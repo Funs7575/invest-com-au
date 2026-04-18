@@ -31,23 +31,28 @@ interface NewsletterEdition {
   id: number;
   edition_date: string;
   subject: string;
-  fee_changes_count: number;
-  articles_count: number;
-  deals_count: number;
+  fee_changes: number;
+  articles: number;
+  deals: number;
   created_at: string;
 }
 
 export default async function NewsletterArchivePage() {
-  const supabase = await createClient();
-
-  const { data: editions } = await supabase
-    .from("newsletter_editions")
-    .select(
-      "id, edition_date, subject, fee_changes_count, articles_count, deals_count, created_at"
-    )
-    .order("edition_date", { ascending: false });
-
-  const allEditions = (editions as NewsletterEdition[]) || [];
+  // Defensive fetch — the table is seeded but RLS could still deny,
+  // or the migration might not have been applied to the current env.
+  let allEditions: NewsletterEdition[] = [];
+  try {
+    const supabase = await createClient();
+    const { data: editions } = await supabase
+      .from("newsletter_editions")
+      .select(
+        "id, edition_date, subject, fee_changes, articles, deals, created_at"
+      )
+      .order("edition_date", { ascending: false });
+    allEditions = (editions as NewsletterEdition[]) || [];
+  } catch {
+    // Silent degrade — page renders "No editions yet" empty state.
+  }
 
   const breadcrumbs = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
@@ -122,26 +127,26 @@ export default async function NewsletterArchivePage() {
                       </h2>
                     </div>
                     <div className="flex items-center gap-3 md:gap-4 shrink-0">
-                      {edition.fee_changes_count > 0 && (
+                      {edition.fee_changes > 0 && (
                         <span className="text-[0.69rem] md:text-xs font-medium px-2 py-0.5 rounded-full bg-red-50 text-red-700">
-                          {edition.fee_changes_count} fee{" "}
-                          {edition.fee_changes_count === 1
+                          {edition.fee_changes} fee{" "}
+                          {edition.fee_changes === 1
                             ? "change"
                             : "changes"}
                         </span>
                       )}
-                      {edition.articles_count > 0 && (
+                      {edition.articles > 0 && (
                         <span className="text-[0.69rem] md:text-xs font-medium px-2 py-0.5 rounded-full bg-blue-50 text-blue-700">
-                          {edition.articles_count}{" "}
-                          {edition.articles_count === 1
+                          {edition.articles}{" "}
+                          {edition.articles === 1
                             ? "article"
                             : "articles"}
                         </span>
                       )}
-                      {edition.deals_count > 0 && (
+                      {edition.deals > 0 && (
                         <span className="text-[0.69rem] md:text-xs font-medium px-2 py-0.5 rounded-full bg-amber-50 text-amber-700">
-                          {edition.deals_count}{" "}
-                          {edition.deals_count === 1 ? "deal" : "deals"}
+                          {edition.deals}{" "}
+                          {edition.deals === 1 ? "deal" : "deals"}
                         </span>
                       )}
                       <span className="text-xs md:text-sm font-semibold text-slate-400 group-hover:text-amber-600 transition-colors">

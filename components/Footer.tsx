@@ -134,16 +134,18 @@ export default function Footer() {
               </ul>
             </div>
 
-            {/* Advisors — own column */}
+            {/* Property & Advisors — own column */}
             <div>
-              <h4 className="text-white font-semibold mb-2 md:mb-3 text-xs md:text-sm">Advisors</h4>
+              <h4 className="text-white font-semibold mb-2 md:mb-3 text-xs md:text-sm">Property &amp; Advisors</h4>
               <ul className="space-y-1.5 md:space-y-2 text-xs md:text-sm">
                 <li><Link href="/find-advisor" className="hover:text-white transition-colors inline-block py-0.5">Find My Advisor — Free</Link></li>
                 <li><Link href="/advisors" className="hover:text-white transition-colors inline-block py-0.5">Advisor Directory</Link></li>
+                <li><Link href="/advisors/search" className="hover:text-white transition-colors inline-block py-0.5">Advanced Search</Link></li>
                 <li><Link href="/advisors/mortgage-brokers" className="hover:text-white transition-colors inline-block py-0.5">Mortgage Brokers</Link></li>
                 <li><Link href="/advisors/financial-planners" className="hover:text-white transition-colors inline-block py-0.5">Financial Planners</Link></li>
                 <li><Link href="/advisors/smsf-accountants" className="hover:text-white transition-colors inline-block py-0.5">SMSF Accountants</Link></li>
-                <li><Link href="/advisors/tax-agents" className="hover:text-white transition-colors inline-block py-0.5">Tax Agents</Link></li>
+                <li><Link href="/advisors/mining-lawyers" className="hover:text-white transition-colors inline-block py-0.5">Mining Lawyers</Link></li>
+                <li><Link href="/advisors/business-brokers" className="hover:text-white transition-colors inline-block py-0.5">Business Brokers</Link></li>
                 <li><Link href="/for-advisors" className="hover:text-white transition-colors inline-block py-0.5">List Your Practice</Link></li>
               </ul>
             </div>

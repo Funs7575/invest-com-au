@@ -85,7 +85,7 @@ export default function WHTCalculator({ countries, defaultRates }: Props) {
                 setGrossAmount(v);
               }}
               placeholder="10,000"
-              className="w-full pl-7 pr-4 py-2.5 text-sm border border-slate-300 rounded-xl bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-400/50 focus:border-amber-400 transition"
+              className="w-full pl-7 pr-4 py-2.5 text-sm border border-slate-300 rounded-xl bg-white text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-400/50 focus:border-amber-400 transition"
             />
           </div>
         </div>

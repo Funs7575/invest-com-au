@@ -232,12 +232,13 @@ export default function ConversionsPage() {
             </h3>
             <div className="flex flex-col items-center gap-1 max-w-md mx-auto">
               {stages.map((stage, i) => {
-                const topW = widths[i];
-                const botW = widths[i + 1] || widths[i] * 0.6;
+                const topW = widths[i] ?? 100;
+                const botW = widths[i + 1] ?? topW * 0.6;
                 const topInset = (100 - topW) / 2;
                 const botInset = (100 - botW) / 2;
-                const conversionRate = i > 0 && stages[i - 1].count > 0
-                  ? Math.round((stage.count / stages[i - 1].count) * 100)
+                const prev = stages[i - 1];
+                const conversionRate = i > 0 && prev && prev.count > 0
+                  ? Math.round((stage.count / prev.count) * 100)
                   : null;
 
                 return (

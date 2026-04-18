@@ -64,8 +64,9 @@ export default function AdminAdvisorsPage() {
     const supply: Record<string, Record<string, number>> = {};
     for (const a of (advisorRes.data as Professional[]) || []) {
       if (a.status !== "active") continue;
-      if (!supply[a.type]) supply[a.type] = {};
-      supply[a.type][a.location_state || "Unknown"] = (supply[a.type][a.location_state || "Unknown"] || 0) + 1;
+      const bucket = (supply[a.type] ??= {});
+      const state = a.location_state || "Unknown";
+      bucket[state] = (bucket[state] || 0) + 1;
     }
     setSupplyData(supply);
 

@@ -73,8 +73,9 @@ export default async function CommunityPage() {
             Community Forum
           </h1>
           <p className="text-slate-300 text-lg max-w-2xl mx-auto mb-8">
-            Join thousands of Australian investors discussing strategies,
-            brokers, and opportunities.
+            A place for Australian investors to compare notes on strategies,
+            brokers, and opportunities. Start a thread or jump into the
+            discussion.
           </p>
           <Link
             href="/community/new"

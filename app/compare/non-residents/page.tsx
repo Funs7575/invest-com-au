@@ -7,6 +7,7 @@ import { FOREIGN_INVESTOR_GENERAL_DISCLAIMER } from "@/lib/compliance";
 import type { Broker } from "@/lib/types";
 import SectionHeading from "@/components/SectionHeading";
 import ComplianceFooter from "@/components/ComplianceFooter";
+import BrokerLogo from "@/components/BrokerLogo";
 import { AFFILIATE_REL } from "@/lib/tracking";
 import CompareNav from "../CompareNav";
 
@@ -190,12 +191,12 @@ export default async function NonResidentBrokersPage() {
                 <div key={broker.id} className="border border-slate-200 rounded-2xl overflow-hidden hover:border-amber-200 transition-colors">
                   <div className="p-5">
                     <div className="flex items-start gap-4">
-                      {/* Logo / initial */}
-                      <div
-                        className="shrink-0 w-14 h-14 rounded-xl flex items-center justify-center text-white font-extrabold text-xl"
-                        style={{ backgroundColor: broker.color || "#1e293b" }}
-                      >
-                        {broker.name?.charAt(0)}
+                      {/* Logo with graceful fallback to coloured initials.
+                          Previously this rendered initials unconditionally,
+                          ignoring broker.logo_url even when a real logo was
+                          available. BrokerLogo handles both paths. */}
+                      <div className="shrink-0">
+                        <BrokerLogo broker={broker} size="lg" />
                       </div>
 
                       <div className="flex-1 min-w-0">

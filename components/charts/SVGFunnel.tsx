@@ -60,7 +60,7 @@ export default function SVGFunnel({
         const bottomHalfWidth = (bottomWidthRatio * funnelAreaWidth) / 2;
 
         const color =
-          stage.color || DEFAULT_FUNNEL_COLORS[i % DEFAULT_FUNNEL_COLORS.length];
+          stage.color || DEFAULT_FUNNEL_COLORS[i % DEFAULT_FUNNEL_COLORS.length] || "#64748b";
 
         // Trapezoid points
         const x1 = centerX - topHalfWidth; // top-left
@@ -68,9 +68,10 @@ export default function SVGFunnel({
         const x3 = centerX + bottomHalfWidth; // bottom-right
         const x4 = centerX - bottomHalfWidth; // bottom-left
 
+        const prevStage = stages[i - 1];
         const dropOff =
-          i > 0
-            ? (((stages[i - 1].value - stage.value) / stages[i - 1].value) * 100).toFixed(1)
+          i > 0 && prevStage && prevStage.value > 0
+            ? (((prevStage.value - stage.value) / prevStage.value) * 100).toFixed(1)
             : null;
 
         const convRate = ((stage.value / maxValue) * 100).toFixed(1);

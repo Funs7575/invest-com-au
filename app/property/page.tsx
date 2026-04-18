@@ -49,24 +49,64 @@ const PROPERTY_TYPES = [
 ];
 
 export default async function PropertyHubPage() {
-  const supabase = await createClient();
+  // Defensive fetch — if the property_listings or suburb_data table
+  // is missing, RLS blocks the read, or the query times out, render
+  // the hub with empty state sections instead of 503ing.
+  type FeaturedListing = {
+    id: number;
+    slug: string;
+    title: string;
+    city: string | null;
+    suburb: string | null;
+    state: string | null;
+    price_from_cents: number | null;
+    price_to_cents: number | null;
+    rental_yield_estimate: number | null;
+    completion_date: string | null;
+    property_type: string | null;
+    images: string[] | null;
+    sponsored: boolean | null;
+    featured: boolean | null;
+    developer_name: string | null;
+    bedrooms_min: number | null;
+    bedrooms_max: number | null;
+    firb_approved: boolean | null;
+    off_the_plan: boolean | null;
+  };
+  type SuburbRow = {
+    suburb: string;
+    state: string | null;
+    median_price_house: number | null;
+    rental_yield_house: number | null;
+    capital_growth_10yr: number | null;
+    distance_to_cbd_km: number | null;
+  };
 
-  const [{ data: featuredListings }, { data: topSuburbs }] = await Promise.all([
-    supabase
-      .from("property_listings")
-      .select("id, slug, title, city, suburb, state, price_from_cents, price_to_cents, rental_yield_estimate, completion_date, property_type, images, sponsored, featured, developer_name, bedrooms_min, bedrooms_max, firb_approved, off_the_plan")
-      .eq("status", "active")
-      .eq("featured", true)
-      .order("sponsored", { ascending: false })
-      .limit(6),
-    supabase
-      .from("suburb_data")
-      .select("suburb, state, median_price_house, rental_yield_house, capital_growth_10yr, distance_to_cbd_km")
-      .order("capital_growth_10yr", { ascending: false })
-      .limit(6),
-  ]);
+  let featuredListings: FeaturedListing[] = [];
+  let topSuburbs: SuburbRow[] = [];
+  try {
+    const supabase = await createClient();
+    const [listingsRes, suburbsRes] = await Promise.all([
+      supabase
+        .from("property_listings")
+        .select("id, slug, title, city, suburb, state, price_from_cents, price_to_cents, rental_yield_estimate, completion_date, property_type, images, sponsored, featured, developer_name, bedrooms_min, bedrooms_max, firb_approved, off_the_plan")
+        .eq("status", "active")
+        .eq("featured", true)
+        .order("sponsored", { ascending: false })
+        .limit(6),
+      supabase
+        .from("suburb_data")
+        .select("suburb, state, median_price_house, rental_yield_house, capital_growth_10yr, distance_to_cbd_km")
+        .order("capital_growth_10yr", { ascending: false })
+        .limit(6),
+    ]);
+    featuredListings = (listingsRes.data as FeaturedListing[] | null) ?? [];
+    topSuburbs = (suburbsRes.data as SuburbRow[] | null) ?? [];
+  } catch {
+    // Graceful degrade — page renders with zero listings / suburbs.
+  }
 
-  const maxGrowth = Math.max(...(topSuburbs || []).map(s => s.capital_growth_10yr ?? 0), 1);
+  const maxGrowth = Math.max(...topSuburbs.map(s => s.capital_growth_10yr ?? 0), 1);
 
   const stats = [
     { value: "50+", label: "New Developments" },
@@ -172,7 +212,7 @@ export default async function PropertyHubPage() {
               {/* Large hero card (first listing) */}
               {featuredListings![0] && (() => {
                 const hero = featuredListings![0];
-                const heroImgs = getListingImages(hero.slug, hero.images, hero.property_type);
+                const heroImgs = getListingImages(hero.slug, hero.images, hero.property_type ?? undefined);
                 return (
                   <Link
                     href={`/property/listings/${hero.slug}`}
@@ -203,7 +243,7 @@ export default async function PropertyHubPage() {
                           {hero.developer_name && <p className="text-xs text-white/70">{hero.developer_name}</p>}
                         </div>
                         <div className="text-right shrink-0 ml-4">
-                          <div className="text-xl md:text-2xl font-extrabold text-white">From {formatPrice(hero.price_from_cents)}</div>
+                          <div className="text-xl md:text-2xl font-extrabold text-white">From {formatPrice(hero.price_from_cents ?? 0)}</div>
                           {hero.rental_yield_estimate && (
                             <div className="text-xs font-semibold text-emerald-400 mt-0.5">{hero.rental_yield_estimate}% est. yield</div>
                           )}
@@ -221,7 +261,7 @@ export default async function PropertyHubPage() {
               {(featuredListings!.length > 1) && (
                 <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
                   {featuredListings!.slice(1).map((listing) => {
-                    const imgs = getListingImages(listing.slug, listing.images, listing.property_type);
+                    const imgs = getListingImages(listing.slug, listing.images, listing.property_type ?? undefined);
                     return (
                       <Link
                         key={listing.id}
@@ -246,7 +286,7 @@ export default async function PropertyHubPage() {
                           <p className="text-[0.6rem] font-bold uppercase tracking-wider text-slate-400 mb-0.5">{listing.city} · {listing.suburb}</p>
                           <h3 className="text-xs font-bold text-slate-900 group-hover:text-slate-600 transition-colors line-clamp-2 mb-1.5">{listing.title}</h3>
                           <div className="flex items-center justify-between">
-                            <span className="text-sm font-extrabold text-slate-900">From {formatPrice(listing.price_from_cents)}</span>
+                            <span className="text-sm font-extrabold text-slate-900">From {formatPrice(listing.price_from_cents ?? 0)}</span>
                           </div>
                           {listing.completion_date && (
                             <p className="text-[0.6rem] text-slate-400 mt-1">Completion: {listing.completion_date}</p>

@@ -349,116 +349,33 @@ ON CONFLICT (slug) DO UPDATE SET
   display_order    = EXCLUDED.display_order;
 
 -- ────────────────────────────────────────────────────────────
--- 6. SEED: commodity_stocks (5 → 30)
+-- 6-10. SEED: commodity + stories + alerts data REMOVED.
 -- ────────────────────────────────────────────────────────────
-INSERT INTO public.commodity_stocks (ticker, name, commodity, market_cap_aud, sector, description) VALUES
-  ('BHP', 'BHP Group', 'diversified', 230000000000, 'Mining', 'World''s largest mining company. Iron ore, copper, nickel, potash, coal.'),
-  ('RIO', 'Rio Tinto', 'iron_ore', 180000000000, 'Mining', 'Global mining major. Iron ore, aluminium, copper, diamonds.'),
-  ('FMG', 'Fortescue', 'iron_ore', 65000000000, 'Mining', 'Pure-play Pilbara iron ore producer. Green energy division.'),
-  ('WDS', 'Woodside Energy', 'lng', 48000000000, 'Energy', 'Australia''s largest LNG producer. Scarborough, NWS, Pluto.'),
-  ('STO', 'Santos', 'lng', 18000000000, 'Energy', 'Oil and gas producer. Barossa, PNG LNG, Cooper Basin.'),
-  ('NCM', 'Newmont (ASX)', 'gold', 55000000000, 'Gold', 'World''s largest gold miner. Boddington, Tanami, Cadia.'),
-  ('NST', 'Northern Star', 'gold', 15000000000, 'Gold', 'Major Australian gold producer. Kalgoorlie Super Pit, Jundee, Pogo.'),
-  ('EVN', 'Evolution Mining', 'gold', 8000000000, 'Gold', 'Gold and copper miner. Cowal, Mt Rawdon, Ernest Henry.'),
-  ('PLS', 'Pilbara Minerals', 'lithium', 12000000000, 'Mining', 'Leading Australian spodumene lithium producer. Pilgangoora.'),
-  ('LYC', 'Lynas Rare Earths', 'rare_earths', 8000000000, 'Mining', 'World''s largest non-Chinese rare earth producer. Mt Weld, Kalgoorlie.'),
-  ('ILU', 'Iluka Resources', 'rare_earths', 5000000000, 'Mining', 'Mineral sands and rare earths. Eneabba refinery for critical minerals.'),
-  ('IGO', 'IGO Limited', 'lithium', 6000000000, 'Mining', 'Lithium and nickel. Greenbushes JV (world''s largest lithium mine).'),
-  ('MIN', 'Mineral Resources', 'lithium', 7000000000, 'Mining', 'Mining services and lithium. Wodgina, Mt Marion.'),
-  ('ARU', 'Arafura Rare Earths', 'rare_earths', 800000000, 'Mining', 'Nolans NdPr rare earths project, NT. DFS complete.'),
-  ('WHC', 'Whitehaven Coal', 'coal', 8000000000, 'Mining', 'Premium metallurgical and thermal coal. Maules Creek, Narrabri.'),
-  ('S32', 'South32', 'diversified', 12000000000, 'Mining', 'Diversified miner. Alumina, manganese, coal, zinc, copper.'),
-  ('OZL', 'OZ Minerals', 'copper', 0, 'Mining', 'Copper-gold miner. Prominent Hill, Carrapateena. Acquired by BHP.'),
-  ('SFR', 'Sandfire Resources', 'copper', 4000000000, 'Mining', 'Copper miner. DeGrussa, Motheo (Botswana), Black Butte (US).'),
-  ('NIC', 'Nickel Industries', 'nickel', 3000000000, 'Mining', 'Nickel pig iron and HPAL nickel. Indonesia operations.'),
-  ('PDN', 'Paladin Energy', 'uranium', 3500000000, 'Mining', 'Uranium producer. Langer Heinrich (Namibia) restart.'),
-  ('LOT', 'Lotus Resources', 'uranium', 500000000, 'Mining', 'Uranium developer. Kayelekera mine restart (Malawi).'),
-  ('DEG', 'De Grey Mining', 'gold', 4000000000, 'Gold', 'Hemi gold discovery. One of Australia''s largest undeveloped gold deposits.'),
-  ('GOR', 'Gold Road Resources', 'gold', 3000000000, 'Gold', 'Gruyere gold mine JV. WA goldfields.'),
-  ('RRL', 'Regis Resources', 'gold', 2500000000, 'Gold', 'McPhillamys gold project (NSW). Duketon (WA).'),
-  ('LTR', 'Liontown Resources', 'lithium', 3000000000, 'Mining', 'Kathleen Valley lithium project. Spodumene developer.'),
-  ('WGX', 'Westgold Resources', 'gold', 2000000000, 'Gold', 'Murchison gold operations. Fortnum hub.'),
-  ('NHC', 'New Hope Corporation', 'coal', 4000000000, 'Mining', 'Thermal coal producer. New Acland, Bengalla.'),
-  ('ORE', 'Orocobre (now Allkem)', 'lithium', 0, 'Mining', 'Merged with Livent to form Arcadium Lithium.'),
-  ('BOE', 'Boss Energy', 'uranium', 1500000000, 'Mining', 'Honeymoon uranium ISR restart. South Australia.'),
-  ('ERA', 'Energy Resources of AU', 'uranium', 800000000, 'Mining', 'Ranger uranium mine rehabilitation. Rio Tinto subsidiary.')
-ON CONFLICT DO NOTHING;
-
--- ────────────────────────────────────────────────────────────
--- 7. SEED: commodity_etfs (2 → 15)
--- ────────────────────────────────────────────────────────────
-INSERT INTO public.commodity_etfs (ticker, name, commodity, mer_percent, provider, description) VALUES
-  ('MNRS', 'VanEck Gold Miners ETF', 'gold', 0.53, 'VanEck', 'Tracks NYSE Arca Gold Miners Index. Exposure to global gold mining companies.'),
-  ('QRE', 'BetaShares Resources ETF', 'diversified', 0.34, 'BetaShares', 'Tracks S&P/ASX 200 Resources sector. Broad Australian resources exposure.'),
-  ('ETLM', 'Global X Battery Tech & Lithium ETF', 'lithium', 0.69, 'Global X', 'Tracks Solactive Global Lithium & Battery Technology Index.'),
-  ('GDX', 'VanEck Gold Miners (US-listed)', 'gold', 0.51, 'VanEck', 'US-listed gold miners ETF. Largest global gold mining ETF by AUM.'),
-  ('FUEL', 'BetaShares Global Energy Companies ETF', 'energy', 0.57, 'BetaShares', 'Tracks S&P Global 1200 Energy Sector. Oil, gas, LNG exposure.'),
-  ('URNM', 'Sprott Junior Uranium Miners ETF', 'uranium', 0.85, 'Sprott', 'Exposure to junior uranium mining companies. Higher risk/reward.'),
-  ('ACDC', 'Global X Battery Tech & Lithium ETF (Alt)', 'lithium', 0.69, 'Global X', 'Alternative ticker for lithium/battery technology exposure.'),
-  ('OOO', 'BetaShares Crude Oil ETF', 'oil', 1.29, 'BetaShares', 'Tracks crude oil futures. Synthetic exposure, not physical.'),
-  ('QAU', 'BetaShares Gold Bullion ETF (AUD hedged)', 'gold', 0.59, 'BetaShares', 'Physical gold bullion ETF. AUD-hedged. Direct gold price exposure.'),
-  ('GOLD', 'ETFS Physical Gold', 'gold', 0.40, 'ETFS', 'Physical gold bullion ETF. Unhedged AUD exposure.'),
-  ('PMGOLD', 'Perth Mint Gold', 'gold', 0.15, 'Perth Mint', 'Government-guaranteed physical gold. Lowest MER gold ETF on ASX.'),
-  ('WIRE', 'Global X Copper Miners ETF', 'copper', 0.65, 'Global X', 'Tracks Solactive Global Copper Miners Index. Pure copper mining exposure.'),
-  ('FOOD', 'BetaShares Global Agriculture ETF', 'agriculture', 0.57, 'BetaShares', 'Tracks agriculture companies. Fertilisers, grain, livestock.'),
-  ('AQLT', 'iShares Core Composite Bond ETF', 'bonds', 0.10, 'iShares', 'Australian composite bond ETF. Government + corporate bonds.'),
-  ('IHVV', 'iShares S&P 500 AUD Hedged', 'diversified', 0.09, 'iShares', 'Not a commodity ETF — included for diversification context.')
-ON CONFLICT DO NOTHING;
-
--- ────────────────────────────────────────────────────────────
--- 8. SEED: commodity_sectors (1 → 8)
--- ────────────────────────────────────────────────────────────
-INSERT INTO public.commodity_sectors (slug, name, description, display_order) VALUES
-  ('gold', 'Gold', 'Safe haven asset at record highs. Australian gold miners benefit from AUD weakness against USD.', 10),
-  ('lithium', 'Lithium & Battery Metals', 'EV battery demand driving 500-700% projected growth by 2030. Australia is the world''s largest lithium producer.', 20),
-  ('rare-earths', 'Rare Earths & Critical Minerals', 'Strategic minerals for defence, renewables, and EV motors. China supply restrictions creating investment opportunities.', 30),
-  ('iron-ore', 'Iron Ore', 'Australia''s largest export commodity. Pilbara operations by BHP, Rio Tinto, and Fortescue.', 40),
-  ('copper', 'Copper', 'Electrification megatrend. EVs use 3-4x more copper than ICE vehicles. Olympic Dam, Ernest Henry.', 50),
-  ('uranium', 'Uranium & Nuclear', 'Nuclear renaissance driving demand. Australia holds world''s largest reserves.', 60),
-  ('energy', 'Oil, Gas & LNG', 'Woodside, Santos, and LNG exporters. Transition risk but strong cashflows.', 70),
-  ('coal', 'Coal (Met & Thermal)', 'Metallurgical coal essential for steelmaking. ESG concerns affecting thermal coal.', 80)
-ON CONFLICT (slug) DO NOTHING;
-
--- ────────────────────────────────────────────────────────────
--- 9. SEED: regulatory_alerts (0 → 5)
--- ────────────────────────────────────────────────────────────
-INSERT INTO public.regulatory_alerts (title, slug, body, severity, source, source_url, effective_date, status, published_at) VALUES
-  ('ASIC bans payment for order flow for retail CFD providers',
-   'asic-bans-payment-order-flow-cfd',
-   'ASIC has finalised Product Intervention Order CI 2025/001 banning payment for order flow (PFOF) arrangements for retail CFD providers operating in Australia. The ban takes effect 1 July 2026. This aligns Australia with the EU MiFID II approach and removes a key conflict of interest in CFD pricing.',
-   'high', 'ASIC', 'https://asic.gov.au', '2026-07-01', 'published', NOW() - INTERVAL '14 days'),
-
-  ('Established dwelling ban extended to 31 March 2027',
-   'established-dwelling-ban-extended-2027',
-   'The Australian Government has confirmed the temporary ban on foreign purchases of established residential dwellings will remain in force until at least 31 March 2027. Non-resident foreign investors continue to be restricted to new dwellings only. FIRB application fees for new dwelling purchases remain unchanged.',
-   'high', 'Treasury', 'https://treasury.gov.au', '2025-04-01', 'published', NOW() - INTERVAL '30 days'),
-
-  ('ATO updates CGT withholding rate for foreign residents to 15%',
-   'ato-cgt-withholding-foreign-residents-15-percent',
-   'The ATO has confirmed the non-final withholding tax rate on capital gains from the disposal of taxable Australian property by foreign residents increases from 12.5% to 15% for contracts entered into from 1 January 2026. This applies to direct property sales above $750,000 and indirect interests in Australian real property.',
-   'medium', 'ATO', 'https://ato.gov.au', '2026-01-01', 'published', NOW() - INTERVAL '60 days'),
-
-  ('APRA increases minimum capital requirements for ADIs',
-   'apra-minimum-capital-adi-2026',
-   'APRA has finalised APS 110 revisions increasing minimum CET1 capital ratios for all authorised deposit-taking institutions from 4.5% to 5.0%, effective 1 January 2027. The buffer increase is designed to absorb potential losses from commercial property lending exposure. No immediate impact on deposit rates expected.',
-   'low', 'APRA', 'https://apra.gov.au', '2027-01-01', 'published', NOW() - INTERVAL '7 days'),
-
-  ('Critical Minerals Strategic Reserve Bill passes Federal Parliament',
-   'critical-minerals-strategic-reserve-bill-2026',
-   'The Export Finance and Insurance Corporation Amendment (Strategic Reserve) Bill 2026 has passed both houses of Federal Parliament. The Bill expands Export Finance Australia''s powers to facilitate critical minerals supply chain development and establishes the $1.2 billion Critical Minerals Strategic Reserve, operational from H2 2026.',
-   'medium', 'Parliament', 'https://aph.gov.au', '2026-06-01', 'published', NOW() - INTERVAL '3 days')
-ON CONFLICT (slug) DO NOTHING;
-
--- ────────────────────────────────────────────────────────────
--- 10. SEED: switch_stories (0 → 8)
--- ────────────────────────────────────────────────────────────
-INSERT INTO public.switch_stories (display_name, from_broker, to_broker, reason, story, annual_savings_cents, status, approved_at) VALUES
-  ('James T.', 'CommSec', 'Stake', 'brokerage_cost', 'I was paying $29.95 per trade on CommSec for my regular DCA into VAS and VGS. Switching to Stake cut that to $3 per trade. Over 24 monthly buys per year, I save over $640 annually. The platform is simpler but does everything I need.', 64000, 'approved', NOW() - INTERVAL '10 days'),
-  ('Sarah M.', 'SelfWealth', 'CMC Markets', 'features', 'SelfWealth was great when it launched, but CMC Markets now offers $0 brokerage on your first trade each day plus better international access. I trade ASX and US markets, and the CMC platform is more capable for research.', 30000, 'approved', NOW() - INTERVAL '8 days'),
-  ('David L.', 'ANZ Share Investing', 'Interactive Brokers', 'international_access', 'ANZ charged $19.95 per ASX trade and didn''t support US shares at all. IBKR gives me access to 150+ markets globally at rock-bottom rates. As an expat investing from Singapore, IBKR is the only platform that actually works for me.', 120000, 'approved', NOW() - INTERVAL '6 days'),
-  ('Michelle K.', 'Raiz', 'Vanguard Personal Investor', 'fees', 'Raiz was costing me 0.275% in platform fees on a growing balance. Once I had $50K invested, that was $137/year just in platform fees — before ETF MERs. VPI has no platform fee and I invest in the same Vanguard ETFs directly.', 13700, 'approved', NOW() - INTERVAL '5 days'),
-  ('Tom R.', 'IG Markets', 'Pepperstone', 'spreads', 'IG''s forex spreads were consistently wider than Pepperstone on AUD/USD and EUR/USD pairs. After tracking my fills for 3 months, I was losing roughly 0.3 pips per trade. On 200 trades per month, that adds up fast.', 48000, 'approved', NOW() - INTERVAL '4 days'),
-  ('Priya S.', 'Spaceship', 'Stake', 'chess_ownership', 'Spaceship holds shares in a pooled nominee structure — I never actually owned the shares directly. When I moved to Stake, my holdings are CHESS-sponsored under my own HIN. That ownership security matters to me.', 0, 'approved', NOW() - INTERVAL '3 days'),
-  ('Marcus W.', 'Westpac Online Investing', 'Pearler', 'automation', 'Westpac''s interface felt like it was from 2005. Pearler lets me set up automatic recurring investments into my ETF portfolio — no manual orders every month. Plus $6.50/trade vs $19.95. The automation alone saves me hours.', 32400, 'approved', NOW() - INTERVAL '2 days'),
-  ('Linda C.', 'nabtrade', 'CommSec', 'research', 'nabtrade was fine for execution, but CommSec''s research tools, analyst recommendations, and market depth display are significantly better. I''m willing to pay a bit more per trade for the research quality.', -1000, 'approved', NOW() - INTERVAL '1 day')
-ON CONFLICT DO NOTHING;
+-- The commodity_sectors / commodity_stocks / commodity_etfs INSERTs
+-- in an earlier version of this migration used wrong column names
+-- (`name` vs `display_name`, `description` vs `hero_description`,
+-- `commodity` vs `sector_slug`, `market_cap_aud` vs `market_cap_bucket`
+-- enum, etc.) and would have failed to apply — taking the whole
+-- migration down with them.
+--
+-- They are also redundant: 20260417_wave_13_commodity_engine.sql
+-- already seeds the only dynamic commodity hub (/invest/oil-gas) with
+-- the correct schema. The other /invest/<sector> pages (gold, bonds,
+-- commodities, etc.) are STATIC hubs — they don't read from these
+-- tables.
+--
+-- The switch_stories and regulatory_alerts seeds were also removed
+-- because they used column names and enum values that don't match
+-- the real schema:
+--   - switch_stories requires source_broker_id, source_broker_slug,
+--     dest_broker_id, dest_broker_slug, title, body, source_rating,
+--     dest_rating (not display_name, from_broker, to_broker, story,
+--     annual_savings_cents which were invented).
+--   - regulatory_alerts.severity is 'info'|'important'|'urgent',
+--     not 'high'|'medium'|'low', and the column is source_name not
+--     source.
+--
+-- Both pages (/stories, /alerts) already carry noindex metadata so
+-- they're safe to ship empty. Real content will be seeded post-launch
+-- from the admin panel, which uses the correct schema via the typed
+-- API layer.

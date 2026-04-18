@@ -177,7 +177,7 @@ export default function UserReviewForm({ brokerSlug, brokerName }: UserReviewFor
             placeholder="e.g. Sarah M."
             maxLength={50}
             required
-            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-700/40 focus:border-blue-700"
+            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-700/40 focus:border-blue-700"
           />
         </div>
         <div>
@@ -192,7 +192,7 @@ export default function UserReviewForm({ brokerSlug, brokerName }: UserReviewFor
             placeholder="you@email.com"
             maxLength={254}
             required
-            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-700/40 focus:border-blue-700"
+            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-700/40 focus:border-blue-700"
           />
           <p className="text-xs text-slate-400 mt-1">For verification only — never displayed.</p>
         </div>
@@ -211,7 +211,7 @@ export default function UserReviewForm({ brokerSlug, brokerName }: UserReviewFor
           placeholder="Summarise your experience in a few words"
           maxLength={120}
           required
-          className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-700/40 focus:border-blue-700"
+          className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-700/40 focus:border-blue-700"
         />
       </div>
 
@@ -228,7 +228,7 @@ export default function UserReviewForm({ brokerSlug, brokerName }: UserReviewFor
           rows={4}
           maxLength={2000}
           required
-          className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400 resize-y"
+          className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400 resize-y"
         />
         <p className="text-xs text-slate-400 mt-1 text-right">{body.length}/2000</p>
       </div>
@@ -246,7 +246,7 @@ export default function UserReviewForm({ brokerSlug, brokerName }: UserReviewFor
             placeholder="What did you like?"
             rows={2}
             maxLength={500}
-            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400 resize-y"
+            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400 resize-y"
           />
         </div>
         <div>
@@ -260,7 +260,7 @@ export default function UserReviewForm({ brokerSlug, brokerName }: UserReviewFor
             placeholder="What could be improved?"
             rows={2}
             maxLength={500}
-            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400 resize-y"
+            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400 resize-y"
           />
         </div>
       </div>

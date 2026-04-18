@@ -258,7 +258,7 @@ export default function SwitchStoryForm({
             placeholder="e.g. Sarah M."
             maxLength={50}
             required
-            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
+            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
           />
         </div>
         <div>
@@ -273,7 +273,7 @@ export default function SwitchStoryForm({
             placeholder="you@email.com"
             maxLength={254}
             required
-            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
+            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
           />
           <p className="text-xs text-slate-400 mt-1">For verification only — never displayed.</p>
         </div>
@@ -292,7 +292,7 @@ export default function SwitchStoryForm({
           placeholder="e.g. Why I left CommSec for Stake"
           maxLength={120}
           required
-          className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
+          className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
         />
       </div>
 
@@ -309,7 +309,7 @@ export default function SwitchStoryForm({
           rows={5}
           maxLength={2000}
           required
-          className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400 resize-y"
+          className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400 resize-y"
         />
         <p className="text-xs text-slate-400 mt-1 text-right">{body.length}/2000</p>
       </div>
@@ -326,7 +326,7 @@ export default function SwitchStoryForm({
           onChange={(e) => setReason(e.target.value)}
           placeholder="e.g. Lower fees, better app, CHESS sponsorship"
           maxLength={500}
-          className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
+          className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
         />
       </div>
 
@@ -343,7 +343,7 @@ export default function SwitchStoryForm({
             onChange={(e) => setEstimatedSavings(e.target.value)}
             placeholder="e.g. $500/year"
             maxLength={100}
-            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
+            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
           />
         </div>
         <div>
@@ -357,7 +357,7 @@ export default function SwitchStoryForm({
             onChange={(e) => setTimeWithSource(e.target.value)}
             placeholder="e.g. 3 years"
             maxLength={100}
-            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
+            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
           />
         </div>
       </div>

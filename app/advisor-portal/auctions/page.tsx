@@ -359,7 +359,7 @@ export default function AdvisorAuctionsPage() {
                                   }))
                                 }
                                 placeholder="50.00"
-                                className="w-full rounded-lg border border-slate-200 bg-white pl-7 pr-4 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                                className="w-full rounded-lg border border-slate-200 bg-white pl-7 pr-4 py-2 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                               />
                             </div>
                           </div>

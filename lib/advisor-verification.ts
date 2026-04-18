@@ -528,6 +528,245 @@ export const VERIFICATION_CONFIGS: Record<ProfessionalType, VerificationConfig> 
     cpd: "Subject to ongoing CPD obligations under ASIC standards and any internal qualifications",
     disclosure: "Private wealth managers operate under an AFSL and may provide discretionary portfolio management. Verify the firm's AFSL and request a Financial Services Guide (FSG) before engaging.",
   },
+
+  // ─── Wave-N new advisor types ─────────────────────────────────
+  // Added when the advisor directory expanded to cover 22 types.
+  // These configs are minimum-viable — they satisfy the typechecker
+  // and give user-facing pages real disclosure copy. Full licence
+  // and CPD detail can be backfilled as advisors onboard.
+
+  mining_lawyer: {
+    type: "mining_lawyer",
+    label: "Mining Lawyer",
+    primaryLicence: {
+      code: "LPC",
+      name: "Legal Practising Certificate",
+      regulator: "State Law Society / Legal Services Commission",
+      regulatorShort: "Law Society",
+      verifyUrl: "https://www.lawcouncil.asn.au",
+      verifyLabel: "Verify on state Law Society register",
+      mandatory: true,
+      field: "registration_number",
+      description: "Required to practise law in Australia — issued by the state Law Society to admitted practitioners.",
+    },
+    additionalLicences: [],
+    qualifications: [
+      "Admitted to practice in at least one Australian state or territory",
+      "Practising certificate current with state Law Society",
+      "Substantive experience in resources sector transactions (tenements, JV, FIRB)",
+    ],
+    associations: [
+      { name: "Law Council of Australia — Business Law Section", acronym: "LCA", url: "https://www.lawcouncil.asn.au" },
+      { name: "Australian Mining & Petroleum Law Association", acronym: "AMPLA", url: "https://www.ampla.org" },
+    ],
+    insurance: "Professional Indemnity Insurance — mandatory under state legal profession acts",
+    edr: "Complaints handled by the relevant state Legal Services Commissioner",
+    cpd: "10 CPD units per year as required by state Law Society",
+    disclosure: "Mining lawyers must hold a current practising certificate in their admitted jurisdiction. Legal fees attract GST. Always confirm the practitioner's certificate on the state Law Society register before engaging.",
+  },
+
+  mining_tax_advisor: {
+    type: "mining_tax_advisor",
+    label: "Mining Tax Advisor",
+    primaryLicence: {
+      code: "TPB",
+      name: "Registered Tax Agent",
+      regulator: "Tax Practitioners Board",
+      regulatorShort: "TPB",
+      verifyUrl: "https://www.tpb.gov.au/public-register",
+      verifyLabel: "Verify on TPB Public Register",
+      mandatory: true,
+      field: "registration_number",
+      description: "Required to provide tax agent services for a fee — verifies registration with the Tax Practitioners Board.",
+    },
+    additionalLicences: [],
+    qualifications: [
+      "Registered tax agent with the Tax Practitioners Board (TPB)",
+      "Chartered Accountant (CA) or CPA with Big 4 / specialist resources experience",
+      "Substantive experience with PRRT, royalty regimes and cross-border transfer pricing",
+    ],
+    associations: [
+      { name: "Chartered Accountants Australia & New Zealand", acronym: "CA ANZ", url: "https://www.charteredaccountantsanz.com" },
+      { name: "CPA Australia", acronym: "CPA", url: "https://www.cpaaustralia.com.au" },
+    ],
+    insurance: "Professional Indemnity Insurance — required under TPB registration conditions",
+    edr: "Complaints escalate to the Tax Practitioners Board",
+    cpd: "120 hours over 3 years as per TPB requirements",
+    disclosure: "Tax agents must be registered with the TPB. Verify the agent's registration number before engaging. Fees attract GST.",
+  },
+
+  migration_agent: {
+    type: "migration_agent",
+    label: "Migration Agent",
+    primaryLicence: {
+      code: "MARN",
+      name: "Migration Agents Registration Number",
+      regulator: "Office of the Migration Agents Registration Authority",
+      regulatorShort: "MARA",
+      verifyUrl: "https://www.mara.gov.au/search-the-register-of-migration-agents",
+      verifyLabel: "Verify on MARA Register",
+      mandatory: true,
+      field: "registration_number",
+      description: "Required by law to provide immigration assistance in Australia — all practising agents must hold a current MARN.",
+    },
+    additionalLicences: [],
+    qualifications: [
+      "MARA-registered (Migration Agents Registration Number, MARN)",
+      "Completed the Graduate Diploma in Migration Law & Practice (or equivalent)",
+      "Bound by the Code of Conduct under the Migration Agents Regulations 1998",
+    ],
+    associations: [
+      { name: "Migration Institute of Australia", acronym: "MIA", url: "https://www.mia.org.au" },
+    ],
+    insurance: "Professional Indemnity Insurance — mandatory under MARA registration conditions",
+    edr: "Complaints handled by the Office of MARA",
+    cpd: "Annual CPD requirement set by MARA (currently 10 points per year)",
+    disclosure: "Only MARA-registered migration agents can legally provide immigration assistance in Australia. Verify the MARN on the MARA register before engaging.",
+  },
+
+  business_broker: {
+    type: "business_broker",
+    label: "Business Broker",
+    primaryLicence: {
+      code: "RE Agent",
+      name: "State Real Estate / Business Agent Licence",
+      regulator: "State Fair Trading / Consumer Affairs",
+      regulatorShort: "Fair Trading",
+      verifyUrl: "https://www.abba.asn.au",
+      verifyLabel: "Verify on state Fair Trading register",
+      mandatory: true,
+      field: "registration_number",
+      description: "Required to broker the sale of businesses in Australia — licensed by state consumer protection authorities.",
+    },
+    additionalLicences: [],
+    qualifications: [
+      "Licensed as a business agent or real estate agent in the relevant state",
+      "Practical experience in SME valuation, due diligence and transaction management",
+    ],
+    associations: [
+      { name: "Australian Business Brokers Association", acronym: "ABBA", url: "https://www.abba.asn.au" },
+      { name: "Real Estate Institute (state chapters)", acronym: "REI", url: "https://reia.asn.au" },
+    ],
+    insurance: "Professional Indemnity Insurance — required under state licensing conditions",
+    edr: "Complaints handled by state Fair Trading / Consumer Affairs",
+    cpd: "Ongoing CPD as per state licensing board requirements",
+    disclosure: "Business brokers must be licensed in the state where they operate. Commissions are typically 8–12% for SMEs and paid by the seller. Always verify the licence on the relevant state Fair Trading register.",
+  },
+
+  commercial_lawyer: {
+    type: "commercial_lawyer",
+    label: "Commercial Lawyer",
+    primaryLicence: {
+      code: "LPC",
+      name: "Legal Practising Certificate",
+      regulator: "State Law Society / Legal Services Commission",
+      regulatorShort: "Law Society",
+      verifyUrl: "https://www.lawcouncil.asn.au",
+      verifyLabel: "Verify on state Law Society register",
+      mandatory: true,
+      field: "registration_number",
+      description: "Required to practise law in Australia — issued by the state Law Society to admitted practitioners.",
+    },
+    additionalLicences: [],
+    qualifications: [
+      "Admitted to practice in at least one Australian state or territory",
+      "Current practising certificate with state Law Society",
+    ],
+    associations: [
+      { name: "Law Council of Australia — Business Law Section", acronym: "LCA", url: "https://www.lawcouncil.asn.au" },
+    ],
+    insurance: "Professional Indemnity Insurance — mandatory under state legal profession acts",
+    edr: "Complaints handled by the relevant state Legal Services Commissioner",
+    cpd: "10 CPD units per year as required by state Law Society",
+    disclosure: "Commercial lawyers must hold a current practising certificate. Always verify the practitioner on the state Law Society register before engaging. Legal fees attract GST.",
+  },
+
+  rural_property_agent: {
+    type: "rural_property_agent",
+    label: "Rural Property Agent",
+    primaryLicence: {
+      code: "RE Agent",
+      name: "State Real Estate Agent Licence",
+      regulator: "State Fair Trading / Consumer Affairs",
+      regulatorShort: "Fair Trading",
+      verifyUrl: "https://reia.asn.au",
+      verifyLabel: "Verify on state Fair Trading register",
+      mandatory: true,
+      field: "registration_number",
+      description: "Required to sell or auction rural / agricultural real estate — issued by state consumer protection authorities.",
+    },
+    additionalLicences: [],
+    qualifications: [
+      "Licensed real estate agent in the relevant state",
+      "Experience in agricultural or rural sales (farms, stations, water rights)",
+    ],
+    associations: [
+      { name: "Real Estate Institute (state chapters)", acronym: "REI", url: "https://reia.asn.au" },
+    ],
+    insurance: "Professional Indemnity Insurance — required under state licensing conditions",
+    edr: "Complaints handled by state Fair Trading / Consumer Affairs",
+    cpd: "Ongoing CPD as per state licensing board requirements",
+    disclosure: "Rural property agents must hold a state real estate licence. Commissions on rural sales typically range 2–4% and are paid by the seller. Verify the agent on the relevant state Fair Trading register.",
+  },
+
+  commercial_property_agent: {
+    type: "commercial_property_agent",
+    label: "Commercial Property Agent",
+    primaryLicence: {
+      code: "RE Agent",
+      name: "State Real Estate Agent Licence",
+      regulator: "State Fair Trading / Consumer Affairs",
+      regulatorShort: "Fair Trading",
+      verifyUrl: "https://reia.asn.au",
+      verifyLabel: "Verify on state Fair Trading register",
+      mandatory: true,
+      field: "registration_number",
+      description: "Required to sell, lease or auction commercial real estate — issued by state consumer protection authorities.",
+    },
+    additionalLicences: [],
+    qualifications: [
+      "Licensed real estate agent in the relevant state",
+      "Experience in commercial asset sales and/or leasing (office, industrial, retail)",
+    ],
+    associations: [
+      { name: "Real Estate Institute (state chapters)", acronym: "REI", url: "https://reia.asn.au" },
+      { name: "Australian Property Institute", acronym: "API", url: "https://www.api.org.au" },
+    ],
+    insurance: "Professional Indemnity Insurance — required under state licensing conditions",
+    edr: "Complaints handled by state Fair Trading / Consumer Affairs",
+    cpd: "Ongoing CPD as per state licensing board requirements",
+    disclosure: "Commercial property agents must hold a state real estate licence. Sales commissions typically 1–2% and leasing commissions 6–12% of first-year rent. Verify the agent on the relevant state Fair Trading register.",
+  },
+
+  energy_consultant: {
+    type: "energy_consultant",
+    label: "Energy Consultant",
+    primaryLicence: {
+      code: "CEC",
+      name: "Clean Energy Council Approved Consultant",
+      regulator: "Clean Energy Council",
+      regulatorShort: "CEC",
+      verifyUrl: "https://www.cleanenergycouncil.org.au",
+      verifyLabel: "Verify on CEC Approved Consultants register",
+      mandatory: false,
+      field: "registration_number",
+      description: "Recognised industry accreditation for renewable energy consultants — not statutorily required but an industry benchmark.",
+    },
+    additionalLicences: [],
+    qualifications: [
+      "Relevant engineering degree or equivalent technical qualifications",
+      "Clean Energy Council accredited (where applicable) or Engineers Australia CEng",
+      "Experience in renewables feasibility, PPA structuring or grid connection",
+    ],
+    associations: [
+      { name: "Clean Energy Council", acronym: "CEC", url: "https://www.cleanenergycouncil.org.au" },
+      { name: "Engineers Australia", acronym: "EA", url: "https://www.engineersaustralia.org.au" },
+    ],
+    insurance: "Professional Indemnity Insurance — typical market standard; verify with consultant",
+    edr: "No single statutory EDR — disputes resolved via contract / common law",
+    cpd: "Ongoing CPD as per Engineers Australia / Clean Energy Council requirements",
+    disclosure: "Energy consultants are not a regulated profession in Australia. Verify qualifications via Engineers Australia membership or Clean Energy Council accreditation before engaging.",
+  },
 };
 
 // ═══════════════════════════════════════════════════════════════════

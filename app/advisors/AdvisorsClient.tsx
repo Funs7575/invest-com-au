@@ -5,26 +5,28 @@ import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import type { Professional, ProfessionalType, AdvisorFirm } from "@/lib/types";
-import { PROFESSIONAL_TYPE_LABELS, AU_STATES } from "@/lib/types";
+import { PROFESSIONAL_TYPE_LABELS, PROFESSIONAL_TYPE_ICONS, AU_STATES } from "@/lib/types";
 import Icon from "@/components/Icon";
 import { trackEvent } from "@/lib/tracking";
 import { useAdvisorShortlist } from "@/lib/hooks/useAdvisorShortlist";
 
+/**
+ * Derived from PROFESSIONAL_TYPE_LABELS so a new type added to the
+ * union automatically appears in the filter. Sorted alphabetically
+ * for predictable UX. The plural suffix is best-effort: most labels
+ * are singular ("Mining Lawyer") so we append "s" except where the
+ * label already ends in 's' (e.g. "Buyers Agent" → "Buyers Agents"
+ * just adds 's' which is still correct).
+ */
 const TYPE_FILTERS: { key: ProfessionalType | "all"; label: string; icon: string }[] = [
   { key: "all", label: "All Types", icon: "users" },
-  { key: "smsf_accountant", label: "SMSF Accountants", icon: "building" },
-  { key: "financial_planner", label: "Financial Planners", icon: "trending-up" },
-  { key: "property_advisor", label: "Property Advisors", icon: "home" },
-  { key: "tax_agent", label: "Tax Agents", icon: "calculator" },
-  { key: "mortgage_broker", label: "Mortgage Brokers", icon: "landmark" },
-  { key: "estate_planner", label: "Estate Planners", icon: "file-text" },
-  { key: "insurance_broker", label: "Insurance Brokers", icon: "shield" },
-  { key: "buyers_agent", label: "Buyers Agents", icon: "search" },
-  { key: "real_estate_agent", label: "Real Estate Agents", icon: "map-pin" },
-  { key: "wealth_manager", label: "Wealth Managers", icon: "briefcase" },
-  { key: "aged_care_advisor", label: "Aged Care Advisors", icon: "heart" },
-  { key: "crypto_advisor", label: "Crypto Advisors", icon: "bitcoin" },
-  { key: "debt_counsellor", label: "Debt Counsellors", icon: "credit-card" },
+  ...(Object.keys(PROFESSIONAL_TYPE_LABELS) as ProfessionalType[])
+    .map((key) => ({
+      key,
+      label: `${PROFESSIONAL_TYPE_LABELS[key]}s`.replace(/ss$/, "s"),
+      icon: PROFESSIONAL_TYPE_ICONS[key] ?? "user",
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label)),
 ];
 
 const RADIUS_OPTIONS = [
@@ -509,6 +511,16 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
             <span className="hidden md:inline">Filters</span>
             {activeFilterCount > 0 && <span className="w-5 h-5 bg-amber-600 text-white text-[0.6rem] font-bold rounded-full flex items-center justify-center">{activeFilterCount}</span>}
           </button>
+          {/* Advanced search — full filter UI with language, international-client
+              toggle and alphabetical/newest sort options that the compact
+              filter panel on this page doesn't surface. */}
+          <Link
+            href="/advisors/search"
+            className="hidden md:inline-flex items-center gap-1.5 px-3 md:px-4 py-2.5 border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 rounded-xl text-sm font-semibold transition-all shrink-0"
+          >
+            <Icon name="search" size={16} />
+            Advanced Search
+          </Link>
           <select value={sortBy} onChange={e => setSortBy(e.target.value as SortKey)} className="hidden md:block px-3 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-600 bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/30">
             {SORT_OPTIONS.map(o => <option key={o.key} value={o.key}>{o.label}</option>)}
           </select>

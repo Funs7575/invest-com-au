@@ -2,29 +2,39 @@ import Link from "next/link";
 import Image from "next/image";
 import Icon from "@/components/Icon";
 
+/**
+ * Loose, tolerant type for ListingCard — accepts both the strict
+ * Supabase-row shape and the lib/types.InvestmentListing shape. All
+ * fields except id/title/slug/vertical are optional + nullable so
+ * rows from helpers that return the canonical lib/types type
+ * (fetchRelatedListings, fetchListingsBySubCategory) plug in without
+ * a cast. The component body already guards every field with
+ * truthy / nullish checks, so tolerating `undefined | null` here
+ * is safe at runtime.
+ */
 export type InvestmentListing = {
   id: number;
   vertical: string;
   title: string;
   slug: string;
-  description: string | null;
-  location_state: string | null;
-  location_city: string | null;
-  asking_price_cents: number | null;
-  price_display: string | null;
-  annual_revenue_cents: number | null;
-  annual_profit_cents: number | null;
-  industry: string | null;
-  sub_category: string | null;
-  key_metrics: Record<string, unknown>;
-  images: string[];
-  listing_type: string;
-  firb_eligible: boolean;
-  siv_complying: boolean;
-  status: string;
-  views: number;
-  enquiries: number;
-  created_at: string;
+  description?: string | null;
+  location_state?: string | null;
+  location_city?: string | null;
+  asking_price_cents?: number | null;
+  price_display?: string | null;
+  annual_revenue_cents?: number | null;
+  annual_profit_cents?: number | null;
+  industry?: string | null;
+  sub_category?: string | null;
+  key_metrics?: Record<string, unknown> | null;
+  images?: string[] | null;
+  listing_type?: string | null;
+  firb_eligible?: boolean | null;
+  siv_complying?: boolean | null;
+  status?: string | null;
+  views?: number | null;
+  enquiries?: number | null;
+  created_at?: string;
 };
 
 function formatCents(cents: number): string {
@@ -35,7 +45,13 @@ function formatCents(cents: number): string {
 }
 
 function getKeyMetric(listing: InvestmentListing): string | null {
-  const km = listing.key_metrics ?? {};
+  // Cast explicitly — with key_metrics now nullable (`?: Record | null`)
+  // the `?? {}` narrowing widens km to `Record<string, unknown> | {}`,
+  // and `{}` has no index signature so `km.annual_ebitda` wouldn't type-
+  // check. The empty-object branch is only reachable when key_metrics
+  // is null/undefined, in which case every downstream lookup returns
+  // undefined anyway — same runtime behaviour as before.
+  const km: Record<string, unknown> = listing.key_metrics ?? {};
   switch (listing.vertical) {
     case "business": {
       const ebitda = km.annual_ebitda as number | undefined;

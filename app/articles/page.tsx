@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import type { Article } from "@/lib/types";
-import Image from "next/image";
+import ArticleCover from "@/components/ArticleCover";
 import Link from "next/link";
 import { Suspense } from "react";
 import ArticleSearchInput from "@/components/ArticleSearchInput";
@@ -242,14 +242,21 @@ export default async function ArticlesPage({
   searchParams: Promise<{ category?: string; q?: string }>;
 }) {
   const { category, q } = await searchParams;
-  const supabase = await createClient();
 
-  const { data: articles } = await supabase
-    .from("articles")
-    .select("*")
-    .order("published_at", { ascending: false });
-
-  const allArticles = (articles as Article[]) || [];
+  // Defensive fetch — the articles table might reject the query under
+  // strict RLS or be temporarily unreachable. Render the hub with an
+  // empty state instead of crashing the whole page.
+  let allArticles: Article[] = [];
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("articles")
+      .select("*")
+      .order("published_at", { ascending: false });
+    allArticles = (data as Article[]) || [];
+  } catch {
+    // Silent degrade — cluster and flat sections both render empty.
+  }
 
   // Build a slug→article lookup for cluster rendering
   const articleBySlug = new Map<string, Article>();
@@ -501,19 +508,17 @@ function PillarCard({ article }: { article: Article }) {
       className="block border border-slate-200 rounded-lg md:rounded-xl bg-slate-50 hover:shadow-lg hover:scale-[1.005] transition-all overflow-hidden group"
     >
       <div className="md:flex md:items-stretch">
-        {/* Cover Image */}
-        {article.cover_image_url && (
-          <div className="aspect-[16/9] md:aspect-auto md:w-2/5 overflow-hidden bg-slate-100 relative shrink-0">
-            <Image
-              src={article.cover_image_url}
-              alt={article.title}
-              fill
-              sizes="(max-width: 768px) 100vw, 40vw"
-              className="object-cover group-hover:scale-105 transition-transform duration-300"
-              priority
-            />
-          </div>
-        )}
+        {/* Cover — real image if present, otherwise category gradient. */}
+        <div className="md:w-2/5 shrink-0">
+          <ArticleCover
+            title={article.title}
+            coverImageUrl={article.cover_image_url ?? null}
+            category={article.category ?? null}
+            variant="card"
+            priority
+            sizes="(max-width: 768px) 100vw, 40vw"
+          />
+        </div>
         <div className="p-3 md:p-6 flex flex-col flex-1">
           {/* Badges Row */}
           <div className="flex items-center gap-1.5 md:gap-2 mb-1.5 md:mb-3">
@@ -567,19 +572,15 @@ function ArticleCard({ article, priority = false }: { article: Article; priority
       href={`/article/${article.slug}`}
       className="border border-slate-200 rounded-lg md:rounded-xl bg-white hover:shadow-lg hover:scale-[1.01] transition-all flex flex-col overflow-hidden group"
     >
-      {/* Cover Image */}
-      {article.cover_image_url ? (
-        <div className="aspect-[16/9] overflow-hidden bg-slate-100 relative">
-          <Image
-            src={article.cover_image_url}
-            alt={article.title}
-            fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            className="object-cover group-hover:scale-105 transition-transform duration-300"
-            {...(priority ? { priority: true } : {})}
-          />
-        </div>
-      ) : null}
+      {/* Cover — real image if present, category gradient otherwise. */}
+      <ArticleCover
+        title={article.title}
+        coverImageUrl={article.cover_image_url ?? null}
+        category={article.category ?? null}
+        variant="card"
+        priority={priority}
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+      />
       <div className="p-2.5 md:p-6 flex flex-col flex-1">
         {/* Badges Row */}
         <div className="flex items-center gap-1 md:gap-2 mb-1 md:mb-3">

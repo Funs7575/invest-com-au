@@ -116,7 +116,7 @@ export default function FunnelPage() {
             <div className="space-y-3">
               {funnelSteps.map((step, i) => {
                 const pct = maxFunnel > 0 ? (step.value / maxFunnel) * 100 : 0;
-                const prevValue = i > 0 ? funnelSteps[i - 1].value : 0;
+                const prevValue = i > 0 ? (funnelSteps[i - 1]?.value ?? 0) : 0;
                 const dropoff = prevValue > 0 ? ((1 - step.value / prevValue) * 100).toFixed(1) : null;
                 return (
                   <div key={step.label}>

@@ -22,6 +22,18 @@ const SLUG_TO_TYPE: Record<string, ProfessionalType> = {
   "aged-care-advisors": "aged_care_advisor",
   "crypto-advisors": "crypto_advisor",
   "debt-counsellors": "debt_counsellor",
+  // New types — /advisors/mining-lawyers etc. route through this
+  // dynamic page rather than needing their own folder. `migration-agents`
+  // is NOT listed here because app/advisors/migration-agents/page.tsx
+  // already exists as a specialist (boolean-flag) page and takes
+  // precedence over this dynamic route.
+  "mining-lawyers": "mining_lawyer",
+  "mining-tax-advisors": "mining_tax_advisor",
+  "business-brokers": "business_broker",
+  "commercial-lawyers": "commercial_lawyer",
+  "rural-property-agents": "rural_property_agent",
+  "commercial-property-agents": "commercial_property_agent",
+  "energy-consultants": "energy_consultant",
 };
 
 const TYPE_DESCRIPTIONS: Record<string, string> = {
@@ -38,6 +50,13 @@ const TYPE_DESCRIPTIONS: Record<string, string> = {
   "aged-care-advisors": "Find aged care advisors who specialise in residential aged care, home care packages, means testing, and retirement transitions.",
   "crypto-advisors": "Compare crypto and digital asset advisors for portfolio construction, tax planning, and DeFi strategy in Australia.",
   "debt-counsellors": "Find accredited debt counsellors for debt consolidation, hardship applications, budgeting, and financial recovery.",
+  "mining-lawyers": "Find specialist mining lawyers for tenement acquisitions, joint ventures, FIRB applications and environmental approvals. Essential for foreign investors in Australian mining.",
+  "mining-tax-advisors": "Find mining tax advisors specialising in PRRT, royalties, cross-border transfer pricing, and tax-effective project structuring for resources investors.",
+  "business-brokers": "Compare business brokers across Australia. Business sale advisory, valuations, buyer introductions and succession planning for SMEs and franchise networks.",
+  "commercial-lawyers": "Find commercial lawyers for contracts, M&A, corporate structuring, shareholder agreements and cross-border transactions.",
+  "rural-property-agents": "Compare rural property agents specialising in farms, cattle stations, viticulture, horticulture and agricultural land across Australia.",
+  "commercial-property-agents": "Find commercial property agents for office, industrial, retail and healthcare asset sales, leasing and tenant representation.",
+  "energy-consultants": "Find energy consultants specialising in renewables project development, PPAs, grid connection, carbon credit strategy and energy transition advisory.",
 };
 
 const TYPE_FAQS: Record<string, { q: string; a: string }[]> = {
@@ -105,6 +124,41 @@ const TYPE_FAQS: Record<string, { q: string; a: string }[]> = {
     { q: "Is debt counselling free?", a: "Financial counselling through not-for-profit services (like the National Debt Helpline) is free. Private debt management services may charge fees — always ask upfront." },
     { q: "What can a debt counsellor help with?", a: "They help with budgeting, debt consolidation strategies, negotiating hardship arrangements with creditors, understanding your rights, and creating a plan to become debt-free." },
     { q: "Will debt counselling affect my credit score?", a: "Seeing a counsellor does not affect your credit score. However, some debt solutions they recommend (like Part IX agreements or bankruptcy) will appear on your credit report." },
+  ],
+  "mining-lawyers": [
+    { q: "When do I need a mining lawyer?", a: "Any mining tenement acquisition, joint venture, farm-in agreement, or M&A deal should involve a mining lawyer. Foreign investors also need FIRB advice for mining assets — FIRB treats minerals as a sensitive sector." },
+    { q: "How much does a mining lawyer cost?", a: "Hourly rates typically range $500–$1,200. A straightforward tenement transfer costs $5,000–$15,000. Complex JVs or M&A transactions can run $50,000–$250,000+." },
+    { q: "Do I need FIRB approval for a mining investment?", a: "Usually yes. Mining is a sensitive sector under FIRB, with lower thresholds than general commercial investment. Your lawyer coordinates the FIRB application alongside the transaction." },
+  ],
+  "mining-tax-advisors": [
+    { q: "What is PRRT?", a: "Petroleum Resource Rent Tax — a federal tax on the profits of petroleum (oil and gas) projects. Mining tax advisors also handle state-based royalties, company tax deductions for exploration, and cross-border transfer pricing." },
+    { q: "How do exploration deductions work?", a: "Exploration expenditure is generally immediately deductible, but the rules are complex for unsuccessful tenements, joint ventures, and farm-out arrangements. A specialist can identify deductions a generalist tax agent would miss." },
+    { q: "What does mining tax advice cost?", a: "A structured strategy for a single mining investment typically costs $5,000–$15,000. Ongoing advisory for producing assets or multi-project portfolios runs $15,000–$50,000+ per year." },
+  ],
+  "business-brokers": [
+    { q: "What does a business broker do?", a: "They value your business, prepare it for sale, market confidentially to qualified buyers, negotiate terms, and coordinate due diligence. They represent the seller — similar to a real estate agent for a business." },
+    { q: "How much do business brokers charge?", a: "Typically 8–12% of the sale price for SMEs under $2M. Larger deals use sliding scales: 10% on the first $1M, 6% on the next, etc. Retainers of $2,000–$10,000 upfront are common." },
+    { q: "Do I need a business broker or can I sell myself?", a: "Owners who try to sell privately usually get 20–40% less and face higher due-diligence failure rates. Good brokers access a buyer network you don't have and preserve confidentiality during the process." },
+  ],
+  "commercial-lawyers": [
+    { q: "What's the difference between commercial and business law?", a: "They overlap heavily. 'Commercial lawyer' usually means someone handling contracts, M&A, and corporate structuring. 'Business lawyer' is a broader term that can include employment, disputes, IP, and smaller-scale advisory." },
+    { q: "When should I engage a commercial lawyer?", a: "Before signing any significant contract, raising capital, taking on a co-founder, structuring a JV, selling a business, or entering a cross-border deal. Early engagement costs less than fixing problems later." },
+    { q: "What do commercial lawyers charge?", a: "Hourly rates are $400–$900 at national firms; $250–$500 at specialist boutiques. A shareholder agreement typically costs $3,000–$8,000. Full M&A legal work scales with deal size." },
+  ],
+  "rural-property-agents": [
+    { q: "How is rural property different from residential?", a: "Rural agents understand water rights, carrying capacity, soil types, commodity cycles, and depreciation schedules. They value land on productive capacity, not just comparable sales. Most have agricultural backgrounds." },
+    { q: "What's the commission on a farm sale?", a: "Rural commissions typically range 2–4%, higher than residential (1.5–2.5%) because deal volumes are lower and sales cycles longer. Large stations and aggregations may negotiate fixed fees." },
+    { q: "Do rural agents help with foreign buyers?", a: "Yes. FIRB requires approval for foreign acquisitions of agricultural land above $15M. Good rural agents work alongside FIRB specialists to structure compliant transactions." },
+  ],
+  "commercial-property-agents": [
+    { q: "How do commercial property agents get paid?", a: "Sales commissions: 1–2% of sale price. Leasing: typically 6–12% of the first year's rent for new leases. Institutional and portfolio transactions often use negotiated fixed fees." },
+    { q: "Should I use a separate leasing and sales agent?", a: "Specialists usually outperform generalists. Industrial leasing, CBD office sales, and suburban retail are three different markets — the best agent for one is rarely the best for another." },
+    { q: "What yield should I expect on commercial property?", a: "Prime CBD office: 4–6%. Large-format retail: 5–7%. Industrial: 4.5–6.5%. Childcare, healthcare, service stations: 5–7%. Yields below these levels usually signal growth assumptions; higher yields signal risk." },
+  ],
+  "energy-consultants": [
+    { q: "When do I need an energy consultant?", a: "Developing a renewables project (solar farm, wind, battery storage), negotiating a PPA, evaluating grid connection feasibility, or managing energy costs for large operations. They also advise on carbon credits and LGC/STC strategies." },
+    { q: "What does energy consulting cost?", a: "Feasibility studies: $25,000–$150,000+ depending on project size. PPA structuring and grid connection advisory: typically day rates of $1,500–$3,000. Fixed-price project packages are common." },
+    { q: "Are energy consultants regulated in Australia?", a: "Most are not directly licensed (unlike financial advisers), but reputable practitioners hold engineering qualifications (Engineers Australia, CEng) and memberships with the Clean Energy Council or AEMO market participant status." },
   ],
 };
 
@@ -238,6 +292,76 @@ const TYPE_EDITORIAL: Record<string, { howToChoose: string[]; costGuide: string;
     ],
     costGuide: "Financial counselling through not-for-profit services is free. Private debt management services range from $500–$3,000 depending on complexity. Avoid services charging percentage-based fees on your total debt — this is a red flag.",
     industryInsight: "Australian household debt-to-income ratio is among the highest globally at over 180%. Rising interest rates have increased demand for debt counselling services, with the National Debt Helpline reporting record call volumes.",
+  },
+  "mining-lawyers": {
+    howToChoose: [
+      "Look for lawyers with direct mining sector experience — tenements, JVs, FIRB — not generalists with a mining client",
+      "Ask about their work on foreign investment deals if you're an overseas buyer; FIRB coordination is a specialist skill",
+      "Check recent deal announcements in the ASX resources sector — top lawyers show up repeatedly in notable transactions",
+      "Confirm they can work alongside your tax and technical advisors; mining deals need integrated counsel",
+    ],
+    costGuide: "Tenement acquisitions typically cost $5,000–$15,000 in legal fees. Joint venture agreements and farm-ins run $15,000–$40,000. Major M&A or cross-border deals start at $50,000 and scale with deal size. Hourly rates: $500–$1,200.",
+    industryInsight: "The 2026 US-Australia Critical Minerals Framework and EU-Australia FTA have triggered a generational wave of mining deals. Specialist mining lawyers are in tight supply — engage early to secure senior partner attention.",
+  },
+  "mining-tax-advisors": {
+    howToChoose: [
+      "Prioritise firms with dedicated resources-sector tax practices — PRRT and royalty rules are genuinely specialist",
+      "Verify their cross-border experience if you're investing from overseas or into overseas projects",
+      "Ask for references from comparable-scale projects — junior explorers need different advice from producing majors",
+      "Check they have working relationships with the ATO's Large Business & International group if your deal qualifies",
+    ],
+    costGuide: "A structured tax strategy for a single mining investment costs $5,000–$15,000. Ongoing advisory for producing assets runs $15,000–$50,000/year. Complex cross-border structures can be $50,000+ upfront and $30,000+ ongoing.",
+    industryInsight: "The PRRT has been under structural review since 2023, and state royalty regimes (especially WA, Queensland) are actively evolving. Strategic tax advice has rarely been more valuable — or more sensitive to timing.",
+  },
+  "business-brokers": {
+    howToChoose: [
+      "Choose a broker whose recent sales look like your business — same industry, size, and buyer profile",
+      "Ask for their 'days to sale' average and closure rate over the last 12 months; reputable brokers share this data",
+      "Confirm their marketing process preserves confidentiality — you don't want competitors knowing you're selling",
+      "Clarify whether the fee is success-based, retainer-plus-success, or pure retainer; success-weighted is usually better aligned",
+    ],
+    costGuide: "SME business sales typically attract 8–12% success commissions. Retainers of $2,000–$10,000 upfront are standard. Larger deals (>$5M EV) use sliding scales and start with 4–6% at the top end. Expect valuations to cost $2,500–$8,000 separately.",
+    industryInsight: "Baby-boomer business ownership transitions are driving record SME listing volumes in Australia. The best brokers are now booked 3–6 months out; owners planning a sale in 2026 should engage one by early in the year.",
+  },
+  "commercial-lawyers": {
+    howToChoose: [
+      "Match their deal size to yours — boutiques nail SME work; top-tier firms handle billion-dollar M&A",
+      "Check their recent work in your industry; legal frameworks vary widely (tech vs construction vs healthcare)",
+      "Ask how they bill: hourly, fixed fee, or phase-based. Fixed fees are available for more matters than firms admit",
+      "Confirm their partner will be actively involved, not just signing off on junior work",
+    ],
+    costGuide: "Shareholder agreements and SAFEs: $3,000–$8,000. Commercial leases: $2,500–$6,000. Series A legal work: $25,000–$80,000. Full M&A for a $10M business: $80,000–$200,000. Hourly rates: $400–$900 (top-tier), $250–$500 (boutique).",
+    industryInsight: "Australia's corporate M&A market has rebounded strongly with the return of lower rates and the critical minerals deal flow. Specialist commercial lawyers are selectively taking work — negotiate scope and fee structure upfront.",
+  },
+  "rural-property-agents": {
+    howToChoose: [
+      "Choose agents who specialise in your land use (cropping vs grazing vs viticulture vs horticulture)",
+      "Look at their recent sales in your region — rural markets are intensely local",
+      "Ask how they handle confidential off-market listings; many premium rural deals don't hit public platforms",
+      "If you're a foreign buyer, confirm they work routinely with FIRB specialists — agricultural land has tight thresholds",
+    ],
+    costGuide: "Rural commissions typically run 2–4% of sale price. Large stations and aggregations can negotiate fixed fees of $50,000–$250,000. Marketing costs ($5,000–$20,000) are usually separate. Valuations for pre-sale advice: $3,000–$8,000.",
+    industryInsight: "Institutional capital has moved heavily into Australian agriculture over the past five years, professionalising the market but also raising prices. Quality rural agents bridge the gap between family-owner sellers and sophisticated institutional buyers.",
+  },
+  "commercial-property-agents": {
+    howToChoose: [
+      "Pick agents with deep sector focus: office, industrial, retail, healthcare, and childcare are all different markets",
+      "Review their last 12 months of sales — volume, average sale-to-book ratio, and average days on market",
+      "Ask for their tenant covenant due-diligence process; strong tenant relationships drive yield premiums",
+      "Verify their research capability — the best agents publish quarterly market updates and cap-rate research",
+    ],
+    costGuide: "Sales commissions typically 1–2% of sale price. Leasing commissions: 6–12% of first-year rent. Portfolio and institutional work often uses negotiated fixed fees starting at $50,000. Marketing budgets: $5,000–$30,000+.",
+    industryInsight: "Post-pandemic commercial property yields have widened in Australia, particularly for office assets. The best agents are now specialists in repositioning — finding alternative uses for obsolete stock. Pure transactional agents are being disrupted.",
+  },
+  "energy-consultants": {
+    howToChoose: [
+      "Match their project scale — household energy advisors are different from utility-scale project developers",
+      "Check if they hold Clean Energy Council memberships or have AEMO market participant status for serious work",
+      "Ask for case studies of comparable projects delivered through grid connection and commissioning",
+      "Confirm they're independent — some consultants are tied to equipment suppliers, which creates conflicts",
+    ],
+    costGuide: "Utility-scale feasibility studies: $25,000–$150,000+. PPA structuring and grid-connection advisory: $1,500–$3,000/day or fixed packages of $20,000–$80,000. Small commercial solar/storage assessments: $2,000–$8,000.",
+    industryInsight: "Australia's energy transition is accelerating: the 2030 renewable targets plus the 2040 coal-closure trajectory are creating a decade of consulting demand. Specialist consultants with grid-connection experience are the most booked.",
   },
 };
 
