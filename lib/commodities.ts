@@ -315,3 +315,52 @@ export async function upsertEtf(
     };
   }
 }
+
+// ─── Price snapshot reads ────────────────────────────────────
+
+export interface PriceSnapshot {
+  ref: string;
+  captured_at: string;
+  price_minor_units: number;
+  currency: string;
+  source: string | null;
+}
+
+/**
+ * Fetch the most recent price snapshot for each of the given refs
+ * in one round trip. Results are keyed by ref for easy lookup on
+ * the rendering side. Missing refs are simply absent from the map.
+ */
+export async function getLatestPriceSnapshots(
+  refs: string[],
+): Promise<Record<string, PriceSnapshot>> {
+  if (refs.length === 0) return {};
+  try {
+    const supabase = createAdminClient();
+    const { data } = await supabase
+      .from("commodity_price_snapshots")
+      .select("entity_ref, captured_at, price_minor_units, currency, source")
+      .in("entity_ref", refs)
+      .order("captured_at", { ascending: false });
+    const out: Record<string, PriceSnapshot> = {};
+    for (const row of (data || []) as Array<{
+      entity_ref: string;
+      captured_at: string;
+      price_minor_units: number;
+      currency: string;
+      source: string | null;
+    }>) {
+      if (out[row.entity_ref]) continue;
+      out[row.entity_ref] = {
+        ref: row.entity_ref,
+        captured_at: row.captured_at,
+        price_minor_units: row.price_minor_units,
+        currency: row.currency,
+        source: row.source,
+      };
+    }
+    return out;
+  } catch {
+    return {};
+  }
+}
