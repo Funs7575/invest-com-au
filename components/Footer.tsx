@@ -112,6 +112,7 @@ export default function Footer() {
                 <li><Link href="/invest/oil-gas" className="hover:text-white transition-colors inline-block py-0.5">Oil &amp; Gas</Link></li>
                 <li><Link href="/invest/lithium" className="hover:text-white transition-colors inline-block py-0.5">Lithium</Link></li>
                 <li><Link href="/invest/uranium" className="hover:text-white transition-colors inline-block py-0.5">Uranium</Link></li>
+                <li><Link href="/invest/hydrogen" className="hover:text-white transition-colors inline-block py-0.5">Hydrogen</Link></li>
                 <li><Link href="/invest/buy-business" className="hover:text-white transition-colors inline-block py-0.5">Buy a Business</Link></li>
                 <li><Link href="/invest/farmland" className="hover:text-white transition-colors inline-block py-0.5">Farmland</Link></li>
                 <li><Link href="/invest/commercial-property" className="hover:text-white transition-colors inline-block py-0.5">Commercial Property</Link></li>

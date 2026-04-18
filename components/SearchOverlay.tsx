@@ -26,7 +26,11 @@ const SEARCH_INDEX: SearchItem[] = [
   // Investment Verticals
   { title: "All Investment Verticals", href: "/invest", category: "Invest", description: "Every way to invest in Australia" },
   { title: "Investment Marketplace", href: "/invest/listings", category: "Invest", description: "Browse active investment listings" },
-  { title: "Mining & Resources", href: "/invest/mining", category: "Invest", description: "Iron ore, lithium, gold & critical minerals" },
+  { title: "Mining & Resources", href: "/invest/mining", category: "Invest", description: "Iron ore, copper & critical minerals" },
+  { title: "Oil & Gas", href: "/invest/oil-gas", category: "Invest", description: "ASX majors, LNG, refineries" },
+  { title: "Uranium", href: "/invest/uranium", category: "Invest", description: "Paladin, Boss Energy, ATOM ETF" },
+  { title: "Lithium", href: "/invest/lithium", category: "Invest", description: "Pilbara producers & processing" },
+  { title: "Hydrogen", href: "/invest/hydrogen", category: "Invest", description: "Green H2, fuel cells & HGEN ETF" },
   { title: "Buy a Business", href: "/invest/buy-business", category: "Invest", description: "SME acquisitions & franchise pathways" },
   { title: "Farmland & Agriculture", href: "/invest/farmland", category: "Invest", description: "Livestock, cropping, water rights" },
   { title: "Commercial Property", href: "/invest/commercial-property", category: "Invest", description: "Office, industrial, hotels" },
@@ -80,6 +84,9 @@ const SEARCH_INDEX: SearchItem[] = [
   { title: "Retirement Calculator", href: "/retirement-calculator", category: "Tools", description: "Project your retirement savings" },
   { title: "Savings Calculator", href: "/savings-calculator", category: "Tools", description: "Interest earnings projector" },
   { title: "SMSF Calculator", href: "/smsf-calculator", category: "Tools", description: "SMSF fee comparison" },
+  { title: "FIRB Fee Estimator", href: "/firb-fee-estimator", category: "Tools", description: "Foreign investment application fee" },
+  { title: "Non-Resident Dividend Calculator", href: "/non-resident-dividend-calculator", category: "Tools", description: "DTA withholding tax on ASX dividends" },
+  { title: "Non-Resident CGT Checker", href: "/non-resident-cgt-checker", category: "Tools", description: "Section 855-10 exemption eligibility" },
 ];
 
 const CATEGORY_ICONS: Record<string, string> = {
@@ -130,6 +137,7 @@ export default function SearchOverlay({ isOpen, onClose }: { isOpen: boolean; on
   }, [isOpen, handleKeyDown]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (!isOpen) setQuery("");
   }, [isOpen]);
 
