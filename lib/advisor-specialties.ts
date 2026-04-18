@@ -356,6 +356,38 @@ export const SPECIALTIES_BY_TYPE: Record<ProfessionalType, string[]> = {
     "Energy Project Financing",
     "Sustainability Strategy",
   ],
+  energy_financial_planner: [
+    "Concentrated ASX Energy Portfolios",
+    "Franking Credit Harvesting",
+    "Refinery / LNG Sector Tax Planning",
+    "SMSF Energy Infrastructure",
+    "Division 293 Strategy",
+    "Employee Share Scheme De-risking",
+  ],
+  resources_fund_manager: [
+    "Long-only Resources Funds",
+    "Long-short Resources",
+    "Critical Minerals Strategy",
+    "Energy Transition Funds",
+    "Wholesale Mandates",
+    "Small-cap Energy Equities",
+  ],
+  foreign_investment_lawyer: [
+    "FIRB Applications",
+    "Critical Infrastructure Review",
+    "National Security Review",
+    "Sovereign Wealth Mandates",
+    "JKM-linked LNG Offtakes",
+    "Cross-border Energy JVs",
+  ],
+  petroleum_royalties_advisor: [
+    "Royalty Valuation",
+    "PRRT Interaction",
+    "Overriding / Net-Profits Royalties",
+    "State Royalty Audits",
+    "Secondary Royalty Trading",
+    "SMSF Royalty Tax Treatment",
+  ],
 };
 
 // ═══════════════════════════════════════════════

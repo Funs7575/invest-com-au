@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { Professional, ProfessionalType } from "@/lib/types";
 import type { Metadata } from "next";
-import { PROFESSIONAL_TYPE_LABELS, AU_STATES } from "@/lib/types";
+import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
 import AdvisorsClient from "../AdvisorsClient";
 
@@ -34,6 +34,11 @@ const SLUG_TO_TYPE: Record<string, ProfessionalType> = {
   "rural-property-agents": "rural_property_agent",
   "commercial-property-agents": "commercial_property_agent",
   "energy-consultants": "energy_consultant",
+  // New — oil-gas expansion (20260429)
+  "energy-financial-planners": "energy_financial_planner",
+  "resources-fund-managers": "resources_fund_manager",
+  "foreign-investment-lawyers": "foreign_investment_lawyer",
+  "petroleum-royalties-advisors": "petroleum_royalties_advisor",
 };
 
 const TYPE_DESCRIPTIONS: Record<string, string> = {
@@ -57,6 +62,10 @@ const TYPE_DESCRIPTIONS: Record<string, string> = {
   "rural-property-agents": "Compare rural property agents specialising in farms, cattle stations, viticulture, horticulture and agricultural land across Australia.",
   "commercial-property-agents": "Find commercial property agents for office, industrial, retail and healthcare asset sales, leasing and tenant representation.",
   "energy-consultants": "Find energy consultants specialising in renewables project development, PPAs, grid connection, carbon credit strategy and energy transition advisory.",
+  "energy-financial-planners": "Find fee-for-service financial planners who specialise in concentrated ASX energy stock portfolios, franking credit strategy, SMSF oil & gas allocations, and tax planning for refinery and LNG sector professionals.",
+  "resources-fund-managers": "Compare wholesale and retail Australian resources fund managers — long-only, long-short, and energy transition funds with disclosed AUM, fee structures, and hurdle benchmarks.",
+  "foreign-investment-lawyers": "Find specialist FIRB and national-security review lawyers for cross-border acquisitions of Australian energy, LNG, and critical-infrastructure assets. Experienced with Japanese, Korean, US, EU and Middle Eastern capital.",
+  "petroleum-royalties-advisors": "Find specialists in Australian petroleum royalty structures — overriding, net-profits, and sliding-scale royalties, PRRT interaction, state royalty audits, and secondary-market royalty trading.",
 };
 
 const TYPE_FAQS: Record<string, { q: string; a: string }[]> = {
@@ -159,6 +168,26 @@ const TYPE_FAQS: Record<string, { q: string; a: string }[]> = {
     { q: "When do I need an energy consultant?", a: "Developing a renewables project (solar farm, wind, battery storage), negotiating a PPA, evaluating grid connection feasibility, or managing energy costs for large operations. They also advise on carbon credits and LGC/STC strategies." },
     { q: "What does energy consulting cost?", a: "Feasibility studies: $25,000–$150,000+ depending on project size. PPA structuring and grid connection advisory: typically day rates of $1,500–$3,000. Fixed-price project packages are common." },
     { q: "Are energy consultants regulated in Australia?", a: "Most are not directly licensed (unlike financial advisers), but reputable practitioners hold engineering qualifications (Engineers Australia, CEng) and memberships with the Clean Energy Council or AEMO market participant status." },
+  ],
+  "energy-financial-planners": [
+    { q: "How is an energy financial planner different from a general financial planner?", a: "They hold the same AFSL authorisation as any licensed planner, but they concentrate their practice on clients whose wealth is highly exposed to energy sector risk — refinery engineers, LNG project personnel, concentrated ASX energy shareholders. They have working knowledge of Div 293, franking-credit harvesting on high-yield energy dividends, and SMSF investment in energy infrastructure funds." },
+    { q: "Do I need one if I just own some Woodside shares?", a: "For small holdings (<$50K) a generalist is fine. It becomes worth paying for specialist advice when energy exposure represents 30%+ of your net worth, when you have a concentrated employee share scheme, or when you want to structure SMSF allocations to unlisted energy funds and infrastructure." },
+    { q: "What does energy-focused financial planning cost?", a: "Statements of Advice typically $3,900–$5,500. Ongoing advice retainers $3,000–$8,000/year. Concentrated-stock de-risking strategies involving CGT modelling and protection overlays sit at the upper end." },
+  ],
+  "resources-fund-managers": [
+    { q: "What is a resources fund and how does it differ from an energy ETF?", a: "A resources fund is an actively managed portfolio — long-only, long-short, or thematic — of ASX and international resources equities. Compared to a passive energy ETF (like OOO), an active fund can avoid stocks, time entries, and short weak names. Active funds charge higher fees (typically 1.0–1.5% plus performance fees) so they need to generate alpha to justify themselves." },
+    { q: "Are resources funds open to retail investors?", a: "Some are retail-registered and accessible for $25K minimums; many wholesale funds require a sophisticated-investor certificate ($2.5M net assets or $250K gross income) and $100K+ minimums. This directory flags each fund's eligibility." },
+    { q: "How should I judge a resources fund manager?", a: "Look at: (1) AUM and team tenure, (2) performance vs a relevant benchmark (ASX300 Resources, MSCI World Energy) over 3 and 5 years net of fees, (3) fee structure — management fee, performance fee, and hurdle, (4) liquidity terms and lock-ups, (5) personal capital invested by the PM alongside LPs." },
+  ],
+  "foreign-investment-lawyers": [
+    { q: "When do I need a foreign investment lawyer?", a: "Any time a non-Australian entity acquires an interest in an Australian petroleum tenement, LNG infrastructure asset, or >=10% of a petroleum producer. Since the 2025 national security amendments, many midstream and storage assets are also classified critical infrastructure and attract heightened scrutiny." },
+    { q: "How long does a FIRB application take?", a: "Statutory period is 30 days but extensions are routine. For sensitive-sector energy assets, 90–180 days is typical; complex sovereign-wealth or SOE acquisitions can run 6–9 months through national security review." },
+    { q: "What does a FIRB application cost?", a: "Government application fees are set by legislation and scale with transaction value, from ~$14K to ~$1.1M. Legal fees are separate: straightforward portfolio acquisitions $45K–$80K, contested/national-security cases $150K+. Always budget for Treasury-imposed conditions and undertakings." },
+  ],
+  "petroleum-royalties-advisors": [
+    { q: "What is a petroleum royalty?", a: "A petroleum royalty is a payment tied to the revenue or net profit of a petroleum operation, retained or sold by the resource owner (Crown, landowner, or a secondary holder). Common structures include overriding royalties (% of gross revenue), net-profits royalties (% of operating profit), and sliding-scale royalties (escalating with price or volume bands)." },
+    { q: "How do royalties interact with PRRT?", a: "State royalties paid on petroleum are creditable against federal PRRT liability — but the mechanics are complex, with timing mismatches and ring-fencing rules. A specialist advisor models both taxes together, and validates your operator's self-assessed allocation." },
+    { q: "Can retail investors or SMSFs own petroleum royalties?", a: "Yes — but the structures vary in tax efficiency. Purchased royalties generate ordinary income (not a CGT event on disposal of the underlying resource), and foreign-source royalties have withholding-tax consequences. Specialist advice on structure is essential before purchase." },
   ],
 };
 
@@ -362,6 +391,46 @@ const TYPE_EDITORIAL: Record<string, { howToChoose: string[]; costGuide: string;
     ],
     costGuide: "Utility-scale feasibility studies: $25,000–$150,000+. PPA structuring and grid-connection advisory: $1,500–$3,000/day or fixed packages of $20,000–$80,000. Small commercial solar/storage assessments: $2,000–$8,000.",
     industryInsight: "Australia's energy transition is accelerating: the 2030 renewable targets plus the 2040 coal-closure trajectory are creating a decade of consulting demand. Specialist consultants with grid-connection experience are the most booked.",
+  },
+  "energy-financial-planners": {
+    howToChoose: [
+      "Confirm current AFSL authorisation on the ASIC Financial Advisers Register — there is no separate 'energy' licence in Australia",
+      "Check their client book — planners servicing Perth, Gladstone, or Darwin resource professionals carry real sector knowledge",
+      "Ask how they handle concentrated employee shareholdings, vested-share CGT, and protection overlays",
+      "Verify they're fee-for-service rather than percentage-of-AUM for concentrated single-stock clients",
+    ],
+    costGuide: "SOA from $3,900–$5,500. Ongoing advice retainers $3,000–$8,000/year. Concentrated-stock de-risking plans involving CGT modelling, protection collars, or charitable remainder strategies sit $8,000–$25,000.",
+    industryInsight: "The extension of the Fuel Security Services Payment to 2030 and strong Brent pricing through 2026 has created a generational wealth event for Australian refinery, LNG, and upstream workers. Planners with sector-specific expertise are in tight supply outside Perth.",
+  },
+  "resources-fund-managers": {
+    howToChoose: [
+      "Insist on 3 and 5-year net-of-fee performance versus a relevant benchmark (ASX300 Resources, MSCI World Energy)",
+      "Verify AUM and team tenure — funds with sub-$50M AUM or <3-year track records carry key-person risk",
+      "Understand the fee stack: management fee, performance fee, hurdle, and high-water mark",
+      "Ask for co-investment disclosure — personal capital alongside LPs aligns incentives",
+    ],
+    costGuide: "Management fees typically 0.95–1.50% p.a. Performance fees 15–20% over hurdle (ASX300 Resources or absolute 8%). Most wholesale funds have $100K minimums and 1–3 year lock-ups; retail-registered funds start at $25K with daily liquidity.",
+    industryInsight: "The resources fund category has narrowed dramatically since 2015 — many generalist funds closed after the commodity bear market. The surviving specialists typically have deep technical benches (ex-engineers, ex-sell-side analysts) and are once again attracting institutional capital as energy transition demand accelerates.",
+  },
+  "foreign-investment-lawyers": {
+    howToChoose: [
+      "Verify admission and a current practising certificate in the lawyer's home jurisdiction (usually NSW, VIC, or WA)",
+      "Check recent announced FIRB decisions in the sector — specialists show up repeatedly in sensitive-sector approvals",
+      "Ask about their Treasury and national security division relationships — pre-lodgement engagement dramatically speeds timelines",
+      "Confirm language and cultural fit where the investor is Japanese, Korean, Chinese or Middle Eastern — these engagements benefit from bilingual counsel",
+    ],
+    costGuide: "Typical FIRB application package $45K–$120K. National-security-reviewed cases $150K+. Sovereign-wealth and SOE acquisitions $250K–$750K end-to-end. Hourly rates $850–$1,200 at practice heads.",
+    industryInsight: "The 2025 amendments to the Security of Critical Infrastructure Act and the National Security Review of Foreign Investment have materially widened what counts as a 'sensitive' energy asset. Storage terminals, LNG jetties, and gas pipelines are now routinely reviewed where they once flew through. Pre-lodgement engagement is no longer optional.",
+  },
+  "petroleum-royalties-advisors": {
+    howToChoose: [
+      "Ask how many live royalty valuations they've signed off on in the last 24 months — this is a narrow specialty",
+      "Check their familiarity with both federal PRRT and the state royalty regime that applies to your asset",
+      "Confirm their work on secondary-market royalty transactions if you're buying or selling an existing royalty stream",
+      "For SMSF trustees, verify they understand the trustee obligations around non-arm's-length income (NALI) for purchased royalties",
+    ],
+    costGuide: "Royalty valuation engagements $12K–$40K. Purchase-side due diligence on secondary royalties $20K–$60K. Ongoing advisory retainers from $2,500/month. Hourly rates $780–$820 at senior level.",
+    industryInsight: "The PRRT has been under structural review since 2023 with uplift-rate and deductibility changes progressively tightening. Combined with the Queensland coal royalty precedent flowing through to petroleum policy debates, the valuation environment for existing royalty streams is more volatile than any time since the 1990s.",
   },
 };
 
