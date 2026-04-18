@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import Icon from "@/components/Icon";
 import { breadcrumbJsonLd, SITE_URL, SITE_NAME, CURRENT_YEAR } from "@/lib/seo";
 
 export const revalidate = 3600;
@@ -338,26 +339,157 @@ export default function GoldPage() {
         </div>
       </section>
 
-      {/* Advisor CTA */}
-      <section className="py-14 bg-slate-50">
-        <div className="container-custom">
-          <div className="max-w-3xl mx-auto bg-white border border-slate-200 rounded-xl p-8 flex flex-col md:flex-row items-start md:items-center gap-6">
-            <div className="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center shrink-0">
-              <svg className="w-6 h-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-            </div>
-            <div className="flex-1">
-              <h2 className="text-lg font-bold text-slate-900 mb-1">Get Personalised Gold Investment Advice</h2>
-              <p className="text-sm text-slate-500">
-                Whether you are structuring gold exposure for a SMSF, a large physical purchase at the Perth Mint, or ETF allocation within a broader portfolio — speak with a verified Australian financial adviser.
+      {/* Advisor CTA — specialist multi-type */}
+      <section className="py-12 md:py-14 bg-slate-900 text-white" id="find-advisor">
+        <div className="container-custom max-w-4xl">
+          <p className="text-xs font-bold uppercase tracking-wider text-amber-400 mb-2">
+            Get specialist help
+          </p>
+          <h2 className="text-2xl md:text-3xl font-extrabold mb-3">
+            Speak with a gold-specialist adviser
+          </h2>
+          <p className="text-sm md:text-base text-slate-300 leading-relaxed mb-6 max-w-2xl">
+            Gold allocation has material SMSF, CGT and structure implications
+            — particularly at Perth Mint Certificate Programme sizing or when
+            blending physical, ETF and miner exposure inside a broader
+            portfolio. Our directory is filtered to practitioners with real
+            sector experience.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <Link
+              href="/advisors/smsf-accountants"
+              className="group bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl p-5 transition-colors"
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <Icon name="building" size={20} className="text-amber-400" />
+                <h3 className="text-base font-extrabold text-white group-hover:text-amber-300">
+                  SMSF accountants
+                </h3>
+              </div>
+              <p className="text-xs md:text-sm text-slate-300">
+                Physical gold and gold ETF integration with SMSF compliance,
+                audit and custodian requirements.
               </p>
-            </div>
+            </Link>
+
+            <Link
+              href="/advisors/resources-fund-managers"
+              className="group bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl p-5 transition-colors"
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <Icon name="bar-chart-2" size={20} className="text-amber-400" />
+                <h3 className="text-base font-extrabold text-white group-hover:text-amber-300">
+                  Resources fund managers
+                </h3>
+              </div>
+              <p className="text-xs md:text-sm text-slate-300">
+                Actively managed gold and precious-metals fund exposure —
+                wholesale and retail-registered funds with disclosed AUM.
+              </p>
+            </Link>
+
+            <Link
+              href="/advisors/mining-lawyers"
+              className="group bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl p-5 transition-colors"
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <Icon name="pickaxe" size={20} className="text-amber-400" />
+                <h3 className="text-base font-extrabold text-white group-hover:text-amber-300">
+                  Mining lawyers
+                </h3>
+              </div>
+              <p className="text-xs md:text-sm text-slate-300">
+                Tenement and joint venture work for investors participating in
+                ASX gold mining capital raises or direct project equity.
+              </p>
+            </Link>
+
             <Link
               href="/advisors/financial-planners"
-              className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold text-sm px-5 py-2.5 rounded-lg transition-colors shrink-0"
+              className="group bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl p-5 transition-colors"
             >
-              Find an Adviser &rarr;
+              <div className="flex items-center gap-3 mb-2">
+                <Icon name="trending-up" size={20} className="text-amber-400" />
+                <h3 className="text-base font-extrabold text-white group-hover:text-amber-300">
+                  Financial planners
+                </h3>
+              </div>
+              <p className="text-xs md:text-sm text-slate-300">
+                Portfolio-level gold allocation sizing, rebalancing policy,
+                and retirement-phase risk management.
+              </p>
+            </Link>
+          </div>
+
+          <Link
+            href="/find-advisor?focus=gold"
+            className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-extrabold text-sm md:text-base px-6 py-3 rounded-lg transition-colors"
+          >
+            Match me with an adviser
+            <Icon name="arrow-right" size={16} />
+          </Link>
+        </div>
+      </section>
+
+      {/* Foreign investor note */}
+      <section className="py-10 md:py-12 bg-white border-t border-slate-100" id="foreign-investors">
+        <div className="container-custom max-w-4xl">
+          <p className="text-xs font-bold uppercase tracking-wider text-amber-600 mb-1">
+            International investors
+          </p>
+          <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-4">
+            Foreign investor note
+          </h2>
+
+          <div className="prose prose-slate max-w-none mb-6">
+            <p>
+              Gold is one of the friendlier Australian asset classes for
+              non-residents — but there are structural rules worth
+              understanding before allocating capital:
+            </p>
+            <ul>
+              <li>
+                <strong>Physical gold + Perth Mint.</strong> Foreign persons
+                can hold allocated or certificate gold at the Perth Mint
+                without FIRB approval. Investment-grade bullion is GST-free
+                in Australia.
+              </li>
+              <li>
+                <strong>Listed gold miners and ETFs.</strong> Non-residents
+                holding less than 10% of an ASX-listed gold miner or ETF are
+                generally exempt from Australian CGT under Section 855-10
+                ITAA 1997. Dividends attract 30% withholding tax on the
+                unfranked portion, reduced by DTA.
+              </li>
+              <li>
+                <strong>Direct mining interests.</strong> Direct interests in
+                gold tenements or project equity are classified as Taxable
+                Australian Property — the Section 855-10 exemption does not
+                apply. FIRB approval is typically required.
+              </li>
+              <li>
+                <strong>State royalties.</strong> Gold royalties are set by
+                each resource state — WA and Queensland are the most relevant
+                for gold producers.
+              </li>
+            </ul>
+          </div>
+
+          <div className="flex flex-wrap gap-3">
+            <Link
+              href="/foreign-investment/energy"
+              className="inline-flex items-center gap-1.5 text-sm font-bold text-primary hover:underline"
+            >
+              Energy &amp; resources foreign-investment guide
+              <Icon name="arrow-right" size={14} />
+            </Link>
+            <Link
+              href="/advisors/foreign-investment-lawyers"
+              className="inline-flex items-center gap-1.5 text-sm font-bold text-primary hover:underline"
+            >
+              Find a foreign investment lawyer
+              <Icon name="arrow-right" size={14} />
             </Link>
           </div>
         </div>

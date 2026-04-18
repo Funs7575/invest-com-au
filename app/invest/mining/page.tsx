@@ -255,6 +255,161 @@ export default function MiningPage() {
           </div>
         </div>
       </section>
+
+      {/* Advisor CTA — specialist multi-type */}
+      <section className="py-12 md:py-14 bg-slate-900 text-white" id="find-advisor">
+        <div className="container-custom max-w-4xl">
+          <p className="text-xs font-bold uppercase tracking-wider text-amber-400 mb-2">
+            Get specialist help
+          </p>
+          <h2 className="text-2xl md:text-3xl font-extrabold mb-3">
+            Speak with a resources-specialist adviser
+          </h2>
+          <p className="text-sm md:text-base text-slate-300 leading-relaxed mb-6 max-w-2xl">
+            Mining and critical-minerals investment has material FIRB, tax,
+            and structuring considerations that are worth discussing with a
+            sector-experienced adviser before committing capital.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <Link
+              href="/advisors/mining-lawyers"
+              className="group bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl p-5 transition-colors"
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <Icon name="pickaxe" size={20} className="text-amber-400" />
+                <h3 className="text-base font-extrabold text-white group-hover:text-amber-300">
+                  Mining lawyers
+                </h3>
+              </div>
+              <p className="text-xs md:text-sm text-slate-300">
+                Tenement acquisition, JV, farm-in, FIRB coordination for
+                ASX-listed and unlisted transactions.
+              </p>
+            </Link>
+
+            <Link
+              href="/advisors/mining-tax-advisors"
+              className="group bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl p-5 transition-colors"
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <Icon name="calculator" size={20} className="text-amber-400" />
+                <h3 className="text-base font-extrabold text-white group-hover:text-amber-300">
+                  Mining tax advisors
+                </h3>
+              </div>
+              <p className="text-xs md:text-sm text-slate-300">
+                State royalty regimes, exploration deductions, transfer-pricing,
+                and tax-effective project structures.
+              </p>
+            </Link>
+
+            <Link
+              href="/advisors/resources-fund-managers"
+              className="group bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl p-5 transition-colors"
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <Icon name="bar-chart-2" size={20} className="text-amber-400" />
+                <h3 className="text-base font-extrabold text-white group-hover:text-amber-300">
+                  Resources fund managers
+                </h3>
+              </div>
+              <p className="text-xs md:text-sm text-slate-300">
+                Actively managed resources funds — long-only, long-short, and
+                critical-minerals thematic strategies.
+              </p>
+            </Link>
+
+            <Link
+              href="/advisors/foreign-investment-lawyers"
+              className="group bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl p-5 transition-colors"
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <Icon name="globe" size={20} className="text-amber-400" />
+                <h3 className="text-base font-extrabold text-white group-hover:text-amber-300">
+                  Foreign investment lawyers
+                </h3>
+              </div>
+              <p className="text-xs md:text-sm text-slate-300">
+                FIRB and national-security review specialists for inbound
+                capital deploying into Australian mining and critical-mineral
+                assets.
+              </p>
+            </Link>
+          </div>
+
+          <Link
+            href="/find-advisor?focus=mining"
+            className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-extrabold text-sm md:text-base px-6 py-3 rounded-lg transition-colors"
+          >
+            Match me with an adviser
+            <Icon name="arrow-right" size={16} />
+          </Link>
+        </div>
+      </section>
+
+      {/* Foreign investor note */}
+      <section className="py-10 md:py-12 bg-white border-t border-slate-100" id="foreign-investors">
+        <div className="container-custom max-w-4xl">
+          <p className="text-xs font-bold uppercase tracking-wider text-amber-600 mb-1">
+            International investors
+          </p>
+          <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-4">
+            Foreign investor note
+          </h2>
+
+          <div className="prose prose-slate max-w-none mb-6">
+            <p>
+              Australian mining and critical-minerals assets sit inside the
+              strictest FIRB perimeter and — since 2025 — the expanded Security
+              of Critical Infrastructure Act regime. Key rules for non-residents:
+            </p>
+            <ul>
+              <li>
+                <strong>FIRB default.</strong> Direct tenement acquisitions,
+                project equity, and most major transactions in critical-mineral
+                assets are notifiable regardless of value. Portfolio share
+                purchases below 10% in ASX-listed miners are generally exempt.
+              </li>
+              <li>
+                <strong>Allied-nation fast track.</strong> US, Japan, Korea, EU
+                and UK investors benefit from streamlined FIRB review under
+                bilateral critical-minerals frameworks. Chinese and Russian
+                capital faces heightened national-security scrutiny.
+              </li>
+              <li>
+                <strong>Direct mining = Taxable Australian Property.</strong>{" "}
+                Direct interests in mining tenements, project equity, and
+                royalties are inside the Australian CGT net for non-residents
+                regardless of holding size.
+              </li>
+              <li>
+                <strong>Structure matters.</strong> Offshore processing
+                arrangements, offtake pricing, and withholding tax on
+                concentrate exports benefit from upfront structuring with
+                specialist advisers.
+              </li>
+            </ul>
+          </div>
+
+          <div className="flex flex-wrap gap-3">
+            <Link
+              href="/foreign-investment/energy"
+              className="inline-flex items-center gap-1.5 text-sm font-bold text-primary hover:underline"
+            >
+              Energy &amp; resources foreign-investment guide
+              <Icon name="arrow-right" size={14} />
+            </Link>
+            <Link
+              href="/advisors/foreign-investment-lawyers"
+              className="inline-flex items-center gap-1.5 text-sm font-bold text-primary hover:underline"
+            >
+              Find a foreign investment lawyer
+              <Icon name="arrow-right" size={14} />
+            </Link>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
