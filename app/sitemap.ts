@@ -32,7 +32,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/invest/commodities", "/invest/alternatives", "/invest/infrastructure",
     "/invest/hybrid-securities", "/invest/crypto-staking", "/invest/smsf",
     "/invest/private-equity", "/invest/bonds", "/invest/gold", "/invest/ipos",
-    "/invest/oil-gas", "/invest/lithium", "/invest/uranium",
+    "/invest/oil-gas", "/invest/lithium", "/invest/uranium", "/invest/hydrogen",
     "/invest/listings",
     "/invest/buy-business/listings", "/invest/mining/listings",
     "/invest/farmland/listings", "/invest/commercial-property/listings",
