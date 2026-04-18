@@ -25,6 +25,11 @@ const SEARCH_INDEX: SearchItem[] = [
 
   // Investment Verticals
   { title: "All Investment Verticals", href: "/invest", category: "Invest", description: "Every way to invest in Australia" },
+  { title: "Investment Funds Directory", href: "/invest/funds", category: "Invest", description: "Managed, syndicated, infrastructure, wholesale" },
+  { title: "SMSF Services Hub", href: "/smsf", category: "Invest", description: "SMSF auditors, specialists, property, strategy" },
+  { title: "SMSF Auditors", href: "/smsf/auditors", category: "Advisors", description: "ASIC-approved auditors with SAN" },
+  { title: "Research & Sector Reports", href: "/research", category: "Learn", description: "Editorial investment research" },
+  { title: "Significant Investor Visa (SIV)", href: "/foreign-investment/siv", category: "Invest", description: "$5M complying investment pathway" },
   { title: "Investment Marketplace", href: "/invest/listings", category: "Invest", description: "Browse active investment listings" },
   { title: "Mining & Resources", href: "/invest/mining", category: "Invest", description: "Iron ore, copper & critical minerals" },
   { title: "Oil & Gas", href: "/invest/oil-gas", category: "Invest", description: "ASX majors, LNG, refineries" },

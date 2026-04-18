@@ -108,6 +108,10 @@ export default function Footer() {
               <h4 className="text-white font-semibold mb-2 md:mb-3 text-xs md:text-sm">Invest by Sector</h4>
               <ul className="space-y-1.5 md:space-y-2 text-xs md:text-sm">
                 <li><Link href="/invest" className="hover:text-white transition-colors inline-block py-0.5">All Verticals</Link></li>
+                <li><Link href="/invest/funds" className="hover:text-white transition-colors inline-block py-0.5">Investment Funds</Link></li>
+                <li><Link href="/smsf" className="hover:text-white transition-colors inline-block py-0.5">SMSF Hub</Link></li>
+                <li><Link href="/research" className="hover:text-white transition-colors inline-block py-0.5">Research Reports</Link></li>
+                <li><Link href="/foreign-investment/siv" className="hover:text-white transition-colors inline-block py-0.5">Significant Investor Visa</Link></li>
                 <li><Link href="/invest/mining" className="hover:text-white transition-colors inline-block py-0.5">Mining & Resources</Link></li>
                 <li><Link href="/invest/oil-gas" className="hover:text-white transition-colors inline-block py-0.5">Oil &amp; Gas</Link></li>
                 <li><Link href="/invest/lithium" className="hover:text-white transition-colors inline-block py-0.5">Lithium</Link></li>

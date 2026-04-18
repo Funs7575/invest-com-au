@@ -42,6 +42,7 @@ function GrowthBar({ value, max }: { value: number; max: number }) {
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const PROPERTY_TYPES = [
   { label: "Apartments", icon: "building-2", type: "apartment", color: "bg-blue-50 text-blue-700 border-blue-200" },
   { label: "Townhouses", icon: "home", type: "townhouse", color: "bg-emerald-50 text-emerald-700 border-emerald-200" },
@@ -559,6 +560,24 @@ export default async function PropertyHubPage() {
           </div>
         </section>
       </ScrollFadeIn>
+
+      {/* ── SMSF property cross-link ───────────────── */}
+      <section className="py-8 bg-slate-50 border-t border-slate-200">
+        <div className="container-custom max-w-4xl">
+          <div className="bg-white border border-slate-200 rounded-xl p-6 flex flex-col md:flex-row items-start md:items-center gap-5">
+            <div className="w-11 h-11 rounded-xl bg-amber-50 flex items-center justify-center shrink-0">
+              <Icon name="shield" size={22} className="text-amber-600" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-base md:text-lg font-extrabold text-slate-900">Buying property in your SMSF?</h3>
+              <p className="text-sm text-slate-600 mt-1">LRBA rules, in-house asset limits, and ATO compliance are materially different for SMSF property. See our dedicated SMSF hub.</p>
+            </div>
+            <Link href="/smsf" className="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm px-5 py-2.5 rounded-lg shrink-0">
+              Visit SMSF Hub &rarr;
+            </Link>
+          </div>
+        </div>
+      </section>
 
       {/* ── Property Disclaimer ───────────────────── */}
       <section className="py-6 md:py-8 bg-white border-t border-slate-100">
