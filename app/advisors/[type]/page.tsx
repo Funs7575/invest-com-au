@@ -39,6 +39,11 @@ const SLUG_TO_TYPE: Record<string, ProfessionalType> = {
   "resources-fund-managers": "resources_fund_manager",
   "foreign-investment-lawyers": "foreign_investment_lawyer",
   "petroleum-royalties-advisors": "petroleum_royalties_advisor",
+  // Revenue expansion (20260506)
+  "smsf-auditors": "smsf_auditor",
+  "smsf-specialists": "smsf_specialist",
+  "immigration-investment-lawyers": "immigration_investment_lawyer",
+  "fund-managers": "fund_manager",
 };
 
 const TYPE_DESCRIPTIONS: Record<string, string> = {
@@ -66,6 +71,10 @@ const TYPE_DESCRIPTIONS: Record<string, string> = {
   "resources-fund-managers": "Compare wholesale and retail Australian resources fund managers — long-only, long-short, and energy transition funds with disclosed AUM, fee structures, and hurdle benchmarks.",
   "foreign-investment-lawyers": "Find specialist FIRB and national-security review lawyers for cross-border acquisitions of Australian energy, LNG, and critical-infrastructure assets. Experienced with Japanese, Korean, US, EU and Middle Eastern capital.",
   "petroleum-royalties-advisors": "Find specialists in Australian petroleum royalty structures — overriding, net-profits, and sliding-scale royalties, PRRT interaction, state royalty audits, and secondary-market royalty trading.",
+  "smsf-auditors": "Find ASIC-approved SMSF auditors across Australia. Every SMSF must be audited annually by an independent approved auditor with an ASIC-issued SMSF Auditor Number (SAN).",
+  "smsf-specialists": "Find AFSL-authorised SMSF specialists — setup, investment strategy, LRBA property structuring, pension-phase transition, and death benefit nominations.",
+  "immigration-investment-lawyers": "Find specialist lawyers for Significant Investor Visa (SIV), Business Innovation Visa, and SIV-complying investment structuring. Experienced with FIRB coordination and sophisticated-investor certification.",
+  "fund-managers": "Browse AFSL-licensed Australian fund managers — wholesale, retail-registered, managed investment schemes, private credit, and alternative mandates.",
 };
 
 const TYPE_FAQS: Record<string, { q: string; a: string }[]> = {
@@ -188,6 +197,26 @@ const TYPE_FAQS: Record<string, { q: string; a: string }[]> = {
     { q: "What is a petroleum royalty?", a: "A petroleum royalty is a payment tied to the revenue or net profit of a petroleum operation, retained or sold by the resource owner (Crown, landowner, or a secondary holder). Common structures include overriding royalties (% of gross revenue), net-profits royalties (% of operating profit), and sliding-scale royalties (escalating with price or volume bands)." },
     { q: "How do royalties interact with PRRT?", a: "State royalties paid on petroleum are creditable against federal PRRT liability — but the mechanics are complex, with timing mismatches and ring-fencing rules. A specialist advisor models both taxes together, and validates your operator's self-assessed allocation." },
     { q: "Can retail investors or SMSFs own petroleum royalties?", a: "Yes — but the structures vary in tax efficiency. Purchased royalties generate ordinary income (not a CGT event on disposal of the underlying resource), and foreign-source royalties have withholding-tax consequences. Specialist advice on structure is essential before purchase." },
+  ],
+  "smsf-auditors": [
+    { q: "Why does an SMSF need an annual audit?", a: "Under the SIS Act every SMSF must be audited annually by an ASIC-approved SMSF auditor. The audit is a two-part financial + compliance review. Without a signed audit, the fund can't lodge its SMSF annual return and risks losing its complying status." },
+    { q: "How much does an SMSF audit cost?", a: "Typical fees are $300–$700 per year for straightforward funds. Complex funds (multiple properties, in-house assets, LRBA structures, unusual investments) can be $800–$1,500+. Auditor independence rules mean the auditor must not be involved in preparing the accounts." },
+    { q: "Who is on the ASIC SMSF Auditor Register?", a: "Approved SMSF auditors hold a unique SMSF Auditor Number (SAN) visible on ASIC's public register. The SAN must be included in the audit report. Always verify the auditor's SAN on ASIC before appointing them." },
+  ],
+  "smsf-specialists": [
+    { q: "Do I need an SMSF specialist as well as an accountant?", a: "Your SMSF accountant handles compliance and annual returns; an SMSF specialist (typically an AFSL-authorised financial adviser) provides the investment strategy, contribution strategy, and pension-phase advice. Many SMSF practices combine both roles." },
+    { q: "What is an SSA accreditation?", a: "SSA (SMSF Specialist Advisor) is an industry accreditation from the SMSF Association. It is not a statutory requirement but indicates additional SMSF-specific training. Most top-tier SMSF specialists hold an SSA." },
+    { q: "How much does SMSF specialist advice cost?", a: "Statement of Advice on SMSF setup and investment strategy: $3,000–$6,000. Ongoing advice retainer: $2,500–$7,500/year. LRBA (property borrowing) advice: $2,000–$5,000 as a one-off." },
+  ],
+  "immigration-investment-lawyers": [
+    { q: "What is the Significant Investor Visa?", a: "The Significant Investor Visa (SIV, subclass 188C) is an Australian business innovation and investment visa requiring $5 million in complying investments across three categories: managed funds (40%+), emerging companies (10%+), and balancing investments. Visa holders have a 4-year provisional period before permanent residency." },
+    { q: "What is a 'complying investment' for SIV?", a: "Complying investments are asset categories the Department of Home Affairs has designated as eligible. The list is updated periodically and currently includes managed funds investing in ASX shares, specified VC and growth private equity funds, and certain balancing investments. Your lawyer and fund manager should confirm current eligibility." },
+    { q: "What does an immigration investment lawyer do?", a: "They coordinate the visa application with the investment structuring — ensuring the $5M is deployed into compliant fund structures, that the investor meets health and character requirements, and that the investment is maintained throughout the provisional period. Fees typically $20,000–$60,000 end-to-end." },
+  ],
+  "fund-managers": [
+    { q: "What's the difference between wholesale and retail fund managers?", a: "Retail funds are available to everyday investors and must issue a Product Disclosure Statement (PDS). Wholesale funds are restricted to sophisticated/professional investors (typically $2.5M net assets or $250K gross income certification) and issue an Information Memorandum instead of a PDS." },
+    { q: "How do fund manager fees work?", a: "Management fee: typically 0.5–1.5% p.a. of AUM. Performance fee: 15–20% over a benchmark or absolute hurdle, often with a high-water mark. Some funds charge entry/exit fees or buy-sell spreads. Always review the PDS/IM fee schedule and compare on the total cost of ownership." },
+    { q: "How do I verify a fund manager is legitimate?", a: "Check their AFSL number on the ASIC register — it should cover managed investment schemes and/or wholesale dealing. Review the fund's PDS or IM. For retail funds, check ASIC's MoneySmart tool. Past performance must be disclosed in standard format." },
   ],
 };
 
@@ -431,6 +460,46 @@ const TYPE_EDITORIAL: Record<string, { howToChoose: string[]; costGuide: string;
     ],
     costGuide: "Royalty valuation engagements $12K–$40K. Purchase-side due diligence on secondary royalties $20K–$60K. Ongoing advisory retainers from $2,500/month. Hourly rates $780–$820 at senior level.",
     industryInsight: "The PRRT has been under structural review since 2023 with uplift-rate and deductibility changes progressively tightening. Combined with the Queensland coal royalty precedent flowing through to petroleum policy debates, the valuation environment for existing royalty streams is more volatile than any time since the 1990s.",
+  },
+  "smsf-auditors": {
+    howToChoose: [
+      "Verify their SMSF Auditor Number (SAN) on the ASIC approved-auditor register",
+      "Confirm auditor independence — they must not be preparing your fund's accounts",
+      "Ask how they handle complex areas: LRBAs, in-house assets, property valuations, related-party transactions",
+      "Look for responsive turnaround — good auditors complete audits within 4-6 weeks of receiving complete file",
+    ],
+    costGuide: "Straightforward SMSF audit: $300–$700/year. Complex funds (multi-property, LRBA, in-house assets): $800–$1,500+. Corrective work for problem funds can add $2,000–$5,000 in the first year.",
+    industryInsight: "The ATO has significantly increased SMSF audit quality scrutiny since 2024, particularly on asset valuations and NALI. Auditors themselves are under increased ATO review — working with a well-rated auditor reduces the risk of auditor-level findings cascading into trustee-level compliance issues.",
+  },
+  "smsf-specialists": {
+    howToChoose: [
+      "Verify their AFSL authorisation on the ASIC Financial Advisers Register",
+      "Look for SSA (SMSF Specialist Advisor) accreditation from the SMSF Association",
+      "Ask about their experience with LRBA property purchases, pension-phase transition, and death benefit nominations",
+      "Confirm fee structure — fee-for-service is strongly preferred over commission-based SMSF advice",
+    ],
+    costGuide: "SMSF setup + initial SOA: $3,000–$6,000. Ongoing advice retainer: $2,500–$7,500/year. LRBA property strategy: $2,000–$5,000 one-off. Pension-phase transition: $1,500–$3,500.",
+    industryInsight: "Following the Hayne Royal Commission, fee-only SMSF advisers now dominate the market. The SSA accreditation has become the de-facto professional standard, and the SMSF Association estimates only ~2,000 of Australia's ~25,000 financial advisers hold current SSA status.",
+  },
+  "immigration-investment-lawyers": {
+    howToChoose: [
+      "Confirm current practising certificate in their admitted jurisdiction",
+      "Look for recent SIV grants on their case record — this is a narrow specialty with limited volume nationally",
+      "Ask about their fund-manager relationships — SIV requires coordinated investment and visa timing",
+      "Verify whether they hold migration-agent registration (MARN) or work with a MARA-registered agent on your behalf",
+    ],
+    costGuide: "End-to-end SIV application legal: $20,000–$60,000. Investment structuring advice (separate from visa work): $15,000–$40,000. Business Innovation Visa (188 A/B) simpler matters: $10,000–$25,000.",
+    industryInsight: "The SIV program has been under review since 2023. The Department of Home Affairs periodically tightens complying-investment categories and can adjust thresholds with limited notice. Engage early — application timelines stretch from 12 to 24 months for complex matters.",
+  },
+  "fund-managers": {
+    howToChoose: [
+      "Verify AFSL number covers the specific fund type on the ASIC register",
+      "Review 3 and 5-year performance net of all fees against a relevant benchmark",
+      "Check AUM and team tenure — funds below $50M AUM or with <3-year team history carry key-person risk",
+      "For wholesale funds, confirm the Information Memorandum details fees, liquidity, and conflicts of interest",
+    ],
+    costGuide: "Retail managed funds: 0.3–1.5% p.a. management fee, some with performance fees. Wholesale funds: 1.0–2.0% management + 15–20% performance over hurdle. Private credit funds: 0.85–1.25% management + 10–15% performance. Private equity: 1.75–2.25% + 20% carry over 8% preferred return.",
+    industryInsight: "The Australian managed-funds industry manages ~$4.3 trillion. Post-RG 97 fee disclosure, retail investors can compare total-cost-of-ownership more directly than ever. Wholesale mandates remain the fastest-growing segment, particularly in private credit and infrastructure.",
   },
 };
 

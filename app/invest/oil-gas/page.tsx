@@ -528,6 +528,31 @@ export default async function OilGasPage() {
         </div>
       </section>
 
+      {/* Research cross-link */}
+      <section className="py-8 bg-slate-50 border-t border-slate-200">
+        <div className="container-custom max-w-4xl">
+          <div className="bg-white border border-slate-200 rounded-xl p-6 flex flex-col md:flex-row items-start md:items-center gap-5">
+            <div className="w-11 h-11 rounded-xl bg-amber-50 flex items-center justify-center shrink-0">
+              <Icon name="file-text" size={22} className="text-amber-600" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-base md:text-lg font-extrabold text-slate-900">
+                Australian Energy Investment Report 2026
+              </h3>
+              <p className="text-sm text-slate-600 mt-1">
+                48-page editorial report covering ASX oil &amp; gas, uranium, hydrogen, LNG economics, and the 2025 critical-infrastructure amendments. Free download, email registration required.
+              </p>
+            </div>
+            <Link
+              href="/research/australian-energy-investment-report-2026"
+              className="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm px-5 py-2.5 rounded-lg shrink-0"
+            >
+              Download report &rarr;
+            </Link>
+          </div>
+        </div>
+      </section>
+
       <GeneralAdviceWarning sectorDisplayName={sector.display_name} />
     </div>
   );

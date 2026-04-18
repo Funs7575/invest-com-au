@@ -24,6 +24,7 @@ const investMegaMenu = [
   {
     title: "Sectors & Assets",
     items: [
+      { label: "Investment Funds", href: "/invest/funds", desc: "Managed, syndicated, infrastructure, wholesale" },
       { label: "Mining & Resources", href: "/invest/mining", desc: "Iron ore, copper & critical minerals" },
       { label: "Oil & Gas", href: "/invest/oil-gas", desc: "ASX majors, LNG, refineries" },
       { label: "Uranium", href: "/invest/uranium", desc: "Paladin, Boss Energy, ATOM ETF" },
@@ -143,6 +144,9 @@ const mobileNavSections = [
     title: "Invest by Sector",
     items: [
       { name: "All Investment Verticals", href: "/invest" },
+      { name: "Investment Funds", href: "/invest/funds" },
+      { name: "SMSF Hub", href: "/smsf" },
+      { name: "Research Reports", href: "/research" },
       { name: "Mining & Resources", href: "/invest/mining" },
       { name: "Oil & Gas", href: "/invest/oil-gas" },
       { name: "Uranium", href: "/invest/uranium" },

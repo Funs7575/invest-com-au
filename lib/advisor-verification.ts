@@ -886,6 +886,120 @@ export const VERIFICATION_CONFIGS: Record<ProfessionalType, VerificationConfig> 
     cpd: "120 hours over 3 years as per TPB requirements",
     disclosure: "Petroleum royalty advice sits at the intersection of state royalty legislation, federal PRRT, and general tax. Advisors must be registered with the TPB — verify their registration number before engaging. Fees attract GST.",
   },
+
+  // ─── Revenue expansion (20260506) ─────────────────────────────
+
+  smsf_auditor: {
+    type: "smsf_auditor",
+    label: "SMSF Auditor",
+    primaryLicence: {
+      code: "ASIC SMSF Auditor",
+      name: "Approved SMSF Auditor",
+      regulator: "Australian Securities and Investments Commission",
+      regulatorShort: "ASIC",
+      verifyUrl: "https://asic.gov.au/for-finance-professionals/approved-smsf-auditors/",
+      verifyLabel: "Verify on ASIC SMSF Auditor Register",
+      mandatory: true,
+      field: "registration_number",
+      description: "Required by the SIS Act to audit an SMSF. All approved SMSF auditors are listed on the ASIC register with a unique SMSF Auditor Number (SAN).",
+    },
+    additionalLicences: [],
+    qualifications: [
+      "ASIC-approved SMSF auditor (SAN issued)",
+      "Chartered Accountant (CA) or CPA with public practice certificate",
+      "Demonstrated competency in SIS Act and regulations",
+    ],
+    associations: [
+      { name: "Chartered Accountants Australia & New Zealand", acronym: "CA ANZ", url: "https://www.charteredaccountantsanz.com" },
+      { name: "CPA Australia", acronym: "CPA", url: "https://www.cpaaustralia.com.au" },
+      { name: "Institute of Public Accountants", acronym: "IPA", url: "https://www.publicaccountants.org.au" },
+    ],
+    insurance: "Professional Indemnity Insurance — required under ASIC approval conditions",
+    edr: "Complaints handled by ASIC and the relevant professional body",
+    cpd: "30 hours per year including at least 8 hours SMSF-specific CPD",
+    disclosure: "Every SMSF must be audited annually by an ASIC-approved SMSF auditor. Verify the auditor''s SAN on the ASIC register before engaging. Auditors must be independent — your accountant preparing the financial statements cannot also audit them.",
+  },
+
+  smsf_specialist: {
+    type: "smsf_specialist",
+    label: "SMSF Specialist",
+    primaryLicence: AFSL,
+    additionalLicences: [ASIC_FAR],
+    qualifications: [
+      "Listed on the ASIC Financial Advisers Register with current authorisation",
+      "SMSF Association SSA (SMSF Specialist Advisor) accreditation preferred",
+      "Experience across SMSF setup, investment strategy, property, and pension-phase transition",
+    ],
+    associations: [
+      { name: "SMSF Association", acronym: "SMSFA", url: "https://www.smsfassociation.com" },
+      { name: "Financial Advice Association of Australia", acronym: "FAAA", url: "https://faaa.au" },
+    ],
+    insurance: "Professional Indemnity Insurance — required under AFSL conditions",
+    edr: "Australian Financial Complaints Authority (AFCA) membership required",
+    cpd: "40 CPD hours per year including SMSF-specific modules",
+    disclosure: "SMSF specialists must be AFSL-authorised to provide personal financial advice on superannuation. SSA accreditation is an industry benchmark but not a statutory requirement. Always verify the adviser''s authorisation on the ASIC Financial Advisers Register before engaging.",
+  },
+
+  immigration_investment_lawyer: {
+    type: "immigration_investment_lawyer",
+    label: "Immigration Investment Lawyer",
+    primaryLicence: {
+      code: "LPC",
+      name: "Legal Practising Certificate",
+      regulator: "State Law Society / Legal Services Commission",
+      regulatorShort: "Law Society",
+      verifyUrl: "https://www.lawcouncil.asn.au",
+      verifyLabel: "Verify on state Law Society register",
+      mandatory: true,
+      field: "registration_number",
+      description: "Required to practise law in Australia and to provide legal advice on investment structures for Significant Investor Visa (SIV) or Business Innovation Visa applicants.",
+    },
+    additionalLicences: [],
+    qualifications: [
+      "Admitted to practice in at least one Australian state or territory",
+      "Demonstrated experience with SIV, Business Innovation Visa, and complying investment structures",
+      "Understanding of FIRB interactions with visa pathway",
+    ],
+    associations: [
+      { name: "Law Council of Australia — Migration Law Committee", acronym: "LCA", url: "https://www.lawcouncil.asn.au" },
+      { name: "Migration Institute of Australia", acronym: "MIA", url: "https://www.mia.org.au" },
+    ],
+    insurance: "Professional Indemnity Insurance — mandatory under state legal profession acts",
+    edr: "Complaints handled by the relevant state Legal Services Commissioner",
+    cpd: "10 CPD units per year as required by state Law Society",
+    disclosure: "Only MARA-registered migration agents can provide immigration assistance in Australia. Lawyers with migration practice commonly hold both a practising certificate and MARN. For SIV-specific advice, engage a lawyer whose recent work includes signed complying-investment opinions — this is a narrow specialty.",
+  },
+
+  fund_manager: {
+    type: "fund_manager",
+    label: "Fund Manager",
+    primaryLicence: {
+      code: "AFSL",
+      name: "Australian Financial Services Licence — Managed Investment Scheme",
+      regulator: "Australian Securities and Investments Commission",
+      regulatorShort: "ASIC",
+      verifyUrl: "https://asic.gov.au/online-services/search-asics-registers/",
+      verifyLabel: "Verify AFSL on ASIC Register",
+      mandatory: true,
+      field: "afsl_number",
+      description: "Required to operate a managed investment scheme or deal in financial products as a wholesale or retail fund manager.",
+    },
+    additionalLicences: [],
+    qualifications: [
+      "AFSL authorisation covering managed investment schemes, wholesale dealing, or both",
+      "PM / analyst team with CFA, CA/CPA, or equivalent qualifications",
+      "Published track record against a relevant benchmark",
+    ],
+    associations: [
+      { name: "Financial Services Council", acronym: "FSC", url: "https://fsc.org.au" },
+      { name: "CFA Society Australia", acronym: "CFA", url: "https://www.cfa.com.au" },
+      { name: "Alternative Investment Management Association (Aus)", acronym: "AIMA", url: "https://www.aima.org" },
+    ],
+    insurance: "Professional Indemnity + Directors & Officers — required under AFSL conditions",
+    edr: "Australian Financial Complaints Authority (AFCA) — retail funds only",
+    cpd: "Ongoing fund-manager training as required under RG 104 / RG 133",
+    disclosure: "Fund managers must operate under a valid AFSL. Verify the fund''s PDS (retail) or Information Memorandum (wholesale), and confirm the AFSL covers the specific activities being offered. Past performance is not an indicator of future returns.",
+  },
 };
 
 // ═══════════════════════════════════════════════════════════════════
