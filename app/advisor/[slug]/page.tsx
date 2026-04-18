@@ -4,9 +4,10 @@ import { createStaticClient } from "@/lib/supabase/static";
 import type { Professional } from "@/lib/types";
 import type { Metadata } from "next";
 import AdvisorProfileClient from "./AdvisorProfileClient";
-import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
+import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
 import ComplianceFooter from "@/components/ComplianceFooter";
+import ClaimListingButton from "@/components/claims/ClaimListingButton";
 
 export const revalidate = 1800;
 
@@ -205,6 +206,11 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
         }) }} />
       )}
       <AdvisorProfileClient professional={pro as Professional} similar={similar} reviews={reviews} teamMembers={teamMembers} firm={firm} expertArticles={expertArticles} />
+      <ClaimListingButton
+        claimType="advisor"
+        targetSlug={pro.slug}
+        targetName={pro.name}
+      />
       <div className="container-custom pb-8">
         <ComplianceFooter />
       </div>
