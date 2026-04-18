@@ -388,6 +388,38 @@ export const SPECIALTIES_BY_TYPE: Record<ProfessionalType, string[]> = {
     "Secondary Royalty Trading",
     "SMSF Royalty Tax Treatment",
   ],
+  smsf_auditor: [
+    "SMSF Annual Audit",
+    "Compliance Audit",
+    "Financial Audit",
+    "In-house Asset Review",
+    "NALI Risk Review",
+    "ATO Audit Liaison",
+  ],
+  smsf_specialist: [
+    "SMSF Setup",
+    "Investment Strategy",
+    "Trust Deed Review",
+    "LRBA Structuring",
+    "Pension Phase Transition",
+    "Death Benefit Nominations",
+  ],
+  immigration_investment_lawyer: [
+    "Significant Investor Visa (SIV)",
+    "Business Innovation Visa",
+    "SIV Complying Investment Structuring",
+    "FIRB Coordination",
+    "Residency Pathways",
+    "Sophisticated Investor Certification",
+  ],
+  fund_manager: [
+    "Managed Investment Schemes",
+    "Wholesale Mandates",
+    "Retail-Registered Funds",
+    "AFSL Licensing",
+    "Custody & Administration",
+    "Performance Attribution",
+  ],
 };
 
 // ═══════════════════════════════════════════════
