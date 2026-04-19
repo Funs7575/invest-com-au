@@ -1414,104 +1414,6 @@ export type Database = {
           },
         ]
       }
-      affiliate_payout_reports: {
-        Row: {
-          broker_slug: string
-          currency: string
-          id: number
-          period_end: string
-          period_start: string
-          raw_payload: Json | null
-          reported_clicks: number
-          reported_conversions: number
-          reported_revenue_cents: number
-          source: string | null
-          uploaded_at: string
-          uploaded_by: string | null
-        }
-        Insert: {
-          broker_slug: string
-          currency?: string
-          id?: number
-          period_end: string
-          period_start: string
-          raw_payload?: Json | null
-          reported_clicks?: number
-          reported_conversions?: number
-          reported_revenue_cents?: number
-          source?: string | null
-          uploaded_at?: string
-          uploaded_by?: string | null
-        }
-        Update: {
-          broker_slug?: string
-          currency?: string
-          id?: number
-          period_end?: string
-          period_start?: string
-          raw_payload?: Json | null
-          reported_clicks?: number
-          reported_conversions?: number
-          reported_revenue_cents?: number
-          source?: string | null
-          uploaded_at?: string
-          uploaded_by?: string | null
-        }
-        Relationships: []
-      }
-      affiliate_payout_variance: {
-        Row: {
-          broker_slug: string
-          click_delta: number
-          click_delta_pct: number | null
-          computed_at: string
-          flagged: boolean
-          id: number
-          period_end: string
-          period_start: string
-          report_id: number | null
-          reported_clicks: number
-          revenue_cents: number
-          tracked_clicks: number
-        }
-        Insert: {
-          broker_slug: string
-          click_delta: number
-          click_delta_pct?: number | null
-          computed_at?: string
-          flagged?: boolean
-          id?: number
-          period_end: string
-          period_start: string
-          report_id?: number | null
-          reported_clicks: number
-          revenue_cents: number
-          tracked_clicks: number
-        }
-        Update: {
-          broker_slug?: string
-          click_delta?: number
-          click_delta_pct?: number | null
-          computed_at?: string
-          flagged?: boolean
-          id?: number
-          period_end?: string
-          period_start?: string
-          report_id?: number | null
-          reported_clicks?: number
-          revenue_cents?: number
-          tracked_clicks?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "affiliate_payout_variance_report_id_fkey"
-            columns: ["report_id"]
-            isOneToOne: false
-            referencedRelation: "affiliate_payout_reports"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       agreement_acceptances: {
         Row: {
           accepted_at: string
@@ -5111,9 +5013,6 @@ export type Database = {
           last_newsletter_at: string | null
           name: string | null
           newsletter_opt_in: boolean | null
-          nurture_email_1_sent_at: string | null
-          nurture_email_2_sent_at: string | null
-          nurture_email_3_sent_at: string | null
           recovery_sent_at: string | null
           referral_url: string | null
           session_id: string | null
@@ -5133,9 +5032,6 @@ export type Database = {
           last_newsletter_at?: string | null
           name?: string | null
           newsletter_opt_in?: boolean | null
-          nurture_email_1_sent_at?: string | null
-          nurture_email_2_sent_at?: string | null
-          nurture_email_3_sent_at?: string | null
           recovery_sent_at?: string | null
           referral_url?: string | null
           session_id?: string | null
@@ -5155,9 +5051,6 @@ export type Database = {
           last_newsletter_at?: string | null
           name?: string | null
           newsletter_opt_in?: boolean | null
-          nurture_email_1_sent_at?: string | null
-          nurture_email_2_sent_at?: string | null
-          nurture_email_3_sent_at?: string | null
           recovery_sent_at?: string | null
           referral_url?: string | null
           session_id?: string | null
@@ -9457,57 +9350,6 @@ export type Database = {
           paid_at?: string | null
           period_end?: string
           period_start?: string
-          status?: string
-          tier?: string
-        }
-        Relationships: []
-      }
-      sponsored_placement_bookings: {
-        Row: {
-          amount_cents: number | null
-          applied_at: string | null
-          broker_slug: string
-          cleared_at: string | null
-          created_at: string
-          created_by: string | null
-          currency: string
-          ends_at: string
-          id: number
-          invoice_ref: string | null
-          notes: string | null
-          starts_at: string
-          status: string
-          tier: string
-        }
-        Insert: {
-          amount_cents?: number | null
-          applied_at?: string | null
-          broker_slug: string
-          cleared_at?: string | null
-          created_at?: string
-          created_by?: string | null
-          currency?: string
-          ends_at: string
-          id?: number
-          invoice_ref?: string | null
-          notes?: string | null
-          starts_at: string
-          status?: string
-          tier: string
-        }
-        Update: {
-          amount_cents?: number | null
-          applied_at?: string | null
-          broker_slug?: string
-          cleared_at?: string | null
-          created_at?: string
-          created_by?: string | null
-          currency?: string
-          ends_at?: string
-          id?: number
-          invoice_ref?: string | null
-          notes?: string | null
-          starts_at?: string
           status?: string
           tier?: string
         }
