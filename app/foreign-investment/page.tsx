@@ -7,7 +7,6 @@ import {
   VERTICAL_FOREIGN_RULES,
   TOP_5_RULES_FOR_FOREIGN_INVESTORS,
   DTA_COUNTRIES,
-  type ForeignInvestorPersona,
 } from "@/lib/foreign-investment-data";
 import { getDtaCountries, getDefaultWHT } from "@/lib/fi-data-server";
 import { FOREIGN_INVESTOR_GENERAL_DISCLAIMER, DTA_DISCLAIMER } from "@/lib/compliance";
@@ -36,7 +35,17 @@ export const metadata: Metadata = {
     ],
   },
   twitter: { card: "summary_large_image" },
-  alternates: { canonical: `${SITE_URL}/foreign-investment` },
+  alternates: {
+    canonical: `${SITE_URL}/foreign-investment`,
+    // hreflang: tells Google the zh + ko translations are equivalents
+    // of this English page. x-default falls back to English.
+    languages: {
+      "en-AU": `${SITE_URL}/foreign-investment`,
+      "zh-CN": `${SITE_URL}/zh/foreign-investment`,
+      "ko-KR": `${SITE_URL}/ko/foreign-investment`,
+      "x-default": `${SITE_URL}/foreign-investment`,
+    },
+  },
 };
 
 export const revalidate = 86400;

@@ -93,6 +93,7 @@ const NAV_GROUPS = [
     label: "System",
     items: [
       { href: "/admin/team-members", icon: "user", label: "Team" },
+      { href: "/admin/settings/mfa", icon: "shield-check", label: "Two-factor (2FA)" },
       { href: "/admin/site-settings", icon: "settings", label: "Settings" },
     ],
   },

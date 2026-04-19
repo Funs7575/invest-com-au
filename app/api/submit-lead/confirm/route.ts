@@ -2,6 +2,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { sendNewLeadNotification } from "@/lib/advisor-emails";
 import { logger } from "@/lib/logger";
+import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 
 export const runtime = "edge";
 
@@ -16,6 +17,10 @@ const log = logger("confirm-lead");
  * Body: { lead_id: number, user_email: string }
  */
 export async function POST(request: NextRequest) {
+  if (!(await isAllowed("submit_lead_confirm_post", ipKey(request), { max: 10, refillPerSec: 0.05 }))) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
+
   let body: { lead_id?: number; user_email?: string };
   try {
     body = await request.json();

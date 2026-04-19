@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { lookupTicker, TICKER_MAP } from "@/lib/ticker-sectors";
 import { logger } from "@/lib/logger";
+import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 
 const log = logger("portfolio-xray");
 
@@ -52,6 +53,10 @@ interface Recommendation {
 }
 
 export async function POST(request: NextRequest) {
+  if (!(await isAllowed("portfolio_xray_post", ipKey(request), { max: 10, refillPerSec: 0.05 }))) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
+
   try {
     const body = await request.json();
     const { holdings, current_broker_slug } = body as {

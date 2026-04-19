@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { logger } from "@/lib/logger";
+import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 
 const log = logger("property:suburbs");
 
 export async function GET(request: NextRequest) {
+  if (!(await isAllowed("property_suburbs_get", ipKey(request), { max: 120, refillPerSec: 2 }))) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
+
   try {
     const { searchParams } = new URL(request.url);
     const q = searchParams.get("q")?.trim();

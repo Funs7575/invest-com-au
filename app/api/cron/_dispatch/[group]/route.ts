@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireCronAuth } from "@/lib/cron-auth";
 import { CRON_GROUPS } from "@/lib/cron-groups";
 import { logger } from "@/lib/logger";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 const log = logger("cron-dispatch");
 
@@ -41,24 +42,67 @@ export async function GET(
 
   const origin = new URL(req.url).origin;
   const auth = req.headers.get("authorization") ?? "";
+  const supabase = createAdminClient();
 
   const started = Date.now();
   const results = await Promise.allSettled(
     paths.map(async (path) => {
       const t0 = Date.now();
-      const res = await fetch(`${origin}${path}`, {
-        method: "GET",
-        headers: { Authorization: auth },
-        cache: "no-store",
-      });
-      const durationMs = Date.now() - t0;
+      // Open a cron_run_log row before the call so a hanging handler
+      // still shows up as "running" in the observability dashboard.
+      const { data: logRow } = await supabase
+        .from("cron_run_log")
+        .insert({
+          name: path,
+          started_at: new Date(t0).toISOString(),
+          status: "running",
+          triggered_by: "dispatcher",
+        })
+        .select("id")
+        .single();
+
+      let status = 0;
       let body: unknown = null;
+      let errorMessage: string | null = null;
       try {
-        body = await res.json();
-      } catch {
-        // handler returned non-JSON; ignore body, status is what we log
+        const res = await fetch(`${origin}${path}`, {
+          method: "GET",
+          headers: { Authorization: auth },
+          cache: "no-store",
+        });
+        status = res.status;
+        try {
+          body = await res.json();
+        } catch {
+          // handler returned non-JSON; ignore body, status is what we log
+        }
+      } catch (err) {
+        errorMessage = err instanceof Error ? err.message : String(err);
       }
-      return { path, status: res.status, durationMs, body };
+      const durationMs = Date.now() - t0;
+
+      // Close the row with the outcome. If the insert earlier failed
+      // we silently drop the update — the dispatcher summary below is
+      // still accurate.
+      if (logRow) {
+        await supabase
+          .from("cron_run_log")
+          .update({
+            ended_at: new Date().toISOString(),
+            duration_ms: durationMs,
+            status: errorMessage
+              ? "error"
+              : status < 400
+                ? "success"
+                : "error",
+            error_message:
+              errorMessage ?? (status >= 400 ? `HTTP ${status}` : null),
+            stats: isPlainObject(body) ? body : null,
+          })
+          .eq("id", logRow.id);
+      }
+
+      return { path, status, durationMs, body, errorMessage };
     }),
   );
 
@@ -93,4 +137,8 @@ export async function GET(
     },
     { status: failed.length === 0 ? 200 : 207 },
   );
+}
+
+function isPlainObject(x: unknown): x is Record<string, unknown> {
+  return typeof x === "object" && x !== null && !Array.isArray(x);
 }

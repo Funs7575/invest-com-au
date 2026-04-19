@@ -16,7 +16,9 @@
     "e2e:ui": "playwright test --ui",
     "e2e:install": "playwright install --with-deps chromium webkit",
     "analyze": "ANALYZE=true next build",
-    "db:types": "echo 'Run: npx supabase gen types typescript --project-id YOUR_PROJECT_ID > lib/database.types.ts'",
+    "audit:rate-limits": "node scripts/rate-limit-coverage.mjs",
+    "db:types": "npx supabase gen types typescript --project-id ${SUPABASE_PROJECT_ID} > lib/database.types.ts",
+    "db:types:check": "npx supabase gen types typescript --project-id ${SUPABASE_PROJECT_ID} > /tmp/database.types.generated.ts && diff -u lib/database.types.ts /tmp/database.types.generated.ts",
     "prepare": "husky || true"
   },
   "dependencies": {
@@ -33,6 +35,7 @@
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^16.2.3",
+    "@axe-core/playwright": "^4.10.0",
     "@playwright/test": "^1.50.0",
     "@tailwindcss/postcss": "^4.2.2",
     "@testing-library/dom": "^10.4.1",

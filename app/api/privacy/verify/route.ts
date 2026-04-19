@@ -14,6 +14,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 import { exportUserData, eraseUserData } from "@/lib/privacy-data";
+import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 
 const log = logger("privacy-verify");
 
@@ -22,6 +23,10 @@ export const runtime = "nodejs";
 const LINK_TTL_HOURS = 24;
 
 export async function GET(request: NextRequest) {
+  if (!(await isAllowed("privacy_verify_get", ipKey(request), { max: 20, refillPerSec: 0.1 }))) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
+
   const token = request.nextUrl.searchParams.get("token");
   if (!token) {
     return NextResponse.json({ error: "Missing token" }, { status: 400 });

@@ -3,10 +3,15 @@ import { createClient as createServerClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 import { ADMIN_EMAILS } from "@/lib/admin";
+import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 
 const log = logger("verify-client");
 
 export async function POST(request: NextRequest) {
+  if (!(await isAllowed("reviews_verify_client_post", ipKey(request), { max: 30, refillPerSec: 0.2 }))) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
+
   // ── Auth check: require an authenticated admin user ──
   const supabaseAuth = await createServerClient();
   const {

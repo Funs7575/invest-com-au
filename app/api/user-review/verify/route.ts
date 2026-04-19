@@ -1,6 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from 'next/server';
 import { logger } from '@/lib/logger';
+import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 
 const log = logger('user-review');
 
@@ -73,6 +74,10 @@ function checkBlocklist(review: ReviewContent): string | null {
 // --- Route handler ---
 
 export async function GET(request: NextRequest) {
+  if (!(await isAllowed("user_review_verify_get", ipKey(request), { max: 30, refillPerSec: 0.2 }))) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
+
   const token = request.nextUrl.searchParams.get('token');
 
   if (!token || typeof token !== 'string' || token.length < 10) {
