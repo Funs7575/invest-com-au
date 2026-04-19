@@ -47,6 +47,9 @@ jobs:
       - name: Test with coverage
         run: npm run test:coverage
 
+      - name: Rate-limit coverage audit
+        run: npm run audit:rate-limits -- --strict
+
       - name: Build (catches production-only errors)
         run: npm run build
 
@@ -180,6 +183,109 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 7
+
+  supabase-types-drift:
+    name: Supabase types drift
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: github.event_name == 'pull_request'
+    # Skips gracefully when the SUPABASE_ACCESS_TOKEN secret is not
+    # configured — the job succeeds instead of failing the PR, so the
+    # workflow remains forward-compatible for forks / new clones.
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+          cache: "npm"
+      - run: npm ci
+      - name: Check for drift between DB schema and lib/database.types.ts
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+        run: |
+          if [ -z "$SUPABASE_ACCESS_TOKEN" ] || [ -z "$SUPABASE_PROJECT_ID" ]; then
+            echo "::warning::SUPABASE_ACCESS_TOKEN / SUPABASE_PROJECT_ID not set — skipping drift check"
+            exit 0
+          fi
+          npx supabase gen types typescript --project-id "$SUPABASE_PROJECT_ID" > /tmp/generated.ts
+          if ! diff -u lib/database.types.ts /tmp/generated.ts > drift.diff; then
+            echo "::error::lib/database.types.ts has drifted from the live schema."
+            echo "Run 'npm run db:types' locally, commit the update, and push again."
+            echo ""
+            echo "--- drift (first 100 lines) ---"
+            head -100 drift.diff || true
+            exit 1
+          fi
+          echo "lib/database.types.ts matches live DB schema."
+
+  lighthouse-cwv-gate:
+    name: Lighthouse — Core Web Vitals gate (hard-fail)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: github.event_name == 'pull_request'
+    # Separate from the advisory Lighthouse job below — this one hard
+    # fails the PR if LCP / CLS / TBT regress past agreed thresholds.
+    # Uses median of 3 runs to reduce runner-load noise.
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder
+      SUPABASE_SERVICE_ROLE_KEY: placeholder
+      RESEND_API_KEY: placeholder
+      STRIPE_SECRET_KEY: placeholder
+      STRIPE_WEBHOOK_SECRET: placeholder
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+      CRON_SECRET: placeholder
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+          cache: "npm"
+      - run: npm ci
+      - run: npm run build
+      - name: Run Lighthouse CWV gate
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          configPath: ./.lighthouserc.cwv.json
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+  a11y:
+    name: Accessibility (axe-core on key routes)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: github.event_name == 'pull_request'
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder
+      SUPABASE_SERVICE_ROLE_KEY: placeholder
+      RESEND_API_KEY: placeholder
+      STRIPE_SECRET_KEY: placeholder
+      STRIPE_WEBHOOK_SECRET: placeholder
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+      CRON_SECRET: placeholder
+      CI: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+          cache: "npm"
+      - run: npm ci
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - name: Run axe-core a11y suite
+        run: npx playwright test e2e/a11y.spec.ts --reporter=github
+      - name: Upload a11y report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: a11y-report
+          path: playwright-report/
+          retention-days: 7
+          if-no-files-found: ignore
 
   lighthouse:
     name: Lighthouse CI (main canonical pages)
