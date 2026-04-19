@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import SectionHeading from "@/components/SectionHeading";
+import VerticalMarketplaceListings from "@/components/marketplace/VerticalMarketplaceListings";
 
 export const revalidate = 3600;
 
@@ -347,6 +348,13 @@ export default function MiningPage() {
           </Link>
         </div>
       </section>
+
+      <VerticalMarketplaceListings
+        vertical="mining"
+        accent="amber"
+        id="marketplace"
+        sub="Active mining and critical-minerals opportunities in our marketplace — tenements, project equity and royalty streams. Register interest directly with the listing contact."
+      />
 
       {/* Foreign investor note */}
       <section className="py-10 md:py-12 bg-white border-t border-slate-100" id="foreign-investors">

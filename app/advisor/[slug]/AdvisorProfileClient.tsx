@@ -10,6 +10,7 @@ import BookingWidget from "@/components/BookingWidget";
 import AdvisorAppointmentsWidget from "@/components/AdvisorAppointmentsWidget";
 import AdvisorReviewForm from "@/components/AdvisorReviewForm";
 import VerifiedClientBadge from "@/components/VerifiedClientBadge";
+import VerifiedBadge from "@/components/VerifiedBadge";
 import { getStoredUtm } from "@/components/UtmCapture";
 import { trackEvent } from "@/lib/tracking";
 import { getVerificationConfig, getVerificationLinks } from "@/lib/advisor-verification";
@@ -144,8 +145,11 @@ export default function AdvisorProfileClient({
       if (raw) {
         const data = JSON.parse(raw);
         if (data.matchedAdvisors?.some((a: { slug: string }) => a.slug === pro.slug)) {
+          // eslint-disable-next-line react-hooks/set-state-in-effect
           setAlreadyMatched(true);
+           
           if (data.quizData?.firstName) setName(data.quizData.firstName);
+           
           if (data.quizData?.email) setEmail(data.quizData.email);
         }
       }
@@ -269,6 +273,12 @@ export default function AdvisorProfileClient({
                       Verified
                     </span>
                   )}
+                  <VerifiedBadge
+                    method={pro.verification_method ?? null}
+                    abn={pro.abn ?? null}
+                    afsl={pro.afsl_number ?? null}
+                    compact
+                  />
                   {pro.accepts_international_clients && (
                     <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 text-xs font-bold shrink-0">
                       🌏 International Clients

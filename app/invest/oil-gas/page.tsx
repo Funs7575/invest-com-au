@@ -11,6 +11,7 @@ import {
 import AsxTickerCard from "@/components/commodities/AsxTickerCard";
 import EtfComparisonCard from "@/components/commodities/EtfComparisonCard";
 import GeneralAdviceWarning from "@/components/commodities/GeneralAdviceWarning";
+import VerticalMarketplaceListings from "@/components/marketplace/VerticalMarketplaceListings";
 import EnergyPriceWidget from "@/components/commodities/EnergyPriceWidget";
 import Icon from "@/components/Icon";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
@@ -527,6 +528,13 @@ export default async function OilGasPage() {
           </div>
         </div>
       </section>
+
+      <VerticalMarketplaceListings
+        vertical="oil-gas"
+        accent="amber"
+        id="marketplace"
+        sub="Twelve active oil &amp; gas opportunities — ASX majors, LNG royalties, refinery infrastructure and project equity. Register interest directly with the listing contact."
+      />
 
       {/* Research cross-link */}
       <section className="py-8 bg-slate-50 border-t border-slate-200">

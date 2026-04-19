@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable react-hooks/set-state-in-effect, react-hooks/exhaustive-deps, react-hooks/preserve-manual-memoization */
+
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -7,6 +9,7 @@ import Image from "next/image";
 import type { Professional, ProfessionalType, AdvisorFirm } from "@/lib/types";
 import { PROFESSIONAL_TYPE_LABELS, PROFESSIONAL_TYPE_ICONS, AU_STATES } from "@/lib/types";
 import Icon from "@/components/Icon";
+import VerifiedBadge from "@/components/VerifiedBadge";
 import { trackEvent } from "@/lib/tracking";
 import { useAdvisorShortlist } from "@/lib/hooks/useAdvisorShortlist";
 
@@ -462,6 +465,13 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
             <span className="hidden md:inline">{dynamicDescription}</span>
           </p>
           <div className="flex items-center gap-2 md:gap-3 flex-wrap">
+            <Link
+              href={initialType ? `/find-advisor?focus=${initialType}` : "/find-advisor"}
+              className="inline-flex items-center gap-1.5 bg-amber-500 hover:bg-amber-600 text-white font-extrabold text-xs md:text-sm px-4 py-2 rounded-full transition-colors shadow-sm"
+            >
+              Get matched
+              <Icon name="arrow-right" size={14} />
+            </Link>
             <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-full shadow-sm text-[0.65rem] md:text-xs font-semibold text-slate-700">
               <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
               <span className="font-bold text-slate-900">{professionals.length}</span> advisors listed
@@ -865,6 +875,12 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                                 Verified
                               </span>
                             )}
+                            <VerifiedBadge
+                              method={pro.verification_method ?? null}
+                              abn={pro.abn ?? null}
+                              afsl={pro.afsl_number ?? null}
+                              compact
+                            />
                             {isFeatured && (
                               <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-amber-500 text-white flex items-center gap-0.5 shadow-sm">
                                 <Icon name="star" size={9} />

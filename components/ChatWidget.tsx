@@ -158,9 +158,12 @@ export default function ChatWidget() {
   return (
     <>
       {!open && (
-        <button
-          type="button"
-          onClick={() => setOpen(true)}
+        // The floating bubble now deep-links to the full-page concierge
+        // at /concierge. The inline panel state is preserved in this
+        // component for transitional compatibility but the bubble no
+        // longer opens it.
+        <a
+          href="/concierge"
           className="fixed bottom-4 right-4 z-[9998] w-14 h-14 rounded-full bg-slate-900 text-white shadow-xl hover:bg-slate-800 flex items-center justify-center print:hidden"
           aria-label="Open AI concierge"
         >
@@ -168,7 +171,7 @@ export default function ChatWidget() {
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
           </svg>
           <span className="sr-only">Chat</span>
-        </button>
+        </a>
       )}
 
       {open && (

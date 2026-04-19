@@ -65,6 +65,20 @@ async function fetchAllActiveListings(): Promise<InvestmentListing[]> {
 export default async function InvestListingsPage() {
   const listings = await fetchAllActiveListings();
 
+  // Per-vertical counts for the summary strip above the marketplace
+  // grid. Counts reflect the currently-active listings, computed
+  // once on the server to avoid loading the client with the raw
+  // aggregation.
+  const verticalCounts: Record<string, number> = {};
+  for (const l of listings) {
+    const v = l.vertical as string;
+    if (!v) continue;
+    verticalCounts[v] = (verticalCounts[v] || 0) + 1;
+  }
+  const sortedCounts = Object.entries(verticalCounts).sort(
+    ([, a], [, b]) => b - a,
+  );
+
   // Category tabs from invest-categories config
   const allCategories = getAllInvestCategories();
   const categoryTabs = allCategories.map((c) => ({
@@ -183,6 +197,33 @@ export default async function InvestListingsPage() {
             </details>
           </div>
         </div>
+
+        {/* Per-vertical count strip — live counts from the DB */}
+        {sortedCounts.length > 0 && (
+          <div className="container-custom max-w-6xl mb-4">
+            <div className="bg-white border border-slate-200 rounded-xl p-4">
+              <p className="text-[10px] font-bold uppercase tracking-wide text-slate-500 mb-3">
+                Active listings by vertical
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {sortedCounts.map(([slug, count]) => (
+                  <Link
+                    key={slug}
+                    href={`/invest/${slug}/listings`}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-50 hover:bg-amber-50 border border-slate-200 hover:border-amber-200 transition-colors text-xs"
+                  >
+                    <span className="font-semibold text-slate-700 capitalize">
+                      {slug.replace(/-/g, " ")}
+                    </span>
+                    <span className="font-extrabold text-amber-700 tabular-nums">
+                      {count}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Client component with filters + grid */}
         <InvestListingsClient
