@@ -39,7 +39,7 @@ async function getNonResidentBrokers(): Promise<Broker[]> {
     const supabase = await createClient();
     const { data } = await supabase
       .from("brokers")
-      .select("id, name, slug, color, logo_url, cta_text, affiliate_url, rating, asx_fee, asx_fee_value, us_fee, us_fee_value, fx_rate, chess_sponsored, accepts_non_residents, foreign_investor_notes, platform_type, regulated_by, status, tagline, deal, deal_text, editors_pick, updated_at, fee_last_checked")
+      .select("id, name, slug, color, logo_url, cta_text, affiliate_url, rating, asx_fee, asx_fee_value, us_fee, us_fee_value, fx_rate, chess_sponsored, accepts_non_residents, foreign_investor_notes, platform_type, regulated_by, status, tagline, deal, deal_text, editors_pick, updated_at, fee_last_checked, fee_verified_date")
       .eq("accepts_non_residents", true)
       .eq("status", "active")
       .order("rating", { ascending: false });

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { GLOSSARY_ENTRIES } from "@/lib/glossary";
+import type { GlossaryEntry } from "@/lib/glossary";
+import { getGlossaryEntries } from "@/lib/glossary-db";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import GlossarySearch from "@/components/GlossarySearch";
 
@@ -29,9 +30,9 @@ export const metadata: Metadata = {
 };
 
 /** Group entries by first letter for A-Z navigation */
-function groupByLetter() {
-  const groups: Record<string, typeof GLOSSARY_ENTRIES> = {};
-  for (const entry of GLOSSARY_ENTRIES) {
+function groupByLetter(entries: GlossaryEntry[]) {
+  const groups: Record<string, GlossaryEntry[]> = {};
+  for (const entry of entries) {
     const letter = entry.term[0].toUpperCase();
     if (!groups[letter]) groups[letter] = [];
     groups[letter].push(entry);
@@ -44,9 +45,9 @@ function groupByLetter() {
 }
 
 /** Get all unique categories */
-function getCategories(): string[] {
+function getCategories(entries: GlossaryEntry[]): string[] {
   const cats = new Set<string>();
-  for (const entry of GLOSSARY_ENTRIES) {
+  for (const entry of entries) {
     if (entry.category) cats.add(entry.category);
   }
   return Array.from(cats).sort();
@@ -66,10 +67,11 @@ const CATEGORY_ICONS: Record<string, string> = {
   Property: "\uD83C\uDFE0",
 };
 
-export default function GlossaryPage() {
-  const grouped = groupByLetter();
+export default async function GlossaryPage() {
+  const entries = await getGlossaryEntries();
+  const grouped = groupByLetter(entries);
   const letters = Object.keys(grouped).sort();
-  const categories = getCategories();
+  const categories = getCategories(entries);
 
   const breadcrumbs = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
@@ -84,7 +86,7 @@ export default function GlossaryPage() {
     description:
       "Plain-English definitions of financial and investing terms for Australian investors.",
     url: absoluteUrl("/glossary"),
-    hasDefinedTerm: GLOSSARY_ENTRIES.map((entry) => ({
+    hasDefinedTerm: entries.map((entry) => ({
       "@type": "DefinedTerm",
       name: entry.term,
       description: entry.definition,
@@ -119,13 +121,13 @@ export default function GlossaryPage() {
               Investing Glossary
             </h1>
             <p className="text-sm md:text-base text-slate-600 max-w-2xl">
-              Plain-English definitions for {GLOSSARY_ENTRIES.length} investing
+              Plain-English definitions for {entries.length} investing
               terms. No jargon, no fluff — just what you need to know.
             </p>
           </div>
 
           {/* Search */}
-          <GlossarySearch entries={GLOSSARY_ENTRIES} />
+          <GlossarySearch entries={entries} />
 
           {/* A-Z Quick Jump */}
           <div className="flex flex-wrap gap-1 md:gap-1.5 mb-6 md:mb-8 sticky top-0 bg-white/95 backdrop-blur-sm py-2 -mx-1 px-1 z-10 border-b border-slate-100">
@@ -143,7 +145,7 @@ export default function GlossaryPage() {
           {/* Category Overview */}
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 md:gap-3 mb-8 md:mb-12">
             {categories.map((cat) => {
-              const count = GLOSSARY_ENTRIES.filter(
+              const count = entries.filter(
                 (e) => e.category === cat
               ).length;
               return (

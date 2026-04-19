@@ -82,7 +82,7 @@ async function CompareData() {
 
   const { data: brokers } = await supabase
     .from('brokers')
-    .select("id, name, slug, color, icon, logo_url, rating, asx_fee, asx_fee_value, us_fee, us_fee_value, fx_rate, chess_sponsored, smsf_support, is_crypto, platform_type, deal, deal_text, deal_expiry, editors_pick, tagline, cta_text, affiliate_url, sponsorship_tier, benefit_cta, updated_at, fee_last_checked, status, promoted_placement, cpa_value, affiliate_priority")
+    .select("id, name, slug, color, icon, logo_url, rating, asx_fee, asx_fee_value, us_fee, us_fee_value, fx_rate, chess_sponsored, smsf_support, is_crypto, platform_type, deal, deal_text, deal_expiry, editors_pick, tagline, cta_text, affiliate_url, sponsorship_tier, benefit_cta, updated_at, fee_last_checked, fee_verified_date, status, promoted_placement, cpa_value, affiliate_priority")
     .eq('status', 'active')
     // Revenue-weighted: promoted first, then by rating
     .order('promoted_placement', { ascending: false })

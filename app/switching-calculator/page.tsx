@@ -21,7 +21,7 @@ export default async function SwitchingCalculatorPage() {
   const supabase = await createClient();
   const { data: brokers } = await supabase
     .from("brokers")
-    .select("id, slug, name, platform_type, asx_fee, us_fee, fx_rate, inactivity_fee, rating, affiliate_url, logo_url, chess_sponsored, smsf_support, fee_last_checked")
+    .select("id, slug, name, platform_type, asx_fee, us_fee, fx_rate, inactivity_fee, rating, affiliate_url, logo_url, chess_sponsored, smsf_support, fee_last_checked, fee_verified_date")
     .eq("status", "active")
     .in("platform_type", ["share_broker", "cfd_forex"])
     .order("rating", { ascending: false });

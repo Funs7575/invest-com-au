@@ -1,6 +1,7 @@
 import AdminShell from "@/components/AdminShell";
 import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { FEE_STALE_DAYS } from "@/lib/fee-freshness";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -207,6 +208,35 @@ async function gatherMetrics(): Promise<Metric[]> {
   } catch {
     metrics.push({
       label: "Verticals with sparse listings",
+      count: -1,
+      severity: "warn",
+      description: "Query failed.",
+    });
+  }
+
+  // 7. Brokers with stale or missing fee verification
+  try {
+    const staleFeeCutoff = new Date(
+      Date.now() - FEE_STALE_DAYS * 24 * 60 * 60 * 1000,
+    ).toISOString();
+    const { data: staleOrMissing } = await supabase
+      .from("brokers")
+      .select("slug, name, fee_verified_date")
+      .eq("status", "active")
+      .or(`fee_verified_date.is.null,fee_verified_date.lt.${staleFeeCutoff}`)
+      .limit(200);
+    const count = staleOrMissing?.length || 0;
+    metrics.push({
+      label: `Brokers with stale or missing fee verification (>${FEE_STALE_DAYS}d)`,
+      count,
+      severity: count > 5 ? "block" : count > 0 ? "warn" : "ok",
+      description: `Active brokers whose fees have not been human-verified in the last ${FEE_STALE_DAYS} days (or never). Readers see a red "unverified" pill on these cards — the highest-impact trust drag on the site.`,
+      fixHref: "/admin/fee-queue",
+      sample: (staleOrMissing || []).slice(0, 5).map((b) => b.slug),
+    });
+  } catch {
+    metrics.push({
+      label: "Brokers with stale fee verification",
       count: -1,
       severity: "warn",
       description: "Query failed.",

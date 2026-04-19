@@ -8,7 +8,8 @@ import VersusClient from "../VersusClient";
 import { SITE_URL, CURRENT_YEAR, absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import ComplianceFooter from "@/components/ComplianceFooter";
 import { getVersusEditorial } from "@/lib/cached-versus";
-import type { VersusEditorial } from "@/lib/versus-content";
+import { generateVersusPairs, getRelatedVersusPairs } from "@/lib/versus-pairs";
+import Link from "next/link";
 
 const PLATFORM_LABELS = PLATFORM_TYPE_LABELS_LOWER;
 
@@ -135,8 +136,34 @@ function parseSlugs(slugs: string): string[] {
   return slugs.split("-vs-").filter(Boolean);
 }
 
+/**
+ * Pre-render the top ~200 pairs at build time. Any other pair still
+ * renders on-demand via the catch-all dynamic route.
+ *
+ * Pairs are generated programmatically from live broker inventory, so
+ * adding a new broker auto-adds its pairings without a code change.
+ * Falls back to the hand-curated POPULAR_PAIRS list if the build-time
+ * DB query is unavailable.
+ */
 export async function generateStaticParams() {
-  return POPULAR_PAIRS.map((slugs) => ({ slugs }));
+  try {
+    const supabase = await createClient();
+    const { data: rows } = await supabase
+      .from("brokers")
+      .select("slug, name, rating, platform_type")
+      .eq("status", "active");
+    if (!rows || rows.length === 0) {
+      return POPULAR_PAIRS.map((slugs) => ({ slugs }));
+    }
+    const pairs = generateVersusPairs(
+      rows as { slug: string; name: string; rating: number | null; platform_type: PlatformType }[],
+    );
+    const topPairs = pairs.slice(0, 200).map((p) => p.slug);
+    const merged = Array.from(new Set([...POPULAR_PAIRS, ...topPairs]));
+    return merged.map((slugs) => ({ slugs }));
+  } catch {
+    return POPULAR_PAIRS.map((slugs) => ({ slugs }));
+  }
 }
 
 export async function generateMetadata({
@@ -271,6 +298,51 @@ async function VersusData({ brokerSlugs, slugs }: { brokerSlugs: string[]; slugs
         />
       )}
       <VersusClient brokers={(allBrokers as Broker[]) || []} serverEditorial={editorial} />
+      {(() => {
+        // Related-comparison cross-links — helps crawlers discover the
+        // full versus graph and nudges readers toward adjacent matchups.
+        if (orderedBrokers.length !== 2) return null;
+        const all = generateVersusPairs(
+          ((allBrokers as Broker[]) || []).map((b) => ({
+            slug: b.slug,
+            name: b.name,
+            rating: b.rating ?? null,
+            platform_type: b.platform_type,
+          })),
+        );
+        const [first, second] = [brokerSlugs[0]!, brokerSlugs[1]!].sort();
+        const canonicalSlug = `${first}-vs-${second}`;
+        const thisPair = all.find((p) => p.slug === canonicalSlug);
+        if (!thisPair) return null;
+        const related = getRelatedVersusPairs(thisPair, all, 8);
+        if (related.length === 0) return null;
+        const brokerBySlug = new Map(
+          ((allBrokers as Broker[]) || []).map((b) => [b.slug, b.name]),
+        );
+        return (
+          <div className="container-custom max-w-5xl pb-6">
+            <h2 className="text-sm md:text-base font-bold text-slate-900 mb-3">
+              Related comparisons
+            </h2>
+            <div className="flex flex-wrap gap-2">
+              {related.map((p) => {
+                const [a, b] = p.slug.split("-vs-");
+                const nameA = brokerBySlug.get(a!) || a;
+                const nameB = brokerBySlug.get(b!) || b;
+                return (
+                  <Link
+                    key={p.slug}
+                    href={`/versus/${p.slug}`}
+                    className="text-xs font-semibold px-3 py-1.5 rounded-full bg-slate-100 hover:bg-amber-50 hover:text-amber-700 border border-slate-200 hover:border-amber-200 transition-colors"
+                  >
+                    {nameA} vs {nameB}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })()}
       <div className="container-custom pb-8">
         <ComplianceFooter />
       </div>
