@@ -86,8 +86,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/how-to",
     // Foreign investment hub
     "/foreign-investment",
-    // Localised foreign-investor hub (zh, ko)
+    // Localised foreign-investor hub + sub-pages (zh, ko)
     "/zh/foreign-investment", "/ko/foreign-investment",
+    "/zh/foreign-investment/siv", "/ko/foreign-investment/siv",
+    "/zh/foreign-investment/property", "/ko/foreign-investment/property",
+    "/zh/foreign-investment/tax", "/ko/foreign-investment/tax",
     "/foreign-investment/property", "/foreign-investment/tax", "/foreign-investment/super",
     "/foreign-investment/shares", "/foreign-investment/energy",
     "/foreign-investment/savings", "/foreign-investment/cfd",
