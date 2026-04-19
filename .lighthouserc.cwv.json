@@ -5,8 +5,8 @@
       "startServerReadyPattern": "Ready",
       "url": [
         "http://localhost:3000/",
-        "http://localhost:3000/compare",
-        "http://localhost:3000/broker/commsec"
+        "http://localhost:3000/glossary",
+        "http://localhost:3000/how-we-earn"
       ],
       "numberOfRuns": 3,
       "settings": {

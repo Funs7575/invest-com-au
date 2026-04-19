@@ -33,9 +33,9 @@ export function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ category: string; subcategory: string }>;
+  params: Promise<{ slug: string; subcategory: string }>;
 }): Promise<Metadata> {
-  const { category, subcategory } = await params;
+  const { slug: category, subcategory } = await params;
   const cat = getInvestCategoryBySlug(category);
   if (!cat) return {};
   const sub = getSubcategoryBySlug(category, subcategory);
@@ -60,9 +60,9 @@ export async function generateMetadata({
 export default async function InvestSubcategoryListingsPage({
   params,
 }: {
-  params: Promise<{ category: string; subcategory: string }>;
+  params: Promise<{ slug: string; subcategory: string }>;
 }) {
-  const { category, subcategory } = await params;
+  const { slug: category, subcategory } = await params;
   const cat = getInvestCategoryBySlug(category);
   if (!cat) notFound();
   const sub = getSubcategoryBySlug(category, subcategory);
