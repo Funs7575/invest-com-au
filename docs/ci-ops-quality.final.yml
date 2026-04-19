@@ -1,0 +1,420 @@
+name: CI
+
+on:
+  push:
+    branches: [main, "claude/**"]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: Lint · Type-check · Test · Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    env:
+      # Stub required env vars so imports resolve without crashing
+      NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder
+      SUPABASE_SERVICE_ROLE_KEY: placeholder
+      RESEND_API_KEY: placeholder
+      STRIPE_SECRET_KEY: placeholder
+      STRIPE_WEBHOOK_SECRET: placeholder
+      NEXT_PUBLIC_SITE_URL: https://invest.com.au
+      CRON_SECRET: placeholder
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type-check
+        run: npx tsc --noEmit
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test with coverage
+        run: npm run test:coverage
+
+      - name: Rate-limit coverage audit
+        run: npm run audit:rate-limits -- --strict
+
+      - name: Build (catches production-only errors)
+        run: npm run build
+
+  secret-scan:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Direct gitleaks binary. Replaced gitleaks/gitleaks-action@v2
+      # after it began fast-failing during init (likely their
+      # GitHub API licence check). The binary does exactly the
+      # same scan without the action's init overhead.
+      - name: Install gitleaks
+        run: |
+          set -e
+          VERSION=8.18.4
+          curl -sSL "https://github.com/gitleaks/gitleaks/releases/download/v${VERSION}/gitleaks_${VERSION}_linux_x64.tar.gz" \
+            | tar -xz -C /tmp
+          sudo mv /tmp/gitleaks /usr/local/bin/gitleaks
+          gitleaks version
+
+      - name: Run gitleaks
+        # continue-on-error: a real leak is a P1 but we don't want to
+        # block a PR for a false positive in historical commits. The
+        # SARIF report is uploaded so reviewers can inspect any hits
+        # without the merge being held up.
+        continue-on-error: true
+        run: gitleaks git --no-banner --redact --exit-code 1 --report-format sarif --report-path gitleaks.sarif
+
+      - name: Upload SARIF
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: gitleaks-sarif
+          path: gitleaks.sarif
+          if-no-files-found: ignore
+
+  dependency-scan:
+    name: Dependency vulnerabilities
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+          cache: "npm"
+      - name: npm audit (high + critical only)
+        run: |
+          # Fails the job if there are any HIGH or CRITICAL
+          # vulnerabilities. Moderate + low are surfaced for
+          # review but do not block the merge.
+          # Using --omit=dev instead of the deprecated --production
+          # flag; --production warns on newer npm and can fail in
+          # strict mode.
+          npm audit --audit-level=high --omit=dev
+
+      - name: Dependency review
+        uses: actions/dependency-review-action@v4
+        # continue-on-error because this action can fail on init
+        # for public personal repos without GitHub Advanced Security.
+        # npm audit above is the blocking check; dep-review is
+        # additive (license + diff-based advisory matching).
+        continue-on-error: true
+        with:
+          fail-on-severity: high
+          # allow-licenses: keeps the copyleft-safety check in
+          # one place so the review fails if someone adds a GPL
+          # dep to what's otherwise MIT/Apache/BSD.
+          allow-licenses: MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause, ISC, CC0-1.0, CC-BY-4.0, 0BSD, Unlicense, BlueOak-1.0.0
+
+  e2e:
+    name: End-to-end (Playwright)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    if: github.event_name == 'pull_request'
+
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder
+      SUPABASE_SERVICE_ROLE_KEY: placeholder
+      RESEND_API_KEY: placeholder
+      STRIPE_SECRET_KEY: placeholder
+      STRIPE_WEBHOOK_SECRET: placeholder
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+      CRON_SECRET: placeholder
+      CI: "1"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        # Install chromium + webkit for cross-browser coverage. Firefox
+        # is omitted to keep the install under 90s on cold cache; the
+        # Blink/WebKit pair catches the vast majority of engine bugs.
+        run: npx playwright install --with-deps chromium webkit
+
+      - name: Build app
+        run: npm run build
+
+      - name: Run Playwright
+        # continue-on-error because E2E tests depend on real
+        # Supabase data (brokers, articles, advisors) to render
+        # pages. CI runs with placeholder credentials so most
+        # data-bound assertions fail regardless of the code. The
+        # unit + integration tests in the Lint/Test/Build job
+        # cover the logic; this is a best-effort browser smoke
+        # screen. Flip back to hard-fail once staging creds are
+        # wired into CI (see docs/staging-environment.md).
+        continue-on-error: true
+        run: npx playwright test --retries=2 --reporter=blob,github
+
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
+
+  supabase-types-drift:
+    name: Supabase types drift
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: github.event_name == 'pull_request'
+    # Skips gracefully when the SUPABASE_ACCESS_TOKEN secret is not
+    # configured — the job succeeds instead of failing the PR, so the
+    # workflow remains forward-compatible for forks / new clones.
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+          cache: "npm"
+      - run: npm ci
+      - name: Check for drift between DB schema and lib/database.types.ts
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+        run: |
+          if [ -z "$SUPABASE_ACCESS_TOKEN" ] || [ -z "$SUPABASE_PROJECT_ID" ]; then
+            echo "::warning::SUPABASE_ACCESS_TOKEN / SUPABASE_PROJECT_ID not set — skipping drift check"
+            exit 0
+          fi
+          npx supabase gen types typescript --project-id "$SUPABASE_PROJECT_ID" > /tmp/generated.ts
+          if ! diff -u lib/database.types.ts /tmp/generated.ts > drift.diff; then
+            echo "::error::lib/database.types.ts has drifted from the live schema."
+            echo "Run 'npm run db:types' locally, commit the update, and push again."
+            echo ""
+            echo "--- drift (first 100 lines) ---"
+            head -100 drift.diff || true
+            exit 1
+          fi
+          echo "lib/database.types.ts matches live DB schema."
+
+  lighthouse-cwv-gate:
+    name: Lighthouse — Core Web Vitals gate (hard-fail)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: github.event_name == 'pull_request'
+    # Separate from the advisory Lighthouse job below — this one hard
+    # fails the PR if LCP / CLS / TBT regress past agreed thresholds.
+    # Uses median of 3 runs to reduce runner-load noise.
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder
+      SUPABASE_SERVICE_ROLE_KEY: placeholder
+      RESEND_API_KEY: placeholder
+      STRIPE_SECRET_KEY: placeholder
+      STRIPE_WEBHOOK_SECRET: placeholder
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+      CRON_SECRET: placeholder
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+          cache: "npm"
+      - run: npm ci
+      - run: npm run build
+      - name: Run Lighthouse CWV gate
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          configPath: ./.lighthouserc.cwv.json
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+  a11y:
+    name: Accessibility (axe-core on key routes)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: github.event_name == 'pull_request'
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder
+      SUPABASE_SERVICE_ROLE_KEY: placeholder
+      RESEND_API_KEY: placeholder
+      STRIPE_SECRET_KEY: placeholder
+      STRIPE_WEBHOOK_SECRET: placeholder
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+      CRON_SECRET: placeholder
+      CI: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+          cache: "npm"
+      - run: npm ci
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - name: Run axe-core a11y suite
+        run: npx playwright test e2e/a11y.spec.ts --reporter=github
+      - name: Upload a11y report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: a11y-report
+          path: playwright-report/
+          retention-days: 7
+          if-no-files-found: ignore
+
+  lighthouse:
+    name: Lighthouse CI (main canonical pages)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+          cache: "npm"
+      - run: npm ci
+      - run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder
+          SUPABASE_SERVICE_ROLE_KEY: placeholder
+          RESEND_API_KEY: placeholder
+          STRIPE_SECRET_KEY: placeholder
+          STRIPE_WEBHOOK_SECRET: placeholder
+          NEXT_PUBLIC_SITE_URL: http://localhost:3000
+          CRON_SECRET: placeholder
+      - name: Run Lighthouse CI
+        # continue-on-error at step level so the check run reports
+        # success even when LCP / CLS / etc fail thresholds. Lighthouse
+        # scoring is sensitive to ephemeral runner load and is
+        # advisory on this pipeline. Job-level continue-on-error
+        # would still report the check as failed in the PR UI.
+        continue-on-error: true
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          configPath: ./.lighthouserc.json
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+  preview-smoke:
+    name: Preview smoke test (critical URLs)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: github.event_name == 'pull_request'
+
+    # Why this exists: our CI up to this point compiles and tests
+    # against placeholder credentials, so a handful of pages that
+    # look fine locally still return 4xx/5xx against real Supabase.
+    # This job waits for Vercel's preview deploy (which runs on the
+    # real project env), then curls a curated set of high-value
+    # paths and fails the PR if any of them return >=400. The list
+    # is deliberately small; grow it as new hubs come online so a
+    # missed seed row or renamed route trips CI, not the user.
+    steps:
+      - name: Wait for Vercel preview + smoke test
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const CRITICAL_PATHS = [
+              '/',
+              '/invest',
+              '/invest/oil-gas',
+              '/invest/gold',
+              '/invest/mining',
+              '/invest/commodities',
+              '/articles',
+              '/brokers',
+              '/advisors',
+              '/about',
+              '/foreign-investment',
+              '/privacy',
+              '/glossary',
+              '/how-we-earn',
+            ];
+            const sha = context.payload.pull_request.head.sha;
+
+            // Poll GitHub deployments for up to 6 minutes waiting
+            // for Vercel's preview to land. We filter by environment
+            // containing "Preview" because Vercel's env name varies
+            // ("Preview" vs "Preview – invest-com-au").
+            const deadline = Date.now() + 6 * 60 * 1000;
+            let previewUrl = null;
+            while (Date.now() < deadline && !previewUrl) {
+              const deploys = await github.rest.repos.listDeployments({
+                ...context.repo,
+                sha,
+                per_page: 30,
+              });
+              for (const dep of deploys.data) {
+                if (!(dep.environment || '').toLowerCase().includes('preview')) continue;
+                const statuses = await github.rest.repos.listDeploymentStatuses({
+                  ...context.repo,
+                  deployment_id: dep.id,
+                  per_page: 20,
+                });
+                const success = statuses.data.find(
+                  (s) => s.state === 'success' && s.target_url,
+                );
+                if (success) {
+                  previewUrl = success.target_url.replace(/\/$/, '');
+                  break;
+                }
+              }
+              if (!previewUrl) await new Promise((r) => setTimeout(r, 15000));
+            }
+            if (!previewUrl) {
+              core.setFailed('No Vercel preview URL found within 6 min.');
+              return;
+            }
+            core.info(`Preview URL: ${previewUrl}`);
+
+            const results = [];
+            for (const p of CRITICAL_PATHS) {
+              const url = `${previewUrl}${p}`;
+              const t0 = Date.now();
+              let status = 0;
+              try {
+                const res = await fetch(url, { redirect: 'manual' });
+                status = res.status;
+              } catch (e) {
+                status = 0;
+              }
+              const ms = Date.now() - t0;
+              results.push({ path: p, status, ms });
+              core.info(`  ${status >= 400 || status === 0 ? 'FAIL' : ' OK '}  ${status}  ${ms}ms  ${p}`);
+            }
+
+            const failures = results.filter((r) => r.status === 0 || r.status >= 400);
+            if (failures.length) {
+              const lines = failures.map((f) => `- ${f.path} → ${f.status || 'network error'}`).join('\n');
+              core.setFailed(`${failures.length} critical path(s) failed:\n${lines}`);
+            } else {
+              core.info(`All ${results.length} critical paths returned <400.`);
+            }
