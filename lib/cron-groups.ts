@@ -51,11 +51,13 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
     "/api/cron/verify-review-clients",
     "/api/cron/ab-auto-promote",
     "/api/cron/revenue-reconciliation",
+    "/api/cron/broker-review-invites",
   ],
   "daily-5": [
     "/api/cron/expire-deals",
     "/api/cron/advisor-quality",
     "/api/cron/review-sentiment-refresh",
+    "/api/cron/versus-editorial-backfill",
   ],
   "daily-6": ["/api/cron/check-fees", "/api/cron/tmd-audit"],
   "daily-7": [
