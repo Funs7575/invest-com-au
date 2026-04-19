@@ -6,7 +6,8 @@ import { getAllCitySlugs } from "@/lib/cities";
 import { getAllGuideSlugs } from "@/lib/how-to-guides";
 import { getAllInvestCategorySlugs, getAllSubcategorySlugs } from "@/lib/invest-categories";
 import { listingUrl } from "@/lib/listing-url";
-import type { InvestListingVertical } from "@/lib/types";
+import type { InvestListingVertical, PlatformType } from "@/lib/types";
+import { generateVersusPairs } from "@/lib/versus-pairs";
 
 // Regenerate sitemap at most once per day — avoids per-request DB queries
 export const revalidate = 86400;
@@ -434,11 +435,33 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "axitrader-vs-pepperstone", "activtrades-vs-pepperstone",
   ];
 
-  const versusPages = versusPopularPairs.map((pair) => ({
+  // Programmatic versus pairs — generated from live broker inventory so
+  // new brokers automatically enter SEO coverage. Curated pairs are
+  // merged in too so any hand-picked pair (e.g. one we have editorial
+  // for) is guaranteed to ship.
+  let generatedPairSlugs: string[] = [];
+  if (supabase) {
+    const { data: versusRows } = await supabase
+      .from("brokers")
+      .select("slug, name, rating, platform_type")
+      .eq("status", "active");
+    if (versusRows && versusRows.length > 0) {
+      generatedPairSlugs = generateVersusPairs(
+        versusRows as { slug: string; name: string; rating: number | null; platform_type: PlatformType }[],
+      )
+        .slice(0, 400)
+        .map((p) => p.slug);
+    }
+  }
+  const allVersusPairs = Array.from(
+    new Set([...versusPopularPairs, ...generatedPairSlugs]),
+  );
+
+  const versusPages = allVersusPairs.map((pair) => ({
     url: `${baseUrl}/versus/${pair}`,
     lastModified: new Date(),
     changeFrequency: "weekly" as const,
-    priority: 0.8,
+    priority: versusPopularPairs.includes(pair) ? 0.8 : 0.6,
   }));
 
   // Dynamic advisor profile pages

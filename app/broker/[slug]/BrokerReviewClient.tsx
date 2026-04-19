@@ -24,6 +24,7 @@ import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import RecentlyViewed, { trackView } from "@/components/RecentlyViewed";
 import StickyCTABar from "@/components/StickyCTABar";
 import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
+import FeeVerifiedPill from "@/components/FeeVerifiedPill";
 import CountUp from "@/components/CountUp";
 import ScrollReveal from "@/components/ScrollReveal";
 import Icon from "@/components/Icon";
@@ -301,6 +302,7 @@ export default function BrokerReviewClient({
                 {b.deal && (
                   <span className="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-semibold rounded-full">Deal Active</span>
                 )}
+                <FeeVerifiedPill verifiedDate={b.fee_verified_date} variant="pill" />
               </div>
             </div>
           </div>

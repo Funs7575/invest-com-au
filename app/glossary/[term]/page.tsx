@@ -2,7 +2,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
-import { GLOSSARY_ENTRIES, type GlossaryEntry } from "@/lib/glossary";
+import type { GlossaryEntry } from "@/lib/glossary";
+import { getGlossaryBySlug, getGlossaryEntries } from "@/lib/glossary-db";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 
@@ -10,13 +11,14 @@ export const revalidate = 86400; // 24h
 
 /* ─── Static params for all terms ─── */
 export async function generateStaticParams() {
-  return GLOSSARY_ENTRIES.map((e) => ({ term: e.slug }));
+  const entries = await getGlossaryEntries();
+  return entries.map((e) => ({ term: e.slug }));
 }
 
 /* ─── Metadata ─── */
 export async function generateMetadata({ params }: { params: Promise<{ term: string }> }): Promise<Metadata> {
   const { term: slug } = await params;
-  const entry = GLOSSARY_ENTRIES.find((e) => e.slug === slug);
+  const entry = await getGlossaryBySlug(slug);
   if (!entry) return {};
 
   const title = `What Is ${entry.term}? — Definition & Explanation`;
@@ -31,24 +33,24 @@ export async function generateMetadata({ params }: { params: Promise<{ term: str
 }
 
 /* ─── Related terms ─── */
-function getRelatedTerms(entry: GlossaryEntry): GlossaryEntry[] {
-  const sameCategory = GLOSSARY_ENTRIES.filter(
+function getRelatedTerms(entry: GlossaryEntry, all: GlossaryEntry[]): GlossaryEntry[] {
+  const sameCategory = all.filter(
     (e) => e.slug !== entry.slug && e.category === entry.category
   ).slice(0, 6);
   if (sameCategory.length >= 4) return sameCategory;
-  // Fill with alphabetically nearby terms
-  const idx = GLOSSARY_ENTRIES.findIndex((e) => e.slug === entry.slug);
-  const nearby = GLOSSARY_ENTRIES.filter((e, i) => e.slug !== entry.slug && Math.abs(i - idx) <= 4);
+  const idx = all.findIndex((e) => e.slug === entry.slug);
+  const nearby = all.filter((e, i) => e.slug !== entry.slug && Math.abs(i - idx) <= 4);
   return [...new Map([...sameCategory, ...nearby].map((e) => [e.slug, e])).values()].slice(0, 6);
 }
 
 /* ─── Page ─── */
 export default async function GlossaryTermPage({ params }: { params: Promise<{ term: string }> }) {
   const { term: slug } = await params;
-  const entry = GLOSSARY_ENTRIES.find((e) => e.slug === slug);
+  const all = await getGlossaryEntries();
+  const entry = all.find((e) => e.slug === slug);
   if (!entry) notFound();
 
-  const related = getRelatedTerms(entry);
+  const related = getRelatedTerms(entry, all);
 
   // Fetch related articles by matching the term's category to article tags
   const supabase = await createClient();
