@@ -23,6 +23,7 @@ import ArticleComments from "@/components/ArticleComments";
 import Icon from "@/components/Icon";
 import AdSlot from "@/components/AdSlot";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
+import LinkifiedText from "@/components/LinkifiedText";
 
 export const revalidate = 3600; // ISR: revalidate every hour
 
@@ -410,9 +411,10 @@ export default async function ArticlePage({
                     <h2 className="text-2xl font-bold mb-4">
                       {a.sections[0].heading}
                     </h2>
-                    <div className="max-w-none text-slate-700 leading-relaxed whitespace-pre-line">
-                      {a.sections[0].body}
-                    </div>
+                    <LinkifiedText
+                      text={a.sections[0].body}
+                      skipHrefs={[`/article/${a.slug}`]}
+                    />
                   </section>
 
                   {/* Inject enhanced tools */}
@@ -438,9 +440,10 @@ export default async function ArticlePage({
                         <h2 className="text-2xl font-bold mb-4">
                           {section.heading}
                         </h2>
-                        <div className="max-w-none text-slate-700 leading-relaxed whitespace-pre-line">
-                          {section.body}
-                        </div>
+                        <LinkifiedText
+                          text={section.body}
+                          skipHrefs={[`/article/${a.slug}`]}
+                        />
                       </section>
                     )
                   )}
@@ -489,9 +492,10 @@ export default async function ArticlePage({
                           <h2 className="text-2xl font-bold mb-4">
                             {section.heading}
                           </h2>
-                          <div className="max-w-none text-slate-700 leading-relaxed whitespace-pre-line">
-                            {section.body}
-                          </div>
+                          <LinkifiedText
+                            text={section.body}
+                            skipHrefs={[`/article/${a.slug}`]}
+                          />
                         </section>
                         {/* In-content ad after 2nd section (only if 4+ sections for density) */}
                         {i === 1 && a.sections!.length >= 4 && (
