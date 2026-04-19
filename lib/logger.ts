@@ -206,3 +206,19 @@ export function setLoggerRequestId(requestId: string | null): void {
     // Sentry not initialised — no-op.
   }
 }
+
+/**
+ * Convenience helper for route handlers. Reads `x-request-id` from the
+ * incoming NextRequest (stamped by `middleware.ts`) and attaches it to
+ * the Sentry scope. Call once at the top of your handler:
+ *
+ *   export async function POST(req: NextRequest) {
+ *     trackRequest(req);
+ *     // …rest of handler
+ *   }
+ */
+export function trackRequest(req: { headers: Headers }): string | null {
+  const id = req.headers.get("x-request-id");
+  setLoggerRequestId(id);
+  return id;
+}
