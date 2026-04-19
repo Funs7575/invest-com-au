@@ -34,7 +34,15 @@ export const metadata: Metadata = {
     ],
   },
   twitter: { card: "summary_large_image" },
-  alternates: { canonical: "/property/foreign-investment" },
+  alternates: {
+    canonical: "/property/foreign-investment",
+    languages: {
+      "en-AU": "/property/foreign-investment",
+      "zh-CN": "/zh/foreign-investment/property",
+      "ko-KR": "/ko/foreign-investment/property",
+      "x-default": "/property/foreign-investment",
+    },
+  },
 };
 
 export const revalidate = 86400; // revalidate daily

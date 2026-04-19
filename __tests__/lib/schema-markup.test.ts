@@ -136,12 +136,17 @@ describe("itemListJsonLd", () => {
 });
 
 describe("listingProductJsonLd", () => {
+  // Listing product output is a discriminated union (offers key lives
+  // on some branches, areaServed on others). Cast to a bag in tests
+  // so we can assert on the branch that actually produced it.
+  type Bag = Record<string, unknown>;
+
   it("emits an InStock offer when priceAud is set", () => {
     const out = listingProductJsonLd({
       slug: "acme",
       title: "Acme fund",
       priceAud: 250_000,
-    });
+    }) as Bag;
     const offers = out.offers as { availability?: string; price?: number };
     expect(offers.availability).toBe("https://schema.org/InStock");
     expect(offers.price).toBe(250_000);
@@ -152,13 +157,13 @@ describe("listingProductJsonLd", () => {
       slug: "acme",
       title: "Acme fund",
       priceDisplay: "From $50,000",
-    });
+    }) as Bag;
     const offers = out.offers as { priceSpecification?: string };
     expect(offers.priceSpecification).toBe("From $50,000");
   });
 
   it("omits offers entirely when neither price is set", () => {
-    const out = listingProductJsonLd({ slug: "acme", title: "Acme" });
+    const out = listingProductJsonLd({ slug: "acme", title: "Acme" }) as Bag;
     expect(out.offers).toBeUndefined();
   });
 
@@ -168,7 +173,7 @@ describe("listingProductJsonLd", () => {
       title: "Acme",
       locationState: "NSW",
       locationCity: "Sydney",
-    });
+    }) as Bag;
     expect(out.areaServed).toBeDefined();
   });
 });

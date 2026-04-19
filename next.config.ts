@@ -10,6 +10,16 @@ const nextConfig: NextConfig = {
   experimental: {
     // Reduce aggressive prefetching — only prefetch on hover, not on viewport
     optimisticClientCache: false,
+    // Rewrites barrel imports (e.g. `import { X } from "@sentry/nextjs"`)
+    // into deep path imports at build time, giving tree-shaking a chance
+    // to drop unused exports. Measurable win on the heavier packages
+    // below — Sentry + Supabase together were >100KB of dead weight
+    // shipped to the client in prior bundles.
+    optimizePackageImports: [
+      "@sentry/nextjs",
+      "@supabase/supabase-js",
+      "@supabase/ssr",
+    ],
   },
   images: {
     formats: ["image/avif", "image/webp"],
@@ -222,9 +232,9 @@ const nextConfig: NextConfig = {
 //
 // Using `as any` because Sentry v9 peer-deps target Next.js ≤15 types,
 // but the runtime integration works fine with Next.js 16.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const sentryWrapped: NextConfig = process.env.SENTRY_AUTH_TOKEN
-  ? (withSentryConfig(nextConfig as any, {
+  ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (withSentryConfig(nextConfig as any, {
       org: process.env.SENTRY_ORG,
       project: process.env.SENTRY_PROJECT,
       silent: !process.env.CI,
