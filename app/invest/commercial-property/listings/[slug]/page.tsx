@@ -13,6 +13,7 @@ import {
   fetchRelatedListings,
 } from "@/lib/investment-listings-query";
 import { getSubcategoryBySlug } from "@/lib/invest-categories";
+import ListingSchemaScripts from "@/components/ListingSchemaScripts";
 
 export const revalidate = 300;
 
@@ -121,6 +122,7 @@ export default async function CommercialListingDetailPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      <ListingSchemaScripts listing={l} vertical={CATEGORY_SLUG} />
 
       <section className="bg-white border-b border-slate-100 py-12">
         <div className="container-custom">
