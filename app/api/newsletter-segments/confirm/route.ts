@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { confirmSubscription, unsubscribeByToken } from "@/lib/newsletter";
+import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 
 export const runtime = "nodejs";
 
@@ -13,6 +14,10 @@ export const runtime = "nodejs";
  * unsubscribe the user).
  */
 export async function GET(request: NextRequest) {
+  if (!(await isAllowed("newsletter_segments_get", ipKey(request), { max: 20, refillPerSec: 0.2 }))) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
+
   const token = request.nextUrl.searchParams.get("token");
   if (!token) {
     return NextResponse.json({ error: "Missing token" }, { status: 400 });
@@ -28,6 +33,10 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  if (!(await isAllowed("newsletter_segments_post", ipKey(request), { max: 20, refillPerSec: 0.2 }))) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
+
   const body = await request.json().catch(() => ({}));
   const action = body.action as "unsubscribe" | undefined;
   const token = typeof body.token === "string" ? body.token : null;

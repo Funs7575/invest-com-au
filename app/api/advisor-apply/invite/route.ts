@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 
 // Public endpoint: look up an invite token to pre-fill the apply form
 export async function GET(request: NextRequest) {
+  if (!(await isAllowed("advisor_apply_invite_get", ipKey(request), { max: 20, refillPerSec: 0.1 }))) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
+
   const token = request.nextUrl.searchParams.get("token");
   if (!token) return NextResponse.json({ error: "Token required" }, { status: 400 });
 

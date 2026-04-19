@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 
 /**
  * GET /api/broker-review-invite?token=…
@@ -10,6 +11,9 @@ import { createAdminClient } from "@/lib/supabase/admin";
  * invite email to the client — the form submits it server-side.
  */
 export async function GET(req: NextRequest) {
+  if (!(await isAllowed("broker_review_invite_get", ipKey(req), { max: 30, refillPerSec: 0.2 }))) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
   const token = req.nextUrl.searchParams.get("token") ?? "";
   if (!/^[0-9a-f-]{36}$/i.test(token)) {
     return NextResponse.json({ error: "Invalid token" }, { status: 400 });
@@ -89,6 +93,9 @@ export async function GET(req: NextRequest) {
  * endpoint is for the short-path invite flow.
  */
 export async function POST(req: NextRequest) {
+  if (!(await isAllowed("broker_review_invite_post", ipKey(req), { max: 5, refillPerSec: 0.05 }))) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
   let body: Record<string, unknown>;
   try {
     body = (await req.json()) as Record<string, unknown>;

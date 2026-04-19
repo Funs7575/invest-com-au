@@ -11,8 +11,13 @@
  */
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 
 export async function GET(request: NextRequest) {
+  if (!(await isAllowed("review_token_get", ipKey(request), { max: 30, refillPerSec: 0.2 }))) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
+
   const { searchParams } = new URL(request.url);
   const token = searchParams.get("token");
 

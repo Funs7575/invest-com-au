@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
+import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 
 const log = logger("review-incentive");
 
@@ -67,6 +68,10 @@ export async function GET() {
  * Body: { broker_slug, rating, title, body, pros, cons }
  */
 export async function POST(req: NextRequest) {
+  if (!(await isAllowed("review_incentive_post", ipKey(req), { max: 15, refillPerSec: 0.1 }))) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
+
   const supabase = await createClient();
   const {
     data: { user },

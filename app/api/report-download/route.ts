@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
+import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 
 const log = logger("report-download");
 
@@ -16,6 +17,10 @@ export const dynamic = "force-dynamic";
  * Body: { email: string }
  */
 export async function POST(request: NextRequest) {
+  if (!(await isAllowed("report_download_post", ipKey(request), { max: 10, refillPerSec: 0.05 }))) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
+
   try {
     const body = await request.json();
     const { email } = body as { email: string };

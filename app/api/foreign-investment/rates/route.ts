@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
+import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 
 const log = logger("foreign-investment-rates");
 
@@ -33,6 +34,10 @@ interface RateRow {
 }
 
 export async function GET(req: NextRequest) {
+  if (!(await isAllowed("fi_rates_get", ipKey(req), { max: 60, refillPerSec: 1 }))) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
+
   const country = req.nextUrl.searchParams.get("country");
 
   try {

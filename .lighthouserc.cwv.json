@@ -1,0 +1,29 @@
+{
+  "ci": {
+    "collect": {
+      "startServerCommand": "npm run start",
+      "startServerReadyPattern": "Ready",
+      "url": [
+        "http://localhost:3000/",
+        "http://localhost:3000/compare",
+        "http://localhost:3000/broker/commsec"
+      ],
+      "numberOfRuns": 3,
+      "settings": {
+        "preset": "desktop",
+        "chromeFlags": "--no-sandbox --headless=new"
+      }
+    },
+    "assert": {
+      "aggregationMethod": "median-run",
+      "assertions": {
+        "largest-contentful-paint": ["error", { "maxNumericValue": 4500 }],
+        "cumulative-layout-shift": ["error", { "maxNumericValue": 0.15 }],
+        "total-blocking-time": ["error", { "maxNumericValue": 800 }]
+      }
+    },
+    "upload": {
+      "target": "temporary-public-storage"
+    }
+  }
+}
