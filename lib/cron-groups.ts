@@ -44,6 +44,7 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
   "daily-3": [
     "/api/cron/referral-payouts",
     "/api/cron/data-integrity-audit",
+    "/api/cron/observability-retention",
   ],
   "daily-4": [
     "/api/cron/email-bounce-sweep",
