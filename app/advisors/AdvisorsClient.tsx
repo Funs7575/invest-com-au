@@ -465,6 +465,13 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
             <span className="hidden md:inline">{dynamicDescription}</span>
           </p>
           <div className="flex items-center gap-2 md:gap-3 flex-wrap">
+            <Link
+              href={initialType ? `/find-advisor?focus=${initialType}` : "/find-advisor"}
+              className="inline-flex items-center gap-1.5 bg-amber-500 hover:bg-amber-600 text-white font-extrabold text-xs md:text-sm px-4 py-2 rounded-full transition-colors shadow-sm"
+            >
+              Get matched
+              <Icon name="arrow-right" size={14} />
+            </Link>
             <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-full shadow-sm text-[0.65rem] md:text-xs font-semibold text-slate-700">
               <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
               <span className="font-bold text-slate-900">{professionals.length}</span> advisors listed

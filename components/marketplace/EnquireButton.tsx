@@ -81,7 +81,13 @@ export default function EnquireButton({
     <>
       <button
         type="button"
-        onClick={() => setOpen(true)}
+        onClick={(e) => {
+          // Cards are often wrapped in a Next.js <Link> — stop the
+          // click from bubbling up and navigating away.
+          e.preventDefault();
+          e.stopPropagation();
+          setOpen(true);
+        }}
         className={`inline-flex items-center gap-1.5 font-bold text-xs px-3 py-2 rounded-lg transition-colors ${buttonCls}`}
       >
         Enquire
