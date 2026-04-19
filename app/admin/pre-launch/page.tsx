@@ -216,13 +216,98 @@ async function gatherMetrics(): Promise<Metric[]> {
   return metrics;
 }
 
+/* ─── V2: deployment & environment checks ─── */
+
+interface EnvCheck {
+  key: string;
+  required: boolean;
+  present: boolean;
+  note: string;
+}
+
+function checkEnv(): EnvCheck[] {
+  const vars: Array<Omit<EnvCheck, "present">> = [
+    { key: "NEXT_PUBLIC_SUPABASE_URL", required: true, note: "Supabase project URL — public, required for all client DB reads." },
+    { key: "NEXT_PUBLIC_SUPABASE_ANON_KEY", required: true, note: "Supabase anon key — required for all client DB reads." },
+    { key: "SUPABASE_SERVICE_ROLE_KEY", required: true, note: "Server-side admin client. Required for cron jobs, admin portal." },
+    { key: "NEXT_PUBLIC_SITE_URL", required: true, note: "Canonical site URL used in absoluteUrl() and sitemap." },
+    { key: "ANTHROPIC_API_KEY", required: true, note: "Powers the concierge chat + content ops scripts." },
+    { key: "RESEND_API_KEY", required: true, note: "Transactional email (newsletters, advisor claims, concierge digests)." },
+    { key: "STRIPE_SECRET_KEY", required: false, note: "Sponsor billing + advisor subscription — optional for soft launch." },
+    { key: "STRIPE_WEBHOOK_SECRET", required: false, note: "Stripe webhook verification. Required if STRIPE_SECRET_KEY is set." },
+    { key: "NEXT_PUBLIC_SENTRY_DSN", required: false, note: "Client-side Sentry error reporting." },
+    { key: "SENTRY_AUTH_TOKEN", required: false, note: "Sentry source-map upload at build time." },
+    { key: "CRON_SECRET", required: true, note: "Authenticates scheduled Vercel cron jobs." },
+  ];
+  return vars.map((v) => ({
+    ...v,
+    present: Boolean(process.env[v.key] && process.env[v.key]!.trim()),
+  }));
+}
+
+interface UrlCheck {
+  path: string;
+  status: number | null;
+  ok: boolean;
+  note: string;
+}
+
+async function checkCriticalUrls(): Promise<UrlCheck[]> {
+  const base =
+    process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
+    "https://invest.com.au";
+
+  const paths: Array<{ path: string; note: string }> = [
+    { path: "/", note: "Homepage" },
+    { path: "/sitemap.xml", note: "Sitemap index — Google crawls this first" },
+    { path: "/robots.txt", note: "Robots directives" },
+    { path: "/compare", note: "Broker comparison hub" },
+    { path: "/best/low-fees", note: "Best-for category template" },
+    { path: "/api/health", note: "Application health endpoint" },
+  ];
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 4000);
+  try {
+    const results = await Promise.all(
+      paths.map(async (p) => {
+        try {
+          const r = await fetch(`${base}${p.path}`, {
+            method: "GET",
+            redirect: "manual",
+            cache: "no-store",
+            signal: controller.signal,
+          });
+          const ok = r.status >= 200 && r.status < 400;
+          return { path: p.path, status: r.status, ok, note: p.note };
+        } catch {
+          return { path: p.path, status: null, ok: false, note: p.note };
+        }
+      }),
+    );
+    return results;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 export default async function AdminPreLaunchPage() {
   const metrics = await gatherMetrics();
+  const envChecks = checkEnv();
+  const urlChecks = await checkCriticalUrls();
   const blockers = metrics.filter((m) => m.severity === "block").length;
   const warnings = metrics.filter((m) => m.severity === "warn").length;
+  const missingRequiredEnv = envChecks.filter(
+    (e) => e.required && !e.present,
+  ).length;
+  const urlFailures = urlChecks.filter((u) => !u.ok).length;
 
   const overallSeverity: Metric["severity"] =
-    blockers > 0 ? "block" : warnings > 2 ? "warn" : "ok";
+    blockers > 0 || missingRequiredEnv > 0 || urlFailures > 0
+      ? "block"
+      : warnings > 2
+        ? "warn"
+        : "ok";
 
   return (
     <AdminShell
@@ -261,7 +346,7 @@ export default async function AdminPreLaunchPage() {
             }`}
           >
             {overallSeverity === "block"
-              ? `${blockers} blocker(s) detected — address before hard launch`
+              ? `${blockers + missingRequiredEnv + urlFailures} blocker(s) detected — address before hard launch`
               : overallSeverity === "warn"
                 ? `${warnings} warning(s) — review before hard launch`
                 : "All content-health checks pass"}
@@ -339,6 +424,116 @@ export default async function AdminPreLaunchPage() {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Environment variables */}
+        <div className="bg-white border border-slate-200 rounded-xl p-5">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm font-extrabold uppercase tracking-wide text-slate-700">
+              Environment variables
+            </h2>
+            <span
+              className={`text-[10px] font-extrabold uppercase tracking-wide px-2 py-0.5 rounded-full ${
+                missingRequiredEnv > 0
+                  ? "bg-rose-100 text-rose-800"
+                  : "bg-emerald-100 text-emerald-800"
+              }`}
+            >
+              {missingRequiredEnv > 0
+                ? `${missingRequiredEnv} missing`
+                : "All required present"}
+            </span>
+          </div>
+          <div className="divide-y divide-slate-100">
+            {envChecks.map((e) => (
+              <div
+                key={e.key}
+                className="py-2 flex items-start justify-between gap-3"
+              >
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <code className="text-xs font-mono text-slate-900">
+                      {e.key}
+                    </code>
+                    {e.required && (
+                      <span className="text-[9px] font-bold uppercase tracking-wide text-slate-500">
+                        required
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[11px] text-slate-500 mt-0.5 max-w-xl">
+                    {e.note}
+                  </p>
+                </div>
+                <span
+                  className={`text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full shrink-0 ${
+                    e.present
+                      ? "bg-emerald-50 text-emerald-800"
+                      : e.required
+                        ? "bg-rose-50 text-rose-800"
+                        : "bg-slate-100 text-slate-600"
+                  }`}
+                >
+                  {e.present ? "Set" : e.required ? "Missing" : "Not set"}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Critical URL checks */}
+        <div className="bg-white border border-slate-200 rounded-xl p-5">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm font-extrabold uppercase tracking-wide text-slate-700">
+              Critical URL reachability
+            </h2>
+            <span
+              className={`text-[10px] font-extrabold uppercase tracking-wide px-2 py-0.5 rounded-full ${
+                urlFailures > 0
+                  ? "bg-rose-100 text-rose-800"
+                  : "bg-emerald-100 text-emerald-800"
+              }`}
+            >
+              {urlFailures > 0
+                ? `${urlFailures} failing`
+                : "All reachable"}
+            </span>
+          </div>
+          <p className="text-[11px] text-slate-500 mb-3">
+            GETs each path against{" "}
+            <code className="bg-slate-50 px-1 rounded">
+              NEXT_PUBLIC_SITE_URL
+            </code>{" "}
+            with a 4s timeout. 3xx redirects count as OK. A failure here likely
+            means Vercel is down, DNS is misconfigured, or the route is
+            broken.
+          </p>
+          <div className="divide-y divide-slate-100">
+            {urlChecks.map((u) => (
+              <div
+                key={u.path}
+                className="py-2 flex items-center justify-between gap-3"
+              >
+                <div className="min-w-0">
+                  <code className="text-xs font-mono text-slate-900 truncate block">
+                    {u.path}
+                  </code>
+                  <p className="text-[11px] text-slate-500 mt-0.5">
+                    {u.note}
+                  </p>
+                </div>
+                <span
+                  className={`text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full shrink-0 ${
+                    u.ok
+                      ? "bg-emerald-50 text-emerald-800"
+                      : "bg-rose-50 text-rose-800"
+                  }`}
+                >
+                  {u.status == null ? "Timeout" : u.status}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Ops notes */}

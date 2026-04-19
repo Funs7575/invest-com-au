@@ -78,6 +78,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/advisor-apply", "/switching-calculator", "/savings-calculator",
     "/quick-audit", "/portfolio-xray", "/tax-optimizer", "/fee-simulator",
     "/trade-cost-calculator", "/us-share-costs-calculator", "/cgt-calculator",
+    "/tools", "/tools/should-i-switch", "/tools/visa-investment-calculator", "/tools/withholding-tax-calculator",
     "/firb-fee-estimator", "/non-resident-dividend-calculator", "/non-resident-cgt-checker",
     "/franking-credits-calculator", "/chess-lookup",
     "/share-trading", "/crypto", "/savings", "/super", "/cfd",

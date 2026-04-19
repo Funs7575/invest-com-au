@@ -70,17 +70,46 @@ export default function ConciergeClient() {
   const [input, setInput] = useState("");
   const [streaming, setStreaming] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [hydrating, setHydrating] = useState(false);
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
 
-  // Restore session id on mount.
+  // Restore session id on mount and fetch stored history.
   useEffect(() => {
+    let cancelled = false;
     try {
       const stored = localStorage.getItem(SESSION_KEY);
-      if (stored && stored.length <= 120) setSessionId(stored);
+      if (stored && stored.length <= 120) {
+        setSessionId(stored);
+        setHydrating(true);
+        (async () => {
+          try {
+            const r = await fetch(
+              `/api/concierge?session_id=${encodeURIComponent(stored)}`,
+              { cache: "no-store" },
+            );
+            if (!r.ok) return;
+            const json = (await r.json()) as {
+              messages?: Array<{ role: "user" | "assistant"; content: string }>;
+            };
+            if (cancelled || !json.messages?.length) return;
+            setMessages(
+              json.messages.map((m) => ({ ...m, id: genId() })),
+            );
+          } catch {
+            // offline / blocked — fine, session starts fresh
+          } finally {
+            if (!cancelled) setHydrating(false);
+          }
+        })();
+      }
     } catch {
       // localStorage blocked — fine, we'll generate server-side.
     }
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   // Scroll to bottom on new content.
@@ -111,6 +140,8 @@ export default function ConciergeClient() {
         { role: "assistant", content: "", id: assistantId },
       ]);
 
+      const ac = new AbortController();
+      abortRef.current = ac;
       try {
         const res = await fetch("/api/concierge", {
           method: "POST",
@@ -120,6 +151,7 @@ export default function ConciergeClient() {
             session_id: sessionId ?? undefined,
             history,
           }),
+          signal: ac.signal,
         });
 
         if (!res.ok || !res.body) {
@@ -173,19 +205,58 @@ export default function ConciergeClient() {
           }
         }
       } catch (err) {
-        setError(
-          err instanceof Error
-            ? err.message
-            : "Unexpected error — please try again",
-        );
-        setMessages((prev) => prev.filter((m) => m.id !== assistantId));
+        const aborted =
+          err instanceof DOMException && err.name === "AbortError";
+        if (!aborted) {
+          setError(
+            err instanceof Error
+              ? err.message
+              : "Unexpected error — please try again",
+          );
+          setMessages((prev) => prev.filter((m) => m.id !== assistantId));
+        } else {
+          setMessages((prev) =>
+            prev.map((m) =>
+              m.id === assistantId && m.content.length === 0
+                ? { ...m, content: "_(stopped)_" }
+                : m,
+            ),
+          );
+        }
       } finally {
+        abortRef.current = null;
         setStreaming(false);
         requestAnimationFrame(() => textareaRef.current?.focus());
       }
     },
     [streaming, messages, sessionId],
   );
+
+  const stopStream = useCallback(() => {
+    abortRef.current?.abort();
+  }, []);
+
+  const clearSession = useCallback(async () => {
+    if (streaming) return;
+    const sid = sessionId;
+    setMessages([]);
+    setError(null);
+    try {
+      localStorage.removeItem(SESSION_KEY);
+    } catch {
+      // ignore
+    }
+    setSessionId(null);
+    if (sid) {
+      try {
+        await fetch(`/api/concierge?session_id=${encodeURIComponent(sid)}`, {
+          method: "DELETE",
+        });
+      } catch {
+        // server-side deletion best-effort
+      }
+    }
+  }, [streaming, sessionId]);
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -216,14 +287,28 @@ export default function ConciergeClient() {
             <span className="text-slate-600">/</span>
             <span className="text-white font-medium">Concierge</span>
           </nav>
-          <h1 className="text-2xl md:text-3xl font-extrabold mb-1">
-            Investment concierge
-          </h1>
-          <p className="text-xs md:text-sm text-slate-400 max-w-2xl">
-            Ask anything about Australian investing — platforms, funds,
-            advisors, SMSF, FIRB, foreign investor rules. Educational only,
-            not personal financial advice.
-          </p>
+          <div className="flex items-start justify-between gap-3 flex-wrap">
+            <div>
+              <h1 className="text-2xl md:text-3xl font-extrabold mb-1">
+                Investment concierge
+              </h1>
+              <p className="text-xs md:text-sm text-slate-400 max-w-2xl">
+                Ask anything about Australian investing — platforms, funds,
+                advisors, SMSF, FIRB, foreign investor rules. Educational
+                only, not personal financial advice.
+              </p>
+            </div>
+            {messages.length > 0 && (
+              <button
+                type="button"
+                onClick={() => void clearSession()}
+                disabled={streaming}
+                className="text-[11px] font-semibold text-slate-300 hover:text-white disabled:opacity-40 border border-slate-700 hover:border-slate-500 rounded-full px-3 py-1 transition-colors"
+              >
+                Clear conversation
+              </button>
+            )}
+          </div>
         </div>
       </section>
 
@@ -231,7 +316,11 @@ export default function ConciergeClient() {
         <div className="container-custom max-w-4xl py-5 md:py-8">
           {/* Messages */}
           <div className="bg-white border border-slate-200 rounded-2xl p-4 md:p-6 min-h-[320px] mb-4">
-            {messages.length === 0 ? (
+            {hydrating && messages.length === 0 ? (
+              <div className="text-center py-12 text-xs text-slate-500">
+                Restoring your last conversation…
+              </div>
+            ) : messages.length === 0 ? (
               <div className="text-center py-8">
                 <div className="w-10 h-10 mx-auto mb-3 rounded-full bg-amber-100 flex items-center justify-center">
                   <Icon name="message-circle" size={20} className="text-amber-600" />
@@ -315,14 +404,25 @@ export default function ConciergeClient() {
               className="w-full bg-white border border-slate-300 rounded-2xl px-4 py-3 pr-24 text-sm focus:ring-2 focus:ring-amber-400 focus:outline-none resize-none"
               disabled={streaming}
             />
-            <button
-              type="submit"
-              disabled={!canSend}
-              className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 bg-amber-500 hover:bg-amber-600 disabled:bg-slate-300 text-white font-bold text-xs px-4 py-2 rounded-lg"
-            >
-              {streaming ? "Thinking…" : "Send"}
-              <Icon name="arrow-right" size={12} />
-            </button>
+            {streaming ? (
+              <button
+                type="button"
+                onClick={stopStream}
+                className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs px-4 py-2 rounded-lg"
+              >
+                Stop
+                <Icon name="x-circle" size={12} />
+              </button>
+            ) : (
+              <button
+                type="submit"
+                disabled={!canSend}
+                className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 bg-amber-500 hover:bg-amber-600 disabled:bg-slate-300 text-white font-bold text-xs px-4 py-2 rounded-lg"
+              >
+                Send
+                <Icon name="arrow-right" size={12} />
+              </button>
+            )}
           </form>
 
           <p className="text-[11px] text-slate-500 leading-relaxed mt-3">

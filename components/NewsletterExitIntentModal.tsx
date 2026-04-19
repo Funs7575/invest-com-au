@@ -58,8 +58,46 @@ export default function NewsletterExitIntentModal({
     [variant, pathname],
   );
 
+  // Only fire on pages where the reader is actively consuming
+  // content — article / compare / broker / advisor / best-for /
+  // tools. Never on homepage, login, account, onboarding or
+  // admin flows where an exit-intent popup is just friction.
+  const isEligiblePath = useCallback((path: string): boolean => {
+    if (!path || path === "/") return false;
+    const ALLOW_PREFIXES = [
+      "/article/",
+      "/compare",
+      "/broker/",
+      "/advisor/",
+      "/advisors/",
+      "/best/",
+      "/best-for/",
+      "/invest/",
+      "/tools/",
+      "/how-to/",
+      "/versus/",
+      "/research/",
+      "/foreign-investment/",
+      "/smsf",
+    ];
+    const DENY_PREFIXES = [
+      "/admin",
+      "/advisor-portal",
+      "/account",
+      "/login",
+      "/signup",
+      "/onboarding",
+      "/checkout",
+      "/quiz",
+      "/find-advisor",
+    ];
+    if (DENY_PREFIXES.some((p) => path.startsWith(p))) return false;
+    return ALLOW_PREFIXES.some((p) => path.startsWith(p));
+  }, []);
+
   const maybeFire = useCallback(() => {
     if (firedRef.current || disabled) return;
+    if (!isEligiblePath(pathname || "")) return;
     try {
       const k = "inv_newsletter_exit_intent_shown";
       if (sessionStorage.getItem(k)) return;
@@ -70,7 +108,7 @@ export default function NewsletterExitIntentModal({
     firedRef.current = true;
     setOpen(true);
     logEvent("shown");
-  }, [disabled, logEvent]);
+  }, [disabled, logEvent, isEligiblePath, pathname]);
 
   useEffect(() => {
     if (disabled) return;
@@ -96,11 +134,31 @@ export default function NewsletterExitIntentModal({
       lastScroll = y;
     };
 
+    // Mobile-UA 45s idle fallback — if the reader hasn't
+    // interacted (scroll, tap, touchmove) for 45 seconds AND has
+    // already seen some of the page, fire the modal.
+    let lastInteraction = Date.now();
+    const isMobileUA =
+      typeof navigator !== "undefined" &&
+      /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+    const onInteraction = () => {
+      lastInteraction = Date.now();
+    };
+    const idleCheck = window.setInterval(() => {
+      if (!isMobileUA) return;
+      if (Date.now() - lastInteraction >= 45_000 && seenDeep) maybeFire();
+    }, 5_000);
+
     document.addEventListener("mouseleave", onMouseLeave);
     window.addEventListener("scroll", onScroll, { passive: true });
+    document.addEventListener("touchstart", onInteraction, { passive: true });
+    document.addEventListener("touchmove", onInteraction, { passive: true });
     return () => {
       document.removeEventListener("mouseleave", onMouseLeave);
       window.removeEventListener("scroll", onScroll);
+      document.removeEventListener("touchstart", onInteraction);
+      document.removeEventListener("touchmove", onInteraction);
+      window.clearInterval(idleCheck);
     };
   }, [maybeFire, disabled]);
 

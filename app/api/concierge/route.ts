@@ -220,3 +220,68 @@ export async function POST(req: NextRequest) {
     },
   });
 }
+
+/**
+ * GET /api/concierge?session_id=…
+ *
+ * Returns prior-turn history for the supplied session so the UI can
+ * rehydrate a conversation after a page refresh. Ordered oldest-first
+ * and capped at the last 40 turns.
+ */
+export async function GET(req: NextRequest) {
+  const session_id = req.nextUrl.searchParams.get("session_id") ?? "";
+  if (!/^[a-zA-Z0-9_-]{8,120}$/.test(session_id)) {
+    return NextResponse.json({ messages: [] });
+  }
+  if (!(await isAllowed("concierge_read", ipKey(req), { max: 60, refillPerSec: 1 }))) {
+    return new Response("Too many requests", { status: 429 });
+  }
+
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("chatbot_conversations")
+    .select("role, content, created_at")
+    .eq("session_id", session_id)
+    .order("created_at", { ascending: false })
+    .limit(40);
+
+  if (error) {
+    log.error("history_fetch_failed", { err: error.message });
+    return NextResponse.json({ messages: [] });
+  }
+
+  const messages = (data ?? [])
+    .slice()
+    .reverse()
+    .filter((r): r is { role: "user" | "assistant"; content: string; created_at: string } =>
+      (r.role === "user" || r.role === "assistant") && typeof r.content === "string",
+    )
+    .map((r) => ({ role: r.role, content: r.content }));
+
+  return NextResponse.json({ messages });
+}
+
+/**
+ * DELETE /api/concierge?session_id=…
+ *
+ * Clears the session's stored history so the user can start over.
+ */
+export async function DELETE(req: NextRequest) {
+  const session_id = req.nextUrl.searchParams.get("session_id") ?? "";
+  if (!/^[a-zA-Z0-9_-]{8,120}$/.test(session_id)) {
+    return NextResponse.json({ ok: false, error: "invalid session" }, { status: 400 });
+  }
+  if (!(await isAllowed("concierge_delete", ipKey(req), { max: 10, refillPerSec: 0.1 }))) {
+    return new Response("Too many requests", { status: 429 });
+  }
+  const supabase = createAdminClient();
+  const { error } = await supabase
+    .from("chatbot_conversations")
+    .delete()
+    .eq("session_id", session_id);
+  if (error) {
+    log.error("history_delete_failed", { err: error.message });
+    return NextResponse.json({ ok: false }, { status: 500 });
+  }
+  return NextResponse.json({ ok: true });
+}

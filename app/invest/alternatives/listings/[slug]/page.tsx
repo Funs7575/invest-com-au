@@ -14,6 +14,7 @@ import {
   ALTERNATIVES_SUB_CATEGORIES,
 } from "@/lib/investment-listings-query";
 import { getSubcategoryBySlug } from "@/lib/invest-categories";
+import ListingSchemaScripts from "@/components/ListingSchemaScripts";
 
 export const revalidate = 300;
 
@@ -155,6 +156,7 @@ export default async function AlternativesListingDetailPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      <ListingSchemaScripts listing={l} vertical={CATEGORY_SLUG} />
 
       {/* Hero */}
       <section className="bg-white border-b border-slate-100 py-12">
