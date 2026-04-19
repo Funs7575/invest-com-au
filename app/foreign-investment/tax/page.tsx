@@ -37,7 +37,15 @@ export const metadata: Metadata = {
     ],
   },
   twitter: { card: "summary_large_image" },
-  alternates: { canonical: `${SITE_URL}/foreign-investment/tax` },
+  alternates: {
+    canonical: `${SITE_URL}/foreign-investment/tax`,
+    languages: {
+      "en-AU": `${SITE_URL}/foreign-investment/tax`,
+      "zh-CN": `${SITE_URL}/zh/foreign-investment/tax`,
+      "ko-KR": `${SITE_URL}/ko/foreign-investment/tax`,
+      "x-default": `${SITE_URL}/foreign-investment/tax`,
+    },
+  },
 };
 
 export const revalidate = 86400;
