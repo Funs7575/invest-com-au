@@ -170,8 +170,13 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
     { name: b.name },
   ]);
 
-  // AggregateRating JSON-LD for user reviews (star ratings in Google results)
-  // Uses SoftwareApplication type to distinguish user ratings from editorial review on FinancialProduct
+  // AggregateRating + individual Reviews JSON-LD for user reviews.
+  // SoftwareApplication type keeps this entity distinct from the
+  // editorial FinancialProduct review — Google honours both and shows
+  // star-rating rich results on SERP when ≥1 user review exists.
+  // We nest the top 5 most-recent approved reviews as individual
+  // Review items so rich snippets can display review excerpts.
+  const topUserReviews = ((userReviews ?? []) as UserReview[]).slice(0, 5);
   const aggregateRatingLd = reviewStats && reviewStats.review_count > 0 && reviewStats.average_rating != null ? {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
@@ -185,6 +190,25 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
       worstRating: 1,
       ratingCount: reviewStats.review_count,
     },
+    ...(topUserReviews.length > 0
+      ? {
+          review: topUserReviews.map((r) => ({
+            "@type": "Review",
+            author: { "@type": "Person", name: r.display_name || "Anonymous" },
+            datePublished: r.created_at
+              ? new Date(r.created_at).toISOString().split("T")[0]
+              : undefined,
+            name: r.title || `${b.name} review`,
+            reviewBody: (r.body || "").slice(0, 500),
+            reviewRating: {
+              "@type": "Rating",
+              ratingValue: r.rating,
+              bestRating: 5,
+              worstRating: 1,
+            },
+          })),
+        }
+      : {}),
   } : null;
 
   // Dates for visible byline (must match structured data)
