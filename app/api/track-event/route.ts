@@ -35,8 +35,10 @@ const ALLOWED_EVENTS = new Set([
   // General page engagement
   'booking_click',
   'page_duration',
-  // Apply page
   'conversion_intent',
+  // Homepage hero A/B test events (variant in event_data.variant, CTA in event_data.target)
+  'home_hero_impression',
+  'home_hero_click',
 ]);
 
 export async function POST(request: NextRequest) {

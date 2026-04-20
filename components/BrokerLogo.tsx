@@ -17,6 +17,14 @@ interface BrokerLogoProps {
   };
   size?: "xs" | "sm" | "md" | "lg" | "xl";
   className?: string;
+  /**
+   * Set `true` when the logo is the LCP element of the page (e.g. on
+   * `/broker/[slug]` the hero logo). Turns on Next/Image `priority`
+   * and drops the `lazy` loading hint so the browser fetches it with
+   * the initial HTML. Leave `false` (default) everywhere else to
+   * preserve bandwidth.
+   */
+  priority?: boolean;
 }
 
 const SIZES = {
@@ -38,7 +46,12 @@ function LetterFallback({ broker, s }: { broker: BrokerLogoProps["broker"]; s: (
   );
 }
 
-export default function BrokerLogo({ broker, size = "md", className = "" }: BrokerLogoProps) {
+export default function BrokerLogo({
+  broker,
+  size = "md",
+  className = "",
+  priority = false,
+}: BrokerLogoProps) {
   const s = SIZES[size];
   const [imgError, setImgError] = useState(false);
 
@@ -56,7 +69,8 @@ export default function BrokerLogo({ broker, size = "md", className = "" }: Brok
             width={s.img}
             height={s.img}
             className="w-full h-full object-contain p-0.5"
-            loading="lazy"
+            loading={priority ? "eager" : "lazy"}
+            fetchPriority={priority ? "high" : undefined}
             onError={() => setImgError(true)}
           />
         </div>
@@ -72,7 +86,8 @@ export default function BrokerLogo({ broker, size = "md", className = "" }: Brok
           height={s.img}
           className="w-full h-full object-contain p-0.5"
           sizes={`${s.img}px`}
-          loading="lazy"
+          priority={priority}
+          loading={priority ? undefined : "lazy"}
           onError={() => setImgError(true)}
         />
       </div>

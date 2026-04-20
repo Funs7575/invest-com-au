@@ -289,7 +289,7 @@ export default function BrokerReviewClient({
         {/* Header */}
         <div className="bg-white border border-slate-200 rounded-2xl p-4 md:p-6 mb-4 md:mb-6 shadow-sm">
           <div className="flex items-start gap-3 md:gap-4 mb-3 md:mb-4">
-            <BrokerLogo broker={b} size="xl" />
+            <BrokerLogo broker={b} size="xl" priority />
             <div className="min-w-0 flex-1">
               <h1 className="text-xl md:text-3xl font-extrabold leading-tight text-slate-900">{b.name} Review ({CURRENT_YEAR})</h1>
               <p className="text-slate-500 mt-0.5 md:mt-1 text-xs md:text-base">{b.tagline}</p>
