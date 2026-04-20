@@ -19,15 +19,76 @@ export interface RecommendedBroker {
   affiliateUrl: string; // tracking URL via /api/drip-click
 }
 
+/** Broker row shape consumed by the scorer — a subset of the brokers table. */
+export interface ScorableBroker {
+  slug: string;
+  name: string;
+  rating: number | null;
+  us_fee_value: number | null;
+  asx_fee_value: number | null;
+}
+
+/**
+ * Pure scoring heuristic for the drip-email recommender. Exported for unit
+ * tests — the DB layer in `getPersonalizedBrokers` just wraps this.
+ *
+ *  - baseline = rating * 10 (rating defaults to 3 if null)
+ *  - +100 if broker.slug === ctx.top_match_slug (quiz "top match")
+ *  - +max(0, 20 - us_fee_value) when ctx.trading_interest includes "us_shares"
+ *  - +15 when ctx.experience_level is "beginner" and rating > 4
+ *  - +max(0, 15 - asx_fee_value) for high-investment cohorts
+ *    (range key contains large/xlarge/whale/$50,000/$100,000)
+ */
+export function scoreBrokerForContext(
+  broker: ScorableBroker,
+  ctx: BrokerRecommendationContext,
+): number {
+  let score = (broker.rating ?? 3) * 10;
+
+  if (ctx.top_match_slug && broker.slug === ctx.top_match_slug) {
+    score += 100;
+  }
+
+  if (
+    ctx.trading_interest?.includes("us_shares") &&
+    broker.us_fee_value != null
+  ) {
+    score += Math.max(0, 20 - broker.us_fee_value);
+  }
+
+  if (
+    ctx.experience_level &&
+    ctx.experience_level.toLowerCase() === "beginner" &&
+    broker.rating != null &&
+    broker.rating > 4
+  ) {
+    score += 15;
+  }
+
+  const highRangePatterns = [
+    "large",
+    "xlarge",
+    "whale",
+    "$50,000",
+    "$100,000",
+  ];
+  if (
+    ctx.investment_range &&
+    highRangePatterns.some((p) =>
+      ctx.investment_range!.toLowerCase().includes(p.toLowerCase()),
+    ) &&
+    broker.asx_fee_value != null
+  ) {
+    score += Math.max(0, 15 - broker.asx_fee_value);
+  }
+
+  return score;
+}
+
 /**
  * Returns the top 3 personalized broker recommendations based on user context.
- *
- * Scoring heuristic:
- *  - top_match_slug from the quiz gets a large boost (+100)
- *  - trading_interest containing "us_shares" boosts brokers with low us_fee
- *  - experience_level "beginner" boosts highly-rated brokers (rating > 4)
- *  - high investment_range boosts low-fee brokers
- *  - baseline: sort by rating descending
+ * Delegates scoring to `scoreBrokerForContext` — see that function for the
+ * heuristic details.
  */
 export async function getPersonalizedBrokers(
   ctx: BrokerRecommendationContext,
@@ -47,47 +108,10 @@ export async function getPersonalizedBrokers(
 
   if (!brokers || brokers.length === 0) return [];
 
-  // Score each broker based on user context
-  const scored = brokers.map((b) => {
-    let score = (b.rating ?? 3) * 10; // baseline: rating * 10
-
-    // If quiz provided a top match, give it a massive boost
-    if (ctx.top_match_slug && b.slug === ctx.top_match_slug) {
-      score += 100;
-    }
-
-    // If user is interested in US shares, boost low-fee US brokers
-    if (ctx.trading_interest?.includes("us_shares") && b.us_fee_value != null) {
-      // Lower US fee → higher boost (max ~20 points for $0 fee)
-      score += Math.max(0, 20 - b.us_fee_value);
-    }
-
-    // Beginners prefer simple, highly-rated platforms
-    if (
-      ctx.experience_level &&
-      ctx.experience_level.toLowerCase() === "beginner" &&
-      b.rating &&
-      b.rating > 4
-    ) {
-      score += 15;
-    }
-
-    // High investment range → prefer low ASX fees
-    // Handles both raw keys (large, xlarge, whale) and human-readable labels
-    const highRangePatterns = ["large", "xlarge", "whale", "$50,000", "$100,000"];
-    if (
-      ctx.investment_range &&
-      highRangePatterns.some((p) =>
-        ctx.investment_range!.toLowerCase().includes(p.toLowerCase())
-      ) &&
-      b.asx_fee_value != null
-    ) {
-      // Lower ASX fee → higher boost (max ~15 points for $0 fee)
-      score += Math.max(0, 15 - b.asx_fee_value);
-    }
-
-    return { broker: b, score };
-  });
+  const scored = brokers.map((b) => ({
+    broker: b,
+    score: scoreBrokerForContext(b, ctx),
+  }));
 
   // Sort by score descending, then rating descending, then name ascending
   scored.sort(

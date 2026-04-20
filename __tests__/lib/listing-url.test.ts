@@ -7,7 +7,7 @@ function listing(
 ): Pick<InvestmentListing, "vertical" | "sub_category" | "slug"> {
   return {
     vertical: "startup" as InvestListingVertical,
-    sub_category: null,
+    sub_category: undefined,
     slug: "acme-corp",
     ...overrides,
   };
@@ -24,7 +24,7 @@ describe("categoryForListing", () => {
     ["mining", "mining"],
     ["startup", "startups"],
   ])("maps vertical %s to slug %s", (vertical, slug) => {
-    expect(categoryForListing({ vertical, sub_category: null })).toBe(slug);
+    expect(categoryForListing({ vertical, sub_category: undefined })).toBe(slug);
   });
 
   it("overrides 'fund' vertical to 'alternatives' for art/wine/watches/cars/coins/whisky sub-categories", () => {
@@ -86,7 +86,7 @@ describe("listingUrl", () => {
       listingUrl(
         listing({
           vertical: "fund",
-          sub_category: null,
+          sub_category: undefined,
           slug: "balanced-fund",
         }),
       ),
