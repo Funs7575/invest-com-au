@@ -27,7 +27,7 @@ export function SiteFooter() {
             { label: "Share Trading", href: "/share-trading" },
             { label: "ETFs", href: "/compare/etfs" },
             { label: "Crypto", href: "/crypto" },
-            { label: "Super Funds", href: "/compare/super" },
+            { label: "Super Funds", href: "/super" },
             { label: "Savings Accounts", href: "/savings" },
             { label: "Current Deals", href: "/deals" },
             { label: "Broker vs Broker", href: "/versus" },

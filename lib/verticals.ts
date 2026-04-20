@@ -628,4 +628,39 @@ export function getAllVerticalSlugs(): string[] {
   return VERTICALS.map((v) => v.slug);
 }
 
+const PILLAR_SHORT_LABELS: Record<string, string> = {
+  "share-trading": "Share Trading",
+  crypto: "Crypto",
+  savings: "Savings",
+  super: "Super",
+  cfd: "CFD & Forex",
+  "term-deposits": "Term Deposits",
+  "robo-advisors": "Robo-Advisors",
+  "property-platforms": "Property Platforms",
+  "research-tools": "Research Tools",
+};
+
+export interface RelatedVertical {
+  slug: string;
+  label: string;
+  tagline: string;
+}
+
+/**
+ * Sibling pillars for cross-sell strips. Excludes the current vertical.
+ * Tagline is the first stat ("20+ Platforms Compared" style) when available.
+ */
+export function getRelatedVerticals(currentSlug: string): RelatedVertical[] {
+  return VERTICALS.filter((v) => v.slug !== currentSlug).map((v) => {
+    const firstStat = v.stats[0];
+    return {
+      slug: v.slug,
+      label: PILLAR_SHORT_LABELS[v.slug] ?? v.slug,
+      tagline: firstStat
+        ? `${firstStat.value} ${firstStat.label.toLowerCase()}`
+        : "",
+    };
+  });
+}
+
 export { VERTICALS };

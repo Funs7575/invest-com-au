@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Broker, Article } from "@/lib/types";
 import type { VerticalConfig } from "@/lib/verticals";
+import { getRelatedVerticals } from "@/lib/verticals";
 import {
   absoluteUrl,
   breadcrumbJsonLd,
@@ -158,6 +159,7 @@ export default function VerticalPillarPage({
             ...(advisors.length > 0 ? [{ id: "expert-advisors", label: "Advisors" }] : []),
             ...(expertArticles.length > 0 ? [{ id: "expert-insights", label: "Expert Insights" }] : []),
             ...(config.faqs.length > 0 ? [{ id: "faq", label: "FAQ" }] : []),
+            { id: "other-categories", label: "Other Categories" },
             ...(relatedArticles.length > 0
               ? [{ id: "related-articles", label: "Articles" }]
               : []),
@@ -538,6 +540,7 @@ export default function VerticalPillarPage({
                         href={`/advisor/${advisor.slug}`}
                         className="flex items-center gap-3 p-3 bg-white border border-violet-100 rounded-xl hover:border-violet-300 hover:shadow-md transition-all group"
                       >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           src={advisor.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(advisor.name)}&size=80&background=7c3aed&color=fff`}
                           alt={advisor.name}
@@ -601,8 +604,9 @@ export default function VerticalPillarPage({
               <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 mb-4">Expert Insights</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {expertArticles.map((article: ExpertArticle) => (
-                  <a key={article.id} href={`/expert/${article.slug}`} className="bg-white border border-slate-200 rounded-xl p-4 hover:shadow-md hover:border-slate-300 transition-all group">
+                  <Link key={article.id} href={`/expert/${article.slug}`} className="bg-white border border-slate-200 rounded-xl p-4 hover:shadow-md hover:border-slate-300 transition-all group">
                     <div className="flex items-center gap-2 mb-2.5">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={article.author_photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(article.author_name || 'Expert')}&background=7c3aed&color=fff&size=40`}
                         alt={article.author_name || 'Expert'}
@@ -618,11 +622,11 @@ export default function VerticalPillarPage({
                     {article.category && (
                       <span className="inline-block mt-2 px-2 py-0.5 bg-violet-50 text-violet-600 text-[0.58rem] font-medium rounded-full">{article.category}</span>
                     )}
-                  </a>
+                  </Link>
                 ))}
               </div>
               <div className="mt-3 text-center">
-                <a href="/expert" className="text-xs font-bold text-violet-600 hover:text-violet-800 transition-colors">View all expert articles &rarr;</a>
+                <Link href="/expert" className="text-xs font-bold text-violet-600 hover:text-violet-800 transition-colors">View all expert articles &rarr;</Link>
               </div>
             </section>
           )}
@@ -650,6 +654,31 @@ export default function VerticalPillarPage({
               </div>
             </div>
           )}
+
+          {/* ─── Other Categories (cross-sell to sibling pillars) ─── */}
+          <div id="other-categories" className="mb-6 md:mb-10 scroll-mt-20">
+            <h2 className="text-lg md:text-xl font-bold mb-3">
+              Compare Other Categories
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
+              {getRelatedVerticals(config.slug).map((rv) => (
+                <Link
+                  key={rv.slug}
+                  href={`/${rv.slug}`}
+                  className="block p-3 border border-slate-200 rounded-xl hover:border-slate-400 hover:bg-slate-50/50 transition-all group"
+                >
+                  <span className="text-sm font-semibold text-slate-800 group-hover:text-slate-900">
+                    {rv.label}
+                  </span>
+                  {rv.tagline && (
+                    <p className="text-[0.6rem] md:text-xs text-slate-500 mt-0.5">
+                      {rv.tagline}
+                    </p>
+                  )}
+                </Link>
+              ))}
+            </div>
+          </div>
 
           {/* ─── Related Articles ─── */}
           {relatedArticles.length > 0 && (

@@ -224,6 +224,24 @@ export default function AdvertisePage() {
               </div>
             ))}
           </div>
+          <div className="mt-10 text-center">
+            <Link
+              href="/advertise/packages"
+              className="inline-flex items-center gap-2 px-8 py-3 bg-slate-900 text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors"
+            >
+              Configure &amp; book a package
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+            <p className="text-xs text-slate-500 mt-3">
+              Self-serve checkout with duration discounts — or{" "}
+              <a href="mailto:partners@invest.com.au" className="underline hover:text-slate-900 transition-colors">
+                contact sales
+              </a>
+              .
+            </p>
+          </div>
         </div>
       </section>
 

@@ -18,7 +18,7 @@ const platformsMenu = {
   byCategory: [
     { label: "Share Trading", href: "/share-trading", desc: "ASX & international shares" },
     { label: "ETFs", href: "/compare/etfs", desc: "Diversified index investing" },
-    { label: "Super Funds", href: "/compare/super", desc: "Compare fees & performance" },
+    { label: "Super Funds", href: "/super", desc: "Compare fees & performance" },
     { label: "Savings Accounts", href: "/savings", desc: "High interest & at-call accounts" },
     { label: "Robo-Advisors", href: "/robo-advisors", desc: "Automated portfolio management" },
     { label: "Term Deposits", href: "/term-deposits", desc: "Government-guaranteed fixed rates" },
@@ -251,7 +251,7 @@ const mobileSections = [
       { name: "Share Trading", href: "/share-trading" },
       { name: "ETFs", href: "/compare/etfs" },
       { name: "Crypto Exchanges", href: "/crypto" },
-      { name: "Super Funds", href: "/compare/super" },
+      { name: "Super Funds", href: "/super" },
       { name: "Savings Accounts", href: "/savings" },
       { name: "CFD & Forex", href: "/cfd" },
       { name: "Non-Resident Brokers", href: "/compare/non-residents" },
