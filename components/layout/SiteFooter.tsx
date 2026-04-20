@@ -145,7 +145,7 @@ export function SiteFooter() {
               <p className="text-sm text-slate-400">
                 © {year} Invest.com.au Pty Ltd. All rights reserved.
               </p>
-              <p className="text-xs text-slate-600">
+              <p className="text-xs text-slate-400">
                 ACN {COMPANY_ACN} · ABN {COMPANY_ABN}
               </p>
             </div>
@@ -172,7 +172,7 @@ export function SiteFooter() {
             </nav>
           </div>
 
-          <p className="text-xs text-slate-700 mt-4">
+          <p className="text-xs text-slate-400 mt-4">
             100+ platforms · licensed professionals · Updated {updatedDate}
           </p>
 

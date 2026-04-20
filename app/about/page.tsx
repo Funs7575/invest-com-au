@@ -101,7 +101,7 @@ export default function AboutPage() {
                   <li className="flex items-start gap-3">
                     <span className="text-amber font-bold shrink-0">2.</span>
                     <span><strong className="text-white">Monetisation is transparent.</strong> We earn affiliate commissions when you sign up through our links. This never affects rankings.{" "}
-                      <Link href="/how-we-earn" className="text-amber hover:underline">Learn more</Link>.
+                      <Link href="/how-we-earn" className="text-amber underline underline-offset-2">Learn more</Link>.
                     </span>
                   </li>
                   <li className="flex items-start gap-3">
@@ -176,7 +176,7 @@ export default function AboutPage() {
                   <h3 className="font-bold text-sm text-slate-900">{person.name}</h3>
                   <p className="text-xs text-violet-600 font-medium mt-0.5">{person.role}</p>
                   <p className="text-xs text-slate-500 mt-2 leading-relaxed">{person.desc}</p>
-                  <p className="text-[0.65rem] text-slate-400 mt-2 leading-relaxed">{person.credentials}</p>
+                  <p className="text-[0.65rem] text-slate-600 mt-2 leading-relaxed">{person.credentials}</p>
                 </Link>
               ))}
             </div>

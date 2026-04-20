@@ -49,7 +49,7 @@ export default function Footer() {
       <div className="bg-slate-50 border-b border-slate-200">
         <div className="container-custom">
           <div className="py-1">
-            <p className="text-[0.65rem] font-semibold text-slate-400 uppercase tracking-wider pt-2 pb-1">Additional Disclosures</p>
+            <p className="text-[0.65rem] font-semibold text-slate-600 uppercase tracking-wider pt-2 pb-1">Additional Disclosures</p>
             {collapsibleSections.map((section, i) => (
               <div key={i} className="border-t border-slate-200">
                 <button
