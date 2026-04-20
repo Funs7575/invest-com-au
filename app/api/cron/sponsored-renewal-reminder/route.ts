@@ -122,7 +122,8 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({ ok: true, reminded, skipped });
 }
 
-function extractEmail(
+/** @internal exported for unit tests */
+export function extractEmail(
   createdBy: string | null,
   notes: string | null,
 ): string | null {
