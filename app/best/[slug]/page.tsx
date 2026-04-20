@@ -149,6 +149,12 @@ export default async function BestBrokerPage({
     },
   };
 
+  // Rich ItemList: each entry embeds a FinancialProduct with
+  // name/url/description so Google has enough context to render a
+  // richer SERP tile than a bare ListItem. AggregateRating is
+  // deliberately NOT included here — Google's structured-data policy
+  // forbids fabricated review counts, and the per-broker pages
+  // already carry real aggregateRating when user reviews exist.
   const itemListJsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -157,8 +163,13 @@ export default async function BestBrokerPage({
     itemListElement: filtered.slice(0, 10).map((b, i) => ({
       "@type": "ListItem",
       position: i + 1,
-      name: b.name,
       url: absoluteUrl(`/broker/${b.slug}`),
+      item: {
+        "@type": "FinancialProduct",
+        name: b.name,
+        url: absoluteUrl(`/broker/${b.slug}`),
+        description: b.tagline || `${b.name} — Australian investing platform`,
+      },
     })),
   };
 

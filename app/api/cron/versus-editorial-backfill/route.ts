@@ -8,7 +8,7 @@ import type { PlatformType } from "@/lib/types";
 
 const log = logger("cron:versus-editorial-backfill");
 
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 /**
  * AI-generated versus editorial backfill.
@@ -18,14 +18,15 @@ export const maxDuration = 60;
  * the result. Idempotent — skips pairs that already have editorial so
  * re-running burns no tokens.
  *
- * Runs N pairs per invocation (default 5, override with ?max=N) so the
- * cron stays well under its 60s budget and token costs are predictable.
- * Daily runs would complete the backfill of 400 pairs in ~80 days; a
- * one-off manual trigger with ?max=40 batches it through faster.
+ * Runs N pairs per invocation (default 20, override with ?max=N). At
+ * ~1500 output tokens per editorial that's ~30k tokens/day — well
+ * under the Sonnet cost floor. With the default quota the backfill of
+ * 400 pairs finishes in ~3 weeks instead of ~3 months. The 300s
+ * maxDuration gives room for ~80 pairs per manual ?max burst.
  */
 
 const MODEL = "claude-sonnet-4-20250514";
-const DEFAULT_MAX_PAIRS = 5;
+const DEFAULT_MAX_PAIRS = 20;
 
 interface BrokerRow {
   id: number;
@@ -70,7 +71,7 @@ export async function GET(req: NextRequest) {
 
   const max = Math.max(
     1,
-    Math.min(40, Number(req.nextUrl.searchParams.get("max") ?? DEFAULT_MAX_PAIRS)),
+    Math.min(80, Number(req.nextUrl.searchParams.get("max") ?? DEFAULT_MAX_PAIRS)),
   );
 
   const supabase = createAdminClient();
@@ -151,11 +152,20 @@ export async function GET(req: NextRequest) {
     }
   }
 
+  const remaining = pairs.length - existingSlugs.size - generated;
+  log.info("backfill_run_complete", {
+    generated,
+    failed,
+    remaining,
+    totalPairs: pairs.length,
+    alreadyDone: existingSlugs.size + generated,
+  });
   return NextResponse.json({
     ok: true,
     generated,
     failed,
-    remaining: pairs.length - existingSlugs.size - generated,
+    remaining,
+    totalPairs: pairs.length,
   });
 }
 
