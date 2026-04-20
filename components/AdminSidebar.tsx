@@ -54,6 +54,7 @@ const NAV_GROUPS = [
     items: [
       { href: "/admin/affiliate-links", icon: "link", label: "Affiliate Links" },
       { href: "/admin/affiliate-dashboard", icon: "pie-chart", label: "Affiliate Performance" },
+      { href: "/admin/sponsored-queue", icon: "calendar", label: "Sponsored Queue" },
       { href: "/admin/ab-tests", icon: "git-branch", label: "A/B Tests" },
       { href: "/admin/fee-queue", icon: "dollar-sign", label: "Fee Queue" },
       { href: "/admin/deal-of-month", icon: "trophy", label: "Deal of Month" },

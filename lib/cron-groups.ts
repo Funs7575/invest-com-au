@@ -33,7 +33,7 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
   "every-6h": ["/api/admin/run-migration"],
 
   "daily-0": ["/api/cron/auto-publish"],
-  "daily-1": ["/api/cron/cleanup"],
+  "daily-1": ["/api/cron/cleanup", "/api/cron/sponsored-placement-apply"],
   "daily-1-30": ["/api/cron/warehouse-rollup"],
   "daily-2": [
     "/api/cron/lead-quality-weights",
@@ -102,7 +102,7 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
   "weekly-mon-11": ["/api/cron/advisor-dormant-nudge"],
 
   "monthly-1-3": ["/api/cron/property-suburb-refresh"],
-  "monthly-1-6": ["/api/cron/monthly-affiliate-report"],
+  "monthly-1-6": ["/api/cron/monthly-affiliate-report", "/api/cron/affiliate-payout-recon"],
   "monthly-1-8": ["/api/cron/portfolio-monitor"],
   "monthly-1-9": [
     "/api/cron/monthly-advisor-reports",
