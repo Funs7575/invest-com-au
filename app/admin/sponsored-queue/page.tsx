@@ -26,6 +26,9 @@ interface Booking {
   notes: string | null;
   applied_at: string | null;
   cleared_at: string | null;
+  stripe_session_id: string | null;
+  stripe_invoice_url: string | null;
+  renewal_reminder_sent_at: string | null;
 }
 
 export default async function SponsoredQueuePage() {
@@ -53,13 +56,16 @@ export default async function SponsoredQueuePage() {
     >
       <div className="max-w-5xl space-y-6">
         <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 text-xs text-slate-600">
-          <strong className="text-slate-800">How it works:</strong> insert a
-          row into <code className="bg-white px-1 rounded">sponsored_placement_bookings</code>{" "}
-          with <code className="bg-white px-1 rounded">broker_slug</code>,{" "}
-          <code className="bg-white px-1 rounded">tier</code> (featured_partner
-          / editors_pick / deal_of_month), <code className="bg-white px-1 rounded">starts_at</code>,{" "}
-          <code className="bg-white px-1 rounded">ends_at</code>. The
-          daily-1 cron{" "}
+          <strong className="text-slate-800">Two booking sources:</strong>{" "}
+          <em>self-serve</em> rows are created by the Stripe webhook
+          when a broker books via{" "}
+          <Link href="/advertise/featured-placement" className="text-amber-700 underline">
+            /advertise/featured-placement
+          </Link>{" "}
+          (look for a ⚡ badge). <em>Manual</em> rows come from direct
+          SQL inserts into{" "}
+          <code className="bg-white px-1 rounded">sponsored_placement_bookings</code>.
+          Either way, the daily-1 cron{" "}
           <code className="bg-white px-1 rounded">/api/cron/sponsored-placement-apply</code>{" "}
           applies the tier to the broker row when the window opens and
           clears it when the window closes.
@@ -104,6 +110,7 @@ function Section({
               <th className="px-3 py-2">Tier</th>
               <th className="px-3 py-2">Window</th>
               <th className="px-3 py-2 text-right">Amount</th>
+              <th className="px-3 py-2">Source</th>
               <th className="px-3 py-2">Invoice</th>
             </tr>
           </thead>
@@ -135,8 +142,31 @@ function Section({
                       ? `$${(r.amount_cents / 100).toLocaleString("en-AU")}`
                       : "—"}
                   </td>
+                  <td className="px-3 py-2 text-xs">
+                    {r.stripe_session_id ? (
+                      <span
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 font-bold text-[10px] uppercase"
+                        title={r.stripe_session_id}
+                      >
+                        ⚡ Self-serve
+                      </span>
+                    ) : (
+                      <span className="text-slate-500 text-[10px] uppercase">Manual</span>
+                    )}
+                  </td>
                   <td className="px-3 py-2 text-xs text-slate-500">
-                    {r.invoice_ref ?? "—"}
+                    {r.stripe_invoice_url ? (
+                      <a
+                        href={r.stripe_invoice_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-amber-700 hover:text-amber-800 underline"
+                      >
+                        View PDF
+                      </a>
+                    ) : (
+                      r.invoice_ref ?? "—"
+                    )}
                   </td>
                 </tr>
               );

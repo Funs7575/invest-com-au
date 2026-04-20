@@ -190,6 +190,7 @@ export default function Footer() {
                 <li><Link href="/how-we-earn" className="hover:text-white transition-colors inline-block py-0.5">How We Earn</Link></li>
                 <li><Link href="/complaints" className="hover:text-white transition-colors inline-block py-0.5">Complaints &amp; AFCA</Link></li>
                 <li><Link href="/contact" className="hover:text-white transition-colors inline-block py-0.5">Contact</Link></li>
+                <li><Link href="/advertise/featured-placement" className="hover:text-white transition-colors inline-block py-0.5">Advertise With Us</Link></li>
                 <li><Link href="/legal" className="hover:text-white transition-colors inline-block py-0.5">Legal</Link></li>
               </ul>
             </div>

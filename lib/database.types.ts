@@ -9476,6 +9476,7 @@ export type Database = {
           id: number
           invoice_ref: string | null
           notes: string | null
+          renewal_reminder_sent_at: string | null
           starts_at: string
           status: string
           stripe_invoice_url: string | null
@@ -9496,6 +9497,7 @@ export type Database = {
           id?: number
           invoice_ref?: string | null
           notes?: string | null
+          renewal_reminder_sent_at?: string | null
           starts_at: string
           status?: string
           stripe_invoice_url?: string | null
@@ -9516,6 +9518,7 @@ export type Database = {
           id?: number
           invoice_ref?: string | null
           notes?: string | null
+          renewal_reminder_sent_at?: string | null
           starts_at?: string
           status?: string
           stripe_invoice_url?: string | null

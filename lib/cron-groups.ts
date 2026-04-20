@@ -33,7 +33,11 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
   "every-6h": ["/api/admin/run-migration"],
 
   "daily-0": ["/api/cron/auto-publish"],
-  "daily-1": ["/api/cron/cleanup", "/api/cron/sponsored-placement-apply"],
+  "daily-1": [
+    "/api/cron/cleanup",
+    "/api/cron/sponsored-placement-apply",
+    "/api/cron/sponsored-renewal-reminder",
+  ],
   "daily-1-30": ["/api/cron/warehouse-rollup"],
   "daily-2": [
     "/api/cron/lead-quality-weights",

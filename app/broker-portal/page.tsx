@@ -480,6 +480,12 @@ export default function BrokerDashboard() {
         >
           Top Up Wallet
         </Link>
+        <Link
+          href="/advertise/featured-placement"
+          className="px-4 py-2 bg-amber-500 text-white text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors"
+        >
+          ★ Book Sponsored Slot
+        </Link>
       </div>
 
       {/* Recent Campaigns */}

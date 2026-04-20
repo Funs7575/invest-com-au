@@ -830,6 +830,14 @@ export async function POST(request: NextRequest) {
               session_id: session.id,
               md,
             });
+            // Payment was taken but the booking cannot be auto-created.
+            // Alert ops immediately so a manual refund or booking can
+            // happen before the broker is confused.
+            sendTransactionalEmail(
+              ADMIN_EMAIL,
+              `⚠️ Sponsored placement payment without bookable metadata — ${session.id}`,
+              `<div style="font-family:Arial,sans-serif;max-width:520px"><h2 style="color:#b91c1c;font-size:16px">Manual action required</h2><p style="color:#475569;font-size:14px">A Stripe checkout session completed with <code>metadata.kind=sponsored_placement</code> but the booking row could not be created because one of <code>broker_id / tier / starts_at / ends_at</code> was missing.</p><p style="color:#475569;font-size:14px"><strong>Session:</strong> <code>${escapeHtml(session.id)}</code><br/><strong>Buyer:</strong> ${escapeHtml(session.customer_email || "(unknown)")}<br/><strong>Amount:</strong> A$${((session.amount_total ?? 0) / 100).toFixed(2)}</p><p style="color:#475569;font-size:14px">Either manually create the booking or refund the buyer.</p></div>`,
+            ).catch((err) => log.error("sponsored_placement incomplete-alert failed", { err: err instanceof Error ? err.message : String(err) }));
           } else {
             const amountCents = session.amount_total ?? 0;
             const pi =
@@ -885,10 +893,21 @@ export async function POST(request: NextRequest) {
                     : md.contact_email || null,
                 });
               if (insertErr) {
-                log.error("sponsored_placement booking insert failed", {
-                  session_id: session.id,
-                  err: insertErr.message,
-                });
+                // 23505 = unique_violation. If two webhook deliveries
+                // raced past the select-existing check above, one of
+                // them will lose on the UNIQUE index on
+                // stripe_session_id — treat that as success, not a
+                // bug.
+                if (insertErr.code === "23505") {
+                  log.info("sponsored_placement race lost (already booked)", {
+                    session_id: session.id,
+                  });
+                } else {
+                  log.error("sponsored_placement booking insert failed", {
+                    session_id: session.id,
+                    err: insertErr.message,
+                  });
+                }
               } else {
                 log.info("sponsored_placement booking created", {
                   broker_slug: md.broker_slug,
