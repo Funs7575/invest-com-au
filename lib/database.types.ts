@@ -9466,6 +9466,7 @@ export type Database = {
         Row: {
           amount_cents: number | null
           applied_at: string | null
+          broker_id: number | null
           broker_slug: string
           cleared_at: string | null
           created_at: string
@@ -9477,11 +9478,15 @@ export type Database = {
           notes: string | null
           starts_at: string
           status: string
+          stripe_invoice_url: string | null
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string | null
           tier: string
         }
         Insert: {
           amount_cents?: number | null
           applied_at?: string | null
+          broker_id?: number | null
           broker_slug: string
           cleared_at?: string | null
           created_at?: string
@@ -9493,11 +9498,15 @@ export type Database = {
           notes?: string | null
           starts_at: string
           status?: string
+          stripe_invoice_url?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
           tier: string
         }
         Update: {
           amount_cents?: number | null
           applied_at?: string | null
+          broker_id?: number | null
           broker_slug?: string
           cleared_at?: string | null
           created_at?: string
@@ -9509,6 +9518,59 @@ export type Database = {
           notes?: string | null
           starts_at?: string
           status?: string
+          stripe_invoice_url?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          tier?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sponsored_placement_bookings_broker_id_fkey"
+            columns: ["broker_id"]
+            isOneToOne: false
+            referencedRelation: "brokers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sponsored_placement_pricing: {
+        Row: {
+          active: boolean
+          amount_cents: number
+          created_at: string
+          currency: string
+          description: string | null
+          duration_days: number
+          id: number
+          max_concurrent: number
+          sort_order: number
+          stripe_price_id: string | null
+          tier: string
+        }
+        Insert: {
+          active?: boolean
+          amount_cents: number
+          created_at?: string
+          currency?: string
+          description?: string | null
+          duration_days: number
+          id?: number
+          max_concurrent?: number
+          sort_order?: number
+          stripe_price_id?: string | null
+          tier: string
+        }
+        Update: {
+          active?: boolean
+          amount_cents?: number
+          created_at?: string
+          currency?: string
+          description?: string | null
+          duration_days?: number
+          id?: number
+          max_concurrent?: number
+          sort_order?: number
+          stripe_price_id?: string | null
           tier?: string
         }
         Relationships: []
