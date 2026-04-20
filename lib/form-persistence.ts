@@ -63,7 +63,7 @@ export interface PersistentFormResult<T extends Record<string, unknown>> {
   hydrated: boolean;
 }
 
-function scrub<T extends Record<string, unknown>>(
+export function scrub<T extends Record<string, unknown>>(
   value: T,
   extraSensitive: Array<keyof T>,
 ): Partial<T> {
