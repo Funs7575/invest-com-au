@@ -340,8 +340,11 @@ jobs:
     steps:
       - name: Wait for Vercel preview + smoke test
         uses: actions/github-script@v7
+        env:
+          VERCEL_BYPASS: ${{ secrets.VERCEL_AUTOMATION_BYPASS_TOKEN }}
         with:
           script: |
+            const BYPASS = process.env.VERCEL_BYPASS || '';
             const CRITICAL_PATHS = [
               '/',
               '/invest',
@@ -395,13 +398,14 @@ jobs:
             }
             core.info(`Preview URL: ${previewUrl}`);
 
+            const headers = BYPASS ? { 'x-vercel-protection-bypass': BYPASS } : {};
             const results = [];
             for (const p of CRITICAL_PATHS) {
               const url = `${previewUrl}${p}`;
               const t0 = Date.now();
               let status = 0;
               try {
-                const res = await fetch(url, { redirect: 'manual' });
+                const res = await fetch(url, { redirect: 'manual', headers });
                 status = res.status;
               } catch (e) {
                 status = 0;
@@ -409,6 +413,21 @@ jobs:
               const ms = Date.now() - t0;
               results.push({ path: p, status, ms });
               core.info(`  ${status >= 400 || status === 0 ? 'FAIL' : ' OK '}  ${status}  ${ms}ms  ${p}`);
+            }
+
+            // If EVERY path returns 401, Vercel deployment protection is
+            // blocking the smoke test — that is an infra problem, not a
+            // code problem. Warn loudly but do not fail the PR: letting
+            // every PR fail here teaches reviewers to ignore red CI.
+            // Either set VERCEL_AUTOMATION_BYPASS_TOKEN or turn off
+            // deployment protection for previews to restore the check.
+            const allAuthWalled = results.every((r) => r.status === 401);
+            if (allAuthWalled) {
+              core.warning(
+                'All preview URLs returned 401 — Vercel deployment protection is blocking the smoke test. ' +
+                'Set the VERCEL_AUTOMATION_BYPASS_TOKEN secret to restore coverage. Skipping.',
+              );
+              return;
             }
 
             const failures = results.filter((r) => r.status === 0 || r.status >= 400);
