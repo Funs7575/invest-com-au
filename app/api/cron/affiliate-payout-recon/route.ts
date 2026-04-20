@@ -26,6 +26,32 @@ export const maxDuration = 60;
 
 const FLAG_THRESHOLD_PCT = 10;
 
+/**
+ * Pure variance calculation — exported so it can be unit-tested
+ * without supabase mocks. Returns the integer click delta, the
+ * percentage delta (2dp rounded by the caller), and whether the
+ * variance exceeds the configured flag threshold.
+ *
+ * Percentage convention:
+ *   - reported > 0: (tracked - reported) / reported * 100
+ *   - reported == 0 && tracked > 0: 100 (every tracked click is variance)
+ *   - both zero: 0 (nothing to reconcile)
+ *
+ * The Math.abs comparison makes the threshold symmetric — we flag
+ * equally when we tracked MORE than reported (missing commission) and
+ * when we tracked LESS (UTM loss / affiliate-network overcount).
+ */
+export function calculatePayoutVariance(
+  tracked: number,
+  reported: number,
+): { delta: number; deltaPct: number; shouldFlag: boolean } {
+  const delta = tracked - reported;
+  const deltaPct =
+    reported > 0 ? (delta / reported) * 100 : tracked > 0 ? 100 : 0;
+  const shouldFlag = Math.abs(deltaPct) >= FLAG_THRESHOLD_PCT;
+  return { delta, deltaPct, shouldFlag };
+}
+
 export async function GET(req: NextRequest) {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
@@ -71,9 +97,10 @@ export async function GET(req: NextRequest) {
 
     const tracked = trackedClicks ?? 0;
     const reported = r.reported_clicks;
-    const delta = tracked - reported;
-    const deltaPct = reported > 0 ? (delta / reported) * 100 : tracked > 0 ? 100 : 0;
-    const shouldFlag = Math.abs(deltaPct) >= FLAG_THRESHOLD_PCT;
+    const { delta, deltaPct, shouldFlag } = calculatePayoutVariance(
+      tracked,
+      reported,
+    );
 
     const { error } = await supabase.from("affiliate_payout_variance").insert({
       report_id: r.id,

@@ -8,6 +8,29 @@ const log = logger("cron:sponsored-placement-apply");
 export const maxDuration = 60;
 
 /**
+ * True iff the broker's currently-applied sponsorship end-date is the
+ * same instant as the booking we're about to clear. Prevents the "end"
+ * sweep from stomping on a later booking that was already activated —
+ * a case we'd otherwise hit whenever two back-to-back bookings
+ * briefly overlap the sweep tick.
+ *
+ * Both inputs come from Postgres `timestamptz` via the JS client, so
+ * they arrive as ISO strings. Millisecond precision is enough; we
+ * don't accidentally match sub-ms clock drift because Postgres
+ * doesn't produce sub-ms values for these columns.
+ */
+export function sponsorshipEndMatches(
+  brokerEnd: string | null | undefined,
+  bookingEndsAt: string,
+): boolean {
+  if (!brokerEnd) return false;
+  const a = new Date(brokerEnd).getTime();
+  const b = new Date(bookingEndsAt).getTime();
+  if (Number.isNaN(a) || Number.isNaN(b)) return false;
+  return a === b;
+}
+
+/**
  * Sponsored placement daily sweep.
  *
  *   scheduled → active: booking starts_at ≤ now ≤ ends_at
@@ -74,11 +97,7 @@ export async function GET(req: NextRequest) {
       .select("sponsorship_end")
       .eq("slug", b.broker_slug)
       .maybeSingle();
-    const matches =
-      broker?.sponsorship_end &&
-      new Date(broker.sponsorship_end).getTime() ===
-        new Date(b.ends_at).getTime();
-    if (matches) {
+    if (sponsorshipEndMatches(broker?.sponsorship_end, b.ends_at)) {
       await supabase
         .from("brokers")
         .update({

@@ -186,7 +186,7 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({ ok: true, sent: totalSent, by_stage: stageCounts });
 }
 
-function firstNameOf(name: string | null | undefined, email: string): string {
+export function firstNameOf(name: string | null | undefined, email: string): string {
   if (name && typeof name === "string" && name.trim()) {
     return name.trim().split(/\s+/)[0]!;
   }
