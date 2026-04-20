@@ -25,7 +25,11 @@ interface VersusEditorialRow {
   choose_b: string | null;
   sections: { heading: string; body: string }[] | null;
   verdict: string | null;
-  faqs: { question: string; answer: string }[] | null;
+  // Historical rows use { question, answer }; batch-inserted rows used
+  // { q, a }. normaliseFaqs() collapses both into the canonical shape.
+  faqs:
+    | ({ question: string; answer: string } | { q: string; a: string })[]
+    | null;
 }
 
 /**
@@ -39,8 +43,32 @@ function rowToEditorial(row: VersusEditorialRow): VersusEditorial {
     chooseA: row.choose_a ?? "",
     chooseB: row.choose_b ?? "",
     sections: row.sections ?? [],
-    faqs: row.faqs ?? undefined,
+    faqs: normaliseFaqs(row.faqs),
   };
+}
+
+/**
+ * Accept either { question, answer } or { q, a } shapes (the batch
+ * inserts used the short form) and return the canonical
+ * { question, answer } shape that the rest of the codebase consumes.
+ * Drops malformed entries silently so one bad row never kills the
+ * whole FAQ block.
+ */
+function normaliseFaqs(
+  raw: VersusEditorialRow["faqs"],
+): { question: string; answer: string }[] | undefined {
+  if (!raw || raw.length === 0) return undefined;
+  const out: { question: string; answer: string }[] = [];
+  for (const f of raw) {
+    if (!f || typeof f !== "object") continue;
+    const question =
+      "question" in f ? f.question : "q" in f ? f.q : undefined;
+    const answer = "answer" in f ? f.answer : "a" in f ? f.a : undefined;
+    if (question && answer) {
+      out.push({ question, answer });
+    }
+  }
+  return out.length > 0 ? out : undefined;
 }
 
 /**
