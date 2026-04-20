@@ -54,7 +54,7 @@ function rowToEditorial(row: VersusEditorialRow): VersusEditorial {
  * Drops malformed entries silently so one bad row never kills the
  * whole FAQ block.
  */
-function normaliseFaqs(
+export function normaliseFaqs(
   raw: VersusEditorialRow["faqs"],
 ): { question: string; answer: string }[] | undefined {
   if (!raw || raw.length === 0) return undefined;
