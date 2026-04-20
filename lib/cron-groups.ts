@@ -33,7 +33,7 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
   "every-6h": ["/api/admin/run-migration"],
 
   "daily-0": ["/api/cron/auto-publish"],
-  "daily-1": ["/api/cron/cleanup"],
+  "daily-1": ["/api/cron/cleanup", "/api/cron/sponsored-placement-apply"],
   "daily-1-30": ["/api/cron/warehouse-rollup"],
   "daily-2": [
     "/api/cron/lead-quality-weights",
@@ -44,6 +44,7 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
   "daily-3": [
     "/api/cron/referral-payouts",
     "/api/cron/data-integrity-audit",
+    "/api/cron/observability-retention",
   ],
   "daily-4": [
     "/api/cron/email-bounce-sweep",
@@ -81,7 +82,7 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
     "/api/cron/advisor-dunning",
     "/api/cron/post-enquiry-drip",
   ],
-  "daily-12": ["/api/cron/abandoned-form-drip"],
+  "daily-12": ["/api/cron/abandoned-form-drip", "/api/cron/exit-intent-nurture"],
   "daily-15": ["/api/cron/web-vitals-rollup"],
   "daily-16": ["/api/cron/attribution-rollup"],
   "daily-23": ["/api/cron/quiz-follow-up"],
@@ -97,11 +98,11 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
     "/api/cron/weekly-rate-update",
     "/api/cron/personalized-digest",
   ],
-  "weekly-mon-9": ["/api/cron/fee-digest", "/api/cron/content-freshness"],
+  "weekly-mon-9": ["/api/cron/fee-digest", "/api/cron/content-freshness", "/api/cron/stale-fee-editorial"],
   "weekly-mon-11": ["/api/cron/advisor-dormant-nudge"],
 
   "monthly-1-3": ["/api/cron/property-suburb-refresh"],
-  "monthly-1-6": ["/api/cron/monthly-affiliate-report"],
+  "monthly-1-6": ["/api/cron/monthly-affiliate-report", "/api/cron/affiliate-payout-recon"],
   "monthly-1-8": ["/api/cron/portfolio-monitor"],
   "monthly-1-9": [
     "/api/cron/monthly-advisor-reports",

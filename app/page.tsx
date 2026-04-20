@@ -8,6 +8,7 @@ import ScrollFadeIn from "@/components/ScrollFadeIn";
 import LeadMagnet from "@/components/LeadMagnet";
 import Icon from "@/components/Icon";
 import BrokerLogo from "@/components/BrokerLogo";
+import HomeHero from "@/components/HomeHero";
 import { AFFILIATE_REL } from "@/lib/tracking";
 import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
 import { getMostRecentFeeCheck } from "@/lib/utils";
@@ -155,67 +156,17 @@ export default async function HomePage() {
         }}
       />
 
-      {/* ═══════ 1. HERO ═══════ */}
+      {/* ═══════ 1. HERO (A/B test — 3 variants via HomeHero) ═══════ */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden">
         <div className="container-custom py-8 md:py-14 lg:py-16">
+          <HomeHero
+            brokerCount={brokerCount}
+            listingCount={listingCount || 0}
+            updatedMonth={updatedMonth}
+          />
+
+          {/* Trust bar — below hero, aligned to max-w-3xl */}
           <div className="max-w-3xl mx-auto text-center">
-
-            {/* Updated badge */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-900 border border-slate-800 rounded-full text-xs font-semibold text-white mb-4">
-              <span className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-pulse" />
-              Updated {updatedMonth} &middot; {brokerCount}+ platforms &middot; {listingCount || 55}+ investment listings
-            </div>
-
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-900 leading-[1.1] mb-4 tracking-tight">
-              Compare platforms, professionals{" "}
-              <span className="text-amber-500">&amp; ways to invest</span>
-            </h1>
-
-            <p className="text-base md:text-lg text-slate-600 mb-8 leading-relaxed max-w-2xl mx-auto">
-              Compare fees, browse directories, and explore investment options — built for Australians.
-            </p>
-
-            {/* 3-pathway cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-2xl mx-auto mb-6">
-              <Link
-                href="/compare"
-                className="group flex flex-col items-center gap-2 p-4 bg-white border-2 border-slate-200 rounded-2xl hover:border-amber-400 hover:shadow-lg transition-all"
-              >
-                <div className="w-11 h-11 rounded-xl bg-amber-50 flex items-center justify-center group-hover:bg-amber-100 transition-colors">
-                  <Icon name="bar-chart-2" size={20} className="text-amber-600" />
-                </div>
-                <div className="text-center">
-                  <p className="text-sm font-bold text-slate-900 group-hover:text-amber-600 transition-colors">Compare Platforms</p>
-                  <p className="text-[0.65rem] text-slate-500 mt-0.5">{brokerCount}+ platforms &middot; fees &middot; features</p>
-                </div>
-              </Link>
-              <Link
-                href="/advisors"
-                className="group flex flex-col items-center gap-2 p-4 bg-white border-2 border-slate-200 rounded-2xl hover:border-amber-400 hover:shadow-lg transition-all"
-              >
-                <div className="w-11 h-11 rounded-xl bg-slate-100 flex items-center justify-center group-hover:bg-amber-50 transition-colors">
-                  <Icon name="users" size={20} className="text-slate-600 group-hover:text-amber-600" />
-                </div>
-                <div className="text-center">
-                  <p className="text-sm font-bold text-slate-900 group-hover:text-amber-600 transition-colors">Browse Professionals</p>
-                  <p className="text-[0.65rem] text-slate-500 mt-0.5">Planners &middot; brokers &middot; accountants</p>
-                </div>
-              </Link>
-              <Link
-                href="/invest"
-                className="group flex flex-col items-center gap-2 p-4 bg-white border-2 border-slate-200 rounded-2xl hover:border-amber-400 hover:shadow-lg transition-all"
-              >
-                <div className="w-11 h-11 rounded-xl bg-slate-100 flex items-center justify-center group-hover:bg-amber-50 transition-colors">
-                  <Icon name="layers" size={20} className="text-slate-600 group-hover:text-amber-600" />
-                </div>
-                <div className="text-center">
-                  <p className="text-sm font-bold text-slate-900 group-hover:text-amber-600 transition-colors">Explore Investments</p>
-                  <p className="text-[0.65rem] text-slate-500 mt-0.5">27 categories &middot; marketplace &middot; guides</p>
-                </div>
-              </Link>
-            </div>
-
-            {/* Trust bar */}
             <div className="flex items-center justify-center flex-wrap gap-x-5 gap-y-1.5 text-sm font-semibold text-slate-600">
               <span className="flex items-center gap-1.5">
                 <Icon name="check-circle" size={15} className="text-amber-500" />
