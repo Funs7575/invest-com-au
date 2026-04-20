@@ -180,30 +180,35 @@ export default async function GlossaryPage() {
                   <div className="h-px flex-1 bg-slate-200" />
                 </div>
 
-                <dl className="space-y-3 md:space-y-4">
+                {/* Using an unordered list of article cards — a `<dl>` would be
+                    more semantic but the children are `<Link>` blocks and not
+                    `<dt>`/`<dd>` direct descendants, which axe flags as a
+                    serious WCAG violation. */}
+                <ul className="space-y-3 md:space-y-4 list-none p-0">
                   {grouped[letter].map((entry) => (
-                    <Link
-                      key={entry.term}
-                      href={`/glossary/${entry.slug}`}
-                      id={`term-${entry.term.toLowerCase().replace(/\s+/g, "-")}`}
-                      className="block bg-white border border-slate-150 rounded-lg p-3 md:p-4 hover:border-violet-300 hover:shadow-sm transition-all group"
-                    >
-                      <dt className="flex items-center gap-2 mb-1 md:mb-1.5">
-                        <span className="text-sm md:text-base font-bold text-slate-900 group-hover:text-violet-700 transition-colors">
-                          {entry.term}
-                        </span>
-                        {entry.category && (
-                          <span className="text-[0.6rem] md:text-xs font-semibold px-1.5 md:px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">
-                            {entry.category}
+                    <li key={entry.term}>
+                      <Link
+                        href={`/glossary/${entry.slug}`}
+                        id={`term-${entry.term.toLowerCase().replace(/\s+/g, "-")}`}
+                        className="block bg-white border border-slate-150 rounded-lg p-3 md:p-4 hover:border-violet-300 hover:shadow-sm transition-all group"
+                      >
+                        <div className="flex items-center gap-2 mb-1 md:mb-1.5">
+                          <span className="text-sm md:text-base font-bold text-slate-900 group-hover:text-violet-700 transition-colors">
+                            {entry.term}
                           </span>
-                        )}
-                      </dt>
-                      <dd className="text-xs md:text-sm text-slate-600 leading-relaxed">
-                        {entry.definition}
-                      </dd>
-                    </Link>
+                          {entry.category && (
+                            <span className="text-[0.6rem] md:text-xs font-semibold px-1.5 md:px-2 py-0.5 rounded-full bg-slate-100 text-slate-500">
+                              {entry.category}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs md:text-sm text-slate-600 leading-relaxed">
+                          {entry.definition}
+                        </p>
+                      </Link>
+                    </li>
                   ))}
-                </dl>
+                </ul>
               </section>
             ))}
           </div>
