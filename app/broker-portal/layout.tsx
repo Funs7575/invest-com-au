@@ -13,6 +13,7 @@ const navItems = [
   { href: "/broker-portal", label: "Dashboard", icon: "bar-chart" },
   { href: "/broker-portal/deals", label: "Deals", icon: "tag" },
   { href: "/broker-portal/analytics", label: "Analytics", icon: "pie-chart" },
+  { href: "/broker-portal/sponsored-slots", label: "Sponsored Slots", icon: "star" },
   { href: "/broker-portal/settings", label: "Settings", icon: "settings" },
 ];
 
@@ -30,6 +31,107 @@ const navItems = [
 // { href: "/broker-portal/packages", label: "Packages", icon: "package" },
 // { href: "/broker-portal/notifications", label: "Notifications", icon: "bell" },
 // { href: "/broker-portal/support", label: "Support", icon: "message-circle" },
+
+interface SidebarContentProps {
+  pathname: string | null;
+  brokerName: string;
+  balanceCents: number;
+  unreadCount: number;
+  onNavigate: () => void;
+  onLogout: () => void;
+}
+
+function SidebarContent({
+  pathname,
+  brokerName,
+  balanceCents,
+  unreadCount,
+  onNavigate,
+  onLogout,
+}: SidebarContentProps) {
+  return (
+    <>
+      <div className="p-4 border-b border-slate-700/50">
+        <Link href="/broker-portal" className="flex items-center gap-2.5" onClick={onNavigate}>
+          <div className="w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center shrink-0">
+            <span className="text-slate-900 font-extrabold text-sm">I</span>
+          </div>
+          <div>
+            <span className="text-sm font-bold text-white">invest.com.au</span>
+            <p className="text-[0.65rem] text-amber-400 font-semibold uppercase tracking-widest">Partner Portal</p>
+          </div>
+        </Link>
+      </div>
+
+      <div className="p-4 border-b border-slate-700/50">
+        <p className="text-[0.65rem] text-slate-500 uppercase tracking-wider font-semibold mb-1">Wallet Balance</p>
+        <p className="text-xl font-extrabold text-white">
+          <CountUp end={balanceCents / 100} prefix="$" decimals={2} duration={1000} />
+        </p>
+        <Link
+          href="/broker-portal/wallet"
+          onClick={onNavigate}
+          className="text-xs text-amber-400 hover:text-amber-300 underline mt-1 inline-block"
+        >
+          Add Funds →
+        </Link>
+      </div>
+
+      <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
+        {navItems.map((item) => {
+          const isActive = pathname === item.href ||
+            (item.href !== "/broker-portal" && !!pathname?.startsWith(item.href));
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={onNavigate}
+              className={`sidebar-nav-item flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-all ${
+                isActive
+                  ? "is-active bg-amber-500/15 text-amber-500 font-semibold"
+                  : "text-slate-400 hover:bg-white/5 hover:text-white font-medium"
+              }`}
+            >
+              <Icon name={item.icon} size={16} className={isActive ? "text-amber-500" : "text-slate-400"} />
+              {item.label}
+              {item.label === "Notifications" && unreadCount > 0 && (
+                <span className="ml-auto relative flex items-center justify-center">
+                  <span className="absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-40 animate-ping" />
+                  <span className="relative bg-amber-500 text-slate-900 text-[0.6rem] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
+                    {unreadCount > 99 ? "99+" : unreadCount}
+                  </span>
+                </span>
+              )}
+            </Link>
+          );
+        })}
+      </nav>
+
+      <div className="p-3 border-t border-slate-700/50 space-y-1">
+        <div className="flex items-center justify-between px-3 py-1">
+          {brokerName && (
+            <p className="text-xs text-slate-400 truncate">{brokerName}</p>
+          )}
+          <ThemeToggle />
+        </div>
+        <Link
+          href="/"
+          className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-slate-400 hover:bg-white/5 hover:text-white transition-colors"
+        >
+          <Icon name="globe" size={16} />
+          View Site
+        </Link>
+        <button
+          onClick={onLogout}
+          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-slate-400 hover:bg-white/5 hover:text-red-400 transition-colors"
+        >
+          <Icon name="log-out" size={16} />
+          Sign Out
+        </button>
+      </div>
+    </>
+  );
+}
 
 export default function BrokerPortalLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -105,90 +207,6 @@ export default function BrokerPortalLayout({ children }: { children: React.React
     (item) => pathname === item.href || (item.href !== "/broker-portal" && pathname?.startsWith(item.href))
   )?.label || "Dashboard";
 
-  const SidebarContent = () => (
-    <>
-      <div className="p-4 border-b border-slate-700/50">
-        <Link href="/broker-portal" className="flex items-center gap-2.5" onClick={() => setMobileOpen(false)}>
-          <div className="w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center shrink-0">
-            <span className="text-slate-900 font-extrabold text-sm">I</span>
-          </div>
-          <div>
-            <span className="text-sm font-bold text-white">invest.com.au</span>
-            <p className="text-[0.65rem] text-amber-400 font-semibold uppercase tracking-widest">Partner Portal</p>
-          </div>
-        </Link>
-      </div>
-
-      {/* Wallet balance */}
-      <div className="p-4 border-b border-slate-700/50">
-        <p className="text-[0.65rem] text-slate-500 uppercase tracking-wider font-semibold mb-1">Wallet Balance</p>
-        <p className="text-xl font-extrabold text-white">
-          <CountUp end={balanceCents / 100} prefix="$" decimals={2} duration={1000} />
-        </p>
-        <Link
-          href="/broker-portal/wallet"
-          onClick={() => setMobileOpen(false)}
-          className="text-xs text-amber-400 hover:text-amber-300 underline mt-1 inline-block"
-        >
-          Add Funds →
-        </Link>
-      </div>
-
-      <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
-        {navItems.map((item) => {
-          const isActive = pathname === item.href ||
-            (item.href !== "/broker-portal" && pathname?.startsWith(item.href));
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={() => setMobileOpen(false)}
-              className={`sidebar-nav-item flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-all ${
-                isActive
-                  ? "is-active bg-amber-500/15 text-amber-500 font-semibold"
-                  : "text-slate-400 hover:bg-white/5 hover:text-white font-medium"
-              }`}
-            >
-              <Icon name={item.icon} size={16} className={isActive ? "text-amber-500" : "text-slate-400"} />
-              {item.label}
-              {item.label === "Notifications" && unreadCount > 0 && (
-                <span className="ml-auto relative flex items-center justify-center">
-                  <span className="absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-40 animate-ping" />
-                  <span className="relative bg-amber-500 text-slate-900 text-[0.6rem] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
-                    {unreadCount > 99 ? "99+" : unreadCount}
-                  </span>
-                </span>
-              )}
-            </Link>
-          );
-        })}
-      </nav>
-
-      <div className="p-3 border-t border-slate-700/50 space-y-1">
-        <div className="flex items-center justify-between px-3 py-1">
-          {brokerName && (
-            <p className="text-xs text-slate-400 truncate">{brokerName}</p>
-          )}
-          <ThemeToggle />
-        </div>
-        <Link
-          href="/"
-          className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-slate-400 hover:bg-white/5 hover:text-white transition-colors"
-        >
-          <Icon name="globe" size={16} />
-          View Site
-        </Link>
-        <button
-          onClick={handleLogout}
-          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-slate-400 hover:bg-white/5 hover:text-red-400 transition-colors"
-        >
-          <Icon name="log-out" size={16} />
-          Sign Out
-        </button>
-      </div>
-    </>
-  );
-
   return (
     <div className="min-h-screen bg-slate-50 md:flex">
       <meta name="robots" content="noindex, nofollow" />
@@ -219,12 +237,26 @@ export default function BrokerPortalLayout({ children }: { children: React.React
 
       {/* Mobile sidebar */}
       <aside className={`fixed inset-y-0 left-0 z-50 w-56 bg-slate-900 flex flex-col transform transition-transform duration-200 ease-in-out md:hidden ${mobileOpen ? "translate-x-0" : "-translate-x-full"}`}>
-        <SidebarContent />
+        <SidebarContent
+          pathname={pathname}
+          brokerName={brokerName}
+          balanceCents={balanceCents}
+          unreadCount={unreadCount}
+          onNavigate={() => setMobileOpen(false)}
+          onLogout={handleLogout}
+        />
       </aside>
 
       {/* Desktop sidebar */}
       <aside className="hidden md:flex w-56 bg-slate-900 flex-col shrink-0">
-        <SidebarContent />
+        <SidebarContent
+          pathname={pathname}
+          brokerName={brokerName}
+          balanceCents={balanceCents}
+          unreadCount={unreadCount}
+          onNavigate={() => setMobileOpen(false)}
+          onLogout={handleLogout}
+        />
       </aside>
 
       {/* Main */}

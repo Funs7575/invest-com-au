@@ -813,6 +813,130 @@ export async function POST(request: NextRequest) {
             }
           }
         }
+
+        // ── Sponsored placement self-serve purchase ────────────────
+        // Metadata set by /api/advertise/create-checkout. Creates a
+        // scheduled booking which the daily cron picks up and applies.
+        if (
+          session.metadata?.kind === "sponsored_placement" &&
+          session.mode === "payment" &&
+          session.payment_status === "paid"
+        ) {
+          const supabase = createAdminClient();
+          const md = session.metadata;
+          const brokerId = parseInt(md.broker_id || "0");
+          if (!brokerId || !md.tier || !md.starts_at || !md.ends_at) {
+            log.error("sponsored_placement metadata incomplete", {
+              session_id: session.id,
+              md,
+            });
+          } else {
+            const amountCents = session.amount_total ?? 0;
+            const pi =
+              typeof session.payment_intent === "string"
+                ? session.payment_intent
+                : session.payment_intent?.id || null;
+            const invoiceUrl =
+              typeof session.invoice === "string"
+                ? null // hosted URL fetched lazily below
+                : session.invoice?.hosted_invoice_url || null;
+
+            // Lazy-fetch the invoice URL when the invoice is only an id
+            let resolvedInvoiceUrl = invoiceUrl;
+            if (!resolvedInvoiceUrl && typeof session.invoice === "string") {
+              try {
+                const invoice = await getStripe().invoices.retrieve(session.invoice);
+                resolvedInvoiceUrl = invoice.hosted_invoice_url ?? null;
+              } catch {
+                // non-fatal
+              }
+            }
+
+            const { data: existing } = await supabase
+              .from("sponsored_placement_bookings")
+              .select("id")
+              .eq("stripe_session_id", session.id)
+              .maybeSingle();
+
+            if (existing) {
+              log.info("sponsored_placement booking already exists", {
+                session_id: session.id,
+                booking_id: existing.id,
+              });
+            } else {
+              const { error: insertErr } = await supabase
+                .from("sponsored_placement_bookings")
+                .insert({
+                  broker_id: brokerId,
+                  broker_slug: md.broker_slug,
+                  tier: md.tier,
+                  starts_at: md.starts_at,
+                  ends_at: md.ends_at,
+                  amount_cents: amountCents,
+                  currency: (session.currency || "aud").toUpperCase(),
+                  invoice_ref: (session.invoice as string) || null,
+                  stripe_session_id: session.id,
+                  stripe_payment_intent_id: pi,
+                  stripe_invoice_url: resolvedInvoiceUrl,
+                  status: "scheduled",
+                  created_by: md.contact_email || session.customer_email || "checkout",
+                  notes: md.contact_name
+                    ? `Contact: ${md.contact_name} <${md.contact_email}>`
+                    : md.contact_email || null,
+                });
+              if (insertErr) {
+                log.error("sponsored_placement booking insert failed", {
+                  session_id: session.id,
+                  err: insertErr.message,
+                });
+              } else {
+                log.info("sponsored_placement booking created", {
+                  broker_slug: md.broker_slug,
+                  tier: md.tier,
+                  starts_at: md.starts_at,
+                });
+                // Receipt to the buyer + admin notification
+                const buyerEmail = md.contact_email || session.customer_email;
+                if (buyerEmail) {
+                  const amount = (amountCents / 100).toFixed(2);
+                  sendTransactionalEmail(
+                    buyerEmail,
+                    `Sponsored placement confirmed — ${md.broker_name}`,
+                    emailWrapper(
+                      "Sponsored placement booked",
+                      "#0f172a",
+                      `
+                      <h2 style="margin: 0 0 12px; font-size: 18px; color: #0f172a;">Thanks — your booking is locked in</h2>
+                      <p style="color: #475569; font-size: 14px; line-height: 1.6; margin: 0 0 16px;">
+                        Your ${escapeHtml(md.tier.replace(/_/g, " "))} placement for
+                        <strong>${escapeHtml(md.broker_name)}</strong> goes live on
+                        ${new Date(md.starts_at).toLocaleDateString("en-AU", { dateStyle: "medium" })}
+                        and runs for ${md.duration_days} days.
+                      </p>
+                      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px; margin: 0 0 16px;">
+                        <p style="margin: 0; font-size: 13px; color: #334155;"><strong>Amount paid:</strong> A$${amount}</p>
+                        ${resolvedInvoiceUrl ? `<p style="margin: 4px 0 0; font-size: 13px;"><a href="${resolvedInvoiceUrl}" style="color: #2563eb;">View invoice</a></p>` : ""}
+                      </div>
+                      <p style="color: #64748b; font-size: 12px; line-height: 1.55;">
+                        You can track impressions + clicks during the campaign at your Broker Portal dashboard.
+                      </p>
+                      <p style="margin: 20px 0; text-align: center;">
+                        <a href="${getSiteUrl()}/broker-portal/sponsored-slots" style="display: inline-block; padding: 12px 28px; background: #f59e0b; color: #fff; font-weight: 700; font-size: 14px; border-radius: 8px; text-decoration: none;">Track my campaign →</a>
+                      </p>
+                    `,
+                    ),
+                  ).catch((err) => log.error("sponsored_placement receipt failed", { err: err instanceof Error ? err.message : String(err) }));
+                }
+                // Admin heads-up
+                sendTransactionalEmail(
+                  ADMIN_EMAIL,
+                  `💰 Sponsored placement booked: ${md.broker_name} — ${md.tier}`,
+                  `<div style="font-family:Arial,sans-serif;max-width:500px"><h2 style="color:#0f172a;font-size:16px">New sponsored placement</h2><p style="color:#64748b;font-size:14px"><strong>${escapeHtml(md.broker_name)}</strong> booked <strong>${escapeHtml(md.tier.replace(/_/g, " "))}</strong> for ${md.duration_days} days starting ${escapeHtml(md.starts_at.slice(0, 10))}.</p><p style="color:#64748b;font-size:14px">Amount: A$${(amountCents / 100).toFixed(2)}</p><a href="${getSiteUrl()}/admin/sponsored-queue" style="display:inline-block;padding:10px 20px;background:#f59e0b;color:white;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;margin-top:8px">Queue →</a></div>`,
+                ).catch(() => undefined);
+              }
+            }
+          }
+        }
         break;
       }
 
