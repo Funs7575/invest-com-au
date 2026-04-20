@@ -59,8 +59,10 @@ export default function WHTCalculator({ countries, defaultRates }: Props) {
       <div className="grid sm:grid-cols-2 gap-4 mb-5">
         {/* Income type */}
         <div>
-          <label className="block text-xs font-bold text-slate-700 mb-1.5">Income type</label>
+          <label htmlFor="wht-income-type" className="block text-xs font-bold text-slate-700 mb-1.5">Income type</label>
           <select
+            id="wht-income-type"
+            aria-label="Income type"
             value={incomeType}
             onChange={(e) => setIncomeType(e.target.value)}
             className="w-full px-3 py-2.5 text-sm border border-slate-300 rounded-xl bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-400/50 focus:border-amber-400 transition"
@@ -93,8 +95,10 @@ export default function WHTCalculator({ countries, defaultRates }: Props) {
 
       {/* Country selector */}
       <div className="mb-5">
-        <label className="block text-xs font-bold text-slate-700 mb-1.5">Your country of residence</label>
+        <label htmlFor="wht-country" className="block text-xs font-bold text-slate-700 mb-1.5">Your country of residence</label>
         <select
+          id="wht-country"
+          aria-label="Your country of residence"
           value={countryCode}
           onChange={(e) => setCountryCode(e.target.value)}
           className="w-full sm:max-w-xs px-3 py-2.5 text-sm border border-slate-300 rounded-xl bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-400/50 focus:border-amber-400 transition"
