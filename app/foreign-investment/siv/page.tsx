@@ -15,7 +15,15 @@ export const metadata: Metadata = {
   title: `Significant Investor Visa (SIV) Australia ${CURRENT_YEAR} — FIRB, Complying Funds & Country Guides`,
   description:
     "Complete guide to the Australian Significant Investor Visa (SIV, subclass 188C). $5M complying investment breakdown, FIRB rules, country-specific guidance for Singapore, Hong Kong, China, UK. Connect with immigration investment lawyers.",
-  alternates: { canonical: `${SITE_URL}/foreign-investment/siv` },
+  alternates: {
+    canonical: `${SITE_URL}/foreign-investment/siv`,
+    languages: {
+      "en-AU": `${SITE_URL}/foreign-investment/siv`,
+      "zh-CN": `${SITE_URL}/zh/foreign-investment/siv`,
+      "ko-KR": `${SITE_URL}/ko/foreign-investment/siv`,
+      "x-default": `${SITE_URL}/foreign-investment/siv`,
+    },
+  },
   openGraph: {
     title: `Significant Investor Visa Australia (${CURRENT_YEAR})`,
     description:

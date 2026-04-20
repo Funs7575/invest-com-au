@@ -136,9 +136,9 @@ describe("itemListJsonLd", () => {
 });
 
 describe("listingProductJsonLd", () => {
-  // The listingProductJsonLd return type is a union (offers key is
-  // only present on some branches). Cast to a bag-of-properties shape
-  // in tests so we can assert on the branch that actually produced it.
+  // Listing product output is a discriminated union (offers key lives
+  // on some branches, areaServed on others). Cast to a bag in tests
+  // so we can assert on the branch that actually produced it.
   type Bag = Record<string, unknown>;
 
   it("emits an InStock offer when priceAud is set", () => {
