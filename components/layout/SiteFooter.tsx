@@ -24,11 +24,13 @@ export function SiteFooter() {
           {/* Column 1 — Compare */}
           <FooterColumn title="Compare" items={[
             { label: "Compare All Platforms", href: "/compare" },
+            { label: "Best For Your Scenario", href: "/best-for" },
             { label: "Share Trading", href: "/share-trading" },
-            { label: "ETFs", href: "/compare/etfs" },
+            { label: "ETFs", href: "/etfs" },
             { label: "Crypto", href: "/crypto" },
             { label: "Super Funds", href: "/compare/super" },
             { label: "Savings Accounts", href: "/savings" },
+            { label: "Insurance", href: "/insurance" },
             { label: "Current Deals", href: "/deals" },
             { label: "Broker vs Broker", href: "/versus" },
           ]} />

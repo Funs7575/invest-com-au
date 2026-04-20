@@ -37,7 +37,7 @@ export default function PrivacyPage() {
     <div className="py-5 md:py-12">
       <div className="container-custom max-w-3xl">
         <h1 className="text-3xl font-extrabold mb-2">Privacy Policy</h1>
-        <p className="text-sm text-slate-500 mb-8">
+        <p className="text-sm text-slate-600 mb-8">
           Version 1.3 — Last updated: 18 March 2026
         </p>
 

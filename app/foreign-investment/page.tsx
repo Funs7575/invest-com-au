@@ -154,7 +154,7 @@ export default async function ForeignInvestmentHubPage() {
       {/* ── Hero ─────────────────────────────────────────────────────── */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5">
+          <nav className="text-xs text-slate-600 mb-5 flex items-center gap-1.5">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span className="text-slate-300">/</span>
             <span className="text-slate-900 font-medium">Foreign Investment in Australia</span>
