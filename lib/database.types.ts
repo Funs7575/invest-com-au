@@ -2749,6 +2749,39 @@ export type Database = {
         }
         Relationships: []
       }
+      broker_outreach_log: {
+        Row: {
+          broker_name: string
+          broker_slug: string | null
+          contact_email: string
+          contact_name: string
+          id: number
+          notes: string | null
+          sent_at: string
+          sent_by: string
+        }
+        Insert: {
+          broker_name: string
+          broker_slug?: string | null
+          contact_email: string
+          contact_name: string
+          id?: number
+          notes?: string | null
+          sent_at?: string
+          sent_by: string
+        }
+        Update: {
+          broker_name?: string
+          broker_slug?: string | null
+          contact_email?: string
+          contact_name?: string
+          id?: number
+          notes?: string | null
+          sent_at?: string
+          sent_by?: string
+        }
+        Relationships: []
+      }
       broker_packages: {
         Row: {
           cpc_rate_discount_pct: number

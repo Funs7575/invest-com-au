@@ -44,6 +44,39 @@ interface FlagRow {
 const CACHE_TTL_MS = 30_000;
 const cache = new Map<string, { row: FlagRow | null; at: number }>();
 
+// Fail-fast timeout for the Supabase round-trip. Layout-level
+// flag reads block server render on every request, so we'd rather
+// treat an unresponsive Supabase as "flag off" than wedge the page.
+// Real Supabase p99 is well under 2s; 3s leaves headroom without
+// stalling Playwright's 15s navigation timeout.
+const FETCH_TIMEOUT_MS = 3_000;
+
+// Negative-cache TTL for thrown fetches (DNS fail, timeout, network
+// error). Prevents every subsequent loadFlag() in the same render
+// from repeating the full timeout wait — critical for `app/layout.tsx`
+// which reads three flags back-to-back. Shorter than the positive
+// TTL so a recovered Supabase starts serving fresh values quickly.
+const NEGATIVE_CACHE_TTL_MS = 5_000;
+
+/**
+ * CI and preview environments build with placeholder Supabase creds
+ * (see `.github/workflows/ci.yml` → `NEXT_PUBLIC_SUPABASE_URL:
+ * https://placeholder.supabase.co`). That hostname resolves in DNS
+ * but never answers, so fetch() hangs until its own timeout. The
+ * chain of awaits in app/layout.tsx then blows past Playwright's 15s
+ * navigationTimeout and every a11y / e2e assertion fails.
+ *
+ * Short-circuit here so builds against a placeholder URL evaluate
+ * every flag as "off" instantly. Production with a real URL is
+ * unaffected — the check is a string match against the sentinel
+ * value CI sets, nothing more.
+ */
+function isPlaceholderSupabase(): boolean {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  if (!url) return true;
+  return url.includes("placeholder");
+}
+
 /**
  * Stable hash of (flagKey, userKey) → 0..99. Used for percentage
  * rollout. The key is hashed together so different flags get
@@ -111,19 +144,31 @@ export async function loadFlag(flagKey: string): Promise<FlagRow | null> {
   const cached = cache.get(flagKey);
   if (cached && now - cached.at < CACHE_TTL_MS) return cached.row;
 
+  // Placeholder creds (CI / local build without .env) → short-circuit
+  // to null so the page renders instantly. Cached for the positive
+  // TTL to avoid repeating the env check on every read.
+  if (isPlaceholderSupabase()) {
+    cache.set(flagKey, { row: null, at: now });
+    return null;
+  }
+
   try {
     const supabase = createAdminClient();
     const { data, error } = await supabase
       .from("feature_flags")
       .select("flag_key, enabled, rollout_pct, allowlist, denylist, segments")
       .eq("flag_key", flagKey)
+      .abortSignal(AbortSignal.timeout(FETCH_TIMEOUT_MS))
       .maybeSingle();
     if (error) {
       log.warn("feature_flags fetch failed", {
         flag: flagKey,
         error: error.message,
       });
-      cache.set(flagKey, { row: null, at: now });
+      // Short negative-cache so a transient Supabase blip doesn't
+      // bury every flag in the 30s positive cache, but repeated
+      // reads within one render don't each pay the timeout.
+      cache.set(flagKey, { row: null, at: now - CACHE_TTL_MS + NEGATIVE_CACHE_TTL_MS });
       return null;
     }
     const row = (data as FlagRow | null) || null;
@@ -134,6 +179,10 @@ export async function loadFlag(flagKey: string): Promise<FlagRow | null> {
       flag: flagKey,
       err: err instanceof Error ? err.message : String(err),
     });
+    // Same short negative-cache window on thrown errors (timeout,
+    // DNS failure, network) so the next read in this render returns
+    // immediately instead of waiting another FETCH_TIMEOUT_MS.
+    cache.set(flagKey, { row: null, at: now - CACHE_TTL_MS + NEGATIVE_CACHE_TTL_MS });
     return null;
   }
 }
