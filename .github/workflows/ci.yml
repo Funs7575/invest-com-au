@@ -339,7 +339,7 @@ jobs:
     # missed seed row or renamed route trips CI, not the user.
     steps:
       - name: Wait for Vercel preview + smoke test
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         env:
           VERCEL_BYPASS: ${{ secrets.VERCEL_AUTOMATION_BYPASS_TOKEN }}
         with:
