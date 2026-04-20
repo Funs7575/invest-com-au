@@ -28,7 +28,7 @@ jobs:
       CRON_SECRET: placeholder
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: actions/setup-node@v6
         with:
@@ -59,7 +59,7 @@ jobs:
     timeout-minutes: 5
     if: github.event_name == 'pull_request'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -98,7 +98,7 @@ jobs:
     timeout-minutes: 5
     if: github.event_name == 'pull_request'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
           node-version: "20"
@@ -145,7 +145,7 @@ jobs:
       CI: "1"
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: actions/setup-node@v6
         with:
@@ -193,7 +193,7 @@ jobs:
     # configured — the job succeeds instead of failing the PR, so the
     # workflow remains forward-compatible for forks / new clones.
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
           node-version: "20"
@@ -237,7 +237,7 @@ jobs:
       NEXT_PUBLIC_SITE_URL: http://localhost:3000
       CRON_SECRET: placeholder
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
           node-version: "20"
@@ -267,7 +267,7 @@ jobs:
       CRON_SECRET: placeholder
       CI: "1"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
           node-version: "20"
@@ -294,7 +294,7 @@ jobs:
     if: github.event_name == 'pull_request'
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
           node-version: "20"
