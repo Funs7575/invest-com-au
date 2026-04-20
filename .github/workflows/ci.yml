@@ -277,7 +277,12 @@ jobs:
         run: npx playwright install --with-deps chromium
       - run: npm run build
       - name: Run axe-core a11y suite
-        run: npx playwright test e2e/a11y.spec.ts --reporter=github
+        # --project=chromium skips webkit + mobile-safari; WebKit
+        # tests here were timing out on networkidle and adding ~3min
+        # to every PR for no a11y signal (axe runs against the DOM,
+        # not engine rendering). Engine differences are covered by
+        # the E2E job.
+        run: npx playwright test e2e/a11y.spec.ts --project=chromium --reporter=github
       - name: Upload a11y report
         if: always()
         uses: actions/upload-artifact@v7

@@ -37,6 +37,18 @@ updates:
         update-types:
           - patch
           - minor
+      # Bundle vitest + the coverage provider so majors land in one
+      # PR. Dependabot otherwise opens them separately, which causes
+      # "Running mixed versions is not supported" crashes in CI until
+      # the second PR lands.
+      vitest:
+        patterns:
+          - "vitest"
+          - "@vitest/*"
+        update-types:
+          - major
+          - minor
+          - patch
     # Security advisories bypass the weekly schedule and open
     # immediately. There is no way to "group" these — one PR per
     # advisory is the safe default.
