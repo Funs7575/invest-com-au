@@ -115,7 +115,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/property/finance",
     // Additional public pages
     "/tools", "/rates", "/properties", "/pro", "/jobs",
-    "/advertise", "/advertiser-terms", "/accessibility",
+    "/advertise", "/advertise/featured-placement", "/advertiser-terms", "/accessibility",
     "/fsg", "/legal", "/developer-terms", "/consultations",
     "/courses", "/reports", "/portfolio", "/portfolio-calculator",
     "/advisor-signup",
@@ -445,11 +445,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // merged in too so any hand-picked pair (e.g. one we have editorial
   // for) is guaranteed to ship.
   let generatedPairSlugs: string[] = [];
+  let editorialSlugs: string[] = [];
   if (supabase) {
-    const { data: versusRows } = await supabase
-      .from("brokers")
-      .select("slug, name, rating, platform_type")
-      .eq("status", "active");
+    const [versusRowsRes, editorialRowsRes] = await Promise.all([
+      supabase
+        .from("brokers")
+        .select("slug, name, rating, platform_type")
+        .eq("status", "active"),
+      // Every row in versus_editorials is a page that definitely has
+      // content — guarantee those are in the sitemap even if the
+      // generator happens not to surface them (platform-type drift,
+      // deactivated broker, etc).
+      supabase.from("versus_editorials").select("slug"),
+    ]);
+    const versusRows = versusRowsRes.data;
     if (versusRows && versusRows.length > 0) {
       generatedPairSlugs = generateVersusPairs(
         versusRows as { slug: string; name: string; rating: number | null; platform_type: PlatformType }[],
@@ -457,17 +466,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         .slice(0, 400)
         .map((p) => p.slug);
     }
+    editorialSlugs =
+      ((editorialRowsRes.data ?? []) as { slug: string }[]).map((r) => r.slug);
   }
+  const editorialSlugSet = new Set(editorialSlugs);
   const allVersusPairs = Array.from(
-    new Set([...versusPopularPairs, ...generatedPairSlugs]),
+    new Set([...versusPopularPairs, ...generatedPairSlugs, ...editorialSlugs]),
   );
 
-  const versusPages = allVersusPairs.map((pair) => ({
-    url: `${baseUrl}/versus/${pair}`,
-    lastModified: new Date(),
-    changeFrequency: "weekly" as const,
-    priority: versusPopularPairs.includes(pair) ? 0.8 : 0.6,
-  }));
+  const versusPages = allVersusPairs.map((pair) => {
+    const hasEditorial = editorialSlugSet.has(pair);
+    const isHandCurated = versusPopularPairs.includes(pair);
+    return {
+      url: `${baseUrl}/versus/${pair}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      // Pages with real editorial content ship at 0.9; curated-but-no-
+      // editorial pairs at 0.8; auto-generated pairs at 0.6.
+      priority: hasEditorial ? 0.9 : isHandCurated ? 0.8 : 0.6,
+    };
+  });
 
   // Dynamic advisor profile pages
   const { data: professionals } = supabase

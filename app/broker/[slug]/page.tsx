@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { createStaticClient } from "@/lib/supabase/static";
 import type { Broker, UserReview, BrokerReviewStats, SwitchStory, BrokerQuestion, BrokerAnswer } from "@/lib/types";
@@ -94,7 +95,7 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
 
   // Fetch articles, user reviews, switch stories, fee history, related deals (in parallel)
   // NOTE: Q&A is intentionally excluded from this batch and streamed separately via <Suspense> below.
-  const [{ data: brokerArticles }, { data: expertArticlesRaw }, { data: userReviews }, { data: reviewStats }, { data: switchStoriesRaw }, { data: feeHistoryRaw }, { data: relatedDealsRaw }] = await Promise.all([
+  const [{ data: brokerArticles }, { data: expertArticlesRaw }, { data: userReviews }, { data: reviewStats }, { data: switchStoriesRaw }, { data: feeHistoryRaw }, { data: relatedDealsRaw }, { data: versusEditorialsRaw }] = await Promise.all([
     supabase
       .from('articles')
       .select('id, title, slug, category, read_time')
@@ -141,6 +142,14 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
       .neq('slug', slug)
       .order('rating', { ascending: false })
       .limit(20),
+    // Head-to-head editorials where this broker is on either side —
+    // drives crawlers through versus pages and gives users direct
+    // comparison entry points.
+    supabase
+      .from('versus_editorials')
+      .select('slug, broker_a_slug, broker_b_slug, title')
+      .or(`broker_a_slug.eq.${slug},broker_b_slug.eq.${slug}`)
+      .limit(24),
   ]);
 
   // Filter related deals to same platform_type (or crypto match), take top 4
@@ -149,6 +158,43 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
     if ((b.is_crypto || b.platform_type === 'crypto_exchange') && (d.platform_type === 'crypto_exchange')) return true;
     return false;
   }).slice(0, 4);
+
+  // Shape versus editorials into { slug, otherName } for rendering.
+  // Resolve the "other" broker name by looking up its active row —
+  // this is a single extra query regardless of how many editorials
+  // match.
+  const versusEditorials = (versusEditorialsRaw ?? []) as {
+    slug: string;
+    broker_a_slug: string;
+    broker_b_slug: string;
+    title: string | null;
+  }[];
+  const otherSlugs = Array.from(
+    new Set(
+      versusEditorials.map((v) =>
+        v.broker_a_slug === slug ? v.broker_b_slug : v.broker_a_slug,
+      ),
+    ),
+  );
+  const { data: otherBrokersRaw } = otherSlugs.length
+    ? await supabase
+        .from('brokers')
+        .select('slug, name')
+        .in('slug', otherSlugs)
+    : { data: null };
+  const otherBrokerNameBySlug = new Map<string, string>();
+  for (const r of (otherBrokersRaw ?? []) as { slug: string; name: string }[]) {
+    otherBrokerNameBySlug.set(r.slug, r.name);
+  }
+  const versusComparisons = versusEditorials.map((v) => {
+    const otherSlug =
+      v.broker_a_slug === slug ? v.broker_b_slug : v.broker_a_slug;
+    return {
+      slug: v.slug,
+      otherSlug,
+      otherName: otherBrokerNameBySlug.get(otherSlug) ?? otherSlug,
+    };
+  });
 
   // JSON-LD structured data — FinancialProduct + Review + Article + Breadcrumb
   const financialProductLd = brokerReviewJsonLd(b, brokerReviewer ?? undefined);
@@ -262,6 +308,38 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
           relatedDeals={relatedDeals}
         />
       </Suspense>
+      {versusComparisons.length > 0 && (
+        <section
+          aria-labelledby="head-to-head-heading"
+          className="container-custom max-w-4xl mt-8 md:mt-12"
+        >
+          <h2
+            id="head-to-head-heading"
+            className="text-lg md:text-xl font-extrabold text-slate-900 mb-1"
+          >
+            {b.name} head-to-head comparisons
+          </h2>
+          <p className="text-xs md:text-sm text-slate-600 mb-4">
+            Side-by-side breakdowns against the platforms Australian
+            investors most often cross-shop with {b.name}.
+          </p>
+          <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+            {versusComparisons.map((c) => (
+              <li key={c.slug}>
+                <Link
+                  href={`/versus/${c.slug}`}
+                  className="block bg-white border border-slate-200 rounded-lg px-3 py-2.5 text-sm text-slate-800 hover:border-amber-300 hover:text-amber-800 transition-colors"
+                >
+                  {b.name} vs {c.otherName}
+                  <span aria-hidden="true" className="ml-1 text-amber-600">
+                    →
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
       {/* Q&A Section — streamed independently so main review renders first */}
       <div id="questions" className="container-custom max-w-4xl scroll-mt-20">
         <Suspense fallback={<QASectionSkeleton />}>
