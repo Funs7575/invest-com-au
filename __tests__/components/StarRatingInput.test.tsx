@@ -3,10 +3,10 @@ import { render, screen, userEvent } from "./setup";
 import StarRatingInput from "@/components/StarRatingInput";
 
 describe("StarRatingInput", () => {
-  let onChange: ReturnType<typeof vi.fn>;
+  let onChange: ReturnType<typeof vi.fn<(rating: number) => void>>;
 
   beforeEach(() => {
-    onChange = vi.fn();
+    onChange = vi.fn<(rating: number) => void>();
   });
 
   it("renders 5 star buttons", () => {

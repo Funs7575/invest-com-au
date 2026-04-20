@@ -31,7 +31,9 @@ function submitBuilder() {
   // the chain and caused a 500 because .select is not a function on the
   // resolved value.
   const builder = createChainableBuilder("investment_listings");
-  const originalInsert = builder.insert;
+  const originalInsert = builder.insert as unknown as (
+    ...args: unknown[]
+  ) => unknown;
   builder.insert = vi.fn((...args) => {
     // Keep the chain alive; single() resolves with a synthetic id.
     originalInsert?.(...args);
