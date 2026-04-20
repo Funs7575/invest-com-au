@@ -42,16 +42,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ ok: true, stale: 0 });
   }
 
-  const now = Date.now();
-  const prioritised = brokers.map((b) => {
-    const verifiedMs = b.fee_verified_date
-      ? new Date(b.fee_verified_date).getTime()
-      : null;
-    const ageDays = verifiedMs
-      ? Math.floor((now - verifiedMs) / (24 * 60 * 60 * 1000))
-      : null;
-    return { ...b, ageDays };
-  });
+  const prioritised = prioritiseStaleBrokers(brokers, Date.now());
 
   const ops = process.env.OPS_ALERT_EMAIL || process.env.SUPPORT_EMAIL;
   let emailed = false;
@@ -77,15 +68,42 @@ export async function GET(req: NextRequest) {
   });
 }
 
-function renderDigest(
-  rows: Array<{
-    slug: string;
-    name: string;
-    fee_verified_date: string | null;
-    fee_source_url: string | null;
-    ageDays: number | null;
-  }>,
-): string {
+export interface StaleBrokerRow {
+  slug: string;
+  name: string;
+  fee_verified_date: string | null;
+  fee_source_url: string | null;
+}
+
+export interface PrioritisedRow extends StaleBrokerRow {
+  ageDays: number | null;
+}
+
+/**
+ * Stamp each row with ageDays (floored days since `fee_verified_date`).
+ * Rows with a null `fee_verified_date` get `ageDays: null` — the digest
+ * renders them as "never verified" and treats them as top-priority.
+ *
+ * Exported for unit tests; the GET handler is a thin wrapper over this
+ * plus `renderDigest`.
+ */
+export function prioritiseStaleBrokers(
+  rows: StaleBrokerRow[],
+  nowMs: number,
+): PrioritisedRow[] {
+  return rows.map((b) => {
+    const verifiedMs = b.fee_verified_date
+      ? new Date(b.fee_verified_date).getTime()
+      : null;
+    const ageDays =
+      verifiedMs != null && Number.isFinite(verifiedMs)
+        ? Math.floor((nowMs - verifiedMs) / (24 * 60 * 60 * 1000))
+        : null;
+    return { ...b, ageDays };
+  });
+}
+
+export function renderDigest(rows: PrioritisedRow[]): string {
   const tableRows = rows
     .map((r) => {
       const age =
