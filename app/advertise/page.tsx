@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { SELF_SERVE_TIERS } from "@/lib/sponsorship-tiers";
 
 export const revalidate = 86400;
 
@@ -69,46 +70,18 @@ const PLACEMENTS = [
   },
 ];
 
-const TIERS = [
-  {
-    name: "Featured Partner",
-    price: "$1,500",
-    period: "/month",
-    features: [
-      "Top position across all pages",
-      "\"Featured Partner\" badge",
-      "Priority in quiz results",
-      "Dedicated account manager",
-      "Monthly performance reports",
-    ],
-    highlight: true,
-  },
-  {
-    name: "Editor's Pick",
-    price: "$800",
-    period: "/month",
-    features: [
-      "Promoted position in listings",
-      "\"Editor's Pick\" badge",
-      "Enhanced broker profile",
-      "Quarterly performance reports",
-    ],
-    highlight: false,
-  },
-  {
-    name: "Deal of the Month",
-    price: "$2,000",
-    period: "/month",
-    features: [
-      "Featured deal banner sitewide",
-      "\"Deal of the Month\" badge",
-      "Homepage deal carousel",
-      "Email newsletter inclusion",
-      "Social media promotion",
-    ],
-    highlight: false,
-  },
-];
+/**
+ * Tier copy mirrors the self-serve catalogue so prices on the marketing
+ * page never drift from what `/advertise/packages` actually charges.
+ * Edit prices/features in `lib/sponsorship-tiers.ts`, not here.
+ */
+const TIERS = SELF_SERVE_TIERS.map((t) => ({
+  name: t.name,
+  price: `$${t.basePrice.toLocaleString("en-AU")}`,
+  period: "/month",
+  features: t.includes,
+  highlight: !!t.highlight,
+}));
 
 export default function AdvertisePage() {
   return (

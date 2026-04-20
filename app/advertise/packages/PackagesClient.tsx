@@ -1,27 +1,16 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import {
+  SELF_SERVE_TIERS,
+  SELF_SERVE_DURATIONS,
+  type SelfServeTierId,
+} from "@/lib/sponsorship-tiers";
 
-type Tier = "featured_partner" | "category_sponsor" | "deal_of_month";
+type Tier = SelfServeTierId;
 
-interface TierConfig {
-  id: Tier;
-  name: string;
-  basePrice: number;
-}
-
-const TIERS: TierConfig[] = [
-  { id: "featured_partner", name: "Featured Partner", basePrice: 2000 },
-  { id: "category_sponsor", name: "Category Sponsor", basePrice: 500 },
-  { id: "deal_of_month", name: "Deal of the Month", basePrice: 300 },
-];
-
-const DURATIONS = [
-  { months: 1, label: "1 month", discount: 0 },
-  { months: 3, label: "3 months", discount: 0.1 },
-  { months: 6, label: "6 months", discount: 0.2 },
-  { months: 12, label: "12 months", discount: 0.3 },
-];
+const TIERS = SELF_SERVE_TIERS;
+const DURATIONS = SELF_SERVE_DURATIONS;
 
 const CATEGORIES = [
   { slug: "beginners", label: "Best for Beginners" },
