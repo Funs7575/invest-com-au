@@ -13,6 +13,44 @@ const log = logger("cron:subscription-dunning");
 export const runtime = "nodejs";
 export const maxDuration = 120;
 
+export type DunningStage = 1 | 2 | 3 | 4;
+
+/**
+ * Pick the dunning stage for a subscription based on how many
+ * reminder emails have already been sent.
+ *
+ *   attempts 0 → stage 1 (soft warning)
+ *   attempts 1 → stage 2 (firm warning)
+ *   attempts 2 → stage 3 (final notice, grace period starts)
+ *   attempts >= 3 → stage 4 (cancellation notice)
+ *
+ * Exported for unit tests; the cron handler uses the returned stage
+ * to pick a template and decide whether to cancel the subscription.
+ */
+export function decideDunningStage(attempts: number): DunningStage {
+  if (attempts <= 0) return 1;
+  if (attempts === 1) return 2;
+  if (attempts === 2) return 3;
+  return 4;
+}
+
+/**
+ * Hours elapsed since the last dunning email. Returns Infinity when
+ * no email has been sent yet so the throttle gate is always open.
+ */
+export function hoursSinceLastDunning(
+  lastSent: Date | string | null,
+  now: Date,
+): number {
+  if (!lastSent) return Infinity;
+  const t =
+    typeof lastSent === "string"
+      ? new Date(lastSent).getTime()
+      : lastSent.getTime();
+  if (!Number.isFinite(t)) return Infinity;
+  return (now.getTime() - t) / (1000 * 60 * 60);
+}
+
 /**
  * Subscription dunning cron.
  *
@@ -70,12 +108,10 @@ async function handler(req: NextRequest) {
   for (const sub of subs || []) {
     try {
       const attempts = (sub.dunning_attempt_count as number) || 0;
-      const lastSent = sub.last_dunning_email_at
-        ? new Date(sub.last_dunning_email_at as string)
-        : null;
-      const hoursSinceLast = lastSent
-        ? (now.getTime() - lastSent.getTime()) / (1000 * 60 * 60)
-        : Infinity;
+      const hoursSinceLast = hoursSinceLastDunning(
+        sub.last_dunning_email_at as string | null,
+        now,
+      );
 
       // Don't re-send within 24h
       if (hoursSinceLast < 24) continue;
@@ -92,16 +128,14 @@ async function handler(req: NextRequest) {
         continue;
       }
 
-      if (attempts === 0) {
-        await sendStage(email, 1);
-        stats.stage1++;
-      } else if (attempts === 1) {
-        await sendStage(email, 2);
-        stats.stage2++;
-      } else if (attempts === 2) {
-        await sendStage(email, 3);
+      const stage = decideDunningStage(attempts);
+      await sendStage(email, stage);
+
+      if (stage === 1) stats.stage1++;
+      else if (stage === 2) stats.stage2++;
+      else if (stage === 3) {
         stats.stage3++;
-        // Set grace period to end in 24 hours
+        // Stage 3 → start the 24-hour grace period
         await supabase
           .from("subscriptions")
           .update({
@@ -111,7 +145,7 @@ async function handler(req: NextRequest) {
           })
           .eq("id", sub.id);
       } else {
-        // Cancel the subscription
+        // Stage 4 → cancel the subscription
         await supabase
           .from("subscriptions")
           .update({
@@ -119,7 +153,6 @@ async function handler(req: NextRequest) {
             grace_period_until: null,
           })
           .eq("id", sub.id);
-        await sendStage(email, 4);
         stats.cancelled++;
       }
 
