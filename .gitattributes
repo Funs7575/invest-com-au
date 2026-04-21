@@ -1,0 +1,6 @@
+# Shell scripts and husky hooks must be LF
+.husky/* text eol=lf
+*.sh text eol=lf
+
+# Everything else: let git handle it normally
+* text=auto
