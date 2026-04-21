@@ -6,11 +6,12 @@ Running backlog. Pull from here rather than inventing work.
 
 ## Urgent — data exposure
 
-- [ ] **`public.bd_pipeline` is readable by anon.** Policy `Public can read BD pipeline` is `FOR SELECT` with `qual = true` on `{public}`. This is our enterprise deal pipeline — contact, stage, deal size — exposed to every anon request via PostgREST. **Live production data leak.** Fix: drop that policy; the existing `Service role manages BD pipeline` covers agent writes via service_role. Add a targeted authenticated read only if/when the `/bd` dashboard needs it. Surfaced 2026-04-21 during agent-infrastructure migration RLS audit.
-- [ ] **`public.competitor_watch` is readable by anon.** Policy `Public read competitor_watch` is `FOR SELECT` with `qual = true` on `{public}`. Competitor intel exposed publicly. **Live production data leak.** Fix: drop that policy; add an explicit `service_role` `FOR ALL` policy (service_role currently works only via `BYPASSRLS`). Surfaced 2026-04-21 during agent-infrastructure migration RLS audit.
+- [x] 2026-04-21 — **`public.bd_pipeline` public read leak closed.** Dropped `Public can read BD pipeline` policy in migration `20260513_fix_public_read_leaks.sql`. Admin route continues to work via `createAdminClient()`.
+- [x] 2026-04-21 — **`public.competitor_watch` public read leak closed.** Dropped `Public read competitor_watch` policy and added explicit `Service role manages competitor_watch FOR ALL` in migration `20260513_fix_public_read_leaks.sql`.
 
 ## Now (pick from here first)
 
+- [ ] Refactor `app/admin/competitors/page.tsx` to use the API route pattern from `app/api/admin/bd-pipeline/route.ts` (server handler + `createAdminClient`). Currently reads `competitor_watch` via browser anon client; since we closed the public-read leak in migration `20260513`, reads now return empty. Write actions were already silently failing (no INSERT/DELETE policy for anon). Page is internal + low-traffic but needs fixing to be usable. Surfaced 2026-04-21 during data-leak fix.
 - [ ] A11y: identify the remaining `color-contrast` offender on /glossary, /tools, /foreign-investment, /about, /how-we-earn, /privacy, /terms. Run axe locally after `npm run build && npm run start`. One violation per page, so likely a single shared element (breadcrumb? prose link?). Re-raise the gate to block on `serious` in `e2e/a11y.spec.ts` once violations hit zero.
 - [ ] Vitest 4 migration PR. Blockers documented in PR #180 (closed). Bump `vitest` + `@vitest/coverage-v8` together; replace `environmentMatchGlobs` in `vitest.config.mts` with `test.projects`; widen `vi.fn()` mock types where the return signature is narrowed (pattern already applied in `__tests__/components/StarRatingInput.test.tsx` and `__tests__/helpers.ts`).
 - [ ] Lint-staged 16 PR #181 — should merge cleanly after rebase; watch for husky 9 compat.
