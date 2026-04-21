@@ -12,6 +12,13 @@ Running backlog. Pull from here rather than inventing work.
 
 ## Soon (next week or two)
 
+- [ ] ACN/ABN hardcode cleanup. `lib/compliance.ts` exports `COMPANY_ACN` (`093 882 421`) and `COMPANY_ABN` (`90 093 882 421`) as the source of truth, but three pages hardcode the literal instead of importing:
+  - `app/accessibility/page.tsx:26`
+  - `app/admin/compliance/page.tsx:1035-1036`
+  - `app/privacy/page.tsx:48`
+
+  Correct pattern already used at `app/advertiser-terms/page.tsx:137` (imports `COMPANY_LEGAL_NAME` & friends). Import and interpolate. Surfaced 2026-04-21 during COMPANY.md sanity sweep (commit `2284c83`).
+- [ ] Vercel project ID env-var extraction. `app/api/admin/ai-chat/route.ts:12` hardcodes `const VERCEL_PROJECT_ID = "prj_miPLXyjwXbqNnGLOFijBHbjXWESY";`. Move to `process.env.VERCEL_PROJECT_ID`. Confirm the env var is set in Vercel project settings before removing the literal fallback. Surfaced 2026-04-21 during COMPANY.md sanity sweep (commit `2284c83`).
 - [ ] Tests for today's shipped cron routes. Pattern: `__tests__/api/cron-<name>.test.ts`, following `__tests__/api/cron-sponsored-renewal-reminder.test.ts`. Priorities:
   - [ ] `app/api/cron/affiliate-payout-recon/route.ts`
   - [ ] `app/api/cron/sponsored-placement-apply/route.ts` (financial side-effect; test the "matches" check that avoids stomping later bookings)
@@ -22,6 +29,7 @@ Running backlog. Pull from here rather than inventing work.
 
 ## Someday / parking lot
 
+- [ ] "Tier N" naming discipline for the agent system. When implementing escalation (COMPANY.md §5-tier escalation system) and editorial tiers (§Editorial standards) in code, prefer qualified enums (`EscalationTier.AUTO`, `EscalationTier.APPROVAL_GATE`; `EditorialTier.PILLAR`, `EditorialTier.CLUSTER`, `EditorialTier.PROGRAMMATIC`) over bare `Tier 1`–`Tier 5`. The token is already used for at least 4 unrelated concepts in the codebase (`lib/advisor-verification.ts:312-313` RG146 advice tiers; `app/insurance/health/page.tsx:140-142` Medicare Levy Surcharge; `app/invest/hybrid-securities/page.tsx` and `app/invest/bonds/page.tsx` Basel/APRA bank capital tiers; `app/versus/[slugs]/page.tsx:26-49` SEO groupings). Surfaced 2026-04-21 during COMPANY.md sanity sweep (commit `2284c83`).
 - [ ] Next.js majors — dependabot is configured to ignore them; plan a dedicated migration window.
 - [ ] Re-enable webkit a11y when networkidle timeouts are resolved (currently chromium-only in `.github/workflows/ci.yml`).
 - [ ] Split `MEMORY.md` into per-topic memory files per the harness convention (index + individual files).
