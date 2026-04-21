@@ -9,6 +9,45 @@ const log = logger("cron-revenue-reconciliation");
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
+/** |variance%| above this triggers an ops alert. */
+export const VARIANCE_PCT_THRESHOLD = 5;
+/** |absolute variance| above this (cents) triggers an ops alert — guards against rounding on tiny samples. */
+export const VARIANCE_ABS_CENTS_THRESHOLD = 5000;
+
+export interface VarianceResult {
+  variance_cents: number;
+  variance_pct: number;
+  alerted: boolean;
+}
+
+/**
+ * Reconciliation variance between expected and reported revenue.
+ *
+ *   variance_cents = reported - expected   (positive = overcount)
+ *   variance_pct   = variance / expected, rounded to one decimal;
+ *                    0 when expected is 0 (avoids divide-by-zero noise)
+ *   alerted        = |pct| > VARIANCE_PCT_THRESHOLD (5%)
+ *                    OR |cents| > VARIANCE_ABS_CENTS_THRESHOLD ($50)
+ *
+ * Exported for unit tests — the cron handler computes one of these
+ * per revenue source and upserts the row into
+ * revenue_reconciliation_runs.
+ */
+export function computeVariance(
+  expectedCents: number,
+  reportedCents: number,
+): VarianceResult {
+  const variance_cents = reportedCents - expectedCents;
+  const variance_pct =
+    expectedCents > 0
+      ? Math.round((variance_cents / expectedCents) * 1000) / 10
+      : 0;
+  const alerted =
+    Math.abs(variance_pct) > VARIANCE_PCT_THRESHOLD ||
+    Math.abs(variance_cents) > VARIANCE_ABS_CENTS_THRESHOLD;
+  return { variance_cents, variance_pct, alerted };
+}
+
 /**
  * Cron: Revenue reconciliation.
  *
@@ -82,13 +121,11 @@ async function handler(req: NextRequest): Promise<NextResponse> {
     });
   }
 
-  const affiliateVariance = affiliateReported - affiliateExpected;
-  const affiliateVariancePct =
-    affiliateExpected > 0
-      ? Math.round((affiliateVariance / affiliateExpected) * 1000) / 10
-      : 0;
-  const affiliateAlert =
-    Math.abs(affiliateVariancePct) > 5 || Math.abs(affiliateVariance) > 5000;
+  const {
+    variance_cents: affiliateVariance,
+    variance_pct: affiliateVariancePct,
+    alerted: affiliateAlert,
+  } = computeVariance(affiliateExpected, affiliateReported);
 
   await supabase.from("revenue_reconciliation_runs").upsert(
     {
@@ -148,12 +185,8 @@ async function handler(req: NextRequest): Promise<NextResponse> {
   }
 
   if (stripeExpected > 0 || stripeReported > 0) {
-    const variance = stripeReported - stripeExpected;
-    const variancePct =
-      stripeExpected > 0
-        ? Math.round((variance / stripeExpected) * 1000) / 10
-        : 0;
-    const alert = Math.abs(variancePct) > 5 || Math.abs(variance) > 5000;
+    const { variance_cents: variance, variance_pct: variancePct, alerted: alert } =
+      computeVariance(stripeExpected, stripeReported);
 
     await supabase.from("revenue_reconciliation_runs").upsert(
       {
