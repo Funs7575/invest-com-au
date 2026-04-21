@@ -4,6 +4,11 @@ Running backlog. Pull from here rather than inventing work.
 
 **Convention:** newest at top of each section. Tick with `- [x]` and leave in place for ~a week so we can see what shipped. Delete during weekly prune.
 
+## Urgent — data exposure
+
+- [ ] **`public.bd_pipeline` is readable by anon.** Policy `Public can read BD pipeline` is `FOR SELECT` with `qual = true` on `{public}`. This is our enterprise deal pipeline — contact, stage, deal size — exposed to every anon request via PostgREST. **Live production data leak.** Fix: drop that policy; the existing `Service role manages BD pipeline` covers agent writes via service_role. Add a targeted authenticated read only if/when the `/bd` dashboard needs it. Surfaced 2026-04-21 during agent-infrastructure migration RLS audit.
+- [ ] **`public.competitor_watch` is readable by anon.** Policy `Public read competitor_watch` is `FOR SELECT` with `qual = true` on `{public}`. Competitor intel exposed publicly. **Live production data leak.** Fix: drop that policy; add an explicit `service_role` `FOR ALL` policy (service_role currently works only via `BYPASSRLS`). Surfaced 2026-04-21 during agent-infrastructure migration RLS audit.
+
 ## Now (pick from here first)
 
 - [ ] A11y: identify the remaining `color-contrast` offender on /glossary, /tools, /foreign-investment, /about, /how-we-earn, /privacy, /terms. Run axe locally after `npm run build && npm run start`. One violation per page, so likely a single shared element (breadcrumb? prose link?). Re-raise the gate to block on `serious` in `e2e/a11y.spec.ts` once violations hit zero.
@@ -12,6 +17,9 @@ Running backlog. Pull from here rather than inventing work.
 
 ## Soon (next week or two)
 
+- [ ] RLS cosmetic cleanup on two reused platform tables (surfaced 2026-04-21 during agent-infrastructure migration RLS audit; not blocking — agent writes work via `BYPASSRLS`):
+  - `public.dynamic_pricing_rules` has zero policies. Default-deny for `anon`/`authenticated` is correct, but Supabase advisor flags the missing explicit `service_role` policy. Add `Service role manages dynamic_pricing_rules FOR ALL TO service_role USING (true) WITH CHECK (true)`.
+  - `public.forum_threads` has two duplicate public-read policies (`Public read forum_threads` and `public_read_visible_threads`) with identical `is_removed = false` predicate. Drop one.
 - [ ] ACN/ABN hardcode cleanup. `lib/compliance.ts` exports `COMPANY_ACN` (`093 882 421`) and `COMPANY_ABN` (`90 093 882 421`) as the source of truth, but three pages hardcode the literal instead of importing:
   - `app/accessibility/page.tsx:26`
   - `app/admin/compliance/page.tsx:1035-1036`
