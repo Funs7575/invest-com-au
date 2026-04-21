@@ -115,7 +115,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/property/finance",
     // Additional public pages
     "/tools", "/rates", "/properties", "/pro", "/jobs",
-    "/advertise", "/advertise/featured-placement", "/advertiser-terms", "/accessibility",
+    "/advertise", "/advertise/packages", "/advertise/featured-placement", "/advertiser-terms", "/accessibility",
     "/fsg", "/legal", "/developer-terms", "/consultations",
     "/courses", "/reports", "/portfolio", "/portfolio-calculator",
     "/advisor-signup",
