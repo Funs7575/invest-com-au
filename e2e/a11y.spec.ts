@@ -45,10 +45,14 @@ for (const { path, name } of ROUTES) {
   test(`${name} (${path}) has no serious or critical a11y violations`, async ({
     page,
   }) => {
-    await page.goto(path, { waitUntil: "networkidle" });
-    // Let client components settle; some rely on post-mount data to
-    // render their labels.
-    await page.waitForTimeout(400);
+    // `networkidle` on the homepage never settles in CI — analytics
+    // + tracking fetches keep the network busy past the 15s goto
+    // default, so chromium hits TimeoutError on retry. Wait for DOM
+    // only; 600ms post-mount gives client components enough time to
+    // render their labels without depending on network quiescence.
+    await page.goto(path, { waitUntil: "domcontentloaded", timeout: 30_000 });
+    await page.waitForLoadState("load", { timeout: 30_000 });
+    await page.waitForTimeout(600);
 
     const results = await new AxeBuilder({ page })
       .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
