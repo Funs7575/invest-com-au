@@ -86,7 +86,7 @@ Specs will live in `.claude/agents/` (directory to be created).
 | 13 | Licensing Agent               | Continuous                          | ACL + AFSL management; ASIC monitoring; Dad's CPD generation |
 | 14 | Growth / Partnership Agent    | Wednesday 09:00                     | Competitor intel + partnership pipeline |
 | 15 | Revenue Optimisation Agent    | Sunday 20:00                        | 6 parallel analyses; 3–5 opportunities/week |
-| 16 | **Migration Agent**           | **October–December 2026 ONLY**      | Protects 28-yr aged domain authority during `.vercel.app` → `invest.com.au` cutover |
+| 16 | **Domain Migration Agent**    | **October–December 2026 ONLY**      | Protects 28-yr aged domain authority during `.vercel.app` → `invest.com.au` cutover |
 | 17 | AI Search Optimisation Agent  | Continuous                          | 500+ probe queries/week across LLMs for citation patterns |
 | 18 | Product Layer Agent           | Activates post-AFSL                 | Co-branded products (savings / super / ETF / card) |
 
@@ -144,7 +144,7 @@ windows.
 - `.com.au` is a restricted ccTLD and geo-targets AU exactly.
 - **Migration window: October–December 2026.** Highest-stakes period in the
   entire build.
-- Migration Agent (#16) handles: URL inventory, 301 mapping, schema
+- Domain Migration Agent (#16) handles: URL inventory, 301 mapping, schema
   preservation, ranking monitoring.
 - **Risk if mishandled:** 30–50% authority loss; 6–12 months recovery.
 
