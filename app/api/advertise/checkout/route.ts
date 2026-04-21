@@ -4,29 +4,32 @@ import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 import { getSiteUrl } from "@/lib/url";
 import { isValidEmail } from "@/lib/validate-email";
+import {
+  SELF_SERVE_TIER_PRICES_CENTS,
+  SELF_SERVE_TIERS,
+  VALID_SELF_SERVE_DURATIONS,
+  SELF_SERVE_DURATION_DISCOUNTS,
+  type SelfServeTierId,
+} from "@/lib/sponsorship-tiers";
 
 const log = logger("advertise-checkout");
 
-const TIER_PRICES: Record<string, number> = {
-  featured_partner: 2000_00, // cents
-  category_sponsor: 500_00,
-  deal_of_month: 300_00,
-};
+const TIER_PRICES: Record<SelfServeTierId, number> = SELF_SERVE_TIER_PRICES_CENTS;
 
-const TIER_LABELS: Record<string, string> = {
-  featured_partner: "Featured Partner Sponsorship",
-  category_sponsor: "Category Sponsor",
-  deal_of_month: "Deal of the Month",
-};
+const TIER_LABELS: Record<string, string> = Object.fromEntries(
+  SELF_SERVE_TIERS.map((t) => [
+    t.id,
+    t.id === "featured_partner" ? "Featured Partner Sponsorship" : t.name,
+  ]),
+);
 
-const VALID_DURATIONS = [1, 3, 6, 12];
+const VALID_DURATIONS = VALID_SELF_SERVE_DURATIONS;
 
-const DURATION_DISCOUNTS: Record<number, number> = {
-  1: 0,
-  3: 0.1,
-  6: 0.2,
-  12: 0.3,
-};
+const DURATION_DISCOUNTS = SELF_SERVE_DURATION_DISCOUNTS;
+
+function isSelfServeTierId(v: unknown): v is SelfServeTierId {
+  return typeof v === "string" && v in TIER_PRICES;
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -34,7 +37,7 @@ export async function POST(request: NextRequest) {
     const { tier, category_slug, duration_months, company_name, contact_email } = body;
 
     // Validate tier
-    if (!tier || !TIER_PRICES[tier]) {
+    if (!isSelfServeTierId(tier)) {
       return NextResponse.json(
         { error: "Invalid sponsorship tier." },
         { status: 400 }
