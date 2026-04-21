@@ -51,3 +51,4 @@ index copy*.html
 # package-lock.json
 supabase/.temp/
 .claude/worktrees/
+.claude/settings.local.json
