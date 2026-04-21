@@ -4,6 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Start here
 
+- `COMPANY.md` — organisational brief: legal entity, team, 19 agents, 24 agent tables, 5 escalation tiers, compliance constraints, Oct–Dec 2026 migration window. Read before any change that touches compliance, agents, escalation, or domain migration.
 - `ARCHITECTURE.md` — request lifecycle, auth model, data model, caching strategy. Read before your first non-trivial change.
 - `CONTRIBUTING.md` — commit convention (Conventional Commits), PR expectations, migration discipline, code style.
 - `docs/runbooks/` — incident response procedures.
