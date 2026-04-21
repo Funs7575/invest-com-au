@@ -32,18 +32,20 @@ export const metadata = {
   twitter: { card: "summary_large_image" as const },
 };
 
-export default function TermsPage() {
-  const breadcrumbs = breadcrumbJsonLd([
-    { name: "Home", url: absoluteUrl("/") },
-    { name: "Terms of Use" },
-  ]);
-
-  const S = ({ n, title, children }: { n: number; title: string; children: React.ReactNode }) => (
+function S({ n, title, children }: { n: number; title: string; children: React.ReactNode }) {
+  return (
     <section className="bg-slate-50 border border-slate-200 rounded-xl p-6">
       <h2 className="text-lg font-bold mb-2">{n}. {title}</h2>
       <div className="text-sm text-slate-600 leading-relaxed space-y-2">{children}</div>
     </section>
   );
+}
+
+export default function TermsPage() {
+  const breadcrumbs = breadcrumbJsonLd([
+    { name: "Home", url: absoluteUrl("/") },
+    { name: "Terms of Use" },
+  ]);
 
   return (
     <>
@@ -54,7 +56,7 @@ export default function TermsPage() {
       <div className="py-5 md:py-12">
         <div className="container-custom">
           <div className="max-w-3xl mx-auto">
-            <div className="text-sm text-slate-500 mb-6">
+            <div className="text-sm text-slate-600 mb-6">
               <Link href="/" className="hover:text-brand">Home</Link>
               <span className="mx-2">/</span>
               <span className="text-brand">Terms of Use</span>

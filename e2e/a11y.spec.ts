@@ -60,9 +60,11 @@ for (const { path, name } of ROUTES) {
       .analyze();
 
     // Hard-fail on critical only; log serious for follow-up but don't
-    // block the merge. Contrast and dl-nesting fixes are iterative and
-    // blocking on every regression stalls shipping without a11y signal
-    // actually improving.
+    // block the merge. Legal/meta page breadcrumbs are now clean, but
+    // a site-wide audit (2026-04-21) turned up amber-500/600 links,
+    // glossary term badges and methodology cards that all still fail
+    // the WCAG AA contrast ratio. Raising the gate to serious needs
+    // those to land first — planned as a follow-up sweep.
     const critical = results.violations.filter((v) => v.impact === "critical");
     const serious = results.violations.filter((v) => v.impact === "serious");
 

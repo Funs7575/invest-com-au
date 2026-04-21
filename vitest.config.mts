@@ -33,10 +33,10 @@ export default defineConfig({
       // add new (legitimately untested) code. Ratchet these up as
       // test suites grow; do not lower them.
       thresholds: {
-        lines: 20,
+        lines: 22,
         functions: 45,
-        branches: 50,
-        statements: 20,
+        branches: 52,
+        statements: 22,
       },
     },
   },
