@@ -66,15 +66,15 @@ Compliance copy lives in `lib/compliance.ts` — never hardcode disclaimers.
 
 ## The 19 agents
 
-Specs will live in `.claude/agents/` (directory to be created).
+Specs live in `.claude/agents/` — see `README.md` for precedence rules and editing conventions.
 
 | #  | Name                          | Cadence / trigger                  | Purpose |
 |----|-------------------------------|-------------------------------------|---------|
-| 00 | Master Overseer               | Daily 05:00 AEST                    | Monitors all 19 agents; detects failures/anomalies |
-| 01 | CEO Agent                     | Monday 06:00 weekly                 | Strategic brief |
-| 02 | CTO Agent                     | Continuous (via Claude Code)        | spec → architect → implementer |
+| 00 | Master Overseer               | Hourly + event-driven               | Monitors all 19 agents; detects failures/anomalies |
+| 01 | CEO Agent                     | Daily 06:00 AEST                    | Strategic brief |
+| 02 | CTO Agent                     | Every 4 hours + event-driven        | spec → architect → implementer |
 | 03 | CMO / Content Agent           | Daily 07:00                         | 20 Tier 2 articles/week; byline "invest.com.au Research Team" |
-| 04 | Editorial Agent               | Ongoing                             | Manages Friend's Dad collaboration on Tier 1 pillars (10–15/quarter) |
+| 04 | Editorial Agent               | Daily 10:00 AEST                    | Manages Friend's Dad collaboration on Tier 1 pillars (10–15/quarter) |
 | 05 | SMB Sales Agent               | Continuous                          | Cold outbound via Apollo + Clay + Lemlist + Northlight; 600 prospects/month |
 | 06 | BD / Enterprise Agent         | Continuous                          | Supports Co-Founder's enterprise pipeline ($50k–$5M deals) |
 | 07 | Revenue Agent                 | Continuous                          | Lead routing (<60s response); Stripe anomaly monitoring |
@@ -82,13 +82,15 @@ Specs will live in `.claude/agents/` (directory to be created).
 | 09 | CI / Improvement Agent        | Sunday 06:00                        | 3–5 improvement hypotheses/week; 14-day measurement |
 | 10 | Analytics Agent               | Daily 02:00                         | Single source of truth via `platform_snapshots` |
 | 11 | Email / Lifecycle Agent       | Event-driven                        | Loops + Resend; customer lifecycle |
-| 12 | Ops / Admin Agent             | Continuous                          | Broker/advisor onboarding + routine correspondence |
-| 13 | Licensing Agent               | Continuous                          | ACL + AFSL management; ASIC monitoring; Dad's CPD generation |
-| 14 | Growth / Partnership Agent    | Wednesday 09:00                     | Competitor intel + partnership pipeline |
+| 12 | Ops / Admin Agent             | Daily 04:00 + weekly + quarterly    | Broker/advisor onboarding + routine correspondence |
+| 13 | Licensing Agent               | Daily 04:30 + weekly + event-driven | ACL + AFSL management; ASIC monitoring; Dad's CPD generation |
+| 14 | Growth / Partnership Agent    | Daily 05:30 + weekly Wed 09:00      | Competitor intel + partnership pipeline |
 | 15 | Revenue Optimisation Agent    | Sunday 20:00                        | 6 parallel analyses; 3–5 opportunities/week |
 | 16 | **Domain Migration Agent**    | **October–December 2026 ONLY**      | Protects 28-yr aged domain authority during `.vercel.app` → `invest.com.au` cutover |
-| 17 | AI Search Optimisation Agent  | Continuous                          | 500+ probe queries/week across LLMs for citation patterns |
+| 17 | AI Search Optimisation Agent  | Weekly Mon 22:00 + monthly 1st 22:00 | 500+ probe queries/week across LLMs for citation patterns |
 | 18 | Product Layer Agent           | Activates post-AFSL                 | Co-branded products (savings / super / ETF / card) |
+
+> Authoritative schedules live in `.claude/agents/*.md` spec files; this column is a human-readable summary. If the summary and the spec diverge, the spec wins per `.claude/agents/README.md` §Precedence.
 
 ## The 24 agent infrastructure tables (Supabase)
 
