@@ -92,23 +92,34 @@ Specs will live in `.claude/agents/` (directory to be created).
 
 ## The 24 agent infrastructure tables (Supabase)
 
-Migration to create these is forthcoming. Planned names:
+19 tables are agent-only, created in migration
+`20260512_agent_infrastructure.sql`. The other 5 already exist as
+platform tables — agents share them rather than shadow them:
 
-```
-agent_tasks                    platform_snapshots           compliance_tasks
-agent_memory                   prospects                    ceo_approvals
-agent_logs                     enterprise_pipeline          friend_decisions
-                               ab_tests                     advisor_content_subscriptions
+| Existing platform table   | Used by agent                        |
+|---------------------------|--------------------------------------|
+| `ab_tests`                | CI / Improvement (#09)               |
+| `forum_threads`           | CMO / Content (#03), Editorial (#04) |
+| `bd_pipeline`             | BD / Enterprise (#06)                |
+| `competitor_watch`        | Growth / Partnership (#14)           |
+| `dynamic_pricing_rules`   | Revenue Optimisation (#15)           |
 
-revenue_opportunities          editorial_articles           api_customers
-competitor_intel               forum_threads                founder_bandwidth
-dynamic_pricing                llm_citations                cobranded_products
-migration_plan                 partner_integrations         authorised_representatives
-                                                            credit_representatives
-```
+Agent-only tables (19), grouped by purpose:
 
-All user-data tables ship with RLS enabled + explicit policies per the
-migration discipline in `CLAUDE.md`.
+- **Core runtime:** `agent_tasks`, `agent_memory`, `agent_logs`
+- **Observability:** `platform_snapshots`
+- **Sales & growth:** `prospects`, `revenue_opportunities`, `partner_integrations`
+- **Compliance & licensing:** `compliance_tasks`, `authorised_representatives`, `credit_representatives`
+- **Approvals & bandwidth:** `ceo_approvals`, `friend_decisions`, `founder_bandwidth`
+- **Editorial:** `editorial_articles`, `advisor_content_subscriptions`
+- **Search & migration:** `llm_citations`, `migration_plan`
+- **Products & API:** `cobranded_products`, `api_customers`
+
+Agent-only tables are RLS-enabled with `service_role`-only access.
+`anon` and `authenticated` have no matching policies. The `/ceo`
+dashboard will add targeted authenticated read policies for
+`ceo_approvals` and `friend_decisions` in a follow-up migration when
+that UI ships.
 
 ## 5-tier escalation system
 
