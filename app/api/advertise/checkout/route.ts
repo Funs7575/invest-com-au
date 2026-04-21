@@ -9,11 +9,12 @@ import {
   SELF_SERVE_TIERS,
   VALID_SELF_SERVE_DURATIONS,
   SELF_SERVE_DURATION_DISCOUNTS,
+  type SelfServeTierId,
 } from "@/lib/sponsorship-tiers";
 
 const log = logger("advertise-checkout");
 
-const TIER_PRICES = SELF_SERVE_TIER_PRICES_CENTS;
+const TIER_PRICES: Record<SelfServeTierId, number> = SELF_SERVE_TIER_PRICES_CENTS;
 
 const TIER_LABELS: Record<string, string> = Object.fromEntries(
   SELF_SERVE_TIERS.map((t) => [
@@ -26,13 +27,17 @@ const VALID_DURATIONS = VALID_SELF_SERVE_DURATIONS;
 
 const DURATION_DISCOUNTS = SELF_SERVE_DURATION_DISCOUNTS;
 
+function isSelfServeTierId(v: unknown): v is SelfServeTierId {
+  return typeof v === "string" && v in TIER_PRICES;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { tier, category_slug, duration_months, company_name, contact_email } = body;
 
     // Validate tier
-    if (!tier || !TIER_PRICES[tier]) {
+    if (!isSelfServeTierId(tier)) {
       return NextResponse.json(
         { error: "Invalid sponsorship tier." },
         { status: 400 }
