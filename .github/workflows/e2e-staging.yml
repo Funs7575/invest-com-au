@@ -1,0 +1,149 @@
+name: E2E on staging Supabase (blocked — needs setup)
+
+# ──────────────────────────────────────────────────────────────────
+# STATUS: Blocked on infra setup. This workflow is committed but
+# disabled via `if: false` at the job level. Enable when the two
+# setup items below are done.
+#
+# WHAT THIS SOLVES:
+#   The existing `e2e` job in ci.yml builds with placeholder
+#   Supabase URL/keys. As a result, every data-dependent page
+#   (broker reviews, compare, find-advisor, articles) renders
+#   empty in CI and the Playwright assertions silently pass.
+#   Only layout/tool/calculator pages get real signal.
+#
+#   E2E_PREVIEW (in e2e-preview.yml) tests the real Vercel preview
+#   — which hits the PROD Supabase DB. That catches wiring bugs
+#   but we don't want PR tests to depend on live prod data.
+#
+#   This workflow runs against a dedicated STAGING Supabase project
+#   seeded with fixture data — real integration coverage, no prod
+#   blast radius.
+#
+# SETUP STEPS (~1 hour):
+#
+#   1. Create a throwaway Supabase project named e.g.
+#      "invest-com-au-staging":
+#        - Supabase dashboard → New project
+#        - Region: same as prod (eu-west-1)
+#        - Note the Project Ref (looks like "xyzabc1234")
+#
+#   2. Run the prod migrations against staging:
+#        supabase login
+#        supabase link --project-ref <STAGING_REF>
+#        supabase db push
+#
+#   3. Seed fixture data:
+#        SUPABASE_URL=https://<STAGING_REF>.supabase.co \
+#        SUPABASE_SERVICE_ROLE_KEY=<staging_service_role> \
+#          npx tsx scripts/seed-staging.ts
+#
+#   4. Add three GitHub Secrets in repo settings:
+#        STAGING_SUPABASE_URL           https://<STAGING_REF>.supabase.co
+#        STAGING_SUPABASE_ANON_KEY      (from Supabase → API → anon)
+#        STAGING_SUPABASE_SERVICE_ROLE  (from Supabase → API → service_role)
+#
+#   5. Remove the `if: false` guard below and push.
+#
+# MAINTENANCE:
+#   Re-seed staging on schema changes. Add a scheduled cron:
+#     on: schedule: [{ cron: "0 0 * * 0" }]  # weekly Sun midnight
+#   that runs `supabase db push` + `scripts/seed-staging.ts`.
+# ──────────────────────────────────────────────────────────────────
+
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: e2e-staging-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e-staging:
+    name: Playwright vs staging Supabase
+    # ─── Enable me by removing this guard after the setup steps
+    # ─── at the top of this file are complete.
+    if: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.STAGING_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.STAGING_SUPABASE_ANON_KEY }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.STAGING_SUPABASE_SERVICE_ROLE }}
+      # Other env vars can stay as placeholder — they're for outbound
+      # services (Stripe, Resend) that staging doesn't need to hit.
+      RESEND_API_KEY: placeholder
+      STRIPE_SECRET_KEY: placeholder
+      STRIPE_WEBHOOK_SECRET: placeholder
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+      CRON_SECRET: placeholder
+      CI: "1"
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Get Playwright version
+        id: playwright-version
+        run: |
+          PW_VERSION=$(node -p "require('./package-lock.json').packages['node_modules/@playwright/test'].version")
+          echo "version=$PW_VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}-chromium-webkit
+
+      - name: Install Playwright browsers
+        run: |
+          if [ "${{ steps.playwright-cache.outputs.cache-hit }}" = "true" ]; then
+            npx playwright install-deps chromium webkit
+          else
+            npx playwright install --with-deps chromium webkit
+          fi
+
+      - name: Reseed staging (idempotent)
+        run: npx tsx scripts/seed-staging.ts
+
+      - name: Build app against staging Supabase
+        run: npm run build
+
+      - name: Start server + run Playwright
+        # Hard-fail — unlike the placeholder-creds e2e, staging is
+        # supposed to have real data and should produce actionable
+        # failures.
+        run: |
+          npm run start &
+          SERVER_PID=$!
+          # Wait for the server to be accepting connections
+          for i in $(seq 1 30); do
+            if curl -fsS http://localhost:3000 > /dev/null 2>&1; then
+              echo "Server is up."
+              break
+            fi
+            sleep 1
+          done
+          npx playwright test --reporter=blob,github
+          TEST_EXIT=$?
+          kill $SERVER_PID 2>/dev/null || true
+          exit $TEST_EXIT
+
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-staging-report
+          path: playwright-report/
+          retention-days: 7
+          if-no-files-found: ignore
