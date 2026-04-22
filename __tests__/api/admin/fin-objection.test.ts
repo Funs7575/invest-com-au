@@ -112,17 +112,11 @@ describe("POST /api/admin/fin-objection/[id]", () => {
     // the partial index idx_editorial_articles_auto_publish — stable
     // before that lands.
 
-    type ChainMethod = ReturnType<typeof vi.fn>;
-    const chain: {
-      select: ChainMethod;
-      eq: ChainMethod;
-      is: ChainMethod;
-      lte: ChainMethod;
-    } = {
-      select: vi.fn(),
-      eq: vi.fn(),
-      is: vi.fn(),
-      lte: vi.fn(),
+    const chain = {
+      select: vi.fn<(...args: unknown[]) => unknown>(),
+      eq: vi.fn<(...args: unknown[]) => unknown>(),
+      is: vi.fn<(...args: unknown[]) => unknown>(),
+      lte: vi.fn<(...args: unknown[]) => Promise<unknown>>(),
     };
     chain.select.mockReturnValue(chain);
     chain.eq.mockReturnValue(chain);
