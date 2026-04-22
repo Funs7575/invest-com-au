@@ -66,7 +66,6 @@ describe("getSessionId", () => {
   it("falls back to the Math.random UUID when crypto.randomUUID is missing (older browsers)", () => {
     // Temporarily remove randomUUID
     const original = crypto.randomUUID;
-    // @ts-expect-error — deliberately stripping
     delete (crypto as { randomUUID?: () => string }).randomUUID;
 
     try {
