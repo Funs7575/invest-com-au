@@ -130,7 +130,9 @@ describe("POST /api/admin/fin-objection/[id]", () => {
     chain.is.mockReturnValue(chain as unknown as Chain);
     chain.lte.mockResolvedValue({ data: [], error: null });
 
-    const fromMock = vi.fn<() => Chain>(() => chain as unknown as Chain);
+    const fromMock = vi.fn<(table: string) => Chain>(
+      () => chain as unknown as Chain
+    );
     const supabase = { from: fromMock };
 
     const fourHoursAgo = new Date(
