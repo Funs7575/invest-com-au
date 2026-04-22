@@ -39,12 +39,22 @@ jobs:
       github.event.deployment_status.environment_url != ''
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    permissions:
+      # Needed to look up the PR associated with the deployed SHA
+      # and post a failure comment.
+      contents: read
+      pull-requests: write
+      issues: write
+      deployments: read
 
     env:
       # Playwright will test the real deploy URL — no placeholder
       # env vars needed to build an app. We don't `npm run build`
       # in this job; just install Playwright and point it at Vercel.
       E2E_BASE_URL: ${{ github.event.deployment_status.environment_url }}
+      # Skip playwright.config.ts's webServer block — the target
+      # is already running at E2E_BASE_URL.
+      E2E_SKIP_WEBSERVER: "1"
 
     steps:
       - uses: actions/checkout@v6

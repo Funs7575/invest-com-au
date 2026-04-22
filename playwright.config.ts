@@ -58,12 +58,20 @@ export default defineConfig({
       use: { ...devices["iPhone 13"] },
     },
   ],
-  webServer: process.env.CI
-    ? {
-        command: "npm run start",
-        url: "http://localhost:3000",
-        reuseExistingServer: false,
-        timeout: 120_000,
-      }
-    : undefined,
+  // Skip the local webServer when E2E_BASE_URL points at an
+  // external target (e.g. a Vercel preview deploy). The
+  // e2e-preview.yml workflow sets E2E_SKIP_WEBSERVER=1 so
+  // Playwright doesn't try to `npm run start` against a preview
+  // URL that's already live.
+  webServer:
+    process.env.E2E_SKIP_WEBSERVER === "1"
+      ? undefined
+      : process.env.CI
+        ? {
+            command: "npm run start",
+            url: "http://localhost:3000",
+            reuseExistingServer: false,
+            timeout: 120_000,
+          }
+        : undefined,
 });
