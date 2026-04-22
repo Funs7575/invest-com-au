@@ -1,0 +1,150 @@
+name: E2E on Vercel preview
+
+# Runs the Playwright suite against the real Vercel preview URL for
+# each PR, instead of a placeholder-creds local build. This catches
+# integration bugs that the existing `e2e` job in ci.yml can't —
+# because that job builds with stubbed Supabase URL/keys so most
+# data-dependent pages render empty.
+#
+# Triggered when Vercel posts a `deployment_status` event with
+# state=success AND the deployment targets a preview environment.
+# The preview URL is pulled from the event payload (no API call,
+# no VERCEL_TOKEN needed for the URL itself).
+#
+# Runs in addition to the existing `e2e` job, not instead of — the
+# placeholder-creds version still provides a signal on components
+# that don't need DB data (layouts, tools, calculators).
+#
+# If Vercel deploys aren't configured for the repo, this workflow
+# silently never fires (no trigger, no cost).
+
+on:
+  deployment_status:
+
+concurrency:
+  # One concurrent run per deployment. If Vercel redeploys twice in
+  # a row (e.g. rapid pushes), the previous run is cancelled so we
+  # only test the latest.
+  group: e2e-preview-${{ github.event.deployment.id }}
+  cancel-in-progress: true
+
+jobs:
+  e2e-preview:
+    name: Playwright vs Vercel preview
+    # Only fire on successful preview deployments. Production and
+    # failure states are ignored.
+    if: |
+      github.event.deployment_status.state == 'success' &&
+      github.event.deployment.environment != 'Production' &&
+      github.event.deployment_status.environment_url != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    env:
+      # Playwright will test the real deploy URL — no placeholder
+      # env vars needed to build an app. We don't `npm run build`
+      # in this job; just install Playwright and point it at Vercel.
+      E2E_BASE_URL: ${{ github.event.deployment_status.environment_url }}
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          # Check out the specific commit that was deployed, not
+          # the latest on the branch. Otherwise a subsequent push
+          # would change the tests mid-run.
+          ref: ${{ github.event.deployment.sha }}
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Get Playwright version
+        id: playwright-version
+        run: |
+          PW_VERSION=$(node -p "require('./package-lock.json').packages['node_modules/@playwright/test'].version")
+          echo "version=$PW_VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}-chromium-webkit
+
+      - name: Install Playwright browsers
+        run: |
+          if [ "${{ steps.playwright-cache.outputs.cache-hit }}" = "true" ]; then
+            npx playwright install-deps chromium webkit
+          else
+            npx playwright install --with-deps chromium webkit
+          fi
+
+      - name: Wait for preview to warm up
+        # Vercel reports success slightly before the deployment is
+        # fully routable. One quick probe with backoff avoids the
+        # flaky "first pageload 502" failure mode.
+        run: |
+          for i in 1 2 3 4 5; do
+            if curl -fsS --max-time 10 "$E2E_BASE_URL" > /dev/null; then
+              echo "Preview is live."
+              exit 0
+            fi
+            echo "Preview not ready yet, attempt $i/5, sleeping 5s…"
+            sleep 5
+          done
+          echo "::warning::Preview URL never responded with 2xx; proceeding anyway."
+
+      - name: Run Playwright against preview URL
+        # No continue-on-error here (unlike the placeholder-creds
+        # job) — a real preview URL with real data means failures
+        # are actionable.
+        run: npx playwright test --reporter=blob,github
+
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-preview-report
+          path: playwright-report/
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Comment on PR with result
+        # Only post on failure — a sticky comment flipping between
+        # green/red is noise. Failure surface is important enough
+        # to interrupt.
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const url = process.env.E2E_BASE_URL;
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            // Find the PR this deployment belongs to by SHA.
+            const { data: prs } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: context.sha,
+            });
+            const pr = prs[0];
+            if (!pr) {
+              console.log('No associated PR; skipping comment.');
+              return;
+            }
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr.number,
+              body: [
+                '## ❌ Preview E2E failed',
+                '',
+                `Preview URL: ${url}`,
+                `Run: ${runUrl}`,
+                '',
+                '_Playwright run against the live Vercel preview failed._',
+                '_Placeholder-creds E2E may still be green — that only tests DOM, not data-dependent pages._',
+              ].join('\n'),
+            });
