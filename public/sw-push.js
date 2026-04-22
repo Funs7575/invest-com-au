@@ -4,8 +4,6 @@
  * Handles incoming push events and notification click navigation.
  */
 
-/* eslint-disable no-restricted-globals */
-
 self.addEventListener("push", function (event) {
   if (!event.data) return;
 

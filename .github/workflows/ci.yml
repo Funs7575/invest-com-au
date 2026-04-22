@@ -50,8 +50,49 @@ jobs:
       - name: Rate-limit coverage audit
         run: npm run audit:rate-limits -- --strict
 
+      - name: Cache Next.js build
+        # Keyed on lockfile + source hash so any app/lib/component
+        # change busts it cleanly. Next.js uses .next/cache for
+        # webpack module persistence + type-checking incrementals;
+        # a warm cache cuts production-build time by ~30–50%.
+        uses: actions/cache@v4
+        with:
+          path: .next/cache
+          key: nextjs-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-${{ hashFiles('app/**/*.{ts,tsx}', 'components/**/*.{ts,tsx}', 'lib/**/*.{ts,tsx}', 'next.config.ts', 'tsconfig.json') }}
+          restore-keys: |
+            nextjs-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-
+
       - name: Build (catches production-only errors)
         run: npm run build
+
+      # Upload .next so dependent jobs (e2e, a11y, lighthouse*) can
+      # download instead of rebuilding from scratch. Each rebuild
+      # costs ~2-4 min; with 4 downstream jobs that's ~8-16 min saved
+      # per PR. Restricted to PR runs because main-branch pushes
+      # don't have downstream jobs — no benefit uploading.
+      #
+      # Path note: Next.js 16 writes to .next/. Not cached between
+      # workflow runs (that's what the Cache Next.js build step above
+      # does); this artifact is for sibling-job sharing within a
+      # single workflow run.
+      - name: Upload .next build artifact
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: next-build
+          # v4 expects globs, not bare directory names. `.next/**`
+          # recursively matches every file; `!.next/cache/**` prunes
+          # the webpack cache (we have a separate step for that).
+          path: |
+            .next/**
+            !.next/cache/**
+          # v4 skips dotfiles/dotdirs by default — .next starts
+          # with a dot so without this flag the glob matches zero
+          # files. Flipping this on restores the v3 behaviour for
+          # this specific artifact.
+          include-hidden-files: true
+          retention-days: 1
+          if-no-files-found: error
 
   secret-scan:
     name: Secret scan
@@ -132,6 +173,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     if: github.event_name == 'pull_request'
+    # Reuse the .next artifact uploaded by the main ci job so we
+    # don't rebuild the whole app from scratch. Saves ~3-4 min per
+    # PR. If the ci job fails the artifact won't exist; the
+    # `needs: ci` guarantees this job only runs on a green build.
+    needs: ci
 
     env:
       NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
@@ -155,14 +201,38 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Get Playwright version
+        id: playwright-version
+        run: |
+          PW_VERSION=$(node -p "require('./package-lock.json').packages['node_modules/@playwright/test'].version")
+          echo "version=$PW_VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}-chromium-webkit
+
       - name: Install Playwright browsers
         # Install chromium + webkit for cross-browser coverage. Firefox
         # is omitted to keep the install under 90s on cold cache; the
         # Blink/WebKit pair catches the vast majority of engine bugs.
-        run: npx playwright install --with-deps chromium webkit
+        # On cache hit, skip the browser download (saves ~60–90s) but
+        # still install OS-level deps because those live outside the
+        # cached path.
+        run: |
+          if [ "${{ steps.playwright-cache.outputs.cache-hit }}" = "true" ]; then
+            npx playwright install-deps chromium webkit
+          else
+            npx playwright install --with-deps chromium webkit
+          fi
 
-      - name: Build app
-        run: npm run build
+      - name: Download .next build from ci job
+        uses: actions/download-artifact@v4
+        with:
+          name: next-build
+          path: .next
 
       - name: Run Playwright
         # continue-on-error because E2E tests depend on real
@@ -224,6 +294,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     if: github.event_name == 'pull_request'
+    needs: ci
     # Separate from the advisory Lighthouse job below — this one hard
     # fails the PR if LCP / CLS / TBT regress past agreed thresholds.
     # Uses median of 3 runs to reduce runner-load noise.
@@ -243,7 +314,11 @@ jobs:
           node-version: "20"
           cache: "npm"
       - run: npm ci
-      - run: npm run build
+      - name: Download .next build from ci job
+        uses: actions/download-artifact@v4
+        with:
+          name: next-build
+          path: .next
       - name: Run Lighthouse CWV gate
         uses: treosh/lighthouse-ci-action@v12
         with:
@@ -256,6 +331,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     if: github.event_name == 'pull_request'
+    needs: ci
     env:
       NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
       NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder
@@ -273,9 +349,29 @@ jobs:
           node-version: "20"
           cache: "npm"
       - run: npm ci
+      - name: Get Playwright version
+        id: playwright-version
+        run: |
+          PW_VERSION=$(node -p "require('./package-lock.json').packages['node_modules/@playwright/test'].version")
+          echo "version=$PW_VERSION" >> "$GITHUB_OUTPUT"
+      - name: Cache Playwright browser (chromium-only)
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}-chromium
       - name: Install Playwright browser
-        run: npx playwright install --with-deps chromium
-      - run: npm run build
+        run: |
+          if [ "${{ steps.playwright-cache.outputs.cache-hit }}" = "true" ]; then
+            npx playwright install-deps chromium
+          else
+            npx playwright install --with-deps chromium
+          fi
+      - name: Download .next build from ci job
+        uses: actions/download-artifact@v4
+        with:
+          name: next-build
+          path: .next
       - name: Run axe-core a11y suite
         # --project=chromium skips webkit + mobile-safari; WebKit
         # tests here were timing out on networkidle and adding ~3min
@@ -297,6 +393,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     if: github.event_name == 'pull_request'
+    needs: ci
 
     steps:
       - uses: actions/checkout@v6
@@ -305,16 +402,11 @@ jobs:
           node-version: "20"
           cache: "npm"
       - run: npm ci
-      - run: npm run build
-        env:
-          NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder
-          SUPABASE_SERVICE_ROLE_KEY: placeholder
-          RESEND_API_KEY: placeholder
-          STRIPE_SECRET_KEY: placeholder
-          STRIPE_WEBHOOK_SECRET: placeholder
-          NEXT_PUBLIC_SITE_URL: http://localhost:3000
-          CRON_SECRET: placeholder
+      - name: Download .next build from ci job
+        uses: actions/download-artifact@v4
+        with:
+          name: next-build
+          path: .next
       - name: Run Lighthouse CI
         # continue-on-error at step level so the check run reports
         # success even when LCP / CLS / etc fail thresholds. Lighthouse

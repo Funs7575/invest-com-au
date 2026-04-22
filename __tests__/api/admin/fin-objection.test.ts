@@ -112,24 +112,27 @@ describe("POST /api/admin/fin-objection/[id]", () => {
     // the partial index idx_editorial_articles_auto_publish — stable
     // before that lands.
 
-    type ChainMethod = ReturnType<typeof vi.fn>;
-    const chain: {
-      select: ChainMethod;
-      eq: ChainMethod;
-      is: ChainMethod;
-      lte: ChainMethod;
-    } = {
-      select: vi.fn(),
-      eq: vi.fn(),
-      is: vi.fn(),
-      lte: vi.fn(),
+    type Chain = {
+      select: (...args: unknown[]) => Chain;
+      eq: (...args: unknown[]) => Chain;
+      is: (...args: unknown[]) => Chain;
+      lte: (...args: unknown[]) => Promise<{ data: unknown[]; error: null }>;
     };
-    chain.select.mockReturnValue(chain);
-    chain.eq.mockReturnValue(chain);
-    chain.is.mockReturnValue(chain);
+
+    const chain = {
+      select: vi.fn<Chain["select"]>(),
+      eq: vi.fn<Chain["eq"]>(),
+      is: vi.fn<Chain["is"]>(),
+      lte: vi.fn<Chain["lte"]>(),
+    };
+    chain.select.mockReturnValue(chain as unknown as Chain);
+    chain.eq.mockReturnValue(chain as unknown as Chain);
+    chain.is.mockReturnValue(chain as unknown as Chain);
     chain.lte.mockResolvedValue({ data: [], error: null });
 
-    const fromMock = vi.fn(() => chain);
+    const fromMock = vi.fn<(table: string) => Chain>(
+      () => chain as unknown as Chain
+    );
     const supabase = { from: fromMock };
 
     const fourHoursAgo = new Date(

@@ -1,0 +1,198 @@
+name: E2E on Vercel preview
+
+# Runs the Playwright suite against the real Vercel preview URL for
+# each PR, instead of a placeholder-creds local build. This catches
+# integration bugs that the existing `e2e` job in ci.yml can't —
+# because that job builds with stubbed Supabase URL/keys so most
+# data-dependent pages render empty.
+#
+# Triggered when Vercel posts a `deployment_status` event with
+# state=success AND the deployment targets a preview environment.
+# The preview URL is pulled from the event payload (no API call,
+# no VERCEL_TOKEN needed for the URL itself).
+#
+# REQUIRES: VERCEL_AUTOMATION_BYPASS_SECRET to be set as a repo
+# secret. Vercel teams on Pro/Enterprise have deployment
+# protection on by default, which redirects every preview URL
+# to a "Login – Vercel" page and breaks automated testing. The
+# bypass secret + the x-vercel-protection-bypass header (applied
+# in playwright.config.ts) lets Playwright through.
+#
+# ONE-TIME SETUP (~5 min):
+#   1. Vercel dashboard → Project → Settings → Deployment Protection
+#   2. Under "Protection Bypass for Automation", click "Add Secret".
+#   3. Copy the generated token.
+#   4. In the GitHub repo: Settings → Secrets and variables →
+#      Actions → New repository secret:
+#        Name:  VERCEL_AUTOMATION_BYPASS_SECRET
+#        Value: (the token from step 3)
+#
+# Until the secret is set, the gate job below emits a warning and
+# the rest of the workflow is skipped — better than 99 failed
+# tests and a noisy PR comment on every deploy.
+#
+# Runs in addition to the existing `e2e` job, not instead of — the
+# placeholder-creds version still provides a signal on components
+# that don't need DB data (layouts, tools, calculators).
+
+on:
+  deployment_status:
+
+concurrency:
+  # One concurrent run per deployment. If Vercel redeploys twice in
+  # a row (e.g. rapid pushes), the previous run is cancelled so we
+  # only test the latest.
+  group: e2e-preview-${{ github.event.deployment.id }}
+  cancel-in-progress: true
+
+jobs:
+  gate:
+    name: Check bypass secret
+    # Separate gating job so the downstream e2e-preview job can be
+    # skipped cleanly via `needs:` + `if:` instead of sprinkling
+    # `if: env.SECRET != ''` on every step.
+    if: |
+      github.event.deployment_status.state == 'success' &&
+      github.event.deployment.environment != 'Production' &&
+      github.event.deployment_status.environment_url != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    outputs:
+      has_secret: ${{ steps.check.outputs.has_secret }}
+    steps:
+      - id: check
+        env:
+          SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+        run: |
+          if [ -n "$SECRET" ]; then
+            echo "has_secret=true" >> "$GITHUB_OUTPUT"
+            echo "✅ Bypass secret is configured."
+          else
+            echo "has_secret=false" >> "$GITHUB_OUTPUT"
+            echo "::warning title=Preview E2E skipped::VERCEL_AUTOMATION_BYPASS_SECRET not set. See the setup block at the top of .github/workflows/e2e-preview.yml. Until then, Vercel's protection wall makes every test fail with 'Login – Vercel' page titles."
+          fi
+
+  e2e-preview:
+    name: Playwright vs Vercel preview
+    needs: gate
+    if: needs.gate.outputs.has_secret == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+      deployments: read
+
+    env:
+      E2E_BASE_URL: ${{ github.event.deployment_status.environment_url }}
+      # Skip playwright.config.ts's webServer block — the target
+      # is already running at E2E_BASE_URL.
+      E2E_SKIP_WEBSERVER: "1"
+      # playwright.config.ts uses this to set
+      # x-vercel-protection-bypass on every request, bypassing the
+      # deployment-protection auth wall.
+      VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          # Check out the specific commit that was deployed, not
+          # the latest on the branch. Otherwise a subsequent push
+          # would change the tests mid-run.
+          ref: ${{ github.event.deployment.sha }}
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Get Playwright version
+        id: playwright-version
+        run: |
+          PW_VERSION=$(node -p "require('./package-lock.json').packages['node_modules/@playwright/test'].version")
+          echo "version=$PW_VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}-chromium-webkit
+
+      - name: Install Playwright browsers
+        run: |
+          if [ "${{ steps.playwright-cache.outputs.cache-hit }}" = "true" ]; then
+            npx playwright install-deps chromium webkit
+          else
+            npx playwright install --with-deps chromium webkit
+          fi
+
+      - name: Wait for preview to warm up
+        # Vercel reports success slightly before the deployment is
+        # fully routable. One quick probe with backoff avoids the
+        # flaky "first pageload 502" failure mode. curl sends the
+        # bypass header explicitly so the probe doesn't trip the
+        # auth wall itself.
+        run: |
+          for i in 1 2 3 4 5; do
+            if curl -fsS --max-time 10 \
+              -H "x-vercel-protection-bypass: $VERCEL_AUTOMATION_BYPASS_SECRET" \
+              "$E2E_BASE_URL" > /dev/null; then
+              echo "Preview is live."
+              exit 0
+            fi
+            echo "Preview not ready yet, attempt $i/5, sleeping 5s…"
+            sleep 5
+          done
+          echo "::warning::Preview URL never responded with 2xx; proceeding anyway."
+
+      - name: Run Playwright against preview URL
+        run: npx playwright test --reporter=blob,github
+
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-preview-report
+          path: playwright-report/
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Comment on PR with result
+        # Only post on failure — a sticky comment flipping between
+        # green/red is noise. Failure surface is important enough
+        # to interrupt.
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const url = process.env.E2E_BASE_URL;
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const { data: prs } = await github.rest.repos.listPullRequestsAssociatedWithCommit({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              commit_sha: context.sha,
+            });
+            const pr = prs[0];
+            if (!pr) {
+              console.log('No associated PR; skipping comment.');
+              return;
+            }
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr.number,
+              body: [
+                '## ❌ Preview E2E failed',
+                '',
+                `Preview URL: ${url}`,
+                `Run: ${runUrl}`,
+                '',
+                '_Playwright run against the live Vercel preview failed._',
+                '_Placeholder-creds E2E may still be green — that only tests DOM, not data-dependent pages._',
+              ].join('\n'),
+            });

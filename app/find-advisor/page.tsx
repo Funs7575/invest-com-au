@@ -270,7 +270,6 @@ function FindAdvisorQuiz() {
   // Read sessionStorage once synchronously so all lazy initialisers share the same
   // parsed value — avoids 5 separate JSON.parse calls and, crucially, avoids the
   // two-render flash (step-1 paint → useEffect → step-5 repaint).
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const _savedMatch = typeof sessionStorage !== "undefined" ? loadMatchFromStorage() : null;
   const savedMatch = _savedMatch && _savedMatch.matchedAdvisors.length > 0 ? _savedMatch : null;
 

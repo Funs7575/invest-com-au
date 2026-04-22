@@ -23,6 +23,7 @@ const ALLOWLIST = new Set<string>([
 const GUARD_PATTERNS = [
   /requireAdmin\s*\(/,
   /getAdminEmails\s*\(/,
+  /getFinObjectionEmails\s*\(/,
   /ADMIN_EMAILS\b/,
   /process\.env\.CRON_SECRET/,
   /process\.env\.ADMIN_API_TOKEN/,

@@ -1,0 +1,73 @@
+#!/usr/bin/env sh
+# Pre-push hook: run type-check + rate-limit audit before pushing.
+#
+# Rationale:
+#   CI runs the same checks on every push. Running them locally
+#   first catches obvious breakage without burning runner minutes
+#   and without the 3-5min wait for CI to report. The one-time
+#   cost is ~15-30s (mostly tsc cold-start).
+#
+# Skipping:
+#   Pre-push checks block every push including emergency fixes.
+#   To bypass (rare), use:
+#     git push --no-verify
+#   This is NOT a silent override — the commit still has to pass
+#   the pre-commit hook (lint-staged). Only the extra type-check
+#   + audit layer is skipped.
+#
+# Performance tip:
+#   If you're pushing frequently to a WIP branch, comment out
+#   the slow checks locally (do not commit the .husky/ edit) or
+#   use --no-verify. CI will catch the breakage either way.
+
+set -e
+
+# Where the npm scripts live
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT" || exit 1
+
+# Skip on unusual checkouts (detached HEAD in a submodule, etc.)
+# where node_modules may not be installed.
+if [ ! -d "node_modules" ]; then
+  echo "[pre-push] node_modules not found — skipping checks (run 'npm install')"
+  exit 0
+fi
+
+echo "[pre-push] Running type-check…"
+if ! npx tsc --noEmit; then
+  echo ""
+  echo "[pre-push] ❌ TypeScript errors. Fix before pushing, or bypass with:"
+  echo "           git push --no-verify"
+  exit 1
+fi
+
+echo "[pre-push] Running rate-limit coverage audit…"
+if ! npm run audit:rate-limits -- --strict > /dev/null 2>&1; then
+  echo ""
+  echo "[pre-push] ❌ Rate-limit audit failed — a new API route is missing"
+  echo "           rate limiting or EXEMPT_PATTERNS. See scripts/rate-limit-coverage.mjs."
+  echo "           Bypass with: git push --no-verify"
+  exit 1
+fi
+
+# Fast feedback: run only the tests affected by this push's commits.
+# Full suite still runs in CI — this just surfaces breakage locally
+# in seconds instead of the ~30s full-suite run.
+#
+# Skipped when the checkout is clean with no ahead-commits (first
+# push to a new branch) because vitest --changed has no base to
+# diff against and would run everything.
+AHEAD=$(git rev-list --count @{upstream}..HEAD 2>/dev/null || echo "0")
+if [ "$AHEAD" != "0" ]; then
+  echo "[pre-push] Running changed-file tests ($AHEAD commits to push)…"
+  if ! npm run test:changed -- --silent > /tmp/pre-push-test.log 2>&1; then
+    echo ""
+    echo "[pre-push] ❌ Tests failed. Last output:"
+    tail -40 /tmp/pre-push-test.log
+    echo ""
+    echo "[pre-push]    Bypass with: git push --no-verify"
+    exit 1
+  fi
+fi
+
+echo "[pre-push] ✅ All checks passed."

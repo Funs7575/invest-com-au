@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { COMPANY_ACN, COMPANY_LEGAL_NAME } from "@/lib/compliance";
 
 export const revalidate = 86400;
 
@@ -23,7 +24,7 @@ export default function AccessibilityPage() {
           <section>
             <h2 className="text-lg font-bold mb-2">Our Commitment</h2>
             <p className="text-slate-600">
-              Invest.com.au Pty Ltd (ACN 093 882 421) is committed to ensuring
+              {COMPANY_LEGAL_NAME} (ACN {COMPANY_ACN}) is committed to ensuring
               our website is accessible to all users, including people with
               disabilities. We aim to meet the{" "}
               <strong>

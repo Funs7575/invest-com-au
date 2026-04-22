@@ -1,0 +1,126 @@
+name: Visual regression (Chromatic) — blocked, needs setup
+
+# ──────────────────────────────────────────────────────────────────
+# STATUS: Blocked on Chromatic account + CHROMATIC_PROJECT_TOKEN.
+# Workflow is committed but disabled via `if: false`. Enable once
+# the handoff steps below are done.
+#
+# WHY CHROMATIC OVER PERCY:
+#   - Chromatic is free for open-source, $149/mo for commercial 5k
+#     snapshots. Percy (BrowserStack) starts around $80/mo for a
+#     single project. Pricing rough parity; Chromatic's GitHub
+#     integration and Storybook story-as-snapshot-source is the
+#     closer fit if we're already doing component-level rendering.
+#   - If Storybook isn't set up in the repo, use the Playwright
+#     integration instead (Chromatic supports both). This workflow
+#     is wired for the Playwright path because the repo has e2e/
+#     but no Storybook.
+#
+# WHAT IT CATCHES:
+#   "The privacy page has moved 3px to the left." CSS regressions,
+#   unintended text overflow, broken responsive layouts, icon
+#   swaps, image-URL changes. None of which axe-core or Playwright
+#   assertions see today.
+#
+# COVERAGE PLAN:
+#   Baseline: homepage + 5 legal/meta pages + 3 financial tools +
+#   2 broker reviews + 2 find-advisor screens + 1 compare page =
+#   ~14 snapshots per run × 2 viewports (desktop + mobile) = 28
+#   snapshots/run. At 5k free tier, that's ~180 PR runs/mo before
+#   pay-as-you-go kicks in — enough for 6 PRs/day.
+#
+# SETUP STEPS (~45 min):
+#
+#   1. Sign up at chromatic.com/ with a free personal or Hobby tier:
+#        - Link the invest-com-au GitHub repo
+#        - Copy the CHROMATIC_PROJECT_TOKEN from the dashboard
+#
+#   2. Add the token as a GitHub Secret:
+#        Repo settings → Secrets → Actions → New repository secret
+#        Name:  CHROMATIC_PROJECT_TOKEN
+#        Value: (pasted from step 1)
+#
+#   3. Add a minimal Chromatic config in the repo (per handoff
+#      docs): chromatic.config.json with buildScriptName="build"
+#      and either `storybook: true` (if adding Storybook) or leave
+#      it out to use the Playwright path.
+#
+#   4. Remove the `if: false` guard below and push.
+#
+# ALTERNATIVE (cheaper): run Playwright's built-in screenshot
+# comparison with `toHaveScreenshot()`. Stores baselines in the
+# repo. No SaaS dependency but manual review of diffs — no hosted
+# UI for approving/rejecting changes.
+# ──────────────────────────────────────────────────────────────────
+
+on:
+  pull_request:
+    paths:
+      - "app/**"
+      - "components/**"
+      - "public/**"
+      - "next.config.ts"
+      - "postcss.config.mjs"
+      - ".github/workflows/visual-regression.yml"
+
+concurrency:
+  group: visual-regression-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  chromatic:
+    name: Chromatic snapshot diff
+    # ─── Enable me by removing this guard after the setup steps
+    # ─── at the top of this file are complete.
+    if: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: ci
+
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder
+      SUPABASE_SERVICE_ROLE_KEY: placeholder
+      RESEND_API_KEY: placeholder
+      STRIPE_SECRET_KEY: placeholder
+      STRIPE_WEBHOOK_SECRET: placeholder
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+      CRON_SECRET: placeholder
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          # Chromatic needs full history to diff vs baseline branch
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download .next build from ci job
+        uses: actions/download-artifact@v4
+        with:
+          name: next-build
+          path: .next
+
+      - name: Install Playwright
+        run: npx playwright install --with-deps chromium
+
+      - name: Publish snapshots to Chromatic
+        # chromatic-ci action handles: start server, run the
+        # screenshot suite (chromatic/playwright), diff vs baseline,
+        # upload result, set PR check status.
+        # Docs: https://www.chromatic.com/docs/playwright
+        uses: chromaui/action@v11
+        with:
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          # Run in playwright mode because there's no Storybook.
+          # The test harness at e2e/visual/*.spec.ts (create this
+          # alongside setup step 3) captures the routes listed in
+          # the COVERAGE PLAN at the top of this file.
+          playwright: true
+          exitOnceUploaded: true

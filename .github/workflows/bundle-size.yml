@@ -1,0 +1,125 @@
+name: Bundle size budget
+
+# Compares the Next.js production bundle size between PR head and
+# the base branch, and comments the diff on the PR. Fails (soft) if
+# any route grows by more than the threshold — advisory signal, not
+# a hard gate (regression can sometimes be justified).
+#
+# How it works:
+#   1. Check out base branch, build, capture .next/app-build-manifest
+#      + per-route chunk sizes into a JSON summary.
+#   2. Check out PR head, build, capture the same summary.
+#   3. Diff the two summaries per route. Output table formatted
+#      markdown and post it as a sticky PR comment (same comment
+#      updated every run — the thread doesn't fill with noise).
+#
+# Threshold:
+#   +10% or +5KB (whichever is larger) per route triggers a warning
+#   line in the comment. No gate today; promote to a hard check
+#   once a baseline is established.
+#
+# Skipped on:
+#   - non-PR events (we only care about PR deltas)
+#   - docs-only PRs (no app/ or components/ changes) — nothing to
+#     compare, and the build would just produce identical output
+
+on:
+  pull_request:
+    # Only run when code that affects the bundle changed. Docs /
+    # TODO / workflow-file PRs get a fast no-op.
+    paths:
+      - "app/**"
+      - "components/**"
+      - "lib/**"
+      - "public/**"
+      - "next.config.ts"
+      - "package-lock.json"
+      - "package.json"
+      - ".github/workflows/bundle-size.yml"
+
+concurrency:
+  group: bundle-size-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  bundle-size:
+    name: Bundle size diff vs base
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pull-requests: write
+
+    env:
+      # Placeholder secrets for the build; we're only measuring
+      # JS output, not executing anything.
+      NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder
+      SUPABASE_SERVICE_ROLE_KEY: placeholder
+      RESEND_API_KEY: placeholder
+      STRIPE_SECRET_KEY: placeholder
+      STRIPE_WEBHOOK_SECRET: placeholder
+      NEXT_PUBLIC_SITE_URL: https://invest.com.au
+      CRON_SECRET: placeholder
+
+    steps:
+      - name: Checkout PR head
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Stash bundle-size scripts from PR head
+        # These scripts only exist on this PR (they're being added).
+        # Copy them somewhere outside the working tree so they
+        # survive the base-branch checkout.
+        run: |
+          mkdir -p /tmp/bundle-scripts
+          cp scripts/bundle-size-summary.mjs /tmp/bundle-scripts/
+          cp scripts/bundle-size-diff.mjs /tmp/bundle-scripts/
+
+      - name: Build PR head
+        run: |
+          npm ci
+          npm run build
+          mkdir -p /tmp/bundle-size
+          node /tmp/bundle-scripts/bundle-size-summary.mjs > /tmp/bundle-size/head.json
+          cat /tmp/bundle-size/head.json
+
+      - name: Checkout base branch
+        run: |
+          git fetch origin ${{ github.base_ref }}:base-ref
+          git checkout base-ref
+          git reset --hard origin/${{ github.base_ref }}
+
+      - name: Build base branch
+        run: |
+          npm ci
+          npm run build
+          # Run the PR-version of the summary script — the base
+          # branch predates it. Using the stashed copy means both
+          # summaries are apples-to-apples even if the script
+          # itself changed in this PR.
+          node /tmp/bundle-scripts/bundle-size-summary.mjs > /tmp/bundle-size/base.json
+          cat /tmp/bundle-size/base.json
+
+      - name: Generate diff + comment body
+        run: |
+          node /tmp/bundle-scripts/bundle-size-diff.mjs \
+            --base /tmp/bundle-size/base.json \
+            --head /tmp/bundle-size/head.json \
+            --out /tmp/bundle-size/comment.md
+
+      - name: Upsert PR comment
+        # Use the action's `path:` input rather than plumbing the
+        # comment body through $GITHUB_OUTPUT. The heredoc approach
+        # broke with 'Matching delimiter not found' when the markdown
+        # content had patterns that collided with the shell delimiter.
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: bundle-size
+          path: /tmp/bundle-size/comment.md

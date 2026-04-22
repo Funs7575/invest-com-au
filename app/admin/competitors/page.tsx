@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
 import AdminShell from "@/components/AdminShell";
 import Icon from "@/components/Icon";
 
@@ -45,23 +44,25 @@ export default function CompetitorWatchPage() {
 
   async function fetchEntries() {
     setLoading(true);
-    const supabase = createClient();
-    const { data } = await supabase.from("competitor_watch").select("*").order("spotted_at", { ascending: false }).limit(200);
-    setEntries(data || []);
+    const res = await fetch("/api/admin/competitors");
+    const data: Entry[] = res.ok ? await res.json() : [];
+    setEntries(data);
     setLoading(false);
   }
 
   async function handleAdd() {
     if (!title.trim()) return;
     setSaving(true);
-    const supabase = createClient();
-    await supabase.from("competitor_watch").insert({
-      competitor,
-      event_type: eventType,
-      title: title.trim(),
-      detail: detail.trim() || null,
-      url: url.trim() || null,
-      spotted_at: new Date().toISOString(),
+    await fetch("/api/admin/competitors", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        competitor,
+        event_type: eventType,
+        title: title.trim(),
+        detail: detail.trim() || null,
+        url: url.trim() || null,
+      }),
     });
     setTitle("");
     setDetail("");
@@ -72,8 +73,11 @@ export default function CompetitorWatchPage() {
   }
 
   async function handleDelete(id: number) {
-    const supabase = createClient();
-    await supabase.from("competitor_watch").delete().eq("id", id);
+    await fetch("/api/admin/competitors", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
     setEntries(prev => prev.filter(e => e.id !== id));
   }
 
