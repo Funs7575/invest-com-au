@@ -9,7 +9,8 @@ export const maxDuration = 120;
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-const VERCEL_PROJECT_ID = "prj_miPLXyjwXbqNnGLOFijBHbjXWESY";
+const VERCEL_PROJECT_ID =
+  process.env.VERCEL_PROJECT_ID || "prj_miPLXyjwXbqNnGLOFijBHbjXWESY";
 
 const SYSTEM_PROMPT = `You are an AI operations assistant for invest.com.au — an Australian investment platform that helps users compare brokers (ETF, share trading, super), find financial advisors, access educational content, and manage investments.
 
@@ -415,7 +416,6 @@ async function executeTool(name: string, input: Record<string, unknown>): Promis
         };
 
         const now = new Date().toISOString();
-        const newStatus = action === "approve" ? "approved" : "rejected";
 
         const tableMap: Record<string, { table: string; statusField: string; approvedStatus?: string; rejectedStatus?: string }> = {
           advisor_article:      { table: "advisor_articles", statusField: "status", approvedStatus: "published", rejectedStatus: "rejected" },
