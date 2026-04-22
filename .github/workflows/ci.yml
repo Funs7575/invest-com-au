@@ -155,11 +155,32 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Get Playwright version
+        id: playwright-version
+        run: |
+          PW_VERSION=$(node -p "require('./package-lock.json').packages['node_modules/@playwright/test'].version")
+          echo "version=$PW_VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}-chromium-webkit
+
       - name: Install Playwright browsers
         # Install chromium + webkit for cross-browser coverage. Firefox
         # is omitted to keep the install under 90s on cold cache; the
         # Blink/WebKit pair catches the vast majority of engine bugs.
-        run: npx playwright install --with-deps chromium webkit
+        # On cache hit, skip the browser download (saves ~60–90s) but
+        # still install OS-level deps because those live outside the
+        # cached path.
+        run: |
+          if [ "${{ steps.playwright-cache.outputs.cache-hit }}" = "true" ]; then
+            npx playwright install-deps chromium webkit
+          else
+            npx playwright install --with-deps chromium webkit
+          fi
 
       - name: Build app
         run: npm run build
@@ -273,8 +294,24 @@ jobs:
           node-version: "20"
           cache: "npm"
       - run: npm ci
+      - name: Get Playwright version
+        id: playwright-version
+        run: |
+          PW_VERSION=$(node -p "require('./package-lock.json').packages['node_modules/@playwright/test'].version")
+          echo "version=$PW_VERSION" >> "$GITHUB_OUTPUT"
+      - name: Cache Playwright browser (chromium-only)
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}-chromium
       - name: Install Playwright browser
-        run: npx playwright install --with-deps chromium
+        run: |
+          if [ "${{ steps.playwright-cache.outputs.cache-hit }}" = "true" ]; then
+            npx playwright install-deps chromium
+          else
+            npx playwright install --with-deps chromium
+          fi
       - run: npm run build
       - name: Run axe-core a11y suite
         # --project=chromium skips webkit + mobile-safari; WebKit
