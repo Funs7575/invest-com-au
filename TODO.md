@@ -4,6 +4,14 @@ Running backlog. Pull from here rather than inventing work.
 
 **Convention:** newest at top of each section. Tick with `- [x]` and leave in place for ~a week so we can see what shipped. Delete during weekly prune.
 
+## Blocked on your terminal (PR #199 — 2026-04-22 session wrap)
+
+- [ ] Run `npm run db:types` on your work machine and commit. Clears the pre-existing Supabase types-drift CI check. Needs `SUPABASE_ACCESS_TOKEN` which the session agent couldn't access.
+- [ ] Enable E2E-against-staging: follow the setup block at the top of `.github/workflows/e2e-staging.yml` (~1 hour: new Supabase project, 3 GitHub Secrets, remove `if: false`).
+- [ ] Enable visual-regression: follow the setup block at the top of `.github/workflows/visual-regression.yml` (~45 min: Chromatic signup, 1 GitHub Secret, remove `if: false`).
+- [ ] Wire up Stryker mutation testing: four-step ENABLE ME block at the bottom of `stryker.config.mjs` (~15 min: `npm install -D @stryker-mutator/*` + npm script + optional weekly cron).
+- [ ] Fix the React 19 hook warnings in `app/admin/compliance/page.tsx` so ACN/ABN dedup can finish.
+
 ## Urgent — data exposure
 
 - [x] 2026-04-21 — **`public.bd_pipeline` public read leak closed.** Dropped `Public can read BD pipeline` policy in migration `20260513_fix_public_read_leaks.sql`. Admin route continues to work via `createAdminClient()`.
@@ -11,6 +19,7 @@ Running backlog. Pull from here rather than inventing work.
 
 ## Now (pick from here first)
 
+- [x] 2026-04-22 — CI structural overhaul shipped. See `docs/ci-improvements-2026-04-22.md` for the full inventory: pre-push hook, build-artifact sharing (-9min/PR), bundle-size PR comment bot, `test:changed` fast path, E2E-on-Vercel-preview workflow, staging-Supabase workflow (disabled pending secrets), Chromatic visual-regression (disabled pending account), Stryker mutation-testing config (pending npm install), flaky-test-triage design doc. 4 of 9 are live; 5 have handoff steps in their respective files.
 - [ ] **Regenerate `lib/database.types.ts` via supabase CLI to clear `Supabase types drift` CI check.** Pre-existing failure on `main` after commit `b0d293d` added `editorial_articles.fin_objection_at` (and a broader audit on 2026-04-22 found ~15 other tables missing too: `agent_logs`, `agent_memory`, `agent_tasks`, `ceo_approvals`, `friend_decisions`, `advisor_content_subscriptions`, etc. — purely additive). Regen via `npm run db:types` requires a node env with `supabase` CLI; the Supabase MCP `generate_typescript_types` produces semantically correct content but doesn't match CLI output byte-for-byte (ordering / formatting / version differences), so MCP regen does NOT satisfy the drift check. Action: someone with a working dev env runs `npm run db:types` and commits. File is currently not imported anywhere (`grep -rln "database.types"` = 0 matches), so the regen is purely a CI-gate fix — no downstream type churn expected. Surfaced 2026-04-22 during continuous-improvement session (PR #199).
 - [ ] **Hard gate before #11 Email/Lifecycle ships its first production Loops batch send:** migrate the email suppression list from the MVP `agent_memory:email:suppression` key to a dedicated `public.suppression_list` table. Schema: `id uuid pk default gen_random_uuid()`, `contact_email text not null`, `reason text not null` (one of `hard_bounce`, `soft_bounce_ladder_exhausted`, `complaint`, `manual_unsubscribe`, `admin`), `suppressed_at timestamptz not null default now()`, `metadata jsonb not null default '{}'`; unique index on `lower(contact_email)`. RLS enabled, `service_role FOR ALL`, no `anon`/`authenticated` policies. #11 owns writes; all other agents are read-only. Rationale: `agent_memory` is per-agent scoped, has no unique constraint on `contact_email`, and can't be efficiently queried by recipient on the dispatch hot-path — wrong shape for authoritative cross-agent read. Do not let this sit — #11 production readiness is blocked on it. Surfaced 2026-04-21 during agent spec drafting (session 3).
 - [x] 2026-04-22 — Refactored `app/admin/competitors/page.tsx` to API route pattern matching `app/api/admin/bd-pipeline`. Page now calls `/api/admin/competitors` (GET/POST/DELETE) instead of querying `competitor_watch` via browser anon client, restoring read/write functionality after migration `20260513` closed the public-read leak.
