@@ -108,21 +108,18 @@ jobs:
           cat /tmp/bundle-size/base.json
 
       - name: Generate diff + comment body
-        id: diff
         run: |
           node /tmp/bundle-scripts/bundle-size-diff.mjs \
             --base /tmp/bundle-size/base.json \
             --head /tmp/bundle-size/head.json \
             --out /tmp/bundle-size/comment.md
-          # Emit the body for the comment step (escape multi-line)
-          {
-            echo "body<<COMMENT_EOF"
-            cat /tmp/bundle-size/comment.md
-            echo "COMMENT_EOF"
-          } >> "$GITHUB_OUTPUT"
 
       - name: Upsert PR comment
+        # Use the action's `path:` input rather than plumbing the
+        # comment body through $GITHUB_OUTPUT. The heredoc approach
+        # broke with 'Matching delimiter not found' when the markdown
+        # content had patterns that collided with the shell delimiter.
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: bundle-size
-          message: ${{ steps.diff.outputs.body }}
+          path: /tmp/bundle-size/comment.md

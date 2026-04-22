@@ -7,6 +7,7 @@ Running backlog. Pull from here rather than inventing work.
 ## Blocked on your terminal (PR #199 — 2026-04-22 session wrap)
 
 - [ ] Run `npm run db:types` on your work machine and commit. Clears the pre-existing Supabase types-drift CI check. Needs `SUPABASE_ACCESS_TOKEN` which the session agent couldn't access.
+- [ ] **Add `VERCEL_AUTOMATION_BYPASS_SECRET`** to repo secrets so `.github/workflows/e2e-preview.yml` can bypass Vercel deployment protection. ~5 min: Vercel → Project → Settings → Deployment Protection → "Protection Bypass for Automation" → Add Secret → copy token → GitHub → Settings → Secrets → new secret `VERCEL_AUTOMATION_BYPASS_SECRET`. Until set, the workflow skips cleanly with a warning; fine to leave unconfigured if you don't want preview E2E.
 - [ ] Enable E2E-against-staging: follow the setup block at the top of `.github/workflows/e2e-staging.yml` (~1 hour: new Supabase project, 3 GitHub Secrets, remove `if: false`).
 - [ ] Enable visual-regression: follow the setup block at the top of `.github/workflows/visual-regression.yml` (~45 min: Chromatic signup, 1 GitHub Secret, remove `if: false`).
 - [ ] Wire up Stryker mutation testing: four-step ENABLE ME block at the bottom of `stryker.config.mjs` (~15 min: `npm install -D @stryker-mutator/*` + npm script + optional weekly cron).

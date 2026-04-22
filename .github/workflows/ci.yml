@@ -86,6 +86,11 @@ jobs:
           path: |
             .next/**
             !.next/cache/**
+          # v4 skips dotfiles/dotdirs by default — .next starts
+          # with a dot so without this flag the glob matches zero
+          # files. Flipping this on restores the v3 behaviour for
+          # this specific artifact.
+          include-hidden-files: true
           retention-days: 1
           if-no-files-found: error
 
