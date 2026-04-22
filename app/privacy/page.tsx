@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
+import { COMPANY_ABN, COMPANY_ACN, COMPANY_LEGAL_NAME } from "@/lib/compliance";
 
 export const revalidate = 86400;
 
@@ -45,7 +46,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-lg font-bold mb-2">1. About This Policy</h2>
             <p className="text-slate-600">
-              Invest.com.au Pty Ltd (ACN 093 882 421, ABN 90 093 882 421)
+              {COMPANY_LEGAL_NAME} (ACN {COMPANY_ACN}, ABN {COMPANY_ABN})
               (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;)
               is committed to protecting your personal information in accordance
               with the Australian Privacy Act 1988 (Cth) and the Australian
