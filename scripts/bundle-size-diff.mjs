@@ -48,6 +48,18 @@ function deltaBadge(baseKb, headKb) {
   return "·";
 }
 
+// Totals are measured in thousands of KB; an absolute-KB gate
+// that makes sense per-route (20 KB) fires almost always on the
+// aggregate. Use percent-only thresholds on totals. Calibrated
+// so that a whole-site 5% regression is a real signal.
+function totalBadge(baseKb, headKb) {
+  const diffPct = pct(baseKb, headKb);
+  if (diffPct >= 10) return "❌";
+  if (diffPct >= 5) return "⚠️";
+  if (diffPct <= -2) return "✅";
+  return "·";
+}
+
 function fmtKb(n) {
   return `${n.toFixed(1)} KB`;
 }
@@ -95,11 +107,13 @@ async function main() {
 
   // Top-level totals first. The shared-chunks number is the
   // most important regression signal — it lands on every route.
-  const sharedBadge = deltaBadge(
+  // Use totalBadge (percent-only) on the aggregates; deltaBadge's
+  // absolute-KB thresholds are calibrated for per-route scale.
+  const sharedBadge = totalBadge(
     base.sharedChunksKb ?? 0,
     head.sharedChunksKb ?? 0,
   );
-  const serverBadge = deltaBadge(
+  const serverBadge = totalBadge(
     base.totalServerKb ?? 0,
     head.totalServerKb ?? 0,
   );
@@ -154,7 +168,7 @@ async function main() {
 
   lines.push("");
   lines.push(
-    `<sub>Thresholds: ⚠️ ≥ ${WARN_PCT}% or ${WARN_KB} KB · ❌ ≥ ${FAIL_PCT}% or ${FAIL_KB} KB · ✅ shrinks ≥ ${SHRINK_KB} KB. Advisory only — see scripts/bundle-size-diff.mjs to tune.</sub>`,
+    `<sub>Per-route thresholds: ⚠️ ≥ ${WARN_PCT}% or ${WARN_KB} KB · ❌ ≥ ${FAIL_PCT}% or ${FAIL_KB} KB · ✅ shrinks ≥ ${SHRINK_KB} KB. Totals-row thresholds (percent only): ⚠️ ≥ 5% · ❌ ≥ 10%. Advisory only — see scripts/bundle-size-diff.mjs to tune.</sub>`,
   );
 
   const out = lines.join("\n");
