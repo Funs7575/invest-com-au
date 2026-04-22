@@ -37,14 +37,16 @@ Running backlog. Pull from here rather than inventing work.
 - [x] 2026-04-22 — RLS cosmetic cleanup on two reused platform tables shipped in `supabase/migrations/20260522_rls_cosmetic_cleanup.sql`. Adds explicit `Service role manages dynamic_pricing_rules FOR ALL` policy; drops legacy duplicate `Public can read threads` SELECT policy on `forum_threads` (current `forum_threads_public_read` from `20260427_wave_security_observability.sql` retained).
 - [x] 2026-04-22 — ACN/ABN hardcode cleanup: `app/accessibility/page.tsx` and `app/privacy/page.tsx` now import from `lib/compliance`. `app/admin/compliance/page.tsx` still has the hardcoded literals in its `COMPANY_DETAILS` object — blocked by pre-existing lint warnings in the file (runComplianceChecks hoisting, roboAdvisors unused) which lint-staged rejects when the file is touched. Follow-up: fix the two pre-existing warnings then apply the same import pattern.
 - [x] 2026-04-22 — Vercel project ID env-var extraction shipped in `app/api/admin/ai-chat/route.ts:12` as `process.env.VERCEL_PROJECT_ID || "prj_miPLXyjwXbqNnGLOFijBHbjXWESY"`. Env var documented in `.env.local.example`. Follow-up: set `VERCEL_PROJECT_ID` in Vercel project settings, then drop the literal fallback.
-- [ ] Tests for remaining untested cron routes. Pattern: `__tests__/api/cron-<name>.test.ts`, following `cron-auto-publish.test.ts` or `cron-cleanup.test.ts`. ~60 routes still lack tests. High-value candidates (financial/compliance/state-changing):
-  - [ ] `app/api/cron/referral-payouts/route.ts` (uses `wrapCronHandler` + financial-audit + notifications — more complex mock setup)
-  - [ ] `app/api/cron/gdpr-retention-purge/route.ts` (data-destroying; highest blast radius)
-  - [ ] `app/api/cron/month-end-close/route.ts` (financial reconciliation)
-  - [ ] `app/api/cron/data-integrity-audit/route.ts` (cross-table consistency)
-  - Already tested in 2026-04-22 session: `auto-publish`, `retry-webhooks`.
-- [x] 2026-04-22 — Coverage ratchet: floors bumped from `lines/stmt 22, branches 52, functions 45` to `lines/stmt 27, branches 68, functions 45` after cron tests landed. Measured actuals: lines/stmt 28.05, branches 69.23, functions 45.63. Functions held at 45 (too tight to ratchet safely).
+- [ ] Tests for remaining untested cron routes. Pattern: `__tests__/api/cron-<name>.test.ts`, following `cron-auto-publish.test.ts` or `cron-cleanup.test.ts`. ~58 routes still lack tests. High-value candidates (financial/compliance/state-changing):
+  - [ ] `app/api/cron/referral-payouts/route.ts` (uses `wrapCronHandler` + financial-audit + notifications — complex mock setup)
+  - [ ] `app/api/cron/data-integrity-audit/route.ts` (cross-table consistency; 216 lines, multi-check CHECKS array, complex to mock)
+  - [ ] `app/api/cron/afsl-expiry-monitor/route.ts` (compliance)
+  - [ ] `app/api/cron/advisor-dunning/route.ts` (financial)
+  - Tested in 2026-04-22 session: `auto-publish`, `retry-webhooks`, `month-end-close`, `gdpr-retention-purge`, `heartbeat`.
+- [x] 2026-04-22 — Coverage ratchet (two passes): lines/stmt 22→27→28, branches 52→68→69, functions held at 45. Measured: 28.33 / 69.48 / 45.92. Gap to next ratchet is now tight enough that another bump risks false-positive failures on minor coverage drops from new untested code; next pass should wait for another test-file landing.
 - [x] 2026-04-22 — Webkit timeout audit: no `waitUntil: "networkidle"` actually in use under `e2e/`; the prior `networkidle` comment in `e2e/a11y.spec.ts:48` describes past pain, not current state. TODO item was stale.
+- [x] 2026-04-22 — CI speed: Playwright browser cache added to e2e + a11y jobs (~60–90s saved per job on hit). Next.js build cache added to main ci job (~30–50% build-time cut on warm hit).
+- [ ] Fix the pre-existing lint warnings in `app/admin/compliance/page.tsx` so ACN/ABN dedup can be completed. Two `react-hooks/immutability` warnings on `runComplianceChecks` (accessed before declared + declared-after-use pair) plus `roboAdvisors` unused. Attempted `useCallback` refactor in 2026-04-22 session swapped one rule for `react-hooks/set-state-in-effect` (React 19 strictness). Proper fix probably needs: (a) remove `roboAdvisors`; (b) move the function declaration above useEffect OR refactor the auto-fetch-on-mount to use an async IIFE inside useEffect that doesn't trigger the sync-setState-in-effect rule. Once warnings are 0, import `COMPANY_ABN/ACN/LEGAL_NAME` from `lib/compliance` and replace the `COMPANY_DETAILS` literal on line 1035.
 
 ## Someday / parking lot
 
