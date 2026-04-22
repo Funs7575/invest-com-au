@@ -55,12 +55,11 @@ function setTable(
   table: string,
   b: Partial<(typeof tableBehaviour)[string]>,
 ): void {
-  tableBehaviour[table] = {
+  const prev = tableBehaviour[table] ?? {
     delete: { count: 0, error: null },
     update: { count: 0, error: null },
-    ...(tableBehaviour[table] || {}),
-    ...b,
   };
+  tableBehaviour[table] = { ...prev, ...b };
 }
 
 // Capture every write for assertions
