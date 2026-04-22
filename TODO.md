@@ -35,20 +35,16 @@ Running backlog. Pull from here rather than inventing work.
 - [ ] Evaluate delegating micro-refund authority to Agent #07 Revenue after 6 months of operational data shows the pattern is stable and approval is perfunctory. Current strict T3-always policy (all refunds require `ceo_approvals`) is appropriate for pre-launch per COMPANY.md §FORBIDDEN actions, but may become friction later — if the vast majority of refund requests get approved reflexively, a delegated micro-budget (e.g. ≤ AUD $50/customer, ≤ AUD $500/month aggregate, T2 notify only) would remove a Fin-attention tax. Revisit with 6 months of `ceo_approvals` data. Surfaced 2026-04-21 during agent spec drafting (session 2).
 - [ ] Surface Agent #06 BD/Enterprise's dependency on Co-Founder in onboarding. #06 has zero outbound capability by design — all correspondence is Co-Founder's own, and pipeline velocity is fully gated on his email discipline and meeting-recap cadence. The 30-day dormancy detection in #06 is a safety net, not a substitute. Worth an explicit conversation with Co-Founder at onboarding: "this agent will only work as well as you feed it." Surfaced 2026-04-21 during agent spec drafting (session 2).
 - [x] 2026-04-22 — RLS cosmetic cleanup on two reused platform tables shipped in `supabase/migrations/20260522_rls_cosmetic_cleanup.sql`. Adds explicit `Service role manages dynamic_pricing_rules FOR ALL` policy; drops legacy duplicate `Public can read threads` SELECT policy on `forum_threads` (current `forum_threads_public_read` from `20260427_wave_security_observability.sql` retained).
-- [ ] ACN/ABN hardcode cleanup. `lib/compliance.ts` exports `COMPANY_ACN` (`093 882 421`) and `COMPANY_ABN` (`90 093 882 421`) as the source of truth, but three pages hardcode the literal instead of importing:
-  - `app/accessibility/page.tsx:26`
-  - `app/admin/compliance/page.tsx:1035-1036`
-  - `app/privacy/page.tsx:48`
-
-  Correct pattern already used at `app/advertiser-terms/page.tsx:137` (imports `COMPANY_LEGAL_NAME` & friends). Import and interpolate. Surfaced 2026-04-21 during COMPANY.md sanity sweep (commit `2284c83`).
-- [ ] Vercel project ID env-var extraction. `app/api/admin/ai-chat/route.ts:12` hardcodes `const VERCEL_PROJECT_ID = "prj_miPLXyjwXbqNnGLOFijBHbjXWESY";`. Move to `process.env.VERCEL_PROJECT_ID`. Confirm the env var is set in Vercel project settings before removing the literal fallback. Surfaced 2026-04-21 during COMPANY.md sanity sweep (commit `2284c83`).
-- [ ] Tests for today's shipped cron routes. Pattern: `__tests__/api/cron-<name>.test.ts`, following `__tests__/api/cron-sponsored-renewal-reminder.test.ts`. Priorities:
-  - [ ] `app/api/cron/affiliate-payout-recon/route.ts`
-  - [ ] `app/api/cron/sponsored-placement-apply/route.ts` (financial side-effect; test the "matches" check that avoids stomping later bookings)
-  - [ ] `app/api/cron/exit-intent-nurture/route.ts`
-  - [ ] `app/api/cron/stale-fee-editorial/route.ts`
-- [ ] Webkit timeout audit: `networkidle` is the killer. Look at swapping to `domcontentloaded` + explicit waits, or dropping webkit from E2E entirely if chromium covers what matters.
-- [ ] Coverage ratchet: current thresholds in `vitest.config.mts` are `lines: 20, functions: 45, branches: 50, statements: 20`. After cron-route tests land, bump floors.
+- [x] 2026-04-22 — ACN/ABN hardcode cleanup: `app/accessibility/page.tsx` and `app/privacy/page.tsx` now import from `lib/compliance`. `app/admin/compliance/page.tsx` still has the hardcoded literals in its `COMPANY_DETAILS` object — blocked by pre-existing lint warnings in the file (runComplianceChecks hoisting, roboAdvisors unused) which lint-staged rejects when the file is touched. Follow-up: fix the two pre-existing warnings then apply the same import pattern.
+- [x] 2026-04-22 — Vercel project ID env-var extraction shipped in `app/api/admin/ai-chat/route.ts:12` as `process.env.VERCEL_PROJECT_ID || "prj_miPLXyjwXbqNnGLOFijBHbjXWESY"`. Env var documented in `.env.local.example`. Follow-up: set `VERCEL_PROJECT_ID` in Vercel project settings, then drop the literal fallback.
+- [ ] Tests for remaining untested cron routes. Pattern: `__tests__/api/cron-<name>.test.ts`, following `cron-auto-publish.test.ts` or `cron-cleanup.test.ts`. ~60 routes still lack tests. High-value candidates (financial/compliance/state-changing):
+  - [ ] `app/api/cron/referral-payouts/route.ts` (uses `wrapCronHandler` + financial-audit + notifications — more complex mock setup)
+  - [ ] `app/api/cron/gdpr-retention-purge/route.ts` (data-destroying; highest blast radius)
+  - [ ] `app/api/cron/month-end-close/route.ts` (financial reconciliation)
+  - [ ] `app/api/cron/data-integrity-audit/route.ts` (cross-table consistency)
+  - Already tested in 2026-04-22 session: `auto-publish`, `retry-webhooks`.
+- [x] 2026-04-22 — Coverage ratchet: floors bumped from `lines/stmt 22, branches 52, functions 45` to `lines/stmt 27, branches 68, functions 45` after cron tests landed. Measured actuals: lines/stmt 28.05, branches 69.23, functions 45.63. Functions held at 45 (too tight to ratchet safely).
+- [x] 2026-04-22 — Webkit timeout audit: no `waitUntil: "networkidle"` actually in use under `e2e/`; the prior `networkidle` comment in `e2e/a11y.spec.ts:48` describes past pain, not current state. TODO item was stale.
 
 ## Someday / parking lot
 
