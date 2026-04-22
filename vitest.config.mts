@@ -32,14 +32,14 @@ export default defineConfig({
       // CI catches coverage regressions without blocking ships that
       // add new (legitimately untested) code. Ratchet these up as
       // test suites grow; do not lower them.
-      // 2026-04-22: ratcheted after cron-auto-publish + cron-retry-webhooks
-      // tests landed. Prior floors were stale (lines 22, branches 52) vs
-      // measured (lines 28.05, branches 69.23).
+      // 2026-04-22: second ratchet this session after adding
+      // cron-month-end-close + cron-gdpr-retention-purge tests.
+      // Measured: lines/stmt 28.26, branches 69.38, functions 45.82.
       thresholds: {
-        lines: 27,
+        lines: 28,
         functions: 45,
-        branches: 68,
-        statements: 27,
+        branches: 69,
+        statements: 28,
       },
     },
   },
