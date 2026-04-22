@@ -80,9 +80,12 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: next-build
+          # v4 expects globs, not bare directory names. `.next/**`
+          # recursively matches every file; `!.next/cache/**` prunes
+          # the webpack cache (we have a separate step for that).
           path: |
-            .next
-            !.next/cache
+            .next/**
+            !.next/cache/**
           retention-days: 1
           if-no-files-found: error
 

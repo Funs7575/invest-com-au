@@ -73,14 +73,21 @@ jobs:
           node-version: "20"
           cache: "npm"
 
+      - name: Stash bundle-size scripts from PR head
+        # These scripts only exist on this PR (they're being added).
+        # Copy them somewhere outside the working tree so they
+        # survive the base-branch checkout.
+        run: |
+          mkdir -p /tmp/bundle-scripts
+          cp scripts/bundle-size-summary.mjs /tmp/bundle-scripts/
+          cp scripts/bundle-size-diff.mjs /tmp/bundle-scripts/
+
       - name: Build PR head
         run: |
           npm ci
           npm run build
           mkdir -p /tmp/bundle-size
-          # Capture the page-level bundle sizes Next.js prints in
-          # the .next/app-build-manifest.json + trace files.
-          node scripts/bundle-size-summary.mjs > /tmp/bundle-size/head.json
+          node /tmp/bundle-scripts/bundle-size-summary.mjs > /tmp/bundle-size/head.json
           cat /tmp/bundle-size/head.json
 
       - name: Checkout base branch
@@ -93,13 +100,17 @@ jobs:
         run: |
           npm ci
           npm run build
-          node scripts/bundle-size-summary.mjs > /tmp/bundle-size/base.json
+          # Run the PR-version of the summary script — the base
+          # branch predates it. Using the stashed copy means both
+          # summaries are apples-to-apples even if the script
+          # itself changed in this PR.
+          node /tmp/bundle-scripts/bundle-size-summary.mjs > /tmp/bundle-size/base.json
           cat /tmp/bundle-size/base.json
 
       - name: Generate diff + comment body
         id: diff
         run: |
-          node scripts/bundle-size-diff.mjs \
+          node /tmp/bundle-scripts/bundle-size-diff.mjs \
             --base /tmp/bundle-size/base.json \
             --head /tmp/bundle-size/head.json \
             --out /tmp/bundle-size/comment.md
