@@ -1,0 +1,34 @@
+-- Migration: add metadata jsonb column to agent_tasks
+-- Separates orchestration state (this column) from task inputs (the existing
+-- payload column). Per .claude/agents/00-master-overseer.md, Agent #00 and
+-- future specialist agents need a canonical place to record blocked_on,
+-- retry_count, last_error_at, handoff_from_agent and similar orchestration
+-- metadata without colliding with the task-input schema carried in payload.
+--
+-- Decision context (2026-04-22): Phase 1 n8n deployment of Agent #00 required
+-- reading a `blocked_on` reason from blocked tasks. Option A was to overload
+-- payload.blocked_on; Option B (this migration) is a dedicated metadata column.
+-- Chose B because payload belongs to whichever agent created the task (domain
+-- shape varies), whereas metadata is orchestration-layer state the Overseer
+-- and the originating agent both write to — mixing the two into payload would
+-- force every specialist agent's payload schema to reserve orchestration keys.
+--
+-- Rollback:
+--   ALTER TABLE public.agent_tasks DROP COLUMN IF EXISTS metadata;
+--
+-- Semantics:
+--   - NOT NULL with default '{}'::jsonb so existing rows and all future
+--     inserts have a consistent object shape — readers never need to handle
+--     null-vs-empty-object.
+--   - Conventional keys (documented, not enforced at schema level):
+--       blocked_on          text   — reason the task is in status='blocked'
+--       retry_count         int    — times the assigned agent has retried
+--       last_error_at       timestamptz — last failure observation
+--       handoff_from_agent  text   — previous owner if task was reassigned
+--   - Write path: assigned specialist agent + Agent #00 Overseer (both via
+--     service_role). No RLS change required — agent_tasks already has RLS
+--     enabled with service-role-only write policies per 20260512_agent_infrastructure.sql.
+--   - Idempotent via IF NOT EXISTS; safe to re-run.
+
+ALTER TABLE public.agent_tasks
+  ADD COLUMN IF NOT EXISTS metadata jsonb NOT NULL DEFAULT '{}'::jsonb;
