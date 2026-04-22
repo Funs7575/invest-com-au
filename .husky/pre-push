@@ -50,4 +50,24 @@ if ! npm run audit:rate-limits -- --strict > /dev/null 2>&1; then
   exit 1
 fi
 
+# Fast feedback: run only the tests affected by this push's commits.
+# Full suite still runs in CI — this just surfaces breakage locally
+# in seconds instead of the ~30s full-suite run.
+#
+# Skipped when the checkout is clean with no ahead-commits (first
+# push to a new branch) because vitest --changed has no base to
+# diff against and would run everything.
+AHEAD=$(git rev-list --count @{upstream}..HEAD 2>/dev/null || echo "0")
+if [ "$AHEAD" != "0" ]; then
+  echo "[pre-push] Running changed-file tests ($AHEAD commits to push)…"
+  if ! npm run test:changed -- --silent > /tmp/pre-push-test.log 2>&1; then
+    echo ""
+    echo "[pre-push] ❌ Tests failed. Last output:"
+    tail -40 /tmp/pre-push-test.log
+    echo ""
+    echo "[pre-push]    Bypass with: git push --no-verify"
+    exit 1
+  fi
+fi
+
 echo "[pre-push] ✅ All checks passed."
