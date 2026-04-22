@@ -1,0 +1,117 @@
+name: Bundle size budget
+
+# Compares the Next.js production bundle size between PR head and
+# the base branch, and comments the diff on the PR. Fails (soft) if
+# any route grows by more than the threshold — advisory signal, not
+# a hard gate (regression can sometimes be justified).
+#
+# How it works:
+#   1. Check out base branch, build, capture .next/app-build-manifest
+#      + per-route chunk sizes into a JSON summary.
+#   2. Check out PR head, build, capture the same summary.
+#   3. Diff the two summaries per route. Output table formatted
+#      markdown and post it as a sticky PR comment (same comment
+#      updated every run — the thread doesn't fill with noise).
+#
+# Threshold:
+#   +10% or +5KB (whichever is larger) per route triggers a warning
+#   line in the comment. No gate today; promote to a hard check
+#   once a baseline is established.
+#
+# Skipped on:
+#   - non-PR events (we only care about PR deltas)
+#   - docs-only PRs (no app/ or components/ changes) — nothing to
+#     compare, and the build would just produce identical output
+
+on:
+  pull_request:
+    # Only run when code that affects the bundle changed. Docs /
+    # TODO / workflow-file PRs get a fast no-op.
+    paths:
+      - "app/**"
+      - "components/**"
+      - "lib/**"
+      - "public/**"
+      - "next.config.ts"
+      - "package-lock.json"
+      - "package.json"
+      - ".github/workflows/bundle-size.yml"
+
+concurrency:
+  group: bundle-size-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  bundle-size:
+    name: Bundle size diff vs base
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pull-requests: write
+
+    env:
+      # Placeholder secrets for the build; we're only measuring
+      # JS output, not executing anything.
+      NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder
+      SUPABASE_SERVICE_ROLE_KEY: placeholder
+      RESEND_API_KEY: placeholder
+      STRIPE_SECRET_KEY: placeholder
+      STRIPE_WEBHOOK_SECRET: placeholder
+      NEXT_PUBLIC_SITE_URL: https://invest.com.au
+      CRON_SECRET: placeholder
+
+    steps:
+      - name: Checkout PR head
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Build PR head
+        run: |
+          npm ci
+          npm run build
+          mkdir -p /tmp/bundle-size
+          # Capture the page-level bundle sizes Next.js prints in
+          # the .next/app-build-manifest.json + trace files.
+          node scripts/bundle-size-summary.mjs > /tmp/bundle-size/head.json
+          cat /tmp/bundle-size/head.json
+
+      - name: Checkout base branch
+        run: |
+          git fetch origin ${{ github.base_ref }}:base-ref
+          git checkout base-ref
+          git reset --hard origin/${{ github.base_ref }}
+
+      - name: Build base branch
+        run: |
+          npm ci
+          npm run build
+          node scripts/bundle-size-summary.mjs > /tmp/bundle-size/base.json
+          cat /tmp/bundle-size/base.json
+
+      - name: Generate diff + comment body
+        id: diff
+        run: |
+          node scripts/bundle-size-diff.mjs \
+            --base /tmp/bundle-size/base.json \
+            --head /tmp/bundle-size/head.json \
+            --out /tmp/bundle-size/comment.md
+          # Emit the body for the comment step (escape multi-line)
+          {
+            echo "body<<COMMENT_EOF"
+            cat /tmp/bundle-size/comment.md
+            echo "COMMENT_EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Upsert PR comment
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: bundle-size
+          message: ${{ steps.diff.outputs.body }}
