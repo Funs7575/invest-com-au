@@ -49,6 +49,20 @@ updates:
           - major
           - minor
           - patch
+      # Bundle React type packages together — @types/react and
+      # @types/react-dom track the same React major and dependabot
+      # otherwise splits minor/major bumps across separate PRs, which
+      # triggers "types of children prop differ" TS errors until the
+      # second PR lands. The dev-patch-minor group above already
+      # catches patches; this dedicated group guarantees majors land
+      # atomically too.
+      react-types:
+        patterns:
+          - "@types/react"
+          - "@types/react-dom"
+        update-types:
+          - major
+          - minor
     # Security advisories bypass the weekly schedule and open
     # immediately. There is no way to "group" these — one PR per
     # advisory is the safe default.
