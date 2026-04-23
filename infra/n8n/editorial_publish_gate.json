@@ -1,0 +1,568 @@
+{
+  "name": "editorial_publish_gate",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 0 10 * * *"
+            }
+          ]
+        }
+      },
+      "id": "e4a1d6e0-0001-4f00-a000-000000000001",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const runAtIso = new Date().toISOString();\nreturn [{ json: { runAtIso, runId: runAtIso.slice(0, 16) } }];\n"
+      },
+      "id": "e4a1d6e0-0002-4f00-a000-000000000002",
+      "name": "Compute Run Metadata",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://guggzyqceattncjwvgyc.supabase.co/rest/v1/editorial_articles",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "status",
+              "value": "=eq.draft"
+            },
+            {
+              "name": "select",
+              "value": "id,tier,title,slug,author_name,byline,target_publish_date,brief,metadata,created_at,updated_at"
+            },
+            {
+              "name": "order",
+              "value": "created_at.asc"
+            },
+            {
+              "name": "limit",
+              "value": "4"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "[HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer [HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "id": "e4a1d6e0-0003-4f00-a000-000000000003",
+      "name": "Read pending drafts",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        680,
+        300
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "has-id-check",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e4a1d6e0-0004-4f00-a000-000000000004",
+      "name": "If is real draft",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        900,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "javaScript",
+        "jsCode": "const d = $json;\nconst runAtIso = $('Compute Run Metadata').first().json.runAtIso;\n\nconst system = [\n  \"You are Agent #04 Editorial for invest.com.au. You review a single Tier 2 draft before it can pass the 4h Fin no-objection window that leads to auto-publish.\",\n  \"Enforce the checks in .claude/agents/04-editorial.md §Prompt skeleton step 2, in this exact order:\",\n  \"1. Forbidden phrases - 'we recommend', 'best for you', 'you should'. Any hit = reject (or revise if removable).\",\n  \"2. Required structure - TL;DR first paragraph (30-60 words); H2/H3 body; FAQ 5-8 Q/A; Article + FAQPage + Organization JSON-LD.\",\n  \"3. Compliance disclaimers - AFSL status, general-advice warning, crypto warning if applicable. Hardcoded disclaimers (not from lib/compliance.ts via compliance_refs) = reject.\",\n  \"4. Byline - Tier 2 MUST be exactly 'invest.com.au Research Team'. Any named person on Tier 2 = reject.\",\n  \"\",\n  \"Return a single JSON block (```json ... ```) with keys:\",\n  \"  action: one of 'approve' | 'revise' | 'reject'\",\n  \"  reason: short rationale (<=240 chars)\",\n  \"  forbidden_phrases_found: array of strings (empty if none)\",\n  \"  missing_required: array from ['tldr','faq','jsonld_article','jsonld_faqpage','jsonld_organization','afsl_disclaimer','general_advice_warning','byline']\",\n  \"  inline_edits: array of short diff-style suggestions (max 5, only when action='revise')\",\n  \"Follow the JSON with a one-line plain-English digest.\",\n  \"Strictness: if torn between approve and revise, choose revise. Revise is cheap; a bad publish is not.\"\n].join('\\n');\n\nconst user = [\n  `Draft under review:`,\n  `- id: ${d.id}`,\n  `- title: ${d.title}`,\n  `- slug: ${d.slug ?? '(none)'}`,\n  `- tier: ${d.tier}`,\n  `- byline: ${d.byline ?? '(none)'}`,\n  `- author_name: ${d.author_name ?? '(none)'}`,\n  `- target_publish_date: ${d.target_publish_date ?? '(none)'}`,\n  `- created_at: ${d.created_at}`,\n  ``,\n  `Draft brief (jsonb):`,\n  '```json',\n  JSON.stringify(d.brief ?? {}, null, 2),\n  '```',\n  ``,\n  `Draft metadata (jsonb):`,\n  '```json',\n  JSON.stringify(d.metadata ?? {}, null, 2),\n  '```'\n].join('\\n');\n\nreturn {\n  json: {\n    draft_id: d.id,\n    draft_title: d.title,\n    draft_tier: d.tier,\n    draft_metadata_existing: d.metadata ?? {},\n    system,\n    user,\n    runAtIso\n  }\n};\n"
+      },
+      "id": "e4a1d6e0-0005-4f00-a000-000000000005",
+      "name": "Build review prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "[HARDCODE_ANTHROPIC_API_KEY_HERE]"
+            },
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"claude-opus-4-7\",\n  \"max_tokens\": 2048,\n  \"system\": {{ JSON.stringify($json.system) }},\n  \"messages\": [\n    { \"role\": \"user\", \"content\": {{ JSON.stringify($json.user) }} }\n  ]\n}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 60000
+        }
+      },
+      "id": "e4a1d6e0-0006-4f00-a000-000000000006",
+      "name": "Call Claude",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1340,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "javaScript",
+        "jsCode": "const resp = $json || {};\nconst upstream = $('Build review prompt').item.json;\nconst draft_id = upstream.draft_id;\nconst draft_title = upstream.draft_title;\nconst draft_tier = upstream.draft_tier;\nconst existing_metadata = upstream.draft_metadata_existing || {};\nconst runAtIso = upstream.runAtIso;\n\n// Extract assistant text + JSON block\nconst textBlocks = Array.isArray(resp.content) ? resp.content.filter(c => c && c.type === 'text').map(c => c.text || '') : [];\nconst combined = textBlocks.join('\\n');\n\nlet parsed = null;\nconst fenceMatch = combined.match(/```json\\s*([\\s\\S]*?)```/i);\nif (fenceMatch) {\n  try { parsed = JSON.parse(fenceMatch[1].trim()); } catch (e) { parsed = null; }\n}\nif (!parsed) {\n  const braceMatch = combined.match(/\\{[\\s\\S]*\\}/);\n  if (braceMatch) {\n    try { parsed = JSON.parse(braceMatch[0]); } catch (e) { parsed = null; }\n  }\n}\n\n// Safe fallback: if Claude output is unparseable, treat as revise for human review.\nconst action = (parsed && ['approve','revise','reject'].includes(parsed.action)) ? parsed.action : 'revise';\nconst reason = (parsed && typeof parsed.reason === 'string') ? parsed.reason.slice(0, 240) : 'Claude output unparseable - human review required';\n\nconst reviewAddendum = {\n  editorial_review: {\n    action,\n    reason,\n    forbidden_phrases_found: (parsed && Array.isArray(parsed.forbidden_phrases_found)) ? parsed.forbidden_phrases_found.slice(0, 20) : [],\n    missing_required: (parsed && Array.isArray(parsed.missing_required)) ? parsed.missing_required.slice(0, 20) : [],\n    inline_edits: (parsed && Array.isArray(parsed.inline_edits)) ? parsed.inline_edits.slice(0, 5).map(s => String(s).slice(0, 400)) : [],\n    reviewed_at: new Date().toISOString(),\n    run_at: runAtIso,\n    model: resp.model || 'claude-opus-4-7',\n    stop_reason: resp.stop_reason,\n    usage: resp.usage,\n    raw_text_preview: combined.slice(0, 4000)\n  }\n};\n\n// Merge with existing metadata so we do not clobber other columns' siblings.\nconst merged_metadata = Object.assign({}, existing_metadata, reviewAddendum);\n\nlet new_status, needs_task = false, task_body = null;\nif (action === 'approve') {\n  new_status = 'review_passed';\n} else if (action === 'revise') {\n  new_status = 'revisions_requested';\n  needs_task = true;\n  task_body = [{\n    agent_name: 'editorial',\n    task_type: 'content_revision',\n    status: 'queued',\n    priority: 150,\n    payload: {\n      source_workflow: 'editorial_publish_gate',\n      editorial_article_id: draft_id,\n      editorial_article_title: draft_title,\n      action_required: 'revise_tier2_draft',\n      reason,\n      inline_edits: reviewAddendum.editorial_review.inline_edits\n    }\n  }];\n} else {\n  new_status = 'rejected';\n}\n\nconst patch_body = { status: new_status, metadata: merged_metadata };\nif (action === 'approve') {\n  patch_body.review_passed_at = new Date().toISOString();\n}\n\nreturn {\n  json: {\n    draft_id,\n    draft_title,\n    draft_tier,\n    action,\n    reason,\n    new_status,\n    patch_body,\n    needs_task,\n    task_body,\n    runAtIso\n  }\n};\n"
+      },
+      "id": "e4a1d6e0-0007-4f00-a000-000000000007",
+      "name": "Parse Claude decision",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1560,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://guggzyqceattncjwvgyc.supabase.co/rest/v1/editorial_articles?id=eq.{{ $json.draft_id }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.patch_body) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "[HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer [HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 15000
+        }
+      },
+      "id": "e4a1d6e0-0008-4f00-a000-000000000008",
+      "name": "Apply status PATCH",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1780,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "needs-task-check",
+              "leftValue": "={{ $('Parse Claude decision').item.json.needs_task }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e4a1d6e0-0009-4f00-a000-000000000009",
+      "name": "If needs task",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2000,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://guggzyqceattncjwvgyc.supabase.co/rest/v1/agent_tasks",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($('Parse Claude decision').item.json.task_body) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "[HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer [HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 15000
+        }
+      },
+      "id": "e4a1d6e0-000a-4f00-a000-00000000000a",
+      "name": "Insert revision task",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2220,
+        60
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://guggzyqceattncjwvgyc.supabase.co/rest/v1/agent_logs",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify([{ agent_name: 'editorial', level: ($('Parse Claude decision').item.json.action === 'reject' ? 'warn' : 'info'), message: ('Editorial publish gate: ' + $('Parse Claude decision').item.json.action + ' - ' + ($('Parse Claude decision').item.json.draft_title || '(untitled)')).slice(0, 240), metadata: { editorial_publish_gate: true, draft_id: $('Parse Claude decision').item.json.draft_id, draft_tier: $('Parse Claude decision').item.json.draft_tier, action: $('Parse Claude decision').item.json.action, reason: $('Parse Claude decision').item.json.reason, new_status: $('Parse Claude decision').item.json.new_status, needs_task: $('Parse Claude decision').item.json.needs_task, run_at: $('Parse Claude decision').item.json.runAtIso } }]) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "[HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer [HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 15000
+        }
+      },
+      "id": "e4a1d6e0-000b-4f00-a000-00000000000b",
+      "name": "Write decision log",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2440,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://guggzyqceattncjwvgyc.supabase.co/rest/v1/agent_logs",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify([{ agent_name: 'editorial', level: 'info', message: 'Editorial publish gate: no drafts pending review', metadata: { editorial_publish_gate: true, note: 'no_drafts_pending', run_at: $('Compute Run Metadata').first().json.runAtIso } }]) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "[HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer [HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 15000
+        }
+      },
+      "id": "e4a1d6e0-000c-4f00-a000-00000000000c",
+      "name": "Write empty-day log",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1120,
+        420
+      ]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Compute Run Metadata",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compute Run Metadata": {
+      "main": [
+        [
+          {
+            "node": "Read pending drafts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read pending drafts": {
+      "main": [
+        [
+          {
+            "node": "If is real draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If is real draft": {
+      "main": [
+        [
+          {
+            "node": "Build review prompt",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Write empty-day log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build review prompt": {
+      "main": [
+        [
+          {
+            "node": "Call Claude",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Claude": {
+      "main": [
+        [
+          {
+            "node": "Parse Claude decision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Claude decision": {
+      "main": [
+        [
+          {
+            "node": "Apply status PATCH",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apply status PATCH": {
+      "main": [
+        [
+          {
+            "node": "If needs task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If needs task": {
+      "main": [
+        [
+          {
+            "node": "Insert revision task",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Write decision log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert revision task": {
+      "main": [
+        [
+          {
+            "node": "Write decision log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "timezone": "Australia/Sydney",
+    "errorWorkflow": "agent_error_logger",
+    "executionOrder": "v1",
+    "saveExecutionProgress": true,
+    "saveDataSuccessExecution": "all",
+    "saveDataErrorExecution": "all"
+  },
+  "tags": [
+    {
+      "name": "phase:2"
+    },
+    {
+      "name": "agent:04-editorial"
+    }
+  ]
+}
