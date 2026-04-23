@@ -1,0 +1,388 @@
+{
+  "name": "lead_nurture_hourly",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 5 * * * *"
+            }
+          ]
+        }
+      },
+      "id": "f1a1d6e0-0001-4f00-a000-000000000001",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const now = new Date();\nconst windowStart = new Date(now.getTime() - 60 * 60 * 1000);\nreturn [{ json: { runAtIso: now.toISOString(), windowStartIso: windowStart.toISOString() } }];\n"
+      },
+      "id": "f1a1d6e0-0002-4f00-a000-000000000002",
+      "name": "Compute Window",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://guggzyqceattncjwvgyc.supabase.co/rest/v1/agent_tasks",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "task_type",
+              "value": "=eq.loops_enqueue"
+            },
+            {
+              "name": "status",
+              "value": "=eq.queued"
+            },
+            {
+              "name": "created_at",
+              "value": "=gte.{{ $json.windowStartIso }}"
+            },
+            {
+              "name": "select",
+              "value": "id,agent_name,task_type,status,priority,payload,metadata,created_at"
+            },
+            {
+              "name": "order",
+              "value": "created_at.asc"
+            },
+            {
+              "name": "limit",
+              "value": "50"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "[HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer [HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "id": "f1a1d6e0-0003-4f00-a000-000000000003",
+      "name": "Read queued loops tasks",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        680,
+        300
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "has-id",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f1a1d6e0-0004-4f00-a000-000000000004",
+      "name": "If is real task",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        900,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "javaScript",
+        "jsCode": "const t = $json;\nconst payload = (t.payload && typeof t.payload === 'object') ? t.payload : {};\nconst runAtIso = $('Compute Window').first().json.runAtIso;\n\n// Lane-permitted originators for loops_enqueue per .claude/agents/11-email-lifecycle.md\nconst PERMITTED_LOOPS_ORIGINATORS = ['cmo','editorial','growth','ai_search','03','04','14','17'];\n// Sender-identity allow-list per spec forbidden-actions + prompt skeleton step 2\nconst PERMITTED_FROM = new Set([\n  'noreply@invest.com.au',\n  'admin@invest.com.au',\n  'billing@invest.com.au'\n]);\n\nconst originator = String(payload.routed_by_agent || t.agent_name || '').toLowerCase();\nconst fromAddr = String(payload.from || '').toLowerCase();\nconst contactEmail = String(payload.contact_email || '').toLowerCase();\nconst sequenceSlug = payload.sequence_slug;\nconst logicalKey = payload.logical_event_key;\n\nconst problems = [];\nlet decision = 'validated_pending_dispatch';\nlet severity = 'info';\n\nif (!PERMITTED_LOOPS_ORIGINATORS.some(a => originator === a || originator.endsWith(a))) {\n  problems.push('lane_violation: originator not permitted for loops_enqueue (' + (originator || '(none)') + ')');\n  decision = 'rejected';\n  severity = 'warn';\n}\nif (!PERMITTED_FROM.has(fromAddr)) {\n  problems.push('identity_violation: from not in allow-list (' + (fromAddr || '(none)') + ')');\n  decision = 'rejected';\n  severity = 'error'; // T4 tripwire per spec\n}\nif (!contactEmail) {\n  problems.push('missing: payload.contact_email');\n  decision = 'rejected';\n  severity = 'warn';\n}\nif (!sequenceSlug) {\n  problems.push('missing: payload.sequence_slug');\n  decision = 'rejected';\n  severity = 'warn';\n}\nif (!logicalKey) {\n  problems.push('missing: payload.logical_event_key');\n  decision = 'rejected';\n  severity = 'warn';\n}\n\n// Dry-run: no Loops API call, no suppression lookup, no 6h dedupe lookup.\n// Those are required before activation - see runbook TODO list.\nlet patch_body;\nif (decision === 'rejected') {\n  patch_body = {\n    status: 'failed',\n    error_message: problems.join('; ').slice(0, 500),\n    metadata: Object.assign({}, t.metadata || {}, {\n      lead_nurture_hourly: {\n        decision,\n        problems,\n        reviewed_at: new Date().toISOString(),\n        run_at: runAtIso\n      }\n    })\n  };\n} else {\n  // Dry-run stub: mark validated but keep queued so the future Loops-dispatch\n  // step (not yet built) can pick them up. Stamp metadata for traceability.\n  patch_body = {\n    status: 'queued',\n    metadata: Object.assign({}, t.metadata || {}, {\n      lead_nurture_hourly: {\n        decision,\n        validated_at: new Date().toISOString(),\n        run_at: runAtIso,\n        note: 'validated; dispatch deferred until Loops MCP is wired'\n      }\n    })\n  };\n}\n\nreturn {\n  json: {\n    task_id: t.id,\n    task_agent_name: t.agent_name,\n    decision,\n    severity,\n    problems,\n    contactEmail,\n    sequenceSlug,\n    originator,\n    fromAddr,\n    patch_body,\n    runAtIso\n  }\n};\n"
+      },
+      "id": "f1a1d6e0-0005-4f00-a000-000000000005",
+      "name": "Validate and classify",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://guggzyqceattncjwvgyc.supabase.co/rest/v1/agent_tasks?id=eq.{{ $json.task_id }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.patch_body) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "[HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer [HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 15000
+        }
+      },
+      "id": "f1a1d6e0-0006-4f00-a000-000000000006",
+      "name": "PATCH task status",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1340,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://guggzyqceattncjwvgyc.supabase.co/rest/v1/agent_logs",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify([{ agent_name: 'email_lifecycle', level: $('Validate and classify').item.json.severity, message: ('lead_nurture_hourly: ' + $('Validate and classify').item.json.decision + ' for ' + ($('Validate and classify').item.json.contactEmail || '(no-email)') + ' -> ' + ($('Validate and classify').item.json.sequenceSlug || '(no-sequence)')).slice(0, 240), metadata: { lead_nurture_hourly: true, task_id: $('Validate and classify').item.json.task_id, decision: $('Validate and classify').item.json.decision, originator: $('Validate and classify').item.json.originator, from: $('Validate and classify').item.json.fromAddr, contact_email: $('Validate and classify').item.json.contactEmail, sequence_slug: $('Validate and classify').item.json.sequenceSlug, problems: $('Validate and classify').item.json.problems, run_at: $('Validate and classify').item.json.runAtIso } }]) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "[HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer [HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 15000
+        }
+      },
+      "id": "f1a1d6e0-0007-4f00-a000-000000000007",
+      "name": "Write per-task log",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1560,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://guggzyqceattncjwvgyc.supabase.co/rest/v1/agent_logs",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify([{ agent_name: 'email_lifecycle', level: 'info', message: 'lead_nurture_hourly: no queued loops_enqueue tasks in last hour', metadata: { lead_nurture_hourly: true, note: 'no_queued_tasks', run_at: $('Compute Window').first().json.runAtIso, window_start: $('Compute Window').first().json.windowStartIso } }]) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "[HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer [HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 15000
+        }
+      },
+      "id": "f1a1d6e0-0008-4f00-a000-000000000008",
+      "name": "Write empty-hour log",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1120,
+        420
+      ]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Compute Window",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compute Window": {
+      "main": [
+        [
+          {
+            "node": "Read queued loops tasks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read queued loops tasks": {
+      "main": [
+        [
+          {
+            "node": "If is real task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If is real task": {
+      "main": [
+        [
+          {
+            "node": "Validate and classify",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Write empty-hour log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate and classify": {
+      "main": [
+        [
+          {
+            "node": "PATCH task status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PATCH task status": {
+      "main": [
+        [
+          {
+            "node": "Write per-task log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "timezone": "Australia/Sydney",
+    "errorWorkflow": "agent_error_logger",
+    "executionOrder": "v1",
+    "saveExecutionProgress": true,
+    "saveDataSuccessExecution": "all",
+    "saveDataErrorExecution": "all"
+  },
+  "tags": [
+    {
+      "name": "phase:2"
+    },
+    {
+      "name": "agent:11-email-lifecycle"
+    }
+  ]
+}
