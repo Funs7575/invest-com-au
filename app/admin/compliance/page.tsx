@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import AdminShell from "@/components/AdminShell";
 import type { Broker, Article } from "@/lib/types";
@@ -82,11 +82,7 @@ export default function CompliancePage() {
   const [loading, setLoading] = useState(true);
   const [lastRun, setLastRun] = useState<string>("");
 
-  useEffect(() => {
-    runComplianceChecks();
-  }, []);
-
-  async function runComplianceChecks() {
+  const runComplianceChecks = useCallback(async () => {
     setLoading(true);
     const supabase = createClient();
     const results: ComplianceCheck[] = [];
@@ -106,7 +102,6 @@ export default function CompliancePage() {
       const cfdPlatforms = brokers.filter((b) => b.platform_type === "cfd_forex");
       const superFunds = brokers.filter((b) => b.platform_type === "super_fund");
       const shareBrokers = brokers.filter((b) => b.platform_type === "share_broker");
-      const roboAdvisors = brokers.filter((b) => b.platform_type === "robo_advisor");
       const dealBrokers = brokers.filter((b) => b.deal);
       const sponsoredBrokers = brokers.filter((b) => b.sponsorship_tier);
       const brokersWithFees = brokers.filter((b) => b.asx_fee && b.asx_fee !== "N/A");
@@ -785,7 +780,15 @@ export default function CompliancePage() {
     setChecks(results);
     setLastRun(new Date().toLocaleString("en-AU", { dateStyle: "medium", timeStyle: "short" }));
     setLoading(false);
-  }
+  }, []);
+
+  useEffect(() => {
+    // Mount-time data fetch that populates `checks`/`loading`/`lastRun` —
+    // the React 19 "avoid setState in effect" rule is advisory for this
+    // "fetch external data on mount" pattern.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    runComplianceChecks();
+  }, [runComplianceChecks]);
 
   // Summary stats
   const summary = useMemo(() => {

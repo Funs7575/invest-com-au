@@ -167,7 +167,7 @@ describe("verifyAfsl", () => {
     process.env.ASIC_API_ENDPOINT = "https://vendor.example/afsl";
     process.env.ASIC_API_KEY = "test-key";
     const spy = vi.fn(
-      async () =>
+      async (_url: string | URL, _init?: RequestInit) =>
         new Response(
           JSON.stringify({ valid: true, holderName: "X", status: "Current" }),
           { status: 200 },
@@ -176,11 +176,11 @@ describe("verifyAfsl", () => {
     globalThis.fetch = spy as unknown as typeof fetch;
 
     await verifyAfsl("AFSL 234567");
-    const requestUrl = spy.mock.calls[0]?.[0];
+    const [requestUrl, init] = spy.mock.calls[0] ?? [];
     const href = requestUrl instanceof URL ? requestUrl.toString() : String(requestUrl);
     expect(href).toContain("afsl=234567");
     // Authorization header is sent
-    const init = spy.mock.calls[0]?.[1] as { headers?: Record<string, string> };
-    expect(init?.headers?.Authorization).toBe("Bearer test-key");
+    const headers = (init?.headers as Record<string, string> | undefined) ?? {};
+    expect(headers.Authorization).toBe("Bearer test-key");
   });
 });

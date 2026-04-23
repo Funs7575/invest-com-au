@@ -34,11 +34,14 @@ const updateCalls: { table: string; payload: Record<string, unknown>; keyCol: st
 
 // Stripe stub state
 const stripeCalls: { fn: string; args: unknown[] }[] = [];
-let stripeCreateInvoiceImpl = vi.fn(async () => ({ id: "in_123" }));
-let stripeFinalizeImpl = vi.fn(async () => ({ id: "in_123", number: "INV-0001" }));
-let stripeSendImpl = vi.fn(async () => ({}));
-let stripeCreateItemImpl = vi.fn(async () => ({}));
-let stripeCreateCustomerImpl = vi.fn(async () => ({ id: "cus_new" }));
+let stripeCreateInvoiceImpl = vi.fn(async (_args: unknown) => ({ id: "in_123" }));
+let stripeFinalizeImpl = vi.fn(async (_id: string) => ({
+  id: "in_123",
+  number: "INV-0001",
+}));
+let stripeSendImpl = vi.fn(async (_id: string) => ({}));
+let stripeCreateItemImpl = vi.fn(async (_args: unknown) => ({}));
+let stripeCreateCustomerImpl = vi.fn(async (_args: unknown) => ({ id: "cus_new" }));
 
 const mockFrom = vi.fn((table: string) => {
   if (table === "professionals") {
@@ -222,11 +225,14 @@ describe("createLeadInvoice", () => {
     proByQuery = {};
     billingError = null;
     billingUpdateError = null;
-    stripeCreateInvoiceImpl = vi.fn(async () => ({ id: "in_xyz" }));
-    stripeFinalizeImpl = vi.fn(async () => ({ id: "in_xyz", number: "INV-42" }));
-    stripeSendImpl = vi.fn(async () => ({}));
-    stripeCreateItemImpl = vi.fn(async () => ({}));
-    stripeCreateCustomerImpl = vi.fn(async () => ({ id: "cus_new" }));
+    stripeCreateInvoiceImpl = vi.fn(async (_args: unknown) => ({ id: "in_xyz" }));
+    stripeFinalizeImpl = vi.fn(async (_id: string) => ({
+      id: "in_xyz",
+      number: "INV-42",
+    }));
+    stripeSendImpl = vi.fn(async (_id: string) => ({}));
+    stripeCreateItemImpl = vi.fn(async (_args: unknown) => ({}));
+    stripeCreateCustomerImpl = vi.fn(async (_args: unknown) => ({ id: "cus_new" }));
   });
 
   it("returns null when billing record is missing", async () => {
@@ -336,7 +342,7 @@ describe("createLeadInvoice", () => {
       email: "a@b.com",
       stripe_customer_id: "cus_existing",
     };
-    stripeCreateInvoiceImpl = vi.fn(async () => {
+    stripeCreateInvoiceImpl = vi.fn(async (_args: unknown) => {
       throw new Error("stripe down");
     });
 
