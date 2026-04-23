@@ -79,14 +79,7 @@ describe("getPackageTiers", () => {
   });
 
   it("coerces null data to an empty array", async () => {
-    // Override to return explicit null
-    mockFrom.mockImplementationOnce(() => ({
-      select: () => ({
-        eq: () => ({
-          order: async () => ({ data: null, error: null }),
-        }),
-      }),
-    }));
+    packagesList = null as unknown as unknown[];
     expect(await getPackageTiers()).toEqual([]);
   });
 });
