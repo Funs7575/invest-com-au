@@ -1551,6 +1551,54 @@ export type Database = {
           },
         ]
       }
+      agent_analytics: {
+        Row: {
+          agent_name: string
+          avg_runtime_ms: number | null
+          created_at: string | null
+          date: string
+          error_count: number
+          estimated_cost_usd: number | null
+          id: number
+          info_count: number
+          metadata: Json | null
+          success_rate: number
+          total_logs: number
+          updated_at: string | null
+          warn_count: number
+        }
+        Insert: {
+          agent_name: string
+          avg_runtime_ms?: number | null
+          created_at?: string | null
+          date: string
+          error_count?: number
+          estimated_cost_usd?: number | null
+          id?: number
+          info_count?: number
+          metadata?: Json | null
+          success_rate?: number
+          total_logs?: number
+          updated_at?: string | null
+          warn_count?: number
+        }
+        Update: {
+          agent_name?: string
+          avg_runtime_ms?: number | null
+          created_at?: string | null
+          date?: string
+          error_count?: number
+          estimated_cost_usd?: number | null
+          id?: number
+          info_count?: number
+          metadata?: Json | null
+          success_rate?: number
+          total_logs?: number
+          updated_at?: string | null
+          warn_count?: number
+        }
+        Relationships: []
+      }
       agent_logs: {
         Row: {
           agent_name: string
@@ -1629,6 +1677,7 @@ export type Database = {
           created_at: string
           error_message: string | null
           id: string
+          metadata: Json
           parent_task_id: string | null
           payload: Json
           priority: number
@@ -1645,6 +1694,7 @@ export type Database = {
           created_at?: string
           error_message?: string | null
           id?: string
+          metadata?: Json
           parent_task_id?: string | null
           payload?: Json
           priority?: number
@@ -1661,6 +1711,7 @@ export type Database = {
           created_at?: string
           error_message?: string | null
           id?: string
+          metadata?: Json
           parent_task_id?: string | null
           payload?: Json
           priority?: number
