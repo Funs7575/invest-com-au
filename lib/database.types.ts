@@ -5630,6 +5630,7 @@ export type Database = {
           metadata: Json
           published_article_slug: string | null
           published_at: string | null
+          review_passed_at: string | null
           slug: string | null
           status: string
           target_publish_date: string | null
@@ -5647,6 +5648,7 @@ export type Database = {
           metadata?: Json
           published_article_slug?: string | null
           published_at?: string | null
+          review_passed_at?: string | null
           slug?: string | null
           status?: string
           target_publish_date?: string | null
@@ -5664,6 +5666,7 @@ export type Database = {
           metadata?: Json
           published_article_slug?: string | null
           published_at?: string | null
+          review_passed_at?: string | null
           slug?: string | null
           status?: string
           target_publish_date?: string | null
