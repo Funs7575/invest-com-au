@@ -1,0 +1,486 @@
+{
+  "name": "cto_daily",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 0 6 * * *"
+            }
+          ]
+        }
+      },
+      "id": "c2a1d6e0-0001-4f00-a000-000000000001",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const tz = 'Australia/Sydney';\nconst now = new Date();\n\n// now() and (now - 24h), both as ISO with correct Sydney offset\nfunction zonedOffsetAt(date) {\n  const dtf = new Intl.DateTimeFormat('en-US', { timeZone: tz, timeZoneName: 'shortOffset' });\n  const parts = dtf.formatToParts(date);\n  const tzName = (parts.find(p => p.type === 'timeZoneName') || {}).value || 'GMT+10';\n  const m = tzName.match(/GMT([+-])(\\d{1,2})(?::?(\\d{2}))?/);\n  const sign = m ? m[1] : '+';\n  const hh = m ? String(parseInt(m[2], 10)).padStart(2, '0') : '10';\n  const mm = m && m[3] ? m[3] : '00';\n  return `${sign}${hh}:${mm}`;\n}\n\nfunction toZonedIso(date) {\n  const off = zonedOffsetAt(date);\n  // Represent the instant in Sydney local time with explicit offset\n  const sign = off.startsWith('-') ? -1 : 1;\n  const [hh, mm] = off.slice(1).split(':').map(Number);\n  const shifted = new Date(date.getTime() + sign * (hh * 60 + mm) * 60 * 1000);\n  const y = shifted.getUTCFullYear();\n  const mo = String(shifted.getUTCMonth() + 1).padStart(2, '0');\n  const d = String(shifted.getUTCDate()).padStart(2, '0');\n  const h = String(shifted.getUTCHours()).padStart(2, '0');\n  const mi = String(shifted.getUTCMinutes()).padStart(2, '0');\n  const s = String(shifted.getUTCSeconds()).padStart(2, '0');\n  return `${y}-${mo}-${d}T${h}:${mi}:${s}${off}`;\n}\n\nconst end = now;\nconst start = new Date(now.getTime() - 24 * 60 * 60 * 1000);\nconst startIso = toZonedIso(start);\nconst endIso = toZonedIso(end);\nconst runDate = toZonedIso(now).slice(0, 10);\n\nreturn [{ json: { startIso, endIso, runDate, runAtIso: now.toISOString() } }];\n"
+      },
+      "id": "c2a1d6e0-0002-4f00-a000-000000000002",
+      "name": "Compute Date Range",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://guggzyqceattncjwvgyc.supabase.co/rest/v1/agent_logs",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "level",
+              "value": "=in.(error,fatal,warn)"
+            },
+            {
+              "name": "created_at",
+              "value": "=gte.{{ $json.startIso }}"
+            },
+            {
+              "name": "created_at",
+              "value": "=lt.{{ $json.endIso }}"
+            },
+            {
+              "name": "select",
+              "value": "id,agent_name,level,message,metadata,created_at"
+            },
+            {
+              "name": "limit",
+              "value": "500"
+            },
+            {
+              "name": "order",
+              "value": "created_at.desc"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "[HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer [HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "id": "c2a1d6e0-0003-4f00-a000-000000000003",
+      "name": "Read errors and warns 24h",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        680,
+        300
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://guggzyqceattncjwvgyc.supabase.co/rest/v1/agent_tasks",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "status",
+              "value": "=in.(failed,blocked)"
+            },
+            {
+              "name": "updated_at",
+              "value": "=gte.{{ $('Compute Date Range').first().json.startIso }}"
+            },
+            {
+              "name": "select",
+              "value": "id,agent_name,task_type,status,priority,payload,metadata,scheduled_for,started_at,updated_at,created_at"
+            },
+            {
+              "name": "limit",
+              "value": "200"
+            },
+            {
+              "name": "order",
+              "value": "updated_at.desc"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "[HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer [HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "id": "c2a1d6e0-0004-4f00-a000-000000000004",
+      "name": "Read broken tasks 24h",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        900,
+        300
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const logs = $('Read errors and warns 24h').all().map(i => i && i.json).filter(x => x && x.id && x.agent_name);\nconst tasks = $('Read broken tasks 24h').all().map(i => i && i.json).filter(x => x && x.id && x.agent_name);\nconst runAtIso = $('Compute Date Range').first().json.runAtIso;\nconst runDate = $('Compute Date Range').first().json.runDate;\n\nlet errors_24h = 0, warnings_24h = 0;\nconst errorsByAgent = {};\nconst escalations = [];\nfor (const l of logs) {\n  const lv = (l.level || '').toLowerCase();\n  if (lv === 'error' || lv === 'fatal') {\n    errors_24h++;\n    errorsByAgent[l.agent_name] = (errorsByAgent[l.agent_name] || 0) + 1;\n  } else if (lv === 'warn') {\n    warnings_24h++;\n  }\n  const tier = l.metadata && (l.metadata.tier ?? l.metadata.escalation_tier);\n  if (tier === 'T4' || tier === 4 || tier === 'T5' || tier === 5) {\n    escalations.push({\n      agent: l.agent_name,\n      tier: tier,\n      message: (l.message || '').slice(0, 240),\n      created_at: l.created_at,\n    });\n  }\n}\n\nlet failed_tasks_24h = 0, blocked_tasks_24h = 0;\nconst nowMs = new Date(runAtIso).getTime();\nconst SIX_HOURS = 6 * 60 * 60 * 1000;\nconst aging_blocked = [];\nfor (const t of tasks) {\n  if (t.status === 'failed') failed_tasks_24h++;\n  else if (t.status === 'blocked') {\n    blocked_tasks_24h++;\n    const since = new Date(t.started_at || t.created_at || 0).getTime();\n    if (since > 0 && (nowMs - since) > SIX_HOURS) {\n      aging_blocked.push({ id: t.id, agent: t.agent_name, task_type: t.task_type, hours_blocked: Math.round((nowMs - since) / 3600000) });\n    }\n  }\n}\n\nconst top_agents_by_errors = Object.entries(errorsByAgent)\n  .sort((a, b) => b[1] - a[1])\n  .slice(0, 5)\n  .map(([agent, count]) => ({ agent, count }));\n\nconst snapshot = {\n  runDate,\n  errors_24h,\n  warnings_24h,\n  failed_tasks_24h,\n  blocked_tasks_24h,\n  top_agents_by_errors,\n  aging_blocked,\n  escalations,\n};\n\nconst bypass_claude = errors_24h === 0 && warnings_24h === 0 && failed_tasks_24h === 0 && blocked_tasks_24h === 0;\n\nif (bypass_claude) {\n  return [{ json: { bypass_claude: true, snapshot, runAtIso } }];\n}\n\nconst system = [\n  \"You are Agent #02 CTO for invest.com.au. You run once a day and produce a tight operational digest.\",\n  \"Phase 2 deployment — same input constraints as the Master Overseer: you have agent_logs + agent_tasks, nothing more.\",\n  \"Your job on this run is to classify severity, flag escalating issues, and suggest at most 3 follow-up actions.\",\n  \"Do NOT invent numbers the snapshot does not support. Do NOT propose code changes in this digest — PR drafting is a separate workflow.\",\n  \"\",\n  \"Return a JSON block (```json ... ```) with keys: severity (one of: info|warn|error), headline (<=120 chars), recommendations (array of <=3 strings, each <=160 chars), echo {errors_24h, warnings_24h, failed_tasks_24h, blocked_tasks_24h, aging_blocked_count: N}. Follow the JSON block with a one-line plain-English digest.\"\n].join('\\n');\n\nconst user = [\n  `Run at: ${runAtIso} (Sydney-local digest window: last 24h)`,\n  '',\n  'Snapshot (ground truth, computed deterministically):',\n  '```json',\n  JSON.stringify(snapshot, null, 2),\n  '```',\n  '',\n  'Recent error/fatal/warn logs (most recent first, up to 20):',\n  '```json',\n  JSON.stringify(logs.slice(0, 20).map(l => ({ agent: l.agent_name, level: l.level, message: (l.message || '').slice(0, 400), created_at: l.created_at })), null, 2),\n  '```',\n  '',\n  'Broken tasks (failed+blocked, most recent first, up to 20):',\n  '```json',\n  JSON.stringify(tasks.slice(0, 20).map(t => ({ id: t.id, agent: t.agent_name, task_type: t.task_type, status: t.status, priority: t.priority, updated_at: t.updated_at })), null, 2),\n  '```',\n].join('\\n');\n\nreturn [{ json: { bypass_claude: false, snapshot, system, user, runAtIso } }];\n"
+      },
+      "id": "c2a1d6e0-0005-4f00-a000-000000000005",
+      "name": "Build CTO prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "bypass-check",
+              "leftValue": "={{ $json.bypass_claude }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c2a1d6e0-0006-4f00-a000-000000000006",
+      "name": "If empty day",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1340,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://guggzyqceattncjwvgyc.supabase.co/rest/v1/agent_logs",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify([{ agent_name: 'cto', level: 'info', message: 'CTO daily digest \\u2014 no issues in last 24h', metadata: { daily_digest: true, note: 'no_issues_in_last_24h', success_rate: 100, snapshot: $json.snapshot, run_at: $json.runAtIso } }]) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "[HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer [HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 15000
+        }
+      },
+      "id": "c2a1d6e0-0007-4f00-a000-000000000007",
+      "name": "Write sentinel log",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1560,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "[HARDCODE_ANTHROPIC_API_KEY_HERE]"
+            },
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"claude-opus-4-7\",\n  \"max_tokens\": 2048,\n  \"system\": {{ JSON.stringify($json.system) }},\n  \"messages\": [\n    { \"role\": \"user\", \"content\": {{ JSON.stringify($json.user) }} }\n  ]\n}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 60000
+        }
+      },
+      "id": "c2a1d6e0-0008-4f00-a000-000000000008",
+      "name": "Call Claude",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1560,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const resp = $('Call Claude').first().json || {};\nconst snapshot = $('Build CTO prompt').first().json.snapshot;\nconst runAtIso = $('Build CTO prompt').first().json.runAtIso;\n\n// Extract the assistant text block(s)\nconst textBlocks = Array.isArray(resp.content) ? resp.content.filter(c => c && c.type === 'text').map(c => c.text || '') : [];\nconst combined = textBlocks.join('\\n');\n\n// Try to find a JSON block of the form ```json ... ``` or the first {...} object\nlet parsed = null;\nconst fenceMatch = combined.match(/```json\\s*([\\s\\S]*?)```/i);\nif (fenceMatch) {\n  try { parsed = JSON.parse(fenceMatch[1].trim()); } catch (e) { parsed = null; }\n}\nif (!parsed) {\n  const braceMatch = combined.match(/\\{[\\s\\S]*\\}/);\n  if (braceMatch) {\n    try { parsed = JSON.parse(braceMatch[0]); } catch (e) { parsed = null; }\n  }\n}\n\n// Derive level from snapshot (not from Claude — Claude's severity is advisory)\nlet level = 'info';\nif (snapshot.warnings_24h > 0 || snapshot.blocked_tasks_24h > 0) level = 'warn';\nif (snapshot.errors_24h > 0 || snapshot.failed_tasks_24h > 0 || snapshot.escalations.length > 0) level = 'error';\n\nconst headline = (parsed && typeof parsed.headline === 'string') ? parsed.headline.slice(0, 240) : 'CTO daily digest';\nconst recommendations = (parsed && Array.isArray(parsed.recommendations)) ? parsed.recommendations.slice(0, 3).map(s => String(s).slice(0, 240)) : [];\n\nreturn [{\n  json: {\n    agent_name: 'cto',\n    level,\n    message: headline,\n    metadata: {\n      daily_digest: true,\n      snapshot,\n      claude: {\n        severity: parsed && parsed.severity,\n        headline,\n        recommendations,\n        raw_text: combined.slice(0, 4000),\n        model: resp.model || 'claude-opus-4-7',\n        stop_reason: resp.stop_reason,\n        usage: resp.usage,\n      },\n      run_at: runAtIso,\n    },\n  },\n}];\n"
+      },
+      "id": "c2a1d6e0-0009-4f00-a000-000000000009",
+      "name": "Parse Claude response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1780,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://guggzyqceattncjwvgyc.supabase.co/rest/v1/agent_logs",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($input.all().map(i => i.json)) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "[HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer [HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 15000
+        }
+      },
+      "id": "c2a1d6e0-000a-4f00-a000-00000000000a",
+      "name": "Write CTO log",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2000,
+        420
+      ]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Compute Date Range",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compute Date Range": {
+      "main": [
+        [
+          {
+            "node": "Read errors and warns 24h",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read errors and warns 24h": {
+      "main": [
+        [
+          {
+            "node": "Read broken tasks 24h",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read broken tasks 24h": {
+      "main": [
+        [
+          {
+            "node": "Build CTO prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build CTO prompt": {
+      "main": [
+        [
+          {
+            "node": "If empty day",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If empty day": {
+      "main": [
+        [
+          {
+            "node": "Write sentinel log",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Call Claude",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Claude": {
+      "main": [
+        [
+          {
+            "node": "Parse Claude response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Claude response": {
+      "main": [
+        [
+          {
+            "node": "Write CTO log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "timezone": "Australia/Sydney",
+    "errorWorkflow": "agent_error_logger",
+    "executionOrder": "v1",
+    "saveExecutionProgress": true,
+    "saveDataSuccessExecution": "all",
+    "saveDataErrorExecution": "all"
+  },
+  "tags": [
+    {
+      "name": "phase:2"
+    },
+    {
+      "name": "agent:02-cto"
+    }
+  ]
+}
