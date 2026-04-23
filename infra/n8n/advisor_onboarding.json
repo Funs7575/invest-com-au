@@ -1,0 +1,645 @@
+{
+  "name": "advisor_onboarding",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 0 9 * * *"
+            }
+          ]
+        }
+      },
+      "id": "d3a1d6e0-0001-4f00-a000-000000000001",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://guggzyqceattncjwvgyc.supabase.co/rest/v1/professionals",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "profile_quality_gate",
+              "value": "=eq.pending"
+            },
+            {
+              "name": "select",
+              "value": "id,slug,name,firm_name,type,specialties,email,photo_url,bio,afsl_number,registration_number,location_display,years_experience,qualifications,onboarding_step,profile_complete,profile_quality_gate,profile_missing_fields,created_at"
+            },
+            {
+              "name": "limit",
+              "value": "25"
+            },
+            {
+              "name": "order",
+              "value": "created_at.asc"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "[HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer [HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "id": "d3a1d6e0-0002-4f00-a000-000000000002",
+      "name": "Read pending advisors",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        460,
+        300
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "has-id",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d3a1d6e0-0003-4f00-a000-000000000003",
+      "name": "Has advisor row",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        680,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://guggzyqceattncjwvgyc.supabase.co/rest/v1/agent_logs",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify([{ agent_name: 'advisor-onboarding', level: 'info', message: 'advisor_onboarding \\u2014 no pending advisors in queue', metadata: { daily_digest: true, note: 'no_pending_advisors', success_rate: 100, run_at: new Date().toISOString() } }]) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "[HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer [HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 15000
+        }
+      },
+      "id": "d3a1d6e0-0004-4f00-a000-000000000004",
+      "name": "Write empty-day log",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        900,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "javaScript",
+        "jsCode": "// Evaluate completeness of the advisor profile and prepare the welcome draft prompt.\n// Called once per pending advisor row that arrived from Read pending advisors.\nconst a = $json || {};\nconst nowIso = new Date().toISOString();\n\n// Required fields (hard gate)\nconst required = {\n  photo_url:    (typeof a.photo_url === 'string' && a.photo_url.trim().length > 0),\n  bio:          (typeof a.bio === 'string' && a.bio.trim().length >= 50),\n  specialties:  (Array.isArray(a.specialties) && a.specialties.length > 0),\n  email:        (typeof a.email === 'string' && /@/.test(a.email)),\n  location:     (typeof a.location_display === 'string' && a.location_display.trim().length > 0),\n  years_exp:    (typeof a.years_experience === 'number' && a.years_experience >= 0),\n};\n// Credentialed-profession gate: AFSL for financial advisors, registration_number for others that need it\nconst needsAfsl = ['financial_advisor','wealth_manager','stockbroker','accountant'].includes(a.type);\nif (needsAfsl) {\n  required.afsl_or_reg = (typeof a.afsl_number === 'string' && a.afsl_number.trim().length > 0)\n    || (typeof a.registration_number === 'string' && a.registration_number.trim().length > 0);\n}\n\nconst missing_fields = Object.entries(required).filter(([, ok]) => !ok).map(([k]) => k);\nconst is_complete = missing_fields.length === 0;\n\nlet welcome_prompt_system = null;\nlet welcome_prompt_user = null;\nif (is_complete) {\n  welcome_prompt_system = [\n    \"You are the Advisor Onboarding agent for invest.com.au. You draft the first welcome email to a newly-verified advisor who has passed the profile quality gate.\",\n    \"Voice: warm, professional, concise. Match the brand voice from COMPANY.md (Australian English, general-advice disclaimer not required in onboarding).\",\n    \"Do NOT make any claim about lead volume, pricing, or returns that the advisor hasn't already been shown in the product flow.\",\n    \"Do NOT use forbidden phrases ('we recommend', 'best for you', 'you should'). Avoid exclamation marks.\",\n    \"\",\n    \"Return a JSON block (```json ... ```) with keys: subject (<=80 chars), body_plain (<=800 chars, plain text), body_html (optional, same content with safe <p>/<strong>/<a> tags), next_steps (array of 3 short strings).\",\n    \"Follow the JSON block with nothing else.\"\n  ].join('\\n');\n  welcome_prompt_user = [\n    `New advisor ready for onboarding:`,\n    '```json',\n    JSON.stringify({\n      name: a.name,\n      firm_name: a.firm_name,\n      type: a.type,\n      specialties: a.specialties,\n      location: a.location_display,\n      years_experience: a.years_experience,\n      booking_enabled: a.booking_enabled,\n    }, null, 2),\n    '```',\n    '',\n    'Task: draft the welcome email for this advisor. Reference one of their specialties if present. Close with three clear next steps (fill portal, confirm availability, accept first lead).',\n  ].join('\\n');\n}\n\nreturn {\n  json: {\n    advisor_id: a.id,\n    advisor_slug: a.slug,\n    advisor_name: a.name,\n    advisor_email: a.email,\n    advisor_type: a.type,\n    is_complete,\n    missing_fields,\n    welcome_prompt_system,\n    welcome_prompt_user,\n    run_at: nowIso,\n  }\n};\n"
+      },
+      "id": "d3a1d6e0-0005-4f00-a000-000000000005",
+      "name": "Evaluate profile",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        900,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "is-complete",
+              "leftValue": "={{ $json.is_complete }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d3a1d6e0-0006-4f00-a000-000000000006",
+      "name": "Profile complete?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1120,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "[HARDCODE_ANTHROPIC_API_KEY_HERE]"
+            },
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"claude-opus-4-7\",\n  \"max_tokens\": 1500,\n  \"system\": {{ JSON.stringify($json.welcome_prompt_system) }},\n  \"messages\": [\n    { \"role\": \"user\", \"content\": {{ JSON.stringify($json.welcome_prompt_user) }} }\n  ]\n}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 60000
+        }
+      },
+      "id": "d3a1d6e0-0007-4f00-a000-000000000007",
+      "name": "Call Claude",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1340,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "javaScript",
+        "jsCode": "const resp = $json || {};\nconst evalOut = $('Evaluate profile').item.json;\n\nconst textBlocks = Array.isArray(resp.content) ? resp.content.filter(c => c && c.type === 'text').map(c => c.text || '') : [];\nconst combined = textBlocks.join('\\n');\n\nlet parsed = null;\nconst fence = combined.match(/```json\\s*([\\s\\S]*?)```/i);\nif (fence) { try { parsed = JSON.parse(fence[1].trim()); } catch (e) { parsed = null; } }\nif (!parsed) {\n  const brace = combined.match(/\\{[\\s\\S]*\\}/);\n  if (brace) { try { parsed = JSON.parse(brace[0]); } catch (e) { parsed = null; } }\n}\n\nconst subject = (parsed && typeof parsed.subject === 'string') ? parsed.subject.slice(0, 120) : `Welcome to invest.com.au, ${evalOut.advisor_name}`;\nconst body_plain = (parsed && typeof parsed.body_plain === 'string') ? parsed.body_plain.slice(0, 4000) : combined.slice(0, 4000);\nconst body_html = (parsed && typeof parsed.body_html === 'string') ? parsed.body_html.slice(0, 6000) : null;\nconst next_steps = (parsed && Array.isArray(parsed.next_steps)) ? parsed.next_steps.slice(0, 5).map(s => String(s).slice(0, 240)) : [];\n\nreturn {\n  json: {\n    advisor_id: evalOut.advisor_id,\n    advisor_slug: evalOut.advisor_slug,\n    advisor_name: evalOut.advisor_name,\n    advisor_email: evalOut.advisor_email,\n    advisor_type: evalOut.advisor_type,\n    run_at: evalOut.run_at,\n    email_draft: {\n      subject,\n      body_plain,\n      body_html,\n      next_steps,\n    },\n    claude_raw: combined.slice(0, 4000),\n    claude_usage: resp.usage,\n    claude_model: resp.model || 'claude-opus-4-7',\n    claude_stop_reason: resp.stop_reason,\n  }\n};\n"
+      },
+      "id": "d3a1d6e0-0008-4f00-a000-000000000008",
+      "name": "Parse welcome draft",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1560,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://guggzyqceattncjwvgyc.supabase.co/rest/v1/agent_tasks",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify([{ agent_name: 'email-lifecycle', task_type: 'welcome_email_send', status: 'queued', priority: 50, payload: { advisor_id: $json.advisor_id, advisor_slug: $json.advisor_slug, to_email: $json.advisor_email, to_name: $json.advisor_name, subject: $json.email_draft.subject, body_plain: $json.email_draft.body_plain, body_html: $json.email_draft.body_html, next_steps: $json.email_draft.next_steps }, metadata: { source: 'advisor_onboarding_workflow', claude_model: $json.claude_model, usage: $json.claude_usage, run_at: $json.run_at } }]) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "[HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer [HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 15000
+        }
+      },
+      "id": "d3a1d6e0-0009-4f00-a000-000000000009",
+      "name": "Enqueue welcome email task",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1780,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://guggzyqceattncjwvgyc.supabase.co/rest/v1/professionals?id=eq.{{ $('Parse welcome draft').item.json.advisor_id }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ profile_quality_gate: 'passed', profile_gate_checked_at: new Date().toISOString(), onboarded_at: new Date().toISOString(), portal_onboarded: true, profile_missing_fields: [] }) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "[HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer [HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=minimal"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 15000
+        }
+      },
+      "id": "d3a1d6e0-000a-4f00-a000-00000000000a",
+      "name": "Mark advisor passed",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2000,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://guggzyqceattncjwvgyc.supabase.co/rest/v1/agent_logs",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify([{ agent_name: 'advisor-onboarding', level: 'info', message: 'Advisor onboarded: ' + ($('Parse welcome draft').item.json.advisor_name || $('Parse welcome draft').item.json.advisor_slug), metadata: { advisor_id: $('Parse welcome draft').item.json.advisor_id, advisor_slug: $('Parse welcome draft').item.json.advisor_slug, advisor_type: $('Parse welcome draft').item.json.advisor_type, decision: 'onboarded', welcome_task_enqueued: true, claude_model: $('Parse welcome draft').item.json.claude_model, claude_usage: $('Parse welcome draft').item.json.claude_usage, run_at: $('Parse welcome draft').item.json.run_at } }]) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "[HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer [HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 15000
+        }
+      },
+      "id": "d3a1d6e0-000b-4f00-a000-00000000000b",
+      "name": "Write onboarded log",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2220,
+        360
+      ]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://guggzyqceattncjwvgyc.supabase.co/rest/v1/professionals?id=eq.{{ $json.advisor_id }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ profile_quality_gate: 'needs_review', profile_gate_checked_at: new Date().toISOString(), profile_missing_fields: $json.missing_fields }) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "[HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer [HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=minimal"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 15000
+        }
+      },
+      "id": "d3a1d6e0-000c-4f00-a000-00000000000c",
+      "name": "Mark advisor needs review",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1340,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://guggzyqceattncjwvgyc.supabase.co/rest/v1/agent_logs",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify([{ agent_name: 'advisor-onboarding', level: 'warn', message: 'Advisor profile incomplete: ' + $('Evaluate profile').item.json.advisor_slug, metadata: { advisor_id: $('Evaluate profile').item.json.advisor_id, advisor_slug: $('Evaluate profile').item.json.advisor_slug, advisor_type: $('Evaluate profile').item.json.advisor_type, decision: 'needs_review', missing_fields: $('Evaluate profile').item.json.missing_fields, run_at: $('Evaluate profile').item.json.run_at } }]) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "[HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer [HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 15000
+        }
+      },
+      "id": "d3a1d6e0-000d-4f00-a000-00000000000d",
+      "name": "Write needs-review log",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1560,
+        600
+      ]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Read pending advisors",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read pending advisors": {
+      "main": [
+        [
+          {
+            "node": "Has advisor row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has advisor row": {
+      "main": [
+        [
+          {
+            "node": "Evaluate profile",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Write empty-day log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evaluate profile": {
+      "main": [
+        [
+          {
+            "node": "Profile complete?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Profile complete?": {
+      "main": [
+        [
+          {
+            "node": "Call Claude",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mark advisor needs review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Claude": {
+      "main": [
+        [
+          {
+            "node": "Parse welcome draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse welcome draft": {
+      "main": [
+        [
+          {
+            "node": "Enqueue welcome email task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enqueue welcome email task": {
+      "main": [
+        [
+          {
+            "node": "Mark advisor passed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark advisor passed": {
+      "main": [
+        [
+          {
+            "node": "Write onboarded log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark advisor needs review": {
+      "main": [
+        [
+          {
+            "node": "Write needs-review log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "timezone": "Australia/Sydney",
+    "errorWorkflow": "agent_error_logger",
+    "executionOrder": "v1",
+    "saveExecutionProgress": true,
+    "saveDataSuccessExecution": "all",
+    "saveDataErrorExecution": "all"
+  },
+  "tags": [
+    {
+      "name": "phase:2"
+    },
+    {
+      "name": "agent:advisor-onboarding"
+    }
+  ]
+}
