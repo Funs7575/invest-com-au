@@ -69,17 +69,17 @@ Running backlog. Pull from here rather than inventing work.
 
 ## 2026-04-23 overnight continuous-improvement session
 
-**Outcome:** 57 commits pushed to `main`; 3214 tests pass (up from ~2572
-baseline, +642); all pre-push hooks green (type-check + rate-limit audit +
-test:changed).
+**Outcome:** 65 commits pushed to `main`; 3214+ tests pass (up from ~2572
+baseline, +650); all pre-push hooks green (type-check + rate-limit audit +
+test:changed) on every push.
 
-**Coverage (measured mid-session at commit `bb4d9d4`):**
-- lines/stmt  28.00 → 41.77 (+13.77)
-- functions   46.00 → 63.02 (+17.02)
-- branches    70.00 → 72.29 (+2.29)
+**Coverage (final at session end):**
+- lines/stmt  28.00 → 42.65 (+14.65)
+- functions   46.00 → 63.07 (+17.07)
+- branches    70.00 → 72.66 (+2.66)
 
-Floors ratcheted twice during the session: 28/46/70 → 30/49/72 → 41/62/72
-(see `vitest.config.mts`).
+Floors ratcheted three times during the session: 28/46/70 → 30/49/72 →
+41/62/72 → 42/63/72 (see `vitest.config.mts`).
 
 **By tier:**
 - **Tier 1 (Critical path untested)** ✅
@@ -90,6 +90,9 @@ Floors ratcheted twice during the session: 28/46/70 → 30/49/72 → 41/62/72
   - `__tests__/lib/server.test.ts` — hasCourseAccess + getSubscription full coverage.
   - `__tests__/lib/marketplace-{frequency-cap,packages,wallet}.test.ts` — lib/marketplace goes from 0% to near-full on public exports.
   - `__tests__/lib/web-vitals-capture.test.ts` — captureSample + rollupYesterday (was 32% → near-100%).
+  - `__tests__/lib/cached-advisor-guides.test.ts` + `fi-data-server-pure.test.ts` — remaining DB-facing lib modules covered via stubbed Supabase.
+  - `__tests__/lib/hooks-{useUser,useCourseAccess,useSubscription}.test.tsx` — client auth/paywall/pro hooks (was 0% on lib/hooks/).
+  - `__tests__/components/{BrokerLogo,BackToTop,ArticleSearchInput,CollapsibleSection,error-boundary}.test.tsx` — core UI primitives.
   - Admin route guard coverage auto-extends via the existing walker — no change needed.
 
 - **Tier 2 (Code quality)** ✅

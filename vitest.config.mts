@@ -32,26 +32,32 @@ export default defineConfig({
       // CI catches coverage regressions without blocking ships that
       // add new (legitimately untested) code. Ratchet these up as
       // test suites grow; do not lower them.
-      // 2026-04-23: fifth ratchet — continuation of the same
-      // overnight pass. Additional suites: marketplace/packages +
-      // wallet + frequency-cap, server/course-access + get-
-      // subscription, web-vitals capture/rollup, admin/automation-
-      // metrics, api-auth, job-queue, admin-mfa, advisor-billing,
-      // advisor-emails/kyc/verification/specialties/guides/booking,
-      // verify-abn/afsl, invest-categories, listing-verticals,
-      // ticker-sectors, glossary, firb-data, foreign-investment-
-      // data, scenario-content, compliance-config, versus-content,
-      // request-cache, resend, form-persistence, form-tracking,
-      // quiz-history, course, env, best-broker-categories, topic-
-      // clusters, property-images, account/{bookmarks,delete,
-      // accept-terms}, cron/{referral-payouts,data-integrity-audit},
-      // track-event error paths (+480 tests).
-      // Measured: lines/stmt 41.77, branches 72.29, functions 63.02.
+      // 2026-04-23: fifth ratchet — overnight continuous-improvement
+      // pass. New suites: marketplace/packages + wallet + frequency-
+      // cap, server/course-access + get-subscription, web-vitals
+      // capture/rollup, admin/automation-metrics + classifier-config,
+      // api-auth, job-queue, admin-mfa, advisor-billing, advisor-
+      // emails/kyc/verification/specialties/guides/booking, advisor-
+      // application-resolver lookups, verify-abn/afsl, invest-
+      // categories, listing-verticals, ticker-sectors, glossary,
+      // firb-data, foreign-investment-data, scenario-content,
+      // compliance-config, versus-content, request-cache, resend,
+      // form-persistence, form-tracking, quiz-history, course, env,
+      // best-broker-categories, topic-clusters, property-images,
+      // investment-listings-query, cached-advisor-guides, fi-data-
+      // server pure helpers, hooks/{useUser, useCourseAccess,
+      // useSubscription}, account/{bookmarks, delete, accept-terms},
+      // cron/{referral-payouts, data-integrity-audit}, track-event
+      // error paths, BrokerLogo + BackToTop + ArticleSearchInput +
+      // CollapsibleSection components, top-level error boundary.
+      // ~640 new tests across 65+ new files.
+      // Measured at end of session: lines/stmt 42.65, branches 72.66,
+      // functions 63.07.
       thresholds: {
-        lines: 41,
-        functions: 62,
+        lines: 42,
+        functions: 63,
         branches: 72,
-        statements: 41,
+        statements: 42,
       },
     },
   },
