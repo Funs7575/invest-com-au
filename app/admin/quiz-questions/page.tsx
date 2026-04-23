@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AdminShell from "@/components/AdminShell";
 import { createClient } from "@/lib/supabase/client";
 import { downloadCSV } from "@/lib/csv-export";
@@ -41,11 +41,7 @@ export default function QuizQuestionsPage() {
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
   const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null);
 
-  useEffect(() => {
-    fetchQuestions();
-  }, []);
-
-  async function fetchQuestions() {
+  const fetchQuestions = useCallback(async () => {
     setLoading(true);
     const { data, error } = await supabase
       .from("quiz_questions")
@@ -57,7 +53,12 @@ export default function QuizQuestionsPage() {
       setQuestions(data || []);
     }
     setLoading(false);
-  }
+  }, [supabase]);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchQuestions();
+  }, [fetchQuestions]);
 
   function handleCreate() {
     setEditingId(null);
@@ -71,7 +72,7 @@ export default function QuizQuestionsPage() {
       order_index: question.order_index,
       question_text: question.question_text,
       options: question.options && question.options.length > 0
-        ? question.options.map((o: any) => ({ label: o.label, key: o.key }))
+        ? question.options.map((o) => ({ label: o.label, key: o.key }))
         : [{ label: "", key: "" }],
       active: question.active,
     });

@@ -78,11 +78,7 @@ export default function AttributionAnalyticsPage() {
     }
   }, [dateRange]);
 
-  useEffect(() => {
-    loadData();
-  }, [dateRange]);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     setLoading(true);
     const supabase = createClient();
     const dateFrom = getDateFilter();
@@ -161,7 +157,7 @@ export default function AttributionAnalyticsPage() {
         .select("slug, name")
         .in("slug", slugs);
       if (placementData) {
-        placementData.forEach((p: any) => {
+        placementData.forEach((p: { slug: string; name: string }) => {
           placementNames[p.slug] = p.name;
         });
       }
@@ -178,7 +174,11 @@ export default function AttributionAnalyticsPage() {
     );
 
     setLoading(false);
-  };
+  }, [getDateFilter]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const formatCurrency = (cents: number) => {
     const dollars = cents / 100;

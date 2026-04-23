@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AdminShell from "@/components/AdminShell";
 import { createClient } from "@/lib/supabase/client";
 import TableSkeleton from "@/components/TableSkeleton";
@@ -28,11 +28,7 @@ export default function AffiliateLinksPage() {
   const [edits, setEdits] = useState<Record<string, EditableFields>>({});
   const [activeTab, setActiveTab] = useState<"links" | "revenue" | "health">("links");
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  async function fetchData() {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     const [brokersRes, clickStatsRes] = await Promise.all([
       supabase.from("brokers").select("*").order("name"),
@@ -48,7 +44,12 @@ export default function AffiliateLinksPage() {
       setClickCounts(counts);
     }
     setLoading(false);
-  }
+  }, [supabase]);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchData();
+  }, [fetchData]);
 
   function handleFieldChange(slug: string, field: keyof EditableFields, value: string) {
     setEdits((prev) => ({
@@ -61,8 +62,7 @@ export default function AffiliateLinksPage() {
     if (edits[broker.slug] && edits[broker.slug][field] !== undefined) {
       return edits[broker.slug][field] as string;
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const val = (broker as any)[field];
+    const val = (broker as unknown as Record<string, unknown>)[field];
     if (val === null || val === undefined) return "";
     return String(val);
   }
