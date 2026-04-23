@@ -103,13 +103,13 @@ describe("fetchListingsByVertical", () => {
   });
 
   it("filters by vertical + status=active", async () => {
-    await fetchListingsByVertical("gold");
-    expect(eqCalls).toContainEqual({ col: "vertical", val: "gold" });
+    await fetchListingsByVertical("mining");
+    expect(eqCalls).toContainEqual({ col: "vertical", val: "mining" });
     expect(eqCalls).toContainEqual({ col: "status", val: "active" });
   });
 
   it("passes subCategories to .in() when provided", async () => {
-    await fetchListingsByVertical("funds", { subCategories: ["art", "wine"] });
+    await fetchListingsByVertical("fund", { subCategories: ["art", "wine"] });
     expect(inCalls).toContainEqual({
       col: "sub_category",
       val: ["art", "wine"],
@@ -167,21 +167,21 @@ describe("fetchListingsBySubCategory", () => {
   });
 
   it("returns [] for empty subCategory", async () => {
-    expect(await fetchListingsBySubCategory("funds", "")).toEqual([]);
+    expect(await fetchListingsBySubCategory("fund", "")).toEqual([]);
   });
 
   it("filters by vertical + sub_category + active status", async () => {
     listingsData = [{ id: 1 }];
-    const res = await fetchListingsBySubCategory("funds", "art");
+    const res = await fetchListingsBySubCategory("fund", "art");
     expect(res).toEqual([{ id: 1 }]);
-    expect(eqCalls).toContainEqual({ col: "vertical", val: "funds" });
+    expect(eqCalls).toContainEqual({ col: "vertical", val: "fund" });
     expect(eqCalls).toContainEqual({ col: "sub_category", val: "art" });
     expect(eqCalls).toContainEqual({ col: "status", val: "active" });
   });
 
   it("returns [] on query error", async () => {
     queryError = { message: "schema mismatch", code: "42703" };
-    expect(await fetchListingsBySubCategory("funds", "art")).toEqual([]);
+    expect(await fetchListingsBySubCategory("fund", "art")).toEqual([]);
   });
 });
 
@@ -231,12 +231,12 @@ describe("fetchRelatedListings", () => {
   });
 
   it("adds sub_category filter when provided", async () => {
-    await fetchRelatedListings("funds", "slug", "art");
+    await fetchRelatedListings("fund", "slug", "art");
     expect(eqCalls).toContainEqual({ col: "sub_category", val: "art" });
   });
 
   it("skips sub_category filter when null", async () => {
-    await fetchRelatedListings("funds", "slug", null);
+    await fetchRelatedListings("fund", "slug", null);
     // No eq call on sub_category
     expect(
       eqCalls.some((c) => c.col === "sub_category"),
