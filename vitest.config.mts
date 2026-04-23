@@ -32,17 +32,26 @@ export default defineConfig({
       // CI catches coverage regressions without blocking ships that
       // add new (legitimately untested) code. Ratchet these up as
       // test suites grow; do not lower them.
-      // 2026-04-23: fourth ratchet after an overnight test-coverage
-      // pass — referral-payouts, data-integrity-audit, api-auth,
-      // job-queue, admin-mfa, advisor-billing, advisor-emails,
-      // verify-abn, verify-afsl, account-bookmarks, account-delete,
-      // accept-terms, track-event error paths (+150 tests).
-      // Measured: lines/stmt 30.83, branches 72.67, functions 49.44.
+      // 2026-04-23: fifth ratchet — continuation of the same
+      // overnight pass. Additional suites: marketplace/packages +
+      // wallet + frequency-cap, server/course-access + get-
+      // subscription, web-vitals capture/rollup, admin/automation-
+      // metrics, api-auth, job-queue, admin-mfa, advisor-billing,
+      // advisor-emails/kyc/verification/specialties/guides/booking,
+      // verify-abn/afsl, invest-categories, listing-verticals,
+      // ticker-sectors, glossary, firb-data, foreign-investment-
+      // data, scenario-content, compliance-config, versus-content,
+      // request-cache, resend, form-persistence, form-tracking,
+      // quiz-history, course, env, best-broker-categories, topic-
+      // clusters, property-images, account/{bookmarks,delete,
+      // accept-terms}, cron/{referral-payouts,data-integrity-audit},
+      // track-event error paths (+480 tests).
+      // Measured: lines/stmt 41.77, branches 72.29, functions 63.02.
       thresholds: {
-        lines: 30,
-        functions: 49,
+        lines: 41,
+        functions: 62,
         branches: 72,
-        statements: 30,
+        statements: 41,
       },
     },
   },
