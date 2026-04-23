@@ -126,3 +126,11 @@ n8n workflows from git. To install:
 6. **Log volume cap.** `Read agent_logs` is capped at `limit=1000`. If a day
    ever generates more than 1000 logs, the aggregates will be under-counted
    silently. Add pagination before we ship more than a handful of agents.
+7. **Empty PostgREST response silently kills the chain.** n8n's HTTP Request
+   node splits a `[]` response into zero output items, and downstream nodes
+   never run. The execution is marked `success` with no visible error. To
+   keep the empty-day sentinel path alive we set `alwaysOutputData: true` on
+   `Read agent_logs`, and `Compute Analytics` filters out the resulting dummy
+   `{}` item via `row.agent_name` guards. If you add a new HTTP GET node to
+   this workflow, apply the same pattern — or the chain will silently
+   short-circuit on any day the upstream table is empty.
