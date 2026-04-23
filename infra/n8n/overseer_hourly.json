@@ -1,0 +1,339 @@
+{
+  "name": "overseer_hourly",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://guggzyqceattncjwvgyc.supabase.co/rest/v1/agent_tasks",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "status",
+              "value": "in.(queued,assigned,in_progress,blocked)"
+            },
+            {
+              "name": "select",
+              "value": "id,agent_name,task_type,status,priority,payload,metadata,scheduled_for,started_at,created_at,updated_at"
+            },
+            {
+              "name": "limit",
+              "value": "100"
+            },
+            {
+              "name": "order",
+              "value": "priority.asc,created_at.asc"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "=[HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer [HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 15000
+        }
+      },
+      "id": "e640c5ca-fc67-4c8d-9494-ced0488265e1",
+      "name": "Read active tasks",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        224,
+        -16
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "url": "https://guggzyqceattncjwvgyc.supabase.co/rest/v1/agent_logs",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "created_at",
+              "value": "=gte.{{ $now.minus({ hours: 1 }).toISO() }}"
+            },
+            {
+              "name": "select",
+              "value": "id,agent_name,task_id,level,message,metadata,created_at"
+            },
+            {
+              "name": "limit",
+              "value": "200"
+            },
+            {
+              "name": "order",
+              "value": "created_at.desc"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "=[HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer [HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 15000
+        }
+      },
+      "id": "6d99f577-9518-4c4a-b8a0-7e325d0da0d5",
+      "name": "Read recent logs",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        448,
+        -16
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build Overseer prompt \u2014 HONEST about what inputs this Phase 1 run has.\n// Inputs available: 1h of agent_logs + active agent_tasks.\n// Inputs NOT available: per-agent success rate / runtime (requires Analytics #10 = Phase 2).\n// Therefore: we do NOT compute healthy/degraded/failed counts. We compute by_status as the proxy.\n\nconst tasks = $('Read active tasks').all().map(i => i.json).filter(t => t && t.id);\nconst logs  = $('Read recent logs').all().map(i => i.json).filter(l => l && l.id);\n\nconst by_status = { queued: 0, assigned: 0, in_progress: 0, blocked: 0 };\nconst blocked_by_reason = {};\nlet blocked_count = 0;\n\nfor (const t of tasks) {\n  if (t && t.status in by_status) by_status[t.status]++;\n  if (t && t.status === 'blocked') {\n    blocked_count++;\n    // metadata.blocked_on is the canonical location (migration 20260422_add_agent_tasks_metadata).\n    // payload.blocked_on is a future-proof fallback \u2014 no pre-migration blocked rows exist today.\n    const fromMeta = (t.metadata && typeof t.metadata === 'object') ? t.metadata.blocked_on : null;\n    const fromPayload = (t.payload && typeof t.payload === 'object') ? t.payload.blocked_on : null;\n    const reason = fromMeta ?? fromPayload ?? 'unspecified';\n    blocked_by_reason[reason] = (blocked_by_reason[reason] || 0) + 1;\n  }\n}\n\nlet recent_errors = 0;\nlet recent_warnings = 0;\nconst active_agents = new Set();\nconst escalations = [];\n\nfor (const l of logs) {\n  if (!l) continue;\n  if (l.level === 'error' || l.level === 'fatal') recent_errors++;\n  if (l.level === 'warn') recent_warnings++;\n  if (l.agent_name) active_agents.add(l.agent_name);\n  const tier = l.metadata && (l.metadata.tier ?? l.metadata.escalation_tier);\n  if (tier === 'T4' || tier === 4) {\n    escalations.push({\n      agent: l.agent_name,\n      message: (l.message || '').slice(0, 240),\n      created_at: l.created_at,\n    });\n  }\n}\n\n// Severity classification (Phase 1 honest rules):\n//   info  = no errors, no blocked tasks, no warnings\n//   warn  = any blocked or any warning, no errors\n//   error = any error/fatal log OR any T4 escalation\nlet level = 'info';\nif (recent_warnings > 0 || blocked_count > 0) level = 'warn';\nif (recent_errors > 0 || escalations.length > 0) level = 'error';\n\nconst snapshot = {\n  task_count: tasks.length,\n  by_status,\n  blocked_count,\n  blocked_by_reason,\n  recent_errors,\n  recent_warnings,\n  active_agents: [...active_agents].sort(),\n  escalations,\n};\n\nconst system = [\n  \"You are Agent #00 Master Overseer for invest.com.au's 19-agent autonomous system (hourly monitor).\",\n  \"\",\n  \"IMPORTANT INPUT CONSTRAINTS \u2014 Phase 1 deployment. Be honest about what this run has:\",\n  \"- You have the last 60 minutes of agent_logs and the full list of currently-active agent_tasks.\",\n  \"- You DO NOT have per-agent success-rate or runtime metrics. Analytics #10 is not yet running (Phase 2).\",\n  \"- DO NOT compute healthy_count/degraded_count/failed_count. Those are not derivable from this snapshot.\",\n  \"- Use by_status, blocked_count, recent_errors, recent_warnings as the proxy signals.\",\n  \"- DO NOT invent numbers the inputs don't support.\",\n  \"\",\n  \"Task this run:\",\n  \"1) Summarise the system in <=200 words, severity-accurate per the provided 'level'.\",\n  \"2) Flag any blocked task whose started_at/created_at is >6h ago (derive from the task rows).\",\n  \"3) Suggest at most 3 follow-up actions \u2014 each one line, each addressed to a specific agent by number.\",\n  \"\",\n  \"Return a JSON block (```json ... ```) with keys: assessment (string), recommendations (array of strings), observed_level (string), echo {task_count, blocked_count, recent_errors, recent_warnings}. Follow the JSON block with your plain-English one-line digest.\",\n].join('\\n');\n\nconst user = [\n  `Run at: ${new Date().toISOString()}`,\n  `Pre-computed level: ${level}`,\n  ``,\n  `Snapshot (ground truth, computed deterministically from inputs):`,\n  '```json',\n  JSON.stringify(snapshot, null, 2),\n  '```',\n  ``,\n  `Recent error/warn/fatal logs (most recent first, up to 20):`,\n  '```json',\n  JSON.stringify(\n    logs.filter(l => l && (l.level === 'error' || l.level === 'fatal' || l.level === 'warn')).slice(0, 20),\n    null,\n    2,\n  ),\n  '```',\n].join('\\n');\n\nreturn [{ json: { system, user, level, snapshot } }];\n"
+      },
+      "id": "acebc860-cef8-4ea1-b41e-6dc41391b8bb",
+      "name": "Build Overseer prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        -16
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-api-key",
+              "value": "[HARDCODE_ANTHROPIC_API_KEY_HERE]"
+            },
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"claude-opus-4-7\",\n  \"max_tokens\": 2048,\n  \"system\": {{ JSON.stringify($json.system) }},\n  \"messages\": [\n    { \"role\": \"user\", \"content\": {{ JSON.stringify($json.user) }} }\n  ]\n}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 60000
+        }
+      },
+      "id": "1a319586-0b89-4ed3-b589-81e63e9d5e08",
+      "name": "Call Claude",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        896,
+        -16
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse Claude response.\n// PARSE HARDENING: expected keys (task_count, blocked_count, recent_errors, recent_warnings)\n// are explicitly set to null when missing from Claude's JSON \u2014 preserves null-vs-missing\n// distinction for downstream monitors. Snapshot is also attached (ground truth) so Claude's\n// (possibly null) echo never loses the source figures.\n\nconst resp    = $input.first().json;\nconst promptItem = $('Build Overseer prompt').first().json;\nconst snapshot   = promptItem.snapshot;\nconst level      = promptItem.level;\n\nconst contentBlocks = Array.isArray(resp && resp.content) ? resp.content : [];\nconst textBlock = contentBlocks.find(b => b && b.type === 'text');\nconst text = textBlock ? String(textBlock.text || '') : '';\n\nlet parsedMetadata = {};\nconst jsonMatch = text.match(/```json\\s*([\\s\\S]*?)\\s*```/);\nif (jsonMatch) {\n  try { parsedMetadata = JSON.parse(jsonMatch[1]) || {}; } catch (_) { parsedMetadata = {}; }\n}\nif (typeof parsedMetadata !== 'object' || parsedMetadata === null) parsedMetadata = {};\n\n// Expected echo keys \u2014 explicit null, never undefined.\nconst expected = ['task_count', 'blocked_count', 'recent_errors', 'recent_warnings'];\nconst echo = (parsedMetadata && typeof parsedMetadata.echo === 'object' && parsedMetadata.echo !== null) ? parsedMetadata.echo : {};\nfor (const k of expected) {\n  if (!(k in echo)) echo[k] = null;\n}\nparsedMetadata.echo = echo;\n\n// Attach ground truth + run provenance.\nparsedMetadata.snapshot = snapshot;\nparsedMetadata.run_at   = new Date().toISOString();\nparsedMetadata.model    = 'claude-opus-4-7';\nparsedMetadata.anthropic_response_id = resp && resp.id ? resp.id : null;\nparsedMetadata.stop_reason = resp && resp.stop_reason ? resp.stop_reason : null;\nparsedMetadata.input_tokens  = resp && resp.usage ? resp.usage.input_tokens  ?? null : null;\nparsedMetadata.output_tokens = resp && resp.usage ? resp.usage.output_tokens ?? null : null;\n\n// Single-line digest for agent_logs.message (<=500 chars).\nconst firstLine = text.split(/\\n+/).map(s => s.trim()).find(s => s && !s.startsWith('```')) || '';\nconst message = firstLine.slice(0, 500) || `Overseer hourly run (level=${level}, tasks=${snapshot.task_count})`;\n\nreturn [{\n  json: {\n    agent_name: 'overseer',\n    level,\n    message,\n    metadata: parsedMetadata,\n  }\n}];\n"
+      },
+      "id": "16768b49-063f-421e-8ff4-90ddd819f8cf",
+      "name": "Parse Claude response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        -16
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://guggzyqceattncjwvgyc.supabase.co/rest/v1/agent_logs",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "=[HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer [HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Prefer",
+              "value": "return=representation"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"agent_name\": {{ JSON.stringify($json.agent_name) }},\n  \"level\":      {{ JSON.stringify($json.level) }},\n  \"message\":    {{ JSON.stringify($json.message) }},\n  \"metadata\":   {{ JSON.stringify($json.metadata) }}\n}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          },
+          "timeout": 15000
+        }
+      },
+      "id": "5d2e7e52-a8cd-4968-87f3-591a2d59553d",
+      "name": "Write overseer log",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1344,
+        -16
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 0 * * * *"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        -16
+      ],
+      "id": "8d99c525-7eb8-493c-8024-3f7c7c890659",
+      "name": "Schedule Trigger"
+    }
+  ],
+  "connections": {
+    "Read active tasks": {
+      "main": [
+        [
+          {
+            "node": "Read recent logs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read recent logs": {
+      "main": [
+        [
+          {
+            "node": "Build Overseer prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Overseer prompt": {
+      "main": [
+        [
+          {
+            "node": "Call Claude",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call Claude": {
+      "main": [
+        [
+          {
+            "node": "Parse Claude response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Claude response": {
+      "main": [
+        [
+          {
+            "node": "Write overseer log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Read active tasks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    {
+      "name": "phase:1"
+    },
+    {
+      "name": "agent:00-overseer"
+    }
+  ]
+}
