@@ -4,6 +4,11 @@ import { useEffect, useState, useMemo, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import AdminShell from "@/components/AdminShell";
 import type { Broker, Article } from "@/lib/types";
+import {
+  COMPANY_LEGAL_NAME,
+  COMPANY_ACN,
+  COMPANY_ABN,
+} from "@/lib/compliance";
 
 /* ─── Types ─── */
 
@@ -417,12 +422,12 @@ export default function CompliancePage() {
         severity: "pass",
         regulation: "Corporations Act s912D",
         detail:
-          `${COMPANY_DETAILS.name} (ACN ${COMPANY_DETAILS.acn}, ABN ${COMPANY_DETAILS.abn}) is displayed in the footer. ` +
+          `${COMPANY_LEGAL_NAME} (ACN ${COMPANY_ACN}, ABN ${COMPANY_ABN}) is displayed in the footer. ` +
           "REGULATORY_NOTE clarifies that the company is not a financial product issuer, credit provider, or financial adviser.",
         items: [
-          `Legal name: ${COMPANY_DETAILS.name}`,
-          `ACN: ${COMPANY_DETAILS.acn}`,
-          `ABN: ${COMPANY_DETAILS.abn}`,
+          `Legal name: ${COMPANY_LEGAL_NAME}`,
+          `ACN: ${COMPANY_ACN}`,
+          `ABN: ${COMPANY_ABN}`,
           "Footer: ✅ Displayed",
           "REGULATORY_NOTE: ✅ Defined",
         ],
@@ -1032,9 +1037,3 @@ export default function CompliancePage() {
   );
 }
 
-// Company details constant (used for display, sourced from lib/compliance.ts)
-const COMPANY_DETAILS = {
-  name: "Invest.com.au Pty Ltd",
-  acn: "093 882 421",
-  abn: "90 093 882 421",
-};
