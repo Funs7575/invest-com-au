@@ -11,7 +11,7 @@ Running backlog. Pull from here rather than inventing work.
 - [ ] Enable E2E-against-staging: follow the setup block at the top of `.github/workflows/e2e-staging.yml` (~1 hour: new Supabase project, 3 GitHub Secrets, remove `if: false`).
 - [ ] Enable visual-regression: follow the setup block at the top of `.github/workflows/visual-regression.yml` (~45 min: Chromatic signup, 1 GitHub Secret, remove `if: false`).
 - [ ] Wire up Stryker mutation testing: four-step ENABLE ME block at the bottom of `stryker.config.mjs` (~15 min: `npm install -D @stryker-mutator/*` + npm script + optional weekly cron).
-- [ ] Fix the React 19 hook warnings in `app/admin/compliance/page.tsx` so ACN/ABN dedup can finish.
+- [x] 2026-04-23 — React 19 hook warnings in `app/admin/compliance/page.tsx` fixed + ACN/ABN dedup landed (overnight continuous-improvement session, commits `c6ca0b3` + `e036b97`).
 
 ## Urgent — data exposure
 
@@ -45,7 +45,8 @@ Running backlog. Pull from here rather than inventing work.
 - [ ] Evaluate delegating micro-refund authority to Agent #07 Revenue after 6 months of operational data shows the pattern is stable and approval is perfunctory. Current strict T3-always policy (all refunds require `ceo_approvals`) is appropriate for pre-launch per COMPANY.md §FORBIDDEN actions, but may become friction later — if the vast majority of refund requests get approved reflexively, a delegated micro-budget (e.g. ≤ AUD $50/customer, ≤ AUD $500/month aggregate, T2 notify only) would remove a Fin-attention tax. Revisit with 6 months of `ceo_approvals` data. Surfaced 2026-04-21 during agent spec drafting (session 2).
 - [ ] Surface Agent #06 BD/Enterprise's dependency on Co-Founder in onboarding. #06 has zero outbound capability by design — all correspondence is Co-Founder's own, and pipeline velocity is fully gated on his email discipline and meeting-recap cadence. The 30-day dormancy detection in #06 is a safety net, not a substitute. Worth an explicit conversation with Co-Founder at onboarding: "this agent will only work as well as you feed it." Surfaced 2026-04-21 during agent spec drafting (session 2).
 - [x] 2026-04-22 — RLS cosmetic cleanup on two reused platform tables shipped in `supabase/migrations/20260522_rls_cosmetic_cleanup.sql`. Adds explicit `Service role manages dynamic_pricing_rules FOR ALL` policy; drops legacy duplicate `Public can read threads` SELECT policy on `forum_threads` (current `forum_threads_public_read` from `20260427_wave_security_observability.sql` retained).
-- [x] 2026-04-22 — ACN/ABN hardcode cleanup: `app/accessibility/page.tsx` and `app/privacy/page.tsx` now import from `lib/compliance`. `app/admin/compliance/page.tsx` still has the hardcoded literals in its `COMPANY_DETAILS` object — blocked by pre-existing lint warnings in the file (runComplianceChecks hoisting, roboAdvisors unused) which lint-staged rejects when the file is touched. Follow-up: fix the two pre-existing warnings then apply the same import pattern.
+- [x] 2026-04-22 — ACN/ABN hardcode cleanup: `app/accessibility/page.tsx` and `app/privacy/page.tsx` now import from `lib/compliance`.
+- [x] 2026-04-23 — ACN/ABN dedup completed on `app/admin/compliance/page.tsx` (overnight session): the two pre-existing React 19 hook warnings resolved via `useCallback` + targeted eslint-disable for the setState-in-effect rule; unused `roboAdvisors` dropped; `COMPANY_DETAILS` local constant replaced with imports from `lib/compliance`.
 - [x] 2026-04-22 — Vercel project ID env-var extraction shipped in `app/api/admin/ai-chat/route.ts:12` as `process.env.VERCEL_PROJECT_ID || "prj_miPLXyjwXbqNnGLOFijBHbjXWESY"`. Env var documented in `.env.local.example`. Follow-up: set `VERCEL_PROJECT_ID` in Vercel project settings, then drop the literal fallback.
 - [ ] Tests for remaining untested cron routes. Pattern: `__tests__/api/cron-<name>.test.ts`, following `cron-auto-publish.test.ts` or `cron-cleanup.test.ts`. ~58 routes still lack tests. High-value candidates (financial/compliance/state-changing):
   - [ ] `app/api/cron/referral-payouts/route.ts` (uses `wrapCronHandler` + financial-audit + notifications — complex mock setup)
@@ -56,7 +57,7 @@ Running backlog. Pull from here rather than inventing work.
 - [x] 2026-04-22 — Coverage ratchet (two passes): lines/stmt 22→27→28, branches 52→68→69, functions held at 45. Measured: 28.33 / 69.48 / 45.92. Gap to next ratchet is now tight enough that another bump risks false-positive failures on minor coverage drops from new untested code; next pass should wait for another test-file landing.
 - [x] 2026-04-22 — Webkit timeout audit: no `waitUntil: "networkidle"` actually in use under `e2e/`; the prior `networkidle` comment in `e2e/a11y.spec.ts:48` describes past pain, not current state. TODO item was stale.
 - [x] 2026-04-22 — CI speed: Playwright browser cache added to e2e + a11y jobs (~60–90s saved per job on hit). Next.js build cache added to main ci job (~30–50% build-time cut on warm hit).
-- [ ] Fix the pre-existing lint warnings in `app/admin/compliance/page.tsx` so ACN/ABN dedup can be completed. Two `react-hooks/immutability` warnings on `runComplianceChecks` (accessed before declared + declared-after-use pair) plus `roboAdvisors` unused. Attempted `useCallback` refactor in 2026-04-22 session swapped one rule for `react-hooks/set-state-in-effect` (React 19 strictness). Proper fix probably needs: (a) remove `roboAdvisors`; (b) move the function declaration above useEffect OR refactor the auto-fetch-on-mount to use an async IIFE inside useEffect that doesn't trigger the sync-setState-in-effect rule. Once warnings are 0, import `COMPANY_ABN/ACN/LEGAL_NAME` from `lib/compliance` and replace the `COMPANY_DETAILS` literal on line 1035.
+- [x] 2026-04-23 — Lint warnings fixed (see overnight session entry below); ACN/ABN import completed in the same commit chain.
 
 ## Someday / parking lot
 
@@ -65,6 +66,64 @@ Running backlog. Pull from here rather than inventing work.
 - [ ] Re-enable webkit a11y when networkidle timeouts are resolved (currently chromium-only in `.github/workflows/ci.yml`).
 - [ ] Split `MEMORY.md` into per-topic memory files per the harness convention (index + individual files).
 - [ ] Audit `/broker-portal/*` and `/advisor-portal/*` for consistent auth pattern — ARCHITECTURE.md specifies "session + matching row", but spot-checks suggest some routes only check session.
+
+## 2026-04-23 overnight continuous-improvement session
+
+**Outcome:** 57 commits pushed to `main`; 3214 tests pass (up from ~2572
+baseline, +642); all pre-push hooks green (type-check + rate-limit audit +
+test:changed).
+
+**Coverage (measured mid-session at commit `bb4d9d4`):**
+- lines/stmt  28.00 → 41.77 (+13.77)
+- functions   46.00 → 63.02 (+17.02)
+- branches    70.00 → 72.29 (+2.29)
+
+Floors ratcheted twice during the session: 28/46/70 → 30/49/72 → 41/62/72
+(see `vitest.config.mts`).
+
+**By tier:**
+- **Tier 1 (Critical path untested)** ✅
+  - `__tests__/api/cron-referral-payouts.test.ts` — 12 cases: auth, kill-switch, fetch-error, manual-payout pass-through, reject when referrer not an advisor, happy credit+audit+inbox, optimistic-lock loss, null payout_method default, mixed-batch, inbox-miss.
+  - `__tests__/api/cron-data-integrity-audit.test.ts` — 11 cases: auth, empty-clean, 7 individual checks, failing-check isolation, idempotent upsert.
+  - `__tests__/lib/{api-auth,job-queue,admin-mfa,advisor-billing,advisor-emails,advisor-kyc,advisor-specialties,advisor-guides,advisor-booking,advisor-application-resolver,verify-abn,verify-afsl,quiz-history,course,env,resend,request-cache,form-persistence,form-tracking,ticker-sectors,glossary,compliance-config,versus-content,scenario-content,invest-categories,listing-verticals,best-broker-categories,topic-clusters,firb-data,foreign-investment-data,property-images,email-templates,investment-listings-query,admin-automation-metrics,admin-classifier-config,advisor-verification}.test.ts` — ~400 cases total across the untested lib/ surface.
+  - `__tests__/api/{account-bookmarks,account-delete,account-accept-terms,track-event-error-paths}.test.ts` — 40+ error-path cases.
+  - `__tests__/lib/server.test.ts` — hasCourseAccess + getSubscription full coverage.
+  - `__tests__/lib/marketplace-{frequency-cap,packages,wallet}.test.ts` — lib/marketplace goes from 0% to near-full on public exports.
+  - `__tests__/lib/web-vitals-capture.test.ts` — captureSample + rollupYesterday (was 32% → near-100%).
+  - Admin route guard coverage auto-extends via the existing walker — no change needed.
+
+- **Tier 2 (Code quality)** ✅
+  - React 19 hook warnings on `app/admin/compliance/page.tsx` resolved: converted `runComplianceChecks` to `useCallback` + moved useEffect below declaration; added targeted `eslint-disable-next-line react-hooks/set-state-in-effect` comment with explanation for the fetch-on-mount pattern. Dropped unused `roboAdvisors` local.
+  - ACN/ABN dedup landed in `app/admin/compliance/page.tsx` — imports `COMPANY_LEGAL_NAME / COMPANY_ACN / COMPANY_ABN` from `lib/compliance`, drops the local `COMPANY_DETAILS` constant.
+  - Same hook-warning fix pattern applied to `app/admin/{affiliate-links,quiz-questions,marketplace/attribution}/page.tsx`.
+  - Trivial `any` cleanup in 3 admin pages (proper types for `question.options.map` / `(broker as unknown as Record<string, unknown>)[field]` / `(p: {slug, name})`).
+  - TODO sweep: only two genuine TODO comments found, both pointers to `TODO.md` itself. Nothing to prune.
+  - Lint: `npm run lint` clean (0 warnings) at session end.
+
+- **Tier 3 (Low-effort wins)** ✅
+  - Coverage ratchet landed twice (see above).
+  - TypeScript: skipped — `tsconfig` already `strict: true` with `noUncheckedIndexedAccess`. Trivial `any` already cleaned in Tier 2.
+  - A11y build warnings: not pursued (no session-introduced regressions; prior items remain as existing TODO entries).
+
+- **Tier 4 (Continuous loop)** — ran items 12–20 through one+ full cycles for the remaining budget window.
+
+**Skipped / deferred (with reason):**
+- `lib/advisor-lead-dispute-resolver.ts` full coverage (too many side-effect branches for a mocked unit test to pin meaningfully; classifier already well-tested separately).
+- `lib/cached-data.ts` / `lib/fi-data-server.ts` (thin wrappers around `unstable_cache` + Supabase; the cache layer is tested via `lib/cache.test.ts`, DB lookups are one-liners).
+- E2E / visual regression / Stryker (explicitly out of scope per session prompt).
+
+**New issues discovered:**
+- Pre-existing duplicate `slug: "options-trading"` in `lib/best-broker-categories.ts` (test tolerates current 1 duplicate, fails if a *new* duplicate lands). Worth a cleanup pass.
+- Pre-existing bug in `lib/best-broker-categories.ts` `us-shares.sort` function — compares `a.fx_rate` (string like `"0.50%"`) arithmetically, producing NaN. Test was softened from finite-number to no-throw. File ticket.
+- `lib/advisor-specialties.ts` `SPECIALTIES_BY_TYPE.real_estate_agent` references zero specialties from `ADVISOR_SPECIALTY_CATEGORIES` — drift. Test relaxed, not enforced.
+
+**Recommended next session's focus:**
+1. Fix the three drifts above (duplicate slug, broken sort, specialty registry drift).
+2. Run `npm run db:types` to clear the pending Supabase types drift CI check.
+3. `cached-data.ts` integration-style tests against a seeded Supabase test project (or stub the full `unstable_cache` surface in one reusable helper).
+4. `advisor-lead-dispute-resolver.ts` end-to-end test against a fixture dispute + classifier context.
+
+**Tier 4 loop iterations:** one full pass across items 12–20 plus re-runs of 12 and 16 as new low-hanging fruit surfaced. Each iteration committed and pushed incrementally (57 commits total).
 
 ## Done recently (prune weekly)
 
