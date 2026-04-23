@@ -24,7 +24,7 @@ describe("computeHealth state machine", () => {
   it("returns 'unknown' when lastRun is never_run and queue under warn", () => {
     expect(
       computeHealth(
-        { name: "x", status: "never_run", startedAt: null, endedAt: null, stats: null, triggeredBy: null },
+        { name: "x", status: "never_run", startedAt: null, endedAt: null, durationMs: null, stats: null, errorMessage: null, triggeredBy: null },
         0,
         cadence,
         warn,
@@ -41,7 +41,7 @@ describe("computeHealth state machine", () => {
   it("returns 'red' when lastRun errored", () => {
     expect(
       computeHealth(
-        { name: "x", status: "error", startedAt: new Date().toISOString(), endedAt: null, stats: null, triggeredBy: "cron" },
+        { name: "x", status: "error", startedAt: new Date().toISOString(), endedAt: null, durationMs: null, stats: null, errorMessage: null, triggeredBy: "cron" },
         0,
         cadence,
         warn,
@@ -55,7 +55,7 @@ describe("computeHealth state machine", () => {
     const staleTime = new Date(Date.now() - 49 * 60 * 60 * 1000).toISOString();
     expect(
       computeHealth(
-        { name: "x", status: "ok", startedAt: staleTime, endedAt: null, stats: null, triggeredBy: "cron" },
+        { name: "x", status: "ok", startedAt: staleTime, endedAt: null, durationMs: null, stats: null, errorMessage: null, triggeredBy: "cron" },
         0,
         cadence,
         warn,
@@ -71,7 +71,7 @@ describe("computeHealth state machine", () => {
   it("returns 'amber' when lastRun is 'partial'", () => {
     expect(
       computeHealth(
-        { name: "x", status: "partial", startedAt: new Date().toISOString(), endedAt: null, stats: null, triggeredBy: "cron" },
+        { name: "x", status: "partial", startedAt: new Date().toISOString(), endedAt: null, durationMs: null, stats: null, errorMessage: null, triggeredBy: "cron" },
         0,
         cadence,
         warn,
@@ -85,7 +85,7 @@ describe("computeHealth state machine", () => {
     const warnTime = new Date(Date.now() - 31 * 60 * 60 * 1000).toISOString();
     expect(
       computeHealth(
-        { name: "x", status: "ok", startedAt: warnTime, endedAt: null, stats: null, triggeredBy: "cron" },
+        { name: "x", status: "ok", startedAt: warnTime, endedAt: null, durationMs: null, stats: null, errorMessage: null, triggeredBy: "cron" },
         0,
         cadence,
         warn,
@@ -98,7 +98,7 @@ describe("computeHealth state machine", () => {
     const fresh = new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString();
     expect(
       computeHealth(
-        { name: "x", status: "ok", startedAt: fresh, endedAt: null, stats: null, triggeredBy: "cron" },
+        { name: "x", status: "ok", startedAt: fresh, endedAt: null, durationMs: null, stats: null, errorMessage: null, triggeredBy: "cron" },
         0,
         cadence,
         warn,
@@ -111,7 +111,7 @@ describe("computeHealth state machine", () => {
     const warnTime = new Date(Date.now() - 31 * 60 * 60 * 1000).toISOString();
     expect(
       computeHealth(
-        { name: "x", status: "ok", startedAt: warnTime, endedAt: null, stats: null, triggeredBy: "cron" },
+        { name: "x", status: "ok", startedAt: warnTime, endedAt: null, durationMs: null, stats: null, errorMessage: null, triggeredBy: "cron" },
         200,
         cadence,
         warn,
@@ -123,7 +123,7 @@ describe("computeHealth state machine", () => {
   it("prioritises red status over amber queue", () => {
     expect(
       computeHealth(
-        { name: "x", status: "error", startedAt: new Date().toISOString(), endedAt: null, stats: null, triggeredBy: "cron" },
+        { name: "x", status: "error", startedAt: new Date().toISOString(), endedAt: null, durationMs: null, stats: null, errorMessage: null, triggeredBy: "cron" },
         75,
         cadence,
         warn,

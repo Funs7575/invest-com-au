@@ -46,43 +46,44 @@ describe("sendEmail", () => {
 
   it("normalizes a single 'to' address into an array", async () => {
     const spy = vi.fn(
-      async () => new Response("{}", { status: 200 }),
+      async (_url: string, _init?: RequestInit) =>
+        new Response("{}", { status: 200 }),
     );
     globalThis.fetch = spy as unknown as typeof fetch;
     await sendEmail({ to: "one@x.com", subject: "x", html: "<p/>" });
-    const body = JSON.parse(
-      (spy.mock.calls[0]?.[1] as { body: string }).body,
-    );
+    const init = spy.mock.calls[0]?.[1] as RequestInit | undefined;
+    const body = JSON.parse(init?.body as string);
     expect(body.to).toEqual(["one@x.com"]);
   });
 
   it("preserves a 'to' array", async () => {
     const spy = vi.fn(
-      async () => new Response("{}", { status: 200 }),
+      async (_url: string, _init?: RequestInit) =>
+        new Response("{}", { status: 200 }),
     );
     globalThis.fetch = spy as unknown as typeof fetch;
     await sendEmail({ to: ["a@x.com", "b@x.com"], subject: "x", html: "<p/>" });
-    const body = JSON.parse(
-      (spy.mock.calls[0]?.[1] as { body: string }).body,
-    );
+    const init = spy.mock.calls[0]?.[1] as RequestInit | undefined;
+    const body = JSON.parse(init?.body as string);
     expect(body.to).toEqual(["a@x.com", "b@x.com"]);
   });
 
   it("uses a default from address when not provided", async () => {
     const spy = vi.fn(
-      async () => new Response("{}", { status: 200 }),
+      async (_url: string, _init?: RequestInit) =>
+        new Response("{}", { status: 200 }),
     );
     globalThis.fetch = spy as unknown as typeof fetch;
     await sendEmail({ to: "a@x.com", subject: "x", html: "<p/>" });
-    const body = JSON.parse(
-      (spy.mock.calls[0]?.[1] as { body: string }).body,
-    );
+    const init = spy.mock.calls[0]?.[1] as RequestInit | undefined;
+    const body = JSON.parse(init?.body as string);
     expect(body.from).toBe("Invest.com.au <fees@invest.com.au>");
   });
 
   it("respects a custom 'from' override", async () => {
     const spy = vi.fn(
-      async () => new Response("{}", { status: 200 }),
+      async (_url: string, _init?: RequestInit) =>
+        new Response("{}", { status: 200 }),
     );
     globalThis.fetch = spy as unknown as typeof fetch;
     await sendEmail({
@@ -91,9 +92,8 @@ describe("sendEmail", () => {
       html: "<p/>",
       from: "Hello <hi@invest.com.au>",
     });
-    const body = JSON.parse(
-      (spy.mock.calls[0]?.[1] as { body: string }).body,
-    );
+    const init = spy.mock.calls[0]?.[1] as RequestInit | undefined;
+    const body = JSON.parse(init?.body as string);
     expect(body.from).toBe("Hello <hi@invest.com.au>");
   });
 
@@ -115,13 +115,15 @@ describe("sendEmail", () => {
 
   it("sets bearer auth header + JSON content-type", async () => {
     const spy = vi.fn(
-      async () => new Response("{}", { status: 200 }),
+      async (_url: string, _init?: RequestInit) =>
+        new Response("{}", { status: 200 }),
     );
     globalThis.fetch = spy as unknown as typeof fetch;
     await sendEmail({ to: "a@x.com", subject: "x", html: "<p/>" });
-    const init = spy.mock.calls[0]?.[1] as { headers: Record<string, string> };
-    expect(init?.headers.Authorization).toBe("Bearer rk_test");
-    expect(init?.headers["Content-Type"]).toBe("application/json");
+    const init = spy.mock.calls[0]?.[1];
+    const headers = init?.headers as Record<string, string> | undefined;
+    expect(headers?.Authorization).toBe("Bearer rk_test");
+    expect(headers?.["Content-Type"]).toBe("application/json");
   });
 });
 
@@ -150,36 +152,37 @@ describe("upsertContact", () => {
 
   it("posts to the audience-specific URL", async () => {
     const spy = vi.fn(
-      async () => new Response("{}", { status: 200 }),
+      async (_url: string, _init?: RequestInit) =>
+        new Response("{}", { status: 200 }),
     );
     globalThis.fetch = spy as unknown as typeof fetch;
     await upsertContact("aud_123", "u@x.com", "Jane");
-    const url = spy.mock.calls[0]?.[0] as string;
+    const url = spy.mock.calls[0]?.[0];
     expect(url).toBe("https://api.resend.com/audiences/aud_123/contacts");
   });
 
   it("omits first_name when not provided", async () => {
     const spy = vi.fn(
-      async () => new Response("{}", { status: 200 }),
+      async (_url: string, _init?: RequestInit) =>
+        new Response("{}", { status: 200 }),
     );
     globalThis.fetch = spy as unknown as typeof fetch;
     await upsertContact("a1", "u@x.com");
-    const body = JSON.parse(
-      (spy.mock.calls[0]?.[1] as { body: string }).body,
-    );
+    const init = spy.mock.calls[0]?.[1] as RequestInit | undefined;
+    const body = JSON.parse(init?.body as string);
     expect(body.first_name).toBeUndefined();
     expect(body.unsubscribed).toBe(false);
   });
 
   it("propagates unsubscribed flag", async () => {
     const spy = vi.fn(
-      async () => new Response("{}", { status: 200 }),
+      async (_url: string, _init?: RequestInit) =>
+        new Response("{}", { status: 200 }),
     );
     globalThis.fetch = spy as unknown as typeof fetch;
     await upsertContact("a1", "u@x.com", undefined, true);
-    const body = JSON.parse(
-      (spy.mock.calls[0]?.[1] as { body: string }).body,
-    );
+    const init = spy.mock.calls[0]?.[1] as RequestInit | undefined;
+    const body = JSON.parse(init?.body as string);
     expect(body.unsubscribed).toBe(true);
   });
 
