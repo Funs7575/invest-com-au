@@ -5493,6 +5493,57 @@ export type Database = {
         }
         Relationships: []
       }
+      data_license_subscribers: {
+        Row: {
+          api_key_hash: string
+          contact_email: string
+          contract_end: string | null
+          contract_start: string
+          created_at: string | null
+          id: number
+          last_api_call_at: string | null
+          metadata: Json | null
+          monthly_price_usd: number
+          organization_name: string
+          status: string
+          tier: string
+          total_api_calls: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          api_key_hash: string
+          contact_email: string
+          contract_end?: string | null
+          contract_start: string
+          created_at?: string | null
+          id?: number
+          last_api_call_at?: string | null
+          metadata?: Json | null
+          monthly_price_usd: number
+          organization_name: string
+          status?: string
+          tier: string
+          total_api_calls?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          api_key_hash?: string
+          contact_email?: string
+          contract_end?: string | null
+          contract_start?: string
+          created_at?: string | null
+          id?: number
+          last_api_call_at?: string | null
+          metadata?: Json | null
+          monthly_price_usd?: number
+          organization_name?: string
+          status?: string
+          tier?: string
+          total_api_calls?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       developer_leads: {
         Row: {
           created_at: string | null
@@ -10162,6 +10213,51 @@ export type Database = {
         }
         Relationships: []
       }
+      sentiment_signals: {
+        Row: {
+          asset_class: string
+          computed_at: string | null
+          confidence: number
+          created_at: string | null
+          id: number
+          raw_metrics: Json | null
+          sample_size: number
+          sector: string | null
+          sentiment_score: number
+          signal_date: string
+          signal_source: string
+          ticker: string | null
+        }
+        Insert: {
+          asset_class: string
+          computed_at?: string | null
+          confidence: number
+          created_at?: string | null
+          id?: number
+          raw_metrics?: Json | null
+          sample_size: number
+          sector?: string | null
+          sentiment_score: number
+          signal_date: string
+          signal_source: string
+          ticker?: string | null
+        }
+        Update: {
+          asset_class?: string
+          computed_at?: string | null
+          confidence?: number
+          created_at?: string | null
+          id?: number
+          raw_metrics?: Json | null
+          sample_size?: number
+          sector?: string | null
+          sentiment_score?: number
+          signal_date?: string
+          signal_source?: string
+          ticker?: string | null
+        }
+        Relationships: []
+      }
       shared_shortlists: {
         Row: {
           broker_slugs: string[]
@@ -10946,6 +11042,162 @@ export type Database = {
           ip_address?: string | null
           user_id?: string
           version?: string
+        }
+        Relationships: []
+      }
+      trading_performance_daily: {
+        Row: {
+          alpha: number | null
+          benchmark_return_pct: number | null
+          cash_balance: number
+          created_at: string | null
+          daily_pnl: number
+          daily_return_pct: number
+          id: number
+          max_drawdown_30d: number | null
+          metadata: Json | null
+          open_position_count: number | null
+          perf_date: string
+          portfolio_value: number
+          sharpe_30d: number | null
+          total_pnl: number
+          trades_executed_today: number | null
+        }
+        Insert: {
+          alpha?: number | null
+          benchmark_return_pct?: number | null
+          cash_balance: number
+          created_at?: string | null
+          daily_pnl: number
+          daily_return_pct: number
+          id?: number
+          max_drawdown_30d?: number | null
+          metadata?: Json | null
+          open_position_count?: number | null
+          perf_date: string
+          portfolio_value: number
+          sharpe_30d?: number | null
+          total_pnl: number
+          trades_executed_today?: number | null
+        }
+        Update: {
+          alpha?: number | null
+          benchmark_return_pct?: number | null
+          cash_balance?: number
+          created_at?: string | null
+          daily_pnl?: number
+          daily_return_pct?: number
+          id?: number
+          max_drawdown_30d?: number | null
+          metadata?: Json | null
+          open_position_count?: number | null
+          perf_date?: string
+          portfolio_value?: number
+          sharpe_30d?: number | null
+          total_pnl?: number
+          trades_executed_today?: number | null
+        }
+        Relationships: []
+      }
+      trading_positions: {
+        Row: {
+          account_id: string | null
+          asset_class: string
+          avg_cost_basis: number
+          broker: string
+          closed_at: string | null
+          created_at: string | null
+          current_price: number | null
+          id: number
+          metadata: Json | null
+          opened_at: string | null
+          realized_pnl: number | null
+          shares: number
+          status: string
+          ticker: string
+          unrealized_pnl: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          account_id?: string | null
+          asset_class: string
+          avg_cost_basis: number
+          broker?: string
+          closed_at?: string | null
+          created_at?: string | null
+          current_price?: number | null
+          id?: number
+          metadata?: Json | null
+          opened_at?: string | null
+          realized_pnl?: number | null
+          shares: number
+          status?: string
+          ticker: string
+          unrealized_pnl?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          account_id?: string | null
+          asset_class?: string
+          avg_cost_basis?: number
+          broker?: string
+          closed_at?: string | null
+          created_at?: string | null
+          current_price?: number | null
+          id?: number
+          metadata?: Json | null
+          opened_at?: string | null
+          realized_pnl?: number | null
+          shares?: number
+          status?: string
+          ticker?: string
+          unrealized_pnl?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      trading_signals: {
+        Row: {
+          action: string
+          asset_class: string
+          conviction: number
+          created_at: string | null
+          executed: boolean | null
+          execution_notes: string | null
+          id: number
+          reasoning: Json
+          signal_time: string | null
+          source_sentiment_ids: number[] | null
+          target_allocation_pct: number | null
+          ticker: string
+        }
+        Insert: {
+          action: string
+          asset_class: string
+          conviction: number
+          created_at?: string | null
+          executed?: boolean | null
+          execution_notes?: string | null
+          id?: number
+          reasoning: Json
+          signal_time?: string | null
+          source_sentiment_ids?: number[] | null
+          target_allocation_pct?: number | null
+          ticker: string
+        }
+        Update: {
+          action?: string
+          asset_class?: string
+          conviction?: number
+          created_at?: string | null
+          executed?: boolean | null
+          execution_notes?: string | null
+          id?: number
+          reasoning?: Json
+          signal_time?: string | null
+          source_sentiment_ids?: number[] | null
+          target_allocation_pct?: number | null
+          ticker?: string
         }
         Relationships: []
       }
