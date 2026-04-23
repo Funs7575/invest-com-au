@@ -77,8 +77,8 @@ describe("groupLessonsIntoModules", () => {
         module_index: 1,
         lesson_index: 1,
         slug: "x",
-        video_url: null,
-        video_duration_seconds: null,
+        video_url: undefined,
+        video_duration_seconds: undefined,
       }),
     ];
     const [mod] = groupLessonsIntoModules(lessons);
