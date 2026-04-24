@@ -5,6 +5,7 @@ import "./globals.css";
 import LayoutShell from "@/components/LayoutShell";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
+import { PostHogProvider } from "@/components/PostHogProvider";
 import UtmCapture from "@/components/UtmCapture";
 import InternationalBannerServer from "@/components/InternationalBannerServer";
 import RouteChangeFocus from "@/components/RouteChangeFocus";
@@ -134,6 +135,7 @@ export default async function RootLayout({
           </div>
         </noscript>
         <GoogleAnalytics />
+        <PostHogProvider>
         <Suspense fallback={null}><UtmCapture /></Suspense>
         <Suspense fallback={null}><RouteChangeFocus /></Suspense>
         <Suspense fallback={null}><ServiceWorkerRegistrar /></Suspense>
@@ -151,6 +153,7 @@ export default async function RootLayout({
           )}
         </ThemeProvider>
         <Suspense fallback={null}><WebVitals /></Suspense>
+        </PostHogProvider>
         <SpeedInsights />
       </body>
     </html>

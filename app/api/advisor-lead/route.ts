@@ -5,6 +5,7 @@ import { isValidEmail } from "@/lib/validate-email";
 import { isValidAuPhone } from "@/lib/validate-phone";
 import { logger } from "@/lib/logger";
 import { extractUtm, utmForInsert } from "@/lib/utm";
+import { captureServerEvent } from "@/lib/posthog/server";
 
 const log = logger("advisor-lead");
 
@@ -235,6 +236,17 @@ export async function POST(request: NextRequest) {
     ),
     syncToResendContacts(sanitizedEmail, sanitizedName),
   ]).catch((err) => log.error("Post-lead tasks failed", { error: String(err) }));
+
+  const distinctId = typeof (body as { distinct_id?: unknown }).distinct_id === "string"
+    ? ((body as { distinct_id: string }).distinct_id)
+    : `anonymous-lead-${crypto.randomUUID()}`;
+  captureServerEvent(distinctId, "lead_submitted", {
+    lead_source: isIntl ? "advisor-lead-international" : "advisor-lead",
+    advisor_match_count: Object.keys(sanitizedAnswers).length,
+    quiz_completed: !!quiz_answers,
+    utm_source: utm.utm_source ?? null,
+    utm_campaign: utm.utm_campaign ?? null,
+  }).catch((err) => log.warn("posthog capture failed", { err: String(err) }));
 
   return NextResponse.json({ success: true });
 }
