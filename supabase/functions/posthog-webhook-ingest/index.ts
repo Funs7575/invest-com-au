@@ -53,6 +53,14 @@ function toRow(e: PostHogEvent) {
   };
 }
 
+// Shared-secret fallback. The env var `POSTHOG_WEBHOOK_SECRET` (set via
+// `supabase secrets set`) takes precedence when present. If neither the
+// env var nor this fallback matches the header, the request is rejected
+// 401. Rotate by updating `supabase secrets set POSTHOG_WEBHOOK_SECRET=…`
+// and removing this constant.
+const FALLBACK_SECRET =
+  "64d1da6f32a182013e7c3a9d60d70d393adefefca425e7f8524e6742b6bc28ef";
+
 Deno.serve(async (req: Request) => {
   if (req.method !== "POST") {
     return new Response(JSON.stringify({ error: "method not allowed" }), {
@@ -61,9 +69,9 @@ Deno.serve(async (req: Request) => {
     });
   }
 
-  const expected = Deno.env.get("POSTHOG_WEBHOOK_SECRET");
+  const expected = Deno.env.get("POSTHOG_WEBHOOK_SECRET") ?? FALLBACK_SECRET;
   const provided = req.headers.get("x-posthog-webhook-secret");
-  if (!expected || !provided || provided !== expected) {
+  if (!provided || provided !== expected) {
     return new Response(JSON.stringify({ error: "unauthorized" }), {
       status: 401,
       headers: { "content-type": "application/json" },
