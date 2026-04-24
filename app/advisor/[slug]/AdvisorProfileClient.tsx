@@ -13,6 +13,7 @@ import VerifiedClientBadge from "@/components/VerifiedClientBadge";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import { getStoredUtm } from "@/components/UtmCapture";
 import { trackEvent } from "@/lib/tracking";
+import { trackEvent as phTrack } from "@/lib/posthog/events";
 import { getVerificationConfig, getVerificationLinks } from "@/lib/advisor-verification";
 import { getQualificationData } from "@/lib/qualification-store";
 import { useAdvisorShortlist } from "@/lib/hooks/useAdvisorShortlist";
@@ -163,7 +164,14 @@ export default function AdvisorProfileClient({
       type: pro.type,
       has_booking_link: !!pro.booking_link,
     }, `/advisor/${pro.slug}`);
-  }, [pro.slug, pro.id, pro.type, pro.booking_link]);
+    phTrack('advisor_viewed', {
+      advisor_id: pro.id,
+      advisor_name: pro.name,
+      advisor_type: pro.type,
+      firm: pro.firm_name ?? null,
+      city: pro.location_display ?? null,
+    });
+  }, [pro.slug, pro.id, pro.type, pro.booking_link, pro.name, pro.firm_name, pro.location_display]);
 
   const typeLabel = PROFESSIONAL_TYPE_LABELS[pro.type] || "Financial Professional";
   const isValidEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
@@ -203,6 +211,11 @@ export default function AdvisorProfileClient({
       });
       if (res.ok) {
         setFormState("success");
+        phTrack('advisor_contacted', {
+          advisor_id: pro.id,
+          contact_method: 'enquiry_form',
+          source_section: `/advisor/${pro.slug}`,
+        });
         setName(""); setEmail(""); setPhone(""); setMessage(""); setTouched({});
       } else {
         setFormState("error");

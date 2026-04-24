@@ -8408,6 +8408,72 @@ export type Database = {
           },
         ]
       }
+      posthog_events_mirror: {
+        Row: {
+          browser: string | null
+          city: string | null
+          country: string | null
+          device_type: string | null
+          distinct_id: string
+          event_name: string
+          event_timestamp: string
+          id: number
+          ingested_at: string | null
+          os: string | null
+          person_properties: Json | null
+          posthog_event_id: string
+          properties: Json
+          referrer: string | null
+          session_id: string | null
+          url: string | null
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
+        }
+        Insert: {
+          browser?: string | null
+          city?: string | null
+          country?: string | null
+          device_type?: string | null
+          distinct_id: string
+          event_name: string
+          event_timestamp: string
+          id?: number
+          ingested_at?: string | null
+          os?: string | null
+          person_properties?: Json | null
+          posthog_event_id: string
+          properties?: Json
+          referrer?: string | null
+          session_id?: string | null
+          url?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+        }
+        Update: {
+          browser?: string | null
+          city?: string | null
+          country?: string | null
+          device_type?: string | null
+          distinct_id?: string
+          event_name?: string
+          event_timestamp?: string
+          id?: number
+          ingested_at?: string | null
+          os?: string | null
+          person_properties?: Json | null
+          posthog_event_id?: string
+          properties?: Json
+          referrer?: string | null
+          session_id?: string | null
+          url?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+        }
+        Relationships: []
+      }
       privacy_data_requests: {
         Row: {
           completed_at: string | null
@@ -11842,6 +11908,19 @@ export type Database = {
           f_table_schema?: unknown
           srid?: number | null
           type?: string | null
+        }
+        Relationships: []
+      }
+      posthog_daily_funnel: {
+        Row: {
+          advisor_contacted: number | null
+          advisor_viewed: number | null
+          funnel_date: string | null
+          leads_submitted: number | null
+          quiz_completed: number | null
+          quiz_started: number | null
+          total_events: number | null
+          unique_visitors: number | null
         }
         Relationships: []
       }

@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { Broker } from "@/lib/types";
 import { trackEvent } from "@/lib/tracking";
+import { trackEvent as phTrack } from "@/lib/posthog/events";
 import { storeQualificationData } from "@/lib/qualification-store";
 import { getPlacementWinners, type PlacementWinner } from "@/lib/sponsorship";
 import { scoreQuizResults, type WeightKey, type QuizWeights, type AmountKey } from "@/lib/quiz-scoring";
@@ -414,6 +415,7 @@ export default function QuizPage() {
 
   const mountedRef = useRef(true);
   const questionHeadingRef = useRef<HTMLHeadingElement>(null);
+  const quizStartedAtRef = useRef<number | null>(null);
 
   // Restore saved progress on mount
   useEffect(() => {
@@ -480,6 +482,17 @@ export default function QuizPage() {
     if ((phase === "diy-results" || phase === "advisor-results") && brokers.length > 0) {
       trackEvent('quiz_complete', { answers: scoringAnswers, top_broker: results[0]?.slug || null }, '/quiz');
       trackEvent('quiz_completed', { top_match: results[0]?.slug || null }, '/quiz');
+      phTrack('quiz_completed', {
+        quiz_type: phase === 'advisor-results' ? 'advisor_match' : 'diy_broker',
+        time_taken_seconds: quizStartedAtRef.current
+          ? Math.round((Date.now() - quizStartedAtRef.current) / 1000)
+          : 0,
+        selected_advisor_type: answers.advisor_type ?? null,
+        budget_range: answers.amount ?? null,
+        risk_profile: answers.experience ?? null,
+        top_match_slug: results[0]?.slug ?? null,
+        match_count: results.length,
+      });
       try {
         const topResults = results.slice(0, 5).filter(r => r.broker).map(r => ({
           slug: r.slug, name: r.broker!.name, score: r.total,
@@ -494,7 +507,7 @@ export default function QuizPage() {
         });
       } catch { /* quota exceeded */ }
     }
-  }, [phase, brokers.length, results, scoringAnswers]);
+  }, [phase, brokers.length, results, scoringAnswers, answers.advisor_type, answers.amount, answers.experience]);
 
   /* ─── Handlers ─── */
 
@@ -502,6 +515,11 @@ export default function QuizPage() {
     if (animating) return;
     if (history.length === 0) {
       trackEvent('quiz_start', { first_answer: key }, '/quiz');
+      quizStartedAtRef.current = Date.now();
+      phTrack('quiz_started', {
+        quiz_type: 'advisor_match',
+        source_page: typeof window !== 'undefined' ? window.location.pathname : '/quiz',
+      });
     }
     trackEvent('quiz_step', { question: currentId, answer: key }, '/quiz');
 
