@@ -1,0 +1,232 @@
+{
+  "name": "ceo_daily",
+  "nodes": [
+    {
+      "parameters": { "rule": { "interval": [ { "field": "cronExpression", "expression": "0 0 6 * * *" } ] } },
+      "id": "h3e4a001-0001-4f00-a000-000000000001",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const now = new Date();\nconst d7 = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);\nconst iso = now.toISOString();\nconst runDate = iso.slice(0, 10);\nconst isMonday = now.getUTCDay() === 1;\nreturn [{ json: { now: iso, since7d: d7.toISOString(), runDate, isMonday } }];\n"
+      },
+      "id": "h3e4a001-0002-4f00-a000-000000000002",
+      "name": "Compute Window",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://guggzyqceattncjwvgyc.supabase.co/rest/v1/platform_snapshots",
+        "sendQuery": true,
+        "queryParameters": { "parameters": [
+          { "name": "select", "value": "snapshot_date,metrics,source_agent,created_at" },
+          { "name": "order", "value": "snapshot_date.desc" },
+          { "name": "limit", "value": "14" }
+        ]},
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [
+          { "name": "apikey", "value": "[HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]" },
+          { "name": "Authorization", "value": "Bearer [HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]" },
+          { "name": "Accept", "value": "application/json" }
+        ]},
+        "options": { "response": { "response": { "responseFormat": "json" } }, "timeout": 30000 }
+      },
+      "id": "h3e4a001-0003-4f00-a000-000000000003",
+      "name": "Read platform_snapshots",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 180],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://guggzyqceattncjwvgyc.supabase.co/rest/v1/revenue_opportunities",
+        "sendQuery": true,
+        "queryParameters": { "parameters": [
+          { "name": "select", "value": "id,opportunity_type,title,estimated_aud_monthly,confidence,status,surfaced_by_agent,created_at" },
+          { "name": "status", "value": "=in.(new,under_review,approved)" },
+          { "name": "limit", "value": "200" },
+          { "name": "order", "value": "estimated_aud_monthly.desc.nullslast" }
+        ]},
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [
+          { "name": "apikey", "value": "[HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]" },
+          { "name": "Authorization", "value": "Bearer [HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]" },
+          { "name": "Accept", "value": "application/json" }
+        ]},
+        "options": { "response": { "response": { "responseFormat": "json" } }, "timeout": 30000 }
+      },
+      "id": "h3e4a001-0004-4f00-a000-000000000004",
+      "name": "Read revenue_opportunities",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 180],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://guggzyqceattncjwvgyc.supabase.co/rest/v1/compliance_tasks",
+        "sendQuery": true,
+        "queryParameters": { "parameters": [
+          { "name": "select", "value": "id,severity,status,title,due_date" },
+          { "name": "status", "value": "=in.(open,in_progress,escalated)" },
+          { "name": "severity", "value": "=in.(high,critical)" },
+          { "name": "limit", "value": "50" }
+        ]},
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [
+          { "name": "apikey", "value": "[HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]" },
+          { "name": "Authorization", "value": "Bearer [HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]" },
+          { "name": "Accept", "value": "application/json" }
+        ]},
+        "options": { "response": { "response": { "responseFormat": "json" } }, "timeout": 30000 }
+      },
+      "id": "h3e4a001-0005-4f00-a000-000000000005",
+      "name": "Read high compliance_tasks",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1120, 180],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "function rows(nodeName, idKey = 'id') {\n  const out = [];\n  for (const it of $(nodeName).all()) {\n    const p = it && it.json;\n    if (!p) continue;\n    if (Array.isArray(p)) { for (const r of p) if (r && typeof r === 'object' && (idKey === null || r[idKey])) out.push(r); }\n    else if (Array.isArray(p.data)) { for (const r of p.data) if (r && typeof r === 'object' && (idKey === null || r[idKey])) out.push(r); }\n    else if (typeof p === 'object' && (idKey === null || p[idKey])) { out.push(p); }\n  }\n  return out;\n}\n\nconst snapshots = rows('Read platform_snapshots', 'snapshot_date');\nconst opps = rows('Read revenue_opportunities');\nconst highTasks = rows('Read high compliance_tasks');\nconst meta = $('Compute Window').first().json;\n\nconst latest = snapshots[0] || null;\nconst prev = snapshots[1] || null;\n\n// Top opps by estimated monthly revenue\nconst top10 = opps\n  .filter(o => typeof o.estimated_aud_monthly === 'number')\n  .sort((a, b) => (b.estimated_aud_monthly || 0) - (a.estimated_aud_monthly || 0))\n  .slice(0, 10);\n\nconst hasData = !!latest;\n\nif (!hasData) {\n  return [{ json: {\n    bypass_claude: true,\n    digest: {\n      headline: 'CEO daily — no platform_snapshots available yet',\n      note: 'Data aggregator has not written its first snapshot yet. Digest is a heartbeat only.',\n      run_date: meta.runDate,\n    },\n    run_at: meta.now,\n  }}];\n}\n\nconst system = [\n  'You are the CEO Agent for invest.com.au. You run once a day at 06:00 Sydney and produce a short founder digest.',\n  'Per the spec: ≤ 400 words daily, ≤ 600 words on Mondays. Decisions > AUD $500 require ceo_approvals rows — you do NOT commit spend in the digest itself.',\n  'Your job is to surface the most valuable next action across revenue / compliance / migration / product.',\n  'Cite numbers only where the snapshot supports them. Do NOT invent metrics. When data is missing, say so explicitly.',\n  '',\n  'Return a JSON block (```json ... ```) with keys: headline (<=120 chars), top_priority (one string <=240 chars), top_3_opportunities (array of 3 strings referencing revenue_opportunities by id where useful), flags (array of strings for compliance/risk items), recommended_actions (array of 3 strings, each addressed to an agent by number or to Fin). Follow the JSON block with one plain-English line.',\n].join('\\n');\n\nconst user = [\n  `Run at: ${meta.now} (Monday weekly-brief mode: ${meta.isMonday})`,\n  '',\n  'Latest platform_snapshots row (source of truth):',\n  '```json',\n  JSON.stringify({ snapshot_date: latest.snapshot_date, metrics: latest.metrics }, null, 2),\n  '```',\n  '',\n  'Previous day snapshot (for trend context, may be null):',\n  '```json',\n  JSON.stringify(prev ? { snapshot_date: prev.snapshot_date, metrics: prev.metrics } : null, null, 2),\n  '```',\n  '',\n  'Top 10 revenue_opportunities by estimated_aud_monthly:',\n  '```json',\n  JSON.stringify(top10, null, 2),\n  '```',\n  '',\n  'High/critical compliance_tasks (open):',\n  '```json',\n  JSON.stringify(highTasks.slice(0, 20), null, 2),\n  '```',\n].join('\\n');\n\nreturn [{ json: {\n  bypass_claude: false,\n  system,\n  user,\n  snapshot_date: latest.snapshot_date,\n  top10_opp_ids: top10.map(o => o.id),\n  high_task_count: highTasks.length,\n  run_at: meta.now,\n  runDate: meta.runDate,\n  isMonday: meta.isMonday,\n}}];\n"
+      },
+      "id": "h3e4a001-0006-4f00-a000-000000000006",
+      "name": "Build CEO prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1340, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "typeValidation": "strict", "version": 2 },
+          "combinator": "and",
+          "conditions": [
+            { "id": "bypass", "leftValue": "={{ $json.bypass_claude }}", "rightValue": true, "operator": { "type": "boolean", "operation": "true", "singleValue": true } }
+          ]
+        },
+        "options": {}
+      },
+      "id": "h3e4a001-0007-4f00-a000-000000000007",
+      "name": "If no data",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1560, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://guggzyqceattncjwvgyc.supabase.co/rest/v1/agent_logs",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify([{ agent_name: 'ceo', level: 'info', message: 'CEO daily — no snapshot yet (heartbeat)', metadata: { daily_digest: true, note: 'no_snapshot_yet', digest: $json.digest, run_at: $json.run_at } }]) }}",
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [
+          { "name": "apikey", "value": "[HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]" },
+          { "name": "Authorization", "value": "Bearer [HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]" },
+          { "name": "Content-Type", "value": "application/json" },
+          { "name": "Prefer", "value": "return=representation" }
+        ]},
+        "options": { "response": { "response": { "responseFormat": "json" } }, "timeout": 15000 }
+      },
+      "id": "h3e4a001-0008-4f00-a000-000000000008",
+      "name": "Write heartbeat log",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1780, 180]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [
+          { "name": "x-api-key", "value": "[HARDCODE_ANTHROPIC_API_KEY_HERE]" },
+          { "name": "anthropic-version", "value": "2023-06-01" },
+          { "name": "content-type", "value": "application/json" }
+        ]},
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"claude-opus-4-7\",\n  \"max_tokens\": 2048,\n  \"system\": {{ JSON.stringify($json.system) }},\n  \"messages\": [ { \"role\": \"user\", \"content\": {{ JSON.stringify($json.user) }} } ]\n}",
+        "options": { "response": { "response": { "responseFormat": "json" } }, "timeout": 60000 }
+      },
+      "id": "h3e4a001-0009-4f00-a000-000000000009",
+      "name": "Call Claude",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1780, 420]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "javaScript",
+        "jsCode": "const resp = $json || {};\nconst meta = $('Build CEO prompt').item.json;\n\nconst textBlocks = Array.isArray(resp.content) ? resp.content.filter(c => c && c.type === 'text').map(c => c.text || '') : [];\nconst combined = textBlocks.join('\\n');\n\nlet parsed = null;\nconst fence = combined.match(/```json\\s*([\\s\\S]*?)```/i);\nif (fence) { try { parsed = JSON.parse(fence[1].trim()); } catch (e) { parsed = null; } }\nif (!parsed) {\n  const brace = combined.match(/\\{[\\s\\S]*\\}/);\n  if (brace) { try { parsed = JSON.parse(brace[0]); } catch (e) { parsed = null; } }\n}\n\nconst headline = (parsed && typeof parsed.headline === 'string') ? parsed.headline.slice(0, 240) : 'CEO daily digest';\nconst top_priority = (parsed && typeof parsed.top_priority === 'string') ? parsed.top_priority.slice(0, 600) : null;\nconst top_3_opportunities = (parsed && Array.isArray(parsed.top_3_opportunities)) ? parsed.top_3_opportunities.slice(0, 3).map(s => String(s).slice(0, 400)) : [];\nconst flags = (parsed && Array.isArray(parsed.flags)) ? parsed.flags.slice(0, 5).map(s => String(s).slice(0, 400)) : [];\nconst recommended_actions = (parsed && Array.isArray(parsed.recommended_actions)) ? parsed.recommended_actions.slice(0, 3).map(s => String(s).slice(0, 400)) : [];\n\n// Severity derived from inputs, not Claude.\nlet level = 'info';\nif (meta.high_task_count > 0 || flags.length > 0) level = 'warn';\n\nreturn [{ json: {\n  agent_name: 'ceo',\n  level,\n  message: headline,\n  metadata: {\n    daily_digest: true,\n    snapshot_date: meta.snapshot_date,\n    is_monday: meta.isMonday,\n    ceo: {\n      headline, top_priority, top_3_opportunities, flags, recommended_actions,\n      raw_text: combined.slice(0, 4000),\n      model: resp.model || 'claude-opus-4-7',\n      stop_reason: resp.stop_reason,\n      usage: resp.usage,\n    },\n    top10_opp_ids: meta.top10_opp_ids,\n    run_at: meta.run_at,\n  },\n}}];\n"
+      },
+      "id": "h3e4a001-000a-4f00-a000-00000000000a",
+      "name": "Parse CEO response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2000, 420]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://guggzyqceattncjwvgyc.supabase.co/rest/v1/agent_logs",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($input.all().map(i => i.json)) }}",
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [
+          { "name": "apikey", "value": "[HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]" },
+          { "name": "Authorization", "value": "Bearer [HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]" },
+          { "name": "Content-Type", "value": "application/json" },
+          { "name": "Prefer", "value": "return=representation" }
+        ]},
+        "options": { "response": { "response": { "responseFormat": "json" } }, "timeout": 15000 }
+      },
+      "id": "h3e4a001-000b-4f00-a000-00000000000b",
+      "name": "Write CEO digest log",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2220, 420]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": { "main": [[{ "node": "Compute Window", "type": "main", "index": 0 }]] },
+    "Compute Window": { "main": [[{ "node": "Read platform_snapshots", "type": "main", "index": 0 }]] },
+    "Read platform_snapshots": { "main": [[{ "node": "Read revenue_opportunities", "type": "main", "index": 0 }]] },
+    "Read revenue_opportunities": { "main": [[{ "node": "Read high compliance_tasks", "type": "main", "index": 0 }]] },
+    "Read high compliance_tasks": { "main": [[{ "node": "Build CEO prompt", "type": "main", "index": 0 }]] },
+    "Build CEO prompt": { "main": [[{ "node": "If no data", "type": "main", "index": 0 }]] },
+    "If no data": { "main": [
+      [{ "node": "Write heartbeat log", "type": "main", "index": 0 }],
+      [{ "node": "Call Claude", "type": "main", "index": 0 }]
+    ]},
+    "Call Claude": { "main": [[{ "node": "Parse CEO response", "type": "main", "index": 0 }]] },
+    "Parse CEO response": { "main": [[{ "node": "Write CEO digest log", "type": "main", "index": 0 }]] }
+  },
+  "active": false,
+  "settings": {
+    "timezone": "Australia/Sydney",
+    "errorWorkflow": "agent_error_logger",
+    "executionOrder": "v1",
+    "saveExecutionProgress": true,
+    "saveDataSuccessExecution": "all",
+    "saveDataErrorExecution": "all"
+  },
+  "tags": [ { "name": "phase:3" }, { "name": "agent:01-ceo" } ]
+}

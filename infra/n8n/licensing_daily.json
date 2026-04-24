@@ -1,0 +1,151 @@
+{
+  "name": "licensing_daily",
+  "nodes": [
+    {
+      "parameters": { "rule": { "interval": [ { "field": "cronExpression", "expression": "0 30 4 * * *" } ] } },
+      "id": "g2d3a001-0001-4f00-a000-000000000001",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const now = new Date();\nconst d7 = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);\nreturn [{ json: { now: now.toISOString(), since7d: d7.toISOString(), runDate: now.toISOString().slice(0, 10) } }];\n"
+      },
+      "id": "g2d3a001-0002-4f00-a000-000000000002",
+      "name": "Compute Window",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://guggzyqceattncjwvgyc.supabase.co/rest/v1/authorised_representatives",
+        "sendQuery": true,
+        "queryParameters": { "parameters": [
+          { "name": "select", "value": "id,legal_name,ar_number,status,appointed_at,terminated_at" },
+          { "name": "limit", "value": "500" }
+        ]},
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [
+          { "name": "apikey", "value": "[HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]" },
+          { "name": "Authorization", "value": "Bearer [HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]" },
+          { "name": "Accept", "value": "application/json" }
+        ]},
+        "options": { "response": { "response": { "responseFormat": "json" } }, "timeout": 30000 }
+      },
+      "id": "g2d3a001-0003-4f00-a000-000000000003",
+      "name": "Read AR register",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 180],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://guggzyqceattncjwvgyc.supabase.co/rest/v1/credit_representatives",
+        "sendQuery": true,
+        "queryParameters": { "parameters": [
+          { "name": "select", "value": "id,legal_name,cr_number,status,appointed_at,terminated_at" },
+          { "name": "limit", "value": "500" }
+        ]},
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [
+          { "name": "apikey", "value": "[HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]" },
+          { "name": "Authorization", "value": "Bearer [HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]" },
+          { "name": "Accept", "value": "application/json" }
+        ]},
+        "options": { "response": { "response": { "responseFormat": "json" } }, "timeout": 30000 }
+      },
+      "id": "g2d3a001-0004-4f00-a000-000000000004",
+      "name": "Read CR register",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 180],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://guggzyqceattncjwvgyc.supabase.co/rest/v1/compliance_tasks",
+        "sendQuery": true,
+        "queryParameters": { "parameters": [
+          { "name": "select", "value": "id,agent_name,task_type,severity,status,title,due_date,created_at" },
+          { "name": "status", "value": "=in.(open,in_progress,escalated)" },
+          { "name": "limit", "value": "500" },
+          { "name": "order", "value": "severity.desc,created_at.asc" }
+        ]},
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [
+          { "name": "apikey", "value": "[HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]" },
+          { "name": "Authorization", "value": "Bearer [HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]" },
+          { "name": "Accept", "value": "application/json" }
+        ]},
+        "options": { "response": { "response": { "responseFormat": "json" } }, "timeout": 30000 }
+      },
+      "id": "g2d3a001-0005-4f00-a000-000000000005",
+      "name": "Read open compliance_tasks",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1120, 180],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "function rows(nodeName) {\n  const out = [];\n  for (const it of $(nodeName).all()) {\n    const p = it && it.json;\n    if (!p) continue;\n    if (Array.isArray(p)) { for (const r of p) if (r && typeof r === 'object' && r.id) out.push(r); }\n    else if (Array.isArray(p.data)) { for (const r of p.data) if (r && typeof r === 'object' && r.id) out.push(r); }\n    else if (typeof p === 'object' && p.id) { out.push(p); }\n  }\n  return out;\n}\n\nconst ars = rows('Read AR register');\nconst crs = rows('Read CR register');\nconst openTasks = rows('Read open compliance_tasks');\nconst nowIso = new Date().toISOString();\nconst nowMs = Date.now();\nconst runDate = $('Compute Window').first().json.runDate;\n\n// AR/CR health\nconst arsActive = ars.filter(r => r.status === 'active');\nconst arsWithoutNumber = arsActive.filter(r => !r.ar_number);\nconst crsActive = crs.filter(r => r.status === 'active');\nconst crsWithoutNumber = crsActive.filter(r => !r.cr_number);\n\n// Stale tasks (>5 business days ~= 7 calendar days old, still open)\nconst FIVE_D = 5 * 24 * 60 * 60 * 1000;\nconst staleTasks = openTasks.filter(t => {\n  const age = t.created_at ? (nowMs - new Date(t.created_at).getTime()) : 0;\n  return age > FIVE_D;\n});\nconst criticalTasks = openTasks.filter(t => t.severity === 'critical' || t.severity === 'high');\n\n// Upcoming due dates (14 days)\nconst FOURTEEN_D = 14 * 24 * 60 * 60 * 1000;\nconst upcomingDue = openTasks.filter(t => {\n  if (!t.due_date) return false;\n  const dueMs = new Date(t.due_date).getTime();\n  return dueMs > nowMs && (dueMs - nowMs) < FOURTEEN_D;\n});\n\n// Severity\nlet level = 'info';\nif (staleTasks.length > 0 || upcomingDue.length > 0) level = 'warn';\nif (criticalTasks.length > 0 || arsWithoutNumber.length > 0 || crsWithoutNumber.length > 0) level = 'error';\n\nconst summary = {\n  run_date: runDate,\n  ar_active_count: arsActive.length,\n  ar_missing_number_count: arsWithoutNumber.length,\n  ar_missing_number_ids: arsWithoutNumber.slice(0, 20).map(r => ({ id: r.id, legal_name: r.legal_name })),\n  cr_active_count: crsActive.length,\n  cr_missing_number_count: crsWithoutNumber.length,\n  cr_missing_number_ids: crsWithoutNumber.slice(0, 20).map(r => ({ id: r.id, legal_name: r.legal_name })),\n  open_tasks_count: openTasks.length,\n  critical_or_high_tasks: criticalTasks.length,\n  stale_tasks_over_5d: staleTasks.length,\n  upcoming_due_14d: upcomingDue.length,\n  upcoming_due_sample: upcomingDue.slice(0, 10).map(t => ({ id: t.id, title: t.title, due_date: t.due_date })),\n  run_at: nowIso,\n};\n\nreturn [{ json: {\n  agent_name: 'licensing',\n  level,\n  message: `licensing_daily digest — ${criticalTasks.length} critical/high open, ${staleTasks.length} stale, ${upcomingDue.length} due within 14d`,\n  metadata: { daily_digest: true, summary, run_at: nowIso }\n}}];\n"
+      },
+      "id": "g2d3a001-0006-4f00-a000-000000000006",
+      "name": "Compute Licensing digest",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1340, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://guggzyqceattncjwvgyc.supabase.co/rest/v1/agent_logs",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($input.all().map(i => i.json)) }}",
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [
+          { "name": "apikey", "value": "[HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]" },
+          { "name": "Authorization", "value": "Bearer [HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]" },
+          { "name": "Content-Type", "value": "application/json" },
+          { "name": "Prefer", "value": "return=representation" }
+        ]},
+        "options": { "response": { "response": { "responseFormat": "json" } }, "timeout": 15000 }
+      },
+      "id": "g2d3a001-0007-4f00-a000-000000000007",
+      "name": "Write licensing log",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1560, 300]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": { "main": [[{ "node": "Compute Window", "type": "main", "index": 0 }]] },
+    "Compute Window": { "main": [[{ "node": "Read AR register", "type": "main", "index": 0 }]] },
+    "Read AR register": { "main": [[{ "node": "Read CR register", "type": "main", "index": 0 }]] },
+    "Read CR register": { "main": [[{ "node": "Read open compliance_tasks", "type": "main", "index": 0 }]] },
+    "Read open compliance_tasks": { "main": [[{ "node": "Compute Licensing digest", "type": "main", "index": 0 }]] },
+    "Compute Licensing digest": { "main": [[{ "node": "Write licensing log", "type": "main", "index": 0 }]] }
+  },
+  "active": false,
+  "settings": {
+    "timezone": "Australia/Sydney",
+    "errorWorkflow": "agent_error_logger",
+    "executionOrder": "v1",
+    "saveExecutionProgress": true,
+    "saveDataSuccessExecution": "all",
+    "saveDataErrorExecution": "all"
+  },
+  "tags": [ { "name": "phase:3" }, { "name": "agent:13-licensing" } ]
+}

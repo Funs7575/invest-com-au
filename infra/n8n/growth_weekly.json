@@ -1,0 +1,232 @@
+{
+  "name": "growth_weekly",
+  "nodes": [
+    {
+      "parameters": { "rule": { "interval": [ { "field": "cronExpression", "expression": "0 0 9 * * 3" } ] } },
+      "id": "i4f5a001-0001-4f00-a000-000000000001",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const now = new Date();\nconst d7 = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);\nconst d28 = new Date(now.getTime() - 28 * 24 * 60 * 60 * 1000);\nreturn [{ json: {\n  now: now.toISOString(),\n  since7d: d7.toISOString(),\n  since28d: d28.toISOString(),\n  since7dDate: d7.toISOString().slice(0, 10),\n  since28dDate: d28.toISOString().slice(0, 10),\n  runDate: now.toISOString().slice(0, 10),\n} }];\n"
+      },
+      "id": "i4f5a001-0002-4f00-a000-000000000002",
+      "name": "Compute Window",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://guggzyqceattncjwvgyc.supabase.co/rest/v1/posthog_daily_funnel",
+        "sendQuery": true,
+        "queryParameters": { "parameters": [
+          { "name": "select", "value": "*" },
+          { "name": "order", "value": "day.desc" },
+          { "name": "limit", "value": "28" }
+        ]},
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [
+          { "name": "apikey", "value": "[HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]" },
+          { "name": "Authorization", "value": "Bearer [HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]" },
+          { "name": "Accept", "value": "application/json" }
+        ]},
+        "options": { "response": { "response": { "responseFormat": "json" } }, "timeout": 30000 }
+      },
+      "id": "i4f5a001-0003-4f00-a000-000000000003",
+      "name": "Read posthog_daily_funnel",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 180],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://guggzyqceattncjwvgyc.supabase.co/rest/v1/competitor_watch",
+        "sendQuery": true,
+        "queryParameters": { "parameters": [
+          { "name": "select", "value": "id,competitor,event_type,title,url,spotted_at" },
+          { "name": "spotted_at", "value": "=gte.{{ $('Compute Window').first().json.since7d }}" },
+          { "name": "limit", "value": "200" },
+          { "name": "order", "value": "spotted_at.desc" }
+        ]},
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [
+          { "name": "apikey", "value": "[HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]" },
+          { "name": "Authorization", "value": "Bearer [HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]" },
+          { "name": "Accept", "value": "application/json" }
+        ]},
+        "options": { "response": { "response": { "responseFormat": "json" } }, "timeout": 30000 }
+      },
+      "id": "i4f5a001-0004-4f00-a000-000000000004",
+      "name": "Read competitor_watch 7d",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 180],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://guggzyqceattncjwvgyc.supabase.co/rest/v1/partner_integrations",
+        "sendQuery": true,
+        "queryParameters": { "parameters": [
+          { "name": "select", "value": "id,partner_name,partner_type,status,contract_start,contract_end,monthly_revenue_aud,updated_at" },
+          { "name": "status", "value": "=in.(prospecting,negotiating,contracted,live)" },
+          { "name": "limit", "value": "200" },
+          { "name": "order", "value": "updated_at.desc" }
+        ]},
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [
+          { "name": "apikey", "value": "[HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]" },
+          { "name": "Authorization", "value": "Bearer [HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]" },
+          { "name": "Accept", "value": "application/json" }
+        ]},
+        "options": { "response": { "response": { "responseFormat": "json" } }, "timeout": 30000 }
+      },
+      "id": "i4f5a001-0005-4f00-a000-000000000005",
+      "name": "Read partner_integrations",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1120, 180],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "function rows(nodeName, idKey = 'id') {\n  const out = [];\n  for (const it of $(nodeName).all()) {\n    const p = it && it.json;\n    if (!p) continue;\n    if (Array.isArray(p)) { for (const r of p) if (r && typeof r === 'object' && (idKey === null || r[idKey])) out.push(r); }\n    else if (Array.isArray(p.data)) { for (const r of p.data) if (r && typeof r === 'object' && (idKey === null || r[idKey])) out.push(r); }\n    else if (typeof p === 'object' && (idKey === null || p[idKey])) { out.push(p); }\n  }\n  return out;\n}\n\nconst funnel = rows('Read posthog_daily_funnel', 'day');\nconst competitor = rows('Read competitor_watch 7d');\nconst partners = rows('Read partner_integrations');\nconst meta = $('Compute Window').first().json;\n\n// Stale partners: status in (prospecting/negotiating) with no update in 30 days\nconst THIRTY_D = 30 * 24 * 60 * 60 * 1000;\nconst nowMs = Date.now();\nconst stalePartners = partners.filter(p => {\n  if (!['prospecting','negotiating','contracted'].includes(p.status)) return false;\n  const age = p.updated_at ? (nowMs - new Date(p.updated_at).getTime()) : 0;\n  return age > THIRTY_D;\n});\n\n// Funnel drop-off detection (only if we have enough data)\nconst d7Funnel = funnel.slice(0, 7);\nconst d28Funnel = funnel.slice(0, 28);\nconst funnelHasData = d7Funnel.length >= 1;\n\nconst hasAnyData = funnelHasData || competitor.length > 0 || stalePartners.length > 0;\n\nif (!hasAnyData) {\n  return [{ json: {\n    bypass_claude: true,\n    note: 'no_weekly_data',\n    summary: { d7_funnel_rows: 0, competitor_events_7d: 0, stale_partners: 0 },\n    run_at: meta.now,\n  }}];\n}\n\nconst summary = {\n  run_date: meta.runDate,\n  d7_funnel_rows: d7Funnel.length,\n  d28_funnel_rows: d28Funnel.length,\n  competitor_events_7d: competitor.length,\n  open_partners: partners.length,\n  stale_partners_30d: stalePartners.length,\n  stale_partner_names: stalePartners.slice(0, 10).map(p => p.partner_name),\n};\n\nconst system = [\n  'You are the Growth/Partnership agent for invest.com.au. You run weekly on Wednesday at 09:00 Sydney.',\n  'Your job: surface funnel drop-off signals from PostHog, flag partnerships stuck > 30 days, summarise competitor activity, and propose up to 3 growth experiments for next week.',\n  'Do NOT propose code changes directly (that is #02 CTO). Do NOT close partnerships (that is #06 BD or Co-Founder).',\n  'When funnel data is sparse (<3 days), explicitly flag that in the digest rather than extrapolating.',\n  '',\n  'Return a JSON block (```json ... ```) with keys: headline (<=120 chars), funnel_observation (one string), top_experiments (array of up to 3 strings), stale_partnerships_to_nudge (array of partner_name strings), competitor_signals (array of up to 5 strings). Follow with a one-line digest.',\n].join('\\n');\n\nconst user = [\n  `Run at: ${meta.now} (weekly brief)`,\n  '',\n  'Daily funnel rows (most recent 28 days, PostHog mirror view):',\n  '```json',\n  JSON.stringify(d28Funnel, null, 2),\n  '```',\n  '',\n  'Competitor events in the last 7 days:',\n  '```json',\n  JSON.stringify(competitor.slice(0, 30), null, 2),\n  '```',\n  '',\n  'Open partnerships (summary, most recently updated first):',\n  '```json',\n  JSON.stringify(partners.slice(0, 20), null, 2),\n  '```',\n  '',\n  'Stale partnerships (> 30 days without status change):',\n  '```json',\n  JSON.stringify(stalePartners.slice(0, 10), null, 2),\n  '```',\n].join('\\n');\n\nreturn [{ json: {\n  bypass_claude: false,\n  system, user, summary, meta,\n  run_at: meta.now,\n}}];\n"
+      },
+      "id": "i4f5a001-0006-4f00-a000-000000000006",
+      "name": "Build Growth prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1340, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "typeValidation": "strict", "version": 2 },
+          "combinator": "and",
+          "conditions": [
+            { "id": "bypass", "leftValue": "={{ $json.bypass_claude }}", "rightValue": true, "operator": { "type": "boolean", "operation": "true", "singleValue": true } }
+          ]
+        },
+        "options": {}
+      },
+      "id": "i4f5a001-0007-4f00-a000-000000000007",
+      "name": "If no data",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1560, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://guggzyqceattncjwvgyc.supabase.co/rest/v1/agent_logs",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify([{ agent_name: 'growth', level: 'info', message: 'growth_weekly — no data yet (heartbeat)', metadata: { weekly_digest: true, note: 'no_weekly_data', summary: $json.summary, run_at: $json.run_at } }]) }}",
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [
+          { "name": "apikey", "value": "[HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]" },
+          { "name": "Authorization", "value": "Bearer [HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]" },
+          { "name": "Content-Type", "value": "application/json" },
+          { "name": "Prefer", "value": "return=representation" }
+        ]},
+        "options": { "response": { "response": { "responseFormat": "json" } }, "timeout": 15000 }
+      },
+      "id": "i4f5a001-0008-4f00-a000-000000000008",
+      "name": "Write heartbeat log",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1780, 180]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [
+          { "name": "x-api-key", "value": "[HARDCODE_ANTHROPIC_API_KEY_HERE]" },
+          { "name": "anthropic-version", "value": "2023-06-01" },
+          { "name": "content-type", "value": "application/json" }
+        ]},
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"claude-opus-4-7\",\n  \"max_tokens\": 2048,\n  \"system\": {{ JSON.stringify($json.system) }},\n  \"messages\": [ { \"role\": \"user\", \"content\": {{ JSON.stringify($json.user) }} } ]\n}",
+        "options": { "response": { "response": { "responseFormat": "json" } }, "timeout": 60000 }
+      },
+      "id": "i4f5a001-0009-4f00-a000-000000000009",
+      "name": "Call Claude",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1780, 420]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "language": "javaScript",
+        "jsCode": "const resp = $json || {};\nconst src = $('Build Growth prompt').item.json;\n\nconst textBlocks = Array.isArray(resp.content) ? resp.content.filter(c => c && c.type === 'text').map(c => c.text || '') : [];\nconst combined = textBlocks.join('\\n');\n\nlet parsed = null;\nconst fence = combined.match(/```json\\s*([\\s\\S]*?)```/i);\nif (fence) { try { parsed = JSON.parse(fence[1].trim()); } catch (e) { parsed = null; } }\nif (!parsed) {\n  const brace = combined.match(/\\{[\\s\\S]*\\}/);\n  if (brace) { try { parsed = JSON.parse(brace[0]); } catch (e) { parsed = null; } }\n}\n\nconst headline = (parsed && typeof parsed.headline === 'string') ? parsed.headline.slice(0, 240) : 'Growth weekly digest';\nconst funnel_observation = (parsed && typeof parsed.funnel_observation === 'string') ? parsed.funnel_observation.slice(0, 600) : null;\nconst top_experiments = (parsed && Array.isArray(parsed.top_experiments)) ? parsed.top_experiments.slice(0, 3).map(s => String(s).slice(0, 400)) : [];\nconst stale_nudges = (parsed && Array.isArray(parsed.stale_partnerships_to_nudge)) ? parsed.stale_partnerships_to_nudge.slice(0, 10).map(s => String(s).slice(0, 200)) : [];\nconst competitor_signals = (parsed && Array.isArray(parsed.competitor_signals)) ? parsed.competitor_signals.slice(0, 5).map(s => String(s).slice(0, 400)) : [];\n\nlet level = 'info';\nif (src.summary.stale_partners_30d > 0 || competitor_signals.length > 0) level = 'warn';\n\nreturn [{ json: {\n  agent_name: 'growth',\n  level,\n  message: headline,\n  metadata: {\n    weekly_digest: true,\n    summary: src.summary,\n    growth: {\n      headline, funnel_observation, top_experiments, stale_nudges, competitor_signals,\n      raw_text: combined.slice(0, 4000),\n      model: resp.model || 'claude-opus-4-7',\n      stop_reason: resp.stop_reason,\n      usage: resp.usage,\n    },\n    run_at: src.run_at,\n  },\n}}];\n"
+      },
+      "id": "i4f5a001-000a-4f00-a000-00000000000a",
+      "name": "Parse Growth response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2000, 420]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://guggzyqceattncjwvgyc.supabase.co/rest/v1/agent_logs",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($input.all().map(i => i.json)) }}",
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [
+          { "name": "apikey", "value": "[HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]" },
+          { "name": "Authorization", "value": "Bearer [HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]" },
+          { "name": "Content-Type", "value": "application/json" },
+          { "name": "Prefer", "value": "return=representation" }
+        ]},
+        "options": { "response": { "response": { "responseFormat": "json" } }, "timeout": 15000 }
+      },
+      "id": "i4f5a001-000b-4f00-a000-00000000000b",
+      "name": "Write Growth digest log",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2220, 420]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": { "main": [[{ "node": "Compute Window", "type": "main", "index": 0 }]] },
+    "Compute Window": { "main": [[{ "node": "Read posthog_daily_funnel", "type": "main", "index": 0 }]] },
+    "Read posthog_daily_funnel": { "main": [[{ "node": "Read competitor_watch 7d", "type": "main", "index": 0 }]] },
+    "Read competitor_watch 7d": { "main": [[{ "node": "Read partner_integrations", "type": "main", "index": 0 }]] },
+    "Read partner_integrations": { "main": [[{ "node": "Build Growth prompt", "type": "main", "index": 0 }]] },
+    "Build Growth prompt": { "main": [[{ "node": "If no data", "type": "main", "index": 0 }]] },
+    "If no data": { "main": [
+      [{ "node": "Write heartbeat log", "type": "main", "index": 0 }],
+      [{ "node": "Call Claude", "type": "main", "index": 0 }]
+    ]},
+    "Call Claude": { "main": [[{ "node": "Parse Growth response", "type": "main", "index": 0 }]] },
+    "Parse Growth response": { "main": [[{ "node": "Write Growth digest log", "type": "main", "index": 0 }]] }
+  },
+  "active": false,
+  "settings": {
+    "timezone": "Australia/Sydney",
+    "errorWorkflow": "agent_error_logger",
+    "executionOrder": "v1",
+    "saveExecutionProgress": true,
+    "saveDataSuccessExecution": "all",
+    "saveDataErrorExecution": "all"
+  },
+  "tags": [ { "name": "phase:3" }, { "name": "agent:14-growth-partnership" } ]
+}

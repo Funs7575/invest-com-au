@@ -1,0 +1,202 @@
+{
+  "name": "ops_admin_daily",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": { "interval": [ { "field": "cronExpression", "expression": "0 0 4 * * *" } ] }
+      },
+      "id": "f1c2a001-0001-4f00-a000-000000000001",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "const now = new Date();\nconst d1 = new Date(now.getTime() - 24 * 60 * 60 * 1000);\nreturn [{ json: { now: now.toISOString(), since24h: d1.toISOString(), runDate: d1.toISOString().slice(0, 10) } }];\n"
+      },
+      "id": "f1c2a001-0002-4f00-a000-000000000002",
+      "name": "Compute Window",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://guggzyqceattncjwvgyc.supabase.co/rest/v1/cron_run_log",
+        "sendQuery": true,
+        "queryParameters": { "parameters": [
+          { "name": "select", "value": "id,name,status,started_at,finished_at,error_message" },
+          { "name": "started_at", "value": "=gte.{{ $json.since24h }}" },
+          { "name": "limit", "value": "500" },
+          { "name": "order", "value": "started_at.desc" }
+        ]},
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [
+          { "name": "apikey", "value": "[HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]" },
+          { "name": "Authorization", "value": "Bearer [HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]" },
+          { "name": "Accept", "value": "application/json" }
+        ]},
+        "options": { "response": { "response": { "responseFormat": "json" } }, "timeout": 30000 }
+      },
+      "id": "f1c2a001-0003-4f00-a000-000000000003",
+      "name": "Read cron_run_log 24h",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 180],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://guggzyqceattncjwvgyc.supabase.co/rest/v1/agent_logs",
+        "sendQuery": true,
+        "queryParameters": { "parameters": [
+          { "name": "select", "value": "id,agent_name,level,message,created_at" },
+          { "name": "level", "value": "=in.(error,fatal)" },
+          { "name": "created_at", "value": "=gte.{{ $('Compute Window').first().json.since24h }}" },
+          { "name": "limit", "value": "500" },
+          { "name": "order", "value": "created_at.desc" }
+        ]},
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [
+          { "name": "apikey", "value": "[HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]" },
+          { "name": "Authorization", "value": "Bearer [HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]" },
+          { "name": "Accept", "value": "application/json" }
+        ]},
+        "options": { "response": { "response": { "responseFormat": "json" } }, "timeout": 30000 }
+      },
+      "id": "f1c2a001-0004-4f00-a000-000000000004",
+      "name": "Read agent errors 24h",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [900, 180],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://guggzyqceattncjwvgyc.supabase.co/rest/v1/professionals",
+        "sendQuery": true,
+        "queryParameters": { "parameters": [
+          { "name": "select", "value": "id,slug,name,unresponded_leads,auto_paused_at,accepting_new_clients" },
+          { "name": "unresponded_leads", "value": "=gte.5" },
+          { "name": "auto_paused_at", "value": "is.null" },
+          { "name": "accepting_new_clients", "value": "eq.true" },
+          { "name": "limit", "value": "200" }
+        ]},
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [
+          { "name": "apikey", "value": "[HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]" },
+          { "name": "Authorization", "value": "Bearer [HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]" },
+          { "name": "Accept", "value": "application/json" }
+        ]},
+        "options": { "response": { "response": { "responseFormat": "json" } }, "timeout": 30000 }
+      },
+      "id": "f1c2a001-0005-4f00-a000-000000000005",
+      "name": "Read stale advisors",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1120, 180],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "language": "javaScript",
+        "jsCode": "function rows(nodeName, idKey = 'id') {\n  const out = [];\n  for (const it of $(nodeName).all()) {\n    const p = it && it.json;\n    if (!p) continue;\n    if (Array.isArray(p)) { for (const r of p) if (r && typeof r === 'object' && r[idKey]) out.push(r); }\n    else if (Array.isArray(p.data)) { for (const r of p.data) if (r && typeof r === 'object' && r[idKey]) out.push(r); }\n    else if (typeof p === 'object' && p[idKey]) { out.push(p); }\n  }\n  return out;\n}\n\nconst cronRuns = rows('Read cron_run_log 24h');\nconst errors = rows('Read agent errors 24h');\nconst staleAdvisors = rows('Read stale advisors');\nconst nowIso = new Date().toISOString();\nconst runDate = $('Compute Window').first().json.runDate;\n\n// Cron health\nconst cronFailures = cronRuns.filter(r => r.status === 'failed' || r.status === 'error');\nconst cronStuck = cronRuns.filter(r => r.status === 'running' && r.started_at && (Date.now() - new Date(r.started_at).getTime()) > 30 * 60 * 1000);\n\n// Agent errors by agent\nconst errorsByAgent = {};\nfor (const e of errors) {\n  const n = e.agent_name || 'unknown';\n  errorsByAgent[n] = (errorsByAgent[n] || 0) + 1;\n}\n\n// Severity\nlet level = 'info';\nif (errors.length > 0 || cronFailures.length > 0) level = 'warn';\nif (errors.filter(e => e.level === 'fatal').length > 0 || cronFailures.length > 3 || cronStuck.length > 0) level = 'error';\n\nconst summary = {\n  run_date: runDate,\n  cron_runs_24h: cronRuns.length,\n  cron_failures_24h: cronFailures.length,\n  cron_stuck_count: cronStuck.length,\n  agent_errors_24h: errors.length,\n  errors_by_agent: errorsByAgent,\n  stale_advisors_needing_autopause: staleAdvisors.length,\n  run_at: nowIso,\n};\n\nconst emit = [];\n\n// 1) summary log\nemit.push({ json: {\n  agent_name: 'ops-admin',\n  level,\n  message: `ops_admin_daily digest — ${cronFailures.length} cron failures, ${errors.length} agent errors, ${staleAdvisors.length} advisors to auto-pause`,\n  metadata: { daily_digest: true, summary, run_at: nowIso }\n}});\n\n// 2) one compliance_task row per auto-pause candidate\nfor (const adv of staleAdvisors) {\n  emit.push({ json: {\n    kind: 'compliance_task',\n    task: {\n      agent_name: 'ops-admin',\n      task_type: 'auto_pause_recommended',\n      severity: 'medium',\n      status: 'open',\n      title: `Auto-pause recommended: ${adv.name || adv.slug} (${adv.unresponded_leads} unresponded leads)`,\n      description: `Advisor ${adv.slug} has ${adv.unresponded_leads} unresponded leads and is still accepting new clients. Spec says auto-pause at >= 5.`,\n      metadata: { advisor_id: adv.id, advisor_slug: adv.slug, unresponded_leads: adv.unresponded_leads, source: 'ops_admin_daily', run_at: nowIso }\n    }\n  }});\n}\n\nreturn emit;\n"
+      },
+      "id": "f1c2a001-0006-4f00-a000-000000000006",
+      "name": "Compute Ops digest",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1340, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "typeValidation": "strict", "version": 2 },
+          "combinator": "and",
+          "conditions": [
+            { "id": "is-task", "leftValue": "={{ $json.kind }}", "rightValue": "compliance_task", "operator": { "type": "string", "operation": "equals" } }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f1c2a001-0007-4f00-a000-000000000007",
+      "name": "Split log vs task",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1560, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://guggzyqceattncjwvgyc.supabase.co/rest/v1/compliance_tasks",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.task) }}",
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [
+          { "name": "apikey", "value": "[HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]" },
+          { "name": "Authorization", "value": "Bearer [HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]" },
+          { "name": "Content-Type", "value": "application/json" },
+          { "name": "Prefer", "value": "return=representation" }
+        ]},
+        "options": { "response": { "response": { "responseFormat": "json" } }, "timeout": 15000 }
+      },
+      "id": "f1c2a001-0008-4f00-a000-000000000008",
+      "name": "Insert compliance_task",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1780, 180]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://guggzyqceattncjwvgyc.supabase.co/rest/v1/agent_logs",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify([$json]) }}",
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [
+          { "name": "apikey", "value": "[HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]" },
+          { "name": "Authorization", "value": "Bearer [HARDCODE_SUPABASE_SERVICE_ROLE_KEY_HERE]" },
+          { "name": "Content-Type", "value": "application/json" },
+          { "name": "Prefer", "value": "return=representation" }
+        ]},
+        "options": { "response": { "response": { "responseFormat": "json" } }, "timeout": 15000 }
+      },
+      "id": "f1c2a001-0009-4f00-a000-000000000009",
+      "name": "Write digest log",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1780, 420]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": { "main": [[{ "node": "Compute Window", "type": "main", "index": 0 }]] },
+    "Compute Window": { "main": [[{ "node": "Read cron_run_log 24h", "type": "main", "index": 0 }]] },
+    "Read cron_run_log 24h": { "main": [[{ "node": "Read agent errors 24h", "type": "main", "index": 0 }]] },
+    "Read agent errors 24h": { "main": [[{ "node": "Read stale advisors", "type": "main", "index": 0 }]] },
+    "Read stale advisors": { "main": [[{ "node": "Compute Ops digest", "type": "main", "index": 0 }]] },
+    "Compute Ops digest": { "main": [[{ "node": "Split log vs task", "type": "main", "index": 0 }]] },
+    "Split log vs task": { "main": [
+      [{ "node": "Insert compliance_task", "type": "main", "index": 0 }],
+      [{ "node": "Write digest log", "type": "main", "index": 0 }]
+    ]}
+  },
+  "active": false,
+  "settings": {
+    "timezone": "Australia/Sydney",
+    "errorWorkflow": "agent_error_logger",
+    "executionOrder": "v1",
+    "saveExecutionProgress": true,
+    "saveDataSuccessExecution": "all",
+    "saveDataErrorExecution": "all"
+  },
+  "tags": [ { "name": "phase:3" }, { "name": "agent:12-ops-admin" } ]
+}
