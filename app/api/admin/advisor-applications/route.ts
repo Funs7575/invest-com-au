@@ -88,6 +88,14 @@ export async function PATCH(request: NextRequest) {
     }).eq("id", applicationId);
 
     sendApplicationRejected(app.email, app.name, rejectionReason).catch((err) => log.error("Rejection email failed", { err: err instanceof Error ? err.message : String(err), applicationId }));
+    await supabase.from("admin_audit_log").insert({
+      action: "advisor_application:rejected",
+      entity_type: "advisor_application",
+      entity_id: String(applicationId),
+      entity_name: app.name,
+      admin_email: admin.email ?? null,
+      details: { rejection_reason: rejectionReason ?? null },
+    });
     return NextResponse.json({ success: true });
   }
 
@@ -199,6 +207,14 @@ export async function PATCH(request: NextRequest) {
 
   const loginUrl = `${siteUrl}/advisor-portal?token=${token}`;
   sendApplicationApproved(app.email, app.name, loginUrl).catch((err) => log.error("Approval email failed", { err: err instanceof Error ? err.message : String(err), applicationId }));
+  await supabase.from("admin_audit_log").insert({
+    action: "advisor_application:approved",
+    entity_type: "advisor_application",
+    entity_id: String(applicationId),
+    entity_name: app.name,
+    admin_email: admin.email ?? null,
+    details: { professional_id: newPro.id, firm_id: firmId },
+  });
 
   return NextResponse.json({ success: true, professionalId: newPro.id, firmId });
 }
