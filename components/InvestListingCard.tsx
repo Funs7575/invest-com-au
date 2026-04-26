@@ -82,7 +82,11 @@ export default function InvestListingCard({
           </div>
         )}
 
-        {/* Top-left badges (Featured / pick) */}
+        {/* Top-left badges — Featured (gold) is the only attention-grabbing
+            badge on the image. Compliance status (FIRB / SIV) was previously
+            rendered as competing top-right overlays; it now sits inline in
+            the card body as neutral text so the image hero isn't visually
+            crowded. See visual-hierarchy fix in the 2026-04-26 audit. */}
         {(badge || listing.listing_type === "featured") && (
           <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
             {listing.listing_type === "featured" && (
@@ -93,22 +97,6 @@ export default function InvestListingCard({
             {badge && (
               <span className="bg-white/95 backdrop-blur text-slate-800 text-[0.62rem] font-extrabold uppercase tracking-wider px-2 py-1 rounded-md shadow-sm">
                 {badge}
-              </span>
-            )}
-          </div>
-        )}
-
-        {/* Top-right compliance badges */}
-        {(listing.firb_eligible || listing.siv_complying) && (
-          <div className="absolute top-3 right-3 flex gap-1.5">
-            {listing.firb_eligible && (
-              <span className="bg-blue-600 text-white text-[0.6rem] font-extrabold uppercase tracking-wider px-2 py-1 rounded-md shadow-sm">
-                FIRB
-              </span>
-            )}
-            {listing.siv_complying && (
-              <span className="bg-emerald-600 text-white text-[0.6rem] font-extrabold uppercase tracking-wider px-2 py-1 rounded-md shadow-sm">
-                SIV
               </span>
             )}
           </div>
@@ -140,8 +128,15 @@ export default function InvestListingCard({
           </p>
         )}
 
-        {/* Industry / sub-category pills */}
-        {(listing.industry || listing.sub_category) && (
+        {/* Industry / sub-category pills + neutral compliance indicators.
+            FIRB / SIV were previously gold-blue/emerald top-right overlays
+            competing with Featured for attention; rendered inline here as
+            small neutral text-icons they communicate the same info without
+            disturbing the image hero or stealing focus from Featured. */}
+        {(listing.industry ||
+          listing.sub_category ||
+          listing.firb_eligible ||
+          listing.siv_complying) && (
           <div className="flex flex-wrap items-center gap-1 mb-3">
             {listing.industry && (
               <span className="text-[0.62rem] px-2 py-0.5 bg-slate-100 rounded-full font-semibold text-slate-600">
@@ -151,6 +146,22 @@ export default function InvestListingCard({
             {listing.sub_category && (
               <span className="text-[0.62rem] px-2 py-0.5 bg-slate-100 rounded-full font-semibold text-slate-600 capitalize">
                 {listing.sub_category.replace(/_/g, " ")}
+              </span>
+            )}
+            {listing.firb_eligible && (
+              <span
+                className="inline-flex items-center gap-0.5 text-[0.62rem] px-2 py-0.5 bg-slate-50 border border-slate-200 rounded-full font-semibold text-slate-600"
+                title="Foreign Investment Review Board eligible"
+              >
+                <span aria-hidden="true">✓</span> FIRB-eligible
+              </span>
+            )}
+            {listing.siv_complying && (
+              <span
+                className="inline-flex items-center gap-0.5 text-[0.62rem] px-2 py-0.5 bg-slate-50 border border-slate-200 rounded-full font-semibold text-slate-600"
+                title="Significant Investor Visa compliant"
+              >
+                <span aria-hidden="true">✓</span> SIV-complying
               </span>
             )}
           </div>

@@ -11,8 +11,11 @@ export const VERTICAL_TO_CATEGORY: Record<InvestListingVertical, string> = {
   farmland: "farmland",
   franchise: "franchise",
   fund: "funds",
+  hydrogen: "hydrogen",
   mining: "mining",
+  oil_gas: "oil-gas",
   startup: "startups",
+  uranium: "uranium",
 };
 
 /**

@@ -301,6 +301,237 @@ const categories: InvestCategory[] = [
     ],
   },
 
+  // ─── Uranium ───
+  {
+    slug: "uranium",
+    label: "Uranium",
+    dbVerticals: ["uranium"],
+    color: {
+      bg: "bg-yellow-50",
+      border: "border-yellow-200",
+      text: "text-yellow-800",
+      accent: "bg-yellow-600",
+      gradient: "from-yellow-50 to-white",
+    },
+    icon: "atom",
+    title: `Uranium Investment Opportunities in Australia (${yr})`,
+    h1: "Uranium Investment Opportunities in Australia",
+    metaDescription: `Invest in Australian uranium — ASX producers, ISR projects, sector ETFs and exploration plays. ${upd}.`,
+    intro: `Australia holds the world's largest uranium reserves and supplies roughly 10% of global production. With small modular reactors and the global nuclear renaissance lifting long-term demand, ASX-listed uranium plays span from established producers to advanced explorers.`,
+    sections: [
+      {
+        heading: "Why Invest in Uranium Now",
+        body: "Uranium spot prices have re-rated significantly since 2022 as utilities re-contract for the next decade and emerging nuclear demand from data centres and SMRs adds new structural buyers. Australian deposits — particularly in South Australia and the Northern Territory — offer Tier-1 grade with established regulatory pathways.",
+      },
+      {
+        heading: "Ways to Get Uranium Exposure",
+        body: "Direct project equity (ISR producers, advanced explorers), ASX-listed producers and developers, physical-uranium trusts, and broad nuclear-energy ETFs. Royalty streams over producing operations offer passive yield with reduced operational risk.",
+      },
+    ],
+    faqs: [
+      {
+        question: "Where can uranium be mined in Australia?",
+        answer: "South Australia (Olympic Dam, Beverley, Four Mile, Honeymoon) and the Northern Territory permit uranium mining. Western Australia lifted its ban in 2024. NSW, Victoria, and Queensland maintain state moratoriums. Federal export oversight applies to all production.",
+      },
+      {
+        question: "What's the cheapest way to get uranium exposure?",
+        answer: "ASX-listed uranium ETFs and major producers (BHP, Paladin Energy, Boss Energy) provide liquid exposure for any size investment. Physical-uranium trusts (like SPUT and Yellow Cake) track the metal directly. Direct project equity typically requires $250K+ minimum cheques.",
+      },
+      {
+        question: "Are uranium investments ESG-compliant?",
+        answer: "The EU Taxonomy classified nuclear as a transitional sustainable activity in 2022, and most major ESG frameworks now recognise uranium's role in clean baseload generation. Many institutional ESG funds are reversing previous uranium exclusions on energy-transition grounds.",
+      },
+    ],
+    subcategories: [
+      {
+        slug: "producers",
+        label: "Producers",
+        dbValue: "producer",
+        title: `ASX Uranium Producers — Investment Listings (${yr})`,
+        h1: "ASX Uranium Producers",
+        metaDescription: `Browse listings of producing Australian uranium operations and ASX-listed uranium producers. ${upd}.`,
+        intro: "Active uranium producers offer near-term cash flow leverage to spot prices, with operating mines in SA and NT ramping production into a tightening market.",
+        faqs: [
+          { question: "Who are Australia's main uranium producers?", answer: "BHP (Olympic Dam), Boss Energy (Honeymoon), and Heathgate Resources (Beverley) operate producing mines. Paladin Energy restarted Langer Heinrich in Namibia and is advancing Australian assets." },
+        ],
+      },
+      {
+        slug: "explorers",
+        label: "Explorers & Developers",
+        dbValue: "explorer",
+        title: `Australian Uranium Explorers & Developers (${yr})`,
+        h1: "Australian Uranium Explorers & Developers",
+        metaDescription: `Investment opportunities across Australian uranium explorers and pre-production developers. ${upd}.`,
+        intro: "Pre-production uranium plays offer leverage to a sustained spot recovery — definitive feasibility studies, permitting milestones, and offtake announcements typically catalyse re-rates.",
+        faqs: [
+          { question: "What's the risk of investing in uranium explorers?", answer: "Pre-revenue explorers carry high binary risk: dilution at unfavourable prices, permitting delays, and discovery risk. Diversification across 4-6 names or a thematic ETF reduces single-name exposure." },
+        ],
+      },
+      {
+        slug: "etfs",
+        label: "Sector ETFs",
+        dbValue: "etf",
+        title: `Australian Uranium ETFs and Index Products (${yr})`,
+        h1: "Australian Uranium & Nuclear-Energy ETFs",
+        metaDescription: `Browse uranium and nuclear-energy ETFs available to Australian investors. ${upd}.`,
+        intro: "ETFs spread single-name risk across producers, developers, and physical uranium — a sensible entry point for most retail investors.",
+        faqs: [
+          { question: "Which uranium ETFs are available in Australia?", answer: "URNM (Sprott Uranium Miners), URA (Global X), and Betashares' nuclear-energy products are available via local brokers and CHESS-sponsored access." },
+        ],
+      },
+    ],
+  },
+
+  // ─── Oil & Gas ───
+  {
+    slug: "oil-gas",
+    label: "Oil & Gas",
+    dbVerticals: ["oil_gas"],
+    color: {
+      bg: "bg-stone-50",
+      border: "border-stone-200",
+      text: "text-stone-700",
+      accent: "bg-stone-700",
+      gradient: "from-stone-50 to-white",
+    },
+    icon: "fuel",
+    title: `Oil & Gas Investment Opportunities in Australia (${yr})`,
+    h1: "Oil & Gas Investment Opportunities in Australia",
+    metaDescription: `Invest in Australian oil & gas — LNG, exploration, refineries, midstream infrastructure and royalties. ${upd}.`,
+    intro: `Australia is one of the world's largest LNG exporters, with significant offshore and onshore gas plays across the North West Shelf, Browse Basin, Bass Strait, and Cooper Basin. Investment opportunities range from explorer equity to producing royalty streams and infrastructure stakes.`,
+    sections: [
+      {
+        heading: "Australian Oil & Gas at a Glance",
+        body: "LNG remains the highest-value Australian gas export, with major projects on the North West Shelf, Gorgon, Wheatstone, Ichthys, and Prelude FLNG. Domestic gas demand is structurally tight on the east coast, supporting prices for new conventional and unconventional supply.",
+      },
+      {
+        heading: "Investment Pathways",
+        body: "Direct working interests in producing or developing fields, ASX-listed E&P equities (Woodside, Santos, Beach Energy), midstream infrastructure investments (pipelines, processing), and royalty/production-payment structures. Each carries different risk-return profiles.",
+      },
+    ],
+    faqs: [
+      {
+        question: "Is oil & gas a good investment in 2026?",
+        answer: "Demand is more durable than headlines suggest — global oil consumption is still growing, gas underwrites grid reliability as renewables scale, and underinvestment since 2014 has tightened global supply. Energy-transition risk is real but priced into producer multiples.",
+      },
+      {
+        question: "How can I invest in Australian LNG?",
+        answer: "Liquid public exposure via Woodside Energy (WDS) and Santos (STO) on the ASX. Working-interest stakes in projects typically require institutional-scale cheques. Specialist energy funds offer diversified private-market exposure.",
+      },
+      {
+        question: "What's a royalty stream in oil & gas?",
+        answer: "A royalty entitles the holder to a percentage of revenue from a producing field, paid before operating costs and capex. Royalties offer leveraged exposure to commodity prices with no operational risk — but face depletion as reserves are produced.",
+      },
+    ],
+    subcategories: [
+      {
+        slug: "lng",
+        label: "LNG",
+        dbValue: "lng",
+        title: `Australian LNG Investments (${yr})`,
+        h1: "Australian LNG Project Investments",
+        metaDescription: `Investment opportunities across Australian LNG projects — North West Shelf, Gorgon, Ichthys, Prelude. ${upd}.`,
+        intro: "Australia hosts seven operating LNG export plants with combined capacity of ~88 Mtpa — second only to the United States.",
+        faqs: [
+          { question: "Who operates Australian LNG projects?", answer: "Woodside, Chevron, Shell, Inpex, ConocoPhillips, and Santos operate the seven major LNG plants. Stakes are typically held via long-term JV agreements." },
+        ],
+      },
+      {
+        slug: "exploration",
+        label: "Exploration & Development",
+        dbValue: "exploration",
+        title: `Australian Oil & Gas Exploration Listings (${yr})`,
+        h1: "Australian Oil & Gas Exploration & Development",
+        metaDescription: `Investment opportunities in Australian oil & gas exploration permits and field developments. ${upd}.`,
+        intro: "Exploration and appraisal plays offer high-leverage exposure to discovery and development outcomes — with commensurate binary risk.",
+        faqs: [
+          { question: "Where are the most active exploration regions?", answer: "Beetaloo, Cooper, Bowen-Surat, Browse, Carnarvon, and Bonaparte basins remain the most actively explored, with new acreage releases periodically through the offshore acreage round." },
+        ],
+      },
+      {
+        slug: "midstream",
+        label: "Midstream & Infrastructure",
+        dbValue: "midstream",
+        title: `Australian Oil & Gas Infrastructure Investments (${yr})`,
+        h1: "Australian Oil & Gas Midstream & Infrastructure",
+        metaDescription: `Pipelines, processing and storage infrastructure investment opportunities across Australia. ${upd}.`,
+        intro: "Midstream infrastructure offers stable, regulated-style cashflows — tolling on volumes rather than commodity-price exposure.",
+        faqs: [
+          { question: "How do midstream returns compare to E&P?", answer: "Midstream typically targets 8-12% IRRs with much lower volatility than upstream E&P. Returns are driven by throughput contracts and tariff escalators rather than oil price." },
+        ],
+      },
+    ],
+  },
+
+  // ─── Hydrogen ───
+  {
+    slug: "hydrogen",
+    label: "Hydrogen",
+    dbVerticals: ["hydrogen"],
+    color: {
+      bg: "bg-sky-50",
+      border: "border-sky-200",
+      text: "text-sky-700",
+      accent: "bg-sky-600",
+      gradient: "from-sky-50 to-white",
+    },
+    icon: "droplets",
+    title: `Hydrogen Investment Opportunities in Australia (${yr})`,
+    h1: "Hydrogen Investment Opportunities in Australia",
+    metaDescription: `Invest in Australian hydrogen — green H2, fuel cells, production hubs and export-scale projects. ${upd}.`,
+    intro: `Australia's hydrogen industry is scaling fast, backed by federal Hydrogen Headstart funding and state strategies in QLD, WA, and SA. Opportunities span large-scale green hydrogen export hubs, regional production-and-distribution projects, fuel-cell technology, and pure-play ASX equities.`,
+    sections: [
+      {
+        heading: "Why Hydrogen Matters",
+        body: "Hydrogen is the only zero-emission energy carrier capable of decarbonising heavy industry, long-haul freight, and seasonal energy storage. Australia has the renewable resources, deep-water ports, and trade relationships to become a top-3 hydrogen exporter by 2035.",
+      },
+      {
+        heading: "Investment Stages",
+        body: "Most hydrogen projects are still pre-FID. Investors can participate via early-stage project equity (highest risk/return), ASX-listed pure-plays and integrated energy companies, electrolyser technology vendors, or sector-specific funds.",
+      },
+    ],
+    faqs: [
+      {
+        question: "What is green hydrogen?",
+        answer: "Green hydrogen is produced by electrolysing water using renewable electricity — splitting H2O into H2 and O2 with zero direct emissions. It's distinguished from grey hydrogen (from fossil gas without capture) and blue hydrogen (with carbon capture).",
+      },
+      {
+        question: "Which Australian hydrogen projects are most advanced?",
+        answer: "CQ-H2 (Stanwell), Murchison Hydrogen Renewables, H2-Hub Gladstone, Western Green Energy Hub, and Hunter Valley Hydrogen Hub are at FEED or near FID. Hydrogen Headstart Round 1 selected two projects for $4B in production credits.",
+      },
+      {
+        question: "What returns are achievable in hydrogen?",
+        answer: "Early-stage project equity targets 15-25% IRRs but carries development and offtake risk. Late-stage infrastructure stakes are more institutional, targeting 8-12% IRRs with 20-30 year offtake contracts.",
+      },
+    ],
+    subcategories: [
+      {
+        slug: "production",
+        label: "Production & Hubs",
+        dbValue: "production",
+        title: `Australian Hydrogen Production Projects (${yr})`,
+        h1: "Australian Hydrogen Production & Hub Investments",
+        metaDescription: `Investment opportunities in Australian green hydrogen production projects and export hubs. ${upd}.`,
+        intro: "Australia's hydrogen production projects are scaling from pilot to gigawatt-scale, with export-focused hubs targeting Asian markets.",
+        faqs: [
+          { question: "How big are Australia's hydrogen ambitions?", answer: "Australia targets 30+ Mtpa of hydrogen production by 2050, equivalent to a top-3 global position. Federal and state programs combined have committed over $7B in support funding." },
+        ],
+      },
+      {
+        slug: "fuel-cells",
+        label: "Fuel Cells & Technology",
+        dbValue: "fuel_cell",
+        title: `Hydrogen Fuel Cell & Technology Investments (${yr})`,
+        h1: "Hydrogen Fuel Cell & Technology Investments",
+        metaDescription: `ASX and private hydrogen technology companies — fuel cells, electrolysers, storage. ${upd}.`,
+        intro: "Hardware suppliers — electrolysers, fuel cells, compression and storage — capture value across all production projects.",
+        faqs: [
+          { question: "Are there ASX-listed hydrogen technology companies?", answer: "Yes — Hazer Group, Province Resources, Pure Hydrogen Corporation and others trade on the ASX. Specialist ETFs offer diversified exposure to global hydrogen-economy names." },
+        ],
+      },
+    ],
+  },
+
   // ─── Farmland ───
   {
     slug: "farmland",

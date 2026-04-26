@@ -15,7 +15,7 @@ import { getAllInvestCategories } from "@/lib/invest-categories";
 import type { InvestmentListing } from "@/lib/types";
 import { logger } from "@/lib/logger";
 import InvestListingsClient from "@/components/InvestListingsClient";
-import { listingUrl } from "@/lib/listing-url";
+import { categoryForListing, listingUrl } from "@/lib/listing-url";
 
 const log = logger("invest-listings-all");
 
@@ -65,25 +65,24 @@ async function fetchAllActiveListings(): Promise<InvestmentListing[]> {
 export default async function InvestListingsPage() {
   const listings = await fetchAllActiveListings();
 
-  // Per-vertical counts for the summary strip above the marketplace
-  // grid. Counts reflect the currently-active listings, computed
-  // once on the server to avoid loading the client with the raw
-  // aggregation.
-  const verticalCounts: Record<string, number> = {};
+  // ── Single source of truth for the category filter ──
+  // Counts are computed using `categoryForListing()` — the same
+  // mapping the active filter uses — so what users see on the tab
+  // matches what the grid shows when they click. This deliberately
+  // replaces the prior dual UI (DB-vertical badge bar + hard-coded
+  // pill row) which produced inconsistent counts and missing
+  // categories. Categories with zero listings remain visible so the
+  // taxonomy stays stable across loads (dimmed in the UI).
+  const categoryCounts: Record<string, number> = {};
   for (const l of listings) {
-    const v = l.vertical as string;
-    if (!v) continue;
-    verticalCounts[v] = (verticalCounts[v] || 0) + 1;
+    const cat = categoryForListing(l);
+    categoryCounts[cat] = (categoryCounts[cat] ?? 0) + 1;
   }
-  const sortedCounts = Object.entries(verticalCounts).sort(
-    ([, a], [, b]) => b - a,
-  );
-
-  // Category tabs from invest-categories config
   const allCategories = getAllInvestCategories();
   const categoryTabs = allCategories.map((c) => ({
     slug: c.slug,
     label: c.label,
+    count: categoryCounts[c.slug] ?? 0,
   }));
 
   // ── JSON-LD: ItemList ──
@@ -198,34 +197,12 @@ export default async function InvestListingsPage() {
           </div>
         </div>
 
-        {/* Per-vertical count strip — live counts from the DB */}
-        {sortedCounts.length > 0 && (
-          <div className="container-custom max-w-6xl mb-4">
-            <div className="bg-white border border-slate-200 rounded-xl p-4">
-              <p className="text-[10px] font-bold uppercase tracking-wide text-slate-500 mb-3">
-                Active listings by vertical
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {sortedCounts.map(([slug, count]) => (
-                  <Link
-                    key={slug}
-                    href={`/invest/${slug}/listings`}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-50 hover:bg-amber-50 border border-slate-200 hover:border-amber-200 transition-colors text-xs"
-                  >
-                    <span className="font-semibold text-slate-700 capitalize">
-                      {slug.replace(/-/g, " ")}
-                    </span>
-                    <span className="font-extrabold text-amber-700 tabular-nums">
-                      {count}
-                    </span>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Client component with filters + grid */}
+        {/* Single unified category filter + grid. The previous
+            "Active Listings by Vertical" summary strip lived here and
+            was removed in 2026-04 — it duplicated the tab bar with a
+            different (DB-vertical) taxonomy and confused users. The
+            tab bar inside InvestListingsClient now serves both roles:
+            navigation and live counts. */}
         <InvestListingsClient
           listings={listings}
           categories={categoryTabs}

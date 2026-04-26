@@ -7,9 +7,17 @@ import { categoryForListing } from "@/lib/listing-url";
 import InvestListingCard from "@/components/InvestListingCard";
 
 // ─── Props ───────────────────────────────────────────────────────────
+export interface CategoryTab {
+  slug: string;
+  label: string;
+  /** Optional pre-computed listing count for this category. When provided,
+   *  shown inline on the tab. Pass 0 (or omit) to suppress the count chip. */
+  count?: number;
+}
+
 export interface InvestListingsClientProps {
   listings: InvestmentListing[];
-  categories: { slug: string; label: string }[];
+  categories: CategoryTab[];
   initialCategory?: string;
   initialSubcategory?: string;
   /**
@@ -32,6 +40,9 @@ export interface InvestListingsClientProps {
 }
 
 // ─── Category colors (pill styling) ─────────────────────────────────
+// Keyed by canonical category slug. New verticals (uranium, oil-gas,
+// hydrogen) added here MUST also be reflected in lib/invest-categories.ts
+// and lib/listing-url.ts to keep the taxonomy aligned.
 const CATEGORY_COLORS: Record<
   string,
   { bg: string; text: string; ring: string }
@@ -39,6 +50,9 @@ const CATEGORY_COLORS: Record<
   all: { bg: "bg-slate-100", text: "text-slate-700", ring: "ring-slate-300" },
   "buy-business": { bg: "bg-blue-100", text: "text-blue-700", ring: "ring-blue-300" },
   mining: { bg: "bg-amber-100", text: "text-amber-700", ring: "ring-amber-300" },
+  uranium: { bg: "bg-yellow-100", text: "text-yellow-800", ring: "ring-yellow-300" },
+  "oil-gas": { bg: "bg-stone-200", text: "text-stone-800", ring: "ring-stone-400" },
+  hydrogen: { bg: "bg-sky-100", text: "text-sky-700", ring: "ring-sky-300" },
   farmland: { bg: "bg-green-100", text: "text-green-700", ring: "ring-green-300" },
   "commercial-property": { bg: "bg-slate-100", text: "text-slate-700", ring: "ring-slate-400" },
   franchise: { bg: "bg-purple-100", text: "text-purple-700", ring: "ring-purple-300" },
@@ -267,11 +281,27 @@ export default function InvestListingsClient({
     });
   }
 
-  // All category tabs (prepend "All")
-  const tabs = useMemo(
-    () => [{ slug: "all", label: "All" }, ...categories],
-    [categories],
-  );
+  // All category tabs (prepend "All"). When counts are provided, the
+  // "All" tab shows the total of every category's listings — i.e. the
+  // unfiltered universe — so users can see at a glance how broad the
+  // page is before narrowing down.
+  const tabs = useMemo<CategoryTab[]>(() => {
+    const allCount = categories.reduce(
+      (sum, c) => sum + (c.count ?? 0),
+      0,
+    );
+    return [
+      { slug: "all", label: "All", count: allCount > 0 ? allCount : undefined },
+      ...categories,
+    ];
+  }, [categories]);
+
+  // When a category is active, surface its label in the sub-category
+  // header so users always know what bucket they're narrowing within.
+  const activeCategoryLabel = useMemo(() => {
+    if (activeCategory === "all") return "";
+    return prettyCategory(activeCategory, categories);
+  }, [activeCategory, categories]);
 
   return (
     <div>
@@ -290,33 +320,64 @@ export default function InvestListingsClient({
         </div>
       )}
 
-      {/* ── Sticky category tab bar — global page only ── */}
+      {/* ── Sticky category filter — single source of truth ──
+           Replaces the previous "Active Listings by Vertical" badge
+           bar + duplicate pill row. Each tab shows the live count
+           inline so users can see at a glance which categories have
+           listings before they click. The active tab is highlighted
+           with the category's own colour theme + ring; inactive tabs
+           with zero listings are dimmed but kept visible so the
+           taxonomy stays consistent across loads. */}
       {!lockedCategory && (
-        <div className="sticky top-0 z-20 bg-white/95 backdrop-blur border-b border-slate-200">
+        <nav
+          aria-label="Filter listings by category"
+          className="sticky top-0 z-20 bg-white/95 backdrop-blur border-b border-slate-200"
+        >
           <div className="container-custom overflow-x-auto scrollbar-hide">
-            <div className="flex gap-1.5 py-2.5 min-w-max">
+            <div
+              role="tablist"
+              className="flex gap-1.5 py-2.5 min-w-max"
+            >
               {tabs.map((tab) => {
                 const isActive = tab.slug === activeCategory;
                 const colors = CATEGORY_COLORS[tab.slug] ?? CATEGORY_COLORS.all;
+                const hasCount = typeof tab.count === "number";
+                const isEmpty = hasCount && tab.count === 0;
                 return (
                   <button
                     key={tab.slug}
+                    role="tab"
+                    aria-selected={isActive}
                     onClick={() =>
                       setParam({ category: tab.slug === "all" ? "" : tab.slug, sub: "" })
                     }
-                    className={`whitespace-nowrap rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${
+                    className={`whitespace-nowrap inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${
                       isActive
-                        ? `${colors.bg} ${colors.text} ring-1 ${colors.ring}`
-                        : "text-slate-500 hover:bg-slate-50 hover:text-slate-700"
+                        ? `${colors.bg} ${colors.text} ring-2 ${colors.ring} shadow-sm`
+                        : isEmpty
+                          ? "text-slate-300 hover:bg-slate-50"
+                          : "text-slate-500 hover:bg-slate-50 hover:text-slate-700"
                     }`}
                   >
-                    {tab.label}
+                    <span>{tab.label}</span>
+                    {hasCount && tab.count! > 0 && (
+                      <span
+                        className={`tabular-nums text-[10px] font-extrabold rounded-full px-1.5 py-0.5 ${
+                          isActive
+                            ? "bg-white/70"
+                            : "bg-slate-100 text-slate-600"
+                        }`}
+                        aria-label={`${tab.count} listings`}
+                      >
+                        {tab.count}
+                      </span>
+                    )}
                   </button>
                 );
               })}
             </div>
           </div>
-        </div>
+        </nav>
       )}
 
       {/* ── Sticky filter toolbar — visible as user scrolls. ──
@@ -453,11 +514,13 @@ export default function InvestListingsClient({
       <div className="container-custom py-5 md:py-8">
         {/* Sub-category pills — only meaningful when a single category
             is selected. Collapsed into a compact chip row with a
-            visible label so readers know what the pills narrow. */}
+            visible label so readers know what the pills narrow. The
+            header surfaces the active category name so users always
+            know which bucket they're refining. */}
         {subCategories.length > 0 && (
           <div className="mb-5">
             <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-1.5">
-              Narrow by type
+              Narrow {activeCategoryLabel ? `${activeCategoryLabel} ` : ""}by type
             </p>
             <div className="flex flex-wrap gap-1.5">
               {subCategories.map((sub) => {

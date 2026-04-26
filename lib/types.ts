@@ -1317,8 +1317,11 @@ export type InvestListingVertical =
   | 'farmland'
   | 'franchise'
   | 'fund'
+  | 'hydrogen'
   | 'mining'
-  | 'startup';
+  | 'oil_gas'
+  | 'startup'
+  | 'uranium';
 
 export interface InvestmentListing {
   id: number;

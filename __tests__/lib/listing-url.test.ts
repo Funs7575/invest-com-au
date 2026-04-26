@@ -21,8 +21,11 @@ describe("categoryForListing", () => {
     ["farmland", "farmland"],
     ["franchise", "franchise"],
     ["fund", "funds"],
+    ["hydrogen", "hydrogen"],
     ["mining", "mining"],
+    ["oil_gas", "oil-gas"],
     ["startup", "startups"],
+    ["uranium", "uranium"],
   ])("maps vertical %s to slug %s", (vertical, slug) => {
     expect(categoryForListing({ vertical, sub_category: undefined })).toBe(slug);
   });
