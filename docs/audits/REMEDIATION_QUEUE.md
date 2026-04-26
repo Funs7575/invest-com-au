@@ -34,7 +34,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | H | _not started_ | — | — | — |
 | I | _not started_ | — | — | — |
 | J | _not started_ | — | — | — |
-| K | `claude/audit-remediation/k-security-hardening` | #222 | pending — re-running 2026-04-26T19:50Z (merged main) | K-01..K-05 + K-06a + K-07 done; K-06b + K-07b + K-08..K-15 pending |
+| K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-26T21:12Z | K-01..K-05 + K-06a + K-06b + K-07 done; K-07b + K-08..K-15 pending |
 | L | _not started_ | — | — | — |
 | M | _not started_ | — | — | — |
 | N | _not started_ | — | — | — |
@@ -227,7 +227,7 @@ P0/P1/P2 findings from the security agent's deep scan. Each is small (<2h); clus
 | K-04 | done | `proxy.ts` CSP `'unsafe-inline'` removal from `script-src` | 1 | Done in commit `7f1f734f` (PR #222). New directive: `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https:`. CSP3 browsers (>95% AU) unaffected — `'unsafe-inline'` was already shadowed by `'strict-dynamic'`. CSP2 legacy browsers still have the `https:` host-source fallback for externally-loaded scripts; only truly inline `<script>…</script>` without a nonce is blocked, and Next.js auto-nonces framework-emitted scripts. style-src untouched (Tailwind needs it; documented in code). |
 | K-05 | done | Unify X-Frame-Options + Permissions-Policy in `proxy.ts` | 1 | Done in commit `a1d1d59b` (PR #222). proxy.ts: `SAMEORIGIN` → `DENY` (matches what browser was already enforcing via most-restrictive selection); `geolocation=()` → `geolocation=(self)` (the silent-most-restrictive combine had been disabling all geolocation features — restored). next.config.ts: dropped both conflicting headers; X-Content-Type-Options, Referrer-Policy, X-DNS-Prefetch-Control, HSTS remain duplicated with matching values across both configs to cover the static-asset paths excluded from the middleware matcher. Behavioural deltas: X-Frame-Options unchanged (was DENY, is DENY); geolocation features re-enabled. |
 | K-06a | done | Data-export request stale-pending monitor cron | 1 | Done in commit `9d6b2609` (PR #222). New cron `/api/cron/data-export-monitor` (daily, batched into `daily-2` alongside `gdpr-retention-purge`). Scans `data_export_requests` for `status='pending'` rows; bucketed at 7+ days (reminder email) and 25+ days (urgent — within 5 days of APP-12 30-day deadline). Single consolidated alert email to `ADMIN_NOTIFICATION_EMAIL`. Read-only on the table; non-blocking on Resend failure. Pre-launch: zero overhead while no requests exist. |
-| K-06b | pending | Full data-export processor cron — generate JSON archive of user's data across all tables, sign download URL, email user | ~3 | P1 / APP-12 compliance. Larger scope split out from K-06. Until shipped, K-06a's monitor surfaces stalled requests for manual processing via `/admin/privacy`. |
+| K-06b | done | Full data-export processor cron — JSON archive, signed URL, email user | 1 | Done in commit `c0ca676` (PR #222). Gathers 13 user_id-linked tables + 2 email-linked tables; uploads to private `data-exports` Supabase Storage bucket; 7-day signed URL; emails user; CAS-style claim prevents double-processing. PREREQUISITE: founder must create private Storage bucket `data-exports`. Forward-compatible with unapplied migration (same pattern as K-06a). |
 | K-07 | done | `/api/account/delete` — confirmation email on schedule | 1 | Done in commit `41b84e0b` (PR #222). After the existing upsert succeeds, fires a transactional email to `user.email` with locale-formatted purge date (`Saturday, 26 May 2026`), cancel link to `/account/privacy`, and the "if you didn't request this" escape hatch for phishing victims. Best-effort — Resend failure logs `warn` but doesn't roll back the deletion request. **Known live drift:** the `account_deletion_requests` table doesn't exist in any live schema (migration `20260427_wave_security_observability.sql:175` defines it but appears unapplied) — so the route's POST returns 500 today and the email path is forward-compatible code that activates the day the migration lands. Surfaced to Blocked. |
 | K-07b | pending | Day-25 grace-period reminder cron | 1 | P1. Daily cron scans `account_deletion_requests` where `status='scheduled'` AND `scheduled_purge_at` between now+1d and now+5d; sends final-warning email. Depends on the table being live (currently isn't — see Blocked entry). |
 | K-08 | pending | Sweep `/api/admin/*` PATCH/POST/DELETE routes: ensure each writes to `admin_audit_log` | ~2 | P1. SOC 2 / ASIC audit-trail gap. ~44 routes; spot-check 10 first. |
@@ -410,6 +410,7 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 
 ## Done
 
+- 2026-04-26 · K-06b · Full data-export processor cron — gathers 13 user_id tables + 2 email tables, uploads JSON to private `data-exports` Storage bucket, creates 7-day signed URL, emails user, marks request ready. CAS-style claim guards parallel fires. PREREQUISITE: create private Storage bucket `data-exports`. Forward-compatible with unapplied migration. · commit `c0ca676` · pr #222
 - 2026-04-26 · K-07 · `/api/account/delete` confirmation email after schedule — locale-formatted purge date, cancel link, phishing-victim escape hatch. Best-effort send; doesn't roll back deletion request on Resend failure. Forward-compatible with the missing `account_deletion_requests` table (Blocked entry A-MISSING-TABLE-1). · commit `41b84e0b` · pr #222
 - 2026-04-26 · K-06a · Data-export stale-pending monitor cron — daily check, founder alert at 7d (reminder) and 25d (urgent — within 5 days of APP-12 deadline). Closes the silent-failure gap where pending `data_export_requests` would sit unprocessed past the 30-day legal window. · commit `9d6b2609` · pr #222
 - 2026-04-26 · M-01a · Site-wide default OG + Twitter card image (P0-6, out-of-loop) · pr #227
@@ -440,6 +441,19 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-26 21:12Z — iteration 22 (stream K, item K-06b — data-export processor cron)
+
+- K-06b implemented as a single iteration (fits ~350 LOC; "~3 iterations" estimate in queue was conservative — the full flow is self-contained once patterns from K-06a and K-07 were established).
+- Commit `c0ca676`: new cron `/app/api/cron/process-data-exports/route.ts` + 1-line addition to `lib/cron-groups.ts` (daily-2 group alongside gdpr-retention-purge and data-export-monitor).
+- **Data coverage:** 13 user_id-linked tables (`professionals`, `subscriptions`, `user_bookmarks`, `user_notifications`, `user_quiz_history`, `consultation_bookings`, `course_purchases`, `course_progress`, `tos_acceptances`, `notification_preferences`, `forum_user_profiles`, `forum_votes`, `article_reactions`) + 2 email-linked tables (`leads`, `advisor_applications`) + auth profile via `auth.admin.getUserById`.
+- **Storage + signed URL:** uploads to private Supabase Storage bucket `data-exports/{user_id}/{request_id}.json`; 7-day signed URL. PREREQUISITE: founder must create the private bucket once.
+- **Email:** `exportReadyEmail()` sends "your export is ready" with the signed URL download button; Resend failure is non-fatal (URL persisted in DB row, accessible via `/account/privacy`).
+- **CAS-style claim:** `update({status:'processing'}).eq("status","pending")` guard prevents double-processing if two cron fires overlap.
+- **Forward-compatible:** `data_export_requests` table not-found is handled gracefully (same pattern as K-06a and K-07). No effect until migration A-MISSING-TABLE-1 is applied to live.
+- Phase 2 CI: PR #220 green (success+skipped); PR #222 green (success+skipped). No rescue needed.
+- Local gates: file-targeted tsc (TS5112 / no-tsconfig-in-file-mode) and eslint (missing eslint-config-next) both fail due to sandbox environment constraints (Hardware exception). CI is authoritative.
+- Status: PROGRESS · stream=K · item=K-06b · pr=#222.
 
 ### 2026-04-26 19:50Z — iteration 21 (CI rescue follow-up — merge main into K branch)
 - PR #222's "Supabase types drift" check still FAILED after iter 20's main-side regen, because the K branch hadn't picked up main's new `database.types.ts`. Per the loop contract this is still a CI-RESCUE iteration on the same root-cause until green.
