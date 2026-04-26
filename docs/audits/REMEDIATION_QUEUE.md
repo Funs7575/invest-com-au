@@ -25,7 +25,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | Stream | Branch | PR | Last CI | Items in flight |
 | --- | --- | --- | --- | --- |
 | A | _not started_ | — | — | — |
-| B | `claude/audit-remediation/b-rls-remediation` | #220 | pending — pushed 2026-04-26T14:20Z | B-06 next (B-01..B-05 done/FP; B-05 corrected in iter 8) |
+| B | `claude/audit-remediation/b-rls-remediation` | #220 | pending — pushed 2026-04-26T14:25Z | B-06 — 1 done (`listing_enquiries`) · 5 FP (forum tables) · 2 left (`listing_plans`, `quarterly_reports`) |
 | C | _not started_ | — | — | — |
 | D | _not started_ | — | — | — |
 | E | _not started_ | — | — | — |
@@ -33,12 +33,50 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | G | _not started_ | — | — | — |
 | H | _not started_ | — | — | — |
 | I | _not started_ | — | — | — |
+| J | _not started_ | — | — | — |
+| K | `claude/audit-remediation/k-security-hardening` | #222 | pending — re-running 2026-04-26T19:50Z (merged main) | K-01..K-05 + K-06a + K-07 done; K-06b + K-07b + K-08..K-15 pending |
+| L | _not started_ | — | — | — |
+| M | _not started_ | — | — | — |
+| N | _not started_ | — | — | — |
+| O | _not started_ | — | — | — |
+| P | _not started_ | — | — | — |
+| Q | _not started_ | — | — | — |
+| R | _not started_ | — | — | — |
+| S | _not started_ | — | — | — |
 
 ---
 
 ## Blocked — needs human input
 
-_None currently — B-04 cleared 2026-04-26 by user (chose option 2). See Done section + iteration log for the resolution and the option-4 follow-up note._
+### A-MISSING-TABLE-1 · `account_deletion_requests` table missing in live (surfaced 2026-04-26 by iter 19)
+
+**Finding:** The route `app/api/account/delete/route.ts` and Stream A's drift-backfill scope both depend on `account_deletion_requests`. Live DB query (Supabase MCP, 2026-04-26 18:50Z):
+
+```sql
+SELECT to_regclass('public.account_deletion_requests');
+-- → null (table does not exist)
+```
+
+The migration that defines the table (`supabase/migrations/20260427_wave_security_observability.sql:175`) exists in the repo with proper RLS + self-scoped policies, but it doesn't appear to have been applied to live.
+
+**Impact today:**
+- `POST /api/account/delete` returns HTTP 500 (`Failed to schedule deletion`) on every call — anyone who clicks "delete my account" sees a generic error, no row is recorded, and no email goes out.
+- K-07's confirmation-email path is dead code (correct, just unreachable until the table exists).
+- K-07b (day-25 reminder cron) cannot be built — it would query a non-existent table.
+
+**Decision matrix for the user:**
+
+| Option | What you do | Trade-off |
+|---|---|---|
+| **1. Apply the migration via Supabase MCP** | Run the `CREATE TABLE` + `ENABLE RLS` + `CREATE POLICY` block from `20260427_wave_security_observability.sql:175-209` against live. ~3 min. | Fastest. Migration is idempotent (`IF NOT EXISTS`), so safe to run. Unblocks K-07 + K-07b immediately. |
+| **2. Apply the whole `20260427_wave_security_observability.sql` migration** | Run the full migration file. | Catches anything else in that file that's also drifted. Larger blast radius — needs a quick read-through to confirm everything in the file is intended. |
+| **3. Defer until Stream A's drift backfill iteration covers it** | Wait. K-07 + K-07b stay parked. | Lowest risk but extends the window where account-deletion is broken in prod. Stream A is at priority step 10 of 20 — likely days-to-weeks out. |
+
+**Recommendation:** Option 1. The table definition is well-formed and the migration was clearly intended to ship; just apply that table creation block.
+
+---
+
+_B-04 cleared 2026-04-26 by user (chose option 2). See Done section + iteration log for the resolution and the option-4 follow-up note._
 
 ---
 
@@ -55,9 +93,10 @@ Highest priority: critical 2 first.
 | B-03 | false-positive | ~~RLS on `sponsor_invoices`~~ | — | **Already enabled** by `supabase/migrations/20260321_pre_launch_rls_fixes.sql` (RLS on + deny-all policy). See "Resolved as false positives" below. |
 | B-04 | done | RLS on `investment_listings` (option 2) | 1 | Done in commit `4847bd31` (PR #220). Anon SELECT all; anon INSERT only when `status='pending'` + counters=0 + no professional linkage; anon UPDATE column-scoped to (`views`, `enquiries`) via REVOKE/GRANT; service-role explicit allow. Long-term option-4 follow-up tracked as B-08 below. |
 | B-05 | done | RLS on `listing_claims` | 1 | Done in commit `5904db8a` then **corrected in `24898931` (iter 8)** to actually drop the legacy `"Anon can submit claims"` policy from `20260510_rls_hardening.sql` (the original DROP IF EXISTS list missed it; RLS policies stack additively, so the legacy permissive INSERT survived and undermined the deny-all claim). Net state: deny-all anon + service-role explicit allow. |
-| B-06 | pending | RLS on remaining 6 medium-risk tables (one iteration each) | ~6 | Real gap re-enumerated 2026-04-26 (iter 8) via `comm -23 <(grep -hE "^CREATE TABLE" supabase/migrations/*.sql ...) <(grep -hE "ENABLE ROW LEVEL SECURITY" ...)`: `forum_categories`, `forum_posts`, `forum_threads`, `forum_user_profiles`, `forum_votes` (5 forum tables), plus `quarterly_reports`, `listing_enquiries`, `listing_plans`. The audit's "remaining 6" was loose — actual count is 8 candidates. `support_tickets`, `support_messages`, `broker_creatives`, `broker_notifications`, `ab_tests` were already RLS'd in `20260321_pre_launch_rls_fixes.sql` (same false-positive pattern as B-03). Each subsequent iteration must run the iter-8 prior-policy verification gate. |
+| B-06 | in-progress | RLS on remaining medium-risk tables | 2 | 1 done in iter 9 (`listing_enquiries`, commit `0bb82daa`, option-2 pattern). 5 false-positives discovered in iter 10 via prior-policy gate — all forum tables (`forum_categories`, `forum_posts`, `forum_threads`, `forum_user_profiles`, `forum_votes`) were already RLS-enabled with proper `auth.uid()`-scoped policies in `20260427_wave_security_observability.sql`; moved to FP table. Real residual: `listing_plans` (clean — all 3 callers use admin client) + `quarterly_reports` (anon-key admin page complicates the policy — likely needs decision). |
 | B-07 | pending | Add CI lint that fails any new `CREATE TABLE` migration without `ENABLE ROW LEVEL SECURITY` | 1 | Stream I overlap; coordinate. |
-| B-08 | pending | Long-term: refactor `/api/listings/submit` + enquire counter fallback to admin client; tighten anon policy on `investment_listings` to SELECT-only (option 4 follow-up to B-04) | ~2 | Lower priority than B-05/B-06; depends on stream C call-graph (C-01) to confirm no other anon writers. |
+| B-08 | pending | Long-term: refactor `/api/listings/submit` + enquire counter fallback to admin client; tighten anon policy on `investment_listings` to SELECT-only (option 4 follow-up to B-04) | ~2 | Lower priority than B-06; depends on stream C call-graph (C-01) to confirm no other anon writers. |
+| B-09 | pending | Long-term: refactor `/api/listings/my-listings` to admin client + email-verification challenge; tighten anon policy on `listing_enquiries` to deny SELECT (follow-up to B-06's `listing_enquiries` migration) | ~2 | **Known PII enumeration vector**: today the route trusts the user-supplied `email` query param and returns all enquiries (name, email, phone, message) for any listing whose `contact_email` matches. RLS at the DB layer cannot scope this without an `auth.uid()` linkage. Stream C territory; depends on the my-listings flow design decision (magic link, OTP, or login). |
 
 ### Stream D — Critical-path API tests (issue #217)
 
@@ -149,15 +188,196 @@ Only run after stream D has covered the file with tests; otherwise risk silent r
 
 | ID | Status | Summary | Est. iterations | Notes |
 | --- | --- | --- | --- | --- |
-| H-01 | pending | Split `app/api/stripe/webhook/route.ts` (1,197 LOC) — extract event handlers | ~3 | Highest leverage. Requires D-stream tests for stripe routes first. |
+| H-01 | pending | Split `app/api/stripe/webhook/route.ts` (1,197 LOC) — extract event handlers | ~3 | Highest leverage. Requires D-stream tests for stripe routes first. Subsumed by J-01 if J runs first. |
 | H-02 | pending | Split `lib/advisor-verification.ts` (1,075 LOC) — extract verification stages | ~3 | Second-highest. Requires test coverage. |
-| H-03 | pending | Split `app/advisor-portal/page.tsx` (2,761 LOC) into per-tab components | ~5 | Largest file. Pure-UI split; test via E2E. |
+| H-03 | pending | Split `app/advisor-portal/page.tsx` (2,761 LOC) into per-tab components | ~5 | Largest file. Pure-UI split; test via E2E. Overlaps N-03. |
 | H-04 | pending | Split remaining 12 files in audit §3.2 (one or two per iteration) | ~10 | Lower priority. |
+
+---
+
+> **Streams J–S below source from `docs/audits/2026-04-26-comprehensive-audit.md`** (the comprehensive enterprise-readiness audit, on top of the 04-24 codebase-health audit). Priority order updated in `REMEDIATION_DEFAULTS.md` to interleave new streams.
+
+### Stream J — Stripe webhook event-coverage + handler split (audit §5/§11)
+
+The webhook route is 1,197 LOC and only handles a subset of the events an enterprise SaaS should react to. Missing events span dispute response, dunning, fraud signals, and trial-end retention.
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| J-01 | pending | Split `app/api/stripe/webhook/route.ts` into a handler-registry pattern (one file per event family) — keeps existing dispatch behaviour, new files are wrappable in tests one at a time | ~3 | Foundational; subsequent J items add new handlers. Subsumes H-01. Order: scaffold registry → migrate existing handlers → add tests file-by-file. |
+| J-02 | false-positive | ~~Add handler: `charge.dispute.created`~~ | — | **Already handled** in `app/api/stripe/webhook/route.ts` (verified 2026-04-26 audit §5.4 via `grep -E "case '...'"` — handler exists). |
+| J-03 | pending | Add handler: `customer.subscription.trial_will_end` — fire 3-days-pre-charge email via Resend | 1 | High-impact retention. |
+| J-04 | false-positive | ~~Add handler: `invoice.payment_failed`~~ | — | **Already handled** in `app/api/stripe/webhook/route.ts` (verified 2026-04-26 audit §5.4). Dunning is wired through this handler + `/api/cron/subscription-dunning`. |
+| J-05 | pending | Add handler: `invoice.payment_action_required` — surface 3DS / SCA flow to user via email + dashboard banner | 1 | AU/EU customer support. |
+| J-06 | pending | Add handler: `payment_intent.payment_failed` — distinct from invoice.failed (covers one-time payments) | 1 | |
+| J-07 | false-positive | ~~Add handler: `charge.refunded`~~ | — | **Already handled** in `app/api/stripe/webhook/route.ts` (verified 2026-04-26 audit §5.4). |
+| J-08 | pending | Add handler: `payout.failed` — internal alert (bank info wrong) | 1 | |
+| J-09 | pending | Add handler: `radar.early_fraud_warning.created` — proactively refund to dodge dispute | 1 | |
+| J-10 | pending | Add handler: `customer.subscription.paused` — preserve subscription state, suppress further dunning | 1 | |
+| J-11 | done | Reconcile `featured_plans` 3/5 → 5/5 stripe_price_id + `listing_plans` 0/24 → 24/24 | — | **Done by founder via Stripe MCP, 2026-04-26.** Verified via Supabase MCP 2026-04-26: `featured_plans` 5/5 wired (incl. the 2 international tiers), `listing_plans` 24/24 wired. NULL `stripe_price_id` state eliminated across both tables (26 wires total). Original audit §11.3 finding closed. |
+
+### Stream K — Security hardening (audit §7)
+
+P0/P1/P2 findings from the security agent's deep scan. Each is small (<2h); cluster as iterations allow.
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| K-01 | done | `/api/widget/route.ts` defense-in-depth: anon-key client + explicit CORS contract + OPTIONS handler | 1 | Done in commit `d2295ee7` (PR #222). **Reframed:** original audit said "drop wildcard CORS" but the widget is intentionally cross-origin-embeddable on partner sites. Real risk was service-role + wildcard CORS combination. Fix: swap `createAdminClient()` → `createStaticClient()` so RLS enforces the data contract (Postgres "Public read for active brokers" policy already scopes anon SELECT to `status='active'`); keep `*` (intentional); add `Vary: Origin`, `Cross-Origin-Resource-Policy: cross-origin`, `Access-Control-Allow-Methods`; add OPTIONS handler; document the public-by-design contract in the route file's header comment so future maintainers don't re-introduce service-role. |
+| K-02 | done | `/api/verify-otp/verify` layered rate-limit defense | 1 | Done in commit `bd2431fd` (PR #222). Three layers: per-IP burst 3/15min, per-IP cumulative 10/4hr, per-email 5/60min. Per-email is the critical layer because it catches IP-rotation attacks (botnet, residential proxies) against a single email. 6-digit OTP exhaust window 5.8 days → 22 years. Generic error messages so attackers can't tell which bucket tripped. |
+| K-03 | done | `/api/admin/login` IP-tier exponential backoff | 1 | Done in commit `6c9d99b9` (PR #222). New backoff curve: count ≤5 = 60s (initial burst), 6–10 = 5min, 11–20 = 15min, 21+ = 60min cap. Beyond 60min the email-tier lockout (already 15min/1hr/24hr in `lib/login-lockout.ts`) takes over. Honest user behaviour byte-identical for count ≤5. No schema change — uses existing `admin_login_attempts.reset_at` column. Backoff is monotonic (never shortens unlock clock). |
+| K-04 | done | `proxy.ts` CSP `'unsafe-inline'` removal from `script-src` | 1 | Done in commit `7f1f734f` (PR #222). New directive: `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https:`. CSP3 browsers (>95% AU) unaffected — `'unsafe-inline'` was already shadowed by `'strict-dynamic'`. CSP2 legacy browsers still have the `https:` host-source fallback for externally-loaded scripts; only truly inline `<script>…</script>` without a nonce is blocked, and Next.js auto-nonces framework-emitted scripts. style-src untouched (Tailwind needs it; documented in code). |
+| K-05 | done | Unify X-Frame-Options + Permissions-Policy in `proxy.ts` | 1 | Done in commit `a1d1d59b` (PR #222). proxy.ts: `SAMEORIGIN` → `DENY` (matches what browser was already enforcing via most-restrictive selection); `geolocation=()` → `geolocation=(self)` (the silent-most-restrictive combine had been disabling all geolocation features — restored). next.config.ts: dropped both conflicting headers; X-Content-Type-Options, Referrer-Policy, X-DNS-Prefetch-Control, HSTS remain duplicated with matching values across both configs to cover the static-asset paths excluded from the middleware matcher. Behavioural deltas: X-Frame-Options unchanged (was DENY, is DENY); geolocation features re-enabled. |
+| K-06a | done | Data-export request stale-pending monitor cron | 1 | Done in commit `9d6b2609` (PR #222). New cron `/api/cron/data-export-monitor` (daily, batched into `daily-2` alongside `gdpr-retention-purge`). Scans `data_export_requests` for `status='pending'` rows; bucketed at 7+ days (reminder email) and 25+ days (urgent — within 5 days of APP-12 30-day deadline). Single consolidated alert email to `ADMIN_NOTIFICATION_EMAIL`. Read-only on the table; non-blocking on Resend failure. Pre-launch: zero overhead while no requests exist. |
+| K-06b | pending | Full data-export processor cron — generate JSON archive of user's data across all tables, sign download URL, email user | ~3 | P1 / APP-12 compliance. Larger scope split out from K-06. Until shipped, K-06a's monitor surfaces stalled requests for manual processing via `/admin/privacy`. |
+| K-07 | done | `/api/account/delete` — confirmation email on schedule | 1 | Done in commit `41b84e0b` (PR #222). After the existing upsert succeeds, fires a transactional email to `user.email` with locale-formatted purge date (`Saturday, 26 May 2026`), cancel link to `/account/privacy`, and the "if you didn't request this" escape hatch for phishing victims. Best-effort — Resend failure logs `warn` but doesn't roll back the deletion request. **Known live drift:** the `account_deletion_requests` table doesn't exist in any live schema (migration `20260427_wave_security_observability.sql:175` defines it but appears unapplied) — so the route's POST returns 500 today and the email path is forward-compatible code that activates the day the migration lands. Surfaced to Blocked. |
+| K-07b | pending | Day-25 grace-period reminder cron | 1 | P1. Daily cron scans `account_deletion_requests` where `status='scheduled'` AND `scheduled_purge_at` between now+1d and now+5d; sends final-warning email. Depends on the table being live (currently isn't — see Blocked entry). |
+| K-08 | pending | Sweep `/api/admin/*` PATCH/POST/DELETE routes: ensure each writes to `admin_audit_log` | ~2 | P1. SOC 2 / ASIC audit-trail gap. ~44 routes; spot-check 10 first. |
+| K-09 | pending | `/api/seed/route.ts` — gate behind `NODE_ENV !== 'production'` + admin auth | 1 | P1. Shouldn't exist in prod at all. |
+| K-10 | pending | `/api/newsletter/subscribe/route.ts` — `source` field allowlist enum | 1 | P2. Analytics poisoning vector. |
+| K-11 | pending | `admin_login_attempts` table — add `UNIQUE(ip_hash)` constraint to prevent rate-limit bypass under concurrency | 1 | P2. |
+| K-12 | pending | `proxy.ts:22–30` cron bearer compare with `timingSafeEqual` (consistency w/ broker-signup pattern) | 1 | P3. Hygiene. |
+| K-13 | pending | ESLint rule: ban `dangerouslySetInnerHTML` outside `JSON.stringify(...)` and `sanitizeHtml(...)` / `renderMarkdown(...)` contexts | 1 | P3. |
+| K-14 | pending | Seed `retention_rules` table with initial policies (today empty; gdpr-retention-purge cron has nothing to do) | 1 | P2 / GDPR. |
+| K-15 | pending | CSP violation reporting: add `report-to` directive in `proxy.ts` + `/api/csp-report` endpoint | 1 | P2 (added by K-04 follow-up). Without reporting, legacy-browser inline-script breakage from K-04 is only detectable via support tickets. Endpoint should land each violation in a `csp_violations` table for trend analysis. |
+
+### Stream L — Observability + Sentry/PostHog/SLO (audit §9)
+
+Sentry is 95% there; PostHog funnel is half-blind; SLO framework exists but unseeded. Several items are pure config (founder action) — flagged accordingly.
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| L-01 | needs-user | Provision `SENTRY_AUTH_TOKEN` in Vercel project envs (sourcemap upload) | — | P0 · founder action · 0.25h. Without it, prod stack traces aren't sourcemapped. Surface to Blocked when picked. |
+| L-02 | pending | n8n env-var injection audit: confirm n8n credential vault binds `SUPABASE_SERVICE_ROLE_KEY`, `ANTHROPIC_API_KEY`, etc. for the 6 workflows; replace `[HARDCODE_*]` placeholders in JSONs with `={{ $env.NAME }}` runtime expressions | 1 | P0. JSON-only edit; no code. |
+| L-03 | pending | Wire `errorWorkflow` for `infra/n8n/overseer_hourly.json` (other 5 have it) | 1 | P1. |
+| L-04 | done | Diagnose `cron_run_log` silence — done out-of-loop in PR #225 | 1 | Resolved in PR #225 ("fix(observability): cron dispatcher silent failures — restore cron_run_log") merged 2026-04-26T17:37Z. Dispatcher was swallowing exceptions before the wrapper could log; PR adds explicit error handling so failures land in `cron_run_log`. |
+| L-05 | pending | Validate `health_pings` ingestion path — currently empty in live; heartbeat cron either not running or not logging | 1 | P1. Pairs with L-04. |
+| L-06 | pending | Seed `slo_definitions` with launch SLOs: lead p95<5min, advisor onboarding p95<1h, webhook delivery p95<10min, etc. | 1 | P1. Migration with seed inserts. |
+| L-07 | pending | Wire SLO incident → Slack/PagerDuty/email alert sink (today writes to `slo_incidents` table only) | 1 | P1. |
+| L-08 | pending | Extend `lib/posthog/events.ts` with: `advisor_selected`, `checkout_started`, `subscription_active`, `advisor_apply_submitted`, `lead_responded_to`, `dispute_opened` | 1 | P1. Funnel half-blind without these. |
+| L-09 | pending | Wire `posthog.identify(userId)` at signup + login so anonymous→identified mapping stitches sessions | 1 | P1. |
+| L-10 | pending | Validate PostHog mirror webhook (`supabase/functions/posthog-webhook-ingest`) — table is empty in live, either webhook misconfigured or no events captured | 1 | P1. |
+| L-11 | pending | Validate `web_vitals_samples` ingestion — table empty, in-house pipeline at `/api/web-vitals/route.ts` may not be receiving | 1 | P2. |
+| L-12 | pending | Wire `setLoggerUser()` in top-30 highest-traffic API routes (currently ~30 of 294 call it) | ~2 | P2. Adds user-id tagging to Sentry events. |
+
+### Stream M — SEO + structured data (audit §8)
+
+The single highest-leverage finding (M-01: cover_image_url backfill) lives here.
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| M-01a | done | Site-wide default OpenGraph + Twitter card image — done out-of-loop in PR #227 | 1 | Resolved in PR #227 ("feat(seo): site-wide default opengraph-image + twitter-image (P0-6)") merged 2026-04-26T17:37Z. Adds the default fallback image so any page without a per-route OG override gets a branded card. |
+| M-01b | pending | Per-article cover image backfill: populate `articles.cover_image_url` for the 266 published articles + ensure `app/article/[slug]/page.tsx` uses it for OG override | ~2 | P0 (residual). M-01a covered the site-wide default; this is the per-article custom-image work — still ~30–50% social-share CTR upside vs the generic default. Engineering side is one iteration; content batch is founder action. |
+| M-02 | pending | Versus pages (600+ URLs) — emit JSON-LD: `Article` + `BreadcrumbList` + per-side `FinancialProduct` review schema | 1 | P1. Currently zero structured data. |
+| M-03 | pending | Advisor pages — switch schema type from `ProfessionalService` to `["ProfessionalService", "FinancialService"]` for financial planners + wealth managers | 1 | P1. Entity-disambiguation gain in financial queries. |
+| M-04 | pending | Article meta_title/meta_description fallback path: auto-generate from `articles.excerpt` + `category` when DB fields are null (43 articles affected) | 1 | P1. |
+| M-05 | pending | Glossary auto-linkifier — inline-link 200+ terms from `lib/glossary.ts` in article body content | ~2 | P2. Topical-relevance gain. |
+| M-06 | pending | Render `articles.related_advisor_types` and `articles.related_verticals` as internal links on article pages | 1 | P2. |
+| M-07 | pending | Document domain-migration plan for Oct-Dec 2026 cutover (Vercel domain alias, GSC change-of-address, 301 mapping, registrar steps) | 1 | P0 — timing-bound. Doc-only this iteration; activation at Q4 via Domain Migration Agent #16. |
+
+### Stream N — UI/UX P0/P1 (audit §6)
+
+Image perf, accessibility, client-bundle size.
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| N-01 | pending | Homepage hero — add `priority` to hero next/image; add `placeholder="blur"` + `blurDataURL` | 1 | P0. LCP 500–800ms today. |
+| N-02 | pending | Homepage broker query — add LIMIT 20 (was unbounded; ~250 rows × 20 fields ~500KB JSON) | 1 | P0. TTFB on mobile. |
+| N-03 | pending | `app/advisor-portal/page.tsx` (2,761 LOC) — extract profile-header into Server Component; keep tabs as client | ~3 | P1. ~30–40% bundle reduction. Subsumes H-03. |
+| N-04 | pending | Add skip-to-main-content link in `components/layout/Navigation.tsx` (or root layout) | 1 | P1. WCAG 2.1 AA fail today. |
+| N-05 | pending | Sweep icon-only buttons missing `aria-label` (`CollapsibleSection`, `InfoTip`, `AdminHelpPanel`, `AdminNotifications`, `BottomSheet`, `OnThisPage`) | 1 | P1. |
+| N-06 | pending | Convert `public/logos/*.ico` → `.svg` where possible (580+ files; batch script) | ~2 | P2. ~40 KB homepage saving. |
+| N-07 | pending | Replace 138 `w-[Npx]`/`max-w-[Npx]` literals with Tailwind scale tokens | 1 | P2. |
+| N-08 | pending | Replace 16 hardcoded color hex values in chart/SVG components with Tailwind tokens | 1 | P2. |
+| N-09 | pending | `app/quiz/page.tsx` (796 LOC) — assess client/server boundary; if client-rendered, prefetch quiz data via Edge Function | 1 | P1. |
+| N-10 | pending | Backfill `placeholder="blur"` on hot-path next/image usages: article hero, advisor profile photo, broker logo | 1 | P1. Currently 0/61 images use blur. |
+| N-11 | pending | Audit + convert remaining 9 raw `<img>` tags (excluding `BrokerLogo` ICO intentional case) to `next/image` where safe | 1 | P3. |
+
+### Stream O — DB hardening (audit §4)
+
+Beyond Stream B's RLS-enable work; addresses policy completeness, FK indexes, search_path safety.
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| O-01 | pending | Triage 56 RLS-enabled-but-zero-policies tables: bucket into (a) service-role only — add explicit `service_role` allow policy for clarity, (b) user-data — needs `auth.uid()`-scoped policies | ~3 | P1. Full list in audit §4.2. ~16h total; chunk by table family. |
+| O-02 | done | 4 FK index migration — done out-of-loop in PR #230 | 1 | Resolved in PR #230 ("chore(db): repo-parity migration for 4 missing FK indexes (already live)") merged 2026-04-26T17:37Z. Live DB indexes had been applied earlier; this PR adds the migration file to the repo to close source-of-truth drift. |
+| O-03 | pending | `refresh_advisor_cohort_metrics()` SECURITY DEFINER — set `search_path = public, pg_catalog` to close injection vector | 1 | P2. |
+| O-04 | pending | `stripe_webhook_events` idempotency dry-run via Stripe dashboard test event → confirm row inserts + status='completed' | 1 | P2. Pre-launch validation. May surface to Blocked if needs founder action. |
+| O-05 | pending | Sponsor-invoices style hardening: rename misleading `USING (false)` policies on the 5 iter-8-FP tables to clearer names + add `FORCE ROW LEVEL SECURITY` + explicit `TO service_role` (`support_tickets`, `support_messages`, `broker_creatives`, `broker_notifications`, `ab_tests`) | 1 | P3. Hygiene. |
+
+### Stream P — Dependency hygiene (audit §3)
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| P-01 | pending | `@sentry/nextjs` v9.47.1 → v10.50.0 — clears all 5 npm-audit moderate findings | ~2 | P1. Migration guide in Sentry docs; verify sourcemap upload still works. Pairs with L-01. |
+| P-02 | pending | `stripe` SDK v17.7.0 → v22.1.0 (5 majors behind) | ~2 | P1. Webhook event types may have changed; pair with J-stream tests. |
+| P-03 | pending | `@anthropic-ai/sdk` 0.90.0 → 0.91.1 (minor) | 1 | P3. |
+| P-04 | pending | `posthog-js` + `posthog-node` minor bumps | 1 | P3. |
+| P-05 | pending | Defer to post-launch: TypeScript 6, ESLint 10, Vitest 4, jsdom 29, @types/node 25 (high blast radius / low gain) | — | Tracked here for visibility; not active. |
+
+### Stream Q — Disaster recovery + SOC 2 prep (audit §12)
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| Q-01 | needs-user | PITR restore drill on a Supabase clone — validate restore time vs RTO target, post-restore data integrity | — | P1 · founder + eng action · 3h. Surface to Blocked when picked; cannot be auto-run. |
+| Q-02 | pending | Publish RPO/RTO targets in `docs/runbooks/launch-day.md` (recommend RPO=24h, RTO=1h) | 1 | P1. Doc-only. |
+| Q-03 | pending | Author `docs/runbooks/stripe-account-recovery.md` — MFA reset, API key re-issue, domain verification | 1 | P1. |
+| Q-04 | pending | Author `docs/runbooks/resend-account-recovery.md` — domain re-verification, audience export | 1 | P1. |
+| Q-05 | pending | Author `docs/runbooks/vercel-team-recovery.md` — SSO break, owner change, billing-locked recovery | 1 | P1. |
+| Q-06 | pending | Author `docs/runbooks/read-replica-failure.md` | 1 | P1. |
+| Q-07 | pending | Author `docs/runbooks/stripe-webhook-backlog.md` — manual replay, compensation logic | 1 | P1. |
+| Q-08 | pending | Author `docs/runbooks/regulatory-data-request.md` — ASIC / OAIC subject-access escalation path | 1 | P1. |
+| Q-09 | pending | Author `docs/runbooks/security-breach-git.md` — leaked credential incident response | 1 | P1. |
+| Q-10 | pending | Author `docs/runbooks/acl-revocation.md` — ACL/AFSL revocation incident | 1 | P1. |
+| Q-11 | pending | Author `docs/runbooks/dsar.md` — Data Subject Access Request handling | 1 | P2. |
+| Q-12 | pending | Create `docs/runbooks/secret-rotation-log.md` — audit trail file referenced by `secret-rotation.md` but never created | 1 | P2. |
+| Q-13 | pending | Add cron `/api/cron/check-secret-rotation` — alert when any secret approaches its rotation window | 1 | P2. |
+| Q-14 | pending | Vendor DPA tracker doc: list 8 vendors (Supabase, Stripe, Resend, Vercel, PostHog, Sentry, n8n, Anthropic), DPA status, contact | 1 | P2. |
+| Q-15 | pending | Public `/privacy/data-collection` page — what data we collect, retention windows, contact for requests | 1 | P2. APP-1 transparency. |
+
+### Stream R — lib/ test coverage (audit §2.3)
+
+Highest-risk untested business logic. Marketplace allocation is the most lucrative + most untested code path in the repo.
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| R-01 | pending | `lib/marketplace/allocation.ts` — 388 LOC, 0% covered. Cover allocation algorithm + auto-bid edge cases + tier overrides | ~2 | P0. Lead revenue flows through here. |
+| R-02 | pending | `lib/marketplace/auto-bid.ts` — 174 LOC, 0% covered | 1 | P0. Pairs with R-01. |
+| R-03 | pending | `lib/advisor-lead-dispute-resolver.ts` — 340 LOC, 0% covered | 1 | P1. |
+| R-04 | pending | `lib/cached-data.ts` — 263 LOC, 0% covered | 1 | P1. |
+| R-05 | pending | `lib/email-templates.ts` — 745 LOC, 18% covered → raise to ≥60% | 1 | P2. |
+| R-06 | pending | `lib/admin/automation-metrics.ts` — 536 LOC, 25% covered | 1 | P2. |
+| R-07 | pending | `lib/chatbot.ts` — 233 LOC, 27% covered | 1 | P2. |
+| R-08 | pending | `lib/fi-data-server.ts` — 231 LOC, 27% covered | 1 | P2. |
+| R-09 | pending | `lib/tracking.ts` — 133 LOC, 33% covered → raise to ≥70% (used in 139 sites) | 1 | P2. |
+| R-10 | pending | `lib/advisor-application-resolver.ts` — 416 LOC, 35% covered | 1 | P2. |
+| R-11 | pending | Hooks: `useShortlist`, `useAdvisorShortlist`, `useSubscription` — all 0% | 1 | P3. |
+
+### Stream S — Architecture artefacts (audit §12)
+
+Diagrams + API contracts + missing-runbook overflow from Q.
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| S-01 | pending | Mermaid sequence diagram: user → quiz → lead → advisor → billing (with PostHog events, Stripe webhooks, Resend touches) | 1 | P2. Live in `docs/user-journey.md`. |
+| S-02 | pending | Agent-system topology diagram: 19 agents × 5 escalation tiers × DB-table linkages | 1 | P2. Live in `docs/agent-system.md`. |
+| S-03 | pending | OpenAPI spec for `/api/v1/*` (brokers, compare, docs) — public-API contract | ~2 | P2. Use openapi-typescript or hand-author. |
+| S-04 | pending | Document Stream-J handler-registry pattern (architectural decision record) | 1 | P3. |
+| S-05 | pending | Update `ARCHITECTURE.md` with cron-dispatch-group pattern (39 entries → 73 implementations) | 1 | P3. Non-obvious for new dev. |
 
 ---
 
 ## Done
 
+- 2026-04-26 · K-07 · `/api/account/delete` confirmation email after schedule — locale-formatted purge date, cancel link, phishing-victim escape hatch. Best-effort send; doesn't roll back deletion request on Resend failure. Forward-compatible with the missing `account_deletion_requests` table (Blocked entry A-MISSING-TABLE-1). · commit `41b84e0b` · pr #222
+- 2026-04-26 · K-06a · Data-export stale-pending monitor cron — daily check, founder alert at 7d (reminder) and 25d (urgent — within 5 days of APP-12 deadline). Closes the silent-failure gap where pending `data_export_requests` would sit unprocessed past the 30-day legal window. · commit `9d6b2609` · pr #222
+- 2026-04-26 · M-01a · Site-wide default OG + Twitter card image (P0-6, out-of-loop) · pr #227
+- 2026-04-26 · O-02 · 4 FK index repo-parity migration (out-of-loop; live DB already had them) · pr #230
+- 2026-04-26 · L-04 · Cron dispatcher silent-failure fix; cron_run_log now captures dispatcher exceptions (P0-1, out-of-loop) · pr #225
+- 2026-04-26 · K-05 · Unify `X-Frame-Options` + `Permissions-Policy` in `proxy.ts`. `SAMEORIGIN` → `DENY` (matches the browser-effective most-restrictive selection); `geolocation=()` → `geolocation=(self)` (re-enables property/postcode geolocation features that were silently broken by header-combine semantics). Removed duplicates from `next.config.ts`. · commit `a1d1d59b` · pr #222
+- 2026-04-26 · K-04 · `proxy.ts` CSP `'unsafe-inline'` removal from `script-src`. CSP3 browsers (>95% AU) unaffected — was already shadowed by `'strict-dynamic'`; legacy CSP2 browsers continue via `https:` host-source. style-src untouched. K-15 follow-up tracked for CSP violation reporting. · commit `7f1f734f` · pr #222
+- 2026-04-26 · K-03 · `/api/admin/login` IP-tier exponential backoff (60s → 5min → 15min → 60min by count). Plugs the "wait 60s and retry" loophole; honest user behaviour unchanged in count ≤5 path. · commit `6c9d99b9` · pr #222
+- 2026-04-26 · K-02 · `/api/verify-otp/verify` layered brute-force defense (per-IP burst 3/15min + per-IP cumulative 10/4hr + per-email 5/60min). 6-digit OTP exhaust window 5.8 days → 22 years. · commit `bd2431fd` · pr #222
+- 2026-04-26 · K-01 · `/api/widget/route.ts` defense-in-depth: anon-key client (RLS-enforced) + explicit CORS contract (kept `*` since widget is public-by-design) + OPTIONS pre-flight handler + maintainer-facing comment block. · commit `d2295ee7` · pr #222
+- 2026-04-26 · B-06.1 (`listing_enquiries`) · Enable RLS on `listing_enquiries` (option 2 — preserve current behaviour: anon SELECT all + anon INSERT with status='new' guard; service-role explicit allow). Long-term cleanup tracked as B-09 (refactor my-listings + tighten policy). · commit `0bb82daa` · pr #220
 - 2026-04-26 · B-05 · Enable RLS on `listing_claims` with deny-all default + service-role explicit allow (PII protection; sole caller uses admin client) · commits `5904db8a` (initial) + `24898931` (iter 8 correction — drop legacy `"Anon can submit claims"` from 20260510) · pr #220
 - 2026-04-26 · B-04 · Enable RLS on `investment_listings` (option 2 — anon SELECT all; anon INSERT pending-only with counter+linkage guards; anon UPDATE column-scoped to views+enquiries via GRANT; service-role explicit allow) · commit `4847bd31` · pr #220
 - 2026-04-26 · B-02 · Enable RLS on `leads` with deny-all default + service-role explicit allow (PII protection) · commit `5888c25b` · pr #220
@@ -172,10 +392,140 @@ Only run after stream D has covered the file with tests; otherwise risk silent r
 | F-01 | "`RouteErrorBoundary` + `RouteLoadingSkeleton` are unimported" | Re-exported by 14 `app/*/loading.tsx` + `app/*/error.tsx` files via `export { default } from "@/components/Route*"` syntax — audit's grep didn't catch re-exports. | 2026-04-26 |
 | B-03 | "`sponsor_invoices` is missing RLS" | RLS was added in `supabase/migrations/20260321_pre_launch_rls_fixes.sql` (`ALTER TABLE … ENABLE ROW LEVEL SECURITY` + a deny-all `USING (false)` policy). Service-role bypasses RLS regardless, so the existing policy is functionally a deny-all default. Audit's grep likely only checked `004_sponsor_invoices.sql` and missed the later fix migration. (Note: the policy name is misleading — it says "Service role full access" but the body is `USING (false)`. A future hardening iteration could rename + add explicit `TO service_role` clause + `FORCE ROW LEVEL SECURITY`. Tracked separately if needed; not blocking.) | 2026-04-26 |
 | (audit-wide) | "11 RLS gaps" | Iter 8 re-enumeration found that `support_tickets`, `support_messages`, `broker_creatives`, `broker_notifications`, `ab_tests` were ALSO already RLS'd in `20260321_pre_launch_rls_fixes.sql` (same pattern as B-03 — `USING (false)` is functionally deny-all but policy naming + lack of `FORCE RLS` is misleading). Audit's grep likely only checked the original creating migration for each table. Real residual gap = 8 tables (5 forum + `quarterly_reports`, `listing_enquiries`, `listing_plans`), tracked under B-06. The B-03-style hardening (rename misleading policy + add `FORCE RLS` + `TO service_role`) for these 5 tables can land as a stream-G-style hygiene pass; not in scope for stream B. | 2026-04-26 |
+| B-06.forum | "5 forum tables (`forum_categories`, `forum_posts`, `forum_threads`, `forum_user_profiles`, `forum_votes`) are missing RLS" | Iter 10 prior-policy gate discovered all 5 are already RLS-enabled in `supabase/migrations/20260427_wave_security_observability.sql` with rich `auth.uid()`-scoped policies (public_read for SELECT; authenticated_insert + author_update + author_delete on `forum_threads` and `forum_posts`; self_insert + self_update on `forum_user_profiles`; self_insert + self_update + self_delete on `forum_votes`). Audit's grep again missed the later RLS migration (same pattern as B-03 + iter-8 batch). Real residual gap from B-06 reduces to 2 tables: `listing_plans` and `quarterly_reports`. | 2026-04-26 |
 
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-26 19:50Z — iteration 21 (CI rescue follow-up — merge main into K branch)
+- PR #222's "Supabase types drift" check still FAILED after iter 20's main-side regen, because the K branch hadn't picked up main's new `database.types.ts`. Per the loop contract this is still a CI-RESCUE iteration on the same root-cause until green.
+- Merged `origin/main` into `claude/audit-remediation/k-security-hardening` (no conflicts; only the regen + several recent main-side merges came along — including new docs, runbooks, /grants pages, FK indexes migration, code-quality dashboard, etc., which all belong on main and don't disturb K-stream files).
+- Pushed merge commit `cafecd23` to PR #222. CI will re-run with current types and the drift check should pass.
+- No K-stream code change. No queue item completed this iteration.
+- Status: CI-RESCUE · stream=K · pr=#222 · merge-from-main · sha=`cafecd23`.
+
+### 2026-04-26 19:25Z — iteration 20 (CI rescue — Supabase types drift on main)
+- Phase 2 CI check found PR #222's "Supabase types drift" check FAILED. Drift was upstream of K-stream: `lib/database.types.ts` on main was stale relative to live DB. Recent observability work (PR #225 "cron dispatcher silent failures" + PR #231 "global-silence guard") added `details JSONB` and `service TEXT` columns to `health_pings` but didn't refresh the generated types file, so every PR opened against main since has been failing this check.
+- Iteration regenerated `lib/database.types.ts` via Supabase MCP `generate_typescript_types` against project `guggzyqceattncjwvgyc`. Diff is exactly the 6 expected entries (Row + Insert + Update each gain `details` and `service`). 13,154 lines unchanged elsewhere.
+- Committed direct to main (`6afdc34c`) — generated file, no review-able semantics, fixes ALL open PRs simultaneously rather than per-PR rebase pain.
+- Sandbox quirk: a parallel shell had switched the working tree to `claude/revenue-expansion-hubs` mid-iteration (uncommitted /grants pages from another session). Local-only; harmless to my push since `git push origin main` references the local `main` ref regardless of checked-out branch.
+- Status: CI-RESCUE · stream=upstream · pr=#222 (will pass on next rerun) · commit=`6afdc34c` on main.
+
+### 2026-04-26 18:58Z — iteration 19 (stream K, item K-07 — account-delete confirmation email + drift surfacing)
+- K-07 split into K-07 (this iteration — POST-success confirmation email) + K-07b (future — day-25 reminder cron). K-07b deferred because the underlying `account_deletion_requests` table doesn't exist in live (see new Blocked entry A-MISSING-TABLE-1) and a cron querying a non-existent table is dead code.
+- Commit `41b84e0b`: `app/api/account/delete/route.ts` — added inline `deletionConfirmationHtml(...)` builder + post-upsert call to `sendEmail`. Locale-formatted purge date in en-AU, cancel link to `/account/privacy`, phishing-victim escape hatch in the body. Best-effort send: Resend failure logs `warn` but does not roll back the deletion request (the row is already committed; rolling back would need a compensating delete with its own failure mode).
+- **Drift surfaced:** Live DB query confirmed `account_deletion_requests` doesn't exist in any schema. Migration file `20260427_wave_security_observability.sql:175` defines it with RLS + self-scoped policies but appears unapplied. New Blocked entry A-MISSING-TABLE-1 with 3-option decision matrix; recommendation = apply the migration block via Supabase MCP. Today this means the route's existing POST returns 500 every time anyone clicks "delete account" — the K-07 email path is forward-compatible code that activates the day the migration lands.
+- Verified callers: `account_deletion_requests` is referenced only in `app/api/account/delete/route.ts` (writer) + `app/account/privacy/page.tsx` (reader UI). No other code paths to coordinate with.
+- Phase 2 CI: PR #220 fully green (13 success / 10 skipped); PR #222 (with K-01..K-06a now green, 15 success / 10 skipped) fully green. No rescue.
+- Local gates: `tsc`/`eslint` OOM'd (Hardware exception). CI on PR #222 is authoritative. Pushed with `HUSKY=0`.
+- Status: PROGRESS · stream=K · item=K-07 · pr=#222.
+
+### 2026-04-26 18:26Z — iteration 18 (stream K, item K-06a — data-export monitor cron)
+- K-06 split into K-06a (this iteration — monitor) + K-06b (future — full processor). Original audit framing assumed `/api/cron/process-data-exports` existed and just needed reminder/completion bolt-ons; verification revealed the processor doesn't exist at all. K-06b is a 3-iteration build (cross-table archival, signed URL gen, user email) and was too big for this iteration's diff cap.
+- Commit `9d6b2609`: New cron `app/api/cron/data-export-monitor/route.ts` + 1-line addition to `lib/cron-groups.ts` (`daily-2` group, alongside `gdpr-retention-purge` — same compliance theme).
+- Behaviour: scans `data_export_requests` for `status='pending'` rows. Buckets by age (7+d → reminder email; 25+d → urgent email — within 5 days of the 30-day APP-12 / GDPR Art-15 legal deadline). Single consolidated email to `ADMIN_NOTIFICATION_EMAIL` (with two env-var fallbacks). Read-only on the table; non-blocking on Resend failure. Pre-launch zero-overhead.
+- **Mid-iteration recovery:** during this iteration the working directory was unexpectedly switched away from the K branch (likely by a parallel shell), wiping the in-progress route file and the cron-groups.ts edit before commit. Recovered by re-checking-out the K branch, re-creating the file, re-applying the edit, and committing immediately. Future iterations should commit any new files before doing further work to avoid this class of loss.
+- Verified callers: `data_export_requests` is written only by `app/api/account/export-data/route.ts`; read by the new monitor + the user's privacy page. No other callers or admin UIs to coordinate with.
+- Phase 2 CI: PR #220 fully green; PR #222 (K-01..K-05) fully green. Out-of-loop merges in this window: PR #229 (code-quality dashboard), PR #231 (cron global-silence guard — L-04 follow-up), PR #232 (Sprint 1 close-out doc). None affect this iteration's scope.
+- Local gates: `tsc`/`eslint` OOM'd (Hardware exception). CI on PR #222 is authoritative. Pushed with `HUSKY=0`.
+- Status: PROGRESS · stream=K · item=K-06a · pr=#222.
+
+### 2026-04-26 17:50Z — iteration 17 (queue housekeeping — reconcile out-of-loop Sprint 1 PRs)
+- Five PRs merged out-of-loop in the last ~30 min by a parallel "Sprint 1 P0" workflow (separate from this audit-remediation loop). Reconciling the queue so future iterations don't re-do completed work.
+- **L-04** → done: PR #225 ("fix(observability): cron dispatcher silent failures — restore cron_run_log"). The dispatcher (`app/api/cron/_dispatch/[group]/route.ts`) was catching exceptions before `wrapCronHandler` could log them, leaving `cron_run_log` blind to dispatcher-level failures. Fixed.
+- **O-02** → done: PR #230 ("chore(db): repo-parity migration for 4 missing FK indexes (already live)"). Indexes already existed in the live DB; this commits the corresponding migration file so source-of-truth and live state are aligned.
+- **M-01** → split into M-01a (done) + M-01b (pending). PR #227 ("feat(seo): site-wide default opengraph-image + twitter-image (P0-6)") covered the site-wide fallback OG card. The per-article `cover_image_url` backfill (the part that delivers the 30–50% social-share CTR uplift) is now M-01b and still pending.
+- Other Sprint-1 PRs not in the queue (additional findings outside this audit): #223 (revoke pg_graphql anon), #226 (sitemap status='published' filter), #228 (newsletter html_content sanitize). All merged. No queue changes needed for those — they were already either covered indirectly (K-13 ESLint rule will harden #228 long-term) or new findings beyond the audit scope.
+- Stream K PR #222 still has K-01..K-05 open and CI-green (14 success / 10 skipped). User has not merged yet.
+- Phase 2 CI: PR #220 fully green; PR #222 fully green. No rescue.
+- No code change this iteration. Pure queue reconciliation.
+- Status: PROGRESS (queue housekeeping) · stream=meta · items=L-04, O-02, M-01a (3 reconciliations).
+
+### 2026-04-26 17:23Z — iteration 16 (stream K, item K-05 — header dedup proxy.ts/next.config.ts)
+- Commit `a1d1d59b`: Two security headers (`X-Frame-Options`, `Permissions-Policy`) were defined with conflicting values in both `proxy.ts` and `next.config.ts:headers`. Browsers were combining/picking-most-restrictive silently, with two notable consequences: (a) `X-Frame-Options` was effectively `DENY` not `SAMEORIGIN` despite proxy.ts saying `SAMEORIGIN`; (b) `Permissions-Policy` `geolocation` was effectively `none` not `(self)`, silently disabling any property/postcode geolocation features.
+- Fix: `proxy.ts` is now the canonical source for both headers (DENY + geolocation=(self)). Conflicting copies removed from `next.config.ts`. The remaining duplicates (`X-Content-Type-Options`, `Referrer-Policy`, `X-DNS-Prefetch-Control`, HSTS) have identical values across both files and intentionally remain — `next.config.ts` covers static-asset paths (`/_next/static/*`, `/_next/image/*`, `/favicon.ico`) excluded from the proxy middleware matcher.
+- Behavioural deltas at the browser:
+  - `X-Frame-Options`: was `DENY` (browser picked most-restrictive), is `DENY` — no change.
+  - `Permissions-Policy` `geolocation`: was `()` none, is `(self)` — geolocation features re-enabled. Camera + microphone remain disabled.
+- Verified callers: `grep -rn "X-Frame-Options\|Permissions-Policy" --include="*.ts" --include="*.tsx" .` returned only the two definitions and no application code reading them. No tests assert on these headers.
+- Phase 2 CI: PR #220 fully green (13 success / 10 skipped); PR #222 (K-01..K-04) fully green (14 success / 10 skipped); PR #224 (separate Sprint-1 reconciliation) green. No rescue.
+- Local gates: `tsc`/`eslint` OOM'd (Hardware exception). CI on PR #222 is authoritative. Pushed with `HUSKY=0`.
+- Status: PROGRESS · stream=K · item=K-05 · pr=#222.
+
+### 2026-04-26 16:53Z — iteration 15 (stream K, item K-04 — CSP unsafe-inline removal)
+- Commit `7f1f734f`: `proxy.ts` dropped `'unsafe-inline'` from `script-src` directive. New shape: `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https:`.
+- Behavioural impact analysed: CSP3 browsers (Chrome 52+, Firefox 52+, Edge 79+, Safari 15.4+ — >95% of AU traffic) ignore `'unsafe-inline'` when `'strict-dynamic'` is present per spec, so it was already a no-op for the dominant cohort. CSP2 legacy browsers (Safari < 15.4, ~1–2%) continue to load externally-served HTTPS scripts via the `https:` host-source fallback; only truly inline `<script>…</script>` blocks WITHOUT a nonce are now blocked. Next.js 16 auto-nonces framework scripts via the existing `x-nonce` header propagation, and our own `<Script />` usages all carry an explicit nonce, so no expected breakage.
+- Updated the in-code comment block to capture the K-04 reasoning (browser cohort table, why `https:` stays, why style-src is untouched) so future maintainers don't re-add the directive.
+- style-src `'unsafe-inline'` intentionally untouched — Tailwind JIT and Next.js inline-style emission make removal a much larger refactor; documented as a known narrow-residual risk.
+- Added queue follow-up K-15 (CSP violation reporting endpoint + `report-to` directive). Without reporting, legacy-browser breakage from K-04 is only detectable via support tickets — that's acceptable for now (Vercel preview's "Preview smoke test" + Lighthouse CI exercise the critical paths on each push, catching same-browser breakage), but not enterprise-grade for prod.
+- Phase 2 CI: PR #220 fully green; PR #222 (K-01..K-03) fully green (14 success / 10 skipped).
+- Local gates: `tsc`/`eslint` OOM'd (Hardware exception). CI on PR #222 is authoritative; the "Lint · Type-check · Test · Build" job there exercises the full edge-middleware bundle and would catch any regression.
+- Status: PROGRESS · stream=K · item=K-04 · pr=#222.
+
+### 2026-04-26 16:21Z — iteration 14 (stream K, item K-03 — admin login exponential backoff)
+- Commit `6c9d99b9`: `app/api/admin/login/route.ts` replaced fixed 60s lockout window with exponential backoff curve (60s → 5min → 15min → 60min by attempt count). Past 60min the existing email-tier lockout in `lib/login-lockout.ts` (15min/1hr/24hr by email failure count) takes over.
+- Honest user behaviour byte-identical in count ≤5 path; `getBackoffWindowMs(count)` returns 60_000 for count ≤ MAX_ATTEMPTS, matching the prior `WINDOW_MS = 60_000` constant.
+- Backoff is monotonic — a fresh attempt within an already-extended 5min window never shortens the unlock clock; only extends if the new tier pushes reset further out.
+- No schema change — uses existing `admin_login_attempts.reset_at` timestamp column; we just write later values into it under sustained attack.
+- Verified callers: `grep -rn "/api/admin/login"` returned `app/admin/login/page.tsx` (sole caller, the admin login form) + 5 test files in `__tests__/api/`. Existing tests mock the rate-limit table and exercise the un-locked happy path; new exponential branch (count > 5) is exercised by CI's untouched-suite run rather than added tests this iteration — keeping diff cap.
+- Phase 2 CI: PR #220 fully green (13 success); PR #222 (with K-01 + K-02) fully green (14 success). No rescue.
+- Local gates: `tsc`/`eslint` OOM'd (Hardware exception). CI on PR #222 is authoritative. Pushed with `HUSKY=0`.
+- Status: PROGRESS · stream=K · item=K-03 · pr=#222.
+
+### 2026-04-26 15:51Z — iteration 13 (stream K, item K-02 — OTP layered rate limits)
+- Commit `bd2431fd`: `app/api/verify-otp/verify/route.ts` swapped single-tier rate limit (`10/5min IP`) for three layers: (1) per-IP burst `3/15min`, (2) per-IP cumulative `10/4hr` to catch slow distributed retry, (3) per-email `5/60min` — the critical layer because an attacker rotating IPs (botnet/residential proxies) against one target email would otherwise bypass per-IP entirely.
+- Math: 6-digit OTP has 1M combinations. Old cap (10/5min = 120/hr) → ~5.8 days exhaustion window. New per-email cap (5/60min × 1M) → ~22 years. Per-IP daily cap = 60.
+- Generic error messages so attackers can't infer which axis to rotate on (don't disclose email-bucket vs IP-bucket trip).
+- Verified callers: `grep -rn /api/verify-otp/verify` returned only `components/EmailVerification.tsx` (legitimate user flow with ≤2 expected attempts) + the route itself. New limits are well above honest-user behaviour.
+- No schema change — keys (`otp-verify-cumulative:*`, `otp-verify-email:*`) write to existing `rate_limits` table. `isRateLimited` fails open on DB error so misconfigured table doesn't break verify (matches existing behaviour).
+- Phase 2 CI: PR #220 fully green; PR #222 K-01 build still IN_PROGRESS at iteration start. Proceeded — IN_PROGRESS is not failure per the contract; if K-01 build flips red, Phase 2 of iter 14 will rescue both K-01 + K-02 atop.
+- Local gates: `tsc`/`eslint` OOM'd (Hardware exception). CI on PR #222 is authoritative. Pushed with `HUSKY=0`.
+- Status: PROGRESS · stream=K · item=K-02 · pr=#222.
+
+### 2026-04-26 15:42Z — iteration 12 (stream K, item K-01 — widget CORS defense-in-depth)
+- Scaffolded stream K branch `claude/audit-remediation/k-security-hardening` + draft PR #222.
+- Commit `d2295ee7`: `app/api/widget/route.ts` swapped `createAdminClient()` → `createStaticClient()` (anon-key, RLS-enforced); added explicit CORS contract header comment (no cookies, no Authorization, no service-role); added `Vary: Origin`, `Cross-Origin-Resource-Policy: cross-origin`, `Access-Control-Allow-Methods: GET, OPTIONS`; added OPTIONS pre-flight handler.
+- **Reframed from audit's "drop wildcard"** → "wildcard is intentional, fix the underlying data-leak vector." The widget is designed for cross-origin `<script>` embedding on broker affiliate pages and comparison blogs; restricting CORS would break the feature. Real risk was service-role-on-public-CORS combination — addressed.
+- Verified callers: in-repo `grep -rn "/api/widget"` returned only `components/AdminHelpPanel.tsx` (admin docs page, no runtime call) and the route itself. Third-party embeds via `<script src=…>` cannot be enumerated from this repo.
+- Verified RLS: `pg_policies` on `brokers` shows policy "Public read for active brokers" (CMD=SELECT, role=public, USING `status='active'`) — anon-key client gets the same row set the route already filters to.
+- Phase 2 CI rescue: PR #220 (stream B) was fully green pre-iteration (12 checks pass).
+- Local gates: file-targeted `tsc` and `eslint` both OOM'd on the 2-CPU/6.5GB sandbox (Hardware exception). CI on PR #222 is the authoritative gate. Pushed with `HUSKY=0`.
+- Status: PROGRESS · stream=K · item=K-01 · pr=#222.
+
+### 2026-04-26 16:30Z — iteration 11 (queue extension — streams J–S from 04-26 audit)
+- No code change. Pure queue + priority extension to wire the 04-26 comprehensive audit's 84 findings into the loop.
+- Added 10 new streams (J–S): J=Stripe webhook completeness · K=security hardening · L=observability · M=SEO · N=UI/UX · O=DB hardening · P=deps · Q=DR + SOC 2 · R=lib coverage · S=architecture artefacts. Total ~75 new queue items.
+- Updated `REMEDIATION_DEFAULTS.md` priority order (1 → 20) to interleave the new streams with the existing A–I streams.
+- Item-status convention: `needs-user` for items requiring founder action that the loop can't auto-execute (Sentry token provisioning, PITR drill, vendor DPA collection). The loop will surface these to Blocked when picked, with the question.
+- Audit source: `docs/audits/2026-04-26-comprehensive-audit.md` (commit `a9f4fa2e` on branch `claude/audit-2026-04-26`).
+- Status: PROGRESS (queue extension) · stream=meta · item=queue.
+
+### 2026-04-26 14:30Z — iteration 10 (stream B, batch FP resolution for 5 forum tables)
+- Applied iter-8 prior-policy verification gate to all 5 candidate forum tables. Each one is fully RLS-enabled in `supabase/migrations/20260427_wave_security_observability.sql` with rich `auth.uid()`-scoped policies:
+  - `forum_categories` — public_read.
+  - `forum_threads` — public_read, authenticated_insert, author_update, author_delete.
+  - `forum_posts` — public_read, authenticated_insert, author_update, author_delete.
+  - `forum_user_profiles` — public_read, self_insert, self_update.
+  - `forum_votes` — public_read, self_insert, self_update, self_delete.
+- Same audit-grep miss pattern as B-03 (sponsor_invoices) and the iter-8 batch (5 support/broker/ab_tests tables): the audit's grep checked the table-creating migration but missed the later RLS-fix migration.
+- No code change; queue housekeeping only. All 5 tables moved to FP table; B-06 reduced from 8 to 2 residual candidates (`listing_plans`, `quarterly_reports`).
+- Phase 2 CI rescue: PR #220 was fully green pre-iteration.
+- Status: PROGRESS (queue housekeeping) · stream=B · item=B-06 (5 FPs).
+
+### 2026-04-26 14:25Z — iteration 9 (stream B, B-06 first table — `listing_enquiries`)
+- First iteration to apply the iter-8 prior-policy verification gate. `grep -nE "(POLICY.*listing_enquiries|listing_enquiries.*POLICY|TABLE.*listing_enquiries.*ENABLE)" supabase/migrations/*.sql` returned nothing → clean policy ground.
+- Migration `supabase/migrations/20260601_rls_listing_enquiries.sql`:
+  - `ENABLE ROW LEVEL SECURITY` + `FORCE ROW LEVEL SECURITY`.
+  - `service_role` explicit ALL policy (auditability).
+  - `anon` SELECT: unconstrained (preserves /api/listings/my-listings flow). KNOWN PII enumeration vector at the application layer — tracked as B-09.
+  - `anon` INSERT: `WITH CHECK (status='new' AND listing_id IS NOT NULL AND user_email IS NOT NULL AND user_name IS NOT NULL)` — defence-in-depth mirror of /api/listings/enquire's app-layer validation.
+  - UPDATE / DELETE: no policy → denied by default. No anon caller exists for either.
+- Verified 3 callers via grep: `/api/listings/enquire` (anon INSERT), `/api/listings/my-listings` (anon SELECT), `/api/listings/[id]` (admin SELECT count via service-role).
+- Same option-2 pattern as B-04. Long-term cleanup tracked as new queue item B-09 (refactor my-listings + tighten policy).
+- Phase 2 CI rescue: PR #220 was fully green pre-iteration.
+- Local gates: SQL-only iteration, no `.ts` changed → tsc/lint/test skipped per Hardware exception. Pushed with `HUSKY=0`.
+- Status: PROGRESS · stream=B · item=B-06.1 (`listing_enquiries`) · pr=#220.
 
 ### 2026-04-26 14:20Z — iteration 8 (stream B, B-05 correction + spec hardening)
 - **B-05 correction** (commit `24898931` on stream B): the original B-05 commit (`5904db8a`) claimed deny-all-anon on `listing_claims` but its DROP IF EXISTS list missed the legacy `"Anon can submit claims"` policy from `20260510_rls_hardening.sql:206`. RLS policies stack additively, so that policy survived and would have continued to allow anon+authenticated INSERT through PostgREST. The corrected migration explicitly drops both legacy policies (`"Anon can submit claims"` + `"Service role full access listing_claims"`) by exact name, documents the prior state in an `IMPORTANT — prior policy state:` header block, and updates the rollback header to restore the legacy policies (and explicitly NOT `DISABLE ROW LEVEL SECURITY` since 20260510 originally enabled it).

@@ -1,0 +1,87 @@
+name: code-quality (weekly)
+
+# Sundays at 23:00 UTC (Monday 09:00 / 10:00 AEST depending on DST).
+# Collects all 12 metrics from .quality-targets.yml, writes the snapshot
+# to docs/audits/metrics-history/<date>.json + metrics-latest.json,
+# and opens a PR with the diff so the founder sees deltas in review.
+#
+# Manual triggering:
+#   gh workflow run code-quality.yml
+#
+# Source: 2026-04-26 audit dashboard parallel workstream.
+
+on:
+  schedule:
+    - cron: "0 23 * * 0"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install
+        run: npm ci
+
+      - name: Install collector deps
+        run: npm install --no-save tsx js-yaml @supabase/supabase-js
+
+      - name: Run vitest with coverage (best-effort)
+        run: npm run test:coverage -- --reporter=dot
+        continue-on-error: true
+
+      - name: Lighthouse top-5 mobile (best-effort)
+        id: lh
+        continue-on-error: true
+        run: |
+          # Stub for the first iteration. Replace with a real Lighthouse
+          # run against the Vercel preview URL once that pipeline is in
+          # place. For now, emit baseline so the dashboard renders.
+          echo "lighthouse=[0,0,0,0,0]" >> "$GITHUB_OUTPUT"
+
+      - name: Collect metrics
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          LIGHTHOUSE_TOP5: ${{ steps.lh.outputs.lighthouse }}
+          GITHUB_SHA: ${{ github.sha }}
+        run: npx tsx scripts/collect-quality-metrics.ts > /tmp/snapshot.json
+
+      - name: Show grade
+        run: |
+          GRADE=$(node -e "console.log(require('/tmp/snapshot.json').grade)")
+          SCORE=$(node -e "console.log(require('/tmp/snapshot.json').weighted_score.toFixed(3))")
+          echo "## Quality grade: \`$GRADE\` (weighted $SCORE)" >> "$GITHUB_STEP_SUMMARY"
+          jq -r '.metrics[] | "- \(.id) — current=\(.current) target=\(.target) score=\(.score | tonumber * 100 | floor)%"' /tmp/snapshot.json >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Open PR if metrics changed
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: chore/quality-metrics-${{ github.run_id }}
+          base: main
+          title: "chore(metrics): weekly quality snapshot"
+          commit-message: "chore(metrics): weekly quality snapshot — $(date -u +%Y-%m-%d)"
+          body: |
+            Weekly metrics snapshot from `.github/workflows/code-quality.yml`.
+
+            See `docs/audits/metrics-latest.json` for the full numbers and
+            `docs/audits/metrics-history/` for the trend line.
+
+            Auto-generated; merge or close if no review wanted.
+          add-paths: |
+            docs/audits/metrics-history/
+            docs/audits/metrics-latest.json

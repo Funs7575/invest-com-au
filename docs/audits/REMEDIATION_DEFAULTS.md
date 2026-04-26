@@ -38,7 +38,7 @@ Per-stream verification floor before any commit:
 
 ## Per-iteration discipline
 
-- **Diff cap:** ≤ ~500 LOC per iteration (excluding generated files / pure data). Larger work splits across iterations.
+- **Diff cap:** ≤ ~800 LOC per iteration (excluding generated files / pure data). Bumped from 500 → 800 on 2026-04-26 after iter 22 review — most cleanly-bounded refactors (handler-registry splits, test-file additions, runbook authoring) fit in 600–800 lines and forcing a split adds ceremony without quality gain. Larger work still splits across iterations.
 - **Always run before commit:**
   ```bash
   # If any .ts/.tsx changed, type-check just those files:
@@ -64,34 +64,98 @@ The loop runs on a 2-CPU / 6.5GB / no-swap sandbox. `npx tsc --noEmit` over the 
 
 The exception is hardware-scoped, not policy-scoped: if the loop is moved to a host that can run `tsc` cleanly (≥4 CPU, ≥8GB or with swap), revert this section and re-enable the local gates.
 
+**Cloud-mode probe:** in cloud schedule mode, the sandbox is generally bigger than the constrained 6.5GB local one. The first iteration in cloud should attempt `npx tsc --noEmit` with a 90s timeout — if it completes, drop the Hardware exception for cloud iterations and run full local validation. If it OOMs / times out, keep the exception and lean on CI as before. This is checked once per cloud session at the start of Phase 5, not every iteration.
+
+## Cloud schedule mode (added 2026-04-26 after iter 21)
+
+The loop runs in two modes, with different infrastructure but the same iteration contract.
+
+| | Local `/loop` (sessions) | Cloud `/schedule` (recurring cron) |
+|---|---|---|
+| Trigger | `ScheduleWakeup` between iterations | Cron expression (e.g. `0,30 * * * *`) |
+| Working tree | Persistent — same checkout, can be contaminated by parallel sessions | Fresh `git clone` each fire — always clean |
+| Lock file | `.git/audit-remediation.lock` (process-level) | Not needed — cron infrastructure serialises fires |
+| Cadence | Self-paced (1200–1800 s typical) | Fixed (cron pattern) |
+| Survives terminal close | ❌ no | ✅ yes |
+| Auto-expiry | None | 7 days (default) |
+
+**Things to verify when running in cloud mode:**
+
+1. **`HUSKY=0` must be in the cloud schedule's env** — the pre-push hook re-runs whole-codebase `tsc` and OOMs identically to the local sandbox. (Set in the `/schedule` invocation or globally.)
+2. **MCP servers** — at least Supabase MCP is needed (iter 19/20 used `generate_typescript_types` to fix a drift CI failure; iter 21 used the same to verify table existence). If MCPs are missing in the cloud env, those iterations would surface as Blocked instead of forward progress.
+3. **`gh` CLI auth** — must be configured for the GitHub user who can write to PRs. Used for `gh pr create`, `gh pr checks`, `gh api -X PATCH`.
+4. **Lock-file race** — concurrent local + cloud fires CAN conflict (each thinks it has the lock since the file lives in different `.git/` trees). When swapping in cloud mode, **stop the local `/loop`** (omit the next `ScheduleWakeup` call) to avoid overlap. The schedule's cron pattern alone serialises subsequent runs.
+5. **`STATUS: ALL-BLOCKED`** — if the queue runs out of unblocked work, each cron fire performs Phase 1+2+3 then exits cheaply (~10 s). Cancel the cron via `/schedule list` + `/schedule delete <id>` to stop the wasted fires.
+6. **Stop signal** — when an iteration prints `STATUS: COMPLETE`, it writes a `LOOP_DONE` sentinel file at the repo root before exiting. The founder can monitor for this file's presence (or set up a GitHub Action that disables the cron when it lands) to auto-stop the schedule. Re-arm by deleting `LOOP_DONE` and re-enabling.
+
+### Parallel cloud routines (added 2026-04-26 after iter 22)
+
+Two cloud routines run concurrently with offset cron:
+
+- `audit-remediation-loop` — fires at `0 * * * *` (top of hour)
+- `audit-remediation-loop-half` — fires at `30 * * * *` (half past)
+
+Effective cadence: 30 min, doubling overnight throughput (~16 iterations/8h vs ~8). Both routines share the same queue (`docs/audits/REMEDIATION_QUEUE.md` on main) but each fire is a fresh `git clone` so there's no in-process lock contention.
+
+**Race safety:** the only contention point is when both fires happen to pick the SAME pending item between Phase 1 (sync queue) and Phase 7 (push queue update). This is bounded by:
+- Phase 7's `git push origin main` is rejected as non-fast-forward if the other fire pushed first → the second iteration's queue update simply re-tries on its next fire.
+- Phase 6's `git push origin <stream-branch>` similarly retries.
+- Worst case: ~5% of fires are wasted because both raced on the same item. No data corruption.
+
+If an auto-merge GitHub Action is set up (see `.github/workflows/audit-remediation-auto-merge-main.yml`), main-side merges automatically rebase into stream branches, removing the iter-21 class of CI rescue.
+
 ## Streams
 
-| Letter | Branch | Title | Tracks issue |
+| Letter | Branch | Title | Source |
 | --- | --- | --- | --- |
-| A | `claude/audit-remediation/a-drift-backfill` | DB schema drift backfill (231 tables) | #214 |
-| B | `claude/audit-remediation/b-rls-remediation` | RLS on 11 migrations | #215 |
-| C | `claude/audit-remediation/c-admin-scope-reset` | `admin.ts` scope reset | #216 |
-| D | `claude/audit-remediation/d-route-tests` | API route tests (critical 9 + backfill) | #217 |
-| E | `claude/audit-remediation/e-zod-rollout` | Zod validation rollout | #218 |
-| F | `claude/audit-remediation/f-hygiene` | Dead code, duplicate consolidation, SSOT | (no P0 issue; report §1 + §2) |
-| G | `claude/audit-remediation/g-migration-hygiene` | Idempotency + rollback headers | (report §5.2 + §5.4) |
-| H | `claude/audit-remediation/h-file-splits` | Files >1000 LOC | (report §3.2) |
-| I | `claude/audit-remediation/i-guardrails` | ESLint + CI guards (re-drift, RLS, admin.ts imports) | cross-cutting |
+| A | `claude/audit-remediation/a-drift-backfill` | DB schema drift backfill (231 tables) | 04-24 audit · issue #214 |
+| B | `claude/audit-remediation/b-rls-remediation` | RLS on 11 migrations | 04-24 audit · issue #215 |
+| C | `claude/audit-remediation/c-admin-scope-reset` | `admin.ts` scope reset | 04-24 audit · issue #216 |
+| D | `claude/audit-remediation/d-route-tests` | API route tests (critical 9 + backfill) | 04-24 audit · issue #217 |
+| E | `claude/audit-remediation/e-zod-rollout` | Zod validation rollout | 04-24 audit · issue #218 |
+| F | `claude/audit-remediation/f-hygiene` | Dead code, duplicate consolidation, SSOT | 04-24 audit §1+§2 |
+| G | `claude/audit-remediation/g-migration-hygiene` | Idempotency + rollback headers | 04-24 audit §5.2+§5.4 |
+| H | `claude/audit-remediation/h-file-splits` | Files >1000 LOC | 04-24 audit §3.2 |
+| I | `claude/audit-remediation/i-guardrails` | ESLint + CI guards | 04-24 audit cross-cutting |
+| J | `claude/audit-remediation/j-stripe-webhook` | Stripe webhook completeness + handler split | 04-26 audit §5+§11 · issue #221 |
+| K | `claude/audit-remediation/k-security-hardening` | Security P0/P1/P2 (CORS, OTP, CSP, audit log) | 04-26 audit §7 · issue #221 |
+| L | `claude/audit-remediation/l-observability` | Sentry/PostHog/SLO/n8n env-vars | 04-26 audit §9+§10 · issue #221 |
+| M | `claude/audit-remediation/m-seo` | Cover images, versus schema, FinancialService | 04-26 audit §8 · issue #221 |
+| N | `claude/audit-remediation/n-ux-perf` | Hero LCP, blur placeholders, a11y, advisor-portal split | 04-26 audit §6 · issue #221 |
+| O | `claude/audit-remediation/o-db-hardening` | RLS-no-policy triage, FK indexes, search_path | 04-26 audit §4 · issue #221 |
+| P | `claude/audit-remediation/p-deps` | Sentry v10, Stripe SDK v22, audit clean | 04-26 audit §3 · issue #221 |
+| Q | `claude/audit-remediation/q-dr-soc2` | PITR drill, account-recovery runbooks, DPAs | 04-26 audit §12 · issue #221 |
+| R | `claude/audit-remediation/r-lib-coverage` | Marketplace, dispute-resolver, cached-data tests | 04-26 audit §2.3 · issue #221 |
+| S | `claude/audit-remediation/s-architecture` | Diagrams, OpenAPI, missing runbooks | 04-26 audit §12 · issue #221 |
 
 ## Priority order
 
-When choosing the next item, walk in this order and pick the first non-blocked one:
+When choosing the next item, walk in this order and pick the first non-blocked one. The loop interleaves 04-24 streams (A–I) with 04-26 streams (J–S) so that compliance/security/revenue gates land first, with cosmetic and architecture work later.
 
-1. **B (critical 2)** — `email_otps` and `leads` RLS — compliance gate.
-2. **D (critical 9)** — lead-capture + Stripe + signout integration tests — revenue gate.
-3. **B (other 9)** — remaining RLS migrations.
-4. **C** — `admin.ts` scope reset (mechanical refactors first; surface ambiguous to Blocked).
-5. **A** — drift backfill (4–5 tables per iteration).
-6. **E** — Zod rollout (top-20 first, then backfill).
-7. **G** — migration hygiene.
-8. **I** — guardrails (best after A/B/C land so the rules don't break in-flight work).
-9. **F** — hygiene cleanup.
-10. **H** — file splits (last; needs tests in place to be safe).
+**2026-04-26 reorder note:** N (P0 UI/UX) moved up to step 3 (was step 7). Reasons: (a) founder explicitly asked for visible work after observing the first 22 iterations were all backend; (b) stream K is mid-flight on PR #222 with 7 commits, so finishing K then jumping to N gives one clean review-able PR followed by visible morning wins; (c) D/J/L items are largely test/integration work that can run while founder is awake to consult on edge cases.
+
+1. **B (critical 2)** — `email_otps` and `leads` RLS — compliance gate. _(Done; B-06 in flight.)_
+2. **K (P0 security)** — widget CORS, audit-log sweep, OTP rate-limit, CSP fallback removal — security gate.
+3. **N (P0 UI/UX)** — homepage hero priority + blur, advisor-portal client-bundle split, a11y skip-link, hero LCP, mobile responsiveness.
+4. **D (critical 9)** — lead-capture + Stripe + signout integration tests — revenue gate.
+5. **J (P0/P1 Stripe webhook)** — handler-registry split + 9 missing event handlers + featured_plans cleanup — revenue gate.
+6. **L (observability)** — n8n env-vars, SLO seed + alert sink, PostHog funnel completion, cron silence diagnosis.
+7. **M (P0 SEO)** — article cover-image backfill, versus schema, advisor FinancialService, domain-migration prep.
+8. **B (other)** — remaining RLS migrations (`listing_plans`, `quarterly_reports`).
+9. **C** — `admin.ts` scope reset (mechanical refactors; surface ambiguous to Blocked).
+10. **A** — drift backfill (4–5 tables per iteration).
+11. **O (DB hardening)** — 56 RLS-no-policy triage, FK indexes, search_path safety.
+12. **P (deps)** — Sentry v10, Stripe SDK v22.
+13. **R (lib coverage)** — marketplace allocation + auto-bid + dispute-resolver tests (P0 lib coverage).
+14. **E** — Zod rollout (top-20 first).
+15. **Q (DR + SOC 2)** — runbooks, vendor DPAs, secret-rotation log, GDPR disclosure page.
+16. **G** — migration hygiene.
+17. **I** — guardrails (after A/B/C land so the rules don't break in-flight work).
+18. **F** — hygiene cleanup.
+19. **S (architecture artefacts)** — diagrams, OpenAPI, ADRs.
+20. **H** — file splits (last; needs tests in place to be safe). Note: H-01 (stripe webhook split) is subsumed by J-01; H-03 (advisor-portal split) is subsumed by N-03.
+
+`needs-user` items in any stream surface to Blocked when picked. The loop notes the question and continues to the next non-blocked item.
 
 ## Concurrency + locking
 
