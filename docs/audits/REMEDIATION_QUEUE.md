@@ -34,7 +34,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | H | _not started_ | — | — | — |
 | I | _not started_ | — | — | — |
 | J | _not started_ | — | — | — |
-| K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-26T22:56Z | K-01..K-07b done; K-08 in-progress (batch 2/N: 11 routes done — automation x4 + pricing + BD-pipeline); K-09..K-15 pending |
+| K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-26T23:40Z | K-01..K-07b done; K-08 in-progress (batch 3/N: 19 routes done — batch1 x5 + batch2 x6 + batch3 x8); K-09..K-15 pending |
 | L | _not started_ | — | — | — |
 | M | _not started_ | — | — | — |
 | N | _not started_ | — | — | — |
@@ -230,7 +230,7 @@ P0/P1/P2 findings from the security agent's deep scan. Each is small (<2h); clus
 | K-06b | done | Full data-export processor cron — JSON archive, signed URL, email user | 1 | Done in commit `c0ca676` (PR #222). Gathers 13 user_id-linked tables + 2 email-linked tables; uploads to private `data-exports` Supabase Storage bucket; 7-day signed URL; emails user; CAS-style claim prevents double-processing. PREREQUISITE: founder must create private Storage bucket `data-exports`. Forward-compatible with unapplied migration (same pattern as K-06a). |
 | K-07 | done | `/api/account/delete` — confirmation email on schedule | 1 | Done in commit `41b84e0b` (PR #222). After the existing upsert succeeds, fires a transactional email to `user.email` with locale-formatted purge date (`Saturday, 26 May 2026`), cancel link to `/account/privacy`, and the "if you didn't request this" escape hatch for phishing victims. Best-effort — Resend failure logs `warn` but doesn't roll back the deletion request. **Known live drift:** the `account_deletion_requests` table doesn't exist in any live schema (migration `20260427_wave_security_observability.sql:175` defines it but appears unapplied) — so the route's POST returns 500 today and the email path is forward-compatible code that activates the day the migration lands. Surfaced to Blocked. |
 | K-07b | done | Day-25 grace-period reminder cron | 1 | Done in commit `64f40d9` (PR #222). New cron `/api/cron/account-deletion-reminder` registered in `daily-2` group. Scans `status='scheduled' AND reminder_sent_at IS NULL AND scheduled_purge_at <= NOW()+5d`; sends final-warning email; stamps `reminder_sent_at` on success (idempotent — no double-send). Migration `20260523_account_deletion_requests_reminder.sql` adds `reminder_sent_at TIMESTAMPTZ` column + partial index. Forward-compatible: catches Postgres 42P01 ("relation does not exist") and exits gracefully until A-MISSING-TABLE-1 is applied to live. |
-| K-08 | in-progress | Sweep `/api/admin/*` PATCH/POST/DELETE routes: ensure each writes to `admin_audit_log` | ~2 | P1. SOC 2 / ASIC audit-trail gap. ~40 routes with mutating methods; 1 already had it (`ai-chat`). Batch 1 done (iter 24, commit `bb8a677`): `advisor-applications` (approve + reject paths), `advisor-moderation` (bulk approve/suspend), `advisor-kyc` (verify + reject), `review-moderation` (approve/reject/flag), `feature-flags` (PATCH). Batch 2 done (iter 25, commit `97f8ef2`): `automation/override` (lead dispute reversals + credit balance mutations), `automation/bulk` (bulk moderation), `automation/trigger` (manual cron fire), `automation/kill-switch` (automation disable/enable), `notify-price-change` (advisor pricing email), `bd-pipeline` (POST create/update + DELETE). ~29 routes remaining. |
+| K-08 | in-progress | Sweep `/api/admin/*` PATCH/POST/DELETE routes: ensure each writes to `admin_audit_log` | ~1 | P1. SOC 2 / ASIC audit-trail gap. ~40 routes with mutating methods; 1 already had it (`ai-chat`). Batch 1 done (iter 24, commit `bb8a677`): `advisor-applications`, `advisor-moderation`, `advisor-kyc`, `review-moderation`, `feature-flags`. Batch 2 done (iter 25, commit `97f8ef2`): `automation/override`, `automation/bulk`, `automation/trigger`, `automation/kill-switch`, `notify-price-change`, `bd-pipeline`. Batch 3 done (iter 26, commit `f820830`): `fee-queue`, `competitors`, `regulatory-impacts`, `cohort/refresh`, `content/batch-generate`, `tmds`, `foreign-investment/update`, `foreign-investment/verify`. ~10 session-auth routes remaining (article-comments, article-preview-tokens, article-scorecard, articles-editor/save, commodity-hubs, commodity-news-briefs, content/generate-draft, fin-objection/[id], financial-periods, sponsored-placements); ~5 system-bearer routes (no admin identity — skip). |
 | K-09 | pending | `/api/seed/route.ts` — gate behind `NODE_ENV !== 'production'` + admin auth | 1 | P1. Shouldn't exist in prod at all. |
 | K-10 | pending | `/api/newsletter/subscribe/route.ts` — `source` field allowlist enum | 1 | P2. Analytics poisoning vector. |
 | K-11 | pending | `admin_login_attempts` table — add `UNIQUE(ip_hash)` constraint to prevent rate-limit bypass under concurrency | 1 | P2. |
@@ -442,6 +442,24 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-26 23:40Z — iteration 26 (stream K, item K-08 batch 3 — fee-queue + competitors + regulatory-impacts + cohort + content + tmds + fi routes)
+
+- Phase 1.5: Types drift check — skipped (Supabase MCP regen is a heavy call; no schema changes in this window). No regen needed.
+- Phase 2 CI rescue: PR #220 green (success+skipped); PR #222 green (success+skipped). No rescue.
+- K-08 batch 3 scope — 8 routes, commit `f820830`, +94/-0 lines:
+  - `fee-queue POST`: approve/reject broker fee changes. Local `requireAdmin()` returns `user` (has `user.email`). Two action strings: `fee_queue:approved` (with broker_id, field_name, new_value) + `fee_queue:rejected`. Insert after the `fee_update_queue.update()` call so it fires only on successful state transition.
+  - `competitors POST/DELETE`: competitor_watch entry create/remove. Local `requireAdmin()`. `competitor_watch:created` (with competitor, event_type) + `competitor_watch:deleted`.
+  - `regulatory-impacts POST/DELETE`: broker impact assessment upsert/remove. Inline session auth via `createClient()` + `ADMIN_EMAILS`. `admin` var already defined. `regulatory_impact:upserted` (alert_id, broker_slug, impact_level) + `regulatory_impact:deleted`.
+  - `cohort/refresh POST`: enqueue refresh_cohort_metrics job. Uses `requireAdmin()` from `@/lib/require-admin` (has `guard.email`). Added `createAdminClient` import. `cohort:refresh_queued` with job_id.
+  - `content/batch-generate POST`: enqueue batch article draft jobs. Uses `requireAdmin()`. `admin` client already in scope. `content:batch_generate_queued` (calendar_ids, queued count, total_requested).
+  - `tmds POST`: upsert Target Market Determination record. Uses `requireAdmin()`. Added `createAdminClient` import. `tmd:upserted` (product_type, product_ref, tmd_version).
+  - `foreign-investment/update POST`: already writes `fi_change_log` (domain-specific trail); added `admin_audit_log` alongside for SOC 2 general trail. `fi_data:updated` (table, category_key, fields_updated list).
+  - `foreign-investment/verify POST`: same dual-log pattern. `fi_data:verified` (category_key, note).
+- Skipped routes with system bearer auth (CRON_SECRET or INTERNAL_API_KEY — no admin user identity available): `content/calendar`, `foreign-investment/revalidate`, `foreign-investment/seed`, `revalidate`, `run-migration`. These are invoked by automation, not human admins — logging as "system" would add noise without accountability signal.
+- Local gates: file-targeted `tsc --noEmit` — only TS5112 (known sandbox informational; Hardware exception applies). No real errors. `eslint` OOMs (missing eslint-config-next in sandbox). CI on PR #222 is authoritative.
+- Remaining K-08 scope: ~10 session-auth routes (article-comments, article-preview-tokens, article-scorecard, articles-editor/save, commodity-hubs, commodity-news-briefs, content/generate-draft, fin-objection/[id], financial-periods, sponsored-placements).
+- Status: PROGRESS · stream=K · item=K-08 (batch 3) · pr=#222 · commit=`f820830`
 
 ### 2026-04-26 22:56Z — iteration 25 (stream K, item K-08 batch 2 — automation + pricing + BD-pipeline audit-log)
 
