@@ -25,7 +25,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | Stream | Branch | PR | Last CI | Items in flight |
 | --- | --- | --- | --- | --- |
 | A | _not started_ | — | — | — |
-| B | `claude/audit-remediation/b-rls-remediation` | #220 | pending — pushed 2026-04-26T14:00Z | B-03 next |
+| B | `claude/audit-remediation/b-rls-remediation` | #220 | pending — pushed 2026-04-26T14:00Z | B-04 next (B-03 was FP) |
 | C | _not started_ | — | — | — |
 | D | _not started_ | — | — | — |
 | E | _not started_ | — | — | — |
@@ -52,7 +52,7 @@ Highest priority: critical 2 first.
 | --- | --- | --- | --- | --- |
 | B-01 | done | RLS on `email_otps` (`supabase/migrations/20260316_email_otps.sql`) | 1 | Done in commit `79bfd291` (PR #220). Deny-all default; service-role explicit allow. |
 | B-02 | done | RLS on `leads` (`supabase/migrations/20260316_create_leads_table.sql`) | 1 | Done in commit `5888c25b` (PR #220). Deny-all default; service-role explicit allow. PII enumeration vector closed. |
-| B-03 | pending | RLS on `sponsor_invoices` | 1 | Owner = sponsor user; default per `REMEDIATION_DEFAULTS.md` §4. |
+| B-03 | false-positive | ~~RLS on `sponsor_invoices`~~ | — | **Already enabled** by `supabase/migrations/20260321_pre_launch_rls_fixes.sql` (RLS on + deny-all policy). See "Resolved as false positives" below. |
 | B-04 | pending | RLS on `investment_listings` | 1 | Public-read likely intended; verify. |
 | B-05 | pending | RLS on `listing_claims` | 1 | Owner = claimant. |
 | B-06 | pending | RLS on remaining 6 medium-risk tables (one iteration each) | 6 | Enumerate from `grep -L "ENABLE ROW LEVEL SECURITY" supabase/migrations/*.sql` minus the 5 above. |
@@ -167,10 +167,17 @@ Only run after stream D has covered the file with tests; otherwise risk silent r
 | ID | Original claim | Why it's a FP | Verified |
 | --- | --- | --- | --- |
 | F-01 | "`RouteErrorBoundary` + `RouteLoadingSkeleton` are unimported" | Re-exported by 14 `app/*/loading.tsx` + `app/*/error.tsx` files via `export { default } from "@/components/Route*"` syntax — audit's grep didn't catch re-exports. | 2026-04-26 |
+| B-03 | "`sponsor_invoices` is missing RLS" | RLS was added in `supabase/migrations/20260321_pre_launch_rls_fixes.sql` (`ALTER TABLE … ENABLE ROW LEVEL SECURITY` + a deny-all `USING (false)` policy). Service-role bypasses RLS regardless, so the existing policy is functionally a deny-all default. Audit's grep likely only checked `004_sponsor_invoices.sql` and missed the later fix migration. (Note: the policy name is misleading — it says "Service role full access" but the body is `USING (false)`. A future hardening iteration could rename + add explicit `TO service_role` clause + `FORCE ROW LEVEL SECURITY`. Tracked separately if needed; not blocking.) | 2026-04-26 |
 
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-26 14:08Z — iteration 4 (stream B, item B-03 — false positive)
+- Verified `sponsor_invoices` already has RLS enabled via `supabase/migrations/20260321_pre_launch_rls_fixes.sql` (the audit's grep likely only inspected the original `004_sponsor_invoices.sql`, missing the later RLS-fix migration — same pattern as F-01).
+- No code change; queue housekeeping only. B-03 moved to false-positive table with hardening note for a future optional pass (rename misleading policy + add `FORCE ROW LEVEL SECURITY` + explicit `TO service_role`).
+- Phase-2 CI rescue: PR #220 CI clean (no failures).
+- Status: PROGRESS · stream=B · item=B-03 (resolved as FP).
 
 ### 2026-04-26 14:00Z — iteration 3 (stream B, item B-02)
 - Migration `supabase/migrations/20260601_rls_leads.sql`: `ENABLE ROW LEVEL SECURITY` + `FORCE ROW LEVEL SECURITY` + service-role explicit-allow on `leads`. Idempotent, rollback header.
