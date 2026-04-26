@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME, ORGANIZATION_JSONLD } from "@/lib/seo";
+import { sanitizeHtml } from "@/lib/sanitize-html";
 
 export const revalidate = 86400;
 
@@ -176,11 +177,23 @@ export default async function NewsletterEditionPage({
           </div>
         </div>
 
-        {/* Rendered HTML content */}
+        {/* Rendered HTML content.
+            Sanitised via lib/sanitize-html.ts before render. The newsletter
+            html_content column is admin-authored today, but defence-in-depth
+            matters here for two reasons:
+              1. A compromised admin account becomes stored XSS hitting every
+                 newsletter reader (large blast radius — full email list).
+              2. Future advertiser-submission features (sponsored newsletter
+                 sections) will write to the same column.
+            P0-2 in docs/audits/2026-04-26-comprehensive-audit.md §7.7.
+            Follow-up F-7.7.3 (queue K-stream) replaces the regex
+            sanitiser with isomorphic-dompurify for stronger guarantees. */}
         <div className="border border-slate-200 rounded-2xl bg-white overflow-hidden shadow-sm">
           <div
             className="newsletter-html-content"
-            dangerouslySetInnerHTML={{ __html: editionData.html_content }}
+            dangerouslySetInnerHTML={{
+              __html: sanitizeHtml(editionData.html_content),
+            }}
           />
         </div>
 
