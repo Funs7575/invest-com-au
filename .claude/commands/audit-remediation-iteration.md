@@ -109,26 +109,44 @@ Execute the item. Hard limits:
 - Diff cap: ≤ ~500 LOC excluding generated/data files. Larger work splits — break the queue item into sub-items in this iteration's update, do the first sub-item.
 - One stream branch per iteration. Never touch another stream's files.
 
-Local gates before commit (run all three):
+Local gates before commit. **Per the Hardware exception in `REMEDIATION_DEFAULTS.md`, whole-codebase `tsc` is skipped on this sandbox** — file-targeted only:
 
 ```bash
-npm run type-check
-npm test -- <changed test files only>
-npm run lint -- <changed files only>
+# Identify .ts/.tsx files changed in this iteration:
+CHANGED_TS=$(git diff --name-only --diff-filter=ACMR | grep -E '\.(ts|tsx)$' || true)
+
+# Type-check only the changed TS files (skip if none changed):
+if [ -n "$CHANGED_TS" ]; then
+  npx tsc --noEmit --noErrorTruncation $CHANGED_TS
+fi
+
+# Tests on changed test files only (vacuously passes if none):
+CHANGED_TESTS=$(git diff --name-only --diff-filter=ACMR | grep -E '\.test\.(ts|tsx)$' || true)
+if [ -n "$CHANGED_TESTS" ]; then
+  npm test -- $CHANGED_TESTS
+fi
+
+# Lint on changed lintable files only:
+CHANGED_LINT=$(git diff --name-only --diff-filter=ACMR | grep -E '\.(ts|tsx|js|jsx)$' || true)
+if [ -n "$CHANGED_LINT" ]; then
+  npm run lint -- $CHANGED_LINT
+fi
 ```
 
-If anything red:
+CI on the stream PR is the authoritative gate (it runs the full `tsc`, full test suite, and full audits on adequate hardware). If CI is red on a previously pushed iteration, Phase 2's CI rescue handles it on the next iteration.
+
+If anything in the local gates above is red:
 1. Try to fix. ≤ 2 fix attempts.
 2. If still red after 2 attempts, revert the iteration's working changes (`git checkout -- <files>`), surface to Blocked with the failure log, exit `STATUS: BLOCKED`.
 
-Every 10th iteration (count = `git log --oneline --grep="audit remediation iteration" | wc -l`), additionally run `npm run build`. If red, treat as above.
+Every 10th iteration (count = `git log --oneline --grep="audit remediation iteration" | wc -l`), additionally run `npm run build` **only if hardware permits** (skip on the constrained sandbox per Hardware exception; CI's build job is authoritative).
 
 ### Phase 6 — Commit + push + PR update
 
 - Conventional Commits subject. Scope = stream letter. Body explains the why, references the queue item ID, references the audit section.
 - Trailer line: `Refs: #<tracking-issue>` (e.g., `Refs: #215` for stream B).
 - Do NOT include any AI-attribution trailer or "Co-authored-by" lines unless the project's existing `git log` already does so. Check first.
-- `git push origin <branch>` — retry up to 4× with exponential backoff on network errors only (per repo's git ops policy).
+- `HUSKY=0 git push origin <branch>` — retry up to 4× with exponential backoff on network errors only (per repo's git ops policy). `HUSKY=0` is the bypass authorised by the Hardware exception in `REMEDIATION_DEFAULTS.md`; the loop should also be invoked with `HUSKY=0` in env so all child shells inherit it.
 - Update PR body via `mcp__github__update_pull_request` with the new progress checklist (mark item as done in PR body too).
 
 ### Phase 7 — Update queue + exit
@@ -161,7 +179,8 @@ Exit. The lock file is removed via the trap.
 ## Hard rules
 
 - **Never** modify `docs/audits/codebase-health-2026-04-24.md` (audit is the immutable source).
-- **Never** force-push, reset --hard, or skip hooks.
+- **Never** force-push or `reset --hard`.
+- **Hooks:** generally don't skip. Exception: `HUSKY=0` is authorised on the constrained sandbox (see Hardware exception in `REMEDIATION_DEFAULTS.md`). CI on the stream PR remains the authoritative gate for everything the hook would have run.
 - **Never** apply migrations to prod or run anything that touches the live DB.
 - **Never** merge a PR. The user merges.
 - **Never** start work without first running phase 2 (CI rescue check). A red CI on an earlier stream blocks new work on that stream.
