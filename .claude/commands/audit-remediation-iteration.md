@@ -63,6 +63,18 @@ git checkout main && git pull --ff-only origin main
 
 Read `docs/audits/REMEDIATION_QUEUE.md` and `docs/audits/REMEDIATION_DEFAULTS.md` end-to-end. Do not skim — they encode all decisions.
 
+### Phase 1.5 — Types-drift auto-regen (added 2026-04-26 after iter 22)
+
+A live-DB schema change between iterations leaves `lib/database.types.ts` stale and turns the "Supabase types drift" CI check red on every PR (caused iter 20 + 21 CI rescues). Cheaper to regenerate proactively here than to rescue per stream.
+
+```bash
+# Regenerate via the Supabase MCP `generate_typescript_types`
+# (cloud routines have it attached; local runs may not).
+# Skip if the MCP isn't available — Phase 2 CI rescue still catches it later.
+```
+
+If `lib/database.types.ts` is stale relative to live, regenerate, commit `chore(db): regenerate database.types.ts (auto-rescue)` direct to main, push. This is a one-line idempotent fix that benefits ALL open PRs simultaneously. Skip and proceed if the regen produces an empty diff.
+
 ### Phase 2 — CI rescue check
 
 For each stream in the queue's "In flight" table that has a PR number:
@@ -165,6 +177,19 @@ Every 10th iteration (count = `git log --oneline --grep="audit remediation itera
 ### Phase 7 — Update queue + exit
 
 **Queue updates land directly on `main`, not on the stream branch.** Queue is the source of truth that Phase 1 reads at the start of each iteration; future iterations see the wrong picture if updates sit on an unmerged stream branch. Switch to `main` before editing the queue.
+
+If at the end of Phase 7 the iteration's status would be `STATUS: COMPLETE` (i.e., queue's In flight + Pending + Blocked sections are all empty AND all original items are in Done), additionally write a `LOOP_DONE` sentinel file at the repo root with a one-line summary, commit, and push. The cron schedule can then be disabled (manually or via a follow-up GitHub Action) to stop wasted fires.
+
+```bash
+if [ "$STATUS" = "COMPLETE" ]; then
+  echo "Audit-remediation queue exhausted at $(date -u +%FT%TZ). Disable the cloud cron." > LOOP_DONE
+  git add LOOP_DONE
+  HUSKY=0 git commit -m "chore(audit): queue exhausted — LOOP_DONE sentinel"
+  HUSKY=0 git push origin main
+fi
+```
+
+If the iteration's status is `STATUS: ALL-BLOCKED` (everything is blocked but not done), DO NOT write `LOOP_DONE` — the loop should keep running cheap no-ops in case the founder unblocks an item.
 
 ```bash
 git checkout main
