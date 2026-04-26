@@ -40,10 +40,27 @@ export async function proxy(request: NextRequest) {
   response.headers.set('x-request-id', requestId)
 
   // ── Security headers ─────────────────────────────────────────
-  response.headers.set('X-Frame-Options', 'SAMEORIGIN')
+  // K-05 (audit 2026-04-26 §7 SEC-05): canonical X-Frame-Options and
+  // Permissions-Policy live here. Both used to be duplicated in
+  // `next.config.ts:headers` with conflicting values:
+  //   - X-Frame-Options: this file had `SAMEORIGIN`, next.config had
+  //     `DENY`. Browsers picked the most-restrictive (DENY); aligned
+  //     here so the source-of-truth matches the effective policy.
+  //   - Permissions-Policy: this file had `geolocation=()` (none),
+  //     next.config had `geolocation=(self)` (allow same-origin).
+  //     Multiple Permissions-Policy headers combine to the LEAST
+  //     permissive — `none` was winning, silently blocking the
+  //     property/postcode geolocation features. Realigned to `(self)`
+  //     to preserve those features.
+  // The conflicting copies have been removed from next.config.ts;
+  // X-Content-Type-Options + Referrer-Policy + X-DNS-Prefetch-Control
+  // + HSTS remain in both places because their values are identical
+  // (no drift), and the next.config copy covers the static-asset
+  // paths excluded from this middleware's matcher.
+  response.headers.set('X-Frame-Options', 'DENY')
   response.headers.set('X-Content-Type-Options', 'nosniff')
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
-  response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
+  response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(self)')
   response.headers.set('X-DNS-Prefetch-Control', 'on')
   response.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload')
 
