@@ -25,7 +25,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | Stream | Branch | PR | Last CI | Items in flight |
 | --- | --- | --- | --- | --- |
 | A | _not started_ | — | — | — |
-| B | `claude/audit-remediation/b-rls-remediation` | #220 | pending — pushed 2026-04-26T14:14Z | B-06 next (B-01..B-05 done/FP) |
+| B | `claude/audit-remediation/b-rls-remediation` | #220 | pending — pushed 2026-04-26T14:20Z | B-06 next (B-01..B-05 done/FP; B-05 corrected in iter 8) |
 | C | _not started_ | — | — | — |
 | D | _not started_ | — | — | — |
 | E | _not started_ | — | — | — |
@@ -51,11 +51,11 @@ Highest priority: critical 2 first.
 | ID | Status | Summary | Est. iterations | Notes |
 | --- | --- | --- | --- | --- |
 | B-01 | done | RLS on `email_otps` (`supabase/migrations/20260316_email_otps.sql`) | 1 | Done in commit `79bfd291` (PR #220). Deny-all default; service-role explicit allow. |
-| B-02 | done | RLS on `leads` (`supabase/migrations/20260316_create_leads_table.sql`) | 1 | Done in commit `5888c25b` (PR #220). Deny-all default; service-role explicit allow. PII enumeration vector closed. |
+| B-02 | done | RLS on `leads` (`supabase/migrations/20260316_create_leads_table.sql`) | 1 | Done in commit `5888c25b` (PR #220). Deny-all default; service-role explicit allow. PII enumeration vector closed. **Doc-correctness note (iter 8 audit):** `20260315_revenue_optimization.sql:109-110` had already enabled RLS + a deny-all `"Service role full access on leads"` policy (USING `false`), so the commit message's "table created without RLS" framing is partly wrong. Functionally fine — legacy policy was deny-all, and the new explicit `service_role`-allow stacks correctly with it. The migration's true delta is FORCE RLS + a clearly-named service-role policy. No follow-up commit needed. |
 | B-03 | false-positive | ~~RLS on `sponsor_invoices`~~ | — | **Already enabled** by `supabase/migrations/20260321_pre_launch_rls_fixes.sql` (RLS on + deny-all policy). See "Resolved as false positives" below. |
 | B-04 | done | RLS on `investment_listings` (option 2) | 1 | Done in commit `4847bd31` (PR #220). Anon SELECT all; anon INSERT only when `status='pending'` + counters=0 + no professional linkage; anon UPDATE column-scoped to (`views`, `enquiries`) via REVOKE/GRANT; service-role explicit allow. Long-term option-4 follow-up tracked as B-08 below. |
-| B-05 | done | RLS on `listing_claims` | 1 | Done in commit `5904db8a` (PR #220). Deny-all default + service-role explicit allow. Sole caller (`/api/claim-listing`) uses admin client; planned admin-review UI must also. Standard owner policy did not apply (no `auth.uid()` linkage — claimants identify by email only). |
-| B-06 | pending | RLS on remaining 6 medium-risk tables (one iteration each) | 6 | Enumerate from `grep -L "ENABLE ROW LEVEL SECURITY" supabase/migrations/*.sql` minus the 5 above. |
+| B-05 | done | RLS on `listing_claims` | 1 | Done in commit `5904db8a` then **corrected in `24898931` (iter 8)** to actually drop the legacy `"Anon can submit claims"` policy from `20260510_rls_hardening.sql` (the original DROP IF EXISTS list missed it; RLS policies stack additively, so the legacy permissive INSERT survived and undermined the deny-all claim). Net state: deny-all anon + service-role explicit allow. |
+| B-06 | pending | RLS on remaining 6 medium-risk tables (one iteration each) | ~6 | Real gap re-enumerated 2026-04-26 (iter 8) via `comm -23 <(grep -hE "^CREATE TABLE" supabase/migrations/*.sql ...) <(grep -hE "ENABLE ROW LEVEL SECURITY" ...)`: `forum_categories`, `forum_posts`, `forum_threads`, `forum_user_profiles`, `forum_votes` (5 forum tables), plus `quarterly_reports`, `listing_enquiries`, `listing_plans`. The audit's "remaining 6" was loose — actual count is 8 candidates. `support_tickets`, `support_messages`, `broker_creatives`, `broker_notifications`, `ab_tests` were already RLS'd in `20260321_pre_launch_rls_fixes.sql` (same false-positive pattern as B-03). Each subsequent iteration must run the iter-8 prior-policy verification gate. |
 | B-07 | pending | Add CI lint that fails any new `CREATE TABLE` migration without `ENABLE ROW LEVEL SECURITY` | 1 | Stream I overlap; coordinate. |
 | B-08 | pending | Long-term: refactor `/api/listings/submit` + enquire counter fallback to admin client; tighten anon policy on `investment_listings` to SELECT-only (option 4 follow-up to B-04) | ~2 | Lower priority than B-05/B-06; depends on stream C call-graph (C-01) to confirm no other anon writers. |
 
@@ -158,7 +158,7 @@ Only run after stream D has covered the file with tests; otherwise risk silent r
 
 ## Done
 
-- 2026-04-26 · B-05 · Enable RLS on `listing_claims` with deny-all default + service-role explicit allow (PII protection; sole caller uses admin client) · commit `5904db8a` · pr #220
+- 2026-04-26 · B-05 · Enable RLS on `listing_claims` with deny-all default + service-role explicit allow (PII protection; sole caller uses admin client) · commits `5904db8a` (initial) + `24898931` (iter 8 correction — drop legacy `"Anon can submit claims"` from 20260510) · pr #220
 - 2026-04-26 · B-04 · Enable RLS on `investment_listings` (option 2 — anon SELECT all; anon INSERT pending-only with counter+linkage guards; anon UPDATE column-scoped to views+enquiries via GRANT; service-role explicit allow) · commit `4847bd31` · pr #220
 - 2026-04-26 · B-02 · Enable RLS on `leads` with deny-all default + service-role explicit allow (PII protection) · commit `5888c25b` · pr #220
 - 2026-04-26 · B-01 · Enable RLS on `email_otps` with deny-all default + service-role explicit allow · commit `79bfd291` · pr #220
@@ -171,10 +171,20 @@ Only run after stream D has covered the file with tests; otherwise risk silent r
 | --- | --- | --- | --- |
 | F-01 | "`RouteErrorBoundary` + `RouteLoadingSkeleton` are unimported" | Re-exported by 14 `app/*/loading.tsx` + `app/*/error.tsx` files via `export { default } from "@/components/Route*"` syntax — audit's grep didn't catch re-exports. | 2026-04-26 |
 | B-03 | "`sponsor_invoices` is missing RLS" | RLS was added in `supabase/migrations/20260321_pre_launch_rls_fixes.sql` (`ALTER TABLE … ENABLE ROW LEVEL SECURITY` + a deny-all `USING (false)` policy). Service-role bypasses RLS regardless, so the existing policy is functionally a deny-all default. Audit's grep likely only checked `004_sponsor_invoices.sql` and missed the later fix migration. (Note: the policy name is misleading — it says "Service role full access" but the body is `USING (false)`. A future hardening iteration could rename + add explicit `TO service_role` clause + `FORCE ROW LEVEL SECURITY`. Tracked separately if needed; not blocking.) | 2026-04-26 |
+| (audit-wide) | "11 RLS gaps" | Iter 8 re-enumeration found that `support_tickets`, `support_messages`, `broker_creatives`, `broker_notifications`, `ab_tests` were ALSO already RLS'd in `20260321_pre_launch_rls_fixes.sql` (same pattern as B-03 — `USING (false)` is functionally deny-all but policy naming + lack of `FORCE RLS` is misleading). Audit's grep likely only checked the original creating migration for each table. Real residual gap = 8 tables (5 forum + `quarterly_reports`, `listing_enquiries`, `listing_plans`), tracked under B-06. The B-03-style hardening (rename misleading policy + add `FORCE RLS` + `TO service_role`) for these 5 tables can land as a stream-G-style hygiene pass; not in scope for stream B. | 2026-04-26 |
 
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-26 14:20Z — iteration 8 (stream B, B-05 correction + spec hardening)
+- **B-05 correction** (commit `24898931` on stream B): the original B-05 commit (`5904db8a`) claimed deny-all-anon on `listing_claims` but its DROP IF EXISTS list missed the legacy `"Anon can submit claims"` policy from `20260510_rls_hardening.sql:206`. RLS policies stack additively, so that policy survived and would have continued to allow anon+authenticated INSERT through PostgREST. The corrected migration explicitly drops both legacy policies (`"Anon can submit claims"` + `"Service role full access listing_claims"`) by exact name, documents the prior state in an `IMPORTANT — prior policy state:` header block, and updates the rollback header to restore the legacy policies (and explicitly NOT `DISABLE ROW LEVEL SECURITY` since 20260510 originally enabled it).
+- **Spec hardening** (this commit on main): added a "Prior policy discovery" mandatory step to Phase 4 of `audit-remediation-iteration.md` and the verification gates of `REMEDIATION_DEFAULTS.md`. Future RLS-on-existing-table iterations must `grep -nE "(POLICY.*<table>|<table>.*POLICY|TABLE.*<table>.*ENABLE)" supabase/migrations/*.sql` and DROP each prior `CREATE POLICY` by exact name.
+- **B-06 re-enumeration**: real residual gap is 8 tables, not the audit's loose "remaining 6". 5 forum tables (`forum_categories`, `forum_posts`, `forum_threads`, `forum_user_profiles`, `forum_votes`) plus `quarterly_reports`, `listing_enquiries`, `listing_plans`. `support_tickets`, `support_messages`, `broker_creatives`, `broker_notifications`, `ab_tests` were already RLS'd in `20260321_pre_launch_rls_fixes.sql` — added to FP table.
+- **B-02 doc-correctness note**: iter-8 audit found that `leads` was already RLS-enabled in `20260315_revenue_optimization.sql:109-110` (deny-all `USING (false)`), so the B-02 commit message's framing is partly wrong. Functionally fine; no follow-up commit. Noted in queue.
+- Phase 2 CI rescue: PR #220 was fully green pre-iteration (no rescue).
+- Local gates: SQL + docs only, no `.ts` changed → tsc/lint/test skipped per Hardware exception. Pushed with `HUSKY=0`.
+- Status: PROGRESS · stream=B · item=B-05 (correction) + spec harden + queue re-enumerate.
 
 ### 2026-04-26 14:14Z — iteration 7 (stream B, item B-05)
 - Migration `supabase/migrations/20260601_rls_listing_claims.sql`: `ENABLE ROW LEVEL SECURITY` + `FORCE ROW LEVEL SECURITY` + service-role explicit-allow on `listing_claims`. Idempotent, rollback header.
