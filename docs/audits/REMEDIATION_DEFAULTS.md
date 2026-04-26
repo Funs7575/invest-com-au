@@ -38,7 +38,7 @@ Per-stream verification floor before any commit:
 
 ## Per-iteration discipline
 
-- **Diff cap:** ≤ ~500 LOC per iteration (excluding generated files / pure data). Larger work splits across iterations.
+- **Diff cap:** ≤ ~800 LOC per iteration (excluding generated files / pure data). Bumped from 500 → 800 on 2026-04-26 after iter 22 review — most cleanly-bounded refactors (handler-registry splits, test-file additions, runbook authoring) fit in 600–800 lines and forcing a split adds ceremony without quality gain. Larger work still splits across iterations.
 - **Always run before commit:**
   ```bash
   # If any .ts/.tsx changed, type-check just those files:
@@ -64,6 +64,8 @@ The loop runs on a 2-CPU / 6.5GB / no-swap sandbox. `npx tsc --noEmit` over the 
 
 The exception is hardware-scoped, not policy-scoped: if the loop is moved to a host that can run `tsc` cleanly (≥4 CPU, ≥8GB or with swap), revert this section and re-enable the local gates.
 
+**Cloud-mode probe:** in cloud schedule mode, the sandbox is generally bigger than the constrained 6.5GB local one. The first iteration in cloud should attempt `npx tsc --noEmit` with a 90s timeout — if it completes, drop the Hardware exception for cloud iterations and run full local validation. If it OOMs / times out, keep the exception and lean on CI as before. This is checked once per cloud session at the start of Phase 5, not every iteration.
+
 ## Cloud schedule mode (added 2026-04-26 after iter 21)
 
 The loop runs in two modes, with different infrastructure but the same iteration contract.
@@ -84,6 +86,23 @@ The loop runs in two modes, with different infrastructure but the same iteration
 3. **`gh` CLI auth** — must be configured for the GitHub user who can write to PRs. Used for `gh pr create`, `gh pr checks`, `gh api -X PATCH`.
 4. **Lock-file race** — concurrent local + cloud fires CAN conflict (each thinks it has the lock since the file lives in different `.git/` trees). When swapping in cloud mode, **stop the local `/loop`** (omit the next `ScheduleWakeup` call) to avoid overlap. The schedule's cron pattern alone serialises subsequent runs.
 5. **`STATUS: ALL-BLOCKED`** — if the queue runs out of unblocked work, each cron fire performs Phase 1+2+3 then exits cheaply (~10 s). Cancel the cron via `/schedule list` + `/schedule delete <id>` to stop the wasted fires.
+6. **Stop signal** — when an iteration prints `STATUS: COMPLETE`, it writes a `LOOP_DONE` sentinel file at the repo root before exiting. The founder can monitor for this file's presence (or set up a GitHub Action that disables the cron when it lands) to auto-stop the schedule. Re-arm by deleting `LOOP_DONE` and re-enabling.
+
+### Parallel cloud routines (added 2026-04-26 after iter 22)
+
+Two cloud routines run concurrently with offset cron:
+
+- `audit-remediation-loop` — fires at `0 * * * *` (top of hour)
+- `audit-remediation-loop-half` — fires at `30 * * * *` (half past)
+
+Effective cadence: 30 min, doubling overnight throughput (~16 iterations/8h vs ~8). Both routines share the same queue (`docs/audits/REMEDIATION_QUEUE.md` on main) but each fire is a fresh `git clone` so there's no in-process lock contention.
+
+**Race safety:** the only contention point is when both fires happen to pick the SAME pending item between Phase 1 (sync queue) and Phase 7 (push queue update). This is bounded by:
+- Phase 7's `git push origin main` is rejected as non-fast-forward if the other fire pushed first → the second iteration's queue update simply re-tries on its next fire.
+- Phase 6's `git push origin <stream-branch>` similarly retries.
+- Worst case: ~5% of fires are wasted because both raced on the same item. No data corruption.
+
+If an auto-merge GitHub Action is set up (see `.github/workflows/audit-remediation-auto-merge-main.yml`), main-side merges automatically rebase into stream branches, removing the iter-21 class of CI rescue.
 
 ## Streams
 
