@@ -171,6 +171,11 @@ Only run after stream D has covered the file with tests; otherwise risk silent r
 
 ## Iteration log (most recent at top)
 
+### 2026-04-26 13:50Z — iteration 2 (out-of-stream housekeeping, no stream item)
+- Patched `REMEDIATION_DEFAULTS.md` + `.claude/commands/audit-remediation-iteration.md` with the **Hardware exception**: file-targeted `tsc` (skip whole-codebase) and `HUSKY=0` for pushes. CI on stream PRs is the authoritative gate.
+- Committed direct to main (`05cffb44`); no stream branch / PR (per user's "out-of-stream housekeeping commit" guidance).
+- Status: PROGRESS (out-of-band).
+
 ### 2026-04-26 13:35Z — iteration 1 (stream B, item B-01)
 - Opened stream B branch + draft PR #220 (`claude/audit-remediation/b-rls-remediation`).
 - Migration `supabase/migrations/20260601_rls_email_otps.sql`: `ENABLE ROW LEVEL SECURITY` + `FORCE ROW LEVEL SECURITY` + service-role explicit-allow policy on `email_otps`. Idempotent, rollback header present.
