@@ -24,10 +24,11 @@
  *   - COVERAGE_JSON    — path to vitest-coverage v8 summary (defaults to ./coverage/coverage-summary.json).
  */
 
-import { promises as fs } from "node:fs";
+import { promises as fs, readFileSync } from "node:fs";
 import path from "node:path";
 import { execSync } from "node:child_process";
 import { createClient } from "@supabase/supabase-js";
+import * as yaml from "js-yaml";
 
 // ── Types ────────────────────────────────────────────────────────────
 
@@ -65,20 +66,11 @@ interface OverallSnapshot {
 const ROOT = path.resolve(__dirname, "..");
 
 function readYaml(filepath: string): Record<string, unknown> {
-  // Tiny YAML reader sufficient for .quality-targets.yml's flat shape —
-  // avoids adding `js-yaml` as a runtime dep just for this script.
-  const raw = require("node:fs").readFileSync(filepath, "utf8");
-  // Use a trivial parser via require if js-yaml is present; otherwise
-  // fall back to JSON-like parsing of the limited shape we own.
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const yaml = require("js-yaml") as { load: (s: string) => unknown };
-    return yaml.load(raw) as Record<string, unknown>;
-  } catch {
-    throw new Error(
-      "js-yaml not installed. Run `npm install --save-dev js-yaml` or invoke this script via the CI workflow which installs it.",
-    );
-  }
+  // Static ESM imports above (`yaml` from "js-yaml"). The CI workflow
+  // installs js-yaml via `npm install --no-save tsx js-yaml ...` before
+  // invoking tsx — see .github/workflows/code-quality.yml.
+  const raw = readFileSync(filepath, "utf8");
+  return yaml.load(raw) as Record<string, unknown>;
 }
 
 function envOr(name: string, fallback: string | null = null): string | null {
@@ -212,8 +204,8 @@ function collectFromCoverageJson(): Record<string, number> {
     envOr("COVERAGE_JSON") ??
     path.join(ROOT, "coverage", "coverage-summary.json");
   try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const json = require(p) as {
+    const raw = readFileSync(p, "utf8");
+    const json = JSON.parse(raw) as {
       total: {
         lines: { pct: number };
         branches: { pct: number };

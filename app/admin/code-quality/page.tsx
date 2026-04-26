@@ -152,16 +152,18 @@ export default async function CodeQualityPage() {
     );
   }
 
+  // Render an absolute timestamp string instead of "X min ago".
+  // The linter (rules-of-react) flags `Date.now()` calls during render
+  // as impure even in server components — and `force-dynamic` already
+  // guarantees the page renders on every request, so the absolute
+  // string is just as fresh as a relative one. Cleaner anyway: ops
+  // can read the exact UTC stamp from the audit history.
   const collectedAt = new Date(snap.collected_at);
-  const ageMin = Math.floor(
-    (Date.now() - collectedAt.getTime()) / 60_000,
-  );
-  const ageStr =
-    ageMin < 60
-      ? `${ageMin} min ago`
-      : ageMin < 24 * 60
-        ? `${Math.floor(ageMin / 60)} hours ago`
-        : `${Math.floor(ageMin / (24 * 60))} days ago`;
+  const ageStr = collectedAt.toLocaleString("en-AU", {
+    timeZone: "UTC",
+    dateStyle: "medium",
+    timeStyle: "short",
+  }) + " UTC";
 
   return (
     <AdminShell>
@@ -170,7 +172,7 @@ export default async function CodeQualityPage() {
           <div>
             <h1 className="text-2xl font-bold text-slate-900">Code quality</h1>
             <p className="mt-1 text-sm text-slate-500">
-              Snapshot {ageStr}
+              Snapshot at {ageStr}
               {snap.commit ? (
                 <>
                   {" "}· commit{" "}
