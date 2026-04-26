@@ -122,6 +122,8 @@ export default function Footer() {
                 <li><Link href="/invest/commercial-property" className="hover:text-white transition-colors inline-block py-0.5">Commercial Property</Link></li>
                 <li><Link href="/invest/renewable-energy" className="hover:text-white transition-colors inline-block py-0.5">Renewable Energy</Link></li>
                 <li><Link href="/invest/startups" className="hover:text-white transition-colors inline-block py-0.5">Startups & Tech</Link></li>
+                <li><Link href="/sell-business" className="hover:text-white transition-colors inline-block py-0.5">Sell a Business</Link></li>
+                <li><Link href="/dividends" className="hover:text-white transition-colors inline-block py-0.5">Dividends</Link></li>
               </ul>
             </div>
 
@@ -175,8 +177,13 @@ export default function Footer() {
             <div>
               <h4 className="text-white font-semibold mb-2 md:mb-3 text-xs md:text-sm">Learn</h4>
               <ul className="space-y-1.5 md:space-y-2 text-xs md:text-sm mb-4 md:mb-5">
+                <li><Link href="/learn" className="hover:text-white transition-colors inline-block py-0.5">Learn to Invest</Link></li>
                 <li><Link href="/articles" className="hover:text-white transition-colors inline-block py-0.5">Articles &amp; Guides</Link></li>
+                <li><Link href="/grants" className="hover:text-white transition-colors inline-block py-0.5">Grants Hub</Link></li>
                 <li><Link href="/tax" className="hover:text-white transition-colors inline-block py-0.5">Tax Strategy Hub</Link></li>
+                <li><Link href="/negative-gearing" className="hover:text-white transition-colors inline-block py-0.5">Negative Gearing</Link></li>
+                <li><Link href="/lump-sum-investing" className="hover:text-white transition-colors inline-block py-0.5">Lump-Sum Investing</Link></li>
+                <li><Link href="/visa-investment" className="hover:text-white transition-colors inline-block py-0.5">Visa &amp; Migration</Link></li>
                 <li><Link href="/insurance" className="hover:text-white transition-colors inline-block py-0.5">Insurance Hub</Link></li>
                 <li><Link href="/calculators" className="hover:text-white transition-colors inline-block py-0.5">Calculators</Link></li>
                 <li><Link href="/glossary" className="hover:text-white transition-colors inline-block py-0.5">Glossary</Link></li>
