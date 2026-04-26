@@ -18,8 +18,33 @@ import { isFlagEnabled } from "@/lib/feature-flags";
 
 const log = logger("admin-login");
 
-const WINDOW_MS = 60_000;
+const INITIAL_WINDOW_MS = 60_000;
 const MAX_ATTEMPTS = 5;
+
+/**
+ * Exponential backoff schedule (audit K-03 — defense against the
+ * "wait out the 60s and retry" pattern). After the IP hits the
+ * MAX_ATTEMPTS burst threshold, each additional in-window attempt
+ * extends the lockout to the next tier.
+ *
+ * count threshold | lockout window
+ * --------------- | ---------------
+ *      ≤ 5        | 60 s   (initial burst window)
+ *      6–10       | 5 min  (1st extension)
+ *     11–20       | 15 min (2nd extension)
+ *      21+        | 60 min (cap)
+ *
+ * Past 60 min the attacker has clearly given up on burst attempts
+ * and has switched to a slow distributed approach — the email-tier
+ * lockout (`lib/login-lockout.ts`, 15 min → 1 hr → 24 hr by
+ * failure count) takes over from there.
+ */
+function getBackoffWindowMs(count: number): number {
+  if (count <= MAX_ATTEMPTS) return INITIAL_WINDOW_MS;
+  if (count <= 10) return 5 * 60_000;
+  if (count <= 20) return 15 * 60_000;
+  return 60 * 60_000;
+}
 
 function hashIP(ip: string): string {
   const salt = process.env.IP_HASH_SALT || "invest-com-au-2026";
@@ -33,7 +58,6 @@ function createAdminSupabase() {
 async function checkRateLimit(ipHash: string): Promise<{ locked: boolean; remaining: number }> {
   const supabase = createAdminSupabase();
   const now = new Date();
-  const resetAt = new Date(now.getTime() + WINDOW_MS);
 
   // Try to get existing entry
   const { data: entry } = await supabase
@@ -43,22 +67,38 @@ async function checkRateLimit(ipHash: string): Promise<{ locked: boolean; remain
     .single();
 
   if (!entry || new Date(entry.reset_at) < now) {
-    // No entry or expired — upsert a fresh one
+    // No entry or fully cooled off — start fresh with the initial 60s window.
+    const resetAt = new Date(now.getTime() + INITIAL_WINDOW_MS);
     await supabase
       .from("admin_login_attempts")
       .upsert({ ip_hash: ipHash, count: 1, reset_at: resetAt.toISOString() });
     return { locked: false, remaining: MAX_ATTEMPTS - 1 };
   }
 
-  // Increment count
+  // Increment count. Each in-window attempt also potentially extends the
+  // lockout window per the backoff schedule above — once an attacker has
+  // tripped MAX_ATTEMPTS, hammering further keeps pushing the unlock time
+  // out instead of counting down to a fixed 60s reset.
   const newCount = entry.count + 1;
+  const backoffMs = getBackoffWindowMs(newCount);
+  const newResetAt = new Date(now.getTime() + backoffMs);
+  // Only extend the reset_at if the new backoff window pushes it later
+  // than the existing one (a brand-new request within an already-extended
+  // 5min window shouldn't reset the unlock clock).
+  const extendResetAt =
+    newCount > MAX_ATTEMPTS && newResetAt > new Date(entry.reset_at);
+
   await supabase
     .from("admin_login_attempts")
-    .update({ count: newCount })
+    .update({
+      count: newCount,
+      ...(extendResetAt ? { reset_at: newResetAt.toISOString() } : {}),
+    })
     .eq("ip_hash", ipHash);
 
   if (newCount > MAX_ATTEMPTS) {
-    const waitSec = Math.ceil((new Date(entry.reset_at).getTime() - now.getTime()) / 1000);
+    const effectiveResetAt = extendResetAt ? newResetAt : new Date(entry.reset_at);
+    const waitSec = Math.ceil((effectiveResetAt.getTime() - now.getTime()) / 1000);
     return { locked: true, remaining: waitSec };
   }
   return { locked: false, remaining: MAX_ATTEMPTS - newCount };
