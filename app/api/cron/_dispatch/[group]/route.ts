@@ -129,7 +129,16 @@ export async function GET(
           .update({
             ended_at: new Date().toISOString(),
             duration_ms: durationMs,
-            status: handlerFailed ? "error" : "success",
+            // Status MUST be one of ('running','ok','error','partial')
+            // per the cron_run_log_status_check CHECK constraint
+            // (verified live 2026-04-26). The pre-fix dispatcher
+            // wrote 'success' here — the constraint silently rejected
+            // every UPDATE, which is the deepest layer of the
+            // 04-16 → 04-26 logging silence. 'ok' matches the value
+            // wrapCronHandler uses on the handler-side path so the
+            // observability dashboard groups both sources under one
+            // bucket.
+            status: handlerFailed ? "error" : "ok",
             error_message:
               errorMessage ?? (status >= 400 ? `HTTP ${status}` : null),
             stats: isPlainObject(body) ? body : null,
