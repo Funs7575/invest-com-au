@@ -66,6 +66,34 @@ async function handler(req: NextRequest): Promise<NextResponse> {
 
   const supabase = createAdminClient();
   const now = Date.now();
+
+  // ── Global silence guard ──────────────────────────────────────
+  // The 04-16 → 04-26 silence (audit P0-1) wasn't a per-cron miss —
+  // the dispatcher was firing 200s while writing zero rows for ten
+  // days. Per-cron staleness alerts (below) wouldn't fire if the
+  // ENTIRE table is empty, because there's no row to age out from.
+  //
+  // This check scans the last hour of cron_run_log and fires a
+  // distinctive error if the table received ZERO rows at all. The
+  // Sentry alert rule documented at docs/runbooks/cron-silence-alert.md
+  // keys on the `cron_global_silence` tag so it pages within minutes.
+  const oneHourAgo = new Date(now - 60 * 60_000).toISOString();
+  const { count: lastHourRows } = await supabase
+    .from("cron_run_log")
+    .select("id", { count: "exact", head: true })
+    .gte("started_at", oneHourAgo);
+
+  if ((lastHourRows ?? 0) === 0) {
+    // log.error → Sentry.captureException with tag `cron_global_silence`
+    // so an alert rule on either the message or the tag wakes oncall.
+    log.error("CRON_GLOBAL_SILENCE: zero rows in cron_run_log for 1h", {
+      cron_global_silence: true,
+      last_hour_rows: 0,
+      check_ran_at: new Date(now).toISOString(),
+      runbook: "docs/runbooks/cron-silence-alert.md",
+    });
+  }
+
   const stale: Array<{
     name: string;
     last_ended_at: string | null;
