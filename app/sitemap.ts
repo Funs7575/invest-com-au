@@ -146,9 +146,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  // Dynamic article pages
+  // Dynamic article pages — only published. Without this filter,
+  // drafts (status='draft') and archived (status='archived') articles
+  // leak into the sitemap and get crawled by Google. Every other
+  // dynamic source on this file (brokers, professionals, scenarios,
+  // alerts, reports, advisor_articles) already filters by its
+  // status column; this query was the lone exception (P0-4 in
+  // docs/audits/2026-04-26-comprehensive-audit.md §8.1).
   const { data: articles } = supabase
-    ? await supabase.from("articles").select("slug, updated_at")
+    ? await supabase
+        .from("articles")
+        .select("slug, updated_at")
+        .eq("status", "published")
     : { data: null };
 
   const articlePages = (articles || []).map((a) => ({
