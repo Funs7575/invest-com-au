@@ -1,0 +1,89 @@
+name: code-quality (PR delta)
+
+# Per-PR job: collect metrics on HEAD, compare to main's latest snapshot,
+# post a comment showing per-metric deltas + the new overall grade. Lets
+# the founder see "what does this PR move?" in review without opening
+# the dashboard page.
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  delta:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    if: ${{ !contains(github.event.pull_request.title, '[skip-quality]') }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install
+        run: npm ci
+
+      - name: Install collector deps
+        run: npm install --no-save tsx js-yaml @supabase/supabase-js
+
+      - name: Run vitest with coverage (best-effort)
+        run: npm run test:coverage -- --reporter=dot
+        continue-on-error: true
+
+      - name: Collect metrics on PR head
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          GITHUB_SHA: ${{ github.event.pull_request.head.sha }}
+        run: npx tsx scripts/collect-quality-metrics.ts > /tmp/head.json
+
+      - name: Compare to baseline (main's metrics-latest.json)
+        id: diff
+        run: |
+          if [ -f docs/audits/metrics-latest.json ]; then
+            BASE=docs/audits/metrics-latest.json
+          else
+            BASE=docs/audits/metrics-week-0.json
+          fi
+          node <<'EOF' > /tmp/comment.md
+          const head = require('/tmp/head.json');
+          const fs = require('fs');
+          const base = JSON.parse(fs.readFileSync(process.env.BASE || 'docs/audits/metrics-week-0.json', 'utf8'));
+          const baseScore = base.weighted_score ?? 0;
+          const arrow = head.weighted_score > baseScore ? '⬆️' : head.weighted_score < baseScore ? '⬇️' : '➡️';
+          const lines = [];
+          lines.push(`## Quality delta`);
+          lines.push('');
+          lines.push(`**Grade:** \`${base.grade}\` → \`${head.grade}\` ${arrow}`);
+          lines.push(`**Weighted score:** \`${baseScore.toFixed(3)}\` → \`${head.weighted_score.toFixed(3)}\``);
+          lines.push('');
+          lines.push('| Metric | Baseline | Current | Δ | Score |');
+          lines.push('|---|---:|---:|---:|---:|');
+          for (const m of head.metrics) {
+            const baseM = (base.metrics || []).find(x => x.id === m.id);
+            const baseVal = baseM ? baseM.current : null;
+            const curVal = m.current;
+            const delta = (baseVal == null || curVal == null) ? '—'
+              : (curVal === baseVal ? '0' : (curVal - baseVal).toFixed(2));
+            const scorePct = Math.floor(m.score * 100);
+            lines.push(`| ${m.id} ${m.label} | ${baseVal ?? '—'} | ${curVal ?? '—'} | ${delta} | ${scorePct}% |`);
+          }
+          lines.push('');
+          lines.push(`<sub>Source: \`.quality-targets.yml\` · Skip on title with \`[skip-quality]\`.</sub>`);
+          fs.writeFileSync('/tmp/comment.md', lines.join('\n'));
+          EOF
+          echo "BASE=$BASE" >> "$GITHUB_OUTPUT"
+        env:
+          BASE: ${{ steps.diff.outputs.BASE }}
+
+      - name: Upsert PR comment
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: quality-delta
+          path: /tmp/comment.md
