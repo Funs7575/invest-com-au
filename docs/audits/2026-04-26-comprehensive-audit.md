@@ -975,9 +975,19 @@ Theme: get observability + safety nets back to green so all later work has a fee
 
 ## Tracking
 
-- **GitHub issue:** TBD — opened immediately after this commit.
+- **GitHub issue:** [#221 — 4-month enterprise-grade improvement plan](https://github.com/Funs7575/invest-com-au/issues/221).
 - **Audit doc:** `docs/audits/2026-04-26-comprehensive-audit.md` (this file).
 - **Remediation queue:** `docs/audits/REMEDIATION_QUEUE.md` (streams J–S draw from this doc; update queue when any finding ID lands).
 - **Slash command:** `/audit-remediation-iteration` consumes the queue per `REMEDIATION_DEFAULTS.md`.
+
+## Sprint 1 close-out — running log
+
+Updated in-place as items ship; full close-out summary written when the sprint completes.
+
+| Date | Item | Status | PR / commit | Metric impact |
+|---|---|---|---|---|
+| 2026-04-26 | **J-11** featured_plans + listing_plans stripe_price_id wires (26 wires total) | DONE by founder (Stripe MCP) | — | M06 unaffected; revenue surface complete |
+| 2026-04-26 | **F-4.4.2** pg_graphql revoke anon | PR opened | [#223](https://github.com/Funs7575/invest-com-au/pull/223) | M07: 261 → ~20 (kills 241 advisor findings) |
+| 2026-04-26 | **J-02 / J-04 / J-07** | FALSE POSITIVE — already handled | queue updated | (no work) |
 
 — end —

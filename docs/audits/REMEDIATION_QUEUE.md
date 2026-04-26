@@ -176,16 +176,16 @@ The webhook route is 1,197 LOC and only handles a subset of the events an enterp
 | ID | Status | Summary | Est. iterations | Notes |
 | --- | --- | --- | --- | --- |
 | J-01 | pending | Split `app/api/stripe/webhook/route.ts` into a handler-registry pattern (one file per event family) — keeps existing dispatch behaviour, new files are wrappable in tests one at a time | ~3 | Foundational; subsequent J items add new handlers. Subsumes H-01. Order: scaffold registry → migrate existing handlers → add tests file-by-file. |
-| J-02 | pending | Add handler: `charge.dispute.created` — open dispute → record in `lead_disputes` → email admin within SLA window | 1 | Time-sensitive (Stripe dispute deadline ~7 days). |
+| J-02 | false-positive | ~~Add handler: `charge.dispute.created`~~ | — | **Already handled** in `app/api/stripe/webhook/route.ts` (verified 2026-04-26 audit §5.4 via `grep -E "case '...'"` — handler exists). |
 | J-03 | pending | Add handler: `customer.subscription.trial_will_end` — fire 3-days-pre-charge email via Resend | 1 | High-impact retention. |
-| J-04 | pending | Add handler: `invoice.payment_failed` — start dunning workflow (check existing `/api/cron/subscription-dunning`) | 1 | Verify if already handled; if so, mark FP. |
+| J-04 | false-positive | ~~Add handler: `invoice.payment_failed`~~ | — | **Already handled** in `app/api/stripe/webhook/route.ts` (verified 2026-04-26 audit §5.4). Dunning is wired through this handler + `/api/cron/subscription-dunning`. |
 | J-05 | pending | Add handler: `invoice.payment_action_required` — surface 3DS / SCA flow to user via email + dashboard banner | 1 | AU/EU customer support. |
 | J-06 | pending | Add handler: `payment_intent.payment_failed` — distinct from invoice.failed (covers one-time payments) | 1 | |
-| J-07 | pending | Add handler: `charge.refunded` — update internal subscription state when admin processes refund | 1 | |
+| J-07 | false-positive | ~~Add handler: `charge.refunded`~~ | — | **Already handled** in `app/api/stripe/webhook/route.ts` (verified 2026-04-26 audit §5.4). |
 | J-08 | pending | Add handler: `payout.failed` — internal alert (bank info wrong) | 1 | |
 | J-09 | pending | Add handler: `radar.early_fraud_warning.created` — proactively refund to dodge dispute | 1 | |
 | J-10 | pending | Add handler: `customer.subscription.paused` — preserve subscription state, suppress further dunning | 1 | |
-| J-11 | pending | Reconcile `featured_plans` 3/5 → 5/5 stripe_price_id (or delete the 2 unused tier rows) | 1 | DB query in audit §11.3. Decision-needed item. |
+| J-11 | done | Reconcile `featured_plans` 3/5 → 5/5 stripe_price_id + `listing_plans` 0/24 → 24/24 | — | **Done by founder via Stripe MCP, 2026-04-26.** Verified via Supabase MCP 2026-04-26: `featured_plans` 5/5 wired (incl. the 2 international tiers), `listing_plans` 24/24 wired. NULL `stripe_price_id` state eliminated across both tables (26 wires total). Original audit §11.3 finding closed. |
 
 ### Stream K — Security hardening (audit §7)
 
