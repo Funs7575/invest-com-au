@@ -34,7 +34,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | H | _not started_ | — | — | — |
 | I | _not started_ | — | — | — |
 | J | _not started_ | — | — | — |
-| K | _not started_ | — | — | — |
+| K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-26T15:42Z | K-01 done; K-02..K-14 pending |
 | L | _not started_ | — | — | — |
 | M | _not started_ | — | — | — |
 | N | _not started_ | — | — | — |
@@ -193,7 +193,7 @@ P0/P1/P2 findings from the security agent's deep scan. Each is small (<2h); clus
 
 | ID | Status | Summary | Est. iterations | Notes |
 | --- | --- | --- | --- | --- |
-| K-01 | pending | `/api/widget/route.ts:161` CORS lockdown — drop `Access-Control-Allow-Origin: *`; allowlist invest.com.au + invest-com-au.vercel.app | 1 | P0 — 0.5h fix, ship first. |
+| K-01 | done | `/api/widget/route.ts` defense-in-depth: anon-key client + explicit CORS contract + OPTIONS handler | 1 | Done in commit `d2295ee7` (PR #222). **Reframed:** original audit said "drop wildcard CORS" but the widget is intentionally cross-origin-embeddable on partner sites. Real risk was service-role + wildcard CORS combination. Fix: swap `createAdminClient()` → `createStaticClient()` so RLS enforces the data contract (Postgres "Public read for active brokers" policy already scopes anon SELECT to `status='active'`); keep `*` (intentional); add `Vary: Origin`, `Cross-Origin-Resource-Policy: cross-origin`, `Access-Control-Allow-Methods`; add OPTIONS handler; document the public-by-design contract in the route file's header comment so future maintainers don't re-introduce service-role. |
 | K-02 | pending | `/api/verify-otp/verify/route.ts:11–17` rate-limit tighten: 10/5min → 3/15min + exponential backoff | 1 | P1. 6-digit OTP exhaust window today is 5.8 days. |
 | K-03 | pending | `/api/admin/login/route.ts:33–106` add exponential backoff after 5 failures: 60s → 300s → 900s (cap 1h) | 1 | P1. |
 | K-04 | pending | `proxy.ts:68` CSP: drop `'unsafe-inline'` from `script-src` after browser-support test | 1 | P1. `'strict-dynamic'` neutralises it on modern browsers; verify analytics scripts still execute. |
@@ -335,6 +335,7 @@ Diagrams + API contracts + missing-runbook overflow from Q.
 
 ## Done
 
+- 2026-04-26 · K-01 · `/api/widget/route.ts` defense-in-depth: anon-key client (RLS-enforced) + explicit CORS contract (kept `*` since widget is public-by-design) + OPTIONS pre-flight handler + maintainer-facing comment block. · commit `d2295ee7` · pr #222
 - 2026-04-26 · B-06.1 (`listing_enquiries`) · Enable RLS on `listing_enquiries` (option 2 — preserve current behaviour: anon SELECT all + anon INSERT with status='new' guard; service-role explicit allow). Long-term cleanup tracked as B-09 (refactor my-listings + tighten policy). · commit `0bb82daa` · pr #220
 - 2026-04-26 · B-05 · Enable RLS on `listing_claims` with deny-all default + service-role explicit allow (PII protection; sole caller uses admin client) · commits `5904db8a` (initial) + `24898931` (iter 8 correction — drop legacy `"Anon can submit claims"` from 20260510) · pr #220
 - 2026-04-26 · B-04 · Enable RLS on `investment_listings` (option 2 — anon SELECT all; anon INSERT pending-only with counter+linkage guards; anon UPDATE column-scoped to views+enquiries via GRANT; service-role explicit allow) · commit `4847bd31` · pr #220
@@ -355,6 +356,16 @@ Diagrams + API contracts + missing-runbook overflow from Q.
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-26 15:42Z — iteration 12 (stream K, item K-01 — widget CORS defense-in-depth)
+- Scaffolded stream K branch `claude/audit-remediation/k-security-hardening` + draft PR #222.
+- Commit `d2295ee7`: `app/api/widget/route.ts` swapped `createAdminClient()` → `createStaticClient()` (anon-key, RLS-enforced); added explicit CORS contract header comment (no cookies, no Authorization, no service-role); added `Vary: Origin`, `Cross-Origin-Resource-Policy: cross-origin`, `Access-Control-Allow-Methods: GET, OPTIONS`; added OPTIONS pre-flight handler.
+- **Reframed from audit's "drop wildcard"** → "wildcard is intentional, fix the underlying data-leak vector." The widget is designed for cross-origin `<script>` embedding on broker affiliate pages and comparison blogs; restricting CORS would break the feature. Real risk was service-role-on-public-CORS combination — addressed.
+- Verified callers: in-repo `grep -rn "/api/widget"` returned only `components/AdminHelpPanel.tsx` (admin docs page, no runtime call) and the route itself. Third-party embeds via `<script src=…>` cannot be enumerated from this repo.
+- Verified RLS: `pg_policies` on `brokers` shows policy "Public read for active brokers" (CMD=SELECT, role=public, USING `status='active'`) — anon-key client gets the same row set the route already filters to.
+- Phase 2 CI rescue: PR #220 (stream B) was fully green pre-iteration (12 checks pass).
+- Local gates: file-targeted `tsc` and `eslint` both OOM'd on the 2-CPU/6.5GB sandbox (Hardware exception). CI on PR #222 is the authoritative gate. Pushed with `HUSKY=0`.
+- Status: PROGRESS · stream=K · item=K-01 · pr=#222.
 
 ### 2026-04-26 16:30Z — iteration 11 (queue extension — streams J–S from 04-26 audit)
 - No code change. Pure queue + priority extension to wire the 04-26 comprehensive audit's 84 findings into the loop.
