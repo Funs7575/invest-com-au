@@ -54,6 +54,17 @@ export async function proxy(request: NextRequest) {
   // script loaded by a nonce'd script is also trusted, so we don't
   // need to allowlist every analytics/gtm/Sentry origin individually.
   //
+  // K-04 (audit 2026-04-26 §7 SEC-04): dropped 'unsafe-inline' from
+  // script-src. Modern browsers (CSP3 — Chrome 52+, Firefox 52+,
+  // Edge 79+, Safari 15.4+) ignore 'unsafe-inline' when 'strict-dynamic'
+  // is present, so it was already a no-op for >95% of AU traffic. In
+  // legacy CSP2 browsers (Safari < 15.4 etc.), the `https:` host-source
+  // fallback still permits any HTTPS-served script; only TRULY inline
+  // <script>…</script> blocks without a nonce are now blocked. Next.js
+  // 16 auto-nonces framework-emitted inline scripts via the x-nonce
+  // header propagation below, and our own <Script /> usages all carry
+  // an explicit nonce, so there is no expected breakage path.
+  //
   // style-src keeps 'unsafe-inline' because Tailwind JIT + the
   // Next.js runtime emit inline style blocks that we can't nonce
   // without rewriting every component. This is a known, documented
@@ -65,10 +76,10 @@ export async function proxy(request: NextRequest) {
 
   const cspDirectives = [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' 'unsafe-inline' https:`,
-    // The 'unsafe-inline' above is IGNORED by browsers that understand
-    // 'strict-dynamic' + nonce, but kept as a fallback for older
-    // browsers that don't. https: same.
+    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https:`,
+    // The `https:` host-source above is the fallback for legacy CSP2
+    // browsers that don't understand 'strict-dynamic'. CSP3 browsers
+    // ignore both `https:` and the strict-dynamic-shadowed sources.
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob: https:",
     "font-src 'self' data:",
