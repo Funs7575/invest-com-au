@@ -1,0 +1,25 @@
+{
+  "collected_at": "2026-04-26T16:00:00.000Z",
+  "commit": null,
+  "branch": "main",
+  "_source": "Hand-authored from docs/audits/2026-04-26-comprehensive-audit.md §Executive summary table M01-M12. Replaced by the weekly CI job's output once first run completes.",
+  "metrics": [
+    { "id": "M01_test_coverage_lines",          "label": "Test coverage — lines",                            "direction": "up",   "unit": "percent", "baseline": 42,  "target": 60,  "weight": 4, "current": 42,  "score": 0.700, "delta_vs_baseline": 0, "collected_at": "2026-04-26T16:00:00.000Z" },
+    { "id": "M01_test_coverage_branches",       "label": "Test coverage — branches",                         "direction": "up",   "unit": "percent", "baseline": 72,  "target": 80,  "weight": 3, "current": 72,  "score": 0.900, "delta_vs_baseline": 0, "collected_at": "2026-04-26T16:00:00.000Z" },
+    { "id": "M01_test_coverage_functions",      "label": "Test coverage — functions",                        "direction": "up",   "unit": "percent", "baseline": 63,  "target": 75,  "weight": 3, "current": 63,  "score": 0.840, "delta_vs_baseline": 0, "collected_at": "2026-04-26T16:00:00.000Z" },
+    { "id": "M02_api_routes_with_tests",        "label": "API routes with tests",                            "direction": "up",   "unit": "count",   "baseline": 57,  "target": 200, "total": 294, "weight": 4, "current": 57,  "score": 0.285, "delta_vs_baseline": 0, "collected_at": "2026-04-26T16:00:00.000Z" },
+    { "id": "M03_api_routes_with_zod",          "label": "API routes with Zod input validation",             "direction": "up",   "unit": "count",   "baseline": 9,   "target": 100, "total": 294, "weight": 3, "current": 9,   "score": 0.090, "delta_vs_baseline": 0, "collected_at": "2026-04-26T16:00:00.000Z" },
+    { "id": "M04_rls_tables_with_policies",     "label": "RLS tables with policies",                         "direction": "up",   "unit": "count",   "baseline": 178, "target": 234, "total": 234, "weight": 5, "current": 178, "score": 0.760, "delta_vs_baseline": 0, "collected_at": "2026-04-26T16:00:00.000Z" },
+    { "id": "M05_migration_drift",              "label": "Migration drift (live tables not in supabase/migrations/)", "direction": "down", "unit": "count",   "baseline": 231, "target": 0,   "weight": 4, "current": 231, "score": 0.000, "delta_vs_baseline": 0, "collected_at": "2026-04-26T16:00:00.000Z" },
+    { "id": "M06_stripe_webhook_events",        "label": "Stripe webhook events handled",                    "direction": "up",   "unit": "count",   "baseline": 8,   "target": 14,  "total": 14,  "weight": 3, "current": 8,   "score": 0.571, "delta_vs_baseline": 0, "collected_at": "2026-04-26T16:00:00.000Z" },
+    { "id": "M07_supabase_security_advisors",   "label": "Supabase security advisor findings (ERROR + WARN)","direction": "down", "unit": "count",   "baseline": 261, "target": 20,  "weight": 5, "current": 261, "score": 0.000, "delta_vs_baseline": 0, "collected_at": "2026-04-26T16:00:00.000Z" },
+    { "id": "M08_supabase_perf_advisors",       "label": "Supabase performance advisor findings",            "direction": "down", "unit": "count",   "baseline": 417, "target": 80,  "weight": 2, "current": 417, "score": 0.000, "delta_vs_baseline": 0, "collected_at": "2026-04-26T16:00:00.000Z" },
+    { "id": "M09_cron_success_rate_7d",         "label": "Cron success rate (7d rolling)",                   "direction": "up",   "unit": "percent", "baseline": 0,   "target": 99.5,"weight": 5, "current": 0,   "score": 0.000, "delta_vs_baseline": 0, "collected_at": "2026-04-26T16:00:00.000Z" },
+    { "id": "M10_posthog_mirror_events_per_day","label": "PostHog mirror events per day",                    "direction": "up",   "unit": "count",   "baseline": 0,   "target": 1000,"weight": 3, "current": 0,   "score": 0.000, "delta_vs_baseline": 0, "collected_at": "2026-04-26T16:00:00.000Z" },
+    { "id": "M11_lighthouse_perf_top5_mobile",  "label": "Lighthouse perf — top 5 pages (mobile, median)",   "direction": "up",   "unit": "score",   "baseline": 0,   "target": 85,  "weight": 4, "current": 0,   "score": 0.000, "delta_vs_baseline": 0, "collected_at": "2026-04-26T16:00:00.000Z" },
+    { "id": "M12_og_image_coverage",            "label": "OG image coverage — articles",                     "direction": "up",   "unit": "count",   "baseline": 0,   "target": 266, "total": 266, "weight": 2, "current": 0,   "score": 0.000, "delta_vs_baseline": 0, "collected_at": "2026-04-26T16:00:00.000Z" }
+  ],
+  "weighted_score": 0.385,
+  "grade": "F",
+  "_grade_explanation": "Three metrics at score 0 (M05 drift, M07 sec advisors, M09 cron success, M10 posthog, M11 lighthouse, M12 OG images) drag the weighted average to 0.385. Sprint 1 alone closes M07 (pg_graphql revoke → 261→~20) and restores M09 (cron silence fix). Expected end of Sprint 1 grade: C/D. Expected end of Sprint 8 grade: A."
+}
