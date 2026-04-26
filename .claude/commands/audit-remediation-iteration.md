@@ -80,6 +80,7 @@ If multiple streams have red CI, rescue the highest-priority one (per `REMEDIATI
 
 Walk `REMEDIATION_DEFAULTS.md`'s priority order. For each stream in order:
 
+- **Skip items with status `blocked` or `false-positive`** — these are not picked up by the loop. Blocked items are the user's call; false-positives are already resolved.
 - If the stream's queue section has a `pending` item, that's the candidate.
 - If the candidate is the very first item of that stream and the stream has no branch yet:
   - Create branch from `main`: `git checkout -b claude/audit-remediation/<letter>-<slug>`.
@@ -97,7 +98,13 @@ Apply the verification gate from `REMEDIATION_DEFAULTS.md` for the item's catego
 
 - **Deletion:** grep for symbol AND `export.*from.*<filename>` re-exports. If any match, mark item as `false-positive` in the queue's "Resolved as false positives" table, log to iteration log, exit phase 7 with `STATUS: PROGRESS` (queue housekeeping is real progress).
 - **Refactor (admin.ts → server.ts):** confirm route reads cookies / is in an authenticated layout. If not, surface to Blocked.
-- **New migration:** plan must include `IF NOT EXISTS`, rollback header, and `ENABLE ROW LEVEL SECURITY` if creating a table.
+- **New migration:** plan must include:
+  - Header comment block with: Date, Audit ref, Queue item, Why (in user terms), idempotency claim, Rollback (concrete SQL).
+  - `BEGIN; ... COMMIT;` transaction wrapper.
+  - `IF NOT EXISTS` on table creates / index creates.
+  - For RLS-on-existing-table: `ENABLE ROW LEVEL SECURITY` + `FORCE ROW LEVEL SECURITY` + `DROP POLICY IF EXISTS ... CREATE POLICY ...` for any policies (idempotent reruns).
+  - Service-role explicit allow policy when policy is otherwise deny-all (auditability — `pg_policies` shows intent).
+  - `-- TODO: human review of policy semantics` comment when defaults §4 doesn't cleanly apply (e.g., no `auth.uid()` linkage, public-write paths, etc.).
 - **New test:** plan must exercise the route handler's actual logic, not just import-and-truthy-assert.
 
 If verification rules out the item, surface a Blocked entry with the question for the user; print `STATUS: BLOCKED` and exit.
@@ -144,19 +151,39 @@ Every 10th iteration (count = `git log --oneline --grep="audit remediation itera
 ### Phase 6 — Commit + push + PR update
 
 - Conventional Commits subject. Scope = stream letter. Body explains the why, references the queue item ID, references the audit section.
-- Trailer line: `Refs: #<tracking-issue>` (e.g., `Refs: #215` for stream B).
-- Do NOT include any AI-attribution trailer or "Co-authored-by" lines unless the project's existing `git log` already does so. Check first.
+- **Commit body quality bar** — must include, in order:
+  1. **Why** — one paragraph on the motivating problem (what was broken / risky, in user terms not just technical).
+  2. **Verified callers / context** — for code changes touching shared types, the grep'd list of caller paths and which client/tier they use. For migrations, the call sites that exercise the affected table and whether they go through admin (service-role) or anon-key clients.
+  3. **Idempotency / safety claim** — for migrations: "is no-op when re-applied because X." For code: "does not regress callers because Y."
+  4. **Rollback location** — for migrations: "rollback header in the migration." For code: "revert this commit + restore via [path]."
+- Trailer line: `Refs: #<tracking-issue>` (e.g., `Refs: #215` for stream B). Plus `Audit:` and `Queue:` lines pointing to the source.
+- Do NOT include any AI-attribution trailer or "Co-authored-by" lines unless the project's existing `git log` already does so. Check first (this repo does not).
 - `HUSKY=0 git push origin <branch>` — retry up to 4× with exponential backoff on network errors only (per repo's git ops policy). `HUSKY=0` is the bypass authorised by the Hardware exception in `REMEDIATION_DEFAULTS.md`; the loop should also be invoked with `HUSKY=0` in env so all child shells inherit it.
-- Update PR body via `mcp__github__update_pull_request` with the new progress checklist (mark item as done in PR body too).
+- Update PR body with the new progress checklist (mark item as done in PR body too) via `gh api -X PATCH repos/<owner>/<repo>/pulls/<N> --field body=@/path/to/body.md`. **Do not use `gh pr edit --body-file`** — it silently no-ops with a `projects-classic` GraphQL deprecation warning on this repo.
 
 ### Phase 7 — Update queue + exit
+
+**Queue updates land directly on `main`, not on the stream branch.** Queue is the source of truth that Phase 1 reads at the start of each iteration; future iterations see the wrong picture if updates sit on an unmerged stream branch. Switch to `main` before editing the queue.
+
+```bash
+git checkout main
+git pull --ff-only origin main
+# ...edit docs/audits/REMEDIATION_QUEUE.md...
+git add docs/audits/REMEDIATION_QUEUE.md
+HUSKY=0 git commit -m "chore(audit): queue update — iter <N>, <item-ID> <status>
+
+Refs: #<tracking-issue>"
+HUSKY=0 git push origin main
+```
 
 In `docs/audits/REMEDIATION_QUEUE.md`:
 
 - Move completed item's row to the Done section, prepend a new line: `<ISO date> · <item-ID> · <one-line summary> · commit <sha> · pr #<NNN>`.
 - If the iteration broke a queue item into sub-items, replace the original row with the sub-items (status: pending, except the one just done which goes to Done).
+- For false-positives: change the row's status to `false-positive`, strike-through the summary, and add an entry to the "Resolved as false positives" table with the verification reasoning.
+- For blocked items: change the row's status to `blocked`, and add a full entry to the "Blocked — needs human input" section with: what the iteration found, the decision matrix (2–4 concrete options with trade-offs), and a recommendation. **Never modify or remove existing Blocked entries** — only the user clears those.
 - Update the In flight table for the touched stream (PR number, last CI = "pending — pushed at <time>").
-- Append a single line to the Iteration log section.
+- Append a single block to the Iteration log section (most recent at top): iteration number, stream, item, what was done / why blocked / why FP, status line.
 
 Print:
 
@@ -186,7 +213,9 @@ Exit. The lock file is removed via the trap.
 - **Never** start work without first running phase 2 (CI rescue check). A red CI on an earlier stream blocks new work on that stream.
 - **Never** commit a red iteration. Revert and surface.
 - **Never** trust the audit's claims without the verification gate. The audit had at least one false positive (F-01).
-- **Always** keep iterations self-contained — one stream, one item (or one rescue, or one Blocked surface).
+- **Always** keep iterations self-contained — one stream, one item (or one rescue, or one Blocked surface, or one FP resolution).
+- **Never** modify or remove an existing Blocked entry. Iterations may add to the Blocked section; only the user clears entries.
+- **Never** spawn sub-agents to do the iteration's work — the previous failure mode was an agent that did the work but didn't push/PR/update queue, leaving a half-done stream branch and a stale lock. Run all phases in the iteration's own context so the lock + state are coherent.
 
 ## Useful one-liners (for diagnostic phases)
 

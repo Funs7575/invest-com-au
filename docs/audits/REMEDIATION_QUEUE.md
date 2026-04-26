@@ -25,7 +25,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | Stream | Branch | PR | Last CI | Items in flight |
 | --- | --- | --- | --- | --- |
 | A | _not started_ | — | — | — |
-| B | `claude/audit-remediation/b-rls-remediation` | #220 | pending — pushed 2026-04-26T13:35Z | B-02 next |
+| B | `claude/audit-remediation/b-rls-remediation` | #220 | pending — pushed 2026-04-26T14:00Z | B-05 next (B-04 blocked, B-03 FP) |
 | C | _not started_ | — | — | — |
 | D | _not started_ | — | — | — |
 | E | _not started_ | — | — | — |
@@ -38,7 +38,32 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 
 ## Blocked — needs human input
 
-_None yet. Each entry below would have: stream, item ID, question, what the iteration tried, decision needed._
+### B-04 · RLS on `investment_listings` · surfaced 2026-04-26 14:15Z
+
+**What the iteration found:**
+
+`investment_listings` has multiple anon-key code paths that currently rely on RLS being off:
+
+| Operation | Route | Client | Why it works today |
+| --- | --- | --- | --- |
+| SELECT (public catalogue) | `/api/listings`, `/invest/...`, `app/page.tsx`, sitemap | SSR (anon-key) | Anon read of all rows |
+| SELECT (by `contact_email`, no auth) | `/api/listings/my-listings` | SSR (anon-key) | Anon read of all rows |
+| SELECT (by id, status check) | `/api/listings/enquire` | SSR (anon-key) | Anon read |
+| INSERT (public submit form) | `/api/listings/submit` | SSR (anon-key) | Anon write |
+| UPDATE (views/enquiries counters) | implied from `/api/listings/enquire` line 201 | SSR (anon-key) | Anon write |
+
+There is **no `auth.uid()` linkage** — `listed_by_professional_id` references `professionals(id)`, which is a business record, not a Supabase Auth user. Defaults §4's standard policy (`owner_id = auth.uid()`) does not apply directly.
+
+**Decision needed (one of):**
+
+1. **Refactor write paths to use service-role admin client** (in `lib/supabase/admin.ts`) and apply policy: `SELECT` for anon allowed (public catalogue intended), all writes service-role only. Cleanest, but requires touching `/api/listings/submit` + the views/enquiries-counter path. Out-of-scope for stream B; would land as a stream C-style refactor first.
+2. **Allow anon `INSERT` on submit + anon `UPDATE` on counters in the RLS policy.** Preserves current behaviour. Concedes that the submit form is intentionally permissive (any visitor can post a listing). Adds a `status = 'pending'` default + admin gate before publish (already in place). Pragmatic but encodes the existing trust assumption.
+3. **Add a `professionals.user_id REFERENCES auth.users(id)` linkage** and policy by `auth.uid() = (SELECT user_id FROM professionals WHERE id = listed_by_professional_id)`. Cleanest long-term, requires schema work + back-fill + auth flow tied to professionals. Probably wrong scope for this stream.
+4. **Surface as a multi-iteration project** — split into: (a) refactor submit/counters to admin client (stream C-style), (b) add SELECT-only anon RLS, (c) follow up with audit on what the policy should ultimately be. Three iterations.
+
+**Recommendation:** option 2 in the short term (preserves behaviour, closes the security gap on writes that *should* be admin-only like `status` field manipulation), with option 4 tracked as a longer-term cleanup. But the user owns this call.
+
+The iteration committed no code; queue updated only.
 
 ---
 
@@ -51,9 +76,9 @@ Highest priority: critical 2 first.
 | ID | Status | Summary | Est. iterations | Notes |
 | --- | --- | --- | --- | --- |
 | B-01 | done | RLS on `email_otps` (`supabase/migrations/20260316_email_otps.sql`) | 1 | Done in commit `79bfd291` (PR #220). Deny-all default; service-role explicit allow. |
-| B-02 | pending | RLS on `leads` (`supabase/migrations/20260316_create_leads_table.sql`) | 1 | PII; default policy: deny anon read, service-role write, admin role read. |
-| B-03 | pending | RLS on `sponsor_invoices` | 1 | Owner = sponsor user; default per `REMEDIATION_DEFAULTS.md` §4. |
-| B-04 | pending | RLS on `investment_listings` | 1 | Public-read likely intended; verify. |
+| B-02 | done | RLS on `leads` (`supabase/migrations/20260316_create_leads_table.sql`) | 1 | Done in commit `5888c25b` (PR #220). Deny-all default; service-role explicit allow. PII enumeration vector closed. |
+| B-03 | false-positive | ~~RLS on `sponsor_invoices`~~ | — | **Already enabled** by `supabase/migrations/20260321_pre_launch_rls_fixes.sql` (RLS on + deny-all policy). See "Resolved as false positives" below. |
+| B-04 | blocked | RLS on `investment_listings` | 1 | **See Blocked section** — public submit/enquire/view-counter routes use the SSR (anon) client; no `auth.uid()` linkage; needs product decision. |
 | B-05 | pending | RLS on `listing_claims` | 1 | Owner = claimant. |
 | B-06 | pending | RLS on remaining 6 medium-risk tables (one iteration each) | 6 | Enumerate from `grep -L "ENABLE ROW LEVEL SECURITY" supabase/migrations/*.sql` minus the 5 above. |
 | B-07 | pending | Add CI lint that fails any new `CREATE TABLE` migration without `ENABLE ROW LEVEL SECURITY` | 1 | Stream I overlap; coordinate. |
@@ -157,6 +182,7 @@ Only run after stream D has covered the file with tests; otherwise risk silent r
 
 ## Done
 
+- 2026-04-26 · B-02 · Enable RLS on `leads` with deny-all default + service-role explicit allow (PII protection) · commit `5888c25b` · pr #220
 - 2026-04-26 · B-01 · Enable RLS on `email_otps` with deny-all default + service-role explicit allow · commit `79bfd291` · pr #220
 
 ---
@@ -166,10 +192,30 @@ Only run after stream D has covered the file with tests; otherwise risk silent r
 | ID | Original claim | Why it's a FP | Verified |
 | --- | --- | --- | --- |
 | F-01 | "`RouteErrorBoundary` + `RouteLoadingSkeleton` are unimported" | Re-exported by 14 `app/*/loading.tsx` + `app/*/error.tsx` files via `export { default } from "@/components/Route*"` syntax — audit's grep didn't catch re-exports. | 2026-04-26 |
+| B-03 | "`sponsor_invoices` is missing RLS" | RLS was added in `supabase/migrations/20260321_pre_launch_rls_fixes.sql` (`ALTER TABLE … ENABLE ROW LEVEL SECURITY` + a deny-all `USING (false)` policy). Service-role bypasses RLS regardless, so the existing policy is functionally a deny-all default. Audit's grep likely only checked `004_sponsor_invoices.sql` and missed the later fix migration. (Note: the policy name is misleading — it says "Service role full access" but the body is `USING (false)`. A future hardening iteration could rename + add explicit `TO service_role` clause + `FORCE ROW LEVEL SECURITY`. Tracked separately if needed; not blocking.) | 2026-04-26 |
 
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-26 14:15Z — iteration 5 (stream B, item B-04 — blocked)
+- Verified `investment_listings` has anon-key INSERT (`/api/listings/submit`), anon-key UPDATE (views/enquiries), and several anon-key SELECT paths (catalogue + my-listings + enquire context).
+- No `auth.uid()` linkage on `listed_by_professional_id` (FK to `professionals`, not `auth.users`). Defaults §4 standard owner-policy does not apply.
+- Surfaced to Blocked with 4-option decision matrix for the user. No code change.
+- Status: BLOCKED · stream=B · item=B-04.
+
+### 2026-04-26 14:08Z — iteration 4 (stream B, item B-03 — false positive)
+- Verified `sponsor_invoices` already has RLS enabled via `supabase/migrations/20260321_pre_launch_rls_fixes.sql` (the audit's grep likely only inspected the original `004_sponsor_invoices.sql`, missing the later RLS-fix migration — same pattern as F-01).
+- No code change; queue housekeeping only. B-03 moved to false-positive table with hardening note for a future optional pass (rename misleading policy + add `FORCE ROW LEVEL SECURITY` + explicit `TO service_role`).
+- Phase-2 CI rescue: PR #220 CI clean (no failures).
+- Status: PROGRESS · stream=B · item=B-03 (resolved as FP).
+
+### 2026-04-26 14:00Z — iteration 3 (stream B, item B-02)
+- Migration `supabase/migrations/20260601_rls_leads.sql`: `ENABLE ROW LEVEL SECURITY` + `FORCE ROW LEVEL SECURITY` + service-role explicit-allow on `leads`. Idempotent, rollback header.
+- All 3 callers verified to use service-role admin client (`grep` of app/ — `submit-lead/route.ts`, `submit-lead/confirm/route.ts`, `cron/confirm-lead-notify/route.ts`).
+- Phase-2 CI rescue: PR #220 CI was clean (only E2E IN_PROGRESS, all other gates green) — no rescue needed.
+- Local gates: SQL-only iteration, no `.ts` changed → tsc/lint/test skipped per Hardware exception. Pushed with `HUSKY=0`.
+- Status: PROGRESS · stream=B · item=B-02 · pr=#220.
 
 ### 2026-04-26 13:50Z — iteration 2 (out-of-stream housekeeping, no stream item)
 - Patched `REMEDIATION_DEFAULTS.md` + `.claude/commands/audit-remediation-iteration.md` with the **Hardware exception**: file-targeted `tsc` (skip whole-codebase) and `HUSKY=0` for pushes. CI on stream PRs is the authoritative gate.
