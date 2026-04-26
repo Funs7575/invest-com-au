@@ -19,12 +19,22 @@
 --     - app/api/claim-listing/route.ts             INSERT (anon-submitted claim)
 --
 -- The submit endpoint (`/api/claim-listing`) already uses the service-role
--- admin client — `createAdminClient()` at line 118 — so anon callers cannot
--- write directly through PostgREST today; they go through the admin route
--- which validates input, rate-limits by IP, and emails an admin notify
--- (escapeHtml'd). No anon-key reader exists either; the planned admin UI
--- (the route's comment references "/admin/listing-claims") does not yet
--- exist and would itself use the admin client.
+-- admin client — `createAdminClient()` at line 118 — so the admin route is
+-- the intended path. The route validates input, rate-limits by IP, and
+-- emails an admin notify (escapeHtml'd). No anon-key reader exists; the
+-- planned admin UI (the route's comment references "/admin/listing-claims")
+-- does not yet exist and would itself use the admin client.
+--
+-- IMPORTANT — prior policy state (discovered iter 8 verification gate):
+-- `20260510_rls_hardening.sql` already enabled RLS on this table and
+-- defined two policies:
+--   - "Anon can submit claims"          (PERMISSIVE, INSERT, anon+authenticated, WITH CHECK email IS NOT NULL AND full_name IS NOT NULL) — i.e. the submit endpoint had a fallback anon-INSERT path through PostgREST as well as the admin client.
+--   - "Service role full access listing_claims"  (PERMISSIVE, ALL, service_role)
+-- Both are explicitly DROP IF EXISTS'd below before our new policies are
+-- created, so the resulting state is unambiguous: deny anon + authenticated,
+-- service-role explicit allow only. Removing the anon INSERT path narrows
+-- the surface to exactly one caller (`/api/claim-listing`), which is the
+-- intended audit posture.
 --
 -- Policy: deny anon + authenticated; service-role explicit allow for
 -- auditability in pg_policies. This matches the B-02 (`leads`) pattern
@@ -38,10 +48,16 @@
 -- Idempotent: ENABLE/FORCE RLS are no-ops if already enabled; policies use
 -- DROP IF EXISTS + CREATE so reruns succeed.
 --
--- Rollback:
+-- Rollback (note: also restores the legacy 20260510 policies for full
+-- pre-migration parity):
 --   DROP POLICY IF EXISTS "service_role full access" ON listing_claims;
+--   CREATE POLICY "Anon can submit claims" ON listing_claims FOR INSERT
+--     TO anon, authenticated
+--     WITH CHECK (email IS NOT NULL AND full_name IS NOT NULL);
+--   CREATE POLICY "Service role full access listing_claims" ON listing_claims
+--     FOR ALL TO service_role USING (true) WITH CHECK (true);
 --   ALTER TABLE listing_claims NO FORCE ROW LEVEL SECURITY;
---   ALTER TABLE listing_claims DISABLE ROW LEVEL SECURITY;
+--   -- (do NOT DISABLE ROW LEVEL SECURITY — 20260510 originally enabled it)
 -- ============================================================================
 
 BEGIN;
@@ -53,10 +69,15 @@ ALTER TABLE listing_claims ENABLE ROW LEVEL SECURITY;
 ALTER TABLE listing_claims FORCE ROW LEVEL SECURITY;
 
 -- Drop any pre-existing policies (this migration is the source of truth).
-DROP POLICY IF EXISTS "service_role full access"     ON listing_claims;
-DROP POLICY IF EXISTS "anon insert claim"            ON listing_claims;
-DROP POLICY IF EXISTS "anon read own claim"          ON listing_claims;
-DROP POLICY IF EXISTS "authenticated read claims"    ON listing_claims;
+-- Includes the legacy policies from 20260510_rls_hardening.sql which used
+-- different naming and granted anon INSERT — explicitly dropping by exact
+-- name is required because RLS policies stack additively.
+DROP POLICY IF EXISTS "service_role full access"             ON listing_claims;
+DROP POLICY IF EXISTS "anon insert claim"                    ON listing_claims;
+DROP POLICY IF EXISTS "anon read own claim"                  ON listing_claims;
+DROP POLICY IF EXISTS "authenticated read claims"            ON listing_claims;
+DROP POLICY IF EXISTS "Anon can submit claims"               ON listing_claims;  -- legacy from 20260510_rls_hardening.sql
+DROP POLICY IF EXISTS "Service role full access listing_claims" ON listing_claims;  -- legacy from 20260510_rls_hardening.sql
 
 -- Service-role explicit allow. Service-role bypasses RLS regardless, but an
 -- explicit policy makes intent visible in pg_policies for auditing.
