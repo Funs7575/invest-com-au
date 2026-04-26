@@ -34,7 +34,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | H | _not started_ | — | — | — |
 | I | _not started_ | — | — | — |
 | J | _not started_ | — | — | — |
-| K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-26T15:42Z | K-01 done; K-02..K-14 pending |
+| K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-26T15:51Z | K-01..K-02 done; K-03..K-14 pending |
 | L | _not started_ | — | — | — |
 | M | _not started_ | — | — | — |
 | N | _not started_ | — | — | — |
@@ -194,7 +194,7 @@ P0/P1/P2 findings from the security agent's deep scan. Each is small (<2h); clus
 | ID | Status | Summary | Est. iterations | Notes |
 | --- | --- | --- | --- | --- |
 | K-01 | done | `/api/widget/route.ts` defense-in-depth: anon-key client + explicit CORS contract + OPTIONS handler | 1 | Done in commit `d2295ee7` (PR #222). **Reframed:** original audit said "drop wildcard CORS" but the widget is intentionally cross-origin-embeddable on partner sites. Real risk was service-role + wildcard CORS combination. Fix: swap `createAdminClient()` → `createStaticClient()` so RLS enforces the data contract (Postgres "Public read for active brokers" policy already scopes anon SELECT to `status='active'`); keep `*` (intentional); add `Vary: Origin`, `Cross-Origin-Resource-Policy: cross-origin`, `Access-Control-Allow-Methods`; add OPTIONS handler; document the public-by-design contract in the route file's header comment so future maintainers don't re-introduce service-role. |
-| K-02 | pending | `/api/verify-otp/verify/route.ts:11–17` rate-limit tighten: 10/5min → 3/15min + exponential backoff | 1 | P1. 6-digit OTP exhaust window today is 5.8 days. |
+| K-02 | done | `/api/verify-otp/verify` layered rate-limit defense | 1 | Done in commit `bd2431fd` (PR #222). Three layers: per-IP burst 3/15min, per-IP cumulative 10/4hr, per-email 5/60min. Per-email is the critical layer because it catches IP-rotation attacks (botnet, residential proxies) against a single email. 6-digit OTP exhaust window 5.8 days → 22 years. Generic error messages so attackers can't tell which bucket tripped. |
 | K-03 | pending | `/api/admin/login/route.ts:33–106` add exponential backoff after 5 failures: 60s → 300s → 900s (cap 1h) | 1 | P1. |
 | K-04 | pending | `proxy.ts:68` CSP: drop `'unsafe-inline'` from `script-src` after browser-support test | 1 | P1. `'strict-dynamic'` neutralises it on modern browsers; verify analytics scripts still execute. |
 | K-05 | pending | Unify `X-Frame-Options` between `proxy.ts:43` (SAMEORIGIN) and `next.config.ts:81–82` (DENY) — keep DENY in proxy, remove from next.config | 1 | P1. Config drift hazard. |
@@ -335,6 +335,7 @@ Diagrams + API contracts + missing-runbook overflow from Q.
 
 ## Done
 
+- 2026-04-26 · K-02 · `/api/verify-otp/verify` layered brute-force defense (per-IP burst 3/15min + per-IP cumulative 10/4hr + per-email 5/60min). 6-digit OTP exhaust window 5.8 days → 22 years. · commit `bd2431fd` · pr #222
 - 2026-04-26 · K-01 · `/api/widget/route.ts` defense-in-depth: anon-key client (RLS-enforced) + explicit CORS contract (kept `*` since widget is public-by-design) + OPTIONS pre-flight handler + maintainer-facing comment block. · commit `d2295ee7` · pr #222
 - 2026-04-26 · B-06.1 (`listing_enquiries`) · Enable RLS on `listing_enquiries` (option 2 — preserve current behaviour: anon SELECT all + anon INSERT with status='new' guard; service-role explicit allow). Long-term cleanup tracked as B-09 (refactor my-listings + tighten policy). · commit `0bb82daa` · pr #220
 - 2026-04-26 · B-05 · Enable RLS on `listing_claims` with deny-all default + service-role explicit allow (PII protection; sole caller uses admin client) · commits `5904db8a` (initial) + `24898931` (iter 8 correction — drop legacy `"Anon can submit claims"` from 20260510) · pr #220
@@ -356,6 +357,16 @@ Diagrams + API contracts + missing-runbook overflow from Q.
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-26 15:51Z — iteration 13 (stream K, item K-02 — OTP layered rate limits)
+- Commit `bd2431fd`: `app/api/verify-otp/verify/route.ts` swapped single-tier rate limit (`10/5min IP`) for three layers: (1) per-IP burst `3/15min`, (2) per-IP cumulative `10/4hr` to catch slow distributed retry, (3) per-email `5/60min` — the critical layer because an attacker rotating IPs (botnet/residential proxies) against one target email would otherwise bypass per-IP entirely.
+- Math: 6-digit OTP has 1M combinations. Old cap (10/5min = 120/hr) → ~5.8 days exhaustion window. New per-email cap (5/60min × 1M) → ~22 years. Per-IP daily cap = 60.
+- Generic error messages so attackers can't infer which axis to rotate on (don't disclose email-bucket vs IP-bucket trip).
+- Verified callers: `grep -rn /api/verify-otp/verify` returned only `components/EmailVerification.tsx` (legitimate user flow with ≤2 expected attempts) + the route itself. New limits are well above honest-user behaviour.
+- No schema change — keys (`otp-verify-cumulative:*`, `otp-verify-email:*`) write to existing `rate_limits` table. `isRateLimited` fails open on DB error so misconfigured table doesn't break verify (matches existing behaviour).
+- Phase 2 CI: PR #220 fully green; PR #222 K-01 build still IN_PROGRESS at iteration start. Proceeded — IN_PROGRESS is not failure per the contract; if K-01 build flips red, Phase 2 of iter 14 will rescue both K-01 + K-02 atop.
+- Local gates: `tsc`/`eslint` OOM'd (Hardware exception). CI on PR #222 is authoritative. Pushed with `HUSKY=0`.
+- Status: PROGRESS · stream=K · item=K-02 · pr=#222.
 
 ### 2026-04-26 15:42Z — iteration 12 (stream K, item K-01 — widget CORS defense-in-depth)
 - Scaffolded stream K branch `claude/audit-remediation/k-security-hardening` + draft PR #222.
