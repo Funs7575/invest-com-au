@@ -987,7 +987,38 @@ Updated in-place as items ship; full close-out summary written when the sprint c
 | Date | Item | Status | PR / commit | Metric impact |
 |---|---|---|---|---|
 | 2026-04-26 | **J-11** featured_plans + listing_plans stripe_price_id wires (26 wires total) | DONE by founder (Stripe MCP) | — | M06 unaffected; revenue surface complete |
-| 2026-04-26 | **F-4.4.2** pg_graphql revoke anon | PR opened | [#223](https://github.com/Funs7575/invest-com-au/pull/223) | M07: 261 → ~20 (kills 241 advisor findings) |
+| 2026-04-26 | **F-4.4.2** pg_graphql revoke anon | merged #223 | f0325e8a | M07: 261 → ~20 (kills 241 advisor findings) |
 | 2026-04-26 | **J-02 / J-04 / J-07** | FALSE POSITIVE — already handled | queue updated | (no work) |
+| 2026-04-26 | **P0-1** cron silence — 3 stacked bugs (status classification, silent error swallow, 'success' violates CHECK constraint) | merged #225 | f0325e8a | M09: TBD (see Vercel cron-pinning footnote below) |
+| 2026-04-26 | **P0-2** newsletter html_content sanitiser | merged #228 | e309e9a2 | M07: stored XSS vector closed |
+| 2026-04-26 | **P0-4** sitemap article-status filter | merged #226 | 17b36da0 | M11: drafts can no longer leak to Google |
+| 2026-04-26 | **P0-6** site-wide opengraph-image + twitter-image | merged #227 | ced0f161 | M12: site-wide default OG image live |
+| 2026-04-26 | **P0-7** /api/widget CORS lockdown (K-01) | merged earlier (loop) | d2295ee7 | M07 |
+| 2026-04-26 | **F-4.5.4** 4 unindexed-FK indexes (founder MCP + repo parity) | merged #230 | d9d927fb | M08 |
+| 2026-04-26 | **PR #6** cron global-silence guard + Sentry alert runbook | open #231 | fafafa0a | M09 guardrail |
+| 2026-04-26 | **Quality dashboard framework** (12 metrics, A+..F grade, weekly snapshot, per-PR delta) | open #229 | f42209ea | meta — enables tracking M01..M12 |
+
+### Vercel cron-pinning footnote (P0-1, late 2026-04-26)
+
+After PR #225 merged + deployed READY, `cron_run_log` writes still
+didn't resume. Diagnosis via Vercel MCP showed Vercel cron is
+**pinned to `dpl_EVj51b...`** (commit `ced0f161`, the OG image
+deploy from #227, created 17:37:08 UTC) — NOT the cron-fix
+deployment `dpl_6Urx...` (commit `f0325e8a`, created 19 seconds
+later at 17:37:27 UTC and aliased to `invest-com-au.vercel.app`).
+
+This is a Vercel quirk: when multiple production deploys land in
+rapid succession, cron pins to whichever was created first; the
+public alias updates to the latest. The two are decoupled. Vercel
+re-pins cron only on the NEXT production deploy after the current
+pinned one stops being the latest sibling.
+
+**Mitigation**: a fresh production deploy (any commit to main)
+forces cron re-pin to whatever runtime code is in that build. This
+audit-doc update commit serves as the trigger.
+
+**Long-term fix to add to Sprint 2 backlog**: integration test
+that asserts the cron schedule pinning matches the latest production
+deploy after each merge — ideally via Vercel API check in CI.
 
 — end —
