@@ -25,7 +25,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | Stream | Branch | PR | Last CI | Items in flight |
 | --- | --- | --- | --- | --- |
 | A | _not started_ | — | — | — |
-| B | `claude/audit-remediation/b-rls-remediation` | #220 | pending — pushed 2026-04-26T14:10Z | B-05 next (B-04 done via option 2, B-03 FP) |
+| B | `claude/audit-remediation/b-rls-remediation` | #220 | pending — pushed 2026-04-26T14:14Z | B-06 next (B-01..B-05 done/FP) |
 | C | _not started_ | — | — | — |
 | D | _not started_ | — | — | — |
 | E | _not started_ | — | — | — |
@@ -54,7 +54,7 @@ Highest priority: critical 2 first.
 | B-02 | done | RLS on `leads` (`supabase/migrations/20260316_create_leads_table.sql`) | 1 | Done in commit `5888c25b` (PR #220). Deny-all default; service-role explicit allow. PII enumeration vector closed. |
 | B-03 | false-positive | ~~RLS on `sponsor_invoices`~~ | — | **Already enabled** by `supabase/migrations/20260321_pre_launch_rls_fixes.sql` (RLS on + deny-all policy). See "Resolved as false positives" below. |
 | B-04 | done | RLS on `investment_listings` (option 2) | 1 | Done in commit `4847bd31` (PR #220). Anon SELECT all; anon INSERT only when `status='pending'` + counters=0 + no professional linkage; anon UPDATE column-scoped to (`views`, `enquiries`) via REVOKE/GRANT; service-role explicit allow. Long-term option-4 follow-up tracked as B-08 below. |
-| B-05 | pending | RLS on `listing_claims` | 1 | Owner = claimant. |
+| B-05 | done | RLS on `listing_claims` | 1 | Done in commit `5904db8a` (PR #220). Deny-all default + service-role explicit allow. Sole caller (`/api/claim-listing`) uses admin client; planned admin-review UI must also. Standard owner policy did not apply (no `auth.uid()` linkage — claimants identify by email only). |
 | B-06 | pending | RLS on remaining 6 medium-risk tables (one iteration each) | 6 | Enumerate from `grep -L "ENABLE ROW LEVEL SECURITY" supabase/migrations/*.sql` minus the 5 above. |
 | B-07 | pending | Add CI lint that fails any new `CREATE TABLE` migration without `ENABLE ROW LEVEL SECURITY` | 1 | Stream I overlap; coordinate. |
 | B-08 | pending | Long-term: refactor `/api/listings/submit` + enquire counter fallback to admin client; tighten anon policy on `investment_listings` to SELECT-only (option 4 follow-up to B-04) | ~2 | Lower priority than B-05/B-06; depends on stream C call-graph (C-01) to confirm no other anon writers. |
@@ -158,6 +158,7 @@ Only run after stream D has covered the file with tests; otherwise risk silent r
 
 ## Done
 
+- 2026-04-26 · B-05 · Enable RLS on `listing_claims` with deny-all default + service-role explicit allow (PII protection; sole caller uses admin client) · commit `5904db8a` · pr #220
 - 2026-04-26 · B-04 · Enable RLS on `investment_listings` (option 2 — anon SELECT all; anon INSERT pending-only with counter+linkage guards; anon UPDATE column-scoped to views+enquiries via GRANT; service-role explicit allow) · commit `4847bd31` · pr #220
 - 2026-04-26 · B-02 · Enable RLS on `leads` with deny-all default + service-role explicit allow (PII protection) · commit `5888c25b` · pr #220
 - 2026-04-26 · B-01 · Enable RLS on `email_otps` with deny-all default + service-role explicit allow · commit `79bfd291` · pr #220
@@ -174,6 +175,14 @@ Only run after stream D has covered the file with tests; otherwise risk silent r
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-26 14:14Z — iteration 7 (stream B, item B-05)
+- Migration `supabase/migrations/20260601_rls_listing_claims.sql`: `ENABLE ROW LEVEL SECURITY` + `FORCE ROW LEVEL SECURITY` + service-role explicit-allow on `listing_claims`. Idempotent, rollback header.
+- Sole caller `/api/claim-listing/route.ts` uses `createAdminClient()` (line 118) — verified by `grep -rln "listing_claims" app/ lib/`. Admin-review UI ("/admin/listing-claims" referenced in route comment) does not yet exist; when added it must also use the admin client.
+- Standard "Owner = claimant" policy from Defaults §4 did not apply: the table has no `auth.uid()` linkage (claimants identify by email alone, no auth account). Deny-all-anon + service-role-only is the correct fit; matches the B-02 (`leads`) shape exactly.
+- Phase 2 CI rescue: PR #220 was fully green pre-iteration (no rescue).
+- Local gates: SQL-only iteration, no `.ts` changed → tsc/lint/test skipped per Hardware exception. Pushed with `HUSKY=0`.
+- Status: PROGRESS · stream=B · item=B-05 · pr=#220.
 
 ### 2026-04-26 14:10Z — iteration 6 (stream B, item B-04 — option 2 applied)
 - User cleared the B-04 blocker by choosing option 2 (preserve current public-write behaviour; encode it in the policy).
