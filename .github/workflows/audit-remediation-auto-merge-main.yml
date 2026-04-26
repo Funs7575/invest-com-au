@@ -1,0 +1,92 @@
+name: Audit-remediation auto-merge main into stream branches
+
+# Triggers when main is pushed. Iterates over all
+# claude/audit-remediation/* branches and merges main into each so that
+# the next loop iteration on that stream doesn't have to do a CI rescue
+# just to refresh shared types or schema files.
+#
+# Conflict handling: skip the branch and log. The conflict will surface
+# the next time a human or the loop touches that branch.
+#
+# Idempotent: if main is already in the branch, `git merge` is a no-op.
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: audit-remediation-auto-merge-main
+  cancel-in-progress: false
+
+jobs:
+  merge-main-into-streams:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          # Use a token that can push back to protected branches.
+          # Default GITHUB_TOKEN works for non-protected; if branch
+          # protection is added later, switch to a PAT in repo secrets.
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure git identity
+        run: |
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions (audit-remediation auto-merge)"
+
+      - name: Merge main into each stream branch
+        run: |
+          set +e
+          MERGED=()
+          SKIPPED=()
+          UPTODATE=()
+
+          # List remote stream branches (audit-remediation streams only)
+          for ref in $(git branch -r | grep -E 'origin/claude/audit-remediation/' | sed 's|.*origin/||'); do
+            branch="$ref"
+            echo "::group::$branch"
+
+            git checkout -B "$branch" "origin/$branch" 2>&1 | tail -3
+            git fetch origin main >/dev/null 2>&1
+
+            # Skip if main is already in this branch
+            if git merge-base --is-ancestor origin/main HEAD; then
+              echo "$branch: already up to date with main"
+              UPTODATE+=("$branch")
+              echo "::endgroup::"
+              continue
+            fi
+
+            # Attempt merge
+            if git merge --no-edit origin/main 2>&1 | tail -10; then
+              git push origin "$branch" 2>&1 | tail -3
+              echo "$branch: merged + pushed"
+              MERGED+=("$branch")
+            else
+              echo "$branch: CONFLICT — aborting merge, leaving branch as-is for human resolution"
+              git merge --abort 2>/dev/null
+              SKIPPED+=("$branch")
+            fi
+
+            echo "::endgroup::"
+          done
+
+          # Summary
+          echo ""
+          echo "::notice::Auto-merge summary"
+          echo "Merged + pushed: ${#MERGED[@]} branch(es)"
+          for b in "${MERGED[@]}"; do echo "  ✓ $b"; done
+          echo "Already up-to-date: ${#UPTODATE[@]} branch(es)"
+          for b in "${UPTODATE[@]}"; do echo "  · $b"; done
+          echo "Skipped (conflict): ${#SKIPPED[@]} branch(es)"
+          for b in "${SKIPPED[@]}"; do echo "  ⚠ $b"; done
+
+          # Don't fail the workflow on conflicts — the loop will surface
+          # them on the next iteration that touches the affected branch.
+          exit 0
