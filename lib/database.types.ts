@@ -6805,20 +6805,26 @@ export type Database = {
       health_pings: {
         Row: {
           created_at: string | null
+          details: Json | null
           id: number
           latency_ms: number | null
+          service: string | null
           status: string
         }
         Insert: {
           created_at?: string | null
+          details?: Json | null
           id?: number
           latency_ms?: number | null
+          service?: string | null
           status?: string
         }
         Update: {
           created_at?: string | null
+          details?: Json | null
           id?: number
           latency_ms?: number | null
+          service?: string | null
           status?: string
         }
         Relationships: []
