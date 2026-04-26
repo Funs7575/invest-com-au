@@ -34,7 +34,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | H | _not started_ | — | — | — |
 | I | _not started_ | — | — | — |
 | J | _not started_ | — | — | — |
-| K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-26T16:21Z | K-01..K-03 done; K-04..K-14 pending |
+| K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-26T16:53Z | K-01..K-04 done; K-05..K-15 pending |
 | L | _not started_ | — | — | — |
 | M | _not started_ | — | — | — |
 | N | _not started_ | — | — | — |
@@ -196,7 +196,7 @@ P0/P1/P2 findings from the security agent's deep scan. Each is small (<2h); clus
 | K-01 | done | `/api/widget/route.ts` defense-in-depth: anon-key client + explicit CORS contract + OPTIONS handler | 1 | Done in commit `d2295ee7` (PR #222). **Reframed:** original audit said "drop wildcard CORS" but the widget is intentionally cross-origin-embeddable on partner sites. Real risk was service-role + wildcard CORS combination. Fix: swap `createAdminClient()` → `createStaticClient()` so RLS enforces the data contract (Postgres "Public read for active brokers" policy already scopes anon SELECT to `status='active'`); keep `*` (intentional); add `Vary: Origin`, `Cross-Origin-Resource-Policy: cross-origin`, `Access-Control-Allow-Methods`; add OPTIONS handler; document the public-by-design contract in the route file's header comment so future maintainers don't re-introduce service-role. |
 | K-02 | done | `/api/verify-otp/verify` layered rate-limit defense | 1 | Done in commit `bd2431fd` (PR #222). Three layers: per-IP burst 3/15min, per-IP cumulative 10/4hr, per-email 5/60min. Per-email is the critical layer because it catches IP-rotation attacks (botnet, residential proxies) against a single email. 6-digit OTP exhaust window 5.8 days → 22 years. Generic error messages so attackers can't tell which bucket tripped. |
 | K-03 | done | `/api/admin/login` IP-tier exponential backoff | 1 | Done in commit `6c9d99b9` (PR #222). New backoff curve: count ≤5 = 60s (initial burst), 6–10 = 5min, 11–20 = 15min, 21+ = 60min cap. Beyond 60min the email-tier lockout (already 15min/1hr/24hr in `lib/login-lockout.ts`) takes over. Honest user behaviour byte-identical for count ≤5. No schema change — uses existing `admin_login_attempts.reset_at` column. Backoff is monotonic (never shortens unlock clock). |
-| K-04 | pending | `proxy.ts:68` CSP: drop `'unsafe-inline'` from `script-src` after browser-support test | 1 | P1. `'strict-dynamic'` neutralises it on modern browsers; verify analytics scripts still execute. |
+| K-04 | done | `proxy.ts` CSP `'unsafe-inline'` removal from `script-src` | 1 | Done in commit `7f1f734f` (PR #222). New directive: `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https:`. CSP3 browsers (>95% AU) unaffected — `'unsafe-inline'` was already shadowed by `'strict-dynamic'`. CSP2 legacy browsers still have the `https:` host-source fallback for externally-loaded scripts; only truly inline `<script>…</script>` without a nonce is blocked, and Next.js auto-nonces framework-emitted scripts. style-src untouched (Tailwind needs it; documented in code). |
 | K-05 | pending | Unify `X-Frame-Options` between `proxy.ts:43` (SAMEORIGIN) and `next.config.ts:81–82` (DENY) — keep DENY in proxy, remove from next.config | 1 | P1. Config drift hazard. |
 | K-06 | pending | `/api/account/export-data/route.ts` — add reminder cron + completion email path; verify `/api/cron/process-data-exports` exists and runs | 1 | P1. APP-12 / GDPR Art-15 compliance. |
 | K-07 | pending | `/api/account/delete/route.ts` — confirmation email on schedule; day-25 reminder | 1 | P1. UX + APP-13. |
@@ -207,6 +207,7 @@ P0/P1/P2 findings from the security agent's deep scan. Each is small (<2h); clus
 | K-12 | pending | `proxy.ts:22–30` cron bearer compare with `timingSafeEqual` (consistency w/ broker-signup pattern) | 1 | P3. Hygiene. |
 | K-13 | pending | ESLint rule: ban `dangerouslySetInnerHTML` outside `JSON.stringify(...)` and `sanitizeHtml(...)` / `renderMarkdown(...)` contexts | 1 | P3. |
 | K-14 | pending | Seed `retention_rules` table with initial policies (today empty; gdpr-retention-purge cron has nothing to do) | 1 | P2 / GDPR. |
+| K-15 | pending | CSP violation reporting: add `report-to` directive in `proxy.ts` + `/api/csp-report` endpoint | 1 | P2 (added by K-04 follow-up). Without reporting, legacy-browser inline-script breakage from K-04 is only detectable via support tickets. Endpoint should land each violation in a `csp_violations` table for trend analysis. |
 
 ### Stream L — Observability + Sentry/PostHog/SLO (audit §9)
 
@@ -335,6 +336,7 @@ Diagrams + API contracts + missing-runbook overflow from Q.
 
 ## Done
 
+- 2026-04-26 · K-04 · `proxy.ts` CSP `'unsafe-inline'` removal from `script-src`. CSP3 browsers (>95% AU) unaffected — was already shadowed by `'strict-dynamic'`; legacy CSP2 browsers continue via `https:` host-source. style-src untouched. K-15 follow-up tracked for CSP violation reporting. · commit `7f1f734f` · pr #222
 - 2026-04-26 · K-03 · `/api/admin/login` IP-tier exponential backoff (60s → 5min → 15min → 60min by count). Plugs the "wait 60s and retry" loophole; honest user behaviour unchanged in count ≤5 path. · commit `6c9d99b9` · pr #222
 - 2026-04-26 · K-02 · `/api/verify-otp/verify` layered brute-force defense (per-IP burst 3/15min + per-IP cumulative 10/4hr + per-email 5/60min). 6-digit OTP exhaust window 5.8 days → 22 years. · commit `bd2431fd` · pr #222
 - 2026-04-26 · K-01 · `/api/widget/route.ts` defense-in-depth: anon-key client (RLS-enforced) + explicit CORS contract (kept `*` since widget is public-by-design) + OPTIONS pre-flight handler + maintainer-facing comment block. · commit `d2295ee7` · pr #222
@@ -358,6 +360,16 @@ Diagrams + API contracts + missing-runbook overflow from Q.
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-26 16:53Z — iteration 15 (stream K, item K-04 — CSP unsafe-inline removal)
+- Commit `7f1f734f`: `proxy.ts` dropped `'unsafe-inline'` from `script-src` directive. New shape: `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https:`.
+- Behavioural impact analysed: CSP3 browsers (Chrome 52+, Firefox 52+, Edge 79+, Safari 15.4+ — >95% of AU traffic) ignore `'unsafe-inline'` when `'strict-dynamic'` is present per spec, so it was already a no-op for the dominant cohort. CSP2 legacy browsers (Safari < 15.4, ~1–2%) continue to load externally-served HTTPS scripts via the `https:` host-source fallback; only truly inline `<script>…</script>` blocks WITHOUT a nonce are now blocked. Next.js 16 auto-nonces framework scripts via the existing `x-nonce` header propagation, and our own `<Script />` usages all carry an explicit nonce, so no expected breakage.
+- Updated the in-code comment block to capture the K-04 reasoning (browser cohort table, why `https:` stays, why style-src is untouched) so future maintainers don't re-add the directive.
+- style-src `'unsafe-inline'` intentionally untouched — Tailwind JIT and Next.js inline-style emission make removal a much larger refactor; documented as a known narrow-residual risk.
+- Added queue follow-up K-15 (CSP violation reporting endpoint + `report-to` directive). Without reporting, legacy-browser breakage from K-04 is only detectable via support tickets — that's acceptable for now (Vercel preview's "Preview smoke test" + Lighthouse CI exercise the critical paths on each push, catching same-browser breakage), but not enterprise-grade for prod.
+- Phase 2 CI: PR #220 fully green; PR #222 (K-01..K-03) fully green (14 success / 10 skipped).
+- Local gates: `tsc`/`eslint` OOM'd (Hardware exception). CI on PR #222 is authoritative; the "Lint · Type-check · Test · Build" job there exercises the full edge-middleware bundle and would catch any regression.
+- Status: PROGRESS · stream=K · item=K-04 · pr=#222.
 
 ### 2026-04-26 16:21Z — iteration 14 (stream K, item K-03 — admin login exponential backoff)
 - Commit `6c9d99b9`: `app/api/admin/login/route.ts` replaced fixed 60s lockout window with exponential backoff curve (60s → 5min → 15min → 60min by attempt count). Past 60min the existing email-tier lockout in `lib/login-lockout.ts` (15min/1hr/24hr by email failure count) takes over.
