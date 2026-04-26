@@ -34,7 +34,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | H | _not started_ | — | — | — |
 | I | _not started_ | — | — | — |
 | J | _not started_ | — | — | — |
-| K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-26T17:23Z | K-01..K-05 done; K-06..K-15 pending |
+| K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-26T18:26Z | K-01..K-05 + K-06a done; K-06b + K-07..K-15 pending |
 | L | _not started_ | — | — | — |
 | M | _not started_ | — | — | — |
 | N | _not started_ | — | — | — |
@@ -198,7 +198,8 @@ P0/P1/P2 findings from the security agent's deep scan. Each is small (<2h); clus
 | K-03 | done | `/api/admin/login` IP-tier exponential backoff | 1 | Done in commit `6c9d99b9` (PR #222). New backoff curve: count ≤5 = 60s (initial burst), 6–10 = 5min, 11–20 = 15min, 21+ = 60min cap. Beyond 60min the email-tier lockout (already 15min/1hr/24hr in `lib/login-lockout.ts`) takes over. Honest user behaviour byte-identical for count ≤5. No schema change — uses existing `admin_login_attempts.reset_at` column. Backoff is monotonic (never shortens unlock clock). |
 | K-04 | done | `proxy.ts` CSP `'unsafe-inline'` removal from `script-src` | 1 | Done in commit `7f1f734f` (PR #222). New directive: `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https:`. CSP3 browsers (>95% AU) unaffected — `'unsafe-inline'` was already shadowed by `'strict-dynamic'`. CSP2 legacy browsers still have the `https:` host-source fallback for externally-loaded scripts; only truly inline `<script>…</script>` without a nonce is blocked, and Next.js auto-nonces framework-emitted scripts. style-src untouched (Tailwind needs it; documented in code). |
 | K-05 | done | Unify X-Frame-Options + Permissions-Policy in `proxy.ts` | 1 | Done in commit `a1d1d59b` (PR #222). proxy.ts: `SAMEORIGIN` → `DENY` (matches what browser was already enforcing via most-restrictive selection); `geolocation=()` → `geolocation=(self)` (the silent-most-restrictive combine had been disabling all geolocation features — restored). next.config.ts: dropped both conflicting headers; X-Content-Type-Options, Referrer-Policy, X-DNS-Prefetch-Control, HSTS remain duplicated with matching values across both configs to cover the static-asset paths excluded from the middleware matcher. Behavioural deltas: X-Frame-Options unchanged (was DENY, is DENY); geolocation features re-enabled. |
-| K-06 | pending | `/api/account/export-data/route.ts` — add reminder cron + completion email path; verify `/api/cron/process-data-exports` exists and runs | 1 | P1. APP-12 / GDPR Art-15 compliance. |
+| K-06a | done | Data-export request stale-pending monitor cron | 1 | Done in commit `9d6b2609` (PR #222). New cron `/api/cron/data-export-monitor` (daily, batched into `daily-2` alongside `gdpr-retention-purge`). Scans `data_export_requests` for `status='pending'` rows; bucketed at 7+ days (reminder email) and 25+ days (urgent — within 5 days of APP-12 30-day deadline). Single consolidated alert email to `ADMIN_NOTIFICATION_EMAIL`. Read-only on the table; non-blocking on Resend failure. Pre-launch: zero overhead while no requests exist. |
+| K-06b | pending | Full data-export processor cron — generate JSON archive of user's data across all tables, sign download URL, email user | ~3 | P1 / APP-12 compliance. Larger scope split out from K-06. Until shipped, K-06a's monitor surfaces stalled requests for manual processing via `/admin/privacy`. |
 | K-07 | pending | `/api/account/delete/route.ts` — confirmation email on schedule; day-25 reminder | 1 | P1. UX + APP-13. |
 | K-08 | pending | Sweep `/api/admin/*` PATCH/POST/DELETE routes: ensure each writes to `admin_audit_log` | ~2 | P1. SOC 2 / ASIC audit-trail gap. ~44 routes; spot-check 10 first. |
 | K-09 | pending | `/api/seed/route.ts` — gate behind `NODE_ENV !== 'production'` + admin auth | 1 | P1. Shouldn't exist in prod at all. |
@@ -337,6 +338,7 @@ Diagrams + API contracts + missing-runbook overflow from Q.
 
 ## Done
 
+- 2026-04-26 · K-06a · Data-export stale-pending monitor cron — daily check, founder alert at 7d (reminder) and 25d (urgent — within 5 days of APP-12 deadline). Closes the silent-failure gap where pending `data_export_requests` would sit unprocessed past the 30-day legal window. · commit `9d6b2609` · pr #222
 - 2026-04-26 · M-01a · Site-wide default OG + Twitter card image (P0-6, out-of-loop) · pr #227
 - 2026-04-26 · O-02 · 4 FK index repo-parity migration (out-of-loop; live DB already had them) · pr #230
 - 2026-04-26 · L-04 · Cron dispatcher silent-failure fix; cron_run_log now captures dispatcher exceptions (P0-1, out-of-loop) · pr #225
@@ -365,6 +367,16 @@ Diagrams + API contracts + missing-runbook overflow from Q.
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-26 18:26Z — iteration 18 (stream K, item K-06a — data-export monitor cron)
+- K-06 split into K-06a (this iteration — monitor) + K-06b (future — full processor). Original audit framing assumed `/api/cron/process-data-exports` existed and just needed reminder/completion bolt-ons; verification revealed the processor doesn't exist at all. K-06b is a 3-iteration build (cross-table archival, signed URL gen, user email) and was too big for this iteration's diff cap.
+- Commit `9d6b2609`: New cron `app/api/cron/data-export-monitor/route.ts` + 1-line addition to `lib/cron-groups.ts` (`daily-2` group, alongside `gdpr-retention-purge` — same compliance theme).
+- Behaviour: scans `data_export_requests` for `status='pending'` rows. Buckets by age (7+d → reminder email; 25+d → urgent email — within 5 days of the 30-day APP-12 / GDPR Art-15 legal deadline). Single consolidated email to `ADMIN_NOTIFICATION_EMAIL` (with two env-var fallbacks). Read-only on the table; non-blocking on Resend failure. Pre-launch zero-overhead.
+- **Mid-iteration recovery:** during this iteration the working directory was unexpectedly switched away from the K branch (likely by a parallel shell), wiping the in-progress route file and the cron-groups.ts edit before commit. Recovered by re-checking-out the K branch, re-creating the file, re-applying the edit, and committing immediately. Future iterations should commit any new files before doing further work to avoid this class of loss.
+- Verified callers: `data_export_requests` is written only by `app/api/account/export-data/route.ts`; read by the new monitor + the user's privacy page. No other callers or admin UIs to coordinate with.
+- Phase 2 CI: PR #220 fully green; PR #222 (K-01..K-05) fully green. Out-of-loop merges in this window: PR #229 (code-quality dashboard), PR #231 (cron global-silence guard — L-04 follow-up), PR #232 (Sprint 1 close-out doc). None affect this iteration's scope.
+- Local gates: `tsc`/`eslint` OOM'd (Hardware exception). CI on PR #222 is authoritative. Pushed with `HUSKY=0`.
+- Status: PROGRESS · stream=K · item=K-06a · pr=#222.
 
 ### 2026-04-26 17:50Z — iteration 17 (queue housekeeping — reconcile out-of-loop Sprint 1 PRs)
 - Five PRs merged out-of-loop in the last ~30 min by a parallel "Sprint 1 P0" workflow (separate from this audit-remediation loop). Reconciling the queue so future iterations don't re-do completed work.
