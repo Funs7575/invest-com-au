@@ -47,23 +47,15 @@ const LEAD_PRICING_ROWS: Array<{
 ];
 
 async function seedLeadPricing() {
-  let inserted = 0;
-  let skipped = 0;
-  for (const row of LEAD_PRICING_ROWS) {
-    const { data: existing } = await supabase
-      .from("lead_pricing")
-      .select("advisor_type")
-      .eq("advisor_type", row.advisor_type)
-      .maybeSingle();
-    if (existing) { skipped++; continue; }
-    const { error } = await supabase.from("lead_pricing").insert(row);
-    if (error) {
-      console.error(`  ! ${row.advisor_type}: ${error.message}`);
-      continue;
-    }
-    inserted++;
+  // Single bulk upsert is one round trip vs N×2 for the loop variant.
+  const { error, count } = await supabase
+    .from("lead_pricing")
+    .upsert(LEAD_PRICING_ROWS, { onConflict: "advisor_type", ignoreDuplicates: true, count: "exact" });
+  if (error) {
+    console.error(`  ! lead_pricing upsert: ${error.message}`);
+    return;
   }
-  console.log(`lead_pricing: ${inserted} inserted, ${skipped} already present`);
+  console.log(`lead_pricing: ${count ?? "?"} rows reconciled (existing rows untouched)`);
 }
 
 /* ─── Articles ───────────────────────────────────────────────────── */
@@ -390,42 +382,32 @@ const ARTICLES: ArticleSeed[] = [
 ];
 
 async function seedArticles() {
-  let inserted = 0;
-  let skipped = 0;
-  let errors = 0;
   const now = new Date().toISOString();
-  for (const a of ARTICLES) {
-    const { data: existing } = await supabase
-      .from("articles")
-      .select("slug")
-      .eq("slug", a.slug)
-      .maybeSingle();
-    if (existing) { skipped++; continue; }
-    const { error } = await supabase.from("articles").insert({
-      slug: a.slug,
-      title: a.title,
-      category: a.category,
-      tags: a.tags,
-      excerpt: a.excerpt,
-      read_time: a.read_time,
-      sections: a.sections,
-      author_name: AUTHOR_NAME,
-      status: "published",
-      evergreen: true,
-      content_type: a.content_type || "guide",
-      related_brokers: [],
-      published_at: now,
-      created_at: now,
-      updated_at: now,
-    });
-    if (error) {
-      console.error(`  ! ${a.slug}: ${error.message}`);
-      errors++;
-      continue;
-    }
-    inserted++;
+  const rows = ARTICLES.map((a) => ({
+    slug: a.slug,
+    title: a.title,
+    category: a.category,
+    tags: a.tags,
+    excerpt: a.excerpt,
+    read_time: a.read_time,
+    sections: a.sections,
+    author_name: AUTHOR_NAME,
+    status: "published",
+    evergreen: true,
+    content_type: a.content_type || "guide",
+    related_brokers: [],
+    published_at: now,
+    created_at: now,
+    updated_at: now,
+  }));
+  const { error, count } = await supabase
+    .from("articles")
+    .upsert(rows, { onConflict: "slug", ignoreDuplicates: true, count: "exact" });
+  if (error) {
+    console.error(`  ! articles upsert: ${error.message}`);
+    return;
   }
-  console.log(`articles: ${inserted} inserted, ${skipped} already present, ${errors} errors`);
+  console.log(`articles: ${count ?? "?"} rows reconciled (existing slugs untouched)`);
 }
 
 async function main() {
