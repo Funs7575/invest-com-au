@@ -363,6 +363,49 @@ Diagrams + API contracts + missing-runbook overflow from Q.
 | S-04 | pending | Document Stream-J handler-registry pattern (architectural decision record) | 1 | P3. |
 | S-05 | pending | Update `ARCHITECTURE.md` with cron-dispatch-group pattern (39 entries → 73 implementations) | 1 | P3. Non-obvious for new dev. |
 
+### Stream T — Deferred dependency upgrades (added 2026-04-26 iter 22+ "max 100%" expansion)
+
+Originally deferred in audit `P-05` ("post-launch only — high blast radius, low gain"). Promoted to active when founder asked for max-100% enterprise-grade. Run AFTER stream D has rebuilt route-test coverage so any regression is caught.
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| T-01 | pending | TypeScript 5.9 → 6.0 upgrade | ~3 | Touches every `.ts` file. Run `tsc --noEmit` to find type errors; fix or `@ts-expect-error`. Validate Next.js 16 + React 19 still happy. May surface to Blocked if ecosystem types incompatible. |
+| T-02 | pending | ESLint 9 → 10 upgrade | ~2 | Flat-config breaking changes possible. Project already uses flat config (`eslint.config.mjs`); update deprecated rule names. |
+| T-03 | pending | Vitest 3 → 4 + jsdom 25 → 29 + @vitest/coverage-v8 3 → 4 (grouped per `.github/dependabot.yml`) | ~2 | All-or-nothing per CLAUDE.md. Vitest 4 has new `coverage.thresholds` shape; update `vitest.config.mts`. |
+
+### Stream U — Pre-launch operational readiness (added 2026-04-26 iter 22+ "max 100%" expansion)
+
+Items NOT in the 04-26 audit but genuinely needed for launch-day. Several are `needs-user` (external services / business decisions).
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| U-01 | needs-user | Public status page (statuspage.io / instatus / similar) — sign up, configure components, link from footer | 1 | Founder picks provider + signs up. Loop generates the footer link snippet + incident-update runbook. |
+| U-02 | needs-user | Customer support inbox routing (`hello@invest.com.au`, `support@invest.com.au`) → real human (Co-Founder during AU hours) | — | Founder: configure email forwarding. No code change. |
+| U-03 | pending | Email deliverability validation: DMARC + SPF + DKIM verified for sender domain; mail-tester.com score ≥9/10 | 1 | Reads current DNS via Vercel/registrar APIs (or `dig`); generates checklist + test script. Surfaces gaps as Blocked if DNS records need adding. |
+| U-04 | pending | Lighthouse-CI budget enforcement — CI gate fails PRs regressing LCP/CLS/INP on top-20 pages | 1 | Builds on existing `.lighthouserc.cwv.json`. Thresholds: LCP <2.5s, CLS <0.1, INP <200ms (mobile). |
+| U-05 | pending | axe-core CI gate — fail PRs introducing new WCAG 2.1 AA violations | 1 | Builds on existing axe job in `e2e-preview.yml`; tighten violation budget to zero on critical-impact rules. |
+| U-06 | pending | Synthetic load-test script for `/api/marketplace/allocation` and `/api/quiz-lead` | 1 | k6 or autocannon. Target: 100 RPS sustained 30s without 5xx; p95 <500ms. Output to `docs/runbooks/load-test-baseline.md`. |
+| U-07 | pending | Post-launch monitoring runbook — which Sentry / Vercel / Supabase / PostHog dashboards to watch in the first 48h after go-live | 1 | Single doc with bookmarkable URLs + thresholds + escalation paths. |
+| U-08 | pending | Closed-beta plan doc + checklist (friends-and-family list, onboarding email template, beta-flag setup, feedback collection) | 1 | Doc + minimal feature-flag wiring. Founder runs the actual beta. |
+| U-09 | needs-user | BetterStack / UptimeRobot / Pingdom configuration — sign up, point at `/api/health`, set page-on-failure | 1 | Founder signs up; loop generates the runbook + alert routing config. |
+
+### Stream V — Polish + max-100% extras (added 2026-04-26 iter 22+ "max 100%" expansion)
+
+Lowest priority — runs after everything else lands. The "we want zero loose ends" stream.
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| V-01 | pending | Sentry release tracking — auto-tag releases via `withSentryConfig`'s `release` option, link to commits | 1 | Lets you see which release introduced which error. |
+| V-02 | pending | Source-map upload verification post-deploy — script that checks Sentry has the latest sourcemaps | 1 | Run as post-deploy step in Vercel. Pairs with L-01 (auth token provisioning). |
+| V-03 | pending | PostHog session-replay privacy filtering — mask PII inputs (email, phone, password) per recording | 1 | Add `data-ph-mask` attributes; configure `posthog.init` privacy settings. |
+| V-04 | pending | GDPR cookie-consent banner audit — confirm we have one, banner copy correct, opt-in vs opt-out matches AU Privacy Act + EU GDPR | 1 | Read current implementation; surface gaps. May be a Blocked decision if AU-only stance is enough. |
+| V-05 | needs-user | ACL/AFSL pre-launch checklist (signed off by Dad as RM) — what compliance copy must be present, which routes need general-advice warnings, AFCA membership disclosure | — | Founder + Dad action. Loop drafts the checklist; Dad signs. |
+| V-06 | pending | Cookie domain config for the invest.com.au cutover (Oct-Dec 2026) — ensure cookies set today carry over to the new domain | 1 | Read current `Set-Cookie` headers; verify `domain=` attribute or absence is intentional. Document in `docs/runbooks/launch-day.md`. |
+| V-07 | pending | 301 redirect map for legacy WordPress URLs (~30 years of inbound links to preserve from the 1996/97-era site) | ~3 | Pull legacy URL inventory from Google Search Console export (founder action) → generate `next.config.ts` redirects entries → test 301s on preview. |
+| V-08 | pending | Per-page performance budgets (LCP / CLS / INP targets) committed to `.lighthouserc.cwv.json` for top-20 pages by traffic | 1 | Sets the SLO for U-04's CI gate. |
+| V-09 | needs-user | External a11y audit booking — Deque / Level Access / TPGi quote + scheduled audit for top-10 pages | — | Founder action. Could swap for in-house axe + manual KB testing if budget tight. |
+| V-10 | pending | Pen-test prep doc + bounty program scoping — what's in scope, what's out, severity classifications, response SLAs | 1 | Doc only. Founder decides between paid pen-test ($5-15k) vs. HackerOne bug bounty (free, 2-week window). |
+
 ---
 
 ## Done

@@ -127,6 +127,9 @@ If an auto-merge GitHub Action is set up (see `.github/workflows/audit-remediati
 | Q | `claude/audit-remediation/q-dr-soc2` | PITR drill, account-recovery runbooks, DPAs | 04-26 audit §12 · issue #221 |
 | R | `claude/audit-remediation/r-lib-coverage` | Marketplace, dispute-resolver, cached-data tests | 04-26 audit §2.3 · issue #221 |
 | S | `claude/audit-remediation/s-architecture` | Diagrams, OpenAPI, missing runbooks | 04-26 audit §12 · issue #221 |
+| T | `claude/audit-remediation/t-deferred-deps` | TypeScript 6 + ESLint 10 + Vitest 4 (deferred upgrades, promoted to active) | iter 22+ "max 100%" · issue #221 |
+| U | `claude/audit-remediation/u-pre-launch-ops` | Status page, support inbox, email deliverability, LH-CI gate, axe-core gate, load-test, monitoring runbook, closed-beta plan, uptime monitor | iter 22+ "max 100%" · issue #221 |
+| V | `claude/audit-remediation/v-polish-extras` | Sentry release tracking, sourcemap verification, PostHog privacy, GDPR consent, ACL checklist, cookie domain, 301 redirect map, perf budgets, external a11y, pen-test prep | iter 22+ "max 100%" · issue #221 |
 
 ## Priority order
 
@@ -153,7 +156,10 @@ When choosing the next item, walk in this order and pick the first non-blocked o
 17. **I** — guardrails (after A/B/C land so the rules don't break in-flight work).
 18. **F** — hygiene cleanup.
 19. **S (architecture artefacts)** — diagrams, OpenAPI, ADRs.
-20. **H** — file splits (last; needs tests in place to be safe). Note: H-01 (stripe webhook split) is subsumed by J-01; H-03 (advisor-portal split) is subsumed by N-03.
+20. **H** — file splits (last 04-26-audit stream; needs tests in place to be safe). Note: H-01 (stripe webhook split) is subsumed by J-01; H-03 (advisor-portal split) is subsumed by N-03.
+21. **U (pre-launch ops)** — status page, support inbox, email deliverability, LH-CI gate, axe-core gate, load-test, monitoring runbook, closed-beta plan, uptime monitor. Several items are `needs-user` — surface them early so the founder has time to act.
+22. **V (polish + extras)** — Sentry release tracking, sourcemap verification, PostHog privacy, GDPR consent, ACL checklist, cookie domain pre-flight, 301 redirect map for legacy WordPress URLs, perf budgets, external a11y, pen-test prep.
+23. **T (deferred deps)** — TypeScript 6 + ESLint 10 + Vitest 4. Run LAST because high blast radius — depends on stream D's restored test coverage being green to detect regression. If the upgrade fails, the loop reverts and surfaces to Blocked rather than landing a half-broken main.
 
 `needs-user` items in any stream surface to Blocked when picked. The loop notes the question and continues to the next non-blocked item.
 
