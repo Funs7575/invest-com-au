@@ -45,12 +45,17 @@ export async function GET(
   const supabase = createAdminClient();
 
   const started = Date.now();
+  log.info("Dispatch start", { group, total: paths.length, origin });
+
   const results = await Promise.allSettled(
     paths.map(async (path) => {
       const t0 = Date.now();
       // Open a cron_run_log row before the call so a hanging handler
       // still shows up as "running" in the observability dashboard.
-      const { data: logRow } = await supabase
+      // We surface insert failures explicitly — silent failures here
+      // were the root cause of the 2026-04-16 → 2026-04-26 cron-log
+      // silence (P0-1).
+      const { data: logRow, error: insertErr } = await supabase
         .from("cron_run_log")
         .insert({
           name: path,
@@ -61,9 +66,19 @@ export async function GET(
         .select("id")
         .single();
 
+      if (insertErr) {
+        log.error("cron_run_log insert failed", {
+          path,
+          err: insertErr,
+          message: insertErr.message,
+          code: insertErr.code,
+        });
+      }
+
       let status = 0;
       let body: unknown = null;
       let errorMessage: string | null = null;
+      let fetchSucceeded = false;
       try {
         const res = await fetch(`${origin}${path}`, {
           method: "GET",
@@ -71,6 +86,7 @@ export async function GET(
           cache: "no-store",
         });
         status = res.status;
+        fetchSucceeded = true;
         try {
           body = await res.json();
         } catch {
@@ -78,38 +94,79 @@ export async function GET(
         }
       } catch (err) {
         errorMessage = err instanceof Error ? err.message : String(err);
+        log.error("loopback fetch threw", {
+          path,
+          err: err instanceof Error ? err : undefined,
+          message: errorMessage,
+        });
       }
       const durationMs = Date.now() - t0;
+
+      // A loopback fetch that throws (e.g., DNS / TLS / connection
+      // reset) leaves `status === 0`. Without this guard, the
+      // summary at the bottom treats `0 < 400` as success and
+      // dispatcher returns 200 even though every handler failed —
+      // which is exactly what masked the 10-day cron silence in
+      // 2026-04. Treat any non-fulfilled fetch as failure.
+      const handlerFailed = !fetchSucceeded || status >= 400;
+
+      if (handlerFailed) {
+        log.error("handler invocation failed", {
+          path,
+          status,
+          fetchSucceeded,
+          message: errorMessage ?? `HTTP ${status}`,
+          durationMs,
+        });
+      }
 
       // Close the row with the outcome. If the insert earlier failed
       // we silently drop the update — the dispatcher summary below is
       // still accurate.
       if (logRow) {
-        await supabase
+        const { error: updateErr } = await supabase
           .from("cron_run_log")
           .update({
             ended_at: new Date().toISOString(),
             duration_ms: durationMs,
-            status: errorMessage
-              ? "error"
-              : status < 400
-                ? "success"
-                : "error",
+            // Status MUST be one of ('running','ok','error','partial')
+            // per the cron_run_log_status_check CHECK constraint
+            // (verified live 2026-04-26). The pre-fix dispatcher
+            // wrote 'success' here — the constraint silently rejected
+            // every UPDATE, which is the deepest layer of the
+            // 04-16 → 04-26 logging silence. 'ok' matches the value
+            // wrapCronHandler uses on the handler-side path so the
+            // observability dashboard groups both sources under one
+            // bucket.
+            status: handlerFailed ? "error" : "ok",
             error_message:
               errorMessage ?? (status >= 400 ? `HTTP ${status}` : null),
             stats: isPlainObject(body) ? body : null,
           })
           .eq("id", logRow.id);
+
+        if (updateErr) {
+          log.error("cron_run_log update failed", {
+            path,
+            logRowId: logRow.id,
+            err: updateErr,
+            message: updateErr.message,
+          });
+        }
       }
 
-      return { path, status, durationMs, body, errorMessage };
+      return { path, status, durationMs, body, errorMessage, handlerFailed };
     }),
   );
 
   const summary = results.map((r, i) => {
     const path = paths[i];
     if (r.status === "fulfilled") {
-      return { ok: r.value.status < 400, ...r.value };
+      // `handlerFailed` is the authoritative success/failure flag —
+      // it's true when the loopback fetch threw OR returned >=400.
+      // Pre-fix code used `status < 400` which incorrectly classified
+      // `status === 0` (fetch never returned) as success.
+      return { ok: !r.value.handlerFailed, ...r.value };
     }
     return {
       path,
@@ -120,12 +177,23 @@ export async function GET(
   });
 
   const failed = summary.filter((s) => !s.ok);
-  log.info("Dispatch complete", {
-    group,
-    total: summary.length,
-    failed: failed.length,
-    totalMs: Date.now() - started,
-  });
+  if (failed.length > 0) {
+    log.error("Dispatch complete with failures", {
+      group,
+      total: summary.length,
+      failed: failed.length,
+      totalMs: Date.now() - started,
+      // First 3 failed paths for triage; full set in summary response
+      failedPaths: failed.slice(0, 3).map((f) => f.path),
+    });
+  } else {
+    log.info("Dispatch complete", {
+      group,
+      total: summary.length,
+      failed: 0,
+      totalMs: Date.now() - started,
+    });
+  }
 
   return NextResponse.json(
     {
