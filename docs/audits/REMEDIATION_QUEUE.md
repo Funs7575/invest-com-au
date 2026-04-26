@@ -25,7 +25,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | Stream | Branch | PR | Last CI | Items in flight |
 | --- | --- | --- | --- | --- |
 | A | _not started_ | — | — | — |
-| B | `claude/audit-remediation/b-rls-remediation` | #220 | pending — pushed 2026-04-26T14:20Z | B-06 next (B-01..B-05 done/FP; B-05 corrected in iter 8) |
+| B | `claude/audit-remediation/b-rls-remediation` | #220 | pending — pushed 2026-04-26T14:25Z | B-06 in progress (1 of 8 done — `listing_enquiries`); B-01..B-05 done/FP |
 | C | _not started_ | — | — | — |
 | D | _not started_ | — | — | — |
 | E | _not started_ | — | — | — |
@@ -55,9 +55,10 @@ Highest priority: critical 2 first.
 | B-03 | false-positive | ~~RLS on `sponsor_invoices`~~ | — | **Already enabled** by `supabase/migrations/20260321_pre_launch_rls_fixes.sql` (RLS on + deny-all policy). See "Resolved as false positives" below. |
 | B-04 | done | RLS on `investment_listings` (option 2) | 1 | Done in commit `4847bd31` (PR #220). Anon SELECT all; anon INSERT only when `status='pending'` + counters=0 + no professional linkage; anon UPDATE column-scoped to (`views`, `enquiries`) via REVOKE/GRANT; service-role explicit allow. Long-term option-4 follow-up tracked as B-08 below. |
 | B-05 | done | RLS on `listing_claims` | 1 | Done in commit `5904db8a` then **corrected in `24898931` (iter 8)** to actually drop the legacy `"Anon can submit claims"` policy from `20260510_rls_hardening.sql` (the original DROP IF EXISTS list missed it; RLS policies stack additively, so the legacy permissive INSERT survived and undermined the deny-all claim). Net state: deny-all anon + service-role explicit allow. |
-| B-06 | pending | RLS on remaining 6 medium-risk tables (one iteration each) | ~6 | Real gap re-enumerated 2026-04-26 (iter 8) via `comm -23 <(grep -hE "^CREATE TABLE" supabase/migrations/*.sql ...) <(grep -hE "ENABLE ROW LEVEL SECURITY" ...)`: `forum_categories`, `forum_posts`, `forum_threads`, `forum_user_profiles`, `forum_votes` (5 forum tables), plus `quarterly_reports`, `listing_enquiries`, `listing_plans`. The audit's "remaining 6" was loose — actual count is 8 candidates. `support_tickets`, `support_messages`, `broker_creatives`, `broker_notifications`, `ab_tests` were already RLS'd in `20260321_pre_launch_rls_fixes.sql` (same false-positive pattern as B-03). Each subsequent iteration must run the iter-8 prior-policy verification gate. |
+| B-06 | in-progress | RLS on remaining 8 medium-risk tables (one iteration each) | ~7 | 1 of 8 done in iter 9 — `listing_enquiries` (commit `0bb82daa`, option-2 pattern). Remaining 7: `forum_categories`, `forum_posts`, `forum_threads`, `forum_user_profiles`, `forum_votes`, `quarterly_reports`, `listing_plans`. Each iteration runs the iter-8 prior-policy verification gate. Per-table risk ranking: forum_user_profiles (PII) > forum_posts/threads (UGC) > listing_plans (reference data) > forum_categories/votes (reference) > quarterly_reports (admin content). |
 | B-07 | pending | Add CI lint that fails any new `CREATE TABLE` migration without `ENABLE ROW LEVEL SECURITY` | 1 | Stream I overlap; coordinate. |
-| B-08 | pending | Long-term: refactor `/api/listings/submit` + enquire counter fallback to admin client; tighten anon policy on `investment_listings` to SELECT-only (option 4 follow-up to B-04) | ~2 | Lower priority than B-05/B-06; depends on stream C call-graph (C-01) to confirm no other anon writers. |
+| B-08 | pending | Long-term: refactor `/api/listings/submit` + enquire counter fallback to admin client; tighten anon policy on `investment_listings` to SELECT-only (option 4 follow-up to B-04) | ~2 | Lower priority than B-06; depends on stream C call-graph (C-01) to confirm no other anon writers. |
+| B-09 | pending | Long-term: refactor `/api/listings/my-listings` to admin client + email-verification challenge; tighten anon policy on `listing_enquiries` to deny SELECT (follow-up to B-06's `listing_enquiries` migration) | ~2 | **Known PII enumeration vector**: today the route trusts the user-supplied `email` query param and returns all enquiries (name, email, phone, message) for any listing whose `contact_email` matches. RLS at the DB layer cannot scope this without an `auth.uid()` linkage. Stream C territory; depends on the my-listings flow design decision (magic link, OTP, or login). |
 
 ### Stream D — Critical-path API tests (issue #217)
 
@@ -158,6 +159,7 @@ Only run after stream D has covered the file with tests; otherwise risk silent r
 
 ## Done
 
+- 2026-04-26 · B-06.1 (`listing_enquiries`) · Enable RLS on `listing_enquiries` (option 2 — preserve current behaviour: anon SELECT all + anon INSERT with status='new' guard; service-role explicit allow). Long-term cleanup tracked as B-09 (refactor my-listings + tighten policy). · commit `0bb82daa` · pr #220
 - 2026-04-26 · B-05 · Enable RLS on `listing_claims` with deny-all default + service-role explicit allow (PII protection; sole caller uses admin client) · commits `5904db8a` (initial) + `24898931` (iter 8 correction — drop legacy `"Anon can submit claims"` from 20260510) · pr #220
 - 2026-04-26 · B-04 · Enable RLS on `investment_listings` (option 2 — anon SELECT all; anon INSERT pending-only with counter+linkage guards; anon UPDATE column-scoped to views+enquiries via GRANT; service-role explicit allow) · commit `4847bd31` · pr #220
 - 2026-04-26 · B-02 · Enable RLS on `leads` with deny-all default + service-role explicit allow (PII protection) · commit `5888c25b` · pr #220
@@ -176,6 +178,20 @@ Only run after stream D has covered the file with tests; otherwise risk silent r
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-26 14:25Z — iteration 9 (stream B, B-06 first table — `listing_enquiries`)
+- First iteration to apply the iter-8 prior-policy verification gate. `grep -nE "(POLICY.*listing_enquiries|listing_enquiries.*POLICY|TABLE.*listing_enquiries.*ENABLE)" supabase/migrations/*.sql` returned nothing → clean policy ground.
+- Migration `supabase/migrations/20260601_rls_listing_enquiries.sql`:
+  - `ENABLE ROW LEVEL SECURITY` + `FORCE ROW LEVEL SECURITY`.
+  - `service_role` explicit ALL policy (auditability).
+  - `anon` SELECT: unconstrained (preserves /api/listings/my-listings flow). KNOWN PII enumeration vector at the application layer — tracked as B-09.
+  - `anon` INSERT: `WITH CHECK (status='new' AND listing_id IS NOT NULL AND user_email IS NOT NULL AND user_name IS NOT NULL)` — defence-in-depth mirror of /api/listings/enquire's app-layer validation.
+  - UPDATE / DELETE: no policy → denied by default. No anon caller exists for either.
+- Verified 3 callers via grep: `/api/listings/enquire` (anon INSERT), `/api/listings/my-listings` (anon SELECT), `/api/listings/[id]` (admin SELECT count via service-role).
+- Same option-2 pattern as B-04. Long-term cleanup tracked as new queue item B-09 (refactor my-listings + tighten policy).
+- Phase 2 CI rescue: PR #220 was fully green pre-iteration.
+- Local gates: SQL-only iteration, no `.ts` changed → tsc/lint/test skipped per Hardware exception. Pushed with `HUSKY=0`.
+- Status: PROGRESS · stream=B · item=B-06.1 (`listing_enquiries`) · pr=#220.
 
 ### 2026-04-26 14:20Z — iteration 8 (stream B, B-05 correction + spec hardening)
 - **B-05 correction** (commit `24898931` on stream B): the original B-05 commit (`5904db8a`) claimed deny-all-anon on `listing_claims` but its DROP IF EXISTS list missed the legacy `"Anon can submit claims"` policy from `20260510_rls_hardening.sql:206`. RLS policies stack additively, so that policy survived and would have continued to allow anon+authenticated INSERT through PostgREST. The corrected migration explicitly drops both legacy policies (`"Anon can submit claims"` + `"Service role full access listing_claims"`) by exact name, documents the prior state in an `IMPORTANT — prior policy state:` header block, and updates the rollback header to restore the legacy policies (and explicitly NOT `DISABLE ROW LEVEL SECURITY` since 20260510 originally enabled it).
