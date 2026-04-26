@@ -25,7 +25,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | Stream | Branch | PR | Last CI | Items in flight |
 | --- | --- | --- | --- | --- |
 | A | _not started_ | — | — | — |
-| B | `claude/audit-remediation/b-rls-remediation` | #220 | pending — pushed 2026-04-26T14:25Z | B-06 in progress (1 of 8 done — `listing_enquiries`); B-01..B-05 done/FP |
+| B | `claude/audit-remediation/b-rls-remediation` | #220 | pending — pushed 2026-04-26T14:25Z | B-06 — 1 done (`listing_enquiries`) · 5 FP (forum tables) · 2 left (`listing_plans`, `quarterly_reports`) |
 | C | _not started_ | — | — | — |
 | D | _not started_ | — | — | — |
 | E | _not started_ | — | — | — |
@@ -33,6 +33,16 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | G | _not started_ | — | — | — |
 | H | _not started_ | — | — | — |
 | I | _not started_ | — | — | — |
+| J | _not started_ | — | — | — |
+| K | _not started_ | — | — | — |
+| L | _not started_ | — | — | — |
+| M | _not started_ | — | — | — |
+| N | _not started_ | — | — | — |
+| O | _not started_ | — | — | — |
+| P | _not started_ | — | — | — |
+| Q | _not started_ | — | — | — |
+| R | _not started_ | — | — | — |
+| S | _not started_ | — | — | — |
 
 ---
 
@@ -55,7 +65,7 @@ Highest priority: critical 2 first.
 | B-03 | false-positive | ~~RLS on `sponsor_invoices`~~ | — | **Already enabled** by `supabase/migrations/20260321_pre_launch_rls_fixes.sql` (RLS on + deny-all policy). See "Resolved as false positives" below. |
 | B-04 | done | RLS on `investment_listings` (option 2) | 1 | Done in commit `4847bd31` (PR #220). Anon SELECT all; anon INSERT only when `status='pending'` + counters=0 + no professional linkage; anon UPDATE column-scoped to (`views`, `enquiries`) via REVOKE/GRANT; service-role explicit allow. Long-term option-4 follow-up tracked as B-08 below. |
 | B-05 | done | RLS on `listing_claims` | 1 | Done in commit `5904db8a` then **corrected in `24898931` (iter 8)** to actually drop the legacy `"Anon can submit claims"` policy from `20260510_rls_hardening.sql` (the original DROP IF EXISTS list missed it; RLS policies stack additively, so the legacy permissive INSERT survived and undermined the deny-all claim). Net state: deny-all anon + service-role explicit allow. |
-| B-06 | in-progress | RLS on remaining 8 medium-risk tables (one iteration each) | ~7 | 1 of 8 done in iter 9 — `listing_enquiries` (commit `0bb82daa`, option-2 pattern). Remaining 7: `forum_categories`, `forum_posts`, `forum_threads`, `forum_user_profiles`, `forum_votes`, `quarterly_reports`, `listing_plans`. Each iteration runs the iter-8 prior-policy verification gate. Per-table risk ranking: forum_user_profiles (PII) > forum_posts/threads (UGC) > listing_plans (reference data) > forum_categories/votes (reference) > quarterly_reports (admin content). |
+| B-06 | in-progress | RLS on remaining medium-risk tables | 2 | 1 done in iter 9 (`listing_enquiries`, commit `0bb82daa`, option-2 pattern). 5 false-positives discovered in iter 10 via prior-policy gate — all forum tables (`forum_categories`, `forum_posts`, `forum_threads`, `forum_user_profiles`, `forum_votes`) were already RLS-enabled with proper `auth.uid()`-scoped policies in `20260427_wave_security_observability.sql`; moved to FP table. Real residual: `listing_plans` (clean — all 3 callers use admin client) + `quarterly_reports` (anon-key admin page complicates the policy — likely needs decision). |
 | B-07 | pending | Add CI lint that fails any new `CREATE TABLE` migration without `ENABLE ROW LEVEL SECURITY` | 1 | Stream I overlap; coordinate. |
 | B-08 | pending | Long-term: refactor `/api/listings/submit` + enquire counter fallback to admin client; tighten anon policy on `investment_listings` to SELECT-only (option 4 follow-up to B-04) | ~2 | Lower priority than B-06; depends on stream C call-graph (C-01) to confirm no other anon writers. |
 | B-09 | pending | Long-term: refactor `/api/listings/my-listings` to admin client + email-verification challenge; tighten anon policy on `listing_enquiries` to deny SELECT (follow-up to B-06's `listing_enquiries` migration) | ~2 | **Known PII enumeration vector**: today the route trusts the user-supplied `email` query param and returns all enquiries (name, email, phone, message) for any listing whose `contact_email` matches. RLS at the DB layer cannot scope this without an `auth.uid()` linkage. Stream C territory; depends on the my-listings flow design decision (magic link, OTP, or login). |
@@ -150,10 +160,176 @@ Only run after stream D has covered the file with tests; otherwise risk silent r
 
 | ID | Status | Summary | Est. iterations | Notes |
 | --- | --- | --- | --- | --- |
-| H-01 | pending | Split `app/api/stripe/webhook/route.ts` (1,197 LOC) — extract event handlers | ~3 | Highest leverage. Requires D-stream tests for stripe routes first. |
+| H-01 | pending | Split `app/api/stripe/webhook/route.ts` (1,197 LOC) — extract event handlers | ~3 | Highest leverage. Requires D-stream tests for stripe routes first. Subsumed by J-01 if J runs first. |
 | H-02 | pending | Split `lib/advisor-verification.ts` (1,075 LOC) — extract verification stages | ~3 | Second-highest. Requires test coverage. |
-| H-03 | pending | Split `app/advisor-portal/page.tsx` (2,761 LOC) into per-tab components | ~5 | Largest file. Pure-UI split; test via E2E. |
+| H-03 | pending | Split `app/advisor-portal/page.tsx` (2,761 LOC) into per-tab components | ~5 | Largest file. Pure-UI split; test via E2E. Overlaps N-03. |
 | H-04 | pending | Split remaining 12 files in audit §3.2 (one or two per iteration) | ~10 | Lower priority. |
+
+---
+
+> **Streams J–S below source from `docs/audits/2026-04-26-comprehensive-audit.md`** (the comprehensive enterprise-readiness audit, on top of the 04-24 codebase-health audit). Priority order updated in `REMEDIATION_DEFAULTS.md` to interleave new streams.
+
+### Stream J — Stripe webhook event-coverage + handler split (audit §5/§11)
+
+The webhook route is 1,197 LOC and only handles a subset of the events an enterprise SaaS should react to. Missing events span dispute response, dunning, fraud signals, and trial-end retention.
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| J-01 | pending | Split `app/api/stripe/webhook/route.ts` into a handler-registry pattern (one file per event family) — keeps existing dispatch behaviour, new files are wrappable in tests one at a time | ~3 | Foundational; subsequent J items add new handlers. Subsumes H-01. Order: scaffold registry → migrate existing handlers → add tests file-by-file. |
+| J-02 | pending | Add handler: `charge.dispute.created` — open dispute → record in `lead_disputes` → email admin within SLA window | 1 | Time-sensitive (Stripe dispute deadline ~7 days). |
+| J-03 | pending | Add handler: `customer.subscription.trial_will_end` — fire 3-days-pre-charge email via Resend | 1 | High-impact retention. |
+| J-04 | pending | Add handler: `invoice.payment_failed` — start dunning workflow (check existing `/api/cron/subscription-dunning`) | 1 | Verify if already handled; if so, mark FP. |
+| J-05 | pending | Add handler: `invoice.payment_action_required` — surface 3DS / SCA flow to user via email + dashboard banner | 1 | AU/EU customer support. |
+| J-06 | pending | Add handler: `payment_intent.payment_failed` — distinct from invoice.failed (covers one-time payments) | 1 | |
+| J-07 | pending | Add handler: `charge.refunded` — update internal subscription state when admin processes refund | 1 | |
+| J-08 | pending | Add handler: `payout.failed` — internal alert (bank info wrong) | 1 | |
+| J-09 | pending | Add handler: `radar.early_fraud_warning.created` — proactively refund to dodge dispute | 1 | |
+| J-10 | pending | Add handler: `customer.subscription.paused` — preserve subscription state, suppress further dunning | 1 | |
+| J-11 | pending | Reconcile `featured_plans` 3/5 → 5/5 stripe_price_id (or delete the 2 unused tier rows) | 1 | DB query in audit §11.3. Decision-needed item. |
+
+### Stream K — Security hardening (audit §7)
+
+P0/P1/P2 findings from the security agent's deep scan. Each is small (<2h); cluster as iterations allow.
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| K-01 | pending | `/api/widget/route.ts:161` CORS lockdown — drop `Access-Control-Allow-Origin: *`; allowlist invest.com.au + invest-com-au.vercel.app | 1 | P0 — 0.5h fix, ship first. |
+| K-02 | pending | `/api/verify-otp/verify/route.ts:11–17` rate-limit tighten: 10/5min → 3/15min + exponential backoff | 1 | P1. 6-digit OTP exhaust window today is 5.8 days. |
+| K-03 | pending | `/api/admin/login/route.ts:33–106` add exponential backoff after 5 failures: 60s → 300s → 900s (cap 1h) | 1 | P1. |
+| K-04 | pending | `proxy.ts:68` CSP: drop `'unsafe-inline'` from `script-src` after browser-support test | 1 | P1. `'strict-dynamic'` neutralises it on modern browsers; verify analytics scripts still execute. |
+| K-05 | pending | Unify `X-Frame-Options` between `proxy.ts:43` (SAMEORIGIN) and `next.config.ts:81–82` (DENY) — keep DENY in proxy, remove from next.config | 1 | P1. Config drift hazard. |
+| K-06 | pending | `/api/account/export-data/route.ts` — add reminder cron + completion email path; verify `/api/cron/process-data-exports` exists and runs | 1 | P1. APP-12 / GDPR Art-15 compliance. |
+| K-07 | pending | `/api/account/delete/route.ts` — confirmation email on schedule; day-25 reminder | 1 | P1. UX + APP-13. |
+| K-08 | pending | Sweep `/api/admin/*` PATCH/POST/DELETE routes: ensure each writes to `admin_audit_log` | ~2 | P1. SOC 2 / ASIC audit-trail gap. ~44 routes; spot-check 10 first. |
+| K-09 | pending | `/api/seed/route.ts` — gate behind `NODE_ENV !== 'production'` + admin auth | 1 | P1. Shouldn't exist in prod at all. |
+| K-10 | pending | `/api/newsletter/subscribe/route.ts` — `source` field allowlist enum | 1 | P2. Analytics poisoning vector. |
+| K-11 | pending | `admin_login_attempts` table — add `UNIQUE(ip_hash)` constraint to prevent rate-limit bypass under concurrency | 1 | P2. |
+| K-12 | pending | `proxy.ts:22–30` cron bearer compare with `timingSafeEqual` (consistency w/ broker-signup pattern) | 1 | P3. Hygiene. |
+| K-13 | pending | ESLint rule: ban `dangerouslySetInnerHTML` outside `JSON.stringify(...)` and `sanitizeHtml(...)` / `renderMarkdown(...)` contexts | 1 | P3. |
+| K-14 | pending | Seed `retention_rules` table with initial policies (today empty; gdpr-retention-purge cron has nothing to do) | 1 | P2 / GDPR. |
+
+### Stream L — Observability + Sentry/PostHog/SLO (audit §9)
+
+Sentry is 95% there; PostHog funnel is half-blind; SLO framework exists but unseeded. Several items are pure config (founder action) — flagged accordingly.
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| L-01 | needs-user | Provision `SENTRY_AUTH_TOKEN` in Vercel project envs (sourcemap upload) | — | P0 · founder action · 0.25h. Without it, prod stack traces aren't sourcemapped. Surface to Blocked when picked. |
+| L-02 | pending | n8n env-var injection audit: confirm n8n credential vault binds `SUPABASE_SERVICE_ROLE_KEY`, `ANTHROPIC_API_KEY`, etc. for the 6 workflows; replace `[HARDCODE_*]` placeholders in JSONs with `={{ $env.NAME }}` runtime expressions | 1 | P0. JSON-only edit; no code. |
+| L-03 | pending | Wire `errorWorkflow` for `infra/n8n/overseer_hourly.json` (other 5 have it) | 1 | P1. |
+| L-04 | pending | Diagnose `cron_run_log` silence since 2026-04-16 (10 days) — either crons silenced or wrapper not logging | 1 | P1. May surface to Blocked depending on root cause. |
+| L-05 | pending | Validate `health_pings` ingestion path — currently empty in live; heartbeat cron either not running or not logging | 1 | P1. Pairs with L-04. |
+| L-06 | pending | Seed `slo_definitions` with launch SLOs: lead p95<5min, advisor onboarding p95<1h, webhook delivery p95<10min, etc. | 1 | P1. Migration with seed inserts. |
+| L-07 | pending | Wire SLO incident → Slack/PagerDuty/email alert sink (today writes to `slo_incidents` table only) | 1 | P1. |
+| L-08 | pending | Extend `lib/posthog/events.ts` with: `advisor_selected`, `checkout_started`, `subscription_active`, `advisor_apply_submitted`, `lead_responded_to`, `dispute_opened` | 1 | P1. Funnel half-blind without these. |
+| L-09 | pending | Wire `posthog.identify(userId)` at signup + login so anonymous→identified mapping stitches sessions | 1 | P1. |
+| L-10 | pending | Validate PostHog mirror webhook (`supabase/functions/posthog-webhook-ingest`) — table is empty in live, either webhook misconfigured or no events captured | 1 | P1. |
+| L-11 | pending | Validate `web_vitals_samples` ingestion — table empty, in-house pipeline at `/api/web-vitals/route.ts` may not be receiving | 1 | P2. |
+| L-12 | pending | Wire `setLoggerUser()` in top-30 highest-traffic API routes (currently ~30 of 294 call it) | ~2 | P2. Adds user-id tagging to Sentry events. |
+
+### Stream M — SEO + structured data (audit §8)
+
+The single highest-leverage finding (M-01: cover_image_url backfill) lives here.
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| M-01 | pending | Article cover-image backfill: per-article OG component (engineering) + DB column population (content) | ~2 | **P0 — single highest-leverage finding.** 0/266 articles today. ~30–50% lift in social-share CTR estimated. Engineering side is one iteration; content batch is founder action via separate workflow. |
+| M-02 | pending | Versus pages (600+ URLs) — emit JSON-LD: `Article` + `BreadcrumbList` + per-side `FinancialProduct` review schema | 1 | P1. Currently zero structured data. |
+| M-03 | pending | Advisor pages — switch schema type from `ProfessionalService` to `["ProfessionalService", "FinancialService"]` for financial planners + wealth managers | 1 | P1. Entity-disambiguation gain in financial queries. |
+| M-04 | pending | Article meta_title/meta_description fallback path: auto-generate from `articles.excerpt` + `category` when DB fields are null (43 articles affected) | 1 | P1. |
+| M-05 | pending | Glossary auto-linkifier — inline-link 200+ terms from `lib/glossary.ts` in article body content | ~2 | P2. Topical-relevance gain. |
+| M-06 | pending | Render `articles.related_advisor_types` and `articles.related_verticals` as internal links on article pages | 1 | P2. |
+| M-07 | pending | Document domain-migration plan for Oct-Dec 2026 cutover (Vercel domain alias, GSC change-of-address, 301 mapping, registrar steps) | 1 | P0 — timing-bound. Doc-only this iteration; activation at Q4 via Domain Migration Agent #16. |
+
+### Stream N — UI/UX P0/P1 (audit §6)
+
+Image perf, accessibility, client-bundle size.
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| N-01 | pending | Homepage hero — add `priority` to hero next/image; add `placeholder="blur"` + `blurDataURL` | 1 | P0. LCP 500–800ms today. |
+| N-02 | pending | Homepage broker query — add LIMIT 20 (was unbounded; ~250 rows × 20 fields ~500KB JSON) | 1 | P0. TTFB on mobile. |
+| N-03 | pending | `app/advisor-portal/page.tsx` (2,761 LOC) — extract profile-header into Server Component; keep tabs as client | ~3 | P1. ~30–40% bundle reduction. Subsumes H-03. |
+| N-04 | pending | Add skip-to-main-content link in `components/layout/Navigation.tsx` (or root layout) | 1 | P1. WCAG 2.1 AA fail today. |
+| N-05 | pending | Sweep icon-only buttons missing `aria-label` (`CollapsibleSection`, `InfoTip`, `AdminHelpPanel`, `AdminNotifications`, `BottomSheet`, `OnThisPage`) | 1 | P1. |
+| N-06 | pending | Convert `public/logos/*.ico` → `.svg` where possible (580+ files; batch script) | ~2 | P2. ~40 KB homepage saving. |
+| N-07 | pending | Replace 138 `w-[Npx]`/`max-w-[Npx]` literals with Tailwind scale tokens | 1 | P2. |
+| N-08 | pending | Replace 16 hardcoded color hex values in chart/SVG components with Tailwind tokens | 1 | P2. |
+| N-09 | pending | `app/quiz/page.tsx` (796 LOC) — assess client/server boundary; if client-rendered, prefetch quiz data via Edge Function | 1 | P1. |
+| N-10 | pending | Backfill `placeholder="blur"` on hot-path next/image usages: article hero, advisor profile photo, broker logo | 1 | P1. Currently 0/61 images use blur. |
+| N-11 | pending | Audit + convert remaining 9 raw `<img>` tags (excluding `BrokerLogo` ICO intentional case) to `next/image` where safe | 1 | P3. |
+
+### Stream O — DB hardening (audit §4)
+
+Beyond Stream B's RLS-enable work; addresses policy completeness, FK indexes, search_path safety.
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| O-01 | pending | Triage 56 RLS-enabled-but-zero-policies tables: bucket into (a) service-role only — add explicit `service_role` allow policy for clarity, (b) user-data — needs `auth.uid()`-scoped policies | ~3 | P1. Full list in audit §4.2. ~16h total; chunk by table family. |
+| O-02 | pending | Add backing indexes on 4 unindexed FK columns: `international_leads.professional_lead_id`, `broker_review_invites.user_review_id`, `affiliate_payout_variance.report_id`, `sponsored_placement_bookings.broker_id` | 1 | P2. Single migration, 4 index creates. |
+| O-03 | pending | `refresh_advisor_cohort_metrics()` SECURITY DEFINER — set `search_path = public, pg_catalog` to close injection vector | 1 | P2. |
+| O-04 | pending | `stripe_webhook_events` idempotency dry-run via Stripe dashboard test event → confirm row inserts + status='completed' | 1 | P2. Pre-launch validation. May surface to Blocked if needs founder action. |
+| O-05 | pending | Sponsor-invoices style hardening: rename misleading `USING (false)` policies on the 5 iter-8-FP tables to clearer names + add `FORCE ROW LEVEL SECURITY` + explicit `TO service_role` (`support_tickets`, `support_messages`, `broker_creatives`, `broker_notifications`, `ab_tests`) | 1 | P3. Hygiene. |
+
+### Stream P — Dependency hygiene (audit §3)
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| P-01 | pending | `@sentry/nextjs` v9.47.1 → v10.50.0 — clears all 5 npm-audit moderate findings | ~2 | P1. Migration guide in Sentry docs; verify sourcemap upload still works. Pairs with L-01. |
+| P-02 | pending | `stripe` SDK v17.7.0 → v22.1.0 (5 majors behind) | ~2 | P1. Webhook event types may have changed; pair with J-stream tests. |
+| P-03 | pending | `@anthropic-ai/sdk` 0.90.0 → 0.91.1 (minor) | 1 | P3. |
+| P-04 | pending | `posthog-js` + `posthog-node` minor bumps | 1 | P3. |
+| P-05 | pending | Defer to post-launch: TypeScript 6, ESLint 10, Vitest 4, jsdom 29, @types/node 25 (high blast radius / low gain) | — | Tracked here for visibility; not active. |
+
+### Stream Q — Disaster recovery + SOC 2 prep (audit §12)
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| Q-01 | needs-user | PITR restore drill on a Supabase clone — validate restore time vs RTO target, post-restore data integrity | — | P1 · founder + eng action · 3h. Surface to Blocked when picked; cannot be auto-run. |
+| Q-02 | pending | Publish RPO/RTO targets in `docs/runbooks/launch-day.md` (recommend RPO=24h, RTO=1h) | 1 | P1. Doc-only. |
+| Q-03 | pending | Author `docs/runbooks/stripe-account-recovery.md` — MFA reset, API key re-issue, domain verification | 1 | P1. |
+| Q-04 | pending | Author `docs/runbooks/resend-account-recovery.md` — domain re-verification, audience export | 1 | P1. |
+| Q-05 | pending | Author `docs/runbooks/vercel-team-recovery.md` — SSO break, owner change, billing-locked recovery | 1 | P1. |
+| Q-06 | pending | Author `docs/runbooks/read-replica-failure.md` | 1 | P1. |
+| Q-07 | pending | Author `docs/runbooks/stripe-webhook-backlog.md` — manual replay, compensation logic | 1 | P1. |
+| Q-08 | pending | Author `docs/runbooks/regulatory-data-request.md` — ASIC / OAIC subject-access escalation path | 1 | P1. |
+| Q-09 | pending | Author `docs/runbooks/security-breach-git.md` — leaked credential incident response | 1 | P1. |
+| Q-10 | pending | Author `docs/runbooks/acl-revocation.md` — ACL/AFSL revocation incident | 1 | P1. |
+| Q-11 | pending | Author `docs/runbooks/dsar.md` — Data Subject Access Request handling | 1 | P2. |
+| Q-12 | pending | Create `docs/runbooks/secret-rotation-log.md` — audit trail file referenced by `secret-rotation.md` but never created | 1 | P2. |
+| Q-13 | pending | Add cron `/api/cron/check-secret-rotation` — alert when any secret approaches its rotation window | 1 | P2. |
+| Q-14 | pending | Vendor DPA tracker doc: list 8 vendors (Supabase, Stripe, Resend, Vercel, PostHog, Sentry, n8n, Anthropic), DPA status, contact | 1 | P2. |
+| Q-15 | pending | Public `/privacy/data-collection` page — what data we collect, retention windows, contact for requests | 1 | P2. APP-1 transparency. |
+
+### Stream R — lib/ test coverage (audit §2.3)
+
+Highest-risk untested business logic. Marketplace allocation is the most lucrative + most untested code path in the repo.
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| R-01 | pending | `lib/marketplace/allocation.ts` — 388 LOC, 0% covered. Cover allocation algorithm + auto-bid edge cases + tier overrides | ~2 | P0. Lead revenue flows through here. |
+| R-02 | pending | `lib/marketplace/auto-bid.ts` — 174 LOC, 0% covered | 1 | P0. Pairs with R-01. |
+| R-03 | pending | `lib/advisor-lead-dispute-resolver.ts` — 340 LOC, 0% covered | 1 | P1. |
+| R-04 | pending | `lib/cached-data.ts` — 263 LOC, 0% covered | 1 | P1. |
+| R-05 | pending | `lib/email-templates.ts` — 745 LOC, 18% covered → raise to ≥60% | 1 | P2. |
+| R-06 | pending | `lib/admin/automation-metrics.ts` — 536 LOC, 25% covered | 1 | P2. |
+| R-07 | pending | `lib/chatbot.ts` — 233 LOC, 27% covered | 1 | P2. |
+| R-08 | pending | `lib/fi-data-server.ts` — 231 LOC, 27% covered | 1 | P2. |
+| R-09 | pending | `lib/tracking.ts` — 133 LOC, 33% covered → raise to ≥70% (used in 139 sites) | 1 | P2. |
+| R-10 | pending | `lib/advisor-application-resolver.ts` — 416 LOC, 35% covered | 1 | P2. |
+| R-11 | pending | Hooks: `useShortlist`, `useAdvisorShortlist`, `useSubscription` — all 0% | 1 | P3. |
+
+### Stream S — Architecture artefacts (audit §12)
+
+Diagrams + API contracts + missing-runbook overflow from Q.
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| S-01 | pending | Mermaid sequence diagram: user → quiz → lead → advisor → billing (with PostHog events, Stripe webhooks, Resend touches) | 1 | P2. Live in `docs/user-journey.md`. |
+| S-02 | pending | Agent-system topology diagram: 19 agents × 5 escalation tiers × DB-table linkages | 1 | P2. Live in `docs/agent-system.md`. |
+| S-03 | pending | OpenAPI spec for `/api/v1/*` (brokers, compare, docs) — public-API contract | ~2 | P2. Use openapi-typescript or hand-author. |
+| S-04 | pending | Document Stream-J handler-registry pattern (architectural decision record) | 1 | P3. |
+| S-05 | pending | Update `ARCHITECTURE.md` with cron-dispatch-group pattern (39 entries → 73 implementations) | 1 | P3. Non-obvious for new dev. |
 
 ---
 
@@ -174,10 +350,31 @@ Only run after stream D has covered the file with tests; otherwise risk silent r
 | F-01 | "`RouteErrorBoundary` + `RouteLoadingSkeleton` are unimported" | Re-exported by 14 `app/*/loading.tsx` + `app/*/error.tsx` files via `export { default } from "@/components/Route*"` syntax — audit's grep didn't catch re-exports. | 2026-04-26 |
 | B-03 | "`sponsor_invoices` is missing RLS" | RLS was added in `supabase/migrations/20260321_pre_launch_rls_fixes.sql` (`ALTER TABLE … ENABLE ROW LEVEL SECURITY` + a deny-all `USING (false)` policy). Service-role bypasses RLS regardless, so the existing policy is functionally a deny-all default. Audit's grep likely only checked `004_sponsor_invoices.sql` and missed the later fix migration. (Note: the policy name is misleading — it says "Service role full access" but the body is `USING (false)`. A future hardening iteration could rename + add explicit `TO service_role` clause + `FORCE ROW LEVEL SECURITY`. Tracked separately if needed; not blocking.) | 2026-04-26 |
 | (audit-wide) | "11 RLS gaps" | Iter 8 re-enumeration found that `support_tickets`, `support_messages`, `broker_creatives`, `broker_notifications`, `ab_tests` were ALSO already RLS'd in `20260321_pre_launch_rls_fixes.sql` (same pattern as B-03 — `USING (false)` is functionally deny-all but policy naming + lack of `FORCE RLS` is misleading). Audit's grep likely only checked the original creating migration for each table. Real residual gap = 8 tables (5 forum + `quarterly_reports`, `listing_enquiries`, `listing_plans`), tracked under B-06. The B-03-style hardening (rename misleading policy + add `FORCE RLS` + `TO service_role`) for these 5 tables can land as a stream-G-style hygiene pass; not in scope for stream B. | 2026-04-26 |
+| B-06.forum | "5 forum tables (`forum_categories`, `forum_posts`, `forum_threads`, `forum_user_profiles`, `forum_votes`) are missing RLS" | Iter 10 prior-policy gate discovered all 5 are already RLS-enabled in `supabase/migrations/20260427_wave_security_observability.sql` with rich `auth.uid()`-scoped policies (public_read for SELECT; authenticated_insert + author_update + author_delete on `forum_threads` and `forum_posts`; self_insert + self_update on `forum_user_profiles`; self_insert + self_update + self_delete on `forum_votes`). Audit's grep again missed the later RLS migration (same pattern as B-03 + iter-8 batch). Real residual gap from B-06 reduces to 2 tables: `listing_plans` and `quarterly_reports`. | 2026-04-26 |
 
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-26 16:30Z — iteration 11 (queue extension — streams J–S from 04-26 audit)
+- No code change. Pure queue + priority extension to wire the 04-26 comprehensive audit's 84 findings into the loop.
+- Added 10 new streams (J–S): J=Stripe webhook completeness · K=security hardening · L=observability · M=SEO · N=UI/UX · O=DB hardening · P=deps · Q=DR + SOC 2 · R=lib coverage · S=architecture artefacts. Total ~75 new queue items.
+- Updated `REMEDIATION_DEFAULTS.md` priority order (1 → 20) to interleave the new streams with the existing A–I streams.
+- Item-status convention: `needs-user` for items requiring founder action that the loop can't auto-execute (Sentry token provisioning, PITR drill, vendor DPA collection). The loop will surface these to Blocked when picked, with the question.
+- Audit source: `docs/audits/2026-04-26-comprehensive-audit.md` (commit `a9f4fa2e` on branch `claude/audit-2026-04-26`).
+- Status: PROGRESS (queue extension) · stream=meta · item=queue.
+
+### 2026-04-26 14:30Z — iteration 10 (stream B, batch FP resolution for 5 forum tables)
+- Applied iter-8 prior-policy verification gate to all 5 candidate forum tables. Each one is fully RLS-enabled in `supabase/migrations/20260427_wave_security_observability.sql` with rich `auth.uid()`-scoped policies:
+  - `forum_categories` — public_read.
+  - `forum_threads` — public_read, authenticated_insert, author_update, author_delete.
+  - `forum_posts` — public_read, authenticated_insert, author_update, author_delete.
+  - `forum_user_profiles` — public_read, self_insert, self_update.
+  - `forum_votes` — public_read, self_insert, self_update, self_delete.
+- Same audit-grep miss pattern as B-03 (sponsor_invoices) and the iter-8 batch (5 support/broker/ab_tests tables): the audit's grep checked the table-creating migration but missed the later RLS-fix migration.
+- No code change; queue housekeeping only. All 5 tables moved to FP table; B-06 reduced from 8 to 2 residual candidates (`listing_plans`, `quarterly_reports`).
+- Phase 2 CI rescue: PR #220 was fully green pre-iteration.
+- Status: PROGRESS (queue housekeeping) · stream=B · item=B-06 (5 FPs).
 
 ### 2026-04-26 14:25Z — iteration 9 (stream B, B-06 first table — `listing_enquiries`)
 - First iteration to apply the iter-8 prior-policy verification gate. `grep -nE "(POLICY.*listing_enquiries|listing_enquiries.*POLICY|TABLE.*listing_enquiries.*ENABLE)" supabase/migrations/*.sql` returned nothing → clean policy ground.

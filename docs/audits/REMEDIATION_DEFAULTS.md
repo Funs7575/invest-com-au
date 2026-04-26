@@ -66,32 +66,54 @@ The exception is hardware-scoped, not policy-scoped: if the loop is moved to a h
 
 ## Streams
 
-| Letter | Branch | Title | Tracks issue |
+| Letter | Branch | Title | Source |
 | --- | --- | --- | --- |
-| A | `claude/audit-remediation/a-drift-backfill` | DB schema drift backfill (231 tables) | #214 |
-| B | `claude/audit-remediation/b-rls-remediation` | RLS on 11 migrations | #215 |
-| C | `claude/audit-remediation/c-admin-scope-reset` | `admin.ts` scope reset | #216 |
-| D | `claude/audit-remediation/d-route-tests` | API route tests (critical 9 + backfill) | #217 |
-| E | `claude/audit-remediation/e-zod-rollout` | Zod validation rollout | #218 |
-| F | `claude/audit-remediation/f-hygiene` | Dead code, duplicate consolidation, SSOT | (no P0 issue; report §1 + §2) |
-| G | `claude/audit-remediation/g-migration-hygiene` | Idempotency + rollback headers | (report §5.2 + §5.4) |
-| H | `claude/audit-remediation/h-file-splits` | Files >1000 LOC | (report §3.2) |
-| I | `claude/audit-remediation/i-guardrails` | ESLint + CI guards (re-drift, RLS, admin.ts imports) | cross-cutting |
+| A | `claude/audit-remediation/a-drift-backfill` | DB schema drift backfill (231 tables) | 04-24 audit · issue #214 |
+| B | `claude/audit-remediation/b-rls-remediation` | RLS on 11 migrations | 04-24 audit · issue #215 |
+| C | `claude/audit-remediation/c-admin-scope-reset` | `admin.ts` scope reset | 04-24 audit · issue #216 |
+| D | `claude/audit-remediation/d-route-tests` | API route tests (critical 9 + backfill) | 04-24 audit · issue #217 |
+| E | `claude/audit-remediation/e-zod-rollout` | Zod validation rollout | 04-24 audit · issue #218 |
+| F | `claude/audit-remediation/f-hygiene` | Dead code, duplicate consolidation, SSOT | 04-24 audit §1+§2 |
+| G | `claude/audit-remediation/g-migration-hygiene` | Idempotency + rollback headers | 04-24 audit §5.2+§5.4 |
+| H | `claude/audit-remediation/h-file-splits` | Files >1000 LOC | 04-24 audit §3.2 |
+| I | `claude/audit-remediation/i-guardrails` | ESLint + CI guards | 04-24 audit cross-cutting |
+| J | `claude/audit-remediation/j-stripe-webhook` | Stripe webhook completeness + handler split | 04-26 audit §5+§11 · issue #221 |
+| K | `claude/audit-remediation/k-security-hardening` | Security P0/P1/P2 (CORS, OTP, CSP, audit log) | 04-26 audit §7 · issue #221 |
+| L | `claude/audit-remediation/l-observability` | Sentry/PostHog/SLO/n8n env-vars | 04-26 audit §9+§10 · issue #221 |
+| M | `claude/audit-remediation/m-seo` | Cover images, versus schema, FinancialService | 04-26 audit §8 · issue #221 |
+| N | `claude/audit-remediation/n-ux-perf` | Hero LCP, blur placeholders, a11y, advisor-portal split | 04-26 audit §6 · issue #221 |
+| O | `claude/audit-remediation/o-db-hardening` | RLS-no-policy triage, FK indexes, search_path | 04-26 audit §4 · issue #221 |
+| P | `claude/audit-remediation/p-deps` | Sentry v10, Stripe SDK v22, audit clean | 04-26 audit §3 · issue #221 |
+| Q | `claude/audit-remediation/q-dr-soc2` | PITR drill, account-recovery runbooks, DPAs | 04-26 audit §12 · issue #221 |
+| R | `claude/audit-remediation/r-lib-coverage` | Marketplace, dispute-resolver, cached-data tests | 04-26 audit §2.3 · issue #221 |
+| S | `claude/audit-remediation/s-architecture` | Diagrams, OpenAPI, missing runbooks | 04-26 audit §12 · issue #221 |
 
 ## Priority order
 
-When choosing the next item, walk in this order and pick the first non-blocked one:
+When choosing the next item, walk in this order and pick the first non-blocked one. The loop interleaves 04-24 streams (A–I) with 04-26 streams (J–S) so that compliance/security/revenue gates land first, with cosmetic and architecture work later.
 
-1. **B (critical 2)** — `email_otps` and `leads` RLS — compliance gate.
-2. **D (critical 9)** — lead-capture + Stripe + signout integration tests — revenue gate.
-3. **B (other 9)** — remaining RLS migrations.
-4. **C** — `admin.ts` scope reset (mechanical refactors first; surface ambiguous to Blocked).
-5. **A** — drift backfill (4–5 tables per iteration).
-6. **E** — Zod rollout (top-20 first, then backfill).
-7. **G** — migration hygiene.
-8. **I** — guardrails (best after A/B/C land so the rules don't break in-flight work).
-9. **F** — hygiene cleanup.
-10. **H** — file splits (last; needs tests in place to be safe).
+1. **B (critical 2)** — `email_otps` and `leads` RLS — compliance gate. _(Done; B-06 in flight.)_
+2. **K (P0 security)** — widget CORS, audit-log sweep, OTP rate-limit, CSP fallback removal — security gate.
+3. **D (critical 9)** — lead-capture + Stripe + signout integration tests — revenue gate.
+4. **J (P0/P1 Stripe webhook)** — handler-registry split + 9 missing event handlers + featured_plans cleanup — revenue gate.
+5. **L (observability)** — n8n env-vars, SLO seed + alert sink, PostHog funnel completion, cron silence diagnosis.
+6. **M (P0 SEO)** — article cover-image backfill, versus schema, advisor FinancialService, domain-migration prep.
+7. **N (P0 UI/UX)** — homepage hero priority + blur, advisor-portal client-bundle split, a11y skip-link.
+8. **B (other)** — remaining RLS migrations (`listing_plans`, `quarterly_reports`).
+9. **C** — `admin.ts` scope reset (mechanical refactors; surface ambiguous to Blocked).
+10. **A** — drift backfill (4–5 tables per iteration).
+11. **O (DB hardening)** — 56 RLS-no-policy triage, FK indexes, search_path safety.
+12. **P (deps)** — Sentry v10, Stripe SDK v22.
+13. **R (lib coverage)** — marketplace allocation + auto-bid + dispute-resolver tests (P0 lib coverage).
+14. **E** — Zod rollout (top-20 first).
+15. **Q (DR + SOC 2)** — runbooks, vendor DPAs, secret-rotation log, GDPR disclosure page.
+16. **G** — migration hygiene.
+17. **I** — guardrails (after A/B/C land so the rules don't break in-flight work).
+18. **F** — hygiene cleanup.
+19. **S (architecture artefacts)** — diagrams, OpenAPI, ADRs.
+20. **H** — file splits (last; needs tests in place to be safe). Note: H-01 (stripe webhook split) is subsumed by J-01; H-03 (advisor-portal split) is subsumed by N-03.
+
+`needs-user` items in any stream surface to Blocked when picked. The loop notes the question and continues to the next non-blocked item.
 
 ## Concurrency + locking
 
