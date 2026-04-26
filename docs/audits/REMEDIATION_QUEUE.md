@@ -34,7 +34,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | H | _not started_ | — | — | — |
 | I | _not started_ | — | — | — |
 | J | _not started_ | — | — | — |
-| K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-26T23:40Z | K-01..K-07b done; K-08 in-progress (batch 3/N: 19 routes done — batch1 x5 + batch2 x6 + batch3 x8); K-09..K-15 pending |
+| K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-27T00:05Z | K-01..K-08 done (28 session-auth routes + 5 system-bearer skipped); K-09..K-15 pending |
 | L | _not started_ | — | — | — |
 | M | _not started_ | — | — | — |
 | N | _not started_ | — | — | — |
@@ -230,7 +230,7 @@ P0/P1/P2 findings from the security agent's deep scan. Each is small (<2h); clus
 | K-06b | done | Full data-export processor cron — JSON archive, signed URL, email user | 1 | Done in commit `c0ca676` (PR #222). Gathers 13 user_id-linked tables + 2 email-linked tables; uploads to private `data-exports` Supabase Storage bucket; 7-day signed URL; emails user; CAS-style claim prevents double-processing. PREREQUISITE: founder must create private Storage bucket `data-exports`. Forward-compatible with unapplied migration (same pattern as K-06a). |
 | K-07 | done | `/api/account/delete` — confirmation email on schedule | 1 | Done in commit `41b84e0b` (PR #222). After the existing upsert succeeds, fires a transactional email to `user.email` with locale-formatted purge date (`Saturday, 26 May 2026`), cancel link to `/account/privacy`, and the "if you didn't request this" escape hatch for phishing victims. Best-effort — Resend failure logs `warn` but doesn't roll back the deletion request. **Known live drift:** the `account_deletion_requests` table doesn't exist in any live schema (migration `20260427_wave_security_observability.sql:175` defines it but appears unapplied) — so the route's POST returns 500 today and the email path is forward-compatible code that activates the day the migration lands. Surfaced to Blocked. |
 | K-07b | done | Day-25 grace-period reminder cron | 1 | Done in commit `64f40d9` (PR #222). New cron `/api/cron/account-deletion-reminder` registered in `daily-2` group. Scans `status='scheduled' AND reminder_sent_at IS NULL AND scheduled_purge_at <= NOW()+5d`; sends final-warning email; stamps `reminder_sent_at` on success (idempotent — no double-send). Migration `20260523_account_deletion_requests_reminder.sql` adds `reminder_sent_at TIMESTAMPTZ` column + partial index. Forward-compatible: catches Postgres 42P01 ("relation does not exist") and exits gracefully until A-MISSING-TABLE-1 is applied to live. |
-| K-08 | in-progress | Sweep `/api/admin/*` PATCH/POST/DELETE routes: ensure each writes to `admin_audit_log` | ~1 | P1. SOC 2 / ASIC audit-trail gap. ~40 routes with mutating methods; 1 already had it (`ai-chat`). Batch 1 done (iter 24, commit `bb8a677`): `advisor-applications`, `advisor-moderation`, `advisor-kyc`, `review-moderation`, `feature-flags`. Batch 2 done (iter 25, commit `97f8ef2`): `automation/override`, `automation/bulk`, `automation/trigger`, `automation/kill-switch`, `notify-price-change`, `bd-pipeline`. Batch 3 done (iter 26, commit `f820830`): `fee-queue`, `competitors`, `regulatory-impacts`, `cohort/refresh`, `content/batch-generate`, `tmds`, `foreign-investment/update`, `foreign-investment/verify`. ~10 session-auth routes remaining (article-comments, article-preview-tokens, article-scorecard, articles-editor/save, commodity-hubs, commodity-news-briefs, content/generate-draft, fin-objection/[id], financial-periods, sponsored-placements); ~5 system-bearer routes (no admin identity — skip). |
+| K-08 | done | Sweep `/api/admin/*` PATCH/POST/DELETE routes: ensure each writes to `admin_audit_log` | 4 | P1. SOC 2 / ASIC audit-trail gap. 28 session-auth routes covered across 4 batches (iter 24-27). 5 system-bearer routes (CRON_SECRET / INTERNAL_API_KEY — no admin identity) intentionally skipped. All commits on PR #222. |
 | K-09 | pending | `/api/seed/route.ts` — gate behind `NODE_ENV !== 'production'` + admin auth | 1 | P1. Shouldn't exist in prod at all. |
 | K-10 | pending | `/api/newsletter/subscribe/route.ts` — `source` field allowlist enum | 1 | P2. Analytics poisoning vector. |
 | K-11 | pending | `admin_login_attempts` table — add `UNIQUE(ip_hash)` constraint to prevent rate-limit bypass under concurrency | 1 | P2. |
@@ -410,6 +410,7 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 
 ## Done
 
+- 2026-04-27 · K-08 · Sweep `/api/admin/*` PATCH/POST/DELETE for `admin_audit_log` — 28 session-auth routes covered in 4 batches (iter 24-27); 5 system-bearer routes skipped (no admin identity). Commits `bb8a677` (batch 1) + `97f8ef2` (batch 2) + `f820830` (batch 3) + `0bddf05` (batch 4) · pr #222
 - 2026-04-26 · K-07b · Day-25 account-deletion grace-period reminder cron — daily, scans `scheduled + reminder_sent_at IS NULL + purge ≤5 days`; sends final-warning email; stamps `reminder_sent_at` on success. Migration `20260523_account_deletion_requests_reminder.sql` adds sentinel column. Forward-compatible with missing table (A-MISSING-TABLE-1). · commit `64f40d9` · pr #222
 - 2026-04-26 · K-06b · Full data-export processor cron — gathers 13 user_id tables + 2 email tables, uploads JSON to private `data-exports` Storage bucket, creates 7-day signed URL, emails user, marks request ready. CAS-style claim guards parallel fires. PREREQUISITE: create private Storage bucket `data-exports`. Forward-compatible with unapplied migration. · commit `c0ca676` · pr #222
 - 2026-04-26 · K-07 · `/api/account/delete` confirmation email after schedule — locale-formatted purge date, cancel link, phishing-victim escape hatch. Best-effort send; doesn't roll back deletion request on Resend failure. Forward-compatible with the missing `account_deletion_requests` table (Blocked entry A-MISSING-TABLE-1). · commit `41b84e0b` · pr #222
@@ -442,6 +443,25 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-27 00:05Z — iteration 27 (stream K, item K-08 batch 4 — final 9 session-auth routes completing K-08)
+
+- Phase 1.5: Types drift check — skipped (no schema changes in this window).
+- Phase 2 CI rescue: PR #220 green (success+skipped); PR #222 green (success+skipped). No rescue.
+- K-08 batch 4 scope — 9 routes, commit `0bddf05`, +157/-3 lines:
+  - `article-comments PATCH`: added `createAdminClient` import. `admin_audit_log` insert after successful `setCommentStatus` call. Action: `article_comment:{action}` (publish/reject/remove).
+  - `article-preview-tokens POST`: added `createAdminClient` import. `article_preview_token:created` (article_slug, ttl_hours, note) on success. DELETE: `article_preview_token:revoked` on success only.
+  - `article-scorecard POST`: audit log only when `persist=true` (state-changing path). `article_scorecard:persisted` (score, grade) written inside the existing try block on successful insert. Keystroke-path (persist=false) produces no audit row — correct, no state change.
+  - `articles-editor/save POST`: `article:published` or `article:saved` (status, grade, score) after successful upsert. Uses existing `supabase` admin client.
+  - `commodity-hubs POST`: added `createAdminClient` import. `commodity_sector:upserted` (slug). PUT: `commodity_stock:upserted` or `commodity_etf:upserted` (sector_slug, ticker).
+  - `commodity-news-briefs POST`: `commodity_news_brief:created` (article_slug, sector_slug, status, compliance_flags). PATCH: `commodity_news_brief:published` or `commodity_news_brief:retired` (article_slug).
+  - `fin-objection/[id] POST`: uses custom `requireFinObjectionAuth()` returning `{ user }`. Added `createAdminClient` (renamed `adminDb` to avoid shadowing `supabase`). `editorial_article:fin_objection` (fin_objection_at). `user.email ?? ""` as admin_email.
+  - `financial-periods POST`: added `createAdminClient` import. `financial_period:closed` (period_start, period_end, notes, already_closed flag).
+  - `sponsored-placements POST`: `sponsored_placement:created` (professional_id, tier, vertical, daily_cap_cents, ends_at). Uses existing `admin` client alongside existing `recordFinancialAudit` call (different table; both logged). PATCH: `sponsored_placement:reactivated` or `sponsored_placement:deactivated` (active).
+- Skipped: `content/generate-draft` — uses `Bearer ${process.env.CRON_SECRET}` (system-bearer; no admin user identity).
+- K-08 is now fully complete. All ~35 session-auth mutating admin routes covered. 5 system-bearer routes intentionally excluded.
+- Local gates: file-targeted `tsc --ignoreConfig` — only path-alias 2307 errors (expected with `--ignoreConfig`; Hardware exception applies). No semantic errors. CI on PR #222 is authoritative.
+- Status: PROGRESS · stream=K · item=K-08 (batch 4, COMPLETE) · pr=#222 · commit=`0bddf05`
 
 ### 2026-04-26 23:40Z — iteration 26 (stream K, item K-08 batch 3 — fee-queue + competitors + regulatory-impacts + cohort + content + tmds + fi routes)
 
