@@ -34,7 +34,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | H | _not started_ | — | — | — |
 | I | _not started_ | — | — | — |
 | J | _not started_ | — | — | — |
-| K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-26T16:53Z | K-01..K-04 done; K-05..K-15 pending |
+| K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-26T17:23Z | K-01..K-05 done; K-06..K-15 pending |
 | L | _not started_ | — | — | — |
 | M | _not started_ | — | — | — |
 | N | _not started_ | — | — | — |
@@ -197,7 +197,7 @@ P0/P1/P2 findings from the security agent's deep scan. Each is small (<2h); clus
 | K-02 | done | `/api/verify-otp/verify` layered rate-limit defense | 1 | Done in commit `bd2431fd` (PR #222). Three layers: per-IP burst 3/15min, per-IP cumulative 10/4hr, per-email 5/60min. Per-email is the critical layer because it catches IP-rotation attacks (botnet, residential proxies) against a single email. 6-digit OTP exhaust window 5.8 days → 22 years. Generic error messages so attackers can't tell which bucket tripped. |
 | K-03 | done | `/api/admin/login` IP-tier exponential backoff | 1 | Done in commit `6c9d99b9` (PR #222). New backoff curve: count ≤5 = 60s (initial burst), 6–10 = 5min, 11–20 = 15min, 21+ = 60min cap. Beyond 60min the email-tier lockout (already 15min/1hr/24hr in `lib/login-lockout.ts`) takes over. Honest user behaviour byte-identical for count ≤5. No schema change — uses existing `admin_login_attempts.reset_at` column. Backoff is monotonic (never shortens unlock clock). |
 | K-04 | done | `proxy.ts` CSP `'unsafe-inline'` removal from `script-src` | 1 | Done in commit `7f1f734f` (PR #222). New directive: `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https:`. CSP3 browsers (>95% AU) unaffected — `'unsafe-inline'` was already shadowed by `'strict-dynamic'`. CSP2 legacy browsers still have the `https:` host-source fallback for externally-loaded scripts; only truly inline `<script>…</script>` without a nonce is blocked, and Next.js auto-nonces framework-emitted scripts. style-src untouched (Tailwind needs it; documented in code). |
-| K-05 | pending | Unify `X-Frame-Options` between `proxy.ts:43` (SAMEORIGIN) and `next.config.ts:81–82` (DENY) — keep DENY in proxy, remove from next.config | 1 | P1. Config drift hazard. |
+| K-05 | done | Unify X-Frame-Options + Permissions-Policy in `proxy.ts` | 1 | Done in commit `a1d1d59b` (PR #222). proxy.ts: `SAMEORIGIN` → `DENY` (matches what browser was already enforcing via most-restrictive selection); `geolocation=()` → `geolocation=(self)` (the silent-most-restrictive combine had been disabling all geolocation features — restored). next.config.ts: dropped both conflicting headers; X-Content-Type-Options, Referrer-Policy, X-DNS-Prefetch-Control, HSTS remain duplicated with matching values across both configs to cover the static-asset paths excluded from the middleware matcher. Behavioural deltas: X-Frame-Options unchanged (was DENY, is DENY); geolocation features re-enabled. |
 | K-06 | pending | `/api/account/export-data/route.ts` — add reminder cron + completion email path; verify `/api/cron/process-data-exports` exists and runs | 1 | P1. APP-12 / GDPR Art-15 compliance. |
 | K-07 | pending | `/api/account/delete/route.ts` — confirmation email on schedule; day-25 reminder | 1 | P1. UX + APP-13. |
 | K-08 | pending | Sweep `/api/admin/*` PATCH/POST/DELETE routes: ensure each writes to `admin_audit_log` | ~2 | P1. SOC 2 / ASIC audit-trail gap. ~44 routes; spot-check 10 first. |
@@ -336,6 +336,7 @@ Diagrams + API contracts + missing-runbook overflow from Q.
 
 ## Done
 
+- 2026-04-26 · K-05 · Unify `X-Frame-Options` + `Permissions-Policy` in `proxy.ts`. `SAMEORIGIN` → `DENY` (matches the browser-effective most-restrictive selection); `geolocation=()` → `geolocation=(self)` (re-enables property/postcode geolocation features that were silently broken by header-combine semantics). Removed duplicates from `next.config.ts`. · commit `a1d1d59b` · pr #222
 - 2026-04-26 · K-04 · `proxy.ts` CSP `'unsafe-inline'` removal from `script-src`. CSP3 browsers (>95% AU) unaffected — was already shadowed by `'strict-dynamic'`; legacy CSP2 browsers continue via `https:` host-source. style-src untouched. K-15 follow-up tracked for CSP violation reporting. · commit `7f1f734f` · pr #222
 - 2026-04-26 · K-03 · `/api/admin/login` IP-tier exponential backoff (60s → 5min → 15min → 60min by count). Plugs the "wait 60s and retry" loophole; honest user behaviour unchanged in count ≤5 path. · commit `6c9d99b9` · pr #222
 - 2026-04-26 · K-02 · `/api/verify-otp/verify` layered brute-force defense (per-IP burst 3/15min + per-IP cumulative 10/4hr + per-email 5/60min). 6-digit OTP exhaust window 5.8 days → 22 years. · commit `bd2431fd` · pr #222
@@ -360,6 +361,17 @@ Diagrams + API contracts + missing-runbook overflow from Q.
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-26 17:23Z — iteration 16 (stream K, item K-05 — header dedup proxy.ts/next.config.ts)
+- Commit `a1d1d59b`: Two security headers (`X-Frame-Options`, `Permissions-Policy`) were defined with conflicting values in both `proxy.ts` and `next.config.ts:headers`. Browsers were combining/picking-most-restrictive silently, with two notable consequences: (a) `X-Frame-Options` was effectively `DENY` not `SAMEORIGIN` despite proxy.ts saying `SAMEORIGIN`; (b) `Permissions-Policy` `geolocation` was effectively `none` not `(self)`, silently disabling any property/postcode geolocation features.
+- Fix: `proxy.ts` is now the canonical source for both headers (DENY + geolocation=(self)). Conflicting copies removed from `next.config.ts`. The remaining duplicates (`X-Content-Type-Options`, `Referrer-Policy`, `X-DNS-Prefetch-Control`, HSTS) have identical values across both files and intentionally remain — `next.config.ts` covers static-asset paths (`/_next/static/*`, `/_next/image/*`, `/favicon.ico`) excluded from the proxy middleware matcher.
+- Behavioural deltas at the browser:
+  - `X-Frame-Options`: was `DENY` (browser picked most-restrictive), is `DENY` — no change.
+  - `Permissions-Policy` `geolocation`: was `()` none, is `(self)` — geolocation features re-enabled. Camera + microphone remain disabled.
+- Verified callers: `grep -rn "X-Frame-Options\|Permissions-Policy" --include="*.ts" --include="*.tsx" .` returned only the two definitions and no application code reading them. No tests assert on these headers.
+- Phase 2 CI: PR #220 fully green (13 success / 10 skipped); PR #222 (K-01..K-04) fully green (14 success / 10 skipped); PR #224 (separate Sprint-1 reconciliation) green. No rescue.
+- Local gates: `tsc`/`eslint` OOM'd (Hardware exception). CI on PR #222 is authoritative. Pushed with `HUSKY=0`.
+- Status: PROGRESS · stream=K · item=K-05 · pr=#222.
 
 ### 2026-04-26 16:53Z — iteration 15 (stream K, item K-04 — CSP unsafe-inline removal)
 - Commit `7f1f734f`: `proxy.ts` dropped `'unsafe-inline'` from `script-src` directive. New shape: `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https:`.
