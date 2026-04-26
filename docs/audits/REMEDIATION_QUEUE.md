@@ -218,7 +218,7 @@ Sentry is 95% there; PostHog funnel is half-blind; SLO framework exists but unse
 | L-01 | needs-user | Provision `SENTRY_AUTH_TOKEN` in Vercel project envs (sourcemap upload) | — | P0 · founder action · 0.25h. Without it, prod stack traces aren't sourcemapped. Surface to Blocked when picked. |
 | L-02 | pending | n8n env-var injection audit: confirm n8n credential vault binds `SUPABASE_SERVICE_ROLE_KEY`, `ANTHROPIC_API_KEY`, etc. for the 6 workflows; replace `[HARDCODE_*]` placeholders in JSONs with `={{ $env.NAME }}` runtime expressions | 1 | P0. JSON-only edit; no code. |
 | L-03 | pending | Wire `errorWorkflow` for `infra/n8n/overseer_hourly.json` (other 5 have it) | 1 | P1. |
-| L-04 | pending | Diagnose `cron_run_log` silence since 2026-04-16 (10 days) — either crons silenced or wrapper not logging | 1 | P1. May surface to Blocked depending on root cause. |
+| L-04 | done | Diagnose `cron_run_log` silence — done out-of-loop in PR #225 | 1 | Resolved in PR #225 ("fix(observability): cron dispatcher silent failures — restore cron_run_log") merged 2026-04-26T17:37Z. Dispatcher was swallowing exceptions before the wrapper could log; PR adds explicit error handling so failures land in `cron_run_log`. |
 | L-05 | pending | Validate `health_pings` ingestion path — currently empty in live; heartbeat cron either not running or not logging | 1 | P1. Pairs with L-04. |
 | L-06 | pending | Seed `slo_definitions` with launch SLOs: lead p95<5min, advisor onboarding p95<1h, webhook delivery p95<10min, etc. | 1 | P1. Migration with seed inserts. |
 | L-07 | pending | Wire SLO incident → Slack/PagerDuty/email alert sink (today writes to `slo_incidents` table only) | 1 | P1. |
@@ -234,7 +234,8 @@ The single highest-leverage finding (M-01: cover_image_url backfill) lives here.
 
 | ID | Status | Summary | Est. iterations | Notes |
 | --- | --- | --- | --- | --- |
-| M-01 | pending | Article cover-image backfill: per-article OG component (engineering) + DB column population (content) | ~2 | **P0 — single highest-leverage finding.** 0/266 articles today. ~30–50% lift in social-share CTR estimated. Engineering side is one iteration; content batch is founder action via separate workflow. |
+| M-01a | done | Site-wide default OpenGraph + Twitter card image — done out-of-loop in PR #227 | 1 | Resolved in PR #227 ("feat(seo): site-wide default opengraph-image + twitter-image (P0-6)") merged 2026-04-26T17:37Z. Adds the default fallback image so any page without a per-route OG override gets a branded card. |
+| M-01b | pending | Per-article cover image backfill: populate `articles.cover_image_url` for the 266 published articles + ensure `app/article/[slug]/page.tsx` uses it for OG override | ~2 | P0 (residual). M-01a covered the site-wide default; this is the per-article custom-image work — still ~30–50% social-share CTR upside vs the generic default. Engineering side is one iteration; content batch is founder action. |
 | M-02 | pending | Versus pages (600+ URLs) — emit JSON-LD: `Article` + `BreadcrumbList` + per-side `FinancialProduct` review schema | 1 | P1. Currently zero structured data. |
 | M-03 | pending | Advisor pages — switch schema type from `ProfessionalService` to `["ProfessionalService", "FinancialService"]` for financial planners + wealth managers | 1 | P1. Entity-disambiguation gain in financial queries. |
 | M-04 | pending | Article meta_title/meta_description fallback path: auto-generate from `articles.excerpt` + `category` when DB fields are null (43 articles affected) | 1 | P1. |
@@ -267,7 +268,7 @@ Beyond Stream B's RLS-enable work; addresses policy completeness, FK indexes, se
 | ID | Status | Summary | Est. iterations | Notes |
 | --- | --- | --- | --- | --- |
 | O-01 | pending | Triage 56 RLS-enabled-but-zero-policies tables: bucket into (a) service-role only — add explicit `service_role` allow policy for clarity, (b) user-data — needs `auth.uid()`-scoped policies | ~3 | P1. Full list in audit §4.2. ~16h total; chunk by table family. |
-| O-02 | pending | Add backing indexes on 4 unindexed FK columns: `international_leads.professional_lead_id`, `broker_review_invites.user_review_id`, `affiliate_payout_variance.report_id`, `sponsored_placement_bookings.broker_id` | 1 | P2. Single migration, 4 index creates. |
+| O-02 | done | 4 FK index migration — done out-of-loop in PR #230 | 1 | Resolved in PR #230 ("chore(db): repo-parity migration for 4 missing FK indexes (already live)") merged 2026-04-26T17:37Z. Live DB indexes had been applied earlier; this PR adds the migration file to the repo to close source-of-truth drift. |
 | O-03 | pending | `refresh_advisor_cohort_metrics()` SECURITY DEFINER — set `search_path = public, pg_catalog` to close injection vector | 1 | P2. |
 | O-04 | pending | `stripe_webhook_events` idempotency dry-run via Stripe dashboard test event → confirm row inserts + status='completed' | 1 | P2. Pre-launch validation. May surface to Blocked if needs founder action. |
 | O-05 | pending | Sponsor-invoices style hardening: rename misleading `USING (false)` policies on the 5 iter-8-FP tables to clearer names + add `FORCE ROW LEVEL SECURITY` + explicit `TO service_role` (`support_tickets`, `support_messages`, `broker_creatives`, `broker_notifications`, `ab_tests`) | 1 | P3. Hygiene. |
@@ -336,6 +337,9 @@ Diagrams + API contracts + missing-runbook overflow from Q.
 
 ## Done
 
+- 2026-04-26 · M-01a · Site-wide default OG + Twitter card image (P0-6, out-of-loop) · pr #227
+- 2026-04-26 · O-02 · 4 FK index repo-parity migration (out-of-loop; live DB already had them) · pr #230
+- 2026-04-26 · L-04 · Cron dispatcher silent-failure fix; cron_run_log now captures dispatcher exceptions (P0-1, out-of-loop) · pr #225
 - 2026-04-26 · K-05 · Unify `X-Frame-Options` + `Permissions-Policy` in `proxy.ts`. `SAMEORIGIN` → `DENY` (matches the browser-effective most-restrictive selection); `geolocation=()` → `geolocation=(self)` (re-enables property/postcode geolocation features that were silently broken by header-combine semantics). Removed duplicates from `next.config.ts`. · commit `a1d1d59b` · pr #222
 - 2026-04-26 · K-04 · `proxy.ts` CSP `'unsafe-inline'` removal from `script-src`. CSP3 browsers (>95% AU) unaffected — was already shadowed by `'strict-dynamic'`; legacy CSP2 browsers continue via `https:` host-source. style-src untouched. K-15 follow-up tracked for CSP violation reporting. · commit `7f1f734f` · pr #222
 - 2026-04-26 · K-03 · `/api/admin/login` IP-tier exponential backoff (60s → 5min → 15min → 60min by count). Plugs the "wait 60s and retry" loophole; honest user behaviour unchanged in count ≤5 path. · commit `6c9d99b9` · pr #222
@@ -361,6 +365,17 @@ Diagrams + API contracts + missing-runbook overflow from Q.
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-26 17:50Z — iteration 17 (queue housekeeping — reconcile out-of-loop Sprint 1 PRs)
+- Five PRs merged out-of-loop in the last ~30 min by a parallel "Sprint 1 P0" workflow (separate from this audit-remediation loop). Reconciling the queue so future iterations don't re-do completed work.
+- **L-04** → done: PR #225 ("fix(observability): cron dispatcher silent failures — restore cron_run_log"). The dispatcher (`app/api/cron/_dispatch/[group]/route.ts`) was catching exceptions before `wrapCronHandler` could log them, leaving `cron_run_log` blind to dispatcher-level failures. Fixed.
+- **O-02** → done: PR #230 ("chore(db): repo-parity migration for 4 missing FK indexes (already live)"). Indexes already existed in the live DB; this commits the corresponding migration file so source-of-truth and live state are aligned.
+- **M-01** → split into M-01a (done) + M-01b (pending). PR #227 ("feat(seo): site-wide default opengraph-image + twitter-image (P0-6)") covered the site-wide fallback OG card. The per-article `cover_image_url` backfill (the part that delivers the 30–50% social-share CTR uplift) is now M-01b and still pending.
+- Other Sprint-1 PRs not in the queue (additional findings outside this audit): #223 (revoke pg_graphql anon), #226 (sitemap status='published' filter), #228 (newsletter html_content sanitize). All merged. No queue changes needed for those — they were already either covered indirectly (K-13 ESLint rule will harden #228 long-term) or new findings beyond the audit scope.
+- Stream K PR #222 still has K-01..K-05 open and CI-green (14 success / 10 skipped). User has not merged yet.
+- Phase 2 CI: PR #220 fully green; PR #222 fully green. No rescue.
+- No code change this iteration. Pure queue reconciliation.
+- Status: PROGRESS (queue housekeeping) · stream=meta · items=L-04, O-02, M-01a (3 reconciliations).
 
 ### 2026-04-26 17:23Z — iteration 16 (stream K, item K-05 — header dedup proxy.ts/next.config.ts)
 - Commit `a1d1d59b`: Two security headers (`X-Frame-Options`, `Permissions-Policy`) were defined with conflicting values in both `proxy.ts` and `next.config.ts:headers`. Browsers were combining/picking-most-restrictive silently, with two notable consequences: (a) `X-Frame-Options` was effectively `DENY` not `SAMEORIGIN` despite proxy.ts saying `SAMEORIGIN`; (b) `Permissions-Policy` `geolocation` was effectively `none` not `(self)`, silently disabling any property/postcode geolocation features.
