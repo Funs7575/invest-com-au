@@ -34,7 +34,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | H | _not started_ | — | — | — |
 | I | _not started_ | — | — | — |
 | J | _not started_ | — | — | — |
-| K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-26T21:37Z | K-01..K-07b done; K-08..K-15 pending |
+| K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-26T22:26Z | K-01..K-07b done; K-08 in-progress (batch 1/N: 5 routes done); K-09..K-15 pending |
 | L | _not started_ | — | — | — |
 | M | _not started_ | — | — | — |
 | N | _not started_ | — | — | — |
@@ -230,7 +230,7 @@ P0/P1/P2 findings from the security agent's deep scan. Each is small (<2h); clus
 | K-06b | done | Full data-export processor cron — JSON archive, signed URL, email user | 1 | Done in commit `c0ca676` (PR #222). Gathers 13 user_id-linked tables + 2 email-linked tables; uploads to private `data-exports` Supabase Storage bucket; 7-day signed URL; emails user; CAS-style claim prevents double-processing. PREREQUISITE: founder must create private Storage bucket `data-exports`. Forward-compatible with unapplied migration (same pattern as K-06a). |
 | K-07 | done | `/api/account/delete` — confirmation email on schedule | 1 | Done in commit `41b84e0b` (PR #222). After the existing upsert succeeds, fires a transactional email to `user.email` with locale-formatted purge date (`Saturday, 26 May 2026`), cancel link to `/account/privacy`, and the "if you didn't request this" escape hatch for phishing victims. Best-effort — Resend failure logs `warn` but doesn't roll back the deletion request. **Known live drift:** the `account_deletion_requests` table doesn't exist in any live schema (migration `20260427_wave_security_observability.sql:175` defines it but appears unapplied) — so the route's POST returns 500 today and the email path is forward-compatible code that activates the day the migration lands. Surfaced to Blocked. |
 | K-07b | done | Day-25 grace-period reminder cron | 1 | Done in commit `64f40d9` (PR #222). New cron `/api/cron/account-deletion-reminder` registered in `daily-2` group. Scans `status='scheduled' AND reminder_sent_at IS NULL AND scheduled_purge_at <= NOW()+5d`; sends final-warning email; stamps `reminder_sent_at` on success (idempotent — no double-send). Migration `20260523_account_deletion_requests_reminder.sql` adds `reminder_sent_at TIMESTAMPTZ` column + partial index. Forward-compatible: catches Postgres 42P01 ("relation does not exist") and exits gracefully until A-MISSING-TABLE-1 is applied to live. |
-| K-08 | pending | Sweep `/api/admin/*` PATCH/POST/DELETE routes: ensure each writes to `admin_audit_log` | ~2 | P1. SOC 2 / ASIC audit-trail gap. ~44 routes; spot-check 10 first. |
+| K-08 | in-progress | Sweep `/api/admin/*` PATCH/POST/DELETE routes: ensure each writes to `admin_audit_log` | ~2 | P1. SOC 2 / ASIC audit-trail gap. ~40 routes with mutating methods; 1 already had it (`ai-chat`). Batch 1 done (iter 24, commit `bb8a677`): `advisor-applications` (approve + reject paths), `advisor-moderation` (bulk approve/suspend), `advisor-kyc` (verify + reject), `review-moderation` (approve/reject/flag), `feature-flags` (PATCH). ~35 routes remaining. |
 | K-09 | pending | `/api/seed/route.ts` — gate behind `NODE_ENV !== 'production'` + admin auth | 1 | P1. Shouldn't exist in prod at all. |
 | K-10 | pending | `/api/newsletter/subscribe/route.ts` — `source` field allowlist enum | 1 | P2. Analytics poisoning vector. |
 | K-11 | pending | `admin_login_attempts` table — add `UNIQUE(ip_hash)` constraint to prevent rate-limit bypass under concurrency | 1 | P2. |
@@ -442,6 +442,22 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-26 22:26Z — iteration 24 (stream K, item K-08 batch 1 — admin audit-log first 5 routes)
+
+- Phase 1.5: Types drift check — generated types from Supabase MCP, diffed against `lib/database.types.ts` — zero diff. No regen needed.
+- Phase 2 CI rescue: PR #220 green (success+skipped); PR #222 green (success+skipped). No rescue.
+- K-08 scope assessed: 40 routes have PATCH/POST/DELETE methods; only `ai-chat` previously wrote to `admin_audit_log`. The table requires `action` (string) + `entity_type` (string); `admin_email`, `entity_id`, `entity_name`, `details` are optional.
+- Batch 1 commit `bb8a677` — 5 routes, 61 insertions:
+  - `advisor-applications PATCH`: approve path logs `advisor_application:approved` + `{professional_id, firm_id}`; reject path logs `advisor_application:rejected` + `{rejection_reason}`. `admin.email` from local `requireAdmin()` guard.
+  - `advisor-moderation PATCH`: bulk professional status transition. Single shared insert after the if/else block (`professional:approved` or `professional:suspended`). `user.email` from inline auth check.
+  - `advisor-kyc PATCH`: added `createAdminClient` import (first admin-client usage in this file; library functions handle their own DB ops). `db` client shared between verify (`advisor_kyc:verified`) and reject (`advisor_kyc:rejected`) paths. `guard.email` from `requireAdmin()`.
+  - `review-moderation PATCH`: bulk review status transition (`professional_review:approved|rejected|flagged`). `user.email` from inline auth check.
+  - `feature-flags PATCH`: `feature_flag:updated`. `update` is `Record<string,unknown>` — materialised into `auditChanges: Record<string, boolean|number|string|string[]>` before insert for TypeScript type safety. `guard.email` from `requireAdmin()`.
+- Pattern: audit-log insert is `await` but best-effort from a UX standpoint (matches existing `ai-chat` + marketplace page pattern). A Supabase failure returns 500 but doesn't roll back the primary write (already committed at that point).
+- Local gates: file-targeted `tsc` exited 0 (TS5112 informational only — path aliases not resolved without tsconfig; Hardware exception applies). No test files changed → test skip. CI on PR #222 is authoritative.
+- Remaining K-08 scope: ~35 routes. Next iteration picks the next batch (automation routes, content management, foreign-investment admin, notify-price-change, etc.).
+- Status: PROGRESS · stream=K · item=K-08 (batch 1) · pr=#222 · commit=`bb8a677`
 
 ### 2026-04-26 21:37Z — iteration 23 (stream K, item K-07b — account-deletion day-25 reminder cron)
 
