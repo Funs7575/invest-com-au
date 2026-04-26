@@ -34,7 +34,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | H | _not started_ | — | — | — |
 | I | _not started_ | — | — | — |
 | J | _not started_ | — | — | — |
-| K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-26T18:26Z | K-01..K-05 + K-06a done; K-06b + K-07..K-15 pending |
+| K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-26T18:58Z | K-01..K-05 + K-06a + K-07 done; K-06b + K-07b + K-08..K-15 pending |
 | L | _not started_ | — | — | — |
 | M | _not started_ | — | — | — |
 | N | _not started_ | — | — | — |
@@ -48,7 +48,35 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 
 ## Blocked — needs human input
 
-_None currently — B-04 cleared 2026-04-26 by user (chose option 2). See Done section + iteration log for the resolution and the option-4 follow-up note._
+### A-MISSING-TABLE-1 · `account_deletion_requests` table missing in live (surfaced 2026-04-26 by iter 19)
+
+**Finding:** The route `app/api/account/delete/route.ts` and Stream A's drift-backfill scope both depend on `account_deletion_requests`. Live DB query (Supabase MCP, 2026-04-26 18:50Z):
+
+```sql
+SELECT to_regclass('public.account_deletion_requests');
+-- → null (table does not exist)
+```
+
+The migration that defines the table (`supabase/migrations/20260427_wave_security_observability.sql:175`) exists in the repo with proper RLS + self-scoped policies, but it doesn't appear to have been applied to live.
+
+**Impact today:**
+- `POST /api/account/delete` returns HTTP 500 (`Failed to schedule deletion`) on every call — anyone who clicks "delete my account" sees a generic error, no row is recorded, and no email goes out.
+- K-07's confirmation-email path is dead code (correct, just unreachable until the table exists).
+- K-07b (day-25 reminder cron) cannot be built — it would query a non-existent table.
+
+**Decision matrix for the user:**
+
+| Option | What you do | Trade-off |
+|---|---|---|
+| **1. Apply the migration via Supabase MCP** | Run the `CREATE TABLE` + `ENABLE RLS` + `CREATE POLICY` block from `20260427_wave_security_observability.sql:175-209` against live. ~3 min. | Fastest. Migration is idempotent (`IF NOT EXISTS`), so safe to run. Unblocks K-07 + K-07b immediately. |
+| **2. Apply the whole `20260427_wave_security_observability.sql` migration** | Run the full migration file. | Catches anything else in that file that's also drifted. Larger blast radius — needs a quick read-through to confirm everything in the file is intended. |
+| **3. Defer until Stream A's drift backfill iteration covers it** | Wait. K-07 + K-07b stay parked. | Lowest risk but extends the window where account-deletion is broken in prod. Stream A is at priority step 10 of 20 — likely days-to-weeks out. |
+
+**Recommendation:** Option 1. The table definition is well-formed and the migration was clearly intended to ship; just apply that table creation block.
+
+---
+
+_B-04 cleared 2026-04-26 by user (chose option 2). See Done section + iteration log for the resolution and the option-4 follow-up note._
 
 ---
 
@@ -200,7 +228,8 @@ P0/P1/P2 findings from the security agent's deep scan. Each is small (<2h); clus
 | K-05 | done | Unify X-Frame-Options + Permissions-Policy in `proxy.ts` | 1 | Done in commit `a1d1d59b` (PR #222). proxy.ts: `SAMEORIGIN` → `DENY` (matches what browser was already enforcing via most-restrictive selection); `geolocation=()` → `geolocation=(self)` (the silent-most-restrictive combine had been disabling all geolocation features — restored). next.config.ts: dropped both conflicting headers; X-Content-Type-Options, Referrer-Policy, X-DNS-Prefetch-Control, HSTS remain duplicated with matching values across both configs to cover the static-asset paths excluded from the middleware matcher. Behavioural deltas: X-Frame-Options unchanged (was DENY, is DENY); geolocation features re-enabled. |
 | K-06a | done | Data-export request stale-pending monitor cron | 1 | Done in commit `9d6b2609` (PR #222). New cron `/api/cron/data-export-monitor` (daily, batched into `daily-2` alongside `gdpr-retention-purge`). Scans `data_export_requests` for `status='pending'` rows; bucketed at 7+ days (reminder email) and 25+ days (urgent — within 5 days of APP-12 30-day deadline). Single consolidated alert email to `ADMIN_NOTIFICATION_EMAIL`. Read-only on the table; non-blocking on Resend failure. Pre-launch: zero overhead while no requests exist. |
 | K-06b | pending | Full data-export processor cron — generate JSON archive of user's data across all tables, sign download URL, email user | ~3 | P1 / APP-12 compliance. Larger scope split out from K-06. Until shipped, K-06a's monitor surfaces stalled requests for manual processing via `/admin/privacy`. |
-| K-07 | pending | `/api/account/delete/route.ts` — confirmation email on schedule; day-25 reminder | 1 | P1. UX + APP-13. |
+| K-07 | done | `/api/account/delete` — confirmation email on schedule | 1 | Done in commit `41b84e0b` (PR #222). After the existing upsert succeeds, fires a transactional email to `user.email` with locale-formatted purge date (`Saturday, 26 May 2026`), cancel link to `/account/privacy`, and the "if you didn't request this" escape hatch for phishing victims. Best-effort — Resend failure logs `warn` but doesn't roll back the deletion request. **Known live drift:** the `account_deletion_requests` table doesn't exist in any live schema (migration `20260427_wave_security_observability.sql:175` defines it but appears unapplied) — so the route's POST returns 500 today and the email path is forward-compatible code that activates the day the migration lands. Surfaced to Blocked. |
+| K-07b | pending | Day-25 grace-period reminder cron | 1 | P1. Daily cron scans `account_deletion_requests` where `status='scheduled'` AND `scheduled_purge_at` between now+1d and now+5d; sends final-warning email. Depends on the table being live (currently isn't — see Blocked entry). |
 | K-08 | pending | Sweep `/api/admin/*` PATCH/POST/DELETE routes: ensure each writes to `admin_audit_log` | ~2 | P1. SOC 2 / ASIC audit-trail gap. ~44 routes; spot-check 10 first. |
 | K-09 | pending | `/api/seed/route.ts` — gate behind `NODE_ENV !== 'production'` + admin auth | 1 | P1. Shouldn't exist in prod at all. |
 | K-10 | pending | `/api/newsletter/subscribe/route.ts` — `source` field allowlist enum | 1 | P2. Analytics poisoning vector. |
@@ -338,6 +367,7 @@ Diagrams + API contracts + missing-runbook overflow from Q.
 
 ## Done
 
+- 2026-04-26 · K-07 · `/api/account/delete` confirmation email after schedule — locale-formatted purge date, cancel link, phishing-victim escape hatch. Best-effort send; doesn't roll back deletion request on Resend failure. Forward-compatible with the missing `account_deletion_requests` table (Blocked entry A-MISSING-TABLE-1). · commit `41b84e0b` · pr #222
 - 2026-04-26 · K-06a · Data-export stale-pending monitor cron — daily check, founder alert at 7d (reminder) and 25d (urgent — within 5 days of APP-12 deadline). Closes the silent-failure gap where pending `data_export_requests` would sit unprocessed past the 30-day legal window. · commit `9d6b2609` · pr #222
 - 2026-04-26 · M-01a · Site-wide default OG + Twitter card image (P0-6, out-of-loop) · pr #227
 - 2026-04-26 · O-02 · 4 FK index repo-parity migration (out-of-loop; live DB already had them) · pr #230
@@ -367,6 +397,15 @@ Diagrams + API contracts + missing-runbook overflow from Q.
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-26 18:58Z — iteration 19 (stream K, item K-07 — account-delete confirmation email + drift surfacing)
+- K-07 split into K-07 (this iteration — POST-success confirmation email) + K-07b (future — day-25 reminder cron). K-07b deferred because the underlying `account_deletion_requests` table doesn't exist in live (see new Blocked entry A-MISSING-TABLE-1) and a cron querying a non-existent table is dead code.
+- Commit `41b84e0b`: `app/api/account/delete/route.ts` — added inline `deletionConfirmationHtml(...)` builder + post-upsert call to `sendEmail`. Locale-formatted purge date in en-AU, cancel link to `/account/privacy`, phishing-victim escape hatch in the body. Best-effort send: Resend failure logs `warn` but does not roll back the deletion request (the row is already committed; rolling back would need a compensating delete with its own failure mode).
+- **Drift surfaced:** Live DB query confirmed `account_deletion_requests` doesn't exist in any schema. Migration file `20260427_wave_security_observability.sql:175` defines it with RLS + self-scoped policies but appears unapplied. New Blocked entry A-MISSING-TABLE-1 with 3-option decision matrix; recommendation = apply the migration block via Supabase MCP. Today this means the route's existing POST returns 500 every time anyone clicks "delete account" — the K-07 email path is forward-compatible code that activates the day the migration lands.
+- Verified callers: `account_deletion_requests` is referenced only in `app/api/account/delete/route.ts` (writer) + `app/account/privacy/page.tsx` (reader UI). No other code paths to coordinate with.
+- Phase 2 CI: PR #220 fully green (13 success / 10 skipped); PR #222 (with K-01..K-06a now green, 15 success / 10 skipped) fully green. No rescue.
+- Local gates: `tsc`/`eslint` OOM'd (Hardware exception). CI on PR #222 is authoritative. Pushed with `HUSKY=0`.
+- Status: PROGRESS · stream=K · item=K-07 · pr=#222.
 
 ### 2026-04-26 18:26Z — iteration 18 (stream K, item K-06a — data-export monitor cron)
 - K-06 split into K-06a (this iteration — monitor) + K-06b (future — full processor). Original audit framing assumed `/api/cron/process-data-exports` existed and just needed reminder/completion bolt-ons; verification revealed the processor doesn't exist at all. K-06b is a 3-iteration build (cross-table archival, signed URL gen, user email) and was too big for this iteration's diff cap.
