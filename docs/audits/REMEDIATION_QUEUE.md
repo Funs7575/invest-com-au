@@ -34,7 +34,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | H | _not started_ | — | — | — |
 | I | _not started_ | — | — | — |
 | J | _not started_ | — | — | — |
-| K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-26T18:58Z | K-01..K-05 + K-06a + K-07 done; K-06b + K-07b + K-08..K-15 pending |
+| K | `claude/audit-remediation/k-security-hardening` | #222 | pending — re-running 2026-04-26T19:50Z (merged main) | K-01..K-05 + K-06a + K-07 done; K-06b + K-07b + K-08..K-15 pending |
 | L | _not started_ | — | — | — |
 | M | _not started_ | — | — | — |
 | N | _not started_ | — | — | — |
@@ -397,6 +397,13 @@ Diagrams + API contracts + missing-runbook overflow from Q.
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-26 19:50Z — iteration 21 (CI rescue follow-up — merge main into K branch)
+- PR #222's "Supabase types drift" check still FAILED after iter 20's main-side regen, because the K branch hadn't picked up main's new `database.types.ts`. Per the loop contract this is still a CI-RESCUE iteration on the same root-cause until green.
+- Merged `origin/main` into `claude/audit-remediation/k-security-hardening` (no conflicts; only the regen + several recent main-side merges came along — including new docs, runbooks, /grants pages, FK indexes migration, code-quality dashboard, etc., which all belong on main and don't disturb K-stream files).
+- Pushed merge commit `cafecd23` to PR #222. CI will re-run with current types and the drift check should pass.
+- No K-stream code change. No queue item completed this iteration.
+- Status: CI-RESCUE · stream=K · pr=#222 · merge-from-main · sha=`cafecd23`.
 
 ### 2026-04-26 19:25Z — iteration 20 (CI rescue — Supabase types drift on main)
 - Phase 2 CI check found PR #222's "Supabase types drift" check FAILED. Drift was upstream of K-stream: `lib/database.types.ts` on main was stale relative to live DB. Recent observability work (PR #225 "cron dispatcher silent failures" + PR #231 "global-silence guard") added `details JSONB` and `service TEXT` columns to `health_pings` but didn't refresh the generated types file, so every PR opened against main since has been failing this check.
