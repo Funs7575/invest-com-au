@@ -18,8 +18,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = hasSupabase ? await createClient() : null;
 
   // Static pages with tiered priorities
-  const highPriority = new Set(["/compare", "/quiz", "/reviews", "/deals", "/share-trading", "/crypto", "/savings", "/super", "/cfd", "/term-deposits", "/robo-advisors", "/versus", "/how-to", "/invest", "/foreign-investment", "/etfs", "/insurance", "/tax", "/property"]);
-  const medPriority = new Set(["/calculators", "/articles", "/scenarios", "/switch", "/stories", "/benchmark", "/health-scores", "/alerts", "/whats-new", "/costs", "/fee-impact", "/compound-interest-calculator", "/dividend-reinvestment-calculator", "/fire-calculator", "/property-vs-shares-calculator", "/super-contributions-calculator", "/tco-calculator", "/invest/mining", "/invest/buy-business", "/invest/farmland", "/invest/commercial-property", "/invest/renewable-energy", "/invest/startups", "/compare/non-residents", "/compare/money-transfer"]);
+  const highPriority = new Set(["/compare", "/quiz", "/reviews", "/deals", "/share-trading", "/crypto", "/savings", "/super", "/cfd", "/term-deposits", "/robo-advisors", "/versus", "/how-to", "/invest", "/foreign-investment", "/etfs", "/insurance", "/tax", "/property", "/grants", "/grants/rd-tax-incentive", "/smsf/setup", "/smsf/crypto", "/smsf/property", "/sell-business", "/sell-business/valuation", "/dividends", "/dividends/franking-credits", "/negative-gearing", "/lump-sum-investing", "/lump-sum-investing/redundancy", "/lump-sum-investing/inheritance", "/learn"]);
+  const medPriority = new Set(["/calculators", "/articles", "/scenarios", "/switch", "/stories", "/benchmark", "/health-scores", "/alerts", "/whats-new", "/costs", "/fee-impact", "/compound-interest-calculator", "/dividend-reinvestment-calculator", "/fire-calculator", "/property-vs-shares-calculator", "/super-contributions-calculator", "/tco-calculator", "/invest/mining", "/invest/buy-business", "/invest/farmland", "/invest/commercial-property", "/invest/renewable-energy", "/invest/startups", "/compare/non-residents", "/compare/money-transfer", "/grants/emdg", "/grants/industry-growth-program", "/grants/eligibility-quiz", "/smsf/investment-strategy", "/smsf/checklist", "/sell-business/checklist", "/visa-investment", "/dividends/calculator", "/negative-gearing/calculator", "/lump-sum-investing/calculator"]);
   // Everything else (about, how-we-earn, privacy, methodology, terms, etc.) → 0.4
 
   const staticPages = [
@@ -84,6 +84,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/franking-credits-calculator", "/chess-lookup",
     "/share-trading", "/crypto", "/savings", "/super", "/cfd",
     "/how-to",
+    // Revenue-expansion hubs
+    "/grants", "/grants/rd-tax-incentive", "/grants/emdg",
+    "/grants/industry-growth-program", "/grants/eligibility-quiz",
+    "/smsf/setup", "/smsf/crypto", "/smsf/property",
+    "/smsf/investment-strategy", "/smsf/checklist",
+    "/sell-business", "/sell-business/valuation", "/sell-business/checklist",
+    "/visa-investment",
+    "/dividends", "/dividends/franking-credits", "/dividends/calculator",
+    "/negative-gearing", "/negative-gearing/calculator",
+    "/lump-sum-investing", "/lump-sum-investing/redundancy",
+    "/lump-sum-investing/inheritance", "/lump-sum-investing/calculator",
+    "/learn",
     // Foreign investment hub
     "/foreign-investment",
     // Localised foreign-investor hub + sub-pages (zh, ko)
