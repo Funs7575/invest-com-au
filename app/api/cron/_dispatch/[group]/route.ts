@@ -47,6 +47,38 @@ export async function GET(
   const started = Date.now();
   log.info("Dispatch start", { group, total: paths.length, origin });
 
+  // ─────────────────────────────────────────────────────────────
+  // Diagnostic write at function entry to definitively prove the
+  // dispatcher route handler is executing. Without this, we can't
+  // distinguish between "Vercel served a cached 200 without
+  // running the route" and "route ran but its writes silently
+  // failed". Distinct `name` + `triggered_by` so it doesn't
+  // pollute real cron-health dashboards. Awaited (not
+  // fire-and-forget) so we can capture the error if it fails.
+  //
+  // Once the cron silence is conclusively diagnosed (Sprint 1
+  // close-out), this entry-write is removed in a follow-up PR.
+  // Tracked as cleanup in queue stream L.
+  // ─────────────────────────────────────────────────────────────
+  const { error: diagErr } = await supabase
+    .from("cron_run_log")
+    .insert({
+      name: `_diagnostic:${group}`,
+      started_at: new Date().toISOString(),
+      status: "ok",
+      duration_ms: 0,
+      triggered_by: "dispatcher",
+      stats: { commit: process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) || "local", origin, paths_count: paths.length },
+    });
+  if (diagErr) {
+    log.error("DIAGNOSTIC_ENTRY_INSERT_FAILED", {
+      group,
+      err: diagErr,
+      message: diagErr.message,
+      code: diagErr.code,
+    });
+  }
+
   const results = await Promise.allSettled(
     paths.map(async (path) => {
       const t0 = Date.now();
