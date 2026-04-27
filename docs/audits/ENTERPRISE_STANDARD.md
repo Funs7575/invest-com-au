@@ -154,9 +154,17 @@ Any user-facing route under `app/**` (RSC or client component).
       Build fails on unwrapped dated claims via V-NEW-01.
 - [ ] If the page contains a lead form, the form routes via the typed
       `submitLead({ source })` (see Lead form surface).
+- [ ] **Passes CL-09 anonymity stress test.** No founder PII (real
+      name, personal email, personal phone, residential address)
+      anywhere in the rendered page output, JSON-LD, og:tags,
+      meta description, or visible/hidden source. Author by-lines
+      use entity-pseudonymous editorial personas only (see CL-03).
+      Build fails on hit via the CL-09 CI gate.
 
 CI gate: V-NEW-01 (stale-data CI gate) + U-04 (axe-core) + U-03
-(Lighthouse CI).
+(Lighthouse CI) + **CL-09 (anonymity stress test, added 2026-04-27
+pre-launch product expansion — blocks every public-facing PR until
+passed)**.
 
 ### Calculator surface
 
