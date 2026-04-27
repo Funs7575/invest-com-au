@@ -800,6 +800,35 @@ Tier-2/3 hub streams (post-Z: `/retirement`, `/aged-care`, `/angel`,
 `/find-accountant`, `/find-mortgage-broker`) will be queued as separate
 streams once Z lands, following the same per-hub anatomy.
 
+### Stream CL — Anonymity infrastructure (Tier 0, added 2026-04-27)
+
+Founder-anonymity infrastructure that ships **before** anything public-facing. CL-09 becomes a CI gate alongside V-NEW-01..04 — every public-facing PR must pass CL-09 anonymity stress test before merge. Reference: founder's PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending — to be added to docs/audits/). Per-item DoD details there.
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| CL-01 | pending | About page (entity-only — no founder identification) | 1-2 | **Tier 0.** Statutory minimum + entity framing. **Deps:** none. Blocks: CL-04, CL-09. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| CL-02 | pending | Editorial Team page | 1-2 | **Tier 1.** Surface editorial standards + named-but-pseudonymous editorial roles per `lib/compliance.ts`. **Deps:** CL-01. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| CL-03 | pending | Operational personas page | 1-2 | **Tier 1.** Defines the operational/editorial personas the platform speaks through. **Deps:** none. Blocks: CL-08. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| CL-04 | pending | Privacy / legal / AFSL disclosure page (statutory minimum) | 1-2 | **Tier 0.** Compliance-mandated disclosure. **Deps:** CL-01. Routes via `lib/compliance.ts` SSOT — never inline copy. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| CL-05 | pending | Domain WHOIS + entity-owned audit | 1 | **Tier 0.** Verify WHOIS shows entity not individual; document ownership chain. Founder action item; loop drafts the audit script. **Deps:** none. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| CL-06 | pending | Code repository hygiene — sweep for founder PII | 1-2 | **Tier 0.** Grep history for founder name / personal email / phone in commits + comments + READMEs. Surface findings; rewrite where safe (recent commits) or document where not (deep history). **Deps:** none. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| CL-07 | pending | Social media presence (entity-only) | 1-2 | **Tier 0.** Twitter / LinkedIn / Bluesky accounts in entity name; bio copy via `lib/compliance.ts`. **Deps:** CL-01, CL-03. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| CL-08 | pending | Press inquiry handling — auto-reply + queue | 1-2 | **Tier 1.** Inbound press goes to entity address with templated auto-reply; founder personally never quoted. **Deps:** CL-03. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| CL-09 | pending | Anonymity stress test (CI gate) — blocks all public PRs | 2-3 | **Tier 0. NEW CI GATE.** Pattern after V-NEW-01..04. CI script that scans every public-facing surface (pages, RSS, sitemap, JSON-LD, og:tags, repo READMEs, social bio copy) for founder PII patterns; fails build on hit. Pairs with `lib/compliance.ts` allowlist. **Deps:** CL-01..CL-07 land first so the script has clean ground to scan. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| CL-10 | pending | Quarterly anonymity audit script | 1-2 | **Tier 1.** Cron-driven quarterly run of CL-09 stress test + WHOIS re-check + social-bio re-check. Email founder + alert on regressions. **Deps:** CL-09. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+
+### Stream LL — Logged-in user infrastructure (Tier 1, added 2026-04-27)
+
+User profile + dashboard is the foundation that unlocks 15+ dependent items across LX/GT/DF/AT/DV. Without LL-01, those streams cannot start. LL-01 is the longest critical path in the pre-launch roadmap.
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| LL-01 | pending | Personal profile + dashboard | 5-7 | **Tier 1. Longest critical path.** Supabase Auth-backed user profile, dashboard surface, RLS-isolated `user_profiles` table. **Deps:** Supabase Auth (in place). **Blocks:** LL-02, LX-02, LX-04, GT-01, GT-02, DF-01..04, AT-01..04, CD-01, DV-01. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| LL-02 | pending | Profile-driven advisor matching v2 | 3-4 | **Tier 1.** Replaces the quiz-only matching with profile-aware matching (saved goals, prior leads, jurisdiction). **Deps:** LL-01. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| LL-03 | pending | Watchlist + email digests | 3-4 | **Tier 2.** Save advisors, hubs, calculator results to a watchlist; weekly email digest. **Deps:** LL-01, EM-02 email digest infrastructure. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| LL-04 | pending | Reviews + ratings on advisors | 4-5 | **Tier 2.** Authenticated review submission + moderation flow + display on advisor pages. **Deps:** LL-01. **Blocks:** RR-01, RR-02. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| LL-05 | pending | Live chat AI routing | 3-4 | **Tier 2.** Lower-funnel chat that routes to advisor or AI based on intent + jurisdiction. **Deps:** V-NEW-02 (factual filter), CC-06 (advisor pre-chat infra). Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+
 ---
 
 ## Done
