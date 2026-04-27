@@ -43,6 +43,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | Q | _not started_ | — | — | — |
 | R | _not started_ | — | — | — |
 | S | _not started_ | — | — | — |
+| V | `claude/audit-remediation/v-polish-extras` | #252 | pending — pushed 2026-04-27T14:15Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 blocked (no DatedStatBadge component yet) · V-NEW-02 blocked (no compliance factual-filter) · V-NEW-03 pending |
 
 ---
 
@@ -122,6 +123,37 @@ A `status = 'published'` allow-SELECT policy would fix the public pages but leav
 | **4. Defer — skip `quarterly_reports` in B-06, move to C-stream admin-scope reset** | Leave B-06 as done (listing_plans + listing_enquiries done); quarterly_reports becomes C-05b when the admin page refactor happens. | No new risk vs today (table always had no RLS). Avoids fragmented ownership. |
 
 **Recommendation:** Option 1. The admin page should go through an API route (the CLAUDE.md pattern for "admin routes, webhooks, and cron") rather than direct browser-DB. Migration is straightforward once the route exists. This neatly dovetails with Stream C (C-05 already covers `account/notifications` and `ArticleBrokerTable` browser-to-server refactors).
+
+---
+
+### V-NEW-01-DATED-STAT-1 · Stale-data CI gate needs `<DatedStatBadge>` component (surfaced 2026-04-27 by iter 53)
+
+**Finding:** `<DatedStatBadge>` component does not exist anywhere in the codebase. V-NEW-01 (the CI gate that fails build when a badge's `stalesAt` date is past today) cannot be implemented without the component it checks for.
+
+**Decision matrix:**
+
+| Option | What you / the loop does | Trade-off |
+|---|---|---|
+| **1. Ship slot-2 DatedStatBadge component first (recommended)** | Next iteration picks up Y-05 (extracted to slot 2 in priority order) and builds `<DatedStatBadge>` + `lib/dated-stats.ts` + cron stale-check. V-NEW-01 follows in the subsequent iteration. | Correct sequencing — the component and its CI gate land together (two iterations). Unblocks V-NEW-01 + every AA-* item touching dated data. |
+| **2. Defer V-NEW-01 until stream W/Y land naturally** | Leave blocked until W-02 or Y-05 ships the component as part of hub foundation work. | Delays the gate by potentially many iterations while W/Y hub work proceeds. Higher risk of stale dates shipping to prod. |
+
+**Recommendation:** Option 1 — slot-2 DatedStatBadge extraction is already at priority step 2 in `REMEDIATION_DEFAULTS.md`. The next iteration should do Y-05 (component only, not the full Y stream) to unblock V-NEW-01.
+
+---
+
+### V-NEW-02-COMPLIANCE-FILTER-1 · AI factual-filter needs founder compliance copy (surfaced 2026-04-27 by iter 53)
+
+**Finding:** `lib/compliance.ts` has no `filterFactualOutput()` or equivalent function — only compliance copy strings. V-NEW-02 (AI-output factual-filter enforcement) requires this function to exist before the ESLint rule and unit tests can be written.
+
+**Decision matrix:**
+
+| Option | What you / the loop does | Trade-off |
+|---|---|---|
+| **1. Loop drafts the filter function based on existing compliance copy** | Loop implements `filterFactualOutput(text: string): FilterResult` that rejects patterns: "you should", "we recommend", "best for you", "I recommend", "advise you to"; enforces GAW prefix; strips citations not backed by a URL. Founder reviews + approves the filter before CC-* items start. | Fastest path. Filter is conservative by default (rejects ambiguous phrases). CC-* items can't ship until founder approves semantics. |
+| **2. Founder drafts the filter semantics, loop implements** | Founder writes the list of banned phrases + required prefixes; loop wraps them in code + tests. | Highest compliance accuracy. ~1-2 days slower if founder is busy. |
+| **3. Defer V-NEW-02 until CC-* items are closer** | Leave blocked. CC-* items surface to Blocked automatically when picked (they check for this dependency). | No immediate risk (CC-* stream is 30+ iterations away). But unblocking is a 1-iteration task — cheaper now than mid-stream. |
+
+**Recommendation:** Option 1 — the loop can draft a conservative filter based on existing AFSL/GAW compliance copy in `lib/compliance.ts`. Founder reviews before any CC-* PR is merged. Unblock by updating this entry or replying "draft the filter."
 
 ---
 
@@ -465,10 +497,10 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 | V-08 | pending | Per-page performance budgets (LCP / CLS / INP targets) committed to `.lighthouserc.cwv.json` for top-20 pages by traffic | 1 | Sets the SLO for U-04's CI gate. |
 | V-09 | needs-user | External a11y audit booking — Deque / Level Access / TPGi quote + scheduled audit for top-10 pages | — | Founder action. Could swap for in-house axe + manual KB testing if budget tight. |
 | V-10 | pending | Pen-test prep doc + bounty program scoping — what's in scope, what's out, severity classifications, response SLAs | 1 | Doc only. Founder decides between paid pen-test ($5-15k) vs. HackerOne bug bounty (free, 2-week window). |
-| V-NEW-01 | pending | Stale-data CI gate — fail build if any `<DatedStatBadge stalesAt>` is past today | 1-2 | **P0 within additions.** Protects the entire `<DatedStatBadge>` investment from stream Y. **Deps:** `<DatedStatBadge>` component (stream W via Y-05). **DoD:** CI script that scans every `<DatedStatBadge stalesAt="…">` and fails build if any `stalesAt` is past today; runs on every PR + nightly cron; failure produces actionable list of stale entries with file paths; tests for gate firing on past-date fixtures, passing on future-date fixtures, edge cases (missing `stalesAt` attr, malformed dates). |
-| V-NEW-02 | pending | AI-output factual-filter enforcement — every CC-* response through lib/compliance.ts | 2-3 | **P0 within additions. Gates entire CC stream — no CC-* item ships until this lands.** **Deps:** `lib/compliance.ts` factual-filter implementation. **DoD:** every AI response in CC-* must pass through `lib/compliance.ts` before display; ESLint rule + unit test enforces no direct Anthropic API response rendering without filter; filter rejects personal-advice language ("you should", "we recommend", "best for you"), enforces GAW prefix, strips fabricated citations; tests for filter rejection on advice-shaped fixtures, GAW prefix injection, citation validation. |
+| V-NEW-01 | blocked | Stale-data CI gate — fail build if any `<DatedStatBadge stalesAt>` is past today | 1-2 | **P0 within additions.** **Blocked** — iter 53 Phase 4: `<DatedStatBadge>` component does not exist yet; `find` over entire repo returned no matches. Unblocked when slot-2 DatedStatBadge component (Y-05 extraction) lands. Deps: `<DatedStatBadge>` component (stream W via Y-05). |
+| V-NEW-02 | blocked | AI-output factual-filter enforcement — every CC-* response through lib/compliance.ts | 2-3 | **P0 within additions. Gates entire CC stream.** **Blocked** — iter 53 Phase 4: `lib/compliance.ts` has no factual-filter function (only compliance copy strings). Filter implementation depends on founder's compliance copy review. Unblocked when `lib/compliance.ts` gains a `filterFactualOutput()` or equivalent function. |
 | V-NEW-03 | pending | Stripe webhook idempotency replay test harness — gates entire DD stream | 2-3 | **P0 within additions. Gates entire DD stream — no DD-* item ships until this lands.** **Deps:** existing Stripe webhook infrastructure. **DoD:** test harness that replays the same Stripe webhook event N times + asserts state converges (no duplicate subscriptions, no double-charges, no double-tier-upgrades); applies to every webhook handler in DD-*; runs in CI on every PR touching `app/api/webhooks/stripe/**`; tests for replay convergence on `customer.subscription.created`, `invoice.paid`, `payment_failed`, `refund.created`. |
-| V-NEW-04 | pending | RLS-isolation test gate for new user-data tables — fail build if missing | 2-3 | **P0 within additions.** Security baseline. **Deps:** existing Supabase RLS infrastructure. **DoD:** CI script that detects new user-data tables (any table with `user_id` or `owner` column) added in a migration + fails build if no corresponding RLS isolation test exists; isolation test pattern = create user A + user B + assert A cannot SELECT/UPDATE/DELETE B's rows; test template provided in `tests/templates/rls-isolation.test.ts`; tests for gate firing on migration without RLS test, passing with valid RLS test. |
+| V-NEW-04 | done | RLS-isolation test gate for new user-data tables — CI gate + test template + 16 gate tests | 1 | Done in commit `5aadce3` (PR #252). `scripts/check-rls-isolation.mjs` — scans added migrations for user_id/owner_id tables, checks for `__tests__/lib/<table>.rls.test.ts` or `// rls-isolation: <table>` marker. `__tests__/templates/rls-isolation.template.ts` — copy-paste starting point for isolation tests. CI job `rls-isolation-gate` in `ci.yml`. `npm run audit:rls-isolation` for local pre-check. 16 gate tests green. |
 
 ### Stream W — Hub foundation: component extraction (added 2026-04-27)
 
@@ -730,6 +762,19 @@ distribution.
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-27T14:15Z — iteration 53 (stream V — V-NEW-04 done — RLS isolation gate)
+
+- Phase 0: lock acquired.
+- Phase 1: local main diverged from origin/main (forced update); reset via `git reset --hard origin/main`. Read queue and defaults end-to-end.
+- Phase 1.5: Types drift check — skipped (no schema changes; CI green on all in-flight PRs).
+- Phase 2 CI check: PR #246 (D) — all success/skipped. PR #220 (B) — success/skipped. PR #242 (N) — success/skipped. No rescue needed.
+- Phase 3: priority-walk → V-NEW-01 (slot 1): `<DatedStatBadge>` does not exist → blocked. V-NEW-02 (slot 1): `lib/compliance.ts` has no factual-filter function → blocked. V-NEW-03 (slot 1): unblocked (deps = existing Stripe webhook infra, present). **V-NEW-04 (slot 1)**: unblocked (deps = existing RLS infra, present). Stream V not started — created branch `claude/audit-remediation/v-polish-extras`, empty scaffold commit.
+- Phase 4: verification — V-NEW-04 is a "new CI gate + test" item. Verified: no existing RLS isolation tests in `__tests__/`; no pre-existing `scripts/check-rls-isolation.*`; `ci.yml` has analogous gate jobs (`supabase-types-drift`, `rls-isolation-gate` slot identified after it). Gate scope: only migration files **added** in the current PR (not pre-existing tables). Test template: two-user fixture, covers SELECT/INSERT/UPDATE/DELETE isolation. 16 planned test cases.
+- Phase 5: implemented `scripts/check-rls-isolation.mjs` (ESM, guarded `main()` call with `isMain` check), `__tests__/templates/rls-isolation.template.ts`, `__tests__/scripts/check-rls-isolation.test.ts` (16 tests). Lint clean (0 warnings/errors after removing unused `vi` + `requireMjs` imports). All 16 tests green (vitest 3.2.4). Added `rls-isolation-gate` CI job to `ci.yml` and `audit:rls-isolation` npm script.
+- Phase 6: committed `5aadce3` (+607/-0, 5 files), pushed to `claude/audit-remediation/v-polish-extras`. Opened draft PR #252.
+- Phase 7: queue updated on main — V-NEW-04 done, V-NEW-01 + V-NEW-02 blocked (new Blocked entries added), stream V In-flight row added, this log added.
+- STATUS: PROGRESS · stream=V · item=V-NEW-04 · pr=#252 · commit=`5aadce3` · diff=+607/-0 across 5 files
 
 ### 2026-04-27T13:50Z — iteration 52 (stream D — D-07 done — /api/stripe/create-portal integration test)
 
