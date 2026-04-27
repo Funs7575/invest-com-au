@@ -43,7 +43,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | Q | _not started_ | — | — | — |
 | R | _not started_ | — | — | — |
 | S | _not started_ | — | — | — |
-| V | `claude/audit-remediation/v-polish-extras` | #252 | pending — pushed 2026-04-27T14:50Z (V-NEW-03: Stripe webhook idempotency replay harness + CI gate) | V-NEW-04 done (`5aadce3`) · CI-rescue `e37633c` · V-NEW-01 blocked (no DatedStatBadge component yet) · V-NEW-02 blocked (no compliance factual-filter) · V-NEW-03 done (`84bde1f`) |
+| V | `claude/audit-remediation/v-polish-extras` | #252 | pending — pushed 2026-04-27T22:47Z (V-NEW-01: stale-dated-stats CI gate + 33 tests) | V-NEW-04 done (`5aadce3`) · CI-rescue `e37633c` · V-NEW-01 done (`a99c5db0`) · V-NEW-02 blocked (no compliance factual-filter) · V-NEW-03 done (`84bde1f`) |
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 | pending — pushed 2026-04-27 | V-NEW-06 done (commit `a7bd736`) |
 | V (V-NEW-07) | `claude/audit-remediation/v-new-07-admin-mfa-enforced` | #256 | pending — test-fix pushed 2026-04-27T18:45Z | V-NEW-07a done (cookie helper + verify route + 22 tests) · V-NEW-07b done (`698bbae`) · test-fix `0561944` |
 | X | `claude/audit-remediation/x-admin-backlog` | #257 | pending — pushed 2026-04-27T18:23Z (X-01 decision matrix) | X-01 done — per-file decision matrix at `docs/audits/x-admin-backlog-decision-matrix.md`; X-02..X-09 parallel-eligible with W |
@@ -501,7 +501,7 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 | V-08 | pending | Per-page performance budgets (LCP / CLS / INP targets) committed to `.lighthouserc.cwv.json` for top-20 pages by traffic | 1 | Sets the SLO for U-04's CI gate. |
 | V-09 | needs-user | External a11y audit booking — Deque / Level Access / TPGi quote + scheduled audit for top-10 pages | — | Founder action. Could swap for in-house axe + manual KB testing if budget tight. |
 | V-10 | pending | Pen-test prep doc + bounty program scoping — what's in scope, what's out, severity classifications, response SLAs | 1 | Doc only. Founder decides between paid pen-test ($5-15k) vs. HackerOne bug bounty (free, 2-week window). |
-| V-NEW-01 | blocked | Stale-data CI gate — fail build if any `<DatedStatBadge stalesAt>` is past today | 1-2 | **P0 within additions.** **Blocked** — iter 53 Phase 4: `<DatedStatBadge>` component does not exist yet; `find` over entire repo returned no matches. Unblocked when slot-2 DatedStatBadge component (Y-05 extraction) lands. Deps: `<DatedStatBadge>` component (stream W via Y-05). |
+| V-NEW-01 | done | Stale-data CI gate — fail build if any `<DatedStatBadge stalesAt>` is past today | 1-2 | Done in commit `a99c5db0` (PR #252). `scripts/check-stale-dated-stats.mjs` — scans all .tsx files for `<DatedStatBadge stalesAt="…">` props, fails when any date is before today. Handles ISO string / JS string / `new Date(ISO)` forms. File-level (`// dated-stale-exempt`) and usage-level (`{/* dated-stale-ok */}`) escape hatches. CI job `stale-dated-stats-gate` in `ci.yml`. `npm run audit:stale-dated-stats` for local pre-check. 33 tests green. Gate passes trivially on main (no DatedStatBadge usage yet — component on Y branch PR #253); activates on merge. |
 | V-NEW-02 | blocked | AI-output factual-filter enforcement — every CC-* response through lib/compliance.ts | 2-3 | **P0 within additions. Gates entire CC stream.** **Blocked** — iter 53 Phase 4: `lib/compliance.ts` has no factual-filter function (only compliance copy strings). Filter implementation depends on founder's compliance copy review. Unblocked when `lib/compliance.ts` gains a `filterFactualOutput()` or equivalent function. |
 | V-NEW-03 | done | Stripe webhook idempotency replay test harness — gates entire DD stream | 2-3 | Done in commit `84bde1f` (PR #252). `__tests__/lib/stripe-webhook-idempotency.harness.ts` — stateful `stripe_webhook_events` mock + `createIdempotencyHarness()` + `makeStripeEvent()` + `makeWebhookRequest()`. `__tests__/api/stripe-webhook-idempotency.test.ts` — 18 tests across 5 suites (customer.subscription.created, invoice.paid, invoice.payment_failed, charge.refunded, edge cases). `scripts/check-stripe-idempotency.mjs` — CI gate for new `app/api/webhooks/stripe/**` handlers. CI job `stripe-idempotency-gate` in `ci.yml`. `npm run audit:stripe-idempotency` for local pre-check. 18 tests green. |
 | V-NEW-04 | done | RLS-isolation test gate for new user-data tables — CI gate + test template + 16 gate tests | 1 | Done in commit `5aadce3` (PR #252). `scripts/check-rls-isolation.mjs` — scans added migrations for user_id/owner_id tables, checks for `__tests__/lib/<table>.rls.test.ts` or `// rls-isolation: <table>` marker. `__tests__/templates/rls-isolation.template.ts` — copy-paste starting point for isolation tests. CI job `rls-isolation-gate` in `ci.yml`. `npm run audit:rls-isolation` for local pre-check. 16 gate tests green. |
@@ -1032,6 +1032,19 @@ Items that ship LAST, in the final week before launch (Month 4 of pre-launch roa
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-27T22:47Z — iteration 73 (stream V — V-NEW-01 — stale-dated-stats CI gate)
+
+- Phase 0: lock acquired.
+- Phase 1: git fetch + rebase to sync local main with origin/main (50-commit divergence from older local checkout). Read queue + defaults end-to-end.
+- Phase 1.5: types-drift skipped (no Supabase MCP available in this session).
+- Phase 2: CI rescue scan — checked PRs #220, #222, #242, #246, #252, #253, #256, #257, #258. All check runs green or skipped (Vercel preview + bypass-secret only). No rescue needed.
+- Phase 3: priority slot 1 = V-NEW-01..04. V-NEW-03 done, V-NEW-04 done, V-NEW-02 still blocked. V-NEW-01 was blocked but its dependency (Y-05 `<DatedStatBadge>` component, commit `fb9dec3` on Y branch) is now done → unblocked. Checked out `claude/audit-remediation/v-polish-extras` branch.
+- Phase 4: V-NEW-01 is a new script gate (not a deletion/refactor/migration/test) — no verification gate required beyond confirming the dependency. Y-05 exists on the Y branch and the gate is a pure static file analysis that doesn't require the component to be on main. Gate trivially passes until Y-05 merges; activates automatically on merge. Confirmed component API: `stalesAt: Date | string` prop. Verified 3 value forms parseable statically; dynamic variables are intentionally skipped.
+- Phase 5: created `scripts/check-stale-dated-stats.mjs` (gate + exported helpers) + `__tests__/scripts/check-stale-dated-stats.test.ts` (33 tests — `isFileExempt`, `parseStalesAt`, `isDateStale`, `extractViolations` all branches). Tests: 33/33 green. Gate: passes on 1,051 files (no `<DatedStatBadge>` usages on main). Lint: clean. Added `stale-dated-stats-gate` CI job to `ci.yml`. Added `audit:stale-dated-stats` to `package.json`.
+- Phase 6: committed `a99c5db0`. Pushed to origin. Updated PR #252 body (V-NEW-01 checked off).
+- Phase 7: queue updated on main — V-NEW-01 status changed from `blocked` to `done`, V in-flight row updated with new commit + timestamp, iteration log appended.
+- STATUS: PROGRESS · stream=V · item=V-NEW-01 · pr=#252 · commit=`a99c5db0`
 
 ### 2026-04-27T22:37Z — iteration 72 (stream D — D-11 batch 6 — privacy + unsubscribe + claim-listing)
 
