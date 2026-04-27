@@ -37,7 +37,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-27T05:35Z | K-01..K-08 done; K-09 false-positive; K-10..K-15 done — **stream complete** |
 | L | _not started_ | — | — | — |
 | M | _not started_ | — | — | — |
-| N | `claude/audit-remediation/n-ux-perf` | #242 | pending — pushed 2026-04-27T08:40Z | N-01+N-02 done (`2ec6f89`) · N-03 iter 1/3 done (`36e3f6d`) · N-03 iter 2/3 done (`97bb9b00`) |
+| N | `claude/audit-remediation/n-ux-perf` | #242 | pending — pushed 2026-04-27T09:45Z | N-01+N-02 done (`2ec6f89`) · N-03a done (`36e3f6d`) · N-03b done (`97bb9b00`) · N-03c done (`b29f443`) |
 | O | `claude/audit-remediation/o-rls-no-policy` | _opening_ | pending — pushed 2026-04-26 | O-01 — 3 done (`user_notifications`, `user_quiz_history`, `user_bookmarks`); ~13 user-data tables left |
 | P | _not started_ | — | — | — |
 | Q | _not started_ | — | — | — |
@@ -309,7 +309,7 @@ Image perf, accessibility, client-bundle size.
 | N-02 | done | Homepage broker query `.limit(20)` (was unbounded ~250 rows) | 1 | P0. TTFB on mobile. commit `2ec6f89` pr #242. |
 | N-03a | done | Extract `AdvisorPortalLogin` component from `page.tsx` (login state + handler + 120-line JSX; -141 LOC net) | 1 | commit `36e3f6d` pr #242. |
 | N-03b | done | Extract per-tab components with dynamic imports: `DashboardTab`, `LeadsTab`, `AnalyticsTab` | 1 | commit `97bb9b00` pr #242. Shared types → `types.ts`. page.tsx −773 LOC (2,620 → 1,847). |
-| N-03c | pending | Extract remaining tabs (`ProfileTab`, `BillingTab`, `SettingsTab`, `TeamTab`); `page.tsx` becomes thin shell | 1 | P1. Final split. ~1,847-line file → ~250-line shell + 7 tab components. |
+| N-03c | done | Extract `ProfileTab`, `BillingTab`, `SettingsTab`, `TeamTab`; `page.tsx` 1,847 → 805 LOC thin shell | 1 | commit `b29f443` pr #242. All tab-specific state internalized into child components via `useEffect` mount-fetches. |
 | N-04 | pending | Add skip-to-main-content link in `components/layout/Navigation.tsx` (or root layout) | 1 | P1. WCAG 2.1 AA fail today. |
 | N-05 | pending | Sweep icon-only buttons missing `aria-label` (`CollapsibleSection`, `InfoTip`, `AdminHelpPanel`, `AdminNotifications`, `BottomSheet`, `OnThisPage`) | 1 | P1. |
 | N-06 | pending | Convert `public/logos/*.ico` → `.svg` where possible (580+ files; batch script) | ~2 | P2. ~40 KB homepage saving. |
@@ -438,6 +438,7 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 
 ## Done
 
+- 2026-04-27 · N-03c · Extract `ProfileTab`, `BillingTab`, `SettingsTab`, `TeamTab` from `app/advisor-portal/page.tsx` with `next/dynamic` lazy imports. All tab-specific state internalized into child components: `savingProfile`/`profileSaved`/`saveProfile()` → `ProfileTab`; `topupHistory` + mount-fetch → `BillingTab`; `notifPrefs`/`savingNotifs`/`notifSaved`/`saveNotifPrefs()` + mount-fetch → `SettingsTab`; all firm state (members, invites, details, analytics, sub-tabs, invite flow, seat-request) + `loadFirmData` mount-fetch → `TeamTab`. page.tsx 1,847 → 805 LOC. · commit `b29f443` · pr #242
 - 2026-04-27 · N-03b · Extract `DashboardTab`, `LeadsTab`, `AnalyticsTab` from `app/advisor-portal/page.tsx` with `next/dynamic` lazy imports. Shared types (`Advisor`, `Lead`, `Stats`, `ViewType`, `CategoryPricing`, `DisputeModal`, etc.) moved to `app/advisor-portal/types.ts`. Dashboard receives read-only state + 2 callbacks; LeadsTab uses bool-setter props (not toggles) so "Clear filters" can reset without toggling; AnalyticsTab receives stats/leads/profileCompleteness + onNavigate. page.tsx −773 LOC (2,620 → 1,847). · commit `97bb9b00` · pr #242
 - 2026-04-27 · N-03a · Extract `AdvisorPortalLogin` from `app/advisor-portal/page.tsx` — login state (email/password/mode/status/error), `handleLogin()` handler, and 120-line login form JSX moved to dedicated component; `tokenFromUrl` dead state removed; `useEffect` simplified; `page.tsx` -141 LOC net (2,761 → 2,620). Zero behaviour change: password-login flow still does `window.location.reload()` to re-trigger parent `checkSession`; magic-link token in URL still handled by parent `verifyToken`. · commit `36e3f6d` · pr #242
 - 2026-04-27 · N-01+N-02 · Homepage trust-strip BrokerLogo `priority` for first 3 (LCP preload hint); advisor profile hero `priority`+`placeholder="blur"` (audit 6-A — the 220px photo is the LCP element on every advisor page); advisor listing top-3 card photos `priority`+blur; broker query capped at LIMIT 20 (~500KB JSON → ~80KB, TTFB fix). Bundled because N-02 is a 1-line change directly adjacent to N-01's TTFB motivation. · commit `2ec6f89` · pr #242
@@ -481,6 +482,20 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-27T09:45Z — iteration 39 (stream N, item N-03c done — ProfileTab/BillingTab/SettingsTab/TeamTab extraction)
+
+- Phase 0: lock acquired (session resumed from summary after context limit hit mid-iteration).
+- Phase 1: main was on `origin/main` (already synced). Read queue and defaults end-to-end.
+- Phase 1.5: Types drift check — skipped (no schema changes in this window).
+- Phase 2 CI rescue: PR #220 — success/skipped. PR #222 — success/skipped. PR #242 — success/skipped. No rescue needed.
+- Phase 3 pick: Stream N, N-03c (next pending item). Checked out `claude/audit-remediation/n-ux-perf`.
+- Phase 4 verification: Refactor (code movement). Verified: `ProfileTab` receives `advisor/reviews/onAdvisorChange`; `BillingTab` receives `advisor/stats/categoryPricing/billing/onNavigate`; `SettingsTab` receives `advisor`; `TeamTab` receives `advisor` (used only for "You" label). All tab-specific state and data-loading moved into child components via `useEffect` mount-fetches — equivalent observable behaviour to parent calling `loadX()` on nav-click, since both approaches load data on the user reaching that tab. Dispute modal stays in parent (renders outside all tabs, triggered from LeadsTab via `onDisputeOpen`).
+- Phase 5: created `ProfileTab.tsx` (228 LOC), `BillingTab.tsx` (226 LOC), `SettingsTab.tsx` (119 LOC), `TeamTab.tsx` (552 LOC). Updated `page.tsx` (1,847 → 805 LOC, −1,042 lines). Diff: +1,146/-1,063 across 5 files. Local gates: tsc/lint fail on sandbox-level missing-module errors (Hardware exception; same as prior N iterations). CI on PR #242 is authoritative.
+- Phase 6: committed `b29f443` (+1,146/-1,063, 5 files). Pushed to `claude/audit-remediation/n-ux-perf`. PR #242 body updated (N-03c checked).
+- Phase 7: queue updated on main — N-03c moved to Done, In-flight table updated, Done entry prepended, this log added.
+- Status: PROGRESS · stream=N · item=N-03c · pr=#242 · commit=`b29f443` · diff=+1,146/-1,063 across 5 files
+- Next item: N-04 (skip-to-main-content link in Navigation, WCAG 2.1 AA).
 
 ### 2026-04-27T08:40Z — iteration 38 (stream N, item N-03b done — DashboardTab/LeadsTab/AnalyticsTab extraction)
 
