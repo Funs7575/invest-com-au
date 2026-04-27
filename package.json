@@ -18,6 +18,7 @@
     "e2e:install": "playwright install --with-deps chromium webkit",
     "analyze": "ANALYZE=true next build",
     "audit:rate-limits": "node scripts/rate-limit-coverage.mjs",
+    "audit:dated-strings": "node scripts/check-dated-strings.mjs",
     "db:types": "npx supabase gen types typescript --project-id ${SUPABASE_PROJECT_ID} > lib/database.types.ts",
     "db:types:check": "npx supabase gen types typescript --project-id ${SUPABASE_PROJECT_ID} > /tmp/database.types.generated.ts && diff -u lib/database.types.ts /tmp/database.types.generated.ts",
     "prepare": "husky || true"
