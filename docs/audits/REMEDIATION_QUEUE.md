@@ -37,7 +37,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-27T05:35Z | K-01..K-08 done; K-09 false-positive; K-10..K-15 done — **stream complete** |
 | L | _not started_ | — | — | — |
 | M | _not started_ | — | — | — |
-| N | `claude/audit-remediation/n-ux-perf` | #242 | pending — pushed 2026-04-27T08:10Z | N-01+N-02 done (`2ec6f89`) · N-03 iter 1/3 done (`36e3f6d`) |
+| N | `claude/audit-remediation/n-ux-perf` | #242 | pending — pushed 2026-04-27T08:40Z | N-01+N-02 done (`2ec6f89`) · N-03 iter 1/3 done (`36e3f6d`) · N-03 iter 2/3 done (`97bb9b00`) |
 | O | _not started_ | — | — | — |
 | P | _not started_ | — | — | — |
 | Q | _not started_ | — | — | — |
@@ -308,8 +308,8 @@ Image perf, accessibility, client-bundle size.
 | N-01 | done | Homepage trust-strip BrokerLogos `priority={i<3}`; advisor profile hero `priority`+`placeholder="blur"`+`blurDataURL`; advisor listing top-3 cards `priority`+blur | 1 | P0. Audit 6-A + 6-H. commit `2ec6f89` pr #242. |
 | N-02 | done | Homepage broker query `.limit(20)` (was unbounded ~250 rows) | 1 | P0. TTFB on mobile. commit `2ec6f89` pr #242. |
 | N-03a | done | Extract `AdvisorPortalLogin` component from `page.tsx` (login state + handler + 120-line JSX; -141 LOC net) | 1 | commit `36e3f6d` pr #242. |
-| N-03b | pending | Extract per-tab components with dynamic imports: `DashboardTab`, `LeadsTab`, `AnalyticsTab` | 1 | P1. Next iteration. Reduces initial bundle by deferring heavy tab JSX. |
-| N-03c | pending | Extract remaining tabs (`ProfileTab`, `BillingTab`, `SettingsTab`, `TeamTab`); `page.tsx` becomes thin shell | 1 | P1. Final split. ~2,400-line file → ~250-line shell + 7 tab components. |
+| N-03b | done | Extract per-tab components with dynamic imports: `DashboardTab`, `LeadsTab`, `AnalyticsTab` | 1 | commit `97bb9b00` pr #242. Shared types → `types.ts`. page.tsx −773 LOC (2,620 → 1,847). |
+| N-03c | pending | Extract remaining tabs (`ProfileTab`, `BillingTab`, `SettingsTab`, `TeamTab`); `page.tsx` becomes thin shell | 1 | P1. Final split. ~1,847-line file → ~250-line shell + 7 tab components. |
 | N-04 | pending | Add skip-to-main-content link in `components/layout/Navigation.tsx` (or root layout) | 1 | P1. WCAG 2.1 AA fail today. |
 | N-05 | pending | Sweep icon-only buttons missing `aria-label` (`CollapsibleSection`, `InfoTip`, `AdminHelpPanel`, `AdminNotifications`, `BottomSheet`, `OnThisPage`) | 1 | P1. |
 | N-06 | pending | Convert `public/logos/*.ico` → `.svg` where possible (580+ files; batch script) | ~2 | P2. ~40 KB homepage saving. |
@@ -438,6 +438,7 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 
 ## Done
 
+- 2026-04-27 · N-03b · Extract `DashboardTab`, `LeadsTab`, `AnalyticsTab` from `app/advisor-portal/page.tsx` with `next/dynamic` lazy imports. Shared types (`Advisor`, `Lead`, `Stats`, `ViewType`, `CategoryPricing`, `DisputeModal`, etc.) moved to `app/advisor-portal/types.ts`. Dashboard receives read-only state + 2 callbacks; LeadsTab uses bool-setter props (not toggles) so "Clear filters" can reset without toggling; AnalyticsTab receives stats/leads/profileCompleteness + onNavigate. page.tsx −773 LOC (2,620 → 1,847). · commit `97bb9b00` · pr #242
 - 2026-04-27 · N-03a · Extract `AdvisorPortalLogin` from `app/advisor-portal/page.tsx` — login state (email/password/mode/status/error), `handleLogin()` handler, and 120-line login form JSX moved to dedicated component; `tokenFromUrl` dead state removed; `useEffect` simplified; `page.tsx` -141 LOC net (2,761 → 2,620). Zero behaviour change: password-login flow still does `window.location.reload()` to re-trigger parent `checkSession`; magic-link token in URL still handled by parent `verifyToken`. · commit `36e3f6d` · pr #242
 - 2026-04-27 · N-01+N-02 · Homepage trust-strip BrokerLogo `priority` for first 3 (LCP preload hint); advisor profile hero `priority`+`placeholder="blur"` (audit 6-A — the 220px photo is the LCP element on every advisor page); advisor listing top-3 card photos `priority`+blur; broker query capped at LIMIT 20 (~500KB JSON → ~80KB, TTFB fix). Bundled because N-02 is a 1-line change directly adjacent to N-01's TTFB motivation. · commit `2ec6f89` · pr #242
 - 2026-04-27 · K-15 · CSP violation reporting — `Report-To` header + `report-to`/`report-uri` directives in `proxy.ts` (pointing to NEXT_PUBLIC_SITE_URL/api/csp-report); new `/api/csp-report` POST endpoint (Node runtime, no auth, IP rate-limited 60/min); new `csp_violations` table with ENABLE/FORCE RLS + service_role explicit ALLOW policy. Supports both application/csp-report (legacy report-uri) and application/reports+json (Reporting API v1) formats. Stream K now fully complete (K-01..K-15, 1 false-positive K-09). · commit `cf6c267` · pr #222
@@ -480,6 +481,20 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-27T08:40Z — iteration 38 (stream N, item N-03b done — DashboardTab/LeadsTab/AnalyticsTab extraction)
+
+- Phase 0: lock acquired.
+- Phase 1: main was diverged (50/50 local vs origin); reset via `git reset --hard origin/main`. Read queue and defaults end-to-end.
+- Phase 1.5: Types drift check — skipped (no schema changes in this window).
+- Phase 2 CI rescue: PR #220 — all success/skipped. PR #222 — all success/skipped. PR #242 — all success/skipped. No rescue needed.
+- Phase 3 pick: Stream N, N-03b (highest priority non-blocked item per step 3 in priority order). Fetched branch `claude/audit-remediation/n-ux-perf` from origin.
+- Phase 4 verification: Refactor (code movement), no deletion. Verified: DashboardTab reads `advisor/stats/leads/profileCompleteness/reviews/viewsByDay/weeklyEnquiries/dismissedOnboarding/isPending`; LeadsTab reads all filter state + uses `onLeadSortByQualityChange` / `onHotLeadsOnlyChange` (bool setters, not toggles — needed for "Clear filters" reset-to-false path); AnalyticsTab reads `stats/advisor/leads/profileCompleteness`. Dispute modal state stays in parent (modal renders outside the leads tab). TypeScript enforces prop shape at CI time.
+- Phase 5: Created `app/advisor-portal/types.ts` (80 lines), `DashboardTab.tsx` (389 lines), `LeadsTab.tsx` (304 lines), `AnalyticsTab.tsx` (136 lines). Updated `page.tsx` (+17 lines imports, −826 JSX lines removed → 1,847 lines total). Diff: +962/-826 across 5 files. Local gates: file-targeted tsc / lint both fail on sandbox-level missing-module errors (Hardware exception; same pattern as AdvisorPortalLogin.tsx). CI on PR #242 is authoritative.
+- Phase 6: committed `97bb9b00` (+962/-826, 5 files). Pushed to `claude/audit-remediation/n-ux-perf`. PR #242 body updated (N-03b checked).
+- Phase 7: queue updated on main — N-03b moved to Done, N-03c remains pending, In-flight table updated, Done entry prepended, this log added.
+- Status: PROGRESS · stream=N · item=N-03b · pr=#242 · commit=`97bb9b00` · diff=+962/-826 across 5 files
+- Next item: N-03c (extract ProfileTab, BillingTab, SettingsTab, TeamTab; page.tsx → thin shell).
 
 ### 2026-04-27T08:10Z — iteration 37 (stream N, item N-03a done — AdvisorPortalLogin extraction)
 
