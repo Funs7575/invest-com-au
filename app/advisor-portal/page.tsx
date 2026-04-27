@@ -7,6 +7,7 @@ import Icon from "@/components/Icon";
 import AdvisorPhotoUpload from "@/components/AdvisorPhotoUpload";
 import LeadScoreBadge from "@/components/LeadScoreBadge";
 import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
+import AdvisorPortalLogin from "./AdvisorPortalLogin";
 
 type Advisor = {
   id: number; name: string; slug: string; firm_name?: string; email?: string;
@@ -107,13 +108,6 @@ export default function AdvisorPortalPage() {
   const [leadStatusFilter, setLeadStatusFilter] = useState<"all" | "new" | "contacted" | "converted" | "lost">("all");
   const [leadSortByQuality, setLeadSortByQuality] = useState(false);
   const [hotLeadsOnly, setHotLeadsOnly] = useState(false);
-  const [loginEmail, setLoginEmail] = useState("");
-  const [loginPassword, setLoginPassword] = useState("");
-  const [loginMode, setLoginMode] = useState<"magic" | "password" | "signup">("magic");
-  const [loginStatus, setLoginStatus] = useState<"idle" | "sending" | "sent" | "error" | "success">("idle");
-  const [loginError, setLoginError] = useState("");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [tokenFromUrl, setTokenFromUrl] = useState<string | null>(null);
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileSaved, setProfileSaved] = useState(false);
 
@@ -138,12 +132,10 @@ export default function AdvisorPortalPage() {
   // Onboarding banner
   const [dismissedOnboarding, setDismissedOnboarding] = useState(false);
 
-  // Check for magic link token in URL
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const token = params.get("token");
     if (token) {
-      setTokenFromUrl(token);
       verifyToken(token);
     } else {
       checkSession();
@@ -266,38 +258,6 @@ export default function AdvisorPortalPage() {
     } catch { /* ignore */ }
   }, []);
 
-  const handleLogin = async () => {
-    setLoginStatus("sending");
-    setLoginError("");
-    try {
-      const res = await fetch("/api/advisor-auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: loginEmail, password: loginPassword, mode: loginMode }),
-      });
-      const data = await res.json();
-      
-      if (!res.ok) {
-        setLoginError(data.error || "Something went wrong.");
-        setLoginStatus("error");
-        return;
-      }
-      
-      if (loginMode === "magic") {
-        setLoginStatus("sent");
-      } else if (loginMode === "signup" && data.needsConfirmation) {
-        setLoginStatus("sent");
-      } else {
-        // Password login or signup with auto-confirm — reload to pick up session
-        setLoginStatus("success");
-        window.location.reload();
-      }
-    } catch {
-      setLoginError("Network error. Please try again.");
-      setLoginStatus("error");
-    }
-  };
-
   const logout = async () => {
     await fetch("/api/advisor-auth/session", { method: "DELETE" });
     setAdvisor(null);
@@ -419,109 +379,8 @@ export default function AdvisorPortalPage() {
     );
   }
 
-  // ─── LOGIN ───
   if (view === "login") {
-    return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-        <div className="w-full max-w-sm">
-          <div className="text-center mb-6">
-            <Link href="/" className="text-xl font-extrabold text-slate-900">Invest.com.au</Link>
-            <p className="text-sm text-slate-500 mt-1">Advisor Portal</p>
-          </div>
-          <div className="bg-white rounded-xl border border-slate-200 p-6">
-            {loginStatus === "sent" ? (
-              <div className="text-center py-4">
-                <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Icon name="mail" size={24} className="text-emerald-600" />
-                </div>
-                <h2 className="text-lg font-bold text-slate-900 mb-1">Check your email</h2>
-                <p className="text-sm text-slate-500">We&apos;ve sent a login link to <strong>{loginEmail}</strong>. Click the link to access your dashboard.</p>
-                <p className="text-xs text-slate-400 mt-3">Check spam if you don&apos;t see it within a minute.</p>
-                <button onClick={() => { setLoginStatus("idle"); setLoginError(""); }} className="mt-4 text-xs text-slate-500 hover:text-slate-700">Try a different email</button>
-              </div>
-            ) : loginStatus === "success" ? (
-              <div className="text-center py-4">
-                <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Icon name="check" size={24} className="text-emerald-600" />
-                </div>
-                <h2 className="text-lg font-bold text-slate-900 mb-1">Logging you in...</h2>
-              </div>
-            ) : (
-              <>
-                <h2 className="text-lg font-bold text-slate-900 mb-1">
-                  {loginMode === "signup" ? "Create your account" : "Log in"}
-                </h2>
-                <p className="text-sm text-slate-500 mb-4">
-                  {loginMode === "magic" ? "We'll email you a secure login link." : loginMode === "signup" ? "Set up a password for your advisor account." : "Enter your email and password."}
-                </p>
-                
-                <input
-                  type="email"
-                  value={loginEmail}
-                  onChange={(e) => setLoginEmail(e.target.value)}
-                  placeholder="you@example.com"
-                  className="w-full px-3 py-2.5 border border-slate-200 rounded-lg text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-slate-900"
-                  onKeyDown={(e) => e.key === "Enter" && (loginMode === "magic" ? handleLogin() : null)}
-                />
-                
-                {loginMode !== "magic" && (
-                  <input
-                    type="password"
-                    value={loginPassword}
-                    onChange={(e) => setLoginPassword(e.target.value)}
-                    placeholder={loginMode === "signup" ? "Create a password (8+ characters)" : "Password"}
-                    className="w-full px-3 py-2.5 border border-slate-200 rounded-lg text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-slate-900"
-                    onKeyDown={(e) => e.key === "Enter" && handleLogin()}
-                  />
-                )}
-                
-                <button
-                  onClick={handleLogin}
-                  disabled={loginStatus === "sending" || !loginEmail || (loginMode !== "magic" && !loginPassword)}
-                  className="w-full py-2.5 bg-slate-900 text-white font-semibold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 transition-colors"
-                >
-                  {loginStatus === "sending" ? "Please wait..." : loginMode === "magic" ? "Send Login Link" : loginMode === "signup" ? "Create Account" : "Log In"}
-                </button>
-                
-                {loginError && (
-                  <p className="text-xs text-red-600 mt-2 text-center">{loginError}</p>
-                )}
-                
-                {/* Mode switchers */}
-                <div className="mt-4 pt-3 border-t border-slate-100 text-center space-y-1.5">
-                  {loginMode === "magic" ? (
-                    <>
-                      <button onClick={() => { setLoginMode("password"); setLoginError(""); }} className="text-xs text-slate-500 hover:text-slate-700 block w-full">
-                        Use password instead
-                      </button>
-                      <button onClick={() => { setLoginMode("signup"); setLoginError(""); }} className="text-xs text-violet-600 hover:text-violet-800 block w-full font-medium">
-                        First time? Set up a password
-                      </button>
-                    </>
-                  ) : loginMode === "password" ? (
-                    <>
-                      <button onClick={() => { setLoginMode("magic"); setLoginError(""); }} className="text-xs text-slate-500 hover:text-slate-700 block w-full">
-                        Use magic link instead
-                      </button>
-                      <button onClick={() => { setLoginMode("signup"); setLoginError(""); }} className="text-xs text-violet-600 hover:text-violet-800 block w-full font-medium">
-                        First time? Create account
-                      </button>
-                    </>
-                  ) : (
-                    <button onClick={() => { setLoginMode("password"); setLoginError(""); }} className="text-xs text-slate-500 hover:text-slate-700 block w-full">
-                      Already have an account? Log in
-                    </button>
-                  )}
-                </div>
-              </>
-            )}
-          </div>
-          <p className="text-center text-xs text-slate-400 mt-4">
-            Not listed yet? <Link href="/for-advisors" className="text-slate-600 hover:text-slate-900 font-medium">Join the directory →</Link>
-          </p>
-        </div>
-      </div>
-    );
+    return <AdvisorPortalLogin />;
   }
 
   // ─── PORTAL SHELL ───
