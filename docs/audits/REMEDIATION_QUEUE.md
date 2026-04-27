@@ -34,7 +34,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | H | _not started_ | — | — | — |
 | I | _not started_ | — | — | — |
 | J | _not started_ | — | — | — |
-| K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-27T00:05Z | K-01..K-08 done; K-09 false-positive; K-10..K-15 pending |
+| K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-27T00:15Z | K-01..K-08 done; K-09 false-positive; K-10 done; K-11..K-15 pending |
 | L | _not started_ | — | — | — |
 | M | _not started_ | — | — | — |
 | N | _not started_ | — | — | — |
@@ -232,7 +232,7 @@ P0/P1/P2 findings from the security agent's deep scan. Each is small (<2h); clus
 | K-07b | done | Day-25 grace-period reminder cron | 1 | Done in commit `64f40d9` (PR #222). New cron `/api/cron/account-deletion-reminder` registered in `daily-2` group. Scans `status='scheduled' AND reminder_sent_at IS NULL AND scheduled_purge_at <= NOW()+5d`; sends final-warning email; stamps `reminder_sent_at` on success (idempotent — no double-send). Migration `20260523_account_deletion_requests_reminder.sql` adds `reminder_sent_at TIMESTAMPTZ` column + partial index. Forward-compatible: catches Postgres 42P01 ("relation does not exist") and exits gracefully until A-MISSING-TABLE-1 is applied to live. |
 | K-08 | done | Sweep `/api/admin/*` PATCH/POST/DELETE routes: ensure each writes to `admin_audit_log` | 4 | P1. SOC 2 / ASIC audit-trail gap. 28 session-auth routes covered across 4 batches (iter 24-27). 5 system-bearer routes (CRON_SECRET / INTERNAL_API_KEY — no admin identity) intentionally skipped. All commits on PR #222. |
 | K-09 | false-positive | ~~`/api/seed/route.ts` — gate behind `NODE_ENV !== 'production'` + admin auth~~ | — | Both guards already present: `NODE_ENV === "production"` → 403 (line 12), `ADMIN_EMAILS`/`@invest.com.au` domain auth check (lines 20-23). Verified 2026-04-27. |
-| K-10 | pending | `/api/newsletter/subscribe/route.ts` — `source` field allowlist enum | 1 | P2. Analytics poisoning vector. |
+| K-10 | done | `/api/newsletter/subscribe/route.ts` — `source` field allowlist enum | 1 | Done in commit `e065eb5` (PR #222). `ALLOWED_SOURCES` const-tuple `["newsletter","smsf_checklist","learn_hub"]`. Unknown/missing source falls back to `"newsletter"`. All 3 confirmed callers use an allowlisted value — no breakage. |
 | K-11 | pending | `admin_login_attempts` table — add `UNIQUE(ip_hash)` constraint to prevent rate-limit bypass under concurrency | 1 | P2. |
 | K-12 | pending | `proxy.ts:22–30` cron bearer compare with `timingSafeEqual` (consistency w/ broker-signup pattern) | 1 | P3. Hygiene. |
 | K-13 | pending | ESLint rule: ban `dangerouslySetInnerHTML` outside `JSON.stringify(...)` and `sanitizeHtml(...)` / `renderMarkdown(...)` contexts | 1 | P3. |
@@ -410,6 +410,7 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 
 ## Done
 
+- 2026-04-27 · K-10 · `/api/newsletter/subscribe` `source` field allowlist — `ALLOWED_SOURCES` const-tuple closes analytics-poisoning vector; unknown sources fall back to `"newsletter"`; all 3 confirmed callers unaffected. · commit `e065eb5` · pr #222
 - 2026-04-27 · K-08 · Sweep `/api/admin/*` PATCH/POST/DELETE for `admin_audit_log` — 28 session-auth routes covered in 4 batches (iter 24-27); 5 system-bearer routes skipped (no admin identity). Commits `bb8a677` (batch 1) + `97f8ef2` (batch 2) + `f820830` (batch 3) + `0bddf05` (batch 4) · pr #222
 - 2026-04-26 · K-07b · Day-25 account-deletion grace-period reminder cron — daily, scans `scheduled + reminder_sent_at IS NULL + purge ≤5 days`; sends final-warning email; stamps `reminder_sent_at` on success. Migration `20260523_account_deletion_requests_reminder.sql` adds sentinel column. Forward-compatible with missing table (A-MISSING-TABLE-1). · commit `64f40d9` · pr #222
 - 2026-04-26 · K-06b · Full data-export processor cron — gathers 13 user_id tables + 2 email tables, uploads JSON to private `data-exports` Storage bucket, creates 7-day signed URL, emails user, marks request ready. CAS-style claim guards parallel fires. PREREQUISITE: create private Storage bucket `data-exports`. Forward-compatible with unapplied migration. · commit `c0ca676` · pr #222
@@ -444,6 +445,21 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-27 — iteration 29 (stream K, item K-10 — newsletter source allowlist)
+
+- Phase 0: lock acquired.
+- Phase 1: synced main (50 commits ahead; ff-only pull). Main is up to date.
+- Phase 1.5: Types drift check — skipped (no schema changes in this window).
+- Phase 2 CI rescue: PR #220 all checks success/skipped; PR #222 all checks success/skipped. No rescue needed.
+- Phase 3: picked K-10 (top pending K item after K-09 FP).
+- Phase 4 verification: read `app/api/newsletter/subscribe/route.ts`. Confirmed `source` field was only length-capped (`body.source.slice(0, 100)`) — no allowlist. Identified 3 confirmed callers: `components/NewsletterSignup.tsx` (`"newsletter"`), `app/smsf/checklist/SmsfChecklistClient.tsx` (`"smsf_checklist"`), `app/learn/NewsletterCta.tsx` (`"learn_hub"`). All three are in-scope for the allowlist; no caller breakage.
+- Phase 5: added `ALLOWED_SOURCES` const-tuple + `NewsletterSource` type; replaced free-string assignment with allowlist guard + `"newsletter"` fallback. Commit `e065eb5` (+14/-1 lines, 1 file).
+- Local gates: file-targeted `tsc --noEmit` returns TS5112 (sandbox env quirk); whole-codebase tsc shows only pre-existing module-resolution errors (`next/server`, `react` not found in sandbox — Hardware exception applies). No logic/type errors in changed file.
+- Phase 6: pushed `e065eb5` to `claude/audit-remediation/k-security-hardening` → PR #222.
+- Phase 7: queue updated on main — K-10 marked done, In-flight table updated, Done entry prepended, this log added.
+- Next item: K-11 (`admin_login_attempts` UNIQUE(ip_hash) constraint).
+- Status: PROGRESS · stream=K · item=K-10 · pr=#222 · commit=`e065eb5`
 
 ### 2026-04-27 — iteration 28 (stream K, item K-09 — false positive resolution)
 
