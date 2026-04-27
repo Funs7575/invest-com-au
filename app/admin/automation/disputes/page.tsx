@@ -60,7 +60,7 @@ export default async function DisputesDrillDown() {
               {rows.map((r) => (
                 <tr key={r.id} className="hover:bg-slate-50/50">
                   <td className="px-4 py-2 font-mono text-slate-500">#{r.id}</td>
-                  <td className="px-4 py-2 text-slate-700 truncate max-w-[140px]">{r.professionals?.name || "—"}</td>
+                  <td className="px-4 py-2 text-slate-700 truncate max-w-35">{r.professionals?.name || "—"}</td>
                   <td className="px-4 py-2 text-slate-500 truncate max-w-40">{r.professional_leads?.user_email || "—"}</td>
                   <td className="px-4 py-2 text-slate-700">{r.reason_code || r.reason?.slice(0, 30)}</td>
                   <td className="px-4 py-2">

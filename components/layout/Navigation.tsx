@@ -176,7 +176,7 @@ function MegaMenuDropdown({
   label,
   children,
   isActive,
-  menuWidth = "min-w-[560px]",
+  menuWidth = "min-w-140",
 }: {
   label: string;
   children: React.ReactNode;
@@ -899,7 +899,7 @@ export function Navigation() {
                       key={item.href}
                       href={item.href}
                       onClick={() => setMobileOpen(false)}
-                      className={`flex items-center justify-between px-3 py-3 min-h-[48px] rounded-xl text-sm font-medium transition-colors ${
+                      className={`flex items-center justify-between px-3 py-3 min-h-12 rounded-xl text-sm font-medium transition-colors ${
                         active
                           ? "bg-amber-50 text-amber-800 font-bold"
                           : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"
@@ -928,7 +928,7 @@ export function Navigation() {
                   <Link
                     href="/account"
                     onClick={() => setMobileOpen(false)}
-                    className="flex items-center justify-between px-3 py-3 min-h-[48px] rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                    className="flex items-center justify-between px-3 py-3 min-h-12 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors"
                   >
                     My Account
                     <svg className="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -938,7 +938,7 @@ export function Navigation() {
                   <Link
                     href="/shortlist"
                     onClick={() => setMobileOpen(false)}
-                    className="flex items-center justify-between px-3 py-3 min-h-[48px] rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                    className="flex items-center justify-between px-3 py-3 min-h-12 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors"
                   >
                     My Shortlist
                     <svg className="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -948,7 +948,7 @@ export function Navigation() {
                   <Link
                     href="/account/saved"
                     onClick={() => setMobileOpen(false)}
-                    className="flex items-center justify-between px-3 py-3 min-h-[48px] rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                    className="flex items-center justify-between px-3 py-3 min-h-12 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors"
                   >
                     Saved Comparisons
                     <svg className="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -958,7 +958,7 @@ export function Navigation() {
                   <Link
                     href="/fee-alerts"
                     onClick={() => setMobileOpen(false)}
-                    className="flex items-center justify-between px-3 py-3 min-h-[48px] rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                    className="flex items-center justify-between px-3 py-3 min-h-12 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors"
                   >
                     Fee Alerts
                     <svg className="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -971,14 +971,14 @@ export function Navigation() {
                   <Link
                     href="/auth/login"
                     onClick={() => setMobileOpen(false)}
-                    className="flex-1 flex items-center justify-center py-3 min-h-[48px] rounded-xl text-sm font-semibold text-slate-700 border border-slate-200 hover:bg-slate-50 transition-colors"
+                    className="flex-1 flex items-center justify-center py-3 min-h-12 rounded-xl text-sm font-semibold text-slate-700 border border-slate-200 hover:bg-slate-50 transition-colors"
                   >
                     Sign In
                   </Link>
                   <Link
                     href="/auth/signup"
                     onClick={() => setMobileOpen(false)}
-                    className="flex-1 flex items-center justify-center py-3 min-h-[48px] rounded-xl text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 transition-colors"
+                    className="flex-1 flex items-center justify-center py-3 min-h-12 rounded-xl text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 transition-colors"
                   >
                     Sign Up
                   </Link>
@@ -991,7 +991,7 @@ export function Navigation() {
               <Link
                 href={PRIMARY_CTA_HREF}
                 onClick={() => setMobileOpen(false)}
-                className="flex items-center justify-center w-full py-3.5 min-h-[52px] bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm rounded-xl transition-colors"
+                className="flex items-center justify-center w-full py-3.5 min-h-13 bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm rounded-xl transition-colors"
               >
                 {PRIMARY_CTA_TEXT} &rarr;
               </Link>

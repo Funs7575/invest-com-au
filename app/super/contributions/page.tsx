@@ -217,7 +217,7 @@ export default function SuperContributionsPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900 text-white">
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-[200px]">Feature</th>
+                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-50">Feature</th>
                   <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-green-300">Concessional (Pre-Tax)</th>
                   <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-blue-300">Non-Concessional (After-Tax)</th>
                 </tr>

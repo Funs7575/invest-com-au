@@ -100,7 +100,7 @@ export default function AdminPropertyListings() {
               {listings.map((listing) => (
                 <tr key={listing.id} className="border-b border-slate-100 last:border-b-0 hover:bg-slate-50">
                   <td className="px-4 py-3">
-                    <p className="font-semibold text-slate-900 truncate max-w-[200px]">{listing.title}</p>
+                    <p className="font-semibold text-slate-900 truncate max-w-50">{listing.title}</p>
                     <p className="text-[0.65rem] text-slate-400">{listing.developer_name}</p>
                   </td>
                   <td className="px-4 py-3 text-slate-600 hidden md:table-cell">{listing.city}, {listing.suburb}</td>

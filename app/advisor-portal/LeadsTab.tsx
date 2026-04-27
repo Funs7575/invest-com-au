@@ -138,7 +138,7 @@ export default function LeadsTab({
 
       {/* Search & Filter Bar */}
       <div className="flex gap-2 mb-4 flex-wrap">
-        <div className="relative flex-1 min-w-[180px]">
+        <div className="relative flex-1 min-w-45">
           <Icon name="search" size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             type="text"
@@ -292,7 +292,7 @@ export default function LeadsTab({
                   placeholder="Add a note..."
                   defaultValue={lead.advisor_notes || ""}
                   onBlur={(e) => onUpdateLeadNotes(lead.id, e.target.value)}
-                  className="flex-1 min-w-[120px] text-xs px-2 py-1 border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-400"
+                  className="flex-1 min-w-30 text-xs px-2 py-1 border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-400"
                 />
               </div>
             </div>

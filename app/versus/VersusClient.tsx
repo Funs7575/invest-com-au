@@ -293,7 +293,7 @@ export default function VersusClient({ brokers, serverEditorial }: { brokers: Br
                   )}
 
                   {/* Broker slot — mini-card */}
-                  <div className="flex-1 min-w-[120px] md:min-w-[140px]">
+                  <div className="flex-1 min-w-30 md:min-w-35">
                     <div
                       className={`rounded-lg md:rounded-xl border p-2.5 md:p-3 transition-all ${
                         broker ? 'bg-white border-slate-200 shadow-sm' : 'bg-slate-50/50 border-dashed border-slate-300'

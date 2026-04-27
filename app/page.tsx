@@ -255,7 +255,7 @@ export default async function HomePage() {
                       Promotion
                     </span>
                     <BrokerLogo broker={broker} size="xs" />
-                    <span className="text-xs font-semibold text-slate-700 group-hover:text-slate-900 whitespace-nowrap max-w-[180px] truncate">
+                    <span className="text-xs font-semibold text-slate-700 group-hover:text-slate-900 whitespace-nowrap max-w-45 truncate">
                       {broker.deal_text}
                     </span>
                     <Icon name="arrow-right" size={12} className="text-amber-500 shrink-0" />

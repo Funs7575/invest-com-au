@@ -302,7 +302,7 @@ export default function DashboardTab({
                         "bg-slate-100 text-slate-500"
                       }`}>{lead.status}</span>
                     </td>
-                    <td className="px-4 py-2.5 text-slate-500 max-w-[200px] truncate">
+                    <td className="px-4 py-2.5 text-slate-500 max-w-50 truncate">
                       {lead.message ? lead.message.slice(0, 80) + (lead.message.length > 80 ? "..." : "") : <span className="text-slate-300">&mdash;</span>}
                     </td>
                   </tr>

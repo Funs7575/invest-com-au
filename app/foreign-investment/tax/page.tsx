@@ -186,7 +186,7 @@ export default async function ForeignTaxPage() {
                     <td className="px-4 py-3 font-bold text-slate-900 text-xs">{row.income_type}</td>
                     <td className={`px-4 py-3 text-xs font-bold ${colorMap[row.color] ?? "text-slate-700"}`}>{row.standard_rate}</td>
                     <td className="px-4 py-3 text-xs font-semibold text-green-700">{row.with_dta_typical}</td>
-                    <td className="px-4 py-3 text-xs text-slate-500 leading-relaxed hidden md:table-cell max-w-[220px]">{row.notes}</td>
+                    <td className="px-4 py-3 text-xs text-slate-500 leading-relaxed hidden md:table-cell max-w-55">{row.notes}</td>
                   </tr>
                 ))}
               </tbody>

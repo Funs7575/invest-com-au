@@ -178,7 +178,7 @@ export default function QuizQuestionScreen({
                   role="radio"
                   aria-checked={isSelected}
                   aria-label={opt.label}
-                  className={`w-full text-left border rounded-xl px-4 py-3.5 md:px-5 md:py-4 min-h-[52px] transition-all font-medium text-sm md:text-base ${
+                  className={`w-full text-left border rounded-xl px-4 py-3.5 md:px-5 md:py-4 min-h-13 transition-all font-medium text-sm md:text-base ${
                     isSelected
                       ? "border-amber-500 bg-amber-50/80 scale-[0.985] shadow-sm"
                       : "border-slate-200 hover:border-amber-400 hover:bg-amber-50/40 bg-white"

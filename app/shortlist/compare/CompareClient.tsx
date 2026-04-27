@@ -203,7 +203,7 @@ export default function CompareClient() {
             {/* Broker headers */}
             <thead>
               <tr className="border-b border-slate-200">
-                <th className="px-4 py-4 text-left text-xs font-semibold text-slate-500 uppercase bg-slate-50 sticky left-0 z-10 min-w-[140px]">
+                <th className="px-4 py-4 text-left text-xs font-semibold text-slate-500 uppercase bg-slate-50 sticky left-0 z-10 min-w-35">
                   Feature
                 </th>
                 {brokers.map((broker) => (

@@ -191,7 +191,7 @@ function InfoTip({ text }: { text: string }) {
         ?
       </button>
       {open && (
-        <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2.5 py-1.5 bg-slate-800 text-white text-xs rounded-lg z-10 max-w-[220px] whitespace-normal text-center leading-tight shadow-lg" role="tooltip">
+        <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2.5 py-1.5 bg-slate-800 text-white text-xs rounded-lg z-10 max-w-55 whitespace-normal text-center leading-tight shadow-lg" role="tooltip">
           {text}
           <span className="absolute top-full left-1/2 -translate-x-1/2 -mt-px border-4 border-transparent border-t-slate-800" />
         </span>
@@ -836,13 +836,13 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             <div className="flex gap-3 pt-2 border-t border-slate-100">
               <button
                 onClick={() => { setActiveFilter('all'); setActiveFeatures(new Set()); setMaxFee(999); setMinRating(0); }}
-                className="flex-1 py-3 min-h-[48px] text-sm font-semibold text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors"
+                className="flex-1 py-3 min-h-12 text-sm font-semibold text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors"
               >
                 Clear All
               </button>
               <button
                 onClick={() => setSheetOpen(false)}
-                className="flex-1 py-3 min-h-[48px] text-sm font-bold text-white bg-slate-900 rounded-xl hover:bg-slate-800 transition-colors"
+                className="flex-1 py-3 min-h-12 text-sm font-bold text-white bg-slate-900 rounded-xl hover:bg-slate-800 transition-colors"
               >
                 Show Results
               </button>
