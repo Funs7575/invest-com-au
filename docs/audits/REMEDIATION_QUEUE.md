@@ -37,7 +37,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-27T05:35Z | K-01..K-08 done; K-09 false-positive; K-10..K-15 done — **stream complete** |
 | L | _not started_ | — | — | — |
 | M | _not started_ | — | — | — |
-| N | `claude/audit-remediation/n-ux-perf` | #242 | pending — pushed 2026-04-27T12:00Z | N-01+N-02 done (`2ec6f89`) · N-03a done (`36e3f6d`) · N-03b done (`97bb9b00`) · N-03c done (`b29f443`) · N-04 FP · N-05 FP · N-06 blocked · N-07 batch 1 done (`2e5d8a4`) · N-07 batch 2 done (`91d0d42`) · N-08 done (`315d3b7`) · N-09 done (`3b43bf8`) |
+| N | `claude/audit-remediation/n-ux-perf` | #242 | pending — pushed 2026-04-27T13:00Z | N-01+N-02 done (`2ec6f89`) · N-03a done (`36e3f6d`) · N-03b done (`97bb9b00`) · N-03c done (`b29f443`) · N-04 FP · N-05 FP · N-06 blocked · N-07 batch 1 done (`2e5d8a4`) · N-07 batch 2 done (`91d0d42`) · N-08 done (`315d3b7`) · N-09 done (`3b43bf8`) · N-10 done (`0c33d71`) |
 | O | `claude/audit-remediation/o-rls-no-policy` | _opening_ | pending — pushed 2026-04-26 | O-01 — 3 done (`user_notifications`, `user_quiz_history`, `user_bookmarks`); ~13 user-data tables left |
 | P | _not started_ | — | — | — |
 | Q | _not started_ | — | — | — |
@@ -335,7 +335,7 @@ Image perf, accessibility, client-bundle size.
 | N-07 | done | Replace arbitrary px literals with Tailwind scale tokens | 2 | P2. **Done.** Batch 1 (iter 40, commit `2e5d8a4`): 91 replacements across 40 files. Batch 2 (iter 41, commit `91d0d42`): 99 replacements across 58 files covering off-grid values and high-frequency dimension classes. 190 total replacements; all pixel-identical in Tailwind v4. |
 | N-08 | done | Replace 16 hardcoded color hex values in chart/SVG components with Tailwind tokens | 1 | P2. commit `315d3b7` pr #242. Structural SVG fills/strokes → `className="fill-slate-N"` / `className="stroke-slate-N"`; data-palette arrays annotated with Tailwind token names. |
 | N-09 | done | `app/quiz/page.tsx` client/server boundary — was fully client-rendered; moved broker+quiz_weights fetch to Edge route `GET /api/quiz/data` with CDN cache (60s/300s SWR) | 1 | P1. commit `3b43bf8` pr #242. |
-| N-10 | pending | Backfill `placeholder="blur"` on hot-path next/image usages: article hero, advisor profile photo, broker logo | 1 | P1. Currently 0/61 images use blur. |
+| N-10 | done | Backfill `placeholder="blur"` on hot-path next/image usages: article hero, advisor profile photo, broker logo | 1 | Done in commit `0c33d71` (PR #242). `ArticleCover`, `AuthorByline`, `BrokerLogo` (non-ICO, uses `broker.color`), broker profile hero, author profile avatar. |
 | N-11 | pending | Audit + convert remaining 9 raw `<img>` tags (excluding `BrokerLogo` ICO intentional case) to `next/image` where safe | 1 | P3. |
 
 ### Stream O — DB hardening (audit §4)
@@ -457,6 +457,7 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 
 ## Done
 
+- 2026-04-27 · N-10 · Backfill `placeholder="blur"` on hot-path `next/image` usages. `ArticleCover` (article hero — LCP element on all 266 article pages), `AuthorByline` (author avatar, appears alongside every article), `BrokerLogo` (non-ICO path, uses `broker.color` for brand-matched blur tile), broker profile hero (`full-service/[slug]`), author profile avatar (`authors/[slug]`). `blurDataURL()` from `lib/image-blur.ts` generates an inline SVG data URL — zero network cost. ICO path in BrokerLogo intentionally uses native `<img>` and is unaffected. +15/-0 across 5 files. · commit `0c33d71` · pr #242
 - 2026-04-27 · N-09 · Quiz page client/server boundary: confirmed `app/quiz/page.tsx` is fully client-rendered (`"use client"`). Created `GET /api/quiz/data` Edge route — parallel-fetches `brokers` (active, rated desc) + `quiz_weights` from Supabase anon key; returns JSON with `Cache-Control: public, max-age=60, stale-while-revalidate=300`. Updated quiz page to fetch from this route instead of calling Supabase browser client directly. Eliminates client→Supabase waterfall; CDN/browser caches shared quiz data for 60 s. Fallback scores path unchanged. +88/-31 across 2 files. · commit `3b43bf8` · pr #242
 - 2026-04-27 · N-08 · Replace 16 hardcoded hex values in chart/SVG components with Tailwind tokens. Structural SVG `fill`/`stroke` attributes (`#64748b`, `#f1f5f9`, `#334155`, `#e2e8f0`, `#94a3b8`, `#1e293b`, `#ef4444`) across SVGBarChart, SVGLineChart, SVGDonutChart, SVGFunnel replaced with `className="fill-slate-N"` / `className="stroke-slate-N"` Tailwind utilities (CSS properties override SVG presentation attributes in all modern browsers). Default color props (`color = "#16a34a"`, `#3b82f6`) and data-palette arrays (DEFAULT_COLORS, DEFAULT_FUNNEL_COLORS) annotated with Tailwind token equivalents. 30 additions / 23 deletions, 5 files. · commit `315d3b7` · pr #242
 - 2026-04-27 · N-07 batch 2 · Replace off-grid + high-frequency arbitrary px literals with Tailwind v4 scale tokens: `min-h-[48px]`→`min-h-12` (27), `min-h-[36px]`→`min-h-9` (9), `min-h-[40px]`→`min-h-10` (6), `min-h-[52px]`→`min-h-13` (4), `min-h-[60px]`→`min-h-15` (2), `min-h-[120px]`→`min-h-30` (2), `min-h-[200px]`→`min-h-50` (3), `max-w-[200px]`→`max-w-50` (13), `max-w-[180px]`→`max-w-45` (8), `max-w-[220px]`→`max-w-55` (5), `min-w-[18px]`→`min-w-4.5` (4), `min-w-[140px]`→`min-w-35` (3), `min-w-[560px]`→`min-w-140` (1), `h-[80px]`→`h-20` (3), `h-[60px]`→`h-15` (3), `w-[80px]`→`w-20` (3), `w-[200px]`→`w-50` (1), `w-[60px]`→`w-15` (3), and others. 99 total replacements, 58 files, pixel-identical CSS output. · commit `91d0d42` · pr #242
@@ -507,6 +508,20 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-27T13:00Z — iteration 44 (stream N — N-10 done)
+
+- Phase 0: lock acquired.
+- Phase 1: local main had diverged from origin/main (50/50 unrelated histories); reset via `git reset --hard origin/main`. Pulled — already up to date at `83de71b`. Read queue and defaults end-to-end.
+- Phase 1.5: Types drift check — Supabase MCP available but no schema changes since last iter; skipped regen (CI was green on PR #242).
+- Phase 2 CI rescue: PR #220 — all checks success/skipped. PR #222 — all checks success/skipped. PR #242 — all checks success/skipped. No rescue needed.
+- Phase 3 pick: Stream N (step 3 in priority order), N-10 (first pending item after N-09 done). Fetched and checked out `claude/audit-remediation/n-ux-perf` (branch not in local clone after fresh pull).
+- Phase 4 verification: N-10 is a `next/image` prop addition — no deletion, no migration, no test required. Verified `lib/image-blur.ts` exists with `blurDataURL(color?)` and `gradientBlurDataURL(color1?, color2?)` helpers. Existing blur usages: `AdvisorProfileClient.tsx:272` (line 272, done by N-01), `AdvisorsClient.tsx:856` (done by N-01). Found 5 hot-path targets without blur: `ArticleCover.tsx`, `AuthorByline.tsx`, `BrokerLogo.tsx` (non-ICO path), `brokers/full-service/[slug]/page.tsx` (broker hero, `priority` already set), `authors/[slug]/page.tsx` (author avatar, `priority` already set).
+- Phase 5: Added `placeholder="blur"` + `blurDataURL={blurDataURL(broker.color)}` (BrokerLogo) or `blurDataURL={blurDataURL()}` (others) to all 5 files. Imported `blurDataURL` from `@/lib/image-blur` in each. ICO path in BrokerLogo uses native `<img>` intentionally — untouched. Local gate: file-targeted tsc with `--ignoreConfig` shows only sandbox module-resolution false-positives (Hardware exception). No test files changed.
+- Phase 6: committed `0c33d71` (+15/-0, 5 files). Pushed to `claude/audit-remediation/n-ux-perf`. PR #242 body updated (N-10 checked).
+- Phase 7: queue updated on main — N-10 marked done, In-flight table updated (N row), Done entry prepended, this log added.
+- Status: PROGRESS · stream=N · item=N-10 · pr=#242 · commit=`0c33d71` · diff=+15/-0 across 5 files
+- Next item: N-11 (audit 9 raw `<img>` tags → `next/image` where safe).
 
 ### 2026-04-27T12:00Z — iteration 43 (stream N — N-09 done)
 
