@@ -37,7 +37,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-27T05:35Z | K-01..K-08 done; K-09 false-positive; K-10..K-15 done — **stream complete** |
 | L | _not started_ | — | — | — |
 | M | _not started_ | — | — | — |
-| N | `claude/audit-remediation/n-ux-perf` | #242 | pending — pushed 2026-04-27T09:45Z | N-01+N-02 done (`2ec6f89`) · N-03a done (`36e3f6d`) · N-03b done (`97bb9b00`) · N-03c done (`b29f443`) |
+| N | `claude/audit-remediation/n-ux-perf` | #242 | pending — pushed 2026-04-27T10:30Z | N-01+N-02 done (`2ec6f89`) · N-03a done (`36e3f6d`) · N-03b done (`97bb9b00`) · N-03c done (`b29f443`) · N-04 FP (skip link already in LayoutShell) · N-05 FP (aria-labels present) · N-06 blocked (ICO→SVG needs human SVG sourcing) · N-07 batch 1 done (`2e5d8a4`) |
 | O | `claude/audit-remediation/o-rls-no-policy` | _opening_ | pending — pushed 2026-04-26 | O-01 — 3 done (`user_notifications`, `user_quiz_history`, `user_bookmarks`); ~13 user-data tables left |
 | P | _not started_ | — | — | — |
 | Q | _not started_ | — | — | — |
@@ -77,6 +77,25 @@ The migration that defines the table (`supabase/migrations/20260427_wave_securit
 ---
 
 _B-04 cleared 2026-04-26 by user (chose option 2). See Done section + iteration log for the resolution and the option-4 follow-up note._
+
+---
+
+### N-06-ICO-SVG-1 · `public/logos/*.ico` → `.svg` conversion (surfaced 2026-04-27 by iter 40)
+
+**Finding:** `public/logos/` contains 73 `.ico` files (not 580+ as the audit estimated — audit count was likely of all static assets). ICO files are rasterised bitmaps; true ICO→SVG conversion is not mechanical — any automated tool would produce an SVG wrapping the raster image (`<image href="...ico">`), which provides no file-size benefit.
+
+The `logo_url` field in the `brokers`/`advisors` tables points to these paths (e.g., `/logos/commsec.ico`). A full fix requires: (1) sourcing actual vector SVG artwork for each broker, (2) replacing the files in `public/logos/`, and (3) updating `logo_url` DB records to point to the `.svg` paths.
+
+**Decision matrix:**
+
+| Option | What you / the loop does | Trade-off |
+|---|---|---|
+| **1. Use Clearbit Logo API (clearbit.com/logo)** | Replace local `/logos/*.ico` paths in the DB with `https://logo.clearbit.com/<domain>` URLs. No local file changes. Free tier ~150 req/month (sufficient for 73 brokers). | Eliminates 73 local files (~40 KB total savings). No sourcing work. But: adds external CDN dependency; some AU-only brands may not be in Clearbit. |
+| **2. Source SVGs manually from brand websites** | Founder downloads SVG logos for each of the 73 brokers from their brand/press pages. Loop then updates file names + DB `logo_url` values. | Highest quality (official artwork). ~2–4h of founder time. Cleanest long-term solution. |
+| **3. Keep ICO files; optimise with `svgo`-equivalent** | Run `icotool` / `optipng` to compress the ICOs. Loop writes a `scripts/optimise-logos.sh`. No DB change needed. | Minimal effort; ~10–20% size reduction. Does not address the "prefer SVG" audit finding but reduces the network cost without human sourcing. |
+| **4. Defer** | Leave as-is. The `BrokerLogo` component already handles ICO correctly (native `<img>`, not `next/image`). P2 priority — no user-visible regression. | No risk. Revisit post-launch with a batch brand-kit request to partner brokers. |
+
+**Recommendation:** Option 4 (defer) for now — no user regression; the component already handles ICO correctly. Option 1 is fast if the founder wants the SVG benefit pre-launch. Whichever option is chosen, unblock by updating this entry.
 
 ---
 
@@ -310,10 +329,10 @@ Image perf, accessibility, client-bundle size.
 | N-03a | done | Extract `AdvisorPortalLogin` component from `page.tsx` (login state + handler + 120-line JSX; -141 LOC net) | 1 | commit `36e3f6d` pr #242. |
 | N-03b | done | Extract per-tab components with dynamic imports: `DashboardTab`, `LeadsTab`, `AnalyticsTab` | 1 | commit `97bb9b00` pr #242. Shared types → `types.ts`. page.tsx −773 LOC (2,620 → 1,847). |
 | N-03c | done | Extract `ProfileTab`, `BillingTab`, `SettingsTab`, `TeamTab`; `page.tsx` 1,847 → 805 LOC thin shell | 1 | commit `b29f443` pr #242. All tab-specific state internalized into child components via `useEffect` mount-fetches. |
-| N-04 | pending | Add skip-to-main-content link in `components/layout/Navigation.tsx` (or root layout) | 1 | P1. WCAG 2.1 AA fail today. |
-| N-05 | pending | Sweep icon-only buttons missing `aria-label` (`CollapsibleSection`, `InfoTip`, `AdminHelpPanel`, `AdminNotifications`, `BottomSheet`, `OnThisPage`) | 1 | P1. |
-| N-06 | pending | Convert `public/logos/*.ico` → `.svg` where possible (580+ files; batch script) | ~2 | P2. ~40 KB homepage saving. |
-| N-07 | pending | Replace 138 `w-[Npx]`/`max-w-[Npx]` literals with Tailwind scale tokens | 1 | P2. |
+| N-04 | false-positive | ~~Add skip-to-main-content link in `components/layout/Navigation.tsx` (or root layout)~~ | — | P1. **Already implemented** in `components/LayoutShell.tsx` lines 40–45: `<a href="#main-content" className="sr-only focus:not-sr-only ...">Skip to main content</a>` pointing to `<main id="main-content">`. Verified iter 40. |
+| N-05 | false-positive | ~~Sweep icon-only buttons missing `aria-label` (`CollapsibleSection`, `InfoTip`, `AdminHelpPanel`, `AdminNotifications`, `BottomSheet`, `OnThisPage`)~~ | — | P1. **All 6 components already have proper labels.** `InfoTip`: `aria-label="More info"`. `AdminHelpPanel`: dynamic `aria-label={open ? "Close help" : "Help for this page"}`. `AdminNotifications`: `aria-label="Notifications"`. `BottomSheet`: `aria-label="Close"`. `OnThisPage`: `aria-label="Close navigation"` + text. `CollapsibleSection`: buttons have visible text ("Show less" / "Show all N items"). Verified iter 40. |
+| N-06 | blocked | Convert `public/logos/*.ico` → `.svg` where possible (73 files; batch script) | ~2 | P2. **Blocked** — see Blocked entry N-06-ICO-SVG-1 below. ICO files are rasterised; sourcing vector SVGs requires human curation or a brand-logo API (Clearbit / Brandfetch); the `logo_url` DB column also needs updating per file. |
+| N-07 | in-progress | Replace 138 `w-[Npx]`/`max-w-[Npx]` literals with Tailwind scale tokens | ~2 | P2. **Batch 1 done** (iter 40, commit `2e5d8a4`): 91 exact-match replacements across 40 files — `min-w-[44px]`→`min-w-11`, `min-h-[44px]`→`min-h-11`, `min-w-[240px]`→`min-w-60`, `max-w-[160px]`→`max-w-40`. Remaining: off-grid values (`[18px]`, `[140px]`, `[200px]`, `[560px]`) — batch 2 pending. |
 | N-08 | pending | Replace 16 hardcoded color hex values in chart/SVG components with Tailwind tokens | 1 | P2. |
 | N-09 | pending | `app/quiz/page.tsx` (796 LOC) — assess client/server boundary; if client-rendered, prefetch quiz data via Edge Function | 1 | P1. |
 | N-10 | pending | Backfill `placeholder="blur"` on hot-path next/image usages: article hero, advisor profile photo, broker logo | 1 | P1. Currently 0/61 images use blur. |
@@ -438,6 +457,7 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 
 ## Done
 
+- 2026-04-27 · N-07 batch 1 · Replace exact-match arbitrary Tailwind px literals with scale tokens: `min-w-[44px]`→`min-w-11`, `min-h-[44px]`→`min-h-11`, `min-w-[240px]`→`min-w-60`, `max-w-[160px]`→`max-w-40`. 91 in-place replacements across 40 files; pixel-identical CSS output (Tailwind v4 `--spacing=0.25rem` scale). Off-grid values (`[18px]`, `[140px]`, `[200px]`, `[560px]`) deferred to N-07 batch 2. · commit `2e5d8a4` · pr #242
 - 2026-04-27 · N-03c · Extract `ProfileTab`, `BillingTab`, `SettingsTab`, `TeamTab` from `app/advisor-portal/page.tsx` with `next/dynamic` lazy imports. All tab-specific state internalized into child components: `savingProfile`/`profileSaved`/`saveProfile()` → `ProfileTab`; `topupHistory` + mount-fetch → `BillingTab`; `notifPrefs`/`savingNotifs`/`notifSaved`/`saveNotifPrefs()` + mount-fetch → `SettingsTab`; all firm state (members, invites, details, analytics, sub-tabs, invite flow, seat-request) + `loadFirmData` mount-fetch → `TeamTab`. page.tsx 1,847 → 805 LOC. · commit `b29f443` · pr #242
 - 2026-04-27 · N-03b · Extract `DashboardTab`, `LeadsTab`, `AnalyticsTab` from `app/advisor-portal/page.tsx` with `next/dynamic` lazy imports. Shared types (`Advisor`, `Lead`, `Stats`, `ViewType`, `CategoryPricing`, `DisputeModal`, etc.) moved to `app/advisor-portal/types.ts`. Dashboard receives read-only state + 2 callbacks; LeadsTab uses bool-setter props (not toggles) so "Clear filters" can reset without toggling; AnalyticsTab receives stats/leads/profileCompleteness + onNavigate. page.tsx −773 LOC (2,620 → 1,847). · commit `97bb9b00` · pr #242
 - 2026-04-27 · N-03a · Extract `AdvisorPortalLogin` from `app/advisor-portal/page.tsx` — login state (email/password/mode/status/error), `handleLogin()` handler, and 120-line login form JSX moved to dedicated component; `tokenFromUrl` dead state removed; `useEffect` simplified; `page.tsx` -141 LOC net (2,761 → 2,620). Zero behaviour change: password-login flow still does `window.location.reload()` to re-trigger parent `checkSession`; magic-link token in URL still handled by parent `verifyToken`. · commit `36e3f6d` · pr #242
@@ -478,10 +498,26 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 | (audit-wide) | "11 RLS gaps" | Iter 8 re-enumeration found that `support_tickets`, `support_messages`, `broker_creatives`, `broker_notifications`, `ab_tests` were ALSO already RLS'd in `20260321_pre_launch_rls_fixes.sql` (same pattern as B-03 — `USING (false)` is functionally deny-all but policy naming + lack of `FORCE RLS` is misleading). Audit's grep likely only checked the original creating migration for each table. Real residual gap = 8 tables (5 forum + `quarterly_reports`, `listing_enquiries`, `listing_plans`), tracked under B-06. The B-03-style hardening (rename misleading policy + add `FORCE RLS` + `TO service_role`) for these 5 tables can land as a stream-G-style hygiene pass; not in scope for stream B. | 2026-04-26 |
 | B-06.forum | "5 forum tables (`forum_categories`, `forum_posts`, `forum_threads`, `forum_user_profiles`, `forum_votes`) are missing RLS" | Iter 10 prior-policy gate discovered all 5 are already RLS-enabled in `supabase/migrations/20260427_wave_security_observability.sql` with rich `auth.uid()`-scoped policies (public_read for SELECT; authenticated_insert + author_update + author_delete on `forum_threads` and `forum_posts`; self_insert + self_update on `forum_user_profiles`; self_insert + self_update + self_delete on `forum_votes`). Audit's grep again missed the later RLS migration (same pattern as B-03 + iter-8 batch). Real residual gap from B-06 reduces to 2 tables: `listing_plans` and `quarterly_reports`. | 2026-04-26 |
 | K-09 | "`/api/seed/route.ts` is missing `NODE_ENV !== 'production'` guard and admin auth" | Iter 28 Phase 4 verification: `app/api/seed/route.ts` already has both guards — (1) `if (process.env.NODE_ENV === "production") { return 403 }` at line 12 and (2) `getUser()` + `ADMIN_EMAILS` / `@invest.com.au` domain check at lines 20-23. Both guards match the K-09 requirement exactly. Work was either pre-existing or added between the 04-26 audit and now; no further action needed. | 2026-04-27 |
+| N-04 | "Skip-to-main-content link missing in Navigation (WCAG 2.1 AA fail)" | Iter 40 Phase 4 verification: `components/LayoutShell.tsx` lines 40–45 already has a correct skip-link: `<a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[200] ...">Skip to main content</a>`. The `<main id="main-content">` target is at line 49. Implementation predates iter 40; audit missed it because Navigation.tsx was the stated target but the link lives in LayoutShell. | 2026-04-27 |
+| N-05 | "6 components have icon-only buttons missing `aria-label`" | Iter 40 Phase 4 verification of all 6 named components: `InfoTip` (`aria-label="More info"` at line 37), `AdminHelpPanel` (dynamic `aria-label={open ? "Close help" : "Help for this page"}` at line 334), `AdminNotifications` (`aria-label="Notifications"` at line 234), `BottomSheet` (`aria-label="Close"` at line 87), `OnThisPage` (`aria-label="Close navigation"` at line 123 + text on all other buttons), `CollapsibleSection` (both buttons have visible text: "Show less" / "Show all N items"). All compliant. | 2026-04-27 |
 
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-27T10:30Z — iteration 40 (stream N — N-04 FP + N-05 FP + N-06 blocked + N-07 batch 1 done)
+
+- Phase 0: lock acquired.
+- Phase 1: local main had diverged from origin/main (50 vs 50 commits — two parallel sessions wrote to main). Reset local to `origin/main` (e478a2e). Read queue and defaults end-to-end.
+- Phase 1.5: Types drift check — skipped (no schema changes in this window).
+- Phase 2 CI rescue: PR #220 — all checks success/skipped. PR #222 — all checks success/skipped. PR #242 — all checks success/skipped. No rescue needed.
+- Phase 3 pick: Stream N (step 3 in priority order), N-04 first pending item. Checked out `claude/audit-remediation/n-ux-perf` (fetched fresh — branch not in local clone from after reset).
+- Phase 4 verification (N-04): Refactor/addition. Read `LayoutShell.tsx` — skip-to-main-content link already present (lines 40–45). **False positive.** Also verified N-05 in same investigation pass: all 6 named components have proper `aria-label` or visible text — **false positive** for all 6. Read `BrokerLogo.tsx` and `public/logos/` for N-06: 73 `.ico` raster files; no vector SVG source; `logo_url` DB column also needs updating — **blocked**. Proceeded to N-07 as first actionable item.
+- Phase 5 (N-07 batch 1): Identified 4 patterns with exact Tailwind v4 scale equivalents: `min-w-[44px]`→`min-w-11`, `min-h-[44px]`→`min-h-11`, `min-w-[240px]`→`min-w-60`, `max-w-[160px]`→`max-w-40`. Applied via `sed -i` across all `.tsx`/`.ts` files: 91 replacements in 40 files. Verified: (a) Tailwind v4 `@import "tailwindcss"` with default `--spacing=0.25rem` — all replacements pixel-identical. (b) diff inspection: all changes inside JSX `className` string literals only. (c) Local lint infrastructure broken (missing `eslint-config-next` package in sandbox — Hardware exception); CI on PR #242 is authoritative.
+- Phase 6: committed `2e5d8a4` (+91/-91 across 40 files). Pushed to `claude/audit-remediation/n-ux-perf`. PR #242 body updated (N-04 FP, N-05 FP, N-07 batch 1 checked, N-06 blocked noted).
+- Phase 7: queue updated on main — N-04/N-05 marked false-positive (+ FP table entries), N-06 blocked (+ Blocked section entry), N-07 updated to in-progress (batch 1 done), Done entry prepended, this log added.
+- Status: PROGRESS · stream=N · item=N-07 (batch 1) · pr=#242 · commit=`2e5d8a4` · diff=+91/-91 across 40 files
+- Next item: N-07 batch 2 (off-grid arbitrary px values) or N-08 (hex color tokens).
 
 ### 2026-04-27T09:45Z — iteration 39 (stream N, item N-03c done — ProfileTab/BillingTab/SettingsTab/TeamTab extraction)
 
