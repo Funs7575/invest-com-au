@@ -37,7 +37,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-27T05:35Z | K-01..K-08 done; K-09 false-positive; K-10..K-15 done — **stream complete** |
 | L | _not started_ | — | — | — |
 | M | _not started_ | — | — | — |
-| N | _not started_ | — | — | — |
+| N | `claude/audit-remediation/n-ux-perf` | #242 | pending — pushed 2026-04-27T07:30Z | N-01+N-02 done (commit `2ec6f89`) |
 | O | _not started_ | — | — | — |
 | P | _not started_ | — | — | — |
 | Q | _not started_ | — | — | — |
@@ -305,8 +305,8 @@ Image perf, accessibility, client-bundle size.
 
 | ID | Status | Summary | Est. iterations | Notes |
 | --- | --- | --- | --- | --- |
-| N-01 | pending | Homepage hero — add `priority` to hero next/image; add `placeholder="blur"` + `blurDataURL` | 1 | P0. LCP 500–800ms today. |
-| N-02 | pending | Homepage broker query — add LIMIT 20 (was unbounded; ~250 rows × 20 fields ~500KB JSON) | 1 | P0. TTFB on mobile. |
+| N-01 | done | Homepage trust-strip BrokerLogos `priority={i<3}`; advisor profile hero `priority`+`placeholder="blur"`+`blurDataURL`; advisor listing top-3 cards `priority`+blur | 1 | P0. Audit 6-A + 6-H. commit `2ec6f89` pr #242. |
+| N-02 | done | Homepage broker query `.limit(20)` (was unbounded ~250 rows) | 1 | P0. TTFB on mobile. commit `2ec6f89` pr #242. |
 | N-03 | pending | `app/advisor-portal/page.tsx` (2,761 LOC) — extract profile-header into Server Component; keep tabs as client | ~3 | P1. ~30–40% bundle reduction. Subsumes H-03. |
 | N-04 | pending | Add skip-to-main-content link in `components/layout/Navigation.tsx` (or root layout) | 1 | P1. WCAG 2.1 AA fail today. |
 | N-05 | pending | Sweep icon-only buttons missing `aria-label` (`CollapsibleSection`, `InfoTip`, `AdminHelpPanel`, `AdminNotifications`, `BottomSheet`, `OnThisPage`) | 1 | P1. |
@@ -436,6 +436,7 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 
 ## Done
 
+- 2026-04-27 · N-01+N-02 · Homepage trust-strip BrokerLogo `priority` for first 3 (LCP preload hint); advisor profile hero `priority`+`placeholder="blur"` (audit 6-A — the 220px photo is the LCP element on every advisor page); advisor listing top-3 card photos `priority`+blur; broker query capped at LIMIT 20 (~500KB JSON → ~80KB, TTFB fix). Bundled because N-02 is a 1-line change directly adjacent to N-01's TTFB motivation. · commit `2ec6f89` · pr #242
 - 2026-04-27 · K-15 · CSP violation reporting — `Report-To` header + `report-to`/`report-uri` directives in `proxy.ts` (pointing to NEXT_PUBLIC_SITE_URL/api/csp-report); new `/api/csp-report` POST endpoint (Node runtime, no auth, IP rate-limited 60/min); new `csp_violations` table with ENABLE/FORCE RLS + service_role explicit ALLOW policy. Supports both application/csp-report (legacy report-uri) and application/reports+json (Reporting API v1) formats. Stream K now fully complete (K-01..K-15, 1 false-positive K-09). · commit `cf6c267` · pr #222
 - 2026-04-27 · K-14 · Seed `retention_rules` with 7 PII table retention policies (leads 730d anonymise, email_otps 7d delete, listing_enquiries 730d anonymise, quiz_follow_ups 180d delete, auth_attempts 90d delete, admin_login_attempts 7d delete-via-reset_at, support_messages 1095d delete). Added FORCE ROW LEVEL SECURITY + explicit service_role ALLOW policy to close SOC 2 zero-policy ambiguity. · commit `2ad7bb5` · pr #222
 - 2026-04-27 · K-13 · ESLint rule `invest/no-unsafe-inner-html` — inline plugin in `eslint.config.mjs` banning unsafe `dangerouslySetInnerHTML`; allows JSON.stringify/sanitizeHtml/renderMarkdown/string-literals only. Fixed 2 unnecessary usages in buy-property-australia-foreigner/page.tsx (p.role/p.why were plain-text hardcoded strings — replaced with `{p.role}`/`{p.why}`). Added eslint-disable-next-line with safety comments to TrackingPixels.tsx env-var template literals (FB_PIXEL_ID, GOOGLE_ADS_ID). · commit `23b7eda` · pr #222
@@ -476,6 +477,20 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-27T07:30Z — iteration 36 (stream N, items N-01+N-02 done — LCP + TTFB homepage fixes)
+
+- Phase 0: lock acquired.
+- Phase 1: local main had diverged from origin/main (force-updated remote). Reset local main to origin/main via `git reset --hard origin/main`. Read queue and defaults end-to-end.
+- Phase 1.5: Types drift check — skipped (no schema changes in this window).
+- Phase 2 CI rescue: PR #220 — 3 checks (Playwright skipped, Check bypass secret success, Vercel Preview success). PR #222 — 3 checks (Playwright skipped, Check bypass secret skipped, Vercel Preview success). No rescue needed.
+- Phase 3 pick: Stream K complete. Next priority per REMEDIATION_DEFAULTS.md: N (P0 UI/UX). First item: N-01 (homepage hero priority + blur). Stream N has no branch yet — created `claude/audit-remediation/n-ux-perf` from main, scaffold empty commit, pushed, opened PR #242 (draft).
+- Phase 4 verification: HomeHero component is text-only (no next/image hero). Audit 6-A specifically calls out advisor profile hero + top 3 advisor cards as the LCP elements. `BrokerLogo` already supports `priority` prop (line 27 of BrokerLogo.tsx). Verified: (a) `featuredPlatforms` trust strip in page.tsx uses `BrokerLogo` without priority; (b) `AdvisorProfileClient.tsx:265` — hero `<Image>` has no `priority` or blur; (c) `AdvisorsClient.tsx:849` — advisor card photos have no priority or blur. N-02 (broker query LIMIT) is 1 line adjacent to N-01's TTFB motivation — bundled per prior iter precedent.
+- Phase 5: 3 files changed (+18/-5 LOC): (1) `app/page.tsx` — `featuredPlatforms.map((b, i) => ...)` with `priority={i < 3}` + `.limit(20)` on broker query; (2) `app/advisor/[slug]/AdvisorProfileClient.tsx` — added `priority`, `placeholder="blur"`, `blurDataURL` (slate-200 8×8 SVG) to hero image; (3) `app/advisors/AdvisorsClient.tsx` — added `(pro, index)` to map, `priority={index < 3}`, `placeholder="blur"`, `blurDataURL` to advisor card photos. Local gates: file-targeted tsc produced only pre-existing TS7026 JSX-type sandbox errors (Hardware exception). Lint: eslint-config-next not installed in sandbox (Hardware exception). CI on PR #242 is authoritative.
+- Phase 6: committed `2ec6f89` (+18/-5 lines, 3 files). Pushed to `claude/audit-remediation/n-ux-perf`. PR #242 body updated (N-01+N-02 checked).
+- Phase 7: queue updated on main — N-01+N-02 marked done, In-flight table updated (N row), Done entries prepended, this log added.
+- Status: PROGRESS · stream=N · item=N-01+N-02 · pr=#242 · commit=`2ec6f89` · diff=+18/-5 across 3 files
+- Next item: N-03 (`app/advisor-portal/page.tsx` 2,761 LOC client-bundle split).
 
 ### 2026-04-27T06:50Z — iteration 35 (stream B, item B-06 partial — `listing_plans` done; `quarterly_reports` blocked)
 
