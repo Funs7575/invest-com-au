@@ -40,6 +40,7 @@ export default function TrackingPixels() {
         <Script
           id="fb-pixel"
           strategy="afterInteractive"
+          // eslint-disable-next-line invest/no-unsafe-inner-html -- template interpolates only server-side NEXT_PUBLIC env vars (FB_PIXEL_ID), not user input
           dangerouslySetInnerHTML={{
             __html: `
               !function(f,b,e,v,n,t,s)
@@ -67,6 +68,7 @@ export default function TrackingPixels() {
           <Script
             id="google-ads"
             strategy="afterInteractive"
+            // eslint-disable-next-line invest/no-unsafe-inner-html -- template interpolates only server-side NEXT_PUBLIC env vars (GOOGLE_ADS_ID), not user input
             dangerouslySetInnerHTML={{
               __html: `
                 window.dataLayer = window.dataLayer || [];
