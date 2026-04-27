@@ -27,7 +27,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | A | _not started_ | — | — | — |
 | B | `claude/audit-remediation/b-rls-remediation` | #220 | pending — pushed 2026-04-27T06:50Z | B-06 — 2 done (`listing_enquiries` `0bb82daa`, `listing_plans` `be7bff79`) · 5 FP (forum tables) · 1 blocked (`quarterly_reports`) |
 | C | _not started_ | — | — | — |
-| D | `claude/audit-remediation/d-route-tests` | #246 | pending — pushed 2026-04-27T10:22Z | D-01 done (commit `7269510`) |
+| D | `claude/audit-remediation/d-route-tests` | #246 | pending — pushed 2026-04-27T10:43Z | D-01 done (commit `7269510`) · D-02 done (commit `ebf2250`) |
 | E | _not started_ | — | — | — |
 | F | _not started_ | — | — | — |
 | G | _not started_ | — | — | — |
@@ -148,7 +148,7 @@ Highest priority: critical 2 first.
 | ID | Status | Summary | Est. iterations | Notes |
 | --- | --- | --- | --- | --- |
 | D-01 | done | Integration test for `/api/submit-lead` | 1 | Done in commit `7269510` (PR #246). 15 tests: input validation (invalid lead_type, invalid email, disposable email, rate-limit, honeypot), platform lead success+error, advisor auto-match success+no_more_matches+insert-error, dry_run, confirm_advisor_id (not-found, duplicate-suppressed, new-lead). |
-| D-02 | pending | Integration test for `/api/quiz-lead` | 1 | |
+| D-02 | done | Integration test for `/api/quiz-lead` | 1 | Done in commit `ebf2250` (PR #246). 17 tests: invalid JSON, email validation, disposable email, rate-limit, DB insert error, answer label mapping (experience/investment/interest), quiz-history recording (session_id + userId + unauthenticated), non-blocking side-effects (email_captures upsert error, recordQuizSubmission throw, Resend fetch throw), input sanitization (name null, answers capped at 10). |
 | D-03 | pending | Integration test for `/api/advisor-lead` | 1 | |
 | D-04 | pending | Integration test for `/api/advisor-apply` (root, not just `invite`) | 1 | |
 | D-05 | pending | Integration test for `/api/stripe/refund-subscription` | 1 | Mock `stripe` SDK + admin client. |
@@ -457,6 +457,7 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 
 ## Done
 
+- 2026-04-27 · D-02 · Integration test for `POST /api/quiz-lead`: 17 tests covering invalid JSON, email/disposable-email validation, rate-limit, DB insert error, answer label mapping (experience/investment/interest → human-readable labels), quiz-history attribution (session_id + userId + unauthenticated no-op), non-blocking side-effects (email_captures upsert error, recordQuizSubmission throw, Resend fetch throw all return 200), input sanitization (name null-if-non-string, answers capped at 10). +336/-29 across 1 file. · commit `ebf2250` · pr #246
 - 2026-04-27 · D-01 · Integration test for `POST /api/submit-lead`: 15 tests covering input validation (invalid lead_type, invalid/disposable email, rate-limit, honeypot), platform lead success+error, advisor auto-match 5-level fallback success + no_more_matches + lead-insert-error, dry_run, confirm_advisor_id (not-found, duplicate-suppressed, new-lead). Primary revenue-capture route now has non-trivial branch coverage. +401 LOC, 1 file. · commit `7269510` · pr #246
 - 2026-04-27 · N-11 · Audit 9 raw `<img>` tags (excl. BrokerLogo ICO): 3 converted to `<Image>` (VerticalPillarPage advisor photo 44×44 + author avatar 32×32; MfaEnrollmentClient QR code 240×240 unoptimized); added `api.qrserver.com` to `next.config.ts` remotePatterns; 3 documented with eslint-disable + blob-URL/arbitrary-domain rationale (AdvisorPhotoUpload, advisor-apply, team-members); 2 already had eslint-disable (ArticleBrokerTable, creative-insights). Stream N now complete except N-06 (blocked). +17/-5 across 6 files. · commit `c2b769e` · pr #242
 - 2026-04-27 · N-10 · Backfill `placeholder="blur"` on hot-path `next/image` usages. `ArticleCover` (article hero — LCP element on all 266 article pages), `AuthorByline` (author avatar, appears alongside every article), `BrokerLogo` (non-ICO path, uses `broker.color` for brand-matched blur tile), broker profile hero (`full-service/[slug]`), author profile avatar (`authors/[slug]`). `blurDataURL()` from `lib/image-blur.ts` generates an inline SVG data URL — zero network cost. ICO path in BrokerLogo intentionally uses native `<img>` and is unaffected. +15/-0 across 5 files. · commit `0c33d71` · pr #242
@@ -510,6 +511,18 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-27T10:43Z — iteration 47 (stream D — D-02 done — /api/quiz-lead integration test)
+
+- Phase 0: lock acquired.
+- Phase 1: local main had diverged from origin/main (forced-update on remote); reset via `git reset --hard origin/main`. Read queue and defaults end-to-end. No types drift detected.
+- Phase 2 CI check: PRs #220 (B), #246 (D), #222 (K), #242 (N) all green (success/skipped). No rescue needed.
+- Phase 3: priority-walk → B (B-07/B-08 pending, lower priority than D) → K complete → N complete → **D** next. D-02 pending: integration test for `/api/quiz-lead`. Checked out `claude/audit-remediation/d-route-tests`, merged main (already up to date).
+- Phase 4: verification — "new test" gate. Existing `__tests__/api/quiz-lead.test.ts` had only 3 shallow tests (no mocks, no branch coverage). Route has 6 distinct branches (validation, rate-limit, DB insert, quiz-history, fire-and-forget side-effects, sanitization). Test must cover ≥60% branches.
+- Phase 5: wrote 17-test suite covering all significant branches. All 17 green. Lint clean.
+- Phase 6: committed `ebf2250`, pushed, updated PR #246 body.
+- Phase 7: queue updated on main. Next item: D-03 (integration test for `/api/advisor-lead`).
+- STATUS: PROGRESS · stream=D · item=D-02 · pr=#246
 
 ### 2026-04-27T10:22Z — iteration 46 (stream D — D-01 done — /api/submit-lead integration test)
 
