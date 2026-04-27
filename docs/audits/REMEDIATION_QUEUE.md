@@ -863,6 +863,81 @@ Email list + lead-magnet + drip-sequence machinery. EM-03 is critical for cold l
 | EM-05 | pending | Lead magnet automation — auto-deliver PDF + start drip | 2-3 | **Tier 2.** Form submit → email-magnet delivered → drip sequence enrolled. **Deps:** EM-01, EM-03. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
 | EM-06 | pending | Drip sequences (10 sequences across hubs) | 6-8 | **Tier 3.** Per-hub nurture sequences (5-7 emails each) post-magnet-download. **Deps:** EM-01, EM-05. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
 
+### Stream GT — Goal tracking (Tier 3, added 2026-04-27)
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| GT-01 | pending | Goal tracking — set + monitor financial goals (FHB deposit, FIRE, retirement, debt-free) | 4-5 | **Tier 3.** Per-user goal CRUD + progress chart + milestone alerts. **Deps:** LL-01, DV-01. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| GT-02 | pending | Annual financial check-up — yearly diagnostic + advisor-prompt | 3-4 | **Tier 3.** Annual prompt → 5-10 question diagnostic → personalised report + advisor CTA. **Deps:** LL-01. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+
+### Stream DF — Decision frameworks (Tier 3, added 2026-04-27)
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| DF-01 | pending | Decision framework infrastructure — generic flowchart engine | 3-4 | **Tier 3.** Reusable engine for tree-shaped Q&A flows that resolve to a recommendation + advisor CTA. **Deps:** LL-01. **Blocks:** DF-02..04. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| DF-02 | pending | Decision tree — "Should I buy or rent?" | 2-3 | **Tier 3.** First DF tree. **Deps:** DF-01. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| DF-03 | pending | Decision tree — "Should I salary-sacrifice?" | 2-3 | **Tier 3.** Second DF tree (cross-links BB-02). **Deps:** DF-01. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| DF-04 | pending | Decision tree — "Should I set up an SMSF?" | 2-3 | **Tier 3.** Third DF tree (cross-links /smsf hub + /smsf-calculator). **Deps:** DF-01. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+
+### Stream QA — Q&A surfaces (Tier 3, added 2026-04-27)
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| QA-01 | pending | Q&A page template — single-question deep-dive format with FAQ JSON-LD | 2-3 | **Tier 3.** Per-question template (long-tail SEO play). One question = one page = one rich-snippet eligible answer. **Blocks:** QA-02. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| QA-02 | pending | 50 Q&A pages — one per high-volume long-tail query | 5-8 | **Tier 3.** Initial seed of 50 Q&A pages targeting "how do I X", "what is Y", "when should I Z" queries. **Deps:** QA-01. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+
+### Stream CD — Calendar + utility features (Tier 3, added 2026-04-27)
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| CD-01 | pending | Calendar of deadlines — tax dates, super caps, grant deadlines, stamp-duty changes | 3-4 | **Tier 3.** Per-user opt-in calendar with iCal export + email reminders. **Deps:** LL-01, `<DatedStatBadge>` registry. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| CD-02 | pending | Currency converter — live FX with hub-relevant context | 1-2 | **Tier 3.** AUD/USD/GBP/EUR/SGD/INR rates + "what does this mean for [X]" context per hub. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| CD-03 | pending | Pricing transparency surface — every fee, every product | 2-3 | **Tier 3.** Standalone surface listing every advisor/product fee on the platform with sortable comparison. Cross-links into directories. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+
+### Stream RR — Review extensions (Tier 3, added 2026-04-27)
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| RR-01 | pending | Review verification — verified badge for advisor reviews | 2-3 | **Tier 3.** Email verification + optional advisor-engagement-confirmation; verified badge on review. **Deps:** LL-04. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| RR-02 | pending | Advisor response to reviews — public reply UI | 2 | **Tier 3.** Advisor portal feature; public-facing reply on advisor profile. **Deps:** LL-04. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+
+### Stream MK — Marketplace conversion (Tier 3, added 2026-04-27)
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| MK-01 | pending | Advisor calendar embedding — Cal.com / Google Calendar slot picker on advisor profile | 3-4 | **Tier 3.** Pairs with DD-03 (booking + payment rail) but lighter — just calendar embed without payment rail. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| MK-02 | pending | Advisor video intros — 60-90s self-recorded intro on profile | 2-3 | **Tier 3.** Upload + transcode + display on advisor profile. Increases lead conversion. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+
+### Stream SM — Service-line + cultural matching (Tier 3, added 2026-04-27)
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| SM-01 | pending | Service-line tags — fine-grained advisor specialties beyond category | 2-3 | **Tier 3.** Schema migration adding `service_line_tags` array to `professionals` + filter UI on directories. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| SM-02 | pending | Cultural / religion routing — match users to advisors by language / cultural fit | 2-3 | **Tier 3.** Optional self-declared cultural/language preferences in `user_profiles` + advisor opt-in cultural tags + matching weight. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+
+### Stream CM — Conversion / multi-advisor matching (Tier 3, added 2026-04-27)
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| CM-01 | pending | Life-event matching — surface advisor matches based on declared life event | 2-3 | **Tier 3.** Cross-references AA-07 just-[event] pages and Z-22..Z-27 lifecycle hubs. **Deps:** LL-01, AA-07. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| CM-02 | pending | Multi-advisor matching for high-value leads | 2-3 | **Tier 3.** When lead value > threshold, match to top-N advisors not just one; auction-eligible. **Deps:** KK-01 (SLA monitoring). Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| CM-03 | pending | Lead quality scoring — auction bid floor input | 2-3 | **Tier 3.** Compute lead quality score from profile completeness + intent signals; feeds DD-04 auction bid floor. **Deps:** KK-01. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+
+### Stream AT — Account types (Tier 3, added 2026-04-27)
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| AT-01 | pending | Individual account type — base profile (default) | 2-3 | **Tier 3.** First account type; default for all users. **Deps:** LL-01. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| AT-02 | pending | Couple / household account type — shared profile + goals | 2-3 | **Tier 3.** Two-user shared dashboard. **Deps:** LL-01, AT-01. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| AT-03 | pending | Family / multi-generational account type | 2-3 | **Tier 3.** Parent + dependant + grandparent linkages for inheritance + estate planning. **Deps:** LL-01, AT-01. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| AT-04 | pending | Business / SMSF / trust account type | 2-3 | **Tier 3.** Entity-level profile (vs natural person). Cross-links to /smsf hub + /sell-business. **Deps:** LL-01, AT-01. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+
+### Stream DV — Document vault (Tier 3, added 2026-04-27)
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| DV-01 | pending | Document vault — encrypted upload + RLS-isolated user storage | 4-6 | **Tier 3.** Per-user encrypted document storage (super statements, tax returns, will, insurance policies, bank statements). RLS-isolated per Supabase auth.uid(). **Deps:** LL-01, CC-01 (extract pipeline), V-NEW-04 (RLS isolation gate). Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+
 ---
 
 ## Done
