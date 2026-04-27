@@ -829,6 +829,40 @@ User profile + dashboard is the foundation that unlocks 15+ dependent items acro
 | LL-04 | pending | Reviews + ratings on advisors | 4-5 | **Tier 2.** Authenticated review submission + moderation flow + display on advisor pages. **Deps:** LL-01. **Blocks:** RR-01, RR-02. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
 | LL-05 | pending | Live chat AI routing | 3-4 | **Tier 2.** Lower-funnel chat that routes to advisor or AI based on intent + jurisdiction. **Deps:** V-NEW-02 (factual filter), CC-06 (advisor pre-chat infra). Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
 
+### Stream LX — UX features (Tier 2-3, added 2026-04-27)
+
+UX conversion + retention features. LX-01/04/05 are critical for cold-launch (no PR yet — squeeze every conversion lever from organic traffic). LX-02/03/06/07/08 are polish that ships in parallel with calculator/AI/marketplace work.
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| LX-01 | pending | Calculator share/save (viral lever) | 2-3 | **Tier 2.** Every BB-* calculator gets share-link + save-to-profile. **Deps:** `<CalculatorShell>` (W-09). Extends every BB calculator. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| LX-02 | pending | Calculator history (per-user log of computed scenarios) | 2-3 | **Tier 3.** Logged-in users see their past calculator runs + can revisit/diff. **Deps:** LL-01. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| LX-03 | pending | Comparison cart — save advisors/products to compare side-by-side | 2-3 | **Tier 3.** Multi-select on directory listings; comparison view. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| LX-04 | pending | Pre-filled forms from profile | 2 | **Tier 2.** Lead forms + advisor-apply forms auto-populate from `user_profiles`. **Deps:** LL-01. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| LX-05 | pending | Exit-intent capture (CRITICAL for cold launch) | 2 | **Tier 2.** Mouse-leave → email capture modal with hub-relevant lead magnet. **Deps:** EM-03 (email list infra). Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| LX-06 | pending | Print / PDF export per page | 2 | **Tier 3.** Hub pages + calculator results + advisor profiles printable. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| LX-07 | pending | Last-updated freshness indicator across pages | 1-2 | **Tier 3.** Visible "Updated [date]" badge on every content surface, sourced from `<DatedStatBadge>` registry. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| LX-08 | pending | Author profile pages (per editorial persona from CL-03) | 2-3 | **Tier 3.** Each editorial persona has a profile + by-line + post history. **Deps:** CL-03. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+
+### Stream OB — Hub onboarding flows (Tier 2, added 2026-04-27)
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| OB-01 | pending | Hub onboarding flows — shell + 12 hub configs | 13 | **Tier 2.** Diagnostic-quiz-style onboarding per hub: 3-5 questions → personalised hub homepage. Single shell + 12 hub-specific configurations (one per active hub). **Deps:** stream W components (especially `<EligibilityQuiz>` W-10). 13-iteration build (1 shell + 12 configs). Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+
+### Stream EM — Email infrastructure (Tier 2-3, added 2026-04-27)
+
+Email list + lead-magnet + drip-sequence machinery. EM-03 is critical for cold launch (no PR audience — own your audience via email).
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| EM-01 | pending | Ebook lead magnets per hub (12 PDFs) | 4-6 | **Tier 2.** One gated PDF per hub (e.g., "AU founder fundraising checklist", "FHB FHSS guide", "SMSF setup workbook"). Email-gated download. **Deps:** EM-03. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| EM-02 | pending | Email digest infrastructure | 3-4 | **Tier 2.** Weekly digest sender (segment by hub, personalised by watchlist via LL-03). **Deps:** EM-03. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| EM-03 | pending | Pre-launch email list building infrastructure | 3-4 | **Tier 2. CRITICAL for cold launch.** ESP integration + double-opt-in flow + suppression list + unsubscribe + GDPR compliance + per-hub list segmentation. **Blocks:** EM-01, EM-02, EM-04, EM-05, EM-06, LX-05. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| EM-04 | pending | Newsletter foundation — weekly editorial newsletter | 2-3 | **Tier 3.** Independent of EM-02 hub digests; flagship platform-wide newsletter. **Deps:** EM-03. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| EM-05 | pending | Lead magnet automation — auto-deliver PDF + start drip | 2-3 | **Tier 2.** Form submit → email-magnet delivered → drip sequence enrolled. **Deps:** EM-01, EM-03. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| EM-06 | pending | Drip sequences (10 sequences across hubs) | 6-8 | **Tier 3.** Per-hub nurture sequences (5-7 emails each) post-magnet-download. **Deps:** EM-01, EM-05. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+
 ---
 
 ## Done
