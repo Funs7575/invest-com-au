@@ -59,48 +59,48 @@ async function checkRateLimit(ipHash: string): Promise<{ locked: boolean; remain
   const supabase = createAdminSupabase();
   const now = new Date();
 
-  // Try to get existing entry
-  const { data: entry } = await supabase
-    .from("admin_login_attempts")
-    .select("count, reset_at")
-    .eq("ip_hash", ipHash)
-    .single();
+  // Atomically increment-or-insert the counter via a DB function (K-11).
+  // The old SELECT → upsert/UPDATE pattern had a TOCTOU race: two concurrent
+  // requests could both read count=N, both compute N+1, and both write N+1 —
+  // losing one increment and allowing an extra attempt through the budget.
+  // admin_rate_limit_increment does the increment in one INSERT ... ON CONFLICT
+  // DO UPDATE statement, closing the race window.
+  const { data: rpcData, error: rpcError } = await supabase.rpc(
+    "admin_rate_limit_increment",
+    { p_ip_hash: ipHash, p_initial_window_ms: INITIAL_WINDOW_MS },
+  );
 
-  if (!entry || new Date(entry.reset_at) < now) {
-    // No entry or fully cooled off — start fresh with the initial 60s window.
-    const resetAt = new Date(now.getTime() + INITIAL_WINDOW_MS);
-    await supabase
-      .from("admin_login_attempts")
-      .upsert({ ip_hash: ipHash, count: 1, reset_at: resetAt.toISOString() });
-    return { locked: false, remaining: MAX_ATTEMPTS - 1 };
+  if (rpcError || !rpcData || (rpcData as unknown[]).length === 0) {
+    // Fail-open: don't block legitimate admin logins on a transient DB error.
+    log.warn("admin-rate-limit RPC error — failing open", {
+      err: rpcError?.message ?? "empty result",
+    });
+    return { locked: false, remaining: MAX_ATTEMPTS };
   }
 
-  // Increment count. Each in-window attempt also potentially extends the
-  // lockout window per the backoff schedule above — once an attacker has
-  // tripped MAX_ATTEMPTS, hammering further keeps pushing the unlock time
-  // out instead of counting down to a fixed 60s reset.
-  const newCount = entry.count + 1;
-  const backoffMs = getBackoffWindowMs(newCount);
-  const newResetAt = new Date(now.getTime() + backoffMs);
-  // Only extend the reset_at if the new backoff window pushes it later
-  // than the existing one (a brand-new request within an already-extended
-  // 5min window shouldn't reset the unlock clock).
-  const extendResetAt =
-    newCount > MAX_ATTEMPTS && newResetAt > new Date(entry.reset_at);
-
-  await supabase
-    .from("admin_login_attempts")
-    .update({
-      count: newCount,
-      ...(extendResetAt ? { reset_at: newResetAt.toISOString() } : {}),
-    })
-    .eq("ip_hash", ipHash);
+  const row = (rpcData as { attempt_count: number; reset_at: string }[])[0]!;
+  const newCount = row.attempt_count;
+  const currentResetAt = new Date(row.reset_at);
 
   if (newCount > MAX_ATTEMPTS) {
-    const effectiveResetAt = extendResetAt ? newResetAt : new Date(entry.reset_at);
-    const waitSec = Math.ceil((effectiveResetAt.getTime() - now.getTime()) / 1000);
+    // Apply the exponential backoff extension. This UPDATE is non-atomic with
+    // the counter increment — concurrent extensions write the same monotonic
+    // value, so the worst-case race is a harmless double-write to the same
+    // future timestamp.
+    const backoffMs = getBackoffWindowMs(newCount);
+    const extendedResetAt = new Date(now.getTime() + backoffMs);
+    if (extendedResetAt > currentResetAt) {
+      await supabase
+        .from("admin_login_attempts")
+        .update({ reset_at: extendedResetAt.toISOString() })
+        .eq("ip_hash", ipHash);
+      const waitSec = Math.ceil((extendedResetAt.getTime() - now.getTime()) / 1000);
+      return { locked: true, remaining: waitSec };
+    }
+    const waitSec = Math.ceil((currentResetAt.getTime() - now.getTime()) / 1000);
     return { locked: true, remaining: waitSec };
   }
+
   return { locked: false, remaining: MAX_ATTEMPTS - newCount };
 }
 
