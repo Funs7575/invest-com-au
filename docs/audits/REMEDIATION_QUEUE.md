@@ -34,7 +34,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | H | _not started_ | — | — | — |
 | I | _not started_ | — | — | — |
 | J | _not started_ | — | — | — |
-| K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-27T04:09Z | K-01..K-08 done; K-09 false-positive; K-10..K-12 done; K-13..K-15 pending |
+| K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-27T04:42Z | K-01..K-08 done; K-09 false-positive; K-10..K-13 done; K-14..K-15 pending |
 | L | _not started_ | — | — | — |
 | M | _not started_ | — | — | — |
 | N | _not started_ | — | — | — |
@@ -235,7 +235,7 @@ P0/P1/P2 findings from the security agent's deep scan. Each is small (<2h); clus
 | K-10 | done | `/api/newsletter/subscribe/route.ts` — `source` field allowlist enum | 1 | Done in commit `e065eb5` (PR #222). `ALLOWED_SOURCES` const-tuple `["newsletter","smsf_checklist","learn_hub"]`. Unknown/missing source falls back to `"newsletter"`. All 3 confirmed callers use an allowlisted value — no breakage. |
 | K-11 | done | `admin_login_attempts` — atomic counter via DB function to close SELECT→UPDATE TOCTOU race | 1 | Done in commit `f933d37` (PR #222). Phase-4 note: `ip_hash TEXT PRIMARY KEY` already provides uniqueness — the UNIQUE constraint K-11 described was already present. The real bypass vector was the SELECT → upsert/UPDATE TOCTOU race: two concurrent requests could both read count=N and both write count=N+1, losing an increment. Fix: new `admin_rate_limit_increment` PL/pgSQL function performs the increment atomically via `INSERT ... ON CONFLICT DO UPDATE SET count = count + 1`; `checkRateLimit` now calls `supabase.rpc('admin_rate_limit_increment', ...)` in a single round-trip. Fails-open on RPC error to avoid blocking admin logins during a partial DB outage. |
 | K-12 | done | `proxy.ts:22–30` cron bearer timing-safe comparison — `cronTokensMatch()` XOR helper (Edge-runtime compatible) | 1 | Done in commit `79ac0aa` (PR #222). |
-| K-13 | pending | ESLint rule: ban `dangerouslySetInnerHTML` outside `JSON.stringify(...)` and `sanitizeHtml(...)` / `renderMarkdown(...)` contexts | 1 | P3. |
+| K-13 | done | ESLint rule: ban `dangerouslySetInnerHTML` outside `JSON.stringify(...)` and `sanitizeHtml(...)` / `renderMarkdown(...)` contexts | 1 | Done in commit `23b7eda` (PR #222). Inline `invest/no-unsafe-inner-html` plugin in `eslint.config.mjs`. 2 real violations fixed (hardcoded strings in buy-property-australia-foreigner/page.tsx replaced with plain JSX). 2 env-var tracking-pixel usages suppressed with eslint-disable-next-line + explanation comment. |
 | K-14 | pending | Seed `retention_rules` table with initial policies (today empty; gdpr-retention-purge cron has nothing to do) | 1 | P2 / GDPR. |
 | K-15 | pending | CSP violation reporting: add `report-to` directive in `proxy.ts` + `/api/csp-report` endpoint | 1 | P2 (added by K-04 follow-up). Without reporting, legacy-browser inline-script breakage from K-04 is only detectable via support tickets. Endpoint should land each violation in a `csp_violations` table for trend analysis. |
 
@@ -410,6 +410,7 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 
 ## Done
 
+- 2026-04-27 · K-13 · ESLint rule `invest/no-unsafe-inner-html` — inline plugin in `eslint.config.mjs` banning unsafe `dangerouslySetInnerHTML`; allows JSON.stringify/sanitizeHtml/renderMarkdown/string-literals only. Fixed 2 unnecessary usages in buy-property-australia-foreigner/page.tsx (p.role/p.why were plain-text hardcoded strings — replaced with `{p.role}`/`{p.why}`). Added eslint-disable-next-line with safety comments to TrackingPixels.tsx env-var template literals (FB_PIXEL_ID, GOOGLE_ADS_ID). · commit `23b7eda` · pr #222
 - 2026-04-27 · K-12 · `proxy.ts` cron bearer timing-safe comparison — `cronTokensMatch()` XOR loop replaces direct string equality; Edge-runtime compatible (no Node `crypto.timingSafeEqual`); explicit `!secret` fast-fail when `CRON_SECRET` unset. Consistent with broker-signup / partner-API pattern. · commit `79ac0aa` · pr #222
 - 2026-04-27 · K-11 · `admin_login_attempts` atomic rate-limit counter — new `admin_rate_limit_increment` PL/pgSQL function closes SELECT→UPDATE TOCTOU race; `checkRateLimit` now single-round-trip atomic; fails-open on RPC error. Noted: `UNIQUE(ip_hash)` was already present via `TEXT PRIMARY KEY`. · commit `f933d37` · pr #222
 - 2026-04-27 · K-10 · `/api/newsletter/subscribe` `source` field allowlist — `ALLOWED_SOURCES` const-tuple closes analytics-poisoning vector; unknown sources fall back to `"newsletter"`; all 3 confirmed callers unaffected. · commit `e065eb5` · pr #222
@@ -447,6 +448,20 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-27 — iteration 32 (stream K, item K-13 — ESLint no-unsafe-inner-html rule)
+
+- Phase 0: lock acquired.
+- Phase 1: local main had diverged from origin/main (50/50 commits each, no fast-forward). Reset local main to origin/main (remote is source of truth).
+- Phase 1.5: Types drift check — skipped (no schema changes in this window).
+- Phase 2 CI rescue: PR #220 — 3 checks (Playwright skipped, Check bypass secret success, Vercel Preview success). PR #222 — 3 checks (Playwright skipped, Check bypass secret success, Vercel Preview success). No rescue needed.
+- Phase 3: picked K-13 (next pending K item after K-12 done). Checked out `claude/audit-remediation/k-security-hardening` from remote.
+- Phase 4 verification: grepped all 200+ `dangerouslySetInnerHTML` usages. Classified all instances: (a) vast majority use `JSON.stringify(...)` — allowed; (b) `sanitizeHtml(...)` in LessonClient.tsx and newsletter — allowed; (c) `renderMarkdown(...)` in expert/[slug]/page.tsx — allowed; (d) string literals in app/layout.tsx:112 — allowed; (e) zero-expression template literals in export/*.tsx and app/layout.tsx:117 — allowed. Identified 4 actual violations: `p.role` and `p.why` in buy-property-australia-foreigner/page.tsx (member-expressions on page-local hardcoded array) + template literals with `${FB_PIXEL_ID}` and `${GOOGLE_ADS_ID}` in TrackingPixels.tsx.
+- Phase 5: (1) Added inline `invest/no-unsafe-inner-html` plugin to `eslint.config.mjs` with `isSafeHtml()` helper covering the 5 allowed patterns. (2) Fixed `buy-property-australia-foreigner/page.tsx:387-388` — `p.role` and `p.why` are hardcoded plain-text strings in a page-local array; `dangerouslySetInnerHTML` was unnecessary; replaced with `{p.role}`/`{p.why}`. (3) Added `// eslint-disable-next-line invest/no-unsafe-inner-html -- env-var-only...` comments to `components/TrackingPixels.tsx` for the two pixel init scripts. Local gates: tsc on changed .tsx files — only pre-existing sandbox TS2307/TS17004 errors (Hardware exception). No test files changed (rule is lint-only). CI on PR #222 is authoritative.
+- Phase 6: committed `23b7eda` (+91/-2 lines, 3 files). Pushed to `claude/audit-remediation/k-security-hardening` → PR #222. PR body updated (K-13 checked).
+- Phase 7: queue updated on main — K-13 marked done, In-flight table updated, Done entry prepended, this log added.
+- Next item: K-14 (seed `retention_rules` table with initial GDPR policies).
+- Status: PROGRESS · stream=K · item=K-13 · pr=#222 · commit=`23b7eda`
 
 ### 2026-04-27 — iteration 31 (stream K, item K-12 — cron bearer timing-safe comparison)
 
