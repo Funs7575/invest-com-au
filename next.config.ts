@@ -158,6 +158,32 @@ const nextConfig: NextConfig = {
         destination: "/invest/:category/listings/:subcategory",
         permanent: true,
       },
+      // ── Commodity pillar pages → canonical subcategory listings ──
+      // /invest/uranium, /invest/gold, /invest/lithium etc. are SEO/education
+      // pillar pages; the marketplace listings live under the parent category
+      // (mining or renewable-energy) as `/listings/<commodity>` subpaths. Users
+      // who land on the pillar and try /listings naturally hit a 404 — redirect
+      // them to the canonical listings location. 308 so search engines update.
+      {
+        source: "/invest/uranium/listings",
+        destination: "/invest/mining/listings/uranium",
+        permanent: true,
+      },
+      {
+        source: "/invest/gold/listings",
+        destination: "/invest/mining/listings/gold",
+        permanent: true,
+      },
+      {
+        source: "/invest/lithium/listings",
+        destination: "/invest/mining/listings/lithium",
+        permanent: true,
+      },
+      {
+        source: "/invest/hydrogen/listings",
+        destination: "/invest/renewable-energy/listings/hydrogen",
+        permanent: true,
+      },
       // ── /invest/listing/[slug] catch-all (deleted route) ──
       // Old inbound links from before the listings system cleanup used
       // a flat `/invest/listing/[slug]` URL that no longer exists.

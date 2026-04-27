@@ -74,6 +74,16 @@ const eslintConfig = [
       }],
     },
   },
+  {
+    // .github/workflows/scripts/** runs in Node CommonJS via github-script's
+    // require() pattern. ESM is not compatible with how the workflow YAML
+    // invokes these helpers. Allow require() here only.
+    files: [".github/workflows/scripts/**/*.js"],
+    rules: {
+      "@typescript-eslint/no-require-imports": "off",
+      "@typescript-eslint/no-var-requires": "off",
+    },
+  },
 ];
 
 export default eslintConfig;
