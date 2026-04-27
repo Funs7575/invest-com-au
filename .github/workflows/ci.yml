@@ -289,6 +289,25 @@ jobs:
           fi
           echo "lib/database.types.ts matches live DB schema."
 
+  rls-isolation-gate:
+    name: RLS isolation gate (new user-data tables)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: github.event_name == 'pull_request'
+    # Why this exists (V-NEW-04): any migration that adds a table with a
+    # user_id/owner_id column must ship alongside an isolation test proving
+    # that user A cannot read or mutate user B's rows.  The gate scans only
+    # migration files added in this PR, so it never fails for pre-existing
+    # tables.  Skip token not required — this is a static file analysis.
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Check new user-data tables have RLS isolation tests
+        env:
+          GITHUB_BASE_REF: ${{ github.base_ref }}
+        run: node scripts/check-rls-isolation.mjs
+
   lighthouse-cwv-gate:
     name: Lighthouse — Core Web Vitals gate (hard-fail)
     runs-on: ubuntu-latest
