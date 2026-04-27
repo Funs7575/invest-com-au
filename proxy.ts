@@ -2,6 +2,25 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
+// Timing-safe Bearer token comparison for the Edge runtime.
+// Node's `crypto.timingSafeEqual` is unavailable in Edge; this XOR loop
+// achieves the same constant-time property using the Buffer polyfill that
+// Next.js already ships to Edge middleware (evidenced by the nonce encoding
+// below). Consistent with the broker-signup / partner-API pattern used in
+// route handlers that run on Node.
+function cronTokensMatch(authHeader: string | null, secret: string): boolean {
+  if (!authHeader) return false
+  const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : ''
+  const aBuf = Buffer.from(token)
+  const bBuf = Buffer.from(secret)
+  if (aBuf.length !== bBuf.length) return false
+  let diff = 0
+  for (let i = 0; i < aBuf.length; i++) {
+    diff |= (aBuf[i] as number) ^ (bBuf[i] as number)
+  }
+  return diff === 0
+}
+
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
@@ -20,8 +39,8 @@ export async function proxy(request: NextRequest) {
   // ── Cron route protection ──────────────────────────────────────
   // Vercel cron jobs send a Bearer token — reject unauthorized callers.
   if (pathname.startsWith('/api/cron/')) {
-    const authHeader = request.headers.get('authorization')
-    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    const secret = process.env.CRON_SECRET
+    if (!secret || !cronTokensMatch(request.headers.get('authorization'), secret)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
     const cronResponse = NextResponse.next()
