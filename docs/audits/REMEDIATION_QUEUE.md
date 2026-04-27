@@ -34,7 +34,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | H | _not started_ | — | — | — |
 | I | _not started_ | — | — | — |
 | J | _not started_ | — | — | — |
-| K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-27T00:05Z | K-01..K-08 done (28 session-auth routes + 5 system-bearer skipped); K-09..K-15 pending |
+| K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-27T00:05Z | K-01..K-08 done; K-09 false-positive; K-10..K-15 pending |
 | L | _not started_ | — | — | — |
 | M | _not started_ | — | — | — |
 | N | _not started_ | — | — | — |
@@ -231,7 +231,7 @@ P0/P1/P2 findings from the security agent's deep scan. Each is small (<2h); clus
 | K-07 | done | `/api/account/delete` — confirmation email on schedule | 1 | Done in commit `41b84e0b` (PR #222). After the existing upsert succeeds, fires a transactional email to `user.email` with locale-formatted purge date (`Saturday, 26 May 2026`), cancel link to `/account/privacy`, and the "if you didn't request this" escape hatch for phishing victims. Best-effort — Resend failure logs `warn` but doesn't roll back the deletion request. **Known live drift:** the `account_deletion_requests` table doesn't exist in any live schema (migration `20260427_wave_security_observability.sql:175` defines it but appears unapplied) — so the route's POST returns 500 today and the email path is forward-compatible code that activates the day the migration lands. Surfaced to Blocked. |
 | K-07b | done | Day-25 grace-period reminder cron | 1 | Done in commit `64f40d9` (PR #222). New cron `/api/cron/account-deletion-reminder` registered in `daily-2` group. Scans `status='scheduled' AND reminder_sent_at IS NULL AND scheduled_purge_at <= NOW()+5d`; sends final-warning email; stamps `reminder_sent_at` on success (idempotent — no double-send). Migration `20260523_account_deletion_requests_reminder.sql` adds `reminder_sent_at TIMESTAMPTZ` column + partial index. Forward-compatible: catches Postgres 42P01 ("relation does not exist") and exits gracefully until A-MISSING-TABLE-1 is applied to live. |
 | K-08 | done | Sweep `/api/admin/*` PATCH/POST/DELETE routes: ensure each writes to `admin_audit_log` | 4 | P1. SOC 2 / ASIC audit-trail gap. 28 session-auth routes covered across 4 batches (iter 24-27). 5 system-bearer routes (CRON_SECRET / INTERNAL_API_KEY — no admin identity) intentionally skipped. All commits on PR #222. |
-| K-09 | pending | `/api/seed/route.ts` — gate behind `NODE_ENV !== 'production'` + admin auth | 1 | P1. Shouldn't exist in prod at all. |
+| K-09 | false-positive | ~~`/api/seed/route.ts` — gate behind `NODE_ENV !== 'production'` + admin auth~~ | — | Both guards already present: `NODE_ENV === "production"` → 403 (line 12), `ADMIN_EMAILS`/`@invest.com.au` domain auth check (lines 20-23). Verified 2026-04-27. |
 | K-10 | pending | `/api/newsletter/subscribe/route.ts` — `source` field allowlist enum | 1 | P2. Analytics poisoning vector. |
 | K-11 | pending | `admin_login_attempts` table — add `UNIQUE(ip_hash)` constraint to prevent rate-limit bypass under concurrency | 1 | P2. |
 | K-12 | pending | `proxy.ts:22–30` cron bearer compare with `timingSafeEqual` (consistency w/ broker-signup pattern) | 1 | P3. Hygiene. |
@@ -439,10 +439,21 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 | B-03 | "`sponsor_invoices` is missing RLS" | RLS was added in `supabase/migrations/20260321_pre_launch_rls_fixes.sql` (`ALTER TABLE … ENABLE ROW LEVEL SECURITY` + a deny-all `USING (false)` policy). Service-role bypasses RLS regardless, so the existing policy is functionally a deny-all default. Audit's grep likely only checked `004_sponsor_invoices.sql` and missed the later fix migration. (Note: the policy name is misleading — it says "Service role full access" but the body is `USING (false)`. A future hardening iteration could rename + add explicit `TO service_role` clause + `FORCE ROW LEVEL SECURITY`. Tracked separately if needed; not blocking.) | 2026-04-26 |
 | (audit-wide) | "11 RLS gaps" | Iter 8 re-enumeration found that `support_tickets`, `support_messages`, `broker_creatives`, `broker_notifications`, `ab_tests` were ALSO already RLS'd in `20260321_pre_launch_rls_fixes.sql` (same pattern as B-03 — `USING (false)` is functionally deny-all but policy naming + lack of `FORCE RLS` is misleading). Audit's grep likely only checked the original creating migration for each table. Real residual gap = 8 tables (5 forum + `quarterly_reports`, `listing_enquiries`, `listing_plans`), tracked under B-06. The B-03-style hardening (rename misleading policy + add `FORCE RLS` + `TO service_role`) for these 5 tables can land as a stream-G-style hygiene pass; not in scope for stream B. | 2026-04-26 |
 | B-06.forum | "5 forum tables (`forum_categories`, `forum_posts`, `forum_threads`, `forum_user_profiles`, `forum_votes`) are missing RLS" | Iter 10 prior-policy gate discovered all 5 are already RLS-enabled in `supabase/migrations/20260427_wave_security_observability.sql` with rich `auth.uid()`-scoped policies (public_read for SELECT; authenticated_insert + author_update + author_delete on `forum_threads` and `forum_posts`; self_insert + self_update on `forum_user_profiles`; self_insert + self_update + self_delete on `forum_votes`). Audit's grep again missed the later RLS migration (same pattern as B-03 + iter-8 batch). Real residual gap from B-06 reduces to 2 tables: `listing_plans` and `quarterly_reports`. | 2026-04-26 |
+| K-09 | "`/api/seed/route.ts` is missing `NODE_ENV !== 'production'` guard and admin auth" | Iter 28 Phase 4 verification: `app/api/seed/route.ts` already has both guards — (1) `if (process.env.NODE_ENV === "production") { return 403 }` at line 12 and (2) `getUser()` + `ADMIN_EMAILS` / `@invest.com.au` domain check at lines 20-23. Both guards match the K-09 requirement exactly. Work was either pre-existing or added between the 04-26 audit and now; no further action needed. | 2026-04-27 |
 
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-27 — iteration 28 (stream K, item K-09 — false positive resolution)
+
+- Phase 1.5: Types drift check — skipped (no schema changes in this window).
+- Phase 2 CI rescue: PR #220 green (success+skipped); PR #222 green (success+skipped). No rescue needed.
+- Phase 3: picked K-09 (top pending K item).
+- Phase 4 verification: read `app/api/seed/route.ts`. Found both required guards already in place — `NODE_ENV === "production"` → 403 at line 12, and `getUser()` + `ADMIN_EMAILS` / `@invest.com.au` domain check at lines 20-23. No code change needed.
+- K-09 marked false-positive. Entry added to "Resolved as false positives" table.
+- Next item: K-10 (`/api/newsletter/subscribe/route.ts` — `source` field allowlist).
+- Status: PROGRESS · stream=K · item=K-09 (false-positive) · pr=#222
 
 ### 2026-04-27 00:05Z — iteration 27 (stream K, item K-08 batch 4 — final 9 session-auth routes completing K-08)
 
