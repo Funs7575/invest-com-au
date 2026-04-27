@@ -97,6 +97,64 @@ describe("getBenefitCta", () => {
     const broker = makeBroker({ affiliate_url: "https://example.com" });
     expect(getBenefitCta(broker, "quiz")).toBe("Get Started Free →");
   });
+
+  it("returns review CTA when no affiliate_url", () => {
+    const broker = makeBroker({ affiliate_url: undefined });
+    expect(getBenefitCta(broker, "review")).toBe("Read Full Review →");
+  });
+
+  it("returns informational view CTA for non-review when no affiliate_url", () => {
+    const broker = makeBroker({
+      affiliate_url: undefined,
+      name: "TestBroker",
+    });
+    expect(getBenefitCta(broker, "compare")).toBe("View TestBroker →");
+  });
+
+  it("deal with deal_text returns 'Claim ${name} Deal' default", () => {
+    const broker = makeBroker({
+      deal: true,
+      deal_text: "Win cash",
+      name: "TestBroker",
+      affiliate_url: "https://example.com",
+    });
+    expect(getBenefitCta(broker, "review")).toBe("Claim TestBroker Deal");
+  });
+
+  it("review without deal returns Open ${name} Account", () => {
+    const broker = makeBroker({
+      name: "TestBroker",
+      affiliate_url: "https://example.com",
+    });
+    expect(getBenefitCta(broker, "review")).toBe(
+      "Open TestBroker Account →",
+    );
+  });
+
+  it("calculator returns Try ${name} Free for non-zero fees", () => {
+    const broker = makeBroker({
+      name: "TestBroker",
+      asx_fee_value: 10,
+      affiliate_url: "https://example.com",
+    });
+    expect(getBenefitCta(broker, "calculator")).toBe("Try TestBroker Free →");
+  });
+
+  it("versus returns the standard Open Free Account default", () => {
+    const broker = makeBroker({ affiliate_url: "https://example.com" });
+    expect(getBenefitCta(broker, "versus")).toBe("Open Free Account →");
+  });
+
+  it("respects deal flag set without deal_text (falls through)", () => {
+    const broker = makeBroker({
+      deal: true,
+      deal_text: null,
+      asx_fee_value: 0,
+      affiliate_url: "https://example.com",
+    });
+    // No deal_text means the deal branch is skipped — falls through to context default
+    expect(getBenefitCta(broker, "compare")).toBe("Trade $0 Brokerage →");
+  });
 });
 
 describe("formatPercent", () => {
