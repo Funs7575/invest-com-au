@@ -48,7 +48,8 @@ export default async function HomePage() {
       .select(BROKER_LISTING_COLUMNS)
       .eq("status", "active")
       .order("promoted_placement", { ascending: false })
-      .order("rating", { ascending: false }),
+      .order("rating", { ascending: false })
+      .limit(20),
     supabase
       .from("articles")
       .select("id, title, slug, excerpt, category, read_time, tags, cover_image_url")
@@ -197,9 +198,9 @@ export default async function HomePage() {
                 Platforms we&apos;ve independently compared
               </p>
               <div className="flex items-center justify-center gap-3 md:gap-5 flex-wrap">
-                {featuredPlatforms.map((b) => (
+                {featuredPlatforms.map((b, i) => (
                   <Link key={b.slug} href={`/broker/${b.slug}`} className="opacity-60 hover:opacity-100 transition-opacity" title={b.name}>
-                    <BrokerLogo broker={b} size="sm" />
+                    <BrokerLogo broker={b} size="sm" priority={i < 3} />
                   </Link>
                 ))}
               </div>

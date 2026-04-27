@@ -830,7 +830,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
           </div>
         ) : paginatedResults.length > 0 ? (
           <div className="space-y-3">
-            {paginatedResults.map(pro => {
+            {paginatedResults.map((pro, index) => {
               const isFeatured = !!(pro.featured_until && new Date(pro.featured_until) > new Date());
               return (
                 <Link key={pro.id} href={`/advisor/${pro.slug}`} className={`group block bg-white rounded-2xl transition-all duration-200 overflow-hidden ${
@@ -846,7 +846,16 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                     <div className="relative shrink-0">
                       {pro.photo_url ? (
                         <div className="w-[60px] h-[60px] md:w-[80px] md:h-[80px] rounded-2xl overflow-hidden ring-2 ring-slate-100 shadow-sm">
-                          <Image src={pro.photo_url} alt={pro.name} width={80} height={80} className="w-full h-full object-cover" />
+                          <Image
+                            src={pro.photo_url}
+                            alt={pro.name}
+                            width={80}
+                            height={80}
+                            className="w-full h-full object-cover"
+                            priority={index < 3}
+                            placeholder="blur"
+                            blurDataURL="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxyZWN0IHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiNlMmU4ZjAiLz48L3N2Zz4="
+                          />
                         </div>
                       ) : (
                         <div className="w-[60px] h-[60px] md:w-[80px] md:h-[80px] rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white font-bold text-xl md:text-2xl shadow-md shadow-amber-200/60 select-none">
