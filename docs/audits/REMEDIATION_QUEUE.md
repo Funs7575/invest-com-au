@@ -44,7 +44,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | R | _not started_ | — | — | — |
 | S | _not started_ | — | — | — |
 | V | `claude/audit-remediation/v-polish-extras` | #252 | pending — pushed 2026-04-27T14:50Z (V-NEW-03: Stripe webhook idempotency replay harness + CI gate) | V-NEW-04 done (`5aadce3`) · CI-rescue `e37633c` · V-NEW-01 blocked (no DatedStatBadge component yet) · V-NEW-02 blocked (no compliance factual-filter) · V-NEW-03 done (`84bde1f`) |
-| V (V-NEW-07) | `claude/audit-remediation/v-new-07-admin-mfa-enforced` | #256 | pending — pushed 2026-04-27T18:40Z (V-NEW-07b UI + proxy gate + recovery codes + rollout doc) | V-NEW-07a done (cookie helper + verify route + 22 tests) · V-NEW-07b done (commit `698bbae`) |
+| V (V-NEW-07) | `claude/audit-remediation/v-new-07-admin-mfa-enforced` | #256 | pending — test-fix pushed 2026-04-27T18:45Z | V-NEW-07a done (cookie helper + verify route + 22 tests) · V-NEW-07b done (`698bbae`) · test-fix `0561944` |
 | X | `claude/audit-remediation/x-admin-backlog` | #257 | pending — pushed 2026-04-27T18:23Z (X-01 decision matrix) | X-01 done — per-file decision matrix at `docs/audits/x-admin-backlog-decision-matrix.md`; X-02..X-09 parallel-eligible with W |
 | Y | `claude/audit-remediation/y-registry-nav` | #253 | pending — pushed 2026-04-27T15:30Z | Y-05 done (commit `fb9dec3`) |
 
@@ -1027,6 +1027,18 @@ Items that ship LAST, in the final week before launch (Month 4 of pre-launch roa
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-27T18:45Z — iteration 64 (CI-RESCUE · stream V · PR #256 — test fix for admin-mfa-cookie-edge.test.ts)
+
+- Phase 0: lock acquired.
+- Phase 1: synced main (`fc83d79` — iter 63 queue update already landed). Reset local to origin/main. Read queue + defaults.
+- Phase 1.5: types-drift skipped (no Supabase MCP).
+- Phase 2: CI rescue — checked PR #256 (V-NEW-07). Found `Lint · Type-check · Test · Build` still in-progress; ran tests locally to validate. Found `__tests__/lib/admin-mfa-cookie-edge.test.ts` had 5/11 tests failing. Root cause: test "returns false when ADMIN_MFA_COOKIE_SECRET is absent" called `signMfaCookie()` while the env var was already deleted — the function throws immediately, so the restore line `process.env.ADMIN_MFA_COOKIE_SECRET = saved` was never reached, poisoning all subsequent tests that call `signMfaCookie`.
+- Phase 3: V-NEW-07b was already done by parallel iter 63. This iteration is a CI-rescue for PR #256.
+- Phase 4: Verified fix — correct approach is to sign the cookie FIRST (while secret is available from `beforeAll`), then delete the secret in a `try/finally` block so the restore is guaranteed. Verified all 11 tests pass locally after fix; also ran 07a test suite (22 tests) — all pass. Lint clean (0 warnings).
+- Phase 5: Committed fix `0561944` to `claude/audit-remediation/v-new-07-admin-mfa-enforced`. Merged remote branch (parallel iter had pushed queue-update to branch + merged main — merged those in). Pushed.
+- Phase 7: Queue updated on main — In-flight table updated with test-fix commit. This log entry added.
+- Status: CI-RESCUE · stream=V · pr=#256 · commit=`0561944`
 
 ### 2026-04-27T18:40Z — iteration 63 (stream V — V-NEW-07b — admin MFA UI + proxy gate + rollout doc)
 
