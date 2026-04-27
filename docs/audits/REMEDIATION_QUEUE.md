@@ -34,7 +34,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | H | _not started_ | — | — | — |
 | I | _not started_ | — | — | — |
 | J | _not started_ | — | — | — |
-| K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-27T05:10Z | K-01..K-08 done; K-09 false-positive; K-10..K-14 done; K-15 pending |
+| K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-27T05:35Z | K-01..K-08 done; K-09 false-positive; K-10..K-15 done — **stream complete** |
 | L | _not started_ | — | — | — |
 | M | _not started_ | — | — | — |
 | N | _not started_ | — | — | — |
@@ -237,7 +237,7 @@ P0/P1/P2 findings from the security agent's deep scan. Each is small (<2h); clus
 | K-12 | done | `proxy.ts:22–30` cron bearer timing-safe comparison — `cronTokensMatch()` XOR helper (Edge-runtime compatible) | 1 | Done in commit `79ac0aa` (PR #222). |
 | K-13 | done | ESLint rule: ban `dangerouslySetInnerHTML` outside `JSON.stringify(...)` and `sanitizeHtml(...)` / `renderMarkdown(...)` contexts | 1 | Done in commit `23b7eda` (PR #222). Inline `invest/no-unsafe-inner-html` plugin in `eslint.config.mjs`. 2 real violations fixed (hardcoded strings in buy-property-australia-foreigner/page.tsx replaced with plain JSX). 2 env-var tracking-pixel usages suppressed with eslint-disable-next-line + explanation comment. |
 | K-14 | done | Seed `retention_rules` table with initial policies (today empty; gdpr-retention-purge cron has nothing to do) | 1 | Done in commit `2ad7bb5` (PR #222). 7 PII tables seeded; FORCE RLS + service_role explicit ALLOW policy added. |
-| K-15 | pending | CSP violation reporting: add `report-to` directive in `proxy.ts` + `/api/csp-report` endpoint | 1 | P2 (added by K-04 follow-up). Without reporting, legacy-browser inline-script breakage from K-04 is only detectable via support tickets. Endpoint should land each violation in a `csp_violations` table for trend analysis. |
+| K-15 | done | CSP violation reporting: `Report-To` header + `report-to`/`report-uri` directives in `proxy.ts` + `/api/csp-report` endpoint + `csp_violations` migration | 1 | Done in commit `cf6c267` (PR #222). |
 
 ### Stream L — Observability + Sentry/PostHog/SLO (audit §9)
 
@@ -410,6 +410,7 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 
 ## Done
 
+- 2026-04-27 · K-15 · CSP violation reporting — `Report-To` header + `report-to`/`report-uri` directives in `proxy.ts` (pointing to NEXT_PUBLIC_SITE_URL/api/csp-report); new `/api/csp-report` POST endpoint (Node runtime, no auth, IP rate-limited 60/min); new `csp_violations` table with ENABLE/FORCE RLS + service_role explicit ALLOW policy. Supports both application/csp-report (legacy report-uri) and application/reports+json (Reporting API v1) formats. Stream K now fully complete (K-01..K-15, 1 false-positive K-09). · commit `cf6c267` · pr #222
 - 2026-04-27 · K-14 · Seed `retention_rules` with 7 PII table retention policies (leads 730d anonymise, email_otps 7d delete, listing_enquiries 730d anonymise, quiz_follow_ups 180d delete, auth_attempts 90d delete, admin_login_attempts 7d delete-via-reset_at, support_messages 1095d delete). Added FORCE ROW LEVEL SECURITY + explicit service_role ALLOW policy to close SOC 2 zero-policy ambiguity. · commit `2ad7bb5` · pr #222
 - 2026-04-27 · K-13 · ESLint rule `invest/no-unsafe-inner-html` — inline plugin in `eslint.config.mjs` banning unsafe `dangerouslySetInnerHTML`; allows JSON.stringify/sanitizeHtml/renderMarkdown/string-literals only. Fixed 2 unnecessary usages in buy-property-australia-foreigner/page.tsx (p.role/p.why were plain-text hardcoded strings — replaced with `{p.role}`/`{p.why}`). Added eslint-disable-next-line with safety comments to TrackingPixels.tsx env-var template literals (FB_PIXEL_ID, GOOGLE_ADS_ID). · commit `23b7eda` · pr #222
 - 2026-04-27 · K-12 · `proxy.ts` cron bearer timing-safe comparison — `cronTokensMatch()` XOR loop replaces direct string equality; Edge-runtime compatible (no Node `crypto.timingSafeEqual`); explicit `!secret` fast-fail when `CRON_SECRET` unset. Consistent with broker-signup / partner-API pattern. · commit `79ac0aa` · pr #222
@@ -449,6 +450,20 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-27 — iteration 34 (stream K, item K-15 — CSP violation reporting)
+
+- Phase 0: lock acquired.
+- Phase 1: local main had diverged from origin/main (50/50 commits, forced update on remote). Reset local main to origin/main (remote is source of truth). Synced K branch from remote.
+- Phase 1.5: Types drift check — generated types from Supabase MCP (`guggzyqceattncjwvgyc`), diffed against `lib/database.types.ts` — zero diff. No regen needed.
+- Phase 2 CI rescue: PR #220 — 3 checks (Playwright skipped, Check bypass secret success, Vercel Preview success). PR #222 — 3 checks (Playwright skipped, Check bypass secret success, Vercel Preview success). No rescue needed.
+- Phase 3: picked K-15 (next pending item in stream K, highest-priority active stream). Checked out `claude/audit-remediation/k-security-hardening` from remote; merged origin/main (already up to date).
+- Phase 4 verification: grepped all migrations for `csp_violations` — no prior CREATE TABLE / ENABLE RLS / CREATE POLICY. Grepped proxy.ts for existing `report-to`/`report-uri`/`csp-report` — none. No `/api/csp-report` route directory existed. No prior policy state to handle.
+- Phase 5: created 3 files: (1) `supabase/migrations/20260427_csp_violations.sql` — new table with ENABLE/FORCE RLS + service_role explicit policy; (2) `app/api/csp-report/route.ts` — POST endpoint accepting both CSP report formats (application/csp-report + application/reports+json), rate-limited 60/min per IP, inserts to csp_violations via admin client; (3) `proxy.ts` — added `Report-To` header (group `invest-csp`, max_age=86400, endpoint=NEXT_PUBLIC_SITE_URL/api/csp-report) + `report-to invest-csp` + `report-uri` directives to CSP. Local gates: tsc showed only pre-existing module-resolution errors (Hardware exception applies). No test files changed; SQL-only migration portion skips tsc. CI on PR #222 is authoritative.
+- Phase 6: committed `cf6c267` (+188/-0 lines, 3 files). Pushed to `claude/audit-remediation/k-security-hardening` → PR #222. PR body updated (K-15 checked; stream K complete noted).
+- Phase 7: queue updated on main — K-15 marked done, In-flight table updated to stream complete, Done entry prepended, this log added.
+- Next item: stream K complete. Next stream by priority order: N (P0 UI/UX), N-01 (homepage hero priority + blur).
+- Status: PROGRESS · stream=K · item=K-15 · pr=#222 · commit=`cf6c267`
 
 ### 2026-04-27 — iteration 33 (stream K, item K-14 — retention_rules PII seed)
 
