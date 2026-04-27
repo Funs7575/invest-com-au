@@ -1,0 +1,142 @@
+name: Auto-merge (selective)
+
+# Selectively auto-merges low-risk audit-loop PRs after a 60-minute quiet
+# window. The intent: routine doc/test/seed/hub PRs merge themselves on
+# green CI; anything risky still waits for a human.
+#
+# Two responsibilities, expressed as separate jobs:
+#
+#   1. signal — runs on PR sync, CI completion, label changes. If the PR
+#      is eligible, posts ONE countdown comment per head-SHA so the
+#      founder sees "auto-merging in 60min unless STOP" and has a window
+#      to skim. Idempotent: re-posting is suppressed by a SHA-tagged
+#      marker comment.
+#
+#   2. merge — runs on a 15-minute schedule. Iterates over open PRs that
+#      carry the `auto-merge-safe` label, re-evaluates every gate (CI
+#      still green, still no conflicts, still not draft, no STOP comment
+#      from a write-access user posted after the head commit, head commit
+#      ≥ 60 min old), and squash-merges + deletes the source branch when
+#      all gates pass. Idempotent: PRs already merged or relabeled are
+#      skipped.
+#
+# Gates (every gate must pass for both signal and merge):
+#   - Label `auto-merge-safe` present, `needs-human-review` absent
+#   - PR is not draft, base is `main`
+#   - Head branch matches `claude/audit-remediation/**` or
+#     `claude/audit-queue-**`
+#   - Mergeable === true (no conflicts)
+#   - All check runs on head SHA either succeeded or were skipped /
+#     neutral (none failing, none cancelled, none in-progress)
+#   - No STOP comment from a user with write+ permission posted after
+#     the head commit's authored time
+#   - For merge job only: head commit authored ≥ 60 min ago
+#
+# STOP comment escape hatch:
+#   Any comment whose body contains the literal word `STOP` (uppercase,
+#   word-bounded) authored by a user with write or admin permission, that
+#   is newer than the head commit, blocks the merge. STOP works even
+#   after the countdown comment is posted — the schedule re-checks for
+#   STOP on every fire.
+#
+# Rollback:
+#   Delete this file (and the sibling auto-merge-*.yml files) to disable
+#   instantly. No data loss — every action is a normal squash merge that
+#   shows up in `git log` and PR history.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, labeled, unlabeled]
+  check_suite:
+    types: [completed]
+  issue_comment:
+    types: [created]
+  schedule:
+    # Every 15 minutes. Quiet window is 60 min so 15-min granularity is
+    # fine — worst-case a PR merges 14 min later than it could have.
+    - cron: "*/15 * * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pull-requests: write
+  checks: read
+  issues: write
+
+concurrency:
+  # Serialise the merge job so we never race two squash-merges. Signal
+  # events run independently keyed by PR number to keep notifications
+  # responsive.
+  group: auto-merge-${{ github.event.pull_request.number || github.event.issue.number || 'schedule' }}
+  cancel-in-progress: false
+
+jobs:
+  signal:
+    name: Post countdown comment
+    if: >-
+      github.event_name == 'pull_request'
+      || github.event_name == 'check_suite'
+      || github.event_name == 'issue_comment'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Resolve target PR numbers
+        id: targets
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const eventName = context.eventName;
+            const prs = [];
+            if (eventName === 'pull_request') {
+              prs.push(context.payload.pull_request.number);
+            } else if (eventName === 'issue_comment') {
+              if (context.payload.issue.pull_request) {
+                prs.push(context.payload.issue.number);
+              }
+            } else if (eventName === 'check_suite') {
+              const suite = context.payload.check_suite;
+              for (const pr of suite.pull_requests || []) {
+                prs.push(pr.number);
+              }
+            }
+            core.setOutput('prs', JSON.stringify(prs));
+
+      - name: Checkout helper script
+        if: ${{ fromJSON(steps.targets.outputs.prs)[0] != null }}
+        uses: actions/checkout@v6
+        with:
+          sparse-checkout: |
+            .github/workflows/scripts
+          sparse-checkout-cone-mode: false
+
+      - name: Evaluate gates and post countdown
+        if: ${{ fromJSON(steps.targets.outputs.prs)[0] != null }}
+        uses: actions/github-script@v7
+        env:
+          PR_NUMBERS: ${{ steps.targets.outputs.prs }}
+        with:
+          script: |
+            const script = require('./.github/workflows/scripts/auto-merge.js');
+            const prs = JSON.parse(process.env.PR_NUMBERS);
+            for (const number of prs) {
+              await script.signal({ github, context, core, number });
+            }
+
+  merge:
+    name: Merge eligible PRs
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          sparse-checkout: |
+            .github/workflows/scripts
+          sparse-checkout-cone-mode: false
+
+      - name: Sweep open auto-merge-safe PRs
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const script = require('./.github/workflows/scripts/auto-merge.js');
+            await script.sweep({ github, context, core });

@@ -1,5 +1,7 @@
 # Invest.com.au
 
+[![auto-merge stats](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FFuns7575%2Finvest-com-au%2Fautomerge-bot%2Fstats%2Fstats.json)](docs/audits/REMEDIATION_DEFAULTS.md#auto-merge-policy)
+
 Australia's independent broker comparison + advisor directory platform.
 
 ## Tech Stack
