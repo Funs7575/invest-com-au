@@ -37,7 +37,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-27T05:35Z | K-01..K-08 done; K-09 false-positive; K-10..K-15 done — **stream complete** |
 | L | _not started_ | — | — | — |
 | M | _not started_ | — | — | — |
-| N | `claude/audit-remediation/n-ux-perf` | #242 | pending — pushed 2026-04-27T07:30Z | N-01+N-02 done (commit `2ec6f89`) |
+| N | `claude/audit-remediation/n-ux-perf` | #242 | pending — pushed 2026-04-27T08:10Z | N-01+N-02 done (`2ec6f89`) · N-03 iter 1/3 done (`36e3f6d`) |
 | O | _not started_ | — | — | — |
 | P | _not started_ | — | — | — |
 | Q | _not started_ | — | — | — |
@@ -307,7 +307,9 @@ Image perf, accessibility, client-bundle size.
 | --- | --- | --- | --- | --- |
 | N-01 | done | Homepage trust-strip BrokerLogos `priority={i<3}`; advisor profile hero `priority`+`placeholder="blur"`+`blurDataURL`; advisor listing top-3 cards `priority`+blur | 1 | P0. Audit 6-A + 6-H. commit `2ec6f89` pr #242. |
 | N-02 | done | Homepage broker query `.limit(20)` (was unbounded ~250 rows) | 1 | P0. TTFB on mobile. commit `2ec6f89` pr #242. |
-| N-03 | pending | `app/advisor-portal/page.tsx` (2,761 LOC) — extract profile-header into Server Component; keep tabs as client | ~3 | P1. ~30–40% bundle reduction. Subsumes H-03. |
+| N-03a | done | Extract `AdvisorPortalLogin` component from `page.tsx` (login state + handler + 120-line JSX; -141 LOC net) | 1 | commit `36e3f6d` pr #242. |
+| N-03b | pending | Extract per-tab components with dynamic imports: `DashboardTab`, `LeadsTab`, `AnalyticsTab` | 1 | P1. Next iteration. Reduces initial bundle by deferring heavy tab JSX. |
+| N-03c | pending | Extract remaining tabs (`ProfileTab`, `BillingTab`, `SettingsTab`, `TeamTab`); `page.tsx` becomes thin shell | 1 | P1. Final split. ~2,400-line file → ~250-line shell + 7 tab components. |
 | N-04 | pending | Add skip-to-main-content link in `components/layout/Navigation.tsx` (or root layout) | 1 | P1. WCAG 2.1 AA fail today. |
 | N-05 | pending | Sweep icon-only buttons missing `aria-label` (`CollapsibleSection`, `InfoTip`, `AdminHelpPanel`, `AdminNotifications`, `BottomSheet`, `OnThisPage`) | 1 | P1. |
 | N-06 | pending | Convert `public/logos/*.ico` → `.svg` where possible (580+ files; batch script) | ~2 | P2. ~40 KB homepage saving. |
@@ -436,6 +438,7 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 
 ## Done
 
+- 2026-04-27 · N-03a · Extract `AdvisorPortalLogin` from `app/advisor-portal/page.tsx` — login state (email/password/mode/status/error), `handleLogin()` handler, and 120-line login form JSX moved to dedicated component; `tokenFromUrl` dead state removed; `useEffect` simplified; `page.tsx` -141 LOC net (2,761 → 2,620). Zero behaviour change: password-login flow still does `window.location.reload()` to re-trigger parent `checkSession`; magic-link token in URL still handled by parent `verifyToken`. · commit `36e3f6d` · pr #242
 - 2026-04-27 · N-01+N-02 · Homepage trust-strip BrokerLogo `priority` for first 3 (LCP preload hint); advisor profile hero `priority`+`placeholder="blur"` (audit 6-A — the 220px photo is the LCP element on every advisor page); advisor listing top-3 card photos `priority`+blur; broker query capped at LIMIT 20 (~500KB JSON → ~80KB, TTFB fix). Bundled because N-02 is a 1-line change directly adjacent to N-01's TTFB motivation. · commit `2ec6f89` · pr #242
 - 2026-04-27 · K-15 · CSP violation reporting — `Report-To` header + `report-to`/`report-uri` directives in `proxy.ts` (pointing to NEXT_PUBLIC_SITE_URL/api/csp-report); new `/api/csp-report` POST endpoint (Node runtime, no auth, IP rate-limited 60/min); new `csp_violations` table with ENABLE/FORCE RLS + service_role explicit ALLOW policy. Supports both application/csp-report (legacy report-uri) and application/reports+json (Reporting API v1) formats. Stream K now fully complete (K-01..K-15, 1 false-positive K-09). · commit `cf6c267` · pr #222
 - 2026-04-27 · K-14 · Seed `retention_rules` with 7 PII table retention policies (leads 730d anonymise, email_otps 7d delete, listing_enquiries 730d anonymise, quiz_follow_ups 180d delete, auth_attempts 90d delete, admin_login_attempts 7d delete-via-reset_at, support_messages 1095d delete). Added FORCE ROW LEVEL SECURITY + explicit service_role ALLOW policy to close SOC 2 zero-policy ambiguity. · commit `2ad7bb5` · pr #222
@@ -477,6 +480,20 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-27T08:10Z — iteration 37 (stream N, item N-03a done — AdvisorPortalLogin extraction)
+
+- Phase 0: lock acquired.
+- Phase 1: local main diverged from origin/main (50/50); reset via `git reset --hard origin/main`. Read queue and defaults end-to-end.
+- Phase 1.5: Types drift check — skipped (no schema changes in this window).
+- Phase 2 CI rescue: PR #220 — 3 checks (Playwright skipped, bypass secret success, Vercel Preview success). PR #222 — 3 checks (all success/skipped). PR #242 — 3 checks (all success/skipped). No rescue needed.
+- Phase 3 pick: Stream N, next item N-03 (first iteration of ~3). Checked out `claude/audit-remediation/n-ux-perf`, merged origin/main (already up to date).
+- Phase 4 verification: `app/advisor-portal/page.tsx` is 2,761 lines, all "use client". Login-specific state (`loginEmail`, `loginPassword`, `loginMode`, `loginStatus`, `loginError`) and `handleLogin` handler identified as cleanly extractable — no callers outside `view === "login"` branch. `tokenFromUrl` state is dead (set in useEffect, never read in JSX; suppressed with eslint-disable-next-line). `verifyToken` STAYS in parent (handles `?token=XXX` URL flow; sets parent `advisor` + calls `loadData`). No `Advisor` type needed in login component (no callbacks — password login uses `window.location.reload()`; magic link sends email).
+- Phase 5: Created `app/advisor-portal/AdvisorPortalLogin.tsx` (175 lines); updated `app/advisor-portal/page.tsx` (+2/-143). Diff: 177 additions + 143 deletions across 2 files (320 LOC, within 800 cap). Local gates: file-targeted tsc produced only pre-existing sandbox errors (TS2307/TS7026/TS17004/TS7006 — module-resolution without tsconfig + JSX flag; Hardware exception applies). Lint: eslint-config-next missing in sandbox (Hardware exception). CI on PR #242 is authoritative.
+- Phase 6: committed `36e3f6d` (+177/-143, 2 files). Pushed to `claude/audit-remediation/n-ux-perf`. PR #242 body updated (N-03 split into N-03a/b/c; N-03a checked).
+- Phase 7: queue updated on main — N-03 split into N-03a (done) + N-03b/N-03c (pending), In-flight table updated, Done entry prepended, this log added.
+- Status: PROGRESS · stream=N · item=N-03a · pr=#242 · commit=`36e3f6d` · diff=+177/-143 across 2 files
+- Next item: N-03b (extract DashboardTab + LeadsTab + AnalyticsTab with dynamic imports).
 
 ### 2026-04-27T07:30Z — iteration 36 (stream N, items N-01+N-02 done — LCP + TTFB homepage fixes)
 
