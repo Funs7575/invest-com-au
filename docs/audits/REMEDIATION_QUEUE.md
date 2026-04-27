@@ -27,7 +27,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | A | _not started_ | — | — | — |
 | B | `claude/audit-remediation/b-rls-remediation` | #220 | pending — pushed 2026-04-27T06:50Z | B-06 — 2 done (`listing_enquiries` `0bb82daa`, `listing_plans` `be7bff79`) · 5 FP (forum tables) · 1 blocked (`quarterly_reports`) |
 | C | _not started_ | — | — | — |
-| D | `claude/audit-remediation/d-route-tests` | #246 | pending — pushed 2026-04-27T13:10Z | D-01 done (commit `7269510`) · D-02 done (commit `ebf2250`) · D-03 done (commit `0177aa1`) · D-04 done (commit `bea95b1`) · D-05 done (commit `e49375d`) · D-06 done (commit `c0cd3ee`) |
+| D | `claude/audit-remediation/d-route-tests` | #246 | pending — pushed 2026-04-27T13:50Z | D-01 done (commit `7269510`) · D-02 done (commit `ebf2250`) · D-03 done (commit `0177aa1`) · D-04 done (commit `bea95b1`) · D-05 done (commit `e49375d`) · D-06 done (commit `c0cd3ee`) · D-07 done (commit `33230fb`) |
 | E | _not started_ | — | — | — |
 | F | _not started_ | — | — | — |
 | G | _not started_ | — | — | — |
@@ -153,7 +153,7 @@ Highest priority: critical 2 first.
 | D-04 | done | Integration test for `/api/advisor-apply` (root, not just `invite`) | 1 | Done in commit `bea95b1` (PR #246). 16 tests: rate-limit, invalid JSON, missing name/email/type, invite token not found, invite token expired, invite email mismatch, email already registered (409), pending application exists (409), insert error (500), success (no invite), agreement_acceptances via admin client, success with valid invite (marks invitation accepted), confirmation email rejection (fire-and-forget → 200), admin client throw (try/catch swallows → 200). |
 | D-05 | done | Integration test for `/api/stripe/refund-subscription` | 1 | Done in commit `e49375d` (PR #246). 17 tests: unauthenticated → 401, no active subscription → 404, >7-day window → 400, no invoice → 400, no payment_intent → 400, already refunded → 400, boundary at 6.9 days → passes, success (PI as string), success (PI as object → .id extracted), refund idempotency key shape verified, subscriptions.cancel called with prorate:false, email fire-and-forget (fetch throws → 200), RESEND_API_KEY unset (fetch not called), Stripe refunds.create throws → 500, Stripe subscriptions.cancel throws → 500, invoices.list throws → 500. All 17 green. |
 | D-06 | done | Integration test for `/api/stripe/cancel-subscription` | 1 | Done in commit `c0cd3ee` (PR #246). 13 tests: 401 unauthenticated, 404 no active subscription, subscriptions query uses user_id filter, 400 already set to cancel, 200 success body shape, Stripe update called with cancel_at_period_end:true, idempotency key format verified, trialing subscription eligible, admin DB update called with correct data + ISO updated_at, DB update eq filter uses stripe_subscription_id, 500 Stripe update throws, 500 DB lookup throws, 500 DB update throws after Stripe succeeds. |
-| D-07 | pending | Integration test for `/api/stripe/create-portal` | 1 | |
+| D-07 | done | Integration test for `/api/stripe/create-portal` | 1 | Done in commit `33230fb` (PR #246). 12 tests: 401 unauthenticated, 404 profile null, 404 stripe_customer_id null, 200 success + URL returned, customer ID passed to Stripe, return_url from NEXT_PUBLIC_SITE_URL, fallback to https://invest.com.au/account, idempotency key format (portal_userId_timestamp), profiles eq-filter verified, stripe_customer_id column projection, 500 on Stripe throw, 500 on DB throw. |
 | D-08 | pending | Integration test for `/api/stripe/create-contract` | 1 | |
 | D-09 | pending | Integration test for `/api/auth/signout` | 1 | |
 | D-10 | pending | Add `vitest.config.mts` ratchet: API-route coverage floor | 1 | Compute current %, set ratchet just below. |
@@ -703,6 +703,19 @@ distribution.
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-27T13:50Z — iteration 52 (stream D — D-07 done — /api/stripe/create-portal integration test)
+
+- Phase 0: lock acquired.
+- Phase 1: local main had diverged from origin/main (unrelated histories after sandbox reset); reset via `git reset --hard origin/main`. Read queue and defaults end-to-end.
+- Phase 1.5: Types drift check — skipped (no schema changes; CI green on all in-flight PRs).
+- Phase 2 CI check: PR #246 (D) — 3 checks all success/skipped. PR #220 (B) — success/skipped. PR #242 (N) — success/skipped. No rescue needed.
+- Phase 3: priority-walk → B (B-07 pending but step 8) → K complete → N complete → **D next (step 4)**. D-07 pending: integration test for `/api/stripe/create-portal`. Fetched and checked out `claude/audit-remediation/d-route-tests`; already up to date with main.
+- Phase 4: verification — "new test" gate. Read route in full (55 LOC). Branches: auth gate (401), profile null → 404, stripe_customer_id null → 404, success path (200 + URL), billingPortal.sessions.create throw (500), admin DB throw (500). return_url uses `NEXT_PUBLIC_SITE_URL` env with fallback. Idempotency key is `portal_<userId>_<Date.now()>`. Test must cover ≥60% branches — all 6 branches covered.
+- Phase 5: installed node_modules (`npm install --legacy-peer-deps`); wrote 12-test suite in `__tests__/api/stripe-create-portal.test.ts`. All 12 green (vitest 3.2.4). Lint exit 0 (no errors in test file; pre-existing warnings in unrelated files).
+- Phase 6: committed `33230fb` (+243/-0, 1 file), pushed to `claude/audit-remediation/d-route-tests`. PR #246 body updated to mark D-07 done.
+- Phase 7: queue updated on main — D-07 marked done, In-flight table D row updated, this log added.
+- STATUS: PROGRESS · stream=D · item=D-07 · pr=#246 · commit=`33230fb` · diff=+243/-0 across 1 file
 
 ### 2026-04-27T13:10Z — iteration 51 (stream D — D-06 done — /api/stripe/cancel-subscription integration test)
 
