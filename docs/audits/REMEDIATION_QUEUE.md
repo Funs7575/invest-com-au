@@ -27,7 +27,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | A | _not started_ | — | — | — |
 | B | `claude/audit-remediation/b-rls-remediation` | #220 | pending — pushed 2026-04-27T06:50Z | B-06 — 2 done (`listing_enquiries` `0bb82daa`, `listing_plans` `be7bff79`) · 5 FP (forum tables) · 1 blocked (`quarterly_reports`) |
 | C | _not started_ | — | — | — |
-| D | `claude/audit-remediation/d-route-tests` | #246 | pending — pushed 2026-04-27T12:48Z | D-01 done (commit `7269510`) · D-02 done (commit `ebf2250`) · D-03 done (commit `0177aa1`) · D-04 done (commit `bea95b1`) · D-05 done (commit `e49375d`) |
+| D | `claude/audit-remediation/d-route-tests` | #246 | pending — pushed 2026-04-27T13:10Z | D-01 done (commit `7269510`) · D-02 done (commit `ebf2250`) · D-03 done (commit `0177aa1`) · D-04 done (commit `bea95b1`) · D-05 done (commit `e49375d`) · D-06 done (commit `c0cd3ee`) |
 | E | _not started_ | — | — | — |
 | F | _not started_ | — | — | — |
 | G | _not started_ | — | — | — |
@@ -152,7 +152,7 @@ Highest priority: critical 2 first.
 | D-03 | done | Integration test for `/api/advisor-lead` | 1 | Done in commit `0177aa1` (PR #246). 20 tests: invalid JSON, name absent/too-short, domestic invalid/missing phone, international phone too short, invalid email, consent absent/false, IP rate-limit (key includes IP), domestic insert success + source field, international insert with full context (investor_country, visa_status, lead_tier), AU phone validation skipped for intl leads, non-duplicate DB error (500), duplicate via code 23505 (200), duplicate via message text (200), name truncation + trim, default advisor_type, default quiz_answers. |
 | D-04 | done | Integration test for `/api/advisor-apply` (root, not just `invite`) | 1 | Done in commit `bea95b1` (PR #246). 16 tests: rate-limit, invalid JSON, missing name/email/type, invite token not found, invite token expired, invite email mismatch, email already registered (409), pending application exists (409), insert error (500), success (no invite), agreement_acceptances via admin client, success with valid invite (marks invitation accepted), confirmation email rejection (fire-and-forget → 200), admin client throw (try/catch swallows → 200). |
 | D-05 | done | Integration test for `/api/stripe/refund-subscription` | 1 | Done in commit `e49375d` (PR #246). 17 tests: unauthenticated → 401, no active subscription → 404, >7-day window → 400, no invoice → 400, no payment_intent → 400, already refunded → 400, boundary at 6.9 days → passes, success (PI as string), success (PI as object → .id extracted), refund idempotency key shape verified, subscriptions.cancel called with prorate:false, email fire-and-forget (fetch throws → 200), RESEND_API_KEY unset (fetch not called), Stripe refunds.create throws → 500, Stripe subscriptions.cancel throws → 500, invoices.list throws → 500. All 17 green. |
-| D-06 | pending | Integration test for `/api/stripe/cancel-subscription` | 1 | |
+| D-06 | done | Integration test for `/api/stripe/cancel-subscription` | 1 | Done in commit `c0cd3ee` (PR #246). 13 tests: 401 unauthenticated, 404 no active subscription, subscriptions query uses user_id filter, 400 already set to cancel, 200 success body shape, Stripe update called with cancel_at_period_end:true, idempotency key format verified, trialing subscription eligible, admin DB update called with correct data + ISO updated_at, DB update eq filter uses stripe_subscription_id, 500 Stripe update throws, 500 DB lookup throws, 500 DB update throws after Stripe succeeds. |
 | D-07 | pending | Integration test for `/api/stripe/create-portal` | 1 | |
 | D-08 | pending | Integration test for `/api/stripe/create-contract` | 1 | |
 | D-09 | pending | Integration test for `/api/auth/signout` | 1 | |
@@ -645,6 +645,7 @@ distribution.
 
 ## Done
 
+- 2026-04-27 · D-06 · Integration test for `POST /api/stripe/cancel-subscription`: 13 tests — 401 unauthenticated, 404 no active subscription, user_id filter verified, 400 already set to cancel, 200 success body shape (success:true + cancel_at_period_end:true), Stripe update called with cancel_at_period_end:true, idempotency key format (cancel_<sub_id>_<ts>), trialing subscription eligible, admin DB update called with correct payload + ISO updated_at, DB update eq filter uses stripe_subscription_id, 500 Stripe update throws, 500 DB lookup throws, 500 DB update throws after Stripe succeeds. +187/-48 across 1 file. · commit `c0cd3ee` · pr #246
 - 2026-04-27 · D-05 · Integration test for `POST /api/stripe/refund-subscription`: 17 tests — unauthenticated (401), no subscription (404), >7-day window (400), 6.9-day boundary passes, no invoice (400), no payment_intent (400), already refunded (400), success + PI-as-string (200), PI-as-object .id extraction (200), idempotency key shape verified, subscriptions.cancel with prorate:false, email fire-and-forget (fetch throws → 200), RESEND_API_KEY unset (fetch not called), refunds.create throws (500), cancel throws (500), invoices.list throws (500). +330/-0 across 1 file. · commit `e49375d` · pr #246
 - 2026-04-27 · D-04 · Integration test for `POST /api/advisor-apply` (root, not just invite): 16 tests covering rate-limit, invalid JSON, missing name/email/type → 400, invite token not found → 400, invite token expired → 400, invite email mismatch → 400, email already registered → 409, pending application exists → 409, advisor_applications insert error → 500, success (no invite) + confirms no invite-table touch, records agreement_acceptances via admin client, success with valid invite token (advisor_firm_invitations called twice: SELECT + UPDATE), sendApplicationConfirmation rejection (fire-and-forget → 200), createAdminClient throw (try/catch → 200). +314/-0 across 1 file. · commit `bea95b1` · pr #246
 - 2026-04-27 · D-03 · Integration test for `POST /api/advisor-lead`: 20 tests covering invalid JSON, name absent/too-short, domestic invalid/missing AU phone, international phone too-short, invalid email, consent absent/false, IP rate-limit (key includes IP), domestic insert success (source='advisor-lead'), international insert with full intl context (investor_country, visa_status, investor_goal_intl, lead_tier='international'), AU phone validation skipped for intl leads, non-duplicate DB error (500), duplicate-by-code-23505 (200), duplicate-by-message-text (200), name truncation + trim to 100 chars, default advisor_type fallback to 'not-sure', default quiz_answers fallback to {}. +279/-0 across 1 file. · commit `0177aa1` · pr #246
@@ -702,6 +703,19 @@ distribution.
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-27T13:10Z — iteration 51 (stream D — D-06 done — /api/stripe/cancel-subscription integration test)
+
+- Phase 0: lock acquired.
+- Phase 1: local main had diverged from origin/main; reset via `git reset --hard origin/main`. Read queue and defaults end-to-end.
+- Phase 1.5: Types drift check — skipped (no schema changes; CI green on all in-flight PRs).
+- Phase 2 CI check: PR #246 (D), #220 (B), #222 (K), #242 (N) — all checks success or skipped. No rescue needed.
+- Phase 3: priority-walk → B (B-07 pending but step 8) → K complete → N complete → **D next (step 4)**. D-06 pending: integration test for `/api/stripe/cancel-subscription`. Checked out `claude/audit-remediation/d-route-tests`.
+- Phase 4: verification — "new test" gate. A pre-existing `__tests__/api/stripe-cancel.test.ts` existed (created in PR #229 metrics dashboard commit, not D-stream work) with only 5 shallow tests. Route has 4 distinct code paths (401 / 404 / 400-already-cancelling / success), 2 distinct admin DB calls, and 3 throw-catch paths. Existing 5 tests covered <40% branches — well below the ≥60% requirement. Expanded to 13 tests.
+- Phase 5: expanded test file to 13 tests covering all branches. All 13 green (vitest 3.2.4). Lint exit 0.
+- Phase 6: committed `c0cd3ee` (+187/-48, 1 file), pushed to `claude/audit-remediation/d-route-tests`. PR #246 body updated to mark D-06 done.
+- Phase 7: queue updated on main — D-06 marked done, In-flight table D row updated, Done entry prepended, this log added.
+- STATUS: PROGRESS · stream=D · item=D-06 · pr=#246 · commit=`c0cd3ee` · diff=+187/-48 across 1 file
 
 ### 2026-04-27T12:48Z — iteration 50 (stream D — D-05 done — /api/stripe/refund-subscription integration test)
 
