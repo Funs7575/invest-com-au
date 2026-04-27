@@ -130,6 +130,10 @@ If an auto-merge GitHub Action is set up (see `.github/workflows/audit-remediati
 | T | `claude/audit-remediation/t-deferred-deps` | TypeScript 6 + ESLint 10 + Vitest 4 (deferred upgrades, promoted to active) | iter 22+ "max 100%" · issue #221 |
 | U | `claude/audit-remediation/u-pre-launch-ops` | Status page, support inbox, email deliverability, LH-CI gate, axe-core gate, load-test, monitoring runbook, closed-beta plan, uptime monitor | iter 22+ "max 100%" · issue #221 |
 | V | `claude/audit-remediation/v-polish-extras` | Sentry release tracking, sourcemap verification, PostHog privacy, GDPR consent, ACL checklist, cookie domain, 301 redirect map, perf budgets, external a11y, pen-test prep | iter 22+ "max 100%" · issue #221 |
+| W | `claude/audit-remediation/w-hub-foundation` | Hub component extraction (HubHero, HubServiceGrid, HubArticleStrip, DirectoryGrid, CalculatorShell, EligibilityQuiz, HubPage HOC) + migrations of existing hubs onto the new template | 2026-04-27 hub revenue expansion · `docs/audits/HUB_BLUEPRINT.md` |
+| X | `claude/audit-remediation/x-admin-backlog` | Clear `createAdminClient` from 17 public RSC pages; ratchet ESLint rule from `warn` to `error` | 2026-04-27 hub foundation · extension of stream C |
+| Y | `claude/audit-remediation/y-registry-nav` | Registry-driven `<MegaMenu>`, auto-sitemap, `<DatedStatBadge>` + cron stale-check + CI lint | 2026-04-27 hub foundation · `docs/audits/HUB_BLUEPRINT.md` §2 + §7 |
+| Z | `claude/audit-remediation/z-tier1-hubs` | Tier-1 hub builds: `/private-markets`, `/startup` (relocate `/grants`), `/wholesale` — each hub: HubConfig + sub-pages + directory + calculator + quiz + lead magnet + article seeds + smoke E2E | 2026-04-27 hub revenue expansion · `docs/audits/HUB_BLUEPRINT.md` §5 |
 
 ## Priority order
 
@@ -160,6 +164,13 @@ When choosing the next item, walk in this order and pick the first non-blocked o
 21. **U (pre-launch ops)** — status page, support inbox, email deliverability, LH-CI gate, axe-core gate, load-test, monitoring runbook, closed-beta plan, uptime monitor. Several items are `needs-user` — surface them early so the founder has time to act.
 22. **V (polish + extras)** — Sentry release tracking, sourcemap verification, PostHog privacy, GDPR consent, ACL checklist, cookie domain pre-flight, 301 redirect map for legacy WordPress URLs, perf budgets, external a11y, pen-test prep.
 23. **T (deferred deps)** — TypeScript 6 + ESLint 10 + Vitest 4. Run LAST because high blast radius — depends on stream D's restored test coverage being green to detect regression. If the upgrade fails, the loop reverts and surfaces to Blocked rather than landing a half-broken main.
+
+**2026-04-27 hub-revenue extension (founder brief: "make every hub leverage every monetisation opportunity, deep-dive then execute").** Four streams added (W/X/Y/Z) for hub foundation + registry-driven nav + Tier-1 hub builds. Strategic doc: `docs/audits/HUB_BLUEPRINT.md`. Streams added to priority order below; founder may hand-edit to slot above quality streams if velocity outweighs polish.
+
+24. **W (hub foundation)** — extract `<HubHero>`, `<HubServiceGrid>`, `<HubArticleStrip>`, `<HubDeepDiveGrid>`, `<HubAdvisorCTA>`, `<HubFAQ>`, `<DirectoryGrid>` family, `<CalculatorShell>`, `<EligibilityQuiz>`, `<CrossHubLinks>`, `<HubPage>` HOC. Migrate `/smsf` and `/grants` first (proof). Without this layer every new hub re-implements layout — biggest velocity multiplier in the roadmap. Items W-01..W-15.
+25. **X (admin backlog)** — clear `createAdminClient` from the 17 public RSC pages identified during the foundation audit; ratchet `eslint.config.mjs` rule from `warn` to `error`. Extension of stream C. Items X-01..X-09.
+26. **Y (registry + nav + dated-stats)** — registry-driven `<MegaMenu>` replacing the 666-line hardcoded `Header.tsx`, auto-sitemap, breadcrumbs from registry, `<DatedStatBadge>` + cron stale-check + CI lint that fails build on unwrapped dated claims. Items Y-01..Y-08. Depends on W landing.
+27. **Z (Tier-1 hub builds)** — `/private-markets`, `/startup` (absorbs `/grants`), `/wholesale`. Each hub: HubConfig row + sub-pages + directory + calculator + quiz + lead magnet + article seeds + smoke E2E. Items Z-01..Z-21. Depends on Y landing. Tier-2/3 hubs (`/retirement`, `/aged-care`, `/angel`, `/business-for-sale`, `/crypto-exchange`, `/crypto-tax`, `/family-office`, `/find-accountant`, `/find-mortgage-broker`) queued as new streams after Z lands.
 
 `needs-user` items in any stream surface to Blocked when picked. The loop notes the question and continues to the next non-blocked item.
 
