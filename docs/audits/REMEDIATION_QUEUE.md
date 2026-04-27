@@ -27,7 +27,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | A | _not started_ | — | — | — |
 | B | `claude/audit-remediation/b-rls-remediation` | #220 | pending — pushed 2026-04-27T06:50Z | B-06 — 2 done (`listing_enquiries` `0bb82daa`, `listing_plans` `be7bff79`) · 5 FP (forum tables) · 1 blocked (`quarterly_reports`) |
 | C | _not started_ | — | — | — |
-| D | `claude/audit-remediation/d-route-tests` | #246 | pending — pushed 2026-04-27T16:37Z | D-01 done (commit `7269510`) · D-02 done (commit `ebf2250`) · D-03 done (commit `0177aa1`) · D-04 done (commit `bea95b1`) · D-05 done (commit `e49375d`) · D-06 done (commit `c0cd3ee`) · D-07 done (commit `33230fb`) · D-08 done (commit `311df3f`) · D-09 done (commit `8e2d35d`) |
+| D | `claude/audit-remediation/d-route-tests` | #246 | pending — pushed 2026-04-27T17:12Z | D-01 done (commit `7269510`) · D-02 done (commit `ebf2250`) · D-03 done (commit `0177aa1`) · D-04 done (commit `bea95b1`) · D-05 done (commit `e49375d`) · D-06 done (commit `c0cd3ee`) · D-07 done (commit `33230fb`) · D-08 done (commit `311df3f`) · D-09 done (commit `8e2d35d`) · D-10 done (commit `4e702c1`) |
 | E | _not started_ | — | — | — |
 | F | _not started_ | — | — | — |
 | G | _not started_ | — | — | — |
@@ -202,7 +202,7 @@ Highest priority: critical 2 first.
 | D-07 | done | Integration test for `/api/stripe/create-portal` | 1 | Done in commit `33230fb` (PR #246). 12 tests: 401 unauthenticated, 404 profile null, 404 stripe_customer_id null, 200 success + URL returned, customer ID passed to Stripe, return_url from NEXT_PUBLIC_SITE_URL, fallback to https://invest.com.au/account, idempotency key format (portal_userId_timestamp), profiles eq-filter verified, stripe_customer_id column projection, 500 on Stripe throw, 500 on DB throw. |
 | D-08 | done | Integration test for `/api/stripe/create-contract` | 1 | Done in commit `311df3f` (PR #246). 16 tests: 401 no cookie; 401 invalid/expired session (null DB); 400 missing advisor_id/plan/billing_cycle; 400 invalid plan value; 400 invalid billing_cycle value; 403 professional_id mismatch; 200 monthly success; 200 annual success; unit_amount=9900+interval=month for basic/monthly; unit_amount=499000+interval=year for premium/annual; metadata includes advisor_id+plan+billing_cycle; success_url+cancel_url use NEXT_PUBLIC_SITE_URL; advisor_sessions query scoped by cookie token; 500 Stripe throws. |
 | D-09 | done | Integration test for `/api/auth/signout` | 1 | Done in commit `8e2d35d` (PR #246). 2 tests: success path (`signOut()` resolves → `{success:true}` 200); catch path (`signOut()` throws → `{error:"Failed to sign out"}` 500). 100% branch coverage on the 12-line route. |
-| D-10 | pending | Add `vitest.config.mts` ratchet: API-route coverage floor | 1 | Compute current %, set ratchet just below. |
+| D-10 | done | Add `vitest.config.mts` ratchet: API-route coverage floor | 1 | Global thresholds ratcheted 42→44 (lines/stmt), 72→73 (branches). API-route floor added: lines/stmt 13, branches 58, functions 30. commit `4e702c1` PR #246. |
 | D-11 | pending | Backfill remaining 228 untested routes (chunked: ~5 per iteration, prioritised by traffic) | ~45 | Lowest priority within D; ongoing. |
 
 ### Stream A — DB schema drift backfill (issue #214)
@@ -956,6 +956,7 @@ Items that ship LAST, in the final week before launch (Month 4 of pre-launch roa
 
 ## Done
 
+- 2026-04-27 · D-10 · `vitest.config.mts` coverage ratchet: global thresholds 42/72/63 → 44/73/63 (lines/stmt/branches/functions); per-glob API-route floor added `"app/api/**/*.ts": { lines: 13, branches: 58, functions: 30, statements: 13 }`. Measured post-D-01..D-09: overall 44.45%/73.02%/63.74%; API-route scoped 13.82%/58.35%/30.18%. +25/-23 across 1 file. · commit `4e702c1` · pr #246
 - 2026-04-27 · D-09 · Integration test for `POST /api/auth/signout`: 2 tests — success path (`{success:true}` 200) and catch path (`{error:"Failed to sign out"}` 500). 100% branch coverage on the 12-line route. +40/-0 across 1 file. · commit `8e2d35d` · pr #246
 - 2026-04-27 · D-08 · Integration test for `POST /api/stripe/create-contract`: 16 tests — 401 no cookie, 401 invalid/expired session, 400 missing fields (advisor_id/plan/billing_cycle), 400 invalid plan, 400 invalid billing_cycle, 403 professional_id mismatch, 200 monthly success, 200 annual success, unit_amount=9900+interval=month for basic/monthly, unit_amount=499000+interval=year for premium/annual (catches price-table drift), metadata advisor_id+plan+billing_cycle, success_url+cancel_url use NEXT_PUBLIC_SITE_URL, advisor_sessions scoped by cookie token, 500 Stripe throws. +248/-0 across 1 file. · commit `311df3f` · pr #246
 - 2026-04-27 · Y-05 · `<DatedStatBadge>` component + `lib/dated-stats.ts` DATED_STATS registry + daily-8 cron stale-check. `isStale` / `getStaleStats` / `getUpcomingStaleStats(withinDays)` helpers; `data-stales-at` ISO attribute for CI gate (V-NEW-01); dev-only ⚠ indicator when stalesAt is past today; email alert to founder on stale or within-7-day entries. 21 tests green. V-NEW-01 dependency now met — unblocked once PR #253 merges. · commit `fb9dec3` · pr #253
@@ -1018,6 +1019,19 @@ Items that ship LAST, in the final week before launch (Month 4 of pre-launch roa
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-27T17:12Z — iteration 59 (stream D — D-10 done — vitest coverage ratchet + API-route floor)
+
+- Phase 0: lock acquired.
+- Phase 1: local main had diverged from origin/main (50-commit divergence, forced-update pattern); reset via `git reset --hard origin/main`. Read queue and defaults end-to-end.
+- Phase 1.5: Types drift check — skipped (no schema changes since iter 58).
+- Phase 2 CI check: PRs #246 (D), #252 (V), #253 (Y), #220 (B) — all checks success or skipped. No rescue needed.
+- Phase 3: priority-walk → V-NEW-01/02 blocked, V-NEW-03/04 done, Y-05 done, K complete, N complete → **D-10 pending** (step 6 in priority order). Checked out `claude/audit-remediation/d-route-tests`.
+- Phase 4: verification — coverage ratchet item. Read existing `vitest.config.mts`; confirmed Vitest v3 (3.2.4) per-glob threshold support via `{ [glob: string]: Pick<Thresholds, ...> } & Thresholds` type. Ran full `npm run test:coverage` (300s timeout) — completed without OOM; global: lines/stmt 44.45%, branches 73.02%, functions 63.74%. Ran scoped `--coverage.include="app/api/**/*.ts"` run: lines/stmt 13.82%, branches 58.35%, functions 30.18%. All floors set 1pp below measured values per CLAUDE.md ratchet policy.
+- Phase 5: updated `vitest.config.mts` — global thresholds raised 42/72/63 → 44/73/63; added per-glob `"app/api/**/*.ts"` threshold object. Config validated via `npx vitest run __tests__/api/auth-signout.test.ts` (2/2 green). Lint exit 0.
+- Phase 6: committed `4e702c1` (+25/-23, 1 file), pushed to `claude/audit-remediation/d-route-tests`. PR #246 body updated (D-10 checked).
+- Phase 7: queue updated on main — D-10 done, In-flight D row updated, Done entry prepended, this log added.
+- STATUS: PROGRESS · stream=D · item=D-10 · pr=#246 · commit=`4e702c1` · diff=+25/-23 across 1 file
 
 ### 2026-04-27T16:37Z — iteration 58 (stream D — D-09 done — /api/auth/signout integration test)
 
