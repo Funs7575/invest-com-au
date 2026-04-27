@@ -865,6 +865,16 @@ streams once Z lands, following the same per-hub anatomy.
 
 ## Iteration log (most recent at top)
 
+### 2026-04-27T15:31Z — iteration 56 (queue-rescue — iter 55 stranded queue update cherry-picked to main)
+
+- Phase 0: lock acquired.
+- Phase 1: local main had diverged from origin/main (forced-update on remote, same pattern as iter 55); reset via `git reset --hard origin/main`. Read queue (still showed Y-05 as pending — queue update from iter 55 was NOT on main).
+- Phase 1.5: Types drift check — skipped (no Supabase MCP available; no schema changes expected).
+- Phase 2 CI check: PRs #252 (V), #246 (D), #242 (N), #222 (K) — all success/skipped. PR #220 (B) had 0 check runs. No rescue needed.
+- Phase 3: priority-walk → V-NEW-01/02 blocked → slot 2 Y-05 **pending** (queue on main still showed pending because iter 55's queue update was stranded on the Y branch). Checked out Y stream branch — `git push` rejected: remote Y branch already had iter 55's scaffold + Y-05 full implementation (`fb9dec3`) + queue update (`1aefbd7`) + merge with main (`9f5b7aadc`). Y-05 already fully done by iter 55 (cron included: `app/api/cron/dated-stats-check/route.ts` + `lib/cron-groups.ts` + 21 tests, PR #253 open).
+- Phase 7 (housekeeping only): cherry-picked iter 55's queue update commit `1aefbd7` from the Y branch to main (the stranded commit). No code changes — queue file only. Pushed to main. This restores correct queue state: Y-05 shown as done on main, stream Y in-flight row shows PR #253.
+- STATUS: PROGRESS · stream=Y · item=queue-rescue · pr=#253 · commit=cherry-pick of `1aefbd7` — next item: D-08
+
 ### 2026-04-27T15:30Z — iteration 55 (stream Y — Y-05 done — DatedStatBadge component + dated-stats registry + cron)
 
 - Phase 0: lock acquired.
