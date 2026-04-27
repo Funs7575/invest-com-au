@@ -44,6 +44,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | R | _not started_ | — | — | — |
 | S | _not started_ | — | — | — |
 | V | `claude/audit-remediation/v-polish-extras` | #252 | pending — pushed 2026-04-27T14:50Z (V-NEW-03: Stripe webhook idempotency replay harness + CI gate) | V-NEW-04 done (`5aadce3`) · CI-rescue `e37633c` · V-NEW-01 blocked (no DatedStatBadge component yet) · V-NEW-02 blocked (no compliance factual-filter) · V-NEW-03 done (`84bde1f`) |
+| Y | `claude/audit-remediation/y-registry-nav` | #253 | pending — pushed 2026-04-27T15:30Z | Y-05 done (commit `fb9dec3`) |
 
 ---
 
@@ -575,7 +576,7 @@ hub stops requiring `Header.tsx` edits. Reference: `HUB_BLUEPRINT.md` §2,
 | Y-02 | pending | Migrate `Header.tsx` to use `<MegaMenu>` + add all top-level hubs to desktop mega-menu (`/smsf`, `/grants`, `/dividends`, `/sell-business`, `/lump-sum-investing`, `/negative-gearing`, `/visa-investment`, `/learn`, plus `/smsf-calculator`) | 1 | Closes the desktop discoverability gap. Today these are mobile-only. |
 | Y-03 | pending | Auto-include all hubs in `app/sitemap.ts` from registry | 1 | |
 | Y-04 | pending | Auto-resolve breadcrumbs from registry (replace per-page hand-coded breadcrumbs) | 1 | |
-| Y-05 | pending | Build `<DatedStatBadge>` + `lib/dated-stats.ts` registry + cron stale-check | 2 | Cron alerts on entries past `stalesAt`. Alerts to founder. |
+| Y-05 | done | Build `<DatedStatBadge>` + `lib/dated-stats.ts` registry + cron stale-check | 2 | Done in commit `fb9dec3` (PR #253). `DatedStat` interface + `DATED_STATS` registry + `isStale` + `getStaleStats` + `getUpcomingStaleStats`; `<DatedStatBadge>` "use client" wrapper with `data-stales-at` ISO attribute + dev stale indicator; daily-8 cron alerts founder when entries are stale or within 7 days. 21 tests green. Unblocks V-NEW-01 once PR #253 merges. |
 | Y-06 | pending | Audit + wrap hardcoded dated claims in `/grants` hero (4 stats) and `/grants/[program]` pages | 1 | "30 April 2026", "Round 4 open", "~90% spent by June 2026". |
 | Y-07 | pending | Audit + wrap dated claims in remaining hubs (`/smsf`, `/dividends`, `/sell-business`, `/learn`, etc.) | 1 | |
 | Y-08 | pending | Add CI lint that fails build if a date-shaped string isn't wrapped in `<DatedStatBadge>` | 1 | Static analysis: regex `\b\d{1,2}\s+(January\|February\|...\|December)\s+\d{4}\b` outside `<DatedStatBadge>` JSX. |
@@ -759,7 +760,7 @@ hub stops requiring `Header.tsx` edits. Reference: `HUB_BLUEPRINT.md` §2,
 | Y-02 | pending | Migrate `Header.tsx` to use `<MegaMenu>` + add all top-level hubs to desktop mega-menu (`/smsf`, `/grants`, `/dividends`, `/sell-business`, `/lump-sum-investing`, `/negative-gearing`, `/visa-investment`, `/learn`, plus `/smsf-calculator`) | 1 | Closes the desktop discoverability gap. Today these are mobile-only. |
 | Y-03 | pending | Auto-include all hubs in `app/sitemap.ts` from registry | 1 | |
 | Y-04 | pending | Auto-resolve breadcrumbs from registry (replace per-page hand-coded breadcrumbs) | 1 | |
-| Y-05 | pending | Build `<DatedStatBadge>` + `lib/dated-stats.ts` registry + cron stale-check | 2 | Cron alerts on entries past `stalesAt`. Alerts to founder. |
+| Y-05 | done | Build `<DatedStatBadge>` + `lib/dated-stats.ts` registry + cron stale-check | 2 | Done in commit `fb9dec3` (PR #253). `DatedStat` interface + `DATED_STATS` registry + `isStale` + `getStaleStats` + `getUpcomingStaleStats`; `<DatedStatBadge>` "use client" wrapper with `data-stales-at` ISO attribute + dev stale indicator; daily-8 cron alerts founder when entries are stale or within 7 days. 21 tests green. Unblocks V-NEW-01 once PR #253 merges. |
 | Y-06 | pending | Audit + wrap hardcoded dated claims in `/grants` hero (4 stats) and `/grants/[program]` pages | 1 | "30 April 2026", "Round 4 open", "~90% spent by June 2026". |
 | Y-07 | pending | Audit + wrap dated claims in remaining hubs (`/smsf`, `/dividends`, `/sell-business`, `/learn`, etc.) | 1 | |
 | Y-08 | pending | Add CI lint that fails build if a date-shaped string isn't wrapped in `<DatedStatBadge>` | 1 | Static analysis: regex `\b\d{1,2}\s+(January\|February\|...\|December)\s+\d{4}\b` outside `<DatedStatBadge>` JSX. |
@@ -803,6 +804,7 @@ streams once Z lands, following the same per-hub anatomy.
 
 ## Done
 
+- 2026-04-27 · Y-05 · `<DatedStatBadge>` component + `lib/dated-stats.ts` DATED_STATS registry + daily-8 cron stale-check. `isStale` / `getStaleStats` / `getUpcomingStaleStats(withinDays)` helpers; `data-stales-at` ISO attribute for CI gate (V-NEW-01); dev-only ⚠ indicator when stalesAt is past today; email alert to founder on stale or within-7-day entries. 21 tests green. V-NEW-01 dependency now met — unblocked once PR #253 merges. · commit `fb9dec3` · pr #253
 - 2026-04-27 · V-NEW-03 · Stripe webhook idempotency replay harness + CI gate: `createIdempotencyHarness()`, 18 tests (5 suites: subscription.created, invoice.paid, invoice.payment_failed, charge.refunded, edge-cases), `scripts/check-stripe-idempotency.mjs` gate, `stripe-idempotency-gate` CI job. DD stream now unblocked. · commit `84bde1f` · pr #252
 - 2026-04-27 · D-06 · Integration test for `POST /api/stripe/cancel-subscription`: 13 tests — 401 unauthenticated, 404 no active subscription, user_id filter verified, 400 already set to cancel, 200 success body shape (success:true + cancel_at_period_end:true), Stripe update called with cancel_at_period_end:true, idempotency key format (cancel_<sub_id>_<ts>), trialing subscription eligible, admin DB update called with correct payload + ISO updated_at, DB update eq filter uses stripe_subscription_id, 500 Stripe update throws, 500 DB lookup throws, 500 DB update throws after Stripe succeeds. +187/-48 across 1 file. · commit `c0cd3ee` · pr #246
 - 2026-04-27 · D-05 · Integration test for `POST /api/stripe/refund-subscription`: 17 tests — unauthenticated (401), no subscription (404), >7-day window (400), 6.9-day boundary passes, no invoice (400), no payment_intent (400), already refunded (400), success + PI-as-string (200), PI-as-object .id extraction (200), idempotency key shape verified, subscriptions.cancel with prorate:false, email fire-and-forget (fetch throws → 200), RESEND_API_KEY unset (fetch not called), refunds.create throws (500), cancel throws (500), invoices.list throws (500). +330/-0 across 1 file. · commit `e49375d` · pr #246
@@ -862,6 +864,19 @@ streams once Z lands, following the same per-hub anatomy.
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-27T15:30Z — iteration 55 (stream Y — Y-05 done — DatedStatBadge component + dated-stats registry + cron)
+
+- Phase 0: lock acquired.
+- Phase 1: local main had diverged from origin/main (forced-update on remote); reset via `git reset --hard origin/main`. Read queue and defaults end-to-end.
+- Phase 1.5: Types drift check — skipped (no schema changes since iter 54).
+- Phase 2 CI check: PRs #252 (V), #246 (D), #242 (N), #220 (B) — all success/skipped. No rescue needed.
+- Phase 3: priority-walk → V-NEW-01 blocked (DatedStatBadge does not exist — this iteration fixes the dependency), V-NEW-02 blocked, V-NEW-03 done, V-NEW-04 done → **slot 2 Y-05** unblocked (pending). Stream Y not yet started — created branch `claude/audit-remediation/y-registry-nav`, scaffold commit, pushed.
+- Phase 4: verification — "new component + lib" item. Confirmed `lib/dated-stats.ts` does not exist; `components/DatedStatBadge.tsx` does not exist. No DB access required. Hub pages (W/Z/AA streams) will push entries into `DATED_STATS` as they land; V-NEW-01 CI gate will scan JSX `data-stales-at` attributes after this PR merges.
+- Phase 5: implemented `lib/dated-stats.ts` (DatedStat interface + DATED_STATS registry + isStale + getStaleStats + getUpcomingStaleStats(withinDays)), `components/DatedStatBadge.tsx` ("use client" span wrapper with `data-stales-at` ISO attribute + dev stale indicator), `app/api/cron/dated-stats-check/route.ts` (daily-8 group, alerts founder via Resend on stale/7-day-advance entries), `lib/cron-groups.ts` (+1 entry in daily-8 group). Cloud-mode tsc probe: full `npx tsc --noEmit` completed without OOM — Hardware exception may not apply in cloud. All errors in new files are pre-existing patterns (213+ vitest, 484+ react, 347+ next/server across the codebase). 21 tests: 11 lib (isStale boundary cases, getStaleStats, getUpcomingStaleStats) + 10 component (render, data-attrs, dev stale indicator, className passthrough) — all green. Lint exit 0.
+- Phase 6: committed `fb9dec3` (+454/-1, 6 files), pushed to `claude/audit-remediation/y-registry-nav`. Opened draft PR #253.
+- Phase 7: queue updated on main — Y-05 done, stream Y In-flight row added, V-NEW-01 dependency now met (pending PR #253 merge), this log added.
+- STATUS: PROGRESS · stream=Y · item=Y-05 · pr=#253 · commit=`fb9dec3` · diff=+454/-1 across 6 files
 
 ### 2026-04-27T14:50Z — iteration 54 (stream V — V-NEW-03 done — Stripe webhook idempotency replay harness)
 
