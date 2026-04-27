@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import Icon from "@/components/Icon";
 import HubLeadForm from "@/components/leads/HubLeadForm";
+import { formatAUD } from "@/lib/currency";
 
 const SMALL_CO_OFFSET = 0.435;   // refundable, < $20M turnover
 const LARGE_CO_OFFSET = 0.385;   // non-refundable, > $20M turnover (simplified)
@@ -18,14 +19,6 @@ const ELIGIBLE_ACTIVITIES: Array<{ id: string; label: string; eligible: boolean 
   { id: "content",       label: "Content writing or SEO",                              eligible: false },
   { id: "compliance",    label: "Regulatory compliance testing",                       eligible: false },
 ];
-
-function formatAUD(n: number): string {
-  return new Intl.NumberFormat("en-AU", {
-    style: "currency",
-    currency: "AUD",
-    maximumFractionDigits: 0,
-  }).format(n);
-}
 
 export default function RdTaxCalculator() {
   const [turnover, setTurnover] = useState<number>(2_000_000);

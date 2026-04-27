@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
+import { formatAUD } from "@/lib/currency";
 
 const TAX_RATES: Array<{ id: string; label: string; rate: number; isSmsf?: boolean; pension?: boolean }> = [
   { id: "0",        label: "0% — under threshold",   rate: 0 },
@@ -16,10 +17,6 @@ const TAX_RATES: Array<{ id: string; label: string; rate: number; isSmsf?: boole
 
 const CORPORATE_RATE = 0.30;
 
-function formatAUD(n: number): string {
-  return new Intl.NumberFormat("en-AU", { style: "currency", currency: "AUD", maximumFractionDigits: 2 }).format(n);
-}
-
 export default function FrankingCalculatorClient() {
   const [dividend, setDividend] = useState<number>(1_000);
   const [frankingPct, setFrankingPct] = useState<number>(100);
@@ -31,9 +28,8 @@ export default function FrankingCalculatorClient() {
     const frankingCredit = frankedPortion * (CORPORATE_RATE / (1 - CORPORATE_RATE));
     const grossedUp = dividend + frankingCredit;
     const taxOnGrossedUp = grossedUp * tr.rate;
-    const netTaxAfterOffset = taxOnGrossedUp - frankingCredit;
-    const refundOrTax = netTaxAfterOffset; // negative = refund
-    const netIncome = dividend - Math.max(0, refundOrTax) + Math.max(0, -refundOrTax);
+    const refundOrTax = taxOnGrossedUp - frankingCredit; // negative = refund
+    const netIncome = dividend - refundOrTax;
     return {
       tr,
       frankingCredit,
@@ -92,29 +88,29 @@ export default function FrankingCalculatorClient() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div>
               <p className="text-[10px] uppercase tracking-wider font-extrabold text-slate-400">Franking credit</p>
-              <p className="text-lg md:text-xl font-extrabold mt-1">{formatAUD(calc.frankingCredit)}</p>
+              <p className="text-lg md:text-xl font-extrabold mt-1">{formatAUD(calc.frankingCredit, 2)}</p>
             </div>
             <div>
               <p className="text-[10px] uppercase tracking-wider font-extrabold text-slate-400">Grossed-up dividend</p>
-              <p className="text-lg md:text-xl font-extrabold mt-1">{formatAUD(calc.grossedUp)}</p>
+              <p className="text-lg md:text-xl font-extrabold mt-1">{formatAUD(calc.grossedUp, 2)}</p>
             </div>
             <div>
               <p className="text-[10px] uppercase tracking-wider font-extrabold text-slate-400">Tax on grossed-up</p>
-              <p className="text-lg md:text-xl font-extrabold mt-1">{formatAUD(calc.taxOnGrossedUp)}</p>
+              <p className="text-lg md:text-xl font-extrabold mt-1">{formatAUD(calc.taxOnGrossedUp, 2)}</p>
             </div>
             <div>
               <p className="text-[10px] uppercase tracking-wider font-extrabold" style={{ color: isRefund ? "#34D399" : "#F87171" }}>
                 {isRefund ? "Refund" : "Net tax"}
               </p>
               <p className="text-lg md:text-xl font-extrabold mt-1" style={{ color: isRefund ? "#34D399" : "#F87171" }}>
-                {formatAUD(Math.abs(calc.refundOrTax))}
+                {formatAUD(Math.abs(calc.refundOrTax), 2)}
               </p>
             </div>
           </div>
 
           <div className="mt-5 pt-5 border-t border-white/10">
             <p className="text-[10px] uppercase tracking-wider font-extrabold text-amber-400">Net after-tax income from this dividend</p>
-            <p className="text-3xl md:text-4xl font-extrabold mt-1" style={{ color: "#EAB308" }}>{formatAUD(calc.netIncome)}</p>
+            <p className="text-3xl md:text-4xl font-extrabold mt-1" style={{ color: "#EAB308" }}>{formatAUD(calc.netIncome, 2)}</p>
           </div>
         </div>
 
@@ -122,7 +118,7 @@ export default function FrankingCalculatorClient() {
         <div className="rounded-xl border border-slate-200 bg-slate-50 p-5">
           {calc.tr.pension ? (
             <p className="text-sm text-slate-700 leading-relaxed">
-              <strong className="text-emerald-700">SMSF pension phase:</strong> you receive <strong>{formatAUD(calc.frankingCredit)}</strong> as a cash refund from the ATO — even though the fund pays no tax. This is one of the most powerful SMSF tax benefits available to Australian retail investors. <Link href="/smsf" className="text-amber-700 hover:underline font-bold">Explore SMSF →</Link>
+              <strong className="text-emerald-700">SMSF pension phase:</strong> you receive <strong>{formatAUD(calc.frankingCredit, 2)}</strong> as a cash refund from the ATO — even though the fund pays no tax. This is one of the most powerful SMSF tax benefits available to Australian retail investors. <Link href="/smsf" className="text-amber-700 hover:underline font-bold">Explore SMSF →</Link>
             </p>
           ) : calc.tr.isSmsf ? (
             <p className="text-sm text-slate-700 leading-relaxed">

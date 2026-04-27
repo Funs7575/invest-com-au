@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent, type ReactNode } from "react";
 import Icon from "@/components/Icon";
+import { isValidEmailClient, isDisposableEmail } from "@/lib/validate-email";
 
 type Intent = {
   need: string;
@@ -15,7 +16,11 @@ interface HubLeadFormProps {
   source: string;
   ctaLabel?: string;
   ctaIntro?: ReactNode;
-  /** Optional extra fields to capture (eg. company, dev_spend). Stored as part of source_page metadata. */
+  /**
+   * Optional domain-specific fields appended to source_page so they
+   * survive into lead routing (`source_page` is one of the columns
+   * the matching engine sees).
+   */
   extraFields?: Array<{ name: string; label: string; type?: "text" | "number"; required?: boolean }>;
   /** Show state selector. Defaults to true. */
   showState?: boolean;
@@ -40,7 +45,6 @@ export default function HubLeadForm({
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError(null);
-    setSubmitting(true);
 
     const fd = new FormData(e.currentTarget);
     const email = String(fd.get("email") || "").trim();
@@ -48,11 +52,26 @@ export default function HubLeadForm({
     const phone = String(fd.get("phone") || "").trim();
     const state = String(fd.get("state") || "").trim();
 
-    const extras: Record<string, string> = {};
+    if (!isValidEmailClient(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+    if (isDisposableEmail(email)) {
+      setError("Please use a real email address — disposable inboxes aren't supported.");
+      return;
+    }
+
+    setSubmitting(true);
+
+    // Domain-specific extras get appended to source_page so the
+    // server's matcher and analytics can see them without a schema
+    // change. Server route ignores anything else in the body.
+    const extras: string[] = [];
     for (const f of extraFields) {
       const v = String(fd.get(f.name) || "").trim();
-      if (v) extras[f.name] = v;
+      if (v) extras.push(`${f.name}=${v}`);
     }
+    const sourcePage = extras.length ? `${source}|${extras.join("|")}` : source;
 
     try {
       const res = await fetch("/api/submit-lead", {
@@ -65,11 +84,8 @@ export default function HubLeadForm({
           user_phone: phone || undefined,
           user_location_state: state || undefined,
           user_intent: intent,
-          source_page: source,
-          // honeypot field — bots will fill this; humans won't see it
+          source_page: sourcePage,
           website: String(fd.get("website") || ""),
-          // Capture extras as additional context
-          ...(Object.keys(extras).length ? { extra_metadata: extras } : {}),
         }),
       });
       const json = await res.json();

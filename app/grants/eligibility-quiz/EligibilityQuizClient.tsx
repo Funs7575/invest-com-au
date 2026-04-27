@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Icon from "@/components/Icon";
 import HubLeadForm from "@/components/leads/HubLeadForm";
 
@@ -146,6 +146,7 @@ export default function EligibilityQuizClient() {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Answers>({});
   const [done, setDone] = useState(false);
+  const results = useMemo(() => (done ? evaluate(answers) : []), [done, answers]);
 
   function answer(q: Q, value: string) {
     const next = { ...answers, [q.id]: value };
@@ -164,7 +165,6 @@ export default function EligibilityQuizClient() {
   }
 
   if (done) {
-    const results = evaluate(answers);
     return (
       <div className="space-y-6">
         <div className="rounded-2xl border border-slate-200 bg-white p-6 md:p-8 shadow-sm">
