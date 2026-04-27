@@ -27,7 +27,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | A | _not started_ | — | — | — |
 | B | `claude/audit-remediation/b-rls-remediation` | #220 | pending — pushed 2026-04-27T06:50Z | B-06 — 2 done (`listing_enquiries` `0bb82daa`, `listing_plans` `be7bff79`) · 5 FP (forum tables) · 1 blocked (`quarterly_reports`) |
 | C | _not started_ | — | — | — |
-| D | `claude/audit-remediation/d-route-tests` | #246 | pending — pushed 2026-04-27T17:12Z | D-01 done (commit `7269510`) · D-02 done (commit `ebf2250`) · D-03 done (commit `0177aa1`) · D-04 done (commit `bea95b1`) · D-05 done (commit `e49375d`) · D-06 done (commit `c0cd3ee`) · D-07 done (commit `33230fb`) · D-08 done (commit `311df3f`) · D-09 done (commit `8e2d35d`) · D-10 done (commit `4e702c1`) |
+| D | `claude/audit-remediation/d-route-tests` | #246 | pending — pushed 2026-04-27T17:45Z | D-01 done (commit `7269510`) · D-02 done (commit `ebf2250`) · D-03 done (commit `0177aa1`) · D-04 done (commit `bea95b1`) · D-05 done (commit `e49375d`) · D-06 done (commit `c0cd3ee`) · D-07 done (commit `33230fb`) · D-08 done (commit `311df3f`) · D-09 done (commit `8e2d35d`) · D-10 done (commit `4e702c1`) · D-11 batch 1 done (commit `90c7c5b`) |
 | E | _not started_ | — | — | — |
 | F | _not started_ | — | — | — |
 | G | _not started_ | — | — | — |
@@ -203,7 +203,7 @@ Highest priority: critical 2 first.
 | D-08 | done | Integration test for `/api/stripe/create-contract` | 1 | Done in commit `311df3f` (PR #246). 16 tests: 401 no cookie; 401 invalid/expired session (null DB); 400 missing advisor_id/plan/billing_cycle; 400 invalid plan value; 400 invalid billing_cycle value; 403 professional_id mismatch; 200 monthly success; 200 annual success; unit_amount=9900+interval=month for basic/monthly; unit_amount=499000+interval=year for premium/annual; metadata includes advisor_id+plan+billing_cycle; success_url+cancel_url use NEXT_PUBLIC_SITE_URL; advisor_sessions query scoped by cookie token; 500 Stripe throws. |
 | D-09 | done | Integration test for `/api/auth/signout` | 1 | Done in commit `8e2d35d` (PR #246). 2 tests: success path (`signOut()` resolves → `{success:true}` 200); catch path (`signOut()` throws → `{error:"Failed to sign out"}` 500). 100% branch coverage on the 12-line route. |
 | D-10 | done | Add `vitest.config.mts` ratchet: API-route coverage floor | 1 | Global thresholds ratcheted 42→44 (lines/stmt), 72→73 (branches). API-route floor added: lines/stmt 13, branches 58, functions 30. commit `4e702c1` PR #246. |
-| D-11 | pending | Backfill remaining 228 untested routes (chunked: ~5 per iteration, prioritised by traffic) | ~45 | Lowest priority within D; ongoing. |
+| D-11 | pending | Backfill remaining 228 untested routes (chunked: ~5 per iteration, prioritised by traffic) | ~45 | Lowest priority within D; ongoing. Batch 1 done (iter 60, commit `90c7c5b`): advisor-auth lifecycle — session GET+DELETE (8), login POST (16), profile PATCH (5), notifications GET+PATCH (7) = 37 tests, 4 files. |
 
 ### Stream A — DB schema drift backfill (issue #214)
 
@@ -958,6 +958,7 @@ Items that ship LAST, in the final week before launch (Month 4 of pre-launch roa
 
 ## Done
 
+- 2026-04-27 · D-11 batch 1 · advisor-auth lifecycle tests: session GET (5 tests — no-auth 401, Supabase-auth 200, auth_user_id link-on-login, legacy-cookie fallback 200, expired-cookie 401) + session DELETE (3 tests — success, legacy row deleted, exceptions swallowed) + login POST (16 tests — no-email 400, rate-limit 429, magic obfuscated 200, magic OTP sent, magic OTP error 500, password not-found 404, missing password 400, wrong credentials 401, success + links auth_user_id, signup password-too-short 400, signup already-has-auth_user_id 409, signup already-registered 409, signup with-session needsConfirmation=false, signup without-session needsConfirmation=true, unknown mode 400, exception 500) + profile PATCH (5 tests — rate-limit 429, unauthenticated 401, success 200, allowlist enforcement, DB error 500) + notifications GET+PATCH (7 tests). 37 tests total, +636/-0 across 4 files. · commit `90c7c5b` · pr #246
 - 2026-04-27 · D-10 · `vitest.config.mts` coverage ratchet: global thresholds 42/72/63 → 44/73/63 (lines/stmt/branches/functions); per-glob API-route floor added `"app/api/**/*.ts": { lines: 13, branches: 58, functions: 30, statements: 13 }`. Measured post-D-01..D-09: overall 44.45%/73.02%/63.74%; API-route scoped 13.82%/58.35%/30.18%. +25/-23 across 1 file. · commit `4e702c1` · pr #246
 - 2026-04-27 · D-09 · Integration test for `POST /api/auth/signout`: 2 tests — success path (`{success:true}` 200) and catch path (`{error:"Failed to sign out"}` 500). 100% branch coverage on the 12-line route. +40/-0 across 1 file. · commit `8e2d35d` · pr #246
 - 2026-04-27 · D-08 · Integration test for `POST /api/stripe/create-contract`: 16 tests — 401 no cookie, 401 invalid/expired session, 400 missing fields (advisor_id/plan/billing_cycle), 400 invalid plan, 400 invalid billing_cycle, 403 professional_id mismatch, 200 monthly success, 200 annual success, unit_amount=9900+interval=month for basic/monthly, unit_amount=499000+interval=year for premium/annual (catches price-table drift), metadata advisor_id+plan+billing_cycle, success_url+cancel_url use NEXT_PUBLIC_SITE_URL, advisor_sessions scoped by cookie token, 500 Stripe throws. +248/-0 across 1 file. · commit `311df3f` · pr #246
@@ -1021,6 +1022,19 @@ Items that ship LAST, in the final week before launch (Month 4 of pre-launch roa
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-27T17:45Z — iteration 60 (stream D — D-11 batch 1 — advisor-auth lifecycle tests)
+
+- Phase 0: lock acquired.
+- Phase 1: local main had diverged from origin/main (50-commit divergence, forced-update pattern); reset via `git reset --hard origin/main`. Read queue and defaults end-to-end.
+- Phase 1.5: Types drift check — Supabase MCP available; regenerated types for project `guggzyqceattncjwvgyc`; diff vs `lib/database.types.ts` = IDENTICAL (403,455 bytes, no drift). Skip.
+- Phase 2 CI check: PRs #246 (D), #252 (V), #253 (Y), #220 (B) — all checks success or skipped. No rescue needed.
+- Phase 3: priority-walk → V-NEW-01/02 blocked, V-NEW-03/04 done, Y-05 done, K complete, N complete → **D-11 pending** (step 6 in priority order, D-11 first remaining). Checked out `claude/audit-remediation/d-route-tests`; npm install (fresh session, no node_modules). Merged origin/main — already up to date.
+- Phase 4: verification — "new test" gate. Identified top-traffic untested routes: advisor-auth lifecycle (session, login, profile, notifications — all called on every advisor portal session). Confirmed no prior test files existed for any of the 4 routes.
+- Phase 5: wrote 4 test files — `advisor-auth-session.test.ts` (9 tests), `advisor-auth-login.test.ts` (16 tests), `advisor-auth-profile.test.ts` (5 tests), `advisor-auth-notifications.test.ts` (7 tests). Fixed one `then`-mock bug (hardcoded `null` error instead of `result` in notifications chain). All 37 tests green. Lint exit 0.
+- Phase 6: committed `90c7c5b` (+636/-0, 4 files), pushed to `claude/audit-remediation/d-route-tests`. PR #246 body updated (D-11 batch 1 checked).
+- Phase 7: queue updated on main — In-flight D row updated, Done entry prepended, this log added.
+- STATUS: PROGRESS · stream=D · item=D-11 · pr=#246 · commit=`90c7c5b` · diff=+636/-0 across 4 files
 
 ### 2026-04-27T17:12Z — iteration 59 (stream D — D-10 done — vitest coverage ratchet + API-route floor)
 
