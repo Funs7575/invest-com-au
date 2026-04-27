@@ -1,0 +1,87 @@
+name: Auto-merge stats
+
+# Computes a small stats payload (PRs auto-merged this week, PRs
+# currently waiting for human review, average time-to-merge for
+# auto-merged PRs) and publishes it as a shields.io endpoint JSON on
+# branch `automerge-bot/stats`. The README badge fetches that file
+# via raw.githubusercontent.com and renders the numbers.
+#
+# Why a separate branch:
+#   Same reasoning as the labeling state file — bot-owned data shouldn't
+#   pollute main. A separate branch lets us publish snapshots as
+#   frequently as we like without main commit history noise.
+#
+# Schedule: hourly. The badge can lag by up to an hour without losing
+# usefulness; faster firing wastes minutes.
+
+on:
+  schedule:
+    - cron: "13 * * * *"
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/auto-merge-stats.yml"
+      - ".github/workflows/scripts/auto-merge-stats.js"
+
+permissions:
+  contents: write
+  pull-requests: read
+
+concurrency:
+  group: auto-merge-stats
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    name: Compute and publish stats badge
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          sparse-checkout: |
+            .github/workflows/scripts
+          sparse-checkout-cone-mode: false
+
+      - name: Compute stats
+        id: stats
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const script = require('./.github/workflows/scripts/auto-merge-stats.js');
+            const payload = await script.compute({ github, context });
+            core.setOutput('payload', JSON.stringify(payload));
+
+      - name: Publish to stats branch
+        env:
+          PAYLOAD: ${{ steps.stats.outputs.payload }}
+        run: |
+          set -euo pipefail
+          BOT_BRANCH="automerge-bot/stats"
+          REPO_URL="https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+          TMPDIR=$(mktemp -d)
+          trap 'rm -rf "$TMPDIR"' EXIT
+
+          git clone --depth 1 "$REPO_URL" "$TMPDIR"
+          cd "$TMPDIR"
+          git config user.email "actions@github.com"
+          git config user.name "auto-merge-stats-bot"
+
+          if git ls-remote --exit-code origin "$BOT_BRANCH" > /dev/null 2>&1; then
+            git fetch origin "$BOT_BRANCH"
+            git checkout -B "$BOT_BRANCH" "origin/$BOT_BRANCH"
+          else
+            git checkout --orphan "$BOT_BRANCH"
+            git rm -rf --cached . > /dev/null 2>&1 || true
+            find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          fi
+
+          printf '%s\n' "$PAYLOAD" > stats.json
+          git add stats.json
+          if git diff --cached --quiet; then
+            echo "stats unchanged — skipping commit"
+            exit 0
+          fi
+          git commit -m "chore(auto-merge): refresh stats badge"
+          git push origin "$BOT_BRANCH"

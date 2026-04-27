@@ -1,0 +1,62 @@
+name: Auto-merge labeling (paths + queue flags + first-of-pattern)
+
+# Decides which PRs are eligible for auto-merge by inspecting changed
+# paths against a SAFE allowlist + a BLOCKED denylist (denylist always
+# wins). Two additional override sources can force `needs-human-review`
+# even when paths look safe:
+#
+#   1. Queue review flags — items called out in
+#      docs/audits/REMEDIATION_DEFAULTS.md "Review flags" section as
+#      requiring security or legal review (BB-04, CC-01, EE-02, CC-07).
+#      Detected by item-ID prefix in the PR title (the audit loop
+#      already prefixes PRs with the item ID).
+#
+#   2. First-of-pattern — the FIRST PR introducing each new component or
+#      template pattern is force-flagged for human review so the founder
+#      sees the new pattern before letting the loop replicate it. State
+#      is tracked in .github/auto-merge-state.json on a separate bot
+#      branch (`automerge-bot/state`) so main isn't polluted by bot
+#      commits. Patterns: hub-on-extracted-components,
+#      programmatic-seo-template, calculator-on-shell, ai-feature,
+#      marketplace-mechanic, distribution-embed.
+#
+# Outcomes:
+#   - All changed files in SAFE allowlist + no overrides → label
+#     `auto-merge-safe`
+#   - Any file in BLOCKED denylist OR override fires → label
+#     `needs-human-review` (and `auto-merge-safe` removed if present)
+#   - Neither — no label, PR sits waiting for a human
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: write   # write so the bot branch can be updated
+  pull-requests: write
+
+concurrency:
+  group: auto-merge-label-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  label:
+    name: Apply path-based + override labels
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          # Need the helper script + REMEDIATION_DEFAULTS.md for queue
+          # review-flag detection.
+          sparse-checkout: |
+            .github
+            docs/audits/REMEDIATION_DEFAULTS.md
+          sparse-checkout-cone-mode: false
+
+      - name: Run labeling logic
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const script = require('./.github/workflows/scripts/auto-merge-label.js');
+            await script.run({ github, context, core });
