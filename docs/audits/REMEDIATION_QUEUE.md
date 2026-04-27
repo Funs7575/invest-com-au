@@ -938,6 +938,20 @@ Email list + lead-magnet + drip-sequence machinery. EM-03 is critical for cold l
 | --- | --- | --- | --- | --- |
 | DV-01 | pending | Document vault — encrypted upload + RLS-isolated user storage | 4-6 | **Tier 3.** Per-user encrypted document storage (super statements, tax returns, will, insurance policies, bank statements). RLS-isolated per Supabase auth.uid(). **Deps:** LL-01, CC-01 (extract pipeline), V-NEW-04 (RLS isolation gate). Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
 
+### Stream CO — Cutover preparation (Final tier, added 2026-04-27)
+
+Items that ship LAST, in the final week before launch (Month 4 of pre-launch roadmap). Depend on all feature streams being shipped + stable. Most are checklists / runbooks / one-time configs rather than recurring features.
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| CO-01 | pending | 301 redirect map for legacy WordPress URLs (~30 years of inbound links) | 3 | **Tier final.** Full coverage of legacy URL inventory. **Deps:** all routes finalised (Y registry, AA templates, Z hubs all shipped). Founder action: pull legacy URL inventory from Google Search Console export. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| CO-02 | pending | Search Console + Analytics verified for new domain | 1 | **Tier final.** Verify domain ownership in GSC + GA4; ensure historical data preserved through cutover. Founder action with loop-drafted checklist. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| CO-03 | pending | Sitemap + robots.txt finalised + verified | 1-2 | **Tier final.** Full sitemap from registry (covers all hubs + AA programmatic + Q&A pages); robots.txt allowlist correct. **Deps:** Y-03 (auto-sitemap from registry). Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| CO-04 | pending | DNS TTL operational checklist (not code) | 1 | **Tier final. needs-user.** Pre-cutover DNS TTL drop to 300s, schedule swap, post-cutover restore. Doc only. Founder/ops action. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| CO-05 | pending | Pre-launch QA automation — full E2E suite green | 2-3 | **Tier final.** Comprehensive Playwright suite covering top user journeys across every shipped hub + calculator + lead flow + auth flow. **Deps:** all features shipped. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| CO-06 | pending | Cutover runbook — minute-by-minute switch plan | 1 | **Tier final.** Doc only. Lives in `docs/runbooks/launch-day.md`. Includes rollback decision tree. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+| CO-07 | pending | Final anonymity audit — full CL-09 stress test + WHOIS + social re-check | 1 | **Tier final.** Last gate before launch. Re-runs CL-09 across the entire shipped surface plus a fresh manual review. **Deps:** CL-09 stress test exists. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
+
 ---
 
 ## Done
