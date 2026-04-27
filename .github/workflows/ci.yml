@@ -308,6 +308,28 @@ jobs:
           GITHUB_BASE_REF: ${{ github.base_ref }}
         run: node scripts/check-rls-isolation.mjs
 
+  stripe-idempotency-gate:
+    name: Stripe webhook idempotency gate (new handlers)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: github.event_name == 'pull_request'
+    # Why this exists (V-NEW-03): any new Stripe webhook handler added under
+    # app/api/webhooks/stripe/** (the DD-* stream path) must ship alongside an
+    # idempotency replay test proving that replaying the same event N times
+    # converges to the same DB state.  Duplicate charges, double subscriptions,
+    # and double wallet credits are revenue / trust disasters.
+    # The gate scans only handler files ADDED in this PR; existing handlers
+    # (app/api/stripe/webhook/route.ts) are covered by the existing test suite.
+    # Skip token not required — this is a static file analysis.
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Check new Stripe webhook handlers have idempotency tests
+        env:
+          GITHUB_BASE_REF: ${{ github.base_ref }}
+        run: node scripts/check-stripe-idempotency.mjs
+
   lighthouse-cwv-gate:
     name: Lighthouse — Core Web Vitals gate (hard-fail)
     runs-on: ubuntu-latest
