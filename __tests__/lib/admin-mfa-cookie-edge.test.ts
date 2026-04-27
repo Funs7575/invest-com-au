@@ -41,13 +41,21 @@ describe("admin-mfa-cookie-edge (Web Crypto verifier)", () => {
   });
 
   it("returns false when ADMIN_MFA_COOKIE_SECRET is absent", async () => {
-    const saved = process.env.ADMIN_MFA_COOKIE_SECRET;
-    delete process.env.ADMIN_MFA_COOKIE_SECRET;
+    // Sign first while the secret is available, then delete it for the verify call.
+    // Deleting before signing would throw from signMfaCookie (secret guard), which
+    // would skip the restore and poison the env for subsequent tests.
     const cookie = signMfaCookie("admin@example.com");
-    // Restore early so other tests aren't affected
-    process.env.ADMIN_MFA_COOKIE_SECRET = saved;
-    const result = await verifyMfaCookieEdge(cookie);
-    expect(result).toBe(false);
+    const saved = process.env.ADMIN_MFA_COOKIE_SECRET;
+    try {
+      delete process.env.ADMIN_MFA_COOKIE_SECRET;
+      expect(await verifyMfaCookieEdge(cookie)).toBe(false);
+    } finally {
+      if (saved !== undefined) {
+        process.env.ADMIN_MFA_COOKIE_SECRET = saved;
+      } else {
+        delete process.env.ADMIN_MFA_COOKIE_SECRET;
+      }
+    }
   });
 
   it("returns false when ADMIN_MFA_COOKIE_SECRET is too short", async () => {
