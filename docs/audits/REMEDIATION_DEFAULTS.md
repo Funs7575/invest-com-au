@@ -320,6 +320,62 @@ The loop reads `docs/audits/ENTERPRISE_STANDARD.md` on every iteration alongside
 
 **Why this exists.** Items that touch a surface but skip its rubric ship at ~70-75% of standard. Quality plateaus there because the loop's energy goes to visible work; rubric items become "we'll add tests later" and later is rare. With pre-flight + per-item enforcement, items ship at ~88-92% of standard. The loop is slightly slower per iteration but the total work to reach 88% is less than the work to reach 75%-then-retroactively-fix-everything. Net Week 12 trajectory: 88% with this enforcement, 82% without.
 
+## Throughput optimisation
+
+See `docs/runbooks/loop-throughput-optimisation.md` for the full playbook (cron-cadence multiplier, multi-loop separation, Haiku-for-cheap-iterations, pre-staging human-blocked items, CI sharding).
+
+### Model selection per iteration
+
+The loop defaults to Sonnet/Opus. For **mechanical iterations** (queue housekeeping, doc-only edits, runbook authoring, predictable test additions, CI rescue commits, migration header/rollback comments), switch to Haiku 4.5 — same quality on those item types, ~10× cheaper, faster per fire (more iterations fit in the cron window). Specify per-schedule:
+
+```
+/schedule add "0 * * * *" /audit-remediation-iteration --model haiku
+```
+
+Streams suitable for Haiku: B (RLS migrations), D (route tests), G (migration hygiene), O (RLS-no-policy triage), Q (DR/SOC 2 docs), R (lib tests), S (architecture docs), queue-housekeeping fires.
+
+Streams that need Sonnet/Opus: W (component extraction — architectural), Y (registry-driven nav — architectural), Z (Tier-1 hub builds — config-heavy + architectural), AA (programmatic templates), CC (AI features), DD (marketplace mechanics), CL (anonymity infra — compliance-sensitive), LL (logged-in user infra — RLS-sensitive).
+
+### Parallel-eligibility map
+
+The loop's existing parallel cloud routines (`0 * * * *` + `30 * * * *`) can fire on disjoint streams without merge contention. Pairs with confirmed disjoint file scopes (any cron fire can pick from either side without colliding):
+
+| Pair | Disjoint scope |
+|---|---|
+| **W ↔ X** | W = `components/Hub*`, X = imports in `app/**/page.tsx` |
+| **W ↔ E** | E = Zod schemas in `app/api/**/*.ts` |
+| **W ↔ D / R** | D/R = `__tests__/api/` and `__tests__/lib/` |
+| **W ↔ J** | J = `app/api/stripe/webhook/*` |
+| **W ↔ L** | L = Sentry/n8n config + `lib/logger.ts` |
+| **Y ↔ X** | Y = `Header.tsx` + `sitemap.ts`; X = page-level import swaps |
+| **Y ↔ E** | E adds Zod to API routes; Y is registry/nav |
+| **D ↔ R** | D = api tests, R = lib tests, different `__tests__/` subdirs |
+| **D ↔ L** | D = tests, L = config |
+| **BB ↔ AA** | Both new code, different directories |
+| **BB ↔ CC** | Calculators vs `app/api/ai/*` |
+| **QA ↔ AA** | Different new directories (`app/q-and-a/` vs `app/find/`) |
+| **QA ↔ Z** | Different new directories (`app/q-and-a/` vs `app/[hub]/`) |
+| **EM ↔ everything-code** | EM is email infra (`lib/email/` + lead-magnet PDFs); no code-side conflict |
+| **CL ↔ everything-else** | Anonymity = `app/about/` + `app/team/` + social config; no code overlap |
+| **DV ↔ everything-else** | Document vault = `app/dashboard/vault/` + `lib/storage/` |
+
+NOT parallel-eligible (same-file conflict risk):
+
+- A ↔ B ↔ O — all DB migrations; sequence them.
+- C ↔ X — both refactor `createAdminClient` callers in `app/**/page.tsx`.
+- F ↔ everything — hygiene cleanup touches all over.
+- I ↔ everything — ESLint guardrails change rules other streams race against.
+
+Internal-stream parallel-eligibility (multiple cron fires can each grab a different item from the same stream after the prerequisite lands):
+
+- **W**: W-02..W-12 are independent after W-01 lands (each extracts a distinct component file). All of W-02..W-12 can run in any order across parallel fires. W-13..W-15 sequence after W-12.
+- **D / R**: every test file is independent. Multiple fires can each add a different test file.
+- **AA**: each programmatic template directory is independent.
+- **BB**: each calculator file is independent.
+- **QA**: each Q&A page is independent (`app/q-and-a/[slug]/page.tsx`).
+
+The loop should mark internal parallel-eligibility on each stream's section in `REMEDIATION_QUEUE.md` as it reaches that stream.
+
 ## Concurrency + locking
 
 - Only one iteration may touch one branch at a time. Lock file: `.git/audit-remediation.lock` containing the iteration's start ISO timestamp. Stale locks (> 90 minutes old) are removed by the next iteration.
