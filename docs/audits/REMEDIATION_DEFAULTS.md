@@ -133,7 +133,12 @@ If an auto-merge GitHub Action is set up (see `.github/workflows/audit-remediati
 | W | `claude/audit-remediation/w-hub-foundation` | Hub component extraction (HubHero, HubServiceGrid, HubArticleStrip, DirectoryGrid, CalculatorShell, EligibilityQuiz, HubPage HOC) + migrations of existing hubs onto the new template | 2026-04-27 hub revenue expansion · `docs/audits/HUB_BLUEPRINT.md` |
 | X | `claude/audit-remediation/x-admin-backlog` | Clear `createAdminClient` from 17 public RSC pages; ratchet ESLint rule from `warn` to `error` | 2026-04-27 hub foundation · extension of stream C |
 | Y | `claude/audit-remediation/y-registry-nav` | Registry-driven `<MegaMenu>`, auto-sitemap, `<DatedStatBadge>` + cron stale-check + CI lint | 2026-04-27 hub foundation · `docs/audits/HUB_BLUEPRINT.md` §2 + §7 |
-| Z | `claude/audit-remediation/z-tier1-hubs` | Tier-1 hub builds: `/private-markets`, `/startup` (relocate `/grants`), `/wholesale` — each hub: HubConfig + sub-pages + directory + calculator + quiz + lead magnet + article seeds + smoke E2E | 2026-04-27 hub revenue expansion · `docs/audits/HUB_BLUEPRINT.md` §5 |
+| Z | `claude/audit-remediation/z-tier1-hubs` | Tier-1 hub builds: `/private-markets`, `/startup` (relocate `/grants`), `/wholesale` — each hub: HubConfig + sub-pages + directory + calculator + quiz + lead magnet + article seeds + smoke E2E. Extended 2026-04-27 with Z-22..Z-27 (`/redundancy`, `/first-home-buyer`, `/inheritance`, `/insurance`, `/super`, `/tax-return`) | 2026-04-27 hub revenue expansion · `docs/audits/HUB_BLUEPRINT.md` §5 |
+| AA | `claude/audit-remediation/aa-programmatic-seo` | Programmatic SEO templates that consume Supabase data and ISR-render thousands of pages: `/find/[type]/[city]`, `/grants/[industry]`, `/grants/[state]/[program]`, `/[etf-ticker]`, `/[suburb]/property-investing`, `/investing-for-[occupation]`, `/just-[event]` moment-of-money pages | 2026-04-27 hub revenue expansion · `docs/audits/HUB_BLUEPRINT.md` §8 |
+| BB | `claude/audit-remediation/bb-calculators` | Lead-capture tool farm: borrowing-power multi-lender, salary-sacrifice optimiser, CGT calculator, net-worth tracker (Basiq/Frollo bank linking, security-reviewed), subscription audit, mortgage stress test, ETP calculator, FHSS calculator, ETF screener, LIC screener | 2026-04-27 hub revenue expansion · `docs/audits/HUB_BLUEPRINT.md` §1 |
+| CC | `claude/audit-remediation/cc-ai-features` | AI features (Anthropic API): document upload + extract pipeline (security-reviewed), super-statement analyzer, tax-return optimizer, grants eligibility extractor, portfolio review AI, advisor pre-chat bot, SoA/RoA generator (legal-reviewed, post-AFSL) | 2026-04-27 hub revenue expansion · `docs/audits/HUB_BLUEPRINT.md` §9 |
+| DD | `claude/audit-remediation/dd-marketplace` | Marketplace mechanics: tiered advisor listings (Free/Pro/Featured), verified-by-invest.com.au badge, booking + payment rail (Stripe Connect 15% take), real-time advisor bidding auction model | 2026-04-27 hub revenue expansion · `docs/audits/HUB_BLUEPRINT.md` §1 (lever #2 + #6) |
+| EE | `claude/audit-remediation/ee-distribution` | Distribution / embeds: embeddable rate tables widget, Chrome extension (security-reviewed, separate repo), WhatsApp/Telegram alerts bot, API marketplace (B2B) | 2026-04-27 hub revenue expansion · `docs/audits/HUB_BLUEPRINT.md` §7 |
 
 ## Priority order
 
@@ -170,7 +175,57 @@ When choosing the next item, walk in this order and pick the first non-blocked o
 24. **W (hub foundation)** — extract `<HubHero>`, `<HubServiceGrid>`, `<HubArticleStrip>`, `<HubDeepDiveGrid>`, `<HubAdvisorCTA>`, `<HubFAQ>`, `<DirectoryGrid>` family, `<CalculatorShell>`, `<EligibilityQuiz>`, `<CrossHubLinks>`, `<HubPage>` HOC. Migrate `/smsf` and `/grants` first (proof). Without this layer every new hub re-implements layout — biggest velocity multiplier in the roadmap. Items W-01..W-15.
 25. **X (admin backlog)** — clear `createAdminClient` from the 17 public RSC pages identified during the foundation audit; ratchet `eslint.config.mjs` rule from `warn` to `error`. Extension of stream C. Items X-01..X-09.
 26. **Y (registry + nav + dated-stats)** — registry-driven `<MegaMenu>` replacing the 666-line hardcoded `Header.tsx`, auto-sitemap, breadcrumbs from registry, `<DatedStatBadge>` + cron stale-check + CI lint that fails build on unwrapped dated claims. Items Y-01..Y-08. Depends on W landing.
-27. **Z (Tier-1 hub builds)** — `/private-markets`, `/startup` (absorbs `/grants`), `/wholesale`. Each hub: HubConfig row + sub-pages + directory + calculator + quiz + lead magnet + article seeds + smoke E2E. Items Z-01..Z-21. Depends on Y landing. Tier-2/3 hubs (`/retirement`, `/aged-care`, `/angel`, `/business-for-sale`, `/crypto-exchange`, `/crypto-tax`, `/family-office`, `/find-accountant`, `/find-mortgage-broker`) queued as new streams after Z lands.
+27. **Z (Tier-1 hub builds)** — `/private-markets`, `/startup` (absorbs `/grants`), `/wholesale`. Each hub: HubConfig row + sub-pages + directory + calculator + quiz + lead magnet + article seeds + smoke E2E. Items Z-01..Z-21 (Tier-1) plus Z-22..Z-27 (added 2026-04-27 — `/redundancy`, `/first-home-buyer`, `/inheritance`, `/insurance`, `/super`, `/tax-return`). Depends on Y landing.
+
+**2026-04-27 AA–EE expansion (founder spec, post-Option-B authorisation).** Five new streams adding programmatic SEO, lead-capture calculator farm, AI features, marketplace mechanics, and distribution/embeds. Plus four CI gates added to stream V (V-NEW-01..04) that gate later streams from landing. Z extended inline with six new lifecycle hubs (Z-22..Z-27). 38 new items + 4 CI gates + 6 hub items = 48 added items, raising total queue from 53 (W/X/Y/Z) to 101 (W/X/Y/Z + AA/BB/CC/DD/EE/V-NEW + Z-22..Z-27).
+
+28. **Stream V CI gates: V-NEW-01..04 (parallel)** — stale-data gate (protects DatedStatBadge), AI-output factual filter (gates entire CC stream), Stripe webhook idempotency replay harness (gates entire DD stream), RLS isolation gate for new user-data tables (security baseline). All P0; ship before any item that depends on them.
+29. **AA-01** (`/find/[advisor-type]/[city]` template) — unlocks ~5,000 SEO pages on existing professionals data; highest single-item leverage in the roadmap.
+30. **Z-23 + BB-08 co-shipped** (`/first-home-buyer` hub + FHSS calc) — biggest organic search volume in AU PF, mortgage broker affiliate is highest CPA on platform; together they ship as the first proof point that the new component system actually compresses build time.
+31. **Z-22 + BB-07 co-shipped** (`/redundancy` hub + ETP calc) — fastest revenue moment, lowest competition, ETP $80-300K landing.
+32. **BB-01** (borrowing power multi-lender) — feeds Z-23, standalone calculator value.
+33. **BB-06** (mortgage stress test) — pairs with BB-01 in mortgage broker funnel.
+34. **DD-01** (tiered advisor listings Free/Pro/Featured) — recurring revenue unlock, prerequisite for DD-02/03/04. Gated by V-NEW-03.
+35. **AA-02 + AA-03** (programmatic `/grants/[industry]` + `/grants/[state]/[program]`) — kills the Phase 0 dead-loop fix properly.
+36. **Z-26** (`/super` proper hub, not just `/super/smsf`) — massive search volume "best super fund".
+37. **Z-25** (`/insurance` hub) — affiliate $100-400/policy, ASIC RG 244 compliance.
+38. **AA-04 + BB-09 co-shipped** (ETF data feed → ticker pages + screener) — shared data feed is the heavy part.
+39. **CC-01** (AI document upload + extract pipeline foundation) — gated by V-NEW-02 (factual-filter enforcement). Security-reviewed before merge.
+40. **CC-02 + CC-03 + CC-04 co-shipped** (super/tax/grants analyzers built on CC-01).
+41. **AA-07** (`/just-[event]` moment-of-money pages) — depends on Z-22/Z-23/Z-24 hubs partially built.
+42. **Z-24** (`/inheritance` hub) — adds estate-planning lawyer advisor type.
+43. **BB-02 + BB-03 co-shipped** (salary-sacrifice optimiser + CGT calc).
+44. **AA-06** (`/investing-for-[occupation]` pages — 30+ slugs).
+45. **DD-02** (verified-by-invest.com.au badge — AFSL/ACL/ASIC + ID verification).
+46. **DD-03** (booking + payment rail — Stripe Connect 15% take).
+47. **Z-27** (`/tax-return` hub — June-October seasonal, accountant lead generator).
+48. **CC-05 + CC-06** (portfolio review AI + advisor pre-chat bot).
+49. **EE-01** (embeddable rate tables widget — every embed = backlink).
+50. **DD-04** (real-time advisor bidding auction model) — ship after DD-01/02/03 stable.
+51. **AA-05** (`/[suburb]/property-investing` pages) — pause if data licensing can't be resolved.
+52. **BB-04** (net-worth tracker with bank linking) — biggest build, security-reviewed before merge.
+53. **BB-05** (subscription audit tool) — v1 manual; v2 needs BB-04.
+54. **BB-10** (LIC screener) — same data feed as AA-04/BB-09.
+55. **EE-03** (WhatsApp/Telegram alerts bot).
+56. **EE-02** (Chrome extension — separate repo, security-reviewed).
+57. **CC-07** (SoA/RoA generator B2B SaaS for advisors) — legal-reviewed, post-Step 9 AFSL spend in roadmap.
+58. **EE-04** (API marketplace B2B) — speculative; depends on all other streams stable.
+
+### Review flags (2026-04-27 expansion)
+
+Items requiring **security review** before merge: **BB-04** (bank-data via Basiq/Frollo + CDR + AU privacy CPS230), **CC-01** (document upload + Anthropic API + RLS storage bucket + prompt injection resistance + cost cap), **EE-02** (Chrome extension — broad browser scope, content-script injection on third-party sites).
+
+Items requiring **legal review** before launch: **CC-07** (SoA/RoA generator — AFSL/ACL territory, ASIC RG 90 + RG 175 conformance, advisor disclaimer + audit trail). Explicitly waits until post-Step 9 AFSL spend in roadmap.
+
+### Co-shipped pairings (2026-04-27 expansion)
+
+Pairs/triplets that must ship together to compound their leverage:
+
+- **Z-23 + BB-08** — `/first-home-buyer` hub + FHSS calc (priority slot 30)
+- **Z-22 + BB-07** — `/redundancy` hub + ETP calc (priority slot 31)
+- **AA-04 + BB-09** — ETF ticker pages + screener (shared ASX data feed; slot 38)
+- **CC-02 + CC-03 + CC-04** — super/tax/grants analyzers (all built on CC-01; slot 40)
+- **BB-02 + BB-03** — salary-sacrifice optimiser + CGT calc (both `<CalculatorShell>`-based, similar test scaffolding; slot 43)
 
 `needs-user` items in any stream surface to Blocked when picked. The loop notes the question and continues to the next non-blocked item.
 
