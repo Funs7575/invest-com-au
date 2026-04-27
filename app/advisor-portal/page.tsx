@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import Image from "next/image";
 import Icon from "@/components/Icon";
@@ -8,76 +9,18 @@ import AdvisorPhotoUpload from "@/components/AdvisorPhotoUpload";
 import LeadScoreBadge from "@/components/LeadScoreBadge";
 import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
 import AdvisorPortalLogin from "./AdvisorPortalLogin";
+import type {
+  Advisor, FirmMember, FirmInvite, FirmDetails, FirmAnalyticsMember, FirmAnalyticsSummary,
+  Lead, BillingRecord, Stats, ViewDay, Review, WeeklyEnquiry, ProfileCompleteness,
+  CategoryPricing, DisputeModal, ViewType,
+} from "./types";
 
-type Advisor = {
-  id: number; name: string; slug: string; firm_name?: string; email?: string;
-  photo_url?: string; type: string; location_display?: string; rating?: number;
-  review_count?: number; verified?: boolean; bio?: string; specialties?: string[];
-  fee_structure?: string; fee_description?: string; website?: string; phone?: string;
-  booking_link?: string; booking_intro?: string;
-  profile_complete?: boolean;
-  offer_text?: string; offer_terms?: string; offer_active?: boolean;
-  firm_id?: number; is_firm_admin?: boolean; account_type?: string; status?: string;
-  free_leads_used?: number; lead_price_cents?: number;
-  credit_balance_cents?: number; lifetime_credit_cents?: number; lifetime_lead_spend_cents?: number;
-  featured_until?: string;
-};
-
-type FirmMember = { id: number; name: string; slug: string; email?: string; type: string; photo_url?: string; verified?: boolean; status?: string; created_at: string; role?: string; is_firm_admin?: boolean };
-type FirmInvite = { id: number; email: string; name?: string; status: string; created_at: string; expires_at: string };
-
-type FirmDetails = {
-  id: number; name: string; slug: string; abn?: string; acn?: string; afsl_number?: string;
-  website?: string; phone?: string; email?: string; logo_url?: string; bio?: string;
-  location_state?: string; location_suburb?: string; max_seats: number; status: string;
-};
-
-type FirmAnalyticsMember = FirmMember & {
-  leads30d: number; totalLeads: number; views30d: number;
-  totalBilledCents: number; convertedLeads: number; conversionRate: string;
-  credit_balance_cents?: number;
-};
-
-type FirmAnalyticsSummary = {
-  totalMembers: number; totalLeads: number; totalLeads30d: number; totalViews30d: number;
-  totalConverted: number; conversionRate: string; totalBilledCents: number;
-  totalCreditCents: number; avgRating: string | null;
-};
-
-type Lead = {
-  id: number; user_name: string; user_email: string; user_phone?: string;
-  message?: string; source_page?: string; status: string; advisor_notes?: string;
-  contacted_at?: string; converted_at?: string; created_at: string;
-  quality_score?: number; quality_signals?: Record<string, number>;
-  qualification_data?: Record<string, unknown>; lead_tier?: string;
-  bill_amount_cents: number; billed: boolean;
-  review_requested_at?: string | null;
-};
-
-type BillingRecord = {
-  id: number; amount_cents: number; description: string; status: string;
-  invoice_number?: string; created_at: string;
-};
-
-type Stats = {
-  totalViews30d: number; totalLeads: number; leads30d: number;
-  convertedLeads: number; conversionRate: string;
-  totalBilledCents: number; pendingBilledCents: number; reviewCount: number;
-  avgRating: string | null; bookingClicks30d: number;
-  hotLeadsCount: number; warmLeadsCount: number; coldLeadsCount: number;
-  // Analytics
-  phoneClicks: number; websiteClicks: number; bookingClicks: number;
-  articleViews: number; searchImpressions: number;
-  articles: { title: string; slug: string; views: number; clicks: number }[];
-};
-
-type ViewDay = { view_date: string; view_count: number };
-type Review = { id: number; reviewer_name: string; rating: number; title?: string; body?: string; created_at: string; communication_rating?: number; expertise_rating?: number; value_for_money_rating?: number };
-type WeeklyEnquiry = { weekLabel: string; count: number };
-type ProfileCompleteness = { score: number; missingFields: string[] };
+const DashboardTab = dynamic(() => import("./DashboardTab"));
+const LeadsTab = dynamic(() => import("./LeadsTab"));
+const AnalyticsTab = dynamic(() => import("./AnalyticsTab"));
 
 export default function AdvisorPortalPage() {
-  const [view, setView] = useState<"login" | "dashboard" | "leads" | "analytics" | "profile" | "billing" | "articles" | "team" | "settings">("login");
+  const [view, setView] = useState<ViewType>("login");
   const [advisor, setAdvisor] = useState<Advisor | null>(null);
   const [leads, setLeads] = useState<Lead[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
@@ -100,7 +43,7 @@ export default function AdvisorPortalPage() {
   const [viewsByDay, setViewsByDay] = useState<ViewDay[]>([]);
   const [billing, setBilling] = useState<BillingRecord[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
-  const [categoryPricing, setCategoryPricing] = useState<{ price_cents: number; free_trial_leads: number; featured_monthly_cents: number } | null>(null);
+  const [categoryPricing, setCategoryPricing] = useState<CategoryPricing | null>(null);
   const [weeklyEnquiries, setWeeklyEnquiries] = useState<WeeklyEnquiry[]>([]);
   const [profileCompleteness, setProfileCompleteness] = useState<ProfileCompleteness | null>(null);
   const [loading, setLoading] = useState(true);
@@ -112,7 +55,7 @@ export default function AdvisorPortalPage() {
   const [profileSaved, setProfileSaved] = useState(false);
 
   // Dispute modal
-  const [disputeModal, setDisputeModal] = useState<{ leadId: number; leadName: string; daysLeft: number } | null>(null);
+  const [disputeModal, setDisputeModal] = useState<DisputeModal | null>(null);
   const [disputeReason, setDisputeReason] = useState("");
   const [disputeDetails, setDisputeDetails] = useState("");
   const [disputeSubmitting, setDisputeSubmitting] = useState(false);
@@ -420,7 +363,7 @@ export default function AdvisorPortalPage() {
             <button
               key={item.key}
               type="button"
-              onClick={() => { setView(item.key as typeof view); if (item.key === "team") { loadFirmData(); } if (item.key === "billing") { loadTopupHistory(); } if (item.key === "settings") { loadNotifPrefs(); } }}
+              onClick={() => { setView(item.key as ViewType); if (item.key === "team") { loadFirmData(); } if (item.key === "billing") { loadTopupHistory(); } if (item.key === "settings") { loadNotifPrefs(); } }}
               className={`flex items-center gap-1.5 px-3 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-inset ${
                 view === item.key
                   ? "border-slate-900 text-slate-900"
@@ -456,646 +399,42 @@ export default function AdvisorPortalPage() {
 
         {/* ─── DASHBOARD ─── */}
         {view === "dashboard" && (
-          <>
-            <h1 className="text-xl font-bold text-slate-900 mb-1">Welcome{isPending ? "" : " back"}, {advisor?.name?.split(" ")[0]}</h1>
-            <p className="text-sm text-slate-500 mb-6">{advisor?.firm_name || PROFESSIONAL_TYPE_LABELS[advisor?.type as keyof typeof PROFESSIONAL_TYPE_LABELS]}</p>
-
-            {/* Profile complete + no booking link: high-intent prompt.
-                Rendered only when the trustee has finished the core
-                profile but hasn't yet added a scheduling link. */}
-            {advisor?.profile_complete && !advisor?.booking_link && (
-              <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-5 flex flex-col sm:flex-row items-start sm:items-center gap-3">
-                <Icon name="calendar" size={22} className="text-amber-600 shrink-0" />
-                <div className="flex-1">
-                  <p className="font-bold text-sm text-amber-900">
-                    Add a booking link — your profile is ready, investors can&rsquo;t schedule yet
-                  </p>
-                  <p className="text-xs text-amber-800 mt-0.5">
-                    Calendly, SavvyCal or any scheduling URL. Advisors with a booking link convert 2-4x more enquiries.
-                  </p>
-                </div>
-                <button
-                  onClick={() => setView("profile")}
-                  className="bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs px-4 py-2 rounded-lg whitespace-nowrap"
-                >
-                  Add booking link
-                </button>
-              </div>
-            )}
-
-            {/* ── Stats cards row ── */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-              {[
-                { label: "Profile Views", value: stats?.totalViews30d || 0, sub: "last 30 days", icon: "eye", color: "text-blue-600", bg: "bg-blue-50" },
-                { label: "Enquiries", value: stats?.leads30d || 0, sub: "last 30 days", icon: "inbox", color: "text-violet-600", bg: "bg-violet-50" },
-                { label: "Booking Clicks", value: stats?.bookingClicks30d || 0, sub: "last 30 days", icon: "calendar", color: "text-emerald-600", bg: "bg-emerald-50" },
-                { label: "Avg Rating", value: stats?.avgRating || (advisor?.rating ? Number(advisor.rating).toFixed(1) : "\u2014"), sub: `${stats?.reviewCount || advisor?.review_count || 0} reviews`, icon: "star", color: "text-amber-600", bg: "bg-amber-50" },
-              ].map((kpi, i) => (
-                <div key={i} className="bg-white border border-slate-200 rounded-xl p-4 hover:shadow-sm transition-shadow">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="text-xs text-slate-500 font-medium">{kpi.label}</div>
-                    <div className={`w-8 h-8 ${kpi.bg} rounded-lg flex items-center justify-center`}><Icon name={kpi.icon} size={16} className={kpi.color} /></div>
-                  </div>
-                  <div className="text-2xl font-extrabold text-slate-900">{typeof kpi.value === "number" ? kpi.value.toLocaleString() : kpi.value}</div>
-                  <div className="text-[0.62rem] text-slate-400 mt-0.5">{kpi.sub}</div>
-                </div>
-              ))}
-            </div>
-
-            {/* Credit balance banner */}
-            {(() => {
-              const balance = advisor?.credit_balance_cents || 0;
-              const leadPrice = advisor?.lead_price_cents || 3980;
-              const freeLeadsUsed = advisor?.free_leads_used || 0;
-              const hasFreeLeads = freeLeadsUsed < 2;
-              const leadsRemaining = hasFreeLeads ? (2 - freeLeadsUsed) : Math.floor(balance / leadPrice);
-              const isLow = !hasFreeLeads && leadsRemaining <= 2 && balance > 0;
-              const isEmpty = !hasFreeLeads && balance <= 0;
-
-              return (
-                <>
-                  {/* Critical: empty balance warning */}
-                  {isEmpty && (
-                    <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-4 flex items-start gap-3">
-                      <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
-                        <Icon name="alert-triangle" size={16} className="text-red-600" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-sm font-bold text-red-800">Credit balance empty — leads paused</p>
-                        <p className="text-xs text-red-600 mt-0.5">You won&rsquo;t receive new enquiries until you top up your credit balance.</p>
-                      </div>
-                      <button
-                        onClick={() => setView("billing")}
-                        className="px-3 py-1.5 bg-red-600 text-white text-xs font-bold rounded-lg hover:bg-red-700 transition-colors shrink-0"
-                      >
-                        Top Up Now
-                      </button>
-                    </div>
-                  )}
-                  {/* Warning: low balance */}
-                  {isLow && (
-                    <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-4 flex items-start gap-3">
-                      <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
-                        <Icon name="alert-triangle" size={16} className="text-amber-600" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-sm font-bold text-amber-800">Low credit balance — {leadsRemaining} lead{leadsRemaining !== 1 ? "s" : ""} remaining</p>
-                        <p className="text-xs text-amber-600 mt-0.5">Top up soon to avoid missing incoming enquiries.</p>
-                      </div>
-                      <button
-                        onClick={() => setView("billing")}
-                        className="px-3 py-1.5 bg-amber-500 text-white text-xs font-bold rounded-lg hover:bg-amber-600 transition-colors shrink-0"
-                      >
-                        Top Up
-                      </button>
-                    </div>
-                  )}
-                  <div className={`rounded-xl p-4 mb-6 text-white flex items-center justify-between ${isEmpty ? "bg-gradient-to-r from-red-700 to-red-900" : isLow ? "bg-gradient-to-r from-amber-500 to-amber-700" : "bg-gradient-to-r from-violet-600 to-violet-800"}`}>
-                    <div>
-                      <p className={`text-[0.65rem] font-semibold uppercase tracking-wider ${isEmpty ? "text-red-200" : isLow ? "text-amber-100" : "text-violet-200"}`}>Lead Credit Balance</p>
-                      <p className="text-2xl font-extrabold">${(balance / 100).toFixed(0)}</p>
-                      <p className={`text-[0.62rem] mt-0.5 ${isEmpty ? "text-red-200" : isLow ? "text-amber-100" : "text-violet-200"}`}>
-                        {hasFreeLeads
-                          ? `${2 - freeLeadsUsed} free leads remaining`
-                          : isEmpty
-                            ? "No credits — top up to receive leads"
-                            : `~${leadsRemaining} leads remaining`
-                        }
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => setView("billing")}
-                      className="px-5 py-2.5 bg-white text-sm font-bold rounded-lg hover:opacity-90 transition-opacity shrink-0 text-slate-800"
-                    >
-                      Buy Credits
-                    </button>
-                  </div>
-                </>
-              );
-            })()}
-
-            {/* ── Onboarding Checklist (first-run, dismissable) ── */}
-            {profileCompleteness && profileCompleteness.score < 80 && !dismissedOnboarding && (
-              <div className="bg-gradient-to-br from-violet-50 to-white border border-violet-200 rounded-xl p-5 mb-6">
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <h3 className="text-sm font-bold text-violet-900">Get your profile ready</h3>
-                    <p className="text-xs text-violet-600 mt-0.5">Complete these steps to start receiving leads</p>
-                  </div>
-                  <button onClick={() => setDismissedOnboarding(true)} className="text-violet-400 hover:text-violet-600 text-xs" title="Dismiss">✕</button>
-                </div>
-                <div className="space-y-2 mb-4">
-                  {[
-                    { label: "Add a profile photo", done: !!advisor?.photo_url, action: () => setView("profile") },
-                    { label: "Write a bio", done: !!advisor?.bio && advisor.bio.length > 30, action: () => setView("profile") },
-                    { label: "Add your specialties", done: (advisor?.specialties?.length || 0) > 0, action: () => setView("profile") },
-                    { label: "Set your fee structure", done: !!advisor?.fee_structure, action: () => setView("profile") },
-                    { label: "Add a booking link", done: !!advisor?.booking_link, action: () => setView("profile") },
-                  ].map((step, i) => (
-                    <div key={i} className={`flex items-center gap-3 p-2.5 rounded-lg ${step.done ? "opacity-50" : "cursor-pointer hover:bg-violet-50"}`} onClick={step.done ? undefined : step.action}>
-                      <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${step.done ? "bg-emerald-500" : "bg-white border-2 border-violet-300"}`}>
-                        {step.done && <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
-                      </div>
-                      <span className={`text-xs font-medium ${step.done ? "line-through text-slate-400" : "text-slate-700"}`}>{step.label}</span>
-                      {!step.done && <svg className="w-3.5 h-3.5 text-violet-400 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>}
-                    </div>
-                  ))}
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="flex-1 h-2 bg-violet-100 rounded-full overflow-hidden">
-                    <div className="h-full bg-violet-500 rounded-full transition-all duration-500" style={{ width: `${profileCompleteness.score}%` }} />
-                  </div>
-                  <span className="text-xs font-bold text-violet-700">{profileCompleteness.score}%</span>
-                </div>
-              </div>
-            )}
-
-            {/* ── Profile Completeness (compact, shown when > 80% or dismissed wizard) ── */}
-            {profileCompleteness && profileCompleteness.score < 100 && (profileCompleteness.score >= 80 || dismissedOnboarding) && (
-              <div className="bg-white border border-slate-200 rounded-xl p-4 mb-6">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-sm font-bold text-slate-900">Profile Completeness</h3>
-                  <span className={`text-sm font-extrabold ${profileCompleteness.score >= 80 ? "text-emerald-600" : profileCompleteness.score >= 50 ? "text-amber-600" : "text-red-500"}`}>
-                    {profileCompleteness.score}%
-                  </span>
-                </div>
-                <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden mb-3">
-                  <div
-                    className={`h-full rounded-full transition-all duration-500 ${
-                      profileCompleteness.score >= 80 ? "bg-emerald-500" : profileCompleteness.score >= 50 ? "bg-amber-500" : "bg-red-500"
-                    }`}
-                    style={{ width: `${profileCompleteness.score}%` }}
-                  />
-                </div>
-                {profileCompleteness.missingFields.length > 0 && (
-                  <div className="flex flex-wrap gap-1.5">
-                    <span className="text-[0.62rem] text-slate-500 mr-1">Missing:</span>
-                    {profileCompleteness.missingFields.map((f) => (
-                      <button
-                        key={f}
-                        onClick={() => setView("profile")}
-                        className="text-[0.58rem] font-medium text-violet-600 bg-violet-50 border border-violet-200 px-2 py-0.5 rounded-full hover:bg-violet-100 transition-colors"
-                      >
-                        {f}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* ── Performance Chart: Enquiries per week (last 8 weeks) ── */}
-            {weeklyEnquiries.length > 0 && (
-              <div className="bg-white border border-slate-200 rounded-xl p-4 mb-6">
-                <h3 className="text-sm font-bold text-slate-900 mb-1">Enquiries Per Week</h3>
-                <p className="text-[0.62rem] text-slate-400 mb-4">Last 8 weeks</p>
-                <div className="flex items-end gap-2 h-28">
-                  {weeklyEnquiries.map((w, i) => {
-                    const max = Math.max(...weeklyEnquiries.map(wk => wk.count), 1);
-                    const pct = (w.count / max) * 100;
-                    return (
-                      <div key={i} className="flex-1 flex flex-col items-center justify-end gap-1">
-                        <span className="text-[0.56rem] font-bold text-slate-700">{w.count}</span>
-                        <div
-                          className="w-full bg-violet-500 rounded-t-md transition-all duration-300 hover:bg-violet-600"
-                          style={{ height: `${Math.max(pct, 4)}%`, minHeight: "3px" }}
-                          title={`${w.weekLabel}: ${w.count} enquiries`}
-                        />
-                        <span className="text-[0.5rem] text-slate-400 whitespace-nowrap">{w.weekLabel}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* ── Views chart (daily, 30 days) ── */}
-            {viewsByDay.length > 0 && (
-              <div className="bg-white border border-slate-200 rounded-xl p-4 mb-6">
-                <h3 className="text-sm font-bold text-slate-900 mb-1">Profile Views</h3>
-                <p className="text-[0.62rem] text-slate-400 mb-3">Daily views over the last 30 days</p>
-                <div className="flex items-end gap-0.5 h-20">
-                  {viewsByDay.map((d, i) => {
-                    const max = Math.max(...viewsByDay.map(v => v.view_count), 1);
-                    const pct = (d.view_count / max) * 100;
-                    return (
-                      <div key={i} className="flex-1 flex flex-col items-center justify-end" title={`${d.view_date}: ${d.view_count} views`}>
-                        <div className="w-full bg-blue-500 rounded-sm min-h-[2px] hover:bg-blue-600 transition-colors" style={{ height: `${Math.max(pct, 3)}%` }} />
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* ── Recent leads table ── */}
-            <div className="bg-white border border-slate-200 rounded-xl mb-6 overflow-hidden">
-              <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
-                <h3 className="text-sm font-bold text-slate-900">Recent Enquiries</h3>
-                <button onClick={() => setView("leads")} className="text-xs text-violet-600 hover:text-violet-700 font-semibold">View All &rarr;</button>
-              </div>
-              {leads.length === 0 ? (
-                <div className="px-4 py-8 text-center">
-                  <Icon name="inbox" size={28} className="text-slate-300 mx-auto mb-2" />
-                  <p className="text-sm text-slate-500">No enquiries yet. They&apos;ll appear here when investors contact you.</p>
-                </div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left">
-                    <thead>
-                      <tr className="bg-slate-50 text-[0.62rem] font-semibold text-slate-500 uppercase tracking-wider">
-                        <th className="px-4 py-2">Name</th>
-                        <th className="px-4 py-2">Date</th>
-                        <th className="px-4 py-2 text-center">Quality</th>
-                        <th className="px-4 py-2">Status</th>
-                        <th className="px-4 py-2">Message</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                      {leads.slice(0, 8).map((lead) => (
-                        <tr key={lead.id} className={`text-xs ${lead.status === "new" ? "bg-violet-50/40" : "hover:bg-slate-50"} transition-colors`}>
-                          <td className="px-4 py-2.5">
-                            <div className="font-semibold text-slate-900">{lead.user_name}</div>
-                            <div className="text-[0.58rem] text-slate-400">{lead.user_email}</div>
-                          </td>
-                          <td className="px-4 py-2.5 text-slate-500 whitespace-nowrap">
-                            {new Date(lead.created_at).toLocaleDateString("en-AU", { day: "numeric", month: "short" })}
-                          </td>
-                          <td className="px-4 py-2.5 text-center">
-                            {lead.quality_score != null ? (
-                              <LeadScoreBadge score={lead.quality_score} signals={lead.quality_signals} tier={lead.lead_tier} compact />
-                            ) : (
-                              <span className="text-slate-300">&mdash;</span>
-                            )}
-                          </td>
-                          <td className="px-4 py-2.5">
-                            <span className={`text-[0.56rem] font-bold px-2 py-0.5 rounded-full ${
-                              lead.status === "new" ? "bg-violet-100 text-violet-700" :
-                              lead.status === "contacted" ? "bg-blue-100 text-blue-700" :
-                              lead.status === "converted" ? "bg-emerald-100 text-emerald-700" :
-                              lead.status === "lost" ? "bg-red-100 text-red-600" :
-                              "bg-slate-100 text-slate-500"
-                            }`}>{lead.status}</span>
-                          </td>
-                          <td className="px-4 py-2.5 text-slate-500 max-w-[200px] truncate">
-                            {lead.message ? lead.message.slice(0, 80) + (lead.message.length > 80 ? "..." : "") : <span className="text-slate-300">&mdash;</span>}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
-
-            {/* ── Latest Reviews ── */}
-            <div className="bg-white border border-slate-200 rounded-xl p-4 mb-6">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-bold text-slate-900">Latest Reviews</h3>
-                {reviews.length > 0 && (
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-amber-400 text-sm">{"★".repeat(Math.round(Number(stats?.avgRating || advisor?.rating || 0)))}</span>
-                    <span className="text-xs font-bold text-slate-700">{stats?.avgRating || (advisor?.rating ? Number(advisor.rating).toFixed(1) : "N/A")}</span>
-                    <span className="text-[0.62rem] text-slate-400">({stats?.reviewCount || 0})</span>
-                  </div>
-                )}
-              </div>
-              {reviews.length === 0 ? (
-                <div className="py-6 text-center">
-                  <Icon name="star" size={28} className="text-slate-300 mx-auto mb-2" />
-                  <p className="text-sm text-slate-500">No reviews yet. Ask happy clients to leave a review on your profile.</p>
-                  <Link href={`/advisor/${advisor?.slug}`} target="_blank" className="inline-block mt-2 text-xs font-semibold text-violet-600 hover:text-violet-700">Share review link &rarr;</Link>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {reviews.slice(0, 4).map((r) => (
-                    <div key={r.id} className="border border-slate-100 rounded-lg p-3 hover:bg-slate-50/50 transition-colors">
-                      <div className="flex items-center justify-between mb-1.5">
-                        <div className="flex items-center gap-2">
-                          <div className="w-7 h-7 bg-violet-100 rounded-full flex items-center justify-center text-[0.56rem] font-bold text-violet-700">
-                            {r.reviewer_name.charAt(0).toUpperCase()}
-                          </div>
-                          <div>
-                            <span className="text-sm font-semibold text-slate-900">{r.reviewer_name}</span>
-                            <div className="text-[0.56rem] text-slate-400">{new Date(r.created_at).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" })}</div>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-0.5">
-                          {[1,2,3,4,5].map(s => (
-                            <span key={s} className={`text-sm ${s <= r.rating ? "text-amber-400" : "text-slate-200"}`}>★</span>
-                          ))}
-                        </div>
-                      </div>
-                      {r.title && <div className="text-xs font-semibold text-slate-800 mb-1">{r.title}</div>}
-                      {r.body && <p className="text-xs text-slate-600 leading-relaxed">{r.body.slice(0, 200)}{r.body.length > 200 ? "..." : ""}</p>}
-                      {(r.communication_rating || r.expertise_rating || r.value_for_money_rating) && (
-                        <div className="flex gap-3 mt-2">
-                          {r.communication_rating && <span className="text-[0.56rem] text-slate-400">Communication: <strong className="text-slate-600">{r.communication_rating}/5</strong></span>}
-                          {r.expertise_rating && <span className="text-[0.56rem] text-slate-400">Expertise: <strong className="text-slate-600">{r.expertise_rating}/5</strong></span>}
-                          {r.value_for_money_rating && <span className="text-[0.56rem] text-slate-400">Value: <strong className="text-slate-600">{r.value_for_money_rating}/5</strong></span>}
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* ── Quick actions ── */}
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              <button onClick={() => setView("profile")} className="bg-white border border-slate-200 rounded-xl p-4 text-left hover:bg-slate-50 hover:shadow-sm transition-all">
-                <Icon name="user" size={20} className="text-violet-600 mb-2" />
-                <div className="text-sm font-bold text-slate-900">Edit Profile</div>
-                <div className="text-xs text-slate-500">Update bio, fees, specialties</div>
-              </button>
-              <Link href={`/advisor/${advisor?.slug}`} target="_blank" className="bg-white border border-slate-200 rounded-xl p-4 text-left hover:bg-slate-50 hover:shadow-sm transition-all">
-                <Icon name="external-link" size={20} className="text-blue-600 mb-2" />
-                <div className="text-sm font-bold text-slate-900">View Public Profile</div>
-                <div className="text-xs text-slate-500">See how investors see you</div>
-              </Link>
-              <button onClick={() => setView("billing")} className="bg-white border border-slate-200 rounded-xl p-4 text-left hover:bg-slate-50 hover:shadow-sm transition-all">
-                <Icon name="credit-card" size={20} className="text-emerald-600 mb-2" />
-                <div className="text-sm font-bold text-slate-900">Billing</div>
-                <div className="text-xs text-slate-500">{stats?.pendingBilledCents ? `$${(stats.pendingBilledCents / 100).toFixed(0)} pending` : "No charges yet"}</div>
-              </button>
-            </div>
-          </>
+          <DashboardTab
+            advisor={advisor}
+            stats={stats}
+            leads={leads}
+            profileCompleteness={profileCompleteness}
+            reviews={reviews}
+            viewsByDay={viewsByDay}
+            weeklyEnquiries={weeklyEnquiries}
+            dismissedOnboarding={dismissedOnboarding}
+            isPending={isPending}
+            onNavigate={setView}
+            onDismissOnboarding={() => setDismissedOnboarding(true)}
+          />
         )}
 
         {/* ─── LEADS ─── */}
-        {view === "leads" && (() => {
-          const filteredLeads = leads.filter((l) => {
-            const matchesStatus = leadStatusFilter === "all" || l.status === leadStatusFilter;
-            const q = leadSearch.toLowerCase();
-            const matchesSearch = !q || l.user_name.toLowerCase().includes(q) || l.user_email.toLowerCase().includes(q) || (l.user_phone || "").includes(q);
-            const matchesHot = !hotLeadsOnly || (l.quality_score ?? 0) >= 70;
-            return matchesStatus && matchesSearch && matchesHot;
-          });
-          if (leadSortByQuality) {
-            filteredLeads.sort((a, b) => (b.quality_score ?? 0) - (a.quality_score ?? 0));
-          }
-          const exportCsv = () => {
-            const rows = [
-              ["Name", "Email", "Phone", "Status", "Message", "Source", "Quality", "Billed ($)", "Date"],
-              ...filteredLeads.map((l) => [
-                l.user_name, l.user_email, l.user_phone || "", l.status,
-                (l.message || "").replace(/"/g, '""'),
-                l.source_page || "",
-                l.quality_score != null ? String(l.quality_score) : "",
-                l.bill_amount_cents ? (l.bill_amount_cents / 100).toFixed(2) : "0",
-                new Date(l.created_at).toLocaleDateString("en-AU"),
-              ])
-            ];
-            const csv = rows.map((r) => r.map((c) => `"${c}"`).join(",")).join("\n");
-            const blob = new Blob([csv], { type: "text/csv" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a"); a.href = url; a.download = "leads.csv"; a.click();
-            URL.revokeObjectURL(url);
-          };
-          return (
-          <>
-            <div className="flex items-center justify-between mb-1">
-              <h1 className="text-xl font-bold text-slate-900">Enquiries</h1>
-              <button onClick={exportCsv} className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-700 px-3 py-1.5 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
-                <Icon name="download" size={13} /> Export CSV
-              </button>
-            </div>
-            <p className="text-sm text-slate-500 mb-4">{stats?.totalLeads || 0} total · {leads.filter(l => l.status === "new").length} new</p>
-
-            {/* Lead pricing & credit balance */}
-            <div className="bg-violet-50 border border-violet-200 rounded-xl p-4 mb-5">
-              <div className="flex items-start justify-between">
-                <div>
-                  <h3 className="text-xs font-bold text-violet-800 mb-1">Your Lead Account</h3>
-                  <p className="text-xs text-violet-600">
-                    {advisor?.free_leads_used !== undefined && advisor.free_leads_used < (categoryPricing?.free_trial_leads || 2)
-                      ? <>You have <strong>{(categoryPricing?.free_trial_leads || 2) - (advisor.free_leads_used || 0)} free leads</strong> remaining. After that, leads are deducted from your credit balance at ${((advisor?.lead_price_cents || categoryPricing?.price_cents || 4900) / 100).toFixed(0)}/lead.</>
-                      : (advisor?.credit_balance_cents || 0) > 0
-                        ? <>Leads are deducted from your credit balance. Each enquiry is exclusive to you.</>
-                        : <>Your credit balance is empty. <strong>Top up to continue receiving leads.</strong></>
-                    }
-                  </p>
-                </div>
-                <div className="text-right shrink-0 ml-3">
-                  <span className="text-lg font-extrabold text-violet-900">${((advisor?.credit_balance_cents || 0) / 100).toFixed(0)}</span>
-                  <span className="text-[0.6rem] text-violet-500 block">credit balance</span>
-                </div>
-              </div>
-              {/* Credit Pack Options */}
-              <div className="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-violet-200/60">
-                {[
-                  { name: "Starter", leads: 5, price: 199, slug: "starter", badge: "" },
-                  { name: "Growth", leads: 12, price: 449, slug: "growth", badge: "Popular" },
-                  { name: "Scale", leads: 25, price: 799, slug: "scale", badge: "Best Value" },
-                ].map((pack) => (
-                  <button
-                    key={pack.slug}
-                    type="button"
-                    tabIndex={0}
-                    onClick={async () => {
-                      try {
-                        const res = await fetch("/api/advisor-auth/topup", {
-                          method: "POST",
-                          headers: { "Content-Type": "application/json" },
-                          body: JSON.stringify({ amount_cents: pack.price * 100, pack_slug: pack.slug }),
-                        });
-                        const data = await res.json();
-                        if (data.url) window.location.href = data.url;
-                        else alert(data.error || "Failed to create checkout session. Please try again.");
-                      } catch (err) {
-                        alert("Something went wrong. Please check you're logged in and try again.");
-                        console.error("Topup error:", err);
-                      }
-                    }}
-                    className={`relative flex flex-col items-center p-2.5 rounded-lg border text-center transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2 ${
-                      pack.slug === "growth"
-                        ? "bg-violet-600 text-white border-violet-600 hover:bg-violet-700"
-                        : "bg-white text-slate-700 border-slate-200 hover:border-violet-300"
-                    }`}
-                  >
-                    {pack.badge && (
-                      <span className={`absolute -top-2 text-[0.5rem] font-bold px-1.5 py-0.5 rounded-full ${
-                        pack.slug === "growth" ? "bg-amber-400 text-amber-900" : "bg-emerald-100 text-emerald-700"
-                      }`}>{pack.badge}</span>
-                    )}
-                    <span className="text-[0.6rem] font-bold uppercase tracking-wider opacity-70 mt-1">{pack.name}</span>
-                    <span className="text-lg font-extrabold">${pack.price}</span>
-                    <span className="text-[0.55rem] opacity-70">{pack.leads} leads · ${Math.round(pack.price / pack.leads)}/ea</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Search & Filter Bar */}
-            <div className="flex gap-2 mb-4 flex-wrap">
-              <div className="relative flex-1 min-w-[180px]">
-                <Icon name="search" size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
-                <input
-                  type="text"
-                  value={leadSearch}
-                  onChange={(e) => setLeadSearch(e.target.value)}
-                  placeholder="Search by name, email or phone..."
-                  className="w-full pl-8 pr-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900"
-                />
-              </div>
-              <div className="flex gap-1 flex-wrap">
-                {(["all", "new", "contacted", "converted", "lost"] as const).map((s) => (
-                  <button
-                    key={s}
-                    onClick={() => setLeadStatusFilter(s)}
-                    className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg border transition-colors capitalize ${
-                      leadStatusFilter === s
-                        ? "bg-slate-900 text-white border-slate-900"
-                        : "bg-white text-slate-600 border-slate-200 hover:border-slate-300"
-                    }`}
-                  >
-                    {s === "all" ? `All (${leads.length})` : `${s} (${leads.filter(l => l.status === s).length})`}
-                  </button>
-                ))}
-              </div>
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => setLeadSortByQuality((v) => !v)}
-                  className={`flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold rounded-lg border transition-colors ${
-                    leadSortByQuality
-                      ? "bg-violet-600 text-white border-violet-600"
-                      : "bg-white text-slate-600 border-slate-200 hover:border-slate-300"
-                  }`}
-                >
-                  <Icon name="filter" size={12} /> Sort by quality
-                </button>
-                <button
-                  onClick={() => setHotLeadsOnly((v) => !v)}
-                  className={`flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold rounded-lg border transition-colors ${
-                    hotLeadsOnly
-                      ? "bg-emerald-600 text-white border-emerald-600"
-                      : "bg-white text-slate-600 border-slate-200 hover:border-slate-300"
-                  }`}
-                >
-                  {hotLeadsOnly ? "\uD83D\uDD25" : ""} Hot leads only{stats ? ` (${stats.hotLeadsCount})` : ""}
-                </button>
-              </div>
-            </div>
-
-            {leads.length === 0 ? (
-              <div className="bg-white border border-slate-200 rounded-xl p-8 text-center">
-                <Icon name="inbox" size={40} className="text-slate-300 mx-auto mb-3" />
-                <h3 className="text-lg font-bold text-slate-900 mb-1">No enquiries yet</h3>
-                <p className="text-sm text-slate-500">When investors submit a consultation request through your profile, they&apos;ll appear here.</p>
-              </div>
-            ) : filteredLeads.length === 0 ? (
-              <div className="bg-white border border-slate-200 rounded-xl p-8 text-center">
-                <Icon name="search" size={32} className="text-slate-300 mx-auto mb-3" />
-                <p className="text-sm text-slate-500">No leads match your filters.</p>
-                <button onClick={() => { setLeadSearch(""); setLeadStatusFilter("all"); setHotLeadsOnly(false); setLeadSortByQuality(false); }} className="mt-2 text-xs text-violet-600 hover:underline">Clear filters</button>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {filteredLeads.map((lead) => (
-                  <div key={lead.id} className={`bg-white border rounded-xl p-4 ${lead.status === "new" ? "border-amber-200 bg-amber-50/30" : "border-slate-200"}`}>
-                    <div className="flex items-start justify-between mb-2">
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-bold text-slate-900">{lead.user_name}</span>
-                          <span className={`text-[0.56rem] font-bold px-1.5 py-0.5 rounded-full ${
-                            lead.status === "new" ? "bg-amber-100 text-amber-700" :
-                            lead.status === "contacted" ? "bg-blue-100 text-blue-700" :
-                            lead.status === "converted" ? "bg-emerald-100 text-emerald-700" :
-                            lead.status === "lost" ? "bg-red-100 text-red-600" :
-                            "bg-slate-100 text-slate-500"
-                          }`}>{lead.status}</span>
-                        </div>
-                        <div className="text-xs text-slate-500 mt-0.5">
-                          <a href={`mailto:${lead.user_email}`} className="text-blue-600 hover:underline">{lead.user_email}</a>
-                          {lead.user_phone && <> · <a href={`tel:${lead.user_phone}`} className="text-blue-600 hover:underline">{lead.user_phone}</a></>}
-                        </div>
-                      </div>
-                      <span className="text-xs text-slate-400">{new Date(lead.created_at).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" })}</span>
-                    </div>
-                    {lead.message && (
-                      <div className="bg-slate-50 rounded-lg p-3 text-xs text-slate-600 mb-3 leading-relaxed">{lead.message}</div>
-                    )}
-                    <div className="flex items-center gap-2 flex-wrap">
-                      {lead.source_page && (
-                        <span className="text-[0.56rem] font-semibold px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-500">
-                          via {lead.source_page.replace(/^\//, "").replace(/-/g, " ") || "profile"}
-                        </span>
-                      )}
-                      {lead.quality_score != null && (
-                        <LeadScoreBadge score={lead.quality_score} signals={lead.quality_signals} tier={lead.lead_tier} />
-                      )}
-                      {lead.bill_amount_cents > 0 && (
-                        <span className="text-[0.56rem] text-slate-400">${(lead.bill_amount_cents / 100).toFixed(0)} billed</span>
-                      )}
-                      {lead.bill_amount_cents === 0 && lead.billed === false && (
-                        <span className="text-[0.56rem] text-emerald-600 font-semibold">Free trial lead</span>
-                      )}
-                      {lead.status === "new" && (
-                        <button onClick={() => updateLeadStatus(lead.id, "contacted")} className="text-xs font-semibold text-blue-600 hover:text-blue-800 px-2 py-1 border border-blue-200 rounded-lg hover:bg-blue-50">Mark Contacted</button>
-                      )}
-                      {(lead.status === "new" || lead.status === "contacted") && (
-                        <button onClick={() => updateLeadStatus(lead.id, "converted")} className="text-xs font-semibold text-emerald-600 hover:text-emerald-800 px-2 py-1 border border-emerald-200 rounded-lg hover:bg-emerald-50">Mark Converted</button>
-                      )}
-                      {lead.status !== "lost" && lead.status !== "converted" && (
-                        <button onClick={() => updateLeadStatus(lead.id, "lost")} className="text-xs font-semibold text-red-500 hover:text-red-700 px-2 py-1 border border-red-200 rounded-lg hover:bg-red-50">Mark Lost</button>
-                      )}
-                      {lead.status === "converted" && (
-                        lead.review_requested_at
-                          ? <span className="text-[0.56rem] text-slate-400 px-1.5 py-0.5">Review requested {new Date(lead.review_requested_at).toLocaleDateString("en-AU", { day: "numeric", month: "short" })}</span>
-                          : <button
-                              onClick={async () => {
-                                const res = await fetch("/api/advisor-auth/request-review", {
-                                  method: "POST",
-                                  headers: { "Content-Type": "application/json" },
-                                  body: JSON.stringify({ leadId: lead.id }),
-                                });
-                                if (res.ok) {
-                                  setLeads((prev) => prev.map((l) => l.id === lead.id ? { ...l, review_requested_at: new Date().toISOString() } : l));
-                                } else {
-                                  const d = await res.json();
-                                  alert(d.error || "Failed to send review request.");
-                                }
-                              }}
-                              className="text-xs font-semibold text-violet-600 hover:text-violet-800 px-2 py-1 border border-violet-200 rounded-lg hover:bg-violet-50"
-                            >Request Review</button>
-                      )}
-                      {(() => {
-                        const daysSince = Math.floor((Date.now() - new Date(lead.created_at).getTime()) / (1000 * 60 * 60 * 24));
-                        const canDispute = daysSince <= 14 && lead.billed;
-                        const daysLeft = 14 - daysSince;
-                        return (
-                          <button
-                            onClick={() => {
-                              if (!canDispute) return;
-                              setDisputeModal({ leadId: lead.id, leadName: lead.user_name, daysLeft });
-                              setDisputeReason("");
-                              setDisputeDetails("");
-                              setDisputeError("");
-                              setDisputeDone(false);
-                            }}
-                            disabled={!canDispute}
-                            className={`text-xs font-semibold px-2 py-1 border rounded-lg ${canDispute ? "text-slate-400 hover:text-slate-600 border-slate-200 hover:bg-slate-50" : "text-slate-300 border-slate-100 cursor-not-allowed"}`}
-                            title={!canDispute ? (daysSince > 14 ? "Dispute window closed (14 days)" : "Free leads cannot be disputed") : `${daysLeft} days left to dispute`}
-                          >
-                            Dispute{canDispute && daysLeft <= 5 ? ` (${daysLeft}d left)` : ""}
-                          </button>
-                        );
-                      })()}
-                      <input
-                        type="text"
-                        placeholder="Add a note..."
-                        defaultValue={lead.advisor_notes || ""}
-                        onBlur={(e) => updateLeadNotes(lead.id, e.target.value)}
-                        className="flex-1 min-w-[120px] text-xs px-2 py-1 border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-400"
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </>
-          );
-        })()}
+        {view === "leads" && (
+          <LeadsTab
+            leads={leads}
+            advisor={advisor}
+            stats={stats}
+            categoryPricing={categoryPricing}
+            leadSearch={leadSearch}
+            leadStatusFilter={leadStatusFilter}
+            leadSortByQuality={leadSortByQuality}
+            hotLeadsOnly={hotLeadsOnly}
+            onLeadSearchChange={setLeadSearch}
+            onLeadStatusFilterChange={setLeadStatusFilter}
+            onLeadSortByQualityChange={setLeadSortByQuality}
+            onHotLeadsOnlyChange={setHotLeadsOnly}
+            onLeadsUpdate={setLeads}
+            onOpenDisputeModal={(m) => { setDisputeModal(m); setDisputeReason(""); setDisputeDetails(""); setDisputeError(""); setDisputeDone(false); }}
+            onUpdateLeadStatus={updateLeadStatus}
+            onUpdateLeadNotes={updateLeadNotes}
+          />
+        )}
 
         {/* ─── PROFILE ─── */}
         {view === "profile" && advisor && (
@@ -1487,125 +826,13 @@ export default function AdvisorPortalPage() {
         {/* ═══ ARTICLES ═══ */}
         {/* ── ANALYTICS ── */}
         {view === "analytics" && (
-          <div className="space-y-4 md:space-y-6">
-            <div>
-              <h2 className="text-lg md:text-xl font-bold text-slate-900">Performance Analytics</h2>
-              <p className="text-xs text-slate-500 mt-0.5">How your profile and content are performing across invest.com.au</p>
-            </div>
-
-            {/* Top-level metrics */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              {[
-                { label: "Profile Views", value: stats?.totalViews30d || 0, sub: "last 30 days", icon: "eye", color: "text-blue-600", bg: "bg-blue-50" },
-                { label: "Enquiries", value: stats?.leads30d || 0, sub: "last 30 days", icon: "inbox", color: "text-violet-600", bg: "bg-violet-50" },
-                { label: "Conversion Rate", value: stats?.conversionRate || "0%", sub: "views → enquiries", icon: "target", color: "text-emerald-600", bg: "bg-emerald-50" },
-                { label: "Rating", value: advisor?.rating ? `${advisor.rating}/5` : "—", sub: `${advisor?.review_count || 0} reviews`, icon: "star", color: "text-amber-600", bg: "bg-amber-50" },
-              ].map((s, i) => (
-                <div key={i} className="bg-white border border-slate-200 rounded-xl p-3 md:p-4">
-                  <div className={`w-8 h-8 ${s.bg} rounded-lg flex items-center justify-center mb-2`}>
-                    <Icon name={s.icon} size={16} className={s.color} />
-                  </div>
-                  <p className="text-lg md:text-2xl font-bold text-slate-900">{typeof s.value === "number" ? s.value.toLocaleString() : s.value}</p>
-                  <p className="text-[0.6rem] md:text-xs text-slate-500">{s.label}</p>
-                  <p className="text-[0.55rem] md:text-[0.6rem] text-slate-400">{s.sub}</p>
-                </div>
-              ))}
-            </div>
-
-            {/* Engagement breakdown */}
-            <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-5">
-              <h3 className="text-sm font-bold text-slate-900 mb-3">Engagement Breakdown</h3>
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-                {[
-                  { label: "Phone Clicks", value: stats?.phoneClicks || 0, icon: "phone" },
-                  { label: "Website Visits", value: stats?.websiteClicks || 0, icon: "globe" },
-                  { label: "Booking Clicks", value: stats?.bookingClicks || 0, icon: "calendar" },
-                  { label: "Article Views", value: stats?.articleViews || 0, icon: "file-text" },
-                  { label: "Search Appearances", value: stats?.searchImpressions || 0, icon: "search" },
-                ].map((m, i) => (
-                  <div key={i} className="flex items-center gap-2.5 p-2 rounded-lg bg-slate-50">
-                    <Icon name={m.icon} size={16} className="text-slate-400 shrink-0" />
-                    <div>
-                      <p className="text-sm font-bold text-slate-900">{m.value.toLocaleString()}</p>
-                      <p className="text-[0.55rem] text-slate-400">{m.label}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Lead funnel */}
-            <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-5">
-              <h3 className="text-sm font-bold text-slate-900 mb-3">Lead Funnel</h3>
-              <div className="grid grid-cols-4 gap-2 text-center">
-                {[
-                  { label: "Total Leads", value: stats?.totalLeads || 0, color: "bg-blue-100 text-blue-700" },
-                  { label: "Contacted", value: leads.filter(l => l.status === "contacted").length, color: "bg-amber-100 text-amber-700" },
-                  { label: "Converted", value: stats?.convertedLeads || 0, color: "bg-emerald-100 text-emerald-700" },
-                  { label: "Lost", value: leads.filter(l => l.status === "lost").length, color: "bg-slate-100 text-slate-600" },
-                ].map((s, i) => (
-                  <div key={i} className={`rounded-xl p-3 ${s.color}`}>
-                    <p className="text-lg md:text-xl font-bold">{s.value}</p>
-                    <p className="text-[0.55rem] md:text-xs font-medium">{s.label}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Article performance */}
-            <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-5">
-              <h3 className="text-sm font-bold text-slate-900 mb-1">Article Performance</h3>
-              <p className="text-[0.6rem] text-slate-400 mb-3">How your published expert articles are performing</p>
-              {(stats?.articles || []).length > 0 ? (
-                <div className="space-y-2">
-                  {(stats?.articles as { title: string; views: number; clicks: number; slug: string }[] || []).map((art, i) => (
-                    <div key={i} className="flex items-center justify-between p-2.5 bg-slate-50 rounded-lg">
-                      <div className="min-w-0 flex-1">
-                        <p className="text-xs font-semibold text-slate-900 truncate">{art.title}</p>
-                      </div>
-                      <div className="flex items-center gap-4 text-[0.6rem] text-slate-500 shrink-0 ml-3">
-                        <span><strong className="text-slate-700">{art.views}</strong> views</span>
-                        <span><strong className="text-slate-700">{art.clicks}</strong> profile clicks</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-6 text-sm text-slate-400">
-                  <Icon name="file-text" size={24} className="text-slate-300 mx-auto mb-2" />
-                  No articles published yet. <button onClick={() => setView("articles")} className="text-violet-600 hover:text-violet-800 font-medium">Write one →</button>
-                </div>
-              )}
-            </div>
-
-            {/* Tips */}
-            <div className="bg-gradient-to-r from-violet-50 to-blue-50 border border-violet-200 rounded-xl p-4 md:p-5">
-              <h3 className="text-sm font-bold text-slate-900 mb-2 flex items-center gap-1.5">
-                <Icon name="lightbulb" size={16} className="text-amber-500" />
-                Tips to Improve Performance
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs text-slate-600">
-                {[
-                  profileCompleteness && profileCompleteness.score < 100 ? `Complete your profile (${profileCompleteness.score}%) — complete profiles get 3x more enquiries` : null,
-                  !advisor?.photo_url?.startsWith("http") || advisor?.photo_url?.includes("ui-avatars") ? "Add a real profile photo — advisors with photos get 2.5x more clicks" : null,
-                  !advisor?.booking_link ? "Add a booking link — lets investors schedule directly from your profile" : null,
-                  (stats?.articles || []).length === 0 ? "Publish an expert article — advisors with articles get 40% more profile views" : null,
-                  advisor?.review_count === 0 ? "Ask a client to leave a review — ratings build trust with new enquiries" : null,
-                ].filter(Boolean).map((tip, i) => (
-                  <div key={i} className="flex items-start gap-2 p-2 bg-white/60 rounded-lg">
-                    <Icon name="arrow-right" size={12} className="text-violet-500 shrink-0 mt-0.5" />
-                    <span>{tip}</span>
-                  </div>
-                ))}
-                {[profileCompleteness?.score === 100, advisor?.photo_url && !advisor.photo_url.includes("ui-avatars"), advisor?.booking_link, (stats?.articles || []).length > 0, (advisor?.review_count || 0) > 0].every(Boolean) && (
-                  <div className="col-span-full text-center py-2 text-emerald-600 font-medium">
-                    <Icon name="check-circle" size={16} className="inline mr-1" />
-                    Your profile is fully optimised!
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
+          <AnalyticsTab
+            stats={stats}
+            advisor={advisor}
+            leads={leads}
+            profileCompleteness={profileCompleteness}
+            onNavigate={setView}
+          />
         )}
 
         {view === "articles" && <AdvisorArticlesSection advisorId={advisor?.id} />}
