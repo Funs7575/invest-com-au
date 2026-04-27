@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import HubLeadForm from "@/components/leads/HubLeadForm";
+import { formatAUD } from "@/lib/currency";
 
 type Industry = "retail" | "hospitality" | "professional" | "tech" | "manufacturing" | "trades" | "healthcare" | "other";
 
@@ -17,10 +18,6 @@ const INDUSTRIES: Array<{ id: Industry; label: string; ebitdaMin: number; ebitda
 ];
 
 type Method = "ebitda" | "revenue" | "asset";
-
-function formatAUD(n: number): string {
-  return new Intl.NumberFormat("en-AU", { style: "currency", currency: "AUD", maximumFractionDigits: 0 }).format(n);
-}
 
 export default function ValuationClient() {
   const [industry, setIndustry] = useState<Industry>("professional");
