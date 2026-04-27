@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 import SmsfAuditorsClient, {
   type AuditorRow,
 } from "./SmsfAuditorsClient";
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 
 async function fetchAuditors(): Promise<AuditorRow[]> {
   try {
-    const supabase = createAdminClient();
+    const supabase = await createClient();
     const { data } = await supabase
       .from("professionals")
       .select(
