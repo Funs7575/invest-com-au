@@ -45,6 +45,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | S | _not started_ | — | — | — |
 | V | `claude/audit-remediation/v-polish-extras` | #252 | pending — pushed 2026-04-27T14:50Z (V-NEW-03: Stripe webhook idempotency replay harness + CI gate) | V-NEW-04 done (`5aadce3`) · CI-rescue `e37633c` · V-NEW-01 blocked (no DatedStatBadge component yet) · V-NEW-02 blocked (no compliance factual-filter) · V-NEW-03 done (`84bde1f`) |
 | V (V-NEW-07) | `claude/audit-remediation/v-new-07-admin-mfa-enforced` | #256 | pending — pushed 2026-04-27T17:55Z (V-NEW-07a foundation) | V-NEW-07a done (cookie helper + verify route + 22 tests) · V-NEW-07b pending (UI + proxy gate + rollout doc) |
+| X | `claude/audit-remediation/x-admin-backlog` | #257 | pending — pushed 2026-04-27T18:23Z (X-01 decision matrix) | X-01 done — per-file decision matrix at `docs/audits/x-admin-backlog-decision-matrix.md`; X-02..X-09 parallel-eligible with W |
 | Y | `claude/audit-remediation/y-registry-nav` | #253 | pending — pushed 2026-04-27T15:30Z | Y-05 done (commit `fb9dec3`) |
 
 ---
@@ -558,7 +559,7 @@ rule from `warn` to `error`. Extension of stream C philosophy.
 
 | ID | Status | Summary | Est. iterations | Notes |
 | --- | --- | --- | --- | --- |
-| X-01 | pending | Audit + classify all 17 backlog files; produce per-file decision matrix | 1 | Files: `app/advisor-portal/health`, `app/advisor-portal/upgrade`, `app/advisors/search`, `app/best-for/`, `app/best-for/[slug]/`, `app/foreign-investment/siv`, `app/go/[slug]/apply`, `app/how-to/transfer-from/`, `app/how-to/transfer-from/[broker_slug]/`, `app/invest/funds/`, `app/invest/funds/[slug]/`, `app/invest/[slug]/etfs/`, `app/invest/[slug]/stocks/`, `app/invest/[slug]/stocks/[ticker]/`, `app/preview/[token]/`, `app/research/`, `app/research/[slug]/`. Plus `app/go/[slug]/route.ts` (route, not page). |
+| X-01 | done | Audit + classify all 17 backlog files; produce per-file decision matrix | 1 | Done in commit `87bcef9e` (PR #257). `docs/audits/x-admin-backlog-decision-matrix.md` classifies the 18 files into 4 buckets: 11 SWAP (anon-readable RLS confirmed via `001_initial.sql` + `20260510_rls_hardening.sql`), 2 SWAP-WITH-MIGRATION (`broker_transfer_guides` lacks a policy — add one then swap), 3 KEEP-ADMIN with documented per-file justifications (preview/[token] draft articles via signed token; advisor-portal/health + upgrade read `advisor_sessions` which has no anon RLS by design), 2 NEEDS-API-ROUTE (`go/[slug]/apply` + `go/[slug]/route.ts`). Sequencing: X-02..X-08 are independent and parallel-eligible with W-stream. X-09 ratchet last. Open questions surfaced for founder: `broker_transfer_guides` + `campaigns` policy state (both in types.ts but no migration); shared `requireAdvisorSession()` helper extraction. |
 | X-02 | pending | Swap batch 1 — `/best-for/` family (3 files) | 1 | Reads `articles` (public-read) — straight swap. |
 | X-03 | pending | Swap batch 2 — `/research/` family (2 files) | 1 | Same. |
 | X-04 | pending | Swap batch 3 — `/invest/funds/` family (2 files) | 1 | Verify `funds` table RLS; swap or migrate policy. |
@@ -742,7 +743,7 @@ rule from `warn` to `error`. Extension of stream C philosophy.
 
 | ID | Status | Summary | Est. iterations | Notes |
 | --- | --- | --- | --- | --- |
-| X-01 | pending | Audit + classify all 17 backlog files; produce per-file decision matrix | 1 | Files: `app/advisor-portal/health`, `app/advisor-portal/upgrade`, `app/advisors/search`, `app/best-for/`, `app/best-for/[slug]/`, `app/foreign-investment/siv`, `app/go/[slug]/apply`, `app/how-to/transfer-from/`, `app/how-to/transfer-from/[broker_slug]/`, `app/invest/funds/`, `app/invest/funds/[slug]/`, `app/invest/[slug]/etfs/`, `app/invest/[slug]/stocks/`, `app/invest/[slug]/stocks/[ticker]/`, `app/preview/[token]/`, `app/research/`, `app/research/[slug]/`. Plus `app/go/[slug]/route.ts` (route, not page). |
+| X-01 | done | Audit + classify all 17 backlog files; produce per-file decision matrix | 1 | Done in commit `87bcef9e` (PR #257). `docs/audits/x-admin-backlog-decision-matrix.md` classifies the 18 files into 4 buckets: 11 SWAP (anon-readable RLS confirmed via `001_initial.sql` + `20260510_rls_hardening.sql`), 2 SWAP-WITH-MIGRATION (`broker_transfer_guides` lacks a policy — add one then swap), 3 KEEP-ADMIN with documented per-file justifications (preview/[token] draft articles via signed token; advisor-portal/health + upgrade read `advisor_sessions` which has no anon RLS by design), 2 NEEDS-API-ROUTE (`go/[slug]/apply` + `go/[slug]/route.ts`). Sequencing: X-02..X-08 are independent and parallel-eligible with W-stream. X-09 ratchet last. Open questions surfaced for founder: `broker_transfer_guides` + `campaigns` policy state (both in types.ts but no migration); shared `requireAdvisorSession()` helper extraction. |
 | X-02 | pending | Swap batch 1 — `/best-for/` family (3 files) | 1 | Reads `articles` (public-read) — straight swap. |
 | X-03 | pending | Swap batch 2 — `/research/` family (2 files) | 1 | Same. |
 | X-04 | pending | Swap batch 3 — `/invest/funds/` family (2 files) | 1 | Verify `funds` table RLS; swap or migrate policy. |
@@ -1025,6 +1026,19 @@ Items that ship LAST, in the final week before launch (Month 4 of pre-launch roa
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-27T18:23Z — iteration 62 (stream X — X-01 — createAdminClient backlog decision matrix)
+
+- Phase 0: lock acquired.
+- Phase 1: synced main (`785b6517`). Re-read queue + defaults.
+- Phase 1.5: types-drift skipped (no Supabase MCP).
+- Phase 2: CI rescue scan — all in-flight PR CI checks SUCCESS or in-progress; no rescue.
+- Phase 3: priority walk → V-NEW-02 blocked (compliance copy), V-NEW-06 actively being worked by parallel session ("V-NEW-06: AI cost caps + per-user-per-day budget" next on their stack), V-NEW-07 actively being worked by parallel session ("Push V-NEW-07 branch" message at iter 62 start; my iter 61 V-NEW-07a foundation now on remote, parallel session likely building 07b on top). Rather than collide, picked **X-01** (createAdminClient backlog decision matrix) — slot 11, parallel-eligible with W per defaults, no active branch on remote, doc-only iteration.
+- Phase 4: verified scope — gathered call patterns from each of the 18 backlog files (`grep` for `createAdminClient` + `.from()` + auth/cookie patterns) and cross-referenced each queried table against `supabase/migrations/*.sql` for `CREATE POLICY` mentions. Sources: `001_initial.sql` (initial RLS), `20260510_rls_hardening.sql` (anon-read policies for `best_for_scenarios`, `fund_listings`, `sector_reports`, `commodity_etfs`, `commodity_sectors`, `commodity_stocks`), `20260309_security_and_performance_fixes.sql` (`affiliate_clicks` anon-INSERT policy).
+- Phase 5: wrote `docs/audits/x-admin-backlog-decision-matrix.md` (144 LOC) — classifies each file into SWAP (11) / SWAP-WITH-MIGRATION (2) / KEEP-ADMIN (3) / NEEDS-API-ROUTE (2). Surfaces three open questions for founder: `broker_transfer_guides` policy state (in types.ts but no migration), `campaigns` policy state (same), shared `requireAdvisorSession()` helper extraction. Doc-only — no tsc / lint / test gates needed.
+- Phase 6: committed `87bcef9e` "docs(x): X-01 — createAdminClient backlog decision matrix" with full Why/Verified/Idempotency/Rollback body. Pushed branch + opened draft PR #257.
+- Phase 7: queue updated on main — X-01 marked done with link to commit + matrix path; In-flight table extended with X stream row referencing PR #257.
+- Status: PROGRESS · stream=X · item=X-01 · pr=#257
 
 ### 2026-04-27T17:55Z — iteration 61 (stream V — V-NEW-07a — admin MFA verify foundation)
 
