@@ -34,7 +34,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | H | _not started_ | — | — | — |
 | I | _not started_ | — | — | — |
 | J | _not started_ | — | — | — |
-| K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-27T00:15Z | K-01..K-08 done; K-09 false-positive; K-10 done; K-11..K-15 pending |
+| K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-27T03:45Z | K-01..K-08 done; K-09 false-positive; K-10..K-11 done; K-12..K-15 pending |
 | L | _not started_ | — | — | — |
 | M | _not started_ | — | — | — |
 | N | _not started_ | — | — | — |
@@ -233,7 +233,7 @@ P0/P1/P2 findings from the security agent's deep scan. Each is small (<2h); clus
 | K-08 | done | Sweep `/api/admin/*` PATCH/POST/DELETE routes: ensure each writes to `admin_audit_log` | 4 | P1. SOC 2 / ASIC audit-trail gap. 28 session-auth routes covered across 4 batches (iter 24-27). 5 system-bearer routes (CRON_SECRET / INTERNAL_API_KEY — no admin identity) intentionally skipped. All commits on PR #222. |
 | K-09 | false-positive | ~~`/api/seed/route.ts` — gate behind `NODE_ENV !== 'production'` + admin auth~~ | — | Both guards already present: `NODE_ENV === "production"` → 403 (line 12), `ADMIN_EMAILS`/`@invest.com.au` domain auth check (lines 20-23). Verified 2026-04-27. |
 | K-10 | done | `/api/newsletter/subscribe/route.ts` — `source` field allowlist enum | 1 | Done in commit `e065eb5` (PR #222). `ALLOWED_SOURCES` const-tuple `["newsletter","smsf_checklist","learn_hub"]`. Unknown/missing source falls back to `"newsletter"`. All 3 confirmed callers use an allowlisted value — no breakage. |
-| K-11 | pending | `admin_login_attempts` table — add `UNIQUE(ip_hash)` constraint to prevent rate-limit bypass under concurrency | 1 | P2. |
+| K-11 | done | `admin_login_attempts` — atomic counter via DB function to close SELECT→UPDATE TOCTOU race | 1 | Done in commit `f933d37` (PR #222). Phase-4 note: `ip_hash TEXT PRIMARY KEY` already provides uniqueness — the UNIQUE constraint K-11 described was already present. The real bypass vector was the SELECT → upsert/UPDATE TOCTOU race: two concurrent requests could both read count=N and both write count=N+1, losing an increment. Fix: new `admin_rate_limit_increment` PL/pgSQL function performs the increment atomically via `INSERT ... ON CONFLICT DO UPDATE SET count = count + 1`; `checkRateLimit` now calls `supabase.rpc('admin_rate_limit_increment', ...)` in a single round-trip. Fails-open on RPC error to avoid blocking admin logins during a partial DB outage. |
 | K-12 | pending | `proxy.ts:22–30` cron bearer compare with `timingSafeEqual` (consistency w/ broker-signup pattern) | 1 | P3. Hygiene. |
 | K-13 | pending | ESLint rule: ban `dangerouslySetInnerHTML` outside `JSON.stringify(...)` and `sanitizeHtml(...)` / `renderMarkdown(...)` contexts | 1 | P3. |
 | K-14 | pending | Seed `retention_rules` table with initial policies (today empty; gdpr-retention-purge cron has nothing to do) | 1 | P2 / GDPR. |
@@ -410,6 +410,7 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 
 ## Done
 
+- 2026-04-27 · K-11 · `admin_login_attempts` atomic rate-limit counter — new `admin_rate_limit_increment` PL/pgSQL function closes SELECT→UPDATE TOCTOU race; `checkRateLimit` now single-round-trip atomic; fails-open on RPC error. Noted: `UNIQUE(ip_hash)` was already present via `TEXT PRIMARY KEY`. · commit `f933d37` · pr #222
 - 2026-04-27 · K-10 · `/api/newsletter/subscribe` `source` field allowlist — `ALLOWED_SOURCES` const-tuple closes analytics-poisoning vector; unknown sources fall back to `"newsletter"`; all 3 confirmed callers unaffected. · commit `e065eb5` · pr #222
 - 2026-04-27 · K-08 · Sweep `/api/admin/*` PATCH/POST/DELETE for `admin_audit_log` — 28 session-auth routes covered in 4 batches (iter 24-27); 5 system-bearer routes skipped (no admin identity). Commits `bb8a677` (batch 1) + `97f8ef2` (batch 2) + `f820830` (batch 3) + `0bddf05` (batch 4) · pr #222
 - 2026-04-26 · K-07b · Day-25 account-deletion grace-period reminder cron — daily, scans `scheduled + reminder_sent_at IS NULL + purge ≤5 days`; sends final-warning email; stamps `reminder_sent_at` on success. Migration `20260523_account_deletion_requests_reminder.sql` adds sentinel column. Forward-compatible with missing table (A-MISSING-TABLE-1). · commit `64f40d9` · pr #222
@@ -445,6 +446,20 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-27 — iteration 30 (stream K, item K-11 — atomic rate-limit counter)
+
+- Phase 0: lock acquired.
+- Phase 1: synced main (51 commits ahead; ff-only pull). Main is up to date.
+- Phase 1.5: Types drift check — skipped (no schema changes in this window).
+- Phase 2 CI rescue: PR #220 — 3 checks (Playwright skipped, Check bypass secret success, Vercel Preview success). PR #222 — 3 checks (Playwright skipped, Check bypass secret success, Vercel Preview success). No rescue needed.
+- Phase 3: picked K-11 (next pending K item after K-10 done).
+- Phase 4 verification: read `supabase/migrations/20260310_admin_login_attempts.sql`. Confirmed `ip_hash TEXT PRIMARY KEY` — PRIMARY KEY implies UNIQUE NOT NULL. The literal K-11 ask ("add UNIQUE constraint") is already satisfied by the PK; adding a redundant UNIQUE constraint was not the right fix. Read `app/api/admin/login/route.ts`: confirmed the real bypass is the SELECT → upsert/UPDATE TOCTOU race in `checkRateLimit` (lines 58-105). Prior policy check for `admin_login_attempts`: RLS enabled in `20260310_admin_login_attempts.sql:12`; "Service role only on admin_login_attempts" USING (false) deny-all in `20260310_fix_security_advisories.sql:14-17`.
+- Phase 5: created `supabase/migrations/20260427_admin_rate_limit_atomic.sql` (PL/pgSQL `admin_rate_limit_increment` function, SECURITY DEFINER, GRANT EXECUTE to service_role). Rewrote `checkRateLimit` to call `supabase.rpc('admin_rate_limit_increment', ...)` — single atomic round-trip replaces SELECT→upsert/UPDATE sequence. Fail-open on RPC error (logs warn, returns { locked: false, remaining: MAX_ATTEMPTS }). Backoff extension UPDATE retained as a best-effort non-atomic step (benign race: concurrent extensions write the same monotonic timestamp). Local gates: file-targeted tsc — all errors are pre-existing sandbox module-resolution issues (Hardware exception applies). Lint — `eslint-config-next` not installed in sandbox (same hardware exception). No semantic errors in changed code.
+- Phase 6: committed `f933d37` (+105/-36 lines, 2 files). Pushed to `claude/audit-remediation/k-security-hardening` → PR #222.
+- Phase 7: queue updated on main — K-11 marked done, In-flight table updated, Done entry prepended, this log added.
+- Next item: K-12 (`proxy.ts` cron bearer `timingSafeEqual` consistency).
+- Status: PROGRESS · stream=K · item=K-11 · pr=#222 · commit=`f933d37`
 
 ### 2026-04-27 — iteration 29 (stream K, item K-10 — newsletter source allowlist)
 
