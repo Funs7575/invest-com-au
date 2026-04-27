@@ -513,3 +513,55 @@ Saved to `/tmp/audit-eslint.json`.
 | | **Aggregate** | | | **66.0%** |
 
 Loop trajectory math (from `ENTERPRISE_STANDARD.md`): with per-surface enforcement now active, items ship at 88–92% of standard. Net Week-12 trajectory: **88%**.
+
+---
+
+## Post-audit reconciliation (added later same day)
+
+Live cross-check against the Supabase project ran a few hours after the audit completed. Numbers shifted as Stream O RLS-iter 2/3/4 landed during the audit window. The audit-time snapshot above is preserved unchanged for historical accuracy; the reconciliation below is additive context, not a re-score.
+
+### Database surface — observed deltas
+
+| Metric | Audit-time (counted from `supabase/migrations/*.sql`) | Live now (queried via Supabase MCP) | Delta |
+| --- | --- | --- | --- |
+| Tables | 177 | 235 | +58 (+33%) |
+| RLS-enabled tables | 183 | 234 | +51 (+28%) |
+| RLS coverage | n/a (counts overlapped) | **234 / 235 = 99.6%** | — |
+| Policies | 211 | 292 | +81 (+38%) |
+| Indexes | 406 | 785 | +379 (+93%) |
+
+Two interpretations of the audit-time numbers:
+
+- The migration-grep count includes re-enabled-RLS lines (some tables get `ENABLE ROW LEVEL SECURITY` re-asserted across migrations), which inflates the "RLS-enabled" count above the table count. The live-DB count of 234 / 235 unique tables is the authoritative coverage figure.
+- Index count nearly doubled (+93%) — most likely from the FK-index backfill commits in Stream O plus indexes shipped on new tables.
+
+### Reconciled Database surface assessment
+
+The dominant gap surfaced in the original audit — **0 RLS isolation tests across all user-data tables** — is unchanged. The platform now has near-universal RLS coverage (99.6% of tables), but no integration tests prove that those policies actually isolate user A from user B's rows.
+
+If the audit's scoring model gave full credit for C1.1 only when "RLS policies on all user-data tables AND isolation tests prove they work", the surface score remains **3/6 = 50%**. If C1.1 is split into "policies present" (now ~99.6%) and "policies tested" (still 0%), the surface bumps to about **3.5/6 ≈ 58%**. Either way, the ceiling stays at ~65% until isolation tests start landing as part of V-NEW-04 rollout.
+
+The remaining gaps at this surface — rollback headers (5/117 migrations), perf profiling (none) — are also unchanged.
+
+**Net effect on aggregate:** if the Database surface is treated as 58% instead of 50%, the platform aggregate moves from 66% to ~67%. Insufficient to change the executive summary or the P0 gap order. The bottom-percentile surface (AI at 22%) is still the determinant of effective user experience.
+
+### Slot-1 reprioritization (parallel-session reconciliation)
+
+While this audit was being authored, a parallel session added two of the audit's three Critical-severity gaps to the queue as net-new items: **V-NEW-06 (AI cost caps)** and **V-NEW-07 (Admin MFA enforced)**. These match audit gaps #2 and #3 respectively. Both landed on main as `f562d9b8` before this PR could open. To avoid ID conflicts, this PR adds the remaining audit-driven item — **V-NEW-08 (Email double opt-in)** — and confirms the slot-1 sequence as:
+
+1. **V-NEW-02** — AI factual filter (audit gap #1)
+2. **V-NEW-06** — AI cost caps (audit gap #2) [landed on main from the parallel session]
+3. **V-NEW-07** — Admin MFA enforced (audit gap #3) [landed on main from the parallel session]
+4. **V-NEW-08** — Email double opt-in (Spam Act 2003 exposure)
+5. **V-NEW-01** — Stale-data CI gate (unblocks once `<DatedStatBadge>` ships from slot 2)
+
+V-NEW-03 + V-NEW-04 already shipped via PR #252.
+
+### What this reconciliation does not change
+
+- All other surface scores remain as audited.
+- The top-10 gaps list remains valid.
+- The 14-week remediation roadmap remains unchanged.
+- The trajectory math (88% by Week 12) remains unchanged.
+
+The reconciliation reinforces the audit's central thesis: **per-surface scoring matters more than aggregate**. A 33% week-over-week improvement on Database doesn't move the platform's effective grade because it doesn't touch the AI surface, which is what users feel when they touch AI features.
