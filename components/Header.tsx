@@ -268,6 +268,7 @@ const mobileNavSections = [
       { name: "SMSF Setup", href: "/smsf/setup" },
       { name: "SMSF Crypto", href: "/smsf/crypto" },
       { name: "SMSF Property", href: "/smsf/property" },
+      { name: "SMSF Cost Calculator", href: "/smsf-calculator" },
       { name: "Learn to Invest", href: "/learn" },
     ],
   },
