@@ -44,8 +44,9 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | R | _not started_ | — | — | — |
 | S | _not started_ | — | — | — |
 | V | `claude/audit-remediation/v-polish-extras` | #252 | pending — pushed 2026-04-27T14:50Z (V-NEW-03: Stripe webhook idempotency replay harness + CI gate) | V-NEW-04 done (`5aadce3`) · CI-rescue `e37633c` · V-NEW-01 blocked (no DatedStatBadge component yet) · V-NEW-02 blocked (no compliance factual-filter) · V-NEW-03 done (`84bde1f`) |
-| V (V-NEW-07) | `claude/audit-remediation/v-new-07-admin-mfa-enforced` | #256 | pending — pushed 2026-04-27T17:55Z (V-NEW-07a foundation) | V-NEW-07a done (cookie helper + verify route + 22 tests) · V-NEW-07b pending (UI + proxy gate + rollout doc) |
-| Y | `claude/audit-remediation/y-registry-nav` | #253 | pending — pushed 2026-04-27T15:30Z | Y-05 done (commit `fb9dec3`) |
+| V (V-NEW-07) | `claude/audit-remediation/v-new-07-admin-mfa-enforced` | #256 | pending — test-fix pushed 2026-04-27T18:45Z | V-NEW-07a done (cookie helper + verify route + 22 tests) · V-NEW-07b done (`698bbae`) · test-fix `0561944` |
+| X | `claude/audit-remediation/x-admin-backlog` | #257 | pending — pushed 2026-04-27T18:23Z (X-01 decision matrix) | X-01 done — per-file decision matrix at `docs/audits/x-admin-backlog-decision-matrix.md`; X-02..X-09 parallel-eligible with W |
+| Y | `claude/audit-remediation/y-registry-nav` | #253 | pending — pushed 2026-04-27T19:25Z | Y-05 done (commit `fb9dec3`) · Y-08 done (commit `8bb1d4d`) |
 
 ---
 
@@ -506,7 +507,7 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 | V-NEW-06 | pending | AI cost caps — per-user-per-day token budget, global daily budget, 80% alerts, 429 with friendly message, daily UTC reset, admin override flag | 2-3 | **P0 — net-new ID added 2026-04-27.** Source: `docs/audits/2026-04-26-comprehensive-audit.md` (companion to other terminal's 04-27 audit). Adds `ai_token_usage` table tracking tokens by `user_id, route, day`. Hard caps: $5/user/day on public concierge, $50/admin-user/day on admin agent (configurable env vars `AI_USER_DAILY_USD`, `AI_ADMIN_USER_DAILY_USD`). Global budgets: $200/day public, $100/day admin (`AI_GLOBAL_PUBLIC_USD`, `AI_GLOBAL_ADMIN_USD`). Alert at 80% of any cap → existing `OPS_ALERT_EMAIL` pathway. 429 friendly when cap hit. Daily reset 00:00 UTC. Admin override flag for emergencies. Apply to `app/api/concierge/*` and `app/api/admin/agent/*`. Branch: `claude/audit-remediation/v-new-06-ai-cost-caps`. |
 | V-NEW-07 | split | Admin MFA enforced — split into 07a (foundation, done) + 07b (UI + proxy gate, pending) because atomic LOC exceeds per-iteration cap. Branch: `claude/audit-remediation/v-new-07-admin-mfa-enforced`. PR #256 (draft). |
 | V-NEW-07a | done | Admin MFA verify foundation — HMAC-signed cookie helper + step-up route + 22 tests | 1 | Done in PR #256 sub-item 07a (~549 LOC). `lib/admin-mfa-cookie.ts` — sign/verify HMAC-SHA256 cookie, 12h TTL, refuses to operate without `ADMIN_MFA_COOKIE_SECRET` ≥32 chars. `app/api/admin/mfa/verify/route.ts` — POST step-up that takes a TOTP or recovery code from an authenticated admin and sets the HttpOnly + SameSite=Strict cookie on success. 13 cookie-helper tests + 9 verify-route tests, all green. No user-visible behaviour change yet — proxy gate ships in 07b. |
-| V-NEW-07b | pending | Admin MFA enforced — UI + proxy gate + downloadable recovery codes + rollout doc | 1-2 | **P0 — slot 3 audit-driven priority.** **Depends on V-NEW-07a (done).** Adds `/admin/mfa/verify` page + client form, modifies `proxy.ts` to redirect authenticated admins lacking `admin_mfa_verified` cookie to the verify page (exempt: `/admin/login`, `/admin/mfa/verify`, `/admin/settings/mfa`), adds "Download codes (.txt)" button to `MfaEnrollmentClient.tsx`, ships `docs/ops/admin-mfa-rollout.md`. ~480 LOC. Continues on the V-NEW-07 branch + PR #256. Pre-deploy: founder must set `ADMIN_MFA_COOKIE_SECRET` in Vercel (≥32 chars). |
+| V-NEW-07b | done | Admin MFA enforced — UI + proxy gate + downloadable recovery codes + rollout doc | 1 | Done in commit `698bbae` (PR #256). `lib/admin-mfa-cookie-edge.ts` — Edge-compatible HMAC verifier using `crypto.subtle`. `proxy.ts` — MFA gate: authenticated admins without valid `admin_mfa_verified` cookie → redirect to `/admin/mfa/verify?redirect=<path>` (exempt: `/admin/login`, `/admin/mfa/verify`, `/admin/settings/mfa`; dev fallthrough when secret absent). `app/admin/mfa/verify/page.tsx` + `MfaVerifyClient.tsx` — step-up page (TOTP + recovery-code toggle). `MfaEnrollmentClient.tsx` — "Download (.txt)" button. `docs/ops/admin-mfa-rollout.md` — pre-deploy checklist + rollback + secret rotation. `__tests__/lib/admin-mfa-cookie-edge.test.ts` — 10 edge-verifier tests. 605 LOC. **Pre-deploy: founder must set `ADMIN_MFA_COOKIE_SECRET` ≥32 chars in Vercel before merging.** |
 
 ### Stream W — Hub foundation: component extraction (added 2026-04-27)
 
@@ -558,7 +559,7 @@ rule from `warn` to `error`. Extension of stream C philosophy.
 
 | ID | Status | Summary | Est. iterations | Notes |
 | --- | --- | --- | --- | --- |
-| X-01 | pending | Audit + classify all 17 backlog files; produce per-file decision matrix | 1 | Files: `app/advisor-portal/health`, `app/advisor-portal/upgrade`, `app/advisors/search`, `app/best-for/`, `app/best-for/[slug]/`, `app/foreign-investment/siv`, `app/go/[slug]/apply`, `app/how-to/transfer-from/`, `app/how-to/transfer-from/[broker_slug]/`, `app/invest/funds/`, `app/invest/funds/[slug]/`, `app/invest/[slug]/etfs/`, `app/invest/[slug]/stocks/`, `app/invest/[slug]/stocks/[ticker]/`, `app/preview/[token]/`, `app/research/`, `app/research/[slug]/`. Plus `app/go/[slug]/route.ts` (route, not page). |
+| X-01 | done | Audit + classify all 17 backlog files; produce per-file decision matrix | 1 | Done in commit `87bcef9e` (PR #257). `docs/audits/x-admin-backlog-decision-matrix.md` classifies the 18 files into 4 buckets: 11 SWAP (anon-readable RLS confirmed via `001_initial.sql` + `20260510_rls_hardening.sql`), 2 SWAP-WITH-MIGRATION (`broker_transfer_guides` lacks a policy — add one then swap), 3 KEEP-ADMIN with documented per-file justifications (preview/[token] draft articles via signed token; advisor-portal/health + upgrade read `advisor_sessions` which has no anon RLS by design), 2 NEEDS-API-ROUTE (`go/[slug]/apply` + `go/[slug]/route.ts`). Sequencing: X-02..X-08 are independent and parallel-eligible with W-stream. X-09 ratchet last. Open questions surfaced for founder: `broker_transfer_guides` + `campaigns` policy state (both in types.ts but no migration); shared `requireAdvisorSession()` helper extraction. |
 | X-02 | pending | Swap batch 1 — `/best-for/` family (3 files) | 1 | Reads `articles` (public-read) — straight swap. |
 | X-03 | pending | Swap batch 2 — `/research/` family (2 files) | 1 | Same. |
 | X-04 | pending | Swap batch 3 — `/invest/funds/` family (2 files) | 1 | Verify `funds` table RLS; swap or migrate policy. |
@@ -584,7 +585,7 @@ hub stops requiring `Header.tsx` edits. Reference: `HUB_BLUEPRINT.md` §2,
 | Y-05 | done | Build `<DatedStatBadge>` + `lib/dated-stats.ts` registry + cron stale-check | 2 | Done in commit `fb9dec3` (PR #253). `DatedStat` interface + `DATED_STATS` registry + `isStale` + `getStaleStats` + `getUpcomingStaleStats`; `<DatedStatBadge>` "use client" wrapper with `data-stales-at` ISO attribute + dev stale indicator; daily-8 cron alerts founder when entries are stale or within 7 days. 21 tests green. Unblocks V-NEW-01 once PR #253 merges. |
 | Y-06 | pending | Audit + wrap hardcoded dated claims in `/grants` hero (4 stats) and `/grants/[program]` pages | 1 | "30 April 2026", "Round 4 open", "~90% spent by June 2026". |
 | Y-07 | pending | Audit + wrap dated claims in remaining hubs (`/smsf`, `/dividends`, `/sell-business`, `/learn`, etc.) | 1 | |
-| Y-08 | pending | Add CI lint that fails build if a date-shaped string isn't wrapped in `<DatedStatBadge>` | 1 | Static analysis: regex `\b\d{1,2}\s+(January\|February\|...\|December)\s+\d{4}\b` outside `<DatedStatBadge>` JSX. |
+| Y-08 | done | Add CI lint that fails build if a date-shaped string isn't wrapped in `<DatedStatBadge>` | 1 | Done in commit `8bb1d4d` (PR #253). `scripts/check-dated-strings.mjs` — scans .tsx files changed in the PR for bare spelled-out dates outside `<DatedStatBadge>` (±5-line window check). `// dated-ok` line-level escape; `// dated-strings-exempt` file-level escape. 33 tests. `dated-strings-gate` CI job. `npm run audit:dated-strings` local script. |
 
 ### Stream Z — Tier-1 hub builds (added 2026-04-27)
 
@@ -742,7 +743,7 @@ rule from `warn` to `error`. Extension of stream C philosophy.
 
 | ID | Status | Summary | Est. iterations | Notes |
 | --- | --- | --- | --- | --- |
-| X-01 | pending | Audit + classify all 17 backlog files; produce per-file decision matrix | 1 | Files: `app/advisor-portal/health`, `app/advisor-portal/upgrade`, `app/advisors/search`, `app/best-for/`, `app/best-for/[slug]/`, `app/foreign-investment/siv`, `app/go/[slug]/apply`, `app/how-to/transfer-from/`, `app/how-to/transfer-from/[broker_slug]/`, `app/invest/funds/`, `app/invest/funds/[slug]/`, `app/invest/[slug]/etfs/`, `app/invest/[slug]/stocks/`, `app/invest/[slug]/stocks/[ticker]/`, `app/preview/[token]/`, `app/research/`, `app/research/[slug]/`. Plus `app/go/[slug]/route.ts` (route, not page). |
+| X-01 | done | Audit + classify all 17 backlog files; produce per-file decision matrix | 1 | Done in commit `87bcef9e` (PR #257). `docs/audits/x-admin-backlog-decision-matrix.md` classifies the 18 files into 4 buckets: 11 SWAP (anon-readable RLS confirmed via `001_initial.sql` + `20260510_rls_hardening.sql`), 2 SWAP-WITH-MIGRATION (`broker_transfer_guides` lacks a policy — add one then swap), 3 KEEP-ADMIN with documented per-file justifications (preview/[token] draft articles via signed token; advisor-portal/health + upgrade read `advisor_sessions` which has no anon RLS by design), 2 NEEDS-API-ROUTE (`go/[slug]/apply` + `go/[slug]/route.ts`). Sequencing: X-02..X-08 are independent and parallel-eligible with W-stream. X-09 ratchet last. Open questions surfaced for founder: `broker_transfer_guides` + `campaigns` policy state (both in types.ts but no migration); shared `requireAdvisorSession()` helper extraction. |
 | X-02 | pending | Swap batch 1 — `/best-for/` family (3 files) | 1 | Reads `articles` (public-read) — straight swap. |
 | X-03 | pending | Swap batch 2 — `/research/` family (2 files) | 1 | Same. |
 | X-04 | pending | Swap batch 3 — `/invest/funds/` family (2 files) | 1 | Verify `funds` table RLS; swap or migrate policy. |
@@ -768,7 +769,7 @@ hub stops requiring `Header.tsx` edits. Reference: `HUB_BLUEPRINT.md` §2,
 | Y-05 | done | Build `<DatedStatBadge>` + `lib/dated-stats.ts` registry + cron stale-check | 2 | Done in commit `fb9dec3` (PR #253). `DatedStat` interface + `DATED_STATS` registry + `isStale` + `getStaleStats` + `getUpcomingStaleStats`; `<DatedStatBadge>` "use client" wrapper with `data-stales-at` ISO attribute + dev stale indicator; daily-8 cron alerts founder when entries are stale or within 7 days. 21 tests green. Unblocks V-NEW-01 once PR #253 merges. |
 | Y-06 | pending | Audit + wrap hardcoded dated claims in `/grants` hero (4 stats) and `/grants/[program]` pages | 1 | "30 April 2026", "Round 4 open", "~90% spent by June 2026". |
 | Y-07 | pending | Audit + wrap dated claims in remaining hubs (`/smsf`, `/dividends`, `/sell-business`, `/learn`, etc.) | 1 | |
-| Y-08 | pending | Add CI lint that fails build if a date-shaped string isn't wrapped in `<DatedStatBadge>` | 1 | Static analysis: regex `\b\d{1,2}\s+(January\|February\|...\|December)\s+\d{4}\b` outside `<DatedStatBadge>` JSX. |
+| Y-08 | done | Add CI lint that fails build if a date-shaped string isn't wrapped in `<DatedStatBadge>` | 1 | Done in commit `8bb1d4d` (PR #253). `scripts/check-dated-strings.mjs` — scans .tsx files changed in the PR for bare spelled-out dates outside `<DatedStatBadge>` (±5-line window check). `// dated-ok` line-level escape; `// dated-strings-exempt` file-level escape. 33 tests. `dated-strings-gate` CI job. `npm run audit:dated-strings` local script. |
 
 ### Stream Z — Tier-1 hub builds (added 2026-04-27)
 
@@ -961,6 +962,8 @@ Items that ship LAST, in the final week before launch (Month 4 of pre-launch roa
 
 ## Done
 
+- 2026-04-27 · Y-08 · Dated strings CI gate — `scripts/check-dated-strings.mjs` fails build when a .tsx file added or modified in a PR contains a bare spelled-out date ("30 April 2026") not wrapped in `<DatedStatBadge>`. ±5-line window check covers multiline badge usage. `// dated-ok` line-level escape for genuinely static dates; `// dated-strings-exempt` file-level escape for DB-rendered dates. 33 tests (extractDateMatches 9 cases, isInDatedBadgeContext 7 cases, hasEscapeHatch 4 cases, isExemptFile 9 cases, isFileExemptByContent 4 cases). `dated-strings-gate` CI job + `npm run audit:dated-strings` local script. Gate validates clean on existing DatedStatBadge component source. Slot 2 enforcement complete (component + cron + gate all landed). · commit `8bb1d4d` · pr #253
+- 2026-04-27 · V-NEW-07b · Admin MFA UI + proxy gate + recovery-code download + rollout doc. `lib/admin-mfa-cookie-edge.ts` — Edge-compatible HMAC verifier (crypto.subtle). `proxy.ts` — gate: authenticated admins without valid `admin_mfa_verified` cookie redirected to `/admin/mfa/verify` (exempt: login, verify, settings/mfa; dev fallthrough). `app/admin/mfa/verify/page.tsx` + `MfaVerifyClient.tsx` — TOTP/recovery-code step-up page. `MfaEnrollmentClient.tsx` — Download (.txt) button. `docs/ops/admin-mfa-rollout.md` — pre-deploy checklist. 10 edge-verifier tests. 605 LOC. **Pre-deploy: `ADMIN_MFA_COOKIE_SECRET` ≥32 chars must be set in Vercel before merging.** · commit `698bbae` · pr #256
 - 2026-04-27 · D-11 batch 1 · advisor-auth lifecycle tests: session GET (5 tests — no-auth 401, Supabase-auth 200, auth_user_id link-on-login, legacy-cookie fallback 200, expired-cookie 401) + session DELETE (3 tests — success, legacy row deleted, exceptions swallowed) + login POST (16 tests — no-email 400, rate-limit 429, magic obfuscated 200, magic OTP sent, magic OTP error 500, password not-found 404, missing password 400, wrong credentials 401, success + links auth_user_id, signup password-too-short 400, signup already-has-auth_user_id 409, signup already-registered 409, signup with-session needsConfirmation=false, signup without-session needsConfirmation=true, unknown mode 400, exception 500) + profile PATCH (5 tests — rate-limit 429, unauthenticated 401, success 200, allowlist enforcement, DB error 500) + notifications GET+PATCH (7 tests). 37 tests total, +636/-0 across 4 files. · commit `90c7c5b` · pr #246
 - 2026-04-27 · D-10 · `vitest.config.mts` coverage ratchet: global thresholds 42/72/63 → 44/73/63 (lines/stmt/branches/functions); per-glob API-route floor added `"app/api/**/*.ts": { lines: 13, branches: 58, functions: 30, statements: 13 }`. Measured post-D-01..D-09: overall 44.45%/73.02%/63.74%; API-route scoped 13.82%/58.35%/30.18%. +25/-23 across 1 file. · commit `4e702c1` · pr #246
 - 2026-04-27 · D-09 · Integration test for `POST /api/auth/signout`: 2 tests — success path (`{success:true}` 200) and catch path (`{error:"Failed to sign out"}` 500). 100% branch coverage on the 12-line route. +40/-0 across 1 file. · commit `8e2d35d` · pr #246
@@ -1025,6 +1028,57 @@ Items that ship LAST, in the final week before launch (Month 4 of pre-launch roa
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-27T19:15Z — iteration 65 (stream Y — Y-08 — dated strings CI gate)
+
+- Phase 0: lock acquired.
+- Phase 1: local main had diverged from origin/main (force-pushed to 4ba8520); reset local to origin/main. Read queue + defaults end-to-end.
+- Phase 1.5: types-drift skipped (no Supabase MCP available).
+- Phase 2: CI rescue scan — checked all in-flight PRs (#220 B, #246 D, #252 V, #253 Y, #256 V-NEW-07, #257 X, #242 N, #222 K) via `get_check_runs`. All: "Check bypass secret: success" / "Playwright vs Vercel preview: skipped". No CI failures; no rescue needed.
+- Phase 3: priority walk — V-NEW-01 blocked (in Blocked section, user must clear even though Y-05 is done). V-NEW-02 blocked (user must clear). Slot 2: Y-08 (CI lint half of DatedStatBadge enforcement) is pending on stream Y / PR #253. Checked out `claude/audit-remediation/y-registry-nav` via `git fetch + checkout`. Verified `components/DatedStatBadge.tsx` present on branch.
+- Phase 4: verified scope — DatedStatBadge component exists with `stalesAt` prop + `data-stales-at` attribute (CI gate target confirmed). No prior `check-dated-strings` scripts exist. Pattern matches V-NEW-03/04 gate style exactly. No blockers.
+- Phase 5: created 3 files (+520/-0 LOC): `scripts/check-dated-strings.mjs` (gate — getChangedTsxFiles / extractDateMatches / isInDatedBadgeContext / hasEscapeHatch / isExemptFile / isFileExemptByContent, all exported), `__tests__/scripts/check-dated-strings.test.ts` (33 tests), `.github/workflows/ci.yml` (dated-strings-gate job). Added `audit:dated-strings` npm script. Ran 33 tests locally — all pass. Linted — clean. Ran gate against branch diff — passes on existing DatedStatBadge component (dates wrapped in context). Hardware exception: whole-codebase tsc skipped; CI is authoritative.
+- Phase 6: committed `8bb1d4d` with full Why/Verified/Idempotency/Rollback body. Pushed. Updated PR #253 body (Y-08 checked off).
+- Phase 7: queue updated on main — Y-08 marked done in both Y stream tables, in-flight table updated, done entry prepended, iteration log appended.
+- Status: PROGRESS · stream=Y · item=Y-08 · pr=#253 · commit=`8bb1d4d`
+
+### 2026-04-27T18:45Z — iteration 64 (CI-RESCUE · stream V · PR #256 — test fix for admin-mfa-cookie-edge.test.ts)
+
+- Phase 0: lock acquired.
+- Phase 1: synced main (`fc83d79` — iter 63 queue update already landed). Reset local to origin/main. Read queue + defaults.
+- Phase 1.5: types-drift skipped (no Supabase MCP).
+- Phase 2: CI rescue — checked PR #256 (V-NEW-07). Found `Lint · Type-check · Test · Build` still in-progress; ran tests locally to validate. Found `__tests__/lib/admin-mfa-cookie-edge.test.ts` had 5/11 tests failing. Root cause: test "returns false when ADMIN_MFA_COOKIE_SECRET is absent" called `signMfaCookie()` while the env var was already deleted — the function throws immediately, so the restore line `process.env.ADMIN_MFA_COOKIE_SECRET = saved` was never reached, poisoning all subsequent tests that call `signMfaCookie`.
+- Phase 3: V-NEW-07b was already done by parallel iter 63. This iteration is a CI-rescue for PR #256.
+- Phase 4: Verified fix — correct approach is to sign the cookie FIRST (while secret is available from `beforeAll`), then delete the secret in a `try/finally` block so the restore is guaranteed. Verified all 11 tests pass locally after fix; also ran 07a test suite (22 tests) — all pass. Lint clean (0 warnings).
+- Phase 5: Committed fix `0561944` to `claude/audit-remediation/v-new-07-admin-mfa-enforced`. Merged remote branch (parallel iter had pushed queue-update to branch + merged main — merged those in). Pushed.
+- Phase 7: Queue updated on main — In-flight table updated with test-fix commit. This log entry added.
+- Status: CI-RESCUE · stream=V · pr=#256 · commit=`0561944`
+
+### 2026-04-27T18:40Z — iteration 63 (stream V — V-NEW-07b — admin MFA UI + proxy gate + rollout doc)
+
+- Phase 0: lock acquired.
+- Phase 1: synced main (`90115a9`). Re-read queue + defaults. Local main had diverged from origin/main (force-push); reset local main to match.
+- Phase 1.5: types-drift skipped (no Supabase MCP available).
+- Phase 2: CI rescue scan — all in-flight PRs (#220 B, #246 D, #252 V, #256 V-NEW-07, #253 Y) checked via `get_check_runs`. All: "Check bypass secret: success" + "Playwright vs Vercel preview: skipped". No CI failures; no rescue needed.
+- Phase 3: priority walk → V-NEW-07b top unblocked pending item (slot 1, V-NEW gate; V-NEW-07a done in prior iter). Checked out `claude/audit-remediation/v-new-07-admin-mfa-enforced` branch via `git fetch + checkout`.
+- Phase 4: verified scope — read `lib/admin-mfa-cookie.ts` (Node.js crypto; can't import in Edge), `app/api/admin/mfa/verify/route.ts` (existing 07a foundation), `proxy.ts` (uses Buffer → Edge Runtime polyfill; needs async-await compatible gate), `MfaEnrollmentClient.tsx` (existing copy-codes button needs download sibling), `app/admin/login/page.tsx` (UI pattern reference). Cross-checked `requireAdmin()` return type → `{ ok: true; email: string }`. Confirmed searchParams typing from existing pages. No Phase 4 blockers.
+- Phase 5: created 7 files (+605/-9 LOC): `lib/admin-mfa-cookie-edge.ts` (Edge-compatible HMAC via crypto.subtle), `app/admin/mfa/verify/page.tsx` + `MfaVerifyClient.tsx` (step-up page + client form), `proxy.ts` gate (MFA check + dev fallthrough), `MfaEnrollmentClient.tsx` Download (.txt) button, `__tests__/lib/admin-mfa-cookie-edge.test.ts` (10 tests), `docs/ops/admin-mfa-rollout.md`. Local type-check skipped (no node_modules; Hardware exception). CI is authoritative gate.
+- Phase 6: committed `698bbae` with full Why/Verified/Idempotency/Rollback body. Pushed. Concurrent iteration had pushed a queue update to the branch — pulled/merged, then pushed successfully. Updated PR #256 body to reflect both 07a + 07b complete.
+- Phase 7: queue updated on main — V-NEW-07b marked done (done entry added, in-flight table updated). Iteration log appended.
+- Status: PROGRESS · stream=V · item=V-NEW-07b · pr=#256
+
+### 2026-04-27T18:23Z — iteration 62 (stream X — X-01 — createAdminClient backlog decision matrix)
+
+- Phase 0: lock acquired.
+- Phase 1: synced main (`785b6517`). Re-read queue + defaults.
+- Phase 1.5: types-drift skipped (no Supabase MCP).
+- Phase 2: CI rescue scan — all in-flight PR CI checks SUCCESS or in-progress; no rescue.
+- Phase 3: priority walk → V-NEW-02 blocked (compliance copy), V-NEW-06 actively being worked by parallel session ("V-NEW-06: AI cost caps + per-user-per-day budget" next on their stack), V-NEW-07 actively being worked by parallel session ("Push V-NEW-07 branch" message at iter 62 start; my iter 61 V-NEW-07a foundation now on remote, parallel session likely building 07b on top). Rather than collide, picked **X-01** (createAdminClient backlog decision matrix) — slot 11, parallel-eligible with W per defaults, no active branch on remote, doc-only iteration.
+- Phase 4: verified scope — gathered call patterns from each of the 18 backlog files (`grep` for `createAdminClient` + `.from()` + auth/cookie patterns) and cross-referenced each queried table against `supabase/migrations/*.sql` for `CREATE POLICY` mentions. Sources: `001_initial.sql` (initial RLS), `20260510_rls_hardening.sql` (anon-read policies for `best_for_scenarios`, `fund_listings`, `sector_reports`, `commodity_etfs`, `commodity_sectors`, `commodity_stocks`), `20260309_security_and_performance_fixes.sql` (`affiliate_clicks` anon-INSERT policy).
+- Phase 5: wrote `docs/audits/x-admin-backlog-decision-matrix.md` (144 LOC) — classifies each file into SWAP (11) / SWAP-WITH-MIGRATION (2) / KEEP-ADMIN (3) / NEEDS-API-ROUTE (2). Surfaces three open questions for founder: `broker_transfer_guides` policy state (in types.ts but no migration), `campaigns` policy state (same), shared `requireAdvisorSession()` helper extraction. Doc-only — no tsc / lint / test gates needed.
+- Phase 6: committed `87bcef9e` "docs(x): X-01 — createAdminClient backlog decision matrix" with full Why/Verified/Idempotency/Rollback body. Pushed branch + opened draft PR #257.
+- Phase 7: queue updated on main — X-01 marked done with link to commit + matrix path; In-flight table extended with X stream row referencing PR #257.
+- Status: PROGRESS · stream=X · item=X-01 · pr=#257
 
 ### 2026-04-27T17:55Z — iteration 61 (stream V — V-NEW-07a — admin MFA verify foundation)
 
