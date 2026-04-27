@@ -1,14 +1,24 @@
-// Labeling logic for the auto-merge system. Computes which of (SAFE,
-// BLOCKED, neither) the PR's changed files fall into — denylist wins
-// on conflict — and applies the chosen label, removing the conflicting
-// one if it was previously present.
+// Labeling logic for the auto-merge system. Computes:
 //
-// Queue review-flagged items (security/legal review per
-// REMEDIATION_DEFAULTS.md "Review flags": BB-04, CC-01, EE-02, CC-07)
-// always force `needs-human-review` regardless of changed paths.
+//   - which of (SAFE, BLOCKED, neither) the PR's changed files fall
+//     into, with denylist winning on conflict
+//   - whether the PR's queue item ID is on the security/legal review
+//     list per docs/audits/REMEDIATION_DEFAULTS.md
+//   - whether the PR is the first of a tracked pattern (state lives on
+//     bot branch `automerge-bot/state`, file `.github/auto-merge-state.json`)
+//
+// Then applies the resulting label set: `auto-merge-safe` or
+// `needs-human-review`, removing the other if it was previously
+// present.
+
+const fs = require("fs");
+const path = require("path");
+const { execSync } = require("child_process");
 
 const SAFE_LABEL = "auto-merge-safe";
 const REVIEW_LABEL = "needs-human-review";
+const BOT_BRANCH = "automerge-bot/state";
+const STATE_PATH = ".github/auto-merge-state.json";
 
 // SAFE allowlist patterns. A PR is eligible only if EVERY changed file
 // matches one of these (and none match the denylist). Patterns use a
@@ -55,6 +65,23 @@ const BLOCKED_BASENAME_SUBSTRINGS = ["rls", "policy", ".env"];
 // Source of truth is REMEDIATION_DEFAULTS.md "Review flags" section —
 // keep this list in sync if that section changes.
 const REVIEW_FLAGGED_ITEMS = ["BB-04", "CC-01", "EE-02", "CC-07"];
+
+// Patterns whose FIRST PR is force-flagged for human review. After the
+// founder approves the first one, subsequent PRs of the same pattern
+// flow through normal labeling. State persisted on bot branch so we
+// remember across runs.
+const TRACKED_PATTERNS = {
+  "hub-on-extracted-components": (ctx) =>
+    ctx.diff.includes("HubPage") &&
+    ctx.diff.includes("import") &&
+    /<HubPage[\s>/]/.test(ctx.diff),
+  "programmatic-seo-template": (ctx) => /\bAA-\d/.test(ctx.title),
+  "calculator-on-shell": (ctx) =>
+    /\bBB-\d/.test(ctx.title) && ctx.diff.includes("CalculatorShell"),
+  "ai-feature": (ctx) => /\bCC-\d/.test(ctx.title),
+  "marketplace-mechanic": (ctx) => /\bDD-\d/.test(ctx.title),
+  "distribution-embed": (ctx) => /\bEE-\d/.test(ctx.title),
+};
 
 function escapeRegex(s) {
   return s.replace(/[.+(){}|^$\\]/g, "\\$&");
@@ -133,6 +160,87 @@ async function listChangedFiles({ github, context, number }) {
     if (page > 30) break;
   }
   return all;
+}
+
+async function fetchPrDiff({ github, context, number }) {
+  // mediaType.format=diff returns the unified diff as text. Used for
+  // first-of-pattern detection (e.g. "does this PR import HubPage?").
+  try {
+    const res = await github.rest.pulls.get({
+      owner: context.repo.owner,
+      repo: context.repo.repo,
+      pull_number: number,
+      mediaType: { format: "diff" },
+    });
+    return typeof res.data === "string" ? res.data : "";
+  } catch (err) {
+    return "";
+  }
+}
+
+async function loadStateFromBotBranch() {
+  // Try to fetch the bot branch from origin. If it doesn't exist yet,
+  // start with an empty state.
+  try {
+    execSync(`git fetch origin ${BOT_BRANCH}:${BOT_BRANCH}`, {
+      stdio: "pipe",
+    });
+    const raw = execSync(`git show ${BOT_BRANCH}:${STATE_PATH}`, {
+      encoding: "utf8",
+    });
+    return JSON.parse(raw);
+  } catch (err) {
+    return {};
+  }
+}
+
+async function persistStateToBotBranch(newState, prNumber) {
+  // Worktree-style update: switch to bot branch (creating it if absent),
+  // write file, commit, push. Run in a tmp dir so we don't disturb the
+  // current checkout.
+  const tmp = fs.mkdtempSync("/tmp/automerge-bot-");
+  const repoUrl = `https://x-access-token:${process.env.GITHUB_TOKEN}@github.com/${process.env.GITHUB_REPOSITORY}.git`;
+  try {
+    execSync(`git clone --depth 1 ${repoUrl} ${tmp}`, { stdio: "pipe" });
+    let branchExists = false;
+    try {
+      execSync(`git -C ${tmp} ls-remote --exit-code origin ${BOT_BRANCH}`, {
+        stdio: "pipe",
+      });
+      branchExists = true;
+    } catch (_) {
+      branchExists = false;
+    }
+    if (branchExists) {
+      execSync(`git -C ${tmp} fetch origin ${BOT_BRANCH}`, { stdio: "pipe" });
+      execSync(`git -C ${tmp} checkout -B ${BOT_BRANCH} origin/${BOT_BRANCH}`, {
+        stdio: "pipe",
+      });
+    } else {
+      // Orphan branch — no tie to main's history.
+      execSync(`git -C ${tmp} checkout --orphan ${BOT_BRANCH}`, {
+        stdio: "pipe",
+      });
+      execSync(`git -C ${tmp} rm -rf --cached . || true`, { stdio: "pipe" });
+      execSync(`rm -rf ${tmp}/* ${tmp}/.[!.]*`, { stdio: "pipe" });
+    }
+    fs.mkdirSync(path.join(tmp, ".github"), { recursive: true });
+    fs.writeFileSync(
+      path.join(tmp, STATE_PATH),
+      JSON.stringify(newState, null, 2) + "\n",
+    );
+    execSync(
+      `git -C ${tmp} -c user.email=actions@github.com -c user.name="auto-merge-bot" add ${STATE_PATH}`,
+      { stdio: "pipe" },
+    );
+    execSync(
+      `git -C ${tmp} -c user.email=actions@github.com -c user.name="auto-merge-bot" commit -m "chore(auto-merge): record first-of-pattern from pr #${prNumber}"`,
+      { stdio: "pipe" },
+    );
+    execSync(`git -C ${tmp} push origin ${BOT_BRANCH}`, { stdio: "pipe" });
+  } finally {
+    execSync(`rm -rf ${tmp}`, { stdio: "pipe" });
+  }
 }
 
 async function applyLabels({ github, context, number, decision }) {
@@ -274,6 +382,34 @@ async function run({ github, context, core }) {
     core.info(`queue review flag: ${itemId}`);
     await applyLabels({ github, context, number, decision: "review" });
     return;
+  }
+
+  // 5. First-of-pattern override.
+  const diff = await fetchPrDiff({ github, context, number });
+  const patternCtx = { title: pr.title || "", diff };
+  const triggered = [];
+  for (const [name, predicate] of Object.entries(TRACKED_PATTERNS)) {
+    try {
+      if (predicate(patternCtx)) triggered.push(name);
+    } catch (err) {
+      core.warning(`pattern ${name} predicate threw: ${err.message}`);
+    }
+  }
+  if (triggered.length > 0) {
+    const state = await loadStateFromBotBranch();
+    const firstOf = triggered.filter((p) => !(p in state));
+    if (firstOf.length > 0) {
+      core.info(`first-of-pattern: ${firstOf.join(", ")}`);
+      const updated = { ...state };
+      for (const p of firstOf) updated[p] = number;
+      try {
+        await persistStateToBotBranch(updated, number);
+      } catch (err) {
+        core.warning(`bot-branch update failed: ${err.message}`);
+      }
+      await applyLabels({ github, context, number, decision: "review" });
+      return;
+    }
   }
 
   // All gates clear → safe.
