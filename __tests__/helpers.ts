@@ -48,6 +48,8 @@ export function createChainableBuilder(
   const chainMethods = [
     "select", "insert", "upsert", "update", "delete",
     "eq", "neq", "order", "limit", "gte", "lte", "in", "gt", "lt",
+    "not", "or", "is", "ilike", "like", "contains", "containedBy",
+    "range", "match", "filter",
   ];
 
   for (const method of chainMethods) {
