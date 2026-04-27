@@ -25,7 +25,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | Stream | Branch | PR | Last CI | Items in flight |
 | --- | --- | --- | --- | --- |
 | A | _not started_ | — | — | — |
-| B | `claude/audit-remediation/b-rls-remediation` | #220 | pending — pushed 2026-04-26T14:25Z | B-06 — 1 done (`listing_enquiries`) · 5 FP (forum tables) · 2 left (`listing_plans`, `quarterly_reports`) |
+| B | `claude/audit-remediation/b-rls-remediation` | #220 | pending — pushed 2026-04-27T06:50Z | B-06 — 2 done (`listing_enquiries` `0bb82daa`, `listing_plans` `be7bff79`) · 5 FP (forum tables) · 1 blocked (`quarterly_reports`) |
 | C | _not started_ | — | — | — |
 | D | _not started_ | — | — | — |
 | E | _not started_ | — | — | — |
@@ -80,6 +80,32 @@ _B-04 cleared 2026-04-26 by user (chose option 2). See Done section + iteration 
 
 ---
 
+### B-06-QUARTERLY-REPORTS-1 · `quarterly_reports` RLS policy — browser-client admin page (surfaced 2026-04-27 by iter 35)
+
+**Finding:** `quarterly_reports` has no RLS enabled and no prior policies. The table has two distinct caller classes with conflicting access requirements:
+
+- **Public read** (server.ts anon-key session): `app/reports/page.tsx`, `app/reports/[slug]/page.tsx`, `app/sitemap.ts` — all SELECT published reports via `lib/supabase/server.ts` (user session cookie client, anon access when unauthenticated).
+- **Admin CUD** (browser anon-key client): `app/admin/quarterly-reports/page.tsx` — a `"use client"` component that uses `lib/supabase/client.ts` (browser client with anon key) to SELECT all reports (including drafts), INSERT, UPDATE, and DELETE. This page lives under `/admin/` and is protected at the HTTP layer by `proxy.ts` middleware, but **not** at the Supabase RLS layer.
+
+**The complication:** because the admin page uses the browser anon-key client (not the service-role client), there is no `auth.uid()` or role signal that RLS can use to distinguish an admin from a regular visitor. If RLS deny-all-anon is applied:
+- Public reports pages break (they read as anon)
+- Admin CUD page breaks (it also reads/writes as anon)
+
+A `status = 'published'` allow-SELECT policy would fix the public pages but leave the admin page broken for draft management and all writes.
+
+**Decision matrix:**
+
+| Option | What you / the loop does | Trade-off |
+|---|---|---|
+| **1. Add SELECT-published + service-role-full policy; refactor admin page to API route** | Loop refactors `app/admin/quarterly-reports/page.tsx` to call `/api/admin/quarterly-reports` (admin client in route handler) instead of direct DB access. Migration: anon SELECT `WHERE status='published'`; service_role full. | Clean: RLS enforces intent at DB layer. ~2 iterations (migration + route refactor). Stream C territory (admin.ts scope reset). **Recommended.** |
+| **2. Deny-all anon; refactor admin page only** | Same as option 1 but deny anon SELECT entirely — public reports pages get data via a server route or RSC with admin client. | Marginal security gain over option 1 (public report data is public anyway). More work (~3 iterations). Only worth it if SEO-crawl transparency is not a concern. |
+| **3. Grant anon full access (USING true / WITH CHECK true) + note middleware protection** | Migration: anon SELECT/INSERT/UPDATE/DELETE all allowed. Rely on proxy.ts middleware for admin-only enforcement. | Weakest: PostgREST API remains fully open to anyone with the anon key (no `proxy.ts` involvement). Enumerates drafts; allows direct REST writes. Closes the "no RLS" finding technically, but the security value is near-zero. Not recommended. |
+| **4. Defer — skip `quarterly_reports` in B-06, move to C-stream admin-scope reset** | Leave B-06 as done (listing_plans + listing_enquiries done); quarterly_reports becomes C-05b when the admin page refactor happens. | No new risk vs today (table always had no RLS). Avoids fragmented ownership. |
+
+**Recommendation:** Option 1. The admin page should go through an API route (the CLAUDE.md pattern for "admin routes, webhooks, and cron") rather than direct browser-DB. Migration is straightforward once the route exists. This neatly dovetails with Stream C (C-05 already covers `account/notifications` and `ArticleBrokerTable` browser-to-server refactors).
+
+---
+
 ## Pending work
 
 ### Stream B — RLS remediation (issue #215)
@@ -93,7 +119,7 @@ Highest priority: critical 2 first.
 | B-03 | false-positive | ~~RLS on `sponsor_invoices`~~ | — | **Already enabled** by `supabase/migrations/20260321_pre_launch_rls_fixes.sql` (RLS on + deny-all policy). See "Resolved as false positives" below. |
 | B-04 | done | RLS on `investment_listings` (option 2) | 1 | Done in commit `4847bd31` (PR #220). Anon SELECT all; anon INSERT only when `status='pending'` + counters=0 + no professional linkage; anon UPDATE column-scoped to (`views`, `enquiries`) via REVOKE/GRANT; service-role explicit allow. Long-term option-4 follow-up tracked as B-08 below. |
 | B-05 | done | RLS on `listing_claims` | 1 | Done in commit `5904db8a` then **corrected in `24898931` (iter 8)** to actually drop the legacy `"Anon can submit claims"` policy from `20260510_rls_hardening.sql` (the original DROP IF EXISTS list missed it; RLS policies stack additively, so the legacy permissive INSERT survived and undermined the deny-all claim). Net state: deny-all anon + service-role explicit allow. |
-| B-06 | in-progress | RLS on remaining medium-risk tables | 2 | 1 done in iter 9 (`listing_enquiries`, commit `0bb82daa`, option-2 pattern). 5 false-positives discovered in iter 10 via prior-policy gate — all forum tables (`forum_categories`, `forum_posts`, `forum_threads`, `forum_user_profiles`, `forum_votes`) were already RLS-enabled with proper `auth.uid()`-scoped policies in `20260427_wave_security_observability.sql`; moved to FP table. Real residual: `listing_plans` (clean — all 3 callers use admin client) + `quarterly_reports` (anon-key admin page complicates the policy — likely needs decision). |
+| B-06 | in-progress | RLS on remaining medium-risk tables | 2 | 1 done in iter 9 (`listing_enquiries`, commit `0bb82daa`, option-2 pattern). 5 false-positives discovered in iter 10 via prior-policy gate — all forum tables (`forum_categories`, `forum_posts`, `forum_threads`, `forum_user_profiles`, `forum_votes`) were already RLS-enabled with proper `auth.uid()`-scoped policies in `20260427_wave_security_observability.sql`; moved to FP table. `listing_plans` done iter 35 (commit `be7bff79` — deny-all anon; all 3 callers use service-role). `quarterly_reports` **blocked** (iter 35): admin CRUD page `app/admin/quarterly-reports/page.tsx` uses browser anon-key client (`lib/supabase/client.ts`); no `auth.uid()` linkage; policy design is non-obvious — see Blocked entry B-06-QUARTERLY-REPORTS-1. |
 | B-07 | pending | Add CI lint that fails any new `CREATE TABLE` migration without `ENABLE ROW LEVEL SECURITY` | 1 | Stream I overlap; coordinate. |
 | B-08 | pending | Long-term: refactor `/api/listings/submit` + enquire counter fallback to admin client; tighten anon policy on `investment_listings` to SELECT-only (option 4 follow-up to B-04) | ~2 | Lower priority than B-06; depends on stream C call-graph (C-01) to confirm no other anon writers. |
 | B-09 | pending | Long-term: refactor `/api/listings/my-listings` to admin client + email-verification challenge; tighten anon policy on `listing_enquiries` to deny SELECT (follow-up to B-06's `listing_enquiries` migration) | ~2 | **Known PII enumeration vector**: today the route trusts the user-supplied `email` query param and returns all enquiries (name, email, phone, message) for any listing whose `contact_email` matches. RLS at the DB layer cannot scope this without an `auth.uid()` linkage. Stream C territory; depends on the my-listings flow design decision (magic link, OTP, or login). |
@@ -450,6 +476,18 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-27T06:50Z — iteration 35 (stream B, item B-06 partial — `listing_plans` done; `quarterly_reports` blocked)
+
+- Phase 1: synced main to `origin/main` (local sandbox had unrelated-history divergence; resolved via `git checkout -B main origin/main`). Checked out `claude/audit-remediation/b-rls-remediation` tracking `origin/`.
+- Phase 1.5: Types drift check — skipped (no schema changes in this window; MCP not needed).
+- Phase 2 CI rescue: PR #220 green (success+skipped); PR #222 green (success+skipped). No rescue.
+- Phase 3 pick: B-06 (in-progress); `listing_plans` + `quarterly_reports` were the remaining 2 tables.
+- Phase 4 verification gate — **`listing_plans`**: prior-policy grep returned no matches. All 3 callers confirmed service-role (`createAdminClient()`): `app/api/stripe/webhook/route.ts:711`, `app/api/listings/renew/route.ts:87`, `app/api/listings/checkout/route.ts:61`. Clean — straightforward deny-all + service_role allow.
+- Phase 4 verification gate — **`quarterly_reports`**: prior-policy grep returned no matches. But `app/admin/quarterly-reports/page.tsx` is a `"use client"` component using `lib/supabase/client.ts` (browser anon key) for SELECT-all (incl. drafts), INSERT, UPDATE, DELETE. No `auth.uid()` linkage. Policy is non-obvious (§4 defaults don't cleanly apply). Surfaced to Blocked as B-06-QUARTERLY-REPORTS-1 with 4-option decision matrix.
+- Phase 5: migration `supabase/migrations/20260601_rls_listing_plans.sql` written (81 LOC). SQL-only — tsc and lint gates vacuously satisfied (no .ts/.tsx changed). Committed `be7bff79`.
+- Phase 6: pushed to `origin/claude/audit-remediation/b-rls-remediation`. PR #220 body updated to mark `listing_plans` done and flag `quarterly_reports` as blocked.
+- Status: PROGRESS · stream=B · item=B-06 (`listing_plans` done; `quarterly_reports` → Blocked) · pr=#220 · commit=`be7bff79` · diff=+81/-0 across 1 file
 
 ### 2026-04-27 — iteration 34 (stream K, item K-15 — CSP violation reporting)
 
