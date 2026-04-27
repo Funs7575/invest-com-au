@@ -174,6 +174,40 @@ When choosing the next item, walk in this order and pick the first non-blocked o
 - **Stream stuck:** if the same stream fails 3 iterations in a row (CI red after fix attempt), the stream is moved to Blocked with the failure log and the loop continues on other streams.
 - **Manual halt:** if the user pauses the loop, no cleanup is required — every iteration is a complete unit.
 
+## Auto-merge policy
+
+The repo has a selective auto-merge system (`.github/workflows/auto-merge*.yml`) that lets routine PRs from this loop merge themselves on green CI after a 60-minute quiet window. The labeling workflow inspects every PR's changed paths and applies one of:
+
+- `auto-merge-safe` — eligible for auto-merge after the quiet window
+- `needs-human-review` — auto-merge blocked, founder must review and merge
+- (no label) — sits waiting for a human to decide
+
+**Items the loop should expect to auto-merge** (most stream Z hub content additions, AA programmatic SEO templates after the first one is human-reviewed, doc updates, article seeds): anything whose changed files all match `app/**/page.tsx`, `scripts/seed-*.ts`, `content/**/*.md`, `docs/**/*.md`, `lib/verticals.ts`, `public/**`, `components/Hub*.tsx`, or `__tests__/**/*.test.ts` (additions only — deletions force review).
+
+**Items that always need a human:**
+
+- Anything in stream **BB** — calculators with regulatory math (CGT, super, FHSS, ETP). Math errors are user-facing and load-bearing for compliance copy.
+- Anything in stream **CC** — AI features (Anthropic API). Prompt-injection, hallucination cost, factual filter (V-NEW-02) — the founder vets the first of every AI feature and the system force-flags subsequent CC-* PRs anyway via the `ai-feature` pattern.
+- Anything in stream **DD** — Stripe / marketplace mechanics. Payment flows are not auto-mergeable; idempotency replay (V-NEW-03) gates these.
+- Anything touching the **V-NEW gates** (V-NEW-01..04). The gates themselves are the safety system, so the safety system reviews them.
+- The **four queue review-flagged items**: BB-04 (bank-data integration), CC-01 (AI document upload), EE-02 (Chrome extension), CC-07 (SoA/RoA generator — legal review). Forced via item-ID in PR title.
+- Anything touching `supabase/migrations/**`, `app/api/**`, `middleware.ts`, the Supabase client modules, `lib/compliance.ts`, `lib/auth/**`, `lib/stripe/**`, `.github/workflows/**`, build/lint/TS config, or any file matching `*rls*` / `*policy*` / `*.env*`.
+
+**STOP comment escape hatch.** A countdown comment ("Auto-merging in 60min unless STOP") is posted on every eligible PR. Anyone with write access to the repo can post `STOP` (uppercase, word-bounded) at any point before the actual squash-merge fires — the schedule re-checks STOP on every poll, even after the countdown is already running. To re-arm a stopped PR, push a new commit (resets the quiet window).
+
+**First-of-pattern rule.** The FIRST PR introducing each new component or template pattern is force-flagged `needs-human-review` even if its paths would otherwise be SAFE, so the founder sees the new pattern before the loop replicates it. Tracked patterns (state at `.github/auto-merge-state.json` on the bot branch `automerge-bot/state`):
+
+- `hub-on-extracted-components` — first time a hub uses the `<HubPage>` HOC
+- `programmatic-seo-template` — first AA-* template
+- `calculator-on-shell` — first BB-* using `<CalculatorShell>`
+- `ai-feature` — any CC-*
+- `marketplace-mechanic` — any DD-*
+- `distribution-embed` — any EE-*
+
+Once a pattern is in the state file, subsequent PRs of that pattern flow through normal labeling. Detection is by item-ID prefix in the PR title (the loop already prefixes PRs with the item ID) and, for HOC-based patterns, by inspecting the PR diff for the relevant import.
+
+**Disable instantly.** Delete `.github/workflows/auto-merge*.yml` to turn the system off — no data loss, every action so far is a normal squash merge in `git log`.
+
 ## Stuff the loop will never do (ask the user instead)
 
 - Apply migrations to production (forward-only; user runs).
@@ -181,4 +215,4 @@ When choosing the next item, walk in this order and pick the first non-blocked o
 - Query the live DB for runtime data (row counts, last-read timestamps, partial-failure verification of §5.5).
 - Hit PostHog API for "is this route actually called in prod?" data — needed to safely act on the 135 suspected-dead routes.
 - Decide compliance copy beyond `lib/compliance.ts` SSOT.
-- Merge any PR.
+- Merge any PR. (Exception: the auto-merge system squash-merges `auto-merge-safe`-labelled PRs after the 60-min quiet window — see "Auto-merge policy" above.)
