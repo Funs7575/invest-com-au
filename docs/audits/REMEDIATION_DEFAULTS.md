@@ -232,6 +232,13 @@ Pairs/triplets that must ship together to compound their leverage:
 - **CC-02 + CC-03 + CC-04** — super/tax/grants analyzers (all built on CC-01; slot 42)
 - **BB-02 + BB-03** — salary-sacrifice optimiser + CGT calc (both `<CalculatorShell>`-based, similar test scaffolding; slot 45)
 
+**2026-04-27 hub-revenue extension (founder brief: "make every hub leverage every monetisation opportunity, deep-dive then execute").** Four streams added (W/X/Y/Z) for hub foundation + registry-driven nav + Tier-1 hub builds. Strategic doc: `docs/audits/HUB_BLUEPRINT.md`. Streams added to priority order below; founder may hand-edit to slot above quality streams if velocity outweighs polish.
+
+24. **W (hub foundation)** — extract `<HubHero>`, `<HubServiceGrid>`, `<HubArticleStrip>`, `<HubDeepDiveGrid>`, `<HubAdvisorCTA>`, `<HubFAQ>`, `<DirectoryGrid>` family, `<CalculatorShell>`, `<EligibilityQuiz>`, `<CrossHubLinks>`, `<HubPage>` HOC. Migrate `/smsf` and `/grants` first (proof). Without this layer every new hub re-implements layout — biggest velocity multiplier in the roadmap. Items W-01..W-15.
+25. **X (admin backlog)** — clear `createAdminClient` from the 17 public RSC pages identified during the foundation audit; ratchet `eslint.config.mjs` rule from `warn` to `error`. Extension of stream C. Items X-01..X-09.
+26. **Y (registry + nav + dated-stats)** — registry-driven `<MegaMenu>` replacing the 666-line hardcoded `Header.tsx`, auto-sitemap, breadcrumbs from registry, `<DatedStatBadge>` + cron stale-check + CI lint that fails build on unwrapped dated claims. Items Y-01..Y-08. Depends on W landing.
+27. **Z (Tier-1 hub builds)** — `/private-markets`, `/startup` (absorbs `/grants`), `/wholesale`. Each hub: HubConfig row + sub-pages + directory + calculator + quiz + lead magnet + article seeds + smoke E2E. Items Z-01..Z-21. Depends on Y landing. Tier-2/3 hubs (`/retirement`, `/aged-care`, `/angel`, `/business-for-sale`, `/crypto-exchange`, `/crypto-tax`, `/family-office`, `/find-accountant`, `/find-mortgage-broker`) queued as new streams after Z lands.
+
 `needs-user` items in any stream surface to Blocked when picked. The loop notes the question and continues to the next non-blocked item.
 
 ## Enterprise standard enforcement
