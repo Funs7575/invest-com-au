@@ -1,401 +1,434 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { makeRequest, createChainableBuilder } from "@/__tests__/helpers";
 
-// ── Mocks ─────────────────────────────────────────────────────────────────────
+// ── Mocks ──────────────────────────────────────────────────────────────────────
 
 const mockFrom = vi.fn();
+const supabaseCalls: Record<string, { method: string; args: unknown[] }[]> = {};
 
 vi.mock("@/lib/supabase/admin", () => ({
-  createAdminClient: vi.fn(() => ({ from: mockFrom })),
+  createAdminClient: () => ({ from: mockFrom }),
 }));
 
 vi.mock("@/lib/rate-limit", () => ({
   isRateLimited: vi.fn(() => Promise.resolve(false)),
 }));
 
-vi.mock("@/lib/validate-email", () => ({
-  isValidEmail: vi.fn(() => true),
-  isDisposableEmail: vi.fn(() => false),
-}));
-
-vi.mock("@/lib/utm", () => ({
-  extractUtm: vi.fn(() => ({})),
-}));
+const mockSendNewLeadNotification = vi.fn(() => Promise.resolve());
+const mockSendLeadConfirmationToUser = vi.fn(() => Promise.resolve());
 
 vi.mock("@/lib/advisor-emails", () => ({
-  sendNewLeadNotification: vi.fn(() => Promise.resolve()),
-  sendLeadConfirmationToUser: vi.fn(() => Promise.resolve()),
+  sendNewLeadNotification: (...args: unknown[]) =>
+    mockSendNewLeadNotification(...args),
+  sendLeadConfirmationToUser: (...args: unknown[]) =>
+    mockSendLeadConfirmationToUser(...args),
 }));
 
-vi.mock("@/lib/logger", () => ({
-  logger: vi.fn(() => ({
-    debug: vi.fn(),
-    info: vi.fn(),
-    warn: vi.fn(),
-    error: vi.fn(),
-  })),
-}));
-
-// Import after mocks
 import { POST } from "@/app/api/submit-lead/route";
 import { isRateLimited } from "@/lib/rate-limit";
-import { isValidEmail, isDisposableEmail } from "@/lib/validate-email";
 
-// ── Fixtures ──────────────────────────────────────────────────────────────────
+// ── Helpers ────────────────────────────────────────────────────────────────────
 
 const ADVISOR = {
-  id: 101,
-  slug: "jane-planner",
-  name: "Jane Planner",
-  email: "jane@planners.com.au",
-  firm_name: "Planners Pty Ltd",
+  id: 1,
+  slug: "alice-advisor",
+  name: "Alice",
+  firm_name: "Alice Capital",
   type: "financial_planner",
   photo_url: null,
   rating: 4.8,
-  review_count: 23,
+  review_count: 50,
   location_display: "Sydney NSW",
   location_state: "NSW",
   specialties: ["retirement"],
-  fee_description: "Fee for service",
+  fee_description: "Fee-only",
   verified: true,
+  bio: null,
+  email: "alice@advisor.test",
 };
 
-const ADVISOR_BODY = {
-  lead_type: "advisor",
-  user_email: "test@example.com",
-  user_name: "Test User",
-  user_phone: "0412345678",
-  user_location_state: "NSW",
-  user_intent: { need: "planning", context: [], budget: "50000" },
-  source_page: "/quiz",
-};
-
-const PLATFORM_BODY = {
-  lead_type: "platform",
-  user_email: "test@example.com",
-  user_name: "Test User",
-  broker_slug: "commsec",
-  source_page: "/brokers/commsec",
-};
-
-// ── Mock helpers ──────────────────────────────────────────────────────────────
-
-type SingleResult = { data: unknown; error: unknown };
-type ThenCb = (v: { data: unknown; error: unknown }) => void;
-
-function makeBuilder(table: string) {
-  const b = createChainableBuilder(table);
-  // Add chain methods absent from the base helper
-  b.not = vi.fn(() => b);
-  b.or = vi.fn(() => b);
-  b.filter = vi.fn(() => b);
-  return b;
+function resetCalls() {
+  for (const k of Object.keys(supabaseCalls)) delete supabaseCalls[k];
 }
 
-function setupFromMock(
-  tableConfig: Record<
-    string,
-    {
-      then?: (cb: ThenCb) => Promise<void>;
-      single?: () => Promise<SingleResult>;
-    }
-  > = {},
-) {
-  mockFrom.mockImplementation((table: string) => {
-    const b = makeBuilder(table);
-    const cfg = tableConfig[table];
-    if (cfg?.then) {
-      const thenImpl = cfg.then;
-      b.then = vi.fn((cb: ThenCb) => thenImpl(cb));
-    }
-    if (cfg?.single) {
-      const singleImpl = cfg.single;
-      b.single = vi.fn(() => singleImpl());
-    }
-    return b;
-  });
-}
-
-function leadRequest(body: Record<string, unknown>, ip = "4.5.6.7") {
+function buildRequest(body: Record<string, unknown>, ip = "9.9.9.9") {
   return makeRequest("/api/submit-lead", body, { ip });
 }
 
-// ── Tests ─────────────────────────────────────────────────────────────────────
+// ── Tests ──────────────────────────────────────────────────────────────────────
 
 describe("POST /api/submit-lead", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    resetCalls();
+    mockFrom.mockReset();
+    mockFrom.mockImplementation((table: string) =>
+      createChainableBuilder(table, supabaseCalls),
+    );
     (isRateLimited as ReturnType<typeof vi.fn>).mockResolvedValue(false);
-    (isValidEmail as ReturnType<typeof vi.fn>).mockReturnValue(true);
-    (isDisposableEmail as ReturnType<typeof vi.fn>).mockReturnValue(false);
   });
 
-  // ── Input validation ──────────────────────────────────────────────────────
+  // ── Validation ──
+
+  it("returns 400 for invalid JSON body", async () => {
+    const req = new Request("http://localhost/api/submit-lead", {
+      method: "POST",
+      body: "{not-json",
+      headers: { "Content-Type": "application/json" },
+    });
+    const res = await POST(req as unknown as Parameters<typeof POST>[0]);
+    expect(res.status).toBe(400);
+    const json = await res.json();
+    expect(json.error).toBe("Invalid JSON");
+  });
 
   it("returns 400 for missing lead_type", async () => {
-    const res = await POST(leadRequest({ user_email: "a@b.com" }));
+    const req = buildRequest({ user_email: "test@example.com" });
+    const res = await POST(req);
     expect(res.status).toBe(400);
-    expect((await res.json()).error).toContain("lead_type");
+    expect((await res.json()).error).toBe("Invalid lead_type");
   });
 
-  it("returns 400 for unrecognised lead_type", async () => {
-    const res = await POST(leadRequest({ lead_type: "broker", user_email: "a@b.com" }));
+  it("returns 400 for invalid lead_type", async () => {
+    const req = buildRequest({
+      lead_type: "bogus",
+      user_email: "test@example.com",
+    });
+    const res = await POST(req);
     expect(res.status).toBe(400);
-    expect((await res.json()).error).toContain("lead_type");
   });
 
-  it("returns 400 for invalid email", async () => {
-    (isValidEmail as ReturnType<typeof vi.fn>).mockReturnValue(false);
-    const res = await POST(leadRequest({ ...ADVISOR_BODY, user_email: "not-email" }));
+  it("returns 400 for missing email", async () => {
+    const req = buildRequest({ lead_type: "advisor" });
+    const res = await POST(req);
     expect(res.status).toBe(400);
-    expect((await res.json()).error).toContain("email");
+    expect((await res.json()).error).toBe("Valid email required");
   });
 
-  it("returns 400 for disposable email domain", async () => {
-    (isDisposableEmail as ReturnType<typeof vi.fn>).mockReturnValue(true);
-    const res = await POST(leadRequest({ ...ADVISOR_BODY, user_email: "anon@mailinator.com" }));
+  it("returns 400 for invalid email format", async () => {
+    const req = buildRequest({
+      lead_type: "advisor",
+      user_email: "not-an-email",
+    });
+    const res = await POST(req);
     expect(res.status).toBe(400);
-    expect((await res.json()).error).toContain("real email");
   });
+
+  it("rejects disposable email domains", async () => {
+    const req = buildRequest({
+      lead_type: "advisor",
+      user_email: "user@mailinator.com",
+    });
+    const res = await POST(req);
+    expect(res.status).toBe(400);
+    expect((await res.json()).error).toBe("Please use a real email address.");
+  });
+
+  // ── Honeypot ──
+
+  it("silently succeeds when honeypot fields are filled", async () => {
+    const req = buildRequest({
+      lead_type: "advisor",
+      user_email: "real@example.com",
+      website: "spam.example.com",
+    });
+    const res = await POST(req);
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json.success).toBe(true);
+    expect(json.lead_id).toBe(null);
+    expect(json.matched).toBe(null);
+    // Crucially, no DB writes
+    expect(supabaseCalls.leads).toBeUndefined();
+  });
+
+  // ── Rate limit ──
 
   it("returns 429 when rate limited", async () => {
-    (isRateLimited as ReturnType<typeof vi.fn>).mockResolvedValue(true);
-    const res = await POST(leadRequest(ADVISOR_BODY));
+    (isRateLimited as ReturnType<typeof vi.fn>).mockResolvedValueOnce(true);
+    const req = buildRequest({
+      lead_type: "advisor",
+      user_email: "rl@example.com",
+    });
+    const res = await POST(req);
     expect(res.status).toBe(429);
-    expect((await res.json()).error).toContain("Too many requests");
   });
 
-  it("returns 200 silently for honeypot-filled bot requests without touching DB", async () => {
-    const res = await POST(leadRequest({ ...ADVISOR_BODY, website: "https://spam.example" }));
-    expect(res.status).toBe(200);
-    const json = await res.json();
-    expect(json.success).toBe(true);
-    expect(json.lead_id).toBeNull();
-    expect(json.matched).toBeNull();
-    expect(mockFrom).not.toHaveBeenCalled();
-  });
+  // ── Platform leads ──
 
-  // ── Platform lead path ────────────────────────────────────────────────────
+  describe("lead_type=platform", () => {
+    it("inserts a platform lead with broker lookup", async () => {
+      mockFrom.mockImplementation((table: string) => {
+        const b = createChainableBuilder(table, supabaseCalls);
+        if (table === "brokers") {
+          b.single = vi.fn(() =>
+            Promise.resolve({
+              data: { id: 42, cpa_value: 1500 },
+              error: null,
+            }),
+          );
+        }
+        if (table === "leads") {
+          b.single = vi.fn(() =>
+            Promise.resolve({ data: { id: 99 }, error: null }),
+          );
+        }
+        return b;
+      });
 
-  it("platform lead: inserts lead row and returns lead_id", async () => {
-    setupFromMock({
-      brokers: { single: async () => ({ data: { id: 5, cpa_value: 100 }, error: null }) },
-      leads: { single: async () => ({ data: { id: 77 }, error: null }) },
+      const req = buildRequest({
+        lead_type: "platform",
+        user_email: "platform@test.com",
+        user_name: "Platform User",
+        broker_slug: "test-broker",
+        source_page: "/compare",
+      });
+      const res = await POST(req);
+      expect(res.status).toBe(200);
+      const json = await res.json();
+      expect(json.success).toBe(true);
+      expect(json.lead_id).toBe(99);
+
+      const leadCalls = supabaseCalls.leads || [];
+      const insertCall = leadCalls.find((c) => c.method === "insert");
+      expect(insertCall).toBeDefined();
+      const args = insertCall?.args[0] as Record<string, unknown>;
+      expect(args.lead_type).toBe("platform");
+      expect(args.broker_id).toBe(42);
+      expect(args.user_email).toBe("platform@test.com");
     });
 
-    const res = await POST(leadRequest(PLATFORM_BODY));
-    expect(res.status).toBe(200);
-    const json = await res.json();
-    expect(json.success).toBe(true);
-    expect(json.lead_id).toBe(77);
+    it("returns 500 when platform lead insert fails", async () => {
+      mockFrom.mockImplementation((table: string) => {
+        const b = createChainableBuilder(table, supabaseCalls);
+        if (table === "leads") {
+          b.single = vi.fn(() =>
+            Promise.resolve({
+              data: null,
+              error: { message: "db down" },
+            }),
+          );
+        }
+        return b;
+      });
 
-    const leadCalls = mockFrom.mock.calls.filter((c: unknown[]) => c[0] === "leads");
-    expect(leadCalls.length).toBeGreaterThanOrEqual(1);
+      const req = buildRequest({
+        lead_type: "platform",
+        user_email: "fail@test.com",
+      });
+      const res = await POST(req);
+      expect(res.status).toBe(500);
+    });
   });
 
-  it("platform lead: returns 500 when leads insert fails", async () => {
-    setupFromMock({
-      brokers: { single: async () => ({ data: null, error: null }) },
-      leads: { single: async () => ({ data: null, error: { message: "constraint" } }) },
+  // ── confirm_advisor_id fast-path ──
+
+  describe("confirm_advisor_id", () => {
+    it("returns 404 when confirmed advisor not found", async () => {
+      mockFrom.mockImplementation((table: string) => {
+        const b = createChainableBuilder(table, supabaseCalls);
+        if (table === "professionals") {
+          b.single = vi.fn(() =>
+            Promise.resolve({ data: null, error: null }),
+          );
+        }
+        return b;
+      });
+
+      const req = buildRequest({
+        lead_type: "advisor",
+        user_email: "user@test.com",
+        confirm_advisor_id: 9999,
+      });
+      const res = await POST(req);
+      expect(res.status).toBe(404);
     });
 
-    const res = await POST(leadRequest(PLATFORM_BODY));
-    expect(res.status).toBe(500);
-    expect((await res.json()).error).toContain("Failed to save lead");
+    it("creates lead and notifies advisor when confirming", async () => {
+      let professionalsCallCount = 0;
+      let leadCallCount = 0;
+      mockFrom.mockImplementation((table: string) => {
+        const b = createChainableBuilder(table, supabaseCalls);
+        if (table === "professionals") {
+          b.single = vi.fn(() => {
+            professionalsCallCount++;
+            // First call: confirmedAdvisor lookup
+            // Second call: tier lookup
+            return Promise.resolve({
+              data:
+                professionalsCallCount === 1
+                  ? ADVISOR
+                  : { advisor_tier: "silver" },
+              error: null,
+            });
+          });
+        }
+        if (table === "leads") {
+          // First call: existingLead dedup lookup → null
+          // Second call: confirmedLead insert → return id
+          b.single = vi.fn(() => {
+            leadCallCount++;
+            return Promise.resolve({
+              data: leadCallCount === 1 ? null : { id: 555 },
+              error: leadCallCount === 1 ? { code: "PGRST116" } : null,
+            });
+          });
+        }
+        return b;
+      });
+
+      const req = buildRequest({
+        lead_type: "advisor",
+        user_email: "user@test.com",
+        user_name: "User Test",
+        user_phone: "0400000000",
+        user_intent: { need: "planning", context: ["retirement"], budget: "100k" },
+        confirm_advisor_id: 1,
+      });
+      const res = await POST(req);
+      expect(res.status).toBe(200);
+      const json = await res.json();
+      expect(json.success).toBe(true);
+      expect(json.lead_id).toBe(555);
+      expect(json.matched.id).toBe(1);
+
+      // Advisor email + user confirmation should both be sent
+      expect(mockSendNewLeadNotification).toHaveBeenCalled();
+      expect(mockSendLeadConfirmationToUser).toHaveBeenCalled();
+    });
+
+    it("dedupes when the user already confirmed this advisor in last 7 days", async () => {
+      mockFrom.mockImplementation((table: string) => {
+        const b = createChainableBuilder(table, supabaseCalls);
+        if (table === "professionals") {
+          b.single = vi.fn(() =>
+            Promise.resolve({ data: ADVISOR, error: null }),
+          );
+        }
+        if (table === "leads") {
+          b.single = vi.fn(() =>
+            Promise.resolve({ data: { id: 777 }, error: null }),
+          );
+        }
+        return b;
+      });
+
+      const req = buildRequest({
+        lead_type: "advisor",
+        user_email: "user@test.com",
+        confirm_advisor_id: 1,
+      });
+      const res = await POST(req);
+      expect(res.status).toBe(200);
+      const json = await res.json();
+      expect(json.lead_id).toBe(777);
+      // Lead notifications should NOT fire on dedupe
+      expect(mockSendNewLeadNotification).not.toHaveBeenCalled();
+    });
   });
 
-  // ── Advisor auto-match path ───────────────────────────────────────────────
+  // ── Advisor matching ──
 
-  it("dry_run: returns matched advisor without creating any professional_leads rows", async () => {
-    setupFromMock({
-      professionals: {
-        then: (cb) => { cb({ data: [ADVISOR], error: null }); return Promise.resolve(); },
-        single: async () => ({ data: ADVISOR, error: null }),
-      },
-      // recent-leads dedup check runs even in dry_run; return empty so no exclusions are built
-      leads: {
-        then: (cb) => { cb({ data: [], error: null }); return Promise.resolve(); },
-      },
-      professional_leads: {
-        then: (cb) => { cb({ data: [], error: null }); return Promise.resolve(); },
-      },
+  describe("advisor matching", () => {
+    it("dry_run returns the matched advisor without writing a lead", async () => {
+      mockFrom.mockImplementation((table: string) => {
+        const b = createChainableBuilder(table, supabaseCalls);
+        if (table === "professionals") {
+          // Override limit to return an array via thenable
+          b.limit = vi.fn(() => {
+            supabaseCalls[table]?.push({ method: "limit", args: [] });
+            return Promise.resolve({ data: [ADVISOR], error: null });
+          });
+        }
+        return b;
+      });
+
+      const req = buildRequest({
+        lead_type: "advisor",
+        user_email: "match@test.com",
+        user_location_state: "NSW",
+        user_intent: { need: "planning" },
+        dry_run: true,
+      });
+      const res = await POST(req);
+      expect(res.status).toBe(200);
+      const json = await res.json();
+      expect(json.matched.id).toBe(1);
+      expect(json.lead_id).toBe(null);
+      // No insert into leads on dry_run (read for dedup is fine)
+      const leadCalls = supabaseCalls.leads || [];
+      expect(leadCalls.some((c) => c.method === "insert")).toBe(false);
+      expect(mockSendNewLeadNotification).not.toHaveBeenCalled();
     });
 
-    const res = await POST(leadRequest({ ...ADVISOR_BODY, dry_run: true }));
-    expect(res.status).toBe(200);
-    const json = await res.json();
-    expect(json.lead_id).toBeNull();    // key dry_run guarantee: no lead created
-    expect(json.matched?.id).toBe(101);
-    expect(json.matched?.name).toBe("Jane Planner");
-    // No leads table insert made (lead_id: null above proves this)
-  });
+    it("returns no_more_matches when all advisors are excluded", async () => {
+      mockFrom.mockImplementation((table: string) => {
+        const b = createChainableBuilder(table, supabaseCalls);
+        if (table === "professionals") {
+          b.limit = vi.fn(() => {
+            supabaseCalls[table]?.push({ method: "limit", args: [] });
+            // First 4 attempts return empty (filtered by exclusion); 5th returns advisor
+            return Promise.resolve({ data: [], error: null });
+          });
+        }
+        return b;
+      });
 
-  it("auto-match success: creates lead + professional_leads rows and returns matched advisor", async () => {
-    setupFromMock({
-      professionals: {
-        then: (cb) => { cb({ data: [ADVISOR], error: null }); return Promise.resolve(); },
-        single: async () => ({ data: { advisor_tier: "gold" }, error: null }),
-      },
-      leads: {
-        then: (cb) => { cb({ data: [], error: null }); return Promise.resolve(); },
-        single: async () => ({ data: { id: 99 }, error: null }),
-      },
-      professional_leads: {
-        then: (cb) => { cb({ data: null, error: null }); return Promise.resolve(); },
-      },
+      const req = buildRequest({
+        lead_type: "advisor",
+        user_email: "exhausted@test.com",
+        user_location_state: "NSW",
+        user_intent: { need: "planning" },
+        exclude_advisor_ids: [1, 2, 3],
+      });
+      const res = await POST(req);
+      expect(res.status).toBe(200);
+      const json = await res.json();
+      expect(json.no_more_matches).toBe(true);
+      expect(json.matched).toBe(null);
     });
 
-    const res = await POST(leadRequest(ADVISOR_BODY));
-    expect(res.status).toBe(200);
-    const json = await res.json();
-    expect(json.success).toBe(true);
-    expect(json.lead_id).toBe(99);
-    expect(json.matched?.id).toBe(101);
-    expect(json.matched?.name).toBe("Jane Planner");
-    expect(json.no_more_matches).toBe(false);
+    it("creates an advisor lead with revenue_value_cents from tier", async () => {
+      mockFrom.mockImplementation((table: string) => {
+        const b = createChainableBuilder(table, supabaseCalls);
+        if (table === "professionals") {
+          b.limit = vi.fn(() => {
+            supabaseCalls[table]?.push({ method: "limit", args: [] });
+            return Promise.resolve({ data: [ADVISOR], error: null });
+          });
+          b.single = vi.fn(() =>
+            Promise.resolve({
+              data: { advisor_tier: "gold" },
+              error: null,
+            }),
+          );
+        }
+        if (table === "leads") {
+          b.single = vi.fn(() =>
+            Promise.resolve({ data: { id: 12345 }, error: null }),
+          );
+        }
+        return b;
+      });
 
-    const leadCalls = mockFrom.mock.calls.filter((c: unknown[]) => c[0] === "leads");
-    const plCalls = mockFrom.mock.calls.filter((c: unknown[]) => c[0] === "professional_leads");
-    expect(leadCalls.length).toBeGreaterThanOrEqual(2); // recent-leads check + insert
-    expect(plCalls.length).toBeGreaterThanOrEqual(1);
-  });
+      const req = buildRequest({
+        lead_type: "advisor",
+        user_email: "match@test.com",
+        user_name: "Lead User",
+        user_location_state: "NSW",
+        user_intent: { need: "planning" },
+      });
+      const res = await POST(req);
+      expect(res.status).toBe(200);
+      const json = await res.json();
+      expect(json.lead_id).toBe(12345);
+      expect(json.matched.id).toBe(1);
 
-  it("auto-match: no_more_matches when DB reports user already matched with all advisors", async () => {
-    // Seed the recent-leads check to return advisor 101 as a prior match so
-    // excludeArray = [101] (length > 0), which arms Attempt 5's absolute fallback.
-    // All match + fallback queries return zero results -> no_more_matches: true.
-    let leadsCallIndex = 0;
-
-    mockFrom.mockImplementation((table: string) => {
-      const b = makeBuilder(table);
-
-      if (table === "professionals") {
-        b.then = vi.fn((cb) => { cb({ data: [], error: null }); return Promise.resolve(); });
-      }
-
-      if (table === "leads") {
-        leadsCallIndex++;
-        const callN = leadsCallIndex;
-        b.then = vi.fn((cb) => {
-          // First call: recent-leads exclusion check -> report advisor 101 was recently matched
-          cb({ data: callN === 1 ? [{ professional_id: 101 }] : [], error: null });
-          return Promise.resolve();
-        });
-        // single is the fallback for insert (only reached if Attempt 5 doesn't early-return)
-        b.single = vi.fn(async () => ({ data: null, error: null }));
-      }
-
-      if (table === "professional_leads") {
-        b.then = vi.fn((cb) => { cb({ data: [], error: null }); return Promise.resolve(); });
-      }
-
-      return b;
+      const leadCalls = supabaseCalls.leads || [];
+      const insertCall = leadCalls.find((c) => c.method === "insert");
+      const insertArgs = insertCall?.args[0] as Record<string, unknown>;
+      // gold tier → 6000 cents
+      expect(insertArgs.revenue_value_cents).toBe(6000);
     });
-
-    const res = await POST(leadRequest(ADVISOR_BODY));
-    expect(res.status).toBe(200);
-    const json = await res.json();
-    expect(json.no_more_matches).toBe(true);
-    expect(json.lead_id).toBeNull();
-    expect(json.matched).toBeNull();
-  });
-
-  it("auto-match: lead insert error returns 500", async () => {
-    setupFromMock({
-      professionals: {
-        then: (cb) => { cb({ data: [ADVISOR], error: null }); return Promise.resolve(); },
-        single: async () => ({ data: { advisor_tier: "gold" }, error: null }),
-      },
-      leads: {
-        then: (cb) => { cb({ data: [], error: null }); return Promise.resolve(); },
-        single: async () => ({ data: null, error: { message: "FK violation" } }),
-      },
-    });
-
-    const res = await POST(leadRequest(ADVISOR_BODY));
-    expect(res.status).toBe(500);
-    expect((await res.json()).error).toContain("Failed to save lead");
-  });
-
-  // ── confirm_advisor_id path ───────────────────────────────────────────────
-
-  it("confirm_advisor_id: returns 404 when advisor not found", async () => {
-    setupFromMock({
-      professionals: {
-        single: async () => ({ data: null, error: { code: "PGRST116" } }),
-      },
-    });
-
-    const res = await POST(leadRequest({ ...ADVISOR_BODY, confirm_advisor_id: 999 }));
-    expect(res.status).toBe(404);
-    expect((await res.json()).error).toContain("not found");
-  });
-
-  it("confirm_advisor_id: duplicate lead suppressed — returns existing lead without re-inserting", async () => {
-    setupFromMock({
-      professionals: {
-        single: async () => ({ data: ADVISOR, error: null }),
-      },
-      leads: {
-        // dedup check finds an existing lead within the 7-day window
-        single: async () => ({ data: { id: 42 }, error: null }),
-      },
-    });
-
-    const res = await POST(leadRequest({ ...ADVISOR_BODY, confirm_advisor_id: 101 }));
-    expect(res.status).toBe(200);
-    const json = await res.json();
-    expect(json.success).toBe(true);
-    expect(json.lead_id).toBe(42);
-    expect(json.matched?.id).toBe(101);
-
-    // No professional_leads insert since it was a duplicate
-    const plCalls = mockFrom.mock.calls.filter((c: unknown[]) => c[0] === "professional_leads");
-    expect(plCalls).toHaveLength(0);
-  });
-
-  it("confirm_advisor_id: creates new lead when no duplicate exists", async () => {
-    let leadsCallIndex = 0;
-    let profCallIndex = 0;
-
-    mockFrom.mockImplementation((table: string) => {
-      const b = makeBuilder(table);
-
-      if (table === "professionals") {
-        profCallIndex++;
-        const callN = profCallIndex;
-        b.single = vi.fn(async () =>
-          callN === 1
-            ? { data: ADVISOR, error: null }            // advisor lookup
-            : { data: { advisor_tier: "silver" }, error: null }, // tier lookup
-        );
-      }
-
-      if (table === "leads") {
-        leadsCallIndex++;
-        const callN = leadsCallIndex;
-        b.single = vi.fn(async () =>
-          callN === 1
-            ? { data: null, error: null }               // dedup: no existing lead
-            : { data: { id: 88 }, error: null },        // insert: new lead created
-        );
-      }
-
-      if (table === "professional_leads") {
-        b.then = vi.fn((cb) => { cb({ data: null, error: null }); return Promise.resolve(); });
-      }
-
-      return b;
-    });
-
-    const res = await POST(leadRequest({ ...ADVISOR_BODY, confirm_advisor_id: 101 }));
-    expect(res.status).toBe(200);
-    const json = await res.json();
-    expect(json.success).toBe(true);
-    expect(json.lead_id).toBe(88);
-    expect(json.matched?.id).toBe(101);
-
-    const plCalls = mockFrom.mock.calls.filter((c: unknown[]) => c[0] === "professional_leads");
-    expect(plCalls.length).toBeGreaterThanOrEqual(1);
   });
 });

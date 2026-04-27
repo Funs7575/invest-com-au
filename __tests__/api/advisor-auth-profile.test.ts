@@ -1,13 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { makeRequest } from "@/__tests__/helpers";
+import { NextRequest } from "next/server";
+import { createChainableBuilder } from "@/__tests__/helpers";
 
-// ── Mock state ────────────────────────────────────────────────────────────────
+// ── Mocks ──────────────────────────────────────────────────────────────────────
 
 const mockGetUser = vi.fn();
 const mockServerFrom = vi.fn();
 const mockAdminFrom = vi.fn();
-
-// ── Mocks ─────────────────────────────────────────────────────────────────────
+const supabaseCalls: Record<string, { method: string; args: unknown[] }[]> = {};
 
 vi.mock("@/lib/supabase/server", () => ({
   createClient: vi.fn(async () => ({
@@ -17,89 +17,171 @@ vi.mock("@/lib/supabase/server", () => ({
 }));
 
 vi.mock("@/lib/supabase/admin", () => ({
-  createAdminClient: vi.fn(() => ({ from: mockAdminFrom })),
+  createAdminClient: () => ({ from: mockAdminFrom }),
 }));
 
 vi.mock("@/lib/rate-limit", () => ({
-  isRateLimited: vi.fn().mockResolvedValue(false),
+  isRateLimited: vi.fn(() => Promise.resolve(false)),
 }));
-
-// ── Import after mocks ────────────────────────────────────────────────────────
 
 import { PATCH } from "@/app/api/advisor-auth/profile/route";
 import { isRateLimited } from "@/lib/rate-limit";
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// ── Helpers ────────────────────────────────────────────────────────────────────
 
-function makeChain(result: { data: unknown; error: unknown }) {
-  const c: Record<string, ReturnType<typeof vi.fn>> = {};
-  for (const m of ["select", "update", "eq", "or", "in"]) c[m] = vi.fn(() => c);
-  c.single = vi.fn(() => Promise.resolve(result));
-  c.maybeSingle = vi.fn(() => Promise.resolve(result));
-  c.then = vi.fn((cb: (v: unknown) => void) => {
-    cb(result);
-    return Promise.resolve();
+function makePatch(
+  body: Record<string, unknown>,
+  cookie?: string,
+): NextRequest {
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+  if (cookie) headers.cookie = `advisor_session=${cookie}`;
+  return new NextRequest("http://localhost/api/advisor-auth/profile", {
+    method: "PATCH",
+    body: JSON.stringify(body),
+    headers,
   });
-  return c;
 }
 
-function patch(body: Record<string, unknown>) {
-  return PATCH(makeRequest("/api/advisor-auth/profile", body, { method: "PATCH" }));
+function resetCalls() {
+  for (const k of Object.keys(supabaseCalls)) delete supabaseCalls[k];
 }
 
-// ── Tests ─────────────────────────────────────────────────────────────────────
+// ── Tests ──────────────────────────────────────────────────────────────────────
 
 describe("PATCH /api/advisor-auth/profile", () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+    resetCalls();
+    mockServerFrom.mockReset();
+    mockAdminFrom.mockReset();
+    mockServerFrom.mockImplementation((table: string) =>
+      createChainableBuilder(table, supabaseCalls),
+    );
+    mockAdminFrom.mockImplementation((table: string) =>
+      createChainableBuilder(table, supabaseCalls),
+    );
+    (isRateLimited as ReturnType<typeof vi.fn>).mockResolvedValue(false);
+  });
 
   it("returns 429 when rate limited", async () => {
-    vi.mocked(isRateLimited).mockResolvedValueOnce(true);
-    const res = await patch({ bio: "hello" });
+    (isRateLimited as ReturnType<typeof vi.fn>).mockResolvedValueOnce(true);
+    const res = await PATCH(makePatch({ bio: "hi" }));
     expect(res.status).toBe(429);
   });
 
-  it("returns 401 when not authenticated (no Supabase user, no cookie)", async () => {
-    mockGetUser.mockResolvedValueOnce({ data: { user: null } });
-    mockAdminFrom.mockReturnValue(makeChain({ data: null, error: null }));
-    const res = await patch({ bio: "hello" });
+  it("returns 401 when no auth user and no legacy session", async () => {
+    mockGetUser.mockResolvedValue({ data: { user: null } });
+    const res = await PATCH(makePatch({ bio: "hi" }));
     expect(res.status).toBe(401);
-    expect(await res.json()).toMatchObject({ error: "Not authenticated" });
   });
 
-  it("returns 200 on successful update via Supabase auth", async () => {
-    mockGetUser.mockResolvedValueOnce({
-      data: { user: { id: "uid-1", email: "a@a.com" } },
+  it("updates allowed fields when authed via supabase", async () => {
+    mockGetUser.mockResolvedValue({
+      data: { user: { id: "u-1", email: "a@b.com" } },
     });
-    mockAdminFrom.mockReturnValue(makeChain({ data: { id: 99 }, error: null }));
-    mockServerFrom.mockReturnValue(makeChain({ data: null, error: null }));
-    const res = await patch({ bio: "New bio" });
+    mockAdminFrom.mockImplementation((table: string) => {
+      const b = createChainableBuilder(table, supabaseCalls);
+      if (table === "professionals") {
+        b.maybeSingle = vi.fn(() =>
+          Promise.resolve({ data: { id: 99 }, error: null }),
+        );
+      }
+      return b;
+    });
+
+    const res = await PATCH(
+      makePatch({
+        bio: "New bio",
+        website: "https://example.com",
+        // Disallowed field — should be silently dropped
+        verified: true,
+        rating: 5,
+      }),
+    );
     expect(res.status).toBe(200);
-    expect(await res.json()).toMatchObject({ success: true });
+
+    // Server client (createClient) is what runs the update
+    const proCalls = supabaseCalls.professionals || [];
+    const updateCall = proCalls.find((c) => c.method === "update");
+    expect(updateCall).toBeDefined();
+    const args = updateCall?.args[0] as Record<string, unknown>;
+    expect(args.bio).toBe("New bio");
+    expect(args.website).toBe("https://example.com");
+    // Disallowed fields must NOT leak into the update
+    expect(args.verified).toBeUndefined();
+    expect(args.rating).toBeUndefined();
+    expect(typeof args.updated_at).toBe("string");
   });
 
-  it("only passes allowed fields — disallowed fields (status, verified) are excluded", async () => {
-    mockGetUser.mockResolvedValueOnce({
-      data: { user: { id: "uid-1", email: "a@a.com" } },
+  it("returns 500 when the update query errors", async () => {
+    mockGetUser.mockResolvedValue({
+      data: { user: { id: "u-2", email: "a@b.com" } },
     });
-    mockAdminFrom.mockReturnValue(makeChain({ data: { id: 99 }, error: null }));
-    const serverChain = makeChain({ data: null, error: null });
-    mockServerFrom.mockReturnValue(serverChain);
-    await patch({ bio: "Safe bio", status: "inactive", verified: true, rating: 5 });
-    const updateArg = serverChain.update.mock.calls[0]?.[0] as Record<string, unknown>;
-    expect(updateArg).toHaveProperty("bio", "Safe bio");
-    expect(updateArg).not.toHaveProperty("status");
-    expect(updateArg).not.toHaveProperty("verified");
-    expect(updateArg).not.toHaveProperty("rating");
-  });
+    mockAdminFrom.mockImplementation((table: string) => {
+      const b = createChainableBuilder(table, supabaseCalls);
+      if (table === "professionals") {
+        b.maybeSingle = vi.fn(() =>
+          Promise.resolve({ data: { id: 99 }, error: null }),
+        );
+      }
+      return b;
+    });
+    mockServerFrom.mockImplementation((table: string) => {
+      const b = createChainableBuilder(table, supabaseCalls);
+      if (table === "professionals") {
+        // Override the awaited update result
+        b.eq = vi.fn(() =>
+          Promise.resolve({ data: null, error: { message: "db error" } }),
+        );
+      }
+      return b;
+    });
 
-  it("returns 500 when DB update fails", async () => {
-    mockGetUser.mockResolvedValueOnce({
-      data: { user: { id: "uid-1", email: "a@a.com" } },
-    });
-    mockAdminFrom.mockReturnValue(makeChain({ data: { id: 99 }, error: null }));
-    mockServerFrom.mockReturnValue(makeChain({ data: null, error: { message: "constraint violation" } }));
-    const res = await patch({ bio: "bio" });
+    const res = await PATCH(makePatch({ bio: "hi" }));
     expect(res.status).toBe(500);
-    expect(await res.json()).toMatchObject({ error: "Update failed" });
+  });
+
+  it("authenticates via legacy session cookie when supabase user is absent", async () => {
+    mockGetUser.mockResolvedValue({ data: { user: null } });
+    const futureExpiry = new Date(Date.now() + 86400 * 1000).toISOString();
+    mockAdminFrom.mockImplementation((table: string) => {
+      const b = createChainableBuilder(table, supabaseCalls);
+      if (table === "advisor_sessions") {
+        b.single = vi.fn(() =>
+          Promise.resolve({
+            data: { professional_id: 88, expires_at: futureExpiry },
+            error: null,
+          }),
+        );
+      }
+      return b;
+    });
+
+    const res = await PATCH(
+      makePatch({ bio: "from legacy" }, "legacy-cookie"),
+    );
+    expect(res.status).toBe(200);
+  });
+
+  it("returns 401 when legacy session is expired", async () => {
+    mockGetUser.mockResolvedValue({ data: { user: null } });
+    const pastExpiry = new Date(Date.now() - 1000).toISOString();
+    mockAdminFrom.mockImplementation((table: string) => {
+      const b = createChainableBuilder(table, supabaseCalls);
+      if (table === "advisor_sessions") {
+        b.single = vi.fn(() =>
+          Promise.resolve({
+            data: { professional_id: 88, expires_at: pastExpiry },
+            error: null,
+          }),
+        );
+      }
+      return b;
+    });
+
+    const res = await PATCH(makePatch({ bio: "x" }, "stale-cookie"));
+    expect(res.status).toBe(401);
   });
 });

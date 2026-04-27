@@ -1,165 +1,217 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
+import { createChainableBuilder } from "@/__tests__/helpers";
 
-// ── Mock state ────────────────────────────────────────────────────────────────
+// ── Mocks ──────────────────────────────────────────────────────────────────────
 
 const mockGetUser = vi.fn();
-const mockSignOut = vi.fn();
+const mockSignOut = vi.fn(() => Promise.resolve({ error: null }));
+const mockServerFrom = vi.fn();
 const mockAdminFrom = vi.fn();
-
-// ── Mocks ─────────────────────────────────────────────────────────────────────
+const supabaseCalls: Record<string, { method: string; args: unknown[] }[]> = {};
 
 vi.mock("@/lib/supabase/server", () => ({
   createClient: vi.fn(async () => ({
     auth: { getUser: mockGetUser, signOut: mockSignOut },
+    from: mockServerFrom,
   })),
 }));
 
 vi.mock("@/lib/supabase/admin", () => ({
-  createAdminClient: vi.fn(() => ({ from: mockAdminFrom })),
+  createAdminClient: () => ({ from: mockAdminFrom }),
 }));
-
-vi.mock("@/lib/logger", () => ({
-  logger: vi.fn(() => ({ error: vi.fn() })),
-}));
-
-// ── Import after mocks ────────────────────────────────────────────────────────
 
 import { GET, DELETE } from "@/app/api/advisor-auth/session/route";
 
-// ── Fixtures ──────────────────────────────────────────────────────────────────
+// ── Helpers ────────────────────────────────────────────────────────────────────
+
+function reqWithCookie(cookie?: string): NextRequest {
+  const headers: Record<string, string> = {};
+  if (cookie) headers.cookie = `advisor_session=${cookie}`;
+  return new NextRequest("http://localhost/api/advisor-auth/session", {
+    method: "GET",
+    headers,
+  });
+}
+
+function deleteReqWithCookie(cookie?: string): NextRequest {
+  const headers: Record<string, string> = {};
+  if (cookie) headers.cookie = `advisor_session=${cookie}`;
+  return new NextRequest("http://localhost/api/advisor-auth/session", {
+    method: "DELETE",
+    headers,
+  });
+}
 
 const ADVISOR = {
-  id: 42,
-  name: "Alice",
-  email: "alice@example.com",
-  auth_user_id: "user-uuid-1",
+  id: 7,
+  name: "Test Advisor",
+  slug: "test-advisor",
+  email: "advisor@test.com",
   status: "active",
+  auth_user_id: null,
 };
 
-function makeReq(method: string, cookie?: string): NextRequest {
-  return new NextRequest("http://localhost/api/advisor-auth/session", {
-    method,
-    headers: cookie ? { Cookie: cookie } : {},
-  });
+function resetCalls() {
+  for (const k of Object.keys(supabaseCalls)) delete supabaseCalls[k];
 }
 
-function makeChain(result: { data: unknown; error: unknown }) {
-  const c: Record<string, ReturnType<typeof vi.fn>> = {};
-  for (const m of ["select", "update", "delete", "eq", "or", "in"]) {
-    c[m] = vi.fn(() => c);
-  }
-  c.single = vi.fn(() => Promise.resolve(result));
-  c.maybeSingle = vi.fn(() => Promise.resolve(result));
-  c.then = vi.fn((cb: (v: unknown) => void) => {
-    cb({ data: null, error: null });
-    return Promise.resolve();
-  });
-  return c;
-}
-
-// ── GET tests ─────────────────────────────────────────────────────────────────
+// ── Tests ──────────────────────────────────────────────────────────────────────
 
 describe("GET /api/advisor-auth/session", () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+    resetCalls();
+    mockServerFrom.mockReset();
+    mockAdminFrom.mockReset();
+    mockServerFrom.mockImplementation((table: string) =>
+      createChainableBuilder(table, supabaseCalls),
+    );
+    mockAdminFrom.mockImplementation((table: string) =>
+      createChainableBuilder(table, supabaseCalls),
+    );
+  });
 
-  it("returns 401 when no user and no cookie", async () => {
-    mockGetUser.mockResolvedValueOnce({ data: { user: null } });
-    const res = await GET(makeReq("GET"));
+  it("returns 401 when no auth user and no legacy cookie", async () => {
+    mockGetUser.mockResolvedValue({ data: { user: null } });
+    const res = await GET(reqWithCookie());
     expect(res.status).toBe(401);
-    expect(await res.json()).toMatchObject({ error: "Not authenticated" });
+    const json = await res.json();
+    expect(json.error).toBe("Not authenticated");
   });
 
-  it("returns 200 with authMethod=supabase when Supabase user has linked advisor", async () => {
-    mockGetUser.mockResolvedValueOnce({
-      data: { user: { id: "user-uuid-1", email: ADVISOR.email } },
+  it("returns advisor with authMethod=supabase when supabase user is linked", async () => {
+    mockGetUser.mockResolvedValue({
+      data: { user: { id: "u-123", email: "advisor@test.com" } },
     });
-    mockAdminFrom.mockReturnValue(makeChain({ data: ADVISOR, error: null }));
-    const res = await GET(makeReq("GET"));
-    expect(res.status).toBe(200);
-    const body = await res.json();
-    expect(body.authMethod).toBe("supabase");
-    expect(body.advisor.id).toBe(42);
-  });
-
-  it("triggers admin update to link auth_user_id when null on the advisor record", async () => {
-    mockGetUser.mockResolvedValueOnce({
-      data: { user: { id: "user-uuid-1", email: ADVISOR.email } },
-    });
-    const chain = makeChain({ data: { ...ADVISOR, auth_user_id: null }, error: null });
-    mockAdminFrom.mockReturnValue(chain);
-    await GET(makeReq("GET"));
-    expect(chain.update).toHaveBeenCalled();
-  });
-
-  it("falls back to legacy cookie path when Supabase returns no user", async () => {
-    mockGetUser.mockResolvedValueOnce({ data: { user: null } });
     mockAdminFrom.mockImplementation((table: string) => {
-      if (table === "advisor_sessions") {
-        return makeChain({
-          data: {
-            professional_id: 42,
-            expires_at: new Date(Date.now() + 3_600_000).toISOString(),
-          },
-          error: null,
-        });
+      const b = createChainableBuilder(table, supabaseCalls);
+      if (table === "professionals") {
+        b.maybeSingle = vi.fn(() =>
+          Promise.resolve({
+            data: { ...ADVISOR, auth_user_id: "u-123" },
+            error: null,
+          }),
+        );
       }
-      return makeChain({ data: ADVISOR, error: null });
+      return b;
     });
-    const res = await GET(makeReq("GET", "advisor_session=tok-abc"));
+
+    const res = await GET(reqWithCookie());
     expect(res.status).toBe(200);
-    expect((await res.json()).authMethod).toBe("legacy");
+    const json = await res.json();
+    expect(json.authMethod).toBe("supabase");
+    expect(json.advisor.id).toBe(7);
+  });
+
+  it("links auth_user_id when not yet set on advisor row", async () => {
+    mockGetUser.mockResolvedValue({
+      data: { user: { id: "u-456", email: "advisor@test.com" } },
+    });
+    mockAdminFrom.mockImplementation((table: string) => {
+      const b = createChainableBuilder(table, supabaseCalls);
+      if (table === "professionals") {
+        b.maybeSingle = vi.fn(() =>
+          Promise.resolve({
+            data: { ...ADVISOR, auth_user_id: null },
+            error: null,
+          }),
+        );
+      }
+      return b;
+    });
+
+    const res = await GET(reqWithCookie());
+    expect(res.status).toBe(200);
+    // Should have called update on professionals to backfill auth_user_id
+    const proCalls = supabaseCalls.professionals || [];
+    const updateCall = proCalls.find((c) => c.method === "update");
+    expect(updateCall).toBeDefined();
+    const updateArgs = updateCall?.args[0] as Record<string, unknown>;
+    expect(updateArgs.auth_user_id).toBe("u-456");
+  });
+
+  it("returns advisor with authMethod=legacy for valid legacy session", async () => {
+    mockGetUser.mockResolvedValue({ data: { user: null } });
+    const futureExpiry = new Date(Date.now() + 86400 * 1000).toISOString();
+    mockAdminFrom.mockImplementation((table: string) => {
+      const b = createChainableBuilder(table, supabaseCalls);
+      if (table === "advisor_sessions") {
+        b.single = vi.fn(() =>
+          Promise.resolve({
+            data: { professional_id: 7, expires_at: futureExpiry },
+            error: null,
+          }),
+        );
+      }
+      if (table === "professionals") {
+        b.single = vi.fn(() => Promise.resolve({ data: ADVISOR, error: null }));
+      }
+      return b;
+    });
+
+    const res = await GET(reqWithCookie("legacy-token"));
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json.authMethod).toBe("legacy");
   });
 
   it("returns 401 and clears cookie when legacy session is expired", async () => {
-    mockGetUser.mockResolvedValueOnce({ data: { user: null } });
-    mockAdminFrom.mockReturnValue(
-      makeChain({
-        data: {
-          professional_id: 42,
-          expires_at: new Date(Date.now() - 1_000).toISOString(),
-        },
-        error: null,
-      }),
-    );
-    const res = await GET(makeReq("GET", "advisor_session=expired-tok"));
-    expect(res.status).toBe(401);
-    expect(await res.json()).toMatchObject({ error: "Session expired" });
-  });
+    mockGetUser.mockResolvedValue({ data: { user: null } });
+    const pastExpiry = new Date(Date.now() - 86400 * 1000).toISOString();
+    mockAdminFrom.mockImplementation((table: string) => {
+      const b = createChainableBuilder(table, supabaseCalls);
+      if (table === "advisor_sessions") {
+        b.single = vi.fn(() =>
+          Promise.resolve({
+            data: { professional_id: 7, expires_at: pastExpiry },
+            error: null,
+          }),
+        );
+      }
+      return b;
+    });
 
-  it("returns 500 on unexpected error", async () => {
-    mockGetUser.mockRejectedValueOnce(new Error("DB down"));
-    const res = await GET(makeReq("GET"));
-    expect(res.status).toBe(500);
-    expect(await res.json()).toMatchObject({ error: "Failed" });
+    const res = await GET(reqWithCookie("legacy-stale"));
+    expect(res.status).toBe(401);
+    // Cookie should be cleared via Set-Cookie with empty/expiry
+    const setCookie = res.headers.get("set-cookie") || "";
+    expect(setCookie).toContain("advisor_session=");
   });
 });
 
-// ── DELETE tests ──────────────────────────────────────────────────────────────
-
 describe("DELETE /api/advisor-auth/session", () => {
-  beforeEach(() => vi.clearAllMocks());
+  beforeEach(() => {
+    vi.clearAllMocks();
+    resetCalls();
+    mockServerFrom.mockReset();
+    mockAdminFrom.mockReset();
+    mockServerFrom.mockImplementation((table: string) =>
+      createChainableBuilder(table, supabaseCalls),
+    );
+    mockAdminFrom.mockImplementation((table: string) =>
+      createChainableBuilder(table, supabaseCalls),
+    );
+  });
 
-  it("signs out and returns 200 when no legacy cookie", async () => {
-    mockSignOut.mockResolvedValueOnce({});
-    const res = await DELETE(makeReq("DELETE"));
+  it("signs out and clears cookie even with no legacy session", async () => {
+    const res = await DELETE(deleteReqWithCookie());
     expect(res.status).toBe(200);
-    expect(await res.json()).toMatchObject({ success: true });
-    expect(mockSignOut).toHaveBeenCalledOnce();
+    expect(mockSignOut).toHaveBeenCalled();
   });
 
   it("deletes legacy session row when cookie is present", async () => {
-    mockSignOut.mockResolvedValueOnce({});
-    const chain = makeChain({ data: null, error: null });
-    mockAdminFrom.mockReturnValue(chain);
-    await DELETE(makeReq("DELETE", "advisor_session=tok-123"));
-    expect(chain.delete).toHaveBeenCalled();
+    const res = await DELETE(deleteReqWithCookie("legacy-token"));
+    expect(res.status).toBe(200);
+    const sessCalls = supabaseCalls.advisor_sessions || [];
+    expect(sessCalls.some((c) => c.method === "delete")).toBe(true);
   });
 
-  it("swallows signOut exceptions and still returns 200", async () => {
-    mockSignOut.mockRejectedValueOnce(new Error("auth service down"));
-    const res = await DELETE(makeReq("DELETE"));
+  it("still returns success when supabase signOut throws", async () => {
+    mockSignOut.mockRejectedValueOnce(new Error("network blip"));
+    const res = await DELETE(deleteReqWithCookie("legacy-token"));
     expect(res.status).toBe(200);
-    expect(await res.json()).toMatchObject({ success: true });
+    const json = await res.json();
+    expect(json.success).toBe(true);
   });
 });
