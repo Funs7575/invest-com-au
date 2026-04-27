@@ -37,7 +37,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-27T05:35Z | K-01..K-08 done; K-09 false-positive; K-10..K-15 done — **stream complete** |
 | L | _not started_ | — | — | — |
 | M | _not started_ | — | — | — |
-| N | `claude/audit-remediation/n-ux-perf` | #242 | pending — pushed 2026-04-27T10:30Z | N-01+N-02 done (`2ec6f89`) · N-03a done (`36e3f6d`) · N-03b done (`97bb9b00`) · N-03c done (`b29f443`) · N-04 FP (skip link already in LayoutShell) · N-05 FP (aria-labels present) · N-06 blocked (ICO→SVG needs human SVG sourcing) · N-07 batch 1 done (`2e5d8a4`) |
+| N | `claude/audit-remediation/n-ux-perf` | #242 | pending — pushed 2026-04-27T11:00Z | N-01+N-02 done (`2ec6f89`) · N-03a done (`36e3f6d`) · N-03b done (`97bb9b00`) · N-03c done (`b29f443`) · N-04 FP · N-05 FP · N-06 blocked · N-07 batch 1 done (`2e5d8a4`) · N-07 batch 2 done (`91d0d42`) |
 | O | `claude/audit-remediation/o-rls-no-policy` | _opening_ | pending — pushed 2026-04-26 | O-01 — 3 done (`user_notifications`, `user_quiz_history`, `user_bookmarks`); ~13 user-data tables left |
 | P | _not started_ | — | — | — |
 | Q | _not started_ | — | — | — |
@@ -332,7 +332,7 @@ Image perf, accessibility, client-bundle size.
 | N-04 | false-positive | ~~Add skip-to-main-content link in `components/layout/Navigation.tsx` (or root layout)~~ | — | P1. **Already implemented** in `components/LayoutShell.tsx` lines 40–45: `<a href="#main-content" className="sr-only focus:not-sr-only ...">Skip to main content</a>` pointing to `<main id="main-content">`. Verified iter 40. |
 | N-05 | false-positive | ~~Sweep icon-only buttons missing `aria-label` (`CollapsibleSection`, `InfoTip`, `AdminHelpPanel`, `AdminNotifications`, `BottomSheet`, `OnThisPage`)~~ | — | P1. **All 6 components already have proper labels.** `InfoTip`: `aria-label="More info"`. `AdminHelpPanel`: dynamic `aria-label={open ? "Close help" : "Help for this page"}`. `AdminNotifications`: `aria-label="Notifications"`. `BottomSheet`: `aria-label="Close"`. `OnThisPage`: `aria-label="Close navigation"` + text. `CollapsibleSection`: buttons have visible text ("Show less" / "Show all N items"). Verified iter 40. |
 | N-06 | blocked | Convert `public/logos/*.ico` → `.svg` where possible (73 files; batch script) | ~2 | P2. **Blocked** — see Blocked entry N-06-ICO-SVG-1 below. ICO files are rasterised; sourcing vector SVGs requires human curation or a brand-logo API (Clearbit / Brandfetch); the `logo_url` DB column also needs updating per file. |
-| N-07 | in-progress | Replace 138 `w-[Npx]`/`max-w-[Npx]` literals with Tailwind scale tokens | ~2 | P2. **Batch 1 done** (iter 40, commit `2e5d8a4`): 91 exact-match replacements across 40 files — `min-w-[44px]`→`min-w-11`, `min-h-[44px]`→`min-h-11`, `min-w-[240px]`→`min-w-60`, `max-w-[160px]`→`max-w-40`. Remaining: off-grid values (`[18px]`, `[140px]`, `[200px]`, `[560px]`) — batch 2 pending. |
+| N-07 | done | Replace arbitrary px literals with Tailwind scale tokens | 2 | P2. **Done.** Batch 1 (iter 40, commit `2e5d8a4`): 91 replacements across 40 files. Batch 2 (iter 41, commit `91d0d42`): 99 replacements across 58 files covering off-grid values and high-frequency dimension classes. 190 total replacements; all pixel-identical in Tailwind v4. |
 | N-08 | pending | Replace 16 hardcoded color hex values in chart/SVG components with Tailwind tokens | 1 | P2. |
 | N-09 | pending | `app/quiz/page.tsx` (796 LOC) — assess client/server boundary; if client-rendered, prefetch quiz data via Edge Function | 1 | P1. |
 | N-10 | pending | Backfill `placeholder="blur"` on hot-path next/image usages: article hero, advisor profile photo, broker logo | 1 | P1. Currently 0/61 images use blur. |
@@ -457,6 +457,7 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 
 ## Done
 
+- 2026-04-27 · N-07 batch 2 · Replace off-grid + high-frequency arbitrary px literals with Tailwind v4 scale tokens: `min-h-[48px]`→`min-h-12` (27), `min-h-[36px]`→`min-h-9` (9), `min-h-[40px]`→`min-h-10` (6), `min-h-[52px]`→`min-h-13` (4), `min-h-[60px]`→`min-h-15` (2), `min-h-[120px]`→`min-h-30` (2), `min-h-[200px]`→`min-h-50` (3), `max-w-[200px]`→`max-w-50` (13), `max-w-[180px]`→`max-w-45` (8), `max-w-[220px]`→`max-w-55` (5), `min-w-[18px]`→`min-w-4.5` (4), `min-w-[140px]`→`min-w-35` (3), `min-w-[560px]`→`min-w-140` (1), `h-[80px]`→`h-20` (3), `h-[60px]`→`h-15` (3), `w-[80px]`→`w-20` (3), `w-[200px]`→`w-50` (1), `w-[60px]`→`w-15` (3), and others. 99 total replacements, 58 files, pixel-identical CSS output. · commit `91d0d42` · pr #242
 - 2026-04-27 · N-07 batch 1 · Replace exact-match arbitrary Tailwind px literals with scale tokens: `min-w-[44px]`→`min-w-11`, `min-h-[44px]`→`min-h-11`, `min-w-[240px]`→`min-w-60`, `max-w-[160px]`→`max-w-40`. 91 in-place replacements across 40 files; pixel-identical CSS output (Tailwind v4 `--spacing=0.25rem` scale). Off-grid values (`[18px]`, `[140px]`, `[200px]`, `[560px]`) deferred to N-07 batch 2. · commit `2e5d8a4` · pr #242
 - 2026-04-27 · N-03c · Extract `ProfileTab`, `BillingTab`, `SettingsTab`, `TeamTab` from `app/advisor-portal/page.tsx` with `next/dynamic` lazy imports. All tab-specific state internalized into child components: `savingProfile`/`profileSaved`/`saveProfile()` → `ProfileTab`; `topupHistory` + mount-fetch → `BillingTab`; `notifPrefs`/`savingNotifs`/`notifSaved`/`saveNotifPrefs()` + mount-fetch → `SettingsTab`; all firm state (members, invites, details, analytics, sub-tabs, invite flow, seat-request) + `loadFirmData` mount-fetch → `TeamTab`. page.tsx 1,847 → 805 LOC. · commit `b29f443` · pr #242
 - 2026-04-27 · N-03b · Extract `DashboardTab`, `LeadsTab`, `AnalyticsTab` from `app/advisor-portal/page.tsx` with `next/dynamic` lazy imports. Shared types (`Advisor`, `Lead`, `Stats`, `ViewType`, `CategoryPricing`, `DisputeModal`, etc.) moved to `app/advisor-portal/types.ts`. Dashboard receives read-only state + 2 callbacks; LeadsTab uses bool-setter props (not toggles) so "Clear filters" can reset without toggling; AnalyticsTab receives stats/leads/profileCompleteness + onNavigate. page.tsx −773 LOC (2,620 → 1,847). · commit `97bb9b00` · pr #242
@@ -504,6 +505,20 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-27T11:00Z — iteration 41 (stream N — N-07 batch 2 done)
+
+- Phase 0: lock acquired.
+- Phase 1: local main had diverged from origin/main (50/50 commits); reset via `git reset --hard origin/main`. Read queue and defaults end-to-end.
+- Phase 1.5: Types drift check — skipped (no schema changes in this window).
+- Phase 2 CI rescue: PR #220 — all checks success/skipped. PR #222 — all checks success/skipped. PR #242 — all checks success/skipped. No rescue needed.
+- Phase 3 pick: Stream N (step 3 in priority order), N-07 batch 2 (next pending item after batch 1 done in iter 40). Checked out `claude/audit-remediation/n-ux-perf` from origin; `git merge --no-edit origin/main` — already up to date.
+- Phase 4 verification: N-07 is a pure Tailwind class-name replacement, not a deletion or refactor. Verified Tailwind v4 `@import "tailwindcss"` with `--spacing: 0.25rem` (4px/unit) — all planned substitutions produce pixel-identical CSS via `calc(var(--spacing) * N)`. Confirmed all replacements are in JSX `className` string literals only (TypeScript cannot type-check these). Enumerated all remaining off-grid and high-frequency values across all 6 prefix types (min-h, max-h, min-w, max-w, bare h-, bare w-) with exact counts. Specific off-grid values called out in iter-40 notes all covered: `[18px]`→`4.5`, `[140px]`→`35`, `[200px]`→`50`, `[560px]`→`140`.
+- Phase 5: Applied 20 sed substitution patterns via `find | xargs sed -i` in prefix-order (min-h → max-h → max-w → min-w → bare h- → bare w-) to avoid substring collisions. Verified zero remaining occurrences of all targeted values. Diff: 58 files changed, +99/-99 (pure renames). Local gates: `tsc --noEmit --ignoreConfig` on sample files produces only pre-existing sandbox module-resolution errors (TS2307/TS17004/TS17004 — Hardware exception applies). No semantic errors introduced. CI on PR #242 is authoritative.
+- Phase 6: committed `91d0d42` (+99/-99 across 58 files). Pushed to `claude/audit-remediation/n-ux-perf`. PR #242 body updated (N-07 batch 2 checked).
+- Phase 7: queue updated on main — N-07 marked done, In-flight table updated, Done entry prepended, this log added.
+- Status: PROGRESS · stream=N · item=N-07 (batch 2) · pr=#242 · commit=`91d0d42` · diff=+99/-99 across 58 files
+- Next item: N-08 (replace 16 hardcoded hex values in chart/SVG components with Tailwind tokens).
 
 ### 2026-04-27T10:30Z — iteration 40 (stream N — N-04 FP + N-05 FP + N-06 blocked + N-07 batch 1 done)
 
