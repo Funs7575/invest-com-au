@@ -1,6 +1,15 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { verifyMfaCookieEdge, MFA_COOKIE_NAME } from '@/lib/admin-mfa-cookie-edge'
+
+// Admin paths where the MFA step-up page itself lives — must never be
+// gated, otherwise they redirect to themselves infinitely.
+const ADMIN_MFA_EXEMPT = [
+  '/admin/login',
+  '/admin/mfa/verify',
+  '/admin/settings/mfa',
+]
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -184,6 +193,44 @@ export async function proxy(request: NextRequest) {
             redirectResponse.cookies.set(cookie.name, cookie.value)
           })
           return redirectResponse
+        }
+
+        // ── MFA step-up gate ───────────────────────────────────────
+        // Authenticated admins must also have a valid admin_mfa_verified
+        // cookie before accessing any admin page. Exempt paths are the
+        // login page, the MFA verify page itself, and the MFA settings
+        // page (so admins can enroll even if the cookie has expired).
+        //
+        // Dev/test fallthrough: if ADMIN_MFA_COOKIE_SECRET is not set, the
+        // gate is skipped with a console warning so local development works
+        // without the secret. In production the secret MUST be set — if
+        // it's absent, verifyMfaCookieEdge returns false and every admin
+        // request redirects to the verify page (where the verify route
+        // also fails), making the admin panel inaccessible until the secret
+        // is configured. See docs/ops/admin-mfa-rollout.md.
+        const mfaSecretSet =
+          process.env.ADMIN_MFA_COOKIE_SECRET &&
+          process.env.ADMIN_MFA_COOKIE_SECRET.length >= 32
+        if (!mfaSecretSet && process.env.NODE_ENV !== 'production') {
+          // Skip gate in dev — warn once per cold start
+          console.warn('[proxy] ADMIN_MFA_COOKIE_SECRET not set — MFA gate disabled in dev')
+        } else {
+          const isMfaExempt = ADMIN_MFA_EXEMPT.some(p => pathname.startsWith(p))
+          if (!isMfaExempt) {
+            const mfaValid = await verifyMfaCookieEdge(
+              request.cookies.get(MFA_COOKIE_NAME)?.value,
+            )
+            if (!mfaValid) {
+              const url = request.nextUrl.clone()
+              url.pathname = '/admin/mfa/verify'
+              url.searchParams.set('redirect', pathname)
+              const redirectResponse = NextResponse.redirect(url)
+              supabaseResponse.cookies.getAll().forEach(cookie => {
+                redirectResponse.cookies.set(cookie.name, cookie.value)
+              })
+              return redirectResponse
+            }
+          }
         }
       }
 

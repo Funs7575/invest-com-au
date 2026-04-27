@@ -159,15 +159,38 @@ export default function MfaEnrollmentClient({ enrolled: initialEnrolled, email }
                 </li>
               ))}
             </ol>
-            <button
-              type="button"
-              onClick={() => {
-                navigator.clipboard?.writeText(result.recoveryCodes.join("\n"));
-              }}
-              className="mt-2 px-3 py-1 text-xs rounded bg-white border border-slate-300 hover:bg-slate-50"
-            >
-              Copy codes
-            </button>
+            <div className="mt-2 flex gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard?.writeText(result.recoveryCodes.join("\n"));
+                }}
+                className="px-3 py-1 text-xs rounded bg-white border border-slate-300 hover:bg-slate-50"
+              >
+                Copy codes
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const text =
+                    "invest.com.au admin MFA recovery codes\n" +
+                    "Generated: " + new Date().toISOString() + "\n" +
+                    "Account: " + email + "\n\n" +
+                    result.recoveryCodes.map((c, i) => `${i + 1}. ${c}`).join("\n") +
+                    "\n\nEach code can only be used once. Store this file somewhere safe.\n";
+                  const blob = new Blob([text], { type: "text/plain" });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = "mfa-recovery-codes.txt";
+                  a.click();
+                  URL.revokeObjectURL(url);
+                }}
+                className="px-3 py-1 text-xs rounded bg-white border border-slate-300 hover:bg-slate-50"
+              >
+                Download (.txt)
+              </button>
+            </div>
           </div>
 
           <div>
