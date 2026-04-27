@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import HubLeadForm from "@/components/leads/HubLeadForm";
+import { formatAUD } from "@/lib/currency";
 
 const TAX_OPTIONS = [
   { id: "none",   label: "No tax (super pension)",  rate: 0 },
@@ -10,10 +11,6 @@ const TAX_OPTIONS = [
   { id: "37",     label: "37% marginal",            rate: 0.37 },
   { id: "45",     label: "45% marginal",            rate: 0.45 },
 ];
-
-function formatAUD(n: number): string {
-  return new Intl.NumberFormat("en-AU", { style: "currency", currency: "AUD", maximumFractionDigits: 0 }).format(n);
-}
 
 function project(initial: number, monthly: number, annualRate: number, years: number, taxRate: number) {
   const months = years * 12;
