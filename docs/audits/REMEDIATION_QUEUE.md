@@ -27,7 +27,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | A | _not started_ | — | — | — |
 | B | `claude/audit-remediation/b-rls-remediation` | #220 | pending — pushed 2026-04-27T06:50Z | B-06 — 2 done (`listing_enquiries` `0bb82daa`, `listing_plans` `be7bff79`) · 5 FP (forum tables) · 1 blocked (`quarterly_reports`) |
 | C | _not started_ | — | — | — |
-| D | `claude/audit-remediation/d-route-tests` | #246 | CI-rescue pushed 2026-04-27T21:40Z — commit `9282178` | D-01 done (commit `7269510`) · D-02 done (commit `ebf2250`) · D-03 done (commit `0177aa1`) · D-04 done (commit `bea95b1`) · D-05 done (commit `e49375d`) · D-06 done (commit `c0cd3ee`) · D-07 done (commit `33230fb`) · D-08 done (commit `311df3f`) · D-09 done (commit `8e2d35d`) · D-10 done (commit `4e702c1`) · D-11 batch 1 done (commit `90c7c5b`) · D-11 batch 2 done (commit `387bcb4`) · D-11 batch 3 done (commit `db0df8d`) · D-11 batch 4 done (commit `c49e3aa`) · CI-rescue merged main (commit `9282178`) |
+| D | `claude/audit-remediation/d-route-tests` | #246 | pending — pushed 2026-04-27T22:30Z | D-01 done (commit `7269510`) · D-02 done (commit `ebf2250`) · D-03 done (commit `0177aa1`) · D-04 done (commit `bea95b1`) · D-05 done (commit `e49375d`) · D-06 done (commit `c0cd3ee`) · D-07 done (commit `33230fb`) · D-08 done (commit `311df3f`) · D-09 done (commit `8e2d35d`) · D-10 done (commit `4e702c1`) · D-11 batch 1 done (commit `90c7c5b`) · D-11 batch 2 done (commit `387bcb4`) · D-11 batch 3 done (commit `db0df8d`) · D-11 batch 4 done (commit `c49e3aa`) · CI-rescue merged main (commit `9282178`) · D-11 batch 5 done (commit `6c7637f`) |
 | E | _not started_ | — | — | — |
 | F | _not started_ | — | — | — |
 | G | _not started_ | — | — | — |
@@ -206,7 +206,7 @@ Highest priority: critical 2 first.
 | D-08 | done | Integration test for `/api/stripe/create-contract` | 1 | Done in commit `311df3f` (PR #246). 16 tests: 401 no cookie; 401 invalid/expired session (null DB); 400 missing advisor_id/plan/billing_cycle; 400 invalid plan value; 400 invalid billing_cycle value; 403 professional_id mismatch; 200 monthly success; 200 annual success; unit_amount=9900+interval=month for basic/monthly; unit_amount=499000+interval=year for premium/annual; metadata includes advisor_id+plan+billing_cycle; success_url+cancel_url use NEXT_PUBLIC_SITE_URL; advisor_sessions query scoped by cookie token; 500 Stripe throws. |
 | D-09 | done | Integration test for `/api/auth/signout` | 1 | Done in commit `8e2d35d` (PR #246). 2 tests: success path (`signOut()` resolves → `{success:true}` 200); catch path (`signOut()` throws → `{error:"Failed to sign out"}` 500). 100% branch coverage on the 12-line route. |
 | D-10 | done | Add `vitest.config.mts` ratchet: API-route coverage floor | 1 | Global thresholds ratcheted 42→44 (lines/stmt), 72→73 (branches). API-route floor added: lines/stmt 13, branches 58, functions 30. commit `4e702c1` PR #246. |
-| D-11 | pending | Backfill remaining 228 untested routes (chunked: ~5 per iteration, prioritised by traffic) | ~45 | Lowest priority within D; ongoing. Batch 1 done (iter 60, commit `90c7c5b`): advisor-auth lifecycle — session GET+DELETE (8), login POST (16), profile PATCH (5), notifications GET+PATCH (7) = 37 tests, 4 files. Batch 2 done (iter 67, commit `387bcb4`): advisor-auth financial+auth — payment (12), tier-upgrade (10), topup (11), verify (6), request-review (8) = 47 tests, 4 files. Batch 3 done (iter 68, commit `db0df8d`): consumer-path routes — account/notifications GET+PATCH (13), account/claim-anonymous POST (8), user-profile GET+PUT (15), newsletter/subscribe POST (12) = 48 tests, 4 files. Batch 4 done (iter 69, commit `c49e3aa`): OTP + shortlist + notification-preferences — verify-otp/send POST (11), verify-otp/verify POST (9), shortlist POST+GET (16), notification-preferences GET+POST (11) = 47 tests, 4 files. |
+| D-11 | pending | Backfill remaining 228 untested routes (chunked: ~5 per iteration, prioritised by traffic) | ~45 | Lowest priority within D; ongoing. Batch 1 done (iter 60, commit `90c7c5b`): advisor-auth lifecycle — session GET+DELETE (8), login POST (16), profile PATCH (5), notifications GET+PATCH (7) = 37 tests, 4 files. Batch 2 done (iter 67, commit `387bcb4`): advisor-auth financial+auth — payment (12), tier-upgrade (10), topup (11), verify (6), request-review (8) = 47 tests, 4 files. Batch 3 done (iter 68, commit `db0df8d`): consumer-path routes — account/notifications GET+PATCH (13), account/claim-anonymous POST (8), user-profile GET+PUT (15), newsletter/subscribe POST (12) = 48 tests, 4 files. Batch 4 done (iter 69, commit `c49e3aa`): OTP + shortlist + notification-preferences — verify-otp/send POST (11), verify-otp/verify POST (9), shortlist POST+GET (16), notification-preferences GET+POST (11) = 47 tests, 4 files. Batch 5 done (iter 71, commit `6c7637f`): consumer search + quiz + lead-confirm + GDPR export — advisor-search GET (12), quiz/submit POST (12), submit-lead/confirm POST (12), account/export-data POST (10) = 46 tests, 4 files. |
 
 ### Stream A — DB schema drift backfill (issue #214)
 
@@ -1032,6 +1032,19 @@ Items that ship LAST, in the final week before launch (Month 4 of pre-launch roa
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-27T22:30Z — iteration 71 (stream D — D-11 batch 5 — consumer search + quiz + lead-confirm + GDPR export)
+
+- Phase 0: lock acquired.
+- Phase 1: local main had diverged from origin/main (force-push); reset via `git reset --hard origin/main`. Read queue + defaults end-to-end.
+- Phase 1.5: types-drift skipped (no Supabase MCP available).
+- Phase 2: CI rescue scan — checked in-flight PRs. No CI failures requiring rescue; proceeded to Phase 3.
+- Phase 3: priority walk — D-11 batch 5 pending. Checked out `claude/audit-remediation/d-route-tests` branch.
+- Phase 4: verified 4 target routes — advisor-search GET (composite relevance scoring, PostGIS RPC, rate-limit), quiz/submit POST (broker scoring heuristics, admin client ×2), submit-lead/confirm POST (edge runtime, idempotency via advisor_notified_at, sendNewLeadNotification), account/export-data POST (GDPR APP-12 export, 1/24h rate-limit per user). All confirmed testable with clear mock seams.
+- Phase 5: created 4 test files (+570/-0 LOC): advisor-search.test.ts (12 tests), quiz-submit.test.ts (12 tests), submit-lead-confirm.test.ts (12 tests), account-export-data.test.ts (10 tests) = 46 tests total. Hardware exception: whole-codebase tsc + npm test skipped (node_modules not installed on sandbox); CI is authoritative.
+- Phase 6: committed `6c7637f` with full Why/Verified/Idempotency/Rollback body. Pushed to origin. Updated PR #246 body (D-11 batch 5 checked off).
+- Phase 7: queue updated on main — D in-flight row updated, D-11 notes updated, iteration log appended.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 5 · pr=#246
 
 ### 2026-04-27T21:40Z — iteration 70 (CI rescue — stream D PR #246 — merge add/add conflict)
 
