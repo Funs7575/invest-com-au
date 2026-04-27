@@ -38,7 +38,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | L | _not started_ | — | — | — |
 | M | _not started_ | — | — | — |
 | N | `claude/audit-remediation/n-ux-perf` | #242 | pending — pushed 2026-04-27T08:40Z | N-01+N-02 done (`2ec6f89`) · N-03 iter 1/3 done (`36e3f6d`) · N-03 iter 2/3 done (`97bb9b00`) |
-| O | _not started_ | — | — | — |
+| O | `claude/audit-remediation/o-rls-no-policy` | _opening_ | pending — pushed 2026-04-26 | O-01 — 3 done (`user_notifications`, `user_quiz_history`, `user_bookmarks`); ~13 user-data tables left |
 | P | _not started_ | — | — | — |
 | Q | _not started_ | — | — | — |
 | R | _not started_ | — | — | — |
@@ -325,7 +325,7 @@ Beyond Stream B's RLS-enable work; addresses policy completeness, FK indexes, se
 
 | ID | Status | Summary | Est. iterations | Notes |
 | --- | --- | --- | --- | --- |
-| O-01 | pending | Triage 56 RLS-enabled-but-zero-policies tables: bucket into (a) service-role only — add explicit `service_role` allow policy for clarity, (b) user-data — needs `auth.uid()`-scoped policies | ~3 | P1. Full list in audit §4.2. ~16h total; chunk by table family. |
+| O-01 | in-progress | Triage 56 RLS-enabled-but-zero-policies tables: bucket into (a) service-role only — add explicit `service_role` allow policy for clarity, (b) user-data — needs `auth.uid()`-scoped policies | ~3 | P1. Full list in audit §4.2. ~16h total; chunk by table family. **Iter 1 (2026-04-26):** user-data triplet done — `user_notifications`, `user_quiz_history`, `user_bookmarks` (`supabase/migrations/20260426_user_data_rls_policies.sql`). Pre-emptively wrapped `auth.uid()` in `(SELECT auth.uid())` per F-4.5.3 (auth_rls_initplan). Service-role caller paths unchanged — all use `createAdminClient()`. **Next batches:** (2) `article_comments`/`article_reactions` (need `published`-only public read + author-edit), (3) admin/audit cluster (`admin_action_log`, `admin_mfa_enrollments`, `financial_audit_log`, `login_attempts` — service-role only). |
 | O-02 | done | 4 FK index migration — done out-of-loop in PR #230 | 1 | Resolved in PR #230 ("chore(db): repo-parity migration for 4 missing FK indexes (already live)") merged 2026-04-26T17:37Z. Live DB indexes had been applied earlier; this PR adds the migration file to the repo to close source-of-truth drift. |
 | O-03 | pending | `refresh_advisor_cohort_metrics()` SECURITY DEFINER — set `search_path = public, pg_catalog` to close injection vector | 1 | P2. |
 | O-04 | pending | `stripe_webhook_events` idempotency dry-run via Stripe dashboard test event → confirm row inserts + status='completed' | 1 | P2. Pre-launch validation. May surface to Blocked if needs founder action. |
