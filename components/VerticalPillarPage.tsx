@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Broker, Article } from "@/lib/types";
 import type { VerticalConfig } from "@/lib/verticals";
 import { getRelatedVerticals } from "@/lib/verticals";
@@ -540,8 +541,7 @@ export default function VerticalPillarPage({
                         href={`/advisor/${advisor.slug}`}
                         className="flex items-center gap-3 p-3 bg-white border border-violet-100 rounded-xl hover:border-violet-300 hover:shadow-md transition-all group"
                       >
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
+                        <Image
                           src={advisor.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(advisor.name)}&size=80&background=7c3aed&color=fff`}
                           alt={advisor.name}
                           width={44}
@@ -606,10 +606,11 @@ export default function VerticalPillarPage({
                 {expertArticles.map((article: ExpertArticle) => (
                   <Link key={article.id} href={`/expert/${article.slug}`} className="bg-white border border-slate-200 rounded-xl p-4 hover:shadow-md hover:border-slate-300 transition-all group">
                     <div className="flex items-center gap-2 mb-2.5">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
+                      <Image
                         src={article.author_photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(article.author_name || 'Expert')}&background=7c3aed&color=fff&size=40`}
                         alt={article.author_name || 'Expert'}
+                        width={32}
+                        height={32}
                         className="w-8 h-8 rounded-full object-cover"
                       />
                       <div>

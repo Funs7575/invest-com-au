@@ -162,6 +162,7 @@ export default function AdvisorPhotoUpload({ currentPhotoUrl, advisorSlug, onPho
         `}
       >
         {preview ? (
+          // eslint-disable-next-line @next/next/no-img-element -- preview is a blob: URL from URL.createObjectURL(); next/image does not support blob: scheme
           <img
             src={preview}
             alt="Profile photo"
