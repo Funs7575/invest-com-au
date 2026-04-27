@@ -27,7 +27,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | A | _not started_ | — | — | — |
 | B | `claude/audit-remediation/b-rls-remediation` | #220 | pending — pushed 2026-04-27T06:50Z | B-06 — 2 done (`listing_enquiries` `0bb82daa`, `listing_plans` `be7bff79`) · 5 FP (forum tables) · 1 blocked (`quarterly_reports`) |
 | C | _not started_ | — | — | — |
-| D | `claude/audit-remediation/d-route-tests` | #246 | pending — pushed 2026-04-27T16:20Z | D-01 done (commit `7269510`) · D-02 done (commit `ebf2250`) · D-03 done (commit `0177aa1`) · D-04 done (commit `bea95b1`) · D-05 done (commit `e49375d`) · D-06 done (commit `c0cd3ee`) · D-07 done (commit `33230fb`) · D-08 done (commit `311df3f`) |
+| D | `claude/audit-remediation/d-route-tests` | #246 | pending — pushed 2026-04-27T17:12Z | D-01 done (commit `7269510`) · D-02 done (commit `ebf2250`) · D-03 done (commit `0177aa1`) · D-04 done (commit `bea95b1`) · D-05 done (commit `e49375d`) · D-06 done (commit `c0cd3ee`) · D-07 done (commit `33230fb`) · D-08 done (commit `311df3f`) · D-09 done (commit `8e2d35d`) · D-10 done (commit `4e702c1`) |
 | E | _not started_ | — | — | — |
 | F | _not started_ | — | — | — |
 | G | _not started_ | — | — | — |
@@ -201,8 +201,8 @@ Highest priority: critical 2 first.
 | D-06 | done | Integration test for `/api/stripe/cancel-subscription` | 1 | Done in commit `c0cd3ee` (PR #246). 13 tests: 401 unauthenticated, 404 no active subscription, subscriptions query uses user_id filter, 400 already set to cancel, 200 success body shape, Stripe update called with cancel_at_period_end:true, idempotency key format verified, trialing subscription eligible, admin DB update called with correct data + ISO updated_at, DB update eq filter uses stripe_subscription_id, 500 Stripe update throws, 500 DB lookup throws, 500 DB update throws after Stripe succeeds. |
 | D-07 | done | Integration test for `/api/stripe/create-portal` | 1 | Done in commit `33230fb` (PR #246). 12 tests: 401 unauthenticated, 404 profile null, 404 stripe_customer_id null, 200 success + URL returned, customer ID passed to Stripe, return_url from NEXT_PUBLIC_SITE_URL, fallback to https://invest.com.au/account, idempotency key format (portal_userId_timestamp), profiles eq-filter verified, stripe_customer_id column projection, 500 on Stripe throw, 500 on DB throw. |
 | D-08 | done | Integration test for `/api/stripe/create-contract` | 1 | Done in commit `311df3f` (PR #246). 16 tests: 401 no cookie; 401 invalid/expired session (null DB); 400 missing advisor_id/plan/billing_cycle; 400 invalid plan value; 400 invalid billing_cycle value; 403 professional_id mismatch; 200 monthly success; 200 annual success; unit_amount=9900+interval=month for basic/monthly; unit_amount=499000+interval=year for premium/annual; metadata includes advisor_id+plan+billing_cycle; success_url+cancel_url use NEXT_PUBLIC_SITE_URL; advisor_sessions query scoped by cookie token; 500 Stripe throws. |
-| D-09 | pending | Integration test for `/api/auth/signout` | 1 | |
-| D-10 | pending | Add `vitest.config.mts` ratchet: API-route coverage floor | 1 | Compute current %, set ratchet just below. |
+| D-09 | done | Integration test for `/api/auth/signout` | 1 | Done in commit `8e2d35d` (PR #246). 2 tests: success path (`signOut()` resolves → `{success:true}` 200); catch path (`signOut()` throws → `{error:"Failed to sign out"}` 500). 100% branch coverage on the 12-line route. |
+| D-10 | done | Add `vitest.config.mts` ratchet: API-route coverage floor | 1 | Global thresholds ratcheted 42→44 (lines/stmt), 72→73 (branches). API-route floor added: lines/stmt 13, branches 58, functions 30. commit `4e702c1` PR #246. |
 | D-11 | pending | Backfill remaining 228 untested routes (chunked: ~5 per iteration, prioritised by traffic) | ~45 | Lowest priority within D; ongoing. |
 
 ### Stream A — DB schema drift backfill (issue #214)
@@ -502,6 +502,8 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 | V-NEW-02 | blocked | AI-output factual-filter enforcement — every CC-* response through lib/compliance.ts | 2-3 | **P0 within additions. Gates entire CC stream.** **Blocked** — iter 53 Phase 4: `lib/compliance.ts` has no factual-filter function (only compliance copy strings). Filter implementation depends on founder's compliance copy review. Unblocked when `lib/compliance.ts` gains a `filterFactualOutput()` or equivalent function. |
 | V-NEW-03 | done | Stripe webhook idempotency replay test harness — gates entire DD stream | 2-3 | Done in commit `84bde1f` (PR #252). `__tests__/lib/stripe-webhook-idempotency.harness.ts` — stateful `stripe_webhook_events` mock + `createIdempotencyHarness()` + `makeStripeEvent()` + `makeWebhookRequest()`. `__tests__/api/stripe-webhook-idempotency.test.ts` — 18 tests across 5 suites (customer.subscription.created, invoice.paid, invoice.payment_failed, charge.refunded, edge cases). `scripts/check-stripe-idempotency.mjs` — CI gate for new `app/api/webhooks/stripe/**` handlers. CI job `stripe-idempotency-gate` in `ci.yml`. `npm run audit:stripe-idempotency` for local pre-check. 18 tests green. |
 | V-NEW-04 | done | RLS-isolation test gate for new user-data tables — CI gate + test template + 16 gate tests | 1 | Done in commit `5aadce3` (PR #252). `scripts/check-rls-isolation.mjs` — scans added migrations for user_id/owner_id tables, checks for `__tests__/lib/<table>.rls.test.ts` or `// rls-isolation: <table>` marker. `__tests__/templates/rls-isolation.template.ts` — copy-paste starting point for isolation tests. CI job `rls-isolation-gate` in `ci.yml`. `npm run audit:rls-isolation` for local pre-check. 16 gate tests green. |
+| V-NEW-06 | pending | AI cost caps — per-user-per-day token budget, global daily budget, 80% alerts, 429 with friendly message, daily UTC reset, admin override flag | 2-3 | **P0 — net-new ID added 2026-04-27.** Source: `docs/audits/2026-04-26-comprehensive-audit.md` (companion to other terminal's 04-27 audit). Adds `ai_token_usage` table tracking tokens by `user_id, route, day`. Hard caps: $5/user/day on public concierge, $50/admin-user/day on admin agent (configurable env vars `AI_USER_DAILY_USD`, `AI_ADMIN_USER_DAILY_USD`). Global budgets: $200/day public, $100/day admin (`AI_GLOBAL_PUBLIC_USD`, `AI_GLOBAL_ADMIN_USD`). Alert at 80% of any cap → existing `OPS_ALERT_EMAIL` pathway. 429 friendly when cap hit. Daily reset 00:00 UTC. Admin override flag for emergencies. Apply to `app/api/concierge/*` and `app/api/admin/agent/*`. Branch: `claude/audit-remediation/v-new-06-ai-cost-caps`. |
+| V-NEW-07 | pending | Admin MFA enforced — remove `admin_mfa_required` feature flag, force enrollment on next admin session, signed verify cookie, recovery codes downloadable | 2 | **P0 — net-new ID added 2026-04-27.** Source: `docs/audits/2026-04-26-comprehensive-audit.md`. Removes feature-flag gate (currently the login-page form bypasses `/api/admin/login` entirely, so the flag is meaningless). MFA enforced in `proxy.ts` for `/admin/**` (except `/admin/login`, `/admin/mfa/verify`, `/admin/settings/mfa`). New verify route + page; signed `admin_mfa_verified` HttpOnly cookie (12h TTL). Backup codes already generated by existing enrollment endpoint — make downloadable. Rollout doc at `docs/ops/admin-mfa-rollout.md`. 1 PR, atomic. Branch: `claude/audit-remediation/v-new-07-admin-mfa-enforced`. |
 
 ### Stream W — Hub foundation: component extraction (added 2026-04-27)
 
@@ -956,6 +958,8 @@ Items that ship LAST, in the final week before launch (Month 4 of pre-launch roa
 
 ## Done
 
+- 2026-04-27 · D-10 · `vitest.config.mts` coverage ratchet: global thresholds 42/72/63 → 44/73/63 (lines/stmt/branches/functions); per-glob API-route floor added `"app/api/**/*.ts": { lines: 13, branches: 58, functions: 30, statements: 13 }`. Measured post-D-01..D-09: overall 44.45%/73.02%/63.74%; API-route scoped 13.82%/58.35%/30.18%. +25/-23 across 1 file. · commit `4e702c1` · pr #246
+- 2026-04-27 · D-09 · Integration test for `POST /api/auth/signout`: 2 tests — success path (`{success:true}` 200) and catch path (`{error:"Failed to sign out"}` 500). 100% branch coverage on the 12-line route. +40/-0 across 1 file. · commit `8e2d35d` · pr #246
 - 2026-04-27 · D-08 · Integration test for `POST /api/stripe/create-contract`: 16 tests — 401 no cookie, 401 invalid/expired session, 400 missing fields (advisor_id/plan/billing_cycle), 400 invalid plan, 400 invalid billing_cycle, 403 professional_id mismatch, 200 monthly success, 200 annual success, unit_amount=9900+interval=month for basic/monthly, unit_amount=499000+interval=year for premium/annual (catches price-table drift), metadata advisor_id+plan+billing_cycle, success_url+cancel_url use NEXT_PUBLIC_SITE_URL, advisor_sessions scoped by cookie token, 500 Stripe throws. +248/-0 across 1 file. · commit `311df3f` · pr #246
 - 2026-04-27 · Y-05 · `<DatedStatBadge>` component + `lib/dated-stats.ts` DATED_STATS registry + daily-8 cron stale-check. `isStale` / `getStaleStats` / `getUpcomingStaleStats(withinDays)` helpers; `data-stales-at` ISO attribute for CI gate (V-NEW-01); dev-only ⚠ indicator when stalesAt is past today; email alert to founder on stale or within-7-day entries. 21 tests green. V-NEW-01 dependency now met — unblocked once PR #253 merges. · commit `fb9dec3` · pr #253
 - 2026-04-27 · V-NEW-03 · Stripe webhook idempotency replay harness + CI gate: `createIdempotencyHarness()`, 18 tests (5 suites: subscription.created, invoice.paid, invoice.payment_failed, charge.refunded, edge-cases), `scripts/check-stripe-idempotency.mjs` gate, `stripe-idempotency-gate` CI job. DD stream now unblocked. · commit `84bde1f` · pr #252
@@ -1017,6 +1021,32 @@ Items that ship LAST, in the final week before launch (Month 4 of pre-launch roa
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-27T17:12Z — iteration 59 (stream D — D-10 done — vitest coverage ratchet + API-route floor)
+
+- Phase 0: lock acquired.
+- Phase 1: local main had diverged from origin/main (50-commit divergence, forced-update pattern); reset via `git reset --hard origin/main`. Read queue and defaults end-to-end.
+- Phase 1.5: Types drift check — skipped (no schema changes since iter 58).
+- Phase 2 CI check: PRs #246 (D), #252 (V), #253 (Y), #220 (B) — all checks success or skipped. No rescue needed.
+- Phase 3: priority-walk → V-NEW-01/02 blocked, V-NEW-03/04 done, Y-05 done, K complete, N complete → **D-10 pending** (step 6 in priority order). Checked out `claude/audit-remediation/d-route-tests`.
+- Phase 4: verification — coverage ratchet item. Read existing `vitest.config.mts`; confirmed Vitest v3 (3.2.4) per-glob threshold support via `{ [glob: string]: Pick<Thresholds, ...> } & Thresholds` type. Ran full `npm run test:coverage` (300s timeout) — completed without OOM; global: lines/stmt 44.45%, branches 73.02%, functions 63.74%. Ran scoped `--coverage.include="app/api/**/*.ts"` run: lines/stmt 13.82%, branches 58.35%, functions 30.18%. All floors set 1pp below measured values per CLAUDE.md ratchet policy.
+- Phase 5: updated `vitest.config.mts` — global thresholds raised 42/72/63 → 44/73/63; added per-glob `"app/api/**/*.ts"` threshold object. Config validated via `npx vitest run __tests__/api/auth-signout.test.ts` (2/2 green). Lint exit 0.
+- Phase 6: committed `4e702c1` (+25/-23, 1 file), pushed to `claude/audit-remediation/d-route-tests`. PR #246 body updated (D-10 checked).
+- Phase 7: queue updated on main — D-10 done, In-flight D row updated, Done entry prepended, this log added.
+- STATUS: PROGRESS · stream=D · item=D-10 · pr=#246 · commit=`4e702c1` · diff=+25/-23 across 1 file
+
+### 2026-04-27T16:37Z — iteration 58 (stream D — D-09 done — /api/auth/signout integration test)
+
+- Phase 0: lock acquired.
+- Phase 1: local main had diverged from origin/main (unrelated histories — remote force-pushed); reset via `git reset --hard origin/main`. Read queue and defaults end-to-end.
+- Phase 1.5: Types drift check — skipped (no schema changes since iter 57; CI green on all in-flight PRs).
+- Phase 2 CI check: PRs #246 (D), #252 (V), #253 (Y), #220 (B) — all checks success or skipped. No rescue needed.
+- Phase 3: priority-walk → V-NEW-01/02 blocked, V-NEW-03/04 done, Y-05 done, K complete, N complete → **D-09 pending** (step 6 in priority order). Checked out `claude/audit-remediation/d-route-tests`.
+- Phase 4: read route `app/api/auth/signout/route.ts` (12 LOC). Two branches: success (`signOut()` resolves → `{success:true}` 200) and catch (`signOut()` throws → `{error:"Failed to sign out"}` 500). No prior test file existed.
+- Phase 5: wrote `__tests__/api/auth-signout.test.ts` (2 tests covering both branches, 40 LOC). `node_modules/.bin/vitest run` → 2/2 green. ESLint → 0 warnings. No .ts source changes → tsc skipped per Hardware exception.
+- Phase 6: committed `8e2d35d` (+40/-0, 1 file), pushed to `claude/audit-remediation/d-route-tests`. PR #246 body updated (D-09 checked).
+- Phase 7: queue updated on main — D-09 done, In-flight D row updated, Done entry prepended, this log added.
+- STATUS: PROGRESS · stream=D · item=D-09 · pr=#246 · commit=`8e2d35d` · diff=+40/-0 across 1 file
 
 ### 2026-04-27T16:20Z — iteration 57 (stream D — D-08 done — /api/stripe/create-contract integration test)
 
