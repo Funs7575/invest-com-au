@@ -30,7 +30,7 @@ export default function SVGBarChart({
   gap = 8,
   width = 500,
   formatValue = (v) => String(v),
-  color = "#16a34a",
+  color = "#16a34a", // green-600
   className = "",
 }: SVGBarChartProps) {
   if (data.length === 0) return null;
@@ -64,8 +64,7 @@ export default function SVGBarChart({
               textAnchor="end"
               dominantBaseline="central"
               fontSize={11}
-              fill="#64748b"
-              className="select-none"
+              className="fill-slate-500 select-none"
             >
               {item.label.length > 18
                 ? item.label.slice(0, 17) + "..."
@@ -79,7 +78,7 @@ export default function SVGBarChart({
               width={chartWidth}
               height={barHeight}
               rx={4}
-              fill="#f1f5f9"
+              className="fill-slate-100"
             />
 
             {/* Bar */}
@@ -109,8 +108,7 @@ export default function SVGBarChart({
               dominantBaseline="central"
               fontSize={11}
               fontWeight={600}
-              fill="#334155"
-              className="select-none"
+              className="fill-slate-700 select-none"
             >
               {formatValue(item.value)}
             </text>
