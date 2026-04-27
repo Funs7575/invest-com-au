@@ -700,6 +700,105 @@ distribution.
 | EE-03 | pending | WhatsApp/Telegram alerts bot — IPO + grant + ASX news subscriptions | 6-8 | **P3.** Captures audiences who'll never visit site. **Deps:** Twilio/Telegram Bot API, alert subscription model. **DoD:** subscriptions for IPO alerts + grant openings + ASX news flow + ETF distribution dates + RBA rate decisions; per-channel deep link back to relevant hub; subscriber growth tracking; tests for message delivery, subscription mgmt, opt-out compliance per Spam Act 2003. **Compliance:** AU Spam Act 2003, factual alerts only, GAW where applicable. |
 | EE-04 | pending | API marketplace (B2B) — grants/advisor/ETF/suburb data feeds, Stripe metered | 12-15 | **P4 — speculative B2B, queue but don't prioritise.** **Deps:** All other streams stable, dedicated API gateway, rate limiting, Stripe metered billing. **DoD:** API products grants data feed + advisor directory feed + ETF data + suburb data; pricing $499-4,999/mo per consumer per product; self-serve API key issuance + OpenAPI spec + sandbox; rate limiting per tier + usage dashboard; tests for rate limit enforcement, billing accuracy, key rotation, RLS per consumer. **Compliance:** data-licensing agreements (esp. third-party-sourced data), terms of use. |
 
+### Stream W — Hub foundation: component extraction (added 2026-04-27)
+
+The DRY layer that lets every future hub be ~200 lines of config + content
+instead of ~500 lines of bespoke layout. Each component is extracted with
+its own tests; existing hubs migrate progressively. Reference:
+`docs/audits/HUB_BLUEPRINT.md` §2 (anatomy), §3 (HubConfig schema).
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| W-01 | pending | Extend `lib/verticals.ts` with `HubConfig` schema (additive — new interface alongside `VerticalConfig`) | 1 | Per BLUEPRINT §3. Includes audience union, lead-queue discriminated union, slot interfaces. |
+| W-02 | pending | Extract `<HubHero>` + `<DatedStatBadge>` + tests | 1 | Migrate `/smsf` and `/grants` heroes onto the new component as the proof in W-13/W-14. |
+| W-03 | pending | Extract `<HubServiceGrid>` + tests | 1 | |
+| W-04 | pending | Extract `<HubArticleStrip>` (Supabase-fed, anon-client) + tests | 1 | Replaces the duplicated try/catch + select pattern in 4+ hubs. |
+| W-05 | pending | Extract `<HubDeepDiveGrid>` + tests | 1 | |
+| W-06 | pending | Extract `<HubAdvisorCTA>` + tests | 1 | Lever #1 — bottom-of-page lead capture. |
+| W-07 | pending | Extract `<HubFAQ>` (JSON-LD-emitting) + tests | 1 | |
+| W-08 | pending | Extract `<DirectoryGrid>` + `<DirectoryFilter>` + `<DirectoryCard>` + tests | 2 | Generalised from `/smsf/auditors`. Supports sponsored top-row slot (lever #2). |
+| W-09 | pending | Extract `<CalculatorShell>` (wrapper with disclaimer + share + save-results email-gate) + tests | 1 | Wraps existing R&D / SMSF / valuation / lump-sum / negative-gearing / dividends calculators. |
+| W-10 | pending | Extract `<EligibilityQuiz>` (generalised from `/grants/eligibility-quiz`) + tests | 1 | |
+| W-11 | pending | Build `<CrossHubLinks>` rail driven by registry adjacency + tests | 1 | |
+| W-12 | pending | Build `<HubPage>` HOC (renders all slots from a `HubConfig`) + tests | 2 | The orchestrator. After W-12 lands, new hubs become config + content only. |
+| W-13 | pending | Migrate `/smsf` onto `<HubPage>` (proof-of-template) + smoke tests | 1 | First migration; validates the design. |
+| W-14 | pending | Migrate `/grants` onto `<HubPage>` (relocate to `/startup/grants` with 301 redirect; preserve old URL) + smoke tests | 1 | Coordinates with Z-08. |
+| W-15 | pending | Migrate remaining existing hubs (`/dividends`, `/sell-business`, `/learn`, `/lump-sum-investing`, `/negative-gearing`, `/visa-investment`) onto `<HubPage>` (1 hub per iteration) + smoke tests | ~6 | One hub per iteration. |
+
+### Stream X — createAdminClient backlog clearance (added 2026-04-27)
+
+17 public RSC pages still import `createAdminClient` (service-role,
+bypasses RLS). Each iteration audits ~3 files: classify each as "swap to
+anon" (RLS allows the read) / "needs admin → move to API route" (genuine
+service-role need) / "preview-token / signed-token route" (legitimate
+admin use). Land the swaps. Once cleared, ratchet `eslint.config.mjs`
+rule from `warn` to `error`. Extension of stream C philosophy.
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| X-01 | pending | Audit + classify all 17 backlog files; produce per-file decision matrix | 1 | Files: `app/advisor-portal/health`, `app/advisor-portal/upgrade`, `app/advisors/search`, `app/best-for/`, `app/best-for/[slug]/`, `app/foreign-investment/siv`, `app/go/[slug]/apply`, `app/how-to/transfer-from/`, `app/how-to/transfer-from/[broker_slug]/`, `app/invest/funds/`, `app/invest/funds/[slug]/`, `app/invest/[slug]/etfs/`, `app/invest/[slug]/stocks/`, `app/invest/[slug]/stocks/[ticker]/`, `app/preview/[token]/`, `app/research/`, `app/research/[slug]/`. Plus `app/go/[slug]/route.ts` (route, not page). |
+| X-02 | pending | Swap batch 1 — `/best-for/` family (3 files) | 1 | Reads `articles` (public-read) — straight swap. |
+| X-03 | pending | Swap batch 2 — `/research/` family (2 files) | 1 | Same. |
+| X-04 | pending | Swap batch 3 — `/invest/funds/` family (2 files) | 1 | Verify `funds` table RLS; swap or migrate policy. |
+| X-05 | pending | Swap batch 4 — `/invest/[slug]/etfs/`, `/invest/[slug]/stocks/`, `/invest/[slug]/stocks/[ticker]/` (3 files) | 1 | Verify ETF/stock RLS; swap. |
+| X-06 | pending | Swap batch 5 — `/how-to/transfer-from/` (2 files) | 1 | |
+| X-07 | pending | Swap batch 6 — `/advisors/search`, `/foreign-investment/siv`, `/advisor-portal/health`, `/advisor-portal/upgrade` (4 files) | 1 | advisor-portal pages may legitimately need admin — surface to Blocked if so. |
+| X-08 | pending | `/preview/[token]/`, `/go/[slug]/apply`, `/go/[slug]/route.ts` token-gated routes — verify or move data fetch behind API route | 1 | These probably keep admin client (signed-token gating); document the exception. |
+| X-09 | pending | Ratchet `eslint.config.mjs` `no-restricted-imports` rule from `warn` to `error` once backlog is clear | 1 | Closes the foundation work. Verify CI green on touched files. |
+
+### Stream Y — Vertical registry, mega-menu, dated-stats (added 2026-04-27)
+
+Once components are extracted (stream W), wire them into a registry-driven
+nav + auto-sitemap + stale-stat enforcement. After Y lands, adding a new
+hub stops requiring `Header.tsx` edits. Reference: `HUB_BLUEPRINT.md` §2,
+§7, §8.
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| Y-01 | pending | Build registry-driven `<MegaMenu>` reading from `lib/verticals.ts` HubConfig array | 1 | Replaces hardcoded mega-menu in `components/Header.tsx`. |
+| Y-02 | pending | Migrate `Header.tsx` to use `<MegaMenu>` + add all top-level hubs to desktop mega-menu (`/smsf`, `/grants`, `/dividends`, `/sell-business`, `/lump-sum-investing`, `/negative-gearing`, `/visa-investment`, `/learn`, plus `/smsf-calculator`) | 1 | Closes the desktop discoverability gap. Today these are mobile-only. |
+| Y-03 | pending | Auto-include all hubs in `app/sitemap.ts` from registry | 1 | |
+| Y-04 | pending | Auto-resolve breadcrumbs from registry (replace per-page hand-coded breadcrumbs) | 1 | |
+| Y-05 | pending | Build `<DatedStatBadge>` + `lib/dated-stats.ts` registry + cron stale-check | 2 | Cron alerts on entries past `stalesAt`. Alerts to founder. |
+| Y-06 | pending | Audit + wrap hardcoded dated claims in `/grants` hero (4 stats) and `/grants/[program]` pages | 1 | "30 April 2026", "Round 4 open", "~90% spent by June 2026". |
+| Y-07 | pending | Audit + wrap dated claims in remaining hubs (`/smsf`, `/dividends`, `/sell-business`, `/learn`, etc.) | 1 | |
+| Y-08 | pending | Add CI lint that fails build if a date-shaped string isn't wrapped in `<DatedStatBadge>` | 1 | Static analysis: regex `\b\d{1,2}\s+(January\|February\|...\|December)\s+\d{4}\b` outside `<DatedStatBadge>` JSX. |
+
+### Stream Z — Tier-1 hub builds (added 2026-04-27)
+
+After foundation (W) + registry (Y), each hub becomes config + content.
+Tier-1 = highest-revenue. Reference: `HUB_BLUEPRINT.md` §5 per-hub lever
+priority + §6 Definition of Done.
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| Z-01 | pending | `/private-markets` HubConfig row in `lib/verticals.ts` + scaffold `app/private-markets/page.tsx` + breadcrumb + s708 wholesale-investor self-cert gate component | 1 | The literal "exchange" play. Marketplace pattern. |
+| Z-02 | pending | `/private-markets` deep-dives: `pre-ipo`, `wholesale-certification`, `private-credit`, `explainer` | 2 | One iteration per 2 sub-pages. |
+| Z-03 | pending | `/private-markets/platforms` directory (PrimaryMarkets, OnMarket secondary, ASIIN, Aussie Angels secondary, AltX) + filter + sponsored top-row slot | 2 | Lever #5 + #2. |
+| Z-04 | pending | `/private-markets` calculator (opportunity-cost — private vs public over hold period) using `<CalculatorShell>` | 1 | |
+| Z-05 | pending | `/private-markets` lead magnet (gated PDF: "AU pre-IPO secondary market 2026 guide") + email-gate | 1 | Lever #9. |
+| Z-06 | pending | `/private-markets` article seeds (8–10) via `scripts/seed-private-markets.ts` (idempotent upsert) | 1 | |
+| Z-07 | pending | `/private-markets` smoke E2E (renders, cert gate, directory filters, lead form posts, calculator computes) | 1 | |
+| Z-08 | pending | `/startup` HubConfig row + scaffold (relocate `/grants` to `/startup/grants` with 301 redirect via `next.config.ts`) | 1 | Stream W-14 must precede this. |
+| Z-09 | pending | `/startup` deep-dives: `raise-capital`, `find-investors`, `equity-tools`, `incorporate`, `exit` | 3 | |
+| Z-10 | pending | `/startup/find-investors` directory (AU VC + angel + syndicates: Blackbird, Airtree, Square Peg, Folklore, Skip, OneVentures, Tidal, Aussie Angels, Scale Investors, etc.) + filter (stage / ticket / sector) | 2 | Lever #1 + #5. |
+| Z-11 | pending | `/startup/equity-tools` calculators (SAFE / convertible-note / dilution / ESS / runway) all wrapped in `<CalculatorShell>` | 2 | |
+| Z-12 | pending | `/startup` stage-diagnostic quiz (routes to right sub-hub) using `<EligibilityQuiz>` | 1 | |
+| Z-13 | pending | `/startup` lead magnet (gated PDF: "AU founder fundraising checklist 2026") | 1 | |
+| Z-14 | pending | `/startup` article seeds (12–15) via `scripts/seed-startup.ts` | 1 | |
+| Z-15 | pending | `/startup` smoke E2E | 1 | |
+| Z-16 | pending | `/wholesale` HubConfig row + scaffold + s708 cert gate | 1 | |
+| Z-17 | pending | `/wholesale` deep-dives: `certification`, `private-credit`, `private-equity`, `venture`, `altx` | 3 | |
+| Z-18 | pending | `/wholesale/funds` directory + filter (fund-by-fund: strategy / min-ticket / recent-performance) | 2 | |
+| Z-19 | pending | `/wholesale` premium subscription tier (deal alerts) — Stripe price + paywall | 2 | Lever #6. needs-user for Stripe price ID. |
+| Z-20 | pending | `/wholesale` article seeds (8–10) via `scripts/seed-wholesale.ts` | 1 | |
+| Z-21 | pending | `/wholesale` smoke E2E | 1 | |
+
+Tier-2/3 hub streams (post-Z: `/retirement`, `/aged-care`, `/angel`,
+`/business-for-sale`, `/crypto-exchange`, `/crypto-tax`, `/family-office`,
+`/find-accountant`, `/find-mortgage-broker`) will be queued as separate
+streams once Z lands, following the same per-hub anatomy.
+
 ---
 
 ## Done
