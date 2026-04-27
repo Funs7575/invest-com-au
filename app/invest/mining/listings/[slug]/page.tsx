@@ -135,7 +135,7 @@ export default async function MiningOpportunityDetailPage({
             <Icon name="chevron-right" size={12} className="text-slate-300" />
             <Link href="/invest/mining/listings" className="hover:text-slate-900 transition-colors">Mining Opportunities</Link>
             <Icon name="chevron-right" size={12} className="text-slate-300" />
-            <span className="text-slate-900 font-medium truncate max-w-[160px]">{l.title}</span>
+            <span className="text-slate-900 font-medium truncate max-w-40">{l.title}</span>
           </nav>
 
           <div className="flex flex-wrap gap-2 mb-3">

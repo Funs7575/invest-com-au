@@ -845,7 +845,7 @@ export function Navigation() {
           <div className="lg:hidden flex items-center gap-1.5">
             <button
               onClick={() => setSearchOpen(true)}
-              className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-500 rounded-lg hover:bg-slate-100 transition-colors"
+              className="p-2 min-w-11 min-h-11 flex items-center justify-center text-slate-500 rounded-lg hover:bg-slate-100 transition-colors"
               aria-label="Search"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -854,13 +854,13 @@ export function Navigation() {
             </button>
             <button
               onClick={() => setIntentOpen(true)}
-              className="bg-amber-500 text-slate-900 px-4 py-2 rounded-lg text-xs font-bold transition-all hover:bg-amber-600 min-h-[44px] flex items-center cursor-pointer"
+              className="bg-amber-500 text-slate-900 px-4 py-2 rounded-lg text-xs font-bold transition-all hover:bg-amber-600 min-h-11 flex items-center cursor-pointer"
             >
               Get Started
             </button>
             <button
               onClick={() => setMobileOpen((v) => !v)}
-              className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-700 rounded-lg hover:bg-slate-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+              className="p-2 min-w-11 min-h-11 flex items-center justify-center text-slate-700 rounded-lg hover:bg-slate-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
               aria-label={mobileOpen ? "Close menu" : "Open menu"}
               aria-expanded={mobileOpen}
               aria-controls="mobile-menu"

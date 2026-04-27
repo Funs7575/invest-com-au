@@ -323,7 +323,7 @@ export default function CalculatorsClient({ brokers }: Props) {
               {hasPrev && prevCalc ? (
                 <button
                   onClick={() => goToCalc("prev")}
-                  className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-slate-500 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors min-h-[44px]"
+                  className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-slate-500 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors min-h-11"
                 >
                   <Icon name="chevron-left" size={16} />
                   <span className="hidden sm:inline">{prevCalc.title}</span>
@@ -337,7 +337,7 @@ export default function CalculatorsClient({ brokers }: Props) {
               {hasNext && nextCalc ? (
                 <button
                   onClick={() => goToCalc("next")}
-                  className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-slate-500 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors min-h-[44px]"
+                  className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-slate-500 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors min-h-11"
                 >
                   <span className="hidden sm:inline">{nextCalc.title}</span>
                   <span className="sm:hidden">Next</span>

@@ -166,7 +166,7 @@ export function SiteFooter() {
                   href={item.href}
                   target={item.external ? "_blank" : undefined}
                   rel={item.external ? "noopener noreferrer" : undefined}
-                  className="hover:text-amber-400 transition-colors py-1.5 block min-h-[44px] flex items-center"
+                  className="hover:text-amber-400 transition-colors py-1.5 block min-h-11 flex items-center"
                 >
                   {item.label}
                 </Link>

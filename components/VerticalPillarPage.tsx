@@ -643,7 +643,7 @@ export default function VerticalPillarPage({
                     key={i}
                     className="border border-slate-200 rounded-lg"
                   >
-                    <summary className="px-4 py-3 min-h-[44px] font-semibold text-sm cursor-pointer hover:bg-slate-50 transition-colors flex items-center">
+                    <summary className="px-4 py-3 min-h-11 font-semibold text-sm cursor-pointer hover:bg-slate-50 transition-colors flex items-center">
                       {faq.question}
                     </summary>
                     <p className="px-4 pb-4 text-sm text-slate-600 leading-relaxed">

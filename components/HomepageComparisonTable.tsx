@@ -216,7 +216,7 @@ export default function HomepageComparisonTable({
                 onClick={() => setActiveTab(tab)}
                 role="tab"
                 aria-selected={activeTab === tab}
-                className={`whitespace-nowrap shrink-0 px-2.5 md:px-3.5 py-1.5 md:py-2 min-h-[36px] md:min-h-[44px] rounded-full text-[0.65rem] md:text-xs font-semibold transition-colors ${
+                className={`whitespace-nowrap shrink-0 px-2.5 md:px-3.5 py-1.5 md:py-2 min-h-[36px] md:min-h-11 rounded-full text-[0.65rem] md:text-xs font-semibold transition-colors ${
                   activeTab === tab
                     ? "bg-slate-900 text-white"
                     : "bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-700"

@@ -117,7 +117,7 @@ export default function QuizPromptBar() {
               </Link>
               <button
                 onClick={handleDesktopDismiss}
-                className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-400 hover:text-slate-700 transition-colors rounded-lg"
+                className="p-2 min-w-11 min-h-11 flex items-center justify-center text-slate-400 hover:text-slate-700 transition-colors rounded-lg"
                 aria-label="Dismiss quiz prompt"
               >
                 <svg

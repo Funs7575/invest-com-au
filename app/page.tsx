@@ -292,7 +292,7 @@ export default async function HomePage() {
                 </p>
                 {!SHOW_EDITORIAL_BADGES && <p className="text-xs text-slate-400 mt-2">{FACTUAL_COMPARISON_DISCLAIMER}</p>}
               </div>
-              <Link href="/compare" className="md:hidden text-xs font-semibold text-slate-600 hover:text-slate-900 shrink-0 inline-flex items-center px-1 min-h-[44px]">
+              <Link href="/compare" className="md:hidden text-xs font-semibold text-slate-600 hover:text-slate-900 shrink-0 inline-flex items-center px-1 min-h-11">
                 View all &rarr;
               </Link>
             </div>
@@ -462,7 +462,7 @@ export default async function HomePage() {
                   <h2 className="text-xl md:text-2xl font-bold text-slate-900">Latest Investor Guides</h2>
                   <p className="text-xs md:text-sm text-slate-600 mt-1">Guides, how-tos, and professional advice for smarter investing</p>
                 </div>
-                <Link href="/articles" className="text-xs md:text-sm font-semibold text-slate-600 hover:text-slate-900 shrink-0 min-h-[44px] inline-flex items-center px-1">
+                <Link href="/articles" className="text-xs md:text-sm font-semibold text-slate-600 hover:text-slate-900 shrink-0 min-h-11 inline-flex items-center px-1">
                   View all &rarr;
                 </Link>
               </div>
