@@ -127,6 +127,19 @@ A `status = 'published'` allow-SELECT policy would fix the public pages but leav
 
 ## Pending work
 
+### Cross-stream dependencies (added 2026-04-27 enterprise-standard reorder)
+
+Hard dependencies between items in different streams. The loop checks these before picking an item — if a dependency isn't `done`, the dependent item surfaces to Blocked and the loop continues. Items not listed here have only intra-stream dependencies.
+
+- **Every DD-\* item** depends on **V-NEW-03** (Stripe webhook idempotency replay harness). DD-* items add Stripe Connect mechanics (advisor listings, booking + payment rail, advisor bidding); without the replay harness, none of them have a CI gate proving idempotency.
+- **Every CC-\* item** depends on **V-NEW-02** (AI-output factual-filter enforcement). Every CC response renders to a user; without the filter, the AI surface rubric in `ENTERPRISE_STANDARD.md` is unmet on the surface as a whole.
+- **Every AA-\* item touching dated data** (AA-02, AA-03, AA-04, AA-05, AA-06, AA-07 — all AA items except AA-01 which is a directory and uses live DB rows) depends on **slot 2 `<DatedStatBadge>` enforcement**. Programmatic SEO at scale + stale stats = compounding surface-area error; the badge + cron + CI lint catch it before publication.
+- **Every BB-\* calculator item** depends on **W-NEW-01** (calculator math reference test pattern — see Stream W below for the new item). The pattern is one iteration's work — drafts the ATO/ASIC worked-example reference test scaffolding that every BB-* item inherits. Without it, every BB-* re-invents the regulator-reference-test pattern.
+- **Every Z-\* hub item** ships with the page-surface rubric in `ENTERPRISE_STANDARD.md` enforced. The page rubric is checked per-item by the loop — it doesn't block on a separate dependency, but the iteration won't ship a Z-* PR that violates the rubric.
+- **Every directory listing** (anything in W-08 family + AA-01 + Z-* directories + DD-* listings) depends on **V-NEW-04** (RLS isolation gate for new user-data tables). Directory listings always touch a user-data table (advisors, professionals, listings) and the RLS isolation test must exist before the listing can render to anonymous users.
+
+If a dependency is itself blocked (e.g. V-NEW-02 depends on `lib/compliance.ts` factual-filter implementation, which depends on the founder's compliance copy review), the dependent item surfaces to Blocked with a pointer back to the dependency's blocker. The loop never silently skips a dependency.
+
 ### Stream B — RLS remediation (issue #215)
 
 Highest priority: critical 2 first.
@@ -481,6 +494,20 @@ its own tests; existing hubs migrate progressively. Reference:
 | W-13 | pending | Migrate `/smsf` onto `<HubPage>` (proof-of-template) + smoke tests | 1 | First migration; validates the design. |
 | W-14 | pending | Migrate `/grants` onto `<HubPage>` (relocate to `/startup/grants` with 301 redirect; preserve old URL) + smoke tests | 1 | Coordinates with Z-08. |
 | W-15 | pending | Migrate remaining existing hubs (`/dividends`, `/sell-business`, `/learn`, `/lump-sum-investing`, `/negative-gearing`, `/visa-investment`) onto `<HubPage>` (1 hub per iteration) + smoke tests | ~6 | One hub per iteration. |
+| W-NEW-01 | pending | Calculator math reference test pattern (drafts the ATO/ASIC worked-example reference test scaffolding that every BB-* item inherits) | 1 | **Cross-stream gate.** Every BB-* calculator depends on this — without the pattern each calculator re-invents regulator-reference testing. **DoD:** test helper at `__tests__/lib/calculator-reference.ts` that takes (calculator function, regulator URL, worked example inputs/outputs) and asserts the function reproduces the regulator's published numbers within an explicit tolerance; one reference example wired up against an existing calculator (e.g. SMSF tax calc against ATO super calculator) as proof; documented in `docs/runbooks/calculator-reference-tests.md`. |
+
+### Stream KK — Lead-routing maturity (added 2026-04-27 enterprise-standard reorder)
+
+Operationalises the lead-form surface in `docs/audits/ENTERPRISE_STANDARD.md` so the rubric items "SLA monitoring per source", "queue health alert", "advisor response-time tracking", and "conversion analytics per source" become CI-checkable rather than hopeful. Inserted before Cowork external coordination starts in Week 4-5 so the lead pipeline is observable when external partners begin sending volume.
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| KK-01 | pending | Per-source SLA monitoring — alert if a lead sits in the queue past its source's SLA (5 min hot, 30 min warm, 4h cold) | 1-2 | Reads `leads` table + source variant; cron sweeps for breaches; Sentry alert + ops-channel notification. |
+| KK-02 | pending | Queue health alert — if no leads for a hub for >N hours during business hours, alert | 1 | Per-hub silence threshold configurable; catches broken forms / broken routing / genuinely silent hubs (operator decides per alert). |
+| KK-03 | pending | Advisor response-time tracking — per-advisor mean-time-to-first-response surfaced in advisor portal | 1-2 | Reads `lead_assignments` + `advisor_responses` join; renders into the existing advisor portal dashboard. |
+| KK-04 | pending | Conversion analytics per source — PostHog funnel `lead_submit:<source>` → `advisor_response` → `outcome` | 1 | Adds the `<source>` discriminator to every existing `submitLead()` call site; back-fills missing variants. |
+| KK-05 | pending | Lead-source routing audit — verify every form on the platform routes to the correct hub-specific queue + tagged with the right source | 1-2 | Walks every page that contains a lead form, asserts the typed `submitLead({ source })` matches the page's hub. CI lint plausible. |
+| KK-06 | pending | Advisor performance dashboard — per-advisor lead volume, accept rate, response time, conversion rate, revenue attribution | 1-2 | Read-only dashboard in advisor portal. Inputs from KK-01/03/04 + existing `advisor_payments` table. |
 
 ### Stream X — createAdminClient backlog clearance (added 2026-04-27)
 
