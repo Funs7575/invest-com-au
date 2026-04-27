@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl } from "@/lib/seo";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 import Icon from "@/components/Icon";
 import RdTaxCalculator from "@/components/RdTaxCalculator";
 
@@ -48,24 +48,24 @@ const GRANT_CARDS = [
   },
   {
     title: "NSW MVP Ventures",
-    href: "/grants",
-    badge: "NSW · OPEN",
-    badgeTone: "emerald",
+    href: "/grants/eligibility-quiz",
+    badge: "NSW · COMING SOON",
+    badgeTone: "slate",
     blurb:
       "$25K–$200K matched funding to commercialise innovative products in NSW. Best for early-stage tech founders.",
   },
   {
     title: "Advance Queensland",
-    href: "/grants",
-    badge: "QLD · ROLLING",
+    href: "/grants/eligibility-quiz",
+    badge: "QLD · COMING SOON",
     badgeTone: "slate",
     blurb:
       "Multiple programs for QLD tech startups: Ignite Ideas, Commercialisation fund, co-investment streams.",
   },
   {
     title: "LaunchVic",
-    href: "/grants",
-    badge: "VIC · ROLLING",
+    href: "/grants/eligibility-quiz",
+    badge: "VIC · COMING SOON",
     badgeTone: "slate",
     blurb:
       "LaunchVic grants, accelerator support and innovation vouchers for Victorian founders.",
@@ -82,7 +82,7 @@ function badgeClass(tone: string) {
 
 async function fetchGrantArticles() {
   try {
-    const supabase = createAdminClient();
+    const supabase = await createClient();
     const { data } = await supabase
       .from("articles")
       .select("slug, title, excerpt")
