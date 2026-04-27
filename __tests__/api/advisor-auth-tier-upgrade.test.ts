@@ -1,21 +1,19 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
-
-// ── Mock state ─────────────────────────────────────────────────────────────────
-
-const mockCookiesGet = vi.fn();
-const mockServerFrom = vi.fn();
-const mockAdminFrom = vi.fn();
-const mockGetTier = vi.fn();
-const mockIsUpgrade = vi.fn();
-const mockRecordFinancialAudit = vi.fn(() => Promise.resolve());
-const mockEnqueueJob = vi.fn(() => Promise.resolve());
-const mockCheckoutCreate = vi.fn();
+import { createChainableBuilder } from "@/__tests__/helpers";
 
 // ── Mocks ──────────────────────────────────────────────────────────────────────
 
+const mockServerFrom = vi.fn();
+const mockAdminFrom = vi.fn();
+const mockCookieStoreGet = vi.fn();
+const mockRecordFinancialAudit = vi.fn(() => Promise.resolve());
+const mockEnqueueJob = vi.fn(() => Promise.resolve());
+const mockCheckoutCreate = vi.fn();
+const supabaseCalls: Record<string, { method: string; args: unknown[] }[]> = {};
+
 vi.mock("next/headers", () => ({
-  cookies: vi.fn(async () => ({ get: mockCookiesGet })),
+  cookies: vi.fn(async () => ({ get: mockCookieStoreGet })),
 }));
 
 vi.mock("@/lib/supabase/server", () => ({
@@ -23,80 +21,88 @@ vi.mock("@/lib/supabase/server", () => ({
 }));
 
 vi.mock("@/lib/supabase/admin", () => ({
-  createAdminClient: vi.fn(() => ({ from: mockAdminFrom })),
-}));
-
-vi.mock("@/lib/stripe", () => ({
-  getStripe: vi.fn(() => ({ checkout: { sessions: { create: mockCheckoutCreate } } })),
-}));
-
-vi.mock("@/lib/url", () => ({
-  getSiteUrl: () => "https://invest.com.au",
-}));
-
-vi.mock("@/lib/advisor-tiers", () => ({
-  getTier: (...args: unknown[]) => mockGetTier(...args),
-  isUpgrade: (...args: unknown[]) => mockIsUpgrade(...args),
+  createAdminClient: () => ({ from: mockAdminFrom }),
 }));
 
 vi.mock("@/lib/financial-audit", () => ({
-  recordFinancialAudit: (...args: unknown[]) => mockRecordFinancialAudit(...args),
+  recordFinancialAudit: (...args: unknown[]) =>
+    mockRecordFinancialAudit(...args),
 }));
 
 vi.mock("@/lib/job-queue", () => ({
   enqueueJob: (...args: unknown[]) => mockEnqueueJob(...args),
 }));
 
-vi.mock("@/lib/html-escape", () => ({
-  escapeHtml: (s: string) => s,
+vi.mock("@/lib/url", () => ({
+  getSiteUrl: () => "https://invest.com.au",
 }));
 
-vi.mock("@/lib/logger", () => ({
-  logger: vi.fn(() => ({ error: vi.fn(), warn: vi.fn() })),
+vi.mock("@/lib/stripe", () => ({
+  getStripe: () => ({
+    checkout: { sessions: { create: mockCheckoutCreate } },
+  }),
 }));
-
-// ── Import after mocks ─────────────────────────────────────────────────────────
 
 import { POST } from "@/app/api/advisor-auth/tier-upgrade/route";
 
-// ── Fixtures ───────────────────────────────────────────────────────────────────
+// ── Helpers ────────────────────────────────────────────────────────────────────
 
-const FUTURE = new Date(Date.now() + 3_600_000).toISOString();
-const SESSION = { professional_id: 42, expires_at: FUTURE };
-const ADVISOR = { id: 42, email: "advisor@inv.com", name: "Bob", advisor_tier: "free" };
-const TIER_SPEC = {
-  id: "growth",
-  label: "Growth",
-  features: ["Feature A"],
-  monthlyPriceCents: 19900,
-  annualPriceCents: 199000,
-};
-const CHECKOUT_URL = "https://checkout.stripe.com/pay/cs_tier";
-
-function chain(result: { data: unknown; error?: unknown }) {
-  const c: Record<string, ReturnType<typeof vi.fn>> = {};
-  for (const m of ["select", "insert", "update", "eq", "or", "in", "order", "limit"])
-    c[m] = vi.fn(() => c);
-  c.single = vi.fn(() => Promise.resolve({ data: result.data, error: result.error ?? null }));
-  c.maybeSingle = vi.fn(() => Promise.resolve({ data: result.data, error: result.error ?? null }));
-  c.then = vi.fn((cb: (v: unknown) => void) => {
-    cb({ data: null, error: null });
-    return Promise.resolve();
+function makePost(body: unknown): NextRequest {
+  return new NextRequest("http://localhost/api/advisor-auth/tier-upgrade", {
+    method: "POST",
+    body: typeof body === "string" ? body : JSON.stringify(body),
+    headers: { "Content-Type": "application/json" },
   });
-  return c;
 }
 
-function post(body: unknown, sessionCookieValue?: string): Promise<Response> {
-  mockCookiesGet.mockReturnValue(
-    sessionCookieValue ? { value: sessionCookieValue } : undefined,
-  );
-  return POST(
-    new NextRequest("http://localhost/api/advisor-auth/tier-upgrade", {
-      method: "POST",
-      body: JSON.stringify(body),
-      headers: { "Content-Type": "application/json" },
-    }),
-  );
+function withCookieAndSession(
+  professionalId: number | null = 42,
+  expiresAt = new Date(Date.now() + 86400 * 1000).toISOString(),
+  hasCookie = true,
+) {
+  if (hasCookie) {
+    mockCookieStoreGet.mockReturnValue({ value: "session-token" });
+  } else {
+    mockCookieStoreGet.mockReturnValue(undefined);
+  }
+  mockServerFrom.mockImplementation((table: string) => {
+    const b = createChainableBuilder(table, supabaseCalls);
+    if (table === "advisor_sessions") {
+      b.maybeSingle = vi.fn(() =>
+        Promise.resolve({
+          data: professionalId
+            ? { professional_id: professionalId, expires_at: expiresAt }
+            : null,
+          error: null,
+        }),
+      );
+    }
+    return b;
+  });
+}
+
+function withAdvisorTier(currentTier: string) {
+  mockAdminFrom.mockImplementation((table: string) => {
+    const b = createChainableBuilder(table, supabaseCalls);
+    if (table === "professionals") {
+      b.maybeSingle = vi.fn(() =>
+        Promise.resolve({
+          data: {
+            id: 42,
+            email: "advisor@test.com",
+            name: "Advisor",
+            advisor_tier: currentTier,
+          },
+          error: null,
+        }),
+      );
+    }
+    return b;
+  });
+}
+
+function resetCalls() {
+  for (const k of Object.keys(supabaseCalls)) delete supabaseCalls[k];
 }
 
 // ── Tests ──────────────────────────────────────────────────────────────────────
@@ -104,118 +110,147 @@ function post(body: unknown, sessionCookieValue?: string): Promise<Response> {
 describe("POST /api/advisor-auth/tier-upgrade", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockGetTier.mockReturnValue(TIER_SPEC);
-    mockIsUpgrade.mockReturnValue(true);
-    mockCheckoutCreate.mockResolvedValue({ url: CHECKOUT_URL });
-  });
-
-  it("401 — no session cookie", async () => {
-    const res = await post({ target_tier: "growth" });
-    expect(res.status).toBe(401);
-    expect(await res.json()).toMatchObject({ error: "Not authenticated" });
-  });
-
-  it("401 — session not found / expired in DB", async () => {
-    mockServerFrom.mockReturnValueOnce(chain({ data: null }));
-    const res = await post({ target_tier: "growth" }, "tok");
-    expect(res.status).toBe(401);
-    expect(await res.json()).toMatchObject({ error: "Session expired" });
-  });
-
-  it("400 — missing target_tier", async () => {
-    mockServerFrom.mockReturnValueOnce(chain({ data: SESSION }));
-    const res = await post({}, "tok");
-    expect(res.status).toBe(400);
-    expect(await res.json()).toMatchObject({ error: "Missing target_tier" });
-  });
-
-  it("400 — unknown tier (getTier returns null)", async () => {
-    mockGetTier.mockReturnValueOnce(null);
-    mockServerFrom.mockReturnValueOnce(chain({ data: SESSION }));
-    const res = await post({ target_tier: "legendary" }, "tok");
-    expect(res.status).toBe(400);
-    expect(await res.json()).toMatchObject({ error: "Unknown tier" });
-  });
-
-  it("404 — advisor not found in professionals", async () => {
-    mockServerFrom.mockReturnValueOnce(chain({ data: SESSION }));
-    mockAdminFrom.mockReturnValueOnce(chain({ data: null }));
-    const res = await post({ target_tier: "growth" }, "tok");
-    expect(res.status).toBe(404);
-    expect(await res.json()).toMatchObject({ error: "Advisor not found" });
-  });
-
-  it("200 — same tier, returns no-op message", async () => {
-    mockServerFrom.mockReturnValueOnce(chain({ data: SESSION }));
-    mockAdminFrom.mockReturnValueOnce(chain({ data: { ...ADVISOR, advisor_tier: "growth" } }));
-    const res = await post({ target_tier: "growth" }, "tok");
-    expect(res.status).toBe(200);
-    expect(await res.json()).toMatchObject({ ok: true, message: "Already on this tier" });
-  });
-
-  it("200 — downgrade: writes DB directly and enqueues confirmation email", async () => {
-    mockIsUpgrade.mockReturnValueOnce(false);
-    mockServerFrom.mockReturnValueOnce(chain({ data: SESSION }));
-    mockAdminFrom
-      .mockReturnValueOnce(chain({ data: ADVISOR })) // professionals select
-      .mockReturnValueOnce(chain({ data: null })); // professionals update
-    const res = await post({ target_tier: "growth", billing: "monthly" }, "tok");
-    expect(res.status).toBe(200);
-    expect(await res.json()).toMatchObject({ ok: true, action: "downgraded" });
-    expect(mockRecordFinancialAudit).toHaveBeenCalledWith(
-      expect.objectContaining({ action: "adjustment", actorType: "advisor" }),
+    resetCalls();
+    delete process.env.STRIPE_SECRET_KEY;
+    mockServerFrom.mockReset();
+    mockAdminFrom.mockReset();
+    mockServerFrom.mockImplementation((table: string) =>
+      createChainableBuilder(table, supabaseCalls),
     );
+    mockAdminFrom.mockImplementation((table: string) =>
+      createChainableBuilder(table, supabaseCalls),
+    );
+    mockCheckoutCreate.mockResolvedValue({
+      id: "cs_tier_001",
+      url: "https://checkout.stripe.com/c/cs_tier_001",
+    });
+  });
+
+  it("returns 401 when no session cookie", async () => {
+    withCookieAndSession(42, undefined, false);
+    const res = await POST(makePost({ target_tier: "growth" }));
+    expect(res.status).toBe(401);
+  });
+
+  it("returns 401 when session is expired", async () => {
+    withCookieAndSession(
+      42,
+      new Date(Date.now() - 86400 * 1000).toISOString(),
+    );
+    const res = await POST(makePost({ target_tier: "growth" }));
+    expect(res.status).toBe(401);
+    expect((await res.json()).error).toBe("Session expired");
+  });
+
+  it("returns 401 when session lookup returns null", async () => {
+    withCookieAndSession(null);
+    const res = await POST(makePost({ target_tier: "growth" }));
+    expect(res.status).toBe(401);
+  });
+
+  it("returns 400 when target_tier is missing", async () => {
+    withCookieAndSession();
+    const res = await POST(makePost({}));
+    expect(res.status).toBe(400);
+    expect((await res.json()).error).toBe("Missing target_tier");
+  });
+
+  it("returns 400 for unknown tier id", async () => {
+    withCookieAndSession();
+    const res = await POST(makePost({ target_tier: "platinum" }));
+    expect(res.status).toBe(400);
+    expect((await res.json()).error).toBe("Unknown tier");
+  });
+
+  it("returns 404 when advisor row missing", async () => {
+    withCookieAndSession();
+    mockAdminFrom.mockImplementation((table: string) => {
+      const b = createChainableBuilder(table, supabaseCalls);
+      if (table === "professionals") {
+        b.maybeSingle = vi.fn(() =>
+          Promise.resolve({ data: null, error: null }),
+        );
+      }
+      return b;
+    });
+    const res = await POST(makePost({ target_tier: "growth" }));
+    expect(res.status).toBe(404);
+  });
+
+  it("returns 200 no-op when current tier matches target", async () => {
+    withCookieAndSession();
+    withAdvisorTier("growth");
+    const res = await POST(makePost({ target_tier: "growth" }));
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json.message).toBe("Already on this tier");
+  });
+
+  it("downgrades immediately, audits, and enqueues confirmation email", async () => {
+    withCookieAndSession();
+    withAdvisorTier("pro");
+    const res = await POST(
+      makePost({ target_tier: "growth", billing: "monthly" }),
+    );
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json.action).toBe("downgraded");
+    expect(json.tier).toBe("growth");
+
+    // Direct stamp on professionals
+    const proCalls = supabaseCalls.professionals || [];
+    const updateCall = proCalls.find((c) => c.method === "update");
+    expect(updateCall).toBeDefined();
+    const updateArgs = updateCall?.args[0] as Record<string, unknown>;
+    expect(updateArgs.advisor_tier).toBe("growth");
+    expect(updateArgs.tier_change_reason).toBe("self_service_downgrade");
+
+    expect(mockRecordFinancialAudit).toHaveBeenCalled();
     expect(mockEnqueueJob).toHaveBeenCalledWith(
       "send_email",
-      expect.objectContaining({ to: ADVISOR.email }),
+      expect.objectContaining({ to: "advisor@test.com" }),
     );
   });
 
-  it("200 — upgrade returns placeholder when STRIPE_SECRET_KEY unset", async () => {
-    const savedKey = process.env.STRIPE_SECRET_KEY;
-    delete process.env.STRIPE_SECRET_KEY;
-    try {
-      mockServerFrom.mockReturnValueOnce(chain({ data: SESSION }));
-      mockAdminFrom.mockReturnValueOnce(chain({ data: ADVISOR }));
-      const res = await post({ target_tier: "growth" }, "tok");
-      expect(res.status).toBe(200);
-      expect(await res.json()).toMatchObject({ ok: true, action: "stripe_not_configured" });
-    } finally {
-      process.env.STRIPE_SECRET_KEY = savedKey;
-    }
+  it("returns placeholder URL when Stripe is not configured (upgrade)", async () => {
+    withCookieAndSession();
+    withAdvisorTier("free");
+    const res = await POST(makePost({ target_tier: "growth" }));
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json.action).toBe("stripe_not_configured");
+    expect(json.checkout_url).toContain("/upgrade/thanks?tier=growth");
+    expect(mockCheckoutCreate).not.toHaveBeenCalled();
   });
 
-  it("200 — upgrade creates Stripe checkout and returns URL", async () => {
-    const savedKey = process.env.STRIPE_SECRET_KEY;
-    process.env.STRIPE_SECRET_KEY = "sk_test_abc123";
-    try {
-      mockServerFrom.mockReturnValueOnce(chain({ data: SESSION }));
-      mockAdminFrom.mockReturnValueOnce(chain({ data: ADVISOR }));
-      const res = await post({ target_tier: "growth", billing: "monthly" }, "tok");
-      expect(res.status).toBe(200);
-      const body = await res.json();
-      expect(body).toMatchObject({ ok: true, action: "upgrade_checkout" });
-      expect(body.checkout_url).toBeDefined();
-      expect(mockCheckoutCreate).toHaveBeenCalledWith(
-        expect.objectContaining({ mode: "subscription" }),
-      );
-    } finally {
-      process.env.STRIPE_SECRET_KEY = savedKey;
-    }
+  it("creates Stripe subscription checkout for upgrades", async () => {
+    process.env.STRIPE_SECRET_KEY = "sk_test_xxx";
+    withCookieAndSession();
+    withAdvisorTier("free");
+    const res = await POST(
+      makePost({ target_tier: "pro", billing: "annual" }),
+    );
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json.action).toBe("upgrade_checkout");
+    expect(json.checkout_url).toBe("https://checkout.stripe.com/c/cs_tier_001");
+
+    const callArg = mockCheckoutCreate.mock.calls[0][0];
+    expect(callArg.mode).toBe("subscription");
+    // Pro annual = 143000 per advisor-tiers.ts
+    expect(callArg.line_items[0].price_data.unit_amount).toBe(143000);
+    expect(callArg.line_items[0].price_data.recurring.interval).toBe("year");
+    expect(callArg.metadata.type).toBe("advisor_tier_upgrade");
+    expect(callArg.metadata.from_tier).toBe("free");
+    expect(callArg.metadata.to_tier).toBe("pro");
   });
 
-  it("500 — Stripe checkout throws", async () => {
-    const savedKey = process.env.STRIPE_SECRET_KEY;
-    process.env.STRIPE_SECRET_KEY = "sk_test_abc123";
-    mockCheckoutCreate.mockRejectedValueOnce(new Error("Stripe unavailable"));
-    try {
-      mockServerFrom.mockReturnValueOnce(chain({ data: SESSION }));
-      mockAdminFrom.mockReturnValueOnce(chain({ data: ADVISOR }));
-      const res = await post({ target_tier: "growth", billing: "annual" }, "tok");
-      expect(res.status).toBe(500);
-      expect(await res.json()).toMatchObject({ error: "Failed to start checkout" });
-    } finally {
-      process.env.STRIPE_SECRET_KEY = savedKey;
-    }
+  it("returns 500 when stripe checkout creation throws", async () => {
+    process.env.STRIPE_SECRET_KEY = "sk_test_xxx";
+    withCookieAndSession();
+    withAdvisorTier("free");
+    mockCheckoutCreate.mockRejectedValueOnce(new Error("Stripe API down"));
+    const res = await POST(makePost({ target_tier: "growth" }));
+    expect(res.status).toBe(500);
   });
 });

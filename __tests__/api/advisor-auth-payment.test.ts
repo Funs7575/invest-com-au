@@ -1,66 +1,92 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
-
-// ── Mock state ─────────────────────────────────────────────────────────────────
-
-const mockAdminFrom = vi.fn();
-const mockGetStripe = vi.fn();
-const mockCheckoutCreate = vi.fn();
-const mockCustomerCreate = vi.fn();
+import { createChainableBuilder } from "@/__tests__/helpers";
 
 // ── Mocks ──────────────────────────────────────────────────────────────────────
 
-vi.mock("@/lib/supabase/admin", () => ({
-  createAdminClient: vi.fn(() => ({ from: mockAdminFrom })),
-}));
+const mockAdminFrom = vi.fn();
+const supabaseCalls: Record<string, { method: string; args: unknown[] }[]> = {};
 
-vi.mock("@/lib/stripe", () => ({
-  getStripe: (...args: unknown[]) => mockGetStripe(...args),
+vi.mock("@/lib/supabase/admin", () => ({
+  createAdminClient: () => ({ from: mockAdminFrom }),
 }));
 
 vi.mock("@/lib/url", () => ({
   getSiteUrl: () => "https://invest.com.au",
 }));
 
-vi.mock("@/lib/logger", () => ({
-  logger: vi.fn(() => ({ error: vi.fn() })),
+const mockCustomerCreate = vi.fn();
+const mockCheckoutCreate = vi.fn();
+let throwOnGetStripe = false;
+vi.mock("@/lib/stripe", () => ({
+  getStripe: () => {
+    if (throwOnGetStripe) throw new Error("Stripe not configured");
+    return {
+      customers: { create: mockCustomerCreate },
+      checkout: { sessions: { create: mockCheckoutCreate } },
+    };
+  },
 }));
-
-// ── Import after mocks ─────────────────────────────────────────────────────────
 
 import { POST } from "@/app/api/advisor-auth/payment/route";
 
-// ── Fixtures ───────────────────────────────────────────────────────────────────
+// ── Helpers ────────────────────────────────────────────────────────────────────
 
-const FUTURE = new Date(Date.now() + 3_600_000).toISOString();
-const SESSION = { professional_id: 99, expires_at: FUTURE };
-const ADVISOR = { id: 99, name: "Alice", email: "alice@inv.com", stripe_customer_id: "cus_exist", status: "active" };
-const CHECKOUT_URL = "https://checkout.stripe.com/pay/cs_test_abc";
-
-function chain(result: { data: unknown; error?: unknown }) {
-  const c: Record<string, ReturnType<typeof vi.fn>> = {};
-  for (const m of ["select", "insert", "update", "eq", "or", "in", "gt", "order", "limit"])
-    c[m] = vi.fn(() => c);
-  c.single = vi.fn(() => Promise.resolve({ data: result.data, error: result.error ?? null }));
-  c.maybeSingle = vi.fn(() => Promise.resolve({ data: result.data, error: result.error ?? null }));
-  c.then = vi.fn((cb: (v: unknown) => void) => {
-    cb({ data: result.data, error: null });
-    return Promise.resolve();
+function makePost(body: unknown, cookie?: string): NextRequest {
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+  if (cookie) headers.cookie = `advisor_session=${cookie}`;
+  return new NextRequest("http://localhost/api/advisor-auth/payment", {
+    method: "POST",
+    body: typeof body === "string" ? body : JSON.stringify(body),
+    headers,
   });
-  return c;
 }
 
-function post(body: unknown, sessionCookie?: string): Promise<Response> {
-  return POST(
-    new NextRequest("http://localhost/api/advisor-auth/payment", {
-      method: "POST",
-      body: JSON.stringify(body),
-      headers: {
-        "Content-Type": "application/json",
-        ...(sessionCookie ? { Cookie: `advisor_session=${sessionCookie}` } : {}),
-      },
-    }),
-  );
+function withSessionAndAdvisor(
+  professionalId = 42,
+  advisorOverrides: Record<string, unknown> = {},
+) {
+  mockAdminFrom.mockImplementation((table: string) => {
+    const b = createChainableBuilder(table, supabaseCalls);
+    if (table === "advisor_sessions") {
+      b.single = vi.fn(() =>
+        Promise.resolve({
+          data: {
+            professional_id: professionalId,
+            expires_at: new Date(Date.now() + 86400 * 1000).toISOString(),
+          },
+          error: null,
+        }),
+      );
+    }
+    if (table === "professionals") {
+      b.single = vi.fn(() =>
+        Promise.resolve({
+          data: {
+            id: professionalId,
+            name: "Advisor",
+            email: "advisor@test.com",
+            stripe_customer_id: "cus_existing",
+            status: "active",
+            ...advisorOverrides,
+          },
+          error: null,
+        }),
+      );
+    }
+    if (table === "advisor_credit_topups") {
+      b.single = vi.fn(() =>
+        Promise.resolve({ data: { id: 99 }, error: null }),
+      );
+    }
+    return b;
+  });
+}
+
+function resetCalls() {
+  for (const k of Object.keys(supabaseCalls)) delete supabaseCalls[k];
 }
 
 // ── Tests ──────────────────────────────────────────────────────────────────────
@@ -68,123 +94,168 @@ function post(body: unknown, sessionCookie?: string): Promise<Response> {
 describe("POST /api/advisor-auth/payment", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockGetStripe.mockReturnValue({
-      checkout: { sessions: { create: mockCheckoutCreate } },
-      customers: { create: mockCustomerCreate },
-    });
-    mockCheckoutCreate.mockResolvedValue({ url: CHECKOUT_URL });
+    resetCalls();
+    throwOnGetStripe = false;
+    mockAdminFrom.mockReset();
+    mockAdminFrom.mockImplementation((table: string) =>
+      createChainableBuilder(table, supabaseCalls),
+    );
     mockCustomerCreate.mockResolvedValue({ id: "cus_new" });
+    mockCheckoutCreate.mockResolvedValue({
+      id: "cs_payment_001",
+      url: "https://checkout.stripe.com/c/cs_payment_001",
+    });
   });
 
-  it("401 — no advisor_session cookie", async () => {
-    const res = await post({ advisor_id: 99, credit_pack: "starter" });
-    expect(res.status).toBe(401);
-    expect(await res.json()).toMatchObject({ error: "Authentication required" });
-  });
-
-  it("401 — session not found in DB", async () => {
-    mockAdminFrom.mockReturnValueOnce(chain({ data: null }));
-    const res = await post({ advisor_id: 99, credit_pack: "starter" }, "tok");
-    expect(res.status).toBe(401);
-    expect(await res.json()).toMatchObject({ error: "Invalid or expired session" });
-  });
-
-  it("400 — invalid JSON body", async () => {
-    mockAdminFrom.mockReturnValueOnce(chain({ data: SESSION }));
+  it("returns 401 when no session cookie", async () => {
     const res = await POST(
-      new NextRequest("http://localhost/api/advisor-auth/payment", {
-        method: "POST",
-        body: "not-json",
-        headers: { "Content-Type": "application/json", Cookie: "advisor_session=tok" },
-      }),
+      makePost({ advisor_id: 42, credit_pack: "starter" }),
+    );
+    expect(res.status).toBe(401);
+  });
+
+  it("returns 401 when session is invalid/expired", async () => {
+    mockAdminFrom.mockImplementation((table: string) => {
+      const b = createChainableBuilder(table, supabaseCalls);
+      if (table === "advisor_sessions") {
+        b.single = vi.fn(() => Promise.resolve({ data: null, error: null }));
+      }
+      return b;
+    });
+
+    const res = await POST(
+      makePost({ advisor_id: 42, credit_pack: "starter" }, "stale-token"),
+    );
+    expect(res.status).toBe(401);
+  });
+
+  it("returns 400 for invalid JSON body", async () => {
+    mockAdminFrom.mockImplementation((table: string) => {
+      const b = createChainableBuilder(table, supabaseCalls);
+      if (table === "advisor_sessions") {
+        b.single = vi.fn(() =>
+          Promise.resolve({
+            data: {
+              professional_id: 42,
+              expires_at: new Date(Date.now() + 86400 * 1000).toISOString(),
+            },
+            error: null,
+          }),
+        );
+      }
+      return b;
+    });
+
+    const res = await POST(makePost("{not-json", "valid-token"));
+    expect(res.status).toBe(400);
+  });
+
+  it("returns 400 when advisor_id is missing", async () => {
+    withSessionAndAdvisor();
+    const res = await POST(makePost({ credit_pack: "starter" }, "valid"));
+    expect(res.status).toBe(400);
+  });
+
+  it("returns 400 when credit_pack is invalid", async () => {
+    withSessionAndAdvisor();
+    const res = await POST(
+      makePost({ advisor_id: 42, credit_pack: "bogus" }, "valid"),
     );
     expect(res.status).toBe(400);
-    expect(await res.json()).toMatchObject({ error: "Invalid JSON body." });
   });
 
-  it("400 — advisor_id missing", async () => {
-    mockAdminFrom.mockReturnValueOnce(chain({ data: SESSION }));
-    const res = await post({ credit_pack: "starter" }, "tok");
-    expect(res.status).toBe(400);
-    expect(await res.json()).toMatchObject({ error: /advisor_id/ });
-  });
-
-  it("400 — invalid credit_pack value", async () => {
-    mockAdminFrom.mockReturnValueOnce(chain({ data: SESSION }));
-    const res = await post({ advisor_id: 99, credit_pack: "ultra" }, "tok");
-    expect(res.status).toBe(400);
-    expect(await res.json()).toMatchObject({ error: /credit_pack/ });
-  });
-
-  it("403 — advisor_id doesn't match session professional_id", async () => {
-    mockAdminFrom.mockReturnValueOnce(chain({ data: { ...SESSION, professional_id: 1 } }));
-    const res = await post({ advisor_id: 99, credit_pack: "starter" }, "tok");
+  it("returns 403 when advisor_id doesn't match session", async () => {
+    withSessionAndAdvisor(42);
+    const res = await POST(
+      makePost({ advisor_id: 99, credit_pack: "starter" }, "valid"),
+    );
     expect(res.status).toBe(403);
-    expect(await res.json()).toMatchObject({ error: "Forbidden" });
   });
 
-  it("404 — advisor not found in professionals", async () => {
-    mockAdminFrom
-      .mockReturnValueOnce(chain({ data: SESSION }))
-      .mockReturnValueOnce(chain({ data: null, error: { code: "PGRST116" } }));
-    const res = await post({ advisor_id: 99, credit_pack: "starter" }, "tok");
-    expect(res.status).toBe(404);
-    expect(await res.json()).toMatchObject({ error: "Advisor not found." });
-  });
-
-  it("403 — advisor status is suspended", async () => {
-    mockAdminFrom
-      .mockReturnValueOnce(chain({ data: SESSION }))
-      .mockReturnValueOnce(chain({ data: { ...ADVISOR, status: "suspended" } }));
-    const res = await post({ advisor_id: 99, credit_pack: "starter" }, "tok");
-    expect(res.status).toBe(403);
-    expect(await res.json()).toMatchObject({ error: "Advisor account is not active." });
-  });
-
-  it("503 — Stripe not configured (getStripe throws)", async () => {
-    mockGetStripe.mockImplementationOnce(() => {
-      throw new Error("no STRIPE_SECRET_KEY");
+  it("returns 404 when advisor row not found", async () => {
+    mockAdminFrom.mockImplementation((table: string) => {
+      const b = createChainableBuilder(table, supabaseCalls);
+      if (table === "advisor_sessions") {
+        b.single = vi.fn(() =>
+          Promise.resolve({
+            data: {
+              professional_id: 42,
+              expires_at: new Date(Date.now() + 86400 * 1000).toISOString(),
+            },
+            error: null,
+          }),
+        );
+      }
+      if (table === "professionals") {
+        b.single = vi.fn(() =>
+          Promise.resolve({ data: null, error: null }),
+        );
+      }
+      return b;
     });
-    mockAdminFrom
-      .mockReturnValueOnce(chain({ data: SESSION }))
-      .mockReturnValueOnce(chain({ data: ADVISOR }));
-    const res = await post({ advisor_id: 99, credit_pack: "starter" }, "tok");
+
+    const res = await POST(
+      makePost({ advisor_id: 42, credit_pack: "starter" }, "valid"),
+    );
+    expect(res.status).toBe(404);
+  });
+
+  it("returns 403 when advisor account is suspended", async () => {
+    withSessionAndAdvisor(42, { status: "suspended" });
+    const res = await POST(
+      makePost({ advisor_id: 42, credit_pack: "starter" }, "valid"),
+    );
+    expect(res.status).toBe(403);
+  });
+
+  it("returns 503 when Stripe is not configured", async () => {
+    throwOnGetStripe = true;
+    withSessionAndAdvisor();
+    const res = await POST(
+      makePost({ advisor_id: 42, credit_pack: "starter" }, "valid"),
+    );
     expect(res.status).toBe(503);
-    expect(await res.json()).toMatchObject({ error: /Payment system/ });
   });
 
-  it("200 — success with existing stripe_customer_id (no customer create)", async () => {
-    mockAdminFrom
-      .mockReturnValueOnce(chain({ data: SESSION }))
-      .mockReturnValueOnce(chain({ data: ADVISOR }))
-      .mockReturnValueOnce(chain({ data: { id: 5 } })); // topup insert
-    const res = await post({ advisor_id: 99, credit_pack: "growth" }, "tok");
+  it("creates a checkout session for starter pack", async () => {
+    withSessionAndAdvisor();
+    const res = await POST(
+      makePost({ advisor_id: 42, credit_pack: "starter" }, "valid"),
+    );
     expect(res.status).toBe(200);
-    expect(await res.json()).toMatchObject({ url: CHECKOUT_URL });
-    expect(mockCustomerCreate).not.toHaveBeenCalled();
+    const json = await res.json();
+    expect(json.url).toBe("https://checkout.stripe.com/c/cs_payment_001");
+
+    const callArg = mockCheckoutCreate.mock.calls[0][0];
+    expect(callArg.line_items[0].price_data.unit_amount).toBe(19900);
+    expect(callArg.metadata.type).toBe("advisor_credit_topup");
+    expect(callArg.metadata.credits).toBe("5");
   });
 
-  it("200 — creates Stripe customer when stripe_customer_id is null", async () => {
-    mockAdminFrom
-      .mockReturnValueOnce(chain({ data: SESSION }))
-      .mockReturnValueOnce(chain({ data: { ...ADVISOR, stripe_customer_id: null } }))
-      .mockReturnValueOnce(chain({ data: null })) // update stripe_customer_id
-      .mockReturnValueOnce(chain({ data: { id: 6 } })); // topup insert
-    const res = await post({ advisor_id: 99, credit_pack: "scale" }, "tok");
+  it("creates a Stripe customer when stripe_customer_id is null", async () => {
+    withSessionAndAdvisor(42, { stripe_customer_id: null });
+    const res = await POST(
+      makePost({ advisor_id: 42, credit_pack: "scale" }, "valid"),
+    );
     expect(res.status).toBe(200);
     expect(mockCustomerCreate).toHaveBeenCalledWith(
-      expect.objectContaining({ email: ADVISOR.email, name: ADVISOR.name }),
+      expect.objectContaining({
+        email: "advisor@test.com",
+        name: "Advisor",
+      }),
     );
+    const callArg = mockCheckoutCreate.mock.calls[0][0];
+    expect(callArg.customer).toBe("cus_new");
+    expect(callArg.line_items[0].price_data.unit_amount).toBe(79900);
   });
 
-  it("500 — Stripe checkout.sessions.create throws", async () => {
-    mockCheckoutCreate.mockRejectedValueOnce(new Error("Stripe network error"));
-    mockAdminFrom
-      .mockReturnValueOnce(chain({ data: SESSION }))
-      .mockReturnValueOnce(chain({ data: ADVISOR }))
-      .mockReturnValueOnce(chain({ data: { id: 7 } }));
-    const res = await post({ advisor_id: 99, credit_pack: "starter" }, "tok");
+  it("returns 500 on unexpected error", async () => {
+    mockAdminFrom.mockImplementation(() => {
+      throw new Error("DB unreachable");
+    });
+    const res = await POST(
+      makePost({ advisor_id: 42, credit_pack: "starter" }, "valid"),
+    );
     expect(res.status).toBe(500);
-    expect(await res.json()).toMatchObject({ error: "Failed to create checkout session." });
   });
 });

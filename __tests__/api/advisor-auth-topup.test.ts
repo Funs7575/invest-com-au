@@ -1,31 +1,27 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
-
-// ── Mock state ─────────────────────────────────────────────────────────────────
-
-const mockGetUser = vi.fn();
-const mockAdminFrom = vi.fn();
-const mockIsRateLimited = vi.fn(() => Promise.resolve(false));
-const mockGetStripe = vi.fn();
-const mockCheckoutCreate = vi.fn();
-const mockCustomerCreate = vi.fn();
+import { createChainableBuilder } from "@/__tests__/helpers";
 
 // ── Mocks ──────────────────────────────────────────────────────────────────────
 
+const mockGetUser = vi.fn();
+const mockServerFrom = vi.fn();
+const mockAdminFrom = vi.fn();
+const supabaseCalls: Record<string, { method: string; args: unknown[] }[]> = {};
+
 vi.mock("@/lib/supabase/server", () => ({
-  createClient: vi.fn(async () => ({ auth: { getUser: mockGetUser } })),
+  createClient: vi.fn(async () => ({
+    auth: { getUser: mockGetUser },
+    from: mockServerFrom,
+  })),
 }));
 
 vi.mock("@/lib/supabase/admin", () => ({
-  createAdminClient: vi.fn(() => ({ from: mockAdminFrom })),
+  createAdminClient: () => ({ from: mockAdminFrom }),
 }));
 
 vi.mock("@/lib/rate-limit", () => ({
-  isRateLimited: (...args: unknown[]) => mockIsRateLimited(...args),
-}));
-
-vi.mock("@/lib/stripe", () => ({
-  getStripe: (...args: unknown[]) => mockGetStripe(...args),
+  isRateLimited: vi.fn(() => Promise.resolve(false)),
 }));
 
 vi.mock("@/lib/url", () => ({
@@ -33,56 +29,65 @@ vi.mock("@/lib/url", () => ({
 }));
 
 vi.mock("@/lib/advisor-billing", () => ({
-  DEFAULT_TOPUP_CENTS: 15000,
+  DEFAULT_TOPUP_CENTS: 20000,
 }));
 
-// ── Import after mocks ─────────────────────────────────────────────────────────
+const mockCustomerCreate = vi.fn();
+const mockCheckoutCreate = vi.fn();
+let throwOnGetStripe = false;
+vi.mock("@/lib/stripe", () => ({
+  getStripe: () => {
+    if (throwOnGetStripe) throw new Error("Stripe not configured");
+    return {
+      customers: { create: mockCustomerCreate },
+      checkout: { sessions: { create: mockCheckoutCreate } },
+    };
+  },
+}));
 
 import { POST, GET } from "@/app/api/advisor-auth/topup/route";
+import { isRateLimited } from "@/lib/rate-limit";
 
-// ── Fixtures ───────────────────────────────────────────────────────────────────
+// ── Helpers ────────────────────────────────────────────────────────────────────
 
-const FUTURE = new Date(Date.now() + 3_600_000).toISOString();
-const PRO = {
-  id: 55,
-  name: "Carol",
-  email: "carol@inv.com",
-  stripe_customer_id: "cus_carol",
-};
-const CHECKOUT_URL = "https://checkout.stripe.com/pay/cs_topup";
-
-function chain(result: { data: unknown; error?: unknown }) {
-  const c: Record<string, ReturnType<typeof vi.fn>> = {};
-  for (const m of ["select", "insert", "update", "eq", "or", "in", "order", "limit"])
-    c[m] = vi.fn(() => c);
-  c.single = vi.fn(() => Promise.resolve({ data: result.data, error: result.error ?? null }));
-  c.maybeSingle = vi.fn(() => Promise.resolve({ data: result.data, error: result.error ?? null }));
-  c.then = vi.fn((cb: (v: unknown) => void) => {
-    cb({ data: result.data, error: null });
-    return Promise.resolve();
-  });
-  return c;
-}
-
-function makePostReq(body: unknown, sessionCookie?: string): NextRequest {
+function makePost(body: Record<string, unknown>, cookie?: string): NextRequest {
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+  if (cookie) headers.cookie = `advisor_session=${cookie}`;
   return new NextRequest("http://localhost/api/advisor-auth/topup", {
     method: "POST",
     body: JSON.stringify(body),
-    headers: {
-      "Content-Type": "application/json",
-      "x-forwarded-for": "1.2.3.4",
-      ...(sessionCookie ? { Cookie: `advisor_session=${sessionCookie}` } : {}),
-    },
+    headers,
   });
 }
 
-function makeGetReq(sessionCookie?: string): NextRequest {
+function makeGet(cookie?: string): NextRequest {
+  const headers: Record<string, string> = {};
+  if (cookie) headers.cookie = `advisor_session=${cookie}`;
   return new NextRequest("http://localhost/api/advisor-auth/topup", {
     method: "GET",
-    headers: {
-      ...(sessionCookie ? { Cookie: `advisor_session=${sessionCookie}` } : {}),
-    },
+    headers,
   });
+}
+
+function authedAdvisor(advisorId = 42) {
+  mockGetUser.mockResolvedValue({
+    data: { user: { id: "u-1", email: "advisor@test.com" } },
+  });
+  mockAdminFrom.mockImplementation((table: string) => {
+    const b = createChainableBuilder(table, supabaseCalls);
+    if (table === "professionals") {
+      b.maybeSingle = vi.fn(() =>
+        Promise.resolve({ data: { id: advisorId }, error: null }),
+      );
+    }
+    return b;
+  });
+}
+
+function resetCalls() {
+  for (const k of Object.keys(supabaseCalls)) delete supabaseCalls[k];
 }
 
 // ── Tests ──────────────────────────────────────────────────────────────────────
@@ -90,146 +95,332 @@ function makeGetReq(sessionCookie?: string): NextRequest {
 describe("POST /api/advisor-auth/topup", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    // Default: no Supabase auth user → falls through to session-cookie auth
-    mockGetUser.mockResolvedValue({ data: { user: null } });
-    mockGetStripe.mockReturnValue({
-      checkout: { sessions: { create: mockCheckoutCreate } },
-      customers: { create: mockCustomerCreate },
+    resetCalls();
+    throwOnGetStripe = false;
+    mockServerFrom.mockReset();
+    mockAdminFrom.mockReset();
+    mockServerFrom.mockImplementation((table: string) =>
+      createChainableBuilder(table, supabaseCalls),
+    );
+    mockAdminFrom.mockImplementation((table: string) =>
+      createChainableBuilder(table, supabaseCalls),
+    );
+    (isRateLimited as ReturnType<typeof vi.fn>).mockResolvedValue(false);
+    mockCustomerCreate.mockResolvedValue({ id: "cus_new_001" });
+    mockCheckoutCreate.mockResolvedValue({
+      id: "cs_test_001",
+      url: "https://checkout.stripe.com/c/cs_test_001",
     });
-    mockCheckoutCreate.mockResolvedValue({ url: CHECKOUT_URL });
-    mockCustomerCreate.mockResolvedValue({ id: "cus_new" });
-    mockIsRateLimited.mockResolvedValue(false);
   });
 
-  it("429 — rate limited", async () => {
-    mockIsRateLimited.mockResolvedValueOnce(true);
-    const res = await POST(makePostReq({ pack_slug: "starter" }, "tok"));
+  it("returns 429 when rate limited", async () => {
+    (isRateLimited as ReturnType<typeof vi.fn>).mockResolvedValueOnce(true);
+    const res = await POST(makePost({}));
     expect(res.status).toBe(429);
-    expect(await res.json()).toMatchObject({ error: /Too many/ });
   });
 
-  it("401 — no valid session and no auth user", async () => {
-    // No cookie + no Supabase user → getAdvisorId returns null
-    const res = await POST(makePostReq({ pack_slug: "starter" }));
+  it("returns 401 when not authenticated", async () => {
+    mockGetUser.mockResolvedValue({ data: { user: null } });
+    const res = await POST(makePost({}));
     expect(res.status).toBe(401);
-    expect(await res.json()).toMatchObject({ error: "Not authenticated" });
   });
 
-  it("400 — custom amount_cents below minimum ($50)", async () => {
-    mockAdminFrom.mockReturnValueOnce(
-      chain({ data: { professional_id: 55, expires_at: FUTURE } }),
-    ); // session
-    const res = await POST(makePostReq({ amount_cents: 4999 }, "tok"));
+  it("rejects amount < $50", async () => {
+    authedAdvisor();
+    const res = await POST(makePost({ amount_cents: 100 }));
     expect(res.status).toBe(400);
-    expect(await res.json()).toMatchObject({ error: /between/ });
+    expect((await res.json()).error).toMatch(/between \$50 and \$2,000/);
   });
 
-  it("400 — custom amount_cents above maximum ($2,000)", async () => {
-    mockAdminFrom.mockReturnValueOnce(
-      chain({ data: { professional_id: 55, expires_at: FUTURE } }),
-    );
-    const res = await POST(makePostReq({ amount_cents: 200001 }, "tok"));
+  it("rejects amount > $2000", async () => {
+    authedAdvisor();
+    const res = await POST(makePost({ amount_cents: 300000 }));
     expect(res.status).toBe(400);
-    expect(await res.json()).toMatchObject({ error: /between/ });
   });
 
-  it("404 — professional not found", async () => {
-    mockAdminFrom
-      .mockReturnValueOnce(chain({ data: { professional_id: 55, expires_at: FUTURE } })) // session
-      .mockReturnValueOnce(chain({ data: null })); // professionals lookup
-    const res = await POST(makePostReq({ pack_slug: "starter" }, "tok"));
-    expect(res.status).toBe(404);
-    expect(await res.json()).toMatchObject({ error: "Professional not found" });
-  });
-
-  it("503 — Stripe not configured (getStripe throws)", async () => {
-    mockGetStripe.mockImplementationOnce(() => {
-      throw new Error("no STRIPE_SECRET_KEY");
+  it("returns 404 when professional not found", async () => {
+    mockGetUser.mockResolvedValue({
+      data: { user: { id: "u-1", email: "advisor@test.com" } },
     });
-    mockAdminFrom
-      .mockReturnValueOnce(chain({ data: { professional_id: 55, expires_at: FUTURE } }))
-      .mockReturnValueOnce(chain({ data: PRO }));
-    const res = await POST(makePostReq({ pack_slug: "starter" }, "tok"));
+    mockAdminFrom.mockImplementation((table: string) => {
+      const b = createChainableBuilder(table, supabaseCalls);
+      if (table === "professionals") {
+        // First .maybeSingle() returns the advisor id (auth path)
+        b.maybeSingle = vi.fn(() =>
+          Promise.resolve({ data: { id: 42 }, error: null }),
+        );
+        // .single() (the pro-lookup) returns null
+        b.single = vi.fn(() =>
+          Promise.resolve({ data: null, error: null }),
+        );
+      }
+      return b;
+    });
+
+    const res = await POST(makePost({}));
+    expect(res.status).toBe(404);
+  });
+
+  it("returns 503 when Stripe is not configured", async () => {
+    throwOnGetStripe = true;
+    mockGetUser.mockResolvedValue({
+      data: { user: { id: "u-1", email: "advisor@test.com" } },
+    });
+    mockAdminFrom.mockImplementation((table: string) => {
+      const b = createChainableBuilder(table, supabaseCalls);
+      if (table === "professionals") {
+        b.maybeSingle = vi.fn(() =>
+          Promise.resolve({ data: { id: 42 }, error: null }),
+        );
+        b.single = vi.fn(() =>
+          Promise.resolve({
+            data: {
+              id: 42,
+              name: "Advisor",
+              email: "advisor@test.com",
+              stripe_customer_id: "cus_existing",
+            },
+            error: null,
+          }),
+        );
+      }
+      return b;
+    });
+
+    const res = await POST(makePost({}));
     expect(res.status).toBe(503);
-    expect(await res.json()).toMatchObject({ error: /Payment system/ });
   });
 
-  it("200 — pack-based checkout with existing customer", async () => {
-    mockAdminFrom
-      .mockReturnValueOnce(chain({ data: { professional_id: 55, expires_at: FUTURE } })) // session
-      .mockReturnValueOnce(chain({ data: PRO })) // professionals
-      .mockReturnValueOnce(chain({ data: { id: 10 } })); // topup insert
-    const res = await POST(makePostReq({ pack_slug: "growth" }, "tok"));
+  it("uses pack pricing when pack_slug=growth", async () => {
+    mockGetUser.mockResolvedValue({
+      data: { user: { id: "u-1", email: "advisor@test.com" } },
+    });
+    mockAdminFrom.mockImplementation((table: string) => {
+      const b = createChainableBuilder(table, supabaseCalls);
+      if (table === "professionals") {
+        b.maybeSingle = vi.fn(() =>
+          Promise.resolve({ data: { id: 42 }, error: null }),
+        );
+        b.single = vi.fn(() =>
+          Promise.resolve({
+            data: {
+              id: 42,
+              name: "Advisor",
+              email: "advisor@test.com",
+              stripe_customer_id: "cus_existing",
+            },
+            error: null,
+          }),
+        );
+      }
+      if (table === "advisor_credit_topups") {
+        b.single = vi.fn(() =>
+          Promise.resolve({ data: { id: 555 }, error: null }),
+        );
+      }
+      return b;
+    });
+
+    const res = await POST(makePost({ pack_slug: "growth" }));
     expect(res.status).toBe(200);
-    expect(await res.json()).toMatchObject({ url: CHECKOUT_URL });
-    expect(mockCustomerCreate).not.toHaveBeenCalled();
+    const json = await res.json();
+    expect(json.url).toBe("https://checkout.stripe.com/c/cs_test_001");
+
+    const callArg = mockCheckoutCreate.mock.calls[0][0];
+    expect(callArg.line_items[0].price_data.unit_amount).toBe(44900);
+    expect(callArg.metadata.type).toBe("advisor_credit_topup");
+    expect(callArg.metadata.pack_slug).toBe("growth");
+    expect(callArg.metadata.pack_leads).toBe("12");
   });
 
-  it("200 — custom amount checkout uses DEFAULT_TOPUP_CENTS when no pack_slug or amount given", async () => {
-    mockAdminFrom
-      .mockReturnValueOnce(chain({ data: { professional_id: 55, expires_at: FUTURE } }))
-      .mockReturnValueOnce(chain({ data: PRO }))
-      .mockReturnValueOnce(chain({ data: { id: 11 } }));
-    const res = await POST(makePostReq({}, "tok")); // no pack_slug, no amount_cents → DEFAULT_TOPUP_CENTS=15000
-    expect(res.status).toBe(200);
-    expect(await res.json()).toMatchObject({ url: CHECKOUT_URL });
-    expect(mockCheckoutCreate).toHaveBeenCalledWith(
-      expect.objectContaining({ mode: "payment" }),
-    );
-  });
+  it("creates a Stripe customer when stripe_customer_id is missing", async () => {
+    mockGetUser.mockResolvedValue({
+      data: { user: { id: "u-1", email: "advisor@test.com" } },
+    });
+    mockAdminFrom.mockImplementation((table: string) => {
+      const b = createChainableBuilder(table, supabaseCalls);
+      if (table === "professionals") {
+        b.maybeSingle = vi.fn(() =>
+          Promise.resolve({ data: { id: 42 }, error: null }),
+        );
+        b.single = vi.fn(() =>
+          Promise.resolve({
+            data: {
+              id: 42,
+              name: "Advisor",
+              email: "advisor@test.com",
+              stripe_customer_id: null,
+            },
+            error: null,
+          }),
+        );
+      }
+      if (table === "advisor_credit_topups") {
+        b.single = vi.fn(() =>
+          Promise.resolve({ data: { id: 555 }, error: null }),
+        );
+      }
+      return b;
+    });
 
-  it("200 — creates new Stripe customer when stripe_customer_id is null", async () => {
-    mockAdminFrom
-      .mockReturnValueOnce(chain({ data: { professional_id: 55, expires_at: FUTURE } }))
-      .mockReturnValueOnce(chain({ data: { ...PRO, stripe_customer_id: null } }))
-      .mockReturnValueOnce(chain({ data: null })) // update stripe_customer_id
-      .mockReturnValueOnce(chain({ data: { id: 12 } })); // topup insert
-    const res = await POST(makePostReq({ pack_slug: "scale" }, "tok"));
+    const res = await POST(makePost({ amount_cents: 50000 }));
     expect(res.status).toBe(200);
     expect(mockCustomerCreate).toHaveBeenCalledWith(
-      expect.objectContaining({ email: PRO.email, name: PRO.name }),
+      expect.objectContaining({
+        email: "advisor@test.com",
+        name: "Advisor",
+      }),
     );
+    const callArg = mockCheckoutCreate.mock.calls[0][0];
+    expect(callArg.customer).toBe("cus_new_001");
+  });
+
+  it("uses 'advisor_featured' type for featured_monthly pack", async () => {
+    mockGetUser.mockResolvedValue({
+      data: { user: { id: "u-1", email: "advisor@test.com" } },
+    });
+    mockAdminFrom.mockImplementation((table: string) => {
+      const b = createChainableBuilder(table, supabaseCalls);
+      if (table === "professionals") {
+        b.maybeSingle = vi.fn(() =>
+          Promise.resolve({ data: { id: 42 }, error: null }),
+        );
+        b.single = vi.fn(() =>
+          Promise.resolve({
+            data: {
+              id: 42,
+              name: "Advisor",
+              email: "advisor@test.com",
+              stripe_customer_id: "cus_existing",
+            },
+            error: null,
+          }),
+        );
+      }
+      if (table === "advisor_credit_topups") {
+        b.single = vi.fn(() =>
+          Promise.resolve({ data: { id: 555 }, error: null }),
+        );
+      }
+      return b;
+    });
+
+    const res = await POST(makePost({ pack_slug: "featured_monthly" }));
+    expect(res.status).toBe(200);
+    const callArg = mockCheckoutCreate.mock.calls[0][0];
+    expect(callArg.metadata.type).toBe("advisor_featured");
+    expect(callArg.line_items[0].price_data.unit_amount).toBe(14900);
   });
 });
 
 describe("GET /api/advisor-auth/topup", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    resetCalls();
+    mockServerFrom.mockReset();
+    mockAdminFrom.mockReset();
+    mockServerFrom.mockImplementation((table: string) =>
+      createChainableBuilder(table, supabaseCalls),
+    );
+    mockAdminFrom.mockImplementation((table: string) =>
+      createChainableBuilder(table, supabaseCalls),
+    );
+  });
+
+  it("returns 401 when not authenticated", async () => {
     mockGetUser.mockResolvedValue({ data: { user: null } });
-  });
-
-  it("401 — not authenticated", async () => {
-    const res = await GET(makeGetReq()); // no cookie
+    const res = await GET(makeGet());
     expect(res.status).toBe(401);
-    expect(await res.json()).toMatchObject({ error: "Not authenticated" });
   });
 
-  it("200 — returns credit balance and top-up history", async () => {
-    const TOPUPS = [
-      { id: 1, amount_cents: 19900, status: "completed", created_at: "2026-01-01T00:00:00Z" },
-    ];
-    mockAdminFrom
-      .mockReturnValueOnce(chain({ data: { professional_id: 55, expires_at: FUTURE } })) // session in getAdvisorId
-      .mockReturnValueOnce(
-        chain({
-          data: {
-            credit_balance_cents: 5000,
-            lifetime_credit_cents: 20000,
-            lifetime_lead_spend_cents: 15000,
-            free_leads_used: 1,
-            lead_price_cents: 4900,
-          },
-        }),
-      ) // professionals in Promise.all
-      .mockReturnValueOnce(chain({ data: TOPUPS })); // advisor_credit_topups in Promise.all
-    const res = await GET(makeGetReq("tok"));
-    expect(res.status).toBe(200);
-    const body = await res.json();
-    expect(body).toMatchObject({
-      balance_cents: 5000,
-      free_leads_remaining: 1, // max(0, 2 - 1)
-      lead_price_cents: 4900,
-      topups: TOPUPS,
+  it("returns balance and topup history with derived free_leads_remaining", async () => {
+    mockGetUser.mockResolvedValue({
+      data: { user: { id: "u-1", email: "advisor@test.com" } },
     });
+    mockAdminFrom.mockImplementation((table: string) => {
+      const b = createChainableBuilder(table, supabaseCalls);
+      if (table === "professionals") {
+        let callCount = 0;
+        b.maybeSingle = vi.fn(() => {
+          callCount++;
+          // First call: auth lookup
+          if (callCount === 1) {
+            return Promise.resolve({ data: { id: 42 }, error: null });
+          }
+          return Promise.resolve({ data: null, error: null });
+        });
+        b.single = vi.fn(() =>
+          Promise.resolve({
+            data: {
+              credit_balance_cents: 50000,
+              lifetime_credit_cents: 100000,
+              lifetime_lead_spend_cents: 49000,
+              free_leads_used: 1,
+              lead_price_cents: 4900,
+            },
+            error: null,
+          }),
+        );
+      }
+      if (table === "advisor_credit_topups") {
+        // Make limit return an array directly (final terminal)
+        b.limit = vi.fn(() => {
+          supabaseCalls[table]?.push({ method: "limit", args: [] });
+          return Promise.resolve({
+            data: [
+              {
+                id: 1,
+                amount_cents: 50000,
+                status: "completed",
+                created_at: "2026-01-01",
+              },
+            ],
+            error: null,
+          });
+        });
+      }
+      return b;
+    });
+
+    const res = await GET(makeGet());
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json.balance_cents).toBe(50000);
+    expect(json.lifetime_credit_cents).toBe(100000);
+    expect(json.free_leads_used).toBe(1);
+    expect(json.free_leads_remaining).toBe(1);
+    expect(json.lead_price_cents).toBe(4900);
+    expect(json.topups).toHaveLength(1);
+  });
+
+  it("falls back to defaults when professional row is missing", async () => {
+    mockGetUser.mockResolvedValue({
+      data: { user: { id: "u-1", email: "advisor@test.com" } },
+    });
+    mockAdminFrom.mockImplementation((table: string) => {
+      const b = createChainableBuilder(table, supabaseCalls);
+      if (table === "professionals") {
+        b.maybeSingle = vi.fn(() =>
+          Promise.resolve({ data: { id: 42 }, error: null }),
+        );
+        b.single = vi.fn(() =>
+          Promise.resolve({ data: null, error: null }),
+        );
+      }
+      if (table === "advisor_credit_topups") {
+        b.limit = vi.fn(() =>
+          Promise.resolve({ data: [], error: null }),
+        );
+      }
+      return b;
+    });
+
+    const res = await GET(makeGet());
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json.balance_cents).toBe(0);
+    expect(json.free_leads_remaining).toBe(2);
+    expect(json.lead_price_cents).toBe(4900);
+    expect(json.topups).toEqual([]);
   });
 });

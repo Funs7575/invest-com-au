@@ -1,153 +1,244 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { makeRequest } from "@/__tests__/helpers";
 import { NextRequest } from "next/server";
+import { createChainableBuilder } from "@/__tests__/helpers";
 
-// ── Mock state ────────────────────────────────────────────────────────────────
+// ── Mocks ──────────────────────────────────────────────────────────────────────
 
 const mockGetUser = vi.fn();
+const mockServerFrom = vi.fn();
 const mockAdminFrom = vi.fn();
-
-// ── Mocks ─────────────────────────────────────────────────────────────────────
+const supabaseCalls: Record<string, { method: string; args: unknown[] }[]> = {};
 
 vi.mock("@/lib/supabase/server", () => ({
   createClient: vi.fn(async () => ({
     auth: { getUser: mockGetUser },
+    from: mockServerFrom,
   })),
 }));
 
 vi.mock("@/lib/supabase/admin", () => ({
-  createAdminClient: vi.fn(() => ({ from: mockAdminFrom })),
+  createAdminClient: () => ({ from: mockAdminFrom }),
 }));
-
-// ── Import after mocks ────────────────────────────────────────────────────────
 
 import { GET, PATCH } from "@/app/api/advisor-auth/notifications/route";
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
-const ADVISOR_ID = 55;
-
-function makeChain(result: { data: unknown; error: unknown }) {
-  const c: Record<string, ReturnType<typeof vi.fn>> = {};
-  for (const m of ["select", "update", "eq", "or", "in"]) c[m] = vi.fn(() => c);
-  c.single = vi.fn(() => Promise.resolve(result));
-  c.maybeSingle = vi.fn(() => Promise.resolve(result));
-  c.then = vi.fn((cb: (v: unknown) => void) => {
-    cb(result);
-    return Promise.resolve();
-  });
-  return c;
-}
-
-function setupAuth() {
-  mockGetUser.mockResolvedValueOnce({
-    data: { user: { id: "uid-55", email: "eve@example.com" } },
+function makeGet(): NextRequest {
+  return new NextRequest("http://localhost/api/advisor-auth/notifications", {
+    method: "GET",
   });
 }
 
-function setupAdminWithProf(emailPrefs: Record<string, unknown> | null) {
-  let callCount = 0;
-  mockAdminFrom.mockImplementation((table: string) => {
-    callCount++;
-    if (table === "professionals" && callCount === 1) {
-      return makeChain({ data: { id: ADVISOR_ID }, error: null });
-    }
-    return makeChain({ data: { email_preferences: emailPrefs }, error: null });
+function makePatch(body: unknown): NextRequest {
+  return new NextRequest("http://localhost/api/advisor-auth/notifications", {
+    method: "PATCH",
+    body: typeof body === "string" ? body : JSON.stringify(body),
+    headers: { "Content-Type": "application/json" },
   });
 }
 
-function makeGetReq(): NextRequest {
-  return new NextRequest("http://localhost/api/advisor-auth/notifications", { method: "GET" });
+function authedAdvisor() {
+  mockGetUser.mockResolvedValue({
+    data: { user: { id: "u-1", email: "advisor@test.com" } },
+  });
 }
 
-function makePatchReq(body: Record<string, unknown>): NextRequest {
-  return makeRequest("/api/advisor-auth/notifications", body, { method: "PATCH" });
+function resetCalls() {
+  for (const k of Object.keys(supabaseCalls)) delete supabaseCalls[k];
 }
-
-// ── GET tests ─────────────────────────────────────────────────────────────────
 
 describe("GET /api/advisor-auth/notifications", () => {
-  beforeEach(() => vi.clearAllMocks());
-
-  it("returns 401 when not authenticated", async () => {
-    mockGetUser.mockResolvedValueOnce({ data: { user: null } });
-    mockAdminFrom.mockReturnValue(makeChain({ data: null, error: null }));
-    const res = await GET(makeGetReq());
-    expect(res.status).toBe(401);
-    expect(await res.json()).toMatchObject({ error: "Not authenticated" });
+  beforeEach(() => {
+    vi.clearAllMocks();
+    resetCalls();
+    mockServerFrom.mockReset();
+    mockAdminFrom.mockReset();
+    mockServerFrom.mockImplementation((table: string) =>
+      createChainableBuilder(table, supabaseCalls),
+    );
+    mockAdminFrom.mockImplementation((table: string) =>
+      createChainableBuilder(table, supabaseCalls),
+    );
   });
 
-  it("returns default prefs when email_preferences is null", async () => {
-    setupAuth();
-    setupAdminWithProf(null);
-    const res = await GET(makeGetReq());
+  it("returns 401 when not authenticated", async () => {
+    mockGetUser.mockResolvedValue({ data: { user: null } });
+    const res = await GET(makeGet());
+    expect(res.status).toBe(401);
+  });
+
+  it("returns DEFAULT_PREFS when advisor has no saved preferences", async () => {
+    authedAdvisor();
+    mockAdminFrom.mockImplementation((table: string) => {
+      const b = createChainableBuilder(table, supabaseCalls);
+      if (table === "professionals") {
+        b.maybeSingle = vi.fn(() =>
+          Promise.resolve({ data: { id: 42 }, error: null }),
+        );
+        b.single = vi.fn(() =>
+          Promise.resolve({
+            data: { email_preferences: null },
+            error: null,
+          }),
+        );
+      }
+      return b;
+    });
+
+    const res = await GET(makeGet());
     expect(res.status).toBe(200);
-    const { prefs } = await res.json();
+    const json = await res.json();
+    expect(json.prefs).toEqual({
+      new_lead: true,
+      weekly_summary: true,
+      billing_alerts: true,
+      review_new: false,
+    });
+  });
+
+  it("merges saved preferences with defaults", async () => {
+    authedAdvisor();
+    mockAdminFrom.mockImplementation((table: string) => {
+      const b = createChainableBuilder(table, supabaseCalls);
+      if (table === "professionals") {
+        b.maybeSingle = vi.fn(() =>
+          Promise.resolve({ data: { id: 42 }, error: null }),
+        );
+        b.single = vi.fn(() =>
+          Promise.resolve({
+            data: {
+              email_preferences: {
+                new_lead: false,
+                review_new: true,
+              },
+            },
+            error: null,
+          }),
+        );
+      }
+      return b;
+    });
+
+    const res = await GET(makeGet());
+    const json = await res.json();
+    // saved overrides
+    expect(json.prefs.new_lead).toBe(false);
+    expect(json.prefs.review_new).toBe(true);
+    // defaults preserved for unspecified keys
+    expect(json.prefs.weekly_summary).toBe(true);
+    expect(json.prefs.billing_alerts).toBe(true);
+  });
+});
+
+describe("PATCH /api/advisor-auth/notifications", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    resetCalls();
+    mockServerFrom.mockReset();
+    mockAdminFrom.mockReset();
+    mockServerFrom.mockImplementation((table: string) =>
+      createChainableBuilder(table, supabaseCalls),
+    );
+    mockAdminFrom.mockImplementation((table: string) =>
+      createChainableBuilder(table, supabaseCalls),
+    );
+  });
+
+  it("returns 401 when not authenticated", async () => {
+    mockGetUser.mockResolvedValue({ data: { user: null } });
+    const res = await PATCH(makePatch({ prefs: { new_lead: true } }));
+    expect(res.status).toBe(401);
+  });
+
+  it("returns 400 when prefs are missing", async () => {
+    authedAdvisor();
+    mockAdminFrom.mockImplementation((table: string) => {
+      const b = createChainableBuilder(table, supabaseCalls);
+      if (table === "professionals") {
+        b.maybeSingle = vi.fn(() =>
+          Promise.resolve({ data: { id: 42 }, error: null }),
+        );
+      }
+      return b;
+    });
+    const res = await PATCH(makePatch({}));
+    expect(res.status).toBe(400);
+  });
+
+  it("returns 400 when prefs is not an object", async () => {
+    authedAdvisor();
+    mockAdminFrom.mockImplementation((table: string) => {
+      const b = createChainableBuilder(table, supabaseCalls);
+      if (table === "professionals") {
+        b.maybeSingle = vi.fn(() =>
+          Promise.resolve({ data: { id: 42 }, error: null }),
+        );
+      }
+      return b;
+    });
+    const res = await PATCH(makePatch({ prefs: "yes" }));
+    expect(res.status).toBe(400);
+  });
+
+  it("coerces all preference fields to booleans", async () => {
+    authedAdvisor();
+    mockAdminFrom.mockImplementation((table: string) => {
+      const b = createChainableBuilder(table, supabaseCalls);
+      if (table === "professionals") {
+        b.maybeSingle = vi.fn(() =>
+          Promise.resolve({ data: { id: 42 }, error: null }),
+        );
+      }
+      return b;
+    });
+
+    const res = await PATCH(
+      makePatch({
+        prefs: {
+          new_lead: 1,
+          weekly_summary: 0,
+          billing_alerts: "yes",
+          review_new: null,
+        },
+      }),
+    );
+    expect(res.status).toBe(200);
+
+    const proCalls = supabaseCalls.professionals || [];
+    const updateCall = proCalls.find((c) => c.method === "update");
+    expect(updateCall).toBeDefined();
+    const updateArgs = updateCall?.args[0] as Record<string, unknown>;
+    const prefs = updateArgs.email_preferences as Record<string, unknown>;
     expect(prefs.new_lead).toBe(true);
-    expect(prefs.weekly_summary).toBe(true);
+    expect(prefs.weekly_summary).toBe(false);
     expect(prefs.billing_alerts).toBe(true);
     expect(prefs.review_new).toBe(false);
   });
 
-  it("returns saved prefs merged with defaults for missing keys", async () => {
-    setupAuth();
-    setupAdminWithProf({ new_lead: false, billing_alerts: false });
-    const res = await GET(makeGetReq());
-    expect(res.status).toBe(200);
-    const { prefs } = await res.json();
-    expect(prefs.new_lead).toBe(false);
-    expect(prefs.billing_alerts).toBe(false);
-    expect(prefs.weekly_summary).toBe(true);
-    expect(prefs.review_new).toBe(false);
-  });
-});
-
-// ── PATCH tests ───────────────────────────────────────────────────────────────
-
-describe("PATCH /api/advisor-auth/notifications", () => {
-  beforeEach(() => vi.clearAllMocks());
-
-  it("returns 401 when not authenticated", async () => {
-    mockGetUser.mockResolvedValueOnce({ data: { user: null } });
-    mockAdminFrom.mockReturnValue(makeChain({ data: null, error: null }));
-    const res = await PATCH(makePatchReq({ prefs: { new_lead: false } }));
-    expect(res.status).toBe(401);
-  });
-
-  it("returns 400 when prefs body is invalid", async () => {
-    setupAuth();
-    mockAdminFrom.mockReturnValue(makeChain({ data: { id: ADVISOR_ID }, error: null }));
-    const res = await PATCH(makePatchReq({ prefs: "not-an-object" }));
-    expect(res.status).toBe(400);
-    expect(await res.json()).toMatchObject({ error: "Invalid preferences" });
-  });
-
-  it("returns 200 on successful preference update", async () => {
-    setupAuth();
-    let callCount = 0;
-    mockAdminFrom.mockImplementation(() => {
-      callCount++;
-      return makeChain({ data: callCount === 1 ? { id: ADVISOR_ID } : null, error: null });
+  it("returns success with warning when column is missing", async () => {
+    authedAdvisor();
+    mockAdminFrom.mockImplementation((table: string) => {
+      const b = createChainableBuilder(table, supabaseCalls);
+      if (table === "professionals") {
+        b.maybeSingle = vi.fn(() =>
+          Promise.resolve({ data: { id: 42 }, error: null }),
+        );
+        // Override the awaited update result via .eq() terminal
+        b.eq = vi.fn(() =>
+          Promise.resolve({
+            data: null,
+            error: { message: "column does not exist" },
+          }),
+        );
+      }
+      return b;
     });
+
     const res = await PATCH(
-      makePatchReq({ prefs: { new_lead: false, weekly_summary: true, billing_alerts: true, review_new: true } }),
+      makePatch({ prefs: { new_lead: true } }),
     );
     expect(res.status).toBe(200);
-    expect(await res.json()).toMatchObject({ success: true });
-  });
-
-  it("returns 200 with warning when DB column does not exist (error is non-fatal)", async () => {
-    setupAuth();
-    let callCount = 0;
-    mockAdminFrom.mockImplementation(() => {
-      callCount++;
-      if (callCount === 1) return makeChain({ data: { id: ADVISOR_ID }, error: null });
-      return makeChain({ data: null, error: { message: "column email_preferences does not exist" } });
-    });
-    const res = await PATCH(
-      makePatchReq({ prefs: { new_lead: true, weekly_summary: false, billing_alerts: true, review_new: false } }),
-    );
-    expect(res.status).toBe(200);
-    expect(await res.json()).toMatchObject({ success: true, warning: expect.any(String) });
+    const json = await res.json();
+    expect(json.success).toBe(true);
+    expect(json.warning).toMatch(/in memory only/);
   });
 });
