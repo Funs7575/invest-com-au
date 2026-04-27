@@ -27,7 +27,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | A | _not started_ | — | — | — |
 | B | `claude/audit-remediation/b-rls-remediation` | #220 | pending — pushed 2026-04-27T06:50Z | B-06 — 2 done (`listing_enquiries` `0bb82daa`, `listing_plans` `be7bff79`) · 5 FP (forum tables) · 1 blocked (`quarterly_reports`) |
 | C | _not started_ | — | — | — |
-| D | _not started_ | — | — | — |
+| D | `claude/audit-remediation/d-route-tests` | #246 | pending — pushed 2026-04-27T10:22Z | D-01 done (commit `7269510`) |
 | E | _not started_ | — | — | — |
 | F | _not started_ | — | — | — |
 | G | _not started_ | — | — | — |
@@ -147,7 +147,7 @@ Highest priority: critical 2 first.
 
 | ID | Status | Summary | Est. iterations | Notes |
 | --- | --- | --- | --- | --- |
-| D-01 | pending | Integration test for `/api/submit-lead` | 1 | Pattern after existing `__tests__/api/*` files. Mock Supabase `admin` and outbound notifications. |
+| D-01 | done | Integration test for `/api/submit-lead` | 1 | Done in commit `7269510` (PR #246). 15 tests: input validation (invalid lead_type, invalid email, disposable email, rate-limit, honeypot), platform lead success+error, advisor auto-match success+no_more_matches+insert-error, dry_run, confirm_advisor_id (not-found, duplicate-suppressed, new-lead). |
 | D-02 | pending | Integration test for `/api/quiz-lead` | 1 | |
 | D-03 | pending | Integration test for `/api/advisor-lead` | 1 | |
 | D-04 | pending | Integration test for `/api/advisor-apply` (root, not just `invite`) | 1 | |
@@ -457,6 +457,7 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 
 ## Done
 
+- 2026-04-27 · D-01 · Integration test for `POST /api/submit-lead`: 15 tests covering input validation (invalid lead_type, invalid/disposable email, rate-limit, honeypot), platform lead success+error, advisor auto-match 5-level fallback success + no_more_matches + lead-insert-error, dry_run, confirm_advisor_id (not-found, duplicate-suppressed, new-lead). Primary revenue-capture route now has non-trivial branch coverage. +401 LOC, 1 file. · commit `7269510` · pr #246
 - 2026-04-27 · N-11 · Audit 9 raw `<img>` tags (excl. BrokerLogo ICO): 3 converted to `<Image>` (VerticalPillarPage advisor photo 44×44 + author avatar 32×32; MfaEnrollmentClient QR code 240×240 unoptimized); added `api.qrserver.com` to `next.config.ts` remotePatterns; 3 documented with eslint-disable + blob-URL/arbitrary-domain rationale (AdvisorPhotoUpload, advisor-apply, team-members); 2 already had eslint-disable (ArticleBrokerTable, creative-insights). Stream N now complete except N-06 (blocked). +17/-5 across 6 files. · commit `c2b769e` · pr #242
 - 2026-04-27 · N-10 · Backfill `placeholder="blur"` on hot-path `next/image` usages. `ArticleCover` (article hero — LCP element on all 266 article pages), `AuthorByline` (author avatar, appears alongside every article), `BrokerLogo` (non-ICO path, uses `broker.color` for brand-matched blur tile), broker profile hero (`full-service/[slug]`), author profile avatar (`authors/[slug]`). `blurDataURL()` from `lib/image-blur.ts` generates an inline SVG data URL — zero network cost. ICO path in BrokerLogo intentionally uses native `<img>` and is unaffected. +15/-0 across 5 files. · commit `0c33d71` · pr #242
 - 2026-04-27 · N-09 · Quiz page client/server boundary: confirmed `app/quiz/page.tsx` is fully client-rendered (`"use client"`). Created `GET /api/quiz/data` Edge route — parallel-fetches `brokers` (active, rated desc) + `quiz_weights` from Supabase anon key; returns JSON with `Cache-Control: public, max-age=60, stale-while-revalidate=300`. Updated quiz page to fetch from this route instead of calling Supabase browser client directly. Eliminates client→Supabase waterfall; CDN/browser caches shared quiz data for 60 s. Fallback scores path unchanged. +88/-31 across 2 files. · commit `3b43bf8` · pr #242
@@ -509,6 +510,20 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-27T10:22Z — iteration 46 (stream D — D-01 done — /api/submit-lead integration test)
+
+- Phase 0: lock acquired.
+- Phase 1: local main had no common ancestor with origin/main (forced-update on remote); reset via `git reset --hard origin/main`. Read queue and defaults end-to-end.
+- Phase 1.5: Types drift check via Supabase MCP `generate_typescript_types`. MD5 of generated output matched `lib/database.types.ts` exactly — no regen needed.
+- Phase 2 CI rescue: PR #220 — all checks success/skipped. PR #222 — all checks success/skipped. PR #242 — all checks success/skipped. No rescue needed.
+- Phase 3 pick: Stream D (step 4 in priority order — B-06 blocked, K complete, N complete). D-01 is D's first item — no branch. Created `claude/audit-remediation/d-route-tests` from main. Empty scaffold commit (`6a1d25f`). Pushed + opened draft PR #246.
+- Phase 4 verification: D-01 is a new test (not deletion/migration). Verification gate: test must exercise actual route handler logic (not just import-and-assert). Route read in full (`app/api/submit-lead/route.ts`, 647 LOC). Identified 6 major code paths: platform-lead, auto-match (5-level fallback), dry_run, confirm_advisor_id, no_more_matches (Attempt 5), input validation. Examined existing `__tests__/api/*` patterns (`advisor-enquiry.test.ts`, `account-delete.test.ts`). Added `not`/`or`/`filter` chain extensions to the builder helper inline (not in shared `helpers.ts`).
+- Phase 5: authored `__tests__/api/submit-lead.test.ts` (15 tests, 401 LOC). Fixed 2 test bugs found during `vitest run`: (1) dry_run still calls `from("professional_leads")` for the recent-enquiries dedup check — removed incorrect assertion; (2) no_more_matches test needed `excludeArray.length > 0` — seeded via the recent-leads DB mock returning a prior match rather than relying on body parsing. All 15 tests green. ESLint clean.
+- Phase 6: committed `7269510` (`test(d): integration test for POST /api/submit-lead (D-01)`). Pushed to `claude/audit-remediation/d-route-tests`. PR #246 body updated.
+- Phase 7: queue updated on main — D-01 marked done, In-flight table D row updated, Done entry prepended, this log added.
+- Status: PROGRESS · stream=D · item=D-01 · pr=#246 · commit=`7269510` · diff=+401/-0 across 1 file
+- Next item: D-02 (integration test for `/api/quiz-lead`, step 4 in priority order).
 
 ### 2026-04-27T13:30Z — iteration 45 (stream N — N-11 done — stream complete)
 
