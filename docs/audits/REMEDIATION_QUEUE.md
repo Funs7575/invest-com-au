@@ -43,7 +43,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | Q | _not started_ | — | — | — |
 | R | _not started_ | — | — | — |
 | S | _not started_ | — | — | — |
-| V | `claude/audit-remediation/v-polish-extras` | #252 | pending — pushed 2026-04-27T14:15Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 blocked (no DatedStatBadge component yet) · V-NEW-02 blocked (no compliance factual-filter) · V-NEW-03 pending |
+| V | `claude/audit-remediation/v-polish-extras` | #252 | pending — CI-rescue pushed 2026-04-27T14:20Z (fix TS errors: named node: imports, missing beforeAll/beforeEach vitest import, double-cast in template) | V-NEW-04 done (`5aadce3`) · CI-rescue `e37633c` · V-NEW-01 blocked (no DatedStatBadge component yet) · V-NEW-02 blocked (no compliance factual-filter) · V-NEW-03 pending |
 
 ---
 
