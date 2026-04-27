@@ -37,7 +37,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-27T05:35Z | K-01..K-08 done; K-09 false-positive; K-10..K-15 done — **stream complete** |
 | L | _not started_ | — | — | — |
 | M | _not started_ | — | — | — |
-| N | `claude/audit-remediation/n-ux-perf` | #242 | pending — pushed 2026-04-27T13:00Z | N-01+N-02 done (`2ec6f89`) · N-03a done (`36e3f6d`) · N-03b done (`97bb9b00`) · N-03c done (`b29f443`) · N-04 FP · N-05 FP · N-06 blocked · N-07 batch 1 done (`2e5d8a4`) · N-07 batch 2 done (`91d0d42`) · N-08 done (`315d3b7`) · N-09 done (`3b43bf8`) · N-10 done (`0c33d71`) |
+| N | `claude/audit-remediation/n-ux-perf` | #242 | pending — pushed 2026-04-27T13:30Z | N-01+N-02 done (`2ec6f89`) · N-03a done (`36e3f6d`) · N-03b done (`97bb9b00`) · N-03c done (`b29f443`) · N-04 FP · N-05 FP · N-06 blocked · N-07 batch 1 done (`2e5d8a4`) · N-07 batch 2 done (`91d0d42`) · N-08 done (`315d3b7`) · N-09 done (`3b43bf8`) · N-10 done (`0c33d71`) · N-11 done (`c2b769e`) — **stream complete** (N-06 blocked) |
 | O | `claude/audit-remediation/o-rls-no-policy` | _opening_ | pending — pushed 2026-04-26 | O-01 — 3 done (`user_notifications`, `user_quiz_history`, `user_bookmarks`); ~13 user-data tables left |
 | P | _not started_ | — | — | — |
 | Q | _not started_ | — | — | — |
@@ -336,7 +336,7 @@ Image perf, accessibility, client-bundle size.
 | N-08 | done | Replace 16 hardcoded color hex values in chart/SVG components with Tailwind tokens | 1 | P2. commit `315d3b7` pr #242. Structural SVG fills/strokes → `className="fill-slate-N"` / `className="stroke-slate-N"`; data-palette arrays annotated with Tailwind token names. |
 | N-09 | done | `app/quiz/page.tsx` client/server boundary — was fully client-rendered; moved broker+quiz_weights fetch to Edge route `GET /api/quiz/data` with CDN cache (60s/300s SWR) | 1 | P1. commit `3b43bf8` pr #242. |
 | N-10 | done | Backfill `placeholder="blur"` on hot-path next/image usages: article hero, advisor profile photo, broker logo | 1 | Done in commit `0c33d71` (PR #242). `ArticleCover`, `AuthorByline`, `BrokerLogo` (non-ICO, uses `broker.color`), broker profile hero, author profile avatar. |
-| N-11 | pending | Audit + convert remaining 9 raw `<img>` tags (excluding `BrokerLogo` ICO intentional case) to `next/image` where safe | 1 | P3. |
+| N-11 | done | Audit + convert remaining 9 raw `<img>` tags (excluding `BrokerLogo` ICO intentional case) to `next/image` where safe | 1 | Done in commit `c2b769e` (PR #242). 3 converted to `<Image>`: VerticalPillarPage advisor photo (44×44) + author avatar (32×32); MfaEnrollmentClient QR code (240×240, `unoptimized`). `api.qrserver.com` added to `next.config.ts` remotePatterns. 3 documented with eslint-disable + rationale: AdvisorPhotoUpload + advisor-apply (blob: URLs from `URL.createObjectURL()`); team-members (admin-entered free-text URL). 2 already had eslint-disable (ArticleBrokerTable broker logo — ICO pattern; creative-insights thumbnail — arbitrary CDN). |
 
 ### Stream O — DB hardening (audit §4)
 
@@ -457,6 +457,7 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 
 ## Done
 
+- 2026-04-27 · N-11 · Audit 9 raw `<img>` tags (excl. BrokerLogo ICO): 3 converted to `<Image>` (VerticalPillarPage advisor photo 44×44 + author avatar 32×32; MfaEnrollmentClient QR code 240×240 unoptimized); added `api.qrserver.com` to `next.config.ts` remotePatterns; 3 documented with eslint-disable + blob-URL/arbitrary-domain rationale (AdvisorPhotoUpload, advisor-apply, team-members); 2 already had eslint-disable (ArticleBrokerTable, creative-insights). Stream N now complete except N-06 (blocked). +17/-5 across 6 files. · commit `c2b769e` · pr #242
 - 2026-04-27 · N-10 · Backfill `placeholder="blur"` on hot-path `next/image` usages. `ArticleCover` (article hero — LCP element on all 266 article pages), `AuthorByline` (author avatar, appears alongside every article), `BrokerLogo` (non-ICO path, uses `broker.color` for brand-matched blur tile), broker profile hero (`full-service/[slug]`), author profile avatar (`authors/[slug]`). `blurDataURL()` from `lib/image-blur.ts` generates an inline SVG data URL — zero network cost. ICO path in BrokerLogo intentionally uses native `<img>` and is unaffected. +15/-0 across 5 files. · commit `0c33d71` · pr #242
 - 2026-04-27 · N-09 · Quiz page client/server boundary: confirmed `app/quiz/page.tsx` is fully client-rendered (`"use client"`). Created `GET /api/quiz/data` Edge route — parallel-fetches `brokers` (active, rated desc) + `quiz_weights` from Supabase anon key; returns JSON with `Cache-Control: public, max-age=60, stale-while-revalidate=300`. Updated quiz page to fetch from this route instead of calling Supabase browser client directly. Eliminates client→Supabase waterfall; CDN/browser caches shared quiz data for 60 s. Fallback scores path unchanged. +88/-31 across 2 files. · commit `3b43bf8` · pr #242
 - 2026-04-27 · N-08 · Replace 16 hardcoded hex values in chart/SVG components with Tailwind tokens. Structural SVG `fill`/`stroke` attributes (`#64748b`, `#f1f5f9`, `#334155`, `#e2e8f0`, `#94a3b8`, `#1e293b`, `#ef4444`) across SVGBarChart, SVGLineChart, SVGDonutChart, SVGFunnel replaced with `className="fill-slate-N"` / `className="stroke-slate-N"` Tailwind utilities (CSS properties override SVG presentation attributes in all modern browsers). Default color props (`color = "#16a34a"`, `#3b82f6`) and data-palette arrays (DEFAULT_COLORS, DEFAULT_FUNNEL_COLORS) annotated with Tailwind token equivalents. 30 additions / 23 deletions, 5 files. · commit `315d3b7` · pr #242
@@ -508,6 +509,20 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-27T13:30Z — iteration 45 (stream N — N-11 done — stream complete)
+
+- Phase 0: lock acquired.
+- Phase 1: local main had diverged from origin/main (50/50 unrelated histories); reset via `git reset --hard origin/main`. Read queue and defaults end-to-end.
+- Phase 1.5: Types drift check — no schema changes in this window; skipped.
+- Phase 2 CI rescue: PR #220 — all checks success/skipped. PR #222 — all checks success/skipped. PR #242 — all checks success/skipped. No rescue needed.
+- Phase 3 pick: Stream N (step 3 in priority order), N-11 (first pending item after N-10 done). Checked out `claude/audit-remediation/n-ux-perf` from origin; already up to date with main.
+- Phase 4 verification: N-11 is an audit+refactor item (no deletion gate, no migration gate). Grepped for all raw `<img>` tags in `.tsx`/`.jsx` files (excl. node_modules/.next). Found 9 instances (BrokerLogo ICO already excluded per spec): VerticalPillarPage×2, ArticleBrokerTable, AdvisorPhotoUpload, team-members, MfaEnrollmentClient, creative-insights, advisor-apply. Classified each: (a) safe to convert — VerticalPillarPage photos (Supabase Storage + ui-avatars.com both in remotePatterns; already had explicit dims), MfaEnrollmentClient QR code (api.qrserver.com, not yet in remotePatterns); (b) blob: URL — AdvisorPhotoUpload + advisor-apply (`URL.createObjectURL()`, blob: scheme, Next.js Image cannot handle); (c) arbitrary admin-entered URL — team-members (free-text form field; no safe remotePatterns entry); (d) already documented — ArticleBrokerTable (ICO pattern), creative-insights (already had eslint-disable).
+- Phase 5: (1) Added `api.qrserver.com` `/v1/**` to `next.config.ts` remotePatterns. (2) Converted VerticalPillarPage advisor photo (44×44) and author avatar (32×32 — added explicit dims matching `w-8 h-8`) to `<Image>`, removed existing eslint-disable comments, added `Image` import. (3) Converted MfaEnrollmentClient QR code to `<Image unoptimized>`, added `Image` import. (4) Added `eslint-disable-next-line @next/next/no-img-element` with explanation comments to AdvisorPhotoUpload, advisor-apply, team-members. Local gates: file-targeted tsc produced only pre-existing TS2307/TS17004/TS7026 sandbox module-resolution errors (Hardware exception). Lint: eslint-config-next missing in sandbox (Hardware exception). CI on PR #242 is authoritative.
+- Phase 6: committed `c2b769e` (+17/-5, 6 files). Pushed to `claude/audit-remediation/n-ux-perf`. PR #242 body updated (N-11 checked).
+- Phase 7: queue updated on main — N-11 marked done, In-flight table N row updated to stream complete (N-06 remains blocked), Done entry prepended, this log added.
+- Status: PROGRESS · stream=N · item=N-11 · pr=#242 · commit=`c2b769e` · diff=+17/-5 across 6 files
+- Next item: D-01 (integration test for `/api/submit-lead`, step 4 in priority order).
 
 ### 2026-04-27T13:00Z — iteration 44 (stream N — N-10 done)
 
