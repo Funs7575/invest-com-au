@@ -84,6 +84,20 @@ export function formatCurrency(
 }
 
 /**
+ * Format a whole-dollar AUD amount. Convenience wrapper for the common
+ * case of "I have a number in dollars (not cents) and want the standard
+ * en-AU currency string". Default fraction digits = 0 (most calculators
+ * round to whole dollars in their UI).
+ */
+export function formatAUD(dollars: number, fractionDigits = 0): string {
+  return new Intl.NumberFormat("en-AU", {
+    style: "currency",
+    currency: "AUD",
+    maximumFractionDigits: fractionDigits,
+  }).format(dollars);
+}
+
+/**
  * Abbreviate large currency amounts — useful for tight mobile UIs.
  *
  *   $1,234      → $1.2k
