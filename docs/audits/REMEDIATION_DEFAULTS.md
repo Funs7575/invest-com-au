@@ -140,6 +140,22 @@ If an auto-merge GitHub Action is set up (see `.github/workflows/audit-remediati
 | DD | `claude/audit-remediation/dd-marketplace` | Marketplace mechanics: tiered advisor listings (Free/Pro/Featured), verified-by-invest.com.au badge, booking + payment rail (Stripe Connect 15% take), real-time advisor bidding auction model | 2026-04-27 hub revenue expansion · `docs/audits/HUB_BLUEPRINT.md` §1 (lever #2 + #6) |
 | EE | `claude/audit-remediation/ee-distribution` | Distribution / embeds: embeddable rate tables widget, Chrome extension (security-reviewed, separate repo), WhatsApp/Telegram alerts bot, API marketplace (B2B) | 2026-04-27 hub revenue expansion · `docs/audits/HUB_BLUEPRINT.md` §7 |
 | KK | `claude/audit-remediation/kk-lead-routing-maturity` | Lead-form surface CI gates: SLA monitoring per source, queue health alerts, advisor response-time tracking, conversion analytics per source, lead-source routing audit, advisor performance dashboard | 2026-04-27 enterprise-standard reorder · `docs/audits/ENTERPRISE_STANDARD.md` "Lead form surface" |
+| CL | `claude/audit-remediation/cl-anonymity-infra` | Founder-anonymity infrastructure: about page, editorial team, operational personas, AFSL disclosure, WHOIS audit, repo PII sweep, social media presence, press inquiry handling, anonymity stress test (CI gate), quarterly audit cron | 2026-04-27 pre-launch product expansion · `docs/audits/PRE_LAUNCH_PRODUCT_PLAN_FINAL.md` (pending) |
+| LL | `claude/audit-remediation/ll-logged-in-user` | Logged-in user infrastructure: personal profile + dashboard (longest critical path — blocks 15+ items), profile-driven advisor matching v2, watchlist + email digests, reviews + ratings, live chat AI routing | 2026-04-27 pre-launch product expansion · `docs/audits/PRE_LAUNCH_PRODUCT_PLAN_FINAL.md` (pending) |
+| LX | `claude/audit-remediation/lx-ux-features` | UX conversion + retention features: calculator share/save (viral), calculator history, comparison cart, pre-filled forms, exit-intent capture (cold-launch critical), print/PDF, last-updated freshness, author profile pages | 2026-04-27 pre-launch product expansion · `docs/audits/PRE_LAUNCH_PRODUCT_PLAN_FINAL.md` (pending) |
+| OB | `claude/audit-remediation/ob-hub-onboarding` | Hub onboarding flows — diagnostic-quiz-style onboarding shell + 12 hub-specific configurations (one per active hub) | 2026-04-27 pre-launch product expansion · `docs/audits/PRE_LAUNCH_PRODUCT_PLAN_FINAL.md` (pending) |
+| EM | `claude/audit-remediation/em-email-infra` | Email infrastructure: ebook lead magnets per hub (12 PDFs), email digest infrastructure, pre-launch email list building (foundational gate), newsletter foundation, lead magnet automation, drip sequences (10 hub-specific) | 2026-04-27 pre-launch product expansion · `docs/audits/PRE_LAUNCH_PRODUCT_PLAN_FINAL.md` (pending) |
+| GT | `claude/audit-remediation/gt-goal-tracking` | Goal tracking: set + monitor financial goals (FHB deposit, FIRE, retirement, debt-free), annual financial check-up | 2026-04-27 pre-launch product expansion · `docs/audits/PRE_LAUNCH_PRODUCT_PLAN_FINAL.md` (pending) |
+| DF | `claude/audit-remediation/df-decision-frameworks` | Decision frameworks: generic flowchart engine + 3 decision trees (buy-vs-rent, salary-sacrifice, SMSF setup) | 2026-04-27 pre-launch product expansion · `docs/audits/PRE_LAUNCH_PRODUCT_PLAN_FINAL.md` (pending) |
+| QA | `claude/audit-remediation/qa-q-and-a` | Q&A surfaces: single-question deep-dive template + 50 seeded Q&A pages (long-tail SEO with FAQ JSON-LD) | 2026-04-27 pre-launch product expansion · `docs/audits/PRE_LAUNCH_PRODUCT_PLAN_FINAL.md` (pending) |
+| CD | `claude/audit-remediation/cd-calendar-utility` | Calendar + utility features: calendar of deadlines, currency converter, pricing transparency surface | 2026-04-27 pre-launch product expansion · `docs/audits/PRE_LAUNCH_PRODUCT_PLAN_FINAL.md` (pending) |
+| RR | `claude/audit-remediation/rr-review-extensions` | Review extensions: review verification badge, advisor response to reviews | 2026-04-27 pre-launch product expansion · `docs/audits/PRE_LAUNCH_PRODUCT_PLAN_FINAL.md` (pending) |
+| MK | `claude/audit-remediation/mk-marketplace-conversion` | Marketplace conversion features: advisor calendar embedding, advisor video intros | 2026-04-27 pre-launch product expansion · `docs/audits/PRE_LAUNCH_PRODUCT_PLAN_FINAL.md` (pending) |
+| SM | `claude/audit-remediation/sm-service-cultural` | Service-line + cultural matching: fine-grained service-line tags, cultural/religion routing | 2026-04-27 pre-launch product expansion · `docs/audits/PRE_LAUNCH_PRODUCT_PLAN_FINAL.md` (pending) |
+| CM | `claude/audit-remediation/cm-multi-advisor-matching` | Multi-advisor matching: life-event matching, multi-advisor for high-value leads, lead quality scoring (feeds DD-04 auction bid floor) | 2026-04-27 pre-launch product expansion · `docs/audits/PRE_LAUNCH_PRODUCT_PLAN_FINAL.md` (pending) |
+| AT | `claude/audit-remediation/at-account-types` | Account types: individual (default), couple/household, family/multi-generational, business/SMSF/trust entity | 2026-04-27 pre-launch product expansion · `docs/audits/PRE_LAUNCH_PRODUCT_PLAN_FINAL.md` (pending) |
+| DV | `claude/audit-remediation/dv-document-vault` | Document vault: encrypted upload + RLS-isolated user storage for super statements, tax returns, will, insurance policies, bank statements | 2026-04-27 pre-launch product expansion · `docs/audits/PRE_LAUNCH_PRODUCT_PLAN_FINAL.md` (pending) |
+| CO | `claude/audit-remediation/co-cutover-prep` | Cutover preparation: 301 redirect map, GSC + GA4 verification, sitemap + robots.txt finalisation, DNS TTL checklist, pre-launch QA automation, cutover runbook, final anonymity audit | 2026-04-27 pre-launch product expansion · `docs/audits/PRE_LAUNCH_PRODUCT_PLAN_FINAL.md` (pending) |
 
 ## Priority order
 
@@ -215,6 +231,48 @@ When choosing the next item, walk in this order and pick the first non-blocked o
 58. **EE-02** (Chrome extension — separate repo, security-reviewed).
 59. **CC-07** (SoA/RoA generator B2B SaaS for advisors) — legal-reviewed, post-Step 9 AFSL spend in roadmap.
 60. **EE-04** (API marketplace B2B) — speculative; depends on all other streams stable.
+
+**2026-04-27 pre-launch product expansion (founder spec — `docs/audits/PRE_LAUNCH_PRODUCT_PLAN_FINAL.md` to be added).** 16 new streams totalling ~62 items adding founder-anonymity infrastructure (Tier 0 — ships first, preempts V-NEW gates), logged-in user platform (Tier 1 — unlocks 15+ dependent items), conversion + email infrastructure (Tier 2), polish + depth features (Tier 3), and cutover preparation (Final). Tiers overlay the existing priority order.
+
+### Tier 0 — ships before everything (preempts slot 1)
+
+CL-01..CL-07 + CL-09 build the entity-level surfaces and the anonymity stress-test CI gate. They preempt the V-NEW gates at slot 1 because anonymity is structural — must be in place before any public-facing surface ships, otherwise founder PII can leak and is irretrievable post-launch. CL-09 becomes a CI gate (pattern after V-NEW-01..04) that blocks every public PR until passed.
+
+61. **CL-01, CL-04, CL-05, CL-06, CL-07, CL-09 (parallel)** — anonymity infrastructure: about page (entity-only) + AFSL disclosure + WHOIS audit + repo PII sweep + social media (entity-only) + anonymity stress test CI gate. The loop should pick these in any order (parallel-eligible) but ALL must land before any public-facing PR can ship.
+
+### Tier 1 — ships after V-NEW gates, alongside W/X foundation
+
+62. **CL-02, CL-03, CL-08, CL-10** — Tier 0 extensions: editorial team page, operational personas, press inquiry handling, quarterly anonymity audit cron. **Deps:** CL-01..CL-09. Parallel-eligible with each other.
+63. **LL-01 (longest critical path — unblocks 15+ items)** — personal profile + dashboard. Once landed, unblocks LL-02, LX-02, LX-04, GT-01, GT-02, DF-01..04, AT-01..04, CD-01, DV-01. Critical-path priority.
+64. **LL-02** — profile-driven advisor matching v2. **Deps:** LL-01.
+
+### Tier 2 — ships parallel with Z hubs
+
+65. **EM-03** — pre-launch email list building infrastructure. Foundational gate for email work. **Blocks:** EM-01, EM-02, EM-04, EM-05, EM-06, LX-05.
+66. **OB-01** — hub onboarding flows (shell + 12 hub configs, 13 iterations). **Deps:** stream W components (W-10 `<EligibilityQuiz>`).
+67. **LX-01, LX-04, LX-05 (parallel)** — calculator share/save + pre-filled forms + exit-intent capture. LX-05 critical for cold-launch conversion. **Deps:** LL-01 (LX-04), EM-03 (LX-05).
+68. **EM-01, EM-02, EM-05** — lead magnets (12 PDFs) + digest infrastructure + automation. **Deps:** EM-03.
+69. **LL-03, LL-04, LL-05 (parallel)** — watchlist + reviews + live chat. **Deps:** LL-01 (LL-03/04), V-NEW-02 + CC-06 (LL-05).
+
+### Tier 3 — ships parallel with BB/CC/DD/EE features
+
+70. **GT-01, GT-02 (parallel)** — goal tracking + annual check-up. **Deps:** LL-01 (both), DV-01 (GT-01).
+71. **DF-01..DF-04** — decision framework engine + 3 trees (buy-vs-rent, salary-sacrifice, SMSF setup). DF-01 blocks DF-02..04. **Deps:** LL-01.
+72. **QA-01, QA-02** — Q&A template + 50 seeded pages. QA-01 blocks QA-02.
+73. **CD-01, CD-02, CD-03 (parallel)** — calendar of deadlines + currency converter + pricing transparency. **Deps:** LL-01 (CD-01).
+74. **RR-01, RR-02** — review verification + advisor responses. **Deps:** LL-04.
+75. **MK-01, MK-02 (parallel)** — advisor calendar embedding + video intros.
+76. **SM-01, SM-02 (parallel)** — service-line tags + cultural/religion routing.
+77. **CM-01, CM-02, CM-03** — life-event matching + multi-advisor + lead quality scoring. **Deps:** LL-01 (CM-01), KK-01 (CM-02/03). Feeds DD-04 auction bid floor.
+78. **AT-01..AT-04** — individual + couple + family + business account types. AT-01 blocks AT-02..04. **Deps:** LL-01.
+79. **DV-01** — document vault (encrypted upload + RLS-isolated storage). **Deps:** LL-01, CC-01, V-NEW-04.
+80. **LX-02, LX-03, LX-06, LX-07, LX-08 (parallel polish)** — calc history + comparison cart + print/PDF + last-updated freshness + author profiles. **Deps:** LL-01 (LX-02), CL-03 (LX-08).
+81. **EM-04, EM-06** — newsletter foundation + drip sequences. **Deps:** EM-03 (EM-04), EM-01/05 (EM-06).
+
+### Final — ships last, week before launch
+
+82. **CO-01, CO-02, CO-03, CO-04, CO-05, CO-06** — 301 redirect map + GSC/GA4 verification + sitemap finalisation + DNS TTL checklist + pre-launch QA E2E + cutover runbook. Most are needs-user (founder/ops actions).
+83. **CO-07** — final anonymity audit. Last gate before launch. Re-runs CL-09 across the entire shipped surface. **Deps:** CL-09.
 
 ### Review flags (2026-04-27 expansion)
 
