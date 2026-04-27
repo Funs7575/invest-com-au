@@ -43,6 +43,10 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | Q | _not started_ | — | — | — |
 | R | _not started_ | — | — | — |
 | S | _not started_ | — | — | — |
+| W | _not started_ | — | — | — |
+| X | _not started_ | — | — | — |
+| Y | _not started_ | — | — | — |
+| Z | _not started_ | — | — | — |
 
 ---
 
