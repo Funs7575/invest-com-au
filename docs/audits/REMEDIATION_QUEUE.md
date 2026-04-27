@@ -34,7 +34,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | H | _not started_ | — | — | — |
 | I | _not started_ | — | — | — |
 | J | _not started_ | — | — | — |
-| K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-27T04:42Z | K-01..K-08 done; K-09 false-positive; K-10..K-13 done; K-14..K-15 pending |
+| K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-27T05:10Z | K-01..K-08 done; K-09 false-positive; K-10..K-14 done; K-15 pending |
 | L | _not started_ | — | — | — |
 | M | _not started_ | — | — | — |
 | N | _not started_ | — | — | — |
@@ -236,7 +236,7 @@ P0/P1/P2 findings from the security agent's deep scan. Each is small (<2h); clus
 | K-11 | done | `admin_login_attempts` — atomic counter via DB function to close SELECT→UPDATE TOCTOU race | 1 | Done in commit `f933d37` (PR #222). Phase-4 note: `ip_hash TEXT PRIMARY KEY` already provides uniqueness — the UNIQUE constraint K-11 described was already present. The real bypass vector was the SELECT → upsert/UPDATE TOCTOU race: two concurrent requests could both read count=N and both write count=N+1, losing an increment. Fix: new `admin_rate_limit_increment` PL/pgSQL function performs the increment atomically via `INSERT ... ON CONFLICT DO UPDATE SET count = count + 1`; `checkRateLimit` now calls `supabase.rpc('admin_rate_limit_increment', ...)` in a single round-trip. Fails-open on RPC error to avoid blocking admin logins during a partial DB outage. |
 | K-12 | done | `proxy.ts:22–30` cron bearer timing-safe comparison — `cronTokensMatch()` XOR helper (Edge-runtime compatible) | 1 | Done in commit `79ac0aa` (PR #222). |
 | K-13 | done | ESLint rule: ban `dangerouslySetInnerHTML` outside `JSON.stringify(...)` and `sanitizeHtml(...)` / `renderMarkdown(...)` contexts | 1 | Done in commit `23b7eda` (PR #222). Inline `invest/no-unsafe-inner-html` plugin in `eslint.config.mjs`. 2 real violations fixed (hardcoded strings in buy-property-australia-foreigner/page.tsx replaced with plain JSX). 2 env-var tracking-pixel usages suppressed with eslint-disable-next-line + explanation comment. |
-| K-14 | pending | Seed `retention_rules` table with initial policies (today empty; gdpr-retention-purge cron has nothing to do) | 1 | P2 / GDPR. |
+| K-14 | done | Seed `retention_rules` table with initial policies (today empty; gdpr-retention-purge cron has nothing to do) | 1 | Done in commit `2ad7bb5` (PR #222). 7 PII tables seeded; FORCE RLS + service_role explicit ALLOW policy added. |
 | K-15 | pending | CSP violation reporting: add `report-to` directive in `proxy.ts` + `/api/csp-report` endpoint | 1 | P2 (added by K-04 follow-up). Without reporting, legacy-browser inline-script breakage from K-04 is only detectable via support tickets. Endpoint should land each violation in a `csp_violations` table for trend analysis. |
 
 ### Stream L — Observability + Sentry/PostHog/SLO (audit §9)
@@ -410,6 +410,7 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 
 ## Done
 
+- 2026-04-27 · K-14 · Seed `retention_rules` with 7 PII table retention policies (leads 730d anonymise, email_otps 7d delete, listing_enquiries 730d anonymise, quiz_follow_ups 180d delete, auth_attempts 90d delete, admin_login_attempts 7d delete-via-reset_at, support_messages 1095d delete). Added FORCE ROW LEVEL SECURITY + explicit service_role ALLOW policy to close SOC 2 zero-policy ambiguity. · commit `2ad7bb5` · pr #222
 - 2026-04-27 · K-13 · ESLint rule `invest/no-unsafe-inner-html` — inline plugin in `eslint.config.mjs` banning unsafe `dangerouslySetInnerHTML`; allows JSON.stringify/sanitizeHtml/renderMarkdown/string-literals only. Fixed 2 unnecessary usages in buy-property-australia-foreigner/page.tsx (p.role/p.why were plain-text hardcoded strings — replaced with `{p.role}`/`{p.why}`). Added eslint-disable-next-line with safety comments to TrackingPixels.tsx env-var template literals (FB_PIXEL_ID, GOOGLE_ADS_ID). · commit `23b7eda` · pr #222
 - 2026-04-27 · K-12 · `proxy.ts` cron bearer timing-safe comparison — `cronTokensMatch()` XOR loop replaces direct string equality; Edge-runtime compatible (no Node `crypto.timingSafeEqual`); explicit `!secret` fast-fail when `CRON_SECRET` unset. Consistent with broker-signup / partner-API pattern. · commit `79ac0aa` · pr #222
 - 2026-04-27 · K-11 · `admin_login_attempts` atomic rate-limit counter — new `admin_rate_limit_increment` PL/pgSQL function closes SELECT→UPDATE TOCTOU race; `checkRateLimit` now single-round-trip atomic; fails-open on RPC error. Noted: `UNIQUE(ip_hash)` was already present via `TEXT PRIMARY KEY`. · commit `f933d37` · pr #222
@@ -448,6 +449,20 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-27 — iteration 33 (stream K, item K-14 — retention_rules PII seed)
+
+- Phase 0: lock acquired.
+- Phase 1: local main had diverged from origin/main (50/50 commits, no common ancestor — forced update on remote). Reset local main to origin/main (remote is source of truth).
+- Phase 1.5: Types drift check — skipped (no schema changes in this window).
+- Phase 2 CI rescue: PR #220 — 3 checks (Playwright skipped, Check bypass secret success, Vercel Preview success). PR #222 — 3 checks (Playwright skipped, Check bypass secret success, Vercel Preview success). No rescue needed.
+- Phase 3: picked K-14 (next pending K item after K-13 done). Fetched and checked out `claude/audit-remediation/k-security-hardening` from remote.
+- Phase 4 verification: grepped all migrations for `retention_rules` POLICY / ENABLE / FORCE mentions. Found: RLS enabled in `20260415_wave_7_trust_ops.sql:148`; FORCE RLS not set; zero CREATE POLICY statements on this table. Verified the 5 existing seed rows (form_events, attribution_touches, analytics_events, affiliate_clicks, email_captures) in wave_7 migration. Confirmed gdpr-retention-purge cron at `app/api/cron/gdpr-retention-purge/route.ts` uses createAdminClient (service_role). Identified 7 high-PII tables needing retention rules: leads (user_email/name/phone), email_otps (auth codes), listing_enquiries (user PII), quiz_follow_ups (drip dedup), auth_attempts (email+ip_hash security log), admin_login_attempts (ip rate-limit state via reset_at), support_messages (sender_name + message text).
+- Phase 5: created `supabase/migrations/20260427_retention_rules_pii_seed.sql` (+130 lines). SQL-only — no TS files changed; tsc and lint skipped per Hardware exception.
+- Phase 6: committed `2ad7bb5` (+130 lines, 1 file). Pushed to `claude/audit-remediation/k-security-hardening` → PR #222. PR body updated (K-14 checked).
+- Phase 7: queue updated on main — K-14 marked done, In-flight table updated, Done entry prepended, this log added.
+- Next item: K-15 (CSP violation reporting: `report-to` directive + `/api/csp-report` endpoint).
+- Status: PROGRESS · stream=K · item=K-14 · pr=#222 · commit=`2ad7bb5`
 
 ### 2026-04-27 — iteration 32 (stream K, item K-13 — ESLint no-unsafe-inner-html rule)
 
