@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 import Icon from "@/components/Icon";
 
 export const revalidate = 3600;
@@ -56,7 +56,7 @@ const SERVICE_CARDS = [
 
 async function fetchSmsfArticles() {
   try {
-    const supabase = createAdminClient();
+    const supabase = await createClient();
     const { data } = await supabase
       .from("articles")
       .select("slug, title, excerpt, category, published_at")
@@ -264,6 +264,7 @@ export default async function SmsfHubPage() {
                 { title: "SMSF Property Investment", desc: "LRBA borrowing, residential vs commercial, costs and the $300K minimum balance.", href: "/smsf/property" },
                 { title: "SMSF Investment Strategy", desc: "The 5 mandatory elements, three model portfolios and Division 296 considerations.", href: "/smsf/investment-strategy" },
                 { title: "SMSF Compliance Checklist", desc: "12 setup, ongoing and review obligations — interactive tracker.", href: "/smsf/checklist" },
+                { title: "SMSF Cost Calculator", desc: "Project SMSF setup and ongoing costs against a retail super fund — see when SMSF breaks even.", href: "/smsf-calculator" },
               ].map((card) => (
                 <Link
                   key={card.href}
