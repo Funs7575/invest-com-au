@@ -110,6 +110,23 @@ export async function proxy(request: NextRequest) {
   crypto.getRandomValues(nonceBytes)
   const nonce = Buffer.from(nonceBytes).toString('base64')
 
+  // K-15 (audit 2026-04-26 §7 SEC-04 follow-up): CSP violation reporting.
+  // The Report-To header defines a named endpoint group; the `report-to`
+  // directive in the CSP tells browsers to POST violations there. Browsers
+  // send `application/reports+json` for report-to and `application/csp-report`
+  // for the legacy `report-uri` fallback — both are accepted by the endpoint.
+  // max_age=86400 (24h) so the browser re-fetches the endpoint config daily.
+  const siteOrigin = process.env.NEXT_PUBLIC_SITE_URL || 'https://invest.com.au'
+  const cspReportEndpoint = `${siteOrigin}/api/csp-report`
+  response.headers.set(
+    'Report-To',
+    JSON.stringify({
+      group: 'invest-csp',
+      max_age: 86400,
+      endpoints: [{ url: cspReportEndpoint }],
+    })
+  )
+
   const cspDirectives = [
     "default-src 'self'",
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https:`,
@@ -126,6 +143,13 @@ export async function proxy(request: NextRequest) {
     "form-action 'self'",
     "object-src 'none'",
     "upgrade-insecure-requests",
+    // Violation reporting: modern Reporting API (report-to) + legacy fallback
+    // (report-uri). Both point to /api/csp-report which persists to
+    // csp_violations for trend analysis. Legacy browsers that only understand
+    // report-uri will use the full absolute URL; modern browsers use the
+    // Report-To group name.
+    "report-to invest-csp",
+    `report-uri ${cspReportEndpoint}`,
   ]
   response.headers.set('Content-Security-Policy', cspDirectives.join('; '))
 
