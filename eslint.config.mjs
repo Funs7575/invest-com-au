@@ -52,6 +52,28 @@ const eslintConfig = [
       "eqeqeq": ["error", "smart"],
     },
   },
+  {
+    // Service-role Supabase client must not appear in public RSC routes —
+    // it bypasses RLS. Use createClient from @/lib/supabase/server (anon
+    // with cookies) for any data a logged-out visitor should see. Admin /
+    // API / account routes are exempt because they legitimately need
+    // elevated access.
+    //
+    // Set as "warn" because there is a backlog of ~17 public pages still
+    // importing the admin client (best-for, invest/funds, research,
+    // how-to/transfer-from, advisors/search, etc). Ratchet to "error"
+    // once the backlog is cleared.
+    files: ["app/**/page.tsx", "app/**/layout.tsx"],
+    ignores: ["app/admin/**", "app/api/**", "app/account/**"],
+    rules: {
+      "no-restricted-imports": ["warn", {
+        paths: [{
+          name: "@/lib/supabase/admin",
+          message: "createAdminClient bypasses RLS and must not be used in public RSC pages. Use createClient from @/lib/supabase/server instead.",
+        }],
+      }],
+    },
+  },
 ];
 
 export default eslintConfig;
