@@ -27,7 +27,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | A | _not started_ | — | — | — |
 | B | `claude/audit-remediation/b-rls-remediation` | #220 | pending — pushed 2026-04-27T06:50Z | B-06 — 2 done (`listing_enquiries` `0bb82daa`, `listing_plans` `be7bff79`) · 5 FP (forum tables) · 1 blocked (`quarterly_reports`) |
 | C | _not started_ | — | — | — |
-| D | `claude/audit-remediation/d-route-tests` | #246 | pending — pushed 2026-04-27T21:30Z | D-01 done (commit `7269510`) · D-02 done (commit `ebf2250`) · D-03 done (commit `0177aa1`) · D-04 done (commit `bea95b1`) · D-05 done (commit `e49375d`) · D-06 done (commit `c0cd3ee`) · D-07 done (commit `33230fb`) · D-08 done (commit `311df3f`) · D-09 done (commit `8e2d35d`) · D-10 done (commit `4e702c1`) · D-11 batch 1 done (commit `90c7c5b`) · D-11 batch 2 done (commit `387bcb4`) · D-11 batch 3 done (commit `db0df8d`) · D-11 batch 4 done (commit `c49e3aa`) |
+| D | `claude/audit-remediation/d-route-tests` | #246 | CI-rescue pushed 2026-04-27T21:40Z — commit `9282178` | D-01 done (commit `7269510`) · D-02 done (commit `ebf2250`) · D-03 done (commit `0177aa1`) · D-04 done (commit `bea95b1`) · D-05 done (commit `e49375d`) · D-06 done (commit `c0cd3ee`) · D-07 done (commit `33230fb`) · D-08 done (commit `311df3f`) · D-09 done (commit `8e2d35d`) · D-10 done (commit `4e702c1`) · D-11 batch 1 done (commit `90c7c5b`) · D-11 batch 2 done (commit `387bcb4`) · D-11 batch 3 done (commit `db0df8d`) · D-11 batch 4 done (commit `c49e3aa`) · CI-rescue merged main (commit `9282178`) |
 | E | _not started_ | — | — | — |
 | F | _not started_ | — | — | — |
 | G | _not started_ | — | — | — |
@@ -1032,6 +1032,15 @@ Items that ship LAST, in the final week before launch (Month 4 of pre-launch roa
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-27T21:40Z — iteration 70 (CI rescue — stream D PR #246 — merge add/add conflict)
+
+- Phase 0: lock acquired.
+- Phase 1: checked in-flight PRs via `get_check_runs`.
+- Phase 2: **CI RESCUE** — PR #246 (stream D) had `Lint · Type-check · Test · Build` failure. Diagnosed: stream D branch was 7 commits behind origin/main; PRs #264–#269 had been squash-merged into main covering the same advisor-auth routes that D-11 batch 2 added (`advisor-auth-notifications`, `advisor-auth-payment`, `advisor-auth-tier-upgrade`, `advisor-auth-topup`). Merge attempt produced add/add conflicts in those 4 files. Resolution: `git checkout --theirs` to take main's versions (more comprehensive, code-reviewed); pulled in the 7 new test files from main (`advisor-auth-data`, `advisor-auth-disputes`, `advisor-auth-firm`, `advisor-auth-firm-analytics`, `advisor-auth-firm-invite`, `advisor-auth-firm-member`, `advisor-auth-firm-seat-request`, `advisor-auth-request-review`). 131 tests pass across all 12 affected files.
+- Phase 6: committed merge as `9282178`; pushed to `origin/claude/audit-remediation/d-route-tests`.
+- Phase 7: queue updated — D in-flight row updated to CI-rescue pushed; iteration log appended.
+- STATUS: CI-RESCUE · stream=D · pr=#246
 
 ### 2026-04-27T21:30Z — iteration 69 (stream D — D-11 batch 4 — OTP + shortlist + notification-preferences)
 
