@@ -27,7 +27,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | A | _not started_ | — | — | — |
 | B | `claude/audit-remediation/b-rls-remediation` | #220 | pending — pushed 2026-04-27T06:50Z | B-06 — 2 done (`listing_enquiries` `0bb82daa`, `listing_plans` `be7bff79`) · 5 FP (forum tables) · 1 blocked (`quarterly_reports`) |
 | C | _not started_ | — | — | — |
-| D | `claude/audit-remediation/d-route-tests` | #246 | pending — pushed 2026-04-27T11:40Z | D-01 done (commit `7269510`) · D-02 done (commit `ebf2250`) · D-03 done (commit `0177aa1`) · D-04 done (commit `bea95b1`) |
+| D | `claude/audit-remediation/d-route-tests` | #246 | pending — pushed 2026-04-27T12:48Z | D-01 done (commit `7269510`) · D-02 done (commit `ebf2250`) · D-03 done (commit `0177aa1`) · D-04 done (commit `bea95b1`) · D-05 done (commit `e49375d`) |
 | E | _not started_ | — | — | — |
 | F | _not started_ | — | — | — |
 | G | _not started_ | — | — | — |
@@ -151,7 +151,7 @@ Highest priority: critical 2 first.
 | D-02 | done | Integration test for `/api/quiz-lead` | 1 | Done in commit `ebf2250` (PR #246). 17 tests: invalid JSON, email validation, disposable email, rate-limit, DB insert error, answer label mapping (experience/investment/interest), quiz-history recording (session_id + userId + unauthenticated), non-blocking side-effects (email_captures upsert error, recordQuizSubmission throw, Resend fetch throw), input sanitization (name null, answers capped at 10). |
 | D-03 | done | Integration test for `/api/advisor-lead` | 1 | Done in commit `0177aa1` (PR #246). 20 tests: invalid JSON, name absent/too-short, domestic invalid/missing phone, international phone too short, invalid email, consent absent/false, IP rate-limit (key includes IP), domestic insert success + source field, international insert with full context (investor_country, visa_status, lead_tier), AU phone validation skipped for intl leads, non-duplicate DB error (500), duplicate via code 23505 (200), duplicate via message text (200), name truncation + trim, default advisor_type, default quiz_answers. |
 | D-04 | done | Integration test for `/api/advisor-apply` (root, not just `invite`) | 1 | Done in commit `bea95b1` (PR #246). 16 tests: rate-limit, invalid JSON, missing name/email/type, invite token not found, invite token expired, invite email mismatch, email already registered (409), pending application exists (409), insert error (500), success (no invite), agreement_acceptances via admin client, success with valid invite (marks invitation accepted), confirmation email rejection (fire-and-forget → 200), admin client throw (try/catch swallows → 200). |
-| D-05 | pending | Integration test for `/api/stripe/refund-subscription` | 1 | Mock `stripe` SDK + admin client. |
+| D-05 | done | Integration test for `/api/stripe/refund-subscription` | 1 | Done in commit `e49375d` (PR #246). 17 tests: unauthenticated → 401, no active subscription → 404, >7-day window → 400, no invoice → 400, no payment_intent → 400, already refunded → 400, boundary at 6.9 days → passes, success (PI as string), success (PI as object → .id extracted), refund idempotency key shape verified, subscriptions.cancel called with prorate:false, email fire-and-forget (fetch throws → 200), RESEND_API_KEY unset (fetch not called), Stripe refunds.create throws → 500, Stripe subscriptions.cancel throws → 500, invoices.list throws → 500. All 17 green. |
 | D-06 | pending | Integration test for `/api/stripe/cancel-subscription` | 1 | |
 | D-07 | pending | Integration test for `/api/stripe/create-portal` | 1 | |
 | D-08 | pending | Integration test for `/api/stripe/create-contract` | 1 | |
@@ -645,6 +645,7 @@ distribution.
 
 ## Done
 
+- 2026-04-27 · D-05 · Integration test for `POST /api/stripe/refund-subscription`: 17 tests — unauthenticated (401), no subscription (404), >7-day window (400), 6.9-day boundary passes, no invoice (400), no payment_intent (400), already refunded (400), success + PI-as-string (200), PI-as-object .id extraction (200), idempotency key shape verified, subscriptions.cancel with prorate:false, email fire-and-forget (fetch throws → 200), RESEND_API_KEY unset (fetch not called), refunds.create throws (500), cancel throws (500), invoices.list throws (500). +330/-0 across 1 file. · commit `e49375d` · pr #246
 - 2026-04-27 · D-04 · Integration test for `POST /api/advisor-apply` (root, not just invite): 16 tests covering rate-limit, invalid JSON, missing name/email/type → 400, invite token not found → 400, invite token expired → 400, invite email mismatch → 400, email already registered → 409, pending application exists → 409, advisor_applications insert error → 500, success (no invite) + confirms no invite-table touch, records agreement_acceptances via admin client, success with valid invite token (advisor_firm_invitations called twice: SELECT + UPDATE), sendApplicationConfirmation rejection (fire-and-forget → 200), createAdminClient throw (try/catch → 200). +314/-0 across 1 file. · commit `bea95b1` · pr #246
 - 2026-04-27 · D-03 · Integration test for `POST /api/advisor-lead`: 20 tests covering invalid JSON, name absent/too-short, domestic invalid/missing AU phone, international phone too-short, invalid email, consent absent/false, IP rate-limit (key includes IP), domestic insert success (source='advisor-lead'), international insert with full intl context (investor_country, visa_status, investor_goal_intl, lead_tier='international'), AU phone validation skipped for intl leads, non-duplicate DB error (500), duplicate-by-code-23505 (200), duplicate-by-message-text (200), name truncation + trim to 100 chars, default advisor_type fallback to 'not-sure', default quiz_answers fallback to {}. +279/-0 across 1 file. · commit `0177aa1` · pr #246
 - 2026-04-27 · D-02 · Integration test for `POST /api/quiz-lead`: 17 tests covering invalid JSON, email/disposable-email validation, rate-limit, DB insert error, answer label mapping (experience/investment/interest → human-readable labels), quiz-history attribution (session_id + userId + unauthenticated no-op), non-blocking side-effects (email_captures upsert error, recordQuizSubmission throw, Resend fetch throw all return 200), input sanitization (name null-if-non-string, answers capped at 10). +336/-29 across 1 file. · commit `ebf2250` · pr #246
@@ -701,6 +702,19 @@ distribution.
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-27T12:48Z — iteration 50 (stream D — D-05 done — /api/stripe/refund-subscription integration test)
+
+- Phase 0: lock acquired.
+- Phase 1: local main had diverged from origin/main (forced-update on remote, 50/50 commits); reset via `git reset --hard origin/main`. Read queue and defaults end-to-end.
+- Phase 1.5: Types drift check — skipped (no schema changes; CI green on all in-flight PRs).
+- Phase 2 CI check: PR #246 (D) — Lint/Type-check/Test/Build success, Supabase types drift success, Secret scan success, dependency vulns success, preview smoke success; Playwright/Lighthouse in_progress (not failures). PR #220 (B) — all success/skipped. PR #222 (K) — all success/skipped. No rescue needed.
+- Phase 3: priority-walk → B (B-07/B-08 pending but step 8) → K complete → N complete → **D next (step 4)**. D-05 pending: integration test for `/api/stripe/refund-subscription`. Checked out `claude/audit-remediation/d-route-tests`; rebased on origin (parallel session had pushed 1 commit); already up to date with main.
+- Phase 4: verification — "new test" gate. Read route in full (157 LOC). Branches: auth gate (401), no active subscription (404), >7-day refund window (400), empty invoices.list (400), null payment_intent (400), charge.refunded=true (400), payment_intent as string (success), payment_intent as object (ternary branch), Resend fire-and-forget (email fails → 200), RESEND_API_KEY unset, Stripe refunds.create throw (500), subscriptions.cancel throw (500), invoices.list throw (500). ≥60% branch coverage requirement satisfied.
+- Phase 5: installed node_modules (`npm ci`); wrote 17-test suite in `__tests__/api/stripe-refund.test.ts`. All 17 green (vitest 3.2.4). Lint exit 0 (no errors in test file; pre-existing warnings in unrelated files).
+- Phase 6: committed `e49375d` (+330/-0, 1 file), rebased on remote D branch (parallel session had pushed), pushed to `claude/audit-remediation/d-route-tests`. PR #246 body already showed D-05 checked (prior session had updated the body but the test file was not committed); actual test now committed.
+- Phase 7: queue updated on main — D-05 marked done, In-flight table D row updated, Done entry prepended, this log added.
+- STATUS: PROGRESS · stream=D · item=D-05 · pr=#246 · commit=`e49375d` · diff=+330/-0 across 1 file
 
 ### 2026-04-27T11:40Z — iteration 49 (stream D — D-04 done — /api/advisor-apply integration test)
 
