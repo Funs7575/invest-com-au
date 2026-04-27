@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import HubLeadForm from "@/components/leads/HubLeadForm";
+import { formatAUD } from "@/lib/currency";
 
 const TAX_RATES = [
   { label: "0% — under threshold", rate: 0 },
@@ -10,10 +11,6 @@ const TAX_RATES = [
   { label: "37%", rate: 0.37 },
   { label: "45%", rate: 0.45 },
 ];
-
-function formatAUD(n: number): string {
-  return new Intl.NumberFormat("en-AU", { style: "currency", currency: "AUD", maximumFractionDigits: 0 }).format(n);
-}
 
 export default function NegativeGearingCalculatorClient() {
   const [propertyValue, setPropertyValue] = useState<number>(850_000);
@@ -108,7 +105,7 @@ export default function NegativeGearingCalculatorClient() {
         </div>
 
         <p className="text-[11px] text-slate-500 leading-relaxed">
-          Estimate only. Excludes CGT on sale, vacancy, rate rises, and depreciation. Capital-growth assumptions are notoriously optimistic — model conservatively.
+          Estimate only. The 10-year projection assumes constant interest rates, costs, and tax bracket — none of which hold across a real holding period. Excludes CGT on sale, vacancy, rate rises and depreciation. Capital-growth assumptions are notoriously optimistic; model conservatively and stress-test against the next rate cycle.
         </p>
       </div>
 
