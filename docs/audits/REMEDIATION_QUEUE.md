@@ -27,7 +27,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | A | _not started_ | — | — | — |
 | B | `claude/audit-remediation/b-rls-remediation` | #220 | pending — pushed 2026-04-27T06:50Z | B-06 — 2 done (`listing_enquiries` `0bb82daa`, `listing_plans` `be7bff79`) · 5 FP (forum tables) · 1 blocked (`quarterly_reports`) |
 | C | _not started_ | — | — | — |
-| D | `claude/audit-remediation/d-route-tests` | #246 | pending — pushed 2026-04-27T17:45Z | D-01 done (commit `7269510`) · D-02 done (commit `ebf2250`) · D-03 done (commit `0177aa1`) · D-04 done (commit `bea95b1`) · D-05 done (commit `e49375d`) · D-06 done (commit `c0cd3ee`) · D-07 done (commit `33230fb`) · D-08 done (commit `311df3f`) · D-09 done (commit `8e2d35d`) · D-10 done (commit `4e702c1`) · D-11 batch 1 done (commit `90c7c5b`) |
+| D | `claude/audit-remediation/d-route-tests` | #246 | pending — pushed 2026-04-27T20:33Z | D-01 done (commit `7269510`) · D-02 done (commit `ebf2250`) · D-03 done (commit `0177aa1`) · D-04 done (commit `bea95b1`) · D-05 done (commit `e49375d`) · D-06 done (commit `c0cd3ee`) · D-07 done (commit `33230fb`) · D-08 done (commit `311df3f`) · D-09 done (commit `8e2d35d`) · D-10 done (commit `4e702c1`) · D-11 batch 1 done (commit `90c7c5b`) · D-11 batch 2 done (commit `387bcb4`) |
 | E | _not started_ | — | — | — |
 | F | _not started_ | — | — | — |
 | G | _not started_ | — | — | — |
@@ -963,6 +963,7 @@ Items that ship LAST, in the final week before launch (Month 4 of pre-launch roa
 
 ## Done
 
+- 2026-04-27 · D-11 batch 2 · advisor-auth financial+auth routes — 47 tests across 5 route files: `advisor-auth/payment` (12 tests: 401 no-cookie, 401 bad-session, 400 invalid-JSON, 400 missing-advisor_id, 400 invalid-credit_pack, 403 id-mismatch, 404 not-found, 403 suspended, 503 Stripe-not-configured, 200 existing-customer, 200 new-customer-created, 500 Stripe-throws), `advisor-auth/tier-upgrade` (10 tests: 401 no-cookie, 401 bad-session, 400 missing-tier, 400 unknown-tier, 404 no-advisor, 200 same-tier-noop, 200 downgrade-DB+email+audit, 200 no-Stripe-key, 200 checkout-success, 500 Stripe-throws), `advisor-auth/topup` POST (9 tests: 429 rate-limited, 401 not-authenticated, 400 < $50, 400 > $2000, 404 pro-not-found, 503 Stripe-not-configured, 200 pack-based, 200 custom-amount, 200 new-customer-created), `advisor-auth/topup` GET (2 tests: 401, 200 balance+history), `advisor-auth/verify` (6 tests: 400, 401, 401-already-used, 401-expired, 200+HttpOnly-cookie, 500), `advisor-auth/request-review` (8 tests: 401, 400, 400-string-id, 404, 400-not-converted, 409, 500, 200) · commit `387bcb4` · pr #246
 - 2026-04-27 · V-NEW-06 · AI cost caps — per-IP and per-admin-email daily budgets ($5/$50 per-user, $200/$100 global), integer-micro ledger (`ai_token_usage` table with `subject_id, subject_type, route, day, tokens_in, tokens_out, cost_usd_micros, request_count, alerted_80_at`), 80% one-shot alert via `OPS_ALERT_EMAIL`, `site_settings.ai_cost_caps_disabled` override switch with 30s cache, `Retry-After` UTC-midnight header on 429s. 27 tests (22 caps + 5 alerts). Both routes wired: concierge (IP-keyed) + admin/ai-chat (email-keyed). `docs/ops/ai-cost-caps.md` runbook. · commit `a7bd736` · pr #258
 - 2026-04-27 · Y-08 · Dated strings CI gate — `scripts/check-dated-strings.mjs` fails build when a .tsx file added or modified in a PR contains a bare spelled-out date ("30 April 2026") not wrapped in `<DatedStatBadge>`. ±5-line window check covers multiline badge usage. `// dated-ok` line-level escape for genuinely static dates; `// dated-strings-exempt` file-level escape for DB-rendered dates. 33 tests (extractDateMatches 9 cases, isInDatedBadgeContext 7 cases, hasEscapeHatch 4 cases, isExemptFile 9 cases, isFileExemptByContent 4 cases). `dated-strings-gate` CI job + `npm run audit:dated-strings` local script. Gate validates clean on existing DatedStatBadge component source. Slot 2 enforcement complete (component + cron + gate all landed). · commit `8bb1d4d` · pr #253
 - 2026-04-27 · V-NEW-07b · Admin MFA UI + proxy gate + recovery-code download + rollout doc. `lib/admin-mfa-cookie-edge.ts` — Edge-compatible HMAC verifier (crypto.subtle). `proxy.ts` — gate: authenticated admins without valid `admin_mfa_verified` cookie redirected to `/admin/mfa/verify` (exempt: login, verify, settings/mfa; dev fallthrough). `app/admin/mfa/verify/page.tsx` + `MfaVerifyClient.tsx` — TOTP/recovery-code step-up page. `MfaEnrollmentClient.tsx` — Download (.txt) button. `docs/ops/admin-mfa-rollout.md` — pre-deploy checklist. 10 edge-verifier tests. 605 LOC. **Pre-deploy: `ADMIN_MFA_COOKIE_SECRET` ≥32 chars must be set in Vercel before merging.** · commit `698bbae` · pr #256
@@ -1030,6 +1031,19 @@ Items that ship LAST, in the final week before launch (Month 4 of pre-launch roa
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-27T20:33Z — iteration 67 (stream D — D-11 batch 2 — advisor-auth financial+auth routes)
+
+- Phase 0: lock acquired.
+- Phase 1: local main had diverged from origin/main (force-pushed); reset local to origin/main. Read queue + defaults end-to-end.
+- Phase 1.5: types-drift skipped (no Supabase MCP available).
+- Phase 2: CI rescue scan — checked all in-flight PRs. No CI failures; no rescue needed.
+- Phase 3: priority walk — V-NEW-01/02 blocked (user must clear). V-NEW-03/04/06/07 done. Slot 6: stream D — D-11 ongoing backfill, batch 2. Checked out `claude/audit-remediation/d-route-tests`. Installed npm deps (fresh session, node_modules absent).
+- Phase 4: verified 5 target routes — `advisor-auth/payment` (186 LOC), `advisor-auth/tier-upgrade` (184 LOC), `advisor-auth/topup` (177 LOC, dual-auth helper), `advisor-auth/verify` (70 LOC), `advisor-auth/request-review` (88 LOC). All verified as Route Handlers with testable handler logic. Mock patterns: `advisor_sessions` cookie chain, Stripe dynamic import, `process.env` save/restore for STRIPE_SECRET_KEY, Promise.all parallel DB mock ordering.
+- Phase 5: created 4 test files (+897/-0 LOC): `advisor-auth-payment.test.ts` (12 tests), `advisor-auth-tier-upgrade.test.ts` (10 tests), `advisor-auth-topup.test.ts` (11 tests), `advisor-auth-verify-review.test.ts` (14 tests). 47 tests total — all pass. Lint clean. Hardware exception: whole-codebase tsc skipped; CI is authoritative.
+- Phase 6: committed `387bcb4` with full Why/Verified/Idempotency/Rollback body. Pushed to origin. Updated PR #246 body (D-11 batch 2 checked off).
+- Phase 7: queue updated on main — D row in-flight table updated, Done entry prepended, iteration log appended.
+- Status: PROGRESS · stream=D · item=D-11 batch 2 · pr=#246
 
 ### 2026-04-27T19:30Z — iteration 66 (stream V — V-NEW-06 — AI cost caps — queue housekeeping)
 
