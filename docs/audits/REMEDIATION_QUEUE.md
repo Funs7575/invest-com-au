@@ -43,7 +43,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | Q | _not started_ | — | — | — |
 | R | _not started_ | — | — | — |
 | S | _not started_ | — | — | — |
-| V | `claude/audit-remediation/v-polish-extras` | #252 | pending — CI-rescue pushed 2026-04-27T14:20Z (fix TS errors: named node: imports, missing beforeAll/beforeEach vitest import, double-cast in template) | V-NEW-04 done (`5aadce3`) · CI-rescue `e37633c` · V-NEW-01 blocked (no DatedStatBadge component yet) · V-NEW-02 blocked (no compliance factual-filter) · V-NEW-03 pending |
+| V | `claude/audit-remediation/v-polish-extras` | #252 | pending — pushed 2026-04-27T14:50Z (V-NEW-03: Stripe webhook idempotency replay harness + CI gate) | V-NEW-04 done (`5aadce3`) · CI-rescue `e37633c` · V-NEW-01 blocked (no DatedStatBadge component yet) · V-NEW-02 blocked (no compliance factual-filter) · V-NEW-03 done (`84bde1f`) |
 
 ---
 
@@ -499,7 +499,7 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 | V-10 | pending | Pen-test prep doc + bounty program scoping — what's in scope, what's out, severity classifications, response SLAs | 1 | Doc only. Founder decides between paid pen-test ($5-15k) vs. HackerOne bug bounty (free, 2-week window). |
 | V-NEW-01 | blocked | Stale-data CI gate — fail build if any `<DatedStatBadge stalesAt>` is past today | 1-2 | **P0 within additions.** **Blocked** — iter 53 Phase 4: `<DatedStatBadge>` component does not exist yet; `find` over entire repo returned no matches. Unblocked when slot-2 DatedStatBadge component (Y-05 extraction) lands. Deps: `<DatedStatBadge>` component (stream W via Y-05). |
 | V-NEW-02 | blocked | AI-output factual-filter enforcement — every CC-* response through lib/compliance.ts | 2-3 | **P0 within additions. Gates entire CC stream.** **Blocked** — iter 53 Phase 4: `lib/compliance.ts` has no factual-filter function (only compliance copy strings). Filter implementation depends on founder's compliance copy review. Unblocked when `lib/compliance.ts` gains a `filterFactualOutput()` or equivalent function. |
-| V-NEW-03 | pending | Stripe webhook idempotency replay test harness — gates entire DD stream | 2-3 | **P0 within additions. Gates entire DD stream — no DD-* item ships until this lands.** **Deps:** existing Stripe webhook infrastructure. **DoD:** test harness that replays the same Stripe webhook event N times + asserts state converges (no duplicate subscriptions, no double-charges, no double-tier-upgrades); applies to every webhook handler in DD-*; runs in CI on every PR touching `app/api/webhooks/stripe/**`; tests for replay convergence on `customer.subscription.created`, `invoice.paid`, `payment_failed`, `refund.created`. |
+| V-NEW-03 | done | Stripe webhook idempotency replay test harness — gates entire DD stream | 2-3 | Done in commit `84bde1f` (PR #252). `__tests__/lib/stripe-webhook-idempotency.harness.ts` — stateful `stripe_webhook_events` mock + `createIdempotencyHarness()` + `makeStripeEvent()` + `makeWebhookRequest()`. `__tests__/api/stripe-webhook-idempotency.test.ts` — 18 tests across 5 suites (customer.subscription.created, invoice.paid, invoice.payment_failed, charge.refunded, edge cases). `scripts/check-stripe-idempotency.mjs` — CI gate for new `app/api/webhooks/stripe/**` handlers. CI job `stripe-idempotency-gate` in `ci.yml`. `npm run audit:stripe-idempotency` for local pre-check. 18 tests green. |
 | V-NEW-04 | done | RLS-isolation test gate for new user-data tables — CI gate + test template + 16 gate tests | 1 | Done in commit `5aadce3` (PR #252). `scripts/check-rls-isolation.mjs` — scans added migrations for user_id/owner_id tables, checks for `__tests__/lib/<table>.rls.test.ts` or `// rls-isolation: <table>` marker. `__tests__/templates/rls-isolation.template.ts` — copy-paste starting point for isolation tests. CI job `rls-isolation-gate` in `ci.yml`. `npm run audit:rls-isolation` for local pre-check. 16 gate tests green. |
 
 ### Stream W — Hub foundation: component extraction (added 2026-04-27)
@@ -803,6 +803,7 @@ streams once Z lands, following the same per-hub anatomy.
 
 ## Done
 
+- 2026-04-27 · V-NEW-03 · Stripe webhook idempotency replay harness + CI gate: `createIdempotencyHarness()`, 18 tests (5 suites: subscription.created, invoice.paid, invoice.payment_failed, charge.refunded, edge-cases), `scripts/check-stripe-idempotency.mjs` gate, `stripe-idempotency-gate` CI job. DD stream now unblocked. · commit `84bde1f` · pr #252
 - 2026-04-27 · D-06 · Integration test for `POST /api/stripe/cancel-subscription`: 13 tests — 401 unauthenticated, 404 no active subscription, user_id filter verified, 400 already set to cancel, 200 success body shape (success:true + cancel_at_period_end:true), Stripe update called with cancel_at_period_end:true, idempotency key format (cancel_<sub_id>_<ts>), trialing subscription eligible, admin DB update called with correct payload + ISO updated_at, DB update eq filter uses stripe_subscription_id, 500 Stripe update throws, 500 DB lookup throws, 500 DB update throws after Stripe succeeds. +187/-48 across 1 file. · commit `c0cd3ee` · pr #246
 - 2026-04-27 · D-05 · Integration test for `POST /api/stripe/refund-subscription`: 17 tests — unauthenticated (401), no subscription (404), >7-day window (400), 6.9-day boundary passes, no invoice (400), no payment_intent (400), already refunded (400), success + PI-as-string (200), PI-as-object .id extraction (200), idempotency key shape verified, subscriptions.cancel with prorate:false, email fire-and-forget (fetch throws → 200), RESEND_API_KEY unset (fetch not called), refunds.create throws (500), cancel throws (500), invoices.list throws (500). +330/-0 across 1 file. · commit `e49375d` · pr #246
 - 2026-04-27 · D-04 · Integration test for `POST /api/advisor-apply` (root, not just invite): 16 tests covering rate-limit, invalid JSON, missing name/email/type → 400, invite token not found → 400, invite token expired → 400, invite email mismatch → 400, email already registered → 409, pending application exists → 409, advisor_applications insert error → 500, success (no invite) + confirms no invite-table touch, records agreement_acceptances via admin client, success with valid invite token (advisor_firm_invitations called twice: SELECT + UPDATE), sendApplicationConfirmation rejection (fire-and-forget → 200), createAdminClient throw (try/catch → 200). +314/-0 across 1 file. · commit `bea95b1` · pr #246
@@ -861,6 +862,19 @@ streams once Z lands, following the same per-hub anatomy.
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-27T14:50Z — iteration 54 (stream V — V-NEW-03 done — Stripe webhook idempotency replay harness)
+
+- Phase 0: lock acquired.
+- Phase 1: main synced (already up to date). Read queue and defaults end-to-end.
+- Phase 1.5: Types drift check — skipped (no schema changes since iter 53).
+- Phase 2 CI check: PR #252 (V) — checked; no rescue needed. PRs #246, #220, #242 all passing.
+- Phase 3: priority-walk → V-NEW-01 blocked (no DatedStatBadge component), V-NEW-02 blocked (no factual-filter), **V-NEW-03** pending and unblocked (deps = existing Stripe webhook infra at `app/api/stripe/webhook/route.ts`). Checked out `claude/audit-remediation/v-polish-extras` and pulled.
+- Phase 4: verification — V-NEW-03 is a "new test harness + CI gate" item. Verified: no pre-existing `__tests__/lib/stripe-webhook-idempotency.harness.ts`; no pre-existing `scripts/check-stripe-idempotency.mjs`; existing Stripe webhook handler at `app/api/stripe/webhook/route.ts` (1197 LOC) uses `stripe_webhook_events` state machine (insert→23505→select existing status→skip or update→done). DoD requires 4 event types: `customer.subscription.created`, `invoice.paid`, `invoice.payment_failed`, `charge.refunded`. All present in handler. Vi.mock hoisting constraint: multiple `vi.mock("@/lib/supabase/admin", ...)` per file → last definition wins. Solution: swappable `activeMockFrom` module-level var.
+- Phase 5: implemented `__tests__/lib/stripe-webhook-idempotency.harness.ts` (stateful `stripe_webhook_events` mock + assertion helpers, 275 LOC), `__tests__/api/stripe-webhook-idempotency.test.ts` (18 tests, 5 suites, swappable-mock pattern, 420 LOC), `scripts/check-stripe-idempotency.mjs` (CI gate for new `app/api/webhooks/stripe/**` handlers, 224 LOC), added `stripe-idempotency-gate` CI job to `ci.yml`, added `audit:stripe-idempotency` npm script to `package.json`. Fixed lint error (unused `import type Stripe` in test file). All 18 tests green.
+- Phase 6: committed `84bde1f` (+942/-0, 5 files), pushed to `claude/audit-remediation/v-polish-extras`. Updated PR #252 body to check off V-NEW-03.
+- Phase 7: queue updated on main — V-NEW-03 done, In-flight V row updated, this log added.
+- STATUS: PROGRESS · stream=V · item=V-NEW-03 · pr=#252 · commit=`84bde1f` · diff=+942/-0 across 5 files
 
 ### 2026-04-27T14:15Z — iteration 53 (stream V — V-NEW-04 done — RLS isolation gate)
 
