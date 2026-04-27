@@ -37,7 +37,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-27T05:35Z | K-01..K-08 done; K-09 false-positive; K-10..K-15 done — **stream complete** |
 | L | _not started_ | — | — | — |
 | M | _not started_ | — | — | — |
-| N | `claude/audit-remediation/n-ux-perf` | #242 | pending — pushed 2026-04-27T11:30Z | N-01+N-02 done (`2ec6f89`) · N-03a done (`36e3f6d`) · N-03b done (`97bb9b00`) · N-03c done (`b29f443`) · N-04 FP · N-05 FP · N-06 blocked · N-07 batch 1 done (`2e5d8a4`) · N-07 batch 2 done (`91d0d42`) · N-08 done (`315d3b7`) |
+| N | `claude/audit-remediation/n-ux-perf` | #242 | pending — pushed 2026-04-27T12:00Z | N-01+N-02 done (`2ec6f89`) · N-03a done (`36e3f6d`) · N-03b done (`97bb9b00`) · N-03c done (`b29f443`) · N-04 FP · N-05 FP · N-06 blocked · N-07 batch 1 done (`2e5d8a4`) · N-07 batch 2 done (`91d0d42`) · N-08 done (`315d3b7`) · N-09 done (`3b43bf8`) |
 | O | `claude/audit-remediation/o-rls-no-policy` | _opening_ | pending — pushed 2026-04-26 | O-01 — 3 done (`user_notifications`, `user_quiz_history`, `user_bookmarks`); ~13 user-data tables left |
 | P | _not started_ | — | — | — |
 | Q | _not started_ | — | — | — |
@@ -334,7 +334,7 @@ Image perf, accessibility, client-bundle size.
 | N-06 | blocked | Convert `public/logos/*.ico` → `.svg` where possible (73 files; batch script) | ~2 | P2. **Blocked** — see Blocked entry N-06-ICO-SVG-1 below. ICO files are rasterised; sourcing vector SVGs requires human curation or a brand-logo API (Clearbit / Brandfetch); the `logo_url` DB column also needs updating per file. |
 | N-07 | done | Replace arbitrary px literals with Tailwind scale tokens | 2 | P2. **Done.** Batch 1 (iter 40, commit `2e5d8a4`): 91 replacements across 40 files. Batch 2 (iter 41, commit `91d0d42`): 99 replacements across 58 files covering off-grid values and high-frequency dimension classes. 190 total replacements; all pixel-identical in Tailwind v4. |
 | N-08 | done | Replace 16 hardcoded color hex values in chart/SVG components with Tailwind tokens | 1 | P2. commit `315d3b7` pr #242. Structural SVG fills/strokes → `className="fill-slate-N"` / `className="stroke-slate-N"`; data-palette arrays annotated with Tailwind token names. |
-| N-09 | pending | `app/quiz/page.tsx` (796 LOC) — assess client/server boundary; if client-rendered, prefetch quiz data via Edge Function | 1 | P1. |
+| N-09 | done | `app/quiz/page.tsx` client/server boundary — was fully client-rendered; moved broker+quiz_weights fetch to Edge route `GET /api/quiz/data` with CDN cache (60s/300s SWR) | 1 | P1. commit `3b43bf8` pr #242. |
 | N-10 | pending | Backfill `placeholder="blur"` on hot-path next/image usages: article hero, advisor profile photo, broker logo | 1 | P1. Currently 0/61 images use blur. |
 | N-11 | pending | Audit + convert remaining 9 raw `<img>` tags (excluding `BrokerLogo` ICO intentional case) to `next/image` where safe | 1 | P3. |
 
@@ -457,6 +457,7 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 
 ## Done
 
+- 2026-04-27 · N-09 · Quiz page client/server boundary: confirmed `app/quiz/page.tsx` is fully client-rendered (`"use client"`). Created `GET /api/quiz/data` Edge route — parallel-fetches `brokers` (active, rated desc) + `quiz_weights` from Supabase anon key; returns JSON with `Cache-Control: public, max-age=60, stale-while-revalidate=300`. Updated quiz page to fetch from this route instead of calling Supabase browser client directly. Eliminates client→Supabase waterfall; CDN/browser caches shared quiz data for 60 s. Fallback scores path unchanged. +88/-31 across 2 files. · commit `3b43bf8` · pr #242
 - 2026-04-27 · N-08 · Replace 16 hardcoded hex values in chart/SVG components with Tailwind tokens. Structural SVG `fill`/`stroke` attributes (`#64748b`, `#f1f5f9`, `#334155`, `#e2e8f0`, `#94a3b8`, `#1e293b`, `#ef4444`) across SVGBarChart, SVGLineChart, SVGDonutChart, SVGFunnel replaced with `className="fill-slate-N"` / `className="stroke-slate-N"` Tailwind utilities (CSS properties override SVG presentation attributes in all modern browsers). Default color props (`color = "#16a34a"`, `#3b82f6`) and data-palette arrays (DEFAULT_COLORS, DEFAULT_FUNNEL_COLORS) annotated with Tailwind token equivalents. 30 additions / 23 deletions, 5 files. · commit `315d3b7` · pr #242
 - 2026-04-27 · N-07 batch 2 · Replace off-grid + high-frequency arbitrary px literals with Tailwind v4 scale tokens: `min-h-[48px]`→`min-h-12` (27), `min-h-[36px]`→`min-h-9` (9), `min-h-[40px]`→`min-h-10` (6), `min-h-[52px]`→`min-h-13` (4), `min-h-[60px]`→`min-h-15` (2), `min-h-[120px]`→`min-h-30` (2), `min-h-[200px]`→`min-h-50` (3), `max-w-[200px]`→`max-w-50` (13), `max-w-[180px]`→`max-w-45` (8), `max-w-[220px]`→`max-w-55` (5), `min-w-[18px]`→`min-w-4.5` (4), `min-w-[140px]`→`min-w-35` (3), `min-w-[560px]`→`min-w-140` (1), `h-[80px]`→`h-20` (3), `h-[60px]`→`h-15` (3), `w-[80px]`→`w-20` (3), `w-[200px]`→`w-50` (1), `w-[60px]`→`w-15` (3), and others. 99 total replacements, 58 files, pixel-identical CSS output. · commit `91d0d42` · pr #242
 - 2026-04-27 · N-07 batch 1 · Replace exact-match arbitrary Tailwind px literals with scale tokens: `min-w-[44px]`→`min-w-11`, `min-h-[44px]`→`min-h-11`, `min-w-[240px]`→`min-w-60`, `max-w-[160px]`→`max-w-40`. 91 in-place replacements across 40 files; pixel-identical CSS output (Tailwind v4 `--spacing=0.25rem` scale). Off-grid values (`[18px]`, `[140px]`, `[200px]`, `[560px]`) deferred to N-07 batch 2. · commit `2e5d8a4` · pr #242
@@ -506,6 +507,20 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-27T12:00Z — iteration 43 (stream N — N-09 done)
+
+- Phase 0: lock acquired.
+- Phase 1: local main had diverged from origin/main (50/50 commits); reset via `git reset --hard origin/main`. Then `git pull --ff-only` pulled iter 42's queue update (`15df374`) — that commit had been stranded on the N branch but origin/main was updated by a parallel session. Read queue and defaults end-to-end.
+- Phase 1.5: Types drift check — Supabase types drift CI check on PR #242 passed (success) — skip regen.
+- Phase 2 CI rescue: PR #220 — all checks success/skipped. PR #222 — all checks success/skipped. PR #242 — checks in_progress (Lint/Type-check/Test/Build, Bundle size, Preview smoke); completed checks all success. No rescue needed.
+- Phase 3 pick: Stream N (step 3 in priority order), N-09 (first pending item; N-08 confirmed done on main). Checked out `claude/audit-remediation/n-ux-perf` from origin (branch already tracked remote). Previous iter 42 stranded queue commit resolved — main now correct.
+- Phase 4 verification: `app/quiz/page.tsx` line 1 is `"use client"` — confirmed fully client-rendered. Sole Supabase usage is in a `useEffect` at lines ~440-470: `createClient()` (browser client) fetching `brokers` + `quiz_weights`. Both are public-read tables. Fallback scores const handles fetch failures. No admin-scope issue.
+- Phase 5: Created `app/api/quiz/data/route.ts` (55 LOC, Edge runtime): uses `@supabase/supabase-js` directly (not `@supabase/ssr`) to avoid Next.js cookies dependency; anon key; `Cache-Control: public, max-age=60, stale-while-revalidate=300`. Updated `app/quiz/page.tsx`: removed `import { createClient } from "@/lib/supabase/client"`; replaced useEffect Supabase calls with `fetch("/api/quiz/data")`. Fallback error path preserved. Local gate: file-targeted tsc shows only pre-existing TS2307/TS17004/TS2591 sandbox module-resolution errors (Hardware exception applies). No test files changed.
+- Phase 6: committed `3b43bf8` (+88/-31, 2 files). Pushed to `claude/audit-remediation/n-ux-perf`. PR #242 body updated (N-09 checked).
+- Phase 7: queue updated on main — N-09 marked done, In-flight table updated (N row), Done entry prepended, this log added.
+- Status: PROGRESS · stream=N · item=N-09 · pr=#242 · commit=`3b43bf8` · diff=+88/-31 across 2 files
+- Next item: N-10 (backfill `placeholder="blur"` on article hero + advisor profile photo + broker logo).
 
 ### 2026-04-27T11:30Z — iteration 42 (stream N — N-08 done)
 
