@@ -37,7 +37,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-27T05:35Z | K-01..K-08 done; K-09 false-positive; K-10..K-15 done — **stream complete** |
 | L | _not started_ | — | — | — |
 | M | _not started_ | — | — | — |
-| N | `claude/audit-remediation/n-ux-perf` | #242 | pending — pushed 2026-04-27T11:00Z | N-01+N-02 done (`2ec6f89`) · N-03a done (`36e3f6d`) · N-03b done (`97bb9b00`) · N-03c done (`b29f443`) · N-04 FP · N-05 FP · N-06 blocked · N-07 batch 1 done (`2e5d8a4`) · N-07 batch 2 done (`91d0d42`) |
+| N | `claude/audit-remediation/n-ux-perf` | #242 | pending — pushed 2026-04-27T11:30Z | N-01+N-02 done (`2ec6f89`) · N-03a done (`36e3f6d`) · N-03b done (`97bb9b00`) · N-03c done (`b29f443`) · N-04 FP · N-05 FP · N-06 blocked · N-07 batch 1 done (`2e5d8a4`) · N-07 batch 2 done (`91d0d42`) · N-08 done (`315d3b7`) |
 | O | `claude/audit-remediation/o-rls-no-policy` | _opening_ | pending — pushed 2026-04-26 | O-01 — 3 done (`user_notifications`, `user_quiz_history`, `user_bookmarks`); ~13 user-data tables left |
 | P | _not started_ | — | — | — |
 | Q | _not started_ | — | — | — |
@@ -333,7 +333,7 @@ Image perf, accessibility, client-bundle size.
 | N-05 | false-positive | ~~Sweep icon-only buttons missing `aria-label` (`CollapsibleSection`, `InfoTip`, `AdminHelpPanel`, `AdminNotifications`, `BottomSheet`, `OnThisPage`)~~ | — | P1. **All 6 components already have proper labels.** `InfoTip`: `aria-label="More info"`. `AdminHelpPanel`: dynamic `aria-label={open ? "Close help" : "Help for this page"}`. `AdminNotifications`: `aria-label="Notifications"`. `BottomSheet`: `aria-label="Close"`. `OnThisPage`: `aria-label="Close navigation"` + text. `CollapsibleSection`: buttons have visible text ("Show less" / "Show all N items"). Verified iter 40. |
 | N-06 | blocked | Convert `public/logos/*.ico` → `.svg` where possible (73 files; batch script) | ~2 | P2. **Blocked** — see Blocked entry N-06-ICO-SVG-1 below. ICO files are rasterised; sourcing vector SVGs requires human curation or a brand-logo API (Clearbit / Brandfetch); the `logo_url` DB column also needs updating per file. |
 | N-07 | done | Replace arbitrary px literals with Tailwind scale tokens | 2 | P2. **Done.** Batch 1 (iter 40, commit `2e5d8a4`): 91 replacements across 40 files. Batch 2 (iter 41, commit `91d0d42`): 99 replacements across 58 files covering off-grid values and high-frequency dimension classes. 190 total replacements; all pixel-identical in Tailwind v4. |
-| N-08 | pending | Replace 16 hardcoded color hex values in chart/SVG components with Tailwind tokens | 1 | P2. |
+| N-08 | done | Replace 16 hardcoded color hex values in chart/SVG components with Tailwind tokens | 1 | P2. commit `315d3b7` pr #242. Structural SVG fills/strokes → `className="fill-slate-N"` / `className="stroke-slate-N"`; data-palette arrays annotated with Tailwind token names. |
 | N-09 | pending | `app/quiz/page.tsx` (796 LOC) — assess client/server boundary; if client-rendered, prefetch quiz data via Edge Function | 1 | P1. |
 | N-10 | pending | Backfill `placeholder="blur"` on hot-path next/image usages: article hero, advisor profile photo, broker logo | 1 | P1. Currently 0/61 images use blur. |
 | N-11 | pending | Audit + convert remaining 9 raw `<img>` tags (excluding `BrokerLogo` ICO intentional case) to `next/image` where safe | 1 | P3. |
@@ -457,6 +457,7 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 
 ## Done
 
+- 2026-04-27 · N-08 · Replace 16 hardcoded hex values in chart/SVG components with Tailwind tokens. Structural SVG `fill`/`stroke` attributes (`#64748b`, `#f1f5f9`, `#334155`, `#e2e8f0`, `#94a3b8`, `#1e293b`, `#ef4444`) across SVGBarChart, SVGLineChart, SVGDonutChart, SVGFunnel replaced with `className="fill-slate-N"` / `className="stroke-slate-N"` Tailwind utilities (CSS properties override SVG presentation attributes in all modern browsers). Default color props (`color = "#16a34a"`, `#3b82f6`) and data-palette arrays (DEFAULT_COLORS, DEFAULT_FUNNEL_COLORS) annotated with Tailwind token equivalents. 30 additions / 23 deletions, 5 files. · commit `315d3b7` · pr #242
 - 2026-04-27 · N-07 batch 2 · Replace off-grid + high-frequency arbitrary px literals with Tailwind v4 scale tokens: `min-h-[48px]`→`min-h-12` (27), `min-h-[36px]`→`min-h-9` (9), `min-h-[40px]`→`min-h-10` (6), `min-h-[52px]`→`min-h-13` (4), `min-h-[60px]`→`min-h-15` (2), `min-h-[120px]`→`min-h-30` (2), `min-h-[200px]`→`min-h-50` (3), `max-w-[200px]`→`max-w-50` (13), `max-w-[180px]`→`max-w-45` (8), `max-w-[220px]`→`max-w-55` (5), `min-w-[18px]`→`min-w-4.5` (4), `min-w-[140px]`→`min-w-35` (3), `min-w-[560px]`→`min-w-140` (1), `h-[80px]`→`h-20` (3), `h-[60px]`→`h-15` (3), `w-[80px]`→`w-20` (3), `w-[200px]`→`w-50` (1), `w-[60px]`→`w-15` (3), and others. 99 total replacements, 58 files, pixel-identical CSS output. · commit `91d0d42` · pr #242
 - 2026-04-27 · N-07 batch 1 · Replace exact-match arbitrary Tailwind px literals with scale tokens: `min-w-[44px]`→`min-w-11`, `min-h-[44px]`→`min-h-11`, `min-w-[240px]`→`min-w-60`, `max-w-[160px]`→`max-w-40`. 91 in-place replacements across 40 files; pixel-identical CSS output (Tailwind v4 `--spacing=0.25rem` scale). Off-grid values (`[18px]`, `[140px]`, `[200px]`, `[560px]`) deferred to N-07 batch 2. · commit `2e5d8a4` · pr #242
 - 2026-04-27 · N-03c · Extract `ProfileTab`, `BillingTab`, `SettingsTab`, `TeamTab` from `app/advisor-portal/page.tsx` with `next/dynamic` lazy imports. All tab-specific state internalized into child components: `savingProfile`/`profileSaved`/`saveProfile()` → `ProfileTab`; `topupHistory` + mount-fetch → `BillingTab`; `notifPrefs`/`savingNotifs`/`notifSaved`/`saveNotifPrefs()` + mount-fetch → `SettingsTab`; all firm state (members, invites, details, analytics, sub-tabs, invite flow, seat-request) + `loadFirmData` mount-fetch → `TeamTab`. page.tsx 1,847 → 805 LOC. · commit `b29f443` · pr #242
@@ -505,6 +506,20 @@ Lowest priority — runs after everything else lands. The "we want zero loose en
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-27T11:30Z — iteration 42 (stream N — N-08 done)
+
+- Phase 0: lock acquired.
+- Phase 1: local main had diverged from origin/main (50/50 commits — two parallel sessions); reset via `git reset --hard origin/main`. Read queue and defaults end-to-end.
+- Phase 1.5: Types drift check — skipped (no schema changes in this window).
+- Phase 2 CI rescue: PR #220 — all checks success/skipped. PR #222 — all checks success/skipped. PR #242 — all checks success/skipped. No rescue needed.
+- Phase 3 pick: Stream N (step 3 in priority order), N-08 (first pending item after N-07 done). Checked out `claude/audit-remediation/n-ux-perf` from origin; merge origin/main — already up to date.
+- Phase 4 verification: N-08 is a pure attribute + className change — no deletion or refactor gate needed. Audited all hex `fill`/`stroke` attributes across the 5 core chart files: SVGBarChart (3 structural), SVGLineChart (3 structural), SVGDonutChart (2 structural), SVGFunnel (3 structural + 1 fallback comment), Sparkline (1 default prop comment). Confirmed Tailwind v4 generates `fill-slate-N` / `stroke-slate-N` utilities as CSS properties — these override SVG presentation attributes in all modern browsers. Verified no callers pass conflicting `className` to chart root SVG (they pass only the `color` or `data` props).
+- Phase 5: Replaced 11 structural SVG `fill`/`stroke` hex attributes with Tailwind className utilities; annotated 5 default/palette hex values with token names. Diff: +30/-23 across 5 files. Local gate: file-targeted `tsc --ignoreConfig` produced only pre-existing TS7026/TS2875 sandbox module-resolution errors (Hardware exception applies; same pattern as all prior N iterations). No test files changed.
+- Phase 6: committed `315d3b7` (+30/-23 across 5 files). Pushed to `claude/audit-remediation/n-ux-perf`. PR #242 body updated (N-08 checked).
+- Phase 7: queue updated on main — N-08 marked done, In-flight table updated, Done entry prepended, this log added.
+- Status: PROGRESS · stream=N · item=N-08 · pr=#242 · commit=`315d3b7` · diff=+30/-23 across 5 files
+- Next item: N-09 (`app/quiz/page.tsx` client/server boundary assessment, P1).
 
 ### 2026-04-27T11:00Z — iteration 41 (stream N — N-07 batch 2 done)
 
