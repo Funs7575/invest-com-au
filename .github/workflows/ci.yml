@@ -308,6 +308,23 @@ jobs:
           GITHUB_BASE_REF: ${{ github.base_ref }}
         run: node scripts/check-rls-isolation.mjs
 
+  stale-dated-stats-gate:
+    name: Stale dated-stats gate (DatedStatBadge stalesAt)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    # Why this exists (V-NEW-01): any <DatedStatBadge stalesAt="…"> whose date
+    # is in the past means a dated claim on a hub page has expired without being
+    # updated — users see incorrect (outdated) stats in production.  This gate
+    # scans every .tsx file in the repo so stale badges can never ship silently.
+    # Escape hatches: file-level `// dated-stale-exempt` (for DB-driven dates),
+    # usage-level `{/* dated-stale-ok */}` immediately before the badge (for
+    # genuinely historical dates: launch milestones, legal effective dates).
+    # Skip token not required — this is a static file analysis.
+    steps:
+      - uses: actions/checkout@v6
+      - name: Check for stale DatedStatBadge stalesAt props
+        run: node scripts/check-stale-dated-stats.mjs
+
   stripe-idempotency-gate:
     name: Stripe webhook idempotency gate (new handlers)
     runs-on: ubuntu-latest
