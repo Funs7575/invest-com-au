@@ -73,7 +73,7 @@ function buildMockTableClient(
     }),
     update: vi.fn().mockImplementation((_patch: Partial<Row>) => ({
       eq: (col: string, val: string) => {
-        const target = rows.find((r) => (r as Record<string, string>)[col] === val);
+        const target = rows.find((r) => (r as unknown as Record<string, unknown>)[col] === val);
         if (!target || target[ownerCol] !== callerUid) {
           return Promise.resolve({ data: null, error: { code: "42501", message: "RLS violation" } });
         }
@@ -82,7 +82,7 @@ function buildMockTableClient(
     })),
     delete: vi.fn().mockReturnValue({
       eq: (col: string, val: string) => {
-        const target = rows.find((r) => (r as Record<string, string>)[col] === val);
+        const target = rows.find((r) => (r as unknown as Record<string, unknown>)[col] === val);
         if (!target || target[ownerCol] !== callerUid) {
           return Promise.resolve({ data: null, error: { code: "42501", message: "RLS violation" } });
         }

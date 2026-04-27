@@ -7,13 +7,13 @@
  * covered by the CI job itself on every PR.
  */
 
-import { describe, it, expect, afterEach } from "vitest";
-import path from "node:path";
-import os from "node:os";
+import { describe, it, expect, beforeAll, beforeEach, afterEach } from "vitest";
+import { join } from "node:path";
+import { tmpdir } from "node:os";
 import { promises as fs } from "node:fs";
 
 // Dynamic import needed for ES modules (.mjs)
-const gatePath = path.join(process.cwd(), "scripts/check-rls-isolation.mjs");
+const gatePath = join(process.cwd(), "scripts/check-rls-isolation.mjs");
 
 // We import individual exported helpers via dynamic import
 let extractTableNames: (sql: string) => string[];
@@ -110,8 +110,8 @@ describe("hasIsolationTest", () => {
   let tmpDir: string;
 
   beforeEach(async () => {
-    tmpDir = await fs.mkdtemp(path.join(os.tmpdir(), "rls-test-"));
-    await fs.mkdir(path.join(tmpDir, "lib"), { recursive: true });
+    tmpDir = await fs.mkdtemp(join(tmpdir(), "rls-test-"));
+    await fs.mkdir(join(tmpDir, "lib"), { recursive: true });
   });
 
   afterEach(async () => {
@@ -119,10 +119,7 @@ describe("hasIsolationTest", () => {
   });
 
   it("returns true when conventional test file exists", async () => {
-    await fs.writeFile(
-      path.join(tmpDir, "lib", "user_bookmarks.rls.test.ts"),
-      "// placeholder"
-    );
+    await fs.writeFile(join(tmpDir, "lib", "user_bookmarks.rls.test.ts"), "// placeholder");
     expect(await hasIsolationTest("user_bookmarks", tmpDir)).toBe(true);
   });
 
@@ -132,26 +129,20 @@ describe("hasIsolationTest", () => {
 
   it("returns true when marker comment is found in any test file", async () => {
     await fs.writeFile(
-      path.join(tmpDir, "lib", "some-suite.test.ts"),
+      join(tmpDir, "lib", "some-suite.test.ts"),
       `// rls-isolation: document_extractions\ndescribe('...', () => {});`
     );
     expect(await hasIsolationTest("document_extractions", tmpDir)).toBe(true);
   });
 
   it("returns false when marker comment uses wrong table name", async () => {
-    await fs.writeFile(
-      path.join(tmpDir, "lib", "other.test.ts"),
-      "// rls-isolation: other_table\n"
-    );
+    await fs.writeFile(join(tmpDir, "lib", "other.test.ts"), "// rls-isolation: other_table\n");
     expect(await hasIsolationTest("document_extractions", tmpDir)).toBe(false);
   });
 
   it("scans subdirectories recursively for marker", async () => {
-    await fs.mkdir(path.join(tmpDir, "integration"), { recursive: true });
-    await fs.writeFile(
-      path.join(tmpDir, "integration", "deep.test.ts"),
-      "// rls-isolation: deep_table\n"
-    );
+    await fs.mkdir(join(tmpDir, "integration"), { recursive: true });
+    await fs.writeFile(join(tmpDir, "integration", "deep.test.ts"), "// rls-isolation: deep_table\n");
     expect(await hasIsolationTest("deep_table", tmpDir)).toBe(true);
   });
 });
