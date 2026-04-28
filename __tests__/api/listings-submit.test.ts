@@ -162,7 +162,7 @@ describe("POST /api/listings/submit", () => {
     mockServerFrom.mockReturnValue({ insert: mockInsert });
 
     await POST(makePost({ ...VALID_BODY, listing_plan: "featured" }));
-    expect((insertedRow as Record<string, unknown>)?.listing_type).toBe("featured");
+    expect((insertedRow as unknown as Record<string, unknown>)?.listing_type).toBe("featured");
   });
 
   it("sets listing_type to 'premium' when listing_plan is 'premium'", async () => {
@@ -176,7 +176,7 @@ describe("POST /api/listings/submit", () => {
     mockServerFrom.mockReturnValue({ insert: mockInsert });
 
     await POST(makePost({ ...VALID_BODY, listing_plan: "premium" }));
-    expect((insertedRow as Record<string, unknown>)?.listing_type).toBe("premium");
+    expect((insertedRow as unknown as Record<string, unknown>)?.listing_type).toBe("premium");
   });
 
   it("defaults listing_type to 'standard' when listing_plan is unrecognised", async () => {
@@ -190,7 +190,7 @@ describe("POST /api/listings/submit", () => {
     mockServerFrom.mockReturnValue({ insert: mockInsert });
 
     await POST(makePost({ ...VALID_BODY, listing_plan: undefined }));
-    expect((insertedRow as Record<string, unknown>)?.listing_type).toBe("standard");
+    expect((insertedRow as unknown as Record<string, unknown>)?.listing_type).toBe("standard");
   });
 
   it("sets status to 'pending' on all submissions", async () => {
@@ -204,7 +204,7 @@ describe("POST /api/listings/submit", () => {
     mockServerFrom.mockReturnValue({ insert: mockInsert });
 
     await POST(makePost(VALID_BODY));
-    expect((insertedRow as Record<string, unknown>)?.status).toBe("pending");
+    expect((insertedRow as unknown as Record<string, unknown>)?.status).toBe("pending");
   });
 
   it("handles optional fields (location_city, firb_eligible, siv_complying, etc.)", async () => {
