@@ -149,7 +149,7 @@ export default function QuizQuestionScreen({
           {displayIndex > 0 && (
             <button
               onClick={onBack}
-              className="flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-700 mt-3 mb-1 min-h-[44px] transition-colors"
+              className="flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-700 mt-3 mb-1 min-h-11 transition-colors"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -178,7 +178,7 @@ export default function QuizQuestionScreen({
                   role="radio"
                   aria-checked={isSelected}
                   aria-label={opt.label}
-                  className={`w-full text-left border rounded-xl px-4 py-3.5 md:px-5 md:py-4 min-h-[52px] transition-all font-medium text-sm md:text-base ${
+                  className={`w-full text-left border rounded-xl px-4 py-3.5 md:px-5 md:py-4 min-h-13 transition-all font-medium text-sm md:text-base ${
                     isSelected
                       ? "border-amber-500 bg-amber-50/80 scale-[0.985] shadow-sm"
                       : "border-slate-200 hover:border-amber-400 hover:bg-amber-50/40 bg-white"

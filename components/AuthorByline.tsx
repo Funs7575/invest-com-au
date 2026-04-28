@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { blurDataURL } from "@/lib/image-blur";
 /* Inline SVG icons to avoid lucide-react dependency */
 const Linkedin = ({ className }: { className?: string }) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
@@ -84,6 +85,8 @@ export default function AuthorByline({
             width={48}
             height={48}
             className="w-12 h-12 rounded-full object-cover shrink-0"
+            placeholder="blur"
+            blurDataURL={blurDataURL()}
           />
         ) : (
           <div

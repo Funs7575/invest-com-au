@@ -444,6 +444,7 @@ export default function TeamMembersPage() {
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         {member.avatar_url ? (
+                          // eslint-disable-next-line @next/next/no-img-element -- avatar_url is an admin-entered free-text field; domain is arbitrary and cannot be added to remotePatterns
                           <img
                             src={member.avatar_url}
                             alt={member.full_name}

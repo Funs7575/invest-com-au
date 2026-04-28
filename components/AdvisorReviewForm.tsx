@@ -22,7 +22,7 @@ function StarRatingInput({ label, value, onChange }: { label: string; value: num
             type="button"
             onClick={() => onChange(star)}
             onMouseEnter={() => setHovered(star)}
-            className={`min-w-[44px] min-h-[44px] md:min-w-0 md:min-h-0 text-2xl md:text-lg flex items-center justify-center transition-colors ${
+            className={`min-w-11 min-h-11 md:min-w-0 md:min-h-0 text-2xl md:text-lg flex items-center justify-center transition-colors ${
               star <= (hovered || value) ? "text-amber-400" : "text-slate-200 hover:text-amber-200"
             }`}
           >
@@ -127,7 +127,7 @@ export default function AdvisorReviewForm({ professionalId, advisorName, onSucce
             <button
               type="button"
               onClick={() => setUsedServices(true)}
-              className={`px-5 py-2.5 min-h-[44px] text-xs font-semibold rounded-lg border transition-all ${
+              className={`px-5 py-2.5 min-h-11 text-xs font-semibold rounded-lg border transition-all ${
                 usedServices === true
                   ? "bg-slate-900 text-white border-slate-900"
                   : "bg-white text-slate-600 border-slate-200 hover:border-slate-400"
@@ -138,7 +138,7 @@ export default function AdvisorReviewForm({ professionalId, advisorName, onSucce
             <button
               type="button"
               onClick={() => setUsedServices(false)}
-              className={`px-5 py-2.5 min-h-[44px] text-xs font-semibold rounded-lg border transition-all ${
+              className={`px-5 py-2.5 min-h-11 text-xs font-semibold rounded-lg border transition-all ${
                 usedServices === false
                   ? "bg-slate-900 text-white border-slate-900"
                   : "bg-white text-slate-600 border-slate-200 hover:border-slate-400"
@@ -159,7 +159,7 @@ export default function AdvisorReviewForm({ professionalId, advisorName, onSucce
             value={reviewerName}
             onChange={(e) => setReviewerName(e.target.value)}
             placeholder="Anonymous"
-            className="w-full px-3 py-2.5 min-h-[44px] text-sm md:text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-400"
+            className="w-full px-3 py-2.5 min-h-11 text-sm md:text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-400"
           />
         </div>
 
@@ -173,7 +173,7 @@ export default function AdvisorReviewForm({ professionalId, advisorName, onSucce
             value={reviewTitle}
             onChange={(e) => setReviewTitle(e.target.value)}
             placeholder="Summary of your experience"
-            className="w-full px-3 py-2.5 min-h-[44px] text-sm md:text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-400"
+            className="w-full px-3 py-2.5 min-h-11 text-sm md:text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-400"
           />
         </div>
 
@@ -213,14 +213,14 @@ export default function AdvisorReviewForm({ professionalId, advisorName, onSucce
             type="button"
             onClick={handleSubmit}
             disabled={!canSubmit}
-            className="flex-1 md:flex-none px-4 py-3 min-h-[44px] bg-slate-900 text-white text-sm md:text-xs font-bold rounded-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="flex-1 md:flex-none px-4 py-3 min-h-11 bg-slate-900 text-white text-sm md:text-xs font-bold rounded-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
             {state === "submitting" ? "Submitting..." : "Submit Review"}
           </button>
           <button
             type="button"
             onClick={onCancel}
-            className="flex-1 md:flex-none px-4 py-3 min-h-[44px] border border-slate-200 text-sm md:text-xs font-semibold rounded-lg hover:bg-slate-50 transition-colors text-slate-600"
+            className="flex-1 md:flex-none px-4 py-3 min-h-11 border border-slate-200 text-sm md:text-xs font-semibold rounded-lg hover:bg-slate-50 transition-colors text-slate-600"
           >
             Cancel
           </button>

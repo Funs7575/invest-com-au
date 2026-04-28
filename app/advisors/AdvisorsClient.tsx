@@ -807,7 +807,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
             {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="bg-white border border-slate-100 rounded-2xl p-4 md:p-5 animate-pulse shadow-sm">
                 <div className="flex gap-4">
-                  <div className="w-[60px] h-[60px] md:w-[80px] md:h-[80px] rounded-2xl bg-slate-100 shrink-0" />
+                  <div className="w-15 h-15 md:w-20 md:h-20 rounded-2xl bg-slate-100 shrink-0" />
                   <div className="flex-1 space-y-2.5 py-1">
                     <div className="flex items-center gap-2">
                       <div className="h-4 w-36 bg-slate-100 rounded-full" />
@@ -830,7 +830,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
           </div>
         ) : paginatedResults.length > 0 ? (
           <div className="space-y-3">
-            {paginatedResults.map(pro => {
+            {paginatedResults.map((pro, index) => {
               const isFeatured = !!(pro.featured_until && new Date(pro.featured_until) > new Date());
               return (
                 <Link key={pro.id} href={`/advisor/${pro.slug}`} className={`group block bg-white rounded-2xl transition-all duration-200 overflow-hidden ${
@@ -845,16 +845,25 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                     {/* Photo */}
                     <div className="relative shrink-0">
                       {pro.photo_url ? (
-                        <div className="w-[60px] h-[60px] md:w-[80px] md:h-[80px] rounded-2xl overflow-hidden ring-2 ring-slate-100 shadow-sm">
-                          <Image src={pro.photo_url} alt={pro.name} width={80} height={80} className="w-full h-full object-cover" />
+                        <div className="w-15 h-15 md:w-20 md:h-20 rounded-2xl overflow-hidden ring-2 ring-slate-100 shadow-sm">
+                          <Image
+                            src={pro.photo_url}
+                            alt={pro.name}
+                            width={80}
+                            height={80}
+                            className="w-full h-full object-cover"
+                            priority={index < 3}
+                            placeholder="blur"
+                            blurDataURL="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxyZWN0IHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiNlMmU4ZjAiLz48L3N2Zz4="
+                          />
                         </div>
                       ) : (
-                        <div className="w-[60px] h-[60px] md:w-[80px] md:h-[80px] rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white font-bold text-xl md:text-2xl shadow-md shadow-amber-200/60 select-none">
+                        <div className="w-15 h-15 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white font-bold text-xl md:text-2xl shadow-md shadow-amber-200/60 select-none">
                           {pro.name.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()}
                         </div>
                       )}
                       {pro.verified && (
-                        <div className="absolute -bottom-1 -right-1 w-[18px] h-[18px] bg-amber-500 rounded-full border-2 border-white flex items-center justify-center shadow-sm">
+                        <div className="absolute -bottom-1 -right-1 w-4.5 h-4.5 bg-amber-500 rounded-full border-2 border-white flex items-center justify-center shadow-sm">
                           <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                           </svg>

@@ -166,7 +166,7 @@ export function SiteFooter() {
                   href={item.href}
                   target={item.external ? "_blank" : undefined}
                   rel={item.external ? "noopener noreferrer" : undefined}
-                  className="hover:text-amber-400 transition-colors py-1.5 block min-h-[44px] flex items-center"
+                  className="hover:text-amber-400 transition-colors py-1.5 block min-h-11 flex items-center"
                 >
                   {item.label}
                 </Link>
@@ -204,7 +204,7 @@ function FooterColumn({ title, items }: { title: string; items: { label: string;
       <ul className="space-y-0.5 text-sm">
         {items.map((item) => (
           <li key={item.href}>
-            <Link href={item.href} className="hover:text-amber-400 transition-colors py-1.5 block min-h-[36px] flex items-center">
+            <Link href={item.href} className="hover:text-amber-400 transition-colors py-1.5 block min-h-9 flex items-center">
               {item.label}
             </Link>
           </li>

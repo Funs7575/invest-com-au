@@ -273,7 +273,7 @@ export default function AdvisorSignupPage() {
     );
   }
 
-  const inputClass = "w-full px-3 py-2.5 min-h-[44px] border border-slate-200 rounded-lg text-base md:text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all";
+  const inputClass = "w-full px-3 py-2.5 min-h-11 border border-slate-200 rounded-lg text-base md:text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all";
   const labelClass = "block text-xs font-semibold text-slate-600 mb-1";
 
   return (
@@ -479,7 +479,7 @@ export default function AdvisorSignupPage() {
                   {SPECIALTY_OPTIONS.map((s) => (
                     <label
                       key={s}
-                      className={`flex items-center gap-2 px-3 py-2.5 min-h-[44px] rounded-lg border text-sm cursor-pointer transition-colors ${
+                      className={`flex items-center gap-2 px-3 py-2.5 min-h-11 rounded-lg border text-sm cursor-pointer transition-colors ${
                         form.specialties.includes(s)
                           ? "border-violet-300 bg-violet-50 text-violet-700"
                           : "border-slate-200 text-slate-600 hover:bg-slate-50"
@@ -704,7 +704,7 @@ export default function AdvisorSignupPage() {
             {step > 1 ? (
               <button
                 onClick={prevStep}
-                className="px-4 py-3 min-h-[44px] text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
+                className="px-4 py-3 min-h-11 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
               >
                 Back
               </button>
@@ -716,7 +716,7 @@ export default function AdvisorSignupPage() {
               <button
                 onClick={nextStep}
                 disabled={(step === 1 && !step1Valid) || (step === 2 && !step2Valid)}
-                className="flex-1 sm:flex-none px-6 py-3 min-h-[44px] bg-violet-600 text-white font-bold rounded-lg text-sm hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="flex-1 sm:flex-none px-6 py-3 min-h-11 bg-violet-600 text-white font-bold rounded-lg text-sm hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 Continue
               </button>
@@ -724,7 +724,7 @@ export default function AdvisorSignupPage() {
               <button
                 onClick={submit}
                 disabled={status === "submitting" || !form.termsAccepted || !step1Valid || !step2Valid || !step3Valid}
-                className="flex-1 sm:flex-none px-8 py-3 min-h-[44px] bg-slate-900 text-white font-bold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="flex-1 sm:flex-none px-8 py-3 min-h-11 bg-slate-900 text-white font-bold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {status === "submitting" ? "Creating Account..." : "Create My Account"}
               </button>

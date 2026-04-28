@@ -268,6 +268,9 @@ export default function AdvisorProfileClient({
                   width={220}
                   height={220}
                   className="w-32 h-32 md:w-52 md:h-52 rounded-2xl object-cover shrink-0 shadow-xl ring-1 ring-slate-200"
+                  priority
+                  placeholder="blur"
+                  blurDataURL="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxyZWN0IHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiNlMmU4ZjAiLz48L3N2Zz4="
                 />
               ) : (
                 <div className="w-32 h-32 md:w-52 md:h-52 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center text-4xl md:text-6xl font-black text-white shrink-0 shadow-xl ring-1 ring-slate-200">
