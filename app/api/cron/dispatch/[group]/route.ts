@@ -49,17 +49,26 @@ export async function GET(
     );
   }
 
-  const origin = new URL(req.url).origin;
-  // Build the Authorization header from CRON_SECRET directly rather than
-  // forwarding `req.headers.get("authorization")`. The 11:20 UTC post-fix
-  // run showed every loopback fetch returning HTTP 401 even though the
-  // inbound dispatcher request was authenticated — strong signal that
-  // either the inbound header isn't surviving the round-trip or Vercel
-  // strips Authorization on internal HTTPS loopbacks. Sourcing the secret
-  // from the env on the way out removes both possibilities. The inbound
-  // request is still validated by `requireCronAuth(req)` above, so this
-  // doesn't relax the dispatcher's auth — it only ensures the loopback
-  // header is canonical.
+  // Loop back through the production alias, NOT `req.url`'s origin.
+  //
+  // Vercel cron fires against the unique deployment URL
+  // (`invest-com-XXXX-finns-projects-…vercel.app`), which has Vercel's
+  // Deployment Protection enabled — that layer returns an HTML 401
+  // "Authentication Required" page BEFORE proxy.ts runs, so loopback
+  // fetches never reach the route handler. Curl confirms: unique URL →
+  // HTML 401 (Vercel auth wall), production alias → JSON 401 from
+  // proxy.ts. Vercel automatically populates VERCEL_PROJECT_PRODUCTION_URL
+  // with the protection-free production alias, so we use that.
+  //
+  // Falls back to `req.url`'s origin for local `npm run dev` where the
+  // env var is unset.
+  const origin = process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : new URL(req.url).origin;
+  // Build Authorization from CRON_SECRET directly so the outbound header
+  // is canonical regardless of header-rewrite/strip behaviour on the
+  // round-trip. The inbound request is still validated by
+  // `requireCronAuth(req)` above.
   const auth = process.env.CRON_SECRET
     ? `Bearer ${process.env.CRON_SECRET}`
     : "";
