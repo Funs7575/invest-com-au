@@ -33,7 +33,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | G | _not started_ | — | — | — |
 | H | _not started_ | — | — | — |
 | I | `claude/audit-remediation/i-new-04-main-ci-auto-revert` | #278 (draft) | pending — pushed 2026-04-28T16:14Z | I-NEW-01 done via #277 (`00ef2790`); I-NEW-02 hotfix `5b7937dc`; I-NEW-03 hotfix `4b050ed9`; I-NEW-05 race-fix `55d077bf`; **first real metrics snapshot landed 2026-04-28T16:12Z (grade F 0.0899 — Supabase secrets need to be set in GH Actions for non-zero on M04/M07/M08/M09/M10/M11/M12)**; I-NEW-04 in flight (auto-revert workflow `b42233fb`) |
-| J | `claude/audit-remediation/j-stripe-webhook` | #288 (draft) | pending — pushed 2026-04-29T00:04Z | J-01a..J-01e (route.ts 1197 → 165 LOC) · J-03 (commit `b8e7189`) · J-05 (commit `d68852e`) — trial_will_end + payment_action_required done. J-06/08/09/10 still pending. PR #279 was closed by owner (superseded notice); PR #288 is the new draft. |
+| J | `claude/audit-remediation/j-stripe-webhook` | #288 (draft) | pending — pushed 2026-04-28T22:08Z | J-01a..J-01e (route.ts 1197 → 165 LOC) · J-01d-ext (commit `bb1d56f6` — charge-refunded + checkout-session-completed tests, 25 tests, invoice.test.ts fix) · J-03 (commit `b8e7189`) · J-05 (commit `d68852e`) — trial_will_end + payment_action_required done. J-06/08/09/10 still pending. PR #279 was closed by owner (superseded notice); PR #288 is the new draft. |
 | K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-27T05:35Z | K-01..K-08 done; K-09 false-positive; K-10..K-15 done — **stream complete** |
 | L | _not started_ | — | — | — |
 | M | `claude/audit-remediation/m-01b-cover-image-backfill` | #283 (draft) | pending — pushed 2026-04-28T21:25Z | M-01b in flight (commit `19a0d7e6`) — per-article OG cover override + backfill script. |
@@ -307,7 +307,7 @@ The webhook route is 1,197 LOC and only handles a subset of the events an enterp
 | J-01b | done | Migrate `customer.subscription.{created,updated,deleted}` to the registry | — | **Done in commit `80392137` (PR #279, draft).** Created `lib/stripe-webhook/{lib/email.ts, lib/upsert-subscription.ts, handlers/customer-subscription.ts}`. The `charge.refunded` migration is rolled into J-01c instead (its 140-LOC body would push J-01b past the diff cap). |
 | J-01c-1 | done | Migrate `charge.refunded`, `invoice.paid`, `invoice.payment_failed` to the registry | — | **Done in commit `b3c10476` (PR #279, draft).** Created `lib/stripe-webhook/handlers/{charge-refunded,invoice}.ts`. Route shrank 937 → 701 LOC. Original J-01c had 4 handlers but `checkout.session.completed` is ~509 LOC alone, so it was split out into J-01c-2 to keep this iteration under the diff cap. |
 | J-01c-2 | done | Migrate `checkout.session.completed` (6 sub-flows: course purchase, advisor credit top-up, advisor featured, listing activation, consultation booking, sponsored placement) to the registry | — | **Done in commit `d8626dc` (PR #288, draft).** Created `lib/stripe-webhook/handlers/checkout-session-completed.ts` (606 LOC). Route shrank 701 → 177 LOC. All existing handlers are now in the registry. Behaviour preserved byte-for-byte including idempotent top-up check, course purchase rollback, sponsored placement 23505 race-tolerance, and lazy invoice-URL fetch. |
-| J-01d | done | Add per-handler unit tests in `__tests__/lib/stripe-webhook/<handler>.test.ts` | 1 | **Done in commit `bbfd4d3` (PR #288).** 3 test files, 35 tests total: charge-dispute-created (8), customer-subscription (12), invoice (15). Each handler tested with mock WebhookContext. |
+| J-01d | done | Add per-handler unit tests in `__tests__/lib/stripe-webhook/<handler>.test.ts` | 1 | **Done in commit `bbfd4d3` (PR #288).** 3 test files, 35 tests total: charge-dispute-created (8), customer-subscription (12), invoice (15). Each handler tested with mock WebhookContext. **Extended by commit `bb1d56f6` (iter 97):** 2 more files — charge-refunded.test.ts (12 tests) + checkout-session-completed.test.ts (13 tests); also fixed wrong invoice.test.ts expectation (profile absence does not gate dunning email). Total J-01d: 5 files, 61 tests. |
 | J-01e | done | Remove the legacy switch from `route.ts`; route becomes a 50-line dispatch + idempotency loop | 1 | **Done in commit `8a9e95f` (PR #288).** route.ts shrank from 181 → 165 LOC (1,197 → 165 LOC total from pre-J). Unknown event types now log info instead of silently falling through. |
 | J-02 | false-positive | ~~Add handler: `charge.dispute.created`~~ | — | **Already handled** in `app/api/stripe/webhook/route.ts` (verified 2026-04-26 audit §5.4 via `grep -E "case '...'"` — handler exists). |
 | J-03 | done | Add handler: `customer.subscription.trial_will_end` — fire 3-days-pre-charge email via Resend | 1 | **Done in commit `b8e7189` (PR #288).** `buildTrialEndingSoonEmail` added to email.ts; handler registered for `customer.subscription.trial_will_end`; 7 tests added to customer-subscription.test.ts. |
@@ -1044,6 +1044,18 @@ Items that ship LAST, in the final week before launch (Month 4 of pre-launch roa
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-28T22:08Z — iteration 97 (stream J — J-01d extension — charge-refunded + checkout-session-completed handler tests)
+
+- Phase 0: resumed from context-compacted batch-mode session (iteration 3 of batch-mode fire).
+- Phase 1: synced main. J-01d already partially done (3/5 handler tests by iter 93). Remaining: charge-refunded + checkout-session-completed.
+- Phase 2: CI rescue check — all in-flight PRs pending/green. No rescue needed.
+- Phase 3: J at slot 7. Checked out claude/audit-remediation/j-stripe-webhook. Pulled remote (J-01e + J-03 already landed by other concurrent iters).
+- Phase 4: verification — new test files, no migration.
+- Phase 5: wrote charge-refunded.test.ts (12 tests) + checkout-session-completed.test.ts (13 tests). Fixed wrong expectation in invoice.test.ts. 61 total stripe-webhook tests green, lint clean.
+- Phase 6: commit `bb1d56f6`, rebased twice on J branch (concurrent pushes), pushed.
+- Phase 7: J row updated; J-01d item notes extended; this log entry on main.
+- STATUS: PROGRESS · stream=J · item=J-01d (ext) · pr=#288 · commit=`bb1d56f6` · diff=+649/-2 across 3 files · next=J-06 (stream J)
 
 ### 2026-04-29T00:04Z — iteration 96 (stream J — J-05 — invoice.payment_action_required handler)
 
