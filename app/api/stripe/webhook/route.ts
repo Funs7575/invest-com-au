@@ -4,10 +4,8 @@ import { NextRequest, NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { logger } from "@/lib/logger";
 import { dispatchEvent } from "@/lib/stripe-webhook/registry";
-// Side-effect import — registers per-event handlers into the registry
-// before `dispatchEvent` runs. All event types are now registered
-// (J-01a through J-01c-2). The legacy switch below handles only the
-// `default` arm (unrecognised event types) and can be removed in J-01e.
+// Side-effect import — registers all per-event handlers into the registry
+// before `dispatchEvent` runs.
 import "@/lib/stripe-webhook/handlers";
 
 const log = logger("stripe-webhook");
@@ -121,29 +119,15 @@ export async function POST(request: NextRequest) {
   // finally-style wrapper that runs even if the handler throws.
   let finalStatus: "done" | "error" = "done";
   try {
-    // J-01a: try the handler-registry first. Events not yet migrated
-    // (J-01b/c) fall through to the legacy switch below. The registry's
-    // handlers receive a typed `WebhookContext` so they can be unit-
-    // tested in isolation without spinning up the full route.
     const dispatched = await dispatchEvent(event, {
       admin: createAdminClient(),
       stripe: getStripe(),
       log,
     });
-    if (dispatched.handled) {
-      if (dispatched.result.status === "error") {
-        throw dispatched.result.error;
-      }
-      // Skip the legacy switch — registry owns this event type now.
-      // Fall through to the post-switch idempotency stamp below.
-    } else switch (event.type) {
-      // All event types (checkout.session.completed, charge.*, customer.subscription.*,
-      // invoice.*) are migrated to the handler registry (J-01a through J-01c-2).
-      // This switch now only catches unrecognised event types. J-01e will remove it.
-
-      default:
-        // Unhandled event type — log for debugging
-        break;
+    if (!dispatched.handled) {
+      log.info("Unregistered Stripe event type — ignored", { type: event.type });
+    } else if (dispatched.result.status === "error") {
+      throw dispatched.result.error;
     }
   } catch (err) {
     log.error("Webhook handler error", { error: err instanceof Error ? err.message : String(err) });
