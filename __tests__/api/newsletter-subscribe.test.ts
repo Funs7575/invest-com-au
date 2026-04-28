@@ -96,7 +96,10 @@ describe("POST /api/newsletter/subscribe", () => {
   });
 
   it("returns 400 for missing email", async () => {
-    mockIsValidEmail.mockReturnValueOnce(false);
+    // No mockReturnValueOnce here — the route short-circuits at
+    // `!email` before calling isValidEmail (route line 41), so a
+    // queued .once value would never be consumed and would bleed into
+    // the next test. vi.clearAllMocks does not drain the queue.
     const res = await POST(makePost({}));
     expect(res.status).toBe(400);
   });
