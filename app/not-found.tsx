@@ -29,13 +29,13 @@ export default function NotFound() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-10">
           <Link
             href="/"
-            className="w-full sm:w-auto px-6 py-3 min-h-[48px] inline-flex items-center justify-center bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 transition-colors"
+            className="w-full sm:w-auto px-6 py-3 min-h-12 inline-flex items-center justify-center bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 transition-colors"
           >
             Go to Homepage
           </Link>
           <Link
             href="/compare"
-            className="w-full sm:w-auto px-6 py-3 min-h-[48px] inline-flex items-center justify-center bg-white text-slate-900 text-sm font-semibold rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors"
+            className="w-full sm:w-auto px-6 py-3 min-h-12 inline-flex items-center justify-center bg-white text-slate-900 text-sm font-semibold rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors"
           >
             Compare Platforms
           </Link>

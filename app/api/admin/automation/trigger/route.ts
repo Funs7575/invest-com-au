@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { getAdminEmails } from "@/lib/admin";
 import { logger } from "@/lib/logger";
 import { FEATURE_CONFIG } from "@/lib/admin/automation-metrics";
@@ -98,6 +99,17 @@ export async function POST(request: NextRequest) {
       .filter(([k, v]) => k !== "ok" && typeof v === "number" && (v as number) > 0)
       .map(([k, v]) => `${k}=${v}`)
       .join(", ") || "completed";
+
+    const db = createAdminClient();
+    await db.from("admin_audit_log").insert({
+      action: "automation:trigger",
+      entity_type: "cron",
+      entity_id: cronName,
+      admin_email: user.email,
+      details: { cronName, status: res.status, summary },
+    }).then(({ error: logErr }) => {
+      if (logErr) log.warn("admin_audit_log insert failed", { error: logErr.message });
+    });
 
     return NextResponse.json({ ok: true, status: res.status, summary, data: stats });
   } catch (err) {

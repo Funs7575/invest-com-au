@@ -69,6 +69,15 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  await supabase.from("admin_audit_log").insert({
+    action: "competitor_watch:created",
+    entity_type: "competitor_watch",
+    entity_id: String(data.id),
+    admin_email: admin.email ?? "unknown",
+    details: { competitor, event_type },
+  });
+
   return NextResponse.json(data);
 }
 
@@ -81,5 +90,13 @@ export async function DELETE(request: NextRequest) {
   const { id } = await request.json();
   if (!id) return NextResponse.json({ error: "id required" }, { status: 400 });
   await supabase.from("competitor_watch").delete().eq("id", id);
+
+  await supabase.from("admin_audit_log").insert({
+    action: "competitor_watch:deleted",
+    entity_type: "competitor_watch",
+    entity_id: String(id),
+    admin_email: admin.email ?? "unknown",
+  });
+
   return NextResponse.json({ deleted: true });
 }

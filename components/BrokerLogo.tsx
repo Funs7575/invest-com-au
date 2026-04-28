@@ -6,6 +6,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import { blurDataURL } from "@/lib/image-blur";
 
 interface BrokerLogoProps {
   broker: {
@@ -89,6 +90,8 @@ export default function BrokerLogo({
           priority={priority}
           loading={priority ? undefined : "lazy"}
           onError={() => setImgError(true)}
+          placeholder="blur"
+          blurDataURL={blurDataURL(broker.color)}
         />
       </div>
     );

@@ -149,7 +149,7 @@ export default function AdminListingsPage() {
             >
               {tab.label}
               {tab.count !== undefined && tab.count > 0 && (
-                <span className="ml-1.5 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[0.6rem] font-bold rounded-full bg-red-500 text-white">
+                <span className="ml-1.5 inline-flex items-center justify-center min-w-4.5 h-4.5 px-1 text-[0.6rem] font-bold rounded-full bg-red-500 text-white">
                   {tab.count}
                 </span>
               )}
@@ -225,7 +225,7 @@ export default function AdminListingsPage() {
                   >
                     {/* Title */}
                     <td className="px-4 py-3">
-                      <p className="font-semibold text-slate-900 truncate max-w-[200px]">
+                      <p className="font-semibold text-slate-900 truncate max-w-50">
                         {listing.title}
                       </p>
                       <p className="text-[0.65rem] text-slate-400">

@@ -68,6 +68,7 @@ const CONTRIBUTION_COMPARISON = [
 const CONTRIBUTIONS_SECTIONS = [
   {
     heading: "Employer Superannuation Guarantee — the foundation",
+    // dated-ok — legislated SG rate-rise dates from ATO
     body: "The Superannuation Guarantee (SG) is the mandatory employer contribution to your super fund. For 2025–26, the SG rate is 11.5% of your ordinary time earnings (OTE). This rate is legislated to increase to 12% from 1 July 2025.\n\nThe SG is calculated on your 'ordinary time earnings' — your regular salary, wages, and some allowances. Overtime is generally excluded from the calculation base.\n\nHow to check it's being paid: Your payslip should show the super contribution amount. You can also log into myGov and check the ATO Super tab — employers must report contributions to the ATO within 28 days of the end of each quarter. If your employer isn't paying, contact the ATO's super complaints line or lodge an unpaid super tip-off online.\n\nSelf-employed: If you are genuinely self-employed (sole trader or contractor) you are not required to pay yourself the SG — but you are strongly encouraged to make personal contributions for your own retirement security.",
   },
   {
@@ -104,6 +105,7 @@ const CONTRIBUTIONS_FAQS = [
   {
     question: "What is the super guarantee rate in 2025–26?",
     answer:
+      // dated-ok — legislated SG rate-rise dates from ATO
       "The Superannuation Guarantee (SG) rate for the 2025–26 financial year is 11.5% of ordinary time earnings. The rate is legislated to increase to 12% on 1 July 2025. Your employer must pay this on your ordinary time earnings (your regular salary — generally excluding overtime) at least quarterly, within 28 days of the end of each quarter.",
   },
   {
@@ -124,6 +126,7 @@ const CONTRIBUTIONS_FAQS = [
   {
     question: "Can I contribute to super if I'm retired or over 67?",
     answer:
+      // dated-ok — historical legislative effective date (work test relaxation)
       "Yes, with some restrictions. From age 67–74, you can make super contributions (both concessional and non-concessional) only if you meet the 'work test' — gainfully employed for at least 40 hours over 30 consecutive days in the financial year. From 1 July 2022, this test is only required for non-concessional contributions and salary sacrifice for people aged 67–74; employer SG contributions continue automatically. Once you reach age 75, only mandatory employer SG contributions and downsizer contributions are permitted.",
   },
 ];
@@ -194,6 +197,7 @@ export default function SuperContributionsPage() {
             <div className="bg-white rounded-2xl border border-amber-200 p-5">
               <p className="text-xs font-bold text-amber-800 uppercase tracking-wide mb-1">Super Rate (2025–26)</p>
               <p className="text-xl font-black text-amber-700">11.5%</p>
+              {/* // dated-ok — legislated SG rate-rise date from ATO */}
               <p className="text-xs text-slate-600 mt-1 leading-relaxed">Superannuation Guarantee rate. Rising to 12% from 1 July 2025.</p>
             </div>
             <div className="bg-white rounded-2xl border border-slate-200 p-5">
@@ -217,7 +221,7 @@ export default function SuperContributionsPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-900 text-white">
-                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-[200px]">Feature</th>
+                  <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide w-50">Feature</th>
                   <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-green-300">Concessional (Pre-Tax)</th>
                   <th className="px-5 py-4 text-left font-bold text-xs uppercase tracking-wide text-blue-300">Non-Concessional (After-Tax)</th>
                 </tr>

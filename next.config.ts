@@ -46,6 +46,11 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "images.unsplash.com",
       },
+      {
+        protocol: "https",
+        hostname: "api.qrserver.com",
+        pathname: "/v1/**",
+      },
     ],
   },
   async headers() {
@@ -77,10 +82,19 @@ const nextConfig: NextConfig = {
       {
         source: "/(.*)",
         headers: [
-          {
-            key: "X-Frame-Options",
-            value: "DENY",
-          },
+          // K-05 (audit 2026-04-26 §7 SEC-05): X-Frame-Options and
+          // Permissions-Policy were removed from this list because they
+          // conflicted with the values in `proxy.ts` (DENY vs SAMEORIGIN
+          // for X-Frame-Options; geolocation=(self) vs geolocation=()
+          // for Permissions-Policy). Two simultaneous headers caused
+          // browsers to pick most-restrictive, silently breaking
+          // geolocation use. proxy.ts is now the single source of truth
+          // for those two.
+          //
+          // Headers below remain duplicated with proxy.ts but the values
+          // match exactly (no drift), and they cover the static-asset
+          // paths excluded from the middleware matcher (`/_next/static/*`,
+          // `/_next/image/*`, `/favicon.ico`).
           {
             key: "X-Content-Type-Options",
             value: "nosniff",
@@ -92,10 +106,6 @@ const nextConfig: NextConfig = {
           {
             key: "X-DNS-Prefetch-Control",
             value: "on",
-          },
-          {
-            key: "Permissions-Policy",
-            value: "camera=(), microphone=(), geolocation=(self)",
           },
           {
             key: "Strict-Transport-Security",

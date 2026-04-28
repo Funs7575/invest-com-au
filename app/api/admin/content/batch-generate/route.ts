@@ -72,6 +72,14 @@ export async function POST(request: NextRequest) {
     admin: guard.email,
     count: queued.length,
   });
+
+  await admin.from("admin_audit_log").insert({
+    action: "content:batch_generate_queued",
+    entity_type: "content_calendar",
+    admin_email: guard.email,
+    details: { queued: queued.length, total_requested: ids.length, calendar_ids: ids },
+  });
+
   return NextResponse.json({
     ok: true,
     queued: queued.length,

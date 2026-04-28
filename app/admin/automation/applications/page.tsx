@@ -43,8 +43,8 @@ export default async function ApplicationsDrillDown() {
                 <tr key={r.id} className="hover:bg-slate-50/50">
                   <td className="px-4 py-2 font-mono text-slate-500">#{r.id}</td>
                   <td className="px-4 py-2 text-slate-700">
-                    <div className="truncate max-w-[180px]">{r.name}</div>
-                    {r.firm_name && <div className="text-[0.65rem] text-slate-400 truncate max-w-[180px]">{r.firm_name}</div>}
+                    <div className="truncate max-w-45">{r.name}</div>
+                    {r.firm_name && <div className="text-[0.65rem] text-slate-400 truncate max-w-45">{r.firm_name}</div>}
                   </td>
                   <td className="px-4 py-2 text-slate-600">{r.type}</td>
                   <td className="px-4 py-2 text-slate-500 text-[0.65rem]">
@@ -56,7 +56,7 @@ export default async function ApplicationsDrillDown() {
                     <span className={`inline-block px-2 py-0.5 rounded text-[0.65rem] font-semibold ${r.status === "approved" ? "bg-emerald-100 text-emerald-800" : r.status === "rejected" ? "bg-red-100 text-red-800" : "bg-slate-100 text-slate-600"}`}>{r.status}</span>
                   </td>
                   <td className="px-4 py-2 text-slate-600">{r.reviewed_by || "—"}</td>
-                  <td className="px-4 py-2 text-[0.65rem] text-slate-500 max-w-[220px]">
+                  <td className="px-4 py-2 text-[0.65rem] text-slate-500 max-w-55">
                     <div className="line-clamp-2" title={r.admin_notes || ""}>{r.admin_notes || "—"}</div>
                     {r.rejection_reason && <div className="text-red-600 mt-1 line-clamp-1">{r.rejection_reason}</div>}
                   </td>
