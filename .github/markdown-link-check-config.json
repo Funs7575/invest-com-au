@@ -1,0 +1,29 @@
+{
+  "_comment_ignorePatterns": "Skip flaky / privately-gated / known-redirecting URLs that would create false positives in CI.",
+  "ignorePatterns": [
+    { "pattern": "^http://localhost" },
+    { "pattern": "^https?://127\\.0\\.0\\.1" },
+    { "pattern": "^https?://invest-com-au-git-" },
+    { "pattern": "^https?://invest\\.com\\.au" },
+    { "pattern": "^https?://[^/]*supabase\\.co" },
+    { "pattern": "^https?://vercel\\.com/finns-projects-" },
+    { "pattern": "^https?://platform\\.claude\\.com" },
+    { "pattern": "^https?://docs\\.anthropic\\.com" },
+    { "pattern": "^https?://api\\.anthropic\\.com" },
+    { "pattern": "^https?://dashboard\\.stripe\\.com" },
+    { "pattern": "^https?://github\\.com/Funs7575/invest-com-au/issues/" },
+    { "pattern": "^https?://github\\.com/Funs7575/invest-com-au/pull/" }
+  ],
+  "_comment_replacementPatterns": "Make relative-to-repo links resolvable from any markdown file's directory.",
+  "replacementPatterns": [
+    {
+      "pattern": "^/",
+      "replacement": "{{BASEURL}}/"
+    }
+  ],
+  "timeout": "10s",
+  "retryOn429": true,
+  "retryCount": 3,
+  "fallbackRetryDelay": "30s",
+  "aliveStatusCodes": [200, 206, 301, 302, 308, 403]
+}

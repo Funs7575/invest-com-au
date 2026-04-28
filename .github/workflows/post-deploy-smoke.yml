@@ -1,0 +1,48 @@
+name: Post-deploy smoke
+
+# Runs against PRODUCTION after a main-branch deploy lands. Catches the class
+# of bug that 12 days of cron silence belonged to: builds fine, deploys fine,
+# silently broken in production. See scripts/post-deploy-smoke.mjs.
+#
+# Setup:
+#   1. (Optional) Add secret: CRON_SECRET — enables the cron heartbeat check
+#   2. (Optional) Add secret: SMOKE_BASE_URL — overrides default invest.com.au
+#
+# This runs ~3 minutes after the push on the assumption Vercel needs ~1-2
+# minutes to deploy. If your deploy time differs, adjust the sleep below.
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: post-deploy-smoke
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    name: Smoke test production
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+
+      - name: Wait for Vercel deploy
+        # Crude but effective. Replace with Vercel webhook in a follow-up if
+        # the lag becomes a problem. The cron-pin-lag finding from PR #270
+        # showed that even Vercel itself can take a moment to settle.
+        run: sleep 180
+
+      - name: Run smoke checks
+        env:
+          SMOKE_BASE_URL: ${{ secrets.SMOKE_BASE_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: node scripts/post-deploy-smoke.mjs

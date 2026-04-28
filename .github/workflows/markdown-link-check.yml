@@ -1,0 +1,37 @@
+name: Markdown link check
+
+# Catches broken cross-doc references when files move. Cheap, runs only on
+# PRs that touch markdown, takes <1 minute. Lets the audit-loop refactor docs
+# without quietly leaving 404s in CLAUDE.md.
+#
+# Configuration: .github/markdown-link-check-config.json (created alongside).
+# Skip a single link with <!-- markdown-link-check-disable --> ... <!-- markdown-link-check-enable -->.
+
+on:
+  pull_request:
+    paths:
+      - "**/*.md"
+      - ".github/workflows/markdown-link-check.yml"
+      - ".github/markdown-link-check-config.json"
+
+permissions:
+  contents: read
+
+jobs:
+  check-links:
+    name: Check markdown links
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: gaurav-nelson/github-action-markdown-link-check@v1
+        with:
+          use-quiet-mode: yes
+          use-verbose-mode: yes
+          config-file: .github/markdown-link-check-config.json
+          # Only check files changed in this PR — full-repo scan would
+          # take too long and would re-check already-validated docs.
+          check-modified-files-only: yes
+          base-branch: ${{ github.event.pull_request.base.ref }}

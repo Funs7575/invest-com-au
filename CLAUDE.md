@@ -75,3 +75,67 @@ Reaching for a hardcoded disclaimer, a new affiliate URL builder, or a fresh JSO
 3. For UI: start `npm run dev` and actually click through the feature before declaring done. Type-checking and unit tests verify code correctness, not feature correctness.
 4. If touching a cron route, verify `requireCronAuth` is called first.
 5. If touching a user-data table, verify RLS is enabled with explicit policies.
+
+## Common gotchas (lessons paid for in production)
+
+Each entry below cost real time to debug. Read this section once on
+onboarding, re-read every time the CI fails in a way you don't expect.
+
+- **Folders prefixed with `_` don't become routes.** Next.js app router
+  treats `_folder/` as a *private folder* and excludes it from routing.
+  We discovered this 12 days into a cron-silence incident in 2026-04
+  — the dispatcher lived at `app/api/cron/_dispatch/[group]/route.ts`,
+  Vercel happily fired schedules at the path, `proxy.ts` matched the
+  prefix, returned `NextResponse.next()`, and the response was a silent
+  empty 200. Use `(group)/` for route-grouping, never `_group/`. The
+  current dispatcher is at `app/api/cron/dispatch/[group]/route.ts`.
+- **`cron_run_log.status` CHECK constraint requires `'ok'`, not `'success'`.**
+  Allowed values are `'running' | 'ok' | 'error' | 'partial'`. Writing
+  `'success'` silently fails the UPDATE — every UPDATE was rejected
+  during the 04-16 → 04-26 silence, on top of the routing issue. Match
+  what `wrapCronHandler` writes, which is `'ok'`.
+- **Vercel cron pin lag.** When two production deploys land in rapid
+  succession, Vercel's cron schedule can pin to whichever deployed first
+  while the public alias points at the latest. Cron re-pins only on the
+  next production deploy. If you fix a cron bug and the dispatcher still
+  doesn't run, push another commit to main.
+- **Migrations must be idempotent.** `IF NOT EXISTS` for `CREATE TABLE`,
+  `DROP POLICY IF EXISTS` before `CREATE POLICY`. Migrations are
+  forward-only in prod and may be re-run during recovery.
+- **`arr[0]` is `T | undefined`.** `noUncheckedIndexedAccess` is on. Use
+  `arr[0]?.foo`, an explicit guard, or destructure with a default. Don't
+  reach for `as` to silence it — that's a bug waiting to manifest.
+- **Don't import `lib/supabase/admin.ts` in an RSC page.** ESLint blocks
+  it for files under `app/**/page.tsx`. Use `lib/supabase/server.ts`
+  (carries user cookies, scoped by RLS) instead. Service-role is for
+  admin routes, webhooks, and cron only. See `docs/audits/x-admin-backlog-decision-matrix.md`
+  for the per-file decisions.
+- **Stripe tool-call JSON escaping varies on 4.6+.** When parsing
+  webhook payloads or tool-call inputs, always `JSON.parse()` — never
+  raw-string-match. 4.6 may produce Unicode or forward-slash escaping
+  that exact-string-match misses.
+- **CSP no longer allows `unsafe-inline` for scripts.** Removed in
+  K-04 (PR #222). If you add an inline `<script>`, it'll silently fail
+  in CSP3 browsers. Use `next/script` with `strategy="afterInteractive"`,
+  or move the logic into a module. CSP violations report to
+  `/api/csp-report`.
+- **`dangerouslySetInnerHTML` is ESLint-banned outside safe contexts.**
+  K-13 added an `invest/no-unsafe-inner-html` rule. Use
+  `sanitizeHtml(...)` from `lib/sanitize-html.ts` if you genuinely need
+  HTML, or refactor to safe primitives. The newsletter is the canonical
+  pattern — see `app/newsletter/[edition]/page.tsx`.
+- **Rate-limit coverage is enforced by CI.** Every route under
+  `app/api/**` is either covered by `isAllowed(...)` or explicitly
+  exempted in `EXEMPT_PATTERNS` of `scripts/rate-limit-coverage.mjs`. A
+  new public route without one will fail the build.
+- **Don't write `console.log` in production code.** Use
+  `logger("ctx-name")` from `lib/logger.ts`. The structured logger
+  integrates with Sentry; `console.*` doesn't.
+- **`git add -A` is a foot-gun.** Stages `.env.local`, build artefacts,
+  IDE files. Always stage explicit files. Husky's `lint-staged` will
+  catch obvious leaks but won't catch your local `.env.local` if it has
+  a different name.
+- **AI surface is deferred to post-launch.** See
+  `docs/launch/manual-ops-during-ai-pause.md`. New AI features go
+  behind an off-by-default feature flag or get queued; they don't ship
+  to main without explicit approval.

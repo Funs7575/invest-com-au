@@ -1,0 +1,59 @@
+name: AI code review
+
+# AI-on-AI review — closest free substitute for a part-time human reviewer.
+# Calls Claude on every PR with a structured review prompt, posts a sticky
+# comment, and fails the check if the verdict is REQUEST_CHANGES.
+#
+# Skip individual PRs by including [skip-ai-review] in the PR title.
+#
+# Cost: ~$0.50–$3 per review with Opus. Budget ~$50–$200/month at 5–10
+# PRs/day (audit-loop volume). Toggle to Sonnet via AI_REVIEW_MODEL secret
+# for ~3x cheaper.
+#
+# Setup:
+#   1. In Vercel/GH project settings, add secret: ANTHROPIC_API_KEY
+#   2. (Optional) Add secret: AI_REVIEW_MODEL = claude-sonnet-4-6
+#
+# See scripts/ai-pr-review.mjs for the review prompt and parsing logic.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    branches: [main]
+
+concurrency:
+  group: ai-review-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  ai-review:
+    name: Claude code review
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: |
+      !github.event.pull_request.draft
+      && !contains(github.event.pull_request.title, '[skip-ai-review]')
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run AI review
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AI_REVIEW_MODEL: ${{ secrets.AI_REVIEW_MODEL }}
+        run: node scripts/ai-pr-review.mjs
