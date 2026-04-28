@@ -73,7 +73,7 @@ If Vercel shows the schedule paused or disabled — that's an **infra/billing is
 
 ### 3. If Vercel schedule looks healthy but rows still aren't landing
 
-Pull recent runtime logs filtered to `/api/cron/_dispatch/*`:
+Pull recent runtime logs filtered to `/api/cron/dispatch/*`:
 
 ```
 https://vercel.com/finns-projects-2deaa68c/invest-com-au/logs?source=serverless&search=/api/cron
@@ -124,4 +124,4 @@ Required if the silence exceeded 4 hours:
 - [`cron-stuck.md`](cron-stuck.md) — single-cron stoppage troubleshooting.
 - [`docs/audits/2026-04-26-comprehensive-audit.md`](../audits/2026-04-26-comprehensive-audit.md) §9.1 — original P0-1 finding.
 - `app/api/cron/cron-freshness/route.ts` — alert source.
-- `app/api/cron/_dispatch/[group]/route.ts` — fan-out dispatcher (the part that broke 04-16 → 04-26).
+- `app/api/cron/dispatch/[group]/route.ts` — fan-out dispatcher (the part that broke 04-16 → 04-26).
