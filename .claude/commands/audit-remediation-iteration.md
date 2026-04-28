@@ -176,6 +176,29 @@ Every 10th iteration (count = `git log --oneline --grep="audit remediation itera
 - `HUSKY=0 git push origin <branch>` — retry up to 4× with exponential backoff on network errors only (per repo's git ops policy). `HUSKY=0` is the bypass authorised by the Hardware exception in `REMEDIATION_DEFAULTS.md`; the loop should also be invoked with `HUSKY=0` in env so all child shells inherit it.
 - Update PR body with the new progress checklist (mark item as done in PR body too) via `gh api -X PATCH repos/<owner>/<repo>/pulls/<N> --field body=@/path/to/body.md`. **Do not use `gh pr edit --body-file`** — it silently no-ops with a `projects-classic` GraphQL deprecation warning on this repo.
 
+### Phase 6.5 — Discovery sweep (added 2026-04-28 after iter 87 founder feedback)
+
+Before exiting, do a quick scan of the files touched in this iteration for adjacent issues that aren't already in the queue. The loop becomes a tiny audit on every iteration — discovery scales with queue-drain pace instead of waiting for a separate scout fire.
+
+What to scan (only files touched in THIS iteration's diff or their immediate siblings — don't dive across the codebase):
+
+- **For touched API route handlers (`app/api/**/route.ts`):** are there obvious missing tests for sibling routes in the same directory? If yes, append `D-DISC-NN` items.
+- **For touched migrations (`supabase/migrations/*.sql`):** do any nearby tables in the same file lack `ENABLE ROW LEVEL SECURITY`, or have `CREATE TABLE` without policies? Append `B-DISC-NN` or `O-DISC-NN`.
+- **For touched components (`components/**/*.tsx`, `app/**/page.tsx`):** are there dated strings without `<DatedStatBadge>` wrappers in adjacent components? Append `V-DISC-NN`.
+- **For touched lib helpers (`lib/**/*.ts`):** does the changed module or an adjacent one have <60% test coverage? Append `R-DISC-NN`.
+- **For touched workflow files (`.github/workflows/**`):** any other workflow files in the directory referencing deprecated actions or missing required gates? Append `I-DISC-NN`.
+
+Hard rules for the discovery sweep:
+
+- **Cap: 3 new items per iteration.** More than that, surface a single `SCOUT-BACKLOG` queue note instead and let the dedicated `/audit-remediation-scout` fire handle the bulk.
+- **Don't open extra PRs.** The append goes only to `REMEDIATION_QUEUE.md` on main, alongside this iteration's existing Phase 7 queue update — same commit.
+- **Skip duplicates.** Grep the queue for the file path or symbol before appending. A duplicate is worse than a miss.
+- **Skip if confidence is low.** A finding only goes in the queue if you'd bet the founder would also flag it. Aspirational items are noise.
+- **Use `<STREAM>-DISC-<YYYYMMDD>-NN` IDs.** Status `pending`. Notes column should reference the source iteration that surfaced it (`Surfaced by iter <N>`).
+- **Skip the sweep entirely** if the iteration's STATUS is `BLOCKED`, `LOCKED`, `CI-RESCUE`, or `false-positive` — those iterations didn't ship work, so there's no diff to discover from.
+
+The sweep is bounded — 1-3 minutes of scanning, no editing of source code, only queue appends.
+
 ### Phase 7 — Update queue + exit
 
 **Queue updates land directly on `main`, not on the stream branch.** Queue is the source of truth that Phase 1 reads at the start of each iteration; future iterations see the wrong picture if updates sit on an unmerged stream branch. Switch to `main` before editing the queue.
