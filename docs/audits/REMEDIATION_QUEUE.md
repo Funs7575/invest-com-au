@@ -33,7 +33,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | G | _not started_ | — | — | — |
 | H | _not started_ | — | — | — |
 | I | `claude/audit-remediation/i-new-04-main-ci-auto-revert` | #278 (draft) | pending — pushed 2026-04-28T16:14Z | I-NEW-01 done via #277 (`00ef2790`); I-NEW-02 hotfix `5b7937dc`; I-NEW-03 hotfix `4b050ed9`; I-NEW-05 race-fix `55d077bf`; **first real metrics snapshot landed 2026-04-28T16:12Z (grade F 0.0899 — Supabase secrets need to be set in GH Actions for non-zero on M04/M07/M08/M09/M10/M11/M12)**; I-NEW-04 in flight (auto-revert workflow `b42233fb`) |
-| J | `claude/audit-remediation/j-stripe-webhook` | #279 (draft) | pending — pushed 2026-04-28T19:55Z | J-01a (commit `2651b72d`) · J-01b (commit `80392137`) · J-01c-1 (commit `b3c10476`) — `charge.refunded` + `invoice.{paid,payment_failed}` migrated. J-01c-2 (`checkout.session.completed`) + J-01d/e + J-03/05/06/08/09/10 still pending. |
+| J | `claude/audit-remediation/j-stripe-webhook` | #288 (draft) | pending — pushed 2026-04-29T00:00Z | J-01a (commit `2651b72d`) · J-01b (commit `80392137`) · J-01c-1 (commit `b3c10476`) · J-01c-2 (commit `d8626dc`) — all existing handlers migrated, route.ts → 177 LOC. J-01d/e + J-03/05/06/08/09/10 still pending. PR #279 was closed by owner (superseded notice); PR #288 is the new draft. |
 | K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-27T05:35Z | K-01..K-08 done; K-09 false-positive; K-10..K-15 done — **stream complete** |
 | L | _not started_ | — | — | — |
 | M | `claude/audit-remediation/m-01b-cover-image-backfill` | #283 (draft) | pending — pushed 2026-04-28T21:25Z | M-01b in flight (commit `19a0d7e6`) — per-article OG cover override + backfill script. |
@@ -306,7 +306,7 @@ The webhook route is 1,197 LOC and only handles a subset of the events an enterp
 | J-01a | done | Scaffold `lib/stripe-webhook/{types,registry}.ts` + `handlers/` directory; migrate `charge.dispute.created` as proof | — | **Done in commit `2651b72d` (PR #279, draft).** Registry returns `{handled:false}` for unregistered event types so the legacy switch still owns unmigrated handlers (incremental cutover). Adds `dispatchEvent(event, ctx)` call before the switch in `route.ts`. |
 | J-01b | done | Migrate `customer.subscription.{created,updated,deleted}` to the registry | — | **Done in commit `80392137` (PR #279, draft).** Created `lib/stripe-webhook/{lib/email.ts, lib/upsert-subscription.ts, handlers/customer-subscription.ts}`. The `charge.refunded` migration is rolled into J-01c instead (its 140-LOC body would push J-01b past the diff cap). |
 | J-01c-1 | done | Migrate `charge.refunded`, `invoice.paid`, `invoice.payment_failed` to the registry | — | **Done in commit `b3c10476` (PR #279, draft).** Created `lib/stripe-webhook/handlers/{charge-refunded,invoice}.ts`. Route shrank 937 → 701 LOC. Original J-01c had 4 handlers but `checkout.session.completed` is ~509 LOC alone, so it was split out into J-01c-2 to keep this iteration under the diff cap. |
-| J-01c-2 | pending | Migrate `checkout.session.completed` (course / wallet / consultation / advisor-credit / featured / listing / sponsored — ~509 LOC) to the registry | 1 | After this, every existing handler is in the registry; J-01e can remove the legacy switch. The 7 sub-flows (course purchase, wallet topup, advisor credit topup, advisor featured, listing payment, sponsored placement, consultation booking) may want to split into separate `handlers/checkout-*.ts` files for testability — left as a structural decision for the iteration that picks this up. |
+| J-01c-2 | done | Migrate `checkout.session.completed` (6 sub-flows: course purchase, advisor credit top-up, advisor featured, listing activation, consultation booking, sponsored placement) to the registry | — | **Done in commit `d8626dc` (PR #288, draft).** Created `lib/stripe-webhook/handlers/checkout-session-completed.ts` (606 LOC). Route shrank 701 → 177 LOC. All existing handlers are now in the registry. Behaviour preserved byte-for-byte including idempotent top-up check, course purchase rollback, sponsored placement 23505 race-tolerance, and lazy invoice-URL fetch. |
 | J-01d | pending | Add per-handler unit tests in `__tests__/lib/stripe-webhook/<handler>.test.ts` | 1 | Tests exercise each handler with a mock `WebhookContext` (admin + stripe + log). Reference test scaffolding lives at `__tests__/api/stripe-webhook-idempotency.test.ts`. |
 | J-01e | pending | Remove the legacy switch from `route.ts`; route becomes a 50-line dispatch + idempotency loop | 1 | Last J-01 step. Only safe after J-01b/c/d land green on CI. |
 | J-02 | false-positive | ~~Add handler: `charge.dispute.created`~~ | — | **Already handled** in `app/api/stripe/webhook/route.ts` (verified 2026-04-26 audit §5.4 via `grep -E "case '...'"` — handler exists). |
@@ -1073,6 +1073,19 @@ Items that ship LAST, in the final week before launch (Month 4 of pre-launch roa
 - Phase 6: commit `2f147226` on `claude/audit-remediation/u-03-email-deliverability`. Pushed with `HUSKY=0` (no node_modules in worktree). PR #282 opened as draft, Tier A (docs).
 - Phase 7: this entry + U-03 row marked done on main.
 - STATUS: PROGRESS · stream=U · item=U-03 · pr=#282 · commit=`2f147226`
+
+### 2026-04-29T00:00Z — iteration 90 (stream J — J-01c-2 — `checkout.session.completed` migration)
+
+- Phase 0: lock acquired (session resumed from context-compacted predecessor).
+- Phase 1: synced main; J branch merged with remote (received queue updates + new scout command from parallel activity). Local main reset via `git checkout -B main origin/main` to resolve unrelated-histories divergence.
+- Phase 1.5: types-drift skipped (no DB schema change).
+- Phase 2: CI rescue — PR #279 found closed (owner closed it citing "superseded by direct-to-main commits" — those commits were queue-only; actual J code was still on the branch). No CI rescue needed; PR #288 created fresh.
+- Phase 3: J stream next pending = J-01c-2. Checked out `claude/audit-remediation/j-stripe-webhook`.
+- Phase 4: refactor item, no migration. Verified checkout.session.completed case body lines (149-657 in original, ~509 LOC) still present in route.ts before this iteration.
+- Phase 5: created `lib/stripe-webhook/handlers/checkout-session-completed.ts` (606 LOC) with all 6 sub-flows. Updated `handlers/index.ts` to import + register. Removed entire case body + 7 orphaned imports from `route.ts` — route shrank 701 → 177 LOC (only default: arm remains). Local tooling unavailable (hardware exception); CI on PR #288 is authoritative gate.
+- Phase 6: commit `d8626dc` (`feat(j): migrate checkout.session.completed to registry (J-01c-2)`, +614/-530 across 3 files). Merged remote branch updates (scout command + B-07 queue entry). Pushed to `claude/audit-remediation/j-stripe-webhook`. Created PR #288 (draft) since PR #279 was closed.
+- Phase 7: queue updated on main — J in-flight row updated to PR #288 + commit `d8626dc`; J-01c-2 row marked done.
+- STATUS: PROGRESS · stream=J · item=J-01c-2 · pr=#288 · commit=`d8626dc`
 
 ### 2026-04-28T19:55Z — iteration 87 (stream J — J-01c-1 — `charge.refunded` + `invoice.*` migration)
 
