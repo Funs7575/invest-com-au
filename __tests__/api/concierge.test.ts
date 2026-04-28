@@ -19,8 +19,8 @@ vi.mock("@/lib/logger", () => ({
 }));
 
 // Anthropic streaming mock
-const mockStreamOn = vi.fn();
-const mockStreamFinalMessage = vi.fn();
+const _mockStreamOn = vi.fn();
+const _mockStreamFinalMessage = vi.fn();
 const mockMessagesStream = vi.fn();
 vi.mock("@anthropic-ai/sdk", () => ({
   default: vi.fn().mockImplementation(() => ({
@@ -194,7 +194,7 @@ describe("POST /api/concierge", () => {
 
   it("handles stream error gracefully (still sends error SSE event)", async () => {
     const errorStream = {
-      on: vi.fn((event: string) => {
+      on: vi.fn((_event: string) => {
         return errorStream;
       }),
       finalMessage: vi.fn().mockRejectedValue(new Error("Anthropic error")),
@@ -246,9 +246,12 @@ describe("GET /api/concierge", () => {
     const res = await GET(makeGet("valid-session-1234567"));
     expect(res.status).toBe(200);
     const json = await res.json();
-    // reversed in the route for oldest-first
+    // route fetches DESC by created_at then reverses → oldest-first.
+    // Older row in dbMessages is the user message at 2026-01-01, so it
+    // lands at index 0 in the response.
     expect(json.messages).toHaveLength(2);
-    expect(json.messages[0]).toEqual({ role: "assistant", content: "Hi there" });
+    expect(json.messages[0]).toEqual({ role: "user", content: "Hello" });
+    expect(json.messages[1]).toEqual({ role: "assistant", content: "Hi there" });
   });
 
   it("returns empty messages on DB error", async () => {
