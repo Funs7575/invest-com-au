@@ -7,8 +7,8 @@ import { createChainableBuilder } from "@/__tests__/helpers";
 const mockGetUser = vi.fn();
 const mockServerFrom = vi.fn();
 const mockAdminFrom = vi.fn();
-const mockAutoResolve = vi.fn();
-const mockNotifyAdmin = vi.fn(() => Promise.resolve());
+const mockAutoResolve = vi.fn((..._args: unknown[]) => undefined as unknown);
+const mockNotifyAdmin = vi.fn((..._args: unknown[]) => Promise.resolve());
 const supabaseCalls: Record<string, { method: string; args: unknown[] }[]> = {};
 
 vi.mock("@/lib/supabase/server", () => ({

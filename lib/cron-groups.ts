@@ -2,7 +2,7 @@
  * Cron dispatcher groups.
  *
  * Vercel's per-project cron limit is 40. We have 62 individual handlers, so
- * vercel.json triggers a dispatcher route (/api/cron/_dispatch/[group]) once
+ * vercel.json triggers a dispatcher route (/api/cron/dispatch/[group]) once
  * per unique cron schedule, and the dispatcher fans out to every handler that
  * shares that schedule.
  *
