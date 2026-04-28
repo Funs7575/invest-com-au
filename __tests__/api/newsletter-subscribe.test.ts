@@ -3,8 +3,8 @@ import { NextRequest } from "next/server";
 
 // ── Mock state ────────────────────────────────────────────────────────────────
 
-const mockIsAllowed = vi.fn();
-const mockIpKey = vi.fn(() => "127.0.0.1");
+const mockIsAllowed = vi.fn((..._args: unknown[]) => undefined as unknown);
+const mockIpKey = vi.fn((..._args: unknown[]) => "127.0.0.1");
 const mockIsValidEmail = vi.fn();
 const mockIsDisposableEmail = vi.fn();
 const mockAdminFrom = vi.fn();
