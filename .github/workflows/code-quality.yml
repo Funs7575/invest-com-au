@@ -78,7 +78,10 @@ jobs:
       - name: Commit + push snapshot to main
         run: |
           set -eu
-          if git diff --quiet -- docs/audits/metrics-history/ docs/audits/metrics-latest.json; then
+          # Use git status (sees untracked files too); git diff only compares
+          # tracked files. On the first run, metrics-latest.json + the
+          # history file are both new → diff sees no change but status does.
+          if [ -z "$(git status --porcelain -- docs/audits/metrics-history/ docs/audits/metrics-latest.json)" ]; then
             echo "No metrics change; skipping commit."
             exit 0
           fi
