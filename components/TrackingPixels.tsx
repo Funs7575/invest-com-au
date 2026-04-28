@@ -24,8 +24,11 @@ export default function TrackingPixels() {
   const [consent, setConsent] = useState(false);
 
   useEffect(() => {
+    // Read initial consent from localStorage on mount — must run client-side,
+    // can't use lazy initial state because hasConsent() reads window/localStorage.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setConsent(hasConsent());
-    // Re-check consent on storage changes
+    // Re-check consent on storage changes (fires from other tabs)
     const handler = () => setConsent(hasConsent());
     window.addEventListener("storage", handler);
     return () => window.removeEventListener("storage", handler);
@@ -40,8 +43,8 @@ export default function TrackingPixels() {
         <Script
           id="fb-pixel"
           strategy="afterInteractive"
-          // eslint-disable-next-line invest/no-unsafe-inner-html -- template interpolates only server-side NEXT_PUBLIC env vars (FB_PIXEL_ID), not user input
           dangerouslySetInnerHTML={{
+            // eslint-disable-next-line invest/no-unsafe-inner-html -- template interpolates only server-side NEXT_PUBLIC env vars (FB_PIXEL_ID), not user input
             __html: `
               !function(f,b,e,v,n,t,s)
               {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -68,8 +71,8 @@ export default function TrackingPixels() {
           <Script
             id="google-ads"
             strategy="afterInteractive"
-            // eslint-disable-next-line invest/no-unsafe-inner-html -- template interpolates only server-side NEXT_PUBLIC env vars (GOOGLE_ADS_ID), not user input
             dangerouslySetInnerHTML={{
+              // eslint-disable-next-line invest/no-unsafe-inner-html -- template interpolates only server-side NEXT_PUBLIC env vars (GOOGLE_ADS_ID), not user input
               __html: `
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){dataLayer.push(arguments);}
