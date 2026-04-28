@@ -12,7 +12,7 @@ export const revalidate = 0;
  * avg duration, and a freshness status (green/amber/red) based on how
  * long since the last successful run.
  *
- * Every fan-out through /api/cron/_dispatch/[group] writes a row to
+ * Every fan-out through /api/cron/dispatch/[group] writes a row to
  * public.cron_run_log, so this page shows live data without any
  * additional instrumentation per handler.
  */
@@ -362,7 +362,7 @@ export default async function CronHealthPage() {
 
         <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 text-xs text-slate-600">
           <strong className="text-slate-800">How it works:</strong> every cron
-          fan-out through <code>/api/cron/_dispatch/[group]</code> writes a row
+          fan-out through <code>/api/cron/dispatch/[group]</code> writes a row
           to <code>public.cron_run_log</code> on start and updates it on
           finish. Thresholds: ok {"<"}{STALE_HOURS_BY_CADENCE.hourly}h (hourly),{" "}
           {STALE_HOURS_BY_CADENCE.daily}h (daily),{" "}

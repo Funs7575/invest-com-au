@@ -7,8 +7,10 @@ import { createChainableBuilder } from "@/__tests__/helpers";
 const mockServerFrom = vi.fn();
 const mockAdminFrom = vi.fn();
 const mockCookieStoreGet = vi.fn();
-const mockRecordFinancialAudit = vi.fn(() => Promise.resolve());
-const mockEnqueueJob = vi.fn(() => Promise.resolve());
+const mockRecordFinancialAudit = vi.fn((..._args: unknown[]) =>
+  Promise.resolve(),
+);
+const mockEnqueueJob = vi.fn((..._args: unknown[]) => Promise.resolve());
 const mockCheckoutCreate = vi.fn();
 const supabaseCalls: Record<string, { method: string; args: unknown[] }[]> = {};
 
