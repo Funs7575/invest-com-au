@@ -33,7 +33,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | G | _not started_ | — | — | — |
 | H | _not started_ | — | — | — |
 | I | `claude/audit-remediation/i-new-04-main-ci-auto-revert` | #278 (draft) | pending — pushed 2026-04-28T16:14Z | I-NEW-01 done via #277 (`00ef2790`); I-NEW-02 hotfix `5b7937dc`; I-NEW-03 hotfix `4b050ed9`; I-NEW-05 race-fix `55d077bf`; **first real metrics snapshot landed 2026-04-28T16:12Z (grade F 0.0899 — Supabase secrets need to be set in GH Actions for non-zero on M04/M07/M08/M09/M10/M11/M12)**; I-NEW-04 in flight (auto-revert workflow `b42233fb`) |
-| J | `claude/audit-remediation/j-stripe-webhook` | #288 (draft) | pending — pushed 2026-04-29T00:03Z | J-01a (commit `2651b72d`) · J-01b (commit `80392137`) · J-01c-1 (commit `b3c10476`) · J-01c-2 (commit `d8626dc`) · J-01d (commit `bbfd4d3`) · J-01e (commit `8a9e95f`) · J-03 (commit `b8e7189`) — route.ts 1197 → 165 LOC, all J-01 steps done, trial_will_end handler done. J-05/06/08/09/10 still pending. PR #279 was closed by owner (superseded notice); PR #288 is the new draft. |
+| J | `claude/audit-remediation/j-stripe-webhook` | #288 (draft) | pending — pushed 2026-04-29T00:04Z | J-01a..J-01e (route.ts 1197 → 165 LOC) · J-03 (commit `b8e7189`) · J-05 (commit `d68852e`) — trial_will_end + payment_action_required done. J-06/08/09/10 still pending. PR #279 was closed by owner (superseded notice); PR #288 is the new draft. |
 | K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-27T05:35Z | K-01..K-08 done; K-09 false-positive; K-10..K-15 done — **stream complete** |
 | L | _not started_ | — | — | — |
 | M | `claude/audit-remediation/m-01b-cover-image-backfill` | #283 (draft) | pending — pushed 2026-04-28T21:25Z | M-01b in flight (commit `19a0d7e6`) — per-article OG cover override + backfill script. |
@@ -312,7 +312,7 @@ The webhook route is 1,197 LOC and only handles a subset of the events an enterp
 | J-02 | false-positive | ~~Add handler: `charge.dispute.created`~~ | — | **Already handled** in `app/api/stripe/webhook/route.ts` (verified 2026-04-26 audit §5.4 via `grep -E "case '...'"` — handler exists). |
 | J-03 | done | Add handler: `customer.subscription.trial_will_end` — fire 3-days-pre-charge email via Resend | 1 | **Done in commit `b8e7189` (PR #288).** `buildTrialEndingSoonEmail` added to email.ts; handler registered for `customer.subscription.trial_will_end`; 7 tests added to customer-subscription.test.ts. |
 | J-04 | false-positive | ~~Add handler: `invoice.payment_failed`~~ | — | **Already handled** in `app/api/stripe/webhook/route.ts` (verified 2026-04-26 audit §5.4). Dunning is wired through this handler + `/api/cron/subscription-dunning`. |
-| J-05 | pending | Add handler: `invoice.payment_action_required` — surface 3DS / SCA flow to user via email + dashboard banner | 1 | AU/EU customer support. |
+| J-05 | done | Add handler: `invoice.payment_action_required` — surface 3DS / SCA flow to user via email + dashboard banner | 1 | **Done in commit `d68852e` (PR #288).** Email sends hosted_invoice_url CTA (falls back to /account), skips advisor_lead invoices, 8 tests. |
 | J-06 | pending | Add handler: `payment_intent.payment_failed` — distinct from invoice.failed (covers one-time payments) | 1 | |
 | J-07 | false-positive | ~~Add handler: `charge.refunded`~~ | — | **Already handled** in `app/api/stripe/webhook/route.ts` (verified 2026-04-26 audit §5.4). |
 | J-08 | pending | Add handler: `payout.failed` — internal alert (bank info wrong) | 1 | |
@@ -1044,6 +1044,18 @@ Items that ship LAST, in the final week before launch (Month 4 of pre-launch roa
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-29T00:04Z — iteration 96 (stream J — J-05 — invoice.payment_action_required handler)
+
+- Phase 0: resumed from batch-mode fire (iter 95 completed; this is iter 5 of 5 in the batch).
+- Phase 1: synced main (up-to-date). J branch pulled; fast-forward.
+- Phase 2: CI rescue check — PR #288 Lint/Test/Build in_progress; all completed checks are success. No rescue needed.
+- Phase 3: J-05 is next pending item (slot 7). Branch already checked out.
+- Phase 4: verification — new handler (invoice event), no migration, no deletion.
+- Phase 5: added `handleInvoicePaymentActionRequiredEvent` to invoice.ts (retrieves customer, sends 3DS action email with hosted_invoice_url CTA falling back to /account, skips advisor_lead, swallows errors, logs warn), registered in index.ts for `invoice.payment_action_required`, added 8 tests to invoice.test.ts (done, 3DS email, hosted URL in CTA, fallback to account URL, deleted customer skipped, advisor_lead skipped, swallows errors, logs warn).
+- Phase 6: committed `d68852e` (+147 lines, 3 files), merged concurrent remote J branch changes, pushed.
+- Phase 7: J-05 row → done; J in-flight row updated; PR #288 body updated (J-05 checked); this log entry.
+- STATUS: PROGRESS · stream=J · item=J-05 · pr=#288 · commit=`d68852e` · diff=+147/-2 across 3 files · batch complete (5/5)
 
 ### 2026-04-29T00:15Z — iteration 96 (stream D — D-11 batch 20 — newsletter-segments-confirm + push-subscribe + community-moderate + marketplace-notify + fee-report)
 
