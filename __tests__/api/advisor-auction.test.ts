@@ -27,6 +27,10 @@ const INTERNAL_SECRET = "test-internal-secret";
 
 beforeEach(() => {
   process.env.INTERNAL_API_SECRET = INTERNAL_SECRET;
+  // Default authenticated user so GET /advisor-auction passes the auth
+  // gate at app/api/advisor-auction/route.ts:108. Tests that need to
+  // exercise the unauthenticated path override with mockGetUser.mockResolvedValueOnce.
+  mockGetUser.mockResolvedValue({ data: { user: { id: "test-user-1" } } });
 });
 
 function makePost(body: unknown, headers: Record<string, string> = {}): NextRequest {
@@ -236,9 +240,16 @@ describe("GET /api/advisor-auction (getAuctions)", () => {
         return c;
       }
       // won bids
+      // Won bids: route does `.select().eq().eq()` then awaits the chain.
+      // Both eq() calls must return the chain; the chain awaits to the
+      // final result. We use a `then` that resolves to {data:[], error:null}.
       const c: Record<string, unknown> = {};
       c.select = vi.fn(() => c);
-      c.eq = vi.fn(() => Promise.resolve({ data: [], error: null }));
+      c.eq = vi.fn(() => c);
+      c.then = (resolve: (v: unknown) => void) => {
+        resolve({ data: [], error: null });
+        return Promise.resolve({ data: [], error: null });
+      };
       return c;
     });
 
@@ -287,9 +298,16 @@ describe("GET /api/advisor-auction (getAuctions)", () => {
         }));
         return c;
       }
+      // Won bids: route does `.select().eq().eq()` then awaits the chain.
+      // Both eq() calls must return the chain; the chain awaits to the
+      // final result. We use a `then` that resolves to {data:[], error:null}.
       const c: Record<string, unknown> = {};
       c.select = vi.fn(() => c);
-      c.eq = vi.fn(() => Promise.resolve({ data: [], error: null }));
+      c.eq = vi.fn(() => c);
+      c.then = (resolve: (v: unknown) => void) => {
+        resolve({ data: [], error: null });
+        return Promise.resolve({ data: [], error: null });
+      };
       return c;
     });
 

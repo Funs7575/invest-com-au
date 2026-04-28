@@ -18,9 +18,39 @@ vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ error: vi.fn(), info: vi.fn(), warn: vi.fn(), debug: vi.fn() })),
 }));
 
+// AI-cost caps were wired into POST /api/concierge by PR #258. Mocking the
+// helpers directly is simpler than threading ai_token_usage queries through
+// the supabase mock — this test file is about chat behaviour, not caps.
+vi.mock("@/lib/ai-cost-caps", () => ({
+  loadConciergeConfig: vi.fn(() => ({
+    route: "concierge",
+    subjectType: "session",
+    perSubjectMicros: 1_000_000_000,
+    globalMicros: 1_000_000_000,
+  })),
+  preCheckCaps: vi.fn(async () => ({
+    allowed: true,
+    perSubjectMicros: 0,
+    globalMicros: 0,
+  })),
+  recordUsage: vi.fn(async () => ({
+    perSubjectMicros: 0,
+    globalMicros: 0,
+    crossed80: false,
+    perSubjectCapMicros: 1_000_000_000,
+    globalCapMicros: 1_000_000_000,
+  })),
+  capRejectionPayload: vi.fn(() => ({ error: "Daily limit reached" })),
+  computeCostMicros: vi.fn(() => 0),
+}));
+
+vi.mock("@/lib/ai-cost-alerts", () => ({
+  sendCap80Alert: vi.fn(async () => {}),
+}));
+
 // Anthropic streaming mock
-const mockStreamOn = vi.fn();
-const mockStreamFinalMessage = vi.fn();
+const _mockStreamOn = vi.fn();
+const _mockStreamFinalMessage = vi.fn();
 const mockMessagesStream = vi.fn();
 vi.mock("@anthropic-ai/sdk", () => ({
   default: vi.fn().mockImplementation(() => ({
@@ -194,7 +224,7 @@ describe("POST /api/concierge", () => {
 
   it("handles stream error gracefully (still sends error SSE event)", async () => {
     const errorStream = {
-      on: vi.fn((event: string) => {
+      on: vi.fn((_event: string) => {
         return errorStream;
       }),
       finalMessage: vi.fn().mockRejectedValue(new Error("Anthropic error")),
@@ -246,9 +276,12 @@ describe("GET /api/concierge", () => {
     const res = await GET(makeGet("valid-session-1234567"));
     expect(res.status).toBe(200);
     const json = await res.json();
-    // reversed in the route for oldest-first
+    // route fetches DESC by created_at then reverses → oldest-first.
+    // Older row in dbMessages is the user message at 2026-01-01, so it
+    // lands at index 0 in the response.
     expect(json.messages).toHaveLength(2);
-    expect(json.messages[0]).toEqual({ role: "assistant", content: "Hi there" });
+    expect(json.messages[0]).toEqual({ role: "user", content: "Hello" });
+    expect(json.messages[1]).toEqual({ role: "assistant", content: "Hi there" });
   });
 
   it("returns empty messages on DB error", async () => {

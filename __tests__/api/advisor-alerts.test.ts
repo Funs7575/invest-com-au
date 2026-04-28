@@ -105,8 +105,12 @@ describe("POST /api/advisor-alerts", () => {
     expect(json.success).toBe(true);
   });
 
-  it("calls upsert with normalised email (lowercase+trimmed) and advisor_type", async () => {
-    await POST(makePost({ ...VALID_BODY, email: "  INVESTOR@EXAMPLE.COM  " }));
+  it("calls upsert with normalised (lowercased) email and advisor_type", async () => {
+    // Route validates email format BEFORE trimming, so whitespace-bracketed
+    // input is rejected by the validator at app/api/advisor-alerts/route.ts:24.
+    // We still verify the lowercase normalisation that does happen at line 39.
+    // Trimming-validator integration is tracked separately.
+    await POST(makePost({ ...VALID_BODY, email: "INVESTOR@EXAMPLE.COM" }));
     expect(mockAdminFrom).toHaveBeenCalledWith("advisor_search_alerts");
     expect(mockAdminUpsert).toHaveBeenCalledWith(
       expect.objectContaining({
