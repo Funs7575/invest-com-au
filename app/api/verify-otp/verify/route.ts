@@ -8,12 +8,36 @@ export const runtime = "nodejs";
 /**
  * POST /api/verify-otp/verify
  * Checks the submitted code against the stored OTP.
- * Rate-limited to 10 attempts per IP per 5 minutes to prevent brute force.
+ *
+ * Layered rate limits (audit K-02 — defense-in-depth against brute force):
+ *   1. Per-IP burst cap:        3 attempts / 15 min
+ *   2. Per-IP cumulative cap:  10 attempts / 4 hr (catches slow distributed retry)
+ *   3. Per-email cap:           5 attempts / 60 min (catches IP rotation against one email)
+ *
+ * Math: a 6-digit OTP has 1M combinations. The previous 10/5min cap let an
+ * attacker exhaust the keyspace in ~5.8 days. The new layered limits cap a
+ * single attacker at 10/4hr per IP and 5/60min per email — exhaustion of one
+ * email's OTP space takes ~22 years instead of ~5.8 days. Per-email is the
+ * critical layer because OTPs are scoped to email, and an attacker rotating
+ * IPs would otherwise bypass per-IP limits entirely.
+ *
+ * Both lookups must be done before the OTP query so that a successful
+ * 429 short-circuits before we read the DB.
  */
 export async function POST(request: NextRequest) {
   const ip = (request.headers.get("x-forwarded-for") ?? "unknown").split(",")[0].trim();
-  if (await isRateLimited(`otp-verify:${ip}`, 10, 5)) {
-    return NextResponse.json({ error: "Too many attempts. Please request a new code." }, { status: 429 });
+
+  // Burst cap: 3 attempts per 15 min per IP. Tight enough that an honest
+  // user typo-fixing 1-2 codes never hits it, strict enough that a scripted
+  // brute-force is rate-limited to 12/hr per IP.
+  if (await isRateLimited(`otp-verify:${ip}`, 3, 15)) {
+    return NextResponse.json({ error: "Too many attempts. Please wait 15 minutes or request a new code." }, { status: 429 });
+  }
+
+  // Cumulative IP cap: 10 attempts in any 4-hour window. Catches the "wait
+  // out the 15 min and retry" pattern; total attempts capped at 60/day per IP.
+  if (await isRateLimited(`otp-verify-cumulative:${ip}`, 10, 240)) {
+    return NextResponse.json({ error: "Too many attempts from this network. Please try again in 4 hours." }, { status: 429 });
   }
 
   let email: string, code: string;
@@ -28,6 +52,17 @@ export async function POST(request: NextRequest) {
   }
 
   const normalizedEmail = email.toLowerCase().trim();
+
+  // Per-email cap: 5 attempts per 60 min for any single email address. This
+  // is the most important layer because OTPs are scoped to email; an
+  // attacker rotating through IP addresses (botnet, residential proxies)
+  // would bypass per-IP limits without this. 5/60min × 1M codes = ~22 years
+  // to exhaust.
+  if (await isRateLimited(`otp-verify-email:${normalizedEmail}`, 5, 60)) {
+    // Generic message — don't disclose that the email-bucket tripped vs IP.
+    return NextResponse.json({ error: "Too many attempts. Please request a new code." }, { status: 429 });
+  }
+
   const supabase = createAdminClient();
 
   const { data: otp } = await supabase

@@ -57,18 +57,24 @@ export async function POST(request: NextRequest) {
     admin_overridden_by: user.email,
   };
 
+  let response: NextResponse;
   try {
     switch (feature) {
       case "lead_disputes":
-        return await overrideLeadDispute(admin, rowId, targetVerdict, reason, auditPatch, user.email);
+        response = await overrideLeadDispute(admin, rowId, targetVerdict, reason, auditPatch, user.email);
+        break;
       case "listing_scam":
-        return await overrideListing(admin, rowId, targetVerdict, auditPatch);
+        response = await overrideListing(admin, rowId, targetVerdict, auditPatch);
+        break;
       case "text_moderation":
-        return await overrideReview(admin, rowId, targetVerdict, body.subSurface, auditPatch);
+        response = await overrideReview(admin, rowId, targetVerdict, body.subSurface, auditPatch);
+        break;
       case "advisor_applications":
-        return await overrideApplication(admin, rowId, targetVerdict, auditPatch, user.email);
+        response = await overrideApplication(admin, rowId, targetVerdict, auditPatch, user.email);
+        break;
       case "broker_data_changes":
-        return await overrideBrokerChange(admin, rowId, targetVerdict, auditPatch);
+        response = await overrideBrokerChange(admin, rowId, targetVerdict, auditPatch);
+        break;
       default:
         return NextResponse.json({ error: `Unknown feature: ${feature}` }, { status: 400 });
     }
@@ -84,6 +90,18 @@ export async function POST(request: NextRequest) {
       { status: 500 },
     );
   }
+
+  await admin.from("admin_audit_log").insert({
+    action: "automation:override",
+    entity_type: feature,
+    entity_id: String(rowId),
+    admin_email: user.email,
+    details: { feature, targetVerdict, reason },
+  }).then(({ error: logErr }) => {
+    if (logErr) log.warn("admin_audit_log insert failed", { error: logErr.message });
+  });
+
+  return response;
 }
 
 // ─── Per-feature override handlers ──────────────────────────────────

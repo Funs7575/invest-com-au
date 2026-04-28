@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/require-admin";
+import { createAdminClient } from "@/lib/supabase/admin";
 import {
   listActiveSectors,
   upsertSector,
@@ -67,6 +68,17 @@ export async function POST(request: NextRequest) {
   if (!result.ok) {
     return NextResponse.json({ error: result.error }, { status: 400 });
   }
+
+  const supabase = createAdminClient();
+  await supabase.from("admin_audit_log").insert({
+    action: "commodity_sector:upserted",
+    entity_type: "commodity_sector",
+    entity_id: String(result.id),
+    entity_name: displayName,
+    admin_email: guard.email,
+    details: { slug },
+  });
+
   return NextResponse.json({ ok: true, id: result.id });
 }
 
@@ -78,9 +90,10 @@ export async function PUT(request: NextRequest) {
   const kind = body.kind as "stock" | "etf" | undefined;
 
   if (kind === "stock") {
+    const ticker = String(body.ticker || "");
     const result = await upsertStock({
       sectorSlug: String(body.sector_slug || ""),
-      ticker: String(body.ticker || ""),
+      ticker,
       companyName: String(body.company_name || ""),
       marketCapBucket: body.market_cap_bucket as MarketCapBucket | null | undefined,
       primaryExposure: body.primary_exposure as ExposureKind | null | undefined,
@@ -97,13 +110,22 @@ export async function PUT(request: NextRequest) {
     if (!result.ok) {
       return NextResponse.json({ error: result.error }, { status: 400 });
     }
+    const supabase = createAdminClient();
+    await supabase.from("admin_audit_log").insert({
+      action: "commodity_stock:upserted",
+      entity_type: "commodity_stock",
+      entity_name: ticker,
+      admin_email: guard.email,
+      details: { sector_slug: body.sector_slug, ticker },
+    });
     return NextResponse.json({ ok: true });
   }
 
   if (kind === "etf") {
+    const ticker = String(body.ticker || "");
     const result = await upsertEtf({
       sectorSlug: String(body.sector_slug || ""),
-      ticker: String(body.ticker || ""),
+      ticker,
       name: String(body.name || ""),
       issuer: typeof body.issuer === "string" ? body.issuer : null,
       merPct: typeof body.mer_pct === "number" ? body.mer_pct : null,
@@ -122,6 +144,14 @@ export async function PUT(request: NextRequest) {
     if (!result.ok) {
       return NextResponse.json({ error: result.error }, { status: 400 });
     }
+    const supabase = createAdminClient();
+    await supabase.from("admin_audit_log").insert({
+      action: "commodity_etf:upserted",
+      entity_type: "commodity_etf",
+      entity_name: ticker,
+      admin_email: guard.email,
+      details: { sector_slug: body.sector_slug, ticker },
+    });
     return NextResponse.json({ ok: true });
   }
 

@@ -18,8 +18,33 @@ import { isFlagEnabled } from "@/lib/feature-flags";
 
 const log = logger("admin-login");
 
-const WINDOW_MS = 60_000;
+const INITIAL_WINDOW_MS = 60_000;
 const MAX_ATTEMPTS = 5;
+
+/**
+ * Exponential backoff schedule (audit K-03 — defense against the
+ * "wait out the 60s and retry" pattern). After the IP hits the
+ * MAX_ATTEMPTS burst threshold, each additional in-window attempt
+ * extends the lockout to the next tier.
+ *
+ * count threshold | lockout window
+ * --------------- | ---------------
+ *      ≤ 5        | 60 s   (initial burst window)
+ *      6–10       | 5 min  (1st extension)
+ *     11–20       | 15 min (2nd extension)
+ *      21+        | 60 min (cap)
+ *
+ * Past 60 min the attacker has clearly given up on burst attempts
+ * and has switched to a slow distributed approach — the email-tier
+ * lockout (`lib/login-lockout.ts`, 15 min → 1 hr → 24 hr by
+ * failure count) takes over from there.
+ */
+function getBackoffWindowMs(count: number): number {
+  if (count <= MAX_ATTEMPTS) return INITIAL_WINDOW_MS;
+  if (count <= 10) return 5 * 60_000;
+  if (count <= 20) return 15 * 60_000;
+  return 60 * 60_000;
+}
 
 function hashIP(ip: string): string {
   const salt = process.env.IP_HASH_SALT || "invest-com-au-2026";
@@ -33,34 +58,49 @@ function createAdminSupabase() {
 async function checkRateLimit(ipHash: string): Promise<{ locked: boolean; remaining: number }> {
   const supabase = createAdminSupabase();
   const now = new Date();
-  const resetAt = new Date(now.getTime() + WINDOW_MS);
 
-  // Try to get existing entry
-  const { data: entry } = await supabase
-    .from("admin_login_attempts")
-    .select("count, reset_at")
-    .eq("ip_hash", ipHash)
-    .single();
+  // Atomically increment-or-insert the counter via a DB function (K-11).
+  // The old SELECT → upsert/UPDATE pattern had a TOCTOU race: two concurrent
+  // requests could both read count=N, both compute N+1, and both write N+1 —
+  // losing one increment and allowing an extra attempt through the budget.
+  // admin_rate_limit_increment does the increment in one INSERT ... ON CONFLICT
+  // DO UPDATE statement, closing the race window.
+  const { data: rpcData, error: rpcError } = await supabase.rpc(
+    "admin_rate_limit_increment",
+    { p_ip_hash: ipHash, p_initial_window_ms: INITIAL_WINDOW_MS },
+  );
 
-  if (!entry || new Date(entry.reset_at) < now) {
-    // No entry or expired — upsert a fresh one
-    await supabase
-      .from("admin_login_attempts")
-      .upsert({ ip_hash: ipHash, count: 1, reset_at: resetAt.toISOString() });
-    return { locked: false, remaining: MAX_ATTEMPTS - 1 };
+  if (rpcError || !rpcData || (rpcData as unknown[]).length === 0) {
+    // Fail-open: don't block legitimate admin logins on a transient DB error.
+    log.warn("admin-rate-limit RPC error — failing open", {
+      err: rpcError?.message ?? "empty result",
+    });
+    return { locked: false, remaining: MAX_ATTEMPTS };
   }
 
-  // Increment count
-  const newCount = entry.count + 1;
-  await supabase
-    .from("admin_login_attempts")
-    .update({ count: newCount })
-    .eq("ip_hash", ipHash);
+  const row = (rpcData as { attempt_count: number; reset_at: string }[])[0]!;
+  const newCount = row.attempt_count;
+  const currentResetAt = new Date(row.reset_at);
 
   if (newCount > MAX_ATTEMPTS) {
-    const waitSec = Math.ceil((new Date(entry.reset_at).getTime() - now.getTime()) / 1000);
+    // Apply the exponential backoff extension. This UPDATE is non-atomic with
+    // the counter increment — concurrent extensions write the same monotonic
+    // value, so the worst-case race is a harmless double-write to the same
+    // future timestamp.
+    const backoffMs = getBackoffWindowMs(newCount);
+    const extendedResetAt = new Date(now.getTime() + backoffMs);
+    if (extendedResetAt > currentResetAt) {
+      await supabase
+        .from("admin_login_attempts")
+        .update({ reset_at: extendedResetAt.toISOString() })
+        .eq("ip_hash", ipHash);
+      const waitSec = Math.ceil((extendedResetAt.getTime() - now.getTime()) / 1000);
+      return { locked: true, remaining: waitSec };
+    }
+    const waitSec = Math.ceil((currentResetAt.getTime() - now.getTime()) / 1000);
     return { locked: true, remaining: waitSec };
   }
+
   return { locked: false, remaining: MAX_ATTEMPTS - newCount };
 }
 

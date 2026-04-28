@@ -5,11 +5,13 @@ import { makeRequest, createChainableBuilder } from "@/__tests__/helpers";
 
 const mockAuth = { signInWithPassword: vi.fn() };
 const mockFrom = vi.fn();
+const mockRpc = vi.fn();
 
 vi.mock("@supabase/supabase-js", () => ({
   createClient: vi.fn(() => ({
     from: mockFrom,
     auth: mockAuth,
+    rpc: mockRpc,
   })),
 }));
 
@@ -23,13 +25,23 @@ function setupRateLimitMock(
 ) {
   const callTracker: Record<string, { method: string; args: unknown[] }[]> = {};
   const builder = createChainableBuilder("admin_login_attempts", callTracker);
-
-  // Override single() to return the rate limit entry
   builder.single = vi.fn(() =>
     Promise.resolve({ data: entry, error: entry ? null : { code: "PGRST116" } })
   );
-
   mockFrom.mockReturnValue(builder);
+
+  // Route now uses an atomic admin_rate_limit_increment RPC instead of
+  // SELECT-then-UPSERT. Mirror that: if `entry` is provided, return its
+  // count + reset_at as the post-increment row; otherwise return a fresh
+  // (well-under-limit) row representing a first attempt in this window.
+  const rpcRow = entry
+    ? { attempt_count: entry.count, reset_at: entry.reset_at }
+    : {
+        attempt_count: 1,
+        reset_at: new Date(Date.now() + 60_000).toISOString(),
+      };
+  mockRpc.mockResolvedValue({ data: [rpcRow], error: null });
+
   return { builder, callTracker };
 }
 
@@ -168,11 +180,15 @@ describe("POST /api/admin/login", () => {
     const res = await POST(req);
     expect(res.status).toBe(200);
 
-    // Verify delete was called on admin_login_attempts (clearRateLimit)
-    const deleteCalls = mockFrom.mock.calls.filter(
+    // Increment now goes through rpc("admin_rate_limit_increment");
+    // clear-on-success still uses from("admin_login_attempts").delete().
+    expect(mockRpc).toHaveBeenCalledWith(
+      "admin_rate_limit_increment",
+      expect.objectContaining({ p_initial_window_ms: 60_000 }),
+    );
+    const fromCalls = mockFrom.mock.calls.filter(
       (call: unknown[]) => call[0] === "admin_login_attempts"
     );
-    // Should have been called for check + upsert + clear (delete)
-    expect(deleteCalls.length).toBeGreaterThanOrEqual(2);
+    expect(fromCalls.length).toBeGreaterThanOrEqual(1);
   });
 });

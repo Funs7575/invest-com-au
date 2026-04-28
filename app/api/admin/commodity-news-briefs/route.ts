@@ -152,6 +152,19 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  await supabase.from("admin_audit_log").insert({
+    action: "commodity_news_brief:created",
+    entity_type: "commodity_news_brief",
+    entity_name: eventTitle,
+    admin_email: guard.email,
+    details: {
+      article_slug: articleSlug,
+      sector_slug: sectorSlug,
+      status: shouldPublishImmediately ? "published" : "draft",
+      compliance_flags: flags,
+    },
+  });
+
   return NextResponse.json({
     ok: true,
     status: shouldPublishImmediately ? "published" : "draft",
@@ -191,11 +204,18 @@ export async function PATCH(request: NextRequest) {
         updated_at: nowIso,
       })
       .eq("id", id);
-    // Mirror onto the article row so the public page goes live.
     await supabase
       .from("articles")
       .update({ status: "published", published_at: nowIso })
       .eq("slug", existing.article_slug);
+    await supabase.from("admin_audit_log").insert({
+      action: "commodity_news_brief:published",
+      entity_type: "commodity_news_brief",
+      entity_id: String(id),
+      entity_name: existing.article_slug,
+      admin_email: guard.email,
+      details: { article_slug: existing.article_slug },
+    });
     return NextResponse.json({ ok: true, status: "published" });
   }
 
@@ -211,6 +231,14 @@ export async function PATCH(request: NextRequest) {
       .from("articles")
       .update({ status: "archived" })
       .eq("slug", existing.article_slug);
+    await supabase.from("admin_audit_log").insert({
+      action: "commodity_news_brief:retired",
+      entity_type: "commodity_news_brief",
+      entity_id: String(id),
+      entity_name: existing.article_slug,
+      admin_email: guard.email,
+      details: { article_slug: existing.article_slug },
+    });
     return NextResponse.json({ ok: true, status: "retired" });
   }
 

@@ -94,6 +94,16 @@ export async function POST(request: NextRequest) {
     context: { feature, disabled },
   });
 
+  await admin.from("admin_audit_log").insert({
+    action: "automation:kill_switch",
+    entity_type: "automation_feature",
+    entity_id: feature,
+    admin_email: user.email,
+    details: { feature, disabled, reason },
+  }).then(({ error: logErr }) => {
+    if (logErr) log.warn("admin_audit_log insert failed", { error: logErr.message });
+  });
+
   log.warn("Kill switch flipped", { feature, disabled, adminEmail: user.email });
   return NextResponse.json({ ok: true });
 }

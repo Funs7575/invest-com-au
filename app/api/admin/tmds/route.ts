@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/require-admin";
 import { listAllTmds, upsertTmd, type TmdProductType } from "@/lib/tmds";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export const runtime = "nodejs";
 
@@ -51,5 +52,15 @@ export async function POST(request: NextRequest) {
   if (!result.ok) {
     return NextResponse.json({ error: result.error }, { status: 400 });
   }
+
+  const db = createAdminClient();
+  await db.from("admin_audit_log").insert({
+    action: "tmd:upserted",
+    entity_type: "tmd",
+    entity_id: result.id != null ? String(result.id) : undefined,
+    admin_email: guard.email,
+    details: { product_type: productType, product_ref: productRef, tmd_version: tmdVersion },
+  });
+
   return NextResponse.json({ ok: true, id: result.id });
 }

@@ -126,6 +126,14 @@ export async function POST(req: NextRequest) {
     note: note ?? `Updated ${table} row ${id}`,
   });
 
+  await supabase.from("admin_audit_log").insert({
+    action: "fi_data:updated",
+    entity_type: table,
+    entity_id: id,
+    admin_email: adminEmail,
+    details: { category_key: categoryKey, fields_updated: Object.keys(updates) },
+  });
+
   // ── Bust relevant cache tags ───────────────────────────────
   revalidateTag(TABLE_CACHE_TAGS[table as AllowedTable], {});
   // Also bust specific tags so cached functions pick up the new data

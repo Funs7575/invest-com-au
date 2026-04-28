@@ -98,6 +98,14 @@ export async function POST(request: NextRequest) {
       reviewed_at: new Date().toISOString(),
     }).eq("id", id);
 
+    await supabase.from("admin_audit_log").insert({
+      action: "fee_queue:approved",
+      entity_type: "fee_update_queue",
+      entity_id: String(id),
+      admin_email: admin.email ?? "unknown",
+      details: { broker_id: item.broker_id, field_name: item.field_name, new_value: item.new_value },
+    });
+
     return NextResponse.json({ status: "approved", applied: true });
   }
 
@@ -107,6 +115,15 @@ export async function POST(request: NextRequest) {
       reviewed_by: "admin",
       reviewed_at: new Date().toISOString(),
     }).eq("id", id);
+
+    await supabase.from("admin_audit_log").insert({
+      action: "fee_queue:rejected",
+      entity_type: "fee_update_queue",
+      entity_id: String(id),
+      admin_email: admin.email ?? "unknown",
+      details: { broker_id: item.broker_id, field_name: item.field_name },
+    });
+
     return NextResponse.json({ status: "rejected" });
   }
 

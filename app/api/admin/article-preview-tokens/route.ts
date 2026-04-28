@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/require-admin";
+import { createAdminClient } from "@/lib/supabase/admin";
 import {
   createPreviewToken,
   listTokensForArticle,
@@ -50,6 +51,16 @@ export async function POST(request: NextRequest) {
   if (!result.ok) {
     return NextResponse.json({ error: result.error }, { status: 500 });
   }
+
+  const supabase = createAdminClient();
+  await supabase.from("admin_audit_log").insert({
+    action: "article_preview_token:created",
+    entity_type: "article_preview_token",
+    entity_name: slug,
+    admin_email: guard.email,
+    details: { article_slug: slug, ttl_hours: ttlHours, note },
+  });
+
   return NextResponse.json({ ok: true, token: result.token });
 }
 
@@ -62,5 +73,18 @@ export async function DELETE(request: NextRequest) {
   if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
 
   const result = await revokePreviewToken(id);
+
+  if (result.ok) {
+    const supabase = createAdminClient();
+    await supabase.from("admin_audit_log").insert({
+      action: "article_preview_token:revoked",
+      entity_type: "article_preview_token",
+      entity_id: String(id),
+      entity_name: `token #${id}`,
+      admin_email: guard.email,
+      details: { token_id: id },
+    });
+  }
+
   return NextResponse.json({ ok: result.ok });
 }
