@@ -113,6 +113,54 @@ export type Database = {
         }
         Relationships: []
       }
+      account_deletion_requests: {
+        Row: {
+          cancelled_at: string | null
+          created_at: string | null
+          email: string
+          fulfilled_at: string | null
+          id: number
+          ip_address: unknown
+          reason: string | null
+          requested_at: string
+          scheduled_purge_at: string
+          status: string
+          updated_at: string | null
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          cancelled_at?: string | null
+          created_at?: string | null
+          email: string
+          fulfilled_at?: string | null
+          id?: number
+          ip_address?: unknown
+          reason?: string | null
+          requested_at?: string
+          scheduled_purge_at: string
+          status?: string
+          updated_at?: string | null
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          cancelled_at?: string | null
+          created_at?: string | null
+          email?: string
+          fulfilled_at?: string | null
+          id?: number
+          ip_address?: unknown
+          reason?: string | null
+          requested_at?: string
+          scheduled_purge_at?: string
+          status?: string
+          updated_at?: string | null
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       admin_action_log: {
         Row: {
           action: string
