@@ -33,31 +33,33 @@ export default defineConfig({
       // add new (legitimately untested) code. Ratchet these up as
       // test suites grow; do not lower them.
       // 2026-04-23: fifth ratchet — overnight continuous-improvement
-      // pass. New suites: marketplace/packages + wallet + frequency-
-      // cap, server/course-access + get-subscription, web-vitals
-      // capture/rollup, admin/automation-metrics + classifier-config,
-      // api-auth, job-queue, admin-mfa, advisor-billing, advisor-
-      // emails/kyc/verification/specialties/guides/booking, advisor-
-      // application-resolver lookups, verify-abn/afsl, invest-
-      // categories, listing-verticals, ticker-sectors, glossary,
-      // firb-data, foreign-investment-data, scenario-content,
-      // compliance-config, versus-content, request-cache, resend,
-      // form-persistence, form-tracking, quiz-history, course, env,
-      // best-broker-categories, topic-clusters, property-images,
-      // investment-listings-query, cached-advisor-guides, fi-data-
-      // server pure helpers, hooks/{useUser, useCourseAccess,
-      // useSubscription}, account/{bookmarks, delete, accept-terms},
-      // cron/{referral-payouts, data-integrity-audit}, track-event
-      // error paths, BrokerLogo + BackToTop + ArticleSearchInput +
-      // CollapsibleSection components, top-level error boundary.
-      // ~640 new tests across 65+ new files.
-      // Measured at end of session: lines/stmt 42.65, branches 72.66,
-      // functions 63.07.
+      // pass. ~640 new tests across 65+ new files.
+      // Measured: lines/stmt 42.65%, branches 72.66%, functions 63.07%.
+      //
+      // 2026-04-27: sixth ratchet — D-01..D-09 integration tests for
+      // 9 API routes (submit-lead, quiz-lead, advisor-lead,
+      // advisor-apply, stripe/refund-subscription,
+      // stripe/cancel-subscription, stripe/create-portal,
+      // stripe/create-contract, auth/signout).
+      // Measured: lines/stmt 44.45%, branches 73.02%, functions 63.74%.
+      // API-route floor (D-10): scoped run with app/api/**/*.ts only:
+      // lines/stmt 13.82%, branches 58.35%, functions 30.18%.
+      // Floors set 1pp below measurements per ratchet policy.
       thresholds: {
-        lines: 42,
+        lines: 44,
         functions: 63,
-        branches: 72,
-        statements: 42,
+        branches: 73,
+        statements: 44,
+        // API-route floor (D-10). Measured 2026-04-27 post D-01..D-09:
+        // 13.82% lines, 58.35% branches, 30.18% fns.
+        // 228 untested routes remain (D-11); this floor catches
+        // regressions in the 9 covered routes without penalising them.
+        "app/api/**/*.ts": {
+          lines: 13,
+          branches: 58,
+          functions: 30,
+          statements: 13,
+        },
       },
     },
   },
