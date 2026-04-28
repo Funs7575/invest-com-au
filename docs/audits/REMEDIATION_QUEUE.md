@@ -347,7 +347,7 @@ Sentry is 95% there; PostHog funnel is half-blind; SLO framework exists but unse
 | L-02 | deferred-post-launch | n8n env-var injection audit: confirm n8n credential vault binds `SUPABASE_SERVICE_ROLE_KEY`, `ANTHROPIC_API_KEY`, etc. for the 6 workflows; replace `[HARDCODE_*]` placeholders in JSONs with `={{ $env.NAME }}` runtime expressions | 1 | **Deferred 2026-04-28** — all 6 n8n workflows are `active: false` until post-launch reactivation per founder decision (see `docs/launch/manual-ops-during-ai-pause.md` and PR #271). The placeholder JSONs are dormant; no runtime risk. Resume when n8n surface comes back. |
 | L-03 | deferred-post-launch | Wire `errorWorkflow` for `infra/n8n/overseer_hourly.json` (other 5 have it) | 1 | **Deferred 2026-04-28** — n8n workflow surface dormant until post-launch (see `docs/launch/manual-ops-during-ai-pause.md`). Resume with n8n reactivation. |
 | L-04 | done | Diagnose `cron_run_log` silence — done out-of-loop in PR #225 | 1 | Resolved in PR #225 ("fix(observability): cron dispatcher silent failures — restore cron_run_log") merged 2026-04-26T17:37Z. Dispatcher was swallowing exceptions before the wrapper could log; PR adds explicit error handling so failures land in `cron_run_log`. |
-| L-05 | pending | Validate `health_pings` ingestion path — currently empty in live; heartbeat cron either not running or not logging | 1 | P1. Pairs with L-04. |
+| L-05 | done | Validate `health_pings` ingestion path — currently empty in live; heartbeat cron either not running or not logging | — | **Resolved 2026-04-28T16:05Z by iter 84.** Same root cause as L-04 — the cron blackout (`_dispatch` Next.js private folder, then loopback auth, then loopback URL targeting Vercel deployment-protection wall). After PRs #270/#272/#276 deployed, `health_pings` started populating: 33 rows since 13:25:38Z (first heartbeat post-deploy), 12 rows in the last hour, 3 in the last 15 minutes — exactly matching the every-5-min cadence. No code change needed for L-05. |
 | L-06 | pending | Seed `slo_definitions` with launch SLOs: lead p95<5min, advisor onboarding p95<1h, webhook delivery p95<10min, etc. | 1 | P1. Migration with seed inserts. |
 | L-07 | pending | Wire SLO incident → Slack/PagerDuty/email alert sink (today writes to `slo_incidents` table only) | 1 | P1. |
 | L-08 | pending | Extend `lib/posthog/events.ts` with: `advisor_selected`, `checkout_started`, `subscription_active`, `advisor_apply_submitted`, `lead_responded_to`, `dispute_opened` | 1 | P1. Funnel half-blind without these. |
@@ -1036,6 +1036,30 @@ Items that ship LAST, in the final week before launch (Month 4 of pre-launch roa
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-28T16:08Z — iteration 84 (stream L — L-05 — health_pings ingestion validated)
+
+- Phase 0: lock acquired.
+- Phase 1: synced main; pulled in `29835dd1` (parallel session's I-NEW-01..03 done + I-NEW-04 added + L-02/L-03 deferred-post-launch — same housekeeping I had drafted in this iteration's earlier turn before the parallel commit landed).
+- Phase 1.5: types-drift handled by iter 83's auto-rescue (commit `3f6198f1`).
+- Phase 2: CI rescue scan — no audit-remediation PRs failing.
+- Phase 3: priority walk — V-NEW gates settled, Y-05 done, B-critical-2 done, K complete, N complete, D-11 PR merged, J unstarted, L next. L-01 needs-user (founder action), L-02/L-03 deferred-post-launch, L-04 done. **L-05 candidate: validate `health_pings` ingestion path.**
+- Phase 4: queried live `health_pings` via Supabase MCP. Result: 33 rows since 2026-04-28T13:25:38Z (first heartbeat post-#276 deploy), 12 in last 1h, 3 in last 15min — matches the every-5-min cron cadence exactly. The original L-05 finding ("table empty, heartbeat not running or not logging") was symptomatic of the same cron-blackout root cause we resolved this morning in PRs #270/#272/#276 (route registration + outbound auth + outbound URL targeting Vercel deployment-protection). Item is **auto-resolved** by today's cron blackout fix.
+- Phase 5: no code change needed — L-05 was a verification item. The data is the verification.
+- Phase 6: no commit on a stream branch.
+- Phase 7: marked L-05 done in the Stream L table with the rows-since-deploy + last-1h + last-15m numbers and a pointer back to the L-04 / cron-blackout PRs.
+- STATUS: PROGRESS · queue housekeeping · L-05 verified done · 33 rows since 13:25Z · cadence matches every-5m
+
+### 2026-04-28T15:55Z — iteration 83 (auto-rescue + queue housekeeping)
+
+- Phase 0: lock acquired (post-cron-blackout-fix work cleared queue of K, N, V-NEW-07).
+- Phase 1: synced main; pulled in #270/#272/#276/#220/#222/#242/#256/#258/#271 + governance commit 14f75a05.
+- Phase 1.5: regen detected `lib/database.types.ts` 48 lines stale — live DB has new `account_deletion_requests` table from K-07b's migration that landed via #222. Regenerated and pushed `chore(db): regenerate database.types.ts (auto-rescue)` direct to main as `3f6198f1`. Idempotent fix; benefits all open PRs' "Supabase types drift" CI check on next rebase.
+- Phase 2: CI rescue scan — only audit-remediation PR currently open is #277 (I-NEW-01); CLEAN, no fails. No rescue needed.
+- Phase 3: priority walk — V-NEW-01 done, V-NEW-02 deferred-post-launch, V-NEW-03/04 done → DatedStatBadge done (Y-05) → B critical-2 done → K stream complete (#222 merged 15:14 UTC) → N stream complete (#242 merged 14:50 UTC) → D-11 in-flight (PR #246 merged; batch 14 was last) → J/L/M unstarted. Picked L-02 (P0 n8n env-var injection) as next item — JSON-only edit, simple scope.
+- Phase 4: verification gate caught a contradiction. L-02's premise (replace `[HARDCODE_*]` with `={{ $env.NAME }}`) conflicts with the documented runtime constraint at `docs/ops/n8n-phase2-advisor-onboarding.md:3`: "this n8n instance does not expand `{{ $env.VAR_NAME }}` inside HTTP Request node headers." Founder follow-up clarified the larger context: 2026-04-28 decision in PR #271 deferred the entire n8n surface to post-launch (`docs/launch/manual-ops-during-ai-pause.md`), so L-02 is `deferred-post-launch`, not blocked. Same applies to L-03 (errorWorkflow on overseer_hourly).
+- Phase 7: L-02 + L-03 marked `deferred-post-launch` in queue. (Parallel session at 17:06 UTC committed the same change as part of `29835dd1` before this iteration's commit landed; my edit was deduplicated by the FF-pull. Net effect: same.)
+- STATUS: PROGRESS · auto-rescue + queue housekeeping · types regen `3f6198f1` · L-02/L-03 deferred-post-launch (parallel-session committed)
 
 ### 2026-04-28T15:35Z — iteration 82 (stream I — I-NEW-01 — fix code-quality.yml workflow)
 
