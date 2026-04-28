@@ -278,7 +278,7 @@ export default function AdminSwitchStoriesPage() {
                   <td className="px-4 py-3">
                     <button
                       onClick={() => setExpandedId(expandedId === story.id ? null : story.id)}
-                      className="text-sm text-slate-700 hover:text-emerald-700 text-left max-w-[200px] truncate transition-colors"
+                      className="text-sm text-slate-700 hover:text-emerald-700 text-left max-w-50 truncate transition-colors"
                       title={story.title}
                     >
                       {story.title}

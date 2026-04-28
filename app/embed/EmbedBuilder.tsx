@@ -184,7 +184,7 @@ export default function EmbedBuilder() {
           <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Live Preview</label>
           <div
             ref={previewRef}
-            className={`rounded-lg border border-slate-200 overflow-hidden min-h-[200px] ${
+            className={`rounded-lg border border-slate-200 overflow-hidden min-h-50 ${
               theme === "dark" ? "bg-slate-800" : "bg-white"
             }`}
           />

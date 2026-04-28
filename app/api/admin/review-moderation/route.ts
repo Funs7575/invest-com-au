@@ -97,6 +97,12 @@ export async function PATCH(req: NextRequest) {
       }
     }
 
+    await supabase.from("admin_audit_log").insert({
+      action: `professional_review:${statusMap[action]}`,
+      entity_type: "professional_review",
+      admin_email: user.email ?? null,
+      details: { ids, count: ids.length },
+    });
     return NextResponse.json({
       success: true,
       message: `${ids.length} review(s) ${statusMap[action]}`,

@@ -1,11 +1,90 @@
 import nextConfig from "eslint-config-next/core-web-vitals";
 import tsConfig from "eslint-config-next/typescript";
 
+// ── Custom rule: no-unsafe-inner-html ────────────────────────────────────────
+// Flags dangerouslySetInnerHTML whose __html value is not one of the three
+// safe patterns:  JSON.stringify(...)  |  sanitizeHtml(...)  |  renderMarkdown(...)
+// String literals and zero-expression template literals are also allowed
+// (they carry no dynamic content). Any other expression — an identifier, a
+// member-expression, or a template literal with ${...} substitutions —
+// must be explicitly suppressed with an eslint-disable-next-line comment
+// that explains WHY the value is safe.
+function isSafeHtml(node) {
+  if (!node) return false;
+  // Plain string literal — no dynamic content possible.
+  if (node.type === "Literal" && typeof node.value === "string") return true;
+  // Template literal with zero expressions — equivalent to a string literal.
+  if (node.type === "TemplateLiteral" && node.expressions.length === 0)
+    return true;
+  if (node.type === "CallExpression") {
+    const { callee } = node;
+    // JSON.stringify(...)
+    if (
+      callee.type === "MemberExpression" &&
+      callee.object.type === "Identifier" &&
+      callee.object.name === "JSON" &&
+      callee.property.type === "Identifier" &&
+      callee.property.name === "stringify"
+    )
+      return true;
+    // sanitizeHtml(...) or renderMarkdown(...)
+    if (
+      callee.type === "Identifier" &&
+      (callee.name === "sanitizeHtml" || callee.name === "renderMarkdown")
+    )
+      return true;
+  }
+  return false;
+}
+
+const investPlugin = {
+  rules: {
+    "no-unsafe-inner-html": {
+      meta: {
+        type: "problem",
+        docs: {
+          description:
+            "Require dangerouslySetInnerHTML __html to use JSON.stringify, sanitizeHtml, or renderMarkdown",
+        },
+        messages: {
+          unsafeHtml:
+            "dangerouslySetInnerHTML __html must use JSON.stringify(...), sanitizeHtml(...), renderMarkdown(...), or a string/zero-expression-template literal. Add eslint-disable-next-line with a safety comment if this value is intentionally trusted.",
+        },
+        schema: [],
+      },
+      create(context) {
+        return {
+          JSXAttribute(node) {
+            if (node.name.name !== "dangerouslySetInnerHTML") return;
+            const valueNode = node.value;
+            if (!valueNode || valueNode.type !== "JSXExpressionContainer")
+              return;
+            const expr = valueNode.expression;
+            if (!expr || expr.type !== "ObjectExpression") return;
+            for (const prop of expr.properties) {
+              if (prop.type !== "Property") continue;
+              const keyName =
+                prop.key.type === "Identifier"
+                  ? prop.key.name
+                  : prop.key.value;
+              if (keyName !== "__html") continue;
+              if (!isSafeHtml(prop.value)) {
+                context.report({ node: prop.value, messageId: "unsafeHtml" });
+              }
+            }
+          },
+        };
+      },
+    },
+  },
+};
+
 /** @type {import("eslint").Linter.Config[]} */
 const eslintConfig = [
   ...nextConfig,
   ...tsConfig,
   {
+    plugins: { invest: investPlugin },
     rules: {
       // ── Downgrade noisy pre-existing violations to warnings ──────────────
       // Apostrophes / unescaped entities in JSX copy — style, not a bug
@@ -50,6 +129,14 @@ const eslintConfig = [
       "no-var": "error",
       "prefer-const": "error",
       "eqeqeq": ["error", "smart"],
+
+      // ── Security ─────────────────────────────────────────────────────────
+      // K-13: ban dangerouslySetInnerHTML outside safe sanitization contexts.
+      // Allowed: JSON.stringify(...) | sanitizeHtml(...) | renderMarkdown(...)
+      //          | string literal | zero-expression template literal.
+      // All other forms require an eslint-disable-next-line comment explaining
+      // why the value is safe (e.g. server-only env var, hardcoded constant).
+      "invest/no-unsafe-inner-html": "error",
     },
   },
   {

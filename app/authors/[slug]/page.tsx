@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import Image from "next/image";
+import { blurDataURL } from "@/lib/image-blur";
 import { notFound } from "next/navigation";
 import type { TeamMember, Article } from "@/lib/types";
 import {
@@ -130,6 +131,8 @@ export default async function AuthorPage({
                   height={80}
                   className="w-20 h-20 rounded-full object-cover border-2 border-white/20 shrink-0"
                   priority
+                  placeholder="blur"
+                  blurDataURL={blurDataURL()}
                 />
               ) : (
                 <div className="w-20 h-20 rounded-full bg-amber-500 flex items-center justify-center text-2xl font-bold text-black shrink-0">
