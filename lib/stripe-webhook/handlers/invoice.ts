@@ -1,13 +1,18 @@
 /**
- * Handlers for `invoice.paid` and `invoice.payment_failed`.
+ * Handlers for `invoice.paid`, `invoice.payment_failed`, and
+ * `invoice.payment_action_required`.
  *
- * Two related but distinct flows:
+ * Three related but distinct flows:
  *   - `invoice.paid`: just delegates to `handleInvoicePaid` from
  *     `@/lib/advisor-billing` for advisor lead invoices; logs others.
  *   - `invoice.payment_failed`: delegates to `handleInvoicePaymentFailed`
  *     for advisor leads; for consumer Pro subscriptions, sends a
  *     payment-failed dunning email so the user can update their card
  *     before Stripe's dunning cycle cancels the subscription.
+ *   - `invoice.payment_action_required`: fires when a payment requires
+ *     3DS / SCA authentication (common in AU/EU). Sends an email with
+ *     a direct link to the Stripe-hosted invoice page where the user
+ *     can complete the authentication challenge.
  *
  * Migrated from `app/api/stripe/webhook/route.ts:150-234` as part of
  * J-01c-1. Behaviour is byte-for-byte preserved:
@@ -123,6 +128,55 @@ export const handleInvoicePaymentFailedEvent: WebhookHandler = async (event, ctx
   // The subscription.updated webhook will also fire with status 'past_due',
   // which upsertSubscription handles automatically. Access is revoked
   // by getSubscription() since past_due is excluded from isPro.
+
+  return { status: "done" };
+};
+
+export const handleInvoicePaymentActionRequiredEvent: WebhookHandler = async (event, ctx) => {
+  const invoice = event.data.object as Stripe.Invoice;
+  const hostedUrl = invoice.hosted_invoice_url ?? null;
+  const invCustomerId =
+    typeof invoice.customer === "string" ? invoice.customer : invoice.customer?.id;
+
+  // Skip advisor-lead billing invoices — those are B2B flows handled separately
+  if (invCustomerId && invoice.metadata?.type !== "advisor_lead") {
+    try {
+      const customer = await ctx.stripe.customers.retrieve(invCustomerId);
+      if (!("deleted" in customer) && customer.email) {
+        const amount = ((invoice.amount_due || 0) / 100).toFixed(2);
+        const ctaUrl = hostedUrl || `${getSiteUrl()}/account`;
+        await sendTransactionalEmail(
+          customer.email,
+          "Action required: complete your Invest.com.au Pro payment",
+          emailWrapper("Complete Your Payment 🔐", "#7c3aed", `
+                  <h2 style="margin: 0 0 12px; font-size: 18px; color: #0f172a;">Your bank requires extra verification</h2>
+                  <p style="color: #475569; font-size: 14px; line-height: 1.6; margin: 0 0 16px;">
+                    Your payment of <strong>A$${amount}</strong> for Invest.com.au Pro requires
+                    additional authentication (3D Secure). This is a one-time step required by
+                    your bank to authorise the charge.
+                  </p>
+                  <p style="color: #475569; font-size: 14px; line-height: 1.6; margin: 0 0 20px;">
+                    Click below to complete the verification — it only takes a few seconds.
+                    Your Pro access will resume immediately once the payment goes through.
+                  </p>
+                  <div style="text-align: center; margin: 20px 0;">
+                    <a href="${ctaUrl}" style="display: inline-block; padding: 12px 28px; background: #7c3aed; color: #fff; font-weight: 700; font-size: 14px; border-radius: 8px; text-decoration: none;">Complete Payment →</a>
+                  </div>
+                `),
+        );
+      }
+    } catch (err) {
+      ctx.log.error("Payment action required email error", {
+        error: err instanceof Error ? err.message : String(err),
+      });
+    }
+  }
+
+  ctx.log.warn("Invoice requires payment action (3DS/SCA)", {
+    invoiceId: invoice.id,
+    customer: invoice.customer,
+    hostedUrl,
+  });
 
   return { status: "done" };
 };

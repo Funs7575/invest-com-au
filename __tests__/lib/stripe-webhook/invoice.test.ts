@@ -25,6 +25,7 @@ vi.mock("@/lib/logger", () => ({
 
 import {
   handleInvoicePaidEvent,
+  handleInvoicePaymentActionRequiredEvent,
   handleInvoicePaymentFailedEvent,
 } from "@/lib/stripe-webhook/handlers/invoice";
 
@@ -248,6 +249,94 @@ describe("handleInvoicePaymentFailedEvent", () => {
     expect(ctx.log.warn).toHaveBeenCalledWith(
       "Payment failed for customer",
       expect.objectContaining({ invoice: "in_fail" }),
+    );
+  });
+});
+
+// ── handleInvoicePaymentActionRequiredEvent ───────────────────────────────────
+
+describe("handleInvoicePaymentActionRequiredEvent", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockSendTransactionalEmail.mockResolvedValue({ id: "email_3ds" });
+  });
+
+  it("returns { status: 'done' }", async () => {
+    const result = await handleInvoicePaymentActionRequiredEvent(
+      makeInvoiceFailedEvent(),
+      makeCtx(),
+    );
+    expect(result).toEqual({ status: "done" });
+  });
+
+  it("sends 3DS action email to customer", async () => {
+    const ctx = makeCtx();
+    await handleInvoicePaymentActionRequiredEvent(makeInvoiceFailedEvent(), ctx);
+    expect(ctx.stripe.customers.retrieve).toHaveBeenCalledWith("cus_test");
+    expect(mockSendTransactionalEmail).toHaveBeenCalledWith(
+      CUSTOMER.email,
+      expect.stringContaining("Action required"),
+      expect.any(String),
+    );
+  });
+
+  it("uses hosted_invoice_url as CTA when present", async () => {
+    const ctx = makeCtx();
+    await handleInvoicePaymentActionRequiredEvent(
+      makeInvoiceFailedEvent({ hosted_invoice_url: "https://invoice.stripe.com/inv/test" } as Partial<Stripe.Invoice>),
+      ctx,
+    );
+    expect(mockEmailWrapper).toHaveBeenCalledWith(
+      "Complete Your Payment 🔐",
+      expect.any(String),
+      expect.stringContaining("invoice.stripe.com"),
+    );
+  });
+
+  it("falls back to account URL when hosted_invoice_url absent", async () => {
+    const ctx = makeCtx();
+    await handleInvoicePaymentActionRequiredEvent(
+      makeInvoiceFailedEvent({ hosted_invoice_url: null } as Partial<Stripe.Invoice>),
+      ctx,
+    );
+    expect(mockEmailWrapper).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.any(String),
+      expect.stringContaining("invest.com.au/account"),
+    );
+  });
+
+  it("does NOT send email for deleted customer", async () => {
+    const deletedCustomer = { id: "cus_test", deleted: true } as unknown as Stripe.DeletedCustomer;
+    const ctx = makeCtx({ customersRetrieve: vi.fn().mockResolvedValue(deletedCustomer) });
+    await handleInvoicePaymentActionRequiredEvent(makeInvoiceFailedEvent(), ctx);
+    expect(mockSendTransactionalEmail).not.toHaveBeenCalled();
+  });
+
+  it("does NOT send email for advisor_lead invoices", async () => {
+    const ctx = makeCtx();
+    await handleInvoicePaymentActionRequiredEvent(
+      makeInvoiceFailedEvent({ metadata: { type: "advisor_lead" } }),
+      ctx,
+    );
+    expect(mockSendTransactionalEmail).not.toHaveBeenCalled();
+  });
+
+  it("swallows customer retrieve errors non-fatally", async () => {
+    const ctx = makeCtx({
+      customersRetrieve: vi.fn().mockRejectedValue(new Error("Stripe error")),
+    });
+    const result = await handleInvoicePaymentActionRequiredEvent(makeInvoiceFailedEvent(), ctx);
+    expect(result).toEqual({ status: "done" });
+    expect(ctx.log.error).toHaveBeenCalled();
+  });
+
+  it("always logs warn with invoiceId and hostedUrl", async () => {
+    const ctx = makeCtx();
+    await handleInvoicePaymentActionRequiredEvent(makeInvoiceFailedEvent(), ctx);
+    expect(ctx.log.warn).toHaveBeenCalledWith(
+      "Invoice requires payment action (3DS/SCA)",
+      expect.objectContaining({ invoiceId: "in_fail" }),
     );
   });
 });

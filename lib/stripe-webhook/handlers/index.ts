@@ -27,6 +27,7 @@ import {
 } from "./customer-subscription";
 import {
   handleInvoicePaidEvent,
+  handleInvoicePaymentActionRequiredEvent,
   handleInvoicePaymentFailedEvent,
 } from "./invoice";
 
@@ -38,4 +39,5 @@ registerHandler("customer.subscription.updated", handleCustomerSubscriptionUpdat
 registerHandler("customer.subscription.deleted", handleCustomerSubscriptionDeleted);
 registerHandler("customer.subscription.trial_will_end", handleCustomerSubscriptionTrialWillEnd);
 registerHandler("invoice.paid", handleInvoicePaidEvent);
+registerHandler("invoice.payment_action_required", handleInvoicePaymentActionRequiredEvent);
 registerHandler("invoice.payment_failed", handleInvoicePaymentFailedEvent);
