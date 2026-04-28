@@ -31,7 +31,7 @@ import {
   handleInvoicePaymentActionRequiredEvent,
   handleInvoicePaymentFailedEvent,
 } from "./invoice";
-import { handlePaymentIntentPaymentFailed } from "./payment-intent-payment-failed";
+import { handlePaymentIntentPaymentFailed } from "./payment-intent-failed";
 import { handlePayoutFailed } from "./payout-failed";
 import { handleRadarEarlyFraudWarning } from "./radar-early-fraud-warning";
 
