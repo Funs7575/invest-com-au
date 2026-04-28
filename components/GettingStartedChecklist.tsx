@@ -214,7 +214,7 @@ export default function GettingStartedChecklist({
             >
               {/* Checkbox */}
               <div
-                className={`w-[18px] h-[18px] rounded border-2 flex items-center justify-center shrink-0 ${
+                className={`w-4.5 h-4.5 rounded border-2 flex items-center justify-center shrink-0 ${
                   item.done
                     ? "bg-emerald-500 border-emerald-500"
                     : "border-slate-200"

@@ -75,7 +75,7 @@ export default function NotificationBell() {
       </svg>
       {unread > 0 && (
         <span
-          className="absolute top-1 right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center leading-none"
+          className="absolute top-1 right-1 min-w-4.5 h-4.5 px-1 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center leading-none"
           aria-hidden
         >
           {unread > 99 ? "99+" : unread}

@@ -393,7 +393,7 @@ export default function AuditLogPage() {
                       </span>
                     </td>
                     <td className="px-4 py-3 text-sm text-slate-900">{entry.entity_type}</td>
-                    <td className="px-4 py-3 text-sm text-slate-600 hidden md:table-cell truncate max-w-[200px]">{entry.entity_name || "\u2014"}</td>
+                    <td className="px-4 py-3 text-sm text-slate-600 hidden md:table-cell truncate max-w-50">{entry.entity_name || "\u2014"}</td>
                     <td className="px-4 py-3 text-xs text-slate-500 hidden lg:table-cell">{entry.admin_email || "\u2014"}</td>
                     <td className="px-4 py-3 text-right">
                       <button
@@ -461,7 +461,7 @@ export default function AuditLogPage() {
                           {entry.entity_type}
                         </span>
                         {entry.entity_name && (
-                          <span className="text-sm text-slate-600 truncate max-w-[200px]">
+                          <span className="text-sm text-slate-600 truncate max-w-50">
                             &mdash; {entry.entity_name}
                           </span>
                         )}

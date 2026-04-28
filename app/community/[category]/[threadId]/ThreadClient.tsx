@@ -751,7 +751,7 @@ export default function ThreadClient({
             value={replyBody}
             onChange={(e) => setReplyBody(e.target.value)}
             placeholder="Share your thoughts..."
-            className="w-full border border-slate-200 rounded-lg p-3 text-sm text-slate-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none min-h-[120px] resize-y"
+            className="w-full border border-slate-200 rounded-lg p-3 text-sm text-slate-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none min-h-30 resize-y"
           />
           <div className="flex items-center justify-between mt-3">
             <span className="text-xs text-slate-400">

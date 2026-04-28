@@ -676,7 +676,7 @@ export default function AdvertiserIntelligencePage() {
             <button
               key={tab.value}
               onClick={() => setActiveTab(tab.value)}
-              className={`flex-1 min-w-[120px] px-3 py-2 text-xs font-semibold rounded-lg transition-colors ${
+              className={`flex-1 min-w-30 px-3 py-2 text-xs font-semibold rounded-lg transition-colors ${
                 activeTab === tab.value ? "bg-amber-500 text-white" : "text-slate-600 hover:bg-slate-50"
               }`}
             >

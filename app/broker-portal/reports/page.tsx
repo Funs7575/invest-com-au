@@ -133,7 +133,7 @@ export default function ReportsPage() {
           <div className="flex gap-1 bg-slate-100 rounded-lg p-0.5">
             <button
               onClick={() => setDateMode("preset")}
-              className={`px-3 py-2 min-h-[36px] text-[0.69rem] font-semibold rounded-md transition-colors ${
+              className={`px-3 py-2 min-h-9 text-[0.69rem] font-semibold rounded-md transition-colors ${
                 dateMode === "preset" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500"
               }`}
             >
@@ -141,7 +141,7 @@ export default function ReportsPage() {
             </button>
             <button
               onClick={() => setDateMode("custom")}
-              className={`px-3 py-2 min-h-[36px] text-[0.69rem] font-semibold rounded-md transition-colors ${
+              className={`px-3 py-2 min-h-9 text-[0.69rem] font-semibold rounded-md transition-colors ${
                 dateMode === "custom" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500"
               }`}
             >
@@ -155,7 +155,7 @@ export default function ReportsPage() {
                 <button
                   key={d}
                   onClick={() => setDays(d)}
-                  className={`px-3 py-2 min-h-[36px] text-xs font-semibold rounded-lg transition-colors ${
+                  className={`px-3 py-2 min-h-9 text-xs font-semibold rounded-lg transition-colors ${
                     days === d ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                   }`}
                 >
@@ -169,14 +169,14 @@ export default function ReportsPage() {
                 type="date"
                 value={customFrom}
                 onChange={(e) => setCustomFrom(e.target.value)}
-                className="px-2.5 py-2 min-h-[40px] text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400/30"
+                className="px-2.5 py-2 min-h-10 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400/30"
               />
               <span className="text-xs text-slate-400">to</span>
               <input
                 type="date"
                 value={customTo}
                 onChange={(e) => setCustomTo(e.target.value)}
-                className="px-2.5 py-2 min-h-[40px] text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400/30"
+                className="px-2.5 py-2 min-h-10 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400/30"
               />
             </div>
           )}
@@ -196,7 +196,7 @@ export default function ReportsPage() {
               const label = dateMode === "custom" ? `${customFrom}_${customTo}` : `${days}d`;
               downloadCSV(`report-${label}.csv`, headers, rows);
             }}
-            className="px-3 py-2 min-h-[36px] text-xs font-semibold rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors"
+            className="px-3 py-2 min-h-9 text-xs font-semibold rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors"
           >
             Export CSV
           </button>

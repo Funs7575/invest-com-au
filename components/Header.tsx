@@ -485,7 +485,7 @@ function DesktopDropdown({
       </button>
       {open && (
         <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 z-50">
-          <div className="bg-white rounded-xl border border-slate-200 shadow-lg py-2 min-w-[240px]">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-lg py-2 min-w-60">
             {items.map((item) => (
               <Link
                 key={item.href}
@@ -572,7 +572,7 @@ export default function Header() {
             <ThemeToggle />
             <button
               onClick={() => setMenuOpen(!menuOpen)}
-              className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-700 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-700/40 rounded-lg transition-colors"
+              className="p-2 min-w-11 min-h-11 flex items-center justify-center text-slate-700 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-700/40 rounded-lg transition-colors"
               aria-label={menuOpen ? "Close menu" : "Open menu"}
               aria-expanded={menuOpen}
             >
@@ -605,7 +605,7 @@ export default function Header() {
                       key={item.href}
                       href={item.href}
                       onClick={() => setMenuOpen(false)}
-                      className={`block px-3 py-2.5 min-h-[44px] flex items-center text-[0.8rem] font-medium rounded-lg transition-colors ${isActive ? "bg-amber-50 text-amber-800 font-bold" : "text-slate-700 hover:bg-slate-50"}`}
+                      className={`block px-3 py-2.5 min-h-11 flex items-center text-[0.8rem] font-medium rounded-lg transition-colors ${isActive ? "bg-amber-50 text-amber-800 font-bold" : "text-slate-700 hover:bg-slate-50"}`}
                       {...(isActive ? { "aria-current": "page" as const } : {})}
                     >
                       {item.name}
@@ -620,7 +620,7 @@ export default function Header() {
               <Link
                 href="/quiz"
                 onClick={() => setMenuOpen(false)}
-                className="block w-full py-3 min-h-[44px] text-center text-sm font-extrabold text-white bg-amber-500 rounded-xl hover:bg-amber-600 transition-colors"
+                className="block w-full py-3 min-h-11 text-center text-sm font-extrabold text-white bg-amber-500 rounded-xl hover:bg-amber-600 transition-colors"
               >
                 Start Free Match
               </Link>
@@ -628,14 +628,14 @@ export default function Header() {
                 <Link
                   href="/find-advisor"
                   onClick={() => setMenuOpen(false)}
-                  className="flex-1 py-2.5 min-h-[44px] flex items-center justify-center text-xs font-bold text-center text-slate-700 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100 transition-colors"
+                  className="flex-1 py-2.5 min-h-11 flex items-center justify-center text-xs font-bold text-center text-slate-700 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100 transition-colors"
                 >
                   Find Advisor
                 </Link>
                 <Link
                   href="/compare"
                   onClick={() => setMenuOpen(false)}
-                  className="flex-1 py-2.5 min-h-[44px] flex items-center justify-center text-xs font-bold text-center text-slate-700 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100 transition-colors"
+                  className="flex-1 py-2.5 min-h-11 flex items-center justify-center text-xs font-bold text-center text-slate-700 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100 transition-colors"
                 >
                   Compare Platforms
                 </Link>
@@ -651,7 +651,7 @@ export default function Header() {
                     key={link.href}
                     href={link.href}
                     onClick={() => setMenuOpen(false)}
-                    className="text-[0.69rem] font-medium text-slate-600 bg-slate-50 px-3 py-1.5 min-h-[44px] inline-flex items-center rounded-full hover:bg-slate-100 hover:text-slate-900 transition-colors"
+                    className="text-[0.69rem] font-medium text-slate-600 bg-slate-50 px-3 py-1.5 min-h-11 inline-flex items-center rounded-full hover:bg-slate-100 hover:text-slate-900 transition-colors"
                   >
                     {link.label}
                   </Link>

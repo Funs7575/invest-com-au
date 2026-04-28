@@ -24,7 +24,7 @@ export default function SVGLineChart({
   data,
   width = 500,
   height = 200,
-  color = "#16a34a",
+  color = "#16a34a", // green-600
   showArea = true,
   showDots = true,
   showGrid = true,
@@ -86,9 +86,9 @@ export default function SVGLineChart({
               y1={g.y}
               x2={padding.left + chartWidth}
               y2={g.y}
-              stroke="#e2e8f0"
               strokeWidth={1}
               strokeDasharray={i === 0 ? "0" : "4,4"}
+              className="stroke-slate-200"
             />
             <text
               x={padding.left - 8}
@@ -96,7 +96,7 @@ export default function SVGLineChart({
               textAnchor="end"
               dominantBaseline="central"
               fontSize={10}
-              fill="#94a3b8"
+              className="fill-slate-400"
             >
               {formatValue(g.val)}
             </text>
@@ -138,7 +138,7 @@ export default function SVGLineChart({
             y={height - 8}
             textAnchor="middle"
             fontSize={10}
-            fill="#94a3b8"
+            className="fill-slate-400"
           >
             {d.label}
           </text>
