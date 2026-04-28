@@ -195,10 +195,18 @@ describe("handleInvoicePaymentFailedEvent", () => {
     expect(adminFrom).toHaveBeenCalledWith("subscriptions");
   });
 
-  it("does NOT send dunning email when no profile found", async () => {
+  it("still sends dunning email when no profile found (profile only gates subscriptions touch)", async () => {
     const ctx = makeCtx({ profileData: null });
     await handleInvoicePaymentFailedEvent(makeInvoiceFailedEvent(), ctx);
-    expect(mockSendTransactionalEmail).not.toHaveBeenCalled();
+    // Email goes to Stripe customer.email regardless of profile existence
+    expect(mockSendTransactionalEmail).toHaveBeenCalledWith(
+      CUSTOMER.email,
+      expect.stringContaining("payment failed"),
+      expect.any(String),
+    );
+    // Subscriptions update should NOT be called without profile
+    const adminFrom = ctx.admin.from as ReturnType<typeof vi.fn>;
+    expect(adminFrom).not.toHaveBeenCalledWith("subscriptions");
   });
 
   it("does NOT send dunning email when customer is deleted", async () => {
