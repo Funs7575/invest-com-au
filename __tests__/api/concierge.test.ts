@@ -18,6 +18,36 @@ vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ error: vi.fn(), info: vi.fn(), warn: vi.fn(), debug: vi.fn() })),
 }));
 
+// AI-cost caps were wired into POST /api/concierge by PR #258. Mocking the
+// helpers directly is simpler than threading ai_token_usage queries through
+// the supabase mock — this test file is about chat behaviour, not caps.
+vi.mock("@/lib/ai-cost-caps", () => ({
+  loadConciergeConfig: vi.fn(() => ({
+    route: "concierge",
+    subjectType: "session",
+    perSubjectMicros: 1_000_000_000,
+    globalMicros: 1_000_000_000,
+  })),
+  preCheckCaps: vi.fn(async () => ({
+    allowed: true,
+    perSubjectMicros: 0,
+    globalMicros: 0,
+  })),
+  recordUsage: vi.fn(async () => ({
+    perSubjectMicros: 0,
+    globalMicros: 0,
+    crossed80: false,
+    perSubjectCapMicros: 1_000_000_000,
+    globalCapMicros: 1_000_000_000,
+  })),
+  capRejectionPayload: vi.fn(() => ({ error: "Daily limit reached" })),
+  computeCostMicros: vi.fn(() => 0),
+}));
+
+vi.mock("@/lib/ai-cost-alerts", () => ({
+  sendCap80Alert: vi.fn(async () => {}),
+}));
+
 // Anthropic streaming mock
 const _mockStreamOn = vi.fn();
 const _mockStreamFinalMessage = vi.fn();
