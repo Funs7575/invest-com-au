@@ -102,7 +102,7 @@ jobs:
         run: npm ci
 
       - name: Download .next build from ci job
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: next-build
           path: .next
@@ -115,7 +115,7 @@ jobs:
         # screenshot suite (chromatic/playwright), diff vs baseline,
         # upload result, set PR check status.
         # Docs: https://www.chromatic.com/docs/playwright
-        uses: chromaui/action@v11
+        uses: chromaui/action@v16
         with:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           # Run in playwright mode because there's no Storybook.
