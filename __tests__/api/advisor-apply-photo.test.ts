@@ -121,7 +121,7 @@ describe("POST /api/advisor-apply/photo", () => {
     const json = await res.json();
     expect(json.publicUrl).toBeDefined();
     // Storage path should use .png extension
-    const uploadCall = storageBucket.upload.mock.calls[0] as [string, unknown, unknown];
+    const uploadCall = storageBucket.upload.mock.calls[0] as unknown as [string, unknown, unknown];
     expect(uploadCall[0]).toMatch(/\.png$/);
   });
 
@@ -129,7 +129,7 @@ describe("POST /api/advisor-apply/photo", () => {
     const req = await makeReq(makeSmallFile("image/webp", "advisor.webp"));
     const res = await POST(req);
     expect(res.status).toBe(200);
-    const uploadCall = storageBucket.upload.mock.calls[0] as [string, unknown, unknown];
+    const uploadCall = storageBucket.upload.mock.calls[0] as unknown as [string, unknown, unknown];
     expect(uploadCall[0]).toMatch(/\.webp$/);
   });
 });
