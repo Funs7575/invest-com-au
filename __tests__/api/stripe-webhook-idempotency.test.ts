@@ -131,7 +131,7 @@ describe("idempotency: customer.subscription.created", () => {
     );
     mockConstructEvent.mockReturnValue(evt);
     const results = await harness.replay(
-      POST as (req: Request) => Promise<Response>,
+      POST as unknown as (req: Request) => Promise<Response>,
       () => makeWebhookRequest(JSON.stringify(evt)),
     );
     harness.assertAllSucceeded(results);
@@ -145,7 +145,7 @@ describe("idempotency: customer.subscription.created", () => {
     );
     mockConstructEvent.mockReturnValue(evt);
     const results = await harness.replay(
-      POST as (req: Request) => Promise<Response>,
+      POST as unknown as (req: Request) => Promise<Response>,
       () => makeWebhookRequest(JSON.stringify(evt)),
     );
     harness.assertDuplicatesShortCircuited(results, 2);
@@ -161,7 +161,7 @@ describe("idempotency: customer.subscription.created", () => {
     );
     mockConstructEvent.mockReturnValue(evt);
     await harness.replay(
-      POST as (req: Request) => Promise<Response>,
+      POST as unknown as (req: Request) => Promise<Response>,
       () => makeWebhookRequest(JSON.stringify(evt)),
     );
     harness.assertConverged("subscriptions", "upsert", 1);
@@ -175,7 +175,7 @@ describe("idempotency: customer.subscription.created", () => {
     );
     mockConstructEvent.mockReturnValue(evt);
     await harness.replay(
-      POST as (req: Request) => Promise<Response>,
+      POST as unknown as (req: Request) => Promise<Response>,
       () => makeWebhookRequest(JSON.stringify(evt)),
     );
     harness.assertConverged("profiles", "single", 1);
@@ -194,7 +194,7 @@ describe("idempotency: invoice.paid", () => {
     const evt = makeStripeEvent("invoice.paid", makeInvoiceData(), "evt_inv_paid_001");
     mockConstructEvent.mockReturnValue(evt);
     const results = await harness.replay(
-      POST as (req: Request) => Promise<Response>,
+      POST as unknown as (req: Request) => Promise<Response>,
       () => makeWebhookRequest(JSON.stringify(evt)),
     );
     harness.assertAllSucceeded(results);
@@ -204,7 +204,7 @@ describe("idempotency: invoice.paid", () => {
     const evt = makeStripeEvent("invoice.paid", makeInvoiceData(), "evt_inv_paid_002");
     mockConstructEvent.mockReturnValue(evt);
     const results = await harness.replay(
-      POST as (req: Request) => Promise<Response>,
+      POST as unknown as (req: Request) => Promise<Response>,
       () => makeWebhookRequest(JSON.stringify(evt)),
     );
     harness.assertDuplicatesShortCircuited(results, 2);
@@ -218,7 +218,7 @@ describe("idempotency: invoice.paid", () => {
     );
     mockConstructEvent.mockReturnValue(evt);
     await harness.replay(
-      POST as (req: Request) => Promise<Response>,
+      POST as unknown as (req: Request) => Promise<Response>,
       () => makeWebhookRequest(JSON.stringify(evt)),
     );
     expect(mockHandleInvoicePaid).toHaveBeenCalledTimes(1);
@@ -232,7 +232,7 @@ describe("idempotency: invoice.paid", () => {
     );
     mockConstructEvent.mockReturnValue(evt);
     const results = await harness.replay(
-      POST as (req: Request) => Promise<Response>,
+      POST as unknown as (req: Request) => Promise<Response>,
       () => makeWebhookRequest(JSON.stringify(evt)),
     );
     harness.assertAllSucceeded(results);
@@ -257,7 +257,7 @@ describe("idempotency: invoice.payment_failed", () => {
     );
     mockConstructEvent.mockReturnValue(evt);
     const results = await harness.replay(
-      POST as (req: Request) => Promise<Response>,
+      POST as unknown as (req: Request) => Promise<Response>,
       () => makeWebhookRequest(JSON.stringify(evt)),
     );
     harness.assertAllSucceeded(results);
@@ -271,7 +271,7 @@ describe("idempotency: invoice.payment_failed", () => {
     );
     mockConstructEvent.mockReturnValue(evt);
     const results = await harness.replay(
-      POST as (req: Request) => Promise<Response>,
+      POST as unknown as (req: Request) => Promise<Response>,
       () => makeWebhookRequest(JSON.stringify(evt)),
     );
     harness.assertDuplicatesShortCircuited(results, 2);
@@ -285,7 +285,7 @@ describe("idempotency: invoice.payment_failed", () => {
     );
     mockConstructEvent.mockReturnValue(evt);
     await harness.replay(
-      POST as (req: Request) => Promise<Response>,
+      POST as unknown as (req: Request) => Promise<Response>,
       () => makeWebhookRequest(JSON.stringify(evt)),
     );
     expect(mockHandleInvoicePaymentFailed).toHaveBeenCalledTimes(1);
@@ -299,7 +299,7 @@ describe("idempotency: invoice.payment_failed", () => {
     );
     mockConstructEvent.mockReturnValue(evt);
     await harness.replay(
-      POST as (req: Request) => Promise<Response>,
+      POST as unknown as (req: Request) => Promise<Response>,
       () => makeWebhookRequest(JSON.stringify(evt)),
     );
     const subUpdates = harness.getCalls("subscriptions").filter((c) => c.method === "update");
@@ -319,7 +319,7 @@ describe("idempotency: charge.refunded", () => {
     const evt = makeStripeEvent("charge.refunded", makeChargeData(), "evt_charge_ref_001");
     mockConstructEvent.mockReturnValue(evt);
     const results = await harness.replay(
-      POST as (req: Request) => Promise<Response>,
+      POST as unknown as (req: Request) => Promise<Response>,
       () => makeWebhookRequest(JSON.stringify(evt)),
     );
     harness.assertAllSucceeded(results);
@@ -329,7 +329,7 @@ describe("idempotency: charge.refunded", () => {
     const evt = makeStripeEvent("charge.refunded", makeChargeData(), "evt_charge_ref_002");
     mockConstructEvent.mockReturnValue(evt);
     const results = await harness.replay(
-      POST as (req: Request) => Promise<Response>,
+      POST as unknown as (req: Request) => Promise<Response>,
       () => makeWebhookRequest(JSON.stringify(evt)),
     );
     harness.assertDuplicatesShortCircuited(results, 2);
@@ -343,7 +343,7 @@ describe("idempotency: charge.refunded", () => {
     );
     mockConstructEvent.mockReturnValue(evt);
     await harness.replay(
-      POST as (req: Request) => Promise<Response>,
+      POST as unknown as (req: Request) => Promise<Response>,
       () => makeWebhookRequest(JSON.stringify(evt)),
     );
     const cpWrites = harness.getCalls("course_purchases").filter((c) => c.method === "update");
@@ -358,7 +358,7 @@ describe("idempotency: charge.refunded", () => {
     );
     mockConstructEvent.mockReturnValue(evt);
     const results = await harness.replay(
-      POST as (req: Request) => Promise<Response>,
+      POST as unknown as (req: Request) => Promise<Response>,
       () => makeWebhookRequest(JSON.stringify(evt)),
     );
     harness.assertAllSucceeded(results);
@@ -409,7 +409,7 @@ describe("idempotency state machine: edge cases", () => {
     );
     mockConstructEvent.mockReturnValue(evt);
     const results = await harness.replay(
-      POST as (req: Request) => Promise<Response>,
+      POST as unknown as (req: Request) => Promise<Response>,
       () => makeWebhookRequest(JSON.stringify(evt)),
       5,
     );

@@ -35,7 +35,7 @@ vi.mock("@/lib/supabase/admin", () => ({
 }));
 
 // Capture fetch calls (Resend email)
-const fetchMock = vi.fn<() => Promise<Response>>();
+const fetchMock = vi.fn<(input: unknown, init?: unknown) => Promise<Response>>();
 vi.stubGlobal("fetch", fetchMock);
 
 import { POST } from "@/app/api/user-review/route";

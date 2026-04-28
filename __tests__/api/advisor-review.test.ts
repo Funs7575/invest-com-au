@@ -19,7 +19,7 @@ vi.mock("@/lib/supabase/server", () => ({
   createClient: vi.fn(async () => ({ from: serverFromMock })),
 }));
 
-const fetchMock = vi.fn<() => Promise<Response>>();
+const fetchMock = vi.fn<(input: unknown, init?: unknown) => Promise<Response>>();
 vi.stubGlobal("fetch", fetchMock);
 
 import { POST } from "@/app/api/advisor-review/route";
@@ -147,7 +147,7 @@ describe("POST /api/advisor-review", () => {
     const res = await POST(makeReq(VALID));
     expect(res.status).toBe(200);
     expect(fetchMock).toHaveBeenCalledOnce();
-    expect((fetchMock.mock.calls[0]?.[0] as string)).toContain("resend.com");
+    expect((fetchMock.mock.calls[0]?.[0] as unknown as string)).toContain("resend.com");
   });
 
   it("returns 200 even when Resend email send throws (non-blocking catch)", async () => {
