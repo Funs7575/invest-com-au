@@ -34,13 +34,13 @@ export default function MobileStickyAdvisorCta() {
         <Link
           href="/compare"
           onClick={() => setDismissed(true)}
-          className="shrink-0 px-4 py-2.5 min-h-[44px] flex items-center bg-amber-500 hover:bg-amber-600 text-slate-900 text-xs font-bold rounded-xl transition-colors"
+          className="shrink-0 px-4 py-2.5 min-h-11 flex items-center bg-amber-500 hover:bg-amber-600 text-slate-900 text-xs font-bold rounded-xl transition-colors"
         >
           Compare Platforms &rarr;
         </Link>
         <button
           onClick={() => setDismissed(true)}
-          className="shrink-0 p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-400 hover:text-slate-600 rounded-lg"
+          className="shrink-0 p-2 min-w-11 min-h-11 flex items-center justify-center text-slate-400 hover:text-slate-600 rounded-lg"
           aria-label="Dismiss"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">

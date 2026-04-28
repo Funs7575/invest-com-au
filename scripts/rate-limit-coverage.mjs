@@ -90,6 +90,11 @@ const EXEMPT_PATTERNS = [
   // Push notifications server → registered client push subscriptions;
   // authenticated via session, called from admin flows.
   { match: /\/api\/push\//, reason: "admin/session-authenticated push dispatch" },
+  // Quiz data is a public-read edge route serving brokers + quiz_weights
+  // (no PII). Cache-Control sets `public, max-age=60, stale-while-revalidate=300`,
+  // so Vercel's CDN absorbs the load and a per-IP throttle inside the
+  // edge handler would cost cache hits with no real threat model.
+  { match: /\/api\/quiz\/data(\/|$)/, reason: "edge route w/ 60s CDN cache; provider-pooled" },
 ];
 
 async function findRouteFiles(dir) {

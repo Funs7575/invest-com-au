@@ -31,13 +31,13 @@ export default function ConsultationsError({
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           <button
             onClick={reset}
-            className="w-full sm:w-auto px-6 py-3 min-h-[48px] bg-slate-900 text-white font-semibold rounded-lg hover:bg-slate-800 transition-colors text-sm"
+            className="w-full sm:w-auto px-6 py-3 min-h-12 bg-slate-900 text-white font-semibold rounded-lg hover:bg-slate-800 transition-colors text-sm"
           >
             Try Again
           </button>
           <Link
             href="/"
-            className="w-full sm:w-auto px-6 py-3 min-h-[48px] inline-flex items-center justify-center border border-slate-300 text-slate-700 font-semibold rounded-lg hover:bg-slate-50 transition-colors text-sm"
+            className="w-full sm:w-auto px-6 py-3 min-h-12 inline-flex items-center justify-center border border-slate-300 text-slate-700 font-semibold rounded-lg hover:bg-slate-50 transition-colors text-sm"
           >
             Back to Homepage
           </Link>

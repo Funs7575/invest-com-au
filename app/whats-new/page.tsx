@@ -260,11 +260,11 @@ export default async function WhatsNewPage() {
                           <>
                             {c.change_type === "update" && (
                               <div className="text-xs text-slate-500 mt-1 flex items-center gap-1">
-                                <span className="line-through text-red-400 truncate max-w-[180px]">
+                                <span className="line-through text-red-400 truncate max-w-45">
                                   {c.old_value || "—"}
                                 </span>
                                 <span className="text-slate-300">&rarr;</span>
-                                <span className="text-blue-700 font-medium truncate max-w-[180px]">
+                                <span className="text-blue-700 font-medium truncate max-w-45">
                                   {c.new_value || "—"}
                                 </span>
                               </div>

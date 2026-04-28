@@ -73,6 +73,14 @@ export async function POST(request: NextRequest) {
         log.warn("article_scorecard_runs insert failed", {
           error: error.message,
         });
+      } else {
+        await supabase.from("admin_audit_log").insert({
+          action: "article_scorecard:persisted",
+          entity_type: "article",
+          entity_name: slug,
+          admin_email: guard.email,
+          details: { score: result.score, grade: result.grade },
+        });
       }
     } catch (err) {
       log.warn("persist scorecard threw", {

@@ -81,6 +81,14 @@ export async function POST(req: NextRequest) {
     note: note ?? `Manually verified by ${adminEmail}`,
   });
 
+  await supabase.from("admin_audit_log").insert({
+    action: "fi_data:verified",
+    entity_type: "fi_data_categories",
+    entity_id: categoryKey,
+    admin_email: adminEmail,
+    details: { note: note ?? null },
+  });
+
   // ── Bust cache ─────────────────────────────────────────────
   revalidateTag("fi-data", {});
   revalidateTag("fi-data-categories", {});

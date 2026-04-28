@@ -203,7 +203,7 @@ export default function CompareClient() {
             {/* Broker headers */}
             <thead>
               <tr className="border-b border-slate-200">
-                <th className="px-4 py-4 text-left text-xs font-semibold text-slate-500 uppercase bg-slate-50 sticky left-0 z-10 min-w-[140px]">
+                <th className="px-4 py-4 text-left text-xs font-semibold text-slate-500 uppercase bg-slate-50 sticky left-0 z-10 min-w-35">
                   Feature
                 </th>
                 {brokers.map((broker) => (
@@ -336,7 +336,7 @@ export default function CompareClient() {
                       target="_blank"
                       rel={AFFILIATE_REL}
                       onClick={() => trackClick(broker.slug, broker.name, "shortlist-compare", "/shortlist/compare", "compare")}
-                      className="inline-flex items-center justify-center px-4 py-2.5 bg-amber-600 text-white text-xs font-bold rounded-lg hover:bg-amber-700 transition-colors min-h-[44px]"
+                      className="inline-flex items-center justify-center px-4 py-2.5 bg-amber-600 text-white text-xs font-bold rounded-lg hover:bg-amber-700 transition-colors min-h-11"
                     >
                       Visit {broker.name} &rarr;
                     </a>

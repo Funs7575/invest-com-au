@@ -53,7 +53,7 @@ export default function StickyCTABar({ broker, detail, context = 'review' }: { b
           >
             {getBenefitCta(broker, context)}
           </a>
-          <span className="hidden sm:inline text-[0.69rem] text-slate-500 max-w-[220px] leading-tight">{ADVERTISER_DISCLOSURE_SHORT} {RISK_WARNING_CTA}</span>
+          <span className="hidden sm:inline text-[0.69rem] text-slate-500 max-w-55 leading-tight">{ADVERTISER_DISCLOSURE_SHORT} {RISK_WARNING_CTA}</span>
           <button
             onClick={() => {
               setDismissed(true);

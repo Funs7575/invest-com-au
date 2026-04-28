@@ -18,7 +18,7 @@ export default function Sparkline({
   data,
   width = 80,
   height = 24,
-  color = "#3b82f6",
+  color = "#3b82f6", // blue-500
   showFill = true,
   className = "",
 }: SparklineProps) {

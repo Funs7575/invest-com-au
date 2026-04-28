@@ -87,19 +87,19 @@ export default function CookieBanner() {
             <div className="flex gap-2 flex-shrink-0 flex-wrap">
               <button
                 onClick={() => setShowPrefs(true)}
-                className="px-3 py-2.5 min-h-[44px] text-xs font-medium text-slate-400 hover:text-white transition-colors underline"
+                className="px-3 py-2.5 min-h-11 text-xs font-medium text-slate-400 hover:text-white transition-colors underline"
               >
                 Manage Preferences
               </button>
               <button
                 onClick={handleDeclineAll}
-                className="px-4 py-2.5 min-h-[44px] text-sm font-medium text-slate-300 hover:text-white transition-colors"
+                className="px-4 py-2.5 min-h-11 text-sm font-medium text-slate-300 hover:text-white transition-colors"
               >
                 Essential Only
               </button>
               <button
                 onClick={handleAcceptAll}
-                className="px-6 py-2.5 min-h-[44px] bg-white text-slate-900 font-semibold rounded-lg hover:bg-slate-100 transition-colors text-sm"
+                className="px-6 py-2.5 min-h-11 bg-white text-slate-900 font-semibold rounded-lg hover:bg-slate-100 transition-colors text-sm"
               >
                 Accept All
               </button>
@@ -151,13 +151,13 @@ export default function CookieBanner() {
             <div className="flex gap-3 justify-end">
               <button
                 onClick={() => setShowPrefs(false)}
-                className="px-4 py-2.5 min-h-[44px] text-sm font-medium text-slate-400 hover:text-white transition-colors"
+                className="px-4 py-2.5 min-h-11 text-sm font-medium text-slate-400 hover:text-white transition-colors"
               >
                 Back
               </button>
               <button
                 onClick={handleSavePrefs}
-                className="px-6 py-2.5 min-h-[44px] bg-white text-slate-900 font-semibold rounded-lg hover:bg-slate-100 transition-colors text-sm"
+                className="px-6 py-2.5 min-h-11 bg-white text-slate-900 font-semibold rounded-lg hover:bg-slate-100 transition-colors text-sm"
               >
                 Save Preferences
               </button>
