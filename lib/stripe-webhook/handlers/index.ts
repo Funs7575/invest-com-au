@@ -17,19 +17,24 @@
 
 import { registerHandler } from "../registry";
 import { handleChargeDisputeCreated } from "./charge-dispute-created";
+import { handleChargeRefunded } from "./charge-refunded";
 import {
   handleCustomerSubscriptionCreated,
   handleCustomerSubscriptionDeleted,
   handleCustomerSubscriptionUpdated,
 } from "./customer-subscription";
+import {
+  handleInvoicePaidEvent,
+  handleInvoicePaymentFailedEvent,
+} from "./invoice";
 
 registerHandler("charge.dispute.created", handleChargeDisputeCreated);
+registerHandler("charge.refunded", handleChargeRefunded);
 registerHandler("customer.subscription.created", handleCustomerSubscriptionCreated);
 registerHandler("customer.subscription.updated", handleCustomerSubscriptionUpdated);
 registerHandler("customer.subscription.deleted", handleCustomerSubscriptionDeleted);
+registerHandler("invoice.paid", handleInvoicePaidEvent);
+registerHandler("invoice.payment_failed", handleInvoicePaymentFailedEvent);
 
-// Subsequent handlers will be added here as J-01c iterations land:
-// registerHandler("charge.refunded", handleChargeRefunded);
-// registerHandler("invoice.paid", handleInvoicePaid);
-// registerHandler("invoice.payment_failed", handleInvoicePaymentFailed);
+// Subsequent handlers will be added here as J-01c-2 lands:
 // registerHandler("checkout.session.completed", handleCheckoutSessionCompleted);
