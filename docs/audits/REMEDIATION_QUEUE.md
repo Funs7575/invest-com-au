@@ -33,7 +33,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | G | _not started_ | — | — | — |
 | H | _not started_ | — | — | — |
 | I | `claude/audit-remediation/i-new-04-main-ci-auto-revert` | #278 (draft) | pending — pushed 2026-04-28T16:14Z | I-NEW-01 done via #277 (`00ef2790`); I-NEW-02 hotfix `5b7937dc`; I-NEW-03 hotfix `4b050ed9`; I-NEW-05 race-fix `55d077bf`; **first real metrics snapshot landed 2026-04-28T16:12Z (grade F 0.0899 — Supabase secrets need to be set in GH Actions for non-zero on M04/M07/M08/M09/M10/M11/M12)**; I-NEW-04 in flight (auto-revert workflow `b42233fb`) |
-| J | _not started_ | — | — | — |
+| J | `claude/audit-remediation/j-stripe-webhook` | #279 (draft) | pending — pushed 2026-04-28T16:50Z | J-01a done (commit `2651b72d`) — registry scaffold + `charge.dispute.created` migrated. J-01b/c/d/e + J-03/05/06/08/09/10 still pending. |
 | K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-27T05:35Z | K-01..K-08 done; K-09 false-positive; K-10..K-15 done — **stream complete** |
 | L | _not started_ | — | — | — |
 | M | _not started_ | — | — | — |
@@ -303,7 +303,11 @@ The webhook route is 1,197 LOC and only handles a subset of the events an enterp
 
 | ID | Status | Summary | Est. iterations | Notes |
 | --- | --- | --- | --- | --- |
-| J-01 | pending | Split `app/api/stripe/webhook/route.ts` into a handler-registry pattern (one file per event family) — keeps existing dispatch behaviour, new files are wrappable in tests one at a time | ~3 | Foundational; subsequent J items add new handlers. Subsumes H-01. Order: scaffold registry → migrate existing handlers → add tests file-by-file. |
+| J-01a | done | Scaffold `lib/stripe-webhook/{types,registry}.ts` + `handlers/` directory; migrate `charge.dispute.created` as proof | — | **Done in commit `2651b72d` (PR #279, draft).** Registry returns `{handled:false}` for unregistered event types so the legacy switch still owns unmigrated handlers (incremental cutover). Adds `dispatchEvent(event, ctx)` call before the switch in `route.ts`. |
+| J-01b | pending | Migrate `charge.refunded`, `customer.subscription.{created,updated,deleted}` to the registry | 1 | Continues J-01a. Each handler becomes one file in `lib/stripe-webhook/handlers/`. Tests deferred to J-01d. |
+| J-01c | pending | Migrate `invoice.paid`, `invoice.payment_failed`, `checkout.session.completed` to the registry | 1 | Continues J-01b. After this, every existing handler is in the registry; J-01e can remove the legacy switch. |
+| J-01d | pending | Add per-handler unit tests in `__tests__/lib/stripe-webhook/<handler>.test.ts` | 1 | Tests exercise each handler with a mock `WebhookContext` (admin + stripe + log). Reference test scaffolding lives at `__tests__/api/stripe-webhook-idempotency.test.ts`. |
+| J-01e | pending | Remove the legacy switch from `route.ts`; route becomes a 50-line dispatch + idempotency loop | 1 | Last J-01 step. Only safe after J-01b/c/d land green on CI. |
 | J-02 | false-positive | ~~Add handler: `charge.dispute.created`~~ | — | **Already handled** in `app/api/stripe/webhook/route.ts` (verified 2026-04-26 audit §5.4 via `grep -E "case '...'"` — handler exists). |
 | J-03 | pending | Add handler: `customer.subscription.trial_will_end` — fire 3-days-pre-charge email via Resend | 1 | High-impact retention. |
 | J-04 | false-positive | ~~Add handler: `invoice.payment_failed`~~ | — | **Already handled** in `app/api/stripe/webhook/route.ts` (verified 2026-04-26 audit §5.4). Dunning is wired through this handler + `/api/cron/subscription-dunning`. |
@@ -1038,6 +1042,19 @@ Items that ship LAST, in the final week before launch (Month 4 of pre-launch roa
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-28T16:50Z — iteration 85 (stream J — J-01a — handler-registry scaffold + first migration)
+
+- Phase 0: lock acquired.
+- Phase 1: synced main; pulled in #278 (I-NEW-04 auto-revert workflow), `fde5b72d` (queue update), `cf38279a` (first metrics snapshot), `55d077bf` (metrics push race-fix), iter 84's `48e100b1`.
+- Phase 1.5: types-drift check via Supabase MCP — `lib/database.types.ts` matches live (no diff). Skip regen.
+- Phase 2: CI rescue scan — no open audit-remediation PRs to rescue. (#277, #278 merged earlier.)
+- Phase 3: priority walk — V-NEW gates settled, Y-05 done, B critical-2 done, K complete, N complete, D-11 PR merged, **L cleared** (L-04/L-05 done; L-02/L-03 deferred-post-launch; L-01 needs-user). **Stream J — slot 7 — is the next priority**, P0/P1 stripe webhook completeness. J had no branch; this iteration scaffolds it.
+- Phase 4: J-01 verification — refactor item, no migration. Inspected the 1197-LOC `app/api/stripe/webhook/route.ts`: 7 case handlers (`customer.subscription.created`, `customer.subscription.updated`, `customer.subscription.deleted`, `invoice.paid`, `invoice.payment_failed`, `checkout.session.completed`, `charge.refunded`, `charge.dispute.created`) plus 5 helper functions plus an idempotency wrapper. Cleanest split: registry pattern with one handler file per event family. Iteration broke J-01 into sub-items J-01a..J-01e (scaffold → migrate three handlers → migrate three more → tests → remove legacy switch).
+- Phase 5: created `lib/stripe-webhook/{types,registry}.ts` + `handlers/charge-dispute-created.ts` + `handlers/index.ts` (+275 LOC). Migrated `charge.dispute.created` from `route.ts:1104-1158` byte-for-byte; replaced the case block with a comment pointer. Inserted `dispatchEvent` call before the switch — registry returns `{handled:false}` for unmigrated events so the switch still owns them (incremental cutover). Local gates: full `tsc --noEmit` clean on the changed files; lint clean. (File-targeted tsc with path aliases doesn't resolve on this sandbox per Hardware exception, so used full-project tsc and grepped for stripe-webhook errors → 0.)
+- Phase 6: branch `claude/audit-remediation/j-stripe-webhook` had a stale empty-merge-only commit on origin from a prior session; reset local to that point, applied work on top. Commit `2651b72d` (`feat(j): scaffold stripe webhook handler-registry (J-01a)`, +275/-57 LOC across 5 files). Pushed. Opened draft PR #279 with the J-01a..e progress checklist + the 6 J-03..J-10 missing handlers.
+- Phase 7: queue updated on main — In-flight J row populated with PR #279 + commit; J-01 row replaced with five sub-items (J-01a done; J-01b..e pending); iteration log appended.
+- STATUS: PROGRESS · stream=J · item=J-01a · pr=#279 · commit=`2651b72d`
 
 ### 2026-04-28T16:08Z — iteration 84 (stream L — L-05 — health_pings ingestion validated)
 
