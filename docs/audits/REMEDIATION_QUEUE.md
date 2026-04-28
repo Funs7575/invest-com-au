@@ -38,7 +38,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | L | `claude/audit-remediation/l-observability` | #289 (draft) | pending — pushed 2026-04-29T23:50Z | L-06 done (commit `12183619`) — 8 SLOs seeded. L-07 done (commit `2d0f553`) — email alert sink added to openIncident + 22 tests. L-08 still pending. |
 | M | `claude/audit-remediation/m-01b-cover-image-backfill` | #283 (draft) | pending — pushed 2026-04-28T21:25Z | M-01b in flight (commit `19a0d7e6`) — per-article OG cover override + backfill script. |
 | N | `claude/audit-remediation/n-ux-perf` | #242 | pending — pushed 2026-04-27T13:30Z | N-01+N-02 done (`2ec6f89`) · N-03a done (`36e3f6d`) · N-03b done (`97bb9b00`) · N-03c done (`b29f443`) · N-04 FP · N-05 FP · N-06 blocked · N-07 batch 1 done (`2e5d8a4`) · N-07 batch 2 done (`91d0d42`) · N-08 done (`315d3b7`) · N-09 done (`3b43bf8`) · N-10 done (`0c33d71`) · N-11 done (`c2b769e`) — **stream complete** (N-06 blocked) |
-| O | `claude/audit-remediation/o-rls-no-policy` | _opening_ | pending — pushed 2026-04-26 | O-01 — 3 done (`user_notifications`, `user_quiz_history`, `user_bookmarks`); ~13 user-data tables left |
+| O | `claude/audit-remediation/o-rls-no-policy` | merged via #235/#237/#239 | last pushed 2026-04-26 | O-01 iter1 done (`user_notifications`/`user_quiz_history`/`user_bookmarks`) · iter2 done `8e638bd` (`article_comments`/`article_reactions`) · iter3 done `c9c8fcd` (admin/audit cluster) · iter4 done `e965eb7` (14 observability/admin tables). ~34 tables remain for iter5+. |
 | P | _not started_ | — | — | — |
 | Q | _not started_ | — | — | — |
 | R | _not started_ | — | — | — |
@@ -404,7 +404,7 @@ Beyond Stream B's RLS-enable work; addresses policy completeness, FK indexes, se
 
 | ID | Status | Summary | Est. iterations | Notes |
 | --- | --- | --- | --- | --- |
-| O-01 | in-progress | Triage 56 RLS-enabled-but-zero-policies tables: bucket into (a) service-role only — add explicit `service_role` allow policy for clarity, (b) user-data — needs `auth.uid()`-scoped policies | ~3 | P1. Full list in audit §4.2. ~16h total; chunk by table family. **Iter 1 (2026-04-26):** user-data triplet done — `user_notifications`, `user_quiz_history`, `user_bookmarks` (`supabase/migrations/20260426_user_data_rls_policies.sql`). Pre-emptively wrapped `auth.uid()` in `(SELECT auth.uid())` per F-4.5.3 (auth_rls_initplan). Service-role caller paths unchanged — all use `createAdminClient()`. **Next batches:** (2) `article_comments`/`article_reactions` (need `published`-only public read + author-edit), (3) admin/audit cluster (`admin_action_log`, `admin_mfa_enrollments`, `financial_audit_log`, `login_attempts` — service-role only). |
+| O-01 | in-progress | Triage 56 RLS-enabled-but-zero-policies tables: bucket into (a) service-role only — add explicit `service_role` allow policy for clarity, (b) user-data — needs `auth.uid()`-scoped policies | ~3 | P1. Full list in audit §4.2. ~16h total; chunk by table family. **Iter 1 (2026-04-26):** user-data triplet done — `user_notifications`, `user_quiz_history`, `user_bookmarks` (`supabase/migrations/20260426_user_data_rls_policies.sql`). **Iter 2 (merged via #235, commit `8e638bd`):** `article_comments`/`article_reactions` — service-role full + author-scoped UPDATE/DELETE for comments, owner-scoped INSERT/DELETE for reactions; SELECT intentionally NOT granted (PII/moderation guard). **Iter 3 (merged via #237, commit `c9c8fcd`):** admin/audit cluster: `admin_action_log`, `admin_mfa_enrollments`, `financial_audit_log`, `login_attempts` — service-role-only on all four. **Iter 4 (merged via #239, commit `e965eb7`):** 14 observability/admin tables in one migration — `cron_run_log`, `data_integrity_issues`, `slo_definitions`, `slo_incidents`, `web_vitals_samples`, `automation_kill_switches`, `feature_flags`, `financial_periods`, `revenue_attribution_daily`, `revenue_reconciliation_runs`, `email_suppression_list`, `fraud_signals`, `attribution_touches`; `lead_quality_weights` gets public-SELECT + service-role. Count: 57→54→52→48→34. **~34 remaining** — needs Supabase MCP advisor snapshot to enumerate next batch. |
 | O-02 | done | 4 FK index migration — done out-of-loop in PR #230 | 1 | Resolved in PR #230 ("chore(db): repo-parity migration for 4 missing FK indexes (already live)") merged 2026-04-26T17:37Z. Live DB indexes had been applied earlier; this PR adds the migration file to the repo to close source-of-truth drift. |
 | O-03 | pending | `refresh_advisor_cohort_metrics()` SECURITY DEFINER — set `search_path = public, pg_catalog` to close injection vector | 1 | P2. |
 | O-04 | pending | `stripe_webhook_events` idempotency dry-run via Stripe dashboard test event → confirm row inserts + status='completed' | 1 | P2. Pre-launch validation. May surface to Blocked if needs founder action. |
@@ -1056,6 +1056,17 @@ Items that ship LAST, in the final week before launch (Month 4 of pre-launch roa
 - Phase 6: committed `2d0f553`; merged remote L branch; pushed as `b6a5d70`.
 - Phase 7: L in-flight row updated; L-07 row → done; this log entry on main.
 - STATUS: PROGRESS · stream=L · item=L-07 · pr=#289 · commit=`2d0f553` · diff=+268/-4 across 2 files · next=O-01 batch 2 (stream O, step 13)
+
+### 2026-04-29T23:55Z — iteration 105 (stream O — O-01 batches 2/3/4 queue sync — RLS policies already committed by prior sessions)
+
+- Phase 0: resumed batch-mode fire (iter 5 of 5).
+- Phase 1: synced main (iter 104 — L-07). Read queue — O-01 still showed "3 done, ~13 left" but branch had 3 more migration files committed.
+- Phase 2: CI rescue — no open O stream PR; no CI to rescue.
+- Phase 3: checked out claude/audit-remediation/o-rls-no-policy; found 3 additional migrations already present.
+- Phase 4: verified `20260426_article_engagement_rls_policies.sql` (iter2, PR #235), `20260426_admin_audit_rls_policies.sql` (iter3, PR #237), `20260426_admin_observability_rls_policies.sql` (iter4, PR #239) — all well-formed with DROP POLICY IF EXISTS guards, service-role policies, and auth.uid() scoping where appropriate.
+- Phase 5: Queue-only housekeeping. No new code written. O-01 notes updated in queue to reflect batches 2/3/4 (57→34 remaining). In-flight O row updated with commit hashes.
+- Phase 7: O in-flight row updated; O-01 notes updated; this log entry on main.
+- STATUS: PROGRESS · stream=O · item=O-01 (queue sync, batches 2/3/4) · diff=+0/-0 (queue only) · next=O-01 batch 5 (enumerate ~34 remaining tables via Supabase MCP)
 
 ### 2026-04-29T23:35Z — iteration 103 (stream D — D-11 batch 23 — broker-outreach enhanced, exit-match, foreign-investment/rates, developer-leads)
 
