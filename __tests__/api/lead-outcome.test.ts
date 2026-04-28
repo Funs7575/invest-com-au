@@ -10,7 +10,12 @@ vi.mock("@/lib/rate-limit", () => ({
 
 const mockServerFrom = vi.fn();
 vi.mock("@/lib/supabase/server", () => ({
-  createClient: vi.fn().mockResolvedValue({ from: mockServerFrom }),
+  // Lazy factory — `mockServerFrom` is captured by closure and resolved when
+  // `createClient()` is called, not at hoist time. The previous form
+  // `vi.fn().mockResolvedValue({ from: mockServerFrom })` evaluated the
+  // value object eagerly, hitting the TDZ for `mockServerFrom` because
+  // vi.mock is hoisted above the `const mockServerFrom = vi.fn()` line.
+  createClient: vi.fn(() => Promise.resolve({ from: mockServerFrom })),
 }));
 
 vi.mock("@/lib/url", () => ({
@@ -42,8 +47,12 @@ function makeGet(params: Record<string, string>): NextRequest {
   return new NextRequest(url.toString());
 }
 
-/** Build a supabase-from chain for single-row reads + updates */
-function makeChain(opts: {
+/**
+ * Build a supabase-from chain for single-row reads + updates.
+ * Currently unused but kept for future tests that need the more elaborate
+ * call-counting eq() variant; prefixed `_` to satisfy --max-warnings 0.
+ */
+function _makeChain(opts: {
   selectData?: unknown;
   selectError?: unknown;
   updateError?: unknown;
@@ -57,8 +66,8 @@ function makeChain(opts: {
   c.update = vi.fn(() => c);
   // update chain resolves via .eq() — track call count
   let callCount = 0;
-  const origEq = c.eq as ReturnType<typeof vi.fn>;
-  c.eq = vi.fn((...args: unknown[]) => {
+  const _origEq = c.eq as ReturnType<typeof vi.fn>;
+  c.eq = vi.fn((..._args: unknown[]) => {
     callCount++;
     // The update's .eq() is the terminal call after .update()
     if (callCount > 1 && opts.updateError !== undefined) {

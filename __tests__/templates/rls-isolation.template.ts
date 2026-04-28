@@ -128,7 +128,7 @@ describe("REPLACE_TABLE_NAME — RLS isolation", () => {
 
   it("user A cannot SELECT user B's rows", async () => {
     const { data } = await clientA.select();
-    const crossRows = data!.filter((r) => r.user_id === USER_B_UID);
+    const crossRows = data!.filter((r: { user_id: string }) => r.user_id === USER_B_UID);
     expect(crossRows).toHaveLength(0);
   });
 

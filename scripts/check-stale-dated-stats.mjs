@@ -110,9 +110,13 @@ export function parseStalesAt(chunk) {
 export function isDateStale(dateStr, today = new Date()) {
   const d = new Date(dateStr);
   if (isNaN(d.getTime())) return false;
+  // Compare on UTC calendar boundaries — `setHours(0,…)` uses local time and
+  // moves the day boundary by the runner's tz offset, flipping the result of
+  // "2026-04-26T23:59Z stale relative to 2026-04-27T00:00Z" on any positive-
+  // offset host. Switch both anchors to UTC midnight.
   const midnight = new Date(today);
-  midnight.setHours(0, 0, 0, 0);
-  d.setHours(0, 0, 0, 0);
+  midnight.setUTCHours(0, 0, 0, 0);
+  d.setUTCHours(0, 0, 0, 0);
   return d < midnight;
 }
 
