@@ -4,6 +4,13 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 import { logger } from "@/lib/logger";
 import crypto from "node:crypto";
+import {
+  loadConciergeConfig,
+  preCheckCaps,
+  recordUsage,
+  capRejectionPayload,
+} from "@/lib/ai-cost-caps";
+import { sendCap80Alert } from "@/lib/ai-cost-alerts";
 
 const log = logger("concierge");
 
@@ -119,6 +126,20 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // V-NEW-06: per-IP and global daily cost caps. Cap is enforced
+  // BEFORE the Anthropic call so a runaway loop can't burn through
+  // the global budget in a single request.
+  const capCfg = loadConciergeConfig();
+  const subjectId = ipKey(req);
+  const verdict = await preCheckCaps(subjectId, capCfg);
+  if (!verdict.allowed) {
+    const rej = capRejectionPayload(verdict, capCfg);
+    return NextResponse.json(rej.body, {
+      status: rej.status,
+      headers: rej.headers,
+    });
+  }
+
   const session_id = ensureSessionId(v.data.session_id);
   const client = new Anthropic({ apiKey });
 
@@ -204,6 +225,27 @@ export async function POST(req: NextRequest) {
             model: MODEL,
             tokens_in: tokensIn,
             tokens_out: tokensOut,
+          });
+        }
+        // V-NEW-06: post-record usage + 80% alert. Fire-and-forget;
+        // never blocks the stream closure.
+        if (tokensIn > 0 || tokensOut > 0) {
+          void recordUsage({
+            subjectId,
+            cfg: capCfg,
+            model: MODEL,
+            tokensIn,
+            tokensOut,
+          }).then((r) => {
+            if (r.crossed80Subject) {
+              void sendCap80Alert({
+                routeLabel: capCfg.label,
+                subjectId,
+                subjectType: capCfg.subjectType,
+                newSubjectMicros: r.subjectMicros,
+                capMicros: capCfg.perSubjectMicros,
+              });
+            }
           });
         }
         controller.close();
