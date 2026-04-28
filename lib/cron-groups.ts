@@ -69,7 +69,7 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
     "/api/cron/portfolio-alerts",
     "/api/cron/price-drop-alerts",
   ],
-  "daily-8": ["/api/cron/complaints-sla"],
+  "daily-8": ["/api/cron/complaints-sla", "/api/cron/dated-stats-check"],
   "daily-9": [
     "/api/cron/investor-drip",
     "/api/cron/advisor-nudge",
