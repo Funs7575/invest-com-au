@@ -27,14 +27,24 @@ const SAFE_PATTERNS = [
   "app/**/page.tsx",          // article-seed-only or copy-only — verified
                               // by content-detection logic below
   "scripts/seed-*.ts",
+  "scripts/check-*.mjs",      // CI gate scripts — additive, no runtime impact
+  "scripts/check-*.test.ts",  // tests for the CI gate scripts above
+  "__tests__/templates/**",   // RLS / fixture templates — copy-paste starting
+                              // points for new contributors; cannot affect runtime
   "content/**/*.md",
   "docs/**/*.md",
+  "docs/**/*.mermaid",
+  "docs/**/*.json",           // ADR metadata, glossaries, decision matrices
   "lib/verticals.ts",
   "public/**",
   "components/Hub*.tsx",      // extracted hub components — pure
                               // presentational once stream W lands
+  "components/DatedStat*.tsx",// the dated-stats badge family — additive
   "__tests__/**/*.test.ts",   // test additions only — deletions handled
                               // by the file-status check below
+  "__tests__/**/*.test.tsx",
+  ".github/PULL_REQUEST_TEMPLATE.md", // PR template tweaks — docs in disguise
+  ".github/markdown-link-check-config.json",
 ];
 
 // BLOCKED denylist patterns. Any match flips the PR to

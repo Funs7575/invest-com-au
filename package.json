@@ -22,6 +22,7 @@
     "audit:rls-isolation": "node scripts/check-rls-isolation.mjs",
     "audit:stripe-idempotency": "node scripts/check-stripe-idempotency.mjs",
     "audit:stale-dated-stats": "node scripts/check-stale-dated-stats.mjs",
+    "test:stripe-load": "node scripts/stripe-load-test.mjs",
     "db:types": "npx supabase gen types typescript --project-id ${SUPABASE_PROJECT_ID} > lib/database.types.ts",
     "db:types:check": "npx supabase gen types typescript --project-id ${SUPABASE_PROJECT_ID} > /tmp/database.types.generated.ts && diff -u lib/database.types.ts /tmp/database.types.generated.ts",
     "prepare": "husky || true"
