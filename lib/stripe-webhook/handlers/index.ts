@@ -30,6 +30,7 @@ import {
   handleInvoicePaymentActionRequiredEvent,
   handleInvoicePaymentFailedEvent,
 } from "./invoice";
+import { handlePaymentIntentPaymentFailed } from "./payment-intent-failed";
 
 registerHandler("charge.dispute.created", handleChargeDisputeCreated);
 registerHandler("charge.refunded", handleChargeRefunded);
@@ -41,3 +42,4 @@ registerHandler("customer.subscription.trial_will_end", handleCustomerSubscripti
 registerHandler("invoice.paid", handleInvoicePaidEvent);
 registerHandler("invoice.payment_action_required", handleInvoicePaymentActionRequiredEvent);
 registerHandler("invoice.payment_failed", handleInvoicePaymentFailedEvent);
+registerHandler("payment_intent.payment_failed", handlePaymentIntentPaymentFailed);
