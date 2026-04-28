@@ -33,7 +33,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | G | _not started_ | — | — | — |
 | H | _not started_ | — | — | — |
 | I | `claude/audit-remediation/i-new-04-main-ci-auto-revert` | #278 (draft) | pending — pushed 2026-04-28T16:14Z | I-NEW-01 done via #277 (`00ef2790`); I-NEW-02 hotfix `5b7937dc`; I-NEW-03 hotfix `4b050ed9`; I-NEW-05 race-fix `55d077bf`; **first real metrics snapshot landed 2026-04-28T16:12Z (grade F 0.0899 — Supabase secrets need to be set in GH Actions for non-zero on M04/M07/M08/M09/M10/M11/M12)**; I-NEW-04 in flight (auto-revert workflow `b42233fb`) |
-| J | `claude/audit-remediation/j-stripe-webhook` | #288 (draft) | pending — pushed 2026-04-29T00:01Z | J-01a (commit `2651b72d`) · J-01b (commit `80392137`) · J-01c-1 (commit `b3c10476`) · J-01c-2 (commit `d8626dc`) · J-01d (commit `bbfd4d3`) — all existing handlers migrated + per-handler tests, route.ts → 177 LOC. J-01e + J-03/05/06/08/09/10 still pending. PR #279 was closed by owner (superseded notice); PR #288 is the new draft. |
+| J | `claude/audit-remediation/j-stripe-webhook` | #288 (draft) | pending — pushed 2026-04-29T00:02Z | J-01a (commit `2651b72d`) · J-01b (commit `80392137`) · J-01c-1 (commit `b3c10476`) · J-01c-2 (commit `d8626dc`) · J-01d (commit `bbfd4d3`) · J-01e (commit `8a9e95f`) — route.ts 1197 → 165 LOC, all J-01 steps done. J-03/05/06/08/09/10 still pending. PR #279 was closed by owner (superseded notice); PR #288 is the new draft. |
 | K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-27T05:35Z | K-01..K-08 done; K-09 false-positive; K-10..K-15 done — **stream complete** |
 | L | _not started_ | — | — | — |
 | M | `claude/audit-remediation/m-01b-cover-image-backfill` | #283 (draft) | pending — pushed 2026-04-28T21:25Z | M-01b in flight (commit `19a0d7e6`) — per-article OG cover override + backfill script. |
@@ -308,7 +308,7 @@ The webhook route is 1,197 LOC and only handles a subset of the events an enterp
 | J-01c-1 | done | Migrate `charge.refunded`, `invoice.paid`, `invoice.payment_failed` to the registry | — | **Done in commit `b3c10476` (PR #279, draft).** Created `lib/stripe-webhook/handlers/{charge-refunded,invoice}.ts`. Route shrank 937 → 701 LOC. Original J-01c had 4 handlers but `checkout.session.completed` is ~509 LOC alone, so it was split out into J-01c-2 to keep this iteration under the diff cap. |
 | J-01c-2 | done | Migrate `checkout.session.completed` (6 sub-flows: course purchase, advisor credit top-up, advisor featured, listing activation, consultation booking, sponsored placement) to the registry | — | **Done in commit `d8626dc` (PR #288, draft).** Created `lib/stripe-webhook/handlers/checkout-session-completed.ts` (606 LOC). Route shrank 701 → 177 LOC. All existing handlers are now in the registry. Behaviour preserved byte-for-byte including idempotent top-up check, course purchase rollback, sponsored placement 23505 race-tolerance, and lazy invoice-URL fetch. |
 | J-01d | done | Add per-handler unit tests in `__tests__/lib/stripe-webhook/<handler>.test.ts` | 1 | **Done in commit `bbfd4d3` (PR #288).** 3 test files, 35 tests total: charge-dispute-created (8), customer-subscription (12), invoice (15). Each handler tested with mock WebhookContext. |
-| J-01e | pending | Remove the legacy switch from `route.ts`; route becomes a 50-line dispatch + idempotency loop | 1 | Last J-01 step. Only safe after J-01b/c/d land green on CI. |
+| J-01e | done | Remove the legacy switch from `route.ts`; route becomes a 50-line dispatch + idempotency loop | 1 | **Done in commit `8a9e95f` (PR #288).** route.ts shrank from 181 → 165 LOC (1,197 → 165 LOC total from pre-J). Unknown event types now log info instead of silently falling through. |
 | J-02 | false-positive | ~~Add handler: `charge.dispute.created`~~ | — | **Already handled** in `app/api/stripe/webhook/route.ts` (verified 2026-04-26 audit §5.4 via `grep -E "case '...'"` — handler exists). |
 | J-03 | pending | Add handler: `customer.subscription.trial_will_end` — fire 3-days-pre-charge email via Resend | 1 | High-impact retention. |
 | J-04 | false-positive | ~~Add handler: `invoice.payment_failed`~~ | — | **Already handled** in `app/api/stripe/webhook/route.ts` (verified 2026-04-26 audit §5.4). Dunning is wired through this handler + `/api/cron/subscription-dunning`. |
@@ -1056,6 +1056,18 @@ Items that ship LAST, in the final week before launch (Month 4 of pre-launch roa
 - Phase 6: committed `49e0ad5`, pushed to D branch.
 - Phase 7: D in-flight row (batch 19b); D-11 notes updated; this log entry.
 - STATUS: PROGRESS · stream=D · item=D-11 batch 19b · pr=#285 · commit=`49e0ad5` · diff=+635/-0 across 5 files · next=D-11 batch 20 (stream D)
+
+### 2026-04-29T00:02Z — iteration 94 (stream J — J-01e — remove legacy switch from route.ts)
+
+- Phase 0: resumed from batch-mode fire (iter 93 completed).
+- Phase 1: synced main (up-to-date). Merged remote J branch queue-update commits.
+- Phase 2: CI rescue check — PR #288 Lint/Test/Build in_progress; no failures. No rescue needed.
+- Phase 3: J-01e is next pending item (slot 7). Branch `claude/audit-remediation/j-stripe-webhook` checked out.
+- Phase 4: verification — pure code simplification, no migration, no deletion of exported symbols.
+- Phase 5: removed legacy `else switch (event.type) { default: break }` block and the `if (dispatched.handled)` wrapper. Replaced with `if (!dispatched.handled) log.info(...)`. Updated import comment. No tests reference switch-specific behaviour (__tests__/api/stripe-webhook.test.ts checked). route.ts: 181 → 165 LOC (1,197 → 165 LOC from pre-J baseline).
+- Phase 6: committed `8a9e95f`, merged remote J branch (one more concurrent queue update), pushed.
+- Phase 7: J-01e row → done; J in-flight row updated; PR #288 body updated (J-01e checked); this log entry.
+- STATUS: PROGRESS · stream=J · item=J-01e · pr=#288 · commit=`8a9e95f` · diff=+6/-22 across 1 file · next=J-03 (stream J, slot 7)
 
 ### 2026-04-29T00:01Z — iteration 93 (stream J — J-01d — per-handler unit tests)
 
