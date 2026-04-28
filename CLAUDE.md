@@ -68,6 +68,18 @@ Reaching for a hardcoded disclaimer, a new affiliate URL builder, or a fresh JSO
 
 `vitest` + `@vitest/coverage-v8` are grouped in `.github/dependabot.yml`. Bumping them separately causes "Running mixed versions is not supported" CI crashes — we hit this on 2026-04-20. If you add a new peer-coupled dev-dep pair, group it too.
 
+## Merge authorization
+
+Tiered policy at `docs/audits/MERGE_AUTHORIZATION.md`. Read before merging any agent-authored PR.
+
+- **Tier A** (tests / docs / content / page UI / loop PRs labelled `auto-merge-safe`) → merge after CI green, no confirmation
+- **Tier B** (refactors / additive API tests / RLS migrations passing isolation gate) → merge + 15-min observation window
+- **Tier C** (webhooks, cron, middleware/proxy, auth, compliance, lib/stripe, lib/supabase/admin, .github/workflows, BB/CC/DD/EE streams, new schema migrations) → announce intent in chat, merge unless `STOP` comes back
+- **Tier D** (PR body explicitly says "set X env var before merge", or has `do-not-merge` label) → hard hold, refuse until precondition confirmed
+- **Tier E** (force-push / branch delete / repo settings / workflow disablement / anything `git revert` can't undo) → never autonomous, require explicit fresh consent every time
+
+Founder-authored PRs are out of scope.
+
 ## Before shipping
 
 1. `npm run type-check` — strict + `noUncheckedIndexedAccess` catches most bugs locally.
