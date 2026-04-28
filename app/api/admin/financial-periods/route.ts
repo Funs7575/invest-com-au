@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/require-admin";
+import { createAdminClient } from "@/lib/supabase/admin";
 import {
   listRecentPeriods,
   closePeriod,
@@ -60,6 +61,20 @@ export async function POST(request: NextRequest) {
       { status: 500 },
     );
   }
+
+  const supabase = createAdminClient();
+  await supabase.from("admin_audit_log").insert({
+    action: "financial_period:closed",
+    entity_type: "financial_period",
+    entity_name: `${periodStart} – ${periodEnd}`,
+    admin_email: guard.email,
+    details: {
+      period_start: periodStart,
+      period_end: periodEnd,
+      notes: notes ?? null,
+      already_closed: result.reason === "already_closed",
+    },
+  });
 
   return NextResponse.json({
     ok: true,

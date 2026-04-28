@@ -65,6 +65,15 @@ export async function POST(request: NextRequest) {
       .select()
       .single();
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    await supabase.from("admin_audit_log").insert({
+      action: "bd_pipeline:updated",
+      entity_type: "bd_pipeline",
+      entity_id: String(id),
+      entity_name: fields.company_name as string,
+      admin_email: admin.email ?? null,
+    }).then(({ error: logErr }) => {
+      if (logErr) log.warn("admin_audit_log insert failed", { error: logErr.message });
+    });
     return NextResponse.json(data);
   } else {
     // Create new
@@ -74,6 +83,15 @@ export async function POST(request: NextRequest) {
       .select()
       .single();
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    await supabase.from("admin_audit_log").insert({
+      action: "bd_pipeline:created",
+      entity_type: "bd_pipeline",
+      entity_id: String((data as { id: number }).id),
+      entity_name: fields.company_name as string,
+      admin_email: admin.email ?? null,
+    }).then(({ error: logErr }) => {
+      if (logErr) log.warn("admin_audit_log insert failed", { error: logErr.message });
+    });
     return NextResponse.json(data);
   }
 }
@@ -87,5 +105,13 @@ export async function DELETE(request: NextRequest) {
   const { id } = await request.json();
   if (!id) return NextResponse.json({ error: "id required" }, { status: 400 });
   await supabase.from("bd_pipeline").delete().eq("id", id);
+  await supabase.from("admin_audit_log").insert({
+    action: "bd_pipeline:deleted",
+    entity_type: "bd_pipeline",
+    entity_id: String(id),
+    admin_email: admin.email ?? null,
+  }).then(({ error: logErr }) => {
+    if (logErr) log.warn("admin_audit_log insert failed", { error: logErr.message });
+  });
   return NextResponse.json({ deleted: true });
 }

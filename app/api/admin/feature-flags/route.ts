@@ -73,5 +73,21 @@ export async function PATCH(request: NextRequest) {
     log.warn("feature_flags update failed", { error: error.message, flagKey });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
+  // build a Json-safe copy (update is Record<string,unknown>; values here are bool|number|string|string[])
+  const auditChanges: Record<string, boolean | number | string | string[]> = {};
+  if (typeof update.enabled === "boolean") auditChanges.enabled = update.enabled;
+  if (typeof update.rollout_pct === "number") auditChanges.rollout_pct = update.rollout_pct;
+  if (Array.isArray(update.allowlist)) auditChanges.allowlist = update.allowlist as string[];
+  if (Array.isArray(update.denylist)) auditChanges.denylist = update.denylist as string[];
+  if (Array.isArray(update.segments)) auditChanges.segments = update.segments as string[];
+  if (typeof update.description === "string") auditChanges.description = update.description;
+  await supabase.from("admin_audit_log").insert({
+    action: "feature_flag:updated",
+    entity_type: "feature_flag",
+    entity_id: flagKey,
+    entity_name: flagKey,
+    admin_email: guard.email,
+    details: auditChanges,
+  });
   return NextResponse.json({ ok: true });
 }

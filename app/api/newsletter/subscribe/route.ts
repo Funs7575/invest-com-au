@@ -11,6 +11,15 @@ const log = logger("newsletter:subscribe");
 
 export const runtime = "nodejs";
 
+// Allowlist prevents analytics-poisoning via arbitrary source values.
+// Add new entries here when wiring up a new sign-up surface.
+const ALLOWED_SOURCES = [
+  "newsletter",
+  "smsf_checklist",
+  "learn_hub",
+] as const;
+type NewsletterSource = (typeof ALLOWED_SOURCES)[number];
+
 /**
  * POST /api/newsletter/subscribe
  *
@@ -36,7 +45,11 @@ export async function POST(request: NextRequest) {
     ["weekly", "monthly", "quarterly"].includes(body.preference)
       ? body.preference
       : "weekly";
-  const source = typeof body.source === "string" ? body.source.slice(0, 100) : "newsletter";
+  const source: NewsletterSource =
+    typeof body.source === "string" &&
+    (ALLOWED_SOURCES as readonly string[]).includes(body.source)
+      ? (body.source as NewsletterSource)
+      : "newsletter";
 
   if (!email || !isValidEmail(email)) {
     return NextResponse.json({ error: "Invalid email" }, { status: 400 });
