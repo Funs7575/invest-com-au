@@ -33,7 +33,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | G | _not started_ | — | — | — |
 | H | _not started_ | — | — | — |
 | I | `claude/audit-remediation/i-new-04-main-ci-auto-revert` | #278 (draft) | pending — pushed 2026-04-28T16:14Z | I-NEW-01 done via #277 (`00ef2790`); I-NEW-02 hotfix `5b7937dc`; I-NEW-03 hotfix `4b050ed9`; I-NEW-05 race-fix `55d077bf`; **first real metrics snapshot landed 2026-04-28T16:12Z (grade F 0.0899 — Supabase secrets need to be set in GH Actions for non-zero on M04/M07/M08/M09/M10/M11/M12)**; I-NEW-04 in flight (auto-revert workflow `b42233fb`) |
-| J | `claude/audit-remediation/j-stripe-webhook` | #279 (draft) | pending — pushed 2026-04-28T16:50Z | J-01a done (commit `2651b72d`) — registry scaffold + `charge.dispute.created` migrated. J-01b/c/d/e + J-03/05/06/08/09/10 still pending. |
+| J | `claude/audit-remediation/j-stripe-webhook` | #279 (draft) | pending — pushed 2026-04-28T18:35Z | J-01a done (commit `2651b72d`) · J-01b done (commit `80392137`) — `customer.subscription.{created,updated,deleted}` + `upsertSubscription` + email helpers extracted. J-01c/d/e + J-03/05/06/08/09/10 still pending. |
 | K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-27T05:35Z | K-01..K-08 done; K-09 false-positive; K-10..K-15 done — **stream complete** |
 | L | _not started_ | — | — | — |
 | M | _not started_ | — | — | — |
@@ -304,8 +304,8 @@ The webhook route is 1,197 LOC and only handles a subset of the events an enterp
 | ID | Status | Summary | Est. iterations | Notes |
 | --- | --- | --- | --- | --- |
 | J-01a | done | Scaffold `lib/stripe-webhook/{types,registry}.ts` + `handlers/` directory; migrate `charge.dispute.created` as proof | — | **Done in commit `2651b72d` (PR #279, draft).** Registry returns `{handled:false}` for unregistered event types so the legacy switch still owns unmigrated handlers (incremental cutover). Adds `dispatchEvent(event, ctx)` call before the switch in `route.ts`. |
-| J-01b | pending | Migrate `charge.refunded`, `customer.subscription.{created,updated,deleted}` to the registry | 1 | Continues J-01a. Each handler becomes one file in `lib/stripe-webhook/handlers/`. Tests deferred to J-01d. |
-| J-01c | pending | Migrate `invoice.paid`, `invoice.payment_failed`, `checkout.session.completed` to the registry | 1 | Continues J-01b. After this, every existing handler is in the registry; J-01e can remove the legacy switch. |
+| J-01b | done | Migrate `customer.subscription.{created,updated,deleted}` to the registry | — | **Done in commit `80392137` (PR #279, draft).** Created `lib/stripe-webhook/{lib/email.ts, lib/upsert-subscription.ts, handlers/customer-subscription.ts}`. The `charge.refunded` migration is rolled into J-01c instead (its 140-LOC body would push J-01b past the diff cap). |
+| J-01c | pending | Migrate `charge.refunded`, `invoice.paid`, `invoice.payment_failed`, `checkout.session.completed` to the registry | 1 | After this, every existing handler is in the registry; J-01e can remove the legacy switch. `charge.refunded` was bumped from J-01b to keep diffs under the cap. |
 | J-01d | pending | Add per-handler unit tests in `__tests__/lib/stripe-webhook/<handler>.test.ts` | 1 | Tests exercise each handler with a mock `WebhookContext` (admin + stripe + log). Reference test scaffolding lives at `__tests__/api/stripe-webhook-idempotency.test.ts`. |
 | J-01e | pending | Remove the legacy switch from `route.ts`; route becomes a 50-line dispatch + idempotency loop | 1 | Last J-01 step. Only safe after J-01b/c/d land green on CI. |
 | J-02 | false-positive | ~~Add handler: `charge.dispute.created`~~ | — | **Already handled** in `app/api/stripe/webhook/route.ts` (verified 2026-04-26 audit §5.4 via `grep -E "case '...'"` — handler exists). |
@@ -1042,6 +1042,19 @@ Items that ship LAST, in the final week before launch (Month 4 of pre-launch roa
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-28T18:35Z — iteration 86 (stream J — J-01b — `customer.subscription.*` migration)
+
+- Phase 0: lock acquired.
+- Phase 1: synced main; no new commits since iter 85 on the J branch's history aside from local checkout.
+- Phase 1.5: types-drift skipped (no DB schema change since iter 85).
+- Phase 2: CI rescue scan — #279 has no failing checks to rescue (J-01a still propagating through CI; no red).
+- Phase 3: stream J's next pending item is J-01b. Branch already exists from iter 85.
+- Phase 4: J-01b verification — refactor item, no migration. Confirmed the 4 case bodies + helpers being moved are still resident in `route.ts` and have no callers outside the file. Original J-01b grouped 4 handlers (`charge.refunded` + 3 `customer.subscription.*`); a quick LOC budget showed `charge.refunded` alone is ~140 LOC and the 3 subscription handlers + helpers are ~330 LOC, which would push the diff over the ~800 cap. Split: this iteration migrates only `customer.subscription.*` + `upsertSubscription` + email helpers; J-01c is rebased to include `charge.refunded` alongside the original 3 invoice/checkout handlers.
+- Phase 5: created `lib/stripe-webhook/lib/email.ts` (sendTransactionalEmail, emailWrapper, buildProWelcomeEmail, buildCourseReceiptEmail, buildConsultationConfirmationEmail; 132 LOC), `lib/stripe-webhook/lib/upsert-subscription.ts` (108 LOC, preserves out-of-order protection block byte-for-byte), `lib/stripe-webhook/handlers/customer-subscription.ts` (3 handlers, 87 LOC). `route.ts` shrank from 1197 → 927 LOC: removed the 6 helper definitions + `upsertSubscription` + 3 case blocks; replaced local `escapeHtml` with `@/lib/html-escape` SSOT; added imports from new lib paths. `handlers/index.ts` registers the 3 new handlers. Local gates: lint clean (`npx eslint` on 5 changed files, `--max-warnings 0`); 47 stripe-webhook tests pass (`stripe-webhook.test.ts` + `stripe-webhook-idempotency.test.ts`). File-targeted `tsc` produces only path-alias-resolution noise (no `-p tsconfig.json` on this sandbox per Hardware exception); CI is the authoritative gate.
+- Phase 6: commit `80392137` (`feat(j): migrate customer.subscription.* handlers to registry (J-01b)`, +344/-249 LOC across 5 files). Pushed.
+- Phase 7: queue updated on main — In-flight J row updated with new commit + timestamp; J-01b row marked done; J-01c row updated to include `charge.refunded` (rebased from J-01b).
+- STATUS: PROGRESS · stream=J · item=J-01b · pr=#279 · commit=`80392137`
 
 ### 2026-04-28T16:50Z — iteration 85 (stream J — J-01a — handler-registry scaffold + first migration)
 
