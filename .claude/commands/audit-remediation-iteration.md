@@ -37,7 +37,9 @@ Exactly one of:
 
 ## Per-iteration contract
 
-Execute these phases in order. **Stop at the end of phase 7 — do not pick up a second item.**
+Execute these phases in order. **By default, stop at the end of phase 7 — do not pick up a second item.**
+
+**Batch mode (added 2026-04-28 after iter 82 — throughput optimisation).** When the invoker explicitly requests batched iterations (e.g. cloud routine prompt: "run up to 5 iterations in this fire"), instead of exiting after Phase 7, loop back to Phase 2 (CI rescue check) for up to N total items. Stop when total cumulative diff exceeds ~5000 LOC, or when any iteration returns `STATUS: LOCKED`, `STATUS: BLOCKED` (surface), `STATUS: ALL-BLOCKED`, or `STATUS: COMPLETE`. The lock is acquired once at the start and released once at the end of the batch (single trap covers the whole run). Per-fire setup cost (clone, install, sync) amortises across multiple items, giving ~2-3× throughput per cloud fire. Between iterations: `git fetch origin main && git pull --ff-only origin main` so the next item picks up the queue update from the previous one. Items in the same batch should still be from independent streams — batching does NOT relax the "never cross-commit between streams in one iteration" rule (each iteration in the batch is self-contained, just chained).
 
 ### Phase 0 — Lock
 
