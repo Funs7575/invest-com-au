@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 
 /**
  * Client-side enrollment + disable UI.
@@ -127,11 +128,13 @@ export default function MfaEnrollmentClient({ enrolled: initialEnrolled, email }
             </p>
             {qrSrc && (
               <div className="flex justify-center py-3">
-                <img
+                {/* unoptimized: QR codes are pixel-sensitive; compression artifacts could make them unscannable */}
+                <Image
                   src={qrSrc}
                   alt="MFA QR code"
                   width={240}
                   height={240}
+                  unoptimized
                   className="border border-slate-200 rounded"
                 />
               </div>

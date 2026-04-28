@@ -120,7 +120,7 @@ export default function ReviewsClient({ brokers, advisors = [] }: ReviewsClientP
                   onClick={() => setPlatformTab(tab.key)}
                   role="tab"
                   aria-selected={platformTab === tab.key}
-                  className={`whitespace-nowrap shrink-0 px-3.5 md:px-5 py-2 md:py-2.5 min-h-[44px] rounded-full text-xs md:text-sm font-semibold transition-all duration-200 flex items-center gap-1.5 ${
+                  className={`whitespace-nowrap shrink-0 px-3.5 md:px-5 py-2 md:py-2.5 min-h-11 rounded-full text-xs md:text-sm font-semibold transition-all duration-200 flex items-center gap-1.5 ${
                     platformTab === tab.key
                       ? "bg-slate-900 text-white shadow-md"
                       : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:shadow-sm"
@@ -165,7 +165,7 @@ export default function ReviewsClient({ brokers, advisors = [] }: ReviewsClientP
                   onClick={() => setAdvisorTab(tab.key)}
                   role="tab"
                   aria-selected={advisorTab === tab.key}
-                  className={`whitespace-nowrap shrink-0 px-3.5 md:px-5 py-2 md:py-2.5 min-h-[44px] rounded-full text-xs md:text-sm font-semibold transition-all duration-200 ${
+                  className={`whitespace-nowrap shrink-0 px-3.5 md:px-5 py-2 md:py-2.5 min-h-11 rounded-full text-xs md:text-sm font-semibold transition-all duration-200 ${
                     advisorTab === tab.key
                       ? "bg-violet-600 text-white shadow-md"
                       : "bg-violet-50 text-violet-700 hover:bg-violet-100 hover:shadow-sm"

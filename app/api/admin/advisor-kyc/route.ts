@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/require-admin";
+import { createAdminClient } from "@/lib/supabase/admin";
 import {
   listPendingKyc,
   listKycDocuments,
@@ -43,9 +44,18 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ error: "Missing id or action" }, { status: 400 });
   }
 
+  const db = createAdminClient();
+
   if (action === "verify") {
     const notes = typeof body.notes === "string" ? body.notes : null;
     const ok = await verifyKyc({ id, verifiedBy: guard.email, notes });
+    await db.from("admin_audit_log").insert({
+      action: "advisor_kyc:verified",
+      entity_type: "advisor_kyc_document",
+      entity_id: String(id),
+      admin_email: guard.email,
+      details: { notes },
+    });
     return NextResponse.json({ ok });
   }
 
@@ -58,6 +68,13 @@ export async function PATCH(request: NextRequest) {
       );
     }
     const ok = await rejectKyc({ id, verifiedBy: guard.email, reason });
+    await db.from("admin_audit_log").insert({
+      action: "advisor_kyc:rejected",
+      entity_type: "advisor_kyc_document",
+      entity_id: String(id),
+      admin_email: guard.email,
+      details: { reason },
+    });
     return NextResponse.json({ ok });
   }
 

@@ -73,6 +73,12 @@ export async function PATCH(req: NextRequest) {
       }
     }
 
+    await supabase.from("admin_audit_log").insert({
+      action: action === "approve" ? "professional:approved" : "professional:suspended",
+      entity_type: "professional",
+      admin_email: user.email ?? null,
+      details: { ids, count: ids.length },
+    });
     return NextResponse.json({
       success: true,
       message: `${ids.length} advisor(s) ${action === "approve" ? "approved" : "rejected"}`,

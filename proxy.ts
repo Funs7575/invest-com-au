@@ -11,6 +11,25 @@ const ADMIN_MFA_EXEMPT = [
   '/admin/settings/mfa',
 ]
 
+// Timing-safe Bearer token comparison for the Edge runtime.
+// Node's `crypto.timingSafeEqual` is unavailable in Edge; this XOR loop
+// achieves the same constant-time property using the Buffer polyfill that
+// Next.js already ships to Edge middleware (evidenced by the nonce encoding
+// below). Consistent with the broker-signup / partner-API pattern used in
+// route handlers that run on Node.
+function cronTokensMatch(authHeader: string | null, secret: string): boolean {
+  if (!authHeader) return false
+  const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : ''
+  const aBuf = Buffer.from(token)
+  const bBuf = Buffer.from(secret)
+  if (aBuf.length !== bBuf.length) return false
+  let diff = 0
+  for (let i = 0; i < aBuf.length; i++) {
+    diff |= (aBuf[i] as number) ^ (bBuf[i] as number)
+  }
+  return diff === 0
+}
+
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
@@ -29,8 +48,8 @@ export async function proxy(request: NextRequest) {
   // ── Cron route protection ──────────────────────────────────────
   // Vercel cron jobs send a Bearer token — reject unauthorized callers.
   if (pathname.startsWith('/api/cron/')) {
-    const authHeader = request.headers.get('authorization')
-    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    const secret = process.env.CRON_SECRET
+    if (!secret || !cronTokensMatch(request.headers.get('authorization'), secret)) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
     const cronResponse = NextResponse.next()
@@ -49,10 +68,27 @@ export async function proxy(request: NextRequest) {
   response.headers.set('x-request-id', requestId)
 
   // ── Security headers ─────────────────────────────────────────
-  response.headers.set('X-Frame-Options', 'SAMEORIGIN')
+  // K-05 (audit 2026-04-26 §7 SEC-05): canonical X-Frame-Options and
+  // Permissions-Policy live here. Both used to be duplicated in
+  // `next.config.ts:headers` with conflicting values:
+  //   - X-Frame-Options: this file had `SAMEORIGIN`, next.config had
+  //     `DENY`. Browsers picked the most-restrictive (DENY); aligned
+  //     here so the source-of-truth matches the effective policy.
+  //   - Permissions-Policy: this file had `geolocation=()` (none),
+  //     next.config had `geolocation=(self)` (allow same-origin).
+  //     Multiple Permissions-Policy headers combine to the LEAST
+  //     permissive — `none` was winning, silently blocking the
+  //     property/postcode geolocation features. Realigned to `(self)`
+  //     to preserve those features.
+  // The conflicting copies have been removed from next.config.ts;
+  // X-Content-Type-Options + Referrer-Policy + X-DNS-Prefetch-Control
+  // + HSTS remain in both places because their values are identical
+  // (no drift), and the next.config copy covers the static-asset
+  // paths excluded from this middleware's matcher.
+  response.headers.set('X-Frame-Options', 'DENY')
   response.headers.set('X-Content-Type-Options', 'nosniff')
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
-  response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
+  response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(self)')
   response.headers.set('X-DNS-Prefetch-Control', 'on')
   response.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload')
 
@@ -63,6 +99,17 @@ export async function proxy(request: NextRequest) {
   // script loaded by a nonce'd script is also trusted, so we don't
   // need to allowlist every analytics/gtm/Sentry origin individually.
   //
+  // K-04 (audit 2026-04-26 §7 SEC-04): dropped 'unsafe-inline' from
+  // script-src. Modern browsers (CSP3 — Chrome 52+, Firefox 52+,
+  // Edge 79+, Safari 15.4+) ignore 'unsafe-inline' when 'strict-dynamic'
+  // is present, so it was already a no-op for >95% of AU traffic. In
+  // legacy CSP2 browsers (Safari < 15.4 etc.), the `https:` host-source
+  // fallback still permits any HTTPS-served script; only TRULY inline
+  // <script>…</script> blocks without a nonce are now blocked. Next.js
+  // 16 auto-nonces framework-emitted inline scripts via the x-nonce
+  // header propagation below, and our own <Script /> usages all carry
+  // an explicit nonce, so there is no expected breakage path.
+  //
   // style-src keeps 'unsafe-inline' because Tailwind JIT + the
   // Next.js runtime emit inline style blocks that we can't nonce
   // without rewriting every component. This is a known, documented
@@ -72,12 +119,29 @@ export async function proxy(request: NextRequest) {
   crypto.getRandomValues(nonceBytes)
   const nonce = Buffer.from(nonceBytes).toString('base64')
 
+  // K-15 (audit 2026-04-26 §7 SEC-04 follow-up): CSP violation reporting.
+  // The Report-To header defines a named endpoint group; the `report-to`
+  // directive in the CSP tells browsers to POST violations there. Browsers
+  // send `application/reports+json` for report-to and `application/csp-report`
+  // for the legacy `report-uri` fallback — both are accepted by the endpoint.
+  // max_age=86400 (24h) so the browser re-fetches the endpoint config daily.
+  const siteOrigin = process.env.NEXT_PUBLIC_SITE_URL || 'https://invest.com.au'
+  const cspReportEndpoint = `${siteOrigin}/api/csp-report`
+  response.headers.set(
+    'Report-To',
+    JSON.stringify({
+      group: 'invest-csp',
+      max_age: 86400,
+      endpoints: [{ url: cspReportEndpoint }],
+    })
+  )
+
   const cspDirectives = [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' 'unsafe-inline' https:`,
-    // The 'unsafe-inline' above is IGNORED by browsers that understand
-    // 'strict-dynamic' + nonce, but kept as a fallback for older
-    // browsers that don't. https: same.
+    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https:`,
+    // The `https:` host-source above is the fallback for legacy CSP2
+    // browsers that don't understand 'strict-dynamic'. CSP3 browsers
+    // ignore both `https:` and the strict-dynamic-shadowed sources.
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob: https:",
     "font-src 'self' data:",
@@ -88,6 +152,13 @@ export async function proxy(request: NextRequest) {
     "form-action 'self'",
     "object-src 'none'",
     "upgrade-insecure-requests",
+    // Violation reporting: modern Reporting API (report-to) + legacy fallback
+    // (report-uri). Both point to /api/csp-report which persists to
+    // csp_violations for trend analysis. Legacy browsers that only understand
+    // report-uri will use the full absolute URL; modern browsers use the
+    // Report-To group name.
+    "report-to invest-csp",
+    `report-uri ${cspReportEndpoint}`,
   ]
   response.headers.set('Content-Security-Policy', cspDirectives.join('; '))
 

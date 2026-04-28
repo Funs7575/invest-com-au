@@ -124,7 +124,7 @@ export default function AccountButton() {
         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 text-white font-bold text-sm flex items-center justify-center shrink-0">
           {initial}
         </div>
-        <span className="text-sm font-semibold text-slate-700 max-w-[120px] truncate">
+        <span className="text-sm font-semibold text-slate-700 max-w-30 truncate">
           {displayName}
         </span>
         <svg

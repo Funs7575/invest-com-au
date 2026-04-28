@@ -839,7 +839,7 @@ export default function CompliancePage() {
             <button
               onClick={runComplianceChecks}
               disabled={loading}
-              className="px-4 py-2 min-h-[44px] bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 disabled:opacity-50 transition-colors"
+              className="px-4 py-2 min-h-11 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 disabled:opacity-50 transition-colors"
             >
               {loading ? "Running..." : "Re-run Checks"}
             </button>

@@ -242,7 +242,7 @@ export default function DealsClient({ deals, advisors = [] }: { deals: Broker[];
               onClick={() => setActiveTab(tab)}
               role="tab"
               aria-selected={activeTab === tab}
-              className={`whitespace-nowrap shrink-0 px-3.5 md:px-5 py-2 md:py-2.5 min-h-[44px] rounded-full text-xs md:text-sm font-semibold transition-all duration-200 flex items-center gap-1.5 ${
+              className={`whitespace-nowrap shrink-0 px-3.5 md:px-5 py-2 md:py-2.5 min-h-11 rounded-full text-xs md:text-sm font-semibold transition-all duration-200 flex items-center gap-1.5 ${
                 activeTab === tab
                   ? "bg-slate-900 text-white shadow-md"
                   : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:shadow-sm"

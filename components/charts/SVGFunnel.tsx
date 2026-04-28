@@ -18,7 +18,11 @@ interface SVGFunnelProps {
 }
 
 const DEFAULT_FUNNEL_COLORS = [
-  "#16a34a", "#22c55e", "#65a30d", "#d97706", "#dc2626",
+  "#16a34a", // green-600
+  "#22c55e", // green-500
+  "#65a30d", // lime-600
+  "#d97706", // amber-600
+  "#dc2626", // red-600
 ];
 
 export default function SVGFunnel({
@@ -60,7 +64,7 @@ export default function SVGFunnel({
         const bottomHalfWidth = (bottomWidthRatio * funnelAreaWidth) / 2;
 
         const color =
-          stage.color || DEFAULT_FUNNEL_COLORS[i % DEFAULT_FUNNEL_COLORS.length] || "#64748b";
+          stage.color || DEFAULT_FUNNEL_COLORS[i % DEFAULT_FUNNEL_COLORS.length] || "#64748b"; // slate-500
 
         // Trapezoid points
         const x1 = centerX - topHalfWidth; // top-left
@@ -108,8 +112,7 @@ export default function SVGFunnel({
               dominantBaseline="central"
               fontSize={11}
               fontWeight={600}
-              fill="#334155"
-              className="select-none"
+              className="fill-slate-700 select-none"
             >
               {stage.label}
             </text>
@@ -121,8 +124,7 @@ export default function SVGFunnel({
               textAnchor="end"
               dominantBaseline="central"
               fontSize={10}
-              fill="#94a3b8"
-              className="select-none"
+              className="fill-slate-400 select-none"
             >
               {convRate}% of total
             </text>
@@ -135,9 +137,8 @@ export default function SVGFunnel({
                 textAnchor="start"
                 dominantBaseline="central"
                 fontSize={10}
-                fill="#ef4444"
                 fontWeight={600}
-                className="select-none"
+                className="fill-red-500 select-none"
               >
                 -{dropOff}%
               </text>

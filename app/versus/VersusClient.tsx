@@ -293,7 +293,7 @@ export default function VersusClient({ brokers, serverEditorial }: { brokers: Br
                   )}
 
                   {/* Broker slot — mini-card */}
-                  <div className="flex-1 min-w-[120px] md:min-w-[140px]">
+                  <div className="flex-1 min-w-30 md:min-w-35">
                     <div
                       className={`rounded-lg md:rounded-xl border p-2.5 md:p-3 transition-all ${
                         broker ? 'bg-white border-slate-200 shadow-sm' : 'bg-slate-50/50 border-dashed border-slate-300'
@@ -327,7 +327,7 @@ export default function VersusClient({ brokers, serverEditorial }: { brokers: Br
                       <select
                         value={slug}
                         onChange={(e) => updateSlug(index, e.target.value)}
-                        className="w-full border border-slate-200 rounded-lg py-2.5 md:py-2.5 px-2.5 md:px-3 min-h-[44px] text-xs md:text-sm font-medium bg-white hover:border-slate-300 focus:border-blue-700 focus:ring-1 focus:ring-blue-700 transition-colors"
+                        className="w-full border border-slate-200 rounded-lg py-2.5 md:py-2.5 px-2.5 md:px-3 min-h-11 text-xs md:text-sm font-medium bg-white hover:border-slate-300 focus:border-blue-700 focus:ring-1 focus:ring-blue-700 transition-colors"
                       >
                         <option value="">Choose a platform...</option>
                         {brokers.map(br => {
@@ -679,7 +679,7 @@ export default function VersusClient({ brokers, serverEditorial }: { brokers: Br
                   <Link
                     key={c.href}
                     href={c.href}
-                    className="px-3 py-2 min-h-[44px] inline-flex items-center md:px-4 md:py-2.5 rounded-lg md:rounded-xl bg-white border border-slate-200 text-[0.69rem] md:text-sm font-medium text-slate-600 hover:border-slate-600 hover:text-slate-700 hover:bg-slate-50 hover:shadow-sm transition-all"
+                    className="px-3 py-2 min-h-11 inline-flex items-center md:px-4 md:py-2.5 rounded-lg md:rounded-xl bg-white border border-slate-200 text-[0.69rem] md:text-sm font-medium text-slate-600 hover:border-slate-600 hover:text-slate-700 hover:bg-slate-50 hover:shadow-sm transition-all"
                   >
                     {c.label}
                   </Link>

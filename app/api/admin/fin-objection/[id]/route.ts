@@ -65,6 +65,17 @@ export async function POST(
   }
 
   log.info("fin_objection_at stamped", { id, by: user.email });
+
+  const adminDb = createAdminClient();
+  await adminDb.from("admin_audit_log").insert({
+    action: "editorial_article:fin_objection",
+    entity_type: "editorial_article",
+    entity_id: id,
+    entity_name: `article #${id}`,
+    admin_email: user.email ?? "",
+    details: { fin_objection_at: data.fin_objection_at },
+  });
+
   return NextResponse.json({
     id: data.id,
     fin_objection_at: data.fin_objection_at,

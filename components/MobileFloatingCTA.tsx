@@ -58,7 +58,7 @@ export default function MobileFloatingCTA({
               context
             )
           }
-          className="shrink-0 px-4 py-2.5 bg-amber-600 text-white text-sm font-bold rounded-lg hover:bg-amber-700 hover:scale-105 hover:shadow-[0_0_12px_rgba(217,119,6,0.3)] transition-all duration-200 max-w-[160px] text-center leading-tight"
+          className="shrink-0 px-4 py-2.5 bg-amber-600 text-white text-sm font-bold rounded-lg hover:bg-amber-700 hover:scale-105 hover:shadow-[0_0_12px_rgba(217,119,6,0.3)] transition-all duration-200 max-w-40 text-center leading-tight"
         >
           {getBenefitCta(broker, context)}
         </a>
