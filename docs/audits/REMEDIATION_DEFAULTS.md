@@ -38,7 +38,7 @@ Per-stream verification floor before any commit:
 
 ## Per-iteration discipline
 
-- **Diff cap:** ≤ ~800 LOC per iteration (excluding generated files / pure data). Bumped from 500 → 800 on 2026-04-26 after iter 22 review — most cleanly-bounded refactors (handler-registry splits, test-file additions, runbook authoring) fit in 600–800 lines and forcing a split adds ceremony without quality gain. Larger work still splits across iterations.
+- **Diff cap:** ≤ ~2500 LOC per iteration (excluding generated files / pure data). Raised from 800 → 2500 on 2026-04-28 after the founder flagged loop throughput as too slow — the 800 cap was forcing big items (J-01 webhook split, hub builds, registry extractions) into 4-6 sub-iterations when 1-2 would do. Risk of larger PRs is mitigated by: (a) the auto-revert workflow (`I-NEW-04`, layer 4 of `MERGE_AUTHORIZATION.md`) — bad merges revert within ~5 min; (b) full CI on every PR; (c) squash-merge keeps every change reversible with a single revert. History of the cap: 500 → 800 (2026-04-26 after iter 22) → 2500 (2026-04-28 after iter 82). Items that genuinely deserve splitting (mixing concerns, multi-stream changes) still split — the cap is a ceiling, not a target.
 - **Always run before commit:**
   ```bash
   # If any .ts/.tsx changed, type-check just those files:
