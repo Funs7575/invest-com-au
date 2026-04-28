@@ -32,7 +32,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | F | _not started_ | — | — | — |
 | G | _not started_ | — | — | — |
 | H | _not started_ | — | — | — |
-| I | _not started_ | — | — | — |
+| I | `claude/audit-remediation/i-new-01-metrics-workflow-fix` | #277 | pending — pushed 2026-04-28T15:35Z | I-NEW-01 done (commit `58a4948c`) — code-quality workflow direct-push fix |
 | J | _not started_ | — | — | — |
 | K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-27T05:35Z | K-01..K-08 done; K-09 false-positive; K-10..K-15 done — **stream complete** |
 | L | _not started_ | — | — | — |
@@ -257,6 +257,7 @@ Best done after A/B/C land so the rules don't break in-flight work.
 
 | ID | Status | Summary | Est. iterations | Notes |
 | --- | --- | --- | --- | --- |
+| I-NEW-01 | done | Fix `code-quality.yml` weekly snapshot — replace `peter-evans/create-pull-request` with direct push to main (repo's "Allow GH Actions to create PRs" toggle is OFF; workflow had been failing since 2026-04-26, leaving `metrics-latest.json` absent and the `/admin/code-quality` dashboard frozen on baseline) | 1 | **Done in commit `58a4948c` (PR #277).** Surfaced 2026-04-28 by iter (this) as a deviation from strict priority order — silently invalidates progress measurement on every other stream until fixed. After merge, run `gh workflow run code-quality.yml --ref main` once to populate the first real `metrics-latest.json`. |
 | I-01 | pending | CI: fail build if any `supabase/migrations/*.sql` adds a `CREATE TABLE` without `ENABLE ROW LEVEL SECURITY` | 1 | Pairs with B-07. |
 | I-02 | pending | CI: fail build if `lib/database.types.ts` declares a table not in any migration | 1 | Pairs with A-07. |
 | I-03 | pending | ESLint: restrict `lib/supabase/admin.ts` imports to allowed paths + `CLAUDE.md` exceptions | 1 | Pairs with C-08. |
@@ -1032,6 +1033,18 @@ Items that ship LAST, in the final week before launch (Month 4 of pre-launch roa
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-28T15:35Z — iteration 82 (stream I — I-NEW-01 — fix code-quality.yml workflow)
+
+- Phase 0: lock acquired (local sandbox, session-driven).
+- Phase 1: synced to main at `1c296bb3` (post-K merge). Read queue + defaults end-to-end.
+- Phase 1.5: types-drift skipped (no Supabase schema work this iteration).
+- Phase 2: CI rescue scan — all in-flight PRs healthy. PRs #220 #222 #242 #246 merged earlier this session; #256 (V-NEW-07) is `state=CLEAN` but held pending `ADMIN_MFA_COOKIE_SECRET` in Vercel; #220 was already merged.
+- Phase 3: priority walk surfaced Stream J (slot 7) as the strict next candidate — but session context has the founder explicitly framing the next iteration as "the CI jobs we need to do to get to enterprise level". The highest-leverage CI item is the broken `code-quality.yml` weekly snapshot: it has run once (2026-04-26 23:40Z) and failed at `peter-evans/create-pull-request@v6` because the repo's "Allow GH Actions to create and approve pull requests" toggle is OFF. Symptom: `metrics-latest.json` was never written; `/admin/code-quality` and the per-PR delta comments have been comparing every change to the hand-authored baseline (F, 0.385) for ~2 days. Surfaced as `I-NEW-01` (deviation from strict slot-7-walk recorded explicitly in this log).
+- Phase 4: verification — single workflow file edit; main not branch-protected (verified `/repos/.../branches/main/protection` → 404 'Branch not protected'); workflow already has `contents: write`; `scripts/collect-quality-metrics.ts` writes the two metrics JSONs directly so `git diff --quiet` + `git add` is the right gate.
+- Phase 5: opened branch `claude/audit-remediation/i-new-01-metrics-workflow-fix` from main. Replaced the create-pull-request step with a `git config + git diff --quiet early-exit + git add + git commit + git push origin HEAD:main` block. Local gates vacuously pass (workflow file only, no .ts/.tsx changed).
+- Phase 6: commit `58a4948c` `fix(ci): code-quality workflow pushes snapshot direct to main`. Pushed. Opened draft PR #277.
+- Phase 7: this update. After merge, founder runs `gh workflow run code-quality.yml --ref main` once to populate the first real `metrics-latest.json`. Per-PR delta comments and `/admin/code-quality` go from theoretical to actual.
 
 ### 2026-04-28T01:22Z — iteration 81 (stream D — D-11 batch 14 — advertise-checkout + listings-checkout + community-posts + community-threads + marketplace/wallet-topup)
 
