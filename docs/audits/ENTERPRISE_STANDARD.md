@@ -86,6 +86,16 @@ CI gate: V-NEW-03 (Stripe webhook idempotency replay harness).
 
 ### AI surface
 
+> **Post-launch surface (deferred 2026-04-28).** AI agents and AI-facing
+> routes are deferred to post-launch per founder decision; this rubric is
+> not enforced for the Oct–Dec 2026 launch window. Re-enable enforcement
+> when AI features are activated. Until then, any new PR that touches an
+> AI-surface route should either (a) ship behind an off-by-default feature
+> flag, or (b) surface to Blocked with a pointer to this note. The CI
+> gate (V-NEW-02) is intentionally not wired during the launch window.
+> See `docs/launch/manual-ops-during-ai-pause.md` for the manual
+> processes covering work the dormant n8n agents would otherwise do.
+
 Any code path that calls `@anthropic-ai/sdk` and renders the result —
 in part or whole — to a user.
 
