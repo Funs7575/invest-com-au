@@ -86,7 +86,10 @@ export async function POST(request: NextRequest) {
   });
 
   if (error) {
-    log.warn({ error, blocked_uri: report["blocked-uri"] }, "failed to persist CSP violation report");
+    log.warn("failed to persist CSP violation report", {
+      error,
+      blocked_uri: report["blocked-uri"],
+    });
   }
 
   // 204 No Content — browsers ignore the response body.
