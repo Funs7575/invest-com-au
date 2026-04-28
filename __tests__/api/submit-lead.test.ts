@@ -14,8 +14,12 @@ vi.mock("@/lib/rate-limit", () => ({
   isRateLimited: vi.fn(() => Promise.resolve(false)),
 }));
 
-const mockSendNewLeadNotification = vi.fn(() => Promise.resolve());
-const mockSendLeadConfirmationToUser = vi.fn(() => Promise.resolve());
+const mockSendNewLeadNotification = vi.fn((..._args: unknown[]) =>
+  Promise.resolve(),
+);
+const mockSendLeadConfirmationToUser = vi.fn((..._args: unknown[]) =>
+  Promise.resolve(),
+);
 
 vi.mock("@/lib/advisor-emails", () => ({
   sendNewLeadNotification: (...args: unknown[]) =>
