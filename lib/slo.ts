@@ -18,6 +18,8 @@
 
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
+import { sendEmail } from "@/lib/resend";
+import { getAdminEmails } from "@/lib/admin";
 
 const log = logger("slo");
 
@@ -129,7 +131,7 @@ export async function openIncident(
     return;
   }
 
-  // Route to Slack (always) + PagerDuty (page only)
+  // Route to Slack (always) + PagerDuty (page only) + email (always)
   notifySlack(definition, evaluation, measurement).catch((err) =>
     log.warn("slo slack notification failed", {
       err: err instanceof Error ? err.message : String(err),
@@ -142,6 +144,11 @@ export async function openIncident(
       }),
     );
   }
+  notifyEmail(definition, evaluation, measurement).catch((err) =>
+    log.warn("slo email notification failed", {
+      err: err instanceof Error ? err.message : String(err),
+    }),
+  );
 }
 
 async function notifySlack(
@@ -205,6 +212,33 @@ async function notifyPagerDuty(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
     signal: AbortSignal.timeout(8_000),
+  });
+}
+
+async function notifyEmail(
+  def: SloDefinition,
+  evaluation: SloEvaluation,
+  measurement: SloMeasurement,
+): Promise<void> {
+  const recipients = getAdminEmails();
+  if (!recipients.length) return;
+  const icon = evaluation.severity === "page" ? "🚨" : "⚠️";
+  const html = `
+    <h2>${icon} SLO breach: ${def.name}</h2>
+    <table style="border-collapse:collapse;font-family:monospace;font-size:14px">
+      <tr><td style="padding:4px 12px 4px 0"><strong>Service</strong></td><td>${def.service}</td></tr>
+      <tr><td style="padding:4px 12px 4px 0"><strong>Metric</strong></td><td>${def.metric}</td></tr>
+      <tr><td style="padding:4px 12px 4px 0"><strong>Target</strong></td><td>${def.comparator} ${def.target}</td></tr>
+      <tr><td style="padding:4px 12px 4px 0"><strong>Measured</strong></td><td>${measurement.value}</td></tr>
+      <tr><td style="padding:4px 12px 4px 0"><strong>Severity</strong></td><td>${evaluation.severity.toUpperCase()}</td></tr>
+      <tr><td style="padding:4px 12px 4px 0"><strong>Reason</strong></td><td>${evaluation.reason}</td></tr>
+    </table>
+    <p style="color:#666;font-size:12px">Source: slo-monitor cron (lib/slo.ts).</p>
+  `;
+  await sendEmail({
+    to: recipients,
+    subject: `${icon} SLO breach [${evaluation.severity}]: ${def.name}`,
+    html,
   });
 }
 
