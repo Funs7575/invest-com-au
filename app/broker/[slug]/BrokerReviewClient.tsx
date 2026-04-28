@@ -889,9 +889,9 @@ export default function BrokerReviewClient({
                         <>
                           {c.change_type === 'update' && (
                             <div className="text-xs text-slate-500 mt-0.5 flex items-center gap-1">
-                              <span className="line-through text-red-400 truncate max-w-[180px]">{c.old_value || '\u2014'}</span>
+                              <span className="line-through text-red-400 truncate max-w-45">{c.old_value || '\u2014'}</span>
                               <span className="text-slate-300">{'\u2192'}</span>
-                              <span className="text-amber-700 font-medium truncate max-w-[180px]">{c.new_value || '\u2014'}</span>
+                              <span className="text-amber-700 font-medium truncate max-w-45">{c.new_value || '\u2014'}</span>
                             </div>
                           )}
                           {c.change_type === 'add' && <p className="text-xs text-emerald-700 mt-0.5">{c.new_value}</p>}

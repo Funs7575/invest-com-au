@@ -97,7 +97,7 @@ function SidebarContent({
               {item.label === "Notifications" && unreadCount > 0 && (
                 <span className="ml-auto relative flex items-center justify-center">
                   <span className="absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-40 animate-ping" />
-                  <span className="relative bg-amber-500 text-slate-900 text-[0.6rem] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
+                  <span className="relative bg-amber-500 text-slate-900 text-[0.6rem] font-bold px-1.5 py-0.5 rounded-full min-w-4.5 text-center">
                     {unreadCount > 99 ? "99+" : unreadCount}
                   </span>
                 </span>

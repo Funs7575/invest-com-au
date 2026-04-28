@@ -265,7 +265,7 @@ export default function PillarExitIntent({ slug }: { slug: string }) {
 
           <button
             onClick={handleDismiss}
-            className="w-full mt-3 py-2 min-h-[44px] text-xs text-slate-400 hover:text-slate-600 text-center transition-colors"
+            className="w-full mt-3 py-2 min-h-11 text-xs text-slate-400 hover:text-slate-600 text-center transition-colors"
           >
             No thanks
           </button>

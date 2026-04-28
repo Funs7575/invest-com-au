@@ -418,6 +418,7 @@ function AdvisorApplyInner() {
                   `}
                 >
                   {photoPreview ? (
+                    // eslint-disable-next-line @next/next/no-img-element -- photoPreview is a blob: URL from URL.createObjectURL(); next/image does not support blob: scheme
                     <img
                       src={photoPreview}
                       alt="Profile photo preview"

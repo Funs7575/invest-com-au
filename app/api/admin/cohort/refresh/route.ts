@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/require-admin";
 import { enqueueJob } from "@/lib/job-queue";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 /**
  * POST /api/admin/cohort/refresh
@@ -16,5 +17,14 @@ export async function POST() {
   const id = await enqueueJob("refresh_cohort_metrics", {
     requested_by: guard.email,
   });
+
+  const db = createAdminClient();
+  await db.from("admin_audit_log").insert({
+    action: "cohort:refresh_queued",
+    entity_type: "job_queue",
+    entity_id: id != null ? String(id) : undefined,
+    admin_email: guard.email,
+  });
+
   return NextResponse.json({ ok: true, job_id: id });
 }

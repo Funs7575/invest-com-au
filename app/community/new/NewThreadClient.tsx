@@ -264,7 +264,7 @@ export default function NewThreadClient() {
           </div>
 
           {showPreview ? (
-            <div className="w-full border border-slate-200 rounded-lg p-3 min-h-[200px] bg-slate-50">
+            <div className="w-full border border-slate-200 rounded-lg p-3 min-h-50 bg-slate-50">
               {body.trim() ? (
                 <div className="prose prose-sm max-w-none text-slate-700">
                   {body.split("\n").map((paragraph, i) => (
@@ -291,7 +291,7 @@ export default function NewThreadClient() {
               }}
               placeholder="Share the details of your discussion. Use line breaks to separate paragraphs."
               maxLength={10000}
-              className={`w-full border rounded-lg px-3 py-2.5 text-sm text-slate-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none min-h-[200px] resize-y ${
+              className={`w-full border rounded-lg px-3 py-2.5 text-sm text-slate-700 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none min-h-50 resize-y ${
                 errors.body ? "border-red-300" : "border-slate-200"
               }`}
             />

@@ -205,7 +205,7 @@ export default async function PropertyHubPage() {
                   <h2 className="text-xl md:text-3xl font-extrabold text-slate-900">Hand-picked new developments</h2>
                   <p className="text-sm text-slate-500 mt-1">Exclusive listings across Sydney, Melbourne, Brisbane &amp; more.</p>
                 </div>
-                <Link href="/property/listings" className="text-xs md:text-sm font-bold text-amber-600 hover:text-amber-700 shrink-0 min-h-[44px] inline-flex items-center gap-1 px-1 group">
+                <Link href="/property/listings" className="text-xs md:text-sm font-bold text-amber-600 hover:text-amber-700 shrink-0 min-h-11 inline-flex items-center gap-1 px-1 group">
                   View all <span className="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
                 </Link>
               </div>
@@ -415,7 +415,7 @@ export default async function PropertyHubPage() {
                   <h2 className="text-xl md:text-3xl font-extrabold text-slate-900">Top investment suburbs</h2>
                   <p className="text-sm text-slate-500 mt-1">Ranked by 10-year capital growth — updated quarterly.</p>
                 </div>
-                <Link href="/property/suburbs" className="text-xs md:text-sm font-bold text-amber-600 hover:text-amber-700 shrink-0 min-h-[44px] inline-flex items-center gap-1 px-1 group">
+                <Link href="/property/suburbs" className="text-xs md:text-sm font-bold text-amber-600 hover:text-amber-700 shrink-0 min-h-11 inline-flex items-center gap-1 px-1 group">
                   Research all <span className="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
                 </Link>
               </div>

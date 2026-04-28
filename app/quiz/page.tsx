@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useMemo, useRef } from "react";
-import { createClient } from "@/lib/supabase/client";
 import type { Broker } from "@/lib/types";
 import { trackEvent } from "@/lib/tracking";
 import { trackEvent as phTrack } from "@/lib/posthog/events";
@@ -437,36 +436,39 @@ export default function QuizPage() {
   }, []);
 
   useEffect(() => {
-    const supabase = createClient();
-    Promise.all([
-      supabase.from('brokers').select('*').eq('status', 'active').order('rating', { ascending: false }),
-      supabase.from('quiz_weights').select('*'),
-    ]).then(([brokerRes, weightsRes]) => {
-      if (!mountedRef.current) return;
-      if (brokerRes.error) {
-        setFetchError("Failed to load broker data. Using cached results.");
-      } else if (brokerRes.data) {
-        setBrokers(brokerRes.data);
-      }
-      if (weightsRes.data && weightsRes.data.length > 0) {
-        const w: Record<string, QuizWeights> = {};
-        weightsRes.data.forEach((row: QuizWeight) => {
-          w[row.broker_slug] = {
-            beginner: row.beginner_weight || 0,
-            low_fee: row.low_fee_weight || 0,
-            us_shares: row.us_shares_weight || 0,
-            smsf: row.smsf_weight || 0,
-            crypto: row.crypto_weight || 0,
-            advanced: row.advanced_weight || 0,
-            property: row.property_weight || 0,
-            robo: row.robo_weight || 0,
-          };
-        });
-        setWeights(w);
-      }
-    }).catch(() => {
-      if (mountedRef.current) setFetchError("Failed to load quiz data. Using cached results.");
-    });
+    fetch("/api/quiz/data")
+      .then((r) => {
+        if (!r.ok) throw new Error("quiz data fetch failed");
+        return r.json() as Promise<{ brokers: Broker[]; quiz_weights: QuizWeight[] }>;
+      })
+      .then(({ brokers: bData, quiz_weights: wData }) => {
+        if (!mountedRef.current) return;
+        if (bData.length > 0) {
+          setBrokers(bData);
+        } else {
+          setFetchError("Failed to load broker data. Using cached results.");
+        }
+        if (wData.length > 0) {
+          const w: Record<string, QuizWeights> = {};
+          wData.forEach((row: QuizWeight) => {
+            w[row.broker_slug] = {
+              beginner: row.beginner_weight || 0,
+              low_fee: row.low_fee_weight || 0,
+              us_shares: row.us_shares_weight || 0,
+              smsf: row.smsf_weight || 0,
+              crypto: row.crypto_weight || 0,
+              advanced: row.advanced_weight || 0,
+              property: row.property_weight || 0,
+              robo: row.robo_weight || 0,
+            };
+          });
+          setWeights(w);
+        }
+      })
+      .catch(() => {
+        if (mountedRef.current)
+          setFetchError("Failed to load quiz data. Using cached results.");
+      });
   }, []);
 
   // Compute scored results (memoised)

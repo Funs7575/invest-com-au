@@ -275,7 +275,7 @@ export default function AdminUserReviewsPage() {
                   <td className="px-4 py-3">
                     <button
                       onClick={() => setExpandedId(expandedId === review.id ? null : review.id)}
-                      className="text-sm text-slate-700 hover:text-emerald-700 text-left max-w-[200px] truncate transition-colors"
+                      className="text-sm text-slate-700 hover:text-emerald-700 text-left max-w-50 truncate transition-colors"
                       title={review.title}
                     >
                       {review.title}

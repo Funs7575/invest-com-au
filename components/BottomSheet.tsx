@@ -83,7 +83,7 @@ export default function BottomSheet({ open, onClose, title, children }: BottomSh
             <h3 className="text-base font-bold text-slate-900">{title}</h3>
             <button
               onClick={onClose}
-              className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-400 hover:text-slate-700 rounded-lg"
+              className="p-2 min-w-11 min-h-11 flex items-center justify-center text-slate-400 hover:text-slate-700 rounded-lg"
               aria-label="Close"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

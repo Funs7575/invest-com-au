@@ -547,7 +547,7 @@ export default function CreativeInsightsPage() {
                             <p className="text-sm font-semibold text-slate-900 truncate">
                               {c.label || c.type}
                             </p>
-                            <p className="text-[0.62rem] text-slate-400 truncate max-w-[200px]">
+                            <p className="text-[0.62rem] text-slate-400 truncate max-w-50">
                               {c.url}
                             </p>
                           </div>

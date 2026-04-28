@@ -155,6 +155,16 @@ export async function POST(request: NextRequest) {
       changed_by: `admin (notified ${notified} advisors)`,
     });
 
+    await supabase.from("admin_audit_log").insert({
+      action: "pricing:notify_price_change",
+      entity_type: "lead_pricing",
+      entity_id: advisor_type,
+      admin_email: user.email,
+      details: { advisor_type, old_price_cents, new_price_cents, field_changed, notified, failed },
+    }).then(({ error: logErr }) => {
+      if (logErr) log.warn("admin_audit_log insert failed", { error: logErr.message });
+    });
+
     log.info("Price change notifications sent", {
       advisor_type: typeLabel,
       old_price: formatCents(old_price_cents),

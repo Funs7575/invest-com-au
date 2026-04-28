@@ -44,7 +44,7 @@ export default function RecentlyViewed({ currentSlug }: { currentSlug?: string }
           <Link
             key={item.slug}
             href={`/broker/${item.slug}`}
-            className="shrink-0 bg-white border border-slate-200 rounded-lg px-3 py-2 hover:shadow-md hover:border-slate-300 transition-all flex items-center gap-2 min-w-[140px]"
+            className="shrink-0 bg-white border border-slate-200 rounded-lg px-3 py-2 hover:shadow-md hover:border-slate-300 transition-all flex items-center gap-2 min-w-35"
           >
             <div
               className="w-7 h-7 rounded-md flex items-center justify-center text-[0.5rem] font-bold text-white shrink-0"
