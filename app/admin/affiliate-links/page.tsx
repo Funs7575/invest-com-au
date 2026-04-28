@@ -494,7 +494,7 @@ export default function AffiliateLinksPage() {
                         ) : (
                           <>
                             <td className="px-4 py-3">
-                              <span className="text-xs text-slate-500 font-mono truncate block max-w-[200px]" title={broker.affiliate_url || ""}>
+                              <span className="text-xs text-slate-500 font-mono truncate block max-w-50" title={broker.affiliate_url || ""}>
                                 {broker.affiliate_url || "—"}
                               </span>
                             </td>

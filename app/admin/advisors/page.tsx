@@ -824,7 +824,7 @@ export default function AdminAdvisorsPage() {
                         <div>
                           <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">Admin Notes</h4>
                           <textarea
-                            className="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs resize-y min-h-[60px]"
+                            className="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs resize-y min-h-15"
                             placeholder="Internal notes about this applicant..."
                             defaultValue={String(app.admin_notes || "")}
                             onBlur={async (e) => {

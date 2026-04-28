@@ -46,6 +46,11 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "images.unsplash.com",
       },
+      {
+        protocol: "https",
+        hostname: "api.qrserver.com",
+        pathname: "/v1/**",
+      },
     ],
   },
   async headers() {

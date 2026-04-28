@@ -30,7 +30,7 @@ export default function AdvisorDirectory() {
         <div className="flex bg-white p-1 rounded-lg border border-slate-200 w-max mb-5 md:mb-7">
           <button
             onClick={() => setActiveTab("property")}
-            className={`px-3 md:px-4 py-1.5 rounded-md text-xs md:text-sm font-semibold transition-all min-h-[36px] md:min-h-[40px] ${
+            className={`px-3 md:px-4 py-1.5 rounded-md text-xs md:text-sm font-semibold transition-all min-h-9 md:min-h-10 ${
               isProperty
                 ? "bg-amber-500 text-white shadow-sm"
                 : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
@@ -40,7 +40,7 @@ export default function AdvisorDirectory() {
           </button>
           <button
             onClick={() => setActiveTab("wealth")}
-            className={`px-3 md:px-4 py-1.5 rounded-md text-xs md:text-sm font-semibold transition-all min-h-[36px] md:min-h-[40px] ${
+            className={`px-3 md:px-4 py-1.5 rounded-md text-xs md:text-sm font-semibold transition-all min-h-9 md:min-h-10 ${
               !isProperty
                 ? "bg-amber-500 text-white shadow-sm"
                 : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
@@ -92,7 +92,7 @@ export default function AdvisorDirectory() {
               {/* Primary CTA */}
               <Link
                 href="/find-advisor"
-                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 min-h-[52px] bg-amber-500 hover:bg-amber-600 text-slate-900 text-sm md:text-base font-bold rounded-xl shadow-md shadow-amber-500/25 hover:shadow-amber-500/40 transition-all"
+                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 min-h-13 bg-amber-500 hover:bg-amber-600 text-slate-900 text-sm md:text-base font-bold rounded-xl shadow-md shadow-amber-500/25 hover:shadow-amber-500/40 transition-all"
               >
                 {isProperty ? "Match Me With a Property Expert" : "Match Me With a Financial Advisor"}
                 <Icon name="arrow-right" size={16} className="text-slate-900" />

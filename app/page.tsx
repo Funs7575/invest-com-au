@@ -48,7 +48,8 @@ export default async function HomePage() {
       .select(BROKER_LISTING_COLUMNS)
       .eq("status", "active")
       .order("promoted_placement", { ascending: false })
-      .order("rating", { ascending: false }),
+      .order("rating", { ascending: false })
+      .limit(20),
     supabase
       .from("articles")
       .select("id, title, slug, excerpt, category, read_time, tags, cover_image_url")
@@ -197,9 +198,9 @@ export default async function HomePage() {
                 Platforms we&apos;ve independently compared
               </p>
               <div className="flex items-center justify-center gap-3 md:gap-5 flex-wrap">
-                {featuredPlatforms.map((b) => (
+                {featuredPlatforms.map((b, i) => (
                   <Link key={b.slug} href={`/broker/${b.slug}`} className="opacity-60 hover:opacity-100 transition-opacity" title={b.name}>
-                    <BrokerLogo broker={b} size="sm" />
+                    <BrokerLogo broker={b} size="sm" priority={i < 3} />
                   </Link>
                 ))}
               </div>
@@ -254,7 +255,7 @@ export default async function HomePage() {
                       Promotion
                     </span>
                     <BrokerLogo broker={broker} size="xs" />
-                    <span className="text-xs font-semibold text-slate-700 group-hover:text-slate-900 whitespace-nowrap max-w-[180px] truncate">
+                    <span className="text-xs font-semibold text-slate-700 group-hover:text-slate-900 whitespace-nowrap max-w-45 truncate">
                       {broker.deal_text}
                     </span>
                     <Icon name="arrow-right" size={12} className="text-amber-500 shrink-0" />
@@ -291,7 +292,7 @@ export default async function HomePage() {
                 </p>
                 {!SHOW_EDITORIAL_BADGES && <p className="text-xs text-slate-400 mt-2">{FACTUAL_COMPARISON_DISCLAIMER}</p>}
               </div>
-              <Link href="/compare" className="md:hidden text-xs font-semibold text-slate-600 hover:text-slate-900 shrink-0 inline-flex items-center px-1 min-h-[44px]">
+              <Link href="/compare" className="md:hidden text-xs font-semibold text-slate-600 hover:text-slate-900 shrink-0 inline-flex items-center px-1 min-h-11">
                 View all &rarr;
               </Link>
             </div>
@@ -461,7 +462,7 @@ export default async function HomePage() {
                   <h2 className="text-xl md:text-2xl font-bold text-slate-900">Latest Investor Guides</h2>
                   <p className="text-xs md:text-sm text-slate-600 mt-1">Guides, how-tos, and professional advice for smarter investing</p>
                 </div>
-                <Link href="/articles" className="text-xs md:text-sm font-semibold text-slate-600 hover:text-slate-900 shrink-0 min-h-[44px] inline-flex items-center px-1">
+                <Link href="/articles" className="text-xs md:text-sm font-semibold text-slate-600 hover:text-slate-900 shrink-0 min-h-11 inline-flex items-center px-1">
                   View all &rarr;
                 </Link>
               </div>

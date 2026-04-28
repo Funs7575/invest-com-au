@@ -45,7 +45,7 @@ export default function ArticleCategoryFilter() {
         role="tab"
         aria-selected={activeCategory === "all"}
         scroll={false}
-        className={`shrink-0 px-3 md:px-4 py-2 md:py-2 min-h-[44px] inline-flex items-center text-xs md:text-sm font-medium rounded-full transition-colors ${
+        className={`shrink-0 px-3 md:px-4 py-2 md:py-2 min-h-11 inline-flex items-center text-xs md:text-sm font-medium rounded-full transition-colors ${
           activeCategory === "all"
             ? "bg-slate-900 text-white"
             : "bg-slate-100 text-slate-700 hover:bg-slate-200"
@@ -60,7 +60,7 @@ export default function ArticleCategoryFilter() {
           role="tab"
           aria-selected={activeCategory === cat}
           scroll={false}
-          className={`shrink-0 px-3 md:px-4 py-2 md:py-2 min-h-[44px] inline-flex items-center text-xs md:text-sm font-medium rounded-full transition-colors ${
+          className={`shrink-0 px-3 md:px-4 py-2 md:py-2 min-h-11 inline-flex items-center text-xs md:text-sm font-medium rounded-full transition-colors ${
             activeCategory === cat
               ? "bg-slate-900 text-white"
               : "bg-slate-100 text-slate-700 hover:bg-slate-200"

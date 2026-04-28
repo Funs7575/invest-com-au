@@ -25,8 +25,16 @@ interface SVGDonutChartProps {
 }
 
 const DEFAULT_COLORS = [
-  "#16a34a", "#2563eb", "#d97706", "#dc2626", "#7c3aed",
-  "#059669", "#0891b2", "#e11d48", "#4f46e5", "#ca8a04",
+  "#16a34a", // green-600
+  "#2563eb", // blue-600
+  "#d97706", // amber-600
+  "#dc2626", // red-600
+  "#7c3aed", // violet-600
+  "#059669", // emerald-600
+  "#0891b2", // cyan-600
+  "#e11d48", // rose-600
+  "#4f46e5", // indigo-600
+  "#ca8a04", // yellow-600
 ];
 
 export default function SVGDonutChart({
@@ -117,7 +125,7 @@ export default function SVGDonutChart({
             dominantBaseline="central"
             fontSize={18}
             fontWeight={700}
-            fill="#1e293b"
+            className="fill-slate-800"
           >
             {centerLabel}
           </text>
@@ -129,7 +137,7 @@ export default function SVGDonutChart({
             textAnchor="middle"
             dominantBaseline="central"
             fontSize={10}
-            fill="#94a3b8"
+            className="fill-slate-400"
           >
             {centerSubLabel}
           </text>
