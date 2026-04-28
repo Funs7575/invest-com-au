@@ -50,7 +50,19 @@ export async function GET(
   }
 
   const origin = new URL(req.url).origin;
-  const auth = req.headers.get("authorization") ?? "";
+  // Build the Authorization header from CRON_SECRET directly rather than
+  // forwarding `req.headers.get("authorization")`. The 11:20 UTC post-fix
+  // run showed every loopback fetch returning HTTP 401 even though the
+  // inbound dispatcher request was authenticated — strong signal that
+  // either the inbound header isn't surviving the round-trip or Vercel
+  // strips Authorization on internal HTTPS loopbacks. Sourcing the secret
+  // from the env on the way out removes both possibilities. The inbound
+  // request is still validated by `requireCronAuth(req)` above, so this
+  // doesn't relax the dispatcher's auth — it only ensures the loopback
+  // header is canonical.
+  const auth = process.env.CRON_SECRET
+    ? `Bearer ${process.env.CRON_SECRET}`
+    : "";
   const supabase = createAdminClient();
 
   const started = Date.now();
