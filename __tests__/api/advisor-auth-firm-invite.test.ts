@@ -5,7 +5,9 @@ import { createChainableBuilder } from "@/__tests__/helpers";
 // ── Mocks ──────────────────────────────────────────────────────────────────────
 
 const mockServerFrom = vi.fn();
-const mockSendFirmInvitation = vi.fn(() => Promise.resolve());
+const mockSendFirmInvitation = vi.fn((..._args: unknown[]) =>
+  Promise.resolve(),
+);
 const supabaseCalls: Record<string, { method: string; args: unknown[] }[]> = {};
 
 vi.mock("@/lib/supabase/server", () => ({
@@ -32,11 +34,17 @@ function makeReq(
     "Content-Type": "application/json",
   };
   if (cookie) headers.cookie = `advisor_session=${cookie}`;
-  const init: RequestInit = { method, headers };
-  if (method !== "GET") {
-    init.body = typeof body === "string" ? body : JSON.stringify(body);
-  }
-  return new NextRequest("http://localhost/api/advisor-auth/firm/invite", init);
+  const reqBody =
+    method === "GET"
+      ? undefined
+      : typeof body === "string"
+        ? body
+        : JSON.stringify(body);
+  return new NextRequest("http://localhost/api/advisor-auth/firm/invite", {
+    method,
+    headers,
+    body: reqBody,
+  });
 }
 
 function withFirmAdmin(opts: {
