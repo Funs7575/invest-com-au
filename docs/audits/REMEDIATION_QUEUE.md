@@ -35,7 +35,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | I | `claude/audit-remediation/i-new-04-main-ci-auto-revert` | #278 (draft) | pending — pushed 2026-04-28T16:14Z | I-NEW-01 done via #277 (`00ef2790`); I-NEW-02 hotfix `5b7937dc`; I-NEW-03 hotfix `4b050ed9`; I-NEW-05 race-fix `55d077bf`; **first real metrics snapshot landed 2026-04-28T16:12Z (grade F 0.0899 — Supabase secrets need to be set in GH Actions for non-zero on M04/M07/M08/M09/M10/M11/M12)**; I-NEW-04 in flight (auto-revert workflow `b42233fb`) |
 | J | `claude/audit-remediation/j-stripe-webhook` | #288 (draft) | pending — pushed 2026-04-29T22:30Z | J-01a..J-01e (route.ts 1197 → 165 LOC) · J-01d-ext (commit `bb1d56f6`) · J-03 (commit `b8e7189`) · J-05 (commit `d68852e`) · J-06 (commit `eedf582`) · J-08 (commit `e99aedc`) · J-09 (commit `e99aedc`) · J-10 (commit `e99aedc`) — all handlers complete (14 registered). Stream complete pending PR merge. |
 | K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-27T05:35Z | K-01..K-08 done; K-09 false-positive; K-10..K-15 done — **stream complete** |
-| L | `claude/audit-remediation/l-observability` | #289 (draft) | pending — pushed 2026-04-28T22:24Z | L-06 done (commit `12183619`) — 8 SLOs seeded (lead_delivery_p95_ms, advisor_onboarding_p95_ms, webhook_delivery_p95_ms, api_success_rate, cron_heartbeat_success_rate, lead_queue_age_minutes, webhook_retry_queue_age_minutes, api_error_rate). |
+| L | `claude/audit-remediation/l-observability` | #289 (draft) | pending — pushed 2026-04-29T22:45Z | L-06 done (commit `12183619`) — 8 SLOs seeded (lead_delivery_p95_ms, advisor_onboarding_p95_ms, webhook_delivery_p95_ms, api_success_rate, cron_heartbeat_success_rate, lead_queue_age_minutes, webhook_retry_queue_age_minutes, api_error_rate). L-07 still pending. |
 | M | `claude/audit-remediation/m-01b-cover-image-backfill` | #283 (draft) | pending — pushed 2026-04-28T21:25Z | M-01b in flight (commit `19a0d7e6`) — per-article OG cover override + backfill script. |
 | N | `claude/audit-remediation/n-ux-perf` | #242 | pending — pushed 2026-04-27T13:30Z | N-01+N-02 done (`2ec6f89`) · N-03a done (`36e3f6d`) · N-03b done (`97bb9b00`) · N-03c done (`b29f443`) · N-04 FP · N-05 FP · N-06 blocked · N-07 batch 1 done (`2e5d8a4`) · N-07 batch 2 done (`91d0d42`) · N-08 done (`315d3b7`) · N-09 done (`3b43bf8`) · N-10 done (`0c33d71`) · N-11 done (`c2b769e`) — **stream complete** (N-06 blocked) |
 | O | `claude/audit-remediation/o-rls-no-policy` | _opening_ | pending — pushed 2026-04-26 | O-01 — 3 done (`user_notifications`, `user_quiz_history`, `user_bookmarks`); ~13 user-data tables left |
@@ -355,7 +355,7 @@ Sentry is 95% there; PostHog funnel is half-blind; SLO framework exists but unse
 | L-03 | deferred-post-launch | Wire `errorWorkflow` for `infra/n8n/overseer_hourly.json` (other 5 have it) | 1 | **Deferred 2026-04-28** — n8n workflow surface dormant until post-launch (see `docs/launch/manual-ops-during-ai-pause.md`). Resume with n8n reactivation. |
 | L-04 | done | Diagnose `cron_run_log` silence — done out-of-loop in PR #225 | 1 | Resolved in PR #225 ("fix(observability): cron dispatcher silent failures — restore cron_run_log") merged 2026-04-26T17:37Z. Dispatcher was swallowing exceptions before the wrapper could log; PR adds explicit error handling so failures land in `cron_run_log`. |
 | L-05 | done | Validate `health_pings` ingestion path — currently empty in live; heartbeat cron either not running or not logging | — | **Resolved 2026-04-28T16:05Z by iter 84.** Same root cause as L-04 — the cron blackout (`_dispatch` Next.js private folder, then loopback auth, then loopback URL targeting Vercel deployment-protection wall). After PRs #270/#272/#276 deployed, `health_pings` started populating: 33 rows since 13:25:38Z (first heartbeat post-deploy), 12 rows in the last hour, 3 in the last 15 minutes — exactly matching the every-5-min cadence. No code change needed for L-05. |
-| L-06 | done | Seed `slo_definitions` with launch SLOs: lead p95<5min, advisor onboarding p95<1h, webhook delivery p95<10min, etc. | 1 | **Done in commit `12183619` (PR #289).** 8 SLOs seeded via `20260602_seed_slo_definitions.sql`; idempotent via ON CONFLICT DO UPDATE. |
+| L-06 | done | Seed `slo_definitions` with launch SLOs: lead p95<5min, advisor onboarding p95<1h, webhook delivery p95<10min, etc. | 1 | **Done in commit `12183619` (PR #289).** 8 SLOs seeded via idempotent `ON CONFLICT (name) DO UPDATE`: lead_delivery_p95_ms (300s), advisor_onboarding_p95_ms (1h), webhook_delivery_p95_ms (600s), api_success_rate (99.5%), cron_heartbeat_success_rate (99%), lead_queue_age_minutes (15min), webhook_retry_queue_age_minutes (30min), api_error_rate (1%). Migration: `supabase/migrations/20260602_seed_slo_definitions.sql`. |
 | L-07 | pending | Wire SLO incident → Slack/PagerDuty/email alert sink (today writes to `slo_incidents` table only) | 1 | P1. |
 | L-08 | pending | Extend `lib/posthog/events.ts` with: `advisor_selected`, `checkout_started`, `subscription_active`, `advisor_apply_submitted`, `lead_responded_to`, `dispute_opened` | 1 | P1. Funnel half-blind without these. |
 | L-09 | pending | Wire `posthog.identify(userId)` at signup + login so anonymous→identified mapping stitches sessions | 1 | P1. |
@@ -1044,6 +1044,18 @@ Items that ship LAST, in the final week before launch (Month 4 of pre-launch roa
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-29T23:00Z — iteration 101 (stream L — L-06 — seed slo_definitions with launch SLOs)
+
+- Phase 0: resumed batch-mode fire (iter 3 of 5).
+- Phase 1: synced main (iter 100 queue updates for J-08/09/10 and D-11 batch 21b).
+- Phase 2: CI on #289 in progress; no failure to rescue.
+- Phase 3: checked out L branch `claude/audit-remediation/l-observability`. L-06 (seed slo_definitions) next pending.
+- Phase 4: confirmed migration file absent; slo_definitions table schema verified via Supabase MCP.
+- Phase 5: wrote `supabase/migrations/20260602_seed_slo_definitions.sql` — 8 SLOs seeded idempotently via `ON CONFLICT (name) DO UPDATE`: lead_delivery_p95_ms, advisor_onboarding_p95_ms, webhook_delivery_p95_ms, api_success_rate, cron_heartbeat_success_rate, lead_queue_age_minutes, webhook_retry_queue_age_minutes, api_error_rate.
+- Phase 6: committed `12183619`; pushed to L branch; draft PR #289 opened.
+- Phase 7: L in-flight row updated; L-06 row → done; this log entry on main.
+- STATUS: PROGRESS · stream=L · item=L-06 · pr=#289 · commit=`12183619` · diff=+52/-0 across 1 file · next=L-07 (wire SLO incident alert sink)
 
 ### 2026-04-29T22:40Z — iteration 101 (stream L — L-06 queue sync — slo_definitions seeded)
 
