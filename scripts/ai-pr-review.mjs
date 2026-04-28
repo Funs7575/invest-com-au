@@ -16,17 +16,23 @@
  *   GITHUB_EVENT_PATH        — path to the event JSON (auto-set)
  *
  * Optional env:
- *   AI_REVIEW_MODEL          — default "claude-opus-4-7"; set "claude-sonnet-4-6" for ~3x cheaper
+ *   AI_REVIEW_MODEL          — default "claude-haiku-4-5"; set "claude-sonnet-4-6"
+ *                              for deeper review (~3x more), or "claude-opus-4-7"
+ *                              for top-tier (~25x more)
  *   AI_REVIEW_MAX_DIFF_KB    — default 200; skip review if diff exceeds this
  *
- * Cost: ~$0.50–$3 per review at default model. Toggle to Sonnet for ~$0.20–$1.
+ * Cost at default model (Haiku 4.5): ~$0.05–$0.25 per review. At 5–10 PRs/day
+ * that's $5–$15/month. Opt up per-PR by adding [opus-review] in the title to
+ * use a stronger model on a specific PR — see PR-title parsing below.
  */
 
 import Anthropic from "@anthropic-ai/sdk";
 import { execSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 
-const MODEL = process.env.AI_REVIEW_MODEL ?? "claude-opus-4-7";
+// Default to Haiku 4.5 — the founder picked this tier explicitly. Override
+// per-PR by adding [opus-review] or [sonnet-review] to the PR title.
+let MODEL = process.env.AI_REVIEW_MODEL ?? "claude-haiku-4-5";
 const MAX_DIFF_KB = parseInt(process.env.AI_REVIEW_MAX_DIFF_KB ?? "200", 10);
 
 const REPO = process.env.GITHUB_REPOSITORY;
@@ -47,6 +53,10 @@ if (!PR_NUMBER || !BASE_SHA || !HEAD_SHA) {
   console.error("Not a pull_request event with required fields.");
   process.exit(0);
 }
+
+const PR_TITLE = event.pull_request?.title ?? "";
+if (PR_TITLE.includes("[opus-review]")) MODEL = "claude-opus-4-7";
+else if (PR_TITLE.includes("[sonnet-review]")) MODEL = "claude-sonnet-4-6";
 
 const diff = execSync(`git diff ${BASE_SHA}...${HEAD_SHA}`, {
   encoding: "utf8",

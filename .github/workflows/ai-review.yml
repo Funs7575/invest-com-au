@@ -4,15 +4,15 @@ name: AI code review
 # Calls Claude on every PR with a structured review prompt, posts a sticky
 # comment, and fails the check if the verdict is REQUEST_CHANGES.
 #
-# Skip individual PRs by including [skip-ai-review] in the PR title.
-#
-# Cost: ~$0.50–$3 per review with Opus. Budget ~$50–$200/month at 5–10
-# PRs/day (audit-loop volume). Toggle to Sonnet via AI_REVIEW_MODEL secret
-# for ~3x cheaper.
+# Defaults to Haiku 4.5 — ~$5–$15/month at audit-loop PR volume.
+# Opt up per-PR via title flags:
+#   [opus-review]    — full Opus 4.7 review (~$1–$3 for that PR)
+#   [sonnet-review]  — Sonnet 4.6 review (~$0.20–$1)
+#   [skip-ai-review] — no review at all
 #
 # Setup:
-#   1. In Vercel/GH project settings, add secret: ANTHROPIC_API_KEY
-#   2. (Optional) Add secret: AI_REVIEW_MODEL = claude-sonnet-4-6
+#   1. In GitHub project settings, add secret: ANTHROPIC_API_KEY
+#   2. (Optional) Override default via secret: AI_REVIEW_MODEL
 #
 # See scripts/ai-pr-review.mjs for the review prompt and parsing logic.
 
