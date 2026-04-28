@@ -1,0 +1,159 @@
+name: Post-merge main CI auto-revert
+
+# Layer 4 of the merge-authorization safeguards (see
+# docs/audits/MERGE_AUTHORIZATION.md). When a CI run on main concludes
+# with failure, automatically open a revert PR for the just-pushed
+# commit. The reverting agent (loop or human) sees a one-click rollback
+# instead of having to triage + revert manually.
+#
+# Why workflow_run:
+#   - Triggers AFTER the CI workflow on main completes, regardless of
+#     conclusion. We then filter to conclusion=failure inside the job.
+#   - The head_sha + head_branch are exposed via github.event.workflow_run.
+#   - Avoids polling for CI status from a separate watcher (cleaner +
+#     no time budget exhaustion).
+#
+# What gets reverted:
+#   - Only single-commit pushes to main where the offending commit is
+#     not itself a revert (avoid revert loops).
+#   - Skip if the commit author is github-actions[bot] — those are
+#     metrics-snapshot or auto-merge bot commits; reverting them is
+#     never the right call (the next run will fix forward).
+#   - Skip if the commit message contains [skip-revert] (escape hatch).
+#
+# What it does:
+#   1. Check out main at the failing commit.
+#   2. Create branch revert/<sha>.
+#   3. git revert <sha> --no-edit.
+#   4. Push the branch + open a draft PR titled "revert: <subject>".
+#   5. Add a comment on the original commit linking the revert PR.
+#
+# What it DOESN'T do:
+#   - Auto-merge the revert PR. The founder reviews and merges manually.
+#     This is intentional: a revert is itself a state change to main,
+#     and stacking automated revert-of-revert decisions is the kind of
+#     thing that ends in a 3am incident.
+
+on:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  revert:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'failure' && github.event.workflow_run.event == 'push' }}
+    timeout-minutes: 10
+    steps:
+      - name: Inspect failing commit
+        id: inspect
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          set -eu
+          # Pull commit metadata from the API so the github.event payload
+          # doesn't have to carry it (workflow_run events have a thinner
+          # payload than push events).
+          api_path="repos/${{ github.repository }}/commits/${SHA}"
+          author_email=$(gh api "${api_path}" --jq '.author.email // .commit.author.email')
+          subject=$(gh api "${api_path}" --jq '.commit.message' | head -1)
+          parents=$(gh api "${api_path}" --jq '.parents | length')
+
+          echo "sha=${SHA}" >> "$GITHUB_OUTPUT"
+          echo "author_email=${author_email}" >> "$GITHUB_OUTPUT"
+          echo "subject=${subject}" >> "$GITHUB_OUTPUT"
+          echo "parents=${parents}" >> "$GITHUB_OUTPUT"
+
+          # Decide whether to skip
+          skip_reason=""
+          if [ "${parents}" != "1" ]; then
+            skip_reason="merge commit (${parents} parents) — manual revert needed"
+          elif echo "${subject}" | grep -qE '^Revert |^revert:'; then
+            skip_reason="commit is itself a revert"
+          elif echo "${subject}" | grep -q '\[skip-revert\]'; then
+            skip_reason="commit has [skip-revert] tag"
+          elif [ "${author_email}" = "41898282+github-actions[bot]@users.noreply.github.com" ]; then
+            skip_reason="commit by github-actions[bot] — fix-forward expected"
+          fi
+
+          if [ -n "${skip_reason}" ]; then
+            echo "skip=${skip_reason}" >> "$GITHUB_OUTPUT"
+            echo "Skipping revert: ${skip_reason}"
+          else
+            echo "skip=" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout
+        if: ${{ steps.inspect.outputs.skip == '' }}
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
+
+      - name: Create + push revert branch
+        if: ${{ steps.inspect.outputs.skip == '' }}
+        env:
+          SHA: ${{ steps.inspect.outputs.sha }}
+        run: |
+          set -eu
+          short_sha=$(echo "${SHA}" | cut -c1-8)
+          branch="revert/${short_sha}-auto"
+
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -b "${branch}"
+          git revert --no-edit "${SHA}"
+          git push origin "${branch}"
+          echo "branch=${branch}" >> "$GITHUB_OUTPUT"
+        id: revert
+
+      - name: Open revert PR
+        if: ${{ steps.inspect.outputs.skip == '' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SHA: ${{ steps.inspect.outputs.sha }}
+          SUBJECT: ${{ steps.inspect.outputs.subject }}
+          BRANCH: ${{ steps.revert.outputs.branch }}
+          RUN_URL: ${{ github.event.workflow_run.html_url }}
+        run: |
+          set -eu
+          short_sha=$(echo "${SHA}" | cut -c1-8)
+          gh pr create \
+            --base main \
+            --head "${BRANCH}" \
+            --draft \
+            --title "revert: ${SUBJECT}" \
+            --body "## Auto-revert
+
+The CI run on main for commit \`${short_sha}\` failed:
+
+- **Failing commit:** ${SHA}
+- **Subject:** ${SUBJECT}
+- **CI run:** ${RUN_URL}
+
+This PR reverts that commit so main is green again. Review the failure
+above before merging — if the failure was a flake or unrelated to the
+diff, close this PR and comment \`STOP\` on the original commit's run
+to prevent future auto-reverts of the same SHA.
+
+To prevent auto-revert in future, add \`[skip-revert]\` to the commit
+message subject.
+
+Layer 4 safeguard from \`docs/audits/MERGE_AUTHORIZATION.md\`."
+
+      - name: Comment on failing commit
+        if: ${{ steps.inspect.outputs.skip == '' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SHA: ${{ steps.inspect.outputs.sha }}
+          BRANCH: ${{ steps.revert.outputs.branch }}
+        run: |
+          set -eu
+          gh api -X POST "repos/${{ github.repository }}/commits/${SHA}/comments" \
+            --field body="🔁 Auto-revert PR opened on branch \`${BRANCH}\` because CI on this commit failed. See https://github.com/${{ github.repository }}/pulls?q=is%3Apr+head%3A${BRANCH}"
