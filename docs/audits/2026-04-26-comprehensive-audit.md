@@ -889,18 +889,32 @@ Theme: get observability + safety nets back to green so all later work has a fee
 
 **Total ≈ 40 h.** Maps to M04/M05/M07/M08.
 
-### Sprint 4 (weeks 7-8) — "n8n + agent activation"
+### Sprint 4 (weeks 7-8) — "Validation + JSON-LD" *(revised 2026-04-28)*
 
-- 10-G master error workflow file (1 h)
-- 10-C externalise hardcoded keys in 5 workflows (4 h)
-- 10-B add errorWorkflow to overseer_hourly (0.5 h)
-- 10-D alwaysOutputData on Read nodes (3 h)
-- 10-F runbook activation checklists (2 h)
-- Activate workflows one-by-one with kill-switch ready (8 h ops time)
+> **Decision log 2026-04-28:** AI surface (n8n agent activation + AI-facing
+> routes) deferred to post-launch. Sprint 4 retheme: pull Lighthouse
+> baseline forward from Sprint 5 and grind D-11 test backfill on `main`.
+> Rationale: AI was the highest-uncertainty surface in the plan and the
+> launch isn't AI-dependent. Defers ~10 h of n8n hardening; frees ~8 h of
+> ops-time risk; opens ~12 h to reinvest. See
+> `docs/launch/manual-ops-during-ai-pause.md` for the manual processes
+> that replace the dormant agents during the launch window.
+
 - F-1.5.1 JSON-LD consolidation pass 1 (8 h, top 30 callers)
 - E-stream Zod for top 20 routes (16 h)
+- **Pulled from Sprint 5:** Lighthouse baseline + iterate top 5 (8 h)
+- **Pulled from D-11 backlog:** merge D-stream PR #246 + next 5 batches onto `main` (10 h)
 
-**Total ≈ 42 h.** Maps to M03/M07.
+**Total ≈ 42 h.** Maps to M01/M02/M03/M11.
+
+**Deferred to post-launch (was Sprint 4):**
+- 10-G master error workflow file
+- 10-C externalise hardcoded keys in 5 workflows
+- 10-B add errorWorkflow to overseer_hourly
+- 10-D alwaysOutputData on Read nodes
+- 10-F runbook activation checklists
+- Activate workflows one-by-one with kill-switch ready
+- AI surface rubric items: V-NEW-02 (factual filter), prompt-injection fixtures, AI audit log table, cite-back guardrail, retention cron
 
 ### Sprint 5 (weeks 9-10) — "UI/UX leverage"
 
