@@ -1,4 +1,4 @@
-import { getStripe, PLANS } from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { handleInvoicePaid, handleInvoicePaymentFailed } from "@/lib/advisor-billing";
 import { NextRequest, NextResponse } from "next/server";
@@ -6,7 +6,14 @@ import type Stripe from "stripe";
 import { logger } from "@/lib/logger";
 import { getSiteUrl } from "@/lib/url";
 import { ADMIN_EMAIL } from "@/lib/admin";
+import { escapeHtml } from "@/lib/html-escape";
 import { dispatchEvent } from "@/lib/stripe-webhook/registry";
+import {
+  buildConsultationConfirmationEmail,
+  buildCourseReceiptEmail,
+  emailWrapper,
+  sendTransactionalEmail,
+} from "@/lib/stripe-webhook/lib/email";
 // Side-effect import — registers per-event handlers into the registry
 // before `dispatchEvent` runs. Handler-registry split is incremental
 // (J-01a → J-01c); the legacy switch below still runs for events not
@@ -15,210 +22,8 @@ import "@/lib/stripe-webhook/handlers";
 
 const log = logger("stripe-webhook");
 
-// ─── Transactional email helpers ────────────────────────────────────
-
-/** Escape HTML special chars to prevent XSS in email templates */
-function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
-
-/** Fire-and-forget email via Resend */
-async function sendTransactionalEmail(
-  to: string,
-  subject: string,
-  html: string,
-  from = "Invest.com.au <hello@invest.com.au>",
-): Promise<void> {
-  const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) return;
-
-  try {
-    await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ from, to: [to], subject, html }),
-    });
-  } catch (err) {
-    log.error("Transactional email failed", { error: err instanceof Error ? err.message : String(err) });
-  }
-}
-
-function emailWrapper(heading: string, accentColor: string, body: string): string {
-  return `
-    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 560px; margin: 0 auto; background: #f8fafc; padding: 24px 16px;">
-      <div style="background: ${accentColor}; padding: 20px 24px; border-radius: 12px 12px 0 0; text-align: center;">
-        <span style="color: #fff; font-weight: 800; font-size: 16px;">${heading}</span>
-      </div>
-      <div style="background: #fff; border: 1px solid #e2e8f0; border-top: none; padding: 24px; border-radius: 0 0 12px 12px;">
-        ${body}
-        <p style="color: #94a3b8; font-size: 11px; text-align: center; margin: 24px 0 0 0; line-height: 1.5;">
-          Invest.com.au — Independent investing education &amp; comparison<br>
-          <a href="https://invest.com.au/unsubscribe" style="color: #94a3b8;">Unsubscribe</a>
-        </p>
-      </div>
-    </div>`;
-}
-
-function buildProWelcomeEmail(planInterval: string | null): string {
-  const isYearly = planInterval === "year";
-  const planLabel = isYearly ? PLANS.yearly.label : PLANS.monthly.label;
-
-  return emailWrapper("Welcome to Invest.com.au Pro 🎉", "#15803d", `
-    <h2 style="margin: 0 0 12px; font-size: 18px; color: #0f172a;">You're now a Pro member!</h2>
-    <p style="color: #475569; font-size: 14px; line-height: 1.6; margin: 0 0 16px;">
-      Your <strong>${planLabel}</strong> subscription is active. Here's what you've unlocked:
-    </p>
-    <ul style="color: #334155; font-size: 14px; line-height: 1.8; margin: 0 0 20px; padding-left: 20px;">
-      <li>Ad-free broker comparisons &amp; reviews</li>
-      <li>Exclusive Pro-only research &amp; guides</li>
-      <li>Discounted course &amp; consultation pricing</li>
-      <li>Priority support</li>
-    </ul>
-    <div style="text-align: center; margin: 20px 0;">
-      <a href="https://invest.com.au/account" style="display: inline-block; padding: 12px 28px; background: #15803d; color: #fff; font-weight: 700; font-size: 14px; border-radius: 8px; text-decoration: none;">Go to Your Account →</a>
-    </div>
-  `);
-}
-
-function buildCourseReceiptEmail(courseName: string, courseSlug: string, amountCents: number): string {
-  const amount = (amountCents / 100).toFixed(2);
-
-  return emailWrapper("Course Purchase Confirmed ✅", "#0f172a", `
-    <h2 style="margin: 0 0 12px; font-size: 18px; color: #0f172a;">You're in!</h2>
-    <p style="color: #475569; font-size: 14px; line-height: 1.6; margin: 0 0 16px;">
-      Your purchase of <strong>${escapeHtml(courseName)}</strong> has been confirmed.
-    </p>
-    <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 16px; margin: 0 0 20px;">
-      <p style="margin: 0; font-size: 13px; color: #334155;"><strong>Amount paid:</strong> A$${amount}</p>
-      <p style="margin: 4px 0 0; font-size: 13px; color: #334155;"><strong>Access:</strong> Lifetime — start anytime</p>
-    </div>
-    <div style="text-align: center; margin: 20px 0;">
-      <a href="https://invest.com.au/courses/${courseSlug}" style="display: inline-block; padding: 12px 28px; background: #0f172a; color: #fff; font-weight: 700; font-size: 14px; border-radius: 8px; text-decoration: none;">Start Learning →</a>
-    </div>
-  `);
-}
-
-function buildConsultationConfirmationEmail(
-  consultationTitle: string,
-  consultationSlug: string,
-  amountCents: number,
-): string {
-  const amount = (amountCents / 100).toFixed(2);
-
-  return emailWrapper("Consultation Booked ✅", "#7c3aed", `
-    <h2 style="margin: 0 0 12px; font-size: 18px; color: #0f172a;">Booking confirmed!</h2>
-    <p style="color: #475569; font-size: 14px; line-height: 1.6; margin: 0 0 16px;">
-      Your <strong>${escapeHtml(consultationTitle)}</strong> consultation has been booked successfully.
-    </p>
-    <div style="background: #f5f3ff; border: 1px solid #ddd6fe; border-radius: 8px; padding: 16px; margin: 0 0 16px;">
-      <p style="margin: 0; font-size: 13px; color: #334155;"><strong>Amount paid:</strong> A$${amount}</p>
-      <p style="margin: 4px 0 0; font-size: 13px; color: #334155;"><strong>Status:</strong> Confirmed</p>
-    </div>
-    <p style="color: #475569; font-size: 14px; line-height: 1.6; margin: 0 0 20px;">
-      We'll reach out within 1–2 business days to schedule your session. Check your account for updates.
-    </p>
-    <div style="text-align: center; margin: 20px 0;">
-      <a href="https://invest.com.au/consultations/${consultationSlug}" style="display: inline-block; padding: 12px 28px; background: #7c3aed; color: #fff; font-weight: 700; font-size: 14px; border-radius: 8px; text-decoration: none;">View Booking →</a>
-    </div>
-  `);
-}
-
 // Ensure this runs in Node.js runtime (needed for Stripe signature verification)
 export const runtime = "nodejs";
-
-async function upsertSubscription(subscription: Stripe.Subscription) {
-  const supabase = createAdminClient();
-  const customerId =
-    typeof subscription.customer === "string"
-      ? subscription.customer
-      : subscription.customer.id;
-
-  // Look up user by stripe_customer_id
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("id")
-    .eq("stripe_customer_id", customerId)
-    .single();
-
-  if (!profile) {
-    log.error("No profile found for Stripe customer", { customerId });
-    return;
-  }
-
-  const item = subscription.items.data[0];
-
-  // Out-of-order protection. Stripe does NOT guarantee webhook delivery
-  // order. A `subscription.updated` event (flipping status to active) can
-  // arrive AFTER a later `subscription.updated` (flipping to cancelled),
-  // which would leave the row in the wrong terminal state. Stripe puts
-  // the actual event time on `subscription.updated` via `Date.now()`; we
-  // use that as a monotonic marker and skip any incoming event that's
-  // older than what we already stored.
-  //
-  // We persist it into `updated_at` because the column already exists on
-  // the subscriptions table and we don't want to require a migration for
-  // this fix. Incoming events older than existing `updated_at` are
-  // dropped (but still return success to Stripe so it stops retrying).
-  const stripeEventTime = new Date(
-    // Prefer explicit updated timestamp if Stripe provides it (billing_cycle_anchor
-    // or created are the closest proxies); otherwise fall back to wall clock.
-    subscription.cancel_at
-      ? subscription.cancel_at * 1000
-      : subscription.current_period_start
-      ? subscription.current_period_start * 1000
-      : Date.now()
-  ).toISOString();
-
-  const { data: existing } = await supabase
-    .from("subscriptions")
-    .select("updated_at, status")
-    .eq("stripe_subscription_id", subscription.id)
-    .maybeSingle();
-
-  if (existing?.updated_at && existing.updated_at > stripeEventTime) {
-    log.info("Skipping older webhook event", {
-      subscriptionId: subscription.id,
-      existingUpdatedAt: existing.updated_at,
-      incomingEventTime: stripeEventTime,
-    });
-    return;
-  }
-
-  const subscriptionData = {
-    user_id: profile.id,
-    stripe_subscription_id: subscription.id,
-    stripe_customer_id: customerId,
-    status: subscription.status,
-    price_id: item?.price?.id || null,
-    plan_interval: item?.price?.recurring?.interval || null,
-    current_period_start: new Date(
-      subscription.current_period_start * 1000
-    ).toISOString(),
-    current_period_end: new Date(
-      subscription.current_period_end * 1000
-    ).toISOString(),
-    cancel_at_period_end: subscription.cancel_at_period_end,
-    canceled_at: subscription.canceled_at
-      ? new Date(subscription.canceled_at * 1000).toISOString()
-      : null,
-    updated_at: new Date().toISOString(),
-  };
-
-  const { error } = await supabase
-    .from("subscriptions")
-    .upsert(subscriptionData, { onConflict: "stripe_subscription_id" });
-
-  if (error) {
-    log.error("Subscription upsert error", { error: error.message });
-  }
-}
 
 export async function POST(request: NextRequest) {
   const body = await request.text();
@@ -342,48 +147,6 @@ export async function POST(request: NextRequest) {
       // Skip the legacy switch — registry owns this event type now.
       // Fall through to the post-switch idempotency stamp below.
     } else switch (event.type) {
-      case "customer.subscription.created": {
-        const newSub = event.data.object as Stripe.Subscription;
-        await upsertSubscription(newSub);
-
-        // Send Pro welcome email on new subscription
-        if (newSub.status === "active" || newSub.status === "trialing") {
-          const custId = typeof newSub.customer === "string" ? newSub.customer : newSub.customer.id;
-          try {
-            const customer = await getStripe().customers.retrieve(custId);
-            if (!("deleted" in customer) && customer.email) {
-              const interval = newSub.items.data[0]?.price?.recurring?.interval || null;
-              sendTransactionalEmail(
-                customer.email,
-                "Welcome to Invest.com.au Pro 🎉",
-                buildProWelcomeEmail(interval),
-              ).catch((err) => log.error("Pro welcome email failed", { err: err instanceof Error ? err.message : String(err) }));
-
-              // Notify admin of new Pro signup. Escape customer fields
-              // even though Stripe validates email format — header
-              // injection via "\n" or "\r" in the subject line is the
-              // riskiest path. Stripping non-printable chars defends
-              // even if upstream validation regresses.
-              const safeEmail = escapeHtml(customer.email).replace(/[\r\n]/g, "");
-              const safeCustId = escapeHtml(custId).replace(/[\r\n]/g, "");
-              const safeInterval = escapeHtml(interval || "unknown");
-              sendTransactionalEmail(
-                ADMIN_EMAIL,
-                `New Pro Signup: ${safeEmail}`,
-                `<div style="font-family:Arial,sans-serif;max-width:500px"><h2 style="color:#0f172a;font-size:16px">💎 New Pro Member</h2><p style="color:#64748b;font-size:14px"><strong>${safeEmail}</strong> just subscribed to Invest.com.au Pro (${safeInterval} plan).</p><p style="color:#64748b;font-size:14px">Customer ID: ${safeCustId}</p><a href="${getSiteUrl()}/admin/pro-subscribers" style="display:inline-block;padding:10px 20px;background:#7c3aed;color:white;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;margin-top:8px">View Pro Members →</a></div>`,
-              ).catch((err) => log.error("Admin Pro signup notification failed", { err: err instanceof Error ? err.message : String(err) }));
-            }
-          } catch (err) {
-            log.error("Pro welcome email lookup failed", { error: err instanceof Error ? err.message : String(err) });
-          }
-        }
-        break;
-      }
-      case "customer.subscription.updated":
-      case "customer.subscription.deleted":
-        await upsertSubscription(event.data.object as Stripe.Subscription);
-        break;
-
       case "invoice.paid": {
         const paidInvoice = event.data.object as Stripe.Invoice;
         const paidPiId =
