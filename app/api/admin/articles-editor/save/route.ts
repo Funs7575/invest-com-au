@@ -92,6 +92,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
+  await supabase.from("admin_audit_log").insert({
+    action: `article:${status === "published" ? "published" : "saved"}`,
+    entity_type: "article",
+    entity_name: slug,
+    admin_email: guard.email,
+    details: { status, grade: result.grade, score: result.score },
+  });
+
   // Persist the scorecard run for audit / calendar history
   try {
     await supabase.from("article_scorecard_runs").insert({

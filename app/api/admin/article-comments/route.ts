@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/require-admin";
+import { createAdminClient } from "@/lib/supabase/admin";
 import {
   listPendingComments,
   setCommentStatus,
@@ -49,5 +50,16 @@ export async function PATCH(request: NextRequest) {
   if (!ok) {
     return NextResponse.json({ error: "Update failed" }, { status: 500 });
   }
+
+  const supabase = createAdminClient();
+  await supabase.from("admin_audit_log").insert({
+    action: `article_comment:${action}`,
+    entity_type: "article_comment",
+    entity_id: String(id),
+    entity_name: `comment #${id}`,
+    admin_email: guard.email,
+    details: { new_status: statusMap[action] },
+  });
+
   return NextResponse.json({ ok: true, status: statusMap[action] });
 }

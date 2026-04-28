@@ -390,8 +390,8 @@ export default function BuyPropertyAustralieForeignerPage() {
               },
             ].map((p) => (
               <Link key={p.role} href={p.href} className="group p-4 border border-slate-200 rounded-xl hover:border-amber-300 hover:bg-amber-50/30 transition-all">
-                <h3 className="font-bold text-slate-800 text-sm mb-1.5 group-hover:text-amber-700" dangerouslySetInnerHTML={{ __html: p.role }} />
-                <p className="text-xs text-slate-500 leading-relaxed" dangerouslySetInnerHTML={{ __html: p.why }} />
+                <h3 className="font-bold text-slate-800 text-sm mb-1.5 group-hover:text-amber-700">{p.role}</h3>
+                <p className="text-xs text-slate-500 leading-relaxed">{p.why}</p>
                 <span className="text-xs text-amber-600 font-semibold mt-2 inline-block">Find one &rarr;</span>
               </Link>
             ))}
