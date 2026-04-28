@@ -6,7 +6,9 @@ import { createChainableBuilder } from "@/__tests__/helpers";
 
 const mockServerFrom = vi.fn();
 const mockAdminFrom = vi.fn();
-const mockSendAdminNotification = vi.fn(() => Promise.resolve());
+const mockSendAdminNotification = vi.fn((..._args: unknown[]) =>
+  Promise.resolve(),
+);
 const supabaseCalls: Record<string, { method: string; args: unknown[] }[]> = {};
 
 vi.mock("@/lib/supabase/server", () => ({

@@ -148,7 +148,7 @@ describe("getBenefitCta", () => {
   it("respects deal flag set without deal_text (falls through)", () => {
     const broker = makeBroker({
       deal: true,
-      deal_text: null,
+      deal_text: undefined,
       asx_fee_value: 0,
       affiliate_url: "https://example.com",
     });
