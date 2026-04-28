@@ -3,8 +3,8 @@ import { NextRequest } from "next/server";
 
 // ── Mock state ────────────────────────────────────────────────────────────────
 
-const mockIsAllowed = vi.fn();
-const mockIpKey = vi.fn(() => "127.0.0.1");
+const mockIsAllowed = vi.fn((..._args: unknown[]) => undefined as unknown);
+const mockIpKey = vi.fn((..._args: unknown[]) => "127.0.0.1");
 const mockIsValidEmail = vi.fn();
 const mockIsDisposableEmail = vi.fn();
 const mockAdminFrom = vi.fn();
@@ -96,7 +96,10 @@ describe("POST /api/newsletter/subscribe", () => {
   });
 
   it("returns 400 for missing email", async () => {
-    mockIsValidEmail.mockReturnValueOnce(false);
+    // No mockReturnValueOnce here — the route short-circuits at
+    // `!email` before calling isValidEmail (route line 41), so a
+    // queued .once value would never be consumed and would bleed into
+    // the next test. vi.clearAllMocks does not drain the queue.
     const res = await POST(makePost({}));
     expect(res.status).toBe(400);
   });
