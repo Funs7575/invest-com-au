@@ -94,6 +94,28 @@ jobs:
           retention-days: 1
           if-no-files-found: error
 
+  dated-strings-gate:
+    name: Dated strings gate (DatedStatBadge enforcement)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: github.event_name == 'pull_request'
+    # Why this exists (Y-08): any .tsx file added or modified in a PR that
+    # contains a bare spelled-out date ("30 April 2026") outside a
+    # <DatedStatBadge> wrapper fails the build.  Bare dates in page content
+    # don't fail tests when they become stale, so users see expired copy and
+    # the build stays green.  The gate enforces the DatedStatBadge contract
+    # from components/DatedStatBadge.tsx + lib/dated-stats.ts across every
+    # new or changed page.
+    # Skip token not required — this is static file analysis only.
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Check date strings are wrapped in <DatedStatBadge>
+        env:
+          GITHUB_BASE_REF: ${{ github.base_ref }}
+        run: node scripts/check-dated-strings.mjs
+
   secret-scan:
     name: Secret scan
     runs-on: ubuntu-latest
