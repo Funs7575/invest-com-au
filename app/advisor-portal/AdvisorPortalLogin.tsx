@@ -4,10 +4,9 @@ import { useState } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 
-type Props = {
-  // Intentionally no callbacks — password/signup flows do window.location.reload()
-  // and magic-link flows send an email; both re-enter via the parent's checkSession path.
-};
+// Intentionally no callbacks — password/signup flows do window.location.reload()
+// and magic-link flows send an email; both re-enter via the parent's checkSession path.
+type Props = Record<string, never>;
 
 export default function AdvisorPortalLogin(_props: Props) {
   const [email, setEmail] = useState("");

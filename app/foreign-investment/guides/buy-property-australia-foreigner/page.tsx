@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
-import { FIRB_FEES, STATE_SURCHARGES, FIRB_PROCESS_STEPS } from "@/lib/firb-data";
+import { FIRB_FEES, STATE_SURCHARGES } from "@/lib/firb-data";
 import { FIRB_DISCLAIMER } from "@/lib/compliance";
 import SectionHeading from "@/components/SectionHeading";
 import ComplianceFooter from "@/components/ComplianceFooter";
@@ -34,12 +34,14 @@ const STEPS = [
     step: 1,
     title: "Determine your eligibility",
     description:
+      // dated-ok — Treasury legislation cutoff dates, change only with new legislation
       "Your eligibility depends on your visa status and nationality. Non-residents and temporary visa holders can only buy new dwellings, off-the-plan properties, or vacant land for development. The established dwelling ban (1 April 2025 – 31 March 2027) means no foreign person can purchase an existing home during this period. Australian citizens, permanent residents, and New Zealand citizens living in Australia are exempt from FIRB requirements.",
   },
   {
     step: 2,
     title: "Choose an eligible property type",
     description:
+      // dated-ok — same Treasury legislation cutoff as step 1
       "Focus your search on new residential developments, off-the-plan apartments, or vacant land with council-approved development plans. You cannot buy an established (existing) dwelling until at least 1 April 2027. Check with the developer or agent that the property meets FIRB requirements — most new developments in major cities are pre-approved.",
   },
   {
@@ -84,6 +86,7 @@ const FAQS = [
   {
     question: "Can foreigners buy property in Australia right now?",
     answer:
+      // dated-ok — Treasury legislation cutoff dates
       "Yes, but with significant restrictions. From 1 April 2025 to 31 March 2027, foreign persons — including temporary residents — cannot purchase established (existing) dwellings. You can still buy new dwellings, off-the-plan apartments, and vacant land for development. FIRB approval is required for virtually all purchases by foreign persons.",
   },
   {
@@ -140,6 +143,7 @@ export default function BuyPropertyAustralieForeignerPage() {
               </svg>
             </div>
             <div>
+              {/* // dated-ok — Treasury legislation cutoff dates */}
               <p className="font-bold text-red-800 text-sm">Established Dwelling Ban: 1 April 2025 – 31 March 2027</p>
               <p className="text-red-700 text-xs mt-0.5 leading-relaxed">
                 Foreign persons (including temporary residents) are currently <strong>banned from purchasing existing homes</strong> in Australia.
@@ -253,6 +257,7 @@ export default function BuyPropertyAustralieForeignerPage() {
               { type: "New residential dwellings", eligible: true, desc: "Newly built houses, townhouses, or apartments never previously occupied." },
               { type: "Off-the-plan apartments", eligible: true, desc: "Apartments purchased before completion and registered to you as a new dwelling." },
               { type: "Vacant land (development)", eligible: true, desc: "Vacant residential land where you intend to build a new dwelling within 4 years." },
+              // dated-ok — Treasury legislation cutoff dates
               { type: "Established dwellings", eligible: false, desc: "Banned from 1 April 2025 to 31 March 2027. No exceptions for most foreign persons." },
               { type: "Commercial property", eligible: true, desc: "Different FIRB thresholds apply. No residential rules — business/investor rules." },
               { type: "Rural land", eligible: true, desc: "Separate FIRB rules apply. Different thresholds ($15M for agricultural land)." },
@@ -340,6 +345,7 @@ export default function BuyPropertyAustralieForeignerPage() {
               </tbody>
             </table>
           </div>
+          {/* // dated-ok — FIRB published fee rates, source-attributed */}
           <p className="text-xs text-slate-500 mt-2">FIRB fees are indexed annually. Current rates effective from 1 July 2024. Source: firb.gov.au</p>
         </section>
 
