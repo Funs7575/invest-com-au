@@ -66,14 +66,14 @@ const VARIANT_CONFIG: Record<
   },
   "in-content": {
     width: "w-full",
-    height: "min-h-[120px]",
+    height: "min-h-30",
     containerClass: "rounded-xl border border-slate-200 overflow-hidden my-8",
     mobileHide: false,
     adsenseFormat: "fluid",
   },
   "sticky-footer": {
     width: "w-full",
-    height: "min-h-[60px]",
+    height: "min-h-15",
     containerClass: "",
     mobileHide: false,
     adsenseFormat: "horizontal",

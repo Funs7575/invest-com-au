@@ -168,7 +168,7 @@ export default async function AlternativesListingDetailPage({
             <Icon name="chevron-right" size={12} className="text-slate-300" aria-hidden="true" />
             <Link href={`/invest/${CATEGORY_SLUG}/listings`} className="hover:text-slate-900 transition-colors">{CATEGORY_LABEL}</Link>
             <Icon name="chevron-right" size={12} className="text-slate-300" aria-hidden="true" />
-            <span className="text-slate-900 font-medium truncate max-w-[160px]">{l.title}</span>
+            <span className="text-slate-900 font-medium truncate max-w-40">{l.title}</span>
           </nav>
 
           <div className="flex flex-wrap gap-2 mb-3">

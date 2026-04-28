@@ -76,7 +76,7 @@ export default function AdvisorCompareMatrix({ advisors, onRemove }: Props) {
             {advisors.map((a) => (
               <th
                 key={a.id}
-                className="px-4 py-3 text-left border-b border-slate-100 min-w-[200px] relative"
+                className="px-4 py-3 text-left border-b border-slate-100 min-w-50 relative"
               >
                 {onRemove && (
                   <button

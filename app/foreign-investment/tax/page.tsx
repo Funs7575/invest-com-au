@@ -64,6 +64,7 @@ const TAX_FAQS = [
   {
     question: "Do non-residents pay CGT in Australia?",
     answer:
+      // dated-ok — ATO foreign-resident CGT withholding rate change date
       "Non-residents generally do NOT pay Australian CGT on gains from selling listed Australian company shares — this is known as the Section 855-10 exemption. However, non-residents DO pay Australian CGT on 'taxable Australian property' — primarily Australian real estate and certain other assets. There is also a 15% foreign resident CGT withholding obligation for the buyer on properties sold by foreign residents for over $750,000 (rate increased from 12.5% to 15% from 1 January 2025).",
   },
   {
@@ -186,7 +187,7 @@ export default async function ForeignTaxPage() {
                     <td className="px-4 py-3 font-bold text-slate-900 text-xs">{row.income_type}</td>
                     <td className={`px-4 py-3 text-xs font-bold ${colorMap[row.color] ?? "text-slate-700"}`}>{row.standard_rate}</td>
                     <td className="px-4 py-3 text-xs font-semibold text-green-700">{row.with_dta_typical}</td>
-                    <td className="px-4 py-3 text-xs text-slate-500 leading-relaxed hidden md:table-cell max-w-[220px]">{row.notes}</td>
+                    <td className="px-4 py-3 text-xs text-slate-500 leading-relaxed hidden md:table-cell max-w-55">{row.notes}</td>
                   </tr>
                 ))}
               </tbody>

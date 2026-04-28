@@ -260,7 +260,7 @@ export default function AdvisorCompareClient() {
         {COMPARE_ROWS.map((row, i) => (
           <div
             key={row.label}
-            className={`grid items-center min-h-[52px] ${i % 2 === 0 ? "bg-white" : "bg-slate-50"}`}
+            className={`grid items-center min-h-13 ${i % 2 === 0 ? "bg-white" : "bg-slate-50"}`}
             style={{ gridTemplateColumns: `160px repeat(${advisors.length}, 1fr)` }}
           >
             <div className="px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide border-r border-slate-100">

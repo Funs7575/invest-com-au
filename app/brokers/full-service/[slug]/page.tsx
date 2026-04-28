@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { blurDataURL } from "@/lib/image-blur";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { createStaticClient } from "@/lib/supabase/static";
@@ -174,6 +175,8 @@ export default async function FullServiceBrokerDetailPage({
                     className="w-full h-full object-contain p-2"
                     sizes="96px"
                     priority
+                    placeholder="blur"
+                    blurDataURL={blurDataURL()}
                   />
                 ) : (
                   <Icon name="briefcase" size={36} className="text-slate-400" />

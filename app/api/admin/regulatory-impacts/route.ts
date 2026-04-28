@@ -93,6 +93,14 @@ export async function POST(request: NextRequest) {
       .eq("id", alert_id);
   }
 
+  await admin.from("admin_audit_log").insert({
+    action: "regulatory_impact:upserted",
+    entity_type: "regulatory_broker_impacts",
+    entity_id: String(data.id),
+    admin_email: user.email,
+    details: { alert_id, broker_slug, impact_level },
+  });
+
   log.info("Impact assessment saved", { alert_id, broker_slug, impact_level });
   return NextResponse.json(data);
 }
@@ -119,6 +127,13 @@ export async function DELETE(request: NextRequest) {
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
+
+  await admin.from("admin_audit_log").insert({
+    action: "regulatory_impact:deleted",
+    entity_type: "regulatory_broker_impacts",
+    entity_id: id,
+    admin_email: user.email,
+  });
 
   return NextResponse.json({ ok: true });
 }

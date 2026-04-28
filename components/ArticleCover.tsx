@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { blurDataURL } from "@/lib/image-blur";
 
 interface ArticleCoverProps {
   /** Article title — used as image alt text and as the overlay
@@ -102,6 +103,8 @@ export default function ArticleCover({
           sizes={sizes ?? "(max-width: 768px) 100vw, 800px"}
           className="object-cover"
           priority={priority}
+          placeholder="blur"
+          blurDataURL={blurDataURL()}
         />
       ) : (
         <div
