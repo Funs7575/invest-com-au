@@ -11,7 +11,7 @@ export const maxDuration = 300;
 export const dynamic = "force-dynamic";
 
 /**
- * GET /api/cron/_dispatch/[group]
+ * GET /api/cron/dispatch/[group]
  *
  * Fan-out dispatcher. Vercel triggers this per schedule in vercel.json;
  * the group slug maps to one or more individual handler paths in
@@ -22,6 +22,15 @@ export const dynamic = "force-dynamic";
  * Existence rationale: Vercel's 40-cron-per-project cap. We have 62
  * handlers; this file collapses them to 39 schedule entries with zero
  * behavioural change to any handler.
+ *
+ * IMPORTANT: This folder must NOT start with `_`. Next.js app router
+ * treats `_*` folders as private folders and refuses to register them
+ * as routes. The original dispatcher (commit 0e27a308, 2026-04-16)
+ * lived at `_dispatch/[group]` and was therefore never registered —
+ * Vercel cron requests fell through to middleware which returned an
+ * empty 200 with no body. That hid a 12-day cron blackout that PRs
+ * #225, #231, and #238 instrumented around but never fixed at the
+ * routing layer.
  */
 export async function GET(
   req: NextRequest,
