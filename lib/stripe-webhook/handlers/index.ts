@@ -22,6 +22,7 @@ import { handleCheckoutSessionCompleted } from "./checkout-session-completed";
 import {
   handleCustomerSubscriptionCreated,
   handleCustomerSubscriptionDeleted,
+  handleCustomerSubscriptionTrialWillEnd,
   handleCustomerSubscriptionUpdated,
 } from "./customer-subscription";
 import {
@@ -35,5 +36,6 @@ registerHandler("checkout.session.completed", handleCheckoutSessionCompleted);
 registerHandler("customer.subscription.created", handleCustomerSubscriptionCreated);
 registerHandler("customer.subscription.updated", handleCustomerSubscriptionUpdated);
 registerHandler("customer.subscription.deleted", handleCustomerSubscriptionDeleted);
+registerHandler("customer.subscription.trial_will_end", handleCustomerSubscriptionTrialWillEnd);
 registerHandler("invoice.paid", handleInvoicePaidEvent);
 registerHandler("invoice.payment_failed", handleInvoicePaymentFailedEvent);

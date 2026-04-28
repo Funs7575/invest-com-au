@@ -23,6 +23,7 @@ import { getSiteUrl } from "@/lib/url";
 import { upsertSubscription } from "../lib/upsert-subscription";
 import {
   buildProWelcomeEmail,
+  buildTrialEndingSoonEmail,
   sendTransactionalEmail,
 } from "../lib/email";
 
@@ -72,6 +73,46 @@ export const handleCustomerSubscriptionCreated: WebhookHandler = async (event, c
       });
     }
   }
+
+  return { status: "done" };
+};
+
+export const handleCustomerSubscriptionTrialWillEnd: WebhookHandler = async (event, ctx) => {
+  const sub = event.data.object as Stripe.Subscription;
+  const custId =
+    typeof sub.customer === "string" ? sub.customer : sub.customer.id;
+
+  try {
+    const customer = await ctx.stripe.customers.retrieve(custId);
+    if (!("deleted" in customer) && customer.email) {
+      const interval = sub.items.data[0]?.price?.recurring?.interval || null;
+      const trialEndDate = sub.trial_end
+        ? new Date(sub.trial_end * 1000).toLocaleDateString("en-AU", {
+            weekday: "long",
+            month: "long",
+            day: "numeric",
+          })
+        : "soon";
+      sendTransactionalEmail(
+        customer.email,
+        "Your free trial ends in 3 days — here's what happens next",
+        buildTrialEndingSoonEmail(interval, trialEndDate),
+      ).catch((err) =>
+        ctx.log.error("Trial ending email failed", {
+          err: err instanceof Error ? err.message : String(err),
+        }),
+      );
+    }
+  } catch (err) {
+    ctx.log.error("Trial ending email lookup failed", {
+      error: err instanceof Error ? err.message : String(err),
+    });
+  }
+
+  ctx.log.info("Subscription trial ending soon", {
+    subscriptionId: sub.id,
+    trialEnd: sub.trial_end,
+  });
 
   return { status: "done" };
 };

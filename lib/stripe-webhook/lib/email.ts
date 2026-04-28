@@ -105,6 +105,33 @@ export function buildCourseReceiptEmail(courseName: string, courseSlug: string, 
   `);
 }
 
+/** Trial-ending-soon email — fired on `customer.subscription.trial_will_end` (3 days before charge). */
+export function buildTrialEndingSoonEmail(
+  planInterval: string | null,
+  trialEndDate: string,
+): string {
+  const intervalLabel = planInterval === "year" ? "yearly" : "monthly";
+  return emailWrapper("Your Trial Ends in 3 Days ⏰", "#0f172a", `
+    <h2 style="margin: 0 0 12px; font-size: 18px; color: #0f172a;">Your free trial is almost over</h2>
+    <p style="color: #475569; font-size: 14px; line-height: 1.6; margin: 0 0 16px;">
+      Your Invest.com.au Pro trial ends on <strong>${trialEndDate}</strong>. After that,
+      your ${intervalLabel} subscription will begin automatically.
+    </p>
+    <p style="color: #475569; font-size: 14px; line-height: 1.6; margin: 0 0 16px;">
+      Here's what you'll keep with your Pro membership:
+    </p>
+    <ul style="color: #334155; font-size: 14px; line-height: 1.8; margin: 0 0 20px; padding-left: 20px;">
+      <li>Ad-free broker comparisons &amp; reviews</li>
+      <li>Exclusive Pro-only research &amp; guides</li>
+      <li>Discounted course &amp; consultation pricing</li>
+      <li>Priority support</li>
+    </ul>
+    <div style="text-align: center; margin: 20px 0;">
+      <a href="https://invest.com.au/account" style="display: inline-block; padding: 12px 28px; background: #0f172a; color: #fff; font-weight: 700; font-size: 14px; border-radius: 8px; text-decoration: none;">Manage Subscription →</a>
+    </div>
+  `);
+}
+
 /** Consultation confirmation email — fired on `checkout.session.completed` for consultation mode. */
 export function buildConsultationConfirmationEmail(
   consultationTitle: string,

@@ -11,9 +11,11 @@ vi.mock("@/lib/stripe-webhook/lib/upsert-subscription", () => ({
 
 const mockSendTransactionalEmail = vi.fn();
 const mockBuildProWelcomeEmail = vi.fn().mockReturnValue("<html>welcome</html>");
+const mockBuildTrialEndingSoonEmail = vi.fn().mockReturnValue("<html>trial-end</html>");
 vi.mock("@/lib/stripe-webhook/lib/email", () => ({
   sendTransactionalEmail: (...args: unknown[]) => mockSendTransactionalEmail(...args),
   buildProWelcomeEmail: (...args: unknown[]) => mockBuildProWelcomeEmail(...args),
+  buildTrialEndingSoonEmail: (...args: unknown[]) => mockBuildTrialEndingSoonEmail(...args),
   emailWrapper: vi.fn().mockReturnValue("<html />"),
 }));
 
@@ -28,6 +30,7 @@ import {
   handleCustomerSubscriptionCreated,
   handleCustomerSubscriptionUpdated,
   handleCustomerSubscriptionDeleted,
+  handleCustomerSubscriptionTrialWillEnd,
 } from "@/lib/stripe-webhook/handlers/customer-subscription";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -80,6 +83,20 @@ function makeDeletedEvent(): Stripe.Event {
     id: "evt_sub_deleted",
     type: "customer.subscription.deleted",
     data: { object: SUBSCRIPTION },
+  } as unknown as Stripe.Event;
+}
+
+function makeTrialWillEndEvent(subOverride: Partial<Stripe.Subscription> = {}): Stripe.Event {
+  return {
+    id: "evt_sub_trial_end",
+    type: "customer.subscription.trial_will_end",
+    data: {
+      object: {
+        ...SUBSCRIPTION,
+        trial_end: Math.floor(Date.now() / 1000) + 3 * 24 * 60 * 60, // 3 days from now
+        ...subOverride,
+      } as Stripe.Subscription,
+    },
   } as unknown as Stripe.Event;
 }
 
@@ -188,5 +205,73 @@ describe("handleCustomerSubscriptionDeleted", () => {
     const ctx = makeCtx();
     const result = await handleCustomerSubscriptionDeleted(makeDeletedEvent(), ctx);
     expect(result).toEqual({ status: "done" });
+  });
+});
+
+describe("handleCustomerSubscriptionTrialWillEnd", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockSendTransactionalEmail.mockResolvedValue({ id: "email_1" });
+  });
+
+  it("returns { status: 'done' }", async () => {
+    const ctx = makeCtx();
+    const result = await handleCustomerSubscriptionTrialWillEnd(makeTrialWillEndEvent(), ctx);
+    expect(result).toEqual({ status: "done" });
+  });
+
+  it("sends trial ending email to active customer", async () => {
+    const ctx = makeCtx();
+    await handleCustomerSubscriptionTrialWillEnd(makeTrialWillEndEvent(), ctx);
+    expect(ctx.stripe.customers.retrieve).toHaveBeenCalledWith("cus_test");
+    expect(mockSendTransactionalEmail).toHaveBeenCalledWith(
+      CUSTOMER.email,
+      expect.stringContaining("trial ends"),
+      expect.any(String),
+    );
+  });
+
+  it("calls buildTrialEndingSoonEmail with interval and formatted date", async () => {
+    const ctx = makeCtx();
+    await handleCustomerSubscriptionTrialWillEnd(makeTrialWillEndEvent(), ctx);
+    expect(mockBuildTrialEndingSoonEmail).toHaveBeenCalledWith(
+      "month",
+      expect.any(String),
+    );
+  });
+
+  it("does NOT send email for deleted customer", async () => {
+    const deletedCustomer = { id: "cus_test", deleted: true } as unknown as Stripe.DeletedCustomer;
+    const ctx = makeCtx(vi.fn().mockResolvedValue(deletedCustomer));
+    await handleCustomerSubscriptionTrialWillEnd(makeTrialWillEndEvent(), ctx);
+    expect(mockSendTransactionalEmail).not.toHaveBeenCalled();
+  });
+
+  it("uses 'soon' as trial end date when trial_end is null", async () => {
+    const ctx = makeCtx();
+    await handleCustomerSubscriptionTrialWillEnd(
+      makeTrialWillEndEvent({ trial_end: null }),
+      ctx,
+    );
+    expect(mockBuildTrialEndingSoonEmail).toHaveBeenCalledWith(
+      expect.any(String),
+      "soon",
+    );
+  });
+
+  it("swallows customer retrieve errors non-fatally", async () => {
+    const ctx = makeCtx(vi.fn().mockRejectedValue(new Error("Stripe error")));
+    const result = await handleCustomerSubscriptionTrialWillEnd(makeTrialWillEndEvent(), ctx);
+    expect(result).toEqual({ status: "done" });
+    expect(ctx.log.error).toHaveBeenCalled();
+  });
+
+  it("logs info about the upcoming trial end", async () => {
+    const ctx = makeCtx();
+    await handleCustomerSubscriptionTrialWillEnd(makeTrialWillEndEvent(), ctx);
+    expect(ctx.log.info).toHaveBeenCalledWith(
+      "Subscription trial ending soon",
+      expect.objectContaining({ subscriptionId: "sub_test" }),
+    );
   });
 });
