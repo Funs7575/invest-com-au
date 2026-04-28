@@ -14,11 +14,15 @@
 export const MFA_COOKIE_NAME = "admin_mfa_verified";
 export const MFA_COOKIE_MAX_AGE_S = 12 * 60 * 60; // 12 hours
 
-function b64urlToBytes(s: string): Uint8Array {
+function b64urlToBytes(s: string) {
   const padded = s.replace(/-/g, "+").replace(/_/g, "/");
   const padding = padded.length % 4 === 0 ? 0 : 4 - (padded.length % 4);
   const b64 = padded + "=".repeat(padding);
   const bin = atob(b64);
+  // `Uint8Array.from` returns `Uint8Array<ArrayBuffer>`, which satisfies
+  // `BufferSource` for `crypto.subtle.verify`. Annotating as plain
+  // `Uint8Array` would widen to `Uint8Array<ArrayBufferLike>` and TS 5.7+
+  // rejects that.
   return Uint8Array.from(bin, (c) => c.charCodeAt(0));
 }
 
@@ -44,7 +48,7 @@ export async function verifyMfaCookieEdge(
   if (parts.length !== 2) return false;
   const [payloadB64, hmacB64] = parts as [string, string];
 
-  let hmacBytes: Uint8Array;
+  let hmacBytes: ReturnType<typeof b64urlToBytes>;
   try {
     hmacBytes = b64urlToBytes(hmacB64);
   } catch {
