@@ -25,11 +25,15 @@ import {
   handleCustomerSubscriptionTrialWillEnd,
   handleCustomerSubscriptionUpdated,
 } from "./customer-subscription";
+import { handleCustomerSubscriptionPaused } from "./customer-subscription-paused";
 import {
   handleInvoicePaidEvent,
   handleInvoicePaymentActionRequiredEvent,
   handleInvoicePaymentFailedEvent,
 } from "./invoice";
+import { handlePaymentIntentPaymentFailed } from "./payment-intent-payment-failed";
+import { handlePayoutFailed } from "./payout-failed";
+import { handleRadarEarlyFraudWarning } from "./radar-early-fraud-warning";
 
 registerHandler("charge.dispute.created", handleChargeDisputeCreated);
 registerHandler("charge.refunded", handleChargeRefunded);
@@ -37,7 +41,11 @@ registerHandler("checkout.session.completed", handleCheckoutSessionCompleted);
 registerHandler("customer.subscription.created", handleCustomerSubscriptionCreated);
 registerHandler("customer.subscription.updated", handleCustomerSubscriptionUpdated);
 registerHandler("customer.subscription.deleted", handleCustomerSubscriptionDeleted);
+registerHandler("customer.subscription.paused", handleCustomerSubscriptionPaused);
 registerHandler("customer.subscription.trial_will_end", handleCustomerSubscriptionTrialWillEnd);
 registerHandler("invoice.paid", handleInvoicePaidEvent);
 registerHandler("invoice.payment_action_required", handleInvoicePaymentActionRequiredEvent);
 registerHandler("invoice.payment_failed", handleInvoicePaymentFailedEvent);
+registerHandler("payment_intent.payment_failed", handlePaymentIntentPaymentFailed);
+registerHandler("payout.failed", handlePayoutFailed);
+registerHandler("radar.early_fraud_warning.created", handleRadarEarlyFraudWarning);
