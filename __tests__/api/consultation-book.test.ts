@@ -94,7 +94,17 @@ function setupHappyPath(overrides: {
       case 1: return maybySingleChain({ data: consultation, error: null });           // consultation lookup
       case 2: return maybySingleChain({ data: overrides.existingBooking ?? null, error: null }); // existing booking
       case 3: return maybySingleChain({ data: overrides.activeSub ?? null, error: null });       // active subscription
-      case 4: return singleChain({ data: { stripe_customer_id: overrides.stripeCustomerId ?? "cus_existing" }, error: null }); // profile
+      // `??` would treat an explicit `null` override as "use default",
+      // masking the no-customer branch the relevant test wants to hit.
+      // Check membership instead so `stripeCustomerId: null` is honoured.
+      case 4: return singleChain({
+        data: {
+          stripe_customer_id: "stripeCustomerId" in overrides
+            ? overrides.stripeCustomerId
+            : "cus_existing",
+        },
+        error: null,
+      }); // profile
       default: return updateChain();
     }
   });

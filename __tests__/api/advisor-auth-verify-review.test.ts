@@ -6,7 +6,9 @@ import { NextRequest } from "next/server";
 const mockServerFrom = vi.fn();
 const mockGetUser = vi.fn();
 const mockAdminFrom = vi.fn();
-const mockSendReviewRequest = vi.fn(() => Promise.resolve(true));
+const mockSendReviewRequest = vi.fn((..._args: unknown[]) =>
+  Promise.resolve(true),
+);
 
 // ── Mocks ──────────────────────────────────────────────────────────────────────
 

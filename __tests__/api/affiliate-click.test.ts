@@ -175,8 +175,8 @@ describe("POST /api/affiliate/click", () => {
     });
     await POST(makePost({ broker_slug: "commsec" }, "203.0.113.42"));
     expect(insertArgs).not.toBeNull();
-    expect((insertArgs as Record<string, unknown>).ip_hash).not.toBe("203.0.113.42");
-    expect(typeof (insertArgs as Record<string, unknown>).ip_hash).toBe("string");
+    expect((insertArgs as unknown as Record<string, unknown>).ip_hash).not.toBe("203.0.113.42");
+    expect(typeof (insertArgs as unknown as Record<string, unknown>).ip_hash).toBe("string");
   });
 
   it("stores null ip_hash when IP header is missing", async () => {
