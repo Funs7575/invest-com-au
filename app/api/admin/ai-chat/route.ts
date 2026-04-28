@@ -3,6 +3,13 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { ADMIN_EMAILS } from "@/lib/admin";
 import { NextRequest, NextResponse } from "next/server";
+import {
+  loadAdminAgentConfig,
+  preCheckCaps,
+  recordUsage,
+  capRejectionPayload,
+} from "@/lib/ai-cost-caps";
+import { sendCap80Alert } from "@/lib/ai-cost-alerts";
 
 export const runtime = "nodejs";
 export const maxDuration = 120;
@@ -656,6 +663,22 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    // V-NEW-06: per-admin-user + global daily cost caps. Pre-checked
+    // once before the agent loop runs — the loop itself can do
+    // up to 10 iterations of opus-4-6 calls so an unbounded loop
+    // would burn $$$ in a single request without this gate.
+    const capCfg = loadAdminAgentConfig();
+    const subjectId = (user.email || "").toLowerCase();
+    const ADMIN_AGENT_MODEL = "claude-opus-4-6";
+    const verdict = await preCheckCaps(subjectId, capCfg);
+    if (!verdict.allowed) {
+      const rej = capRejectionPayload(verdict, capCfg);
+      return NextResponse.json(rej.body, {
+        status: rej.status,
+        headers: rej.headers,
+      });
+    }
+
     const encoder = new TextEncoder();
 
     const stream = new ReadableStream({
@@ -664,13 +687,18 @@ export async function POST(req: NextRequest) {
           controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`));
         };
 
+        // V-NEW-06: accumulate token usage across the agentic loop,
+        // record once at the end (success or error).
+        let totalTokensIn = 0;
+        let totalTokensOut = 0;
+
         try {
           let currentMessages = [...messages];
 
           // Agentic loop — keep going until end_turn
           for (let iteration = 0; iteration < 10; iteration++) {
             const response = await anthropic.messages.create({
-              model: "claude-opus-4-6",
+              model: ADMIN_AGENT_MODEL,
               max_tokens: 4096,
               thinking: { type: "adaptive" },
               system: SYSTEM_PROMPT,
@@ -685,8 +713,13 @@ export async function POST(req: NextRequest) {
             let currentBlockType = "";
             let accumulatedText = "";
             let accumulatedInput = "";
+            let iterationInputTokens = 0;
+            let iterationOutputTokens = 0;
 
             for await (const event of response) {
+              if (event.type === "message_start") {
+                iterationInputTokens = event.message.usage?.input_tokens ?? 0;
+              }
               if (event.type === "content_block_start") {
                 currentBlockIndex = event.index;
                 currentBlockType = event.content_block.type;
@@ -729,8 +762,16 @@ export async function POST(req: NextRequest) {
 
               if (event.type === "message_delta") {
                 stopReason = event.delta.stop_reason ?? "end_turn";
+                // message_delta carries the cumulative output_tokens
+                // for this iteration's message. Overwrite each time —
+                // the last value wins.
+                if (event.usage?.output_tokens !== undefined) {
+                  iterationOutputTokens = event.usage.output_tokens;
+                }
               }
             }
+            totalTokensIn += iterationInputTokens;
+            totalTokensOut += iterationOutputTokens;
 
             // Filter out empty blocks
             const validBlocks = contentBlocks.filter(Boolean);
@@ -779,6 +820,31 @@ export async function POST(req: NextRequest) {
               : msg || "Unknown error",
           });
           controller.close();
+        } finally {
+          // V-NEW-06: post-record usage + 80% alert. Fire-and-forget;
+          // never throws (recordUsage swallows DB errors). Triggers
+          // even on the early-return-from-end_turn paths because the
+          // success branch returns from inside the for-loop, which
+          // still hits this finally.
+          if (totalTokensIn > 0 || totalTokensOut > 0) {
+            void recordUsage({
+              subjectId,
+              cfg: capCfg,
+              model: ADMIN_AGENT_MODEL,
+              tokensIn: totalTokensIn,
+              tokensOut: totalTokensOut,
+            }).then((r) => {
+              if (r.crossed80Subject) {
+                void sendCap80Alert({
+                  routeLabel: capCfg.label,
+                  subjectId,
+                  subjectType: capCfg.subjectType,
+                  newSubjectMicros: r.subjectMicros,
+                  capMicros: capCfg.perSubjectMicros,
+                });
+              }
+            });
+          }
         }
       },
     });
