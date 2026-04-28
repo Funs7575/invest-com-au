@@ -44,13 +44,13 @@ export default function CompareSelectionBar({
           {/* Mobile: Quick Compare inline */}
           <button
             onClick={onToggleMobileCompare}
-            className="md:hidden shrink-0 px-3 py-2 min-h-[44px] inline-flex items-center bg-slate-700 text-white font-bold text-xs rounded-lg"
+            className="md:hidden shrink-0 px-3 py-2 min-h-11 inline-flex items-center bg-slate-700 text-white font-bold text-xs rounded-lg"
           >
             {showMobileCompare ? "Close" : "Quick Compare"}
           </button>
           <Link
             href={`/versus?vs=${Array.from(selected).join(',')}`}
-            className="shrink-0 px-4 py-2 min-h-[44px] inline-flex items-center md:px-5 md:py-2 bg-white text-slate-700 font-bold text-xs md:text-sm rounded-lg hover:bg-slate-50 transition-colors"
+            className="shrink-0 px-4 py-2 min-h-11 inline-flex items-center md:px-5 md:py-2 bg-white text-slate-700 font-bold text-xs md:text-sm rounded-lg hover:bg-slate-50 transition-colors"
           >
             Full Compare →
           </Link>

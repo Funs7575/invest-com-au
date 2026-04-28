@@ -163,6 +163,15 @@ export async function POST(request: NextRequest) {
       }
     });
 
+  await admin.from("admin_audit_log").insert({
+    action: "automation:bulk",
+    entity_type: feature,
+    admin_email: user.email,
+    details: { targetVerdict, rowCount: rowIds.length, updated, errors, subSurface },
+  }).then(({ error: logErr }) => {
+    if (logErr) log.warn("admin_audit_log insert failed", { error: logErr.message });
+  });
+
   return NextResponse.json({
     ok: errors.length === 0,
     updated,

@@ -76,7 +76,7 @@ export default function QuizPromptBar() {
             {shortlistCount > 0 && (
               <Link
                 href="/shortlist"
-                className="relative w-10 shrink-0 flex items-center justify-center py-2.5 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 active:scale-[0.98] transition-all min-h-[40px]"
+                className="relative w-10 shrink-0 flex items-center justify-center py-2.5 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 active:scale-[0.98] transition-all min-h-10"
                 aria-label={`My shortlist (${shortlistCount})`}
               >
                 <svg className="w-4 h-4 text-red-500" viewBox="0 0 24 24" fill="currentColor" stroke="none">
@@ -89,7 +89,7 @@ export default function QuizPromptBar() {
             )}
             <Link
               href="/compare"
-              className="flex-1 text-center py-2.5 bg-amber-500 text-white text-[0.75rem] font-bold rounded-lg hover:bg-amber-600 active:bg-amber-700 active:scale-[0.98] transition-all min-h-[40px] flex items-center justify-center gap-1.5"
+              className="flex-1 text-center py-2.5 bg-amber-500 text-white text-[0.75rem] font-bold rounded-lg hover:bg-amber-600 active:bg-amber-700 active:scale-[0.98] transition-all min-h-10 flex items-center justify-center gap-1.5"
             >
               Compare Platforms →
             </Link>
@@ -117,7 +117,7 @@ export default function QuizPromptBar() {
               </Link>
               <button
                 onClick={handleDesktopDismiss}
-                className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-400 hover:text-slate-700 transition-colors rounded-lg"
+                className="p-2 min-w-11 min-h-11 flex items-center justify-center text-slate-400 hover:text-slate-700 transition-colors rounded-lg"
                 aria-label="Dismiss quiz prompt"
               >
                 <svg

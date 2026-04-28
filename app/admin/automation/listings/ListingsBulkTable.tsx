@@ -129,12 +129,12 @@ export default function ListingsBulkTable({ initialRows }: { initialRows: Listin
                         />
                       </td>
                       <td className="px-4 py-2 font-mono text-slate-500">#{r.id}</td>
-                      <td className="px-4 py-2 text-slate-700 max-w-[200px] truncate" title={r.title}>
+                      <td className="px-4 py-2 text-slate-700 max-w-50 truncate" title={r.title}>
                         {r.title}
                       </td>
                       <td className="px-4 py-2 text-slate-600">{r.vertical}</td>
                       <td
-                        className="px-4 py-2 text-[0.65rem] text-slate-500 max-w-[180px] truncate"
+                        className="px-4 py-2 text-[0.65rem] text-slate-500 max-w-45 truncate"
                         title={r.contact_email}
                       >
                         {r.contact_email}

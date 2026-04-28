@@ -251,7 +251,7 @@ export default async function ThreadPage({
             <li>
               <Icon name="chevron-right" size={14} className="text-slate-400" />
             </li>
-            <li className="text-slate-900 font-medium truncate max-w-[200px]">
+            <li className="text-slate-900 font-medium truncate max-w-50">
               {thread.title}
             </li>
           </ol>

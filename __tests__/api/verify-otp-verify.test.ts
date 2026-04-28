@@ -65,10 +65,10 @@ describe("POST /api/verify-otp/verify", () => {
     expect(await res.json()).toMatchObject({ error: expect.stringContaining("Too many") });
   });
 
-  it("passes IP-keyed rate limit args (10 per 5 min)", async () => {
+  it("passes IP-keyed rate limit args (3 per 15 min — K-security tightened)", async () => {
     mockIsRateLimited.mockResolvedValueOnce(true);
     await POST(makePost({ email: "a@b.com", code: "111111" }, "5.5.5.5"));
-    expect(mockIsRateLimited).toHaveBeenCalledWith("otp-verify:5.5.5.5", 10, 5);
+    expect(mockIsRateLimited).toHaveBeenCalledWith("otp-verify:5.5.5.5", 3, 15);
   });
 
   it("returns 400 for malformed JSON body", async () => {

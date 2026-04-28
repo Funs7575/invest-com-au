@@ -77,7 +77,7 @@ export default function ClickLogTab({
                 <tr key={click.id} className="hover:bg-slate-50">
                   <td className="px-4 py-2 text-sm text-slate-900">{click.broker_name}</td>
                   <td className="px-4 py-2 text-xs text-slate-600">{click.source || "\u2014"}</td>
-                  <td className="px-4 py-2 text-xs text-slate-500 max-w-[200px] truncate">{click.page}</td>
+                  <td className="px-4 py-2 text-xs text-slate-500 max-w-50 truncate">{click.page}</td>
                   <td className="px-4 py-2 text-xs text-slate-500">{click.layer || "\u2014"}</td>
                   <td className="px-4 py-2 text-xs text-slate-500 whitespace-nowrap">{new Date(click.clicked_at).toLocaleString()}</td>
                 </tr>

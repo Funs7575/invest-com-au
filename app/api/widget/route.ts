@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createStaticClient } from "@/lib/supabase/static";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -7,6 +7,23 @@ export const dynamic = "force-dynamic";
 /**
  * GET /api/widget — Returns self-contained JavaScript that renders an
  * embeddable broker comparison widget inside a Shadow DOM container.
+ *
+ * ─────────────────────────────────────────────────────────────────────────
+ * PUBLIC-BY-DESIGN ENDPOINT — CORS contract:
+ *   • Served as `application/javascript` to be loaded via `<script src=…>`
+ *     on any third-party origin. `Access-Control-Allow-Origin: *` is
+ *     INTENTIONAL — restricting it would break the embed feature.
+ *   • Must NEVER read or expose user-context data. No cookies, no
+ *     `Authorization` header parsing, no per-user state. The data here
+ *     is the same data on a public broker comparison page.
+ *   • Uses the anon-key client (`createStaticClient`) so Postgres RLS
+ *     enforces that only `status='active'` broker columns are readable.
+ *     Even if a future change naively did `select('*')`, RLS would block
+ *     admin-only rows. Do NOT swap to `createAdminClient()` (service-role
+ *     bypasses RLS).
+ *   • Cache-Control allows public CDN caching since responses are not
+ *     personalised.
+ * ─────────────────────────────────────────────────────────────────────────
  *
  * Query params:
  *   ?brokers=stake,commsec   — comma-separated broker slugs (optional filter)
@@ -21,8 +38,10 @@ export async function GET(request: NextRequest) {
   const theme = params.get("theme") === "dark" ? "dark" : "light";
   const limit = Math.min(Math.max(parseInt(params.get("limit") || "5", 10) || 5, 1), 10);
 
-  // Fetch broker data server-side so the widget JS has everything inline
-  const supabase = createAdminClient();
+  // Anon-key client: RLS enforces that only `status='active'` brokers are
+  // readable, and only the columns selected below are returned. See header
+  // comment for the public-by-design CORS contract.
+  const supabase = createStaticClient();
   let query = supabase
     .from("brokers")
     .select("name, slug, asx_fee, us_fee, fx_rate, rating, chess_sponsored, platform_type, logo_url, color, icon, deal, deal_text")
@@ -158,7 +177,30 @@ export async function GET(request: NextRequest) {
     headers: {
       "Content-Type": "application/javascript; charset=utf-8",
       "Cache-Control": "public, max-age=3600, s-maxage=3600",
+      // Public-by-design: see header comment. Vary header is correct CDN
+      // hygiene even with `*` so caches don't conflate origins if the
+      // policy ever narrows.
       "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, OPTIONS",
+      "Cross-Origin-Resource-Policy": "cross-origin",
+      Vary: "Origin",
+    },
+  });
+}
+
+/**
+ * CORS pre-flight. The actual GET handler also sends the same headers,
+ * but emitting OPTIONS explicitly avoids confusion when consumers run
+ * `fetch('/api/widget', { method: 'GET' })` from JS instead of `<script>`.
+ */
+export function OPTIONS() {
+  return new NextResponse(null, {
+    status: 204,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, OPTIONS",
+      "Access-Control-Max-Age": "86400",
+      Vary: "Origin",
     },
   });
 }

@@ -103,6 +103,15 @@ export async function POST(request: NextRequest) {
     context: { vertical, ends_at: endsAt },
   });
 
+  await admin.from("admin_audit_log").insert({
+    action: "sponsored_placement:created",
+    entity_type: "sponsored_placement",
+    entity_id: String(inserted.id),
+    entity_name: `advisor #${professionalId} — ${tier}`,
+    admin_email: guard.email,
+    details: { professional_id: professionalId, tier, vertical, daily_cap_cents: dailyCapCents, ends_at: endsAt },
+  });
+
   return NextResponse.json({ ok: true, id: inserted.id });
 }
 
@@ -155,6 +164,15 @@ export async function PATCH(request: NextRequest) {
     resourceType: "sponsored_placement",
     resourceId: String(id),
     reason: active ? "Re-activated placement" : "Deactivated placement",
+  });
+
+  await admin.from("admin_audit_log").insert({
+    action: active ? "sponsored_placement:reactivated" : "sponsored_placement:deactivated",
+    entity_type: "sponsored_placement",
+    entity_id: String(id),
+    entity_name: `placement #${id}`,
+    admin_email: guard.email,
+    details: { active },
   });
 
   return NextResponse.json({ ok: true });
