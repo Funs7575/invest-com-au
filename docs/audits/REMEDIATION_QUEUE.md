@@ -33,7 +33,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | G | _not started_ | — | — | — |
 | H | _not started_ | — | — | — |
 | I | `claude/audit-remediation/i-new-04-main-ci-auto-revert` | #278 (draft) | pending — pushed 2026-04-28T16:14Z | I-NEW-01 done via #277 (`00ef2790`); I-NEW-02 hotfix `5b7937dc`; I-NEW-03 hotfix `4b050ed9`; I-NEW-05 race-fix `55d077bf`; **first real metrics snapshot landed 2026-04-28T16:12Z (grade F 0.0899 — Supabase secrets need to be set in GH Actions for non-zero on M04/M07/M08/M09/M10/M11/M12)**; I-NEW-04 in flight (auto-revert workflow `b42233fb`) |
-| J | `claude/audit-remediation/j-stripe-webhook` | #288 (draft) | pending — pushed 2026-04-29T22:16Z | J-01a..J-01e (route.ts 1197 → 165 LOC) · J-01d-ext (commit `bb1d56f6`) · J-03 (commit `b8e7189`) · J-05 (commit `d68852e`) · J-06 (commit `eedf582`) — payment_intent.payment_failed done. J-08/09/10 still pending. PR #288 is the active draft. |
+| J | `claude/audit-remediation/j-stripe-webhook` | #288 (draft) | pending — pushed 2026-04-29T22:30Z | J-01a..J-01e (route.ts 1197 → 165 LOC) · J-01d-ext (commit `bb1d56f6`) · J-03 (commit `b8e7189`) · J-05 (commit `d68852e`) · J-06 (commit `eedf582`) · J-08 (commit `e99aedc`) · J-09 (commit `e99aedc`) · J-10 (commit `e99aedc`) — all handlers complete (14 registered). Stream complete pending PR merge. |
 | K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-27T05:35Z | K-01..K-08 done; K-09 false-positive; K-10..K-15 done — **stream complete** |
 | L | _not started_ | — | — | — |
 | M | `claude/audit-remediation/m-01b-cover-image-backfill` | #283 (draft) | pending — pushed 2026-04-28T21:25Z | M-01b in flight (commit `19a0d7e6`) — per-article OG cover override + backfill script. |
@@ -315,9 +315,9 @@ The webhook route is 1,197 LOC and only handles a subset of the events an enterp
 | J-05 | done | Add handler: `invoice.payment_action_required` — surface 3DS / SCA flow to user via email + dashboard banner | 1 | **Done in commit `d68852e` (PR #288).** Email sends hosted_invoice_url CTA (falls back to /account), skips advisor_lead invoices, 8 tests. |
 | J-06 | done | Add handler: `payment_intent.payment_failed` — distinct from invoice.failed (covers one-time payments) | 1 | **Done in commit `eedf582` (PR #288).** Handler resolves email via customer lookup or receipt_email (guest checkout), derives contextual retry URL from metadata.type, includes decline reason. 12 tests. |
 | J-07 | false-positive | ~~Add handler: `charge.refunded`~~ | — | **Already handled** in `app/api/stripe/webhook/route.ts` (verified 2026-04-26 audit §5.4). |
-| J-08 | pending | Add handler: `payout.failed` — internal alert (bank info wrong) | 1 | |
-| J-09 | pending | Add handler: `radar.early_fraud_warning.created` — proactively refund to dodge dispute | 1 | |
-| J-10 | pending | Add handler: `customer.subscription.paused` — preserve subscription state, suppress further dunning | 1 | |
+| J-08 | done | Add handler: `payout.failed` — internal alert (bank info wrong) | 1 | **Done in commit `e99aedc` (PR #288).** Logs warn, sends admin alert email, writes admin_audit_log. 6 tests. |
+| J-09 | done | Add handler: `radar.early_fraud_warning.created` — proactively refund to dodge dispute | 1 | **Done in commit `e99aedc` (PR #288).** Calls `stripe.refunds.create(charge)`, sends admin alert with refund outcome, writes admin_audit_log. 9 tests. |
+| J-10 | done | Add handler: `customer.subscription.paused` — preserve subscription state, suppress further dunning | 1 | **Done in commit `e99aedc` (PR #288).** Updates `subscriptions.status=paused`; pauses professional if active (sets `auto_pause_reason=subscription_paused`). 7 tests. |
 | J-11 | done | Reconcile `featured_plans` 3/5 → 5/5 stripe_price_id + `listing_plans` 0/24 → 24/24 | — | **Done by founder via Stripe MCP, 2026-04-26.** Verified via Supabase MCP 2026-04-26: `featured_plans` 5/5 wired (incl. the 2 international tiers), `listing_plans` 24/24 wired. NULL `stripe_price_id` state eliminated across both tables (26 wires total). Original audit §11.3 finding closed. |
 
 ### Stream K — Security hardening (audit §7)
@@ -1044,6 +1044,18 @@ Items that ship LAST, in the final week before launch (Month 4 of pre-launch roa
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-29T22:30Z — iteration 100 (stream J — J-08/09/10 — payout.failed, radar.early_fraud_warning, customer.subscription.paused handlers)
+
+- Phase 0: resumed batch-mode fire (iter 2 of 5). Concurrent iter 99 had just landed J-06.
+- Phase 1: synced main (iter 98 queue update on main). J-08/09/10 next pending.
+- Phase 2: CI on #288 in progress; no failure to rescue.
+- Phase 3: J branch checked out; merge conflict in index.ts resolved (kept remote J-06 as payment-intent-failed.ts; removed duplicate payment-intent-payment-failed.ts).
+- Phase 4: confirmed J-08/09/10 handler files absent.
+- Phase 5: wrote 3 handler files (payout-failed 60 LOC, radar-early-fraud-warning 75 LOC, customer-subscription-paused 55 LOC). Wrote 4 test files (22+6+9+7=44 tests including J-06 test from remote). All 110 handler tests pass. Registered all 4 new event types in index.ts.
+- Phase 6: committed `e99aedc`; merged remote conflict (`a79d0a2`); pushed.
+- Phase 7: J-08/09/10 rows → done; J in-flight row updated; this log entry on main.
+- STATUS: PROGRESS · stream=J · item=J-08/09/10 · pr=#288 · commit=`e99aedc`→`a79d0a2` · diff=+880/-1 across 9 files · next=L-06 (stream L)
 
 ### 2026-04-29T22:16Z — iteration 100 (stream D — D-11 batch 21b — user-review/moderate + user-review/verify + questions/[id]/answer + review-token + send-switching-report)
 
