@@ -5,6 +5,9 @@ import { createClient } from "@/lib/supabase/server";
 import { breadcrumbJsonLd, absoluteUrl, SITE_URL, SITE_NAME, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import SectionHeading from "@/components/SectionHeading";
+import { logger } from "@/lib/logger";
+
+const log = logger("invest-vertical-slug");
 
 export const revalidate = 3600;
 
@@ -47,7 +50,7 @@ export async function generateMetadata({
     .maybeSingle();
 
   if (error) {
-    console.error("[invest/[slug]] metadata query failed", error.message);
+    log.error("metadata query failed", { err: error.message, slug });
     return { title: "Investment Vertical" };
   }
 

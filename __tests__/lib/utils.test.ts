@@ -4,6 +4,7 @@ import {
   slugify,
   cn,
   getMostRecentFeeCheck,
+  formatDate,
 } from "@/lib/utils";
 
 describe("formatCurrency", () => {
@@ -123,5 +124,67 @@ describe("getMostRecentFeeCheck", () => {
         { fee_last_checked: "2026-04-05T00:00:00Z" },
       ]),
     ).toBe("2026-04-05T00:00:00Z");
+  });
+});
+
+describe("formatDate", () => {
+  // Use a UTC midday timestamp so the local-time conversion lands on the
+  // same calendar day (4 Jan 2026) in the runner's timezone, regardless
+  // of where CI actually runs.
+  const ISO = "2026-01-04T12:00:00Z";
+
+  it("defaults to short style (en-AU, day numeric, month short, year numeric)", () => {
+    // en-AU short month is "Jan." in some Intl ICU builds; assert the load-bearing parts.
+    const out = formatDate(ISO);
+    expect(out).toMatch(/4/);
+    expect(out).toMatch(/Jan/);
+    expect(out).toMatch(/2026/);
+  });
+
+  it("short-year style emits a 2-digit year", () => {
+    const out = formatDate(ISO, { style: "short-year" });
+    expect(out).toMatch(/4/);
+    expect(out).toMatch(/Jan/);
+    expect(out).toMatch(/26/);
+    expect(out).not.toMatch(/2026/);
+  });
+
+  it("long style emits the full month name", () => {
+    const out = formatDate(ISO, { style: "long" });
+    expect(out).toMatch(/4/);
+    expect(out).toMatch(/January/);
+    expect(out).toMatch(/2026/);
+  });
+
+  it("short-time style includes hour and minute", () => {
+    const out = formatDate(ISO, { style: "short-time" });
+    expect(out).toMatch(/Jan/);
+    expect(out).toMatch(/2026/);
+    // Hour/minute presence — exact value depends on TZ but the colon proves time was rendered
+    expect(out).toMatch(/:\d{2}/);
+  });
+
+  it("numeric style emits zero-padded DD/MM/YYYY (load-bearing for invoice PDFs)", () => {
+    // Use a date with a zero-pad-needed day so we lock the format precisely.
+    expect(formatDate("2026-01-04T12:00:00Z", { style: "numeric" })).toBe(
+      "04/01/2026",
+    );
+    expect(formatDate("2026-12-31T12:00:00Z", { style: "numeric" })).toBe(
+      "31/12/2026",
+    );
+  });
+
+  it("returns empty string by default when input is null or undefined", () => {
+    expect(formatDate(null)).toBe("");
+    expect(formatDate(undefined)).toBe("");
+  });
+
+  it("returns the supplied fallback when input is null or undefined", () => {
+    expect(formatDate(null, { fallback: "—" })).toBe("—");
+    expect(formatDate(undefined, { fallback: "n/a" })).toBe("n/a");
+  });
+
+  it("ignores fallback when input is a real date string", () => {
+    expect(formatDate(ISO, { fallback: "—" })).not.toBe("—");
   });
 });

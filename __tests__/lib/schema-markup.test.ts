@@ -7,6 +7,7 @@ import {
   itemListJsonLd,
   listingProductJsonLd,
   calculatorJsonLd,
+  versusComparisonJsonLd,
 } from "@/lib/schema-markup";
 
 describe("articleJsonLd", () => {
@@ -188,5 +189,101 @@ describe("calculatorJsonLd", () => {
     expect(out["@type"]).toBe("WebApplication");
     expect(out.applicationCategory).toBe("FinanceApplication");
     expect((out.offers as { price: string }).price).toBe("0");
+  });
+});
+
+type Bag = Record<string, unknown>;
+
+describe("versusComparisonJsonLd", () => {
+  const BASE = {
+    slugs: "stake-vs-commsec",
+    title: "Stake vs CommSec — Side-by-Side Comparison (2026)",
+    description: "Compare Stake and CommSec head to head.",
+    brokers: [
+      { slug: "stake", name: "Stake", rating: 4.5, reviewCount: 120 },
+      { slug: "commsec", name: "CommSec", rating: 4.2, reviewCount: 300 },
+    ],
+  };
+
+  it("article has @type Article and correct @context", () => {
+    const { article } = versusComparisonJsonLd(BASE);
+    expect(article["@context"]).toBe("https://schema.org");
+    expect(article["@type"]).toBe("Article");
+  });
+
+  it("article headline matches the provided title", () => {
+    const { article } = versusComparisonJsonLd(BASE);
+    expect(article.headline).toBe(BASE.title);
+  });
+
+  it("article url points to /versus/<slugs>", () => {
+    const { article } = versusComparisonJsonLd(BASE);
+    expect(String(article.url)).toContain("/versus/stake-vs-commsec");
+  });
+
+  it("article image uses the /api/og/versus endpoint with encoded slugs", () => {
+    const { article } = versusComparisonJsonLd(BASE);
+    expect(String(article.image)).toContain("/api/og/versus");
+    expect(String(article.image)).toContain("stake-vs-commsec");
+  });
+
+  it("article author and publisher are the site organisation", () => {
+    const { article } = versusComparisonJsonLd(BASE);
+    expect((article.author as Bag)["@type"]).toBe("Organization");
+    expect((article.publisher as Bag)["@type"]).toBe("Organization");
+  });
+
+  it("returns one FinancialProduct per broker", () => {
+    const { financialProducts } = versusComparisonJsonLd(BASE);
+    expect(financialProducts).toHaveLength(2);
+  });
+
+  it("each FinancialProduct has @type FinancialProduct", () => {
+    const { financialProducts } = versusComparisonJsonLd(BASE);
+    for (const fp of financialProducts) {
+      expect(fp["@type"]).toBe("FinancialProduct");
+    }
+  });
+
+  it("FinancialProduct names match input broker names", () => {
+    const { financialProducts } = versusComparisonJsonLd(BASE);
+    expect(financialProducts[0]?.name).toBe("Stake");
+    expect(financialProducts[1]?.name).toBe("CommSec");
+  });
+
+  it("FinancialProduct includes aggregateRating when rating + reviewCount are present", () => {
+    const { financialProducts } = versusComparisonJsonLd(BASE);
+    const fp = financialProducts[0] as Bag;
+    const ag = fp.aggregateRating as Bag;
+    expect(ag).toBeDefined();
+    expect(ag["@type"]).toBe("AggregateRating");
+    expect(ag.ratingValue).toBe(4.5);
+    expect(ag.reviewCount).toBe(120);
+  });
+
+  it("FinancialProduct omits aggregateRating when rating is missing", () => {
+    const { financialProducts } = versusComparisonJsonLd({
+      ...BASE,
+      brokers: [{ slug: "foo", name: "Foo", rating: null, reviewCount: null }],
+    });
+    expect((financialProducts[0] as Bag).aggregateRating).toBeUndefined();
+  });
+
+  it("FinancialProduct url points to /broker/<slug>", () => {
+    const { financialProducts } = versusComparisonJsonLd(BASE);
+    expect(String((financialProducts[0] as Bag).url)).toContain("/broker/stake");
+    expect(String((financialProducts[1] as Bag).url)).toContain("/broker/commsec");
+  });
+
+  it("handles three-broker comparison", () => {
+    const { financialProducts } = versusComparisonJsonLd({
+      ...BASE,
+      slugs: "stake-vs-commsec-vs-moomoo",
+      brokers: [
+        ...BASE.brokers,
+        { slug: "moomoo", name: "moomoo", rating: 4.3, reviewCount: 80 },
+      ],
+    });
+    expect(financialProducts).toHaveLength(3);
   });
 });

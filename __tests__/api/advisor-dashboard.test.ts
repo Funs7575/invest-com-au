@@ -1,0 +1,352 @@
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { NextRequest } from "next/server";
+import { createChainableBuilder } from "@/__tests__/helpers";
+
+// ── Mocks ──────────────────────────────────────────────────────────────────────
+
+const mockFrom = vi.fn();
+
+vi.mock("@/lib/supabase/server", () => ({
+  createClient: vi.fn(async () => ({ from: mockFrom })),
+}));
+
+vi.mock("@/lib/logger", () => ({
+  logger: vi.fn(() => ({ error: vi.fn(), info: vi.fn(), warn: vi.fn() })),
+}));
+
+import { GET } from "@/app/api/advisor-dashboard/route";
+
+// ── Helpers ────────────────────────────────────────────────────────────────────
+
+const ADVISOR_ID = 42;
+const SESSION_TOKEN = "sess-token-abc";
+
+function makeGet(sessionToken?: string): NextRequest {
+  const headers: Record<string, string> = {};
+  if (sessionToken) {
+    headers.Cookie = `advisor_session=${sessionToken}`;
+  }
+  return new NextRequest("http://localhost/api/advisor-dashboard", { headers });
+}
+
+function makeAdvisor(overrides = {}) {
+  return {
+    id: ADVISOR_ID,
+    name: "Jane Smith",
+    slug: "jane-smith",
+    firm_name: "Smith Financial",
+    email: "jane@smithfin.com",
+    photo_url: "https://example.com/photo.jpg",
+    type: "financial_advisor",
+    location_display: "Sydney, NSW",
+    rating: 4.8,
+    review_count: 12,
+    verified: true,
+    bio: "Experienced planner",
+    specialties: ["SMSF", "retirement"],
+    fee_structure: "fixed",
+    fee_description: "$300/hr",
+    website: "https://smith.com",
+    phone: "0400 000 000",
+    booking_link: "https://calendly.com/jane",
+    booking_intro: "Book a free consult",
+    credit_balance_cents: 5000,
+    lead_price_cents: 5000,
+    free_leads_used: 2,
+    ...overrides,
+  };
+}
+
+function makeLead(created_at: string, status = "new", quality_score = 80) {
+  return {
+    id: Math.random(),
+    user_name: "Test User",
+    user_email: "user@test.com",
+    user_phone: "0400 000 001",
+    message: "I need help",
+    source_page: "/advisor",
+    status,
+    quality_score,
+    qualification_data: null,
+    lead_tier: "warm",
+    advisor_notes: null,
+    contacted_at: null,
+    converted_at: null,
+    created_at,
+  };
+}
+
+function makeReview(rating: number) {
+  return {
+    id: Math.random(),
+    reviewer_name: "Happy Client",
+    rating,
+    title: "Great advisor",
+    body: "Very helpful",
+    created_at: new Date().toISOString(),
+    communication_rating: 5,
+    expertise_rating: 5,
+    value_for_money_rating: 4,
+  };
+}
+
+// ── Tests ──────────────────────────────────────────────────────────────────────
+
+describe("GET /api/advisor-dashboard", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("returns 401 when no advisor_session cookie", async () => {
+    // Session lookup returns null (no cookie → no session)
+    mockFrom.mockImplementation(() => createChainableBuilder("advisor_sessions"));
+
+    const res = await GET(makeGet());
+    expect(res.status).toBe(401);
+    const data = await res.json();
+    expect(data.error).toMatch(/not authenticated/i);
+  });
+
+  it("returns 401 when session token is invalid", async () => {
+    mockFrom.mockImplementation((table: string) => {
+      if (table === "advisor_sessions") {
+        return createChainableBuilder("advisor_sessions");
+      }
+      return createChainableBuilder(table);
+    });
+
+    const res = await GET(makeGet(SESSION_TOKEN));
+    expect(res.status).toBe(401);
+  });
+
+  it("returns 401 when session is expired", async () => {
+    mockFrom.mockImplementation((table: string) => {
+      if (table === "advisor_sessions") {
+        const builder = createChainableBuilder("advisor_sessions");
+        builder.single = vi.fn(() =>
+          Promise.resolve({
+            data: {
+              professional_id: ADVISOR_ID,
+              expires_at: new Date(Date.now() - 86400000).toISOString(), // yesterday
+            },
+            error: null,
+          }),
+        );
+        return builder;
+      }
+      return createChainableBuilder(table);
+    });
+
+    const res = await GET(makeGet(SESSION_TOKEN));
+    expect(res.status).toBe(401);
+  });
+
+  it("returns dashboard data for authenticated advisor", async () => {
+    const advisor = makeAdvisor();
+    const now = new Date().toISOString();
+    const recentLead = makeLead(now, "new", 75);
+    const review = makeReview(5);
+
+    mockFrom.mockImplementation((table: string) => {
+      if (table === "advisor_sessions") {
+        const builder = createChainableBuilder("advisor_sessions");
+        builder.single = vi.fn(() =>
+          Promise.resolve({
+            data: {
+              professional_id: ADVISOR_ID,
+              expires_at: new Date(Date.now() + 86400000).toISOString(),
+            },
+            error: null,
+          }),
+        );
+        return builder;
+      }
+      if (table === "professionals") {
+        const builder = createChainableBuilder("professionals");
+        builder.single = vi.fn(() => Promise.resolve({ data: advisor, error: null }));
+        return builder;
+      }
+      if (table === "professional_leads") {
+        const builder = createChainableBuilder("professional_leads");
+        builder.then = vi.fn((cb: (v: { data: unknown[]; error: null }) => void) => {
+          cb({ data: [recentLead], error: null });
+          return Promise.resolve();
+        });
+        return builder;
+      }
+      if (table === "professional_reviews") {
+        const builder = createChainableBuilder("professional_reviews");
+        builder.then = vi.fn((cb: (v: { data: unknown[]; error: null }) => void) => {
+          cb({ data: [review], error: null });
+          return Promise.resolve();
+        });
+        return builder;
+      }
+      if (table === "lead_pricing") {
+        const builder = createChainableBuilder("lead_pricing");
+        builder.single = vi.fn(() =>
+          Promise.resolve({
+            data: { price_cents: 4900, free_trial_leads: 3, featured_monthly_cents: 49900 },
+            error: null,
+          }),
+        );
+        return builder;
+      }
+      // advisor_billing, advisor_profile_views, advisor_bookings
+      const builder = createChainableBuilder(table);
+      builder.then = vi.fn((cb: (v: { data: unknown[]; error: null }) => void) => {
+        cb({ data: [], error: null });
+        return Promise.resolve();
+      });
+      return builder;
+    });
+
+    const res = await GET(makeGet(SESSION_TOKEN));
+    expect(res.status).toBe(200);
+    const data = await res.json();
+    expect(data.advisor.name).toBe("Jane Smith");
+    expect(data.stats.totalLeads).toBe(1);
+    expect(data.stats.hotLeadsCount).toBe(1); // quality_score 75 >= 70
+    expect(data.stats.reviewCount).toBe(1);
+    expect(data.stats.avgRating).toBe("5.0");
+  });
+
+  it("computes profile completeness score", async () => {
+    // Advisor missing photo and bio → 40 pts deducted
+    const advisor = makeAdvisor({ photo_url: null, bio: "" });
+
+    mockFrom.mockImplementation((table: string) => {
+      if (table === "advisor_sessions") {
+        const builder = createChainableBuilder("advisor_sessions");
+        builder.single = vi.fn(() =>
+          Promise.resolve({
+            data: {
+              professional_id: ADVISOR_ID,
+              expires_at: new Date(Date.now() + 86400000).toISOString(),
+            },
+            error: null,
+          }),
+        );
+        return builder;
+      }
+      if (table === "professionals") {
+        const builder = createChainableBuilder("professionals");
+        builder.single = vi.fn(() => Promise.resolve({ data: advisor, error: null }));
+        return builder;
+      }
+      if (table === "lead_pricing") {
+        const builder = createChainableBuilder("lead_pricing");
+        builder.single = vi.fn(() => Promise.resolve({ data: null, error: null }));
+        return builder;
+      }
+      const builder = createChainableBuilder(table);
+      builder.then = vi.fn((cb: (v: { data: unknown[]; error: null }) => void) => {
+        cb({ data: [], error: null });
+        return Promise.resolve();
+      });
+      return builder;
+    });
+
+    const res = await GET(makeGet(SESSION_TOKEN));
+    expect(res.status).toBe(200);
+    const data = await res.json();
+    // photo_url (20) + bio (20) = 40 deducted → score = 60
+    expect(data.profileCompleteness.score).toBe(60);
+    expect(data.profileCompleteness.missingFields).toContain("Profile photo");
+    expect(data.profileCompleteness.missingFields).toContain("Bio / About");
+  });
+
+  it("returns avgRating null when no reviews", async () => {
+    mockFrom.mockImplementation((table: string) => {
+      if (table === "advisor_sessions") {
+        const builder = createChainableBuilder("advisor_sessions");
+        builder.single = vi.fn(() =>
+          Promise.resolve({
+            data: {
+              professional_id: ADVISOR_ID,
+              expires_at: new Date(Date.now() + 86400000).toISOString(),
+            },
+            error: null,
+          }),
+        );
+        return builder;
+      }
+      if (table === "professionals") {
+        const builder = createChainableBuilder("professionals");
+        builder.single = vi.fn(() => Promise.resolve({ data: makeAdvisor(), error: null }));
+        return builder;
+      }
+      if (table === "lead_pricing") {
+        const builder = createChainableBuilder("lead_pricing");
+        builder.single = vi.fn(() => Promise.resolve({ data: null, error: null }));
+        return builder;
+      }
+      const builder = createChainableBuilder(table);
+      builder.then = vi.fn((cb: (v: { data: unknown[]; error: null }) => void) => {
+        cb({ data: [], error: null });
+        return Promise.resolve();
+      });
+      return builder;
+    });
+
+    const res = await GET(makeGet(SESSION_TOKEN));
+    const data = await res.json();
+    expect(data.stats.avgRating).toBeNull();
+  });
+
+  it("classifies lead quality buckets correctly", async () => {
+    const now = new Date().toISOString();
+    const leads = [
+      makeLead(now, "new", 80),  // hot (>=70)
+      makeLead(now, "new", 55),  // warm (40-69)
+      makeLead(now, "new", 20),  // cold (<40)
+    ];
+
+    mockFrom.mockImplementation((table: string) => {
+      if (table === "advisor_sessions") {
+        const builder = createChainableBuilder("advisor_sessions");
+        builder.single = vi.fn(() =>
+          Promise.resolve({
+            data: {
+              professional_id: ADVISOR_ID,
+              expires_at: new Date(Date.now() + 86400000).toISOString(),
+            },
+            error: null,
+          }),
+        );
+        return builder;
+      }
+      if (table === "professionals") {
+        const builder = createChainableBuilder("professionals");
+        builder.single = vi.fn(() => Promise.resolve({ data: makeAdvisor(), error: null }));
+        return builder;
+      }
+      if (table === "professional_leads") {
+        const builder = createChainableBuilder("professional_leads");
+        builder.then = vi.fn((cb: (v: { data: unknown[]; error: null }) => void) => {
+          cb({ data: leads, error: null });
+          return Promise.resolve();
+        });
+        return builder;
+      }
+      if (table === "lead_pricing") {
+        const builder = createChainableBuilder("lead_pricing");
+        builder.single = vi.fn(() => Promise.resolve({ data: null, error: null }));
+        return builder;
+      }
+      const builder = createChainableBuilder(table);
+      builder.then = vi.fn((cb: (v: { data: unknown[]; error: null }) => void) => {
+        cb({ data: [], error: null });
+        return Promise.resolve();
+      });
+      return builder;
+    });
+
+    const res = await GET(makeGet(SESSION_TOKEN));
+    const data = await res.json();
+    expect(data.stats.hotLeadsCount).toBe(1);
+    expect(data.stats.warmLeadsCount).toBe(1);
+    expect(data.stats.coldLeadsCount).toBe(1);
+    expect(data.weeklyEnquiries).toHaveLength(8); // 8-week window always returned
+  });
+});

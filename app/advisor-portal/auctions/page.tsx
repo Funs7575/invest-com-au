@@ -4,6 +4,11 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 
+const BUDGET_LABELS: Record<string, string> = {
+  under_500: "Under $500", "500_2k": "$500–$2k", "2k_5k": "$2k–$5k",
+  "5k_10k": "$5k–$10k", "10k_plus": "$10k+", not_sure: "Budget TBD",
+};
+
 type Auction = {
   id: number;
   lead_type: string;
@@ -34,6 +39,23 @@ type WonAuction = {
   };
 };
 
+type PublicBid = {
+  id: number;
+  bid_amount: number;
+  status: string;
+  created_at: string;
+  advisor_auctions: {
+    id: number;
+    slug: string;
+    job_title: string;
+    budget_band: string;
+    location: string | null;
+    status: string;
+    ends_at: string;
+    winning_bid_id: number | null;
+  } | null;
+};
+
 function formatTimeRemaining(endsAt: string): string {
   const diff = new Date(endsAt).getTime() - Date.now();
   if (diff <= 0) return "Expired";
@@ -52,11 +74,13 @@ export default function AdvisorAuctionsPage() {
   const [advisorId, setAdvisorId] = useState<number | null>(null);
   const [auctions, setAuctions] = useState<Auction[]>([]);
   const [wonAuctions, setWonAuctions] = useState<WonAuction[]>([]);
+  const [publicBids, setPublicBids] = useState<PublicBid[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [bidInputs, setBidInputs] = useState<Record<number, string>>({});
   const [bidLoading, setBidLoading] = useState<Record<number, boolean>>({});
   const [bidMessages, setBidMessages] = useState<Record<number, { type: "success" | "error"; text: string }>>({});
+  const [retractingBid, setRetractingBid] = useState<number | null>(null);
 
   const fetchAdvisor = useCallback(async () => {
     try {
@@ -73,20 +97,49 @@ export default function AdvisorAuctionsPage() {
     if (!advisorId) return;
     setLoading(true);
     try {
-      const res = await fetch(`/api/advisor-auction?advisor_id=${advisorId}`);
-      if (!res.ok) {
+      const [auctionRes, publicBidsRes] = await Promise.all([
+        fetch(`/api/advisor-auction?advisor_id=${advisorId}`),
+        fetch("/api/advisor-auction/public-bids"),
+      ]);
+
+      if (!auctionRes.ok) {
         setError("Failed to load auctions.");
         return;
       }
-      const data = await res.json();
+      const data = await auctionRes.json();
       setAuctions(data.active || []);
       setWonAuctions(data.won || []);
+
+      if (publicBidsRes.ok) {
+        const pubData = await publicBidsRes.json();
+        setPublicBids(pubData.bids || []);
+      }
     } catch {
       setError("Failed to load auctions.");
     } finally {
       setLoading(false);
     }
   }, [advisorId]);
+
+  async function handleRetractBid(bidId: number) {
+    const reason = window.prompt(
+      "Why are you retracting? (optional)\n\nschedule_conflict / already_booked / outside_expertise / other",
+      "",
+    );
+    setRetractingBid(bidId);
+    try {
+      const params = new URLSearchParams({ bid_id: String(bidId) });
+      if (reason && reason.trim()) params.set("reason", reason.trim());
+      const res = await fetch(`/api/advisor-auction/public-bids?${params.toString()}`, { method: "DELETE" });
+      if (res.ok) {
+        setPublicBids((prev) =>
+          prev.map((b) => (b.id === bidId ? { ...b, status: "retracted" } : b))
+        );
+      }
+    } finally {
+      setRetractingBid(null);
+    }
+  }
 
   useEffect(() => {
     fetchAdvisor();
@@ -218,6 +271,25 @@ export default function AdvisorAuctionsPage() {
       </div>
 
       <div className="container-custom max-w-4xl py-8">
+        {/* Public consumer-job marketplace cross-link */}
+        <div className="bg-gradient-to-br from-amber-50 to-amber-100/60 border border-amber-200 rounded-xl p-4 mb-6 flex items-start sm:items-center gap-4 flex-col sm:flex-row">
+          <div className="w-10 h-10 bg-amber-500 rounded-lg flex items-center justify-center shrink-0">
+            <Icon name="zap" size={18} className="text-slate-900" />
+          </div>
+          <div className="flex-1">
+            <p className="font-bold text-slate-900 text-sm">Browse public quote requests</p>
+            <p className="text-xs text-slate-700 mt-0.5">
+              Consumers post jobs publicly on Invest.com.au — quote on them directly. Lower competition than internal lead auctions.
+            </p>
+          </div>
+          <Link
+            href="/quotes"
+            className="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-4 py-2 rounded-lg whitespace-nowrap"
+          >
+            Open marketplace →
+          </Link>
+        </div>
+
         {loading ? (
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
@@ -461,6 +533,130 @@ export default function AdvisorAuctionsPage() {
                       </div>
                     </div>
                   ))}
+                </div>
+              )}
+            </section>
+
+            {/* Public Quote Requests — my bids */}
+            <section className="mt-10">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h2 className="text-lg font-extrabold text-slate-900">
+                    My Public Quote Bids
+                    {publicBids.length > 0 && (
+                      <span className="ml-2 text-sm font-medium text-slate-500">
+                        ({publicBids.length})
+                      </span>
+                    )}
+                  </h2>
+                  <p className="text-sm text-slate-500 mt-0.5">
+                    Quotes you&apos;ve submitted on the public marketplace.
+                  </p>
+                </div>
+                <Link
+                  href="/quotes"
+                  className="bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold text-xs px-4 py-2 rounded-lg"
+                >
+                  Browse open jobs →
+                </Link>
+              </div>
+
+              {publicBids.length === 0 ? (
+                <div className="bg-white rounded-xl border border-slate-200 p-8 text-center">
+                  <p className="text-sm text-slate-500">
+                    You haven&apos;t bid on any public quote requests yet.{" "}
+                    <Link href="/quotes" className="text-amber-600 font-medium underline">
+                      Browse the marketplace
+                    </Link>{" "}
+                    to find matching jobs.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {publicBids.map((bid) => {
+                    const job = bid.advisor_auctions;
+                    const isWon = bid.status === "won";
+                    const isLost = bid.status === "lost";
+                    const isRetracted = bid.status === "retracted";
+                    const isPending = bid.status === "active";
+                    const jobExpired = job ? new Date(job.ends_at) < new Date() : false;
+
+                    return (
+                      <div
+                        key={bid.id}
+                        className={`bg-white rounded-xl border p-5 ${
+                          isWon ? "border-emerald-200" : isLost || isRetracted ? "border-slate-100 opacity-70" : "border-slate-200"
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-3 flex-wrap">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap mb-1">
+                              {job && (
+                                <Link
+                                  href={`/quotes/${job.slug}`}
+                                  className="font-bold text-slate-900 hover:text-amber-700 transition-colors"
+                                >
+                                  {job.job_title}
+                                </Link>
+                              )}
+                              <span
+                                className={`text-[0.65rem] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest ${
+                                  isWon
+                                    ? "bg-emerald-100 text-emerald-800"
+                                    : isLost
+                                    ? "bg-slate-100 text-slate-500"
+                                    : isRetracted
+                                    ? "bg-slate-100 text-slate-400"
+                                    : jobExpired
+                                    ? "bg-orange-100 text-orange-700"
+                                    : "bg-amber-100 text-amber-800"
+                                }`}
+                              >
+                                {isWon ? "Won" : isLost ? "Not selected" : isRetracted ? "Retracted" : jobExpired ? "Expired" : "Pending"}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-3 text-xs text-slate-500 flex-wrap">
+                              {job?.location && <span><Icon name="map-pin" size={12} className="inline mr-1" />{job.location}</span>}
+                              {job?.budget_band && <span>{BUDGET_LABELS[job.budget_band] || job.budget_band}</span>}
+                              {!jobExpired && job && <span><Icon name="clock" size={12} className="inline mr-1" />Closes {new Date(job.ends_at).toLocaleDateString("en-AU", { day: "numeric", month: "short" })}</span>}
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-xs text-slate-500 mb-0.5">Your bid</p>
+                            <p className={`text-lg font-extrabold ${isWon ? "text-emerald-600" : "text-slate-900"}`}>
+                              ${(bid.bid_amount / 100).toFixed(0)}
+                            </p>
+                          </div>
+                        </div>
+
+                        {isWon && (
+                          <div className="mt-3 pt-3 border-t border-emerald-100 text-sm text-emerald-800">
+                            Your bid was accepted. Check your email for the client&apos;s contact details.
+                          </div>
+                        )}
+
+                        {isPending && !jobExpired && (
+                          <div className="mt-3 pt-3 border-t border-slate-100 flex items-center gap-3">
+                            <Link
+                              href={`/quotes/${job?.slug}`}
+                              className="text-xs text-slate-600 hover:text-slate-900 flex items-center gap-1"
+                            >
+                              <Icon name="external-link" size={12} />
+                              View job
+                            </Link>
+                            <button
+                              onClick={() => handleRetractBid(bid.id)}
+                              disabled={retractingBid === bid.id}
+                              className="text-xs text-red-400 hover:text-red-600 flex items-center gap-1 disabled:opacity-50 transition-colors"
+                            >
+                              <Icon name="x-circle" size={12} />
+                              {retractingBid === bid.id ? "Retracting…" : "Retract bid"}
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </section>

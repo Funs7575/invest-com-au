@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
+import { logger } from "@/lib/logger";
+
+const log = logger("service-worker-registrar");
 
 /**
  * Registers the service worker. Mount once in the root layout.
@@ -26,7 +29,7 @@ export default function ServiceWorkerRegistrar() {
         .register("/sw.js", { scope: "/" })
         .catch((err) => {
           // Non-fatal — worse case we serve the site without offline support
-          console.warn("service worker registration failed", err);
+          log.warn("service worker registration failed", { err: err instanceof Error ? err.message : String(err) });
         });
     };
     if (document.readyState === "complete") register();

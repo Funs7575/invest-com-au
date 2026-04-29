@@ -27,7 +27,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | A | _not started_ | — | — | — |
 | B | `claude/audit-remediation/b-07-rls-migration-lint` | #286 (draft) | pending — pushed 2026-04-28T22:35Z | PR #220 merged (B-01..B-06 done/blocked/FP). B-07 done (`0097159`) — CI gate: new CREATE TABLE migrations must include ENABLE ROW LEVEL SECURITY. |
 | C | _not started_ | — | — | — |
-| D | `claude/audit-remediation/d-route-tests` | #285 | pending — pushed 2026-04-29T23:35Z | D-01 done (commit `7269510`) · D-02 done (commit `ebf2250`) · D-03 done (commit `0177aa1`) · D-04 done (commit `bea95b1`) · D-05 done (commit `e49375d`) · D-06 done (commit `c0cd3ee`) · D-07 done (commit `33230fb`) · D-08 done (commit `311df3f`) · D-09 done (commit `8e2d35d`) · D-10 done (commit `4e702c1`) · D-11 batch 1 done (commit `90c7c5b`) · D-11 batch 2 done (commit `387bcb4`) · D-11 batch 3 done (commit `db0df8d`) · D-11 batch 4 done (commit `c49e3aa`) · CI-rescue merged main (commit `9282178`) · D-11 batch 5 done (commit `6c7637f`) · D-11 batch 6 done (commit `f7e1a1c`) · D-11 batch 7 done (commit `f183cba`) · D-11 batch 8 done (commit `f336fc7`) · D-11 batch 9 done (commit `2c78f24`) · D-11 batch 10 done (commit `73c8aa1`) · D-11 batch 11 done (commit `3fab2c1`) · D-11 batch 12 done (commit `856026c`) · D-11 batch 12c done (commit `cc77b65`) · D-11 batch 13 done (commit `9dae465`) · D-11 batch 14 done (commit `c64ca614`) · D-11 batch 15 done (commit `01b685f`) · D-11 batch 16 done (commit `6536d77`) · D-11 batch 17 done (commit `bbca74d`) · D-11 batch 17b done (commit `251f745`) · **Also: PR #287 (`d-11-batch-15`) parallel coverage — batch 15: quiz/data+csp-report+complaints/intake+advisor-dashboard+course/purchase (`5c4df09`); batch 16: advisor-articles+community/posts/[id]+advisor-search/postcodes+v1/api-keys+marketplace/webhook (`ebdb3f4`) — 110 complementary tests, merges independently** · D-11 batch 18 done (commit `2694124`) · D-11 batch 18b done (commit `6a89600`→`701cf83`) · D-11 batch 19 done (commit `b93f1647`) · D-11 batch 19b done (commit `49e0ad5`) · D-11 batch 20 done (commit `2f72b7a`) · D-11 batch 21 done (commit `eec7429`) · D-11 batch 21b done (commit `d460cb5`→`32e3069`) · D-11 batch 22 done (commit `951a295`) · D-11 batch 22b done (commit `4b5e73b`) · D-11 batch 23 done (commit `575143b`) · D-11 batch 23b done (commit `a6574f1c`) |
+| D | `claude/audit-remediation/d-route-tests` | #285 | pending — pushed 2026-04-29T23:25Z | D-01 done (commit `7269510`) · D-02 done (commit `ebf2250`) · D-03 done (commit `0177aa1`) · D-04 done (commit `bea95b1`) · D-05 done (commit `e49375d`) · D-06 done (commit `c0cd3ee`) · D-07 done (commit `33230fb`) · D-08 done (commit `311df3f`) · D-09 done (commit `8e2d35d`) · D-10 done (commit `4e702c1`) · D-11 batch 1 done (commit `90c7c5b`) · D-11 batch 2 done (commit `387bcb4`) · D-11 batch 3 done (commit `db0df8d`) · D-11 batch 4 done (commit `c49e3aa`) · CI-rescue merged main (commit `9282178`) · D-11 batch 5 done (commit `6c7637f`) · D-11 batch 6 done (commit `f7e1a1c`) · D-11 batch 7 done (commit `f183cba`) · D-11 batch 8 done (commit `f336fc7`) · D-11 batch 9 done (commit `2c78f24`) · D-11 batch 10 done (commit `73c8aa1`) · D-11 batch 11 done (commit `3fab2c1`) · D-11 batch 12 done (commit `856026c`) · D-11 batch 12c done (commit `cc77b65`) · D-11 batch 13 done (commit `9dae465`) · D-11 batch 14 done (commit `c64ca614`) · D-11 batch 15 done (commit `01b685f`) · D-11 batch 16 done (commit `6536d77`) · D-11 batch 17 done (commit `bbca74d`) · D-11 batch 17b done (commit `251f745`) · **Also: PR #287 (`d-11-batch-15`) parallel coverage — batch 15: quiz/data+csp-report+complaints/intake+advisor-dashboard+course/purchase (`5c4df09`); batch 16: advisor-articles+community/posts/[id]+advisor-search/postcodes+v1/api-keys+marketplace/webhook (`ebdb3f4`) — 110 complementary tests, merges independently** · D-11 batch 18 done (commit `2694124`) · D-11 batch 18b done (commit `6a89600`→`701cf83`) · D-11 batch 19 done (commit `b93f1647`) · D-11 batch 19b done (commit `49e0ad5`) · D-11 batch 20 done (commit `2f72b7a`) · D-11 batch 21 done (commit `eec7429`) · D-11 batch 21b done (commit `d460cb5`→`32e3069`) · D-11 batch 22 done (commit `951a295`) · D-11 batch 22b done (commit `4b5e73b`) · D-11 batch 23 done (commit `575143b`) · D-11 batch 23b done (commit `a6574f1c`) · D-11 batch 24b done (commit `86755bb`) — sync-shortlist/report-download/review-incentive/tax-optimizer/broker-portal/deals (53 tests, PR #298) · D-11 batch 25 done (commit `19c5c76`) — advisor-portal/marketplace-analytics+settings/advisor-auction/public-bids/broker-portal/invoices-pdf/reviews/verify-client (57 tests, PR #298) · **Also: PR #297 (`d-11-batch-24`) parallel coverage — batch 24a supplementary: webhooks/resend+broker-signup+property/enquiry+listings+push/send (63 tests, CI-rescue `3055b99`) — merges independently** · D-11 batch 26 done (commit `e9e6fd2`) — admin/cohort-refresh+verify+fi-revalidate+article-comments+revalidate (36 tests, PR #285) · D-11 batch 27 done (commit `84b3517`) — admin/feature-flags+kill-switch+review-moderation+financial-periods+mfa-enroll (57 tests, PR #285) · D-11 batch 28 done (commit `7b8081f`) — admin/tmds+automation-dry-run+run-migration+automation-trigger+notify-price-change (49 tests, PR #285) · D-11 batch 29 done (commit `224e06c`) — cron observability: dated-stats-check/observability-retention/content-freshness/cron-freshness/slo-monitor (42 tests, 5 files, PR #285) · D-11 batch 28-supp done (commit `7407851`) — admin/competitors+fee-queue (26 tests, 2 files, PR #285) · D-11 batch 30 done (commit `b9be156`) — cron/web-vitals-rollup+attribution-rollup+broker-snapshot+auto-resolve-disputes+tmd-audit (28 tests, 5 files, PR #285) · D-11 admin-batch-29 done (commit `03ee16d`) — admin/advisor-kyc+article-preview-tokens+automation-config (parallel fire, PR #285) · D-11 batch 30-admin done (commit `26237f9`) — admin/regulatory-impacts+commodity-hubs (26 tests, 2 files, PR #285) · D-11 batch 31 done (commit `ad98fe5`) — cron/refresh-revenue-view+complaints-sla+review-sentiment-refresh+property-suburb-refresh+afsl-expiry-monitor (36 tests, 5 files, PR #285) · D-11 admin-batch-29b done (commit `5737c51`) — admin/advisor-kyc+article-preview-tokens+competitors+content-batch-generate+sponsored-placements (56 tests, 5 files, parallel fire, PR #285) · D-11 batch 32 done (commit `20c4493`) — cron/email-bounce-sweep+annual-review-reminder+lead-quality-weights+verify-review-clients+job-queue-worker (31 tests, 5 files, PR #285) · D-11 batch 33 done (commit `cd736c8e`) — cron/dispatch-group+cron-health-alert+weekly-newsletter+warehouse-rollup+weekly-rate-update (34 tests, 5 files, PR #285) · D-11 batch 34 done (commit `f23d260`) — cron/portfolio-alerts+fee-digest+low-balance-alerts+broker-review-invites+welcome-drip (38 tests, 5 files, PR #285) · D-11 batch 35 done (commit `a0b468a`) — cron/winback-drip+monthly-affiliate-report+embeddings-refresh+automation-verdict-rollup+expire-deals (31 tests, 5 files, PR #285) · D-11 batch 36 done (commit `ea8ed1e`) — cron/advisor-profile-gate-drip+portfolio-monitor+monthly-advisor-reports+price-drop-alerts+check-affiliate-links (33 tests, 5 files, PR #285) · D-11 batch 37 done (commit `f2382c4`) — report-download+sync-shortlist+report-leads+saved-comparisons-id+cron-versus-editorial-backfill (38 tests, 5 files, PR #285) · D-11 batch 38 done (commit `a57875f`) — cron/quote-expiry-reminders+cron/quote-review-requests+answers/[id]/vote (24 tests, 3 files, PR #285) · D-11 batch 39 done (commit `098e048d`) — cron/post-enquiry-drip+cron/quiz-follow-up+cron/marketplace-stats+cron/investor-drip+cron/process-data-exports (35 tests, 5 files, PR #285) · merge+cron-advisor-quality done (commit `35fdb48f`) — cron-advisor-quality (8 tests, PR #285) |
 | E | _not started_ | — | — | — |
 | F | _not started_ | — | — | — |
 | G | _not started_ | — | — | — |
@@ -35,8 +35,8 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | I | `claude/audit-remediation/i-new-04-main-ci-auto-revert` | #278 (draft) | pending — pushed 2026-04-28T16:14Z | I-NEW-01 done via #277 (`00ef2790`); I-NEW-02 hotfix `5b7937dc`; I-NEW-03 hotfix `4b050ed9`; I-NEW-05 race-fix `55d077bf`; **first real metrics snapshot landed 2026-04-28T16:12Z (grade F 0.0899 — Supabase secrets need to be set in GH Actions for non-zero on M04/M07/M08/M09/M10/M11/M12)**; I-NEW-04 in flight (auto-revert workflow `b42233fb`) |
 | J | `claude/audit-remediation/j-stripe-webhook` | #288 (draft) | pending — pushed 2026-04-29T22:30Z | J-01a..J-01e (route.ts 1197 → 165 LOC) · J-01d-ext (commit `bb1d56f6`) · J-03 (commit `b8e7189`) · J-05 (commit `d68852e`) · J-06 (commit `eedf582`) · J-08 (commit `e99aedc`) · J-09 (commit `e99aedc`) · J-10 (commit `e99aedc`) — all handlers complete (14 registered). Stream complete pending PR merge. |
 | K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-27T05:35Z | K-01..K-08 done; K-09 false-positive; K-10..K-15 done — **stream complete** |
-| L | `claude/audit-remediation/l-observability` | #289 (draft) | pending — pushed 2026-04-30T00:10Z | L-06 done (commit `12183619`) — 8 SLOs seeded. L-07 done (commit `824366e`) — email alert sink (OPS_ALERT_EMAIL pattern) + 25 tests. L-08 in progress. |
-| M | `claude/audit-remediation/m-01b-cover-image-backfill` | #283 (draft) | pending — pushed 2026-04-28T21:25Z | M-01b in flight (commit `19a0d7e6`) — per-article OG cover override + backfill script. |
+| L | `claude/audit-remediation/l-observability` | #289 (draft) | pending — pushed 2026-04-29T23:20Z | L-06 done (commit `12183619`) — 8 SLOs seeded. L-07 done (commit `824366e`) — email alert sink (OPS_ALERT_EMAIL pattern) + 25 tests. L-08 done (commit `832feed3`) — 6 new PostHog events + 22 tests. L-09 done (commit `153cce4`) — posthog.identify at signup+login + 17 tests. |
+| M | `claude/audit-remediation/m-01b-cover-image-backfill` | #283 (draft) | pending — pushed 2026-04-28T21:25Z | M-01b in flight (commit `19a0d7e6`) — per-article OG cover override + backfill script. M-02 on separate branch `claude/audit-remediation/m-02-versus-json-ld` (#296 draft) — commit `3ab1bacf`. |
 | N | `claude/audit-remediation/n-ux-perf` | #242 | pending — pushed 2026-04-27T13:30Z | N-01+N-02 done (`2ec6f89`) · N-03a done (`36e3f6d`) · N-03b done (`97bb9b00`) · N-03c done (`b29f443`) · N-04 FP · N-05 FP · N-06 blocked · N-07 batch 1 done (`2e5d8a4`) · N-07 batch 2 done (`91d0d42`) · N-08 done (`315d3b7`) · N-09 done (`3b43bf8`) · N-10 done (`0c33d71`) · N-11 done (`c2b769e`) — **stream complete** (N-06 blocked) |
 | O | `claude/audit-remediation/o-rls-no-policy` | merged via #235/#237/#239 | last pushed 2026-04-26 | O-01 iter1 done (`user_notifications`/`user_quiz_history`/`user_bookmarks`) · iter2 done `8e638bd` (`article_comments`/`article_reactions`) · iter3 done `c9c8fcd` (admin/audit cluster) · iter4 done `e965eb7` (14 observability/admin tables). ~34 tables remain for iter5+. |
 | P | _not started_ | — | — | — |
@@ -357,8 +357,8 @@ Sentry is 95% there; PostHog funnel is half-blind; SLO framework exists but unse
 | L-05 | done | Validate `health_pings` ingestion path — currently empty in live; heartbeat cron either not running or not logging | — | **Resolved 2026-04-28T16:05Z by iter 84.** Same root cause as L-04 — the cron blackout (`_dispatch` Next.js private folder, then loopback auth, then loopback URL targeting Vercel deployment-protection wall). After PRs #270/#272/#276 deployed, `health_pings` started populating: 33 rows since 13:25:38Z (first heartbeat post-deploy), 12 rows in the last hour, 3 in the last 15 minutes — exactly matching the every-5-min cadence. No code change needed for L-05. |
 | L-06 | done | Seed `slo_definitions` with launch SLOs: lead p95<5min, advisor onboarding p95<1h, webhook delivery p95<10min, etc. | 1 | **Done in commit `12183619` (PR #289).** 8 SLOs seeded via idempotent `ON CONFLICT (name) DO UPDATE`: lead_delivery_p95_ms (300s), advisor_onboarding_p95_ms (1h), webhook_delivery_p95_ms (600s), api_success_rate (99.5%), cron_heartbeat_success_rate (99%), lead_queue_age_minutes (15min), webhook_retry_queue_age_minutes (30min), api_error_rate (1%). Migration: `supabase/migrations/20260602_seed_slo_definitions.sql`. |
 | L-07 | done | Wire SLO incident → Slack/PagerDuty/email alert sink (today writes to `slo_incidents` table only) | 1 | **Done in commit `824366e` (PR #289).** `lib/slo.ts`: added `notifyEmail()` using `OPS_ALERT_EMAIL \|\| SUPPORT_EMAIL` (consistent with `ai-cost-alerts.ts`, `cron-health-alert` pattern; fire-and-forget from `openIncident` for both warn + page severity). Slack + PagerDuty were already wired; this closes the email gap. Tests expanded 9→25 in `__tests__/lib/slo.test.ts`: `openIncident` (16 tests — no-op when unbreached, dedup, DB error, warn/page routing, no-env no-ops, SUPPORT_EMAIL fallback, Slack-throws swallowed, email subject, DB insert fields), `resolveIncident` (4 tests — DB update fields, no-PD-key, PD resolve event shape, PD-throws swallowed). |
-| L-08 | pending | Extend `lib/posthog/events.ts` with: `advisor_selected`, `checkout_started`, `subscription_active`, `advisor_apply_submitted`, `lead_responded_to`, `dispute_opened` | 1 | P1. Funnel half-blind without these. |
-| L-09 | pending | Wire `posthog.identify(userId)` at signup + login so anonymous→identified mapping stitches sessions | 1 | P1. |
+| L-08 | done | Extend `lib/posthog/events.ts` with: `advisor_selected`, `checkout_started`, `subscription_active`, `advisor_apply_submitted`, `lead_responded_to`, `dispute_opened` | 1 | **Done in commit `832feed3` (PR #289).** Added 6 EventName literals + typed EventProps entries covering the full advisor-matching and monetisation funnel. 22 tests in `__tests__/lib/posthog-events.test.ts`: all 6 events, null-field variants, getDistinctId (3 cases), EventName union completeness. |
+| L-09 | done | Wire `posthog.identify(userId)` at signup + login so anonymous→identified mapping stitches sessions | 1 | **Done in commit `153cce4` (PR #289).** Added `identifyUser()` to `lib/posthog/server.ts`; wired into `app/auth/callback/route.ts` on PKCE + OTP success paths (fire-and-forget void call, no redirect delay). 17 tests: posthog-server.test.ts (8) + auth-callback.test.ts (9). |
 | L-10 | pending | Validate PostHog mirror webhook (`supabase/functions/posthog-webhook-ingest`) — table is empty in live, either webhook misconfigured or no events captured | 1 | P1. |
 | L-11 | pending | Validate `web_vitals_samples` ingestion — table empty, in-house pipeline at `/api/web-vitals/route.ts` may not be receiving | 1 | P2. |
 | L-12 | pending | Wire `setLoggerUser()` in top-30 highest-traffic API routes (currently ~30 of 294 call it) | ~2 | P2. Adds user-id tagging to Sentry events. |
@@ -371,7 +371,7 @@ The single highest-leverage finding (M-01: cover_image_url backfill) lives here.
 | --- | --- | --- | --- | --- |
 | M-01a | done | Site-wide default OpenGraph + Twitter card image — done out-of-loop in PR #227 | 1 | Resolved in PR #227 ("feat(seo): site-wide default opengraph-image + twitter-image (P0-6)") merged 2026-04-26T17:37Z. Adds the default fallback image so any page without a per-route OG override gets a branded card. |
 | M-01b | in flight | Per-article cover image backfill: populate `articles.cover_image_url` for the 266 published articles + ensure `app/article/[slug]/page.tsx` uses it for OG override | ~2 | P0 (residual). M-01a covered the site-wide default; this is the per-article custom-image work — still ~30–50% social-share CTR upside vs the generic default. Engineering side is one iteration (PR #283 — `generateMetadata` now prefers `cover_image_url` for OG/Twitter, with `/api/og` fallback; idempotent dry-run-by-default `scripts/backfill-cover-images.mjs` + `docs/runbooks/article-cover-image-backfill.md` ship the founder-runs procedure for the 266-row write). Closes when content batch lands the per-slug manifest. |
-| M-02 | pending | Versus pages (600+ URLs) — emit JSON-LD: `Article` + `BreadcrumbList` + per-side `FinancialProduct` review schema | 1 | P1. Currently zero structured data. |
+| M-02 | done | Versus pages (600+ URLs) — emit JSON-LD: `Article` + `BreadcrumbList` + per-side `FinancialProduct` review schema | 1 | **Done in commit `3ab1bacf` (PR #296, draft).** Added `versusComparisonJsonLd()` to `lib/schema-markup.ts`; updated `app/versus/[slugs]/page.tsx` to replace WebPage+ItemList with Article + individual FinancialProduct per broker side. BreadcrumbList + FAQPage unchanged. 14 new tests in `__tests__/lib/schema-markup.test.ts`. |
 | M-03 | pending | Advisor pages — switch schema type from `ProfessionalService` to `["ProfessionalService", "FinancialService"]` for financial planners + wealth managers | 1 | P1. Entity-disambiguation gain in financial queries. |
 | M-04 | pending | Article meta_title/meta_description fallback path: auto-generate from `articles.excerpt` + `category` when DB fields are null (43 articles affected) | 1 | P1. |
 | M-05 | pending | Glossary auto-linkifier — inline-link 200+ terms from `lib/glossary.ts` in article body content | ~2 | P2. Topical-relevance gain. |
@@ -457,6 +457,7 @@ Highest-risk untested business logic. Marketplace allocation is the most lucrati
 | R-09 | pending | `lib/tracking.ts` — 133 LOC, 33% covered → raise to ≥70% (used in 139 sites) | 1 | P2. |
 | R-10 | pending | `lib/advisor-application-resolver.ts` — 416 LOC, 35% covered | 1 | P2. |
 | R-11 | pending | Hooks: `useShortlist`, `useAdvisorShortlist`, `useSubscription` — all 0% | 1 | P3. |
+| R-DISC-20260429-01 | pending | `lib/financial-periods.ts` — 250 LOC, 0% unit test coverage. `closePeriod` and `listRecentPeriods` are called from admin/financial-periods and the monthly cron; the D-11 batch 27 route tests mock them but don't exercise the lib logic directly. | 1 | P2. Surfaced by iter 112. |
 
 ### Stream S — Architecture artefacts (audit §12)
 
@@ -1044,6 +1045,290 @@ Items that ship LAST, in the final week before launch (Month 4 of pre-launch roa
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-29T23:35Z — iteration 125 (stream L — L-09 — posthog.identify at signup+login)
+
+- Phase 0: lock acquired.
+- Phase 1: merged origin/main (iter 124 at `35fdb48f` landed). L branch clean merge.
+- Phase 1.5: types-drift skipped.
+- Phase 2: CI rescue: #285, #289 green. No rescue needed.
+- Phase 3: L stream, L-09 pending. Added identifyUser() to lib/posthog/server.ts; wired into app/auth/callback/route.ts on PKCE + OTP success (fire-and-forget).
+- Phase 4: feature + tests; no migration.
+- Phase 5: 2 test files (17 tests). All pass; lint clean.
+- Phase 6: committed `153cce4`; pushed to `claude/audit-remediation/l-observability`.
+- Phase 7: L in-flight row updated; L-09 marked done; this log entry on main.
+- STATUS: PROGRESS · stream=L · item=L-09 · pr=#289 · commit=`153cce4` · diff=+241/-0 across 4 files
+- Next item: L-10 (PostHog webhook validation)
+
+### 2026-04-29T23:25Z — iteration 124 (stream D — D-11 batch 39 — cron/post-enquiry-drip, cron/quiz-follow-up, cron/marketplace-stats, cron/investor-drip, cron/process-data-exports)
+
+- Phase 0: lock acquired.
+- Phase 1: synced main. Read queue and defaults.
+- Phase 1.5: types-drift skipped.
+- Phase 2: CI rescue: no red CI detected on #285.
+- Phase 3: D stream, D-11 batch 39. Selected 5 cron routes: post-enquiry-drip (4-step drip + advisor nudge), quiz-follow-up (3-email drip with broker lookup + email-templates), marketplace-stats (11-section campaign lifecycle, auto-bid mock), investor-drip (5-email sequence, getPersonalizedBrokers mock), process-data-exports (GDPR/APP-12 export with storage + auth.admin mocks).
+- Phase 4: all 5 are new test files only; no migration or deletion.
+- Phase 5: wrote 5 test files (35 tests, 952 LOC). Also resolved 2 add/add merge conflicts from parallel fires (adopted theirs for 6 conflicted files; cron-advisor-quality added as our contribution). All 35 tests pass. Also included cron-advisor-quality (8 tests) from this session.
+- Phase 6: committed `098e048d` (batch 39) + `35fdb48f` (merge); pushed to `claude/audit-remediation/d-route-tests`.
+- Phase 7: D in-flight row updated (batches 39 + advisor-quality appended); this log entry on main.
+- Discovery sweep: no adjacent issues not already in queue.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 39 · pr=#285 · commit=`35fdb48f` · diff=+952/-0 across 5 files
+- Remaining: ~25 routes uncovered (15 admin, 1 cron, 5 quotes/[slug], 4 other)
+
+### 2026-04-29T23:05Z — iteration 123 (stream D — D-11 batch 38 — cron-quote-expiry-reminders, cron-quote-review-requests, answers/[id]/vote)
+
+- Phase 0: lock acquired.
+- Phase 1: merged origin/main into D branch (resolved 2 add/add conflicts from parallel fire). Synced to `ed6b7e6`.
+- Phase 1.5: types-drift skipped.
+- Phase 2: CI rescue: no red CI detected on #285.
+- Phase 3: D stream, D-11 batch 38. Parallel fire had already covered report-leads, saved-comparisons-id in batch 37 commit `f2382c4`. Selected remaining uncovered routes: cron/quote-expiry-reminders (104 LOC, multi-step: fetch expiring jobs → get bids → send email → stamp), cron/quote-review-requests (~130 LOC, awarded jobs review request email), answers/[id]/vote (134 LOC, POST with params, vote 1/-1 enforcement, vote direction delta).
+- Phase 4: all 3 are new test files; no migration or deletion.
+- Phase 5: wrote 3 test files (24 tests, 521 LOC). 1 test bug fixed: DELETE success mock needed `.then` thenable rather than `mockResolvedValue` on `.eq` for chained calls. All 24 tests pass; lint clean.
+- Phase 6: committed `a57875f`; pushed to `claude/audit-remediation/d-route-tests`.
+- Phase 7: D in-flight row updated (batch 38 appended); this log entry on main.
+- Discovery sweep: no adjacent issues not already in queue.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 38 · pr=#285 · commit=`a57875f` · diff=+521/-0 across 3 files
+- Remaining: ~34 routes uncovered (8 admin, 2 cron, 24 other)
+
+### 2026-04-29T22:40Z — iteration 122 (stream D — D-11 batch 37 — report-download, sync-shortlist, report-leads, saved-comparisons-id, cron-versus-editorial-backfill)
+
+- Phase 0: lock held (batch-mode fire, iter 5 of 5 — final iteration of this fire).
+- Phase 1: on D branch; up to date with origin (batch 36 at `ea8ed1e`).
+- Phase 1.5: types-drift skipped.
+- Phase 2: CI rescue: no red CI detected on #285, #286, #289.
+- Phase 3: D stream, D-11 batch 37. Selected 5 routes covering non-cron untested paths: report-download (POST, rate-limit-db, admin client, graceful degradation), sync-shortlist (GET+POST, server client, isRateLimited, MAX_SHORTLIST=8 cap), report-leads (POST, isRateLimited+isValidEmail guards, sector_reports lookup + developer_leads insert), saved-comparisons/[id] (GET/PATCH/DELETE, server client, params as Promise, PATCH name/notes validation), cron/versus-editorial-backfill (GET, Anthropic SDK class mock, generateVersusPairs, 503 on missing key).
+- Phase 4: all 5 are new test files only; no migration or deletion.
+- Phase 5: wrote 5 test files (38 tests, 554 LOC). Fixed 1 test bug: Anthropic constructor mock used `vi.fn().mockImplementation(...)` which `vi.resetAllMocks()` wipes in beforeEach, leaving instances without `messages.create`. Fixed by switching to class stub `class { messages = { create: (...args) => mockMessagesCreate(...args) } }` so the constructor shape survives reset. All 38 tests pass.
+- Phase 6: committed `f2382c4`; pushed to `claude/audit-remediation/d-route-tests`.
+- Phase 7: D in-flight row updated (batch 37 appended, Last CI refreshed); this log entry on main.
+- Discovery sweep: no adjacent issues found — test files only; source routes already have tests or are neighbours with no obvious gaps not already in D-11.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 37 · pr=#285 · commit=`f2382c4` · diff=+554/-0 across 5 files · next=D-11 batch 38 (remaining uncovered routes)
+- Remaining: ~37 routes uncovered (8 admin, 3 cron, 26 other)
+
+### 2026-04-29T22:30Z — iteration 121 (stream D — D-11 batch 36 — cron: advisor-profile-gate-drip, portfolio-monitor, monthly-advisor-reports, price-drop-alerts, check-affiliate-links)
+
+- Phase 0: lock held (batch-mode fire, iter 4 of 5).
+- Phase 1: fetched main (iter 120 at 5a18036). Up to date.
+- Phase 1.5: types-drift skipped.
+- Phase 2: CI rescue: #285, #286, #289 all green. No rescue needed.
+- Phase 3: D stream, D-11 batch 36. Selected 5 cron routes by LOC: advisor-profile-gate-drip (222), portfolio-monitor (251), check-affiliate-links (254), monthly-advisor-reports (205), price-drop-alerts (240).
+- Phase 4: all 5 are new test files only; no migration or deletion.
+- Phase 5: wrote 5 test files (33 tests, 713 LOC). price-drop-alerts needed mocks for buildEmailToUserIdMap + notifyUser from @/lib/notifications; check-affiliate-links uses Promise.all for concurrent broker checks handled cleanly. All 33 tests pass first try.
+- Phase 6: committed `ea8ed1e`; pushed to `claude/audit-remediation/d-route-tests`.
+- Phase 7: D in-flight row updated (batch 36 appended, Last CI refreshed); this log entry on main.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 36 · pr=#285 · commit=`ea8ed1e` · diff=+713/-0 across 5 files · next=D-11 batch 37 (final cron batch + admin routes)
+
+### 2026-04-29T22:15Z — iteration 120 (stream D — D-11 batch 35 — cron: winback-drip, monthly-affiliate-report, embeddings-refresh, automation-verdict-rollup, expire-deals)
+
+- Phase 0: lock held (batch-mode fire, iter 3 of 5).
+- Phase 1: fetched main (iter 119 at c8d77e5). Up to date.
+- Phase 1.5: types-drift skipped.
+- Phase 2: CI rescue: #285, #286, #289 all green (Vercel success). No rescue needed.
+- Phase 3: D stream, D-11 batch 35. Selected 5 cron routes by LOC: winback-drip (122), monthly-affiliate-report (166), embeddings-refresh (177), automation-verdict-rollup (232), expire-deals (344).
+- Phase 4: all 5 are new test files only; no migration or deletion.
+- Phase 5: wrote 5 test files (31 tests, 688 LOC). automation-verdict-rollup used table-name-keyed from() mock to handle 6 concurrent Promise.all rollup calls correctly. All 31 tests pass first try.
+- Phase 6: committed `a0b468a`; pushed to `claude/audit-remediation/d-route-tests`.
+- Phase 7: D in-flight row updated (batch 35 appended, Last CI refreshed); this log entry on main.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 35 · pr=#285 · commit=`a0b468a` · diff=+688/-0 across 5 files · next=D-11 batch 36 (more cron routes)
+
+### 2026-04-29T22:05Z — iteration 119 (stream D — D-11 batch 34 — cron: portfolio-alerts, fee-digest, low-balance-alerts, broker-review-invites, welcome-drip)
+
+- Phase 0: lock held (batch-mode fire, continued from compacted context).
+- Phase 1: fetched main (iter 118 landed at `caa6d0d`). Pulled ff-only; up to date.
+- Phase 1.5: types-drift skipped.
+- Phase 2: CI rescue: no red CI detected.
+- Phase 3: D stream, D-11 batch 34. Selected 5 cron routes: portfolio-alerts (124 LOC, user portfolios × broker_data_changes, Resend fetch), fee-digest (187 LOC, weekly subscriber digest, newsletter_sends dedup), low-balance-alerts (190 LOC, broker_wallets threshold check, auto-pause campaigns, Resend fetch), broker-review-invites (220 LOC, affiliate_clicks → email_captures, sendEmail helper not raw fetch), welcome-drip (276 LOC, 4-drip schedule, drip-2 makes 3 extra nested DB calls).
+- Phase 4: all 5 are new test files only; no migration or deletion.
+- Phase 5: wrote 5 test files (38 tests, 770 LOC). Fixed 1 test bug: cron-fee-digest "skips subscriber already sent" mock had wrong call index (no broker from() call when changedSlugs is empty — ternary short-circuits). All 38 tests pass.
+- Phase 6: committed `f23d260`; pushed to `claude/audit-remediation/d-route-tests` (rebased over iter 118 commits).
+- Phase 7: D in-flight row updated (batch 34 appended, Last CI refreshed); this log entry on main.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 34 · pr=#285 · commit=`f23d260` · diff=+770/-0 across 5 files · next=D-11 batch 35 (more cron/admin routes)
+
+### 2026-04-29T21:43Z — iteration 118 (stream D — D-11 batch 33 — cron: dispatch-group, cron-health-alert, weekly-newsletter, warehouse-rollup, weekly-rate-update)
+
+- Phase 0: lock held (batch-mode fire, continued from prior session).
+- Phase 1: fetched main (iter 117 landed). Pulled ff-only; up to date.
+- Phase 1.5: types-drift skipped.
+- Phase 2: CI rescue: no red CI detected.
+- Phase 3: D stream, D-11 batch 33. Selected 5 cron routes: dispatch/[group] (274 LOC, fan-out dispatcher, loopback fetch, 207 on partial failures), cron-health-alert (255 LOC, enumerate() CRON_GROUPS, stale/failing/never-run detection, dedup via cron_health_alerts), weekly-newsletter (223 LOC, fee-changes + articles + deals content, Resend batch send, edition dedup), warehouse-rollup (242 LOC, 11 metrics per day, 3-day window, upsert warehouse_daily_facts), weekly-rate-update (233 LOC, 3 calculator sources, drip-log dedup, personalised Resend emails).
+- Phase 4: all 5 are new test files only; no migration or deletion.
+- Phase 5: wrote 5 test files (34 tests, 966 LOC). Fixed 3 test bugs: (1+2) cron-health-alert mock missing 3rd endpoint `/api/cron/cron-health-alert` in both healthy-run and dedup response data; (3) weekly-newsletter mock had spurious broker-names slot that shifted subscriber response (fee_changes empty → broker query skipped via ternary, so slot n+1 consumed by articles). Lint clean; 34/34 tests pass.
+- Phase 6: committed `cd736c8e`; pushed to `claude/audit-remediation/d-route-tests`.
+- Phase 7: D in-flight row updated (batch 33 appended, Last CI refreshed); this log entry on main.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 33 · pr=#285 · commit=`cd736c8e` · diff=+966/-0 across 5 files · next=D-11 batch 34 (more cron routes)
+
+### 2026-04-30T03:10Z — iteration 117 (stream D — D-11 batch 32 — cron: email-bounce-sweep, annual-review-reminder, lead-quality-weights, verify-review-clients, job-queue-worker)
+
+- Phase 0: lock held (batch-mode fire, iter 4 of 5).
+- Phase 1: fetched main (iters 114-supp+116 landed). D branch had two unlogged parallel fire commits: 5737c51 (admin batch 29b, 56 tests) and 26237f9 (batch 30-admin, already logged as iter 114-supp).
+- Phase 1.5: types-drift skipped.
+- Phase 2: CI rescue: no red CI detected.
+- Phase 3: D stream, D-11 batch 32. Selected 5 cron routes: email-bounce-sweep (146 LOC, RESEND pull + lead flagging + drip scrub), annual-review-reminder (142 LOC, bare GET + per-user email send), lead-quality-weights (164 LOC, 90d window, signal weight computation, maybeSingle), verify-review-clients (170 LOC, broker + advisor verification batched lookup), job-queue-worker (174 LOC, claim + run + retry/dead-letter loop).
+- Phase 4: all 5 are new test files only; no migration or deletion.
+- Phase 5: wrote 5 test files (31 tests, 693 LOC). Fixed: removed unused makeChain function from email-bounce-sweep. All 31 tests pass; lint clean.
+- Phase 6: committed `20c4493`; pushed to `claude/audit-remediation/d-route-tests` (rebased over 5737c51, 26237f9).
+- Phase 7: D in-flight row updated (admin-batch-29b + batch-32 appended); this log entry on main.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 32 · pr=#285 · commit=`20c4493` · diff=+693/-0 across 5 files · next=D-11 batch 33 (more cron routes)
+
+### 2026-04-30T02:50Z — iteration 116 (stream D — D-11 batch 31 — cron: refresh-revenue-view, complaints-sla, review-sentiment-refresh, property-suburb-refresh, afsl-expiry-monitor)
+
+- Phase 0: lock held (batch-mode fire, iter 3 of 5).
+- Phase 1: fetched main (iter 115 queue update landed cleanly).
+- Phase 1.5: types-drift skipped.
+- Phase 2: CI rescue: no red CI on in-flight PRs.
+- Phase 3: D stream, D-11 batch 31. Selected 5 cron routes: refresh-revenue-view (78 LOC, bare GET, Promise.allSettled + ISR fetch), complaints-sla (118 LOC, SLA escalation/warning stamping), review-sentiment-refresh (108 LOC, kill-switch + per-review AI scoring + persistSentiment), property-suburb-refresh (92 LOC, kill-switch + refreshSuburb per suburb + 200ms pace), afsl-expiry-monitor (136 LOC, lookupAfsl per advisor + auto-pause + fire-and-forget email).
+- Phase 4: all 5 are new test files only; no migration or deletion.
+- Phase 5: wrote 5 test files (36 tests, 689 LOC). Key: `Promise.allSettled` rejection tested with `(_resolve, reject) => reject(err)` thenable pattern (not `Promise.reject()`); fake timers for property-suburb-refresh setTimeout pace; table-name-keyed `from()` mocks for review-sentiment-refresh (3 tables per run). All 36 tests pass; lint clean.
+- Phase 6: committed `ad98fe5`; pushed to `claude/audit-remediation/d-route-tests` (rebased over 03ee16d parallel batch).
+- Phase 7: D in-flight row updated (admin-batch-29 + batch-31 appended); this log entry on main.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 31 · pr=#285 · commit=`ad98fe5` · diff=+689/-0 across 5 files · next=D-11 batch 32 (more cron routes)
+
+### 2026-04-29T19:10Z — iteration 114-supp (stream D — D-11 batch 30-admin — admin: regulatory-impacts, commodity-hubs)
+
+- Phase 0: iteration 2 of 5 in batch fire; resumed after context compaction.
+- Phase 3: D stream, D-11 batch 30-admin. Routes covered: `admin/regulatory-impacts` (GET+POST+DELETE, 139 LOC — inline auth, upsert+slug-array update, impact_level enum validation) and `admin/commodity-hubs` (GET+POST+PUT, 159 LOC — listActiveSectors, upsertSector, upsertStock/upsertEtf dispatch).
+- Phase 5: 26 tests, 2 files — all passing. advisor-kyc/article-preview-tokens/automation-config also added from parallel-fire versions during rebase resolution.
+- Phase 6: committed `26237f9`; pushed to `claude/audit-remediation/d-route-tests`.
+- Phase 7: D in-flight row updated; this log entry on main.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 30-admin · pr=#285 · commit=`26237f9` · diff=+637/-338 (2 new files)
+
+### 2026-04-30T02:30Z — iteration 115 (stream D — D-11 batch 30 — cron: web-vitals-rollup, attribution-rollup, broker-snapshot, auto-resolve-disputes, tmd-audit)
+
+- Phase 0: lock held (batch-mode fire, iter 2 of 5).
+- Phase 1: fetched main (parallel fires active; batch 28-supp/7407851 already logged on main). D branch also had 7407851.
+- Phase 1.5: types-drift skipped.
+- Phase 2: CI rescue: no red CI detected.
+- Phase 3: D stream, D-11 batch 30. Selected 5 cron routes: web-vitals-rollup (36 LOC), attribution-rollup (37 LOC), broker-snapshot (62 LOC, createAdminClient + captureBrokerSnapshotsBatch), auto-resolve-disputes (89 LOC, withCronRunLog + isFeatureDisabled + autoResolveDispute), tmd-audit (95 LOC, getCurrentTmd + data_integrity_issues upsert).
+- Phase 4: all 5 are new test files only; no migration or deletion.
+- Phase 5: wrote 5 test files (28 tests, 528 LOC). Key: `withCronRunLog` mocked as `async (_n, h) => (await h()).response`; tmd-audit upsert-failure test uses proper thenable `(resolve, reject) => reject(err)` pattern. Removed `Function` cast — wrapCronHandler typed return works directly. All 28 tests pass; lint clean.
+- Phase 6: committed `b9be156`; pushed to `claude/audit-remediation/d-route-tests` (rebased over 7407851).
+- Phase 7: D in-flight row updated (batch 30 appended); this log entry on main.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 30 · pr=#285 · commit=`b9be156` · diff=+528/-0 across 5 files · next=D-11 batch 31 (more cron routes)
+
+### 2026-04-29T19:00Z — iteration 113-supp (stream D — D-11 batch 28-supp — admin: competitors, fee-queue)
+
+- Phase 0: resumed after context compaction; iteration 113 (batch 28) had tests written and passing but commit/push not yet done.
+- Phase 1: synced — remote branch had parallel-fire commits for batch 28 (7b8081f: tmds/dry-run/run-migration/trigger/notify) and batch 29 (224e06c: cron observability). Local had competitors+fee-queue. Rebased; kept remote versions for 3 conflicting files; retained our new 2 files.
+- Phase 3: D stream, D-11 batch 28-supp. Routes covered: `admin/competitors` (GET+POST+DELETE, 102 LOC) and `admin/fee-queue` (GET+POST, 131 LOC). Approve path required 5 sequential `mockReturnValueOnce` for fee-queue.
+- Phase 5: 26 tests, 2 files — all passing. `admin-competitors.test.ts` (14 tests), `admin-fee-queue.test.ts` (12 tests).
+- Phase 6: committed `7407851`; pushed to `claude/audit-remediation/d-route-tests`.
+- Phase 6.5: discovery sweep — no console.* usage; no adjacent issues found in touched routes.
+- Phase 7: D in-flight row updated (batch 28-supp appended); this log entry on main.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 28-supp · pr=#285 · commit=`7407851` · diff=+695/-186 (2 new files) · next=D-11 batch 30
+
+### 2026-04-30T02:15Z — iteration 114 (stream D — D-11 batch 29 — cron observability: dated-stats-check, observability-retention, content-freshness, cron-freshness, slo-monitor)
+
+- Phase 0: lock acquired (batch-mode fire, iter 1 of 5; resumed after context compaction).
+- Phase 1: fetched main — parallel fire had run iters 112/113 (batches 27+28) while compaction was in progress; local D branch was ahead with 224e06c. Renaming cron batch to 29 to avoid collision with parallel fire's batch 28.
+- Phase 1.5: types-drift skipped.
+- Phase 2: CI rescue: no red CI detected.
+- Phase 3: D stream, D-11 batch 29. Already committed `224e06c` to `claude/audit-remediation/d-route-tests` (5 cron observability routes: dated-stats-check 87 LOC, observability-retention 92 LOC, content-freshness 128 LOC, cron-freshness 161 LOC with wrapCronHandler, slo-monitor 165 LOC with wrapCronHandler).
+- Phase 4: 5 new test files only; no migration or deletion.
+- Phase 5: 42 tests written. Key patterns: queue-based makeChain() factory with maybeSingle()/delete/lt/gte/not; wrapCronHandler mocked as pass-through (_name, h) => h; fire-and-forget fetch tested via vi.stubGlobal + 10ms settle; slo-monitor mocks evaluateSlo/openIncident/resolveIncident from lib/slo. Fixed lint: 2 unused res vars removed. All 42 tests pass; type-check clean.
+- Phase 6: committed `224e06c`; pushed to `claude/audit-remediation/d-route-tests`.
+- Phase 7: D in-flight row updated (batch 29 appended); this log entry on main.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 29 · pr=#285 · commit=`224e06c` · diff=+785/-0 across 5 files · next=D-11 batch 30 (more cron routes)
+
+### 2026-04-29T18:56Z — iteration 113 (stream D — D-11 batch 28 — admin: tmds, automation/dry-run, run-migration, automation/trigger, notify-price-change)
+
+- Phase 0: lock held from batch-mode fire (iter 2 of 5).
+- Phase 1: fetched main (already up to date after iter 112 queue update).
+- Phase 2: CI check — PR #285 pending from iter 112 push; no red checks, proceed.
+- Phase 3: D stream, D-11 batch 28. Checked out `claude/audit-remediation/d-route-tests`. Selected 5 admin routes: tmds (GET+POST, 66 LOC), automation/dry-run (POST, 77 LOC), run-migration (GET+POST bearer-auth, 82 LOC), automation/trigger (POST, 125 LOC), notify-price-change (POST, 188 LOC).
+- Phase 4: all are new test files; no existing tests to conflict.
+- Phase 5: wrote 5 test files (49 tests). Fixed notify-price-change mock: professionals chain used `.is()` as terminal but route uses `.eq().eq()` — replaced with thenable builder. All 49/49 green, lint clean on changed files.
+- Phase 6: committed `7b8081f`; pushed to `claude/audit-remediation/d-route-tests`.
+- Phase 6.5: discovery sweep — notify-price-change route uses `ADMIN_EMAILS` (not `getAdminEmails()`) directly; already tracked. No new queue items needed beyond R-DISC-20260429-01.
+- Phase 7: D in-flight row updated (batch 28 appended, CI timestamp); this log entry on main.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 28 · pr=#285 · commit=`7b8081f` · diff=+854/-0 across 5 files · next=D-11 batch 29 (more admin routes)
+
+### 2026-04-29T18:37Z — iteration 112 (stream D — D-11 batch 27 — admin: feature-flags, kill-switch, review-moderation, financial-periods, mfa/enroll)
+
+- Phase 0: lock acquired (batch-mode fire, iter 1 of 5).
+- Phase 1: synced main (origin/main was force-pushed; reset local). D branch at batch 26.
+- Phase 1.5: types-drift skipped (no MCP in this env).
+- Phase 2: CI check: PRs #285, #286, #288, #289, #296 all green (Vercel success). No rescue needed.
+- Phase 3: D stream, D-11 batch 27. Checked out `claude/audit-remediation/d-route-tests`. Selected 5 admin routes by priority: feature-flags (GET+PATCH, 93 LOC), automation/kill-switch (GET+POST, 109 LOC), review-moderation (PATCH, 114 LOC), financial-periods (GET+POST, 85 LOC), mfa/enroll (GET+POST+DELETE, 95 LOC).
+- Phase 4: all 5 are new test files only; no migration or deletion.
+- Phase 5: wrote 5 test files (57 tests, 934 LOC). All 57 tests green; lint clean (fixed unused NextResponse import + unused allReviews param).
+- Phase 6: committed `84b3517`; pushed to `claude/audit-remediation/d-route-tests`.
+- Phase 6.5: discovery — `admin/financial-periods/route.ts` has sibling `lib/financial-periods.ts` (250 LOC, not currently in queue — no dedicated unit test for `closePeriod`/`listRecentPeriods` lib logic). Adding R-DISC item below.
+- Phase 7: queue updated on main.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 27 · pr=#285 · commit=`84b3517` · diff=+934/-0 across 5 files · next=D-11 batch 28 (more admin routes)
+
+### 2026-04-30T01:45Z — iteration 111 (stream D — D-11 batch 26 — admin: cohort/refresh, verify, fi-revalidate, article-comments, revalidate)
+
+- Phase 0: lock acquired (batch-mode fire, iter 2 of 5).
+- Phase 1: synced main (CI-rescue queue update for PR #297). D branch at batch 25.
+- Phase 1.5: types-drift skipped.
+- Phase 2: CI rescue: PR #297 CI rescue already committed (`3055b99`) and pushed in prior step. No other red CI detected on in-flight PRs.
+- Phase 3: D stream, D-11 batch 26. Checked out `claude/audit-remediation/d-route-tests`. Parallel fire had added batches 24b+25 on PR #298 (sync-shortlist/report-download/review-incentive/tax-optimizer etc.) — different routes, no collision. Selected 5 admin routes by LOC (30–81 LOC each): admin/cohort/refresh, admin/verify, admin/foreign-investment/revalidate, admin/article-comments, admin/revalidate.
+- Phase 4: all 5 are new test files only; no migration or deletion.
+- Phase 5: wrote 5 test files (36 tests, 582 LOC). Key mock pattern learned: `vi.fn().mockResolvedValue(val)` loses implementation after `vi.resetAllMocks()`; `vi.fn(() => Promise.resolve(val))` persists as the default impl. Used factory form for `createClient`. All 36 tests pass; `npm run type-check` returns no errors on the 5 files.
+- Phase 6: committed `e9e6fd2`; pushed to `claude/audit-remediation/d-route-tests`.
+- Phase 7: D in-flight row updated (batch 26 appended); this log entry on main.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 26 · pr=#285 · commit=`e9e6fd2` · diff=+582/-0 across 5 files · next=D-11 batch 27 (more admin routes)
+
+### 2026-04-30T01:30Z — CI-RESCUE (stream D — PR #297 — D-11 batch 24 supplementary branch)
+
+- Phase 2: CI rescue. PR #297 (`claude/audit-remediation/d-11-batch-24`) had "Lint · Type-check · Test · Build" failing. Diagnosed 9 strict-mode TS errors across the 5 new test files:
+  - `afterEach` not imported in 4 files (TS2304 — vitest globals are not ambient in this project).
+  - `vi.fn<() => T>()` zero-arity type incompatible with `(...args: unknown[]) => mock(...args)` spread call in 2 files (TS2556 — TS5.9 strict spread check).
+  - `fetchMock.mock.calls[0] as [string]` — empty tuple `[]` doesn't overlap `[string]` without double cast (TS2352).
+  - `capturedBody?.revenue_cents` — TS5.9 control-flow narrowed `capturedBody` (assigned only inside async mock callback) to `null` in outer scope; required `as unknown as Record<string, unknown>` (TS2352/TS2339).
+- Fix: added `afterEach` to vitest imports in 4 files; widened mock type signatures; fixed 2 type assertion sites. All 63 tests pass; `npm run type-check` returns no errors on the 5 test files.
+- Committed `3055b99`; pushed to `claude/audit-remediation/d-11-batch-24`.
+- Note: PR #297 is complementary to the parallel fire's batch 24 on PR #285 (same 5 routes, 63 vs 57 tests — different assertion depth). Both are valid; merging both adds coverage, not duplication.
+- STATUS: CI-RESCUE · stream=D · pr=#297 · commit=`3055b99`
+
+### 2026-04-30T01:15Z — iteration 110 (stream D — D-11 batch 25 — admin: advisor-moderation, article-scorecard, automation/flags, bd-pipeline, article-templates)
+
+- Phase 0: resumed batch-mode fire (iter 5 of 5 in this session). Lock held.
+- Phase 1: synced main (iter 109 — M-02 done). Queue confirmed D-11 batch 25 as next item (admin routes).
+- Phase 2: CI on #285 pending (no failures to rescue). #296 (M-02) CI in-progress.
+- Phase 3: checked out claude/audit-remediation/d-route-tests.
+- Phase 4: identified 45 admin/* routes with only 2 tests. Selected 5 tractable routes (90–135 LOC each): advisor-moderation (PATCH+ADMIN_EMAILS), article-scorecard (GET+POST+requireAdmin), automation/flags (GET+POST+PATCH+requireAdmin+invalidateFlagCache), bd-pipeline (GET+POST+DELETE+ADMIN_EMAILS), article-templates (GET+requireAdmin).
+- Phase 5: wrote 5 test files (53 tests total). Mock patterns: requireAdmin() mocked directly for routes using that helper; createClient().auth.getUser() + ADMIN_EMAILS mock for routes using inline auth.
+- Phase 6: committed `fb4cce3c`; pushed to D branch.
+- Phase 7: D in-flight row updated (batch 25); this log entry on main.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 25 · pr=#285 · commit=`fb4cce3c` · diff=+879/-0 across 5 files · next=D-11 batch 26 (admin routes continued)
+- **BATCH COMPLETE** — 5 of 5 iterations done in this fire (107–110 + this)
+
+### 2026-04-30T01:00Z — iteration 109 (stream M — M-02 — versus pages JSON-LD)
+
+- Phase 0: resumed batch-mode fire (iter 4 of 5 in this session). Lock held.
+- Phase 1: synced main (iter 108 — L-08 done). Queue confirmed M-02 as next item.
+- Phase 2: CI on L #289 and D #285 pending (no failures to rescue).
+- Phase 3: created new branch claude/audit-remediation/m-02-versus-json-ld from main (M-02 is independent of M-01b cover-image work).
+- Phase 4: read app/versus/[slugs]/page.tsx — existing JSON-LD was WebPage+ItemList inline (not using schema-markup helpers). No Article or standalone FinancialProduct schemas present.
+- Phase 5: added versusComparisonJsonLd() to lib/schema-markup.ts returning Article + per-broker FinancialProduct array; updated versus page to use helper (removed inline jsonLd); added 14 tests to __tests__/lib/schema-markup.test.ts. Kept BreadcrumbList and FAQPage unchanged.
+- Phase 6: committed `3ab1bacf`; pushed new branch; created PR #296 (draft).
+- Phase 7: M in-flight row updated; M-02 marked done; this log entry on main.
+- STATUS: PROGRESS · stream=M · item=M-02 · pr=#296 · commit=`3ab1bacf` · diff=+178/-33 across 3 files · next=D-11 batch 25 (stream D, highest priority)
+
+### 2026-04-30T00:45Z — iteration 108 (stream L — L-08 — PostHog events extension)
+
+- Phase 0: resumed batch-mode fire (iter 3 of 5 in this session). Lock held.
+- Phase 1: synced main (iter 107 — D-11 batch 24 done). Queue confirmed L-08 as next item.
+- Phase 2: CI on #289 pending (no failures to rescue).
+- Phase 3: checked out claude/audit-remediation/l-observability from remote (not present locally after context refresh).
+- Phase 4: read lib/posthog/events.ts — 5 existing events (quiz_started, quiz_completed, advisor_viewed, advisor_contacted, lead_submitted); no test file existed. Confirmed 6 new events absent.
+- Phase 5: extended lib/posthog/events.ts with 6 new EventName literals + EventProps entries (advisor_selected, checkout_started, subscription_active, advisor_apply_submitted, lead_responded_to, dispute_opened). Created __tests__/lib/posthog-events.test.ts with 22 tests. No prod dependencies — pure typed schema extension.
+- Phase 6: committed `832feed3`; pushed to L branch.
+- Phase 7: L in-flight row updated (L-08 done); L-08 item marked done; this log entry on main.
+- STATUS: PROGRESS · stream=L · item=L-08 · pr=#289 · commit=`832feed3` · diff=+380/-0 across 2 files · next=M-02 (versus pages JSON-LD)
+
+### 2026-04-30T00:30Z — iteration 107 (stream D — D-11 batch 24 — webhooks/broker-signup, webhooks/resend, property/enquiry, property/listings, push/send)
+
+- Phase 0: resumed batch-mode fire (continued from context summary). Lock held from batch.
+- Phase 1: synced main (iter 106 — D-11 batch 23b done, J stream merged via #288). Queue showed "next=D-11 batch 25" but in-flight row had no batch 24 listed — renumbered as batch 24.
+- Phase 2: CI on #285 pending (no failures to rescue).
+- Phase 3: checked out D branch (was already on it with 5 untracked test files from previous context window).
+- Phase 4: verified all 5 routes absent from existing D branch tests.
+- Phase 5: wrote 5 test files (57 tests). webhooks/broker-signup POST+GET (11: Bearer auth, click→broker resolution, duplicate external_ref guard, broker_signups insert, PARTNER_API_KEY fallback, UTM extraction, GET→POST delegation). webhooks/resend (9: Svix verification, email.bounced/complained → 3 tables, delivery_delayed no-op, email_id fallback, DB throw). property/enquiry POST (13: rate-limit, honeypot, input validation, listing lookup, 24h duplicate guard, lead insert, developer billing, fire-and-forget email). property/listings GET (13: rate-limit, pagination metadata, page offset, sort ordering, city/firb/price filters, 500). push/send POST (11: admin-key+Bearer auth, topic enum, per-topic rate-limit, VAPID keys, push delivery, stale 410 cleanup, 500).
+- Phase 6: committed `b14460b`; pushed to D branch.
+- Phase 7: D in-flight row updated (batch 24); this log entry on main.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 24 · pr=#285 · commit=`b14460b` · diff=+1023/-0 across 5 files · next=D-11 batch 25
 
 ### 2026-04-30T00:10Z — iteration 106 (stream D — D-11 batch 23b — portfolio, marketplace/invoice, setup-payment-method, stripe checkout+cancel)
 
