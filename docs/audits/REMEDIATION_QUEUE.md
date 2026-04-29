@@ -36,7 +36,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | J | `claude/audit-remediation/j-stripe-webhook` | #288 (draft) | pending — pushed 2026-04-29T22:30Z | J-01a..J-01e (route.ts 1197 → 165 LOC) · J-01d-ext (commit `bb1d56f6`) · J-03 (commit `b8e7189`) · J-05 (commit `d68852e`) · J-06 (commit `eedf582`) · J-08 (commit `e99aedc`) · J-09 (commit `e99aedc`) · J-10 (commit `e99aedc`) — all handlers complete (14 registered). Stream complete pending PR merge. |
 | K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-27T05:35Z | K-01..K-08 done; K-09 false-positive; K-10..K-15 done — **stream complete** |
 | L | `claude/audit-remediation/l-observability` | #289 (draft) | pending — pushed 2026-04-30T00:45Z | L-06 done (commit `12183619`) — 8 SLOs seeded. L-07 done (commit `824366e`) — email alert sink (OPS_ALERT_EMAIL pattern) + 25 tests. L-08 done (commit `832feed3`) — 6 new PostHog events + 22 tests. |
-| M | `claude/audit-remediation/m-01b-cover-image-backfill` | #283 (draft) | pending — pushed 2026-04-28T21:25Z | M-01b in flight (commit `19a0d7e6`) — per-article OG cover override + backfill script. |
+| M | `claude/audit-remediation/m-01b-cover-image-backfill` | #283 (draft) | pending — pushed 2026-04-28T21:25Z | M-01b in flight (commit `19a0d7e6`) — per-article OG cover override + backfill script. M-02 on separate branch `claude/audit-remediation/m-02-versus-json-ld` (#296 draft) — commit `3ab1bacf`. |
 | N | `claude/audit-remediation/n-ux-perf` | #242 | pending — pushed 2026-04-27T13:30Z | N-01+N-02 done (`2ec6f89`) · N-03a done (`36e3f6d`) · N-03b done (`97bb9b00`) · N-03c done (`b29f443`) · N-04 FP · N-05 FP · N-06 blocked · N-07 batch 1 done (`2e5d8a4`) · N-07 batch 2 done (`91d0d42`) · N-08 done (`315d3b7`) · N-09 done (`3b43bf8`) · N-10 done (`0c33d71`) · N-11 done (`c2b769e`) — **stream complete** (N-06 blocked) |
 | O | `claude/audit-remediation/o-rls-no-policy` | merged via #235/#237/#239 | last pushed 2026-04-26 | O-01 iter1 done (`user_notifications`/`user_quiz_history`/`user_bookmarks`) · iter2 done `8e638bd` (`article_comments`/`article_reactions`) · iter3 done `c9c8fcd` (admin/audit cluster) · iter4 done `e965eb7` (14 observability/admin tables). ~34 tables remain for iter5+. |
 | P | _not started_ | — | — | — |
@@ -371,7 +371,7 @@ The single highest-leverage finding (M-01: cover_image_url backfill) lives here.
 | --- | --- | --- | --- | --- |
 | M-01a | done | Site-wide default OpenGraph + Twitter card image — done out-of-loop in PR #227 | 1 | Resolved in PR #227 ("feat(seo): site-wide default opengraph-image + twitter-image (P0-6)") merged 2026-04-26T17:37Z. Adds the default fallback image so any page without a per-route OG override gets a branded card. |
 | M-01b | in flight | Per-article cover image backfill: populate `articles.cover_image_url` for the 266 published articles + ensure `app/article/[slug]/page.tsx` uses it for OG override | ~2 | P0 (residual). M-01a covered the site-wide default; this is the per-article custom-image work — still ~30–50% social-share CTR upside vs the generic default. Engineering side is one iteration (PR #283 — `generateMetadata` now prefers `cover_image_url` for OG/Twitter, with `/api/og` fallback; idempotent dry-run-by-default `scripts/backfill-cover-images.mjs` + `docs/runbooks/article-cover-image-backfill.md` ship the founder-runs procedure for the 266-row write). Closes when content batch lands the per-slug manifest. |
-| M-02 | pending | Versus pages (600+ URLs) — emit JSON-LD: `Article` + `BreadcrumbList` + per-side `FinancialProduct` review schema | 1 | P1. Currently zero structured data. |
+| M-02 | done | Versus pages (600+ URLs) — emit JSON-LD: `Article` + `BreadcrumbList` + per-side `FinancialProduct` review schema | 1 | **Done in commit `3ab1bacf` (PR #296, draft).** Added `versusComparisonJsonLd()` to `lib/schema-markup.ts`; updated `app/versus/[slugs]/page.tsx` to replace WebPage+ItemList with Article + individual FinancialProduct per broker side. BreadcrumbList + FAQPage unchanged. 14 new tests in `__tests__/lib/schema-markup.test.ts`. |
 | M-03 | pending | Advisor pages — switch schema type from `ProfessionalService` to `["ProfessionalService", "FinancialService"]` for financial planners + wealth managers | 1 | P1. Entity-disambiguation gain in financial queries. |
 | M-04 | pending | Article meta_title/meta_description fallback path: auto-generate from `articles.excerpt` + `category` when DB fields are null (43 articles affected) | 1 | P1. |
 | M-05 | pending | Glossary auto-linkifier — inline-link 200+ terms from `lib/glossary.ts` in article body content | ~2 | P2. Topical-relevance gain. |
@@ -1044,6 +1044,18 @@ Items that ship LAST, in the final week before launch (Month 4 of pre-launch roa
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-30T01:00Z — iteration 109 (stream M — M-02 — versus pages JSON-LD)
+
+- Phase 0: resumed batch-mode fire (iter 4 of 5 in this session). Lock held.
+- Phase 1: synced main (iter 108 — L-08 done). Queue confirmed M-02 as next item.
+- Phase 2: CI on L #289 and D #285 pending (no failures to rescue).
+- Phase 3: created new branch claude/audit-remediation/m-02-versus-json-ld from main (M-02 is independent of M-01b cover-image work).
+- Phase 4: read app/versus/[slugs]/page.tsx — existing JSON-LD was WebPage+ItemList inline (not using schema-markup helpers). No Article or standalone FinancialProduct schemas present.
+- Phase 5: added versusComparisonJsonLd() to lib/schema-markup.ts returning Article + per-broker FinancialProduct array; updated versus page to use helper (removed inline jsonLd); added 14 tests to __tests__/lib/schema-markup.test.ts. Kept BreadcrumbList and FAQPage unchanged.
+- Phase 6: committed `3ab1bacf`; pushed new branch; created PR #296 (draft).
+- Phase 7: M in-flight row updated; M-02 marked done; this log entry on main.
+- STATUS: PROGRESS · stream=M · item=M-02 · pr=#296 · commit=`3ab1bacf` · diff=+178/-33 across 3 files · next=D-11 batch 25 (stream D, highest priority)
 
 ### 2026-04-30T00:45Z — iteration 108 (stream L — L-08 — PostHog events extension)
 
