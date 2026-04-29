@@ -27,8 +27,7 @@ import { GET, POST, DELETE } from "@/app/api/admin/competitors/route";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-const ADMIN_USER = { email: "admin@test.com" };
-const ANON_USER = null;
+const ADMIN_USER = { email: "admin@test.com", id: "uid-1" };
 
 const ENTRIES = [
   {
@@ -42,98 +41,120 @@ const ENTRIES = [
   },
 ];
 
-function makeRequest(method: "POST" | "DELETE", body: unknown): NextRequest {
+function makePost(body: unknown): NextRequest {
   return new NextRequest("http://localhost/api/admin/competitors", {
-    method,
+    method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
 }
 
-// ── GET ───────────────────────────────────────────────────────────────────────
+function makeDelete(body: unknown): NextRequest {
+  return new NextRequest("http://localhost/api/admin/competitors", {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+}
+
+function setupListMock(data: unknown[] = ENTRIES) {
+  const chain = {
+    select: vi.fn().mockReturnThis(),
+    order: vi.fn().mockReturnThis(),
+    limit: vi.fn().mockResolvedValue({ data }),
+  };
+  mockFrom.mockReturnValue(chain);
+  return chain;
+}
+
+beforeEach(() => {
+  vi.clearAllMocks();
+});
+
+// ── GET ────────────────────────────────────────────────────────────────────────
 
 describe("GET /api/admin/competitors", () => {
-  beforeEach(() => vi.clearAllMocks());
-
-  it("returns 401 when unauthenticated", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: ANON_USER }, error: null });
+  it("returns 401 when not authenticated", async () => {
+    mockGetUser.mockResolvedValue({ data: { user: null }, error: null });
     const res = await GET();
     expect(res.status).toBe(401);
   });
 
-  it("returns 200 with entries list on success", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: ADMIN_USER }, error: null });
-    mockFrom.mockReturnValue({
-      select: vi.fn().mockReturnThis(),
-      order: vi.fn().mockReturnThis(),
-      limit: vi.fn().mockResolvedValue({ data: ENTRIES }),
+  it("returns 401 when not admin email", async () => {
+    mockGetUser.mockResolvedValue({
+      data: { user: { email: "stranger@example.com" } },
+      error: null,
     });
     const res = await GET();
+    expect(res.status).toBe(401);
+  });
+
+  it("returns competitor entries on success", async () => {
+    mockGetUser.mockResolvedValue({ data: { user: ADMIN_USER }, error: null });
+    setupListMock();
+    const res = await GET();
     expect(res.status).toBe(200);
-    const body = await res.json();
-    expect(body).toHaveLength(1);
-    expect(body[0].competitor).toBe("fin.com.au");
+    const json = await res.json();
+    expect(json).toEqual(ENTRIES);
   });
 
   it("returns empty array when no entries (null data)", async () => {
     mockGetUser.mockResolvedValue({ data: { user: ADMIN_USER }, error: null });
-    mockFrom.mockReturnValue({
+    const chain = {
       select: vi.fn().mockReturnThis(),
       order: vi.fn().mockReturnThis(),
       limit: vi.fn().mockResolvedValue({ data: null }),
-    });
+    };
+    mockFrom.mockReturnValue(chain);
     const res = await GET();
     expect(res.status).toBe(200);
-    const body = await res.json();
-    expect(body).toEqual([]);
+    const json = await res.json();
+    expect(json).toEqual([]);
   });
 
   it("returns 500 when DB throws", async () => {
     mockGetUser.mockResolvedValue({ data: { user: ADMIN_USER }, error: null });
-    mockFrom.mockReturnValue({
+    const chain = {
       select: vi.fn().mockReturnThis(),
       order: vi.fn().mockReturnThis(),
-      limit: vi.fn().mockRejectedValue(new Error("db_thrown")),
-    });
+      limit: vi.fn().mockRejectedValue(new Error("connection error")),
+    };
+    mockFrom.mockReturnValue(chain);
     const res = await GET();
     expect(res.status).toBe(500);
   });
 });
 
-// ── POST ──────────────────────────────────────────────────────────────────────
+// ── POST ───────────────────────────────────────────────────────────────────────
 
 describe("POST /api/admin/competitors", () => {
-  beforeEach(() => vi.clearAllMocks());
-
-  it("returns 401 when unauthenticated", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: ANON_USER }, error: null });
-    const res = await POST(
-      makeRequest("POST", { competitor: "rival.com", event_type: "launch", title: "Test" })
-    );
+  it("returns 401 when not admin", async () => {
+    mockGetUser.mockResolvedValue({ data: { user: null }, error: null });
+    const res = await POST(makePost({ competitor: "rival.com", event_type: "launch", title: "T" }));
     expect(res.status).toBe(401);
   });
 
   it("returns 400 when competitor is missing", async () => {
     mockGetUser.mockResolvedValue({ data: { user: ADMIN_USER }, error: null });
-    const res = await POST(makeRequest("POST", { event_type: "launch", title: "Test" }));
+    const res = await POST(makePost({ event_type: "launch", title: "Test" }));
     expect(res.status).toBe(400);
   });
 
   it("returns 400 when event_type is missing", async () => {
     mockGetUser.mockResolvedValue({ data: { user: ADMIN_USER }, error: null });
-    const res = await POST(makeRequest("POST", { competitor: "rival.com", title: "Test" }));
+    const res = await POST(makePost({ competitor: "rival.com", title: "Test" }));
     expect(res.status).toBe(400);
   });
 
   it("returns 400 when title is empty/whitespace", async () => {
     mockGetUser.mockResolvedValue({ data: { user: ADMIN_USER }, error: null });
     const res = await POST(
-      makeRequest("POST", { competitor: "rival.com", event_type: "launch", title: "   " })
+      makePost({ competitor: "rival.com", event_type: "launch", title: "   " }),
     );
     expect(res.status).toBe(400);
   });
 
-  it("creates entry and writes audit log on success", async () => {
+  it("inserts entry and writes audit log", async () => {
     mockGetUser.mockResolvedValue({ data: { user: ADMIN_USER }, error: null });
     const newEntry = { id: 2, competitor: "rival.com", event_type: "launch", title: "New Launch" };
     const auditInsertMock = vi.fn().mockResolvedValue({ error: null });
@@ -148,13 +169,13 @@ describe("POST /api/admin/competitors", () => {
       return { insert: auditInsertMock };
     });
     const res = await POST(
-      makeRequest("POST", { competitor: "rival.com", event_type: "launch", title: "New Launch" })
+      makePost({ competitor: "rival.com", event_type: "launch", title: "New Launch" }),
     );
     expect(res.status).toBe(200);
-    const body = await res.json();
-    expect(body.id).toBe(2);
+    const json = await res.json();
+    expect(json.id).toBe(2);
     expect(auditInsertMock).toHaveBeenCalledWith(
-      expect.objectContaining({ action: "competitor_watch:created" })
+      expect.objectContaining({ action: "competitor_watch:created" }),
     );
   });
 
@@ -171,7 +192,7 @@ describe("POST /api/admin/competitors", () => {
       return {};
     });
     const res = await POST(
-      makeRequest("POST", { competitor: "rival.com", event_type: "launch", title: "Test" })
+      makePost({ competitor: "rival.com", event_type: "launch", title: "Test" }),
     );
     expect(res.status).toBe(500);
   });
@@ -193,34 +214,39 @@ describe("POST /api/admin/competitors", () => {
       return { insert: vi.fn().mockResolvedValue({ error: null }) };
     });
     await POST(
-      makeRequest("POST", {
+      makePost({
         competitor: "rival.com",
         event_type: "launch",
         title: "Test",
         detail: "some detail",
         url: "https://rival.com/news",
-      })
+      }),
     );
     expect(capturedInsert).toHaveBeenCalledWith(
-      expect.objectContaining({ detail: "some detail", url: "https://rival.com/news" })
+      expect.objectContaining({ detail: "some detail", url: "https://rival.com/news" }),
     );
   });
 });
 
-// ── DELETE ────────────────────────────────────────────────────────────────────
+// ── DELETE ─────────────────────────────────────────────────────────────────────
 
 describe("DELETE /api/admin/competitors", () => {
-  beforeEach(() => vi.clearAllMocks());
-
-  it("returns 401 when unauthenticated", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: ANON_USER }, error: null });
-    const res = await DELETE(makeRequest("DELETE", { id: 1 }));
+  it("returns 401 when not admin", async () => {
+    mockGetUser.mockResolvedValue({ data: { user: null }, error: null });
+    const res = await DELETE(makeDelete({ id: 1 }));
     expect(res.status).toBe(401);
   });
 
-  it("returns 400 when id is missing", async () => {
+  it("returns 400 when id missing", async () => {
     mockGetUser.mockResolvedValue({ data: { user: ADMIN_USER }, error: null });
-    const res = await DELETE(makeRequest("DELETE", {}));
+    const chain = { delete: vi.fn().mockReturnThis(), eq: vi.fn().mockResolvedValue({}) };
+    const auditChain = { insert: vi.fn().mockResolvedValue({}) };
+    let callCount = 0;
+    mockFrom.mockImplementation(() => {
+      callCount++;
+      return callCount === 1 ? chain : auditChain;
+    });
+    const res = await DELETE(makeDelete({}));
     expect(res.status).toBe(400);
   });
 
@@ -236,12 +262,12 @@ describe("DELETE /api/admin/competitors", () => {
       }
       return { insert: auditInsertMock };
     });
-    const res = await DELETE(makeRequest("DELETE", { id: 1 }));
+    const res = await DELETE(makeDelete({ id: 1 }));
     expect(res.status).toBe(200);
-    const body = await res.json();
-    expect(body.deleted).toBe(true);
+    const json = await res.json();
+    expect(json.deleted).toBe(true);
     expect(auditInsertMock).toHaveBeenCalledWith(
-      expect.objectContaining({ action: "competitor_watch:deleted", entity_id: "1" })
+      expect.objectContaining({ action: "competitor_watch:deleted", entity_id: "1" }),
     );
   });
 });
