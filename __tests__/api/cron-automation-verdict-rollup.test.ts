@@ -1,186 +1,121 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import type { NextRequest } from "next/server";
+import { NextRequest } from "next/server";
 
-// ─── Mocks ───────────────────────────────────────────────────────────────────
-
-vi.mock("@/lib/logger", () => ({
-  logger: vi.fn(() => ({
-    debug: vi.fn(),
-    info: vi.fn(),
-    warn: vi.fn(),
-    error: vi.fn(),
-  })),
-}));
-
-vi.mock("@/lib/cron-run-log", () => ({
-  wrapCronHandler: (_name: string, h: unknown) => h,
-}));
-
-vi.mock("@/lib/cron-auth", () => ({
-  requireCronAuth: vi.fn(() => null),
-}));
-
-// ─── DB queue ────────────────────────────────────────────────────────────────
-
-interface DbResult {
-  data?: unknown;
-  error?: { message: string } | null;
-  count?: number | null;
-}
-
-let dbQueue: DbResult[] = [];
-let dbIdx = 0;
-
-function makeChain(res: DbResult) {
-  const chain: Record<string, unknown> = {};
-  const methods = ["select","update","insert","upsert","eq","neq","lt","lte","gte","not","in","or","limit"];
-  for (const m of methods) chain[m] = vi.fn(() => chain);
-  const r = { data: res.data ?? null, error: res.error ?? null, count: res.count ?? null };
-  chain.then = (resolve: (v: typeof r) => unknown) => Promise.resolve(resolve(r));
-  chain.catch = () => chain;
-  return chain;
-}
-
-vi.mock("@/lib/supabase/admin", () => ({
-  createAdminClient: vi.fn(() => ({
-    from: vi.fn(() => makeChain(dbQueue[dbIdx++] ?? { error: null })),
-  })),
-}));
+vi.mock("@/lib/logger", () => ({ logger: () => ({ info: vi.fn(), error: vi.fn(), warn: vi.fn() }) }));
+vi.mock("@/lib/cron-run-log", () => ({ wrapCronHandler: (_n: string, h: unknown) => h }));
+vi.mock("@/lib/cron-auth", () => ({ requireCronAuth: vi.fn() }));
+vi.mock("@/lib/supabase/admin", () => ({ createAdminClient: vi.fn() }));
 
 import { GET } from "@/app/api/cron/automation-verdict-rollup/route";
 import { requireCronAuth } from "@/lib/cron-auth";
+import { createAdminClient } from "@/lib/supabase/admin";
 
-function makeReq(): NextRequest {
-  return new Request("http://localhost/api/cron/automation-verdict-rollup", {
-    headers: { Authorization: "Bearer test-secret" },
-  }) as unknown as NextRequest;
+const mockRequireCronAuth = vi.mocked(requireCronAuth);
+const mockCreateAdmin = vi.mocked(createAdminClient);
+
+function makeChain(res: unknown) {
+  const c: Record<string, unknown> = {};
+  for (const m of ["select", "upsert", "eq", "gte", "lte", "order", "limit"]) {
+    c[m] = vi.fn(() => c);
+  }
+  c.then = (resolve: (v: unknown) => void) => Promise.resolve(resolve(res));
+  return c;
 }
 
-// Each rollup processes 2 days. Each day runs 6 parallel rollup queries + 6 upserts.
-// lead_disputes, investment_listings, user_reviews+professional_reviews (2 parallel), advisor_applications, broker_data_changes, campaigns
-// Total DB calls per day: 6 rollup queries + 6 upserts = 12. For 2 days: 24 total.
-function queueEmptyDay() {
-  // 6 source queries (user_reviews and professional_reviews are fetched in parallel = 2 separate from() calls)
-  for (let i = 0; i < 7; i++) dbQueue.push({ data: [] });
-  // 6 upsert calls
-  for (let i = 0; i < 6; i++) dbQueue.push({ error: null });
+function makeReq() {
+  return new NextRequest("http://localhost/api/cron/automation-verdict-rollup", { method: "GET" });
 }
 
 beforeEach(() => {
-  dbQueue = [];
-  dbIdx = 0;
-  vi.clearAllMocks();
+  vi.resetAllMocks();
+  mockRequireCronAuth.mockReturnValue(undefined as never);
 });
-
-// ─── Tests ───────────────────────────────────────────────────────────────────
 
 describe("GET /api/cron/automation-verdict-rollup", () => {
   it("returns 401 when cron auth fails", async () => {
-    vi.mocked(requireCronAuth).mockReturnValueOnce(
-      new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 }) as never
-    );
+    mockRequireCronAuth.mockReturnValue(new Response(null, { status: 401 }) as never);
     const res = await GET(makeReq());
     expect(res.status).toBe(401);
   });
 
-  it("returns ok with upserts count on success with empty data", async () => {
-    // 2 days × (7 rollup queries + 6 upserts each)
-    queueEmptyDay();
-    queueEmptyDay();
-
+  it("returns ok with zero upserts when all tables are empty", async () => {
+    // The handler processes 2 days (yesterday + today).
+    // Per day: 6 rollup calls (lead_disputes, investment_listings,
+    //   user_reviews + professional_reviews [Promise.all], advisor_applications,
+    //   broker_data_changes, campaigns) = 7 from() calls (text_moderation does 2).
+    // Then for each of the 6 result rows, 1 upsert call.
+    // So per day: 7 select + 6 upsert = 13. For 2 days: 26.
+    mockCreateAdmin.mockReturnValue({
+      from: vi.fn((table: string) => {
+        if (table === "automation_verdict_daily") return makeChain({ data: null, error: null }); // upsert
+        return makeChain({ data: [], error: null }); // any source table
+      }),
+    } as never);
     const res = await GET(makeReq());
-    expect(res.status).toBe(200);
-    const body = await res.json() as { ok: boolean; upserts: number; failed: number };
+    const body = await res.json();
     expect(body.ok).toBe(true);
-    expect(typeof body.upserts).toBe("number");
+    // 6 features × 2 days = 12 upserts (all succeed)
+    expect(body.upserts).toBe(12);
     expect(body.failed).toBe(0);
   });
 
-  it("counts lead_dispute refund correctly", async () => {
+  it("counts upsert failures in stats.failed", async () => {
+    mockCreateAdmin.mockReturnValue({
+      from: vi.fn((table: string) => {
+        if (table === "automation_verdict_daily") return makeChain({ data: null, error: { message: "conflict" } });
+        return makeChain({ data: [], error: null });
+      }),
+    } as never);
+    const res = await GET(makeReq());
+    const body = await res.json();
+    expect(body.ok).toBe(true);
+    expect(body.failed).toBe(12); // all upserts fail
+    expect(body.upserts).toBe(0);
+  });
+
+  it("aggregates lead_disputes verdicts correctly", async () => {
     const disputes = [
-      { auto_resolved_verdict: "refund", status: "approved", refunded_cents: 5000 },
+      { auto_resolved_verdict: "refund", status: "approved", refunded_cents: 2000 },
       { auto_resolved_verdict: "escalate", status: "pending", refunded_cents: null },
       { auto_resolved_verdict: "reject", status: "rejected", refunded_cents: 0 },
     ];
-    // Day 1 source queries — lead_disputes is first
-    dbQueue.push({ data: disputes }); // lead_disputes
-    dbQueue.push({ data: [] });       // investment_listings
-    dbQueue.push({ data: [] });       // user_reviews
-    dbQueue.push({ data: [] });       // professional_reviews
-    dbQueue.push({ data: [] });       // advisor_applications
-    dbQueue.push({ data: [] });       // broker_data_changes
-    dbQueue.push({ data: [] });       // campaigns
-    // 6 upserts for day 1
-    for (let i = 0; i < 6; i++) dbQueue.push({ error: null });
-    // Day 2 empty
-    queueEmptyDay();
-
-    const res = await GET(makeReq());
-    expect(res.status).toBe(200);
-    const body = await res.json() as { ok: boolean; upserts: number };
-    expect(body.ok).toBe(true);
-    expect(body.upserts).toBeGreaterThan(0);
+    const upsertedRows: unknown[] = [];
+    mockCreateAdmin.mockReturnValue({
+      from: vi.fn((table: string) => {
+        if (table === "automation_verdict_daily") {
+          const chain = makeChain({ data: null, error: null });
+          const origUpsert = chain.upsert as ReturnType<typeof vi.fn>;
+          origUpsert.mockImplementation((row: unknown) => { upsertedRows.push(row); return chain; });
+          return chain;
+        }
+        if (table === "lead_disputes") return makeChain({ data: disputes, error: null });
+        return makeChain({ data: [], error: null });
+      }),
+    } as never);
+    await GET(makeReq());
+    // Find the lead_disputes row from today's day
+    const ldRows = upsertedRows.filter((r) => (r as { feature: string }).feature === "lead_disputes");
+    expect(ldRows.length).toBeGreaterThanOrEqual(1);
+    const row = ldRows[ldRows.length - 1] as { auto_acted: number; escalated: number; refunded_cents: number };
+    expect(row.auto_acted).toBe(2); // refund + reject
+    expect(row.escalated).toBe(1);
+    expect(row.refunded_cents).toBe(2000);
   });
 
-  it("tracks failed upserts in the failed counter", async () => {
-    // Day 1 sources
-    for (let i = 0; i < 7; i++) dbQueue.push({ data: [] });
-    // All 6 upserts fail
-    for (let i = 0; i < 6; i++) dbQueue.push({ error: { message: "conflict" } });
-    // Day 2 empty
-    queueEmptyDay();
-
+  it("continues to next day when one day's rollup throws", async () => {
+    let callCount = 0;
+    mockCreateAdmin.mockReturnValue({
+      from: vi.fn((table: string) => {
+        callCount++;
+        if (callCount <= 2 && table === "lead_disputes") throw new Error("first day explodes");
+        if (table === "automation_verdict_daily") return makeChain({ data: null, error: null });
+        return makeChain({ data: [], error: null });
+      }),
+    } as never);
     const res = await GET(makeReq());
-    const body = await res.json() as { ok: boolean; failed: number };
+    const body = await res.json();
+    // One day failed, one day succeeded (6 upserts)
     expect(body.ok).toBe(true);
-    expect(body.failed).toBeGreaterThan(0);
-  });
-
-  it("handles thrown error in a day's rollup gracefully and continues", async () => {
-    // Intentionally leave dbQueue empty so first day throws
-    // then provide data for day 2
-    queueEmptyDay(); // day 2 succeeds
-
-    const res = await GET(makeReq());
-    expect(res.status).toBe(200);
-    const body = await res.json() as { ok: boolean };
-    expect(body.ok).toBe(true);
-  });
-
-  it("counts campaign rollup verdicts correctly", async () => {
-    const campaigns = [
-      { status: "active" },
-      { status: "active" },
-      { status: "rejected" },
-      { status: "pending" },
-    ];
-    // Day 1
-    dbQueue.push({ data: [] }); // lead_disputes
-    dbQueue.push({ data: [] }); // investment_listings
-    dbQueue.push({ data: [] }); // user_reviews
-    dbQueue.push({ data: [] }); // professional_reviews
-    dbQueue.push({ data: [] }); // advisor_applications
-    dbQueue.push({ data: [] }); // broker_data_changes
-    dbQueue.push({ data: campaigns }); // campaigns
-    for (let i = 0; i < 6; i++) dbQueue.push({ error: null });
-    // Day 2 empty
-    queueEmptyDay();
-
-    const res = await GET(makeReq());
-    expect(res.status).toBe(200);
-    const body = await res.json() as { ok: boolean; upserts: number };
-    expect(body.ok).toBe(true);
-    expect(body.upserts).toBe(12); // 6 features × 2 days
-  });
-
-  it("processes both today and yesterday in the same run", async () => {
-    queueEmptyDay(); // yesterday
-    queueEmptyDay(); // today
-
-    const res = await GET(makeReq());
-    const body = await res.json() as { ok: boolean; upserts: number };
-    expect(body.ok).toBe(true);
-    // Both days should produce upserts (6 features × 2 days)
-    expect(body.upserts).toBe(12);
+    expect(body.failed).toBeGreaterThanOrEqual(1);
   });
 });

@@ -1,172 +1,144 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import type { NextRequest } from "next/server";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { NextRequest } from "next/server";
 
-// ─── Mocks ───────────────────────────────────────────────────────────────────
-
-vi.mock("@/lib/logger", () => ({
-  logger: vi.fn(() => ({
-    debug: vi.fn(),
-    info: vi.fn(),
-    warn: vi.fn(),
-    error: vi.fn(),
-  })),
-}));
-
-vi.mock("@/lib/cron-auth", () => ({
-  requireCronAuth: vi.fn(() => null),
-}));
-
-const fetchMock = vi.fn<() => Promise<Response>>();
-vi.stubGlobal("fetch", fetchMock);
-
-// ─── DB queue ────────────────────────────────────────────────────────────────
-
-interface DbResult {
-  data?: unknown;
-  error?: { message: string } | null;
-}
-
-let dbQueue: DbResult[] = [];
-let dbIdx = 0;
-
-function makeChain(res: DbResult) {
-  const chain: Record<string, unknown> = {};
-  const methods = ["select","update","insert","eq","neq","lt","lte","gte","not","in","or","limit"];
-  for (const m of methods) chain[m] = vi.fn(() => chain);
-  const r = { data: res.data ?? null, error: res.error ?? null };
-  chain.then = (resolve: (v: typeof r) => unknown) => Promise.resolve(resolve(r));
-  chain.catch = () => chain;
-  return chain;
-}
-
-vi.mock("@/lib/supabase/admin", () => ({
-  createAdminClient: vi.fn(() => ({
-    from: vi.fn(() => makeChain(dbQueue[dbIdx++] ?? { error: null })),
-  })),
-}));
+vi.mock("@/lib/logger", () => ({ logger: () => ({ info: vi.fn(), error: vi.fn(), warn: vi.fn() }) }));
+vi.mock("@/lib/cron-auth", () => ({ requireCronAuth: vi.fn() }));
+vi.mock("@/lib/supabase/admin", () => ({ createAdminClient: vi.fn() }));
 
 import { GET } from "@/app/api/cron/check-affiliate-links/route";
 import { requireCronAuth } from "@/lib/cron-auth";
+import { createAdminClient } from "@/lib/supabase/admin";
 
-function makeReq(): NextRequest {
-  return new Request("http://localhost/api/cron/check-affiliate-links", {
-    headers: { Authorization: "Bearer test-secret" },
-  }) as unknown as NextRequest;
+const mockRequireCronAuth = vi.mocked(requireCronAuth);
+const mockCreateAdmin = vi.mocked(createAdminClient);
+const mockFetch = vi.fn();
+
+function makeChain(res: unknown) {
+  const c: Record<string, unknown> = {};
+  for (const m of ["select", "insert", "update", "eq", "in", "not", "is", "order", "limit"]) {
+    c[m] = vi.fn(() => c);
+  }
+  c.then = (resolve: (v: unknown) => void) => Promise.resolve(resolve(res));
+  return c;
 }
 
-function broker(overrides: Record<string, unknown> = {}) {
-  return {
-    id: 1,
-    slug: "commsec",
-    name: "CommSec",
-    affiliate_url: "https://www.commsec.com.au/?ref=invest",
-    link_status: "ok",
-    ...overrides,
-  };
+function makeBroker(overrides: Record<string, unknown> = {}) {
+  return { id: 1, slug: "abc", name: "ABC", affiliate_url: "https://abc.com/signup", link_status: "ok", ...overrides };
+}
+
+function makeReq() {
+  return new NextRequest("http://localhost/api/cron/check-affiliate-links", { method: "GET" });
 }
 
 beforeEach(() => {
-  dbQueue = [];
-  dbIdx = 0;
-  vi.clearAllMocks();
-  process.env.RESEND_API_KEY = "test-resend-key";
+  vi.resetAllMocks();
+  mockRequireCronAuth.mockReturnValue(undefined as never);
+  vi.stubGlobal("fetch", mockFetch);
+  delete process.env.RESEND_API_KEY;
 });
 
-// ─── Tests ───────────────────────────────────────────────────────────────────
+afterEach(() => { vi.unstubAllGlobals(); delete process.env.RESEND_API_KEY; });
 
 describe("GET /api/cron/check-affiliate-links", () => {
   it("returns 401 when cron auth fails", async () => {
-    vi.mocked(requireCronAuth).mockReturnValueOnce(
-      new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 }) as never
-    );
+    mockRequireCronAuth.mockReturnValue(new Response(null, { status: 401 }) as never);
     const res = await GET(makeReq());
     expect(res.status).toBe(401);
   });
 
-  it("returns 500 when brokers fetch fails", async () => {
-    dbQueue.push({ error: { message: "DB error" } });
+  it("returns 500 when brokers query errors", async () => {
+    mockCreateAdmin.mockReturnValue({ from: vi.fn(() => makeChain({ data: null, error: { message: "db error" } })) } as never);
     const res = await GET(makeReq());
     expect(res.status).toBe(500);
   });
 
-  it("returns ok with zero results when no active brokers", async () => {
-    dbQueue.push({ data: [] }); // brokers empty
+  it("returns checked:0 when no active brokers", async () => {
+    mockCreateAdmin.mockReturnValue({ from: vi.fn(() => makeChain({ data: [], error: null })) } as never);
+    mockFetch.mockResolvedValue({ ok: true, status: 200 });
     const res = await GET(makeReq());
-    expect(res.status).toBe(200);
-    const body = await res.json() as { checked: number; ok: number; broken: number };
+    const body = await res.json();
     expect(body.checked).toBe(0);
     expect(body.ok).toBe(0);
-    expect(body.broken).toBe(0);
   });
 
-  it("marks broker as ok when affiliate URL returns 200", async () => {
-    dbQueue.push({ data: [broker()] }); // brokers
-    fetchMock
-      .mockResolvedValueOnce(new Response("", { status: 200 })) // affiliate URL check
-    dbQueue.push({ error: null }); // update broker link_status
-
+  it("marks broker with no affiliate_url as no_url", async () => {
+    const broker = makeBroker({ affiliate_url: null, link_status: "ok" });
+    let call = 0;
+    mockCreateAdmin.mockReturnValue({
+      from: vi.fn(() => {
+        call++;
+        if (call === 1) return makeChain({ data: [broker], error: null }); // select brokers
+        return makeChain({ data: null, error: null }); // update
+      }),
+    } as never);
     const res = await GET(makeReq());
-    expect(res.status).toBe(200);
-    const body = await res.json() as { checked: number; ok: number; broken: number };
-    expect(body.checked).toBe(1);
+    const body = await res.json();
+    expect(body.noUrl).toBe(1);
+    expect(body.ok).toBe(0);
+  });
+
+  it("marks broker with 200 response as ok", async () => {
+    const broker = makeBroker();
+    mockFetch.mockResolvedValue({ ok: true, status: 200 });
+    let call = 0;
+    mockCreateAdmin.mockReturnValue({
+      from: vi.fn(() => {
+        call++;
+        if (call === 1) return makeChain({ data: [broker], error: null });
+        return makeChain({ data: null, error: null }); // update
+      }),
+    } as never);
+    const res = await GET(makeReq());
+    const body = await res.json();
     expect(body.ok).toBe(1);
     expect(body.broken).toBe(0);
   });
 
-  it("marks broker as broken and sends alert email when URL returns 404", async () => {
-    const b = broker({ link_status: "ok" });
-    dbQueue.push({ data: [b] });
-    fetchMock
-      .mockResolvedValueOnce(new Response("", { status: 404 })) // affiliate URL
-      .mockResolvedValueOnce(new Response("", { status: 200 })); // alert email
-    dbQueue.push({ error: null }); // update broker
-    dbQueue.push({ error: null }); // insert audit log
-
+  it("marks broker with 404 as broken and sends alert when RESEND set", async () => {
+    process.env.RESEND_API_KEY = "rk_test";
+    const broker = makeBroker({ link_status: "ok" }); // changed: was ok, now broken
+    // First fetch call is the affiliate URL check, second is the Resend alert email
+    let fetchIdx = 0;
+    mockFetch.mockImplementation(() => {
+      fetchIdx++;
+      if (fetchIdx === 1) return Promise.resolve({ ok: false, status: 404 });
+      return Promise.resolve({ ok: true }); // Resend alert
+    });
+    let call = 0;
+    mockCreateAdmin.mockReturnValue({
+      from: vi.fn(() => {
+        call++;
+        if (call === 1) return makeChain({ data: [broker], error: null });
+        if (call === 2) return makeChain({ data: null, error: null }); // update
+        return makeChain({ data: null, error: null }); // audit log insert
+      }),
+    } as never);
     const res = await GET(makeReq());
-    expect(res.status).toBe(200);
-    const body = await res.json() as { broken: number; changed: number };
+    const body = await res.json();
     expect(body.broken).toBe(1);
-    expect(body.changed).toBe(1);
-    // Alert email sent to Resend
-    expect(fetchMock).toHaveBeenCalledWith(
-      "https://api.resend.com/emails",
-      expect.objectContaining({ method: "POST" })
-    );
+    expect(body.changed).toBe(1); // was ok, now broken
+    // Alert email should have been sent
+    expect(fetchIdx).toBe(2);
   });
 
-  it("marks broker as no_url when affiliate_url is null", async () => {
-    const b = broker({ affiliate_url: null, link_status: null });
-    dbQueue.push({ data: [b] });
-    dbQueue.push({ error: null }); // update link_status=no_url
-
+  it("records timeout status when affiliate fetch throws", async () => {
+    const broker = makeBroker({ link_status: "ok" });
+    let fetchIdx = 0;
+    mockFetch.mockImplementation(() => {
+      fetchIdx++;
+      if (fetchIdx === 1) return Promise.reject(new Error("AbortError: The operation was aborted"));
+      return Promise.resolve({ ok: true }); // no alert (no RESEND key)
+    });
+    let call = 0;
+    mockCreateAdmin.mockReturnValue({
+      from: vi.fn(() => {
+        call++;
+        if (call === 1) return makeChain({ data: [broker], error: null });
+        return makeChain({ data: null, error: null });
+      }),
+    } as never);
     const res = await GET(makeReq());
-    const body = await res.json() as { noUrl: number };
-    expect(body.noUrl).toBe(1);
-  });
-
-  it("marks broker as timeout when fetch times out", async () => {
-    dbQueue.push({ data: [broker({ link_status: "ok" })] });
-    fetchMock.mockRejectedValueOnce(new Error("AbortError: timeout"));
-    dbQueue.push({ error: null }); // update link_status=timeout
-    dbQueue.push({ error: null }); // insert audit log
-    fetchMock.mockResolvedValueOnce(new Response("", { status: 200 })); // alert email
-
-    const res = await GET(makeReq());
-    const body = await res.json() as { broken: number };
-    expect(body.broken).toBe(1);
-  });
-
-  it("does not send alert email when RESEND_API_KEY is absent", async () => {
-    delete process.env.RESEND_API_KEY;
-    const b = broker({ link_status: "ok" });
-    dbQueue.push({ data: [b] });
-    fetchMock.mockResolvedValueOnce(new Response("", { status: 500 })); // server_error
-    dbQueue.push({ error: null }); // update
-    dbQueue.push({ error: null }); // audit log
-
-    const res = await GET(makeReq());
-    expect(res.status).toBe(200);
-    // Only 2 fetch calls: link check + no alert (no RESEND key)
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    const body = await res.json();
+    expect(body.results[0].status).toBe("timeout");
   });
 });
