@@ -162,9 +162,7 @@ describe("handleCustomerSubscriptionCreated", () => {
     const ctx = makeCtx();
     await handleCustomerSubscriptionCreated(makeCreatedEvent(), ctx);
     const calls = mockSendTransactionalEmail.mock.calls;
-    const adminCall = calls.find(
-      ([to]: [string]) => to === "admin@invest.com.au",
-    );
+    const adminCall = calls.find((args) => args[0] === "admin@invest.com.au");
     expect(adminCall).toBeDefined();
     expect(adminCall![1]).toContain(CUSTOMER.email!);
   });

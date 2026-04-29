@@ -337,7 +337,14 @@ export const handleCheckoutSessionCompleted: WebhookHandler = async (
         .eq("id", planId)
         .single();
 
-      const durationDays = plan?.features?.listing_duration_days || 30;
+      const features = plan?.features;
+      const durationDays =
+        features &&
+        typeof features === "object" &&
+        !Array.isArray(features) &&
+        typeof features.listing_duration_days === "number"
+          ? features.listing_duration_days
+          : 30;
       const expiresAt = new Date(
         Date.now() + durationDays * 24 * 60 * 60 * 1000,
       ).toISOString();
