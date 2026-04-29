@@ -25,29 +25,29 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | Stream | Branch | PR | Last CI | Items in flight |
 | --- | --- | --- | --- | --- |
 | A | _not started_ | — | — | — |
-| B | `claude/audit-remediation/b-07-rls-migration-lint` | #286 (draft) | pending — pushed 2026-04-28T22:35Z | PR #220 merged (B-01..B-06 done/blocked/FP). B-07 done (`0097159`) — CI gate: new CREATE TABLE migrations must include ENABLE ROW LEVEL SECURITY. |
+| B | ✓ merged | #286 ✓ merged 2026-04-29 | ✅ green | PR #220 merged (B-01..B-06 done/blocked/FP). B-07 done (`0097159`) — CI gate: new CREATE TABLE migrations must include ENABLE ROW LEVEL SECURITY. B-08/B-09 pending. |
 | C | _not started_ | — | — | — |
-| D | `claude/audit-remediation/d-route-tests` | #285 | pending — pushed 2026-04-29T23:35Z | D-01 done (commit `7269510`) · D-02 done (commit `ebf2250`) · D-03 done (commit `0177aa1`) · D-04 done (commit `bea95b1`) · D-05 done (commit `e49375d`) · D-06 done (commit `c0cd3ee`) · D-07 done (commit `33230fb`) · D-08 done (commit `311df3f`) · D-09 done (commit `8e2d35d`) · D-10 done (commit `4e702c1`) · D-11 batch 1 done (commit `90c7c5b`) · D-11 batch 2 done (commit `387bcb4`) · D-11 batch 3 done (commit `db0df8d`) · D-11 batch 4 done (commit `c49e3aa`) · CI-rescue merged main (commit `9282178`) · D-11 batch 5 done (commit `6c7637f`) · D-11 batch 6 done (commit `f7e1a1c`) · D-11 batch 7 done (commit `f183cba`) · D-11 batch 8 done (commit `f336fc7`) · D-11 batch 9 done (commit `2c78f24`) · D-11 batch 10 done (commit `73c8aa1`) · D-11 batch 11 done (commit `3fab2c1`) · D-11 batch 12 done (commit `856026c`) · D-11 batch 12c done (commit `cc77b65`) · D-11 batch 13 done (commit `9dae465`) · D-11 batch 14 done (commit `c64ca614`) · D-11 batch 15 done (commit `01b685f`) · D-11 batch 16 done (commit `6536d77`) · D-11 batch 17 done (commit `bbca74d`) · D-11 batch 17b done (commit `251f745`) · **Also: PR #287 (`d-11-batch-15`) parallel coverage — batch 15: quiz/data+csp-report+complaints/intake+advisor-dashboard+course/purchase (`5c4df09`); batch 16: advisor-articles+community/posts/[id]+advisor-search/postcodes+v1/api-keys+marketplace/webhook (`ebdb3f4`) — 110 complementary tests, merges independently** · D-11 batch 18 done (commit `2694124`) · D-11 batch 18b done (commit `6a89600`→`701cf83`) · D-11 batch 19 done (commit `b93f1647`) · D-11 batch 19b done (commit `49e0ad5`) · D-11 batch 20 done (commit `2f72b7a`) · D-11 batch 21 done (commit `eec7429`) · D-11 batch 21b done (commit `d460cb5`→`32e3069`) · D-11 batch 22 done (commit `951a295`) · D-11 batch 22b done (commit `4b5e73b`) · D-11 batch 23 done (commit `575143b`) · D-11 batch 23b done (commit `a6574f1c`) |
-| E | _not started_ | — | — | — |
-| F | _not started_ | — | — | — |
+| D | `claude/audit-remediation/d-route-tests-2` | #285 ✓ merged 2026-04-29 (batches 1–23b); new PR TBD | ✅ green on #285 | D-01..D-10 done. D-11 batches 1–23b done via PR #285 (merged 2026-04-29). **D-11 batch 24 in progress on new branch** (push/send · webhooks/broker-signup · webhooks/resend · sync-shortlist · report-download). ~96 routes remain untested. |
+| E | ✓ merged | #295 ✓ merged 2026-04-29 | ✅ green | E-01 done — `lib/validation/withValidatedBody.ts` helper + 17 tests. E-02..E-04 pending. |
+| F | ✓ merged | #293 #294 ✓ merged 2026-04-29 | ✅ green | F-02 done (formatDate consolidated, 10 callsites). F-05 done (9 console.* → logger). F-05a (3 remaining files) pending. |
 | G | _not started_ | — | — | — |
 | H | _not started_ | — | — | — |
-| I | `claude/audit-remediation/i-new-04-main-ci-auto-revert` | #278 (draft) | pending — pushed 2026-04-28T16:14Z | I-NEW-01 done via #277 (`00ef2790`); I-NEW-02 hotfix `5b7937dc`; I-NEW-03 hotfix `4b050ed9`; I-NEW-05 race-fix `55d077bf`; **first real metrics snapshot landed 2026-04-28T16:12Z (grade F 0.0899 — Supabase secrets need to be set in GH Actions for non-zero on M04/M07/M08/M09/M10/M11/M12)**; I-NEW-04 in flight (auto-revert workflow `b42233fb`) |
-| J | `claude/audit-remediation/j-stripe-webhook` | #288 (draft) | pending — pushed 2026-04-29T22:30Z | J-01a..J-01e (route.ts 1197 → 165 LOC) · J-01d-ext (commit `bb1d56f6`) · J-03 (commit `b8e7189`) · J-05 (commit `d68852e`) · J-06 (commit `eedf582`) · J-08 (commit `e99aedc`) · J-09 (commit `e99aedc`) · J-10 (commit `e99aedc`) — all handlers complete (14 registered). Stream complete pending PR merge. |
-| K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-27T05:35Z | K-01..K-08 done; K-09 false-positive; K-10..K-15 done — **stream complete** |
-| L | `claude/audit-remediation/l-observability` | #289 (draft) | pending — pushed 2026-04-30T00:10Z | L-06 done (commit `12183619`) — 8 SLOs seeded. L-07 done (commit `824366e`) — email alert sink (OPS_ALERT_EMAIL pattern) + 25 tests. L-08 in progress. |
-| M | `claude/audit-remediation/m-01b-cover-image-backfill` | #283 (draft) | pending — pushed 2026-04-28T21:25Z | M-01b in flight (commit `19a0d7e6`) — per-article OG cover override + backfill script. |
-| N | `claude/audit-remediation/n-ux-perf` | #242 | pending — pushed 2026-04-27T13:30Z | N-01+N-02 done (`2ec6f89`) · N-03a done (`36e3f6d`) · N-03b done (`97bb9b00`) · N-03c done (`b29f443`) · N-04 FP · N-05 FP · N-06 blocked · N-07 batch 1 done (`2e5d8a4`) · N-07 batch 2 done (`91d0d42`) · N-08 done (`315d3b7`) · N-09 done (`3b43bf8`) · N-10 done (`0c33d71`) · N-11 done (`c2b769e`) — **stream complete** (N-06 blocked) |
+| I | ✓ merged | #278 ✓ merged 2026-04-28 | ✅ green | I-NEW-01..I-NEW-05 done. I-NEW-04 auto-revert workflow (`b42233fb`) — **stream complete**. |
+| J | ✓ merged | #288 ✓ merged 2026-04-29 | ✅ green | J-01a..J-01e (route.ts 1197 → 165 LOC) · all 14 handlers registered — **stream complete**. |
+| K | ✓ merged | #222 ✓ merged 2026-04-28 | ✅ green | K-01..K-15 done (K-09 FP) — **stream complete**. |
+| L | new branch TBD | #289 ✓ merged 2026-04-29 | ✅ green | L-06 done (8 SLOs). L-07 done (email alert sink + 25 tests). **L-08 pending** (PostHog events — advisor_selected, checkout_started, subscription_active, etc.). |
+| M | ✓ merged | #283 ✓ merged 2026-04-28 | ✅ green | M-01b done (per-article OG cover override + backfill script). M-02 pending. |
+| N | ✓ merged | #242 ✓ merged 2026-04-28 | ✅ green | N-01..N-11 done (N-04/N-05 FP, N-06 blocked) — **stream complete**. |
 | O | `claude/audit-remediation/o-rls-no-policy` | merged via #235/#237/#239 | last pushed 2026-04-26 | O-01 iter1 done (`user_notifications`/`user_quiz_history`/`user_bookmarks`) · iter2 done `8e638bd` (`article_comments`/`article_reactions`) · iter3 done `c9c8fcd` (admin/audit cluster) · iter4 done `e965eb7` (14 observability/admin tables). ~34 tables remain for iter5+. |
 | P | _not started_ | — | — | — |
 | Q | _not started_ | — | — | — |
-| R | _not started_ | — | — | — |
+| R | ✓ merged | #290 ✓ merged 2026-04-29 | ✅ green | R-01 done — marketplace allocation algorithm + CPC billing tests (738 LOC). |
 | S | _not started_ | — | — | — |
-| V | `claude/audit-remediation/v-polish-extras` | #252 | pending — pushed 2026-04-27T22:47Z (V-NEW-01: stale-dated-stats CI gate + 33 tests) | V-NEW-04 done (`5aadce3`) · CI-rescue `e37633c` · V-NEW-01 done (`a99c5db0`) · V-NEW-02 blocked (no compliance factual-filter) · V-NEW-03 done (`84bde1f`) |
-| V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 | pending — pushed 2026-04-27 | V-NEW-06 done (commit `a7bd736`) |
-| V (V-NEW-07) | `claude/audit-remediation/v-new-07-admin-mfa-enforced` | #256 | pending — test-fix pushed 2026-04-27T18:45Z | V-NEW-07a done (cookie helper + verify route + 22 tests) · V-NEW-07b done (`698bbae`) · test-fix `0561944` |
-| X | `claude/audit-remediation/x-admin-backlog` | #257 | pending — pushed 2026-04-27T18:23Z (X-01 decision matrix) | X-01 done — per-file decision matrix at `docs/audits/x-admin-backlog-decision-matrix.md`; X-02..X-09 parallel-eligible with W |
-| Y | `claude/audit-remediation/y-registry-nav` | #253 | pending — pushed 2026-04-27T19:25Z | Y-05 done (commit `fb9dec3`) · Y-08 done (commit `8bb1d4d`) |
+| V | ✓ merged | #252 ✓ merged 2026-04-28 | ✅ green | V-NEW-01/03/04 done. V-NEW-02 blocked (compliance factual-filter). |
+| V (V-NEW-06) | ✓ merged | #258 ✓ merged 2026-04-28 | ✅ green | V-NEW-06 done — AI cost caps + per-user-per-day budget. |
+| V (V-NEW-07) | ✓ merged | #256 ✓ merged 2026-04-28 | ✅ green | V-NEW-07a+07b done — admin MFA cookie gate + step-up UI. |
+| X | ✓ merged | #257 ✓ merged 2026-04-28 | ✅ green | X-01 done — decision matrix. X-02..X-09 pending. |
+| Y | ✓ merged | #253 ✓ merged 2026-04-28 | ✅ green | Y-05 done (DatedStatBadge + lib/dated-stats.ts). Y-08 done (dated-strings CI gate). Y-01..Y-04/Y-06/Y-07 pending. |
 
 ---
 
@@ -237,7 +237,7 @@ Highest priority: critical 2 first.
 
 | ID | Status | Summary | Est. iterations | Notes |
 | --- | --- | --- | --- | --- |
-| E-01 | pending | Author `lib/validation/withValidatedBody.ts` helper + tests | 1 | Pattern: `withValidatedBody(schema, async (req, body) => {...})`. |
+| E-01 | done | Author `lib/validation/withValidatedBody.ts` helper + tests | 1 | Done in commit `5d36e52` (PR #295, merged 2026-04-29). Pattern: `withValidatedBody(schema, async (req, body) => {...})`. |
 | E-02 | pending | Convert top-20 highest-traffic routes to Zod (overlap with D-01..D-09) | ~5 | 4 routes per iteration. |
 | E-03 | pending | ESLint rule: flag new `await req.json()` without immediate `.parse()`/`.safeParse()` | 1 | Stream I. |
 | E-04 | pending | Backfill remaining ~206 routes (chunked: ~6 per iteration) | ~35 | Lowest priority within E; ongoing. |
