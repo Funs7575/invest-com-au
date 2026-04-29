@@ -250,8 +250,6 @@ describe("PUT /api/broker-portal/deals", () => {
     });
     const res = await PUT(makePut({ deal_enabled: false }));
     expect(res.status).toBe(200);
-    const [[updateData]] = updateMock.mock.calls;
-    expect((updateData as Record<string, unknown>).deal).toBe(false);
-    expect((updateData as Record<string, unknown>).deal_text).toBeNull();
+    expect(updateMock).toHaveBeenCalledWith(expect.objectContaining({ deal: false, deal_text: null }));
   });
 });
