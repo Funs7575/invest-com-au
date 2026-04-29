@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { isRateLimited } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
 
 const log = logger("jobs:slug");
@@ -7,8 +8,13 @@ const log = logger("jobs:slug");
 /**
  * GET /api/jobs/[slug] — Public job detail + bids.
  */
-export async function GET(_request: NextRequest, ctx: { params: Promise<{ slug: string }> }) {
+export async function GET(request: NextRequest, ctx: { params: Promise<{ slug: string }> }) {
   try {
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    if (await isRateLimited(`quote-detail:${ip}`, 60, 60)) {
+      return NextResponse.json({ error: "Too many requests." }, { status: 429 });
+    }
+
     const { slug } = await ctx.params;
     if (!slug) return NextResponse.json({ error: "Missing slug." }, { status: 400 });
 
