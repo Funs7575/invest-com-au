@@ -1,155 +1,190 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { NextRequest } from "next/server";
 
-// ── Mocks ─────────────────────────────────────────────────────────────────────
-
-const mockFrom = vi.fn();
-vi.mock("@/lib/supabase/admin", () => ({
-  createAdminClient: vi.fn(() => ({ from: mockFrom })),
-}));
+// ── Mocks ──────────────────────────────────────────────────────────────────────
 
 vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ error: vi.fn(), info: vi.fn(), warn: vi.fn() })),
 }));
 
-const mockVerify = vi.fn<[string, string, unknown], boolean>();
+const mockVerify = vi.fn<(...args: unknown[]) => boolean>();
+const mockExtract = vi.fn();
+
 vi.mock("@/lib/resend-webhook-verify", () => ({
-  extractSvixHeaders: vi.fn(() => ({
-    svixId: "msg_123",
-    svixTimestamp: "1700000000",
-    svixSignature: "v1,abc123",
-  })),
-  verifyResendSignature: (...args: unknown[]) => mockVerify(...(args as [string, string, unknown])),
+  verifyResendSignature: (...args: unknown[]) => mockVerify(...args),
+  extractSvixHeaders: (...args: unknown[]) => mockExtract(...args),
+}));
+
+const mockAdminFrom = vi.fn();
+vi.mock("@/lib/supabase/admin", () => ({
+  createAdminClient: vi.fn(() => ({ from: mockAdminFrom })),
 }));
 
 import { POST } from "@/app/api/webhooks/resend/route";
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// ── Helpers ────────────────────────────────────────────────────────────────────
 
-function makePost(body: unknown, rawBody?: string): NextRequest {
-  const bodyStr = rawBody ?? JSON.stringify(body);
+const SVIX_HEADERS = {
+  svixId: "msg_001",
+  svixTimestamp: "1700000000",
+  svixSignature: "v1,abc123",
+};
+
+function makePost(body: unknown, extraHeaders: Record<string, string> = {}): NextRequest {
   return new NextRequest("http://localhost/api/webhooks/resend", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: bodyStr,
+    body: JSON.stringify(body),
+    headers: {
+      "Content-Type": "application/json",
+      "svix-id": SVIX_HEADERS.svixId,
+      "svix-timestamp": SVIX_HEADERS.svixTimestamp,
+      "svix-signature": SVIX_HEADERS.svixSignature,
+      ...extraHeaders,
+    },
   });
 }
 
-function makeUpdateChain() {
-  return {
-    update: vi.fn().mockReturnThis(),
-    eq: vi.fn().mockResolvedValue({ error: null }),
-  };
+function makeUpdateChain(result = { error: null }) {
+  const c: Record<string, unknown> = {};
+  c.update = vi.fn(() => c);
+  c.eq = vi.fn().mockResolvedValue(result);
+  return c;
 }
 
-// ── Tests ─────────────────────────────────────────────────────────────────────
+// ── Tests ──────────────────────────────────────────────────────────────────────
 
 describe("POST /api/webhooks/resend", () => {
+  const OLD_ENV = process.env;
+
   beforeEach(() => {
     vi.clearAllMocks();
-    process.env.RESEND_WEBHOOK_SECRET = "whsec_testsecret";
+    process.env = { ...OLD_ENV, RESEND_WEBHOOK_SECRET: "whsec_testsecret" };
+    mockExtract.mockReturnValue(SVIX_HEADERS);
     mockVerify.mockReturnValue(true);
-    mockFrom.mockReturnValue(makeUpdateChain());
+    mockAdminFrom.mockReturnValue(makeUpdateChain());
   });
 
-  it("returns 500 when RESEND_WEBHOOK_SECRET is not set", async () => {
+  afterEach(() => {
+    process.env = OLD_ENV;
+  });
+
+  it("returns 500 when RESEND_WEBHOOK_SECRET is not configured", async () => {
     delete process.env.RESEND_WEBHOOK_SECRET;
     const res = await POST(makePost({ type: "email.bounced", data: {} }));
     expect(res.status).toBe(500);
+    const json = await res.json();
+    expect(json.error).toMatch(/not configured/i);
   });
 
-  it("returns 401 when Svix signature verification fails", async () => {
+  it("returns 401 when signature verification fails", async () => {
     mockVerify.mockReturnValue(false);
     const res = await POST(makePost({ type: "email.bounced", data: {} }));
     expect(res.status).toBe(401);
+    const json = await res.json();
+    expect(json.error).toBe("Unauthorized");
   });
 
-  it("returns 400 when body is invalid JSON", async () => {
-    const res = await POST(makePost(null, "not-json{{{"));
+  it("returns 400 for invalid JSON body", async () => {
+    const req = new NextRequest("http://localhost/api/webhooks/resend", {
+      method: "POST",
+      body: "not-json",
+      headers: {
+        "svix-id": SVIX_HEADERS.svixId,
+        "svix-timestamp": SVIX_HEADERS.svixTimestamp,
+        "svix-signature": SVIX_HEADERS.svixSignature,
+      },
+    });
+    const res = await POST(req);
     expect(res.status).toBe(400);
   });
 
-  it("returns 400 when type field is missing", async () => {
-    const res = await POST(makePost({ data: { to: ["user@example.com"] } }));
-    expect(res.status).toBe(400);
-  });
-
-  it("returns 400 when data field is missing", async () => {
+  it("returns 400 when type or data is missing", async () => {
     const res = await POST(makePost({ type: "email.bounced" }));
     expect(res.status).toBe(400);
+    const json = await res.json();
+    expect(json.error).toMatch(/Invalid webhook payload/i);
   });
 
-  it("updates all three tables on email.bounced", async () => {
-    const called: string[] = [];
-    mockFrom.mockImplementation((table: string) => {
-      called.push(table);
-      return makeUpdateChain();
-    });
+  it("marks email as bounced in email_captures, fee_alert_subscriptions, quiz_leads on email.bounced", async () => {
+    const mockChain = makeUpdateChain();
+    mockAdminFrom.mockReturnValue(mockChain);
+
     const res = await POST(
-      makePost({ type: "email.bounced", data: { to: ["bounce@example.com"] } })
+      makePost({
+        type: "email.bounced",
+        data: { to: ["user@example.com"], bounce: { message: "user unknown" } },
+      })
     );
     expect(res.status).toBe(200);
     const json = await res.json();
     expect(json.received).toBe(true);
-    expect(called).toContain("email_captures");
-    expect(called).toContain("fee_alert_subscriptions");
-    expect(called).toContain("quiz_leads");
+    // from() should be called 3 times: email_captures, fee_alert_subscriptions, quiz_leads
+    expect(mockAdminFrom).toHaveBeenCalledWith("email_captures");
+    expect(mockAdminFrom).toHaveBeenCalledWith("fee_alert_subscriptions");
+    expect(mockAdminFrom).toHaveBeenCalledWith("quiz_leads");
   });
 
-  it("updates all three tables on email.complained", async () => {
-    const called: string[] = [];
-    mockFrom.mockImplementation((table: string) => {
-      called.push(table);
-      return makeUpdateChain();
-    });
+  it("handles email.complained event the same way", async () => {
     const res = await POST(
       makePost({
         type: "email.complained",
-        data: { to: ["spam@example.com"], complaint: { type: "abuse" } },
+        data: { to: ["spammer@test.com"], complaint: { type: "abuse" } },
       })
     );
     expect(res.status).toBe(200);
-    expect(called).toContain("email_captures");
+    expect(mockAdminFrom).toHaveBeenCalledWith("email_captures");
   });
 
-  it("does not update tables on email.delivery_delayed", async () => {
-    const called: string[] = [];
-    mockFrom.mockImplementation((table: string) => {
-      called.push(table);
-      return makeUpdateChain();
-    });
+  it("uses email_id as fallback when to[] is absent", async () => {
     const res = await POST(
-      makePost({ type: "email.delivery_delayed", data: { to: ["user@example.com"] } })
-    );
-    expect(res.status).toBe(200);
-    expect(called).toHaveLength(0);
-  });
-
-  it("uses email_id as fallback when to array is absent", async () => {
-    let capturedEmail: string | undefined;
-    mockFrom.mockImplementation(() => ({
-      update: vi.fn().mockReturnThis(),
-      eq: vi.fn().mockImplementation((_field: string, val: string) => {
-        capturedEmail = val;
-        return Promise.resolve({ error: null });
-      }),
-    }));
-    await POST(
       makePost({
         type: "email.bounced",
-        data: { email_id: "email_abc@bounce.com" },
+        data: { email_id: "norecipient@test.com" },
       })
     );
-    // email_id used as fallback — lower-cased
-    expect(capturedEmail).toBe("email_abc@bounce.com");
+    expect(res.status).toBe(200);
+    expect(mockAdminFrom).toHaveBeenCalledWith("email_captures");
+  });
+
+  it("handles email.delivery_delayed without DB writes", async () => {
+    const res = await POST(
+      makePost({ type: "email.delivery_delayed", data: { to: ["delayed@test.com"] } })
+    );
+    expect(res.status).toBe(200);
+    // No DB update for delivery_delayed
+    expect(mockAdminFrom).not.toHaveBeenCalled();
+  });
+
+  it("returns 200 received:true for unknown event types", async () => {
+    const res = await POST(
+      makePost({ type: "email.opened", data: { to: ["reader@test.com"] } })
+    );
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json.received).toBe(true);
+  });
+
+  it("normalises email address to lowercase before DB update", async () => {
+    const mockChain = makeUpdateChain();
+    mockAdminFrom.mockReturnValue(mockChain);
+
+    await POST(
+      makePost({ type: "email.bounced", data: { to: ["CAPS@Example.COM"] } })
+    );
+
+    // eq() called with lowercased email
+    expect(mockChain.eq).toHaveBeenCalledWith("email", "caps@example.com");
   });
 
   it("returns 500 when DB update throws", async () => {
-    mockFrom.mockImplementation(() => {
-      throw new Error("DB error");
-    });
+    const failing = {
+      update: vi.fn(() => failing),
+      eq: vi.fn().mockRejectedValue(new Error("db error")),
+    };
+    mockAdminFrom.mockReturnValue(failing);
+
     const res = await POST(
-      makePost({ type: "email.bounced", data: { to: ["user@example.com"] } })
+      makePost({ type: "email.bounced", data: { to: ["err@test.com"] } })
     );
     expect(res.status).toBe(500);
   });

@@ -10,6 +10,7 @@ const Twitter = ({ className }: { className?: string }) => (
 );
 import type { TeamMember } from "@/lib/types";
 import { formatRole } from "@/lib/seo";
+import { formatDate } from "@/lib/utils";
 
 interface AuthorBylineProps {
   /** Legacy flat-field props (kept for backwards compat) */
@@ -35,14 +36,6 @@ function getInitials(name: string): string {
     .slice(0, 2)
     .join("")
     .toUpperCase();
-}
-
-function formatDateAU(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString("en-AU", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
 }
 
 export default function AuthorByline({
@@ -191,7 +184,7 @@ export default function AuthorByline({
           {reviewedAt && (
             <span className={isDark ? "text-slate-500" : "text-slate-400"}>
               {" "}
-              &middot; {formatDateAU(reviewedAt)}
+              &middot; {formatDate(reviewedAt, { style: "long" })}
             </span>
           )}
         </p>
@@ -207,7 +200,7 @@ export default function AuthorByline({
           {recentChanges.map((entry, i) => (
             <p key={i}>
               <span className="font-medium">
-                {formatDateAU(entry.date)}
+                {formatDate(entry.date, { style: "long" })}
               </span>
               {" "}&mdash; {entry.summary}
             </p>

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { formatDate } from "@/lib/utils";
 
 interface ExportRequest {
   id: number;
@@ -25,18 +26,6 @@ interface Props {
   latestExport: ExportRequest | null;
   latestDeletion: DeletionRequest | null;
 }
-
-const formatDate = (iso: string | null | undefined): string => {
-  if (!iso) return "";
-  const d = new Date(iso);
-  return d.toLocaleDateString("en-AU", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  });
-};
 
 export default function PrivacyClient({
   email,
@@ -180,9 +169,9 @@ export default function PrivacyClient({
               Your export is ready
             </p>
             <p className="text-xs text-emerald-800 mb-3">
-              Requested {formatDate(latestExport?.requested_at)} ·
+              Requested {formatDate(latestExport?.requested_at, { style: "short-time" })} ·
               {latestExport?.expires_at
-                ? ` expires ${formatDate(latestExport.expires_at)}`
+                ? ` expires ${formatDate(latestExport.expires_at, { style: "short-time" })}`
                 : " expires in 30 days"}
             </p>
             <a
@@ -196,7 +185,7 @@ export default function PrivacyClient({
           <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4 text-sm text-amber-900">
             Your most recent export is{" "}
             <strong>{latestExport?.status}</strong> (requested{" "}
-            {formatDate(latestExport?.requested_at)}). We&apos;ll email
+            {formatDate(latestExport?.requested_at, { style: "short-time" })}). We&apos;ll email
             you when the file is ready.
           </div>
         ) : null}
@@ -259,7 +248,7 @@ export default function PrivacyClient({
             <p className="text-xs text-red-800 mb-3">
               Your account will be permanently deleted on{" "}
               <strong>
-                {formatDate(latestDeletion?.scheduled_purge_at)}
+                {formatDate(latestDeletion?.scheduled_purge_at, { style: "short-time" })}
               </strong>
               . Cancel any time before then.
             </p>

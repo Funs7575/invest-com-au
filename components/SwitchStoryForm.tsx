@@ -5,6 +5,9 @@ import Link from "next/link";
 import StarRatingInput from "./StarRatingInput";
 import { createClient } from "@/lib/supabase/client";
 import { trackEvent } from "@/lib/tracking";
+import { logger } from "@/lib/logger";
+
+const log = logger("switch-story-form");
 
 interface BrokerOption {
   slug: string;
@@ -58,7 +61,7 @@ export default function SwitchStoryForm({
           // Without the broker list the form is unusable (both dropdowns
           // are empty). Surface an explicit error so the user knows to
           // retry instead of staring at a blank form.
-          console.error("[SwitchStoryForm] broker list load failed", error.message);
+          log.error("broker list load failed", { err: error.message });
           setErrorMsg("Couldn't load broker list. Please refresh and try again.");
           return;
         }

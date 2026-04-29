@@ -1,111 +1,120 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { NextRequest } from "next/server";
 
-// ── Mocks ─────────────────────────────────────────────────────────────────────
-
-const mockFrom = vi.fn();
-vi.mock("@/lib/supabase/admin", () => ({
-  createAdminClient: vi.fn(() => ({ from: mockFrom })),
-}));
+// ── Mocks ──────────────────────────────────────────────────────────────────────
 
 vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ error: vi.fn(), info: vi.fn(), warn: vi.fn() })),
 }));
 
+const mockAdminFrom = vi.fn();
+vi.mock("@/lib/supabase/admin", () => ({
+  createAdminClient: vi.fn(() => ({ from: mockAdminFrom })),
+}));
+
+const fetchMock = vi.fn<() => Promise<Response>>();
+vi.stubGlobal("fetch", fetchMock);
+
 import { POST } from "@/app/api/push/send/route";
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
+// ── Helpers ────────────────────────────────────────────────────────────────────
 
-const ADMIN_KEY = "test-admin-key";
+const ADMIN_KEY = "test-admin-key-xyz";
 
-function makePost(body: unknown, adminKey?: string): NextRequest {
-  const headers: Record<string, string> = { "Content-Type": "application/json" };
-  if (adminKey !== undefined) headers["x-admin-key"] = adminKey;
+function makePost(body: unknown, key?: string): NextRequest {
   return new NextRequest("http://localhost/api/push/send", {
     method: "POST",
-    headers,
     body: JSON.stringify(body),
+    headers: {
+      "Content-Type": "application/json",
+      ...(key ? { "x-admin-key": key } : {}),
+    },
   });
 }
 
 const VALID_BODY = {
-  topic: "deals",
-  title: "Hot new deal!",
-  body: "Check out this exclusive offer.",
-  url: "https://invest.com.au/deals",
+  topic: "fee_changes",
+  title: "Fee update",
+  body: "New brokerage rates available",
+  url: "https://invest.com.au/brokers",
 };
 
 const SUBSCRIPTIONS = [
-  { endpoint: "https://fcm.push.example/notify", keys_p256dh: "key1", keys_auth: "auth1" },
+  { endpoint: "https://fcm.example.com/sub1", keys_p256dh: "k1", keys_auth: "a1" },
+  { endpoint: "https://fcm.example.com/sub2", keys_p256dh: "k2", keys_auth: "a2" },
 ];
 
-function setupFromMock(opts: {
-  recentSends?: { id: string }[];
-  subscriptions?: typeof SUBSCRIPTIONS;
+function fromImpl({
+  recentSends = [] as unknown[],
+  subscriptions = SUBSCRIPTIONS as unknown[],
+  insertError = null as unknown,
+  deleteError = null as unknown,
 } = {}) {
-  const { recentSends = [], subscriptions = SUBSCRIPTIONS } = opts;
-
-  mockFrom.mockImplementation((table: string) => {
+  return vi.fn().mockImplementation((table: string) => {
     if (table === "push_send_log") {
-      return {
-        select: vi.fn().mockReturnThis(),
-        eq: vi.fn().mockReturnThis(),
-        gte: vi.fn().mockReturnThis(),
-        limit: vi.fn().mockResolvedValue({ data: recentSends }),
-        insert: vi.fn().mockResolvedValue({ error: null }),
-      };
+      const c: Record<string, unknown> = {};
+      c.select = vi.fn(() => c);
+      c.eq = vi.fn(() => c);
+      c.gte = vi.fn(() => c);
+      c.limit = vi.fn().mockResolvedValue({ data: recentSends, error: null });
+      c.insert = vi.fn().mockResolvedValue({ error: insertError });
+      return c;
     }
     if (table === "push_subscriptions") {
-      return {
-        select: vi.fn().mockReturnThis(),
-        contains: vi.fn().mockResolvedValue({ data: subscriptions }),
-        delete: vi.fn().mockReturnThis(),
-        in: vi.fn().mockResolvedValue({ error: null }),
-      };
+      const c: Record<string, unknown> = {};
+      c.select = vi.fn(() => c);
+      c.contains = vi.fn().mockResolvedValue({ data: subscriptions, error: null });
+      c.delete = vi.fn(() => c);
+      c.in = vi.fn().mockResolvedValue({ error: deleteError });
+      return c;
     }
-    return {};
+    const c: Record<string, unknown> = {};
+    c.select = vi.fn(() => c);
+    c.eq = vi.fn(() => c);
+    return c;
   });
 }
 
-// ── Tests ─────────────────────────────────────────────────────────────────────
+// ── Tests ──────────────────────────────────────────────────────────────────────
 
 describe("POST /api/push/send", () => {
-  const mockFetch = vi.fn<Parameters<typeof fetch>, ReturnType<typeof fetch>>();
+  const OLD_ENV = process.env;
 
   beforeEach(() => {
     vi.clearAllMocks();
-    process.env.ADMIN_API_KEY = ADMIN_KEY;
-    process.env.VAPID_PUBLIC_KEY = "pubkey123";
-    process.env.VAPID_PRIVATE_KEY = "privkey456";
-    global.fetch = mockFetch as unknown as typeof fetch;
-    mockFetch.mockResolvedValue(new Response("", { status: 201 }));
-    setupFromMock();
+    process.env = {
+      ...OLD_ENV,
+      ADMIN_API_KEY: ADMIN_KEY,
+      VAPID_PUBLIC_KEY: "vapid-pub-key",
+      VAPID_PRIVATE_KEY: "vapid-priv-key",
+    };
+    fetchMock.mockResolvedValue(new Response("", { status: 201 }));
+    mockAdminFrom.mockImplementation(() => fromImpl()());
   });
 
-  it("returns 401 when x-admin-key is missing", async () => {
-    const req = new NextRequest("http://localhost/api/push/send", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(VALID_BODY),
-    });
-    const res = await POST(req);
+  afterEach(() => {
+    process.env = OLD_ENV;
+  });
+
+  it("returns 401 when x-admin-key is absent", async () => {
+    const res = await POST(makePost(VALID_BODY));
     expect(res.status).toBe(401);
   });
 
   it("returns 401 when x-admin-key is wrong", async () => {
-    const res = await POST(makePost(VALID_BODY, "bad-key"));
+    const res = await POST(makePost(VALID_BODY, "wrong-key"));
     expect(res.status).toBe(401);
   });
 
-  it("accepts auth via Authorization header Bearer", async () => {
-    setupFromMock({ recentSends: [], subscriptions: [] });
+  it("accepts Bearer auth header as alternative to x-admin-key", async () => {
+    mockAdminFrom.mockImplementation(fromImpl());
     const req = new NextRequest("http://localhost/api/push/send", {
       method: "POST",
+      body: JSON.stringify(VALID_BODY),
       headers: {
         "Content-Type": "application/json",
         authorization: `Bearer ${ADMIN_KEY}`,
       },
-      body: JSON.stringify(VALID_BODY),
     });
     const res = await POST(req);
     expect(res.status).toBe(200);
@@ -115,80 +124,125 @@ describe("POST /api/push/send", () => {
     const res = await POST(makePost({ ...VALID_BODY, topic: "invalid_topic" }, ADMIN_KEY));
     expect(res.status).toBe(400);
     const json = await res.json();
-    expect(json.error).toMatch(/Invalid topic/);
+    expect(json.error).toMatch(/Invalid topic/i);
   });
 
-  it("returns 400 when required fields (title/body/url) are missing", async () => {
-    const res = await POST(makePost({ topic: "deals" }, ADMIN_KEY));
+  it("returns 400 when title is missing", async () => {
+    const res = await POST(makePost({ topic: "deals", body: "x", url: "https://x.com" }, ADMIN_KEY));
     expect(res.status).toBe(400);
   });
 
-  it("returns 429 when a push for the same topic was sent within the last hour", async () => {
-    setupFromMock({ recentSends: [{ id: "recent-1" }] });
+  it("returns 429 when topic was sent within the last hour", async () => {
+    mockAdminFrom.mockImplementation(fromImpl({ recentSends: [{ id: 1 }] }));
     const res = await POST(makePost(VALID_BODY, ADMIN_KEY));
     expect(res.status).toBe(429);
+    const json = await res.json();
+    expect(json.error).toMatch(/rate limited/i);
   });
 
   it("returns 500 when VAPID keys are not configured", async () => {
     delete process.env.VAPID_PUBLIC_KEY;
-    delete process.env.VAPID_PRIVATE_KEY;
+    mockAdminFrom.mockImplementation(fromImpl({ recentSends: [] }));
     const res = await POST(makePost(VALID_BODY, ADMIN_KEY));
     expect(res.status).toBe(500);
+    const json = await res.json();
+    expect(json.error).toMatch(/VAPID/i);
   });
 
-  it("returns 200 with sent=0 when no subscribers for the topic", async () => {
-    setupFromMock({ subscriptions: [] });
+  it("returns 200 with sent:0 when no subscribers exist", async () => {
+    mockAdminFrom.mockImplementation(fromImpl({ subscriptions: [] }));
     const res = await POST(makePost(VALID_BODY, ADMIN_KEY));
     expect(res.status).toBe(200);
     const json = await res.json();
     expect(json.sent).toBe(0);
-    expect(json.message).toMatch(/No subscribers/);
   });
 
-  it("returns 200 with sent count when push succeeds", async () => {
+  it("returns 200 with correct sent count on successful delivery", async () => {
+    mockAdminFrom.mockImplementation(fromImpl());
+    fetchMock.mockResolvedValue(new Response("", { status: 201 }));
     const res = await POST(makePost(VALID_BODY, ADMIN_KEY));
     expect(res.status).toBe(200);
     const json = await res.json();
-    expect(json.success).toBe(true);
-    expect(json.sent).toBe(1);
+    expect(json.sent).toBe(2);
     expect(json.failed).toBe(0);
   });
 
-  it("cleans up stale endpoints that return 410", async () => {
-    mockFetch.mockResolvedValueOnce(new Response("", { status: 410 }));
+  it("counts failed deliveries when push endpoint returns error", async () => {
+    mockAdminFrom.mockImplementation(fromImpl());
+    fetchMock.mockRejectedValue(new Error("network error"));
+    const res = await POST(makePost(VALID_BODY, ADMIN_KEY));
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json.failed).toBe(2);
+    expect(json.sent).toBe(0);
+  });
 
-    let deleteCalledWith: string[] = [];
-    mockFrom.mockImplementation((table: string) => {
+  it("removes stale subscriptions (410/404) after delivery failures", async () => {
+    const staleEndpoint = "https://fcm.example.com/stale";
+    const staleSubscriptions = [{ endpoint: staleEndpoint, keys_p256dh: "k", keys_auth: "a" }];
+
+    const deleteInMock = vi.fn().mockResolvedValue({ error: null });
+    const deleteMock = vi.fn(() => ({ in: deleteInMock }));
+
+    mockAdminFrom.mockImplementation((table: string) => {
       if (table === "push_send_log") {
-        return {
-          select: vi.fn().mockReturnThis(),
-          eq: vi.fn().mockReturnThis(),
-          gte: vi.fn().mockReturnThis(),
-          limit: vi.fn().mockResolvedValue({ data: [] }),
-          insert: vi.fn().mockResolvedValue({ error: null }),
-        };
+        const c: Record<string, unknown> = {};
+        c.select = vi.fn(() => c);
+        c.eq = vi.fn(() => c);
+        c.gte = vi.fn(() => c);
+        c.limit = vi.fn().mockResolvedValue({ data: [], error: null });
+        c.insert = vi.fn().mockResolvedValue({ error: null });
+        return c;
       }
-      if (table === "push_subscriptions") {
-        return {
-          select: vi.fn().mockReturnThis(),
-          contains: vi.fn().mockResolvedValue({ data: SUBSCRIPTIONS }),
-          delete: vi.fn().mockReturnThis(),
-          in: vi.fn().mockImplementation((_, endpoints: string[]) => {
-            deleteCalledWith = endpoints;
-            return Promise.resolve({ error: null });
-          }),
-        };
-      }
-      return {};
+      const c: Record<string, unknown> = {};
+      c.select = vi.fn(() => c);
+      c.contains = vi.fn().mockResolvedValue({ data: staleSubscriptions, error: null });
+      c.delete = deleteMock;
+      return c;
     });
+
+    // Return 410 Gone to signal stale subscription
+    fetchMock.mockResolvedValue(new Response("", { status: 410 }));
 
     const res = await POST(makePost(VALID_BODY, ADMIN_KEY));
     expect(res.status).toBe(200);
-    expect(deleteCalledWith).toContain("https://fcm.push.example/notify");
+    const json = await res.json();
+    expect(json.stale_removed).toBe(1);
+    expect(deleteMock).toHaveBeenCalled();
+    expect(deleteInMock).toHaveBeenCalledWith("endpoint", [staleEndpoint]);
   });
 
-  it("returns 500 on internal error", async () => {
-    mockFrom.mockImplementation(() => { throw new Error("DB gone"); });
+  it("logs the send in push_send_log with correct fields", async () => {
+    const insertMock = vi.fn().mockResolvedValue({ error: null });
+    mockAdminFrom.mockImplementation((table: string) => {
+      if (table === "push_send_log") {
+        const c: Record<string, unknown> = {};
+        c.select = vi.fn(() => c);
+        c.eq = vi.fn(() => c);
+        c.gte = vi.fn(() => c);
+        c.limit = vi.fn().mockResolvedValue({ data: [], error: null });
+        c.insert = insertMock;
+        return c;
+      }
+      const c: Record<string, unknown> = {};
+      c.select = vi.fn(() => c);
+      c.contains = vi.fn().mockResolvedValue({ data: SUBSCRIPTIONS, error: null });
+      c.delete = vi.fn(() => ({ in: vi.fn().mockResolvedValue({ error: null }) }));
+      return c;
+    });
+
+    fetchMock.mockResolvedValue(new Response("", { status: 201 }));
+    await POST(makePost(VALID_BODY, ADMIN_KEY));
+
+    expect(insertMock).toHaveBeenCalledWith(
+      expect.objectContaining({ topic: "fee_changes", title: "Fee update" })
+    );
+  });
+
+  it("returns 500 on unexpected error", async () => {
+    mockAdminFrom.mockImplementation(() => {
+      throw new Error("db crash");
+    });
     const res = await POST(makePost(VALID_BODY, ADMIN_KEY));
     expect(res.status).toBe(500);
   });

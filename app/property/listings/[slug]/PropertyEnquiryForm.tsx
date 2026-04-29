@@ -2,8 +2,18 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ENQUIRY_CONSENT_TEXT } from "@/lib/compliance";
 import { trackEvent } from "@/lib/tracking";
+import { AdvisorOptInCheckboxes } from "@/components/AdvisorOptInCheckboxes";
+import type { ProfessionalType } from "@/lib/types";
+
+// For property enquiries, the most-relevant advisor types are mortgage,
+// buyers' agent, financial planner, and tax. Render a slim version.
+const PROPERTY_OPT_INS = [
+  { type: "mortgage_broker" as ProfessionalType, label: "Mortgage broker", description: "Pre-approval, refinancing, LMI", icon: "landmark" },
+  { type: "buyers_agent" as ProfessionalType, label: "Buyer's agent", description: "Negotiation, due diligence", icon: "search" },
+  { type: "property_advisor" as ProfessionalType, label: "Property advisor", description: "Investment strategy", icon: "home" },
+  { type: "tax_agent" as ProfessionalType, label: "Tax agent", description: "CGT, structuring", icon: "calculator" },
+];
 
 const BUDGET_OPTIONS = [
   "Under $500k",
@@ -43,6 +53,7 @@ export default function PropertyEnquiryForm({
     website: "",
     fax: "",
   });
+  const [advisorOptIns, setAdvisorOptIns] = useState<ProfessionalType[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
@@ -59,6 +70,7 @@ export default function PropertyEnquiryForm({
         body: JSON.stringify({
           listing_id: listingId,
           ...form,
+          advisor_opt_ins: advisorOptIns,
           source_page: window.location.pathname,
         }),
       });
@@ -169,6 +181,16 @@ export default function PropertyEnquiryForm({
         {/* Honeypots */}
         <input type="text" name="website" value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })} className="hidden" tabIndex={-1} autoComplete="off" aria-hidden="true" />
         <input type="text" name="fax" value={form.fax} onChange={(e) => setForm({ ...form, fax: e.target.value })} className="hidden" tabIndex={-1} autoComplete="off" aria-hidden="true" />
+
+        <AdvisorOptInCheckboxes
+          selected={advisorOptIns}
+          onChange={setAdvisorOptIns}
+          options={PROPERTY_OPT_INS}
+          heading="Need help with this purchase?"
+          subheading="Tick anyone you'd like a free intro call with — no obligation."
+          compact
+        />
+
 
         {/* Consent checkbox */}
         <label className="flex items-start gap-2 cursor-pointer">

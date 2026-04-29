@@ -8,16 +8,17 @@
  * measurement, then calls `evaluateSlo`.
  *
  * Alert routing:
- *   - `warn` incidents → Slack webhook
- *   - `page` incidents → Slack + PagerDuty webhook
+ *   - `warn` incidents → Slack webhook + email
+ *   - `page` incidents → Slack + PagerDuty webhook + email
  *
- * Both webhook URLs come from env vars. If they're unset we still
- * open the incident row, just without an external notification —
- * so adding the webhook later is zero-code.
+ * All notification URLs/addresses come from env vars. If they're
+ * unset we still open the incident row without external notification —
+ * adding the webhook / email later is zero-code.
  */
 
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
+import { sendEmail } from "@/lib/resend";
 
 const log = logger("slo");
 
@@ -129,9 +130,14 @@ export async function openIncident(
     return;
   }
 
-  // Route to Slack (always) + PagerDuty (page only)
+  // Route to Slack (always) + email (always) + PagerDuty (page only)
   notifySlack(definition, evaluation, measurement).catch((err) =>
     log.warn("slo slack notification failed", {
+      err: err instanceof Error ? err.message : String(err),
+    }),
+  );
+  notifyEmail(definition, evaluation, measurement).catch((err) =>
+    log.warn("slo email notification failed", {
       err: err instanceof Error ? err.message : String(err),
     }),
   );
@@ -173,6 +179,32 @@ async function notifySlack(
     body: JSON.stringify(body),
     signal: AbortSignal.timeout(8_000),
   });
+}
+
+async function notifyEmail(
+  def: SloDefinition,
+  evaluation: SloEvaluation,
+  measurement: SloMeasurement,
+): Promise<void> {
+  const to = process.env.OPS_ALERT_EMAIL || process.env.SUPPORT_EMAIL;
+  if (!to) return;
+  const isPage = evaluation.severity === "page";
+  const emoji = isPage ? "🚨" : "⚠️";
+  const subject = `${emoji} SLO ${isPage ? "page" : "warning"}: ${def.name}`;
+  const html = `
+    <h2>${emoji} SLO breach: ${def.name}</h2>
+    <table style="border-collapse:collapse;width:100%;font-family:monospace">
+      <tr><td style="padding:4px 8px"><strong>Service</strong></td><td>${def.service}</td></tr>
+      <tr><td style="padding:4px 8px"><strong>Metric</strong></td><td>${def.metric}</td></tr>
+      <tr><td style="padding:4px 8px"><strong>Target</strong></td><td>${def.comparator} ${def.target}</td></tr>
+      <tr><td style="padding:4px 8px"><strong>Measured</strong></td><td>${measurement.value}</td></tr>
+      <tr><td style="padding:4px 8px"><strong>Severity</strong></td><td>${evaluation.severity}</td></tr>
+      <tr><td style="padding:4px 8px"><strong>Reason</strong></td><td>${evaluation.reason}</td></tr>
+      ${measurement.context ? `<tr><td style="padding:4px 8px"><strong>Context</strong></td><td><pre>${JSON.stringify(measurement.context, null, 2)}</pre></td></tr>` : ""}
+    </table>
+    <p style="color:#666;font-size:12px;margin-top:16px">Source: slo-monitor cron. Resolve via admin dashboard → SLO Incidents.</p>
+  `;
+  await sendEmail({ to, subject, html });
 }
 
 async function notifyPagerDuty(

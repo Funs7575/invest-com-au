@@ -20,7 +20,7 @@ vi.mock("@/lib/cron-auth", () => ({
   requireCronAuth: vi.fn(() => null),
 }));
 
-const mockIsFeatureDisabled = vi.fn(async () => false);
+const mockIsFeatureDisabled = vi.fn<(...args: unknown[]) => Promise<boolean>>(async () => false);
 vi.mock("@/lib/admin/classifier-config", () => ({
   isFeatureDisabled: (...args: unknown[]) => mockIsFeatureDisabled(...args),
 }));

@@ -10,14 +10,20 @@ vi.mock("@/lib/rate-limit-db", () => ({
 }));
 
 const mockVerifyAbn = vi.fn();
-const mockNormaliseAbn = vi.fn((s: string) => s.replace(/\s/g, ""));
+// Args typed `unknown[]` so the spread-args wrapper below can call this without
+// TS demanding an exact tuple match. Implementation casts to string at call time.
+const mockNormaliseAbn = vi.fn<(...args: unknown[]) => string>((...args) =>
+  String(args[0] ?? "").replace(/\s/g, ""),
+);
 vi.mock("@/lib/verify-abn", () => ({
   verifyAbn: (...args: unknown[]) => mockVerifyAbn(...args),
   normaliseAbn: (...args: unknown[]) => mockNormaliseAbn(...args),
 }));
 
 const mockVerifyAfsl = vi.fn();
-const mockNormaliseAfsl = vi.fn((s: string) => s.replace(/\s/g, ""));
+const mockNormaliseAfsl = vi.fn<(...args: unknown[]) => string>((...args) =>
+  String(args[0] ?? "").replace(/\s/g, ""),
+);
 vi.mock("@/lib/verify-afsl", () => ({
   verifyAfsl: (...args: unknown[]) => mockVerifyAfsl(...args),
   normaliseAfsl: (...args: unknown[]) => mockNormaliseAfsl(...args),
@@ -48,7 +54,22 @@ function makePost(body: unknown, authToken?: string): NextRequest {
   });
 }
 
-const PROFESSIONAL = {
+// Typed explicitly so individual tests can override `abn`/`afsl_number` to null
+// (some scenarios pass null values into setupAdminMocks).
+type ProfessionalRow = {
+  id: number;
+  slug: string;
+  name: string;
+  email: string;
+  type: string;
+  abn: string | null;
+  afsl_number: string | null;
+  verified: boolean;
+  verification_method: string | null;
+  health_status: string;
+};
+
+const PROFESSIONAL: ProfessionalRow = {
   id: 42,
   slug: "jane-advisor",
   name: "Jane Advisor",
@@ -62,7 +83,7 @@ const PROFESSIONAL = {
 };
 
 function setupAdminMocks(
-  proData: typeof PROFESSIONAL | null = PROFESSIONAL,
+  proData: ProfessionalRow | null = PROFESSIONAL,
   updateError: Error | null = null
 ) {
   mockAdminFrom.mockImplementation((table: string) => {

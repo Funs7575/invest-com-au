@@ -6,6 +6,7 @@ import { notificationFooter } from "@/lib/email-templates";
 import { escapeHtml } from "@/lib/html-escape";
 import { getSiteUrl } from "@/lib/url";
 import { logger } from "@/lib/logger";
+import { processAdvisorOptIns } from "@/lib/advisor-opt-ins";
 
 const log = logger("property-enquiry");
 
@@ -199,7 +200,27 @@ export async function POST(request: NextRequest) {
       log.warn("Property enquiry confirmation email failed", { err: err instanceof Error ? err.message : String(err) });
     }
 
-    return NextResponse.json({ success: true, lead_id: lead.id });
+    // Fan out advisor opt-ins
+    let opt_ins_queued = 0;
+    if (Array.isArray(body.advisor_opt_ins) && body.advisor_opt_ins.length > 0 && lead?.id) {
+      try {
+        const optInResult = await processAdvisorOptIns({
+          admin: supabase,
+          source: "property_enquiry",
+          property_enquiry_id: lead.id,
+          advisor_types: body.advisor_opt_ins,
+          contact_email: user_email,
+          contact_name: user_name,
+          contact_phone: user_phone,
+          context_note: `Enquired re property: ${listing.title?.slice(0, 80)}`,
+        });
+        opt_ins_queued = optInResult.inserted;
+      } catch (err) {
+        log.warn("Property enquiry opt-in fan-out failed", { err: err instanceof Error ? err.message : String(err) });
+      }
+    }
+
+    return NextResponse.json({ success: true, lead_id: lead.id, opt_ins_queued });
   } catch (error) {
     log.error("Property enquiry handler error", { error: error instanceof Error ? error.message : String(error) });
     return NextResponse.json({ error: "Internal server error." }, { status: 500 });

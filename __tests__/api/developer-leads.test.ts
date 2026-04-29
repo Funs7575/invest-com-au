@@ -60,7 +60,10 @@ function makePost(body: unknown, headers: Record<string, string> = {}): NextRequ
   });
 }
 
-function makeInsertChain(result = { error: null }) {
+// Default result is { error: null }, but a test passes `{ error: { message } }`
+// to simulate DB failure, so the param is widened to `error: PostgrestError-ish | null`.
+type InsertResult = { error: { message: string } | null };
+function makeInsertChain(result: InsertResult = { error: null }) {
   const c: Record<string, unknown> = {};
   c.insert = vi.fn().mockResolvedValue(result);
   return c;
