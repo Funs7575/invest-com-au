@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { NextRequest } from "next/server";
 
 // ── Mocks ──────────────────────────────────────────────────────────────────────
@@ -213,7 +213,7 @@ describe("POST /api/property/enquiry", () => {
   it("sends developer notification email when RESEND_API_KEY set", async () => {
     await POST(makePost(validBody()));
     expect(fetchMock).toHaveBeenCalled();
-    const [url] = fetchMock.mock.calls[0] as [string];
+    const [url] = fetchMock.mock.calls[0] as unknown as [string];
     expect(url).toContain("resend.com");
   });
 

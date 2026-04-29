@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { NextRequest } from "next/server";
 
 // ── Mocks ──────────────────────────────────────────────────────────────────────
@@ -7,7 +7,7 @@ vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ error: vi.fn(), info: vi.fn(), warn: vi.fn() })),
 }));
 
-const mockVerify = vi.fn<() => boolean>();
+const mockVerify = vi.fn<(...args: unknown[]) => boolean>();
 const mockExtract = vi.fn();
 
 vi.mock("@/lib/resend-webhook-verify", () => ({

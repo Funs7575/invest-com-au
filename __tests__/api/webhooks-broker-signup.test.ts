@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { NextRequest } from "next/server";
 
 // ── Mocks ──────────────────────────────────────────────────────────────────────
@@ -236,6 +236,6 @@ describe("GET /api/webhooks/broker-signup", () => {
     });
 
     await GET(makeGet({ broker: "tiger-brokers", amount: "29.99" }, VALID_KEY));
-    expect(capturedBody?.revenue_cents).toBe(2999);
+    expect((capturedBody as unknown as Record<string, unknown>)?.revenue_cents).toBe(2999);
   });
 });

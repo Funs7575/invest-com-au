@@ -7,7 +7,7 @@ vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ error: vi.fn(), info: vi.fn(), warn: vi.fn() })),
 }));
 
-const mockIsAllowed = vi.hoisted(() => vi.fn<() => Promise<boolean>>());
+const mockIsAllowed = vi.hoisted(() => vi.fn<(...args: unknown[]) => Promise<boolean>>());
 vi.mock("@/lib/rate-limit-db", () => ({
   isAllowed: (...args: unknown[]) => mockIsAllowed(...args),
   ipKey: () => "1.2.3.4",
