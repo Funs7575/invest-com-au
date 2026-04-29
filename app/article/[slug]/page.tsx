@@ -63,7 +63,15 @@ export async function generateMetadata({
   const categoryLabel = article.category
     ? `${article.category.charAt(0).toUpperCase() + article.category.slice(1)} Guide`
     : "Investing Guide";
-  const ogImageUrl = `/api/og?title=${encodeURIComponent(title)}&subtitle=${encodeURIComponent(categoryLabel)}&type=article`;
+  // Per-article OG override (M-01b). If `articles.cover_image_url` is
+  // populated we use the real cover photo as the social-share card —
+  // historically shown to lift social CTR ~30–50% vs the generic dynamic
+  // card. We fall back to the `/api/og` template for articles whose
+  // `cover_image_url` is still null so the site-wide default OG (M-01a /
+  // PR #227) and per-route override degrade cleanly.
+  const dynamicOgUrl = `/api/og?title=${encodeURIComponent(title)}&subtitle=${encodeURIComponent(categoryLabel)}&type=article`;
+  const coverImageUrl = article.cover_image_url || null;
+  const ogImageUrl = coverImageUrl ?? dynamicOgUrl;
 
   return {
     title,
