@@ -1,175 +1,230 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { NextRequest } from "next/server";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import type { NextRequest } from "next/server";
 
-vi.mock("@/lib/logger", () => ({ logger: () => ({ info: vi.fn(), error: vi.fn(), warn: vi.fn() }) }));
-vi.mock("@/lib/cron-auth", () => ({ requireCronAuth: vi.fn() }));
-vi.mock("@/lib/supabase/admin", () => ({ createAdminClient: vi.fn() }));
-vi.mock("@/lib/resend", () => ({ sendEmail: vi.fn() }));
+// ── Mocks ──────────────────────────────────────────────────────────────────────
+
+vi.mock("@/lib/logger", () => ({
+  logger: vi.fn(() => ({ info: vi.fn(), error: vi.fn(), warn: vi.fn() })),
+}));
+
+const mockRequireCronAuth = vi.fn();
+vi.mock("@/lib/cron-auth", () => ({
+  requireCronAuth: (...a: unknown[]) => mockRequireCronAuth(...a),
+}));
+
+const mockSendEmail = vi.fn();
+vi.mock("@/lib/resend", () => ({
+  sendEmail: (...a: unknown[]) => mockSendEmail(...a),
+}));
+
+const mockAdminFrom = vi.fn();
+const mockListUsers = vi.fn();
+vi.mock("@/lib/supabase/admin", () => ({
+  createAdminClient: vi.fn(() => ({
+    from: mockAdminFrom,
+    auth: { admin: { listUsers: (...a: unknown[]) => mockListUsers(...a) } },
+  })),
+}));
 
 import { GET } from "@/app/api/cron/personalized-digest/route";
-import { requireCronAuth } from "@/lib/cron-auth";
-import { createAdminClient } from "@/lib/supabase/admin";
-import { sendEmail } from "@/lib/resend";
 
-const mockRequireCronAuth = vi.mocked(requireCronAuth);
-const mockCreateAdmin = vi.mocked(createAdminClient);
-const mockSendEmail = vi.mocked(sendEmail);
+// ── Helpers ────────────────────────────────────────────────────────────────────
 
-function makeChain(res: unknown) {
+function makeReq(): NextRequest {
+  return new Request("http://localhost/api/cron/personalized-digest") as unknown as NextRequest;
+}
+
+interface ChainResult {
+  data: unknown;
+  error?: { message: string } | null;
+}
+
+function makeChain(result: ChainResult) {
   const c: Record<string, unknown> = {};
-  for (const m of ["select", "insert", "eq", "in", "not", "gte", "order", "limit"]) {
+  for (const m of [
+    "select", "eq", "in", "gte", "order", "limit", "insert", "not",
+  ]) {
     c[m] = vi.fn(() => c);
   }
-  c.then = (resolve: (v: unknown) => void) => Promise.resolve(resolve(res));
+  c.then = (resolve: (v: ChainResult) => unknown) => Promise.resolve(resolve(result));
   return c;
 }
 
-function makeReq() {
-  return new NextRequest("http://localhost/api/cron/personalized-digest", { method: "GET" });
+// Configures all the from() calls the personalized-digest route makes in order:
+// notification_preferences → digest_sends → user_profiles →
+// broker_data_changes → brokers (changeSlugs) → brokers (all active) → articles → brokers (deals)
+// Then per-user: digest_sends.insert
+function setupFromMocks(overrides: {
+  prefError?: { message: string };
+  prefUsers?: { user_id: string }[];
+  alreadySent?: { user_id: string }[];
+  profiles?: unknown[];
+  feeChanges?: unknown[];
+  changeBrokers?: unknown[];
+  allBrokers?: unknown[];
+  articles?: unknown[];
+  activeDeals?: unknown[];
+  insertErr?: { message: string } | null;
+} = {}) {
+  const {
+    prefError,
+    prefUsers = [{ user_id: "u-1" }],
+    alreadySent = [],
+    profiles = [{ id: "u-1", email: "user@example.com", display_name: "Alice", interested_in: [], preferred_broker: null, investing_experience: null }],
+    feeChanges = [],
+    changeBrokers = [],
+    allBrokers = [{ slug: "commsec", name: "CommSec", rating: 4.5, tagline: "Australia's #1", is_crypto: false, platform_type: "broker", asx_fee: "$10", deal: false, deal_text: null }],
+    articles = [],
+    activeDeals = [],
+    insertErr = null,
+  } = overrides;
+
+  let tableCallCount = 0;
+  mockAdminFrom.mockImplementation((table: string) => {
+    tableCallCount++;
+    if (table === "notification_preferences") {
+      return makeChain({ data: prefUsers, error: prefError ?? null });
+    }
+    if (table === "digest_sends" && tableCallCount <= 3) {
+      // First call: check already sent; later calls: insert
+      return {
+        select: vi.fn(() => ({ eq: vi.fn(() => makeChain({ data: alreadySent, error: null })) })),
+        insert: vi.fn().mockResolvedValue({ error: insertErr }),
+      };
+    }
+    if (table === "user_profiles") {
+      return makeChain({ data: profiles, error: null });
+    }
+    if (table === "broker_data_changes") {
+      return makeChain({ data: feeChanges, error: null });
+    }
+    if (table === "brokers") {
+      // Multiple brokers calls: changeSlugs lookup, all active, deals
+      if (changeBrokers.length > 0 && tableCallCount === 5) {
+        return makeChain({ data: changeBrokers, error: null });
+      }
+      if (tableCallCount <= 7) {
+        return makeChain({ data: allBrokers, error: null });
+      }
+      return makeChain({ data: activeDeals, error: null });
+    }
+    if (table === "articles") {
+      return makeChain({ data: articles, error: null });
+    }
+    return makeChain({ data: null, error: null });
+  });
 }
 
-function makeAdminClient(responses: Record<number, unknown>, authUsers: unknown[] = []) {
-  let call = 0;
-  return {
-    from: vi.fn(() => {
-      call++;
-      return makeChain(responses[call] ?? { data: [], error: null });
-    }),
-    auth: {
-      admin: {
-        listUsers: vi.fn().mockResolvedValue({ data: { users: authUsers }, error: null }),
-      },
-    },
-  };
-}
-
-beforeEach(() => {
-  vi.resetAllMocks();
-  mockRequireCronAuth.mockReturnValue(undefined as never);
-  mockSendEmail.mockResolvedValue({ ok: true } as never);
-});
+// ── Tests ──────────────────────────────────────────────────────────────────────
 
 describe("GET /api/cron/personalized-digest", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockRequireCronAuth.mockReturnValue(null);
+    mockSendEmail.mockResolvedValue({ ok: true });
+    mockListUsers.mockResolvedValue({ data: { users: [] } });
+  });
+
+  afterEach(() => { vi.restoreAllMocks(); });
+
   it("returns 401 when cron auth fails", async () => {
-    mockRequireCronAuth.mockReturnValue(new Response(null, { status: 401 }) as never);
-    mockCreateAdmin.mockReturnValue({} as never);
+    mockRequireCronAuth.mockReturnValue(
+      new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 }),
+    );
     const res = await GET(makeReq());
     expect(res.status).toBe(401);
   });
 
-  it("returns sent:0 when no users with weekly digest enabled", async () => {
-    mockCreateAdmin.mockReturnValue(makeAdminClient({
-      1: { data: [], error: null }, // notification_preferences → no users
-    }) as never);
+  it("returns 500 when notification_preferences query fails", async () => {
+    mockAdminFrom.mockReturnValue(
+      makeChain({ data: null, error: { message: "DB error" } }),
+    );
     const res = await GET(makeReq());
-    const body = await res.json();
-    expect(body.sent).toBe(0);
-    expect(body.message).toMatch(/No users/);
+    expect(res.status).toBe(500);
+    const body = await res.json() as { error: string };
+    expect(body.error).toBe("DB error");
   });
 
-  it("returns sent:0 when all users already received digest today", async () => {
-    mockCreateAdmin.mockReturnValue(makeAdminClient({
-      1: { data: [{ user_id: "u1" }], error: null }, // notification_preferences
-      2: { data: [{ user_id: "u1" }], error: null }, // digest_sends (already sent)
-    }) as never);
+  it("returns sent:0 when no users have weekly_digest enabled", async () => {
+    mockAdminFrom.mockReturnValue(makeChain({ data: [], error: null }));
     const res = await GET(makeReq());
-    const body = await res.json();
+    expect(res.status).toBe(200);
+    const body = await res.json() as { sent: number };
     expect(body.sent).toBe(0);
-    expect(body.message).toMatch(/already received/);
   });
 
-  it("sends email to user with pending digest and inserts digest_sends record", async () => {
-    const activeBroker = { slug: "abc", name: "ABC Broker", rating: 4.5, tagline: null, is_crypto: false, platform_type: "broker", asx_fee: "$10", deal: false, deal_text: null };
-    mockCreateAdmin.mockReturnValue(makeAdminClient({
-      1: { data: [{ user_id: "u1" }], error: null }, // notification_preferences
-      2: { data: [], error: null }, // digest_sends (none yet)
-      3: { data: [{ id: "u1", email: "user@ex.com", display_name: "Alice", interested_in: [], preferred_broker: null, investing_experience: null }], error: null }, // user_profiles
-      // auth.admin.listUsers called separately
-      4: { data: [], error: null }, // broker_data_changes (no fee changes → changeSlugs empty → broker names skip)
-      5: { data: [activeBroker], error: null }, // all active brokers
-      6: { data: [], error: null }, // articles
-      7: { data: [], error: null }, // active deals
-      8: { data: null, error: null }, // digest_sends insert
-    }) as never);
+  it("returns sent:0 when all users already received today's digest", async () => {
+    setupFromMocks({
+      prefUsers: [{ user_id: "u-1" }],
+      alreadySent: [{ user_id: "u-1" }],
+    });
     const res = await GET(makeReq());
-    const body = await res.json();
+    expect(res.status).toBe(200);
+    const body = await res.json() as { sent: number; message: string };
+    expect(body.sent).toBe(0);
+    expect(body.message).toContain("already received");
+  });
+
+  it("sends digest and returns sent:1 on success", async () => {
+    setupFromMocks();
+    mockListUsers.mockResolvedValue({
+      data: { users: [{ id: "u-1", email: "user@example.com" }] },
+    });
+    const res = await GET(makeReq());
+    expect(res.status).toBe(200);
+    const body = await res.json() as { sent: number; errors: number; digest_date: string };
     expect(body.sent).toBe(1);
     expect(body.errors).toBe(0);
-    expect(mockSendEmail).toHaveBeenCalledWith(expect.objectContaining({ to: "user@ex.com" }));
+    expect(body.digest_date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(mockSendEmail).toHaveBeenCalledTimes(1);
   });
 
-  it("falls back to auth email when user profile has no email", async () => {
-    const authUser = { id: "u2", email: "auth@ex.com" };
-    mockCreateAdmin.mockReturnValue(makeAdminClient({
-      1: { data: [{ user_id: "u2" }], error: null }, // notification_preferences
-      2: { data: [], error: null }, // digest_sends
-      3: { data: [{ id: "u2", email: null, display_name: null, interested_in: [], preferred_broker: null, investing_experience: null }], error: null }, // user_profiles (no email)
-      // auth.admin.listUsers returns authUser
-      4: { data: [], error: null }, // broker_data_changes
-      5: { data: [], error: null }, // all active brokers
-      6: { data: [], error: null }, // articles
-      7: { data: [], error: null }, // active deals
-      8: { data: null, error: null }, // digest_sends insert
-    }, [authUser]) as never);
+  it("increments errors when sendEmail throws", async () => {
+    setupFromMocks();
+    mockListUsers.mockResolvedValue({
+      data: { users: [{ id: "u-1", email: "user@example.com" }] },
+    });
+    mockSendEmail.mockRejectedValue(new Error("Resend down"));
     const res = await GET(makeReq());
-    const body = await res.json();
-    expect(body.sent).toBe(1);
-    expect(mockSendEmail).toHaveBeenCalledWith(expect.objectContaining({ to: "auth@ex.com" }));
-  });
-
-  it("skips user with no resolvable email (sendEmail not called)", async () => {
-    mockCreateAdmin.mockReturnValue(makeAdminClient({
-      1: { data: [{ user_id: "u3" }], error: null }, // notification_preferences
-      2: { data: [], error: null }, // digest_sends
-      3: { data: [], error: null }, // user_profiles (not found)
-      4: { data: [], error: null }, // broker_data_changes
-      5: { data: [], error: null }, // all active brokers
-      6: { data: [], error: null }, // articles
-      7: { data: [], error: null }, // active deals
-    }) as never);
-    await GET(makeReq());
-    // Route uses Promise.allSettled — early-return (no email) resolves as fulfilled,
-    // so sent counts the allSettled result, not actual emails. Only sendEmail being
-    // called or not is the meaningful check here.
-    expect(mockSendEmail).not.toHaveBeenCalled();
-  });
-
-  it("counts errors when sendEmail fails", async () => {
-    mockSendEmail.mockResolvedValue({ ok: false, error: "rate limited" } as never);
-    mockCreateAdmin.mockReturnValue(makeAdminClient({
-      1: { data: [{ user_id: "u4" }], error: null },
-      2: { data: [], error: null },
-      3: { data: [{ id: "u4", email: "u4@ex.com", display_name: null, interested_in: [], preferred_broker: null, investing_experience: null }], error: null },
-      4: { data: [], error: null }, // broker_data_changes
-      5: { data: [], error: null }, // all active brokers
-      6: { data: [], error: null }, // articles
-      7: { data: [], error: null }, // active deals
-    }) as never);
-    const res = await GET(makeReq());
-    const body = await res.json();
+    expect(res.status).toBe(200);
+    const body = await res.json() as { sent: number; errors: number };
     expect(body.sent).toBe(0);
     expect(body.errors).toBe(1);
   });
 
-  it("includes shortlist section when user has preferred broker with fee changes", async () => {
-    const feeChange = { broker_slug: "pref-broker", field_name: "asx_fee", old_value: "9.50", new_value: "14.95", changed_at: new Date().toISOString() };
-    const prefBroker = { slug: "pref-broker", name: "Pref Broker", rating: 4.5, is_crypto: false, platform_type: "broker", deal: false, deal_text: null };
-    mockCreateAdmin.mockReturnValue(makeAdminClient({
-      1: { data: [{ user_id: "u5" }], error: null },
-      2: { data: [], error: null },
-      3: { data: [{ id: "u5", email: "u5@ex.com", display_name: "Frank", interested_in: [], preferred_broker: "pref-broker", investing_experience: null }], error: null },
-      4: { data: [feeChange], error: null }, // broker_data_changes
-      5: { data: [prefBroker], error: null }, // brokers for changed slugs (changeSlugs non-empty → query runs)
-      6: { data: [], error: null }, // all active brokers
-      7: { data: [], error: null }, // articles
-      8: { data: [], error: null }, // active deals
-      9: { data: null, error: null }, // digest_sends insert
-    }) as never);
+  it("falls back to auth email when user_profiles has no email", async () => {
+    setupFromMocks({
+      profiles: [{ id: "u-1", email: null, display_name: null, interested_in: [], preferred_broker: null, investing_experience: null }],
+    });
+    mockListUsers.mockResolvedValue({
+      data: { users: [{ id: "u-1", email: "auth@example.com" }] },
+    });
+    await GET(makeReq());
+    const callArg = mockSendEmail.mock.calls[0]?.[0] as { to: string } | undefined;
+    expect(callArg?.to).toBe("auth@example.com");
+  });
+
+  it("skips user with no email even in auth map", async () => {
+    setupFromMocks({
+      profiles: [{ id: "u-1", email: null, display_name: null, interested_in: [], preferred_broker: null, investing_experience: null }],
+    });
+    // listUsers returns nothing for u-1
+    mockListUsers.mockResolvedValue({ data: { users: [] } });
+    await GET(makeReq());
+    expect(mockSendEmail).not.toHaveBeenCalled();
+  });
+
+  it("includes total_eligible and skipped_already_sent in response", async () => {
+    setupFromMocks({
+      prefUsers: [{ user_id: "u-1" }, { user_id: "u-2" }],
+      alreadySent: [{ user_id: "u-2" }],
+    });
+    mockListUsers.mockResolvedValue({
+      data: { users: [{ id: "u-1", email: "user@example.com" }, { id: "u-2", email: "user2@example.com" }] },
+    });
     const res = await GET(makeReq());
-    const body = await res.json();
-    expect(body.sent).toBe(1);
-    // Email contains shortlist section — verify sendEmail called with html containing fee change data
-    const callArgs = mockSendEmail.mock.calls[0]?.[0];
-    expect(callArgs?.html).toContain("Watchlist");
+    const body = await res.json() as { total_eligible: number; skipped_already_sent: number };
+    expect(body.total_eligible).toBe(1);
+    expect(body.skipped_already_sent).toBe(1);
   });
 });

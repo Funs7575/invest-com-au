@@ -1,116 +1,178 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import type { NextRequest } from "next/server";
 
-// ─── Mocks ───────────────────────────────────────────────────────────────────
+// ── Mocks ──────────────────────────────────────────────────────────────────────
 
 vi.mock("@/lib/logger", () => ({
-  logger: vi.fn(() => ({
-    debug: vi.fn(),
-    info: vi.fn(),
-    warn: vi.fn(),
-    error: vi.fn(),
-  })),
+  logger: vi.fn(() => ({ info: vi.fn(), error: vi.fn(), warn: vi.fn() })),
 }));
 
+const mockRequireCronAuth = vi.fn();
 vi.mock("@/lib/cron-auth", () => ({
-  requireCronAuth: vi.fn(() => null),
+  requireCronAuth: (...a: unknown[]) => mockRequireCronAuth(...a),
 }));
 
+const mockFollowUp1 = vi.fn();
+const mockFollowUp2 = vi.fn();
+const mockFollowUp3 = vi.fn();
 vi.mock("@/lib/email-templates", () => ({
-  quizFollowUp1Email: vi.fn(() => "<html>drip1</html>"),
-  quizFollowUp2Email: vi.fn(() => "<html>drip2</html>"),
-  quizFollowUp3Email: vi.fn(() => "<html>drip3</html>"),
+  quizFollowUp1Email: (...a: unknown[]) => mockFollowUp1(...a),
+  quizFollowUp2Email: (...a: unknown[]) => mockFollowUp2(...a),
+  quizFollowUp3Email: (...a: unknown[]) => mockFollowUp3(...a),
 }));
 
-const fetchMock = vi.fn<() => Promise<Response>>();
-vi.stubGlobal("fetch", fetchMock);
-
-// ─── DB queue ────────────────────────────────────────────────────────────────
-
-interface DbResult {
-  data?: unknown;
-  error?: { message: string; code?: string } | null;
-}
-
-let dbQueue: DbResult[] = [];
-let dbIdx = 0;
-
-function makeChain(res: DbResult) {
-  const chain: Record<string, unknown> = {};
-  const methods = ["select","update","insert","eq","neq","lt","lte","gte","not","in","or","order","limit","maybeSingle","single"];
-  for (const m of methods) chain[m] = vi.fn(() => chain);
-  const r = { data: res.data ?? null, error: res.error ?? null };
-  chain.then = (resolve: (v: typeof r) => unknown) => Promise.resolve(resolve(r));
-  chain.catch = () => chain;
-  return chain;
-}
-
+const mockAdminFrom = vi.fn();
 vi.mock("@/lib/supabase/admin", () => ({
-  createAdminClient: vi.fn(() => ({
-    from: vi.fn(() => makeChain(dbQueue[dbIdx++] ?? { error: null })),
-  })),
+  createAdminClient: vi.fn(() => ({ from: mockAdminFrom })),
 }));
 
 import { GET } from "@/app/api/cron/quiz-follow-up/route";
-import { requireCronAuth } from "@/lib/cron-auth";
+
+// ── Helpers ────────────────────────────────────────────────────────────────────
 
 function makeReq(): NextRequest {
-  return new Request("http://localhost/api/cron/quiz-follow-up", {
-    headers: { Authorization: "Bearer test-secret" },
-  }) as unknown as NextRequest;
+  return new Request("http://localhost/api/cron/quiz-follow-up") as unknown as NextRequest;
 }
 
-const THREE_DAYS_AGO = new Date(Date.now() - 3 * 86400000).toISOString();
-const SIX_DAYS_AGO = new Date(Date.now() - 6 * 86400000).toISOString();
+interface ChainResult {
+  data: unknown;
+  error?: { message: string; code?: string } | null;
+}
 
-function quizLead(overrides: Record<string, unknown> = {}) {
+function makeChain(result: ChainResult) {
+  const c: Record<string, unknown> = {};
+  for (const m of ["select", "eq", "neq", "not", "gte", "order", "limit", "insert", "in"]) {
+    c[m] = vi.fn(() => c);
+  }
+  c.maybeSingle = vi.fn().mockResolvedValue(result);
+  c.then = (resolve: (v: ChainResult) => unknown) => Promise.resolve(resolve(result));
+  return c;
+}
+
+interface QuizLead {
+  email: string;
+  name: string;
+  experience_level: string | null;
+  investment_range: string | null;
+  trading_interest: string | null;
+  top_match_slug: string | null;
+  created_at: string;
+}
+
+function buildLead(overrides: Partial<QuizLead> = {}): QuizLead {
+  const twoDaysAgo = new Date(Date.now() - 2 * 86400000).toISOString();
   return {
-    email: "alice@example.com",
+    email: "quiz@example.com",
     name: "Alice",
     experience_level: "beginner",
-    investment_range: "10k-50k",
-    trading_interest: "etf",
+    investment_range: "1000-5000",
+    trading_interest: "shares",
     top_match_slug: "commsec",
-    created_at: THREE_DAYS_AGO,
+    created_at: twoDaysAgo,
     ...overrides,
   };
 }
 
-function broker() {
-  return {
-    name: "CommSec",
-    slug: "commsec",
-    rating: 4.2,
-    asx_fee: "$29.95",
-    us_fee: "USD $6.95",
-    chess_sponsored: true,
-    pros: ["CHESS-sponsored", "Integrated with CommBank"],
-    tagline: "Australia's largest broker",
-  };
+const fakeBroker = {
+  name: "CommSec",
+  slug: "commsec",
+  rating: 4.5,
+  asx_fee: "$10",
+  us_fee: "$20",
+  chess_sponsored: true,
+  pros: ["CHESS sponsored", "Trusted brand"],
+  tagline: "Australia's #1",
+  affiliate_url: "https://commsec.com.au",
+  deal: true,
+  deal_text: "Free trades for first 3 months",
+  deal_expiry: null,
+};
+
+// Sets up from() calls: quiz_leads → (per-lead: quiz_follow_ups + brokers) → quiz_follow_ups.insert
+function setupMocks(overrides: {
+  leads?: QuizLead[] | null;
+  leadsErr?: { message: string } | null;
+  sentDrips?: { drip_type: string }[];
+  broker?: unknown;
+  runnerUps?: unknown[];
+  insertErr?: { message: string; code?: string } | null;
+} = {}) {
+  const {
+    leads = [buildLead()],
+    leadsErr = null,
+    sentDrips = [],
+    broker = fakeBroker,
+    runnerUps = [],
+    insertErr = null,
+  } = overrides;
+
+  // Drip 2 builds two broker queries: top-match (maybeSingle) + runner-ups (.then array).
+  let brokerCallCount = 0;
+
+  mockAdminFrom.mockImplementation((table: string) => {
+    if (table === "quiz_leads") {
+      return makeChain({ data: leads, error: leadsErr });
+    }
+    if (table === "quiz_follow_ups") {
+      return {
+        select: vi.fn(() => ({ eq: vi.fn(() => makeChain({ data: sentDrips, error: null })) })),
+        insert: vi.fn().mockResolvedValue({ error: insertErr }),
+      };
+    }
+    if (table === "brokers") {
+      brokerCallCount++;
+      // Even-numbered calls are runner-up array queries (drip 2 second call)
+      if (brokerCallCount % 2 === 0) {
+        return makeChain({ data: runnerUps, error: null });
+      }
+      // Odd calls: single broker lookup — maybeSingle + .then both work
+      return makeChain({ data: broker, error: null });
+    }
+    return makeChain({ data: null, error: null });
+  });
 }
 
-beforeEach(() => {
-  dbQueue = [];
-  dbIdx = 0;
-  vi.clearAllMocks();
-  process.env.RESEND_API_KEY = "test-key";
-  fetchMock.mockResolvedValue(new Response(JSON.stringify({ ok: true }), { status: 200 }));
-});
-
-// ─── Tests ───────────────────────────────────────────────────────────────────
+// ── Tests ──────────────────────────────────────────────────────────────────────
 
 describe("GET /api/cron/quiz-follow-up", () => {
+  const origResendKey = process.env.RESEND_API_KEY;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockRequireCronAuth.mockReturnValue(null);
+    process.env.RESEND_API_KEY = "re_test_key";
+    mockFollowUp1.mockReturnValue("<html>drip1</html>");
+    mockFollowUp2.mockReturnValue("<html>drip2</html>");
+    mockFollowUp3.mockReturnValue("<html>drip3</html>");
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: true, text: vi.fn().mockResolvedValue("") }));
+  });
+
+  afterEach(() => {
+    process.env.RESEND_API_KEY = origResendKey;
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
+  });
+
   it("returns 401 when cron auth fails", async () => {
-    vi.mocked(requireCronAuth).mockReturnValueOnce(
-      new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 }) as never
+    mockRequireCronAuth.mockReturnValue(
+      new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 }),
     );
     const res = await GET(makeReq());
     expect(res.status).toBe(401);
   });
 
-  it("returns early with zero counts when no quiz leads exist", async () => {
-    dbQueue.push({ data: [] }); // quiz_leads empty
+  it("returns early with 0 counts when leads query errors", async () => {
+    setupMocks({ leadsErr: { message: "DB timeout" } });
+    const res = await GET(makeReq());
+    expect(res.status).toBe(200);
+    const body = await res.json() as { emails_sent: number; leads_processed: number; message: string };
+    expect(body.emails_sent).toBe(0);
+    expect(body.leads_processed).toBe(0);
+    expect(body.message).toBe("DB timeout");
+  });
 
+  it("returns early when no leads found", async () => {
+    setupMocks({ leads: [] });
     const res = await GET(makeReq());
     expect(res.status).toBe(200);
     const body = await res.json() as { emails_sent: number; leads_processed: number };
@@ -118,80 +180,125 @@ describe("GET /api/cron/quiz-follow-up", () => {
     expect(body.leads_processed).toBe(0);
   });
 
-  it("returns early with error message when quiz_leads query fails", async () => {
-    dbQueue.push({ data: null, error: { message: "DB connection failed" } });
-
-    const res = await GET(makeReq());
-    expect(res.status).toBe(200);
-    const body = await res.json() as { emails_sent: number; message: string };
-    expect(body.emails_sent).toBe(0);
-    expect(body.message).toBe("DB connection failed");
-  });
-
-  it("sends drip 1 (Day 2) to lead with top_match_slug at day 3", async () => {
-    dbQueue.push({ data: [quizLead()] });       // quiz_leads
-    dbQueue.push({ data: [] });                  // quiz_follow_ups (no drips sent)
-    dbQueue.push({ data: broker() });            // brokers maybeSingle (drip 1 buildHtml)
-    dbQueue.push({ error: null });               // quiz_follow_ups insert
-
-    const res = await GET(makeReq());
-    expect(res.status).toBe(200);
-    const body = await res.json() as { emails_sent: number; results: { action: string }[] };
-    expect(body.emails_sent).toBe(1);
-    expect(body.results.some((r) => r.action === "sent")).toBe(true);
-    expect(fetchMock).toHaveBeenCalledWith(
-      "https://api.resend.com/emails",
-      expect.objectContaining({ method: "POST" })
-    );
-  });
-
-  it("skips lead when drip 1 already sent", async () => {
-    dbQueue.push({ data: [quizLead()] });
-    dbQueue.push({ data: [{ drip_type: "quiz_followup_1" }] }); // already sent
-
+  it("skips drip 1 when fewer than 2 days have passed", async () => {
+    const freshLead = buildLead({ created_at: new Date().toISOString() });
+    setupMocks({ leads: [freshLead], sentDrips: [] });
     const res = await GET(makeReq());
     const body = await res.json() as { emails_sent: number; skipped: number };
     expect(body.emails_sent).toBe(0);
-    expect(body.skipped).toBeGreaterThan(0);
-    expect(fetchMock).not.toHaveBeenCalled();
+    expect(body.skipped).toBe(1);
+    expect(fetch).not.toHaveBeenCalled();
   });
 
-  it("skips drip 1 and sends drip 2 for lead at day 6 with drip 1 sent", async () => {
-    const lead = quizLead({ created_at: SIX_DAYS_AGO }); // 6 days → drip 2 eligible (>= 5)
-    dbQueue.push({ data: [lead] });
-    dbQueue.push({ data: [{ drip_type: "quiz_followup_1" }] }); // drip 1 sent
-    // drip 2 buildHtml: fetches top broker + runner-ups (2 queries)
-    dbQueue.push({ data: broker() });                             // top broker maybeSingle
-    dbQueue.push({ data: [{ name: "SelfWealth", slug: "selfwealth", rating: 4.0, asx_fee: "$9.50" }] }); // runner-ups
-    dbQueue.push({ error: null });                               // quiz_follow_ups insert
+  it("skips drip when already sent (sentTypes dedup)", async () => {
+    setupMocks({ sentDrips: [{ drip_type: "quiz_followup_1" }] });
+    const res = await GET(makeReq());
+    const body = await res.json() as { emails_sent: number };
+    // All drips either sent or not yet eligible
+    expect(body.emails_sent).toBe(0);
+  });
 
+  it("skips drip 1 when no top_match_slug", async () => {
+    setupMocks({ leads: [buildLead({ top_match_slug: null })] });
+    const res = await GET(makeReq());
+    const body = await res.json() as { results: { action: string; detail: string }[] };
+    const skipResult = body.results.find((r) => r.detail.includes("No top_match_slug"));
+    expect(skipResult).toBeDefined();
+    expect(skipResult?.action).toBe("skipped");
+  });
+
+  it("sends drip 1 on day 2 and records in quiz_follow_ups", async () => {
+    setupMocks({ sentDrips: [] });
+    const res = await GET(makeReq());
+    expect(res.status).toBe(200);
+    const body = await res.json() as { emails_sent: number; leads_processed: number };
+    expect(body.emails_sent).toBe(1);
+    expect(body.leads_processed).toBe(1);
+    expect(mockFollowUp1).toHaveBeenCalledWith(
+      "Alice",
+      expect.objectContaining({ slug: "commsec", name: "CommSec" }),
+      "beginner",
+      "1000-5000",
+    );
+    expect(fetch).toHaveBeenCalledOnce();
+  });
+
+  it("sends drip 2 comparison email on day 5", async () => {
+    const fiveDaysAgo = buildLead({
+      created_at: new Date(Date.now() - 5 * 86400000).toISOString(),
+    });
+    setupMocks({
+      leads: [fiveDaysAgo],
+      sentDrips: [{ drip_type: "quiz_followup_1" }],
+      runnerUps: [
+        { name: "SelfWealth", slug: "selfwealth", rating: 4.2, asx_fee: "$9.50", us_fee: null },
+        { name: "Stake", slug: "stake", rating: 4.0, asx_fee: null, us_fee: "$3" },
+      ],
+    });
     const res = await GET(makeReq());
     const body = await res.json() as { emails_sent: number };
     expect(body.emails_sent).toBe(1);
+    expect(mockFollowUp2).toHaveBeenCalledWith(
+      "Alice",
+      expect.arrayContaining([expect.objectContaining({ slug: "commsec" })]),
+      "shares",
+    );
   });
 
-  it("records skipped when duplicate constraint (23505) on insert", async () => {
-    dbQueue.push({ data: [quizLead()] });
-    dbQueue.push({ data: [] });
-    dbQueue.push({ data: broker() });
-    dbQueue.push({ error: { message: "duplicate key", code: "23505" } }); // quiz_follow_ups insert conflict
-
+  it("sends drip 3 action email on day 8 with deal detection", async () => {
+    const eightDaysAgo = buildLead({
+      created_at: new Date(Date.now() - 8 * 86400000).toISOString(),
+    });
+    setupMocks({
+      leads: [eightDaysAgo],
+      sentDrips: [
+        { drip_type: "quiz_followup_1" },
+        { drip_type: "quiz_followup_2" },
+      ],
+    });
     const res = await GET(makeReq());
-    const body = await res.json() as { skipped: number };
-    expect(body.skipped).toBeGreaterThan(0);
+    const body = await res.json() as { emails_sent: number };
+    expect(body.emails_sent).toBe(1);
+    expect(mockFollowUp3).toHaveBeenCalledWith(
+      "Alice",
+      expect.objectContaining({ slug: "commsec" }),
+      true, // broker.deal is true and deal_text present and no expiry
+    );
   });
 
-  it("records email without sending when RESEND_API_KEY is absent", async () => {
+  it("records drip even when RESEND_API_KEY is absent (email_sent: false)", async () => {
     delete process.env.RESEND_API_KEY;
-    dbQueue.push({ data: [quizLead()] });
-    dbQueue.push({ data: [] });
-    dbQueue.push({ data: broker() });
-    dbQueue.push({ error: null }); // insert still happens
+    setupMocks({ sentDrips: [] });
+    await GET(makeReq());
+    expect(fetch).not.toHaveBeenCalled();
+    // But quiz_follow_ups.insert should still be called
+    const insertCalls = (mockAdminFrom.mock.results as Array<{ value: { insert?: ReturnType<typeof vi.fn> } }>)
+      .map((r) => r.value?.insert)
+      .filter(Boolean);
+    expect(insertCalls.length).toBeGreaterThan(0);
+  });
 
+  it("skips duplicate insert (code 23505) gracefully", async () => {
+    setupMocks({
+      sentDrips: [],
+      insertErr: { message: "duplicate key", code: "23505" },
+    });
     const res = await GET(makeReq());
-    const body = await res.json() as { emails_sent: number; results: { action: string }[] };
+    expect(res.status).toBe(200);
+    const body = await res.json() as { emails_sent: number; skipped: number };
     expect(body.emails_sent).toBe(0);
-    expect(body.results.some((r) => r.action === "recorded")).toBe(true);
-    expect(fetchMock).not.toHaveBeenCalled();
+    expect(body.skipped).toBe(1);
+  });
+
+  it("only sends one drip per lead per run", async () => {
+    // Lead is 8 days old with nothing sent — drip 1 is first eligible, break kicks in
+    const eightDaysAgo = buildLead({
+      created_at: new Date(Date.now() - 8 * 86400000).toISOString(),
+    });
+    setupMocks({ leads: [eightDaysAgo], sentDrips: [] });
+    const res = await GET(makeReq());
+    const body = await res.json() as { emails_sent: number };
+    expect(body.emails_sent).toBe(1);
+    expect(fetch).toHaveBeenCalledOnce();
   });
 });
