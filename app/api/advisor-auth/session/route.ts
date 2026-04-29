@@ -21,7 +21,6 @@ export async function GET(request: NextRequest) {
     setLoggerUser(user);
 
     if (user) {
-      setLoggerUser(user);
       // Find advisor by auth_user_id or email
       const { data: advisor } = await admin
         .from("professionals")
