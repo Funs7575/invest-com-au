@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
+import { formatDate } from "@/lib/utils";
 
 interface Listing {
   id: number;
@@ -41,14 +42,6 @@ function formatPrice(cents: number | null, display: string | null): string {
   if (cents >= 1_000_000_00) return `$${(cents / 1_000_000_00).toFixed(1)}M`;
   if (cents >= 1_000_00) return `$${(cents / 1_000_00).toFixed(0)}K`;
   return `$${(cents / 100).toLocaleString("en-AU")}`;
-}
-
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString("en-AU", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
 }
 
 function verticalToPath(vertical: string, slug: string): string {

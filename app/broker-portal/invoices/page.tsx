@@ -6,6 +6,7 @@ import Link from "next/link";
 import Icon from "@/components/Icon";
 import InfoTip from "@/components/InfoTip";
 import CountUp from "@/components/CountUp";
+import { formatDate } from "@/lib/utils";
 
 interface Invoice {
   id: number;
@@ -76,14 +77,6 @@ export default function InvoicesPage() {
   const totalInvoiced = invoices.reduce((s, i) => s + i.amount_cents, 0);
   const paidCount = invoices.filter(i => i.status === "paid").length;
   const pendingAmount = invoices.filter(i => i.status === "pending").reduce((s, i) => s + i.amount_cents, 0);
-
-  const formatDate = (iso: string) => {
-    const d = new Date(iso);
-    const dd = String(d.getDate()).padStart(2, "0");
-    const mm = String(d.getMonth() + 1).padStart(2, "0");
-    const yyyy = d.getFullYear();
-    return `${dd}/${mm}/${yyyy}`;
-  };
 
   const formatAUD = (cents: number) =>
     `$${(cents / 100).toLocaleString("en-AU", { minimumFractionDigits: 2 })}`;
@@ -180,7 +173,7 @@ export default function InvoicesPage() {
                       {inv.invoice_number}
                     </td>
                     <td className="px-5 py-3 text-slate-600 whitespace-nowrap">
-                      {formatDate(inv.created_at)}
+                      {formatDate(inv.created_at, { style: "numeric" })}
                     </td>
                     <td className="px-5 py-3 text-slate-600 max-w-[250px] truncate">
                       {inv.description || "\u2014"}
