@@ -3,6 +3,9 @@
 import { useState, useEffect } from "react";
 import Icon from "@/components/Icon";
 import type { Advisor, Stats, CategoryPricing, BillingRecord, ViewType } from "./types";
+import { logger } from "@/lib/logger";
+
+const log = logger("advisor-portal-billing");
 
 type TopupRecord = { id: number; amount_cents: number; status: string; created_at: string };
 
@@ -72,7 +75,7 @@ export default function BillingTab({ advisor, stats, categoryPricing, billing, o
                   else alert(data.error || "Failed to create checkout session. Please try again.");
                 } catch (err) {
                   alert("Something went wrong. Please check you're logged in and try again.");
-                  console.error("Topup error:", err);
+                  log.error("topup checkout failed", { err: err instanceof Error ? err.message : String(err) });
                 }
               }}
               className={`w-full py-2.5 rounded-lg text-sm font-bold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2 ${
@@ -120,7 +123,7 @@ export default function BillingTab({ advisor, stats, categoryPricing, billing, o
                   else alert(data.error || "Failed to create checkout session. Please try again.");
                 } catch (err) {
                   alert("Something went wrong. Please check you're logged in and try again.");
-                  console.error("Featured topup error:", err);
+                  log.error("featured topup checkout failed", { err: err instanceof Error ? err.message : String(err) });
                 }
               }}
               className="w-full py-2 rounded-lg text-sm font-bold bg-amber-500 text-white hover:bg-amber-600 transition-all"

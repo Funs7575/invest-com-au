@@ -9,6 +9,9 @@ import {
   COMPANY_ACN,
   COMPANY_ABN,
 } from "@/lib/compliance";
+import { logger } from "@/lib/logger";
+
+const log = logger("admin-compliance");
 
 /* ─── Types ─── */
 
@@ -779,7 +782,7 @@ export default function CompliancePage() {
       });
 
     } catch (err) {
-      console.error("Compliance check error:", err);
+      log.error("compliance check failed", { err: err instanceof Error ? err.message : String(err) });
     }
 
     setChecks(results);
