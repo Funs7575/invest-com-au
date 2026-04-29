@@ -114,6 +114,21 @@ export async function POST(request: NextRequest) {
 
     const body = parsed.data;
 
+    // Optional referral: ?ref=<advisor-slug>. Resolved to professionals.id and
+    // stamped on the auction so #12 (referral credits) can attribute later.
+    const refSlug = request.nextUrl.searchParams.get("ref")?.trim() ?? "";
+    let referrerAdvisorId: number | null = null;
+    if (refSlug && /^[a-z0-9-]{1,80}$/.test(refSlug)) {
+      const adminLookup = createAdminClient();
+      const { data: refPro } = await adminLookup
+        .from("professionals")
+        .select("id")
+        .eq("slug", refSlug)
+        .eq("status", "active")
+        .maybeSingle();
+      if (refPro) referrerAdvisorId = refPro.id as number;
+    }
+
     // Extra email validation (disposable domains)
     if (!isValidEmail(body.contact_email) || isDisposableEmail(body.contact_email)) {
       return NextResponse.json({ error: "Please use a real email address." }, { status: 400 });
@@ -142,6 +157,7 @@ export async function POST(request: NextRequest) {
         contact_email: body.contact_email.toLowerCase().trim(),
         status: "open",
         ends_at: endsAt,
+        referrer_advisor_id: referrerAdvisorId,
       })
       .select("id, slug")
       .single();
@@ -206,17 +222,43 @@ async function notifyMatchingAdvisors(
   // Fetch verified advisors whose type matches and who have an email
   const { data: advisors } = await admin
     .from("professionals")
-    .select("email, name, type")
+    .select("email, name, type, accepts_new_clients, alert_preferences")
     .in("type", advisorTypes)
     .eq("status", "active")
     .not("email", "is", null)
-    .limit(200);
+    .limit(500);
 
   if (!advisors || advisors.length === 0) return;
 
-  // Cap at 200 to avoid rate limit bursts; real-world deployment would batch via queue
+  // Honour alert preferences: if the advisor has narrowed advisor_types,
+  // states, or budget_bands, only notify when this job matches all of them.
+  // Empty arrays = no preference = include.
+  const eligible = advisors.filter((a) => {
+    if (a.accepts_new_clients === false) return false;
+    const prefs = (a.alert_preferences ?? {}) as {
+      advisor_types?: string[];
+      states?: string[];
+      budget_bands?: string[];
+    };
+    if (prefs.advisor_types && prefs.advisor_types.length > 0 && !prefs.advisor_types.includes(a.type as string)) {
+      return false;
+    }
+    if (prefs.states && prefs.states.length > 0 && !prefs.states.includes(body.location_state)) {
+      return false;
+    }
+    if (prefs.budget_bands && prefs.budget_bands.length > 0 && !prefs.budget_bands.includes(body.budget_band)) {
+      return false;
+    }
+    return true;
+  }).slice(0, 200);
+
+  if (eligible.length === 0) {
+    log.info("No eligible advisors after preferences filter", { jobId });
+    return;
+  }
+
   await Promise.allSettled(
-    advisors.map((a) =>
+    eligible.map((a) =>
       sendAdvisorNewPublicJobEmail(
         a.email as string,
         (a.name as string).trim().split(" ")[0] ?? (a.name as string),
@@ -229,5 +271,5 @@ async function notifyMatchingAdvisors(
     )
   );
 
-  log.info("Advisor job notifications sent", { jobId, count: advisors.length });
+  log.info("Advisor job notifications sent", { jobId, count: eligible.length, scanned: advisors.length });
 }

@@ -122,9 +122,15 @@ export default function AdvisorAuctionsPage() {
   }, [advisorId]);
 
   async function handleRetractBid(bidId: number) {
+    const reason = window.prompt(
+      "Why are you retracting? (optional)\n\nschedule_conflict / already_booked / outside_expertise / other",
+      "",
+    );
     setRetractingBid(bidId);
     try {
-      const res = await fetch(`/api/advisor-auction/public-bids?bid_id=${bidId}`, { method: "DELETE" });
+      const params = new URLSearchParams({ bid_id: String(bidId) });
+      if (reason && reason.trim()) params.set("reason", reason.trim());
+      const res = await fetch(`/api/advisor-auction/public-bids?${params.toString()}`, { method: "DELETE" });
       if (res.ok) {
         setPublicBids((prev) =>
           prev.map((b) => (b.id === bidId ? { ...b, status: "retracted" } : b))

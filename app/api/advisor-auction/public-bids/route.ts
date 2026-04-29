@@ -88,6 +88,15 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: "bid_id is required." }, { status: 400 });
     }
 
+    const VALID_REASONS = new Set([
+      "schedule_conflict",
+      "already_booked",
+      "outside_expertise",
+      "other",
+    ]);
+    const reasonRaw = request.nextUrl.searchParams.get("reason") ?? "";
+    const retractReason = VALID_REASONS.has(reasonRaw) ? reasonRaw : null;
+
     const admin = createAdminClient();
 
     const { data: advisor } = await admin
@@ -124,10 +133,10 @@ export async function DELETE(request: NextRequest) {
 
     await admin
       .from("advisor_auction_bids")
-      .update({ status: "retracted" })
+      .update({ status: "retracted", retract_reason: retractReason })
       .eq("id", bidId);
 
-    log.info("Public bid retracted", { bidId, advisorId: advisor.id });
+    log.info("Public bid retracted", { bidId, advisorId: advisor.id, retractReason });
 
     return NextResponse.json({ success: true });
   } catch (err) {

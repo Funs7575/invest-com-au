@@ -46,8 +46,19 @@ export default function QuoteBidsClient({ slug, jobStatus, winningBidId, isExpir
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [acceptedBidId, setAcceptedBidId] = useState<number | null>(winningBidId);
+  const [compareIds, setCompareIds] = useState<number[]>([]);
+  const [showCompare, setShowCompare] = useState(false);
 
   const isAwarded = jobStatus === "awarded" || acceptedBidId !== null;
+
+  function toggleCompare(bidId: number) {
+    setCompareIds((curr) => {
+      if (curr.includes(bidId)) return curr.filter((id) => id !== bidId);
+      if (curr.length >= 3) return curr;
+      return [...curr, bidId];
+    });
+  }
+  const compareBids = bids.filter((b) => compareIds.includes(b.id));
 
   async function accept(bidId: number) {
     if (!email.trim()) {
@@ -87,16 +98,28 @@ export default function QuoteBidsClient({ slug, jobStatus, winningBidId, isExpir
 
   return (
     <div className="bg-white border border-slate-200 rounded-2xl p-6">
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
         <h2 className="text-base font-bold text-slate-900">
           Quotes received <span className="text-slate-400 font-normal">({bids.length})</span>
         </h2>
-        {isAwarded && (
-          <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full">
-            <Icon name="check-circle" size={12} className="inline mr-1" />
-            Awarded
-          </span>
-        )}
+        <div className="flex items-center gap-2">
+          {compareIds.length > 0 && !isAwarded && (
+            <button
+              type="button"
+              onClick={() => setShowCompare(true)}
+              className="text-xs font-bold bg-slate-900 hover:bg-slate-800 text-white px-3 py-1.5 rounded-full inline-flex items-center gap-1.5"
+            >
+              <Icon name="layout-grid" size={12} />
+              Compare {compareIds.length}
+            </button>
+          )}
+          {isAwarded && (
+            <span className="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full">
+              <Icon name="check-circle" size={12} className="inline mr-1" />
+              Awarded
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Owner verification — only shown when consumer wants to accept */}
@@ -132,6 +155,59 @@ export default function QuoteBidsClient({ slug, jobStatus, winningBidId, isExpir
             </button>
           </div>
           {error && <p className="text-xs text-red-600 mt-2">{error}</p>}
+        </div>
+      )}
+
+      {/* Compare drawer */}
+      {showCompare && compareBids.length > 0 && (
+        <div className="fixed inset-0 z-50 bg-slate-900/60 flex items-end sm:items-center justify-center p-4" role="dialog" aria-modal="true">
+          <div className="bg-white rounded-2xl w-full max-w-4xl max-h-[85vh] overflow-y-auto shadow-2xl">
+            <div className="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
+              <h3 className="font-bold text-slate-900">Side-by-side comparison</h3>
+              <button onClick={() => setShowCompare(false)} className="text-slate-500 hover:text-slate-900">
+                <Icon name="x" size={18} />
+              </button>
+            </div>
+            <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+              {compareBids.map((b) => (
+                <div key={b.id} className="border border-slate-200 rounded-xl p-4 flex flex-col">
+                  <div className="flex items-center gap-2 mb-2">
+                    {b.advisor?.photo_url ? (
+                      /* eslint-disable-next-line @next/next/no-img-element */
+                      <img src={b.advisor.photo_url} alt={b.advisor.name} className="w-10 h-10 rounded-full object-cover border border-slate-200" />
+                    ) : (
+                      <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center"><Icon name="user" size={16} className="text-slate-400" /></div>
+                    )}
+                    <div className="min-w-0">
+                      <p className="font-bold text-sm text-slate-900 truncate">{b.advisor?.name ?? "Advisor"}</p>
+                      {b.advisor?.firm_name && <p className="text-xs text-slate-500 truncate">{b.advisor.firm_name}</p>}
+                    </div>
+                  </div>
+                  <p className="text-2xl font-extrabold text-slate-900">{formatBid(b.bid_amount)}</p>
+                  <dl className="mt-3 space-y-1.5 text-xs">
+                    <div className="flex justify-between"><dt className="text-slate-500">Type</dt><dd className="text-slate-800 capitalize">{b.advisor?.type?.replace(/_/g, " ") ?? "—"}</dd></div>
+                    <div className="flex justify-between"><dt className="text-slate-500">Rating</dt><dd className="text-slate-800">{(b.advisor?.review_count ?? 0) > 0 ? `${b.advisor?.rating?.toFixed(1)} (${b.advisor?.review_count})` : "No reviews"}</dd></div>
+                    <div className="flex justify-between"><dt className="text-slate-500">Location</dt><dd className="text-slate-800 truncate">{b.advisor?.location_display ?? "—"}</dd></div>
+                    <div className="flex justify-between"><dt className="text-slate-500">Verified</dt><dd className="text-slate-800">{b.advisor?.verified ? "Yes" : "No"}</dd></div>
+                  </dl>
+                  <div className="mt-auto pt-4 flex flex-col gap-2">
+                    {b.advisor?.slug && (
+                      <Link href={`/advisor/${b.advisor.slug}`} className="text-xs text-center text-slate-700 hover:text-slate-900 underline">
+                        View full profile
+                      </Link>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => { setShowCompare(false); setPendingBidId(b.id); setError(null); }}
+                      className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-lg"
+                    >
+                      Accept this quote
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       )}
 
@@ -212,7 +288,22 @@ export default function QuoteBidsClient({ slug, jobStatus, winningBidId, isExpir
                   </div>
 
                   {/* Action row */}
-                  <div className="flex items-center justify-end gap-2 mt-3">
+                  <div className="flex items-center justify-between gap-2 mt-3">
+                    {!isAwarded && !isExpired ? (
+                      <label className="text-xs text-slate-600 flex items-center gap-1.5 cursor-pointer select-none">
+                        <input
+                          type="checkbox"
+                          checked={compareIds.includes(bid.id)}
+                          onChange={() => toggleCompare(bid.id)}
+                          disabled={!compareIds.includes(bid.id) && compareIds.length >= 3}
+                          className="accent-slate-900"
+                        />
+                        Compare
+                      </label>
+                    ) : (
+                      <span />
+                    )}
+                    <div>
                     {isWinner ? (
                       <span className="text-xs font-bold text-emerald-700 flex items-center gap-1">
                         <Icon name="check-circle" size={14} />
@@ -232,6 +323,7 @@ export default function QuoteBidsClient({ slug, jobStatus, winningBidId, isExpir
                         <Icon name="check" size={12} />
                       </button>
                     )}
+                    </div>
                   </div>
                 </div>
               </div>

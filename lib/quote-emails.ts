@@ -157,3 +157,64 @@ export async function sendAdvisorBidAcceptedEmail(
   });
   return ok;
 }
+
+/** Consumer: 24h before their job expires, nudge to accept a quote. */
+export async function sendQuoteExpiryReminderEmail(
+  email: string,
+  firstName: string,
+  jobTitle: string,
+  jobSlug: string,
+  bidCount: number,
+  topBidAmountCents: number | null,
+  topAdvisorName: string | null,
+): Promise<boolean> {
+  const jobUrl = `${SITE_URL}/quotes/${jobSlug}`;
+  const topBid =
+    topBidAmountCents != null && topAdvisorName
+      ? `<p style="font-size:13px;color:#64748b;margin:8px 0 0 0">Lowest current quote: <strong>$${(topBidAmountCents / 100).toLocaleString("en-AU")}</strong> from ${topAdvisorName}.</p>`
+      : "";
+  const { ok } = await sendEmail({
+    from: FROM,
+    to: email,
+    subject: `Your quote request expires in 24h — ${jobTitle}`,
+    html: wrap(
+      "Your Quote Request Expires Soon",
+      `<p style="font-size:15px">Hi ${firstName},</p>
+      <p style="font-size:14px;color:#64748b">Your quote request <strong>${jobTitle}</strong> expires in <strong>24 hours</strong>.</p>
+      <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:16px;margin:16px 0">
+        <p style="font-size:14px;color:#0f172a;margin:0;font-weight:600">You have ${bidCount} ${bidCount === 1 ? "quote" : "quotes"} waiting for review.</p>
+        ${topBid}
+      </div>
+      <p style="font-size:14px;color:#64748b">If you don't accept a quote before expiry, the request will close. You can re-open it for another 7 days afterwards if you need more time.</p>
+      ${btn(jobUrl, `Review ${bidCount === 1 ? "the Quote" : "All Quotes"} →`, "#dc2626")}
+      <p style="font-size:12px;color:#94a3b8;margin-top:20px">You received this because you posted a quote request on Invest.com.au.</p>`,
+    ),
+  });
+  return ok;
+}
+
+/** Consumer: 14 days after accepting a quote, ask them to leave a review. */
+export async function sendQuoteReviewRequestEmail(
+  email: string,
+  firstName: string,
+  advisorName: string,
+  jobTitle: string,
+  jobSlug: string,
+  reviewToken: string,
+): Promise<boolean> {
+  const reviewUrl = `${SITE_URL}/quotes/${jobSlug}/review?token=${encodeURIComponent(reviewToken)}`;
+  const { ok } = await sendEmail({
+    from: FROM,
+    to: email,
+    subject: `How was your experience with ${advisorName}?`,
+    html: wrap(
+      "Share Your Experience",
+      `<p style="font-size:15px">Hi ${firstName},</p>
+      <p style="font-size:14px;color:#64748b">It's been a couple of weeks since you accepted <strong>${advisorName}</strong>'s quote for <strong>${jobTitle}</strong>. We'd love to hear how it went.</p>
+      <p style="font-size:14px;color:#64748b">A short, honest review helps other Australians find trustworthy advisors — and it takes less than a minute.</p>
+      ${btn(reviewUrl, "Leave a Review (1 min) →", "#f59e0b")}
+      <p style="font-size:12px;color:#94a3b8;margin-top:20px">If you'd rather not, just ignore this email. We won't ask again.</p>`,
+    ),
+  });
+  return ok;
+}

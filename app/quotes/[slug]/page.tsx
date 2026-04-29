@@ -6,6 +6,9 @@ import { createClient } from "@/lib/supabase/server";
 import Icon from "@/components/Icon";
 import QuoteBidsClient from "./QuoteBidsClient";
 import CountdownPill from "./CountdownPill";
+import QuoteQAClient from "./QuoteQAClient";
+import InstantMatchPanel from "./InstantMatchPanel";
+import ReopenJobClient from "./ReopenJobClient";
 
 export const dynamic = "force-dynamic";
 
@@ -117,6 +120,20 @@ export default async function QuoteDetailPage({ params, searchParams }: {
 
   const bids = (bidsRaw as unknown as BidRow[]) || [];
 
+  // Q&A thread (public)
+  const { data: qaRaw } = await supabase
+    .from("quote_qa")
+    .select(`
+      id, advisor_id, author_display_name, body, is_question, parent_id, created_at,
+      professionals:advisor_id ( slug, type, verified )
+    `)
+    .eq("auction_id", job.id)
+    .eq("is_removed", false)
+    .order("created_at", { ascending: true });
+  const qa = (qaRaw ?? []) as unknown as Parameters<typeof QuoteQAClient>[0]["initial"];
+
+  const excludeAdvisorIds = bids.map((b) => b.professionals?.id).filter((id): id is number => id != null);
+
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
     { name: "Quotes", url: `${SITE_URL}/quotes` },
@@ -210,6 +227,20 @@ export default async function QuoteDetailPage({ params, searchParams }: {
               )}
             </div>
 
+            {/* Instant matches — only when there are no bids yet */}
+            {bids.length === 0 && job.status === "open" && (
+              <InstantMatchPanel
+                advisorTypes={job.advisor_types ?? []}
+                locationState={job.location}
+                excludeAdvisorIds={excludeAdvisorIds}
+              />
+            )}
+
+            {/* Re-open block — only when expired with no winner */}
+            {isClosedByStatus && !job.winning_bid_id && (
+              <ReopenJobClient slug={job.slug} ownerEmailFromUrl={email || ""} />
+            )}
+
             {/* Bids — interactive client */}
             <QuoteBidsClient
               slug={job.slug}
@@ -238,6 +269,9 @@ export default async function QuoteDetailPage({ params, searchParams }: {
               }))}
               ownerEmailFromUrl={email || ""}
             />
+
+            {/* Public Q&A */}
+            <QuoteQAClient slug={job.slug} initial={qa} ownerEmailFromUrl={email || ""} />
           </div>
 
           {/* Sidebar */}
