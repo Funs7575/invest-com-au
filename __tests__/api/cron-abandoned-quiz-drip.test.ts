@@ -20,13 +20,15 @@ vi.mock("@/lib/cron-auth", () => ({
   requireCronAuth: vi.fn(() => null),
 }));
 
-const mockIsFeatureDisabled = vi.fn(async () => false);
+const mockIsFeatureDisabled = vi.fn<(...args: unknown[]) => Promise<boolean>>(async () => false);
 vi.mock("@/lib/admin/classifier-config", () => ({
   isFeatureDisabled: (...args: unknown[]) => mockIsFeatureDisabled(...args),
 }));
 
-const mockBuildEmailToUserIdMap = vi.fn(async () => new Map<string, string>());
-const mockNotifyUser = vi.fn(async () => false);
+const mockBuildEmailToUserIdMap = vi.fn<(...args: unknown[]) => Promise<Map<string, string>>>(
+  async () => new Map<string, string>(),
+);
+const mockNotifyUser = vi.fn<(...args: unknown[]) => Promise<boolean>>(async () => false);
 vi.mock("@/lib/notifications", () => ({
   buildEmailToUserIdMap: (...args: unknown[]) => mockBuildEmailToUserIdMap(...args),
   notifyUser: (...args: unknown[]) => mockNotifyUser(...args),

@@ -11,7 +11,9 @@ vi.mock("@/lib/cron-auth", () => ({
   requireCronAuth: vi.fn(() => null),
 }));
 
-const mockSendLeadNotification = vi.fn(() => Promise.resolve());
+const mockSendLeadNotification = vi.fn<(...args: unknown[]) => Promise<unknown>>(() =>
+  Promise.resolve(),
+);
 vi.mock("@/lib/advisor-emails", () => ({
   sendNewLeadNotification: (...args: unknown[]) => mockSendLeadNotification(...args),
 }));

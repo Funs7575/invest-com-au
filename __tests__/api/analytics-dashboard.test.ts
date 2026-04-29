@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { NextRequest } from "next/server";
 
 // ── Mocks ──────────────────────────────────────────────────────────────────────
@@ -28,8 +28,12 @@ function makeAuthedGet(): NextRequest {
   return makeGet({ Authorization: `Bearer ${CRON_SECRET}` });
 }
 
-/** Count builder — used for all the `.select("id", { count, head }).gte().eq()` calls. */
-function makeCountBuilder(count: number, error: unknown = null) {
+/** Count builder — used for all the `.select("id", { count, head }).gte().eq()` calls.
+ * Currently unused (the thenable variant below covers all chain shapes); kept for
+ * future tests that need a non-thenable builder. Underscore-prefixed to satisfy
+ * the no-unused-vars rule without deleting (low risk, possible future use).
+ */
+function _makeCountBuilder(count: number, error: unknown = null) {
   return {
     select: vi.fn().mockReturnThis(),
     gte: vi.fn().mockReturnThis(),
