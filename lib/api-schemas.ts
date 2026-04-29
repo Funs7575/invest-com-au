@@ -115,6 +115,48 @@ export const BulkActionResponse = z.object({
   errors: z.array(z.string()),
 });
 
+// ─── /api/quotes (POST) ────────────────────────────────────────────
+
+export const QUOTE_BUDGET_BANDS = [
+  "under_500", "500_2k", "2k_5k", "5k_10k", "10k_plus", "not_sure",
+] as const;
+
+export const QUOTE_ADVISOR_TYPES = [
+  "smsf_accountant", "financial_planner", "property_advisor", "tax_agent",
+  "mortgage_broker", "estate_planner", "insurance_broker", "buyers_agent",
+  "wealth_manager", "aged_care_advisor", "crypto_advisor", "business_broker",
+  "migration_agent",
+] as const;
+
+export const QUOTE_AU_STATES = [
+  "NSW", "VIC", "QLD", "WA", "SA", "TAS", "ACT", "NT",
+] as const;
+
+export const PostJobRequest = z.object({
+  job_title: z.string().min(8, "Title must be at least 8 characters.").max(160, "Title too long."),
+  job_description: z.string().min(30, "Description must be at least 30 characters.").max(5000, "Description too long."),
+  budget_band: z.enum(QUOTE_BUDGET_BANDS, { error: "A valid budget band is required." }),
+  advisor_types: z.array(z.enum(QUOTE_ADVISOR_TYPES)).min(1, "Pick at least one advisor type."),
+  location_state: z.enum(QUOTE_AU_STATES, { error: "A valid Australian state is required." }),
+  contact_name: z.string().min(1, "Name is required.").max(100),
+  contact_email: z.string().email("A valid email is required.").max(200),
+  contact_phone: z.string().max(20).optional(),
+  website: z.string().optional(),
+  fax: z.string().optional(),
+});
+
+export const AcceptBidRequest = z.object({
+  bid_id: z.number().int().positive("bid_id must be a positive integer."),
+  contact_email: z.string().email("A valid email is required."),
+});
+
+export const PostJobResponse = z.object({
+  success: z.literal(true),
+  job_id: z.number().int(),
+  slug: z.string(),
+  ends_at: z.string(),
+});
+
 // ─── Helper: assert a response matches a schema ────────────────────
 
 /**

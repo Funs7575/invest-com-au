@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import ThreadClient from "./ThreadClient";
+import VerifiedAdvisorBadge from "@/components/VerifiedAdvisorBadge";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
@@ -17,6 +18,7 @@ interface AuthorProfile {
   reputation: number;
   badge: string | null;
   is_moderator: boolean;
+  verified_advisor?: { slug: string; type: string } | null;
 }
 
 interface ForumThread {
@@ -189,6 +191,23 @@ export default async function ThreadPage({
     }
   }
 
+  // Overlay verified advisor data where professionals have linked their auth account
+  const authorIdList = Array.from(authorIds);
+  const { data: linkedProfessionals } = await supabase
+    .from("professionals")
+    .select("auth_user_id, slug, type")
+    .in("auth_user_id", authorIdList)
+    .eq("status", "active");
+
+  if (linkedProfessionals) {
+    for (const pro of linkedProfessionals) {
+      const uid = pro.auth_user_id as string;
+      if (profileMap[uid]) {
+        profileMap[uid].verified_advisor = { slug: pro.slug as string, type: pro.type as string };
+      }
+    }
+  }
+
   const thread: ForumThread = {
     ...threadData,
     author_profile: profileMap[threadData.author_id] ?? null,
@@ -286,17 +305,24 @@ export default async function ThreadPage({
               <Icon name="user" size={16} className="text-slate-500" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <span className="text-sm font-semibold text-slate-900">
                   {thread.author_name}
                 </span>
-                <span
-                  className={`text-xs font-medium px-2 py-0.5 rounded-full ${badgeStyle(
-                    thread.author_profile?.badge ?? null
-                  )}`}
-                >
-                  {badgeLabel(thread.author_profile?.badge ?? null)}
-                </span>
+                {thread.author_profile?.verified_advisor ? (
+                  <VerifiedAdvisorBadge
+                    advisorSlug={thread.author_profile.verified_advisor.slug}
+                    advisorType={thread.author_profile.verified_advisor.type}
+                  />
+                ) : (
+                  <span
+                    className={`text-xs font-medium px-2 py-0.5 rounded-full ${badgeStyle(
+                      thread.author_profile?.badge ?? null
+                    )}`}
+                  >
+                    {badgeLabel(thread.author_profile?.badge ?? null)}
+                  </span>
+                )}
               </div>
               <div className="flex items-center gap-3 text-xs text-slate-400 mt-0.5">
                 <span className="flex items-center gap-1">

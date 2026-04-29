@@ -131,6 +131,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/fsg", "/legal", "/developer-terms", "/consultations",
     "/courses", "/reports", "/portfolio", "/portfolio-calculator",
     "/advisor-signup",
+    "/quotes", "/quotes/post",
     // More advisor-guides
     "/advisor-guides/how-to-choose-real-estate-agent",
     // Calculators
@@ -795,5 +796,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  return [...staticPages, ...bestPages, ...bestForPages, ...commodityPages, ...stockDetailPages, ...transferGuidePages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...howToPages, ...expertArticlePages, ...advisorPages, ...advisorTypePages, ...advisorStatePages, ...advisorCityPages, ...advisorLocationPages, ...investingCityPages, ...glossaryPages, ...firmPages, ...propertyListingPages, ...suburbGuidePages, ...propertyHubPages, ...newHubPages, newsletterArchivePage, ...newsletterEditionPages, ...investStaticPages, ...investCategoryPages, ...investSubcategoryPages, ...investListingPages, ...stockbrokerFirmPages];
+  // Public quote request pages (open jobs only — expired/closed drop off on next sitemap regen)
+  const { data: publicJobs } = supabase
+    ? await supabase
+        .from("advisor_auctions")
+        .select("slug, created_at")
+        .eq("is_public", true)
+        .eq("source", "public_job")
+        .eq("status", "open")
+    : { data: null };
+
+  const quoteJobPages = (publicJobs || []).map((j) => ({
+    url: `${baseUrl}/quotes/${j.slug}`,
+    lastModified: j.created_at ? new Date(j.created_at) : new Date(),
+    changeFrequency: "hourly" as const,
+    priority: 0.6,
+  }));
+
+  return [...staticPages, ...bestPages, ...bestForPages, ...commodityPages, ...stockDetailPages, ...transferGuidePages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...howToPages, ...expertArticlePages, ...advisorPages, ...advisorTypePages, ...advisorStatePages, ...advisorCityPages, ...advisorLocationPages, ...investingCityPages, ...glossaryPages, ...firmPages, ...propertyListingPages, ...suburbGuidePages, ...propertyHubPages, ...newHubPages, newsletterArchivePage, ...newsletterEditionPages, ...investStaticPages, ...investCategoryPages, ...investSubcategoryPages, ...investListingPages, ...stockbrokerFirmPages, ...quoteJobPages];
 }

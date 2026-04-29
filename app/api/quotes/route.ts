@@ -4,37 +4,13 @@ import { isRateLimited } from "@/lib/rate-limit";
 import { isValidEmail, isDisposableEmail } from "@/lib/validate-email";
 import { logger } from "@/lib/logger";
 import { processAdvisorOptIns } from "@/lib/advisor-opt-ins";
+import { PostJobRequest } from "@/lib/api-schemas";
+import {
+  sendJobPostedConfirmation,
+  sendAdvisorNewPublicJobEmail,
+} from "@/lib/quote-emails";
 
-const log = logger("jobs");
-
-/**
- * GET /api/jobs — Public job board feed (open jobs only).
- * POST /api/jobs — Consumer creates a job posting (Airtasker-style).
- *
- * Both use the existing advisor_auctions + advisor_auction_bids tables. A
- * consumer job is `source = 'public_job', is_public = true`. The same
- * /api/advisor-auction/bid endpoint accepts bids on these auctions.
- */
-
-const VALID_BUDGET_BANDS = new Set(["under_500", "500_2k", "2k_5k", "5k_10k", "10k_plus", "not_sure"]);
-
-const VALID_ADVISOR_TYPES = new Set([
-  "smsf_accountant",
-  "financial_planner",
-  "property_advisor",
-  "tax_agent",
-  "mortgage_broker",
-  "estate_planner",
-  "insurance_broker",
-  "buyers_agent",
-  "wealth_manager",
-  "aged_care_advisor",
-  "crypto_advisor",
-  "business_broker",
-  "migration_agent",
-]);
-
-const AU_STATES = new Set(["NSW", "VIC", "QLD", "WA", "SA", "TAS", "ACT", "NT"]);
+const log = logger("quotes");
 
 function slugify(s: string): string {
   return s
@@ -52,23 +28,20 @@ export async function GET(request: NextRequest) {
     const state = params.get("state");
     const limit = Math.min(50, Number(params.get("limit") || 20));
 
+    const VALID_ADVISOR_TYPES = new Set([
+      "smsf_accountant", "financial_planner", "property_advisor", "tax_agent",
+      "mortgage_broker", "estate_planner", "insurance_broker", "buyers_agent",
+      "wealth_manager", "aged_care_advisor", "crypto_advisor", "business_broker",
+      "migration_agent",
+    ]);
+    const AU_STATES = new Set(["NSW", "VIC", "QLD", "WA", "SA", "TAS", "ACT", "NT"]);
+
     const admin = createAdminClient();
     const now = new Date().toISOString();
 
     let query = admin
       .from("advisor_auctions")
-      .select(`
-        id,
-        slug,
-        job_title,
-        job_description,
-        budget_band,
-        advisor_types,
-        location,
-        status,
-        ends_at,
-        created_at
-      `)
+      .select("id, slug, job_title, job_description, budget_band, advisor_types, location, status, ends_at, created_at")
       .eq("is_public", true)
       .eq("source", "public_job")
       .eq("status", "open")
@@ -89,7 +62,6 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Failed to fetch jobs." }, { status: 500 });
     }
 
-    // Bid count per job
     const ids = (data || []).map((j) => j.id);
     let bidCounts: Record<number, number> = {};
     if (ids.length > 0) {
@@ -109,75 +81,48 @@ export async function GET(request: NextRequest) {
       jobs: (data || []).map((j) => ({ ...j, bid_count: bidCounts[j.id as number] || 0 })),
     });
   } catch (err) {
-    log.error("Jobs GET error", { err: err instanceof Error ? err.message : String(err) });
+    log.error("Quotes GET error", { err: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ error: "Failed to fetch jobs." }, { status: 500 });
   }
-}
-
-interface PostJobBody {
-  job_title: string;
-  job_description: string;
-  budget_band: string;
-  advisor_types: string[];
-  location_state: string;
-  contact_name: string;
-  contact_email: string;
-  contact_phone?: string;
 }
 
 export async function POST(request: NextRequest) {
   try {
     const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
-    if (await isRateLimited(`jobs-post:${ip}`, 5, 60)) {
+    if (await isRateLimited(`quotes-post:${ip}`, 5, 60)) {
       return NextResponse.json({ error: "Too many submissions. Please try again later." }, { status: 429 });
     }
 
-    let body: Partial<PostJobBody>;
+    let rawBody: unknown;
     try {
-      body = await request.json();
+      rawBody = await request.json();
     } catch {
       return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
     }
 
-    // Honeypot
-    if ((body as Record<string, unknown>).website || (body as Record<string, unknown>).fax) {
+    // Honeypot check before Zod (prevents leaking schema to bots)
+    const maybeBot = rawBody as Record<string, unknown>;
+    if (maybeBot.website || maybeBot.fax) {
       return NextResponse.json({ success: true, job_id: null, slug: null });
     }
 
-    // Validation
-    if (!body.job_title || body.job_title.trim().length < 8) {
-      return NextResponse.json({ error: "Job title must be at least 8 characters." }, { status: 400 });
+    const parsed = PostJobRequest.safeParse(rawBody);
+    if (!parsed.success) {
+      const msg = parsed.error.issues[0]?.message || "Invalid request body.";
+      return NextResponse.json({ error: msg }, { status: 400 });
     }
-    if (!body.job_description || body.job_description.trim().length < 30) {
-      return NextResponse.json({ error: "Description must be at least 30 characters." }, { status: 400 });
-    }
-    if (!body.budget_band || !VALID_BUDGET_BANDS.has(body.budget_band)) {
-      return NextResponse.json({ error: "A valid budget band is required." }, { status: 400 });
-    }
-    if (!Array.isArray(body.advisor_types) || body.advisor_types.length === 0) {
-      return NextResponse.json({ error: "Pick at least one advisor type." }, { status: 400 });
-    }
-    const cleanTypes = body.advisor_types.filter((t) => VALID_ADVISOR_TYPES.has(t));
-    if (cleanTypes.length === 0) {
-      return NextResponse.json({ error: "Pick at least one valid advisor type." }, { status: 400 });
-    }
-    if (!body.location_state || !AU_STATES.has(body.location_state)) {
-      return NextResponse.json({ error: "A valid state is required." }, { status: 400 });
-    }
-    if (!body.contact_name || body.contact_name.trim().length === 0) {
-      return NextResponse.json({ error: "Name is required." }, { status: 400 });
-    }
-    if (!body.contact_email || !isValidEmail(body.contact_email)) {
-      return NextResponse.json({ error: "A valid email is required." }, { status: 400 });
-    }
-    if (isDisposableEmail(body.contact_email)) {
+
+    const body = parsed.data;
+
+    // Extra email validation (disposable domains)
+    if (!isValidEmail(body.contact_email) || isDisposableEmail(body.contact_email)) {
       return NextResponse.json({ error: "Please use a real email address." }, { status: 400 });
     }
 
+    const cleanTypes = body.advisor_types.filter(Boolean);
+
     const admin = createAdminClient();
 
-    // 72-hour bidding window for public jobs (longer than internal lead
-    // auctions because consumers are slower to check back).
     const endsAt = new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString();
     const baseSlug = slugify(body.job_title);
     const slug = `${baseSlug}-${Date.now().toString(36)}`;
@@ -195,37 +140,47 @@ export async function POST(request: NextRequest) {
         location: body.location_state,
         contact_name: body.contact_name.trim(),
         contact_email: body.contact_email.toLowerCase().trim(),
-        // lead_id and lead_type are nullable for public jobs
         status: "open",
         ends_at: endsAt,
       })
       .select("id, slug")
       .single();
 
-    if (insertError) {
-      log.error("Failed to create public job", { error: insertError.message });
+    if (insertError || !auction) {
+      log.error("Failed to create public job", { error: insertError?.message });
       return NextResponse.json({ error: "Failed to create job." }, { status: 500 });
     }
 
-    // Also fan out into listing_advisor_opt_ins so the existing lead
-    // pipeline notifies advisors of relevant types — same as listing
-    // opt-ins. This means advisors get the email even if they don't
-    // refresh the public job board.
-    try {
-      await processAdvisorOptIns({
-        admin,
-        source: "job_posting",
-        job_posting_id: auction.id,
-        advisor_types: cleanTypes,
-        contact_email: body.contact_email,
-        contact_name: body.contact_name,
-        contact_phone: body.contact_phone,
-        user_location_state: body.location_state,
-        context_note: `Job posted: ${body.job_title.slice(0, 80)}`,
-      });
-    } catch (err) {
-      log.warn("Job opt-in fan-out failed", { err: err instanceof Error ? err.message : String(err) });
-    }
+    // Opt-in fan-out (for lead tracking, uses job_posting source)
+    processAdvisorOptIns({
+      admin,
+      source: "job_posting",
+      job_posting_id: auction.id,
+      advisor_types: cleanTypes,
+      contact_email: body.contact_email,
+      contact_name: body.contact_name,
+      contact_phone: body.contact_phone,
+      user_location_state: body.location_state,
+      context_note: `Job posted: ${body.job_title.slice(0, 80)}`,
+    }).catch((err) =>
+      log.warn("Job opt-in fan-out failed", { err: err instanceof Error ? err.message : String(err) })
+    );
+
+    // Email consumer confirmation (fire-and-forget)
+    sendJobPostedConfirmation(
+      body.contact_email.toLowerCase().trim(),
+      body.contact_name.trim().split(" ")[0] ?? body.contact_name.trim(),
+      body.job_title.trim(),
+      auction.slug,
+      cleanTypes,
+    ).catch((err) =>
+      log.warn("Job confirmation email failed", { err: err instanceof Error ? err.message : String(err) })
+    );
+
+    // Notify matching advisors about the new public job (fire-and-forget)
+    notifyMatchingAdvisors(admin, auction.id, auction.slug, body, cleanTypes).catch((err) =>
+      log.warn("Advisor job notification failed", { err: err instanceof Error ? err.message : String(err) })
+    );
 
     log.info("Public job created", { jobId: auction.id, slug: auction.slug, types: cleanTypes });
 
@@ -236,7 +191,43 @@ export async function POST(request: NextRequest) {
       ends_at: endsAt,
     });
   } catch (err) {
-    log.error("Jobs POST error", { err: err instanceof Error ? err.message : String(err) });
+    log.error("Quotes POST error", { err: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ error: "Failed to create job." }, { status: 500 });
   }
+}
+
+async function notifyMatchingAdvisors(
+  admin: ReturnType<typeof createAdminClient>,
+  jobId: number,
+  jobSlug: string,
+  body: { job_title: string; job_description: string; budget_band: string; location_state: string },
+  advisorTypes: string[],
+): Promise<void> {
+  // Fetch verified advisors whose type matches and who have an email
+  const { data: advisors } = await admin
+    .from("professionals")
+    .select("email, name, type")
+    .in("type", advisorTypes)
+    .eq("status", "active")
+    .not("email", "is", null)
+    .limit(200);
+
+  if (!advisors || advisors.length === 0) return;
+
+  // Cap at 200 to avoid rate limit bursts; real-world deployment would batch via queue
+  await Promise.allSettled(
+    advisors.map((a) =>
+      sendAdvisorNewPublicJobEmail(
+        a.email as string,
+        (a.name as string).trim().split(" ")[0] ?? (a.name as string),
+        body.job_title,
+        body.job_description,
+        jobSlug,
+        body.budget_band,
+        body.location_state,
+      )
+    )
+  );
+
+  log.info("Advisor job notifications sent", { jobId, count: advisors.length });
 }

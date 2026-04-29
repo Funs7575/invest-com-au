@@ -30,10 +30,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
   const title = data?.job_title || "Quote request";
   return {
-    title: `${title} — Live Quotes (${CURRENT_YEAR})`,
-    description: "Open quote request on Invest.com.au — verified advisors are submitting bids now.",
+    title: `${title} — Get Advisor Quotes (${CURRENT_YEAR})`,
+    description: `Open quote request on Invest.com.au: "${title}". Verified Australian advisors are submitting quotes now — compare and pick the best.`,
     alternates: { canonical: `${SITE_URL}/quotes/${slug}` },
-    robots: { index: false, follow: false },
   };
 }
 
@@ -124,11 +123,42 @@ export default async function QuoteDetailPage({ params, searchParams }: {
     { name: job.job_title },
   ]);
 
+  const jobPostingLd = {
+    "@context": "https://schema.org",
+    "@type": "JobPosting",
+    "title": job.job_title,
+    "description": job.job_description,
+    "datePosted": job.created_at,
+    "validThrough": job.ends_at,
+    "employmentType": "CONTRACTOR",
+    "jobLocationType": "TELECOMMUTE",
+    "applicantLocationRequirements": {
+      "@type": "Country",
+      "name": "AU",
+    },
+    "jobLocation": {
+      "@type": "Place",
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "AU",
+        "addressRegion": job.location || "AU",
+      },
+    },
+    "hiringOrganization": {
+      "@type": "Organization",
+      "name": "Invest.com.au",
+      "sameAs": SITE_URL,
+    },
+    "directApply": true,
+    "url": `${SITE_URL}/quotes/${job.slug}`,
+  };
+
   const isClosedByStatus = job.status !== "open";
 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jobPostingLd) }} />
 
       {/* Hero */}
       <section className="bg-gradient-to-b from-slate-900 to-slate-800 text-white">
