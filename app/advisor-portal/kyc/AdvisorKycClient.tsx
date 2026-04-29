@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { formatDate } from "@/lib/utils";
 
 interface KycDoc {
   id: number;
@@ -74,15 +75,6 @@ function formatBytes(bytes: number | null): string {
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)} KB`;
   return `${Math.round((bytes / 1024 / 1024) * 10) / 10} MB`;
-}
-
-function formatDate(iso: string | null): string {
-  if (!iso) return "—";
-  return new Date(iso).toLocaleDateString("en-AU", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
 }
 
 export default function AdvisorKycClient() {
@@ -321,15 +313,15 @@ export default function AdvisorKycClient() {
                   <dl className="mt-2 grid grid-cols-2 md:grid-cols-4 gap-2 text-[11px] text-slate-600">
                     <div>
                       <dt className="font-semibold text-slate-500">Uploaded</dt>
-                      <dd>{formatDate(d.uploaded_at)}</dd>
+                      <dd>{formatDate(d.uploaded_at, { fallback: "—" })}</dd>
                     </div>
                     <div>
                       <dt className="font-semibold text-slate-500">Expires</dt>
-                      <dd>{formatDate(d.expires_at)}</dd>
+                      <dd>{formatDate(d.expires_at, { fallback: "—" })}</dd>
                     </div>
                     <div>
                       <dt className="font-semibold text-slate-500">Verified</dt>
-                      <dd>{formatDate(d.verified_at)}</dd>
+                      <dd>{formatDate(d.verified_at, { fallback: "—" })}</dd>
                     </div>
                     <div>
                       <dt className="font-semibold text-slate-500">Status</dt>

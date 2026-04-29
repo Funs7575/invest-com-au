@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import { formatDate } from "@/lib/utils";
 
 interface LineItem {
   description: string;
@@ -92,14 +93,6 @@ export default function InvoiceDetailPage() {
   const formatAUD = (cents: number) =>
     `$${(cents / 100).toLocaleString("en-AU", { minimumFractionDigits: 2 })}`;
 
-  const formatDate = (iso: string) => {
-    const d = new Date(iso);
-    const dd = String(d.getDate()).padStart(2, "0");
-    const mm = String(d.getMonth() + 1).padStart(2, "0");
-    const yyyy = d.getFullYear();
-    return `${dd}/${mm}/${yyyy}`;
-  };
-
   const statusBadge = (status: Invoice["status"]) => {
     const map: Record<Invoice["status"], string> = {
       paid: "bg-emerald-50 text-slate-700",
@@ -172,7 +165,7 @@ export default function InvoiceDetailPage() {
               Invoice Date
             </p>
             <p className="text-sm text-slate-700">
-              {formatDate(invoice.created_at)}
+              {formatDate(invoice.created_at, { style: "numeric" })}
             </p>
           </div>
           <div>

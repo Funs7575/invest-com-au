@@ -25,20 +25,20 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | Stream | Branch | PR | Last CI | Items in flight |
 | --- | --- | --- | --- | --- |
 | A | _not started_ | — | — | — |
-| B | `claude/audit-remediation/b-rls-remediation` | #220 | pending — pushed 2026-04-27T06:50Z | B-06 — 2 done (`listing_enquiries` `0bb82daa`, `listing_plans` `be7bff79`) · 5 FP (forum tables) · 1 blocked (`quarterly_reports`) |
+| B | `claude/audit-remediation/b-07-rls-migration-lint` | #286 (draft) | pending — pushed 2026-04-28T22:35Z | PR #220 merged (B-01..B-06 done/blocked/FP). B-07 done (`0097159`) — CI gate: new CREATE TABLE migrations must include ENABLE ROW LEVEL SECURITY. |
 | C | _not started_ | — | — | — |
-| D | `claude/audit-remediation/d-route-tests` | #246 | pending — pushed 2026-04-28T01:22Z | D-01 done (commit `7269510`) · D-02 done (commit `ebf2250`) · D-03 done (commit `0177aa1`) · D-04 done (commit `bea95b1`) · D-05 done (commit `e49375d`) · D-06 done (commit `c0cd3ee`) · D-07 done (commit `33230fb`) · D-08 done (commit `311df3f`) · D-09 done (commit `8e2d35d`) · D-10 done (commit `4e702c1`) · D-11 batch 1 done (commit `90c7c5b`) · D-11 batch 2 done (commit `387bcb4`) · D-11 batch 3 done (commit `db0df8d`) · D-11 batch 4 done (commit `c49e3aa`) · CI-rescue merged main (commit `9282178`) · D-11 batch 5 done (commit `6c7637f`) · D-11 batch 6 done (commit `f7e1a1c`) · D-11 batch 7 done (commit `f183cba`) · D-11 batch 8 done (commit `f336fc7`) · D-11 batch 9 done (commit `2c78f24`) · D-11 batch 10 done (commit `73c8aa1`) · D-11 batch 11 done (commit `3fab2c1`) · D-11 batch 12 done (commit `856026c`) · D-11 batch 12c done (commit `cc77b65`) · D-11 batch 13 done (commit `9dae465`) · D-11 batch 14 done (commit `c64ca614`) |
+| D | `claude/audit-remediation/d-route-tests` | #285 | pending — pushed 2026-04-29T23:35Z | D-01 done (commit `7269510`) · D-02 done (commit `ebf2250`) · D-03 done (commit `0177aa1`) · D-04 done (commit `bea95b1`) · D-05 done (commit `e49375d`) · D-06 done (commit `c0cd3ee`) · D-07 done (commit `33230fb`) · D-08 done (commit `311df3f`) · D-09 done (commit `8e2d35d`) · D-10 done (commit `4e702c1`) · D-11 batch 1 done (commit `90c7c5b`) · D-11 batch 2 done (commit `387bcb4`) · D-11 batch 3 done (commit `db0df8d`) · D-11 batch 4 done (commit `c49e3aa`) · CI-rescue merged main (commit `9282178`) · D-11 batch 5 done (commit `6c7637f`) · D-11 batch 6 done (commit `f7e1a1c`) · D-11 batch 7 done (commit `f183cba`) · D-11 batch 8 done (commit `f336fc7`) · D-11 batch 9 done (commit `2c78f24`) · D-11 batch 10 done (commit `73c8aa1`) · D-11 batch 11 done (commit `3fab2c1`) · D-11 batch 12 done (commit `856026c`) · D-11 batch 12c done (commit `cc77b65`) · D-11 batch 13 done (commit `9dae465`) · D-11 batch 14 done (commit `c64ca614`) · D-11 batch 15 done (commit `01b685f`) · D-11 batch 16 done (commit `6536d77`) · D-11 batch 17 done (commit `bbca74d`) · D-11 batch 17b done (commit `251f745`) · **Also: PR #287 (`d-11-batch-15`) parallel coverage — batch 15: quiz/data+csp-report+complaints/intake+advisor-dashboard+course/purchase (`5c4df09`); batch 16: advisor-articles+community/posts/[id]+advisor-search/postcodes+v1/api-keys+marketplace/webhook (`ebdb3f4`) — 110 complementary tests, merges independently** · D-11 batch 18 done (commit `2694124`) · D-11 batch 18b done (commit `6a89600`→`701cf83`) · D-11 batch 19 done (commit `b93f1647`) · D-11 batch 19b done (commit `49e0ad5`) · D-11 batch 20 done (commit `2f72b7a`) · D-11 batch 21 done (commit `eec7429`) · D-11 batch 21b done (commit `d460cb5`→`32e3069`) · D-11 batch 22 done (commit `951a295`) · D-11 batch 22b done (commit `4b5e73b`) · D-11 batch 23 done (commit `575143b`) · D-11 batch 23b done (commit `a6574f1c`) |
 | E | _not started_ | — | — | — |
 | F | _not started_ | — | — | — |
 | G | _not started_ | — | — | — |
 | H | _not started_ | — | — | — |
 | I | `claude/audit-remediation/i-new-04-main-ci-auto-revert` | #278 (draft) | pending — pushed 2026-04-28T16:14Z | I-NEW-01 done via #277 (`00ef2790`); I-NEW-02 hotfix `5b7937dc`; I-NEW-03 hotfix `4b050ed9`; I-NEW-05 race-fix `55d077bf`; **first real metrics snapshot landed 2026-04-28T16:12Z (grade F 0.0899 — Supabase secrets need to be set in GH Actions for non-zero on M04/M07/M08/M09/M10/M11/M12)**; I-NEW-04 in flight (auto-revert workflow `b42233fb`) |
-| J | `claude/audit-remediation/j-stripe-webhook` | #279 (draft) | pending — pushed 2026-04-28T19:55Z | J-01a (commit `2651b72d`) · J-01b (commit `80392137`) · J-01c-1 (commit `b3c10476`) — `charge.refunded` + `invoice.{paid,payment_failed}` migrated. J-01c-2 (`checkout.session.completed`) + J-01d/e + J-03/05/06/08/09/10 still pending. |
+| J | `claude/audit-remediation/j-stripe-webhook` | #288 (draft) | pending — pushed 2026-04-29T22:30Z | J-01a..J-01e (route.ts 1197 → 165 LOC) · J-01d-ext (commit `bb1d56f6`) · J-03 (commit `b8e7189`) · J-05 (commit `d68852e`) · J-06 (commit `eedf582`) · J-08 (commit `e99aedc`) · J-09 (commit `e99aedc`) · J-10 (commit `e99aedc`) — all handlers complete (14 registered). Stream complete pending PR merge. |
 | K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-27T05:35Z | K-01..K-08 done; K-09 false-positive; K-10..K-15 done — **stream complete** |
-| L | _not started_ | — | — | — |
-| M | _not started_ | — | — | — |
+| L | `claude/audit-remediation/l-observability` | #289 (draft) | pending — pushed 2026-04-30T00:10Z | L-06 done (commit `12183619`) — 8 SLOs seeded. L-07 done (commit `824366e`) — email alert sink (OPS_ALERT_EMAIL pattern) + 25 tests. L-08 in progress. |
+| M | `claude/audit-remediation/m-01b-cover-image-backfill` | #283 (draft) | pending — pushed 2026-04-28T21:25Z | M-01b in flight (commit `19a0d7e6`) — per-article OG cover override + backfill script. |
 | N | `claude/audit-remediation/n-ux-perf` | #242 | pending — pushed 2026-04-27T13:30Z | N-01+N-02 done (`2ec6f89`) · N-03a done (`36e3f6d`) · N-03b done (`97bb9b00`) · N-03c done (`b29f443`) · N-04 FP · N-05 FP · N-06 blocked · N-07 batch 1 done (`2e5d8a4`) · N-07 batch 2 done (`91d0d42`) · N-08 done (`315d3b7`) · N-09 done (`3b43bf8`) · N-10 done (`0c33d71`) · N-11 done (`c2b769e`) — **stream complete** (N-06 blocked) |
-| O | `claude/audit-remediation/o-rls-no-policy` | _opening_ | pending — pushed 2026-04-26 | O-01 — 3 done (`user_notifications`, `user_quiz_history`, `user_bookmarks`); ~13 user-data tables left |
+| O | `claude/audit-remediation/o-rls-no-policy` | merged via #235/#237/#239 | last pushed 2026-04-26 | O-01 iter1 done (`user_notifications`/`user_quiz_history`/`user_bookmarks`) · iter2 done `8e638bd` (`article_comments`/`article_reactions`) · iter3 done `c9c8fcd` (admin/audit cluster) · iter4 done `e965eb7` (14 observability/admin tables). ~34 tables remain for iter5+. |
 | P | _not started_ | — | — | — |
 | Q | _not started_ | — | — | — |
 | R | _not started_ | — | — | — |
@@ -188,7 +188,7 @@ Highest priority: critical 2 first.
 | B-04 | done | RLS on `investment_listings` (option 2) | 1 | Done in commit `4847bd31` (PR #220). Anon SELECT all; anon INSERT only when `status='pending'` + counters=0 + no professional linkage; anon UPDATE column-scoped to (`views`, `enquiries`) via REVOKE/GRANT; service-role explicit allow. Long-term option-4 follow-up tracked as B-08 below. |
 | B-05 | done | RLS on `listing_claims` | 1 | Done in commit `5904db8a` then **corrected in `24898931` (iter 8)** to actually drop the legacy `"Anon can submit claims"` policy from `20260510_rls_hardening.sql` (the original DROP IF EXISTS list missed it; RLS policies stack additively, so the legacy permissive INSERT survived and undermined the deny-all claim). Net state: deny-all anon + service-role explicit allow. |
 | B-06 | in-progress | RLS on remaining medium-risk tables | 2 | 1 done in iter 9 (`listing_enquiries`, commit `0bb82daa`, option-2 pattern). 5 false-positives discovered in iter 10 via prior-policy gate — all forum tables (`forum_categories`, `forum_posts`, `forum_threads`, `forum_user_profiles`, `forum_votes`) were already RLS-enabled with proper `auth.uid()`-scoped policies in `20260427_wave_security_observability.sql`; moved to FP table. `listing_plans` done iter 35 (commit `be7bff79` — deny-all anon; all 3 callers use service-role). `quarterly_reports` **blocked** (iter 35): admin CRUD page `app/admin/quarterly-reports/page.tsx` uses browser anon-key client (`lib/supabase/client.ts`); no `auth.uid()` linkage; policy design is non-obvious — see Blocked entry B-06-QUARTERLY-REPORTS-1. |
-| B-07 | pending | Add CI lint that fails any new `CREATE TABLE` migration without `ENABLE ROW LEVEL SECURITY` | 1 | Stream I overlap; coordinate. |
+| B-07 | done | Add CI lint that fails any new `CREATE TABLE` migration without `ENABLE ROW LEVEL SECURITY` | 1 | Done in commit `0097159` (PR #286). `scripts/check-rls-migrations.mjs` — finds added migration files in the PR via `git diff --diff-filter=A`, extracts `CREATE TABLE` names, checks each has `ENABLE ROW LEVEL SECURITY` in the same file. System-table prefixes exempted. `-- rls-exempt: <table>` escape hatch for public-read tables. 30 unit tests green. `rls-migrations-gate` CI job + `npm run audit:rls-migrations` local script. Coordinates with I-01. |
 | B-08 | pending | Long-term: refactor `/api/listings/submit` + enquire counter fallback to admin client; tighten anon policy on `investment_listings` to SELECT-only (option 4 follow-up to B-04) | ~2 | Lower priority than B-06; depends on stream C call-graph (C-01) to confirm no other anon writers. |
 | B-09 | pending | Long-term: refactor `/api/listings/my-listings` to admin client + email-verification challenge; tighten anon policy on `listing_enquiries` to deny SELECT (follow-up to B-06's `listing_enquiries` migration) | ~2 | **Known PII enumeration vector**: today the route trusts the user-supplied `email` query param and returns all enquiries (name, email, phone, message) for any listing whose `contact_email` matches. RLS at the DB layer cannot scope this without an `auth.uid()` linkage. Stream C territory; depends on the my-listings flow design decision (magic link, OTP, or login). |
 
@@ -206,7 +206,7 @@ Highest priority: critical 2 first.
 | D-08 | done | Integration test for `/api/stripe/create-contract` | 1 | Done in commit `311df3f` (PR #246). 16 tests: 401 no cookie; 401 invalid/expired session (null DB); 400 missing advisor_id/plan/billing_cycle; 400 invalid plan value; 400 invalid billing_cycle value; 403 professional_id mismatch; 200 monthly success; 200 annual success; unit_amount=9900+interval=month for basic/monthly; unit_amount=499000+interval=year for premium/annual; metadata includes advisor_id+plan+billing_cycle; success_url+cancel_url use NEXT_PUBLIC_SITE_URL; advisor_sessions query scoped by cookie token; 500 Stripe throws. |
 | D-09 | done | Integration test for `/api/auth/signout` | 1 | Done in commit `8e2d35d` (PR #246). 2 tests: success path (`signOut()` resolves → `{success:true}` 200); catch path (`signOut()` throws → `{error:"Failed to sign out"}` 500). 100% branch coverage on the 12-line route. |
 | D-10 | done | Add `vitest.config.mts` ratchet: API-route coverage floor | 1 | Global thresholds ratcheted 42→44 (lines/stmt), 72→73 (branches). API-route floor added: lines/stmt 13, branches 58, functions 30. commit `4e702c1` PR #246. |
-| D-11 | pending | Backfill remaining 219 untested routes (chunked: ~5 per iteration, prioritised by traffic) | ~44 | Lowest priority within D; ongoing. Batch 1 done (iter 60, commit `90c7c5b`): advisor-auth lifecycle — session GET+DELETE (8), login POST (16), profile PATCH (5), notifications GET+PATCH (7) = 37 tests, 4 files. Batch 2 done (iter 67, commit `387bcb4`): advisor-auth financial+auth — payment (12), tier-upgrade (10), topup (11), verify (6), request-review (8) = 47 tests, 4 files. Batch 3 done (iter 68, commit `db0df8d`): consumer-path routes — account/notifications GET+PATCH (13), account/claim-anonymous POST (8), user-profile GET+PUT (15), newsletter/subscribe POST (12) = 48 tests, 4 files. Batch 4 done (iter 69, commit `c49e3aa`): OTP + shortlist + notification-preferences — verify-otp/send POST (11), verify-otp/verify POST (9), shortlist POST+GET (16), notification-preferences GET+POST (11) = 47 tests, 4 files. Batch 5 done (iter 71, commit `6c7637f`): consumer search + quiz + lead-confirm + GDPR export — advisor-search GET (12), quiz/submit POST (12), submit-lead/confirm POST (12), account/export-data POST (10) = 46 tests, 4 files. Batch 6 done (iter 72, commit `f7e1a1c`): privacy + unsubscribe + claim-listing — privacy/request POST (14), privacy/verify GET (12), unsubscribe POST (13), claim-listing POST (16) = 55 tests, 4 files. Batch 7 done (iter 74, commit `f183cba`): marketplace/allocation GET (9), versus/vote GET+POST (15), ab-track POST (11), user-review POST (18), advisor-apply/photo POST (8) = 61 tests, 5 files. Batch 8 done (iter 75, commit `f336fc7`): advisor-signup POST (16), advisor-review POST (20), advisor-booking GET+POST (15), advisor-appointments GET+POST (12), referrals GET+POST (16) = 79 tests, 5 files. Batch 9 done (iter 76, commit `2c78f24`): advisor-compare GET (6), listings-enquire POST (16), marketplace-campaign-click POST (10), marketplace-impression POST (10), nps POST (15) = 57 tests, 5 files. Batch 10 done (iter 77, commit `73c8aa1`): affiliate-click POST (12), health GET (8), chatbot POST (10), advisor-kyc GET+POST (14), listings-submit POST (17) = 61 tests, 5 files. Batch 11 done (iter 78, commit `3fab2c1`): form-event POST (17), article-comments GET+POST (15), advisor-alerts POST (11), attribution/touch POST (13), churn-survey POST (14) = 56 tests, 5 files (analytics + engagement funnels). Batch 12 done (iter 79, commit `856026c`): article-reactions GET+POST (11), search-semantic GET (13), web-vitals POST (10), advisor-apply/invite GET (7), privacy/correct POST (10) = 51 tests, 5 files (engagement, search, telemetry, GDPR). Batch 12c done (iter 80b concurrent, commit `cc77b65`): listings/my-listings GET (8), questions POST (8), questions/[id]/vote POST (9), exit-intent-log POST (8) = 33 tests, 4 files (advisor management, Q&A engagement, A/B analytics). Batch 13 done (iter 80, commit `9dae465`): concierge POST/GET/DELETE (18, AI SSE streaming, session history, rate-limit tiers), lead-outcome POST/GET (18, advisor CRM one-click outcome + email token handler), advisor-auction POST/GET (12, create auction + list active/won), advisor-auction/bid POST (15, bid placement, update, duplicate constraint, expiry), consultation/book POST (15, Stripe checkout, Pro pricing, duplicate booking) = 78 tests, 5 files. Batch 14 done (iter 81, commit `c64ca614`): advertise/checkout POST (13, Stripe sponsorship checkout, tier validation, 12-month discount), listings/checkout POST (14, investment listing plan checkout, get-or-create Stripe customer), community/posts POST (14, authenticated forum post creation, rate-limit, threaded replies), community/threads GET+POST (18, thread list + creation, slug generation, category lookup), marketplace/wallet-topup POST (11, broker wallet top-up, Stripe checkout, amount validation) = 70 tests, 5 files. |
+| D-11 | pending | Backfill remaining 219 untested routes (chunked: ~5 per iteration, prioritised by traffic) | ~44 | Lowest priority within D; ongoing. Batch 1 done (iter 60, commit `90c7c5b`): advisor-auth lifecycle — session GET+DELETE (8), login POST (16), profile PATCH (5), notifications GET+PATCH (7) = 37 tests, 4 files. Batch 2 done (iter 67, commit `387bcb4`): advisor-auth financial+auth — payment (12), tier-upgrade (10), topup (11), verify (6), request-review (8) = 47 tests, 4 files. Batch 3 done (iter 68, commit `db0df8d`): consumer-path routes — account/notifications GET+PATCH (13), account/claim-anonymous POST (8), user-profile GET+PUT (15), newsletter/subscribe POST (12) = 48 tests, 4 files. Batch 4 done (iter 69, commit `c49e3aa`): OTP + shortlist + notification-preferences — verify-otp/send POST (11), verify-otp/verify POST (9), shortlist POST+GET (16), notification-preferences GET+POST (11) = 47 tests, 4 files. Batch 5 done (iter 71, commit `6c7637f`): consumer search + quiz + lead-confirm + GDPR export — advisor-search GET (12), quiz/submit POST (12), submit-lead/confirm POST (12), account/export-data POST (10) = 46 tests, 4 files. Batch 6 done (iter 72, commit `f7e1a1c`): privacy + unsubscribe + claim-listing — privacy/request POST (14), privacy/verify GET (12), unsubscribe POST (13), claim-listing POST (16) = 55 tests, 4 files. Batch 7 done (iter 74, commit `f183cba`): marketplace/allocation GET (9), versus/vote GET+POST (15), ab-track POST (11), user-review POST (18), advisor-apply/photo POST (8) = 61 tests, 5 files. Batch 8 done (iter 75, commit `f336fc7`): advisor-signup POST (16), advisor-review POST (20), advisor-booking GET+POST (15), advisor-appointments GET+POST (12), referrals GET+POST (16) = 79 tests, 5 files. Batch 9 done (iter 76, commit `2c78f24`): advisor-compare GET (6), listings-enquire POST (16), marketplace-campaign-click POST (10), marketplace-impression POST (10), nps POST (15) = 57 tests, 5 files. Batch 10 done (iter 77, commit `73c8aa1`): affiliate-click POST (12), health GET (8), chatbot POST (10), advisor-kyc GET+POST (14), listings-submit POST (17) = 61 tests, 5 files. Batch 11 done (iter 78, commit `3fab2c1`): form-event POST (17), article-comments GET+POST (15), advisor-alerts POST (11), attribution/touch POST (13), churn-survey POST (14) = 56 tests, 5 files (analytics + engagement funnels). Batch 12 done (iter 79, commit `856026c`): article-reactions GET+POST (11), search-semantic GET (13), web-vitals POST (10), advisor-apply/invite GET (7), privacy/correct POST (10) = 51 tests, 5 files (engagement, search, telemetry, GDPR). Batch 12c done (iter 80b concurrent, commit `cc77b65`): listings/my-listings GET (8), questions POST (8), questions/[id]/vote POST (9), exit-intent-log POST (8) = 33 tests, 4 files (advisor management, Q&A engagement, A/B analytics). Batch 13 done (iter 80, commit `9dae465`): concierge POST/GET/DELETE (18, AI SSE streaming, session history, rate-limit tiers), lead-outcome POST/GET (18, advisor CRM one-click outcome + email token handler), advisor-auction POST/GET (12, create auction + list active/won), advisor-auction/bid POST (15, bid placement, update, duplicate constraint, expiry), consultation/book POST (15, Stripe checkout, Pro pricing, duplicate booking) = 78 tests, 5 files. Batch 14 done (iter 81, commit `c64ca614`): advertise/checkout POST (13, Stripe sponsorship checkout, tier validation, 12-month discount), listings/checkout POST (14, investment listing plan checkout, get-or-create Stripe customer), community/posts POST (14, authenticated forum post creation, rate-limit, threaded replies), community/threads GET+POST (18, thread list + creation, slug generation, category lookup), marketplace/wallet-topup POST (11, broker wallet top-up, Stripe checkout, amount validation) = 70 tests, 5 files. Batch 15 done (iter 82, commit `01b685f`): advisor-search/postcodes GET (9, numeric like vs alpha ilike, limit(10), null data), v1/brokers GET+OPTIONS (20, Bearer auth, field allowlist, limit clamping, pagination, 7 filter params, Cache-Control, meta.updated_at), community/posts/[id] PATCH+DELETE (17, ownership check, body validation 1-5000 chars, soft-delete, isModerator admin-email short-circuit), advisor-dashboard GET (7, session cookie auth, profile completeness score, hot/warm/cold lead buckets, 8-week weekly enquiries), advisor-articles GET+POST+PUT (24, 6 GET modes, POST compliance checks ≥300 words/no perf guarantees/no promo, PUT admin-only actions) = 77 tests, 5 files. Batch 16 done (iter 83, commit `6536d77`): community/threads/[id] GET+PATCH+DELETE (18, public thread+posts+profiles fetch, title/body edit 5-200/10-10000 chars, soft-delete, isModerator), community/categories GET (6, active list, sort_order, DB error), community/vote POST (12, DB token-bucket rate-limit, target_type validation, self-vote prevention, new vote/toggle-off/direction-flip, insert failure), v1/brokers/[slug] GET+OPTIONS (11, slug format [a-z0-9-], broker+changelog, field strip, Cache-Control, logApiRequest), v1/api-keys POST+OPTIONS (14, IP+email rate limits, max-3-keys-per-email, ica_<32hex> key prefix, confirmation email via lib/resend) = 61 tests, 5 files. Batch 17 done (iter 91, commit `bbca74d`): fee-profile GET+POST (11, Pro-subscription gate, input clamping 0–999, rate-limit), saved-comparisons GET/POST/GET[id]/PATCH[id]/DELETE[id] (24, max-25 limit, name/notes trim, 401/429/500/503 error paths), advisor-welcome POST (12, admin-only guard via getAdminEmails(), Resend fire-and-forget, type-label mapping, case-insensitive email match) = 47 tests, 3 files. Batch 17b done (iter 91b concurrent, commit `251f745`): course/purchase POST (16, rate-limit, auth, course not found/unpublished, already-purchased, no-price configured, new vs existing Stripe customer, no-email guard, Pro vs standard pricing, metadata shape, Stripe throws), course/progress POST (10, auth, lesson_id/course_slug validation, not-purchased 403, upsert idempotent, upsert error), consultation/bookings GET (7, auth, missing param, booking found/null, user+consultation_id filter, status filter), sponsored-booking POST (14 inc. it.each, rate-limit + key scoping, required fields, invalid package, valid packages, admin email subject, sendEmail throws, phone include/exclude) = 47 tests, 4 files. Batch 18b done (iter 93, commit `6a89600`→`701cf83`): answers/[id]/vote POST (12, IP-keyed rate-limit, integer-ID validation, vote 1/-1 enforcement, upvote/downvote delta, same-vote idempotency, direction-change delta, helpful_count floor at 0, insert/update 500 paths), newsletter-segments/subscribe POST (9, rate-limit, missing-email, subscribeToNewsletter error passthrough, alreadyConfirmed short-circuit, confirmation email + token in HTML, segment in email, email-failure non-blocking, no-token case, malformed JSON), switch-story POST (13, broker slug validation, same-broker 400, email/rating/displayName/body validation, rate-limit, source/dest broker 404, duplicate 409, insert + verification email, email-failure non-blocking, DB insert 500), switch-story/moderate POST (10, admin-only via ADMIN_EMAILS, 401/400/404/500, approve/reject with DB update, notification email, no-RESEND_KEY skip), switch-story/verify GET (9, token length gate, rate-limit, story-not-found redirect, clean-story auto-approved, profanity hold → status='verified', non-pending skip-update, DB error redirect) = 53 tests, 5 files. vi.hoisted() fix for createRateLimiter mock. Batch 18 done (iter 92b, commit `2694124`): analytics/search-log POST (8, rate-limit, query/surface validation, logSearchQuery ok:true/false, optional fields, invalid-JSON 400), analytics-dashboard GET/cron (6, CRON_SECRET Bearer auth, thenable count-query mock, all summary keys, RPC failures, null-count→0), broker-health GET (9, public slug, safety score ASIC/CHESS/years/rating factors, Strong/Moderate/Caution labels, Cache-Control s-maxage=86400), complaints/intake POST (11, DB token-bucket, email/subject/body/category validation, enqueueJob ×2, severity default, insert 500), consultation/bookings GET (7, auth check, consultation_id param, eq/in chain assertions, null booking, 500 on throw) = 41 tests, 5 files. Batch 19 done (iter 92, commit `b93f1647`): portfolio-xray POST (13, rate-limit, holdings validation, ticker resolution, weight/yield/geo calc, concentration warnings, fee_drag, 500 path), listings/[id] GET+PUT+DELETE (17, numeric-id guard, email-ownership timing-safe merge, enquiries_count join, soft-delete), verify-professional POST (13, dual bearer auth ADMIN_API_KEY+CRON_SECRET, ABN/AFSL outcomes passed/failed/partial, admin_action_log always written), partner/leads POST (13, PARTNER_API_KEY auth, batch validation 100-lead cap, free-lead path, duplicate-protection, billing path), marketplace/postback POST (13, X-API-Key broker auth, click ownership, idempotency already_recorded, 23505 race, all event_type values) = 69 tests, 5 files. Batch 19b done (iter 93b, commit `49e0ad5`): cohort-stats GET (8, experience+range required, <50-rows insufficient_data, ≥50-rows distribution+name-lookup, optional interest filter, no-interest-eq, 500, cohort_label), csp-report POST (6, rate-limit 429, legacy format insert, Reporting API v1 format, unparseable 204, DB error still 204, user_agent stored), drip-click GET (8, missing broker/drip→/compare, NaN drip, 429, redirect UTM, insert call, Cache-Control no-store, DB-throw non-blocking), partner/status GET (7, missing key 401, no env 401, wrong key 401, valid key credits+leads, count error 500, null count 0, throw 500), fee-alerts POST+GET (10, 429, missing email, upsert success, DB 500, Resend called/skipped, defaults; GET verify/unsubscribe) = 39 tests, 5 files. Batch 20 done (iter 96, commit `2f72b7a`): newsletter-segments/confirm GET+POST (9, rate-limit, missing token, confirmSubscription error/success, unsubscribe action validation), push/subscribe POST (9, rate-limit, subscription object validation, topic filtering, upsert fields, 500 on DB error), community/moderate POST (10, 401 unauthenticated, 403 non-moderator, admin email bypass, invalid action, missing thread_id, pin/lock success, 404 update fail, remove post, invalid JSON), marketplace/notify POST (7, 401 missing/wrong key, 400 missing fields, 200 notification_id, insert assertions, 500), fee-report GET (8, 500 empty/null brokers, HTML content-type, broker names in body, year in title, broker count, Cache-Control, eq+order assertions) = 43 tests, 5 files. Batch 21 done (iter 98, commit `eec7429`): cron/abandoned-form-drip GET (9, kill-switch, 401, no-view-events, happy-path send+stamp, bounced skip, suppression-list skip, no-email count, complete-events filter), cron/abandoned-quiz-drip GET (10, kill-switch, 401, DB error 500, empty leads, step-1 at 2d, step-2 at 7d, step-3 at 14d, not-ready skip, in-app notifyUser), cron/advisor-dormant-nudge GET (9, kill-switch, 401, DB error 500, no-advisors, 30d nudge+stamp, 60d nudge, >90d skip, 14d-cooldown skip), cron/advisor-nudge GET (8, edge runtime, 401, no-RESEND_API_KEY skip, DB error, no-advisors, unreviewed-leads nudge+stamp, low-balance email subject, fetch-throw not-counted), cron/advisor-dunning GET (8, 401, DB error 500, no-failed-topups, step-already-current skip, step-0→1 stripe-retry-failing email, stripe-confirm-succeeds credit, step-3 auto-pause) = 44 tests, 5 files. Batch 21b done (iter 100, commit `d460cb5`→`32e3069`): user-review/moderate POST (12, admin-only auth, approve/reject actions, DB error 500, review-not-found 404, approval email, rejection email with note, no-email without RESEND_KEY), user-review/verify GET (11, rate-limit 429, missing/short token redirect, review-not-found, auto-approve clean review, profanity hold→verified, URL-spam hold, body-too-short hold, non-pending skip, DB error redirect, moderation_note written on hold), questions/[id]/answer POST (12, rate-limit, NaN-ID 400, 401 unauthenticated, too-short/too-long body, question-not-found 404, community/broker/advisor role resolution, insert 500, notification email, no-email guard), review-token GET (8, rate-limit, missing token, empty-slug token, advisor-not-found 404, valid slug token, slug:leadId token, professionals eq filter, lenient-base64 fallback), send-switching-report POST (11, rate-limit, missing required fields, sendEmail called, subject contains savings+broker, HTML has broker names, savings highlight, 500 on throw, affiliate link, IP rate-limit key) = 54 tests, 5 files. Batch 22 done (iter 101, commit `951a295`): widget GET+OPTIONS (11, CORS *, Content-Type JS, broker filter, limit clamp 1–10, compact/table/dark, empty result, OPTIONS preflight), quiz/data GET (6, 503 no-env, 502 broker-error, 200+Cache-Control, empty quiz_weights on error), cron/advisor-onboarding GET (9, 401, no-RESEND 500, no-advisors, skip-no-email, skip-no-onboarded_at, day<2 skip, day≥2 step-1 email+update, day≥5 step-2 article, fetch-throws continues), cron/ab-auto-promote GET (10, 401, kill_switch, DB-error 500, no-tests, auto-promoted skip, insufficient-sample, inconclusive, winner-promoted+audit-log, update-error, throws-failed), cron/confirm-lead-notify GET (9, 401, no-leads, notify+stamp, advisor-not-found, no-email, send-throws, null-intent defaults, timestamp) = 45 tests, 5 files. Batch 22b done (iter 102, commit `4b5e73b`): broker-outreach POST (9, admin-only cold-pitch, rate-limit IP key, Resend 502, outreach log insert, 401/400/429/500), listings/renew POST (10, Stripe Checkout renewal, existing vs new Stripe customer, listing ownership 403, inactive plan 410, 400/404/500), questions/moderate POST (9, admin-only approve/reject broker_questions/broker_answers, fire-and-forget answer notification, 401/400/500) = 28 tests, 3 files. Batch 23 done (iter 103, commit `575143b`): broker-outreach POST enhanced to 13 tests (invalid email 400, broker_slug in HTML, no-slug fallback URL, all error paths), exit-match GET (10, no-auth public, broker scoring shortlist+10/quiz+5/rating×3/deal+5/cpa+2/affiliate+1, malformed cookie graceful, US-history reason, response shape), foreign-investment/rates GET (10, DB token-bucket rate-limit, country list dedup+alpha-sort, rates by country code, upcase+slice(3), error paths for both query types), developer-leads POST (13, rate-limit, full_name 2–120/email/investor_type validation, 4 investor types, insert, UTM fields, fire-and-forget admin notify, IP rate-limit key) = 46 tests, 4 files. |
 
 ### Stream A — DB schema drift backfill (issue #214)
 
@@ -263,7 +263,7 @@ Best done after A/B/C land so the rules don't break in-flight work.
 | I-NEW-04 | in-flight | Post-merge `main` CI auto-revert workflow — Layer 4 of the merge-authorization safeguards. When CI on main concludes failure, auto-open a draft revert PR for the just-pushed commit, comment on the failing commit, founder reviews + merges | 2 | **In flight in PR #278 (draft, branch `claude/audit-remediation/i-new-04-main-ci-auto-revert`, commit `b42233fb`).** Uses `workflow_run` trigger. Skips merge commits, revert commits, `[skip-revert]` tagged commits, and `github-actions[bot]` commits. Revert PR is draft so the founder reviews + merges — never auto-merge a revert. |
 | I-NEW-05 | done | Hotfix push race in metrics workflow — main moves while the snapshot is being computed (cloud audit-loop iterations push every 15 min), so non-fast-forward push rejection is the common case. Switched to fetch + rebase + retry loop with HUSKY=0 | 1 | **Done — direct-pushed to main as `55d077bf` on 2026-04-28T16:11Z.** Tier C, fix-forward urgency. First successful metrics snapshot landed at 2026-04-28T16:12Z confirming the workflow now works end-to-end. |
 | I-NEW-06 | needs-user | Set `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` as GitHub Actions secrets so the weekly snapshot can populate M04 (RLS tables with policies), M07 (Supabase security advisors), M08 (perf advisors), M09 (cron success rate), M10 (PostHog mirror), M11 (Lighthouse), M12 (OG image coverage) from live data instead of falling through to 0 | — | **Founder action.** Per `QUALITY_DASHBOARD.md` § Caveats: "First weekly run depends on secrets. SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set as GitHub Actions secrets for M04, M09, M10, M12 to populate from live data." Surface to Blocked when picked. Without it, the weighted score reads 0.0899 instead of the real value. |
-| I-01 | pending | CI: fail build if any `supabase/migrations/*.sql` adds a `CREATE TABLE` without `ENABLE ROW LEVEL SECURITY` | 1 | Pairs with B-07. |
+| I-01 | done | CI: fail build if any `supabase/migrations/*.sql` adds a `CREATE TABLE` without `ENABLE ROW LEVEL SECURITY` | 1 | Done as part of B-07 (commit `0097159`, PR #286). `scripts/check-rls-migrations.mjs` + `rls-migrations-gate` CI job. |
 | I-02 | pending | CI: fail build if `lib/database.types.ts` declares a table not in any migration | 1 | Pairs with A-07. |
 | I-03 | pending | ESLint: restrict `lib/supabase/admin.ts` imports to allowed paths + `CLAUDE.md` exceptions | 1 | Pairs with C-08. |
 | I-04 | pending | ESLint: flag new `await req.json()` without an adjacent `.parse()`/`.safeParse()` | 1 | Pairs with E-03. |
@@ -306,18 +306,18 @@ The webhook route is 1,197 LOC and only handles a subset of the events an enterp
 | J-01a | done | Scaffold `lib/stripe-webhook/{types,registry}.ts` + `handlers/` directory; migrate `charge.dispute.created` as proof | — | **Done in commit `2651b72d` (PR #279, draft).** Registry returns `{handled:false}` for unregistered event types so the legacy switch still owns unmigrated handlers (incremental cutover). Adds `dispatchEvent(event, ctx)` call before the switch in `route.ts`. |
 | J-01b | done | Migrate `customer.subscription.{created,updated,deleted}` to the registry | — | **Done in commit `80392137` (PR #279, draft).** Created `lib/stripe-webhook/{lib/email.ts, lib/upsert-subscription.ts, handlers/customer-subscription.ts}`. The `charge.refunded` migration is rolled into J-01c instead (its 140-LOC body would push J-01b past the diff cap). |
 | J-01c-1 | done | Migrate `charge.refunded`, `invoice.paid`, `invoice.payment_failed` to the registry | — | **Done in commit `b3c10476` (PR #279, draft).** Created `lib/stripe-webhook/handlers/{charge-refunded,invoice}.ts`. Route shrank 937 → 701 LOC. Original J-01c had 4 handlers but `checkout.session.completed` is ~509 LOC alone, so it was split out into J-01c-2 to keep this iteration under the diff cap. |
-| J-01c-2 | pending | Migrate `checkout.session.completed` (course / wallet / consultation / advisor-credit / featured / listing / sponsored — ~509 LOC) to the registry | 1 | After this, every existing handler is in the registry; J-01e can remove the legacy switch. The 7 sub-flows (course purchase, wallet topup, advisor credit topup, advisor featured, listing payment, sponsored placement, consultation booking) may want to split into separate `handlers/checkout-*.ts` files for testability — left as a structural decision for the iteration that picks this up. |
-| J-01d | pending | Add per-handler unit tests in `__tests__/lib/stripe-webhook/<handler>.test.ts` | 1 | Tests exercise each handler with a mock `WebhookContext` (admin + stripe + log). Reference test scaffolding lives at `__tests__/api/stripe-webhook-idempotency.test.ts`. |
-| J-01e | pending | Remove the legacy switch from `route.ts`; route becomes a 50-line dispatch + idempotency loop | 1 | Last J-01 step. Only safe after J-01b/c/d land green on CI. |
+| J-01c-2 | done | Migrate `checkout.session.completed` (6 sub-flows: course purchase, advisor credit top-up, advisor featured, listing activation, consultation booking, sponsored placement) to the registry | — | **Done in commit `d8626dc` (PR #288, draft).** Created `lib/stripe-webhook/handlers/checkout-session-completed.ts` (606 LOC). Route shrank 701 → 177 LOC. All existing handlers are now in the registry. Behaviour preserved byte-for-byte including idempotent top-up check, course purchase rollback, sponsored placement 23505 race-tolerance, and lazy invoice-URL fetch. |
+| J-01d | done | Add per-handler unit tests in `__tests__/lib/stripe-webhook/<handler>.test.ts` | 1 | **Done in commit `bbfd4d3` (PR #288).** 3 test files, 35 tests total: charge-dispute-created (8), customer-subscription (12), invoice (15). Each handler tested with mock WebhookContext. **Extended by commit `bb1d56f6` (iter 97):** 2 more files — charge-refunded.test.ts (12 tests) + checkout-session-completed.test.ts (13 tests); also fixed wrong invoice.test.ts expectation (profile absence does not gate dunning email). Total J-01d: 5 files, 61 tests. |
+| J-01e | done | Remove the legacy switch from `route.ts`; route becomes a 50-line dispatch + idempotency loop | 1 | **Done in commit `8a9e95f` (PR #288).** route.ts shrank from 181 → 165 LOC (1,197 → 165 LOC total from pre-J). Unknown event types now log info instead of silently falling through. |
 | J-02 | false-positive | ~~Add handler: `charge.dispute.created`~~ | — | **Already handled** in `app/api/stripe/webhook/route.ts` (verified 2026-04-26 audit §5.4 via `grep -E "case '...'"` — handler exists). |
-| J-03 | pending | Add handler: `customer.subscription.trial_will_end` — fire 3-days-pre-charge email via Resend | 1 | High-impact retention. |
+| J-03 | done | Add handler: `customer.subscription.trial_will_end` — fire 3-days-pre-charge email via Resend | 1 | **Done in commit `b8e7189` (PR #288).** `buildTrialEndingSoonEmail` added to email.ts; handler registered for `customer.subscription.trial_will_end`; 7 tests added to customer-subscription.test.ts. |
 | J-04 | false-positive | ~~Add handler: `invoice.payment_failed`~~ | — | **Already handled** in `app/api/stripe/webhook/route.ts` (verified 2026-04-26 audit §5.4). Dunning is wired through this handler + `/api/cron/subscription-dunning`. |
-| J-05 | pending | Add handler: `invoice.payment_action_required` — surface 3DS / SCA flow to user via email + dashboard banner | 1 | AU/EU customer support. |
-| J-06 | pending | Add handler: `payment_intent.payment_failed` — distinct from invoice.failed (covers one-time payments) | 1 | |
+| J-05 | done | Add handler: `invoice.payment_action_required` — surface 3DS / SCA flow to user via email + dashboard banner | 1 | **Done in commit `d68852e` (PR #288).** Email sends hosted_invoice_url CTA (falls back to /account), skips advisor_lead invoices, 8 tests. |
+| J-06 | done | Add handler: `payment_intent.payment_failed` — distinct from invoice.failed (covers one-time payments) | 1 | **Done in commit `eedf582` (PR #288).** Handler resolves email via customer lookup or receipt_email (guest checkout), derives contextual retry URL from metadata.type, includes decline reason. 12 tests. |
 | J-07 | false-positive | ~~Add handler: `charge.refunded`~~ | — | **Already handled** in `app/api/stripe/webhook/route.ts` (verified 2026-04-26 audit §5.4). |
-| J-08 | pending | Add handler: `payout.failed` — internal alert (bank info wrong) | 1 | |
-| J-09 | pending | Add handler: `radar.early_fraud_warning.created` — proactively refund to dodge dispute | 1 | |
-| J-10 | pending | Add handler: `customer.subscription.paused` — preserve subscription state, suppress further dunning | 1 | |
+| J-08 | done | Add handler: `payout.failed` — internal alert (bank info wrong) | 1 | **Done in commit `e99aedc` (PR #288).** Logs warn, sends admin alert email, writes admin_audit_log. 6 tests. |
+| J-09 | done | Add handler: `radar.early_fraud_warning.created` — proactively refund to dodge dispute | 1 | **Done in commit `e99aedc` (PR #288).** Calls `stripe.refunds.create(charge)`, sends admin alert with refund outcome, writes admin_audit_log. 9 tests. |
+| J-10 | done | Add handler: `customer.subscription.paused` — preserve subscription state, suppress further dunning | 1 | **Done in commit `e99aedc` (PR #288).** Updates `subscriptions.status=paused`; pauses professional if active (sets `auto_pause_reason=subscription_paused`). 7 tests. |
 | J-11 | done | Reconcile `featured_plans` 3/5 → 5/5 stripe_price_id + `listing_plans` 0/24 → 24/24 | — | **Done by founder via Stripe MCP, 2026-04-26.** Verified via Supabase MCP 2026-04-26: `featured_plans` 5/5 wired (incl. the 2 international tiers), `listing_plans` 24/24 wired. NULL `stripe_price_id` state eliminated across both tables (26 wires total). Original audit §11.3 finding closed. |
 
 ### Stream K — Security hardening (audit §7)
@@ -355,8 +355,8 @@ Sentry is 95% there; PostHog funnel is half-blind; SLO framework exists but unse
 | L-03 | deferred-post-launch | Wire `errorWorkflow` for `infra/n8n/overseer_hourly.json` (other 5 have it) | 1 | **Deferred 2026-04-28** — n8n workflow surface dormant until post-launch (see `docs/launch/manual-ops-during-ai-pause.md`). Resume with n8n reactivation. |
 | L-04 | done | Diagnose `cron_run_log` silence — done out-of-loop in PR #225 | 1 | Resolved in PR #225 ("fix(observability): cron dispatcher silent failures — restore cron_run_log") merged 2026-04-26T17:37Z. Dispatcher was swallowing exceptions before the wrapper could log; PR adds explicit error handling so failures land in `cron_run_log`. |
 | L-05 | done | Validate `health_pings` ingestion path — currently empty in live; heartbeat cron either not running or not logging | — | **Resolved 2026-04-28T16:05Z by iter 84.** Same root cause as L-04 — the cron blackout (`_dispatch` Next.js private folder, then loopback auth, then loopback URL targeting Vercel deployment-protection wall). After PRs #270/#272/#276 deployed, `health_pings` started populating: 33 rows since 13:25:38Z (first heartbeat post-deploy), 12 rows in the last hour, 3 in the last 15 minutes — exactly matching the every-5-min cadence. No code change needed for L-05. |
-| L-06 | pending | Seed `slo_definitions` with launch SLOs: lead p95<5min, advisor onboarding p95<1h, webhook delivery p95<10min, etc. | 1 | P1. Migration with seed inserts. |
-| L-07 | pending | Wire SLO incident → Slack/PagerDuty/email alert sink (today writes to `slo_incidents` table only) | 1 | P1. |
+| L-06 | done | Seed `slo_definitions` with launch SLOs: lead p95<5min, advisor onboarding p95<1h, webhook delivery p95<10min, etc. | 1 | **Done in commit `12183619` (PR #289).** 8 SLOs seeded via idempotent `ON CONFLICT (name) DO UPDATE`: lead_delivery_p95_ms (300s), advisor_onboarding_p95_ms (1h), webhook_delivery_p95_ms (600s), api_success_rate (99.5%), cron_heartbeat_success_rate (99%), lead_queue_age_minutes (15min), webhook_retry_queue_age_minutes (30min), api_error_rate (1%). Migration: `supabase/migrations/20260602_seed_slo_definitions.sql`. |
+| L-07 | done | Wire SLO incident → Slack/PagerDuty/email alert sink (today writes to `slo_incidents` table only) | 1 | **Done in commit `824366e` (PR #289).** `lib/slo.ts`: added `notifyEmail()` using `OPS_ALERT_EMAIL \|\| SUPPORT_EMAIL` (consistent with `ai-cost-alerts.ts`, `cron-health-alert` pattern; fire-and-forget from `openIncident` for both warn + page severity). Slack + PagerDuty were already wired; this closes the email gap. Tests expanded 9→25 in `__tests__/lib/slo.test.ts`: `openIncident` (16 tests — no-op when unbreached, dedup, DB error, warn/page routing, no-env no-ops, SUPPORT_EMAIL fallback, Slack-throws swallowed, email subject, DB insert fields), `resolveIncident` (4 tests — DB update fields, no-PD-key, PD resolve event shape, PD-throws swallowed). |
 | L-08 | pending | Extend `lib/posthog/events.ts` with: `advisor_selected`, `checkout_started`, `subscription_active`, `advisor_apply_submitted`, `lead_responded_to`, `dispute_opened` | 1 | P1. Funnel half-blind without these. |
 | L-09 | pending | Wire `posthog.identify(userId)` at signup + login so anonymous→identified mapping stitches sessions | 1 | P1. |
 | L-10 | pending | Validate PostHog mirror webhook (`supabase/functions/posthog-webhook-ingest`) — table is empty in live, either webhook misconfigured or no events captured | 1 | P1. |
@@ -404,7 +404,7 @@ Beyond Stream B's RLS-enable work; addresses policy completeness, FK indexes, se
 
 | ID | Status | Summary | Est. iterations | Notes |
 | --- | --- | --- | --- | --- |
-| O-01 | in-progress | Triage 56 RLS-enabled-but-zero-policies tables: bucket into (a) service-role only — add explicit `service_role` allow policy for clarity, (b) user-data — needs `auth.uid()`-scoped policies | ~3 | P1. Full list in audit §4.2. ~16h total; chunk by table family. **Iter 1 (2026-04-26):** user-data triplet done — `user_notifications`, `user_quiz_history`, `user_bookmarks` (`supabase/migrations/20260426_user_data_rls_policies.sql`). Pre-emptively wrapped `auth.uid()` in `(SELECT auth.uid())` per F-4.5.3 (auth_rls_initplan). Service-role caller paths unchanged — all use `createAdminClient()`. **Next batches:** (2) `article_comments`/`article_reactions` (need `published`-only public read + author-edit), (3) admin/audit cluster (`admin_action_log`, `admin_mfa_enrollments`, `financial_audit_log`, `login_attempts` — service-role only). |
+| O-01 | in-progress | Triage 56 RLS-enabled-but-zero-policies tables: bucket into (a) service-role only — add explicit `service_role` allow policy for clarity, (b) user-data — needs `auth.uid()`-scoped policies | ~3 | P1. Full list in audit §4.2. ~16h total; chunk by table family. **Iter 1 (2026-04-26):** user-data triplet done — `user_notifications`, `user_quiz_history`, `user_bookmarks` (`supabase/migrations/20260426_user_data_rls_policies.sql`). **Iter 2 (merged via #235, commit `8e638bd`):** `article_comments`/`article_reactions` — service-role full + author-scoped UPDATE/DELETE for comments, owner-scoped INSERT/DELETE for reactions; SELECT intentionally NOT granted (PII/moderation guard). **Iter 3 (merged via #237, commit `c9c8fcd`):** admin/audit cluster: `admin_action_log`, `admin_mfa_enrollments`, `financial_audit_log`, `login_attempts` — service-role-only on all four. **Iter 4 (merged via #239, commit `e965eb7`):** 14 observability/admin tables in one migration — `cron_run_log`, `data_integrity_issues`, `slo_definitions`, `slo_incidents`, `web_vitals_samples`, `automation_kill_switches`, `feature_flags`, `financial_periods`, `revenue_attribution_daily`, `revenue_reconciliation_runs`, `email_suppression_list`, `fraud_signals`, `attribution_touches`; `lead_quality_weights` gets public-SELECT + service-role. Count: 57→54→52→48→34. **~34 remaining** — needs Supabase MCP advisor snapshot to enumerate next batch. |
 | O-02 | done | 4 FK index migration — done out-of-loop in PR #230 | 1 | Resolved in PR #230 ("chore(db): repo-parity migration for 4 missing FK indexes (already live)") merged 2026-04-26T17:37Z. Live DB indexes had been applied earlier; this PR adds the migration file to the repo to close source-of-truth drift. |
 | O-03 | pending | `refresh_advisor_cohort_metrics()` SECURITY DEFINER — set `search_path = public, pg_catalog` to close injection vector | 1 | P2. |
 | O-04 | pending | `stripe_webhook_events` idempotency dry-run via Stripe dashboard test event → confirm row inserts + status='completed' | 1 | P2. Pre-launch validation. May surface to Blocked if needs founder action. |
@@ -974,6 +974,7 @@ Items that ship LAST, in the final week before launch (Month 4 of pre-launch roa
 
 ## Done
 
+- 2026-04-28 · B-07 · CI gate: new `CREATE TABLE` migrations must include `ENABLE ROW LEVEL SECURITY`. `scripts/check-rls-migrations.mjs` — git-diff-based detection of added migrations, regex-based RLS check per table, system-table prefix exemption, `-- rls-exempt` escape hatch. 30 unit tests (`extractCreatedTables` 7, `hasRlsEnabled` 7, `extractExemptedTables` 5, `isSystemTable` 6, integration 5). `rls-migrations-gate` CI job in `ci.yml`. `npm run audit:rls-migrations` local script. Coordinates with I-01. · commit `0097159` · pr #286
 - 2026-04-27 · D-11 batch 3 · consumer-path routes — 48 tests across 4 route files: `account/notifications` GET+PATCH (13 tests: 401, count-only mode, full-mode shape, empty-data, DB error, admin throws, user-id scope; 401 PATCH, mark-all-read, mark-by-id, missing-fields, string-id, malformed-JSON), `account/claim-anonymous` POST (8 tests: 401, missing/non-string/malformed session_id, success body shape, both claim fns called, 100-char truncation, zero-claims ok:true), `user-profile` GET+PUT (15 tests: 401, profile-exists, null-profile, GET-throws; 401 PUT, bad-JSON, no-allowed-fields, invalid-enum, invalid-state, display_name upsert, investing_experience, interested_in filter+cap, display_name trim+truncate, upsert-error, connection-throw 503), `newsletter/subscribe` POST (12 tests: 429 rate-limit, invalid/missing/disposable email, success+enqueueJob, email-lowercase+trim, preference-default, valid-preferences, source-default, upsert-status=active-for-resubscribe, 500 upsert-fail, no-job-on-error) · commit `db0df8d` · pr #246
 - 2026-04-27 · D-11 batch 2 · advisor-auth financial+auth routes — 47 tests across 5 route files: `advisor-auth/payment` (12 tests: 401 no-cookie, 401 bad-session, 400 invalid-JSON, 400 missing-advisor_id, 400 invalid-credit_pack, 403 id-mismatch, 404 not-found, 403 suspended, 503 Stripe-not-configured, 200 existing-customer, 200 new-customer-created, 500 Stripe-throws), `advisor-auth/tier-upgrade` (10 tests: 401 no-cookie, 401 bad-session, 400 missing-tier, 400 unknown-tier, 404 no-advisor, 200 same-tier-noop, 200 downgrade-DB+email+audit, 200 no-Stripe-key, 200 checkout-success, 500 Stripe-throws), `advisor-auth/topup` POST (9 tests: 429 rate-limited, 401 not-authenticated, 400 < $50, 400 > $2000, 404 pro-not-found, 503 Stripe-not-configured, 200 pack-based, 200 custom-amount, 200 new-customer-created), `advisor-auth/topup` GET (2 tests: 401, 200 balance+history), `advisor-auth/verify` (6 tests: 400, 401, 401-already-used, 401-expired, 200+HttpOnly-cookie, 500), `advisor-auth/request-review` (8 tests: 401, 400, 400-string-id, 404, 400-not-converted, 409, 500, 200) · commit `387bcb4` · pr #246
 - 2026-04-27 · V-NEW-06 · AI cost caps — per-IP and per-admin-email daily budgets ($5/$50 per-user, $200/$100 global), integer-micro ledger (`ai_token_usage` table with `subject_id, subject_type, route, day, tokens_in, tokens_out, cost_usd_micros, request_count, alerted_80_at`), 80% one-shot alert via `OPS_ALERT_EMAIL`, `site_settings.ai_cost_caps_disabled` override switch with 30s cache, `Retry-After` UTC-midnight header on 429s. 27 tests (22 caps + 5 alerts). Both routes wired: concierge (IP-keyed) + admin/ai-chat (email-keyed). `docs/ops/ai-cost-caps.md` runbook. · commit `a7bd736` · pr #258
@@ -1044,6 +1045,336 @@ Items that ship LAST, in the final week before launch (Month 4 of pre-launch roa
 
 ## Iteration log (most recent at top)
 
+### 2026-04-30T00:10Z — iteration 106 (stream D — D-11 batch 23b — portfolio, marketplace/invoice, setup-payment-method, stripe checkout+cancel)
+
+- Phase 0: resumed batch-mode fire (iter 2 of 5 in this session). Lock acquired.
+- Phase 1: synced main; another concurrent fire had already pushed D-11 batch 23 (broker-outreach etc., commit `575143b`) and batch 24. Continued as "23b".
+- Phase 2: CI on #285 pending (no failures to rescue).
+- Phase 3: checked out D branch; rebased on remote (concurrent fire had batch 24 ahead).
+- Phase 4: verified portfolio, marketplace/invoice/[id], setup-payment-method, stripe/create-checkout, stripe/cancel-subscription absent from D branch tests.
+- Phase 5: wrote 5 test files (39 tests). portfolio GET+POST (11: rate-limit, fee calc, optimal-broker selection, upsert-vs-insert, 500). marketplace/invoice/[id] GET (5: NaN-id 400, auth 401, no-broker 403, not-found 404, found 200). marketplace/setup-payment-method POST+PATCH (10: rate-limit, auth, existing/new Stripe customer, SetupIntent, PATCH partial fields). stripe/create-checkout POST (8: auth, new customer race-handle, no-email 400, active-sub block, cancel_at_period_end allowed, invalid-plan fallback, existing-customer reuse, 500). stripe/cancel-subscription POST (5: auth 401, no-sub 404, already-cancelling 400, Stripe cancel+DB update, 500). Fixed: update-chain mock bug (needed `fn().eq()` not `fn()→Promise`), `vi.clearAllMocks` → `vi.resetAllMocks` to prevent once-queue leakage.
+- Phase 6: committed `a76ccb2f`; rebased on remote D; pushed as `a6574f1c`.
+- Phase 7: D in-flight row updated (batch 23b); this log entry on main.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 23b · pr=#285 · commit=`a6574f1c` · diff=+742/-0 across 5 files · next=D-11 batch 25
+
+### 2026-04-30T00:10Z — iteration 105 (stream L — L-07 refinement — OPS_ALERT_EMAIL pattern + 25 tests)
+
+- Phase 0: batch-mode fire (iter 1 of 5). Lock acquired.
+- Phase 1: synced main (iter 104 — L-07 done via `2d0f553`). Discovered iter 104 used `getAdminEmails()` for email; all other ops alert functions use `OPS_ALERT_EMAIL || SUPPORT_EMAIL`.
+- Phase 2: no red CI on in-flight PRs (no check_runs returned).
+- Phase 3: checked out claude/audit-remediation/l-observability; resolved conflict between remote (getAdminEmails approach) and local (OPS_ALERT_EMAIL approach) — kept OPS_ALERT_EMAIL for consistency with ai-cost-alerts.ts / cron-health-alert.
+- Phase 5: `lib/slo.ts` — `notifyEmail()` uses `OPS_ALERT_EMAIL || SUPPORT_EMAIL`; call order: Slack → email → PagerDuty (page only). `__tests__/lib/slo.test.ts` expanded 9→25 tests: 16 for openIncident + 4 for resolveIncident. All 25 green. Lint clean.
+- Phase 6: committed `824366e`; pushed to `claude/audit-remediation/l-observability`.
+- Phase 7: L in-flight row updated; L-07 done entry updated to reference `824366e`. Next: L-08 (PostHog events).
+- STATUS: PROGRESS · stream=L · item=L-07 · pr=#289 · commit=`824366e` · diff=+287/-229 across 2 files · next=L-08 (stream L)
+
+### 2026-04-29T23:50Z — iteration 104 (stream L — L-07 — SLO incident email alert sink + tests)
+
+- Phase 0: resumed batch-mode fire (iter 4 of 5).
+- Phase 1: synced main (iter 103 — D-11 batch 23). Read queue — L-07 still pending.
+- Phase 2: CI on #289 pending; no failures to rescue.
+- Phase 3: checked out claude/audit-remediation/l-observability; merged remote (queue updates, no code conflicts).
+- Phase 4: verified Slack + PagerDuty already wired in lib/slo.ts; email alert was the gap.
+- Phase 5: added `notifyEmail()` to `lib/slo.ts` + wired fire-and-forget in `openIncident()`. Expanded `__tests__/lib/slo.test.ts` from 9→22 tests. All 22 green. Lint clean.
+- Phase 6: committed `2d0f553`; merged remote L branch; pushed as `b6a5d70`.
+- Phase 7: L in-flight row updated; L-07 row → done; this log entry on main.
+- STATUS: PROGRESS · stream=L · item=L-07 · pr=#289 · commit=`2d0f553` · diff=+268/-4 across 2 files · next=O-01 batch 2 (stream O, step 13)
+
+### 2026-04-29T23:55Z — iteration 105 (stream O — O-01 batches 2/3/4 queue sync — RLS policies already committed by prior sessions)
+
+- Phase 0: resumed batch-mode fire (iter 5 of 5).
+- Phase 1: synced main (iter 104 — L-07). Read queue — O-01 still showed "3 done, ~13 left" but branch had 3 more migration files committed.
+- Phase 2: CI rescue — no open O stream PR; no CI to rescue.
+- Phase 3: checked out claude/audit-remediation/o-rls-no-policy; found 3 additional migrations already present.
+- Phase 4: verified `20260426_article_engagement_rls_policies.sql` (iter2, PR #235), `20260426_admin_audit_rls_policies.sql` (iter3, PR #237), `20260426_admin_observability_rls_policies.sql` (iter4, PR #239) — all well-formed with DROP POLICY IF EXISTS guards, service-role policies, and auth.uid() scoping where appropriate.
+- Phase 5: Queue-only housekeeping. No new code written. O-01 notes updated in queue to reflect batches 2/3/4 (57→34 remaining). In-flight O row updated with commit hashes.
+- Phase 7: O in-flight row updated; O-01 notes updated; this log entry on main.
+- STATUS: PROGRESS · stream=O · item=O-01 (queue sync, batches 2/3/4) · diff=+0/-0 (queue only) · next=O-01 batch 5 (enumerate ~34 remaining tables via Supabase MCP)
+
+### 2026-04-29T23:35Z — iteration 103 (stream D — D-11 batch 23 — broker-outreach enhanced, exit-match, foreign-investment/rates, developer-leads)
+
+- Phase 0: resumed batch-mode fire. Lock acquired (continuing from context-compacted session).
+- Phase 1: synced main (iter 102 queue updates — batch 22b done). Concurrent fires had already written advisor-outreach (remote 12 tests) and broker-outreach (9 tests).
+- Phase 2: CI on PR #285 — no failures to rescue.
+- Phase 3: checked out D branch (local/d-batch22 tracking origin/claude/audit-remediation/d-route-tests). Merged concurrent changes.
+- Phase 4: verified exit-match, foreign-investment/rates, developer-leads absent from D branch. broker-outreach present with 9 tests; ours has 13 (kept --ours on conflict).
+- Phase 5: wrote 4 test files (46 tests). `broker-outreach.test.ts` enhanced to 13 (adds invalid email 400, broker_slug in HTML, no-slug fallback, IP rate-limit key assertion). `exit-match.test.ts` (10: 500 on DB error/empty brokers, 200 baseline, shortlist scoring, quiz scoring, deal reason, malformed cookie graceful, US-history reason, response shape). `foreign-investment-rates.test.ts` (10: 429 rate-limit, country list dedup+alpha-sort, country rates, upcase+3-char code, error paths for both paths). `developer-leads.test.ts` (13: rate-limit 429, invalid JSON, name length, email, investor_type enum, DB error 500, success 200, UTM insert, IP rate-limit key, fire-and-forget notify). Fixed: makeQueryChain .not() terminal for country-list path; exit-match quiz test used non-competing brokers so quiz+5 signal was decisive.
+- Phase 6: committed `575143b`; merged remote D branch (3 rebase cycles, --ours on broker-outreach conflict); pushed to D branch.
+- Phase 7: D in-flight row updated (batch 23); D-11 notes updated; this log entry on main.
+- Status: PROGRESS · stream=D · item=D-11 batch 23 · pr=#285 · commit=575143b · +728/-0 across 4 files
+
+### 2026-04-29T23:15Z — iteration 102 (stream D — D-11 batch 22b — broker-outreach, listings/renew, questions/moderate)
+
+- Phase 0: resumed batch-mode fire. Lock acquired.
+- Phase 1: synced main (iter 101 queue updates — batch 22a + L-06). Concurrent fire had already written quiz/data.test.ts and marketplace-register.test.ts to D branch (commit `951a295` + `0084121`).
+- Phase 2: CI on PR #285 — no failures to rescue.
+- Phase 3: checked out D branch, rebased against origin.
+- Phase 4: verified broker-outreach, listings/renew, questions/moderate absent from D branch.
+- Phase 5: wrote 3 test files (28 tests). `broker-outreach.test.ts` (9: admin-only 401, non-admin 401, rate-limit 429, missing fields 400, invalid email 400, no-RESEND_API_KEY 500, Resend 502, success 200+log insert, IP rate-limit key). `listings-renew.test.ts` (10: missing listing_id/plan_id/email 400, listing not found 404, wrong email 403, plan not found 404, inactive plan 410, new customer success, existing customer reuse, Stripe throws 500). `questions-moderate.test.ts` (9: unauthenticated 401, non-admin 401, missing fields 400, invalid type 400, invalid action 400, approve question 200, reject answer 200 — route uses ${type} ${action}d verbatim so "answer rejectd", fire-and-forget notification, DB error 500). Conflict on quiz-data.test.ts: concurrent fire had already written it; cherry-picked only the 3 non-conflicting files.
+- Phase 6: committed `4b5e73b`; rebased against concurrent pushes (2 rebase cycles); pushed to D branch.
+- Phase 7: D in-flight row updated (batch 22b); D-11 notes updated; this log entry on main.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 22b · pr=#285 · commit=`4b5e73b` · diff=+450/-0 across 3 files · next=D-11 batch 23 (stream D)
+
+### 2026-04-29T23:00Z — iteration 101 (stream L — L-06 — seed slo_definitions with launch SLOs)
+
+- Phase 0: resumed batch-mode fire (iter 3 of 5).
+- Phase 1: synced main (iter 100 queue updates for J-08/09/10 and D-11 batch 21b).
+- Phase 2: CI on #289 in progress; no failure to rescue.
+- Phase 3: checked out L branch `claude/audit-remediation/l-observability`. L-06 (seed slo_definitions) next pending.
+- Phase 4: confirmed migration file absent; slo_definitions table schema verified via Supabase MCP.
+- Phase 5: wrote `supabase/migrations/20260602_seed_slo_definitions.sql` — 8 SLOs seeded idempotently via `ON CONFLICT (name) DO UPDATE`: lead_delivery_p95_ms, advisor_onboarding_p95_ms, webhook_delivery_p95_ms, api_success_rate, cron_heartbeat_success_rate, lead_queue_age_minutes, webhook_retry_queue_age_minutes, api_error_rate.
+- Phase 6: committed `12183619`; pushed to L branch; draft PR #289 opened.
+- Phase 7: L in-flight row updated; L-06 row → done; this log entry on main.
+- STATUS: PROGRESS · stream=L · item=L-06 · pr=#289 · commit=`12183619` · diff=+52/-0 across 1 file · next=L-07 (wire SLO incident alert sink)
+
+### 2026-04-29T22:40Z — iteration 101 (stream L — L-06 queue sync — slo_definitions seeded)
+
+- Phase 0: lock acquired. Continued batch-mode (iter 4 of 5).
+- Phase 1: synced main (iter 100 — J-08/09/10 queue sync). Read queue — L is "not started" but remote L branch (`claude/audit-remediation/l-observability`) already has L-06 commit `12183619` + PR #289.
+- Phase 2: CI check on PR #289 — no failures. No rescue needed.
+- Phase 3: L-06 already implemented by concurrent session. Synced local L branch to remote.
+- Phase 5: Queue-only update. No new code written.
+- Phase 7: L-06 row → done; L in-flight row added with branch + PR #289; this log entry on main.
+- STATUS: PROGRESS · stream=L · item=L-06 · pr=#289 · commit=`12183619` (pre-existing) · diff=+0/-0 (queue sync only) · next=L-07 (stream L)
+
+### 2026-04-29T22:35Z — iteration 101 (stream D — D-11 batch 22 — widget, quiz/data, cron-advisor-onboarding, cron-ab-auto-promote, cron-confirm-lead-notify)
+
+- Phase 0: batch-mode fire, iter 1 of 5. Lock acquired.
+- Phase 1: synced main (iter 100 — J-08/09/10 + D-11 batch 21b). Read queue — D-11 is top priority (step 6, J stream now complete).
+- Phase 1.5: types drift check — skipped (no Supabase schema changes since last check).
+- Phase 2: CI check — PR #285 (D-stream) had no check_runs (draft). No red CI.
+- Phase 3: checked out claude/audit-remediation/d-route-tests. Rebased against remote (parallel fire had added batch 21b). 139 routes still untested.
+- Phase 4: 5 routes selected: widget (K-01 anon-key + CORS), quiz/data (Edge route, cache headers), cron/advisor-onboarding (3-email drip), cron/ab-auto-promote (two-proportion z-test + auto-promote), cron/confirm-lead-notify (15-min hold notify).
+- Phase 5: wrote 5 test files (726 LOC). Fixed NextRequest construction (needed `new NextRequest(url)` not plain Request cast for `nextUrl.searchParams`). Fixed limit-clamp test (limit=0 falls back to default 5 via `|| 5`, not clamped to 1; changed to limit=-3 which is truthy). 45/45 green. Lint clean.
+- Phase 6: committed `951a295`. Rebased against concurrent remote push; pushed as same SHA.
+- Phase 7: D in-flight row updated (batch 22); D-11 notes updated; this log entry on main.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 22 · pr=#285 · commit=`951a295` · diff=+726/-0 across 5 files · next=L-07 (stream L, L-06 done by concurrent fire)
+
+### 2026-04-29T22:30Z — iteration 100 (stream J — J-08/09/10 — payout.failed, radar.early_fraud_warning, customer.subscription.paused handlers)
+
+- Phase 0: resumed batch-mode fire (iter 2 of 5). Concurrent iter 99 had just landed J-06.
+- Phase 1: synced main (iter 98 queue update on main). J-08/09/10 next pending.
+- Phase 2: CI on #288 in progress; no failure to rescue.
+- Phase 3: J branch checked out; merge conflict in index.ts resolved (kept remote J-06 as payment-intent-failed.ts; removed duplicate payment-intent-payment-failed.ts).
+- Phase 4: confirmed J-08/09/10 handler files absent.
+- Phase 5: wrote 3 handler files (payout-failed 60 LOC, radar-early-fraud-warning 75 LOC, customer-subscription-paused 55 LOC). Wrote 4 test files (22+6+9+7=44 tests including J-06 test from remote). All 110 handler tests pass. Registered all 4 new event types in index.ts.
+- Phase 6: committed `e99aedc`; merged remote conflict (`a79d0a2`); pushed.
+- Phase 7: J-08/09/10 rows → done; J in-flight row updated; this log entry on main.
+- STATUS: PROGRESS · stream=J · item=J-08/09/10 · pr=#288 · commit=`e99aedc`→`a79d0a2` · diff=+880/-1 across 9 files · next=L-06 (stream L)
+
+### 2026-04-29T22:16Z — iteration 100 (stream D — D-11 batch 21b — user-review/moderate + user-review/verify + questions/[id]/answer + review-token + send-switching-report)
+
+- Phase 0: resumed from batch-mode fire; lock acquired.
+- Phase 1: synced main (iter 99, J-06 done). Confirmed batch 21b not yet in queue (iter 98 had already written batch 21 for cron routes).
+- Phase 2: CI rescue — #285 in_progress, no failures. No rescue needed.
+- Phase 3: D branch `claude/audit-remediation/d-route-tests` checked out and merged concurrent remote changes.
+- Phase 4: confirmed 5 non-admin non-cron route test files absent: user-review/moderate, user-review/verify, questions/[id]/answer, review-token, send-switching-report.
+- Phase 5: 5 test files, 54 tests total. Fixed 3 vi.hoisted() TDZ errors (mockIpKey, mockIsAllowed in verify, mockSendEmail). Fixed mock.calls indexing in send-switching-report. Fixed review-token test that expected 400 on non-base64 — Buffer.from is lenient, route always decodes and queries DB (changed to 404). All 54 tests green.
+- Phase 6: committed `d460cb5` (+985 lines, 5 files), merged 1 concurrent remote change, pushed as `32e3069`.
+- Phase 7: D in-flight row (batch 21b); D-11 notes updated; this log entry.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 21b · pr=#285 · commit=`d460cb5`→`32e3069` · diff=+985/-0 across 5 files · next=D-11 batch 22 (stream D)
+
+### 2026-04-29T22:16Z — iteration 99 (stream J — J-06 — payment_intent.payment_failed handler)
+
+- Phase 0: resumed from previous context-compacted session (batch-mode fire, iter 2 of 5).
+- Phase 1: synced main (origin/main at iter 98 — D-11 batch 21). Read queue — J-06 is next pending J item.
+- Phase 2: CI rescue check — PR #288 Lint/Test/Build in_progress; no failures. No rescue needed.
+- Phase 3: J-06 is next pending item (slot 7). Checked out local/j-work (tracking origin/claude/audit-remediation/j-stripe-webhook). Concurrent session had done J-05 via invoice.ts (d68852e); reset --hard to remote HEAD. J-05 handler already in invoice.ts.
+- Phase 4: verification — new handler file, new test file, no migration, no deletion.
+- Phase 5: created payment-intent-failed.ts with handlePaymentIntentPaymentFailed; resolves recipient via customer lookup + receipt_email fallback; derives contextual retry URL from metadata.type; includes decline reason; registered in index.ts. 12 tests pass, ESLint clean.
+- Phase 6: committed `eedf582`, merged concurrent J branch (main queue-update merge), pushed to claude/audit-remediation/j-stripe-webhook.
+- Phase 7: J-06 row → done; J in-flight row updated; this log entry on main.
+- STATUS: PROGRESS · stream=J · item=J-06 · pr=#288 · commit=`eedf582` · diff=+265/-0 across 3 files · next=J-08 (stream J)
+
+
+### 2026-04-28T22:08Z — iteration 97 (stream J — J-01d extension — charge-refunded + checkout-session-completed handler tests)
+
+- Phase 0: resumed from context-compacted batch-mode session (iteration 3 of batch-mode fire).
+- Phase 1: synced main. J-01d already partially done (3/5 handler tests by iter 93). Remaining: charge-refunded + checkout-session-completed.
+- Phase 2: CI rescue check — all in-flight PRs pending/green. No rescue needed.
+- Phase 3: J at slot 7. Checked out claude/audit-remediation/j-stripe-webhook. Pulled remote (J-01e + J-03 already landed by other concurrent iters).
+- Phase 4: verification — new test files, no migration.
+- Phase 5: wrote charge-refunded.test.ts (12 tests) + checkout-session-completed.test.ts (13 tests). Fixed wrong expectation in invoice.test.ts. 61 total stripe-webhook tests green, lint clean.
+- Phase 6: commit `bb1d56f6`, rebased twice on J branch (concurrent pushes), pushed.
+- Phase 7: J row updated; J-01d item notes extended; this log entry on main.
+- STATUS: PROGRESS · stream=J · item=J-01d (ext) · pr=#288 · commit=`bb1d56f6` · diff=+649/-2 across 3 files · next=J-06 (stream J)
+
+### 2026-04-29T00:04Z — iteration 96 (stream J — J-05 — invoice.payment_action_required handler)
+
+- Phase 0: resumed from batch-mode fire (iter 95 completed; this is iter 5 of 5 in the batch).
+- Phase 1: synced main (up-to-date). J branch pulled; fast-forward.
+- Phase 2: CI rescue check — PR #288 Lint/Test/Build in_progress; all completed checks are success. No rescue needed.
+- Phase 3: J-05 is next pending item (slot 7). Branch already checked out.
+- Phase 4: verification — new handler (invoice event), no migration, no deletion.
+- Phase 5: added `handleInvoicePaymentActionRequiredEvent` to invoice.ts (retrieves customer, sends 3DS action email with hosted_invoice_url CTA falling back to /account, skips advisor_lead, swallows errors, logs warn), registered in index.ts for `invoice.payment_action_required`, added 8 tests to invoice.test.ts (done, 3DS email, hosted URL in CTA, fallback to account URL, deleted customer skipped, advisor_lead skipped, swallows errors, logs warn).
+- Phase 6: committed `d68852e` (+147 lines, 3 files), merged concurrent remote J branch changes, pushed.
+- Phase 7: J-05 row → done; J in-flight row updated; PR #288 body updated (J-05 checked); this log entry.
+- STATUS: PROGRESS · stream=J · item=J-05 · pr=#288 · commit=`d68852e` · diff=+147/-2 across 3 files · batch complete (5/5)
+
+### 2026-04-29T00:30Z — iteration 98 (stream D — D-11 batch 21 — abandoned-form-drip + abandoned-quiz-drip + advisor-dormant-nudge + advisor-nudge + advisor-dunning)
+
+- Phase 0: lock not present; acquired.
+- Phase 1: synced main. Concurrent iter 96 had already claimed batch 20 (different routes). This iteration is batch 21.
+- Phase 2: CI on #285 in progress; no failure to rescue.
+- Phase 3: D branch merged concurrent remote changes (d58321e→7db468d), pushed.
+- Phase 4: confirmed 5 cron route test files absent.
+- Phase 5: read routes (abandoned-form-drip 176 LOC, abandoned-quiz-drip 208 LOC, advisor-dormant-nudge 144 LOC, advisor-nudge 126 LOC, advisor-dunning 232 LOC). Wrote 5 test files (44 tests). All pass, ESLint clean.
+- Phase 6: committed `eec7429`, pushed (merge with concurrent remote required).
+- Phase 7: D in-flight row updated (batch 21); D-11 notes updated; this log entry.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 21 · pr=#285 · commit=`eec7429` · diff=+970/-0 across 5 files · next=D-11 batch 22 (stream D)
+
+### 2026-04-29T00:15Z — iteration 96 (stream D — D-11 batch 20 — newsletter-segments-confirm + push-subscribe + community-moderate + marketplace-notify + fee-report)
+
+- Phase 0: lock not present; acquired.
+- Phase 1: synced main (reset to `222a72e`). D-11 batch 20 is next pending.
+- Phase 2: CI check on #285 — in_progress; no failure detected. No rescue needed.
+- Phase 3: D branch checked out; merged concurrent remote changes (cron-account-deletion-reminder + cron-data-export-monitor + cron-enforce-lead-sla + cron-rotate-featured-advisors from parallel session).
+- Phase 4: confirmed 5 route test files absent.
+- Phase 5: read routes (push/subscribe 91 LOC, community/moderate 133 LOC, marketplace/notify 109 LOC, fee-report 101 LOC, newsletter-segments/confirm already written). Wrote 5 test files (43 tests). All pass.
+- Phase 6: committed `2f72b7a`, pushed to D branch (merged two concurrent remote heads).
+- Phase 7: D in-flight row updated (batch 20); D-11 notes updated; this log entry.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 20 · pr=#285 · commit=`2f72b7a` · diff=+605/-0 across 5 files · next=D-11 batch 21 (stream D)
+
+### 2026-04-28T22:00Z — iteration 93b (stream D — D-11 batch 19b — cohort-stats + csp-report + drip-click + partner-status + fee-alerts)
+
+- Phase 0: lock not present; acquired.
+- Phase 1: synced main. D-11 batch 19b is next pending (concurrent iter 93 J-01d just landed).
+- Phase 2: CI rescue — #285 in_progress, no failure. No rescue needed.
+- Phase 3: D branch checked out; merged concurrent remote changes.
+- Phase 4: confirmed 5 route test files absent.
+- Phase 5: 5 test files (39 tests). All pass. Fixed vi.hoisted() in drip-click for createRateLimiter TDZ.
+- Phase 6: committed `49e0ad5`, pushed to D branch.
+- Phase 7: D in-flight row (batch 19b); D-11 notes updated; this log entry.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 19b · pr=#285 · commit=`49e0ad5` · diff=+635/-0 across 5 files · next=D-11 batch 20 (stream D)
+
+### 2026-04-28T22:30Z — iteration 93 (stream D — D-11 batch 18b — answers/[id]/vote + newsletter-segments/subscribe + switch-story + switch-story/moderate + switch-story/verify)
+
+- Phase 0: resumed from batch-mode fire (iter 92b completed); lock acquired.
+- Phase 1: synced main. D-11 batch 18b is next pending (batch 18 done by iter 92b, concurrent batches ongoing).
+- Phase 2: CI rescue — #285 pending. No failures. No rescue needed.
+- Phase 3: D branch `claude/audit-remediation/d-route-tests` checked out; merged concurrent remote changes.
+- Phase 4: confirmed 5 route test files absent (answers/[id]/vote, newsletter-segments/subscribe, switch-story, switch-story/moderate, switch-story/verify).
+- Phase 5: 5 test files, 53 tests total. Fixed vi.hoisted() pattern for createRateLimiter TDZ error in switch-story.test.ts. Fixed profanity regex word-boundary: "fucking" doesn't match \bfuck\b, changed test body to use "shit" as standalone word. All 53 tests pass.
+- Phase 6: committed `6a89600` (+984 lines, 5 files), merged 14 concurrent remote test files, pushed as `701cf83`.
+- Phase 7: D in-flight row (batch 18b); D-11 notes updated; this log entry.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 18b · pr=#285 · commit=`6a89600`→`701cf83` · diff=+984/-0 across 5 files · next=D-11 batch 19 (stream D)
+
+### 2026-04-29T00:03Z — iteration 95 (stream J — J-03 — customer.subscription.trial_will_end handler)
+
+- Phase 0: resumed from batch-mode fire (iter 94 completed).
+- Phase 1: synced main (up-to-date). Merged remote J branch queue-update commits (concurrent iters 94+).
+- Phase 2: CI rescue check — PR #288 latest CI initializing (1 check, Vercel). No failures. No rescue needed.
+- Phase 3: J-03 is next pending item (slot 7). Branch `claude/audit-remediation/j-stripe-webhook` already checked out.
+- Phase 4: verification — new handler + template, no migration, no deletion.
+- Phase 5: added `buildTrialEndingSoonEmail` to email.ts, added `handleCustomerSubscriptionTrialWillEnd` to customer-subscription.ts (retrieves customer, fire-and-forget email, logs info), registered in index.ts, added 7 tests to customer-subscription.test.ts (done, email sent, buildTrialEndingSoon called, deleted customer skipped, null trial_end → "soon", swallows errors, logs info).
+- Phase 6: committed `b8e7189` (+155 lines, 4 files), merged remote J branch, pushed.
+- Phase 7: J-03 row → done; J in-flight row updated; PR #288 body updated (J-03 checked); this log entry.
+- STATUS: PROGRESS · stream=J · item=J-03 · pr=#288 · commit=`b8e7189` · diff=+155/-0 across 4 files · next=J-05 (stream J, slot 7)
+
+### 2026-04-29T00:02Z — iteration 94 (stream J — J-01e — remove legacy switch from route.ts)
+
+- Phase 0: resumed from batch-mode fire (iter 93 completed).
+- Phase 1: synced main (up-to-date). Merged remote J branch queue-update commits.
+- Phase 2: CI rescue check — PR #288 Lint/Test/Build in_progress; no failures. No rescue needed.
+- Phase 3: J-01e is next pending item (slot 7). Branch `claude/audit-remediation/j-stripe-webhook` checked out.
+- Phase 4: verification — pure code simplification, no migration, no deletion of exported symbols.
+- Phase 5: removed legacy `else switch (event.type) { default: break }` block and the `if (dispatched.handled)` wrapper. Replaced with `if (!dispatched.handled) log.info(...)`. Updated import comment. No tests reference switch-specific behaviour (__tests__/api/stripe-webhook.test.ts checked). route.ts: 181 → 165 LOC (1,197 → 165 LOC from pre-J baseline).
+- Phase 6: committed `8a9e95f`, merged remote J branch (one more concurrent queue update), pushed.
+- Phase 7: J-01e row → done; J in-flight row updated; PR #288 body updated (J-01e checked); this log entry.
+- STATUS: PROGRESS · stream=J · item=J-01e · pr=#288 · commit=`8a9e95f` · diff=+6/-22 across 1 file · next=J-03 (stream J, slot 7)
+
+### 2026-04-29T00:01Z — iteration 93 (stream J — J-01d — per-handler unit tests)
+
+- Phase 0: resumed from context-compacted session (continuation of batch-mode fire).
+- Phase 1: synced main (already up-to-date). Merged remote J branch changes (queue updates from concurrent iters 92/92b).
+- Phase 2: CI rescue check — PR #288 CI not yet triggered (newly created PR); no rescue needed.
+- Phase 3: J-01d is next pending item (slot 7). Branch `claude/audit-remediation/j-stripe-webhook` checked out.
+- Phase 4: verification — new test files only; no migration, no deletion.
+- Phase 5: wrote 3 handler test files (35 tests): charge-dispute-created.test.ts (8 tests), customer-subscription.test.ts (12 tests), invoice.test.ts (15 tests). Each uses mock WebhookContext (admin.from, stripe.customers.retrieve, log). Hardware exception: vitest not installed; CI on PR #288 is authoritative gate.
+- Phase 6: merged remote J branch (queue-update commits), committed `bbfd4d3`, merged again after second 403 (concurrent push), pushed successfully.
+- Phase 7: J-01d row → done; J in-flight row updated (commit `bbfd4d3`); PR #288 body updated (J-01d checked); this log entry.
+- STATUS: PROGRESS · stream=J · item=J-01d · pr=#288 · commit=`bbfd4d3` · diff=+579/-0 across 3 files · next=J-01e (stream J, slot 7)
+
+### 2026-04-28T22:06Z — iteration 92 (stream D — D-11 batch 19 — portfolio-xray, listings/[id], verify-professional, partner/leads, marketplace/postback)
+
+- Phase 0: resumed from context-compacted session (continuation of batch-mode fire).
+- Phase 1: synced main. Read queue — remote D branch had batch 18 (commit `26941246`, queued as 92b) without queue update on main yet; continued to batch 19.
+- Phase 2: CI rescue check — no red CI found across in-flight PRs.
+- Phase 3: D at slot 6, D-11 still pending. Rebased local commit onto origin/claude/audit-remediation/d-route-tests (remote had batch 18 + merge commits ahead).
+- Phase 4: verification — new test files, no migration.
+- Phase 5: wrote 5 test files (69 tests): portfolio-xray POST (13), listings/[id] GET+PUT+DELETE (17), verify-professional POST (13), partner/leads POST (13), marketplace/postback POST (13). Fixed vi.mock hoisting issue (MOCK_TICKER_MAP → TICKER_MAP_FIXTURE), fixed professionals mock missing update(), fixed 500 test expectation (isAllowed is outside try block). All 69 tests pass, lint clean.
+- Phase 6: commit `b93f1647`, rebased onto origin D branch, pushed.
+- Phase 7: D row updated (batch 19 appended); D-11 notes updated; this log entry on main.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 19 · pr=#285 · commit=`b93f1647` · diff=+1190/-0 across 5 files · next=J-01d (stream J, slot 7)
+
+### 2026-04-28T22:00Z — iteration 92b (stream D — D-11 batch 18 — analytics-search-log + analytics-dashboard + broker-health + complaints-intake + consultation-bookings)
+
+- Phase 0: lock not present; acquired.
+- Phase 1: synced main. Read queue — D-11 batch 18 is next pending item (slot 6, after concurrent batches 17/17b/17c from concurrent iter 92).
+- Phase 2: CI rescue check — no in-flight PRs with red CI.
+- Phase 3: checked out `claude/audit-remediation/d-route-tests`. Merged concurrent remote changes; `consultation-bookings.test.ts` conflict resolved by taking remote's cleaner version.
+- Phase 4: confirmed 5 route test files absent after accounting for concurrent additions.
+- Phase 5: wrote 5 test files — analytics-search-log (8), analytics-dashboard (6), broker-health (9), complaints-intake (11), consultation-bookings (7) = 41 tests. All pass locally.
+- Phase 6: committed `2694124`, pushed to `claude/audit-remediation/d-route-tests`.
+- Phase 7: D in-flight row updated (batch 18 appended); D-11 notes updated; this log entry.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 18 · pr=#285 · commit=`2694124` · diff=+691/-0 across 5 files · next=D-11 batch 19 (stream D)
+
+### 2026-04-28T22:00Z — iteration 92 (stream D — D-11 batch 16 on PR #287 — advisor-articles, community/posts/[id], advisor-search/postcodes, v1/api-keys, marketplace/webhook)
+
+- Phase 0: lock taken over from previous context (lock age <5400s, same fire). Resumed batch-mode iteration.
+- Phase 1: synced main; read queue. Identified D-11 batch 16 already done on PR #285 (`d-route-tests`) by iter 83. PR #287 (`d-11-batch-15`) is the parallel D stream branch started after PR #246 merge — complementary coverage on 5 different routes.
+- Phase 2: CI check on #285 and #283 — both success (Vercel only). No rescue needed.
+- Phase 3: D slot 6, PR #287 branch. Confirmed 5 truly untested routes via import-graph analysis (78 non-admin/cron).
+- Phase 5: wrote 5 test files — `advisor-articles.test.ts` (21 tests: GET 8 modes incl. admin-by-id 401/404, slug, advisor, admin-list 401, guidelines, list; POST 429/400-missing/404-pro/draft-save/400-short/400-perf-guarantee/400-promo; PUT 400-no-id/401-non-admin/approve/reject/draft-save), `community-posts-id.test.ts` (13 tests: PATCH 401/429/404/403-non-author/400-empty/400-too-long/200; DELETE 401/429/404/403-non-mod/200-admin-email/200-owner), `advisor-search-postcodes.test.ts` (8 tests: missing-q/short-q→[]/numeric-LIKE/alpha-ILIKE/limit-10/200/500/null-data), `v1-api-keys.test.ts` (12 tests: OPTIONS-204-CORS; POST 429-IP/400-email/400-invalid/429-email-daily/400-name/500-count-error/400-max-3/500-insert/201-ica_hex/email-sent/optional-fields), `marketplace-webhook.test.ts` (8 tests: 400-missing-sig/400-bad-sig/200-unknown/400-missing-metadata/creditWallet-called/500-credit-throws/payment_intent-auto_topup/non-wallet-checkout). All 62 tests green; lint clean. Commit `ebdb3f4a` on PR #287.
+- Phase 7: iteration log appended; D in-flight row note added for PR #287.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 16 (PR #287) · pr=#287 · commit=`ebdb3f4a` · diff=+1069/-0 across 5 files · next=D-11 batch 18 (stream D, PR #285)
+
+### 2026-04-29T00:00Z — iteration 91b (stream D — D-11 batch 17b — course/purchase, course/progress, consultation/bookings, sponsored-booking)
+
+- Phase 0: lock acquired (session resumed from context-compacted predecessor; J-01c-2 already committed).
+- Phase 1: synced main. Read queue — concurrent iter 91 already claimed D-11 batch 17. Adjusted to batch 17b.
+- Phase 2: CI rescue check — PR #288 (J) in_progress, all other checks passing. No rescue needed.
+- Phase 3: D at slot 6, D-11 still pending. Checked out `claude/audit-remediation/d-route-tests`. Pulled remote — batch 17 (3 files) already there.
+- Phase 4: refactor item (new tests), no migration.
+- Phase 5: wrote 4 test files: `course-purchase.test.ts` (16 tests), `course-progress.test.ts` (10 tests), `consultation-bookings.test.ts` (7 tests), `sponsored-booking.test.ts` (14 tests inc. it.each). 854 LOC. Resolved merge conflict in fee-profile.test.ts (took remote version). Hardware exception applies — no local test runner.
+- Phase 6: commit `251f745` + merge `2ac0b0c`. Pushed.
+- Phase 7: D row updated (batch 17b appended); D-11 notes updated; this log entry.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 17b · pr=#285 · commit=`251f745` · diff=+854/-0 across 4 files · next=J-01d (stream J, slot 7)
+
+### 2026-04-29T00:00Z — iteration 90 (stream J — J-01c-2 — `checkout.session.completed` migration)
+
+- Phase 0: lock acquired (session resumed from context-compacted predecessor).
+- Phase 1: synced main via `git checkout -B main origin/main` (unrelated-histories divergence from prior session).
+- Phase 2: CI rescue — PR #279 found closed by owner (thought code was on main but it wasn't). No CI rescue needed; new PR #288 created.
+- Phase 3: J stream, J-01c-2 pending. Checked out `claude/audit-remediation/j-stripe-webhook`.
+- Phase 4: refactor item, no migration. checkout.session.completed case body at lines 149-657, ~509 LOC.
+- Phase 5: created `lib/stripe-webhook/handlers/checkout-session-completed.ts` (606 LOC) with all 6 sub-flows (course, advisor top-up, advisor featured, listing, consultation, sponsored placement). Updated handlers/index.ts. Removed entire case body + 7 orphaned imports from route.ts → 177 LOC. Hardware exception applies.
+- Phase 6: commit `d8626dc`. Merged remote branch updates. Pushed. Created PR #288 (draft, since #279 was closed).
+- Phase 7: J in-flight row updated to PR #288; J-01c-2 marked done; this log entry.
+- STATUS: PROGRESS · stream=J · item=J-01c-2 · pr=#288 · commit=`d8626dc` · diff=+614/-530 across 3 files · next=D-11 batch 17b (stream D, concurrent)
+
+### 2026-04-28T21:50Z — iteration 91 (stream D — D-11 batch 17 — fee-profile, saved-comparisons, advisor-welcome)
+
+- Phase 0: lock acquired. Local main diverged from origin/main (no common ancestor — origin had been force-pushed by a prior session). Resolved by detach-HEAD trick + `git fetch origin main:main -f` (clean working tree, safe pointer update).
+- Phase 1: synced main to origin/main. Read queue + defaults.
+- Phase 2: CI rescue check on all in-flight PRs (#285 D, #288 J, #278 I, #283 M, #286 B) — all checks success/skipped. No rescue needed.
+- Phase 3: next pending item per priority = D-11 (slot 6). Checked out `claude/audit-remediation/d-route-tests`. Discovered concurrent iter 83 already shipped batch 16 (community/categories, community/vote, community/threads/[id], v1/brokers/[slug], v1/api-keys). Adjusted to batch 17 with the 3 still-uncovered routes.
+- Phase 5: wrote 3 test files — `fee-profile.test.ts` (11 tests: GET 401/success/null/500; POST 429/401/403-no-subscription/200/clamp/500-upsert/500-throw), `saved-comparisons.test.ts` (24 tests: list GET 401/200/null/500/503; POST 401/429/count-error/max-25/invalid-JSON/empty-slugs/201/500/name-notes-trim; [id] GET 401/404/200; PATCH 401/empty-name/404/200; DELETE 401/500/200), `advisor-welcome.test.ts` (12 tests: 401 no-user/auth-error/non-admin; 429; 400 missing-fields; 500 no-RESEND_KEY; 200 success; type-label smsf_accountant; unknown-type fallback; case-insensitive admin email). All 47 tests green; lint clean.
+- Phase 6: commit `bbca74d` on `claude/audit-remediation/d-route-tests`. Merged from origin to pick up batch 16 before push. Pushed successfully.
+- Phase 7: D in-flight row updated (batch 17 appended); D-11 notes updated; this log entry.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 17 · pr=#285 · commit=`bbca74d` · diff=+747/-0 across 3 files · next=D-11 batch 18 (stream D)
+
+### 2026-04-28T22:35Z — iteration 90 (stream B — B-07 — RLS migration CI gate)
+
+- Phase 0–1: no lock file; synced main. B-07 is first pending B-* item (after B-01..B-06 done/FP/blocked). Existing in-flight PRs: #279 J, #285 D, #278 I, #283 M — all green on last CI.
+- Phase 2: CI rescue check on all in-flight PRs — all green (success/skipped only). No rescue needed.
+- Phase 3: stream B had no existing branch (PR #220 merged). Created new branch `claude/audit-remediation/b-07-rls-migration-lint`; PR #286 opened as draft.
+- Phase 4 verification: B-07 is a new script/CI gate item. Confirmed I-01 and B-07 are equivalent — both add the same gate. Chose to land here in stream B as planned; I-01 will be marked done/coordinated.
+- Phase 5: `scripts/check-rls-migrations.mjs` (203 LOC): `getAddedMigrations(baseRef)` — git diff `--diff-filter=A` against origin/base; `extractCreatedTables(sql)` — regex CREATE TABLE extraction; `hasRlsEnabled(sql, tableName)` — ALTER TABLE … ENABLE ROW LEVEL SECURITY check; `extractExemptedTables(sql)` — `-- rls-exempt: <table>` escape hatch; `isSystemTable(name)` — system-prefix filter (pg_, auth., storage., realtime., supabase_). Main runner exits 1 with actionable error messages. `__tests__/lib/check-rls-migrations.test.ts` (247 LOC, 30 tests). `rls-migrations-gate` CI job in `.github/workflows/ci.yml`. `"audit:rls-migrations"` script in `package.json`. All 30 tests green.
+- Phase 6: commit `0097159` on `claude/audit-remediation/b-07-rls-migration-lint`. Pushed with `HUSKY=0` (sandbox Hardware exception). PR #286 draft.
+- Phase 7: queue updated on main — M row in In-flight table, B-07 → done in stream B, Done section prepend, this log entry.
+- STATUS: PROGRESS · stream=B · item=B-07 · pr=#286 · commit=`0097159` · diff=+473/-0 across 3 files · next=D-11 batch 16 (stream D)
+
 ### 2026-04-28T21:25Z — iteration 89 (stream M — M-01b — per-article OG cover override + backfill script)
 
 - Phase 0–1: branched `claude/audit-remediation/m-01b-cover-image-backfill` from `origin/main`. Confirmed M-01b first pending M-* item.
@@ -1061,6 +1392,19 @@ Items that ship LAST, in the final week before launch (Month 4 of pre-launch roa
 - Phase 6: commit `2f147226` on `claude/audit-remediation/u-03-email-deliverability`. Pushed with `HUSKY=0` (no node_modules in worktree). PR #282 opened as draft, Tier A (docs).
 - Phase 7: this entry + U-03 row marked done on main.
 - STATUS: PROGRESS · stream=U · item=U-03 · pr=#282 · commit=`2f147226`
+
+### 2026-04-29T00:00Z — iteration 90 (stream J — J-01c-2 — `checkout.session.completed` migration)
+
+- Phase 0: lock acquired (session resumed from context-compacted predecessor).
+- Phase 1: synced main; J branch merged with remote (received queue updates + new scout command from parallel activity). Local main reset via `git checkout -B main origin/main` to resolve unrelated-histories divergence.
+- Phase 1.5: types-drift skipped (no DB schema change).
+- Phase 2: CI rescue — PR #279 found closed (owner closed it citing "superseded by direct-to-main commits" — those commits were queue-only; actual J code was still on the branch). No CI rescue needed; PR #288 created fresh.
+- Phase 3: J stream next pending = J-01c-2. Checked out `claude/audit-remediation/j-stripe-webhook`.
+- Phase 4: refactor item, no migration. Verified checkout.session.completed case body lines (149-657 in original, ~509 LOC) still present in route.ts before this iteration.
+- Phase 5: created `lib/stripe-webhook/handlers/checkout-session-completed.ts` (606 LOC) with all 6 sub-flows. Updated `handlers/index.ts` to import + register. Removed entire case body + 7 orphaned imports from `route.ts` — route shrank 701 → 177 LOC (only default: arm remains). Local tooling unavailable (hardware exception); CI on PR #288 is authoritative gate.
+- Phase 6: commit `d8626dc` (`feat(j): migrate checkout.session.completed to registry (J-01c-2)`, +614/-530 across 3 files). Merged remote branch updates (scout command + B-07 queue entry). Pushed to `claude/audit-remediation/j-stripe-webhook`. Created PR #288 (draft) since PR #279 was closed.
+- Phase 7: queue updated on main — J in-flight row updated to PR #288 + commit `d8626dc`; J-01c-2 row marked done.
+- STATUS: PROGRESS · stream=J · item=J-01c-2 · pr=#288 · commit=`d8626dc`
 
 ### 2026-04-28T19:55Z — iteration 87 (stream J — J-01c-1 — `charge.refunded` + `invoice.*` migration)
 
@@ -1136,6 +1480,32 @@ Items that ship LAST, in the final week before launch (Month 4 of pre-launch roa
 - Phase 5: opened branch `claude/audit-remediation/i-new-01-metrics-workflow-fix` from main. Replaced the create-pull-request step with a `git config + git diff --quiet early-exit + git add + git commit + git push origin HEAD:main` block. Local gates vacuously pass (workflow file only, no .ts/.tsx changed).
 - Phase 6: commit `58a4948c` `fix(ci): code-quality workflow pushes snapshot direct to main`. Pushed. Opened draft PR #277.
 - Phase 7: this update. After merge, founder runs `gh workflow run code-quality.yml --ref main` once to populate the first real `metrics-latest.json`. Per-PR delta comments and `/admin/code-quality` go from theoretical to actual.
+
+### 2026-04-28T22:00Z — iteration 83 (stream D — D-11 batch 16 — community-threads-id + community-categories + community-vote + v1-brokers-slug + v1-api-keys)
+
+- Phase 0: lock acquired (batch mode fire, iteration 2 of 5).
+- Phase 1: fetched + pulled origin/main. Read queue + defaults end-to-end.
+- Phase 1.5: types-drift check skipped.
+- Phase 2: CI rescue scan — PR #285 had "Lint·Type-check·Test·Build" still in_progress (not failed). All others bypass/skipped. No rescue needed.
+- Phase 3: priority walk — D at slot 6, still has D-11 pending. Checked out `claude/audit-remediation/d-route-tests`; merged origin/main (picked up audit-remediation-scout.md + queue update).
+- Phase 4: enumerated 78 remaining untested routes (excluding admin/cron). Selected 5 for batch 16: community/threads/[id] GET+PATCH+DELETE (public thread view with posts+profiles, edit and soft-delete with moderator check), community/categories GET (active category list, sort_order), community/vote POST (DB token-bucket rate-limit from lib/rate-limit-db, 7-step DB sequence with vote toggle/flip/reputation update), v1/brokers/[slug] GET+OPTIONS (slug format validation, broker+changelog fetched, private field strip, Cache-Control), v1/api-keys POST+OPTIONS (API key provisioning, SHA-256 hashing, max-3-keys-per-email, Resend email).
+- Phase 5: created 5 test files (+1105/-0 LOC): community-threads-id.test.ts (18 tests), community-categories.test.ts (6 tests), community-vote.test.ts (12 tests), v1-brokers-slug.test.ts (11 tests), v1-api-keys.test.ts (14 tests) = 61 tests total. Key fix: community-vote uses mockImplementationOnce chains (7 sequential calls per complex test) rather than callCount+fallback to avoid eq-returns-Promise vs eq-returns-this ambiguity in multi-step vote sequences. All 61 tests green locally.
+- Phase 6: committed `6536d77` (+1105/-0 LOC, 5 files). Merged origin branch (non-fast-forward after parallel queue update). Pushed to origin `claude/audit-remediation/d-route-tests`.
+- Phase 7: queue updated on main — D in-flight row updated with batch 16 commit + new CI timestamp, D-11 notes updated with batch 16 summary, iteration log appended.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 16 · pr=#285 · commit=`6536d77`
+
+### 2026-04-28T02:30Z — iteration 82 (stream D — D-11 batch 15 — advisor-search-postcodes + v1-brokers + community-posts-id + advisor-dashboard + advisor-articles)
+
+- Phase 0: lock acquired (batch mode fire, iteration 1 of 5).
+- Phase 1: on main; read queue + defaults end-to-end.
+- Phase 1.5: types-drift check skipped (Supabase MCP not invoked this iteration).
+- Phase 2: CI rescue scan — D #246 (original) was already merged; all other in-flight PRs show only bypass/skipped checks. No rescue needed. New PR #285 created for D stream batch 15.
+- Phase 3: priority walk — D still has D-11 pending (slot 6). Checked out `claude/audit-remediation/d-route-tests`; pulled latest. npm install ran.
+- Phase 4: enumerated remaining untested routes after batches 1-14. Selected 5 varied routes for batch 15: advisor-search/postcodes GET (simple search, numeric vs alpha routing), v1/brokers GET+OPTIONS (external API key auth, field allowlist, pagination), community/posts/[id] PATCH+DELETE (ownership + moderator checks, soft-delete), advisor-dashboard GET (session cookie auth, stats computation, profile completeness), advisor-articles GET+POST+PUT (6 GET modes, compliance validators, admin-only PUT actions).
+- Phase 5: created 5 test files (+1139/-0 LOC): advisor-search-postcodes.test.ts (9 tests), v1-brokers.test.ts (20 tests), community-posts-id.test.ts (17 tests), advisor-dashboard.test.ts (7 tests), advisor-articles.test.ts (24 tests) = 77 tests total. Key fix: DELETE handler calls isModerator() which creates its own adminClient; plain mock object (no createChainableBuilder) for forum_user_profiles avoided .then thenable interference. All 77 tests green locally.
+- Phase 6: committed `01b685f` (+1139/-0 LOC, 5 files). Pushed to origin `claude/audit-remediation/d-route-tests`. Old PR #246 was already merged; opened new draft PR #285.
+- Phase 7: queue updated on main — D in-flight row updated to PR #285 + batch 15 commit + new CI timestamp, D-11 notes updated with batch 15 summary, iteration log appended.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 15 · pr=#285 · commit=`01b685f`
 
 ### 2026-04-28T01:22Z — iteration 81 (stream D — D-11 batch 14 — advertise-checkout + listings-checkout + community-posts + community-threads + marketplace/wallet-topup)
 
