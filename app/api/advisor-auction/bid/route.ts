@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { sendConsumerBidReceivedEmail } from "@/lib/quote-emails";
 
 const log = logger("advisor-auction-bid");
 
@@ -46,7 +47,7 @@ export async function POST(request: NextRequest) {
     // Look up advisor by user email
     const { data: advisor } = await admin
       .from("advisors")
-      .select("id, name, email, credit_balance_cents")
+      .select("id, name, email, type, credit_balance_cents")
       .eq("email", user.email)
       .single();
 
@@ -60,7 +61,7 @@ export async function POST(request: NextRequest) {
     // Verify auction exists and is still open
     const { data: auction } = await admin
       .from("advisor_auctions")
-      .select("id, status, ends_at")
+      .select("id, status, ends_at, source, contact_email, contact_name, job_title, slug")
       .eq("id", auction_id)
       .single();
 
@@ -190,6 +191,34 @@ export async function POST(request: NextRequest) {
       .limit(1);
 
     const isLeading = highBids?.[0]?.advisor_id === advisor.id;
+
+    // For public jobs, notify the consumer about their new quote (fire-and-forget)
+    if (auction.source === "public_job" && auction.contact_email) {
+      const { data: bidCountRow } = await admin
+        .from("advisor_auction_bids")
+        .select("id", { count: "exact", head: true })
+        .eq("auction_id", auction_id)
+        .eq("status", "active");
+
+      const totalBids = (bidCountRow as unknown as { count: number } | null)?.count ?? 1;
+      const consumerFirst =
+        ((auction.contact_name as string | null) ?? "").trim().split(" ")[0] ||
+        "there";
+
+      sendConsumerBidReceivedEmail(
+        auction.contact_email as string,
+        consumerFirst,
+        (auction.job_title as string | null) ?? "Your quote request",
+        (auction.slug as string | null) ?? "",
+        advisor.name as string,
+        advisor.type as string,
+        totalBids,
+      ).catch((err) =>
+        log.warn("Consumer bid notification failed", {
+          err: err instanceof Error ? err.message : String(err),
+        })
+      );
+    }
 
     return NextResponse.json({
       bid_id: newBid.id,

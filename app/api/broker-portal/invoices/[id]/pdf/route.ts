@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { formatDate } from "@/lib/utils";
 
 export const runtime = "nodejs";
 
@@ -12,14 +13,6 @@ interface LineItem {
 
 function formatAUD(cents: number): string {
   return `$${(cents / 100).toFixed(2)}`;
-}
-
-function formatDate(iso: string): string {
-  const d = new Date(iso);
-  const dd = String(d.getDate()).padStart(2, "0");
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  const yyyy = d.getFullYear();
-  return `${dd}/${mm}/${yyyy}`;
 }
 
 function escapeHtml(str: string): string {
@@ -265,11 +258,11 @@ export async function GET(
           <strong>Invoice #:</strong> ${escapeHtml(invoice.invoice_number || String(invoice.id))}
         </div>
         <div style="color:#334155;font-size:14px;">
-          <strong>Date:</strong> ${formatDate(invoice.created_at || new Date().toISOString())}
+          <strong>Date:</strong> ${formatDate(invoice.created_at || new Date().toISOString(), { style: "numeric" })}
         </div>
         ${
           invoice.paid_at
-            ? `<div style="color:#334155;font-size:14px;"><strong>Paid:</strong> ${formatDate(invoice.paid_at)}</div>`
+            ? `<div style="color:#334155;font-size:14px;"><strong>Paid:</strong> ${formatDate(invoice.paid_at, { style: "numeric" })}</div>`
             : ""
         }
         <div style="color:#334155;font-size:14px;">

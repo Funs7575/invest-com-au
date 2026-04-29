@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { formatDate } from "@/lib/utils";
 
 interface Period {
   id: number;
@@ -25,15 +26,6 @@ function formatCents(cents: number | null): string {
   if (cents == null) return "—";
   const dollars = (cents / 100).toFixed(2);
   return `$${dollars}`;
-}
-
-function formatDate(iso: string | null): string {
-  if (!iso) return "—";
-  return new Date(iso).toLocaleDateString("en-AU", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
 }
 
 const STATUS_BADGE: Record<string, string> = {
@@ -217,7 +209,7 @@ export default function FinancialPeriodsClient({
                     {formatCents(p.total_refunds_cents)}
                   </td>
                   <td className="px-3 py-2 text-slate-600">
-                    {formatDate(p.closed_at)}
+                    {formatDate(p.closed_at, { fallback: "—" })}
                   </td>
                   <td className="px-3 py-2 text-slate-600 text-[11px]">
                     {p.closed_by || "—"}
