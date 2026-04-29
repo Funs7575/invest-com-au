@@ -89,6 +89,7 @@ const advisorsMegaMenu: { title: string; items: { label: string; href: string; d
   {
     title: "Financial",
     items: [
+      { label: "Get a Quote (Live Marketplace)", href: "/quotes", desc: "Post a job, advisors compete to quote" },
       { label: "Financial Planners", href: "/advisors/financial-planners", desc: "Wealth strategy & retirement" },
       { label: "SMSF Accountants", href: "/advisors/smsf-accountants", desc: "Self-managed super specialists" },
       { label: "Wealth Managers", href: "/advisors/wealth-managers", desc: "Portfolio management for HNW" },

@@ -218,6 +218,25 @@ export default function AdvisorAuctionsPage() {
       </div>
 
       <div className="container-custom max-w-4xl py-8">
+        {/* Public consumer-job marketplace cross-link */}
+        <div className="bg-gradient-to-br from-amber-50 to-amber-100/60 border border-amber-200 rounded-xl p-4 mb-6 flex items-start sm:items-center gap-4 flex-col sm:flex-row">
+          <div className="w-10 h-10 bg-amber-500 rounded-lg flex items-center justify-center shrink-0">
+            <Icon name="zap" size={18} className="text-slate-900" />
+          </div>
+          <div className="flex-1">
+            <p className="font-bold text-slate-900 text-sm">Browse public quote requests</p>
+            <p className="text-xs text-slate-700 mt-0.5">
+              Consumers post jobs publicly on Invest.com.au — quote on them directly. Lower competition than internal lead auctions.
+            </p>
+          </div>
+          <Link
+            href="/quotes"
+            className="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-4 py-2 rounded-lg whitespace-nowrap"
+          >
+            Open marketplace →
+          </Link>
+        </div>
+
         {loading ? (
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (

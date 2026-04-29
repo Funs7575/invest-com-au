@@ -1,0 +1,366 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import Icon from "@/components/Icon";
+import { AdvisorOptInCheckboxes, DEFAULT_ADVISOR_OPT_INS } from "@/components/AdvisorOptInCheckboxes";
+import type { ProfessionalType } from "@/lib/types";
+
+const STATES = ["NSW", "VIC", "QLD", "WA", "SA", "TAS", "ACT", "NT"];
+
+const BUDGETS = [
+  { value: "under_500", label: "Under $500" },
+  { value: "500_2k", label: "$500 – $2,000" },
+  { value: "2k_5k", label: "$2,000 – $5,000" },
+  { value: "5k_10k", label: "$5,000 – $10,000" },
+  { value: "10k_plus", label: "$10,000+" },
+  { value: "not_sure", label: "Not sure yet" },
+];
+
+type Step = "details" | "advisors" | "contact" | "success";
+
+interface JobForm {
+  job_title: string;
+  job_description: string;
+  budget_band: string;
+  location_state: string;
+  contact_name: string;
+  contact_email: string;
+  contact_phone: string;
+  agree_terms: boolean;
+}
+
+const INITIAL: JobForm = {
+  job_title: "",
+  job_description: "",
+  budget_band: "",
+  location_state: "",
+  contact_name: "",
+  contact_email: "",
+  contact_phone: "",
+  agree_terms: false,
+};
+
+export default function JobPostForm() {
+  const [step, setStep] = useState<Step>("details");
+  const [form, setForm] = useState<JobForm>(INITIAL);
+  const [advisorTypes, setAdvisorTypes] = useState<ProfessionalType[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [resultSlug, setResultSlug] = useState<string | null>(null);
+
+  function set<K extends keyof JobForm>(key: K, v: JobForm[K]) {
+    setForm((p) => ({ ...p, [key]: v }));
+  }
+
+  const canDetails =
+    form.job_title.trim().length >= 8 &&
+    form.job_description.trim().length >= 30 &&
+    form.budget_band &&
+    form.location_state;
+
+  const canAdvisors = advisorTypes.length > 0;
+
+  const canContact =
+    form.contact_name.trim().length > 0 &&
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.contact_email) &&
+    form.agree_terms;
+
+  async function submit() {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/quotes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          job_title: form.job_title,
+          job_description: form.job_description,
+          budget_band: form.budget_band,
+          location_state: form.location_state,
+          advisor_types: advisorTypes,
+          contact_name: form.contact_name,
+          contact_email: form.contact_email,
+          contact_phone: form.contact_phone || undefined,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || "Failed to post job.");
+      setResultSlug(data.slug);
+      setStep("success");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  if (step === "success") {
+    return (
+      <div className="bg-white border border-emerald-200 rounded-2xl p-8 text-center max-w-2xl mx-auto">
+        <div className="w-14 h-14 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <Icon name="check-circle" size={28} className="text-emerald-600" />
+        </div>
+        <h2 className="text-2xl font-extrabold text-slate-900 mb-2">Job posted!</h2>
+        <p className="text-slate-600 text-sm leading-relaxed mb-6 max-w-md mx-auto">
+          Verified advisors are being notified now. You&apos;ll see quotes appear on your job page over the next 72 hours.
+          We&apos;ve sent a link to <strong>{form.contact_email}</strong>.
+        </p>
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          {resultSlug && (
+            <Link
+              href={`/quotes/${resultSlug}?email=${encodeURIComponent(form.contact_email)}`}
+              className="inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold px-6 py-3 rounded-xl transition-colors"
+            >
+              View your job
+              <Icon name="arrow-right" size={16} />
+            </Link>
+          )}
+          <Link
+            href="/quotes"
+            className="inline-flex items-center justify-center gap-2 bg-white border border-slate-200 text-slate-700 font-semibold px-6 py-3 rounded-xl hover:border-slate-300 transition-colors"
+          >
+            Browse the marketplace
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm">
+      {/* Progress */}
+      <div className="flex items-center gap-2 mb-8">
+        {(["details", "advisors", "contact"] as Step[]).map((s, i) => {
+          const order: Step[] = ["details", "advisors", "contact"];
+          const cur = order.indexOf(step);
+          const idx = order.indexOf(s);
+          const done = cur > idx;
+          const active = step === s;
+          const labels: Record<string, string> = {
+            details: "Your job",
+            advisors: "Who can help",
+            contact: "Your details",
+          };
+          return (
+            <div key={s} className="flex items-center gap-2 flex-1">
+              {i > 0 && <div className={`flex-1 h-px ${done ? "bg-amber-500" : "bg-slate-200"}`} />}
+              <div className="flex items-center gap-2">
+                <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
+                  done ? "bg-amber-500 text-slate-900" : active ? "bg-slate-900 text-white" : "bg-slate-200 text-slate-500"
+                }`}>
+                  {done ? <Icon name="check" size={13} /> : i + 1}
+                </div>
+                <span className={`text-xs hidden sm:block ${active ? "text-slate-900 font-semibold" : "text-slate-400"}`}>{labels[s]}</span>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {step === "details" && (
+        <div className="space-y-6">
+          <div>
+            <h2 className="text-xl font-bold text-slate-900 mb-1">Tell us what you need help with</h2>
+            <p className="text-sm text-slate-500">Be specific — advisors give better quotes when they know what they&apos;re bidding on.</p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+              Title <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              maxLength={120}
+              value={form.job_title}
+              onChange={(e) => set("job_title", e.target.value)}
+              placeholder="e.g. Refinance our $750k investment loan"
+              className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+            />
+            <p className="text-xs text-slate-400 mt-1">A short summary advisors will see in the job board.</p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+              Describe your situation <span className="text-red-500">*</span>
+            </label>
+            <textarea
+              rows={6}
+              maxLength={3000}
+              value={form.job_description}
+              onChange={(e) => set("job_description", e.target.value)}
+              placeholder="What's the situation? What outcome do you want? Any deadlines? The more context the better — advisors will give sharper, lower quotes."
+              className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 resize-y"
+            />
+            <p className="text-xs text-slate-400 mt-1">Min 30 characters · {form.job_description.length} written</p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+                State <span className="text-red-500">*</span>
+              </label>
+              <select
+                value={form.location_state}
+                onChange={(e) => set("location_state", e.target.value)}
+                className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+              >
+                <option value="">Select state</option>
+                {STATES.map((s) => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+                Budget <span className="text-red-500">*</span>
+              </label>
+              <select
+                value={form.budget_band}
+                onChange={(e) => set("budget_band", e.target.value)}
+                className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+              >
+                <option value="">Select budget</option>
+                {BUDGETS.map((b) => <option key={b.value} value={b.value}>{b.label}</option>)}
+              </select>
+            </div>
+          </div>
+
+          <div className="flex justify-end">
+            <button
+              type="button"
+              disabled={!canDetails}
+              onClick={() => setStep("advisors")}
+              className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-slate-900 font-bold px-7 py-3 rounded-xl"
+            >
+              Continue <Icon name="arrow-right" size={16} />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {step === "advisors" && (
+        <div className="space-y-6">
+          <div>
+            <h2 className="text-xl font-bold text-slate-900 mb-1">Who do you need?</h2>
+            <p className="text-sm text-slate-500">Pick everyone who could help — picking more types means more quotes.</p>
+          </div>
+
+          <AdvisorOptInCheckboxes
+            selected={advisorTypes}
+            onChange={setAdvisorTypes}
+            options={DEFAULT_ADVISOR_OPT_INS}
+            heading="Pick advisor types"
+            subheading="Each ticked type will see your job and may submit a quote."
+          />
+
+          <div className="flex justify-between">
+            <button
+              type="button"
+              onClick={() => setStep("details")}
+              className="inline-flex items-center gap-2 text-slate-600 hover:text-slate-900 font-semibold text-sm px-4 py-2.5"
+            >
+              <Icon name="arrow-left" size={14} /> Back
+            </button>
+            <button
+              type="button"
+              disabled={!canAdvisors}
+              onClick={() => setStep("contact")}
+              className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-slate-900 font-bold px-7 py-3 rounded-xl"
+            >
+              Continue <Icon name="arrow-right" size={16} />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {step === "contact" && (
+        <div className="space-y-6">
+          <div>
+            <h2 className="text-xl font-bold text-slate-900 mb-1">Your details</h2>
+            <p className="text-sm text-slate-500">We&apos;ll email you the link to your job page so you can review quotes.</p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+              Name <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              value={form.contact_name}
+              onChange={(e) => set("contact_name", e.target.value)}
+              className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+                Email <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="email"
+                value={form.contact_email}
+                onChange={(e) => set("contact_email", e.target.value)}
+                placeholder="you@example.com"
+                className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-slate-700 mb-1.5">Phone</label>
+              <input
+                type="tel"
+                value={form.contact_phone}
+                onChange={(e) => set("contact_phone", e.target.value)}
+                placeholder="+61 4XX XXX XXX"
+                className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+              />
+            </div>
+          </div>
+
+          <label className="flex items-start gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={form.agree_terms}
+              onChange={(e) => set("agree_terms", e.target.checked)}
+              className="mt-0.5 w-4 h-4 accent-amber-500 shrink-0"
+            />
+            <span className="text-xs text-slate-600 leading-relaxed">
+              I agree to share my contact details with the advisor I accept a bid from. I&apos;ve read the{" "}
+              <Link href="/privacy" className="underline hover:text-slate-700">privacy policy</Link>
+              {" "}and{" "}
+              <Link href="/terms" className="underline hover:text-slate-700">terms</Link>.
+            </span>
+          </label>
+
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-700">{error}</div>
+          )}
+
+          <div className="flex justify-between">
+            <button
+              type="button"
+              onClick={() => setStep("advisors")}
+              className="inline-flex items-center gap-2 text-slate-600 hover:text-slate-900 font-semibold text-sm px-4 py-2.5"
+            >
+              <Icon name="arrow-left" size={14} /> Back
+            </button>
+            <button
+              type="button"
+              disabled={!canContact || loading}
+              onClick={submit}
+              className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 disabled:bg-amber-300 text-slate-900 font-bold px-8 py-3 rounded-xl"
+            >
+              {loading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-slate-900 border-t-transparent rounded-full animate-spin" />
+                  Posting...
+                </>
+              ) : (
+                <>Post job <Icon name="check" size={16} /></>
+              )}
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

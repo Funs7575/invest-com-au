@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { isRateLimited } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
+import { processAdvisorOptIns } from "@/lib/advisor-opt-ins";
 
 const log = logger("listings:submit");
 
@@ -32,6 +34,7 @@ interface SubmitBody {
   contact_email: string;
   contact_phone?: string;
   listing_plan?: string;
+  advisor_opt_ins?: string[];
 }
 
 export async function POST(request: NextRequest) {
@@ -136,7 +139,32 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return NextResponse.json({ success: true, listing_id: inserted?.id });
+    // Fan out advisor opt-ins (non-blocking — never fail the listing for a
+    // downstream lead-create error).
+    let opt_ins_queued = 0;
+    if (Array.isArray(body.advisor_opt_ins) && body.advisor_opt_ins.length > 0 && inserted?.id) {
+      try {
+        const admin = createAdminClient();
+        const optInResult = await processAdvisorOptIns({
+          admin,
+          source: "investment_listing",
+          investment_listing_id: inserted.id,
+          advisor_types: body.advisor_opt_ins,
+          contact_email: body.contact_email,
+          contact_name: body.contact_name,
+          contact_phone: body.contact_phone,
+          user_location_state: body.location_state,
+          context_note: `Listed: ${body.title?.slice(0, 80)}`,
+        });
+        opt_ins_queued = optInResult.inserted;
+      } catch (err) {
+        log.warn("[listings/submit] opt-in processing failed", {
+          err: err instanceof Error ? err.message : String(err),
+        });
+      }
+    }
+
+    return NextResponse.json({ success: true, listing_id: inserted?.id, opt_ins_queued });
   } catch (err) {
     log.error("[listings/submit] unexpected error:", err);
     return NextResponse.json(
