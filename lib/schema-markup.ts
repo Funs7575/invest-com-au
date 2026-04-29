@@ -292,6 +292,59 @@ export function listingProductJsonLd(input: ListingSchemaInput) {
   });
 }
 
+// ─── Versus comparison pages ─────────────────────────────────
+
+export interface VersusBrokerInput {
+  slug: string;
+  name: string;
+  description?: string | null;
+  logoUrl?: string | null;
+  rating?: number | null;
+  reviewCount?: number | null;
+}
+
+export interface VersusComparisonSchemaInput {
+  /** URL path segment, e.g. "stake-vs-commsec" */
+  slugs: string;
+  title: string;
+  description: string;
+  brokers: VersusBrokerInput[];
+}
+
+/**
+ * Returns an Article schema for the comparison page plus individual
+ * FinancialProduct schemas for each broker side.
+ * Emit as separate <script type="application/ld+json"> blocks.
+ */
+export function versusComparisonJsonLd(input: VersusComparisonSchemaInput) {
+  const pageUrl = absoluteUrl(`/versus/${input.slugs}`);
+
+  const article = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: input.title,
+    description: input.description,
+    url: pageUrl,
+    image: `${SITE_URL}/api/og/versus?slugs=${encodeURIComponent(input.slugs)}`,
+    author: ORG,
+    publisher: ORG,
+    mainEntityOfPage: { "@type": "WebPage", "@id": pageUrl },
+  };
+
+  const financialProducts = input.brokers.map((b) =>
+    brokerFinancialProductJsonLd({
+      slug: b.slug,
+      name: b.name,
+      description: b.description,
+      logoUrl: b.logoUrl,
+      rating: b.rating,
+      reviewCount: b.reviewCount,
+    }),
+  );
+
+  return { article, financialProducts };
+}
+
 // ─── Calculator / WebApplication ─────────────────────────────
 
 export interface CalculatorSchemaInput {

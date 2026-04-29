@@ -5,7 +5,8 @@ import type { Broker, PlatformType } from "@/lib/types";
 import { PLATFORM_TYPE_LABELS_LOWER } from "@/lib/types";
 import type { Metadata } from "next";
 import VersusClient from "../VersusClient";
-import { SITE_URL, CURRENT_YEAR, absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
+import { CURRENT_YEAR, absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
+import { versusComparisonJsonLd } from "@/lib/schema-markup";
 import ComplianceFooter from "@/components/ComplianceFooter";
 import { getVersusEditorial } from "@/lib/cached-versus";
 import { generateVersusPairs, getRelatedVersusPairs } from "@/lib/versus-pairs";
@@ -231,37 +232,24 @@ async function VersusData({ brokerSlugs, slugs }: { brokerSlugs: string[]; slugs
     .map((s) => (allBrokers || []).find((b) => b.slug === s))
     .filter(Boolean) as Broker[];
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    name: `${orderedBrokers.map((b) => b.name).join(" vs ")} Comparison`,
-    description: `Compare ${orderedBrokers.map((b) => b.name).join(" and ")} side by side`,
-    url: `${SITE_URL}/versus/${slugs}`,
-    mainEntity: {
-      "@type": "ItemList",
-      numberOfItems: orderedBrokers.length,
-      itemListElement: orderedBrokers.map((b, i) => ({
-        "@type": "ListItem",
-        position: i + 1,
-        item: {
-          "@type": "FinancialProduct",
-          name: b.name,
-          description: b.tagline || `${b.name} ${PLATFORM_LABELS[b.platform_type as PlatformType] || 'platform'}`,
-          ...(b.rating && (b as unknown as Record<string, unknown>).review_count
-            ? {
-                aggregateRating: {
-                  "@type": "AggregateRating",
-                  ratingValue: b.rating,
-                  bestRating: 5,
-                  worstRating: 1,
-                  reviewCount: (b as unknown as Record<string, unknown>).review_count,
-                },
-              }
-            : {}),
-        },
-      })),
-    },
-  };
+  const names = orderedBrokers.map((b) => b.name);
+  const hasShareBrokers = orderedBrokers.some((b) => b.platform_type === 'share_broker');
+  const versusTitle = `${names.join(" vs ")} — Side-by-Side Comparison (${CURRENT_YEAR})`;
+  const versusDescription = `Compare ${names.join(" and ")} head to head. See fees, ${hasShareBrokers ? 'CHESS sponsorship, ' : ''}ratings, pros & cons, and our honest pick for Australian investors.`;
+
+  const { article: articleLd, financialProducts: financialProductLds } = versusComparisonJsonLd({
+    slugs,
+    title: versusTitle,
+    description: versusDescription,
+    brokers: orderedBrokers.map((b) => ({
+      slug: b.slug,
+      name: b.name,
+      description: b.tagline || `${b.name} ${PLATFORM_LABELS[b.platform_type as PlatformType] || 'platform'}`,
+      logoUrl: b.logo_url,
+      rating: b.rating,
+      reviewCount: (b as unknown as Record<string, unknown>).review_count as number | undefined,
+    })),
+  });
 
   const breadcrumbLd = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
@@ -285,8 +273,15 @@ async function VersusData({ brokerSlugs, slugs }: { brokerSlugs: string[]; slugs
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleLd) }}
       />
+      {financialProductLds.map((fp) => (
+        <script
+          key={(fp as unknown as Record<string, string>).url}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(fp) }}
+        />
+      ))}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
