@@ -4,6 +4,7 @@ import { useState, useCallback, useRef } from "react";
 import { useUser } from "@/lib/hooks/useUser";
 import Icon from "@/components/Icon";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import VerifiedAdvisorBadge from "@/components/VerifiedAdvisorBadge";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -15,6 +16,7 @@ interface AuthorProfile {
   reputation: number;
   badge: string | null;
   is_moderator: boolean;
+  verified_advisor?: { slug: string; type: string } | null;
 }
 
 interface ForumThread {
@@ -232,17 +234,24 @@ function PostCard({
         <div className="w-7 h-7 rounded-full bg-slate-200 flex items-center justify-center">
           <Icon name="user" size={14} className="text-slate-500" />
         </div>
-        <div className="flex items-center gap-2 flex-1">
+        <div className="flex items-center gap-2 flex-1 flex-wrap">
           <span className="text-sm font-semibold text-slate-900">
             {post.author_name}
           </span>
-          <span
-            className={`text-xs font-medium px-2 py-0.5 rounded-full ${badgeStyle(
-              post.author_profile?.badge ?? null
-            )}`}
-          >
-            {badgeLabel(post.author_profile?.badge ?? null)}
-          </span>
+          {post.author_profile?.verified_advisor ? (
+            <VerifiedAdvisorBadge
+              advisorSlug={post.author_profile.verified_advisor.slug}
+              advisorType={post.author_profile.verified_advisor.type}
+            />
+          ) : (
+            <span
+              className={`text-xs font-medium px-2 py-0.5 rounded-full ${badgeStyle(
+                post.author_profile?.badge ?? null
+              )}`}
+            >
+              {badgeLabel(post.author_profile?.badge ?? null)}
+            </span>
+          )}
           <span className="text-xs text-slate-400 flex items-center gap-1">
             <Icon name="clock" size={12} />
             {timeAgo(post.created_at)}

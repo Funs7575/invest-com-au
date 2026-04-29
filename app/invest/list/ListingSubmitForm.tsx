@@ -3,6 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
+import { AdvisorOptInCheckboxes } from "@/components/AdvisorOptInCheckboxes";
+import type { ProfessionalType } from "@/lib/types";
 
 const VERTICALS = [
   { value: "business", label: "Business for Sale", icon: "💼", desc: "Sell your established business" },
@@ -103,6 +105,7 @@ const INITIAL_FORM: FormData = {
 export default function ListingSubmitForm() {
   const [step, setStep] = useState<Step>("plan");
   const [form, setForm] = useState<FormData>(INITIAL_FORM);
+  const [advisorOptIns, setAdvisorOptIns] = useState<ProfessionalType[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -147,6 +150,7 @@ export default function ListingSubmitForm() {
           contact_email: form.contact_email,
           contact_phone: form.contact_phone,
           listing_plan: form.plan,
+          advisor_opt_ins: advisorOptIns,
         }),
       });
       if (!res.ok) {
@@ -533,6 +537,13 @@ export default function ListingSubmitForm() {
             </p>
           </div>
 
+          <AdvisorOptInCheckboxes
+            selected={advisorOptIns}
+            onChange={setAdvisorOptIns}
+            heading="Need help with this sale or transaction?"
+            subheading="Selling a business, mining tenement, or property is rarely a one-person job. Tick any specialists you'd like a free intro call with — we'll match you with verified ones in your state."
+          />
+
           <div className="flex justify-between">
             <button
               type="button"
@@ -607,6 +618,18 @@ export default function ListingSubmitForm() {
                 {form.siv_complying && (
                   <span className="bg-purple-100 text-purple-700 text-xs font-bold px-2.5 py-0.5 rounded-full">SIV Complying</span>
                 )}
+              </div>
+            )}
+            {advisorOptIns.length > 0 && (
+              <div className="p-4">
+                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide block mb-2">Advisor intros</span>
+                <div className="flex flex-wrap gap-1.5">
+                  {advisorOptIns.map((t) => (
+                    <span key={t} className="bg-amber-100 text-amber-800 text-xs font-bold px-2.5 py-0.5 rounded-full">
+                      {t.replace(/_/g, " ")}
+                    </span>
+                  ))}
+                </div>
               </div>
             )}
           </div>
