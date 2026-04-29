@@ -54,6 +54,20 @@ export default function WebVitals() {
         }),
         keepalive: true,
       }).catch(() => {});
+
+      // Beacon to in-house web vitals pipeline → web_vitals_samples table
+      fetch("/api/web-vitals", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          metric: name,
+          value,
+          page_path: window.location.pathname,
+          session_id: id,
+          user_agent: navigator.userAgent,
+        }),
+        keepalive: true,
+      }).catch(() => {});
     }
   });
 
