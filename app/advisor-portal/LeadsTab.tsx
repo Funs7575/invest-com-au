@@ -3,6 +3,9 @@
 import Icon from "@/components/Icon";
 import LeadScoreBadge from "@/components/LeadScoreBadge";
 import type { Advisor, Stats, Lead, CategoryPricing, DisputeModal } from "./types";
+import { logger } from "@/lib/logger";
+
+const log = logger("advisor-portal-leads");
 
 type LeadStatusFilter = "all" | "new" | "contacted" | "converted" | "lost";
 
@@ -114,7 +117,7 @@ export default function LeadsTab({
                   else alert(data.error || "Failed to create checkout session. Please try again.");
                 } catch (err) {
                   alert("Something went wrong. Please check you&apos;re logged in and try again.");
-                  console.error("Topup error:", err);
+                  log.error("topup checkout failed", { err: err instanceof Error ? err.message : String(err) });
                 }
               }}
               className={`relative flex flex-col items-center p-2.5 rounded-lg border text-center transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2 ${

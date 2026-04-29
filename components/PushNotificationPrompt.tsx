@@ -2,6 +2,9 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Icon from "@/components/Icon";
+import { logger } from "@/lib/logger";
+
+const log = logger("push-notification-prompt");
 
 const TOPICS = [
   { id: "fee_changes", label: "Fee Changes", desc: "When a broker changes their fees" },
@@ -104,7 +107,7 @@ export default function PushNotificationPrompt() {
       localStorage.setItem(LS_SUBSCRIBED_KEY, "1");
       setStep("done");
     } catch (err) {
-      console.error("Push subscribe error:", err);
+      log.error("push subscribe failed", { err: err instanceof Error ? err.message : String(err) });
       setError("Something went wrong. Please try again.");
     } finally {
       setLoading(false);

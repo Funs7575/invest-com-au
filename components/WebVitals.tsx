@@ -1,6 +1,9 @@
 "use client";
 
 import { useReportWebVitals } from "next/web-vitals";
+import { logger } from "@/lib/logger";
+
+const log = logger("web-vitals");
 
 /**
  * Reports Core Web Vitals (CLS, LCP, INP, FCP, TTFB) to analytics.
@@ -14,10 +17,13 @@ export default function WebVitals() {
   useReportWebVitals((metric) => {
     const { name, value, id, rating } = metric;
 
-    // Log in development for debugging
+    // Log in development for debugging (logger filters debug-level out in prod)
     if (process.env.NODE_ENV === "development") {
-       
-      console.log(`[Web Vital] ${name}: ${Math.round(value * 100) / 100} (${rating})`);
+      log.debug(`${name}: ${Math.round(value * 100) / 100} (${rating})`, {
+        metric: name,
+        value: Math.round(value * 100) / 100,
+        rating,
+      });
     }
 
     // Send to Google Analytics if gtag is available
