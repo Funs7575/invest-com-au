@@ -798,6 +798,36 @@ export default function AdvisorProfileClient({
               </SectionCard>
             ) : null}
 
+            {/* Q&A community CTA — links to the public forum */}
+            <SectionCard title="Ask the community" icon="message-circle">
+              <p className="text-sm text-slate-600 leading-relaxed mb-4">
+                Got a question about {pro.type?.replace(/_/g, " ")} matters? Post it on the Invest.com.au community and verified advisors — including {firstName} — can answer publicly. Free, no obligation.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Link
+                  href="/community/new"
+                  className="inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold px-5 py-2.5 rounded-lg text-sm"
+                >
+                  <Icon name="edit-3" size={14} />
+                  Ask a question
+                </Link>
+                <Link
+                  href="/community"
+                  className="inline-flex items-center justify-center gap-2 bg-white border border-slate-200 hover:border-slate-300 text-slate-700 font-semibold px-5 py-2.5 rounded-lg text-sm"
+                >
+                  Browse discussions
+                  <Icon name="arrow-right" size={14} />
+                </Link>
+                <Link
+                  href="/quotes/post"
+                  className="inline-flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold px-5 py-2.5 rounded-lg text-sm"
+                >
+                  Get a quote
+                  <Icon name="zap" size={14} />
+                </Link>
+              </div>
+            </SectionCard>
+
             {/* FAQ */}
             {(pro.faqs)?.length ? (
               <SectionCard title="Frequently Asked Questions" icon="chevron-down">
