@@ -1,13 +1,28 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createStaticClient } from "@/lib/supabase/static";
-import type { Professional } from "@/lib/types";
+import type { Professional, ProfessionalType } from "@/lib/types";
 import type { Metadata } from "next";
 import AdvisorProfileClient from "./AdvisorProfileClient";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
 import ComplianceFooter from "@/components/ComplianceFooter";
 import ClaimListingButton from "@/components/claims/ClaimListingButton";
+
+// Types where schema.org FinancialService is semantically accurate in addition
+// to ProfessionalService (covers Google's rich-result eligibility for financial advisors).
+const FINANCIAL_SERVICE_TYPES: ProfessionalType[] = [
+  "financial_planner",
+  "wealth_manager",
+  "private_wealth_manager",
+  "energy_financial_planner",
+  "smsf_accountant",
+  "smsf_specialist",
+  "smsf_auditor",
+  "stockbroker_firm",
+  "fund_manager",
+  "resources_fund_manager",
+];
 
 export const revalidate = 1800;
 
@@ -164,7 +179,9 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
   // LocalBusiness schema for advisor firms — helps Google rich results
   const localBusinessLd = pro.firm_name ? {
     "@context": "https://schema.org",
-    "@type": "ProfessionalService",
+    "@type": FINANCIAL_SERVICE_TYPES.includes(pro.type as ProfessionalType)
+      ? ["ProfessionalService", "FinancialService"]
+      : "ProfessionalService",
     name: pro.firm_name,
     description: pro.bio ? String(pro.bio).slice(0, 200) : `${PROFESSIONAL_TYPE_LABELS[pro.type as keyof typeof PROFESSIONAL_TYPE_LABELS]} in ${pro.location_display || "Australia"}`,
     ...(pro.location_display ? {
