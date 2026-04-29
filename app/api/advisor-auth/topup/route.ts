@@ -5,6 +5,7 @@ import { getStripe } from "@/lib/stripe";
 import { getSiteUrl } from "@/lib/url";
 import { DEFAULT_TOPUP_CENTS } from "@/lib/advisor-billing";
 import { isRateLimited } from "@/lib/rate-limit";
+import { setLoggerUser } from "@/lib/logger";
 
 async function getAdvisorId(request: NextRequest): Promise<number | null> {
   const supabase = await createClient();
@@ -12,6 +13,7 @@ async function getAdvisorId(request: NextRequest): Promise<number | null> {
   
   const { data: { user } } = await supabase.auth.getUser();
   if (user) {
+    setLoggerUser(user);
     const { data: advisor } = await admin
       .from("professionals")
       .select("id")
@@ -20,7 +22,7 @@ async function getAdvisorId(request: NextRequest): Promise<number | null> {
       .maybeSingle();
     if (advisor) return advisor.id;
   }
-  
+
   const sessionToken = request.cookies.get("advisor_session")?.value;
   if (!sessionToken) return null;
   const { data } = await admin

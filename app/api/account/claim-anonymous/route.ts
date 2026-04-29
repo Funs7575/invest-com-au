@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { claimAnonymousSaves } from "@/lib/bookmarks";
 import { claimSessionQuizzes } from "@/lib/quiz-history";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 
 const log = logger("api:account:claim-anonymous");
 
@@ -26,6 +26,7 @@ export async function POST(request: NextRequest) {
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  setLoggerUser(user);
 
   const body = await request.json().catch(() => ({}));
   const sessionId =

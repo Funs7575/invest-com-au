@@ -8,7 +8,7 @@ import {
   type BookmarkType,
 } from "@/lib/bookmarks";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 
 const log = logger("api:account:bookmarks");
 
@@ -35,6 +35,7 @@ async function getUser() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  setLoggerUser(user);
   return user;
 }
 

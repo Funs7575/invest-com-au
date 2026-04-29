@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 import { sendEmail } from "@/lib/resend";
 
 const log = logger("account-delete");
@@ -74,6 +74,7 @@ export async function POST(request: NextRequest) {
   if (!user) {
     return NextResponse.json({ error: "Authentication required" }, { status: 401 });
   }
+  setLoggerUser(user);
 
   const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
   const reason = typeof body.reason === "string" ? body.reason.slice(0, 1000) : null;
@@ -155,6 +156,7 @@ export async function DELETE(_request: NextRequest) {
   if (!user) {
     return NextResponse.json({ error: "Authentication required" }, { status: 401 });
   }
+  setLoggerUser(user);
 
   const { error } = await supabase
     .from("account_deletion_requests")

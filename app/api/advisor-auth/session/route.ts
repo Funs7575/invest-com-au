@@ -18,7 +18,8 @@ export async function GET(request: NextRequest) {
 
     // Try Supabase Auth first
     const { data: { user } } = await supabase.auth.getUser();
-    
+    setLoggerUser(user);
+
     if (user) {
       setLoggerUser(user);
       // Find advisor by auth_user_id or email
