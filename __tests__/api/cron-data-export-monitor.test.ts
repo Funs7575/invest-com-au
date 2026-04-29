@@ -20,7 +20,14 @@ vi.mock("@/lib/cron-auth", () => ({
   requireCronAuth: vi.fn(() => null),
 }));
 
-const mockSendEmail = vi.fn(async () => ({ ok: true }));
+// sendEmail mock — typed with the real `{ ok: boolean; error?: string }` shape
+// (otherwise TS narrows to `{ ok: true }` and `{ ok: false, error: ... }`
+// becomes an "unknown property" error). `unknown[]` args make the mock callable
+// from the spread-args wrapper below.
+type SendEmailResult = { ok: boolean; error?: string };
+const mockSendEmail = vi.fn<(...args: unknown[]) => Promise<SendEmailResult>>(
+  async () => ({ ok: true }),
+);
 vi.mock("@/lib/resend", () => ({
   sendEmail: (...args: unknown[]) => mockSendEmail(...args),
 }));
@@ -138,7 +145,8 @@ describe("GET /api/cron/data-export-monitor", () => {
     const res = await GET(makeReq());
     const body = await res.json();
     expect(body.ok).toBe(true);
-    expect(mockSendEmail.mock.calls[0]?.[0]?.to).toBe("fallback@example.com");
+    const firstArg = mockSendEmail.mock.calls[0]?.[0] as { to: string } | undefined;
+    expect(firstArg?.to).toBe("fallback@example.com");
   });
 
   it("happy path — reminder-only rows: sends one email with correct subject", async () => {
@@ -151,9 +159,9 @@ describe("GET /api/cron/data-export-monitor", () => {
     expect(body.stale_count).toBe(1);
     expect(body.urgent_count).toBe(0);
     expect(mockSendEmail).toHaveBeenCalledTimes(1);
-    const call = mockSendEmail.mock.calls[0]?.[0] as { to: string; subject: string };
-    expect(call.to).toBe("admin@invest.com.au");
-    expect(call.subject).not.toMatch(/URGENT/i);
+    const call = mockSendEmail.mock.calls[0]?.[0] as { to: string; subject: string } | undefined;
+    expect(call?.to).toBe("admin@invest.com.au");
+    expect(call?.subject).not.toMatch(/URGENT/i);
   });
 
   it("happy path — urgent rows: subject contains URGENT and correct counts", async () => {
@@ -165,8 +173,8 @@ describe("GET /api/cron/data-export-monitor", () => {
     expect(body.ok).toBe(true);
     expect(body.stale_count).toBe(2);
     expect(body.urgent_count).toBe(1);
-    const subject = (mockSendEmail.mock.calls[0]?.[0] as { subject: string }).subject;
-    expect(subject).toMatch(/URGENT/i);
+    const callArg = mockSendEmail.mock.calls[0]?.[0] as { subject: string } | undefined;
+    expect(callArg?.subject).toMatch(/URGENT/i);
   });
 
   it("returns ok=false when sendEmail fails", async () => {

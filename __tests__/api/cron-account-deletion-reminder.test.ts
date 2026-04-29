@@ -20,8 +20,16 @@ vi.mock("@/lib/cron-auth", () => ({
   requireCronAuth: vi.fn(() => null),
 }));
 
-// sendEmail mock — controls whether the email send succeeds
-const mockSendEmail = vi.fn(async () => ({ ok: true }));
+// sendEmail mock — controls whether the email send succeeds.
+// Typed with the real return shape `{ ok: boolean; error?: string }` so
+// callers can `mockResolvedValueOnce({ ok: false, error: "..." })` without TS
+// narrowing the return to `{ ok: true }`. The args list is `unknown[]` so the
+// mock can be invoked from the spread-args wrapper below without TS demanding
+// a literal tuple.
+type SendEmailResult = { ok: boolean; error?: string };
+const mockSendEmail = vi.fn<(...args: unknown[]) => Promise<SendEmailResult>>(
+  async () => ({ ok: true }),
+);
 vi.mock("@/lib/resend", () => ({
   sendEmail: (...args: unknown[]) => mockSendEmail(...args),
 }));
@@ -172,7 +180,8 @@ describe("GET /api/cron/account-deletion-reminder", () => {
     dbQueue.push({ data: [PENDING_ROWS[0]], error: null });
     dbQueue.push({ error: null });
     await GET(makeReq());
-    const subject = mockSendEmail.mock.calls[0]?.[0]?.subject as string;
+    const firstCallArg = mockSendEmail.mock.calls[0]?.[0] as { subject: string } | undefined;
+    const subject = firstCallArg?.subject ?? "";
     expect(subject).toMatch(/Final reminder/i);
     expect(subject).toMatch(/day/i);
   });

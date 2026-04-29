@@ -14,7 +14,12 @@ vi.mock("@/lib/email-templates", () => ({
   notificationFooter: vi.fn(() => "<footer>unsubscribe</footer>"),
 }));
 
-const mockFetch = vi.fn(() => Promise.resolve(new Response("ok", { status: 200 })));
+// Typed with the real fetch signature so `mock.calls[i]` is `[input, init?]`,
+// not `[]`. Otherwise `calls[0][1]` fails noUncheckedIndexedAccess on a `[]`
+// tuple (length-0 has no index 1).
+const mockFetch = vi.fn<(input: RequestInfo | URL, init?: RequestInit) => Promise<Response>>(
+  () => Promise.resolve(new Response("ok", { status: 200 })),
+);
 vi.stubGlobal("fetch", mockFetch);
 
 // DB queue consumed per from() call
