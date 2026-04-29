@@ -135,6 +135,8 @@ export interface Article {
   related_verticals?: string[];
   related_calc?: string;
   cover_image_url?: string;
+  meta_title?: string | null;
+  meta_description?: string | null;
   evergreen: boolean;
   status?: string;
   published_at?: string;

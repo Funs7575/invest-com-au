@@ -58,11 +58,16 @@ export async function generateMetadata({
 
   if (!article) return { title: "Article Not Found" };
 
-  const title = article.title;
-  const description = article.excerpt || "";
   const categoryLabel = article.category
     ? `${article.category.charAt(0).toUpperCase() + article.category.slice(1)} Guide`
     : "Investing Guide";
+  // Prefer DB-authored meta fields; fall back to excerpt, then auto-generate
+  // from title + category so every article has a non-empty description.
+  const title = article.meta_title || article.title;
+  const description =
+    article.meta_description ||
+    article.excerpt ||
+    `${article.title} — ${categoryLabel} | invest.com.au`;
   // Per-article OG override (M-01b). If `articles.cover_image_url` is
   // populated we use the real cover photo as the social-share card —
   // historically shown to lift social CTR ~30–50% vs the generic dynamic
