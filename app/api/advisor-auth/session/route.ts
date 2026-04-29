@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 
 const log = logger("advisor-auth:session");
 
@@ -20,6 +20,7 @@ export async function GET(request: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser();
     
     if (user) {
+      setLoggerUser(user);
       // Find advisor by auth_user_id or email
       const { data: advisor } = await admin
         .from("professionals")

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getUnreadCount, markRead, markAllRead } from "@/lib/notifications";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 
 const log = logger("api:account:notifications");
 
@@ -29,6 +29,7 @@ async function requireUser() {
       response: NextResponse.json({ error: "Unauthorized" }, { status: 401 }),
     };
   }
+  setLoggerUser(user);
   return { ok: true as const, user };
 }
 

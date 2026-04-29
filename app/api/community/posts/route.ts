@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 import { isRateLimited } from "@/lib/rate-limit";
 
 const log = logger("community:posts");
@@ -14,6 +14,7 @@ export async function POST(req: NextRequest) {
     if (authError || !user) {
       return NextResponse.json({ error: "Authentication required" }, { status: 401 });
     }
+    setLoggerUser(user);
 
     // Rate limit — 20 posts per hour per user. Prevents a compromised
     // account or impatient bot from flooding threads.

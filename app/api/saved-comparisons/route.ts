@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 import { isRateLimited } from "@/lib/rate-limit";
 
 const log = logger("saved-comparisons");
@@ -20,6 +20,7 @@ export async function GET() {
     if (!user) {
       return NextResponse.json({ error: "Session expired. Please sign in again." }, { status: 401 });
     }
+    setLoggerUser(user);
 
     const { data: comparisons, error } = await supabase
       .from("user_saved_comparisons")
@@ -55,6 +56,7 @@ export async function POST(request: NextRequest) {
     if (!user) {
       return NextResponse.json({ error: "Session expired. Please sign in again." }, { status: 401 });
     }
+    setLoggerUser(user);
 
     // Rate limit: 20 per hour per user
     const limited = await isRateLimited(`save-comparison:${user.id}`, 20, 60);

@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
+import { setLoggerUser } from "@/lib/logger";
 
 export async function GET() {
   try {
@@ -12,6 +13,7 @@ export async function GET() {
         { status: 401 }
       );
     }
+    setLoggerUser(user);
 
     const { data: profile } = await supabase
       .from("user_profiles")
@@ -38,6 +40,7 @@ export async function PUT(req: NextRequest) {
       { status: 401 }
     );
   }
+  setLoggerUser(user);
 
   let body: Record<string, unknown>;
   try {

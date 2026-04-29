@@ -6,7 +6,7 @@ import {
 } from "@/lib/article-comments";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 import { isValidEmail } from "@/lib/validate-email";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 
 const log = logger("api:article-comments");
 
@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    if (user) authorId = user.id;
+    if (user) { authorId = user.id; setLoggerUser(user); }
   } catch {
     /* anonymous is fine */
   }

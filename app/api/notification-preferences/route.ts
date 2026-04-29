@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 
 const log = logger("notifications");
 
@@ -17,6 +17,7 @@ export async function GET() {
   if (!user) {
     return NextResponse.json({ error: "Session expired. Please sign in again." }, { status: 401 });
   }
+  setLoggerUser(user);
 
   const { data, error } = await supabase
     .from("notification_preferences")
@@ -57,6 +58,7 @@ export async function POST(req: NextRequest) {
   if (!user) {
     return NextResponse.json({ error: "Session expired. Please sign in again." }, { status: 401 });
   }
+  setLoggerUser(user);
 
   let body: Record<string, unknown>;
   try {

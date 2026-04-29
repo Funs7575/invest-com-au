@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 import { isRateLimited } from "@/lib/rate-limit";
 
 const log = logger("community:threads");
@@ -95,6 +95,7 @@ export async function POST(req: NextRequest) {
     if (authError || !user) {
       return NextResponse.json({ error: "Authentication required" }, { status: 401 });
     }
+    setLoggerUser(user);
 
     // Rate limit — 5 new threads per hour per user. Thread creation is
     // costlier than post replies (each spawns a moderation surface and a
