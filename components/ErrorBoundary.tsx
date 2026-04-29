@@ -1,5 +1,8 @@
 "use client";
 import { Component, type ReactNode } from "react";
+import { logger } from "@/lib/logger";
+
+const log = logger("error-boundary");
 
 interface Props { children: ReactNode; fallback?: ReactNode; section?: string }
 interface State { hasError: boolean; error?: Error }
@@ -20,7 +23,7 @@ export default class ErrorBoundary extends Component<Props, State> {
     if (w?.Sentry) {
       w.Sentry.captureException(error);
     }
-    console.error(`[ErrorBoundary${this.props.section ? ` - ${this.props.section}` : ""}]`, error);
+    log.error("boundary caught error", { section: this.props.section ?? null, err: error });
   }
 
   override render() {
