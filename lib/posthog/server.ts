@@ -27,3 +27,14 @@ export async function captureServerEvent<T extends EventName>(
   await ph.shutdown()
   server = null
 }
+
+export async function identifyUser(
+  distinctId: string,
+  properties?: Record<string, string | undefined>,
+): Promise<void> {
+  const ph = getServerPostHog()
+  if (!ph) return
+  ph.identify({ distinctId, properties })
+  await ph.shutdown()
+  server = null
+}

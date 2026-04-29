@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { identifyUser } from "@/lib/posthog/server";
 
 const log = logger("auth-callback");
 
@@ -72,6 +73,10 @@ export async function GET(request: NextRequest) {
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        void identifyUser(user.id, { email: user.email });
+      }
       return NextResponse.redirect(new URL(next, origin));
     }
     log.warn("exchangeCodeForSession failed", {
@@ -98,6 +103,10 @@ export async function GET(request: NextRequest) {
       token_hash: tokenHash,
     });
     if (!error) {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        void identifyUser(user.id, { email: user.email });
+      }
       return NextResponse.redirect(new URL(next, origin));
     }
     log.warn("verifyOtp failed", {
