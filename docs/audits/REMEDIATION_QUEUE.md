@@ -36,7 +36,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | J | `claude/audit-remediation/j-stripe-webhook` | #288 (draft) | pending — pushed 2026-04-29T22:30Z | J-01a..J-01e (route.ts 1197 → 165 LOC) · J-01d-ext (commit `bb1d56f6`) · J-03 (commit `b8e7189`) · J-05 (commit `d68852e`) · J-06 (commit `eedf582`) · J-08 (commit `e99aedc`) · J-09 (commit `e99aedc`) · J-10 (commit `e99aedc`) — all handlers complete (14 registered). Stream complete pending PR merge. |
 | K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-27T05:35Z | K-01..K-08 done; K-09 false-positive; K-10..K-15 done — **stream complete** |
 | L | `claude/audit-remediation/l-observability` | #289 (draft) | pending — pushed 2026-04-29T23:20Z | L-06 done (commit `12183619`) — 8 SLOs seeded. L-07 done (commit `824366e`) — email alert sink (OPS_ALERT_EMAIL pattern) + 25 tests. L-08 done (commit `832feed3`) — 6 new PostHog events + 22 tests. L-09 done (commit `153cce4`) — posthog.identify at signup+login + 17 tests. |
-| M | `claude/audit-remediation/m-01b-cover-image-backfill` | #283 (draft) | pending — pushed 2026-04-28T21:25Z | M-01b in flight (commit `19a0d7e6`) — per-article OG cover override + backfill script. M-02 on separate branch `claude/audit-remediation/m-02-versus-json-ld` (#296 draft) — commit `3ab1bacf`. |
+| M | `claude/audit-remediation/m-01b-cover-image-backfill` | #283 (draft) | pending — pushed 2026-04-29T (iter 129) | M-01b in flight (commit `19a0d7e6`) — per-article OG cover override + backfill script. M-02 on separate branch `claude/audit-remediation/m-02-versus-json-ld` (#296 draft) — commit `3ab1bacf`. M-03 done (commit `85c7236`) — advisor localBusinessLd now emits `["ProfessionalService","FinancialService"]` for 10 qualifying financial types. |
 | N | `claude/audit-remediation/n-ux-perf` | #242 | pending — pushed 2026-04-27T13:30Z | N-01+N-02 done (`2ec6f89`) · N-03a done (`36e3f6d`) · N-03b done (`97bb9b00`) · N-03c done (`b29f443`) · N-04 FP · N-05 FP · N-06 blocked · N-07 batch 1 done (`2e5d8a4`) · N-07 batch 2 done (`91d0d42`) · N-08 done (`315d3b7`) · N-09 done (`3b43bf8`) · N-10 done (`0c33d71`) · N-11 done (`c2b769e`) — **stream complete** (N-06 blocked) |
 | O | `claude/audit-remediation/o-rls-no-policy` | merged via #235/#237/#239 | last pushed 2026-04-26 | O-01 iter1 done (`user_notifications`/`user_quiz_history`/`user_bookmarks`) · iter2 done `8e638bd` (`article_comments`/`article_reactions`) · iter3 done `c9c8fcd` (admin/audit cluster) · iter4 done `e965eb7` (14 observability/admin tables). ~34 tables remain for iter5+. |
 | P | _not started_ | — | — | — |
@@ -372,7 +372,7 @@ The single highest-leverage finding (M-01: cover_image_url backfill) lives here.
 | M-01a | done | Site-wide default OpenGraph + Twitter card image — done out-of-loop in PR #227 | 1 | Resolved in PR #227 ("feat(seo): site-wide default opengraph-image + twitter-image (P0-6)") merged 2026-04-26T17:37Z. Adds the default fallback image so any page without a per-route OG override gets a branded card. |
 | M-01b | in flight | Per-article cover image backfill: populate `articles.cover_image_url` for the 266 published articles + ensure `app/article/[slug]/page.tsx` uses it for OG override | ~2 | P0 (residual). M-01a covered the site-wide default; this is the per-article custom-image work — still ~30–50% social-share CTR upside vs the generic default. Engineering side is one iteration (PR #283 — `generateMetadata` now prefers `cover_image_url` for OG/Twitter, with `/api/og` fallback; idempotent dry-run-by-default `scripts/backfill-cover-images.mjs` + `docs/runbooks/article-cover-image-backfill.md` ship the founder-runs procedure for the 266-row write). Closes when content batch lands the per-slug manifest. |
 | M-02 | done | Versus pages (600+ URLs) — emit JSON-LD: `Article` + `BreadcrumbList` + per-side `FinancialProduct` review schema | 1 | **Done in commit `3ab1bacf` (PR #296, draft).** Added `versusComparisonJsonLd()` to `lib/schema-markup.ts`; updated `app/versus/[slugs]/page.tsx` to replace WebPage+ItemList with Article + individual FinancialProduct per broker side. BreadcrumbList + FAQPage unchanged. 14 new tests in `__tests__/lib/schema-markup.test.ts`. |
-| M-03 | pending | Advisor pages — switch schema type from `ProfessionalService` to `["ProfessionalService", "FinancialService"]` for financial planners + wealth managers | 1 | P1. Entity-disambiguation gain in financial queries. |
+| M-03 | done | Advisor pages — switch schema type from `ProfessionalService` to `["ProfessionalService", "FinancialService"]` for financial planners + wealth managers | 1 | P1. Entity-disambiguation gain in financial queries. Done commit `85c7236` (iter 129). |
 | M-04 | pending | Article meta_title/meta_description fallback path: auto-generate from `articles.excerpt` + `category` when DB fields are null (43 articles affected) | 1 | P1. |
 | M-05 | pending | Glossary auto-linkifier — inline-link 200+ terms from `lib/glossary.ts` in article body content | ~2 | P2. Topical-relevance gain. |
 | M-06 | pending | Render `articles.related_advisor_types` and `articles.related_verticals` as internal links on article pages | 1 | P2. |
@@ -1060,6 +1060,21 @@ Items that ship LAST, in the final week before launch (Month 4 of pre-launch roa
 - Discovery sweep: no new items — coverage is complete on stream branch.
 - STATUS: PROGRESS · stream=D · item=D-11 batch 41 · pr=#285 · commit=`5ed11e3d` · diff=+193/-0 across 2 files
 - Remaining: 0 uncovered non-cron non-admin routes on stream branch. D-11 effectively done pending PR merge.
+
+### 2026-04-29T — iteration 130 (stream M — M-03 — advisor pages FinancialService schema)
+
+- Phase 0: lock acquired.
+- Phase 1: synced main (iter 128 queue update at `d568a52`). M branch pulled latest.
+- Phase 1.5: types-drift skipped.
+- Phase 2: no red CI on #283, #285, #289. No rescue needed.
+- Phase 3: M stream, M-03 pending. Checked out `claude/audit-remediation/m-01b-cover-image-backfill` + pulled latest.
+- Phase 4: verified — `app/advisor/[slug]/page.tsx` `localBusinessLd` emits `"@type": "ProfessionalService"` for all advisor types. Schema.org FinancialService is the correct additional type for financial planners, wealth managers, SMSF specialists, stockbrokers, and fund managers.
+- Phase 5: defined `FINANCIAL_SERVICE_TYPES` constant (10 qualifying types); updated `localBusinessLd` `"@type"` to conditionally emit `["ProfessionalService","FinancialService"]` for qualifying types vs `"ProfessionalService"` for others. Lint: 0 errors in changed file.
+- Phase 6: committed `85c7236`; pushed to `claude/audit-remediation/m-01b-cover-image-backfill`.
+- Phase 7: M-03 marked done; M in-flight row updated; this log entry on main.
+- Discovery sweep: `app/advisor/[slug]/page.tsx` — `personLd` block uses `"@type": "Person"` (correct, unchanged). `lib/json-ld.ts` `advisorProfileLd()` already emits `"@type": "FinancialService"` directly (correct for the generic lib helper). No new items to surface.
+- STATUS: PROGRESS · stream=M · item=M-03 · pr=#283 · commit=`85c7236` · diff=+19/-2 across 1 file
+- Next item: M-04 (article meta_title/description fallback)
 
 ### 2026-04-29T22:15Z — iteration 128 (stream D — D-11 batch 40 — quotes/[slug]/* cluster)
 
