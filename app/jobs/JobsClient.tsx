@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
+import { formatDate } from "@/lib/utils";
 
 /* ─── Types ─── */
 
@@ -161,11 +162,6 @@ const TYPE_BADGE_COLORS: Record<Job["type"], string> = {
   "part-time": "bg-amber-100 text-amber-700",
   contract: "bg-purple-100 text-purple-700",
 };
-
-function formatDate(dateStr: string) {
-  const d = new Date(dateStr);
-  return d.toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" });
-}
 
 /* ─── Component ─── */
 

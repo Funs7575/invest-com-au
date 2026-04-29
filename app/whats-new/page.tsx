@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 import Link from "next/link";
 import AuthorByline from "@/components/AuthorByline";
 import { breadcrumbJsonLd, absoluteUrl, REVIEW_AUTHOR } from "@/lib/seo";
+import { formatDate } from "@/lib/utils";
 import type { Metadata } from "next";
 
 export const revalidate = 1800; // ISR: revalidate every 30 minutes
@@ -65,14 +66,6 @@ function formatBrokerName(slug: string): string {
   return slug
     .replace(/-/g, " ")
     .replace(/\b\w/g, (c) => c.toUpperCase());
-}
-
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString("en-AU", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
 }
 
 function formatMonthLabel(key: string): string {
