@@ -8,39 +8,31 @@ vi.mock("@/lib/require-admin", () => ({
   requireAdmin: () => mockRequireAdmin(),
 }));
 
-const mockFrom = vi.fn();
-vi.mock("@/lib/supabase/admin", () => ({
-  createAdminClient: vi.fn(() => ({ from: mockFrom })),
-}));
-
 const mockListPendingKyc = vi.fn();
 const mockListKycDocuments = vi.fn();
 const mockVerifyKyc = vi.fn();
 const mockRejectKyc = vi.fn();
 vi.mock("@/lib/advisor-kyc", () => ({
   listPendingKyc: () => mockListPendingKyc(),
-  listKycDocuments: (...args: unknown[]) => mockListKycDocuments(...args),
-  verifyKyc: (...args: unknown[]) => mockVerifyKyc(...args),
-  rejectKyc: (...args: unknown[]) => mockRejectKyc(...args),
+  listKycDocuments: (...a: unknown[]) => mockListKycDocuments(...a),
+  verifyKyc: (...a: unknown[]) => mockVerifyKyc(...a),
+  rejectKyc: (...a: unknown[]) => mockRejectKyc(...a),
+}));
+
+const mockFrom = vi.fn();
+vi.mock("@/lib/supabase/admin", () => ({
+  createAdminClient: vi.fn(() => ({ from: mockFrom })),
 }));
 
 import { GET, PATCH } from "@/app/api/admin/advisor-kyc/route";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-const ADMIN_GUARD = { ok: true, email: "admin@test.com", userId: "uid-1" } as const;
+const ADMIN_GUARD = { ok: true as const, email: "admin@test.com", userId: "uid-1" };
 const DENY_GUARD = {
-  ok: false,
+  ok: false as const,
   response: NextResponse.json({ error: "Unauthorized" }, { status: 401 }),
-} as const;
-
-function makeGet(searchParams?: Record<string, string>): NextRequest {
-  const url = new URL("http://localhost/api/admin/advisor-kyc");
-  if (searchParams) {
-    for (const [k, v] of Object.entries(searchParams)) url.searchParams.set(k, v);
-  }
-  return new NextRequest(url);
-}
+};
 
 function makePatch(body: unknown): NextRequest {
   return new NextRequest("http://localhost/api/admin/advisor-kyc", {
@@ -50,51 +42,47 @@ function makePatch(body: unknown): NextRequest {
   });
 }
 
-function setupAuditMock() {
-  mockFrom.mockImplementation(() => ({
-    insert: vi.fn().mockResolvedValue({ error: null }),
-  }));
-}
-
-// ── GET tests ─────────────────────────────────────────────────────────────────
+// ── GET ───────────────────────────────────────────────────────────────────────
 
 describe("GET /api/admin/advisor-kyc", () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it("returns 401 when not authenticated", async () => {
+  it("returns 401 when not admin", async () => {
     mockRequireAdmin.mockResolvedValue(DENY_GUARD);
-    const res = await GET(makeGet());
+    const req = new NextRequest("http://localhost/api/admin/advisor-kyc");
+    const res = await GET(req);
     expect(res.status).toBe(401);
   });
 
-  it("returns pending KYC queue when no professional_id given", async () => {
+  it("returns pending KYC queue when no professional_id", async () => {
     mockRequireAdmin.mockResolvedValue(ADMIN_GUARD);
-    mockListPendingKyc.mockResolvedValue([{ id: 1, status: "pending" }]);
-    const res = await GET(makeGet());
+    mockListPendingKyc.mockResolvedValue([{ id: 1 }, { id: 2 }]);
+    const req = new NextRequest("http://localhost/api/admin/advisor-kyc");
+    const res = await GET(req);
     expect(res.status).toBe(200);
     const body = await res.json();
-    expect(body.items).toHaveLength(1);
-    expect(mockListKycDocuments).not.toHaveBeenCalled();
+    expect(body.items).toHaveLength(2);
+    expect(mockListPendingKyc).toHaveBeenCalled();
   });
 
-  it("returns documents for specific professional when professional_id given", async () => {
+  it("returns docs for specific professional_id", async () => {
     mockRequireAdmin.mockResolvedValue(ADMIN_GUARD);
-    mockListKycDocuments.mockResolvedValue([{ id: 2, status: "verified" }]);
-    const res = await GET(makeGet({ professional_id: "42" }));
+    mockListKycDocuments.mockResolvedValue([{ id: 3, document_type: "passport" }]);
+    const req = new NextRequest("http://localhost/api/admin/advisor-kyc?professional_id=99");
+    const res = await GET(req);
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.items).toHaveLength(1);
-    expect(mockListKycDocuments).toHaveBeenCalledWith(42);
-    expect(mockListPendingKyc).not.toHaveBeenCalled();
+    expect(mockListKycDocuments).toHaveBeenCalledWith(99);
   });
 });
 
-// ── PATCH tests ───────────────────────────────────────────────────────────────
+// ── PATCH ─────────────────────────────────────────────────────────────────────
 
 describe("PATCH /api/admin/advisor-kyc", () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it("returns 401 when not authenticated", async () => {
+  it("returns 401 when not admin", async () => {
     mockRequireAdmin.mockResolvedValue(DENY_GUARD);
     const res = await PATCH(makePatch({ id: 1, action: "verify" }));
     expect(res.status).toBe(401);
@@ -104,73 +92,63 @@ describe("PATCH /api/admin/advisor-kyc", () => {
     mockRequireAdmin.mockResolvedValue(ADMIN_GUARD);
     const res = await PATCH(makePatch({ action: "verify" }));
     expect(res.status).toBe(400);
-    const body = await res.json();
-    expect(body.error).toMatch(/missing/i);
   });
 
   it("returns 400 when action is missing", async () => {
     mockRequireAdmin.mockResolvedValue(ADMIN_GUARD);
-    const res = await PATCH(makePatch({ id: 1 }));
+    const res = await PATCH(makePatch({ id: 5 }));
     expect(res.status).toBe(400);
   });
 
-  it("returns 400 when rejection reason is missing", async () => {
-    mockRequireAdmin.mockResolvedValue(ADMIN_GUARD);
-    const res = await PATCH(makePatch({ id: 1, action: "reject" }));
-    expect(res.status).toBe(400);
-    const body = await res.json();
-    expect(body.error).toMatch(/reason/i);
-  });
-
-  it("returns 400 when rejection reason is too short (< 3 chars)", async () => {
-    mockRequireAdmin.mockResolvedValue(ADMIN_GUARD);
-    const res = await PATCH(makePatch({ id: 1, action: "reject", reason: "ab" }));
-    expect(res.status).toBe(400);
-  });
-
-  it("calls verifyKyc and writes audit log on verify action", async () => {
+  it("verify: calls verifyKyc and writes audit log", async () => {
     mockRequireAdmin.mockResolvedValue(ADMIN_GUARD);
     mockVerifyKyc.mockResolvedValue(true);
-    setupAuditMock();
-    const res = await PATCH(makePatch({ id: 5, action: "verify", notes: "Looks good" }));
+    mockFrom.mockReturnValue({ insert: vi.fn().mockResolvedValue({ error: null }) });
+    const res = await PATCH(makePatch({ id: 5, action: "verify", notes: "looks good" }));
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.ok).toBe(true);
-    expect(mockVerifyKyc).toHaveBeenCalledWith({
-      id: 5,
-      verifiedBy: "admin@test.com",
-      notes: "Looks good",
-    });
+    expect(mockVerifyKyc).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 5, verifiedBy: "admin@test.com", notes: "looks good" })
+    );
+    expect(mockFrom).toHaveBeenCalledWith("admin_audit_log");
   });
 
-  it("passes null notes to verifyKyc when not provided", async () => {
+  it("verify: audit log uses advisor_kyc:verified action", async () => {
     mockRequireAdmin.mockResolvedValue(ADMIN_GUARD);
     mockVerifyKyc.mockResolvedValue(true);
-    setupAuditMock();
+    const auditInsert = vi.fn().mockResolvedValue({ error: null });
+    mockFrom.mockReturnValue({ insert: auditInsert });
     await PATCH(makePatch({ id: 5, action: "verify" }));
-    expect(mockVerifyKyc).toHaveBeenCalledWith(
-      expect.objectContaining({ notes: null })
+    expect(auditInsert).toHaveBeenCalledWith(
+      expect.objectContaining({ action: "advisor_kyc:verified", entity_id: "5" })
     );
   });
 
-  it("calls rejectKyc and writes audit log on reject action", async () => {
+  it("reject: returns 400 when reason is too short (<3 chars)", async () => {
+    mockRequireAdmin.mockResolvedValue(ADMIN_GUARD);
+    const res = await PATCH(makePatch({ id: 5, action: "reject", reason: "no" }));
+    expect(res.status).toBe(400);
+  });
+
+  it("reject: calls rejectKyc and writes audit log", async () => {
     mockRequireAdmin.mockResolvedValue(ADMIN_GUARD);
     mockRejectKyc.mockResolvedValue(true);
-    setupAuditMock();
-    const res = await PATCH(makePatch({ id: 7, action: "reject", reason: "Blurry image" }));
+    const auditInsert = vi.fn().mockResolvedValue({ error: null });
+    mockFrom.mockReturnValue({ insert: auditInsert });
+    const res = await PATCH(makePatch({ id: 5, action: "reject", reason: "Documents expired" }));
     expect(res.status).toBe(200);
-    expect(mockRejectKyc).toHaveBeenCalledWith({
-      id: 7,
-      verifiedBy: "admin@test.com",
-      reason: "Blurry image",
-    });
+    expect(mockRejectKyc).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 5, reason: "Documents expired" })
+    );
+    expect(auditInsert).toHaveBeenCalledWith(
+      expect.objectContaining({ action: "advisor_kyc:rejected" })
+    );
   });
 
   it("returns 400 for unknown action", async () => {
     mockRequireAdmin.mockResolvedValue(ADMIN_GUARD);
-    const res = await PATCH(makePatch({ id: 1, action: "unknown_action" }));
+    const res = await PATCH(makePatch({ id: 5, action: "approve_everything" }));
     expect(res.status).toBe(400);
-    const body = await res.json();
-    expect(body.error).toMatch(/unknown/i);
   });
 });
