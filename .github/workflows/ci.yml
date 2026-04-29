@@ -369,6 +369,28 @@ jobs:
           GITHUB_BASE_REF: ${{ github.base_ref }}
         run: node scripts/check-stripe-idempotency.mjs
 
+  rls-migrations-gate:
+    name: RLS migration gate (new CREATE TABLE without RLS)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: github.event_name == 'pull_request'
+    # Why this exists (B-07 / I-01): any migration that adds a CREATE TABLE
+    # without ENABLE ROW LEVEL SECURITY exposes the table to full PostgREST
+    # read/write access via the Supabase anon key — a security regression.
+    # The gate scans only migration files ADDED in this PR, so pre-existing
+    # tables (which may legitimately lack RLS pending a dedicated B/O-stream
+    # iteration) are not flagged.  Escape hatch: add
+    #   -- rls-exempt: <table>  <justification>
+    # inside the migration for extension-managed or Supabase-internal tables.
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Check new migrations enable RLS on all CREATE TABLE targets
+        env:
+          GITHUB_BASE_REF: ${{ github.base_ref }}
+        run: node scripts/check-rls-migrations.mjs
+
   lighthouse-cwv-gate:
     name: Lighthouse — Core Web Vitals gate (hard-fail)
     runs-on: ubuntu-latest
