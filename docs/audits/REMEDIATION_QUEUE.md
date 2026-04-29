@@ -25,29 +25,29 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | Stream | Branch | PR | Last CI | Items in flight |
 | --- | --- | --- | --- | --- |
 | A | _not started_ | — | — | — |
-| B | ✓ merged | #286 ✓ merged 2026-04-29 | ✅ green | PR #220 merged (B-01..B-06 done/blocked/FP). B-07 done (`0097159`) — CI gate: new CREATE TABLE migrations must include ENABLE ROW LEVEL SECURITY. B-08/B-09 pending. |
+| B | `claude/audit-remediation/b-07-rls-migration-lint` | #286 (draft) | pending — pushed 2026-04-28T22:35Z | PR #220 merged (B-01..B-06 done/blocked/FP). B-07 done (`0097159`) — CI gate: new CREATE TABLE migrations must include ENABLE ROW LEVEL SECURITY. |
 | C | _not started_ | — | — | — |
-| D | `claude/audit-remediation/d-route-tests-2` | #285 ✓ merged 2026-04-29 (batches 1–23b); new PR TBD | ✅ green on #285 | D-01..D-10 done. D-11 batches 1–23b done via PR #285 (merged 2026-04-29). **D-11 batch 24 in progress on new branch** (push/send · webhooks/broker-signup · webhooks/resend · sync-shortlist · report-download). ~96 routes remain untested. |
-| E | ✓ merged | #295 ✓ merged 2026-04-29 | ✅ green | E-01 done — `lib/validation/withValidatedBody.ts` helper + 17 tests. E-02..E-04 pending. |
-| F | ✓ merged | #293 #294 ✓ merged 2026-04-29 | ✅ green | F-02 done (formatDate consolidated, 10 callsites). F-05 done (9 console.* → logger). F-05a (3 remaining files) pending. |
+| D | `claude/audit-remediation/d-route-tests` | #285 | pending — pushed 2026-04-30T01:15Z | D-01 done (commit `7269510`) · D-02 done (commit `ebf2250`) · D-03 done (commit `0177aa1`) · D-04 done (commit `bea95b1`) · D-05 done (commit `e49375d`) · D-06 done (commit `c0cd3ee`) · D-07 done (commit `33230fb`) · D-08 done (commit `311df3f`) · D-09 done (commit `8e2d35d`) · D-10 done (commit `4e702c1`) · D-11 batch 1 done (commit `90c7c5b`) · D-11 batch 2 done (commit `387bcb4`) · D-11 batch 3 done (commit `db0df8d`) · D-11 batch 4 done (commit `c49e3aa`) · CI-rescue merged main (commit `9282178`) · D-11 batch 5 done (commit `6c7637f`) · D-11 batch 6 done (commit `f7e1a1c`) · D-11 batch 7 done (commit `f183cba`) · D-11 batch 8 done (commit `f336fc7`) · D-11 batch 9 done (commit `2c78f24`) · D-11 batch 10 done (commit `73c8aa1`) · D-11 batch 11 done (commit `3fab2c1`) · D-11 batch 12 done (commit `856026c`) · D-11 batch 12c done (commit `cc77b65`) · D-11 batch 13 done (commit `9dae465`) · D-11 batch 14 done (commit `c64ca614`) · D-11 batch 15 done (commit `01b685f`) · D-11 batch 16 done (commit `6536d77`) · D-11 batch 17 done (commit `bbca74d`) · D-11 batch 17b done (commit `251f745`) · **Also: PR #287 (`d-11-batch-15`) parallel coverage — batch 15: quiz/data+csp-report+complaints/intake+advisor-dashboard+course/purchase (`5c4df09`); batch 16: advisor-articles+community/posts/[id]+advisor-search/postcodes+v1/api-keys+marketplace/webhook (`ebdb3f4`) — 110 complementary tests, merges independently** · D-11 batch 18 done (commit `2694124`) · D-11 batch 18b done (commit `6a89600`→`701cf83`) · D-11 batch 19 done (commit `b93f1647`) · D-11 batch 19b done (commit `49e0ad5`) · D-11 batch 20 done (commit `2f72b7a`) · D-11 batch 21 done (commit `eec7429`) · D-11 batch 21b done (commit `d460cb5`→`32e3069`) · D-11 batch 22 done (commit `951a295`) · D-11 batch 22b done (commit `4b5e73b`) · D-11 batch 23 done (commit `575143b`) · D-11 batch 23b done (commit `a6574f1c`) · D-11 batch 24 done (commit `b14460b`) · D-11 batch 25 done (commit `fb4cce3c`) |
+| E | _not started_ | — | — | — |
+| F | _not started_ | — | — | — |
 | G | _not started_ | — | — | — |
 | H | _not started_ | — | — | — |
-| I | ✓ merged | #278 ✓ merged 2026-04-28 | ✅ green | I-NEW-01..I-NEW-05 done. I-NEW-04 auto-revert workflow (`b42233fb`) — **stream complete**. |
-| J | ✓ merged | #288 ✓ merged 2026-04-29 | ✅ green | J-01a..J-01e (route.ts 1197 → 165 LOC) · all 14 handlers registered — **stream complete**. |
-| K | ✓ merged | #222 ✓ merged 2026-04-28 | ✅ green | K-01..K-15 done (K-09 FP) — **stream complete**. |
-| L | new branch TBD | #289 ✓ merged 2026-04-29 | ✅ green | L-06 done (8 SLOs). L-07 done (email alert sink + 25 tests). **L-08 pending** (PostHog events — advisor_selected, checkout_started, subscription_active, etc.). |
-| M | ✓ merged | #283 ✓ merged 2026-04-28 | ✅ green | M-01b done (per-article OG cover override + backfill script). M-02 pending. |
-| N | ✓ merged | #242 ✓ merged 2026-04-28 | ✅ green | N-01..N-11 done (N-04/N-05 FP, N-06 blocked) — **stream complete**. |
+| I | `claude/audit-remediation/i-new-04-main-ci-auto-revert` | #278 (draft) | pending — pushed 2026-04-28T16:14Z | I-NEW-01 done via #277 (`00ef2790`); I-NEW-02 hotfix `5b7937dc`; I-NEW-03 hotfix `4b050ed9`; I-NEW-05 race-fix `55d077bf`; **first real metrics snapshot landed 2026-04-28T16:12Z (grade F 0.0899 — Supabase secrets need to be set in GH Actions for non-zero on M04/M07/M08/M09/M10/M11/M12)**; I-NEW-04 in flight (auto-revert workflow `b42233fb`) |
+| J | `claude/audit-remediation/j-stripe-webhook` | #288 (draft) | pending — pushed 2026-04-29T22:30Z | J-01a..J-01e (route.ts 1197 → 165 LOC) · J-01d-ext (commit `bb1d56f6`) · J-03 (commit `b8e7189`) · J-05 (commit `d68852e`) · J-06 (commit `eedf582`) · J-08 (commit `e99aedc`) · J-09 (commit `e99aedc`) · J-10 (commit `e99aedc`) — all handlers complete (14 registered). Stream complete pending PR merge. |
+| K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-27T05:35Z | K-01..K-08 done; K-09 false-positive; K-10..K-15 done — **stream complete** |
+| L | `claude/audit-remediation/l-observability` | #289 (draft) | pending — pushed 2026-04-30T00:45Z | L-06 done (commit `12183619`) — 8 SLOs seeded. L-07 done (commit `824366e`) — email alert sink (OPS_ALERT_EMAIL pattern) + 25 tests. L-08 done (commit `832feed3`) — 6 new PostHog events + 22 tests. |
+| M | `claude/audit-remediation/m-01b-cover-image-backfill` | #283 (draft) | pending — pushed 2026-04-28T21:25Z | M-01b in flight (commit `19a0d7e6`) — per-article OG cover override + backfill script. M-02 on separate branch `claude/audit-remediation/m-02-versus-json-ld` (#296 draft) — commit `3ab1bacf`. |
+| N | `claude/audit-remediation/n-ux-perf` | #242 | pending — pushed 2026-04-27T13:30Z | N-01+N-02 done (`2ec6f89`) · N-03a done (`36e3f6d`) · N-03b done (`97bb9b00`) · N-03c done (`b29f443`) · N-04 FP · N-05 FP · N-06 blocked · N-07 batch 1 done (`2e5d8a4`) · N-07 batch 2 done (`91d0d42`) · N-08 done (`315d3b7`) · N-09 done (`3b43bf8`) · N-10 done (`0c33d71`) · N-11 done (`c2b769e`) — **stream complete** (N-06 blocked) |
 | O | `claude/audit-remediation/o-rls-no-policy` | merged via #235/#237/#239 | last pushed 2026-04-26 | O-01 iter1 done (`user_notifications`/`user_quiz_history`/`user_bookmarks`) · iter2 done `8e638bd` (`article_comments`/`article_reactions`) · iter3 done `c9c8fcd` (admin/audit cluster) · iter4 done `e965eb7` (14 observability/admin tables). ~34 tables remain for iter5+. |
 | P | _not started_ | — | — | — |
 | Q | _not started_ | — | — | — |
-| R | ✓ merged | #290 ✓ merged 2026-04-29 | ✅ green | R-01 done — marketplace allocation algorithm + CPC billing tests (738 LOC). |
+| R | _not started_ | — | — | — |
 | S | _not started_ | — | — | — |
-| V | ✓ merged | #252 ✓ merged 2026-04-28 | ✅ green | V-NEW-01/03/04 done. V-NEW-02 blocked (compliance factual-filter). |
-| V (V-NEW-06) | ✓ merged | #258 ✓ merged 2026-04-28 | ✅ green | V-NEW-06 done — AI cost caps + per-user-per-day budget. |
-| V (V-NEW-07) | ✓ merged | #256 ✓ merged 2026-04-28 | ✅ green | V-NEW-07a+07b done — admin MFA cookie gate + step-up UI. |
-| X | ✓ merged | #257 ✓ merged 2026-04-28 | ✅ green | X-01 done — decision matrix. X-02..X-09 pending. |
-| Y | ✓ merged | #253 ✓ merged 2026-04-28 | ✅ green | Y-05 done (DatedStatBadge + lib/dated-stats.ts). Y-08 done (dated-strings CI gate). Y-01..Y-04/Y-06/Y-07 pending. |
+| V | `claude/audit-remediation/v-polish-extras` | #252 | pending — pushed 2026-04-27T22:47Z (V-NEW-01: stale-dated-stats CI gate + 33 tests) | V-NEW-04 done (`5aadce3`) · CI-rescue `e37633c` · V-NEW-01 done (`a99c5db0`) · V-NEW-02 blocked (no compliance factual-filter) · V-NEW-03 done (`84bde1f`) |
+| V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 | pending — pushed 2026-04-27 | V-NEW-06 done (commit `a7bd736`) |
+| V (V-NEW-07) | `claude/audit-remediation/v-new-07-admin-mfa-enforced` | #256 | pending — test-fix pushed 2026-04-27T18:45Z | V-NEW-07a done (cookie helper + verify route + 22 tests) · V-NEW-07b done (`698bbae`) · test-fix `0561944` |
+| X | `claude/audit-remediation/x-admin-backlog` | #257 | pending — pushed 2026-04-27T18:23Z (X-01 decision matrix) | X-01 done — per-file decision matrix at `docs/audits/x-admin-backlog-decision-matrix.md`; X-02..X-09 parallel-eligible with W |
+| Y | `claude/audit-remediation/y-registry-nav` | #253 | pending — pushed 2026-04-27T19:25Z | Y-05 done (commit `fb9dec3`) · Y-08 done (commit `8bb1d4d`) |
 
 ---
 
@@ -237,7 +237,7 @@ Highest priority: critical 2 first.
 
 | ID | Status | Summary | Est. iterations | Notes |
 | --- | --- | --- | --- | --- |
-| E-01 | done | Author `lib/validation/withValidatedBody.ts` helper + tests | 1 | Done in commit `5d36e52` (PR #295, merged 2026-04-29). Pattern: `withValidatedBody(schema, async (req, body) => {...})`. |
+| E-01 | pending | Author `lib/validation/withValidatedBody.ts` helper + tests | 1 | Pattern: `withValidatedBody(schema, async (req, body) => {...})`. |
 | E-02 | pending | Convert top-20 highest-traffic routes to Zod (overlap with D-01..D-09) | ~5 | 4 routes per iteration. |
 | E-03 | pending | ESLint rule: flag new `await req.json()` without immediate `.parse()`/`.safeParse()` | 1 | Stream I. |
 | E-04 | pending | Backfill remaining ~206 routes (chunked: ~6 per iteration) | ~35 | Lowest priority within E; ongoing. |
@@ -357,7 +357,7 @@ Sentry is 95% there; PostHog funnel is half-blind; SLO framework exists but unse
 | L-05 | done | Validate `health_pings` ingestion path — currently empty in live; heartbeat cron either not running or not logging | — | **Resolved 2026-04-28T16:05Z by iter 84.** Same root cause as L-04 — the cron blackout (`_dispatch` Next.js private folder, then loopback auth, then loopback URL targeting Vercel deployment-protection wall). After PRs #270/#272/#276 deployed, `health_pings` started populating: 33 rows since 13:25:38Z (first heartbeat post-deploy), 12 rows in the last hour, 3 in the last 15 minutes — exactly matching the every-5-min cadence. No code change needed for L-05. |
 | L-06 | done | Seed `slo_definitions` with launch SLOs: lead p95<5min, advisor onboarding p95<1h, webhook delivery p95<10min, etc. | 1 | **Done in commit `12183619` (PR #289).** 8 SLOs seeded via idempotent `ON CONFLICT (name) DO UPDATE`: lead_delivery_p95_ms (300s), advisor_onboarding_p95_ms (1h), webhook_delivery_p95_ms (600s), api_success_rate (99.5%), cron_heartbeat_success_rate (99%), lead_queue_age_minutes (15min), webhook_retry_queue_age_minutes (30min), api_error_rate (1%). Migration: `supabase/migrations/20260602_seed_slo_definitions.sql`. |
 | L-07 | done | Wire SLO incident → Slack/PagerDuty/email alert sink (today writes to `slo_incidents` table only) | 1 | **Done in commit `824366e` (PR #289).** `lib/slo.ts`: added `notifyEmail()` using `OPS_ALERT_EMAIL \|\| SUPPORT_EMAIL` (consistent with `ai-cost-alerts.ts`, `cron-health-alert` pattern; fire-and-forget from `openIncident` for both warn + page severity). Slack + PagerDuty were already wired; this closes the email gap. Tests expanded 9→25 in `__tests__/lib/slo.test.ts`: `openIncident` (16 tests — no-op when unbreached, dedup, DB error, warn/page routing, no-env no-ops, SUPPORT_EMAIL fallback, Slack-throws swallowed, email subject, DB insert fields), `resolveIncident` (4 tests — DB update fields, no-PD-key, PD resolve event shape, PD-throws swallowed). |
-| L-08 | pending | Extend `lib/posthog/events.ts` with: `advisor_selected`, `checkout_started`, `subscription_active`, `advisor_apply_submitted`, `lead_responded_to`, `dispute_opened` | 1 | P1. Funnel half-blind without these. |
+| L-08 | done | Extend `lib/posthog/events.ts` with: `advisor_selected`, `checkout_started`, `subscription_active`, `advisor_apply_submitted`, `lead_responded_to`, `dispute_opened` | 1 | **Done in commit `832feed3` (PR #289).** Added 6 EventName literals + typed EventProps entries covering the full advisor-matching and monetisation funnel. 22 tests in `__tests__/lib/posthog-events.test.ts`: all 6 events, null-field variants, getDistinctId (3 cases), EventName union completeness. |
 | L-09 | pending | Wire `posthog.identify(userId)` at signup + login so anonymous→identified mapping stitches sessions | 1 | P1. |
 | L-10 | pending | Validate PostHog mirror webhook (`supabase/functions/posthog-webhook-ingest`) — table is empty in live, either webhook misconfigured or no events captured | 1 | P1. |
 | L-11 | pending | Validate `web_vitals_samples` ingestion — table empty, in-house pipeline at `/api/web-vitals/route.ts` may not be receiving | 1 | P2. |
@@ -371,7 +371,7 @@ The single highest-leverage finding (M-01: cover_image_url backfill) lives here.
 | --- | --- | --- | --- | --- |
 | M-01a | done | Site-wide default OpenGraph + Twitter card image — done out-of-loop in PR #227 | 1 | Resolved in PR #227 ("feat(seo): site-wide default opengraph-image + twitter-image (P0-6)") merged 2026-04-26T17:37Z. Adds the default fallback image so any page without a per-route OG override gets a branded card. |
 | M-01b | in flight | Per-article cover image backfill: populate `articles.cover_image_url` for the 266 published articles + ensure `app/article/[slug]/page.tsx` uses it for OG override | ~2 | P0 (residual). M-01a covered the site-wide default; this is the per-article custom-image work — still ~30–50% social-share CTR upside vs the generic default. Engineering side is one iteration (PR #283 — `generateMetadata` now prefers `cover_image_url` for OG/Twitter, with `/api/og` fallback; idempotent dry-run-by-default `scripts/backfill-cover-images.mjs` + `docs/runbooks/article-cover-image-backfill.md` ship the founder-runs procedure for the 266-row write). Closes when content batch lands the per-slug manifest. |
-| M-02 | pending | Versus pages (600+ URLs) — emit JSON-LD: `Article` + `BreadcrumbList` + per-side `FinancialProduct` review schema | 1 | P1. Currently zero structured data. |
+| M-02 | done | Versus pages (600+ URLs) — emit JSON-LD: `Article` + `BreadcrumbList` + per-side `FinancialProduct` review schema | 1 | **Done in commit `3ab1bacf` (PR #296, draft).** Added `versusComparisonJsonLd()` to `lib/schema-markup.ts`; updated `app/versus/[slugs]/page.tsx` to replace WebPage+ItemList with Article + individual FinancialProduct per broker side. BreadcrumbList + FAQPage unchanged. 14 new tests in `__tests__/lib/schema-markup.test.ts`. |
 | M-03 | pending | Advisor pages — switch schema type from `ProfessionalService` to `["ProfessionalService", "FinancialService"]` for financial planners + wealth managers | 1 | P1. Entity-disambiguation gain in financial queries. |
 | M-04 | pending | Article meta_title/meta_description fallback path: auto-generate from `articles.excerpt` + `category` when DB fields are null (43 articles affected) | 1 | P1. |
 | M-05 | pending | Glossary auto-linkifier — inline-link 200+ terms from `lib/glossary.ts` in article body content | ~2 | P2. Topical-relevance gain. |
@@ -1044,6 +1044,55 @@ Items that ship LAST, in the final week before launch (Month 4 of pre-launch roa
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-30T01:15Z — iteration 110 (stream D — D-11 batch 25 — admin: advisor-moderation, article-scorecard, automation/flags, bd-pipeline, article-templates)
+
+- Phase 0: resumed batch-mode fire (iter 5 of 5 in this session). Lock held.
+- Phase 1: synced main (iter 109 — M-02 done). Queue confirmed D-11 batch 25 as next item (admin routes).
+- Phase 2: CI on #285 pending (no failures to rescue). #296 (M-02) CI in-progress.
+- Phase 3: checked out claude/audit-remediation/d-route-tests.
+- Phase 4: identified 45 admin/* routes with only 2 tests. Selected 5 tractable routes (90–135 LOC each): advisor-moderation (PATCH+ADMIN_EMAILS), article-scorecard (GET+POST+requireAdmin), automation/flags (GET+POST+PATCH+requireAdmin+invalidateFlagCache), bd-pipeline (GET+POST+DELETE+ADMIN_EMAILS), article-templates (GET+requireAdmin).
+- Phase 5: wrote 5 test files (53 tests total). Mock patterns: requireAdmin() mocked directly for routes using that helper; createClient().auth.getUser() + ADMIN_EMAILS mock for routes using inline auth.
+- Phase 6: committed `fb4cce3c`; pushed to D branch.
+- Phase 7: D in-flight row updated (batch 25); this log entry on main.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 25 · pr=#285 · commit=`fb4cce3c` · diff=+879/-0 across 5 files · next=D-11 batch 26 (admin routes continued)
+- **BATCH COMPLETE** — 5 of 5 iterations done in this fire (107–110 + this)
+
+### 2026-04-30T01:00Z — iteration 109 (stream M — M-02 — versus pages JSON-LD)
+
+- Phase 0: resumed batch-mode fire (iter 4 of 5 in this session). Lock held.
+- Phase 1: synced main (iter 108 — L-08 done). Queue confirmed M-02 as next item.
+- Phase 2: CI on L #289 and D #285 pending (no failures to rescue).
+- Phase 3: created new branch claude/audit-remediation/m-02-versus-json-ld from main (M-02 is independent of M-01b cover-image work).
+- Phase 4: read app/versus/[slugs]/page.tsx — existing JSON-LD was WebPage+ItemList inline (not using schema-markup helpers). No Article or standalone FinancialProduct schemas present.
+- Phase 5: added versusComparisonJsonLd() to lib/schema-markup.ts returning Article + per-broker FinancialProduct array; updated versus page to use helper (removed inline jsonLd); added 14 tests to __tests__/lib/schema-markup.test.ts. Kept BreadcrumbList and FAQPage unchanged.
+- Phase 6: committed `3ab1bacf`; pushed new branch; created PR #296 (draft).
+- Phase 7: M in-flight row updated; M-02 marked done; this log entry on main.
+- STATUS: PROGRESS · stream=M · item=M-02 · pr=#296 · commit=`3ab1bacf` · diff=+178/-33 across 3 files · next=D-11 batch 25 (stream D, highest priority)
+
+### 2026-04-30T00:45Z — iteration 108 (stream L — L-08 — PostHog events extension)
+
+- Phase 0: resumed batch-mode fire (iter 3 of 5 in this session). Lock held.
+- Phase 1: synced main (iter 107 — D-11 batch 24 done). Queue confirmed L-08 as next item.
+- Phase 2: CI on #289 pending (no failures to rescue).
+- Phase 3: checked out claude/audit-remediation/l-observability from remote (not present locally after context refresh).
+- Phase 4: read lib/posthog/events.ts — 5 existing events (quiz_started, quiz_completed, advisor_viewed, advisor_contacted, lead_submitted); no test file existed. Confirmed 6 new events absent.
+- Phase 5: extended lib/posthog/events.ts with 6 new EventName literals + EventProps entries (advisor_selected, checkout_started, subscription_active, advisor_apply_submitted, lead_responded_to, dispute_opened). Created __tests__/lib/posthog-events.test.ts with 22 tests. No prod dependencies — pure typed schema extension.
+- Phase 6: committed `832feed3`; pushed to L branch.
+- Phase 7: L in-flight row updated (L-08 done); L-08 item marked done; this log entry on main.
+- STATUS: PROGRESS · stream=L · item=L-08 · pr=#289 · commit=`832feed3` · diff=+380/-0 across 2 files · next=M-02 (versus pages JSON-LD)
+
+### 2026-04-30T00:30Z — iteration 107 (stream D — D-11 batch 24 — webhooks/broker-signup, webhooks/resend, property/enquiry, property/listings, push/send)
+
+- Phase 0: resumed batch-mode fire (continued from context summary). Lock held from batch.
+- Phase 1: synced main (iter 106 — D-11 batch 23b done, J stream merged via #288). Queue showed "next=D-11 batch 25" but in-flight row had no batch 24 listed — renumbered as batch 24.
+- Phase 2: CI on #285 pending (no failures to rescue).
+- Phase 3: checked out D branch (was already on it with 5 untracked test files from previous context window).
+- Phase 4: verified all 5 routes absent from existing D branch tests.
+- Phase 5: wrote 5 test files (57 tests). webhooks/broker-signup POST+GET (11: Bearer auth, click→broker resolution, duplicate external_ref guard, broker_signups insert, PARTNER_API_KEY fallback, UTM extraction, GET→POST delegation). webhooks/resend (9: Svix verification, email.bounced/complained → 3 tables, delivery_delayed no-op, email_id fallback, DB throw). property/enquiry POST (13: rate-limit, honeypot, input validation, listing lookup, 24h duplicate guard, lead insert, developer billing, fire-and-forget email). property/listings GET (13: rate-limit, pagination metadata, page offset, sort ordering, city/firb/price filters, 500). push/send POST (11: admin-key+Bearer auth, topic enum, per-topic rate-limit, VAPID keys, push delivery, stale 410 cleanup, 500).
+- Phase 6: committed `b14460b`; pushed to D branch.
+- Phase 7: D in-flight row updated (batch 24); this log entry on main.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 24 · pr=#285 · commit=`b14460b` · diff=+1023/-0 across 5 files · next=D-11 batch 25
 
 ### 2026-04-30T00:10Z — iteration 106 (stream D — D-11 batch 23b — portfolio, marketplace/invoice, setup-payment-method, stripe checkout+cancel)
 

@@ -23,7 +23,7 @@
 export const CRON_GROUPS: Record<string, readonly string[]> = {
   "hourly-0": ["/api/cron/auto-resolve-disputes", "/api/cron/cron-health-alert"],
   "hourly-5": ["/api/cron/broker-snapshot"],
-  "hourly-15": ["/api/cron/automation-verdict-rollup"],
+  "hourly-15": ["/api/cron/automation-verdict-rollup", "/api/cron/quote-expiry-reminders"],
   "hourly-20": ["/api/cron/cron-freshness"],
   "hourly-30": ["/api/cron/embeddings-refresh"],
 
@@ -60,6 +60,7 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
     "/api/cron/ab-auto-promote",
     "/api/cron/revenue-reconciliation",
     "/api/cron/broker-review-invites",
+    "/api/cron/quote-review-requests",
   ],
   "daily-5": [
     "/api/cron/expire-deals",
