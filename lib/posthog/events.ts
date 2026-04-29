@@ -4,6 +4,12 @@ export type EventName =
   | 'advisor_viewed'
   | 'advisor_contacted'
   | 'lead_submitted'
+  | 'advisor_selected'
+  | 'checkout_started'
+  | 'subscription_active'
+  | 'advisor_apply_submitted'
+  | 'lead_responded_to'
+  | 'dispute_opened'
 
 export interface EventProps {
   quiz_started: {
@@ -37,6 +43,42 @@ export interface EventProps {
     quiz_completed: boolean
     utm_source: string | null
     utm_campaign: string | null
+  }
+  advisor_selected: {
+    advisor_id: number
+    advisor_name: string
+    selection_source: 'quiz_results' | 'search' | 'shortlist' | 'profile_page' | 'recommendation'
+    rank_position: number | null
+  }
+  checkout_started: {
+    product_type: 'advisor_subscription' | 'advisor_credits' | 'listing' | 'sponsored_booking' | 'course'
+    plan_id: string | null
+    amount_cents: number | null
+    source: string
+  }
+  subscription_active: {
+    plan_id: string
+    plan_name: string
+    amount_cents: number
+    interval: 'month' | 'year'
+    advisor_id: number | null
+  }
+  advisor_apply_submitted: {
+    application_type: 'new' | 'resubmit'
+    firm: string | null
+    city: string | null
+    specialisations: string[]
+  }
+  lead_responded_to: {
+    lead_id: string
+    response_time_hours: number | null
+    advisor_id: number
+    outcome: 'accepted' | 'declined' | 'no_outcome_set'
+  }
+  dispute_opened: {
+    dispute_type: 'review' | 'lead' | 'billing' | 'other'
+    subject_id: string
+    reason: string | null
   }
 }
 
