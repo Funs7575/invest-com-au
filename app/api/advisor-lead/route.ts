@@ -1,5 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { isRateLimited } from "@/lib/rate-limit";
 import { isValidEmail } from "@/lib/validate-email";
 import { isValidAuPhone } from "@/lib/validate-phone";
@@ -8,6 +9,32 @@ import { extractUtm, utmForInsert } from "@/lib/utm";
 import { captureServerEvent } from "@/lib/posthog/server";
 
 const log = logger("advisor-lead");
+
+/**
+ * Body schema. Field-level guards (AU phone, email format, consent flag)
+ * stay below so the existing per-error 400 messages and ordering are
+ * preserved bit-for-bit. Schema only types the shape, replacing the
+ * previous `body as { ... }` cast.
+ *
+ * `.passthrough()` keeps `utm_source`, `referrer`, `distinct_id` and similar
+ * extras visible to `extractUtm()` and the PostHog capture below — those
+ * are intentionally not enumerated here so adding a new tracking field
+ * doesn't require a schema bump.
+ */
+const AdvisorLeadSchema = z
+  .object({
+    name: z.string().optional(),
+    phone: z.string().optional(),
+    email: z.string().optional(),
+    advisor_type: z.string().optional(),
+    quiz_answers: z.record(z.string(), z.string()).optional(),
+    consent: z.boolean().optional(),
+    is_international: z.boolean().optional(),
+    investor_country: z.string().optional(),
+    visa_status: z.string().optional(),
+    investor_goal_intl: z.string().optional(),
+  })
+  .passthrough();
 
 const ADVISOR_LABELS: Record<string, string> = {
   "mortgage-broker": "Mortgage Broker",
@@ -128,14 +155,21 @@ async function syncToResendContacts(email: string, name: string): Promise<void> 
 }
 
 export async function POST(request: NextRequest) {
-  let body: Record<string, unknown>;
+  let raw: unknown;
   try {
-    body = await request.json();
+    raw = await request.json();
   } catch (err) {
     log.warn("advisor-lead invalid JSON", { err: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
+  const parsedBody = AdvisorLeadSchema.safeParse(raw);
+  if (!parsedBody.success) {
+    // Hard schema mismatch (e.g. `name: 123`) — surface the same generic
+    // 400 the field-level guards below would have produced.
+    return NextResponse.json({ error: "Full name is required" }, { status: 400 });
+  }
+  const body = parsedBody.data;
   const {
     name,
     phone,
@@ -147,31 +181,20 @@ export async function POST(request: NextRequest) {
     investor_country,
     visa_status,
     investor_goal_intl,
-  } = body as {
-    name?: string;
-    phone?: string;
-    email?: string;
-    advisor_type?: string;
-    quiz_answers?: Record<string, string>;
-    consent?: boolean;
-    is_international?: boolean;
-    investor_country?: string;
-    visa_status?: string;
-    investor_goal_intl?: string;
-  };
+  } = body;
 
   // Validation
-  if (!name || typeof name !== "string" || name.trim().length < 2) {
+  if (!name || name.trim().length < 2) {
     return NextResponse.json({ error: "Full name is required" }, { status: 400 });
   }
   // International users may have non-AU phone numbers — only validate AU format for domestic leads
-  if (!is_international && (!phone || !isValidAuPhone(phone as string))) {
+  if (!is_international && (!phone || !isValidAuPhone(phone))) {
     return NextResponse.json({ error: "Valid Australian phone number is required" }, { status: 400 });
   }
-  if (is_international && (!phone || (phone as string).trim().length < 6)) {
+  if (is_international && (!phone || phone.trim().length < 6)) {
     return NextResponse.json({ error: "Phone number is required" }, { status: 400 });
   }
-  if (!isValidEmail(email as string)) {
+  if (!email || !isValidEmail(email)) {
     return NextResponse.json({ error: "Valid email address is required" }, { status: 400 });
   }
   if (!consent) {
@@ -185,14 +208,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
   }
 
-  const utm = extractUtm(body);
+  // `raw` is the un-narrowed JSON object so utm/distinct_id passthrough fields
+  // (not part of the declared schema) remain visible to extractors below.
+  const utm = extractUtm(raw as Record<string, unknown>);
   const supabase = createAdminClient();
 
   const sanitizedName = name.trim().slice(0, 100);
   const sanitizedPhone = (phone || "").trim().slice(0, 30);
-  const sanitizedEmail = (email as string).trim().toLowerCase().slice(0, 254);
+  const sanitizedEmail = email.trim().toLowerCase().slice(0, 254);
   const sanitizedAdvisorType = (advisor_type || "not-sure").slice(0, 50);
-  const sanitizedAnswers = quiz_answers && typeof quiz_answers === "object" ? quiz_answers : {};
+  const sanitizedAnswers = quiz_answers ?? {};
   const isIntl = Boolean(is_international);
 
   // Store lead in email_captures with rich context
@@ -237,8 +262,9 @@ export async function POST(request: NextRequest) {
     syncToResendContacts(sanitizedEmail, sanitizedName),
   ]).catch((err) => log.error("Post-lead tasks failed", { error: String(err) }));
 
-  const distinctId = typeof (body as { distinct_id?: unknown }).distinct_id === "string"
-    ? ((body as { distinct_id: string }).distinct_id)
+  const rawObj = (raw && typeof raw === "object" ? raw : {}) as Record<string, unknown>;
+  const distinctId = typeof rawObj.distinct_id === "string"
+    ? rawObj.distinct_id
     : `anonymous-lead-${crypto.randomUUID()}`;
   captureServerEvent(distinctId, "lead_submitted", {
     lead_source: isIntl ? "advisor-lead-international" : "advisor-lead",

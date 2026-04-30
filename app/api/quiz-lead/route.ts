@@ -1,10 +1,26 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { isAllowed, ipKey } from '@/lib/rate-limit-db';
 import { isValidEmail, isDisposableEmail } from '@/lib/validate-email';
 import { logger } from '@/lib/logger';
 import { recordQuizSubmission } from '@/lib/quiz-history';
 import { createClient } from '@/lib/supabase/server';
+
+/**
+ * Body schema. Mirrors the previous `body as { ... }` cast — every field is
+ * optional and permissive. Strict semantic validation (email format, disposable
+ * domains) lives below; this schema only types the shape and silently coerces
+ * non-array `answers` to undefined, preserving the route's pre-existing
+ * `Array.isArray(answers) ? answers.slice(...) : []` fallback.
+ */
+const QuizLeadSchema = z.object({
+  email: z.string().optional(),
+  name: z.string().optional(),
+  answers: z.array(z.string()).optional().catch(undefined),
+  top_match_slug: z.string().optional(),
+  session_id: z.string().optional(),
+});
 
 const log = logger('quiz-lead');
 
@@ -207,22 +223,26 @@ async function syncToResendContacts(
 }
 
 export async function POST(request: NextRequest) {
-  let body: Record<string, unknown>;
+  let raw: unknown;
   try {
-    body = await request.json();
+    raw = await request.json();
   } catch {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
   }
 
-  const { email, name, answers, top_match_slug, session_id } = body as {
-    email?: string; name?: string; answers?: string[]; top_match_slug?: string; session_id?: string;
-  };
+  const parsed = QuizLeadSchema.safeParse(raw);
+  if (!parsed.success) {
+    // Schema only fails on hard type mismatches (e.g. `email: 123`). Match
+    // the existing 400 envelope so client error rendering is unchanged.
+    return NextResponse.json({ error: 'Valid email required' }, { status: 400 });
+  }
+  const { email, name, answers, top_match_slug, session_id } = parsed.data;
   // Validate email
-  if (!isValidEmail(email as string)) {
+  if (!email || !isValidEmail(email)) {
     return NextResponse.json({ error: 'Valid email required' }, { status: 400 });
   }
 
-  if (isDisposableEmail(email as string)) {
+  if (isDisposableEmail(email)) {
     return NextResponse.json({ error: 'Please use a real email address.' }, { status: 400 });
   }
 
@@ -233,9 +253,9 @@ export async function POST(request: NextRequest) {
 
   const supabase = createAdminClient();
 
-  const sanitizedEmail = (email as string).trim().toLowerCase().slice(0, 254);
-  const sanitizedName = (typeof name === 'string' ? name.trim().slice(0, 100) : null) || null;
-  const safeAnswers = Array.isArray(answers) ? answers.slice(0, 10) : [];
+  const sanitizedEmail = email.trim().toLowerCase().slice(0, 254);
+  const sanitizedName = (name ? name.trim().slice(0, 100) : null) || null;
+  const safeAnswers = answers ? answers.slice(0, 10) : [];
 
   // Parse quiz answers into lead qualification fields
   const experienceLevel = safeAnswers.find(a => EXPERIENCE_MAP[a]) || null;
@@ -247,7 +267,7 @@ export async function POST(request: NextRequest) {
     email: sanitizedEmail,
     name: sanitizedName,
     answers: safeAnswers,
-    top_match_slug: typeof top_match_slug === 'string' ? top_match_slug.slice(0, 100) : null,
+    top_match_slug: top_match_slug ? top_match_slug.slice(0, 100) : null,
     experience_level: experienceLevel ? EXPERIENCE_MAP[experienceLevel] : null,
     investment_range: investmentRange ? INVESTMENT_MAP[investmentRange] : null,
     trading_interest: tradingInterest ? INTEREST_MAP[tradingInterest] : null,
@@ -271,7 +291,7 @@ export async function POST(request: NextRequest) {
   });
 
   // Send personalized quiz results email (fire-and-forget)
-  const safeTopMatch = typeof top_match_slug === 'string' ? top_match_slug.slice(0, 100) : null;
+  const safeTopMatch = top_match_slug ? top_match_slug.slice(0, 100) : null;
   if (safeTopMatch) {
     sendQuizResultsEmail(
       sanitizedEmail,
@@ -291,8 +311,7 @@ export async function POST(request: NextRequest) {
   try {
     const authSupabase = await createClient();
     const { data: { user } } = await authSupabase.auth.getUser();
-    const safeSessionId =
-      typeof session_id === 'string' ? session_id.slice(0, 100) : null;
+    const safeSessionId = session_id ? session_id.slice(0, 100) : null;
     if (user?.id || safeSessionId) {
       await recordQuizSubmission({
         userId: user?.id ?? null,
