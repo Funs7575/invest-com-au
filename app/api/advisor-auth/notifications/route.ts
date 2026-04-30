@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { requireAdvisorSession } from "@/lib/require-advisor-session";
 
 const DEFAULT_PREFS = {
   new_lead: true,
@@ -9,34 +9,8 @@ const DEFAULT_PREFS = {
   review_new: false,
 };
 
-async function getAdvisorId(request: NextRequest): Promise<number | null> {
-  const supabase = await createClient();
-  const admin = createAdminClient();
-
-  const { data: { user } } = await supabase.auth.getUser();
-  if (user) {
-    const { data: advisor } = await admin
-      .from("professionals")
-      .select("id")
-      .or(`auth_user_id.eq.${user.id},email.eq.${user.email}`)
-      .in("status", ["active", "pending"])
-      .maybeSingle();
-    if (advisor) return advisor.id;
-  }
-
-  const sessionToken = request.cookies.get("advisor_session")?.value;
-  if (!sessionToken) return null;
-  const { data } = await admin
-    .from("advisor_sessions")
-    .select("professional_id, expires_at")
-    .eq("session_token", sessionToken)
-    .single();
-  if (!data || new Date(data.expires_at) < new Date()) return null;
-  return data.professional_id;
-}
-
 export async function GET(request: NextRequest) {
-  const advisorId = await getAdvisorId(request);
+  const advisorId = await requireAdvisorSession(request);
   if (!advisorId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
 
   const admin = createAdminClient();
@@ -58,7 +32,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function PATCH(request: NextRequest) {
-  const advisorId = await getAdvisorId(request);
+  const advisorId = await requireAdvisorSession(request);
   if (!advisorId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
 
   const body = await request.json().catch(() => null);
