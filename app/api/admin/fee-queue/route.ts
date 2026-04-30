@@ -20,6 +20,7 @@ async function requireAdmin() {
   ) {
     return null;
   }
+  setLoggerUser(user);
   return user;
 }
 

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/client";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 import { getAdminEmails } from "@/lib/admin";
 
 const log = logger("broker-deals");
@@ -17,6 +16,7 @@ async function getBrokerSlug(request: NextRequest): Promise<{ slug: string; acco
   );
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return null;
+  setLoggerUser(user);
 
   const admin = createAdminClient();
   const { data: account } = await admin

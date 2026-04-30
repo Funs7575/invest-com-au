@@ -1,7 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient as createServerClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 import { ADMIN_EMAILS } from "@/lib/admin";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 
@@ -25,6 +25,7 @@ export async function POST(request: NextRequest) {
   ) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  setLoggerUser(user);
 
   // Parse body
   let body: Record<string, unknown>;

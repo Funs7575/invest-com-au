@@ -3,7 +3,7 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isRateLimited } from "@/lib/rate-limit";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 import { QUOTE_ADVISOR_TYPES, QUOTE_AU_STATES, QUOTE_BUDGET_BANDS } from "@/lib/api-schemas";
 
 const log = logger("advisor-marketplace-settings");
@@ -30,6 +30,7 @@ async function loadAdvisor() {
   const supa = await createClient();
   const { data: { user } } = await supa.auth.getUser();
   if (!user?.email) return null;
+  setLoggerUser(user);
   const admin = createAdminClient();
   const { data: pro } = await admin
     .from("professionals")

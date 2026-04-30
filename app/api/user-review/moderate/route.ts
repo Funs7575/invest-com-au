@@ -1,7 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient as createServerClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
-import { logger } from '@/lib/logger';
+import { logger, setLoggerUser } from '@/lib/logger';
 import { notificationFooter } from '@/lib/email-templates';
 import { ADMIN_EMAILS } from "@/lib/admin";
 
@@ -14,6 +14,7 @@ export async function POST(request: NextRequest) {
   if (authError || !user || !ADMIN_EMAILS.includes(user.email?.toLowerCase() || '')) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
+  setLoggerUser(user);
 
   // Parse body
   let body: Record<string, unknown>;

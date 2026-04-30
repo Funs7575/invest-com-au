@@ -29,6 +29,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getAdminEmails } from "@/lib/admin";
+import { setLoggerUser } from "@/lib/logger";
 
 export interface AdminGuardOk {
   ok: true;
@@ -60,5 +61,6 @@ export async function requireAdmin(): Promise<AdminGuardResult> {
       response: NextResponse.json({ error: "Forbidden" }, { status: 403 }),
     };
   }
+  setLoggerUser(user);
   return { ok: true, email: user.email, userId: user.id };
 }

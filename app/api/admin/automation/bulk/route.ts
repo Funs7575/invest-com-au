@@ -57,6 +57,7 @@ export async function POST(request: NextRequest) {
   if (!adminEmails.includes(user.email.toLowerCase())) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
+  setLoggerUser(user);
 
   const body = await request.json().catch(() => ({}));
   const feature: string | null = typeof body.feature === "string" ? body.feature : null;

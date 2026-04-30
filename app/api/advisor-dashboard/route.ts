@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { setLoggerUser } from "@/lib/logger";
 
 async function getAdvisorId(request: NextRequest): Promise<number | null> {
   const sessionToken = request.cookies.get("advisor_session")?.value;
@@ -11,6 +12,7 @@ async function getAdvisorId(request: NextRequest): Promise<number | null> {
     .eq("session_token", sessionToken)
     .single();
   if (!data || new Date(data.expires_at) < new Date()) return null;
+  setLoggerUser({ id: String(data.professional_id) });
   return data.professional_id;
 }
 
@@ -22,7 +24,7 @@ export async function GET(request: NextRequest) {
   const supabase = await createClient();
   const now = new Date();
   const thirtyDaysAgo = new Date(now.getTime() - 30 * 86400000).toISOString();
-  const eightWeeksAgo = new Date(now.getTime() - 56 * 86400000).toISOString();
+  const _eightWeeksAgo = new Date(now.getTime() - 56 * 86400000).toISOString();
 
   const [
     { data: advisor },
