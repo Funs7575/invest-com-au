@@ -124,28 +124,38 @@ jobs:
         run: |
           set -eu
           short_sha=$(echo "${SHA}" | cut -c1-8)
+          # Body via temp file (heredoc-with-tabs would lose Markdown bullets;
+          # writing to a file keeps the body readable and avoids the
+          # YAML-block-scalar dedent issue that would otherwise break the
+          # workflow file when --body's content de-indents to column 0).
+          body_file=$(mktemp)
+          cat >"${body_file}" <<BODY_EOF
+          ## Auto-revert
+
+          The CI run on main for commit \`${short_sha}\` failed:
+
+          - **Failing commit:** ${SHA}
+          - **Subject:** ${SUBJECT}
+          - **CI run:** ${RUN_URL}
+
+          This PR reverts that commit so main is green again. Review the failure
+          above before merging — if the failure was a flake or unrelated to the
+          diff, close this PR and comment \`STOP\` on the original commit's run
+          to prevent future auto-reverts of the same SHA.
+
+          To prevent auto-revert in future, add \`[skip-revert]\` to the commit
+          message subject.
+
+          Layer 4 safeguard from \`docs/audits/MERGE_AUTHORIZATION.md\`.
+          BODY_EOF
+          # Strip the 10-space indent that the YAML block requires.
+          sed -i 's/^          //' "${body_file}"
           gh pr create \
             --base main \
             --head "${BRANCH}" \
             --draft \
             --title "revert: ${SUBJECT}" \
-            --body "## Auto-revert
-
-The CI run on main for commit \`${short_sha}\` failed:
-
-- **Failing commit:** ${SHA}
-- **Subject:** ${SUBJECT}
-- **CI run:** ${RUN_URL}
-
-This PR reverts that commit so main is green again. Review the failure
-above before merging — if the failure was a flake or unrelated to the
-diff, close this PR and comment \`STOP\` on the original commit's run
-to prevent future auto-reverts of the same SHA.
-
-To prevent auto-revert in future, add \`[skip-revert]\` to the commit
-message subject.
-
-Layer 4 safeguard from \`docs/audits/MERGE_AUTHORIZATION.md\`."
+            --body-file "${body_file}"
 
       - name: Comment on failing commit
         if: ${{ steps.inspect.outputs.skip == '' }}
