@@ -6,7 +6,7 @@ import { isRateLimited } from "@/lib/rate-limit";
 import { notificationFooter } from "@/lib/email-templates";
 import { getSiteUrl } from "@/lib/url";
 import { getAdminEmail, getAdminEmails } from "@/lib/admin";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 
 const log = logger("advisor-articles");
 
@@ -17,7 +17,9 @@ async function verifyAdmin(): Promise<string | null> {
   const supabase = await createClient();
   const { data: { user }, error } = await supabase.auth.getUser();
   if (error || !user) return null;
-  return getAdminEmails().includes(user.email?.toLowerCase() || "") ? user.email! : null;
+  if (!getAdminEmails().includes(user.email?.toLowerCase() || "")) return null;
+  setLoggerUser(user);
+  return user.email!;
 }
 
 function calcWordCount(text: string): number {

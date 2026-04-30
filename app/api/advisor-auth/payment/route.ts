@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getStripe } from "@/lib/stripe";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 import { getSiteUrl } from "@/lib/url";
 
 const log = logger("advisor-payment");
@@ -41,6 +41,7 @@ export async function POST(request: NextRequest) {
     if (!advisorSession) {
       return NextResponse.json({ error: "Invalid or expired session" }, { status: 401 });
     }
+    setLoggerUser({ id: String(advisorSession.professional_id) });
 
     let body: Partial<PaymentBody>;
 

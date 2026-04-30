@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 
 const log = logger("advisor-auth:firm:member");
 
@@ -25,6 +25,7 @@ async function getFirmAdmin(request: NextRequest) {
     .single();
 
   if (!advisor?.is_firm_admin || !advisor.firm_id) return null;
+  setLoggerUser({ id: String(advisor.id) });
   return advisor;
 }
 

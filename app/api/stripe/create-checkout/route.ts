@@ -2,7 +2,7 @@ import { getStripe, PLANS } from "@/lib/stripe";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 import { getSiteUrl } from "@/lib/url";
 
 const log = logger("stripe");
@@ -18,6 +18,7 @@ export async function POST(request: NextRequest) {
     if (!user) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
+    setLoggerUser(user);
 
     // Parse plan from body
     const body = await request.json();

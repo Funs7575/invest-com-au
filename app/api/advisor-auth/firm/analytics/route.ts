@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 
 const log = logger("advisor-auth:firm:analytics");
 
@@ -30,6 +30,7 @@ export async function GET(request: NextRequest) {
     if (!advisor?.firm_id) {
       return NextResponse.json({ error: "Not in a firm" }, { status: 403 });
     }
+    setLoggerUser({ id: String(advisor.id) });
 
     const adminSupabase = createAdminClient();
 

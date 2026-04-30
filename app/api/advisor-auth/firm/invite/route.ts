@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { randomBytes } from "crypto";
 import { sendFirmInvitation } from "@/lib/advisor-emails";
 import { getSiteUrl } from "@/lib/url";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 
 const log = logger("advisor-auth:firm:invite");
 
@@ -35,6 +35,7 @@ export async function POST(request: NextRequest) {
     if (!advisor?.is_firm_admin || !advisor.firm_id) {
       return NextResponse.json({ error: "Only firm admins can invite members" }, { status: 403 });
     }
+    setLoggerUser({ id: String(advisor.id) });
 
     // Get firm details
     const { data: firm } = await supabase

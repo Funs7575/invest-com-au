@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendAdminNotification } from "@/lib/advisor-emails";
 import { escapeHtml } from "@/lib/html-escape";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 
 const log = logger("advisor-auth:firm:seat-request");
 
@@ -32,6 +32,7 @@ export async function POST(request: NextRequest) {
     if (!advisor?.is_firm_admin || !advisor.firm_id) {
       return NextResponse.json({ error: "Only firm admins can request seat upgrades" }, { status: 403 });
     }
+    setLoggerUser({ id: String(advisor.id), email: advisor.email });
 
     const { data: firm } = await supabase
       .from("advisor_firms")
