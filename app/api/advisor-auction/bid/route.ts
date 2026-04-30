@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 import { sendConsumerBidReceivedEmail } from "@/lib/quote-emails";
 
 const log = logger("advisor-auction-bid");
@@ -22,6 +22,7 @@ export async function POST(request: NextRequest) {
         { status: 401 }
       );
     }
+    setLoggerUser(user);
 
     const body = await request.json();
     const { auction_id, bid_amount } = body;

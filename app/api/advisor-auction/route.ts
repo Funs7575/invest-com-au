@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 
 const log = logger("advisor-auction");
 
@@ -111,6 +111,7 @@ async function getAuctions(request: NextRequest) {
         { status: 401 }
       );
     }
+    setLoggerUser(user);
 
     const advisorId = request.nextUrl.searchParams.get("advisor_id");
     if (!advisorId) {

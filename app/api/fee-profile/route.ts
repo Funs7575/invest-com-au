@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 
 const log = logger("fee-profile");
@@ -15,6 +15,7 @@ export async function GET() {
     if (!user) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
+    setLoggerUser(user);
 
     const { data: profile } = await supabase
       .from("fee_profiles")
@@ -45,6 +46,7 @@ export async function POST(request: NextRequest) {
     if (!user) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
+    setLoggerUser(user);
 
     // Check Pro subscription
     const { data: subscription } = await supabase

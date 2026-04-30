@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 import { ADMIN_EMAILS } from "@/lib/admin";
 import { isRateLimited } from "@/lib/rate-limit";
 
@@ -33,6 +33,7 @@ export async function PATCH(
     if (authError || !user) {
       return NextResponse.json({ error: "Authentication required" }, { status: 401 });
     }
+    setLoggerUser(user);
 
     // 30 edits per minute per user — see threads/[id]/route.ts for rationale.
     if (await isRateLimited(`community_post_edit:${user.id}`, 30, 60)) {
@@ -101,6 +102,7 @@ export async function DELETE(
     if (authError || !user) {
       return NextResponse.json({ error: "Authentication required" }, { status: 401 });
     }
+    setLoggerUser(user);
 
     // 10 deletions per minute per user — see threads/[id]/route.ts for rationale.
     if (await isRateLimited(`community_post_delete:${user.id}`, 10, 60)) {

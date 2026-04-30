@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 
 const log = logger("saved-comparisons");
 
@@ -21,6 +21,7 @@ export async function GET(
     if (!user) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
+    setLoggerUser(user);
 
     const { data: comparison, error } = await supabase
       .from("user_saved_comparisons")
@@ -54,6 +55,7 @@ export async function PATCH(
     if (!user) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
+    setLoggerUser(user);
 
     const body = await request.json();
 
@@ -109,6 +111,7 @@ export async function DELETE(
     if (!user) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
+    setLoggerUser(user);
 
     const { error } = await supabase
       .from("user_saved_comparisons")
