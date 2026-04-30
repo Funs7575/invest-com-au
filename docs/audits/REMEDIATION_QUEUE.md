@@ -36,7 +36,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | J | `claude/audit-remediation/j-stripe-webhook` | #288 (draft) | pending — pushed 2026-04-29T22:30Z | J-01a..J-01e (route.ts 1197 → 165 LOC) · J-01d-ext (commit `bb1d56f6`) · J-03 (commit `b8e7189`) · J-05 (commit `d68852e`) · J-06 (commit `eedf582`) · J-08 (commit `e99aedc`) · J-09 (commit `e99aedc`) · J-10 (commit `e99aedc`) — all handlers complete (14 registered). Stream complete pending PR merge. |
 | K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-27T05:35Z | K-01..K-08 done; K-09 false-positive; K-10..K-15 done — **stream complete** |
 | L | `claude/audit-remediation/l-observability` | #289 (draft) | pending — pushed 2026-04-30T (iter 145b, L-12b fully complete) | L-06..L-11 done. L-12a done (`20f5e6c`). L-12b batches 1-6: 63 routes. Batch 7 (`d88ca44`): 10 admin routes. Batch 7b (`eee5f1f5`): lib/require-admin (19 routes) + 5 direct. Batch 8 (`0db941e4`): 9 routes. Batch 8b (`dc67fff4`): advisor-photo, analytics-dashboard, broker-portal/invoices/pdf, stripe/create-contract. **L-12b fully complete — all authenticated routes tagged, cron/cleanup confirmed FP (requireCronAuth, no user identity).** |
-| M | `claude/audit-remediation/m-01b-cover-image-backfill` | #283 (draft) | pending — pushed 2026-04-29T (iter 132) | M-01b in flight (commit `19a0d7e6`) — per-article OG cover override + backfill script. M-02 on separate branch `claude/audit-remediation/m-02-versus-json-ld` (#296 draft) — commit `3ab1bacf`. M-03 done (commit `85c7236`). M-04 done (commit `353fa3a`) — meta_title/description added to Article type + generateMetadata fallback chain. |
+| M | `claude/audit-remediation/m-01b-cover-image-backfill` | #283 (draft) | pending — pushed 2026-04-30T (iter 146, M-07 domain migration plan) | M-01b in flight (commit `19a0d7e6`) — per-article OG cover override + backfill script. M-02 on separate branch `claude/audit-remediation/m-02-versus-json-ld` (#296 draft) — commit `3ab1bacf`. M-03 done (commit `85c7236`). M-04 done (commit `353fa3a`) — meta_title/description added to Article type + generateMetadata fallback chain. M-07 done (commit `32609ec`) — domain migration runbook. |
 | N | `claude/audit-remediation/n-ux-perf` | #242 | pending — pushed 2026-04-27T13:30Z | N-01+N-02 done (`2ec6f89`) · N-03a done (`36e3f6d`) · N-03b done (`97bb9b00`) · N-03c done (`b29f443`) · N-04 FP · N-05 FP · N-06 blocked · N-07 batch 1 done (`2e5d8a4`) · N-07 batch 2 done (`91d0d42`) · N-08 done (`315d3b7`) · N-09 done (`3b43bf8`) · N-10 done (`0c33d71`) · N-11 done (`c2b769e`) — **stream complete** (N-06 blocked) |
 | O | `claude/audit-remediation/o-rls-no-policy` | merged via #235/#237/#239 | last pushed 2026-04-26 | O-01 iter1 done (`user_notifications`/`user_quiz_history`/`user_bookmarks`) · iter2 done `8e638bd` (`article_comments`/`article_reactions`) · iter3 done `c9c8fcd` (admin/audit cluster) · iter4 done `e965eb7` (14 observability/admin tables). ~34 tables remain for iter5+. |
 | P | _not started_ | — | — | — |
@@ -409,7 +409,7 @@ The single highest-leverage finding (M-01: cover_image_url backfill) lives here.
 | M-04 | done | Article meta_title/meta_description fallback path: auto-generate from `articles.excerpt` + `category` when DB fields are null (43 articles affected) | 1 | P1. Done commit `353fa3a` (iter 131). Added meta_title/meta_description to Article type; generateMetadata now uses them with excerpt → auto-generated fallback chain. |
 | M-05 | pending | Glossary auto-linkifier — inline-link 200+ terms from `lib/glossary.ts` in article body content | ~2 | P2. Topical-relevance gain. |
 | M-06 | pending | Render `articles.related_advisor_types` and `articles.related_verticals` as internal links on article pages | 1 | P2. |
-| M-07 | pending | Document domain-migration plan for Oct-Dec 2026 cutover (Vercel domain alias, GSC change-of-address, 301 mapping, registrar steps) | 1 | P0 — timing-bound. Doc-only this iteration; activation at Q4 via Domain Migration Agent #16. |
+| M-07 | done | Document domain-migration plan for Oct-Dec 2026 cutover (Vercel domain alias, GSC change-of-address, 301 mapping, registrar steps) | 1 | Done in commit `32609ec` (PR #283). `docs/runbooks/domain-migration.md` — 6-phase runbook: pre-migration audit (URL inventory, GSC baseline, authority snapshot, legacy redirect map) → DNS TTL reduction (T-14d) → Vercel custom domain + TXT verification (T-7d) → GSC property + change-of-address (T-7d) → final checklist (T-1d) → T=0 cutover (DNS + NEXT_PUBLIC_SITE_URL env var) → post-cutover monitoring (T+1h/24h/7d/30d/90d) + rollback. Key finding: only ONE env var change at T=0 propagates to all canonical tags, sitemap, robots.txt, schema.org URLs, Stripe URLs, email links. |
 
 ### Stream N — UI/UX P0/P1 (audit §6)
 
@@ -1175,6 +1175,22 @@ Two strategically important surfaces under-served by current nav: (1) investment
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-30T — iteration 146 (stream M — M-07 — domain migration runbook)
+
+- Phase 0: batch-mode iteration 2/5. Lock active from batch start.
+- Phase 1: pulled main (1a87373). L-12b fully done per iter 145b queue update. Next stream = M.
+- Phase 1.5: types-drift skipped (no DB schema change).
+- Phase 2: CI checked for PR #283 (M branch) — all checks green. No rescue needed.
+- Phase 3: M-07 is the first non-blocked, non-done M item by priority (P0 timing-bound, doc-only). M-05/M-06 are P2 and longer. Picked M-07.
+- Phase 4: doc-only item — no verification gate required. Checked existing runbooks and COMPANY.md for context.
+- Phase 5: wrote `docs/runbooks/domain-migration.md` (422 lines). No TS changes.
+- Phase 6: committed `32609ec`; pushed to `claude/audit-remediation/m-01b-cover-image-backfill` (PR #283) cleanly.
+- Phase 7: M in-flight row updated; M-07 marked done; this entry on main.
+
+- STATUS: PROGRESS · stream=M · item=M-07 · pr=#283 · commit=`32609ec` · diff=+422 across 1 file
+- Next item: M-05 (glossary auto-linkifier, P2) or M-06 (related_advisor_types links, P2)
+- Remaining: M-05 pending · M-06 pending · M-07 done · B-08/B-09 pending · C-02..C-08 pending
 
 ### 2026-04-30T (this fire) — iteration 145b (stream L — L-12b batch 8b — final 4 routes)
 
