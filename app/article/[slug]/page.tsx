@@ -44,6 +44,44 @@ const CALC_NAMES: Record<string, { name: string; iconName: string }> = {
   "calc-chess": { name: "CHESS Lookup Tool", iconName: "shield-check" },
 };
 
+const RELATED_VERTICAL_MAP: Record<string, { label: string; href: string }> = {
+  "oil-gas":          { label: "Oil & Gas",          href: "/invest/oil-gas" },
+  "uranium":          { label: "Uranium",             href: "/invest/uranium" },
+  "hydrogen":         { label: "Hydrogen",            href: "/invest/hydrogen" },
+  "lithium":          { label: "Lithium",             href: "/invest/lithium" },
+  "mining":           { label: "Mining",              href: "/invest/mining" },
+  "funds":            { label: "Investment Funds",    href: "/invest/funds" },
+  "gold":             { label: "Gold",                href: "/invest/gold" },
+  "smsf":             { label: "SMSF",                href: "/smsf" },
+  "etfs":             { label: "ETFs",                href: "/etfs" },
+  "cfd":              { label: "CFDs & Forex",        href: "/cfd" },
+  "crypto":           { label: "Crypto",              href: "/crypto" },
+  "share-trading":    { label: "Share Trading",       href: "/share-trading" },
+  "property":         { label: "Property",            href: "/property-platforms" },
+  "renewable-energy": { label: "Renewable Energy",   href: "/invest/renewable-energy" },
+  "private-equity":   { label: "Private Equity",     href: "/invest/private-equity" },
+  "bonds":            { label: "Bonds",               href: "/invest/bonds" },
+};
+
+const RELATED_ADVISOR_TYPE_MAP: Record<string, { label: string; href: string }> = {
+  "financial_planner":             { label: "Financial Planner",              href: "/advisors/financial-planners" },
+  "smsf_accountant":               { label: "SMSF Accountant",               href: "/advisors/smsf-accountants" },
+  "smsf_specialist":               { label: "SMSF Specialist",               href: "/advisors/smsf-specialists" },
+  "smsf_auditor":                  { label: "SMSF Auditor",                  href: "/smsf/auditors" },
+  "mortgage_broker":               { label: "Mortgage Broker",               href: "/advisors/mortgage-brokers" },
+  "buyers_agent":                  { label: "Buyers Agent",                  href: "/advisors/buyers-agents" },
+  "migration_agent":               { label: "Migration Agent",               href: "/advisors/migration-agents" },
+  "mining_lawyer":                 { label: "Mining Lawyer",                 href: "/advisors/mining-lawyers" },
+  "mining_tax_advisor":            { label: "Mining Tax Advisor",            href: "/advisors/mining-tax-advisors" },
+  "foreign_investment_lawyer":     { label: "Foreign Investment Lawyer",     href: "/advisors/foreign-investment-lawyers" },
+  "immigration_investment_lawyer": { label: "Immigration Investment Lawyer", href: "/advisors/immigration-investment-lawyers" },
+  "resources_fund_manager":        { label: "Resources Fund Manager",        href: "/advisors/resources-fund-managers" },
+  "energy_financial_planner":      { label: "Energy Financial Planner",      href: "/advisors/energy-financial-planners" },
+  "fund_manager":                  { label: "Fund Manager",                  href: "/advisors/fund-managers" },
+  "stockbroker_firm":              { label: "Stockbroker",                   href: "/compare" },
+  "petroleum_royalties_advisor":   { label: "Petroleum Royalties Advisor",   href: "/advisors/petroleum-royalties-advisors" },
+};
+
 const ENHANCED_SLUGS = ["best-intl-brokers"];
 
 export async function generateMetadata({
@@ -676,6 +714,58 @@ export default async function ArticlePage({
                         </Link>
                       ))}
                     </div>
+                  </div>
+                );
+              })()}
+
+              {/* Related Hubs + Specialist Advisors — structured links derived from
+                  articles.related_verticals and articles.related_advisor_types metadata */}
+              {(() => {
+                const verticalLinks = (a.related_verticals ?? [])
+                  .map((v) => RELATED_VERTICAL_MAP[v])
+                  .filter((x): x is { label: string; href: string } => !!x);
+                const advisorLinks = (a.related_advisor_types ?? [])
+                  .map((t) => RELATED_ADVISOR_TYPE_MAP[t])
+                  .filter((x): x is { label: string; href: string } => !!x);
+                if (verticalLinks.length === 0 && advisorLinks.length === 0) return null;
+                return (
+                  <div className="mt-6 md:mt-8 bg-slate-50 rounded-xl p-4 md:p-5 space-y-3">
+                    {verticalLinks.length > 0 && (
+                      <div>
+                        <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                          Related Topics
+                        </h3>
+                        <div className="flex flex-wrap gap-1.5">
+                          {verticalLinks.map((vl) => (
+                            <Link
+                              key={vl.href}
+                              href={vl.href}
+                              className="px-3 py-1.5 bg-white border border-slate-200 rounded-full text-sm text-slate-700 hover:border-slate-700 hover:text-slate-900 transition-colors"
+                            >
+                              {vl.label}
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {advisorLinks.length > 0 && (
+                      <div>
+                        <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                          Find a Specialist
+                        </h3>
+                        <div className="flex flex-wrap gap-1.5">
+                          {advisorLinks.map((al) => (
+                            <Link
+                              key={al.href}
+                              href={al.href}
+                              className="px-3 py-1.5 bg-white border border-violet-200 rounded-full text-sm text-violet-700 hover:border-violet-700 hover:text-violet-900 transition-colors"
+                            >
+                              {al.label}
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 );
               })()}
