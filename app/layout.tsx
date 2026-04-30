@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
+import { JetBrains_Mono, Source_Serif_4 } from "next/font/google";
 import { Suspense } from "react";
 import "./globals.css";
 import LayoutShell from "@/components/LayoutShell";
@@ -29,7 +30,22 @@ const inter = localFont({
     { path: "../public/fonts/Inter-ExtraBold.woff2", weight: "800", style: "normal" },
   ],
   display: "swap",
+  variable: "--font-inter",
   fallback: ["system-ui", "-apple-system", "Arial", "sans-serif"],
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-jetbrains-mono",
+  weight: ["400", "500", "700", "800"],
+});
+
+const sourceSerif = Source_Serif_4({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-source-serif",
+  weight: ["400", "500", "600"],
 });
 
 export const metadata: Metadata = {
@@ -100,7 +116,7 @@ export default async function RootLayout({
       newsletterExitIntentFlag.rollout_pct > 0
     : true;
   return (
-    <html lang="en-AU" suppressHydrationWarning>
+    <html lang="en-AU" suppressHydrationWarning className={`${inter.variable} ${jetbrainsMono.variable} ${sourceSerif.variable}`}>
       {/* Inline script adds .js-ready immediately so CSS animations only run when JS is available.
           Without this, hero-fade-up starts at opacity:0 and stays invisible until JS loads. */}
       <head>
