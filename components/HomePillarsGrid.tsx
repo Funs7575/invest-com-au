@@ -34,7 +34,7 @@ export default function HomePillarsGrid({ listingCount, professionalCount, broke
       title: "Post a job — advisors come to you",
       sub: "Describe your situation. Verified advisors quote. Free to post.",
       cta: "Post your situation",
-      href: "/find-advisor",
+      href: "/quotes/post",
       icon: "megaphone",
       accent: "var(--color-coral-500)",
       stats: [["FREE", "to post"], ["4h", "avg response"]],

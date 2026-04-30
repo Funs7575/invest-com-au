@@ -82,7 +82,7 @@ export default function HomeHero({ brokerCount, listingCount, professionalCount 
                 boxShadow: "0 0 0 4px rgba(242,88,34,.18)",
               }}
             />
-            Independent · ASIC-registered · Est. 1996
+            Independent · ASIC-registered · No commission incentive · Est. 1996
           </span>
 
           <h1
