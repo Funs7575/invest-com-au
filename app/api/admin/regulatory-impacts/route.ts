@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { ADMIN_EMAILS } from "@/lib/admin";
 import { createClient } from "@/lib/supabase/server";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 
 const log = logger("regulatory-impacts");
 
@@ -16,6 +16,7 @@ export async function GET(request: NextRequest) {
   if (!user?.email || !ADMIN_EMAILS.includes(user.email)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  setLoggerUser(user);
 
   const alertId = request.nextUrl.searchParams.get("alert_id");
   if (!alertId) {
@@ -46,6 +47,7 @@ export async function POST(request: NextRequest) {
   if (!user?.email || !ADMIN_EMAILS.includes(user.email)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  setLoggerUser(user);
 
   const body = await request.json();
   const { alert_id, broker_slug, impact_level, impact_description, estimated_fee_change, broker_response } = body;

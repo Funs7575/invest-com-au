@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { ADMIN_EMAILS } from "@/lib/admin";
 import { sendEmail } from "@/lib/resend";
 import { isRateLimited } from "@/lib/rate-limit";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 
 const log = logger("notify-price-change");
 
@@ -41,6 +41,7 @@ export async function POST(request: NextRequest) {
     if (!user?.email || !ADMIN_EMAILS.includes(user.email.toLowerCase())) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+    setLoggerUser(user);
 
     const body = await request.json();
     const { advisor_type, old_price_cents, new_price_cents, field_changed } = body;

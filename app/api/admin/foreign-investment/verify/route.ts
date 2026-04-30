@@ -13,7 +13,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidateTag } from "next/cache";
 import { getAdminEmails } from "@/lib/admin";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 
 const log = logger("admin-fi-verify");
 
@@ -30,6 +30,7 @@ export async function POST(req: NextRequest) {
   if (!user || !user.email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  setLoggerUser(user);
 
   const adminEmails = getAdminEmails();
   const authedEmail = user.email.toLowerCase();

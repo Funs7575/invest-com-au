@@ -3,7 +3,7 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isRateLimited } from "@/lib/rate-limit";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 
 const log = logger("quotes:qa");
 
@@ -115,6 +115,7 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ slug: stri
 
     const supa = await createClient();
     const { data: { user } } = await supa.auth.getUser();
+    if (user) setLoggerUser(user);
     if (user?.email) {
       const { data: pro } = await admin
         .from("professionals")

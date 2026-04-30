@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import siteData from "@/data/site-data.json";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 import { ADMIN_EMAILS } from "@/lib/admin";
 
 const log = logger("seed");
@@ -21,6 +21,7 @@ export async function POST() {
     if (!user || (!ADMIN_EMAILS.includes(user.email || "") && !user.email?.endsWith(ADMIN_DOMAIN))) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+    setLoggerUser(user);
 
     const now = new Date().toISOString();
 

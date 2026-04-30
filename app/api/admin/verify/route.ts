@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getAdminEmails } from "@/lib/admin";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 
 const log = logger("admin-verify");
 
@@ -22,6 +22,7 @@ export async function GET() {
     if (error || !user) {
       return NextResponse.json({ admin: false }, { status: 401 });
     }
+    setLoggerUser(user);
 
     const adminEmails = getAdminEmails();
     if (!adminEmails.includes(user.email?.toLowerCase() || "")) {
