@@ -1,7 +1,7 @@
 -- ============================================================================
 -- Migration: C-DISC-20260430-03 — lead_disputes RLS hardening
--- Date: 2026-04-30
--- Audit ref: docs/audits/codebase-health-2026-04-24.md (RLS gaps)
+-- Date: 2026-06-06
+-- Audit ref: docs/audits/codebase-health-2026-04-24.md (RLS gaps / admin scope)
 -- Queue item: docs/audits/REMEDIATION_QUEUE.md C-DISC-20260430-03
 --
 -- Why:
@@ -20,37 +20,55 @@
 --   - lib/advisor-lead-dispute-resolver.ts    SELECT+UPDATE via createAdminClient()
 --   - app/api/cron/auto-resolve-disputes/     SELECT+UPDATE via createAdminClient()
 --   - app/api/admin/**                        SELECT+UPDATE via createAdminClient()
---   All callers use the admin client (service-role key, BYPASSRLS privilege).
---   Enabling RLS does not break any existing caller.
+--   All server-side + cron callers use the admin client (service-role key,
+--   BYPASSRLS privilege). Enabling RLS does not break any of these callers.
 --
 -- IMPORTANT — prior policy state on lead_disputes:
 --   None. This migration is the first RLS activation on this table.
+--   (Verified via grep -nE "POLICY.*lead_disputes" supabase/migrations/*.sql — zero matches.)
+--
+-- TODO: human review of policy semantics — 3 admin browser pages currently use
+--   createClient() (browser anon key) to read/write lead_disputes and will fail
+--   after this migration is applied in prod:
+--     • app/admin/page.tsx          — dispute count   (SELECT)
+--     • app/admin/revenue/page.tsx  — dispute list    (SELECT)
+--     • app/admin/advisors/page.tsx — list + approve/reject (SELECT + UPDATE)
+--   These pages need to be refactored to call API routes backed by
+--   createAdminClient() before this migration is safe to apply in prod.
+--   Tracked as C-DISC-admin-disputes in the remediation queue.
+--   app/admin/automation/disputes/page.tsx already uses createAdminClient()
+--   and is not affected.
 --
 -- Idempotent:
 --   ENABLE/FORCE ROW LEVEL SECURITY are no-ops if already set.
 --   DROP POLICY IF EXISTS + CREATE is idempotent.
 --
 -- Rollback:
---   DROP POLICY IF EXISTS "Advisor can view own disputes" ON lead_disputes;
---   DROP POLICY IF EXISTS "service_role full access disputes" ON lead_disputes;
---   ALTER TABLE lead_disputes NO FORCE ROW LEVEL SECURITY;
---   ALTER TABLE lead_disputes DISABLE ROW LEVEL SECURITY;
+--   DROP POLICY IF EXISTS "Advisor can view own disputes" ON public.lead_disputes;
+--   DROP POLICY IF EXISTS "service_role full access disputes" ON public.lead_disputes;
+--   ALTER TABLE public.lead_disputes NO FORCE ROW LEVEL SECURITY;
+--   ALTER TABLE public.lead_disputes DISABLE ROW LEVEL SECURITY;
 -- ============================================================================
 
 BEGIN;
 
-ALTER TABLE lead_disputes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lead_disputes ENABLE ROW LEVEL SECURITY;
 
 -- FORCE RLS so the table owner cannot bypass.
-ALTER TABLE lead_disputes FORCE ROW LEVEL SECURITY;
+ALTER TABLE public.lead_disputes FORCE ROW LEVEL SECURITY;
+
+-- Drop any prior policies by name (idempotent reruns — also covers both policy
+-- name variants that may have been written by parallel migration drafts).
+DROP POLICY IF EXISTS "service_role full access disputes"           ON public.lead_disputes;
+DROP POLICY IF EXISTS "service_role full access on lead_disputes"   ON public.lead_disputes;
+DROP POLICY IF EXISTS "Advisor can view own disputes"               ON public.lead_disputes;
 
 -- Service-role explicit allow (makes intent visible in pg_policies).
 -- The admin client (service_role key) has BYPASSRLS and does not need this
 -- policy to function, but without it pg_policies shows no service_role entry
 -- which obscures the intended access pattern for auditors.
-DROP POLICY IF EXISTS "service_role full access disputes" ON lead_disputes;
 CREATE POLICY "service_role full access disputes"
-  ON lead_disputes
+  ON public.lead_disputes
   FOR ALL
   TO service_role
   USING (true)
@@ -60,14 +78,13 @@ CREATE POLICY "service_role full access disputes"
 -- dispute records. professional_id links to professionals.auth_user_id;
 -- there is no direct auth.uid() column on lead_disputes. Cookie-session
 -- advisors (no auth.uid()) remain on the admin client path in disputes/route.ts.
-DROP POLICY IF EXISTS "Advisor can view own disputes" ON lead_disputes;
 CREATE POLICY "Advisor can view own disputes"
-  ON lead_disputes
+  ON public.lead_disputes
   FOR SELECT
   TO authenticated
   USING (
     professional_id IN (
-      SELECT id FROM professionals WHERE auth_user_id = auth.uid()
+      SELECT id FROM public.professionals WHERE auth_user_id = auth.uid()
     )
   );
 
@@ -75,11 +92,5 @@ CREATE POLICY "Advisor can view own disputes"
 -- by the advisor portal (admin client) and cron jobs (admin client).
 -- Advisors INSERT disputes via disputes/route.ts which uses admin client scoped
 -- by advisorId — no direct INSERT policy for authenticated role is needed.
-
--- TODO: human review of policy semantics — lead_disputes has no direct
--- auth.uid() column; ownership is inferred via the professionals join.
--- Confirm no cross-advisor dispute exposure is possible (it cannot: a given
--- auth.uid() maps to exactly one professionals.id via auth_user_id, so the
--- subquery is bounded to a single advisor's rows).
 
 COMMIT;
