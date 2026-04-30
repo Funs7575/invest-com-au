@@ -16,34 +16,35 @@
 --   This migration is the first time RLS is enabled on lead_disputes.
 --
 -- Verified callers (grep app/ lib/):
+--   Admin-client callers (BYPASSRLS — unaffected by RLS):
 --   - app/api/advisor-auth/disputes/route.ts  SELECT+INSERT via createAdminClient()
 --   - lib/advisor-lead-dispute-resolver.ts    SELECT+UPDATE via createAdminClient()
 --   - app/api/cron/auto-resolve-disputes/     SELECT+UPDATE via createAdminClient()
---   - app/api/admin/**                        SELECT+UPDATE via createAdminClient()
---   All server-side + cron callers use the admin client (service-role key,
---   BYPASSRLS privilege). Enabling RLS does not break any of these callers.
+--   - app/api/admin/automation/override/      SELECT+UPDATE via createAdminClient()
+--   - app/api/admin/reports/afsl-monthly/     SELECT       via createAdminClient()
+--   - app/api/admin/ai-chat/                  SELECT       via createAdminClient()
+--   - app/api/cron/automation-verdict-rollup/ SELECT       via createAdminClient()
+--   - app/api/cron/warehouse-rollup/          SELECT       via createAdminClient()
+--   - app/api/cron/data-integrity-audit/      SELECT       via createAdminClient()
+--   - app/admin/automation/disputes/page.tsx  SELECT       via createAdminClient()
+--   Browser-client callers (authenticated role — covered by admin ALL policy):
+--   - app/admin/advisors/page.tsx     SELECT all + UPDATE status via createClient()
+--   - app/admin/page.tsx              SELECT count (status=pending) via createClient()
+--   - app/admin/revenue/page.tsx      SELECT count             via createClient()
+--   These admin pages authenticate via Supabase Auth with
+--   raw_user_meta_data->>'role' = 'admin' in auth.users. The "Admin can manage
+--   disputes" policy below grants full access to these callers.
 --
 -- IMPORTANT — prior policy state on lead_disputes:
 --   None. This migration is the first RLS activation on this table.
 --   (Verified via grep -nE "POLICY.*lead_disputes" supabase/migrations/*.sql — zero matches.)
---
--- TODO: human review of policy semantics — 3 admin browser pages currently use
---   createClient() (browser anon key) to read/write lead_disputes and will fail
---   after this migration is applied in prod:
---     • app/admin/page.tsx          — dispute count   (SELECT)
---     • app/admin/revenue/page.tsx  — dispute list    (SELECT)
---     • app/admin/advisors/page.tsx — list + approve/reject (SELECT + UPDATE)
---   These pages need to be refactored to call API routes backed by
---   createAdminClient() before this migration is safe to apply in prod.
---   Tracked as C-DISC-admin-disputes in the remediation queue.
---   app/admin/automation/disputes/page.tsx already uses createAdminClient()
---   and is not affected.
 --
 -- Idempotent:
 --   ENABLE/FORCE ROW LEVEL SECURITY are no-ops if already set.
 --   DROP POLICY IF EXISTS + CREATE is idempotent.
 --
 -- Rollback:
+--   DROP POLICY IF EXISTS "Admin can manage disputes" ON public.lead_disputes;
 --   DROP POLICY IF EXISTS "Advisor can view own disputes" ON public.lead_disputes;
 --   DROP POLICY IF EXISTS "service_role full access disputes" ON public.lead_disputes;
 --   ALTER TABLE public.lead_disputes NO FORCE ROW LEVEL SECURITY;
@@ -61,6 +62,7 @@ ALTER TABLE public.lead_disputes FORCE ROW LEVEL SECURITY;
 -- name variants that may have been written by parallel migration drafts).
 DROP POLICY IF EXISTS "service_role full access disputes"           ON public.lead_disputes;
 DROP POLICY IF EXISTS "service_role full access on lead_disputes"   ON public.lead_disputes;
+DROP POLICY IF EXISTS "Admin can manage disputes"                   ON public.lead_disputes;
 DROP POLICY IF EXISTS "Advisor can view own disputes"               ON public.lead_disputes;
 
 -- Service-role explicit allow (makes intent visible in pg_policies).
@@ -73,6 +75,31 @@ CREATE POLICY "service_role full access disputes"
   TO service_role
   USING (true)
   WITH CHECK (true);
+
+-- Admin users can read and manage all disputes via the admin portal browser
+-- client. app/admin/advisors/page.tsx (SELECT+UPDATE), app/admin/page.tsx
+-- (SELECT count), and app/admin/revenue/page.tsx (SELECT count) all use
+-- createClient() (Supabase Auth browser client, authenticated role) and require
+-- full access. Admin identity: raw_user_meta_data->>'role' = 'admin' in auth.users.
+-- Same pattern as "Admins full access leads" in 20260305_create_advisor_directory.sql.
+CREATE POLICY "Admin can manage disputes"
+  ON public.lead_disputes
+  FOR ALL
+  TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM auth.users
+      WHERE auth.uid() = id
+        AND raw_user_meta_data->>'role' = 'admin'
+    )
+  )
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM auth.users
+      WHERE auth.uid() = id
+        AND raw_user_meta_data->>'role' = 'admin'
+    )
+  );
 
 -- Advisor self-scoped SELECT: Supabase Auth advisors can read their own
 -- dispute records. professional_id links to professionals.auth_user_id;
@@ -92,5 +119,11 @@ CREATE POLICY "Advisor can view own disputes"
 -- by the advisor portal (admin client) and cron jobs (admin client).
 -- Advisors INSERT disputes via disputes/route.ts which uses admin client scoped
 -- by advisorId — no direct INSERT policy for authenticated role is needed.
+
+-- TODO: human review of policy semantics — lead_disputes has no direct
+-- auth.uid() column; advisor ownership is inferred via the professionals join.
+-- Confirm no cross-advisor dispute exposure is possible (it cannot: a given
+-- auth.uid() maps to exactly one professionals.id via auth_user_id, so the
+-- subquery is bounded to a single advisor's rows).
 
 COMMIT;
