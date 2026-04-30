@@ -1,10 +1,32 @@
--- ─── Broker Portal Feature Gaps ───
--- 1. Self-registration onboarding
--- 2. Enhanced analytics (uses existing tables)
--- 3. Broker creatives / asset management
--- 4. A/B test variants
--- 5. Notification system
--- 6. Support tickets / messaging
+-- ============================================================
+-- 003: Broker portal feature gaps — creatives, A/B tests, notifications, support
+-- ============================================================
+--
+-- Adds tables that power the broker self-service portal:
+--   1. Self-registration onboarding (handled in app, no schema changes)
+--   2. Enhanced analytics (uses existing tables)
+--   3. broker_creatives — logos / banners / icons / screenshots
+--   4. ab_tests — variant testing for CTAs and deals
+--   5. broker_notifications — in-app + email alerts
+--   6. support_tickets / support_messages — broker support inbox
+--
+-- ROLLBACK STRATEGY (forward-only in prod; for dev/staging only):
+--   DROP INDEX IF EXISTS idx_support_messages_ticket;
+--   DROP INDEX IF EXISTS idx_support_tickets_status;
+--   DROP INDEX IF EXISTS idx_support_tickets_slug;
+--   DROP INDEX IF EXISTS idx_broker_notifications_unread;
+--   DROP INDEX IF EXISTS idx_broker_notifications_slug;
+--   DROP INDEX IF EXISTS idx_ab_tests_status;
+--   DROP INDEX IF EXISTS idx_ab_tests_slug;
+--   DROP INDEX IF EXISTS idx_broker_creatives_slug;
+--   DROP TABLE IF EXISTS support_messages;
+--   DROP TABLE IF EXISTS support_tickets;
+--   DROP TABLE IF EXISTS broker_notifications;
+--   DROP TABLE IF EXISTS ab_tests;
+--   DROP TABLE IF EXISTS broker_creatives;
+--
+-- Risk: low — additive only; no existing data touched.
+-- All operations use IF NOT EXISTS to be idempotent on re-run.
 
 -- ─── 3. Broker Creatives ───
 CREATE TABLE IF NOT EXISTS broker_creatives (
@@ -23,7 +45,7 @@ CREATE TABLE IF NOT EXISTS broker_creatives (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_broker_creatives_slug ON broker_creatives(broker_slug);
+CREATE INDEX IF NOT EXISTS idx_broker_creatives_slug ON broker_creatives(broker_slug);
 
 -- ─── 4. A/B Test Variants ───
 CREATE TABLE IF NOT EXISTS ab_tests (
@@ -48,8 +70,8 @@ CREATE TABLE IF NOT EXISTS ab_tests (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_ab_tests_slug ON ab_tests(broker_slug);
-CREATE INDEX idx_ab_tests_status ON ab_tests(status);
+CREATE INDEX IF NOT EXISTS idx_ab_tests_slug ON ab_tests(broker_slug);
+CREATE INDEX IF NOT EXISTS idx_ab_tests_status ON ab_tests(status);
 
 -- ─── 5. Notifications ───
 CREATE TABLE IF NOT EXISTS broker_notifications (
@@ -64,8 +86,8 @@ CREATE TABLE IF NOT EXISTS broker_notifications (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_broker_notifications_slug ON broker_notifications(broker_slug);
-CREATE INDEX idx_broker_notifications_unread ON broker_notifications(broker_slug, is_read) WHERE is_read = false;
+CREATE INDEX IF NOT EXISTS idx_broker_notifications_slug ON broker_notifications(broker_slug);
+CREATE INDEX IF NOT EXISTS idx_broker_notifications_unread ON broker_notifications(broker_slug, is_read) WHERE is_read = false;
 
 -- ─── 6. Support Tickets ───
 CREATE TABLE IF NOT EXISTS support_tickets (
@@ -88,6 +110,6 @@ CREATE TABLE IF NOT EXISTS support_messages (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_support_tickets_slug ON support_tickets(broker_slug);
-CREATE INDEX idx_support_tickets_status ON support_tickets(status);
-CREATE INDEX idx_support_messages_ticket ON support_messages(ticket_id);
+CREATE INDEX IF NOT EXISTS idx_support_tickets_slug ON support_tickets(broker_slug);
+CREATE INDEX IF NOT EXISTS idx_support_tickets_status ON support_tickets(status);
+CREATE INDEX IF NOT EXISTS idx_support_messages_ticket ON support_messages(ticket_id);
