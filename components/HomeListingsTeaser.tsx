@@ -21,14 +21,17 @@ export interface HomeListing {
 }
 
 const VERTICAL_LABELS: Record<string, { label: string; color: string }> = {
-  mining:               { label: "Mining",     color: "#fbbf24" },
+  funds:                { label: "Funds",      color: "#60a5fa" },
+  "buy-business":       { label: "Business",   color: "#f87171" },
+  "commercial-property":{ label: "Commercial", color: "#a78bfa" },
   farmland:             { label: "Farmland",   color: "#84cc16" },
-  business:             { label: "Business",   color: "#f87171" },
-  commercial_property:  { label: "Commercial", color: "#a78bfa" },
-  energy:               { label: "Renewables", color: "#34d399" },
-  fund:                 { label: "Funds",      color: "#60a5fa" },
+  "renewable-energy":   { label: "Renewables", color: "#34d399" },
+  mining:               { label: "Mining",     color: "#fbbf24" },
   franchise:            { label: "Franchise",  color: "#db2777" },
-  startup:              { label: "Startup",    color: "#525252" },
+  startups:             { label: "Startups",   color: "#f59e0b" },
+  hydrogen:             { label: "Hydrogen",   color: "#06b6d4" },
+  uranium:              { label: "Uranium",    color: "#8b5cf6" },
+  "oil-gas":            { label: "Oil & Gas",  color: "#64748b" },
 };
 
 interface HomeListingsTeaserProps {
