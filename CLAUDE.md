@@ -63,6 +63,7 @@ Reaching for a hardcoded disclaimer, a new affiliate URL builder, or a fresh JSO
 - **Supabase migrations** are forward-only in prod. Every migration: idempotent (`IF NOT EXISTS`), header comment with rollback strategy, RLS enabled + policies for any user-data table.
 - **Test file naming:** mirror the source path — `__tests__/lib/<x>.test.ts`, `__tests__/api/<route-slug>.test.ts`, `__tests__/components/<Component>.test.tsx` (jsdom). Integration tests go in `__tests__/integration/*.int.test.ts`.
 - **Commit subjects** use Conventional Commits (`feat:`, `fix:`, `chore(deps):`, `test:`, `docs:`). See `git log` for tone — single-line subject, blank line, paragraph body explaining *why*. No closing summaries in PR descriptions — the diff is the summary.
+- **Validate API request bodies with Zod.** New `app/api/*` POST/PUT/PATCH/DELETE routes must wrap their handlers in `withValidatedBody(Schema, ...)` from `lib/validation/withValidatedBody.ts`, OR consume `await req.json()` immediately via `Schema.parse(...)` / `Schema.safeParse(...)`. ESLint rule `invest/no-unvalidated-req-json` (warn) flags drift; lint-staged's `--max-warnings 0` upgrades that warning to a commit blocker on staged files. For an unavoidable exception, opt out at the call site with `// eslint-disable-next-line invest/no-unvalidated-req-json -- <reason>`.
 
 ## Dependabot groups
 

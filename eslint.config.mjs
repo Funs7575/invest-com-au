@@ -37,6 +37,103 @@ function isSafeHtml(node) {
   return false;
 }
 
+// ── Custom rule: no-unvalidated-req-json ─────────────────────────────────────
+// Stream E (Zod validation rollout). Flags `req.json()` / `request.json()`
+// whose result is not consumed by Zod (`.parse(...)` / `.safeParse(...)`)
+// or by the `withValidatedBody` helper inside the same enclosing function
+// scope.
+//
+// Severity is `warn` — the rule is a *forward* guardrail, not a retroactive
+// migration tool. The 200+ legacy routes that pre-date Stream E continue to
+// emit warnings until E-02 migrates them; lint-staged's `--max-warnings 0`
+// catches NEW drift on staged files, while `npm run lint` doesn't break.
+//
+// Allowed shapes:
+//   const Schema = z.object({ ... });
+//   const body = Schema.parse(await req.json());
+//   const body = Schema.safeParse(await req.json());
+//   const body = await req.json().then(d => Schema.parse(d));
+//   export const POST = withValidatedBody(Schema, async (req, body) => {...});
+//
+// Test files (`__tests__/**`, `*.test.ts(x)`) are exempt — mocks legitimately
+// call `.json()` without Zod. The rule is also disabled for the helper itself
+// (`lib/validation/**`) because it's the wrapper that does the validating.
+//
+// Inline opt-out for a legitimate exception:
+//   // eslint-disable-next-line invest/no-unvalidated-req-json -- <reason>
+//   const raw = await req.json();
+//
+// Author the comment with a `--` prefix and a short reason so the disable is
+// reviewable.
+function callExprIsParseOrSafeParse(node) {
+  if (!node || node.type !== "CallExpression") return false;
+  const callee = node.callee;
+  if (!callee || callee.type !== "MemberExpression") return false;
+  if (callee.property.type !== "Identifier") return false;
+  const name = callee.property.name;
+  return name === "parse" || name === "safeParse";
+}
+
+function functionScopeContainsZod(fnNode) {
+  // Walk the function body and return true if any descendant is either:
+  //   - a `.parse(...)` / `.safeParse(...)` call expression, or
+  //   - a `withValidatedBody(...)` call expression.
+  // We DO descend into nested arrow/function expressions because the
+  // common ergonomic patterns hand off the body via a callback:
+  //   await req.json().then(d => Schema.parse(d))
+  //   withValidatedBody(Schema, async (req, body) => { ... })
+  // Treating those callbacks as out-of-scope would create noisy false
+  // positives. The trade-off is a small false-negative rate where two
+  // unrelated nested handlers in the same module reuse one `parse` call —
+  // acceptable for a warn-level forward guardrail, and lint-staged still
+  // catches NEW drift on staged files.
+  if (!fnNode) return false;
+  let found = false;
+  const visit = (node) => {
+    if (!node || typeof node !== "object" || found) return;
+    if (Array.isArray(node)) {
+      for (const child of node) visit(child);
+      return;
+    }
+    if (typeof node.type !== "string") return;
+    if (node.type === "CallExpression") {
+      if (callExprIsParseOrSafeParse(node)) {
+        found = true;
+        return;
+      }
+      if (
+        node.callee &&
+        node.callee.type === "Identifier" &&
+        node.callee.name === "withValidatedBody"
+      ) {
+        found = true;
+        return;
+      }
+    }
+    for (const key of Object.keys(node)) {
+      if (key === "parent" || key === "loc" || key === "range") continue;
+      visit(node[key]);
+    }
+  };
+  visit(fnNode);
+  return found;
+}
+
+function findEnclosingFunction(node) {
+  let cur = node.parent;
+  while (cur) {
+    if (
+      cur.type === "FunctionDeclaration" ||
+      cur.type === "FunctionExpression" ||
+      cur.type === "ArrowFunctionExpression"
+    ) {
+      return cur;
+    }
+    cur = cur.parent;
+  }
+  return null;
+}
+
 const investPlugin = {
   rules: {
     "no-unsafe-inner-html": {
@@ -72,6 +169,60 @@ const investPlugin = {
                 context.report({ node: prop.value, messageId: "unsafeHtml" });
               }
             }
+          },
+        };
+      },
+    },
+    "no-unvalidated-req-json": {
+      meta: {
+        type: "suggestion",
+        docs: {
+          description:
+            "Require req.json() / request.json() to be consumed by Zod (.parse / .safeParse) or by withValidatedBody",
+        },
+        messages: {
+          unvalidated:
+            "`{{ident}}.json()` must be consumed by a Zod schema (Schema.parse / Schema.safeParse) or wrapped in withValidatedBody. See lib/validation/withValidatedBody.ts. Suppress with `// eslint-disable-next-line invest/no-unvalidated-req-json -- <reason>` if the body is intentionally untyped.",
+        },
+        schema: [],
+      },
+      create(context) {
+        return {
+          // Visit the `req.json()` / `request.json()` CallExpression
+          // directly (rather than the enclosing AwaitExpression) so that
+          // chained shapes like `await req.json().catch(() => ({}))`,
+          // `await req.json().then(d => Schema.parse(d))`, and bare
+          // `req.json().then(...)` are all caught by the same selector.
+          CallExpression(node) {
+            const callee = node.callee;
+            if (!callee || callee.type !== "MemberExpression") return;
+            if (callee.computed) return;
+            if (callee.property.type !== "Identifier") return;
+            if (callee.property.name !== "json") return;
+            if (callee.object.type !== "Identifier") return;
+            const ident = callee.object.name;
+            // Match req / request — the conventional names in Next.js route
+            // handlers. Other names (e.g. `someStream.json()` on a fetch
+            // Response) are out of scope; this rule is targeted at the
+            // request body, not arbitrary Response.json() reads.
+            if (ident !== "req" && ident !== "request") return;
+
+            // Allowed shape: parent is a `.parse(...)` / `.safeParse(...)`
+            // call — `Schema.parse(req.json())` (rare; the awaited form is
+            // handled by the scope sweep below).
+            if (callExprIsParseOrSafeParse(node.parent)) return;
+
+            // Allowed shape: anywhere in the enclosing function scope, the
+            // result is consumed by `.parse(...)`, `.safeParse(...)`, or
+            // wrapped in `withValidatedBody(...)`.
+            const fn = findEnclosingFunction(node);
+            if (functionScopeContainsZod(fn)) return;
+
+            context.report({
+              node,
+              messageId: "unvalidated",
+              data: { ident },
+            });
           },
         };
       },
@@ -137,6 +288,53 @@ const eslintConfig = [
       // All other forms require an eslint-disable-next-line comment explaining
       // why the value is safe (e.g. server-only env var, hardcoded constant).
       "invest/no-unsafe-inner-html": "error",
+
+      // ── Validation (Stream E) ────────────────────────────────────────────
+      // E-03: forward guardrail — new `await req.json()` / `await
+      // request.json()` must be consumed by a Zod schema or wrapped in
+      // withValidatedBody. Severity is `warn` because ~200 legacy routes
+      // pre-date Stream E; `npm run lint` should still pass while E-02
+      // migrates them. The husky/lint-staged hook runs `eslint --fix
+      // --max-warnings 0` on staged files, so NEW drift on staged routes
+      // is caught at commit time — only previously-touched legacy files
+      // get a free pass.
+      "invest/no-unvalidated-req-json": "warn",
+    },
+  },
+  {
+    // The withValidatedBody helper itself calls `await req.json()` — that
+    // *is* the validation entry point. Linting the helper would create a
+    // circular complaint, so disable the rule for the validation module.
+    files: ["lib/validation/**/*.{ts,tsx}"],
+    rules: {
+      "invest/no-unvalidated-req-json": "off",
+    },
+  },
+  {
+    // Test files legitimately call `.json()` on mocked requests/responses
+    // and on assertion targets — there's no body-validation contract to
+    // uphold. Disable the rule across all test surfaces.
+    files: [
+      "__tests__/**/*.{ts,tsx,js,mjs}",
+      "**/*.test.{ts,tsx,js,mjs}",
+      "**/*.spec.{ts,tsx,js,mjs}",
+      "e2e/**/*.{ts,tsx}",
+    ],
+    rules: {
+      "invest/no-unvalidated-req-json": "off",
+    },
+  },
+  {
+    // The E-03 lint fixture deliberately includes an
+    // `// eslint-disable-next-line invest/no-unvalidated-req-json` comment
+    // to exercise the inline-opt-out machinery. Because the rule is OFF
+    // across `__tests__/**`, the project lint then flags that disable as
+    // "unused". Suppress that meta-warning on the fixture only — the
+    // companion test runs the rule with its own ESLint instance, where the
+    // directive is meaningful.
+    files: ["__tests__/lint/no-unvalidated-req-json.fixture.ts"],
+    linterOptions: {
+      reportUnusedDisableDirectives: "off",
     },
   },
   {
