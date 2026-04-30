@@ -78,6 +78,34 @@ Three admin usages found:
 
 ---
 
+### C-04 · `affiliate/click` admin import — inactive-broker behavior decision needed (surfaced 2026-04-30 by iter 158)
+
+**Finding:** `app/api/affiliate/click/route.ts` is a public click-tracking endpoint that uses `createAdminClient()` for:
+
+1. SELECT `brokers` by slug (admin → finds ALL brokers regardless of status)
+2. INSERT `affiliate_clicks` (admin → uses service-role bypass)
+
+**RLS policy check:**
+- `affiliate_clicks`: anon INSERT policy exists — `"Insert clicks"` (`WITH CHECK (broker_slug IS NOT NULL AND length(trim(broker_slug)) > 0)`) → anon client works for INSERT
+- `brokers`: anon SELECT policy exists — `"Public read for active brokers"` (`USING (status = 'active')`) → anon client ONLY finds active brokers
+
+**Behavioral difference:** Switching to `createClient()` means clicks on **inactive/suspended broker slugs** return HTTP 404 instead of being logged. Currently (admin client) those clicks ARE logged. Whether to log clicks for delisted brokers is a product question.
+
+**Decision matrix:**
+
+| Option | What to do | Pros | Cons |
+|--------|-----------|------|------|
+| **A** | Switch to `createClient()` as-is | Aligns with CLAUDE.md scope rule; anon policies already cover the happy path | Clicks on inactive broker slugs return 404 (behavioural change) |
+| **B** | Switch to `createClient()` + add `status IN ('active','inactive')` brokers SELECT policy | Both active and inactive brokers found; admin scope reduced | Need a new RLS migration; `"Public read for active brokers"` covers active only |
+| **C** | Keep admin; add a `// admin — needs all broker statuses for click tracking` comment | No behavioural change; admin scope acknowledged as intentional exception | Leaves admin in a public route outside CLAUDE.md rule |
+| **D** | Mark as false-positive | No changes needed | Admin in public route remains undocumented exception |
+
+**Recommendation:** Option A — 404 on inactive broker clicks is the correct behavior (we should not log revenue-relevant affiliate clicks for brokers we've suspended or removed from the platform). The anon policies already support this correctly. Safe to refactor; just needs decision confirmation.
+
+**Resolution:** choose A, B, C, or D. If A or B, the loop can do the refactor in one iteration (~20 lines).
+
+---
+
 ### A-MISSING-TABLE-1 · `account_deletion_requests` table missing in live (surfaced 2026-04-26 by iter 19)
 
 **Finding:** The route `app/api/account/delete/route.ts` and Stream A's drift-backfill scope both depend on `account_deletion_requests`. Live DB query (Supabase MCP, 2026-04-26 18:50Z):
@@ -317,7 +345,7 @@ Highest priority: critical 2 first.
 | C-01 | done | Generate call graph: `grep -rn "from ['\"]@/lib/supabase/admin['\"]"` classified by route family | 1 | Done commit `b654e12` (iter 134). Output: `docs/audits/admin-callgraph.md`. 339 files, 6 refactor streams identified. |
 | C-02 | done | Refactor `app/api/advisor-auth/*` admin imports to `server.ts` + add RLS where missing | ~3 | All steps complete (PR #327). Step 5b (`5b32c3b` iter 158): payment/route.ts + firm/invite/route.ts onto requireAdvisorSession + admin client; lead_disputes RLS migration (C-DISC-20260430-03). session/route.ts excluded by design (IS the auth endpoint). All 12 advisor-auth routes now use requireAdvisorSession + admin; no route reads advisor_sessions via anon client. |
 | C-03 | blocked | Refactor `app/api/advisor-apply/*` admin imports | ~2 | Blocked iter 158 — phase 4 gate: public routes, not authenticated. photo/route.ts (storage) and invite/route.ts (read-only invite lookup) are false-positives. route.ts has a dynamic admin import for `agreement_acceptances` INSERT in a try/catch — outside CLAUDE.md admin scope rule. See Blocked section. |
-| C-04 | pending | Refactor `app/api/affiliate/*` admin imports | ~2 | Likely several Blocked items here — surface to user. |
+| C-04 | blocked | Refactor `app/api/affiliate/*` admin imports | ~2 | Blocked iter 158 — phase 4 gate: public route, behavioral difference with anon client. `affiliate/click/route.ts` uses admin to SELECT brokers + INSERT affiliate_clicks. Anon policies exist for both BUT anon SELECT on brokers is limited to `status='active'` — switching to createClient() would 404 clicks on inactive broker slugs (admin currently logs them). See Blocked section. |
 | C-05 | pending | Refactor `app/account/notifications/page.tsx` + `components/ArticleBrokerTable.tsx` | 1 | |
 | C-06 | pending | Refactor `lib/*` modules currently importing admin (review per-module necessity) | ~3 | |
 | C-07 | pending | Update `CLAUDE.md` allowed-scope list with the documented exceptions surfaced during the refactor | 1 | |
@@ -1238,23 +1266,21 @@ Two strategically important surfaces under-served by current nav: (1) investment
 
 ## Iteration log (most recent at top)
 
-### 2026-04-30T — iteration 160 (stream C — C-DISC-admin-disputes resolved — admin policy for lead_disputes RLS)
+### 2026-04-30T — iteration 160 (stream C — two parallel fires: C-DISC-admin-disputes resolved + C-04 blocked)
 
-- Phase 0: lock reused from batch run.
-- Phase 1: synced main to `f6258e42` (iter 158 C-03 blocked queue update, which also includes iter 159 C-DISC-admin-disputes surfaced). Stream C branch already at `0fc88b5` (my prior admin policy commit, pushed successfully in this batch).
-- Phase 2: PR #327 CI: pending (Vercel). No failures.
-- Phase 3: `C-DISC-admin-disputes` newly surfaced as blocked by iter 159. However, my earlier commit `0fc88b5` on the C stream branch already added "Admin can manage disputes" ALL policy to `20260606_c02_lead_disputes_rls.sql` — the blocker is already resolved on the branch. The iter 159 blocked entry was based on a role-identification error: `createClient()` for authenticated admin users uses the `authenticated` DB role (JWT Bearer), not the `anon` role. The admin policy (TO authenticated, USING raw_user_meta_data->>'role'='admin') covers these callers.
-- Phase 4: confirmed via grep: app/admin/advisors/page.tsx uses `createClient()` which for logged-in users submits JWT → authenticated role in Postgres. Policy "Admin can manage disputes" TO authenticated with role check covers SELECT + UPDATE. Same for admin/page.tsx and admin/revenue/page.tsx (SELECT). No page refactoring required.
-- Phase 5: queue-only update — no code change needed. C stream branch already has the fix.
-- Phase 6.5: discovery — no new items from the queue-only iteration.
-- Phase 7: queue updated. C-DISC-admin-disputes blocked entry resolved + struck through. Table row for C-DISC-admin-disputes updated to `done`. C-DISC-20260430-03 done note updated. In-flight C table updated.
+**Fire A — C-DISC-admin-disputes resolved:**
+- Phase 3: `C-DISC-admin-disputes` blocked by iter 159. Prior commit `0fc88b5` on stream C branch already added "Admin can manage disputes" ALL policy — blocker resolved. Iter 159 blocked entry was based on role-identification error: `createClient()` for logged-in admins submits JWT → `authenticated` DB role in Postgres. Policy TO authenticated with role check covers admin page SELECT/UPDATE callers. No page refactoring required.
+- Phase 7: C-DISC-admin-disputes blocked entry resolved. Queue updated.
+- STATUS: PROGRESS · stream=C · item=C-DISC-admin-disputes (resolve) · pr=#327 · commit: 0fc88b5
 
-- STATUS: PROGRESS · stream=C · item=C-DISC-admin-disputes (resolve) · pr=#327
-- Branch: claude/audit-remediation/c-01-admin-callgraph
-- Commit: 0fc88b5 (already pushed; this iteration is queue-only)
-- Diff: +0 -0 (code); +queue update
-- Next item: C-04 (affiliate admin imports) — C-03 blocked by phase 4 gate (public routes, not advisor-auth scope)
-- Remaining: C-04..C-08 pending · C-DISC-20260430-02 pending · B-09 blocked · C-03 blocked
+**Fire B — C-04 blocked:**
+- Phase 3: picked C-04 (next pending C item after C-03 blocked). `app/api/affiliate/click/route.ts` — single route.
+- Phase 4: phase 4 gate — public route, no auth cookies. Found anon policies exist for both tables BUT `brokers` anon SELECT is limited to `status='active'` — switching to createClient() would 404 clicks on inactive broker slugs (behavioral change). Product decision needed.
+- Phase 7: C-04 status → blocked. Blocked section entry added with decision matrix.
+- STATUS: BLOCKED · stream=C · item=C-04
+
+- Next item: C-05 (account/notifications page + ArticleBrokerTable component)
+- Remaining: C-03 blocked · C-04 blocked · C-05..C-08 pending · C-DISC-20260430-02 pending · B-09 blocked
 
 ### 2026-04-30T — iteration 159 (stream C — C-DISC-20260430-03 reconciled + C-DISC-admin-disputes surfaced)
 
