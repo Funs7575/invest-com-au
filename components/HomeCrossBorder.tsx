@@ -16,7 +16,7 @@ const CORRIDORS: ReadonlyArray<{
     tag: "Migrant",
     lines: ["NHS / QROPS pension", "HMRC residency days"],
     advisers: 34,
-    href: "/foreign-investment/from-uk",
+    href: "/foreign-investment/united-kingdom",
   },
   {
     code: "IN",
@@ -24,7 +24,7 @@ const CORRIDORS: ReadonlyArray<{
     tag: "Migrant",
     lines: ["NRI vs ROR status", "FEMA repatriation"],
     advisers: 37,
-    href: "/foreign-investment/from-india",
+    href: "/foreign-investment/india",
   },
   {
     code: "CN",
@@ -32,7 +32,7 @@ const CORRIDORS: ReadonlyArray<{
     tag: "Migrant",
     lines: ["FX outflow ($50k)", "PRC property + AU tax"],
     advisers: 24,
-    href: "/foreign-investment/from-china",
+    href: "/foreign-investment/china",
   },
   {
     code: "US",
@@ -40,7 +40,7 @@ const CORRIDORS: ReadonlyArray<{
     tag: "Dual / FATCA",
     lines: ["FBAR + FATCA filing", "PFIC trap on AU ETFs"],
     advisers: 28,
-    href: "/foreign-investment/from-us",
+    href: "/foreign-investment/united-states",
   },
 ];
 
@@ -156,16 +156,16 @@ export default function HomeCrossBorder() {
       >
         <span>
           More corridors:{" "}
-          <Link href="/foreign-investment/from-singapore" style={{ color: "var(--color-ink-500)", textDecoration: "none", fontWeight: 600 }}>
+          <Link href="/foreign-investment/singapore" style={{ color: "var(--color-ink-500)", textDecoration: "none", fontWeight: 600 }}>
             Singapore
           </Link>{" "}·{" "}
-          <Link href="/foreign-investment/from-new-zealand" style={{ color: "var(--color-ink-500)", textDecoration: "none", fontWeight: 600 }}>
+          <Link href="/foreign-investment/new-zealand" style={{ color: "var(--color-ink-500)", textDecoration: "none", fontWeight: 600 }}>
             NZ
           </Link>{" "}·{" "}
-          <Link href="/foreign-investment/from-south-korea" style={{ color: "var(--color-ink-500)", textDecoration: "none", fontWeight: 600 }}>
+          <Link href="/foreign-investment/south-korea" style={{ color: "var(--color-ink-500)", textDecoration: "none", fontWeight: 600 }}>
             South Korea
           </Link>{" "}·{" "}
-          <Link href="/foreign-investment/from-uae" style={{ color: "var(--color-ink-500)", textDecoration: "none", fontWeight: 600 }}>
+          <Link href="/foreign-investment/united-arab-emirates" style={{ color: "var(--color-ink-500)", textDecoration: "none", fontWeight: 600 }}>
             UAE
           </Link>
         </span>

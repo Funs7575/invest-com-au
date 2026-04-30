@@ -192,8 +192,9 @@ export default function HomeCompareDeepDive({ brokers }: HomeCompareDeepDiveProp
                           {meta.valueLabel} {value}
                         </div>
                       </div>
-                      <span className="font-mono" style={{ fontSize: 12.5, fontWeight: 700, color: "white" }}>
-                        {row.rating ? row.rating.toFixed(1) : "—"}
+                      <span style={{ fontSize: 12, fontWeight: 700, color: "white", display: "inline-flex", alignItems: "center", gap: 3, whiteSpace: "nowrap" }}>
+                        <span style={{ color: "#fbbf24", fontSize: 11 }} aria-hidden>★</span>
+                        <span className="font-mono">{row.rating ? row.rating.toFixed(1) : "—"}</span>
                       </span>
                       <DesignIcon name="arrow-right" size={10} style={{ color: "rgba(255,255,255,.4)" }} />
                     </div>
