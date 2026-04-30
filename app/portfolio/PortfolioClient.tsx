@@ -6,6 +6,9 @@ import Icon from "@/components/Icon";
 import BrokerLogo from "@/components/BrokerLogo";
 import type { Broker } from "@/lib/types";
 import { getAffiliateLink, AFFILIATE_REL, trackClick } from "@/lib/tracking";
+import { logger } from "@/lib/logger";
+
+const log = logger("portfolio-client");
 
 interface Holding {
   broker_slug: string;
@@ -41,7 +44,7 @@ export default function PortfolioClient() {
 
   // Fetch broker list
   useEffect(() => {
-    fetch("/api/portfolio?brokers=1").catch((err) => console.error("Portfolio prefetch failed:", err));
+    fetch("/api/portfolio?brokers=1").catch((err) => log.error("portfolio prefetch failed", { err: err instanceof Error ? err.message : String(err) }));
     // Get brokers from compare page data
     const fetchBrokers = async () => {
       const res = await fetch("/api/shortlist?list=all");
@@ -113,7 +116,6 @@ export default function PortfolioClient() {
     setLoading(false);
   };
 
-  const totalBalance = holdings.reduce((s, h) => s + (h.balance || 0), 0);
   const optimalBroker = brokers.find(b => b.slug === results?.optimal_broker);
   const unreadAlerts = alerts.filter(a => !a.read).length;
 

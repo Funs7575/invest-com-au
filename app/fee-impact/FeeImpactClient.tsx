@@ -8,9 +8,12 @@ import { useSubscription } from "@/lib/hooks/useSubscription";
 import { useSearchParams } from "next/navigation";
 import Icon from "@/components/Icon";
 import AuthorByline from "@/components/AuthorByline";
+import { logger } from "@/lib/logger";
 
 import FeeImpactInputs from "./_components/FeeImpactInputs";
 import FeeImpactResults from "./_components/FeeImpactResults";
+
+const log = logger("fee-impact-client");
 
 /* ──────────────────────────────────────────────
    URL state sync helpers
@@ -95,9 +98,14 @@ function AnimatedNumber({
   useEffect(() => {
     const start = ref.current;
     const end = value;
+    let flashOnTimer: ReturnType<typeof setTimeout> | null = null;
+    let flashOffTimer: ReturnType<typeof setTimeout> | null = null;
     if (start !== end) {
-      setFlash(true);
-      setTimeout(() => setFlash(false), 600);
+      // Defer setState out of the synchronous effect body to avoid cascading renders.
+      flashOnTimer = setTimeout(() => {
+        setFlash(true);
+        flashOffTimer = setTimeout(() => setFlash(false), 600);
+      }, 0);
     }
     const duration = 400;
     const t0 = performance.now();
@@ -108,6 +116,10 @@ function AnimatedNumber({
     }
     requestAnimationFrame(tick);
     ref.current = end;
+    return () => {
+      if (flashOnTimer) clearTimeout(flashOnTimer);
+      if (flashOffTimer) clearTimeout(flashOffTimer);
+    };
   }, [value]);
   return (
     <span
@@ -278,7 +290,7 @@ export default function FeeImpactClient({ brokers }: Props) {
           if (p.current_broker_slug) setCurrentBrokerSlug(p.current_broker_slug);
         }
       })
-      .catch((err) => console.error("Failed to load fee-impact profile:", err));
+      .catch((err) => log.error("failed to load fee-impact profile", { err: err instanceof Error ? err.message : String(err) }));
   }, [authLoading, user, profileLoaded]);
 
   // Save profile handler
