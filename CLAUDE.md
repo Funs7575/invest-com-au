@@ -34,7 +34,13 @@ npm run test:watch                 # watch mode
 - **`.npmrc` sets `legacy-peer-deps=true`.** Sentry v9 peer-deps target Next ≤15, but we run Next 16. The override is intentional — don't remove it.
 - **TypeScript strict + `noUncheckedIndexedAccess`.** `arr[0]` is `T | undefined`. CI build fails on TS errors — there's no `ignoreBuildErrors` escape hatch.
 - **Middleware is `proxy.ts`, not `middleware.ts`.** There used to be a duplicate — removed in `1fead77`. Stamping request-ids, cron Bearer auth, and admin route protection all happen in `proxy.ts`.
-- **Two Supabase clients, three call sites.** `lib/supabase/server.ts` (RSC + route handlers, carries user cookies), `lib/supabase/client.ts` (browser), `lib/supabase/admin.ts` (service-role, bypasses RLS). Service-role is a security-sensitive escape hatch — use only in admin routes, webhooks, and cron.
+- **Two Supabase clients, three call sites.** `lib/supabase/server.ts` (RSC + route handlers, carries user cookies), `lib/supabase/client.ts` (browser), `lib/supabase/admin.ts` (service-role, bypasses RLS). Service-role is a security-sensitive escape hatch — the full allowed scope (from the C-stream audit in PR #327):
+  - Admin routes (`app/api/admin/*`, `app/admin/*`), webhooks, cron jobs — always legitimate.
+  - `lib/*` helpers that serve **anonymous paths**: tables with deny-all-anon RLS (e.g., `anonymous_saves`, `user_quiz_history` — no anon INSERT policy) where no JWT is available.
+  - `lib/*` helpers doing **cross-user queries** that can't be scoped to `auth.uid()` (e.g., `buildEmailToUserIdMap` in `notifications.ts`, `claimAnonymousSaves` in `bookmarks.ts`).
+  - `lib/*` helpers that intentionally **bypass deny-all RLS** for security isolation (e.g., `require-advisor-session.ts` — `advisor_sessions` is deny-all by design).
+  - Tables with **service_role-only policies** (e.g., `feature_flags`, `web_vitals_samples`) where no authenticated-role policy exists.
+  - **Not** legitimate: public read tables covered by anon SELECT policies (e.g., `brokers` active-status reads). Use `createClient()` from server instead.
 - **Husky + lint-staged run `eslint --fix --max-warnings 0` on staged `.ts`/`.tsx`.** Commits can get reformatted (files restaged post-fix). The `prepare` script silently tolerates missing husky with `|| true` so CI installs cleanly.
 - **Coverage thresholds in `vitest.config.mts` are floors.** Set just below current to catch regressions without blocking legitimately untested new code. Ratchet them up as coverage grows; don't lower.
 - **Webkit + mobile-safari are configured in `playwright.config.ts` but only chromium runs in the a11y job.** The a11y job passes `--project=chromium` because webkit had flaky networkidle timeouts that added ~3 min to PRs. Full E2E still runs all three.
