@@ -186,6 +186,33 @@ A `status = 'published'` allow-SELECT policy would fix the public pages but leav
 
 ---
 
+### B-09-MY-LISTINGS-1 · `/api/listings/my-listings` authentication mechanism (surfaced 2026-04-30 by iter 150)
+
+**Finding:** `app/api/listings/my-listings/route.ts` accepts an unauthenticated `email` query param (no cookie, no session, no signed token) and uses `createClient()` (anon key) to:
+
+1. Query `investment_listings.contact_email` via `ilike` — returns listings for any email the caller claims to own.
+2. Return all `listing_enquiries` rows for those listings, including `user_name`, `user_email`, `message` — PII of investors who enquired.
+
+The current "anon select enquiries" RLS policy on `listing_enquiries` (from B-06, migration `20260601_rls_listing_enquiries.sql`) explicitly preserves this behaviour to avoid breaking the route. B-09 exists to close it. The fix requires both:
+
+- Switching the route to `createAdminClient()` (service-role bypass for DB query)
+- Adding an **email-verification challenge** so only the actual listing owner can retrieve their enquiries
+
+The verification gate for this refactor requires that the route either reads cookies or is in an authenticated layout. It does neither. The email-verification mechanism is the design decision that unblocks implementation.
+
+**Decision matrix for the user:**
+
+| Option | What you / the loop does | Trade-off |
+|---|---|---|
+| **1. OTP challenge (recommended)** | Loop adds a "send OTP to listing contact_email" flow before the route returns data. Uses existing `/api/verify-otp/send` + `/api/verify-otp/verify` infrastructure — no new auth library. Frontend sends email → OTP emailed → user enters code → verified token stored (1h TTL) → listings/enquiries returned. | 2 iterations (route + frontend flow). Closes enumeration vector completely. Consistent with K-02 (OTP hardening already on the platform). Frontend needs to support the 2-step UI before the listings view. |
+| **2. Magic link** | Loop creates a `/api/listings/request-access` endpoint (POST email → sends HMAC-signed URL with 1h expiry → link renders the enquiries page with token in query param, verified server-side). No code-entry step for the listing owner. | 2 iterations. Slightly better UX (no code to type). Requires a new "send magic link" endpoint. Same security level as OTP. |
+| **3. Rate-limit only (partial fix)** | Loop adds IP-bound rate limiting (5 lookups/hour/IP/email) to the route without changing auth mechanism. Keeps the current UX unchanged. | 1 iteration. Does NOT close the enumeration vector — a distributed attacker (botnet, VPN rotation) can still enumerate all enquiries. Not a B-09 completion, but reduces the blast radius. Could be shipped as B-09a while the full fix waits. |
+| **4. Defer to account system** | Leave blocked until listing owners have login accounts (requires a full account-signup flow for non-professional listing owners — not currently in scope). | No effort now. PII enumeration vector stays open indefinitely. |
+
+**Recommendation:** Option 1 (OTP). The infrastructure exists, the UX is familiar, and the security outcome is complete. To unblock: reply with the chosen option, and the loop will implement it as B-09a (route + OTP gate) + B-09b (drop "anon select enquiries" from `listing_enquiries`).
+
+---
+
 ## Pending work
 
 ### Cross-stream dependencies (added 2026-04-27 enterprise-standard reorder)
@@ -222,7 +249,7 @@ Highest priority: critical 2 first.
 | B-06 | in-progress | RLS on remaining medium-risk tables | 2 | 1 done in iter 9 (`listing_enquiries`, commit `0bb82daa`, option-2 pattern). 5 false-positives discovered in iter 10 via prior-policy gate — all forum tables (`forum_categories`, `forum_posts`, `forum_threads`, `forum_user_profiles`, `forum_votes`) were already RLS-enabled with proper `auth.uid()`-scoped policies in `20260427_wave_security_observability.sql`; moved to FP table. `listing_plans` done iter 35 (commit `be7bff79` — deny-all anon; all 3 callers use service-role). `quarterly_reports` **blocked** (iter 35): admin CRUD page `app/admin/quarterly-reports/page.tsx` uses browser anon-key client (`lib/supabase/client.ts`); no `auth.uid()` linkage; policy design is non-obvious — see Blocked entry B-06-QUARTERLY-REPORTS-1. |
 | B-07 | done | Add CI lint that fails any new `CREATE TABLE` migration without `ENABLE ROW LEVEL SECURITY` | 1 | Done in commit `0097159` (PR #286). `scripts/check-rls-migrations.mjs` — finds added migration files in the PR via `git diff --diff-filter=A`, extracts `CREATE TABLE` names, checks each has `ENABLE ROW LEVEL SECURITY` in the same file. System-table prefixes exempted. `-- rls-exempt: <table>` escape hatch for public-read tables. 30 unit tests green. `rls-migrations-gate` CI job + `npm run audit:rls-migrations` local script. Coordinates with I-01. |
 | B-08 | done | Long-term: refactor `/api/listings/submit` + enquire counter fallback to admin client; tighten anon policy on `investment_listings` to SELECT-only (option 4 follow-up to B-04) | ~2 | Done commit `204b4da` (PR #286). listings/submit createClient() → createAdminClient(); enquire counter RPC + fallback UPDATE → createAdminClient(). Migration 20260602_rls_investment_listings_select_only.sql drops "anon insert pending" + "anon update counters" policies and REVOKEs column-level UPDATE grant. |
-| B-09 | pending | Long-term: refactor `/api/listings/my-listings` to admin client + email-verification challenge; tighten anon policy on `listing_enquiries` to deny SELECT (follow-up to B-06's `listing_enquiries` migration) | ~2 | **Known PII enumeration vector**: today the route trusts the user-supplied `email` query param and returns all enquiries (name, email, phone, message) for any listing whose `contact_email` matches. RLS at the DB layer cannot scope this without an `auth.uid()` linkage. Stream C territory; depends on the my-listings flow design decision (magic link, OTP, or login). |
+| B-09 | blocked | Long-term: refactor `/api/listings/my-listings` to admin client + email-verification challenge; tighten anon policy on `listing_enquiries` to deny SELECT (follow-up to B-06's `listing_enquiries` migration) | ~2 | **Blocked** — see B-09-MY-LISTINGS-1 entry below. Verification gate failed: route accepts unauthenticated email query param with no `auth.uid()` linkage; email-verification mechanism (OTP vs magic link vs account login) requires founder decision before implementation. |
 
 ### Stream D — Critical-path API tests (issue #217)
 
@@ -1175,6 +1202,20 @@ Two strategically important surfaces under-served by current nav: (1) investment
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-30T — iteration 150 (stream B — B-09 — BLOCKED: email-verification mechanism needed)
+
+- Phase 0: batch-mode fire, iteration 1. Lock acquired.
+- Phase 1: reset to `origin/main` (`b94c307`). Queue shows B-09 as first pending item (slot 10, B other).
+- Phase 1.5: types-drift skipped (Supabase MCP not probed — SQL-only iteration).
+- Phase 2: CI checked PRs #286 (B), #285 (D), #303 (C), #289 (L) — all checks green or skipped. No CI rescue needed.
+- Phase 3: B-09 is the first pending non-blocked item. Stream B branch `claude/audit-remediation/b-07-rls-migration-lint` (PR #286) already exists.
+- Phase 4 (verification gate — refactor): read `app/api/listings/my-listings/route.ts`. Route accepts unauthenticated `email` query param; uses `createClient()` (anon key); no cookie read, no session, no `auth.uid()` linkage. Gate requires "route reads cookies / is in an authenticated layout." FAILED. PII enumeration vector cannot be closed by admin-client swap alone — caller identity must be verified first. The mechanism (OTP vs magic link vs account login) is a design decision. Surfaced to Blocked with 4-option decision matrix.
+- Phase 5/6: no code changes. Queue-only update on main.
+- Phase 7: B-09 status → `blocked`; B-09-MY-LISTINGS-1 entry added to Blocked section; this log entry added.
+
+- STATUS: BLOCKED · stream=B · item=B-09
+- Remaining: B-09 blocked · C-02..C-08 pending · A-01..A-07 pending · O-01 ~34 tables remaining
 
 ### 2026-04-30T — iteration 149 (stream B — B-08 — investment_listings anon write surface removed)
 
