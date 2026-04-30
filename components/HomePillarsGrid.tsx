@@ -9,56 +9,51 @@ interface PillarsProps {
 
 export default function HomePillarsGrid({ listingCount, professionalCount, brokerCount }: PillarsProps) {
   const pillars: ReadonlyArray<{
-    tag: string;
     title: string;
     sub: string;
     cta: string;
     href: string;
     icon: string;
     accent: string;
-    stats: ReadonlyArray<readonly [string, string]>;
+    badge: string;
     featured?: boolean;
   }> = [
     {
-      tag: "01",
-      title: `Browse ${listingCount} live listings`,
-      sub: "Mining · farmland · credit · renewables · off-plan · businesses.",
-      cta: "Open marketplace",
-      href: "/invest/listings",
-      icon: "sparkles",
-      accent: "#fbbf24",
-      stats: [[String(listingCount), "deals open"], ["$10k", "min from"]],
-    },
-    {
-      tag: "02 · NEW",
-      title: "Post a job — advisors come to you",
-      sub: "Describe your situation. Verified advisors quote. Free to post.",
-      cta: "Post your situation",
-      href: "/quotes/post",
-      icon: "megaphone",
-      accent: "var(--color-coral-500)",
-      stats: [["FREE", "to post"], ["4h", "avg response"]],
-      featured: true,
-    },
-    {
-      tag: "03",
-      title: "Find a verified advisor",
-      sub: "ASIC-registered. Filter by specialty, language, fee, location.",
-      cta: "Browse advisors",
-      href: "/advisors",
-      icon: "users",
-      accent: "#34d399",
-      stats: [[professionalCount.toLocaleString("en-AU"), "verified"], ["12+", "specialties"]],
-    },
-    {
-      tag: "04",
-      title: `Compare ${brokerCount} platforms`,
-      sub: "Brokers, super, savings, crypto, term deposits, mortgages, robo.",
+      title: "Compare platforms",
+      sub: "Brokers, super, crypto, savings, robo — fees side-by-side.",
       cta: "Open comparisons",
       href: "/compare",
       icon: "trending-down",
       accent: "#60a5fa",
-      stats: [[String(brokerCount), "platforms"], ["7", "categories"]],
+      badge: `${brokerCount} platforms`,
+    },
+    {
+      title: "Speak with an advisor",
+      sub: "ASIC-registered. Free quotes from verified pros.",
+      cta: "Find an advisor",
+      href: "/find-advisor",
+      icon: "users",
+      accent: "var(--color-coral-500)",
+      badge: `${professionalCount.toLocaleString("en-AU")} advisors`,
+      featured: true,
+    },
+    {
+      title: "Browse listings",
+      sub: "Funds, businesses, farmland, mining, commercial property.",
+      cta: "Open marketplace",
+      href: "/invest/listings",
+      icon: "sparkles",
+      accent: "#fbbf24",
+      badge: `${listingCount} live`,
+    },
+    {
+      title: "Take the 60-sec quiz",
+      sub: "Tell us your goal — we'll point you the right way.",
+      cta: "Start the quiz",
+      href: "/quiz",
+      icon: "compass",
+      accent: "#34d399",
+      badge: "60 seconds",
     },
   ];
 
@@ -82,7 +77,7 @@ export default function HomePillarsGrid({ listingCount, professionalCount, broke
         </h2>
       </div>
 
-      <div className="home-pillars-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }}>
+      <div className="home-pillars-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14 }}>
         {pillars.map((p) => (
           <Link
             key={p.href}
@@ -94,114 +89,98 @@ export default function HomePillarsGrid({ listingCount, professionalCount, broke
               background: p.featured ? "var(--color-ink-900)" : "white",
               color: p.featured ? "white" : "var(--color-ink-900)",
               border: p.featured ? `1.5px solid ${p.accent}` : "1px solid #e5e7eb",
-              borderTop: p.featured ? `1.5px solid ${p.accent}` : `2px solid ${p.accent}`,
-              borderRadius: 12,
-              padding: "18px 18px 16px",
+              borderTop: p.featured ? `1.5px solid ${p.accent}` : `3px solid ${p.accent}`,
+              borderRadius: 14,
+              padding: "26px 22px 22px",
               textDecoration: "none",
               position: "relative",
               boxShadow: p.featured
-                ? `0 8px 22px color-mix(in oklch, ${p.accent} 16%, transparent)`
+                ? `0 12px 32px color-mix(in oklch, ${p.accent} 20%, transparent)`
                 : "0 1px 0 rgba(0,0,0,.02)",
+              minHeight: 240,
             }}
           >
-            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-              <div
-                style={{
-                  width: 32,
-                  height: 32,
-                  borderRadius: 8,
-                  background: `color-mix(in oklch, ${p.accent} 18%, transparent)`,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: p.accent,
-                }}
-                aria-hidden
-              >
-                <DesignIcon name={p.icon} size={15} strokeWidth={2.2} />
-              </div>
-              <span
-                style={{
-                  fontSize: 10,
-                  fontWeight: 800,
-                  color: p.accent,
-                  textTransform: "uppercase",
-                  letterSpacing: ".1em",
-                }}
-              >
-                {p.tag}
-              </span>
+            <div
+              aria-hidden
+              style={{
+                width: 56,
+                height: 56,
+                borderRadius: 14,
+                background: `color-mix(in oklch, ${p.accent} ${p.featured ? 22 : 14}%, transparent)`,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: p.accent,
+                marginBottom: 16,
+              }}
+            >
+              <DesignIcon name={p.icon} size={28} strokeWidth={2.2} />
             </div>
+
             <div
               className="font-display"
               style={{
-                fontSize: 16.5,
-                fontWeight: 700,
-                lineHeight: 1.18,
-                letterSpacing: "-.018em",
-                marginBottom: 6,
+                fontSize: 21,
+                fontWeight: 800,
+                lineHeight: 1.1,
+                letterSpacing: "-.022em",
+                marginBottom: 8,
                 textWrap: "balance",
+                color: p.featured ? "white" : "var(--color-ink-900)",
               }}
             >
               {p.title}
             </div>
             <div
               style={{
-                fontSize: 12,
+                fontSize: 13,
                 color: p.featured ? "rgba(255,255,255,.65)" : "var(--color-ink-500)",
                 lineHeight: 1.45,
-                marginBottom: 12,
+                marginBottom: 16,
                 flex: 1,
               }}
             >
               {p.sub}
             </div>
+
             <div
               style={{
                 display: "flex",
-                gap: 14,
-                marginBottom: 12,
-                paddingTop: 10,
-                borderTop: p.featured ? "1px solid rgba(255,255,255,.1)" : "1px solid #e5e7eb",
-              }}
-            >
-              {p.stats.map(([n, l]) => (
-                <div key={l}>
-                  <div
-                    className="font-mono"
-                    style={{
-                      fontSize: 14,
-                      fontWeight: 800,
-                      color: p.featured ? "white" : "var(--color-ink-900)",
-                      lineHeight: 1,
-                    }}
-                  >
-                    {n}
-                  </div>
-                  <div
-                    style={{
-                      fontSize: 9.5,
-                      color: p.featured ? "rgba(255,255,255,.5)" : "var(--color-ink-400)",
-                      marginTop: 3,
-                    }}
-                  >
-                    {l}
-                  </div>
-                </div>
-              ))}
-            </div>
-            <span
-              style={{
-                fontSize: 12.5,
-                fontWeight: 700,
-                color: p.accent,
-                display: "inline-flex",
                 alignItems: "center",
-                gap: 5,
+                justifyContent: "space-between",
+                gap: 8,
               }}
             >
-              {p.cta} <DesignIcon name="arrow-right" size={11} strokeWidth={2.6} />
-            </span>
+              <span
+                className="font-mono"
+                style={{
+                  fontSize: 11,
+                  fontWeight: 800,
+                  color: p.accent,
+                  textTransform: "uppercase",
+                  letterSpacing: ".06em",
+                  background: `color-mix(in oklch, ${p.accent} ${p.featured ? 18 : 10}%, transparent)`,
+                  border: `1px solid color-mix(in oklch, ${p.accent} 30%, transparent)`,
+                  padding: "3px 8px",
+                  borderRadius: 99,
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {p.badge}
+              </span>
+              <span
+                style={{
+                  fontSize: 13,
+                  fontWeight: 800,
+                  color: p.featured ? "white" : p.accent,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 6,
+                }}
+              >
+                {p.cta} <DesignIcon name="arrow-right" size={14} strokeWidth={2.6} />
+              </span>
+            </div>
           </Link>
         ))}
       </div>

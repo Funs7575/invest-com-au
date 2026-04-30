@@ -21,6 +21,16 @@ export interface CompareBroker {
   editors_pick: boolean | null;
 }
 
+const QUICK_FILTERS: ReadonlyArray<{ label: string; href: string }> = [
+  { label: "$0 brokerage", href: "/compare?category=shares" },
+  { label: "CHESS sponsored", href: "/compare?category=shares" },
+  { label: "Top-rated super", href: "/best/super-funds" },
+  { label: "Crypto · low fees", href: "/best/crypto-exchanges" },
+  { label: "Best HISA", href: "/best/savings-accounts" },
+  { label: "Robo · all-in fee", href: "/best/robo-advisors" },
+  { label: "Editor's picks", href: "/compare?sort=rating" },
+];
+
 const CAT_META: Record<string, { label: string; color: string; criterion: string; href: string; valueLabel: string }> = {
   share_broker:    { label: "Stock brokers",  color: "#60a5fa", criterion: "by total cost on $200/month DCA", href: "/share-trading", valueLabel: "Trade" },
   super_fund:      { label: "Super funds",    color: "#34d399", criterion: "by 10-yr balanced return net of fees", href: "/super",       valueLabel: "Fee" },
@@ -130,11 +140,54 @@ export default function HomeCompareDeepDive({ brokers }: HomeCompareDeepDiveProp
           })}
         </div>
 
+        <div
+          style={{
+            display: "flex",
+            gap: 6,
+            marginBottom: 14,
+            flexWrap: "wrap",
+            alignItems: "center",
+          }}
+        >
+          <span
+            className="font-mono"
+            style={{
+              fontSize: 9.5,
+              color: "rgba(255,255,255,.4)",
+              fontWeight: 700,
+              textTransform: "uppercase",
+              letterSpacing: ".08em",
+              marginRight: 4,
+            }}
+          >
+            Quick filters
+          </span>
+          {QUICK_FILTERS.map((f) => (
+            <Link
+              key={f.label}
+              href={f.href}
+              style={{
+                padding: "5px 10px",
+                fontSize: 11.5,
+                fontWeight: 600,
+                color: "rgba(255,255,255,.85)",
+                background: "rgba(255,255,255,.05)",
+                border: "1px solid rgba(255,255,255,.1)",
+                borderRadius: 99,
+                textDecoration: "none",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {f.label}
+            </Link>
+          ))}
+        </div>
+
         <div className="home-compare-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
           {featuredKeys.map((key) => {
             const meta = CAT_META[key];
             if (!meta) return null;
-            const rows = (groups.get(key) ?? []).slice(0, 3);
+            const rows = (groups.get(key) ?? []).slice(0, 4);
             if (rows.length === 0) return null;
             return (
               <div
@@ -219,6 +272,57 @@ export default function HomeCompareDeepDive({ brokers }: HomeCompareDeepDiveProp
               </div>
             );
           })}
+        </div>
+
+        <div
+          className="home-compare-end"
+          style={{
+            marginTop: 18,
+            padding: "14px 18px",
+            background: "rgba(255,255,255,.04)",
+            border: "1px solid rgba(255,255,255,.08)",
+            borderRadius: 12,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 16,
+            flexWrap: "wrap",
+          }}
+        >
+          <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <span
+              className="font-mono"
+              style={{
+                fontSize: 9.5,
+                color: "rgba(255,255,255,.4)",
+                fontWeight: 700,
+                textTransform: "uppercase",
+                letterSpacing: ".08em",
+              }}
+            >
+              Not sure where to start?
+            </span>
+            <span style={{ fontSize: 13.5, fontWeight: 700, color: "white" }}>
+              Filter {brokers.length} platforms by your criteria — fees, features, regulator.
+            </span>
+          </div>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            <Link href="/quiz" className="iv2-cta" style={{ fontSize: 12.5 }}>
+              60-second quiz <DesignIcon name="arrow-right" size={11} />
+            </Link>
+            <Link
+              href="/compare"
+              className="iv2-cta-ghost"
+              style={{
+                fontSize: 12.5,
+                color: "white",
+                borderColor: "rgba(255,255,255,.2)",
+                background: "transparent",
+              }}
+            >
+              Open full comparison
+            </Link>
+          </div>
         </div>
       </div>
 
