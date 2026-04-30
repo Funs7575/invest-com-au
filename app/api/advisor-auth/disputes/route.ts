@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { requireAdvisorSession } from "@/lib/require-advisor-session";
 import { isRateLimited } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
 import {
@@ -7,7 +8,6 @@ import {
   notifyAdminEscalated,
 } from "@/lib/advisor-lead-dispute-resolver";
 import type { DisputeReason } from "@/lib/advisor-lead-disputes";
-import { requireAdvisorSession } from "@/lib/require-advisor-session";
 
 const log = logger("advisor-auth:disputes");
 
@@ -57,10 +57,10 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const supabase = await createClient();
+  const admin = createAdminClient();
 
-  // Verify lead belongs to this advisor
-  const { data: lead } = await supabase
+  // Verify lead belongs to this advisor (admin: lead_disputes has no RLS SELECT for authenticated)
+  const { data: lead } = await admin
     .from("professional_leads")
     .select("id, professional_id, created_at, billed")
     .eq("id", leadId)
@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
   }
 
   // Check no existing dispute
-  const { data: existingDispute } = await supabase
+  const { data: existingDispute } = await admin
     .from("lead_disputes")
     .select("id")
     .eq("lead_id", leadId)
@@ -95,13 +95,13 @@ export async function POST(request: NextRequest) {
   if (existingDispute) return NextResponse.json({ error: "This lead already has a dispute" }, { status: 409 });
 
   // Find associated billing record
-  const { data: billingRecord } = await supabase
+  const { data: billingRecord } = await admin
     .from("advisor_billing")
     .select("id")
     .eq("lead_id", leadId)
     .single();
 
-  const { data: insertedDispute, error } = await supabase
+  const { data: insertedDispute, error } = await admin
     .from("lead_disputes")
     .insert({
       lead_id: leadId,
@@ -134,12 +134,12 @@ export async function POST(request: NextRequest) {
   // classifier signals so the admin can see what rules ran and why
   // the classifier punted.
   if (result.verdict === "escalate") {
-    const { data: advisor } = await supabase
+    const { data: advisor } = await admin
       .from("professionals")
       .select("name")
       .eq("id", advisorId)
       .single();
-    const { data: leadData } = await supabase
+    const { data: leadData } = await admin
       .from("professional_leads")
       .select("user_name")
       .eq("id", leadId)
@@ -172,8 +172,8 @@ export async function GET(request: NextRequest) {
   const advisorId = await requireAdvisorSession(request);
   if (!advisorId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
 
-  const supabase = await createClient();
-  const { data: disputes } = await supabase
+  const admin = createAdminClient();
+  const { data: disputes } = await admin
     .from("lead_disputes")
     .select("*, professional_leads(user_name, user_email, created_at)")
     .eq("professional_id", advisorId)
