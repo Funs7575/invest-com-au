@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getAdminEmails } from "@/lib/admin";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 import { FEATURE_CONFIG } from "@/lib/admin/automation-metrics";
 import { getSiteUrl } from "@/lib/url";
 
@@ -35,6 +35,7 @@ export async function POST(request: NextRequest) {
   if (!user || !user.email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  setLoggerUser(user);
   const adminEmails = getAdminEmails();
   if (!adminEmails.includes(user.email.toLowerCase())) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });

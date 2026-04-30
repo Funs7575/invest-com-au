@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { ADMIN_EMAILS } from "@/lib/admin";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 
 const log = logger("admin-competitors");
 
@@ -28,6 +28,7 @@ export async function GET() {
   try {
     const admin = await requireAdmin();
     if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    setLoggerUser(admin);
 
     const supabase = createAdminClient();
     const { data } = await supabase
@@ -46,6 +47,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   const admin = await requireAdmin();
   if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  setLoggerUser(admin);
 
   const supabase = createAdminClient();
   const body = await request.json();
@@ -85,6 +87,7 @@ export async function POST(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   const admin = await requireAdmin();
   if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  setLoggerUser(admin);
 
   const supabase = createAdminClient();
   const { id } = await request.json();

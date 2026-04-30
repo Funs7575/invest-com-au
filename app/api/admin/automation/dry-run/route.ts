@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { setLoggerUser } from "@/lib/logger";
 import { createClient } from "@/lib/supabase/server";
 import { getAdminEmails } from "@/lib/admin";
 import { classifyText } from "@/lib/text-moderation";
@@ -32,6 +33,7 @@ export async function POST(request: NextRequest) {
   if (!user || !user.email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  setLoggerUser(user);
   if (!getAdminEmails().includes(user.email.toLowerCase())) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }

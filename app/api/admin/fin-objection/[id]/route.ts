@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getFinObjectionEmails } from "@/lib/admin";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 
 const log = logger("admin-fin-objection");
 
@@ -43,6 +43,7 @@ export async function POST(
       { status: 403 }
     );
   }
+  if (user) setLoggerUser(user);
 
   const supabase = createAdminClient();
   const { data, error } = await supabase
