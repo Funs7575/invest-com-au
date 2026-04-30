@@ -36,7 +36,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | J | `claude/audit-remediation/j-stripe-webhook` | #288 (draft) | pending — pushed 2026-04-29T22:30Z | J-01a..J-01e (route.ts 1197 → 165 LOC) · J-01d-ext (commit `bb1d56f6`) · J-03 (commit `b8e7189`) · J-05 (commit `d68852e`) · J-06 (commit `eedf582`) · J-08 (commit `e99aedc`) · J-09 (commit `e99aedc`) · J-10 (commit `e99aedc`) — all handlers complete (14 registered). Stream complete pending PR merge. |
 | K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-27T05:35Z | K-01..K-08 done; K-09 false-positive; K-10..K-15 done — **stream complete** |
 | L | `claude/audit-remediation/l-observability` | #289 (draft) | pending — pushed 2026-04-30T (iter 145b, L-12b fully complete) | L-06..L-11 done. L-12a done (`20f5e6c`). L-12b batches 1-6: 63 routes. Batch 7 (`d88ca44`): 10 admin routes. Batch 7b (`eee5f1f5`): lib/require-admin (19 routes) + 5 direct. Batch 8 (`0db941e4`): 9 routes. Batch 8b (`dc67fff4`): advisor-photo, analytics-dashboard, broker-portal/invoices/pdf, stripe/create-contract. **L-12b fully complete — all authenticated routes tagged, cron/cleanup confirmed FP (requireCronAuth, no user identity).** |
-| M | `claude/audit-remediation/m-01b-cover-image-backfill` | #283 (draft) | pending — pushed 2026-04-30T (iter 146, M-07 domain migration plan) | M-01b in flight (commit `19a0d7e6`) — per-article OG cover override + backfill script. M-02 on separate branch `claude/audit-remediation/m-02-versus-json-ld` (#296 draft) — commit `3ab1bacf`. M-03 done (commit `85c7236`). M-04 done (commit `353fa3a`) — meta_title/description added to Article type + generateMetadata fallback chain. M-07 done (commit `32609ec`) — domain migration runbook. |
+| M | `claude/audit-remediation/m-01b-cover-image-backfill` (#283) · `claude/audit-remediation/m-05-glossary-linkifier` (#325) | #283 (draft) · #325 (draft) | #325 pending — pushed 2026-04-30T (iter 147, M-05 iter 1/2) | M-01b in flight (commit `19a0d7e6`). M-02 on separate branch `claude/audit-remediation/m-02-versus-json-ld` (#296 draft) — commit `3ab1bacf`. M-03 done (`85c7236`). M-04 done (`353fa3a`). M-07 done (`32609ec`) — domain migration runbook. M-05 iter 1 in-progress — GLOSSARY_LINK_TARGETS + splitByLinks/linkifyHtml wired, 8 tests (commit `40080391`, PR #325). |
 | N | `claude/audit-remediation/n-ux-perf` | #242 | pending — pushed 2026-04-27T13:30Z | N-01+N-02 done (`2ec6f89`) · N-03a done (`36e3f6d`) · N-03b done (`97bb9b00`) · N-03c done (`b29f443`) · N-04 FP · N-05 FP · N-06 blocked · N-07 batch 1 done (`2e5d8a4`) · N-07 batch 2 done (`91d0d42`) · N-08 done (`315d3b7`) · N-09 done (`3b43bf8`) · N-10 done (`0c33d71`) · N-11 done (`c2b769e`) — **stream complete** (N-06 blocked) |
 | O | `claude/audit-remediation/o-rls-no-policy` | merged via #235/#237/#239 | last pushed 2026-04-26 | O-01 iter1 done (`user_notifications`/`user_quiz_history`/`user_bookmarks`) · iter2 done `8e638bd` (`article_comments`/`article_reactions`) · iter3 done `c9c8fcd` (admin/audit cluster) · iter4 done `e965eb7` (14 observability/admin tables). ~34 tables remain for iter5+. |
 | P | _not started_ | — | — | — |
@@ -407,7 +407,7 @@ The single highest-leverage finding (M-01: cover_image_url backfill) lives here.
 | M-02 | done | Versus pages (600+ URLs) — emit JSON-LD: `Article` + `BreadcrumbList` + per-side `FinancialProduct` review schema | 1 | **Done in commit `3ab1bacf` (PR #296, draft).** Added `versusComparisonJsonLd()` to `lib/schema-markup.ts`; updated `app/versus/[slugs]/page.tsx` to replace WebPage+ItemList with Article + individual FinancialProduct per broker side. BreadcrumbList + FAQPage unchanged. 14 new tests in `__tests__/lib/schema-markup.test.ts`. |
 | M-03 | done | Advisor pages — switch schema type from `ProfessionalService` to `["ProfessionalService", "FinancialService"]` for financial planners + wealth managers | 1 | P1. Entity-disambiguation gain in financial queries. Done commit `85c7236` (iter 129). |
 | M-04 | done | Article meta_title/meta_description fallback path: auto-generate from `articles.excerpt` + `category` when DB fields are null (43 articles affected) | 1 | P1. Done commit `353fa3a` (iter 131). Added meta_title/meta_description to Article type; generateMetadata now uses them with excerpt → auto-generated fallback chain. |
-| M-05 | pending | Glossary auto-linkifier — inline-link 200+ terms from `lib/glossary.ts` in article body content | ~2 | P2. Topical-relevance gain. |
+| M-05 | in-progress | Glossary auto-linkifier — inline-link 200+ terms from `lib/glossary.ts` in article body content | ~2 | P2. Topical-relevance gain. Iter 1 done (commit `40080391`, PR #325): GLOSSARY_LINK_TARGETS built from glossary.ts, merged into ALL_TARGETS, splitByLinks/linkifyHtml wired, 8 new tests. Iter 2: surface coverage on additional page types (M-06 if iter 2 is short). |
 | M-06 | pending | Render `articles.related_advisor_types` and `articles.related_verticals` as internal links on article pages | 1 | P2. |
 | M-07 | done | Document domain-migration plan for Oct-Dec 2026 cutover (Vercel domain alias, GSC change-of-address, 301 mapping, registrar steps) | 1 | Done in commit `32609ec` (PR #283). `docs/runbooks/domain-migration.md` — 6-phase runbook: pre-migration audit (URL inventory, GSC baseline, authority snapshot, legacy redirect map) → DNS TTL reduction (T-14d) → Vercel custom domain + TXT verification (T-7d) → GSC property + change-of-address (T-7d) → final checklist (T-1d) → T=0 cutover (DNS + NEXT_PUBLIC_SITE_URL env var) → post-cutover monitoring (T+1h/24h/7d/30d/90d) + rollback. Key finding: only ONE env var change at T=0 propagates to all canonical tags, sitemap, robots.txt, schema.org URLs, Stripe URLs, email links. |
 
@@ -1176,6 +1176,23 @@ Two strategically important surfaces under-served by current nav: (1) investment
 
 ## Iteration log (most recent at top)
 
+### 2026-04-30T — iteration 147 (stream M — M-05 — glossary auto-linkifier iter 1/2)
+
+- Phase 0: batch-mode iteration 5/5 (final). Lock acquired. Note: iter 146 was M-07 (parallel fire, same batch).
+- Phase 1: synced main (1a873735). Checked out `claude/audit-remediation/m-05-glossary-linkifier` (opened fresh branch from main).
+- Phase 1.5: types-drift skipped (no schema change).
+- Phase 2: CI checked on all in-flight stream PRs — no red CI found.
+- Phase 3: M-05 pending, no prior branch — scaffolded `claude/audit-remediation/m-05-glossary-linkifier`; empty commit `3c83e53d`; pushed; opened draft PR #325.
+- Phase 4: `lib/glossary.ts` exports `GLOSSARY_ENTRIES: GlossaryEntry[]` with `term`, `slug`, `definition` fields. Need to filter out terms already in INTERNAL_LINK_TARGETS to avoid duplicates. `LinkifiedText` component uses `splitByLinks()` — will automatically pick up new targets. `linkifyHtml()` used for article HTML bodies — also automatic.
+- Phase 5: `lib/keyword-linking.ts` — added `GLOSSARY_LINK_TARGETS` (glossary terms filtered against INTERNAL_LINK_TARGETS, mapped to `/glossary/{slug}`, `rel="glossary"`); merged into `ALL_TARGETS`; `SORTED_TARGETS` now sorts `ALL_TARGETS`. `__tests__/lib/keyword-linking.test.ts` — 8 new tests: 5 for GLOSSARY_LINK_TARGETS validity + 2 for splitByLinks glossary behaviour + priority tie-break. All 22 tests green.
+- Phase 6: committed `40080391`; pushed cleanly to `claude/audit-remediation/m-05-glossary-linkifier`.
+- Phase 6.5: discovery sweep — touched `lib/keyword-linking.ts`: coverage is now solid (22 tests). No adjacent gaps discovered.
+- Phase 7: M in-flight row updated with M-05 branch + PR #325; M-05 status → in-progress; this entry added to main.
+
+- STATUS: PROGRESS · stream=M · item=M-05 (iter 1/2) · branch=claude/audit-remediation/m-05-glossary-linkifier · pr=#325 · commit=`40080391` · diff=+79/-6 across 2 files
+- Next item: M-05 iter 2 (surface coverage on additional page types) or M-06 (related_advisor_types links)
+- Remaining: M-05 (1 more iter) · M-06 pending · B-08/B-09 pending · C-02..C-08 pending
+
 ### 2026-04-30T — iteration 146 (stream M — M-07 — domain migration runbook)
 
 - Phase 0: batch-mode iteration 2/5. Lock active from batch start.
@@ -1190,7 +1207,7 @@ Two strategically important surfaces under-served by current nav: (1) investment
 
 - STATUS: PROGRESS · stream=M · item=M-07 · pr=#283 · commit=`32609ec` · diff=+422 across 1 file
 - Next item: M-05 (glossary auto-linkifier, P2) or M-06 (related_advisor_types links, P2)
-- Remaining: M-05 pending · M-06 pending · M-07 done · B-08/B-09 pending · C-02..C-08 pending
+- Remaining: M-05 pending · M-06 pending · B-08/B-09 pending · C-02..C-08 pending
 
 ### 2026-04-30T (this fire) — iteration 145b (stream L — L-12b batch 8b — final 4 routes)
 
