@@ -1,4 +1,19 @@
--- Sponsor invoices for recurring sponsorship tier billing
+-- ============================================================
+-- 004: Sponsor invoices for recurring sponsorship tier billing
+-- ============================================================
+--
+-- Adds sponsor_invoices table to track period-based billing for
+-- sponsorship tiers (e.g. monthly featured-partner placements).
+--
+-- ROLLBACK STRATEGY (forward-only in prod; for dev/staging only):
+--   DROP INDEX IF EXISTS idx_sponsor_invoices_unique;
+--   DROP INDEX IF EXISTS idx_sponsor_invoices_period;
+--   DROP INDEX IF EXISTS idx_sponsor_invoices_slug;
+--   DROP TABLE IF EXISTS sponsor_invoices;
+--
+-- Risk: low — additive only; new isolated table.
+-- All operations use IF NOT EXISTS to be idempotent on re-run.
+
 CREATE TABLE IF NOT EXISTS sponsor_invoices (
   id SERIAL PRIMARY KEY,
   broker_slug TEXT NOT NULL,

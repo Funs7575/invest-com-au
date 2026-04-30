@@ -101,6 +101,9 @@ done > /tmp/scout-no-zod.txt
 npm run audit:rate-limits 2>&1 | tee /tmp/scout-rate-limits.txt
 npm run audit:dated-strings 2>&1 | tee /tmp/scout-dated-strings.txt
 npm run audit:stripe-idempotency 2>&1 | tee /tmp/scout-stripe-idempotency.txt
+npm run audit:console-calls 2>&1 | tee /tmp/scout-console-calls.txt
+npm run audit:duplicate-functions 2>&1 | tee /tmp/scout-duplicate-functions.txt
+npm run audit:stale-branches 2>&1 | tee /tmp/scout-stale-branches.txt
 ```
 
 If any audit script fails, log the failure and continue — one missing audit doesn't kill the scout fire.
@@ -122,6 +125,9 @@ Stream-letter mapping (so new items go to the right queue section):
 | Dated string without badge | V | `V-DISC-<YYYYMMDD>-NN` |
 | Stripe handler missing idempotency replay | J | `J-DISC-<YYYYMMDD>-NN` |
 | Lib coverage <60% | R | `R-DISC-<YYYYMMDD>-NN` |
+| Raw `console.*` call in app/lib/components/hooks | F | `F-DISC-<YYYYMMDD>-NN` |
+| Lib export shadowed by local redefinition | F | `F-DISC-<YYYYMMDD>-NN` |
+| Stale unmerged remote branch (≥7 days) | I | `I-DISC-<YYYYMMDD>-NN` (status `needs-user`) |
 
 ### Phase 3 — Append + push
 

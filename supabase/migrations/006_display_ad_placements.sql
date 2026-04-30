@@ -1,3 +1,39 @@
+-- ============================================================================
+-- Migration: 006_display_ad_placements.sql
+-- Purpose: Seed seven display-ad marketplace_placements rows (sidebar,
+--          in-content native, sticky footer, calculator results).
+-- Rollback: DELETE the seven inserted slugs from marketplace_placements
+--           (only if no campaigns reference them).
+-- Risk: medium — reverse fails if downstream campaigns reference these
+--       placements via FK.
+-- ============================================================================
+--
+-- Forward operations:
+--   1. INSERT INTO marketplace_placements (...) VALUES
+--        ('display-sidebar-review', ...),
+--        ('display-sidebar-compare', ...),
+--        ('display-sidebar-calculator', ...),
+--        ('display-incontent-article', ...),
+--        ('display-incontent-review', ...),
+--        ('display-sticky-footer', ...),
+--        ('display-calculator-results', ...)
+--      ON CONFLICT (slug) DO NOTHING;
+--
+-- Rollback (in reverse order):
+--   1. DELETE FROM marketplace_placements
+--      WHERE slug IN (
+--        'display-calculator-results',
+--        'display-sticky-footer',
+--        'display-incontent-review',
+--        'display-incontent-article',
+--        'display-sidebar-calculator',
+--        'display-sidebar-compare',
+--        'display-sidebar-review'
+--      );
+--      -- Note: will fail if dependent campaigns/bookings reference these
+--      -- slugs via FK. Operator must remove dependents first.
+--
+
 -- New display advertising placements for sidebar, in-content, and sticky positions
 -- These extend the existing marketplace_placements table with display ad inventory
 INSERT INTO marketplace_placements (slug, name, page, position, inventory_type, max_slots, base_rate_cents, description, is_active)
