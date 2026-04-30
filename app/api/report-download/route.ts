@@ -23,7 +23,8 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { email } = body as { email: string };
+    const rawEmail = (body as { email?: unknown }).email;
+    const email = typeof rawEmail === "string" ? rawEmail.trim().toLowerCase() : "";
 
     if (!email || !email.includes("@") || email.length > 320) {
       return NextResponse.json(
@@ -32,7 +33,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Basic email format validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return NextResponse.json(
@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
       .from("email_captures")
       .upsert(
         {
-          email: email.toLowerCase().trim(),
+          email,
           source: "annual_report",
           captured_at: new Date().toISOString(),
         },

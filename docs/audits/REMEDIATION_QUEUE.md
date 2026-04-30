@@ -161,6 +161,31 @@ A `status = 'published'` allow-SELECT policy would fix the public pages but leav
 
 ---
 
+### G-04 · Partial-failure-marker migrations need founder verification (surfaced 2026-04-30 by agent)
+
+**Finding:** 8 migrations contain partial-failure markers (audit §5.5) indicating uncertain prod state — 2 with `TODO.md` references, 6 where the file ends with a trailing `--` comment after the last SQL statement (a pattern that has historically caused some pipelines to silently truncate the final statement). See `docs/audits/g-04-partial-failure-markers.md` for the per-migration verification SQL + recovery actions. The 8 migrations:
+
+1. `20260316_email_otps.sql` — verify `idx_email_otps_expires` index exists.
+2. `20260426_wave_launch_readiness.sql` — verify all 20 trailing best-for scenarios + 6 forum/newsletter tables.
+3. `20260512_agent_infrastructure.sql` — verify 19 agent-infra tables, especially `authorised_representatives` + `credit_representatives` RLS/policies.
+4. `20260310_fix_advisor_photos.sql` — verify no `professionals.photo_url` is NULL for pre-2026-03-10 advisors.
+5. `20260310_admin_login_attempts.sql` — verify `relrowsecurity = true` (RLS on rate-limit table).
+6. `20260411_features_11_12_14_15_16_18.sql` — verify trailing `regulatory_broker_impacts` table + `regulatory_alerts` ALTERs.
+7. `20260522_rls_cosmetic_cleanup.sql` — verify duplicate `Public can read threads` policy is gone.
+8. `20260513_fix_public_read_leaks.sql` — **highest risk** — verify `Public can read BD pipeline` + `Public read competitor_watch` policies are gone (active data leak if still present).
+
+**Decision matrix for the user:**
+
+| Option | What you do | Trade-off |
+|---|---|---|
+| **1. Run the 8 verification SQL blocks via Supabase MCP** | Open `docs/audits/g-04-partial-failure-markers.md`, run each `Verification SQL` block (~10 min total), reply with the results. | Fastest path. Founder is the only one with MCP access. Result tells exactly which (if any) of the 8 need a forward-fix-up migration. |
+| **2. Run only #8 (urgent) and #5 (security)** then **defer the rest** | Verify the data-leak migration and the RLS-on-rate-limit-table migration; treat the other 6 as nice-to-have. | Closes the two security-relevant items immediately; leaves the perf / hygiene items for next dashboard cycle. ~3 min of MCP time. |
+| **3. Defer all 8 — accept current prod state** | Leave G-04 blocked indefinitely. | No effort. Moderate risk: if migration #8 truncated, `bd_pipeline` + `competitor_watch` are still publicly readable via PostgREST anon key. |
+
+**Recommendation:** Run the verification SQL queries (Supabase MCP, ~10 min total), then reply with results so a follow-up forward-fix migration can be queued for any that need it. Start with migration #8 (data-leak risk) and #5 (security regression risk) — those are the only ones where a partial apply has user-visible / compliance-visible consequences. The other 6 are mostly perf / hygiene with one or two edge-case 404s.
+
+---
+
 ## Pending work
 
 ### Cross-stream dependencies (added 2026-04-27 enterprise-standard reorder)
@@ -256,7 +281,7 @@ Highest priority: critical 2 first.
 | G-01 | pending | Idempotency: convert 10 non-idempotent migrations (per audit §5.2) to use `IF NOT EXISTS` / `CREATE OR REPLACE` | 1 | List in audit. Single iteration; comment-only or near-comment-only. |
 | G-02 | pending | Rollback headers: add to the 3 migrations missing headers entirely | 1 | `20260316_add_weekly_rate_drip_log.sql`, `20260316_add_advisor_nudge_tracking.sql`, `20260316_add_lead_outcome_tracking.sql`. |
 | G-03 | pending | Rollback headers: backfill explicit reverse-SQL on remaining 108 partial-header migrations | ~10 | ~10 migrations per iteration. |
-| G-04 | pending | Document the 8 partial-failure-marker migrations (audit §5.5) for user to verify in prod | 1 | Output to Blocked — needs DB access. |
+| G-04 | blocked | Document the 8 partial-failure-marker migrations (audit §5.5) for user to verify in prod | 1 | **Blocked** — see Blocked entry G-04 below. Doc shipped at `docs/audits/g-04-partial-failure-markers.md` (per-migration verification SQL + recovery actions); needs founder Supabase MCP access to run the queries. |
 
 ### Stream I — CI / lint guardrails
 
