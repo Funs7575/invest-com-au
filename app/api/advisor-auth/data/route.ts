@@ -37,7 +37,11 @@ export async function GET(request: NextRequest) {
   const advisorId = await getAdvisorId(request);
   if (!advisorId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
 
-  const supabase = await createClient();
+  // Admin client used throughout: professional_leads, advisor_billing,
+  // advisor_profile_views, and professional_reviews have no RLS SELECT policy
+  // for the authenticated role — using createClient() silently returns empty
+  // arrays. The application-layer .eq("professional_id", advisorId) scoping
+  // provides equivalent security to what an RLS policy would enforce.
   const admin = createAdminClient();
   const thirtyDaysAgo = new Date(Date.now() - 30 * 86400000).toISOString();
 
@@ -49,33 +53,33 @@ export async function GET(request: NextRequest) {
     { data: reviews },
   ] = await Promise.all([
     // Recent leads (last 90 days)
-    supabase
+    admin
       .from("professional_leads")
       .select("*")
       .eq("professional_id", advisorId)
       .order("created_at", { ascending: false })
       .limit(50),
     // All leads count
-    supabase
+    admin
       .from("professional_leads")
       .select("id, status, created_at", { count: "exact" })
       .eq("professional_id", advisorId),
     // Billing records
-    supabase
+    admin
       .from("advisor_billing")
       .select("*")
       .eq("professional_id", advisorId)
       .order("created_at", { ascending: false })
       .limit(20),
     // Profile views (last 30 days)
-    supabase
+    admin
       .from("advisor_profile_views")
       .select("view_date, view_count")
       .eq("professional_id", advisorId)
       .gte("view_date", thirtyDaysAgo.split("T")[0])
       .order("view_date", { ascending: true }),
     // Reviews
-    supabase
+    admin
       .from("professional_reviews")
       .select("*")
       .eq("professional_id", advisorId)
@@ -150,10 +154,13 @@ export async function PATCH(request: NextRequest) {
   const { leadId, status, notes } = await request.json();
   if (!leadId) return NextResponse.json({ error: "Lead ID required" }, { status: 400 });
 
-  const supabase = await createClient();
+  // Admin client: professional_leads and professionals have no RLS UPDATE policy
+  // for the authenticated role. Ownership is enforced at the application layer
+  // by the .eq("professional_id", advisorId) filter below.
+  const admin = createAdminClient();
 
   // Verify lead belongs to this advisor
-  const { data: lead } = await supabase
+  const { data: lead } = await admin
     .from("professional_leads")
     .select("id, professional_id, created_at")
     .eq("id", leadId)
@@ -185,19 +192,19 @@ export async function PATCH(request: NextRequest) {
   }
   if (notes !== undefined) updates.advisor_notes = notes;
 
-  await supabase.from("professional_leads").update(updates).eq("id", leadId);
+  await admin.from("professional_leads").update(updates).eq("id", leadId);
 
   // Update advisor's average response time
   if (status === "contacted" && updates.response_time_minutes) {
     try {
-      const { data: allResponded } = await supabase
+      const { data: allResponded } = await admin
         .from("professional_leads")
         .select("response_time_minutes")
         .eq("professional_id", lead.professional_id)
         .not("response_time_minutes", "is", null);
       if (allResponded && allResponded.length > 0) {
         const avg = Math.round(allResponded.reduce((sum: number, l: { response_time_minutes: number }) => sum + l.response_time_minutes, 0) / allResponded.length);
-        await supabase.from("professionals").update({ avg_response_minutes: avg }).eq("id", lead.professional_id);
+        await admin.from("professionals").update({ avg_response_minutes: avg }).eq("id", lead.professional_id);
       }
     } catch (err) {
       log.warn("avg response time update failed", { err: err instanceof Error ? err.message : String(err), professionalId: lead.professional_id });
