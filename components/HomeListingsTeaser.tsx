@@ -118,6 +118,40 @@ export default function HomeListingsTeaser({ listings, totalCount }: HomeListing
               </button>
             );
           })}
+          <Link
+            href="/invest/listings"
+            className="home-listings-facets"
+            style={{
+              marginLeft: "auto",
+              display: "flex",
+              gap: 6,
+              alignItems: "center",
+              paddingBottom: 6,
+              textDecoration: "none",
+            }}
+            aria-label="Filter listings (full filters on browse page)"
+          >
+            {["$ Min", "Yield", "Term", "Status"].map((f) => (
+              <span
+                key={f}
+                style={{
+                  padding: "5px 10px",
+                  borderRadius: 99,
+                  fontSize: 11,
+                  fontWeight: 600,
+                  border: "1px solid #e5e7eb",
+                  background: "white",
+                  color: "var(--color-ink-500)",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 4,
+                }}
+              >
+                {f}
+                <DesignIcon name="chevron-down" size={9} />
+              </span>
+            ))}
+          </Link>
         </div>
 
         <div className="home-listings-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
@@ -227,6 +261,9 @@ export default function HomeListingsTeaser({ listings, totalCount }: HomeListing
       <style>{`
         @media (max-width: 1024px) {
           .home-listings-grid { grid-template-columns: repeat(2, 1fr) !important; }
+        }
+        @media (max-width: 768px) {
+          .home-listings-facets { display: none !important; }
         }
         @media (max-width: 640px) {
           .home-listings-grid { grid-template-columns: 1fr !important; }
