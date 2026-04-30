@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
 import { isRateLimited } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
 import {
@@ -8,15 +7,12 @@ import {
   notifyAdminEscalated,
 } from "@/lib/advisor-lead-dispute-resolver";
 import type { DisputeReason } from "@/lib/advisor-lead-disputes";
+import { requireAdvisorSession } from "@/lib/require-advisor-session";
 
 const log = logger("advisor-auth:disputes");
 
-/**
- * Valid standardised reason_code values. The enum matches the DB
- * CHECK constraint added in 20260413_advisor_lead_dispute_auto_resolve.
- * Clients are encouraged to send a reason_code in addition to the
- * free-text reason so the classifier has a reliable dispatch key.
- */
+// Valid standardised reason_code values. The enum matches the DB CHECK
+// constraint added in 20260413_advisor_lead_dispute_auto_resolve.
 const VALID_REASON_CODES: DisputeReason[] = [
   "spam_or_fake",
   "wrong_specialty",
@@ -27,34 +23,6 @@ const VALID_REASON_CODES: DisputeReason[] = [
   "other",
 ];
 
-async function getAdvisorId(request: NextRequest): Promise<number | null> {
-  const supabase = await createClient();
-  const admin = createAdminClient();
-  
-  // Try Supabase Auth first
-  const { data: { user } } = await supabase.auth.getUser();
-  if (user) {
-    const { data: advisor } = await admin
-      .from("professionals")
-      .select("id")
-      .eq("auth_user_id", user.id)
-      .in("status", ["active", "pending"])
-      .maybeSingle();
-    if (advisor) return advisor.id;
-  }
-  
-  // Fallback: legacy cookie session
-  const sessionToken = request.cookies.get("advisor_session")?.value;
-  if (!sessionToken) return null;
-  const { data } = await admin
-    .from("advisor_sessions")
-    .select("professional_id, expires_at")
-    .eq("session_token", sessionToken)
-    .single();
-  if (!data || new Date(data.expires_at) < new Date()) return null;
-  return data.professional_id;
-}
-
 // Create a dispute
 export async function POST(request: NextRequest) {
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
@@ -62,7 +30,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Too many dispute requests. Please try again later." }, { status: 429 });
   }
 
-  const advisorId = await getAdvisorId(request);
+  const advisorId = await requireAdvisorSession(request);
   if (!advisorId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
 
   const body = await request.json();
@@ -201,7 +169,7 @@ export async function POST(request: NextRequest) {
 
 // Get disputes for authenticated advisor
 export async function GET(request: NextRequest) {
-  const advisorId = await getAdvisorId(request);
+  const advisorId = await requireAdvisorSession(request);
   if (!advisorId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
 
   const supabase = await createClient();
