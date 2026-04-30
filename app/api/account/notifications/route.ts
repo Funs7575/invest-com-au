@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getUnreadCount, markRead, markAllRead } from "@/lib/notifications";
@@ -7,6 +8,19 @@ import { logger } from "@/lib/logger";
 const log = logger("api:account:notifications");
 
 export const runtime = "nodejs";
+
+/**
+ * Body schema for PATCH. Both fields are optional — the route's contract is
+ * "if neither is set (or is the right type), 400 with 'Missing id or all'".
+ * Schema only types the shape; the inline guard below preserves the existing
+ * error message and the malformed-JSON-treated-as-empty fallback.
+ */
+const NotificationsPatchSchema = z
+  .object({
+    id: z.number().optional(),
+    all: z.boolean().optional(),
+  })
+  .catch({});
 
 /**
  * GET   /api/account/notifications
@@ -76,7 +90,8 @@ export async function PATCH(request: NextRequest) {
   const guard = await requireUser();
   if (!guard.ok) return guard.response;
 
-  const body = await request.json().catch(() => ({}));
+  const raw = await request.json().catch(() => ({}));
+  const body = NotificationsPatchSchema.parse(raw);
   if (body.all === true) {
     await markAllRead(guard.user.id);
     return NextResponse.json({ ok: true });

@@ -1,3 +1,52 @@
+-- ============================================================================
+-- Migration: 20260309_advisor_reviews_and_views.sql
+-- Purpose: Create professional_reviews + advisor_profile_views tables
+--          (with RLS, policies, indexes, updated_at trigger), and an
+--          increment_advisor_view RPC for daily view-count upsert.
+-- Rollback: DROP RPC, DROP TRIGGER, DROP TABLEs (CASCADE clears RLS
+--          policies and indexes). DESTRUCTIVE — every review and view
+--          count is discarded.
+-- Risk: high — reverse drops user-submitted review content. Reviews are
+--       referenced from advisor profile pages and may be cited in support
+--       tickets; recovery requires backup restore.
+-- ============================================================================
+--
+-- Forward operations:
+--   1. CREATE TABLE IF NOT EXISTS professional_reviews (...).
+--   2. CREATE INDEX idx_reviews_professional, idx_reviews_status,
+--      idx_reviews_professional_status, idx_reviews_unique_email.
+--   3. ALTER TABLE professional_reviews ENABLE ROW LEVEL SECURITY.
+--   4. CREATE POLICY "Public can view approved reviews" / "Anyone can submit
+--      reviews" / "Admins full access reviews".
+--   5. CREATE TRIGGER professional_reviews_updated_at.
+--   6. CREATE TABLE IF NOT EXISTS advisor_profile_views (...).
+--   7. CREATE INDEX idx_profile_views_professional, idx_profile_views_date.
+--   8. ALTER TABLE advisor_profile_views ENABLE ROW LEVEL SECURITY.
+--   9. CREATE POLICY "Anyone can increment views".
+--  10. CREATE OR REPLACE FUNCTION increment_advisor_view(...).
+--
+-- Rollback (in reverse order):
+--  10. DROP FUNCTION IF EXISTS public.increment_advisor_view(INTEGER, DATE);
+--   9. DROP POLICY IF EXISTS "Anyone can increment views" ON advisor_profile_views;
+--   8. ALTER TABLE advisor_profile_views DISABLE ROW LEVEL SECURITY;
+--   7. DROP INDEX IF EXISTS public.idx_profile_views_date;
+--      DROP INDEX IF EXISTS public.idx_profile_views_professional;
+--   6. DROP TABLE IF EXISTS public.advisor_profile_views;
+--      -- DESTRUCTIVE: all per-day view counts lost.
+--   5. DROP TRIGGER IF EXISTS professional_reviews_updated_at
+--        ON public.professional_reviews;
+--   4. DROP POLICY IF EXISTS "Admins full access reviews" ON professional_reviews;
+--      DROP POLICY IF EXISTS "Anyone can submit reviews" ON professional_reviews;
+--      DROP POLICY IF EXISTS "Public can view approved reviews" ON professional_reviews;
+--   3. ALTER TABLE professional_reviews DISABLE ROW LEVEL SECURITY;
+--   2. DROP INDEX IF EXISTS public.idx_reviews_unique_email;
+--      DROP INDEX IF EXISTS public.idx_reviews_professional_status;
+--      DROP INDEX IF EXISTS public.idx_reviews_status;
+--      DROP INDEX IF EXISTS public.idx_reviews_professional;
+--   1. DROP TABLE IF EXISTS public.professional_reviews;
+--      -- DESTRUCTIVE: every advisor review is permanently discarded.
+-- ============================================================================
+
 -- Migration: Add professional_reviews table and advisor view tracking
 -- Run in Supabase Dashboard > SQL Editor
 
