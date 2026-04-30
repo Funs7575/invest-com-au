@@ -9,7 +9,6 @@ import HomeCrossBorder from "@/components/HomeCrossBorder";
 import HomeFridayBriefing from "@/components/HomeFridayBriefing";
 import HomeHowWeEarn from "@/components/HomeHowWeEarn";
 import ScrollFadeIn from "@/components/ScrollFadeIn";
-import ComplianceFooter from "@/components/ComplianceFooter";
 import MobileStickyAdvisorCta from "@/components/MobileStickyAdvisorCta";
 import { ORGANIZATION_JSONLD, SITE_URL } from "@/lib/seo";
 
@@ -52,7 +51,7 @@ export default async function HomePage() {
       .eq("status", "active")
       .order("promoted_placement", { ascending: false })
       .order("rating", { ascending: false })
-      .limit(20),
+      .limit(80),
     supabase
       .from("professionals")
       .select("id", { count: "exact", head: true })
@@ -79,7 +78,7 @@ export default async function HomePage() {
       .eq("status", "active")
       .order("listing_type", { ascending: false })
       .order("created_at", { ascending: false })
-      .limit(24),
+      .limit(80),
   ]);
 
   const brokerCount = brokers?.length || 0;
@@ -102,7 +101,41 @@ export default async function HomePage() {
   }));
 
   const advisorList: ReadonlyArray<HomeAdvisor> = (professionals ?? []) as HomeAdvisor[];
-  const listingList: ReadonlyArray<HomeListing> = (listings ?? []) as HomeListing[];
+
+  // Curate listings for the homepage teaser:
+  //   1. Prefer listings with at least one image (better hero unit)
+  //   2. Weight by paid tier: premium > featured > standard
+  //   3. Round-robin across verticals so the grid isn't dominated by one category
+  // Listings without images still appear after image-bearing ones if a vertical has none.
+  const rawListings = (listings ?? []) as HomeListing[];
+  const tierWeight: Record<string, number> = { premium: 3, featured: 2, standard: 1 };
+  const scored = rawListings
+    .map((l) => ({
+      l,
+      hasImg: !!(l.images && l.images.length > 0 && l.images[0]),
+      tier: tierWeight[l.listing_type ?? "standard"] ?? 0,
+    }))
+    .sort((a, b) => {
+      if (a.hasImg !== b.hasImg) return a.hasImg ? -1 : 1;
+      return b.tier - a.tier;
+    });
+
+  const perVerticalCap = 2;
+  const verticalCounts = new Map<string, number>();
+  const curated: HomeListing[] = [];
+  const overflow: HomeListing[] = [];
+  for (const { l } of scored) {
+    const used = verticalCounts.get(l.vertical) ?? 0;
+    if (used < perVerticalCap) {
+      curated.push(l);
+      verticalCounts.set(l.vertical, used + 1);
+    } else {
+      overflow.push(l);
+    }
+  }
+  // Final list: curated leads (image + diverse) followed by remaining inventory so the
+  // per-vertical tabs in HomeListingsTeaser still have plenty to filter through.
+  const listingList: ReadonlyArray<HomeListing> = [...curated, ...overflow].slice(0, 60);
 
   return (
     <div>
@@ -200,10 +233,6 @@ export default async function HomePage() {
       </ScrollFadeIn>
 
       <MobileStickyAdvisorCta />
-
-      <div className="container-custom pb-8 pt-6">
-        <ComplianceFooter />
-      </div>
     </div>
   );
 }

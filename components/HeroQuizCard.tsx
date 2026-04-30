@@ -4,13 +4,48 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { DesignIcon } from "@/components/design/DesignIcon";
 
-type AnswerId = "deals" | "advisor" | "compare" | "foreign";
+type AnswerId = "diy" | "marketplace" | "advisor" | "mix";
 
-const ANSWERS: ReadonlyArray<{ id: AnswerId; label: string; icon: string; accent: string; href: string }> = [
-  { id: "deals",   label: "I want to see deals beyond the ASX",      icon: "sparkles",      accent: "#fbbf24", href: "/quiz?seed=deals" },
-  { id: "advisor", label: "I need to talk to a licensed human",       icon: "users",         accent: "#34d399", href: "/quiz?seed=advisor" },
-  { id: "compare", label: "Compare brokers / super / savings",        icon: "trending-down", accent: "#60a5fa", href: "/quiz?seed=compare" },
-  { id: "foreign", label: "I'm on a visa or have foreign assets",     icon: "globe",         accent: "#f59e0b", href: "/quiz?seed=foreign" },
+const ANSWERS: ReadonlyArray<{
+  id: AnswerId;
+  label: string;
+  hint: string;
+  icon: string;
+  accent: string;
+  href: string;
+}> = [
+  {
+    id: "diy",
+    label: "Invest myself, on a platform",
+    hint: "Shares, ETFs, super, crypto — DIY",
+    icon: "trending-up",
+    accent: "#60a5fa",
+    href: "/quiz?seed=compare",
+  },
+  {
+    id: "marketplace",
+    label: "Browse private deals & listings",
+    hint: "Funds, businesses, farmland, mining, commercial",
+    icon: "sparkles",
+    accent: "#fbbf24",
+    href: "/quiz?seed=deals",
+  },
+  {
+    id: "advisor",
+    label: "Speak with a verified advisor",
+    hint: "Planner, accountant, broker — your situation",
+    icon: "users",
+    accent: "#34d399",
+    href: "/quiz?seed=advisor",
+  },
+  {
+    id: "mix",
+    label: "A mix of all of the above",
+    hint: "Show me the full picture",
+    icon: "compass",
+    accent: "var(--color-coral-400)",
+    href: "/quiz?seed=mix",
+  },
 ];
 
 export default function HeroQuizCard() {
@@ -43,24 +78,23 @@ export default function HeroQuizCard() {
         >
           <DesignIcon name="zap" size={11} /> Start here · 60 seconds
         </span>
-        <span style={{ marginLeft: "auto", fontSize: 11, color: "rgba(255,255,255,.5)" }}>Q 1 of 6</span>
       </div>
 
       <div
         className="font-display"
         style={{
-          fontSize: 22,
-          fontWeight: 700,
-          letterSpacing: "-.022em",
-          lineHeight: 1.15,
-          marginBottom: 14,
+          fontSize: 26,
+          fontWeight: 800,
+          letterSpacing: "-.024em",
+          lineHeight: 1.1,
+          marginBottom: 18,
           color: "white",
         }}
       >
-        What brings you here today?
+        How do you want to invest?
       </div>
 
-      <div role="radiogroup" aria-label="What brings you here today?" style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+      <div role="radiogroup" aria-label="How do you want to invest?" style={{ display: "flex", flexDirection: "column", gap: 8 }}>
         {ANSWERS.map((opt) => {
           const sel = pick === opt.id;
           return (
@@ -71,12 +105,12 @@ export default function HeroQuizCard() {
               aria-checked={sel}
               onClick={() => setPick(opt.id)}
               style={{
-                padding: "11px 12px",
-                borderRadius: 9,
+                padding: "14px 16px",
+                borderRadius: 12,
                 cursor: "pointer",
                 display: "flex",
                 alignItems: "center",
-                gap: 11,
+                gap: 14,
                 border: sel ? `1.5px solid ${opt.accent}` : "1px solid rgba(255,255,255,.1)",
                 background: sel
                   ? `color-mix(in oklch, ${opt.accent} 14%, transparent)`
@@ -84,14 +118,15 @@ export default function HeroQuizCard() {
                 textAlign: "left",
                 fontFamily: "inherit",
                 color: "white",
-                transition: "background .15s ease, border-color .15s ease",
+                transition: "background .15s ease, border-color .15s ease, transform .15s ease",
+                transform: sel ? "translateX(2px)" : "none",
               }}
             >
               <span
                 style={{
-                  width: 28,
-                  height: 28,
-                  borderRadius: 7,
+                  width: 44,
+                  height: 44,
+                  borderRadius: 10,
                   background: `color-mix(in oklch, ${opt.accent} 22%, transparent)`,
                   display: "inline-flex",
                   alignItems: "center",
@@ -101,13 +136,21 @@ export default function HeroQuizCard() {
                 }}
                 aria-hidden
               >
-                <DesignIcon name={opt.icon} size={13} strokeWidth={2.4} />
+                <DesignIcon name={opt.icon} size={22} strokeWidth={2.4} />
               </span>
-              <span style={{ fontSize: 13, fontWeight: 600 }}>{opt.label}</span>
+              <span style={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 0, flex: 1 }}>
+                <span style={{ fontSize: 16, fontWeight: 800, color: "white", letterSpacing: "-.012em" }}>
+                  {opt.label}
+                </span>
+                <span style={{ fontSize: 12, color: "rgba(255,255,255,.55)", fontWeight: 500 }}>
+                  {opt.hint}
+                </span>
+              </span>
               <DesignIcon
                 name="arrow-right"
-                size={11}
-                style={{ marginLeft: "auto", color: sel ? opt.accent : "rgba(255,255,255,.3)" }}
+                size={14}
+                style={{ marginLeft: "auto", color: sel ? opt.accent : "rgba(255,255,255,.35)" }}
+                strokeWidth={2.4}
               />
             </button>
           );
