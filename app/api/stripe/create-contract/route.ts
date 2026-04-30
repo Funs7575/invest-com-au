@@ -1,7 +1,7 @@
 import { getStripe } from "@/lib/stripe";
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 import { getSiteUrl } from "@/lib/url";
 
 const log = logger("stripe-contract");
@@ -44,6 +44,7 @@ export async function POST(request: NextRequest) {
     if (!advisorSession) {
       return NextResponse.json({ error: "Invalid or expired session" }, { status: 401 });
     }
+    setLoggerUser({ id: String(advisorSession.professional_id) });
 
     const body = await request.json();
     const { advisor_id, plan, billing_cycle } = body as {

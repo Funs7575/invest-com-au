@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 import { isAllowed } from "@/lib/rate-limit-db";
 import { moderatePhoto } from "@/lib/photo-moderation";
 
@@ -29,6 +29,7 @@ async function getAdvisorFromSession(request: NextRequest) {
     .eq("id", session.professional_id)
     .single();
 
+  if (advisor) setLoggerUser({ id: String(advisor.id) });
   return advisor;
 }
 

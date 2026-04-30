@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { formatDate } from "@/lib/utils";
+import { setLoggerUser } from "@/lib/logger";
 
 export const runtime = "nodejs";
 
@@ -57,6 +58,7 @@ export async function GET(
   if (!user) {
     return new Response("Unauthorized", { status: 401 });
   }
+  setLoggerUser(user);
 
   // --- Service role client for data access ---
   const supabase = createAdminClient();

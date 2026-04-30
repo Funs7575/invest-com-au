@@ -1,6 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { getAdminEmails } from "@/lib/admin";
+import { setLoggerUser } from "@/lib/logger";
 
 export const runtime = "edge";
 export const revalidate = 300; // Cache for 5 minutes
@@ -24,6 +25,7 @@ export async function GET(req: NextRequest) {
       );
       const { data: { user } } = await supabaseAuth.auth.getUser();
       authorized = !!user?.email && getAdminEmails().includes(user.email.toLowerCase());
+      if (authorized && user) setLoggerUser(user);
     }
   }
 
