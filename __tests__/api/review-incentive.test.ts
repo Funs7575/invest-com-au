@@ -73,19 +73,22 @@ function setupAdminMock(opts: {
 
   mockAdminFrom.mockImplementation((table: string) => {
     if (table === "incentive_reviews") {
+      // GET path: .select().eq() — awaited as { data: existingReviews[] }
+      // POST path: .select().eq().eq().maybeSingle() — { data: {id} | null }
+      const firstEqResult = {
+        eq: vi.fn(() => ({
+          maybeSingle: vi.fn().mockResolvedValue({
+            data: alreadyReviewed ? { id: "r1" } : null,
+          }),
+        })),
+        then: (resolve: (v: { data: { broker_slug: string }[] }) => void) =>
+          resolve({ data: existingReviews }),
+      };
       return {
-        select: vi.fn().mockReturnThis(),
-        eq: vi.fn().mockReturnThis(),
+        select: vi.fn(() => ({
+          eq: vi.fn(() => firstEqResult),
+        })),
         insert: vi.fn().mockResolvedValue({ error: insertReviewError }),
-        maybeSingle: vi.fn().mockResolvedValue({ data: alreadyReviewed ? { id: "r1" } : null }),
-        // first call for GET listing returns existingReviews array
-        ...(existingReviews.length >= 0 ? {
-          select: vi.fn(() => ({
-            eq: vi.fn().mockResolvedValue({ data: existingReviews }),
-            maybeSingle: vi.fn().mockResolvedValue({ data: alreadyReviewed ? { id: "r1" } : null }),
-          })),
-          insert: vi.fn().mockResolvedValue({ error: insertReviewError }),
-        } : {}),
       };
     }
     if (table === "brokers") {
