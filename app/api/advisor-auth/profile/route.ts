@@ -39,7 +39,6 @@ export async function PATCH(request: NextRequest) {
   if (!advisorId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
 
   const body = await request.json();
-  const supabase = await createClient();
 
   // Only allow updating specific fields (not status, verified, rating, etc.)
   const allowedFields = ["bio", "specialties", "fee_structure", "fee_description", "website", "phone", "photo_url", "booking_link", "booking_intro", "offer_text", "offer_terms", "offer_active"];
@@ -51,7 +50,12 @@ export async function PATCH(request: NextRequest) {
     }
   }
 
-  const { error } = await supabase
+  // Use admin client: some advisors authenticate via the advisor_session cookie
+  // (no Supabase Auth session), so auth.uid() is NULL for those requests and the
+  // "Advisor can update own profile" RLS policy would silently deny the UPDATE.
+  // The application-layer allowlist above enforces field-level restrictions.
+  const admin = createAdminClient();
+  const { error } = await admin
     .from("professionals")
     .update(updates)
     .eq("id", advisorId);
