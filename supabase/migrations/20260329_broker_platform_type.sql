@@ -1,9 +1,12 @@
--- ─────────────────────────────────────────────────────────────────────────────
--- Add platform_type column to brokers table
--- Created: 2026-03-29
+-- ============================================================
+-- 20260329: Add platform_type column to brokers
+-- ============================================================
 --
--- Fixes a bug introduced by 20260322_foreign_investment_flags.sql which
--- references platform_type in WHERE clauses but the column was never created.
+-- Fixes a bug introduced by 20260322_foreign_investment_flags.sql
+-- which references platform_type in WHERE clauses but the column
+-- was never created. Adds the column, indexes it, classifies every
+-- existing broker, and re-applies the foreign-investment flag
+-- updates that were no-ops without the column.
 --
 -- Values:
 --   share_broker     — ASX / US share trading platform (CommSec, Stake, IBKR…)
@@ -12,7 +15,16 @@
 --   multi_asset      — Covers shares + CFDs / other asset classes (Saxo, IG…)
 --   robo_advisor     — Automated investment service (Raiz, Stockspot…)
 --   savings          — High-interest savings accounts / term deposits
--- ─────────────────────────────────────────────────────────────────────────────
+--
+-- ROLLBACK STRATEGY (forward-only in prod; for dev/staging only):
+--   DROP INDEX IF EXISTS idx_brokers_platform_type;
+--   ALTER TABLE brokers DROP COLUMN IF EXISTS platform_type;
+--   -- The foreign-investment flag UPDATEs cannot be cleanly reversed;
+--   -- restore from backup or re-run a corrective seed if needed.
+--
+-- Risk: medium — UPDATEs touch many production rows but are
+-- deterministic and keyed on broker slug, so re-running is safe.
+-- All schema operations use IF NOT EXISTS to be idempotent on re-run.
 
 ALTER TABLE brokers
   ADD COLUMN IF NOT EXISTS platform_type text DEFAULT 'share_broker'

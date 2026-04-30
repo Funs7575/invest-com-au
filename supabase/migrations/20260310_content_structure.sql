@@ -1,5 +1,29 @@
--- Content structure improvements: add content_type, cross-linking columns,
--- and advisor article display fields
+-- ============================================================
+-- 20260310: Content structure improvements
+-- ============================================================
+--
+-- Adds content_type plus cross-linking arrays to articles, and
+-- display + cross-linking fields to advisor_articles. Backfills
+-- content_type from existing categories.
+--
+-- ROLLBACK STRATEGY (forward-only in prod; for dev/staging only):
+--   DROP INDEX IF EXISTS idx_articles_related_verticals;
+--   DROP INDEX IF EXISTS idx_articles_related_brokers;
+--   DROP INDEX IF EXISTS idx_articles_content_type;
+--   ALTER TABLE public.articles
+--     DROP COLUMN IF EXISTS related_verticals,
+--     DROP COLUMN IF EXISTS related_advisor_types,
+--     DROP COLUMN IF EXISTS content_type;
+--   ALTER TABLE public.advisor_articles
+--     DROP COLUMN IF EXISTS reading_time_mins,
+--     DROP COLUMN IF EXISTS featured,
+--     DROP COLUMN IF EXISTS related_advisor_type,
+--     DROP COLUMN IF EXISTS related_broker_slugs,
+--     DROP COLUMN IF EXISTS author_photo_url;
+--
+-- Risk: low — additive columns + idempotent backfill UPDATE
+-- (only flips rows still on the editorial default).
+-- All operations use IF NOT EXISTS to be idempotent on re-run.
 
 -- Articles table enhancements
 ALTER TABLE public.articles 
