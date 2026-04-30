@@ -1,21 +1,17 @@
-import Link from "next/link";
-import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
-import type { Article } from "@/lib/types";
-import HomepageComparisonTable from "@/components/HomepageComparisonTable";
-import ScrollFadeIn from "@/components/ScrollFadeIn";
-import LeadMagnet from "@/components/LeadMagnet";
-import Icon from "@/components/Icon";
-import BrokerLogo from "@/components/BrokerLogo";
 import HomeHero from "@/components/HomeHero";
-import { AFFILIATE_REL } from "@/lib/tracking";
-import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
-import { getMostRecentFeeCheck } from "@/lib/utils";
-import { ORGANIZATION_JSONLD, SITE_URL } from "@/lib/seo";
-import MobileStickyAdvisorCta from "@/components/MobileStickyAdvisorCta";
-import { PRIMARY_CTA_HREF, SHOW_EDITORIAL_BADGES, PLATFORM_COMPARE_HEADING, PLATFORM_COMPARE_SUBTEXT, FACTUAL_COMPARISON_DISCLAIMER } from "@/lib/compliance-config";
+import HomePillarsGrid from "@/components/HomePillarsGrid";
+import HomeListingsTeaser, { type HomeListing } from "@/components/HomeListingsTeaser";
+import HomeAdvisorsTeaser, { type HomeAdvisor } from "@/components/HomeAdvisorsTeaser";
+import HomeCompareDeepDive, { type CompareBroker } from "@/components/HomeCompareDeepDive";
+import HomeCrossBorder from "@/components/HomeCrossBorder";
+import HomeFridayBriefing from "@/components/HomeFridayBriefing";
+import HomeHowWeEarn from "@/components/HomeHowWeEarn";
+import ScrollFadeIn from "@/components/ScrollFadeIn";
 import ComplianceFooter from "@/components/ComplianceFooter";
+import MobileStickyAdvisorCta from "@/components/MobileStickyAdvisorCta";
+import { ORGANIZATION_JSONLD, SITE_URL } from "@/lib/seo";
 
 export const metadata = {
   title: { absolute: "Compare Platforms, Browse Advisors & Explore Investments — Invest.com.au" },
@@ -40,9 +36,16 @@ export const revalidate = 3600;
 export default async function HomePage() {
   const supabase = await createClient();
 
-  const BROKER_LISTING_COLUMNS = "id, name, slug, color, icon, logo_url, rating, asx_fee, asx_fee_value, us_fee, us_fee_value, fx_rate, chess_sponsored, smsf_support, is_crypto, platform_type, deal, deal_text, deal_expiry, deal_terms, deal_verified_date, deal_category, editors_pick, tagline, cta_text, affiliate_url, sponsorship_tier, benefit_cta, updated_at, fee_last_checked, status, cpa_value, promoted_placement, affiliate_priority";
+  const BROKER_LISTING_COLUMNS =
+    "id, name, slug, color, logo_url, rating, asx_fee, asx_fee_value, platform_type, sponsorship_tier, promoted_placement, editors_pick, status";
 
-  const [{ data: brokers }, { data: articles }, , , { count: listingCount }] = await Promise.all([
+  const [
+    { data: brokers },
+    { count: professionalCount },
+    { data: professionals },
+    { count: listingCount },
+    { data: listings },
+  ] = await Promise.all([
     supabase
       .from("brokers")
       .select(BROKER_LISTING_COLUMNS)
@@ -51,18 +54,14 @@ export default async function HomePage() {
       .order("rating", { ascending: false })
       .limit(20),
     supabase
-      .from("articles")
-      .select("id, title, slug, excerpt, category, read_time, tags, cover_image_url")
-      .eq("status", "published")
-      .order("created_at", { ascending: false })
-      .limit(6),
-    supabase
       .from("professionals")
       .select("id", { count: "exact", head: true })
       .eq("status", "active"),
     supabase
       .from("professionals")
-      .select("slug, name, firm_name, type, location_display, location_state, rating, review_count, photo_url, fee_description, specialties, verified")
+      .select(
+        "slug, name, firm_name, type, location_display, location_state, rating, review_count, photo_url, fee_description, specialties, verified",
+      )
       .eq("status", "active")
       .eq("verified", true)
       .order("rating", { ascending: false })
@@ -72,44 +71,49 @@ export default async function HomePage() {
       .from("investment_listings")
       .select("id", { count: "exact", head: true })
       .eq("status", "active"),
+    supabase
+      .from("investment_listings")
+      .select(
+        "id, title, slug, vertical, location_state, location_city, price_display, images, listing_type, key_metrics, status",
+      )
+      .eq("status", "active")
+      .order("listing_type", { ascending: false })
+      .order("created_at", { ascending: false })
+      .limit(24),
   ]);
 
-  // Latest research reports — non-blocking, safe on failure
-  const { data: reports } = await supabase
-    .from("sector_reports")
-    .select("slug, title, summary, sector, sponsor_name, gated, published_at")
-    .eq("status", "published")
-    .order("published_at", { ascending: false })
-    .limit(3);
-
-  const dealBrokers = ((brokers as Broker[]) || []).filter((b) => b.deal).slice(0, 3);
   const brokerCount = brokers?.length || 0;
+  const totalListingCount = listingCount ?? 0;
+  const totalProfessionalCount = professionalCount ?? 0;
 
-  // Featured platforms for trust strip (top-rated, recognisable logos)
-  const featuredPlatforms = ((brokers as Broker[]) || [])
-    .filter((b) => b.rating && b.rating >= 4.3 && b.logo_url)
-    .sort((a, b) => (b.rating || 0) - (a.rating || 0))
-    .slice(0, 6);
+  const compareBrokers: ReadonlyArray<CompareBroker> = ((brokers as Broker[]) || []).map((b) => ({
+    id: b.id,
+    slug: b.slug,
+    name: b.name,
+    platform_type: b.platform_type ?? null,
+    logo_url: b.logo_url ?? null,
+    color: b.color ?? null,
+    rating: b.rating ?? null,
+    asx_fee: b.asx_fee ?? null,
+    asx_fee_value: b.asx_fee_value ?? null,
+    sponsorship_tier: b.sponsorship_tier ?? null,
+    promoted_placement: b.promoted_placement ?? false,
+    editors_pick: b.editors_pick ?? false,
+  }));
 
-  const mostRecentUpdate = (brokers as Broker[])?.reduce((latest: string, b: Broker) => {
-    const ts = b.updated_at || b.fee_last_checked;
-    return ts && ts > latest ? ts : latest;
-  }, "") || "";
-
-  const updatedMonth = mostRecentUpdate
-    ? new Date(mostRecentUpdate).toLocaleDateString("en-AU", { month: "long", year: "numeric" })
-    : new Date().toLocaleDateString("en-AU", { month: "long", year: "numeric" });
+  const advisorList: ReadonlyArray<HomeAdvisor> = (professionals ?? []) as HomeAdvisor[];
+  const listingList: ReadonlyArray<HomeListing> = (listings ?? []) as HomeListing[];
 
   return (
     <div>
-      {/* JSON-LD Schemas */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             "@context": "https://schema.org",
             ...ORGANIZATION_JSONLD,
-            description: "Australia's independent investing hub. Compare platforms and find verified financial advisors — shares, crypto, super, robo-advisors, property & more.",
+            description:
+              "Australia's independent investing hub. Compare platforms and find verified financial advisors — shares, crypto, super, robo-advisors, property & more.",
           }),
         }}
       />
@@ -157,457 +161,47 @@ export default async function HomePage() {
         }}
       />
 
-      {/* ═══════ 1. HERO (A/B test — 3 variants via HomeHero) ═══════ */}
-      <section className="relative bg-white border-b border-slate-100 overflow-hidden">
-        <div className="container-custom py-8 md:py-14 lg:py-16">
-          <HomeHero
-            brokerCount={brokerCount}
-            listingCount={listingCount || 0}
-            updatedMonth={updatedMonth}
-          />
+      <HomeHero
+        brokerCount={brokerCount}
+        listingCount={totalListingCount}
+        professionalCount={totalProfessionalCount}
+      />
 
-          {/* Trust bar — below hero, aligned to max-w-3xl */}
-          <div className="max-w-3xl mx-auto text-center">
-            <div className="flex items-center justify-center flex-wrap gap-x-5 gap-y-1.5 text-sm font-semibold text-slate-600">
-              <span className="flex items-center gap-1.5">
-                <Icon name="check-circle" size={15} className="text-amber-500" />
-                {brokerCount}+ platforms compared
-              </span>
-              <span className="text-slate-300 hidden sm:block" aria-hidden="true">|</span>
-              <span className="flex items-center gap-1.5">
-                <Icon name="shield-check" size={15} className="text-amber-500" />
-                Licensed professionals directory
-              </span>
-              <span className="text-slate-300 hidden sm:block" aria-hidden="true">|</span>
-              <span className="flex items-center gap-1.5">
-                <Icon name="layers" size={15} className="text-amber-500" />
-                {listingCount || 55}+ investment listings
-              </span>
-              <span className="text-slate-300 hidden sm:block" aria-hidden="true">|</span>
-              <span className="flex items-center gap-1.5">
-                <Icon name="check-circle" size={15} className="text-amber-500" />
-                Independent publisher
-              </span>
-            </div>
-          </div>
-
-          {/* Platform logo trust strip */}
-          {featuredPlatforms.length > 0 && (
-            <div className="mt-8 border-t border-slate-100 pt-5">
-              <p className="text-center text-[0.65rem] font-semibold uppercase tracking-widest text-slate-400 mb-3">
-                Platforms we&apos;ve independently compared
-              </p>
-              <div className="flex items-center justify-center gap-3 md:gap-5 flex-wrap">
-                {featuredPlatforms.map((b, i) => (
-                  <Link key={b.slug} href={`/broker/${b.slug}`} className="opacity-60 hover:opacity-100 transition-opacity" title={b.name}>
-                    <BrokerLogo broker={b} size="sm" priority={i < 3} />
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
-
-        </div>
-      </section>
-
-
-      {/* ═══════ TRUST STRIP ═══════ */}
-      <section className="bg-slate-50 border-b border-slate-100 py-3">
-        <div className="container-custom">
-          <div className="flex items-center justify-center flex-wrap gap-x-6 gap-y-2 text-xs font-medium text-slate-600">
-            <span className="flex items-center gap-1.5">
-              <Icon name="bar-chart-2" size={14} className="text-amber-500" />
-              Compare factual platform data
-            </span>
-            <span className="text-slate-300 hidden sm:block" aria-hidden="true">|</span>
-            <span className="flex items-center gap-1.5">
-              <Icon name="users" size={14} className="text-amber-500" />
-              Browse professional directories
-            </span>
-            <span className="text-slate-300 hidden sm:block" aria-hidden="true">|</span>
-            <span className="flex items-center gap-1.5">
-              <Icon name="book-open" size={14} className="text-amber-500" />
-              Educational tools for Australian investors
-            </span>
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════ 1E. MONEY ROW — top affiliate promos ═══════ */}
-      {dealBrokers.length > 0 && (
-        <section className="bg-white border-b border-slate-200 py-3 overflow-x-auto">
-          <div className="container-custom">
-            <div className="flex items-center gap-2 md:gap-3 flex-nowrap md:flex-wrap md:justify-center">
-              <span className="shrink-0 text-[0.6rem] font-extrabold uppercase tracking-widest text-slate-400 hidden md:block pr-1">
-                Live Deals
-              </span>
-              {dealBrokers.map((broker) => {
-                const affiliateLink = `/go/${broker.slug}`;
-                return (
-                  <a
-                    key={broker.id}
-                    href={affiliateLink}
-                    target="_blank"
-                    rel={AFFILIATE_REL}
-                    className="shrink-0 flex items-center gap-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-amber-400/60 rounded-lg px-3 py-2 transition-all group"
-                  >
-                    <span className="text-[0.55rem] font-bold uppercase tracking-wider bg-amber-500 text-white px-1.5 py-0.5 rounded-full shrink-0">
-                      Promotion
-                    </span>
-                    <BrokerLogo broker={broker} size="xs" />
-                    <span className="text-xs font-semibold text-slate-700 group-hover:text-slate-900 whitespace-nowrap max-w-45 truncate">
-                      {broker.deal_text}
-                    </span>
-                    <Icon name="arrow-right" size={12} className="text-amber-500 shrink-0" />
-                  </a>
-                );
-              })}
-              <a
-                href="/deals"
-                className="shrink-0 text-[0.7rem] font-semibold text-slate-400 hover:text-amber-500 transition-colors whitespace-nowrap pl-1"
-              >
-                View all deals &rarr;
-              </a>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ═══════ 3. TOP PLATFORMS — SEO data engine ═══════ */}
       <ScrollFadeIn>
-        <section className="py-6 md:py-10 bg-white">
-          <div className="container-custom">
-            <div className="flex items-start justify-between gap-2 mb-4 md:mb-6">
-              <div>
-                <p className="text-xs font-semibold text-amber-600 uppercase tracking-wide mb-1 flex items-center gap-1">
-                  <Icon name="shield-check" size={12} className="text-amber-500" />
-                  Independently published
-                </p>
-                <h2 className="text-xl md:text-3xl font-extrabold text-slate-900">
-                  {PLATFORM_COMPARE_HEADING} — {updatedMonth}
-                </h2>
-                <p className="text-xs md:text-sm text-slate-600 mt-1 flex items-center gap-1.5">
-                  <span className="hidden md:inline">{PLATFORM_COMPARE_SUBTEXT} &middot;</span>
-                  <FeesFreshnessIndicator lastChecked={getMostRecentFeeCheck((brokers as Broker[]) || [])} variant="inline" />
-                </p>
-                {!SHOW_EDITORIAL_BADGES && <p className="text-xs text-slate-400 mt-2">{FACTUAL_COMPARISON_DISCLAIMER}</p>}
-              </div>
-              <Link href="/compare" className="md:hidden text-xs font-semibold text-slate-600 hover:text-slate-900 shrink-0 inline-flex items-center px-1 min-h-11">
-                View all &rarr;
-              </Link>
-            </div>
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm">
-              <HomepageComparisonTable brokers={(brokers as Broker[]) || []} defaultTab="Share Trading" />
-            </div>
-            <div className="hidden sm:block text-center mt-5 md:mt-6">
-              <Link
-                href="/compare"
-                className="inline-block px-6 md:px-8 py-3 md:py-3.5 bg-amber-500 text-white font-bold rounded-xl hover:bg-amber-600 hover:shadow-md transition-all text-sm"
-              >
-                View All {brokerCount}+ Platforms &rarr;
-              </Link>
-              <p className="text-xs text-slate-600 mt-3">
-                Not sure which platform suits you?{" "}
-                <Link href={PRIMARY_CTA_HREF} className="text-amber-600 font-semibold hover:text-amber-700">Use the filter tool</Link>{" "}
-                or{" "}
-                <Link href="/advisors" className="text-amber-600 font-semibold hover:text-amber-700">browse professional directories</Link>,{" "}
-                or <Link href="/invest/listings" className="text-amber-600 font-semibold hover:text-amber-700">explore investment listings</Link>{" "}
-                — free, no obligation.
-              </p>
-            </div>
-          </div>
-        </section>
+        <HomePillarsGrid
+          listingCount={totalListingCount}
+          professionalCount={totalProfessionalCount}
+          brokerCount={brokerCount}
+        />
       </ScrollFadeIn>
 
-      {/* ═══════ 6. INVESTMENT MARKETPLACE ═══════ */}
       <ScrollFadeIn>
-        <section className="py-10 md:py-14 bg-slate-50 border-b border-slate-100">
-          <div className="container-custom">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <p className="text-xs font-semibold text-amber-600 uppercase tracking-wide mb-1">Investment Marketplace</p>
-                <h2 className="text-xl md:text-2xl font-extrabold text-slate-900">Explore Investment Categories</h2>
-                <p className="text-sm text-slate-600 mt-1">Enquire about real assets across these categories.</p>
-              </div>
-              <Link href="/invest/listings" className="text-sm font-semibold text-amber-600 hover:text-amber-700 shrink-0">
-                View all categories →
-              </Link>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-              {[
-                { title: "Investment Funds", icon: "briefcase", href: "/invest/funds", color: "bg-amber-600" },
-                { title: "SMSF Hub", icon: "shield", href: "/smsf", color: "bg-slate-800" },
-                { title: "Businesses for Sale", icon: "briefcase", href: "/invest/buy-business/listings", color: "bg-slate-800" },
-                { title: "Mining & Resources", icon: "layers", href: "/invest/mining/listings", color: "bg-amber-600" },
-                { title: "Farmland & Agriculture", icon: "leaf", href: "/invest/farmland/listings", color: "bg-green-600" },
-                { title: "Commercial Property", icon: "building", href: "/invest/commercial-property/listings", color: "bg-blue-600" },
-                { title: "Franchise", icon: "star", href: "/invest/franchise/listings", color: "bg-purple-600" },
-                { title: "Renewable Energy", icon: "zap", href: "/invest/renewable-energy/listings", color: "bg-teal-600" },
-                { title: "Private Credit", icon: "credit-card", href: "/invest/private-credit/listings", color: "bg-indigo-600" },
-                { title: "Alternatives", icon: "gem", href: "/invest/alternatives/listings", color: "bg-rose-600" },
-              ].map((cat) => (
-                <Link
-                  key={cat.href}
-                  href={cat.href}
-                  className="group bg-white border border-slate-200 rounded-xl p-4 hover:border-amber-200 hover:shadow-md transition-all text-center"
-                >
-                  <div className={`w-10 h-10 ${cat.color} rounded-xl flex items-center justify-center mx-auto mb-3 shadow-sm`}>
-                    <Icon name={cat.icon} size={18} className="text-white" />
-                  </div>
-                  <p className="text-sm font-bold text-slate-900 group-hover:text-amber-600 transition-colors">{cat.title}</p>
-                  <p className="text-xs text-amber-600 font-semibold mt-1">Browse &rarr;</p>
-                </Link>
-              ))}
-            </div>
-            <div className="text-center mt-6">
-              <Link
-                href="/invest/listings"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm rounded-xl transition-all"
-              >
-                <Icon name="layers" size={15} />
-                View All {listingCount || 55}+ Investment Listings &rarr;
-              </Link>
-            </div>
-          </div>
-        </section>
+        <HomeListingsTeaser listings={listingList} totalCount={totalListingCount} />
       </ScrollFadeIn>
 
-      {/* ═══════ 7. PROFESSIONALS SHOWCASE ═══════ */}
       <ScrollFadeIn>
-        <section className="py-10 md:py-14 bg-white border-t border-slate-100">
-          <div className="container-custom">
-            <div className="flex items-start justify-between gap-2 mb-6">
-              <div>
-                <p className="text-xs font-semibold text-amber-600 uppercase tracking-wide mb-1">Professional Directories</p>
-                <h2 className="text-xl md:text-2xl font-extrabold text-slate-900">Browse Licensed Professionals</h2>
-                <p className="text-sm text-slate-500 mt-1">Find the right type of professional. Public register details shown where applicable.</p>
-              </div>
-              <Link href="/advisors" className="text-sm font-semibold text-amber-600 hover:text-amber-700 shrink-0 hidden sm:block">
-                View all &rarr;
-              </Link>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {[
-                { title: "Financial Planners", desc: "Wealth strategy, retirement, investment advice", icon: "briefcase", href: "/advisors/financial-planners", color: "bg-amber-50 text-amber-600 border-amber-100" },
-                { title: "Mortgage Brokers", desc: "Compare 30+ lenders, investment loans, refinancing", icon: "home", href: "/advisors/mortgage-brokers", color: "bg-blue-50 text-blue-600 border-blue-100" },
-                { title: "SMSF Accountants", desc: "Self-managed super setup, compliance, audit", icon: "calculator", href: "/advisors/smsf-accountants", color: "bg-emerald-50 text-emerald-600 border-emerald-100" },
-                { title: "Tax Agents", desc: "Tax planning, CGT, investment deductions", icon: "file-text", href: "/advisors/tax-agents", color: "bg-violet-50 text-violet-600 border-violet-100" },
-                { title: "Buyer's Agents", desc: "Property negotiation, off-market access", icon: "map-pin", href: "/advisors/buyers-agents", color: "bg-rose-50 text-rose-600 border-rose-100" },
-                { title: "Insurance Brokers", desc: "Life, income protection, business insurance", icon: "shield", href: "/advisors/insurance-brokers", color: "bg-sky-50 text-sky-600 border-sky-100" },
-                { title: "Estate Planners", desc: "Wills, trusts, succession planning", icon: "scroll", href: "/advisors/estate-planners", color: "bg-slate-50 text-slate-600 border-slate-200" },
-                { title: "Wealth Managers", desc: "Portfolio management, HNW advisory", icon: "trending-up", href: "/advisors/wealth-managers", color: "bg-amber-50 text-amber-600 border-amber-100" },
-              ].map((prof) => (
-                <Link
-                  key={prof.href}
-                  href={prof.href}
-                  className="group bg-white border border-slate-200 rounded-xl p-4 hover:border-amber-200 hover:shadow-md transition-all"
-                >
-                  <div className={`w-10 h-10 rounded-xl border ${prof.color} flex items-center justify-center mb-3`}>
-                    <Icon name={prof.icon} size={18} />
-                  </div>
-                  <h3 className="text-sm font-bold text-slate-900 group-hover:text-amber-600 transition-colors">{prof.title}</h3>
-                  <p className="text-xs text-slate-500 mt-1 leading-relaxed">{prof.desc}</p>
-                </Link>
-              ))}
-            </div>
-            <div className="text-center mt-6 sm:hidden">
-              <Link href="/advisors" className="text-sm font-semibold text-amber-600 hover:text-amber-700">
-                View all professionals &rarr;
-              </Link>
-            </div>
-          </div>
-        </section>
+        <HomeAdvisorsTeaser advisors={advisorList} totalCount={totalProfessionalCount} />
       </ScrollFadeIn>
 
-      {/* ═══════ 8. TOOLS & CALCULATORS ═══════ */}
       <ScrollFadeIn>
-        <section className="py-6 md:py-10 bg-white border-t border-slate-100">
-          <div className="container-custom">
-            <div className="flex items-center justify-between mb-4 md:mb-6">
-              <div>
-                <p className="text-xs text-amber-600 uppercase tracking-widest font-bold mb-1">Free tools</p>
-                <h2 className="text-xl md:text-2xl font-bold text-slate-900">Investing Tools &amp; Calculators</h2>
-              </div>
-              <Link href="/calculators" className="text-xs md:text-sm font-semibold text-slate-500 hover:text-amber-600 transition-colors shrink-0">
-                View All Calculators &rarr;
-              </Link>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
-              {[
-                { href: "/portfolio-calculator", icon: "calculator", color: "from-amber-500 to-amber-400", shadow: "shadow-amber-500/20", title: "Portfolio Calculator", desc: "See exact fees at every platform" },
-                { href: "/switching-calculator", icon: "arrow-right-left", color: "from-slate-700 to-slate-600", shadow: "shadow-slate-500/15", title: "Switching Calculator", desc: "How much are you overpaying?" },
-                { href: "/savings-calculator", icon: "piggy-bank", color: "from-amber-600 to-amber-500", shadow: "shadow-amber-500/20", title: "Savings Calculator", desc: "Are you earning enough?" },
-                { href: "/mortgage-calculator", icon: "home", color: "from-slate-700 to-slate-600", shadow: "shadow-slate-500/15", title: "Borrowing Power", desc: "How much can you borrow?" },
-              ].map((tool) => (
-                <Link key={tool.href} href={tool.href} className="bg-white border border-slate-200 rounded-xl p-3 md:p-5 hover:shadow-md hover:border-slate-300 transition-all group">
-                  <div className={`w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br ${tool.color} rounded-xl flex items-center justify-center mb-2 md:mb-3 shadow-md ${tool.shadow}`}>
-                    <Icon name={tool.icon} size={18} className="text-white" />
-                  </div>
-                  <h3 className="text-xs md:text-sm font-bold text-slate-900 mb-0.5 group-hover:text-slate-700">{tool.title}</h3>
-                  <p className="text-xs text-slate-600">{tool.desc}</p>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
+        <HomeCompareDeepDive brokers={compareBrokers} />
       </ScrollFadeIn>
 
-      {/* ═══════ 7. ARTICLES & GUIDES ═══════ */}
-      {(articles as Article[])?.length > 0 && (
-        <ScrollFadeIn>
-          <section className="py-6 md:py-10 bg-slate-50 border-t border-slate-200">
-            <div className="container-custom">
-              <div className="flex items-start justify-between gap-2 mb-4 md:mb-6">
-                <div>
-                  <h2 className="text-xl md:text-2xl font-bold text-slate-900">Latest Investor Guides</h2>
-                  <p className="text-xs md:text-sm text-slate-600 mt-1">Guides, how-tos, and professional advice for smarter investing</p>
-                </div>
-                <Link href="/articles" className="text-xs md:text-sm font-semibold text-slate-600 hover:text-slate-900 shrink-0 min-h-11 inline-flex items-center px-1">
-                  View all &rarr;
-                </Link>
-              </div>
-              <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {(articles as Article[]).slice(0, 6).map((article) => (
-                  <Link
-                    key={article.id}
-                    href={`/article/${article.slug}`}
-                    className="border border-slate-200 bg-white rounded-2xl overflow-hidden hover:shadow-md hover:border-slate-300 transition-all group flex flex-col"
-                  >
-                    {article.cover_image_url && (
-                      <div className="aspect-[16/9] overflow-hidden bg-slate-100 relative">
-                        <Image src={article.cover_image_url} alt={article.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" loading="lazy" />
-                      </div>
-                    )}
-                    <div className="p-5 flex flex-col flex-1">
-                      {article.category && (
-                        <span className="inline-block self-start text-[0.65rem] font-bold uppercase tracking-wider text-slate-600 bg-slate-100 px-2 py-0.5 rounded-full mb-3">
-                          {article.category}
-                        </span>
-                      )}
-                      <h3 className="font-bold text-slate-900 group-hover:text-slate-600 transition-colors mb-2 leading-snug">{article.title}</h3>
-                      <p className="text-sm text-slate-600 line-clamp-2 mb-3 flex-1 max-w-[65ch]">{article.excerpt}</p>
-                      <div className="flex items-center gap-3 text-xs text-slate-600">
-                        {article.read_time && <span>{article.read_time} min read</span>}
-                        <span className="text-amber-600 font-semibold group-hover:translate-x-0.5 transition-transform">Read Guide &rarr;</span>
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-              {/* Mobile articles (aria-hidden to prevent duplicate screen reader content) */}
-              <div className="md:hidden" aria-hidden="true">
-                {(articles as Article[])[0] && (
-                  <Link href={`/article/${(articles as Article[])[0].slug}`} className="block mb-3 rounded-xl overflow-hidden border border-slate-200 group">
-                    {(articles as Article[])[0].cover_image_url && (
-                      <div className="aspect-[2/1] overflow-hidden bg-slate-100 relative">
-                        <Image src={(articles as Article[])[0].cover_image_url!} alt={(articles as Article[])[0].title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="100vw" loading="lazy" />
-                      </div>
-                    )}
-                    <div className="p-3 bg-white">
-                      {(articles as Article[])[0].category && (
-                        <span className="text-[0.65rem] font-bold uppercase tracking-wider text-slate-500">{(articles as Article[])[0].category}</span>
-                      )}
-                      <h3 className="font-bold text-sm text-slate-900 leading-snug line-clamp-2 mt-0.5">{(articles as Article[])[0].title}</h3>
-                    </div>
-                  </Link>
-                )}
-                <div className="divide-y divide-slate-100">
-                  {(articles as Article[]).slice(1, 5).map((article) => (
-                    <Link key={article.id} href={`/article/${article.slug}`} className="flex items-start gap-3 py-3 group">
-                      <div className="flex-1 min-w-0">
-                        {article.category && <span className="text-[0.65rem] font-bold uppercase tracking-wider text-slate-400">{article.category}</span>}
-                        <h3 className="font-bold text-sm text-slate-900 leading-snug line-clamp-2 group-hover:text-slate-600 transition-colors">{article.title}</h3>
-                      </div>
-                      <div className="text-xs text-slate-400 shrink-0 mt-1">{article.read_time && <span>{article.read_time} min</span>}</div>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </section>
-        </ScrollFadeIn>
-      )}
-
-      {/* Advisor directory removed — replaced by professionals showcase above tools */}
-
-      {/* ═══════ 10. EMAIL CAPTURE ═══════ */}
       <ScrollFadeIn>
-        <section className="py-6 md:py-10 bg-white border-t border-slate-100">
-          <div className="container-custom">
-            <div className="max-w-xl mx-auto">
-              <LeadMagnet />
-            </div>
-          </div>
-        </section>
+        <HomeCrossBorder />
       </ScrollFadeIn>
 
-      {/* ═══════ RESEARCH REPORTS ═══════ */}
-      {reports && reports.length > 0 && (
-        <ScrollFadeIn>
-          <section className="py-10 md:py-12 bg-slate-50 border-t border-slate-200">
-            <div className="container-custom max-w-6xl">
-              <div className="flex items-baseline justify-between mb-5 flex-wrap gap-2">
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-wider text-amber-600 mb-1">
-                    Research
-                  </p>
-                  <h2 className="text-xl md:text-2xl font-extrabold text-slate-900">
-                    Latest sector reports
-                  </h2>
-                </div>
-                <Link
-                  href="/research"
-                  className="text-sm font-bold text-amber-600 hover:text-amber-700 shrink-0"
-                >
-                  All research &rarr;
-                </Link>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {reports.map((r) => (
-                  <Link
-                    key={r.slug}
-                    href={`/research/${r.slug}`}
-                    className="block bg-white hover:shadow-md border border-slate-200 rounded-xl p-5 transition-shadow"
-                  >
-                    <div className="flex items-center gap-2 mb-2">
-                      {r.sector && (
-                        <span className="text-[10px] font-bold uppercase tracking-wide text-slate-500">
-                          {r.sector.replace(/_/g, " ")}
-                        </span>
-                      )}
-                      <span
-                        className={`text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full ${
-                          r.gated
-                            ? "bg-amber-100 text-amber-800"
-                            : "bg-emerald-100 text-emerald-800"
-                        }`}
-                      >
-                        {r.gated ? "Free · email" : "Free download"}
-                      </span>
-                    </div>
-                    <h3 className="text-sm md:text-base font-extrabold text-slate-900 leading-tight mb-2 line-clamp-2">
-                      {r.title}
-                    </h3>
-                    {r.summary && (
-                      <p className="text-xs text-slate-600 leading-relaxed line-clamp-3">
-                        {r.summary}
-                      </p>
-                    )}
-                    <p className="text-xs font-bold text-amber-600 mt-3">
-                      {r.gated ? "Download free report →" : "Read the report →"}
-                    </p>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </section>
-        </ScrollFadeIn>
-      )}
+      <ScrollFadeIn>
+        <HomeFridayBriefing />
+      </ScrollFadeIn>
 
-      {/* ═══════ MOBILE STICKY CTA (item 68) ═══════ */}
+      <ScrollFadeIn>
+        <HomeHowWeEarn />
+      </ScrollFadeIn>
+
       <MobileStickyAdvisorCta />
 
-      <div className="container-custom pb-8">
+      <div className="container-custom pb-8 pt-6">
         <ComplianceFooter />
       </div>
     </div>
