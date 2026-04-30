@@ -3,7 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { ADMIN_EMAILS } from "@/lib/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { adjustWallet } from "@/lib/marketplace/wallet";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 
 const log = logger("wallet");
 
@@ -44,6 +44,7 @@ export async function POST(request: NextRequest) {
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+    setLoggerUser(user);
 
     // Check if user is admin via ADMIN_EMAILS allowlist (not profile role)
     if (!ADMIN_EMAILS.includes(user.email?.toLowerCase() || "")) {

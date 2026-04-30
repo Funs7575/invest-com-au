@@ -5,7 +5,7 @@ import { randomBytes } from "crypto";
 import { sendApplicationApproved, sendApplicationRejected } from "@/lib/advisor-emails";
 import { getSiteUrl } from "@/lib/url";
 import { ADMIN_EMAILS } from "@/lib/admin";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 
 const log = logger("admin-advisor-applications");
 
@@ -34,6 +34,7 @@ async function requireAdmin() {
 export async function GET(request: NextRequest) {
   const admin = await requireAdmin();
   if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  setLoggerUser(admin);
 
   const supabase = createAdminSupabase();
   const status = request.nextUrl.searchParams.get("status") || "pending";
@@ -53,6 +54,7 @@ export async function GET(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
   const admin = await requireAdmin();
   if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  setLoggerUser(admin);
 
   const supabase = createAdminSupabase();
   const siteUrl = getSiteUrl(request.headers.get("host"));

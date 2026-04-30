@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextResponse } from "next/server";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 import { ADMIN_EMAILS } from "@/lib/admin";
 
 const log = logger("questions");
@@ -119,6 +119,7 @@ export async function POST(req: Request) {
     if (authError || !user || !ADMIN_EMAILS.includes(user.email?.toLowerCase() || '')) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+    setLoggerUser(user);
 
     const body = await req.json();
     const { type, id, action } = body;

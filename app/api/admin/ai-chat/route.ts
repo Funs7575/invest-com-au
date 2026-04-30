@@ -1,4 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
+import { setLoggerUser } from "@/lib/logger";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { ADMIN_EMAILS } from "@/lib/admin";
@@ -653,6 +654,7 @@ export async function POST(req: NextRequest) {
     if (authError || !user || !ADMIN_EMAILS.includes(user.email?.toLowerCase() || "")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+    setLoggerUser(user);
 
     const { messages } = await req.json() as { messages: Anthropic.MessageParam[] };
 

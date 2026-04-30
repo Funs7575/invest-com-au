@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { ADMIN_EMAILS } from "@/lib/admin";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 
 const log = logger("admin-advisor-moderation");
 
@@ -28,6 +28,7 @@ export async function PATCH(req: NextRequest) {
     ) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+    setLoggerUser(user);
 
     const body = await req.json();
     const { ids, action } = body as { ids?: number[]; action?: string };

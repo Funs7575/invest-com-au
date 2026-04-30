@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
+import { setLoggerUser } from "@/lib/logger";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export async function GET(
@@ -34,6 +35,7 @@ export async function GET(
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  setLoggerUser(user);
 
   // Get broker account
   const supabase = createAdminClient();
