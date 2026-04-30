@@ -111,12 +111,156 @@ Things already in the codebase that I didn't initially account for:
 
 ---
 
+## Saved for later — full deferred backlog
+
+Everything not in the ship-now tier, captured here with priority, trigger, and revisit date. Scan this list at month-end. Priority scale: **P1** = pursue as soon as ship-now wave clears · **P2** = next quarter · **P3** = next year · **P4** = revisit only if something changes · **P5** = never unless the world changes.
+
+### P1 — pursue Q2 (after ship-now wave clears)
+
+- **#3 Lead generation (CPL replaces CPA on hot categories)**
+  - Effort: 3–4 wks tech + 4–6 wks BD
+  - Status: 80% built (`app/api/{quiz-lead,advisor-lead,submit-lead,email-capture}/`, Resend webhooks)
+  - Why P1: 10× revenue per user vs current affiliate model. Bottleneck is commercial agreements, not engineering.
+  - Trigger to start: BD has 2+ partners willing to pay $80–250/lead in writing.
+  - Revisit: 2026-06-01
+
+- **#2 Switching-as-a-service (super first, then savings, then broker HIN)**
+  - Effort: 4–6 wks per vertical
+  - Status: 40% built — calculators done, partner integrations missing
+  - Why P1: Turns existing calculator output into transactions. $80–250 per completed switch.
+  - Trigger to start: Concierge stack (#1) live, so we have routed traffic to convert.
+  - Revisit: 2026-06-01
+
+- **#9 Awards / badges / methodology licensing**
+  - Effort: 6–8 wks (mostly editorial + legal, light engineering)
+  - Status: 35% built — methodology page + best-of categories live, no badge SKU
+  - Why P1: Recurring revenue, near-zero marginal cost per badge sold, drives SEO traffic.
+  - Trigger to start: Methodology defensibility audit signed off by legal.
+  - Risk: collapses into paid-badge scheme if methodology isn't genuinely defensible.
+  - Revisit: 2026-06-01
+
+- **#6 Alt-asset comparison vertical (whisky → wine → watches → art)**
+  - Effort: 4–6 wks per sub-vertical
+  - Status: 0% — greenfield, but pattern from existing 9 verticals is replicable
+  - Why P1: New SEO surface area with zero AU competitors. CPLs $200–500.
+  - Trigger to start: 1+ partner BD conversation booked (Cask 88, WhiskyInvestDirect, Vinovest equivalent).
+  - Revisit: 2026-06-30
+
+- **#13 Sponsored editorial / content studio**
+  - Effort: 4 wks ops setup
+  - Status: 40% built — AI drafting infra exists (`app/api/admin/content/generate-draft/`)
+  - Why P1: Higher margin than display, sticky retention.
+  - Trigger to start: spare editorial capacity OR a partner asking unsolicited.
+  - Risk: editorial independence must be visibly protected (disclosure rules).
+  - Revisit: 2026-06-30
+
+### P2 — pursue Q3 (year-1 stretch)
+
+- **#8 White-label comparison widgets (B2B SaaS)**
+  - Effort: 4–6 wks tech + 12+ wks sales
+  - Status: 50% built — `app/embed/` + `EmbedBuilder.tsx` exists
+  - Why P2: Recurring SaaS revenue. Same content, 5× the surface area.
+  - Trigger: 1 anchor B2B customer signed (bank, news site, or accountant network).
+  - Bottleneck: B2B sales motion (new muscle).
+  - Revisit: 2026-09-01
+
+- **#15 Calculators-as-a-service / public API**
+  - Effort: 4–6 wks
+  - Status: 35% built — calculators exist, no API gateway
+  - Why P2: Adjacent SaaS revenue, low engineering cost.
+  - Trigger: 1+ fintech / accountant SaaS willing to pay metered.
+  - Bottleneck: small market, free competitors.
+  - Revisit: 2026-09-01
+
+- **#11 Market-intelligence data product**
+  - Effort: 8–12 wks technical + ongoing enterprise sales motion
+  - Status: 40% built — PostHog event collection wired, no DW layer
+  - Why P2: Becomes a moat once AI Q&A (#7) accumulates 6 months of question dataset.
+  - Trigger: #7 has 6 months of data in production.
+  - Risk: enterprise sales cycles are long; needs dedicated ICs.
+  - Revisit: 2026-10-01
+
+### P3 — year-2 candidates (validate before committing)
+
+- **#14 Off-market property syndicate matchmaking**
+  - Effort: 6–9 mo
+  - Status: 0% — greenfield
+  - Why P3: Real market (currently happens in dodgy FB groups). Big lift — KYC, deal vetting, standard syndicate paperwork.
+  - Trigger: someone actively asks us to broker a syndicate match (organic demand signal).
+  - Revisit: 2027-01-01
+
+### P4 — revisit only if circumstances change
+
+- **#12 Pre-IPO / private company secondaries marketplace (wholesale only)**
+  - Effort: 6–9 mo + AFSL upgrade work
+  - Status: 5% — only wholesale-classification mentions in CFD content
+  - Why P4: Genuinely big upside ($50k–500k deals × 3–5% take). But standalone-company-sized bet, not a feature. **Spin-out candidate, not a roadmap item.**
+  - Trigger: AFSL granted (late 2027), AND no AU competitor has emerged.
+  - Revisit: 2026-10-01 (competitor scan), 2027-01-01 (AFSL milestone check)
+
+- **Quote-auction pattern extension** (uses existing `app/quotes/` infra)
+  - Idea: extend B2C advisor quote auction to other service verticals — accountants bidding for SMSF setups, brokers bidding for refi business, conveyancers bidding for property settlements.
+  - Effort: 2–4 wks per vertical (infra exists)
+  - Status: parent infra at `app/quotes/` is production
+  - Why P4: Real revenue but each new vertical needs its own partner pool. Validate one extension before committing.
+  - Trigger: 1 specific service vertical has 3+ providers asking to be on the platform.
+  - Revisit: 2026-06-30 (with the alt-asset BD scan)
+
+- **#10 Premium research subscription content programme**
+  - Effort: ongoing content motion (Stripe + Pro tier infra is 90% built)
+  - Status: plumbing complete (`lib/stripe.ts`, `app/pro/`); content is the gap
+  - Why P4 (was higher): infrastructure means *anyone can flip the switch* but content production requires editorial bandwidth. Don't block on this; ship when capacity exists.
+  - Trigger: editorial calendar has a clear premium-tier slot for 6+ consecutive months.
+  - Revisit: 2026-07-01
+
+### P5 — NEVER (unless the regulatory or market world changes)
+
+These are explicitly **don't build** decisions. Captured so future Claude sessions don't waste time re-relitigating them.
+
+- **#16 P2P "post your investment for bids" marketplace (AirTasker for assets)**
+  - Why never: securities law (prospectus/PDS triggers, AFSL requirement); adverse selection (worst stuff lists fastest); listed-share version has no real market (broker sale takes 30 seconds at same price).
+  - The narrower version that works is #12 (wholesale secondaries) — see P4.
+  - Reactivation trigger: only if AU regulator carved out a specific safe harbour for P2P investment-asset marketplaces. Not on the horizon.
+
+- **#17 Whisky / wine / art *auction house* (you running the auction)**
+  - Why never: Langton's owns AU wine, Chrono24 owns global watches, Cask 88 owns whisky. Custody, settlement, fraud, dispute resolution = different business with thin margins.
+  - The version that works is #6 (be the comparison + lead-gen layer) — see P1.
+
+- **#18 Pure auction for placement (no editorial filter)**
+  - Why never: ASIC RG 246 conflicted-remuneration risk; adverse selection (worst products bid hardest); premium partners walk.
+  - The version that works is #5 hybrid auction — already in ship-now.
+
+- **#19 Own financial product (co-branded ETF / savings / super)**
+  - Why never (for now): become a financial product issuer with capital requirements + AFSL upgrade + board obligations + liability. Different company, not a feature.
+  - Reactivation trigger: AFSL granted + 3+ years operating history + clear retail-investor demand for an own-brand product. Y5+ at earliest.
+  - Revisit: 2027-12-01
+
+- **#20 Crypto-aggressive affiliate plays (high-CPA leverage products, offshore deals)**
+  - Why never: ASIC enforcement appetite on finance-site reputation. Asymmetric downside.
+  - Existing crypto vertical at compliant CPA terms is fine; pushing harder is the trap.
+
+- **#21 Display ads / programmatic**
+  - Why never: kills UX, regulator dislikes them on financial-product sites, race-to-bottom revenue, hurts the brand asset.
+
+- **#22 Events / annual conference**
+  - Why never (for now): real money but operationally a separate business; one COVID-style disruption from disaster.
+  - Reactivation trigger: core revenue >$10M ARR AND someone on the team wants to run events as a P&L.
+
+- **#23 Robo-advice referrals at scale without disclosure rigour**
+  - Why never: same RG 246 risk as pure auction. Existing robo vertical at compliant disclosure terms is fine.
+
+---
+
 ## Parking lot (raw ideas, not yet evaluated)
 
-_(empty — drop new ideas here as they come up, evaluate when time permits)_
+Drop new ideas here as they come up. Evaluate when time permits — assign a priority (P1–P5) and move into the appropriate section above.
+
+_(empty)_
 
 ---
 
 ## Resolved / shipped
 
-_(empty — move items here once they ship or are formally killed)_
+Move items here once they ship OR are formally killed. Don't delete — keep the trail so we can see what we built and what we walked away from.
+
+_(empty)_
