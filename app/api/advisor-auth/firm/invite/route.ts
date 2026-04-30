@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { requireAdvisorSession } from "@/lib/require-advisor-session";
 import { randomBytes } from "crypto";
 import { sendFirmInvitation } from "@/lib/advisor-emails";
 import { getSiteUrl } from "@/lib/url";
@@ -7,37 +8,29 @@ import { logger } from "@/lib/logger";
 
 const log = logger("advisor-auth:firm:invite");
 
+async function getFirmAdmin(request: NextRequest) {
+  const advisorId = await requireAdvisorSession(request);
+  if (!advisorId) return null;
+
+  const admin = createAdminClient();
+  const { data: advisor } = await admin
+    .from("professionals")
+    .select("id, name, firm_id, is_firm_admin")
+    .eq("id", advisorId)
+    .single();
+
+  if (!advisor?.is_firm_admin || !advisor.firm_id) return null;
+  return advisor;
+}
+
 export async function POST(request: NextRequest) {
   try {
-    const sessionToken = request.cookies.get("advisor_session")?.value;
-    if (!sessionToken) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    const advisor = await getFirmAdmin(request);
+    if (!advisor) return NextResponse.json({ error: "Only firm admins can invite members" }, { status: 403 });
 
-    const supabase = await createClient();
+    const admin = createAdminClient();
 
-    // Verify session and get advisor
-    const { data: session } = await supabase
-      .from("advisor_sessions")
-      .select("professional_id, expires_at")
-      .eq("session_token", sessionToken)
-      .single();
-
-    if (!session || new Date(session.expires_at) < new Date()) {
-      return NextResponse.json({ error: "Session expired" }, { status: 401 });
-    }
-
-    // Verify this advisor is a firm admin
-    const { data: advisor } = await supabase
-      .from("professionals")
-      .select("id, name, firm_id, is_firm_admin")
-      .eq("id", session.professional_id)
-      .single();
-
-    if (!advisor?.is_firm_admin || !advisor.firm_id) {
-      return NextResponse.json({ error: "Only firm admins can invite members" }, { status: 403 });
-    }
-
-    // Get firm details
-    const { data: firm } = await supabase
+    const { data: firm } = await admin
       .from("advisor_firms")
       .select("id, name, max_seats, status")
       .eq("id", advisor.firm_id)
@@ -47,8 +40,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Firm not active" }, { status: 400 });
     }
 
-    // Check seat limit
-    const { count: memberCount } = await supabase
+    const { count: memberCount } = await admin
       .from("professionals")
       .select("id", { count: "exact", head: true })
       .eq("firm_id", firm.id);
@@ -62,8 +54,7 @@ export async function POST(request: NextRequest) {
 
     if (!email?.trim()) return NextResponse.json({ error: "Email required" }, { status: 400 });
 
-    // Check if already invited (pending)
-    const { data: existingInvite } = await supabase
+    const { data: existingInvite } = await admin
       .from("advisor_firm_invitations")
       .select("id")
       .eq("firm_id", firm.id)
@@ -75,8 +66,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "This email has already been invited" }, { status: 409 });
     }
 
-    // Check if already a member
-    const { data: existingMember } = await supabase
+    const { data: existingMember } = await admin
       .from("professionals")
       .select("id")
       .eq("email", email.toLowerCase().trim())
@@ -87,9 +77,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "This person is already a team member" }, { status: 409 });
     }
 
-    // Create invitation
     const token = randomBytes(32).toString("hex");
-    const { error } = await supabase.from("advisor_firm_invitations").insert({
+    const { error } = await admin.from("advisor_firm_invitations").insert({
       firm_id: firm.id,
       email: email.toLowerCase().trim(),
       name: inviteeName?.trim() || null,
@@ -102,7 +91,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Failed to create invitation" }, { status: 500 });
     }
 
-    // Send email
     const siteUrl = getSiteUrl(request.headers.get("host"));
     const acceptUrl = `${siteUrl}/advisor-apply?invite=${token}`;
     sendFirmInvitation(email, inviteeName, firm.name, advisor.name, acceptUrl).catch((err) =>
@@ -116,39 +104,20 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// GET - list pending invitations for the firm
 export async function GET(request: NextRequest) {
   try {
-    const sessionToken = request.cookies.get("advisor_session")?.value;
-    if (!sessionToken) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    const advisor = await getFirmAdmin(request);
+    if (!advisor) return NextResponse.json({ error: "Not a firm admin" }, { status: 403 });
 
-    const supabase = await createClient();
+    const admin = createAdminClient();
 
-    const { data: session } = await supabase
-      .from("advisor_sessions")
-      .select("professional_id")
-      .eq("session_token", sessionToken)
-      .single();
-
-    if (!session) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-
-    const { data: advisor } = await supabase
-      .from("professionals")
-      .select("firm_id, is_firm_admin")
-      .eq("id", session.professional_id)
-      .single();
-
-    if (!advisor?.is_firm_admin || !advisor.firm_id) {
-      return NextResponse.json({ error: "Not a firm admin" }, { status: 403 });
-    }
-
-    const { data: invitations } = await supabase
+    const { data: invitations } = await admin
       .from("advisor_firm_invitations")
       .select("id, email, name, status, created_at, expires_at")
       .eq("firm_id", advisor.firm_id)
       .order("created_at", { ascending: false });
 
-    const { data: members } = await supabase
+    const { data: members } = await admin
       .from("professionals")
       .select("id, name, slug, email, type, photo_url, verified, status, created_at")
       .eq("firm_id", advisor.firm_id)
@@ -161,33 +130,12 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// PATCH — revoke or resend an invitation
 export async function PATCH(request: NextRequest) {
   try {
-    const sessionToken = request.cookies.get("advisor_session")?.value;
-    if (!sessionToken) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    const advisor = await getFirmAdmin(request);
+    if (!advisor) return NextResponse.json({ error: "Only firm admins can manage invitations" }, { status: 403 });
 
-    const supabase = await createClient();
-
-    const { data: session } = await supabase
-      .from("advisor_sessions")
-      .select("professional_id, expires_at")
-      .eq("session_token", sessionToken)
-      .single();
-
-    if (!session || new Date(session.expires_at) < new Date()) {
-      return NextResponse.json({ error: "Session expired" }, { status: 401 });
-    }
-
-    const { data: advisor } = await supabase
-      .from("professionals")
-      .select("id, name, firm_id, is_firm_admin")
-      .eq("id", session.professional_id)
-      .single();
-
-    if (!advisor?.is_firm_admin || !advisor.firm_id) {
-      return NextResponse.json({ error: "Only firm admins can manage invitations" }, { status: 403 });
-    }
+    const admin = createAdminClient();
 
     const body = await request.json();
     const { inviteId, action } = body;
@@ -196,8 +144,7 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: "inviteId and action (revoke|resend) required" }, { status: 400 });
     }
 
-    // Verify the invite belongs to this firm
-    const { data: invite } = await supabase
+    const { data: invite } = await admin
       .from("advisor_firm_invitations")
       .select("id, email, name, status, firm_id")
       .eq("id", inviteId)
@@ -210,16 +157,15 @@ export async function PATCH(request: NextRequest) {
       if (invite.status !== "pending") {
         return NextResponse.json({ error: "Only pending invitations can be revoked" }, { status: 400 });
       }
-      await supabase.from("advisor_firm_invitations").update({ status: "revoked" }).eq("id", inviteId);
+      await admin.from("advisor_firm_invitations").update({ status: "revoked" }).eq("id", inviteId);
       return NextResponse.json({ success: true });
     }
 
-    // resend — create a fresh token and update the invitation
     if (invite.status !== "pending" && invite.status !== "expired") {
       return NextResponse.json({ error: "Only pending or expired invitations can be resent" }, { status: 400 });
     }
 
-    const { data: firm } = await supabase
+    const { data: firm } = await admin
       .from("advisor_firms")
       .select("name, max_seats, status")
       .eq("id", advisor.firm_id)
@@ -232,7 +178,7 @@ export async function PATCH(request: NextRequest) {
     const newToken = randomBytes(32).toString("hex");
     const newExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
 
-    await supabase
+    await admin
       .from("advisor_firm_invitations")
       .update({ token: newToken, status: "pending", expires_at: newExpiresAt })
       .eq("id", inviteId);
