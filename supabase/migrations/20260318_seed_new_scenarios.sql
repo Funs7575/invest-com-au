@@ -1,3 +1,38 @@
+-- ============================================================================
+-- Migration: 20260318_seed_new_scenarios.sql
+-- Purpose: Seed three new launch scenarios into the `scenarios` table —
+--          'First Home Buyer Investing' (slug 'first-home-buyer'),
+--          'Investing in Retirement' (slug 'retirees'), and
+--          'Ethical & ESG Investing' (slug 'esg-investing'). Each row
+--          has hero copy, problem/solution narrative, recommended
+--          brokers, and a considerations checklist.
+-- Rollback: DELETE the three rows by slug.
+-- Risk: medium — DELETE removes only the three seeded scenario rows
+--       (no FK from `scenarios` to consumer pages — the /scenarios/<slug>
+--       route just 404s on missing slugs). Editorial content is preserved
+--       in this migration body, so the rows can be re-seeded by re-running.
+--       Reverse impact: any operator edits to these three rows since the
+--       seed (title / sections / brokers) are lost — snapshot first if
+--       editorial has been touched.
+-- ============================================================================
+--
+-- Forward operations:
+--   1. INSERT INTO scenarios (title, slug, hero_title, icon, problem,
+--      solution, brokers, considerations) VALUES
+--        ('First Home Buyer Investing', 'first-home-buyer', ...),
+--        ('Investing in Retirement', 'retirees', ...),
+--        ('Ethical & ESG Investing', 'esg-investing', ...).
+--      (Note: this is a single multi-row INSERT, no ON CONFLICT clause —
+--      re-running will fail if any of the three slugs already exist on a
+--      UNIQUE constraint; treat as a one-shot seed.)
+--
+-- Rollback (in reverse order):
+--   1. DELETE FROM scenarios
+--        WHERE slug IN ('esg-investing', 'retirees', 'first-home-buyer');
+--      -- DESTRUCTIVE: discards any operator edits to these three
+--      -- scenario rows. Snapshot first.
+-- ============================================================================
+
 -- Seed three new high-value scenarios for launch
 -- Covers first home buyers, retirees, and ESG investors
 

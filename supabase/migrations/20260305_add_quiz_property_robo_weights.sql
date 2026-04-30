@@ -1,5 +1,19 @@
--- Migration: Add property_weight and robo_weight to quiz_weights
--- Run this in Supabase SQL Editor (Dashboard > SQL Editor > New query)
+-- ============================================================
+-- 20260305: Add property_weight and robo_weight to quiz_weights
+-- ============================================================
+--
+-- Extends the quiz scoring matrix with two new dimensions:
+-- property exposure (REIT / direct property platforms) and robo
+-- automation. Backfills weights for every existing broker.
+-- Run this in Supabase SQL Editor (Dashboard > SQL Editor > New query).
+--
+-- ROLLBACK STRATEGY (forward-only in prod; for dev/staging only):
+--   ALTER TABLE quiz_weights DROP COLUMN IF EXISTS robo_weight;
+--   ALTER TABLE quiz_weights DROP COLUMN IF EXISTS property_weight;
+--
+-- Risk: low — additive columns + UPDATE backfill; UPDATEs are
+-- idempotent (set to deterministic values keyed on broker_slug).
+-- All operations use IF NOT EXISTS to be idempotent on re-run.
 
 -- Step 1: Add the new columns
 ALTER TABLE quiz_weights 

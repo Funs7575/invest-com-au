@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 import { isValidEmail, isDisposableEmail } from "@/lib/validate-email";
@@ -21,6 +22,25 @@ const ALLOWED_SOURCES = [
 type NewsletterSource = (typeof ALLOWED_SOURCES)[number];
 
 /**
+ * Body schema. Every field is optional with a server-side default so a
+ * malformed/missing body still gets normalised values — the existing
+ * email-validity gate below stays the gatekeeper for required fields.
+ *
+ * `.catch()` makes the schema infallible: if `.preference` arrives as the
+ * wrong shape (or an unknown enum like "daily"), Zod silently substitutes
+ * the default rather than 400-ing. That preserves the route's current
+ * "drop unknown values, default to weekly" contract end-to-end.
+ */
+const NewsletterSubscribeSchema = z
+  .object({
+    email: z.string().optional(),
+    name: z.string().optional(),
+    preference: z.enum(["weekly", "monthly", "quarterly"]).catch("weekly"),
+    source: z.enum(ALLOWED_SOURCES).catch("newsletter"),
+  })
+  .catch({ preference: "weekly", source: "newsletter" });
+
+/**
  * POST /api/newsletter/subscribe
  *
  * Body: { email, name?, preference?, source? }
@@ -37,19 +57,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Too many subscriptions" }, { status: 429 });
   }
 
-  const body = await request.json().catch(() => ({}));
-  const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : null;
-  const name = typeof body.name === "string" ? body.name.trim().slice(0, 100) : null;
-  const preference =
-    typeof body.preference === "string" &&
-    ["weekly", "monthly", "quarterly"].includes(body.preference)
-      ? body.preference
-      : "weekly";
-  const source: NewsletterSource =
-    typeof body.source === "string" &&
-    (ALLOWED_SOURCES as readonly string[]).includes(body.source)
-      ? (body.source as NewsletterSource)
-      : "newsletter";
+  const raw = await request.json().catch(() => ({}));
+  const parsed = NewsletterSubscribeSchema.parse(raw);
+  const email = parsed.email ? parsed.email.trim().toLowerCase() : null;
+  const name = parsed.name ? parsed.name.trim().slice(0, 100) : null;
+  const preference = parsed.preference;
+  const source: NewsletterSource = parsed.source;
 
   if (!email || !isValidEmail(email)) {
     return NextResponse.json({ error: "Invalid email" }, { status: 400 });
