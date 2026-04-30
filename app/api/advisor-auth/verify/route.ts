@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { randomBytes } from "crypto";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 
 const log = logger("advisor-auth-verify");
 
@@ -50,6 +50,8 @@ export async function POST(request: NextRequest) {
       .select("id, name, slug, firm_name, email, photo_url")
       .eq("id", authToken.professional_id)
       .single();
+
+    if (advisor) setLoggerUser({ id: String(advisor.id), email: advisor.email });
 
     // Set session cookie
     const response = NextResponse.json({ success: true, advisor });

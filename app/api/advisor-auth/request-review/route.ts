@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendReviewRequest } from "@/lib/advisor-emails";
+import { setLoggerUser } from "@/lib/logger";
 
 async function getAdvisorId(request: NextRequest): Promise<number | null> {
   const supabase = await createClient();
@@ -9,6 +10,7 @@ async function getAdvisorId(request: NextRequest): Promise<number | null> {
 
   const { data: { user } } = await supabase.auth.getUser();
   if (user) {
+    setLoggerUser(user);
     const { data: advisor } = await admin
       .from("professionals")
       .select("id")

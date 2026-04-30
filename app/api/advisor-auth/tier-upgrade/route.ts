@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { cookies } from "next/headers";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 import { getTier, isUpgrade, type AdvisorTier } from "@/lib/advisor-tiers";
 import { recordFinancialAudit } from "@/lib/financial-audit";
 import { enqueueJob } from "@/lib/job-queue";
@@ -74,6 +74,7 @@ export async function POST(request: NextRequest) {
   if (!advisor) {
     return NextResponse.json({ error: "Advisor not found" }, { status: 404 });
   }
+  setLoggerUser({ id: String(advisor.id), email: advisor.email });
 
   const currentTier = (advisor.advisor_tier as AdvisorTier) || "free";
 

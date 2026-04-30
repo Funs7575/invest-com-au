@@ -2,7 +2,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from 'next/server';
 import { isAllowed, ipKey } from '@/lib/rate-limit-db';
 import { isValidEmail, isDisposableEmail } from '@/lib/validate-email';
-import { logger } from '@/lib/logger';
+import { logger, setLoggerUser } from '@/lib/logger';
 import { recordQuizSubmission } from '@/lib/quiz-history';
 import { createClient } from '@/lib/supabase/server';
 
@@ -291,6 +291,7 @@ export async function POST(request: NextRequest) {
   try {
     const authSupabase = await createClient();
     const { data: { user } } = await authSupabase.auth.getUser();
+    if (user) setLoggerUser(user);
     const safeSessionId =
       typeof session_id === 'string' ? session_id.slice(0, 100) : null;
     if (user?.id || safeSessionId) {

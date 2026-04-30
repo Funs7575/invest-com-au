@@ -8,7 +8,7 @@ import {
   isValidKycType,
   type KycDocumentType,
 } from "@/lib/advisor-kyc";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 
 const log = logger("api:advisor-kyc");
 
@@ -40,6 +40,7 @@ async function getAdvisorFromSession(request: NextRequest) {
     .select("id, slug")
     .eq("id", session.professional_id)
     .single();
+  if (advisor) setLoggerUser({ id: String(advisor.id) });
   return advisor;
 }
 
