@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireAdvisorSession } from "@/lib/require-advisor-session";
 import { logger } from "@/lib/logger";
+import { requireAdvisorSession } from "@/lib/require-advisor-session";
 
 const log = logger("advisor-auth-data");
 
