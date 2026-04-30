@@ -16,7 +16,14 @@
  *                           strings and {href,label} objects so
  *                           the caller renders real <Link>s via
  *                           React. Safer than dangerouslySetInnerHTML.
+ *
+ * Glossary auto-linking: terms from lib/glossary.ts are appended as
+ * lower-priority targets linking to /glossary#<slug>. Any term already
+ * covered by a dedicated canonical entry in INTERNAL_LINK_TARGETS is
+ * excluded so the canonical link always wins on overlap.
  */
+
+import { GLOSSARY_ENTRIES } from "@/lib/glossary";
 
 export interface LinkTarget {
   /** Keyword match (case-insensitive, word-boundary) */
@@ -109,13 +116,29 @@ export const INTERNAL_LINK_TARGETS: readonly LinkTarget[] = [
   { keyword: "research reports", href: "/research" },
 ];
 
+// Glossary terms from lib/glossary.ts, generated at module load.
+// Terms already covered by INTERNAL_LINK_TARGETS are excluded — the
+// dedicated canonical URL always wins when the same keyword appears in both.
+const _dedicatedKeywords = new Set(
+  INTERNAL_LINK_TARGETS.map((t) => t.keyword.toLowerCase()),
+);
+
+export const GLOSSARY_LINK_TARGETS: readonly LinkTarget[] = GLOSSARY_ENTRIES
+  .filter((e) => !_dedicatedKeywords.has(e.term.toLowerCase()))
+  .map((e) => ({
+    keyword: e.term,
+    href: `/glossary#${e.slug}`,
+  }));
+
 function escapeRegex(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 // Pre-sort keywords longest-first so greedy matching honours
-// priority (multi-word phrases win over bare nouns).
-const SORTED_TARGETS = [...INTERNAL_LINK_TARGETS].sort(
+// priority (multi-word phrases win over bare nouns). Dedicated targets
+// are listed before glossary targets so ties in length resolve in favour
+// of the canonical link (Array.sort is stable in V8).
+const SORTED_TARGETS = [...INTERNAL_LINK_TARGETS, ...GLOSSARY_LINK_TARGETS].sort(
   (a, b) => b.keyword.length - a.keyword.length,
 );
 
