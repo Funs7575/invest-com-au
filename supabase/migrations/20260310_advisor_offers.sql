@@ -1,4 +1,23 @@
--- Add offer/deal fields to professionals table
+-- ============================================================
+-- 20260310: Advisor offers / deals on professionals
+-- ============================================================
+--
+-- Adds offer_text, offer_terms, offer_expiry, offer_active columns
+-- to professionals so each advisor can publish a current promotion
+-- on their listing. Seeds a few sample offers for verified advisors
+-- across financial planner / SMSF / property / crypto types.
+--
+-- ROLLBACK STRATEGY (forward-only in prod; for dev/staging only):
+--   DROP INDEX IF EXISTS idx_professionals_offer_active;
+--   ALTER TABLE professionals DROP COLUMN IF EXISTS offer_active;
+--   ALTER TABLE professionals DROP COLUMN IF EXISTS offer_expiry;
+--   ALTER TABLE professionals DROP COLUMN IF EXISTS offer_terms;
+--   ALTER TABLE professionals DROP COLUMN IF EXISTS offer_text;
+--
+-- Risk: low — additive columns; seed UPDATEs are idempotent
+-- (deterministic WHERE clauses, idempotent values).
+-- All operations use IF NOT EXISTS to be idempotent on re-run.
+
 ALTER TABLE professionals
   ADD COLUMN IF NOT EXISTS offer_text TEXT,
   ADD COLUMN IF NOT EXISTS offer_terms TEXT,
