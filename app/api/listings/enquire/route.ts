@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { sendEmail } from "@/lib/resend";
 import { escapeHtml } from "@/lib/html-escape";
 import { isRateLimited } from "@/lib/rate-limit";
@@ -185,8 +186,10 @@ export async function POST(request: NextRequest) {
       log.error("[listings/enquire] email notification error:", emailErr);
     }
 
-    // Increment enquiries count on the listing (best-effort — don't fail the request if this errors)
-    const { error: updateError } = await supabase.rpc(
+    // Increment enquiries count on the listing via service-role (best-effort).
+    // Admin client bypasses the anon SELECT-only policy on investment_listings.
+    const admin = createAdminClient();
+    const { error: updateError } = await admin.rpc(
       "increment_listing_enquiries",
       { listing_id: body.listing_id }
     );
@@ -197,7 +200,7 @@ export async function POST(request: NextRequest) {
         "[listings/enquire] RPC increment_listing_enquiries not available, using fallback:",
         updateError.message
       );
-      await supabase
+      await admin
         .from("investment_listings")
         .update({ enquiries: ((listing as { enquiries?: number }).enquiries ?? 0) + 1 })
         .eq("id", body.listing_id);

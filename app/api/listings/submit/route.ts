@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isRateLimited } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
@@ -105,7 +104,7 @@ export async function POST(request: NextRequest) {
 
     const slug = `${baseSlug}-${Date.now()}`;
 
-    const supabase = await createClient();
+    const supabase = createAdminClient();
 
     const { data: inserted, error: insertError } = await supabase
       .from("investment_listings")
@@ -144,9 +143,8 @@ export async function POST(request: NextRequest) {
     let opt_ins_queued = 0;
     if (Array.isArray(body.advisor_opt_ins) && body.advisor_opt_ins.length > 0 && inserted?.id) {
       try {
-        const admin = createAdminClient();
         const optInResult = await processAdvisorOptIns({
-          admin,
+          admin: supabase,
           source: "investment_listing",
           investment_listing_id: inserted.id,
           advisor_types: body.advisor_opt_ins,
