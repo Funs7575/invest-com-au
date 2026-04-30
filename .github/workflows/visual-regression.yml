@@ -75,7 +75,6 @@ jobs:
     if: false
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    needs: ci
 
     env:
       NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
