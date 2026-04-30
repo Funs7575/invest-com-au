@@ -34,6 +34,51 @@
   --color-blue-700: #1d4ed8;
   --color-blue-800: #1e40af;
   --color-blue-900: #1e3a8a;
+
+  /* ── Design v2 tokens — confident fintech ── */
+  /* Ink — primary trust + dark hero surfaces */
+  --color-ink-50:  #f5f7fa;
+  --color-ink-100: #e4e8ee;
+  --color-ink-200: #c9d1dc;
+  --color-ink-300: #93a0b3;
+  --color-ink-400: #5e6e83;
+  --color-ink-500: #3a4a60;
+  --color-ink-600: #1f2c3f;
+  --color-ink-700: #131e2e;
+  --color-ink-800: #0b1422;
+  --color-ink-900: #050b18;
+
+  /* Coral — primary action / heat */
+  --color-coral-50:  #fff4ef;
+  --color-coral-100: #ffe1d3;
+  --color-coral-200: #ffc1a3;
+  --color-coral-300: #ff9c70;
+  --color-coral-400: #ff7a45;
+  --color-coral-500: #f25822;
+  --color-coral-600: #d83f0e;
+  --color-coral-700: #ad3009;
+  --color-coral-800: #7a2207;
+
+  /* Sand — warm publisher surfaces */
+  --color-sand-50:  #fbf8f3;
+  --color-sand-100: #f5efe5;
+  --color-sand-200: #ebe2d3;
+  --color-sand-300: #d8c8b0;
+
+  /* Vertical category accents */
+  --color-v-mining:    #b45309;
+  --color-v-farmland:  #65a30d;
+  --color-v-business:  #1d4ed8;
+  --color-v-commercial:#7c2d12;
+  --color-v-renewable: #059669;
+  --color-v-private:   #6d28d9;
+  --color-v-franchise: #db2777;
+  --color-v-altern:    #525252;
+
+  /* Font stacks — display, mono, serif (sans inherits from body) */
+  --font-display: var(--font-inter), "Inter Display", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, "SF Mono", Menlo, monospace;
+  --font-serif: var(--font-source-serif), ui-serif, Georgia, serif;
 }
 
 html {
@@ -71,6 +116,155 @@ body {
 .bg-dots {
   background-image: radial-gradient(circle, #e2e8f0 1px, transparent 1px);
   background-size: 24px 24px;
+}
+
+/* ── Design v2: dark dot grid for hero/compare sections ── */
+.iv2-dotgrid {
+  background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,.05) 1px, transparent 0);
+  background-size: 28px 28px;
+}
+
+/* ── Design v2: tabular-nums utility ── */
+.tnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum", "zero";
+}
+
+/* ── Design v2: display headline ── */
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.025em;
+}
+.font-mono {
+  font-family: var(--font-mono);
+  font-feature-settings: "tnum", "zero";
+}
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+/* ── Design v2: big numbers signature ── */
+.iv2-bignum {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  font-feature-settings: "tnum", "zero";
+  line-height: 1;
+}
+
+/* ── Design v2: pill / tag / mini-label atoms ── */
+.iv2-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+.iv2-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--color-ink-50);
+  color: var(--color-ink-500);
+  border: 1px solid #e5e7eb;
+}
+.iv2-mini {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-ink-400);
+}
+
+/* ── Design v2: CTAs ── */
+.iv2-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: 10px;
+  background: var(--color-coral-500);
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: -0.005em;
+  border: 1px solid var(--color-coral-500);
+  cursor: pointer;
+  box-shadow: 0 1px 0 var(--color-coral-700) inset, 0 1px 2px rgba(11,20,34,.06);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s ease;
+  text-decoration: none;
+  font-family: inherit;
+}
+.iv2-cta:hover {
+  background: var(--color-coral-600);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px -6px rgba(11,20,34,.12), 0 2px 4px rgba(11,20,34,.04);
+}
+.iv2-cta:disabled,
+.iv2-cta[disabled] {
+  cursor: not-allowed;
+  opacity: 0.35;
+  transform: none;
+}
+.iv2-cta-ink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: 10px;
+  background: var(--color-ink-900);
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  border: 1px solid var(--color-ink-900);
+  cursor: pointer;
+  text-decoration: none;
+  font-family: inherit;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.iv2-cta-ink:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px -6px rgba(11,20,34,.18);
+}
+.iv2-cta-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 18px;
+  border-radius: 10px;
+  background: white;
+  color: var(--color-ink-800);
+  font-weight: 600;
+  font-size: 14px;
+  border: 1px solid #d1d5db;
+  cursor: pointer;
+  text-decoration: none;
+  font-family: inherit;
+  transition: border-color 0.12s ease;
+}
+.iv2-cta-ghost:hover { border-color: var(--color-ink-400); }
+
+/* ── Design v2: shared card ── */
+.iv2-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+}
+.iv2-card-hover {
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.iv2-card-hover:hover {
+  border-color: var(--color-ink-200);
+  box-shadow: 0 4px 16px -6px rgba(11,20,34,.12), 0 2px 4px rgba(11,20,34,.04);
+  transform: translateY(-1px);
 }
 
 /* ── Glass card effect ── */
