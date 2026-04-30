@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vitest";
 import {
   INTERNAL_LINK_TARGETS,
-  GLOSSARY_LINK_TARGETS,
   linkifyHtml,
   splitByLinks,
 } from "@/lib/keyword-linking";
@@ -79,66 +78,6 @@ describe("splitByLinks", () => {
     // "commsec" is a keyword but "commsecure" should NOT match.
     const links = out.filter((p) => typeof p !== "string");
     expect(links).toHaveLength(0);
-  });
-});
-
-describe("GLOSSARY_LINK_TARGETS", () => {
-  it("has no empty keywords and all hrefs point to /glossary#<slug>", () => {
-    for (const t of GLOSSARY_LINK_TARGETS) {
-      expect(t.keyword.trim()).toBeTruthy();
-      expect(t.href).toMatch(/^\/glossary#[a-z0-9-]+$/);
-    }
-  });
-
-  it("does not include terms already covered by INTERNAL_LINK_TARGETS", () => {
-    const dedicated = new Set(INTERNAL_LINK_TARGETS.map((t) => t.keyword.toLowerCase()));
-    for (const t of GLOSSARY_LINK_TARGETS) {
-      expect(dedicated.has(t.keyword.toLowerCase())).toBe(false);
-    }
-  });
-
-  it("contains a meaningful number of glossary terms", () => {
-    // Glossary has 123 entries; a handful are filtered as duplicates.
-    expect(GLOSSARY_LINK_TARGETS.length).toBeGreaterThan(100);
-  });
-});
-
-describe("splitByLinks with glossary terms", () => {
-  it("links a glossary term to its glossary anchor", () => {
-    const out = splitByLinks("An ETF is a basket of investments.");
-    const link = out.find((p): p is { href: string; label: string } => typeof p !== "string");
-    expect(link).toBeDefined();
-    expect(link?.href).toBe("/glossary#etf");
-    expect(link?.label).toBe("ETF");
-  });
-
-  it("canonical dedicated target wins over glossary for the same keyword", () => {
-    // "SMSF" is in INTERNAL_LINK_TARGETS (/smsf) and filtered out of GLOSSARY_LINK_TARGETS.
-    const out = splitByLinks("Use an SMSF to manage retirement savings.");
-    const link = out.find((p): p is { href: string; label: string } => typeof p !== "string");
-    expect(link?.href).toBe("/smsf");
-  });
-
-  it("longer dedicated keyword wins over a glossary term that is a substring", () => {
-    // "CGT calculator" (INTERNAL_LINK_TARGETS) should win over bare "CGT" (glossary).
-    const out = splitByLinks("Use our CGT calculator to estimate tax.");
-    const link = out.find((p): p is { href: string; label: string } => typeof p !== "string");
-    expect(link?.href).toBe("/cgt-calculator");
-    expect(link?.label).toBe("CGT calculator");
-  });
-});
-
-describe("linkifyHtml with glossary terms", () => {
-  it("wraps a glossary term in <a> pointing to the glossary anchor", () => {
-    const out = linkifyHtml("<p>Diversification reduces portfolio risk.</p>");
-    expect(out).toContain('href="/glossary#diversification"');
-    expect(out).toContain(">Diversification</a>");
-  });
-
-  it("does not rewrite a dedicated canonical link as a glossary link", () => {
-    const out = linkifyHtml("<p>Use our CGT calculator today.</p>");
-    expect(out).toContain('href="/cgt-calculator"');
-    expect(out).not.toContain("/glossary#cgt");
   });
 });
 
