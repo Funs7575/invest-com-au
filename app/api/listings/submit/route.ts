@@ -104,9 +104,9 @@ export async function POST(request: NextRequest) {
 
     const slug = `${baseSlug}-${Date.now()}`;
 
-    const supabase = createAdminClient();
+    const admin = createAdminClient();
 
-    const { data: inserted, error: insertError } = await supabase
+    const { data: inserted, error: insertError } = await admin
       .from("investment_listings")
       .insert({
         vertical: body.vertical,
@@ -144,7 +144,7 @@ export async function POST(request: NextRequest) {
     if (Array.isArray(body.advisor_opt_ins) && body.advisor_opt_ins.length > 0 && inserted?.id) {
       try {
         const optInResult = await processAdvisorOptIns({
-          admin: supabase,
+          admin: admin,
           source: "investment_listing",
           investment_listing_id: inserted.id,
           advisor_types: body.advisor_opt_ins,

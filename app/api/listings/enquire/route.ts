@@ -195,7 +195,7 @@ export async function POST(request: NextRequest) {
     );
 
     if (updateError) {
-      // Fallback: manual increment if RPC doesn't exist yet
+      // Fallback: manual increment via admin client (anon UPDATE policy removed in B-08).
       log.warn(
         "[listings/enquire] RPC increment_listing_enquiries not available, using fallback:",
         updateError.message
