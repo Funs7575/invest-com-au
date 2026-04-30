@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { isRateLimited } from "@/lib/rate-limit";
 import { createClient } from "@/lib/supabase/server";
 import { getAdminEmails } from "@/lib/admin";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 
 const log = logger("advisor-outreach");
 
@@ -14,6 +14,7 @@ export async function POST(request: NextRequest) {
     if (authErr || !user || !getAdminEmails().includes(user.email?.toLowerCase() || "")) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+    setLoggerUser(user);
     const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
     if (await isRateLimited(`advisor_outreach:${ip}`, 5, 60)) {
       return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });

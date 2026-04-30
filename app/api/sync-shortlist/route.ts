@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 import { isRateLimited } from "@/lib/rate-limit";
 
 const log = logger("sync-shortlist");
@@ -17,6 +17,7 @@ export async function GET() {
     if (!user) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
+    setLoggerUser(user);
 
     const { data: shortlist, error } = await supabase
       .from("user_shortlisted_brokers")
@@ -48,6 +49,7 @@ export async function POST(request: NextRequest) {
     if (!user) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
+    setLoggerUser(user);
 
     // Rate limit — 60 writes per minute per user. The client fires a
     // write on every toggle, so a human rage-clicking can legitimately

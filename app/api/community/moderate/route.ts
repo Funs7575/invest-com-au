@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 import { ADMIN_EMAILS } from "@/lib/admin";
 
 const log = logger("community:moderate");
@@ -30,6 +30,7 @@ export async function POST(req: NextRequest) {
     if (authError || !user) {
       return NextResponse.json({ error: "Authentication required" }, { status: 401 });
     }
+    setLoggerUser(user);
 
     // Moderator check
     const isMod = await isModerator(user.id, user.email ?? undefined);

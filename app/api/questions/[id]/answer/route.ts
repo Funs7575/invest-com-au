@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 import { notificationFooter } from "@/lib/email-templates";
 import { escapeHtml } from "@/lib/html-escape";
 import { isRateLimited } from "@/lib/rate-limit";
@@ -48,6 +48,7 @@ export async function POST(
     if (!user) {
       return NextResponse.json({ error: "Sign in required to answer questions" }, { status: 401 });
     }
+    setLoggerUser(user);
 
     // Resolve role from the authoritative role tables. User may be:
     //  - a broker (row in broker_accounts)

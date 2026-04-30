@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { setLoggerUser } from "@/lib/logger";
 import {
   getReactionCounts,
   hashIp,
@@ -55,7 +56,7 @@ export async function POST(request: NextRequest) {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    if (user) userId = user.id;
+    if (user) { setLoggerUser(user); userId = user.id; }
   } catch {
     /* anonymous */
   }

@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
-import { logger } from "@/lib/logger";
+import { logger, setLoggerUser } from "@/lib/logger";
 
 const log = logger("consultation");
 
@@ -14,6 +14,7 @@ export async function GET(request: NextRequest) {
     if (!user) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
+    setLoggerUser(user);
 
     const consultationId = request.nextUrl.searchParams.get("consultation_id");
 
