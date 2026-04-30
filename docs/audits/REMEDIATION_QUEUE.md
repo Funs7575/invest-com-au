@@ -53,6 +53,31 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 
 ## Blocked — needs human input
 
+### C-03 · `advisor-apply/*` admin imports — scope exception decision needed (surfaced 2026-04-30 by iter 158)
+
+**Finding:** Phase 4 verification gate: these are PUBLIC endpoints (no cookies, no authenticated layout). Per the gate, admin→server.ts refactors on public routes require human sign-off.
+
+Three admin usages found:
+
+1. **`app/api/advisor-apply/photo/route.ts`** — `createAdminClient()` for Storage bucket upload/URL. No realistic alternative: storage management requires service-role. → **False-positive** for C-03 scope.
+2. **`app/api/advisor-apply/invite/route.ts`** — `createAdminClient()` to SELECT `advisor_firm_invitations` by token (read-only, pre-fills application form). Admin used because `advisor_firm_invitations` has no public anon SELECT policy for token lookup. → **False-positive** (read-only, public data, no security concern).
+3. **`app/api/advisor-apply/route.ts`** — `createClient()` for main operations (correct), BUT inside a try/catch uses `(await import("@/lib/supabase/admin")).createAdminClient()` to INSERT a row into `agreement_acceptances`. This is a legal compliance record that is fire-and-forget (failure doesn't block the application). This dynamic admin import is **outside the CLAUDE.md admin-scope rule** ("use only in admin routes, webhooks, and cron").
+
+**Decision matrix for `route.ts` item 3:**
+
+| Option | What to do | Pros | Cons |
+|--------|-----------|------|------|
+| **A** | Convert dynamic import to static; acknowledge as intentional exception via a `// admin — compliance record, no anon INSERT policy on agreement_acceptances` comment | 1-line code change + comment; no RLS work | Leaves admin in a public route (acknowledged exception to scope rule) |
+| **B** | Add anon INSERT-only RLS policy to `agreement_acceptances` + use `createClient()` | Aligns strictly with CLAUDE.md scope rule | `agreement_acceptances` is a legal table — public INSERT risks spamming fake consent records; policy would need careful `WITH CHECK` |
+| **C** | Move agreement recording to the admin approval workflow (when admin approves the application) | Agreement only recorded for actually-approved advisors; no public write path | Agreement should be at submission time when the user clicked "I agree"; delaying it weakens the legal timestamp |
+| **D** | Mark entire C-03 as false-positive | No changes, no scope rule violation documented | Leaves the scope rule applied inconsistently |
+
+**Recommendation:** Option A — convert the dynamic import to a static import (cleanliness fix) and add a comment documenting the exception. The admin usage is a one-off compliance insert that does not bypass any security boundary; it just records what the user consented to. The dynamic import is a code smell but not a security issue. Option D is also acceptable if you consider compliance recording an inherent exception to the scope rule.
+
+**Loop is blocked on C-03 until this is resolved. C-04 onward can proceed independently.**
+
+---
+
 ### A-MISSING-TABLE-1 · `account_deletion_requests` table missing in live (surfaced 2026-04-26 by iter 19)
 
 **Finding:** The route `app/api/account/delete/route.ts` and Stream A's drift-backfill scope both depend on `account_deletion_requests`. Live DB query (Supabase MCP, 2026-04-26 18:50Z):
@@ -307,7 +332,7 @@ Highest priority: critical 2 first.
 | --- | --- | --- | --- | --- |
 | C-01 | done | Generate call graph: `grep -rn "from ['\"]@/lib/supabase/admin['\"]"` classified by route family | 1 | Done commit `b654e12` (iter 134). Output: `docs/audits/admin-callgraph.md`. 339 files, 6 refactor streams identified. |
 | C-02 | done | Refactor `app/api/advisor-auth/*` admin imports to `server.ts` + add RLS where missing | ~3 | All steps complete (PR #327). Step 5b (`5b32c3b` iter 158): payment/route.ts + firm/invite/route.ts onto requireAdvisorSession + admin client; lead_disputes RLS migration (C-DISC-20260430-03). session/route.ts excluded by design (IS the auth endpoint). All 12 advisor-auth routes now use requireAdvisorSession + admin; no route reads advisor_sessions via anon client. |
-| C-03 | pending | Refactor `app/api/advisor-apply/*` admin imports | ~2 | |
+| C-03 | blocked | Refactor `app/api/advisor-apply/*` admin imports | ~2 | Blocked iter 158 — phase 4 gate: public routes, not authenticated. photo/route.ts (storage) and invite/route.ts (read-only invite lookup) are false-positives. route.ts has a dynamic admin import for `agreement_acceptances` INSERT in a try/catch — outside CLAUDE.md admin scope rule. See Blocked section. |
 | C-04 | pending | Refactor `app/api/affiliate/*` admin imports | ~2 | Likely several Blocked items here — surface to user. |
 | C-05 | pending | Refactor `app/account/notifications/page.tsx` + `components/ArticleBrokerTable.tsx` | 1 | |
 | C-06 | pending | Refactor `lib/*` modules currently importing admin (review per-module necessity) | ~3 | |
@@ -1256,14 +1281,14 @@ Two strategically important surfaces under-served by current nav: (1) investment
 - Phase 4: verified. firm/invite has no auth.uid() path — correct to use requireAdvisorSession + admin. payment/route.ts redundant advisor_id body field confirmed safe to remove (session is authoritative). lead_disputes: no prior RLS policies found in any migration — first enable.
 - Phase 5: (1) payment/route.ts — import requireAdvisorSession, remove manual cookie + second admin client + advisor_id body field; derive advisorId from session. (2) firm/invite/route.ts — extract getFirmAdmin() helper (requireAdvisorSession + admin firm-admin check), refactor all 3 handlers (POST/GET/PATCH) to use it + admin for all queries. (3) `20260606_c02_lead_disputes_rls.sql` — ENABLE RLS + FORCE RLS + service_role full access + advisor self-SELECT via professionals join. Committed `5b32c3b`. Diff: +134 -147 across 3 files.
 - Phase 6: push rejected (concurrent fire had pushed to branch). Fetched + rebased; push succeeded.
-- Phase 6.5: discovery — no new high-confidence items adjacent to touched files. C-DISC-20260430-02 (advisor_sessions CREATE TABLE backfill) already queued. C-03 is next logical C item.
-- Phase 7: queue updated. C-02 status → done. C-DISC-20260430-03 status → done. In-flight table updated.
+- Phase 6.5: discovery — no new high-confidence items adjacent to touched files. C-DISC-20260430-02 (advisor_sessions CREATE TABLE backfill) already queued.
+- Phase 7 (iter 158 part 2 — C-03 surface): picked C-03 as next item. Phase 4 gate: advisor-apply routes are PUBLIC (no auth cookies, no authenticated layout). Reviewed all 3 admin usages: photo/route.ts (storage) → false-positive; invite/route.ts (read-only invite lookup) → false-positive; route.ts dynamic admin import for agreement_acceptances → outside CLAUDE.md scope rule, needs human decision. Added Blocked entry for C-03 with decision matrix. Queue updated on main.
 
 - STATUS: PROGRESS · stream=C · item=C-02 (step 5b) + C-DISC-20260430-03 · pr=#327
 - Commit: 5b32c3b
 - Diff: +134 -147 across 3 files
-- Next item: C-03 (advisor-apply refactor) or C-DISC-20260430-02 (advisor_sessions CREATE TABLE backfill, P3)
-- Remaining: C-03..C-08 pending · C-DISC-20260430-02 pending · B-09 blocked
+- Next pick: C-03 → STATUS: BLOCKED (see Blocked section — public route, admin scope exception decision needed)
+- Remaining: C-03 blocked · C-04..C-08 pending · C-DISC-20260430-02 pending · B-09 blocked
 
 ### 2026-04-30T — iteration 157 (stream C — C-02 steps 4b+5 — professional_reviews RLS + tests + tier-upgrade + firm/* refactor)
 
