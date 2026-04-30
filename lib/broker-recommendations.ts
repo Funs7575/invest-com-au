@@ -1,4 +1,4 @@
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 
 export interface BrokerRecommendationContext {
   experience_level?: string;
@@ -94,7 +94,7 @@ export async function getPersonalizedBrokers(
   ctx: BrokerRecommendationContext,
   opts?: { email?: string; dripNumber?: number }
 ): Promise<RecommendedBroker[]> {
-  const supabase = createAdminClient();
+  const supabase = await createClient();
 
   const { data: brokers } = await supabase
     .from("brokers")
