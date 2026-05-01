@@ -121,6 +121,45 @@ const advisorsMegaMenu: { title: string; items: { label: string; href: string; d
   },
 ];
 
+const toolsMegaMenu: { title: string; items: { label: string; href: string; desc: string }[] }[] = [
+  {
+    title: "Calculators",
+    items: [
+      { label: "Franking Credits", href: "/dividends/calculator", desc: "Calculate ASX dividend franking" },
+      { label: "Negative Gearing", href: "/negative-gearing", desc: "Property tax-loss modelling" },
+      { label: "Lump-Sum Investing", href: "/lump-sum-investing", desc: "Lump-sum vs DCA, modelled" },
+      { label: "All Calculators", href: "/calculators", desc: "Browse 20+ financial calculators" },
+    ],
+  },
+  {
+    title: "SMSF",
+    items: [
+      { label: "SMSF Setup", href: "/smsf/setup", desc: "Step-by-step setup guide" },
+      { label: "SMSF Crypto", href: "/smsf/crypto", desc: "Holding crypto in super" },
+      { label: "SMSF Property", href: "/smsf/property", desc: "Property in your SMSF" },
+      { label: "SMSF Cost Calculator", href: "/smsf-calculator", desc: "Setup + ongoing cost estimate" },
+    ],
+  },
+  {
+    title: "Business",
+    items: [
+      { label: "Sell a Business", href: "/sell-business", desc: "Valuation, broker, CGT" },
+      { label: "Business Valuation", href: "/sell-business/valuation", desc: "Free valuation tool" },
+      { label: "Visa & Migration", href: "/visa-investment", desc: "Investor & business visas" },
+      { label: "Dividend Hub", href: "/dividends", desc: "Franking, ASX yield & ETFs" },
+    ],
+  },
+  {
+    title: "Grants & Programs",
+    items: [
+      { label: "Grants Hub", href: "/grants", desc: "All Australian business grants" },
+      { label: "R&D Tax Incentive", href: "/grants/rd-tax-incentive", desc: "Up to 43.5% refundable" },
+      { label: "EMDG Export Grant", href: "/grants/emdg", desc: "Export market development" },
+      { label: "Industry Growth Program", href: "/grants/industry-growth-program", desc: "Up to $50M co-investment" },
+    ],
+  },
+];
+
 const platformsDropdown = [
   { label: "Compare Platforms", href: "/compare", desc: "Side-by-side comparison tool" },
   { label: `Best Platforms ${CURRENT_YEAR}`, href: "/best", desc: "Top picks by category" },
@@ -453,6 +492,88 @@ function AdvisorsMegaDropdown({ isActive }: { isActive: boolean }) {
   );
 }
 
+/**
+ * Tools mega dropdown — surfaces calculators, SMSF, business and grants
+ * tools that previously only existed in the mobile drawer. Mirrors the
+ * Invest / Advisors mega dropdown structure: four columns + a Learn rail.
+ */
+function ToolsMegaDropdown({ isActive }: { isActive: boolean }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const timeout = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  const enter = () => { clearTimeout(timeout.current); setOpen(true); };
+  const leave = () => { timeout.current = setTimeout(() => setOpen(false), 150); };
+
+  useEffect(() => {
+    return () => clearTimeout(timeout.current);
+  }, []);
+
+  return (
+    <div ref={ref} className="relative" onMouseEnter={enter} onMouseLeave={leave}>
+      <button
+        onClick={() => setOpen(!open)}
+        className={`px-4 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-bold rounded-lg transition-colors flex items-center gap-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-700/40 ${
+          isActive ? "text-slate-900 bg-slate-50" : ""
+        }`}
+        aria-haspopup="true"
+        aria-expanded={open}
+      >
+        Tools
+        <Icon name="chevron-down" size={14} className={`text-slate-400 transition-transform ${open ? "rotate-180" : ""}`} aria-hidden="true" />
+      </button>
+      {open && (
+        <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 z-50">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-xl p-5 flex gap-6" style={{ width: "860px" }}>
+            {toolsMegaMenu.map((col) => (
+              <div key={col.title} className="flex-1 min-w-0">
+                <p className="text-[0.65rem] font-extrabold uppercase tracking-wider text-amber-500 mb-2 px-2">{col.title}</p>
+                <div className="space-y-0.5">
+                  {col.items.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setOpen(false)}
+                      className="block px-2 py-1.5 rounded-lg hover:bg-slate-50 transition-colors group"
+                    >
+                      <div className="text-sm font-bold text-slate-900 group-hover:text-amber-600 transition-colors">{item.label}</div>
+                      <div className="text-[0.68rem] text-slate-400 leading-tight">{item.desc}</div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ))}
+            <div className="border-l border-slate-100 pl-5 flex flex-col justify-between" style={{ minWidth: "140px" }}>
+              <div>
+                <p className="text-[0.65rem] font-extrabold uppercase tracking-wider text-amber-500 mb-2">Learn</p>
+                <Link href="/learn" onClick={() => setOpen(false)} className="block text-sm font-bold text-slate-900 hover:text-amber-600 py-1 transition-colors">
+                  Learn to Invest
+                </Link>
+                <Link href="/articles" onClick={() => setOpen(false)} className="block text-sm font-bold text-slate-900 hover:text-amber-600 py-1 transition-colors">
+                  Articles &amp; Guides
+                </Link>
+                <Link href="/how-to" onClick={() => setOpen(false)} className="block text-sm font-bold text-slate-900 hover:text-amber-600 py-1 transition-colors">
+                  How-To Guides
+                </Link>
+                <Link href="/glossary" onClick={() => setOpen(false)} className="block text-sm font-bold text-slate-900 hover:text-amber-600 py-1 transition-colors">
+                  Glossary
+                </Link>
+              </div>
+              <Link
+                href="/calculators"
+                onClick={() => setOpen(false)}
+                className="mt-3 flex items-center gap-1.5 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold text-xs px-3 py-2 rounded-lg transition-colors"
+              >
+                All tools <Icon name="arrow-right" size={12} aria-hidden="true" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function DesktopDropdown({
   label,
   items,
@@ -532,6 +653,21 @@ export default function Header() {
     pathname.startsWith("/for-advisors");
   const isForeignActive = pathname === "/foreign-investment" || pathname.startsWith("/foreign-investment/");
   const isInvestActive = pathname === "/invest" || pathname.startsWith("/invest/");
+  const isToolsActive = [
+    "/calculators",
+    "/dividends",
+    "/negative-gearing",
+    "/lump-sum-investing",
+    "/smsf",
+    "/smsf-calculator",
+    "/sell-business",
+    "/visa-investment",
+    "/grants",
+    "/learn",
+    "/articles",
+    "/how-to",
+    "/glossary",
+  ].some((p) => pathname === p || pathname.startsWith(p + "/"));
 
   return (
     <header className="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50 shadow-[0_2px_20px_rgb(0,0,0,0.02)] transition-all duration-300">
@@ -551,6 +687,7 @@ export default function Header() {
             <AdvisorsMegaDropdown isActive={isAdvisorsActive} />
             <div className="h-6 w-px bg-slate-200 mx-2" />
             <DesktopDropdown label="Compare Platforms" items={platformsDropdown} isActive={isPlatformsActive} />
+            <ToolsMegaDropdown isActive={isToolsActive} />
             <div className="h-6 w-px bg-slate-200 mx-2" />
             <DesktopDropdown label="Investing from Abroad" items={foreignDropdown} isActive={isForeignActive} />
           </nav>

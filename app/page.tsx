@@ -111,6 +111,17 @@ export default async function HomePage() {
 
   const advisorList: ReadonlyArray<HomeAdvisor> = (professionals ?? []) as HomeAdvisor[];
 
+  // Live route-card preview slices — feed real data into the four cards on
+  // the homepage so each one shows what's inside instead of just an icon.
+  const topBrokersForCards = compareBrokers
+    .slice(0, 6)
+    .map((b) => ({ name: b.name, asx_fee: b.asx_fee }));
+
+  const topAdvisorsForCards = advisorList
+    .filter((a) => a.photo_url)
+    .slice(0, 5)
+    .map((a) => ({ name: a.name, photo_url: a.photo_url ?? null }));
+
   // Curate listings for the homepage teaser:
   //   1. Prefer listings with at least one image (better hero unit)
   //   2. Weight by paid tier: premium > featured > standard
@@ -142,6 +153,15 @@ export default async function HomePage() {
     }
   }
   const listingList: ReadonlyArray<HomeListing> = [...curated, ...overflow].slice(0, 60);
+
+  const topListingsForCards = listingList
+    .filter((l) => l.images && l.images.length > 0 && l.images[0])
+    .slice(0, 3)
+    .map((l) => ({
+      id: l.id,
+      title: l.title,
+      image: (l.images && l.images[0]) ? l.images[0] : null,
+    }));
 
   return (
     <div>
@@ -207,11 +227,18 @@ export default async function HomePage() {
           listingCount={totalListingCount}
           professionalCount={totalProfessionalCount}
           brokerCount={brokerCount}
+          topBrokers={topBrokersForCards}
+          topListings={topListingsForCards}
+          topAdvisors={topAdvisorsForCards}
         />
       </ScrollFadeIn>
 
       <ScrollFadeIn>
         <HomePathfinder />
+      </ScrollFadeIn>
+
+      <ScrollFadeIn>
+        <HomeHowWeEarn />
       </ScrollFadeIn>
 
       <ScrollFadeIn>
@@ -236,10 +263,6 @@ export default async function HomePage() {
 
       <ScrollFadeIn>
         <HomeFridayBriefing />
-      </ScrollFadeIn>
-
-      <ScrollFadeIn>
-        <HomeHowWeEarn />
       </ScrollFadeIn>
 
       <MobileBottomNav />
