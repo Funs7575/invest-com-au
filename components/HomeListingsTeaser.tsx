@@ -61,10 +61,15 @@ export default function HomeListingsTeaser({ listings, totalCount }: HomeListing
                 fontWeight: 800,
                 margin: "4px 0 0",
                 lineHeight: 1.05,
+                textWrap: "balance",
               }}
             >
-              Real assets, vetted before they list.
+              Australian investment opportunities, shown clearly.
             </h2>
+            <p style={{ fontSize: 13, color: "var(--color-ink-500)", margin: "6px 0 0", maxWidth: 560, lineHeight: 1.5 }}>
+              Listings are not recommendations. Always perform due diligence and seek professional
+              advice where required.
+            </p>
           </div>
           <Link href="/invest" className="iv2-cta-ghost" style={{ fontSize: 12.5 }}>
             Browse all {totalCount} <DesignIcon name="arrow-right" size={11} />
