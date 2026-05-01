@@ -8,6 +8,7 @@ import AdvisorMatchCTA from "@/components/AdvisorMatchCTA";
 import { trackEvent, trackPageDuration } from "@/lib/tracking";
 import { getStoredUtm } from "@/components/UtmCapture";
 import { storeQualificationData } from "@/lib/qualification-store";
+import { formatCurrency } from "@/lib/utils";
 
 type DebtType = "credit_card" | "personal_loan" | "car_loan" | "hecs" | "other";
 
@@ -26,10 +27,6 @@ const DEBT_TYPE_LABELS: Record<DebtType, string> = {
   hecs: "HECS-HELP",
   other: "Other",
 };
-
-function formatCurrency(n: number): string {
-  return new Intl.NumberFormat("en-AU", { style: "currency", currency: "AUD", maximumFractionDigits: 0 }).format(n);
-}
 
 function formatMonths(months: number): string {
   const years = Math.floor(months / 12);

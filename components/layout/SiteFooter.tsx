@@ -17,7 +17,10 @@ export function SiteFooter() {
   });
 
   return (
-    <footer className="bg-[var(--color-ink-900)] text-slate-300">
+    <footer
+      className="text-slate-300"
+      style={{ background: "var(--color-ink-900)" }}
+    >
       {/* Main grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-8">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-8 mb-12">

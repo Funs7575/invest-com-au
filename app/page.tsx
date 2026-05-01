@@ -1,7 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
 import HomeHero from "@/components/HomeHero";
-import HomePillarsGrid from "@/components/HomePillarsGrid";
+import HomeRouteCards from "@/components/HomeRouteCards";
+import HomePathfinder from "@/components/HomePathfinder";
 import HomeListingsTeaser, { type HomeListing } from "@/components/HomeListingsTeaser";
 import HomeAdvisorsTeaser, { type HomeAdvisor } from "@/components/HomeAdvisorsTeaser";
 import HomePostAJob from "@/components/HomePostAJob";
@@ -10,23 +11,30 @@ import HomeCrossBorder from "@/components/HomeCrossBorder";
 import HomeFridayBriefing from "@/components/HomeFridayBriefing";
 import HomeHowWeEarn from "@/components/HomeHowWeEarn";
 import ScrollFadeIn from "@/components/ScrollFadeIn";
-import MobileStickyAdvisorCta from "@/components/MobileStickyAdvisorCta";
+import MobileBottomNav from "@/components/MobileBottomNav";
 import { ORGANIZATION_JSONLD, SITE_URL } from "@/lib/seo";
 
 export const metadata = {
-  title: { absolute: "Compare Platforms, Browse Advisors & Explore Investments — Invest.com.au" },
+  title: {
+    absolute:
+      "Compare Platforms, Browse Listings, Find Experts — Invest.com.au",
+  },
   description:
-    "Australia's independent investing hub. Compare 100+ trading platforms, browse licensed professionals, and explore investment opportunities — businesses for sale, mining, farmland, commercial property & more. Always free.",
+    "One place to compare platforms, browse investment listings, find experts, or get matched to the right next step. Independent. ASIC-registered. General information only.",
   openGraph: {
-    title: "Compare Platforms, Browse Advisors & Explore Investments — Invest.com.au",
-    description: "Australia's independent investing hub. Compare trading platforms, browse licensed professionals, and explore investment listings. Always free.",
+    title:
+      "Compare Platforms, Browse Listings, Find Experts — Invest.com.au",
+    description:
+      "Compare platforms, browse listings, find experts, or get matched in 60 seconds.",
     url: "/",
     images: [{ url: "/api/og", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image" as const,
-    title: "Compare Platforms, Browse Advisors & Explore Investments — Invest.com.au",
-    description: "Australia's independent investing hub. Compare platforms, browse directories, and explore investment listings. Always free.",
+    title:
+      "Compare Platforms, Browse Listings, Find Experts — Invest.com.au",
+    description:
+      "Compare platforms, browse listings, find experts, or get matched in 60 seconds.",
   },
   alternates: { canonical: "/" },
 };
@@ -107,7 +115,6 @@ export default async function HomePage() {
   //   1. Prefer listings with at least one image (better hero unit)
   //   2. Weight by paid tier: premium > featured > standard
   //   3. Round-robin across verticals so the grid isn't dominated by one category
-  // Listings without images still appear after image-bearing ones if a vertical has none.
   const rawListings = (listings ?? []) as HomeListing[];
   const tierWeight: Record<string, number> = { premium: 3, featured: 2, standard: 1 };
   const scored = rawListings
@@ -134,8 +141,6 @@ export default async function HomePage() {
       overflow.push(l);
     }
   }
-  // Final list: curated leads (image + diverse) followed by remaining inventory so the
-  // per-vertical tabs in HomeListingsTeaser still have plenty to filter through.
   const listingList: ReadonlyArray<HomeListing> = [...curated, ...overflow].slice(0, 60);
 
   return (
@@ -147,7 +152,7 @@ export default async function HomePage() {
             "@context": "https://schema.org",
             ...ORGANIZATION_JSONLD,
             description:
-              "Australia's independent investing hub. Compare platforms and find verified financial advisors — shares, crypto, super, robo-advisors, property & more.",
+              "One place to compare platforms, browse investment listings, find experts, or get matched to the right next step. Independent. ASIC-registered. General information only.",
           }),
         }}
       />
@@ -160,34 +165,34 @@ export default async function HomePage() {
             mainEntity: [
               {
                 "@type": "Question",
-                name: "What is the best investing platform for beginners in Australia?",
-                acceptedAnswer: {
-                  "@type": "Answer",
-                  text: "The best beginner platform depends on your goals, but platforms with low fees, simple interfaces, and educational resources — such as Stake, CommSec, and Superhero — consistently rank highest for new investors.",
-                },
-              },
-              {
-                "@type": "Question",
-                name: "Which Australian investing platform has the lowest fees?",
-                acceptedAnswer: {
-                  "@type": "Answer",
-                  text: "Several brokers now offer $0 brokerage on ASX trades, including Stake and Superhero. For US shares, Stake and Moomoo offer $0 USD brokerage. Compare all fee structures at invest.com.au/compare.",
-                },
-              },
-              {
-                "@type": "Question",
-                name: "How do I choose a mortgage broker in Australia?",
-                acceptedAnswer: {
-                  "@type": "Answer",
-                  text: "Look for an ASIC-registered mortgage broker who offers access to multiple lenders, transparent fee disclosure, and specialises in your situation (first home buyer, investor, self-employed). Browse our professional directory at invest.com.au/advisors.",
-                },
-              },
-              {
-                "@type": "Question",
                 name: "How do I choose between Australian investing platforms?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text: `Compare platforms based on fees, FX rates, available markets, CHESS sponsorship, and features. Use our free 60-second filter tool at ${SITE_URL}/compare to narrow down platforms by your own criteria.`,
+                  text: `Compare key fees, FX rates, available markets, CHESS sponsorship and features. Use the platform tools at ${SITE_URL}/compare to filter platforms by your own criteria. General information only — always check licensing, fees and suitability.`,
+                },
+              },
+              {
+                "@type": "Question",
+                name: "Where can I browse Australian investment opportunities?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: `Browse the marketplace at ${SITE_URL}/invest — businesses for sale, mining, farmland, commercial property, renewable energy projects and selected investment listings. Listings are not recommendations; always perform due diligence.`,
+                },
+              },
+              {
+                "@type": "Question",
+                name: "How do I find an Australian financial expert or adviser?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: `Browse specialists at ${SITE_URL}/advisors — financial advisers, mortgage brokers, buyer's agents, SMSF accountants, tax agents and cross-border specialists. Introductions only — always check licensing, authorisation, fees and suitability.`,
+                },
+              },
+              {
+                "@type": "Question",
+                name: "What does Get matched do?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: `Get matched is a short prompt-based flow at ${SITE_URL}/quiz that routes you to the right next step — comparison, listing, expert directory or matched enquiry — based on your situation. No email needed.`,
                 },
               },
             ],
@@ -195,27 +200,22 @@ export default async function HomePage() {
         }}
       />
 
-      <HomeHero
-        brokerCount={brokerCount}
-        listingCount={totalListingCount}
-        professionalCount={totalProfessionalCount}
-      />
+      <HomeHero />
 
       <ScrollFadeIn>
-        <HomePillarsGrid
+        <HomeRouteCards
           listingCount={totalListingCount}
           professionalCount={totalProfessionalCount}
           brokerCount={brokerCount}
         />
       </ScrollFadeIn>
 
-      {/* Methodology section ("Zero of our revenue is a commission") moved
-          here between the four-ways grid and the marketplace teaser so the
-          trust signal lands BEFORE the visitor enters the inventory. By
-          the time they're scanning marketplace cards or platform fees,
-          they already know how the site is paid for. */}
       <ScrollFadeIn>
-        <HomeHowWeEarn />
+        <HomePathfinder />
+      </ScrollFadeIn>
+
+      <ScrollFadeIn>
+        <HomeCompareDeepDive brokers={compareBrokers} />
       </ScrollFadeIn>
 
       <ScrollFadeIn>
@@ -231,10 +231,6 @@ export default async function HomePage() {
       </ScrollFadeIn>
 
       <ScrollFadeIn>
-        <HomeCompareDeepDive brokers={compareBrokers} />
-      </ScrollFadeIn>
-
-      <ScrollFadeIn>
         <HomeCrossBorder />
       </ScrollFadeIn>
 
@@ -242,7 +238,11 @@ export default async function HomePage() {
         <HomeFridayBriefing />
       </ScrollFadeIn>
 
-      <MobileStickyAdvisorCta />
+      <ScrollFadeIn>
+        <HomeHowWeEarn />
+      </ScrollFadeIn>
+
+      <MobileBottomNav />
     </div>
   );
 }

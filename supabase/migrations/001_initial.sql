@@ -1,3 +1,68 @@
+-- ============================================================================
+-- Migration: 001_initial.sql
+-- Purpose: Bootstrap the original schema — six core tables (brokers,
+--          articles, scenarios, affiliate_clicks, quiz_weights,
+--          site_settings), enable RLS on all six, install six public-read
+--          / public-insert RLS policies, and create five performance
+--          indexes (broker slug/status, article slug, scenario slug,
+--          affiliate_clicks broker_id).
+-- Rollback: DROP every object created — five indexes, six policies, six
+--          tables (all CASCADE because downstream migrations FK into
+--          brokers and add columns/policies on top of every table here).
+-- Risk: high (irreversible) — these tables hold every broker, article,
+--       scenario, affiliate-click, quiz-weight, and site-setting row in
+--       the application. CASCADE drops cascade into ~100 downstream
+--       migrations' tables, indexes, FKs, and triggers. Operator MUST
+--       take a full database snapshot (`pg_dump` or Supabase backup)
+--       before reverting; the migration cannot recreate the row data.
+-- ============================================================================
+--
+-- Forward operations:
+--   1. CREATE TABLE brokers (id, name, slug, color, ...).
+--   2. CREATE TABLE articles (id, title, slug, excerpt, ...).
+--   3. CREATE TABLE scenarios (id, title, slug, hero_title, ...).
+--   4. CREATE TABLE affiliate_clicks (id, broker_id FK→brokers, ...).
+--   5. CREATE TABLE quiz_weights (id, broker_id FK→brokers, ...).
+--   6. CREATE TABLE site_settings (id, key, value, ...).
+--   7. ALTER TABLE ... ENABLE ROW LEVEL SECURITY on all six tables.
+--   8. CREATE POLICY "Public read for active brokers" ON brokers.
+--   9. CREATE POLICY "Public read articles" ON articles.
+--  10. CREATE POLICY "Public read scenarios" ON scenarios.
+--  11. CREATE POLICY "Insert clicks" ON affiliate_clicks.
+--  12. CREATE POLICY "Public read quiz weights" ON quiz_weights.
+--  13. CREATE POLICY "Public read settings" ON site_settings.
+--  14. CREATE INDEX idx_brokers_slug, idx_brokers_status,
+--      idx_articles_slug, idx_scenarios_slug,
+--      idx_affiliate_clicks_broker_id.
+--
+-- Rollback (in reverse order):
+--   -- Pre-step (operator): take a full pg_dump / Supabase snapshot. Every
+--   -- broker, article, scenario, click, quiz weight, and site setting
+--   -- will be lost; downstream migrations that FK into brokers (campaigns,
+--   -- user_reviews, switch_stories, broker_questions, etc.) will also
+--   -- be dropped via CASCADE.
+--  14. DROP INDEX IF EXISTS idx_affiliate_clicks_broker_id;
+--      DROP INDEX IF EXISTS idx_scenarios_slug;
+--      DROP INDEX IF EXISTS idx_articles_slug;
+--      DROP INDEX IF EXISTS idx_brokers_status;
+--      DROP INDEX IF EXISTS idx_brokers_slug;
+--  13. DROP POLICY IF EXISTS "Public read settings" ON site_settings;
+--  12. DROP POLICY IF EXISTS "Public read quiz weights" ON quiz_weights;
+--  11. DROP POLICY IF EXISTS "Insert clicks" ON affiliate_clicks;
+--  10. DROP POLICY IF EXISTS "Public read scenarios" ON scenarios;
+--   9. DROP POLICY IF EXISTS "Public read articles" ON articles;
+--   8. DROP POLICY IF EXISTS "Public read for active brokers" ON brokers;
+--   7. (RLS toggles drop with the tables.)
+--   6. DROP TABLE IF EXISTS site_settings CASCADE;
+--   5. DROP TABLE IF EXISTS quiz_weights CASCADE;
+--   4. DROP TABLE IF EXISTS affiliate_clicks CASCADE;
+--   3. DROP TABLE IF EXISTS scenarios CASCADE;
+--   2. DROP TABLE IF EXISTS articles CASCADE;
+--   1. DROP TABLE IF EXISTS brokers CASCADE;
+--      -- DESTRUCTIVE: collapses the entire application schema. Restore
+--      -- from snapshot is the only recovery path.
+-- ============================================================================
+
 -- Create brokers table
 CREATE TABLE brokers (
   id BIGSERIAL PRIMARY KEY,
