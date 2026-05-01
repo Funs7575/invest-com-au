@@ -75,10 +75,10 @@
 --     app/api/advisor-articles/route.ts:92 — admin client SELECT
 --
 -- Idempotency
---   - CREATE TABLE IF NOT EXISTS — no-op on existing tables.
 --   - ENABLE ROW LEVEL SECURITY — no-op if already enabled.
 --   - FORCE ROW LEVEL SECURITY  — no-op if already forced.
 --   - DROP POLICY IF EXISTS + CREATE POLICY — safe to re-run.
+--   (All five tables pre-exist — this migration only alters policies.)
 --
 -- Rollback
 --   BEGIN;
