@@ -28,7 +28,14 @@ export function useSubscription() {
     if (userLoading) return;
 
     if (!user) {
+      // Logged-out branch — clear any subscription state from a prior
+      // session. This setState IS the side-effect the effect exists for
+      // (the alternative — deriving from `user` in render — would leak
+      // the previous user's subscription data into a fresh anon mount
+      // until the next refetch, which is the bug we're avoiding).
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional teardown when user logs out / switches
       setSubscription(null);
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- pairs with the setSubscription teardown above
       setLoading(false);
       return;
     }
