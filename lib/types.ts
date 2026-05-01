@@ -978,7 +978,13 @@ export type ProfessionalType =
   | 'smsf_auditor'
   | 'smsf_specialist'
   | 'immigration_investment_lawyer'
-  | 'fund_manager';
+  | 'fund_manager'
+  // New in 20260501 — property-thread completion.
+  // Conveyancers handle settlement; property lawyers handle disputes,
+  // off-the-plan, and SMSF property work. See
+  // supabase/migrations/20260501_add_property_advisor_types.sql.
+  | 'conveyancer'
+  | 'property_lawyer';
 
 export interface Professional {
   id: number;
@@ -1152,6 +1158,8 @@ export const PROFESSIONAL_TYPE_LABELS: Record<ProfessionalType, string> = {
   smsf_specialist: "SMSF Specialist",
   immigration_investment_lawyer: "Immigration Investment Lawyer",
   fund_manager: "Fund Manager",
+  conveyancer: "Conveyancer",
+  property_lawyer: "Property Lawyer",
 };
 
 export const PROFESSIONAL_TYPE_ICONS: Record<ProfessionalType, string> = {
@@ -1186,6 +1194,8 @@ export const PROFESSIONAL_TYPE_ICONS: Record<ProfessionalType, string> = {
   smsf_specialist: "building",
   immigration_investment_lawyer: "plane",
   fund_manager: "briefcase",
+  conveyancer: "file-signature",
+  property_lawyer: "gavel",
 };
 
 export const AU_STATES = ["NSW", "VIC", "QLD", "WA", "SA", "TAS", "ACT", "NT"] as const;
