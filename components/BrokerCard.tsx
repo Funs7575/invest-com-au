@@ -3,7 +3,6 @@
 import { memo } from "react";
 import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
-import { AFFILIATE_AD_TOOLTIP } from "@/lib/compliance";
 import SponsorBadge from "@/components/SponsorBadge";
 import Icon from "@/components/Icon";
 import ShortlistButton from "@/components/ShortlistButton";
@@ -73,7 +72,7 @@ export default memo(function BrokerCard({
                 {broker.name}
               </a>
               {broker.affiliate_url && !isSponsoredBroker && (
-                <span title={AFFILIATE_AD_TOOLTIP} className="text-[0.6rem] font-semibold px-1 py-0.5 bg-slate-100 text-slate-400 rounded uppercase tracking-wide shrink-0">Ad</span>
+                <span title="We may earn a commission if you visit this platform" className="text-[0.6rem] font-semibold px-1 py-0.5 bg-slate-100 text-slate-400 rounded uppercase tracking-wide shrink-0">Ad</span>
               )}
             </div>
             <div className="flex items-center gap-1.5">

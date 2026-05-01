@@ -60,41 +60,6 @@ export const COURSE_AFFILIATE_DISCLOSURE =
   "This course contains links to broker platforms. We may earn a commission if you sign up through these links. " +
   "This does not affect our educational content.";
 
-/** Tooltip on the inline "Ad" pill next to a broker name on cards / tables */
-export const AFFILIATE_AD_TOOLTIP =
-  "We may earn a commission if you visit this platform";
-
-/**
- * Verified-badge tooltip explaining that an ABN was confirmed against the ABR.
- * Components may prepend the actual ABN ("ABN 12 345 678 901 confirmed on the ABR.")
- * when one is available; this is the canonical fallback when no ABN is on file.
- */
-export const ABN_VERIFIED_NOTE = "ABN confirmed on the ABR.";
-
-/**
- * Verified-badge tooltip explaining that an AFSL was confirmed against the
- * ASIC Professional Registers. Components may prepend the AFSL number
- * ("AFSL 123456 confirmed current on the ASIC Professional Registers.") when
- * one is available; this is the canonical fallback when no number is on file.
- */
-export const AFSL_VERIFIED_NOTE =
-  "AFSL confirmed current on the ASIC Professional Registers.";
-
-/**
- * Verified-badge tooltip shown on the admin-only "Seeded" pill — clarifies
- * that the profile has not yet been independently verified.
- */
-export const SEEDED_PROFILE_NOTE =
-  "This profile was seeded by the editorial team and has not yet been independently verified against ABR / ASIC.";
-
-/**
- * Disclaimer printed beneath a full-service-broker enquiry form.
- * The literal `{firmName}` token MUST be replaced with the firm's display
- * name at render time (e.g. via `.replace("{firmName}", firmName)`).
- */
-export const FULL_SERVICE_ENQUIRY_DISCLAIMER =
-  "General information only — not personal financial advice. {firmName} is responsible for any advice they give you and operates under their own AFSL.";
-
 // ═══════════════════════════════════════════════════════════════════
 // AUSTRALIAN-SPECIFIC COMPLIANCE (ASIC / AFSL / AFCA / RG 234/256)
 // ═══════════════════════════════════════════════════════════════════
