@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 import { notificationFooter } from "@/lib/email-templates";
 import { requireCronAuth } from "@/lib/cron-auth";
+import { formatCurrency } from "@/lib/utils";
 
 const log = logger("cron-weekly-rate-update");
 
@@ -41,15 +42,6 @@ const SOURCE_CONFIG: Record<
     path: "/portfolio-calculator",
   },
 };
-
-function formatCurrency(value: number): string {
-  return new Intl.NumberFormat("en-AU", {
-    style: "currency",
-    currency: "AUD",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(value);
-}
 
 function buildPersonalLine(
   source: CalculatorSource,
