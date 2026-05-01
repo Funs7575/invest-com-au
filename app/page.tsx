@@ -2,8 +2,6 @@ import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
 import HomeHero from "@/components/HomeHero";
 import HomeRouteCards from "@/components/HomeRouteCards";
-import HomeSearchBar from "@/components/HomeSearchBar";
-import HomePopularStarts from "@/components/HomePopularStarts";
 import HomePathfinder from "@/components/HomePathfinder";
 import HomeListingsTeaser, { type HomeListing } from "@/components/HomeListingsTeaser";
 import HomeAdvisorsTeaser, { type HomeAdvisor } from "@/components/HomeAdvisorsTeaser";
@@ -19,24 +17,24 @@ import { ORGANIZATION_JSONLD, SITE_URL } from "@/lib/seo";
 export const metadata = {
   title: {
     absolute:
-      "Compare Platforms, Browse Opportunities, Find Experts — Invest.com.au",
+      "Compare Platforms, Browse Listings, Find Experts — Invest.com.au",
   },
   description:
-    "Australia's front door for investment decisions. Compare platforms, browse opportunities, find experts or get matched to the right next step. Independent. ASIC-registered. General information only.",
+    "One place to compare platforms, browse investment listings, find experts, or get matched to the right next step. Independent. ASIC-registered. General information only.",
   openGraph: {
     title:
-      "Compare Platforms, Browse Opportunities, Find Experts — Invest.com.au",
+      "Compare Platforms, Browse Listings, Find Experts — Invest.com.au",
     description:
-      "Australia's front door for investment decisions. Compare, browse, find or get matched.",
+      "Compare platforms, browse listings, find experts, or get matched in 60 seconds.",
     url: "/",
     images: [{ url: "/api/og", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image" as const,
     title:
-      "Compare Platforms, Browse Opportunities, Find Experts — Invest.com.au",
+      "Compare Platforms, Browse Listings, Find Experts — Invest.com.au",
     description:
-      "Australia's front door for investment decisions. Compare, browse, find or get matched.",
+      "Compare platforms, browse listings, find experts, or get matched in 60 seconds.",
   },
   alternates: { canonical: "/" },
 };
@@ -154,7 +152,7 @@ export default async function HomePage() {
             "@context": "https://schema.org",
             ...ORGANIZATION_JSONLD,
             description:
-              "Australia's front door for investment decisions. Compare platforms, browse opportunities, find experts or get matched. Independent. ASIC-registered. General information only.",
+              "One place to compare platforms, browse investment listings, find experts, or get matched to the right next step. Independent. ASIC-registered. General information only.",
           }),
         }}
       />
@@ -212,11 +210,9 @@ export default async function HomePage() {
         />
       </ScrollFadeIn>
 
-      <HomeSearchBar />
-
-      <HomePopularStarts />
-
-      <HomePathfinder />
+      <ScrollFadeIn>
+        <HomePathfinder />
+      </ScrollFadeIn>
 
       <ScrollFadeIn>
         <HomeCompareDeepDive brokers={compareBrokers} />
