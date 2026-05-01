@@ -21,6 +21,7 @@ import { getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/l
 import BrokerCard from "@/components/BrokerCard";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
+import CompanionLinksStrip from "@/components/CompanionLinksStrip";
 import ContextualLeadMagnet from "@/components/ContextualLeadMagnet";
 import ScrollReveal from "@/components/ScrollReveal";
 import type { LeadSegment } from "@/components/ContextualLeadMagnet";
@@ -518,6 +519,13 @@ export default async function BestBrokerPage({
             <div className="mb-6 md:mb-10">
               <AdvisorPrompt context="general" compact />
             </div>
+          )}
+
+          {/* Cross-vertical companion strip — turns the page from a single-vertical
+              funnel into a multi-thread launchpad. Renders only when the category
+              has populated companions in lib/best-broker-categories.ts. */}
+          {cat.companionLinks && cat.companionLinks.length > 0 && (
+            <CompanionLinksStrip links={cat.companionLinks} />
           )}
 
           {/* FAQ section */}
