@@ -25,7 +25,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | Stream | Branch | PR | Last CI | Items in flight |
 | --- | --- | --- | --- | --- |
 | A | `claude/audit-remediation/a-01-drift-list` (#308) · `a-02-batch-1-user-data-backfill` (#322) · `a-03-batch-1-revenue-backfill` (#351) | #308/#322/#351 MERGED | last merged 2026-05-01T14:28Z | A-01 done (PR #308). A-02 batch 1 done (PR #322 — 5 user-data tables). A-03 batch 1 done (PR #351 — 5 revenue tables). A-02/A-03 still in-progress (~7 batches each remain). A-04..A-07 pending. |
-| B | `claude/audit-remediation/b-08-rls-select-only` (#326) · `b-09a-otp-gate` (#348 draft, parallel-agent) | #326 MERGED 2026-05-01T13:19Z · #348 OPEN (DRAFT, awaiting `LISTING_OWNER_COOKIE_SECRET` env var) | last merged 2026-05-01T13:19Z | PR #220 merged (B-01..B-06 done/blocked/FP). B-07 done (`0097159` PR #286). B-08 done — code changes merged via PR #326 commit `476f89f6`. B-09 in-progress on `#348` (parallel-agent, draft). CI-rescue merged `origin/main` into branch → merge commit `09c4dfb` pushed 2026-05-01; CI re-run pending. Still DRAFT awaiting `LISTING_OWNER_COOKIE_SECRET` env var (Tier D). |
+| B | `claude/audit-remediation/b-08-rls-select-only` (#326) · `b-09a-otp-gate` (#348 draft, parallel-agent) | #326 MERGED 2026-05-01T13:19Z · #348 OPEN (DRAFT, awaiting `LISTING_OWNER_COOKIE_SECRET` env var) | last CI-rescue 2026-05-01T21:43Z (#348) | PR #220 merged (B-01..B-06 done/blocked/FP). B-07 done (`0097159` PR #286). B-08 done — code changes merged via PR #326 commit `476f89f6`. B-09 in-progress on `#348` (parallel-agent, draft). CI-rescue iter 1 (`09c4dfb`, 2026-05-01) merged main before PR #392 types regen — types drift still red. CI-rescue iter 2 (`7da8757e`, 2026-05-01T21:43Z) merged post-#392 main — picked up database.types.ts regen; CI re-run pending. Still DRAFT awaiting `LISTING_OWNER_COOKIE_SECRET` env var (Tier D). |
 | C | `claude/audit-remediation/c-01-admin-callgraph` (#327) · `c-03-admin-import-comments` (#360 parallel-agent) · `c-04-c-05` (#394) · `c-05b-quarterly-reports` (#349 parallel-agent) | #327 MERGED 2026-05-01T13:19Z · #360 OPEN · #394 OPEN · #349 OPEN | last CI-rescue 2026-05-01T21:40Z (#349) | C-01..C-08 done (merged via #303 + #327). C-DISC-20260501-01 pending (iter 166 discovery). C-03 in-progress on #360 (parallel-agent); CI-rescue: merged main post-#392 → `48b9abd` pushed 2026-05-01T21:37Z; CI re-run pending. C-04 done — PR #394 commit `e202d0d`. C-05 (ArticleBrokerTable) done — PR #394 commit `e202d0d`. C-05b in-progress on #349 (parallel-agent — quarterly_reports refactor); CI-rescue: merged main post-#392 → `153b707` pushed 2026-05-01T21:40Z; CI re-run pending. |
 | D | `claude/audit-remediation/d-route-tests` | #285 MERGED 2026-04-29T10:13Z; supplementary PRs #246/#285/#297/#298 | last merged 2026-04-29T18:53Z | D-01..D-09 done (PR #246). D-10 done (PR #246 — coverage ratchet). D-11 complete (43+ batches, all admin/cron/non-admin routes covered) — merged via PR #285 + supplementary PRs #297/#298. **Stream D complete.** |
 | E | `claude/audit-remediation/e-01-with-validated-body` (#295) · `e-02-batch-*-zod-rollout` (#315/#323) · `e-03-zod-lint-rule` (#313) | all MERGED | last merged 2026-05-01T10:31Z | E-01 done (PR #295 — withValidatedBody helper). E-02 in-progress (batches 1+2 done via PR #315/#323 — 8 routes; ~3 batches remain). E-03 done (PR #313 — ESLint rule). E-04 backfill pending. |
@@ -38,7 +38,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | L | `claude/audit-remediation/l-observability` | #289 MERGED 2026-04-29T10:18Z | last merged 2026-04-29T10:18Z | L-04/L-05 done out-of-loop. L-06..L-12 all done (merged via PR #289). L-02/L-03 deferred-post-launch (n8n dormant). L-01 needs-user (SENTRY_AUTH_TOKEN). L-10 false-positive (verified populating). **Stream L complete** (modulo L-01 needs-user). |
 | M | `claude/audit-remediation/m-01b-cover-image-backfill` (#283) · `m-02-versus-json-ld` (#296) · `m-05-glossary-linkifier` (#325) | #283/#296/#325 all MERGED | last merged 2026-05-01T10:29Z | M-01a done out-of-loop (PR #227). M-01b done (PR #283 — engineering side). M-02 done (PR #296). M-03 done (`85c7236`). M-04 done (`353fa3a`). M-05 done (PR #325). M-06 done (PR #283). M-07 done (PR #283). **Stream M complete.** |
 | N | `claude/audit-remediation/n-ux-perf` | #242 MERGED | last merged 2026-04-28 | N-01+N-02 done (`2ec6f89`) · N-03a/b/c done · N-04/N-05 FP · N-06 blocked (deferred-post-launch by founder 2026-05-01 — option 4 chosen) · N-07/N-08/N-09/N-10/N-11 done — **stream complete** (N-06 deferred). |
-| O | `claude/audit-remediation/o-rls-no-policy` (iters 1-4 via #235/#237/#239) · `o-iter6/forum` (#299) · `o-iter7/editorial-obs-secrets` (#300) · `o-iter8-rls-observability` (#366 parallel-agent) | #235/#237/#239/#299/#300 MERGED · #366 OPEN | last merged 2026-05-01T12:51Z | O-01 iter1-4 done. O-02 done. iter6 done (PR #299, 5 forum tables). iter7 done (PR #300, 9 editorial+obs+secrets tables). iter8 in-progress on #366 (parallel-agent, 8 obs+anti-abuse tables). **iter5 was apparently skipped/never landed in dedicated PR — gap noted.** O-03/O-04/O-05 pending. CI-rescue: merged `origin/main` (11 commits) into `o-iter8-rls-observability` → merge commit `d36344f0` pushed 2026-05-01; CI re-run pending. |
+| O | `claude/audit-remediation/o-rls-no-policy` (iters 1-4 via #235/#237/#239) · `o-iter6/forum` (#299) · `o-iter7/editorial-obs-secrets` (#300) · `o-iter8-rls-observability` (#366 parallel-agent) · `o-03-search-path` (#395) | #235/#237/#239/#299/#300 MERGED · #366 OPEN · #395 OPEN | pending — pushed 2026-05-01 | O-01 iter1-4 done. O-02 done. iter6 done (PR #299). iter7 done (PR #300). iter8 in-progress on #366 (parallel-agent, 8 obs+anti-abuse tables). CI-rescue: merged main post-#392 → `5b000f0` pushed 2026-05-01T21:41Z. **O-03 done: `4a04418` → PR #395 (SECURITY DEFINER search_path fix).** O-04/O-05 pending. |
 | P | _not started_ | — | — | — |
 | Q | _not started_ | — | — | — |
 | R | `claude/audit-remediation/r-01-marketplace-allocation` | #290 MERGED 2026-04-29T10:05Z | last merged 2026-04-29T10:05Z | R-01 done (PR #290 — marketplace allocation + CPC billing tests). R-02..R-11 still pending. |
@@ -46,10 +46,10 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 MERGED 2026-04-28T11:45Z | merged | V-NEW-06 done (commit `a7bd736`) |
 | V (V-NEW-07) | `claude/audit-remediation/v-new-07-admin-mfa-enforced` | #256 MERGED 2026-04-28T15:44Z | merged | V-NEW-07a done · V-NEW-07b done (`698bbae`) — **Tier D: needs `ADMIN_MFA_COOKIE_SECRET` ≥32 chars in Vercel before merge** (PR was merged; env var status unclear) |
-| W | `claude/audit-remediation/w-01-hubconfig-schema` (#306) · `w-02-hub-hero` (#369 parallel-agent) · `w-new-01-calculator-reference-pattern` (#312) | #306/#312 MERGED · #369 OPEN | last merged 2026-04-30T17:43Z | W-01 done (PR #306). W-NEW-01 done (PR #312 — calculator regulator-reference test pattern). W-02 in-progress on #369 (parallel-agent — `<HubHero>` extraction). W-03..W-15 pending. |
-| X | `claude/audit-remediation/x-admin-backlog` (#257) · `x-02-best-for-admin-swap` (#367 parallel-agent) | #257 MERGED 2026-04-28T11:23Z · #367 OPEN | last merged 2026-04-28T11:23Z | X-01 done (PR #257 — decision matrix). X-02 in-progress on #367 (parallel-agent — best-for swap). X-03..X-09 pending. |
-| Y | `claude/audit-remediation/y-registry-nav` (#253) · `y-05-enrich-dated-stat-badge` (#347 parallel-agent) | #253 MERGED 2026-04-28T11:24Z · #347 OPEN | last merged 2026-04-28T11:24Z | Y-05 done (commit `fb9dec3`, PR #253) · Y-08 done (commit `8bb1d4d`, PR #253). Y-05-ENRICH in-progress on #347 (parallel-agent — sourcedAt/source/freshness on DatedStatBadge). Y-01..Y-04, Y-06, Y-07 pending. |
-| BB | `claude/audit-remediation/bb-03-cgt-regulator-ref` (#361 parallel-agent) · `bb-06-mortgage-stress-regulator-ref` (#368 parallel-agent) | both OPEN | parallel-agent in-progress | BB-03 in-progress on #361 (CGT calc vs ATO). BB-06 in-progress on #368 (mortgage stress test vs ASIC + APRA). Other BB items pending. BB-03 CI-rescue: merged `origin/main` (15 commits) → merge commit `b4290a13` pushed 2026-05-01; CI re-run pending. |
+| W | `claude/audit-remediation/w-01-hubconfig-schema` (#306) · `w-02-hub-hero` (#369 parallel-agent) · `w-new-01-calculator-reference-pattern` (#312) | #306/#312 MERGED · #369 OPEN | CI-rescue 2026-05-01T21:42Z | W-01 done (PR #306). W-NEW-01 done (PR #312 — calculator regulator-reference test pattern). W-02 in-progress on #369 (parallel-agent). CI-rescue: merged main post-#392 → `8f7bdb2` pushed 2026-05-01T21:42Z; CI re-run pending. W-03..W-15 pending. |
+| X | `claude/audit-remediation/x-admin-backlog` (#257) · `x-02-best-for-admin-swap` (#367 parallel-agent) | #257 MERGED 2026-04-28T11:23Z · #367 OPEN | CI-rescue 2026-05-01T21:42Z | X-01 done (PR #257 — decision matrix). X-02 in-progress on #367 (parallel-agent). CI-rescue: merged main post-#392 → `1ae6079` pushed 2026-05-01T21:42Z; CI re-run pending. X-03..X-09 pending. |
+| Y | `claude/audit-remediation/y-registry-nav` (#253) · `y-05-enrich-dated-stat-badge` (#347 parallel-agent) | #253 MERGED 2026-04-28T11:24Z · #347 OPEN | CI-rescue 2026-05-01T21:42Z | Y-05 done (commit `fb9dec3`, PR #253) · Y-08 done (commit `8bb1d4d`, PR #253). Y-05-ENRICH in-progress on #347 (parallel-agent). CI-rescue: merged main post-#392 → `708f7ac` pushed 2026-05-01T21:42Z; CI re-run pending. Y-01..Y-04, Y-06, Y-07 pending. |
+| BB | `claude/audit-remediation/bb-03-cgt-regulator-ref` (#361 parallel-agent) · `bb-06-mortgage-stress-regulator-ref` (#368 parallel-agent) | both OPEN | CI-rescue 2026-05-01T21:42Z | BB-03 in-progress on #361 (CGT calc vs ATO). BB-06 in-progress on #368 (mortgage stress test vs ASIC + APRA). CI-rescue (both): merged main post-#392 → BB-03 `df074bd` · BB-06 `cb10a20` pushed 2026-05-01T21:42Z; CI re-run pending. Other BB items pending. |
 
 ---
 
@@ -681,7 +681,7 @@ Beyond Stream B's RLS-enable work; addresses policy completeness, FK indexes, se
 | --- | --- | --- | --- | --- |
 | O-01 | in-progress | Triage 56 RLS-enabled-but-zero-policies tables: bucket into (a) service-role only — add explicit `service_role` allow policy for clarity, (b) user-data — needs `auth.uid()`-scoped policies | ~3 | P1. Full list in audit §4.2. ~16h total; chunk by table family. **Iter 1:** user-data triplet done — `user_notifications`/`user_quiz_history`/`user_bookmarks`. **Iter 2 (PR #235, commit `8e638bd`):** `article_comments`/`article_reactions`. **Iter 3 (PR #237, commit `c9c8fcd`):** admin/audit cluster (4 tables). **Iter 4 (PR #239, commit `e965eb7`):** 14 observability/admin tables. **Iter 6 (PR #299 MERGED 2026-05-01T12:50Z):** 5 forum/community tables. **Iter 7 (PR #300 MERGED 2026-05-01T12:51Z):** 9 editorial+obs+secrets tables. **Iter 8 in-progress on PR #366** (parallel-agent — 8 obs+anti-abuse tables). Count: 57→54→52→48→34→29→20→~12. **iter5 was apparently skipped or merged silently — gap noted; re-enumerate next iteration.** |
 | O-02 | done | 4 FK index migration — done out-of-loop in PR #230 | 1 | Resolved in PR #230 ("chore(db): repo-parity migration for 4 missing FK indexes (already live)") merged 2026-04-26T17:37Z. Live DB indexes had been applied earlier; this PR adds the migration file to the repo to close source-of-truth drift. |
-| O-03 | pending | `refresh_advisor_cohort_metrics()` SECURITY DEFINER — set `search_path = public, pg_catalog` to close injection vector | 1 | P2. |
+| O-03 | done | `refresh_advisor_cohort_metrics()` SECURITY DEFINER — set `search_path = public, pg_catalog` to close injection vector | 1 | P2. Done: commit `4a04418` · PR #395. |
 | O-04 | pending | `stripe_webhook_events` idempotency dry-run via Stripe dashboard test event → confirm row inserts + status='completed' | 1 | P2. Pre-launch validation. May surface to Blocked if needs founder action. |
 | O-05 | pending | Sponsor-invoices style hardening: rename misleading `USING (false)` policies on the 5 iter-8-FP tables to clearer names + add `FORCE ROW LEVEL SECURITY` + explicit `TO service_role` (`support_tickets`, `support_messages`, `broker_creatives`, `broker_notifications`, `ab_tests`) | 1 | P3. Hygiene. |
 
@@ -1347,6 +1347,7 @@ Two strategically important surfaces under-served by current nav: (1) investment
 
 ## Done
 
+- 2026-05-01 · O-03 · `refresh_advisor_cohort_metrics()` SECURITY DEFINER: added `SET search_path = public, pg_catalog` via `20260501_o03_refresh_advisor_cohort_metrics_search_path.sql`. Closes CWE-89/CWE-20 injection vector on SECURITY DEFINER function. Commit `4a04418` · pr #395
 - 2026-05-01 · C-05 · `components/ArticleBrokerTable.tsx`: switched `createAdminClient()` → `await createClient()` (anon key). Anon "Public read for active brokers" RLS policy (`USING status='active'`) matches `.eq("status","active")` filter exactly — zero behavioral change. Commit `e202d0d` · pr #394
 - 2026-05-01 · C-04 · `app/api/affiliate/click/route.ts`: kept admin client (founder Option C), added `// admin — click tracking must capture all broker statuses for revenue/editorial analytics` comment above both SELECT and INSERT call sites. Commit `e202d0d` · pr #394
 - 2026-04-30 · C-DISC-20260430-02 · advisor_sessions CREATE TABLE backfill migration (`20260602_c02_advisor_sessions_backfill.sql`): SERIAL PK + professional_id FK (ON DELETE CASCADE) + session_token UNIQUE + expires_at + created_at. Indexes for token lookup + professional_id cleanup scans. No-op on existing databases. RLS handled by companion 20260603 migration. Commit `169815c8` · pr #327
@@ -1424,6 +1425,37 @@ Two strategically important surfaces under-served by current nav: (1) investment
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-01 — iteration 167 (stream O — O-03 SECURITY DEFINER search_path)
+
+- Phase 2: CI check on in-flight PRs — no new failures (previous batch rescues all pending CI re-runs).
+- Phase 3: picked O-03 — `refresh_advisor_cohort_metrics()` is the top pending item in stream O (priority 13).
+- Phase 4 verification: function confirmed SECURITY DEFINER, no existing `SET search_path` (queried live DB `pg_proc`). Only caller: `lib/job-queue.ts:161` (service-role RPC, admin/cron context only). No anon-key callers.
+- Phase 5: created `supabase/migrations/20260501_o03_refresh_advisor_cohort_metrics_search_path.sql` — `CREATE OR REPLACE FUNCTION` with `SET search_path = public, pg_catalog`. 38-line migration with rollback header. `CREATE OR REPLACE` is idempotent.
+- Phase 6.5 discovery sweep: queried `pg_proc` for all other SECURITY DEFINER functions without pinned search_path. Only `st_estimatedextent` (3 overloads) — PostGIS extension functions, not app-owned. No new queue items needed.
+- Created branch `claude/audit-remediation/o-03-search-path`, committed `4a04418`, pushed, opened draft PR #395.
+- STATUS: PROGRESS · stream=O · item=O-03 · pr=#395
+
+### 2026-05-01 — CI rescue (this fire, iter 1) — B-09 PR #348 second rescue (post-PR #392 types regen)
+
+- Phase 2: B-09 PR #348 still had red CI (`Lint · Type-check · Test · Build` ❌ + `Supabase types drift` ❌) at run started 2026-05-01T21:24Z. Root cause: the previous CI-rescue iter 1 (`09c4dfb`) merged main before PR #392 (Supabase types regen + advisor-auth/listings test fixes) landed. All other in-flight PRs had already been rescued in earlier fires (iters 6–8).
+- Checked out `claude/audit-remediation/b-09a-otp-gate` (via `rescue/b-09`). Merged `origin/main` (HEAD `7149a654`). Clean merge: +242/-114 lines across 8 files (database.types.ts +86, test files updated).
+- Local gates: `npm test` on B-09 specific test files → 44/44 pass. `npm run lint` on B-09 source files → 0 errors.
+- Pushed merge commit `7da8757e` to PR #348.
+- STATUS: CI-RESCUE · stream=B · pr=#348
+
+### 2026-05-01 — CI rescue iters 7–8 — O-01/W-02/X-02/Y-05-ENRICH/BB-03/BB-06 stale-base fix (post-PR #392)
+
+- Phase 2: after rescuing C-03 + C-05b, remaining red-CI PRs all share the same root cause (merged main before PR #392). In batch mode, co-rescuing all remaining stale branches in one pass (pure `git merge origin/main`, no code written).
+- Rescued in order of priority:
+  - O-01 iter8 #366: merge commit `5b000f0` pushed 2026-05-01T21:41Z
+  - W-02 #369: merge commit `8f7bdb2` pushed 2026-05-01T21:42Z
+  - X-02 #367: merge commit `1ae6079` pushed 2026-05-01T21:42Z
+  - Y-05-ENRICH #347: merge commit `708f7ac` pushed 2026-05-01T21:42Z
+  - BB-03 #361: merge commit `df074bd` pushed 2026-05-01T21:42Z
+  - BB-06 #368: merge commit `cb10a20` pushed 2026-05-01T21:42Z
+- All 6 branches picked up: types regen (+86 lines to database.types.ts) + advisor-auth/listings test fixes. No conflicts on any branch.
+- STATUS: CI-RESCUE · streams=O/W/X/Y/BB · prs=#366/#369/#367/#347/#361/#368
 
 ### 2026-05-01 — CI rescue iter 7 — C-05b PR #349 stale-base fix (post-PR #392)
 
