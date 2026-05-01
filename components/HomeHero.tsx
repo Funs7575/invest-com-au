@@ -1,70 +1,150 @@
 import Link from "next/link";
-import Icon from "@/components/Icon";
+import { DesignIcon } from "@/components/design/DesignIcon";
 
-/**
- * Homepage hero — pre-launch posture: variant B (quiz-heavy) is forced.
- *
- * The 3-variant A/B test (a control, b quiz-heavy, c value-first) is
- * intentionally paused until launch traffic is real. Pre-launch the
- * cohort sizes are too small for statistical significance, founder
- * navigation contaminates the dataset, and the 30-day cookie pinning
- * means launch-window cohorts inherit pre-launch buckets.
- *
- * To re-enable post-launch:
- *   1. Restore the original implementation from
- *      `components/HomeHero.tsx` at commit 9d82f401 (the N-stream merge
- *      that introduced the test).
- *   2. Re-add `"use client"` directive at the top.
- *   3. Re-import `useEffect`, `useState` from "react".
- *   4. Wire `/api/track-event` payloads (still active — the route
- *      doesn't need to change).
- *   5. Verify `_inv_ab_home_hero_v1` cookie behaviour against staging
- *      before flipping production.
- *
- * Current rendering matches variant B from the original test:
- *   "Find your broker in 60 seconds" + "Take the 60-second quiz" CTA
- *   + secondary "Or browse N+ platforms" link.
- *
- * `brokerCount`, `listingCount`, `updatedMonth` are still required
- * props (callsite hasn't changed) so the post-launch re-enable is a
- * pure component-internal swap.
- */
-
-interface Props {
+interface HomeHeroProps {
   brokerCount: number;
   listingCount: number;
-  updatedMonth: string;
+  professionalCount: number;
+  /**
+   * Reserved for future ISR-friendly "fresher than X" stamps in the
+   * stat strip; currently unused but kept on the props contract so
+   * callsites stay stable.
+   */
+  updatedMonth?: string;
 }
 
-export default function HomeHero({ brokerCount, listingCount, updatedMonth }: Props) {
+export default function HomeHero({ brokerCount, listingCount, professionalCount }: HomeHeroProps) {
   return (
-    <div className="max-w-3xl mx-auto text-center">
-      <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-900 border border-slate-800 rounded-full text-xs font-semibold text-white mb-4">
-        <span className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-pulse" />
-        Updated {updatedMonth} &middot; {brokerCount}+ platforms &middot; {listingCount || 55}+ investment listings
-      </div>
-      <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-900 leading-[1.1] mb-4 tracking-tight">
-        Find your broker in <span className="text-amber-500">60 seconds</span>
-      </h1>
-      <p className="text-base md:text-lg text-slate-600 mb-8 leading-relaxed max-w-2xl mx-auto">
-        Answer 5 quick questions. We&apos;ll match you to the cheapest Australian
-        broker for your trading style — CHESS, SMSF and FX all factored in.
-      </p>
-      <div className="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto mb-6 justify-center">
-        <Link
-          href="/quiz"
-          className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl text-sm transition-colors shadow-sm"
+    <section
+      style={{
+        background: "var(--color-ink-900)",
+        color: "white",
+        padding: "64px 36px 56px",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
+      <div
+        aria-hidden
+        className="iv2-dotgrid"
+        style={{ position: "absolute", inset: 0, opacity: 0.4, pointerEvents: "none" }}
+      />
+      <div
+        aria-hidden
+        style={{
+          position: "absolute",
+          top: -200,
+          right: -160,
+          width: 680,
+          height: 680,
+          borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(242,88,34,.18), transparent 60%)",
+          pointerEvents: "none",
+        }}
+      />
+
+      <div
+        style={{
+          position: "relative",
+          maxWidth: 920,
+          margin: "0 auto",
+        }}
+      >
+        <span
+          className="iv2-pill"
+          style={{
+            background: "rgba(255,255,255,.06)",
+            color: "white",
+            border: "1px solid rgba(255,255,255,.14)",
+            fontSize: 11.5,
+            padding: "5px 12px",
+          }}
         >
-          <Icon name="zap" size={16} />
-          Take the 60-second quiz
-        </Link>
-        <Link
-          href="/compare"
-          className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-white border-2 border-slate-200 hover:border-amber-400 text-slate-900 font-semibold rounded-xl text-sm transition-colors"
+          <span
+            aria-hidden
+            style={{
+              width: 6,
+              height: 6,
+              borderRadius: 99,
+              background: "var(--color-coral-400)",
+              boxShadow: "0 0 0 4px rgba(242,88,34,.18)",
+            }}
+          />
+          Independent · ASIC-registered · No commission incentive · Est. 1996
+        </span>
+
+        <h1
+          className="font-display"
+          style={{
+            fontSize: "clamp(38px, 5.5vw, 64px)",
+            lineHeight: 0.96,
+            letterSpacing: "-.04em",
+            fontWeight: 800,
+            margin: "18px 0 0",
+            color: "white",
+            maxWidth: 780,
+          }}
         >
-          Or browse {brokerCount}+ platforms
-        </Link>
+          Where Australians figure out{" "}
+          <span style={{ color: "var(--color-coral-400)" }}>where their money should go.</span>
+        </h1>
+
+        <p
+          style={{
+            fontSize: 18,
+            lineHeight: 1.5,
+            color: "rgba(255,255,255,.78)",
+            maxWidth: 720,
+            margin: "20px 0 0",
+          }}
+        >
+          Compare {brokerCount || 0} platforms, find {professionalCount.toLocaleString("en-AU")} advisors,
+          post a job, or browse {listingCount || 0} private deals — all in one place.
+          <br />
+          Take the 60-second quiz, or skip and explore.
+        </p>
+
+        <div style={{ marginTop: 32, display: "flex", flexDirection: "column", gap: 10, alignItems: "flex-start" }}>
+          <Link
+            href="/quiz"
+            className="iv2-cta"
+            style={{
+              fontSize: 17,
+              fontWeight: 700,
+              padding: "16px 28px",
+              borderRadius: 12,
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 10,
+              background: "var(--color-coral-400)",
+              color: "white",
+              boxShadow: "0 8px 24px rgba(242,88,34,.35)",
+            }}
+          >
+            Take the 60-second quiz <DesignIcon name="arrow-right" size={18} strokeWidth={2.6} />
+          </Link>
+          <span style={{ fontSize: 12.5, color: "rgba(255,255,255,.5)", letterSpacing: ".01em" }}>
+            No email needed · Skip anytime
+          </span>
+        </div>
       </div>
-    </div>
+
+      <div
+        style={{
+          position: "relative",
+          maxWidth: 920,
+          margin: "44px auto 0",
+          textAlign: "center",
+          color: "rgba(255,255,255,.4)",
+          fontSize: 11,
+          fontWeight: 600,
+          letterSpacing: ".06em",
+          textTransform: "uppercase",
+        }}
+      >
+        Or skip — explore everything you can do here
+        <span aria-hidden style={{ marginLeft: 6 }}>↓</span>
+      </div>
+    </section>
   );
 }

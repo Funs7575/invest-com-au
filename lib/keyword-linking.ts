@@ -5,8 +5,9 @@
  * keywords in an internal link. Distributes SEO authority from 266
  * published articles down to deep broker / advisor / hub pages.
  *
- * Pure — no DB lookups at render time. Maintain the keyword map in
- * this file when a new broker, advisor type, or hub launches.
+ * Two layers of targets (priority order):
+ *   1. INTERNAL_LINK_TARGETS — broker/advisor/hub pages (highest priority)
+ *   2. GLOSSARY_LINK_TARGETS — /glossary/{slug} pages (fills gaps)
  *
  * Two entry points:
  *   - linkifyHtml(html)   — rewrites an HTML string, skipping
@@ -17,6 +18,8 @@
  *                           the caller renders real <Link>s via
  *                           React. Safer than dangerouslySetInnerHTML.
  */
+
+import { GLOSSARY_ENTRIES } from "@/lib/glossary";
 
 export interface LinkTarget {
   /** Keyword match (case-insensitive, word-boundary) */
@@ -109,13 +112,29 @@ export const INTERNAL_LINK_TARGETS: readonly LinkTarget[] = [
   { keyword: "research reports", href: "/research" },
 ];
 
+// Glossary link targets — /glossary/{slug} for terms not already
+// covered by a more-specific INTERNAL_LINK_TARGETS entry.
+// Truncate definition to 120 chars for tooltip readability.
+const _internalKeywords = new Set(
+  INTERNAL_LINK_TARGETS.map((t) => t.keyword.toLowerCase()),
+);
+export const GLOSSARY_LINK_TARGETS: readonly LinkTarget[] = GLOSSARY_ENTRIES
+  .filter((e) => !_internalKeywords.has(e.term.toLowerCase()))
+  .map((e) => ({
+    keyword: e.term,
+    href: `/glossary/${e.slug}`,
+    title: e.definition.length > 120 ? e.definition.slice(0, 117) + "…" : e.definition,
+    rel: "glossary",
+  }));
+
 function escapeRegex(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-// Pre-sort keywords longest-first so greedy matching honours
-// priority (multi-word phrases win over bare nouns).
-const SORTED_TARGETS = [...INTERNAL_LINK_TARGETS].sort(
+// Internal links first (higher priority), then glossary; sort longest-
+// first within each tier so multi-word phrases win over bare nouns.
+const ALL_TARGETS = [...INTERNAL_LINK_TARGETS, ...GLOSSARY_LINK_TARGETS];
+const SORTED_TARGETS = ALL_TARGETS.sort(
   (a, b) => b.keyword.length - a.keyword.length,
 );
 

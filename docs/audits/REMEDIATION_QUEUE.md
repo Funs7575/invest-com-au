@@ -25,9 +25,9 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | Stream | Branch | PR | Last CI | Items in flight |
 | --- | --- | --- | --- | --- |
 | A | _not started_ | — | — | — |
-| B | `claude/audit-remediation/b-07-rls-migration-lint` | #286 (draft) | pending — pushed 2026-04-28T22:35Z | PR #220 merged (B-01..B-06 done/blocked/FP). B-07 done (`0097159`) — CI gate: new CREATE TABLE migrations must include ENABLE ROW LEVEL SECURITY. |
-| C | _not started_ | — | — | — |
-| D | `claude/audit-remediation/d-route-tests` | #285 | pending — pushed 2026-04-29T18:56Z | D-01 done (commit `7269510`) · D-02 done (commit `ebf2250`) · D-03 done (commit `0177aa1`) · D-04 done (commit `bea95b1`) · D-05 done (commit `e49375d`) · D-06 done (commit `c0cd3ee`) · D-07 done (commit `33230fb`) · D-08 done (commit `311df3f`) · D-09 done (commit `8e2d35d`) · D-10 done (commit `4e702c1`) · D-11 batch 1 done (commit `90c7c5b`) · D-11 batch 2 done (commit `387bcb4`) · D-11 batch 3 done (commit `db0df8d`) · D-11 batch 4 done (commit `c49e3aa`) · CI-rescue merged main (commit `9282178`) · D-11 batch 5 done (commit `6c7637f`) · D-11 batch 6 done (commit `f7e1a1c`) · D-11 batch 7 done (commit `f183cba`) · D-11 batch 8 done (commit `f336fc7`) · D-11 batch 9 done (commit `2c78f24`) · D-11 batch 10 done (commit `73c8aa1`) · D-11 batch 11 done (commit `3fab2c1`) · D-11 batch 12 done (commit `856026c`) · D-11 batch 12c done (commit `cc77b65`) · D-11 batch 13 done (commit `9dae465`) · D-11 batch 14 done (commit `c64ca614`) · D-11 batch 15 done (commit `01b685f`) · D-11 batch 16 done (commit `6536d77`) · D-11 batch 17 done (commit `bbca74d`) · D-11 batch 17b done (commit `251f745`) · **Also: PR #287 (`d-11-batch-15`) parallel coverage — batch 15: quiz/data+csp-report+complaints/intake+advisor-dashboard+course/purchase (`5c4df09`); batch 16: advisor-articles+community/posts/[id]+advisor-search/postcodes+v1/api-keys+marketplace/webhook (`ebdb3f4`) — 110 complementary tests, merges independently** · D-11 batch 18 done (commit `2694124`) · D-11 batch 18b done (commit `6a89600`→`701cf83`) · D-11 batch 19 done (commit `b93f1647`) · D-11 batch 19b done (commit `49e0ad5`) · D-11 batch 20 done (commit `2f72b7a`) · D-11 batch 21 done (commit `eec7429`) · D-11 batch 21b done (commit `d460cb5`→`32e3069`) · D-11 batch 22 done (commit `951a295`) · D-11 batch 22b done (commit `4b5e73b`) · D-11 batch 23 done (commit `575143b`) · D-11 batch 23b done (commit `a6574f1c`) · D-11 batch 24b done (commit `86755bb`) — sync-shortlist/report-download/review-incentive/tax-optimizer/broker-portal/deals (53 tests, PR #298) · D-11 batch 25 done (commit `19c5c76`) — advisor-portal/marketplace-analytics+settings/advisor-auction/public-bids/broker-portal/invoices-pdf/reviews/verify-client (57 tests, PR #298) · **Also: PR #297 (`d-11-batch-24`) parallel coverage — batch 24a supplementary: webhooks/resend+broker-signup+property/enquiry+listings+push/send (63 tests, CI-rescue `3055b99`) — merges independently** · D-11 batch 26 done (commit `e9e6fd2`) — admin/cohort-refresh+verify+fi-revalidate+article-comments+revalidate (36 tests, PR #285) · D-11 batch 27 done (commit `84b3517`) — admin/feature-flags+kill-switch+review-moderation+financial-periods+mfa-enroll (57 tests, PR #285) · D-11 batch 28 done (commit `7b8081f`) — admin/tmds+automation-dry-run+run-migration+automation-trigger+notify-price-change (49 tests, PR #285) · D-11 batch 29 done (commit `224e06c`) — cron observability: dated-stats-check/observability-retention/content-freshness/cron-freshness/slo-monitor (42 tests, 5 files, PR #285) · D-11 batch 28-supp done (commit `7407851`) — admin/competitors+fee-queue (26 tests, 2 files, PR #285) · D-11 batch 30 done (commit `b9be156`) — cron/web-vitals-rollup+attribution-rollup+broker-snapshot+auto-resolve-disputes+tmd-audit (28 tests, 5 files, PR #285) · D-11 admin-batch-29 done (commit `03ee16d`) — admin/advisor-kyc+article-preview-tokens+automation-config (parallel fire, PR #285) · D-11 batch 30-admin done (commit `26237f9`) — admin/regulatory-impacts+commodity-hubs (26 tests, 2 files, PR #285) · D-11 batch 31 done (commit `ad98fe5`) — cron/refresh-revenue-view+complaints-sla+review-sentiment-refresh+property-suburb-refresh+afsl-expiry-monitor (36 tests, 5 files, PR #285) · D-11 admin-batch-29b done (commit `5737c51`) — admin/advisor-kyc+article-preview-tokens+competitors+content-batch-generate+sponsored-placements (56 tests, 5 files, parallel fire, PR #285) · D-11 batch 32 done (commit `20c4493`) — cron/email-bounce-sweep+annual-review-reminder+lead-quality-weights+verify-review-clients+job-queue-worker (31 tests, 5 files, PR #285) |
+| B | `claude/audit-remediation/b-08-rls-select-only` | #326 (draft) | pending — pushed 2026-04-30T (this fire, B-08 corrected) | PR #220 merged (B-01..B-06 done/blocked/FP). B-07 done (`0097159`) — CI gate. B-08 corrected — code changes were not in PR #286 merge; new branch + PR #326 (commit `ed3cbee`). |
+| C | `claude/audit-remediation/c-01-admin-callgraph` | #327 (draft) | pending — pushed 2026-04-30T (iter 165, C-DISC-20260430-02 done — advisor_sessions CREATE TABLE backfill) | C-01 done (`b654e12`, squash-merged in #303). C-02 fully complete (steps 1-5b). C-DISC-20260430-03 done. C-DISC-admin-disputes done. C-05 partial (notifications done; ArticleBrokerTable blocked). C-03 blocked. C-04 blocked. C-06/C-07/C-08 done. C-DISC-20260430-02 done (`169815c8` iter 165). All unblocked C items complete — C stream has only blocked items remaining. |
+| D | `claude/audit-remediation/d-route-tests` | #285 | pending — pushed 2026-04-30T (batch 43 — D-11 complete) | D-01 done (commit `7269510`) · D-02 done (commit `ebf2250`) · D-03 done (commit `0177aa1`) · D-04 done (commit `bea95b1`) · D-05 done (commit `e49375d`) · D-06 done (commit `c0cd3ee`) · D-07 done (commit `33230fb`) · D-08 done (commit `311df3f`) · D-09 done (commit `8e2d35d`) · D-10 done (commit `4e702c1`) · D-11 batch 1 done (commit `90c7c5b`) · D-11 batch 2 done (commit `387bcb4`) · D-11 batch 3 done (commit `db0df8d`) · D-11 batch 4 done (commit `c49e3aa`) · CI-rescue merged main (commit `9282178`) · D-11 batch 5 done (commit `6c7637f`) · D-11 batch 6 done (commit `f7e1a1c`) · D-11 batch 7 done (commit `f183cba`) · D-11 batch 8 done (commit `f336fc7`) · D-11 batch 9 done (commit `2c78f24`) · D-11 batch 10 done (commit `73c8aa1`) · D-11 batch 11 done (commit `3fab2c1`) · D-11 batch 12 done (commit `856026c`) · D-11 batch 12c done (commit `cc77b65`) · D-11 batch 13 done (commit `9dae465`) · D-11 batch 14 done (commit `c64ca614`) · D-11 batch 15 done (commit `01b685f`) · D-11 batch 16 done (commit `6536d77`) · D-11 batch 17 done (commit `bbca74d`) · D-11 batch 17b done (commit `251f745`) · **Also: PR #287 (`d-11-batch-15`) parallel coverage — batch 15: quiz/data+csp-report+complaints/intake+advisor-dashboard+course/purchase (`5c4df09`); batch 16: advisor-articles+community/posts/[id]+advisor-search/postcodes+v1/api-keys+marketplace/webhook (`ebdb3f4`) — 110 complementary tests, merges independently** · D-11 batch 18 done (commit `2694124`) · D-11 batch 18b done (commit `6a89600`→`701cf83`) · D-11 batch 19 done (commit `b93f1647`) · D-11 batch 19b done (commit `49e0ad5`) · D-11 batch 20 done (commit `2f72b7a`) · D-11 batch 21 done (commit `eec7429`) · D-11 batch 21b done (commit `d460cb5`→`32e3069`) · D-11 batch 22 done (commit `951a295`) · D-11 batch 22b done (commit `4b5e73b`) · D-11 batch 23 done (commit `575143b`) · D-11 batch 23b done (commit `a6574f1c`) · D-11 batch 24b done (commit `86755bb`) — sync-shortlist/report-download/review-incentive/tax-optimizer/broker-portal/deals (53 tests, PR #298) · D-11 batch 25 done (commit `19c5c76`) — advisor-portal/marketplace-analytics+settings/advisor-auction/public-bids/broker-portal/invoices-pdf/reviews/verify-client (57 tests, PR #298) · **Also: PR #297 (`d-11-batch-24`) parallel coverage — batch 24a supplementary: webhooks/resend+broker-signup+property/enquiry+listings+push/send (63 tests, CI-rescue `3055b99`) — merges independently** · D-11 batch 26 done (commit `e9e6fd2`) — admin/cohort-refresh+verify+fi-revalidate+article-comments+revalidate (36 tests, PR #285) · D-11 batch 27 done (commit `84b3517`) — admin/feature-flags+kill-switch+review-moderation+financial-periods+mfa-enroll (57 tests, PR #285) · D-11 batch 28 done (commit `7b8081f`) — admin/tmds+automation-dry-run+run-migration+automation-trigger+notify-price-change (49 tests, PR #285) · D-11 batch 29 done (commit `224e06c`) — cron observability: dated-stats-check/observability-retention/content-freshness/cron-freshness/slo-monitor (42 tests, 5 files, PR #285) · D-11 batch 28-supp done (commit `7407851`) — admin/competitors+fee-queue (26 tests, 2 files, PR #285) · D-11 batch 30 done (commit `b9be156`) — cron/web-vitals-rollup+attribution-rollup+broker-snapshot+auto-resolve-disputes+tmd-audit (28 tests, 5 files, PR #285) · D-11 admin-batch-29 done (commit `03ee16d`) — admin/advisor-kyc+article-preview-tokens+automation-config (parallel fire, PR #285) · D-11 batch 30-admin done (commit `26237f9`) — admin/regulatory-impacts+commodity-hubs (26 tests, 2 files, PR #285) · D-11 batch 31 done (commit `ad98fe5`) — cron/refresh-revenue-view+complaints-sla+review-sentiment-refresh+property-suburb-refresh+afsl-expiry-monitor (36 tests, 5 files, PR #285) · D-11 admin-batch-29b done (commit `5737c51`) — admin/advisor-kyc+article-preview-tokens+competitors+content-batch-generate+sponsored-placements (56 tests, 5 files, parallel fire, PR #285) · D-11 batch 32 done (commit `20c4493`) — cron/email-bounce-sweep+annual-review-reminder+lead-quality-weights+verify-review-clients+job-queue-worker (31 tests, 5 files, PR #285) · D-11 batch 33 done (commit `cd736c8e`) — cron/dispatch-group+cron-health-alert+weekly-newsletter+warehouse-rollup+weekly-rate-update (34 tests, 5 files, PR #285) · D-11 batch 34 done (commit `f23d260`) — cron/portfolio-alerts+fee-digest+low-balance-alerts+broker-review-invites+welcome-drip (38 tests, 5 files, PR #285) · D-11 batch 35 done (commit `a0b468a`) — cron/winback-drip+monthly-affiliate-report+embeddings-refresh+automation-verdict-rollup+expire-deals (31 tests, 5 files, PR #285) · D-11 batch 36 done (commit `ea8ed1e`) — cron/advisor-profile-gate-drip+portfolio-monitor+monthly-advisor-reports+price-drop-alerts+check-affiliate-links (33 tests, 5 files, PR #285) · D-11 batch 37 done (commit `f2382c4`) — report-download+sync-shortlist+report-leads+saved-comparisons-id+cron-versus-editorial-backfill (38 tests, 5 files, PR #285) · D-11 batch 38 done (commit `a57875f`) — cron/quote-expiry-reminders+cron/quote-review-requests+answers/[id]/vote (24 tests, 3 files, PR #285) · D-11 batch 39 done (commit `098e048d`) — cron/post-enquiry-drip+cron/quiz-follow-up+cron/marketplace-stats+cron/investor-drip+cron/process-data-exports (35 tests, 5 files, PR #285) · merge+cron-advisor-quality done (commit `35fdb48f`) — cron-advisor-quality (8 tests, PR #285) · D-11 batch 37-mine done (commit `c6cfb316`) — versus-editorial-backfill (7t)+advisor-quality (9t improved)+investor-drip (9t improved)+process-data-exports (9t improved)+personalized-digest (8t NEW) — **all 79 cron routes now covered** · D-11 batch 37-dispatch done (commit `698fb17`) — cron/dispatch/[group] (7 tests) — fan-out dispatcher coverage · D-11 batch 40 done (commit `8d706611`) — quotes/[slug]+accept+reopen+review+qa (44 supplementary tests, 5 files, PR #285) · D-11 batch 41 done (commit `5ed11e3d`) — seed+v1/docs (10 tests, 2 files, PR #285) — **all non-admin non-cron routes now covered on stream branch** · D-11 batch 42 done (commit `6c8b483`) — admin/articles-editor-save+content/calendar+reports/afsl-monthly+reports/idr-annual+automation/bulk (40 tests, 5 files, PR #285) · D-11 batch 42b done (commit `1d32b7a`) — admin/advisor-applications+automation/override+commodity-news-briefs+content/generate-draft (50 tests, 4 files, PR #285) — **only admin/ai-chat remains uncovered on stream branch** · D-11 batch 43 done (commit `6044635`) — admin/ai-chat (12 tests, 1 file, PR #285) — **ALL admin routes now covered on stream branch; D-11 complete pending PR merge** |
 | E | _not started_ | — | — | — |
 | F | _not started_ | — | — | — |
 | G | _not started_ | — | — | — |
@@ -35,8 +35,8 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | I | `claude/audit-remediation/i-new-04-main-ci-auto-revert` | #278 (draft) | pending — pushed 2026-04-28T16:14Z | I-NEW-01 done via #277 (`00ef2790`); I-NEW-02 hotfix `5b7937dc`; I-NEW-03 hotfix `4b050ed9`; I-NEW-05 race-fix `55d077bf`; **first real metrics snapshot landed 2026-04-28T16:12Z (grade F 0.0899 — Supabase secrets need to be set in GH Actions for non-zero on M04/M07/M08/M09/M10/M11/M12)**; I-NEW-04 in flight (auto-revert workflow `b42233fb`) |
 | J | `claude/audit-remediation/j-stripe-webhook` | #288 (draft) | pending — pushed 2026-04-29T22:30Z | J-01a..J-01e (route.ts 1197 → 165 LOC) · J-01d-ext (commit `bb1d56f6`) · J-03 (commit `b8e7189`) · J-05 (commit `d68852e`) · J-06 (commit `eedf582`) · J-08 (commit `e99aedc`) · J-09 (commit `e99aedc`) · J-10 (commit `e99aedc`) — all handlers complete (14 registered). Stream complete pending PR merge. |
 | K | `claude/audit-remediation/k-security-hardening` | #222 | pending — pushed 2026-04-27T05:35Z | K-01..K-08 done; K-09 false-positive; K-10..K-15 done — **stream complete** |
-| L | `claude/audit-remediation/l-observability` | #289 (draft) | pending — pushed 2026-04-30T00:45Z | L-06 done (commit `12183619`) — 8 SLOs seeded. L-07 done (commit `824366e`) — email alert sink (OPS_ALERT_EMAIL pattern) + 25 tests. L-08 done (commit `832feed3`) — 6 new PostHog events + 22 tests. |
-| M | `claude/audit-remediation/m-01b-cover-image-backfill` | #283 (draft) | pending — pushed 2026-04-28T21:25Z | M-01b in flight (commit `19a0d7e6`) — per-article OG cover override + backfill script. M-02 on separate branch `claude/audit-remediation/m-02-versus-json-ld` (#296 draft) — commit `3ab1bacf`. |
+| L | `claude/audit-remediation/l-observability` | #289 (draft) | pending — pushed 2026-04-30T (iter 145b, L-12b fully complete) | L-06..L-11 done. L-12a done (`20f5e6c`). L-12b batches 1-6: 63 routes. Batch 7 (`d88ca44`): 10 admin routes. Batch 7b (`eee5f1f5`): lib/require-admin (19 routes) + 5 direct. Batch 8 (`0db941e4`): 9 routes. Batch 8b (`dc67fff4`): advisor-photo, analytics-dashboard, broker-portal/invoices/pdf, stripe/create-contract. **L-12b fully complete — all authenticated routes tagged, cron/cleanup confirmed FP (requireCronAuth, no user identity).** |
+| M | `claude/audit-remediation/m-01b-cover-image-backfill` (#283) · `claude/audit-remediation/m-05-glossary-linkifier` (#325) | #283 (draft) · #325 (draft) | #283 pending — pushed 2026-04-30T (iter 148, M-06 related hubs) · #325 pending — pushed 2026-04-30T (iter 147, M-05 complete) | M-01b in flight (commit `19a0d7e6`). M-02 on separate branch (#296 draft). M-03 done. M-04 done. M-05 done (`40080391`, PR #325). M-06 done (`da5c46a`, PR #283). M-07 done (`32609ec`). |
 | N | `claude/audit-remediation/n-ux-perf` | #242 | pending — pushed 2026-04-27T13:30Z | N-01+N-02 done (`2ec6f89`) · N-03a done (`36e3f6d`) · N-03b done (`97bb9b00`) · N-03c done (`b29f443`) · N-04 FP · N-05 FP · N-06 blocked · N-07 batch 1 done (`2e5d8a4`) · N-07 batch 2 done (`91d0d42`) · N-08 done (`315d3b7`) · N-09 done (`3b43bf8`) · N-10 done (`0c33d71`) · N-11 done (`c2b769e`) — **stream complete** (N-06 blocked) |
 | O | `claude/audit-remediation/o-rls-no-policy` | merged via #235/#237/#239 | last pushed 2026-04-26 | O-01 iter1 done (`user_notifications`/`user_quiz_history`/`user_bookmarks`) · iter2 done `8e638bd` (`article_comments`/`article_reactions`) · iter3 done `c9c8fcd` (admin/audit cluster) · iter4 done `e965eb7` (14 observability/admin tables). ~34 tables remain for iter5+. |
 | P | _not started_ | — | — | — |
@@ -52,6 +52,82 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 ---
 
 ## Blocked — needs human input
+
+### C-03 · `advisor-apply/*` admin imports — scope exception decision needed (surfaced 2026-04-30 by iter 158)
+
+**Finding:** Phase 4 verification gate: these are PUBLIC endpoints (no cookies, no authenticated layout). Per the gate, admin→server.ts refactors on public routes require human sign-off.
+
+Three admin usages found:
+
+1. **`app/api/advisor-apply/photo/route.ts`** — `createAdminClient()` for Storage bucket upload/URL. No realistic alternative: storage management requires service-role. → **False-positive** for C-03 scope.
+2. **`app/api/advisor-apply/invite/route.ts`** — `createAdminClient()` to SELECT `advisor_firm_invitations` by token (read-only, pre-fills application form). Admin used because `advisor_firm_invitations` has no public anon SELECT policy for token lookup. → **False-positive** (read-only, public data, no security concern).
+3. **`app/api/advisor-apply/route.ts`** — `createClient()` for main operations (correct), BUT inside a try/catch uses `(await import("@/lib/supabase/admin")).createAdminClient()` to INSERT a row into `agreement_acceptances`. This is a legal compliance record that is fire-and-forget (failure doesn't block the application). This dynamic admin import is **outside the CLAUDE.md admin-scope rule** ("use only in admin routes, webhooks, and cron").
+
+**Decision matrix for `route.ts` item 3:**
+
+| Option | What to do | Pros | Cons |
+|--------|-----------|------|------|
+| **A** | Convert dynamic import to static; acknowledge as intentional exception via a `// admin — compliance record, no anon INSERT policy on agreement_acceptances` comment | 1-line code change + comment; no RLS work | Leaves admin in a public route (acknowledged exception to scope rule) |
+| **B** | Add anon INSERT-only RLS policy to `agreement_acceptances` + use `createClient()` | Aligns strictly with CLAUDE.md scope rule | `agreement_acceptances` is a legal table — public INSERT risks spamming fake consent records; policy would need careful `WITH CHECK` |
+| **C** | Move agreement recording to the admin approval workflow (when admin approves the application) | Agreement only recorded for actually-approved advisors; no public write path | Agreement should be at submission time when the user clicked "I agree"; delaying it weakens the legal timestamp |
+| **D** | Mark entire C-03 as false-positive | No changes, no scope rule violation documented | Leaves the scope rule applied inconsistently |
+
+**Recommendation:** Option A — convert the dynamic import to a static import (cleanliness fix) and add a comment documenting the exception. The admin usage is a one-off compliance insert that does not bypass any security boundary; it just records what the user consented to. The dynamic import is a code smell but not a security issue. Option D is also acceptable if you consider compliance recording an inherent exception to the scope rule.
+
+**Loop is blocked on C-03 until this is resolved. C-04 onward can proceed independently.**
+
+---
+
+### C-04 · `affiliate/click` admin import — inactive-broker behavior decision needed (surfaced 2026-04-30 by iter 158)
+
+**Finding:** `app/api/affiliate/click/route.ts` is a public click-tracking endpoint that uses `createAdminClient()` for:
+
+1. SELECT `brokers` by slug (admin → finds ALL brokers regardless of status)
+2. INSERT `affiliate_clicks` (admin → uses service-role bypass)
+
+**RLS policy check:**
+- `affiliate_clicks`: anon INSERT policy exists — `"Insert clicks"` (`WITH CHECK (broker_slug IS NOT NULL AND length(trim(broker_slug)) > 0)`) → anon client works for INSERT
+- `brokers`: anon SELECT policy exists — `"Public read for active brokers"` (`USING (status = 'active')`) → anon client ONLY finds active brokers
+
+**Behavioral difference:** Switching to `createClient()` means clicks on **inactive/suspended broker slugs** return HTTP 404 instead of being logged. Currently (admin client) those clicks ARE logged. Whether to log clicks for delisted brokers is a product question.
+
+**Decision matrix:**
+
+| Option | What to do | Pros | Cons |
+|--------|-----------|------|------|
+| **A** | Switch to `createClient()` as-is | Aligns with CLAUDE.md scope rule; anon policies already cover the happy path | Clicks on inactive broker slugs return 404 (behavioural change) |
+| **B** | Switch to `createClient()` + add `status IN ('active','inactive')` brokers SELECT policy | Both active and inactive brokers found; admin scope reduced | Need a new RLS migration; `"Public read for active brokers"` covers active only |
+| **C** | Keep admin; add a `// admin — needs all broker statuses for click tracking` comment | No behavioural change; admin scope acknowledged as intentional exception | Leaves admin in a public route outside CLAUDE.md rule |
+| **D** | Mark as false-positive | No changes needed | Admin in public route remains undocumented exception |
+
+**Recommendation:** Option A — 404 on inactive broker clicks is the correct behavior (we should not log revenue-relevant affiliate clicks for brokers we've suspended or removed from the platform). The anon policies already support this correctly. Safe to refactor; just needs decision confirmation.
+
+**Resolution:** choose A, B, C, or D. If A or B, the loop can do the refactor in one iteration (~20 lines).
+
+---
+
+### C-05 · `ArticleBrokerTable.tsx` admin import — public server component (surfaced 2026-04-30 by iter 161)
+
+**Finding:** `components/ArticleBrokerTable.tsx` is a public server component (no auth, no cookies) that uses `createAdminClient()` to SELECT `brokers WHERE status = 'active'`. Phase 4 gate: public component → surface to Blocked.
+
+**Analysis:**
+- The `"Public read for active brokers"` anon SELECT policy on `brokers` USES `(status = 'active')`
+- The component already filters `.eq("status", "active")`
+- Switching to `createClient()` would produce **identical results** — no behavioral change
+- Risk: zero. The admin client is strictly unnecessary here.
+
+**Decision matrix:**
+
+| Option | What to do | Pros | Cons |
+|--------|-----------|------|------|
+| **A** | Switch `createAdminClient()` → `createClient()` in `fetchBrokers()` | Removes admin from a public render path; aligned with CLAUDE.md scope rule | None — anon policy exactly covers the query |
+| **B** | Keep admin; add a comment acknowledging the exception | No changes needed | Admin in public render path, undocumented deviation |
+
+**Recommendation:** Option A — safe, zero-risk, aligns with CLAUDE.md. The anon policy was designed precisely for public broker comparisons. `createClient()` in a server component uses the anon key (no cookies needed for this query). One-line fix.
+
+**Note:** `account/notifications/page.tsx` was fixed in iter 161 (removed admin, switched to `createClient()`). This blocked entry is for `ArticleBrokerTable.tsx` only.
+
+---
 
 ### A-MISSING-TABLE-1 · `account_deletion_requests` table missing in live (surfaced 2026-04-26 by iter 19)
 
@@ -161,6 +237,64 @@ A `status = 'published'` allow-SELECT policy would fix the public pages but leav
 
 ---
 
+### G-04 · Partial-failure-marker migrations need founder verification (surfaced 2026-04-30 by agent)
+
+**Finding:** 8 migrations contain partial-failure markers (audit §5.5) indicating uncertain prod state — 2 with `TODO.md` references, 6 where the file ends with a trailing `--` comment after the last SQL statement (a pattern that has historically caused some pipelines to silently truncate the final statement). See `docs/audits/g-04-partial-failure-markers.md` for the per-migration verification SQL + recovery actions. The 8 migrations:
+
+1. `20260316_email_otps.sql` — verify `idx_email_otps_expires` index exists.
+2. `20260426_wave_launch_readiness.sql` — verify all 20 trailing best-for scenarios + 6 forum/newsletter tables.
+3. `20260512_agent_infrastructure.sql` — verify 19 agent-infra tables, especially `authorised_representatives` + `credit_representatives` RLS/policies.
+4. `20260310_fix_advisor_photos.sql` — verify no `professionals.photo_url` is NULL for pre-2026-03-10 advisors.
+5. `20260310_admin_login_attempts.sql` — verify `relrowsecurity = true` (RLS on rate-limit table).
+6. `20260411_features_11_12_14_15_16_18.sql` — verify trailing `regulatory_broker_impacts` table + `regulatory_alerts` ALTERs.
+7. `20260522_rls_cosmetic_cleanup.sql` — verify duplicate `Public can read threads` policy is gone.
+8. `20260513_fix_public_read_leaks.sql` — **highest risk** — verify `Public can read BD pipeline` + `Public read competitor_watch` policies are gone (active data leak if still present).
+
+**Decision matrix for the user:**
+
+| Option | What you do | Trade-off |
+|---|---|---|
+| **1. Run the 8 verification SQL blocks via Supabase MCP** | Open `docs/audits/g-04-partial-failure-markers.md`, run each `Verification SQL` block (~10 min total), reply with the results. | Fastest path. Founder is the only one with MCP access. Result tells exactly which (if any) of the 8 need a forward-fix-up migration. |
+| **2. Run only #8 (urgent) and #5 (security)** then **defer the rest** | Verify the data-leak migration and the RLS-on-rate-limit-table migration; treat the other 6 as nice-to-have. | Closes the two security-relevant items immediately; leaves the perf / hygiene items for next dashboard cycle. ~3 min of MCP time. |
+| **3. Defer all 8 — accept current prod state** | Leave G-04 blocked indefinitely. | No effort. Moderate risk: if migration #8 truncated, `bd_pipeline` + `competitor_watch` are still publicly readable via PostgREST anon key. |
+
+**Recommendation:** Run the verification SQL queries (Supabase MCP, ~10 min total), then reply with results so a follow-up forward-fix migration can be queued for any that need it. Start with migration #8 (data-leak risk) and #5 (security regression risk) — those are the only ones where a partial apply has user-visible / compliance-visible consequences. The other 6 are mostly perf / hygiene with one or two edge-case 404s.
+
+---
+
+### B-09-MY-LISTINGS-1 · `/api/listings/my-listings` authentication mechanism (surfaced 2026-04-30 by iter 150)
+
+**Finding:** `app/api/listings/my-listings/route.ts` accepts an unauthenticated `email` query param (no cookie, no session, no signed token) and uses `createClient()` (anon key) to:
+
+1. Query `investment_listings.contact_email` via `ilike` — returns listings for any email the caller claims to own.
+2. Return all `listing_enquiries` rows for those listings, including `user_name`, `user_email`, `message` — PII of investors who enquired.
+
+The current "anon select enquiries" RLS policy on `listing_enquiries` (from B-06, migration `20260601_rls_listing_enquiries.sql`) explicitly preserves this behaviour to avoid breaking the route. B-09 exists to close it. The fix requires both:
+
+- Switching the route to `createAdminClient()` (service-role bypass for DB query)
+- Adding an **email-verification challenge** so only the actual listing owner can retrieve their enquiries
+
+The verification gate for this refactor requires that the route either reads cookies or is in an authenticated layout. It does neither. The email-verification mechanism is the design decision that unblocks implementation.
+
+**Decision matrix for the user:**
+
+| Option | What you / the loop does | Trade-off |
+|---|---|---|
+| **1. OTP challenge (recommended)** | Loop adds a "send OTP to listing contact_email" flow before the route returns data. Uses existing `/api/verify-otp/send` + `/api/verify-otp/verify` infrastructure — no new auth library. Frontend sends email → OTP emailed → user enters code → verified token stored (1h TTL) → listings/enquiries returned. | 2 iterations (route + frontend flow). Closes enumeration vector completely. Consistent with K-02 (OTP hardening already on the platform). Frontend needs to support the 2-step UI before the listings view. |
+| **2. Magic link** | Loop creates a `/api/listings/request-access` endpoint (POST email → sends HMAC-signed URL with 1h expiry → link renders the enquiries page with token in query param, verified server-side). No code-entry step for the listing owner. | 2 iterations. Slightly better UX (no code to type). Requires a new "send magic link" endpoint. Same security level as OTP. |
+| **3. Rate-limit only (partial fix)** | Loop adds IP-bound rate limiting (5 lookups/hour/IP/email) to the route without changing auth mechanism. Keeps the current UX unchanged. | 1 iteration. Does NOT close the enumeration vector — a distributed attacker (botnet, VPN rotation) can still enumerate all enquiries. Not a B-09 completion, but reduces the blast radius. Could be shipped as B-09a while the full fix waits. |
+| **4. Defer to account system** | Leave blocked until listing owners have login accounts (requires a full account-signup flow for non-professional listing owners — not currently in scope). | No effort now. PII enumeration vector stays open indefinitely. |
+
+**Recommendation:** Option 1 (OTP). The infrastructure exists, the UX is familiar, and the security outcome is complete. To unblock: reply with the chosen option, and the loop will implement it as B-09a (route + OTP gate) + B-09b (drop "anon select enquiries" from `listing_enquiries`).
+
+---
+
+### ~~C-DISC-admin-disputes~~ · RESOLVED by iter 160 — admin ALL policy added to migration
+
+**Resolved (2026-04-30, iter 160, commit `0fc88b5`):** The blocker was based on a misidentification of the DB role. `createClient()` in the browser creates a client initialized with the anon API key, but once the admin user logs in via Supabase Auth, their requests include a JWT Bearer token that maps to the `authenticated` DB role in Postgres — NOT the `anon` role. Adding "Admin can manage disputes" (FOR ALL TO authenticated USING raw_user_meta_data->>'role' = 'admin') is sufficient: admin users' DB role is `authenticated`, the policy matches, and they have full access. No page refactoring needed. Migration is safe in prod.
+
+---
+
 ## Pending work
 
 ### Cross-stream dependencies (added 2026-04-27 enterprise-standard reorder)
@@ -173,6 +307,13 @@ Hard dependencies between items in different streams. The loop checks these befo
 - **Every BB-\* calculator item** depends on **W-NEW-01** (calculator math reference test pattern — see Stream W below for the new item). The pattern is one iteration's work — drafts the ATO/ASIC worked-example reference test scaffolding that every BB-* item inherits. Without it, every BB-* re-invents the regulator-reference-test pattern.
 - **Every Z-\* hub item** ships with the page-surface rubric in `ENTERPRISE_STANDARD.md` enforced. The page rubric is checked per-item by the loop — it doesn't block on a separate dependency, but the iteration won't ship a Z-* PR that violates the rubric.
 - **Every directory listing** (anything in W-08 family + AA-01 + Z-* directories + DD-* listings) depends on **V-NEW-04** (RLS isolation gate for new user-data tables). Directory listings always touch a user-data table (advisors, professionals, listings) and the RLS isolation test must exist before the listing can render to anonymous users.
+- **Every FF-\* item that touches Stripe billing** (FF-01, FF-03, FF-04, FF-05, FF-06, FF-07, FF-08) depends on **V-NEW-03** (Stripe webhook idempotency replay harness) — same gate as DD-*.
+- **Every NN-\* listing item** (NN-01..05) depends on **V-NEW-04** + **V-NEW-03**.
+- **DD-05..DD-19** depend on **DD-01/02/03** baseline + **V-NEW-03** + **V-NEW-04**. DD-05 chat is the foundation for DD-06 e-sign, DD-07 reveal, DD-09 verified-purchase reviews, DD-10 money-back, DD-12 dispute UI, DD-14 public stats surface, DD-17 calendar-in-chat, GG-03 SoA, and HH-01/02 mobile push.
+- **Every GG-\* compliance item** uses `lib/compliance.ts` SSOT (text already exists for many disclosures; the gap is auto-render components + CI gates + cron monitoring).
+- **Every JJ-\* foreign-investment item** ships in addition to existing `lib/i18n` infra; JJ-02 multi-language uses translated SSOT from `lib/compliance.ts`.
+- **II-\* items** all extend existing infrastructure (NPS already collected via `<NPSPrompt>` + `/api/nps`; cohort-stats already wired; consumer referrals already built) — these items add the missing consumption / experiment / vouching layers.
+- **HH-01 + HH-02** (mobile apps) depend on all DD-* items shipped + stable for ≥30 days.
 
 If a dependency is itself blocked (e.g. V-NEW-02 depends on `lib/compliance.ts` factual-filter implementation, which depends on the founder's compliance copy review), the dependent item surfaces to Blocked with a pointer back to the dependency's blocker. The loop never silently skips a dependency.
 
@@ -189,8 +330,8 @@ Highest priority: critical 2 first.
 | B-05 | done | RLS on `listing_claims` | 1 | Done in commit `5904db8a` then **corrected in `24898931` (iter 8)** to actually drop the legacy `"Anon can submit claims"` policy from `20260510_rls_hardening.sql` (the original DROP IF EXISTS list missed it; RLS policies stack additively, so the legacy permissive INSERT survived and undermined the deny-all claim). Net state: deny-all anon + service-role explicit allow. |
 | B-06 | in-progress | RLS on remaining medium-risk tables | 2 | 1 done in iter 9 (`listing_enquiries`, commit `0bb82daa`, option-2 pattern). 5 false-positives discovered in iter 10 via prior-policy gate — all forum tables (`forum_categories`, `forum_posts`, `forum_threads`, `forum_user_profiles`, `forum_votes`) were already RLS-enabled with proper `auth.uid()`-scoped policies in `20260427_wave_security_observability.sql`; moved to FP table. `listing_plans` done iter 35 (commit `be7bff79` — deny-all anon; all 3 callers use service-role). `quarterly_reports` **blocked** (iter 35): admin CRUD page `app/admin/quarterly-reports/page.tsx` uses browser anon-key client (`lib/supabase/client.ts`); no `auth.uid()` linkage; policy design is non-obvious — see Blocked entry B-06-QUARTERLY-REPORTS-1. |
 | B-07 | done | Add CI lint that fails any new `CREATE TABLE` migration without `ENABLE ROW LEVEL SECURITY` | 1 | Done in commit `0097159` (PR #286). `scripts/check-rls-migrations.mjs` — finds added migration files in the PR via `git diff --diff-filter=A`, extracts `CREATE TABLE` names, checks each has `ENABLE ROW LEVEL SECURITY` in the same file. System-table prefixes exempted. `-- rls-exempt: <table>` escape hatch for public-read tables. 30 unit tests green. `rls-migrations-gate` CI job + `npm run audit:rls-migrations` local script. Coordinates with I-01. |
-| B-08 | pending | Long-term: refactor `/api/listings/submit` + enquire counter fallback to admin client; tighten anon policy on `investment_listings` to SELECT-only (option 4 follow-up to B-04) | ~2 | Lower priority than B-06; depends on stream C call-graph (C-01) to confirm no other anon writers. |
-| B-09 | pending | Long-term: refactor `/api/listings/my-listings` to admin client + email-verification challenge; tighten anon policy on `listing_enquiries` to deny SELECT (follow-up to B-06's `listing_enquiries` migration) | ~2 | **Known PII enumeration vector**: today the route trusts the user-supplied `email` query param and returns all enquiries (name, email, phone, message) for any listing whose `contact_email` matches. RLS at the DB layer cannot scope this without an `auth.uid()` linkage. Stream C territory; depends on the my-listings flow design decision (magic link, OTP, or login). |
+| B-08 | done | Long-term: refactor `/api/listings/submit` + enquire counter fallback to admin client; tighten anon policy on `investment_listings` to SELECT-only (option 4 follow-up to B-04) | ~2 | Done commit `ed3cbee` (PR #326). listings/submit createClient() → createAdminClient(); enquire counter RPC + fallback UPDATE → createAdminClient(). Migration 20260602_investment_listings_tighten_rls.sql drops "anon insert pending" + "anon update counters" policies; restores table-wide UPDATE grant; upgrades counter RPCs to SECURITY DEFINER. (Note: iter 149 prematurely marked done — code changes were not in PR #286's merge; this fire corrected it via PR #326.) |
+| B-09 | blocked | Long-term: refactor `/api/listings/my-listings` to admin client + email-verification challenge; tighten anon policy on `listing_enquiries` to deny SELECT (follow-up to B-06's `listing_enquiries` migration) | ~2 | **Blocked** — see B-09-MY-LISTINGS-1 entry below. Verification gate failed: route accepts unauthenticated email query param with no `auth.uid()` linkage; email-verification mechanism (OTP vs magic link vs account login) requires founder decision before implementation. |
 
 ### Stream D — Critical-path API tests (issue #217)
 
@@ -206,7 +347,7 @@ Highest priority: critical 2 first.
 | D-08 | done | Integration test for `/api/stripe/create-contract` | 1 | Done in commit `311df3f` (PR #246). 16 tests: 401 no cookie; 401 invalid/expired session (null DB); 400 missing advisor_id/plan/billing_cycle; 400 invalid plan value; 400 invalid billing_cycle value; 403 professional_id mismatch; 200 monthly success; 200 annual success; unit_amount=9900+interval=month for basic/monthly; unit_amount=499000+interval=year for premium/annual; metadata includes advisor_id+plan+billing_cycle; success_url+cancel_url use NEXT_PUBLIC_SITE_URL; advisor_sessions query scoped by cookie token; 500 Stripe throws. |
 | D-09 | done | Integration test for `/api/auth/signout` | 1 | Done in commit `8e2d35d` (PR #246). 2 tests: success path (`signOut()` resolves → `{success:true}` 200); catch path (`signOut()` throws → `{error:"Failed to sign out"}` 500). 100% branch coverage on the 12-line route. |
 | D-10 | done | Add `vitest.config.mts` ratchet: API-route coverage floor | 1 | Global thresholds ratcheted 42→44 (lines/stmt), 72→73 (branches). API-route floor added: lines/stmt 13, branches 58, functions 30. commit `4e702c1` PR #246. |
-| D-11 | pending | Backfill remaining 219 untested routes (chunked: ~5 per iteration, prioritised by traffic) | ~44 | Lowest priority within D; ongoing. Batch 1 done (iter 60, commit `90c7c5b`): advisor-auth lifecycle — session GET+DELETE (8), login POST (16), profile PATCH (5), notifications GET+PATCH (7) = 37 tests, 4 files. Batch 2 done (iter 67, commit `387bcb4`): advisor-auth financial+auth — payment (12), tier-upgrade (10), topup (11), verify (6), request-review (8) = 47 tests, 4 files. Batch 3 done (iter 68, commit `db0df8d`): consumer-path routes — account/notifications GET+PATCH (13), account/claim-anonymous POST (8), user-profile GET+PUT (15), newsletter/subscribe POST (12) = 48 tests, 4 files. Batch 4 done (iter 69, commit `c49e3aa`): OTP + shortlist + notification-preferences — verify-otp/send POST (11), verify-otp/verify POST (9), shortlist POST+GET (16), notification-preferences GET+POST (11) = 47 tests, 4 files. Batch 5 done (iter 71, commit `6c7637f`): consumer search + quiz + lead-confirm + GDPR export — advisor-search GET (12), quiz/submit POST (12), submit-lead/confirm POST (12), account/export-data POST (10) = 46 tests, 4 files. Batch 6 done (iter 72, commit `f7e1a1c`): privacy + unsubscribe + claim-listing — privacy/request POST (14), privacy/verify GET (12), unsubscribe POST (13), claim-listing POST (16) = 55 tests, 4 files. Batch 7 done (iter 74, commit `f183cba`): marketplace/allocation GET (9), versus/vote GET+POST (15), ab-track POST (11), user-review POST (18), advisor-apply/photo POST (8) = 61 tests, 5 files. Batch 8 done (iter 75, commit `f336fc7`): advisor-signup POST (16), advisor-review POST (20), advisor-booking GET+POST (15), advisor-appointments GET+POST (12), referrals GET+POST (16) = 79 tests, 5 files. Batch 9 done (iter 76, commit `2c78f24`): advisor-compare GET (6), listings-enquire POST (16), marketplace-campaign-click POST (10), marketplace-impression POST (10), nps POST (15) = 57 tests, 5 files. Batch 10 done (iter 77, commit `73c8aa1`): affiliate-click POST (12), health GET (8), chatbot POST (10), advisor-kyc GET+POST (14), listings-submit POST (17) = 61 tests, 5 files. Batch 11 done (iter 78, commit `3fab2c1`): form-event POST (17), article-comments GET+POST (15), advisor-alerts POST (11), attribution/touch POST (13), churn-survey POST (14) = 56 tests, 5 files (analytics + engagement funnels). Batch 12 done (iter 79, commit `856026c`): article-reactions GET+POST (11), search-semantic GET (13), web-vitals POST (10), advisor-apply/invite GET (7), privacy/correct POST (10) = 51 tests, 5 files (engagement, search, telemetry, GDPR). Batch 12c done (iter 80b concurrent, commit `cc77b65`): listings/my-listings GET (8), questions POST (8), questions/[id]/vote POST (9), exit-intent-log POST (8) = 33 tests, 4 files (advisor management, Q&A engagement, A/B analytics). Batch 13 done (iter 80, commit `9dae465`): concierge POST/GET/DELETE (18, AI SSE streaming, session history, rate-limit tiers), lead-outcome POST/GET (18, advisor CRM one-click outcome + email token handler), advisor-auction POST/GET (12, create auction + list active/won), advisor-auction/bid POST (15, bid placement, update, duplicate constraint, expiry), consultation/book POST (15, Stripe checkout, Pro pricing, duplicate booking) = 78 tests, 5 files. Batch 14 done (iter 81, commit `c64ca614`): advertise/checkout POST (13, Stripe sponsorship checkout, tier validation, 12-month discount), listings/checkout POST (14, investment listing plan checkout, get-or-create Stripe customer), community/posts POST (14, authenticated forum post creation, rate-limit, threaded replies), community/threads GET+POST (18, thread list + creation, slug generation, category lookup), marketplace/wallet-topup POST (11, broker wallet top-up, Stripe checkout, amount validation) = 70 tests, 5 files. Batch 15 done (iter 82, commit `01b685f`): advisor-search/postcodes GET (9, numeric like vs alpha ilike, limit(10), null data), v1/brokers GET+OPTIONS (20, Bearer auth, field allowlist, limit clamping, pagination, 7 filter params, Cache-Control, meta.updated_at), community/posts/[id] PATCH+DELETE (17, ownership check, body validation 1-5000 chars, soft-delete, isModerator admin-email short-circuit), advisor-dashboard GET (7, session cookie auth, profile completeness score, hot/warm/cold lead buckets, 8-week weekly enquiries), advisor-articles GET+POST+PUT (24, 6 GET modes, POST compliance checks ≥300 words/no perf guarantees/no promo, PUT admin-only actions) = 77 tests, 5 files. Batch 16 done (iter 83, commit `6536d77`): community/threads/[id] GET+PATCH+DELETE (18, public thread+posts+profiles fetch, title/body edit 5-200/10-10000 chars, soft-delete, isModerator), community/categories GET (6, active list, sort_order, DB error), community/vote POST (12, DB token-bucket rate-limit, target_type validation, self-vote prevention, new vote/toggle-off/direction-flip, insert failure), v1/brokers/[slug] GET+OPTIONS (11, slug format [a-z0-9-], broker+changelog, field strip, Cache-Control, logApiRequest), v1/api-keys POST+OPTIONS (14, IP+email rate limits, max-3-keys-per-email, ica_<32hex> key prefix, confirmation email via lib/resend) = 61 tests, 5 files. Batch 17 done (iter 91, commit `bbca74d`): fee-profile GET+POST (11, Pro-subscription gate, input clamping 0–999, rate-limit), saved-comparisons GET/POST/GET[id]/PATCH[id]/DELETE[id] (24, max-25 limit, name/notes trim, 401/429/500/503 error paths), advisor-welcome POST (12, admin-only guard via getAdminEmails(), Resend fire-and-forget, type-label mapping, case-insensitive email match) = 47 tests, 3 files. Batch 17b done (iter 91b concurrent, commit `251f745`): course/purchase POST (16, rate-limit, auth, course not found/unpublished, already-purchased, no-price configured, new vs existing Stripe customer, no-email guard, Pro vs standard pricing, metadata shape, Stripe throws), course/progress POST (10, auth, lesson_id/course_slug validation, not-purchased 403, upsert idempotent, upsert error), consultation/bookings GET (7, auth, missing param, booking found/null, user+consultation_id filter, status filter), sponsored-booking POST (14 inc. it.each, rate-limit + key scoping, required fields, invalid package, valid packages, admin email subject, sendEmail throws, phone include/exclude) = 47 tests, 4 files. Batch 18b done (iter 93, commit `6a89600`→`701cf83`): answers/[id]/vote POST (12, IP-keyed rate-limit, integer-ID validation, vote 1/-1 enforcement, upvote/downvote delta, same-vote idempotency, direction-change delta, helpful_count floor at 0, insert/update 500 paths), newsletter-segments/subscribe POST (9, rate-limit, missing-email, subscribeToNewsletter error passthrough, alreadyConfirmed short-circuit, confirmation email + token in HTML, segment in email, email-failure non-blocking, no-token case, malformed JSON), switch-story POST (13, broker slug validation, same-broker 400, email/rating/displayName/body validation, rate-limit, source/dest broker 404, duplicate 409, insert + verification email, email-failure non-blocking, DB insert 500), switch-story/moderate POST (10, admin-only via ADMIN_EMAILS, 401/400/404/500, approve/reject with DB update, notification email, no-RESEND_KEY skip), switch-story/verify GET (9, token length gate, rate-limit, story-not-found redirect, clean-story auto-approved, profanity hold → status='verified', non-pending skip-update, DB error redirect) = 53 tests, 5 files. vi.hoisted() fix for createRateLimiter mock. Batch 18 done (iter 92b, commit `2694124`): analytics/search-log POST (8, rate-limit, query/surface validation, logSearchQuery ok:true/false, optional fields, invalid-JSON 400), analytics-dashboard GET/cron (6, CRON_SECRET Bearer auth, thenable count-query mock, all summary keys, RPC failures, null-count→0), broker-health GET (9, public slug, safety score ASIC/CHESS/years/rating factors, Strong/Moderate/Caution labels, Cache-Control s-maxage=86400), complaints/intake POST (11, DB token-bucket, email/subject/body/category validation, enqueueJob ×2, severity default, insert 500), consultation/bookings GET (7, auth check, consultation_id param, eq/in chain assertions, null booking, 500 on throw) = 41 tests, 5 files. Batch 19 done (iter 92, commit `b93f1647`): portfolio-xray POST (13, rate-limit, holdings validation, ticker resolution, weight/yield/geo calc, concentration warnings, fee_drag, 500 path), listings/[id] GET+PUT+DELETE (17, numeric-id guard, email-ownership timing-safe merge, enquiries_count join, soft-delete), verify-professional POST (13, dual bearer auth ADMIN_API_KEY+CRON_SECRET, ABN/AFSL outcomes passed/failed/partial, admin_action_log always written), partner/leads POST (13, PARTNER_API_KEY auth, batch validation 100-lead cap, free-lead path, duplicate-protection, billing path), marketplace/postback POST (13, X-API-Key broker auth, click ownership, idempotency already_recorded, 23505 race, all event_type values) = 69 tests, 5 files. Batch 19b done (iter 93b, commit `49e0ad5`): cohort-stats GET (8, experience+range required, <50-rows insufficient_data, ≥50-rows distribution+name-lookup, optional interest filter, no-interest-eq, 500, cohort_label), csp-report POST (6, rate-limit 429, legacy format insert, Reporting API v1 format, unparseable 204, DB error still 204, user_agent stored), drip-click GET (8, missing broker/drip→/compare, NaN drip, 429, redirect UTM, insert call, Cache-Control no-store, DB-throw non-blocking), partner/status GET (7, missing key 401, no env 401, wrong key 401, valid key credits+leads, count error 500, null count 0, throw 500), fee-alerts POST+GET (10, 429, missing email, upsert success, DB 500, Resend called/skipped, defaults; GET verify/unsubscribe) = 39 tests, 5 files. Batch 20 done (iter 96, commit `2f72b7a`): newsletter-segments/confirm GET+POST (9, rate-limit, missing token, confirmSubscription error/success, unsubscribe action validation), push/subscribe POST (9, rate-limit, subscription object validation, topic filtering, upsert fields, 500 on DB error), community/moderate POST (10, 401 unauthenticated, 403 non-moderator, admin email bypass, invalid action, missing thread_id, pin/lock success, 404 update fail, remove post, invalid JSON), marketplace/notify POST (7, 401 missing/wrong key, 400 missing fields, 200 notification_id, insert assertions, 500), fee-report GET (8, 500 empty/null brokers, HTML content-type, broker names in body, year in title, broker count, Cache-Control, eq+order assertions) = 43 tests, 5 files. Batch 21 done (iter 98, commit `eec7429`): cron/abandoned-form-drip GET (9, kill-switch, 401, no-view-events, happy-path send+stamp, bounced skip, suppression-list skip, no-email count, complete-events filter), cron/abandoned-quiz-drip GET (10, kill-switch, 401, DB error 500, empty leads, step-1 at 2d, step-2 at 7d, step-3 at 14d, not-ready skip, in-app notifyUser), cron/advisor-dormant-nudge GET (9, kill-switch, 401, DB error 500, no-advisors, 30d nudge+stamp, 60d nudge, >90d skip, 14d-cooldown skip), cron/advisor-nudge GET (8, edge runtime, 401, no-RESEND_API_KEY skip, DB error, no-advisors, unreviewed-leads nudge+stamp, low-balance email subject, fetch-throw not-counted), cron/advisor-dunning GET (8, 401, DB error 500, no-failed-topups, step-already-current skip, step-0→1 stripe-retry-failing email, stripe-confirm-succeeds credit, step-3 auto-pause) = 44 tests, 5 files. Batch 21b done (iter 100, commit `d460cb5`→`32e3069`): user-review/moderate POST (12, admin-only auth, approve/reject actions, DB error 500, review-not-found 404, approval email, rejection email with note, no-email without RESEND_KEY), user-review/verify GET (11, rate-limit 429, missing/short token redirect, review-not-found, auto-approve clean review, profanity hold→verified, URL-spam hold, body-too-short hold, non-pending skip, DB error redirect, moderation_note written on hold), questions/[id]/answer POST (12, rate-limit, NaN-ID 400, 401 unauthenticated, too-short/too-long body, question-not-found 404, community/broker/advisor role resolution, insert 500, notification email, no-email guard), review-token GET (8, rate-limit, missing token, empty-slug token, advisor-not-found 404, valid slug token, slug:leadId token, professionals eq filter, lenient-base64 fallback), send-switching-report POST (11, rate-limit, missing required fields, sendEmail called, subject contains savings+broker, HTML has broker names, savings highlight, 500 on throw, affiliate link, IP rate-limit key) = 54 tests, 5 files. Batch 22 done (iter 101, commit `951a295`): widget GET+OPTIONS (11, CORS *, Content-Type JS, broker filter, limit clamp 1–10, compact/table/dark, empty result, OPTIONS preflight), quiz/data GET (6, 503 no-env, 502 broker-error, 200+Cache-Control, empty quiz_weights on error), cron/advisor-onboarding GET (9, 401, no-RESEND 500, no-advisors, skip-no-email, skip-no-onboarded_at, day<2 skip, day≥2 step-1 email+update, day≥5 step-2 article, fetch-throws continues), cron/ab-auto-promote GET (10, 401, kill_switch, DB-error 500, no-tests, auto-promoted skip, insufficient-sample, inconclusive, winner-promoted+audit-log, update-error, throws-failed), cron/confirm-lead-notify GET (9, 401, no-leads, notify+stamp, advisor-not-found, no-email, send-throws, null-intent defaults, timestamp) = 45 tests, 5 files. Batch 22b done (iter 102, commit `4b5e73b`): broker-outreach POST (9, admin-only cold-pitch, rate-limit IP key, Resend 502, outreach log insert, 401/400/429/500), listings/renew POST (10, Stripe Checkout renewal, existing vs new Stripe customer, listing ownership 403, inactive plan 410, 400/404/500), questions/moderate POST (9, admin-only approve/reject broker_questions/broker_answers, fire-and-forget answer notification, 401/400/500) = 28 tests, 3 files. Batch 23 done (iter 103, commit `575143b`): broker-outreach POST enhanced to 13 tests (invalid email 400, broker_slug in HTML, no-slug fallback URL, all error paths), exit-match GET (10, no-auth public, broker scoring shortlist+10/quiz+5/rating×3/deal+5/cpa+2/affiliate+1, malformed cookie graceful, US-history reason, response shape), foreign-investment/rates GET (10, DB token-bucket rate-limit, country list dedup+alpha-sort, rates by country code, upcase+slice(3), error paths for both query types), developer-leads POST (13, rate-limit, full_name 2–120/email/investor_type validation, 4 investor types, insert, UTM fields, fire-and-forget admin notify, IP rate-limit key) = 46 tests, 4 files. |
+| D-11 | done | Backfill all untested routes — complete (chunked: ~5 per iteration, prioritised by traffic) | ~44 | Lowest priority within D; ongoing. Batch 1 done (iter 60, commit `90c7c5b`): advisor-auth lifecycle — session GET+DELETE (8), login POST (16), profile PATCH (5), notifications GET+PATCH (7) = 37 tests, 4 files. Batch 2 done (iter 67, commit `387bcb4`): advisor-auth financial+auth — payment (12), tier-upgrade (10), topup (11), verify (6), request-review (8) = 47 tests, 4 files. Batch 3 done (iter 68, commit `db0df8d`): consumer-path routes — account/notifications GET+PATCH (13), account/claim-anonymous POST (8), user-profile GET+PUT (15), newsletter/subscribe POST (12) = 48 tests, 4 files. Batch 4 done (iter 69, commit `c49e3aa`): OTP + shortlist + notification-preferences — verify-otp/send POST (11), verify-otp/verify POST (9), shortlist POST+GET (16), notification-preferences GET+POST (11) = 47 tests, 4 files. Batch 5 done (iter 71, commit `6c7637f`): consumer search + quiz + lead-confirm + GDPR export — advisor-search GET (12), quiz/submit POST (12), submit-lead/confirm POST (12), account/export-data POST (10) = 46 tests, 4 files. Batch 6 done (iter 72, commit `f7e1a1c`): privacy + unsubscribe + claim-listing — privacy/request POST (14), privacy/verify GET (12), unsubscribe POST (13), claim-listing POST (16) = 55 tests, 4 files. Batch 7 done (iter 74, commit `f183cba`): marketplace/allocation GET (9), versus/vote GET+POST (15), ab-track POST (11), user-review POST (18), advisor-apply/photo POST (8) = 61 tests, 5 files. Batch 8 done (iter 75, commit `f336fc7`): advisor-signup POST (16), advisor-review POST (20), advisor-booking GET+POST (15), advisor-appointments GET+POST (12), referrals GET+POST (16) = 79 tests, 5 files. Batch 9 done (iter 76, commit `2c78f24`): advisor-compare GET (6), listings-enquire POST (16), marketplace-campaign-click POST (10), marketplace-impression POST (10), nps POST (15) = 57 tests, 5 files. Batch 10 done (iter 77, commit `73c8aa1`): affiliate-click POST (12), health GET (8), chatbot POST (10), advisor-kyc GET+POST (14), listings-submit POST (17) = 61 tests, 5 files. Batch 11 done (iter 78, commit `3fab2c1`): form-event POST (17), article-comments GET+POST (15), advisor-alerts POST (11), attribution/touch POST (13), churn-survey POST (14) = 56 tests, 5 files (analytics + engagement funnels). Batch 12 done (iter 79, commit `856026c`): article-reactions GET+POST (11), search-semantic GET (13), web-vitals POST (10), advisor-apply/invite GET (7), privacy/correct POST (10) = 51 tests, 5 files (engagement, search, telemetry, GDPR). Batch 12c done (iter 80b concurrent, commit `cc77b65`): listings/my-listings GET (8), questions POST (8), questions/[id]/vote POST (9), exit-intent-log POST (8) = 33 tests, 4 files (advisor management, Q&A engagement, A/B analytics). Batch 13 done (iter 80, commit `9dae465`): concierge POST/GET/DELETE (18, AI SSE streaming, session history, rate-limit tiers), lead-outcome POST/GET (18, advisor CRM one-click outcome + email token handler), advisor-auction POST/GET (12, create auction + list active/won), advisor-auction/bid POST (15, bid placement, update, duplicate constraint, expiry), consultation/book POST (15, Stripe checkout, Pro pricing, duplicate booking) = 78 tests, 5 files. Batch 14 done (iter 81, commit `c64ca614`): advertise/checkout POST (13, Stripe sponsorship checkout, tier validation, 12-month discount), listings/checkout POST (14, investment listing plan checkout, get-or-create Stripe customer), community/posts POST (14, authenticated forum post creation, rate-limit, threaded replies), community/threads GET+POST (18, thread list + creation, slug generation, category lookup), marketplace/wallet-topup POST (11, broker wallet top-up, Stripe checkout, amount validation) = 70 tests, 5 files. Batch 15 done (iter 82, commit `01b685f`): advisor-search/postcodes GET (9, numeric like vs alpha ilike, limit(10), null data), v1/brokers GET+OPTIONS (20, Bearer auth, field allowlist, limit clamping, pagination, 7 filter params, Cache-Control, meta.updated_at), community/posts/[id] PATCH+DELETE (17, ownership check, body validation 1-5000 chars, soft-delete, isModerator admin-email short-circuit), advisor-dashboard GET (7, session cookie auth, profile completeness score, hot/warm/cold lead buckets, 8-week weekly enquiries), advisor-articles GET+POST+PUT (24, 6 GET modes, POST compliance checks ≥300 words/no perf guarantees/no promo, PUT admin-only actions) = 77 tests, 5 files. Batch 16 done (iter 83, commit `6536d77`): community/threads/[id] GET+PATCH+DELETE (18, public thread+posts+profiles fetch, title/body edit 5-200/10-10000 chars, soft-delete, isModerator), community/categories GET (6, active list, sort_order, DB error), community/vote POST (12, DB token-bucket rate-limit, target_type validation, self-vote prevention, new vote/toggle-off/direction-flip, insert failure), v1/brokers/[slug] GET+OPTIONS (11, slug format [a-z0-9-], broker+changelog, field strip, Cache-Control, logApiRequest), v1/api-keys POST+OPTIONS (14, IP+email rate limits, max-3-keys-per-email, ica_<32hex> key prefix, confirmation email via lib/resend) = 61 tests, 5 files. Batch 17 done (iter 91, commit `bbca74d`): fee-profile GET+POST (11, Pro-subscription gate, input clamping 0–999, rate-limit), saved-comparisons GET/POST/GET[id]/PATCH[id]/DELETE[id] (24, max-25 limit, name/notes trim, 401/429/500/503 error paths), advisor-welcome POST (12, admin-only guard via getAdminEmails(), Resend fire-and-forget, type-label mapping, case-insensitive email match) = 47 tests, 3 files. Batch 17b done (iter 91b concurrent, commit `251f745`): course/purchase POST (16, rate-limit, auth, course not found/unpublished, already-purchased, no-price configured, new vs existing Stripe customer, no-email guard, Pro vs standard pricing, metadata shape, Stripe throws), course/progress POST (10, auth, lesson_id/course_slug validation, not-purchased 403, upsert idempotent, upsert error), consultation/bookings GET (7, auth, missing param, booking found/null, user+consultation_id filter, status filter), sponsored-booking POST (14 inc. it.each, rate-limit + key scoping, required fields, invalid package, valid packages, admin email subject, sendEmail throws, phone include/exclude) = 47 tests, 4 files. Batch 18b done (iter 93, commit `6a89600`→`701cf83`): answers/[id]/vote POST (12, IP-keyed rate-limit, integer-ID validation, vote 1/-1 enforcement, upvote/downvote delta, same-vote idempotency, direction-change delta, helpful_count floor at 0, insert/update 500 paths), newsletter-segments/subscribe POST (9, rate-limit, missing-email, subscribeToNewsletter error passthrough, alreadyConfirmed short-circuit, confirmation email + token in HTML, segment in email, email-failure non-blocking, no-token case, malformed JSON), switch-story POST (13, broker slug validation, same-broker 400, email/rating/displayName/body validation, rate-limit, source/dest broker 404, duplicate 409, insert + verification email, email-failure non-blocking, DB insert 500), switch-story/moderate POST (10, admin-only via ADMIN_EMAILS, 401/400/404/500, approve/reject with DB update, notification email, no-RESEND_KEY skip), switch-story/verify GET (9, token length gate, rate-limit, story-not-found redirect, clean-story auto-approved, profanity hold → status='verified', non-pending skip-update, DB error redirect) = 53 tests, 5 files. vi.hoisted() fix for createRateLimiter mock. Batch 18 done (iter 92b, commit `2694124`): analytics/search-log POST (8, rate-limit, query/surface validation, logSearchQuery ok:true/false, optional fields, invalid-JSON 400), analytics-dashboard GET/cron (6, CRON_SECRET Bearer auth, thenable count-query mock, all summary keys, RPC failures, null-count→0), broker-health GET (9, public slug, safety score ASIC/CHESS/years/rating factors, Strong/Moderate/Caution labels, Cache-Control s-maxage=86400), complaints/intake POST (11, DB token-bucket, email/subject/body/category validation, enqueueJob ×2, severity default, insert 500), consultation/bookings GET (7, auth check, consultation_id param, eq/in chain assertions, null booking, 500 on throw) = 41 tests, 5 files. Batch 19 done (iter 92, commit `b93f1647`): portfolio-xray POST (13, rate-limit, holdings validation, ticker resolution, weight/yield/geo calc, concentration warnings, fee_drag, 500 path), listings/[id] GET+PUT+DELETE (17, numeric-id guard, email-ownership timing-safe merge, enquiries_count join, soft-delete), verify-professional POST (13, dual bearer auth ADMIN_API_KEY+CRON_SECRET, ABN/AFSL outcomes passed/failed/partial, admin_action_log always written), partner/leads POST (13, PARTNER_API_KEY auth, batch validation 100-lead cap, free-lead path, duplicate-protection, billing path), marketplace/postback POST (13, X-API-Key broker auth, click ownership, idempotency already_recorded, 23505 race, all event_type values) = 69 tests, 5 files. Batch 19b done (iter 93b, commit `49e0ad5`): cohort-stats GET (8, experience+range required, <50-rows insufficient_data, ≥50-rows distribution+name-lookup, optional interest filter, no-interest-eq, 500, cohort_label), csp-report POST (6, rate-limit 429, legacy format insert, Reporting API v1 format, unparseable 204, DB error still 204, user_agent stored), drip-click GET (8, missing broker/drip→/compare, NaN drip, 429, redirect UTM, insert call, Cache-Control no-store, DB-throw non-blocking), partner/status GET (7, missing key 401, no env 401, wrong key 401, valid key credits+leads, count error 500, null count 0, throw 500), fee-alerts POST+GET (10, 429, missing email, upsert success, DB 500, Resend called/skipped, defaults; GET verify/unsubscribe) = 39 tests, 5 files. Batch 20 done (iter 96, commit `2f72b7a`): newsletter-segments/confirm GET+POST (9, rate-limit, missing token, confirmSubscription error/success, unsubscribe action validation), push/subscribe POST (9, rate-limit, subscription object validation, topic filtering, upsert fields, 500 on DB error), community/moderate POST (10, 401 unauthenticated, 403 non-moderator, admin email bypass, invalid action, missing thread_id, pin/lock success, 404 update fail, remove post, invalid JSON), marketplace/notify POST (7, 401 missing/wrong key, 400 missing fields, 200 notification_id, insert assertions, 500), fee-report GET (8, 500 empty/null brokers, HTML content-type, broker names in body, year in title, broker count, Cache-Control, eq+order assertions) = 43 tests, 5 files. Batch 21 done (iter 98, commit `eec7429`): cron/abandoned-form-drip GET (9, kill-switch, 401, no-view-events, happy-path send+stamp, bounced skip, suppression-list skip, no-email count, complete-events filter), cron/abandoned-quiz-drip GET (10, kill-switch, 401, DB error 500, empty leads, step-1 at 2d, step-2 at 7d, step-3 at 14d, not-ready skip, in-app notifyUser), cron/advisor-dormant-nudge GET (9, kill-switch, 401, DB error 500, no-advisors, 30d nudge+stamp, 60d nudge, >90d skip, 14d-cooldown skip), cron/advisor-nudge GET (8, edge runtime, 401, no-RESEND_API_KEY skip, DB error, no-advisors, unreviewed-leads nudge+stamp, low-balance email subject, fetch-throw not-counted), cron/advisor-dunning GET (8, 401, DB error 500, no-failed-topups, step-already-current skip, step-0→1 stripe-retry-failing email, stripe-confirm-succeeds credit, step-3 auto-pause) = 44 tests, 5 files. Batch 21b done (iter 100, commit `d460cb5`→`32e3069`): user-review/moderate POST (12, admin-only auth, approve/reject actions, DB error 500, review-not-found 404, approval email, rejection email with note, no-email without RESEND_KEY), user-review/verify GET (11, rate-limit 429, missing/short token redirect, review-not-found, auto-approve clean review, profanity hold→verified, URL-spam hold, body-too-short hold, non-pending skip, DB error redirect, moderation_note written on hold), questions/[id]/answer POST (12, rate-limit, NaN-ID 400, 401 unauthenticated, too-short/too-long body, question-not-found 404, community/broker/advisor role resolution, insert 500, notification email, no-email guard), review-token GET (8, rate-limit, missing token, empty-slug token, advisor-not-found 404, valid slug token, slug:leadId token, professionals eq filter, lenient-base64 fallback), send-switching-report POST (11, rate-limit, missing required fields, sendEmail called, subject contains savings+broker, HTML has broker names, savings highlight, 500 on throw, affiliate link, IP rate-limit key) = 54 tests, 5 files. Batch 22 done (iter 101, commit `951a295`): widget GET+OPTIONS (11, CORS *, Content-Type JS, broker filter, limit clamp 1–10, compact/table/dark, empty result, OPTIONS preflight), quiz/data GET (6, 503 no-env, 502 broker-error, 200+Cache-Control, empty quiz_weights on error), cron/advisor-onboarding GET (9, 401, no-RESEND 500, no-advisors, skip-no-email, skip-no-onboarded_at, day<2 skip, day≥2 step-1 email+update, day≥5 step-2 article, fetch-throws continues), cron/ab-auto-promote GET (10, 401, kill_switch, DB-error 500, no-tests, auto-promoted skip, insufficient-sample, inconclusive, winner-promoted+audit-log, update-error, throws-failed), cron/confirm-lead-notify GET (9, 401, no-leads, notify+stamp, advisor-not-found, no-email, send-throws, null-intent defaults, timestamp) = 45 tests, 5 files. Batch 22b done (iter 102, commit `4b5e73b`): broker-outreach POST (9, admin-only cold-pitch, rate-limit IP key, Resend 502, outreach log insert, 401/400/429/500), listings/renew POST (10, Stripe Checkout renewal, existing vs new Stripe customer, listing ownership 403, inactive plan 410, 400/404/500), questions/moderate POST (9, admin-only approve/reject broker_questions/broker_answers, fire-and-forget answer notification, 401/400/500) = 28 tests, 3 files. Batch 23 done (iter 103, commit `575143b`): broker-outreach POST enhanced to 13 tests (invalid email 400, broker_slug in HTML, no-slug fallback URL, all error paths), exit-match GET (10, no-auth public, broker scoring shortlist+10/quiz+5/rating×3/deal+5/cpa+2/affiliate+1, malformed cookie graceful, US-history reason, response shape), foreign-investment/rates GET (10, DB token-bucket rate-limit, country list dedup+alpha-sort, rates by country code, upcase+slice(3), error paths for both query types), developer-leads POST (13, rate-limit, full_name 2–120/email/investor_type validation, 4 investor types, insert, UTM fields, fire-and-forget admin notify, IP rate-limit key) = 46 tests, 4 files. |
 
 ### Stream A — DB schema drift backfill (issue #214)
 
@@ -224,14 +365,18 @@ Highest priority: critical 2 first.
 
 | ID | Status | Summary | Est. iterations | Notes |
 | --- | --- | --- | --- | --- |
-| C-01 | pending | Generate call graph: `grep -rn "from ['\"]@/lib/supabase/admin['\"]"` classified by route family | 1 | Output: `docs/audits/admin-callgraph.md`. |
-| C-02 | pending | Refactor `app/api/advisor-auth/*` admin imports to `server.ts` + add RLS where missing | ~3 | |
-| C-03 | pending | Refactor `app/api/advisor-apply/*` admin imports | ~2 | |
-| C-04 | pending | Refactor `app/api/affiliate/*` admin imports | ~2 | Likely several Blocked items here — surface to user. |
-| C-05 | pending | Refactor `app/account/notifications/page.tsx` + `components/ArticleBrokerTable.tsx` | 1 | |
-| C-06 | pending | Refactor `lib/*` modules currently importing admin (review per-module necessity) | ~3 | |
-| C-07 | pending | Update `CLAUDE.md` allowed-scope list with the documented exceptions surfaced during the refactor | 1 | |
-| C-08 | pending | Add ESLint rule restricting `lib/supabase/admin.ts` imports to allowed paths | 1 | Stream I overlap. |
+| C-01 | done | Generate call graph: `grep -rn "from ['\"]@/lib/supabase/admin['\"]"` classified by route family | 1 | Done commit `b654e12` (iter 134). Output: `docs/audits/admin-callgraph.md`. 339 files, 6 refactor streams identified. |
+| C-02 | done | Refactor `app/api/advisor-auth/*` admin imports to `server.ts` + add RLS where missing | ~3 | All steps complete (PR #327). Step 5b (`5b32c3b` iter 158): payment/route.ts + firm/invite/route.ts onto requireAdvisorSession + admin client; lead_disputes RLS migration (C-DISC-20260430-03). session/route.ts excluded by design (IS the auth endpoint). All 12 advisor-auth routes now use requireAdvisorSession + admin; no route reads advisor_sessions via anon client. |
+| C-03 | blocked | Refactor `app/api/advisor-apply/*` admin imports | ~2 | Blocked iter 158 — phase 4 gate: public routes, not authenticated. photo/route.ts (storage) and invite/route.ts (read-only invite lookup) are false-positives. route.ts has a dynamic admin import for `agreement_acceptances` INSERT in a try/catch — outside CLAUDE.md admin scope rule. See Blocked section. |
+| C-04 | blocked | Refactor `app/api/affiliate/*` admin imports | ~2 | Blocked iter 158 — phase 4 gate: public route, behavioral difference with anon client. `affiliate/click/route.ts` uses admin to SELECT brokers + INSERT affiliate_clicks. Anon policies exist for both BUT anon SELECT on brokers is limited to `status='active'` — switching to createClient() would 404 clicks on inactive broker slugs (admin currently logs them). See Blocked section. |
+| C-05 | blocked | Refactor `app/account/notifications/page.tsx` + `components/ArticleBrokerTable.tsx` | 1 | Partial iter 161: notifications page done (`170dd8e` PR #327) — removed admin import, switched to existing server client (user_notifications "owner can read" policy covers it). ArticleBrokerTable blocked — public component, phase 4 gate. See Blocked section. |
+| C-06 | done | Refactor `lib/*` modules currently importing admin (review per-module necessity) | ~3 | Iter 162 (`4ea8879` PR #327): broker-recommendations.ts was the only false-positive in 44-module scan (createAdminClient → createClient, brokers has public read policy). Iter 163 (no-code-change): bookmarks.ts + quiz-history.ts both confirmed legitimate — anonymous_saves has deny-all-anon RLS (no explicit policies after ENABLE RLS); user_quiz_history has no anon INSERT policy. Both need service-role for anonymous-path writes. Cross-user operations (claimAnonymousSaves, claimSessionQuizzes) also legitimately require service-role. C-06 complete. |
+| C-07 | done | Update `CLAUDE.md` allowed-scope list with the documented exceptions surfaced during the refactor | 1 | Done iter 163 (`1817f544` PR #327): expanded the "Two Supabase clients" bullet with the five allowed-scope categories surfaced by the C-06 classification. |
+| C-08 | done | Add ESLint rule restricting `lib/supabase/admin.ts` imports to allowed paths | 1 | Done iter 164 (`4b975281` PR #327): added `no-restricted-imports` warn rule for `lib/**/*.ts` (excluding `lib/supabase/admin.ts` itself). Message references CLAUDE.md exception categories. lint-staged `--max-warnings 0` enforces this at commit time for new lib/* files. Stream I overlap. |
+| C-DISC-20260430-01 | done | Extract `requireAdvisorSession()` helper — refactor all 6 non-session advisor-auth routes | 1 | Done across iter 155 (`a7d90bb`: notifications/request-review/topup) + iter 156 (`a6e06dc`: data/disputes/profile). session/route.ts manages sessions directly and does not call getAdvisorId — no change needed. |
+| C-DISC-20260430-03 | done | `lead_disputes` has no RLS — table created outside migrations history (ALTER TABLE and index refs only). Disputes contain advisor PII (reason, details, billing_id). Should add ENABLE RLS + service_role full access + "Advisor can view own disputes" SELECT policy. | 1 | Done iter 158 (`5b32c3b` PR #327) + reconciled iter 159 (`9639d2c`) + admin policy iter 160 (`0fc88b5` PR #327): migration `20260606_c02_lead_disputes_rls.sql` — ENABLE RLS + FORCE RLS + service_role full access + "Admin can manage disputes" ALL (TO authenticated, raw_user_meta_data role=admin) + "Advisor can view own disputes" SELECT. Migration is safe in prod now. |
+| C-DISC-admin-disputes | done | 3 admin browser pages use `createClient()` to read/write `lead_disputes` and need RLS coverage. | ~2 | Resolved iter 160 (`0fc88b5` PR #327): added "Admin can manage disputes" ALL policy (TO authenticated, USING raw_user_meta_data->>'role'='admin') to migration. Admin users authenticated via Supabase Auth use the `authenticated` DB role (not anon) — the policy grants full access. No page refactoring needed. |
+| C-DISC-20260430-02 | done | `advisor_sessions` table has no `CREATE TABLE` migration — the table was created outside migrations history (only an index migration exists in `20260309_security_and_performance_fixes.sql`). Should be backfilled via a `CREATE TABLE IF NOT EXISTS` migration for completeness and future schema drift detection. | 1 | Done iter 165 (`169815c8` PR #327): migration `20260602_c02_advisor_sessions_backfill.sql` — CREATE TABLE IF NOT EXISTS with SERIAL PK, professional_id FK (ON DELETE CASCADE), session_token UNIQUE, expires_at, created_at. Indexes idx_advisor_sessions_token + idx_advisor_sessions_professional with IF NOT EXISTS. ENABLE RLS handled by companion migration 20260603_c02_advisor_auth_rls_hardening.sql. P3. Surfaced by iter 152. |
 
 ### Stream E — Zod validation rollout (issue #218)
 
@@ -249,7 +394,7 @@ Highest priority: critical 2 first.
 | G-01 | pending | Idempotency: convert 10 non-idempotent migrations (per audit §5.2) to use `IF NOT EXISTS` / `CREATE OR REPLACE` | 1 | List in audit. Single iteration; comment-only or near-comment-only. |
 | G-02 | pending | Rollback headers: add to the 3 migrations missing headers entirely | 1 | `20260316_add_weekly_rate_drip_log.sql`, `20260316_add_advisor_nudge_tracking.sql`, `20260316_add_lead_outcome_tracking.sql`. |
 | G-03 | pending | Rollback headers: backfill explicit reverse-SQL on remaining 108 partial-header migrations | ~10 | ~10 migrations per iteration. |
-| G-04 | pending | Document the 8 partial-failure-marker migrations (audit §5.5) for user to verify in prod | 1 | Output to Blocked — needs DB access. |
+| G-04 | blocked | Document the 8 partial-failure-marker migrations (audit §5.5) for user to verify in prod | 1 | **Blocked** — see Blocked entry G-04 below. Doc shipped at `docs/audits/g-04-partial-failure-markers.md` (per-migration verification SQL + recovery actions); needs founder Supabase MCP access to run the queries. |
 
 ### Stream I — CI / lint guardrails
 
@@ -358,10 +503,11 @@ Sentry is 95% there; PostHog funnel is half-blind; SLO framework exists but unse
 | L-06 | done | Seed `slo_definitions` with launch SLOs: lead p95<5min, advisor onboarding p95<1h, webhook delivery p95<10min, etc. | 1 | **Done in commit `12183619` (PR #289).** 8 SLOs seeded via idempotent `ON CONFLICT (name) DO UPDATE`: lead_delivery_p95_ms (300s), advisor_onboarding_p95_ms (1h), webhook_delivery_p95_ms (600s), api_success_rate (99.5%), cron_heartbeat_success_rate (99%), lead_queue_age_minutes (15min), webhook_retry_queue_age_minutes (30min), api_error_rate (1%). Migration: `supabase/migrations/20260602_seed_slo_definitions.sql`. |
 | L-07 | done | Wire SLO incident → Slack/PagerDuty/email alert sink (today writes to `slo_incidents` table only) | 1 | **Done in commit `824366e` (PR #289).** `lib/slo.ts`: added `notifyEmail()` using `OPS_ALERT_EMAIL \|\| SUPPORT_EMAIL` (consistent with `ai-cost-alerts.ts`, `cron-health-alert` pattern; fire-and-forget from `openIncident` for both warn + page severity). Slack + PagerDuty were already wired; this closes the email gap. Tests expanded 9→25 in `__tests__/lib/slo.test.ts`: `openIncident` (16 tests — no-op when unbreached, dedup, DB error, warn/page routing, no-env no-ops, SUPPORT_EMAIL fallback, Slack-throws swallowed, email subject, DB insert fields), `resolveIncident` (4 tests — DB update fields, no-PD-key, PD resolve event shape, PD-throws swallowed). |
 | L-08 | done | Extend `lib/posthog/events.ts` with: `advisor_selected`, `checkout_started`, `subscription_active`, `advisor_apply_submitted`, `lead_responded_to`, `dispute_opened` | 1 | **Done in commit `832feed3` (PR #289).** Added 6 EventName literals + typed EventProps entries covering the full advisor-matching and monetisation funnel. 22 tests in `__tests__/lib/posthog-events.test.ts`: all 6 events, null-field variants, getDistinctId (3 cases), EventName union completeness. |
-| L-09 | pending | Wire `posthog.identify(userId)` at signup + login so anonymous→identified mapping stitches sessions | 1 | P1. |
-| L-10 | pending | Validate PostHog mirror webhook (`supabase/functions/posthog-webhook-ingest`) — table is empty in live, either webhook misconfigured or no events captured | 1 | P1. |
-| L-11 | pending | Validate `web_vitals_samples` ingestion — table empty, in-house pipeline at `/api/web-vitals/route.ts` may not be receiving | 1 | P2. |
-| L-12 | pending | Wire `setLoggerUser()` in top-30 highest-traffic API routes (currently ~30 of 294 call it) | ~2 | P2. Adds user-id tagging to Sentry events. |
+| L-09 | done | Wire `posthog.identify(userId)` at signup + login so anonymous→identified mapping stitches sessions | 1 | **Done in commit `153cce4` (PR #289).** Added `identifyUser()` to `lib/posthog/server.ts`; wired into `app/auth/callback/route.ts` on PKCE + OTP success paths (fire-and-forget void call, no redirect delay). 17 tests: posthog-server.test.ts (8) + auth-callback.test.ts (9). |
+| L-10 | false-positive | ~~Validate PostHog mirror webhook — table is empty in live~~ | — | **False-positive** — verified 2026-04-29T22:30Z via Supabase MCP: `posthog_events_mirror` has 71 rows (all `$pageview`), latest at 2026-04-29T14:47Z. Edge Function v2 ACTIVE. Webhook was already configured and ingesting events since before this iteration; table was empty at audit time but has been populating normally. |
+| L-11 | done | Wire `WebVitals` component to also POST to `/api/web-vitals` so `web_vitals_samples` table receives data | 1 | **Done in commit `d588fbfb` (PR #289).** `WebVitals.tsx` was sending to GA (gtag) and `/api/track-event` but never to `/api/web-vitals`. Added fire-and-forget `fetch("/api/web-vitals", { keepalive: true })` alongside the existing beacon in production mode. Body: `{ metric, value, page_path, session_id: id, user_agent }`. Route validates via `isValidMetric()` Zod schema + 200/min rate limit already in place. |
+| L-12a | done | Wire `setLoggerUser()` in top-12 high-traffic consumer routes | 1 | Done commit `20f5e6c` (iter 137). 12 files: user-profile, notification-preferences, saved-comparisons, account/accept-terms, account/notifications, community/vote+posts+threads, article-comments, advisor-auth/session+data+profile. |
+| L-12b | done | Wire `setLoggerUser()` in all remaining routes | ~1 | **Done — all authenticated routes tagged.** Batch 7 (`d88ca44`): automation/*, bd-pipeline, competitors, fee-queue, fin-objection. Batch 7b (`eee5f1f5`): lib/require-admin (19 shared routes) + advisor-dashboard, marketplace-settings, broker-portal/deals, reviews/verify-client, user-review/moderate. Batch 8 (`0db941e4`): foreign-investment/update+verify, notify-price-change, regulatory-impacts, review-moderation, admin/verify, quotes/qa, seed. Batch 8b (`dc67fff4`): advisor-photo, analytics-dashboard (user-cookie path only), broker-portal/invoices/pdf, stripe/create-contract. cron/cleanup = false-positive (requireCronAuth, advisor_sessions reference is table cleanup not auth). |
 
 ### Stream M — SEO + structured data (audit §8)
 
@@ -372,11 +518,11 @@ The single highest-leverage finding (M-01: cover_image_url backfill) lives here.
 | M-01a | done | Site-wide default OpenGraph + Twitter card image — done out-of-loop in PR #227 | 1 | Resolved in PR #227 ("feat(seo): site-wide default opengraph-image + twitter-image (P0-6)") merged 2026-04-26T17:37Z. Adds the default fallback image so any page without a per-route OG override gets a branded card. |
 | M-01b | in flight | Per-article cover image backfill: populate `articles.cover_image_url` for the 266 published articles + ensure `app/article/[slug]/page.tsx` uses it for OG override | ~2 | P0 (residual). M-01a covered the site-wide default; this is the per-article custom-image work — still ~30–50% social-share CTR upside vs the generic default. Engineering side is one iteration (PR #283 — `generateMetadata` now prefers `cover_image_url` for OG/Twitter, with `/api/og` fallback; idempotent dry-run-by-default `scripts/backfill-cover-images.mjs` + `docs/runbooks/article-cover-image-backfill.md` ship the founder-runs procedure for the 266-row write). Closes when content batch lands the per-slug manifest. |
 | M-02 | done | Versus pages (600+ URLs) — emit JSON-LD: `Article` + `BreadcrumbList` + per-side `FinancialProduct` review schema | 1 | **Done in commit `3ab1bacf` (PR #296, draft).** Added `versusComparisonJsonLd()` to `lib/schema-markup.ts`; updated `app/versus/[slugs]/page.tsx` to replace WebPage+ItemList with Article + individual FinancialProduct per broker side. BreadcrumbList + FAQPage unchanged. 14 new tests in `__tests__/lib/schema-markup.test.ts`. |
-| M-03 | pending | Advisor pages — switch schema type from `ProfessionalService` to `["ProfessionalService", "FinancialService"]` for financial planners + wealth managers | 1 | P1. Entity-disambiguation gain in financial queries. |
-| M-04 | pending | Article meta_title/meta_description fallback path: auto-generate from `articles.excerpt` + `category` when DB fields are null (43 articles affected) | 1 | P1. |
-| M-05 | pending | Glossary auto-linkifier — inline-link 200+ terms from `lib/glossary.ts` in article body content | ~2 | P2. Topical-relevance gain. |
-| M-06 | pending | Render `articles.related_advisor_types` and `articles.related_verticals` as internal links on article pages | 1 | P2. |
-| M-07 | pending | Document domain-migration plan for Oct-Dec 2026 cutover (Vercel domain alias, GSC change-of-address, 301 mapping, registrar steps) | 1 | P0 — timing-bound. Doc-only this iteration; activation at Q4 via Domain Migration Agent #16. |
+| M-03 | done | Advisor pages — switch schema type from `ProfessionalService` to `["ProfessionalService", "FinancialService"]` for financial planners + wealth managers | 1 | P1. Entity-disambiguation gain in financial queries. Done commit `85c7236` (iter 129). |
+| M-04 | done | Article meta_title/meta_description fallback path: auto-generate from `articles.excerpt` + `category` when DB fields are null (43 articles affected) | 1 | P1. Done commit `353fa3a` (iter 131). Added meta_title/meta_description to Article type; generateMetadata now uses them with excerpt → auto-generated fallback chain. |
+| M-05 | done | Glossary auto-linkifier — inline-link 200+ terms from `lib/glossary.ts` in article body content | ~2 | Done commit `40080391` (PR #325). GLOSSARY_LINK_TARGETS built from GLOSSARY_ENTRIES, merged into SORTED_TARGETS, splitByLinks/linkifyHtml wire up automatically. 8 new tests. |
+| M-06 | done | Render `articles.related_advisor_types` and `articles.related_verticals` as internal links on article pages | 1 | Done commit `da5c46a` (PR #283). RELATED_VERTICAL_MAP (16 slugs) + RELATED_ADVISOR_TYPE_MAP (16 slugs) added to article page; "Related Topics" + "Find a Specialist" pill sections rendered when arrays non-empty. |
+| M-07 | done | Document domain-migration plan for Oct-Dec 2026 cutover (Vercel domain alias, GSC change-of-address, 301 mapping, registrar steps) | 1 | Done in commit `32609ec` (PR #283). `docs/runbooks/domain-migration.md` — 6-phase runbook: pre-migration audit (URL inventory, GSC baseline, authority snapshot, legacy redirect map) → DNS TTL reduction (T-14d) → Vercel custom domain + TXT verification (T-7d) → GSC property + change-of-address (T-7d) → final checklist (T-1d) → T=0 cutover (DNS + NEXT_PUBLIC_SITE_URL env var) → post-cutover monitoring (T+1h/24h/7d/30d/90d) + rollback. Key finding: only ONE env var change at T=0 propagates to all canonical tags, sitemap, robots.txt, schema.org URLs, Stripe URLs, email links. |
 
 ### Stream N — UI/UX P0/P1 (audit §6)
 
@@ -707,6 +853,21 @@ period, refund flow, terms-of-service updates per feature.
 | DD-02 | pending | Verified-by-invest.com.au badge — AFSL/ACL/ASIC check + ID verification | 5-7 | **P2.** Pure margin. **Deps:** DD-01 base, manual review + AFSL/ACL/ASIC check + ID verification. **DoD:** Stripe products Verification $299 one-off + Annual Renewal $199/year; workflow AFSL/ACL cross-check against ASIC public register + ID verification via Stripe Identity + insurance certificate upload; badge on listing + directory cards + AA-01 SEO pages; annual renewal cron + email + auto-revoke on expiry; tests for ASIC register API integration, ID verification flow, badge revoke on expiry, RLS on verification docs. **Compliance:** clear disclosure ("verification of credentials not endorsement of advice quality"), ASIC RG 234. |
 | DD-03 | pending | Booking + payment rail — Stripe Connect, 15% platform fee | 8-10 | **P2.** 15% take on every consultation booked. **Deps:** DD-01, calendar availability per advisor, Stripe Connect (destination charges or marketplace setup). **DoD:** advisor sets availability + service catalogue (initial $X, ongoing $Y); consumer books slot + pays via Stripe (15% platform fee + advisor receives net); cancellation policy + refund logic; calendar via existing Google Calendar connector; tests for booking conflict detection, payment + Connect transfer + fee split, cancellation refund, Calendar sync, double-booking prevention. **Compliance:** terms updated, escrow consideration if held >7 days, ASIC referral fee disclosure. |
 | DD-04 | pending | Real-time advisor bidding (auction model) — Stripe authorized capture per lead | 10-12 | **P3.** Doubles RPM but biggest behavioural shift — ship after DD-01/02/03 stable. **Deps:** DD-01 (tier infra), CC-06 (lead quality score), Stripe authorized capture. **DoD:** each lead surfaced to N matching advisors (5-10) with quality score; advisors place bid (real-time UI or pre-set max bid per category) with Stripe auth hold; highest bid wins, charge captured on accept (2hr SLA); losing advisors' auths released; bid floor based on lead score (CC-06); tests for bid-resolution logic, Stripe auth + capture flow, timeout handling, bid-floor enforcement, RLS on bid history. **Compliance:** clear consumer disclosure of auction model, ASIC referral fee disclosure, fair-allocation if multiple identical bids. |
+| DD-05 | pending | In-platform messaging / chat — consumer ↔ advisor inbox (closes the leaky bucket) | 8-12 | **P1 — single highest-leverage post-DD-03 add. Closes 30-50% of bookings currently leaking off-platform.** **Deps:** DD-01 base, LL-01 user profile, V-NEW-04 RLS isolation gate. **DoD:** `lib/messaging/{thread,messages,attachments,delivery}.ts` modules; tables `message_threads` + `messages` + `message_attachments` (RLS scoped to participants only); `app/api/messages/{send,thread/[id]}/route.ts`; `app/messages/{page.tsx,[thread]/page.tsx}`; push + email fan-out; tests for RLS isolation, attachment scan, delivery retry, soft-delete, audit log. **Compliance:** message log = audit trail for ASIC/AFCA disputes; retention 7yr per ASIC RG 105. |
+| DD-06 | pending | E-signature for engagement letters — DocuSign/HelloSign integration | 3-5 | **P1.** Locks engagement to platform legally. **Deps:** DD-05 chat, DocuSign or HelloSign account (founder action — 15min sign-up + API key). **DoD:** integration with DocuSign/HelloSign API; advisor uploads engagement letter template; consumer signs in-thread; signed PDF stored in DV-01 vault + linked to message thread; signature audit (IP, timestamp, identity tier from DD-08); webhook handling for signed/declined/expired; retry on failure; RLS; audit log. **Compliance:** Electronic Transactions Act 1999, AFSL engagement-letter requirements, audit trail for ASIC. |
+| DD-07 | pending | Two-tier contact reveal — hide email/phone until deposit paid | 2 | **P1.** Forces deposit collection → captures the 30-50% leak. **Deps:** DD-03 booking + Stripe deposit, DD-05 chat. **DoD:** consumer + advisor contact info masked in UI until first Stripe payment confirmed; reveal triggered on payment-intent succeeded webhook; "you'll get [advisor]'s direct contact when you pay your deposit" copy; tests for masking on all surfaces (profile, bid card, thread header), reveal on paid + revoke on refund, audit log of reveals. **Compliance:** Privacy Act consent, clear consumer disclosure of deposit-required model. |
+| DD-08 | pending | Multi-tier verification badge ladder + bid priority hookup (extends DD-02) | 4-6 | **P2.** **Note: per-type licence verification rules already exist in `lib/advisor-verification.ts` (AFSL, ACL, ASIC FAR, TPB, AUSTRAC, AFCA mappings).** This item is the user-facing tier ladder (Basic / Standard / Enhanced / Premium) + visible badges + bid-priority weight in allocation algorithm. **Deps:** DD-02 base verified badge, `lib/advisor-verification.ts` (already shipped), Stripe Identity for ID checks (founder action — toggle in Stripe dashboard). **DoD:** four tiers — Basic (email confirmed), Standard (AFSL/ACL ✓ via existing rules), Enhanced (Standard + ID via Stripe Identity + insurance certificate), Premium (Enhanced + ≥12mo on platform + ≥4.8★ over ≥10 reviews); per-tier badge SVG + tier-weighted ranking input to allocation algorithm; advisor portal upgrade flow per tier; tests for tier transitions (downgrade on lapsed insurance, upgrade on hitting Premium criteria), RLS on verification docs, badge rendering. **Compliance:** "verification of credentials not endorsement of advice quality" disclaimer per ASIC RG 234, GAW. |
+| DD-09 | pending | Verified-purchase review enforcement — gate review submission behind paid bookings | 3-4 | **P2 — extends RR-01 with payment gate.** **Note: review submission infra exists (`/api/user-review`, `/api/advisor-review`, `/api/user-review/moderate` + `/verify` already shipped per D-11 batches).** This item is the rule that ONLY consumers who paid through DD-03 (Stripe Connect booking) can leave a review. **Deps:** DD-03 booking, DD-05 chat (engagement linkage), RR-01 review verification badge. **DoD:** review submit-route gates on `bookings.status='completed'` + `bookings.consumer_id = auth.uid()`; `verified_purchase=true` flag on review row; visible "Verified purchase" badge alongside RR-01; tests for gate enforcement (unpaid → 403), badge rendering, soft-delete of legacy unverified reviews, RLS, audit log. **Compliance:** factual statement of verification, no implied endorsement. |
+| DD-10 | pending | Money-back guarantee on first session — platform-funded refund pool | 4-6 | **P2.** Removes "what if this advisor sucks?" friction (conversion +30-50% est on first-time consumers). **Deps:** DD-03 booking, DD-05 chat for dissatisfaction reporting, DD-12 dispute UI. **DoD:** opt-in guarantee on first session (advisor-funded or platform-reserve-funded — config flag); 7-day window post-session; mediation flow before refund issued; refund via existing Stripe refund path; per-advisor cap (max 2 guaranteed refunds before opt-out); tests for window, cap, refund accounting, RLS. **Compliance:** terms updated, refund-policy disclosure, ACL Schedule 2 alignment. |
+| DD-11 | pending | Optional escrow for engagements > $X — milestone-released payments | 8-12 | **P2.** Unlocks high-value engagements ($10k+). **Deps:** DD-03 Stripe Connect, DD-05 chat (milestones agreed in-thread). **DoD:** consumer pays full engagement upfront → held in platform escrow account; advisor + consumer agree milestones in chat; release per milestone via shared "approve" button; auto-release after N days if consumer silent (configurable); platform fee taken on each release; tests for hold/release/refund flows, milestone audit log, partial-completion refund, RLS. **Compliance:** AFS license review of escrow handling, AUSTRAC consideration if held >7d, terms-of-service update. |
+| DD-12 | pending | Public-facing dispute mediation UI + AFCA evidence-pack export | 5-7 | **P2.** **Note: internal dispute infra already exists — `lib/advisor-lead-disputes.ts` + `lib/advisor-lead-dispute-resolver.ts` + `cron/auto-resolve-disputes` + `admin/automation/disputes` + Stripe `charge.dispute.created` handler all shipped.** This item is the consumer + advisor public-facing UI + evidence-pack export for AFCA referral. **Deps:** internal dispute logic (already shipped), DD-05 chat (evidence base), DD-11 escrow (refund mechanism), AFCA membership (founder action — 1hr online application). **DoD:** consumer + advisor can flag dispute via UI → triggers existing internal mediation; structured Q&A surface for evidence collection; if mediation fails, evidence pack auto-exports in AFCA case format (chat log + payment history + signed docs from DD-06 + KYC docs from DV-01); per-advisor dispute rate visible on profile (DD-14); tests for evidence-pack schema validation against AFCA spec, mediation timeout, audit log immutability. **Compliance:** AFCA member-firm requirements, ASIC RG 165 IDR. |
+| DD-13 | pending | PI insurance auto-verification cron + auto-suspend on lapse | 3-4 | **P2.** **Note: AFSL expiry monitoring already exists (`cron/afsl-expiry-monitor`).** This item extends to PI specifically: annual cron reads each verified advisor's PI expiry; 60d/30d/7d email reminders; auto-suspend listing on lapse; visible "PI current to YYYY-MM" badge on profile. **Deps:** DD-02 verified badge (insurance cert upload exists). **DoD:** new `cron/insurance-verification` (separate from AFSL monitor); reminder schedule; auto-suspend + restore on renewal; tests for suspension, restoration, RLS, audit log. **Compliance:** AFSL holders must hold compliant PI per ASIC RG 126. |
+| DD-14 | pending | Public per-advisor stats SURFACE — win rate · response time · NPS · dispute rate on profiles | 4-5 | **P2.** **Note: data is already being collected — NPS via `<NPSPrompt>` + `/api/nps` shipped; lead acceptance + response time tracked in advisor-lead infra; dispute rate tracked via existing dispute infra.** This item is the public-facing surface that stamps these stats on profile + bid card + directory listing. **Deps:** DD-05 chat (response time data confirmed), II-01 NPS weighting (consumes same data). **DoD:** per-advisor rolling 12mo stats surface — accepted-bid % · median response time · NPS · disputes per 100 engagements; opt-out only for stats with <5 data points; tests for stat aggregation accuracy, freshness (<24h lag), opt-out gate, RLS, badge rendering. **Compliance:** factual statistics only, GAW. |
+| DD-15 | pending | Performance bonds — optional advisor security deposit | 4-5 | **P3.** Float = interest revenue + dispute reserve + commitment signal. **Deps:** DD-11 escrow infra. **DoD:** opt-in security deposit ($500-$2k) held in advisor's wallet (existing wallet infra); refunded after 12mo if zero disputes; forfeited proportionally to fund consumer refunds via DD-12; visible "bonded" badge on profile; tests for hold/refund/forfeit accounting, 12mo cron, RLS, audit log. **Compliance:** terms-of-service update, AUSTRAC if aggregated bond float exceeds threshold. |
+| DD-16 | pending | Calendar-availability hookup to allocation algorithm | 3-4 | **P3.** **Note: advisor calendar embed exists (MK-01 already queued; booking-side handled by DD-03).** This item is the small hookup making the allocation algorithm READ each advisor's current capacity before matching. **Deps:** DD-03 calendar integration, MK-01 calendar embed, `lib/marketplace/allocation.ts`. **DoD:** advisor sets weekly recurring availability + auto-pause when inbox > N unanswered; allocation algorithm filters out unavailable advisors before existing semantic match (`lib/embeddings.ts`) and tier weighting; consumer sees realistic "first response within X hrs" copy; tests for availability filter accuracy, auto-pause/resume, fallback when no available advisor in category, RLS. **Compliance:** factual ETA only, GAW. |
+| DD-17 | pending | Calendar booking embedded inside chat — "Pick a slot" button in DD-05 thread | 5-7 | **P2.** Removes the "let me send you my Calendly" leak — booking happens inside the conversation. **Deps:** DD-03 booking route (already routed through Stripe), DD-05 chat (rendering surface), MK-01 calendar embed. **DoD:** message-thread component renders advisor availability slots inline; consumer taps slot → triggers existing DD-03 Stripe checkout in modal; on payment success, booking confirmation message auto-posted to thread + DD-07 reveal triggered; tests for inline rendering, slot tap → checkout flow, post-payment confirmation message, RLS. **Compliance:** clear "this triggers a payment" copy per ACL pre-purchase disclosure. |
+| DD-18 | pending | Bid floor by lead score — connect existing scorer to existing auction | 1-2 | **P2 — small connector. Both halves exist.** **Note: `lib/advisor-lead-scoring.ts` already produces 0-100 scores with cold/warm/hot bands; DD-04 auction model defines bid-floor enforcement.** This item is the lookup that DD-04's allocation reads the score to set per-lead minimum bid (cold=$5, warm=$25, hot=$50 — config-driven). **Deps:** DD-04 auction (when shipped), `lib/advisor-lead-scoring.ts` (already shipped), CM-03 (cohort-aware floor variants). **DoD:** floor lookup function + config table; per-bid validation; visible "Lead score: warm — $25 floor" copy on bid form; tests for lookup accuracy, floor enforcement, config override, RLS, audit log. **Compliance:** factual disclosure of floor, no advisor-side exclusivity. |
+| DD-19 | pending | Repeat-engagement memory — returning consumers see prior advisor surfaced | 3-5 | **P2.** LTV +30-50% (repeat engagements compound). **Deps:** DD-03 booking (engagement history), LL-01 user profile, `lib/marketplace/allocation.ts`. **DoD:** allocation algorithm checks `bookings` table for prior engagement between consumer and any advisor in matched category → surfaces prior advisor as "Worked with you before" badge at top of results; if dispute history → blocks rematch; consumer can override ("show me different advisors"); tests for surfacing accuracy, dispute-block, override flow, RLS, audit log. **Compliance:** factual prior-engagement disclosure, no implied endorsement of repeat advisor. |
 
 ### Stream EE — Distribution / embeds (added 2026-04-27)
 
@@ -971,10 +1132,95 @@ Items that ship LAST, in the final week before launch (Month 4 of pre-launch roa
 | CO-06 | pending | Cutover runbook — minute-by-minute switch plan | 1 | **Tier final.** Doc only. Lives in `docs/runbooks/launch-day.md`. Includes rollback decision tree. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
 | CO-07 | pending | Final anonymity audit — full CL-09 stress test + WHOIS + social re-check | 1 | **Tier final.** Last gate before launch. Re-runs CL-09 across the entire shipped surface plus a fresh manual review. **Deps:** CL-09 stress test exists. Full DoD: PRE_LAUNCH_PRODUCT_PLAN_FINAL.md (pending). |
 
+### Stream FF — Revenue density (added 2026-04-30 — 7→10 marketplace ladder, Theme 4)
+
+Best-in-class marketplaces have 8-12 monetisation surfaces. Today the platform has 4 (CPC + tiered listings + verified + booking fee). Each item below adds margin without much cost. **Audit note:** items the audit found already shipped were dropped from this stream — surge / dynamic pricing is fully built in `lib/dynamic-pricing.ts` (rules-based evaluator with multipliers, floors, caps, audit reasons + tests), so it's NOT in this stream. Sponsored placements infra (`cron/sponsored-placement-apply`, `cron/sponsored-renewal-reminder`, `admin/sponsored-placements`) is also shipped — FF-01 below is the auction LAYER on top of that infra, not a from-scratch build.
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| FF-01 | pending | Featured search-result weekly auctions — second-price layer on top of existing sponsored-placement infra | 5-7 | **P2.** $50-200k/yr at modest bid volumes. **Note: sponsored-placement infra already shipped** (apply cron, renewal cron, admin page). This item adds the auction layer (bidding window + sealed-bid resolution + winner→placement transition) on top. **Deps:** existing sponsored-placement infra, DD-01 tier infra, Stripe authorized capture (DD-04 pattern). **DoD:** weekly auction per category × per location; top-2 search positions sold; sealed-bid second-price (Vickrey); winner charged Monday, placement Mon-Sun (writes to existing sponsored-placement records); visible "Sponsored — $X bid this week" disclosure; tests for auction-resolution logic, payment + capture, fair tie-break, integration with sponsored-placement-apply cron, RLS. **Compliance:** clear "Sponsored" label per ASIC RG 234. |
+| FF-02 | pending | Wallet float interest — accrual tracking + reconciliation cron | 2-3 | **P3 — code is small, value is "free" $4-40k/yr.** **Deps:** existing wallet infra (advisor pre-funded wallets). **Founder action item:** move aggregate wallet float to interest-bearing AU bank account (~30 min trip). **DoD:** monthly cron reads aggregate wallet balance; calculates platform-earned interest; books to GL `interest_income`; per-advisor wallet statements show interest is platform-retained (terms update); tests for accrual math, reconciliation (sum of wallet balances = bank statement), audit log, RLS. **Compliance:** terms-of-service update — wallet interest belongs to platform; AUSTRAC if float exceeds threshold (~$1M+). |
+| FF-03 | pending | Pro+ tier ($399/mo) bundle — concierge AI + premium content + CPD + events | 8-12 | **P2.** Upsell ~30% of Pro → +$50-150k MRR est. **Deps:** DD-01 tier infra, FF-04 CPD product, FF-08 premium paywall. **DoD:** new "Pro+" Stripe product alongside Pro; bundles concierge AI access (CC-* surface) + premium content paywall pass + N CPD credits/yr + advisor-network events ticket; advisor portal upgrade UI; tests for tier gating, bundled-access provisioning, downgrade reverting access, RLS, audit log. **Compliance:** clear bundle disclosure, ASIC RG 234. |
+| FF-04 | pending | CPD credits as a product — partner with FPA/FAAA, charge per credit | 10-15 | **P3.** $50-150k/yr + switching-cost moat. **Deps:** FPA/FAAA accreditation deal (founder action — 1 phone call + accreditation paperwork). **DoD:** platform-completed compliance reading (linked to articles + courses) issues CPD points per FPA/FAAA scheme; per-credit Stripe charge or bundled in Pro+; per-advisor CPD ledger + immutable audit-trail; annual export to FPA/FAAA per advisor; tests for issuance idempotency, ledger accuracy, export schema, RLS, audit log. **Compliance:** FPA/FAAA accreditation requirements, CPD audit trail per ASIC RG 105. |
+| FF-05 | pending | Annual data report — "State of AU Financial Advice" ($999) | 6-8 | **P3.** $50-200k/yr + PR halo. **Deps:** all marketplace streams stable (need ≥6mo data), PostHog + Supabase aggregations. **DoD:** automated data export (pricing benchmarks per category × location, demand heatmaps, advisor-supply density, lead-conversion benchmarks); founder writes commentary; PDF + interactive web version behind Stripe one-off charge; per-buyer license terms; tests for export reproducibility, license-gate enforcement, RLS. **Compliance:** anonymised data only (no per-advisor PII), data-licensing terms, factual benchmarks. |
+| FF-06 | pending | Stripe Connect markup — 15% → 15.6% (pass-through Stripe fees baked in) | 1 | **P3 — tiny effort, +0.6% on every booking volume.** **Deps:** DD-03 booking + Stripe Connect. **DoD:** platform-fee config bumped from 0.150 → 0.156; advisor payout calc updated; receipt copy updated to show "platform fee 15.6% (incl. processing)"; tests for fee math, payout reconciliation, audit log. **Compliance:** clear fee disclosure pre-booking. |
+| FF-07 | pending | PI insurance reseller — partner with insurer, take 10-15% commission | 6-8 | **P3.** $20-100k/yr depending on advisor base. **Deps:** insurer partnership (founder action — 1-3 month sales cycle), DD-13 insurance verification cron. **DoD:** in-portal "renew or buy PI" flow; quote sourced from insurer API; consumer→insurer redirect with referral code; commission tracked via existing affiliate infra; PI cert auto-pushed back to DD-13 verification on policy issue; tests for quote flow, commission attribution, cert sync, RLS. **Compliance:** "we receive a commission" disclosure per ASIC RG 234, no insurance advice. |
+| FF-08 | pending | Premium content paywall — top 5% of articles + AI tools + benchmarks | 5-7 | **P3.** $30-100k/yr standalone or bundled in Pro+. **Deps:** existing article infra, FF-03 Pro+ bundle, V-NEW-02 AI factual filter. **DoD:** `app/(paywall)/premium/*` route tree; per-article paywall flag; metered preview (first 30%); $9.99/mo Stripe subscription or Pro+ bundle pass; cancel-anytime per ACL Schedule 2; tests for paywall enforcement, preview metering, subscription provisioning, RLS, audit log. **Compliance:** factual content only behind paywall, ASIC RG 234, GAW, no personal advice. |
+| FF-09 | pending | Performance bonds revenue accounting (companion to DD-15) | 1-2 | **P3 — bookkeeping companion to DD-15.** **Deps:** DD-15 performance bonds. **DoD:** monthly cron books bond float interest to platform GL; per-advisor bond status visible in their portal; tests for accounting correctness, RLS, audit log. **Compliance:** bond terms pre-disclosed, AUSTRAC if aggregate float crosses threshold. |
+
+### Stream GG — Compliance moat (added 2026-04-30 — 7→10 marketplace ladder, Theme 5)
+
+In regulated industries, the platform with the cleanest compliance posture wins by default. **Audit note:** `lib/compliance.ts` (429 LOC) already has SSOT text for RG 234 disclosures, GENERAL_ADVICE_WARNING, PDS_CONSIDERATION, etc.; AFSL numbers already display on advisor cards + broker cards + admin pages; `cron/afsl-expiry-monitor` already runs. The gap is auto-render components, CI gates, BID workflow, AFCA evidence-pack export, and AUSTRAC AML monitoring — items below.
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| GG-01 | pending | AFSL display CI gate — fail build if any advisor card / bid card / profile is missing the existing AFSL/ACL field render | 2 | **P1.** **Note: AFSL fields already display in product.** This item is the CI gate that prevents future drift. **Deps:** existing professionals schema, advisor-card components. **DoD:** `scripts/check-afsl-display.mjs` — scans all components rendering advisor data + asserts AFSL/ACL number is rendered alongside name; CI job `afsl-display-gate` blocks merge on miss; allowlist for non-licensee categories (e.g., mortgage brokers under ACL not AFSL); tests for scanner accuracy across 20 fixtures (positive + negative); per-component documentation. **Compliance:** ASIC RG 175 — AFSL number display is mandatory; CI gate makes drift impossible. |
+| GG-02 | pending | RG 234 disclosure auto-render component — every page that fires affiliate fees auto-includes disclosure | 3-4 | **P1.** **Note: disclosure text already exists in `lib/compliance.ts`.** This item is the layout-level auto-render component + CI gate. **Deps:** `lib/compliance.ts` SSOT, `lib/tracking.ts` affiliate detection. **DoD:** layout-level component reads page route + affiliate-link presence + auto-renders RG 234 disclosure block from `lib/compliance.ts`; CI gate `rg234-disclosure-gate` blocks PR if affiliate link added without disclosure mount-point; tests for detection accuracy, render correctness across 5 page types, snapshot tests on disclosure copy. **Compliance:** ASIC RG 234 — affiliate fee disclosure mandatory at point of recommendation. |
+| GG-03 | pending | Statement of Advice (SoA) template generator — pre-fills consumer details + advisor's engagement letter framework | 8-12 | **P2.** Saves advisors 2-3 hrs per engagement → switching-cost moat. **Note: see CC-07 in queue for an adjacent SoA generator concept; this item is the operational doc-generation pipeline (template fill + signature flow + storage), not the AI drafting from CC-07.** **Deps:** DD-05 chat (consumer details), DD-06 e-sign, DV-01 vault (storage). **DoD:** advisor uploads SoA template (Word/PDF) once; per-engagement, system fills consumer details + scope-of-advice + fee disclosure + best-interests-duty (GG-04) reasoning; advisor reviews + edits + signs via DD-06; consumer signs; both copies stored in DV-01; immutable audit log; tests for template-fill correctness, signature flow, storage RLS, audit-log immutability. **Compliance:** ASIC RG 175 SoA requirements, AFSL holder responsibilities, audit trail per RG 105. |
+| GG-04 | pending | Best-interests-duty workflow — advisor checklist before SoA can be issued | 6-8 | **P2.** ASIC-aligned + insurance discount possible. **Deps:** GG-03 SoA generator, DD-05 chat. **DoD:** structured checklist (client objectives identified · scope appropriate · alternatives considered · reasoning documented · client priorities ranked); checklist must be completed before SoA generates; reasoning lives in vault audit-trail; tests for checklist enforcement (blocking gate), audit-trail immutability, RLS, per-advisor checklist completion stats (feeds DD-14). **Compliance:** Corporations Act s961B best-interests duty, ASIC RG 175. |
+| GG-05 | pending | AFCA dispute evidence-pack export — companion to DD-12 | 4-5 | **P2 — companion to DD-12 public-facing dispute UI.** **Note: internal dispute resolution infra already shipped** (`lib/advisor-lead-disputes.ts` + cron + admin). This item is specifically the AFCA-format evidence-pack export. **Deps:** DD-12 public dispute UI, existing dispute resolution infra, DD-05 chat (evidence base). **DoD:** if mediation fails, `app/api/disputes/[id]/afca-export/route.ts` produces evidence pack: chat log + payment history + signed engagement letter + SoA + KYC docs + reasoning trail; AFCA-format JSON + PDF; per-export audit log; tests for schema validation against AFCA spec, completeness check, RLS, audit log. **Compliance:** AFCA member-firm requirements, ASIC RG 165 IDR escalation. |
+| GG-06 | pending | AUSTRAC AML threshold monitoring — engagements > $10k auto-flag for CDD step | 6-8 | **P2.** Pulls AML-burdened advisors onto the platform. **Deps:** DD-03 booking, DD-11 escrow. **Founder action item:** AUSTRAC enrolment confirmation (~1hr online — likely already done as AFSL holder). **DoD:** `lib/compliance/austrac-monitor.ts` — engagements + escrow + bond float aggregated per consumer; threshold $10k triggers CDD requirement (advisor uploads ID + verifies funds source); blocked status until CDD complete; SMR (suspicious matter report) flag for unusual patterns; tests for threshold detection, CDD blocking, SMR flag, RLS, audit log. **Compliance:** AML/CTF Act 2006, AUSTRAC reporting obligations. |
+| GG-07 | pending | Annual compliance health-check cron — per-advisor January report | 5-6 | **P2.** Renewal + retention. **Deps:** DD-13 insurance cron, GG-04 BID workflow, FF-04 CPD ledger. **DoD:** Jan 15 cron emails each advisor: PI status (current/expiring/lapsed) · CPD progress (X of Y credits done) · open disputes · BID workflow compliance (% of SoAs with full checklist) · self-service fix-it links per item; tests for cron schedule, email content correctness, fix-it link routing, audit log. **Compliance:** ASIC RG 105 audit-readiness, FPA/FAAA CPD requirements. |
+| GG-08 | pending | Right-to-be-forgotten — full deletion across leads, messages, escrow, invoices in one transaction | 4-6 | **P2.** **Note: account deletion is partially built (`account_deletion_requests` table per K-07 + Blocked entry A-MISSING-TABLE-1).** This item finishes it: a single transactional deletion across all user-data tables. **Deps:** existing `account_deletion_requests` table (needs MCP migration apply per A-MISSING-TABLE-1), DD-05 chat tables, DD-11 escrow. **DoD:** single transactional deletion across all user-data tables (leads + advisor_leads + messages + message_attachments + escrow_holds + invoices + reviews + bookings + audit logs); GDPR + Privacy Act compliant retention exception for AFSL audit-required data (7yr); tests for atomic deletion (rollback on partial failure), retention-exception preservation, schema completeness check, RLS, audit log. **Compliance:** Privacy Act APP 11.2, GDPR Article 17, ASIC RG 105 retention exceptions. |
+| GG-09 | pending | Data sovereignty — all consumer data in ap-southeast-2 only | 2-3 | **P2 — config-only, unlocks bank/super-fund partnerships.** **Note: Supabase project currently in `eu-west-1` per memory — migration required, founder approval needed for downtime window.** **Deps:** Supabase config, Sentry config, Vercel deployment region. **DoD:** verify Supabase project region is `ap-southeast-2` (migration plan needed); Sentry data residency = AU; Vercel deploy regions limited to `syd1`; per-vendor data-residency audit + signed DPA; CI gate `data-sovereignty-audit` checks env config; tests for residency assertion, DPA presence, audit log. **Compliance:** Privacy Act APP 8 cross-border disclosure, banking partnership requirements (CBA/ANZ/NAB/WBC due diligence). |
+
+### Stream HH — Mobile + extra distribution (added 2026-04-30 — 7→10 marketplace ladder, Theme 6)
+
+Beyond the web. **Audit note:** EE-01..EE-04 already cover embed widget + Chrome ext + WhatsApp/Telegram + API marketplace. HH adds: native mobile apps, accountant referral program (distinct from existing consumer-side referrals), and Slack/Teams plugin.
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| HH-01 | pending | iOS native app — consumer + advisor surfaces, push notifications | 30-40 | **P3 — separate repo (RN/Expo), large build.** **Deps:** all DD-* shipped + stable for ≥30 days, DD-05 chat (push key surface). **DoD:** `apps/mobile/` (RN/Expo); consumer flows = job posting, chat, calendar booking, search; advisor flows = lead inbox, bid placement, calendar, payouts; biometric auth via Expo LocalAuthentication; APNs push integration via Expo Push; deep-linking to web routes; App Store review prep (privacy nutrition labels, screenshots, ASIC-compliant copy); tests for auth flows, push delivery, calendar booking, deep-link routing, accessibility per WCAG 2.1 AA. **Compliance:** App Store financial-services category requirements, AFSL display in-app, factual content only. |
+| HH-02 | pending | Android native app — same scope as HH-01 | 30-40 | **P3 — separate repo.** Builds from HH-01 RN/Expo codebase. **Deps:** HH-01 (shared codebase). **DoD:** Android-specific platform integration (Material You theme, Android push via FCM, Play Store review, Android intent routing); separately tested at parity with iOS; tests as HH-01. **Compliance:** as HH-01 + Play Store financial-services policy. |
+| HH-03 | pending | Accountant referral program — BAS agents + tax accountants refer consumers needing FA, 10-20% commission | 8-12 | **P2.** $200k-1M+/yr at scale. **Note: consumer-side referrals exist (`app/account/referrals/`).** This item is the accountant-firm-side referral program — different actor, different commission structure. **Deps:** DD-01 tier infra, existing affiliate-tracking infra in `lib/tracking.ts`. **Founder action item:** sign first 20 firms via direct outreach (handshake sales). **DoD:** referrer-portal sign-up + W-9-equivalent + ABN verification; per-referral attribution (cookie + email + ABN match); commission % per tier (10% standard, 20% premium volume); monthly Stripe Connect payouts to referrer; tests for attribution accuracy, commission calc, payout flow, RLS, audit log. **Compliance:** clear referral-fee disclosure to consumer per ASIC RG 234, AFSL referral-arrangement compliance. |
+| HH-04 | pending | Slack / Microsoft Teams plugin — find a specialist in-channel for corporate finance + accounting firms | 8-12 | **P3.** Captures B2B intent in collaboration tools. **Deps:** existing v1 API, advisor directory data. **DoD:** Slack app + slash command `/invest find <category> <location>` returns top-3 advisor cards; Teams app same; OAuth back to invest.com.au for full lead-flow; published to Slack App Directory + Teams Marketplace; tests for command parsing, OAuth flow, rate limiting, audit log. **Compliance:** factual directory only, no implied recommendation, ASIC RG 234 if affiliate cards surface. |
+
+### Stream II — Strategy + optimisation tooling (added 2026-04-30 — 7→10 marketplace ladder, meta-moves)
+
+Each item below extends EXISTING infrastructure with the missing consumption / experiment / vouching layer. **Audit note:** NPS collection (`<NPSPrompt>` + `/api/nps`) is shipped but not yet weighted into the allocation algorithm; cohort-stats (`/api/cohort-stats` + `cron/cohort/refresh`) is shipped but not yet used for pricing experiments; consumer referrals are shipped but advisor-to-advisor vouching is not.
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| II-01 | pending | NPS weighting in allocation algorithm (consumes existing collection) | 3-4 | **P2.** **Note: NPS is already collected via `<NPSPrompt>` + `/api/nps`.** This item is the consumption layer — weight NPS into ranker + surface joint NPS dashboard. **Deps:** existing NPS data, `lib/marketplace/allocation.ts`. **DoD:** allocation algorithm reads per-advisor rolling 12mo NPS + weights into ranking (replaces simple tier × postcode); public NPS dashboard at `/about/quality`; per-advisor NPS surfaced via DD-14; tests for ranking weight calc, dashboard render, RLS, audit log. **Compliance:** factual statistics only, GAW. |
+| II-02 | pending | Cohort-based pricing experiments (extends existing cohort infra) | 4-6 | **P3.** Continuous margin optimisation. **Note: cohort infra exists (`/api/cohort-stats`, `cron/cohort/refresh`).** This item adds the pricing-experiment overlay. **Deps:** DD-01 tier infra, existing cohort infra. **DoD:** `lib/experiments/pricing-cohorts.ts` — assigns each new advisor to a cohort (deterministic by user_id hash); cohort defines tier prices + commission % + bundling; cohort performance tracked (advisor LTV + churn + NPS); winning cohorts auto-promoted monthly; founder approval gate for promotion; tests for assignment determinism, cohort isolation, promotion-criteria correctness, audit log. **Compliance:** terms-of-service generic across cohorts, no per-cohort hidden fees. |
+| II-03 | pending | Advisor-to-advisor vouching + revenue-share referrals (distinct from consumer referrals) | 6-8 | **P3.** Network-effect lever. **Note: consumer-side referrals already shipped (`app/account/referrals/`).** This item is advisor-to-advisor vouching — different actor, different mechanic. **Deps:** DD-01 tier, HH-03 attribution infra. **DoD:** advisor portal "refer a colleague" flow; vouching badge on profile (X verified peers vouched); revenue share 5-10% of referred advisor's first-12mo platform fees; tests for attribution, vouching cap (max 5 vouches/advisor), revenue share calc, RLS, audit log. **Compliance:** referral-arrangement disclosure per ASIC RG 234. |
+| II-04 | pending | Industry awards platform — "AU Financial Advice Awards" nominations + voting + winner badges | 6-8 | **P3.** Brand moat — organisers control category definitions = control narrative. **Deps:** advisor directory data, DD-14 public stats surface. **DoD:** annual award categories (Advisor of the Year — SMSF / FHB / Foreign Investment / etc.); nomination form (consumer + peer + self); structured voting (consumer 1pt + peer 3pts + judging panel 5pts); fraud detection (multi-vote per IP, suspicious patterns); winner badges on advisor profile; year-over-year archive; tests for nomination flow, voting weight, fraud detection, badge rendering, audit log. **Compliance:** factual award only, voting methodology disclosed, no implied editorial endorsement of winners outside the award context. |
+
+### Stream JJ — Foreign-investment hero hub + multi-language (added 2026-04-30 — 7→10 marketplace ladder + INVEST nav strategy)
+
+Foreign-investment is a cross-cutting vertical. Market: ~$10B/yr non-resident AU property purchases, FIRB application fees $4-48k each, advisor LTV per non-resident buyer = $40-80k. Almost no AU competitor does this well.
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| JJ-01 | pending | Upgrade `/foreign-investment` to hero hub with sticky sub-nav | 3-4 | **P1.** **Deps:** existing `/foreign-investment` route, stream W components (W-12 HubPage HOC). **DoD:** sticky sub-nav (Overview · Property · Tax · Visa · Calculators · Find a specialist); hero with non-resident value prop; co-shipped FIRB calculator suite (already exists per memory) + non-resident CGT + non-resident dividends linked from sub-nav; cross-link from every other hub mega-menu; smoke E2E tests. **Compliance:** factual + GAW + non-resident-specific tax disclaimer. |
+| JJ-02 | pending | Multi-language content scaffolding — Mandarin (zh) + Korean (ko) per existing `lib/i18n` infra | 6-8 | **P1.** **Deps:** existing `lib/i18n/locales.ts` + `dictionaries.ts` (`/zh` + `/ko` partially scaffolded), JJ-01 hero hub. **DoD:** translate top-30 foreign-investment pages to zh + ko; `hreflang` link tags on every translated page; sitemap multi-locale; tests for translation completeness, hreflang correctness, locale-routed analytics. **Compliance:** all translated compliance disclosures sourced from `lib/compliance.ts` (translated SSOT), GAW per locale. |
+| JJ-03 | pending | Geo-IP banner + language switcher — top-of-page CTA for non-AU visitors | 2-3 | **P2.** **Deps:** Vercel geo-IP edge feature, JJ-02 translations. **DoD:** edge function reads request country + accept-language; injects banner "Investing in Australia? See our non-resident guide →" linking to JJ-01 in matched language; persistent language switcher in nav; remembers preference (cookie); tests for geo-IP routing, banner rendering, language persistence, CSP/cookie compliance. **Compliance:** Privacy Act consent for geo-IP cookie. |
+| JJ-04 | pending | Specialist advisor pipeline — FIRB lawyers + migration agents + intl tax + non-resident buyer's agents | 4-6 | **P1.** Each non-resident buyer's advisor LTV = $40-80k. **Deps:** existing professionals schema + add new types via apply_migration; advisor-apply flow extension. **DoD:** new advisor-type rows + `professionals_type_check` constraint update via apply_migration following existing drop-and-recreate pattern; specialist-only directory at `/foreign-investment/specialists`; advisor-apply form variants per type with type-specific verification (e.g., MARA registration for migration agents); lead source `'foreign-investment'` routing to specialist queue; tests for routing, verification per type, RLS, audit log. **Compliance:** MARA + ASIC + Law Society reciprocal verification per advisor type, factual disclosure. |
+| JJ-05 | pending | WeChat mini-program + Xiaohongshu landing pages — China-resident discovery surface | 8-12 | **P3.** Captures audiences who never visit Western search engines. **Deps:** JJ-02 zh translations, WeChat developer account (founder action — Chinese business entity required, ~3-month setup). **DoD:** WeChat mini-program deep-linked to JJ-01 (read-only — no payment via WeChat); Xiaohongshu (Little Red Book) brand account + landing posts pointing to /zh/foreign-investment; per-channel attribution tracking; tests for deep-link routing, attribution, content rendering on WeChat WebView. **Compliance:** Chinese content regulations, AU AFSL display, factual property + tax info only. |
+| JJ-06 | pending | Foreign-buyer-eligible badge for property listings — FIRB pre-screen + qualification check | 3-4 | **P2 — coordinates with NN-04 listing monetisation.** **Deps:** JJ-01 hub, NN-01 property listings. **DoD:** per-listing optional foreign-buyer-eligible flag (seller declares + uploads FIRB pre-approval doc OR FIRB-not-required justification); badge on listing card + filter on listing search; admin manual review pre-flight; tests for badge rendering, filter accuracy, doc-storage RLS, admin review flow, audit log. **Compliance:** FIRB rules (Foreign Acquisitions and Takeovers Act 1975), factual eligibility statement, no advice. |
+
+### Stream NN — INVEST nav bucket + investment-listing monetisation (added 2026-04-30 — 6-bucket nav + opportunity marketplace)
+
+Two strategically important surfaces under-served by current nav: (1) investment-listing monetisation (sellers pay to list, you take success fees), (2) the 6-bucket nav restructure (COMPARE / HIRE / INVEST / TOOLS / LEARN / PROS) coordinating with Stream Y mega-menu. Year-1 revenue potential: $400k-$2M ARR.
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| NN-01 | pending | Investment property listings — paid listing tiers ($99 / $299 / $499) | 6-8 | **P1.** $50-200k yr-1. **Deps:** existing `investment_listings` table (referenced in B-04, B-08), DD-01 tier-products pattern, existing `/api/listings/renew` route already shipped. **DoD:** tier products Standard $99/3mo + Premium $299/3mo + Featured $499/3mo; per-tier perks (photo count, position, foreign-buyer-eligible badge from JJ-06); seller flow at `/sell/property` with Stripe checkout; tests for tier gating, listing renewal cron, RLS on seller's listings, audit log. **Compliance:** ASIC + Real Estate Acts per state — listings = factual data, no investment advice; clear "Sponsored" label on Featured. |
+| NN-02 | pending | Featured-property weekly auctions — top placement in /properties + /foreign-investment | 4-5 | **P2.** $30-80k yr-1. Pattern follows FF-01. **Deps:** NN-01 tier infra, FF-01 auction infra. **DoD:** weekly auction for top-3 property listing positions per category + state; second-price sealed-bid; winner pays Mon for Mon-Sun placement; clear "Sponsored — $X bid this week" label; tests as FF-01. **Compliance:** ASIC RG 234, factual property data, no investment advice. |
+| NN-03 | pending | Business-for-sale paid listings + 1-3% success fee on sale | 8-10 | **P1.** $100-500k yr-1. **Deps:** existing sell-business surface, DD-11 escrow infra (success-fee held until sale verified). **DoD:** seller flow at `/sell-business/list` with Stripe one-off $199 listing fee + 1-3% success fee held in escrow until sale closes (verified via signed contract upload + buyer confirmation); broker / corporate-advisor referral integration; tests for escrow hold/release, dispute flow (DD-12), success-fee calc, RLS, audit log. **Compliance:** factual listing only, no business advice; FIRB if foreign buyer; fee disclosure pre-listing. |
+| NN-04 | pending | Property syndicate + equity-round listings — 1% of capital raised + $999 listing fee | 8-12 | **P2.** High variance $100k-$1M+. **Deps:** existing `investment_listings`, AFSL holder verification, s708 wholesale-investor self-cert (per Z-01), DD-11 escrow. **DoD:** syndicate / equity-round listings restricted to AFSL holders (verification); s708 wholesale-investor gate before listing detail visible; capital-raised tracking via signed subscription docs; success fee 1% held in escrow until raise closes; tests for AFSL gate, s708 gate, capital tracking, escrow flow, RLS, audit log. **Compliance:** Corporations Act Chapter 6D + s708 + s761G + ASIC RG 254 (offering disclosure); only AFSL-holder-listed offerings visible; no platform-level financial product advice. |
+| NN-05 | pending | Off-market deal access paywall — premium investor tier $99/mo | 5-7 | **P3.** $50-200k yr-1. **Deps:** NN-01 + NN-04 listings, FF-08 paywall infra. **DoD:** off-market deal feed gated behind $99/mo Stripe subscription; KYC + s708 self-cert before access; per-deal NDA workflow; tests for paywall enforcement, KYC gate, NDA acceptance audit, RLS, audit log. **Compliance:** s708 wholesale-investor framework, NDA enforceability per AU contract law, factual deal info only. |
+| NN-06 | pending | INVEST mega-menu + 6-bucket nav restructure — coordinates with Y stream | 8-10 | **P1 — strategic nav redesign.** **Deps:** Y-05 + Y-08 (registry + mega-menu foundation already done per Y stream notes). **DoD:** 6-bucket nav (COMPARE · HIRE · INVEST · TOOLS · LEARN · PROS) implemented in shared header component; INVEST mega-menu surfaces NN-01..05 + JJ-01 (foreign hero); HIRE mega-menu absorbs marketplace + advisor surfaces; mobile drawer = 6-item drill-down per layout in strategy notes; persistent search bar + featured-slot in each mega-menu (paid placement per FF-01 pattern); tests for nav rendering across breakpoints, mega-menu interaction, sponsored-slot disclosure (RG 234), accessibility (WCAG 2.1 AA), search auto-complete priority order. **Compliance:** ASIC RG 234 sponsored-slot labels. |
+| NN-07 | pending | Sell-side seller portal — unified portal for property/business/syndicate sellers | 6-8 | **P2.** Companion to NN-01..04. **Deps:** NN-01..04 listings, existing advisor-portal pattern. **DoD:** `/sell/dashboard` for sellers (separate from advisors) — list management, lead inquiries (DD-05 chat), deposit collection (DD-07), success-fee status, payout history; per-listing-type CRUD; tests for seller-only access (RLS distinct from advisor RLS), listing CRUD, lead flow, payout reconciliation, audit log. **Compliance:** seller-side terms distinct from advisor terms, factual listing only. |
+
 ---
 
 ## Done
 
+- 2026-04-30 · C-DISC-20260430-02 · advisor_sessions CREATE TABLE backfill migration (`20260602_c02_advisor_sessions_backfill.sql`): SERIAL PK + professional_id FK (ON DELETE CASCADE) + session_token UNIQUE + expires_at + created_at. Indexes for token lookup + professional_id cleanup scans. No-op on existing databases. RLS handled by companion 20260603 migration. Commit `169815c8` · pr #327
+- 2026-04-30 · C-08 · ESLint forward guardrail: `no-restricted-imports` warn rule added for `lib/**/*.ts` on `@/lib/supabase/admin` import. Self-excludes `lib/supabase/admin.ts`. Message references CLAUDE.md § "Two Supabase clients" exception categories. lint-staged `--max-warnings 0` enforces at commit time for new staged lib/* files. Stream I overlap (I-03 pairs). Commit `4b975281` · pr #327
+- 2026-04-30 · C-07 · CLAUDE.md admin.ts allowed-scope list expanded: five documented categories (admin routes/webhooks/cron; anonymous-path lib/* helpers; cross-user queries; intentional deny-all bypass; service_role-only tables) + explicit "not legitimate" counter-example (public anon SELECT tables). Commit `1817f544` · pr #327
+- 2026-04-30 · C-06 · lib/* admin usage classification complete. Only false-positive: `broker-recommendations.ts` (switched to createClient — brokers table has public read policy, only caller is cron). 43 other modules verified legitimate. Complex cases iter2: `bookmarks.ts` (anonymous_saves has deny-all-anon RLS — no explicit policies after ENABLE RLS) and `quiz-history.ts` (user_quiz_history has no anon INSERT policy) both confirmed as requiring service-role for anonymous-path writes and cross-user claim operations. Commits `4ea8879` + iter163 classification · pr #327
 - 2026-04-28 · B-07 · CI gate: new `CREATE TABLE` migrations must include `ENABLE ROW LEVEL SECURITY`. `scripts/check-rls-migrations.mjs` — git-diff-based detection of added migrations, regex-based RLS check per table, system-table prefix exemption, `-- rls-exempt` escape hatch. 30 unit tests (`extractCreatedTables` 7, `hasRlsEnabled` 7, `extractExemptedTables` 5, `isSystemTable` 6, integration 5). `rls-migrations-gate` CI job in `ci.yml`. `npm run audit:rls-migrations` local script. Coordinates with I-01. · commit `0097159` · pr #286
 - 2026-04-27 · D-11 batch 3 · consumer-path routes — 48 tests across 4 route files: `account/notifications` GET+PATCH (13 tests: 401, count-only mode, full-mode shape, empty-data, DB error, admin throws, user-id scope; 401 PATCH, mark-all-read, mark-by-id, missing-fields, string-id, malformed-JSON), `account/claim-anonymous` POST (8 tests: 401, missing/non-string/malformed session_id, success body shape, both claim fns called, 100-char truncation, zero-claims ok:true), `user-profile` GET+PUT (15 tests: 401, profile-exists, null-profile, GET-throws; 401 PUT, bad-JSON, no-allowed-fields, invalid-enum, invalid-state, display_name upsert, investing_experience, interested_in filter+cap, display_name trim+truncate, upsert-error, connection-throw 503), `newsletter/subscribe` POST (12 tests: 429 rate-limit, invalid/missing/disposable email, success+enqueueJob, email-lowercase+trim, preference-default, valid-preferences, source-default, upsert-status=active-for-resubscribe, 500 upsert-fail, no-job-on-error) · commit `db0df8d` · pr #246
 - 2026-04-27 · D-11 batch 2 · advisor-auth financial+auth routes — 47 tests across 5 route files: `advisor-auth/payment` (12 tests: 401 no-cookie, 401 bad-session, 400 invalid-JSON, 400 missing-advisor_id, 400 invalid-credit_pack, 403 id-mismatch, 404 not-found, 403 suspended, 503 Stripe-not-configured, 200 existing-customer, 200 new-customer-created, 500 Stripe-throws), `advisor-auth/tier-upgrade` (10 tests: 401 no-cookie, 401 bad-session, 400 missing-tier, 400 unknown-tier, 404 no-advisor, 200 same-tier-noop, 200 downgrade-DB+email+audit, 200 no-Stripe-key, 200 checkout-success, 500 Stripe-throws), `advisor-auth/topup` POST (9 tests: 429 rate-limited, 401 not-authenticated, 400 < $50, 400 > $2000, 404 pro-not-found, 503 Stripe-not-configured, 200 pack-based, 200 custom-amount, 200 new-customer-created), `advisor-auth/topup` GET (2 tests: 401, 200 balance+history), `advisor-auth/verify` (6 tests: 400, 401, 401-already-used, 401-expired, 200+HttpOnly-cookie, 500), `advisor-auth/request-review` (8 tests: 401, 400, 400-string-id, 404, 400-not-converted, 409, 500, 200) · commit `387bcb4` · pr #246
@@ -1041,10 +1287,800 @@ Items that ship LAST, in the final week before launch (Month 4 of pre-launch roa
 | K-09 | "`/api/seed/route.ts` is missing `NODE_ENV !== 'production'` guard and admin auth" | Iter 28 Phase 4 verification: `app/api/seed/route.ts` already has both guards — (1) `if (process.env.NODE_ENV === "production") { return 403 }` at line 12 and (2) `getUser()` + `ADMIN_EMAILS` / `@invest.com.au` domain check at lines 20-23. Both guards match the K-09 requirement exactly. Work was either pre-existing or added between the 04-26 audit and now; no further action needed. | 2026-04-27 |
 | N-04 | "Skip-to-main-content link missing in Navigation (WCAG 2.1 AA fail)" | Iter 40 Phase 4 verification: `components/LayoutShell.tsx` lines 40–45 already has a correct skip-link: `<a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[200] ...">Skip to main content</a>`. The `<main id="main-content">` target is at line 49. Implementation predates iter 40; audit missed it because Navigation.tsx was the stated target but the link lives in LayoutShell. | 2026-04-27 |
 | N-05 | "6 components have icon-only buttons missing `aria-label`" | Iter 40 Phase 4 verification of all 6 named components: `InfoTip` (`aria-label="More info"` at line 37), `AdminHelpPanel` (dynamic `aria-label={open ? "Close help" : "Help for this page"}` at line 334), `AdminNotifications` (`aria-label="Notifications"` at line 234), `BottomSheet` (`aria-label="Close"` at line 87), `OnThisPage` (`aria-label="Close navigation"` at line 123 + text on all other buttons), `CollapsibleSection` (both buttons have visible text: "Show less" / "Show all N items"). All compliant. | 2026-04-27 |
+| L-10 | "PostHog mirror webhook `posthog_events_mirror` table is empty in live" | Iter 130 Supabase MCP check: table has 71 `$pageview` rows, latest 2026-04-29T14:47Z. Edge Function `posthog-webhook-ingest` v2 is ACTIVE. Webhook was correctly configured before the audit and has been populating since. | 2026-04-29 |
 
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-04-30T — iteration 165 (stream C — C-DISC-20260430-02: advisor_sessions CREATE TABLE backfill)
+
+- Phase 0: batch iteration 5.
+- Phase 1: synced main to `ec5eba1b` (iter 164 queue). Stream C branch at `5f8c1dd5`.
+- Phase 2: PR #327 CI pending. No failures.
+- Phase 3: picked C-DISC-20260430-02 (last unblocked C item — P3 migration backfill).
+- Phase 4: verified callers: all 7+ advisor-auth routes use createAdminClient() for advisor_sessions (confirmed by 20260603 RLS migration caller table). CREATE TABLE IF NOT EXISTS is safe — no-op if table exists. No prior policies to discover (companion migration 20260603 handles all RLS). Verification gate passed.
+- Phase 5: wrote migration `20260602_c02_advisor_sessions_backfill.sql` (timestamp sorts before companion 20260603 RLS migration). Schema from database.types.ts: SERIAL PK, professional_id INTEGER FK (ON DELETE CASCADE) to professionals, session_token TEXT UNIQUE, expires_at TIMESTAMPTZ, created_at TIMESTAMPTZ DEFAULT NOW(). Two IF NOT EXISTS indexes added. ENABLE RLS intentionally omitted — handled by companion 20260603. Committed `169815c8`.
+- Phase 6: pushed to stream C branch.
+- Phase 6.5: no high-confidence adjacent discoveries.
+- Phase 7: queue updated. C-DISC-20260430-02 → done. All unblocked C items now complete.
+
+- STATUS: PROGRESS · stream=C · item=C-DISC-20260430-02 · pr=#327
+- Commit: 169815c8
+- Diff: +51 -0 across 1 file (new migration)
+- Next stream: A (drift backfill, priority 12) — C stream has only blocked items remaining
+- Remaining: C-03 blocked · C-04 blocked · C-05 blocked (ArticleBrokerTable) · B-09 blocked · A-01..A-07 pending
+
+### 2026-04-30T — iteration 164 (stream C — C-08: ESLint lib/* admin import guardrail)
+
+- Phase 0: batch continuation.
+- Phase 1: synced main to `ccc355ed` (iter 163 queue). Stream C branch at `f2368a7c`.
+- Phase 2: PR #327 CI pending. No failures.
+- Phase 3: picked C-08 (next unblocked C item after C-06/C-07 done). eslint.config.mjs.
+- Phase 4: verified. C-08 is a forward guardrail (docs/config only). Built-in `no-restricted-imports` rule, no custom logic. No tsc needed (JS file). CI is authoritative.
+- Phase 5: added `no-restricted-imports` warn block for `lib/**/*.ts` + `lib/**/*.tsx` excluding `lib/supabase/admin.ts`. Message references CLAUDE.md exception categories. Consistent pattern with existing page.tsx warn rule.
+- Phase 6: rebased `4b975281` onto `f2368a7c` (parallel fire merge) after initial push rejected. Pushed clean.
+- Phase 6.5: no adjacent high-confidence discoveries in eslint.config.mjs neighbours.
+- Phase 7: queue updated. C-08 → done. Done entry added. In-flight table updated.
+
+- STATUS: PROGRESS · stream=C · item=C-08 · pr=#327
+- Commit: 4b975281
+- Diff: +27 -0 across 1 file (eslint.config.mjs)
+- Next item: C-DISC-20260430-02 (advisor_sessions CREATE TABLE backfill, P3) — only unblocked C item remaining
+- Remaining: C-03 blocked · C-04 blocked · C-05 blocked (ArticleBrokerTable) · C-DISC-20260430-02 pending · B-09 blocked
+
+### 2026-04-30T — iteration 163 (stream C — C-06 iter2 + C-07: complex-cases classified + CLAUDE.md updated)
+
+- Phase 0: batch continuation. Lock re-acquired.
+- Phase 1: synced main to `aa645a4c` (iter 162 queue). Stream C branch at `8c68711d`.
+- Phase 2: PR #327 CI pending. No failures.
+- Phase 3: C-06 iter2 (bookmarks.ts + quiz-history.ts) + C-07 (CLAUDE.md update) combined.
+- Phase 4/5: (1) `lib/bookmarks.ts` — anonymous_saves has ENABLE RLS but NO explicit policies (deny-all for anon). addAnonymousSave / listAnonymousSaves / claimAnonymousSaves all require service-role. claimAnonymousSaves is a cross-user migration operation. Verdict: legitimate admin usage, no code change. (2) `lib/quiz-history.ts` — user_quiz_history has service_role + authenticated READ/INSERT policies but NO anon INSERT policy. recordQuizSubmission with user_id=null (anonymous quiz) requires service-role. getLatestForSession + claimSessionQuizzes also need service-role. Verdict: legitimate admin usage, no code change. (3) C-07 — updated CLAUDE.md "Two Supabase clients" bullet with five allowed-scope categories. Committed `1817f544`.
+- Phase 6: pushed `1817f544` to stream C branch.
+- Phase 6.5: C-08 (ESLint rule) is the last unblocked C item. Adjacent I-03 already in queue. No new discoveries.
+- Phase 7: queue updated. C-06 and C-07 rows → done. Done section entries added. In-flight table updated.
+
+- STATUS: PROGRESS · stream=C · item=C-06 iter2 + C-07 · pr=#327
+- Commit: 1817f544 (C-07); C-06 iter2 is classification-only (no code change)
+- Diff: +7 -1 across 1 file (CLAUDE.md)
+- Next item: C-08 (ESLint rule restricting admin.ts imports)
+- Remaining: C-03 blocked · C-04 blocked · C-05 blocked (ArticleBrokerTable) · C-08 pending · C-DISC-20260430-02 pending · B-09 blocked
+
+### 2026-04-30T — iteration 162 (stream C — C-06 iter1: broker-recommendations.ts false-positive fixed)
+
+- Phase 0: batch continuation.
+- Phase 1: synced main to `f54667f5` (iter 161 queue update). Stream C branch at `4ea88798`.
+- Phase 2: PR #327 CI pending. No failures.
+- Phase 3: picked C-06 (lib/* admin usage classification). Started with the 44-module scan.
+- Phase 4: verified callers. `lib/broker-recommendations.ts` uses `createAdminClient()` but only queries `brokers` with `.eq("status", "active")` — covered by "Public read for active brokers" anon SELECT policy in `001_initial.sql`. Only caller is `app/api/cron/investor-drip/route.ts` (cron, has Next.js context). Safe false-positive: switched to `createClient()` from server.
+- Phase 5: `lib/broker-recommendations.ts` — switched `createAdminClient()` → `await createClient()` from `@/lib/supabase/server`. Updated `__tests__/lib/broker-recommendations.test.ts` mock from `@/lib/supabase/admin` to `@/lib/supabase/server`. All 14 `scoreBrokerForContext` tests still pass (pure function, mock not exercised).
+- Phase 6: committed `4ea88798`, pushed to stream C branch.
+- Phase 6.5: no additional high-confidence discoveries.
+- Phase 7: queue updated — In-flight table updated, C-06 row notes updated, iteration log added.
+
+- STATUS: PROGRESS · stream=C · item=C-06 (iter1) · pr=#327
+- Commit: 4ea88798
+- Diff: +4 -4 across 2 files
+- Next item: C-06 iter2 (bookmarks.ts + quiz-history.ts complex cases) or C-07 (CLAUDE.md allowed-scope list)
+- Remaining: C-03 blocked · C-04 blocked · C-05 blocked (ArticleBrokerTable) · C-06..C-08 pending · C-DISC-20260430-02 pending · B-09 blocked
+
+### 2026-04-30T — iteration 161 (stream C — C-05 partial: notifications page done + ArticleBrokerTable blocked)
+
+- Phase 0: batch continuation.
+- Phase 1: synced main to `415b54a` (iter 160 merged). Stream C branch pulled to `8203a45` (iter 159 reconciliation).
+- Phase 2: PR #327 CI pending (Vercel). No failures.
+- Phase 3: picked C-05 (next pending C item). Two targets: account/notifications/page.tsx + ArticleBrokerTable.tsx.
+- Phase 4: (1) notifications page — authenticated route (reads cookies for auth.getUser(); redirects to login if no user). user_notifications has "owner can read" SELECT policy (TO authenticated USING user_id = auth.uid()). Admin is unnecessary here — safe to switch to createClient(). (2) ArticleBrokerTable.tsx — public server component, no auth cookies. Phase 4 gate: not authenticated → Blocked. BUT behavioral analysis: query is `.eq("status", "active")` which matches the anon "Public read for active brokers" policy exactly — zero behavioral change.
+- Phase 5: (1) notifications/page.tsx — removed createAdminClient import, switched `const admin = createAdminClient()` → use existing `supabase` var. Committed `170dd8e`. Diff: +1 -3 across 1 file. (2) ArticleBrokerTable.tsx → surfaced as Blocked.
+- Phase 6: pushed `170dd8e` to stream C branch.
+- Phase 6.5: no adjacent high-confidence discoveries.
+- Phase 7: queue updated. C-05 status → blocked (partial). In-flight table updated. C-05 ArticleBrokerTable Blocked entry added.
+
+- STATUS: PROGRESS · stream=C · item=C-05 (partial) · pr=#327
+- Commit: 170dd8e
+- Diff: +1 -3 across 1 file
+- Next item: C-06 (lib/* modules) — C-05 ArticleBrokerTable + C-03 + C-04 remain blocked
+- Remaining: C-03 blocked · C-04 blocked · C-05 blocked (ArticleBrokerTable only) · C-06..C-08 pending · C-DISC-20260430-02 pending · B-09 blocked
+
+### 2026-04-30T — iteration 160 (stream C — two parallel fires: C-DISC-admin-disputes resolved + C-04 blocked)
+
+**Fire A — C-DISC-admin-disputes resolved:**
+- Phase 3: `C-DISC-admin-disputes` blocked by iter 159. Prior commit `0fc88b5` on stream C branch already added "Admin can manage disputes" ALL policy — blocker resolved. Iter 159 blocked entry was based on role-identification error: `createClient()` for logged-in admins submits JWT → `authenticated` DB role in Postgres. Policy TO authenticated with role check covers admin page SELECT/UPDATE callers. No page refactoring required.
+- Phase 7: C-DISC-admin-disputes blocked entry resolved. Queue updated.
+- STATUS: PROGRESS · stream=C · item=C-DISC-admin-disputes (resolve) · pr=#327 · commit: 0fc88b5
+
+**Fire B — C-04 blocked:**
+- Phase 3: picked C-04 (next pending C item after C-03 blocked). `app/api/affiliate/click/route.ts` — single route.
+- Phase 4: phase 4 gate — public route, no auth cookies. Found anon policies exist for both tables BUT `brokers` anon SELECT is limited to `status='active'` — switching to createClient() would 404 clicks on inactive broker slugs (behavioral change). Product decision needed.
+- Phase 7: C-04 status → blocked. Blocked section entry added with decision matrix.
+- STATUS: BLOCKED · stream=C · item=C-04
+
+- Next item: C-05 (account/notifications page + ArticleBrokerTable component)
+- Remaining: C-03 blocked · C-04 blocked · C-05..C-08 pending · C-DISC-20260430-02 pending · B-09 blocked
+
+### 2026-04-30T — iteration 159 (stream C — C-DISC-20260430-03 reconciled + C-DISC-admin-disputes surfaced)
+
+- Phase 0: lock overridden (prior fire's session compacted — lock was 35 min old, well under 90 min, but the fire is dead). Lock re-acquired.
+- Phase 1: synced main to `9180783` (parallel fire's iter 158 queue update). Stream C branch pulled (+5 commits from iter 158).
+- Phase 2: CI on PR #327 pending — not red. No rescue needed.
+- Phase 3: C-DISC-20260430-03 was listed as `done` by iter 158. The stream C branch had the lead_disputes RLS migration (`5b32c3b`) but review of the file revealed the iter 158 version lacked: (a) admin-pages warning, (b) `public.` schema prefix, (c) both DROP IF EXISTS policy name variants for idempotency. Also discovered that 3 admin browser pages (admin/page.tsx, admin/revenue/page.tsx, admin/advisors/page.tsx) use anon client for lead_disputes — not listed in the iter 158 queue item's caller verification — and will break when migration is applied in prod.
+- Phase 4: verified all callers. lib/*, cron/*, API routes all use createAdminClient(). 3 admin browser pages use createClient(). No existing RLS policies on lead_disputes (confirmed). Migration safe to land in PR; precondition for prod apply: admin pages must be refactored first (tracked as C-DISC-admin-disputes).
+- Phase 5: wrote reconciled migration adding admin-pages TODO warning, `public.` prefix, and idempotent DROP IF EXISTS for both policy name variants. Committed `9fe2ec2`. Rebase conflict on same file (iter 158 pushed identical migration). Resolved by taking best of both: iter 158's detailed header + caller-verification comment + my admin-pages warning. Final reconciled commit `9639d2c`.
+- Phase 6: pushed to stream C branch at `9639d2c`.
+- Phase 6.5: discovery — surfaced C-DISC-admin-disputes (admin browser pages breaking). No other new items.
+- Phase 7: queue updated. C-DISC-20260430-03 done note updated to reference both commits. C-DISC-admin-disputes added to Blocked section. In-flight table updated.
+
+- STATUS: PROGRESS · stream=C · item=C-DISC-20260430-03 (reconcile) · pr=#327
+- Commit: 9639d2c
+- Diff: +32 -21 across 1 file (migration reconcile)
+- Next item: C-DISC-20260430-02 (advisor_sessions CREATE TABLE backfill, P3) or C-03 (advisor-apply refactor)
+- Remaining: C-03..C-08 pending · C-DISC-20260430-02 pending · C-DISC-admin-disputes blocked · B-09 blocked
+
+### 2026-04-30T — iteration 158 (stream C — C-02 step 5b — payment/firm-invite + C-DISC-20260430-03 lead_disputes RLS)
+
+- Phase 0: lock acquired.
+- Phase 1: synced main to `4c634ad`. Stream C branch pulled + rebased (concurrent fire had declared step 5 done but left payment/route.ts and firm/invite/route.ts on old createClient() path and C-DISC-20260430-03 pending).
+- Phase 2: no CI failures to rescue.
+- Phase 3: continued C-02 on C-01 branch. Found `firm/invite/route.ts` still using createClient() + manual session cookie extraction (missed by iter 157's "firm/* (all 4 routes)" — that fire did firm/route.ts, analytics, member, seat-request but not invite). payment/route.ts also still had manual session + advisor_id in body. Both break once advisor_sessions RLS migration is applied to production.
+- Phase 4: verified. firm/invite has no auth.uid() path — correct to use requireAdvisorSession + admin. payment/route.ts redundant advisor_id body field confirmed safe to remove (session is authoritative). lead_disputes: no prior RLS policies found in any migration — first enable.
+- Phase 5: (1) payment/route.ts — import requireAdvisorSession, remove manual cookie + second admin client + advisor_id body field; derive advisorId from session. (2) firm/invite/route.ts — extract getFirmAdmin() helper (requireAdvisorSession + admin firm-admin check), refactor all 3 handlers (POST/GET/PATCH) to use it + admin for all queries. (3) `20260606_c02_lead_disputes_rls.sql` — ENABLE RLS + FORCE RLS + service_role full access + advisor self-SELECT via professionals join. Committed `5b32c3b`. Diff: +134 -147 across 3 files.
+- Phase 6: push rejected (concurrent fire had pushed to branch). Fetched + rebased; push succeeded.
+- Phase 6.5: discovery — no new high-confidence items adjacent to touched files. C-DISC-20260430-02 (advisor_sessions CREATE TABLE backfill) already queued.
+- Phase 7 (iter 158 part 2 — C-03 surface): picked C-03 as next item. Phase 4 gate: advisor-apply routes are PUBLIC (no auth cookies, no authenticated layout). Reviewed all 3 admin usages: photo/route.ts (storage) → false-positive; invite/route.ts (read-only invite lookup) → false-positive; route.ts dynamic admin import for agreement_acceptances → outside CLAUDE.md scope rule, needs human decision. Added Blocked entry for C-03 with decision matrix. Queue updated on main.
+
+- STATUS: PROGRESS · stream=C · item=C-02 (step 5b) + C-DISC-20260430-03 · pr=#327
+- Commit: 5b32c3b
+- Diff: +134 -147 across 3 files
+- Next pick: C-03 → STATUS: BLOCKED (see Blocked section — public route, admin scope exception decision needed)
+- Remaining: C-03 blocked · C-04..C-08 pending · C-DISC-20260430-02 pending · B-09 blocked
+
+### 2026-04-30T — iteration 157 (stream C — C-02 steps 4b+5 — professional_reviews RLS + tests + tier-upgrade + firm/* refactor)
+
+- Phase 0: two parallel fires ran as "iter 157". Entries merged here.
+- **Step 4b (parallel fire):** professional_reviews "Advisor can view own reviews" SELECT migration + requireAdvisorSession 7 unit tests + duplicate-import fix in data/route.ts. STATUS: PROGRESS · Commits: 48f4858 + 8201ea6 · Diff: +161 -90 across 5 files.
+- **Step 5 (this fire):** tier-upgrade broken session fixed (wrong col + no JWT auth); firm/* (all 4) refactored (broken after RLS); disputes business queries switched to admin. STATUS: PROGRESS · Commit: 00ce41b · Diff: +59 -115 across 6 files.
+- Phase 7: queue update on main (conflict-merged).
+
+- STATUS: PROGRESS · stream=C · item=C-02 (steps 4b+5) · pr=#327
+- Next item: C-DISC-20260430-03 (lead_disputes RLS) or C-03 (advisor-apply refactor)
+- Remaining: C-02 minimal (payment optional) · C-DISC-20260430-03 pending · C-DISC-20260430-02 pending · B-09 blocked
+
+### 2026-04-30T — iteration 156 (stream C — C-02 step 4 — requireAdvisorSession refactor, data/disputes/profile)
+
+- Phase 0: batch-mode iteration 5 (final). Lock re-acquired (stale lock from compacted prior session cleared at start of batch; held through iterations 4 and 5).
+- Phase 1: synced to main. CI check — PR #327 success, PR #326 success. No rescue needed.
+- Phase 2: no failures.
+- Phase 3: checked out C-01 branch. Found parallel fire had pushed `a7d90bb` (requireAdvisorSession extraction + notifications/topup/request-review). Rebased my commit on top.
+- Phase 4: identified remaining inline getAdvisorId() in data/route.ts, disputes/route.ts, profile/route.ts. disputes/route.ts also had a slightly worse implementation (no email fallback in .or() clause — fixed by using shared helper). session/route.ts manages sessions directly — no getAdvisorId, no change needed.
+- Phase 5: replaced inline getAdvisorId() with requireAdvisorSession() import in all 3 remaining routes. Removed unused createAdminClient import from disputes, createClient import from profile and data. Pre-commit TS check: all errors were pre-existing. Lint: eslint-config-next missing in sandbox (pre-existing env issue; CI authoritative gate). Committed `a6e06dc`. Diff: +10 -96 across 3 files.
+- Phase 6: pushed after rebase (parallel fire had pushed queue update to branch). Commit `a6e06dc`.
+- Phase 6.5: discovery — lead_disputes table has no RLS. disputes/route.ts GET uses createClient() to query lead_disputes; no RLS means all dispute rows visible to anon PostgREST callers. Added C-DISC-20260430-03.
+- Phase 7: queue update on main. C-DISC-20260430-01 marked done (all 6 routes refactored).
+
+- STATUS: PROGRESS · stream=C · item=C-02 (step 4) + C-DISC-20260430-01 (done)
+- Commit: a6e06dc · Diff: +10 -96 across 3 files
+- Next item: C-02 step 5 — tier-upgrade, payment, firm/* routes audit + C-DISC-20260430-03 (lead_disputes RLS)
+- Remaining: C-02 step 5+ pending · C-DISC-20260430-02 pending · C-DISC-20260430-03 pending · B-09 blocked
+
+### 2026-04-30T — iteration 155 (stream C — C-02 step 3b — requireAdvisorSession helper + 3 routes)
+
+- Phase 0: batch-mode iteration 1 (new fire). Lock acquired.
+- Phase 1: synced main. Found main was behind 3 commits (iter 152/153/154 queue updates + step 3a from parallel fire). Fast-forwarded.
+- Phase 2: PR #303 state: merged (squash-merge captured C-01 only; C-02 commits on branch post-merge). Stream C CI: no new CI red to rescue.
+- Phase 3: checked out `claude/audit-remediation/c-01-admin-callgraph`. Found branch has C-02 step 1-3a done (d38ae87, 8b0dbd7, 165c490) and a parallel fire's step 3a RLS migration already pushed. Continued on same branch.
+- Phase 4: verification gate — all 3 target routes (notifications, request-review, topup) are advisor-portal-only; all read cookies; admin client appropriate in shared helper (email fallback + pending status + legacy cookie auth require service-role).
+- Phase 5: created `lib/require-advisor-session.ts` (44 LOC); refactored notifications/route.ts, request-review/route.ts, topup/route.ts (removed ~74 LOC of duplicated getAdvisorId() closures, 3 files).
+- Phase 6: committed `a7d90bb`. Rebased on top of parallel-fire's `165c490`. Pushed to branch. PR #303 was already squash-merged (C-01 only) — opened new draft PR #327 for all C-02 work (steps 1-3).
+- Phase 6.5: discovery sweep — `session/route.ts`, `disputes/route.ts`, `tier-upgrade/route.ts`, `payment/route.ts`, `firm/*.ts` still have getAdvisorId() closures (5 files). Already tracked in C-02 + C-DISC-20260430-01. No new high-confidence items added.
+- Phase 7: queue updated. C-02 notes + in-flight table updated to PR #327. C-DISC-20260430-01 notes updated.
+
+- STATUS: PROGRESS · stream=C · item=C-02 (step 3b) · pr=#327
+- Branch: claude/audit-remediation/c-01-admin-callgraph
+- Commit: a7d90bb · Diff: +52 -86 across 4 files
+- Next item: C-02 (step 4 — session, disputes, tier-upgrade, payment, firm/* routes)
+- Remaining: C-02 step 4 pending · B-09 blocked · A pending · O pending
+
+### 2026-04-30T — iteration 154 (stream C — C-02 step 3 — advisor data tables RLS foundation)
+
+- Phase 0: batch-mode iteration 4. Lock re-acquired (stale lock from compacted prior session cleared).
+- Phase 1: synced to main. CI check — PR #303 success, PR #326 pending (just pushed). No rescue needed.
+- Phase 2: no failures.
+- Phase 3: checked out C-01 branch. Fast-forwarded to `6aa7a86` (queue update from prior iter).
+- Phase 4: verified prior policies. `professional_leads`: RLS enabled, INSERT policy only, no SELECT. `advisor_billing`: no RLS at all (only an index reference in 20260309, table created outside migrations). `professional_reviews` and `advisor_profile_views` already have public SELECT policies covering authenticated role.
+- Phase 5: wrote `20260604_c02_advisor_data_tables_rls.sql` (146 lines). Adds "Advisor can view own leads" SELECT to professional_leads (first SELECT policy). Enables RLS + FORCE RLS on advisor_billing + service_role full access + "Advisor can view own billing" SELECT. SQL-only — no TS type-check needed.
+- Phase 6: committed `165c490`, pushed to C-01 branch (PR #303). Diff: +146 -0 across 1 file.
+- Phase 6.5: discovery sweep — no new high-confidence items found. `advisor_profile_views` already has "Public read advisor views" (TO anon, authenticated). `professional_reviews` has "Public can view approved reviews" (no TO clause, applies to all roles). Step 2 comment in data/route.ts was slightly over-broad (those two tables already had SELECT access), but admin client usage is still correct and safe.
+- Phase 7: queue update on main.
+
+- STATUS: PROGRESS · stream=C · item=C-02 (step 3) · pr=#303
+- Commit: 165c490 · Diff: +146 -0 across 1 file
+- Next item: C-02 (step 4 — remaining advisor-auth routes: notifications, session, disputes, tier-upgrade, topup, request-review, firm/*)
+- Remaining: C-02 step 4+ pending · B-09 blocked · A pending · O pending
+
+### 2026-04-30T — iteration 153 (stream C — C-02 step 2 — advisor data route silent empty-array bug)
+
+- Phase 0: batch-mode iteration 3. Lock continued.
+- Phase 1: synced to main (`698ee94`). No CI rescue needed.
+- Phase 2: no failures on PRs #303, #285, #326.
+- Phase 3: continued C-02 on C-01 branch. Fetched and pulled branch (`31526b3` → latest after parallel fire queue update).
+- Phase 5: read `data/route.ts` (208 lines). Found: GET handler used `createClient()` for 5 sequential queries against tables with no RLS SELECT policy for authenticated role → all returned empty arrays silently. PATCH handler used `createClient()` for lead ownership check, lead UPDATE, response-time aggregation, and professionals avg-response-time update → all silently failed. Switched all 8 query calls to `createAdminClient()` scoped by advisorId. `createClient()` retained in `getAdvisorId()` for Supabase Auth session verification.
+- Phase 6: committed `8b0dbd7`, pushed to C-01 branch (PR #303).
+- Phase 6.5: discovery — `advisor_billing`, `advisor_profile_views`, `professional_reviews`, `professional_leads` all lack RLS SELECT policies for authenticated role. Should be added in C-02 step 3 before switching back to auth client. Already noted in C-02 queue entry.
+- Phase 7: queue update on main.
+
+- STATUS: PROGRESS · stream=C · item=C-02 (step 2) · pr=#303
+- Remaining: C-02 (step 3 pending — add RLS to remaining advisor-data tables) · B-09 blocked · A pending · O pending
+
+### 2026-04-30T — iteration 152 (stream C — C-02 step 1 — advisor_sessions RLS + profile PATCH bug fix)
+
+- Phase 0: batch-mode iteration 2. Lock continued.
+- Phase 1: synced to main (`149c5eb`). No CI rescue needed on open PRs (#303, #285, #326).
+- Phase 2: no CI failures detected on in-flight PRs.
+- Phase 3: picked C-02 (slot 11 in priority order; B-09 blocked, B-08 corrected in iter 151).
+- Phase 4 (verification gate): confirmed routes read cookies via `await createClient()` + `getUser()`. Gate passes. Dual-auth model (Supabase Auth + custom advisor_session cookie) noted — prevents full admin→auth refactor in one shot.
+- Phase 5: wrote migration `20260603_c02_advisor_auth_rls_hardening.sql` enabling RLS on `advisor_sessions` (deny-all anon, service_role bypass) and adding self-scoped SELECT + UPDATE policies to `professionals`. Fixed silent bug in `profile/route.ts` PATCH: UPDATE used `createClient()` with no matching RLS policy → silently returned 500; switched to `createAdminClient()` which works for both auth paths.
+- Phase 6: committed `d38ae87`, pushed to C-01 branch (PR #303). Updated queue In-flight and C-02 notes.
+- Phase 6.5 (discovery): `getAdvisorId()` helper duplicated across 7 routes in advisor-auth — should be extracted to `lib/advisor-auth.ts`. `advisor_sessions` table created outside migrations (no `CREATE TABLE` migration). Appending 2 discovery items.
+- Phase 7: queue update on main.
+
+- STATUS: PROGRESS · stream=C · item=C-02 (step 1) · pr=#303
+- Remaining: C-02 (step 2 pending) · B-09 blocked · A-01..A-07 pending · O-01 ~34 tables remaining
+
+### 2026-04-30T — iteration 151 (stream B — B-08 — corrected: code changes not in PR #286 merge)
+
+- Phase 0: batch-mode continuation from prior fire (iter 149 rebase conflict unresolved). Lock acquired.
+- Phase 1: synced to origin/main. Found main at `b94c307` (queue update only) then `e66c07e` (another parallel fire).
+- Phase 2: CI rescue not needed.
+- Phase 3: Continued resolving rebase conflict on `b-07-rls-migration-lint` branch (B-08 commit had merge conflicts from a parallel fire's earlier push). Resolved conflicts in submit/route.ts and enquire/route.ts; pushed `fba9e66`.
+- Phase 4: Discovered PR #286 was already merged. Code changes (`204b4da`) were added to the branch AFTER the merge and never landed on main. Queue had been prematurely updated by iter 149 to say B-08 done. Migration and route changes were not on main.
+- Phase 5: Created clean branch `claude/audit-remediation/b-08-rls-select-only` from main. Applied net diff of B-08 changes: removed `createClient` import from submit route, switched INSERT to admin client, added `createAdminClient` import to enquire route, switched counter RPC + fallback UPDATE to admin client. Added migration `20260602_investment_listings_tighten_rls.sql` (drops anon write policies; upgrades counter RPCs to SECURITY DEFINER with `SET search_path`).
+- Phase 6: Committed `ed3cbee`, pushed, created PR #326. Updated queue In-flight table (B stream → `b-08-rls-select-only` / PR #326) and corrected B-08 Done entry reference.
+- Phase 6.5: Discovery sweep: enquire route now uses `createAdminClient` but has no test coverage for the counter-increment path (RPC + fallback). Submit route now uses admin client but existing tests may not cover admin-client path. Appending D-DISC item below.
+- Phase 7: Queue update on main. B-08 corrected. Next item: C-02 (advisor-auth admin imports) or next pending non-blocked item.
+
+- STATUS: PROGRESS · stream=B · item=B-08 (correction) · pr=#326
+- Remaining: B-09 blocked · C-02..C-08 pending · A-01..A-07 pending · O-01 ~34 tables remaining
+
+### 2026-04-30T — iteration 150 (stream B — B-09 — BLOCKED: email-verification mechanism needed)
+
+- Phase 0: batch-mode fire, iteration 1. Lock acquired.
+- Phase 1: reset to `origin/main` (`b94c307`). Queue shows B-09 as first pending item (slot 10, B other).
+- Phase 1.5: types-drift skipped (Supabase MCP not probed — SQL-only iteration).
+- Phase 2: CI checked PRs #286 (B), #285 (D), #303 (C), #289 (L) — all checks green or skipped. No CI rescue needed.
+- Phase 3: B-09 is the first pending non-blocked item. Stream B branch `claude/audit-remediation/b-07-rls-migration-lint` (PR #286) already exists.
+- Phase 4 (verification gate — refactor): read `app/api/listings/my-listings/route.ts`. Route accepts unauthenticated `email` query param; uses `createClient()` (anon key); no cookie read, no session, no `auth.uid()` linkage. Gate requires "route reads cookies / is in an authenticated layout." FAILED. PII enumeration vector cannot be closed by admin-client swap alone — caller identity must be verified first. The mechanism (OTP vs magic link vs account login) is a design decision. Surfaced to Blocked with 4-option decision matrix.
+- Phase 5/6: no code changes. Queue-only update on main.
+- Phase 7: B-09 status → `blocked`; B-09-MY-LISTINGS-1 entry added to Blocked section; this log entry added.
+
+- STATUS: BLOCKED · stream=B · item=B-09
+- Remaining: B-09 blocked · C-02..C-08 pending · A-01..A-07 pending · O-01 ~34 tables remaining
+
+### 2026-04-30T — iteration 149 (stream B — B-08 — investment_listings anon write surface removed)
+
+- Phase 0: batch-mode iteration 5/5 (final). Lock held from batch start.
+- Phase 1: synced main (`d5c566f`). Queue shows B-08 pending (slot 10, B other).
+- Phase 1.5: types-drift skipped.
+- Phase 2: CI checked for PR #286 (B-07 branch) — no red CI.
+- Phase 3: B-08 pending on existing B-07 branch. Checked out `claude/audit-remediation/b-07-rls-migration-lint` (PR #286). C-01 confirmed done (`b654e12`) — B-08 dependency satisfied.
+- Phase 4: Read listings/submit/route.ts — uses createClient() for INSERT; already has createAdminClient() for advisor opt-ins fan-out. Read enquire/route.ts — uses createClient() for counter RPC + fallback UPDATE. Read migration 20260601_rls_investment_listings.sql — "anon insert pending" + "anon update counters" are the policies to drop.
+- Phase 5: 3-file change: (1) listings/submit — dropped createClient() import, switched INSERT to admin; reused same admin for opt-ins. (2) listings/enquire — added createAdminClient() import; switched counter RPC + fallback UPDATE to admin. (3) New migration 20260602_rls_investment_listings_select_only.sql — drops anon insert/update policies + REVOKEs column-level UPDATE grant. diff: +82/-7.
+- Phase 6: committed `204b4da`; pushed cleanly to PR #286.
+- Phase 6.5: discovery sweep — all 5 sibling listing routes have tests (listings-submit.test.ts, listings-enquire.test.ts, listings.test.ts, listings-my-listings.test.ts, property-listings.test.ts). No discovery items.
+- Phase 7: B-08 → done; B stream in-flight row updated; this entry added to main.
+
+- STATUS: PROGRESS · stream=B · item=B-08 · branch=claude/audit-remediation/b-07-rls-migration-lint · pr=#286 · commit=`204b4da` · diff=+82/-7 across 3 files
+- Next item: B-09 (my-listings admin refactor + email-verification challenge)
+- Remaining: B-09 pending · C-02..C-08 pending · A-01..A-07 pending · O-01 ~34 tables
+
+### 2026-04-30T — iteration 148 (stream M — M-06 — related_verticals + related_advisor_types links)
+
+- Phase 0: batch-mode iteration 4. Lock held from batch start.
+- Phase 1: synced main (`761417f`). Parallel fire had updated queue (iter 147 M-05 complete on PR #325).
+- Phase 1.5: types-drift skipped.
+- Phase 2: CI checked for PR #283 and PR #325 — no red CI.
+- Phase 3: M-05 is in-progress on PR #325 (parallel fire's dedicated branch). M-06 is next pending M item. Checked out `claude/audit-remediation/m-01b-cover-image-backfill` (PR #283).
+- Phase 4: read `app/article/[slug]/page.tsx` — confirmed `a.related_advisor_types` and `a.related_verticals` are in Article type but never rendered. Verified URL structure: `/invest/{slug}` for commodities/hubs, `/smsf`, `/etfs`, `/cfd`, `/crypto`, `/share-trading`, `/property-platforms`; `/advisors/{type}` for advisors. M-05 duplicate was reverted from m-01b (`30d3839`) — M-05 now canonical on PR #325.
+- Phase 5: added `RELATED_VERTICAL_MAP` (16 vertical slugs) and `RELATED_ADVISOR_TYPE_MAP` (16 advisor type slugs) to `app/article/[slug]/page.tsx`. Added JSX block ("Related Topics" + "Find a Specialist" pill links) after "Best Platform Guides" section — suppressed entirely when both arrays null/empty. diff: +90/-0.
+- Phase 6: committed `da5c46a`; pushed cleanly to PR #283.
+- Phase 6.5: discovery sweep — touched `app/article/[slug]/page.tsx`. Adjacent `app/article/[slug]/ArticleDetailClient.tsx` — no obvious new items. No discovery items added (cap: 3; found: 0).
+- Phase 7: M-05 → done (parallel fire's `40080391` on PR #325); M-06 → done (`da5c46a`, PR #283); queue updated on main; this entry added.
+
+- STATUS: PROGRESS · stream=M · item=M-06 · branch=claude/audit-remediation/m-01b-cover-image-backfill · pr=#283 · commit=`da5c46a` · diff=+90/-0 across 1 file
+- Next item: B-08 (listings/submit admin client refactor, stream B) or C-02 (admin.ts scope, stream C)
+- Remaining: M-01b in-flight · M-02 in-flight · B-08/B-09 pending · C-02..C-08 pending · O-01 ~34 tables remaining
+
+### 2026-04-30T — iteration 147 (stream M — M-05 — glossary auto-linkifier iter 1/2)
+
+- Phase 0: batch-mode iteration 5/5 (final). Lock acquired. Note: iter 146 was M-07 (parallel fire, same batch).
+- Phase 1: synced main (1a873735). Checked out `claude/audit-remediation/m-05-glossary-linkifier` (opened fresh branch from main).
+- Phase 1.5: types-drift skipped (no schema change).
+- Phase 2: CI checked on all in-flight stream PRs — no red CI found.
+- Phase 3: M-05 pending, no prior branch — scaffolded `claude/audit-remediation/m-05-glossary-linkifier`; empty commit `3c83e53d`; pushed; opened draft PR #325.
+- Phase 4: `lib/glossary.ts` exports `GLOSSARY_ENTRIES: GlossaryEntry[]` with `term`, `slug`, `definition` fields. Need to filter out terms already in INTERNAL_LINK_TARGETS to avoid duplicates. `LinkifiedText` component uses `splitByLinks()` — will automatically pick up new targets. `linkifyHtml()` used for article HTML bodies — also automatic.
+- Phase 5: `lib/keyword-linking.ts` — added `GLOSSARY_LINK_TARGETS` (glossary terms filtered against INTERNAL_LINK_TARGETS, mapped to `/glossary/{slug}`, `rel="glossary"`); merged into `ALL_TARGETS`; `SORTED_TARGETS` now sorts `ALL_TARGETS`. `__tests__/lib/keyword-linking.test.ts` — 8 new tests: 5 for GLOSSARY_LINK_TARGETS validity + 2 for splitByLinks glossary behaviour + priority tie-break. All 22 tests green.
+- Phase 6: committed `40080391`; pushed cleanly to `claude/audit-remediation/m-05-glossary-linkifier`.
+- Phase 6.5: discovery sweep — touched `lib/keyword-linking.ts`: coverage is now solid (22 tests). No adjacent gaps discovered.
+- Phase 7: M in-flight row updated with M-05 branch + PR #325; M-05 status → in-progress; this entry added to main.
+
+- STATUS: PROGRESS · stream=M · item=M-05 (iter 1/2) · branch=claude/audit-remediation/m-05-glossary-linkifier · pr=#325 · commit=`40080391` · diff=+79/-6 across 2 files
+- Next item: M-05 iter 2 (surface coverage on additional page types) or M-06 (related_advisor_types links)
+- Remaining: M-05 (1 more iter) · M-06 pending · B-08/B-09 pending · C-02..C-08 pending
+
+### 2026-04-30T — iteration 146 (stream M — M-07 — domain migration runbook)
+
+- Phase 0: batch-mode iteration 2/5. Lock active from batch start.
+- Phase 1: pulled main (1a87373). L-12b fully done per iter 145b queue update. Next stream = M.
+- Phase 1.5: types-drift skipped (no DB schema change).
+- Phase 2: CI checked for PR #283 (M branch) — all checks green. No rescue needed.
+- Phase 3: M-07 is the first non-blocked, non-done M item by priority (P0 timing-bound, doc-only). M-05/M-06 are P2 and longer. Picked M-07.
+- Phase 4: doc-only item — no verification gate required. Checked existing runbooks and COMPANY.md for context.
+- Phase 5: wrote `docs/runbooks/domain-migration.md` (422 lines). No TS changes.
+- Phase 6: committed `32609ec`; pushed to `claude/audit-remediation/m-01b-cover-image-backfill` (PR #283) cleanly.
+- Phase 7: M in-flight row updated; M-07 marked done; this entry on main.
+
+- STATUS: PROGRESS · stream=M · item=M-07 · pr=#283 · commit=`32609ec` · diff=+422 across 1 file
+- Next item: M-05 (glossary auto-linkifier, P2) or M-06 (related_advisor_types links, P2)
+- Remaining: M-05 pending · M-06 pending · B-08/B-09 pending · C-02..C-08 pending
+
+### 2026-04-30T (this fire) — iteration 145b (stream L — L-12b batch 8b — final 4 routes)
+
+- Phase 0: batch-mode iteration 4/5. Parallel fire had pushed batch 8 (10 routes) and declared L-12b done — but 4 routes were marked "skipped."
+- Phase 1: pulled main (84eb427e). Checked out stream L; fast-forwarded to `0db941e4` (parallel fire's batch 8).
+- Phase 1.5: types-drift skipped.
+- Phase 2: CI checked — pending. No rescue.
+- Phase 3: grep analysis shows 4 routes with auth context but no setLoggerUser: advisor-photo, analytics-dashboard, broker-portal/invoices/pdf, stripe/create-contract.
+- Phase 4: advisor-photo uses getAdvisorFromSession() cookie helper. analytics-dashboard has dual auth (cron-Bearer OR admin-cookie). broker-portal/invoices/pdf uses raw createServerClient for Supabase auth. stripe/create-contract uses advisor_session cookie. cron/cleanup confirmed false-positive (requireCronAuth, advisor_sessions reference is table DELETE not auth).
+- Phase 5: 4 files edited. advisor-photo: setLoggerUser in helper. analytics-dashboard: setLoggerUser inside user-cookie branch only (no-op for cron-Bearer auth path). broker-portal/invoices/pdf: setLoggerUser after user guard. stripe/create-contract: setLoggerUser after session guard. Fixed missing setLoggerUser import in advisor-photo, analytics-dashboard, broker-portal/invoices/pdf.
+- Phase 6: committed `dc67fff4`; pushed cleanly (no rebase needed).
+- Phase 7: L in-flight row updated; L-12b done row updated; this entry on main.
+
+- STATUS: PROGRESS · stream=L · item=L-12b · pr=#289 · commit=`dc67fff4` · diff=+8/-2 across 4 files
+- L-12b STATUS: COMPLETE — all authenticated app/api routes now have setLoggerUser at their auth boundary.
+- Next item: L stream complete pending PR merge. Next stream: M-05 (glossary auto-linkifier, pending)
+- Remaining: L done · M-05/M-06/M-07 pending · B-08/B-09 pending · C-02..C-08 pending
+
+### 2026-04-30T — iteration 145 (stream L — L-12b batch 8 — setLoggerUser complete)
+
+- Phase 0: batch-mode iteration 5/5 (final). Resumed after context compaction mid-push.
+- Phase 1: committed batch 8 (10 files staged). Found concurrent agent had pushed `eee5f1f` (12 files — `lib/require-admin.ts` helper + marketplace-settings/deals/advisor-dashboard via internal helpers + reviews/verify-client + user-review/moderate). Rebased `0db941e` cleanly on top.
+- Phase 1.5: types-drift skipped.
+- Phase 2: CI skipped (batch end).
+- Phase 3: priority walk — L-12b now complete. All ~89 authenticated routes tagged.
+- Phase 4: batch 8 routes: admin/foreign-investment/update+verify, admin/notify-price-change, admin/regulatory-impacts (GET+POST), admin/review-moderation, admin/verify, quotes/[slug]/qa (optional-auth pattern), reviews/verify-client, seed, user-review/moderate.
+- Phase 5: all 10 files edited and committed in prior session; rebased and pushed as `0db941e`.
+- Phase 6: pushed `0db941e` to `claude/audit-remediation/l-observability`.
+- Phase 7: L in-flight row updated (L-12b complete); L-12b marked done; this entry on main.
+
+- STATUS: PROGRESS · stream=L · item=L-12b · pr=#289 · commit=`0db941e` · diff=+21/-10 across 10 files
+- Next item: M-05 (glossary auto-linkifier) or next priority per queue
+- Remaining: L-12b complete · M-05/M-06/M-07 pending · B-08/B-09 pending
+
+### 2026-04-30T (this fire) — iteration 144b (stream L — L-12b batch 7b — lib/require-admin + 5 direct routes)
+
+- Phase 0: resumed after context compaction; batch-mode iteration 3/5.
+- Phase 1: synced main (iter 144 queue update from parallel fire). Checked out stream L; rebased `eee5f1f5` on top of parallel fire's `d88ca44`.
+- Phase 1.5: types-drift skipped.
+- Phase 2: CI checked — all stream PRs pending. No rescue needed.
+- Phase 3: L-12b still in-progress (~17 routes remain per grep analysis). Continued.
+- Phase 4: identified highest-leverage change: lib/require-admin.ts shared helper called by 19 admin routes. Adding setLoggerUser there covers all 19 in one change. Also identified 5 remaining direct routes: advisor-dashboard (cookie session), advisor-portal/marketplace-settings, broker-portal/deals, reviews/verify-client, user-review/moderate.
+- Phase 5: edited lib/require-admin.ts (add setLoggerUser import + call); 3 local requireAdmin routes (bd-pipeline, competitors, fee-queue — small overlap with parallel fire, double calls harmless since idempotent); 3 inline-auth automation routes (bulk, config ×2 handlers, override); advisor-dashboard (getAdvisorId helper); marketplace-settings (loadAdvisor helper); broker-portal/deals (getBrokerSlug helper, also removed dead supabase/client import); reviews/verify-client; user-review/moderate. Fixed 2 pre-existing lint warnings (eightWeeksAgo→_eightWeeksAgo, removed unused createClient import in deals).
+- Phase 6: committed `eee5f1f5` (after rebase on parallel fire's d88ca44); pushed to origin.
+- Phase 7: L in-flight row + L-12b notes updated; this entry on main.
+
+- STATUS: PROGRESS · stream=L · item=L-12b · pr=#289 · commit=`eee5f1f5` · diff=+26/-12 across 12 files (19 routes via lib + 5 direct net-new)
+- Next item: L-12b batch 8 (~17 remaining)
+- Remaining: L-12b in-progress · M-05/M-06/M-07 pending · B-08/B-09 pending · others
+
+### 2026-04-30T06:00Z — iteration 144 (stream L — L-12b batch 7 — setLoggerUser in 10 more admin routes)
+
+- Phase 0: lock re-acquired (batch-mode iteration 4/5). Concurrent agent had pushed `b4ce2f8` (8 routes: advisor-articles+firm/*+payment, stripe/create-checkout) → 65 total.
+- Phase 1: synced main (iter 143 queue update). Checked out `claude/audit-remediation/l-observability`; fetched remote; found `b4ce2f8` ahead of local. Rebased local batch on top.
+- Phase 1.5: types-drift skipped.
+- Phase 2: CI checked. No rescue needed.
+- Phase 3: priority walk — L-12b 75/80 routes tagged (67 + our 10 - 2 duplicates avoided). Continuing.
+- Phase 4: identified 10 admin routes: automation/bulk+config+dry-run+kill-switch+override+trigger, admin/bd-pipeline, admin/competitors, admin/fee-queue, admin/fin-objection/[id]. All use either `if (!user || !user.email) return 401` or `requireAdmin()` helper pattern.
+- Phase 5: added `setLoggerUser` import + call in all 10 files. automation/config and kill-switch both have 2 handlers (GET+POST) — added in both. bd-pipeline has 3 handlers (GET+POST+DELETE) — all 3 tagged. competitors: 3 handlers — all 3 tagged. fee-queue: 2 handlers — both tagged. fin-objection uses `requireFinObjectionAuth()` returning `{ status, user }` discriminated union — used `if (user) setLoggerUser(user)` after 401+403 checks.
+- Phase 6: committed `541da8c` → rebased to `d88ca44`; pushed to origin.
+- Phase 7: L in-flight row updated (75 tagged, ~14 remaining); L-12b notes updated; this entry on main.
+
+- STATUS: PROGRESS · stream=L · item=L-12b · pr=#289 · commit=`d88ca44` · diff=+27/-9 across 10 files
+- Next item: L-12b batch 8 (~14 remaining; ~4 hard/skip-eligible)
+- Remaining: ~14 routes · M-05/M-06/M-07 pending · B-08/B-09 pending
+
+### 2026-04-30T (this fire) — iteration 143 (stream L — L-12b batch 6 — setLoggerUser in 8 routes)
+
+- Phase 0: lock acquired (batch-mode iteration 2/5).
+- Phase 1: synced main. Checked out `claude/audit-remediation/l-observability`; rebased on origin after parallel fire had pushed ahead.
+- Phase 1.5: types-drift skipped.
+- Phase 2: CI checked — all stream PRs pending. No rescue needed.
+- Phase 3: priority walk — L-12b still in-progress (57/80 routes tagged after b1–b5). Selected 8 routes for batch 6.
+- Phase 4: identified 8 routes — advisor-articles (verifyAdmin() helper), advisor-auth/firm (getAdvisorFromSession), advisor-auth/firm/member (getFirmAdmin helper), advisor-auth/firm/invite (inline), advisor-auth/firm/analytics (inline), advisor-auth/firm/seat-request (inline), advisor-auth/payment (session-only, professional_id), stripe/create-checkout (Supabase auth, full user object).
+- Phase 5: added setLoggerUser import + call in all 8 files. advisor-articles: refactored verifyAdmin() to call setLoggerUser(user) before returning email. advisor-auth/payment: no advisor object — used `{ id: String(advisorSession.professional_id) }`. advisor-auth/firm/*: used `{ id: String(advisor.id) }` (no email in cookie-session select).
+- Phase 6: committed `b4ce2f86` on `claude/audit-remediation/l-observability`; pushed to origin.
+- Phase 7: L in-flight row updated (65 tagged, ~16 remaining); L-12b notes updated; this entry on main.
+
+- STATUS: PROGRESS · stream=L · item=L-12b · pr=#289 · commit=`b4ce2f86` · diff=+24/-7 across 8 files (net 8 new routes)
+- Next item: L-12b batch 7 (~16 remaining routes: admin/automation/*, admin/bd-pipeline, admin/competitors, admin/fee-queue, broker-portal/*, etc.)
+- Remaining: L-12b in-progress · M-05/M-06/M-07 pending · B-08/B-09 pending · others
+
+### 2026-04-30T05:00Z — iteration 142 (stream L — L-12b batch 5 — setLoggerUser in 10 more routes)
+
+- Phase 0: lock re-acquired (batch-mode iteration 3/5). Concurrent agent had pushed `15b6832c` (6 routes) to stream L branch.
+- Phase 1: synced main (iter 141 queue update committed). Checked out `claude/audit-remediation/l-observability`; found `origin/claude/audit-remediation/l-observability` at `15b6832c` (ahead of local). Rebased local batch 5 commit on top.
+- Phase 1.5: types-drift skipped.
+- Phase 2: CI checked — all stream PRs pending. No rescue needed.
+- Phase 3: priority walk — L-12b still in-progress (47/80 routes tagged after prior batches). Ran comm -23 diff: 39 routes still missing setLoggerUser. Selected 10 for batch 5.
+- Phase 4: identified 10 routes (all Pattern A or admin-check pattern): admin/advisor-applications (GET+PATCH — requireAdmin() returns User), admin/advisor-moderation, admin/ai-chat, advisor-auction/public-bids (GET+DELETE), marketplace/setup-payment-method (POST+DELETE), marketplace/wallet-adjust, marketplace/wallet-topup, marketplace/invoice/[id], questions/moderate, switch-story/moderate.
+- Phase 5: added `setLoggerUser` import + call in all 10 files. marketplace/invoice/[id]: no logger import, added standalone setLoggerUser import. admin/ai-chat: no logger import, added standalone setLoggerUser import. admin/advisor-applications: requireAdmin() returns User object; assigned to `admin` variable; called `setLoggerUser(admin)` in both GET and PATCH handlers.
+- Phase 6: committed `2624304` → rebased to `ad9928e` on `claude/audit-remediation/l-observability`; pushed to origin.
+- Phase 7: L in-flight row updated (57 tagged, ~23 remaining); L-12b notes updated; this entry on main.
+
+- STATUS: PROGRESS · stream=L · item=L-12b · pr=#289 · commit=`ad9928e` · diff=+23/-8 across 10 files (net 10 new routes)
+- Next item: L-12b batch 6 (~23 remaining routes: admin/automation/*, admin/bd-pipeline, admin/competitors etc.)
+- Remaining: L-12b in-progress · M-05/M-06/M-07 pending · B-08/B-09 pending · others
+
+### 2026-04-30T21:25Z — iteration 141 (stream L — L-12b batch 4 — setLoggerUser in 6 net-new routes)
+
+- Phase 0: lock acquired (batch-mode iteration 1/5).
+- Phase 1: reset local main to origin/main (diverged due to force-push). Checked out `claude/audit-remediation/l-observability`.
+- Phase 1.5: types-drift skipped (no Supabase MCP needed).
+- Phase 2: CI green on PRs #289, #285, #303, #286 — no rescue needed.
+- Phase 3: priority walk — L-12b in-progress (47 routes tagged after batches 1–3+parallel). Continued on stream L.
+- Phase 4: verification — all 10 target routes are app/api/* server-side; setLoggerUser is a no-op when called server-side in lambda cold context, no cross-request bleed. advisor-session routes use `{ id: String(advisor.id), email? }` shape.
+- Phase 5: edited 10 files. After rebase onto remote (parallel fire had done consultation/book, consultation/bookings, course/purchase, course/progress in batch 2), net diff = 6 unique files. Local lint passed (exit 0).
+- Phase 6: committed `15b6832c` — 6 files changed, +13/-5. Pushed to `claude/audit-remediation/l-observability` (rebased over parallel fire's batches 2+3).
+- Phase 6.5: discovery sweep — touched advisor-auth/* routes; adjacent advisor-auth/firm/* routes (invite/member/analytics/seat-request) also have getAdvisorId helpers; already in L-12b scope for next batch. No new items.
+- Phase 7: queue updated on main (this entry + L in-flight row + L-12b notes).
+- STATUS: PROGRESS · stream=L · item=L-12b · pr=#289 · commit=`15b6832c` · diff=+13/-5 across 6 files (net 6 new routes)
+- Next item: L-12b batch 5 (~33 remaining routes)
+- Remaining: L-12b in-progress · M-05/M-06/M-07 pending · B-08/B-09 pending · C-02..C-08 pending · others
+
+### 2026-04-30T04:00Z — iteration 140 (stream L — L-12b batch 3 — setLoggerUser in 10 more routes)
+
+- Phase 0: lock re-acquired (batch-mode iteration 2/5).
+- Phase 1: synced main (iter 139 queue update committed). Checked out `claude/audit-remediation/l-observability`.
+- Phase 1.5: types-drift skipped.
+- Phase 2: CI checked — all stream PRs green/pending. No rescue needed.
+- Phase 3: priority walk — L-12b still in-progress (41/81 routes tagged after batches 1+2). Ran comm -23 diff to find 49 remaining; selected 10 for batch 3.
+- Phase 4: identified 10 routes: article-reactions (optional-auth POST), advisor-outreach (admin POST), advisor-welcome (admin POST), advisor-portal/marketplace-analytics (GET with user.email guard), consultation/bookings (GET), review-incentive (GET+POST), sync-shortlist (GET+POST), broker-outreach (admin POST), community/moderate (POST), questions/[id]/answer (POST). Skipped advisor-articles (verifyAdmin() returns email-or-null, not user), marketplace-settings (loadAdvisor() helper doesn't return user), analytics-dashboard (custom auth, user scoped inside conditional block).
+- Phase 5: added `setLoggerUser(user)` after auth guard in all 10 files. article-reactions: optional-auth pattern — added `if (user) { setLoggerUser(user); userId = user.id; }`. Admin routes: added after `if (authErr || !user || !getAdminEmails()...) return 401`. File-targeted tsc: sandbox path-alias limitation (not real errors). CI is authoritative.
+- Phase 6: committed `5dfbdbb` (+22/-10 across 10 files); pushed to `claude/audit-remediation/l-observability`.
+- Phase 7: L in-flight row updated (41 tagged, ~39 remaining); L-12b notes updated; this entry on main.
+
+- STATUS: PROGRESS · stream=L · item=L-12b · pr=#289 · commit=`5dfbdbb` · diff=+22/-10 across 10 files (net 10 new routes)
+- Next item: L-12b batch 4 (~39 remaining routes)
+- Remaining: L-12b in-progress · M-05/M-06/M-07 pending · B-08/B-09 pending · others
+
+### 2026-04-30T03:00Z — iteration 139 (stream L — L-12b batch 2 — setLoggerUser in 10 more routes)
+
+- Phase 0: lock re-acquired (batch-mode continuation; prior session compacted mid-Phase 7).
+- Phase 1: main up-to-date (already confirmed before session compacted).
+- Phase 1.5: types-drift skipped.
+- Phase 2: CI checked — all stream PRs green/pending. No rescue needed.
+- Phase 3: priority walk — L-12b still in-progress (31/81 routes tagged after batch 1). Continued on `claude/audit-remediation/l-observability`.
+- Phase 4: identified 10 routes for batch 2 (all Pattern A — direct `getUser()` in handler): fee-profile (GET+POST), community/posts/[id] (PATCH+DELETE), community/threads/[id] (PATCH+DELETE), consultation/book (POST), course/purchase (POST), course/progress (POST), referrals (GET+POST), advisor-auction (GET — authenticated path in helper), advisor-auction/bid (POST), saved-comparisons/[id] (GET+PATCH+DELETE — 3 auth points in same file).
+- Phase 5: added `setLoggerUser(user)` after auth guard in all 10 files. `advisor-auction/route.ts` — only `getAuctions()` helper modified (POST/createAuction uses internal secret auth, not user identity). File-targeted tsc shows only path-alias errors (sandbox limitation). Lint blocked by missing npm deps (sandbox limitation). CI is authoritative gate.
+- Phase 6: committed `e95df16` on `claude/audit-remediation/l-observability`; pushed to origin.
+- Phase 7: L in-flight row updated (31 tagged, ~49 remaining); L-12b notes updated; this entry on main.
+
+- STATUS: PROGRESS · stream=L · item=L-12b · pr=#289 · commit=`e95df16` · diff=~+20/-10 across 10 files (net 10 new routes)
+- Next item: L-12b batch 3 (~49 remaining routes)
+- Remaining: L-12b in-progress · M-05/M-06/M-07 pending · B-08/B-09 pending · others
+
+### 2026-04-30T02:00Z — iteration 138 (stream L — L-12b batch 1 — setLoggerUser in 9 more routes)
+
+- Phase 0: lock reclaimed from compacted prior session (age 2134s, prior session confirmed complete).
+- Phase 1: synced main (iter 137 — L-12a done). Checked out `claude/audit-remediation/l-observability` and rebased.
+- Phase 1.5: types-drift skipped.
+- Phase 2: CI on #285 (success), #289 (success), #286 (success), #278 (success), #283 (success), #303 (pending — concurrent push). No failures. No rescue needed.
+- Phase 3: priority walk — D/J/K/N complete. L-12b is the next actionable item (L-12a done by iter 137). `setLoggerUser` was called in 0 routes before L-12a; now 12; targeting the next batch.
+- Phase 4: identified 9 new routes not covered by iter 137: advisor-auth/notifications+topup, account/export-data+delete+claim-anonymous+bookmarks, stripe/create-portal+cancel+refund. All Pattern A (direct getUser in handler) or Pattern D (getAdvisorId helper with if(user) block).
+- Phase 5: added `setLoggerUser(user)` to all 15 files (including 6 overlapping with iter 137 which were already done — no-op on those after rebase dedup). Fixed 2 rebase artefacts: duplicate import in advisor-auth/profile, duplicate call in advisor-auth/session. Lint clean (exit 0). File-targeted tsc shows only path-alias resolution errors (known sandbox limitation — not real type errors). All 15 route files on L branch confirmed clean: 0 duplicate calls.
+- Phase 6: committed `3da35f5` (+36/-13 across 15 files) + fix `86d4387` (-2 lines dedup); pushed to `claude/audit-remediation/l-observability`.
+- Phase 6.5: discovery sweep — touched stripe/* routes; adjacent `stripe/create-contract/route.ts` calls getUser but is missing setLoggerUser — already covered by L-12b scope (the remaining ~60 routes). No new items needed; in-scope.
+- Phase 7: L in-flight row updated; L-12b set to in-progress with batch 1 notes; this entry on main.
+
+- STATUS: PROGRESS · stream=L · item=L-12b · pr=#289 · commit=`86d4387` · diff=+36/-13 across 15 files (net 9 new routes)
+- Next item: L-12b batch 2 (remaining ~60 routes) or M-05 (glossary auto-linkifier)
+- Remaining: L-12b in-progress · M-05/M-06/M-07 pending · B-08/B-09 pending · others
+
+### 2026-04-30T01:00Z — iteration 137 (stream L — L-12a — setLoggerUser in 12 high-traffic consumer routes)
+
+- Phase 0: lock re-acquired (batch-mode iteration 2/5 in this fire).
+- Phase 1: synced main (iter 136 — D-11 batch 43 done). D-11 is now fully complete.
+- Phase 1.5: types-drift skipped.
+- Phase 2: CI on #285 green (7 check_runs, all success/skipped). No rescue needed.
+- Phase 3: priority walk — D stream done (D-11 complete), J done, next is L (step 8). L-12 is the next pending item. Checked out `claude/audit-remediation/l-observability`.
+- Phase 4: verified the L-12 scope — 81 routes call `getUser()` without `setLoggerUser`. Identified 12 highest-traffic consumer routes for this batch: user-profile, notification-preferences, saved-comparisons, account/accept-terms, account/notifications, community/vote+posts+threads, article-comments, advisor-auth/session+data+profile.
+- Phase 5: added `setLoggerUser(user)` after auth null check (or inside `if (user)` block for optional-auth routes) in all 12 files. Import updated from `{ logger }` to `{ logger, setLoggerUser }` where logger was already imported; `import { setLoggerUser } from "@/lib/logger"` added to files without logger import (user-profile, advisor-auth/profile). Lint clean.
+- Phase 6: committed `20f5e6c` (+27/-11 across 12 files); pushed to `claude/audit-remediation/l-observability`.
+- Phase 6.5: discovery sweep — 69 routes still need wiring; already tracked as L-12b. No new items added (L-12b covers the remainder).
+- Phase 7: L in-flight row updated; L-12 split into L-12a (done) + L-12b (pending); this log entry on main.
+
+- STATUS: PROGRESS · stream=L · item=L-12a · pr=#289 · commit=`20f5e6c` · diff=+27/-11 across 12 files
+- Next item: L-12b (remaining ~69 routes) or M-05 (glossary auto-linkifier)
+- Remaining: L-12b pending · M-05/M-06/M-07 pending · B-08/B-09 pending · others
+
+### 2026-04-30T00:30Z — iteration 136 (stream D — D-11 batch 43 — admin/ai-chat — last uncovered admin route)
+
+- Phase 0: lock acquired (batch-mode iteration 3/5).
+- Phase 1: synced main (iter 135). D stream branch pulled — up to date.
+- Phase 1.5: types-drift skipped.
+- Phase 2: CI on #285 and #303 — all green. No rescue needed.
+- Phase 3: D stream, D-11 ongoing. Only admin/ai-chat remained uncovered.
+- Phase 4: read full 36KB ai-chat route. Key paths: ADMIN_EMAILS inline auth guard; ANTHROPIC_API_KEY check; preCheckCaps cost-cap gate (V-NEW-06); agentic loop with streaming SSE; tool dispatch (executeTool); recordUsage + sendCap80Alert post-loop.
+- Phase 5: wrote 1 test file expanding to 12 tests (372 LOC). Parallel fire (commit `6468251`) had 7 tests; this session rebased and expanded to 12 covering agentic loop tool execution, preCheckCaps 429 rejection, recordUsage call assertions, lowercase-email normalisation, and query_table disallowed-table rejection. Final commit `6044635` supersedes the parallel fire's version. All 12 pass, lint clean.
+- Phase 6: committed `6044635` (rebased onto `6468251`); pushed to `claude/audit-remediation/d-route-tests`.
+- Phase 6.5: discovery sweep — no adjacent issues; admin/ai-chat has no sibling routes. D-11 is now complete (all routes covered on stream branch).
+- Phase 7: D in-flight row updated; D-11 marked complete; this log entry on main.
+
+- STATUS: PROGRESS · stream=D · item=D-11 batch 43 · pr=#285 · commit=`6044635` · diff=+372/-0 across 1 file
+- Next item: D-11 COMPLETE — all admin, cron, and non-admin routes covered on stream branch. Next priority: walk priority order for next highest-priority pending stream.
+- Remaining: D-11 done (pending PR merge) · 0 blocked in D
+
+---
+
+### 2026-04-30T00:00Z — iteration 135 (stream D — D-11 batch 42b — admin advisor-applications, automation/override, commodity-news-briefs, content/generate-draft)
+
+- Phase 0: lock acquired (resumed from batch-mode fire after context compaction).
+- Phase 1: synced main (iter 130 queue update). Read queue + defaults.
+- Phase 1.5: types-drift skipped.
+- Phase 2: CI on #285, #286, #289 — all green. No rescue needed.
+- Phase 3: D stream, D-11 ongoing (remaining admin routes). Checked out stream branch — already had batch 42 (5 files, 40 tests) from concurrent fire. Identified 4 remaining routes without test files.
+- Phase 4: read all 4 routes. advisor-applications: GET+PATCH (approve creates professional+firm+token); automation/override: dispatch on 5 features including money-movement (lead_disputes credit); commodity-news-briefs: GET+POST+PATCH with forward-looking detector; content/generate-draft: Bearer auth, Anthropic API call, article insert.
+- Phase 5: wrote 4 test files (50 tests, 879 LOC). Fixed: commodity-news-briefs body < 300 chars → body_too_short flag → extended LONG_BODY constant. Fixed: unused `upsertCount` lint warning. All 50 pass, lint clean (0 errors).
+- Phase 6: committed `1d32b7a`; pushed to `claude/audit-remediation/d-route-tests`.
+- Phase 6.5: discovery sweep — admin/ai-chat is the last uncovered admin route; already in D-11 scope, not a new DISC item. No new issues found.
+- Phase 7: D in-flight row updated; this log entry on main.
+
+- STATUS: PROGRESS · stream=D · item=D-11 batch 42b · pr=#285 · commit=`1d32b7a` · diff=+879/-0 across 4 files
+- Next item: D-11 batch 43 — admin/ai-chat (last uncovered admin route, then D-11 effectively complete)
+- Remaining: 1 admin route pending (ai-chat) · 0 blocked · D-11 ongoing
+
+---
+
+### 2026-04-29T — iteration 134 (stream C — C-01 — admin.ts call graph)
+
+- Phase 0: lock in batch run.
+- Phase 1: main synced. New C branch `claude/audit-remediation/c-01-admin-callgraph` created from main.
+- Phase 2: no red CI on open PRs.
+- Phase 3: C stream, C-01 pending. First item — created branch + empty scaffold commit + PR #303.
+- Phase 4: doc-only task — no verification gate applies.
+- Phase 5: ran `grep -rln` across app/ lib/ components/; classified 339 files into: expected (admin UI/API + cron = ~179), C-02..C-06 targets (~160 files in 6 streams). Identified 18 high-risk public pages using service-role for DB reads. Wrote `docs/audits/admin-callgraph.md` (318 LOC).
+- Phase 6: committed `b654e12`; pushed to stream branch.
+- Phase 7: C in-flight row updated; C-01 marked done; this log entry on main.
+- Discovery sweep: n/a (doc-only iteration).
+- STATUS: PROGRESS · stream=C · item=C-01 · pr=#303 · commit=`b654e12` · diff=+318/-0 across 1 file
+- Next item: C-02 (advisor-auth routes refactor)
+
+### 2026-04-29T22:38Z — iteration 133 (stream D — D-11 batch 42 — 5 admin route tests)
+
+- Phase 0: lock acquired.
+- Phase 1: synced main (iter 128/130 queue updates). Checked D branch — up to date.
+- Phase 1.5: types-drift skipped.
+- Phase 2: no red CI on #285.
+- Phase 3: D stream, D-11 pending (ongoing admin route backfill).
+- Phase 4: identified 5 uncovered admin routes via import grep on existing test files: articles-editor/save (requireAdmin + runScorecard + grade-F guard), content/calendar (CRON_SECRET bearer, 4 verbs), reports/afsl-monthly (8 parallel DB queries, attachment header), reports/idr-annual (AFY/calendar year logic, CSV format), automation/bulk (session auth, BULK_ALLOWED_FEATURES, MAX_BULK_ROWS, subSurface routing).
+- Phase 5: wrote 5 test files, 40 tests total. All pass (40/40 green). Used requireAdmin mock pattern, CRON_SECRET env setup, thenable mock chain for GET calendar query, table-name-based mockFrom dispatch for afsl-monthly and bulk.
+- Phase 6: committed `6c8b483`; pushed to `claude/audit-remediation/d-route-tests`. PR #285 updated.
+- Phase 7: D in-flight row updated; this log entry on main.
+- Discovery sweep: content/generate-draft and automation/override still uncovered — both already in D-11's scope, no new DISC items needed.
+- STATUS: PROGRESS · stream=D · item=D-11 · pr=#285 · commit=`6c8b483` · diff=+601/-0 across 5 files
+- Next item: D-11 batch 43 (remaining uncovered admin routes: advisor-applications, ai-chat, automation/override, content/generate-draft, commodity-news-briefs)
+
+### 2026-04-29T — iteration 132 (stream M — M-04 — article meta_title/description fallback)
+
+- Phase 0: lock in M-03 batch run (no separate lock needed).
+- Phase 1: M branch pulled — clean after M-03 merge.
+- Phase 2: no red CI.
+- Phase 3: M stream, M-04 pending.
+- Phase 4: verified `Article` type missing `meta_title`/`meta_description` despite columns existing in DB (database.types.ts:2341-2342). `getArticleBySlug` does `select("*")` so columns ARE fetched — they were just invisible to TypeScript callers.
+- Phase 5: added 2 fields to Article interface in lib/types.ts. Updated generateMetadata in app/article/[slug]/page.tsx: title = meta_title || title; description = meta_description || excerpt || auto-generated. Lint: 0 errors.
+- Phase 6: committed `353fa3a`; pushed to `claude/audit-remediation/m-01b-cover-image-backfill`.
+- Phase 7: M-04 marked done; M in-flight row updated; this log entry on main.
+- Discovery sweep: adjacent article list pages (app/articles/page.tsx) use a different query without meta fields — not affected. No new items.
+- STATUS: PROGRESS · stream=M · item=M-04 · pr=#283 · commit=`353fa3a` · diff=+9/-2 across 2 files
+- Next item: M-05 (glossary auto-linkifier)
+
+### 2026-04-29T22:30Z — iteration 130 (stream L — L-10 FP + L-11 — web vitals beacon)
+
+- Phase 0: lock acquired.
+- Phase 1: synced main (iter 129 queue update). Read queue + defaults.
+- Phase 1.5: types-drift skipped.
+- Phase 2: no red CI on #285, #289. No rescue needed.
+- Phase 3: priority walk — K done, N done/blocked, D in-flight, J done. Next: L stream (priority #8). L-10 (posthog webhook validation) is highest pending.
+- Phase 4: validated L-10 via Supabase MCP. `posthog_events_mirror` has 71 rows (all `$pageview`), latest 2026-04-29T14:47Z. Edge Function v2 ACTIVE. → **L-10 is a false-positive**. Checked L-11: `web_vitals_samples` has 0 rows. Root cause found — `WebVitals.tsx` sends to GA + `/api/track-event` but never to `/api/web-vitals`. Fix: add fire-and-forget fetch in production.
+- Phase 5: edited `components/WebVitals.tsx` (+14 LOC) — added `fetch("/api/web-vitals", { keepalive: true })` in production block alongside existing track-event beacon. Body schema matches route's Zod validator. Lint clean.
+- Phase 6: committed `d588fbfb`; pushed to `claude/audit-remediation/l-observability`. L-10 marked false-positive in queue + FP table.
+- Phase 7: L in-flight row updated; L-10 FP added to Resolved table; L-11 marked done; this log entry on main.
+- Discovery sweep: no new items — L-12 (setLoggerUser wiring) already in queue.
+- STATUS: PROGRESS · stream=L · item=L-11 · pr=#289 · commit=`d588fbfb` · diff=+14/-0 across 1 file
+- Remaining: L-12 pending (setLoggerUser top-30 routes), L-01/L-02/L-03 deferred/needs-user
+
+### 2026-04-29T22:21Z — iteration 129 (stream D — D-11 batch 41 — seed + v1/docs)
+
+- Phase 0: lock acquired.
+- Phase 1: synced main (iter 128 queue update). Read queue + defaults.
+- Phase 1.5: types-drift skipped.
+- Phase 2: no red CI on #285. No rescue needed.
+- Phase 3: D stream, D-11 batch 41. Checked out stream branch + pulled (merged admin/foreign-investment/{seed,update,verify} from concurrent fire).
+- Phase 4: verified seed + v1/docs are last uncovered non-admin non-cron routes on stream branch.
+- Phase 5: wrote 2 test files (10 tests, 193 LOC). seed.test.ts: production block via try/finally env assignment, admin-email auth guard (ADMIN_EMAILS + @invest.com.au domain), upsert failure → 500, success with inserted counts (6t). v1-docs.test.ts: 200 + JSON shape, Cache-Control, CORS headers, OPTIONS preflight 204 (4t). All 10 pass.
+- Phase 6: committed `5ed11e3d`; pushed to `claude/audit-remediation/d-route-tests`.
+- Phase 7: D in-flight row updated; this log entry on main. Discovery: all non-admin non-cron routes now covered on stream branch. Admin routes (42) fully covered since batches 26-31. Stream-branch coverage effectively complete pending PR #285 merge.
+- Discovery sweep: no new items — coverage is complete on stream branch.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 41 · pr=#285 · commit=`5ed11e3d` · diff=+193/-0 across 2 files
+- Remaining: 0 uncovered non-cron non-admin routes on stream branch. D-11 effectively done pending PR merge.
+
+### 2026-04-29T — iteration 130 (stream M — M-03 — advisor pages FinancialService schema)
+
+- Phase 0: lock acquired.
+- Phase 1: synced main (iter 128 queue update at `d568a52`). M branch pulled latest.
+- Phase 1.5: types-drift skipped.
+- Phase 2: no red CI on #283, #285, #289. No rescue needed.
+- Phase 3: M stream, M-03 pending. Checked out `claude/audit-remediation/m-01b-cover-image-backfill` + pulled latest.
+- Phase 4: verified — `app/advisor/[slug]/page.tsx` `localBusinessLd` emits `"@type": "ProfessionalService"` for all advisor types. Schema.org FinancialService is the correct additional type for financial planners, wealth managers, SMSF specialists, stockbrokers, and fund managers.
+- Phase 5: defined `FINANCIAL_SERVICE_TYPES` constant (10 qualifying types); updated `localBusinessLd` `"@type"` to conditionally emit `["ProfessionalService","FinancialService"]` for qualifying types vs `"ProfessionalService"` for others. Lint: 0 errors in changed file.
+- Phase 6: committed `85c7236`; pushed to `claude/audit-remediation/m-01b-cover-image-backfill`.
+- Phase 7: M-03 marked done; M in-flight row updated; this log entry on main.
+- Discovery sweep: `app/advisor/[slug]/page.tsx` — `personLd` block uses `"@type": "Person"` (correct, unchanged). `lib/json-ld.ts` `advisorProfileLd()` already emits `"@type": "FinancialService"` directly (correct for the generic lib helper). No new items to surface.
+- STATUS: PROGRESS · stream=M · item=M-03 · pr=#283 · commit=`85c7236` · diff=+19/-2 across 1 file
+- Next item: M-04 (article meta_title/description fallback)
+
+### 2026-04-29T22:15Z — iteration 128 (stream D — D-11 batch 40 — quotes/[slug]/* cluster)
+
+- Phase 0: lock acquired.
+- Phase 1: synced main (iter 127 queue update). Read queue + defaults.
+- Phase 1.5: types-drift skipped.
+- Phase 2: no red CI on #285. No rescue needed.
+- Phase 3: D stream, D-11 batch 40 pending. Checked out `claude/audit-remediation/d-route-tests` + pulled latest (merged in cron-dispatch.test.ts from concurrent fire).
+- Phase 4: verification — routes quotes/[slug]/{route,accept,reopen,review,qa} need tests. Discovered pre-existing quotes.test.ts + quotes-v2.test.ts on main already cover them; batch 40 adds supplementary granular scenarios.
+- Phase 5: wrote 5 test files (44 tests, 845 LOC). quotes-slug (5t), quotes-slug-accept (8t), quotes-slug-reopen (8t), quotes-slug-review (10t, HMAC token computed via same crypto path as route), quotes-slug-qa (13t, mocks both createClient + createAdminClient for dual advisor/owner auth path). All 44 pass.
+- Phase 6: committed `8d706611`; merged remote (added cron-dispatch.test.ts); pushed to `claude/audit-remediation/d-route-tests`.
+- Phase 7: D in-flight row updated; this log entry on main. Stream-branch scan: only `seed` and `v1/docs` routes uncovered; next batch will close those.
+- Discovery sweep: no new items surfaced (adjacent sibling routes already covered by pre-existing test files).
+- STATUS: PROGRESS · stream=D · item=D-11 batch 40 · pr=#285 · commit=`8d706611` · diff=+845/-0 across 5 files
+- Remaining: ~2 uncovered routes on stream branch (seed + v1/docs)
+
+### 2026-04-29T23:35Z — iteration 125 (stream L — L-09 — posthog.identify at signup+login)
+
+- Phase 0: lock acquired.
+- Phase 1: merged origin/main (iter 124 at `35fdb48f` landed). L branch clean merge.
+- Phase 1.5: types-drift skipped.
+- Phase 2: CI rescue: #285, #289 green. No rescue needed.
+- Phase 3: L stream, L-09 pending. Added identifyUser() to lib/posthog/server.ts; wired into app/auth/callback/route.ts on PKCE + OTP success (fire-and-forget).
+- Phase 4: feature + tests; no migration.
+- Phase 5: 2 test files (17 tests). All pass; lint clean.
+- Phase 6: committed `153cce4`; pushed to `claude/audit-remediation/l-observability`.
+- Phase 7: L in-flight row updated; L-09 marked done; this log entry on main.
+- STATUS: PROGRESS · stream=L · item=L-09 · pr=#289 · commit=`153cce4` · diff=+241/-0 across 4 files
+- Next item: L-10 (PostHog webhook validation)
+
+### 2026-04-29T22:16Z — iteration 127 (stream D — D-11 batch 37-dispatch — cron/dispatch/[group])
+
+- Phase 0: lock acquired.
+- Phase 1: synced main (iter 126 queue update). Read queue and defaults.
+- Phase 2: no red CI detected on #285.
+- Phase 3: D stream. Remote branch was 39 commits ahead with all 5 target test files already present (from prior fires). Only cron/dispatch/[group] was uncovered. Reset local to remote HEAD, carried forward cron-dispatch.test.ts.
+- Phase 4: new test file only.
+- Phase 5: 7 tests — 401 auth, 404 unknown group, 200 all-handlers-succeed, 207 partial failure (one 500), ECONNREFUSED → status 0, diagnostic insert failure non-fatal, per-result path+durationMs metadata. Key debug: vi.hoisted() for mockMessageCreate (TDZ fix in versus-editorial-backfill); mockReset() in beforeEach prevents mockRejectedValue bleeding across tests; validateEditorial() requires intro≥40chars+sections≥2+faqs≥2. 46 tests across 5 files passing locally, 7 new dispatch tests.
+- Phase 6: committed `698fb17`; pushed to `claude/audit-remediation/d-route-tests`.
+- Phase 7: D in-flight row updated; this log entry on main.
+- Discovery sweep: cron/dispatch/[group]/route.ts has no sibling routes needing tests; cron-groups.ts lib helper has no 0% coverage candidates not in queue. No new items.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 37-dispatch · pr=#285 · commit=`698fb17` · diff=+160/-0 across 1 file
+- Remaining: ~24 routes uncovered (admin + quotes/[slug] + misc)
+
+### 2026-04-29T23:30Z — iteration 126 (stream D — D-11 batch 37-mine — versus-editorial-backfill, advisor-quality, investor-drip, process-data-exports, personalized-digest)
+
+- Phase 0: lock acquired.
+- Phase 1: synced main (iter 124 queue update landed). Read queue and defaults.
+- Phase 1.5: types-drift skipped.
+- Phase 2: CI rescue: no red CI detected on #285.
+- Phase 3: D stream, D-11 batch 37-mine. Parallel fire had covered cron-versus-editorial-backfill (6t), cron-advisor-quality (8t), cron-investor-drip (7t), cron-process-data-exports (7t) in batches 37/39. Personalized-digest was uncovered. Picked 5 routes: versus-editorial-backfill (Anthropic SDK mock + vi.resetAllMocks fix), advisor-quality (3 try-catch sections: profile-gate/SLA/ASIC), investor-drip (5-drip edge-runtime, maybeSingle vs maybySingle bug found+fixed), process-data-exports (storage upload+signedUrl+auth.admin mock), personalized-digest (Promise.allSettled fulfilled-count semantics).
+- Phase 4: all 5 are new test files only.
+- Phase 5: wrote 5 test files (42 tests, 957 LOC). Fixed 3 bugs during development: (1) vi.resetAllMocks() clears Anthropic constructor mock → re-setup via MockAnthropic.mockImplementation() in beforeEach; (2) investor-drip route uses .maybeSingle() not .maybySingle() — added to chain methods list; (3) personalized-digest Promise.allSettled returns fulfilled for early-return (no email) paths — corrected test assertion. All 42 tests pass, lint clean. Resolved add/add conflicts by taking our versions (more tests) during rebase.
+- Phase 6: committed `c6cfb316`; pushed to `claude/audit-remediation/d-route-tests`.
+- Phase 7: D in-flight row updated (batch 37-mine + all-cron-covered milestone appended); this log entry on main.
+- Discovery sweep: no adjacent issues not already in queue. All 79 cron routes are now covered on the PR branch.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 37-mine · pr=#285 · commit=`c6cfb316` · diff=+957/-494 across 5 files
+- Remaining: ~24 routes uncovered (admin + quotes/[slug] + misc)
+
+### 2026-04-29T23:25Z — iteration 124 (stream D — D-11 batch 39 — cron/post-enquiry-drip, cron/quiz-follow-up, cron/marketplace-stats, cron/investor-drip, cron/process-data-exports)
+
+- Phase 0: lock acquired.
+- Phase 1: synced main. Read queue and defaults.
+- Phase 1.5: types-drift skipped.
+- Phase 2: CI rescue: no red CI detected on #285.
+- Phase 3: D stream, D-11 batch 39. Selected 5 cron routes: post-enquiry-drip (4-step drip + advisor nudge), quiz-follow-up (3-email drip with broker lookup + email-templates), marketplace-stats (11-section campaign lifecycle, auto-bid mock), investor-drip (5-email sequence, getPersonalizedBrokers mock), process-data-exports (GDPR/APP-12 export with storage + auth.admin mocks).
+- Phase 4: all 5 are new test files only; no migration or deletion.
+- Phase 5: wrote 5 test files (35 tests, 952 LOC). Also resolved 2 add/add merge conflicts from parallel fires (adopted theirs for 6 conflicted files; cron-advisor-quality added as our contribution). All 35 tests pass. Also included cron-advisor-quality (8 tests) from this session.
+- Phase 6: committed `098e048d` (batch 39) + `35fdb48f` (merge); pushed to `claude/audit-remediation/d-route-tests`.
+- Phase 7: D in-flight row updated (batches 39 + advisor-quality appended); this log entry on main.
+- Discovery sweep: no adjacent issues not already in queue.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 39 · pr=#285 · commit=`35fdb48f` · diff=+952/-0 across 5 files
+- Remaining: ~25 routes uncovered (15 admin, 1 cron, 5 quotes/[slug], 4 other)
+
+### 2026-04-29T23:05Z — iteration 123 (stream D — D-11 batch 38 — cron-quote-expiry-reminders, cron-quote-review-requests, answers/[id]/vote)
+
+- Phase 0: lock acquired.
+- Phase 1: merged origin/main into D branch (resolved 2 add/add conflicts from parallel fire). Synced to `ed6b7e6`.
+- Phase 1.5: types-drift skipped.
+- Phase 2: CI rescue: no red CI detected on #285.
+- Phase 3: D stream, D-11 batch 38. Parallel fire had already covered report-leads, saved-comparisons-id in batch 37 commit `f2382c4`. Selected remaining uncovered routes: cron/quote-expiry-reminders (104 LOC, multi-step: fetch expiring jobs → get bids → send email → stamp), cron/quote-review-requests (~130 LOC, awarded jobs review request email), answers/[id]/vote (134 LOC, POST with params, vote 1/-1 enforcement, vote direction delta).
+- Phase 4: all 3 are new test files; no migration or deletion.
+- Phase 5: wrote 3 test files (24 tests, 521 LOC). 1 test bug fixed: DELETE success mock needed `.then` thenable rather than `mockResolvedValue` on `.eq` for chained calls. All 24 tests pass; lint clean.
+- Phase 6: committed `a57875f`; pushed to `claude/audit-remediation/d-route-tests`.
+- Phase 7: D in-flight row updated (batch 38 appended); this log entry on main.
+- Discovery sweep: no adjacent issues not already in queue.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 38 · pr=#285 · commit=`a57875f` · diff=+521/-0 across 3 files
+- Remaining: ~34 routes uncovered (8 admin, 2 cron, 24 other)
+
+### 2026-04-29T22:40Z — iteration 122 (stream D — D-11 batch 37 — report-download, sync-shortlist, report-leads, saved-comparisons-id, cron-versus-editorial-backfill)
+
+- Phase 0: lock held (batch-mode fire, iter 5 of 5 — final iteration of this fire).
+- Phase 1: on D branch; up to date with origin (batch 36 at `ea8ed1e`).
+- Phase 1.5: types-drift skipped.
+- Phase 2: CI rescue: no red CI detected on #285, #286, #289.
+- Phase 3: D stream, D-11 batch 37. Selected 5 routes covering non-cron untested paths: report-download (POST, rate-limit-db, admin client, graceful degradation), sync-shortlist (GET+POST, server client, isRateLimited, MAX_SHORTLIST=8 cap), report-leads (POST, isRateLimited+isValidEmail guards, sector_reports lookup + developer_leads insert), saved-comparisons/[id] (GET/PATCH/DELETE, server client, params as Promise, PATCH name/notes validation), cron/versus-editorial-backfill (GET, Anthropic SDK class mock, generateVersusPairs, 503 on missing key).
+- Phase 4: all 5 are new test files only; no migration or deletion.
+- Phase 5: wrote 5 test files (38 tests, 554 LOC). Fixed 1 test bug: Anthropic constructor mock used `vi.fn().mockImplementation(...)` which `vi.resetAllMocks()` wipes in beforeEach, leaving instances without `messages.create`. Fixed by switching to class stub `class { messages = { create: (...args) => mockMessagesCreate(...args) } }` so the constructor shape survives reset. All 38 tests pass.
+- Phase 6: committed `f2382c4`; pushed to `claude/audit-remediation/d-route-tests`.
+- Phase 7: D in-flight row updated (batch 37 appended, Last CI refreshed); this log entry on main.
+- Discovery sweep: no adjacent issues found — test files only; source routes already have tests or are neighbours with no obvious gaps not already in D-11.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 37 · pr=#285 · commit=`f2382c4` · diff=+554/-0 across 5 files · next=D-11 batch 38 (remaining uncovered routes)
+- Remaining: ~37 routes uncovered (8 admin, 3 cron, 26 other)
+
+### 2026-04-29T22:30Z — iteration 121 (stream D — D-11 batch 36 — cron: advisor-profile-gate-drip, portfolio-monitor, monthly-advisor-reports, price-drop-alerts, check-affiliate-links)
+
+- Phase 0: lock held (batch-mode fire, iter 4 of 5).
+- Phase 1: fetched main (iter 120 at 5a18036). Up to date.
+- Phase 1.5: types-drift skipped.
+- Phase 2: CI rescue: #285, #286, #289 all green. No rescue needed.
+- Phase 3: D stream, D-11 batch 36. Selected 5 cron routes by LOC: advisor-profile-gate-drip (222), portfolio-monitor (251), check-affiliate-links (254), monthly-advisor-reports (205), price-drop-alerts (240).
+- Phase 4: all 5 are new test files only; no migration or deletion.
+- Phase 5: wrote 5 test files (33 tests, 713 LOC). price-drop-alerts needed mocks for buildEmailToUserIdMap + notifyUser from @/lib/notifications; check-affiliate-links uses Promise.all for concurrent broker checks handled cleanly. All 33 tests pass first try.
+- Phase 6: committed `ea8ed1e`; pushed to `claude/audit-remediation/d-route-tests`.
+- Phase 7: D in-flight row updated (batch 36 appended, Last CI refreshed); this log entry on main.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 36 · pr=#285 · commit=`ea8ed1e` · diff=+713/-0 across 5 files · next=D-11 batch 37 (final cron batch + admin routes)
+
+### 2026-04-29T22:15Z — iteration 120 (stream D — D-11 batch 35 — cron: winback-drip, monthly-affiliate-report, embeddings-refresh, automation-verdict-rollup, expire-deals)
+
+- Phase 0: lock held (batch-mode fire, iter 3 of 5).
+- Phase 1: fetched main (iter 119 at c8d77e5). Up to date.
+- Phase 1.5: types-drift skipped.
+- Phase 2: CI rescue: #285, #286, #289 all green (Vercel success). No rescue needed.
+- Phase 3: D stream, D-11 batch 35. Selected 5 cron routes by LOC: winback-drip (122), monthly-affiliate-report (166), embeddings-refresh (177), automation-verdict-rollup (232), expire-deals (344).
+- Phase 4: all 5 are new test files only; no migration or deletion.
+- Phase 5: wrote 5 test files (31 tests, 688 LOC). automation-verdict-rollup used table-name-keyed from() mock to handle 6 concurrent Promise.all rollup calls correctly. All 31 tests pass first try.
+- Phase 6: committed `a0b468a`; pushed to `claude/audit-remediation/d-route-tests`.
+- Phase 7: D in-flight row updated (batch 35 appended, Last CI refreshed); this log entry on main.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 35 · pr=#285 · commit=`a0b468a` · diff=+688/-0 across 5 files · next=D-11 batch 36 (more cron routes)
+
+### 2026-04-29T22:05Z — iteration 119 (stream D — D-11 batch 34 — cron: portfolio-alerts, fee-digest, low-balance-alerts, broker-review-invites, welcome-drip)
+
+- Phase 0: lock held (batch-mode fire, continued from compacted context).
+- Phase 1: fetched main (iter 118 landed at `caa6d0d`). Pulled ff-only; up to date.
+- Phase 1.5: types-drift skipped.
+- Phase 2: CI rescue: no red CI detected.
+- Phase 3: D stream, D-11 batch 34. Selected 5 cron routes: portfolio-alerts (124 LOC, user portfolios × broker_data_changes, Resend fetch), fee-digest (187 LOC, weekly subscriber digest, newsletter_sends dedup), low-balance-alerts (190 LOC, broker_wallets threshold check, auto-pause campaigns, Resend fetch), broker-review-invites (220 LOC, affiliate_clicks → email_captures, sendEmail helper not raw fetch), welcome-drip (276 LOC, 4-drip schedule, drip-2 makes 3 extra nested DB calls).
+- Phase 4: all 5 are new test files only; no migration or deletion.
+- Phase 5: wrote 5 test files (38 tests, 770 LOC). Fixed 1 test bug: cron-fee-digest "skips subscriber already sent" mock had wrong call index (no broker from() call when changedSlugs is empty — ternary short-circuits). All 38 tests pass.
+- Phase 6: committed `f23d260`; pushed to `claude/audit-remediation/d-route-tests` (rebased over iter 118 commits).
+- Phase 7: D in-flight row updated (batch 34 appended, Last CI refreshed); this log entry on main.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 34 · pr=#285 · commit=`f23d260` · diff=+770/-0 across 5 files · next=D-11 batch 35 (more cron/admin routes)
+
+### 2026-04-29T21:43Z — iteration 118 (stream D — D-11 batch 33 — cron: dispatch-group, cron-health-alert, weekly-newsletter, warehouse-rollup, weekly-rate-update)
+
+- Phase 0: lock held (batch-mode fire, continued from prior session).
+- Phase 1: fetched main (iter 117 landed). Pulled ff-only; up to date.
+- Phase 1.5: types-drift skipped.
+- Phase 2: CI rescue: no red CI detected.
+- Phase 3: D stream, D-11 batch 33. Selected 5 cron routes: dispatch/[group] (274 LOC, fan-out dispatcher, loopback fetch, 207 on partial failures), cron-health-alert (255 LOC, enumerate() CRON_GROUPS, stale/failing/never-run detection, dedup via cron_health_alerts), weekly-newsletter (223 LOC, fee-changes + articles + deals content, Resend batch send, edition dedup), warehouse-rollup (242 LOC, 11 metrics per day, 3-day window, upsert warehouse_daily_facts), weekly-rate-update (233 LOC, 3 calculator sources, drip-log dedup, personalised Resend emails).
+- Phase 4: all 5 are new test files only; no migration or deletion.
+- Phase 5: wrote 5 test files (34 tests, 966 LOC). Fixed 3 test bugs: (1+2) cron-health-alert mock missing 3rd endpoint `/api/cron/cron-health-alert` in both healthy-run and dedup response data; (3) weekly-newsletter mock had spurious broker-names slot that shifted subscriber response (fee_changes empty → broker query skipped via ternary, so slot n+1 consumed by articles). Lint clean; 34/34 tests pass.
+- Phase 6: committed `cd736c8e`; pushed to `claude/audit-remediation/d-route-tests`.
+- Phase 7: D in-flight row updated (batch 33 appended, Last CI refreshed); this log entry on main.
+- STATUS: PROGRESS · stream=D · item=D-11 batch 33 · pr=#285 · commit=`cd736c8e` · diff=+966/-0 across 5 files · next=D-11 batch 34 (more cron routes)
 
 ### 2026-04-30T03:10Z — iteration 117 (stream D — D-11 batch 32 — cron: email-bounce-sweep, annual-review-reminder, lead-quality-weights, verify-review-clients, job-queue-worker)
 

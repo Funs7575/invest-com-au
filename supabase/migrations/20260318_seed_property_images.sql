@@ -1,3 +1,58 @@
+-- ============================================================================
+-- Migration: 20260318_seed_property_images.sql
+-- Purpose: Seed `property_listings.images` (JSONB array of Unsplash URLs)
+--          for eight launch property listings. Each listing receives
+--          3-5 curated photo URLs covering exterior / interior /
+--          amenities / suburb context.
+-- Rollback: NULL out images on each of the eight slugs (resets to the
+--           pre-seed state for those rows).
+-- Risk: medium — reverse blanks the photo galleries on the eight seeded
+--       listings. If operators or admin tools have since UPDATEd the
+--       same `images` field with newer URLs (this migration uses
+--       UPDATE, not INSERT, so any later writes overwrite this seed),
+--       the reverse below will also clear those newer URLs. Inspect
+--       the live row state before running the rollback.
+-- ============================================================================
+--
+-- Forward operations:
+--   1. UPDATE property_listings SET images = '[<4 Unsplash URLs>]'
+--        WHERE slug = 'the-operetta-paramatta'.
+--   2. UPDATE property_listings SET images = '[<4 URLs>]'
+--        WHERE slug = 'botanical-residences-south-melbourne'.
+--   3. UPDATE property_listings SET images = '[<3 URLs>]'
+--        WHERE slug = 'riverview-terrace-newstead'.
+--   4. UPDATE property_listings SET images = '[<3 URLs>]'
+--        WHERE slug = 'elara-marsden-park'.
+--   5. UPDATE property_listings SET images = '[<4 URLs>]'
+--        WHERE slug = 'yarra-one-south-yarra'.
+--   6. UPDATE property_listings SET images = '[<3 URLs>]'
+--        WHERE slug = 'west-village-west-end'.
+--   7. UPDATE property_listings SET images = '[<3 URLs>]'
+--        WHERE slug = 'haven-crows-nest'.
+--   8. UPDATE property_listings SET images = '[<3 URLs>]'
+--        WHERE slug = 'aurora-melbourne-central'.
+--
+-- Rollback (in reverse order):
+--   8. UPDATE property_listings SET images = NULL
+--        WHERE slug = 'aurora-melbourne-central';
+--   7. UPDATE property_listings SET images = NULL
+--        WHERE slug = 'haven-crows-nest';
+--   6. UPDATE property_listings SET images = NULL
+--        WHERE slug = 'west-village-west-end';
+--   5. UPDATE property_listings SET images = NULL
+--        WHERE slug = 'yarra-one-south-yarra';
+--   4. UPDATE property_listings SET images = NULL
+--        WHERE slug = 'elara-marsden-park';
+--   3. UPDATE property_listings SET images = NULL
+--        WHERE slug = 'riverview-terrace-newstead';
+--   2. UPDATE property_listings SET images = NULL
+--        WHERE slug = 'botanical-residences-south-melbourne';
+--   1. UPDATE property_listings SET images = NULL
+--        WHERE slug = 'the-operetta-paramatta';
+--      -- DESTRUCTIVE: also clears any newer URLs that operators
+--      -- subsequently wrote to these rows.
+-- ============================================================================
+
 -- Seed property listing images with curated Unsplash photos
 -- Each listing gets 3-5 images: exterior, interior, amenities, suburb context
 

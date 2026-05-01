@@ -1,14 +1,26 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { isValidEmail, isDisposableEmail } from "@/lib/validate-email";
 import { isRateLimited } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
 
 export const runtime = "edge";
 
+const log = logger("api/verify-otp/send");
+
+const Body = z.object({ email: z.string() });
+
 /**
  * POST /api/verify-otp/send
- * Generates a 6-digit OTP and emails it to the provided address.
+ * Generates a 6-digit OTP and emails it via Resend.
  * Rate-limited to 5 sends per IP per 10 minutes.
+ *
+ * Failure semantics: if the email cannot be sent (missing API key, Resend
+ * outage, non-2xx response), we return 502 in production so the UI surfaces
+ * a real error instead of silently advancing to the "enter code" step. In
+ * development, a missing key is tolerated (warned) so local flows work
+ * without Resend credentials.
  */
 export async function POST(request: NextRequest) {
   const ip = (request.headers.get("x-forwarded-for") ?? "unknown").split(",")[0].trim();
@@ -16,12 +28,17 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Too many requests. Please wait a moment." }, { status: 429 });
   }
 
-  let email: string;
+  let raw: unknown;
   try {
-    ({ email } = await request.json());
+    raw = await request.json();
   } catch {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
+  const parsed = Body.safeParse(raw);
+  if (!parsed.success) {
+    return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+  }
+  const { email } = parsed.data;
 
   if (!isValidEmail(email)) {
     return NextResponse.json({ error: "Please enter a valid email address." }, { status: 400 });
@@ -48,10 +65,22 @@ export async function POST(request: NextRequest) {
 
   await supabase.from("email_otps").insert({ email: normalizedEmail, code, expires_at: expiresAt });
 
-  // Send email via Resend
   const key = process.env.RESEND_API_KEY;
-  if (key) {
-    await fetch("https://api.resend.com/emails", {
+  if (!key) {
+    if (process.env.NODE_ENV === "production") {
+      log.error("RESEND_API_KEY missing — verification email not sent", { email: normalizedEmail });
+      return NextResponse.json(
+        { error: "Email service is not configured. Please contact support." },
+        { status: 503 },
+      );
+    }
+    log.warn("RESEND_API_KEY missing — skipping send (dev mode)", { email: normalizedEmail });
+    return NextResponse.json({ success: true, devSkipped: true });
+  }
+
+  let resendRes: Response;
+  try {
+    resendRes = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
       body: JSON.stringify({
@@ -71,8 +100,30 @@ export async function POST(request: NextRequest) {
           </div>
         </div>`,
       }),
-    }).catch(() => null);
+    });
+  } catch (err) {
+    log.error("Resend request threw", { err, email: normalizedEmail });
+    return NextResponse.json(
+      { error: "We couldn't send the verification email. Please try again." },
+      { status: 502 },
+    );
   }
 
+  if (!resendRes.ok) {
+    // Pull the error body for diagnostics — Resend returns JSON like
+    // { statusCode, name, message } on 4xx (e.g. unverified domain).
+    const body = await resendRes.text().catch(() => "<unreadable>");
+    log.error("Resend returned non-OK", {
+      status: resendRes.status,
+      body: body.slice(0, 500),
+      email: normalizedEmail,
+    });
+    return NextResponse.json(
+      { error: "We couldn't send the verification email. Please try again." },
+      { status: 502 },
+    );
+  }
+
+  log.info("OTP email sent", { email: normalizedEmail });
   return NextResponse.json({ success: true });
 }
