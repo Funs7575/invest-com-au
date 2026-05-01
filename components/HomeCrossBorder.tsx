@@ -2,174 +2,163 @@ import Link from "next/link";
 import { DesignIcon } from "@/components/design/DesignIcon";
 import { FlagChip } from "@/components/design/Atoms";
 
-const CORRIDORS: ReadonlyArray<{
+// Cards on the homepage section serve audience A (inbound migrants — largest
+// absolute LTV). The other three cross-border audiences (US-AU dual citizens,
+// non-resident foreign investors, outbound Australians) get small footer
+// escape hatches. Mixing all four into co-equal cards is what made the
+// previous version read as muddled — see FIN_NOTEBOOK 2026-05-01.
+const ARRIVALS: ReadonlyArray<{
   code: string;
-  title: string;
-  tag: string;
+  country: string;
   blurb: string;
-  advisers: number;
   href: string;
 }> = [
   {
     code: "GB",
-    title: "UK → Australia",
-    tag: "Migrant",
-    blurb: "Pension transfers, residency rules, and how to keep your UK tax sorted.",
-    advisers: 34,
+    country: "the UK",
+    blurb: "Pension transfers, residency rules, and how UK and Australian tax overlap.",
     href: "/foreign-investment/united-kingdom",
   },
   {
     code: "IN",
-    title: "India → Australia",
-    tag: "Migrant",
-    blurb: "Resident-status rules, sending money out of India, and what changes when you arrive.",
-    advisers: 37,
+    country: "India",
+    blurb: "NRI / ROR status, getting funds out of India, and what changes when you arrive.",
     href: "/foreign-investment/india",
   },
   {
     code: "CN",
-    title: "China → Australia",
-    tag: "Migrant",
+    country: "China",
     blurb: "Moving funds across the border, mainland property, and double-tax basics.",
-    advisers: 24,
     href: "/foreign-investment/china",
   },
   {
     code: "US",
-    title: "US citizens in Australia",
-    tag: "Dual citizen",
-    blurb: "What the IRS still wants, plus the Australian funds you should and shouldn't own.",
-    advisers: 28,
+    country: "the US",
+    blurb: "Why the IRS still wants you, and which Australian funds you should and shouldn't own.",
     href: "/foreign-investment/united-states",
   },
 ];
 
 export default function HomeCrossBorder() {
   return (
-    <section style={{ padding: "48px 36px", maxWidth: 1280, margin: "0 auto" }}>
-      <div className="home-crossborder-header" style={{ display: "grid", gridTemplateColumns: "1.1fr 2fr", gap: 36, alignItems: "center", marginBottom: 18 }}>
-        <div>
-          <span className="iv2-mini" style={{ color: "var(--color-coral-600)" }}>
-            ● Cross-border · 8 country guides
-          </span>
-          <h2
-            className="font-display"
-            style={{
-              fontSize: 28,
-              letterSpacing: "-.028em",
-              fontWeight: 800,
-              margin: "4px 0 6px",
-              lineHeight: 1.05,
-              textWrap: "balance",
-            }}
-          >
-            Where are you investing from?
-          </h2>
-          <p style={{ fontSize: 12.5, color: "var(--color-ink-500)", margin: 0, maxWidth: 380, lineHeight: 1.5 }}>
-            For visa holders, expats &amp; foreign investors — we&apos;ll show you the right rules, advisors and deals.
-          </p>
-        </div>
-        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", flexWrap: "wrap" }}>
-          <Link href="/foreign-investment" className="iv2-cta-ghost" style={{ fontSize: 12.5 }}>
-            All country guides
-          </Link>
-          <Link href="/foreign-investment" className="iv2-cta" style={{ fontSize: 12.5 }}>
-            Foreign investor hub <DesignIcon name="arrow-right" size={11} />
-          </Link>
-        </div>
+    <section style={{ padding: "56px 36px 60px", maxWidth: 1280, margin: "0 auto" }}>
+      <div style={{ marginBottom: 24, maxWidth: 720 }}>
+        <span className="iv2-mini" style={{ color: "var(--color-coral-600)" }}>
+          ● Cross-border · pension, tax, FIRB, DASP
+        </span>
+        <h2
+          className="font-display"
+          style={{
+            fontSize: 32,
+            letterSpacing: "-.028em",
+            fontWeight: 800,
+            margin: "6px 0 8px",
+            lineHeight: 1.05,
+            textWrap: "balance",
+          }}
+        >
+          Just moved to Australia?
+        </h2>
+        <p
+          style={{
+            fontSize: 14,
+            color: "var(--color-ink-500)",
+            margin: 0,
+            maxWidth: 640,
+            lineHeight: 1.55,
+          }}
+        >
+          We&apos;ll match you with specialists for the country-specific stuff &mdash; pension transfers,
+          tax overlap, FIRB property rules, DASP refunds. Pick where you&apos;re coming from.
+        </p>
       </div>
 
-      <div className="home-crossborder-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10 }}>
-        {CORRIDORS.map((p) => (
+      <div className="home-crossborder-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }}>
+        {ARRIVALS.map((p) => (
           <Link
             key={p.code}
             href={p.href}
             className="iv2-card iv2-card-hover"
-            style={{ padding: "14px 14px 12px", display: "flex", flexDirection: "column", gap: 8, textDecoration: "none", color: "inherit" }}
+            style={{
+              padding: "18px 18px 16px",
+              display: "flex",
+              flexDirection: "column",
+              gap: 10,
+              textDecoration: "none",
+              color: "inherit",
+              minHeight: 180,
+            }}
           >
-            <div style={{ display: "flex", alignItems: "center", gap: 9 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <FlagChip code={p.code} />
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 12.5, fontWeight: 700, color: "var(--color-ink-900)" }}>{p.title}</div>
-                <div
-                  style={{
-                    fontSize: 9.5,
-                    color: "var(--color-coral-600)",
-                    textTransform: "uppercase",
-                    letterSpacing: ".06em",
-                    fontWeight: 700,
-                    marginTop: 1,
-                  }}
-                >
-                  {p.tag}
-                </div>
+              <div style={{ fontSize: 14, fontWeight: 800, color: "var(--color-ink-900)", letterSpacing: "-.012em" }}>
+                Coming from {p.country}
               </div>
             </div>
             <p
               style={{
-                fontSize: 11.5,
+                fontSize: 12.5,
                 color: "var(--color-ink-500)",
                 margin: 0,
-                lineHeight: 1.45,
+                lineHeight: 1.5,
+                flex: 1,
               }}
             >
               {p.blurb}
             </p>
             <div
               style={{
-                fontSize: 10,
-                color: "var(--color-ink-400)",
-                marginTop: "auto",
-                paddingTop: 8,
-                borderTop: "1px solid #e5e7eb",
-                display: "flex",
-                justifyContent: "space-between",
+                fontSize: 12,
+                fontWeight: 700,
+                color: "var(--color-coral-600)",
+                display: "inline-flex",
                 alignItems: "center",
+                gap: 5,
+                marginTop: "auto",
               }}
             >
-              <span>{p.advisers} advisers</span>
-              <span style={{ color: "var(--color-coral-600)", fontWeight: 700 }}>Open →</span>
+              Find specialists <DesignIcon name="arrow-right" size={11} strokeWidth={2.6} />
             </div>
           </Link>
         ))}
       </div>
 
       <div
+        className="home-crossborder-footer"
         style={{
-          marginTop: 14,
+          marginTop: 18,
+          paddingTop: 14,
+          borderTop: "1px solid #e5e7eb",
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
           flexWrap: "wrap",
-          gap: 12,
-          fontSize: 11.5,
+          gap: 14,
+          fontSize: 12,
           color: "var(--color-ink-400)",
         }}
       >
         <span>
-          More corridors:{" "}
-          <Link href="/foreign-investment/singapore" style={{ color: "var(--color-ink-500)", textDecoration: "none", fontWeight: 600 }}>
-            Singapore
-          </Link>{" "}·{" "}
-          <Link href="/foreign-investment/new-zealand" style={{ color: "var(--color-ink-500)", textDecoration: "none", fontWeight: 600 }}>
-            NZ
-          </Link>{" "}·{" "}
-          <Link href="/foreign-investment/south-korea" style={{ color: "var(--color-ink-500)", textDecoration: "none", fontWeight: 600 }}>
-            South Korea
-          </Link>{" "}·{" "}
-          <Link href="/foreign-investment/united-arab-emirates" style={{ color: "var(--color-ink-500)", textDecoration: "none", fontWeight: 600 }}>
-            UAE
+          Other countries:{" "}
+          <Link href="/foreign-investment/singapore" style={{ color: "var(--color-ink-500)", textDecoration: "none", fontWeight: 600 }}>Singapore</Link>{" · "}
+          <Link href="/foreign-investment/new-zealand" style={{ color: "var(--color-ink-500)", textDecoration: "none", fontWeight: 600 }}>NZ</Link>{" · "}
+          <Link href="/foreign-investment/hong-kong" style={{ color: "var(--color-ink-500)", textDecoration: "none", fontWeight: 600 }}>Hong Kong</Link>{" · "}
+          <Link href="/foreign-investment/united-arab-emirates" style={{ color: "var(--color-ink-500)", textDecoration: "none", fontWeight: 600 }}>UAE</Link>{" · "}
+          <Link href="/foreign-investment" style={{ color: "var(--color-coral-600)", textDecoration: "none", fontWeight: 700 }}>see all 12 &rarr;</Link>
+        </span>
+        <span style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
+          <Link href="/foreign-investment/super" style={{ color: "var(--color-ink-500)", textDecoration: "none", fontWeight: 600 }}>
+            Leaving Australia? DASP refund &rarr;
+          </Link>
+          <Link href="/foreign-investment" style={{ color: "var(--color-ink-500)", textDecoration: "none", fontWeight: 600 }}>
+            Investing into AU from offshore &rarr;
           </Link>
         </span>
-        <Link href="/foreign-investment" style={{ color: "var(--color-coral-600)", fontWeight: 700, textDecoration: "none" }}>
-          Investing <em style={{ fontStyle: "normal" }}>into</em> Australia from overseas? Switch view →
-        </Link>
       </div>
 
       <style>{`
         @media (max-width: 1024px) {
           .home-crossborder-grid { grid-template-columns: repeat(2, 1fr) !important; }
-          .home-crossborder-header { grid-template-columns: 1fr !important; gap: 16px !important; }
         }
         @media (max-width: 640px) {
           .home-crossborder-grid { grid-template-columns: 1fr !important; }
