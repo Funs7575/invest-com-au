@@ -44,6 +44,9 @@ const SLUG_TO_TYPE: Record<string, ProfessionalType> = {
   "smsf-specialists": "smsf_specialist",
   "immigration-investment-lawyers": "immigration_investment_lawyer",
   "fund-managers": "fund_manager",
+  // Property-thread completion (20260501)
+  "conveyancers": "conveyancer",
+  "property-lawyers": "property_lawyer",
 };
 
 const TYPE_DESCRIPTIONS: Record<string, string> = {
@@ -75,6 +78,8 @@ const TYPE_DESCRIPTIONS: Record<string, string> = {
   "smsf-specialists": "Find AFSL-authorised SMSF specialists — setup, investment strategy, LRBA property structuring, pension-phase transition, and death benefit nominations.",
   "immigration-investment-lawyers": "Find specialist lawyers for Significant Investor Visa (SIV), Business Innovation Visa, and SIV-complying investment structuring. Experienced with FIRB coordination and sophisticated-investor certification.",
   "fund-managers": "Browse AFSL-licensed Australian fund managers — wholesale, retail-registered, managed investment schemes, private credit, and alternative mandates.",
+  "conveyancers": "Find licensed Australian conveyancers for residential and off-the-plan property settlement. PEXA-accredited specialists handling contracts, stamp duty, and title transfer across NSW, VIC, QLD, WA, SA, TAS, ACT and NT.",
+  "property-lawyers": "Find specialist Australian property lawyers for off-the-plan disputes, strata matters, SMSF property structuring, and property litigation. Practising-certificate-verified solicitors across every state.",
 };
 
 const TYPE_FAQS: Record<string, { q: string; a: string }[]> = {
@@ -217,6 +222,16 @@ const TYPE_FAQS: Record<string, { q: string; a: string }[]> = {
     { q: "What's the difference between wholesale and retail fund managers?", a: "Retail funds are available to everyday investors and must issue a Product Disclosure Statement (PDS). Wholesale funds are restricted to sophisticated/professional investors (typically $2.5M net assets or $250K gross income certification) and issue an Information Memorandum instead of a PDS." },
     { q: "How do fund manager fees work?", a: "Management fee: typically 0.5–1.5% p.a. of AUM. Performance fee: 15–20% over a benchmark or absolute hurdle, often with a high-water mark. Some funds charge entry/exit fees or buy-sell spreads. Always review the PDS/IM fee schedule and compare on the total cost of ownership." },
     { q: "How do I verify a fund manager is legitimate?", a: "Check their AFSL number on the ASIC register — it should cover managed investment schemes and/or wholesale dealing. Review the fund's PDS or IM. For retail funds, check ASIC's MoneySmart tool. Past performance must be disclosed in standard format." },
+  ],
+  "conveyancers": [
+    { q: "What's the difference between a conveyancer and a property lawyer?", a: "A conveyancer is licensed specifically to handle property settlements: contract review, title searches, PEXA e-settlement, and stamp duty. A property lawyer is an admitted solicitor who can also handle disputes, off-the-plan complications, and litigation. Conveyancers are typically cheaper for straightforward residential purchases; property lawyers are preferred for complex titles or where a dispute is possible." },
+    { q: "How much does a conveyancer cost in Australia?", a: "Standard residential settlement fees range $800–$2,200 depending on state and complexity. NSW and VIC sit in the $1,200–$1,800 range. Off-the-plan settlements often cost more ($1,500–$3,000) because contracts are longer and there are more compliance touchpoints. Search and government fees ($300–$700) are charged on top." },
+    { q: "Do I need a conveyancer in Queensland?", a: "Queensland is the only state where conveyancing is restricted to admitted solicitors — there is no separate conveyancer licence. So in QLD you'll engage a property lawyer for what other states would call conveyancing. Fees are similar to interstate conveyancers for straightforward purchases." },
+  ],
+  "property-lawyers": [
+    { q: "When do I need a property lawyer instead of a conveyancer?", a: "Use a property lawyer for off-the-plan disputes (sunset clauses, defects, developer insolvency), strata or owners-corporation issues, SMSF property structuring (LRBA, in-specie transfers), commercial conveyancing, or any matter where a contract dispute is reasonably possible. The legal cover is broader than a conveyancer's licence allows." },
+    { q: "How much does a property lawyer cost?", a: "Straightforward residential conveyancing handled by a solicitor: $1,200–$2,500. Off-the-plan disputes or strata litigation: $5,000–$25,000+ depending on scope. SMSF property structuring with LRBA setup: $3,500–$7,500. Hourly rates: $400–$700 at boutique firms, $700–$1,000+ at top-tier. All legal fees attract GST." },
+    { q: "What is the sunset clause issue with off-the-plan?", a: "Sunset clauses let either party rescind an off-the-plan contract if the development isn't completed by a specified date — historically used by developers to cancel and re-sell at a higher price after the market rose. NSW and VIC have legislated to restrict developer-initiated rescissions; a property lawyer should review every off-the-plan contract for the current rules in your state." },
   ],
 };
 
@@ -500,6 +515,26 @@ const TYPE_EDITORIAL: Record<string, { howToChoose: string[]; costGuide: string;
     ],
     costGuide: "Retail managed funds: 0.3–1.5% p.a. management fee, some with performance fees. Wholesale funds: 1.0–2.0% management + 15–20% performance over hurdle. Private credit funds: 0.85–1.25% management + 10–15% performance. Private equity: 1.75–2.25% + 20% carry over 8% preferred return.",
     industryInsight: "The Australian managed-funds industry manages ~$4.3 trillion. Post-RG 97 fee disclosure, retail investors can compare total-cost-of-ownership more directly than ever. Wholesale mandates remain the fastest-growing segment, particularly in private credit and infrastructure.",
+  },
+  "conveyancers": {
+    howToChoose: [
+      "Verify their state-issued conveyancer licence on Fair Trading (NSW, VIC, SA, WA, TAS, ACT, NT) — in QLD use a solicitor",
+      "Confirm PEXA accreditation — paper settlements are now the exception, not the rule",
+      "Ask for a fixed-fee quote upfront covering search, settlement, and PEXA fees separately from disbursements",
+      "Check responsiveness — settlement is time-sensitive and 24-hour reply windows matter at exchange and settlement",
+    ],
+    costGuide: "Standard residential settlement: $800–$2,200 (search and gov fees $300–$700 extra). Off-the-plan: $1,500–$3,000. Combined contract review + settlement packages: $1,500–$2,800. Hourly rates rarely apply — most conveyancers quote fixed fees.",
+    industryInsight: "PEXA e-settlement now covers >95% of property transactions across the eastern states. The shift has reduced settlement risk and time-on-the-day delays but raised the bar on conveyancer technology and cyber-fraud awareness — title-fraud insurance is increasingly expected.",
+  },
+  "property-lawyers": {
+    howToChoose: [
+      "Verify a current practising certificate with the relevant state Law Society",
+      "Match expertise to your situation — off-the-plan, strata, SMSF property, and commercial are different sub-specialties",
+      "Ask about recent matters: a property lawyer who has actually run sunset-clause litigation is materially different from one who has only drafted settlements",
+      "For SMSF property, confirm they coordinate with your accountant and SMSF specialist on the LRBA structuring",
+    ],
+    costGuide: "Residential conveyancing by a solicitor: $1,200–$2,500. Off-the-plan disputes or strata litigation: $5,000–$25,000+. SMSF property + LRBA setup: $3,500–$7,500 one-off. Commercial conveyancing: $3,000–$10,000. Hourly rates: $400–$700 (boutique), $700–$1,000+ (top-tier).",
+    industryInsight: "NSW and VIC have tightened sunset-clause rules to limit developer-initiated rescissions, and SMSF LRBA scrutiny by the ATO has increased materially since 2024. Property law as a stand-alone solicitor specialty is growing — generalist 'commercial + property' practices are giving way to dedicated property litigators.",
   },
 };
 

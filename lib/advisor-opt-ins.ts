@@ -75,6 +75,8 @@ const VALID_ADVISOR_TYPES = new Set([
   "smsf_specialist",
   "immigration_investment_lawyer",
   "fund_manager",
+  "conveyancer",
+  "property_lawyer",
 ]);
 
 export async function processAdvisorOptIns(args: ProcessOptInsArgs): Promise<ProcessOptInsResult> {
