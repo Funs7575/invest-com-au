@@ -38,7 +38,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | L | `claude/audit-remediation/l-observability` | #289 MERGED 2026-04-29T10:18Z | last merged 2026-04-29T10:18Z | L-04/L-05 done out-of-loop. L-06..L-12 all done (merged via PR #289). L-02/L-03 deferred-post-launch (n8n dormant). L-01 needs-user (SENTRY_AUTH_TOKEN). L-10 false-positive (verified populating). **Stream L complete** (modulo L-01 needs-user). |
 | M | `claude/audit-remediation/m-01b-cover-image-backfill` (#283) · `m-02-versus-json-ld` (#296) · `m-05-glossary-linkifier` (#325) | #283/#296/#325 all MERGED | last merged 2026-05-01T10:29Z | M-01a done out-of-loop (PR #227). M-01b done (PR #283 — engineering side). M-02 done (PR #296). M-03 done (`85c7236`). M-04 done (`353fa3a`). M-05 done (PR #325). M-06 done (PR #283). M-07 done (PR #283). **Stream M complete.** |
 | N | `claude/audit-remediation/n-ux-perf` | #242 MERGED | last merged 2026-04-28 | N-01+N-02 done (`2ec6f89`) · N-03a/b/c done · N-04/N-05 FP · N-06 blocked (deferred-post-launch by founder 2026-05-01 — option 4 chosen) · N-07/N-08/N-09/N-10/N-11 done — **stream complete** (N-06 deferred). |
-| O | `claude/audit-remediation/o-rls-no-policy` (iters 1-4 via #235/#237/#239) · `o-iter6/forum` (#299) · `o-iter7/editorial-obs-secrets` (#300) · `o-iter8-rls-observability` (#366 parallel-agent) | #235/#237/#239/#299/#300 MERGED · #366 OPEN | CI-rescue 2026-05-01T21:41Z | O-01 iter1-4 done. O-02 done. iter6 done (PR #299). iter7 done (PR #300). iter8 in-progress on #366 (parallel-agent, 8 obs+anti-abuse tables). CI-rescue: merged main post-#392 → `5b000f0` pushed 2026-05-01T21:41Z; CI re-run pending. **iter5 gap noted.** O-03/O-04/O-05 pending. |
+| O | `claude/audit-remediation/o-rls-no-policy` (iters 1-4 via #235/#237/#239) · `o-iter6/forum` (#299) · `o-iter7/editorial-obs-secrets` (#300) · `o-iter8-rls-observability` (#366 parallel-agent) · `o-03-search-path` (#395) | #235/#237/#239/#299/#300 MERGED · #366 OPEN · #395 OPEN | pending — pushed 2026-05-01 | O-01 iter1-4 done. O-02 done. iter6 done (PR #299). iter7 done (PR #300). iter8 in-progress on #366 (parallel-agent, 8 obs+anti-abuse tables). CI-rescue: merged main post-#392 → `5b000f0` pushed 2026-05-01T21:41Z. **O-03 done: `4a04418` → PR #395 (SECURITY DEFINER search_path fix).** O-04/O-05 pending. |
 | P | _not started_ | — | — | — |
 | Q | _not started_ | — | — | — |
 | R | `claude/audit-remediation/r-01-marketplace-allocation` | #290 MERGED 2026-04-29T10:05Z | last merged 2026-04-29T10:05Z | R-01 done (PR #290 — marketplace allocation + CPC billing tests). R-02..R-11 still pending. |
@@ -681,7 +681,7 @@ Beyond Stream B's RLS-enable work; addresses policy completeness, FK indexes, se
 | --- | --- | --- | --- | --- |
 | O-01 | in-progress | Triage 56 RLS-enabled-but-zero-policies tables: bucket into (a) service-role only — add explicit `service_role` allow policy for clarity, (b) user-data — needs `auth.uid()`-scoped policies | ~3 | P1. Full list in audit §4.2. ~16h total; chunk by table family. **Iter 1:** user-data triplet done — `user_notifications`/`user_quiz_history`/`user_bookmarks`. **Iter 2 (PR #235, commit `8e638bd`):** `article_comments`/`article_reactions`. **Iter 3 (PR #237, commit `c9c8fcd`):** admin/audit cluster (4 tables). **Iter 4 (PR #239, commit `e965eb7`):** 14 observability/admin tables. **Iter 6 (PR #299 MERGED 2026-05-01T12:50Z):** 5 forum/community tables. **Iter 7 (PR #300 MERGED 2026-05-01T12:51Z):** 9 editorial+obs+secrets tables. **Iter 8 in-progress on PR #366** (parallel-agent — 8 obs+anti-abuse tables). Count: 57→54→52→48→34→29→20→~12. **iter5 was apparently skipped or merged silently — gap noted; re-enumerate next iteration.** |
 | O-02 | done | 4 FK index migration — done out-of-loop in PR #230 | 1 | Resolved in PR #230 ("chore(db): repo-parity migration for 4 missing FK indexes (already live)") merged 2026-04-26T17:37Z. Live DB indexes had been applied earlier; this PR adds the migration file to the repo to close source-of-truth drift. |
-| O-03 | pending | `refresh_advisor_cohort_metrics()` SECURITY DEFINER — set `search_path = public, pg_catalog` to close injection vector | 1 | P2. |
+| O-03 | done | `refresh_advisor_cohort_metrics()` SECURITY DEFINER — set `search_path = public, pg_catalog` to close injection vector | 1 | P2. Done: commit `4a04418` · PR #395. |
 | O-04 | pending | `stripe_webhook_events` idempotency dry-run via Stripe dashboard test event → confirm row inserts + status='completed' | 1 | P2. Pre-launch validation. May surface to Blocked if needs founder action. |
 | O-05 | pending | Sponsor-invoices style hardening: rename misleading `USING (false)` policies on the 5 iter-8-FP tables to clearer names + add `FORCE ROW LEVEL SECURITY` + explicit `TO service_role` (`support_tickets`, `support_messages`, `broker_creatives`, `broker_notifications`, `ab_tests`) | 1 | P3. Hygiene. |
 
@@ -1347,6 +1347,7 @@ Two strategically important surfaces under-served by current nav: (1) investment
 
 ## Done
 
+- 2026-05-01 · O-03 · `refresh_advisor_cohort_metrics()` SECURITY DEFINER: added `SET search_path = public, pg_catalog` via `20260501_o03_refresh_advisor_cohort_metrics_search_path.sql`. Closes CWE-89/CWE-20 injection vector on SECURITY DEFINER function. Commit `4a04418` · pr #395
 - 2026-05-01 · C-05 · `components/ArticleBrokerTable.tsx`: switched `createAdminClient()` → `await createClient()` (anon key). Anon "Public read for active brokers" RLS policy (`USING status='active'`) matches `.eq("status","active")` filter exactly — zero behavioral change. Commit `e202d0d` · pr #394
 - 2026-05-01 · C-04 · `app/api/affiliate/click/route.ts`: kept admin client (founder Option C), added `// admin — click tracking must capture all broker statuses for revenue/editorial analytics` comment above both SELECT and INSERT call sites. Commit `e202d0d` · pr #394
 - 2026-04-30 · C-DISC-20260430-02 · advisor_sessions CREATE TABLE backfill migration (`20260602_c02_advisor_sessions_backfill.sql`): SERIAL PK + professional_id FK (ON DELETE CASCADE) + session_token UNIQUE + expires_at + created_at. Indexes for token lookup + professional_id cleanup scans. No-op on existing databases. RLS handled by companion 20260603 migration. Commit `169815c8` · pr #327
@@ -1424,6 +1425,16 @@ Two strategically important surfaces under-served by current nav: (1) investment
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-01 — iteration 167 (stream O — O-03 SECURITY DEFINER search_path)
+
+- Phase 2: CI check on in-flight PRs — no new failures (previous batch rescues all pending CI re-runs).
+- Phase 3: picked O-03 — `refresh_advisor_cohort_metrics()` is the top pending item in stream O (priority 13).
+- Phase 4 verification: function confirmed SECURITY DEFINER, no existing `SET search_path` (queried live DB `pg_proc`). Only caller: `lib/job-queue.ts:161` (service-role RPC, admin/cron context only). No anon-key callers.
+- Phase 5: created `supabase/migrations/20260501_o03_refresh_advisor_cohort_metrics_search_path.sql` — `CREATE OR REPLACE FUNCTION` with `SET search_path = public, pg_catalog`. 38-line migration with rollback header. `CREATE OR REPLACE` is idempotent.
+- Phase 6.5 discovery sweep: queried `pg_proc` for all other SECURITY DEFINER functions without pinned search_path. Only `st_estimatedextent` (3 overloads) — PostGIS extension functions, not app-owned. No new queue items needed.
+- Created branch `claude/audit-remediation/o-03-search-path`, committed `4a04418`, pushed, opened draft PR #395.
+- STATUS: PROGRESS · stream=O · item=O-03 · pr=#395
 
 ### 2026-05-01 — CI rescue (this fire, iter 1) — B-09 PR #348 second rescue (post-PR #392 types regen)
 
