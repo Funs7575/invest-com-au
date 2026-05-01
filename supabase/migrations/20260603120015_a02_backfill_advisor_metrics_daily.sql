@@ -7,8 +7,8 @@
 -- Why:
 --   advisor_metrics_daily stores per-day engagement metrics for each advisor
 --   (profile views, enquiries, booking clicks, article views, etc.).
---   The table exists in lib/database.types.ts but has no CREATE TABLE migration
---   (schema drift). Without RLS, advisor analytics are visible to any caller
+--   The table exists in lib/database.types.ts but has no backing schema migration
+--   (drift). Without RLS, advisor analytics are visible to any caller
 --   with the anon key — competitive intelligence exposure (e.g. an advisor
 --   learning their peers' lead volume).
 --
@@ -19,7 +19,7 @@
 --   below provides the foundation for that path.
 --
 -- IMPORTANT — prior policy state on advisor_metrics_daily:
---   No prior CREATE TABLE or ENABLE RLS in any migration. This migration is the
+--   Table not present in any prior migration; no prior RLS. This is the
 --   first time RLS is enabled on this table.
 --
 -- TODO: human review of policy semantics — advisor_metrics_daily has no direct
@@ -28,7 +28,7 @@
 --   given auth.uid() maps to exactly one professionals.id via auth_user_id).
 --
 -- Idempotent:
---   CREATE TABLE IF NOT EXISTS; ENABLE/FORCE RLS are no-ops if already set.
+--   IF NOT EXISTS on table + indexes; ENABLE/FORCE RLS are no-ops if already set.
 --   DROP POLICY IF EXISTS + CREATE is idempotent.
 --
 -- Rollback:

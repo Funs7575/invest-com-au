@@ -6,8 +6,8 @@
 --
 -- Why:
 --   advisor_auth_tokens stores one-time login links emailed to advisors.
---   The table exists in lib/database.types.ts but has no CREATE TABLE migration
---   (schema drift). Without a migration, the table was created ad-hoc and has
+--   The table exists in lib/database.types.ts but has no backing schema migration
+--   (drift). Without a migration, the table was created ad-hoc and has
 --   no RLS — any caller with the anon key can enumerate all auth tokens via
 --   PostgREST, defeating the security model of the OTP flow.
 --
@@ -25,11 +25,11 @@
 --   SELECT + UPDATE policies below can be removed, tightening security further.
 --
 -- IMPORTANT — prior policy state on advisor_auth_tokens:
---   No prior CREATE TABLE or ENABLE RLS in any migration. This migration is the
+--   Table not present in any prior migration; no prior RLS. This is the
 --   first time RLS is enabled on this table.
 --
 -- Idempotent:
---   CREATE TABLE IF NOT EXISTS; ENABLE/FORCE RLS are no-ops if already set.
+--   IF NOT EXISTS on table + indexes; ENABLE/FORCE RLS are no-ops if already set.
 --   DROP POLICY IF EXISTS + CREATE is idempotent.
 --
 -- Rollback:

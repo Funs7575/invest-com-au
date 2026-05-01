@@ -7,8 +7,8 @@
 -- Why:
 --   advisor_specialties is a reference table mapping specialty names to
 --   advisor type categories (e.g. "Self-Managed Super Funds" → "financial_planner").
---   The table exists in lib/database.types.ts but has no CREATE TABLE migration
---   (schema drift). Without RLS, the table is wide open via PostgREST.
+--   The table exists in lib/database.types.ts but has no backing schema migration
+--   (drift). Without RLS, the table is wide open via PostgREST.
 --   This is public reference data (no PII), so anon SELECT is intentional —
 --   adding RLS makes the intent explicit and prevents future anon writes.
 --
@@ -18,11 +18,11 @@
 --   filter UI without code changes.
 --
 -- IMPORTANT — prior policy state on advisor_specialties:
---   No prior CREATE TABLE or ENABLE RLS in any migration. This migration is the
+--   Table not present in any prior migration; no prior RLS. This is the
 --   first time RLS is enabled on this table.
 --
 -- Idempotent:
---   CREATE TABLE IF NOT EXISTS; ENABLE/FORCE RLS are no-ops if already set.
+--   IF NOT EXISTS on table + indexes; ENABLE/FORCE RLS are no-ops if already set.
 --   DROP POLICY IF EXISTS + CREATE is idempotent.
 --
 -- Rollback:

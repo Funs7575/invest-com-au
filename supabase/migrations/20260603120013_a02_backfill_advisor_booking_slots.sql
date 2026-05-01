@@ -7,7 +7,7 @@
 -- Why:
 --   advisor_booking_slots stores an advisor's recurring weekly availability
 --   schedule (which day/time slots they accept bookings). The table exists in
---   lib/database.types.ts but has no CREATE TABLE migration (schema drift).
+--   lib/database.types.ts but has no backing schema migration (drift).
 --   Without RLS, the anon key exposes all advisors' schedules via PostgREST
 --   (acceptable for active slots but creates an enumeration surface).
 --
@@ -19,11 +19,11 @@
 --    advisor-portal feature; only reads exist today.)
 --
 -- IMPORTANT — prior policy state on advisor_booking_slots:
---   No prior CREATE TABLE or ENABLE RLS in any migration. This migration is the
+--   Table not present in any prior migration; no prior RLS. This is the
 --   first time RLS is enabled on this table.
 --
 -- Idempotent:
---   CREATE TABLE IF NOT EXISTS; ENABLE/FORCE RLS are no-ops if already set.
+--   IF NOT EXISTS on table + indexes; ENABLE/FORCE RLS are no-ops if already set.
 --   DROP POLICY IF EXISTS + CREATE is idempotent.
 --
 -- Rollback:
