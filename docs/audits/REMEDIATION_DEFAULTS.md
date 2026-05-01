@@ -161,6 +161,24 @@ If an auto-merge GitHub Action is set up (see `.github/workflows/audit-remediati
 
 When choosing the next item, walk in this order and pick the first non-blocked one. The loop interleaves 04-24 streams (A–I) with 04-26 streams (J–S) so that compliance/security/revenue gates land first, with cosmetic and architecture work later.
 
+### Lane 0 — Founder-reported bugs (preempts every queue slot, added 2026-05-01)
+
+Anything the founder reports as broken in the live product (e.g. "verification email not arriving", "checkout 500", "advisor profile 404") jumps to the top of the queue ahead of every audit-remediation item. The loop opens a hotfix branch, ships the fix, and only resumes queue work once the bug is closed.
+
+**How to recognise.** A founder message that describes user-visible product breakage is a Lane-0 item. Heuristics: present-tense breakage verb ("broken", "not working", "didn't arrive", "shows wrong"), a path/page/feature in the live site, no item-ID prefix. Audit findings are not Lane-0 — they go into the queue under their stream letter.
+
+**How to file.** No queue entry needed for one-shot bugs (they ship and close in one PR). For systemic issues that surface multiple bugs (e.g. "all transactional emails failing"), open a `BUG-<YYYYMMDD>-NN` queue item under whatever stream owns the surface so follow-up work isn't lost.
+
+**How it interacts with merge tiers.** A Lane-0 hotfix uses normal tier policy. If the fix is Tier C (proxy.ts, webhook, RLS), it merges under the Tier-C founder-delegation rule (CI green + 15-min observation + post-merge notification). The lane is about queue *priority*, not merge friction.
+
+### Phase 2 — frozen until launch streams clear (added 2026-05-01)
+
+The streams listed in `docs/audits/BACKLOG_PHASE_2.md` (Z-NN extras, AA-* programmatic SEO, BB-* calculators beyond the FHSS/ETP pair, CC-* AI features beyond CC-01, DD-* marketplace mechanics beyond DD-01, EE-* distribution, FF-* through NN-*) are **frozen for Phase 2**. The loop must not pick items from these streams until every Phase 1 stream (A–Y, V-NEW, KK, the four co-shipped pairings, and CL-*) is in `done` or `blocked` state.
+
+This is to stop the moving-goalpost problem where the queue grows faster than it drains. ~140 items moved to Phase 2 on 2026-05-01.
+
+The queue tracks Phase 2 items as `phase-2` status (between `pending` and `deferred-post-launch`). Surfacing a Phase 2 item back to Phase 1 requires a queue hand-edit by the founder — the loop does not auto-promote.
+
 **2026-04-26 reorder note:** N (P0 UI/UX) moved up to step 3 (was step 7). Reasons: (a) founder explicitly asked for visible work after observing the first 22 iterations were all backend; (b) stream K is mid-flight on PR #222 with 7 commits, so finishing K then jumping to N gives one clean review-able PR followed by visible morning wins; (c) D/J/L items are largely test/integration work that can run while founder is awake to consult on edge cases.
 
 **2026-04-27 enterprise-standard reorder note:** the four V-NEW gates (V-NEW-01..04) move to slot 1 — they're the CI side of the per-surface rubric in `docs/audits/ENTERPRISE_STANDARD.md`, and every later stream (CC, DD, AA touching dated data, BB calculators, every directory listing) depends on at least one of them. Shipping them first means the rest of the queue lands on top of working gates rather than racing a backstop. The DatedStatBadge enforcement (CI lint side of Y-05) moves to slot 2 — it's the page-surface gate the AA-* programmatic templates need to land safely on dated data, and pulling it out of Y-05 lets streams W and Y stay parallelisable. New stream KK (lead-routing maturity) inserts at slot 14, before any external coordination starts in Week 4-5. Streams W and X are explicitly **parallel-eligible** — they touch disjoint file scopes (W extracts to `components/Hub*`, X swaps imports in `app/**/page.tsx`) and the loop can interleave them without merge conflicts. Stream X is shown at the slot where it would block other streams if not yet complete, but it can run any time.

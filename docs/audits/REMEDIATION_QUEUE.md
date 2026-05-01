@@ -10,11 +10,33 @@ up your changes on its next run.
 Format conventions:
 
 - Items are stable IDs of the form `<stream-letter>-<NN>`.
-- Statuses: `pending` · `in-progress` · `done` · `blocked` · `false-positive` · `deferred-post-launch`.
+- Statuses: `pending` · `in-progress` · `done` · `blocked` · `false-positive` · `deferred-post-launch` · `phase-2`.
 - Each item has: ID · status · summary · est-iterations · notes (file paths, blockers, links).
 - "In flight" lists per-stream PR + branch + last CI status (updated each iteration).
 
 Audit source: `docs/audits/codebase-health-2026-04-24.md` (PR #213).
+
+---
+
+## Lane 0 — Founder-reported live-product bugs (preempts everything, added 2026-05-01)
+
+Anything the founder reports as broken in the live product jumps the queue. The loop opens a hotfix branch, ships, and only resumes Phase 1 work once the bug is closed. See `REMEDIATION_DEFAULTS.md` § "Lane 0 — Founder-reported bugs" for full policy.
+
+| When | Item | Status | PR | Note |
+|---|---|---|---|---|
+| 2026-05-01 | OTP send route silently swallowed Resend failures (verification email never arrived from quiz/find-advisor flow) | done (pending merge) | #318 | Surface real errors, log Resend body, 503 in prod when key missing |
+
+---
+
+## Phase 2 freeze (added 2026-05-01)
+
+Streams listed in `docs/audits/BACKLOG_PHASE_2.md` are **frozen**. The loop must not pick items from them until every Phase 1 stream is `done` or `blocked`.
+
+Frozen streams: **AA · EE · FF · GG · HH · II · JJ · NN · LX · OB · GT · DF · QA · CD · RR · MK · SM · CM · AT · DV** plus extras within Z (Z-22..Z-27 minus the two co-shipped pairs), BB (extras minus BB-07/BB-08), CC (extras minus CC-01), DD (extras minus DD-01), LL (extras minus LL-01/LL-02), EM (extras minus EM-01..03/EM-05).
+
+Phase 1 (active): **A · B · C · D · E · F · G · H · I · J · K · L · M · N · O · P · Q · R · S · T · U · V · V-NEW · W · X · Y · KK · CL · CO**, plus Z-01..Z-21, Z-22+BB-07, Z-23+BB-08, CC-01, DD-01, LL-01, LL-02, EM-01..03, EM-05.
+
+The detail of every Phase-2 item remains under its `### Stream <X>` section below — nothing was deleted; the loop is just instructed to skip it.
 
 ---
 

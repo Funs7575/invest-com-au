@@ -75,11 +75,15 @@ Tiered policy at `docs/audits/MERGE_AUTHORIZATION.md`. Read before merging any a
 
 - **Tier A** (tests / docs / content / page UI / loop PRs labelled `auto-merge-safe`) → merge after CI green, no confirmation
 - **Tier B** (refactors / additive API tests / RLS migrations passing isolation gate) → merge + 15-min observation window
-- **Tier C** (webhooks, cron, middleware/proxy, auth, compliance, lib/stripe, lib/supabase/admin, .github/workflows, BB/CC/DD/EE streams, new schema migrations) → announce intent in chat, merge unless `STOP` comes back
+- **Tier C** (webhooks, cron, middleware/proxy, auth, compliance, lib/stripe, lib/supabase/admin, .github/workflows, BB/CC/DD/EE streams, new schema migrations) → **founder-delegated 2026-05-01**: merge after CI green + 15-min observation, post a one-line "merged #N — rollback: <sha>" notification *after* the merge. **No announce-and-wait, no STOP polling.** Carve-outs that still require explicit founder approval: first-of-pattern PRs (first hub on HOC, first AA template, first BB calculator, first CC AI feature, first DD marketplace mechanic, first EE distribution embed); destructive SQL (DROP/DELETE/TRUNCATE on populated tables); changes to founder-anonymity infrastructure (CL-* stream, `lib/compliance.ts` author/byline, `.github/workflows/anonymity-*.yml`).
 - **Tier D** (PR body explicitly says "set X env var before merge", or has `do-not-merge` label) → hard hold, refuse until precondition confirmed
 - **Tier E** (force-push / branch delete / repo settings / workflow disablement / anything `git revert` can't undo) → never autonomous, require explicit fresh consent every time
 
 Founder-authored PRs are out of scope.
+
+**Lane 0 — Founder-reported live-product bugs preempt everything.** When the founder reports user-visible breakage in the live product (e.g. "verification email not arriving"), open a hotfix branch and ship before resuming any queue item. Lane 0 uses normal tier policy for the *merge*, but it owns the *queue priority*. See `docs/audits/REMEDIATION_DEFAULTS.md` § "Lane 0 — Founder-reported bugs".
+
+**Phase 2 freeze.** Streams in `docs/audits/BACKLOG_PHASE_2.md` are frozen. The loop must not pick items from them until every Phase 1 stream is `done` or `blocked`. Re-promotion requires a hand-edit by the founder.
 
 ## Before shipping
 

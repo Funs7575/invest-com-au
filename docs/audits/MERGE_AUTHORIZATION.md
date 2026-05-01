@@ -43,7 +43,9 @@ The fix is a **tiered policy** with **layered safeguards** so the policy can be 
 
 **Action:** merge after a 15-minute quiet window during which any failing post-merge CI on `main` is treated as a regression and triggers a `git revert` PR. The 15 min is the time window for the audit loop to catch a bad change before the next iteration picks it up.
 
-### Tier C — Announce intent + merge unless STOPped
+### Tier C — Auto-merge after CI green + 15-min observation (founder-delegated 2026-05-01)
+
+> **Founder delegation (2026-05-01):** the founder has explicitly delegated Tier-C autonomy to the loop. Rationale: founder is non-technical and does not perform line-level review of agent-authored Tier-C PRs; the announce-and-wait pattern was producing weeks-long stalls (PRs #326, #327, #299, #300) without producing review value. Tier C now behaves identically to Tier B: merge after CI green + 15-min observation. The loop announces the merge as a notification (not a permission request) and proceeds. Layered safeguards (CI gates + post-merge main watch + revert PR on regression) remain in force.
 
 **Examples:** anything touching the high-blast-radius paths:
 
@@ -59,10 +61,15 @@ The fix is a **tiered policy** with **layered safeguards** so the policy can be 
 **Required gates:** all of Tier B's gates, plus:
 
 - Rollback section in the PR body or commit message ("revert this commit + restore via [path]").
-- Explicit pre-merge announcement to the founder ("about to merge #N — does X, rollback is Y, CI is green").
-- 1-sentence wait. If the founder replies with `STOP` or any "hold" / "wait" / "no" within the wait, abort. Anything else (including silence followed by the next message being unrelated) counts as confirmation — don't re-ask.
+- Post-merge `main` CI watch for 15 min (existing layered safeguard #4).
 
-**Action:** announce, then merge with `gh pr merge <N> --squash --delete-branch=false`.
+**Action:** merge with `gh pr merge <N> --squash --delete-branch=false`. Post a one-line "merged #N (Tier C — <path>) — rollback: <commit-sha>" notification to the founder after the merge lands, not before. No wait. No `STOP` polling.
+
+**Tier-C carve-outs that still require explicit founder approval** (these stay in the original "announce + wait" pattern):
+
+- Anything matching the **first-of-pattern force-flag** (layer 6) — first hub on the HOC, first AA template, first BB calculator, first CC AI feature, first DD marketplace mechanic, first EE distribution embed. Once the pattern lands once, subsequent PRs of that pattern flow under the delegation.
+- Anything that would **DROP, DELETE, or TRUNCATE production data** (regardless of path classification). The migration `up` block must be net-additive or column-scoped non-destructive (NOT NULL with default backfill is fine; `DROP COLUMN` on a populated column is not).
+- Anything modifying the **founder-anonymity infrastructure** (CL-* stream items, `lib/compliance.ts` author/byline copy, anything in `.github/workflows/anonymity-*.yml`). One leak is unrecoverable, so the asymmetry justifies the friction.
 
 ### Tier D — Hard hold (don't merge regardless of tier)
 
@@ -113,7 +120,9 @@ If any one layer fails, the others catch it. Layer 1 (CI gates) is the most reli
 2. Verify all required gates green (CI, mergeStateStatus, diff size, no STOP comment)
 3. If Tier A:    merge immediately
    If Tier B:    merge, then watch main CI for 15 min
-   If Tier C:    announce in chat, merge unless STOP within 1 sentence
+   If Tier C:    check Tier-C carve-outs (first-of-pattern, destructive SQL, anonymity infra);
+                 if carved-out → announce in chat, merge unless STOP within 1 sentence
+                 otherwise (founder-delegated) → merge, then watch main CI for 15 min, post merge notification
    If Tier D:    refuse; surface blocker; do not merge
    If Tier E:    refuse; require explicit fresh consent
 4. After merge: verify the merge commit landed; verify next main CI run is healthy
