@@ -21,23 +21,13 @@ export interface CompareBroker {
   editors_pick: boolean | null;
 }
 
-const QUICK_FILTERS: ReadonlyArray<{ label: string; href: string }> = [
-  { label: "$0 brokerage", href: "/compare?category=shares" },
-  { label: "CHESS sponsored", href: "/compare?category=shares" },
-  { label: "Top-rated super", href: "/best/super-funds" },
-  { label: "Crypto · low fees", href: "/best/crypto-exchanges" },
-  { label: "Best HISA", href: "/best/savings-accounts" },
-  { label: "Robo · all-in fee", href: "/best/robo-advisors" },
-  { label: "Editor's picks", href: "/compare?sort=rating" },
-];
-
 const CAT_META: Record<string, { label: string; color: string; criterion: string; href: string; valueLabel: string }> = {
-  share_broker:    { label: "Stock brokers",  color: "#60a5fa", criterion: "by total cost on $200/month DCA", href: "/share-trading", valueLabel: "Trade" },
-  super_fund:      { label: "Super funds",    color: "#34d399", criterion: "by 10-yr balanced return net of fees", href: "/super",       valueLabel: "Fee" },
-  savings_account: { label: "Savings",        color: "#fbbf24", criterion: "by max bonus rate (conditions met)",   href: "/savings",     valueLabel: "Rate" },
-  crypto_exchange: { label: "Crypto",         color: "#a78bfa", criterion: "by maker/taker fee on AUD pairs",      href: "/crypto",      valueLabel: "Fee" },
-  term_deposit:    { label: "Term deposits",  color: "#f59e0b", criterion: "by 12-month rate at $50k",             href: "/term-deposits", valueLabel: "Rate" },
-  robo_advisor:    { label: "Robo / managed", color: "#94a3b8", criterion: "by all-in fee on $50k portfolio",      href: "/robo-advisors", valueLabel: "Fee" },
+  share_broker:    { label: "Stock brokers",  color: "#2563eb", criterion: "by total cost on $200/month DCA", href: "/share-trading", valueLabel: "Trade" },
+  super_fund:      { label: "Super funds",    color: "#059669", criterion: "by 10-yr balanced return net of fees", href: "/super",       valueLabel: "Fee" },
+  savings_account: { label: "Savings",        color: "#d97706", criterion: "by max bonus rate (conditions met)",   href: "/savings",     valueLabel: "Rate" },
+  crypto_exchange: { label: "Crypto",         color: "#7c3aed", criterion: "by maker/taker fee on AUD pairs",      href: "/crypto",      valueLabel: "Fee" },
+  term_deposit:    { label: "Term deposits",  color: "#ea580c", criterion: "by 12-month rate at $50k",             href: "/term-deposits", valueLabel: "Rate" },
+  robo_advisor:    { label: "Robo / managed", color: "#475569", criterion: "by all-in fee on $50k portfolio",      href: "/robo-advisors", valueLabel: "Fee" },
 };
 
 interface HomeCompareDeepDiveProps {
@@ -79,18 +69,16 @@ export default function HomeCompareDeepDive({ brokers }: HomeCompareDeepDiveProp
     <section
       style={{
         padding: "52px 36px",
-        background: "var(--color-ink-900)",
-        color: "white",
+        background: "white",
+        color: "var(--color-ink-900)",
+        borderTop: "1px solid #e5e7eb",
         position: "relative",
-        overflow: "hidden",
       }}
     >
-      <div aria-hidden className="iv2-dotgrid" style={{ position: "absolute", inset: 0, opacity: 0.4, pointerEvents: "none" }} />
-
       <div style={{ position: "relative", maxWidth: 1280, margin: "0 auto" }}>
-        <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 18, gap: 16, flexWrap: "wrap" }}>
+        <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 22, gap: 16, flexWrap: "wrap" }}>
           <div>
-            <span className="iv2-mini" style={{ color: "var(--color-coral-300)" }}>
+            <span className="iv2-mini" style={{ color: "var(--color-coral-600)" }}>
               ● Compare · {brokers.length} platforms · verified monthly
             </span>
             <h2
@@ -101,7 +89,6 @@ export default function HomeCompareDeepDive({ brokers }: HomeCompareDeepDiveProp
                 fontWeight: 800,
                 margin: "4px 0 0",
                 lineHeight: 1.05,
-                color: "white",
               }}
             >
               Every fee. Seven categories. One source.
@@ -112,7 +99,7 @@ export default function HomeCompareDeepDive({ brokers }: HomeCompareDeepDiveProp
           </Link>
         </div>
 
-        <div style={{ display: "flex", gap: 6, marginBottom: 14, flexWrap: "wrap", borderBottom: "1px solid rgba(255,255,255,.1)" }}>
+        <div style={{ display: "flex", gap: 6, marginBottom: 18, flexWrap: "wrap", borderBottom: "1px solid #e5e7eb" }}>
           {tabs.map((t) => {
             const active = activeTab === t.key;
             return (
@@ -127,60 +114,17 @@ export default function HomeCompareDeepDive({ brokers }: HomeCompareDeepDiveProp
                   cursor: "pointer",
                   border: "none",
                   background: "none",
-                  color: active ? "white" : "rgba(255,255,255,.5)",
-                  borderBottom: active ? "2px solid var(--color-coral-400)" : "2px solid transparent",
+                  color: active ? "var(--color-ink-900)" : "var(--color-ink-400)",
+                  borderBottom: active ? "2px solid var(--color-coral-500)" : "2px solid transparent",
                   marginBottom: -1,
                   fontFamily: "inherit",
                 }}
               >
                 {t.label}
-                <span style={{ fontSize: 10.5, color: "rgba(255,255,255,.4)", fontWeight: 500, marginLeft: 3 }}>{t.n}</span>
+                <span style={{ fontSize: 10.5, color: "var(--color-ink-400)", fontWeight: 500, marginLeft: 4 }}>{t.n}</span>
               </button>
             );
           })}
-        </div>
-
-        <div
-          style={{
-            display: "flex",
-            gap: 6,
-            marginBottom: 14,
-            flexWrap: "wrap",
-            alignItems: "center",
-          }}
-        >
-          <span
-            className="font-mono"
-            style={{
-              fontSize: 9.5,
-              color: "rgba(255,255,255,.4)",
-              fontWeight: 700,
-              textTransform: "uppercase",
-              letterSpacing: ".08em",
-              marginRight: 4,
-            }}
-          >
-            Quick filters
-          </span>
-          {QUICK_FILTERS.map((f) => (
-            <Link
-              key={f.label}
-              href={f.href}
-              style={{
-                padding: "5px 10px",
-                fontSize: 11.5,
-                fontWeight: 600,
-                color: "rgba(255,255,255,.85)",
-                background: "rgba(255,255,255,.05)",
-                border: "1px solid rgba(255,255,255,.1)",
-                borderRadius: 99,
-                textDecoration: "none",
-                whiteSpace: "nowrap",
-              }}
-            >
-              {f.label}
-            </Link>
-          ))}
         </div>
 
         <div className="home-compare-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
@@ -193,20 +137,21 @@ export default function HomeCompareDeepDive({ brokers }: HomeCompareDeepDiveProp
               <div
                 key={key}
                 style={{
-                  background: "rgba(255,255,255,.04)",
-                  border: "1px solid rgba(255,255,255,.08)",
+                  background: "white",
+                  border: "1px solid #e5e7eb",
                   borderRadius: 12,
                   overflow: "hidden",
                   display: "flex",
                   flexDirection: "column",
+                  boxShadow: "0 1px 2px rgba(11,20,34,.04)",
                 }}
               >
-                <div style={{ padding: "12px 14px", borderBottom: "1px solid rgba(255,255,255,.08)" }}>
+                <div style={{ padding: "12px 14px", borderBottom: "1px solid #f1f5f9" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 7, marginBottom: 3 }}>
                     <span aria-hidden style={{ width: 7, height: 7, borderRadius: 99, background: meta.color }} />
-                    <span style={{ fontSize: 13, fontWeight: 700, color: "white" }}>{meta.label}</span>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: "var(--color-ink-900)" }}>{meta.label}</span>
                   </div>
-                  <div style={{ fontSize: 10.5, color: "rgba(255,255,255,.5)" }}>Ranked {meta.criterion}</div>
+                  <div style={{ fontSize: 10.5, color: "var(--color-ink-500)" }}>Ranked {meta.criterion}</div>
                 </div>
                 {rows.map((row, j) => {
                   const isPromoted = !!row.promoted_placement || row.sponsorship_tier === "featured_partner" || row.sponsorship_tier === "deal_of_month";
@@ -228,28 +173,28 @@ export default function HomeCompareDeepDive({ brokers }: HomeCompareDeepDiveProp
                         gridTemplateColumns: "22px 26px 1fr auto auto",
                         gap: 9,
                         alignItems: "center",
-                        borderBottom: j < rows.length - 1 ? "1px solid rgba(255,255,255,.06)" : "none",
-                        background: isPromoted ? "rgba(242,88,34,.08)" : "transparent",
+                        borderBottom: j < rows.length - 1 ? "1px solid #f1f5f9" : "none",
+                        background: isPromoted ? "rgba(242,88,34,.06)" : "transparent",
                       }}
                     >
-                      <span className="font-mono" style={{ fontSize: 9.5, color: "rgba(255,255,255,.4)", fontWeight: 700 }}>
+                      <span className="font-mono" style={{ fontSize: 9.5, color: "var(--color-ink-400)", fontWeight: 700 }}>
                         0{j + 1}
                       </span>
                       <Logo name={initials} bg={row.color ?? "var(--color-ink-700)"} size={24} />
                       <div style={{ minWidth: 0 }}>
-                        <div style={{ fontSize: 12.5, fontWeight: 700, color: "white", display: "flex", alignItems: "center", gap: 5 }}>
+                        <div style={{ fontSize: 12.5, fontWeight: 700, color: "var(--color-ink-900)", display: "flex", alignItems: "center", gap: 5 }}>
                           <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{row.name}</span>
                           {isPromoted ? <SponsorChip kind="promoted" /> : isEditor ? <SponsorChip kind="editor" /> : null}
                         </div>
-                        <div className="font-mono tnum" style={{ fontSize: 10.5, color: "rgba(255,255,255,.55)", marginTop: 1 }}>
+                        <div className="font-mono tnum" style={{ fontSize: 10.5, color: "var(--color-ink-500)", marginTop: 1 }}>
                           {meta.valueLabel} {value}
                         </div>
                       </div>
-                      <span style={{ fontSize: 12, fontWeight: 700, color: "white", display: "inline-flex", alignItems: "center", gap: 3, whiteSpace: "nowrap" }}>
-                        <span style={{ color: "#fbbf24", fontSize: 11 }} aria-hidden>★</span>
+                      <span style={{ fontSize: 12, fontWeight: 700, color: "var(--color-ink-900)", display: "inline-flex", alignItems: "center", gap: 3, whiteSpace: "nowrap" }}>
+                        <span style={{ color: "#f59e0b", fontSize: 11 }} aria-hidden>★</span>
                         <span className="font-mono">{row.rating ? row.rating.toFixed(1) : "—"}</span>
                       </span>
-                      <DesignIcon name="arrow-right" size={10} style={{ color: "rgba(255,255,255,.4)" }} />
+                      <DesignIcon name="arrow-right" size={10} style={{ color: "var(--color-ink-400)" }} />
                     </div>
                   );
                 })}
@@ -262,7 +207,7 @@ export default function HomeCompareDeepDive({ brokers }: HomeCompareDeepDiveProp
                     color: meta.color,
                     background: "transparent",
                     border: "none",
-                    borderTop: "1px solid rgba(255,255,255,.06)",
+                    borderTop: "1px solid #f1f5f9",
                     textAlign: "center",
                     textDecoration: "none",
                   }}
@@ -279,8 +224,8 @@ export default function HomeCompareDeepDive({ brokers }: HomeCompareDeepDiveProp
           style={{
             marginTop: 18,
             padding: "14px 18px",
-            background: "rgba(255,255,255,.04)",
-            border: "1px solid rgba(255,255,255,.08)",
+            background: "var(--color-sand-50)",
+            border: "1px solid #e5e7eb",
             borderRadius: 12,
             display: "flex",
             alignItems: "center",
@@ -294,7 +239,7 @@ export default function HomeCompareDeepDive({ brokers }: HomeCompareDeepDiveProp
               className="font-mono"
               style={{
                 fontSize: 9.5,
-                color: "rgba(255,255,255,.4)",
+                color: "var(--color-ink-400)",
                 fontWeight: 700,
                 textTransform: "uppercase",
                 letterSpacing: ".08em",
@@ -302,7 +247,7 @@ export default function HomeCompareDeepDive({ brokers }: HomeCompareDeepDiveProp
             >
               Not sure where to start?
             </span>
-            <span style={{ fontSize: 13.5, fontWeight: 700, color: "white" }}>
+            <span style={{ fontSize: 13.5, fontWeight: 700, color: "var(--color-ink-900)" }}>
               Filter {brokers.length} platforms by your criteria — fees, features, regulator.
             </span>
           </div>
@@ -313,12 +258,7 @@ export default function HomeCompareDeepDive({ brokers }: HomeCompareDeepDiveProp
             <Link
               href="/compare"
               className="iv2-cta-ghost"
-              style={{
-                fontSize: 12.5,
-                color: "white",
-                borderColor: "rgba(255,255,255,.2)",
-                background: "transparent",
-              }}
+              style={{ fontSize: 12.5 }}
             >
               Open full comparison
             </Link>
