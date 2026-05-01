@@ -220,7 +220,13 @@ function MegaMenuDropdown({
     >
       <button
         onClick={() => setOpen((v) => !v)}
-        className={`flex items-center gap-1 px-3 py-2 text-sm font-semibold rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400
+        // whitespace-nowrap prevents multi-word labels ("Find an advisor",
+        // "Compare platforms", "Browse listings", "Post a job") from breaking
+        // onto two lines when the flex parent runs out of horizontal room.
+        // Without it, narrow viewports (1024-1180px) showed stacked words.
+        // Tightened px-3 → px-2.5 + parent gap-1 → gap-0.5 to claw back
+        // ~30px across the 6-item row on narrow screens.
+        className={`flex items-center gap-1 px-2.5 py-2 text-[0.8125rem] font-semibold rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 whitespace-nowrap
           ${isActive
             ? "text-slate-900 bg-slate-50"
             : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
@@ -230,7 +236,7 @@ function MegaMenuDropdown({
       >
         {label}
         <svg
-          className={`w-3.5 h-3.5 text-slate-500 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+          className={`w-3 h-3 text-slate-500 transition-transform duration-200 shrink-0 ${open ? "rotate-180" : ""}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -470,7 +476,7 @@ export function Navigation() {
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden lg:flex items-center gap-1" aria-label="Main navigation">
+          <nav className="hidden lg:flex items-center gap-0.5" aria-label="Main navigation">
 
             {/* ─── 1. Compare Platforms ────────────────────────────────────────── */}
             <MegaMenuDropdown label="Compare platforms" isActive={isPlatformsActive} menuWidth="min-w-[560px]">
