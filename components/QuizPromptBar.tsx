@@ -46,11 +46,16 @@ export default function QuizPromptBar() {
       }
     }
 
+    // Show only when the visitor is near the bottom of the page — at this
+    // point they've either engaged with the in-page CTAs or they're about
+    // to leave, so a "last-call" prompt has plausible value. Earlier
+    // triggers (e.g. 25% scroll) read as a 75%-of-page nag because the
+    // homepage already has multiple stronger CTAs above the fold.
     const handleScroll = () => {
       const scrollPct =
         window.scrollY /
         (document.documentElement.scrollHeight - window.innerHeight);
-      setDesktopVisible(scrollPct > 0.25);
+      setDesktopVisible(scrollPct > 0.75);
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
