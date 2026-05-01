@@ -1,37 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { requireAdvisorSession } from "@/lib/require-advisor-session";
 import { logger } from "@/lib/logger";
 
 const log = logger("advisor-auth:firm:analytics");
 
 export async function GET(request: NextRequest) {
   try {
-    const sessionToken = request.cookies.get("advisor_session")?.value;
-    if (!sessionToken) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    const advisorId = await requireAdvisorSession(request);
+    if (!advisorId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
 
-    const supabase = await createClient();
-    const { data: session } = await supabase
-      .from("advisor_sessions")
-      .select("professional_id, expires_at")
-      .eq("session_token", sessionToken)
-      .single();
+    const adminSupabase = createAdminClient();
 
-    if (!session || new Date(session.expires_at) < new Date()) {
-      return NextResponse.json({ error: "Session expired" }, { status: 401 });
-    }
-
-    const { data: advisor } = await supabase
+    const { data: advisor } = await adminSupabase
       .from("professionals")
       .select("id, firm_id, is_firm_admin")
-      .eq("id", session.professional_id)
+      .eq("id", advisorId)
       .single();
 
     if (!advisor?.firm_id) {
       return NextResponse.json({ error: "Not in a firm" }, { status: 403 });
     }
-
-    const adminSupabase = createAdminClient();
 
     // Get all members in the firm
     const { data: members } = await adminSupabase

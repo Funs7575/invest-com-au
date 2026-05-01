@@ -360,6 +360,33 @@ const eslintConfig = [
     },
   },
   {
+    // C-08: forward guardrail for lib/* modules.
+    //
+    // All 43 lib/* modules that legitimately import createAdminClient were
+    // audited and confirmed correct (C-06, PR #327). The five documented
+    // exception categories are in CLAUDE.md § "Two Supabase clients".
+    //
+    // New lib/* files that import the admin client will fail lint-staged's
+    // `--max-warnings 0` at commit time, prompting the author to either
+    // switch to createClient() from @/lib/supabase/server or add a
+    // `// eslint-disable-next-line no-restricted-imports -- <reason>`
+    // comment documenting which exception category applies.
+    //
+    // Set as "warn" (not "error") because the 43 pre-audit modules are
+    // legitimate and would otherwise generate noise in `npm run lint`.
+    // The lint-staged gate is the enforcement point for new code.
+    files: ["lib/**/*.ts", "lib/**/*.tsx"],
+    ignores: ["lib/supabase/admin.ts"],
+    rules: {
+      "no-restricted-imports": ["warn", {
+        paths: [{
+          name: "@/lib/supabase/admin",
+          message: "createAdminClient bypasses RLS. New lib/* helpers should use createClient from @/lib/supabase/server unless they serve anonymous paths, do cross-user queries, or bypass intentional deny-all RLS. See CLAUDE.md § 'Two Supabase clients' for the documented exception categories.",
+        }],
+      }],
+    },
+  },
+  {
     // .github/workflows/scripts/** runs in Node CommonJS via github-script's
     // require() pattern. ESM is not compatible with how the workflow YAML
     // invokes these helpers. Allow require() here only.
