@@ -118,6 +118,24 @@ export const ADVISOR_SPECIALTY_CATEGORIES: {
       "FIFO Worker Planning",
     ],
   },
+  {
+    // Cross-border specialties (added 2026-05-01). The base taxonomy already
+    // covers FIRB Applications, SIV Complying Investment Structuring,
+    // International Tax, Skilled Migration etc. — these four fill specific
+    // gaps where the journey is unmistakable but no tag exists today:
+    //   • UK arrivals with stranded private/state pensions (huge LTV)
+    //   • US persons whose AU portfolio choices are constrained by FATCA/PFIC
+    //   • Departing temp visa holders claiming DASP super refunds
+    //   • Non-residents buying AU property where FIRB rules + AU credit
+    //     history + tax treatment all interact
+    category: "Cross-border & expat",
+    specialties: [
+      "UK Pension Transfer",
+      "FATCA-Aware US Expat Planning",
+      "DASP Processing",
+      "FIRB Property (Non-Resident)",
+    ],
+  },
 ];
 
 // ═══════════════════════════════════════════════
@@ -165,6 +183,8 @@ export const SPECIALTIES_BY_TYPE: Record<ProfessionalType, string[]> = {
     "Redundancy Planning",
     "FIFO Worker Planning",
     "Small Business Owners",
+    "UK Pension Transfer",
+    "FATCA-Aware US Expat Planning",
   ],
   property_advisor: [
     "First Home Buyers",
@@ -187,6 +207,9 @@ export const SPECIALTIES_BY_TYPE: Record<ProfessionalType, string[]> = {
     "R&D Tax Incentive",
     "Negative Gearing",
     "Small Business Owners",
+    "UK Pension Transfer",
+    "FATCA-Aware US Expat Planning",
+    "DASP Processing",
   ],
   mortgage_broker: [
     "First Home Buyers",
@@ -310,6 +333,7 @@ export const SPECIALTIES_BY_TYPE: Record<ProfessionalType, string[]> = {
     "Employer-Sponsored Visas",
     "Permanent Residency",
     "Citizenship Applications",
+    "DASP Processing",
   ],
   business_broker: [
     "Business Valuations",
@@ -374,6 +398,7 @@ export const SPECIALTIES_BY_TYPE: Record<ProfessionalType, string[]> = {
   ],
   foreign_investment_lawyer: [
     "FIRB Applications",
+    "FIRB Property (Non-Resident)",
     "Critical Infrastructure Review",
     "National Security Review",
     "Sovereign Wealth Mandates",
