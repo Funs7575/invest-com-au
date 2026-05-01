@@ -3,10 +3,10 @@ import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 const NotifyBody = z.object({
-  broker_slug: z.string().min(1),
-  type: z.string().min(1),
-  title: z.string().min(1),
-  message: z.string().min(1),
+  broker_slug: z.string("Required: broker_slug").min(1),
+  type: z.string("Required: type").min(1),
+  title: z.string("Required: title").min(1),
+  message: z.string("Required: message").min(1),
   link: z.string().optional(),
   send_email: z.boolean().default(false),
 });
