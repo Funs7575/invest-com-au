@@ -30,7 +30,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | D | `claude/audit-remediation/d-route-tests` | #285 MERGED 2026-04-29T10:13Z; supplementary PRs #246/#285/#297/#298 | last merged 2026-04-29T18:53Z | D-01..D-09 done (PR #246). D-10 done (PR #246 — coverage ratchet). D-11 complete (43+ batches, all admin/cron/non-admin routes covered) — merged via PR #285 + supplementary PRs #297/#298. **Stream D complete.** |
 | E | `claude/audit-remediation/e-01-with-validated-body` (#295) · `e-02-batch-*-zod-rollout` (#315/#323) · `e-03-zod-lint-rule` (#313) | all MERGED | last merged 2026-05-01T10:31Z | E-01 done (PR #295 — withValidatedBody helper). E-02 in-progress (batches 1+2 done via PR #315/#323 — 8 routes; ~3 batches remain). E-03 done (PR #313 — ESLint rule). E-04 backfill pending. |
 | F | `claude/audit-remediation/f-02..f-06` (multiple PRs) | #293/#294/#301/#354/#355/#370 all MERGED | last merged 2026-05-01T16:00Z | F-01 false-positive. F-02 done (PR #293 — formatDate). F-03 done (PR #370 — formatCurrency). F-04 done (PR #354 — slugify, first wave). F-05 done (PR #294 + #301 followup — console→logger). F-06 done (PR #355 — compliance copy SSOT). F-07/F-08 pending. |
-| G | `claude/audit-remediation/g-01-g-02-migration-hygiene` (#307) · `g-03-batch-*-rollback-headers` (#311/#314/#316/#352) · `g-04-partial-failure-marker-doc` (#310) · `chore/audit-queue-unblock-2026-05-01-v2` (#342) | all MERGED | last merged 2026-05-01T14:29Z | G-01+G-02 done (PR #307). G-03 done (4 batches × 10 migrations via PR #311/#314/#316/#352 — 40 of 108 migrations covered; remaining batches still pending). G-04 documented (PR #310) + verification done by founder via MCP (PR #342) — 5 follow-up findings (G-04-FINDING-1..5) pending founder authorization. |
+| G | `claude/audit-remediation/g-01-g-02-migration-hygiene` (#307) · `g-03-batch-*-rollback-headers` (#311/#314/#316/#352/#405) · `g-04-partial-failure-marker-doc` (#310) · `chore/audit-queue-unblock-2026-05-01-v2` (#342) | #307/#310/#311/#314/#316/#342/#352 MERGED · #405 OPEN | last pushed 2026-05-02T01:30Z (#405 `be00416`) | G-01+G-02 done (PR #307). G-03 batch 5 done (PR #405 — 10 migrations; 50 of 108 covered; ~6 batches still pending). G-04 documented (PR #310) + verification done by founder via MCP (PR #342) — 5 follow-up findings (G-04-FINDING-1..5) pending founder authorization. |
 | H | _not started_ | — | — | — |
 | I | `claude/audit-remediation/i-new-04-main-ci-auto-revert` (#278) · `i-02-drift-detection-ci` (#353) | #278 MERGED 2026-04-28T16:18Z · #353 MERGED 2026-05-01T14:30Z | last merged 2026-05-01T14:30Z | I-NEW-01..05 all done. I-NEW-06 needs-user (Supabase GH Actions secrets). I-01 done via B-07 (PR #286). I-02 done (PR #353). I-03 done via C-08 (PR #327). I-04 done via E-03 (PR #313). I-05 done via D-10 (PR #246). |
 | J | `claude/audit-remediation/j-stripe-webhook` | #288 MERGED 2026-04-29T16:48Z | last merged 2026-04-29T16:48Z | J-01a..J-01e done · J-01d-ext done · J-03/J-05/J-06/J-08/J-09/J-10 done. **Stream J complete** (J-02/J-04/J-07/J-11 false-positives or done out-of-band). |
@@ -524,7 +524,7 @@ Highest priority: critical 2 first.
 | --- | --- | --- | --- | --- |
 | G-01 | done | Idempotency: convert 10 non-idempotent migrations (per audit §5.2) to use `IF NOT EXISTS` / `CREATE OR REPLACE` | 1 | Done in PR #307 (G-01+G-02 combined). |
 | G-02 | done | Rollback headers: add to the 3 migrations missing headers entirely | 1 | Done in PR #307 — 3 migrations (`20260316_add_weekly_rate_drip_log.sql`, `20260316_add_advisor_nudge_tracking.sql`, `20260316_add_lead_outcome_tracking.sql`). |
-| G-03 | in-progress | Rollback headers: backfill explicit reverse-SQL on remaining 108 partial-header migrations | ~10 | 4 batches done — PR #311 (batch 1, 10 migrations), PR #314 (batch 2, 10), PR #316 (batch 3, 10), PR #352 (batch 4, 10). 40 of 108 covered; ~7 batches still pending. |
+| G-03 | in-progress | Rollback headers: backfill explicit reverse-SQL on remaining 108 partial-header migrations | ~10 | 5 batches done — PR #311 (batch 1, 10), PR #314 (batch 2, 10), PR #316 (batch 3, 10), PR #352 (batch 4, 10), PR #405 (batch 5, 10). 50 of 108 covered; ~6 batches still pending. |
 | G-04 | done | Document the 8 partial-failure-marker migrations (audit §5.5) for user to verify in prod | 1 | Doc shipped in PR #310 (`docs/audits/g-04-partial-failure-markers.md`). Verification done by founder via Supabase MCP, logged in PR #342. Result: 3 of 8 clean (#3/#5/#8 — no security data leak), 5 partial-apply findings surfaced as G-04-FINDING-1..5 (pending separate Tier C founder authorization). G-04 itself complete. |
 
 ### Stream I — CI / lint guardrails
@@ -1432,6 +1432,25 @@ Two strategically important surfaces under-served by current nav: (1) investment
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-02 — iteration 176 (stream G — G-03 batch 5: rollback headers, 10 migrations)
+
+- Phase 0: batch iteration 3 of up to 5 this session. Lock held.
+- Phase 1: synced main (reset --hard to origin/main — local had diverged from parallel fire running iter 175). Read queue and defaults.
+- Phase 2: CI check on in-flight PRs — #403/#404 (A-02 batch 4 supplement/revised) pending; no failures. No rescue needed.
+- Phase 3: priority order → B-09 Tier D (skip) → A (A-02 batch 4 revised just pushed — no new A pending) → G (G-03 batch 5 pending). Checked out new branch `g-03-batch-5-rollback-headers` from main.
+- Phase 4 verification: identified next 10 migrations without rollback headers (migrations 41–50 of 108) via grep -rL sorted chronologically. None already in Done section.
+- Phase 5: prepended rollback header blocks to 10 migrations: 20260310_fix_security_advisories.sql, 20260315_revenue_optimization.sql, 20260316_email_otps.sql, 20260316_q1_2026_report.sql, 20260316_seed_expert_articles.sql, 20260317_property_vertical.sql, 20260322_foreign_investment_flags.sql, 20260323_enrich_priya_sharma_profile.sql, 20260329_fi_data_tables.sql, 20260402_investment_listings.sql. Flagged HIGH risk on investment_listings rollback (DROP in prod) and MEDIUM risk on property_vertical. Header-only changes (+158 LOC). No TS/TSX touched; gates vacuously satisfied.
+- Phase 6: committed `be00416`, pushed, opened draft PR #405.
+- Phase 6.5 discovery: no adjacent issues beyond already-tracked G-03 remaining batches.
+- Phase 7: queue updated on main. G-03 batch 5 logged. Stream G in-flight updated.
+
+- STATUS: PROGRESS · stream=G · item=G-03 (batch 5) · pr=#405
+- Branch: claude/audit-remediation/g-03-batch-5-rollback-headers
+- Commit: be00416
+- Diff: +158 -0 across 10 files
+- Next item: E-02 batch 3 (Zod rollout, ~4 more routes)
+- Remaining: ~50+ pending · several blocked · 100+ done
 
 ### 2026-05-02 — iteration 175 (stream A — A-02 batch 4 revised: advisor_auth_tokens, advisor_bookings, advisor_booking_slots, advisor_metrics_daily)
 
