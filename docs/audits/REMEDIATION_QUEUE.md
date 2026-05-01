@@ -38,7 +38,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | L | `claude/audit-remediation/l-observability` | #289 MERGED 2026-04-29T10:18Z | last merged 2026-04-29T10:18Z | L-04/L-05 done out-of-loop. L-06..L-12 all done (merged via PR #289). L-02/L-03 deferred-post-launch (n8n dormant). L-01 needs-user (SENTRY_AUTH_TOKEN). L-10 false-positive (verified populating). **Stream L complete** (modulo L-01 needs-user). |
 | M | `claude/audit-remediation/m-01b-cover-image-backfill` (#283) · `m-02-versus-json-ld` (#296) · `m-05-glossary-linkifier` (#325) | #283/#296/#325 all MERGED | last merged 2026-05-01T10:29Z | M-01a done out-of-loop (PR #227). M-01b done (PR #283 — engineering side). M-02 done (PR #296). M-03 done (`85c7236`). M-04 done (`353fa3a`). M-05 done (PR #325). M-06 done (PR #283). M-07 done (PR #283). **Stream M complete.** |
 | N | `claude/audit-remediation/n-ux-perf` | #242 MERGED | last merged 2026-04-28 | N-01+N-02 done (`2ec6f89`) · N-03a/b/c done · N-04/N-05 FP · N-06 blocked (deferred-post-launch by founder 2026-05-01 — option 4 chosen) · N-07/N-08/N-09/N-10/N-11 done — **stream complete** (N-06 deferred). |
-| O | `claude/audit-remediation/o-rls-no-policy` (iters 1-4 via #235/#237/#239) · `o-iter6/forum` (#299) · `o-iter7/editorial-obs-secrets` (#300) · `o-iter8-rls-observability` (#366) · `o-03-search-path` (#395) · `o-05-service-role-policy-clarity` (#408) | #235/#237/#239/#299/#300/#366 MERGED · #395/#408 OPEN | pushed 2026-05-02T (iter 181 — `d29c218`) | O-01 iter1-4 done. O-02 done. iter6 done (PR #299). iter7 done (PR #300). iter8 MERGED 2026-05-01T22:01Z (#366 — 8 obs+anti-abuse tables). **O-03 done: `4a04418` → PR #395 (SECURITY DEFINER search_path fix).** O-04 blocked (Stripe live validation). **O-05 done: `d29c218` → PR #408 (explicit service_role policies on 5 internal tables).** |
+| O | `claude/audit-remediation/o-rls-no-policy` (iters 1-4 via #235/#237/#239) · `o-iter6/forum` (#299) · `o-iter7/editorial-obs-secrets` (#300) · `o-iter8-rls-observability` (#366) · `o-03-search-path` (#395) · `o-05-service-role-policy-clarity` (#408) | #235/#237/#239/#299/#300/#366 MERGED · #395/#408 OPEN | CI rescue iter 190 — `3c0a78b` (merge main: retrigger LH CWV CI — runner noise); CI re-run pending | O-01 iter1-4 done. O-02 done. iter6 done (PR #299). iter7 done (PR #300). iter8 MERGED 2026-05-01T22:01Z (#366 — 8 obs+anti-abuse tables). **O-03 done: `4a04418` → PR #395 (SECURITY DEFINER search_path fix).** O-04 blocked (Stripe live validation). **O-05 done: `d29c218` → PR #408 (explicit service_role policies on 5 internal tables).** |
 | P | _not started_ | — | — | — |
 | Q | _not started_ | — | — | — |
 | R | `claude/audit-remediation/r-01-marketplace-allocation` · `r-02-auto-bid-tests` (#396) | #290 MERGED 2026-04-29T10:05Z · #396 OPEN | CI-rescue iter 183 — `7d9431a` (merge main: LH CWV TBT threshold 800ms→1500ms); CI re-run pending | R-01 done (PR #290). R-02 done: `ae23f8b` → PR #396 (29 tests for auto-bid.ts). R-02-DISC-20260501-01 done: `1a082b2` → PR #396 (12 tests for broker-auth.ts). R-03..R-11 still pending. |
@@ -1460,6 +1460,15 @@ Two strategically important surfaces under-served by current nav: (1) investment
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-02 — CI-rescue iter 190 (stream O — PR #408 LH CWV runner noise)
+
+- Phase 2: CI rescue — PR #408 (O-05) "Lighthouse — Core Web Vitals gate (hard-fail)" = FAILURE. All other checks (Lint/Type-check/Build, RLS gates, etc.) = SUCCESS.
+- Diagnosis: LH CWV runner noise — same recurring pattern on this CI environment. The 1500ms TBT threshold was already on the branch (merge-base `c48c799` includes `be1bc2f` TBT fix). No code change needed.
+- Fix: merged main (`5eb7dfb`) into O-05 branch to trigger a fresh LH CI run.
+- Commit: `3c0a78b` pushed to `claude/audit-remediation/o-05-service-role-policy-clarity` (PR #408).
+- STATUS: CI-RESCUE · stream=O · pr=#408 · commit=3c0a78b
+- Diff: merge commit only (no code changes)
 
 ### 2026-05-01 — CI-rescue iter 189 (stream A — PR #413 RLS migration gate false positive)
 
