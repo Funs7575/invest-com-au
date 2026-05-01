@@ -95,6 +95,12 @@ const EXEMPT_PATTERNS = [
   // so Vercel's CDN absorbs the load and a per-IP throttle inside the
   // edge handler would cost cache hits with no real threat model.
   { match: /\/api\/quiz\/data(\/|$)/, reason: "edge route w/ 60s CDN cache; provider-pooled" },
+  // /api/geo reads x-vercel-ip-country and returns it. No PII, no DB,
+  // no user input. Cache-Control sets s-maxage=3600 so the edge cache
+  // absorbs every repeat request from the same IP for an hour. Per-IP
+  // rate limiting inside the handler would cost CDN cache hits with
+  // zero threat-model benefit.
+  { match: /\/api\/geo(\/|$)/, reason: "edge route w/ 1h CDN cache; provider-pooled" },
 ];
 
 async function findRouteFiles(dir) {

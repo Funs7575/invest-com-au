@@ -8,7 +8,6 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import { PostHogProvider } from "@/components/PostHogProvider";
 import UtmCapture from "@/components/UtmCapture";
-import InternationalBannerServer from "@/components/InternationalBannerServer";
 import RouteChangeFocus from "@/components/RouteChangeFocus";
 import ServiceWorkerRegistrar from "@/components/ServiceWorkerRegistrar";
 import ChatWidget from "@/components/ChatWidget";
@@ -158,7 +157,6 @@ export default async function RootLayout({
         <Suspense fallback={null}><ClaimAnonymousOnAuth /></Suspense>
 
         <ThemeProvider>
-          <InternationalBannerServer />
           <LayoutShell>{children}</LayoutShell>
           {chatEnabled && <ChatWidget />}
           {pushEnabled && <Suspense fallback={null}><PushNotificationOptIn /></Suspense>}
