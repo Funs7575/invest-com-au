@@ -19,10 +19,7 @@ vi.mock("next/headers", () => ({
 }));
 
 vi.mock("@/lib/supabase/server", () => ({
-  createClient: vi.fn(async () => ({
-    from: mockServerFrom,
-    auth: { getUser: vi.fn().mockResolvedValue({ data: { user: null } }) },
-  })),
+  createClient: vi.fn(async () => ({ from: mockServerFrom })),
 }));
 
 vi.mock("@/lib/supabase/admin", () => ({
@@ -52,51 +49,36 @@ import { POST } from "@/app/api/advisor-auth/tier-upgrade/route";
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
-function makePost(body: unknown, hasCookie = true): NextRequest {
-  const headers: Record<string, string> = { "Content-Type": "application/json" };
-  if (hasCookie) headers.cookie = "advisor_session=session-token";
+function makePost(body: unknown): NextRequest {
   return new NextRequest("http://localhost/api/advisor-auth/tier-upgrade", {
     method: "POST",
     body: typeof body === "string" ? body : JSON.stringify(body),
-    headers,
+    headers: { "Content-Type": "application/json" },
   });
 }
 
-// Post-refactor, requireAdvisorSession() reads the advisor_session cookie
-// from request.cookies (NextRequest) and queries advisor_sessions via the
-// admin client with .single(). The route then queries professionals via
-// admin with .maybeSingle(). Wire both onto mockAdminFrom; tests that
-// override mockAdminFrom for professionals must re-apply the session setup
-// via `buildSessionBuilder`.
-function buildSessionBuilder(
-  table: string,
-  opts: {
-    professionalId?: number | null;
-    expiresAt?: string;
-  },
-  b: ReturnType<typeof createChainableBuilder>,
-) {
-  const professionalId = opts.professionalId === undefined ? 42 : opts.professionalId;
-  const expiresAt = opts.expiresAt ?? new Date(Date.now() + 86400 * 1000).toISOString();
-  if (table === "advisor_sessions") {
-    b.single = vi.fn(() =>
-      Promise.resolve({
-        data: professionalId
-          ? { professional_id: professionalId, expires_at: expiresAt }
-          : null,
-        error: null,
-      }),
-    );
-  }
-}
-
-function withSession(
+function withCookieAndSession(
   professionalId: number | null = 42,
   expiresAt = new Date(Date.now() + 86400 * 1000).toISOString(),
+  hasCookie = true,
 ) {
-  mockAdminFrom.mockImplementation((table: string) => {
+  if (hasCookie) {
+    mockCookieStoreGet.mockReturnValue({ value: "session-token" });
+  } else {
+    mockCookieStoreGet.mockReturnValue(undefined);
+  }
+  mockServerFrom.mockImplementation((table: string) => {
     const b = createChainableBuilder(table, supabaseCalls);
-    buildSessionBuilder(table, { professionalId, expiresAt }, b);
+    if (table === "advisor_sessions") {
+      b.maybeSingle = vi.fn(() =>
+        Promise.resolve({
+          data: professionalId
+            ? { professional_id: professionalId, expires_at: expiresAt }
+            : null,
+          error: null,
+        }),
+      );
+    }
     return b;
   });
 }
@@ -104,7 +86,6 @@ function withSession(
 function withAdvisorTier(currentTier: string) {
   mockAdminFrom.mockImplementation((table: string) => {
     const b = createChainableBuilder(table, supabaseCalls);
-    buildSessionBuilder(table, {}, b);
     if (table === "professionals") {
       b.maybeSingle = vi.fn(() =>
         Promise.resolve({
@@ -148,42 +129,45 @@ describe("POST /api/advisor-auth/tier-upgrade", () => {
   });
 
   it("returns 401 when no session cookie", async () => {
-    const res = await POST(makePost({ target_tier: "growth" }, false));
+    withCookieAndSession(42, undefined, false);
+    const res = await POST(makePost({ target_tier: "growth" }));
     expect(res.status).toBe(401);
   });
 
   it("returns 401 when session is expired", async () => {
-    withSession(42, new Date(Date.now() - 86400 * 1000).toISOString());
+    withCookieAndSession(
+      42,
+      new Date(Date.now() - 86400 * 1000).toISOString(),
+    );
     const res = await POST(makePost({ target_tier: "growth" }));
     expect(res.status).toBe(401);
-    // requireAdvisorSession returns null for expired sessions, route maps to "Not authenticated"
-    expect((await res.json()).error).toBe("Not authenticated");
+    expect((await res.json()).error).toBe("Session expired");
   });
 
   it("returns 401 when session lookup returns null", async () => {
-    withSession(null);
+    withCookieAndSession(null);
     const res = await POST(makePost({ target_tier: "growth" }));
     expect(res.status).toBe(401);
   });
 
   it("returns 400 when target_tier is missing", async () => {
-    withSession();
+    withCookieAndSession();
     const res = await POST(makePost({}));
     expect(res.status).toBe(400);
     expect((await res.json()).error).toBe("Missing target_tier");
   });
 
   it("returns 400 for unknown tier id", async () => {
-    withSession();
+    withCookieAndSession();
     const res = await POST(makePost({ target_tier: "platinum" }));
     expect(res.status).toBe(400);
     expect((await res.json()).error).toBe("Unknown tier");
   });
 
   it("returns 404 when advisor row missing", async () => {
+    withCookieAndSession();
     mockAdminFrom.mockImplementation((table: string) => {
       const b = createChainableBuilder(table, supabaseCalls);
-      buildSessionBuilder(table, {}, b);
       if (table === "professionals") {
         b.maybeSingle = vi.fn(() =>
           Promise.resolve({ data: null, error: null }),
@@ -196,6 +180,7 @@ describe("POST /api/advisor-auth/tier-upgrade", () => {
   });
 
   it("returns 200 no-op when current tier matches target", async () => {
+    withCookieAndSession();
     withAdvisorTier("growth");
     const res = await POST(makePost({ target_tier: "growth" }));
     expect(res.status).toBe(200);
@@ -204,6 +189,7 @@ describe("POST /api/advisor-auth/tier-upgrade", () => {
   });
 
   it("downgrades immediately, audits, and enqueues confirmation email", async () => {
+    withCookieAndSession();
     withAdvisorTier("pro");
     const res = await POST(
       makePost({ target_tier: "growth", billing: "monthly" }),
@@ -229,6 +215,7 @@ describe("POST /api/advisor-auth/tier-upgrade", () => {
   });
 
   it("returns placeholder URL when Stripe is not configured (upgrade)", async () => {
+    withCookieAndSession();
     withAdvisorTier("free");
     const res = await POST(makePost({ target_tier: "growth" }));
     expect(res.status).toBe(200);
@@ -240,6 +227,7 @@ describe("POST /api/advisor-auth/tier-upgrade", () => {
 
   it("creates Stripe subscription checkout for upgrades", async () => {
     process.env.STRIPE_SECRET_KEY = "sk_test_xxx";
+    withCookieAndSession();
     withAdvisorTier("free");
     const res = await POST(
       makePost({ target_tier: "pro", billing: "annual" }),
@@ -261,6 +249,7 @@ describe("POST /api/advisor-auth/tier-upgrade", () => {
 
   it("returns 500 when stripe checkout creation throws", async () => {
     process.env.STRIPE_SECRET_KEY = "sk_test_xxx";
+    withCookieAndSession();
     withAdvisorTier("free");
     mockCheckoutCreate.mockRejectedValueOnce(new Error("Stripe API down"));
     const res = await POST(makePost({ target_tier: "growth" }));

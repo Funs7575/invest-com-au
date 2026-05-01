@@ -3,32 +3,15 @@ import { NextRequest } from "next/server";
 import { createChainableBuilder } from "@/__tests__/helpers";
 
 // ── Mocks ──────────────────────────────────────────────────────────────────────
-// vi.hoisted() runs alongside the vi.mock() factory hoist so the mocks resolve
-// inside the factory closures. requireAdvisorSession (refactored in C-DISC)
-// now reads `auth.getUser` from the server client and uses createAdminClient()
-// for the advisor_sessions + professionals lookups, so both clients are mocked
-// here. Admin's `from` aliases mockServerFrom so the existing test setup
-// (which routes those tables through mockServerFrom) keeps working unchanged.
-const { mockGetUser, mockServerFrom, mockSendFirmInvitation, supabaseCalls } =
-  vi.hoisted(() => ({
-    mockGetUser: vi.fn(() => Promise.resolve({ data: { user: null } })),
-    mockServerFrom: vi.fn(),
-    mockSendFirmInvitation: vi.fn((..._args: unknown[]) => Promise.resolve()),
-    supabaseCalls: {} as Record<
-      string,
-      { method: string; args: unknown[] }[]
-    >,
-  }));
+
+const mockServerFrom = vi.fn();
+const mockSendFirmInvitation = vi.fn((..._args: unknown[]) =>
+  Promise.resolve(),
+);
+const supabaseCalls: Record<string, { method: string; args: unknown[] }[]> = {};
 
 vi.mock("@/lib/supabase/server", () => ({
-  createClient: vi.fn(async () => ({
-    from: mockServerFrom,
-    auth: { getUser: mockGetUser },
-  })),
-}));
-
-vi.mock("@/lib/supabase/admin", () => ({
-  createAdminClient: () => ({ from: mockServerFrom }),
+  createClient: vi.fn(async () => ({ from: mockServerFrom })),
 }));
 
 vi.mock("@/lib/url", () => ({
@@ -154,19 +137,19 @@ describe("POST /api/advisor-auth/firm/invite", () => {
     );
   });
 
-  it("returns 403 with no cookie", async () => {
+  it("returns 401 with no cookie", async () => {
     const res = await POST(
       makeReq("POST", { email: "new@firm.test" }),
     );
-    expect(res.status).toBe(403);
+    expect(res.status).toBe(401);
   });
 
-  it("returns 403 when session expired", async () => {
+  it("returns 401 when session expired", async () => {
     withFirmAdmin({ expired: true });
     const res = await POST(
       makeReq("POST", { email: "new@firm.test" }, "valid"),
     );
-    expect(res.status).toBe(403);
+    expect(res.status).toBe(401);
   });
 
   it("returns 403 when not a firm admin", async () => {
@@ -313,9 +296,9 @@ describe("GET /api/advisor-auth/firm/invite", () => {
     );
   });
 
-  it("returns 403 with no cookie", async () => {
+  it("returns 401 with no cookie", async () => {
     const res = await GET(makeReq("GET", null));
-    expect(res.status).toBe(403);
+    expect(res.status).toBe(401);
   });
 
   it("returns 403 when not a firm admin", async () => {
@@ -445,11 +428,11 @@ describe("PATCH /api/advisor-auth/firm/invite", () => {
     });
   }
 
-  it("returns 403 with no cookie", async () => {
+  it("returns 401 with no cookie", async () => {
     const res = await PATCH(
       makeReq("PATCH", { inviteId: 5, action: "revoke" }),
     );
-    expect(res.status).toBe(403);
+    expect(res.status).toBe(401);
   });
 
   it("returns 400 for invalid action", async () => {

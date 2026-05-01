@@ -9,10 +9,7 @@ const mockAdminFrom = vi.fn();
 const supabaseCalls: Record<string, { method: string; args: unknown[] }[]> = {};
 
 vi.mock("@/lib/supabase/server", () => ({
-  createClient: vi.fn(async () => ({
-    from: mockServerFrom,
-    auth: { getUser: vi.fn().mockResolvedValue({ data: { user: null } }) },
-  })),
+  createClient: vi.fn(async () => ({ from: mockServerFrom })),
 }));
 
 vi.mock("@/lib/supabase/admin", () => ({
@@ -44,55 +41,40 @@ function makePatch(body: unknown, cookie?: string): NextRequest {
   });
 }
 
-// Post-refactor, requireAdvisorSession reads advisor_sessions through the
-// admin client; the route also reads professionals via admin. Wire both onto
-// mockAdminFrom. Tests that override mockAdminFrom for other tables (e.g.
-// advisor_firms) should re-apply this via `buildAuthBuilder`.
-function buildAuthBuilder(
-  table: string,
-  opts: {
-    expired?: boolean;
-    advisor?: Record<string, unknown> | null;
-  },
-  b: ReturnType<typeof createChainableBuilder>,
-) {
-  const expiresAt = opts.expired
-    ? new Date(Date.now() - 86400 * 1000).toISOString()
-    : new Date(Date.now() + 86400 * 1000).toISOString();
-  if (table === "advisor_sessions") {
-    b.single = vi.fn(() =>
-      Promise.resolve({
-        data: { professional_id: 42, expires_at: expiresAt },
-        error: null,
-      }),
-    );
-  }
-  if (table === "professionals") {
-    b.single = vi.fn(() =>
-      Promise.resolve({
-        data:
-          opts.advisor === undefined
-            ? {
-                id: 42,
-                name: "Admin",
-                firm_id: 7,
-                is_firm_admin: true,
-                role: "owner",
-              }
-            : opts.advisor,
-        error: null,
-      }),
-    );
-  }
-}
-
 function withSessionAndAdvisor(opts: {
   expired?: boolean;
   advisor?: Record<string, unknown> | null;
 } = {}) {
-  mockAdminFrom.mockImplementation((table: string) => {
+  const expiresAt = opts.expired
+    ? new Date(Date.now() - 86400 * 1000).toISOString()
+    : new Date(Date.now() + 86400 * 1000).toISOString();
+  mockServerFrom.mockImplementation((table: string) => {
     const b = createChainableBuilder(table, supabaseCalls);
-    buildAuthBuilder(table, opts, b);
+    if (table === "advisor_sessions") {
+      b.single = vi.fn(() =>
+        Promise.resolve({
+          data: { professional_id: 42, expires_at: expiresAt },
+          error: null,
+        }),
+      );
+    }
+    if (table === "professionals") {
+      b.single = vi.fn(() =>
+        Promise.resolve({
+          data:
+            opts.advisor === undefined
+              ? {
+                  id: 42,
+                  name: "Admin",
+                  firm_id: 7,
+                  is_firm_admin: true,
+                  role: "owner",
+                }
+              : opts.advisor,
+          error: null,
+        }),
+      );
+    }
     return b;
   });
 }
@@ -131,9 +113,9 @@ describe("GET /api/advisor-auth/firm", () => {
   });
 
   it("returns 404 when firm row not found", async () => {
+    withSessionAndAdvisor();
     mockAdminFrom.mockImplementation((table: string) => {
       const b = createChainableBuilder(table, supabaseCalls);
-      buildAuthBuilder(table, {}, b);
       if (table === "advisor_firms") {
         b.single = vi.fn(() =>
           Promise.resolve({ data: null, error: { code: "PGRST116" } }),
@@ -146,9 +128,9 @@ describe("GET /api/advisor-auth/firm", () => {
   });
 
   it("returns firm and memberCount on success", async () => {
+    withSessionAndAdvisor();
     mockAdminFrom.mockImplementation((table: string) => {
       const b = createChainableBuilder(table, supabaseCalls);
-      buildAuthBuilder(table, {}, b);
       if (table === "advisor_firms") {
         b.single = vi.fn(() =>
           Promise.resolve({
@@ -235,9 +217,9 @@ describe("PATCH /api/advisor-auth/firm", () => {
   });
 
   it("updates allowlisted fields and returns the updated firm", async () => {
+    withSessionAndAdvisor();
     mockAdminFrom.mockImplementation((table: string) => {
       const b = createChainableBuilder(table, supabaseCalls);
-      buildAuthBuilder(table, {}, b);
       if (table === "advisor_firms") {
         b.single = vi.fn(() =>
           Promise.resolve({
@@ -274,10 +256,10 @@ describe("PATCH /api/advisor-auth/firm", () => {
   });
 
   it("recomputes location_display when location fields change", async () => {
+    withSessionAndAdvisor();
     let firmCallCount = 0;
     mockAdminFrom.mockImplementation((table: string) => {
       const b = createChainableBuilder(table, supabaseCalls);
-      buildAuthBuilder(table, {}, b);
       if (table === "advisor_firms") {
         b.single = vi.fn(() => {
           firmCallCount++;

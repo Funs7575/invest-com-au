@@ -8,14 +8,7 @@ const mockFrom = vi.fn();
 const supabaseCalls: Record<string, { method: string; args: unknown[] }[]> = {};
 
 vi.mock("@/lib/supabase/server", () => ({
-  createClient: vi.fn(async () => ({
-    from: mockFrom,
-    auth: { getUser: vi.fn().mockResolvedValue({ data: { user: null } }) },
-  })),
-}));
-
-vi.mock("@/lib/supabase/admin", () => ({
-  createAdminClient: () => ({ from: mockFrom }),
+  createClient: vi.fn(async () => ({ from: mockFrom })),
 }));
 
 import { POST } from "@/app/api/advisor-auth/verify/route";

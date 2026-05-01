@@ -12,10 +12,7 @@ const mockSendAdminNotification = vi.fn((..._args: unknown[]) =>
 const supabaseCalls: Record<string, { method: string; args: unknown[] }[]> = {};
 
 vi.mock("@/lib/supabase/server", () => ({
-  createClient: vi.fn(async () => ({
-    from: mockServerFrom,
-    auth: { getUser: vi.fn().mockResolvedValue({ data: { user: null } }) },
-  })),
+  createClient: vi.fn(async () => ({ from: mockServerFrom })),
 }));
 
 vi.mock("@/lib/supabase/admin", () => ({
@@ -44,69 +41,53 @@ function makePost(body: unknown, cookie?: string): NextRequest {
   );
 }
 
-function buildAuthBuilder(
-  table: string,
-  opts: {
-    expired?: boolean;
-    advisor?: Record<string, unknown> | null;
-    firm?: Record<string, unknown> | null;
-  },
-  b: ReturnType<typeof createChainableBuilder>,
-) {
-  const expiresAt = opts.expired
-    ? new Date(Date.now() - 86400 * 1000).toISOString()
-    : new Date(Date.now() + 86400 * 1000).toISOString();
-  if (table === "advisor_sessions") {
-    b.single = vi.fn(() =>
-      Promise.resolve({
-        data: { professional_id: 42, expires_at: expiresAt },
-        error: null,
-      }),
-    );
-  }
-  if (table === "professionals") {
-    b.single = vi.fn(() =>
-      Promise.resolve({
-        data:
-          opts.advisor === undefined
-            ? {
-                id: 42,
-                name: "Admin",
-                email: "admin@firm.test",
-                firm_id: 7,
-                is_firm_admin: true,
-              }
-            : opts.advisor,
-        error: null,
-      }),
-    );
-  }
-  if (table === "advisor_firms") {
-    b.single = vi.fn(() =>
-      Promise.resolve({
-        data:
-          opts.firm === undefined
-            ? { name: "Test Firm", max_seats: 5 }
-            : opts.firm,
-        error: null,
-      }),
-    );
-  }
-}
-
-// Post-refactor, requireAdvisorSession reads advisor_sessions through the
-// admin client; the route also reads professionals + advisor_firms via admin.
-// Wire all three onto mockAdminFrom. Tests that override mockAdminFrom for
-// other tables (e.g. firm_seat_requests) should re-apply this via
-// `buildAuthBuilder` to keep the auth flow working.
 function withSession(opts: {
   expired?: boolean;
   advisor?: Record<string, unknown> | null;
   firm?: Record<string, unknown> | null;
 } = {}) {
-  mockAdminFrom.mockImplementation((table: string) => {
+  const expiresAt = opts.expired
+    ? new Date(Date.now() - 86400 * 1000).toISOString()
+    : new Date(Date.now() + 86400 * 1000).toISOString();
+
+  mockServerFrom.mockImplementation((table: string) => {
     const b = createChainableBuilder(table, supabaseCalls);
-    buildAuthBuilder(table, opts, b);
+    if (table === "advisor_sessions") {
+      b.single = vi.fn(() =>
+        Promise.resolve({
+          data: { professional_id: 42, expires_at: expiresAt },
+          error: null,
+        }),
+      );
+    }
+    if (table === "professionals") {
+      b.single = vi.fn(() =>
+        Promise.resolve({
+          data:
+            opts.advisor === undefined
+              ? {
+                  id: 42,
+                  name: "Admin",
+                  email: "admin@firm.test",
+                  firm_id: 7,
+                  is_firm_admin: true,
+                }
+              : opts.advisor,
+          error: null,
+        }),
+      );
+    }
+    if (table === "advisor_firms") {
+      b.single = vi.fn(() =>
+        Promise.resolve({
+          data:
+            opts.firm === undefined
+              ? { name: "Test Firm", max_seats: 5 }
+              : opts.firm,
+          error: null,
+        }),
+      );
+    }
     return b;
   });
 }
@@ -179,9 +160,9 @@ describe("POST /api/advisor-auth/firm/seat-request", () => {
   });
 
   it("returns 409 when a pending request already exists", async () => {
+    withSession();
     mockAdminFrom.mockImplementation((table: string) => {
       const b = createChainableBuilder(table, supabaseCalls);
-      buildAuthBuilder(table, {}, b);
       if (table === "firm_seat_requests") {
         b.single = vi.fn(() =>
           Promise.resolve({ data: { id: 99 }, error: null }),
@@ -194,9 +175,9 @@ describe("POST /api/advisor-auth/firm/seat-request", () => {
   });
 
   it("creates seat request and notifies admin on success", async () => {
+    withSession();
     mockAdminFrom.mockImplementation((table: string) => {
       const b = createChainableBuilder(table, supabaseCalls);
-      buildAuthBuilder(table, {}, b);
       if (table === "firm_seat_requests") {
         b.single = vi.fn(() =>
           Promise.resolve({ data: null, error: null }),
@@ -226,7 +207,7 @@ describe("POST /api/advisor-auth/firm/seat-request", () => {
   });
 
   it("returns 500 on unexpected error", async () => {
-    mockAdminFrom.mockImplementation(() => {
+    mockServerFrom.mockImplementation(() => {
       throw new Error("DB exploded");
     });
     const res = await POST(makePost({ requestedSeats: 10 }, "valid"));

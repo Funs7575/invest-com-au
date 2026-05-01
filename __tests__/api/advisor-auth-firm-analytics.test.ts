@@ -9,10 +9,7 @@ const mockAdminFrom = vi.fn();
 const supabaseCalls: Record<string, { method: string; args: unknown[] }[]> = {};
 
 vi.mock("@/lib/supabase/server", () => ({
-  createClient: vi.fn(async () => ({
-    from: mockServerFrom,
-    auth: { getUser: vi.fn().mockResolvedValue({ data: { user: null } }) },
-  })),
+  createClient: vi.fn(async () => ({ from: mockServerFrom })),
 }));
 
 vi.mock("@/lib/supabase/admin", () => ({
@@ -40,12 +37,7 @@ function withSession(opts: {
   const expiresAt = opts.expired
     ? new Date(Date.now() - 86400 * 1000).toISOString()
     : new Date(Date.now() + 86400 * 1000).toISOString();
-  // requireAdvisorSession() (post-refactor) reads advisor_sessions and
-  // professionals through the admin client, so wire those tables onto
-  // mockAdminFrom. The route's own admin queries (also for "professionals",
-  // "professional_leads", "professional_views") will be overridden by the
-  // per-test mockAdminFrom.mockImplementation calls when needed.
-  mockAdminFrom.mockImplementation((table: string) => {
+  mockServerFrom.mockImplementation((table: string) => {
     const b = createChainableBuilder(table, supabaseCalls);
     if (table === "advisor_sessions") {
       b.single = vi.fn(() =>
@@ -109,24 +101,9 @@ describe("GET /api/advisor-auth/firm/analytics", () => {
 
   it("returns empty members + null summary when firm has no members", async () => {
     withSession();
-    const expiresAt = new Date(Date.now() + 86400 * 1000).toISOString();
     mockAdminFrom.mockImplementation((table: string) => {
       const b = createChainableBuilder(table, supabaseCalls);
-      if (table === "advisor_sessions") {
-        b.single = vi.fn(() =>
-          Promise.resolve({
-            data: { professional_id: 42, expires_at: expiresAt },
-            error: null,
-          }),
-        );
-      }
       if (table === "professionals") {
-        b.single = vi.fn(() =>
-          Promise.resolve({
-            data: { id: 42, firm_id: 7, is_firm_admin: true },
-            error: null,
-          }),
-        );
         b.order = vi.fn(() =>
           Promise.resolve({ data: [], error: null }),
         );
@@ -145,24 +122,9 @@ describe("GET /api/advisor-auth/firm/analytics", () => {
     withSession();
     const recent = new Date(Date.now() - 5 * 86400000).toISOString();
     const old = new Date(Date.now() - 60 * 86400000).toISOString();
-    const expiresAt = new Date(Date.now() + 86400 * 1000).toISOString();
     mockAdminFrom.mockImplementation((table: string) => {
       const b = createChainableBuilder(table, supabaseCalls);
-      if (table === "advisor_sessions") {
-        b.single = vi.fn(() =>
-          Promise.resolve({
-            data: { professional_id: 42, expires_at: expiresAt },
-            error: null,
-          }),
-        );
-      }
       if (table === "professionals") {
-        b.single = vi.fn(() =>
-          Promise.resolve({
-            data: { id: 42, firm_id: 7, is_firm_admin: true },
-            error: null,
-          }),
-        );
         b.order = vi.fn(() =>
           Promise.resolve({
             data: [
@@ -258,7 +220,7 @@ describe("GET /api/advisor-auth/firm/analytics", () => {
   });
 
   it("returns 500 on unexpected error", async () => {
-    mockAdminFrom.mockImplementation(() => {
+    mockServerFrom.mockImplementation(() => {
       throw new Error("DB unavailable");
     });
     const res = await GET(makeGet("valid"));
