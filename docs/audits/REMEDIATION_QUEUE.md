@@ -510,7 +510,7 @@ Highest priority: critical 2 first.
 | A-05 | pending | Backfill migrations for ops/agent tables (`agent_*`, `platform_snapshots`, `ab_tests`) | ~6 | |
 | A-DISC-20260501-01 | pending | CREATE VIEW migration for `finance_monthly_summary` (PostgreSQL view — Row type has no PK, no Insert/Update types). Caller: `app/admin/finance/page.tsx`. | 1 | Surfaced by iter 172 (this fire) |
 | A-DISC-20260501-02 | pending | Backfill `wallet_transactions` (14 refs: broker wallets + marketplace reconciliation; money-handling, needs RLS). | 1 | Surfaced by iter 172 (this fire) |
-| A-DISC-20260502-01 | pending | `article_guidelines` — FORCE RLS + service_role policy missing. Has ENABLE RLS + "Public read guidelines" (FOR SELECT USING active=true, no TO clause). Adjacent to `advisor_article_moderation_log` (batch 5). | 1 | Surfaced by iter 180 discovery sweep |
+| A-DISC-20260502-01 | done | `article_guidelines` — FORCE RLS + service_role policy missing. Has ENABLE RLS + "Public read guidelines" (FOR SELECT USING active=true, no TO clause). Adjacent to `advisor_article_moderation_log` (batch 5). | 1 | Done iter 180c — commit `90ea9344` · PR #407. Surfaced by iter 180 discovery sweep |
 | A-06 | pending | Backfill remaining miscellaneous tables | ~10 | |
 | A-07 | pending | Add CI check that fails build if `database.types.ts` declares a table not present in any migration | 1 | Stream I overlap. |
 
@@ -1456,6 +1456,24 @@ Two strategically important surfaces under-served by current nav: (1) investment
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-02 — iteration 180c (stream A — A-DISC-20260502-01: article_guidelines FORCE RLS + service_role)
+
+- Phase 2: CI rescue check — PR #407 (A-02 batch 5) CI not yet completed for `e6534628` push. PR #406 (E-02 batch 3) CI re-run in progress after `5fc2c8e9` push. No red CI to rescue.
+- Phase 3: priority order → A is slot 12 (highest active). A-DISC-20260502-01 is pending (article_guidelines, 1 iteration, adjacent to batch 5). Checked out `claude/audit-remediation/a-02-batch-5-advisor-firm-tables`.
+- Phase 4: verification gate — new migration category. Prior policy: "Public read guidelines" (no TO clause, no FORCE RLS) in 20260310_content_architecture.sql:114-115. Only caller: `advisor-articles/route.ts:98` uses admin client. No auth.uid() linkage — public reference table. Policy semantics clear: retain public SELECT.
+- Phase 5: migration `20260608120100_a02_disc_article_guidelines_rls.sql` (74 LOC). Adds FORCE RLS + service_role full access + recreates "Public read guidelines v2" with explicit `TO anon, authenticated`. RLS gate: passes locally.
+- Phase 6: committed `90ea9344`. Pushed. Goes into existing draft PR #407.
+- STATUS: PROGRESS · stream=A · item=A-DISC-20260502-01 · pr=#407 · commit=90ea9344
+- Diff: +74 -0 across 1 file
+
+### 2026-05-02 — iteration 180b-E (CI-RESCUE — stream E — PR #406 TS2731 symbol coercion)
+
+- Phase 2: CI rescue — PR #406 (E-02 batch 3) "Lint · Type-check · Test · Build" = FAILURE. Diagnosis: `app/api/marketplace/impression/route.ts:32` — template literal `\`${field}: ${msg}\`` where `field` = `issue?.path[0]` (type `string | number | symbol | undefined`). TypeScript strict TS2731: implicit symbol-to-string conversion fails at runtime. Fix: `field != null ? \`${String(field)}: ${msg}\` : msg`.
+- Local verification: 10/10 impression tests pass. Lint: clean (exit 0).
+- Commit: `5fc2c8e9`. Pushed to `claude/audit-remediation/e-02-batch-3-zod-rollout`.
+- STATUS: CI-RESCUE · stream=E · pr=#406 · commit=5fc2c8e9
+- Diff: +1 -1 across 1 file
 
 ### 2026-05-02 — iteration 183 (CI-RESCUE — stream R — PR #396 Lighthouse CWV TBT threshold)
 
