@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import type { DTACountry } from "@/lib/foreign-investment-data";
+import { formatCurrency } from "@/lib/utils";
 
 interface Props {
   countries: DTACountry[];
@@ -43,9 +44,6 @@ export default function WHTCalculator({ countries, defaultRates }: Props) {
 
   const hasDTA = selectedCountry?.hasDTA ?? false;
   const noCountrySelected = !countryCode;
-
-  const formatCurrency = (n: number) =>
-    n.toLocaleString("en-AU", { style: "currency", currency: "AUD", maximumFractionDigits: 2 });
 
   return (
     <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
