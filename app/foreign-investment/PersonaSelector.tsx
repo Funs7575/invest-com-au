@@ -88,9 +88,14 @@ export default function PersonaSelector({ personas }: Props) {
                 <p className="text-sm text-slate-700 mb-3">{active.advisorType}</p>
                 <Link
                   href={
-                    active.id === "new-pr"
-                      ? "/advisors/financial-planners"
-                      : "/advisors/tax-agents"
+                    // Route each persona to the specialist landing page that
+                    // (a) matches their actual pain and (b) is in the
+                    // cross-border source-path allowlist on the advisor-
+                    // enquiry API, so leads automatically get the
+                    // international 3× premium pricing.
+                    active.id === "non-resident"
+                      ? "/advisors/firb-specialists"
+                      : "/advisors/international-tax-specialists"
                   }
                   className="inline-block text-xs font-bold text-amber-700 hover:text-amber-900 underline underline-offset-2"
                 >

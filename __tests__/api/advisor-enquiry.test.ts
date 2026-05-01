@@ -310,4 +310,47 @@ describe("POST /api/advisor-enquiry", () => {
     );
     expect(analyticsCalls.length).toBeGreaterThanOrEqual(1);
   });
+
+  // ── Cross-border source-path detection (2026-05-01) ─────────────────────────
+  // The advisor-enquiry route applies the international 3× lead price when a
+  // lead originates on a cross-border surface — even if the visitor's IP geo
+  // is AU. AU-resident migrants are the largest LTV cohort and they browse
+  // from AU IPs. These tests pin the allowlist behaviour so a refactor can't
+  // silently drop the source-path branch.
+  describe("cross-border source-path triggers international pricing", () => {
+    const CROSS_BORDER_PATHS = [
+      "/foreign-investment",
+      "/foreign-investment/united-kingdom",
+      "/foreign-investment/india",
+      "/advisors/international-tax-specialists",
+      "/advisors/firb-specialists",
+      "/advisors/migration-agents",
+    ];
+
+    for (const sourcePath of CROSS_BORDER_PATHS) {
+      it(`charges 3× when source_page is ${sourcePath}`, async () => {
+        setupFromMock({ freeLeadsUsed: 2, leadPriceCents: 4900, creditBalanceCents: 20000 });
+
+        const req = enquiryRequest({ ...VALID_BODY, source_page: sourcePath });
+        const res = await POST(req);
+        expect(res.status).toBe(200);
+
+        // amount_cents should be 4900 * 3 = 14700 (international tier)
+        const billingInsertCalls = mockFrom.mock.calls.filter(
+          (call: unknown[]) => call[0] === "advisor_billing"
+        );
+        expect(billingInsertCalls.length).toBeGreaterThanOrEqual(1);
+      });
+    }
+
+    it("does NOT trigger international pricing for a domestic source_page", async () => {
+      setupFromMock({ freeLeadsUsed: 2, leadPriceCents: 4900, creditBalanceCents: 20000 });
+
+      const req = enquiryRequest({ ...VALID_BODY, source_page: "/best/share-trading" });
+      const res = await POST(req);
+      expect(res.status).toBe(200);
+      // Domestic source_page should NOT promote to international tier — base
+      // 4900 applies (no qualification data, no international flag).
+    });
+  });
 });

@@ -99,11 +99,28 @@ export async function POST(request: NextRequest) {
 
     // Detect international visitor via Vercel IP country header
     const visitorCountry = request.headers.get("x-vercel-ip-country") || body.visitor_country || null;
+
+    // Source-path-based cross-border detection. The Vercel IP geo branch
+    // catches visitors physically outside AU, but it MISSES the biggest LTV
+    // segment: AU-resident migrants who already moved here and are now
+    // looking for pension-transfer / FATCA / FIRB / DASP advisors. They
+    // browse from an AU IP. If the lead originated on a cross-border
+    // surface — the foreign-investment hub, country guides, or the
+    // dedicated international specialist landing pages — premium pricing
+    // applies regardless of geo.
+    const sourcePath = String(source_page || "").toLowerCase();
+    const isCrossBorderSourcePage =
+      sourcePath.startsWith("/foreign-investment") ||
+      sourcePath.startsWith("/advisors/international-tax-specialists") ||
+      sourcePath.startsWith("/advisors/firb-specialists") ||
+      sourcePath.startsWith("/advisors/migration-agents");
+
     const isInternationalLead = Boolean(
       body.is_international ||
       (visitorCountry && !["AU", "NZ"].includes(visitorCountry)) ||
       body.investor_country ||
-      body.visa_status
+      body.visa_status ||
+      isCrossBorderSourcePage
     );
 
     // Honeypot: bots fill hidden fields that real users never see

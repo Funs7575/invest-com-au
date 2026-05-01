@@ -293,8 +293,8 @@ export default async function UKInvestingPage() {
                 cross-border tax accountant can navigate the complexities of both tax systems.
               </p>
             </div>
-            <Link href="/advisors" className="shrink-0 px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold rounded-xl text-sm transition-colors">
-              Find an Advisor &rarr;
+            <Link href="/advisors/international-tax-specialists" className="shrink-0 px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold rounded-xl text-sm transition-colors">
+              Find a UK-AU Specialist &rarr;
             </Link>
           </div>
         </section>

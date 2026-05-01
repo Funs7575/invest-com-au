@@ -498,7 +498,7 @@ export default async function CountryInvestmentPage({
             <p className="text-sm text-slate-500 mb-6">Browse advisors who accept international clients.</p>
           )}
           <Link
-            href="/find-advisor"
+            href="/advisors/international-tax-specialists"
             className="inline-flex items-center gap-2 px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl text-sm transition-colors shadow-sm"
           >
             Get matched with a specialist advisor →
