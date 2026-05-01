@@ -8,6 +8,9 @@ import ForeignInvestmentNav from "../ForeignInvestmentNav";
 
 export const revalidate = 86400;
 
+// dated-ok — FIRB Foreign Buyer Ban window is fixed by Foreign Acquisitions & Takeovers Amendment 2024; review at expiry (March 2027).
+const FIRB_BAN_BLURB = "From 1 April 2025 to 31 March 2027, foreign persons cannot purchase established (existing) dwellings in Australia. New dwellings, off-the-plan, and vacant land remain available with FIRB approval.";
+
 // Only handle the 7 new countries — static pages exist for the other 5
 const SLUG_TO_CODE: Record<string, string> = {
   "united-states": "US",
@@ -416,9 +419,7 @@ export default async function CountryInvestmentPage({
                   <>
                     <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
                       <p className="text-sm font-bold text-amber-900 mb-1">Foreign Buyer Ban (2025–2027)</p>
-                      <p className="text-xs text-amber-800 leading-relaxed">
-                        From 1 April 2025 to 31 March 2027, foreign persons cannot purchase established (existing) dwellings in Australia. New dwellings, off-the-plan, and vacant land remain available with FIRB approval.
-                      </p>
+                      <p className="text-xs text-amber-800 leading-relaxed">{FIRB_BAN_BLURB}</p>
                     </div>
                     <div className="bg-white border border-slate-200 rounded-xl p-4">
                       <p className="text-sm font-bold text-slate-900 mb-1">Key FIRB Thresholds</p>
@@ -498,7 +499,7 @@ export default async function CountryInvestmentPage({
             <p className="text-sm text-slate-500 mb-6">Browse advisors who accept international clients.</p>
           )}
           <Link
-            href="/find-advisor"
+            href="/advisors/international-tax-specialists"
             className="inline-flex items-center gap-2 px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl text-sm transition-colors shadow-sm"
           >
             Get matched with a specialist advisor →
