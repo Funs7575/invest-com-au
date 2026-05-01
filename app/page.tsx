@@ -191,10 +191,10 @@ export default async function HomePage() {
               },
               {
                 "@type": "Question",
-                name: "What is the 60-second pathfinder?",
+                name: "What does Get matched do?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text: `A short prompt-based tool at ${SITE_URL}/quiz that routes you to the right next step — comparison, listing, expert directory or matched enquiry — based on your situation. No email needed.`,
+                  text: `Get matched is a short prompt-based flow at ${SITE_URL}/quiz that routes you to the right next step — comparison, listing, expert directory or matched enquiry — based on your situation. No email needed.`,
                 },
               },
             ],

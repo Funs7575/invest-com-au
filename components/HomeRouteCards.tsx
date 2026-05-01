@@ -30,7 +30,7 @@ export default function HomeRouteCards({
   }> = [
     {
       title: "Compare platforms",
-      copy: "Choose brokers, investing apps, super options, crypto platforms and savings tools by key fees, features and trade-offs.",
+      copy: "Brokers, super, crypto and savings — sorted by key fees and features.",
       cta: "Compare platforms",
       href: "/compare",
       micro: "Lowest-friction starting point",
@@ -40,7 +40,7 @@ export default function HomeRouteCards({
     },
     {
       title: "Browse opportunities",
-      copy: "Explore Australian property, businesses, farmland, resources, private credit and selected investment listings.",
+      copy: "Property, businesses, farmland and private-market listings, shown clearly.",
       cta: "Browse listings",
       href: "/invest",
       micro: "Marketplace route",
@@ -50,7 +50,7 @@ export default function HomeRouteCards({
     },
     {
       title: "Find an expert",
-      copy: "Compare specialists across property, lending, financial advice, tax, SMSF and cross-border investment support.",
+      copy: "Property, lending, advice, tax, SMSF and cross-border specialists.",
       cta: "Find an expert",
       href: "/advisors",
       micro: "Human help route",
@@ -60,11 +60,11 @@ export default function HomeRouteCards({
     },
     {
       title: "Get matched",
-      copy: "Tell us what you need and we'll route you towards relevant specialists, comparisons, listings or next steps.",
-      cta: "Get matched",
-      href: "/quotes/post",
+      copy: "Answer a few prompts. We route you to the right next step.",
+      cta: "Get matched in 60s",
+      href: "/quiz",
       micro: "Best if you're unsure",
-      badge: "Free · 24h",
+      badge: "60-sec flow · free",
       icon: "compass",
       accent: "#059669",
       featured: true,
