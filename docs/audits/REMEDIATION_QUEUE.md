@@ -41,7 +41,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | O | `claude/audit-remediation/o-rls-no-policy` (iters 1-4 via #235/#237/#239) · `o-iter6/forum` (#299) · `o-iter7/editorial-obs-secrets` (#300) · `o-iter8-rls-observability` (#366) · `o-03-search-path` (#395) | #235/#237/#239/#299/#300/#366 MERGED · #395 OPEN | MERGED 2026-05-01T22:01Z (#366) | O-01 iter1-4 done. O-02 done. iter6 done (PR #299). iter7 done (PR #300). iter8 MERGED 2026-05-01T22:01Z (#366 — 8 obs+anti-abuse tables). **O-03 done: `4a04418` → PR #395 (SECURITY DEFINER search_path fix).** O-04/O-05 pending. |
 | P | _not started_ | — | — | — |
 | Q | _not started_ | — | — | — |
-| R | `claude/audit-remediation/r-01-marketplace-allocation` · `r-02-auto-bid-tests` (#396) | #290 MERGED 2026-04-29T10:05Z · #396 OPEN | pending — pushed 2026-05-01 | R-01 done (PR #290). **R-02 done: `ae23f8b` → PR #396 (29 tests for auto-bid.ts).** R-03..R-11 still pending. |
+| R | `claude/audit-remediation/r-01-marketplace-allocation` · `r-02-auto-bid-tests` (#396) | #290 MERGED 2026-04-29T10:05Z · #396 OPEN | last pushed 2026-05-02T02:30Z (`1a082b2`) | R-01 done (PR #290). R-02 done: `ae23f8b` → PR #396 (29 tests for auto-bid.ts). R-02-DISC-20260501-01 done: `1a082b2` → PR #396 (12 tests for broker-auth.ts). R-03..R-11 still pending. |
 | S | _not started_ | — | — | — |
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 MERGED 2026-04-28T11:45Z | merged | V-NEW-06 done (commit `a7bd736`) |
@@ -725,7 +725,7 @@ Highest-risk untested business logic. Marketplace allocation is the most lucrati
 | --- | --- | --- | --- | --- |
 | R-01 | done | `lib/marketplace/allocation.ts` — 388 LOC, 0% covered. Cover allocation algorithm + auto-bid edge cases + tier overrides | ~2 | Done in PR #290 MERGED 2026-04-29T10:05Z (`__tests__/api/marketplace-allocation.test.ts` exists; covers allocation + CPC billing). |
 | R-02 | done | `lib/marketplace/auto-bid.ts` — 174 LOC, 0% covered | 1 | P0. Pairs with R-01. Done: commit `ae23f8b` · PR #396 (29 tests). |
-| R-02-DISC-20260501-01 | pending | `lib/marketplace/broker-auth.ts` — 77 LOC, 0 tests, no coverage. Only `lib/marketplace/` file without a test. | 1 | P1. Surfaced by iter 168 (discovery sweep on R-02 file). |
+| R-02-DISC-20260501-01 | done | `lib/marketplace/broker-auth.ts` — 77 LOC, 0 tests, no coverage. Only `lib/marketplace/` file without a test. | 1 | Done in commit `1a082b2` · PR #396 (12 tests: getBrokerAccount × 5, requireBrokerAccount × 3, isBrokerUser × 3). |
 | R-03 | pending | `lib/advisor-lead-dispute-resolver.ts` — 340 LOC, 0% covered | 1 | P1. |
 | R-04 | pending | `lib/cached-data.ts` — 263 LOC, 0% covered | 1 | P1. |
 | R-05 | pending | `lib/email-templates.ts` — 745 LOC, 18% covered → raise to ≥60% | 1 | P2. |
@@ -1432,6 +1432,25 @@ Two strategically important surfaces under-served by current nav: (1) investment
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-02 — iteration 178 (stream R — R-02-DISC-20260501-01: broker-auth.ts tests)
+
+- Phase 0: batch iteration 5 of up to 5 this session. Lock held.
+- Phase 1: synced main (ff-only — already up to date). Read queue and defaults.
+- Phase 2: CI check — #396 (R-02 auto-bid branch, now has broker-auth commit too), #403/#404/#405 pending, #406 queued. No failures. No rescue needed.
+- Phase 3: priority order → B-09 Tier D (skip) → A/G/E (all just pushed, no new pending) → R (R-02-DISC-20260501-01 pending). Queue says use existing PR #396 branch. Checked out `r-02-auto-bid-tests`.
+- Phase 4 verification: confirmed broker-auth.ts is 77 LOC with 3 exported functions (getBrokerAccount, requireBrokerAccount, isBrokerUser). No prior test file exists. All 3 functions use createClient() from @/lib/supabase/server and one uses redirect() from next/navigation. Mock chains verified against source call sites.
+- Phase 5: wrote `__tests__/lib/marketplace-broker-auth.test.ts` (208 LOC, 12 tests). Mocked `@/lib/supabase/server` with configurable per-test state (mockUser, mockAccount, mockWallet, mockBrokerAnyAccount). Mocked `next/navigation` redirect to throw REDIRECT:<url>. Mock chain for broker_accounts handles both getBrokerAccount's 2-eq chain and isBrokerUser's 1-eq chain. vitest not installed on sandbox (Hardware exception) — CI is authoritative.
+- Phase 6: committed `1a082b2`, pushed to existing `r-02-auto-bid-tests` branch (PR #396 already open).
+- Phase 6.5 discovery: no new adjacent issues — broker-auth.ts is fully covered; adjacent files (allocation.ts, auto-bid.ts) already have tests.
+- Phase 7: queue updated on main. R-02-DISC-20260501-01 moved to done. Stream R in-flight updated.
+
+- STATUS: PROGRESS · stream=R · item=R-02-DISC-20260501-01 · pr=#396
+- Branch: claude/audit-remediation/r-02-auto-bid-tests
+- Commit: 1a082b2
+- Diff: +208 -0 across 1 file
+- Next item: (batch of 5 complete — next fire picks up G-03 batch 6 or E-02 batch 4 or O-04)
+- Remaining: ~46+ pending · several blocked · 100+ done
 
 ### 2026-05-02 — iteration 177 (stream E — E-02 batch 3: Zod rollout on 4 routes)
 
