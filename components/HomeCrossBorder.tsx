@@ -6,39 +6,39 @@ const CORRIDORS: ReadonlyArray<{
   code: string;
   title: string;
   tag: string;
-  lines: ReadonlyArray<string>;
+  blurb: string;
   advisers: number;
   href: string;
 }> = [
   {
     code: "GB",
-    title: "UK → AU",
+    title: "UK → Australia",
     tag: "Migrant",
-    lines: ["NHS / QROPS pension", "HMRC residency days"],
+    blurb: "Pension transfers, residency rules, and how to keep your UK tax sorted.",
     advisers: 34,
     href: "/foreign-investment/united-kingdom",
   },
   {
     code: "IN",
-    title: "India → AU",
+    title: "India → Australia",
     tag: "Migrant",
-    lines: ["NRI vs ROR status", "FEMA repatriation"],
+    blurb: "Resident-status rules, sending money out of India, and what changes when you arrive.",
     advisers: 37,
     href: "/foreign-investment/india",
   },
   {
     code: "CN",
-    title: "China → AU",
+    title: "China → Australia",
     tag: "Migrant",
-    lines: ["FX outflow ($50k)", "PRC property + AU tax"],
+    blurb: "Moving funds across the border, mainland property, and double-tax basics.",
     advisers: 24,
     href: "/foreign-investment/china",
   },
   {
     code: "US",
-    title: "US citizen in AU",
-    tag: "Dual / FATCA",
-    lines: ["FBAR + FATCA filing", "PFIC trap on AU ETFs"],
+    title: "US citizens in Australia",
+    tag: "Dual citizen",
+    blurb: "What the IRS still wants, plus the Australian funds you should and shouldn't own.",
     advisers: 28,
     href: "/foreign-investment/united-states",
   },
@@ -50,7 +50,7 @@ export default function HomeCrossBorder() {
       <div className="home-crossborder-header" style={{ display: "grid", gridTemplateColumns: "1.1fr 2fr", gap: 36, alignItems: "center", marginBottom: 18 }}>
         <div>
           <span className="iv2-mini" style={{ color: "var(--color-coral-600)" }}>
-            ● If your money has crossed a border
+            ● Cross-border · 8 country guides
           </span>
           <h2
             className="font-display"
@@ -63,10 +63,10 @@ export default function HomeCrossBorder() {
               textWrap: "balance",
             }}
           >
-            For visa holders, expats &amp; foreign investors.
+            Where are you investing from?
           </h2>
           <p style={{ fontSize: 12.5, color: "var(--color-ink-500)", margin: 0, maxWidth: 380, lineHeight: 1.5 }}>
-            Pick the situation that fits — we&apos;ll show you the right rules, advisors and deals.
+            For visa holders, expats &amp; foreign investors — we&apos;ll show you the right rules, advisors and deals.
           </p>
         </div>
         <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", flexWrap: "wrap" }}>
@@ -105,24 +105,16 @@ export default function HomeCrossBorder() {
                 </div>
               </div>
             </div>
-            <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 3 }}>
-              {p.lines.map((b) => (
-                <li
-                  key={b}
-                  style={{
-                    fontSize: 11,
-                    color: "var(--color-ink-500)",
-                    display: "flex",
-                    gap: 5,
-                    alignItems: "flex-start",
-                    lineHeight: 1.4,
-                  }}
-                >
-                  <span aria-hidden style={{ width: 3, height: 3, borderRadius: 99, background: "var(--color-coral-500)", marginTop: 5, flexShrink: 0 }} />
-                  {b}
-                </li>
-              ))}
-            </ul>
+            <p
+              style={{
+                fontSize: 11.5,
+                color: "var(--color-ink-500)",
+                margin: 0,
+                lineHeight: 1.45,
+              }}
+            >
+              {p.blurb}
+            </p>
             <div
               style={{
                 fontSize: 10,
