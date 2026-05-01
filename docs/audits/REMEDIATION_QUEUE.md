@@ -50,6 +50,9 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | X | `claude/audit-remediation/x-admin-backlog` (#257) · `x-02-best-for-admin-swap` (#367 parallel-agent) | #257 MERGED 2026-04-28T11:23Z · #367 OPEN | CI-rescue 2026-05-01T21:42Z | X-01 done (PR #257 — decision matrix). X-02 in-progress on #367 (parallel-agent). CI-rescue: merged main post-#392 → `1ae6079` pushed 2026-05-01T21:42Z; CI re-run pending. X-03..X-09 pending. |
 | Y | `claude/audit-remediation/y-registry-nav` (#253) · `y-05-enrich-dated-stat-badge` (#347 parallel-agent) | #253 MERGED 2026-04-28T11:24Z · #347 OPEN | CI-rescue 2026-05-01T21:42Z | Y-05 done (commit `fb9dec3`, PR #253) · Y-08 done (commit `8bb1d4d`, PR #253). Y-05-ENRICH in-progress on #347 (parallel-agent). CI-rescue: merged main post-#392 → `708f7ac` pushed 2026-05-01T21:42Z; CI re-run pending. Y-01..Y-04, Y-06, Y-07 pending. |
 | BB | `claude/audit-remediation/bb-03-cgt-regulator-ref` (#361 parallel-agent) · `bb-06-mortgage-stress-regulator-ref` (#368 parallel-agent) | both OPEN | CI-rescue 2026-05-01T21:42Z | BB-03 in-progress on #361 (CGT calc vs ATO). BB-06 in-progress on #368 (mortgage stress test vs ASIC + APRA). CI-rescue (both): merged main post-#392 → BB-03 `df074bd` · BB-06 `cb10a20` pushed 2026-05-01T21:42Z; CI re-run pending. Other BB items pending. |
+| **R-COVERAGE** | _to be created_ | — | — | Test-coverage grind to ≥30% on highest-traffic routes. Long-running stream (3+ months). See "R-COVERAGE — coverage to 30%" section below. |
+| **OBS** | _to be created_ | — | — | Observability layer: SLO dashboards, alerting on main breakage, on-call runbook expansion. ~2 weeks of work once spec'd. See "OBS — observability layer" section below. |
+| **REFACTOR** | _to be created_ | — | — | One major refactor of the messiest area to set the codebase pattern standard. Target TBD on first iteration (likely advisor lifecycle vs sponsorship). See "REFACTOR — pattern-setting refactor" section below. |
 
 ---
 
@@ -466,6 +469,104 @@ Hard dependencies between items in different streams. The loop checks these befo
 - **HH-01 + HH-02** (mobile apps) depend on all DD-* items shipped + stable for ≥30 days.
 
 If a dependency is itself blocked (e.g. V-NEW-02 depends on `lib/compliance.ts` factual-filter implementation, which depends on the founder's compliance copy review), the dependent item surfaces to Blocked with a pointer back to the dependency's blocker. The loop never silently skips a dependency.
+
+### Stream R-COVERAGE — test coverage to ≥30% (added 2026-05-02 senior-grade uplift)
+
+**Goal:** raise overall vitest coverage from ~1.5% to ≥30% on the routes / lib helpers that actually move user money or hit user-data tables. Pure grind work, ideal for the cloud loop. Long-running stream — expect 3+ months to land.
+
+**Priority order (highest-impact first):**
+1. **Money-touching routes** — `app/api/listings/enquire`, `app/api/listings/submit`, `app/api/account/*` payment, `app/api/admin/payout-*`, anything under `lib/stripe/*`, `lib/finance/*`. A bug here = real dollars.
+2. **Lead-flow routes** — `app/api/quotes/*`, `app/api/find-advisor/*`, `app/api/listing-enquiries/*`. Lost leads = lost revenue.
+3. **Auth + admin routes** — `app/api/auth/*`, `app/api/admin/*`. Bugs here = security incidents.
+4. **Hot lib helpers** — `lib/sponsorship.ts`, `lib/tracking.ts`, `lib/seo.ts`, `lib/compliance.ts`, `lib/dated-stats.ts`. Used in many places; a regression hits everywhere.
+5. **Page rendering** — server-component snapshot tests for pillar pages (`/best/*`, `/share-trading`, `/crypto`, etc.). Lower priority because Vercel preview catches the worst.
+
+**Cap per iteration:** 1-3 test files added, 50-200 LOC of test code per iteration. **No production code modified** unless a test surfaces a real bug — in which case the bug fix gets its own commit on a separate stream.
+
+**Definition of done for the stream:**
+- `npm run test:coverage` reports `≥ 30%` overall AND `≥ 60%` on `lib/stripe`, `lib/finance`, `lib/compliance`, `lib/sponsorship`, `lib/tracking`, `lib/seo`, `lib/dated-stats`.
+- Coverage thresholds in `vitest.config.mts` ratcheted up to match (no regression possible).
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| R-COVERAGE-01 | pending | `app/api/listings/enquire` + `app/api/listings/submit` + `app/api/listings/my-listings` — branch coverage to 80%+ | 2 | Currently passes happy-path; missing edge cases (rate-limit, RLS denial, malformed body). |
+| R-COVERAGE-02 | pending | `lib/stripe/*` — full coverage on `webhook.ts`, `idempotency.ts`, `pricing.ts`, customer + subscription helpers | 4 | Mock the Stripe SDK; assert idempotency + amount + metadata invariants. |
+| R-COVERAGE-03 | pending | `app/api/quotes/post`, `app/api/quotes/respond`, `app/api/quotes/recent` — full lead lifecycle | 3 | Includes the per-advisor quota + dispute hand-off. |
+| R-COVERAGE-04 | pending | `app/api/admin/payouts/*` + `app/api/admin/affiliate-*` | 3 | Money-out routes — highest-stakes admin endpoints. |
+| R-COVERAGE-05 | pending | `app/api/auth/*` (signin, signup, OTP, password reset) | 3 | Mock Resend, assert rate limits, no info-leak in errors. |
+| R-COVERAGE-06 | pending | `lib/sponsorship.ts` — `boostFeaturedPartner`, `isSponsored`, tier ranking | 1 | Behaviour-critical to revenue ranking. |
+| R-COVERAGE-07 | pending | `lib/tracking.ts` — `getAffiliateLink`, `getBenefitCta`, `renderStars` | 1 | UTM building + click tracking. |
+| R-COVERAGE-08 | pending | `lib/dated-stats.ts` + `lib/seo.ts` | 1 | Date-format edge cases, JSON-LD shape. |
+| R-COVERAGE-09 | pending | `lib/compliance.ts` — disclosure constants + interpolation helpers | 1 | Legal-correctness — every change here needs test confirmation. |
+| R-COVERAGE-10 | pending | `lib/finance/*` (formatters, calculators) | 2 | AUD currency, percentage, tax-calculation helpers. |
+| R-COVERAGE-11..N | pending | One iteration per remaining hot module until threshold hit | ~30 | Scout + queue more items per iteration as the loop discovers new gaps. |
+
+---
+
+### Stream OBS — observability layer (added 2026-05-02 senior-grade uplift)
+
+**Goal:** SLO dashboards + alerting + on-call runbook expansion so a main-CI break / cron silence / Stripe webhook failure / Sentry rate-limit hit pages a human within 5 minutes — not 24 hours like the 2026-05-01 listings/admin-mock incident.
+
+**Why now:** the audit-remediation loop runs 24/7. When it fails or main breaks, the gap between the failure and a human noticing is the actual risk. Today that gap is "founder happens to check GitHub". Senior-grade: it's "phone vibrates, runbook open, decisive action in <30 min".
+
+**Phased approach:**
+
+- **Phase 1 — Spec sprint (~3 iterations):** founder + loop together define:
+  - Top 5 SLOs (e.g., main CI green % over 7 days; cron heartbeat freshness; Stripe webhook success rate; lead-form conversion rate; homepage Lighthouse CWV).
+  - Alert routing (Slack? PagerDuty? Email? Phone?).
+  - Severity tiers (P0 = phone, P1 = Slack, P2 = email digest).
+  - Acceptable false-positive rate per channel.
+- **Phase 2 — Build (~5-7 iterations):** wire metrics into a dashboard (Vercel Analytics + Sentry + custom `/api/metrics/*` endpoints), set up alert rules, write runbook for each alert.
+- **Phase 3 — Drill (~2 iterations):** simulate each failure mode, verify the alert fires, verify the runbook resolves it within the SLO. Document the gap between MTTD and MTTR.
+
+**Done = a written incident from start to resolution within SLO, executed against a real failure (or a fire drill that simulates one closely).**
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| OBS-01 | pending | Phase 1 spec — founder defines SLOs + routing + severity tiers | 1 (planning, no code) | **Founder input required.** Surface to Blocked with a decision matrix on first iteration. |
+| OBS-02 | pending | Main-CI-status alert: page if `gh run list --branch main --workflow CI --limit 1` is `failure` for >15 min | 2 | One Vercel cron + one alert webhook. Highest-leverage single alert. |
+| OBS-03 | pending | Cron heartbeat alert: page if any cron in `vercel.json` hasn't logged to `cron_run_log` in 2× its expected interval | 2 | Generic check, scales as we add crons. |
+| OBS-04 | pending | Stripe webhook success-rate alert: page if `stripe_webhook_log` shows < 95% success over 1h | 2 | Money-touching; tightest SLO. |
+| OBS-05 | pending | Lead-form abandonment dashboard | 3 | `/api/quotes/post`, `/api/find-advisor`, `/api/listings/enquire` — track `started → submitted` rate. |
+| OBS-06 | pending | Lighthouse CWV regression alert (currently raised threshold 800→1500ms TBT for runner noise — investigate fix) | 2 | Need to disambiguate runner noise from real perf regressions. |
+| OBS-07 | pending | Sentry quota guard: alert at 70% of monthly quota | 1 | Cheap to wire; saves a "we ran out of error budget" incident. |
+| OBS-08 | pending | Runbook for each alert in `docs/runbooks/` | 4 | One iteration per alert; includes "what user sees", "first 60 seconds", "rollback path". |
+| OBS-09 | pending | Fire drill — simulate main-CI break, verify OBS-02 paged within 15 min, verify runbook resolves in <30 min | 1 | Don't ship the layer without proving it works. |
+
+---
+
+### Stream REFACTOR — pattern-setting refactor (added 2026-05-02 senior-grade uplift)
+
+**Goal:** pick the messiest *load-bearing* area of the codebase and refactor it cleanly enough that it sets the pattern for the rest of the codebase. Senior devs trust patterns more than perfection — one well-refactored area teaches future contributors what "good" looks like.
+
+**Target candidates (first iteration: pick one, surface as Blocked for founder approval):**
+
+1. **Advisor lifecycle** — `app/api/advisor-auth/*`, `app/api/find-advisor/*`, `lib/advisor-*.ts`, plus the 15+ `advisor_*` tables. Audit-remediation A-stream has been backfilling RLS migrations across this surface for weeks; the application code on top still has overlapping concerns (auth + onboarding + dispute + analytics). Highest-leverage candidate.
+2. **Sponsorship + ranking** — `lib/sponsorship.ts` + the `*_campaigns` / `*_promoted_*` columns scattered across multiple tables + ad-hoc ranking logic in homepage / vertical pages. Smaller surface but high-revenue leverage.
+3. **Lead flow** — `/api/quotes/*` + `/api/listing-enquiries/*` + the dispute + auto-bid resolver. Two parallel implementations doing similar work.
+
+**Approach (regardless of target):**
+
+- **Iteration 1 — Decision matrix.** Surface to Blocked with a comparison of the three candidates: surface area in files / tables / LOC; recent bug history; how often it's edited; founder's risk tolerance. Founder picks the target.
+- **Iteration 2 — Boundaries.** Draw the new module boundaries on paper (`docs/refactors/<target>.md`). Define the public API of the new module. List every existing call site (grep). Define the migration plan (refactor in place vs gradual replace).
+- **Iterations 3..N — Refactor in tight chunks.** Each iteration: one boundary moved, all call sites updated, tests still pass, PR merged. **Cap at ≤ 300 LOC per PR** — no big-bang refactors. Forward-only; no half-merged states.
+- **Final iteration — Pattern doc.** Write `docs/patterns/<target>.md` documenting the structure so future modules can follow the template.
+
+**Definition of done:**
+- The chosen target follows a documented pattern.
+- No deprecated code paths remain (parallel implementations removed, not shimmed).
+- All call sites use the new module.
+- Test coverage on the refactored area ≥ 60% (regardless of overall coverage).
+- A pattern doc exists and is referenced from `CLAUDE.md`.
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| REFACTOR-01 | pending | Iteration 1 — pick target (advisor lifecycle vs sponsorship vs lead flow). Surface decision matrix to Blocked. | 1 (planning, no code) | **Founder input required** — pick the target. |
+| REFACTOR-02 | pending | Iteration 2 — write `docs/refactors/<target>.md`: boundaries, call sites, migration plan | 1 | Pure docs; no source change. |
+| REFACTOR-03..N | pending | Refactor chunks ≤ 300 LOC each, forward-only | ~10-15 (depends on target) | Each iteration: one boundary moved + tests + PR + merge before next chunk. |
+| REFACTOR-FINAL | pending | Pattern doc + `CLAUDE.md` reference | 1 | Capture the pattern so the next refactor follows the template. |
+
+---
 
 ### Stream B — RLS remediation (issue #215)
 
