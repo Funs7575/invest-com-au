@@ -1,12 +1,124 @@
 -- ============================================================================
--- Migration: Security & Performance Fixes
--- Date: 2026-03-09
+-- Migration: 20260309_security_and_performance_fixes.sql
+-- Purpose: Security + performance hardening — replace ~10 overly permissive
+--          INSERT policies with validation predicates (email_captures,
+--          quiz_leads, analytics_events, affiliate_clicks, switch_stories,
+--          user_reviews, shared_shortlists, professional_leads,
+--          professional_reviews, advisor_profile_views, investor_drip_log);
+--          add ~22 missing FK / lookup indexes (idx_affiliate_clicks_broker,
+--          idx_analytics_events_*, idx_user_reviews_*, idx_switch_stories_*,
+--          idx_broker_questions_page, idx_articles_*, idx_broker_data_changes_*,
+--          idx_email_captures_email, idx_quiz_leads_email, plus conditional
+--          indexes on advisor_*, course_*, marketplace_*, portfolio_*
+--          tables); set search_path = public on 4 utility functions
+--          (cleanup_old_analytics, cleanup_rate_limits, update_updated_at,
+--          increment_advisor_view); drop 3 unused indexes
+--          (idx_email_captures_status, idx_portfolios_email,
+--          idx_analytics_events_created, idx_analytics_events_event_type,
+--          idx_fee_snapshots_portfolio).
+-- Rollback: Per-section reverse — recreate the loose `WITH CHECK (true)`
+--          policies, drop the added indexes, recreate the dropped indexes,
+--          revert search_path on the 4 functions. The full reverse is a
+--          NET DEGRADATION of the database (loosens RLS, removes
+--          performance indexes) and SHOULD ONLY BE USED to undo a bad
+--          deploy — never as a routine operation.
+-- Risk: high — reverse weakens RLS validation (allows empty/invalid
+--       INSERTs the new policies block), removes FK indexes (sequential
+--       scans on JOIN-heavy queries), and re-introduces mutable
+--       search_path (security advisory). Single transaction (BEGIN/COMMIT)
+--       so partial failure rolls back cleanly forward; the reverse must
+--       likewise be wrapped in BEGIN/COMMIT.
+-- ============================================================================
 --
--- Addresses:
---   1. RLS policies with overly permissive WITH CHECK (true)
---   2. Missing indexes on foreign keys and frequently queried columns
---   3. Mutable search_path on functions
---   4. Unused index cleanup
+-- Forward operations (top-level only — see body for the full ~30 ops):
+--   1. BEGIN.
+--   2. SECTION 1 (RLS): for each of email_captures, quiz_leads,
+--      analytics_events, affiliate_clicks, switch_stories, user_reviews,
+--      shared_shortlists, professional_leads, professional_reviews,
+--      advisor_profile_views, investor_drip_log: DROP all known loose
+--      INSERT policies (`WITH CHECK (true)`), CREATE replacement INSERT
+--      policy with validation predicate (email non-empty, broker_slug
+--      non-empty, rating in 1..5, etc.). Conditional via DO blocks for
+--      tables that may not exist yet.
+--   3. SECTION 2 (indexes): CREATE INDEX IF NOT EXISTS for ~22 FK /
+--      lookup columns; conditional CREATE for advisor_*, course_*,
+--      marketplace_*, portfolio_* tables.
+--   4. SECTION 3 (search_path): DO blocks ALTER FUNCTION ... SET
+--      search_path = public on cleanup_old_analytics, cleanup_rate_limits,
+--      update_updated_at, increment_advisor_view (each conditional on
+--      pg_proc presence).
+--   5. SECTION 4 (cleanup): DROP INDEX IF EXISTS idx_email_captures_status,
+--      idx_portfolios_email; (idx_analytics_events_created /
+--      idx_analytics_events_event_type / idx_fee_snapshots_portfolio
+--      dropped in body as duplicate-index cleanup).
+--   6. COMMIT.
+--
+-- Rollback (in reverse order):
+--   -- WARNING: this reverse intentionally re-loosens RLS and removes
+--   -- performance indexes. Only run as part of a full deploy revert,
+--   -- never as a routine "undo".
+--   6. BEGIN;
+--   5. -- Re-create the dropped "unused" indexes if a downstream
+--      -- migration ever recreates them (otherwise leave dropped):
+--      CREATE INDEX IF NOT EXISTS idx_email_captures_status
+--        ON email_captures(status);
+--      CREATE INDEX IF NOT EXISTS idx_portfolios_email
+--        ON user_portfolios(email);
+--      CREATE INDEX IF NOT EXISTS idx_analytics_events_created
+--        ON analytics_events(created_at);
+--      CREATE INDEX IF NOT EXISTS idx_analytics_events_event_type
+--        ON analytics_events(event_type);
+--      CREATE INDEX IF NOT EXISTS idx_fee_snapshots_portfolio
+--        ON portfolio_fee_snapshots(portfolio_id);
+--   4. -- Revert search_path on the 4 utility functions:
+--      ALTER FUNCTION cleanup_old_analytics() RESET search_path;
+--      ALTER FUNCTION cleanup_rate_limits() RESET search_path;
+--      ALTER FUNCTION update_updated_at() RESET search_path;
+--      ALTER FUNCTION increment_advisor_view(integer, date) RESET search_path;
+--   3. -- Drop the ~22 indexes added by SECTION 2 (sample — drop all
+--      -- idx_* names introduced in this migration's body):
+--      DROP INDEX IF EXISTS idx_investor_drip_log_email;
+--      DROP INDEX IF EXISTS idx_advisor_auth_tokens_advisor;
+--      DROP INDEX IF EXISTS idx_advisor_sessions_advisor;
+--      DROP INDEX IF EXISTS idx_advisor_billing_advisor;
+--      DROP INDEX IF EXISTS idx_advisor_bookings_user;
+--      DROP INDEX IF EXISTS idx_advisor_bookings_advisor;
+--      DROP INDEX IF EXISTS idx_advisor_applications_user;
+--      DROP INDEX IF EXISTS idx_portfolio_alerts_portfolio;
+--      DROP INDEX IF EXISTS idx_portfolio_fee_snapshots_portfolio;
+--      DROP INDEX IF EXISTS idx_portfolio_holdings_portfolio;
+--      DROP INDEX IF EXISTS idx_marketplace_campaigns_broker;
+--      DROP INDEX IF EXISTS idx_course_progress_user;
+--      DROP INDEX IF EXISTS idx_course_purchases_user;
+--      DROP INDEX IF EXISTS idx_quiz_leads_email;
+--      DROP INDEX IF EXISTS idx_email_captures_email;
+--      DROP INDEX IF EXISTS idx_broker_data_changes_changed_at;
+--      DROP INDEX IF EXISTS idx_broker_data_changes_broker;
+--      DROP INDEX IF EXISTS idx_advisor_articles_professional;
+--      DROP INDEX IF EXISTS idx_articles_category;
+--      DROP INDEX IF EXISTS idx_articles_status;
+--      DROP INDEX IF EXISTS idx_broker_answers_question;
+--      DROP INDEX IF EXISTS idx_broker_questions_page;
+--      DROP INDEX IF EXISTS idx_switch_stories_source_broker;
+--      DROP INDEX IF EXISTS idx_switch_stories_broker_slug;
+--      DROP INDEX IF EXISTS idx_user_reviews_email;
+--      DROP INDEX IF EXISTS idx_user_reviews_broker_id;
+--      DROP INDEX IF EXISTS idx_analytics_events_created_at;
+--      DROP INDEX IF EXISTS idx_analytics_events_event_type;
+--      DROP INDEX IF EXISTS idx_analytics_events_page;
+--      DROP INDEX IF EXISTS idx_affiliate_clicks_broker;
+--   2. -- Re-create loose INSERT policies (NET DEGRADATION — only do this
+--      -- to revert a bad deploy). Pattern per table:
+--      DROP POLICY IF EXISTS "<validated policy name>" ON <table>;
+--      CREATE POLICY "<original loose name>" ON <table>
+--        FOR INSERT WITH CHECK (true);
+--      -- Apply to email_captures, quiz_leads, analytics_events,
+--      -- affiliate_clicks, switch_stories, user_reviews,
+--      -- shared_shortlists, professional_leads, professional_reviews,
+--      -- advisor_profile_views, investor_drip_log.
+--      -- Original policy names varied per table — check git history
+--      -- pre-2026-03-09 for the exact name strings.
+--   1. COMMIT;
 -- ============================================================================
 
 BEGIN;
