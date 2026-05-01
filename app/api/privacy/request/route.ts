@@ -14,6 +14,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 import { isValidEmail } from "@/lib/validate-email";
@@ -25,6 +26,22 @@ const log = logger("privacy-request");
 
 export const runtime = "nodejs";
 
+/**
+ * Body schema. Both fields are optional; the `type` enum catches unknown
+ * values to `undefined`, mirroring the previous
+ * `body.type === "export" || body.type === "delete" ? body.type : null`
+ * gate. The combined `if (!email || !isValidEmail(email) || !type)` 400
+ * below stays the gatekeeper. The top-level `.catch({})` keeps
+ * malformed-JSON bodies on the same 400 path the old
+ * `.catch(() => ({}))` produced.
+ */
+const PrivacyRequestSchema = z
+  .object({
+    email: z.string().optional().catch(undefined),
+    type: z.enum(["export", "delete"]).optional().catch(undefined),
+  })
+  .catch({});
+
 export async function POST(request: NextRequest) {
   // Strict rate limit — 3 requests per hour per IP. Privacy endpoints
   // are a prime abuse vector.
@@ -32,9 +49,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
 
-  const body = await request.json().catch(() => ({}));
-  const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : null;
-  const type = body.type === "export" || body.type === "delete" ? body.type : null;
+  const raw = await request.json().catch(() => ({}));
+  const parsed = PrivacyRequestSchema.parse(raw);
+  const email = parsed.email ? parsed.email.trim().toLowerCase() : null;
+  const type = parsed.type ?? null;
 
   if (!email || !isValidEmail(email) || !type) {
     return NextResponse.json(
