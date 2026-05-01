@@ -8,6 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `ARCHITECTURE.md` — request lifecycle, auth model, data model, caching strategy. Read before your first non-trivial change.
 - `CONTRIBUTING.md` — commit convention (Conventional Commits), PR expectations, migration discipline, code style.
 - `docs/runbooks/` — incident response procedures.
+- `docs/strategy/FIN_NOTEBOOK.md` — Fin's persistent strategy notebook (revenue backlog, decisions log, "revisit in N months" items). Read at session start if the user asks anything strategic, revenue-related, or "what were we going to do about X". Append to it when new strategic decisions are made — don't delete, move resolved items to the bottom.
 
 Everything below is the Claude-specific working notes that aren't in those files.
 

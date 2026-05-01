@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   INTERNAL_LINK_TARGETS,
+  GLOSSARY_LINK_TARGETS,
   linkifyHtml,
   splitByLinks,
 } from "@/lib/keyword-linking";
@@ -78,6 +79,66 @@ describe("splitByLinks", () => {
     // "commsec" is a keyword but "commsecure" should NOT match.
     const links = out.filter((p) => typeof p !== "string");
     expect(links).toHaveLength(0);
+  });
+});
+
+describe("GLOSSARY_LINK_TARGETS", () => {
+  it("has entries (glossary is non-empty)", () => {
+    expect(GLOSSARY_LINK_TARGETS.length).toBeGreaterThan(0);
+  });
+
+  it("all hrefs point to /glossary/ paths", () => {
+    for (const t of GLOSSARY_LINK_TARGETS) {
+      expect(t.href).toMatch(/^\/glossary\//);
+    }
+  });
+
+  it("all entries have rel=glossary", () => {
+    for (const t of GLOSSARY_LINK_TARGETS) {
+      expect(t.rel).toBe("glossary");
+    }
+  });
+
+  it("does not duplicate keywords already in INTERNAL_LINK_TARGETS", () => {
+    const internalKeywords = new Set(
+      INTERNAL_LINK_TARGETS.map((t) => t.keyword.toLowerCase()),
+    );
+    for (const t of GLOSSARY_LINK_TARGETS) {
+      expect(internalKeywords.has(t.keyword.toLowerCase())).toBe(false);
+    }
+  });
+
+  it("includes common glossary terms that are not in internal targets", () => {
+    const glossaryHrefs = new Set(GLOSSARY_LINK_TARGETS.map((t) => t.href));
+    // ETF should link to glossary since it's not an internal target keyword
+    const hasEtf = GLOSSARY_LINK_TARGETS.some(
+      (t) => t.keyword.toLowerCase() === "etf",
+    );
+    expect(hasEtf).toBe(true);
+    expect(glossaryHrefs.has("/glossary/etf")).toBe(true);
+  });
+});
+
+describe("splitByLinks — glossary terms", () => {
+  it("links a glossary term in prose", () => {
+    // "Dividend" is a glossary term not covered by INTERNAL_LINK_TARGETS
+    const out = splitByLinks("Dividend investing is a popular strategy.");
+    const link = out.find((p) => typeof p !== "string");
+    expect(link).toBeDefined();
+    if (typeof link !== "string" && link) {
+      expect(link.href).toMatch(/^\/glossary\//);
+      expect(link.rel).toBe("glossary");
+    }
+  });
+
+  it("internal link takes priority over glossary for overlapping terms", () => {
+    // "SMSF accountant" is an internal target; "SMSF" may also be in glossary.
+    // The longer match wins because SORTED_TARGETS is longest-first.
+    const out = splitByLinks("Hire an SMSF accountant.");
+    const link = out.find((p) => typeof p !== "string");
+    if (typeof link !== "string" && link) {
+      expect(link.href).toBe("/advisors/smsf-accountants");
+    }
   });
 });
 
