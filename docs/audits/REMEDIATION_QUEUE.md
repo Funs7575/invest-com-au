@@ -24,7 +24,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 
 | Stream | Branch | PR | Last CI | Items in flight |
 | --- | --- | --- | --- | --- |
-| A | `claude/audit-remediation/a-01-drift-list` (#308) · `a-02-batch-1-user-data-backfill` (#322) · `a-03-batch-1-revenue-backfill` (#351) · `a-02-batch-2-user-data-backfill` (#398) · `a-04-content-table-backfill` (#399) · `a-02-batch-3-advisor-tables` (#400) · `a-03-batch-2-revenue-backfill` (#401) · `a-02-batch-4-advisor-tokens-slots` (#402) | #308/#322/#351 MERGED · #398/#399/#400/#401/#402 OPEN | last pushed 2026-05-01T23:10Z (#402 `67158427`) | A-01 done (PR #308). A-02 batch 1 done (PR #322 — 5 user-data tables). A-03 batch 1 done (PR #351 — 5 revenue tables). A-02 batch 2 done (PR #398 — international_leads, lead_disputes, user_reviews). A-04 done (PR #399 — 4 content tables). A-02 batch 3 done (PR #400 — advisor_applications, advisor_billing, advisor_verification_log). A-03 batch 2 done (PR #401 — conversion_events, finance_transactions, credit_packs). A-02 batch 4 done (PR #402 — advisor_auth_tokens, advisor_booking_slots, advisor_specialties, advisor_metrics_daily). A-02/A-03 still in-progress (~3 batches each remain). A-05..A-07 pending. |
+| A | `claude/audit-remediation/a-01-drift-list` (#308) · `a-02-batch-1-user-data-backfill` (#322) · `a-03-batch-1-revenue-backfill` (#351) · `a-02-batch-2-user-data-backfill` (#398) · `a-04-content-table-backfill` (#399) · `a-02-batch-3-advisor-tables` (#400) · `a-03-batch-2-revenue-backfill` (#401) · `a-02-batch-4-advisor-tokens-slots` (#402) · `a-02-batch-4-advisor-bookings` (#403) | #308/#322/#351 MERGED · #398/#399/#400/#401/#402/#403 OPEN | last pushed 2026-05-02T00:00Z (#403 `b1e43f3`) | A-01 done (PR #308). A-02 batch 1 done (PR #322 — 5 user-data tables). A-03 batch 1 done (PR #351 — 5 revenue tables). A-02 batch 2 done (PR #398 — international_leads, lead_disputes, user_reviews). A-04 done (PR #399 — 4 content tables). A-02 batch 3 done (PR #400 — advisor_applications, advisor_billing, advisor_verification_log). A-03 batch 2 done (PR #401 — conversion_events, finance_transactions, credit_packs). A-02 batch 4 done (PR #402 — advisor_auth_tokens, advisor_booking_slots, advisor_specialties, advisor_metrics_daily). A-02 batch 4 supplement done (PR #403 — advisor_bookings; iter 173 deferred this; iter 174 added RLS-with-TODO anon SELECT policy). A-02/A-03 still in-progress (~2 batches each remain). A-05..A-07 pending. |
 | B | `claude/audit-remediation/b-08-rls-select-only` (#326) · `b-09a-otp-gate` (#348 draft, parallel-agent) | #326 MERGED 2026-05-01T13:19Z · #348 OPEN (DRAFT, awaiting `LISTING_OWNER_COOKIE_SECRET` env var) | last CI-rescue 2026-05-01T21:43Z (#348) | PR #220 merged (B-01..B-06 done/blocked/FP). B-07 done (`0097159` PR #286). B-08 done — code changes merged via PR #326 commit `476f89f6`. B-09 in-progress on `#348` (parallel-agent, draft). CI-rescue iter 1 (`09c4dfb`, 2026-05-01) merged main before PR #392 types regen — types drift still red. CI-rescue iter 2 (`7da8757e`, 2026-05-01T21:43Z) merged post-#392 main — picked up database.types.ts regen; CI re-run pending. Still DRAFT awaiting `LISTING_OWNER_COOKIE_SECRET` env var (Tier D). |
 | C | `claude/audit-remediation/c-01-admin-callgraph` (#327) · `c-03-admin-import-comments` (#360) · `c-04-c-05` (#394) · `c-05b-quarterly-reports` (#349) · `c-disc-20260501-01-vertical-marketplace-admin-swap` (#397) | #327/#349/#360 MERGED · #394 OPEN · #397 OPEN | MERGED 2026-05-01T22:01Z (#349, #360) | C-01..C-08 done (merged via #303 + #327). C-03 MERGED 2026-05-01T22:00Z (#360). C-04 done — PR #394 commit `e202d0d`. C-05 done — PR #394. C-05b MERGED 2026-05-01T22:01Z (#349). C-DISC-20260501-01 done — PR #397. Stream C fully caught up. |
 | D | `claude/audit-remediation/d-route-tests` | #285 MERGED 2026-04-29T10:13Z; supplementary PRs #246/#285/#297/#298 | last merged 2026-04-29T18:53Z | D-01..D-09 done (PR #246). D-10 done (PR #246 — coverage ratchet). D-11 complete (43+ batches, all admin/cron/non-admin routes covered) — merged via PR #285 + supplementary PRs #297/#298. **Stream D complete.** |
@@ -1432,6 +1432,25 @@ Two strategically important surfaces under-served by current nav: (1) investment
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-02 — iteration 174 (stream A — A-02 batch 4 supplement: advisor_bookings)
+
+- Phase 0: batch mode fire (iteration 1 of up to 5 this session). Lock held.
+- Phase 1: synced main (reset --hard to origin/main — local diverged due to forced-update from parallel fires). Read queue and defaults.
+- Phase 2: CI check on all open PRs — #398/#399/#400 pending (Vercel deploying); #360/#349/#366/#396 success; #367/#369/#347/#361/#368 success. No failures. No rescue needed.
+- Phase 3: priority order → B-09 Tier D (skip) → A (A-02 batch 4 pending). Discovered iter 173 already covered advisor_auth_tokens/booking_slots/specialties/metrics_daily in PR #402, noting advisor_bookings as deferred. Created `a-02-batch-4-advisor-family` branch; refocused to advisor_bookings only.
+- Phase 4 verification: prior policy scan — 20260309_security_and_performance_fixes.sql has "Insert advisor bookings" FOR INSERT TO authenticated (wrong role — anon client books). Policy dropped and replaced. GET slot-conflict check requires anon SELECT (USING(true) with TODO comment).
+- Phase 5: wrote migration `20260607_a02_advisor_family_tables_batch4.sql` (97 LOC): CREATE TABLE IF NOT EXISTS advisor_bookings + 2 indexes + ENABLE/FORCE RLS + anon INSERT + anon SELECT USING(true) with TODO + service_role ALL. SQL-only change; no tsc/lint gate needed.
+- Phase 6: committed `b1e43f3`, pushed, opened draft PR #403.
+- Phase 6.5 discovery: no adjacent issues in this migration not already tracked.
+- Phase 7: queue updated. A-02 batch 4 supplement logged.
+
+- STATUS: PROGRESS · stream=A · item=A-02 (batch 4 supplement) · pr=#403
+- Branch: claude/audit-remediation/a-02-batch-4-advisor-family
+- Commit: b1e43f3
+- Diff: +97 -0 across 1 file
+- Next item: G-03 batch 5 (rollback headers, next 10 migrations)
+- Remaining: ~55+ pending · several blocked · 100+ done
 
 ### 2026-05-01 — iteration 173 (stream A — A-02 batch 4: advisor_auth_tokens, booking_slots, specialties, metrics_daily)
 
