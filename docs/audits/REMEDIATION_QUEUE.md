@@ -76,6 +76,8 @@ Three admin usages found:
 
 **Loop is blocked on C-03 until this is resolved. C-04 onward can proceed independently.**
 
+**Decision (2026-05-01, founder):** Option A approved for all three files. `photo/route.ts` keeps admin (Storage requires service-role) with `// admin — Storage requires service-role` comment. `invite/route.ts` keeps admin (token IS the security; anon-by-token RLS would expose all rows) with `// admin — token-keyed lookup, no anon RLS path` comment. `route.ts` converts dynamic admin import → static + `// admin — compliance record, no anon INSERT policy on agreement_acceptances` comment. **Status: unblocked, loop can pick up next fire.**
+
 ---
 
 ### C-04 · `affiliate/click` admin import — inactive-broker behavior decision needed (surfaced 2026-04-30 by iter 158)
@@ -104,6 +106,8 @@ Three admin usages found:
 
 **Resolution:** choose A, B, C, or D. If A or B, the loop can do the refactor in one iteration (~20 lines).
 
+**Decision (2026-05-01, founder):** **Option C** (keep admin + comment). Click tracking on inactive/suspended brokers preserves revenue-analytics signal (did delisting cost us? are stale article links still firing?) — a write-only operation with zero data-exposure surface. Add `// admin — click tracking must capture all broker statuses for revenue/editorial analytics` comment to both the SELECT and INSERT calls. **Status: unblocked, loop can pick up next fire.**
+
 ---
 
 ### C-05 · `ArticleBrokerTable.tsx` admin import — public server component (surfaced 2026-04-30 by iter 161)
@@ -127,9 +131,11 @@ Three admin usages found:
 
 **Note:** `account/notifications/page.tsx` was fixed in iter 161 (removed admin, switched to `createClient()`). This blocked entry is for `ArticleBrokerTable.tsx` only.
 
+**Decision (2026-05-01, founder):** **Option A** approved. Switch `createAdminClient()` → `createClient()` in `fetchBrokers()`. Anon policy and component query produce identical result sets. **Status: unblocked, loop can pick up next fire.**
+
 ---
 
-### A-MISSING-TABLE-1 · `account_deletion_requests` table missing in live (surfaced 2026-04-26 by iter 19)
+### ~~A-MISSING-TABLE-1~~ · RESOLVED 2026-05-01 — `account_deletion_requests` already exists in live; new finding: `data_export_requests` is the actually-missing table
 
 **Finding:** The route `app/api/account/delete/route.ts` and Stream A's drift-backfill scope both depend on `account_deletion_requests`. Live DB query (Supabase MCP, 2026-04-26 18:50Z):
 
@@ -155,6 +161,20 @@ The migration that defines the table (`supabase/migrations/20260427_wave_securit
 
 **Recommendation:** Option 1. The table definition is well-formed and the migration was clearly intended to ship; just apply that table creation block.
 
+**Resolved (2026-05-01, MCP verification):** Live DB query confirms `account_deletion_requests` **already exists** with RLS + self-scoped policies. The 2026-04-26 finding was stale — the table was applied between then and now. **However**, the same verification surfaced a sibling miss: `data_export_requests` from the same migration block (lines 144-173 of `20260427_wave_security_observability.sql`) is **missing** in live. See follow-up item **A-MISSING-TABLE-2** below.
+
+---
+
+### A-MISSING-TABLE-2 · `data_export_requests` table missing in live (surfaced 2026-05-01 by MCP verification)
+
+**Finding:** `data_export_requests` (the GDPR/APP data-export tracking table) is missing in live. The CREATE TABLE block at `supabase/migrations/20260427_wave_security_observability.sql:144-173` defines it with RLS + self-scoped SELECT/INSERT policies but it never landed.
+
+**Impact:** Any route that records an export request (currently the `/api/account/export` flow per K-stream work) will fail. SLA tracking + admin processing dashboard cannot function.
+
+**Recommendation:** Apply lines 144-173 of `20260427_wave_security_observability.sql` (CREATE TABLE + 2 indexes + ALTER ENABLE RLS + 2 policies) as a forward-fix-up migration `<date>_g04_data_export_requests_repair.sql`. All blocks are idempotent (`IF NOT EXISTS` / `DROP POLICY IF EXISTS`).
+
+**Pending founder authorization** (Tier C — schema migration). Fixed-up forward migration ready to draft on confirmation.
+
 ---
 
 _B-04 cleared 2026-04-26 by user (chose option 2). See Done section + iteration log for the resolution and the option-4 follow-up note._
@@ -177,6 +197,8 @@ The `logo_url` field in the `brokers`/`advisors` tables points to these paths (e
 | **4. Defer** | Leave as-is. The `BrokerLogo` component already handles ICO correctly (native `<img>`, not `next/image`). P2 priority — no user-visible regression. | No risk. Revisit post-launch with a batch brand-kit request to partner brokers. |
 
 **Recommendation:** Option 4 (defer) for now — no user regression; the component already handles ICO correctly. Option 1 is fast if the founder wants the SVG benefit pre-launch. Whichever option is chosen, unblock by updating this entry.
+
+**Decision (2026-05-01, founder):** **Option 4 (defer-post-launch)**. P2, no user regression. Revisit post-launch with a partner brand-kit ask. **Status: `deferred-post-launch` — loop should skip this item.**
 
 ---
 
@@ -204,6 +226,8 @@ A `status = 'published'` allow-SELECT policy would fix the public pages but leav
 
 **Recommendation:** Option 1. The admin page should go through an API route (the CLAUDE.md pattern for "admin routes, webhooks, and cron") rather than direct browser-DB. Migration is straightforward once the route exists. This neatly dovetails with Stream C (C-05 already covers `account/notifications` and `ArticleBrokerTable` browser-to-server refactors).
 
+**Decision (2026-05-01, founder):** **Option 1** approved. Slot under Stream C as **C-05b**. Loop creates `/api/admin/quarterly-reports` (admin client in route handler), refactors `app/admin/quarterly-reports/page.tsx` to fetch via that route, then migration adds `anon SELECT WHERE status='published'` + `service_role FOR ALL` policies. **Status: unblocked, loop can pick up next fire as C-05b.**
+
 ---
 
 ### V-NEW-01-DATED-STAT-1 · Stale-data CI gate needs `<DatedStatBadge>` component (surfaced 2026-04-27 by iter 53)
@@ -218,6 +242,8 @@ A `status = 'published'` allow-SELECT policy would fix the public pages but leav
 | **2. Defer V-NEW-01 until stream W/Y land naturally** | Leave blocked until W-02 or Y-05 ships the component as part of hub foundation work. | Delays the gate by potentially many iterations while W/Y hub work proceeds. Higher risk of stale dates shipping to prod. |
 
 **Recommendation:** Option 1 — slot-2 DatedStatBadge extraction is already at priority step 2 in `REMEDIATION_DEFAULTS.md`. The next iteration should do Y-05 (component only, not the full Y stream) to unblock V-NEW-01.
+
+**Decision (2026-05-01, founder):** **Option 1** approved. Slot in via natural priority order — no founder action needed; loop picks up Y-05 (DatedStatBadge component only) next, V-NEW-01 follows. **Status: unblocked, loop can pick up next fire.**
 
 ---
 
@@ -234,6 +260,8 @@ A `status = 'published'` allow-SELECT policy would fix the public pages but leav
 | **3. Defer V-NEW-02 until CC-* items are closer** | Leave blocked. CC-* items surface to Blocked automatically when picked (they check for this dependency). | No immediate risk (CC-* stream is 30+ iterations away). But unblocking is a 1-iteration task — cheaper now than mid-stream. |
 
 **Recommendation:** Option 1 — the loop can draft a conservative filter based on existing AFSL/GAW compliance copy in `lib/compliance.ts`. Founder reviews before any CC-* PR is merged. Unblock by updating this entry or replying "draft the filter."
+
+**Decision (2026-05-01, founder):** **Option 1** approved. Loop drafts a conservative `filterFactualOutput(text: string): FilterResult` in `lib/compliance.ts` rejecting "you should / I recommend / best for you / advise you to" patterns + enforcing GAW prefix + stripping un-URL-backed citations. **Hard gate: no CC-* PR merges until founder signs off on filter semantics in the V-NEW-02 PR review** (Tier C — compliance copy). **Status: unblocked, loop can pick up next fire; CC-* downstream items remain blocked until V-NEW-02 PR merges.**
 
 ---
 
@@ -259,6 +287,21 @@ A `status = 'published'` allow-SELECT policy would fix the public pages but leav
 | **3. Defer all 8 — accept current prod state** | Leave G-04 blocked indefinitely. | No effort. Moderate risk: if migration #8 truncated, `bd_pipeline` + `competitor_watch` are still publicly readable via PostgREST anon key. |
 
 **Recommendation:** Run the verification SQL queries (Supabase MCP, ~10 min total), then reply with results so a follow-up forward-fix migration can be queued for any that need it. Start with migration #8 (data-leak risk) and #5 (security regression risk) — those are the only ones where a partial apply has user-visible / compliance-visible consequences. The other 6 are mostly perf / hygiene with one or two edge-case 404s.
+
+**Verification results (2026-05-01, MCP):**
+
+| # | Migration | Verification result | Action |
+|---|---|---|---|
+| 1 | `20260316_email_otps.sql` | **`email_otps` table does not exist in live** (`to_regclass` returns null). | New finding — see G-04-FINDING-1 below. |
+| 2 | `20260426_wave_launch_readiness.sql` | **0 of 20 expected `best_for_scenarios` slugs present** (entire INSERT block did not apply). Newsletter editions = 6 ✓; forum tables not directly verified — covered by Stream B/O. | New finding — see G-04-FINDING-2 below. |
+| 3 | `20260512_agent_infrastructure.sql` | **All clean.** 19 of 19 agent tables present; `authorised_representatives` + `credit_representatives` both have RLS enabled, `Service role manages X` policies, and updated_at triggers. | None. |
+| 4 | `20260310_fix_advisor_photos.sql` | **Partial.** 17 of 167 professionals still have `photo_url IS NULL`. `ui_avatars_count = 12` (suggesting catch-all UPDATE largely did not apply). | New finding — see G-04-FINDING-3 below. |
+| 5 | `20260310_admin_login_attempts.sql` | **All clean.** Table exists, RLS enabled, `idx_admin_login_attempts_reset_at` index present, `Service role only` policy present. | None. |
+| 6 | `20260411_features_11_12_14_15_16_18.sql` | **Migration entirely did not apply.** None of the 7 expected new tables (`user_saved_comparisons`, `user_shortlisted_brokers`, `price_drop_notifications`, `qa_votes`, `api_keys`, `api_request_log`, `regulatory_broker_impacts`) exist. None of the expected ALTER TABLE columns exist on `regulatory_alerts`, `fee_alert_subscriptions`, `professional_reviews`, `broker_questions`, `broker_answers`. Parent tables themselves all exist (created in earlier migrations). | New finding — see G-04-FINDING-4 below. **Largest blast radius of the verification sweep.** |
+| 7 | `20260522_rls_cosmetic_cleanup.sql` | **Partial.** Legacy `Public can read threads` policy IS gone from `forum_threads` ✓; current policies are `Public read forum_threads`, `Service all forum_threads`, `public_read_visible_threads` (a different naming convention drifted, but no duplicate). However, `Service role manages dynamic_pricing_rules` policy is **missing**. | New finding — see G-04-FINDING-5 below. |
+| 8 | `20260513_fix_public_read_leaks.sql` | **All clean — no data leak.** `bd_pipeline` only has `Service role manages BD pipeline`; `competitor_watch` only has `Service role manages competitor_watch`. Both have RLS enabled. The leaky `Public can read BD pipeline` and `Public read competitor_watch` policies are not present. | None. |
+
+**Net read:** 3 of 8 migrations clean (#3, #5, #8). 5 migrations have partial-apply findings; #6 is the largest concern (full migration didn't apply, ~7 missing tables + ~13 missing columns). **No active security data leak** (#8 was the urgent one — clean). G-04 itself can move to `done`; the 5 follow-up findings need separate forward-fix-up migrations and **founder authorization** before applying (Tier C — schema migrations).
 
 ---
 
@@ -287,6 +330,8 @@ The verification gate for this refactor requires that the route either reads coo
 
 **Recommendation:** Option 1 (OTP). The infrastructure exists, the UX is familiar, and the security outcome is complete. To unblock: reply with the chosen option, and the loop will implement it as B-09a (route + OTP gate) + B-09b (drop "anon select enquiries" from `listing_enquiries`).
 
+**Decision (2026-05-01, founder):** **Option 1 (OTP)** approved. Loop implements as **B-09a** (route + OTP gate using existing `/api/verify-otp/send` + `/api/verify-otp/verify` infrastructure) and then **B-09b** (drop `anon select enquiries` policy from `listing_enquiries` once route is shipped). **Status: unblocked, loop can pick up next fire as B-09a.** Note: B-09a + B-09b together change the user flow (email → OTP code → listings/enquiries) — the my-listings frontend page needs a 2-step UI; loop should ship the API + frontend in the same PR.
+
 ---
 
 ### ~~C-DISC-admin-disputes~~ · RESOLVED by iter 160 — admin ALL policy added to migration
@@ -294,6 +339,87 @@ The verification gate for this refactor requires that the route either reads coo
 **Resolved (2026-04-30, iter 160, commit `0fc88b5`):** The blocker was based on a misidentification of the DB role. `createClient()` in the browser creates a client initialized with the anon API key, but once the admin user logs in via Supabase Auth, their requests include a JWT Bearer token that maps to the `authenticated` DB role in Postgres — NOT the `anon` role. Adding "Admin can manage disputes" (FOR ALL TO authenticated USING raw_user_meta_data->>'role' = 'admin') is sufficient: admin users' DB role is `authenticated`, the policy matches, and they have full access. No page refactoring needed. Migration is safe in prod.
 
 ---
+
+---
+
+### G-04-FINDING-1 · `email_otps` table missing in live (surfaced 2026-05-01 by MCP verification)
+
+**Finding:** `to_regclass('public.email_otps')` returns null. Migration `20260316_email_otps.sql` defines the table for the find-advisor quiz email-verification flow but it does not exist in live.
+
+**Impact unclear pending code-graph check.** The K-02 OTP work shipped using a different table or Supabase Auth's built-in OTP — verify which routes (if any) still reference `email_otps` directly. If the table is truly orphaned, mark as `false-positive` and remove the migration. If routes still call it, ship a forward-fix-up migration.
+
+**Pending founder authorization** (Tier C). Recommended next step: `grep -r 'email_otps' app/ lib/` to determine whether the table is still referenced before deciding apply-vs-remove.
+
+---
+
+### G-04-FINDING-2 · 20 best-for slugs missing in live (surfaced 2026-05-01 by MCP verification)
+
+**Finding:** 0 of 20 expected `best_for_scenarios` slugs from `20260426_wave_launch_readiness.sql` are present in live (`fractional-shares`, `copy-trading`, `margin-lending`, `family-accounts`, `international-shares-beyond-us`, `demo-account`, `asx-small-caps`, `high-frequency-api`, `ipo-investing`, `tax-reporting`, `corporate-accounts`, `sustainable-super`, `share-trading-seniors`, `term-deposits`, `high-interest-savings`, `share-trading-nz`, `cheapest-etf-portfolio`, `joint-accounts`, `after-hours-trading`, `crypto-staking`).
+
+**Impact:** The `/best/[slug]` dynamic route 404s for all 20 of these comparison pages. Sitemap entries point at non-existent rows.
+
+**Recommendation:** Re-run the 20-row INSERT block from `20260426_wave_launch_readiness.sql` (idempotent via `ON CONFLICT (slug) DO UPDATE`). Single forward `execute_sql` call.
+
+**Pending founder authorization** (Tier C — schema/data migration).
+
+---
+
+### G-04-FINDING-3 · 17 advisor photos still NULL (surfaced 2026-05-01 by MCP verification)
+
+**Finding:** 17 of 167 professionals still have `photo_url IS NULL`. Only 12 have `ui-avatars` URLs, suggesting the catch-all UPDATE in `20260310_fix_advisor_photos.sql` largely did not apply (would have backfilled all 167 minus the slug-keyed CASE rows).
+
+**Impact:** 17 advisor profile cards / pages render with broken or placeholder images.
+
+**Recommendation:** One-shot MCP `execute_sql` re-running the catch-all (idempotent for any row already populated):
+```sql
+UPDATE professionals
+SET photo_url = 'https://ui-avatars.com/api/?name=' || REPLACE(name, ' ', '+')
+              || '&background=7c3aed&color=fff&size=200&bold=true'
+WHERE photo_url IS NULL;
+```
+
+**Pending founder authorization** (Tier B — data backfill, no schema change).
+
+---
+
+### G-04-FINDING-4 · `20260411_features_11_12_14_15_16_18.sql` migration entirely did not apply (surfaced 2026-05-01 by MCP verification) — **largest blast radius**
+
+**Finding:** None of the 7 expected new tables exist:
+- `user_saved_comparisons` — saved comparison sets
+- `user_shortlisted_brokers` — broker shortlist (`shared_shortlists` exists but is a different table)
+- `price_drop_notifications` — price-drop alert subscriptions
+- `qa_votes` — Q&A vote ledger
+- `api_keys` — API key registry (V-NEW-06 cost caps may depend on this)
+- `api_request_log` — API request audit log
+- `regulatory_broker_impacts` — regulatory-alert × broker impact mapping
+
+None of the expected ALTER TABLE columns exist either:
+- `regulatory_alerts`: missing 6 columns (`affected_broker_slugs`, `affected_platform_types`, `change_category`, `user_action_required`, `compliance_deadline`, `views_count`)
+- `fee_alert_subscriptions`: missing 3 columns (`price_threshold`, `last_notified_at`, `notification_count`)
+- `professional_reviews`: missing 3 columns (`is_verified_client`, `lead_id`, `verified_client_at`)
+- `broker_questions`: missing `vote_count`
+- `broker_answers`: missing `vote_count`, `helpful_count`
+
+**Impact:** Any route or query that references any of the above will fail (likely with `relation does not exist` or `column does not exist`). Need a code-graph audit to enumerate which features are silently broken in prod.
+
+**Recommendation:** Forward-fix-up migration `<date>_g04_features_11_18_repair.sql` containing the entire body of `20260411_features_11_12_14_15_16_18.sql` (already idempotent via `IF NOT EXISTS` / `ADD COLUMN IF NOT EXISTS`). Before applying, audit which routes touch these tables/columns to understand the user-facing impact and gate the apply behind founder review.
+
+**Pending founder authorization** (Tier C — schema migration, large surface area).
+
+---
+
+### G-04-FINDING-5 · `dynamic_pricing_rules` service-role policy missing (surfaced 2026-05-01 by MCP verification)
+
+**Finding:** `Service role manages dynamic_pricing_rules` policy from `20260522_rls_cosmetic_cleanup.sql` is missing in live. Cosmetic-only — service-role bypasses RLS regardless, so no functional gap.
+
+**Recommendation:** One-line MCP `execute_sql`:
+```sql
+CREATE POLICY "Service role manages dynamic_pricing_rules"
+  ON public.dynamic_pricing_rules FOR ALL TO service_role
+  USING (true) WITH CHECK (true);
+```
+
+**Pending founder authorization** (Tier B — RLS cosmetic).
 
 ## Pending work
 
