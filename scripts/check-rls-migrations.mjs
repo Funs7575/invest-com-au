@@ -73,11 +73,15 @@ export function getAddedMigrations(baseRef) {
  * @returns {string[]}
  */
 export function extractCreatedTables(sql) {
+  // Strip single-line SQL comments before parsing so that comment lines
+  // containing "CREATE TABLE IF NOT EXISTS" (e.g. in idempotency headers)
+  // don't produce false table-name extractions like "if".
+  const stripped = sql.replace(/--[^\n]*/g, "");
   const re =
     /CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?(?:public\.)?([a-z_][a-z0-9_]*)/gi;
   const names = [];
   let m;
-  while ((m = re.exec(sql)) !== null) {
+  while ((m = re.exec(stripped)) !== null) {
     names.push(m[1].toLowerCase());
   }
   return [...new Set(names)];
