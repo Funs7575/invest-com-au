@@ -687,7 +687,7 @@ export function Navigation() {
 
                 <div className="grid grid-cols-4 gap-5">
                   <div>
-                    <p className="text-[0.60rem] font-bold text-amber-500 uppercase tracking-wider mb-2">Browse deals</p>
+                    <p className="text-[0.60rem] font-bold text-amber-500 uppercase tracking-wider mb-2">Sectors &amp; Assets</p>
                     <div className="space-y-0.5">
                       {listingsMenu.sectors.map((item) => (
                         <Link
@@ -717,7 +717,7 @@ export function Navigation() {
                     </div>
                   </div>
                   <div>
-                    <p className="text-[0.60rem] font-bold text-amber-500 uppercase tracking-wider mb-2">Asset-class guides</p>
+                    <p className="text-[0.60rem] font-bold text-amber-500 uppercase tracking-wider mb-2">Markets &amp; Income</p>
                     <div className="space-y-0.5">
                       {listingsMenu.marketsIncome.map((item) => (
                         <Link
@@ -732,7 +732,7 @@ export function Navigation() {
                     </div>
                   </div>
                   <div className="border-l border-slate-100 pl-4">
-                    <p className="text-[0.60rem] font-bold text-amber-500 uppercase tracking-wider mb-2">More &amp; filters</p>
+                    <p className="text-[0.60rem] font-bold text-amber-500 uppercase tracking-wider mb-2">Quick Links</p>
                     <div className="space-y-0.5">
                       {listingsMenu.tools.map((item) => (
                         <Link
