@@ -6,9 +6,11 @@ import { logger } from "@/lib/logger";
 import { isRateLimited } from "@/lib/rate-limit";
 
 const PostBody = z.object({
-  thread_id: z.number().int().positive(),
-  body: z.string().trim().min(1).max(5000),
-  parent_id: z.number().int().positive().optional(),
+  thread_id: z.string().min(1, "Missing required fields: thread_id, body"),
+  body: z.string().trim()
+    .min(1, "Missing required fields: thread_id, body")
+    .max(5000, "Body must be 1-5000 characters"),
+  parent_id: z.string().optional(),
 });
 
 const log = logger("community:posts");

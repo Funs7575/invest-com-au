@@ -25,8 +25,11 @@ export async function POST(req: NextRequest) {
   try {
     const parsed = ImpressionBody.safeParse(await req.json());
     if (!parsed.success) {
+      const issue = parsed.error.issues[0];
+      const field = issue?.path[0];
+      const msg = issue?.message ?? "Invalid request body";
       return NextResponse.json(
-        { error: parsed.error.issues[0]?.message ?? "Invalid request body" },
+        { error: field ? `${field}: ${msg}` : msg },
         { status: 400 }
       );
     }
