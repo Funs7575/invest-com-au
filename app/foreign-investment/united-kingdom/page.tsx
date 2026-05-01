@@ -120,9 +120,11 @@ export default async function UKInvestingPage() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
           </svg>
           <div>
+            {/* dated-ok — FIRB Foreign Buyer Ban window is fixed by legislation; review at expiry (March 2027). */}
             <p className="font-bold text-red-800 text-sm">Established Dwelling Ban: Active until 31 March 2027</p>
             <p className="text-sm text-red-700 mt-0.5">
               UK residents (and Australian expats in the UK who are non-residents for AU tax) cannot purchase
+              {/* dated-ok — same regulatory window as above. */}
               existing Australian homes until at least 31 March 2027. New properties remain available.{" "}
               <Link href="/foreign-investment/guides/property-ban-2025" className="underline font-semibold">Full details &rarr;</Link>
             </p>
@@ -208,6 +210,7 @@ export default async function UKInvestingPage() {
               { type: "ASX Shares & ETFs", ok: true, desc: "Interactive Brokers is the primary option for UK residents. Full access to ASX, ETFs, and international markets.", href: "/foreign-investment/shares" },
               { type: "New Property (off-the-plan)", ok: true, desc: "New dwellings available with FIRB approval. UK is an FTA country — higher thresholds may apply.", href: "/foreign-investment/guides/buy-property-australia-foreigner" },
               { type: "Australian Fixed Income", ok: true, desc: "Term deposits and bonds accessible. 10% withholding on interest.", href: "/foreign-investment/savings" },
+              // dated-ok — FIRB Foreign Buyer Ban window is fixed by legislation; review at expiry (March 2027).
               { type: "Established Dwellings", ok: false, desc: "BANNED until 31 March 2027.", href: "/foreign-investment/guides/property-ban-2025" },
               { type: "Superannuation (as non-resident)", ok: false, desc: "Cannot contribute to AU super as a non-resident. Australian expats can preserve existing super.", href: "/foreign-investment/super" },
               { type: "Crypto", ok: true, desc: "Most AU exchanges accept UK residents.", href: "/foreign-investment/crypto" },

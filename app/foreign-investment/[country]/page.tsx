@@ -417,6 +417,7 @@ export default async function CountryInvestmentPage({
                     <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
                       <p className="text-sm font-bold text-amber-900 mb-1">Foreign Buyer Ban (2025–2027)</p>
                       <p className="text-xs text-amber-800 leading-relaxed">
+                        {/* dated-ok — FIRB Foreign Buyer Ban window is fixed by legislation; review at expiry (March 2027). */}
                         From 1 April 2025 to 31 March 2027, foreign persons cannot purchase established (existing) dwellings in Australia. New dwellings, off-the-plan, and vacant land remain available with FIRB approval.
                       </p>
                     </div>
