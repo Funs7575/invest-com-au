@@ -25,7 +25,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | Stream | Branch | PR | Last CI | Items in flight |
 | --- | --- | --- | --- | --- |
 | A | `claude/audit-remediation/a-01-drift-list` (#308) · `a-02-batch-1-user-data-backfill` (#322) · `a-03-batch-1-revenue-backfill` (#351) | #308/#322/#351 MERGED | last merged 2026-05-01T14:28Z | A-01 done (PR #308). A-02 batch 1 done (PR #322 — 5 user-data tables). A-03 batch 1 done (PR #351 — 5 revenue tables). A-02/A-03 still in-progress (~7 batches each remain). A-04..A-07 pending. |
-| B | `claude/audit-remediation/b-08-rls-select-only` (#326) · `b-09a-otp-gate` (#348 draft, parallel-agent) | #326 MERGED 2026-05-01T13:19Z · #348 OPEN (DRAFT, awaiting `ADMIN_MFA_COOKIE_SECRET` env var) | last merged 2026-05-01T13:19Z | PR #220 merged (B-01..B-06 done/blocked/FP). B-07 done (`0097159` PR #286). B-08 done — code changes merged via PR #326 commit `476f89f6`. B-09 in-progress on `#348` (parallel-agent, draft awaiting env var). |
+| B | `claude/audit-remediation/b-08-rls-select-only` (#326) · `b-09a-otp-gate` (#348 draft, parallel-agent) | #326 MERGED 2026-05-01T13:19Z · #348 OPEN (DRAFT, awaiting `LISTING_OWNER_COOKIE_SECRET` env var) | last merged 2026-05-01T13:19Z | PR #220 merged (B-01..B-06 done/blocked/FP). B-07 done (`0097159` PR #286). B-08 done — code changes merged via PR #326 commit `476f89f6`. B-09 in-progress on `#348` (parallel-agent, draft). CI-rescue merged `origin/main` into branch → merge commit `09c4dfb` pushed 2026-05-01; CI re-run pending. Still DRAFT awaiting `LISTING_OWNER_COOKIE_SECRET` env var (Tier D). |
 | C | `claude/audit-remediation/c-01-admin-callgraph` (#327) · `c-03-admin-import-comments` (#360 parallel-agent) · `c-05b-quarterly-reports` (#349 parallel-agent) | #327 MERGED 2026-05-01T13:19Z · #360 OPEN · #349 OPEN | last merged 2026-05-01T13:19Z | C-01..C-08 done (merged via #303 + #327). C-DISC-* all done. C-03 in-progress on #360 (parallel-agent, founder unblocked Option A). C-04 unblocked Option C (founder, 2026-05-01) — now pending pickup. C-05 (ArticleBrokerTable) unblocked Option A — pending pickup. C-05b in-progress on #349 (parallel-agent — quarterly_reports refactor). |
 | D | `claude/audit-remediation/d-route-tests` | #285 MERGED 2026-04-29T10:13Z; supplementary PRs #246/#285/#297/#298 | last merged 2026-04-29T18:53Z | D-01..D-09 done (PR #246). D-10 done (PR #246 — coverage ratchet). D-11 complete (43+ batches, all admin/cron/non-admin routes covered) — merged via PR #285 + supplementary PRs #297/#298. **Stream D complete.** |
 | E | `claude/audit-remediation/e-01-with-validated-body` (#295) · `e-02-batch-*-zod-rollout` (#315/#323) · `e-03-zod-lint-rule` (#313) | all MERGED | last merged 2026-05-01T10:31Z | E-01 done (PR #295 — withValidatedBody helper). E-02 in-progress (batches 1+2 done via PR #315/#323 — 8 routes; ~3 batches remain). E-03 done (PR #313 — ESLint rule). E-04 backfill pending. |
@@ -1421,6 +1421,14 @@ Two strategically important surfaces under-served by current nav: (1) investment
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-01 — CI rescue: stream B, PR #348 (B-09)
+
+- Phase 2 CI rescue: PR #348 (`b-09a-otp-gate`) had red "Lint · Type-check · Test · Build" — branch was 50 commits behind main (`067ee53e` vs `59dbd8e`).
+- Checked out `claude/audit-remediation/b-09a-otp-gate`, ran `git merge origin/main --no-edit` — clean merge, no conflicts. Merge commit `09c4dfb` pushed with `HUSKY=0`.
+- Code review: `lib/listing-owner-cookie.ts` (HMAC-SHA256 cookie helper, `timingSafeEqual`, 1-hour TTL) and `app/api/listings/my-listings/route.ts` (OTP-gated GET using `createAdminClient()`) both correct.
+- Note: env var name corrected in queue — it is `LISTING_OWNER_COOKIE_SECRET` (not `ADMIN_MFA_COOKIE_SECRET`). PR remains DRAFT pending that env var.
+- Status: CI-RESCUE · stream=B · pr=#348
 
 ### 2026-05-01 — Queue grooming pass
 
