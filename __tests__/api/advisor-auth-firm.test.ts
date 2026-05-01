@@ -8,6 +8,16 @@ const mockServerFrom = vi.fn();
 const mockAdminFrom = vi.fn();
 const supabaseCalls: Record<string, { method: string; args: unknown[] }[]> = {};
 
+// vi.hoisted() — vi.mock factories are hoisted; the captured fn must be too.
+// Post-C-02 the route delegates auth to requireAdvisorSession (helper).
+const { mockRequireAdvisorSession } = vi.hoisted(() => ({
+  mockRequireAdvisorSession: vi.fn(),
+}));
+
+vi.mock("@/lib/require-advisor-session", () => ({
+  requireAdvisorSession: mockRequireAdvisorSession,
+}));
+
 vi.mock("@/lib/supabase/server", () => ({
   createClient: vi.fn(async () => ({ from: mockServerFrom })),
 }));
@@ -45,19 +55,15 @@ function withSessionAndAdvisor(opts: {
   expired?: boolean;
   advisor?: Record<string, unknown> | null;
 } = {}) {
-  const expiresAt = opts.expired
-    ? new Date(Date.now() - 86400 * 1000).toISOString()
-    : new Date(Date.now() + 86400 * 1000).toISOString();
-  mockServerFrom.mockImplementation((table: string) => {
+  // Post-C-02: helper handles auth (cookie + expiry); admin client handles
+  // the professionals lookup.
+  if (opts.expired) {
+    mockRequireAdvisorSession.mockResolvedValue(null);
+  } else {
+    mockRequireAdvisorSession.mockResolvedValue(42);
+  }
+  mockAdminFrom.mockImplementation((table: string) => {
     const b = createChainableBuilder(table, supabaseCalls);
-    if (table === "advisor_sessions") {
-      b.single = vi.fn(() =>
-        Promise.resolve({
-          data: { professional_id: 42, expires_at: expiresAt },
-          error: null,
-        }),
-      );
-    }
     if (table === "professionals") {
       b.single = vi.fn(() =>
         Promise.resolve({
@@ -97,6 +103,8 @@ describe("GET /api/advisor-auth/firm", () => {
     mockAdminFrom.mockImplementation((table: string) =>
       createChainableBuilder(table, supabaseCalls),
     );
+    // Default: not authenticated. withSessionAndAdvisor() flips this to 42.
+    mockRequireAdvisorSession.mockResolvedValue(null);
   });
 
   it("returns 401 when no cookie", async () => {
@@ -114,8 +122,23 @@ describe("GET /api/advisor-auth/firm", () => {
 
   it("returns 404 when firm row not found", async () => {
     withSessionAndAdvisor();
+    // Combine professionals (from withSessionAndAdvisor) with advisor_firms.
     mockAdminFrom.mockImplementation((table: string) => {
       const b = createChainableBuilder(table, supabaseCalls);
+      if (table === "professionals") {
+        b.single = vi.fn(() =>
+          Promise.resolve({
+            data: {
+              id: 42,
+              name: "Admin",
+              firm_id: 7,
+              is_firm_admin: true,
+              role: "owner",
+            },
+            error: null,
+          }),
+        );
+      }
       if (table === "advisor_firms") {
         b.single = vi.fn(() =>
           Promise.resolve({ data: null, error: { code: "PGRST116" } }),
@@ -129,6 +152,8 @@ describe("GET /api/advisor-auth/firm", () => {
 
   it("returns firm and memberCount on success", async () => {
     withSessionAndAdvisor();
+    // Combine professionals (from withSessionAndAdvisor) + advisor_firms +
+    // member-count thenable on professionals.
     mockAdminFrom.mockImplementation((table: string) => {
       const b = createChainableBuilder(table, supabaseCalls);
       if (table === "advisor_firms") {
@@ -140,6 +165,18 @@ describe("GET /api/advisor-auth/firm", () => {
         );
       }
       if (table === "professionals") {
+        b.single = vi.fn(() =>
+          Promise.resolve({
+            data: {
+              id: 42,
+              name: "Admin",
+              firm_id: 7,
+              is_firm_admin: true,
+              role: "owner",
+            },
+            error: null,
+          }),
+        );
         // The count query awaits eq() directly; provide a thenable count
         b.eq = vi.fn(() => {
           supabaseCalls[table]?.push({ method: "eq", args: [] });
@@ -174,6 +211,8 @@ describe("PATCH /api/advisor-auth/firm", () => {
     mockAdminFrom.mockImplementation((table: string) =>
       createChainableBuilder(table, supabaseCalls),
     );
+    // Default: not authenticated. withSessionAndAdvisor() flips this to 42.
+    mockRequireAdvisorSession.mockResolvedValue(null);
   });
 
   it("returns 403 when not a firm admin", async () => {
@@ -218,8 +257,23 @@ describe("PATCH /api/advisor-auth/firm", () => {
 
   it("updates allowlisted fields and returns the updated firm", async () => {
     withSessionAndAdvisor();
+    // Combine professionals (firm-admin check) with advisor_firms.
     mockAdminFrom.mockImplementation((table: string) => {
       const b = createChainableBuilder(table, supabaseCalls);
+      if (table === "professionals") {
+        b.single = vi.fn(() =>
+          Promise.resolve({
+            data: {
+              id: 42,
+              name: "Admin",
+              firm_id: 7,
+              is_firm_admin: true,
+              role: "owner",
+            },
+            error: null,
+          }),
+        );
+      }
       if (table === "advisor_firms") {
         b.single = vi.fn(() =>
           Promise.resolve({
@@ -258,8 +312,23 @@ describe("PATCH /api/advisor-auth/firm", () => {
   it("recomputes location_display when location fields change", async () => {
     withSessionAndAdvisor();
     let firmCallCount = 0;
+    // Combine professionals (firm-admin check) with advisor_firms call counter.
     mockAdminFrom.mockImplementation((table: string) => {
       const b = createChainableBuilder(table, supabaseCalls);
+      if (table === "professionals") {
+        b.single = vi.fn(() =>
+          Promise.resolve({
+            data: {
+              id: 42,
+              name: "Admin",
+              firm_id: 7,
+              is_firm_admin: true,
+              role: "owner",
+            },
+            error: null,
+          }),
+        );
+      }
       if (table === "advisor_firms") {
         b.single = vi.fn(() => {
           firmCallCount++;

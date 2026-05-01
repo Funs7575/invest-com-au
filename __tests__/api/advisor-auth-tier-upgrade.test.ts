@@ -14,6 +14,16 @@ const mockEnqueueJob = vi.fn((..._args: unknown[]) => Promise.resolve());
 const mockCheckoutCreate = vi.fn();
 const supabaseCalls: Record<string, { method: string; args: unknown[] }[]> = {};
 
+// vi.hoisted() — vi.mock factories are hoisted; the captured fn must be too.
+// Post-C-02 the route delegates auth to requireAdvisorSession (helper).
+const { mockRequireAdvisorSession } = vi.hoisted(() => ({
+  mockRequireAdvisorSession: vi.fn(),
+}));
+
+vi.mock("@/lib/require-advisor-session", () => ({
+  requireAdvisorSession: mockRequireAdvisorSession,
+}));
+
 vi.mock("next/headers", () => ({
   cookies: vi.fn(async () => ({ get: mockCookieStoreGet })),
 }));
@@ -62,25 +72,20 @@ function withCookieAndSession(
   expiresAt = new Date(Date.now() + 86400 * 1000).toISOString(),
   hasCookie = true,
 ) {
+  // Post-C-02: helper handles cookie + expiry + lookup. The cookie store
+  // mock is kept for parity with old setup but unused by the route now.
   if (hasCookie) {
     mockCookieStoreGet.mockReturnValue({ value: "session-token" });
   } else {
     mockCookieStoreGet.mockReturnValue(undefined);
   }
-  mockServerFrom.mockImplementation((table: string) => {
-    const b = createChainableBuilder(table, supabaseCalls);
-    if (table === "advisor_sessions") {
-      b.maybeSingle = vi.fn(() =>
-        Promise.resolve({
-          data: professionalId
-            ? { professional_id: professionalId, expires_at: expiresAt }
-            : null,
-          error: null,
-        }),
-      );
-    }
-    return b;
-  });
+  // Helper returns advisorId on a valid live session, null otherwise.
+  const isExpired = new Date(expiresAt) < new Date();
+  if (!hasCookie || !professionalId || isExpired) {
+    mockRequireAdvisorSession.mockResolvedValue(null);
+  } else {
+    mockRequireAdvisorSession.mockResolvedValue(professionalId);
+  }
 }
 
 function withAdvisorTier(currentTier: string) {
@@ -122,6 +127,8 @@ describe("POST /api/advisor-auth/tier-upgrade", () => {
     mockAdminFrom.mockImplementation((table: string) =>
       createChainableBuilder(table, supabaseCalls),
     );
+    // Default: not authenticated. withCookieAndSession() flips this.
+    mockRequireAdvisorSession.mockResolvedValue(null);
     mockCheckoutCreate.mockResolvedValue({
       id: "cs_tier_001",
       url: "https://checkout.stripe.com/c/cs_tier_001",
@@ -135,13 +142,16 @@ describe("POST /api/advisor-auth/tier-upgrade", () => {
   });
 
   it("returns 401 when session is expired", async () => {
+    // Post-C-02: helper handles cookie expiry and returns null. Route emits
+    // a single "Not authenticated" error (the previous "Session expired"
+    // string lived in the inlined session-expiry branch in the route).
     withCookieAndSession(
       42,
       new Date(Date.now() - 86400 * 1000).toISOString(),
     );
     const res = await POST(makePost({ target_tier: "growth" }));
     expect(res.status).toBe(401);
-    expect((await res.json()).error).toBe("Session expired");
+    expect((await res.json()).error).toBe("Not authenticated");
   });
 
   it("returns 401 when session lookup returns null", async () => {

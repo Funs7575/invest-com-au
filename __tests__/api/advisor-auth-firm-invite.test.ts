@@ -10,8 +10,27 @@ const mockSendFirmInvitation = vi.fn((..._args: unknown[]) =>
 );
 const supabaseCalls: Record<string, { method: string; args: unknown[] }[]> = {};
 
+// vi.hoisted() — vi.mock() factories are hoisted, so the captured fns must
+// be hoisted too. Post-C-02 the route uses requireAdvisorSession (helper) +
+// admin client throughout; this test now mocks both with mockServerFrom
+// aliased to admin for shared data setups (smaller diff).
+const { mockRequireAdvisorSession } = vi.hoisted(() => ({
+  mockRequireAdvisorSession: vi.fn(),
+}));
+
+vi.mock("@/lib/require-advisor-session", () => ({
+  requireAdvisorSession: mockRequireAdvisorSession,
+}));
+
 vi.mock("@/lib/supabase/server", () => ({
   createClient: vi.fn(async () => ({ from: mockServerFrom })),
+}));
+
+// Post-C-02 the route uses createAdminClient() for all queries. Aliasing to
+// the existing mockServerFrom keeps the existing per-test data-setup bodies
+// working without renaming every reference.
+vi.mock("@/lib/supabase/admin", () => ({
+  createAdminClient: () => ({ from: mockServerFrom }),
 }));
 
 vi.mock("@/lib/url", () => ({
@@ -53,21 +72,18 @@ function withFirmAdmin(opts: {
   firm?: Record<string, unknown> | null;
   memberCount?: number;
 } = {}) {
-  const expiresAt = opts.expired
-    ? new Date(Date.now() - 86400 * 1000).toISOString()
-    : new Date(Date.now() + 86400 * 1000).toISOString();
+  // Post-C-02: requireAdvisorSession helper is mocked. An "expired" session
+  // is now expressed as helper-returns-null (the helper itself does the
+  // expires_at check on the cookie row).
+  if (opts.expired) {
+    mockRequireAdvisorSession.mockResolvedValue(null);
+  } else {
+    mockRequireAdvisorSession.mockResolvedValue(42);
+  }
   let proCallCount = 0;
 
   mockServerFrom.mockImplementation((table: string) => {
     const b = createChainableBuilder(table, supabaseCalls);
-    if (table === "advisor_sessions") {
-      b.single = vi.fn(() =>
-        Promise.resolve({
-          data: { professional_id: 42, expires_at: expiresAt },
-          error: null,
-        }),
-      );
-    }
     if (table === "professionals") {
       proCallCount++;
       const isFirstCall = proCallCount === 1;
@@ -135,21 +151,27 @@ describe("POST /api/advisor-auth/firm/invite", () => {
     mockServerFrom.mockImplementation((table: string) =>
       createChainableBuilder(table, supabaseCalls),
     );
+    // Default: not authenticated. Tests that need auth call withFirmAdmin()
+    // (or explicitly mockResolvedValue(42)) below.
+    mockRequireAdvisorSession.mockResolvedValue(null);
   });
 
-  it("returns 401 with no cookie", async () => {
+  it("returns 403 when not authenticated (no cookie)", async () => {
+    // Post-C-02: route folds unauthenticated and "not a firm admin" into the
+    // same 403 path. The previous 401 was an artifact of the inlined auth
+    // logic which is now in the requireAdvisorSession helper.
     const res = await POST(
       makeReq("POST", { email: "new@firm.test" }),
     );
-    expect(res.status).toBe(401);
+    expect(res.status).toBe(403);
   });
 
-  it("returns 401 when session expired", async () => {
+  it("returns 403 when session expired", async () => {
     withFirmAdmin({ expired: true });
     const res = await POST(
       makeReq("POST", { email: "new@firm.test" }, "valid"),
     );
-    expect(res.status).toBe(401);
+    expect(res.status).toBe(403);
   });
 
   it("returns 403 when not a firm admin", async () => {
@@ -294,11 +316,16 @@ describe("GET /api/advisor-auth/firm/invite", () => {
     mockServerFrom.mockImplementation((table: string) =>
       createChainableBuilder(table, supabaseCalls),
     );
+    // Default: not authenticated. Tests that need auth call withFirmAdmin()
+    // (or explicitly mockResolvedValue(42)) below.
+    mockRequireAdvisorSession.mockResolvedValue(null);
   });
 
-  it("returns 401 with no cookie", async () => {
+  it("returns 403 when not authenticated (no cookie)", async () => {
+    // Post-C-02: route returns 403 from the firm-admin gate for both
+    // unauthenticated and non-firm-admin users.
     const res = await GET(makeReq("GET", null));
-    expect(res.status).toBe(401);
+    expect(res.status).toBe(403);
   });
 
   it("returns 403 when not a firm admin", async () => {
@@ -362,12 +389,17 @@ describe("PATCH /api/advisor-auth/firm/invite", () => {
     mockServerFrom.mockImplementation((table: string) =>
       createChainableBuilder(table, supabaseCalls),
     );
+    // Default: not authenticated. Tests that need auth call withFirmAdmin()
+    // (or explicitly mockResolvedValue(42)) below.
+    mockRequireAdvisorSession.mockResolvedValue(null);
   });
 
   function withInviteRow(opts: {
     inviteStatus?: string;
     found?: boolean;
   } = {}) {
+    // Post-C-02: helper handles auth before route does any DB work.
+    mockRequireAdvisorSession.mockResolvedValue(42);
     let proCount = 0;
     mockServerFrom.mockImplementation((table: string) => {
       const b = createChainableBuilder(table, supabaseCalls);
@@ -428,11 +460,13 @@ describe("PATCH /api/advisor-auth/firm/invite", () => {
     });
   }
 
-  it("returns 401 with no cookie", async () => {
+  it("returns 403 when not authenticated (no cookie)", async () => {
+    // Post-C-02: route returns 403 from the firm-admin gate for both
+    // unauthenticated and non-firm-admin users.
     const res = await PATCH(
       makeReq("PATCH", { inviteId: 5, action: "revoke" }),
     );
-    expect(res.status).toBe(401);
+    expect(res.status).toBe(403);
   });
 
   it("returns 400 for invalid action", async () => {

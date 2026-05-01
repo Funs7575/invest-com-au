@@ -8,6 +8,16 @@ const mockServerFrom = vi.fn();
 const mockAdminFrom = vi.fn();
 const supabaseCalls: Record<string, { method: string; args: unknown[] }[]> = {};
 
+// vi.hoisted() — vi.mock factories are hoisted; the captured fn must be too.
+// Post-C-02 the route delegates auth to requireAdvisorSession (helper).
+const { mockRequireAdvisorSession } = vi.hoisted(() => ({
+  mockRequireAdvisorSession: vi.fn(),
+}));
+
+vi.mock("@/lib/require-advisor-session", () => ({
+  requireAdvisorSession: mockRequireAdvisorSession,
+}));
+
 vi.mock("@/lib/supabase/server", () => ({
   createClient: vi.fn(async () => ({ from: mockServerFrom })),
 }));
@@ -43,19 +53,10 @@ function makeDelete(memberId: number | string, cookie?: string): NextRequest {
 }
 
 function withFirmAdmin(adminId = 42, firmId = 7) {
-  mockServerFrom.mockImplementation((table: string) => {
+  // Post-C-02: helper handles auth; admin client handles professionals lookup.
+  mockRequireAdvisorSession.mockResolvedValue(adminId);
+  mockAdminFrom.mockImplementation((table: string) => {
     const b = createChainableBuilder(table, supabaseCalls);
-    if (table === "advisor_sessions") {
-      b.single = vi.fn(() =>
-        Promise.resolve({
-          data: {
-            professional_id: adminId,
-            expires_at: new Date(Date.now() + 86400 * 1000).toISOString(),
-          },
-          error: null,
-        }),
-      );
-    }
     if (table === "professionals") {
       b.single = vi.fn(() =>
         Promise.resolve({
@@ -91,6 +92,8 @@ describe("PATCH /api/advisor-auth/firm/member", () => {
     mockAdminFrom.mockImplementation((table: string) =>
       createChainableBuilder(table, supabaseCalls),
     );
+    // Default: not authenticated. withFirmAdmin() flips this to 42.
+    mockRequireAdvisorSession.mockResolvedValue(null);
   });
 
   it("returns 403 when no session cookie", async () => {
@@ -120,12 +123,22 @@ describe("PATCH /api/advisor-auth/firm/member", () => {
 
   it("returns 404 when member not in same firm", async () => {
     withFirmAdmin();
+    // Two single() calls on professionals: 1st = firm admin (getFirmAdmin),
+    // 2nd = member-in-firm check. We want the member check to return null.
+    let proCallCount = 0;
     mockAdminFrom.mockImplementation((table: string) => {
       const b = createChainableBuilder(table, supabaseCalls);
       if (table === "professionals") {
-        b.single = vi.fn(() =>
-          Promise.resolve({ data: null, error: null }),
-        );
+        b.single = vi.fn(() => {
+          proCallCount++;
+          if (proCallCount === 1) {
+            return Promise.resolve({
+              data: { id: 42, name: "Admin", firm_id: 7, is_firm_admin: true },
+              error: null,
+            });
+          }
+          return Promise.resolve({ data: null, error: null });
+        });
       }
       return b;
     });
@@ -137,12 +150,14 @@ describe("PATCH /api/advisor-auth/firm/member", () => {
 
   it("blocks self-demotion when no other owner exists", async () => {
     withFirmAdmin();
+    // Two single() calls on professionals: getFirmAdmin then member check.
+    // For self-demotion both target id 42, so both can return the same row.
     mockAdminFrom.mockImplementation((table: string) => {
       const b = createChainableBuilder(table, supabaseCalls);
       if (table === "professionals") {
         b.single = vi.fn(() =>
           Promise.resolve({
-            data: { id: 42, is_firm_admin: true },
+            data: { id: 42, name: "Admin", firm_id: 7, is_firm_admin: true },
             error: null,
           }),
         );
@@ -169,15 +184,24 @@ describe("PATCH /api/advisor-auth/firm/member", () => {
 
   it("updates a member's role and is_firm_admin auto-derived", async () => {
     withFirmAdmin();
+    // Two single() calls: getFirmAdmin (admin id=42) then member check (id=99).
+    let proCallCount = 0;
     mockAdminFrom.mockImplementation((table: string) => {
       const b = createChainableBuilder(table, supabaseCalls);
       if (table === "professionals") {
-        b.single = vi.fn(() =>
-          Promise.resolve({
+        b.single = vi.fn(() => {
+          proCallCount++;
+          if (proCallCount === 1) {
+            return Promise.resolve({
+              data: { id: 42, name: "Admin", firm_id: 7, is_firm_admin: true },
+              error: null,
+            });
+          }
+          return Promise.resolve({
             data: { id: 99, is_firm_admin: false },
             error: null,
-          }),
-        );
+          });
+        });
         // The update awaits .eq() directly
         b.eq = vi.fn(() => {
           supabaseCalls[table]?.push({ method: "eq", args: [] });
@@ -207,15 +231,23 @@ describe("PATCH /api/advisor-auth/firm/member", () => {
 
   it("respects explicit is_firm_admin=false", async () => {
     withFirmAdmin();
+    let proCallCount = 0;
     mockAdminFrom.mockImplementation((table: string) => {
       const b = createChainableBuilder(table, supabaseCalls);
       if (table === "professionals") {
-        b.single = vi.fn(() =>
-          Promise.resolve({
+        b.single = vi.fn(() => {
+          proCallCount++;
+          if (proCallCount === 1) {
+            return Promise.resolve({
+              data: { id: 42, name: "Admin", firm_id: 7, is_firm_admin: true },
+              error: null,
+            });
+          }
+          return Promise.resolve({
             data: { id: 99, is_firm_admin: true },
             error: null,
-          }),
-        );
+          });
+        });
       }
       return b;
     });
@@ -246,6 +278,8 @@ describe("DELETE /api/advisor-auth/firm/member", () => {
     mockAdminFrom.mockImplementation((table: string) =>
       createChainableBuilder(table, supabaseCalls),
     );
+    // Default: not authenticated. withFirmAdmin() flips this to 42.
+    mockRequireAdvisorSession.mockResolvedValue(null);
   });
 
   it("returns 403 when no session", async () => {
@@ -268,12 +302,20 @@ describe("DELETE /api/advisor-auth/firm/member", () => {
 
   it("returns 404 when member not in firm", async () => {
     withFirmAdmin();
+    let proCallCount = 0;
     mockAdminFrom.mockImplementation((table: string) => {
       const b = createChainableBuilder(table, supabaseCalls);
       if (table === "professionals") {
-        b.single = vi.fn(() =>
-          Promise.resolve({ data: null, error: null }),
-        );
+        b.single = vi.fn(() => {
+          proCallCount++;
+          if (proCallCount === 1) {
+            return Promise.resolve({
+              data: { id: 42, name: "Admin", firm_id: 7, is_firm_admin: true },
+              error: null,
+            });
+          }
+          return Promise.resolve({ data: null, error: null });
+        });
       }
       return b;
     });
@@ -283,15 +325,23 @@ describe("DELETE /api/advisor-auth/firm/member", () => {
 
   it("detaches member from firm without deleting the row", async () => {
     withFirmAdmin();
+    let proCallCount = 0;
     mockAdminFrom.mockImplementation((table: string) => {
       const b = createChainableBuilder(table, supabaseCalls);
       if (table === "professionals") {
-        b.single = vi.fn(() =>
-          Promise.resolve({
+        b.single = vi.fn(() => {
+          proCallCount++;
+          if (proCallCount === 1) {
+            return Promise.resolve({
+              data: { id: 42, name: "Admin", firm_id: 7, is_firm_admin: true },
+              error: null,
+            });
+          }
+          return Promise.resolve({
             data: { id: 99, name: "Bob" },
             error: null,
-          }),
-        );
+          });
+        });
       }
       return b;
     });

@@ -11,6 +11,16 @@ const mockSendAdminNotification = vi.fn((..._args: unknown[]) =>
 );
 const supabaseCalls: Record<string, { method: string; args: unknown[] }[]> = {};
 
+// vi.hoisted() — vi.mock factories are hoisted; the captured fn must be too.
+// Post-C-02 the route delegates auth to requireAdvisorSession (helper).
+const { mockRequireAdvisorSession } = vi.hoisted(() => ({
+  mockRequireAdvisorSession: vi.fn(),
+}));
+
+vi.mock("@/lib/require-advisor-session", () => ({
+  requireAdvisorSession: mockRequireAdvisorSession,
+}));
+
 vi.mock("@/lib/supabase/server", () => ({
   createClient: vi.fn(async () => ({ from: mockServerFrom })),
 }));
@@ -46,20 +56,15 @@ function withSession(opts: {
   advisor?: Record<string, unknown> | null;
   firm?: Record<string, unknown> | null;
 } = {}) {
-  const expiresAt = opts.expired
-    ? new Date(Date.now() - 86400 * 1000).toISOString()
-    : new Date(Date.now() + 86400 * 1000).toISOString();
+  // Post-C-02: helper handles auth; admin client handles DB lookups.
+  if (opts.expired) {
+    mockRequireAdvisorSession.mockResolvedValue(null);
+  } else {
+    mockRequireAdvisorSession.mockResolvedValue(42);
+  }
 
-  mockServerFrom.mockImplementation((table: string) => {
+  mockAdminFrom.mockImplementation((table: string) => {
     const b = createChainableBuilder(table, supabaseCalls);
-    if (table === "advisor_sessions") {
-      b.single = vi.fn(() =>
-        Promise.resolve({
-          data: { professional_id: 42, expires_at: expiresAt },
-          error: null,
-        }),
-      );
-    }
     if (table === "professionals") {
       b.single = vi.fn(() =>
         Promise.resolve({
@@ -110,6 +115,8 @@ describe("POST /api/advisor-auth/firm/seat-request", () => {
     mockAdminFrom.mockImplementation((table: string) =>
       createChainableBuilder(table, supabaseCalls),
     );
+    // Default: not authenticated. withSession() flips this to 42.
+    mockRequireAdvisorSession.mockResolvedValue(null);
   });
 
   it("returns 401 when no cookie", async () => {
@@ -161,8 +168,32 @@ describe("POST /api/advisor-auth/firm/seat-request", () => {
 
   it("returns 409 when a pending request already exists", async () => {
     withSession();
+    // Combine professionals/advisor_firms (from withSession) with the
+    // firm_seat_requests override.
     mockAdminFrom.mockImplementation((table: string) => {
       const b = createChainableBuilder(table, supabaseCalls);
+      if (table === "professionals") {
+        b.single = vi.fn(() =>
+          Promise.resolve({
+            data: {
+              id: 42,
+              name: "Admin",
+              email: "admin@firm.test",
+              firm_id: 7,
+              is_firm_admin: true,
+            },
+            error: null,
+          }),
+        );
+      }
+      if (table === "advisor_firms") {
+        b.single = vi.fn(() =>
+          Promise.resolve({
+            data: { name: "Test Firm", max_seats: 5 },
+            error: null,
+          }),
+        );
+      }
       if (table === "firm_seat_requests") {
         b.single = vi.fn(() =>
           Promise.resolve({ data: { id: 99 }, error: null }),
@@ -176,8 +207,32 @@ describe("POST /api/advisor-auth/firm/seat-request", () => {
 
   it("creates seat request and notifies admin on success", async () => {
     withSession();
+    // Combine professionals/advisor_firms (from withSession) with the
+    // firm_seat_requests override.
     mockAdminFrom.mockImplementation((table: string) => {
       const b = createChainableBuilder(table, supabaseCalls);
+      if (table === "professionals") {
+        b.single = vi.fn(() =>
+          Promise.resolve({
+            data: {
+              id: 42,
+              name: "Admin",
+              email: "admin@firm.test",
+              firm_id: 7,
+              is_firm_admin: true,
+            },
+            error: null,
+          }),
+        );
+      }
+      if (table === "advisor_firms") {
+        b.single = vi.fn(() =>
+          Promise.resolve({
+            data: { name: "Test Firm", max_seats: 5 },
+            error: null,
+          }),
+        );
+      }
       if (table === "firm_seat_requests") {
         b.single = vi.fn(() =>
           Promise.resolve({ data: null, error: null }),
@@ -207,7 +262,10 @@ describe("POST /api/advisor-auth/firm/seat-request", () => {
   });
 
   it("returns 500 on unexpected error", async () => {
-    mockServerFrom.mockImplementation(() => {
+    // Post-C-02: route uses admin client; auth happens in helper before
+    // any DB query. Throw from admin to trigger the route's catch block.
+    mockRequireAdvisorSession.mockResolvedValue(42);
+    mockAdminFrom.mockImplementation(() => {
       throw new Error("DB exploded");
     });
     const res = await POST(makePost({ requestedSeats: 10 }, "valid"));

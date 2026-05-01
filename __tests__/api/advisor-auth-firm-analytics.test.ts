@@ -8,6 +8,16 @@ const mockServerFrom = vi.fn();
 const mockAdminFrom = vi.fn();
 const supabaseCalls: Record<string, { method: string; args: unknown[] }[]> = {};
 
+// vi.hoisted() — vi.mock factories are hoisted; the captured fn must be too.
+// Post-C-02 the route delegates auth to requireAdvisorSession (helper).
+const { mockRequireAdvisorSession } = vi.hoisted(() => ({
+  mockRequireAdvisorSession: vi.fn(),
+}));
+
+vi.mock("@/lib/require-advisor-session", () => ({
+  requireAdvisorSession: mockRequireAdvisorSession,
+}));
+
 vi.mock("@/lib/supabase/server", () => ({
   createClient: vi.fn(async () => ({ from: mockServerFrom })),
 }));
@@ -34,19 +44,15 @@ function withSession(opts: {
   expired?: boolean;
   advisor?: Record<string, unknown> | null;
 } = {}) {
-  const expiresAt = opts.expired
-    ? new Date(Date.now() - 86400 * 1000).toISOString()
-    : new Date(Date.now() + 86400 * 1000).toISOString();
-  mockServerFrom.mockImplementation((table: string) => {
+  // Post-C-02: helper handles auth (cookie + expiry); set null for expired.
+  if (opts.expired) {
+    mockRequireAdvisorSession.mockResolvedValue(null);
+  } else {
+    mockRequireAdvisorSession.mockResolvedValue(42);
+  }
+  // Route uses admin client for the firm-membership lookup.
+  mockAdminFrom.mockImplementation((table: string) => {
     const b = createChainableBuilder(table, supabaseCalls);
-    if (table === "advisor_sessions") {
-      b.single = vi.fn(() =>
-        Promise.resolve({
-          data: { professional_id: 42, expires_at: expiresAt },
-          error: null,
-        }),
-      );
-    }
     if (table === "professionals") {
       b.single = vi.fn(() =>
         Promise.resolve({
@@ -80,6 +86,9 @@ describe("GET /api/advisor-auth/firm/analytics", () => {
     mockAdminFrom.mockImplementation((table: string) =>
       createChainableBuilder(table, supabaseCalls),
     );
+    // Default: not authenticated. Tests that need auth call withSession()
+    // (or explicitly mockResolvedValue(42)) below.
+    mockRequireAdvisorSession.mockResolvedValue(null);
   });
 
   it("returns 401 when no cookie", async () => {
@@ -101,9 +110,17 @@ describe("GET /api/advisor-auth/firm/analytics", () => {
 
   it("returns empty members + null summary when firm has no members", async () => {
     withSession();
+    // Override admin mock for both the membership check (single) and the
+    // firm-members listing (order). Post-C-02 both go via admin.
     mockAdminFrom.mockImplementation((table: string) => {
       const b = createChainableBuilder(table, supabaseCalls);
       if (table === "professionals") {
+        b.single = vi.fn(() =>
+          Promise.resolve({
+            data: { id: 42, firm_id: 7, is_firm_admin: true },
+            error: null,
+          }),
+        );
         b.order = vi.fn(() =>
           Promise.resolve({ data: [], error: null }),
         );
@@ -122,9 +139,17 @@ describe("GET /api/advisor-auth/firm/analytics", () => {
     withSession();
     const recent = new Date(Date.now() - 5 * 86400000).toISOString();
     const old = new Date(Date.now() - 60 * 86400000).toISOString();
+    // Override admin mock for membership check (single) + members listing
+    // (order). Post-C-02 both go via admin.
     mockAdminFrom.mockImplementation((table: string) => {
       const b = createChainableBuilder(table, supabaseCalls);
       if (table === "professionals") {
+        b.single = vi.fn(() =>
+          Promise.resolve({
+            data: { id: 42, firm_id: 7, is_firm_admin: true },
+            error: null,
+          }),
+        );
         b.order = vi.fn(() =>
           Promise.resolve({
             data: [
@@ -220,7 +245,10 @@ describe("GET /api/advisor-auth/firm/analytics", () => {
   });
 
   it("returns 500 on unexpected error", async () => {
-    mockServerFrom.mockImplementation(() => {
+    // Post-C-02: route uses admin client, and auth happens in helper before
+    // any DB query. Throw from admin to trigger the route's catch block.
+    mockRequireAdvisorSession.mockResolvedValue(42);
+    mockAdminFrom.mockImplementation(() => {
       throw new Error("DB unavailable");
     });
     const res = await GET(makeGet("valid"));

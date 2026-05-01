@@ -4,9 +4,14 @@ import type { NextRequest } from "next/server";
 
 // ── module mocks ──────────────────────────────────────────────────────────────
 
-const mockGetUser = vi.fn();
-const mockMaybeSingle = vi.fn();
-const mockSingle = vi.fn();
+// vi.hoisted() — vi.mock() is hoisted to the top of the file by Vitest, so
+// these mock fns must be hoisted too or the factory below will hit a TDZ
+// ReferenceError when it dereferences them.
+const { mockGetUser, mockMaybeSingle, mockSingle } = vi.hoisted(() => ({
+  mockGetUser: vi.fn(),
+  mockMaybeSingle: vi.fn(),
+  mockSingle: vi.fn(),
+}));
 
 vi.mock("@/lib/supabase/server", () => ({
   createClient: vi.fn().mockResolvedValue({

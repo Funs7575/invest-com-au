@@ -9,6 +9,18 @@ const mockServerFrom = vi.fn();
 const mockAdminFrom = vi.fn();
 const supabaseCalls: Record<string, { method: string; args: unknown[] }[]> = {};
 
+// vi.hoisted() — the requireAdvisorSession helper mock factory below is
+// hoisted above this declaration block, so the fn it captures must be hoisted
+// too to avoid TDZ errors. See __tests__/lib/require-advisor-session.test.ts
+// for the same pattern.
+const { mockRequireAdvisorSession } = vi.hoisted(() => ({
+  mockRequireAdvisorSession: vi.fn(),
+}));
+
+vi.mock("@/lib/require-advisor-session", () => ({
+  requireAdvisorSession: mockRequireAdvisorSession,
+}));
+
 vi.mock("@/lib/supabase/server", () => ({
   createClient: vi.fn(async () => ({
     auth: { getUser: mockGetUser },
@@ -37,6 +49,7 @@ function makePatch(body: unknown): NextRequest {
 }
 
 function authedAdvisor(advisorId = 42) {
+  mockRequireAdvisorSession.mockResolvedValue(advisorId);
   mockGetUser.mockResolvedValue({
     data: { user: { id: "u-1", email: "advisor@test.com" } },
   });
@@ -69,9 +82,12 @@ describe("GET /api/advisor-auth/data", () => {
     mockAdminFrom.mockImplementation((table: string) =>
       createChainableBuilder(table, supabaseCalls),
     );
+    // Default to authenticated; auth-failure tests override with null below.
+    mockRequireAdvisorSession.mockResolvedValue(42);
   });
 
   it("returns 401 when not authenticated", async () => {
+    mockRequireAdvisorSession.mockResolvedValueOnce(null);
     mockGetUser.mockResolvedValue({ data: { user: null } });
     const res = await GET(makeGet());
     expect(res.status).toBe(401);
@@ -84,6 +100,9 @@ describe("GET /api/advisor-auth/data", () => {
     const recent = new Date(Date.now() - 5 * 86400000).toISOString();
     const old = new Date(Date.now() - 60 * 86400000).toISOString();
 
+    // NOTE: Post-C-02, the route uses admin client for professional_leads,
+    // advisor_billing, advisor_profile_views, and professional_reviews. These
+    // had previously been on mockServerFrom — moved to mockAdminFrom below.
     mockAdminFrom.mockImplementation((table: string) => {
       const b = createChainableBuilder(table, supabaseCalls);
       if (table === "professionals") {
@@ -124,11 +143,6 @@ describe("GET /api/advisor-auth/data", () => {
           });
         });
       }
-      return b;
-    });
-
-    mockServerFrom.mockImplementation((table: string) => {
-      const b = createChainableBuilder(table, supabaseCalls);
       if (table === "professional_leads") {
         // Both queries (limit + count). Override the terminal limit to
         // return rows; the count query returns array via order/.then.
@@ -224,9 +238,12 @@ describe("PATCH /api/advisor-auth/data", () => {
     mockAdminFrom.mockImplementation((table: string) =>
       createChainableBuilder(table, supabaseCalls),
     );
+    // Default to authenticated; auth-failure tests override with null below.
+    mockRequireAdvisorSession.mockResolvedValue(42);
   });
 
   it("returns 401 when not authenticated", async () => {
+    mockRequireAdvisorSession.mockResolvedValueOnce(null);
     mockGetUser.mockResolvedValue({ data: { user: null } });
     const res = await PATCH(makePatch({ leadId: 1, status: "contacted" }));
     expect(res.status).toBe(401);
@@ -240,7 +257,8 @@ describe("PATCH /api/advisor-auth/data", () => {
 
   it("returns 404 when lead doesn't belong to advisor", async () => {
     authedAdvisor();
-    mockServerFrom.mockImplementation((table: string) => {
+    // Post-C-02: route uses admin client for professional_leads.
+    mockAdminFrom.mockImplementation((table: string) => {
       const b = createChainableBuilder(table, supabaseCalls);
       if (table === "professional_leads") {
         b.single = vi.fn(() => Promise.resolve({ data: null, error: null }));
@@ -254,7 +272,8 @@ describe("PATCH /api/advisor-auth/data", () => {
   it("stamps contacted_at, responded_at, and computes response_time_minutes", async () => {
     authedAdvisor();
     const created = new Date(Date.now() - 10 * 60 * 1000).toISOString();
-    mockServerFrom.mockImplementation((table: string) => {
+    // Post-C-02: route uses admin client for professional_leads.
+    mockAdminFrom.mockImplementation((table: string) => {
       const b = createChainableBuilder(table, supabaseCalls);
       if (table === "professional_leads") {
         b.single = vi.fn(() =>
@@ -285,7 +304,8 @@ describe("PATCH /api/advisor-auth/data", () => {
 
   it("stamps converted_at and outcome=won when status=converted", async () => {
     authedAdvisor();
-    mockServerFrom.mockImplementation((table: string) => {
+    // Post-C-02: route uses admin client for professional_leads.
+    mockAdminFrom.mockImplementation((table: string) => {
       const b = createChainableBuilder(table, supabaseCalls);
       if (table === "professional_leads") {
         b.single = vi.fn(() =>
@@ -310,7 +330,8 @@ describe("PATCH /api/advisor-auth/data", () => {
 
   it("stamps outcome=lost on lost / rejected status", async () => {
     authedAdvisor();
-    mockServerFrom.mockImplementation((table: string) => {
+    // Post-C-02: route uses admin client for professional_leads.
+    mockAdminFrom.mockImplementation((table: string) => {
       const b = createChainableBuilder(table, supabaseCalls);
       if (table === "professional_leads") {
         b.single = vi.fn(() =>
@@ -333,7 +354,8 @@ describe("PATCH /api/advisor-auth/data", () => {
 
   it("persists notes when provided", async () => {
     authedAdvisor();
-    mockServerFrom.mockImplementation((table: string) => {
+    // Post-C-02: route uses admin client for professional_leads.
+    mockAdminFrom.mockImplementation((table: string) => {
       const b = createChainableBuilder(table, supabaseCalls);
       if (table === "professional_leads") {
         b.single = vi.fn(() =>
