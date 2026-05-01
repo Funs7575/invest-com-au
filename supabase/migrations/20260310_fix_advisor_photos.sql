@@ -1,3 +1,53 @@
+-- ============================================================================
+-- Migration: 20260310_fix_advisor_photos.sql
+-- Purpose: Backfill `professionals.photo_url` for advisors with NULL
+--          photo_url — Part 1 sets a per-slug ui-avatars.com URL for ~55
+--          known advisor slugs (brand colour #7c3aed); Part 2 catch-all
+--          generates a name-derived ui-avatars URL for any remaining
+--          advisor with NULL photo_url. Both UPDATEs gated on
+--          `WHERE photo_url IS NULL` so the migration is idempotent.
+-- Rollback: NOT cleanly reversible — the forward UPDATE overwrites NULL
+--          values; the reverse cannot distinguish "this value was set by
+--          this migration" from "this value was set by a later operator
+--          edit / 20260309_create_advisor_photos_storage upload". A
+--          best-effort reverse sets ui-avatars.com URLs back to NULL,
+--          but this also wipes any operator changes pointing at
+--          ui-avatars.com (rare but possible).
+-- Risk: high (irreversible) — pure data backfill; the original NULL
+--       state is not preserved. Operator MUST snapshot
+--       professionals.photo_url before reverting. The advisor directory
+--       UI falls back to a placeholder when photo_url is NULL, so the
+--       reverse degrades the visual experience but does not break
+--       functionality.
+-- ============================================================================
+--
+-- Forward operations:
+--   1. UPDATE professionals SET photo_url = CASE slug WHEN '<slug>' THEN
+--      '<ui-avatars.com URL>' … (55 slugs) ELSE photo_url END
+--      WHERE photo_url IS NULL.
+--   2. UPDATE professionals SET photo_url =
+--        'https://ui-avatars.com/api/?name=' ||
+--        REPLACE(name, ' ', '+') || '&background=7c3aed&color=fff&size=200&bold=true'
+--      WHERE photo_url IS NULL.
+--
+-- Rollback (in reverse order):
+--   -- Pre-step (operator): snapshot
+--   --   SELECT id, slug, photo_url FROM professionals;
+--   -- Reverse cannot distinguish migration-set URLs from operator-set
+--   -- URLs. The simplest best-effort reverse is to NULL every
+--   -- ui-avatars.com URL — accept that any operator edits that point
+--   -- to ui-avatars.com (rare) will also be wiped.
+--   2. -- Best-effort reverse for the catch-all (Part 2):
+--      UPDATE professionals SET photo_url = NULL
+--      WHERE photo_url LIKE 'https://ui-avatars.com/api/%'
+--        AND photo_url LIKE '%&background=7c3aed&color=fff&size=200&bold=true';
+--   1. -- The per-slug UPDATE in Part 1 is subsumed by the reverse in
+--      -- step 2 (all 55 slugs use the same ui-avatars.com pattern).
+--      -- No additional action needed.
+--      -- DESTRUCTIVE: any operator-set ui-avatars.com URL on any advisor
+--      -- is also wiped. Restore from snapshot to undo collateral damage.
+-- ============================================================================
+
 -- Migration: Set branded photo_url for all advisors with NULL photo_url
 -- Uses ui-avatars.com with invest.com.au brand purple (#7c3aed)
 -- Idempotent: only updates rows where photo_url IS NULL
