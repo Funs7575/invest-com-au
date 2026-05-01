@@ -38,7 +38,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | L | `claude/audit-remediation/l-observability` | #289 MERGED 2026-04-29T10:18Z | last merged 2026-04-29T10:18Z | L-04/L-05 done out-of-loop. L-06..L-12 all done (merged via PR #289). L-02/L-03 deferred-post-launch (n8n dormant). L-01 needs-user (SENTRY_AUTH_TOKEN). L-10 false-positive (verified populating). **Stream L complete** (modulo L-01 needs-user). |
 | M | `claude/audit-remediation/m-01b-cover-image-backfill` (#283) · `m-02-versus-json-ld` (#296) · `m-05-glossary-linkifier` (#325) | #283/#296/#325 all MERGED | last merged 2026-05-01T10:29Z | M-01a done out-of-loop (PR #227). M-01b done (PR #283 — engineering side). M-02 done (PR #296). M-03 done (`85c7236`). M-04 done (`353fa3a`). M-05 done (PR #325). M-06 done (PR #283). M-07 done (PR #283). **Stream M complete.** |
 | N | `claude/audit-remediation/n-ux-perf` | #242 MERGED | last merged 2026-04-28 | N-01+N-02 done (`2ec6f89`) · N-03a/b/c done · N-04/N-05 FP · N-06 blocked (deferred-post-launch by founder 2026-05-01 — option 4 chosen) · N-07/N-08/N-09/N-10/N-11 done — **stream complete** (N-06 deferred). |
-| O | `claude/audit-remediation/o-rls-no-policy` (iters 1-4 via #235/#237/#239) · `o-iter6/forum` (#299) · `o-iter7/editorial-obs-secrets` (#300) · `o-iter8-rls-observability` (#366) · `o-03-search-path` (#395) | #235/#237/#239/#299/#300/#366 MERGED · #395 OPEN | MERGED 2026-05-01T22:01Z (#366) | O-01 iter1-4 done. O-02 done. iter6 done (PR #299). iter7 done (PR #300). iter8 MERGED 2026-05-01T22:01Z (#366 — 8 obs+anti-abuse tables). **O-03 done: `4a04418` → PR #395 (SECURITY DEFINER search_path fix).** O-04/O-05 pending. |
+| O | `claude/audit-remediation/o-rls-no-policy` (iters 1-4 via #235/#237/#239) · `o-iter6/forum` (#299) · `o-iter7/editorial-obs-secrets` (#300) · `o-iter8-rls-observability` (#366) · `o-03-search-path` (#395) · `o-05-service-role-policy-clarity` (#408) | #235/#237/#239/#299/#300/#366 MERGED · #395/#408 OPEN | pushed 2026-05-02T (iter 181 — `d29c218`) | O-01 iter1-4 done. O-02 done. iter6 done (PR #299). iter7 done (PR #300). iter8 MERGED 2026-05-01T22:01Z (#366 — 8 obs+anti-abuse tables). **O-03 done: `4a04418` → PR #395 (SECURITY DEFINER search_path fix).** O-04 blocked (Stripe live validation). **O-05 done: `d29c218` → PR #408 (explicit service_role policies on 5 internal tables).** |
 | P | _not started_ | — | — | — |
 | Q | _not started_ | — | — | — |
 | R | `claude/audit-remediation/r-01-marketplace-allocation` · `r-02-auto-bid-tests` (#396) | #290 MERGED 2026-04-29T10:05Z · #396 OPEN | last pushed 2026-05-02T02:30Z (`1a082b2`) | R-01 done (PR #290). R-02 done: `ae23f8b` → PR #396 (29 tests for auto-bid.ts). R-02-DISC-20260501-01 done: `1a082b2` → PR #396 (12 tests for broker-auth.ts). R-03..R-11 still pending. |
@@ -708,7 +708,7 @@ Beyond Stream B's RLS-enable work; addresses policy completeness, FK indexes, se
 | O-02 | done | 4 FK index migration — done out-of-loop in PR #230 | 1 | Resolved in PR #230 ("chore(db): repo-parity migration for 4 missing FK indexes (already live)") merged 2026-04-26T17:37Z. Live DB indexes had been applied earlier; this PR adds the migration file to the repo to close source-of-truth drift. |
 | O-03 | done | `refresh_advisor_cohort_metrics()` SECURITY DEFINER — set `search_path = public, pg_catalog` to close injection vector | 1 | P2. Done: commit `4a04418` · PR #395. |
 | O-04 | blocked | `stripe_webhook_events` idempotency dry-run via Stripe dashboard test event → confirm row inserts + status='done' | 1 | P2. Pre-launch validation. Code verified (route.ts insert + 23505 dedup + stale re-take + done/error status). Blocked: requires founder to send Stripe test event. |
-| O-05 | pending | Sponsor-invoices style hardening: rename misleading `USING (false)` policies on the 5 iter-8-FP tables to clearer names + add `FORCE ROW LEVEL SECURITY` + explicit `TO service_role` (`support_tickets`, `support_messages`, `broker_creatives`, `broker_notifications`, `ab_tests`) | 1 | P3. Hygiene. |
+| O-05 | done | Sponsor-invoices style hardening: rename misleading `USING (false)` policies on the 5 iter-8-FP tables to clearer names + add `FORCE ROW LEVEL SECURITY` + explicit `TO service_role` (`support_tickets`, `support_messages`, `broker_creatives`, `broker_notifications`, `ab_tests`) | 1 | P3. Hygiene. Done: commit `d29c218` · PR #408. |
 
 ### Stream P — Dependency hygiene (audit §3)
 
@@ -1373,6 +1373,7 @@ Two strategically important surfaces under-served by current nav: (1) investment
 
 ## Done
 
+- 2026-05-02 · O-05 · Replace 5 misleading `USING (false)` policies (`broker_creatives`, `ab_tests`, `broker_notifications`, `support_tickets`, `support_messages`) with explicit `TO service_role USING (true) WITH CHECK (true)` + `FORCE ROW LEVEL SECURITY`. Runtime behaviour unchanged; `pg_policies` now reflects intent. Commit `d29c218` · pr #408
 - 2026-05-01 · A-03 (batch 2) · Backfill `CREATE TABLE IF NOT EXISTS` for 3 revenue tables: `conversion_events` (service_role + authenticated broker-scoped SELECT via broker_accounts.auth_user_id join), `finance_transactions` (service_role + admin FOR ALL), `credit_packs` (service_role + anon SELECT active=true). `finance_monthly_summary` identified as PostgreSQL view — deferred. Commit `98c669b4` · pr #401
 - 2026-05-01 · A-04 · Backfill `CREATE TABLE IF NOT EXISTS` migrations for 4 missing content tables: `advisor_articles` (35-col, FK to professionals, anon SELECT published + admin FOR ALL, drops prior loose `20260309` policies), `broker_transfer_guides` (public ref data, anon SELECT all + admin FOR ALL), `content_calendar` (internal editorial, deny-all-anon + admin FOR ALL), `content_products` (schema-only, anon SELECT active). All 4 have ENABLE + FORCE ROW LEVEL SECURITY + service_role full access policy. Commit `7a50757` · pr #399
 - 2026-05-01 · C-DISC-20260501-01 · `components/marketplace/VerticalMarketplaceListings.tsx`: swapped `createAdminClient()` → `await createClient()` (anon-key server client). `investment_listings` "anon select catalogue" RLS policy (`USING (true)`) means anon client + `.eq("status","active")` returns identical rows — zero behavioral change. Commit `9517f5a` · pr #397
@@ -1455,6 +1456,21 @@ Two strategically important surfaces under-served by current nav: (1) investment
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-02 — iteration 181 (stream O — O-05 explicit service_role policies on 5 internal tables)
+
+- Phase 0: continuing batch fire (session resumed after context compaction).
+- Phase 1: synced main (fast-forward from 61d5fe5 — parallel fire had pushed another queue update for iter 179 CI-rescue).
+- Phase 2: CI rescue check — PR #406 (E-02 batch 3) has `e54b36a` pushed by iter 179 CI-rescue; CI pending. PR #395 (O-03), #396 (R-02), #394 (C-04/C-05) no new failures observed. No rescue needed.
+- Phase 3: priority order → B-09 Tier D (skip) → C (done/in-flight) → A (drift passing) → O (O-04 blocked; O-05 pending = next candidate). Checked out O-05 branch (already local from prior session with commit `d29c218`).
+- Phase 4: verification gate — new migration category. Prior policy discovery: `grep` across all migrations confirms only 5 original `"Service role full access <table>" USING(false)` policies from `20260321_pre_launch_rls_fixes.sql`. No other migrations touch these tables' policies. `sponsor_invoices` (the 6th table in that migration) was already handled in `20260429_o_iter7_rls_editorial_obs_secrets.sql` with FORCE RLS + explicit service_role policy. Migration idempotent, has BEGIN/COMMIT, header with rollback SQL, prior-policy-state block.
+- Phase 5: migration already written and committed (`d29c218`) — 124 LOC, 5 tables.
+- Phase 6: pushed `claude/audit-remediation/o-05-service-role-policy-clarity` → PR #408 (draft). Discovery sweep: `sponsor_invoices` already FORCE RLS + explicit service_role via iter7 migration — no new items found.
+- Phase 7: queue updated on main (this commit).
+- STATUS: PROGRESS · stream=O · item=O-05 · pr=#408
+- Commit: d29c218 · Diff: +124 -0 across 1 file
+- Next item: KK (not started) or P-01 (Sentry v10 upgrade) or R-03 (lib coverage) or E-04 (Zod backfill)
+- Remaining: ~40+ pending · 8 blocked · ~80 done
 
 ### 2026-05-02 — iteration 180 (stream A — A-02 batch 5: advisor firm + guide + moderation tables)
 
