@@ -7,6 +7,16 @@ import { createChainableBuilder } from "@/__tests__/helpers";
 const mockAdminFrom = vi.fn();
 const supabaseCalls: Record<string, { method: string; args: unknown[] }[]> = {};
 
+// vi.hoisted() — vi.mock factories are hoisted; the captured fn must be too.
+// Post-C-02 the route delegates auth to requireAdvisorSession (helper).
+const { mockRequireAdvisorSession } = vi.hoisted(() => ({
+  mockRequireAdvisorSession: vi.fn(),
+}));
+
+vi.mock("@/lib/require-advisor-session", () => ({
+  requireAdvisorSession: mockRequireAdvisorSession,
+}));
+
 vi.mock("@/lib/supabase/admin", () => ({
   createAdminClient: () => ({ from: mockAdminFrom }),
 }));
@@ -48,19 +58,10 @@ function withSessionAndAdvisor(
   professionalId = 42,
   advisorOverrides: Record<string, unknown> = {},
 ) {
+  // Post-C-02: helper handles auth.
+  mockRequireAdvisorSession.mockResolvedValue(professionalId);
   mockAdminFrom.mockImplementation((table: string) => {
     const b = createChainableBuilder(table, supabaseCalls);
-    if (table === "advisor_sessions") {
-      b.single = vi.fn(() =>
-        Promise.resolve({
-          data: {
-            professional_id: professionalId,
-            expires_at: new Date(Date.now() + 86400 * 1000).toISOString(),
-          },
-          error: null,
-        }),
-      );
-    }
     if (table === "professionals") {
       b.single = vi.fn(() =>
         Promise.resolve({
@@ -100,6 +101,8 @@ describe("POST /api/advisor-auth/payment", () => {
     mockAdminFrom.mockImplementation((table: string) =>
       createChainableBuilder(table, supabaseCalls),
     );
+    // Default: not authenticated. withSessionAndAdvisor() flips this to 42.
+    mockRequireAdvisorSession.mockResolvedValue(null);
     mockCustomerCreate.mockResolvedValue({ id: "cus_new" });
     mockCheckoutCreate.mockResolvedValue({
       id: "cs_payment_001",
@@ -115,14 +118,7 @@ describe("POST /api/advisor-auth/payment", () => {
   });
 
   it("returns 401 when session is invalid/expired", async () => {
-    mockAdminFrom.mockImplementation((table: string) => {
-      const b = createChainableBuilder(table, supabaseCalls);
-      if (table === "advisor_sessions") {
-        b.single = vi.fn(() => Promise.resolve({ data: null, error: null }));
-      }
-      return b;
-    });
-
+    // Helper default (null) already simulates unauthenticated/expired.
     const res = await POST(
       makePost({ advisor_id: 42, credit_pack: "starter" }, "stale-token"),
     );
@@ -130,31 +126,17 @@ describe("POST /api/advisor-auth/payment", () => {
   });
 
   it("returns 400 for invalid JSON body", async () => {
-    mockAdminFrom.mockImplementation((table: string) => {
-      const b = createChainableBuilder(table, supabaseCalls);
-      if (table === "advisor_sessions") {
-        b.single = vi.fn(() =>
-          Promise.resolve({
-            data: {
-              professional_id: 42,
-              expires_at: new Date(Date.now() + 86400 * 1000).toISOString(),
-            },
-            error: null,
-          }),
-        );
-      }
-      return b;
-    });
-
+    // Helper handles auth; route then JSON-parses the body.
+    mockRequireAdvisorSession.mockResolvedValue(42);
     const res = await POST(makePost("{not-json", "valid-token"));
     expect(res.status).toBe(400);
   });
 
-  it("returns 400 when advisor_id is missing", async () => {
-    withSessionAndAdvisor();
-    const res = await POST(makePost({ credit_pack: "starter" }, "valid"));
-    expect(res.status).toBe(400);
-  });
+  // Post-C-02: route ignores body.advisor_id and uses the session-scoped
+  // advisorId from requireAdvisorSession() for both auth and DB scoping. The
+  // previous "advisor_id missing" / "advisor_id doesn't match session"
+  // tests no longer apply — body.advisor_id is unused. The session is the
+  // single source of truth for which advisor is paying.
 
   it("returns 400 when credit_pack is invalid", async () => {
     withSessionAndAdvisor();
@@ -164,28 +146,11 @@ describe("POST /api/advisor-auth/payment", () => {
     expect(res.status).toBe(400);
   });
 
-  it("returns 403 when advisor_id doesn't match session", async () => {
-    withSessionAndAdvisor(42);
-    const res = await POST(
-      makePost({ advisor_id: 99, credit_pack: "starter" }, "valid"),
-    );
-    expect(res.status).toBe(403);
-  });
-
   it("returns 404 when advisor row not found", async () => {
+    // Helper handles auth; admin lookup returns null for the advisor row.
+    mockRequireAdvisorSession.mockResolvedValue(42);
     mockAdminFrom.mockImplementation((table: string) => {
       const b = createChainableBuilder(table, supabaseCalls);
-      if (table === "advisor_sessions") {
-        b.single = vi.fn(() =>
-          Promise.resolve({
-            data: {
-              professional_id: 42,
-              expires_at: new Date(Date.now() + 86400 * 1000).toISOString(),
-            },
-            error: null,
-          }),
-        );
-      }
       if (table === "professionals") {
         b.single = vi.fn(() =>
           Promise.resolve({ data: null, error: null }),
@@ -250,6 +215,8 @@ describe("POST /api/advisor-auth/payment", () => {
   });
 
   it("returns 500 on unexpected error", async () => {
+    // Helper handles auth; throw from admin client to trigger catch.
+    mockRequireAdvisorSession.mockResolvedValue(42);
     mockAdminFrom.mockImplementation(() => {
       throw new Error("DB unreachable");
     });
