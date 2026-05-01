@@ -14,6 +14,30 @@
 
 ## Active strategic decisions log
 
+### 2026-05-01 — Cross-border audit (deep)
+
+The homepage v4 redesign exposed that the cross-border surface (`/foreign-investment` hub + 12 country pages) is **rich content with dumb monetization**. Bespoke deep guides (UK 2-audience, US FATCA/PFIC warnings, India NRI/ROR/DASP, SIV/188 pathways) already capture high-intent traffic. But every monetization signal — visa class, country of origin, journey direction — gets dropped at the funnel entrance. Lead lands in the same flat `$39/lead` advisor pool as a Brisbane share-trader.
+
+**Decision: cross-border becomes a separate revenue product line**, not a content arm. Pricing, taxonomy, affiliate stack, funnel design, and reporting all split out.
+
+**The LTV asymmetry that justifies the work:** a UK-arrival lead consumes ~$5–20k of professional fees over 18 months across pension transfer + non-resident mortgage + FX + FIRB lawyer + ongoing planner + insurance + recurring tax. **5–15× a domestic share-broker lead.** Same pattern (different intensities) for US-AU dual citizens, India-AU migrants, and non-resident investors.
+
+**Audience segmentation** (the homepage section is muddled because it tries to serve all 4 from one card grid):
+- **A. Inbound migrants** (UK / India / China → AU) — biggest absolute LTV, longest cycle, most complex
+- **B. US-AU dual citizens in AU** — small audience, ~100% experience FATCA pain, recurring spend
+- **C. Non-resident foreign investors** investing INTO AU without moving — high volume, lower per-lead value
+- **D. Outbound Australians** (DASP, breaking residency) — moderate, time-limited
+
+**Phase A (ship now, this session):** specialty taxonomy + premium pricing + CTA wiring + homepage section rewrite around audience A. Estimated $15–40k/yr realistic.
+
+**Phase B (4–6 weeks, separate session):** `countries_served TEXT[]` schema migration + advisor portal self-selection UI + ranker country-match boost + remittance / FX / non-resident-mortgage / FIRB-lawyer affiliate panel. Estimated $30–80k/yr + Featured-partner sponsorship slots ($50–100k/yr if 3 slots filled).
+
+**Phase C (Q2–Q3, BD-heavy):** visa advisor partner network (SIV / 188C premium CPL), pension-transfer specialist desk, US-AU tax desk, distinct cross-border reverse-marketplace flow. Estimated $65–200k/yr.
+
+**Why this matters strategically:** the audit (2026-04-30) ranked 23 revenue ideas and surfaced ZERO cross-border items. That was a blind spot. Cross-border is now backlog item #24 and gets its own swim lane in the ship-now table below.
+
+---
+
 ### 2026-04-30 — Revenue strategy review (this is the conversation that started this file)
 
 Audited 23 candidate revenue ideas against the actual codebase. Big finding: a lot of infrastructure is already built but not commercialised. Four ideas dropped from "Q2/Q3 build" to "ship now" after audit. Full backlog and audit sit in this notebook below.
@@ -38,6 +62,7 @@ Audited 23 candidate revenue ideas against the actual codebase. Big finding: a l
 | 7 | AI Q&A capture layer | 2–3 wks | 80% built — `lib/chatbot.ts` (RAG, Claude+OpenAI), `lib/embeddings.ts`, `lib/ai-cost-caps.ts` | Production-ready chatbot is admin-only today. Just needs public Q&A landing pages + question-capture form. |
 | 5 | Hybrid auction self-serve | 4–6 wks | 90% built — `lib/marketplace/auto-bid.ts`, `app/admin/marketplace/` | Auction already running. Need: partner self-serve onboarding, quality multiplier (CTR/CR → bid rank), reserve prices, eligibility gate. **Needs legal sign-off before code.** |
 | 10 | Premium research subscription | content only | 90% built — full Stripe (`lib/stripe.ts`), Pro tier (`app/pro/`) | Plumbing complete. Just write the premium content. |
+| **24** | **Cross-border revenue line** (Phase A) | **1–2 days** | **95% built — `lib/advisor-billing.ts` flat-rate today, `email_captures.context.is_international` flag exists** | **Premium 1.75× lead price for cross-border leads + 5 new specialties (UK Pension Transfer, FATCA-Aware US Expat, FIRB Property Non-Resident, SIV/188C, DASP Processing) + filtered CTA wiring on country pages + persona selector + DASP calc + homepage section rewrite around audience A (inbound migrants). $15–40k/yr realistic. See decision log entry 2026-05-01.** |
 
 ### 🟡 Q2 / year-1
 
