@@ -60,7 +60,7 @@ export default function HomeAdvisorsTeaser({ advisors, totalCount }: HomeAdvisor
       <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 18, gap: 16, flexWrap: "wrap" }}>
         <div>
           <span className="iv2-mini" style={{ color: "var(--color-coral-600)" }}>
-            ● Experts · {totalCount.toLocaleString("en-AU")} verified
+            ● Advisors · {totalCount.toLocaleString("en-AU")} verified
           </span>
           <h2
             className="font-display"
@@ -70,22 +70,17 @@ export default function HomeAdvisorsTeaser({ advisors, totalCount }: HomeAdvisor
               fontWeight: 800,
               margin: "4px 0 0",
               lineHeight: 1.05,
-              textWrap: "balance",
             }}
           >
-            Find the right expert before you commit.
+            Find a human who actually fits your situation.
           </h2>
-          <p style={{ fontSize: 13, color: "var(--color-ink-500)", margin: "6px 0 0", maxWidth: 560, lineHeight: 1.5 }}>
-            Browse specialists by what they help with, where they operate and how they can support
-            your next decision.
-          </p>
         </div>
         <div style={{ display: "flex", gap: 8 }}>
           <Link href="/advisors" className="iv2-cta-ghost" style={{ fontSize: 12.5 }}>
             Browse all {totalCount.toLocaleString("en-AU")}
           </Link>
           <Link href="/quotes/post" className="iv2-cta" style={{ fontSize: 12.5 }}>
-            Get matched
+            Post a job — free
           </Link>
         </div>
       </div>
@@ -240,10 +235,6 @@ export default function HomeAdvisorsTeaser({ advisors, totalCount }: HomeAdvisor
           );
         })}
       </div>
-
-      <p style={{ fontSize: 11.5, color: "var(--color-ink-400)", marginTop: 14, lineHeight: 1.5 }}>
-        Introductions only. Always check licensing, authorisation, fees and suitability before proceeding.
-      </p>
 
       <style>{`
         @media (max-width: 1024px) {

@@ -23,7 +23,7 @@ export default function HomePostAJob() {
         >
           <div>
             <span className="iv2-mini" style={{ color: "var(--color-coral-600)" }}>
-              ● Get matched · free
+              ● Reverse marketplace · always free
             </span>
             <h2
               className="font-display"
@@ -36,7 +36,7 @@ export default function HomePostAJob() {
                 textWrap: "balance",
               }}
             >
-              Tell us what you need.
+              Or describe what you need. They come to you.
             </h2>
             <p
               style={{
@@ -44,11 +44,11 @@ export default function HomePostAJob() {
                 lineHeight: 1.55,
                 color: "var(--color-ink-600)",
                 margin: "14px 0 0",
-                maxWidth: 560,
+                maxWidth: 540,
               }}
             >
-              Describe your situation once and we&apos;ll route you towards relevant specialists,
-              comparisons, listings or next steps. Most matched enquiries hear back within a day.
+              We send your brief to up to 5 verified advisors who specialise in your situation.
+              Average request gets 3&ndash;5 quotes within the first 24 hours. No obligation, free to post.
             </p>
 
             <div style={{ display: "flex", gap: 10, marginTop: 22, flexWrap: "wrap", alignItems: "center" }}>
@@ -57,14 +57,14 @@ export default function HomePostAJob() {
                 className="iv2-cta"
                 style={{ fontSize: 14, padding: "12px 22px" }}
               >
-                Get matched <DesignIcon name="arrow-right" size={13} strokeWidth={2.4} />
+                Post a job &mdash; free <DesignIcon name="arrow-right" size={13} strokeWidth={2.4} />
               </Link>
               <Link
                 href="/quotes/recent-wins"
                 className="iv2-cta-ghost"
                 style={{ fontSize: 13 }}
               >
-                See recent matches
+                See recent jobs &amp; wins
               </Link>
             </div>
           </div>
@@ -81,9 +81,9 @@ export default function HomePostAJob() {
           >
             {(
               [
-                ["1", "Describe your need", "60 seconds. No email until you're ready to send."],
-                ["2", "We route you", "To relevant specialists, comparisons or listings — whatever fits."],
-                ["3", "Compare options", "You pick. Introductions only — we don't decide for you."],
+                ["1", "Describe what you need", "60 seconds. No email until you're ready to send."],
+                ["2", "We match advisors", "Up to 5 verified specialists relevant to your situation."],
+                ["3", "Quotes come back", "Most jobs hear back within a day. You pick — or pass."],
               ] as const
             ).map(([n, title, sub]) => (
               <li
