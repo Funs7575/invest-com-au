@@ -1,5 +1,56 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+
+/**
+ * Body schema for PUT. Every field is optional and value-validating,
+ * matching the previous per-field `typeof === "string"` + enum
+ * `.includes()` guards. Invalid values fall through to `undefined`
+ * (so they're silently dropped) via the per-field
+ * `.optional().catch(undefined)` — preserving the route's "drop
+ * unrecognised values, reject only when zero allowed fields remain"
+ * contract end-to-end. The top-level `.catch({})` keeps malformed
+ * payloads on the same path the previous "no allowed fields → 400"
+ * gate produces.
+ */
+const INVESTING_EXPERIENCES = ["beginner", "intermediate", "advanced"] as const;
+const INVESTMENT_GOALS = ["growth", "income", "preservation", "speculation"] as const;
+const PORTFOLIO_SIZES = [
+  "under_10k",
+  "10k_50k",
+  "50k_200k",
+  "200k_500k",
+  "over_500k",
+] as const;
+const VALID_INTERESTS = [
+  "shares",
+  "etfs",
+  "crypto",
+  "super",
+  "property",
+  "savings",
+  "insurance",
+  "cfd_forex",
+] as const;
+const STATES = ["NSW", "VIC", "QLD", "WA", "SA", "TAS", "ACT", "NT"] as const;
+
+const UserProfileSchema = z
+  .object({
+    display_name: z.string().optional().catch(undefined),
+    avatar_url: z.string().optional().catch(undefined),
+    investing_experience: z
+      .enum(INVESTING_EXPERIENCES)
+      .optional()
+      .catch(undefined),
+    investment_goals: z.enum(INVESTMENT_GOALS).optional().catch(undefined),
+    portfolio_size: z.enum(PORTFOLIO_SIZES).optional().catch(undefined),
+    interested_in: z.array(z.unknown()).optional().catch(undefined),
+    preferred_broker: z.string().optional().catch(undefined),
+    state: z.enum(STATES).optional().catch(undefined),
+    onboarding_completed: z.boolean().optional().catch(undefined),
+  })
+  .passthrough()
+  .catch({});
 
 export async function GET() {
   try {
@@ -39,15 +90,16 @@ export async function PUT(req: NextRequest) {
     );
   }
 
-  let body: Record<string, unknown>;
+  let raw: unknown;
   try {
-    body = await req.json();
+    raw = await req.json();
   } catch {
     return NextResponse.json(
       { error: "Some fields are invalid. Check and try again." },
       { status: 400 }
     );
   }
+  const body = UserProfileSchema.parse(raw);
 
   // Validate fields
   const allowed: Record<string, unknown> = {};
@@ -58,23 +110,26 @@ export async function PUT(req: NextRequest) {
   if (typeof body.avatar_url === "string") {
     allowed.avatar_url = body.avatar_url.trim().slice(0, 500) || null;
   }
-  if (typeof body.investing_experience === "string" && ["beginner", "intermediate", "advanced"].includes(body.investing_experience)) {
+  if (body.investing_experience !== undefined) {
     allowed.investing_experience = body.investing_experience;
   }
-  if (typeof body.investment_goals === "string" && ["growth", "income", "preservation", "speculation"].includes(body.investment_goals)) {
+  if (body.investment_goals !== undefined) {
     allowed.investment_goals = body.investment_goals;
   }
-  if (typeof body.portfolio_size === "string" && ["under_10k", "10k_50k", "50k_200k", "200k_500k", "over_500k"].includes(body.portfolio_size)) {
+  if (body.portfolio_size !== undefined) {
     allowed.portfolio_size = body.portfolio_size;
   }
-  if (typeof body.interested_in === "object" && Array.isArray(body.interested_in)) {
-    const validInterests = ["shares", "etfs", "crypto", "super", "property", "savings", "insurance", "cfd_forex"];
-    allowed.interested_in = body.interested_in.filter((i: string) => validInterests.includes(i)).slice(0, 8);
+  if (Array.isArray(body.interested_in)) {
+    allowed.interested_in = (body.interested_in as unknown[])
+      .filter((i): i is (typeof VALID_INTERESTS)[number] =>
+        typeof i === "string" && (VALID_INTERESTS as readonly string[]).includes(i),
+      )
+      .slice(0, 8);
   }
   if (typeof body.preferred_broker === "string") {
     allowed.preferred_broker = body.preferred_broker.trim().slice(0, 100) || null;
   }
-  if (typeof body.state === "string" && ["NSW", "VIC", "QLD", "WA", "SA", "TAS", "ACT", "NT"].includes(body.state)) {
+  if (body.state !== undefined) {
     allowed.state = body.state;
   }
   if (typeof body.onboarding_completed === "boolean") {
