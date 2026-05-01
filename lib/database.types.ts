@@ -5505,6 +5505,57 @@ export type Database = {
         }
         Relationships: []
       }
+      csp_violations: {
+        Row: {
+          blocked_uri: string | null
+          column_number: number | null
+          created_at: string
+          disposition: string | null
+          document_uri: string | null
+          effective_directive: string | null
+          id: string
+          line_number: number | null
+          original_policy: string | null
+          referrer: string | null
+          source_file: string | null
+          status_code: number | null
+          user_agent: string | null
+          violated_directive: string | null
+        }
+        Insert: {
+          blocked_uri?: string | null
+          column_number?: number | null
+          created_at?: string
+          disposition?: string | null
+          document_uri?: string | null
+          effective_directive?: string | null
+          id?: string
+          line_number?: number | null
+          original_policy?: string | null
+          referrer?: string | null
+          source_file?: string | null
+          status_code?: number | null
+          user_agent?: string | null
+          violated_directive?: string | null
+        }
+        Update: {
+          blocked_uri?: string | null
+          column_number?: number | null
+          created_at?: string
+          disposition?: string | null
+          document_uri?: string | null
+          effective_directive?: string | null
+          id?: string
+          line_number?: number | null
+          original_policy?: string | null
+          referrer?: string | null
+          source_file?: string | null
+          status_code?: number | null
+          user_agent?: string | null
+          violated_directive?: string | null
+        }
+        Relationships: []
+      }
       data_integrity_issues: {
         Row: {
           check_name: string
@@ -5841,6 +5892,33 @@ export type Database = {
           utm_medium?: string | null
           utm_source?: string | null
           winback_sent_at?: string | null
+        }
+        Relationships: []
+      }
+      email_otps: {
+        Row: {
+          code: string
+          created_at: string | null
+          email: string
+          expires_at: string
+          id: number
+          used_at: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          email: string
+          expires_at: string
+          id?: number
+          used_at?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          email?: string
+          expires_at?: string
+          id?: number
+          used_at?: string | null
         }
         Relationships: []
       }
@@ -12370,6 +12448,14 @@ export type Database = {
       gettransactionid: { Args: never; Returns: unknown }
       increment_advisor_view: {
         Args: { p_date: string; p_professional_id: number }
+        Returns: undefined
+      }
+      increment_listing_enquiries: {
+        Args: { listing_id: number }
+        Returns: undefined
+      }
+      increment_listing_views: {
+        Args: { listing_id: number }
         Returns: undefined
       }
       is_admin: { Args: never; Returns: boolean }
