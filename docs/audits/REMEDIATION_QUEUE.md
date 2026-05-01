@@ -28,7 +28,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | B | `claude/audit-remediation/b-08-rls-select-only` (#326) · `b-09a-otp-gate` (#348 draft, parallel-agent) | #326 MERGED 2026-05-01T13:19Z · #348 OPEN (DRAFT, awaiting `LISTING_OWNER_COOKIE_SECRET` env var) | last CI-rescue 2026-05-01T21:43Z (#348) | PR #220 merged (B-01..B-06 done/blocked/FP). B-07 done (`0097159` PR #286). B-08 done — code changes merged via PR #326 commit `476f89f6`. B-09 in-progress on `#348` (parallel-agent, draft). CI-rescue iter 1 (`09c4dfb`, 2026-05-01) merged main before PR #392 types regen — types drift still red. CI-rescue iter 2 (`7da8757e`, 2026-05-01T21:43Z) merged post-#392 main — picked up database.types.ts regen; CI re-run pending. Still DRAFT awaiting `LISTING_OWNER_COOKIE_SECRET` env var (Tier D). |
 | C | `claude/audit-remediation/c-01-admin-callgraph` (#327) · `c-03-admin-import-comments` (#360) · `c-04-c-05` (#394) · `c-05b-quarterly-reports` (#349) · `c-disc-20260501-01-vertical-marketplace-admin-swap` (#397) | #327/#349/#360 MERGED · #394 OPEN · #397 OPEN | MERGED 2026-05-01T22:01Z (#349, #360) | C-01..C-08 done (merged via #303 + #327). C-03 MERGED 2026-05-01T22:00Z (#360). C-04 done — PR #394 commit `e202d0d`. C-05 done — PR #394. C-05b MERGED 2026-05-01T22:01Z (#349). C-DISC-20260501-01 done — PR #397. Stream C fully caught up. |
 | D | `claude/audit-remediation/d-route-tests` | #285 MERGED 2026-04-29T10:13Z; supplementary PRs #246/#285/#297/#298 | last merged 2026-04-29T18:53Z | D-01..D-09 done (PR #246). D-10 done (PR #246 — coverage ratchet). D-11 complete (43+ batches, all admin/cron/non-admin routes covered) — merged via PR #285 + supplementary PRs #297/#298. **Stream D complete.** |
-| E | `claude/audit-remediation/e-01-with-validated-body` (#295) · `e-02-batch-*-zod-rollout` (#315/#323/#406) · `e-03-zod-lint-rule` (#313) | #295/#313/#315/#323 MERGED · #406 OPEN | CI-rescue pushed 2026-05-02 (iter 179 — `e54b36a`) | E-01 done (PR #295 — withValidatedBody helper). E-02 in-progress (batches 1+2 done via PR #315/#323 — 8 routes; batch 3 done via PR #406 — 4 routes; CI-rescue `e54b36a` fixed string-vs-number type mismatch + error message format; ~2 batches remain). E-03 done (PR #313 — ESLint rule). E-04 backfill pending. |
+| E | `claude/audit-remediation/e-01-with-validated-body` (#295) · `e-02-batch-*-zod-rollout` (#315/#323/#406) · `e-03-zod-lint-rule` (#313) | #295/#313/#315/#323 MERGED · #406 OPEN | CI-rescue #2 pushed iter 182 — `9fefb6c` (Zod v4 required_error syntax fix); CI re-run pending | E-01 done (PR #295 — withValidatedBody helper). E-02 in-progress (batches 1+2 done via PR #315/#323 — 8 routes; batch 3 done via PR #406 — 4 routes; CI-rescue iter 179 `e54b36a` fixed string-vs-number type mismatch; CI-rescue iter 182 `9fefb6c` fixed Zod v4 required_error syntax — v4 uses z.string("msg") not {required_error}; ~2 batches remain). E-03 done (PR #313 — ESLint rule). E-04 backfill pending. |
 | F | `claude/audit-remediation/f-02..f-06` (multiple PRs) | #293/#294/#301/#354/#355/#370 all MERGED | last merged 2026-05-01T16:00Z | F-01 false-positive. F-02 done (PR #293 — formatDate). F-03 done (PR #370 — formatCurrency). F-04 done (PR #354 — slugify, first wave). F-05 done (PR #294 + #301 followup — console→logger). F-06 done (PR #355 — compliance copy SSOT). F-07/F-08 pending. |
 | G | `claude/audit-remediation/g-01-g-02-migration-hygiene` (#307) · `g-03-batch-*-rollback-headers` (#311/#314/#316/#352/#405) · `g-04-partial-failure-marker-doc` (#310) · `chore/audit-queue-unblock-2026-05-01-v2` (#342) | #307/#310/#311/#314/#316/#342/#352 MERGED · #405 OPEN | CI-rescue 2026-05-02 (iter 179) — merged main to pick up LH TBT threshold fix; CI re-run pending | G-01+G-02 done (PR #307). G-03 batch 5 done (PR #405 — 10 migrations; 50 of 108 covered; ~6 batches still pending). G-04 documented (PR #310) + verification done by founder via MCP (PR #342) — 5 follow-up findings (G-04-FINDING-1..5) pending founder authorization. |
 | H | _not started_ | — | — | — |
@@ -41,7 +41,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | O | `claude/audit-remediation/o-rls-no-policy` (iters 1-4 via #235/#237/#239) · `o-iter6/forum` (#299) · `o-iter7/editorial-obs-secrets` (#300) · `o-iter8-rls-observability` (#366) · `o-03-search-path` (#395) · `o-05-service-role-policy-clarity` (#408) | #235/#237/#239/#299/#300/#366 MERGED · #395/#408 OPEN | pushed 2026-05-02T (iter 181 — `d29c218`) | O-01 iter1-4 done. O-02 done. iter6 done (PR #299). iter7 done (PR #300). iter8 MERGED 2026-05-01T22:01Z (#366 — 8 obs+anti-abuse tables). **O-03 done: `4a04418` → PR #395 (SECURITY DEFINER search_path fix).** O-04 blocked (Stripe live validation). **O-05 done: `d29c218` → PR #408 (explicit service_role policies on 5 internal tables).** |
 | P | _not started_ | — | — | — |
 | Q | _not started_ | — | — | — |
-| R | `claude/audit-remediation/r-01-marketplace-allocation` · `r-02-auto-bid-tests` (#396) | #290 MERGED 2026-04-29T10:05Z · #396 OPEN | last pushed 2026-05-02T02:30Z (`1a082b2`) | R-01 done (PR #290). R-02 done: `ae23f8b` → PR #396 (29 tests for auto-bid.ts). R-02-DISC-20260501-01 done: `1a082b2` → PR #396 (12 tests for broker-auth.ts). R-03..R-11 still pending. |
+| R | `claude/audit-remediation/r-01-marketplace-allocation` · `r-02-auto-bid-tests` (#396) | #290 MERGED 2026-04-29T10:05Z · #396 OPEN | CI-rescue iter 183 — `7d9431a` (merge main: LH CWV TBT threshold 800ms→1500ms); CI re-run pending | R-01 done (PR #290). R-02 done: `ae23f8b` → PR #396 (29 tests for auto-bid.ts). R-02-DISC-20260501-01 done: `1a082b2` → PR #396 (12 tests for broker-auth.ts). R-03..R-11 still pending. |
 | S | _not started_ | — | — | — |
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 MERGED 2026-04-28T11:45Z | merged | V-NEW-06 done (commit `a7bd736`) |
@@ -1456,6 +1456,27 @@ Two strategically important surfaces under-served by current nav: (1) investment
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-02 — iteration 183 (CI-RESCUE — stream R — PR #396 Lighthouse CWV TBT threshold)
+
+- Phase 0: lock held (batch fire, iteration 2 of up to 5).
+- Phase 1: synced main. Read queue + defaults.
+- Phase 2: CI rescue — PR #396 (R-02 auto-bid tests) has "Lighthouse — Core Web Vitals gate (hard-fail)" = failure. Root cause: `.lighthouserc.cwv.json` on R-02 branch still had `total-blocking-time` maxNumericValue 800ms; main raised it to 1500ms in commits 74f1723 + be1bc2f. Fix: `git merge --no-edit origin/main` on `r-02-auto-bid-tests` branch.
+- Verified: `cat .lighthouserc.cwv.json | grep blocking` → `"maxNumericValue": 1500`. 41/41 tests pass (marketplace-auto-bid + marketplace-broker-auth). Lint clean.
+- Commit: `7d9431a` (merge commit). Pushed to `claude/audit-remediation/r-02-auto-bid-tests`.
+- STATUS: CI-RESCUE · stream=R · pr=#396 · commit=7d9431a
+- Diff: merge commit (LH threshold fix only)
+
+### 2026-05-02 — iteration 182 (CI-RESCUE — stream E — PR #406 Zod v4 required_error syntax)
+
+- Phase 0: lock acquired (batch fire, iteration 1 of up to 5).
+- Phase 1: local main had diverged 50/52 commits; reset --hard to origin/main (remote is source of truth). Read queue + defaults.
+- Phase 2: CI rescue scan — PR #406 (E-02 batch 3): "Lint · Type-check · Test · Build" = FAILURE on head `e54b36a` (iter 179 rescue commit). PR #405 (G-03): CI still in_progress. PR #395 (O-03): CI green ✓. PR #396 (R-02): CI in_progress.
+- Diagnosis: Checked out E-02 branch. `npm test` on the 4 affected route test files → 2 failures: `community-posts.test.ts` (expects `/missing required fields/i`) and `marketplace-notify.test.ts` (expects `/required/i`). Zod v4 (installed: 4.3.6) dropped `{ required_error: "..." }` parameter from z.string() — v3 syntax silently ignored; v4 default "Invalid input: expected string, received undefined" doesn't contain "required". Fix: use `z.string("message")` positional-arg syntax (v4 API) which fires the message on invalid_type errors including missing fields.
+- Fix: `community/posts/route.ts` — thread_id + body use `z.string("Missing required fields: thread_id, body")`; `marketplace/notify/route.ts` — 4 required fields use `z.string("Required: <field>")`. 43/43 tests green, lint clean.
+- Commit: `9fefb6c`. Pushed to `claude/audit-remediation/e-02-batch-3-zod-rollout`.
+- STATUS: CI-RESCUE · stream=E · pr=#406 · commit=9fefb6c
+- Diff: +7 -6 across 2 files
 
 ### 2026-05-02 — iteration 180b (CI-RESCUE — stream A — PR #407 RLS migration gate false positive)
 
