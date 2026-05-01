@@ -30,7 +30,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | D | `claude/audit-remediation/d-route-tests` | #285 MERGED 2026-04-29T10:13Z; supplementary PRs #246/#285/#297/#298 | last merged 2026-04-29T18:53Z | D-01..D-09 done (PR #246). D-10 done (PR #246 — coverage ratchet). D-11 complete (43+ batches, all admin/cron/non-admin routes covered) — merged via PR #285 + supplementary PRs #297/#298. **Stream D complete.** |
 | E | `claude/audit-remediation/e-01-with-validated-body` (#295) · `e-02-batch-*-zod-rollout` (#315/#323/#406) · `e-03-zod-lint-rule` (#313) | #295/#313/#315/#323 MERGED · #406 OPEN | CI-rescue pushed 2026-05-02 (iter 179 — `e54b36a`) | E-01 done (PR #295 — withValidatedBody helper). E-02 in-progress (batches 1+2 done via PR #315/#323 — 8 routes; batch 3 done via PR #406 — 4 routes; CI-rescue `e54b36a` fixed string-vs-number type mismatch + error message format; ~2 batches remain). E-03 done (PR #313 — ESLint rule). E-04 backfill pending. |
 | F | `claude/audit-remediation/f-02..f-06` (multiple PRs) | #293/#294/#301/#354/#355/#370 all MERGED | last merged 2026-05-01T16:00Z | F-01 false-positive. F-02 done (PR #293 — formatDate). F-03 done (PR #370 — formatCurrency). F-04 done (PR #354 — slugify, first wave). F-05 done (PR #294 + #301 followup — console→logger). F-06 done (PR #355 — compliance copy SSOT). F-07/F-08 pending. |
-| G | `claude/audit-remediation/g-01-g-02-migration-hygiene` (#307) · `g-03-batch-*-rollback-headers` (#311/#314/#316/#352/#405) · `g-04-partial-failure-marker-doc` (#310) · `chore/audit-queue-unblock-2026-05-01-v2` (#342) | #307/#310/#311/#314/#316/#342/#352 MERGED · #405 OPEN | last pushed 2026-05-02T01:30Z (#405 `be00416`) | G-01+G-02 done (PR #307). G-03 batch 5 done (PR #405 — 10 migrations; 50 of 108 covered; ~6 batches still pending). G-04 documented (PR #310) + verification done by founder via MCP (PR #342) — 5 follow-up findings (G-04-FINDING-1..5) pending founder authorization. |
+| G | `claude/audit-remediation/g-01-g-02-migration-hygiene` (#307) · `g-03-batch-*-rollback-headers` (#311/#314/#316/#352/#405) · `g-04-partial-failure-marker-doc` (#310) · `chore/audit-queue-unblock-2026-05-01-v2` (#342) | #307/#310/#311/#314/#316/#342/#352 MERGED · #405 OPEN | CI-rescue 2026-05-02 (iter 179) — merged main to pick up LH TBT threshold fix; CI re-run pending | G-01+G-02 done (PR #307). G-03 batch 5 done (PR #405 — 10 migrations; 50 of 108 covered; ~6 batches still pending). G-04 documented (PR #310) + verification done by founder via MCP (PR #342) — 5 follow-up findings (G-04-FINDING-1..5) pending founder authorization. |
 | H | _not started_ | — | — | — |
 | I | `claude/audit-remediation/i-new-04-main-ci-auto-revert` (#278) · `i-02-drift-detection-ci` (#353) | #278 MERGED 2026-04-28T16:18Z · #353 MERGED 2026-05-01T14:30Z | last merged 2026-05-01T14:30Z | I-NEW-01..05 all done. I-NEW-06 needs-user (Supabase GH Actions secrets). I-01 done via B-07 (PR #286). I-02 done (PR #353). I-03 done via C-08 (PR #327). I-04 done via E-03 (PR #313). I-05 done via D-10 (PR #246). |
 | J | `claude/audit-remediation/j-stripe-webhook` | #288 MERGED 2026-04-29T16:48Z | last merged 2026-04-29T16:48Z | J-01a..J-01e done · J-01d-ext done · J-03/J-05/J-06/J-08/J-09/J-10 done. **Stream J complete** (J-02/J-04/J-07/J-11 false-positives or done out-of-band). |
@@ -1483,6 +1483,18 @@ Remaining: ~15 pending A-stream items · multiple streams pending · 0 new block
 - STATUS: CI-RESCUE · stream=E · pr=#406 · commit=e54b36a
 - Diff: +10 -5 across 3 files
 - Next item: O-05 (sponsor-invoices style hardening — 5 tables, PR #395 branch)
+
+### 2026-05-02 — iteration 179b (CI-RESCUE — stream G — G-03 PR #405 Lighthouse CWV hard-fail)
+
+- Phase 0: batch iteration 1 of up to 5 this fire (parallel with iter 179 above). Lock held on this clone.
+- Phase 1: synced main (reset --hard to origin/main). Pulled latest queue (iter 177-178 updates). Main at c48c7992.
+- Phase 2: CI rescue check — PR #405 (G-03 batch 5) has "Lighthouse — Core Web Vitals gate (hard-fail)" = failure. Root cause: branch was pushed (be00416) before systemic LH fix (74f1723 + be1bc2fc) landed on main. Branch's `.lighthouserc.cwv.json` still has 800ms TBT threshold. G-03 is highest-priority failing stream not already rescued (slot 19; O-03 #395 already fixed, R-02 #396 green).
+- Phase 5: merged origin/main into `g-03-batch-5-rollback-headers` (commit 1012ebe4). Brought in .lighthouserc.cwv.json (TBT 800→1500ms). No code conflict.
+- Phase 6: HUSKY=0 pushed to origin — new CI run triggered on PR #405.
+- Phase 6.5: discovery sweep skipped (CI-RESCUE, no code diff).
+- Phase 7: queue updated on main (rebased over iter 179 E-stream rescue).
+
+- STATUS: CI-RESCUE · stream=G · pr=#405 · commit=1012ebe4
 
 ### 2026-05-02 — iteration 178 (stream R — R-02-DISC-20260501-01: broker-auth.ts tests)
 
