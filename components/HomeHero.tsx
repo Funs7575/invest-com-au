@@ -81,8 +81,8 @@ export default function HomeHero() {
             margin: "20px 0 0",
           }}
         >
-          One place to compare platforms, browse investment listings, find experts, or get matched
-          to the right next step &mdash; without the financial jargon.
+          Compare platforms, browse opportunities, find experts or get matched to the right next
+          step &mdash; without getting lost in financial jargon.
         </p>
 
         <div

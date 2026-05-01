@@ -47,18 +47,8 @@ export default function HomePostAJob() {
                 maxWidth: 560,
               }}
             >
-              Describe what you need and have specialists come to you with proposals &mdash; like
+              Describe what you need and have specialists come to you with proposals — like
               Airtasker for investing decisions. Most requests hear back within a day.
-            </p>
-            <p
-              style={{
-                fontSize: 13,
-                color: "var(--color-ink-500)",
-                fontStyle: "italic",
-                margin: "10px 0 0",
-              }}
-            >
-              Best if you want specialists to come back with options.
             </p>
 
             <div style={{ display: "flex", gap: 10, marginTop: 22, flexWrap: "wrap", alignItems: "center" }}>

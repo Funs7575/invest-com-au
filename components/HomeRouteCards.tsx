@@ -7,6 +7,11 @@ interface RouteCardsProps {
   professionalCount: number;
 }
 
+// Four route cards — the primary navigational decision below the hero.
+// Replaces the previous v4 HomePillarsGrid. Cards are equal-weight in size
+// and breathing room, but "Get matched" gets a subtle dark-card treatment
+// because per the v5 spec it's the recommended path for users who don't
+// know which other route to pick (the moat product).
 export default function HomeRouteCards({
   brokerCount,
   listingCount,
@@ -14,54 +19,54 @@ export default function HomeRouteCards({
 }: RouteCardsProps) {
   const routes: ReadonlyArray<{
     title: string;
+    copy: string;
     cta: string;
     href: string;
+    micro: string;
+    badge: string;
     icon: string;
     accent: string;
-    examples: string;
-    audience: string;
-    badge: string;
     featured?: boolean;
   }> = [
     {
       title: "Compare platforms",
-      cta: "Compare",
+      copy: "Brokers, super, crypto and savings — sorted by key fees and features.",
+      cta: "Compare platforms",
       href: "/compare",
+      micro: "Lowest-friction starting point",
+      badge: `${brokerCount || 0} platforms`,
       icon: "trending-down",
       accent: "#2563eb",
-      examples: "Brokers · Super · Crypto · Savings",
-      audience: "If you know what you want",
-      badge: `${brokerCount || 0} platforms`,
     },
     {
-      title: "Browse listings",
-      cta: "Browse",
+      title: "Browse opportunities",
+      copy: "Property, businesses, farmland and private-market listings, shown clearly.",
+      cta: "Browse listings",
       href: "/invest",
-      icon: "map-pin",
-      accent: "#059669",
-      examples: "Property · Businesses · Farmland · Funds",
-      audience: "If you want real opportunities",
+      micro: "Marketplace route",
       badge: `${listingCount || 0} listed`,
+      icon: "sparkles",
+      accent: "#d97706",
     },
     {
       title: "Find an expert",
-      cta: "Find",
+      copy: "Property, lending, advice, tax, SMSF and cross-border specialists.",
+      cta: "Find an expert",
       href: "/advisors",
-      icon: "users",
-      accent: "#7c3aed",
-      examples: "Advisers · Mortgage · Tax · SMSF",
-      audience: "If you need a pro",
+      micro: "Human help route",
       badge: `${professionalCount.toLocaleString("en-AU")} verified`,
+      icon: "users",
+      accent: "var(--color-coral-500)",
     },
     {
       title: "Get matched",
-      cta: "Get matched",
+      copy: "Answer a few prompts. We route you to the right next step.",
+      cta: "Get matched in 60s",
       href: "/quiz",
-      icon: "sparkles",
-      accent: "#f25822",
-      examples: "60 seconds · 4 quick questions",
-      audience: "If you're not sure where to start",
-      badge: "Free · no email",
+      micro: "Best if you're unsure",
+      badge: "60-sec flow · free",
+      icon: "compass",
+      accent: "#059669",
       featured: true,
     },
   ];
@@ -97,147 +102,101 @@ export default function HomeRouteCards({
             href={r.href}
             className="iv2-card-hover"
             style={{
-              position: "relative",
               display: "flex",
               flexDirection: "column",
               background: r.featured ? "var(--color-ink-900)" : "white",
               color: r.featured ? "white" : "var(--color-ink-900)",
               border: r.featured ? `1.5px solid ${r.accent}` : "1px solid #e5e7eb",
-              borderRadius: 16,
-              overflow: "hidden",
+              borderTop: r.featured ? `1.5px solid ${r.accent}` : `4px solid ${r.accent}`,
+              borderRadius: 14,
+              padding: "30px 26px 26px",
               textDecoration: "none",
-              minHeight: 320,
+              minHeight: 280,
               boxShadow: r.featured
-                ? `0 14px 36px color-mix(in oklch, ${r.accent} 28%, transparent)`
+                ? `0 12px 32px color-mix(in oklch, ${r.accent} 22%, transparent)`
                 : "0 1px 2px rgba(11,20,34,.04)",
-              transform: r.featured ? "translateY(-4px)" : undefined,
             }}
           >
-            {r.featured && (
-              <span
-                aria-hidden
-                style={{
-                  position: "absolute",
-                  top: 12,
-                  right: 12,
-                  zIndex: 2,
-                  fontSize: 10.5,
-                  fontWeight: 800,
-                  textTransform: "uppercase",
-                  letterSpacing: ".06em",
-                  background: "white",
-                  color: r.accent,
-                  padding: "4px 10px",
-                  borderRadius: 99,
-                  boxShadow: "0 2px 6px rgba(0,0,0,.18)",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 4,
-                }}
-              >
-                <DesignIcon name="star" size={11} strokeWidth={2.4} fill="currentColor" /> Start here
-              </span>
-            )}
-
             <div
               aria-hidden
               style={{
-                height: 88,
+                width: 64,
+                height: 64,
+                borderRadius: 16,
                 background: r.featured
-                  ? `linear-gradient(135deg, ${r.accent} 0%, color-mix(in oklch, ${r.accent} 70%, #ec4899) 100%)`
-                  : `color-mix(in oklch, ${r.accent} 12%, white)`,
+                  ? `color-mix(in oklch, ${r.accent} 22%, transparent)`
+                  : `color-mix(in oklch, ${r.accent} 14%, transparent)`,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                color: r.featured ? "white" : r.accent,
-                borderBottom: r.featured ? "none" : `1px solid color-mix(in oklch, ${r.accent} 18%, transparent)`,
+                color: r.accent,
+                marginBottom: 18,
               }}
             >
-              <DesignIcon name={r.icon} size={40} strokeWidth={2.2} />
+              <DesignIcon name={r.icon} size={32} strokeWidth={2.2} />
             </div>
 
-            <div style={{ padding: "22px 22px 22px", display: "flex", flexDirection: "column", flex: 1 }}>
-              <div
-                className="font-display"
-                style={{
-                  fontSize: 21,
-                  fontWeight: 800,
-                  lineHeight: 1.1,
-                  letterSpacing: "-.022em",
-                  marginBottom: 8,
-                  color: r.featured ? "white" : "var(--color-ink-900)",
-                }}
-              >
-                {r.title}
-              </div>
+            <div
+              className="font-display"
+              style={{
+                fontSize: 22,
+                fontWeight: 800,
+                lineHeight: 1.1,
+                letterSpacing: "-.022em",
+                marginBottom: 10,
+                color: r.featured ? "white" : "var(--color-ink-900)",
+              }}
+            >
+              {r.title}
+            </div>
+            <div
+              style={{
+                fontSize: 13,
+                color: r.featured ? "rgba(255,255,255,.72)" : "var(--color-ink-500)",
+                lineHeight: 1.5,
+                marginBottom: 16,
+                flex: 1,
+              }}
+            >
+              {r.copy}
+            </div>
 
-              <div
+            <div style={{ marginBottom: 14 }}>
+              <span
                 className="font-mono"
                 style={{
-                  fontSize: 11.5,
-                  fontWeight: 700,
-                  color: r.featured ? "rgba(255,255,255,.78)" : "var(--color-ink-600)",
-                  letterSpacing: ".01em",
-                  marginBottom: 14,
-                  lineHeight: 1.45,
-                }}
-              >
-                {r.examples}
-              </div>
-
-              <div style={{ marginBottom: 14 }}>
-                <span
-                  className="font-mono"
-                  style={{
-                    fontSize: 10,
-                    fontWeight: 800,
-                    color: r.featured ? "white" : r.accent,
-                    textTransform: "uppercase",
-                    letterSpacing: ".07em",
-                    background: r.featured
-                      ? "rgba(255,255,255,.12)"
-                      : `color-mix(in oklch, ${r.accent} 10%, transparent)`,
-                    border: r.featured
-                      ? "1px solid rgba(255,255,255,.18)"
-                      : `1px solid color-mix(in oklch, ${r.accent} 28%, transparent)`,
-                    padding: "3px 9px",
-                    borderRadius: 99,
-                  }}
-                >
-                  {r.badge}
-                </span>
-              </div>
-
-              <div style={{ flex: 1 }} />
-
-              <div
-                style={{
-                  fontSize: 12,
-                  color: r.featured ? "rgba(255,255,255,.62)" : "var(--color-ink-500)",
-                  marginBottom: 14,
-                  lineHeight: 1.4,
-                  fontStyle: "italic",
-                }}
-              >
-                {r.audience}
-              </div>
-
-              <div
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: 6,
-                  fontSize: 13,
+                  fontSize: 10.5,
                   fontWeight: 800,
-                  padding: "10px 14px",
-                  borderRadius: 10,
-                  background: r.featured ? r.accent : "transparent",
-                  color: r.featured ? "white" : r.accent,
-                  border: r.featured ? `1.5px solid ${r.accent}` : `1.5px solid color-mix(in oklch, ${r.accent} 30%, transparent)`,
+                  color: r.accent,
+                  textTransform: "uppercase",
+                  letterSpacing: ".06em",
+                  background: `color-mix(in oklch, ${r.accent} ${r.featured ? 18 : 10}%, transparent)`,
+                  border: `1px solid color-mix(in oklch, ${r.accent} 30%, transparent)`,
+                  padding: "3px 8px",
+                  borderRadius: 99,
                 }}
               >
-                {r.cta} <DesignIcon name="arrow-right" size={13} strokeWidth={2.6} />
+                {r.badge}
+              </span>
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: 8,
+                paddingTop: 12,
+                borderTop: r.featured ? "1px solid rgba(255,255,255,.08)" : "1px solid #f1f5f9",
+              }}
+            >
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 800, color: r.featured ? "white" : r.accent, display: "inline-flex", alignItems: "center", gap: 6 }}>
+                  {r.cta} <DesignIcon name="arrow-right" size={13} strokeWidth={2.6} />
+                </div>
+                <div style={{ fontSize: 10.5, color: r.featured ? "rgba(255,255,255,.5)" : "var(--color-ink-400)", marginTop: 2 }}>
+                  {r.micro}
+                </div>
               </div>
             </div>
           </Link>
