@@ -445,6 +445,25 @@ export const SPECIALTIES_BY_TYPE: Record<ProfessionalType, string[]> = {
     "Custody & Administration",
     "Performance Attribution",
   ],
+  conveyancer: [
+    "Residential Settlement",
+    "Off-the-Plan Settlement",
+    "Contract Review",
+    "PEXA E-Settlement",
+    "Stamp Duty & Concessions",
+    "First Home Buyers",
+    "Title Searches",
+  ],
+  property_lawyer: [
+    "Off-the-Plan Disputes",
+    "Strata & Owners Corporation",
+    "SMSF Property Structuring",
+    "Property Litigation",
+    "Easements & Caveats",
+    "Adverse Possession",
+    "Commercial Conveyancing",
+    "Lease Disputes",
+  ],
 };
 
 // ═══════════════════════════════════════════════

@@ -3,7 +3,6 @@
 import { useEffect, useState, useCallback } from "react";
 import AdminShell from "@/components/AdminShell";
 import ConfirmDialog from "@/components/ConfirmDialog";
-import { createClient } from "@/lib/supabase/client";
 import { downloadCSV } from "@/lib/csv-export";
 import TableSkeleton from "@/components/TableSkeleton";
 import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
@@ -43,7 +42,13 @@ function slugify(text: string): string {
 }
 
 export default function QuarterlyReportsPage() {
-  const supabase = createClient();
+  // C-05b: this page used to call `lib/supabase/client.ts` (browser
+  // anon-key client) directly for SELECT/INSERT/UPDATE/DELETE on
+  // `quarterly_reports`. With RLS now enforcing
+  // `anon SELECT WHERE status='published'`, those writes silently fail —
+  // and even before RLS, anyone with the anon key could CRUD via
+  // PostgREST. All DB access now flows through `/api/admin/quarterly-reports`,
+  // which uses the service-role admin client and a `requireAdmin()` guard.
   const [items, setItems] = useState<QuarterlyReport[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -64,14 +69,23 @@ export default function QuarterlyReportsPage() {
 
   const load = useCallback(async () => {
     setLoading(true);
-    const { data } = await supabase
-      .from("quarterly_reports")
-      .select("*")
-      .order("year", { ascending: false })
-      .order("quarter", { ascending: false });
-    if (data) setItems(data as QuarterlyReport[]);
-    setLoading(false);
-  }, [supabase]);
+    try {
+      const res = await fetch("/api/admin/quarterly-reports", {
+        method: "GET",
+        cache: "no-store",
+      });
+      if (res.ok) {
+        const json = (await res.json()) as { items: QuarterlyReport[] };
+        setItems(json.items || []);
+      } else {
+        setItems([]);
+      }
+    } catch {
+      setItems([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     load();
@@ -156,24 +170,30 @@ export default function QuarterlyReportsPage() {
         .map((s) => s.trim())
         .filter(Boolean),
       status: form.status,
-      published_at:
-        form.status === "published" ? new Date().toISOString() : null,
-      updated_at: new Date().toISOString(),
     };
 
-    let error;
+    let res: Response;
     if (editing) {
-      ({ error } = await supabase
-        .from("quarterly_reports")
-        .update(payload)
-        .eq("id", editing));
+      res = await fetch("/api/admin/quarterly-reports", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: editing, ...payload }),
+      });
     } else {
-      ({ error } = await supabase.from("quarterly_reports").insert(payload));
+      res = await fetch("/api/admin/quarterly-reports", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
     }
 
     setSaving(false);
-    if (error) {
-      showMessage("error", error.message);
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      showMessage(
+        "error",
+        typeof err.error === "string" ? err.error : "Save failed"
+      );
     } else {
       showMessage("success", editing ? "Report updated" : "Report created");
       cancel();
@@ -210,12 +230,16 @@ export default function QuarterlyReportsPage() {
 
   const deleteItem = async () => {
     if (!deleteTarget) return;
-    const { error } = await supabase
-      .from("quarterly_reports")
-      .delete()
-      .eq("id", deleteTarget.id);
-    if (error) {
-      showMessage("error", error.message);
+    const res = await fetch(
+      `/api/admin/quarterly-reports?id=${deleteTarget.id}`,
+      { method: "DELETE" }
+    );
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      showMessage(
+        "error",
+        typeof err.error === "string" ? err.error : "Delete failed"
+      );
     } else {
       showMessage("success", "Report deleted");
       load();
@@ -477,13 +501,13 @@ export default function QuarterlyReportsPage() {
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
                     <th className="text-left px-4 py-3 font-semibold text-slate-600 cursor-pointer select-none hover:text-slate-900" onClick={() => toggleSort("title")}>
-                      Title {sortKey === "title" ? (sortDir === "asc" ? "\u2191" : "\u2193") : ""}
+                      Title {sortKey === "title" ? (sortDir === "asc" ? "↑" : "↓") : ""}
                     </th>
                     <th className="text-center px-4 py-3 font-semibold text-slate-600 cursor-pointer select-none hover:text-slate-900" onClick={() => toggleSort("quarter")}>
-                      Quarter / Year {sortKey === "quarter" ? (sortDir === "asc" ? "\u2191" : "\u2193") : ""}
+                      Quarter / Year {sortKey === "quarter" ? (sortDir === "asc" ? "↑" : "↓") : ""}
                     </th>
                     <th className="text-center px-4 py-3 font-semibold text-slate-600 cursor-pointer select-none hover:text-slate-900" onClick={() => toggleSort("status")}>
-                      Status {sortKey === "status" ? (sortDir === "asc" ? "\u2191" : "\u2193") : ""}
+                      Status {sortKey === "status" ? (sortDir === "asc" ? "↑" : "↓") : ""}
                     </th>
                     <th className="text-left px-4 py-3 font-semibold text-slate-600">
                       Published

@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+// admin — compliance record, no anon INSERT policy on agreement_acceptances
+import { createAdminClient } from "@/lib/supabase/admin";
 import { isRateLimited } from "@/lib/rate-limit";
 import { sendApplicationConfirmation, sendAdminNotification } from "@/lib/advisor-emails";
 import { logger } from "@/lib/logger";
@@ -13,6 +15,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Too many requests." }, { status: 429 });
     }
 
+    // eslint-disable-next-line invest/no-unvalidated-req-json -- pre-existing; Zod migration is out-of-scope for C-03 admin-import refactor
     const body = await request.json();
     const { name, firm_name, email, phone, type, afsl_number, registration_number, location_state, location_suburb, specialties, bio, website, fee_description, account_type, abn, photo_url, pitch_message, years_experience, client_types, languages, invite_token } = body;
 
@@ -107,9 +110,9 @@ export async function POST(request: NextRequest) {
       `<strong>${name.trim()}</strong> (${account_type === 'firm' ? 'Firm' : 'Individual'}) applied as ${type}.<br/>Email: ${email}<br/>Firm: ${firm_name || 'N/A'}<br/><a href="https://invest.com.au/admin/advisors" style="color:#2563eb">Review in Admin →</a>`
     ).catch((err) => log.error("[advisor-apply] admin notification failed:", err));
 
-    // Record agreement acceptance
+    // Record agreement acceptance (fire-and-forget; failure must not block application)
     try {
-      const supabaseAdmin = (await import("@/lib/supabase/admin")).createAdminClient();
+      const supabaseAdmin = createAdminClient();
       await supabaseAdmin.from("agreement_acceptances").insert({
         user_type: "advisor",
         agreement_type: "advisor_services",

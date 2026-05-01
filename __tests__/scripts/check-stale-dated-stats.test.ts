@@ -276,4 +276,28 @@ describe("extractViolations", () => {
     expect(v).toHaveLength(1);
     expect(v[0]?.line).toBe(5);
   });
+
+  it("parses stalesAt from a Y-05-ENRICH multi-prop badge (sourcedAt + source + url)", () => {
+    const content = [
+      `<DatedStatBadge`,
+      `  value="$2.1B"`,
+      `  sourcedAt="2026-01-15"`,
+      `  stalesAt="${YESTERDAY}"`,
+      `  source="ASIC, 2026-01-15"`,
+      `  sourceUrl="https://asic.gov.au/regulatory-resources/find-a-document/reports/rep-789-managed-funds-2026"`,
+      `>`,
+      `  $2.1B committed`,
+      `</DatedStatBadge>`,
+    ].join("\n");
+    const v = extractViolations(content, TODAY);
+    expect(v).toHaveLength(1);
+    expect(v[0]?.stalesAt).toBe(YESTERDAY);
+  });
+
+  it("does not flag a Y-05-ENRICH badge whose only date prop is sourcedAt (no stalesAt)", () => {
+    // When stalesAt is omitted the component derives it at runtime; the static
+    // CI gate has no static stalesAt to evaluate so the file is silently passed.
+    const content = `<DatedStatBadge value="$1B" sourcedAt="${YESTERDAY}">old</DatedStatBadge>`;
+    expect(extractViolations(content, TODAY)).toHaveLength(0);
+  });
 });

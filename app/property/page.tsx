@@ -475,6 +475,80 @@ export default async function PropertyHubPage() {
         </ScrollFadeIn>
       )}
 
+      {/* ── Buying a property? Team CTA ───────────── */}
+      <ScrollFadeIn>
+        <section className="py-8 md:py-14 bg-white">
+          <div className="container-custom">
+            <div className="flex items-end justify-between gap-2 mb-6">
+              <div>
+                <p className="text-xs font-bold text-amber-600 uppercase tracking-wider mb-1">Your Property Team</p>
+                <h2 className="text-xl md:text-3xl font-extrabold text-slate-900">Buying a property? Line up your team.</h2>
+                <p className="text-sm text-slate-500 mt-1">A full property purchase usually involves four professionals. Free, no-obligation introductions.</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              {[
+                {
+                  icon: "landmark",
+                  iconBg: "bg-blue-600",
+                  border: "hover:border-blue-200 hover:bg-blue-50/40",
+                  label: "Mortgage Broker",
+                  copy: "Compare 30+ lenders for the right investment loan structure and rate.",
+                  href: "/advisors/mortgage-brokers",
+                  cta: "Find a broker",
+                  ctaCls: "text-blue-700",
+                },
+                {
+                  icon: "search",
+                  iconBg: "bg-amber-500",
+                  border: "hover:border-amber-200 hover:bg-amber-50/40",
+                  label: "Buyer's Agent",
+                  copy: "Source, evaluate, and negotiate — including off-market opportunities.",
+                  href: "/advisors/buyers-agents",
+                  cta: "Find an agent",
+                  ctaCls: "text-amber-600",
+                },
+                {
+                  icon: "file-signature",
+                  iconBg: "bg-emerald-600",
+                  border: "hover:border-emerald-200 hover:bg-emerald-50/40",
+                  label: "Conveyancer",
+                  copy: "Settlement, contract review, PEXA e-settlement, and stamp duty.",
+                  href: "/advisors/conveyancers",
+                  cta: "Find a conveyancer",
+                  ctaCls: "text-emerald-700",
+                },
+                {
+                  icon: "gavel",
+                  iconBg: "bg-slate-800",
+                  border: "hover:border-slate-300 hover:bg-slate-50",
+                  label: "Property Lawyer",
+                  copy: "Off-the-plan disputes, strata, SMSF property structuring, litigation.",
+                  href: "/advisors/property-lawyers",
+                  cta: "Find a lawyer",
+                  ctaCls: "text-slate-700",
+                },
+              ].map((card) => (
+                <Link
+                  key={card.href}
+                  href={card.href}
+                  className={`bg-white border border-slate-200 rounded-2xl p-5 transition-all group flex flex-col ${card.border}`}
+                >
+                  <div className={`w-10 h-10 ${card.iconBg} rounded-xl flex items-center justify-center mb-4 shadow-sm`}>
+                    <Icon name={card.icon} size={20} className="text-white" />
+                  </div>
+                  <h3 className="text-sm font-bold text-slate-900 mb-1">{card.label}</h3>
+                  <p className="text-xs text-slate-500 leading-relaxed mb-4 flex-1">{card.copy}</p>
+                  <span className={`text-xs font-bold ${card.ctaCls} group-hover:underline flex items-center gap-1`}>
+                    {card.cta} <span className="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      </ScrollFadeIn>
+
       {/* ── Buyer's Agent CTA ─────────────────────── */}
       <ScrollFadeIn>
         <section className="py-8 md:py-12 bg-slate-50 border-y border-slate-100">
