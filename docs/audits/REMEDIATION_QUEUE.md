@@ -38,7 +38,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | L | `claude/audit-remediation/l-observability` | #289 MERGED 2026-04-29T10:18Z | last merged 2026-04-29T10:18Z | L-04/L-05 done out-of-loop. L-06..L-12 all done (merged via PR #289). L-02/L-03 deferred-post-launch (n8n dormant). L-01 needs-user (SENTRY_AUTH_TOKEN). L-10 false-positive (verified populating). **Stream L complete** (modulo L-01 needs-user). |
 | M | `claude/audit-remediation/m-01b-cover-image-backfill` (#283) · `m-02-versus-json-ld` (#296) · `m-05-glossary-linkifier` (#325) | #283/#296/#325 all MERGED | last merged 2026-05-01T10:29Z | M-01a done out-of-loop (PR #227). M-01b done (PR #283 — engineering side). M-02 done (PR #296). M-03 done (`85c7236`). M-04 done (`353fa3a`). M-05 done (PR #325). M-06 done (PR #283). M-07 done (PR #283). **Stream M complete.** |
 | N | `claude/audit-remediation/n-ux-perf` | #242 MERGED | last merged 2026-04-28 | N-01+N-02 done (`2ec6f89`) · N-03a/b/c done · N-04/N-05 FP · N-06 blocked (deferred-post-launch by founder 2026-05-01 — option 4 chosen) · N-07/N-08/N-09/N-10/N-11 done — **stream complete** (N-06 deferred). |
-| O | `claude/audit-remediation/o-rls-no-policy` (iters 1-4 via #235/#237/#239) · `o-iter6/forum` (#299) · `o-iter7/editorial-obs-secrets` (#300) · `o-iter8-rls-observability` (#366 parallel-agent) | #235/#237/#239/#299/#300 MERGED · #366 OPEN | last merged 2026-05-01T12:51Z | O-01 iter1-4 done. O-02 done. iter6 done (PR #299, 5 forum tables). iter7 done (PR #300, 9 editorial+obs+secrets tables). iter8 in-progress on #366 (parallel-agent, 8 obs+anti-abuse tables). **iter5 was apparently skipped/never landed in dedicated PR — gap noted.** O-03/O-04/O-05 pending. CI-rescue: merged `origin/main` (11 commits) into `o-iter8-rls-observability` → merge commit `d36344f0` pushed 2026-05-01; CI re-run pending. |
+| O | `claude/audit-remediation/o-rls-no-policy` (iters 1-4 via #235/#237/#239) · `o-iter6/forum` (#299) · `o-iter7/editorial-obs-secrets` (#300) · `o-iter8-rls-observability` (#366 parallel-agent) | #235/#237/#239/#299/#300 MERGED · #366 OPEN | CI-rescue 2026-05-01T21:41Z | O-01 iter1-4 done. O-02 done. iter6 done (PR #299). iter7 done (PR #300). iter8 in-progress on #366 (parallel-agent, 8 obs+anti-abuse tables). CI-rescue: merged main post-#392 → `5b000f0` pushed 2026-05-01T21:41Z; CI re-run pending. **iter5 gap noted.** O-03/O-04/O-05 pending. |
 | P | _not started_ | — | — | — |
 | Q | _not started_ | — | — | — |
 | R | `claude/audit-remediation/r-01-marketplace-allocation` | #290 MERGED 2026-04-29T10:05Z | last merged 2026-04-29T10:05Z | R-01 done (PR #290 — marketplace allocation + CPC billing tests). R-02..R-11 still pending. |
@@ -46,10 +46,10 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 MERGED 2026-04-28T11:45Z | merged | V-NEW-06 done (commit `a7bd736`) |
 | V (V-NEW-07) | `claude/audit-remediation/v-new-07-admin-mfa-enforced` | #256 MERGED 2026-04-28T15:44Z | merged | V-NEW-07a done · V-NEW-07b done (`698bbae`) — **Tier D: needs `ADMIN_MFA_COOKIE_SECRET` ≥32 chars in Vercel before merge** (PR was merged; env var status unclear) |
-| W | `claude/audit-remediation/w-01-hubconfig-schema` (#306) · `w-02-hub-hero` (#369 parallel-agent) · `w-new-01-calculator-reference-pattern` (#312) | #306/#312 MERGED · #369 OPEN | last merged 2026-04-30T17:43Z | W-01 done (PR #306). W-NEW-01 done (PR #312 — calculator regulator-reference test pattern). W-02 in-progress on #369 (parallel-agent — `<HubHero>` extraction). W-03..W-15 pending. |
-| X | `claude/audit-remediation/x-admin-backlog` (#257) · `x-02-best-for-admin-swap` (#367 parallel-agent) | #257 MERGED 2026-04-28T11:23Z · #367 OPEN | last merged 2026-04-28T11:23Z | X-01 done (PR #257 — decision matrix). X-02 in-progress on #367 (parallel-agent — best-for swap). X-03..X-09 pending. |
-| Y | `claude/audit-remediation/y-registry-nav` (#253) · `y-05-enrich-dated-stat-badge` (#347 parallel-agent) | #253 MERGED 2026-04-28T11:24Z · #347 OPEN | last merged 2026-04-28T11:24Z | Y-05 done (commit `fb9dec3`, PR #253) · Y-08 done (commit `8bb1d4d`, PR #253). Y-05-ENRICH in-progress on #347 (parallel-agent — sourcedAt/source/freshness on DatedStatBadge). Y-01..Y-04, Y-06, Y-07 pending. |
-| BB | `claude/audit-remediation/bb-03-cgt-regulator-ref` (#361 parallel-agent) · `bb-06-mortgage-stress-regulator-ref` (#368 parallel-agent) | both OPEN | parallel-agent in-progress | BB-03 in-progress on #361 (CGT calc vs ATO). BB-06 in-progress on #368 (mortgage stress test vs ASIC + APRA). Other BB items pending. BB-03 CI-rescue: merged `origin/main` (15 commits) → merge commit `b4290a13` pushed 2026-05-01; CI re-run pending. |
+| W | `claude/audit-remediation/w-01-hubconfig-schema` (#306) · `w-02-hub-hero` (#369 parallel-agent) · `w-new-01-calculator-reference-pattern` (#312) | #306/#312 MERGED · #369 OPEN | CI-rescue 2026-05-01T21:42Z | W-01 done (PR #306). W-NEW-01 done (PR #312 — calculator regulator-reference test pattern). W-02 in-progress on #369 (parallel-agent). CI-rescue: merged main post-#392 → `8f7bdb2` pushed 2026-05-01T21:42Z; CI re-run pending. W-03..W-15 pending. |
+| X | `claude/audit-remediation/x-admin-backlog` (#257) · `x-02-best-for-admin-swap` (#367 parallel-agent) | #257 MERGED 2026-04-28T11:23Z · #367 OPEN | CI-rescue 2026-05-01T21:42Z | X-01 done (PR #257 — decision matrix). X-02 in-progress on #367 (parallel-agent). CI-rescue: merged main post-#392 → `1ae6079` pushed 2026-05-01T21:42Z; CI re-run pending. X-03..X-09 pending. |
+| Y | `claude/audit-remediation/y-registry-nav` (#253) · `y-05-enrich-dated-stat-badge` (#347 parallel-agent) | #253 MERGED 2026-04-28T11:24Z · #347 OPEN | CI-rescue 2026-05-01T21:42Z | Y-05 done (commit `fb9dec3`, PR #253) · Y-08 done (commit `8bb1d4d`, PR #253). Y-05-ENRICH in-progress on #347 (parallel-agent). CI-rescue: merged main post-#392 → `708f7ac` pushed 2026-05-01T21:42Z; CI re-run pending. Y-01..Y-04, Y-06, Y-07 pending. |
+| BB | `claude/audit-remediation/bb-03-cgt-regulator-ref` (#361 parallel-agent) · `bb-06-mortgage-stress-regulator-ref` (#368 parallel-agent) | both OPEN | CI-rescue 2026-05-01T21:42Z | BB-03 in-progress on #361 (CGT calc vs ATO). BB-06 in-progress on #368 (mortgage stress test vs ASIC + APRA). CI-rescue (both): merged main post-#392 → BB-03 `df074bd` · BB-06 `cb10a20` pushed 2026-05-01T21:42Z; CI re-run pending. Other BB items pending. |
 
 ---
 
@@ -1424,6 +1424,19 @@ Two strategically important surfaces under-served by current nav: (1) investment
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-01 — CI rescue iters 7–8 — O-01/W-02/X-02/Y-05-ENRICH/BB-03/BB-06 stale-base fix (post-PR #392)
+
+- Phase 2: after rescuing C-03 + C-05b, remaining red-CI PRs all share the same root cause (merged main before PR #392). In batch mode, co-rescuing all remaining stale branches in one pass (pure `git merge origin/main`, no code written).
+- Rescued in order of priority:
+  - O-01 iter8 #366: merge commit `5b000f0` pushed 2026-05-01T21:41Z
+  - W-02 #369: merge commit `8f7bdb2` pushed 2026-05-01T21:42Z
+  - X-02 #367: merge commit `1ae6079` pushed 2026-05-01T21:42Z
+  - Y-05-ENRICH #347: merge commit `708f7ac` pushed 2026-05-01T21:42Z
+  - BB-03 #361: merge commit `df074bd` pushed 2026-05-01T21:42Z
+  - BB-06 #368: merge commit `cb10a20` pushed 2026-05-01T21:42Z
+- All 6 branches picked up: types regen (+86 lines to database.types.ts) + advisor-auth/listings test fixes. No conflicts on any branch.
+- STATUS: CI-RESCUE · streams=O/W/X/Y/BB · prs=#366/#369/#367/#347/#361/#368
 
 ### 2026-05-01 — CI rescue iter 7 — C-05b PR #349 stale-base fix (post-PR #392)
 
