@@ -563,7 +563,7 @@ export default function Header() {
               href="/quiz"
               className="bg-amber-500 hover:bg-amber-600 text-white px-5 py-2.5 rounded-lg font-bold transition-all shadow-sm hover:shadow-md flex items-center gap-2 text-sm"
             >
-              Start Free Match
+              Get matched
               <Icon name="arrow-right" size={16} />
             </Link>
           </div>
@@ -623,22 +623,22 @@ export default function Header() {
                 onClick={() => setMenuOpen(false)}
                 className="block w-full py-3 min-h-11 text-center text-sm font-extrabold text-white bg-amber-500 rounded-xl hover:bg-amber-600 transition-colors"
               >
-                Start Free Match
+                Get matched
               </Link>
               <div className="flex gap-2">
                 <Link
-                  href="/find-advisor"
+                  href="/advisors"
                   onClick={() => setMenuOpen(false)}
                   className="flex-1 py-2.5 min-h-11 flex items-center justify-center text-xs font-bold text-center text-slate-700 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100 transition-colors"
                 >
-                  Find Advisor
+                  Find an expert
                 </Link>
                 <Link
                   href="/compare"
                   onClick={() => setMenuOpen(false)}
                   className="flex-1 py-2.5 min-h-11 flex items-center justify-center text-xs font-bold text-center text-slate-700 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100 transition-colors"
                 >
-                  Compare Platforms
+                  Compare platforms
                 </Link>
               </div>
             </div>

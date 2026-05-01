@@ -23,7 +23,7 @@ export default function HomePathfinder() {
       >
         <div>
           <span className="iv2-mini" style={{ color: "var(--color-coral-600)" }}>
-            ● 60-second pathfinder
+            ● Get matched · 60-second flow
           </span>
           <h2
             className="font-display"
@@ -37,7 +37,7 @@ export default function HomePathfinder() {
               textWrap: "balance",
             }}
           >
-            Use the 60-second pathfinder.
+            Not sure where to start? Get matched.
           </h2>
           <p
             style={{
@@ -48,8 +48,18 @@ export default function HomePathfinder() {
               maxWidth: 540,
             }}
           >
-            Answer a few prompts and get routed to the right next step: comparison, expert,
-            listing, matched enquiry or learning guide.
+            Answer a few quick questions and we&apos;ll show the best next step &mdash; compare
+            platforms, browse listings, find an expert, or post a request.
+          </p>
+          <p
+            style={{
+              fontSize: 12.5,
+              color: "var(--color-ink-500)",
+              fontStyle: "italic",
+              margin: "10px 0 0",
+            }}
+          >
+            Best if you&apos;re not sure where to start.
           </p>
           <ul
             style={{
@@ -81,7 +91,7 @@ export default function HomePathfinder() {
             className="iv2-cta"
             style={{ fontSize: 14, padding: "12px 22px", borderRadius: 11 }}
           >
-            Start the pathfinder <DesignIcon name="arrow-right" size={13} strokeWidth={2.6} />
+            Get matched in 60 seconds <DesignIcon name="arrow-right" size={13} strokeWidth={2.6} />
           </Link>
         </div>
 

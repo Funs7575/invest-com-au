@@ -3,11 +3,16 @@ import { NextRequest } from "next/server";
 import { createChainableBuilder } from "@/__tests__/helpers";
 
 // ── Mocks ──────────────────────────────────────────────────────────────────────
-
-const mockGetUser = vi.fn();
-const mockServerFrom = vi.fn();
-const mockAdminFrom = vi.fn();
-const supabaseCalls: Record<string, { method: string; args: unknown[] }[]> = {};
+// vi.hoisted() runs alongside vi.mock() factory hoisting so the mocks are
+// resolvable both inside the factory closures and in the tests below.
+// (Using plain `const mock = vi.fn()` at module scope here would be undefined
+// at the moment vitest hoists vi.mock, breaking the factory.)
+const { mockGetUser, mockServerFrom, mockAdminFrom, supabaseCalls } = vi.hoisted(() => ({
+  mockGetUser: vi.fn(),
+  mockServerFrom: vi.fn(),
+  mockAdminFrom: vi.fn(),
+  supabaseCalls: {} as Record<string, { method: string; args: unknown[] }[]>,
+}));
 
 vi.mock("@/lib/supabase/server", () => ({
   createClient: vi.fn(async () => ({
@@ -36,18 +41,17 @@ function makePatch(body: unknown): NextRequest {
   });
 }
 
+// The `advisor-auth/data` route was refactored in PR #327 to use
+// createAdminClient() for ALL data reads (professional_leads, advisor_billing,
+// advisor_profile_views, professional_reviews, advisor_articles,
+// analytics_events). The auth path through requireAdvisorSession() also uses
+// admin (for the `professionals` lookup) — so the test mocks live entirely on
+// mockAdminFrom. The mockServerFrom mock is still installed because
+// requireAdvisorSession's `await createClient()` resolves the server client,
+// even though the only thing it pulls from it is `auth.getUser`.
 function authedAdvisor(advisorId = 42) {
   mockGetUser.mockResolvedValue({
     data: { user: { id: "u-1", email: "advisor@test.com" } },
-  });
-  mockAdminFrom.mockImplementation((table: string) => {
-    const b = createChainableBuilder(table, supabaseCalls);
-    if (table === "professionals") {
-      b.maybeSingle = vi.fn(() =>
-        Promise.resolve({ data: { id: advisorId }, error: null }),
-      );
-    }
-    return b;
   });
 }
 
@@ -66,13 +70,24 @@ describe("GET /api/advisor-auth/data", () => {
     mockServerFrom.mockImplementation((table: string) =>
       createChainableBuilder(table, supabaseCalls),
     );
-    mockAdminFrom.mockImplementation((table: string) =>
-      createChainableBuilder(table, supabaseCalls),
-    );
+    mockAdminFrom.mockImplementation((table: string) => {
+      const b = createChainableBuilder(table, supabaseCalls);
+      // Default the requireAdvisorSession professionals lookup to a hit so
+      // individual tests don't have to set it explicitly. Override per-test
+      // with a more specific maybeSingle when needed.
+      if (table === "professionals") {
+        b.maybeSingle = vi.fn(() =>
+          Promise.resolve({ data: { id: 42 }, error: null }),
+        );
+      }
+      return b;
+    });
   });
 
   it("returns 401 when not authenticated", async () => {
     mockGetUser.mockResolvedValue({ data: { user: null } });
+    // requireAdvisorSession returns null because no user AND no advisor_session
+    // cookie on the NextRequest constructed by makeGet().
     const res = await GET(makeGet());
     expect(res.status).toBe(401);
   });
@@ -84,6 +99,7 @@ describe("GET /api/advisor-auth/data", () => {
     const recent = new Date(Date.now() - 5 * 86400000).toISOString();
     const old = new Date(Date.now() - 60 * 86400000).toISOString();
 
+    // ALL data reads go through admin (createAdminClient) per route.ts.
     mockAdminFrom.mockImplementation((table: string) => {
       const b = createChainableBuilder(table, supabaseCalls);
       if (table === "professionals") {
@@ -91,47 +107,8 @@ describe("GET /api/advisor-auth/data", () => {
           Promise.resolve({ data: { id: 42 }, error: null }),
         );
       }
-      if (table === "advisor_articles") {
-        b.order = vi.fn(() => {
-          supabaseCalls[table]?.push({ method: "order", args: [] });
-          return Promise.resolve({
-            data: [
-              {
-                id: 1,
-                title: "Hello Article",
-                slug: "hello-article",
-                view_count: 100,
-                click_count: 10,
-                profile_clicks: 5,
-                lead_clicks: 2,
-                status: "published",
-              },
-            ],
-            error: null,
-          });
-        });
-      }
-      if (table === "analytics_events") {
-        b.gte = vi.fn(() => {
-          supabaseCalls[table]?.push({ method: "gte", args: [] });
-          return Promise.resolve({
-            data: [
-              { event_type: "advisor_phone_click" },
-              { event_type: "advisor_phone_click" },
-              { event_type: "advisor_website_click" },
-            ],
-            error: null,
-          });
-        });
-      }
-      return b;
-    });
-
-    mockServerFrom.mockImplementation((table: string) => {
-      const b = createChainableBuilder(table, supabaseCalls);
       if (table === "professional_leads") {
-        // Both queries (limit + count). Override the terminal limit to
-        // return rows; the count query returns array via order/.then.
+        // Recent leads (terminal limit) — returns 2 rows
         b.limit = vi.fn(() => {
           supabaseCalls[table]?.push({ method: "limit", args: [] });
           return Promise.resolve({
@@ -142,7 +119,7 @@ describe("GET /api/advisor-auth/data", () => {
             error: null,
           });
         });
-        // The count query awaits the eq() chain directly
+        // All-leads count query awaits the .eq() chain directly
         b.eq = vi.fn(() => {
           supabaseCalls[table]?.push({ method: "eq", args: [] });
           return Object.assign(b, {
@@ -194,6 +171,39 @@ describe("GET /api/advisor-auth/data", () => {
           });
         });
       }
+      if (table === "advisor_articles") {
+        b.order = vi.fn(() => {
+          supabaseCalls[table]?.push({ method: "order", args: [] });
+          return Promise.resolve({
+            data: [
+              {
+                id: 1,
+                title: "Hello Article",
+                slug: "hello-article",
+                view_count: 100,
+                click_count: 10,
+                profile_clicks: 5,
+                lead_clicks: 2,
+                status: "published",
+              },
+            ],
+            error: null,
+          });
+        });
+      }
+      if (table === "analytics_events") {
+        b.gte = vi.fn(() => {
+          supabaseCalls[table]?.push({ method: "gte", args: [] });
+          return Promise.resolve({
+            data: [
+              { event_type: "advisor_phone_click" },
+              { event_type: "advisor_phone_click" },
+              { event_type: "advisor_website_click" },
+            ],
+            error: null,
+          });
+        });
+      }
       return b;
     });
 
@@ -221,9 +231,15 @@ describe("PATCH /api/advisor-auth/data", () => {
     mockServerFrom.mockImplementation((table: string) =>
       createChainableBuilder(table, supabaseCalls),
     );
-    mockAdminFrom.mockImplementation((table: string) =>
-      createChainableBuilder(table, supabaseCalls),
-    );
+    mockAdminFrom.mockImplementation((table: string) => {
+      const b = createChainableBuilder(table, supabaseCalls);
+      if (table === "professionals") {
+        b.maybeSingle = vi.fn(() =>
+          Promise.resolve({ data: { id: 42 }, error: null }),
+        );
+      }
+      return b;
+    });
   });
 
   it("returns 401 when not authenticated", async () => {
@@ -240,9 +256,15 @@ describe("PATCH /api/advisor-auth/data", () => {
 
   it("returns 404 when lead doesn't belong to advisor", async () => {
     authedAdvisor();
-    mockServerFrom.mockImplementation((table: string) => {
+    mockAdminFrom.mockImplementation((table: string) => {
       const b = createChainableBuilder(table, supabaseCalls);
+      if (table === "professionals") {
+        b.maybeSingle = vi.fn(() =>
+          Promise.resolve({ data: { id: 42 }, error: null }),
+        );
+      }
       if (table === "professional_leads") {
+        // single() defaults to {data: null, error: null} — explicit for clarity.
         b.single = vi.fn(() => Promise.resolve({ data: null, error: null }));
       }
       return b;
@@ -254,8 +276,13 @@ describe("PATCH /api/advisor-auth/data", () => {
   it("stamps contacted_at, responded_at, and computes response_time_minutes", async () => {
     authedAdvisor();
     const created = new Date(Date.now() - 10 * 60 * 1000).toISOString();
-    mockServerFrom.mockImplementation((table: string) => {
+    mockAdminFrom.mockImplementation((table: string) => {
       const b = createChainableBuilder(table, supabaseCalls);
+      if (table === "professionals") {
+        b.maybeSingle = vi.fn(() =>
+          Promise.resolve({ data: { id: 42 }, error: null }),
+        );
+      }
       if (table === "professional_leads") {
         b.single = vi.fn(() =>
           Promise.resolve({
@@ -285,8 +312,13 @@ describe("PATCH /api/advisor-auth/data", () => {
 
   it("stamps converted_at and outcome=won when status=converted", async () => {
     authedAdvisor();
-    mockServerFrom.mockImplementation((table: string) => {
+    mockAdminFrom.mockImplementation((table: string) => {
       const b = createChainableBuilder(table, supabaseCalls);
+      if (table === "professionals") {
+        b.maybeSingle = vi.fn(() =>
+          Promise.resolve({ data: { id: 42 }, error: null }),
+        );
+      }
       if (table === "professional_leads") {
         b.single = vi.fn(() =>
           Promise.resolve({
@@ -310,8 +342,13 @@ describe("PATCH /api/advisor-auth/data", () => {
 
   it("stamps outcome=lost on lost / rejected status", async () => {
     authedAdvisor();
-    mockServerFrom.mockImplementation((table: string) => {
+    mockAdminFrom.mockImplementation((table: string) => {
       const b = createChainableBuilder(table, supabaseCalls);
+      if (table === "professionals") {
+        b.maybeSingle = vi.fn(() =>
+          Promise.resolve({ data: { id: 42 }, error: null }),
+        );
+      }
       if (table === "professional_leads") {
         b.single = vi.fn(() =>
           Promise.resolve({
@@ -333,8 +370,13 @@ describe("PATCH /api/advisor-auth/data", () => {
 
   it("persists notes when provided", async () => {
     authedAdvisor();
-    mockServerFrom.mockImplementation((table: string) => {
+    mockAdminFrom.mockImplementation((table: string) => {
       const b = createChainableBuilder(table, supabaseCalls);
+      if (table === "professionals") {
+        b.maybeSingle = vi.fn(() =>
+          Promise.resolve({ data: { id: 42 }, error: null }),
+        );
+      }
       if (table === "professional_leads") {
         b.single = vi.fn(() =>
           Promise.resolve({
