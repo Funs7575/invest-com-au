@@ -1,3 +1,23 @@
+-- ============================================================================
+-- Migration: 20260322_foreign_investment_flags.sql
+-- Purpose: Foreign Investment Hub eligibility flags — add 4 broker columns
+--          (accepts_non_residents, accepts_temporary_residents,
+--          requires_australian_address, foreign_investor_notes); add 4
+--          professionals columns (international_tax_specialist, firb_specialist,
+--          migration_agent, migration_agent_marn); create foreign_investment_dta
+--          table for Double Tax Agreement data per country; seed DTA data for
+--          ~50 countries.
+-- Rollback: DROP TABLE IF EXISTS foreign_investment_dta CASCADE;
+--           ALTER TABLE brokers DROP COLUMN IF EXISTS accepts_non_residents,
+--             accepts_temporary_residents, requires_australian_address,
+--             foreign_investor_notes;
+--           ALTER TABLE professionals DROP COLUMN IF EXISTS
+--             international_tax_specialist, firb_specialist,
+--             migration_agent, migration_agent_marn;
+--   Risk: low — columns have NULL defaults; dropping is non-destructive if
+--   no broker rows have been populated with FI eligibility data yet.
+-- ============================================================================
+
 -- ─────────────────────────────────────────────────────────────────────────────
 -- Foreign Investment Hub: broker + platform eligibility flags
 -- Created: 2026-03-22
