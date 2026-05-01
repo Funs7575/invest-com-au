@@ -1,3 +1,78 @@
+-- ============================================================================
+-- Migration: 20260309_seed_mock_advisors.sql
+-- Purpose: Seed 55 realistic mock advisor profiles into `professionals`
+--          across 12 advisor types and major AU cities (Sydney, Melbourne,
+--          Brisbane, Perth, Adelaide, Canberra, Hobart, Gold Coast, Darwin,
+--          Newcastle, Wollongong, Sunshine Coast). Single INSERT … ON
+--          CONFLICT (slug) DO NOTHING.
+-- Rollback: DELETE the 55 mock advisor rows by slug, but ONLY after
+--          confirming no FK-referencing rows exist (advisor_articles,
+--          advisor_bookings, advisor_applications, professional_leads,
+--          professional_reviews) — otherwise the DELETE fails on FK
+--          violation. The forward INSERT is re-runnable (idempotent).
+-- Risk: medium — reverse fails if any production user has booked,
+--       reviewed, or messaged one of the 55 mock advisors. Operator must
+--       cascade-clean those FK rows or accept the seeded advisors stay
+--       in the directory.
+-- ============================================================================
+--
+-- Forward operations:
+--   1. INSERT INTO professionals (slug, name, firm_name, type,
+--        specialties, location_state, location_suburb, location_display,
+--        afsl_number, abn, registration_number, bio, photo_url, website,
+--        phone, email, fee_structure, fee_description, rating,
+--        review_count, verified, status, onboarded_at, profile_complete)
+--      VALUES (... 55 rows ...)
+--      ON CONFLICT (slug) DO NOTHING.
+--
+-- Rollback (in reverse order):
+--   -- Pre-step (operator): delete or reassign FK-dependent rows in
+--   -- advisor_articles, advisor_bookings, advisor_applications,
+--   -- professional_leads, professional_reviews that reference any of
+--   -- the 55 mock advisor IDs. Otherwise the DELETE will fail with
+--   -- foreign_key_violation.
+--   1. DELETE FROM professionals
+--      WHERE slug IN (
+--        -- Sydney
+--        'james-wong-sydney', 'maria-papadopoulos-sydney',
+--        'raj-patel-sydney', 'sophie-laurent-sydney',
+--        'michael-oconnor-sydney', 'helen-tran-sydney',
+--        'david-kowalski-sydney', 'anthony-nguyen-sydney',
+--        'emma-richardson-sydney', 'daniel-stavros-sydney',
+--        'fatima-hassan-sydney', 'margaret-campbell-sydney',
+--        'chris-murphy-sydney', 'wei-chen-sydney',
+--        'luke-thompson-sydney',
+--        -- Melbourne
+--        'olivia-martinez-melbourne', 'george-papadimitriou-melbourne',
+--        'anita-desai-melbourne', 'tom-fitzgerald-melbourne',
+--        'victoria-aldridge-melbourne', 'sam-ibrahim-melbourne',
+--        'alexander-reid-melbourne', 'nina-volkov-melbourne',
+--        'liam-chen-melbourne', 'jenny-le-melbourne',
+--        'patricia-wright-melbourne', 'nick-constantine-melbourne',
+--        -- Brisbane
+--        'ben-walker-brisbane', 'karen-li-brisbane',
+--        'josh-anderson-brisbane', 'rachel-green-brisbane',
+--        'stuart-mackenzie-brisbane', 'tanya-russo-brisbane',
+--        'hassan-ali-brisbane', 'diana-zhou-brisbane',
+--        -- Perth
+--        'andrew-mitchell-perth', 'lisa-tan-perth',
+--        'ryan-kelly-perth', 'deepak-sharma-perth',
+--        'jessica-harris-perth',
+--        -- Adelaide
+--        'peter-rossi-adelaide', 'sarah-campbell-adelaide',
+--        'mark-katsaros-adelaide', 'catherine-singh-adelaide',
+--        -- Canberra / Hobart / GC / Darwin / regional
+--        'robert-jenkins-canberra', 'elena-petrov-canberra',
+--        'philip-chang-canberra', 'amanda-jones-hobart',
+--        'nathan-williams-hobart', 'steve-hall-goldcoast',
+--        'tina-nguyen-goldcoast', 'marco-santos-darwin',
+--        'laura-smith-newcastle', 'bruce-taylor-wollongong',
+--        'zac-miller-sunshinecoast'
+--      );
+--      -- Will fail with foreign_key_violation if downstream FKs reference
+--      -- any of these rows. See pre-step.
+-- ============================================================================
+
 -- Migration: Seed 55 realistic mock advisor accounts
 -- Covers all 12 advisor types across all major Australian cities
 -- Idempotent: uses ON CONFLICT (slug) DO NOTHING
