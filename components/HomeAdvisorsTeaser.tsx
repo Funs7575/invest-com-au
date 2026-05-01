@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { DesignIcon } from "@/components/design/DesignIcon";
+import { PROFESSIONAL_TYPE_LABELS, type ProfessionalType } from "@/lib/types";
 
 export interface HomeAdvisor {
   slug: string;
@@ -20,16 +21,19 @@ export interface HomeAdvisor {
   verified: boolean | null;
 }
 
-const TYPE_LABEL: Record<string, string> = {
-  financial_planner: "Financial Planner",
-  mortgage_broker: "Mortgage Broker",
-  smsf_accountant: "SMSF Specialist",
-  tax_agent: "Tax Agent",
-  buyers_agent: "Buyer's Agent",
-  insurance_broker: "Insurance Broker",
-  estate_planner: "Estate Planner",
-  wealth_manager: "Wealth Manager",
-};
+// Look up a human label for any advisor type. Falls back to a Title-cased
+// version of the raw enum (e.g. "real_estate_agent" → "Real Estate Agent")
+// rather than letting the raw snake_case key leak into the UI when a new
+// type lands in the DB before PROFESSIONAL_TYPE_LABELS is updated.
+function formatAdvisorType(key: string): string {
+  if (key in PROFESSIONAL_TYPE_LABELS) {
+    return PROFESSIONAL_TYPE_LABELS[key as ProfessionalType];
+  }
+  return key
+    .split("_")
+    .map((w) => (w.length > 0 ? w[0]!.toUpperCase() + w.slice(1) : w))
+    .join(" ");
+}
 
 interface HomeAdvisorsTeaserProps {
   advisors: ReadonlyArray<HomeAdvisor>;
@@ -45,7 +49,7 @@ export default function HomeAdvisorsTeaser({ advisors, totalCount }: HomeAdvisor
     const entries = Array.from(counts.entries())
       .sort((a, b) => b[1] - a[1])
       .slice(0, 5);
-    return [{ key: "All", label: "All", n: totalCount }, ...entries.map(([k, n]) => ({ key: k, label: TYPE_LABEL[k] ?? k, n }))];
+    return [{ key: "All", label: "All", n: totalCount }, ...entries.map(([k, n]) => ({ key: k, label: formatAdvisorType(k), n }))];
   }, [advisors, totalCount]);
 
   const [filter, setFilter] = useState<string>("All");
@@ -179,7 +183,7 @@ export default function HomeAdvisorsTeaser({ advisors, totalCount }: HomeAdvisor
                     {a.verified && <DesignIcon name="shield-check" size={11} style={{ color: "var(--color-emerald-600)" }} />}
                   </div>
                   <div style={{ fontSize: 11, color: "var(--color-ink-500)", marginTop: 1 }}>
-                    {a.firm_name ?? (a.type ? TYPE_LABEL[a.type] ?? a.type : "Advisor")}
+                    {a.firm_name ?? (a.type ? formatAdvisorType(a.type) : "Advisor")}
                   </div>
                   <div style={{ fontSize: 10.5, color: "var(--color-ink-400)", marginTop: 1 }}>
                     {a.location_display ?? a.location_state ?? "Australia"}
