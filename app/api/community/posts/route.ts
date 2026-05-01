@@ -1,8 +1,15 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { logger } from "@/lib/logger";
 import { isRateLimited } from "@/lib/rate-limit";
+
+const PostBody = z.object({
+  thread_id: z.number().int().positive(),
+  body: z.string().trim().min(1).max(5000),
+  parent_id: z.number().int().positive().optional(),
+});
 
 const log = logger("community:posts");
 
@@ -24,16 +31,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const body = await req.json();
-    const { thread_id, body: postBody, parent_id } = body;
-
-    // Validation
-    if (!thread_id || !postBody) {
-      return NextResponse.json({ error: "Missing required fields: thread_id, body" }, { status: 400 });
+    const parsed = PostBody.safeParse(await req.json());
+    if (!parsed.success) {
+      return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "Invalid request body" }, { status: 400 });
     }
-    if (typeof postBody !== "string" || postBody.trim().length < 1 || postBody.trim().length > 5000) {
-      return NextResponse.json({ error: "Body must be 1-5000 characters" }, { status: 400 });
-    }
+    const { thread_id, body: postBody, parent_id } = parsed.data;
 
     const admin = createAdminClient();
 

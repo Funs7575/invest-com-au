@@ -1,8 +1,15 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { logger } from "@/lib/logger";
 import { isAllowed } from "@/lib/rate-limit-db";
+
+const VoteBody = z.object({
+  target_type: z.enum(["thread", "post"]),
+  target_id: z.number().int().positive(),
+  vote: z.union([z.literal(1), z.literal(-1)]),
+});
 
 const log = logger("community:vote");
 
@@ -20,19 +27,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Slow down — voting too fast" }, { status: 429 });
     }
 
-    const body = await req.json();
-    const { target_type, target_id, vote } = body;
-
-    // Validation
-    if (!target_type || !target_id || vote === undefined) {
-      return NextResponse.json({ error: "Missing required fields: target_type, target_id, vote" }, { status: 400 });
+    const parsed = VoteBody.safeParse(await req.json());
+    if (!parsed.success) {
+      return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "Invalid request body" }, { status: 400 });
     }
-    if (!["thread", "post"].includes(target_type)) {
-      return NextResponse.json({ error: "target_type must be 'thread' or 'post'" }, { status: 400 });
-    }
-    if (vote !== 1 && vote !== -1) {
-      return NextResponse.json({ error: "vote must be 1 or -1" }, { status: 400 });
-    }
+    const { target_type, target_id, vote } = parsed.data;
 
     const admin = createAdminClient();
     const table = target_type === "thread" ? "forum_threads" : "forum_posts";

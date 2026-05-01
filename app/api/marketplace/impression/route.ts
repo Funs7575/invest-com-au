@@ -1,6 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { recordImpression } from "@/lib/marketplace/allocation";
 import { createRateLimiter } from "@/lib/rate-limiter";
+
+const ImpressionBody = z.object({
+  campaign_id: z.string().min(1),
+  broker_slug: z.string().min(1),
+  page: z.string().optional(),
+  placement: z.string().optional(),
+});
 
 const isRateLimited = createRateLimiter(60_000, 60); // 60 impressions per minute per IP
 
@@ -15,15 +23,14 @@ const isRateLimited = createRateLimiter(60_000, 60); // 60 impressions per minut
  */
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const { campaign_id, broker_slug, page, placement } = body;
-
-    if (!campaign_id || !broker_slug) {
+    const parsed = ImpressionBody.safeParse(await req.json());
+    if (!parsed.success) {
       return NextResponse.json(
-        { error: "campaign_id and broker_slug are required" },
+        { error: parsed.error.issues[0]?.message ?? "Invalid request body" },
         { status: 400 }
       );
     }
+    const { campaign_id, broker_slug, page, placement } = parsed.data;
 
     // Rate limit check
     const forwarded = req.headers.get("x-forwarded-for");
