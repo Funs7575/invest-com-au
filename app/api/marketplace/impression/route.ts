@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
       const field = issue?.path[0];
       const msg = issue?.message ?? "Invalid request body";
       return NextResponse.json(
-        { error: field ? `${field}: ${msg}` : msg },
+        { error: field != null ? `${String(field)}: ${msg}` : msg },
         { status: 400 }
       );
     }
