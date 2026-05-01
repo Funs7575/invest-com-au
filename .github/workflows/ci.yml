@@ -391,6 +391,28 @@ jobs:
           GITHUB_BASE_REF: ${{ github.base_ref }}
         run: node scripts/check-rls-migrations.mjs
 
+  database-types-drift-gate:
+    name: Database types drift gate (lib/database.types.ts vs migrations)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: github.event_name == 'pull_request'
+    # Why this exists (I-02 / A-07): the audit found 91 tables declared in
+    # lib/database.types.ts that have no CREATE TABLE in supabase/migrations
+    # (docs/audits/drift-list.md, 2026-04-30).  Without a gate, that backlog
+    # silently re-grows every time a teammate adds a table via the Supabase
+    # dashboard but forgets to commit the matching migration — a fresh
+    # environment built from migrations alone would not match what the app
+    # expects.  This static-analysis check fails the build if the drift set
+    # grows; transitional drift is tolerated via .driftallowlist (one entry
+    # per drifted table, with a Stream A category comment).  As Stream A
+    # iterations land their backfill migrations, the corresponding allowlist
+    # entries are removed.  Skip token not required — this is static file
+    # analysis only.
+    steps:
+      - uses: actions/checkout@v6
+      - name: Check database.types.ts has migrations for every public table
+        run: node scripts/check-database-types-drift.mjs
+
   lighthouse-cwv-gate:
     name: Lighthouse — Core Web Vitals gate (hard-fail)
     runs-on: ubuntu-latest

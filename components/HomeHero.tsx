@@ -1,19 +1,7 @@
 import Link from "next/link";
 import { DesignIcon } from "@/components/design/DesignIcon";
 
-interface HomeHeroProps {
-  brokerCount: number;
-  listingCount: number;
-  professionalCount: number;
-  /**
-   * Reserved for future ISR-friendly "fresher than X" stamps in the
-   * stat strip; currently unused but kept on the props contract so
-   * callsites stay stable.
-   */
-  updatedMonth?: string;
-}
-
-export default function HomeHero({ brokerCount, listingCount, professionalCount }: HomeHeroProps) {
+export default function HomeHero() {
   return (
     <section
       style={{
@@ -43,13 +31,7 @@ export default function HomeHero({ brokerCount, listingCount, professionalCount 
         }}
       />
 
-      <div
-        style={{
-          position: "relative",
-          maxWidth: 920,
-          margin: "0 auto",
-        }}
-      >
+      <div style={{ position: "relative", maxWidth: 920, margin: "0 auto" }}>
         <span
           className="iv2-pill"
           style={{
@@ -70,80 +52,86 @@ export default function HomeHero({ brokerCount, listingCount, professionalCount 
               boxShadow: "0 0 0 4px rgba(242,88,34,.18)",
             }}
           />
-          Independent · ASIC-registered · No commission incentive · Est. 1996
+          Independent &middot; ASIC-registered &middot; No commission incentive &middot; Est. 1996
         </span>
 
         <h1
           className="font-display"
           style={{
-            fontSize: "clamp(38px, 5.5vw, 64px)",
-            lineHeight: 0.96,
+            fontSize: "clamp(38px, 5.5vw, 60px)",
+            lineHeight: 0.98,
             letterSpacing: "-.04em",
             fontWeight: 800,
             margin: "18px 0 0",
             color: "white",
-            maxWidth: 780,
+            maxWidth: 820,
+            textWrap: "balance",
           }}
         >
-          Where Australians figure out{" "}
-          <span style={{ color: "var(--color-coral-400)" }}>where their money should go.</span>
+          Australia&apos;s front door for{" "}
+          <span style={{ color: "var(--color-coral-400)" }}>investment decisions.</span>
         </h1>
 
         <p
           style={{
-            fontSize: 18,
-            lineHeight: 1.5,
+            fontSize: 17,
+            lineHeight: 1.55,
             color: "rgba(255,255,255,.78)",
-            maxWidth: 720,
+            maxWidth: 700,
             margin: "20px 0 0",
           }}
         >
-          Compare {brokerCount || 0} platforms, find {professionalCount.toLocaleString("en-AU")} advisors,
-          post a job, or browse {listingCount || 0} private deals — all in one place.
-          <br />
-          Take the 60-second quiz, or skip and explore.
+          One place to compare platforms, browse investment listings, find experts, or get matched
+          to the right next step &mdash; without the financial jargon.
         </p>
 
-        <div style={{ marginTop: 32, display: "flex", flexDirection: "column", gap: 10, alignItems: "flex-start" }}>
+        <div
+          style={{
+            marginTop: 28,
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 12,
+            alignItems: "center",
+          }}
+        >
           <Link
             href="/quiz"
             className="iv2-cta"
             style={{
-              fontSize: 17,
+              fontSize: 16,
               fontWeight: 700,
-              padding: "16px 28px",
+              padding: "14px 24px",
               borderRadius: 12,
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 10,
               background: "var(--color-coral-400)",
               color: "white",
-              boxShadow: "0 8px 24px rgba(242,88,34,.35)",
+              boxShadow: "0 8px 24px rgba(242,88,34,.32)",
             }}
           >
-            Take the 60-second quiz <DesignIcon name="arrow-right" size={18} strokeWidth={2.6} />
+            Get matched in 60 seconds <DesignIcon name="arrow-right" size={16} strokeWidth={2.6} />
           </Link>
-          <span style={{ fontSize: 12.5, color: "rgba(255,255,255,.5)", letterSpacing: ".01em" }}>
-            No email needed · Skip anytime
-          </span>
+          <Link
+            href="#routes"
+            style={{
+              fontSize: 14,
+              fontWeight: 700,
+              padding: "13px 20px",
+              borderRadius: 12,
+              border: "1px solid rgba(255,255,255,.18)",
+              color: "white",
+              background: "rgba(255,255,255,.04)",
+              textDecoration: "none",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+            }}
+          >
+            Browse manually <DesignIcon name="arrow-right" size={14} strokeWidth={2.4} />
+          </Link>
         </div>
-      </div>
 
-      <div
-        style={{
-          position: "relative",
-          maxWidth: 920,
-          margin: "44px auto 0",
-          textAlign: "center",
-          color: "rgba(255,255,255,.4)",
-          fontSize: 11,
-          fontWeight: 600,
-          letterSpacing: ".06em",
-          textTransform: "uppercase",
-        }}
-      >
-        Or skip — explore everything you can do here
-        <span aria-hidden style={{ marginLeft: 6 }}>↓</span>
+        <p style={{ marginTop: 24, fontSize: 11, color: "rgba(255,255,255,.45)" }}>
+          General information only. Always check licensing, fees, risks and suitability before proceeding.
+        </p>
       </div>
     </section>
   );

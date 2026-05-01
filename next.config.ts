@@ -120,6 +120,15 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
+      // /invest/listings retired — /invest IS the marketplace landing now (no
+      // more two-step "category aggregator → click again to see deals"). Pre-
+      // launch consolidation, no SEO equity to preserve. Permanent redirect
+      // keeps any deep-linked /invest/listings working.
+      {
+        source: "/invest/listings",
+        destination: "/invest",
+        permanent: true,
+      },
       // /start is retired — the unified quiz at /quiz serves both DIY and advisor tracks
       {
         source: "/start",

@@ -79,7 +79,7 @@ export default function HomeCompareDeepDive({ brokers }: HomeCompareDeepDiveProp
         <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 22, gap: 16, flexWrap: "wrap" }}>
           <div>
             <span className="iv2-mini" style={{ color: "var(--color-coral-600)" }}>
-              ● Compare · {brokers.length} platforms · verified monthly
+              ● Compare · {brokers.length} platforms
             </span>
             <h2
               className="font-display"
@@ -89,10 +89,15 @@ export default function HomeCompareDeepDive({ brokers }: HomeCompareDeepDiveProp
                 fontWeight: 800,
                 margin: "4px 0 0",
                 lineHeight: 1.05,
+                textWrap: "balance",
               }}
             >
-              Every fee. Seven categories. One source.
+              Key platform fees, features and trade-offs in one place.
             </h2>
+            <p style={{ fontSize: 13, color: "var(--color-ink-500)", margin: "6px 0 0", maxWidth: 620, lineHeight: 1.5 }}>
+              Start with a simple preview, then open the full comparison when you want to filter by
+              fees, features, account type or provider.
+            </p>
           </div>
           <Link href="/compare" className="iv2-cta" style={{ fontSize: 12.5 }}>
             See all comparisons <DesignIcon name="arrow-right" size={11} />
@@ -253,7 +258,7 @@ export default function HomeCompareDeepDive({ brokers }: HomeCompareDeepDiveProp
           </div>
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
             <Link href="/quiz" className="iv2-cta" style={{ fontSize: 12.5 }}>
-              60-second quiz <DesignIcon name="arrow-right" size={11} />
+              Get matched in 60s <DesignIcon name="arrow-right" size={11} />
             </Link>
             <Link
               href="/compare"

@@ -1,5 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
+import { slugify } from "@/lib/utils";
 
 export const runtime = "edge";
 export const maxDuration = 120;
@@ -197,10 +198,7 @@ OUTPUT FORMAT (return valid JSON):
     }
 
     // Create the draft article
-    const slug = item.title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-|-$/g, "");
+    const slug = slugify(item.title);
 
     const { data: article, error: insertErr } = await supabase
       .from("articles")

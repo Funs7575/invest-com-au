@@ -1,0 +1,134 @@
+# Database types drift allowlist (I-02 / A-07).
+#
+# Each entry is a table declared under `Database['public']['Tables']` in
+# `lib/database.types.ts` that has no `CREATE TABLE` statement in any
+# `supabase/migrations/*.sql` file.  This allowlist exists so the
+# `npm run audit:drift-types` CI gate can ship without first clearing the
+# 86-table historical drift backlog inventoried in
+# `docs/audits/drift-list.md` (generated 2026-04-30, refreshed 2026-05-01).
+#
+# As Stream A iterations (A-02 .. A-14, plus A-99 retirements) ship a
+# backfill migration for one of these tables, REMOVE the corresponding
+# entry from this file.  The gate emits a warning when an allowlist entry
+# is no longer drifted, so stale lines are surfaced on every CI run.
+#
+# Format: one table name per line.  Trailing `# comment` is ignored.
+# Whole-line `#` comments and blank lines are ignored.
+#
+# Categories follow the Stream A item map in docs/audits/drift-list.md.
+
+# A-04 (admin / audit)
+admin_audit_log
+
+# A-03 (advisor family)
+advisor_applications
+advisor_articles
+advisor_auth_tokens
+advisor_billing
+advisor_bookings
+advisor_booking_slots
+advisor_metrics_daily
+advisor_sessions
+advisor_specialties        # verify retirement before backfill
+advisor_verification_log
+
+# A-05 (affiliate / finance)
+affiliate_payout_reports
+affiliate_payout_variance
+conversion_events
+credit_packs
+finance_transactions
+subscriptions
+
+# A-06 (marketplace)
+allocation_decisions
+broker_accounts
+broker_activity_log
+broker_answers
+broker_data_changes
+broker_health_scores
+broker_packages
+broker_questions
+broker_review_invites
+broker_review_stats        # verify view vs table
+broker_wallets
+campaigns
+campaign_daily_stats
+campaign_events
+campaign_templates
+marketplace_invoices
+marketplace_placements
+sponsored_placement_bookings
+sponsored_placement_pricing
+wallet_transactions
+
+# A-07 (reference data)
+au_postcodes
+
+# A-08 (CRM / BD)
+bd_pipeline
+broker_outreach_log
+competitor_watch
+
+# A-09 (content tables)
+broker_transfer_guides
+content_calendar
+country_investment_profiles  # verify rename relationship to foreign_investment_dta
+fee_auto_rules
+fee_profiles
+fee_update_queue
+foreign_investment_rates     # verify whether folded into fi_* tables
+legal_documents
+regulatory_alerts
+switch_stories
+team_members
+
+# A-10 (consultations / courses)
+consultations
+consultation_bookings
+courses
+course_lessons
+course_progress
+course_purchases
+course_revenue
+
+# A-11 (ops / observability)
+cron_health_alerts
+posthog_events_mirror
+rate_limits
+webhook_delivery_queue
+
+# A-12 (email / lifecycle)
+investor_drip_log
+notification_preferences
+
+# A-13 (portfolio)
+portfolio_alerts
+portfolio_calculations     # verify usage; possibly retired
+portfolio_fee_snapshots
+portfolio_holdings         # verify; may be JSONB on user_portfolios
+user_portfolios
+
+# A-14 (Pro tier)
+pro_deals
+pro_deal_redemptions
+
+# A-02 (lead family / user data) — leftovers after main A-02 ship
+international_leads        # FK index exists but no CREATE TABLE — high priority
+lead_disputes
+user_reviews
+
+# A-99 (retirement / regenerate types — these tables look retired)
+article_moderation_log     # superseded by advisor_article_moderation_log
+content_products           # never shipped
+data_license_subscribers   # never shipped
+featured_plans             # superseded by sponsored_placement_*
+foreign_investment_flags   # renamed to foreign_investment_dta in 20260322 migration
+investor_journey_touchpoints  # superseded by attribution_touches
+sentiment_signals          # never shipped
+trading_performance_daily  # trading product never shipped
+trading_positions          # trading product never shipped
+trading_signals            # trading product never shipped
+
+# PostGIS extension-managed (out of scope — comes from CREATE EXTENSION postgis)
+spatial_ref_sys
