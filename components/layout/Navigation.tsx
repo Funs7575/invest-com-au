@@ -122,14 +122,16 @@ const listingsMenu = {
     { label: "SMSF Investment Guide", href: "/invest/smsf", desc: "What SMSFs invest in & how" },
   ],
   tools: [
-    { label: "All Investment Verticals", href: "/invest" },
-    { label: "Marketplace (All Listings)", href: "/invest/listings" },
+    // /invest IS the marketplace now (was the old /invest/listings before
+    // pre-launch consolidation). Single canonical link, no redundant
+    // "browse all" + "marketplace" entries.
+    { label: "Investment Marketplace", href: "/invest" },
     { label: "Private Equity", href: "/invest/private-equity" },
     { label: "Options & Derivatives", href: "/invest/options-trading" },
     { label: "Forex Trading", href: "/invest/forex" },
     { label: "Commodities", href: "/invest/commodities" },
     { label: "IPO Calendar", href: "/invest/ipos" },
-    { label: "FIRB-Eligible Only", href: "/invest/listings?firb=true" },
+    { label: "FIRB-Eligible Only", href: "/invest?firb=true" },
   ],
 };
 
@@ -312,8 +314,7 @@ const mobileSections = [
   {
     title: "Browse listings",
     items: [
-      { name: "All Investment Verticals", href: "/invest" },
-      { name: "Investment Marketplace", href: "/invest/listings" },
+      { name: "Investment Marketplace", href: "/invest" },
       { name: "Investment Funds", href: "/invest/funds" },
       { name: "Mining & Resources", href: "/invest/mining" },
       { name: "Oil & Gas", href: "/invest/oil-gas" },
@@ -676,8 +677,8 @@ export function Navigation() {
                   className="flex items-center justify-between p-3 bg-gradient-to-r from-amber-50 to-amber-100/60 border border-amber-200 rounded-xl mb-4 hover:border-amber-300 transition-colors group"
                 >
                   <div>
-                    <p className="font-bold text-slate-900 text-sm">All Investment Verticals</p>
-                    <p className="text-xs text-slate-500 mt-0.5">Every way to invest in Australia &mdash; 27 verticals, marketplace &amp; guides</p>
+                    <p className="font-bold text-slate-900 text-sm">Browse the full marketplace</p>
+                    <p className="text-xs text-slate-500 mt-0.5">Every active deal across 27 verticals &mdash; filterable in one place</p>
                   </div>
                   <svg className="w-5 h-5 text-amber-600 shrink-0 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -686,7 +687,7 @@ export function Navigation() {
 
                 <div className="grid grid-cols-4 gap-5">
                   <div>
-                    <p className="text-[0.60rem] font-bold text-amber-500 uppercase tracking-wider mb-2">Sectors &amp; Assets</p>
+                    <p className="text-[0.60rem] font-bold text-amber-500 uppercase tracking-wider mb-2">Browse deals</p>
                     <div className="space-y-0.5">
                       {listingsMenu.sectors.map((item) => (
                         <Link
@@ -716,7 +717,7 @@ export function Navigation() {
                     </div>
                   </div>
                   <div>
-                    <p className="text-[0.60rem] font-bold text-amber-500 uppercase tracking-wider mb-2">Markets &amp; Income</p>
+                    <p className="text-[0.60rem] font-bold text-amber-500 uppercase tracking-wider mb-2">Asset-class guides</p>
                     <div className="space-y-0.5">
                       {listingsMenu.marketsIncome.map((item) => (
                         <Link
@@ -731,7 +732,7 @@ export function Navigation() {
                     </div>
                   </div>
                   <div className="border-l border-slate-100 pl-4">
-                    <p className="text-[0.60rem] font-bold text-amber-500 uppercase tracking-wider mb-2">Quick Links</p>
+                    <p className="text-[0.60rem] font-bold text-amber-500 uppercase tracking-wider mb-2">More &amp; filters</p>
                     <div className="space-y-0.5">
                       {listingsMenu.tools.map((item) => (
                         <Link
