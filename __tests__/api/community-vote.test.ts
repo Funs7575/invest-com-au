@@ -31,7 +31,7 @@ import { POST } from "@/app/api/community/vote/route";
 
 const USER_ID = "user-abc";
 const AUTHOR_ID = "author-xyz";
-const TARGET_ID = "thread-123";
+const TARGET_ID = 123;
 
 function makeRequest(body?: unknown): NextRequest {
   return new NextRequest("http://localhost/api/community/vote", {

@@ -7,7 +7,7 @@ import { isAllowed } from "@/lib/rate-limit-db";
 
 const VoteBody = z.object({
   target_type: z.enum(["thread", "post"]),
-  target_id: z.string().min(1),
+  target_id: z.coerce.number().int().positive(),
   vote: z.union([z.literal(1), z.literal(-1)]),
 });
 

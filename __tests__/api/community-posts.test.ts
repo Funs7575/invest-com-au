@@ -95,7 +95,7 @@ function setupSuccessPath(withParent = false) {
 }
 
 const VALID_BODY = {
-  thread_id: "thread-1",
+  thread_id: 1,
   body: "This is a valid post body.",
 };
 
@@ -133,14 +133,14 @@ describe("POST /api/community/posts", () => {
   });
 
   it("returns 400 when body is empty (caught by missing-fields check)", async () => {
-    const res = await POST(makePost({ thread_id: "t1", body: "" }));
+    const res = await POST(makePost({ thread_id: 1, body: "" }));
     expect(res.status).toBe(400);
     const json = await res.json();
     expect(json.error).toMatch(/missing required fields/i);
   });
 
   it("returns 400 when body exceeds 5000 characters", async () => {
-    const res = await POST(makePost({ thread_id: "t1", body: "x".repeat(5001) }));
+    const res = await POST(makePost({ thread_id: 1, body: "x".repeat(5001) }));
     expect(res.status).toBe(400);
     const json = await res.json();
     expect(json.error).toMatch(/1-5000 characters/i);
@@ -184,7 +184,7 @@ describe("POST /api/community/posts", () => {
     mockAdminFrom
       .mockImplementationOnce(() => makeChain({ data: OPEN_THREAD, error: null })) // thread
       .mockImplementationOnce(() => makeChain({ data: null, error: { message: "no parent" } })); // parent
-    const res = await POST(makePost({ ...VALID_BODY, parent_id: "missing-parent" }));
+    const res = await POST(makePost({ ...VALID_BODY, parent_id: 9999 }));
     expect(res.status).toBe(404);
     const json = await res.json();
     expect(json.error).toMatch(/parent post not found/i);
@@ -233,7 +233,7 @@ describe("POST /api/community/posts", () => {
 
   it("succeeds with valid parent_id in same thread", async () => {
     setupSuccessPath(true);
-    const res = await POST(makePost({ ...VALID_BODY, parent_id: "parent-post-1" }));
+    const res = await POST(makePost({ ...VALID_BODY, parent_id: 1 }));
     expect(res.status).toBe(201);
   });
 });
