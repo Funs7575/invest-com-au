@@ -38,7 +38,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | L | `claude/audit-remediation/l-observability` | #289 MERGED 2026-04-29T10:18Z | last merged 2026-04-29T10:18Z | L-04/L-05 done out-of-loop. L-06..L-12 all done (merged via PR #289). L-02/L-03 deferred-post-launch (n8n dormant). L-01 needs-user (SENTRY_AUTH_TOKEN). L-10 false-positive (verified populating). **Stream L complete** (modulo L-01 needs-user). |
 | M | `claude/audit-remediation/m-01b-cover-image-backfill` (#283) · `m-02-versus-json-ld` (#296) · `m-05-glossary-linkifier` (#325) | #283/#296/#325 all MERGED | last merged 2026-05-01T10:29Z | M-01a done out-of-loop (PR #227). M-01b done (PR #283 — engineering side). M-02 done (PR #296). M-03 done (`85c7236`). M-04 done (`353fa3a`). M-05 done (PR #325). M-06 done (PR #283). M-07 done (PR #283). **Stream M complete.** |
 | N | `claude/audit-remediation/n-ux-perf` | #242 MERGED | last merged 2026-04-28 | N-01+N-02 done (`2ec6f89`) · N-03a/b/c done · N-04/N-05 FP · N-06 blocked (deferred-post-launch by founder 2026-05-01 — option 4 chosen) · N-07/N-08/N-09/N-10/N-11 done — **stream complete** (N-06 deferred). |
-| O | `claude/audit-remediation/o-rls-no-policy` (iters 1-4 via #235/#237/#239) · `o-iter6/forum` (#299) · `o-iter7/editorial-obs-secrets` (#300) · `o-iter8-rls-observability` (#366 parallel-agent) | #235/#237/#239/#299/#300 MERGED · #366 OPEN | last merged 2026-05-01T12:51Z | O-01 iter1-4 done. O-02 done. iter6 done (PR #299, 5 forum tables). iter7 done (PR #300, 9 editorial+obs+secrets tables). iter8 in-progress on #366 (parallel-agent, 8 obs+anti-abuse tables). **iter5 was apparently skipped/never landed in dedicated PR — gap noted.** O-03/O-04/O-05 pending. |
+| O | `claude/audit-remediation/o-rls-no-policy` (iters 1-4 via #235/#237/#239) · `o-iter6/forum` (#299) · `o-iter7/editorial-obs-secrets` (#300) · `o-iter8-rls-observability` (#366 parallel-agent) | #235/#237/#239/#299/#300 MERGED · #366 OPEN | last merged 2026-05-01T12:51Z | O-01 iter1-4 done. O-02 done. iter6 done (PR #299, 5 forum tables). iter7 done (PR #300, 9 editorial+obs+secrets tables). iter8 in-progress on #366 (parallel-agent, 8 obs+anti-abuse tables). **iter5 was apparently skipped/never landed in dedicated PR — gap noted.** O-03/O-04/O-05 pending. CI-rescue: merged `origin/main` (11 commits) into `o-iter8-rls-observability` → merge commit `d36344f0` pushed 2026-05-01; CI re-run pending. |
 | P | _not started_ | — | — | — |
 | Q | _not started_ | — | — | — |
 | R | `claude/audit-remediation/r-01-marketplace-allocation` | #290 MERGED 2026-04-29T10:05Z | last merged 2026-04-29T10:05Z | R-01 done (PR #290 — marketplace allocation + CPC billing tests). R-02..R-11 still pending. |
@@ -1421,6 +1421,12 @@ Two strategically important surfaces under-served by current nav: (1) investment
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-01 — CI rescue: stream O, PR #366 (O-01 iter8)
+
+- Phase 2 CI rescue: PR #366 (`o-iter8-rls-observability`) had red CI — branch was 11 commits behind main (merge base `c553ea95`).
+- Checked out branch, ran `git merge origin/main --no-edit` — clean merge, no conflicts. Merge commit `d36344f0` pushed with `HUSKY=0`.
+- Status: CI-RESCUE · stream=O · pr=#366
 
 ### 2026-05-01 — CI rescue: stream C, PR #360 (C-03)
 
