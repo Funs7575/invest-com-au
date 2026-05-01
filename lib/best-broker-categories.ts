@@ -19,6 +19,14 @@ export interface BestBrokerCategory {
   relatedLinks: { label: string; href: string }[];
   /** FAQ pairs for structured data */
   faqs: { question: string; answer: string }[];
+  /**
+   * Cross-vertical companion strip rendered at the bottom of the page.
+   * Each entry points to an *adjacent* service (specialist advisor type,
+   * sibling vertical pillar, or specific tool) so the page stops being a
+   * single-vertical funnel and becomes a multi-thread launchpad. Optional
+   * — categories without companions just don't render the strip.
+   */
+  companionLinks?: { label: string; sub: string; href: string }[];
 }
 
 const yr = CURRENT_YEAR;
@@ -79,6 +87,23 @@ const categories: BestBrokerCategory[] = [
           "CommSec is a well-known, CHESS-sponsored broker backed by Commonwealth Bank, but its $29.95 per trade brokerage is expensive for beginners making small, regular investments. Newer brokers offer $0-$5 trades with similar safety features.",
       },
     ],
+    companionLinks: [
+      {
+        label: "Take the Platform Quiz",
+        sub: "Two minutes — get a shortlist matched to your goals and budget",
+        href: "/quiz",
+      },
+      {
+        label: "Find a Financial Planner",
+        sub: "Talk to an AFSL-licensed planner before committing real money",
+        href: "/advisors/financial-planners",
+      },
+      {
+        label: "Park Cash While You Decide",
+        sub: "Compare high-interest savings accounts to keep funds working",
+        href: "/best/high-interest-savings",
+      },
+    ],
   },
   {
     slug: "us-shares",
@@ -137,6 +162,23 @@ const categories: BestBrokerCategory[] = [
           "Yes. As an Australian tax resident, you pay capital gains tax on profits from US shares. You may also have US withholding tax (15% with W-8BEN form) deducted from US dividends, which can be claimed as a foreign income tax offset on your Australian tax return.",
       },
     ],
+    companionLinks: [
+      {
+        label: "Capital Gains Tax on US Shares",
+        sub: "How Australian CGT and US withholding stack — W-8BEN, FITO, AUD reporting",
+        href: "/tax/capital-gains",
+      },
+      {
+        label: "Find a Tax Agent",
+        sub: "Specialists in foreign-share CGT and franking — before you sell, not after",
+        href: "/advisors/tax-agents",
+      },
+      {
+        label: "Send AUD to USD Cheaper",
+        sub: "Compare money-transfer providers — often beats broker FX by 0.40%+",
+        href: "/best/money-transfers",
+      },
+    ],
   },
   {
     slug: "low-fees",
@@ -184,6 +226,23 @@ const categories: BestBrokerCategory[] = [
         question: "Are $0 brokerage brokers safe?",
         answer:
           "Yes, as long as they're regulated by ASIC. Some $0 brokerage brokers are also CHESS-sponsored, providing the same share ownership protection as traditional brokers. Check our comparison table for safety details.",
+      },
+    ],
+    companionLinks: [
+      {
+        label: "Compare Research Tools",
+        sub: "Cheap brokers often skimp on research — bolt on a dedicated tool instead",
+        href: "/best/research-tools",
+      },
+      {
+        label: "How We Verify Fees",
+        sub: "Our methodology — what counts, what's hidden, what we audit quarterly",
+        href: "/how-we-verify",
+      },
+      {
+        label: "Take the Platform Quiz",
+        sub: "Lowest fee for your specific trading pattern — depends on volume and assets",
+        href: "/quiz",
       },
     ],
   },
@@ -289,6 +348,23 @@ const categories: BestBrokerCategory[] = [
           "Among SMSF-compatible brokers, costs vary significantly. Some charge $0 brokerage but don't support SMSF. The cheapest SMSF-compatible options tend to be those with lower per-trade fees combined with no SMSF-specific platform charges.",
       },
     ],
+    companionLinks: [
+      {
+        label: "Find an SMSF Accountant",
+        sub: "Setup, annual returns, and compliance — broker is only one piece of the stack",
+        href: "/advisors/smsf-accountants",
+      },
+      {
+        label: "Find an SMSF Auditor",
+        sub: "ASIC-approved auditor — every SMSF needs one annually, by law",
+        href: "/advisors/smsf-auditors",
+      },
+      {
+        label: "Compare Super Funds",
+        sub: "Run the numbers before you DIY — large funds beat many SMSFs under $200k",
+        href: "/super",
+      },
+    ],
   },
   {
     slug: "crypto",
@@ -335,6 +411,23 @@ const categories: BestBrokerCategory[] = [
         question: "What is the best crypto exchange in Australia?",
         answer:
           "The best Australian crypto exchanges are AUSTRAC-registered, support AUD deposits, and have transparent fees. Our top picks are rated on fee structure, supported coins, platform quality, and security features.",
+      },
+    ],
+    companionLinks: [
+      {
+        label: "Crypto Tax in Australia",
+        sub: "CGT events, staking income, and DeFi — what the ATO actually tracks",
+        href: "/tax/crypto",
+      },
+      {
+        label: "Find a Crypto Advisor",
+        sub: "Portfolio construction, tax structuring, and DeFi strategy from licensed pros",
+        href: "/advisors/crypto-advisors",
+      },
+      {
+        label: "Find a Tax Agent",
+        sub: "Crypto tax returns get hairy fast — specialists who handle wallet reconciliation",
+        href: "/advisors/tax-agents",
       },
     ],
   },
@@ -650,6 +743,23 @@ const categories: BestBrokerCategory[] = [
           "There is no legal minimum in Australia, but most experienced traders suggest at least $10,000-20,000 to make day trading viable after accounting for brokerage costs and to allow proper position sizing with sensible risk management.",
       },
     ],
+    companionLinks: [
+      {
+        label: "Compare Research Tools",
+        sub: "Charting, level-2 data, and screeners — execution platforms rarely include them",
+        href: "/best/research-tools",
+      },
+      {
+        label: "CFD & Forex Platforms",
+        sub: "If you need leverage and short selling — read the risk warnings first",
+        href: "/cfd",
+      },
+      {
+        label: "Find a Tax Agent",
+        sub: "Trader vs investor classification has huge tax consequences — get it right early",
+        href: "/advisors/tax-agents",
+      },
+    ],
   },
   {
     slug: "dividend-investing",
@@ -697,6 +807,23 @@ const categories: BestBrokerCategory[] = [
         question: "Do I need CHESS sponsorship to receive franking credits?",
         answer:
           "You receive franking credits regardless of custody model, but CHESS-sponsored brokers make the process more direct. Your shares are in your name, dividends come straight from the company, and tax reporting is clearer. Custodial brokers also pass through franking credits but the process may differ.",
+      },
+    ],
+    companionLinks: [
+      {
+        label: "How Franking Credits Work",
+        sub: "The Australia-only mechanic that turns 4% yields into ~5.7% grossed-up",
+        href: "/tax/franking-credits",
+      },
+      {
+        label: "Find a Financial Planner",
+        sub: "Yield-focused portfolio construction and SMSF pension-phase strategy",
+        href: "/advisors/financial-planners",
+      },
+      {
+        label: "Best CHESS-Sponsored Brokers",
+        sub: "Direct registry ownership — required for clean DRP and franking flow",
+        href: "/best/chess-sponsored",
       },
     ],
   },
@@ -751,6 +878,23 @@ const categories: BestBrokerCategory[] = [
         question: "How many ETFs do I need in my portfolio?",
         answer:
           "Most investors need only 2-4 ETFs for a well-diversified portfolio. A simple two-fund approach — one Australian market ETF and one international ETF — covers thousands of companies across dozens of countries. Adding more ETFs increases complexity without necessarily improving diversification.",
+      },
+    ],
+    companionLinks: [
+      {
+        label: "Compare Robo-Advisors",
+        sub: "Auto-rebalanced ETF portfolios for hands-off investors — set and forget",
+        href: "/best/robo-advisors",
+      },
+      {
+        label: "Take the Platform Quiz",
+        sub: "Match your DCA cadence and ETF mix to the right brokerage tier",
+        href: "/quiz",
+      },
+      {
+        label: "Find a Financial Planner",
+        sub: "Asset allocation and tax-efficient withdrawal strategy when the portfolio grows",
+        href: "/advisors/financial-planners",
       },
     ],
   },
@@ -1339,6 +1483,23 @@ const categories: BestBrokerCategory[] = [
           "As a rough guide: at 30 you might expect $50,000-80,000, at 40 around $150,000-250,000, and at 50 around $300,000-500,000. These vary widely depending on salary, contribution history, and fund performance. The key is whether you're on track for a comfortable retirement — the ASFA Retirement Standard estimates singles need ~$595,000 and couples ~$690,000 at retirement.",
       },
     ],
+    companionLinks: [
+      {
+        label: "Considering an SMSF?",
+        sub: "DIY super for control and direct property — only worthwhile above ~$200k balance",
+        href: "/best/smsf",
+      },
+      {
+        label: "Find a Financial Planner",
+        sub: "Salary-sacrifice strategy, contribution caps, and pension-phase planning",
+        href: "/advisors/financial-planners",
+      },
+      {
+        label: "Find an SMSF Specialist",
+        sub: "AFSL-authorised — required when SMSF advice strays into investment strategy",
+        href: "/advisors/smsf-specialists",
+      },
+    ],
   },
   // ──────────────────────────────────────────────
   // Property Investing
@@ -1396,6 +1557,23 @@ const categories: BestBrokerCategory[] = [
           "Fractional platforms in Australia must hold an AFSL and operate under ASIC regulation. Your investment is typically held in a trust structure. However, fractional property is less liquid than REITs — you may have to wait to sell your 'bricks'. Understand the platform's liquidity mechanism before investing.",
       },
     ],
+    companionLinks: [
+      {
+        label: "Find a Buyers Agent",
+        sub: "Source, evaluate, and negotiate investment property — independent of the seller",
+        href: "/advisors/buyers-agents",
+      },
+      {
+        label: "Compare Mortgage Brokers",
+        sub: "Investment-property loan structuring — interest-only, offset, LMI strategy",
+        href: "/advisors/mortgage-brokers",
+      },
+      {
+        label: "Negative Gearing Tax Guide",
+        sub: "How rental losses, depreciation, and CGT discount actually work in practice",
+        href: "/tax/negative-gearing",
+      },
+    ],
   },
   // ──────────────────────────────────────────────
   // CFD & Forex
@@ -1451,6 +1629,23 @@ const categories: BestBrokerCategory[] = [
         question: "How much money do you need to start CFD trading?",
         answer:
           "Most Australian CFD brokers have minimums of $200-500 to open an account. However, starting with a small balance and high leverage is extremely risky. Financial professionals often suggest only trading with money you can afford to lose entirely, and starting with a demo account to learn the platform.",
+      },
+    ],
+    companionLinks: [
+      {
+        label: "Compare Research Tools",
+        sub: "Charting, news, and economic calendars — most CFD platforms ship the basics only",
+        href: "/best/research-tools",
+      },
+      {
+        label: "Compare Share Brokers",
+        sub: "If you want to actually own the asset — CFDs are derivatives, not shares",
+        href: "/share-trading",
+      },
+      {
+        label: "Find a Tax Agent",
+        sub: "CFD P&L is fully taxable income — no CGT discount, frequent traders need help",
+        href: "/advisors/tax-agents",
       },
     ],
   },
@@ -1915,6 +2110,23 @@ const categories: BestBrokerCategory[] = [
     faqs: [
       { question: "Can you trade options in Australia?", answer: "Yes. ASX exchange-traded options are available through several Australian brokers. US options are accessible through international brokers like Interactive Brokers that accept Australian clients." },
     ],
+    companionLinks: [
+      {
+        label: "Compare Research Tools",
+        sub: "Greeks, IV surfaces, and strategy builders — broker tooling rarely cuts it",
+        href: "/best/research-tools",
+      },
+      {
+        label: "Best for Day Trading",
+        sub: "Execution platforms with the speed and pricing options traders actually need",
+        href: "/best/day-trading",
+      },
+      {
+        label: "Find a Tax Agent",
+        sub: "Premium income, exercise events, and assignment — options tax gets ugly",
+        href: "/advisors/tax-agents",
+      },
+    ],
   },
   {
     slug: "kids-savings-account",
@@ -2093,6 +2305,23 @@ const categories: BestBrokerCategory[] = [
         question: "Can I access the pensioner discount through an investment platform?",
         answer:
           "Investment platforms are separate from Centrelink's Age Pension system. However, some brokers offer senior discount brokerage or low-balance waivers — check with the platform directly.",
+      },
+    ],
+    companionLinks: [
+      {
+        label: "Find an Aged Care Advisor",
+        sub: "Means testing, RAD vs DAP, home-care packages — get the structure right early",
+        href: "/advisors/aged-care-advisors",
+      },
+      {
+        label: "Find an Estate Planner",
+        sub: "Wills, super beneficiary nominations, and intergenerational wealth transfer",
+        href: "/advisors/estate-planners",
+      },
+      {
+        label: "Compare Term Deposits",
+        sub: "Capital preservation for the income bucket — guaranteed rates, no market risk",
+        href: "/best/best-term-deposit-rates",
       },
     ],
   },
