@@ -79,7 +79,7 @@ export default function HomeCompareDeepDive({ brokers }: HomeCompareDeepDiveProp
         <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 22, gap: 16, flexWrap: "wrap" }}>
           <div>
             <span className="iv2-mini" style={{ color: "var(--color-coral-600)" }}>
-              ● Compare · {brokers.length} platforms · verified monthly
+              ● Compare · {brokers.length} platforms
             </span>
             <h2
               className="font-display"
@@ -89,10 +89,14 @@ export default function HomeCompareDeepDive({ brokers }: HomeCompareDeepDiveProp
                 fontWeight: 800,
                 margin: "4px 0 0",
                 lineHeight: 1.05,
+                textWrap: "balance",
               }}
             >
-              Every fee. Seven categories. One source.
+              Key platform fees, features and trade-offs in one place.
             </h2>
+            <p style={{ fontSize: 13, color: "var(--color-ink-500)", margin: "6px 0 0", maxWidth: 560, lineHeight: 1.5 }}>
+              A homepage preview &mdash; jump into a category for the full comparison.
+            </p>
           </div>
           <Link href="/compare" className="iv2-cta" style={{ fontSize: 12.5 }}>
             See all comparisons <DesignIcon name="arrow-right" size={11} />
