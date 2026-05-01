@@ -334,7 +334,7 @@ function InvestMegaDropdown({ isActive }: { isActive: boolean }) {
                 <Link href="/invest" onClick={() => setOpen(false)} className="block text-sm font-bold text-slate-900 hover:text-amber-600 py-1 transition-colors">
                   All Verticals
                 </Link>
-                <Link href="/invest/listings" onClick={() => setOpen(false)} className="block text-sm font-bold text-slate-900 hover:text-amber-600 py-1 transition-colors">
+                <Link href="/invest" onClick={() => setOpen(false)} className="block text-sm font-bold text-slate-900 hover:text-amber-600 py-1 transition-colors">
                   Marketplace
                 </Link>
                 <Link href="/invest/gold" onClick={() => setOpen(false)} className="block text-sm font-bold text-slate-900 hover:text-amber-600 py-1 transition-colors">
