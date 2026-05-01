@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+// admin — token-keyed lookup, no anon RLS path
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 
