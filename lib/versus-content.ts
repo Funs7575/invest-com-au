@@ -19,6 +19,22 @@ export interface VersusEditorial {
   sections: { heading: string; body: string }[];
   /** FAQ pairs for structured data */
   faqs?: { question: string; answer: string }[];
+  /**
+   * Optional "Or use both" panel content.
+   * Versus pages are hesitation moments — many serious investors actually
+   * run two brokers in parallel for different jobs (e.g. one for CHESS,
+   * one for $0 US shares). When present, this overrides the generic
+   * templated copy with pair-specific reasoning.
+   *
+   * `ctaA` / `ctaB` are optional CTA labels — when omitted, the panel
+   * falls back to the broker's standard benefit CTA.
+   */
+  orBoth?: {
+    title: string;
+    body: string;
+    ctaA?: string;
+    ctaB?: string;
+  };
 }
 
 const content: VersusEditorial[] = [
@@ -36,6 +52,10 @@ const content: VersusEditorial[] = [
       { question: "Is Stake or CommSec better?", answer: "Stake is better for fee-conscious investors who primarily trade ASX and US shares. CommSec is better for investors who want comprehensive research, margin lending, and the security of a big-bank broker." },
       { question: "Is Stake as safe as CommSec?", answer: "Both are CHESS-sponsored and ASIC-regulated. Stake holds an AFSL and is covered by a professional indemnity insurance policy. CommSec is backed by Commonwealth Bank. Both are considered safe for Australian investors." },
     ],
+    orBoth: {
+      title: "Or use both",
+      body: "Plenty of Australians keep CommSec for the bank-integrated research, margin lending and longer-term holdings, then run Stake alongside for $0 brokerage on regular ETF buys and US shares. Both are CHESS-sponsored, so each holding sits in your name on the ASX register either way.",
+    },
   },
   {
     key: "cmc-markets-vs-commsec",
@@ -50,6 +70,10 @@ const content: VersusEditorial[] = [
     faqs: [
       { question: "Is CMC Markets cheaper than CommSec?", answer: "Yes, significantly. CMC offers $0 on the first ASX trade daily (up to $1,000) and $11 or 0.10% for larger trades. CommSec charges $29.95 per trade. CMC also offers free international share trading." },
     ],
+    orBoth: {
+      title: "Or use both",
+      body: "These two play different roles well. CMC handles the day-to-day cheaply — a free daily ASX trade and $0 brokerage on US, UK, Canadian and Japanese shares. CommSec sits behind it for research, margin lending and integrated CBA banking on your core long-term holdings.",
+    },
   },
   {
     key: "moomoo-vs-stake",
@@ -85,6 +109,10 @@ const content: VersusEditorial[] = [
       { heading: "Fees for Large Trades", body: "IBKR's tiered pricing starts at 0.08% for ASX trades — on a $50,000 trade, that's $40 vs CommSec's $29.95. But on US trades, IBKR charges $0.005/share (often under $1 per trade) vs CommSec's $65.95. For international investors, IBKR saves thousands per year." },
       { heading: "Complexity Trade-off", body: "IBKR's Trader Workstation is powerful but intimidating. It's designed for professionals and active traders. CommSec's interface is simpler and more familiar to everyday Australians. If you just want to buy ASX shares and ETFs, CommSec's simplicity is an advantage." },
     ],
+    orBoth: {
+      title: "Or use both",
+      body: "A common pattern for investors with global exposure: CommSec for ASX holdings and CBA-integrated banking, Interactive Brokers for international markets where IBKR's per-share pricing and 150+ market access save thousands compared to CommSec's flat international fee.",
+    },
   },
   {
     key: "ic-markets-vs-pepperstone",
@@ -196,6 +224,10 @@ const content: VersusEditorial[] = [
       { heading: "Both Are CHESS-Sponsored", body: "Unusually for low-cost brokers, both Pearler and Stake offer CHESS sponsorship. Your shares are in your name on the ASX register with either platform." },
     ],
     faqs: [{ question: "Is Pearler or Stake better for ETF investing?", answer: "Pearler for automated recurring ETF investments. Stake for flexibility to trade both ETFs and individual stocks at $0." }],
+    orBoth: {
+      title: "Or use both",
+      body: "These work well as a pair: Pearler quietly auto-invests your core ETF allocation each fortnight or month, while Stake handles one-off ASX or US share trades when you want them. Both are CHESS-sponsored, so all your ASX holdings sit in your name on the register either way.",
+    },
   },
   {
     key: "selfwealth-vs-stake",
