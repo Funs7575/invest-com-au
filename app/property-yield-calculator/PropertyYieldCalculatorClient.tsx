@@ -6,9 +6,12 @@ import Icon from "@/components/Icon";
 import SocialProofCounter from "@/components/SocialProofCounter";
 import { trackEvent, trackPageDuration } from "@/lib/tracking";
 import { getStoredUtm } from "@/components/UtmCapture";
-import { formatCurrency } from "@/lib/utils";
 
 /* ─── helpers ─── */
+
+function formatCurrency(n: number): string {
+  return new Intl.NumberFormat("en-AU", { style: "currency", currency: "AUD", maximumFractionDigits: 0 }).format(n);
+}
 
 function formatPercent(n: number): string {
   return n.toFixed(2) + "%";
