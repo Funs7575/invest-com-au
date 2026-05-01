@@ -1,4 +1,5 @@
-import HeroQuizCard from "@/components/HeroQuizCard";
+import Link from "next/link";
+import { DesignIcon } from "@/components/design/DesignIcon";
 
 interface HomeHeroProps {
   brokerCount: number;
@@ -13,19 +14,12 @@ interface HomeHeroProps {
 }
 
 export default function HomeHero({ brokerCount, listingCount, professionalCount }: HomeHeroProps) {
-  const stats: ReadonlyArray<readonly [string, string]> = [
-    [String(listingCount || 0), "live listings"],
-    [professionalCount.toLocaleString("en-AU"), "advisors"],
-    [String(brokerCount || 0), "platforms"],
-    ["8", "countries"],
-  ];
-
   return (
     <section
       style={{
         background: "var(--color-ink-900)",
         color: "white",
-        padding: "48px 36px 56px",
+        padding: "64px 36px 56px",
         position: "relative",
         overflow: "hidden",
       }}
@@ -52,103 +46,94 @@ export default function HomeHero({ brokerCount, listingCount, professionalCount 
       <div
         style={{
           position: "relative",
-          maxWidth: 1280,
+          maxWidth: 920,
           margin: "0 auto",
-          display: "grid",
-          gridTemplateColumns: "1.1fr 1fr",
-          gap: 56,
-          alignItems: "center",
         }}
-        className="home-hero-grid"
       >
-        <div>
+        <span
+          className="iv2-pill"
+          style={{
+            background: "rgba(255,255,255,.06)",
+            color: "white",
+            border: "1px solid rgba(255,255,255,.14)",
+            fontSize: 11.5,
+            padding: "5px 12px",
+          }}
+        >
           <span
-            className="iv2-pill"
+            aria-hidden
             style={{
-              background: "rgba(255,255,255,.06)",
+              width: 6,
+              height: 6,
+              borderRadius: 99,
+              background: "var(--color-coral-400)",
+              boxShadow: "0 0 0 4px rgba(242,88,34,.18)",
+            }}
+          />
+          Independent · ASIC-registered · No commission incentive · Est. 1996
+        </span>
+
+        <h1
+          className="font-display"
+          style={{
+            fontSize: "clamp(38px, 5.5vw, 64px)",
+            lineHeight: 0.96,
+            letterSpacing: "-.04em",
+            fontWeight: 800,
+            margin: "18px 0 0",
+            color: "white",
+            maxWidth: 780,
+          }}
+        >
+          Where Australians figure out{" "}
+          <span style={{ color: "var(--color-coral-400)" }}>where their money should go.</span>
+        </h1>
+
+        <p
+          style={{
+            fontSize: 18,
+            lineHeight: 1.5,
+            color: "rgba(255,255,255,.78)",
+            maxWidth: 720,
+            margin: "20px 0 0",
+          }}
+        >
+          Compare {brokerCount || 0} platforms, find {professionalCount.toLocaleString("en-AU")} advisors,
+          post a job, or browse {listingCount || 0} private deals — all in one place.
+          <br />
+          Take the 60-second quiz, or skip and explore.
+        </p>
+
+        <div style={{ marginTop: 32, display: "flex", flexDirection: "column", gap: 10, alignItems: "flex-start" }}>
+          <Link
+            href="/quiz"
+            className="iv2-cta"
+            style={{
+              fontSize: 17,
+              fontWeight: 700,
+              padding: "16px 28px",
+              borderRadius: 12,
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 10,
+              background: "var(--color-coral-400)",
               color: "white",
-              border: "1px solid rgba(255,255,255,.14)",
-              fontSize: 11.5,
-              padding: "5px 12px",
+              boxShadow: "0 8px 24px rgba(242,88,34,.35)",
             }}
           >
-            <span
-              aria-hidden
-              style={{
-                width: 6,
-                height: 6,
-                borderRadius: 99,
-                background: "var(--color-coral-400)",
-                boxShadow: "0 0 0 4px rgba(242,88,34,.18)",
-              }}
-            />
-            Independent · ASIC-registered · No commission incentive · Est. 1996
+            Take the 60-second quiz <DesignIcon name="arrow-right" size={18} strokeWidth={2.6} />
+          </Link>
+          <span style={{ fontSize: 12.5, color: "rgba(255,255,255,.5)", letterSpacing: ".01em" }}>
+            No email needed · Skip anytime
           </span>
-
-          <h1
-            className="font-display"
-            style={{
-              fontSize: "clamp(38px, 5.5vw, 64px)",
-              lineHeight: 0.96,
-              letterSpacing: "-.04em",
-              fontWeight: 800,
-              margin: "18px 0 0",
-              color: "white",
-            }}
-          >
-            Where Australians figure out{" "}
-            <span style={{ color: "var(--color-coral-400)" }}>where their money should go.</span>
-          </h1>
-
-          <p
-            style={{
-              fontSize: 16,
-              lineHeight: 1.5,
-              color: "rgba(255,255,255,.72)",
-              maxWidth: 520,
-              margin: "18px 0 0",
-            }}
-          >
-            {listingCount || 0} vetted listings. {professionalCount.toLocaleString("en-AU")} verified advisors. {brokerCount || 0} fee-audited platforms. One 60-second quiz to find what fits — or skip it and dive in.
-          </p>
-
-          <div
-            style={{
-              display: "flex",
-              gap: 0,
-              marginTop: 26,
-              fontSize: 11,
-              color: "rgba(255,255,255,.55)",
-              flexWrap: "wrap",
-            }}
-          >
-            {stats.map(([n, l], i) => (
-              <span
-                key={l}
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  padding: i === 0 ? "0 28px 0 0" : "0 28px",
-                  borderLeft: i === 0 ? "none" : "1px solid rgba(255,255,255,.1)",
-                }}
-              >
-                <span className="font-mono tnum" style={{ fontSize: 22, color: "white", fontWeight: 700 }}>
-                  {n}
-                </span>
-                <span style={{ marginTop: 3 }}>{l}</span>
-              </span>
-            ))}
-          </div>
         </div>
-
-        <HeroQuizCard />
       </div>
 
       <div
         style={{
           position: "relative",
-          maxWidth: 1280,
-          margin: "28px auto 0",
+          maxWidth: 920,
+          margin: "44px auto 0",
           textAlign: "center",
           color: "rgba(255,255,255,.4)",
           fontSize: 11,
@@ -160,15 +145,6 @@ export default function HomeHero({ brokerCount, listingCount, professionalCount 
         Or skip — explore everything you can do here
         <span aria-hidden style={{ marginLeft: 6 }}>↓</span>
       </div>
-
-      <style>{`
-        @media (max-width: 900px) {
-          .home-hero-grid {
-            grid-template-columns: 1fr !important;
-            gap: 32px !important;
-          }
-        }
-      `}</style>
     </section>
   );
 }
