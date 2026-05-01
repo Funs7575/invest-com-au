@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 import { logger } from "@/lib/logger";
 import {
   absoluteUrl,
@@ -38,7 +38,7 @@ interface ScenarioSummary {
 
 async function fetchScenarios(): Promise<ScenarioSummary[]> {
   try {
-    const supabase = createAdminClient();
+    const supabase = await createClient();
     const { data, error } = await supabase
       .from("best_for_scenarios")
       .select("slug, h1, intro, target_user, display_order")

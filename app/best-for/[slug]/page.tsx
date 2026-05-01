@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 import {
   rankBrokersForScenario,
   type BrokerForScoring,
@@ -25,7 +25,7 @@ interface ScenarioRow {
 }
 
 async function getScenario(slug: string): Promise<ScenarioRow | null> {
-  const supabase = createAdminClient();
+  const supabase = await createClient();
   const { data } = await supabase
     .from("best_for_scenarios")
     .select("*")
@@ -36,7 +36,7 @@ async function getScenario(slug: string): Promise<ScenarioRow | null> {
 }
 
 async function getBrokers(): Promise<BrokerForScoring[]> {
-  const supabase = createAdminClient();
+  const supabase = await createClient();
   const { data } = await supabase
     .from("brokers")
     .select(
