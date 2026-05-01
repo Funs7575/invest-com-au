@@ -23,7 +23,7 @@ export default function HomePostAJob() {
         >
           <div>
             <span className="iv2-mini" style={{ color: "var(--color-coral-600)" }}>
-              ● Reverse marketplace · always free
+              ● Post a request · free
             </span>
             <h2
               className="font-display"
@@ -36,7 +36,7 @@ export default function HomePostAJob() {
                 textWrap: "balance",
               }}
             >
-              Or describe what you need. They come to you.
+              Post a request.
             </h2>
             <p
               style={{
@@ -44,11 +44,21 @@ export default function HomePostAJob() {
                 lineHeight: 1.55,
                 color: "var(--color-ink-600)",
                 margin: "14px 0 0",
-                maxWidth: 540,
+                maxWidth: 560,
               }}
             >
-              We send your brief to up to 5 verified advisors who specialise in your situation.
-              Average request gets 3&ndash;5 quotes within the first 24 hours. No obligation, free to post.
+              Describe what you need and have specialists come to you with proposals &mdash; like
+              Airtasker for investing decisions. Most requests hear back within a day.
+            </p>
+            <p
+              style={{
+                fontSize: 13,
+                color: "var(--color-ink-500)",
+                fontStyle: "italic",
+                margin: "10px 0 0",
+              }}
+            >
+              Best if you want specialists to come back with options.
             </p>
 
             <div style={{ display: "flex", gap: 10, marginTop: 22, flexWrap: "wrap", alignItems: "center" }}>
@@ -57,14 +67,14 @@ export default function HomePostAJob() {
                 className="iv2-cta"
                 style={{ fontSize: 14, padding: "12px 22px" }}
               >
-                Post a job &mdash; free <DesignIcon name="arrow-right" size={13} strokeWidth={2.4} />
+                Post a request <DesignIcon name="arrow-right" size={13} strokeWidth={2.4} />
               </Link>
               <Link
                 href="/quotes/recent-wins"
                 className="iv2-cta-ghost"
                 style={{ fontSize: 13 }}
               >
-                See recent jobs &amp; wins
+                See recent requests
               </Link>
             </div>
           </div>
@@ -81,9 +91,9 @@ export default function HomePostAJob() {
           >
             {(
               [
-                ["1", "Describe what you need", "60 seconds. No email until you're ready to send."],
-                ["2", "We match advisors", "Up to 5 verified specialists relevant to your situation."],
-                ["3", "Quotes come back", "Most jobs hear back within a day. You pick — or pass."],
+                ["1", "Describe your need", "A short brief. No email until you're ready to send."],
+                ["2", "Specialists respond", "Relevant pros come to you with quotes or proposals."],
+                ["3", "You pick", "Compare responses on your terms. Introductions only."],
               ] as const
             ).map(([n, title, sub]) => (
               <li
