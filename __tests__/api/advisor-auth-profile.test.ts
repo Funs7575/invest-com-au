@@ -9,6 +9,16 @@ const mockServerFrom = vi.fn();
 const mockAdminFrom = vi.fn();
 const supabaseCalls: Record<string, { method: string; args: unknown[] }[]> = {};
 
+// vi.hoisted() — vi.mock factories are hoisted; the captured fn must be too.
+// Post-C-02 the route delegates auth to requireAdvisorSession (helper).
+const { mockRequireAdvisorSession } = vi.hoisted(() => ({
+  mockRequireAdvisorSession: vi.fn(),
+}));
+
+vi.mock("@/lib/require-advisor-session", () => ({
+  requireAdvisorSession: mockRequireAdvisorSession,
+}));
+
 vi.mock("@/lib/supabase/server", () => ({
   createClient: vi.fn(async () => ({
     auth: { getUser: mockGetUser },
@@ -62,6 +72,8 @@ describe("PATCH /api/advisor-auth/profile", () => {
     mockAdminFrom.mockImplementation((table: string) =>
       createChainableBuilder(table, supabaseCalls),
     );
+    // Default: not authenticated. Tests flip this per-case below.
+    mockRequireAdvisorSession.mockResolvedValue(null);
     (isRateLimited as ReturnType<typeof vi.fn>).mockResolvedValue(false);
   });
 
@@ -78,17 +90,10 @@ describe("PATCH /api/advisor-auth/profile", () => {
   });
 
   it("updates allowed fields when authed via supabase", async () => {
+    // Helper handles auth.
+    mockRequireAdvisorSession.mockResolvedValue(99);
     mockGetUser.mockResolvedValue({
       data: { user: { id: "u-1", email: "a@b.com" } },
-    });
-    mockAdminFrom.mockImplementation((table: string) => {
-      const b = createChainableBuilder(table, supabaseCalls);
-      if (table === "professionals") {
-        b.maybeSingle = vi.fn(() =>
-          Promise.resolve({ data: { id: 99 }, error: null }),
-        );
-      }
-      return b;
     });
 
     const res = await PATCH(
@@ -102,7 +107,7 @@ describe("PATCH /api/advisor-auth/profile", () => {
     );
     expect(res.status).toBe(200);
 
-    // Server client (createClient) is what runs the update
+    // Post-C-02: route uses admin client for the update.
     const proCalls = supabaseCalls.professionals || [];
     const updateCall = proCalls.find((c) => c.method === "update");
     expect(updateCall).toBeDefined();
@@ -116,22 +121,15 @@ describe("PATCH /api/advisor-auth/profile", () => {
   });
 
   it("returns 500 when the update query errors", async () => {
+    mockRequireAdvisorSession.mockResolvedValue(99);
     mockGetUser.mockResolvedValue({
       data: { user: { id: "u-2", email: "a@b.com" } },
     });
+    // Post-C-02: route uses admin client for the update; awaited eq() returns
+    // {data, error} — return an error to trigger the 500.
     mockAdminFrom.mockImplementation((table: string) => {
       const b = createChainableBuilder(table, supabaseCalls);
       if (table === "professionals") {
-        b.maybeSingle = vi.fn(() =>
-          Promise.resolve({ data: { id: 99 }, error: null }),
-        );
-      }
-      return b;
-    });
-    mockServerFrom.mockImplementation((table: string) => {
-      const b = createChainableBuilder(table, supabaseCalls);
-      if (table === "professionals") {
-        // Override the awaited update result
         b.eq = vi.fn(() =>
           Promise.resolve({ data: null, error: { message: "db error" } }),
         );
@@ -144,20 +142,10 @@ describe("PATCH /api/advisor-auth/profile", () => {
   });
 
   it("authenticates via legacy session cookie when supabase user is absent", async () => {
+    // Helper translates the cookie into an advisorId; cookie path is now
+    // entirely an internal helper concern.
+    mockRequireAdvisorSession.mockResolvedValue(88);
     mockGetUser.mockResolvedValue({ data: { user: null } });
-    const futureExpiry = new Date(Date.now() + 86400 * 1000).toISOString();
-    mockAdminFrom.mockImplementation((table: string) => {
-      const b = createChainableBuilder(table, supabaseCalls);
-      if (table === "advisor_sessions") {
-        b.single = vi.fn(() =>
-          Promise.resolve({
-            data: { professional_id: 88, expires_at: futureExpiry },
-            error: null,
-          }),
-        );
-      }
-      return b;
-    });
 
     const res = await PATCH(
       makePatch({ bio: "from legacy" }, "legacy-cookie"),
@@ -166,20 +154,9 @@ describe("PATCH /api/advisor-auth/profile", () => {
   });
 
   it("returns 401 when legacy session is expired", async () => {
+    // Helper returns null for an expired cookie session.
+    mockRequireAdvisorSession.mockResolvedValue(null);
     mockGetUser.mockResolvedValue({ data: { user: null } });
-    const pastExpiry = new Date(Date.now() - 1000).toISOString();
-    mockAdminFrom.mockImplementation((table: string) => {
-      const b = createChainableBuilder(table, supabaseCalls);
-      if (table === "advisor_sessions") {
-        b.single = vi.fn(() =>
-          Promise.resolve({
-            data: { professional_id: 88, expires_at: pastExpiry },
-            error: null,
-          }),
-        );
-      }
-      return b;
-    });
 
     const res = await PATCH(makePatch({ bio: "x" }, "stale-cookie"));
     expect(res.status).toBe(401);
