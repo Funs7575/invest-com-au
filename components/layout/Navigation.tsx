@@ -73,17 +73,6 @@ const advisorsMenu = {
   ],
 };
 
-// Post a job — keep the dropdown small. The reverse marketplace doesn't need a
-// sprawling mega-menu; the primary action is "Post a brief", everything else
-// is supporting context.
-const postAJobMenu = {
-  primary: { label: "Post a brief — free", href: "/quotes/post", desc: "60 seconds, no email needed to start" },
-  supporting: [
-    { label: "See active jobs", href: "/quotes", desc: "Recent briefs from Australian investors" },
-    { label: "Recent wins", href: "/quotes/recent-wins", desc: "How others used the marketplace" },
-  ],
-};
-
 // Browse listings — combines the old `opportunitiesMenu` (sectors / markets /
 // income / tools) with property listings split out from the deleted
 // `propertyMenu`. Property professionals (mortgage brokers, buyer's agents)
@@ -155,34 +144,6 @@ const learnMenu = {
     { label: "Community Forum", href: "/community" },
     { label: "Annual Report", href: "/reports/annual" },
     { label: "Write a Review", href: "/reviews/write" },
-  ],
-};
-
-// ─── Tools & Calculators mega-menu (NEW) ─────────────────────────────────────
-const toolsMenu = {
-  feeTools: [
-    { label: "Quick Audit", href: "/quick-audit", desc: "30-second fee snapshot", badge: "NEW" },
-    { label: "Switching Calculator", href: "/switching-calculator", desc: "How much could you save?" },
-    { label: "Fee Simulator", href: "/fee-simulator", desc: "Real-time across all brokers", badge: "NEW" },
-    { label: "Trade Cost Calculator", href: "/trade-cost-calculator", desc: "What does a trade really cost?" },
-    { label: "US Share Costs", href: "/us-share-costs-calculator", desc: "Brokerage + FX hidden fees" },
-    { label: "All Calculators (25)", href: "/calculators", desc: "Browse the full collection" },
-  ],
-  portfolioTax: [
-    { label: "Portfolio X-Ray", href: "/portfolio-xray", desc: "Diversification + concentration", badge: "NEW" },
-    { label: "Tax Optimizer", href: "/tax-optimizer", desc: "CGT, harvesting & franking", badge: "NEW" },
-    { label: "CGT Calculator", href: "/cgt-calculator", desc: "Capital gains tax estimate" },
-    { label: "Franking Credits", href: "/franking-credits-calculator", desc: "Dividend tax + grossing-up" },
-    { label: "Compound Interest", href: "/compound-interest-calculator", desc: "Project investment growth" },
-    { label: "FIRE Calculator", href: "/fire-calculator", desc: "Financial independence number" },
-  ],
-  property: [
-    { label: "Mortgage Calculator", href: "/mortgage-calculator", desc: "Repayments & interest" },
-    { label: "Property Yield", href: "/property-yield-calculator", desc: "Gross & net rental yield" },
-    { label: "Property vs Shares", href: "/property-vs-shares-calculator", desc: "Compare returns" },
-    { label: "Retirement Calculator", href: "/retirement-calculator", desc: "Project your super" },
-    { label: "SMSF Calculator", href: "/smsf-calculator", desc: "Is SMSF worth it?" },
-    { label: "CHESS Lookup", href: "/chess-lookup", desc: "Is your broker safe?" },
   ],
 };
 
@@ -427,36 +388,13 @@ export function Navigation() {
   const isAdvisorsActive = ["/advisors", "/find-advisor", "/advisor/"].some(
     (p) => pathname === p || pathname.startsWith(p)
   );
-  // Post a job — the quotes reverse-marketplace surface.
-  const isPostAJobActive = pathname.startsWith("/quotes");
+  // Post-a-job + Tools active-state checks were removed in v5 — both
+  // mega-menus dropped from the top nav. The "Get matched" right-side CTA
+  // covers /quotes; calculators are accessed in-context from /calculators
+  // and elsewhere.
   const isLearnActive = ["/articles", "/article/", "/how-to", "/glossary", "/community", "/reports", "/reviews/write"].some(
     (p) => pathname === p || pathname.startsWith(p)
   );
-  const isToolsActive = [
-    "/calculators",
-    "/quick-audit",
-    "/portfolio-xray",
-    "/tax-optimizer",
-    "/fee-simulator",
-    "/switching-calculator",
-    "/trade-cost-calculator",
-    "/us-share-costs-calculator",
-    "/cgt-calculator",
-    "/franking-credits-calculator",
-    "/chess-lookup",
-    "/mortgage-calculator",
-    "/retirement-calculator",
-    "/property-yield-calculator",
-    "/property-vs-shares-calculator",
-    "/smsf-calculator",
-    "/compound-interest-calculator",
-    "/fire-calculator",
-    "/dividend-reinvestment-calculator",
-    "/tco-calculator",
-    "/savings-calculator",
-    "/super-contributions-calculator",
-    "/debt-calculator",
-  ].some((p) => pathname === p || pathname.startsWith(p));
   // Browse listings — covers /invest/* sectors AND /property/* (property
   // dissolved as a top-level; listings half lives here, professionals half
   // moved to Find an advisor).
@@ -481,7 +419,7 @@ export function Navigation() {
           <nav className="hidden lg:flex items-center gap-0.5" aria-label="Main navigation">
 
             {/* ─── 1. Compare Platforms ────────────────────────────────────────── */}
-            <MegaMenuDropdown label="Compare platforms" isActive={isPlatformsActive} menuWidth="min-w-[560px]">
+            <MegaMenuDropdown label="Compare" isActive={isPlatformsActive} menuWidth="min-w-[560px]">
               <div className="p-6">
                 <div className="mb-4">
                   <p className="text-xs text-slate-500 leading-relaxed">
@@ -543,7 +481,7 @@ export function Navigation() {
             </MegaMenuDropdown>
 
             {/* ─── 2. Find an advisor ──────────────────────────────────────────── */}
-            <MegaMenuDropdown label="Find an advisor" isActive={isAdvisorsActive} menuWidth="min-w-[760px]">
+            <MegaMenuDropdown label="Experts" isActive={isAdvisorsActive} menuWidth="min-w-[760px]">
               <div className="p-6">
                 <div className="mb-4">
                   <p className="text-xs text-slate-500 leading-relaxed">
@@ -634,43 +572,14 @@ export function Navigation() {
               </div>
             </MegaMenuDropdown>
 
-            {/* ─── 3. Post a job (NEW top-level — moat product) ────────────────── */}
-            <MegaMenuDropdown label="Post a job" isActive={isPostAJobActive} menuWidth="min-w-[420px]">
-              <div className="p-6">
-                <div className="mb-4">
-                  <p className="text-xs text-slate-500 leading-relaxed">
-                    Describe what you need. Up to 5 verified advisors come back with quotes &mdash; free, no email needed to start. <span className="font-semibold text-slate-700">Quotes in 24h.</span>
-                  </p>
-                </div>
-                <Link
-                  href={postAJobMenu.primary.href}
-                  className="flex items-center justify-between p-4 bg-emerald-500 hover:bg-emerald-600 rounded-xl mb-3 transition-colors group"
-                >
-                  <div>
-                    <p className="font-bold text-white text-sm">{postAJobMenu.primary.label}</p>
-                    <p className="text-xs text-emerald-50 mt-0.5">{postAJobMenu.primary.desc}</p>
-                  </div>
-                  <svg className="w-5 h-5 text-white shrink-0 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </Link>
-                <div className="space-y-0.5">
-                  {postAJobMenu.supporting.map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className="block px-3 py-2 rounded-lg hover:bg-emerald-50 transition-colors"
-                    >
-                      <div className="text-sm font-semibold text-slate-800">{item.label}</div>
-                      <div className="text-xs text-slate-500">{item.desc}</div>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            </MegaMenuDropdown>
+            {/* "Post a job" was removed in the v5 redesign — the "Get matched"
+                CTA on the right side of the nav is now the canonical entry to
+                the reverse-marketplace flow. The Find an advisor mega-menu
+                also has a side-by-side "Or have them come to you →" cross-link
+                to /quotes/post for visitors who land on Experts first. */}
 
             {/* ─── 4. Browse listings ──────────────────────────────────────────── */}
-            <MegaMenuDropdown label="Browse listings" isActive={isListingsActive} menuWidth="min-w-[800px]">
+            <MegaMenuDropdown label="Listings" isActive={isListingsActive} menuWidth="min-w-[800px]">
               <div className="p-5">
                 <Link
                   href="/invest"
@@ -749,86 +658,11 @@ export function Navigation() {
               </div>
             </MegaMenuDropdown>
 
-            {/* Tools & Calculators Mega-Menu (NEW) */}
-            <MegaMenuDropdown label="Tools" isActive={isToolsActive} menuWidth="min-w-[720px]">
-              <div className="p-6">
-                {/* Top CTA */}
-                <Link
-                  href="/quick-audit"
-                  className="flex items-center justify-between p-3.5 bg-gradient-to-r from-emerald-50 to-emerald-100/60 border border-emerald-200 rounded-xl mb-5 hover:border-emerald-300 transition-colors group"
-                >
-                  <div>
-                    <p className="font-bold text-slate-900 text-sm">How much are you paying in fees?</p>
-                    <p className="text-xs text-slate-500 mt-0.5">30-second audit — instant savings calculator</p>
-                  </div>
-                  <svg className="w-5 h-5 text-emerald-600 shrink-0 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </Link>
-
-                <div className="grid grid-cols-3 gap-5">
-                  <div>
-                    <p className="text-[0.65rem] font-bold text-slate-500 uppercase tracking-wider mb-3">Fee Tools</p>
-                    <div className="space-y-0.5">
-                      {toolsMenu.feeTools.map((item) => (
-                        <Link
-                          key={item.href}
-                          href={item.href}
-                          className="block px-2 py-2 rounded-lg hover:bg-emerald-50 transition-colors group/item"
-                        >
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-sm font-semibold text-slate-800 group-hover/item:text-emerald-900">{item.label}</span>
-                            {item.badge && (
-                              <span className="text-[0.55rem] font-extrabold px-1 py-0.5 bg-amber-100 text-amber-700 rounded uppercase tracking-wide">
-                                {item.badge}
-                              </span>
-                            )}
-                          </div>
-                          <div className="text-[0.65rem] text-slate-500">{item.desc}</div>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <p className="text-[0.65rem] font-bold text-slate-500 uppercase tracking-wider mb-3">Portfolio & Tax</p>
-                    <div className="space-y-0.5">
-                      {toolsMenu.portfolioTax.map((item) => (
-                        <Link
-                          key={item.href}
-                          href={item.href}
-                          className="block px-2 py-2 rounded-lg hover:bg-emerald-50 transition-colors group/item"
-                        >
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-sm font-semibold text-slate-800 group-hover/item:text-emerald-900">{item.label}</span>
-                            {item.badge && (
-                              <span className="text-[0.55rem] font-extrabold px-1 py-0.5 bg-amber-100 text-amber-700 rounded uppercase tracking-wide">
-                                {item.badge}
-                              </span>
-                            )}
-                          </div>
-                          <div className="text-[0.65rem] text-slate-500">{item.desc}</div>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <p className="text-[0.65rem] font-bold text-slate-500 uppercase tracking-wider mb-3">Property & Retirement</p>
-                    <div className="space-y-0.5">
-                      {toolsMenu.property.map((item) => (
-                        <Link
-                          key={item.href}
-                          href={item.href}
-                          className="block px-2 py-2 rounded-lg hover:bg-emerald-50 transition-colors group/item"
-                        >
-                          <div className="text-sm font-semibold text-slate-800 group-hover/item:text-emerald-900">{item.label}</div>
-                          <div className="text-[0.65rem] text-slate-500">{item.desc}</div>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </MegaMenuDropdown>
+            {/* "Tools" was removed as a top-level mega-menu in v5 — the four
+                top-level slots are reserved for Compare / Listings / Experts /
+                Learn. Calculators and tools remain accessible via /calculators
+                directly and via in-context links from comparison + sector
+                pillar pages. */}
 
             {/* Learn Mega-Menu */}
             <MegaMenuDropdown label="Learn" isActive={isLearnActive} menuWidth="min-w-[540px]">
@@ -893,10 +727,10 @@ export function Navigation() {
             </button>
             <AccountButton />
             <Link
-              href="/quiz"
+              href="/quotes/post"
               className="bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-slate-900 px-4 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm hover:shadow-md active:scale-[0.97] inline-flex items-center gap-2 cursor-pointer"
             >
-              Take the quiz
+              Get matched
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
@@ -915,10 +749,10 @@ export function Navigation() {
               </svg>
             </button>
             <Link
-              href="/quiz"
+              href="/quotes/post"
               className="bg-amber-500 text-slate-900 px-4 py-2 rounded-lg text-xs font-bold transition-all hover:bg-amber-600 min-h-11 inline-flex items-center cursor-pointer"
             >
-              Take the quiz
+              Get matched
             </Link>
             <button
               onClick={() => setMobileOpen((v) => !v)}
