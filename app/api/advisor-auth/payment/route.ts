@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { requireAdvisorSession } from "@/lib/require-advisor-session";
 import { getStripe } from "@/lib/stripe";
 import { logger } from "@/lib/logger";
 import { getSiteUrl } from "@/lib/url";
@@ -14,11 +15,6 @@ const CREDIT_PACKS = {
 
 type CreditPack = keyof typeof CREDIT_PACKS;
 
-interface PaymentBody {
-  advisor_id: number;
-  credit_pack: CreditPack;
-}
-
 /**
  * POST /api/advisor-auth/payment
  * Creates a Stripe Checkout session for advisor credit top-up.
@@ -26,83 +22,45 @@ interface PaymentBody {
  */
 export async function POST(request: NextRequest) {
   try {
-    // Verify advisor session
-    const sessionToken = request.cookies.get("advisor_session")?.value;
-    if (!sessionToken) {
+    const advisorId = await requireAdvisorSession(request);
+    if (!advisorId) {
       return NextResponse.json({ error: "Authentication required" }, { status: 401 });
     }
-    const adminAuth = createAdminClient();
-    const { data: advisorSession } = await adminAuth
-      .from("advisor_sessions")
-      .select("professional_id, expires_at")
-      .eq("session_token", sessionToken)
-      .gt("expires_at", new Date().toISOString())
-      .single();
-    if (!advisorSession) {
-      return NextResponse.json({ error: "Invalid or expired session" }, { status: 401 });
-    }
 
-    let body: Partial<PaymentBody>;
-
+    let body: { credit_pack?: unknown };
     try {
       body = await request.json();
     } catch {
-      return NextResponse.json(
-        { error: "Invalid JSON body." },
-        { status: 400 },
-      );
-    }
-
-    // Validate required fields
-    if (!body.advisor_id || typeof body.advisor_id !== "number") {
-      return NextResponse.json(
-        { error: "advisor_id is required and must be a number." },
-        { status: 400 },
-      );
+      return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
     }
 
     if (
       !body.credit_pack ||
-      !Object.keys(CREDIT_PACKS).includes(body.credit_pack)
+      !Object.keys(CREDIT_PACKS).includes(body.credit_pack as string)
     ) {
       return NextResponse.json(
-        {
-          error: `credit_pack must be one of: ${Object.keys(CREDIT_PACKS).join(", ")}.`,
-        },
+        { error: `credit_pack must be one of: ${Object.keys(CREDIT_PACKS).join(", ")}.` },
         { status: 400 },
       );
     }
 
-    // Verify caller owns this advisor_id
-    if (advisorSession.professional_id !== body.advisor_id) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
-
-    const pack = CREDIT_PACKS[body.credit_pack];
+    const pack = CREDIT_PACKS[body.credit_pack as CreditPack];
     const admin = createAdminClient();
 
-    // Verify advisor exists
     const { data: advisor, error: advisorError } = await admin
       .from("professionals")
       .select("id, name, email, stripe_customer_id, status")
-      .eq("id", body.advisor_id)
+      .eq("id", advisorId)
       .single();
 
     if (advisorError || !advisor) {
-      return NextResponse.json(
-        { error: "Advisor not found." },
-        { status: 404 },
-      );
+      return NextResponse.json({ error: "Advisor not found." }, { status: 404 });
     }
 
     if (!["active", "pending"].includes(advisor.status)) {
-      return NextResponse.json(
-        { error: "Advisor account is not active." },
-        { status: 403 },
-      );
+      return NextResponse.json({ error: "Advisor account is not active." }, { status: 403 });
     }
 
-    // Get or create Stripe customer
     let stripe;
     try {
       stripe = getStripe();
@@ -131,7 +89,6 @@ export async function POST(request: NextRequest) {
         .eq("id", advisor.id);
     }
 
-    // Create a pending top-up record
     const { data: topup } = await admin
       .from("advisor_credit_topups")
       .insert({
@@ -142,7 +99,6 @@ export async function POST(request: NextRequest) {
       .select("id")
       .single();
 
-    // Create Stripe Checkout session (one-time payment)
     const siteUrl = getSiteUrl();
 
     const session = await stripe.checkout.sessions.create({
@@ -163,8 +119,8 @@ export async function POST(request: NextRequest) {
       ],
       metadata: {
         type: "advisor_credit_topup",
-        advisor_id: String(body.advisor_id),
-        credit_pack: body.credit_pack,
+        advisor_id: String(advisorId),
+        credit_pack: body.credit_pack as string,
         credits: String(pack.leads),
         topup_id: String(topup?.id || ""),
       },
