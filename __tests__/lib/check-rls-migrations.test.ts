@@ -52,6 +52,18 @@ describe("extractCreatedTables", () => {
     const sql = "create table lower_case (id uuid);";
     expect(extractCreatedTables(sql)).toEqual(["lower_case"]);
   });
+
+  it("ignores CREATE TABLE mentions inside SQL line comments", () => {
+    // Regression: comment lines like "-- CREATE TABLE IF NOT EXISTS + DROP POLICY"
+    // previously caused "if" to be extracted as a table name when the optional
+    // IF NOT EXISTS group failed and the regex fell back to capturing "if".
+    const sql = `
+      -- Idempotency: CREATE TABLE IF NOT EXISTS + DROP POLICY IF EXISTS before each CREATE POLICY.
+      CREATE TABLE actual_table (id uuid);
+      ALTER TABLE actual_table ENABLE ROW LEVEL SECURITY;
+    `;
+    expect(extractCreatedTables(sql)).toEqual(["actual_table"]);
+  });
 });
 
 // ---------------------------------------------------------------------------
