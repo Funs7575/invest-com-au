@@ -49,7 +49,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | W | `claude/audit-remediation/w-01-hubconfig-schema` (#306) · `w-02-hub-hero` (#369 parallel-agent) · `w-new-01-calculator-reference-pattern` (#312) | #306/#312 MERGED · #369 OPEN | last merged 2026-04-30T17:43Z | W-01 done (PR #306). W-NEW-01 done (PR #312 — calculator regulator-reference test pattern). W-02 in-progress on #369 (parallel-agent — `<HubHero>` extraction). W-03..W-15 pending. |
 | X | `claude/audit-remediation/x-admin-backlog` (#257) · `x-02-best-for-admin-swap` (#367 parallel-agent) | #257 MERGED 2026-04-28T11:23Z · #367 OPEN | last merged 2026-04-28T11:23Z | X-01 done (PR #257 — decision matrix). X-02 in-progress on #367 (parallel-agent — best-for swap). X-03..X-09 pending. |
 | Y | `claude/audit-remediation/y-registry-nav` (#253) · `y-05-enrich-dated-stat-badge` (#347 parallel-agent) | #253 MERGED 2026-04-28T11:24Z · #347 OPEN | last merged 2026-04-28T11:24Z | Y-05 done (commit `fb9dec3`, PR #253) · Y-08 done (commit `8bb1d4d`, PR #253). Y-05-ENRICH in-progress on #347 (parallel-agent — sourcedAt/source/freshness on DatedStatBadge). Y-01..Y-04, Y-06, Y-07 pending. |
-| BB | `claude/audit-remediation/bb-03-cgt-regulator-ref` (#361 parallel-agent) · `bb-06-mortgage-stress-regulator-ref` (#368 parallel-agent) | both OPEN | parallel-agent in-progress | BB-03 in-progress on #361 (CGT calc vs ATO). BB-06 in-progress on #368 (mortgage stress test vs ASIC + APRA). Other BB items pending. |
+| BB | `claude/audit-remediation/bb-03-cgt-regulator-ref` (#361 parallel-agent) · `bb-06-mortgage-stress-regulator-ref` (#368 parallel-agent) | both OPEN | parallel-agent in-progress | BB-03 in-progress on #361 (CGT calc vs ATO). BB-06 in-progress on #368 (mortgage stress test vs ASIC + APRA). Other BB items pending. BB-03 CI-rescue: merged `origin/main` (15 commits) → merge commit `b4290a13` pushed 2026-05-01; CI re-run pending. |
 
 ---
 
@@ -1421,6 +1421,12 @@ Two strategically important surfaces under-served by current nav: (1) investment
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-01 — CI rescue: stream BB, PR #361 (BB-03)
+
+- Phase 2 CI rescue: PR #361 (`bb-03-cgt-regulator-ref`) had red CI — branch was 15 commits behind main (merge base `a925284d`).
+- Checked out branch, ran `git merge origin/main --no-edit` — clean merge, no conflicts. Merge commit `b4290a13` pushed with `HUSKY=0`.
+- Status: CI-RESCUE · stream=BB · pr=#361
 
 ### 2026-05-01 — CI rescue: stream O, PR #366 (O-01 iter8)
 
