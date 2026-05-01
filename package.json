@@ -22,6 +22,7 @@
     "audit:rls-isolation": "node scripts/check-rls-isolation.mjs",
     "audit:stripe-idempotency": "node scripts/check-stripe-idempotency.mjs",
     "audit:stale-dated-stats": "node scripts/check-stale-dated-stats.mjs",
+    "audit:dated-stats": "node scripts/check-stale-dated-stats.mjs",
     "audit:rls-migrations": "node scripts/check-rls-migrations.mjs",
     "audit:console-calls": "node scripts/check-console-calls.mjs",
     "audit:duplicate-functions": "node scripts/check-duplicate-functions.mjs",
