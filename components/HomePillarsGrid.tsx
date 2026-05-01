@@ -16,64 +16,62 @@ export default function HomePillarsGrid({ listingCount, professionalCount, broke
     icon: string;
     accent: string;
     badge: string;
-    featured?: boolean;
   }> = [
     {
       title: "Compare platforms",
-      sub: "Brokers, super, crypto, savings, robo — fees side-by-side.",
+      sub: "Brokers, super, crypto, savings, robo — fees side-by-side, verified monthly.",
       cta: "Open comparisons",
       href: "/compare",
       icon: "trending-down",
-      accent: "#60a5fa",
+      accent: "#2563eb",
       badge: `${brokerCount} platforms`,
     },
     {
-      title: "Speak with an advisor",
-      sub: "ASIC-registered. Free quotes from verified pros.",
-      cta: "Find an advisor",
-      href: "/find-advisor",
+      title: "Find an advisor",
+      sub: "ASIC-registered. Browse 30+ specialties — planners, mortgage brokers, accountants.",
+      cta: "Browse advisors",
+      href: "/advisors",
       icon: "users",
       accent: "var(--color-coral-500)",
       badge: `${professionalCount.toLocaleString("en-AU")} advisors`,
-      featured: true,
+    },
+    {
+      title: "Post a job",
+      sub: "Describe what you need. Up to 5 verified advisors come back with quotes — free, no email needed to start.",
+      cta: "Post a job — free",
+      href: "/quotes/post",
+      icon: "megaphone",
+      accent: "#059669",
+      badge: "Quotes in 24h",
     },
     {
       title: "Browse listings",
-      sub: "Funds, businesses, farmland, mining, commercial property.",
+      sub: "Funds, businesses, farmland, mining, commercial property — vetted before they list.",
       cta: "Open marketplace",
       href: "/invest/listings",
       icon: "sparkles",
-      accent: "#fbbf24",
+      accent: "#d97706",
       badge: `${listingCount} live`,
-    },
-    {
-      title: "Take the 60-sec quiz",
-      sub: "Tell us your goal — we'll point you the right way.",
-      cta: "Start the quiz",
-      href: "/quiz",
-      icon: "compass",
-      accent: "#34d399",
-      badge: "60 seconds",
     },
   ];
 
   return (
-    <section style={{ padding: "44px 36px 48px", maxWidth: 1280, margin: "0 auto" }}>
-      <div style={{ marginBottom: 18 }}>
+    <section style={{ padding: "56px 36px 60px", maxWidth: 1280, margin: "0 auto" }}>
+      <div style={{ marginBottom: 24 }}>
         <span className="iv2-mini" style={{ color: "var(--color-coral-600)" }}>
-          ● Everything you can do here
+          ● Products · 4 ways to use invest.com.au
         </span>
         <h2
           className="font-display"
           style={{
-            fontSize: 30,
+            fontSize: 32,
             letterSpacing: "-.028em",
             fontWeight: 800,
-            margin: "4px 0 0",
+            margin: "6px 0 0",
             lineHeight: 1.05,
           }}
         >
-          Four ways to use invest.com.au.
+          Four products. One independent hub.
         </h2>
       </div>
 
@@ -86,57 +84,55 @@ export default function HomePillarsGrid({ listingCount, professionalCount, broke
             style={{
               display: "flex",
               flexDirection: "column",
-              background: p.featured ? "var(--color-ink-900)" : "white",
-              color: p.featured ? "white" : "var(--color-ink-900)",
-              border: p.featured ? `1.5px solid ${p.accent}` : "1px solid #e5e7eb",
-              borderTop: p.featured ? `1.5px solid ${p.accent}` : `3px solid ${p.accent}`,
+              background: "white",
+              color: "var(--color-ink-900)",
+              border: "1px solid #e5e7eb",
+              borderTop: `4px solid ${p.accent}`,
               borderRadius: 14,
-              padding: "26px 22px 22px",
+              padding: "30px 26px 26px",
               textDecoration: "none",
               position: "relative",
-              boxShadow: p.featured
-                ? `0 12px 32px color-mix(in oklch, ${p.accent} 20%, transparent)`
-                : "0 1px 0 rgba(0,0,0,.02)",
-              minHeight: 240,
+              boxShadow: "0 1px 2px rgba(11,20,34,.04)",
+              minHeight: 280,
             }}
           >
             <div
               aria-hidden
               style={{
-                width: 56,
-                height: 56,
-                borderRadius: 14,
-                background: `color-mix(in oklch, ${p.accent} ${p.featured ? 22 : 14}%, transparent)`,
+                width: 64,
+                height: 64,
+                borderRadius: 16,
+                background: `color-mix(in oklch, ${p.accent} 14%, transparent)`,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
                 color: p.accent,
-                marginBottom: 16,
+                marginBottom: 20,
               }}
             >
-              <DesignIcon name={p.icon} size={28} strokeWidth={2.2} />
+              <DesignIcon name={p.icon} size={32} strokeWidth={2.2} />
             </div>
 
             <div
               className="font-display"
               style={{
-                fontSize: 21,
+                fontSize: 24,
                 fontWeight: 800,
-                lineHeight: 1.1,
-                letterSpacing: "-.022em",
-                marginBottom: 8,
+                lineHeight: 1.08,
+                letterSpacing: "-.024em",
+                marginBottom: 10,
                 textWrap: "balance",
-                color: p.featured ? "white" : "var(--color-ink-900)",
+                color: "var(--color-ink-900)",
               }}
             >
               {p.title}
             </div>
             <div
               style={{
-                fontSize: 13,
-                color: p.featured ? "rgba(255,255,255,.65)" : "var(--color-ink-500)",
-                lineHeight: 1.45,
-                marginBottom: 16,
+                fontSize: 13.5,
+                color: "var(--color-ink-500)",
+                lineHeight: 1.5,
+                marginBottom: 20,
                 flex: 1,
               }}
             >
@@ -159,9 +155,9 @@ export default function HomePillarsGrid({ listingCount, professionalCount, broke
                   color: p.accent,
                   textTransform: "uppercase",
                   letterSpacing: ".06em",
-                  background: `color-mix(in oklch, ${p.accent} ${p.featured ? 18 : 10}%, transparent)`,
-                  border: `1px solid color-mix(in oklch, ${p.accent} 30%, transparent)`,
-                  padding: "3px 8px",
+                  background: `color-mix(in oklch, ${p.accent} 10%, transparent)`,
+                  border: `1px solid color-mix(in oklch, ${p.accent} 28%, transparent)`,
+                  padding: "4px 9px",
                   borderRadius: 99,
                   whiteSpace: "nowrap",
                 }}
@@ -172,7 +168,7 @@ export default function HomePillarsGrid({ listingCount, professionalCount, broke
                 style={{
                   fontSize: 13,
                   fontWeight: 800,
-                  color: p.featured ? "white" : p.accent,
+                  color: p.accent,
                   display: "inline-flex",
                   alignItems: "center",
                   gap: 6,
