@@ -720,6 +720,7 @@ export default function QuizPage() {
       <QuizResultsScreen
         results={results}
         answers={scoringAnswers}
+        unifiedAnswers={answers}
         hasCryptoResult={hasCryptoResult}
         emailGate={false}
         gateEmail=""

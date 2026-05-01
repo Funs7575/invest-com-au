@@ -12,6 +12,7 @@ import QuizTopMatch from "./QuizTopMatch";
 import QuizComparisonTable from "./QuizComparisonTable";
 import QuizRunnerUps from "./QuizRunnerUps";
 import QuizResultsFooter from "./QuizResultsFooter";
+import ThreadCardsStrip, { type ThreadAnswers } from "./ThreadCardsStrip";
 
 interface ScoredResult {
   slug: string;
@@ -22,6 +23,7 @@ interface ScoredResult {
 interface Props {
   results: ScoredResult[];
   answers: string[];
+  unifiedAnswers: ThreadAnswers;
   hasCryptoResult: boolean;
   emailGate: boolean;
   gateEmail: string;
@@ -41,6 +43,7 @@ interface Props {
 export default function QuizResultsScreen({
   results,
   answers,
+  unifiedAnswers,
   hasCryptoResult,
   emailGate,
   gateEmail,
@@ -96,6 +99,7 @@ export default function QuizResultsScreen({
           {/* Confetti burst + emoji */}
           <div className="relative h-14 md:h-20 mb-1 md:mb-2" aria-hidden="true">
             <div className="confetti-container confetti-active">
+              {/* eslint-disable react-hooks/purity -- decorative confetti, deliberate randomness on each render */}
               {Array.from({ length: 24 }).map((_, i) => (
                 <span key={i} className="confetti-particle" style={{
                   '--confetti-x': `${-60 + Math.random() * 120}px`,
@@ -106,6 +110,7 @@ export default function QuizResultsScreen({
                   left: `${8 + (i / 24) * 84}%`,
                 } as React.CSSProperties} />
               ))}
+              {/* eslint-enable react-hooks/purity */}
             </div>
             <div className="absolute inset-0 flex items-center justify-center">
               <Icon name="trophy" size={36} className="celebrate-emoji text-amber-500 md:hidden" />
@@ -164,6 +169,11 @@ export default function QuizResultsScreen({
             </div>
           </>
         )}
+
+        {/* Your investing stack — multi-thread bundle cards conditional on quiz answers.
+            Renders above the leaderboard so users see investing as broker + super + savings + tax,
+            not just "pick a broker". Returns null when no thread matches the user's answers. */}
+        <ThreadCardsStrip answers={unifiedAnswers} />
 
         {/* Top Match */}
         {topMatch?.broker && (
