@@ -3,10 +3,10 @@ import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 const NotifyBody = z.object({
-  broker_slug: z.string("Required: broker_slug").min(1),
-  type: z.string("Required: type").min(1),
-  title: z.string("Required: title").min(1),
-  message: z.string("Required: message").min(1),
+  broker_slug: z.string().min(1),
+  type: z.string().min(1),
+  title: z.string().min(1),
+  message: z.string().min(1),
   link: z.string().optional(),
   send_email: z.boolean().default(false),
 });
@@ -36,7 +36,12 @@ export async function POST(req: NextRequest) {
 
     const parsed = NotifyBody.safeParse(await req.json());
     if (!parsed.success) {
-      return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "Invalid request body" }, { status: 400 });
+      const requiredFields = ["broker_slug", "type", "title", "message"];
+      const hasMissingRequired = parsed.error.issues.some(i => requiredFields.includes(String(i.path[0])));
+      const msg = hasMissingRequired
+        ? "broker_slug, type, title, and message are required"
+        : (parsed.error.issues[0]?.message ?? "Invalid request body");
+      return NextResponse.json({ error: msg }, { status: 400 });
     }
     const { broker_slug, type, title, message, link, send_email } = parsed.data;
 

@@ -6,8 +6,8 @@ import { logger } from "@/lib/logger";
 import { isRateLimited } from "@/lib/rate-limit";
 
 const PostBody = z.object({
-  thread_id: z.coerce.number("Missing required fields: thread_id, body").int().positive(),
-  body: z.string("Missing required fields: thread_id, body").trim()
+  thread_id: z.coerce.number().int().positive(),
+  body: z.string().trim()
     .min(1, "Missing required fields: thread_id, body")
     .max(5000, "Body must be 1-5000 characters"),
   parent_id: z.coerce.number().int().positive().optional(),
@@ -35,7 +35,11 @@ export async function POST(req: NextRequest) {
 
     const parsed = PostBody.safeParse(await req.json());
     if (!parsed.success) {
-      return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "Invalid request body" }, { status: 400 });
+      const issues = parsed.error.issues;
+      const hasThreadIdError = issues.some(i => i.path[0] === "thread_id");
+      const firstMsg = issues[0]?.message ?? "Invalid request body";
+      const msg = hasThreadIdError ? "Missing required fields: thread_id, body" : firstMsg;
+      return NextResponse.json({ error: msg }, { status: 400 });
     }
     const { thread_id, body: postBody, parent_id } = parsed.data;
 
