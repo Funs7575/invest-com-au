@@ -5,10 +5,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 // Sticky mobile bottom navigation — four tabs that mirror the homepage
-// route cards: Compare / Listings / Experts / Pathfinder. Replaces the
-// previous single-CTA MobileStickyAdvisorCta. Per v5 spec we don't
-// overload mobile with long menus — these four cover the dominant retail
-// intents.
+// route cards: Compare / Listings / Experts / Get matched. The fourth
+// tab points at /quiz (the guided matching flow); "Pathfinder" stays as
+// internal/explanatory language only.
 const TABS: ReadonlyArray<{ label: string; href: string; icon: React.ReactNode; matchPrefix: string }> = [
   {
     label: "Compare",
@@ -46,7 +45,7 @@ const TABS: ReadonlyArray<{ label: string; href: string; icon: React.ReactNode; 
     ),
   },
   {
-    label: "Pathfinder",
+    label: "Get matched",
     href: "/quiz",
     matchPrefix: "/quiz",
     icon: (
@@ -66,8 +65,8 @@ export default function MobileBottomNav() {
 
   // Avoid SSR/CSR mismatch: don't render the bar until after hydration so
   // pathname-based "active tab" highlighting reflects the real route.
-  // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional initial mount-only state set
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional initial mount-only state set
     setMounted(true);
   }, []);
 
