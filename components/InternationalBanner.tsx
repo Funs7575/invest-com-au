@@ -65,11 +65,14 @@ export default function InternationalBanner({ countryCode }: Props) {
   const slug = COUNTRY_SLUG_MAP[countryCode];
   const name = COUNTRY_NAMES[countryCode];
   const href = slug ? `/foreign-investment/${slug}` : "/foreign-investment";
+
+  // Geographic identifier first, action second — easier to scan in a glance
+  // ("In the UK?" reads faster than "Investing in Australia from the UK?").
   const message = name
-    ? `Investing in Australia from ${name}?`
-    : "Investing in Australia from overseas?";
+    ? `In ${name}?`
+    : "Outside Australia?";
   const linkText = name
-    ? `See our guide for ${name} investors →`
+    ? `See our guide for investing in Australia from ${name} →`
     : "See our international investor guide →";
 
   return (
@@ -78,15 +81,21 @@ export default function InternationalBanner({ countryCode }: Props) {
         <div className="flex items-center gap-2 min-w-0">
           <span className="text-sm leading-none shrink-0">🌏</span>
           <p className="text-xs font-medium text-amber-900 truncate">
-            <span className="hidden md:inline">{message} </span>
+            <span className="font-semibold">{message}</span>{" "}
             <Link
               href={href}
               className="font-bold text-amber-700 underline underline-offset-2 hover:text-amber-900"
             >
               {linkText}
             </Link>
-            {!name && (
-              <span className="hidden md:inline text-amber-700/70"> — FIRB rules, broker eligibility, double tax agreements &amp; specialist advisors.</span>
+            {name && (
+              <button
+                type="button"
+                onClick={handleDismiss}
+                className="hidden md:inline ml-2 text-amber-700/70 underline underline-offset-2 hover:text-amber-900"
+              >
+                Not in {name}? Switch view →
+              </button>
             )}
           </p>
         </div>
