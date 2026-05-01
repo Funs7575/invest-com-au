@@ -48,8 +48,18 @@ export default function HomePathfinder() {
               maxWidth: 540,
             }}
           >
-            Answer a few prompts and we&apos;ll route you to the right next step: comparison,
-            expert, listing or matched enquiry. (Pathfinder, internally.)
+            Answer a few quick questions and we&apos;ll show the best next step &mdash; compare
+            platforms, browse listings, find an expert, or post a request.
+          </p>
+          <p
+            style={{
+              fontSize: 12.5,
+              color: "var(--color-ink-500)",
+              fontStyle: "italic",
+              margin: "10px 0 0",
+            }}
+          >
+            Best if you&apos;re not sure where to start.
           </p>
           <ul
             style={{
