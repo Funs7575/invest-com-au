@@ -1,12 +1,18 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { requireAdvisorSession } from "@/lib/require-advisor-session";
 import type { NextRequest } from "next/server";
 
 // ── module mocks ──────────────────────────────────────────────────────────────
-
-const mockGetUser = vi.fn();
-const mockMaybeSingle = vi.fn();
-const mockSingle = vi.fn();
+// vi.mock() factories are hoisted by vitest to the top of the file BEFORE any
+// `const`/`let` declarations. Plain `const mock = vi.fn()` at module scope is
+// undefined inside the factory closure at hoist time, which is exactly what
+// the error "make sure there are no top level variables inside" was reporting.
+// vi.hoisted() runs alongside the mock-hoist so the mocks are usable both
+// inside the factory and in the test cases below.
+const { mockGetUser, mockMaybeSingle, mockSingle } = vi.hoisted(() => ({
+  mockGetUser: vi.fn(),
+  mockMaybeSingle: vi.fn(),
+  mockSingle: vi.fn(),
+}));
 
 vi.mock("@/lib/supabase/server", () => ({
   createClient: vi.fn().mockResolvedValue({
@@ -26,6 +32,9 @@ vi.mock("@/lib/supabase/admin", () => ({
     }),
   }),
 }));
+
+// Import the SUT AFTER vi.mock so the mocked modules resolve correctly.
+import { requireAdvisorSession } from "@/lib/require-advisor-session";
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 
