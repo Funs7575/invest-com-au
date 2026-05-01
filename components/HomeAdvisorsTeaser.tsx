@@ -75,15 +75,16 @@ export default function HomeAdvisorsTeaser({ advisors, totalCount }: HomeAdvisor
           >
             Find the right expert before you commit.
           </h2>
-          <p style={{ fontSize: 13, color: "var(--color-ink-500)", margin: "6px 0 0", maxWidth: 620, lineHeight: 1.5 }}>
-            Browse experts yourself, or get matched if you&apos;re not sure who you need.
+          <p style={{ fontSize: 13, color: "var(--color-ink-500)", margin: "6px 0 0", maxWidth: 560, lineHeight: 1.5 }}>
+            Browse specialists by what they help with, where they operate and how they can support
+            your next decision.
           </p>
         </div>
         <div style={{ display: "flex", gap: 8 }}>
           <Link href="/advisors" className="iv2-cta-ghost" style={{ fontSize: 12.5 }}>
             Browse all {totalCount.toLocaleString("en-AU")}
           </Link>
-          <Link href="/quiz" className="iv2-cta" style={{ fontSize: 12.5 }}>
+          <Link href="/quotes/post" className="iv2-cta" style={{ fontSize: 12.5 }}>
             Get matched
           </Link>
         </div>

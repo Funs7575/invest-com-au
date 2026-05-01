@@ -95,7 +95,7 @@ export default function HomeHero() {
           }}
         >
           <Link
-            href="/quiz"
+            href="#routes"
             className="iv2-cta"
             style={{
               fontSize: 16,
@@ -107,10 +107,10 @@ export default function HomeHero() {
               boxShadow: "0 8px 24px rgba(242,88,34,.32)",
             }}
           >
-            Get matched in 60 seconds <DesignIcon name="arrow-right" size={16} strokeWidth={2.6} />
+            Choose a route <DesignIcon name="arrow-right" size={16} strokeWidth={2.6} />
           </Link>
           <Link
-            href="#routes"
+            href="/quiz"
             style={{
               fontSize: 14,
               fontWeight: 700,
@@ -125,7 +125,7 @@ export default function HomeHero() {
               gap: 8,
             }}
           >
-            Browse manually <DesignIcon name="arrow-right" size={14} strokeWidth={2.4} />
+            Use the 60-second pathfinder <DesignIcon name="arrow-right" size={14} strokeWidth={2.4} />
           </Link>
         </div>
 

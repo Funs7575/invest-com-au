@@ -23,7 +23,7 @@ export default function HomePostAJob() {
         >
           <div>
             <span className="iv2-mini" style={{ color: "var(--color-coral-600)" }}>
-              ● Post a request · free
+              ● Get matched · free
             </span>
             <h2
               className="font-display"
@@ -36,7 +36,7 @@ export default function HomePostAJob() {
                 textWrap: "balance",
               }}
             >
-              Post a request.
+              Tell us what you need.
             </h2>
             <p
               style={{
@@ -47,8 +47,8 @@ export default function HomePostAJob() {
                 maxWidth: 560,
               }}
             >
-              Describe what you need and have specialists come to you with proposals — like
-              Airtasker for investing decisions. Most requests hear back within a day.
+              Describe your situation once and we&apos;ll route you towards relevant specialists,
+              comparisons, listings or next steps. Most matched enquiries hear back within a day.
             </p>
 
             <div style={{ display: "flex", gap: 10, marginTop: 22, flexWrap: "wrap", alignItems: "center" }}>
@@ -57,14 +57,14 @@ export default function HomePostAJob() {
                 className="iv2-cta"
                 style={{ fontSize: 14, padding: "12px 22px" }}
               >
-                Post a request <DesignIcon name="arrow-right" size={13} strokeWidth={2.4} />
+                Get matched <DesignIcon name="arrow-right" size={13} strokeWidth={2.4} />
               </Link>
               <Link
                 href="/quotes/recent-wins"
                 className="iv2-cta-ghost"
                 style={{ fontSize: 13 }}
               >
-                See recent requests
+                See recent matches
               </Link>
             </div>
           </div>
@@ -81,9 +81,9 @@ export default function HomePostAJob() {
           >
             {(
               [
-                ["1", "Describe your need", "A short brief. No email until you're ready to send."],
-                ["2", "Specialists respond", "Relevant pros come to you with quotes or proposals."],
-                ["3", "You pick", "Compare responses on your terms. Introductions only."],
+                ["1", "Describe your need", "60 seconds. No email until you're ready to send."],
+                ["2", "We route you", "To relevant specialists, comparisons or listings — whatever fits."],
+                ["3", "Compare options", "You pick. Introductions only — we don't decide for you."],
               ] as const
             ).map(([n, title, sub]) => (
               <li

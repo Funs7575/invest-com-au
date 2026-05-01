@@ -42,7 +42,7 @@ const platformsMenu = {
     { label: "Compare All Platforms", href: "/compare" },
     { label: "Broker vs Broker", href: "/versus" },
     { label: "Current Deals", href: "/deals" },
-    ...(SHOW_MATCH_LANGUAGE ? [{ label: "Get matched (60s)", href: "/quiz" }] : []),
+    ...(SHOW_MATCH_LANGUAGE ? [{ label: "Platform Quiz (60s)", href: "/quiz" }] : []),
     { label: "Fee Calculator", href: "/calculators" },
   ],
 };
@@ -727,7 +727,7 @@ export function Navigation() {
             </button>
             <AccountButton />
             <Link
-              href="/quiz"
+              href="/quotes/post"
               className="bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-slate-900 px-4 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm hover:shadow-md active:scale-[0.97] inline-flex items-center gap-2 cursor-pointer"
             >
               Get matched
@@ -749,7 +749,7 @@ export function Navigation() {
               </svg>
             </button>
             <Link
-              href="/quiz"
+              href="/quotes/post"
               className="bg-amber-500 text-slate-900 px-4 py-2 rounded-lg text-xs font-bold transition-all hover:bg-amber-600 min-h-11 inline-flex items-center cursor-pointer"
             >
               Get matched

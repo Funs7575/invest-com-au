@@ -94,9 +94,8 @@ export default function HomeCompareDeepDive({ brokers }: HomeCompareDeepDiveProp
             >
               Key platform fees, features and trade-offs in one place.
             </h2>
-            <p style={{ fontSize: 13, color: "var(--color-ink-500)", margin: "6px 0 0", maxWidth: 620, lineHeight: 1.5 }}>
-              Start with a simple preview, then open the full comparison when you want to filter by
-              fees, features, account type or provider.
+            <p style={{ fontSize: 13, color: "var(--color-ink-500)", margin: "6px 0 0", maxWidth: 560, lineHeight: 1.5 }}>
+              A homepage preview &mdash; jump into a category for the full comparison.
             </p>
           </div>
           <Link href="/compare" className="iv2-cta" style={{ fontSize: 12.5 }}>
@@ -258,7 +257,7 @@ export default function HomeCompareDeepDive({ brokers }: HomeCompareDeepDiveProp
           </div>
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
             <Link href="/quiz" className="iv2-cta" style={{ fontSize: 12.5 }}>
-              Get matched in 60s <DesignIcon name="arrow-right" size={11} />
+              60-second quiz <DesignIcon name="arrow-right" size={11} />
             </Link>
             <Link
               href="/compare"
