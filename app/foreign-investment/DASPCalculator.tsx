@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
 type VisaType = "standard" | "whm";
 
@@ -158,6 +159,21 @@ export default function DASPCalculator() {
               : taxFreeAmount > 0
               ? `Standard temp visa: ${fmt(taxFreeAmount)} (tax-free component) returned at 100%, ${fmt(taxedAmount)} (taxed element) at 35% WHT. Total received: ${fmt(netReceived)}.`
               : `Standard temp visa: 35% withheld on the taxed element (most employer SG contributions). You receive ${fmt(netReceived)} from ${fmt(balance)}.`}
+          </div>
+
+          <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div>
+              <p className="text-xs font-bold text-slate-900 mb-0.5">Want help claiming this?</p>
+              <p className="text-[0.7rem] text-slate-500 leading-snug">
+                DASP-processing specialists handle the paperwork, residency declaration, and ATO interaction so you don&apos;t leave money on the table.
+              </p>
+            </div>
+            <Link
+              href="/advisors/international-tax-specialists?specialty=DASP+Processing"
+              className="shrink-0 inline-flex items-center gap-1.5 px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-900 text-xs font-bold rounded-lg transition-colors"
+            >
+              Find a DASP specialist &rarr;
+            </Link>
           </div>
         </div>
       ) : (
