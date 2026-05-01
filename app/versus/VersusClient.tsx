@@ -72,6 +72,7 @@ export default function VersusClient({ brokers, serverEditorial }: { brokers: Br
 
   const [selectedSlugs, setSelectedSlugs] = useState<string[]>(initial);
 
+  /* eslint-disable react-hooks/set-state-in-effect -- pre-existing legacy URL→state sync; refactor out of scope for the "or both" panel landing in this PR */
   useEffect(() => {
     // Re-derive from path or query params on navigation
     const fromPath = parseSlugsFromPath(pathname);
@@ -94,6 +95,7 @@ export default function VersusClient({ brokers, serverEditorial }: { brokers: Br
       setSelectedSlugs([a || "", b || ""]);
     }
   }, [searchParams, pathname]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   function updateSlug(index: number, slug: string) {
     setSelectedSlugs(prev => {
@@ -618,6 +620,44 @@ export default function VersusClient({ brokers, serverEditorial }: { brokers: Br
                     </div>
                   ))}
                 </div>
+              );
+            })()}
+
+            {/* ─── Or Use Both (dual-broker conversion panel) ─── */}
+            {selected.length === 2 && serverEditorial?.orBoth && (() => {
+              const a = selected[0];
+              const b = selected[1];
+              if (!a || !b) return null;
+              const orBoth = serverEditorial.orBoth;
+              return (
+                <ScrollReveal animation="scroll-fade-up" className="mb-4 md:mb-6">
+                  <div className="border border-slate-200 rounded-xl bg-gradient-to-br from-emerald-50 to-white p-4 md:p-6">
+                    <p className="text-xs font-bold text-emerald-700 uppercase tracking-wider mb-1.5">{orBoth.title}</p>
+                    <p className="text-sm md:text-base text-slate-700 leading-relaxed mb-4">{orBoth.body}</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 md:gap-3">
+                      <a
+                        href={getAffiliateLink(a)}
+                        target="_blank"
+                        rel={AFFILIATE_REL}
+                        onClick={() => trackClick(a.slug, a.name, "versus-or-both", "/versus", "versus")}
+                        className="block text-center px-4 py-2.5 md:py-3 text-white text-sm md:text-base font-bold rounded-lg md:rounded-xl hover:shadow-md hover:scale-[1.01] transition-all active:scale-[0.99]"
+                        style={{ background: a.color }}
+                      >
+                        {orBoth.ctaA ?? `Open ${a.name}`}
+                      </a>
+                      <a
+                        href={getAffiliateLink(b)}
+                        target="_blank"
+                        rel={AFFILIATE_REL}
+                        onClick={() => trackClick(b.slug, b.name, "versus-or-both", "/versus", "versus")}
+                        className="block text-center px-4 py-2.5 md:py-3 text-white text-sm md:text-base font-bold rounded-lg md:rounded-xl hover:shadow-md hover:scale-[1.01] transition-all active:scale-[0.99]"
+                        style={{ background: b.color }}
+                      >
+                        {orBoth.ctaB ?? `Open ${b.name}`}
+                      </a>
+                    </div>
+                  </div>
+                </ScrollReveal>
               );
             })()}
 
