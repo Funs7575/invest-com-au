@@ -13,6 +13,14 @@ vi.mock("@/lib/supabase/server", () => ({
   createClient: vi.fn(async () => ({ from: mockServerFrom })),
 }));
 
+// The submit route inserts via the admin (service-role) client so the
+// anon RLS policy on investment_listings doesn't block pending submissions.
+// Alias admin.from onto mockServerFrom so existing tests keep working
+// without rewriting every mock chain.
+vi.mock("@/lib/supabase/admin", () => ({
+  createAdminClient: vi.fn(() => ({ from: mockServerFrom })),
+}));
+
 vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ error: vi.fn(), info: vi.fn(), warn: vi.fn(), debug: vi.fn() })),
 }));
