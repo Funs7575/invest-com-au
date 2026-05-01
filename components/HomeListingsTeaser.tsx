@@ -66,7 +66,7 @@ export default function HomeListingsTeaser({ listings, totalCount }: HomeListing
               Real assets, vetted before they list.
             </h2>
           </div>
-          <Link href="/invest/listings" className="iv2-cta-ghost" style={{ fontSize: 12.5 }}>
+          <Link href="/invest" className="iv2-cta-ghost" style={{ fontSize: 12.5 }}>
             Browse all {totalCount} <DesignIcon name="arrow-right" size={11} />
           </Link>
         </div>
@@ -74,7 +74,7 @@ export default function HomeListingsTeaser({ listings, totalCount }: HomeListing
         <div className="home-listings-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
           {visible.length === 0 && (
             <div style={{ gridColumn: "1 / -1", padding: "36px 18px", textAlign: "center", color: "var(--color-ink-400)", fontSize: 13 }}>
-              No listings yet — <Link href="/invest/listings" style={{ color: "var(--color-coral-600)", fontWeight: 700 }}>browse all</Link>.
+              No listings yet — <Link href="/invest" style={{ color: "var(--color-coral-600)", fontWeight: 700 }}>browse all</Link>.
             </div>
           )}
           {visible.map((l) => {
