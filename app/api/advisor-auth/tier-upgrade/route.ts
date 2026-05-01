@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { cookies } from "next/headers";
+import { requireAdvisorSession } from "@/lib/require-advisor-session";
 import { logger } from "@/lib/logger";
 import { getTier, isUpgrade, type AdvisorTier } from "@/lib/advisor-tiers";
 import { recordFinancialAudit } from "@/lib/financial-audit";
@@ -33,26 +32,8 @@ export const runtime = "nodejs";
  * current tier until the end of the billing cycle).
  */
 export async function POST(request: NextRequest) {
-  const cookieStore = await cookies();
-  const sessionToken = cookieStore.get("advisor_session")?.value;
-  if (!sessionToken) {
-    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-  }
-
-  const supabase = await createClient();
-  const { data: session } = await supabase
-    .from("advisor_sessions")
-    .select("professional_id, expires_at")
-    .eq("token", sessionToken)
-    .maybeSingle();
-
-  if (
-    !session ||
-    !session.professional_id ||
-    (session.expires_at && new Date(session.expires_at as string).getTime() < Date.now())
-  ) {
-    return NextResponse.json({ error: "Session expired" }, { status: 401 });
-  }
+  const advisorId = await requireAdvisorSession(request);
+  if (!advisorId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
 
   const body = await request.json().catch(() => ({}));
   const targetTier = typeof body.target_tier === "string" ? body.target_tier : null;
@@ -69,7 +50,7 @@ export async function POST(request: NextRequest) {
   const { data: advisor } = await admin
     .from("professionals")
     .select("id, email, name, advisor_tier")
-    .eq("id", session.professional_id)
+    .eq("id", advisorId)
     .maybeSingle();
   if (!advisor) {
     return NextResponse.json({ error: "Advisor not found" }, { status: 404 });
