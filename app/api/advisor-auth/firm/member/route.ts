@@ -1,27 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { requireAdvisorSession } from "@/lib/require-advisor-session";
 import { logger } from "@/lib/logger";
 
 const log = logger("advisor-auth:firm:member");
 
 async function getFirmAdmin(request: NextRequest) {
-  const sessionToken = request.cookies.get("advisor_session")?.value;
-  if (!sessionToken) return null;
+  const advisorId = await requireAdvisorSession(request);
+  if (!advisorId) return null;
 
-  const supabase = await createClient();
-  const { data: session } = await supabase
-    .from("advisor_sessions")
-    .select("professional_id, expires_at")
-    .eq("session_token", sessionToken)
-    .single();
-
-  if (!session || new Date(session.expires_at) < new Date()) return null;
-
-  const { data: advisor } = await supabase
+  const admin = createAdminClient();
+  const { data: advisor } = await admin
     .from("professionals")
     .select("id, name, firm_id, is_firm_admin")
-    .eq("id", session.professional_id)
+    .eq("id", advisorId)
     .single();
 
   if (!advisor?.is_firm_admin || !advisor.firm_id) return null;

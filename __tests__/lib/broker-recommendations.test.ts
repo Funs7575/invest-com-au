@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 
-vi.mock("@/lib/supabase/admin", () => ({
-  createAdminClient: () => ({ from: () => ({}) }),
+vi.mock("@/lib/supabase/server", () => ({
+  createClient: vi.fn(() => Promise.resolve({ from: vi.fn() })),
 }));
 
 import {

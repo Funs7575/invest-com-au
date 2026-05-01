@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { requireAdvisorSession } from "@/lib/require-advisor-session";
 import { sendAdminNotification } from "@/lib/advisor-emails";
 import { escapeHtml } from "@/lib/html-escape";
 import { logger } from "@/lib/logger";
@@ -9,31 +9,22 @@ const log = logger("advisor-auth:firm:seat-request");
 
 export async function POST(request: NextRequest) {
   try {
-    const sessionToken = request.cookies.get("advisor_session")?.value;
-    if (!sessionToken) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    const advisorId = await requireAdvisorSession(request);
+    if (!advisorId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
 
-    const supabase = await createClient();
-    const { data: session } = await supabase
-      .from("advisor_sessions")
-      .select("professional_id, expires_at")
-      .eq("session_token", sessionToken)
-      .single();
+    const admin = createAdminClient();
 
-    if (!session || new Date(session.expires_at) < new Date()) {
-      return NextResponse.json({ error: "Session expired" }, { status: 401 });
-    }
-
-    const { data: advisor } = await supabase
+    const { data: advisor } = await admin
       .from("professionals")
       .select("id, name, email, firm_id, is_firm_admin")
-      .eq("id", session.professional_id)
+      .eq("id", advisorId)
       .single();
 
     if (!advisor?.is_firm_admin || !advisor.firm_id) {
       return NextResponse.json({ error: "Only firm admins can request seat upgrades" }, { status: 403 });
     }
 
-    const { data: firm } = await supabase
+    const { data: firm } = await admin
       .from("advisor_firms")
       .select("name, max_seats")
       .eq("id", advisor.firm_id)
@@ -49,10 +40,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: `Requested seats must be more than current limit (${firm.max_seats}) and up to 200` }, { status: 400 });
     }
 
-    const adminSupabase = createAdminClient();
-
     // Check for recent pending request
-    const { data: recentRequest } = await adminSupabase
+    const { data: recentRequest } = await admin
       .from("firm_seat_requests")
       .select("id")
       .eq("firm_id", advisor.firm_id)
@@ -63,7 +52,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "You already have a pending seat upgrade request" }, { status: 409 });
     }
 
-    await adminSupabase.from("firm_seat_requests").insert({
+    await admin.from("firm_seat_requests").insert({
       firm_id: advisor.firm_id,
       requested_by: advisor.id,
       current_seats: firm.max_seats,

@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
 import NotificationsList from "./NotificationsList";
 
 export const dynamic = "force-dynamic";
@@ -28,8 +27,7 @@ export default async function AccountNotificationsPage() {
     redirect("/account/login?redirect=/account/notifications");
   }
 
-  const admin = createAdminClient();
-  const { data } = await admin
+  const { data } = await supabase
     .from("user_notifications")
     .select("id, type, title, body, link_url, read_at, created_at")
     .eq("user_id", user.id)
