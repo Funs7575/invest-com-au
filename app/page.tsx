@@ -208,6 +208,15 @@ export default async function HomePage() {
         />
       </ScrollFadeIn>
 
+      {/* Methodology section ("Zero of our revenue is a commission") moved
+          here between the four-ways grid and the marketplace teaser so the
+          trust signal lands BEFORE the visitor enters the inventory. By
+          the time they're scanning marketplace cards or platform fees,
+          they already know how the site is paid for. */}
+      <ScrollFadeIn>
+        <HomeHowWeEarn />
+      </ScrollFadeIn>
+
       <ScrollFadeIn>
         <HomeListingsTeaser listings={listingList} totalCount={totalListingCount} />
       </ScrollFadeIn>
@@ -226,10 +235,6 @@ export default async function HomePage() {
 
       <ScrollFadeIn>
         <HomeFridayBriefing />
-      </ScrollFadeIn>
-
-      <ScrollFadeIn>
-        <HomeHowWeEarn />
       </ScrollFadeIn>
 
       <MobileStickyAdvisorCta />
