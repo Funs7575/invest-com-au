@@ -18,6 +18,18 @@ vi.mock("@/lib/supabase/server", () => ({
 
 const mockRpc = vi.fn();
 
+// The route also reaches for the admin client (service-role) for the
+// enquiries-count increment + fallback update. Without this mock the real
+// client tries to initialise, fails on missing env vars in tests, throws
+// inside the outer try/catch, and the route returns 500. Aliasing admin
+// onto the same mock surface keeps the existing test setup working.
+vi.mock("@/lib/supabase/admin", () => ({
+  createAdminClient: vi.fn(() => ({
+    from: mockFrom,
+    rpc: mockRpc,
+  })),
+}));
+
 const mockSendEmail = vi.fn();
 vi.mock("@/lib/resend", () => ({
   sendEmail: (...args: unknown[]) => mockSendEmail(...args),
