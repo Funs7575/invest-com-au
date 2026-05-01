@@ -46,37 +46,48 @@ const platformsMenu = {
   ],
 };
 
-const propertyMenu = {
-  listings: [
-    { label: "New Developments", href: "/property/listings", desc: "Off-the-plan apartments & houses" },
-    { label: "Suburb Research", href: "/property/suburbs", desc: "Yields, growth & vacancy data" },
-    { label: "Investment Loans", href: "/property/finance", desc: "Compare rates from 8 lenders" },
-    { label: "Foreign Buyer Rules (FIRB)", href: "/property/foreign-investment", desc: "FIRB calculator & compliance guide" },
-  ],
-  professionals: [
-    { label: "Buyer's Agents", href: "/property/buyer-agents", desc: "Verified — free consultation" },
-    { label: "Real Estate Agents", href: "/advisors/real-estate-agents", desc: "Selling & listing specialists" },
-  ],
-};
-
+// Find an advisor — three columns. The cross-border specialty pages were
+// added in PR #337 and double as cross-border source-path triggers in
+// app/api/advisor-enquiry/route.ts. Surfacing them in the nav makes the
+// premium-pricing path discoverable, not buried.
 const advisorsMenu = {
+  wealth: [
+    { label: "Financial Advisers Directory", href: "/advisors/financial-planners", desc: "Wealth strategy & retirement" },
+    { label: "SMSF Accountants", href: "/advisors/smsf-accountants", desc: "Self-managed super specialists" },
+    { label: "Tax Agents", href: "/advisors/tax-agents", desc: "Tax planning & lodgement" },
+    { label: "Wealth Managers", href: "/advisors/wealth-managers", desc: "Portfolio management" },
+    { label: "Full-Service Stockbrokers", href: "/brokers/full-service", desc: "Morgans, Ord Minnett, Shaw & more" },
+    { label: "Insurance Brokers", href: "/advisors/insurance-brokers", desc: "Life & income protection" },
+    { label: "Estate Planners", href: "/advisors/estate-planners", desc: "Wills, trusts & succession" },
+  ],
   property: [
     { label: "Mortgage Brokers Directory", href: "/advisors/mortgage-brokers", desc: "Compare 30+ lenders — free" },
     { label: "Buyer's Agents", href: "/advisors/buyers-agents", desc: "Off-market access & negotiation" },
     { label: "Real Estate Agents", href: "/advisors/real-estate-agents", desc: "Selling & listing specialists" },
   ],
-  wealth: [
-    { label: "Financial Advisers Directory", href: "/advisors/financial-planners", desc: "Wealth strategy & retirement" },
-    { label: "SMSF Accountants", href: "/advisors/smsf-accountants", desc: "Self-managed super specialists" },
-    { label: "Full-Service Stockbrokers", href: "/brokers/full-service", desc: "Morgans, Ord Minnett, Shaw & more" },
-    { label: "Insurance Brokers", href: "/advisors/insurance-brokers", desc: "Life & income protection" },
-    { label: "Tax Agents", href: "/advisors/tax-agents", desc: "Tax planning & lodgement" },
-    { label: "Estate Planners", href: "/advisors/estate-planners", desc: "Wills, trusts & succession" },
-    { label: "Wealth Managers", href: "/advisors/wealth-managers", desc: "Portfolio management" },
+  crossBorder: [
+    { label: "International Tax Specialists", href: "/advisors/international-tax-specialists", desc: "DTA, FATCA, FIRB, expat tax" },
+    { label: "FIRB Specialists", href: "/advisors/firb-specialists", desc: "Non-resident property compliance" },
+    { label: "Migration Agents", href: "/advisors/migration-agents", desc: "Visa pathways & investor visas" },
   ],
 };
 
-const opportunitiesMenu = {
+// Post a job — keep the dropdown small. The reverse marketplace doesn't need a
+// sprawling mega-menu; the primary action is "Post a brief", everything else
+// is supporting context.
+const postAJobMenu = {
+  primary: { label: "Post a brief — free", href: "/quotes/post", desc: "60 seconds, no email needed to start" },
+  supporting: [
+    { label: "See active jobs", href: "/quotes", desc: "Recent briefs from Australian investors" },
+    { label: "Recent wins", href: "/quotes/recent-wins", desc: "How others used the marketplace" },
+  ],
+};
+
+// Browse listings — combines the old `opportunitiesMenu` (sectors / markets /
+// income / tools) with property listings split out from the deleted
+// `propertyMenu`. Property professionals (mortgage brokers, buyer's agents)
+// moved to `advisorsMenu.property` instead.
+const listingsMenu = {
   sectors: [
     { label: "Investment Funds", href: "/invest/funds", desc: "Managed, syndicated, infrastructure, wholesale" },
     { label: "Mining & Resources", href: "/invest/mining", desc: "Iron ore, copper & critical minerals" },
@@ -88,19 +99,20 @@ const opportunitiesMenu = {
     { label: "Renewable Energy", href: "/invest/renewable-energy", desc: "Solar, wind, battery" },
     { label: "Buy a Business", href: "/invest/buy-business", desc: "SME acquisitions" },
     { label: "Farmland & Agriculture", href: "/invest/farmland", desc: "Livestock, cropping, water" },
-    { label: "Commercial Property", href: "/invest/commercial-property", desc: "Office, industrial, hotels" },
     { label: "Startups & Tech", href: "/invest/startups", desc: "VC, angel, crowdfunding" },
     { label: "Infrastructure", href: "/invest/infrastructure", desc: "Toll roads, airports, utilities" },
   ],
-  markets: [
+  property: [
+    { label: "Investment Property Hub", href: "/property", desc: "Listings, suburb data, loans" },
+    { label: "New Developments", href: "/property/listings", desc: "Off-the-plan apartments & houses" },
+    { label: "Suburb Research", href: "/property/suburbs", desc: "Yields, growth & vacancy data" },
+    { label: "Commercial Property", href: "/invest/commercial-property", desc: "Office, industrial, hotels" },
+    { label: "Foreign Buyer Rules (FIRB)", href: "/property/foreign-investment", desc: "FIRB calculator & compliance" },
+  ],
+  marketsIncome: [
     { label: "Managed & Index Funds", href: "/invest/managed-funds", desc: "Vanguard, Betashares, iShares" },
     { label: "Dividend Investing", href: "/invest/dividend-investing", desc: "Franking credits & high-yield ASX" },
     { label: "A-REITs", href: "/invest/reits", desc: "ASX-listed property trusts" },
-    { label: "Options & Derivatives", href: "/invest/options-trading", desc: "ETOs, CFDs, warrants & futures" },
-    { label: "Forex Trading", href: "/invest/forex", desc: "AUD/USD, ASIC-regulated brokers" },
-    { label: "Commodities", href: "/invest/commodities", desc: "Gold, silver, oil & resource ETFs" },
-  ],
-  income: [
     { label: "Private Credit & P2P", href: "/invest/private-credit", desc: "La Trobe, Qualitas, Metrics" },
     { label: "Bonds & Fixed Income", href: "/invest/bonds", desc: "Government & corporate bonds" },
     { label: "Hybrid Securities", href: "/invest/hybrid-securities", desc: "Bank hybrids & APRA phase-out" },
@@ -112,7 +124,9 @@ const opportunitiesMenu = {
     { label: "All Investment Verticals", href: "/invest" },
     { label: "Marketplace (All Listings)", href: "/invest/listings" },
     { label: "Private Equity", href: "/invest/private-equity" },
-    { label: "Gold & Precious Metals", href: "/invest/gold" },
+    { label: "Options & Derivatives", href: "/invest/options-trading" },
+    { label: "Forex Trading", href: "/invest/forex" },
+    { label: "Commodities", href: "/invest/commodities" },
     { label: "IPO Calendar", href: "/invest/ipos" },
     { label: "FIRB-Eligible Only", href: "/invest/listings?firb=true" },
   ],
@@ -242,20 +256,87 @@ function MegaMenuDropdown({
 
 // ─── Mobile menu — collapsed to 3 sections ───────────────────────────────────
 
+// Mobile sections — mirror the desktop four-ways order:
+//   Compare platforms · Find an advisor · Post a job · Browse listings · Tools · Learn
 const mobileSections = [
   {
-    title: "Compare Platforms",
+    title: "Compare platforms",
     items: [
       { name: "Compare All Platforms", href: "/compare" },
       { name: "Share Trading", href: "/share-trading" },
       { name: "ETFs", href: "/compare/etfs" },
-      { name: "Crypto Exchanges", href: "/crypto" },
       { name: "Super Funds", href: "/super" },
+      { name: "Crypto Exchanges", href: "/crypto" },
       { name: "Savings Accounts", href: "/savings" },
+      { name: "Robo-Advisors", href: "/robo-advisors" },
+      { name: "Term Deposits", href: "/term-deposits" },
       { name: "CFD & Forex", href: "/cfd" },
       { name: "Non-Resident Brokers", href: "/compare/non-residents" },
       { name: "Deals & Offers", href: "/deals" },
       { name: "Investing from Overseas", href: "/foreign-investment" },
+    ],
+  },
+  {
+    title: "Find an advisor",
+    items: [
+      { name: "All Advisors Directory", href: "/advisors" },
+      { name: "Financial Advisers", href: "/advisors/financial-planners" },
+      { name: "SMSF Accountants", href: "/advisors/smsf-accountants" },
+      { name: "Tax Agents", href: "/advisors/tax-agents" },
+      { name: "Mortgage Brokers", href: "/advisors/mortgage-brokers" },
+      { name: "Buyer's Agents", href: "/advisors/buyers-agents" },
+      { name: "Real Estate Agents", href: "/advisors/real-estate-agents" },
+      { name: "Wealth Managers", href: "/advisors/wealth-managers" },
+      { name: "Insurance Brokers", href: "/advisors/insurance-brokers" },
+      { name: "Estate Planners", href: "/advisors/estate-planners" },
+      { name: "International Tax Specialists", href: "/advisors/international-tax-specialists" },
+      { name: "FIRB Specialists", href: "/advisors/firb-specialists" },
+      { name: "Migration Agents", href: "/advisors/migration-agents" },
+    ],
+  },
+  {
+    title: "Post a job",
+    items: [
+      { name: "Post a brief — free", href: "/quotes/post" },
+      { name: "See active jobs", href: "/quotes" },
+      { name: "Recent wins", href: "/quotes/recent-wins" },
+    ],
+  },
+  {
+    title: "Browse listings",
+    items: [
+      { name: "All Investment Verticals", href: "/invest" },
+      { name: "Investment Marketplace", href: "/invest/listings" },
+      { name: "Investment Funds", href: "/invest/funds" },
+      { name: "Mining & Resources", href: "/invest/mining" },
+      { name: "Oil & Gas", href: "/invest/oil-gas" },
+      { name: "Uranium", href: "/invest/uranium" },
+      { name: "Lithium", href: "/invest/lithium" },
+      { name: "Hydrogen", href: "/invest/hydrogen" },
+      { name: "Gold & Precious Metals", href: "/invest/gold" },
+      { name: "Renewable Energy", href: "/invest/renewable-energy" },
+      { name: "Buy a Business", href: "/invest/buy-business" },
+      { name: "Farmland & Agriculture", href: "/invest/farmland" },
+      { name: "Startups & Tech", href: "/invest/startups" },
+      { name: "Infrastructure", href: "/invest/infrastructure" },
+      { name: "Investment Property Hub", href: "/property" },
+      { name: "New Developments", href: "/property/listings" },
+      { name: "Suburb Research", href: "/property/suburbs" },
+      { name: "Commercial Property", href: "/invest/commercial-property" },
+      { name: "Foreign Buyer Rules (FIRB)", href: "/property/foreign-investment" },
+      { name: "Managed & Index Funds", href: "/invest/managed-funds" },
+      { name: "Dividend Investing", href: "/invest/dividend-investing" },
+      { name: "A-REITs", href: "/invest/reits" },
+      { name: "Private Credit & P2P", href: "/invest/private-credit" },
+      { name: "Bonds & Fixed Income", href: "/invest/bonds" },
+      { name: "Hybrid Securities", href: "/invest/hybrid-securities" },
+      { name: "Alternatives", href: "/invest/alternatives" },
+      { name: "Crypto Staking & DeFi", href: "/invest/crypto-staking" },
+      { name: "SMSF Investment Guide", href: "/invest/smsf" },
+      { name: "Options & Derivatives", href: "/invest/options-trading" },
+      { name: "Forex Trading", href: "/invest/forex" },
+      { name: "Private Equity", href: "/invest/private-equity" },
+      { name: "IPO Calendar", href: "/invest/ipos" },
     ],
   },
   {
@@ -275,59 +356,6 @@ const mobileSections = [
       { name: "All Calculators (25)", href: "/calculators" },
       { name: "CHESS Lookup", href: "/chess-lookup" },
       { name: "Fee Alerts", href: "/fee-alerts" },
-    ],
-  },
-  {
-    title: "Invest — Sectors",
-    items: [
-      { name: "All Investment Verticals", href: "/invest" },
-      { name: "Investment Funds", href: "/invest/funds" },
-      { name: "SMSF Hub", href: "/smsf" },
-      { name: "Research Reports", href: "/research" },
-      { name: "Investment Marketplace", href: "/invest/listings" },
-      { name: "Mining & Resources", href: "/invest/mining" },
-      { name: "Oil & Gas", href: "/invest/oil-gas" },
-      { name: "Uranium", href: "/invest/uranium" },
-      { name: "Lithium", href: "/invest/lithium" },
-      { name: "Hydrogen", href: "/invest/hydrogen" },
-      { name: "Gold & Precious Metals", href: "/invest/gold" },
-      { name: "Buy a Business", href: "/invest/buy-business" },
-      { name: "Farmland & Agriculture", href: "/invest/farmland" },
-      { name: "Commercial Property", href: "/invest/commercial-property" },
-      { name: "Renewable Energy", href: "/invest/renewable-energy" },
-      { name: "Franchise", href: "/invest/franchise" },
-      { name: "Startups & Tech", href: "/invest/startups" },
-      { name: "Infrastructure", href: "/invest/infrastructure" },
-    ],
-  },
-  {
-    title: "Invest — Markets & Income",
-    items: [
-      { name: "Managed & Index Funds", href: "/invest/managed-funds" },
-      { name: "Dividend Investing", href: "/invest/dividend-investing" },
-      { name: "A-REITs", href: "/invest/reits" },
-      { name: "Private Credit & P2P", href: "/invest/private-credit" },
-      { name: "Bonds & Fixed Income", href: "/invest/bonds" },
-      { name: "Hybrid Securities", href: "/invest/hybrid-securities" },
-      { name: "Alternatives", href: "/invest/alternatives" },
-      { name: "Crypto Staking & DeFi", href: "/invest/crypto-staking" },
-      { name: "SMSF Investment Guide", href: "/invest/smsf" },
-      { name: "Options & Derivatives", href: "/invest/options-trading" },
-      { name: "Forex Trading", href: "/invest/forex" },
-      { name: "Commodities", href: "/invest/commodities" },
-      { name: "Gold", href: "/invest/gold" },
-      { name: "Private Equity", href: "/invest/private-equity" },
-      { name: "IPOs", href: "/invest/ipos" },
-    ],
-  },
-  {
-    title: "Property & Advisors",
-    items: [
-      { name: "Mortgage Brokers Directory", href: "/advisors/mortgage-brokers" },
-      { name: "Buyer's Agents", href: "/advisors/buyers-agents" },
-      { name: "Financial Advisers Directory", href: "/advisors/financial-planners" },
-      { name: "Investment Property", href: "/property" },
-      { name: "All Advisors", href: "/advisors" },
     ],
   },
   {
@@ -385,12 +413,14 @@ export function Navigation() {
   const isPlatformsActive = ["/compare", "/best", "/versus", "/deals", "/broker"].some(
     (p) => pathname === p || pathname.startsWith(p + "/")
   );
-  const isPropertyActive = ["/property"].some(
-    (p) => pathname === p || pathname.startsWith(p + "/")
-  );
+  // Find an advisor — covers the directory, profile pages, and the dedicated
+  // specialist landing pages that double as cross-border source-path triggers
+  // (international-tax-specialists / firb-specialists / migration-agents).
   const isAdvisorsActive = ["/advisors", "/find-advisor", "/advisor/"].some(
     (p) => pathname === p || pathname.startsWith(p)
   );
+  // Post a job — the quotes reverse-marketplace surface.
+  const isPostAJobActive = pathname.startsWith("/quotes");
   const isLearnActive = ["/articles", "/article/", "/how-to", "/glossary", "/community", "/reports", "/reviews/write"].some(
     (p) => pathname === p || pathname.startsWith(p)
   );
@@ -419,7 +449,10 @@ export function Navigation() {
     "/super-contributions-calculator",
     "/debt-calculator",
   ].some((p) => pathname === p || pathname.startsWith(p));
-  const isOpportunitiesActive = pathname.startsWith("/invest");
+  // Browse listings — covers /invest/* sectors AND /property/* (property
+  // dissolved as a top-level; listings half lives here, professionals half
+  // moved to Find an advisor).
+  const isListingsActive = pathname.startsWith("/invest") || pathname.startsWith("/property");
 
   return (
     <>
@@ -439,17 +472,21 @@ export function Navigation() {
           {/* Desktop Nav */}
           <nav className="hidden lg:flex items-center gap-1" aria-label="Main navigation">
 
-            {/* Compare Platforms Mega-Menu */}
-            <MegaMenuDropdown label="Compare Platforms" isActive={isPlatformsActive} menuWidth="min-w-[540px]">
+            {/* ─── 1. Compare Platforms ────────────────────────────────────────── */}
+            <MegaMenuDropdown label="Compare platforms" isActive={isPlatformsActive} menuWidth="min-w-[560px]">
               <div className="p-6">
-                {/* Unified funnel CTA card */}
+                <div className="mb-4">
+                  <p className="text-xs text-slate-500 leading-relaxed">
+                    Brokers, super, crypto, savings, robo &mdash; fees side-by-side, verified monthly. <span className="font-semibold text-slate-700">80 platforms.</span>
+                  </p>
+                </div>
                 <Link
                   href={PRIMARY_CTA_HREF}
                   className="flex items-center justify-between p-3.5 bg-gradient-to-r from-amber-50 to-amber-100/60 border border-amber-200 rounded-xl mb-5 hover:border-amber-300 transition-colors group"
                 >
                   <div>
                     <p className="font-bold text-slate-900 text-sm">Not sure where to start?</p>
-                    <p className="text-xs text-slate-500 mt-0.5">Filter platforms by your preferences — 60 seconds</p>
+                    <p className="text-xs text-slate-500 mt-0.5">Filter platforms by your preferences &mdash; 60 seconds</p>
                   </div>
                   <svg className="w-5 h-5 text-amber-600 shrink-0 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -497,50 +534,69 @@ export function Navigation() {
               </div>
             </MegaMenuDropdown>
 
-            {/* Property Mega-Menu */}
-            <MegaMenuDropdown label="Property" isActive={isPropertyActive} menuWidth="min-w-[480px]">
+            {/* ─── 2. Find an advisor ──────────────────────────────────────────── */}
+            <MegaMenuDropdown label="Find an advisor" isActive={isAdvisorsActive} menuWidth="min-w-[760px]">
               <div className="p-6">
-                {/* Top CTA */}
+                <div className="mb-4">
+                  <p className="text-xs text-slate-500 leading-relaxed">
+                    ASIC-registered. Browse 30+ specialties &mdash; planners, mortgage brokers, accountants. <span className="font-semibold text-slate-700">167 advisors.</span>
+                  </p>
+                </div>
                 <Link
-                  href="/property"
-                  className="flex items-center justify-between p-4 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl mb-5 hover:border-amber-300 transition-colors group"
+                  href="/advisors"
+                  className="flex items-center justify-between p-3.5 bg-gradient-to-r from-amber-50 to-amber-100/60 border border-amber-200 rounded-xl mb-5 hover:border-amber-300 transition-colors group"
                 >
                   <div>
-                    <p className="font-bold text-slate-900 text-sm">Investment Property Hub</p>
-                    <p className="text-xs text-slate-500 mt-0.5">Listings · Suburb data · Buyer&apos;s agents · Loans</p>
+                    <p className="font-bold text-slate-900 text-sm">Browse all advisors</p>
+                    <p className="text-xs text-slate-500 mt-0.5">Search by location, specialty, fee structure</p>
                   </div>
-                  <svg className="w-5 h-5 text-amber-500 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <svg className="w-5 h-5 text-amber-600 shrink-0 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </Link>
 
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-3 gap-5">
                   <div>
-                    <p className="text-[0.65rem] font-bold text-slate-500 uppercase tracking-wider mb-3">Listings & Research</p>
-                    <div className="space-y-1">
-                      {propertyMenu.listings.map((item) => (
+                    <p className="text-[0.65rem] font-bold text-slate-500 uppercase tracking-wider mb-3">Wealth & Tax</p>
+                    <div className="space-y-0.5">
+                      {advisorsMenu.wealth.map((item) => (
                         <Link
                           key={item.href}
                           href={item.href}
-                          className="block px-3 py-2.5 rounded-lg hover:bg-amber-50 transition-colors"
+                          className="block px-2 py-1.5 rounded-lg hover:bg-amber-50 transition-colors"
                         >
-                          <div className="text-sm font-semibold text-slate-800">{item.label}</div>
-                          <div className="text-xs text-slate-500">{item.desc}</div>
+                          <div className="text-[0.8rem] font-semibold text-slate-800">{item.label}</div>
+                          <div className="text-[0.65rem] text-slate-500 leading-tight">{item.desc}</div>
                         </Link>
                       ))}
                     </div>
                   </div>
                   <div>
-                    <p className="text-[0.65rem] font-bold text-slate-500 uppercase tracking-wider mb-3">Professionals</p>
-                    <div className="space-y-1">
-                      {propertyMenu.professionals.map((item) => (
+                    <p className="text-[0.65rem] font-bold text-slate-500 uppercase tracking-wider mb-3">Property</p>
+                    <div className="space-y-0.5">
+                      {advisorsMenu.property.map((item) => (
                         <Link
                           key={item.href}
                           href={item.href}
-                          className="block px-3 py-2.5 rounded-lg hover:bg-amber-50 transition-colors"
+                          className="block px-2 py-1.5 rounded-lg hover:bg-amber-50 transition-colors"
                         >
-                          <div className="text-sm font-semibold text-slate-800">{item.label}</div>
-                          <div className="text-xs text-slate-500">{item.desc}</div>
+                          <div className="text-[0.8rem] font-semibold text-slate-800">{item.label}</div>
+                          <div className="text-[0.65rem] text-slate-500 leading-tight">{item.desc}</div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-[0.65rem] font-bold text-slate-500 uppercase tracking-wider mb-3">Cross-border</p>
+                    <div className="space-y-0.5">
+                      {advisorsMenu.crossBorder.map((item) => (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          className="block px-2 py-1.5 rounded-lg hover:bg-amber-50 transition-colors"
+                        >
+                          <div className="text-[0.8rem] font-semibold text-slate-800">{item.label}</div>
+                          <div className="text-[0.65rem] text-slate-500 leading-tight">{item.desc}</div>
                         </Link>
                       ))}
                     </div>
@@ -549,17 +605,51 @@ export function Navigation() {
               </div>
             </MegaMenuDropdown>
 
-            {/* Invest Mega-Menu */}
-            <MegaMenuDropdown label="Invest" isActive={isOpportunitiesActive} menuWidth="min-w-[780px]">
+            {/* ─── 3. Post a job (NEW top-level — moat product) ────────────────── */}
+            <MegaMenuDropdown label="Post a job" isActive={isPostAJobActive} menuWidth="min-w-[420px]">
+              <div className="p-6">
+                <div className="mb-4">
+                  <p className="text-xs text-slate-500 leading-relaxed">
+                    Describe what you need. Up to 5 verified advisors come back with quotes &mdash; free, no email needed to start. <span className="font-semibold text-slate-700">Quotes in 24h.</span>
+                  </p>
+                </div>
+                <Link
+                  href={postAJobMenu.primary.href}
+                  className="flex items-center justify-between p-4 bg-emerald-500 hover:bg-emerald-600 rounded-xl mb-3 transition-colors group"
+                >
+                  <div>
+                    <p className="font-bold text-white text-sm">{postAJobMenu.primary.label}</p>
+                    <p className="text-xs text-emerald-50 mt-0.5">{postAJobMenu.primary.desc}</p>
+                  </div>
+                  <svg className="w-5 h-5 text-white shrink-0 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
+                <div className="space-y-0.5">
+                  {postAJobMenu.supporting.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className="block px-3 py-2 rounded-lg hover:bg-emerald-50 transition-colors"
+                    >
+                      <div className="text-sm font-semibold text-slate-800">{item.label}</div>
+                      <div className="text-xs text-slate-500">{item.desc}</div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </MegaMenuDropdown>
+
+            {/* ─── 4. Browse listings ──────────────────────────────────────────── */}
+            <MegaMenuDropdown label="Browse listings" isActive={isListingsActive} menuWidth="min-w-[800px]">
               <div className="p-5">
-                {/* Top CTA */}
                 <Link
                   href="/invest"
                   className="flex items-center justify-between p-3 bg-gradient-to-r from-amber-50 to-amber-100/60 border border-amber-200 rounded-xl mb-4 hover:border-amber-300 transition-colors group"
                 >
                   <div>
                     <p className="font-bold text-slate-900 text-sm">All Investment Verticals</p>
-                    <p className="text-xs text-slate-500 mt-0.5">Every way to invest in Australia — 27 verticals, marketplace &amp; guides</p>
+                    <p className="text-xs text-slate-500 mt-0.5">Every way to invest in Australia &mdash; 27 verticals, marketplace &amp; guides</p>
                   </div>
                   <svg className="w-5 h-5 text-amber-600 shrink-0 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -567,11 +657,10 @@ export function Navigation() {
                 </Link>
 
                 <div className="grid grid-cols-4 gap-5">
-                  {/* Col 1: Sectors */}
                   <div>
                     <p className="text-[0.60rem] font-bold text-amber-500 uppercase tracking-wider mb-2">Sectors &amp; Assets</p>
                     <div className="space-y-0.5">
-                      {opportunitiesMenu.sectors.map((item) => (
+                      {listingsMenu.sectors.map((item) => (
                         <Link
                           key={item.href}
                           href={item.href}
@@ -583,11 +672,10 @@ export function Navigation() {
                       ))}
                     </div>
                   </div>
-                  {/* Col 2: Markets */}
                   <div>
-                    <p className="text-[0.60rem] font-bold text-amber-500 uppercase tracking-wider mb-2">Markets &amp; Trading</p>
+                    <p className="text-[0.60rem] font-bold text-amber-500 uppercase tracking-wider mb-2">Property</p>
                     <div className="space-y-0.5">
-                      {opportunitiesMenu.markets.map((item) => (
+                      {listingsMenu.property.map((item) => (
                         <Link
                           key={item.href}
                           href={item.href}
@@ -599,11 +687,10 @@ export function Navigation() {
                       ))}
                     </div>
                   </div>
-                  {/* Col 3: Income & Alternatives */}
                   <div>
-                    <p className="text-[0.60rem] font-bold text-amber-500 uppercase tracking-wider mb-2">Income &amp; Alternatives</p>
+                    <p className="text-[0.60rem] font-bold text-amber-500 uppercase tracking-wider mb-2">Markets &amp; Income</p>
                     <div className="space-y-0.5">
-                      {opportunitiesMenu.income.map((item) => (
+                      {listingsMenu.marketsIncome.map((item) => (
                         <Link
                           key={item.href}
                           href={item.href}
@@ -615,69 +702,16 @@ export function Navigation() {
                       ))}
                     </div>
                   </div>
-                  {/* Col 4: Quick Links */}
                   <div className="border-l border-slate-100 pl-4">
                     <p className="text-[0.60rem] font-bold text-amber-500 uppercase tracking-wider mb-2">Quick Links</p>
                     <div className="space-y-0.5">
-                      {opportunitiesMenu.tools.map((item) => (
+                      {listingsMenu.tools.map((item) => (
                         <Link
                           key={item.href}
                           href={item.href}
                           className="block px-2 py-1.5 text-[0.8rem] text-slate-700 hover:bg-amber-50 hover:text-amber-900 rounded-lg transition-colors"
                         >
                           {item.label}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </MegaMenuDropdown>
-
-            {/* Advisors Mega-Menu */}
-            <MegaMenuDropdown label="Advisors" isActive={isAdvisorsActive} menuWidth="min-w-[480px]">
-              <div className="p-6">
-                {/* Top CTA */}
-                <Link
-                  href={PRIMARY_CTA_HREF}
-                  className="flex items-center justify-between p-4 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl mb-5 hover:border-amber-300 transition-colors group"
-                >
-                  <div>
-                    <p className="font-bold text-slate-900 text-sm">{PRIMARY_CTA_TEXT}</p>
-                    <p className="text-xs text-slate-500 mt-0.5">Browse and filter platforms and professional directories</p>
-                  </div>
-                  <svg className="w-5 h-5 text-amber-500 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </Link>
-
-                <div className="grid grid-cols-2 gap-6">
-                  <div>
-                    <p className="text-[0.65rem] font-bold text-slate-500 uppercase tracking-wider mb-3">Property & Finance</p>
-                    <div className="space-y-1">
-                      {advisorsMenu.property.map((item) => (
-                        <Link
-                          key={item.href}
-                          href={item.href}
-                          className="block px-3 py-2.5 rounded-lg hover:bg-amber-50 transition-colors"
-                        >
-                          <div className="text-sm font-semibold text-slate-800">{item.label}</div>
-                          <div className="text-xs text-slate-500">{item.desc}</div>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <p className="text-[0.65rem] font-bold text-slate-500 uppercase tracking-wider mb-3">Wealth & SMSF</p>
-                    <div className="space-y-1">
-                      {advisorsMenu.wealth.map((item) => (
-                        <Link
-                          key={item.href}
-                          href={item.href}
-                          className="block px-3 py-2.5 rounded-lg hover:bg-amber-50 transition-colors"
-                        >
-                          <div className="text-sm font-semibold text-slate-800">{item.label}</div>
-                          <div className="text-xs text-slate-500">{item.desc}</div>
                         </Link>
                       ))}
                     </div>
