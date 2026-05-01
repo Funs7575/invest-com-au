@@ -22,6 +22,15 @@ vi.mock("@/lib/supabase/admin", () => ({
   createAdminClient: () => ({ from: mockFrom }),
 }));
 
+vi.mock("@/lib/logger", () => ({
+  logger: () => ({
+    debug: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+  }),
+}));
+
 vi.stubGlobal("fetch", mockFetch);
 
 // ── Import after mocks ────────────────────────────────────────────────────────
@@ -55,21 +64,27 @@ function makeChain() {
 
 describe("POST /api/verify-otp/send", () => {
   let savedKey: string | undefined;
+  let savedEnv: string | undefined;
 
   beforeEach(() => {
     vi.clearAllMocks();
     savedKey = process.env.RESEND_API_KEY;
+    savedEnv = process.env.NODE_ENV;
     delete process.env.RESEND_API_KEY;
+    // Default to dev-mode behavior so existing test cases keep working.
+    vi.stubEnv("NODE_ENV", "test");
     mockIsRateLimited.mockResolvedValue(false);
     mockIsValidEmail.mockReturnValue(true);
     mockIsDisposableEmail.mockReturnValue(false);
     mockFrom.mockReturnValue(makeChain());
-    mockFetch.mockResolvedValue({ ok: true });
+    mockFetch.mockResolvedValue({ ok: true, text: async () => "" });
   });
 
   afterEach(() => {
     if (savedKey !== undefined) process.env.RESEND_API_KEY = savedKey;
     else delete process.env.RESEND_API_KEY;
+    vi.unstubAllEnvs();
+    if (savedEnv !== undefined) vi.stubEnv("NODE_ENV", savedEnv);
   });
 
   it("returns 429 when rate limited", async () => {
@@ -159,9 +174,44 @@ describe("POST /api/verify-otp/send", () => {
     );
   });
 
-  it("returns 200 { success: true } on success", async () => {
+  it("returns 200 with devSkipped flag in dev when key absent", async () => {
+    const res = await POST(makePost({ email: "a@b.com" }));
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ success: true, devSkipped: true });
+  });
+
+  it("returns 200 { success: true } on successful send", async () => {
+    process.env.RESEND_API_KEY = "re_test_key";
+    mockFetch.mockResolvedValueOnce({ ok: true, text: async () => "" });
     const res = await POST(makePost({ email: "a@b.com" }));
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ success: true });
+  });
+
+  it("returns 503 in production when RESEND_API_KEY is missing", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    const res = await POST(makePost({ email: "a@b.com" }));
+    expect(res.status).toBe(503);
+    expect(await res.json()).toMatchObject({ error: expect.stringContaining("not configured") });
+    expect(mockFetch).not.toHaveBeenCalled();
+  });
+
+  it("returns 502 when Resend responds non-OK", async () => {
+    process.env.RESEND_API_KEY = "re_test_key";
+    mockFetch.mockResolvedValueOnce({
+      ok: false,
+      status: 422,
+      text: async () => '{"name":"validation_error","message":"domain not verified"}',
+    });
+    const res = await POST(makePost({ email: "a@b.com" }));
+    expect(res.status).toBe(502);
+    expect(await res.json()).toMatchObject({ error: expect.stringContaining("couldn't send") });
+  });
+
+  it("returns 502 when Resend fetch throws", async () => {
+    process.env.RESEND_API_KEY = "re_test_key";
+    mockFetch.mockRejectedValueOnce(new Error("network down"));
+    const res = await POST(makePost({ email: "a@b.com" }));
+    expect(res.status).toBe(502);
   });
 });
