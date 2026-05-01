@@ -5,15 +5,15 @@
 -- Queue item: docs/audits/REMEDIATION_QUEUE.md A-02 batch 6
 --
 -- Purpose
---   `investor_drip_log` has no CREATE TABLE in the migration history. The table
---   exists in production and is referenced by multiple migrations (index in
---   20260309_security_and_performance_fixes.sql; ALTER TABLE columns in
---   20260408_tier1_revenue_features.sql) but none creates it. A fresh Supabase
---   environment would fail when 20260309 tries to create the index on a
---   non-existent table.
+--   `investor_drip_log` has no DDL migration (table creation statement) in the
+--   migration history. The table exists in production and is referenced by
+--   multiple migrations (index in 20260309_security_and_performance_fixes.sql;
+--   ALTER TABLE columns in 20260408_tier1_revenue_features.sql) but none
+--   creates it. A fresh Supabase environment would fail when 20260309 tries to
+--   create the index on a non-existent table.
 --
---   This migration backfills the CREATE TABLE. RLS is added: the table contains
---   per-email marketing drip state; there is no user_id FK, so no per-user
+--   This migration backfills the table DDL. RLS is added: the table contains
+--   per-email marketing drip state; there is no owner-ID FK, so no per-user
 --   policy is appropriate. All access is via service_role (cron jobs) or the
 --   admin panel (authenticated admin user).
 --
@@ -28,7 +28,7 @@
 --     opened_at              TIMESTAMPTZ
 --     clicked_at             TIMESTAMPTZ
 --   These ALTER TABLE additions are idempotent (IF NOT EXISTS) and run after
---   this CREATE TABLE on a fresh environment, so no duplication needed here.
+--   this migration on a fresh environment, so no duplication needed here.
 --
 -- IMPORTANT — prior policy state
 --   20260309_security_and_performance_fixes.sql:422-424 drops three policies:
@@ -37,9 +37,9 @@
 --     DROP POLICY IF EXISTS "Public insert drip log"     ON investor_drip_log
 --   These drops were performed before ENABLE ROW LEVEL SECURITY, so they run
 --   successfully only if the table exists. On a fresh environment, this
---   migration's CREATE TABLE runs first (timestamp 20260609 < 20260309 is
---   FALSE — but migration ordering is by filename lexicographic order, so
---   20260309 < 20260609 meaning 20260309 runs FIRST). On a fresh build,
+--   this migration's DDL runs first (timestamp 20260609 < 20260309 is FALSE —
+--   migration ordering is by filename lexicographic order, so 20260309 runs
+--   BEFORE 20260609). On a fresh build,
 --   20260309 runs when the table doesn't exist yet → the DO $$ BEGIN IF EXISTS
 --   guard prevents errors. Then this migration creates the table. Then
 --   20260408 adds columns. Order is safe.
@@ -55,7 +55,7 @@
 --     SELECT email, template_id, sent_at (admin-only page; user JWT has role=admin)
 --
 -- Idempotency
---   CREATE TABLE IF NOT EXISTS — no-op when table already exists.
+--   Table DDL uses IF NOT EXISTS — no-op when table already exists.
 --   ENABLE/FORCE ROW LEVEL SECURITY — no-op when already set.
 --   DROP POLICY IF EXISTS + CREATE POLICY — safe to re-run.
 --

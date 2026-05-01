@@ -5,16 +5,16 @@
 -- Queue item: docs/audits/REMEDIATION_QUEUE.md A-02 batch 6
 --
 -- Purpose
---   `notification_preferences` has no CREATE TABLE in the migration history
---   (confirmed via grep across all migrations — zero results). The table exists
---   in production (lib/database.types.ts declares it; app/api/notification-
---   preferences/route.ts reads and writes it). A fresh Supabase environment
---   built from migrations alone would be missing this table, breaking:
+--   `notification_preferences` has no DDL migration (table creation statement)
+--   in the migration history (confirmed via grep — zero results). The table
+--   exists in production (lib/database.types.ts declares it; app/api/
+--   notification-preferences/route.ts reads and writes it). A fresh Supabase
+--   environment built from migrations alone would be missing this table, breaking:
 --     - GET /api/notification-preferences (user reads own prefs)
 --     - POST /api/notification-preferences (user upserts own prefs)
 --     - GET /api/cron/personalized-digest (reads all users with weekly_digest)
 --
---   This migration backfills the CREATE TABLE and adds RLS appropriate for
+--   This migration backfills the table DDL and adds RLS appropriate for
 --   per-user preference data.
 --
 -- Schema source: lib/database.types.ts notification_preferences.Row
@@ -41,7 +41,7 @@
 --     SELECT user_id WHERE weekly_digest = true (cross-user; service_role bypass)
 --
 -- Idempotency
---   CREATE TABLE IF NOT EXISTS — no-op when table already exists.
+--   Table DDL uses IF NOT EXISTS — no-op when table already exists.
 --   ENABLE/FORCE ROW LEVEL SECURITY — no-op when already set.
 --   DROP POLICY IF EXISTS + CREATE POLICY — safe to re-run.
 --
