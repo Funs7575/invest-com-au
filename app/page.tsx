@@ -239,11 +239,11 @@ export default async function HomePage() {
       </ScrollFadeIn>
 
       <ScrollFadeIn>
-        <HomeFridayBriefing />
+        <HomeHowWeEarn />
       </ScrollFadeIn>
 
       <ScrollFadeIn>
-        <HomeHowWeEarn />
+        <HomeFridayBriefing />
       </ScrollFadeIn>
 
       <MobileBottomNav />
