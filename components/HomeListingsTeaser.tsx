@@ -66,9 +66,9 @@ export default function HomeListingsTeaser({ listings, totalCount }: HomeListing
             >
               Australian investment opportunities, shown clearly.
             </h2>
-            <p style={{ fontSize: 13, color: "var(--color-ink-500)", margin: "6px 0 0", maxWidth: 560, lineHeight: 1.5 }}>
-              Listings are not recommendations. Always perform due diligence and seek professional
-              advice where required.
+            <p style={{ fontSize: 13, color: "var(--color-ink-500)", margin: "6px 0 0", maxWidth: 620, lineHeight: 1.5 }}>
+              Browse selected property, business and private-market opportunities with clear
+              location, category and next-step details.
             </p>
           </div>
           <Link href="/invest" className="iv2-cta-ghost" style={{ fontSize: 12.5 }}>
