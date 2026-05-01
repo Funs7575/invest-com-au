@@ -10,6 +10,7 @@ import AccountButton from "@/components/layout/AccountButton";
 import { useUser } from "@/lib/hooks/useUser";
 
 const SearchOverlay = dynamic(() => import("@/components/SearchOverlay"), { ssr: false });
+const LocationFlagButton = dynamic(() => import("@/components/layout/LocationFlagButton"), { ssr: false });
 
 // ─── Mega-menu data ───────────────────────────────────────────────────────────
 
@@ -852,6 +853,7 @@ export function Navigation() {
 
           {/* Desktop CTA area */}
           <div className="hidden lg:flex items-center gap-2">
+            <LocationFlagButton />
             <button
               onClick={() => setSearchOpen(true)}
               className="p-2.5 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
