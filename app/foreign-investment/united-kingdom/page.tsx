@@ -30,6 +30,11 @@ export const metadata: Metadata = {
 
 export const revalidate = 86400;
 
+// dated-ok — FIRB Foreign Buyer Ban window is fixed by Foreign Acquisitions & Takeovers Amendment 2024; review at expiry (March 2027).
+const FIRB_BAN_HEADLINE_UK = "Established Dwelling Ban: Active until 31 March 2027";
+// dated-ok — same regulatory window as above.
+const FIRB_BAN_DETAIL_UK = "UK residents (and Australian expats in the UK who are non-residents for AU tax) cannot purchase existing Australian homes until at least 31 March 2027. New properties remain available.";
+
 async function getNonResidentBrokers(): Promise<Broker[]> {
   try {
     const supabase = await createClient();
@@ -120,12 +125,9 @@ export default async function UKInvestingPage() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
           </svg>
           <div>
-            {/* dated-ok — FIRB Foreign Buyer Ban window is fixed by legislation; review at expiry (March 2027). */}
-            <p className="font-bold text-red-800 text-sm">Established Dwelling Ban: Active until 31 March 2027</p>
+            <p className="font-bold text-red-800 text-sm">{FIRB_BAN_HEADLINE_UK}</p>
             <p className="text-sm text-red-700 mt-0.5">
-              UK residents (and Australian expats in the UK who are non-residents for AU tax) cannot purchase
-              {/* dated-ok — same regulatory window as above. */}
-              existing Australian homes until at least 31 March 2027. New properties remain available.{" "}
+              {FIRB_BAN_DETAIL_UK}{" "}
               <Link href="/foreign-investment/guides/property-ban-2025" className="underline font-semibold">Full details &rarr;</Link>
             </p>
           </div>
