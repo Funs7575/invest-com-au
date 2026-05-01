@@ -24,7 +24,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 
 | Stream | Branch | PR | Last CI | Items in flight |
 | --- | --- | --- | --- | --- |
-| A | `claude/audit-remediation/a-01-drift-list` (#308) · `a-02-batch-1-user-data-backfill` (#322) · `a-03-batch-1-revenue-backfill` (#351) · `a-02-batch-2-user-data-backfill` (#398) · `a-04-content-table-backfill` (#399) | #308/#322/#351 MERGED · #398 OPEN · #399 OPEN | last pushed 2026-05-01T22:15Z (#399 `7a50757`) | A-01 done (PR #308). A-02 batch 1 done (PR #322 — 5 user-data tables). A-03 batch 1 done (PR #351 — 5 revenue tables). A-02 batch 2 done (PR #398 — international_leads, lead_disputes, user_reviews). A-04 done (PR #399 — advisor_articles, broker_transfer_guides, content_calendar, content_products). A-02/A-03 still in-progress (~5 batches each remain). A-05..A-07 pending. |
+| A | `claude/audit-remediation/a-01-drift-list` (#308) · `a-02-batch-1-user-data-backfill` (#322) · `a-03-batch-1-revenue-backfill` (#351) · `a-02-batch-2-user-data-backfill` (#398) · `a-04-content-table-backfill` (#399) · `a-02-batch-3-advisor-tables` (#400) | #308/#322/#351 MERGED · #398 OPEN · #399 OPEN · #400 OPEN | last pushed 2026-05-01T23:00Z (#400 `2704974e`) | A-01 done (PR #308). A-02 batch 1 done (PR #322 — 5 user-data tables). A-03 batch 1 done (PR #351 — 5 revenue tables). A-02 batch 2 done (PR #398 — international_leads, lead_disputes, user_reviews). A-04 done (PR #399 — advisor_articles, broker_transfer_guides, content_calendar, content_products). A-02 batch 3 done (PR #400 — advisor_applications, advisor_billing, advisor_verification_log; advisor_articles dropped — covered by A-04). A-02/A-03 still in-progress (~4 batches each remain). A-05..A-07 pending. |
 | B | `claude/audit-remediation/b-08-rls-select-only` (#326) · `b-09a-otp-gate` (#348 draft, parallel-agent) | #326 MERGED 2026-05-01T13:19Z · #348 OPEN (DRAFT, awaiting `LISTING_OWNER_COOKIE_SECRET` env var) | last CI-rescue 2026-05-01T21:43Z (#348) | PR #220 merged (B-01..B-06 done/blocked/FP). B-07 done (`0097159` PR #286). B-08 done — code changes merged via PR #326 commit `476f89f6`. B-09 in-progress on `#348` (parallel-agent, draft). CI-rescue iter 1 (`09c4dfb`, 2026-05-01) merged main before PR #392 types regen — types drift still red. CI-rescue iter 2 (`7da8757e`, 2026-05-01T21:43Z) merged post-#392 main — picked up database.types.ts regen; CI re-run pending. Still DRAFT awaiting `LISTING_OWNER_COOKIE_SECRET` env var (Tier D). |
 | C | `claude/audit-remediation/c-01-admin-callgraph` (#327) · `c-03-admin-import-comments` (#360 parallel-agent) · `c-04-c-05` (#394) · `c-05b-quarterly-reports` (#349 parallel-agent) · `c-disc-20260501-01-vertical-marketplace-admin-swap` (#397) | #327 MERGED 2026-05-01T13:19Z · #360 OPEN · #394 OPEN · #349 OPEN · #397 OPEN | pending — pushed 2026-05-01 | C-01..C-08 done (merged via #303 + #327). **C-DISC-20260501-01 done — commit `9517f5a` PR #397.** C-03 in-progress on #360 (parallel-agent); CI-rescue: merged main post-#392 → `48b9abd` pushed 2026-05-01T21:37Z; CI re-run pending. C-04 done — PR #394 commit `e202d0d`. C-05 (ArticleBrokerTable) done — PR #394 commit `e202d0d`. C-05b in-progress on #349 (parallel-agent — quarterly_reports refactor); CI-rescue: merged main post-#392 → `153b707` pushed 2026-05-01T21:40Z; CI re-run pending. |
 | D | `claude/audit-remediation/d-route-tests` | #285 MERGED 2026-04-29T10:13Z; supplementary PRs #246/#285/#297/#298 | last merged 2026-04-29T18:53Z | D-01..D-09 done (PR #246). D-10 done (PR #246 — coverage ratchet). D-11 complete (43+ batches, all admin/cron/non-admin routes covered) — merged via PR #285 + supplementary PRs #297/#298. **Stream D complete.** |
@@ -482,7 +482,7 @@ Highest priority: critical 2 first.
 | ID | Status | Summary | Est. iterations | Notes |
 | --- | --- | --- | --- | --- |
 | A-01 | done | Reconciliation: produce precise list of drifted tables (compare `lib/database.types.ts` to `grep -E '^CREATE TABLE' supabase/migrations/*.sql`) | 1 | Done in PR #308 (verified). Output: `docs/audits/drift-list.md` with table → classification (app / Supabase-internal / PostGIS / retired). |
-| A-02 | in-progress | Backfill migrations for user-data table families (`leads_*`, `advisor_*`, `email_*`, `lead_*`) | ~8 | Batch 1 done in PR #322 — 5 user-data tables (`profiles`, `quiz_leads`, `shared_shortlists`, `lead_pricing`, `lead_pricing_log`). Batch 2 done in PR #398 — 3 tables (`international_leads`, `lead_disputes`, `user_reviews`). ~5 batches still pending. |
+| A-02 | in-progress | Backfill migrations for user-data table families (`leads_*`, `advisor_*`, `email_*`, `lead_*`) | ~8 | Batch 1 done in PR #322 — 5 user-data tables (`profiles`, `quiz_leads`, `shared_shortlists`, `lead_pricing`, `lead_pricing_log`). Batch 2 done in PR #398 — 3 tables (`international_leads`, `lead_disputes`, `user_reviews`). Batch 3 done in PR #400 — 3 tables (`advisor_applications`, `advisor_billing`, `advisor_verification_log`; `advisor_articles` dropped — A-04/PR #399 is canonical). ~4 batches still pending. |
 | A-03 | in-progress | Backfill migrations for revenue tables (`sponsor_*`, `subscription_*`, `affiliate_*`, `stripe_*`) | ~8 | Batch 1 done in PR #351 — 5 revenue tables (`affiliate_payout_reports`, `affiliate_payout_variance`, `sponsored_placement_pricing`, `sponsored_placement_bookings`, `subscriptions`). ~7 batches still pending. |
 | A-04 | done | Backfill migrations for content tables (`articles_*`, `guides_*`, `glossary_*`, `vertical_*`) | ~10 | 4 tables backfilled: `advisor_articles`, `broker_transfer_guides`, `content_calendar`, `content_products`. Commit `7a50757` · PR #399 |
 | A-05 | pending | Backfill migrations for ops/agent tables (`agent_*`, `platform_snapshots`, `ab_tests`) | ~6 | |
@@ -1429,6 +1429,25 @@ Two strategically important surfaces under-served by current nav: (1) investment
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-01 — iteration 172 (stream A — A-02 batch 3: advisor_applications, advisor_billing, advisor_verification_log)
+
+- Phase 0: batch iteration 4 (of up to 5 this fire). Lock held from prior phases; resumed after context compaction.
+- Phase 1: confirmed main up to date (last commit `2748a879` — iter 171 queue update for A-04).
+- Phase 2: CI pending on #398 (Vercel deploying) and #400 (Vercel deploying). No red CI; no rescue needed.
+- Phase 3: A-02 batch 3 — branch `a-02-batch-3-advisor-tables` already created in prior session fragment; checked out existing branch.
+- Phase 4 verification: prior policy scan — `advisor_applications`: `"Insert advisor applications"` and `"Update advisor applications"` in `20260309`; explicitly dropped. `advisor_billing`: policies in `20260604_c02_advisor_data_tables_rls.sql` (C-02); batch 3 mirrors exactly (DROP IF EXISTS + CREATE = idempotent). `advisor_verification_log`: no prior policies. `advisor_articles`: policies in `20260604140000` (A-04/PR #399); **duplicate** — removed.
+- Phase 5: Commit `f9cc1398` (prior session): 4 migration files (+495 LOC) for advisor_applications, advisor_articles, advisor_billing, advisor_verification_log. Commit `2704974e` (this session): removed `20260603120009_a02_backfill_advisor_articles.sql` (-190 LOC) — A-04/PR #399 is canonical for advisor_articles. Net: 3 migrations, +305 LOC.
+- Phase 6: PR #400 open. Latest push `2704974e`. CI pending.
+- Phase 6.5 discovery: no new items surfaced — adjacent tables in the batch are well-covered by existing queue items.
+- Phase 7: queue updated on main. A-02 batch 3 noted. Stream A in-flight table updated (#400 added).
+
+- STATUS: PROGRESS · stream=A · item=A-02 (batch 3 of ~7) · pr=#400
+- Branch: claude/audit-remediation/a-02-batch-3-advisor-tables
+- Commit: 2704974e (removal of duplicate advisor_articles migration)
+- Diff: +305 -0 net across 3 migration files (after removing duplicate)
+- Next item: A-02 batch 4 (remaining advisor/email tables: advisor_auth_tokens, advisor_sessions, advisor_bookings, etc.)
+- Remaining: ~55+ pending · several blocked · 100+ done
 
 ### 2026-05-01 — iteration 171 (stream A — A-04: backfill 4 content tables)
 
