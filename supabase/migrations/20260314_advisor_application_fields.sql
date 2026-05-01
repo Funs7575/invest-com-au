@@ -1,6 +1,30 @@
--- Add enhanced application fields for supply/demand pipeline
--- These support the admin applications dashboard with pitch messages,
--- experience tracking, and supply gap scoring
+-- ============================================================
+-- 20260314: Advisor application + professionals enhanced fields
+-- ============================================================
+--
+-- Adds pitch_message, years_experience, client_types, languages,
+-- admin_notes, admin_priority, supply_gap_score to
+-- advisor_applications, plus mirrored years_experience and
+-- languages on professionals. Powers the admin applications
+-- dashboard with supply/demand pipeline scoring.
+--
+-- ROLLBACK STRATEGY (forward-only in prod; for dev/staging only):
+--   DROP INDEX IF EXISTS idx_advisor_applications_supply_gap;
+--   DROP INDEX IF EXISTS idx_advisor_applications_status_priority;
+--   ALTER TABLE professionals
+--     DROP COLUMN IF EXISTS languages,
+--     DROP COLUMN IF EXISTS years_experience;
+--   ALTER TABLE advisor_applications
+--     DROP COLUMN IF EXISTS supply_gap_score,
+--     DROP COLUMN IF EXISTS admin_priority,
+--     DROP COLUMN IF EXISTS admin_notes,
+--     DROP COLUMN IF EXISTS languages,
+--     DROP COLUMN IF EXISTS client_types,
+--     DROP COLUMN IF EXISTS years_experience,
+--     DROP COLUMN IF EXISTS pitch_message;
+--
+-- Risk: low — additive columns + indexes only.
+-- All operations use IF NOT EXISTS to be idempotent on re-run.
 
 ALTER TABLE advisor_applications
   ADD COLUMN IF NOT EXISTS pitch_message text,

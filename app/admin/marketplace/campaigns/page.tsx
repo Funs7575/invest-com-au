@@ -1,10 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import AdminShell from "@/components/AdminShell";
 import { createClient } from "@/lib/supabase/client";
 import InfoTip from "@/components/InfoTip";
+import { logger } from "@/lib/logger";
 import type { Campaign, MarketplacePlacement } from "@/lib/types";
+
+const log = logger("admin-marketplace-campaigns");
 
 type StatusFilter = "all" | "pending_review" | "active" | "approved" | "paused" | "budget_exhausted" | "completed" | "rejected" | "cancelled";
 
@@ -29,11 +32,7 @@ export default function AdminCampaignsPage() {
   const [selected, setSelected] = useState<Set<number>>(new Set());
   const [bulkLoading, setBulkLoading] = useState(false);
 
-  useEffect(() => {
-    loadCampaigns();
-  }, []);
-
-  const loadCampaigns = async () => {
+  const loadCampaigns = useCallback(async () => {
     const supabase = createClient();
     const { data } = await supabase
       .from("campaigns")
@@ -48,7 +47,11 @@ export default function AdminCampaignsPage() {
       setCampaigns(mapped);
     }
     setLoading(false);
-  };
+  }, []);
+
+  useEffect(() => {
+    loadCampaigns();
+  }, [loadCampaigns]);
 
   const updateCampaignStatus = async (
     campaignId: number,
@@ -135,7 +138,7 @@ export default function AdminCampaignsPage() {
             link: "/broker-portal/campaigns",
             send_email: true,
           }),
-        }).catch((err) => console.error("[campaigns] Campaign notification failed:", err));
+        }).catch((err) => log.error("campaign notification failed", { err: err instanceof Error ? err.message : String(err) }));
       });
     }
 

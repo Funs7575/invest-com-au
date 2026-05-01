@@ -21,6 +21,342 @@ export interface VerticalConfig {
   expertTags?: string[];
 }
 
+// ────────────────────────────────────────────────────────────────────────────
+// HubConfig — additive schema for /smsf, /grants, /private-markets, /startup,
+// /wholesale, etc. (W-stream foundation, see docs/audits/HUB_BLUEPRINT.md §3).
+//
+// `VerticalConfig` above continues to drive the existing `/<vertical>` pillar
+// pages (share-trading, crypto, savings, super, cfd, …). `HubConfig` is the
+// new DRY layer for hubs that need the full 12-lever monetisation surface
+// — directory + listings + calculators + quizzes + affiliate offers +
+// sponsored slots + lead magnets + newsletter + events + courses, all
+// declarative and registry-driven so a new hub becomes "one config row +
+// content + (maybe) a custom calculator".
+//
+// Design intent: every slot is optional (null/absent = slot not rendered);
+// populated slots render in their canonical position per BLUEPRINT §2. The
+// `<HubPage>` HOC (W-12) consumes a `HubConfig` and renders the full layout.
+// ────────────────────────────────────────────────────────────────────────────
+
+/** Audience taxonomy for hub targeting + analytics segmentation. */
+export type HubAudience =
+  | "founder"
+  | "hnw"
+  | "trustee"
+  | "retiree"
+  | "expat"
+  | "startup-investor";
+
+/**
+ * Pointer into `lib/compliance.ts`. Strings here intentionally mirror the
+ * advisor / product compliance buckets used across the platform. New keys
+ * are added as new hubs land — never inline disclaimer copy in a page.
+ *
+ * Open-ended (`| (string & {})`) so individual hubs can declare bespoke
+ * keys before the full registry lands without the type breaking, while
+ * still giving editor autocomplete on the canonical set.
+ */
+export type ComplianceKey =
+  | "general_advice"
+  | "factual_information"
+  | "smsf"
+  | "grants"
+  | "wholesale_s708"
+  | "crypto"
+  | "cfd"
+  | "super"
+  | "property"
+  | "startup"
+  | "aged_care"
+  | "tax_agent"
+  | "course_affiliate"
+  | "sponsored_disclosure"
+  | (string & {});
+
+/**
+ * Hero block — stats bar + primary/secondary CTA per BLUEPRINT §2. Every
+ * stat must carry `dataAsOf` + `stalesAt` so the daily-8 stale-data cron
+ * (Y-05) can flag drift. Numbers without a date get rejected at the
+ * `<DatedStatBadge>` boundary.
+ */
+export interface HubHero {
+  headline: string;
+  subhead: string;
+  stats?: HubHeroStat[]; // ≤4 numbers, BLUEPRINT §2
+  primaryCta: HubCta;
+  secondaryCta?: HubCta;
+}
+
+export interface HubHeroStat {
+  label: string;
+  value: string;
+  dataAsOf: string;  // ISO date — feeds <DatedStatBadge>
+  stalesAt: string;  // ISO date — feeds stale-data CI gate (V-NEW-01)
+  source?: string;   // attribution URL when applicable
+}
+
+export interface HubCta {
+  label: string;
+  href: string;
+  /** Which monetisation lever this CTA serves (BLUEPRINT §1). */
+  lever: MonetisationLever;
+}
+
+/** The 12 monetisation levers from BLUEPRINT §1. Numeric for stable analytics. */
+export type MonetisationLever =
+  | "lead_routing"        // #1
+  | "sponsored_placement" // #2
+  | "affiliate_cpa"       // #3
+  | "affiliate_revshare"  // #4
+  | "listings"            // #5
+  | "premium_subscription"// #6
+  | "sponsored_content"   // #7
+  | "display_ads"         // #8
+  | "lead_magnet"         // #9
+  | "newsletter_sponsor"  // #10
+  | "event"               // #11
+  | "course";             // #12
+
+/** Top-level service grid card — taxonomy of the hub's topic, ≤6 per BLUEPRINT §2. */
+export interface ServiceCard {
+  title: string;
+  description: string;
+  href: string;
+  icon?: string;
+}
+
+/** Long-form deep-dive card — links to `<hub>/<slug>` long-tail content. */
+export interface DeepDiveCard {
+  title: string;
+  excerpt: string;
+  href: string;
+  readingTimeMinutes?: number;
+}
+
+/** FAQ entry — emitted as `FAQPage` JSON-LD by the renderer. */
+export interface FAQ {
+  question: string;
+  answer: string;
+}
+
+// ── Monetisation slot interfaces ────────────────────────────────────────────
+
+/** Directory slot — sortable rows + filter sidebar + sponsored top row. */
+export interface DirectoryConfig {
+  /** Which platform/advisor types feed the directory rows. */
+  source:
+    | { kind: "platforms"; platformTypes: PlatformType[] }
+    | { kind: "advisors"; advisorTypes: string[] }
+    | { kind: "listings"; listingType: string };
+  filters: DirectoryFilter[];
+  sortable?: boolean;
+  paginated?: boolean;
+  /** Top sponsored row (lever #2) — shown when sponsorship inventory exists. */
+  sponsoredTopRow?: boolean;
+  /** Per-row affiliate / lead-routing CTA (levers #1, #3, #4). */
+  rowCta?: HubCta;
+}
+
+export interface DirectoryFilter {
+  key: string;
+  label: string;
+  type: "select" | "range" | "boolean" | "multiselect";
+  options?: { value: string; label: string }[];
+}
+
+/** Marketplace listings slot (lever #5) — business-for-sale, pre-IPO, etc. */
+export interface ListingsConfig {
+  /** Used to namespace the Supabase listings table query + analytics. */
+  listingType: string;
+  /** "List your X" sell-side CTA for marketplace onboarding. */
+  sellSideCta?: HubCta;
+  /** Featured-upgrade tier copy for paid placements. */
+  featuredCarousel?: boolean;
+  /** s708 / wholesale gate — when true, `<WholesaleGate>` wraps the listings. */
+  requiresWholesaleGate?: boolean;
+}
+
+export interface CalculatorRef {
+  /** Slug used to import the matching `app/calculators/<slug>` calculator. */
+  slug: string;
+  label: string;
+  /** Email-gate the "save / share results" action (lever #9 capture). */
+  emailGate?: boolean;
+}
+
+export interface QuizRef {
+  slug: string;
+  label: string;
+  /** Which lead queue the diagnostic routes to. */
+  routesTo: LeadQueueKey;
+}
+
+export interface AffiliateOfferRef {
+  partnerId: string;
+  label: string;
+  /** CPA = lever #3, RevShare = lever #4. */
+  model: "cpa" | "revshare";
+  /** Routed via `lib/tracking.ts` builders — never a raw URL. */
+  trackingSlug: string;
+}
+
+export interface SponsoredSlot {
+  /** Where the slot renders. */
+  position:
+    | "hero_rail"
+    | "directory_top"
+    | "featured_carousel"
+    | "article_inline"
+    | "article_sidebar";
+  /** Which lever (#2 sponsored placement vs #7 sponsored article). */
+  lever: Extract<MonetisationLever, "sponsored_placement" | "sponsored_content">;
+  partnerId?: string;
+}
+
+export interface LeadMagnetRef {
+  slug: string;
+  title: string;
+  /** What gets delivered (PDF, checklist, template, spreadsheet). */
+  format: "pdf" | "checklist" | "template" | "spreadsheet";
+  /** Email-list key the capture feeds into. */
+  listKey: string;
+}
+
+export interface NewsletterRef {
+  /** Hub-specific list key in the newsletter system. */
+  listKey: string;
+  cadence: "daily" | "weekly" | "monthly";
+  /** Sponsor slot opt-in (lever #10). */
+  sponsorSlotsAvailable?: boolean;
+}
+
+export interface EventRef {
+  slug: string;
+  title: string;
+  /** ISO datetime — feeds the daily-8 freshness check. */
+  startsAt: string;
+  href: string;
+}
+
+export interface CourseRef {
+  slug: string;
+  title: string;
+  href: string;
+  /** RG146 / FAS-style courses require manual compliance review. */
+  requiresAccreditation?: boolean;
+}
+
+/** Article surface — drives the FEATURED ARTICLES band (BLUEPRINT §2). */
+export interface ArticleFilter {
+  category?: string;
+  category_in?: string[];
+  slugs?: string[];
+  tags?: string[];
+}
+
+/** Programmatic SEO template — expanded against a data table at build time. */
+export interface ProgrammaticTemplate {
+  /** e.g. "/smsf/auditors/[state]". */
+  routePattern: string;
+  /** Data source key (Supabase table, JSON file, etc.) the template fans out across. */
+  dataSource: string;
+  /** Title template (e.g. "Best SMSF auditors in {{state}} — {{year}}"). */
+  titleTemplate: string;
+  metaDescriptionTemplate: string;
+}
+
+// ── Lead queue — discriminated union ────────────────────────────────────────
+//
+// The lead-routing system (lever #1) routes form submissions into a
+// hub-specific queue. Each queue has its own required fields — e.g.
+// wholesale routing needs an s708 cert reference, aged-care routing needs a
+// state, grants routing needs the program slug. Modeling this as a
+// discriminated union forces the form / hub config to surface those fields
+// at the type boundary instead of carrying a `Record<string, unknown>` blob
+// of shape-by-convention.
+//
+// `LeadQueueKey` is the discriminator (the simple form referenced in
+// BLUEPRINT §3 line 131). `LeadQueueRoute` is the rich variant — every
+// `HubConfig.leadQueue` is a `LeadQueueRoute`.
+
+export type LeadQueueKey =
+  | "grants"
+  | "smsf"
+  | "startup"
+  | "wholesale"
+  | "retirement"
+  | "aged_care"
+  | "business_for_sale"
+  | "private_markets"
+  | "angel"
+  | "family_office"
+  | "crypto_tax"
+  | "general";
+
+export type LeadQueueRoute =
+  | { kind: "grants"; programSlugs: string[]; minClaimAud?: number }
+  | { kind: "smsf"; advisorType: "smsf_accountant" | "smsf_specialist" | "smsf_auditor" }
+  | { kind: "startup"; stage: "pre_seed" | "seed" | "series_a" | "series_b_plus" }
+  | { kind: "wholesale"; requiresS708Cert: true; assetClasses: string[] }
+  | { kind: "retirement"; advisorType: "retirement_planner" | "lifestyle_planner" }
+  | { kind: "aged_care"; state: string; certifiedAdvisorOnly: true }
+  | { kind: "business_for_sale"; minSalePriceAud?: number; industry?: string }
+  | { kind: "private_markets"; requiresS708Cert: true; vehicleTypes: string[] }
+  | { kind: "angel"; syndicateOnly?: boolean; minTicketAud?: number }
+  | { kind: "family_office"; minNetWorthAud: number }
+  | { kind: "crypto_tax"; involvesDefi?: boolean }
+  | { kind: "general"; topic: string };
+
+// ── HubConfig ───────────────────────────────────────────────────────────────
+
+/**
+ * The full hub contract. Lives alongside `VerticalConfig` and serves the
+ * `<HubPage>` HOC (W-12). See BLUEPRINT §3 for the full design rationale
+ * and §6 for the launch checklist a populated `HubConfig` must satisfy.
+ */
+export interface HubConfig {
+  // Identity
+  slug: string;
+  parentSlug?: string;
+  title: string;
+  metaDescription: string;
+  audiences: HubAudience[];
+  complianceKey: ComplianceKey;
+
+  // Layout
+  hero: HubHero;
+  serviceGrid?: ServiceCard[];
+  deepDives?: DeepDiveCard[];
+  faqs: FAQ[];
+
+  // Monetisation slots (each optional — absent = slot not rendered)
+  directory?: DirectoryConfig;            // levers #1 + #2
+  listings?: ListingsConfig;              // lever #5
+  calculators?: CalculatorRef[];          // lever #1
+  quizzes?: QuizRef[];                    // lever #1
+  affiliateOffers?: AffiliateOfferRef[];  // levers #3 + #4
+  sponsoredSlots?: SponsoredSlot[];       // levers #2 + #7
+  leadMagnets?: LeadMagnetRef[];          // lever #9
+  newsletter?: NewsletterRef;             // levers #6 + #10
+  pushCategory?: string;                  // re-engagement
+  events?: EventRef[];                    // lever #11
+  courses?: CourseRef[];                  // lever #12
+
+  // Lead routing — discriminated by `kind`, required fields enforced at type level
+  leadQueue: LeadQueueRoute;
+
+  // Cross-hub graph — slugs of adjacent hubs for the CrossHubLinks rail
+  relatedHubs: string[];
+
+  // Article surface
+  articleFilters: ArticleFilter;
+
+  // SEO
+  primaryKeywords: string[];
+  schemaTypes: ("FinancialService" | "Service" | "WebPage" | "FAQPage")[];
+  programmaticSeoTemplates?: ProgrammaticTemplate[];
+}
+
 const yr = CURRENT_YEAR;
 
 const VERTICALS: VerticalConfig[] = [

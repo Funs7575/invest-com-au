@@ -1,3 +1,87 @@
+-- ============================================================================
+-- Migration: 20260329_update_advisor_photos_portraits.sql
+-- Purpose: Update `professionals.photo_url` to point at randomuser.me
+--          portrait photos for 54 seeded advisor profiles, replacing
+--          earlier placeholder URLs.
+-- Rollback: NULL out photo_url for the 54 advisor slugs touched
+--           (returns the rows to "no headshot" state). The original
+--           pre-seed URLs are not preserved by this migration so a
+--           true revert to the prior values requires a snapshot.
+-- Risk: medium — these are mock/seeded advisor rows used for the
+--       advisor directory UI. Reverse blanks every headshot, breaking
+--       portrait rendering on /find-advisor/* until reseeded. If
+--       operators have replaced any of these slugs with real-advisor
+--       photos since this migration ran, the reverse will also clear
+--       those production URLs — inspect live row state before reverse.
+-- ============================================================================
+--
+-- Forward operations:
+--   1-54. UPDATE professionals SET photo_url = '<randomuser.me URL>'
+--           WHERE slug = '<one of 54 city-prefixed advisor slugs>'.
+--           Slugs (in file order): james-wong-sydney,
+--           maria-papadopoulos-sydney, raj-patel-sydney,
+--           sophie-laurent-sydney, michael-oconnor-sydney,
+--           helen-tran-sydney, david-kowalski-sydney,
+--           anthony-nguyen-sydney, emma-richardson-sydney,
+--           daniel-stavros-sydney, fatima-hassan-sydney,
+--           margaret-campbell-sydney, chris-murphy-sydney,
+--           wei-chen-sydney, luke-thompson-sydney,
+--           olivia-martinez-melbourne, george-papadimitriou-melbourne,
+--           anita-desai-melbourne, tom-fitzgerald-melbourne,
+--           victoria-aldridge-melbourne, sam-ibrahim-melbourne,
+--           alexander-reid-melbourne, nina-volkov-melbourne,
+--           liam-chen-melbourne, jenny-le-melbourne,
+--           patricia-wright-melbourne, nick-constantine-melbourne,
+--           ben-walker-brisbane, karen-li-brisbane,
+--           josh-anderson-brisbane, rachel-green-brisbane,
+--           stuart-mackenzie-brisbane, tanya-russo-brisbane,
+--           hassan-ali-brisbane, diana-zhou-brisbane,
+--           andrew-mitchell-perth, lisa-tan-perth, ryan-kelly-perth,
+--           deepak-sharma-perth, jessica-harris-perth,
+--           peter-rossi-adelaide, sarah-campbell-adelaide,
+--           mark-katsaros-adelaide, catherine-singh-adelaide,
+--           robert-jenkins-canberra, elena-petrov-canberra,
+--           philip-chang-canberra, amanda-jones-hobart,
+--           nathan-williams-hobart, steve-hall-goldcoast,
+--           tina-nguyen-goldcoast, marco-santos-darwin,
+--           laura-smith-newcastle, bruce-taylor-wollongong,
+--           zac-miller-sunshinecoast.
+--
+-- Rollback (in reverse order):
+--   1. UPDATE professionals SET photo_url = NULL
+--        WHERE slug IN (
+--          'zac-miller-sunshinecoast', 'bruce-taylor-wollongong',
+--          'laura-smith-newcastle', 'marco-santos-darwin',
+--          'tina-nguyen-goldcoast', 'steve-hall-goldcoast',
+--          'nathan-williams-hobart', 'amanda-jones-hobart',
+--          'philip-chang-canberra', 'elena-petrov-canberra',
+--          'robert-jenkins-canberra', 'catherine-singh-adelaide',
+--          'mark-katsaros-adelaide', 'sarah-campbell-adelaide',
+--          'peter-rossi-adelaide', 'jessica-harris-perth',
+--          'deepak-sharma-perth', 'ryan-kelly-perth', 'lisa-tan-perth',
+--          'andrew-mitchell-perth', 'diana-zhou-brisbane',
+--          'hassan-ali-brisbane', 'tanya-russo-brisbane',
+--          'stuart-mackenzie-brisbane', 'rachel-green-brisbane',
+--          'josh-anderson-brisbane', 'karen-li-brisbane',
+--          'ben-walker-brisbane', 'nick-constantine-melbourne',
+--          'patricia-wright-melbourne', 'jenny-le-melbourne',
+--          'liam-chen-melbourne', 'nina-volkov-melbourne',
+--          'alexander-reid-melbourne', 'sam-ibrahim-melbourne',
+--          'victoria-aldridge-melbourne', 'tom-fitzgerald-melbourne',
+--          'anita-desai-melbourne', 'george-papadimitriou-melbourne',
+--          'olivia-martinez-melbourne', 'luke-thompson-sydney',
+--          'wei-chen-sydney', 'chris-murphy-sydney',
+--          'margaret-campbell-sydney', 'fatima-hassan-sydney',
+--          'daniel-stavros-sydney', 'emma-richardson-sydney',
+--          'anthony-nguyen-sydney', 'david-kowalski-sydney',
+--          'helen-tran-sydney', 'michael-oconnor-sydney',
+--          'sophie-laurent-sydney', 'raj-patel-sydney',
+--          'maria-papadopoulos-sydney', 'james-wong-sydney'
+--        );
+--      -- DESTRUCTIVE: blanks 54 advisor headshots; clears any
+--      -- operator-replaced URLs on those rows too.
+-- ============================================================================
+
 -- Migration: Update advisor photo URLs to realistic portrait photos
 -- Uses randomuser.me API portraits for professional-looking headshots
 -- Runs idempotently: updates all existing advisors by slug
