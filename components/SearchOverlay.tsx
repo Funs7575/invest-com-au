@@ -30,7 +30,7 @@ const SEARCH_INDEX: SearchItem[] = [
   { title: "SMSF Auditors", href: "/smsf/auditors", category: "Advisors", description: "ASIC-approved auditors with SAN" },
   { title: "Research & Sector Reports", href: "/research", category: "Learn", description: "Editorial investment research" },
   { title: "Significant Investor Visa (SIV)", href: "/foreign-investment/siv", category: "Invest", description: "$5M complying investment pathway" },
-  { title: "Investment Marketplace", href: "/invest/listings", category: "Invest", description: "Browse active investment listings" },
+  { title: "Investment Marketplace", href: "/invest", category: "Invest", description: "Browse active investment listings" },
   { title: "Mining & Resources", href: "/invest/mining", category: "Invest", description: "Iron ore, copper & critical minerals" },
   { title: "Oil & Gas", href: "/invest/oil-gas", category: "Invest", description: "ASX majors, LNG, refineries" },
   { title: "Uranium", href: "/invest/uranium", category: "Invest", description: "Paladin, Boss Energy, ATOM ETF" },
@@ -181,7 +181,7 @@ export default function SearchOverlay({ isOpen, onClose }: { isOpen: boolean; on
                 <div className="grid grid-cols-2 gap-2">
                   {[
                     { title: "Compare Platforms", href: "/compare", icon: "trending-up" },
-                    { title: "Investment Marketplace", href: "/invest/listings", icon: "layers" },
+                    { title: "Investment Marketplace", href: "/invest", icon: "layers" },
                     { title: "Browse Advisors", href: "/advisors", icon: "users" },
                     { title: "Current Deals", href: "/deals", icon: "zap" },
                     { title: "Calculators", href: "/calculators", icon: "calculator" },
