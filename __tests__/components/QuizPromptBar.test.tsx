@@ -141,7 +141,11 @@ describe("QuizPromptBar", () => {
   });
 
   it("renders desktop bar content after sufficient scroll", () => {
-    scrollY = 900;
+    // The desktop bar fires at >75% scroll (changed from >25% in the v4
+    // redesign so the prompt only appears near the bottom of the page).
+    // Mock viewport: scrollHeight 4000 - innerHeight 800 = 3200 max scroll.
+    // 75% of 3200 = 2400, so we need scrollY > 2400 to surface the bar.
+    scrollY = 2500;
     mockUsePathname.mockReturnValue("/article/test");
 
     render(<QuizPromptBar />);
