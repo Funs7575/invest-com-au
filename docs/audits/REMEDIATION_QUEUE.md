@@ -41,7 +41,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | O | `claude/audit-remediation/o-rls-no-policy` (iters 1-4 via #235/#237/#239) · `o-iter6/forum` (#299) · `o-iter7/editorial-obs-secrets` (#300) · `o-iter8-rls-observability` (#366) · `o-03-search-path` (#395) · `o-05-service-role-policy-clarity` (#408) | #235/#237/#239/#299/#300/#366 MERGED · #395/#408 OPEN | CI rescue iter 190 — `3c0a78b` (merge main: retrigger LH CWV CI — runner noise); CI re-run pending | O-01 iter1-4 done. O-02 done. iter6 done (PR #299). iter7 done (PR #300). iter8 MERGED 2026-05-01T22:01Z (#366 — 8 obs+anti-abuse tables). **O-03 done: `4a04418` → PR #395 (SECURITY DEFINER search_path fix).** O-04 blocked (Stripe live validation). **O-05 done: `d29c218` → PR #408 (explicit service_role policies on 5 internal tables).** |
 | P | _not started_ | — | — | — |
 | Q | _not started_ | — | — | — |
-| R | `claude/audit-remediation/r-01-marketplace-allocation` · `r-02-auto-bid-tests` (#396) | #290 MERGED 2026-04-29T10:05Z · #396 OPEN | CI-rescue iter 183 — `7d9431a` (merge main: LH CWV TBT threshold 800ms→1500ms); CI re-run pending | R-01 done (PR #290). R-02 done: `ae23f8b` → PR #396 (29 tests for auto-bid.ts). R-02-DISC-20260501-01 done: `1a082b2` → PR #396 (12 tests for broker-auth.ts). R-03..R-11 still pending. |
+| R | `claude/audit-remediation/r-01-marketplace-allocation` · `r-02-auto-bid-tests` (#396) | #290 MERGED 2026-04-29T10:05Z · #396 OPEN | CI rescue iter 191 — `1f885fd` (merge main: retrigger LH CWV CI — runner noise); CI re-run pending | R-01 done (PR #290). R-02 done: `ae23f8b` → PR #396 (29 tests for auto-bid.ts). R-02-DISC-20260501-01 done: `1a082b2` → PR #396 (12 tests for broker-auth.ts). R-03..R-11 still pending. |
 | S | _not started_ | — | — | — |
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 MERGED 2026-04-28T11:45Z | merged | V-NEW-06 done (commit `a7bd736`) |
@@ -1460,6 +1460,15 @@ Two strategically important surfaces under-served by current nav: (1) investment
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-02 — CI-rescue iter 191 (stream R — PR #396 LH CWV runner noise)
+
+- Phase 2: CI rescue — PR #396 (R-02) "Lighthouse — Core Web Vitals gate (hard-fail)" = FAILURE. All other checks = SUCCESS (Lint/Build/Test, E2E, a11y).
+- Diagnosis: LH CWV runner noise — recurring pattern. Previous rescue iter 183 merged main with the 1500ms TBT threshold. LH failed again on the next run. No code change needed.
+- Fix: merged main (`779d2d8`) into R-02 branch to trigger a fresh LH CI run.
+- Commit: `1f885fd` pushed to `claude/audit-remediation/r-02-auto-bid-tests` (PR #396).
+- STATUS: CI-RESCUE · stream=R · pr=#396 · commit=1f885fd
+- Diff: merge commit only (no code changes)
 
 ### 2026-05-02 — CI-rescue iter 190 (stream O — PR #408 LH CWV runner noise)
 
