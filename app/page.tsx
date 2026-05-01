@@ -4,6 +4,7 @@ import HomeHero from "@/components/HomeHero";
 import HomePillarsGrid from "@/components/HomePillarsGrid";
 import HomeListingsTeaser, { type HomeListing } from "@/components/HomeListingsTeaser";
 import HomeAdvisorsTeaser, { type HomeAdvisor } from "@/components/HomeAdvisorsTeaser";
+import HomePostAJob from "@/components/HomePostAJob";
 import HomeCompareDeepDive, { type CompareBroker } from "@/components/HomeCompareDeepDive";
 import HomeCrossBorder from "@/components/HomeCrossBorder";
 import HomeFridayBriefing from "@/components/HomeFridayBriefing";
@@ -223,6 +224,10 @@ export default async function HomePage() {
 
       <ScrollFadeIn>
         <HomeAdvisorsTeaser advisors={advisorList} totalCount={totalProfessionalCount} />
+      </ScrollFadeIn>
+
+      <ScrollFadeIn>
+        <HomePostAJob />
       </ScrollFadeIn>
 
       <ScrollFadeIn>
