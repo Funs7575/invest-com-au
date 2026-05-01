@@ -24,7 +24,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 
 | Stream | Branch | PR | Last CI | Items in flight |
 | --- | --- | --- | --- | --- |
-| A | `claude/audit-remediation/a-01-drift-list` (#308) · `a-02-batch-1-user-data-backfill` (#322) · `a-03-batch-1-revenue-backfill` (#351) | #308/#322/#351 MERGED | last merged 2026-05-01T14:28Z | A-01 done (PR #308). A-02 batch 1 done (PR #322 — 5 user-data tables). A-03 batch 1 done (PR #351 — 5 revenue tables). A-02/A-03 still in-progress (~7 batches each remain). A-04..A-07 pending. |
+| A | `claude/audit-remediation/a-01-drift-list` (#308) · `a-02-batch-1-user-data-backfill` (#322) · `a-03-batch-1-revenue-backfill` (#351) · `a-02-batch-2-user-data-backfill` (#398) | #308/#322/#351 MERGED · #398 OPEN | last pushed 2026-05-01T22:10Z (#398 `e194de91`) | A-01 done (PR #308). A-02 batch 1 done (PR #322 — 5 user-data tables). A-03 batch 1 done (PR #351 — 5 revenue tables). A-02 batch 2 done (PR #398 — international_leads, lead_disputes, user_reviews). A-02/A-03 still in-progress (~5 batches each remain). A-04..A-07 pending. |
 | B | `claude/audit-remediation/b-08-rls-select-only` (#326) · `b-09a-otp-gate` (#348 draft, parallel-agent) | #326 MERGED 2026-05-01T13:19Z · #348 OPEN (DRAFT, awaiting `LISTING_OWNER_COOKIE_SECRET` env var) | last CI-rescue 2026-05-01T21:43Z (#348) | PR #220 merged (B-01..B-06 done/blocked/FP). B-07 done (`0097159` PR #286). B-08 done — code changes merged via PR #326 commit `476f89f6`. B-09 in-progress on `#348` (parallel-agent, draft). CI-rescue iter 1 (`09c4dfb`, 2026-05-01) merged main before PR #392 types regen — types drift still red. CI-rescue iter 2 (`7da8757e`, 2026-05-01T21:43Z) merged post-#392 main — picked up database.types.ts regen; CI re-run pending. Still DRAFT awaiting `LISTING_OWNER_COOKIE_SECRET` env var (Tier D). |
 | C | `claude/audit-remediation/c-01-admin-callgraph` (#327) · `c-03-admin-import-comments` (#360 parallel-agent) · `c-04-c-05` (#394) · `c-05b-quarterly-reports` (#349 parallel-agent) · `c-disc-20260501-01-vertical-marketplace-admin-swap` (#397) | #327 MERGED 2026-05-01T13:19Z · #360 OPEN · #394 OPEN · #349 OPEN · #397 OPEN | pending — pushed 2026-05-01 | C-01..C-08 done (merged via #303 + #327). **C-DISC-20260501-01 done — commit `9517f5a` PR #397.** C-03 in-progress on #360 (parallel-agent); CI-rescue: merged main post-#392 → `48b9abd` pushed 2026-05-01T21:37Z; CI re-run pending. C-04 done — PR #394 commit `e202d0d`. C-05 (ArticleBrokerTable) done — PR #394 commit `e202d0d`. C-05b in-progress on #349 (parallel-agent — quarterly_reports refactor); CI-rescue: merged main post-#392 → `153b707` pushed 2026-05-01T21:40Z; CI re-run pending. |
 | D | `claude/audit-remediation/d-route-tests` | #285 MERGED 2026-04-29T10:13Z; supplementary PRs #246/#285/#297/#298 | last merged 2026-04-29T18:53Z | D-01..D-09 done (PR #246). D-10 done (PR #246 — coverage ratchet). D-11 complete (43+ batches, all admin/cron/non-admin routes covered) — merged via PR #285 + supplementary PRs #297/#298. **Stream D complete.** |
@@ -482,7 +482,7 @@ Highest priority: critical 2 first.
 | ID | Status | Summary | Est. iterations | Notes |
 | --- | --- | --- | --- | --- |
 | A-01 | done | Reconciliation: produce precise list of drifted tables (compare `lib/database.types.ts` to `grep -E '^CREATE TABLE' supabase/migrations/*.sql`) | 1 | Done in PR #308 (verified). Output: `docs/audits/drift-list.md` with table → classification (app / Supabase-internal / PostGIS / retired). |
-| A-02 | in-progress | Backfill migrations for user-data table families (`leads_*`, `advisor_*`, `email_*`, `lead_*`) | ~8 | Batch 1 done in PR #322 — 5 user-data tables (`profiles`, `quiz_leads`, `shared_shortlists`, `lead_pricing`, `lead_pricing_log`). Idempotent + RLS-on. ~7 batches still pending. |
+| A-02 | in-progress | Backfill migrations for user-data table families (`leads_*`, `advisor_*`, `email_*`, `lead_*`) | ~8 | Batch 1 done in PR #322 — 5 user-data tables (`profiles`, `quiz_leads`, `shared_shortlists`, `lead_pricing`, `lead_pricing_log`). Batch 2 done in PR #398 — 3 tables (`international_leads`, `lead_disputes`, `user_reviews`). ~5 batches still pending. |
 | A-03 | in-progress | Backfill migrations for revenue tables (`sponsor_*`, `subscription_*`, `affiliate_*`, `stripe_*`) | ~8 | Batch 1 done in PR #351 — 5 revenue tables (`affiliate_payout_reports`, `affiliate_payout_variance`, `sponsored_placement_pricing`, `sponsored_placement_bookings`, `subscriptions`). ~7 batches still pending. |
 | A-04 | pending | Backfill migrations for content tables (`articles_*`, `guides_*`, `glossary_*`, `vertical_*`) | ~10 | |
 | A-05 | pending | Backfill migrations for ops/agent tables (`agent_*`, `platform_snapshots`, `ab_tests`) | ~6 | |
@@ -1428,6 +1428,24 @@ Two strategically important surfaces under-served by current nav: (1) investment
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-01 — iteration 170 (stream A — A-02 batch 2: international_leads, lead_disputes, user_reviews)
+
+- Phase 0: batch iteration 3 (of up to 5 this fire). Lock held from Phase 0.
+- Phase 1: synced main (ff-only after stash/conflict resolution; picked up 56-file parallel-fire update from `a7145b78`).
+- Phase 2: CI check on in-flight PRs (#348/#349/#360/#366/#394/#395/#397/#398) — no failures; #366 lint+build SUCCESS; others in-progress/queued. No CI rescue needed.
+- Phase 3: priority order → B-09 Tier D (skip) → C all done → A (A-02 batch 2 pending). Created branch `claude/audit-remediation/a-02-batch-2-user-data-backfill`.
+- Phase 4 verification: confirmed prior policy state — `international_leads`: no existing policies. `lead_disputes`: policies only in `20260606_c02_lead_disputes_rls.sql` (C-02, DROP IF EXISTS + CREATE → idempotent with this batch). `user_reviews`: `"Insert user reviews"` policy only in `20260309_security_and_performance_fixes.sql` (sorts before this migration; policy created without ENABLE RLS — A-02 batch 2 adds the ENABLE RLS + FORCE RLS + policies, 20260309 re-creates "Insert user reviews" idempotently).
+- Phase 5: wrote 3 migration files (397 LOC): `20260603120005` (international_leads, service-role only), `20260603120006` (lead_disputes, mirrors C-02), `20260603120007` (user_reviews, service_role + anon SELECT approved + anon INSERT validated). No TS/TSX changes — lint/tsc/test gates vacuously satisfied.
+- Phase 6: committed `e194de91`, pushed, opened draft PR #398.
+- Phase 6.5 discovery: adjacent migration siblings are A-02 batch 1 (already done) and A-03 batch 1 (already done). A-02 remaining tables still tracked under A-02 item. No new discoveries beyond existing queue scope.
+- Phase 7: queue updated on main. A-02 batch 2 → done.
+
+- STATUS: PROGRESS · stream=A · item=A-02 (batch 2 of ~7) · pr=#398
+- Commit: e194de91
+- Diff: +397 -0 across 3 files
+- Next item: A-02 batch 3 (remaining user-data/lead tables) or A-03 batch 2
+- Remaining: ~60+ pending · several blocked · 100+ done
 
 ### 2026-05-01 — iteration 169 (stream C — C-DISC-20260501-01: VerticalMarketplaceListings admin swap)
 
