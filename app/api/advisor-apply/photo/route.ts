@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+// admin — Storage requires service-role
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isRateLimited } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
