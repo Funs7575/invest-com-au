@@ -220,7 +220,13 @@ function MegaMenuDropdown({
     >
       <button
         onClick={() => setOpen((v) => !v)}
-        className={`flex items-center gap-1 px-3 py-2 text-sm font-semibold rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400
+        // whitespace-nowrap prevents multi-word labels ("Find an advisor",
+        // "Compare platforms", "Browse listings", "Post a job") from breaking
+        // onto two lines when the flex parent runs out of horizontal room.
+        // Without it, narrow viewports (1024-1180px) showed stacked words.
+        // Tightened px-3 → px-2.5 + parent gap-1 → gap-0.5 to claw back
+        // ~30px across the 6-item row on narrow screens.
+        className={`flex items-center gap-1 px-2.5 py-2 text-[0.8125rem] font-semibold rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 whitespace-nowrap
           ${isActive
             ? "text-slate-900 bg-slate-50"
             : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
@@ -230,7 +236,7 @@ function MegaMenuDropdown({
       >
         {label}
         <svg
-          className={`w-3.5 h-3.5 text-slate-500 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+          className={`w-3 h-3 text-slate-500 transition-transform duration-200 shrink-0 ${open ? "rotate-180" : ""}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -470,7 +476,7 @@ export function Navigation() {
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden lg:flex items-center gap-1" aria-label="Main navigation">
+          <nav className="hidden lg:flex items-center gap-0.5" aria-label="Main navigation">
 
             {/* ─── 1. Compare Platforms ────────────────────────────────────────── */}
             <MegaMenuDropdown label="Compare platforms" isActive={isPlatformsActive} menuWidth="min-w-[560px]">
@@ -542,18 +548,39 @@ export function Navigation() {
                     ASIC-registered. Browse 30+ specialties &mdash; planners, mortgage brokers, accountants. <span className="font-semibold text-slate-700">167 advisors.</span>
                   </p>
                 </div>
-                <Link
-                  href="/advisors"
-                  className="flex items-center justify-between p-3.5 bg-gradient-to-r from-amber-50 to-amber-100/60 border border-amber-200 rounded-xl mb-5 hover:border-amber-300 transition-colors group"
-                >
-                  <div>
-                    <p className="font-bold text-slate-900 text-sm">Browse all advisors</p>
-                    <p className="text-xs text-slate-500 mt-0.5">Search by location, specialty, fee structure</p>
-                  </div>
-                  <svg className="w-5 h-5 text-amber-600 shrink-0 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
-                </Link>
+                <div className="grid grid-cols-2 gap-3 mb-5">
+                  <Link
+                    href="/advisors"
+                    className="flex items-center justify-between p-3.5 bg-gradient-to-r from-amber-50 to-amber-100/60 border border-amber-200 rounded-xl hover:border-amber-300 transition-colors group"
+                  >
+                    <div>
+                      <p className="font-bold text-slate-900 text-sm">Browse all advisors</p>
+                      <p className="text-xs text-slate-500 mt-0.5">Search by location &amp; specialty</p>
+                    </div>
+                    <svg className="w-5 h-5 text-amber-600 shrink-0 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                  {/* Cross-link to the reverse-marketplace flow. Sits next to
+                      "Browse all advisors" so the visitor sees both modes
+                      side-by-side at the moment of intent — browse profiles
+                      vs have advisors come to them. Emerald to match the
+                      Post-a-job homepage card and the dedicated Post a job
+                      mega-menu styling, signalling "this is a different
+                      product, not a sub-feature of advisor browsing." */}
+                  <Link
+                    href="/quotes/post"
+                    className="flex items-center justify-between p-3.5 bg-gradient-to-r from-emerald-50 to-emerald-100/60 border border-emerald-200 rounded-xl hover:border-emerald-300 transition-colors group"
+                  >
+                    <div>
+                      <p className="font-bold text-slate-900 text-sm">Or have them come to you</p>
+                      <p className="text-xs text-slate-500 mt-0.5">Post a brief &mdash; free, quotes in 24h</p>
+                    </div>
+                    <svg className="w-5 h-5 text-emerald-600 shrink-0 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                </div>
 
                 <div className="grid grid-cols-3 gap-5">
                   <div>
