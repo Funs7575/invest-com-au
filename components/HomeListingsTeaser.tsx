@@ -1,6 +1,3 @@
-"use client";
-
-import { useState, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { DesignIcon } from "@/components/design/DesignIcon";
@@ -40,19 +37,7 @@ interface HomeListingsTeaserProps {
 }
 
 export default function HomeListingsTeaser({ listings, totalCount }: HomeListingsTeaserProps) {
-  const tabs = useMemo(() => {
-    const counts = new Map<string, number>();
-    for (const l of listings) {
-      counts.set(l.vertical, (counts.get(l.vertical) ?? 0) + 1);
-    }
-    const entries = Array.from(counts.entries())
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 8);
-    return [{ key: "All", label: "All", n: totalCount }, ...entries.map(([k, n]) => ({ key: k, label: VERTICAL_LABELS[k]?.label ?? k, n }))];
-  }, [listings, totalCount]);
-
-  const [activeTab, setActiveTab] = useState<string>("All");
-  const visible = activeTab === "All" ? listings.slice(0, 6) : listings.filter((l) => l.vertical === activeTab).slice(0, 6);
+  const visible = listings.slice(0, 6);
 
   return (
     <section
@@ -63,7 +48,7 @@ export default function HomeListingsTeaser({ listings, totalCount }: HomeListing
       }}
     >
       <div style={{ maxWidth: 1280, margin: "0 auto" }}>
-        <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 18, gap: 16, flexWrap: "wrap" }}>
+        <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 22, gap: 16, flexWrap: "wrap" }}>
           <div>
             <span className="iv2-mini" style={{ color: "var(--color-coral-600)" }}>
               ● The Marketplace · {totalCount} live listings
@@ -86,81 +71,10 @@ export default function HomeListingsTeaser({ listings, totalCount }: HomeListing
           </Link>
         </div>
 
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 6,
-            marginBottom: 14,
-            borderBottom: "1px solid #e5e7eb",
-            flexWrap: "wrap",
-          }}
-        >
-          {tabs.map((t) => {
-            const active = activeTab === t.key;
-            return (
-              <button
-                key={t.key}
-                type="button"
-                onClick={() => setActiveTab(t.key)}
-                style={{
-                  padding: "9px 12px",
-                  fontSize: 12.5,
-                  fontWeight: 600,
-                  cursor: "pointer",
-                  border: "none",
-                  background: "none",
-                  color: active ? "var(--color-ink-900)" : "var(--color-ink-400)",
-                  borderBottom: active ? "2px solid var(--color-coral-500)" : "2px solid transparent",
-                  marginBottom: -1,
-                  fontFamily: "inherit",
-                }}
-              >
-                {t.label}
-                <span style={{ fontSize: 10.5, color: "var(--color-ink-400)", fontWeight: 500, marginLeft: 4 }}>{t.n}</span>
-              </button>
-            );
-          })}
-          <Link
-            href="/invest/listings"
-            className="home-listings-facets"
-            style={{
-              marginLeft: "auto",
-              display: "flex",
-              gap: 6,
-              alignItems: "center",
-              paddingBottom: 6,
-              textDecoration: "none",
-            }}
-            aria-label="Filter listings (full filters on browse page)"
-          >
-            {["$ Min", "Yield", "Term", "Status"].map((f) => (
-              <span
-                key={f}
-                style={{
-                  padding: "5px 10px",
-                  borderRadius: 99,
-                  fontSize: 11,
-                  fontWeight: 600,
-                  border: "1px solid #e5e7eb",
-                  background: "white",
-                  color: "var(--color-ink-500)",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 4,
-                }}
-              >
-                {f}
-                <DesignIcon name="chevron-down" size={9} />
-              </span>
-            ))}
-          </Link>
-        </div>
-
         <div className="home-listings-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
           {visible.length === 0 && (
             <div style={{ gridColumn: "1 / -1", padding: "36px 18px", textAlign: "center", color: "var(--color-ink-400)", fontSize: 13 }}>
-              No listings in this category yet — <Link href="/invest/listings" style={{ color: "var(--color-coral-600)", fontWeight: 700 }}>browse all</Link>.
+              No listings yet — <Link href="/invest/listings" style={{ color: "var(--color-coral-600)", fontWeight: 700 }}>browse all</Link>.
             </div>
           )}
           {visible.map((l) => {
@@ -264,9 +178,6 @@ export default function HomeListingsTeaser({ listings, totalCount }: HomeListing
       <style>{`
         @media (max-width: 1024px) {
           .home-listings-grid { grid-template-columns: repeat(2, 1fr) !important; }
-        }
-        @media (max-width: 768px) {
-          .home-listings-facets { display: none !important; }
         }
         @media (max-width: 640px) {
           .home-listings-grid { grid-template-columns: 1fr !important; }
