@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 import Icon from "@/components/Icon";
 
 /**
@@ -43,7 +43,7 @@ async function fetchBrokers(
   maxBrokers: number,
 ): Promise<BrokerRow[]> {
   try {
-    const supabase = createAdminClient();
+    const supabase = await createClient();
     let query = supabase
       .from("brokers")
       .select(
