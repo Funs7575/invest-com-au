@@ -10,7 +10,6 @@ import AccountButton from "@/components/layout/AccountButton";
 import { useUser } from "@/lib/hooks/useUser";
 
 const SearchOverlay = dynamic(() => import("@/components/SearchOverlay"), { ssr: false });
-const IntentPicker = dynamic(() => import("@/components/IntentPicker"), { ssr: false });
 
 // ─── Mega-menu data ───────────────────────────────────────────────────────────
 
@@ -371,7 +370,6 @@ const mobileAccountSectionLoggedIn = {
 export function Navigation() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [intentOpen, setIntentOpen] = useState(false);
   const pathname = usePathname();
   const { user } = useUser();
 
@@ -830,15 +828,15 @@ export function Navigation() {
               </svg>
             </button>
             <AccountButton />
-            <button
-              onClick={() => setIntentOpen(true)}
-              className="bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-slate-900 px-4 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm hover:shadow-md active:scale-[0.97] flex items-center gap-2 cursor-pointer"
+            <Link
+              href="/quiz"
+              className="bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-slate-900 px-4 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm hover:shadow-md active:scale-[0.97] inline-flex items-center gap-2 cursor-pointer"
             >
-              Get Started
+              Take the quiz
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
-            </button>
+            </Link>
           </div>
 
           {/* Mobile buttons */}
@@ -852,12 +850,12 @@ export function Navigation() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </button>
-            <button
-              onClick={() => setIntentOpen(true)}
-              className="bg-amber-500 text-slate-900 px-4 py-2 rounded-lg text-xs font-bold transition-all hover:bg-amber-600 min-h-11 flex items-center cursor-pointer"
+            <Link
+              href="/quiz"
+              className="bg-amber-500 text-slate-900 px-4 py-2 rounded-lg text-xs font-bold transition-all hover:bg-amber-600 min-h-11 inline-flex items-center cursor-pointer"
             >
-              Get Started
-            </button>
+              Take the quiz
+            </Link>
             <button
               onClick={() => setMobileOpen((v) => !v)}
               className="p-2 min-w-11 min-h-11 flex items-center justify-center text-slate-700 rounded-lg hover:bg-slate-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
@@ -1003,8 +1001,6 @@ export function Navigation() {
 
       {/* Search overlay */}
       <SearchOverlay isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
-      {/* Intent picker */}
-      <IntentPicker isOpen={intentOpen} onClose={() => setIntentOpen(false)} />
     </>
   );
 }
