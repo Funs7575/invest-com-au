@@ -74,6 +74,7 @@ const HUB_FAQS = [
   {
     question: "Do I need FIRB approval to buy property in Australia?",
     answer:
+      // dated-ok — FIRB Foreign Buyer Ban window fixed by Foreign Acquisitions & Takeovers Amendment 2024; review at expiry (March 2027).
       "Yes, if you are a non-resident or temporary visa holder. Non-residents can only buy new dwellings, off-the-plan properties, or vacant land for development. From 1 April 2025 to 31 March 2027, the Australian Government has also banned foreign persons — including temporary residents — from purchasing established (existing) dwellings. Exceptions may apply in limited cases. Stamp duty surcharges of 7–8% (depending on state) apply on top of standard stamp duty. FIRB application fees start at $14,100 for properties up to $1 million.",
   },
   {
@@ -498,16 +499,16 @@ export default async function ForeignInvestmentHubPage() {
             </div>
             <div className="flex flex-col sm:flex-row gap-3">
               <Link
-                href="/advisors/tax-agents"
+                href="/advisors/international-tax-specialists"
                 className="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-white font-bold rounded-xl text-sm text-center transition-colors shadow-lg"
               >
-                Find a Tax Agent (International)
+                Find an International Tax Specialist
               </Link>
               <Link
-                href="/advisors/financial-planners"
+                href="/advisors/firb-specialists"
                 className="px-6 py-3 border border-slate-600 hover:border-slate-400 text-slate-300 hover:text-white font-semibold rounded-xl text-sm text-center transition-colors"
               >
-                Find a Financial Planner
+                Find an FIRB Specialist
               </Link>
             </div>
           </div>
