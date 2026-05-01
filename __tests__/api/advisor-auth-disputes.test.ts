@@ -11,6 +11,16 @@ const mockAutoResolve = vi.fn((..._args: unknown[]) => undefined as unknown);
 const mockNotifyAdmin = vi.fn((..._args: unknown[]) => Promise.resolve());
 const supabaseCalls: Record<string, { method: string; args: unknown[] }[]> = {};
 
+// vi.hoisted() — vi.mock factories are hoisted; the captured fn must be too.
+// Post-C-02 the route delegates auth to requireAdvisorSession (helper).
+const { mockRequireAdvisorSession } = vi.hoisted(() => ({
+  mockRequireAdvisorSession: vi.fn(),
+}));
+
+vi.mock("@/lib/require-advisor-session", () => ({
+  requireAdvisorSession: mockRequireAdvisorSession,
+}));
+
 vi.mock("@/lib/supabase/server", () => ({
   createClient: vi.fn(async () => ({
     auth: { getUser: mockGetUser },
@@ -51,6 +61,8 @@ function makeGet(): NextRequest {
 }
 
 function authedAdvisor(advisorId = 42) {
+  // Post-C-02: helper is mocked; mockGetUser kept for any non-helper paths.
+  mockRequireAdvisorSession.mockResolvedValue(advisorId);
   mockGetUser.mockResolvedValue({
     data: { user: { id: "u-1", email: "advisor@test.com" } },
   });
@@ -91,10 +103,11 @@ function setupServerFromForPost(opts: {
   // `from(table)` creates a fresh builder, but we want the counter to span
   // them so the route's two distinct `.from('lead_disputes')` calls (lookup +
   // insert) get different rows back.
+  // Post-C-02: route uses admin client for all queries here.
   let leadCallCount = 0;
   let disputeCallCount = 0;
 
-  mockServerFrom.mockImplementation((table: string) => {
+  mockAdminFrom.mockImplementation((table: string) => {
     const b = createChainableBuilder(table, supabaseCalls);
     if (table === "professional_leads") {
       b.single = vi.fn(() => {
@@ -173,6 +186,8 @@ describe("POST /api/advisor-auth/disputes", () => {
     mockAdminFrom.mockImplementation((table: string) =>
       createChainableBuilder(table, supabaseCalls),
     );
+    // Default: not authenticated. authedAdvisor() flips this to 42.
+    mockRequireAdvisorSession.mockResolvedValue(null);
     (isRateLimited as ReturnType<typeof vi.fn>).mockResolvedValue(false);
     mockAutoResolve.mockResolvedValue({
       verdict: "refund",
@@ -188,6 +203,7 @@ describe("POST /api/advisor-auth/disputes", () => {
   });
 
   it("returns 401 when not authenticated", async () => {
+    // Helper default (null) already simulates unauthenticated.
     mockGetUser.mockResolvedValue({ data: { user: null } });
     const res = await POST(makePost({ leadId: 1, reason: "spam" }));
     expect(res.status).toBe(401);
@@ -326,6 +342,8 @@ describe("GET /api/advisor-auth/disputes", () => {
     mockAdminFrom.mockImplementation((table: string) =>
       createChainableBuilder(table, supabaseCalls),
     );
+    // Default: not authenticated. authedAdvisor() flips this to 42.
+    mockRequireAdvisorSession.mockResolvedValue(null);
   });
 
   it("returns 401 when not authenticated", async () => {
@@ -336,7 +354,8 @@ describe("GET /api/advisor-auth/disputes", () => {
 
   it("returns disputes array for the advisor", async () => {
     authedAdvisor();
-    mockServerFrom.mockImplementation((table: string) => {
+    // Post-C-02: route uses admin client for lead_disputes.
+    mockAdminFrom.mockImplementation((table: string) => {
       const b = createChainableBuilder(table, supabaseCalls);
       if (table === "lead_disputes") {
         b.order = vi.fn(() =>
@@ -360,7 +379,8 @@ describe("GET /api/advisor-auth/disputes", () => {
 
   it("returns empty array when no disputes exist", async () => {
     authedAdvisor();
-    mockServerFrom.mockImplementation((table: string) => {
+    // Post-C-02: route uses admin client for lead_disputes.
+    mockAdminFrom.mockImplementation((table: string) => {
       const b = createChainableBuilder(table, supabaseCalls);
       if (table === "lead_disputes") {
         b.order = vi.fn(() =>
