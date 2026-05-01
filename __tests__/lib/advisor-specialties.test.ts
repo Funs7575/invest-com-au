@@ -49,6 +49,23 @@ describe("SPECIALTIES_BY_TYPE", () => {
     expect(SPECIALTIES_BY_TYPE.financial_planner.length).toBeGreaterThan(0);
   });
 
+  it("includes property-thread completion types (conveyancer, property_lawyer)", () => {
+    expect(SPECIALTIES_BY_TYPE.conveyancer.length).toBeGreaterThan(0);
+    expect(SPECIALTIES_BY_TYPE.property_lawyer.length).toBeGreaterThan(0);
+    // Conveyancer specialties should reference settlement work
+    expect(
+      SPECIALTIES_BY_TYPE.conveyancer.some((s) =>
+        /settle|contract|stamp duty|pexa/i.test(s),
+      ),
+    ).toBe(true);
+    // Property lawyer specialties should reference disputes / SMSF / off-the-plan
+    expect(
+      SPECIALTIES_BY_TYPE.property_lawyer.some((s) =>
+        /dispute|smsf|off-the-plan|litigation|strata/i.test(s),
+      ),
+    ).toBe(true);
+  });
+
   it("every type's specialty list is non-empty", () => {
     for (const [type, specialties] of Object.entries(SPECIALTIES_BY_TYPE)) {
       expect(

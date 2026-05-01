@@ -26,7 +26,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | --- | --- | --- | --- | --- |
 | A | `claude/audit-remediation/a-01-drift-list` (#308) · `a-02-batch-1-user-data-backfill` (#322) · `a-03-batch-1-revenue-backfill` (#351) | #308/#322/#351 MERGED | last merged 2026-05-01T14:28Z | A-01 done (PR #308). A-02 batch 1 done (PR #322 — 5 user-data tables). A-03 batch 1 done (PR #351 — 5 revenue tables). A-02/A-03 still in-progress (~7 batches each remain). A-04..A-07 pending. |
 | B | `claude/audit-remediation/b-08-rls-select-only` (#326) · `b-09a-otp-gate` (#348 draft, parallel-agent) | #326 MERGED 2026-05-01T13:19Z · #348 OPEN (DRAFT, awaiting `LISTING_OWNER_COOKIE_SECRET` env var) | last CI-rescue 2026-05-01T21:43Z (#348) | PR #220 merged (B-01..B-06 done/blocked/FP). B-07 done (`0097159` PR #286). B-08 done — code changes merged via PR #326 commit `476f89f6`. B-09 in-progress on `#348` (parallel-agent, draft). CI-rescue iter 1 (`09c4dfb`, 2026-05-01) merged main before PR #392 types regen — types drift still red. CI-rescue iter 2 (`7da8757e`, 2026-05-01T21:43Z) merged post-#392 main — picked up database.types.ts regen; CI re-run pending. Still DRAFT awaiting `LISTING_OWNER_COOKIE_SECRET` env var (Tier D). |
-| C | `claude/audit-remediation/c-01-admin-callgraph` (#327) · `c-03-admin-import-comments` (#360 parallel-agent) · `c-04-c-05` (#394) · `c-05b-quarterly-reports` (#349 parallel-agent) | #327 MERGED 2026-05-01T13:19Z · #360 OPEN · #394 OPEN · #349 OPEN | last CI-rescue 2026-05-01T21:40Z (#349) | C-01..C-08 done (merged via #303 + #327). C-DISC-20260501-01 pending (iter 166 discovery). C-03 in-progress on #360 (parallel-agent); CI-rescue: merged main post-#392 → `48b9abd` pushed 2026-05-01T21:37Z; CI re-run pending. C-04 done — PR #394 commit `e202d0d`. C-05 (ArticleBrokerTable) done — PR #394 commit `e202d0d`. C-05b in-progress on #349 (parallel-agent — quarterly_reports refactor); CI-rescue: merged main post-#392 → `153b707` pushed 2026-05-01T21:40Z; CI re-run pending. |
+| C | `claude/audit-remediation/c-01-admin-callgraph` (#327) · `c-03-admin-import-comments` (#360 parallel-agent) · `c-04-c-05` (#394) · `c-05b-quarterly-reports` (#349 parallel-agent) · `c-disc-20260501-01-vertical-marketplace-admin-swap` (#397) | #327 MERGED 2026-05-01T13:19Z · #360 OPEN · #394 OPEN · #349 OPEN · #397 OPEN | pending — pushed 2026-05-01 | C-01..C-08 done (merged via #303 + #327). **C-DISC-20260501-01 done — commit `9517f5a` PR #397.** C-03 in-progress on #360 (parallel-agent); CI-rescue: merged main post-#392 → `48b9abd` pushed 2026-05-01T21:37Z; CI re-run pending. C-04 done — PR #394 commit `e202d0d`. C-05 (ArticleBrokerTable) done — PR #394 commit `e202d0d`. C-05b in-progress on #349 (parallel-agent — quarterly_reports refactor); CI-rescue: merged main post-#392 → `153b707` pushed 2026-05-01T21:40Z; CI re-run pending. |
 | D | `claude/audit-remediation/d-route-tests` | #285 MERGED 2026-04-29T10:13Z; supplementary PRs #246/#285/#297/#298 | last merged 2026-04-29T18:53Z | D-01..D-09 done (PR #246). D-10 done (PR #246 — coverage ratchet). D-11 complete (43+ batches, all admin/cron/non-admin routes covered) — merged via PR #285 + supplementary PRs #297/#298. **Stream D complete.** |
 | E | `claude/audit-remediation/e-01-with-validated-body` (#295) · `e-02-batch-*-zod-rollout` (#315/#323) · `e-03-zod-lint-rule` (#313) | all MERGED | last merged 2026-05-01T10:31Z | E-01 done (PR #295 — withValidatedBody helper). E-02 in-progress (batches 1+2 done via PR #315/#323 — 8 routes; ~3 batches remain). E-03 done (PR #313 — ESLint rule). E-04 backfill pending. |
 | F | `claude/audit-remediation/f-02..f-06` (multiple PRs) | #293/#294/#301/#354/#355/#370 all MERGED | last merged 2026-05-01T16:00Z | F-01 false-positive. F-02 done (PR #293 — formatDate). F-03 done (PR #370 — formatCurrency). F-04 done (PR #354 — slugify, first wave). F-05 done (PR #294 + #301 followup — console→logger). F-06 done (PR #355 — compliance copy SSOT). F-07/F-08 pending. |
@@ -41,7 +41,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | O | `claude/audit-remediation/o-rls-no-policy` (iters 1-4 via #235/#237/#239) · `o-iter6/forum` (#299) · `o-iter7/editorial-obs-secrets` (#300) · `o-iter8-rls-observability` (#366 parallel-agent) · `o-03-search-path` (#395) | #235/#237/#239/#299/#300 MERGED · #366 OPEN · #395 OPEN | pending — pushed 2026-05-01 | O-01 iter1-4 done. O-02 done. iter6 done (PR #299). iter7 done (PR #300). iter8 in-progress on #366 (parallel-agent, 8 obs+anti-abuse tables). CI-rescue: merged main post-#392 → `5b000f0` pushed 2026-05-01T21:41Z. **O-03 done: `4a04418` → PR #395 (SECURITY DEFINER search_path fix).** O-04/O-05 pending. |
 | P | _not started_ | — | — | — |
 | Q | _not started_ | — | — | — |
-| R | `claude/audit-remediation/r-01-marketplace-allocation` | #290 MERGED 2026-04-29T10:05Z | last merged 2026-04-29T10:05Z | R-01 done (PR #290 — marketplace allocation + CPC billing tests). R-02..R-11 still pending. |
+| R | `claude/audit-remediation/r-01-marketplace-allocation` · `r-02-auto-bid-tests` (#396) | #290 MERGED 2026-04-29T10:05Z · #396 OPEN | pending — pushed 2026-05-01 | R-01 done (PR #290). **R-02 done: `ae23f8b` → PR #396 (29 tests for auto-bid.ts).** R-03..R-11 still pending. |
 | S | _not started_ | — | — | — |
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 MERGED 2026-04-28T11:45Z | merged | V-NEW-06 done (commit `a7bd736`) |
@@ -505,7 +505,7 @@ Highest priority: critical 2 first.
 | C-DISC-20260430-03 | done | `lead_disputes` has no RLS — table created outside migrations history (ALTER TABLE and index refs only). Disputes contain advisor PII (reason, details, billing_id). Should add ENABLE RLS + service_role full access + "Advisor can view own disputes" SELECT policy. | 1 | Done iter 158 (`5b32c3b` PR #327) + reconciled iter 159 (`9639d2c`) + admin policy iter 160 (`0fc88b5` PR #327): migration `20260606_c02_lead_disputes_rls.sql` — ENABLE RLS + FORCE RLS + service_role full access + "Admin can manage disputes" ALL (TO authenticated, raw_user_meta_data role=admin) + "Advisor can view own disputes" SELECT. Migration is safe in prod now. |
 | C-DISC-admin-disputes | done | 3 admin browser pages use `createClient()` to read/write `lead_disputes` and need RLS coverage. | ~2 | Resolved iter 160 (`0fc88b5` PR #327): added "Admin can manage disputes" ALL policy (TO authenticated, USING raw_user_meta_data->>'role'='admin') to migration. Admin users authenticated via Supabase Auth use the `authenticated` DB role (not anon) — the policy grants full access. No page refactoring needed. |
 | C-DISC-20260430-02 | done | `advisor_sessions` table has no `CREATE TABLE` migration — the table was created outside migrations history (only an index migration exists in `20260309_security_and_performance_fixes.sql`). Should be backfilled via a `CREATE TABLE IF NOT EXISTS` migration for completeness and future schema drift detection. | 1 | Done iter 165 (`169815c8` PR #327): migration `20260602_c02_advisor_sessions_backfill.sql` — CREATE TABLE IF NOT EXISTS with SERIAL PK, professional_id FK (ON DELETE CASCADE), session_token UNIQUE, expires_at, created_at. Indexes idx_advisor_sessions_token + idx_advisor_sessions_professional with IF NOT EXISTS. ENABLE RLS handled by companion migration 20260603_c02_advisor_auth_rls_hardening.sql. P3. Surfaced by iter 152. |
-| C-DISC-20260501-01 | pending | `components/marketplace/VerticalMarketplaceListings.tsx` uses `createAdminClient()` to SELECT `investment_listings WHERE status='active'`. `investment_listings` has an "anon select catalogue" RLS policy `USING (true)` — anon client + component's own `.eq("status","active")` produces identical results. Swap to `await createClient()` (same pattern as C-05). | 1 | P3. Surfaced by iter 166 (Phase 6.5 sweep on components/ArticleBrokerTable.tsx sibling). |
+| C-DISC-20260501-01 | done | `components/marketplace/VerticalMarketplaceListings.tsx` uses `createAdminClient()` to SELECT `investment_listings WHERE status='active'`. `investment_listings` has an "anon select catalogue" RLS policy `USING (true)` — anon client + component's own `.eq("status","active")` produces identical results. Swap to `await createClient()` (same pattern as C-05). | 1 | P3. Surfaced by iter 166. Done iter 169 — commit `9517f5a` PR #397. |
 
 ### Stream E — Zod validation rollout (issue #218)
 
@@ -722,7 +722,8 @@ Highest-risk untested business logic. Marketplace allocation is the most lucrati
 | ID | Status | Summary | Est. iterations | Notes |
 | --- | --- | --- | --- | --- |
 | R-01 | done | `lib/marketplace/allocation.ts` — 388 LOC, 0% covered. Cover allocation algorithm + auto-bid edge cases + tier overrides | ~2 | Done in PR #290 MERGED 2026-04-29T10:05Z (`__tests__/api/marketplace-allocation.test.ts` exists; covers allocation + CPC billing). |
-| R-02 | pending | `lib/marketplace/auto-bid.ts` — 174 LOC, 0% covered | 1 | P0. Pairs with R-01. |
+| R-02 | done | `lib/marketplace/auto-bid.ts` — 174 LOC, 0% covered | 1 | P0. Pairs with R-01. Done: commit `ae23f8b` · PR #396 (29 tests). |
+| R-02-DISC-20260501-01 | pending | `lib/marketplace/broker-auth.ts` — 77 LOC, 0 tests, no coverage. Only `lib/marketplace/` file without a test. | 1 | P1. Surfaced by iter 168 (discovery sweep on R-02 file). |
 | R-03 | pending | `lib/advisor-lead-dispute-resolver.ts` — 340 LOC, 0% covered | 1 | P1. |
 | R-04 | pending | `lib/cached-data.ts` — 263 LOC, 0% covered | 1 | P1. |
 | R-05 | pending | `lib/email-templates.ts` — 745 LOC, 18% covered → raise to ≥60% | 1 | P2. |
@@ -1347,6 +1348,8 @@ Two strategically important surfaces under-served by current nav: (1) investment
 
 ## Done
 
+- 2026-05-01 · C-DISC-20260501-01 · `components/marketplace/VerticalMarketplaceListings.tsx`: swapped `createAdminClient()` → `await createClient()` (anon-key server client). `investment_listings` "anon select catalogue" RLS policy (`USING (true)`) means anon client + `.eq("status","active")` returns identical rows — zero behavioral change. Commit `9517f5a` · pr #397
+- 2026-05-01 · R-02 · `lib/marketplace/auto-bid.ts`: 29 unit tests covering `calculateOptimalBids` (conservative bid paths, optimal bid formula, +/-25% caps, min/max clamps, reason labels, multi-campaign) and `applyBidAdjustments` (count, error handling, notification message format). Commit `ae23f8b` · pr #396
 - 2026-05-01 · O-03 · `refresh_advisor_cohort_metrics()` SECURITY DEFINER: added `SET search_path = public, pg_catalog` via `20260501_o03_refresh_advisor_cohort_metrics_search_path.sql`. Closes CWE-89/CWE-20 injection vector on SECURITY DEFINER function. Commit `4a04418` · pr #395
 - 2026-05-01 · C-05 · `components/ArticleBrokerTable.tsx`: switched `createAdminClient()` → `await createClient()` (anon key). Anon "Public read for active brokers" RLS policy (`USING status='active'`) matches `.eq("status","active")` filter exactly — zero behavioral change. Commit `e202d0d` · pr #394
 - 2026-05-01 · C-04 · `app/api/affiliate/click/route.ts`: kept admin client (founder Option C), added `// admin — click tracking must capture all broker statuses for revenue/editorial analytics` comment above both SELECT and INSERT call sites. Commit `e202d0d` · pr #394
@@ -1425,6 +1428,35 @@ Two strategically important surfaces under-served by current nav: (1) investment
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-01 — iteration 169 (stream C — C-DISC-20260501-01: VerticalMarketplaceListings admin swap)
+
+- Phase 0: batch iteration 1 (of up to 5 this fire). Lock acquired.
+- Phase 1: synced main (`reset --hard origin/main` after 50-commit divergence from prior local session).
+- Phase 1.5: types regen skipped (Supabase MCP not needed; CI drift gate is green on all open PRs).
+- Phase 2: CI check on in-flight PRs (#348/#349/#360/#366/#395/#347/#361/#367/#368/#369) — no failures. All queued/in_progress or green. No CI rescue needed.
+- Phase 3: priority order → B-other (B-09 Tier D hold, skip) → C (C-DISC-20260501-01 pending). Created branch `claude/audit-remediation/c-disc-20260501-01-vertical-marketplace-admin-swap`.
+- Phase 4 verification: confirmed "anon select catalogue" RLS policy (`USING (true)`) in `20260601_rls_investment_listings.sql` survives tightening migration `20260602`. Admin NOT needed — anon client + `.eq("status","active")` produces identical results.
+- Phase 5: swapped import + call site (2 lines). No test files to run.
+- Phase 6: committed `9517f5a`, pushed, opened draft PR #397.
+- Phase 6.5 discovery: `components/marketplace/EnquireButton.tsx` (only sibling) — no admin usage. `components/ArticleBrokerTable.tsx` admin import found but already tracked as C-05 in open PR #394. No new discovery items.
+- Phase 7: queue updated on main. C-DISC-20260501-01 → done.
+
+- STATUS: PROGRESS · stream=C · item=C-DISC-20260501-01 · pr=#397
+- Commit: 9517f5a
+- Diff: +2 -2 across 1 file
+- Next item: A-04 (content table drift backfill, priority 12)
+- Remaining: ~60+ pending · several blocked · 100+ done
+
+### 2026-05-01 — iteration 168 (stream R — R-02 auto-bid unit tests)
+
+- Phase 2: CI check on in-flight PRs — #395 (O-03) queued, no failures.
+- Phase 3: picked R-02 — `lib/marketplace/auto-bid.ts`, 174 LOC, 0% coverage. P0.
+- Phase 4 verification: pure test addition — no RLS/migration verification needed.
+- Phase 5: created `__tests__/lib/marketplace-auto-bid.test.ts` (475 LOC, 29 tests). Mocks `@/lib/supabase/admin` + `@/lib/logger`. Tests cover `calculateOptimalBids` (20 tests: 3 error paths, conservative bid paths, optimal bid formula, caps, clamps, reason labels, multi-campaign) and `applyBidAdjustments` (9 tests: count, error handling, notification messages).
+- Phase 6.5 discovery: `lib/marketplace/broker-auth.ts` (77 LOC) is the only `lib/marketplace/` file without a test. Not already in queue. Added `R-02-DISC-20260501-01` (1 of 3 cap used).
+- Created branch `claude/audit-remediation/r-02-auto-bid-tests`, committed `ae23f8b`, pushed, opened draft PR #396.
+- STATUS: PROGRESS · stream=R · item=R-02 · pr=#396
 
 ### 2026-05-01 — iteration 167 (stream O — O-03 SECURITY DEFINER search_path)
 
