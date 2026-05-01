@@ -1,4 +1,9 @@
 import Icon from "@/components/Icon";
+import {
+  ABN_VERIFIED_NOTE,
+  AFSL_VERIFIED_NOTE,
+  SEEDED_PROFILE_NOTE,
+} from "@/lib/compliance";
 
 /**
  * Verified badge — renders up to three pill labels that document
@@ -60,7 +65,9 @@ export default function VerifiedBadge({
   if (hasAbn) {
     pills.push({
       label: "ABN Verified",
-      title: abn ? `ABN ${abn} confirmed on the ABR.` : "ABN confirmed on the ABR.",
+      title: abn
+        ? ABN_VERIFIED_NOTE.replace("ABN", `ABN ${abn}`)
+        : ABN_VERIFIED_NOTE,
       cls: "bg-emerald-100 text-emerald-800 border-emerald-200",
       icon: "check-circle",
     });
@@ -69,8 +76,8 @@ export default function VerifiedBadge({
     pills.push({
       label: "AFSL Current",
       title: afsl
-        ? `AFSL ${afsl} confirmed current on the ASIC Professional Registers.`
-        : "AFSL confirmed current on the ASIC Professional Registers.",
+        ? AFSL_VERIFIED_NOTE.replace("AFSL", `AFSL ${afsl}`)
+        : AFSL_VERIFIED_NOTE,
       cls: "bg-sky-100 text-sky-800 border-sky-200",
       icon: "shield-check",
     });
@@ -78,8 +85,7 @@ export default function VerifiedBadge({
   if (isSeeded && showSeeded) {
     pills.push({
       label: "Seeded",
-      title:
-        "This profile was seeded by the editorial team and has not yet been independently verified against ABR / ASIC.",
+      title: SEEDED_PROFILE_NOTE,
       cls: "bg-slate-100 text-slate-700 border-slate-200",
       icon: "info",
     });

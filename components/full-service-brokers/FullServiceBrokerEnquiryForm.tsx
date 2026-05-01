@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { FULL_SERVICE_ENQUIRY_DISCLAIMER } from "@/lib/compliance";
 
 interface Props {
   professionalId: number;
@@ -203,9 +204,7 @@ export default function FullServiceBrokerEnquiryForm({
       </button>
 
       <p className="text-[0.65rem] text-slate-500 text-center leading-relaxed">
-        General information only — not personal financial advice. {firmName} is
-        responsible for any advice they give you and operates under their own
-        AFSL.
+        {FULL_SERVICE_ENQUIRY_DISCLAIMER.replace("{firmName}", firmName)}
       </p>
     </form>
   );
