@@ -13,6 +13,7 @@ import {
   REVIEW_AUTHOR,
 } from "@/lib/seo";
 import { getAffiliateLink, AFFILIATE_REL } from "@/lib/tracking";
+import { formatCurrency } from "@/lib/utils";
 import AuthorByline from "@/components/AuthorByline";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -43,15 +44,6 @@ export async function generateMetadata({
     },
     alternates: { canonical: `/costs/${slug}` },
   };
-}
-
-function formatCurrency(n: number): string {
-  return n.toLocaleString("en-AU", {
-    style: "currency",
-    currency: "AUD",
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
 }
 
 export default async function CostScenarioPage({

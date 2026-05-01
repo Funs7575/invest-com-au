@@ -8,10 +8,7 @@ import { trackEvent, trackPageDuration } from "@/lib/tracking";
 import { getStoredUtm } from "@/components/UtmCapture";
 import { storeQualificationData } from "@/lib/qualification-store";
 import AdvisorMatchCTA from "@/components/AdvisorMatchCTA";
-
-function formatCurrency(n: number): string {
-  return new Intl.NumberFormat("en-AU", { style: "currency", currency: "AUD", maximumFractionDigits: 0 }).format(n);
-}
+import { formatCurrency } from "@/lib/utils";
 
 export default function RetirementCalculatorClient() {
   const [currentAge, setCurrentAge] = useState(35);
