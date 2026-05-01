@@ -11,7 +11,7 @@ import HomePostAJob from "@/components/HomePostAJob";
 import HomeCompareDeepDive, { type CompareBroker } from "@/components/HomeCompareDeepDive";
 import HomeCrossBorder from "@/components/HomeCrossBorder";
 import HomeFridayBriefing from "@/components/HomeFridayBriefing";
-import HomeTrust from "@/components/HomeTrust";
+import HomeHowWeEarn from "@/components/HomeHowWeEarn";
 import ScrollFadeIn from "@/components/ScrollFadeIn";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import { ORGANIZATION_JSONLD, SITE_URL } from "@/lib/seo";
@@ -243,7 +243,7 @@ export default async function HomePage() {
       </ScrollFadeIn>
 
       <ScrollFadeIn>
-        <HomeTrust />
+        <HomeHowWeEarn />
       </ScrollFadeIn>
 
       <ScrollFadeIn>
