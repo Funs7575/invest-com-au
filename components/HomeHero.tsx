@@ -1,7 +1,29 @@
 import Link from "next/link";
 import { DesignIcon } from "@/components/design/DesignIcon";
 
-export default function HomeHero() {
+interface HomeHeroProps {
+  brokerCount: number;
+  listingCount: number;
+  professionalCount: number;
+}
+
+// v5 hero — "Australia's front door". Compliance-safe copy: replaces the
+// previous "where your money should go" language (which read like personal
+// financial advice) with neutral "investment decisions" framing. Two CTAs:
+// the primary "Choose a route" jumps to the four route cards immediately
+// below; the secondary "Use the 60-second pathfinder" goes to the quiz for
+// visitors who don't know which route they want yet.
+export default function HomeHero({ brokerCount, listingCount, professionalCount }: HomeHeroProps) {
+  // Four proof tiles below the CTAs. Each maps to one of the four routes
+  // shown in detail in the HomeRouteCards section. Tiles are deliberately
+  // small — they hint at the full route grid below without competing with it.
+  const tiles: ReadonlyArray<{ verb: string; label: string; sub: string }> = [
+    { verb: "Compare", label: "platforms", sub: `${brokerCount || 0} on file` },
+    { verb: "Browse", label: "opportunities", sub: `${listingCount || 0} listed` },
+    { verb: "Find", label: "experts", sub: `${professionalCount.toLocaleString("en-AU")} verified` },
+    { verb: "Use", label: "pathfinder", sub: "60 seconds" },
+  ];
+
   return (
     <section
       style={{
@@ -129,10 +151,51 @@ export default function HomeHero() {
           </Link>
         </div>
 
-        <p style={{ marginTop: 24, fontSize: 11, color: "rgba(255,255,255,.45)" }}>
+        <div
+          className="home-hero-tiles"
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(4, 1fr)",
+            gap: 10,
+            marginTop: 32,
+            maxWidth: 720,
+          }}
+        >
+          {tiles.map((t) => (
+            <div
+              key={t.verb + t.label}
+              style={{
+                padding: "12px 14px",
+                borderRadius: 10,
+                background: "rgba(255,255,255,.04)",
+                border: "1px solid rgba(255,255,255,.08)",
+              }}
+            >
+              <div style={{ fontSize: 11, color: "rgba(255,255,255,.5)", fontWeight: 600, letterSpacing: ".04em", textTransform: "uppercase" }}>
+                {t.verb}
+              </div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: "white", marginTop: 2 }}>
+                {t.label}
+              </div>
+              <div style={{ fontSize: 11, color: "rgba(255,255,255,.45)", marginTop: 3 }}>
+                {t.sub}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <p style={{ marginTop: 18, fontSize: 11, color: "rgba(255,255,255,.45)" }}>
           General information only. Always check licensing, fees, risks and suitability before proceeding.
         </p>
       </div>
+
+      <style>{`
+        @media (max-width: 720px) {
+          .home-hero-tiles {
+            grid-template-columns: repeat(2, 1fr) !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }

@@ -202,7 +202,11 @@ export default async function HomePage() {
         }}
       />
 
-      <HomeHero />
+      <HomeHero
+        brokerCount={brokerCount}
+        listingCount={totalListingCount}
+        professionalCount={totalProfessionalCount}
+      />
 
       <ScrollFadeIn>
         <HomeRouteCards
