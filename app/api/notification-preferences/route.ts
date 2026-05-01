@@ -1,8 +1,32 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { logger } from "@/lib/logger";
 
 const log = logger("notifications");
+
+/**
+ * Body schema for POST. Every preference is an optional boolean —
+ * non-boolean values fall through to `undefined` per-field via
+ * `.optional().catch(undefined)`, mirroring the previous
+ * `typeof body[key] === "boolean" ? ... : drop` per-key filter (so a
+ * mixed body like `{ fee_alerts: "yes", weekly_digest: true }` keeps
+ * the valid key and drops only the bad one). The "no recognised keys
+ * → 400" gate below stays the gatekeeper.
+ *
+ * Top-level `.catch({})` mirrors the previous "non-object body → 400
+ * because zero allowed keys" path.
+ */
+const NotificationPreferencesSchema = z
+  .object({
+    fee_alerts: z.boolean().optional().catch(undefined),
+    weekly_digest: z.boolean().optional().catch(undefined),
+    deal_alerts: z.boolean().optional().catch(undefined),
+    campaign_updates: z.boolean().optional().catch(undefined),
+    marketing: z.boolean().optional().catch(undefined),
+  })
+  .passthrough()
+  .catch({});
 
 /**
  * GET /api/notification-preferences
@@ -58,23 +82,26 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Session expired. Please sign in again." }, { status: 401 });
   }
 
-  let body: Record<string, unknown>;
+  let raw: unknown;
   try {
-    body = await req.json();
+    raw = await req.json();
   } catch {
     return NextResponse.json(
       { error: "Some fields are invalid. Check and try again." },
       { status: 400 }
     );
   }
+  const parsed = NotificationPreferencesSchema.parse(raw);
 
-  // Only allow known preference keys
+  // Only allow known preference keys (booleans only — non-bool drops out
+  // because the schema marks each key `boolean | undefined`).
   const allowedKeys = ["fee_alerts", "weekly_digest", "deal_alerts", "campaign_updates", "marketing"] as const;
   const updates: Record<string, boolean> = {};
 
   for (const key of allowedKeys) {
-    if (typeof body[key] === "boolean") {
-      updates[key] = body[key] as boolean;
+    const value = parsed[key];
+    if (typeof value === "boolean") {
+      updates[key] = value;
     }
   }
 

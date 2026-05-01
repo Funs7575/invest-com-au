@@ -2,7 +2,6 @@
 
 import { usePathname } from "next/navigation";
 import dynamic from "next/dynamic";
-import { TopBar } from "@/components/layout/TopBar";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 
 // Navigation is large (738 lines incl. mega-menu data) — code-split into
@@ -44,7 +43,6 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
         Skip to main content
       </a>
 
-      <TopBar />
       <Navigation />
       <main id="main-content" className="min-h-screen pb-14 sm:pb-0">{children}</main>
       <SiteFooter />
