@@ -103,6 +103,8 @@ const ABN_REQUIRED: readonly string[] = [
   "aged_care_advisor",
   "crypto_advisor",
   "debt_counsellor",
+  "conveyancer",
+  "property_lawyer",
 ];
 
 // ─── Top-level classifier ─────────────────────────────────────────────

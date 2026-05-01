@@ -1000,6 +1000,77 @@ export const VERIFICATION_CONFIGS: Record<ProfessionalType, VerificationConfig> 
     cpd: "Ongoing fund-manager training as required under RG 104 / RG 133",
     disclosure: "Fund managers must operate under a valid AFSL. Verify the fund''s PDS (retail) or Information Memorandum (wholesale), and confirm the AFSL covers the specific activities being offered. Past performance is not an indicator of future returns.",
   },
+
+  // ─── Property-thread completion (20260501) ────────────────────
+  // Conveyancers and property lawyers complete the property purchase
+  // advisor team alongside mortgage_broker + buyers_agent. Conveyancers
+  // are licensed under state-based conveyancing or fair-trading
+  // legislation (NSW: Conveyancers Licensing Act; QLD: only solicitors
+  // can convey, no separate conveyancer licence). Property lawyers hold
+  // a state Legal Practising Certificate.
+
+  conveyancer: {
+    type: "conveyancer",
+    label: "Conveyancer",
+    primaryLicence: {
+      code: "Conveyancer Licence",
+      name: "State Conveyancer Licence",
+      regulator: "State Fair Trading / Consumer Affairs",
+      regulatorShort: "Fair Trading",
+      // State-specific in practice — defaults to NSW Fair Trading
+      // licence search; getVerificationLinks layers the matching
+      // STATE_FAIR_TRADING_URLS entry on top when a state is supplied.
+      verifyUrl: "https://verify.licence.nsw.gov.au/",
+      verifyLabel: "Verify with State Fair Trading",
+      mandatory: true,
+      field: "registration_number",
+      description: "Conveyancers must hold a state-based licence to handle property settlements. NSW, VIC, SA, WA, TAS, ACT and NT licence conveyancers separately from solicitors. In QLD only admitted lawyers can conduct conveyancing.",
+    },
+    additionalLicences: [],
+    qualifications: [
+      "State-issued conveyancer licence (NSW, VIC, SA, WA, TAS, ACT, NT) or admitted lawyer (QLD)",
+      "Advanced Diploma of Conveyancing or equivalent in licensing states",
+      "PEXA-accredited for electronic settlement (now mandatory for most transactions)",
+    ],
+    associations: [
+      { name: "Australian Institute of Conveyancers", acronym: "AIC", url: "https://www.aicnational.com.au" },
+      { name: "State Law Society / Bar Association", acronym: "Law Society", url: "https://www.lawsociety.com.au/" },
+    ],
+    insurance: "Professional Indemnity Insurance — mandatory under state licensing conditions, typically minimum $2M per claim",
+    edr: "Complaints handled by state Fair Trading / Consumer Affairs and the Australian Institute of Conveyancers",
+    cpd: "State-based CPD — typically 10 hours per year",
+    disclosure: "Conveyancers are licensed under state-based legislation, not federal ASIC regulation. Licensing varies materially: NSW issues a Conveyancers Licence; QLD restricts conveyancing to admitted solicitors. Always verify the licence on your state's Fair Trading register before engaging.",
+  },
+
+  property_lawyer: {
+    type: "property_lawyer",
+    label: "Property Lawyer",
+    primaryLicence: {
+      code: "LPC",
+      name: "Legal Practising Certificate",
+      regulator: "State Law Society / Legal Services Commission",
+      regulatorShort: "Law Society",
+      verifyUrl: "https://www.lawcouncil.asn.au",
+      verifyLabel: "Verify on state Law Society register",
+      mandatory: true,
+      field: "registration_number",
+      description: "Property lawyers must hold a current practising certificate in their admitted jurisdiction — issued by the relevant state Law Society to admitted legal practitioners.",
+    },
+    additionalLicences: [],
+    qualifications: [
+      "Admitted to practice in at least one Australian state or territory",
+      "Current practising certificate with state Law Society",
+      "Substantive experience in residential and commercial property transactions, off-the-plan disputes, strata, and SMSF property structuring",
+    ],
+    associations: [
+      { name: "Law Council of Australia — Property Law Committee", acronym: "LCA", url: "https://www.lawcouncil.asn.au" },
+      { name: "State Law Society / Bar Association", acronym: "Law Society", url: "https://www.lawsociety.com.au/" },
+    ],
+    insurance: "Professional Indemnity Insurance — mandatory under state legal profession acts",
+    edr: "Complaints handled by the relevant state Legal Services Commissioner",
+    cpd: "10 CPD units per year as required by state Law Society",
+    disclosure: "Property lawyers must hold a current practising certificate in their admitted jurisdiction. Use a property lawyer (rather than a conveyancer) for off-the-plan disputes, contract negotiations, SMSF property structuring, or any matter likely to require litigation. Legal fees attract GST.",
+  },
 };
 
 // ═══════════════════════════════════════════════════════════════════
@@ -1060,8 +1131,8 @@ export function getVerificationLinks(type: ProfessionalType, state?: string): {
     }
   }
 
-  // State-based register for buyers agents / property types
-  if ((type === "buyers_agent" || type === "property_advisor" || type === "real_estate_agent") && state && STATE_FAIR_TRADING_URLS[state]) {
+  // State-based register for buyers agents / property types / conveyancers
+  if ((type === "buyers_agent" || type === "property_advisor" || type === "real_estate_agent" || type === "conveyancer") && state && STATE_FAIR_TRADING_URLS[state]) {
     const ft = STATE_FAIR_TRADING_URLS[state];
     links.push({
       label: `Verify on ${ft.name}`,

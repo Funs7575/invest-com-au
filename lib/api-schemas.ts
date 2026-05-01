@@ -125,7 +125,7 @@ export const QUOTE_ADVISOR_TYPES = [
   "smsf_accountant", "financial_planner", "property_advisor", "tax_agent",
   "mortgage_broker", "estate_planner", "insurance_broker", "buyers_agent",
   "wealth_manager", "aged_care_advisor", "crypto_advisor", "business_broker",
-  "migration_agent",
+  "migration_agent", "conveyancer", "property_lawyer",
 ] as const;
 
 export const QUOTE_AU_STATES = [

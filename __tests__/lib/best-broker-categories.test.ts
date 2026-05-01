@@ -95,6 +95,36 @@ describe("best-broker-categories registry", () => {
       }
     }
   });
+
+  it("companionLinks (when present) is a valid array of {label, sub, href} triples", () => {
+    // Optional cross-vertical companion strip. The field is intentionally
+    // optional — only top-traffic categories carry one — but if present
+    // every entry must be a complete triple with a non-empty href, since
+    // these render on 43 SEO pages and a broken link compounds.
+    for (const c of cats) {
+      if (c.companionLinks === undefined) continue;
+      expect(Array.isArray(c.companionLinks), `${c.slug}.companionLinks not an array`).toBe(true);
+      for (const link of c.companionLinks) {
+        expect(typeof link.label, `${c.slug} companionLink.label`).toBe("string");
+        expect(link.label.length, `${c.slug} companionLink.label empty`).toBeGreaterThan(0);
+        expect(typeof link.sub, `${c.slug} companionLink.sub`).toBe("string");
+        expect(link.sub.length, `${c.slug} companionLink.sub empty`).toBeGreaterThan(0);
+        expect(typeof link.href, `${c.slug} companionLink.href`).toBe("string");
+        expect(link.href.length, `${c.slug} companionLink.href empty`).toBeGreaterThan(0);
+        // Must be an internal path or a fully-qualified URL — never a
+        // bare token like "advisors/financial-planners" that would
+        // resolve relative to the current /best/<slug> route.
+        expect(link.href, `${c.slug} companionLink.href must start with / or http`).toMatch(/^(\/|https?:\/\/)/);
+      }
+    }
+  });
+
+  it("at least one category has companionLinks populated (sanity)", () => {
+    // Regression guard: if someone strips out every companion strip,
+    // the feature silently disappears from prod. Force at least one.
+    const populated = cats.filter((c) => c.companionLinks && c.companionLinks.length > 0);
+    expect(populated.length).toBeGreaterThan(0);
+  });
 });
 
 describe("getCategoryBySlug", () => {

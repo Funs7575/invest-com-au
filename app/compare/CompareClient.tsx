@@ -24,6 +24,7 @@ import { getSponsorSortPriority, isSponsored, getPlacementWinners, type Placemen
 import CompareDesktopTable from "./_components/CompareDesktopTable";
 import CompareSelectionBar from "./_components/CompareSelectionBar";
 import CompareFooter from "./_components/CompareFooter";
+import CompareCrossSellBanner from "@/components/CompareCrossSellBanner";
 import type { ABTestConfig } from "@/lib/ab-test";
 import { createClient } from "@/lib/supabase/client";
 
@@ -361,7 +362,11 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
     });
   }
 
-  // Sync filter/query when URL params change (e.g. browser back/forward)
+  // Sync filter/query when URL params change (e.g. browser back/forward).
+  // This URL→state sync predates react-hooks v5; rewriting to a subscription
+  // form is out of scope for this PR (see eslint config — set-state-in-effect
+  // is intentionally `warn` for legacy code).
+  /* eslint-disable react-hooks/set-state-in-effect -- pre-existing legacy URL→state sync, refactor out of scope */
   useEffect(() => {
     const q = searchParams.get("q") || "";
     setSearchQuery(q);
@@ -375,6 +380,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
       setActiveFilter('all');
     }
   }, [searchParams]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   // Scroll to results when filter changes (not on initial load)
   const isFirstRender = useRef(true);
@@ -892,6 +898,18 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             Take the 60-sec quiz →
           </Link>
         </div>
+
+        {/* Cross-vertical cross-sell — shows once user has 2+ selected and a
+            specific vertical filter active. Dismissable per session per
+            vertical via sessionStorage. Labels derived from platformTypes
+            so we don't duplicate vertical metadata. */}
+        <CompareCrossSellBanner
+          vertical={activeFilter}
+          selectedCount={selected.size}
+          verticalLabels={Object.fromEntries(
+            platformTypes.map((p) => [p.key, p.short ?? p.label]),
+          )}
+        />
 
         {/* Desktop Table */}
         <div ref={resultsRef} className="scroll-mt-16">
