@@ -41,7 +41,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | O | `claude/audit-remediation/o-rls-no-policy` (iters 1-4 via #235/#237/#239) · `o-iter6/forum` (#299) · `o-iter7/editorial-obs-secrets` (#300) · `o-iter8-rls-observability` (#366 parallel-agent) · `o-03-search-path` (#395) | #235/#237/#239/#299/#300 MERGED · #366 OPEN · #395 OPEN | pending — pushed 2026-05-01 | O-01 iter1-4 done. O-02 done. iter6 done (PR #299). iter7 done (PR #300). iter8 in-progress on #366 (parallel-agent, 8 obs+anti-abuse tables). CI-rescue: merged main post-#392 → `5b000f0` pushed 2026-05-01T21:41Z. **O-03 done: `4a04418` → PR #395 (SECURITY DEFINER search_path fix).** O-04/O-05 pending. |
 | P | _not started_ | — | — | — |
 | Q | _not started_ | — | — | — |
-| R | `claude/audit-remediation/r-01-marketplace-allocation` | #290 MERGED 2026-04-29T10:05Z | last merged 2026-04-29T10:05Z | R-01 done (PR #290 — marketplace allocation + CPC billing tests). R-02..R-11 still pending. |
+| R | `claude/audit-remediation/r-01-marketplace-allocation` · `r-02-auto-bid-tests` (#396) | #290 MERGED 2026-04-29T10:05Z · #396 OPEN | pending — pushed 2026-05-01 | R-01 done (PR #290). **R-02 done: `ae23f8b` → PR #396 (29 tests for auto-bid.ts).** R-03..R-11 still pending. |
 | S | _not started_ | — | — | — |
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 MERGED 2026-04-28T11:45Z | merged | V-NEW-06 done (commit `a7bd736`) |
@@ -722,7 +722,8 @@ Highest-risk untested business logic. Marketplace allocation is the most lucrati
 | ID | Status | Summary | Est. iterations | Notes |
 | --- | --- | --- | --- | --- |
 | R-01 | done | `lib/marketplace/allocation.ts` — 388 LOC, 0% covered. Cover allocation algorithm + auto-bid edge cases + tier overrides | ~2 | Done in PR #290 MERGED 2026-04-29T10:05Z (`__tests__/api/marketplace-allocation.test.ts` exists; covers allocation + CPC billing). |
-| R-02 | pending | `lib/marketplace/auto-bid.ts` — 174 LOC, 0% covered | 1 | P0. Pairs with R-01. |
+| R-02 | done | `lib/marketplace/auto-bid.ts` — 174 LOC, 0% covered | 1 | P0. Pairs with R-01. Done: commit `ae23f8b` · PR #396 (29 tests). |
+| R-02-DISC-20260501-01 | pending | `lib/marketplace/broker-auth.ts` — 77 LOC, 0 tests, no coverage. Only `lib/marketplace/` file without a test. | 1 | P1. Surfaced by iter 168 (discovery sweep on R-02 file). |
 | R-03 | pending | `lib/advisor-lead-dispute-resolver.ts` — 340 LOC, 0% covered | 1 | P1. |
 | R-04 | pending | `lib/cached-data.ts` — 263 LOC, 0% covered | 1 | P1. |
 | R-05 | pending | `lib/email-templates.ts` — 745 LOC, 18% covered → raise to ≥60% | 1 | P2. |
@@ -1347,6 +1348,7 @@ Two strategically important surfaces under-served by current nav: (1) investment
 
 ## Done
 
+- 2026-05-01 · R-02 · `lib/marketplace/auto-bid.ts`: 29 unit tests covering `calculateOptimalBids` (conservative bid paths, optimal bid formula, +/-25% caps, min/max clamps, reason labels, multi-campaign) and `applyBidAdjustments` (count, error handling, notification message format). Commit `ae23f8b` · pr #396
 - 2026-05-01 · O-03 · `refresh_advisor_cohort_metrics()` SECURITY DEFINER: added `SET search_path = public, pg_catalog` via `20260501_o03_refresh_advisor_cohort_metrics_search_path.sql`. Closes CWE-89/CWE-20 injection vector on SECURITY DEFINER function. Commit `4a04418` · pr #395
 - 2026-05-01 · C-05 · `components/ArticleBrokerTable.tsx`: switched `createAdminClient()` → `await createClient()` (anon key). Anon "Public read for active brokers" RLS policy (`USING status='active'`) matches `.eq("status","active")` filter exactly — zero behavioral change. Commit `e202d0d` · pr #394
 - 2026-05-01 · C-04 · `app/api/affiliate/click/route.ts`: kept admin client (founder Option C), added `// admin — click tracking must capture all broker statuses for revenue/editorial analytics` comment above both SELECT and INSERT call sites. Commit `e202d0d` · pr #394
@@ -1425,6 +1427,16 @@ Two strategically important surfaces under-served by current nav: (1) investment
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-01 — iteration 168 (stream R — R-02 auto-bid unit tests)
+
+- Phase 2: CI check on in-flight PRs — #395 (O-03) queued, no failures.
+- Phase 3: picked R-02 — `lib/marketplace/auto-bid.ts`, 174 LOC, 0% coverage. P0.
+- Phase 4 verification: pure test addition — no RLS/migration verification needed.
+- Phase 5: created `__tests__/lib/marketplace-auto-bid.test.ts` (475 LOC, 29 tests). Mocks `@/lib/supabase/admin` + `@/lib/logger`. Tests cover `calculateOptimalBids` (20 tests: 3 error paths, conservative bid paths, optimal bid formula, caps, clamps, reason labels, multi-campaign) and `applyBidAdjustments` (9 tests: count, error handling, notification messages).
+- Phase 6.5 discovery: `lib/marketplace/broker-auth.ts` (77 LOC) is the only `lib/marketplace/` file without a test. Not already in queue. Added `R-02-DISC-20260501-01` (1 of 3 cap used).
+- Created branch `claude/audit-remediation/r-02-auto-bid-tests`, committed `ae23f8b`, pushed, opened draft PR #396.
+- STATUS: PROGRESS · stream=R · item=R-02 · pr=#396
 
 ### 2026-05-01 — iteration 167 (stream O — O-03 SECURITY DEFINER search_path)
 
