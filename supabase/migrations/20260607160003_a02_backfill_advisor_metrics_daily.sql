@@ -5,8 +5,8 @@
 -- Queue item: docs/audits/REMEDIATION_QUEUE.md A-02
 --
 -- Purpose
---   `advisor_metrics_daily` exists in `lib/database.types.ts`. No CREATE TABLE
---   migration exists. No direct `from("advisor_metrics_daily")` call found in
+--   `advisor_metrics_daily` exists in `lib/database.types.ts`. No prior schema
+--   declaration found in tree. No direct `from("advisor_metrics_daily")` call found in
 --   app/ or lib/ at migration time — this is a cron-populated metrics table
 --   used for advisor performance analytics. This migration brings the schema
 --   declaration in-tree.
@@ -27,7 +27,7 @@
 --     table directly, an advisor-scoped authenticated SELECT policy will be needed.
 --
 -- Idempotency
---   - CREATE TABLE IF NOT EXISTS — no-op on existing databases.
+--   - IF NOT EXISTS guard on table + index creates — no-op if already applied.
 --   - ENABLE ROW LEVEL SECURITY — no-op if already enabled.
 --   - DROP POLICY IF EXISTS + CREATE POLICY for every policy.
 --

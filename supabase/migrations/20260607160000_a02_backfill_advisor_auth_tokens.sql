@@ -6,8 +6,8 @@
 --
 -- Purpose
 --   `advisor_auth_tokens` exists in `lib/database.types.ts` and is used by the
---   advisor magic-link verification flow and cleanup cron. No CREATE TABLE
---   migration exists. This migration brings the schema declaration in-tree.
+--   advisor magic-link verification flow and cleanup cron. No prior schema
+--   declaration found in tree. This migration brings it in-tree.
 --
 -- Callers (client type):
 --   - app/api/admin/advisor-applications/route.ts: createAdminClient() (service-role)
@@ -35,7 +35,7 @@
 --     keeping the anon UPDATE policy narrower. Deferred to Stream C or E.
 --
 -- Idempotency
---   - CREATE TABLE IF NOT EXISTS — no-op on existing databases.
+--   - IF NOT EXISTS guard on table + index creates — no-op if already applied.
 --   - ENABLE ROW LEVEL SECURITY — no-op if already enabled.
 --   - DROP POLICY IF EXISTS + CREATE POLICY for every policy.
 --

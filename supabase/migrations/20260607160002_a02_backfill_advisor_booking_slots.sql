@@ -6,7 +6,7 @@
 --
 -- Purpose
 --   `advisor_booking_slots` exists in `lib/database.types.ts` and is used by
---   the public booking availability endpoint. No CREATE TABLE migration exists.
+--   the public booking availability endpoint. No prior schema declaration found in tree.
 --   This migration brings the schema declaration in-tree.
 --
 -- Callers (client type):
@@ -32,7 +32,7 @@
 --     a future advisor-session-based policy would be needed here).
 --
 -- Idempotency
---   - CREATE TABLE IF NOT EXISTS — no-op on existing databases.
+--   - IF NOT EXISTS guard on table + index creates — no-op if already applied.
 --   - ENABLE ROW LEVEL SECURITY — no-op if already enabled.
 --   - DROP POLICY IF EXISTS + CREATE POLICY for every policy.
 --

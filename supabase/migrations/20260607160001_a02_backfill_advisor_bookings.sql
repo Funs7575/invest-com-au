@@ -6,8 +6,8 @@
 --
 -- Purpose
 --   `advisor_bookings` exists in `lib/database.types.ts` and is used by the
---   public advisor booking flow and the admin performance page. No CREATE TABLE
---   migration exists. This migration brings the schema declaration in-tree and
+--   public advisor booking flow and the admin performance page. No prior schema
+--   declaration found in tree. This migration brings it in-tree and
 --   corrects a prior policy that restricted INSERT to authenticated users only,
 --   blocking the public booking flow.
 --
@@ -45,7 +45,7 @@
 --     is recommended once the advisor→auth.uid() mapping is formalised.
 --
 -- Idempotency
---   - CREATE TABLE IF NOT EXISTS — no-op on existing databases.
+--   - IF NOT EXISTS guard on table + index creates — no-op if already applied.
 --   - ENABLE ROW LEVEL SECURITY — no-op if already enabled.
 --   - DROP POLICY IF EXISTS + CREATE POLICY for every policy.
 --
