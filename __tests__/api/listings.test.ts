@@ -14,6 +14,16 @@ vi.mock("@/lib/supabase/server", () => ({
   ),
 }));
 
+// Both submit and enquire routes use the admin (service-role) client —
+// submit for the insert, enquire for the increment RPC + fallback update.
+// Alias admin onto the same mockFrom so existing chain assertions still hold.
+vi.mock("@/lib/supabase/admin", () => ({
+  createAdminClient: vi.fn(() => ({
+    from: mockFrom,
+    rpc: vi.fn(() => Promise.resolve({ data: null, error: null })),
+  })),
+}));
+
 vi.mock("@/lib/resend", () => ({
   sendEmail: vi.fn(() => Promise.resolve({ ok: true })),
 }));

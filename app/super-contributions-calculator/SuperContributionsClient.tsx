@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
+import { formatCurrency } from "@/lib/utils";
 
 /* ── constants (FY2026) ── */
 
@@ -14,14 +15,6 @@ const SUPER_TAX_RATE = 0.15;
 const CARRY_FORWARD_BALANCE_THRESHOLD = 500_000;
 
 /* ── helpers ── */
-
-function formatCurrency(n: number): string {
-  return new Intl.NumberFormat("en-AU", {
-    style: "currency",
-    currency: "AUD",
-    maximumFractionDigits: 0,
-  }).format(n);
-}
 
 function formatPercent(n: number): string {
   return `${n.toFixed(1)}%`;

@@ -1,29 +1,7 @@
 import Link from "next/link";
 import { DesignIcon } from "@/components/design/DesignIcon";
 
-interface HomeHeroProps {
-  brokerCount: number;
-  listingCount: number;
-  professionalCount: number;
-}
-
-// v5 hero — "Australia's front door". Compliance-safe copy: replaces the
-// previous "where your money should go" language (which read like personal
-// financial advice) with neutral "investment decisions" framing. Two CTAs:
-// the primary "Choose a route" jumps to the four route cards immediately
-// below; the secondary "Use the 60-second pathfinder" goes to the quiz for
-// visitors who don't know which route they want yet.
-export default function HomeHero({ brokerCount, listingCount, professionalCount }: HomeHeroProps) {
-  // Four proof tiles below the CTAs. Each maps to one of the four routes
-  // shown in detail in the HomeRouteCards section. Tiles are deliberately
-  // small — they hint at the full route grid below without competing with it.
-  const tiles: ReadonlyArray<{ verb: string; label: string; sub: string }> = [
-    { verb: "Compare", label: "platforms", sub: `${brokerCount || 0} on file` },
-    { verb: "Browse", label: "opportunities", sub: `${listingCount || 0} listed` },
-    { verb: "Find", label: "experts", sub: `${professionalCount.toLocaleString("en-AU")} verified` },
-    { verb: "Use", label: "pathfinder", sub: "60 seconds" },
-  ];
-
+export default function HomeHero() {
   return (
     <section
       style={{
@@ -103,8 +81,8 @@ export default function HomeHero({ brokerCount, listingCount, professionalCount 
             margin: "20px 0 0",
           }}
         >
-          Compare platforms, browse opportunities, find experts or get matched to the right next
-          step &mdash; without getting lost in financial jargon.
+          One place to compare platforms, browse investment listings, find experts, or get matched
+          to the right next step &mdash; without the financial jargon.
         </p>
 
         <div
@@ -117,7 +95,7 @@ export default function HomeHero({ brokerCount, listingCount, professionalCount 
           }}
         >
           <Link
-            href="#routes"
+            href="/quiz"
             className="iv2-cta"
             style={{
               fontSize: 16,
@@ -129,10 +107,10 @@ export default function HomeHero({ brokerCount, listingCount, professionalCount 
               boxShadow: "0 8px 24px rgba(242,88,34,.32)",
             }}
           >
-            Choose a route <DesignIcon name="arrow-right" size={16} strokeWidth={2.6} />
+            Get matched in 60 seconds <DesignIcon name="arrow-right" size={16} strokeWidth={2.6} />
           </Link>
           <Link
-            href="/quiz"
+            href="#routes"
             style={{
               fontSize: 14,
               fontWeight: 700,
@@ -147,55 +125,14 @@ export default function HomeHero({ brokerCount, listingCount, professionalCount 
               gap: 8,
             }}
           >
-            Use the 60-second pathfinder <DesignIcon name="arrow-right" size={14} strokeWidth={2.4} />
+            Browse manually <DesignIcon name="arrow-right" size={14} strokeWidth={2.4} />
           </Link>
         </div>
 
-        <div
-          className="home-hero-tiles"
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(4, 1fr)",
-            gap: 10,
-            marginTop: 32,
-            maxWidth: 720,
-          }}
-        >
-          {tiles.map((t) => (
-            <div
-              key={t.verb + t.label}
-              style={{
-                padding: "12px 14px",
-                borderRadius: 10,
-                background: "rgba(255,255,255,.04)",
-                border: "1px solid rgba(255,255,255,.08)",
-              }}
-            >
-              <div style={{ fontSize: 11, color: "rgba(255,255,255,.5)", fontWeight: 600, letterSpacing: ".04em", textTransform: "uppercase" }}>
-                {t.verb}
-              </div>
-              <div style={{ fontSize: 15, fontWeight: 700, color: "white", marginTop: 2 }}>
-                {t.label}
-              </div>
-              <div style={{ fontSize: 11, color: "rgba(255,255,255,.45)", marginTop: 3 }}>
-                {t.sub}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <p style={{ marginTop: 18, fontSize: 11, color: "rgba(255,255,255,.45)" }}>
+        <p style={{ marginTop: 24, fontSize: 11, color: "rgba(255,255,255,.45)" }}>
           General information only. Always check licensing, fees, risks and suitability before proceeding.
         </p>
       </div>
-
-      <style>{`
-        @media (max-width: 720px) {
-          .home-hero-tiles {
-            grid-template-columns: repeat(2, 1fr) !important;
-          }
-        }
-      `}</style>
     </section>
   );
 }
