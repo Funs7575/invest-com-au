@@ -1016,6 +1016,183 @@ const categories: InvestCategory[] = [
       },
     ],
   },
+
+  // ─── Royalties ───
+  {
+    slug: "royalties",
+    label: "Royalties",
+    dbVerticals: ["fund"],
+    dbFundSubCategories: ["royalty_stream"],
+    color: {
+      bg: "bg-rose-50",
+      border: "border-rose-200",
+      text: "text-rose-700",
+      accent: "bg-rose-600",
+      gradient: "from-rose-50 to-white",
+    },
+    icon: "coins",
+    title: `Invest in Royalty Streams in Australia (${yr})`,
+    h1: "Invest in Royalty Streams in Australia",
+    metaDescription: `Mining royalties (Deterra DRR, Elemental Altus), music catalogue royalties, IP / patent royalties and oil & gas overriding royalties. ${upd}.`,
+    intro: `Royalty income — paid as a percentage of revenue or net profits from an underlying asset — sits between bonds and equity in the capital stack. Australian retail investors can access mining royalties via ASX names like Deterra (DRR), or direct music, IP and petroleum royalty deals via the wholesale market.`,
+    sections: [
+      {
+        heading: "What a royalty actually pays",
+        body: "A royalty is a contractual right to a slice of revenue or net profits, separate from the equity or debt of the operator. The economic position is closer to a preferred bond than common equity — payments are senior to dividends, capped at the contracted percentage, and not exposed to operator cost blow-outs. The trade-off is no upside beyond the contracted rate and exposure to underlying production decline.",
+      },
+      {
+        heading: "Australian royalty market context",
+        body: "The Australian royalty market is dominated by mining royalties — the legacy of state-government held royalties on iron ore, coal and gold, plus a small cohort of private royalty deeds. Deterra Royalties (ASX: DRR) sits at the centre of the listed market, with its Mining Area C royalty over BHP delivering the bulk of distributable cash. Petroleum royalties are concentrated in WA, QLD and the NT, overlapping with state royalty regimes and federal PRRT.",
+      },
+    ],
+    faqs: [
+      {
+        question: "How are royalty payments taxed for Australian residents?",
+        answer: "Royalties received by an Australian resident are assessable as ordinary income under section 6-5 of ITAA 1997 — they are not capital gains and the 50% CGT discount does not apply. Mining and petroleum royalties paid to non-residents are subject to royalty withholding tax under section 12-280 of the TAA, generally 30% but reduced by applicable double-tax agreements (often to 5% or 10%).",
+      },
+      {
+        question: "Can retail investors access royalty deals directly?",
+        answer: "Most direct royalty deals are wholesale-only, relying on the section 708 carve-outs from the disclosure regime. Retail investors get exposure indirectly through ASX-listed royalty companies (DRR, ELT) or registered managed investment schemes that hold royalty assets.",
+      },
+      {
+        question: "What minimum allocation is typical for direct royalty deals?",
+        answer: "Direct mining or petroleum royalty acquisitions typically need $250,000–$5M. Music catalogue secondary sales on Royalty Exchange start at $5,000 but most institutional catalogues clear at $500K+. ASX-listed royalty equities have no minimum beyond standard brokerage.",
+      },
+    ],
+    subcategories: [],
+  },
+
+  // ─── Income-Asset Businesses ───
+  {
+    slug: "income-assets",
+    label: "Income-Asset Businesses",
+    dbVerticals: ["business"],
+    color: {
+      bg: "bg-emerald-50",
+      border: "border-emerald-200",
+      text: "text-emerald-700",
+      accent: "bg-emerald-600",
+      gradient: "from-emerald-50 to-white",
+    },
+    icon: "wallet",
+    title: `Income-Generating Asset Businesses in Australia (${yr})`,
+    h1: "Income-Generating Asset Businesses in Australia",
+    metaDescription: `Vending routes, ATM networks, car washes, laundromats, self-storage and billboard rights — cash-flow businesses with $30K–$10M entry tickets. ${upd}.`,
+    intro: `Vending routes, ATM networks, car washes, laundromats, self-storage and billboard rights — physical-asset businesses bought for the cash flow they throw off rather than capital growth. Entry tickets from $30,000 to $10M, net yields from 6% to 25%, and a wide spectrum of owner-time commitment.`,
+    sections: [
+      {
+        heading: "Yield is not return",
+        body: "Headline net yield on an income-asset business is the cash return after operating costs but before financing, tax, replacement capex and the seller's exit value. Sustainable long-term return on capital is typically 30%–60% of the headline yield once equipment depreciation, lease renewal contingency and your owner-time are properly costed. Always model a 7–10 year horizon, not a one-year yield.",
+      },
+      {
+        heading: "Australian income-asset market context",
+        body: "The market is fragmented and almost entirely unbranded at the small-business end. Self-storage and billboard rights have institutional buyers (NSR, Storage King, oOh!media, JCDecaux); the rest is dominated by owner-operators acquiring and rolling up portfolios. Pricing is typically quoted as a multiple of seller's discretionary earnings (SDE) — 1.5×–3× for vending and ATM routes, 2×–4× for car washes and laundromats, 6–10× for self-storage facilities.",
+      },
+    ],
+    faqs: [
+      {
+        question: "How is GST treated on these business acquisitions?",
+        answer: "Going-concern transfers are GST-free under section 38-325 of the GST Act when the seller transfers all assets necessary to continue operating and both parties agree in writing. Asset-only sales not meeting the going-concern test attract 10% GST. Commercial freehold component (e.g. self-storage land, car wash freehold) may be taxed under the margin scheme if eligible.",
+      },
+      {
+        question: "What yields should I realistically expect?",
+        answer: "Net yield ranges by asset class: vending 8%–25%, ATMs 5%–25%, car washes 8%–20%, laundromats 10%–18%, self-storage 6%–9% (institutional bid-up), billboards 15%–40% on owner-cleared land. Higher headline yields almost always reflect lower asset quality.",
+      },
+      {
+        question: "How passive are these businesses really?",
+        answer: "Passive on a spectrum. Self-storage with an outsourced manager is genuinely passive (4–8 hours/month). Vending and ATM routes need 10–30 hours/week if owner-managed, near-zero if route-management is contracted out at 15%–25% of gross revenue. Car washes and laundromats are part-time-active.",
+      },
+    ],
+    subcategories: [],
+  },
+
+  // ─── ASX IPO Calendar ───
+  {
+    slug: "ipo-calendar",
+    label: "ASX IPO Calendar",
+    dbVerticals: ["startup"],
+    color: {
+      bg: "bg-indigo-50",
+      border: "border-indigo-200",
+      text: "text-indigo-700",
+      accent: "bg-indigo-600",
+      gradient: "from-indigo-50 to-white",
+    },
+    icon: "calendar",
+    title: `ASX IPO Calendar (${yr}) — Upcoming Australian IPOs`,
+    h1: "ASX IPO Calendar",
+    metaDescription: `Track upcoming ASX IPOs and recent Australian listings. Broker priority allocations, retail allocation rules, lockup periods. ${upd}.`,
+    intro: `Upcoming Australian IPOs, recent listings and how to access ASX offers as a retail investor — broker priority allocations, public offers, OnMarket aggregation and lockup mechanics.`,
+    sections: [
+      {
+        heading: "How to access ASX IPOs as a retail investor",
+        body: "Three primary routes: broker priority allocations through CommSec, nabtrade, Morgans, Bell Direct or Macquarie Direct; broker-managed offers via Morgans, Bell Potter, E&P, Wilsons or Canaccord (where you typically need a meaningful trading or wealth relationship); and general public offers attached to the prospectus, accessible via OnMarket or directly via BPAY application.",
+      },
+      {
+        heading: "Retail vs institutional allocation split",
+        body: "Retail allocations on Australian IPOs typically run 5%–15% of the total raise. Institutional priority bookbuild takes the bulk. Larger IPOs (above $500M raise) tend to have higher retail allocations because spread requirements demand a retail tail; smaller mid-cap IPOs often allocate >90% to institutions and broker-priority retail.",
+      },
+    ],
+    faqs: [
+      {
+        question: "How do ASX IPOs perform vs the index historically?",
+        answer: "Australian IPO first-day returns average around 7%–10% (ASIC, SIRCA database) but median first-day return is closer to flat — averages are skewed by the tail of high-pop deals. 12-month post-IPO returns are mixed; IPOs underperform the ASX 200 over the medium term on average, with significant dispersion. Picking IPOs that beat the index requires real research.",
+      },
+      {
+        question: "Can I get an allocation as a small retail investor?",
+        answer: "Yes for general public offers (apply via prospectus or OnMarket from $1,000–$2,500) and for smaller-cap IPOs through CommSec, nabtrade and OnMarket. Marquee large-cap IPOs are heavily oversubscribed and retail allocations are scaled meaningfully. A private wealth or premium-broker relationship is the practical route to consistent allocations.",
+      },
+      {
+        question: "What is a lockup period?",
+        answer: "Lockups (escrow) restrict pre-IPO shareholders from selling for 6, 12 or 24 months post-listing. ASX-imposed escrow applies under Listing Rule Chapter 9 to vendors of mining and biotech companies. Discretionary escrow is negotiated by the corporate advisor. Lockup expiry days frequently trigger meaningful share-price selling pressure.",
+      },
+    ],
+    subcategories: [],
+  },
+
+  // ─── Pre-IPO ───
+  {
+    slug: "pre-ipo",
+    label: "Pre-IPO",
+    dbVerticals: ["startup"],
+    color: {
+      bg: "bg-red-50",
+      border: "border-red-200",
+      text: "text-red-700",
+      accent: "bg-red-600",
+      gradient: "from-red-50 to-white",
+    },
+    icon: "trophy",
+    title: `Pre-IPO Investing in Australia (${yr}) — Wholesale Only`,
+    h1: "Pre-IPO Investing in Australia",
+    metaDescription: `Late-stage private placements before IPO — wholesale only. Sophisticated investor (s708) requirements, deal structures, Australian platforms and risks. ${upd}.`,
+    intro: `Late-stage private company investments before initial public offering — accessible only to sophisticated and wholesale investors under the Corporations Act section 708 exemptions. Material risks, illiquidity and IPO timing variance.`,
+    sections: [
+      {
+        heading: "Wholesale and sophisticated investors only",
+        body: "Pre-IPO deals are structured as private placements relying on section 708 disclosure exemptions. Sophisticated investor (s708(8)): gross income of $250,000+ for each of the last two years, or net assets of $2.5M (subject to Reg 6D.2.03 calculation excluding the family home). Wholesale investor (s708(11)): accountant's certificate confirming the equivalent thresholds, or professional investor status. Retail investors cannot access these deals directly.",
+      },
+      {
+        heading: "Australian platforms and channels",
+        body: "PrimaryMarkets dominates the secondary marketplace for late-stage private company shares. OnMarket Pre-IPO runs primary issuance for wholesale investors. Broker syndicate desks at Macquarie Capital, UBS Australia, Morgans, Bell Potter and Canaccord Genuity manage pre-IPO rounds for wholesale and HNW clients. Equity crowdfunding under CSF (s738) is a separate retail-accessible regime, capped at $10K per investor per company.",
+      },
+    ],
+    faqs: [
+      {
+        question: "Can a retail investor in Australia invest in pre-IPO?",
+        answer: "Generally no — direct pre-IPO investments are wholesale-only under section 708. The exceptions are equity crowdfunding under the CSF regime (section 738) which allows retail investment up to $10,000 per company per year through licensed CSF intermediaries like Birchal and Equitise, and ASX-listed pre-IPO funds which give indirect listed exposure to a basket of pre-IPO investments.",
+      },
+      {
+        question: "What's the realistic distribution of pre-IPO returns?",
+        answer: "Pre-IPO is glamorised because winners are public. The realistic individual-deal distribution: ~20–30% deliver intended IPO timing and meaningful uplift, ~30–40% flat or modestly positive after IPO with delays, ~20–30% stall (no IPO in the expected window, capital locked), ~10–20% material capital impairment or total loss. Diversify across 8–15 deals; size as a single-digit-percent allocation of total assets.",
+      },
+      {
+        question: "How are pre-IPO gains taxed?",
+        answer: "Capital gains on pre-IPO shares held more than 12 months by individuals or trusts qualify for the 50% CGT discount. Convertible notes have specific TOFA treatment — conversion triggers CGT event G3 with cost base equal to conversion price plus accrued interest. Division 83A ESS startup concessions can apply for genuine startups under $50M revenue. Always engage a tax adviser.",
+      },
+    ],
+    subcategories: [],
+  },
 ];
 
 // ═══════════════════════════════════════════════════════════════════

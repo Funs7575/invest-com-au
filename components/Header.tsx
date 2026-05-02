@@ -37,6 +37,8 @@ const investMegaMenu = [
       { label: "Commercial Property", href: "/invest/commercial-property", desc: "Office, industrial, hotels" },
       { label: "Startups & Tech", href: "/invest/startups", desc: "VC, angel, crowdfunding" },
       { label: "Infrastructure", href: "/invest/infrastructure", desc: "Toll roads, airports, utilities" },
+      { label: "ASX IPO Calendar", href: "/invest/ipo-calendar", desc: "Upcoming IPOs & recent listings" },
+      { label: "Pre-IPO (Wholesale)", href: "/invest/pre-ipo", desc: "Late-stage private placements" },
     ],
   },
   {
@@ -63,6 +65,8 @@ const investMegaMenu = [
       { label: "Super & SMSF", href: "/compare/super", desc: "Super fund comparisons" },
       { label: "Dividend Hub", href: "/dividends", desc: "Franking credits, ASX yield & ETFs" },
       { label: "Sell a Business", href: "/sell-business", desc: "Valuation, broker, CGT concessions" },
+      { label: "Royalty Streams", href: "/invest/royalties", desc: "Mining, music, IP & oil-gas royalties" },
+      { label: "Income-Asset Businesses", href: "/invest/income-assets", desc: "Vending, ATMs, self-storage, car washes" },
     ],
   },
 ];
