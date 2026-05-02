@@ -50,7 +50,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | X | `claude/audit-remediation/x-admin-backlog` (#257) · `x-02-best-for-admin-swap` (#367 parallel-agent) | #257 MERGED 2026-04-28T11:23Z · #367 OPEN | CI-rescue 2026-05-01T21:42Z | X-01 done (PR #257 — decision matrix). X-02 in-progress on #367 (parallel-agent). CI-rescue: merged main post-#392 → `1ae6079` pushed 2026-05-01T21:42Z; CI re-run pending. X-03..X-09 pending. |
 | Y | `claude/audit-remediation/y-registry-nav` (#253) · `y-05-enrich-dated-stat-badge` (#347 parallel-agent) | #253 MERGED 2026-04-28T11:24Z · #347 OPEN | CI-rescue 2026-05-01T21:42Z | Y-05 done (commit `fb9dec3`, PR #253) · Y-08 done (commit `8bb1d4d`, PR #253). Y-05-ENRICH in-progress on #347 (parallel-agent). CI-rescue: merged main post-#392 → `708f7ac` pushed 2026-05-01T21:42Z; CI re-run pending. Y-01..Y-04, Y-06, Y-07 pending. |
 | BB | `claude/audit-remediation/bb-03-cgt-regulator-ref` (#361 parallel-agent) · `bb-06-mortgage-stress-regulator-ref` (#368 parallel-agent) | both OPEN | CI-rescue 2026-05-01T21:42Z | BB-03 in-progress on #361 (CGT calc vs ATO). BB-06 in-progress on #368 (mortgage stress test vs ASIC + APRA). CI-rescue (both): merged main post-#392 → BB-03 `df074bd` · BB-06 `cb10a20` pushed 2026-05-01T21:42Z; CI re-run pending. Other BB items pending. |
-| **R-COVERAGE** | _to be created_ | — | — | Test-coverage grind to ≥30% on highest-traffic routes. Long-running stream (3+ months). See "R-COVERAGE — coverage to 30%" section below. |
+| **R-COVERAGE** | _to be created_ | — | — | Test-coverage grind to ≥60% overall + ≥80% on money/legal-touching libs (`lib/stripe`, `lib/finance`, `lib/compliance`, `lib/sponsorship`) + ≥70% on user-data / money API routes. Long-running stream (~6-7 months). See "R-COVERAGE — coverage to 60% / 80% / 70%" section below. |
 | **OBS** | _to be created_ | — | — | Observability layer: SLO dashboards, alerting on main breakage, on-call runbook expansion. ~2 weeks of work once spec'd. See "OBS — observability layer" section below. |
 | **REFACTOR** | _to be created_ | — | — | One major refactor of the messiest area to set the codebase pattern standard. Target TBD on first iteration (likely advisor lifecycle vs sponsorship). See "REFACTOR — pattern-setting refactor" section below. |
 
@@ -470,9 +470,19 @@ Hard dependencies between items in different streams. The loop checks these befo
 
 If a dependency is itself blocked (e.g. V-NEW-02 depends on `lib/compliance.ts` factual-filter implementation, which depends on the founder's compliance copy review), the dependent item surfaces to Blocked with a pointer back to the dependency's blocker. The loop never silently skips a dependency.
 
-### Stream R-COVERAGE — test coverage to ≥30% (added 2026-05-02 senior-grade uplift)
+### Stream R-COVERAGE — test coverage to ≥60% / 80% / 70% (added 2026-05-02 senior-grade uplift; targets lifted 2026-05-02 founder decision)
 
-**Goal:** raise overall vitest coverage from ~1.5% to ≥30% on the routes / lib helpers that actually move user money or hit user-data tables. Pure grind work, ideal for the cloud loop. Long-running stream — expect 3+ months to land.
+**Goal:** raise vitest coverage from ~1.5% to a **tiered** target that matches the value-at-risk of each module:
+
+- **Overall ≥ 60%** — the "no senior dev would object" floor.
+- **≥ 80% on money/legal-touching libs** — `lib/stripe/*`, `lib/finance/*`, `lib/compliance.ts`, `lib/sponsorship.ts`. These are library-shaped (pure-ish logic), small, and a regression here costs real money or compliance exposure. The 80% bar is appropriate.
+- **≥ 70% on user-data / money API routes** — `app/api/listings/*`, `app/api/quotes/*`, `app/api/account/*`, `app/api/auth/*`, `app/api/admin/payouts/*`, `app/api/cron/*` (anything that mutates user data or moves money). Routes have more error-handling and integration mocking overhead, so 70% is realistic without burning months on edge cases.
+
+The tiered target avoids the asymptote problem of chasing 90% across the whole codebase (~12 months, ~$50-100k of effort, brittle browser tests) while still hitting the senior-grade bar where it matters.
+
+**Why not 90% across the board:** the cost of moving from 60% → 90% is 3-5× the cost of moving from 1.5% → 60%. The remaining 30% of uncovered code is mostly defensive error handlers, one-shot startup paths, and Vercel-runtime-specific code that's hard to test cleanly. Catching real bugs flattens out around 60%; the rest is buying paranoia.
+
+Pure grind work, ideal for the cloud loop. Long-running stream — expect ~6-7 months to land.
 
 **Priority order (highest-impact first):**
 1. **Money-touching routes** — `app/api/listings/enquire`, `app/api/listings/submit`, `app/api/account/*` payment, `app/api/admin/payout-*`, anything under `lib/stripe/*`, `lib/finance/*`. A bug here = real dollars.
@@ -483,9 +493,16 @@ If a dependency is itself blocked (e.g. V-NEW-02 depends on `lib/compliance.ts` 
 
 **Cap per iteration:** 1-3 test files added, 50-200 LOC of test code per iteration. **No production code modified** unless a test surfaces a real bug — in which case the bug fix gets its own commit on a separate stream.
 
+**Milestones (not separate goals — checkpoints on the path to the final tiered target):**
+- **M1 — 30% overall** (~3 months in). Stream is delivering value before this point but this is the first "we're materially safer" checkpoint.
+- **M2 — 60% overall + 80% on the 4 money/legal libs** (~6 months in). Senior-grade floor.
+- **M3 — 70% on user-data/money API routes** (~6-7 months in). Stream is done.
+
 **Definition of done for the stream:**
-- `npm run test:coverage` reports `≥ 30%` overall AND `≥ 60%` on `lib/stripe`, `lib/finance`, `lib/compliance`, `lib/sponsorship`, `lib/tracking`, `lib/seo`, `lib/dated-stats`.
-- Coverage thresholds in `vitest.config.mts` ratcheted up to match (no regression possible).
+- `npm run test:coverage` reports `≥ 60%` overall.
+- `≥ 80%` on `lib/stripe/*`, `lib/finance/*`, `lib/compliance.ts`, `lib/sponsorship.ts`.
+- `≥ 70%` on every route under `app/api/listings/*`, `app/api/quotes/*`, `app/api/account/*`, `app/api/auth/*`, `app/api/admin/payouts/*`, `app/api/cron/*`.
+- Coverage thresholds in `vitest.config.mts` ratcheted up to match each milestone (no regression possible).
 
 | ID | Status | Summary | Est. iterations | Notes |
 | --- | --- | --- | --- | --- |
@@ -499,7 +516,13 @@ If a dependency is itself blocked (e.g. V-NEW-02 depends on `lib/compliance.ts` 
 | R-COVERAGE-08 | pending | `lib/dated-stats.ts` + `lib/seo.ts` | 1 | Date-format edge cases, JSON-LD shape. |
 | R-COVERAGE-09 | pending | `lib/compliance.ts` — disclosure constants + interpolation helpers | 1 | Legal-correctness — every change here needs test confirmation. |
 | R-COVERAGE-10 | pending | `lib/finance/*` (formatters, calculators) | 2 | AUD currency, percentage, tax-calculation helpers. |
-| R-COVERAGE-11..N | pending | One iteration per remaining hot module until threshold hit | ~30 | Scout + queue more items per iteration as the loop discovers new gaps. |
+| R-COVERAGE-11..N | pending | One iteration per remaining hot module until M1 (30% overall) hit | ~30 | Scout + queue more items per iteration as the loop discovers new gaps. |
+| R-COVERAGE-M2-A | pending | Lift `lib/stripe/*` to ≥80% — full edge-case coverage on webhook idempotency, refund flows, subscription upgrades/downgrades, customer migration | 4 | Done after M1; needs the Stripe SDK mock matrix mature from R-COVERAGE-02. |
+| R-COVERAGE-M2-B | pending | Lift `lib/finance/*` to ≥80% — currency formatting edge cases (negative, zero, > AUD 1B, non-AUD), tax calculations, fee tier boundaries | 3 | Money-correctness tests; pair with finance team if questions on rounding. |
+| R-COVERAGE-M2-C | pending | Lift `lib/compliance.ts` to ≥80% — every disclosure variant, every interpolation, every locale | 2 | Legal-correctness; tests act as documentation of which copy applies where. |
+| R-COVERAGE-M2-D | pending | Lift `lib/sponsorship.ts` to ≥80% — full ranking matrix, tier boundaries, tie-break rules | 2 | Revenue-ranking; regressions here directly affect partner placement fairness. |
+| R-COVERAGE-M2-E..N | pending | Backfill route coverage to 60% overall, then 70% on the user-data/money API surface | ~50-70 | Bulk of M2/M3. Each iteration: one route file or one helper module. |
+| R-COVERAGE-RATCHET | pending | After each milestone, update `vitest.config.mts` coverage thresholds so future PRs can't regress below the new floor | 3 (one per milestone) | Forward-only protection — prevents the floor from sliding. |
 
 ---
 
