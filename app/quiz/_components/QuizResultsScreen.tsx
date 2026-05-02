@@ -13,6 +13,10 @@ import QuizComparisonTable from "./QuizComparisonTable";
 import QuizRunnerUps from "./QuizRunnerUps";
 import QuizResultsFooter from "./QuizResultsFooter";
 import ThreadCardsStrip, { type ThreadAnswers } from "./ThreadCardsStrip";
+import QuizNextBestActions from "./QuizNextBestActions";
+import QuizPrimaryActionHero from "./QuizPrimaryActionHero";
+import QuizInlineEmailCapture from "./QuizInlineEmailCapture";
+import { resolveBestOutcome } from "@/lib/quiz-outcome";
 
 interface ScoredResult {
   slug: string;
@@ -25,19 +29,16 @@ interface Props {
   answers: string[];
   unifiedAnswers: ThreadAnswers;
   hasCryptoResult: boolean;
-  emailGate: boolean;
-  gateEmail: string;
-  gateStatus: "idle" | "loading" | "error";
   copied: boolean;
   showScoring: boolean;
   onSetShowScoring: (v: boolean) => void;
-  onGateEmailChange: (email: string) => void;
-  onGateSubmit: () => void;
-  onEmailGateSent: () => void;
-  onGateConsentSet: () => void;
   onShareResult: () => void;
   onRestart: () => void;
   getMatchReasons: (answers: string[], broker: Broker) => string[];
+  /** Inline email capture handlers — gate moved post-results so users see
+      the win first, then get nudged to capture (warm conversion). */
+  onEmailCaptureSubmit: (email: string, name: string) => Promise<void> | void;
+  emailCaptureStatus: "idle" | "loading" | "submitted" | "error";
 }
 
 export default function QuizResultsScreen({
@@ -45,23 +46,30 @@ export default function QuizResultsScreen({
   answers,
   unifiedAnswers,
   hasCryptoResult,
-  emailGate,
-  gateEmail,
-  gateStatus,
   copied,
   showScoring,
   onSetShowScoring,
-  onGateEmailChange,
-  onGateSubmit,
-  onEmailGateSent,
-  onGateConsentSet,
   onShareResult,
   onRestart,
   getMatchReasons,
+  onEmailCaptureSubmit,
+  emailCaptureStatus,
 }: Props) {
   const topMatch = results[0];
   const runnerUps = results.slice(1);
   const allResults = results.filter(r => r.broker);
+  const alternativesCount = Math.max(0, allResults.length - 1);
+  const hasSponsoredResult = allResults.some(r => r.broker && isSponsored(r.broker));
+
+  // Resolve the inferred best outcome — post-job, calculator-first,
+  // bundle-stack, advisor-browse, education-first, advisor-match, or
+  // diy-broker (default fall-through). The outcome can suppress the broker
+  // leaderboard entirely (e.g. for property-physical the broker list isn't
+  // the answer — a buyer's agent + mortgage broker is).
+  const outcome = resolveBestOutcome(unifiedAnswers);
+  const heroEnabled = outcome.kind !== "diy-broker";
+  const showBrokerResults = !outcome.suppressBrokerResults;
+  const showRunnerUps = !outcome.suppressRunnerUps;
 
   // Edge case: no platforms matched (data fetch failed or empty DB)
   if (allResults.length === 0) {
@@ -117,8 +125,12 @@ export default function QuizResultsScreen({
               <Icon name="trophy" size={56} className="celebrate-emoji text-amber-500 hidden md:block" />
             </div>
           </div>
-          <h1 className="text-xl md:text-3xl font-extrabold mb-1 md:mb-2">Platforms matching your filters</h1>
-          <p className="text-[0.69rem] md:text-base text-slate-600">Platforms that scored highest based on the criteria you selected.</p>
+          <h1 className="text-xl md:text-3xl font-extrabold mb-1 md:mb-2">
+            {alternativesCount > 0
+              ? `Your top match (and ${alternativesCount} ${alternativesCount === 1 ? "alternative" : "alternatives"})`
+              : "Your top match"}
+          </h1>
+          <p className="text-[0.69rem] md:text-base text-slate-600">Scored against the criteria you selected — your #1 first, alternatives below.</p>
           <div className="flex items-center justify-center gap-2 md:gap-3 mt-2 md:mt-3 text-[0.62rem] md:text-xs text-slate-400">
             <span className="flex items-center gap-1">
               <svg className="w-2.5 h-2.5 md:w-3 md:h-3 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
@@ -131,57 +143,57 @@ export default function QuizResultsScreen({
           </div>
         </div>
 
-        {/* General Advice Warning — collapsed on mobile, visible on desktop */}
-        <div className="hidden md:block bg-slate-50 border border-slate-200 rounded-lg p-2.5 md:p-4 mb-3 md:mb-6">
-          <p className="text-[0.62rem] md:text-xs text-slate-500 leading-relaxed">
-            <strong>General Advice Warning:</strong> {GENERAL_ADVICE_WARNING} {ADVERTISER_DISCLOSURE_SHORT}
-          </p>
-        </div>
-        <div className="md:hidden mb-3">
-          <details className="bg-slate-50 border border-slate-200 rounded-lg">
-            <summary className="px-2.5 py-2 text-[0.62rem] text-slate-500 font-medium cursor-pointer flex items-center gap-1">
-              <svg className="w-3 h-3 text-amber-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-              General advice only — not a personal recommendation.
-            </summary>
-            <p className="px-2.5 pb-2.5 text-[0.62rem] text-slate-500 leading-relaxed">
-              {GENERAL_ADVICE_WARNING} {ADVERTISER_DISCLOSURE_SHORT}
-            </p>
-          </details>
-        </div>
+        {/* Primary action hero — renders the inferred best move FIRST when
+            the outcome resolver decides the user's right next step is
+            something other than "pick a broker" (post a job, run a
+            calculator, browse advisors, build a stack, get educated). For
+            diy-broker outcomes this is a no-op and the top match below
+            takes over. */}
+        {heroEnabled && <QuizPrimaryActionHero outcome={outcome} />}
 
-        {/* Sponsored broker disclosure — collapsed on mobile */}
-        {allResults.some(r => r.broker && isSponsored(r.broker)) && (
-          <>
-            <div className="hidden md:block bg-blue-50 border border-blue-200 rounded-lg p-2.5 md:p-3 mb-3 md:mb-6">
-              <p className="text-[0.62rem] md:text-xs text-blue-700 leading-relaxed">
-                <strong>Sponsor Disclosure:</strong> Sponsored partners may receive a minor position boost if they already score in the top 5. {SPONSORED_DISCLOSURE_SHORT}
-              </p>
-            </div>
-            <div className="md:hidden mb-3">
-              <details className="bg-blue-50 border border-blue-200 rounded-lg">
-                <summary className="px-2.5 py-2 text-[0.62rem] text-blue-600 font-medium cursor-pointer">
-                  Includes sponsored results · Details
-                </summary>
-                <p className="px-2.5 pb-2.5 text-[0.62rem] text-blue-700 leading-relaxed">
-                  Sponsored partners may receive a minor position boost if they already score in the top 5. {SPONSORED_DISCLOSURE_SHORT}
-                </p>
-              </details>
-            </div>
-          </>
+        {/* Top Match — surfaced above the fold for diy-broker outcomes.
+            For non-broker outcomes (post-job, calculator-first, etc.) the
+            top match is still shown UNLESS the outcome explicitly
+            suppresses the leaderboard (property-physical, business-intl,
+            mortgage-home — where a broker pick isn't relevant). */}
+        {showBrokerResults && topMatch?.broker && (
+          <div id="top-match">
+            <QuizTopMatch topMatch={topMatch} answers={answers} getMatchReasons={getMatchReasons} />
+          </div>
         )}
+
+        {/* Consolidated disclosures — one collapsible card combining the
+            general-advice warning and the sponsored-results disclosure.
+            Previously these were two separate stacked blocks above the top
+            match; merging + collapsing reduces ~200px of mobile scroll. */}
+        <details className="bg-slate-50 border border-slate-200 rounded-lg mb-3 md:mb-6 group">
+          <summary className="px-3 py-2 text-[0.62rem] md:text-xs text-slate-500 font-medium cursor-pointer flex items-center gap-1.5 list-none [&::-webkit-details-marker]:hidden">
+            <svg className="w-3 h-3 md:w-3.5 md:h-3.5 text-amber-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <span>How we work &amp; why these results</span>
+            {hasSponsoredResult && (
+              <span className="ml-1 px-1.5 py-px bg-blue-50 border border-blue-200 rounded-full text-[0.55rem] md:text-[0.62rem] font-semibold text-blue-700">Includes sponsored</span>
+            )}
+            <svg className="w-3 h-3 md:w-3.5 md:h-3.5 text-slate-400 ml-auto transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+          </summary>
+          <div className="px-3 pb-2.5 space-y-2 text-[0.62rem] md:text-xs leading-relaxed">
+            <p className="text-slate-500">
+              <strong>General advice only:</strong> {GENERAL_ADVICE_WARNING} {ADVERTISER_DISCLOSURE_SHORT}
+            </p>
+            {hasSponsoredResult && (
+              <p className="text-blue-700">
+                <strong>Sponsored partners:</strong> Sponsored partners may receive a minor position boost if they already score in the top 5. {SPONSORED_DISCLOSURE_SHORT}
+              </p>
+            )}
+          </div>
+        </details>
 
         {/* Your investing stack — multi-thread bundle cards conditional on quiz answers.
-            Renders above the leaderboard so users see investing as broker + super + savings + tax,
-            not just "pick a broker". Returns null when no thread matches the user's answers. */}
+            Now sits below the top match so the user sees the answer first, then
+            the broader "broker + super + savings + tax" framing. */}
         <ThreadCardsStrip answers={unifiedAnswers} />
 
-        {/* Top Match */}
-        {topMatch?.broker && (
-          <QuizTopMatch topMatch={topMatch} answers={answers} getMatchReasons={getMatchReasons} />
-        )}
-
-        {/* Quick Comparison Table */}
-        <QuizComparisonTable allResults={allResults} />
+        {/* Quick Comparison Table — only for outcomes that surface broker results */}
+        {showBrokerResults && <QuizComparisonTable allResults={allResults} />}
 
         {/* Cohort Insights — "People Like Me" */}
         {answers.length >= 3 && (
@@ -362,8 +374,35 @@ export default function QuizResultsScreen({
           );
         })()}
 
-        {/* Runner Ups */}
-        <QuizRunnerUps runnerUps={runnerUps} answers={answers} getMatchReasons={getMatchReasons} />
+        {/* Runner Ups — only when the outcome surfaces broker comparisons.
+            Outcomes like education-first / post-job / property-physical
+            suppress this; the broker leaderboard is noise for those users. */}
+        {showBrokerResults && showRunnerUps && (
+          <QuizRunnerUps runnerUps={runnerUps} answers={answers} getMatchReasons={getMatchReasons} />
+        )}
+
+        {/* Inline email capture — warm-capture sweet spot. The user has
+            seen the primary action hero AND the broker results above, so
+            they know the value before being asked. Dismissable; success
+            state swaps the form for a thank-you. */}
+        <QuizInlineEmailCapture
+          onSubmit={onEmailCaptureSubmit}
+          status={emailCaptureStatus}
+        />
+
+        {/* Next-best-actions — vertical-aware cross-sell strip.
+            Surfaces calculators, advisor types, and topic hubs based on the
+            user's actual answers (super → retirement-calc + SMSF accountant,
+            crypto → tax agent, property → mortgage broker, etc.). The strip is
+            the antidote to "quiz returns 1 broker and ends" — most users have
+            multiple latent needs the result page should acknowledge. */}
+        <QuizNextBestActions
+          answers={unifiedAnswers}
+          topSlugs={allResults.map(r => r.slug)}
+          showPostJobFallback={
+            unifiedAnswers.complexity === "complex" || unifiedAnswers.amount === "whale"
+          }
+        />
 
         {/* P1 #7: Crypto warning when results include a crypto broker */}
         {hasCryptoResult && (
@@ -377,15 +416,9 @@ export default function QuizResultsScreen({
         <QuizResultsFooter
           results={results}
           answers={answers}
-          emailGate={emailGate}
-          gateEmail={gateEmail}
-          gateStatus={gateStatus}
+          unifiedAnswers={unifiedAnswers}
           copied={copied}
           topMatch={topMatch}
-          onGateEmailChange={onGateEmailChange}
-          onGateSubmit={onGateSubmit}
-          onEmailGateSent={onEmailGateSent}
-          onGateConsentSet={onGateConsentSet}
           onShareResult={onShareResult}
           onRestart={onRestart}
         />

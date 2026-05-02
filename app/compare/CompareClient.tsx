@@ -225,15 +225,35 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
   const urlSortDir = searchParams.get("dir");
   const initialSortDir: 1 | -1 = urlSortDir === 'asc' ? 1 : -1;
 
+  // Quiz handoff: when the quiz routes here with ?ids=slug1,slug2,slug3 and
+  // optional ?quiz_priority signals, seed the comparison so the user lands
+  // ready to act. This converts the cold compare experience (filter from
+  // scratch) into a warm one (their top quiz matches already selected).
+  const urlIds = searchParams.get("ids");
+  const urlQuizPriority = searchParams.get("quiz_priority");
+  const initialSelected = (() => {
+    if (!urlIds) return new Set<string>();
+    const slugs = urlIds.split(",").map(s => s.trim()).filter(Boolean).slice(0, 4);
+    const validSlugs = new Set(brokers.map(b => b.slug));
+    return new Set(slugs.filter(s => validSlugs.has(s)));
+  })();
+  const initialFeatures = (() => {
+    const next = new Set<FeatureFilter>();
+    if (urlQuizPriority === "safety") next.add("chess");
+    return next;
+  })();
   const [searchQuery, setSearchQuery] = useState(urlQuery);
   const [activeFilter, setActiveFilter] = useState<PlatformType>(initialFilter);
-  const [activeFeatures, setActiveFeatures] = useState<Set<FeatureFilter>>(new Set());
+  const [activeFeatures, setActiveFeatures] = useState<Set<FeatureFilter>>(initialFeatures);
   const [maxFee, setMaxFee] = useState(999);
   const [minRating, setMinRating] = useState(0);
   const resultsRef = useRef<HTMLDivElement>(null);
-  const [sortCol, setSortCol] = useState<SortCol>(initialSortCol);
-  const [sortDir, setSortDir] = useState<1 | -1>(initialSortDir);
-  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const initialSortColForQuiz: SortCol =
+    urlQuizPriority === "fees" ? "asx_fee_value" : initialSortCol;
+  const initialSortDirForQuiz: 1 | -1 = urlQuizPriority === "fees" ? 1 : initialSortDir;
+  const [sortCol, setSortCol] = useState<SortCol>(initialSortColForQuiz);
+  const [sortDir, setSortDir] = useState<1 | -1>(initialSortDirForQuiz);
+  const [selected, setSelected] = useState<Set<string>>(initialSelected);
   const [showMobileCompare, setShowMobileCompare] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
 
