@@ -17,24 +17,24 @@ import { ORGANIZATION_JSONLD, SITE_URL } from "@/lib/seo";
 export const metadata = {
   title: {
     absolute:
-      "Compare Platforms, Browse Listings, Find Experts — Invest.com.au",
+      "Compare Investing Platforms, Browse Investments for Sale, Find Experts — Invest.com.au",
   },
   description:
-    "One place to compare platforms, browse investment listings, find experts, or get matched to the right next step. Independent. ASIC-registered. General information only.",
+    "Compare brokers, crypto, super and savings. Browse Australian investments for sale — businesses, farmland, mining, property. Find a verified expert, or get matched in 60 seconds. Independent. ASIC-registered. General information only.",
   openGraph: {
     title:
-      "Compare Platforms, Browse Listings, Find Experts — Invest.com.au",
+      "Compare Investing Platforms, Browse Investments for Sale, Find Experts — Invest.com.au",
     description:
-      "Compare platforms, browse listings, find experts, or get matched in 60 seconds.",
+      "Compare platforms, browse Australian investments for sale, find experts, or get matched in 60 seconds.",
     url: "/",
     images: [{ url: "/api/og", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image" as const,
     title:
-      "Compare Platforms, Browse Listings, Find Experts — Invest.com.au",
+      "Compare Investing Platforms, Browse Investments for Sale, Find Experts — Invest.com.au",
     description:
-      "Compare platforms, browse listings, find experts, or get matched in 60 seconds.",
+      "Compare platforms, browse Australian investments for sale, find experts, or get matched in 60 seconds.",
   },
   alternates: { canonical: "/" },
 };
@@ -172,7 +172,7 @@ export default async function HomePage() {
             "@context": "https://schema.org",
             ...ORGANIZATION_JSONLD,
             description:
-              "One place to compare platforms, browse investment listings, find experts, or get matched to the right next step. Independent. ASIC-registered. General information only.",
+              "Compare brokers, crypto, super and savings. Browse Australian investments for sale — businesses, farmland, mining, property. Find a verified expert, or get matched in 60 seconds. Independent. ASIC-registered. General information only.",
           }),
         }}
       />
@@ -193,10 +193,10 @@ export default async function HomePage() {
               },
               {
                 "@type": "Question",
-                name: "Where can I browse Australian investment opportunities?",
+                name: "Where can I browse Australian investments for sale?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text: `Browse the marketplace at ${SITE_URL}/invest — businesses for sale, mining, farmland, commercial property, renewable energy projects and selected investment listings. Listings are not recommendations; always perform due diligence.`,
+                  text: `Browse the marketplace at ${SITE_URL}/invest — businesses for sale, mining, farmland, commercial property, renewable energy projects, franchises, IPOs and more. These are real opportunities listed by owners and operators, not recommendations; always perform due diligence.`,
                 },
               },
               {
@@ -212,7 +212,7 @@ export default async function HomePage() {
                 name: "What does Get matched do?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text: `Get matched is a short prompt-based flow at ${SITE_URL}/quiz that routes you to the right next step — comparison, listing, expert directory or matched enquiry — based on your situation. No email needed.`,
+                  text: `Get matched is a short 4-question flow at ${SITE_URL}/quiz that routes you to the right next step — a platform to compare, an opportunity to browse, an expert to contact, or a guide to read — based on your situation. 60 seconds. No email needed.`,
                 },
               },
             ],
@@ -238,10 +238,6 @@ export default async function HomePage() {
       </ScrollFadeIn>
 
       <ScrollFadeIn>
-        <HomeHowWeEarn />
-      </ScrollFadeIn>
-
-      <ScrollFadeIn>
         <HomeCompareDeepDive brokers={compareBrokers} />
       </ScrollFadeIn>
 
@@ -263,6 +259,10 @@ export default async function HomePage() {
 
       <ScrollFadeIn>
         <HomeFridayBriefing />
+      </ScrollFadeIn>
+
+      <ScrollFadeIn>
+        <HomeHowWeEarn />
       </ScrollFadeIn>
 
       <MobileBottomNav />
