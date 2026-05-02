@@ -1,3 +1,23 @@
+-- ============================================================================
+-- Migration: 20260310_fix_security_advisories.sql
+-- Purpose: Fix Supabase security advisories — set search_path = public on
+--          3 functions (update_professional_geog, advisor_fee_stats,
+--          search_advisors_nearby) to prevent SQL injection via mutable
+--          search_path; add deny-all policy to admin_login_attempts (had
+--          RLS enabled but no policies); tighten portfolio_alerts UPDATE
+--          and user_portfolios UPDATE to owner-scoped predicates.
+-- Rollback: ALTER FUNCTION update_professional_geog() RESET search_path;
+--           ALTER FUNCTION advisor_fee_stats(text) RESET search_path;
+--           ALTER FUNCTION search_advisors_nearby(...) RESET search_path;
+--           DROP POLICY IF EXISTS "Service role only on admin_login_attempts" ON admin_login_attempts;
+--           DROP POLICY IF EXISTS "Update own portfolio alerts" ON portfolio_alerts;
+--           CREATE POLICY "Update portfolio alerts" ON portfolio_alerts FOR UPDATE USING (true);
+--           DROP POLICY IF EXISTS "Update own portfolio" ON user_portfolios;
+--           CREATE POLICY "Update own portfolio" ON user_portfolios FOR UPDATE USING (true);
+--   Note: rollback re-introduces the mutable search_path vulnerability and
+--   overly permissive UPDATE policies — only use to undo a bad deploy.
+-- ============================================================================
+
 -- Fix Supabase security advisories flagged by database linter
 
 -- 1. Fix function search_path to prevent SQL injection via mutable search_path

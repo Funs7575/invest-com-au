@@ -1,3 +1,16 @@
+-- ============================================================================
+-- Migration: 20260316_q1_2026_report.sql
+-- Purpose: Create quarterly_reports table and seed the Q1 2026 Quarterly
+--          Industry Report. Table stores published reports with slug, PDF URL,
+--          summary stats, and an advisor_types JSONB column.
+-- Rollback: DROP TABLE IF EXISTS quarterly_reports CASCADE;
+--   Note: C-05b (PR #349) refactored the admin page away from browser-client
+--   direct access; the table now has an API route + RLS via that migration.
+--   Rolling back this migration also loses the Q1 2026 report seed data.
+--   Risk: low for table drop (no user-generated data); the seeded report
+--   row can be re-inserted from this migration.
+-- ============================================================================
+
 -- Migration: Q1 2026 Quarterly Industry Report
 -- Inserts the first published quarterly report
 
