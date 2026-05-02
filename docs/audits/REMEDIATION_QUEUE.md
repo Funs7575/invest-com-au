@@ -30,7 +30,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | D | `claude/audit-remediation/d-route-tests` | #285 MERGED 2026-04-29T10:13Z; supplementary PRs #246/#285/#297/#298 | last merged 2026-04-29T18:53Z | D-01..D-09 done (PR #246). D-10 done (PR #246 — coverage ratchet). D-11 complete (43+ batches, all admin/cron/non-admin routes covered) — merged via PR #285 + supplementary PRs #297/#298. **Stream D complete.** |
 | E | `claude/audit-remediation/e-01-with-validated-body` (#295) · `e-02-batch-*-zod-rollout` (#315/#323/#406) · `e-03-zod-lint-rule` (#313) | #295/#313/#315/#323 MERGED · #406 OPEN | iter 200 — SHA corrected: actual rescue-9 HEAD is `3aef95c` (coerce campaign_id to number — string not assignable to number in recordImpression). Full `tsc --noEmit` exits 0. CI pending. | E-01 done (PR #295 — withValidatedBody helper). E-02 in-progress (batches 1+2 done via PR #315/#323 — 8 routes; batch 3 done via PR #406 — 9 CI rescues: `e54b36a` (type mismatch) → `9fefb6c` (Zod v4 required_error) → `5cac153` (z.coerce.number) → `89411b2` (numeric target_id) → `b180674` (Zod v4 string API) + `e66782b` (forum_votes.value, drop non-existent columns) + `a353733` (drop last_reply_by) + `9b264c7` (drop parent_id) + `3aef95c` (coerce campaign_id); ~2 batches remain). E-03 done (PR #313 — ESLint rule). E-04 backfill pending. |
 | F | `claude/audit-remediation/f-02..f-06` (multiple PRs) | #293/#294/#301/#354/#355/#370 all MERGED | last merged 2026-05-01T16:00Z | F-01 false-positive. F-02 done (PR #293 — formatDate). F-03 done (PR #370 — formatCurrency). F-04 done (PR #354 — slugify, first wave). F-05 done (PR #294 + #301 followup — console→logger). F-06 done (PR #355 — compliance copy SSOT). F-07/F-08 pending. |
-| G | all PRs MERGED | #307/#310/#311/#314/#316/#342/#352/#405 all MERGED | last merged 2026-05-02T16:13Z | G-01+G-02 done (PR #307). G-03 batch 5 MERGED (#405 — 50/108 covered; ~6 batches still pending). G-04 done (PR #310 + #342). G-04-FINDING-1..5 pending founder authorization. |
+| G | `claude/audit-remediation/g-03-batch-6-rollback-headers` (#455) | #307/#310/#311/#314/#316/#342/#352/#405 all MERGED · #455 OPEN | iter 203 — `3cc49bb` (PR #455: G-03 batch 6 — rollback headers for 10 migrations 20260402–20260413); CI in_progress | G-01+G-02 done (PR #307). G-03 batch 6 in-progress (#455 — 60/108 covered; ~5 batches still pending). G-04 done (PR #310 + #342). G-04-FINDING-1..5 pending founder authorization. |
 | H | _not started_ | — | — | — |
 | I | `claude/audit-remediation/i-new-04-main-ci-auto-revert` (#278) · `i-02-drift-detection-ci` (#353) | #278 MERGED 2026-04-28T16:18Z · #353 MERGED 2026-05-01T14:30Z | last merged 2026-05-01T14:30Z | I-NEW-01..05 all done. I-NEW-06 needs-user (Supabase GH Actions secrets). I-01 done via B-07 (PR #286). I-02 done (PR #353). I-03 done via C-08 (PR #327). I-04 done via E-03 (PR #313). I-05 done via D-10 (PR #246). |
 | J | `claude/audit-remediation/j-stripe-webhook` | #288 MERGED 2026-04-29T16:48Z | last merged 2026-04-29T16:48Z | J-01a..J-01e done · J-01d-ext done · J-03/J-05/J-06/J-08/J-09/J-10 done. **Stream J complete** (J-02/J-04/J-07/J-11 false-positives or done out-of-band). |
@@ -681,7 +681,7 @@ Highest priority: critical 2 first.
 | --- | --- | --- | --- | --- |
 | G-01 | done | Idempotency: convert 10 non-idempotent migrations (per audit §5.2) to use `IF NOT EXISTS` / `CREATE OR REPLACE` | 1 | Done in PR #307 (G-01+G-02 combined). |
 | G-02 | done | Rollback headers: add to the 3 migrations missing headers entirely | 1 | Done in PR #307 — 3 migrations (`20260316_add_weekly_rate_drip_log.sql`, `20260316_add_advisor_nudge_tracking.sql`, `20260316_add_lead_outcome_tracking.sql`). |
-| G-03 | in-progress | Rollback headers: backfill explicit reverse-SQL on remaining 108 partial-header migrations | ~10 | 5 batches done — PR #311 (batch 1, 10), PR #314 (batch 2, 10), PR #316 (batch 3, 10), PR #352 (batch 4, 10), PR #405 (batch 5, 10). 50 of 108 covered; ~6 batches still pending. |
+| G-03 | in-progress | Rollback headers: backfill explicit reverse-SQL on remaining 108 partial-header migrations | ~10 | 6 batches done — PR #311 (batch 1, 10), PR #314 (batch 2, 10), PR #316 (batch 3, 10), PR #352 (batch 4, 10), PR #405 (batch 5, 10), PR #455 (batch 6, 10). 60 of 108 covered; ~5 batches still pending. |
 | G-04 | done | Document the 8 partial-failure-marker migrations (audit §5.5) for user to verify in prod | 1 | Doc shipped in PR #310 (`docs/audits/g-04-partial-failure-markers.md`). Verification done by founder via Supabase MCP, logged in PR #342. Result: 3 of 8 clean (#3/#5/#8 — no security data leak), 5 partial-apply findings surfaced as G-04-FINDING-1..5 (pending separate Tier C founder authorization). G-04 itself complete. |
 
 ### Stream I — CI / lint guardrails
@@ -1594,6 +1594,15 @@ Two strategically important surfaces under-served by current nav: (1) investment
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-02 — Forward progress iter 203 (stream G — G-03 batch 6: rollback headers for 10 migrations)
+
+- Phase 2: CI green/skipped on all open PRs (#449/#451/#452/#453/#454). No rescues needed.
+- Phase 3: G-stream (slot 19) next pending item: G-03 batch 6 (next 10 migrations after batch 5's 50/108). Created branch `claude/audit-remediation/g-03-batch-6-rollback-headers` from main.
+- Phase 4: Verified via grep: 40 migrations still missing rollback headers. Batch 6 scope: 10 migrations from 20260402–20260413 (investment_verticals, seed_listing_images, tier1/tier2 revenue features, features_11_12_14_15_16_18, admin_automation_dashboard, advisor_lead_dispute_auto_resolve, automation_wave_1, automation_wave_2, seed_stockbroker_firms).
+- Phase 5: Added `-- ROLLBACK STRATEGY` + explicit reverse-SQL blocks to all 10 migration files (comment-only additions). 20260411 file also tagged with G-04-FINDING-4 note (migration didn't fully apply in prod). SQL-only changes; tsc/tests/lint skipped (hardware exception — migration comment additions).
+- Phase 6: Committed `3cc49bb`, pushed branch g-03-batch-6-rollback-headers, opened PR #455 (draft).
+- STATUS: PROGRESS · stream=G · item=G-03 (batch 6) · pr=#455 · commit=3cc49bb · diff=+128 -0 across 10 files
 
 ### 2026-05-02 — Forward progress iter 202 (stream A — A-DISC-20260501-01 CREATE VIEW finance_monthly_summary)
 
