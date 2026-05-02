@@ -10,6 +10,78 @@
  * Mirrors the pattern in `lib/property-images.ts`.
  */
 
+/**
+ * Sub-category / commodity overrides for verticals where the parent
+ * pool is too generic. Looked up first via `(vertical, subCategory)`;
+ * falls back to the parent vertical pool if no override exists.
+ *
+ * Keys are normalised to lowercase + underscores so callers can pass
+ * either listing.sub_category, listing.key_metrics.commodity, or a
+ * URL slug ("oil-gas" → "oil_gas") interchangeably.
+ */
+const VERTICAL_SUBCATEGORY_IMAGES: Record<
+  string,
+  Record<string, ReadonlyArray<string>>
+> = {
+  energy: {
+    hydrogen: [
+      "https://images.unsplash.com/photo-1623227866882-c005c26dfe41?w=1200&h=675&q=80&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1497440001374-f26997328c1b?w=1200&h=675&q=80&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1592833167001-55b39c8e9e2c?w=1200&h=675&q=80&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1581094271901-8022df4466f9?w=1200&h=675&q=80&auto=format&fit=crop",
+    ],
+    solar: [
+      "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=1200&h=675&q=80&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1559302995-f1d7e5c2bba3?w=1200&h=675&q=80&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=1200&h=675&q=80&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1497440001374-f26997328c1b?w=1200&h=675&q=80&auto=format&fit=crop",
+    ],
+    wind: [
+      "https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=1200&h=675&q=80&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=1200&h=675&q=80&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1532601224476-15c79f2f7a51?w=1200&h=675&q=80&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?w=1200&h=675&q=80&auto=format&fit=crop",
+    ],
+    oil_gas: [
+      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1200&h=675&q=80&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1495615080073-6b89c9839ce0?w=1200&h=675&q=80&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1200&h=675&q=80&auto=format&fit=crop",
+    ],
+  },
+  mining: {
+    lithium: [
+      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1200&h=675&q=80&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1581094271901-8022df4466f9?w=1200&h=675&q=80&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1606613923022-ee4ce15a6d85?w=1200&h=675&q=80&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1518930259200-3e5b1f0d6b89?w=1200&h=675&q=80&auto=format&fit=crop",
+    ],
+    uranium: [
+      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1200&h=675&q=80&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1559757175-5700dde675bc?w=1200&h=675&q=80&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1606613923022-ee4ce15a6d85?w=1200&h=675&q=80&auto=format&fit=crop",
+    ],
+    gold: [
+      "https://images.unsplash.com/photo-1610375461246-83df859d849d?w=1200&h=675&q=80&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=1200&h=675&q=80&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1605792657660-596af9009e82?w=1200&h=675&q=80&auto=format&fit=crop",
+    ],
+    iron_ore: [
+      "https://images.unsplash.com/photo-1581094271901-8022df4466f9?w=1200&h=675&q=80&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1200&h=675&q=80&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1606613923022-ee4ce15a6d85?w=1200&h=675&q=80&auto=format&fit=crop",
+    ],
+    copper: [
+      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1200&h=675&q=80&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1606613923022-ee4ce15a6d85?w=1200&h=675&q=80&auto=format&fit=crop",
+    ],
+  },
+};
+
+function normaliseSubKey(s: string | null | undefined): string | null {
+  if (!s) return null;
+  return s.toLowerCase().replace(/-/g, "_").replace(/\s+/g, "_");
+}
+
 const VERTICAL_IMAGES: Record<string, ReadonlyArray<string>> = {
   business: [
     "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&h=675&q=80&auto=format&fit=crop",
@@ -79,17 +151,59 @@ const GENERIC_FALLBACK_POOL: ReadonlyArray<string> = [
 /**
  * Pick a deterministic seed image for a listing whose `images` array is empty.
  * Returns the live DB image when present.
+ *
+ * Resolution order: dbImages → (vertical, subCategory) → vertical → generic.
+ * `subCategory` accepts listing.sub_category, key_metrics.commodity, or the
+ * URL slug — they're normalised to a common shape before lookup.
  */
 export function getListingHeroImage(
   vertical: string | null | undefined,
   listingId: number | string,
   dbImages: ReadonlyArray<string> | null | undefined,
+  subCategory?: string | null,
 ): string {
   if (dbImages && dbImages.length > 0 && dbImages[0]) return dbImages[0];
 
-  const pool = (vertical && VERTICAL_IMAGES[vertical]) || GENERIC_FALLBACK_POOL;
   const idNum = typeof listingId === "number" ? listingId : Number(listingId);
   const safeIdx = Number.isFinite(idNum) && idNum >= 0 ? idNum : 0;
+
+  const subKey = normaliseSubKey(subCategory);
+  const subPool = vertical && subKey
+    ? VERTICAL_SUBCATEGORY_IMAGES[vertical]?.[subKey]
+    : undefined;
+  const verticalPool = vertical ? VERTICAL_IMAGES[vertical] : undefined;
+  const pool = subPool || verticalPool || GENERIC_FALLBACK_POOL;
+
   const fallback = pool[safeIdx % pool.length] ?? GENERIC_FALLBACK_POOL[0]!;
   return fallback;
+}
+
+/**
+ * Pick a deterministic seed image keyed on a sector slug (e.g. "hydrogen",
+ * "lithium") and a stable string id (e.g. an ASX ticker). Used for the
+ * commodity-sector ticker / ETF cards which don't have a DB images column.
+ */
+export function getSectorThumbImage(
+  sectorSlug: string | null | undefined,
+  stableId: string,
+): string {
+  // Hash the stableId so different tickers in the same sector get
+  // different images deterministically.
+  let hash = 0;
+  for (let i = 0; i < stableId.length; i += 1) {
+    hash = ((hash << 5) - hash + stableId.charCodeAt(i)) | 0;
+  }
+  const safeIdx = Math.abs(hash);
+
+  const subKey = normaliseSubKey(sectorSlug);
+  // Sectors map onto either an "energy" or "mining" parent pool.
+  const energyMatch = subKey && VERTICAL_SUBCATEGORY_IMAGES.energy?.[subKey];
+  const miningMatch = subKey && VERTICAL_SUBCATEGORY_IMAGES.mining?.[subKey];
+  const pool =
+    energyMatch ||
+    miningMatch ||
+    VERTICAL_IMAGES.energy ||
+    GENERIC_FALLBACK_POOL;
+
+  return pool[safeIdx % pool.length] ?? GENERIC_FALLBACK_POOL[0]!;
 }
