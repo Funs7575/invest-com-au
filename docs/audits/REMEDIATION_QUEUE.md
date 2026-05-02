@@ -24,7 +24,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 
 | Stream | Branch | PR | Last CI | Items in flight |
 | --- | --- | --- | --- | --- |
-| A | `claude/audit-remediation/a-03-batch-5-revenue-products` (#449) · `a-05-batch1-agent-ops-rls` (#451) · `a-05-batch2-ops-rls` (#452) | all prior PRs MERGED · #449 OPEN · #451 OPEN · #452 OPEN | iter 200 — `2abadc1` (PR #452: A-05 batch 2 — ENABLE RLS on cron_health_alerts + webhook_delivery_queue + posthog_events_mirror + rate_limits); CI pending | A-01 done (PR #308). A-02 complete (batches 1-6 done). A-03 batches 1-5 done (#351/#401/#413/#415/#417/#449). A-04 done (PR #399). A-05 batches 1-2 in-progress (#451/#452). A-06 batch 1 done (PR #412). A-06 ~2 batches pending. A-07 false-positive (covered by I-02, PR #353). |
+| A | `claude/audit-remediation/a-03-batch-5-revenue-products` (#449) · `a-05-batch1-agent-ops-rls` (#451) · `a-05-batch2-ops-rls` (#452) · `a-05-batch3-crm-rls` (#453) | all prior PRs MERGED · #449 OPEN · #451 OPEN · #452 OPEN · #453 OPEN | iter 201 — `4e1a186` (PR #453: A-05 batch 3 — ENABLE RLS on bd_pipeline + competitor_watch + broker_outreach_log); CI running | A-01 done (PR #308). A-02 complete (batches 1-6 done). A-03 batches 1-5 done (#351/#401/#413/#415/#417/#449). A-04 done (PR #399). A-05 batches 1-3 in-progress (#451/#452/#453). A-06 batch 1 done (PR #412). A-06 ~2 batches pending. A-07 false-positive (covered by I-02, PR #353). |
 | B | `claude/audit-remediation/b-08-rls-select-only` (#326) · `b-09a-otp-gate` (#348 draft, parallel-agent) | #326 MERGED 2026-05-01T13:19Z · #348 OPEN (DRAFT, awaiting `LISTING_OWNER_COOKIE_SECRET` env var) | last CI-rescue 2026-05-01T21:43Z (#348) | PR #220 merged (B-01..B-06 done/blocked/FP). B-07 done (`0097159` PR #286). B-08 done — code changes merged via PR #326 commit `476f89f6`. B-09 in-progress on `#348` (parallel-agent, draft). CI-rescue iter 1 (`09c4dfb`, 2026-05-01) merged main before PR #392 types regen — types drift still red. CI-rescue iter 2 (`7da8757e`, 2026-05-01T21:43Z) merged post-#392 main — picked up database.types.ts regen; CI re-run pending. Still DRAFT awaiting `LISTING_OWNER_COOKIE_SECRET` env var (Tier D). |
 | C | all PRs MERGED | #327/#349/#360/#394/#397 all MERGED | last merged 2026-05-02T16:13Z | C-01..C-08 done. C-03 MERGED (#360). C-04 done (#394). C-05 done (#394). C-05b MERGED (#349). C-DISC-20260501-01 MERGED (#397). **Stream C complete.** |
 | D | `claude/audit-remediation/d-route-tests` | #285 MERGED 2026-04-29T10:13Z; supplementary PRs #246/#285/#297/#298 | last merged 2026-04-29T18:53Z | D-01..D-09 done (PR #246). D-10 done (PR #246 — coverage ratchet). D-11 complete (43+ batches, all admin/cron/non-admin routes covered) — merged via PR #285 + supplementary PRs #297/#298. **Stream D complete.** |
@@ -1594,6 +1594,15 @@ Two strategically important surfaces under-served by current nav: (1) investment
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-02 — Forward progress iter 201 (stream A — A-05 batch 3 CRM table RLS hardening)
+
+- Phase 2: CI running on #452 (A-05 batch 2) — RLS migration gate + other gates in_progress, no failures. #453 just pushed, CI starting.
+- Phase 3: Continuing A-stream. A-05 batch 3 picked — CRM tables needing RLS backfill.
+- Phase 4: Verified 3 tables (bd_pipeline, competitor_watch, broker_outreach_log) in database.types.ts. bd_pipeline: no policies after 20260513 dropped "Public can read BD pipeline"; competitor_watch: has "Service role manages competitor_watch" policy but no ENABLE RLS; broker_outreach_log: no prior policies. bd_pipeline + competitor_watch callers use createAdminClient() → service_role only. broker_outreach_log caller uses browser createClient() → authenticated policy needed + TODO to migrate.
+- Phase 5: Created migration `20260704_a05_batch3_crm_tables_rls.sql` — CREATE TABLE IF NOT EXISTS + ENABLE/FORCE RLS + service_role-only for bd_pipeline + competitor_watch; authenticated + service_role for broker_outreach_log with human-review TODO.
+- Phase 6: Committed `4e1a186`, pushed `a-05-batch3-crm-rls`, opened PR #453.
+- STATUS: PROGRESS · stream=A · item=A-05 batch 3 · pr=#453 · commit=4e1a186 · diff=+142 -0 across 1 file
 
 ### 2026-05-02 — Forward progress iter 200 (stream A — A-05 batch 2 ops/observability RLS hardening)
 
