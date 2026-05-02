@@ -68,8 +68,8 @@ export default function HomeHero() {
             textWrap: "balance",
           }}
         >
-          Australia&apos;s front door for{" "}
-          <span style={{ color: "var(--color-coral-400)" }}>investment decisions.</span>
+          Compare investing platforms, see what&apos;s for sale, or find an expert &mdash;{" "}
+          <span style={{ color: "var(--color-coral-400)" }}>all in one place.</span>
         </h1>
 
         <p
@@ -81,8 +81,9 @@ export default function HomeHero() {
             margin: "20px 0 0",
           }}
         >
-          One place to compare platforms, browse investment listings, find experts, or get matched
-          to the right next step &mdash; without the financial jargon.
+          Compare brokers, crypto exchanges, super funds and savings accounts. Browse real
+          Australian investment opportunities &mdash; businesses, farmland, mining, property.
+          Find a verified expert. Or answer 4 questions to get matched. No jargon, no email.
         </p>
 
         <div
@@ -125,7 +126,7 @@ export default function HomeHero() {
               gap: 8,
             }}
           >
-            Browse manually <DesignIcon name="arrow-right" size={14} strokeWidth={2.4} />
+            Skip the quiz <DesignIcon name="arrow-right" size={14} strokeWidth={2.4} />
           </Link>
         </div>
 
