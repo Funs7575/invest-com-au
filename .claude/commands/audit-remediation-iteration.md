@@ -65,9 +65,22 @@ git checkout main && git pull --ff-only origin main
 
 Read `docs/audits/REMEDIATION_QUEUE.md` and `docs/audits/REMEDIATION_DEFAULTS.md` end-to-end. Do not skim — they encode all decisions.
 
-### Phase 1.5 — Types-drift auto-regen (added 2026-04-26 after iter 22)
+### Phase 1.5 — Types-drift auto-regen (added 2026-04-26 after iter 22; conditional 2026-05-02)
 
-A live-DB schema change between iterations leaves `lib/database.types.ts` stale and turns the "Supabase types drift" CI check red on every PR (caused iter 20 + 21 CI rescues). Cheaper to regenerate proactively here than to rescue per stream.
+A live-DB schema change between iterations leaves `lib/database.types.ts` stale and turns the "Supabase types drift" CI check red on every PR (caused iter 20 + 21 CI rescues). Cheaper to regenerate proactively here than to rescue per stream — but only when there's reason to believe drift exists.
+
+**Precondition gate (added 2026-05-02 — token-cost optimisation).** Phase 1.5 was firing on every iteration regardless of whether any schema change had occurred, paying the MCP round-trip and a queue-update commit even when the result was an empty diff. Skip Phase 1.5 entirely unless ONE of these is true:
+
+```bash
+# 1. A migration was added to main in the last 24 hours
+recent_migration_commit=$(git log --since="24 hours ago" --name-only --pretty=format: -- supabase/migrations/ | grep -c '\.sql$' || echo 0)
+
+# 2. Any in-flight PR currently fails the "Supabase types drift" check
+inflight_drift_failing=$(gh pr list --state open --json number,statusCheckRollup \
+  --jq '[.[] | select(.statusCheckRollup[]? | select(.name == "Supabase types drift" and .conclusion == "FAILURE"))] | length')
+```
+
+If both gates are 0, skip Phase 1.5 and jump to Phase 1.7. The savings: the median fire no longer pays the MCP regen + main-push tax. When schema *does* change, Phase 1.5 fires as before.
 
 ```bash
 # Regenerate via the Supabase MCP `generate_typescript_types`
@@ -112,12 +125,17 @@ For each stream in the queue's "In flight" table that has a PR number:
 
 - `mcp__github__pull_request_read` with `method: get_status` (or equivalent) to fetch CI checks.
 - If any check is `failure` or `cancelled`: this iteration is a CI rescue for that stream.
-  - Switch to the stream branch (`git checkout <branch>`), pull latest.
-  - Diagnose the failure. Fix it. Run `npm run type-check`, `npm test -- <changed>`, `npm run lint -- <changed>` until green locally.
-  - Commit (Conventional Commit, scope = stream letter), push, update queue's "Last CI" cell to "fixing — see commit <sha>".
-  - Print `STATUS: CI-RESCUE · stream=<X> · pr=#<NNN>` and exit.
+  - **Stuck-detection guard (added 2026-05-02 after the LH-CWV gate fiasco — iters 176–192).** Before initiating rescue, grep the queue's iteration log for prior `STATUS: CI-RESCUE` entries on the same `<PR-N>` + same failing check name. If 3+ such entries exist within the last 24 hours, the rescue cycle is non-productive runner noise that the loop cannot fix by retrying. Surface to Blocked instead:
+    - Add an entry to the queue's "Blocked — needs human input" section titled `<check-name> persistent failure on PR #<N>` with: failing check name, attempt count, last 3 commit SHAs from the rescue series, and a recommendation matrix — (a) fix the gate config structurally (e.g., raise thresholds, change runner class, switch to `continue-on-error`), (b) admin-merge if the human verifies the failure is known runner noise, or (c) rebase + retry if main has moved substantially.
+    - Print `STATUS: BLOCKED · stream=<X> · item=<persistent-CI-failure>` and exit. Do NOT add a new rescue commit. Do NOT update "Last CI" — leave the existing red signal visible.
+  - **Same-gate cluster guard.** If the same check name (e.g., `Lighthouse — Core Web Vitals gate`) is currently failing on ≥3 in-flight PRs simultaneously, the failure is systemic, not per-PR. Surface ONE consolidated Blocked entry titled `<check-name> systemic failure (N in-flight PRs affected)` with the list of affected PRs and the recommendation matrix above. Print `STATUS: BLOCKED · systemic=<check-name>` and exit. The next iteration will see the Blocked entry and skip those streams until the human resolves it.
+  - Otherwise (rescue is fresh, < 3 attempts, < 3 in-flight on same gate): proceed with rescue.
+    - Switch to the stream branch (`git checkout <branch>`), pull latest.
+    - Diagnose the failure. Fix it. Run `npm run type-check`, `npm test -- <changed>`, `npm run lint -- <changed>` until green locally.
+    - Commit (Conventional Commit, scope = stream letter), push, update queue's "Last CI" cell to "fixing — see commit <sha>".
+    - Print `STATUS: CI-RESCUE · stream=<X> · pr=#<NNN>` and exit.
 
-If multiple streams have red CI, rescue the highest-priority one (per `REMEDIATION_DEFAULTS.md`).
+If multiple streams have red CI (and the stuck-detection guards above don't fire), rescue the highest-priority one (per `REMEDIATION_DEFAULTS.md`).
 
 ### Phase 3 — Pick the next item
 
@@ -129,7 +147,7 @@ Walk `REMEDIATION_DEFAULTS.md`'s priority order. For each stream in order:
   - Create branch from `main`: `git checkout -b claude/audit-remediation/<letter>-<slug>`.
   - Make an initial empty commit (`git commit --allow-empty -m "chore(<stream-letter>): scaffold remediation stream"`).
   - Push: `git push -u origin <branch>`.
-  - Open a draft PR via `mcp__github__create_pull_request` with title `chore(<stream-letter>): <stream title> [audit remediation]` and body referencing the audit + tracking issue.
+  - Open a PR via `mcp__github__create_pull_request` with title `chore(<stream-letter>): <stream title> [audit remediation]` and body referencing the audit + tracking issue. Open it READY (not draft) — the `auto-merge-label.js` workflow applies `needs-human-review` automatically on touched paths, which is the actual safety gate; draft state on top of that is pure friction.
   - Update queue's In-flight table with branch + PR number.
 - Otherwise checkout the existing stream branch and pull.
 
@@ -289,7 +307,7 @@ Exit. The lock file is removed via the trap.
 - **Never** force-push or `reset --hard`.
 - **Hooks:** generally don't skip. Exception: `HUSKY=0` is authorised on the constrained sandbox (see Hardware exception in `REMEDIATION_DEFAULTS.md`). CI on the stream PR remains the authoritative gate for everything the hook would have run.
 - **Never** apply migrations to prod or run anything that touches the live DB.
-- **Never** merge a PR. The user merges.
+- **Never** merge a PR directly. Merging is delegated to `.github/workflows/auto-merge.yml` (60-min quiet window + STOP escape hatch + label gates). Loop opens PRs READY; `auto-merge-label.js` decides `auto-merge-safe` vs `needs-human-review` by changed paths; user-driven label swap is what releases a PR for auto-merge.
 - **Never** start work without first running phase 2 (CI rescue check). A red CI on an earlier stream blocks new work on that stream.
 - **Never** commit a red iteration. Revert and surface.
 - **Never** trust the audit's claims without the verification gate. The audit had at least one false positive (F-01).
