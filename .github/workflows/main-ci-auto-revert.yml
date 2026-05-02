@@ -80,6 +80,23 @@ jobs:
             skip_reason="commit has [skip-revert] tag"
           elif [ "${author_email}" = "41898282+github-actions[bot]@users.noreply.github.com" ]; then
             skip_reason="commit by github-actions[bot] — fix-forward expected"
+          else
+            # Sanity check: if main was ALREADY failing on the parent commit,
+            # this CI failure is almost certainly inherited breakage, not
+            # caused by the new commit. Reverting in that case adds noise
+            # (the revert won't fix main) and trains the loop to chase
+            # spurious reverts. Lesson from 2026-05-01: 10 spurious revert
+            # PRs were opened for 10 unrelated commits because main was
+            # already broken on listings tests + database.types drift.
+            parent_sha=$(gh api "${api_path}" --jq '.parents[0].sha // empty')
+            if [ -n "${parent_sha}" ]; then
+              parent_ci=$(gh api \
+                "repos/${{ github.repository }}/actions/runs?head_sha=${parent_sha}&status=completed&per_page=20" \
+                --jq '[.workflow_runs[] | select(.name == "CI")][0].conclusion // "missing"')
+              if [ "${parent_ci}" = "failure" ]; then
+                skip_reason="parent commit ${parent_sha:0:8} CI was already failing (parent_ci=${parent_ci}) — main was broken before this commit; not blaming this one"
+              fi
+            fi
           fi
 
           if [ -n "${skip_reason}" ]; then
