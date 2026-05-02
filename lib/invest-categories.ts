@@ -801,7 +801,7 @@ const categories: InvestCategory[] = [
       {
         slug: "cars",
         label: "Classic Cars",
-        dbValue: "wine",
+        dbValue: "cars",
         title: `Classic Car Investment in Australia (${yr})`,
         h1: "Classic Car Investment in Australia",
         metaDescription: `Invest in classic and collectible cars in Australia. Australian muscle cars, European classics, investment returns. ${upd}.`,
@@ -813,7 +813,7 @@ const categories: InvestCategory[] = [
       {
         slug: "watches",
         label: "Watches",
-        dbValue: "wine",
+        dbValue: "watches",
         title: `Watch Investment in Australia (${yr})`,
         h1: "Luxury Watch Investment in Australia",
         metaDescription: `Invest in luxury watches in Australia. Rolex, Patek Philippe, Audemars Piguet investment analysis. ${upd}.`,
@@ -825,7 +825,7 @@ const categories: InvestCategory[] = [
       {
         slug: "coins",
         label: "Rare Coins",
-        dbValue: "wine",
+        dbValue: "coins",
         title: `Rare Coin Investment in Australia (${yr})`,
         h1: "Rare Coin Investment in Australia",
         metaDescription: `Invest in rare Australian coins. Pre-decimal, gold sovereigns, numismatic collectibles. ${upd}.`,
@@ -837,13 +837,26 @@ const categories: InvestCategory[] = [
       {
         slug: "whisky",
         label: "Whisky",
-        dbValue: "wine",
+        dbValue: "whisky",
         title: `Whisky Investment in Australia (${yr})`,
         h1: "Whisky Investment in Australia",
         metaDescription: `Invest in whisky in Australia. Scotch, Australian single malt, cask investment. ${upd}.`,
         intro: "Rare whisky has been the best-performing collectible of the past decade, returning 586% over 10 years (Knight Frank Wealth Report). Australian whisky (Sullivans Cove, Starward) is gaining global recognition.",
         faqs: [
           { question: "How do I invest in whisky in Australia?", answer: "Bottles: invest in limited releases from Scotch distilleries (Macallan, Dalmore) or Australian distilleries (Sullivans Cove, Starward). Casks: buy a full cask ($5,000-$50,000+) and mature it in a bonded warehouse. Platforms: Whisky Investment Direct, Caskable. Focus on distilleries with brand power and proven secondary market demand." },
+        ],
+      },
+      {
+        slug: "sports-memorabilia",
+        label: "Sports Memorabilia",
+        dbValue: "sports_memorabilia",
+        title: `Sports Memorabilia Investment in Australia (${yr})`,
+        h1: "Sports Memorabilia & Trading Card Investment in Australia",
+        metaDescription: `Invest in Australian sports memorabilia and trading cards. Cricket, AFL, NRL, Olympic memorabilia, graded cards. ${upd}.`,
+        intro: "Sports memorabilia and graded trading cards have emerged as a recognised alternative asset class. Australian cricket (Bradman-era bats and signed jerseys), AFL premiership memorabilia, and graded NRL/AFL cards have shown strong long-term appreciation, particularly for items with documented provenance.",
+        faqs: [
+          { question: "What sports memorabilia is worth investing in Australia?", answer: "Cricket: signed Bradman items ($50K-$500K+), Test match-worn baggy greens, signed bats from premiership-winning teams. AFL: premiership guernseys, signed Brownlow medallist items, jumpers worn in grand finals. NRL: Origin-worn jerseys, premiership memorabilia. Graded cards (PSA 10 or BGS 9.5+) of star players from key sets — Select, Stadium Club, Topps Chrome — typically lead the modern card market." },
+          { question: "How do I authenticate sports memorabilia?", answer: "Use established auction houses (Mossgreen, Charles Leski, Lawsons) which provide chain-of-custody documentation. Card grading services PSA, BGS, and SGC are the recognised authorities for graded cards. Avoid items without provenance or third-party authentication — counterfeit signed items are common in this market." },
         ],
       },
     ],

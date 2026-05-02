@@ -47,6 +47,12 @@ const SLUG_TO_TYPE: Record<string, ProfessionalType> = {
   // Property-thread completion (20260501)
   "conveyancers": "conveyancer",
   "property-lawyers": "property_lawyer",
+  // Collectibles & alternatives (20260502)
+  "classic-car-specialists": "classic_car_specialist",
+  "luxury-asset-brokers": "luxury_asset_broker",
+  "wine-advisors": "wine_advisor",
+  "art-advisors": "art_advisor",
+  "royalty-brokers": "royalty_broker",
 };
 
 const TYPE_DESCRIPTIONS: Record<string, string> = {
