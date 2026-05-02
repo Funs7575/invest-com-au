@@ -15,6 +15,7 @@ interface Tool {
   pros: string[];
   pricing: string;
   url: string;
+  internal?: boolean;
 }
 
 /* ─── Sample Data ─── */
@@ -185,11 +186,35 @@ const TOOLS: Tool[] = [
     pricing: "0.6% fee",
     url: "https://swyftx.com",
   },
+  {
+    slug: "alternative-returns",
+    name: "Alternative Asset Returns",
+    category: "Calculators",
+    rating: 5,
+    description:
+      "What if you had bought a Rolex, a classic Ferrari, fine wine, ASX 200 or property in a chosen year? Compare historical-index returns side by side.",
+    pros: ["5 asset classes", "1980 onward", "Side-by-side bars"],
+    pricing: "Free tool",
+    url: "/tools/alternative-returns",
+    internal: true,
+  },
+  {
+    slug: "smsf-checker",
+    name: "SMSF Eligibility Checker",
+    category: "Calculators",
+    rating: 5,
+    description:
+      "Step-by-step screening on whether residential property, shares, collectables, crypto or business real property can sit inside your self-managed super fund.",
+    pros: ["SISA s62A rules", "LRBA constraints", "Specialist routing"],
+    pricing: "Free tool",
+    url: "/tools/smsf-checker",
+    internal: true,
+  },
 ];
 
 /* ─── Config ─── */
 
-const CATEGORY_TABS = ["All", "Budgeting", "Investing", "Banking", "Tax", "Super", "Crypto"] as const;
+const CATEGORY_TABS = ["All", "Calculators", "Budgeting", "Investing", "Banking", "Tax", "Super", "Crypto"] as const;
 type CategoryTab = (typeof CATEGORY_TABS)[number];
 
 const CATEGORY_BADGE_COLORS: Record<string, string> = {
@@ -199,6 +224,7 @@ const CATEGORY_BADGE_COLORS: Record<string, string> = {
   Tax: "bg-purple-100 text-purple-700",
   Super: "bg-teal-100 text-teal-700",
   Crypto: "bg-orange-100 text-orange-700",
+  Calculators: "bg-fuchsia-100 text-fuchsia-700",
 };
 
 function renderStars(rating: number) {
@@ -331,15 +357,25 @@ export default function ToolsClient() {
                   </p>
 
                   {/* CTA */}
-                  <a
-                    href={tool.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center justify-center gap-1.5 w-full px-4 py-2.5 bg-purple-700 hover:bg-purple-800 text-white text-sm font-semibold rounded-lg transition-colors mt-auto"
-                  >
-                    <Icon name="external-link" size={14} className="text-white" />
-                    Visit
-                  </a>
+                  {tool.internal ? (
+                    <Link
+                      href={tool.url}
+                      className="inline-flex items-center justify-center gap-1.5 w-full px-4 py-2.5 bg-purple-700 hover:bg-purple-800 text-white text-sm font-semibold rounded-lg transition-colors mt-auto"
+                    >
+                      <Icon name="calculator" size={14} className="text-white" />
+                      Open tool
+                    </Link>
+                  ) : (
+                    <a
+                      href={tool.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center gap-1.5 w-full px-4 py-2.5 bg-purple-700 hover:bg-purple-800 text-white text-sm font-semibold rounded-lg transition-colors mt-auto"
+                    >
+                      <Icon name="external-link" size={14} className="text-white" />
+                      Visit
+                    </a>
+                  )}
                 </div>
               </div>
             );
