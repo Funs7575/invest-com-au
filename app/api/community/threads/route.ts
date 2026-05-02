@@ -1,8 +1,21 @@
+import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 import { isRateLimited } from "@/lib/rate-limit";
+
+const ThreadPostBody = z.object({
+  category_slug: z.string({ required_error: "Missing required fields: category_slug, title, body" }).min(1, "Missing required fields: category_slug, title, body"),
+  title: z
+    .string({ required_error: "Missing required fields: category_slug, title, body" })
+    .min(5, "Title must be 5-200 characters")
+    .max(200, "Title must be 5-200 characters"),
+  body: z
+    .string({ required_error: "Missing required fields: category_slug, title, body" })
+    .min(10, "Body must be 10-10000 characters")
+    .max(10000, "Body must be 10-10000 characters"),
+});
 
 const log = logger("community:threads");
 
@@ -106,20 +119,20 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const body = await req.json();
-    const { category_slug, title, body: threadBody } = body;
-
-    // Validation
-    if (!category_slug || !title || !threadBody) {
-      return NextResponse.json({ error: "Missing required fields: category_slug, title, body" }, { status: 400 });
-    }
-    if (typeof title !== "string" || title.trim().length < 5 || title.trim().length > 200) {
-      return NextResponse.json({ error: "Title must be 5-200 characters" }, { status: 400 });
-    }
-    if (typeof threadBody !== "string" || threadBody.trim().length < 10 || threadBody.trim().length > 10000) {
-      return NextResponse.json({ error: "Body must be 10-10000 characters" }, { status: 400 });
+    let rawBody: unknown;
+    try {
+      rawBody = await req.json();
+    } catch {
+      return NextResponse.json({ error: "Invalid request" }, { status: 400 });
     }
 
+    const parsedBody = ThreadPostBody.safeParse(rawBody);
+    if (!parsedBody.success) {
+      const message = parsedBody.error.issues[0]?.message ?? "Invalid request";
+      return NextResponse.json({ error: message }, { status: 400 });
+    }
+
+    const { category_slug, title, body: threadBody } = parsedBody.data;
     const admin = createAdminClient();
 
     // Resolve category
