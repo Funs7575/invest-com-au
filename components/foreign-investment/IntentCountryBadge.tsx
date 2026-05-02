@@ -29,7 +29,7 @@ export default async function IntentCountryBadge({
       <span aria-hidden className="text-sm leading-none">
         {meta.flag}
       </span>
-      <span>Filtered for {meta.label}</span>
+      <span>Browsing as {meta.label}</span>
       <span aria-hidden className="text-amber-300">
         ·
       </span>
