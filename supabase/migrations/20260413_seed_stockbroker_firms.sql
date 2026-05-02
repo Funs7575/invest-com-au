@@ -1,3 +1,12 @@
+-- Rollback (data-only migration — no schema change):
+--   DELETE FROM public.professionals
+--     WHERE slug IN (
+--       'morgans-financial', 'ord-minnett', 'shaw-and-partners',
+--       'bell-potter-securities', 'wilsons-advisory'
+--     );
+--   Note: Forward-only in prod — deleting seed rows is destructive only if
+--         real advisor data has been merged onto these rows. Verify before deleting.
+--
 -- Seed the first 5 Australian full-service stockbroker firms.
 --
 -- Sources: each firm's public AFSL listing on the ASIC Financial
