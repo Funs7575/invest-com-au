@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { Professional, AdvisorFirm } from "@/lib/types";
 import type { Metadata } from "next";
 import AdvisorsClient from "./AdvisorsClient";
+import HomeToolsStrip from "@/components/HomeToolsStrip";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
 import { logger } from "@/lib/logger";
 
@@ -77,6 +78,7 @@ export default function AdvisorsPage() {
       <Suspense fallback={<AdvisorsLoading />}>
         <AdvisorsData />
       </Suspense>
+      <HomeToolsStrip />
     </>
   );
 }

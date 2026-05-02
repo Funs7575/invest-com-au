@@ -5,6 +5,7 @@ import CompareClient from "./CompareClient";
 import CompareNav from "./CompareNav";
 import { absoluteUrl, UPDATED_LABEL } from "@/lib/seo";
 import ComplianceFooter from "@/components/ComplianceFooter";
+import HomeToolsStrip from "@/components/HomeToolsStrip";
 
 export const metadata = {
   title: "Compare Investing Platforms — Fees & Features",
@@ -159,6 +160,7 @@ export default function ComparePage() {
       <Suspense fallback={<ComparePageSkeleton />}>
         <CompareData />
       </Suspense>
+      <HomeToolsStrip />
       <div className="container-custom pb-8">
         <ComplianceFooter />
       </div>
