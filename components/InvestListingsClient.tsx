@@ -114,6 +114,11 @@ export default function InvestListingsClient({
   const activeState = searchParams.get("state") ?? "";
   const activePriceIdx = resolvePriceIdx(searchParams.get("price"));
   const activeSort = (searchParams.get("sort") ?? "newest") as SortKey;
+  // FIRB-eligibility filter — typically auto-applied for users who came
+  // through a /foreign-investment/<country> page (and therefore have an
+  // intent-country cookie). Leaves all listings visible by default for
+  // domestic users.
+  const activeFirbOnly = searchParams.get("firb") === "eligible";
 
   // Keyword search is a separate, local state rather than a URL param
   // so typing doesn't spam history entries. Submitting (Enter or
@@ -137,7 +142,7 @@ export default function InvestListingsClient({
 
   const clearAll = useCallback(() => {
     const next = new URLSearchParams(searchParams.toString());
-    for (const key of ["category", "sub", "state", "price", "sort", "q"]) {
+    for (const key of ["category", "sub", "state", "price", "sort", "q", "firb"]) {
       next.delete(key);
     }
     if (lockedCategory) next.delete("category");
@@ -206,6 +211,10 @@ export default function InvestListingsClient({
       });
     }
 
+    if (activeFirbOnly) {
+      result = result.filter((l) => l.firb_eligible === true);
+    }
+
     const sorted = [...result];
     if (activeSort === "newest") {
       sorted.sort((a, b) => b.created_at.localeCompare(a.created_at));
@@ -228,6 +237,7 @@ export default function InvestListingsClient({
     activePriceIdx,
     activeSort,
     activeQuery,
+    activeFirbOnly,
   ]);
 
   // Build a list of active-filter chips so the reader can see exactly
@@ -264,6 +274,12 @@ export default function InvestListingsClient({
         setSearchInput("");
         setParam({ q: "" });
       },
+    });
+  }
+  if (activeFirbOnly) {
+    activeChips.push({
+      label: "FIRB-eligible only",
+      onClear: () => setParam({ firb: "" }),
     });
   }
 
