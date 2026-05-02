@@ -18,6 +18,7 @@ import type { InvestmentListing } from "@/lib/types";
 import { logger } from "@/lib/logger";
 import { listingUrl } from "@/lib/listing-url";
 import InvestListingsClient from "@/components/InvestListingsClient";
+import HomeToolsStrip from "@/components/HomeToolsStrip";
 import ScrollReveal from "@/components/ScrollReveal";
 import Icon from "@/components/Icon";
 
@@ -384,6 +385,7 @@ export default async function InvestMarketplacePage() {
             </ScrollReveal>
           </div>
         </div>
+        <HomeToolsStrip />
       </div>
     </>
   );
