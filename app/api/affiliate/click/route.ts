@@ -104,6 +104,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    // admin — click tracking must capture all broker statuses for revenue/editorial analytics
     const supabase = createAdminClient();
     const { data: broker, error: brokerErr } = await supabase
       .from("brokers")
@@ -121,6 +122,7 @@ export async function POST(req: NextRequest) {
       req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
     const userAgent = req.headers.get("user-agent") ?? null;
 
+    // admin — click tracking must capture all broker statuses for revenue/editorial analytics
     const { error: insertErr } = await supabase.from("affiliate_clicks").insert({
       broker_id: broker.id,
       broker_slug: broker.slug,

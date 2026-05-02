@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 import Icon from "@/components/Icon";
 import EnquireButton from "@/components/marketplace/EnquireButton";
 import { getListingVerticalLabel } from "@/lib/listing-verticals";
@@ -78,7 +78,7 @@ async function fetchListings(
   limit: number,
 ): Promise<Listing[]> {
   try {
-    const supabase = createAdminClient();
+    const supabase = await createClient();
     const { data } = await supabase
       .from("investment_listings")
       .select(
