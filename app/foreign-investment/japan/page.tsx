@@ -5,6 +5,7 @@ import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import { FOREIGN_INVESTOR_GENERAL_DISCLAIMER, DTA_DISCLAIMER } from "@/lib/compliance";
 import type { Broker } from "@/lib/types";
 import ForeignInvestmentNav from "../ForeignInvestmentNav";
+import RememberCountry from "@/components/foreign-investment/RememberCountry";
 import SectionHeading from "@/components/SectionHeading";
 import { AFFILIATE_REL } from "@/lib/tracking";
 
@@ -65,6 +66,7 @@ export default async function JapanInvestingPage() {
         }}
       />
 
+      <RememberCountry code="jp" />
       <ForeignInvestmentNav current="/foreign-investment/japan" />
 
       {/* ── Hero ── */}
