@@ -49,7 +49,7 @@ export default function HomePathfinder() {
             }}
           >
             Answer a few quick questions and we&apos;ll show the best next step &mdash; compare
-            platforms, browse listings, find an expert, or post a request.
+            platforms, browse investments for sale, find an expert, or post a request.
           </p>
           <p
             style={{
