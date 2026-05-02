@@ -273,7 +273,7 @@ const mobileSections = [
     ],
   },
   {
-    title: "Browse listings",
+    title: "Investments for sale",
     items: [
       { name: "Investment Marketplace", href: "/invest" },
       { name: "Investment Funds", href: "/invest/funds" },
