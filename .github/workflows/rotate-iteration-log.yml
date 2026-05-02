@@ -1,0 +1,204 @@
+name: Rotate iteration log
+
+# Weekly archival of older iteration log entries from REMEDIATION_QUEUE.md
+# to REMEDIATION_QUEUE_LOG_ARCHIVE.md.
+#
+# Why exists: the loop reads REMEDIATION_QUEUE.md on every fire (Phase 1).
+# Every line in the file is paid as input tokens × ~96 fires/day. Iteration
+# log entries grow at ~5–15 entries/day. Without rotation, the file grows
+# unbounded and per-fire input cost climbs.
+#
+# A one-time manual archive shipped as PR #425; this workflow makes it
+# automatic.
+#
+# Rotation rule: every Sunday 03:00 UTC, find iteration log entries older
+# than 7 days, cut them from REMEDIATION_QUEUE.md, prepend them to
+# REMEDIATION_QUEUE_LOG_ARCHIVE.md (after the existing intro). Commit
+# direct to main.
+#
+# Idempotent: if no entries are older than 7 days, exits cleanly with no
+# commit.
+#
+# Dates parsed from entry headings of the form:
+#   ### 2026-04-26 18:58Z — iteration 19 (...)
+#   ### 2026-04-30T — iteration 165 (...)
+# (with or without time, with or without "T" suffix). Entries without
+# parseable dates are kept in the live queue and logged as warnings.
+#
+# Manual trigger via workflow_dispatch when needed.
+
+on:
+  schedule:
+    # Sunday 03:00 UTC — quiet hour relative to the loop's 4×/hr fires.
+    - cron: "0 3 * * 0"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: rotate-iteration-log
+  cancel-in-progress: false
+
+jobs:
+  rotate:
+    name: Archive iteration log entries older than 7 days
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 5
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run rotation script
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          QUEUE="docs/audits/REMEDIATION_QUEUE.md"
+          ARCHIVE="docs/audits/REMEDIATION_QUEUE_LOG_ARCHIVE.md"
+
+          if [ ! -f "$QUEUE" ]; then
+            echo "Queue file not found at $QUEUE — nothing to do."
+            exit 0
+          fi
+          if [ ! -f "$ARCHIVE" ]; then
+            echo "Archive file not found at $ARCHIVE — initial archive must be created manually first (see PR #425)."
+            exit 1
+          fi
+
+          # Cutoff: 7 days ago in YYYY-MM-DD
+          cutoff=$(date -u -d "7 days ago" +%Y-%m-%d)
+          echo "Cutoff date: $cutoff (entries on or before this go to archive)"
+
+          # Find the iteration log section start
+          log_start=$(grep -n "^## Iteration log" "$QUEUE" | head -1 | cut -d: -f1)
+          if [ -z "$log_start" ]; then
+            echo "No iteration log section found in $QUEUE — nothing to rotate."
+            exit 0
+          fi
+
+          # Process the file with awk: split into "kept" and "to-archive"
+          # blocks. An entry starts with `### YYYY-MM-DD...iteration` heading
+          # and runs until the next such heading or EOF.
+          awk -v cutoff="$cutoff" -v log_start="$log_start" '
+            BEGIN { mode = "kept"; entry_archive = 0; current_buf = "" }
+            NR < log_start { print > "/tmp/rot_kept.md"; next }
+            NR == log_start { print > "/tmp/rot_kept.md"; next }
+            {
+              # Detect entry heading
+              if ($0 ~ /^### [0-9]{4}-[0-9]{2}-[0-9]{2}/) {
+                # Flush previous entry buffer
+                if (current_buf != "") {
+                  if (entry_archive) {
+                    printf "%s", current_buf >> "/tmp/rot_archive.md"
+                  } else {
+                    printf "%s", current_buf >> "/tmp/rot_kept.md"
+                  }
+                }
+                current_buf = ""
+
+                # Decide if THIS entry is to be archived
+                # Extract date in field 2 (e.g., "2026-04-26" or "2026-04-30T")
+                date_field = $2
+                gsub(/[^0-9-]/, "", date_field)
+                # Take first 10 chars (YYYY-MM-DD)
+                date_str = substr(date_field, 1, 10)
+                if (date_str == "" || length(date_str) < 10) {
+                  # Unparseable date: keep in live (safer)
+                  entry_archive = 0
+                  print "WARN: unparseable date in heading, keeping in live: " $0 > "/dev/stderr"
+                } else if (date_str <= cutoff) {
+                  entry_archive = 1
+                } else {
+                  entry_archive = 0
+                }
+              }
+              current_buf = current_buf $0 "\n"
+            }
+            END {
+              if (current_buf != "") {
+                if (entry_archive) {
+                  printf "%s", current_buf >> "/tmp/rot_archive.md"
+                } else {
+                  printf "%s", current_buf >> "/tmp/rot_kept.md"
+                }
+              }
+            }
+          ' "$QUEUE"
+
+          # Count entries in each bucket
+          archive_count=$(grep -c "^### [0-9]" /tmp/rot_archive.md 2>/dev/null || echo 0)
+          kept_count=$(grep -c "^### [0-9]" /tmp/rot_kept.md 2>/dev/null || echo 0)
+          echo "Entries to archive: $archive_count"
+          echo "Entries kept in live: $kept_count"
+
+          if [ "$archive_count" = "0" ]; then
+            echo "Nothing to archive — exiting cleanly."
+            exit 0
+          fi
+
+          # Write the new live queue
+          cp /tmp/rot_kept.md "$QUEUE"
+
+          # Prepend archive entries to ARCHIVE file. Insert after the existing
+          # "---" intro separator (the archive has a header section ending in "---").
+          # Find the line of the LAST "---" in the first 30 lines (intro section)
+          intro_end=$(head -30 "$ARCHIVE" | grep -n "^---$" | tail -1 | cut -d: -f1)
+          if [ -z "$intro_end" ]; then
+            echo "Archive file missing intro separator — appending instead of prepending."
+            cat /tmp/rot_archive.md >> "$ARCHIVE"
+          else
+            # Build new archive: lines 1..intro_end + new entries + section break + rest
+            head -"$intro_end" "$ARCHIVE" > /tmp/archive_new.md
+            echo "" >> /tmp/archive_new.md
+            echo "## Archived $(date -u +%Y-%m-%d) ($archive_count entries)" >> /tmp/archive_new.md
+            echo "" >> /tmp/archive_new.md
+            cat /tmp/rot_archive.md >> /tmp/archive_new.md
+            echo "" >> /tmp/archive_new.md
+            tail -n +"$((intro_end + 1))" "$ARCHIVE" >> /tmp/archive_new.md
+            cp /tmp/archive_new.md "$ARCHIVE"
+          fi
+
+          # Commit + push
+          git config user.name "rotate-iteration-log[bot]"
+          git config user.email "rotate-iteration-log@invest.com.au"
+          git add "$QUEUE" "$ARCHIVE"
+
+          if git diff --cached --quiet; then
+            echo "No net diff after archival (unexpected) — skipping commit."
+            exit 0
+          fi
+
+          git commit -m "chore(audit): rotate iteration log — archive $archive_count entries older than $cutoff"
+
+          # Retry push up to 3× (race against loop fires)
+          for attempt in 1 2 3; do
+            if git push origin HEAD:main; then
+              echo "Push attempt $attempt: success"
+              exit 0
+            fi
+            echo "Push attempt $attempt: failed, fetching + rebasing"
+            git fetch origin main
+            git rebase origin/main || {
+              echo "Rebase conflict — surfacing as issue and aborting"
+              git rebase --abort || true
+              gh issue create \
+                --title "[ACTION REQUIRED] Iteration log rotation conflict" \
+                --body "Weekly rotation hit a rebase conflict against main. Run the rotation manually or investigate. Workflow: \`.github/workflows/rotate-iteration-log.yml\`" \
+                --assignee Funs7575 \
+                --label "ops,action-required" || true
+              exit 1
+            }
+          done
+
+          echo "Push failed after 3 attempts — opening issue"
+          gh issue create \
+            --title "[ACTION REQUIRED] Iteration log rotation push failed" \
+            --body "Weekly rotation could not push to main after 3 retries. Run the workflow manually via workflow_dispatch or check repo permissions." \
+            --assignee Funs7575 \
+            --label "ops,action-required" || true
+          exit 1
