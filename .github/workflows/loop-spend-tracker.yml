@@ -1,0 +1,217 @@
+name: Loop spend tracker
+
+# Daily snapshot of audit-remediation loop activity. Counts loop-attributable
+# commits + PRs opened by loop authors in the last 24 hours and appends a row
+# to docs/ops/loop-spend.md. Opens a GitHub issue if activity exceeds the
+# alert threshold so the founder gets a concrete "what to do" prompt
+# without having to manually check the billing dashboard.
+#
+# Why exists: 2026-05-02 spend audit found ~50% of weekly budget burned in
+# 2.5 days, dominated by an LH-gate rescue spiral that ran for ~3 days
+# before anyone noticed. The only signal was Anthropic's billing
+# dashboard. This workflow turns the same signal into a daily commit +
+# threshold-based GitHub issue so a future spiral gets caught within ~24h.
+#
+# Estimation method: count "chore(audit)" / "chore(loop)" / "chore(ci)" /
+# "fix(*)" commits authored by loop bot accounts in last 24h. Each
+# productive commit ≈ one cron-fire iteration (~80k input + output
+# tokens). Cron-fire BASELINE is ~50k tokens per fire even when the
+# fire is a no-op (loads queue + slash command, exits LOCKED). At 4
+# crons × 24 fires/day we pay ~5M tokens/day in baseline regardless of
+# work done.
+#
+# Estimated daily ≈ baseline (5M) + commits × 80k.
+#
+# Thresholds (tunable in env block below):
+#   COMMITS_WARN: 40    open issue: "elevated activity, check trend"
+#   COMMITS_CRIT: 80    open issue: "investigate immediately"
+#
+# Manual trigger via workflow_dispatch.
+
+on:
+  schedule:
+    # Daily at 06:00 UTC. Picked to land before founder's working day so
+    # the issue is at the top of their inbox if it fires.
+    - cron: "0 6 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: read
+
+concurrency:
+  group: loop-spend-tracker
+  cancel-in-progress: false
+
+env:
+  COMMITS_WARN: "40"
+  COMMITS_CRIT: "80"
+  TRACK_FILE: "docs/ops/loop-spend.md"
+
+jobs:
+  snapshot:
+    name: Daily snapshot + threshold check
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 100
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Compute snapshot + append row + maybe alert
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          today=$(date -u +%Y-%m-%d)
+          since="24 hours ago"
+
+          # Loop-attributable commits in last 24h.
+          loop_commits=$(git log --since="$since" --oneline --no-merges \
+            --pretty=format:"%s" 2>/dev/null \
+            | grep -ciE '^(chore\(audit\)|chore\(loop\)|chore\(ci\)|chore\(db\)|fix\((a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|v|w|x|y|bb|cc|dd|ee|ff|gg|hh|ii|jj|kk|nn)\))' || echo 0)
+
+          all_commits=$(git log --since="$since" --oneline --no-merges 2>/dev/null | wc -l)
+
+          # PRs opened by loop bots in last 24h
+          prs_opened=$(gh pr list --state all --search "created:>=$today" --limit 100 \
+            --json author,headRefName \
+            --jq '[.[] | select(.headRefName | startswith("claude/audit-remediation"))] | length' 2>/dev/null || echo 0)
+
+          # Token estimate
+          baseline_tokens=5000000
+          per_commit_tokens=$((loop_commits * 80000))
+          est_tokens=$((baseline_tokens + per_commit_tokens))
+          est_tokens_m=$(awk "BEGIN {printf \"%.1f\", $est_tokens / 1000000}")
+
+          # Trailing 7-day average from existing rows in track file
+          trailing_avg=0
+          if [ -f "$TRACK_FILE" ]; then
+            trailing_avg=$(grep -E "^\| [0-9]{4}-[0-9]{2}-[0-9]{2} \|" "$TRACK_FILE" 2>/dev/null \
+              | tail -7 \
+              | awk -F'|' '{gsub(/ /, "", $3); sum += $3; n++} END {if (n>0) print int(sum/n); else print 0}' || echo 0)
+          fi
+
+          # Determine alert level
+          alert_level="ok"
+          if [ "$loop_commits" -gt "$COMMITS_CRIT" ]; then
+            alert_level="critical"
+          elif [ "$loop_commits" -gt "$COMMITS_WARN" ]; then
+            alert_level="warn"
+          fi
+
+          echo "Today: $today"
+          echo "Loop commits: $loop_commits (warn=$COMMITS_WARN crit=$COMMITS_CRIT)"
+          echo "All commits: $all_commits"
+          echo "PRs opened: $prs_opened"
+          echo "Est tokens: ${est_tokens_m}M"
+          echo "Trailing 7d avg commits: $trailing_avg"
+          echo "Alert level: $alert_level"
+
+          # Initialise track file if missing
+          if [ ! -f "$TRACK_FILE" ]; then
+            mkdir -p "$(dirname "$TRACK_FILE")"
+            cat > "$TRACK_FILE" <<'INIT'
+          # Audit-remediation loop spend tracker
+
+          Auto-generated daily by `.github/workflows/loop-spend-tracker.yml`.
+          Each row: 24-hour snapshot at 06:00 UTC.
+
+          - **Loop commits** = `chore(audit|loop|ci|db)` + `fix(<stream>)` commits in last 24h
+          - **All commits** = total commits to main in last 24h
+          - **PRs opened** = PRs whose head branch starts with `claude/audit-remediation/`
+          - **Est tokens** = `5M baseline + (loop commits × 80k)` — order-of-magnitude estimate, NOT billable
+          - **Alert** = `ok` / `warn` (loop commits > 40) / `critical` (> 80)
+
+          Thresholds tunable in the workflow's `env:` block.
+
+          ---
+
+          | Date | Loop commits | All commits | PRs opened | Est tokens (M) | Alert |
+          | --- | --- | --- | --- | --- | --- |
+          INIT
+          fi
+
+          # Append today's row
+          printf "| %s | %s | %s | %s | %s | %s |\n" \
+            "$today" "$loop_commits" "$all_commits" "$prs_opened" "$est_tokens_m" "$alert_level" \
+            >> "$TRACK_FILE"
+
+          # Commit if any change
+          if ! git diff --quiet "$TRACK_FILE"; then
+            git config user.name "loop-spend-tracker[bot]"
+            git config user.email "loop-spend-tracker@invest.com.au"
+            git add "$TRACK_FILE"
+            git commit -m "chore(ops): loop spend snapshot $today (commits=$loop_commits, est=${est_tokens_m}M)"
+
+            # Retry push up to 3× in case main moved
+            for attempt in 1 2 3; do
+              if git push origin HEAD:main; then
+                echo "Push attempt $attempt: success"
+                break
+              fi
+              echo "Push attempt $attempt: failed, fetching + rebasing"
+              git fetch origin main
+              git rebase origin/main
+            done
+          fi
+
+          # Open or update GitHub issue if alerting
+          # Title prefix [ACTION REQUIRED] makes it filterable in Gmail.
+          # Issue is assigned to Funs7575 so it triggers GitHub's "you were
+          # assigned" email even when repo Watch is set to Custom.
+          if [ "$alert_level" != "ok" ]; then
+            issue_title="[ACTION REQUIRED] Loop spend alert: $loop_commits commits in last 24h ($alert_level)"
+            existing_issue=$(gh issue list --state open --search "in:title \"Loop spend alert\"" --limit 1 --json number --jq '.[0].number' || echo "")
+
+            issue_body=$(cat <<EOF
+          ## Snapshot — $today (06:00 UTC)
+
+          | Metric | Value | Threshold |
+          | --- | --- | --- |
+          | Loop commits (last 24h) | **$loop_commits** | warn=$COMMITS_WARN, crit=$COMMITS_CRIT |
+          | All commits (last 24h) | $all_commits | — |
+          | PRs opened (last 24h) | $prs_opened | — |
+          | Est tokens (24h) | ${est_tokens_m}M | — |
+          | Trailing 7-day avg | $trailing_avg commits/day | — |
+
+          ## What this means
+
+          Loop activity is **$alert_level**. Either the queue is genuinely productive (good) or there's a runaway rescue spiral (bad — burns tokens for zero forward progress).
+
+          ## What to do — checklist
+
+          - [ ] **Check the trend.** Open [\`docs/ops/loop-spend.md\`](../blob/main/docs/ops/loop-spend.md). Is today an outlier vs the trailing average, or is the trend climbing?
+          - [ ] **Look for stuck patterns.** Open \`docs/audits/REMEDIATION_QUEUE.md\`, search for \`## Blocked — needs human input\`. If new entries titled \`<check-name> persistent failure\` or \`<check-name> systemic failure\` appeared in the last 24h, the loop's stuck-detection has surfaced a CI gate problem the human needs to resolve. Recommendation matrix is in each Blocked entry.
+          - [ ] **Ask the assistant.** "What's been chewing tokens since yesterday?" — Claude can grep the iteration log + open PRs to find the pattern.
+          - [ ] **If runaway, pause the loop.** Create \`LOOP_PAUSE\` at repo root with a one-line reason, commit + push. Future fires exit at Phase 0 with \`STATUS: PAUSED\`. Resume by deleting the file.
+
+          ## Mark this issue resolved
+
+          Once you've checked trend + queue and either acted or confirmed the activity is legitimate, close this issue. The next snapshot fires at 06:00 UTC tomorrow — if alert_level is back to \`ok\`, no new issue is opened.
+
+          ---
+          *Auto-generated by \`.github/workflows/loop-spend-tracker.yml\`. Tune thresholds in the workflow's \`env:\` block.*
+          EOF
+          )
+
+            if [ -n "$existing_issue" ]; then
+              # Update existing issue with today's snapshot as a comment.
+              # Don't re-assign — assignment is sticky from the original create.
+              echo "$issue_body" | gh issue comment "$existing_issue" --body-file -
+              echo "Updated existing issue #$existing_issue"
+            else
+              # Assigning triggers the "you were assigned" GitHub email even
+              # when repo Watch is set to Custom (only Issues notifications).
+              # The --label flag may fail if the label hasn't been pre-created;
+              # the bare retry handles that.
+              gh issue create --title "$issue_title" --body "$issue_body" \
+                --assignee Funs7575 \
+                --label "loop-spend,ops,action-required" 2>&1 || \
+                gh issue create --title "$issue_title" --body "$issue_body" --assignee Funs7575
+              echo "Opened new issue and assigned to Funs7575"
+            fi
+          fi
