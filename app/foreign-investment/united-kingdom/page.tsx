@@ -130,10 +130,8 @@ export default async function UKInvestingPage() {
               <span className="text-xl sm:text-2xl text-slate-600">Tax, Property, Pensions &amp; How to Start in 2026</span>
             </h1>
             <p className="text-sm md:text-base text-slate-600 leading-relaxed mb-6">
-              The UK-Australia DTA reduces dividend withholding to 15% and royalties to 5%. The UK-Australia
-              FTA raises FIRB thresholds for UK direct investment. But the UK side of the trade — HMRC SA106,
-              UK Inheritance Tax exposure, QROPS rules on pension transfers, and GBP/AUD timing — is where
-              most UK investors trip up. This guide covers both sides.
+              Tax, property, pensions and FX — all in one place. The Australian side is well-known.
+              The UK side (HMRC SA106, IHT, QROPS, GBP/AUD timing) is where most UK investors trip up.
             </p>
 
             <div className="grid grid-cols-3 gap-3">
@@ -174,6 +172,31 @@ export default async function UKInvestingPage() {
       </nav>
 
       <div className="container-custom py-8 md:py-12 space-y-12 md:space-y-16">
+
+        {/* ── Jump-to cards: persona-style entry points ── */}
+        <section aria-label="Jump to your situation">
+          <p className="text-xs font-extrabold uppercase tracking-wider text-amber-600 mb-3">
+            Jump to your situation
+          </p>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {[
+              { emoji: "🇬🇧", title: "I live in the UK", body: "ASX shares, FX, AU tax, IHT.", href: "#audiences" },
+              { emoji: "🇦🇺", title: "I'm an Aussie expat in UK", body: "Super, CGT rebasing, tax residency.", href: "#expat" },
+              { emoji: "✈️", title: "I'm moving to Australia", body: "QROPS, IHT, visa pathways.", href: "#qrops" },
+              { emoji: "🏠", title: "I want AU property", body: "FIRB ban, new dwellings, FX.", href: "#property" },
+            ].map((card) => (
+              <a
+                key={card.title}
+                href={card.href}
+                className="group block p-4 border border-slate-200 rounded-xl hover:border-amber-300 hover:bg-amber-50/40 transition-colors"
+              >
+                <div className="text-2xl mb-1.5" aria-hidden>{card.emoji}</div>
+                <div className="text-sm font-bold text-slate-900 group-hover:text-amber-700 mb-0.5">{card.title}</div>
+                <div className="text-xs text-slate-500 leading-snug">{card.body}</div>
+              </a>
+            ))}
+          </div>
+        </section>
 
         {/* ── Two audiences ── */}
         <div>
@@ -234,9 +257,12 @@ export default async function UKInvestingPage() {
               { label: "Established home", state: "blocked", note: "Banned for foreign buyers until 31 March 2027." },
               { label: "Commercial property", state: "open", note: "Open to UK buyers with FIRB approval; FTA thresholds apply." },
             ].map((b) => (
-              <div key={b.label} className={`p-4 rounded-xl border ${b.state === "open" ? "border-emerald-200 bg-emerald-50/40" : "border-red-200 bg-red-50/40"}`}>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className={`text-xs font-bold uppercase ${b.state === "open" ? "text-emerald-700" : "text-red-700"}`}>
+              <div key={b.label} className={`p-5 rounded-xl border-2 ${b.state === "open" ? "border-emerald-200 bg-emerald-50/40" : "border-red-200 bg-red-50/40"}`}>
+                <div className="flex items-center gap-2 mb-2">
+                  <span aria-hidden className={`inline-flex items-center justify-center w-7 h-7 rounded-full text-white text-base font-extrabold ${b.state === "open" ? "bg-emerald-600" : "bg-red-600"}`}>
+                    {b.state === "open" ? "✓" : "✗"}
+                  </span>
+                  <span className={`text-xs font-bold uppercase tracking-wider ${b.state === "open" ? "text-emerald-700" : "text-red-700"}`}>
                     {b.state === "open" ? "Open to UK" : "Blocked until 03/2027"}
                   </span>
                 </div>
@@ -245,14 +271,17 @@ export default async function UKInvestingPage() {
               </div>
             ))}
           </div>
-          <div className="bg-slate-50 rounded-2xl p-5 border border-slate-200">
-            <h3 className="text-sm font-bold text-slate-900 mb-2">UK-side reminders</h3>
-            <ul className="text-sm text-slate-700 space-y-1.5">
+          <details className="group bg-slate-50 rounded-2xl border border-slate-200">
+            <summary className="cursor-pointer px-5 py-3 text-sm font-bold text-slate-900 flex items-center justify-between gap-3 hover:bg-slate-100 rounded-2xl">
+              UK-side reminders (CGT, SDLT, IHT)
+              <span aria-hidden className="text-slate-400 group-open:rotate-180 transition-transform">↓</span>
+            </summary>
+            <ul className="text-sm text-slate-700 space-y-1.5 px-5 pb-5">
               <li>• <strong>UK CGT</strong> applies on disposal if you remain UK tax resident at sale, even though the property is in Australia. Foreign tax credit relief covers Australian CGT paid.</li>
               <li>• <strong>UK SDLT</strong> (Stamp Duty Land Tax) is not relevant for Australian property — but UK-domiciled buyers pay AU stamp duty plus the foreign-buyer surcharge (which varies by state, typically 7–8%).</li>
               <li>• <strong>UK IHT</strong> (see section below) applies to AU property in your estate if you&apos;re UK-domiciled.</li>
             </ul>
-          </div>
+          </details>
           <div className="flex flex-wrap gap-3">
             <Link
               href="/invest/commercial-property"
@@ -528,16 +557,19 @@ export default async function UKInvestingPage() {
               </tbody>
             </table>
           </div>
-          <div className="bg-slate-50 rounded-2xl p-5 border border-slate-200">
-            <h3 className="text-sm font-bold text-slate-900 mb-2">HMRC Self Assessment SA106 — what to file</h3>
-            <ul className="text-sm text-slate-700 space-y-1.5">
+          <details className="group bg-slate-50 rounded-2xl border border-slate-200">
+            <summary className="cursor-pointer px-5 py-3 text-sm font-bold text-slate-900 flex items-center justify-between gap-3 hover:bg-slate-100 rounded-2xl">
+              HMRC Self Assessment SA106 — what to file
+              <span aria-hidden className="text-slate-400 group-open:rotate-180 transition-transform">↓</span>
+            </summary>
+            <ul className="text-sm text-slate-700 space-y-1.5 px-5 pb-5">
               <li>• AU dividend income → SA106 Box 6 (or 9 for foreign tax)</li>
               <li>• AU interest → SA106 Box 11</li>
               <li>• AU rental property → SA106 Box 14 onwards (separate columns for income, expenses)</li>
               <li>• AU CGT events → SA108 Capital Gains pages, with FTCR claim referencing SA106</li>
               <li>• Filing deadline: 31 January following the tax year (UK tax year = 6 April — 5 April)</li>
             </ul>
-          </div>
+          </details>
           <div className="mt-5">
             <Link
               href="/advisors/international-tax-specialists"
@@ -555,32 +587,37 @@ export default async function UKInvestingPage() {
             title="QROPS — transferring a UK pension to Australian super"
             sub="The single biggest cross-border financial decision UK→AU migrants face. Get this wrong and HMRC can tax up to 55% of the transfer."
           />
-          <div className="grid lg:grid-cols-2 gap-5">
-            <div className="bg-white border border-slate-200 rounded-2xl p-5">
-              <h3 className="text-base font-bold text-slate-900 mb-3">When QROPS to Australia makes sense</h3>
-              <ul className="space-y-2 text-sm text-slate-700">
-                <li>• You&apos;ve permanently migrated to Australia and don&apos;t plan to return to the UK</li>
-                <li>• Your UK pension is a defined-contribution scheme (SIPP / personal pension), not a final-salary DB scheme (which usually shouldn&apos;t be transferred)</li>
-                <li>• You&apos;re aged 55+ (UK access age) so the unauthorised-payment risk is lower</li>
-                <li>• You&apos;ve modelled the long-term tax outcome with a UK-AU pension specialist — it isn&apos;t always the right call</li>
-              </ul>
-            </div>
-            <div className="bg-white border border-slate-200 rounded-2xl p-5">
-              <h3 className="text-base font-bold text-slate-900 mb-3">QROPS rules to know</h3>
-              <ul className="space-y-2 text-sm text-slate-700">
-                <li>• <strong>Only QROPS-listed AU schemes</strong> qualify. Most retail Australian super funds are not on the HMRC QROPS list because AU rules allow access in some cases before age 55. Specialist self-managed super funds (SMSFs) can be QROPS-registered with bespoke trust deeds.</li>
-                <li>• <strong>Overseas Transfer Charge (OTC)</strong> of 25% may apply unless you&apos;re resident in the same country as the receiving scheme, or other exemptions apply.</li>
-                <li>• <strong>Age 55 rule</strong> — non-QROPS transfers can be treated as unauthorised, triggering up to 55% HMRC tax.</li>
-                <li>• <strong>Reporting window</strong> — the receiving scheme must remain QROPS-listed for 5 years post-transfer or HMRC may unwind treatment.</li>
-              </ul>
-            </div>
-          </div>
-          <div className="mt-5 bg-amber-50 border border-amber-200 rounded-2xl p-5">
-            <p className="text-sm text-amber-800">
-              <strong>Don&apos;t self-direct this.</strong> QROPS is one of a small handful of cross-border
-              decisions where DIY is genuinely high-risk — both sides of the trade need specialist input
-              (a UK pension transfer specialist + an AU SMSF accountant for the receiving structure).
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 mb-4">
+            <p className="text-sm text-amber-900">
+              <strong>Don&apos;t self-direct this.</strong> QROPS is one of a small handful of cross-border decisions where DIY is genuinely high-risk — both sides of the trade need specialist input.
             </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 gap-3">
+            <details className="group bg-white border border-slate-200 rounded-2xl">
+              <summary className="cursor-pointer px-5 py-4 text-sm font-bold text-slate-900 flex items-center justify-between gap-3 hover:bg-slate-50 rounded-2xl">
+                When QROPS makes sense
+                <span aria-hidden className="text-slate-400 group-open:rotate-180 transition-transform">↓</span>
+              </summary>
+              <ul className="space-y-2 text-sm text-slate-700 px-5 pb-5">
+                <li>• You&apos;ve permanently migrated to Australia and don&apos;t plan to return to the UK</li>
+                <li>• Your UK pension is a defined-contribution scheme (SIPP / personal pension)</li>
+                <li>• You&apos;re aged 55+ (UK access age) — unauthorised-payment risk is lower</li>
+                <li>• You&apos;ve modelled the long-term tax outcome with a UK-AU pension specialist</li>
+              </ul>
+            </details>
+            <details className="group bg-white border border-slate-200 rounded-2xl">
+              <summary className="cursor-pointer px-5 py-4 text-sm font-bold text-slate-900 flex items-center justify-between gap-3 hover:bg-slate-50 rounded-2xl">
+                Rules to know (OTC, age 55, QROPS list)
+                <span aria-hidden className="text-slate-400 group-open:rotate-180 transition-transform">↓</span>
+              </summary>
+              <ul className="space-y-2 text-sm text-slate-700 px-5 pb-5">
+                <li>• <strong>Only QROPS-listed AU schemes</strong> qualify. Specialist SMSFs can be QROPS-registered.</li>
+                <li>• <strong>Overseas Transfer Charge (OTC)</strong> 25% may apply unless exemptions are met.</li>
+                <li>• <strong>Age 55 rule</strong> — non-QROPS transfers may trigger up to 55% HMRC tax.</li>
+                <li>• <strong>Reporting window</strong> — receiving scheme must stay QROPS-listed for 5 years.</li>
+              </ul>
+            </details>
           </div>
           <div className="mt-5 flex flex-wrap gap-3">
             <Link
@@ -656,15 +693,6 @@ export default async function UKInvestingPage() {
             title="IHT exposure on your Australian assets"
             sub="Australia abolished inheritance tax in 1979. The UK didn't. If you're UK domiciled, HMRC taxes your worldwide estate — including Australian property, shares and super — at up to 40%."
           />
-          <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 mb-5">
-            <h3 className="text-sm font-bold text-slate-900 mb-2">The single biggest UK side-effect</h3>
-            <p className="text-sm text-slate-700">
-              Most UK-born long-term residents are <strong>UK domiciled</strong>. UK domicile follows you
-              even when you live abroad — and it makes your worldwide estate (including AU property,
-              ASX shares and Australian super) chargeable to UK IHT at 40% above the £325,000 nil-rate band.
-              Australia has no equivalent tax, so this is a UK-side problem only.
-            </p>
-          </div>
           <div className="grid sm:grid-cols-3 gap-4">
             <div className="border border-slate-200 rounded-xl p-4">
               <p className="text-xs font-extrabold uppercase tracking-wider text-slate-500 mb-1">Domicile of origin</p>
