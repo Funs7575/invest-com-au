@@ -41,7 +41,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | O | all PRs MERGED | #235/#237/#239/#299/#300/#366/#395/#408 all MERGED | last merged 2026-05-02T16:14Z | O-01..O-03 done. O-04 blocked (Stripe live validation). O-05 MERGED (#408). |
 | P | _not started_ | — | — | — |
 | Q | _not started_ | — | — | — |
-| R | all PRs MERGED | #290/#396 both MERGED | last merged 2026-05-02T16:13Z | R-01 done (PR #290). R-02 MERGED (#396 — 29 tests auto-bid.ts + 12 tests broker-auth.ts). R-03..R-11 pending. |
+| R | `claude/audit-remediation/r-03-dispute-resolver-tests` (#459) | #290/#396 both MERGED · #459 OPEN | iter 206 — `154a93c` (PR #459: R-03 — 18-test suite for advisor-lead-dispute-resolver); CI running | R-01 done (PR #290). R-02 MERGED (#396 — 29 tests auto-bid.ts + 12 tests broker-auth.ts). R-03 in-progress (PR #459). R-04..R-11 pending. |
 | S | _not started_ | — | — | — |
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 MERGED 2026-04-28T11:45Z | merged | V-NEW-06 done (commit `a7bd736`) |
@@ -909,7 +909,7 @@ Highest-risk untested business logic. Marketplace allocation is the most lucrati
 | R-01 | done | `lib/marketplace/allocation.ts` — 388 LOC, 0% covered. Cover allocation algorithm + auto-bid edge cases + tier overrides | ~2 | Done in PR #290 MERGED 2026-04-29T10:05Z (`__tests__/api/marketplace-allocation.test.ts` exists; covers allocation + CPC billing). |
 | R-02 | done | `lib/marketplace/auto-bid.ts` — 174 LOC, 0% covered | 1 | P0. Pairs with R-01. Done: commit `ae23f8b` · PR #396 (29 tests). |
 | R-02-DISC-20260501-01 | done | `lib/marketplace/broker-auth.ts` — 77 LOC, 0 tests, no coverage. Only `lib/marketplace/` file without a test. | 1 | Done in commit `1a082b2` · PR #396 (12 tests: getBrokerAccount × 5, requireBrokerAccount × 3, isBrokerUser × 3). |
-| R-03 | pending | `lib/advisor-lead-dispute-resolver.ts` — 340 LOC, 0% covered | 1 | P1. |
+| R-03 | in-progress | `lib/advisor-lead-dispute-resolver.ts` — 340 LOC, 0% covered | 1 | P1. PR #459. 18 tests: buildClassifierContext (8) + autoResolveDispute (7) + notifyAdminEscalated (3). All passing locally. |
 | R-04 | pending | `lib/cached-data.ts` — 263 LOC, 0% covered | 1 | P1. |
 | R-05 | pending | `lib/email-templates.ts` — 745 LOC, 18% covered → raise to ≥60% | 1 | P2. |
 | R-06 | pending | `lib/admin/automation-metrics.ts` — 536 LOC, 25% covered | 1 | P2. |
@@ -1621,6 +1621,14 @@ Two strategically important surfaces under-served by current nav: (1) investment
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-02 — Forward progress iter 206 (stream R — R-03: 18-test suite for advisor-lead-dispute-resolver)
+
+- Phase 2: No CI rescues needed. PRs #406/#449/#451/#452/#453/#454/#455/#456/#457/#459 — CI pending/running, none red.
+- Phase 3: R-stream (slot 16). R-03: `lib/advisor-lead-dispute-resolver.ts` — 480 LOC, 0% covered. Created branch `claude/audit-remediation/r-03-dispute-resolver-tests`.
+- Phase 5: Wrote `__tests__/lib/advisor-lead-dispute-resolver.test.ts` (391 lines, 18 tests). Key mock challenges resolved: (a) `updateChain` uses `Object.assign(prom, {eq,in})` to make the chain an actual Promise; (b) `mockFrom.mockReset()` in autoResolveDispute `beforeEach` drains the `mockImplementationOnce` queue to prevent stale-mock leakage between tests; (c) `notifyAdminEscalated` takes 6 args — tests updated to pass `details: null, classifierReasons: []`. All 18 tests pass locally.
+- Phase 6: Committed `154a93c`, pushed, opened PR #459.
+- STATUS: PROGRESS · stream=R · item=R-03 · pr=#459 · commit=154a93c · diff=+391 -0 across 1 file
 
 ### 2026-05-02 — Forward progress iter 205 (stream A — A-06 batch 3: RLS on 6 fee/content/user-profile tables)
 
