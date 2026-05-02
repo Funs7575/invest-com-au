@@ -5,10 +5,10 @@
       "startServerReadyPattern": "Ready",
       "url": [
         "http://localhost:3000/",
-        "http://localhost:3000/glossary",
-        "http://localhost:3000/how-we-earn"
+        "http://localhost:3000/compare",
+        "http://localhost:3000/invest"
       ],
-      "numberOfRuns": 3,
+      "numberOfRuns": 5,
       "settings": {
         "preset": "desktop",
         "chromeFlags": "--no-sandbox --headless=new"
