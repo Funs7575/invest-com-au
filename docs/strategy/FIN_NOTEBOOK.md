@@ -284,8 +284,18 @@ _(empty)_
 
 ---
 
+## Open commitments / revisit-by dates
+
+Time-bound items that need a check-in at a specific date. Don't delete — strike through and timestamp when resolved so we keep the trail.
+
+- **2026-05-16 — Quiz funnel post-deploy review.** PR #434 (quiz outcome resolver, post-results email capture, vertical drips, sponsor-boost vertical-aware) shipped 2026-05-02. Estimated +35–50% end-to-end conversion lift; ground truth requires 14 days of PostHog data on `quiz_outcome_primary_cta` distribution + `quiz_lead_capture` rate + drip open/CTR. Compare actuals vs estimate in this notebook on revisit. Remote-trigger scheduled.
+- **2026-05-09 — Test-posture readiness call.** Currently B-grade: ~71% lib coverage, ~14% API-route line coverage, 38 TypeScript errors in test files (project gotcha — pre-push fails for non-loop sessions), 228 untested API routes. Realistic enterprise-grade timeline ~4–6 focused weeks; pre-launch must-do is TS errors + golden-flow E2E (1 week). Decide on a Friday whether to dedicate a sprint to it.
+- **Drip cron kill-switch.** `abandoned_quiz_drip` is gated by `isFeatureDisabled('abandoned_quiz_drip')` (per `lib/admin/classifier-config`). The 27 vertical drip templates shipped in PR #434 sit dormant until flipped. Estimated +1–2% sitewide conversion uplift when enabled. No revisit date — flip when you're ready for the lead volume.
+
+---
+
 ## Resolved / shipped
 
 Move items here once they ship OR are formally killed. Don't delete — keep the trail so we can see what we built and what we walked away from.
 
-_(empty)_
+- **2026-05-02 — Quiz funnel rebuilt.** PR #434 shipped: 7-outcome resolver (post-job, advisor-match, advisor-browse, calculator-first, education-first, diy-broker, bundle-stack) replaces binary DIY-vs-advisor track; email gate moved post-results (warm capture); 12 structured columns added to `quiz_leads`; 9 vertical drip-template variants × 3 steps = 27 drip templates; `applyQuizSponsorBoost` is vertical-aware (no crypto-sponsor over super result); `/quotes/post` prefills from quiz handoff. Migration applied to prod (project `guggzyqceattncjwvgyc`), 125 tests passing, all 25 CI gates green. Squash commit `f1d2017c` on main. Co-author Claude Opus 4.7.

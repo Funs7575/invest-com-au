@@ -1505,6 +1505,40 @@ Two strategically important surfaces under-served by current nav: (1) investment
 
 ---
 
+### Z-QUIZ — quiz funnel post-deploy operations
+
+Operational follow-ups to PR #434 (`f1d2017c` on main, merged 2026-05-02). All
+items are post-deploy hygiene, not blocking. Z-QUIZ-04 is time-bound (revisit
+2026-05-16 — see `docs/strategy/FIN_NOTEBOOK.md`).
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| Z-QUIZ-01 | pending | Flip `abandoned_quiz_drip` kill-switch in feature flags | 1 | **P1 — activates 27 vertical drip templates that shipped dormant.** Currently `isFeatureDisabled('abandoned_quiz_drip')` returns true; cron exits early at line 36 of `app/api/cron/abandoned-quiz-drip/route.ts`. **DoD:** flag flipped in `lib/admin/classifier-config` (or admin UI), cron logged as running with non-zero `sent_step_*` stats within 48h, no Sentry spike on Resend send failures. **Estimated impact:** +1–2% sitewide conversion via re-engagement of abandoned-quiz pool. |
+| Z-QUIZ-02 | pending | Backfill `inferred_vertical` on legacy `quiz_leads` rows | 1 | **P2 — needed for vertical drips to apply to pre-2026-05-02 pool.** Legacy rows have NULL on the new structured columns (goal/mode/etc.), so `selectVerticalTemplate()` falls through to broker default. Backfill SQL: derive `inferred_vertical` from `trading_interest` (existing column) — crypto/trade/income/grow → shares; super/property → matching vertical; mode=help → advisor. **DoD:** one-off SQL via Supabase MCP, % of `quiz_leads` with non-NULL `inferred_vertical` rises from current ~0% to >80%, drip cron next run shows distributed `sent_step_*` per vertical. |
+| Z-QUIZ-03 | pending | PostHog dashboard for outcome-kind distribution | 2 | **P2 — required for Z-QUIZ-04 review.** Need `quiz_outcome_primary_cta` event distribution by `kind` (post-job/advisor-match/advisor-browse/calculator-first/education-first/diy-broker/bundle-stack) + capture-rate per kind + drop-off funnel. **DoD:** saved PostHog dashboard, screenshot or link in `FIN_NOTEBOOK`, sanity-check that >50% of outcomes route to `diy-broker` (the default fall-through). Anything weird (e.g. >20% to `education-first` would suggest the rule is over-firing) needs a tweak in `lib/quiz-outcome.ts:resolveBestOutcome`. |
+| Z-QUIZ-04 | pending | 14-day post-deploy review: actuals vs estimated +35–50% lift | 2 | **P1 — revisit 2026-05-16.** Compare PostHog actuals to PR #434 estimates: email capture rate (estimated +18%), top-match CTR (+10–15%), advisor lead capture (+9%), drip open rate (+15–25%), compounded conversion (+35–50%). **DoD:** report appended to `FIN_NOTEBOOK.md` "Resolved / shipped" section, with delta column (actual − estimate) and decisions: (a) tighten outcome rules if any path under-performs, (b) flip more cohort to vertical drips if open rate held, (c) ramp post-results email gate timing experiment. Remote-trigger scheduled for 2026-05-16. |
+| Z-QUIZ-05 | pending | Manual UI walkthrough of 5 outcome paths on production | 1 | **P3 — nerves-only, not regression-blocking.** Click through 5 paths on prod: (1) super DIY medium → calculator-first hero → /retirement-calculator; (2) whale + complex → bundle-stack hero → /advisors/financial-planners; (3) complex + advisor-not-sure → post-job hero → /quotes/post (verify "Pre-filled from your quiz" banner + form fields); (4) beginner + unsure → education-first hero → /learn; (5) crypto + diy → no hero, top match leads. **DoD:** all 5 paths render correctly on mobile + desktop, hero card accent colors match outcome tone, dismiss-X on inline email capture works, share buttons function. |
+
+---
+
+### T-TESTS — pre-launch testing-debt cleanup
+
+Test-posture readiness pulled out of CLAUDE.md gotcha (`project_test_typescript_drift`)
+and the wider audit. Ordered by ROI for launch-readiness — T-TESTS-01 first
+(unblocks pre-push for non-loop sessions), then golden-flow E2E, then API
+breadth. Realistic enterprise-grade timeline: 4–6 focused weeks total; 1 week
+pre-launch must-do is T-TESTS-01 + T-TESTS-04.
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| T-TESTS-01 | pending | Fix 38 TypeScript errors in test files | 2-3 | **P1 — pre-launch must-do.** Per CLAUDE.md gotcha (`project_test_typescript_drift`): pre-push fails for non-loop sessions because `tsc --noEmit` catches errors in test files. **Most are likely:** stale type imports, optional-chain handling for `noUncheckedIndexedAccess` (`arr[0]` is `T \| undefined`), removed/renamed types. **DoD:** `NODE_OPTIONS='--max-old-space-size=5120' npx tsc --noEmit` exits 0 on a clean clone, pre-push hook stops failing for fresh sessions, `MEMORY.md` `project_test_typescript_drift` entry struck through. ~1–2 days focused work. |
+| T-TESTS-02 | pending | Lock down golden-flow Playwright E2E (10 critical paths) | 4-5 | **P1 — pre-launch must-do.** Currently Playwright is in CI but coverage of golden flows is partial. **Critical paths:** /quiz end-to-end (DIY + advisor + intl), /signup→email-confirm, /broker/[slug] → affiliate redirect, /compare select-and-compare, /find-advisor → advisor lead, /quotes/post → quote received, /account/quizzes view history, /unsubscribe, password reset, admin login. **DoD:** each path has a Playwright spec under `__tests__/e2e/` or `playwright/`, runs in chromium, no flakes over 3 consecutive CI runs. ~1 week focused. |
+| T-TESTS-03 | pending | Backfill tests for top 50 highest-traffic untested API routes | 8-12 | **P2.** D-11 marked complete (228 routes covered) but the audit shows API-route line coverage still ~14% — the D-11 tests are shallow per-route happy-path. T-TESTS-03 picks the 50 highest-traffic routes per Vercel/PostHog telemetry and adds (a) auth gate test, (b) Zod-validation rejection test, (c) RLS isolation test, (d) error-path test. **DoD:** API-route line coverage ≥30%, branch coverage ≥70%, route-files-with-zero-tests count below 50. ~2 weeks focused. |
+| T-TESTS-04 | pending | Lift `lib/**` coverage from 71% → 85% on money/legal modules | 4-6 | **P2.** Coverage thresholds in `vitest.config.mts` are floors (44/63/73/44). Per memory verified 2026-05-02: ~71% lines/statements, ~79% branches/functions on lib + app/api scope. Money/legal modules (`lib/stripe/*`, `lib/finance/*`, `lib/compliance.ts`, `lib/sponsorship.ts`, `lib/quiz-outcome.ts`) need ≥85% — these break products if wrong. **DoD:** per-module thresholds enforced for the listed modules in `vitest.config.mts`, overall lib coverage ≥80%. ~1 week focused. |
+| T-TESTS-05 | pending | Stomp Playwright Safari/webkit flakes — re-enable in a11y job | 2-3 | **P3.** Per CLAUDE.md note: webkit + mobile-safari are configured but the a11y job runs `--project=chromium` only because webkit had flaky `networkidle` timeouts. Likely fixes: longer waits via `waitForLoadState('domcontentloaded')`, retry annotation on flaky specs, or replacing `networkidle` with explicit selector waits. **DoD:** webkit project passes 5 consecutive a11y CI runs without retry, `playwright.config.ts` a11y `--project` flag dropped, full E2E still runs all three browsers without flake budget exhaustion. |
+
+---
+
 ## Done
 
 - 2026-05-01 · A-03 batch 3 · RLS backfill for 4 revenue tables: `broker_wallets` (CREATE TABLE IF NOT EXISTS + ENABLE/FORCE RLS + `service_role ALL` + `authenticated SELECT` for admin dashboard browser client), `wallet_transactions` (same pattern, immutable financial ledger, also resolves A-DISC-20260501-02), `marketplace_invoices` (same, broker PII), `newsletter_subscriptions` (FORCE RLS + `service_role ALL` only — RLS was already enabled in `20260420_wave_16_growth_engine.sql` but zero policies). Commit `c3f89ac` · pr #413
