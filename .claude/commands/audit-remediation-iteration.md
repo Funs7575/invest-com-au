@@ -56,6 +56,30 @@ date -u +%FT%TZ > "$LOCK"
 trap 'rm -f "$LOCK"' EXIT
 ```
 
+### Phase 0.5 — Pause sentinel check (added 2026-05-02)
+
+Before any work, check for a `LOOP_PAUSE` file at the repo root. If it exists, the founder (or an automated alert) has explicitly paused the loop — exit immediately without doing any work. The file's contents document the reason and what to do to resume.
+
+```bash
+git fetch origin main 2>/dev/null || true
+git checkout main 2>/dev/null && git pull --ff-only origin main 2>/dev/null || true
+
+if [ -f "LOOP_PAUSE" ]; then
+  echo "STATUS: PAUSED · LOOP_PAUSE sentinel present"
+  echo "---"
+  cat LOOP_PAUSE
+  echo "---"
+  echo "Resume by deleting LOOP_PAUSE and committing."
+  exit 0
+fi
+```
+
+**Why a file, not an env var:** the loop fires from cloud routines that have no shared state with the founder's terminal. A file in the repo is the only signal the loop reliably reads from main. It's also git-versioned, so the pause + reason + the resume commit are all in `git log` — full audit trail.
+
+**When it gets created:** typically by the founder responding to a `[ACTION REQUIRED]` GitHub issue from `loop-spend-tracker.yml` or from a stuck-detection surface. The issue body's checklist tells them exactly what to write.
+
+**When it gets removed:** by the founder deleting it after the underlying issue is resolved. The loop's next fire after the file is gone resumes normal operation.
+
 ### Phase 1 — Sync
 
 ```bash
