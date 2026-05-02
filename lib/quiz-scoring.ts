@@ -70,7 +70,8 @@ export function scoreQuizResults(
   weights: Record<string, QuizWeights>,
   brokers: Broker[],
   quizCampaignWinners: { broker_slug: string }[] = [],
-  amount?: AmountKey
+  amount?: AmountKey,
+  goal?: string,
 ): ScoredResult[] {
   const multiplier = amount ? (AMOUNT_MULTIPLIER[amount] ?? 1.0) : 1.0;
 
@@ -103,8 +104,10 @@ export function scoreQuizResults(
       (a.broker?.name ?? "").localeCompare(b.broker?.name ?? "")
   );
 
-  // Subtle sponsor boost: featured_partner in positions 1-5 gets swapped up 1
-  const boosted = applyQuizSponsorBoost(scored, 1, 5);
+  // Subtle sponsor boost: featured_partner in positions 1-5 gets swapped up 1.
+  // Vertical-aware — when `goal` is set, only sponsored brokers applicable to
+  // the user's stated goal can be boosted (no crypto-sponsor over super result).
+  const boosted = applyQuizSponsorBoost(scored, 1, 5, goal);
 
   // Marketplace campaign boost: quiz-boost winner in 1-5 gets swapped up 1
   if (quizCampaignWinners.length > 0) {
