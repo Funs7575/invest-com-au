@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import AdvisorsClient from "./AdvisorsClient";
 import HomeToolsStrip from "@/components/HomeToolsStrip";
 import IntentCountryBadge from "@/components/foreign-investment/IntentCountryBadge";
+import IntentCountryRecommendation from "@/components/foreign-investment/IntentCountryRecommendation";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
 import { logger } from "@/lib/logger";
 
@@ -76,7 +77,10 @@ export default function AdvisorsPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
-      <div className="container-custom pt-4"><IntentCountryBadge /></div>
+      <div className="container-custom pt-4">
+        <IntentCountryBadge />
+        <IntentCountryRecommendation surface="advisors" />
+      </div>
       <Suspense fallback={<AdvisorsLoading />}>
         <AdvisorsData />
       </Suspense>
