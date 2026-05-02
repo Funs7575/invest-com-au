@@ -34,6 +34,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/invest/hybrid-securities", "/invest/crypto-staking", "/invest/smsf",
     "/invest/private-equity", "/invest/bonds", "/invest/gold", "/invest/ipos",
     "/invest/oil-gas", "/invest/lithium", "/invest/uranium", "/invest/hydrogen",
+    "/invest/royalties", "/invest/income-assets", "/invest/ipo-calendar", "/invest/pre-ipo",
     "/smsf", "/smsf/auditors",
     "/research",
     "/foreign-investment/siv",
