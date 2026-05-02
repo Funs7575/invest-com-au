@@ -84,7 +84,8 @@ export async function POST(req: NextRequest) {
       user.email?.split("@")[0] ||
       "Anonymous";
 
-    // Insert post
+    // Insert post. parent_id is not a column in forum_posts (schema
+    // has no threading column), so it's validated above but not stored.
     const { data: post, error: insertError } = await admin
       .from("forum_posts")
       .insert({
@@ -92,9 +93,8 @@ export async function POST(req: NextRequest) {
         author_id: user.id,
         author_name: displayName,
         body: postBody.trim(),
-        parent_id: parent_id || null,
       })
-      .select("id, thread_id, author_name, body, parent_id, created_at")
+      .select("id, thread_id, author_name, body, created_at")
       .single();
 
     if (insertError) {
