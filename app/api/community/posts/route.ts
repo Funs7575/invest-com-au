@@ -147,8 +147,6 @@ export async function POST(req: NextRequest) {
         {
           user_id: user.id,
           display_name: displayName,
-          reputation: 0,
-          thread_count: 0,
           post_count: 0,
           is_moderator: false,
         },

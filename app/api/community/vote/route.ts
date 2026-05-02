@@ -56,17 +56,16 @@ export async function POST(req: NextRequest) {
     // Check for existing vote
     const { data: existingVote } = await admin
       .from("forum_votes")
-      .select("id, vote")
+      .select("id, value")
       .eq("target_type", target_type)
       .eq("target_id", target_id)
       .eq("user_id", user.id)
       .single();
 
     let scoreDelta = 0;
-    let reputationDelta = 0;
 
     if (existingVote) {
-      if (existingVote.vote === vote) {
+      if (existingVote.value === vote) {
         // Same vote again: remove the vote (toggle off)
         await admin
           .from("forum_votes")
@@ -74,16 +73,14 @@ export async function POST(req: NextRequest) {
           .eq("id", existingVote.id);
 
         scoreDelta = -vote;
-        reputationDelta = -vote; // Remove the reputation effect
       } else {
         // Changing vote direction
         await admin
           .from("forum_votes")
-          .update({ vote, created_at: new Date().toISOString() })
+          .update({ value: vote, created_at: new Date().toISOString() })
           .eq("id", existingVote.id);
 
         scoreDelta = vote * 2; // Swing from -1 to +1 or vice versa
-        reputationDelta = vote * 2;
       }
     } else {
       // New vote
@@ -93,7 +90,7 @@ export async function POST(req: NextRequest) {
           target_type,
           target_id,
           user_id: user.id,
-          vote,
+          value: vote,
         });
 
       if (insertError) {
@@ -102,7 +99,6 @@ export async function POST(req: NextRequest) {
       }
 
       scoreDelta = vote;
-      reputationDelta = vote;
     }
 
     // Update vote_score on target
@@ -117,35 +113,20 @@ export async function POST(req: NextRequest) {
       log.error("Failed to update vote_score", { error: scoreError.message });
     }
 
-    // Update author's reputation. Race-safe: ensure profile exists
-    // first via upsert with ignoreDuplicates, then read-modify-write
-    // the reputation. Same pattern as posts/threads route.
-    if (reputationDelta !== 0) {
+    // Ensure a user profile row exists for the content author so that
+    // future reputation or stat updates have a row to write to.
+    if (target.author_id) {
       await admin
         .from("forum_user_profiles")
         .upsert(
           {
             user_id: target.author_id,
             display_name: "User",
-            reputation: 0,
-            thread_count: 0,
             post_count: 0,
             is_moderator: false,
           },
           { onConflict: "user_id", ignoreDuplicates: true },
         );
-
-      const { data: authorProfile } = await admin
-        .from("forum_user_profiles")
-        .select("reputation")
-        .eq("user_id", target.author_id)
-        .maybeSingle();
-      if (authorProfile) {
-        await admin
-          .from("forum_user_profiles")
-          .update({ reputation: (authorProfile.reputation ?? 0) + reputationDelta })
-          .eq("user_id", target.author_id);
-      }
     }
 
     return NextResponse.json({ vote_score: newScore });

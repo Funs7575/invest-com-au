@@ -69,14 +69,6 @@ function makeUpsertBuilder() {
   return { upsert: vi.fn(() => Promise.resolve({ error: null })) };
 }
 
-/** Builder for .select().eq().maybeSingle() (reputation fetch). */
-function makeMaybeSingleBuilder(data: unknown = null) {
-  return {
-    select: vi.fn().mockReturnThis(),
-    eq: vi.fn().mockReturnThis(),
-    maybeSingle: vi.fn(() => Promise.resolve({ data, error: null })),
-  };
-}
 
 /**
  * Set up mockAdminFrom to respond to the full sequence of DB calls
@@ -88,8 +80,6 @@ function makeMaybeSingleBuilder(data: unknown = null) {
  * 3. forum_votes     — insert()                             (record vote)
  * 4. target_table    — update().eq()                        (update score)
  * 5. f_u_profiles    — upsert()                             (ensure profile)
- * 6. f_u_profiles    — select().eq().maybeSingle()          (read reputation)
- * 7. f_u_profiles    — update().eq()                        (write reputation)
  */
 function setupNewVoteMocks(target: unknown, targetTable = "forum_threads") {
   mockAdminFrom
@@ -106,9 +96,7 @@ function setupNewVoteMocks(target: unknown, targetTable = "forum_threads") {
       return makeInsertBuilder(null);
     })
     .mockImplementationOnce(() => makeTerminalBuilder())    // score update
-    .mockImplementationOnce(() => makeUpsertBuilder())     // reputation upsert
-    .mockImplementationOnce(() => makeMaybeSingleBuilder({ reputation: 5 })) // rep read
-    .mockImplementationOnce(() => makeTerminalBuilder());  // rep write
+    .mockImplementationOnce(() => makeUpsertBuilder());    // ensure profile
 }
 
 // ── Tests ──────────────────────────────────────────────────────────────────────
@@ -173,13 +161,11 @@ describe("POST /api/community/vote", () => {
   it("toggles vote off when same vote submitted again", async () => {
     const target = { id: TARGET_ID, author_id: AUTHOR_ID, vote_score: 5 };
     mockAdminFrom
-      .mockImplementationOnce(() => makeSingleBuilder(target, null))          // fetch target
-      .mockImplementationOnce(() => makeSingleBuilder({ id: "v1", vote: 1 }, null)) // existing vote
-      .mockImplementationOnce(() => makeTerminalBuilder())                    // delete vote
-      .mockImplementationOnce(() => makeTerminalBuilder())                    // score update
-      .mockImplementationOnce(() => makeUpsertBuilder())                      // rep upsert
-      .mockImplementationOnce(() => makeMaybeSingleBuilder({ reputation: 10 })) // rep read
-      .mockImplementationOnce(() => makeTerminalBuilder());                   // rep write
+      .mockImplementationOnce(() => makeSingleBuilder(target, null))           // fetch target
+      .mockImplementationOnce(() => makeSingleBuilder({ id: "v1", value: 1 }, null)) // existing vote
+      .mockImplementationOnce(() => makeTerminalBuilder())                     // delete vote
+      .mockImplementationOnce(() => makeTerminalBuilder())                     // score update
+      .mockImplementationOnce(() => makeUpsertBuilder());                      // ensure profile
     const res = await POST(makeRequest({ target_type: "thread", target_id: TARGET_ID, vote: 1 }));
     expect(res.status).toBe(200);
     const data = await res.json();
@@ -189,13 +175,11 @@ describe("POST /api/community/vote", () => {
   it("flips vote direction (+2 swing) when opposite vote submitted", async () => {
     const target = { id: TARGET_ID, author_id: AUTHOR_ID, vote_score: 2 };
     mockAdminFrom
-      .mockImplementationOnce(() => makeSingleBuilder(target, null))           // fetch target
-      .mockImplementationOnce(() => makeSingleBuilder({ id: "v1", vote: -1 }, null)) // existing downvote
-      .mockImplementationOnce(() => makeTerminalBuilder())                     // update vote record
-      .mockImplementationOnce(() => makeTerminalBuilder())                     // score update
-      .mockImplementationOnce(() => makeUpsertBuilder())                       // rep upsert
-      .mockImplementationOnce(() => makeMaybeSingleBuilder({ reputation: 5 })) // rep read
-      .mockImplementationOnce(() => makeTerminalBuilder());                    // rep write
+      .mockImplementationOnce(() => makeSingleBuilder(target, null))            // fetch target
+      .mockImplementationOnce(() => makeSingleBuilder({ id: "v1", value: -1 }, null)) // existing downvote
+      .mockImplementationOnce(() => makeTerminalBuilder())                      // update vote record
+      .mockImplementationOnce(() => makeTerminalBuilder())                      // score update
+      .mockImplementationOnce(() => makeUpsertBuilder());                       // ensure profile
     const res = await POST(makeRequest({ target_type: "thread", target_id: TARGET_ID, vote: 1 }));
     expect(res.status).toBe(200);
     const data = await res.json();
