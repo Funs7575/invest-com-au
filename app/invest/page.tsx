@@ -20,6 +20,7 @@ import { listingUrl } from "@/lib/listing-url";
 import InvestListingsClient from "@/components/InvestListingsClient";
 import HomeToolsStrip from "@/components/HomeToolsStrip";
 import IntentCountryBadge from "@/components/foreign-investment/IntentCountryBadge";
+import IntentCountryRecommendation from "@/components/foreign-investment/IntentCountryRecommendation";
 import ScrollReveal from "@/components/ScrollReveal";
 import Icon from "@/components/Icon";
 
@@ -235,6 +236,7 @@ export default async function InvestMarketplacePage() {
           {/* Header */}
           <div className="bg-gradient-to-br from-slate-50 to-white border border-slate-200/50 rounded-2xl p-4 md:p-6 mb-3 md:mb-4">
             <div className="mb-3"><IntentCountryBadge /></div>
+            <IntentCountryRecommendation surface="invest" />
             <h1 className="text-xl md:text-4xl font-extrabold mb-2 md:mb-3 text-slate-900">
               Australian Investment Marketplace
             </h1>
