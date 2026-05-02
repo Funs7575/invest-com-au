@@ -122,6 +122,10 @@ export default function Footer() {
                 <li><Link href="/invest/commercial-property" className="hover:text-white transition-colors inline-block py-0.5">Commercial Property</Link></li>
                 <li><Link href="/invest/renewable-energy" className="hover:text-white transition-colors inline-block py-0.5">Renewable Energy</Link></li>
                 <li><Link href="/invest/startups" className="hover:text-white transition-colors inline-block py-0.5">Startups & Tech</Link></li>
+                <li><Link href="/invest/royalties" className="hover:text-white transition-colors inline-block py-0.5">Royalties</Link></li>
+                <li><Link href="/invest/income-assets" className="hover:text-white transition-colors inline-block py-0.5">Income-Asset Businesses</Link></li>
+                <li><Link href="/invest/ipo-calendar" className="hover:text-white transition-colors inline-block py-0.5">ASX IPO Calendar</Link></li>
+                <li><Link href="/invest/pre-ipo" className="hover:text-white transition-colors inline-block py-0.5">Pre-IPO (Wholesale)</Link></li>
                 <li><Link href="/sell-business" className="hover:text-white transition-colors inline-block py-0.5">Sell a Business</Link></li>
                 <li><Link href="/dividends" className="hover:text-white transition-colors inline-block py-0.5">Dividends</Link></li>
               </ul>
