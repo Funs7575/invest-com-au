@@ -114,13 +114,13 @@ export default async function DividendInvestingPage() {
               href="/compare"
               className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold text-sm px-5 py-2.5 rounded-lg transition-colors"
             >
-              Compare Platforms &rarr;
+              Compare Brokers &rarr;
             </Link>
             <Link
               href="/compare"
               className="inline-flex items-center gap-2 border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 font-semibold text-sm px-5 py-2.5 rounded-lg border transition-colors"
             >
-              Filter Platforms
+              Filter Brokers
             </Link>
           </div>
         </div>
@@ -367,11 +367,11 @@ export default async function DividendInvestingPage() {
       </section>
 
 
-      {/* Compare Platforms */}
+      {/* Compare Brokers */}
       {brokers && brokers.length > 0 && (
         <section className="py-14 bg-slate-50">
           <div className="container-custom max-w-4xl">
-            <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Compare Platforms</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Compare Brokers</p>
             <h2 className="text-2xl font-extrabold text-slate-900 mb-2">Best Platforms for Dividend Investing</h2>
             <p className="text-sm text-slate-500 mb-6">Top-rated Australian platforms ranked by fees, features, and user ratings.</p>
             <div className="space-y-3">
@@ -415,7 +415,7 @@ export default async function DividendInvestingPage() {
             </div>
             <div className="mt-4 text-center">
               <Link href="/compare" className="text-sm font-semibold text-amber-600 hover:text-amber-700">
-                Compare all platforms &rarr;
+                Compare all brokers &rarr;
               </Link>
             </div>
             {!SHOW_EDITORIAL_BADGES && (
