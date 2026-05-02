@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
 import HomeHero from "@/components/HomeHero";
 import HomeRouteCards from "@/components/HomeRouteCards";
+import HomeToolsStrip from "@/components/HomeToolsStrip";
 import HomePathfinder from "@/components/HomePathfinder";
 import HomeListingsTeaser, { type HomeListing } from "@/components/HomeListingsTeaser";
 import HomeAdvisorsTeaser, { type HomeAdvisor } from "@/components/HomeAdvisorsTeaser";
@@ -231,6 +232,10 @@ export default async function HomePage() {
           topListings={topListingsForCards}
           topAdvisors={topAdvisorsForCards}
         />
+      </ScrollFadeIn>
+
+      <ScrollFadeIn>
+        <HomeToolsStrip />
       </ScrollFadeIn>
 
       <ScrollFadeIn>
