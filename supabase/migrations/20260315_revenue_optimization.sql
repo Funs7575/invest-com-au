@@ -1,3 +1,27 @@
+-- ============================================================================
+-- Migration: 20260315_revenue_optimization.sql
+-- Purpose: Revenue tracking infrastructure — add CPA/affiliate/sponsorship
+--          columns to brokers; advisor tier + lead tracking columns to
+--          professionals; create advisor_tiers, leads, email_subscribers,
+--          email_campaigns, analytics_events tables; revenue scoring function;
+--          daily_revenue_summary + brokers_revenue_ranked views; revenue
+--          analytics columns added to articles.
+-- Rollback: DROP VIEW IF EXISTS daily_revenue_summary, brokers_revenue_ranked;
+--           DROP FUNCTION IF EXISTS calculate_broker_revenue_score(bigint);
+--           DROP TABLE IF EXISTS analytics_events, email_campaigns,
+--             email_subscribers, leads, advisor_tiers CASCADE;
+--           ALTER TABLE brokers DROP COLUMN IF EXISTS cpa_value,
+--             affiliate_priority, monthly_sponsorship_fee, promoted_placement,
+--             deal_description, fee_last_checked;
+--           ALTER TABLE professionals DROP COLUMN IF EXISTS advisor_tier,
+--             featured_until, total_leads_received, leads_accepted,
+--             last_lead_date, advisor_nudge_sent_at;
+--           ALTER TABLE articles DROP COLUMN IF EXISTS primary_broker_ids,
+--             expected_rev_per_visit, total_visits, total_affiliate_clicks,
+--             total_conversions, total_revenue_cents, target_keyword;
+--   Risk: leads table holds prod data — only rollback in pre-launch environments.
+-- ============================================================================
+
 -- ═══════════════════════════════════════════════════════════
 -- Revenue Optimization Migration
 -- Adds CPA tracking, revenue scoring, advisor tiers,

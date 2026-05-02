@@ -1,3 +1,15 @@
+-- ============================================================================
+-- Migration: 20260317_property_vertical.sql
+-- Purpose: Create property investment vertical tables — property_developers,
+--          property_listings, property_leads, buyer_agents, suburb_data —
+--          with RLS policies and seed data for AU launch (3 developers,
+--          2 listings, 3 buyer agents, 5 suburb rows).
+-- Rollback: DROP TABLE IF EXISTS suburb_data, buyer_agents, property_leads,
+--             property_listings, property_developers CASCADE;
+--   Risk: medium — seeded listings + developer data lost; no user-generated
+--   data (property_leads will be empty pre-launch). Safe to run pre-launch.
+-- ============================================================================
+
 -- ============================================================
 -- Property Investment Vertical — Tables, RLS, Seed Data
 -- ============================================================
