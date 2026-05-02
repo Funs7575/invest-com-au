@@ -1,4 +1,6 @@
+import Image from "next/image";
 import type { CommodityStock } from "@/lib/commodities";
+import { getSectorThumbImage } from "@/lib/listing-vertical-images";
 
 interface Props {
   stock: CommodityStock;
@@ -35,23 +37,43 @@ export default function AsxTickerCard({ stock }: Props) {
     ? EXPOSURE_LABEL[stock.primary_exposure]
     : null;
 
+  const thumb = getSectorThumbImage(stock.sector_slug, stock.ticker);
+
   return (
-    <article className="border border-slate-200 rounded-xl bg-white p-4 hover:shadow-md transition-shadow">
-      <header className="flex items-baseline justify-between gap-2 mb-2">
-        <div>
-          <h3 className="text-base font-extrabold text-slate-900 leading-tight">
+    <article className="border border-slate-200 rounded-xl bg-white overflow-hidden hover:shadow-md transition-shadow flex flex-col">
+      {/* Sector-themed thumbnail. Deterministic on ticker so each card
+          shows a stable image. Aspect ratio is shorter than the listing
+          card's 16:10 because ticker cards are denser. */}
+      <div className="relative aspect-[16/7] bg-slate-100">
+        <Image
+          src={thumb}
+          alt=""
+          fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+          className="object-cover"
+          loading="lazy"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
+        <div className="absolute top-2 right-2">
+          {bucket && (
+            <span
+              className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full shrink-0 shadow-sm ${bucket.className}`}
+            >
+              {bucket.label}
+            </span>
+          )}
+        </div>
+        <div className="absolute bottom-2 left-3 right-3 text-white">
+          <h3 className="text-base font-extrabold leading-tight drop-shadow">
             {stock.ticker}
           </h3>
-          <p className="text-xs text-slate-600 mt-0.5">{stock.company_name}</p>
+          <p className="text-[11px] opacity-95 leading-snug line-clamp-1 drop-shadow">
+            {stock.company_name}
+          </p>
         </div>
-        {bucket && (
-          <span
-            className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded-full shrink-0 ${bucket.className}`}
-          >
-            {bucket.label}
-          </span>
-        )}
-      </header>
+      </div>
+
+      <div className="p-4 flex-1 flex flex-col">
 
       {stock.blurb && (
         <p className="text-xs text-slate-700 leading-snug mb-3">
@@ -92,6 +114,7 @@ export default function AsxTickerCard({ stock }: Props) {
         Past performance is not a reliable indicator of future performance.
         Consider your personal circumstances.
       </p>
+      </div>
     </article>
   );
 }
