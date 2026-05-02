@@ -100,7 +100,7 @@ Walk `REMEDIATION_DEFAULTS.md`'s priority order. For each stream in order:
   - Create branch from `main`: `git checkout -b claude/audit-remediation/<letter>-<slug>`.
   - Make an initial empty commit (`git commit --allow-empty -m "chore(<stream-letter>): scaffold remediation stream"`).
   - Push: `git push -u origin <branch>`.
-  - Open a draft PR via `mcp__github__create_pull_request` with title `chore(<stream-letter>): <stream title> [audit remediation]` and body referencing the audit + tracking issue.
+  - Open a PR via `mcp__github__create_pull_request` with title `chore(<stream-letter>): <stream title> [audit remediation]` and body referencing the audit + tracking issue. Open it READY (not draft) — the `auto-merge-label.js` workflow applies `needs-human-review` automatically on touched paths, which is the actual safety gate; draft state on top of that is pure friction.
   - Update queue's In-flight table with branch + PR number.
 - Otherwise checkout the existing stream branch and pull.
 
@@ -260,7 +260,7 @@ Exit. The lock file is removed via the trap.
 - **Never** force-push or `reset --hard`.
 - **Hooks:** generally don't skip. Exception: `HUSKY=0` is authorised on the constrained sandbox (see Hardware exception in `REMEDIATION_DEFAULTS.md`). CI on the stream PR remains the authoritative gate for everything the hook would have run.
 - **Never** apply migrations to prod or run anything that touches the live DB.
-- **Never** merge a PR. The user merges.
+- **Never** merge a PR directly. Merging is delegated to `.github/workflows/auto-merge.yml` (60-min quiet window + STOP escape hatch + label gates). Loop opens PRs READY; `auto-merge-label.js` decides `auto-merge-safe` vs `needs-human-review` by changed paths; user-driven label swap is what releases a PR for auto-merge.
 - **Never** start work without first running phase 2 (CI rescue check). A red CI on an earlier stream blocks new work on that stream.
 - **Never** commit a red iteration. Revert and surface.
 - **Never** trust the audit's claims without the verification gate. The audit had at least one false positive (F-01).
