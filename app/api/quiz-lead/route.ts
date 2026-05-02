@@ -8,19 +8,41 @@ import { recordQuizSubmission } from '@/lib/quiz-history';
 import { createClient } from '@/lib/supabase/server';
 
 /**
- * Body schema. Mirrors the previous `body as { ... }` cast — every field is
- * optional and permissive. Strict semantic validation (email format, disposable
- * domains) lives below; this schema only types the shape and silently coerces
- * non-array `answers` to undefined, preserving the route's pre-existing
- * `Array.isArray(answers) ? answers.slice(...) : []` fallback.
+ * Body schema. The legacy `answers` (string[]) is preserved for
+ * back-compat; new submissions also send `unifiedAnswers` (the structured
+ * object from app/quiz/page.tsx) so we can persist queryable columns —
+ * goal, mode, experience, amount, priority, complexity, advisor_type,
+ * property_sub, location, investor_country, visa_status — for downstream
+ * surfaces (drip cron variants, /best pre-filter, /compare prefill).
+ *
+ * Strict semantic validation (email format, disposable domains) lives
+ * below; this schema only types the shape.
  */
+const UnifiedAnswersSchema = z.object({
+  location: z.string().max(50).optional(),
+  goal: z.string().max(50).optional(),
+  mode: z.string().max(50).optional(),
+  experience: z.string().max(50).optional(),
+  complexity: z.string().max(50).optional(),
+  amount: z.string().max(50).optional(),
+  priority: z.string().max(50).optional(),
+  advisor_type: z.string().max(50).optional(),
+  property_sub: z.string().max(50).optional(),
+  investor_country: z.string().max(50).optional(),
+  visa_status: z.string().max(50).optional(),
+  investor_goal_intl: z.string().max(50).optional(),
+}).optional();
+
 const QuizLeadSchema = z.object({
   email: z.string().optional(),
   name: z.string().optional(),
   answers: z.array(z.string()).optional().catch(undefined),
+  unifiedAnswers: UnifiedAnswersSchema,
   top_match_slug: z.string().optional(),
   session_id: z.string().optional(),
 });
+
+type UnifiedAnswers = z.infer<typeof UnifiedAnswersSchema>;
 
 const log = logger('quiz-lead');
 
@@ -44,6 +66,32 @@ const INTEREST_MAP: Record<string, string> = {
   income: 'Dividend Income',
   grow: 'Long-Term Growth',
 };
+
+/**
+ * Infer the vertical for downstream cohort routing (drip-template
+ * selection, /best landing personalisation). Reads the structured answers
+ * and returns one of: super, property, crypto, cfd, robo, advisor,
+ * international, home, shares (default).
+ *
+ * Order matters — "international" wins over goal-specific verticals
+ * because international users go through the advisor track regardless of
+ * their goal. Then advisor (mode=help) wins over DIY goal verticals
+ * because advisor users get advisor-flavoured drips.
+ */
+function inferVertical(a: UnifiedAnswers | undefined): string | null {
+  if (!a) return null;
+  const intl = a.location === 'international' || a.location === 'expat';
+  if (intl) return 'international';
+  if (a.mode === 'help' || a.goal === 'help') return 'advisor';
+  if (a.goal === 'home') return 'home';
+  if (a.goal === 'super' || a.property_sub === 'property-super') return 'super';
+  if (a.goal === 'property') return 'property';
+  if (a.goal === 'crypto') return 'crypto';
+  if (a.goal === 'trade') return 'cfd';
+  if (a.goal === 'automate') return 'robo';
+  if (a.goal === 'grow' || a.goal === 'income') return 'shares';
+  return null;
+}
 
 /** Escape HTML special chars to prevent XSS in email templates */
 function escapeHtml(str: string): string {
@@ -236,7 +284,7 @@ export async function POST(request: NextRequest) {
     // the existing 400 envelope so client error rendering is unchanged.
     return NextResponse.json({ error: 'Valid email required' }, { status: 400 });
   }
-  const { email, name, answers, top_match_slug, session_id } = parsed.data;
+  const { email, name, answers, unifiedAnswers, top_match_slug, session_id } = parsed.data;
   // Validate email
   if (!email || !isValidEmail(email)) {
     return NextResponse.json({ error: 'Valid email required' }, { status: 400 });
@@ -262,7 +310,17 @@ export async function POST(request: NextRequest) {
   const investmentRange = safeAnswers.find(a => INVESTMENT_MAP[a]) || null;
   const tradingInterest = safeAnswers.find(a => INTEREST_MAP[a]) || null;
 
-  // Insert into quiz_leads (quiz_leads schema has no UTM columns — tracked via email_captures)
+  // Compute the inferred vertical from the structured answers — falls back
+  // to tradingInterest only when unifiedAnswers wasn't sent (legacy clients).
+  const inferredVertical = inferVertical(unifiedAnswers) ?? (tradingInterest ?? null);
+
+  // Insert into quiz_leads. New structured columns (goal, mode,
+  // experience, amount, priority, complexity, advisor_type, property_sub,
+  // location, investor_country, visa_status, investor_goal_intl) mirror
+  // UnifiedAnswers from app/quiz/page.tsx and were added in
+  // 20260502152846_quiz_leads_structured_answers. Legacy experience_level
+  // / investment_range / trading_interest stay for back-compat with admin
+  // pages that already read them.
   const { error: leadError } = await supabase.from('quiz_leads').insert({
     email: sanitizedEmail,
     name: sanitizedName,
@@ -271,6 +329,19 @@ export async function POST(request: NextRequest) {
     experience_level: experienceLevel ? EXPERIENCE_MAP[experienceLevel] : null,
     investment_range: investmentRange ? INVESTMENT_MAP[investmentRange] : null,
     trading_interest: tradingInterest ? INTEREST_MAP[tradingInterest] : null,
+    inferred_vertical: inferredVertical,
+    goal: unifiedAnswers?.goal ?? null,
+    mode: unifiedAnswers?.mode ?? null,
+    experience: unifiedAnswers?.experience ?? null,
+    amount: unifiedAnswers?.amount ?? null,
+    priority: unifiedAnswers?.priority ?? null,
+    complexity: unifiedAnswers?.complexity ?? null,
+    advisor_type: unifiedAnswers?.advisor_type ?? null,
+    property_sub: unifiedAnswers?.property_sub ?? null,
+    location: unifiedAnswers?.location ?? null,
+    investor_country: unifiedAnswers?.investor_country ?? null,
+    visa_status: unifiedAnswers?.visa_status ?? null,
+    investor_goal_intl: unifiedAnswers?.investor_goal_intl ?? null,
   });
 
   if (leadError) {
