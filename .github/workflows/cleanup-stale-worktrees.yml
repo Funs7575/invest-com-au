@@ -1,0 +1,114 @@
+name: Cleanup stale agent worktrees
+
+# The audit-remediation cloud loop and the /audit-remediation-parallel
+# slash command create git worktrees under .claude/worktrees/agent-*
+# while running. They're meant to be cleaned up at end of each fire,
+# but in practice many leak — agents that crashed, were preempted, or
+# hit a STATUS: LOCKED exit before reaching cleanup. Observed
+# 2026-05-02: 25 stale worktrees totalling 690 MB, all with branches
+# either deleted from origin or whose PRs had merged days earlier.
+#
+# Stale worktrees aren't just disk cost — they pollute repository-wide
+# greps (e.g. "find .claude/commands -name '*.md'" returns 14 stale
+# copies of the same command file), which adds noise to every cloud
+# fire that searches for files.
+#
+# This workflow runs every 6 hours and prunes worktrees whose branches
+# match either of these "definitely safe to remove" conditions:
+#   1. The branch no longer exists on origin (was deleted post-merge)
+#   2. The branch has a merged PR
+#
+# Worktrees with active branches (open PRs, branches still on origin
+# without a PR yet) are left alone. The loop's own cleanup logic
+# remains responsible for those during normal operation.
+#
+# Runs on schedule + manual workflow_dispatch. Push events do not
+# trigger it (the loop's own cleanup handles in-progress fires).
+
+on:
+  schedule:
+    # Every 6 hours: 02:00, 08:00, 14:00, 20:00 UTC. Off-peak relative
+    # to the audit loop's hourly fires (15-min spacing means a 6-hour
+    # gap is enough for any in-progress fire to finish before this
+    # workflow tries to prune).
+    - cron: "0 2,8,14,20 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cleanup-stale-worktrees
+  cancel-in-progress: false
+
+jobs:
+  prune:
+    name: Prune stale .claude/worktrees/agent-*
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Identify stale worktrees + remove
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          if ! git worktree list 2>/dev/null | grep -q "agent-"; then
+            echo "No agent worktrees found — nothing to prune."
+            exit 0
+          fi
+
+          # Collect all branches currently on origin
+          git ls-remote --heads origin 2>/dev/null \
+            | awk '{print $2}' \
+            | sed 's|refs/heads/||' \
+            > /tmp/origin_branches.txt
+
+          stale_count=0
+          kept_count=0
+
+          # Each line: "<path>  <sha> [<branch>]"
+          while IFS= read -r line; do
+            wt_path=$(echo "$line" | awk '{print $1}')
+            wt_branch=$(echo "$line" | sed -n 's/.*\[\(.*\)\].*/\1/p')
+
+            if [ -z "$wt_branch" ] || [[ "$wt_path" != *"/agent-"* ]]; then
+              continue
+            fi
+
+            # Decision 1: branch exists on origin?
+            if grep -Fxq "$wt_branch" /tmp/origin_branches.txt; then
+              # Decision 2: PR merged?
+              merged=$(gh pr list --head "$wt_branch" --state merged --json number --jq '.[0].number' 2>/dev/null || echo "")
+              open=$(gh pr list --head "$wt_branch" --state open --json number --jq '.[0].number' 2>/dev/null || echo "")
+
+              if [ -n "$open" ]; then
+                echo "KEEP   $wt_branch (open PR #$open)"
+                kept_count=$((kept_count + 1))
+                continue
+              fi
+              if [ -n "$merged" ]; then
+                echo "PRUNE  $wt_branch (PR #$merged merged)"
+              else
+                echo "KEEP   $wt_branch (on origin, no PR yet — branch may be active)"
+                kept_count=$((kept_count + 1))
+                continue
+              fi
+            else
+              echo "PRUNE  $wt_branch (branch deleted from origin)"
+            fi
+
+            git worktree unlock "$wt_path" 2>/dev/null || true
+            git worktree remove --force "$wt_path" 2>/dev/null || true
+            stale_count=$((stale_count + 1))
+          done < <(git worktree list)
+
+          echo ""
+          echo "Pruned: $stale_count   Kept: $kept_count"
+
+          # Final pass to clean any orphaned admin records
+          git worktree prune -v 2>&1 | head -5 || true

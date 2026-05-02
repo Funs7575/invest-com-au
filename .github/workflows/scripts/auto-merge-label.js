@@ -365,6 +365,44 @@ async function run({ github, context, core }) {
     return;
   }
 
+  // 2a. Generalised deletion guard — added 2026-05-02 to extend the
+  // test-only guard above. Any tracked file removal is a meaningful
+  // signal: deleted route handlers, deleted migrations, deleted lib
+  // helpers, deleted seed scripts, deleted content. The SAFE allowlist
+  // patterns (page.tsx / seed scripts / content / docs / hub
+  // components / tests) all imply additions or modifications, not
+  // removals. A path-allowlist match on a deletion is a coincidence,
+  // not a safety guarantee. Force human review on any removal.
+  const removals = files.filter((f) => f.status === "removed");
+  if (removals.length > 0) {
+    core.info(
+      `file removals: ${removals.map((f) => f.filename).slice(0, 10).join(", ")}`,
+    );
+    await applyLabels({ github, context, number, decision: "review" });
+    return;
+  }
+
+  // 2b. LOC-threshold guard — added 2026-05-02. Even when every path
+  // matches the SAFE allowlist, a >1500-LOC PR is too large to be
+  // squash-merged unreviewed: a massive page.tsx refactor, a large
+  // seed script overhaul, or a wholesale content migration can break
+  // user-visible behaviour in ways the path classifier can't see. The
+  // 1500 floor is calibrated above typical loop-output sizes (most
+  // audit-loop test backfills land at 50–700 LOC; the largest
+  // observed in the queue is ~700 for a 29-test batch).
+  const totalAdditions = files.reduce(
+    (sum, f) => sum + (typeof f.additions === "number" ? f.additions : 0),
+    0,
+  );
+  const LARGE_PR_LOC_THRESHOLD = 1500;
+  if (totalAdditions > LARGE_PR_LOC_THRESHOLD) {
+    core.info(
+      `large PR: ${totalAdditions} additions across ${files.length} files (threshold ${LARGE_PR_LOC_THRESHOLD})`,
+    );
+    await applyLabels({ github, context, number, decision: "review" });
+    return;
+  }
+
   // 3. Allowlist check — every file must match a SAFE pattern.
   const unmatched = files.filter((f) => !isSafePath(f.filename));
   if (unmatched.length > 0) {
