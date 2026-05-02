@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import type { InvestmentListing } from "@/lib/types";
 import { listingUrl } from "@/lib/listing-url";
+import { getListingHeroImage } from "@/lib/listing-vertical-images";
 import EnquireButton from "@/components/marketplace/EnquireButton";
 
 function formatLocation(state?: string, city?: string): string | null {
@@ -54,7 +55,9 @@ export default function InvestListingCard({
   const metricEntries = listing.key_metrics
     ? Object.entries(listing.key_metrics).slice(0, 3)
     : [];
-  const heroImage = listing.images?.[0];
+  const dbHeroImage = listing.images?.[0];
+  const heroImage = getListingHeroImage(listing.vertical, listing.id, listing.images);
+  const heroIsSeed = !dbHeroImage;
   const fallbackGradient = VERTICAL_FALLBACK_GRADIENT[listing.vertical] ?? "from-slate-100 to-slate-50";
   const fallbackIcon = VERTICAL_ICON[listing.vertical] ?? "📊";
 
@@ -63,17 +66,27 @@ export default function InvestListingCard({
       href={listingUrl(listing)}
       className="group relative block overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm hover:shadow-xl hover:border-slate-300 transition-all duration-300 hover:-translate-y-0.5"
     >
-      {/* Hero image / fallback */}
+      {/* Hero image — DB image when present, otherwise a deterministic
+          seed image from the listing's vertical. The gradient + emoji
+          path remains as a final guard if the seed pool is exhausted. */}
       <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
         {heroImage ? (
-          <Image
-            src={heroImage}
-            alt={listing.title}
-            fill
-            sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
-            loading="lazy"
-          />
+          <>
+            <Image
+              src={heroImage}
+              alt={listing.title}
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
+              loading="lazy"
+            />
+            {heroIsSeed && (
+              <div
+                aria-hidden
+                className={`absolute inset-0 bg-gradient-to-br ${fallbackGradient} opacity-30 mix-blend-multiply pointer-events-none`}
+              />
+            )}
+          </>
         ) : (
           <div className={`absolute inset-0 bg-gradient-to-br ${fallbackGradient} flex items-center justify-center`}>
             <div className="text-6xl opacity-40 group-hover:scale-110 transition-transform duration-500">
