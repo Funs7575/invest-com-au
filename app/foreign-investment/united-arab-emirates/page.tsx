@@ -5,6 +5,7 @@ import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import { FOREIGN_INVESTOR_GENERAL_DISCLAIMER, DTA_DISCLAIMER } from "@/lib/compliance";
 import type { Broker } from "@/lib/types";
 import ForeignInvestmentNav from "../ForeignInvestmentNav";
+import RememberCountry from "@/components/foreign-investment/RememberCountry";
 import SectionHeading from "@/components/SectionHeading";
 
 export const metadata: Metadata = {
@@ -64,6 +65,7 @@ export default async function UAEInvestingPage() {
         }}
       />
 
+      <RememberCountry code="ae" />
       <ForeignInvestmentNav current="/foreign-investment/united-arab-emirates" />
 
       {/* ── Hero ── */}

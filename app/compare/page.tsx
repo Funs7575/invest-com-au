@@ -6,6 +6,7 @@ import CompareNav from "./CompareNav";
 import { absoluteUrl, UPDATED_LABEL } from "@/lib/seo";
 import ComplianceFooter from "@/components/ComplianceFooter";
 import HomeToolsStrip from "@/components/HomeToolsStrip";
+import IntentCountryBadge from "@/components/foreign-investment/IntentCountryBadge";
 
 export const metadata = {
   title: "Compare Investing Platforms — Fees & Features",
@@ -150,6 +151,7 @@ export default function ComparePage() {
       <Suspense><CompareNav /></Suspense>
       {/* Server-rendered H1 for crawlers that don't execute client JS — streams immediately */}
       <div className="container-custom pt-5 md:pt-10">
+        <div className="mb-3"><IntentCountryBadge /></div>
         <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
           Compare Australian Investment Platforms
         </h1>
