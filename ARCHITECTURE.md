@@ -178,6 +178,78 @@ Tables fall into roughly four classes:
 - **Cron**: every cron run is logged to `cron_run_log` via
   `wrapCronHandler`. Stale crons surface via the heartbeat check.
 
+## Failure modes
+
+What can break, how it manifests, and what to do. Each entry pairs the
+detection signal (so you notice fast) with the response (so you can act
+fast). Runbooks live in `docs/runbooks/` — always link from here.
+
+| Component fails | User-visible symptom | Detection signal | Response |
+|---|---|---|---|
+| **Supabase Postgres outage** | Pages return 500; quiz / submit forms hang | Sentry error rate > 5% on `from()` calls; BetterStack `/api/health` red | Vercel auto-retries; if sustained > 5 min, post status banner via `STATUS_BANNER` env. Runbook: `docs/runbooks/database-outage.md` |
+| **RLS policy regression** (new policy denies what should be allowed) | One user role sees empty pages where they should see data | `pg_stat_statements` shows zero-row returns for previously productive queries; user-reported "where did my data go?" | Roll back the migration (forward-only — write a new "restore" migration; never `DROP POLICY` blindly). Runbook: `docs/runbooks/rls-emergency-rollback.md` |
+| **Cron route fails silently** | Drip emails / metric snapshots stop firing | `cron_run_log` heartbeat > 2× expected interval; BetterStack heartbeat alert | Inspect last `cron_run_log.error_msg`; common cause is third-party (Resend / Stripe) auth rotation |
+| **Stripe webhook duplicate** | User charged twice OR pricing updated twice | Stripe dashboard duplicate webhook delivery; `stripe_webhook_idempotency` table shows duplicate event_id | Idempotency table prevents double-processing — check it actually rejected. If not, see `docs/runbooks/stripe-incident.md` |
+| **CSP nonce regression** | Inline scripts blocked; client-side hydration fails on key pages | Sentry `Refused to execute inline script` errors spike; pages render but feel "stuck" | Verify `proxy.ts` is generating per-request nonces; check that all `<script>` tags use the nonce or are hashed |
+| **Rate limiter fails open** (DB-backed; if DB is slow, requests pass through) | Spam / abuse on public endpoints | `rate_limits` insert latency > 500ms in Sentry; abuse signals (lead spam) | Manually flip `RATE_LIMIT_HARD_FAIL=true` env to fail-closed during incident |
+| **Service-role key leak** | Anything — RLS bypassed for the leaker | gitleaks scan in CI; leaked-keys monitor on supabase.com | **P0** — rotate immediately (Supabase dashboard → API → rotate `service_role`); update `SUPABASE_SERVICE_ROLE_KEY` in Vercel; force-redeploy |
+| **Sentry rate-limit hit** | Errors not captured during spike (you only see the *start* of the incident) | Sentry dashboard "rate limit reached" banner; gap in error graph | Increase plan tier OR add sampling. Default 10% trace sampling; emergency: drop to 1% via `SENTRY_TRACES_SAMPLE_RATE` |
+
+## Capacity planning
+
+Where we are now and the signals that say "time to invest in scaling".
+
+### Current scale (snapshot)
+
+| Dimension | Today | Next plateau (when to invest) |
+|---|---|---|
+| Postgres rows | ~1M across 138 tables | 50M total (consider read replica) |
+| Daily uniques | TBD — Vercel Analytics | 100k/day (consider edge caching aggressively) |
+| API requests | bounded by Vercel function invocations | 1M/day (consider Edge Functions for hot paths) |
+| Cron jobs | 18 scheduled | 30+ (consider Inngest or Trigger.dev for orchestration) |
+| Test suite | 6,109 unit/integration tests, ~7 min | 15k tests (must shard across runners or runtime > 15 min) |
+| `lib/database.types.ts` | ~13,300 lines, 138 tables | 200 tables (consider splitting per-domain types files) |
+
+### Signals to watch
+
+- **Vercel function invocations** — `> $20/day` on the Vercel dashboard means we're at the free-tier bend; budget shifts from $0 to $200/mo at $20/day average.
+- **Supabase egress** — `> 100 GB/mo` triggers overage charges. Watch under Settings → Usage.
+- **CI minutes** — GitHub Actions free tier = 2,000 min/mo for private repos. We currently burn ~50 min/PR × 30 PRs/day = far over. We're either on a paid plan or this is a constraint.
+- **Sentry events** — free tier = 5k errors/mo. With 10% sampling we should be safe; **review monthly**.
+
+### Migration triggers
+
+Explicit "we'll fix this when X" items. Each entry is a load-bearing
+temporary decision with the trigger that makes it not-temporary:
+
+- **`lib/database.types.ts` is one giant file** → split into per-domain
+  files (`types/auth.ts`, `types/marketplace.ts`, etc.) when it crosses
+  20,000 lines or when CI type-check exceeds 90 s.
+- **All API routes are in a single Vercel project** → split into a
+  marketplace project + an admin project when admin work starts being
+  blocked by marketplace deploys, or when total functions > 100.
+- **Cron jobs hard-coded in `vercel.json`** → migrate to Inngest /
+  Trigger.dev when we cross 30 cron jobs OR when one job's runtime
+  exceeds 5 min (Vercel cron limit).
+- **Test suite runs on a single runner** → shard across 4 runners when
+  total runtime exceeds 12 min on PRs.
+- **Single Supabase project for prod + staging** → split when staging
+  testing requires schema divergence (e.g. testing a destructive
+  migration in isolation).
+- **Browser-side admin pages** (any remaining after C-stream completes)
+  → server-side render with admin auth gate; no admin UI should rely on
+  `service_role` key being available client-side.
+- **Founder is on-call** → add a second rotation member when MTTR for
+  P1 incidents exceeds 4 hours OR when more than 2 incidents/week
+  require human response.
+- **Audit remediation is the loop's only workload** → add a feature
+  loop / retention loop / SEO loop once the audit queue depth drops
+  under 10 pending items.
+
+When you hit a trigger, file an issue tagged `tech-debt` and link back
+to this section. Don't silently breach a trigger — it's there because
+the future will hurt without it.
+
 ## Things to know before changing
 
 - **Migrations are forward-only on production.** There is no
