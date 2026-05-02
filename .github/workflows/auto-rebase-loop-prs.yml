@@ -1,0 +1,128 @@
+name: Auto-rebase audit-remediation loop PRs
+
+# When main moves, automatically rebase every open PR whose head branch
+# starts with claude/audit-remediation/ onto the new main and force-push.
+# Why:
+#   - GitHub does NOT re-run CI when the base branch moves; only when the
+#     PR branch itself updates. Without this, PRs sit at "stale CI" that
+#     was run against an outdated main, and the audit-remediation loop
+#     wastes iterations doing "stale-base fix" docs commits that don't
+#     actually rebase the branch.
+#   - Lesson from 2026-05-01: ~8 "CI-rescue iter N" docs commits chased
+#     stale-base PRs that would have unblocked themselves with a single
+#     rebase.
+#
+# Scope: ONLY claude/audit-remediation/* branches. Human-authored PRs are
+# left alone — force-pushing those would be hostile.
+#
+# Safety:
+#   - --force-with-lease (not --force) so a concurrent push from anyone
+#     else aborts the rebase rather than overwriting their work.
+#   - On rebase conflict, abort and post a comment on the PR instead of
+#     fighting through it. Conflicts mean a human (or the loop) needs to
+#     resolve manually.
+#   - paths-ignore matches CI's so docs-only main commits don't trigger
+#     a useless rebase storm.
+#   - Concurrency group serialises rebases so two main commits can't
+#     race against each other on the same PR.
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "docs/audits/**"
+      - "LOOP_DONE"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: auto-rebase-loop-prs
+  cancel-in-progress: false
+
+jobs:
+  rebase:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: ${{ !contains(github.event.head_commit.message, '[skip-rebase]') }}
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Rebase loop PRs onto main
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -eu
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # Pull every open PR whose head ref looks like a loop branch.
+          # Drafts are included intentionally — the loop opens drafts and
+          # marks them ready later, and stale-base on a draft is the same
+          # problem as stale-base on a ready PR.
+          mapfile -t prs < <(gh pr list \
+            --state open \
+            --limit 100 \
+            --json number,headRefName \
+            --jq '.[] | select(.headRefName | startswith("claude/audit-remediation/")) | .number')
+
+          if [ "${#prs[@]}" -eq 0 ]; then
+            echo "No claude/audit-remediation/* PRs open — nothing to rebase."
+            exit 0
+          fi
+
+          echo "Found ${#prs[@]} loop PR(s) to consider: ${prs[*]}"
+
+          rebased=0
+          conflicted=0
+          skipped=0
+
+          for pr in "${prs[@]}"; do
+            head=$(gh pr view "$pr" --json headRefName --jq '.headRefName')
+            echo ""
+            echo "=== PR #$pr · branch=$head ==="
+
+            # Fetch the branch fresh in case the local clone doesn't have it.
+            if ! git fetch origin "$head:$head" 2>/dev/null; then
+              echo "  ⚠ couldn't fetch branch — skipping"
+              skipped=$((skipped + 1))
+              continue
+            fi
+
+            git checkout "$head"
+
+            # Already up-to-date? Skip — saves a no-op force-push that
+            # would still trigger CI re-run for nothing.
+            if git merge-base --is-ancestor origin/main HEAD; then
+              echo "  ✓ already up-to-date with main — skipping"
+              skipped=$((skipped + 1))
+              continue
+            fi
+
+            # Try the rebase. On conflict, abort and comment.
+            if git rebase origin/main; then
+              if git push --force-with-lease origin "$head"; then
+                echo "  ✅ rebased + pushed PR #$pr"
+                rebased=$((rebased + 1))
+              else
+                echo "  ⚠ force-push rejected (lease lost) — somebody pushed concurrently; skipping"
+                git rebase --abort 2>/dev/null || true
+                skipped=$((skipped + 1))
+              fi
+            else
+              echo "  ❌ rebase conflict on PR #$pr — aborting + commenting"
+              git rebase --abort
+              gh pr comment "$pr" --body "🔄 Auto-rebase against latest main hit a conflict. The branch needs manual rebase or the loop's next CI-rescue iteration to resolve. (This comment is from \`auto-rebase-loop-prs.yml\`.)"
+              conflicted=$((conflicted + 1))
+            fi
+
+            git checkout main 2>/dev/null || true
+          done
+
+          echo ""
+          echo "Summary: rebased=${rebased} conflicted=${conflicted} skipped=${skipped} total=${#prs[@]}"

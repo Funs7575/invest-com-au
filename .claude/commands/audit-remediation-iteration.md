@@ -77,6 +77,35 @@ A live-DB schema change between iterations leaves `lib/database.types.ts` stale 
 
 If `lib/database.types.ts` is stale relative to live, regenerate, commit `chore(db): regenerate database.types.ts (auto-rescue)` direct to main, push. This is a one-line idempotent fix that benefits ALL open PRs simultaneously. Skip and proceed if the regen produces an empty diff.
 
+### Phase 1.7 — Main-CI preflight (added 2026-05-02 after the listings/types/admin-mock fire)
+
+Before opening any new stream PRs, check whether **main itself** is currently green. If main's last CI is failing, every PR opened against it inherits the failure — wasting iterations on bogus "CI-rescue" cycles and triggering spurious auto-revert PRs against unrelated commits. Lesson from 2026-05-01: the loop did 8+ "CI-rescue iter N" docs commits chasing a failure on main that none of the in-flight PRs caused.
+
+```bash
+# Latest main CI run
+main_ci_conclusion=$(gh run list --branch main --workflow CI --limit 1 \
+  --json conclusion,status \
+  --jq '.[0] | .conclusion // .status // "missing"')
+```
+
+Decision tree:
+
+- **`success`, `pending`, or `in_progress`** → main is healthy or being verified. Proceed to Phase 2.
+- **`failure`** → main is broken. **Do not open or update stream PRs this iteration.** Instead:
+  1. Fetch the failing job log: `gh run view --job <id> --log-failed`. Extract the failing test files / build step.
+  2. Switch to a fresh branch: `git checkout -b fix/main-rescue-<short-summary>`.
+  3. Reproduce the failure locally: `npx vitest run <failing-test-files>` or `npx tsc --noEmit` for type errors. **Don't proceed without a local repro.** A test that fails on CI but passes locally is environment-specific and needs a different fix path — surface to Blocked.
+  4. Patch the root cause (typical patterns observed: missing `vi.mock("@/lib/supabase/admin", …)` after a route was refactored to use the admin client; `lib/database.types.ts` drifted from migrations; stale advisor-auth mocks).
+  5. Verify locally green, commit (`fix(test+types): unblock main CI — <one-line summary>`), push, open PR with title `fix: unblock main CI — <summary>`.
+  6. Update the queue's "In flight" section with a `MAIN-RESCUE` row pointing to the new PR.
+  7. Print `STATUS: MAIN-RESCUE · pr=#<NNN>` and exit.
+- **`cancelled`** → likely concurrency cancellation from rapid-fire main commits, not a real failure. Look at the second-most-recent run (`--limit 2` and pick the older one). Treat that as the verdict.
+- **`missing`** → no CI run found yet (e.g., main was just pushed and CI hasn't started). Wait the loop's normal cadence and re-check on the next iteration; proceed cautiously to Phase 2.
+
+**Why this is Phase 1.7, not part of Phase 2:** Phase 2 rescues *stream PR* failures by editing the stream branch. Phase 1.7 rescues *main itself*, which is a different code path (different branch, different PR). Mixing them breaks the "one stream per iteration" invariant.
+
+**Time budget:** if the rescue isn't tractable in ~30 minutes of investigation, surface to Blocked with the failure log and exit `STATUS: BLOCKED`. The cloud loop's per-fire budget is bounded; main-rescue work that needs deep human investigation belongs to a human session.
+
 ### Phase 2 — CI rescue check
 
 For each stream in the queue's "In flight" table that has a PR number:
