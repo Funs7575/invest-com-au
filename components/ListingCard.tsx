@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import Icon from "@/components/Icon";
+import { getListingHeroImage } from "@/lib/listing-vertical-images";
 
 /**
  * Loose, tolerant type for ListingCard — accepts both the strict
@@ -202,21 +203,35 @@ export default function ListingCard({ listing }: ListingCardProps) {
 
   return (
     <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col">
-      {/* Image / Gradient placeholder */}
+      {/* Image — DB image when present, otherwise a deterministic seed
+          image keyed off the listing's vertical + id. The gradient + icon
+          path is preserved as a final guard. */}
       <Link href={detailPath} className="block relative aspect-[16/9] overflow-hidden">
-        {listing.images && listing.images.length > 0 ? (
-          <Image
-            src={listing.images[0]}
-            alt={listing.title}
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          />
-        ) : (
-          <div className={`w-full h-full bg-gradient-to-br ${gradient} flex items-center justify-center`}>
-            <Icon name={VERTICAL_ICONS[listing.vertical] ?? "briefcase"} size={32} className="text-white/30" />
-          </div>
-        )}
+        {(() => {
+          const commodityKey =
+            listing.sub_category ??
+            (listing.key_metrics?.commodity as string | undefined) ??
+            null;
+          const heroImage = getListingHeroImage(
+            listing.vertical,
+            listing.id,
+            listing.images,
+            commodityKey,
+          );
+          return heroImage ? (
+            <Image
+              src={heroImage}
+              alt={listing.title}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            />
+          ) : (
+            <div className={`w-full h-full bg-gradient-to-br ${gradient} flex items-center justify-center`}>
+              <Icon name={VERTICAL_ICONS[listing.vertical] ?? "briefcase"} size={32} className="text-white/30" />
+            </div>
+          );
+        })()}
         {/* Dark overlay for text legibility */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
