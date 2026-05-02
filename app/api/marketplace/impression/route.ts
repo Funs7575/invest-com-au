@@ -4,7 +4,7 @@ import { recordImpression } from "@/lib/marketplace/allocation";
 import { createRateLimiter } from "@/lib/rate-limiter";
 
 const ImpressionBody = z.object({
-  campaign_id: z.string().min(1),
+  campaign_id: z.coerce.number().int().positive(),
   broker_slug: z.string().min(1),
   page: z.string().optional(),
   placement: z.string().optional(),
