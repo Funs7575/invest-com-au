@@ -984,7 +984,14 @@ export type ProfessionalType =
   // off-the-plan, and SMSF property work. See
   // supabase/migrations/20260501_add_property_advisor_types.sql.
   | 'conveyancer'
-  | 'property_lawyer';
+  | 'property_lawyer'
+  // New in 20260502 — collectibles & alternatives advisor surface.
+  // See supabase/migrations/20260502_collectibles_advisor_types.sql.
+  | 'classic_car_specialist'
+  | 'luxury_asset_broker'
+  | 'wine_advisor'
+  | 'art_advisor'
+  | 'royalty_broker';
 
 export interface Professional {
   id: number;
@@ -1160,6 +1167,11 @@ export const PROFESSIONAL_TYPE_LABELS: Record<ProfessionalType, string> = {
   fund_manager: "Fund Manager",
   conveyancer: "Conveyancer",
   property_lawyer: "Property Lawyer",
+  classic_car_specialist: "Classic Car Specialist",
+  luxury_asset_broker: "Luxury Asset Broker",
+  wine_advisor: "Wine Advisor",
+  art_advisor: "Art Advisor",
+  royalty_broker: "Royalty Broker",
 };
 
 export const PROFESSIONAL_TYPE_ICONS: Record<ProfessionalType, string> = {
@@ -1196,6 +1208,11 @@ export const PROFESSIONAL_TYPE_ICONS: Record<ProfessionalType, string> = {
   fund_manager: "briefcase",
   conveyancer: "file-signature",
   property_lawyer: "gavel",
+  classic_car_specialist: "car",
+  luxury_asset_broker: "watch",
+  wine_advisor: "wine",
+  art_advisor: "palette",
+  royalty_broker: "music",
 };
 
 export const AU_STATES = ["NSW", "VIC", "QLD", "WA", "SA", "TAS", "ACT", "NT"] as const;

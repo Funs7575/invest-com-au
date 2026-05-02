@@ -27,6 +27,7 @@ export const FUND_SUB_TO_CATEGORY: Record<string, string> = {
   cars: "alternatives",
   coins: "alternatives",
   whisky: "alternatives",
+  sports_memorabilia: "alternatives",
   private_credit: "private-credit",
   infrastructure: "infrastructure",
 };
