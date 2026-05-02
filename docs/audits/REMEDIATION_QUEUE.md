@@ -24,7 +24,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 
 | Stream | Branch | PR | Last CI | Items in flight |
 | --- | --- | --- | --- | --- |
-| A | `claude/audit-remediation/a-03-batch-5-revenue-products` (#449) · `a-05-batch1-agent-ops-rls` (#451) · `a-05-batch2-ops-rls` (#452) · `a-05-batch3-crm-rls` (#453) · `a-disc-finance-monthly-view` (#454) · `a-06-batch2-broker-marketplace` (#456) · `a-06-batch3-fee-content-rls` (#457) · `a-03-batch6-consultations-courses` (#461) · `a-03-batch7-content-tables` (#463) | all prior PRs MERGED · #449/#451/#452/#453/#454/#456/#457/#461/#463 OPEN | iter 209 — `6e41e395` (PR #463: A-03 batch 7 — RLS on 4 content tables: team_members, country_investment_profiles, foreign_investment_rates, switch_stories); CI pending | A-01 done (PR #308). A-02 complete (batches 1-6 done). A-03 batches 1-5 done (#351/#401/#413/#415/#417/#449); batch 6 in-progress (#461); batch 7 in-progress (#463 — team_members, country_investment_profiles, foreign_investment_rates, switch_stories). A-04 done (PR #399). A-05 batches 1-3 in-progress (#451/#452/#453). A-DISC-20260501-01 done (PR #454). **A-06 COMPLETE**. A-07 false-positive. Remaining A: A-03 ~1 batch (user_reviews, shared_shortlists, profiles, quiz_leads) + A-05 remaining ops. Discovery: X-DISC-20260502-02 + X-DISC-20260502-03 (admin team-members browser mutations — see X-stream). |
+| A | `claude/audit-remediation/a-03-batch-5-revenue-products` (#449) · `a-05-batch1-agent-ops-rls` (#451) · `a-05-batch2-ops-rls` (#452) · `a-05-batch3-crm-rls` (#453) · `a-disc-finance-monthly-view` (#454) · `a-06-batch2-broker-marketplace` (#456) · `a-06-batch3-fee-content-rls` (#457) · `a-03-batch6-consultations-courses` (#461) · `a-03-batch7-content-tables` (#463) · `a-03-batch8-audit-qa` (#465) | all prior PRs MERGED · #449/#451/#452/#453/#454/#456/#457/#461/#463/#465 OPEN | iter 210 — `91762fe5` (PR #465: A-03 batch 8 — RLS on admin_audit_log, broker_questions, broker_answers); CI pending | A-01 done. A-02 complete (batches 1-6). A-03 batches 1-8 in-progress (#351/#401/#413/#415/#417/#449/#461/#463/#465). A-04 done (PR #399). A-05 batches 1-3 in-progress (#451/#452/#453). A-DISC-20260501-01 done (#454). **A-06 COMPLETE**. A-07 false-positive. Remaining A: A-05 remaining ops batches + A-99 false-positive sweep (data_license_subscribers, foreign_investment_flags, sentiment_signals, trading_*). |
 | B | `claude/audit-remediation/b-08-rls-select-only` (#326) · `b-09a-otp-gate` (#348 draft, parallel-agent) | #326 MERGED 2026-05-01T13:19Z · #348 OPEN (DRAFT, awaiting `LISTING_OWNER_COOKIE_SECRET` env var) | last CI-rescue 2026-05-01T21:43Z (#348) | PR #220 merged (B-01..B-06 done/blocked/FP). B-07 done (`0097159` PR #286). B-08 done — code changes merged via PR #326 commit `476f89f6`. B-09 in-progress on `#348` (parallel-agent, draft). CI-rescue iter 1 (`09c4dfb`, 2026-05-01) merged main before PR #392 types regen — types drift still red. CI-rescue iter 2 (`7da8757e`, 2026-05-01T21:43Z) merged post-#392 main — picked up database.types.ts regen; CI re-run pending. Still DRAFT awaiting `LISTING_OWNER_COOKIE_SECRET` env var (Tier D). |
 | C | all PRs MERGED | #327/#349/#360/#394/#397 all MERGED | last merged 2026-05-02T16:13Z | C-01..C-08 done. C-03 MERGED (#360). C-04 done (#394). C-05 done (#394). C-05b MERGED (#349). C-DISC-20260501-01 MERGED (#397). **Stream C complete.** |
 | D | `claude/audit-remediation/d-route-tests` | #285 MERGED 2026-04-29T10:13Z; supplementary PRs #246/#285/#297/#298 | last merged 2026-04-29T18:53Z | D-01..D-09 done (PR #246). D-10 done (PR #246 — coverage ratchet). D-11 complete (43+ batches, all admin/cron/non-admin routes covered) — merged via PR #285 + supplementary PRs #297/#298. **Stream D complete.** |
@@ -1623,6 +1623,19 @@ Two strategically important surfaces under-served by current nav: (1) investment
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-02 — Forward progress iter 210 (stream A — A-03 batch 8: RLS on admin_audit_log / broker Q&A)
+
+- Phase 0: Lock active (batch mode, iteration 5/5).
+- Phase 1: Synced main. No concurrent changes since iter 209.
+- Phase 2: CI rescue check — #461/#463/#465 all Vercel pending, no failures. No rescues needed.
+- Phase 3: A-stream (slot 12). Next: A-03 batch 8 — admin_audit_log + broker_questions + broker_answers (truly uncovered by main or any in-flight branch). Created branch `claude/audit-remediation/a-03-batch8-audit-qa`.
+- Phase 4: Verified callers — admin_audit_log: all admin pages use browser createClient() for INSERT (admin middleware-protected). broker_questions: anon SELECT on best pages + authenticated INSERT/UPDATE via server createClient(). broker_answers: anon SELECT via JOIN + authenticated INSERT via server createClient(); vote/moderate routes use createAdminClient() (bypass). Prior policy check: broker_questions/answers have DROP POLICY IF EXISTS in 20260309 but no active CREATE POLICY.
+- Phase 5: Wrote `supabase/migrations/20260709_a03_batch8_audit_qa_rls.sql` (197 LOC). G-04 note: vote_count column may be absent — policies avoid referencing it in USING clauses.
+- Phase 6: Committed `91762fe5`, pushed, opened PR #465.
+- Phase 6.5: Discovery — no new issues beyond X-DISC items already logged.
+- STATUS: PROGRESS · stream=A · item=A-03 batch 8 · pr=#465 · commit=91762fe5 · diff=+197 -0 across 1 file
+- BATCH COMPLETE: 5/5 iterations done. Cumulative diff ~1321 LOC across 5 migrations. PRs: #456/#457/#461/#463/#465.
 
 ### 2026-05-02 — Forward progress iter 209 (stream A — A-03 batch 7: RLS on content tables)
 
