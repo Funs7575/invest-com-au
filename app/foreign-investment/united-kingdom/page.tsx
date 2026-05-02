@@ -7,7 +7,10 @@ import type { Broker } from "@/lib/types";
 import ForeignInvestmentNav from "../ForeignInvestmentNav";
 import RememberCountry from "@/components/foreign-investment/RememberCountry";
 import CountryLeadForm from "@/components/foreign-investment/CountryLeadForm";
+import CountryFaqSection from "@/components/foreign-investment/sections/CountryFaqSection";
+import CountryAudiencesSection from "@/components/foreign-investment/sections/CountryAudiencesSection";
 import SectionHeading from "@/components/SectionHeading";
+import { UK_CONFIG } from "@/lib/foreign-investment-country-data";
 
 export const metadata: Metadata = {
   title: "Investing in Australia from the UK — Tax, Property, Pensions & Brokers Guide 2026",
@@ -53,45 +56,6 @@ const TOC_SECTIONS: ReadonlyArray<{ id: string; label: string }> = [
   { id: "faq", label: "FAQ" },
 ];
 
-const UK_FAQ: ReadonlyArray<{ q: string; a: string }> = [
-  {
-    q: "Can I buy ASX shares as a UK resident?",
-    a: "Yes — through a UK-based broker that offers international markets (Interactive Brokers UK, Saxo UK, IG UK), or by opening an account directly with an Australian broker that accepts non-residents. UK ISAs and SIPPs cannot hold ASX-listed shares directly, but they can hold UK-listed dual-ASX listings such as BHP and Rio Tinto.",
-  },
-  {
-    q: "What withholding tax do UK residents pay on Australian dividends?",
-    a: "Under the UK-Australia Double Tax Agreement (effective 2003), unfranked Australian dividends are subject to 15% withholding tax instead of the default 30%. Fully franked dividends carry 0% Australian withholding. Interest is 10%, royalties are 5%. UK residents must still report Australian-sourced income on HMRC Self Assessment SA106, and can claim foreign tax credit relief for Australian withholding paid.",
-  },
-  {
-    q: "Can I transfer my UK pension (SIPP) to an Australian super fund?",
-    a: "Only into an Australian super fund on HMRC's Recognised Overseas Pension Schemes (QROPS) list. Most Australian super funds are not on this list because Australian schemes generally allow access before age 55 in some circumstances. If you transfer to a non-QROPS scheme HMRC may treat the move as an unauthorised payment with up to 55% tax. Specialist UK-AU pension advice is essential before transferring.",
-  },
-  {
-    q: "Can I still buy an established Australian home as a UK resident?",
-    a: "No, not until 31 March 2027 at the earliest. The Foreign Acquisitions & Takeovers Amendment 2024 banned foreign persons (including UK residents) from purchasing established dwellings between April 2025 and March 2027. New properties (off-the-plan, new dwellings) remain available with FIRB approval.",
-  },
-  {
-    q: "Do I owe UK Inheritance Tax on my Australian assets?",
-    a: "If you are UK domiciled (which includes most UK-born and long-term UK residents), HMRC taxes your worldwide estate including Australian property, shares and super — currently at 40% above the £325,000 nil-rate band. Australia has no inheritance tax, so UK domicile creates the entire IHT exposure. The non-domiciled regime, the 7-year rule on lifetime gifts and the deemed-domicile test (15 of last 20 years) all interact with this and need cross-border IHT planning.",
-  },
-  {
-    q: "How do I send money from a UK bank to an Australian broker or property purchase?",
-    a: "Use a specialist money transfer service (Wise, OFX, MoneyMatch) rather than a high-street UK bank — they typically save 2–4% on the FX margin, which on a £100k transfer is £2,000–£4,000. Compare live rates at our /foreign-investment/send-money-australia page before transferring.",
-  },
-  {
-    q: "I am an Australian expat living in the UK — can I keep contributing to my Australian super?",
-    a: "No. Once you become a UK tax resident, you cannot make personal contributions to Australian super (employer contributions tied to Australian-sourced employment income are still possible but rare). Your existing super is preserved and continues to grow but cannot be accessed until preservation age. On returning to Australia, contributions can resume.",
-  },
-  {
-    q: "What is the AUSFTA / UK-Australia FTA, and does it affect investors?",
-    a: "The UK-Australia Free Trade Agreement (in force May 2023) raises the FIRB screening threshold for UK investors in non-sensitive sectors and reduces tariffs. It does not change tax treatment of investment income (DTA still governs that), but it does materially improve direct-investment terms for UK businesses acquiring Australian assets above the screening threshold.",
-  },
-  {
-    q: "Should I hedge GBP/AUD currency exposure on my Australian investments?",
-    a: "GBP/AUD has moved by 30%+ in the last decade, and FX risk often dominates equity returns over short horizons. Many UK investors with substantial Australian holdings use AUD-hedged ETFs on the LSE, or hold a portion of their portfolio in GBP to dampen volatility. This is a planning question — the right answer depends on whether you intend to spend the AUD or convert it back to GBP.",
-  },
-];
-
 async function getNonResidentBrokers(): Promise<Broker[]> {
   try {
     const supabase = await createClient();
@@ -114,7 +78,7 @@ export default async function UKInvestingPage() {
   const faqJsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: UK_FAQ.map((entry) => ({
+    mainEntity: UK_CONFIG.faq.map((entry) => ({
       "@type": "Question",
       name: entry.q,
       acceptedAnswer: { "@type": "Answer", text: entry.a },
@@ -212,38 +176,12 @@ export default async function UKInvestingPage() {
       <div className="container-custom py-8 md:py-12 space-y-12 md:space-y-16">
 
         {/* ── Two audiences ── */}
-        <section id="audiences" className="scroll-mt-20">
-          <SectionHeading
-            eyebrow="Two Audiences"
-            title="Are you a UK resident or an Australian expat in the UK?"
-            sub="The rules differ significantly depending on your tax residency. Skim the side that applies — the rest of the page is structured around both."
+        <div>
+          <CountryAudiencesSection
+            heading={UK_CONFIG.audiences.heading}
+            sub={UK_CONFIG.audiences.sub}
+            cards={UK_CONFIG.audiences.cards}
           />
-          <div className="grid sm:grid-cols-2 gap-5">
-            <div className="border-2 border-blue-200 bg-blue-50/50 rounded-2xl p-5">
-              <h3 className="font-bold text-blue-800 mb-3">🇬🇧 UK resident (not Australian)</h3>
-              <ul className="space-y-2 text-sm text-blue-700">
-                <li>• 15% AU dividend WHT on unfranked dividends (DTA)</li>
-                <li>• Generally exempt from AU CGT on listed shares</li>
-                <li>• FIRB approval required for property; new dwellings only until March 2027</li>
-                <li>• UK CGT may apply on disposal of AU property</li>
-                <li>• Cannot contribute to AU super; cannot access</li>
-                <li>• UK IHT applies to your Australian assets if UK domiciled</li>
-                <li>• Report AU income on HMRC Self Assessment SA106; claim foreign tax credit</li>
-              </ul>
-            </div>
-            <div className="border-2 border-amber-200 bg-amber-50/50 rounded-2xl p-5">
-              <h3 className="font-bold text-amber-800 mb-3">🇦🇺 Australian expat in the UK</h3>
-              <ul className="space-y-2 text-sm text-amber-700">
-                <li>• Likely UK tax resident — UK taxes worldwide income</li>
-                <li>• Lose AU CGT 50% discount and AU tax-free threshold</li>
-                <li>• AU-sourced income still taxable in Australia</li>
-                <li>• No FIRB needed (AU citizen / PR)</li>
-                <li>• AU super preserved; cannot access as non-resident</li>
-                <li>• On return to AU: CGT rebasing on UK assets</li>
-                <li>• DASP available only for ex-temp-visa holders, not citizens/PR</li>
-              </ul>
-            </div>
-          </div>
 
           <CountryLeadForm
             kind="pdf-checklist"
@@ -269,7 +207,7 @@ export default async function UKInvestingPage() {
             ]}
             accent="amber"
           />
-        </section>
+        </div>
 
         {/* ── Property ── */}
         <section id="property" className="scroll-mt-20 space-y-5">
@@ -863,26 +801,12 @@ export default async function UKInvestingPage() {
         )}
 
         {/* ── FAQ ── */}
-        <section id="faq" className="scroll-mt-20">
-          <SectionHeading
-            eyebrow="FAQ"
-            title="Frequently asked — UK investors in Australia"
-            sub="Schema-marked for search visibility. If your question isn't here, the advisor CTA below routes to a UK-AU specialist."
-          />
-          <div className="space-y-3">
-            {UK_FAQ.map((entry) => (
-              <details key={entry.q} className="group border border-slate-200 rounded-xl bg-white">
-                <summary className="cursor-pointer px-5 py-4 font-bold text-sm text-slate-900 flex items-center justify-between gap-3 hover:bg-slate-50">
-                  <span>{entry.q}</span>
-                  <svg className="w-4 h-4 text-slate-400 transition-transform group-open:rotate-180 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </summary>
-                <div className="px-5 pb-4 text-sm text-slate-700 leading-relaxed">{entry.a}</div>
-              </details>
-            ))}
-          </div>
-        </section>
+        <CountryFaqSection
+          eyebrow="FAQ"
+          title={`Frequently asked — ${UK_CONFIG.adjective} investors in Australia`}
+          sub="Schema-marked for search visibility. If your question isn't here, the advisor CTA below routes to a UK-AU specialist."
+          entries={UK_CONFIG.faq}
+        />
 
         {/* ── Advisor anchor CTA ── */}
         <section className="bg-slate-900 text-white rounded-2xl p-6 md:p-8">
