@@ -6,6 +6,7 @@ import { FOREIGN_INVESTOR_GENERAL_DISCLAIMER, DTA_DISCLAIMER } from "@/lib/compl
 import type { Broker } from "@/lib/types";
 import ForeignInvestmentNav from "../ForeignInvestmentNav";
 import RememberCountry from "@/components/foreign-investment/RememberCountry";
+import CountryLeadForm from "@/components/foreign-investment/CountryLeadForm";
 import SectionHeading from "@/components/SectionHeading";
 
 export const metadata: Metadata = {
@@ -243,6 +244,31 @@ export default async function UKInvestingPage() {
               </ul>
             </div>
           </div>
+
+          <CountryLeadForm
+            kind="pdf-checklist"
+            countryCode="uk"
+            title="Free UK→AU 2026 Tax + Property checklist"
+            body="A 12-page PDF covering the UK and AU tax sides side-by-side, FIRB rules, QROPS gotchas, GBP→AUD timing and a UK-domicile IHT cheat sheet. Email it to me, then unsubscribe whenever."
+            ctaLabel="Send me the PDF"
+            successHeading="Sent — check your inbox."
+            successBody="The PDF is in your inbox now. We'll add you to the UK-investor monthly digest with new FIRB updates, broker offers and tax-year reminders. Unsubscribe anytime."
+            extraFields={[
+              {
+                name: "audience",
+                label: "Which describes you?",
+                type: "select",
+                required: false,
+                options: [
+                  { value: "uk-resident", label: "UK resident (not Australian)" },
+                  { value: "aussie-expat-uk", label: "Australian expat in the UK" },
+                  { value: "uk-au-migrating", label: "Moving from UK to Australia" },
+                  { value: "uk-au-returning", label: "Australian moving back from UK" },
+                ],
+              },
+            ]}
+            accent="amber"
+          />
         </section>
 
         {/* ── Property ── */}
@@ -309,6 +335,58 @@ export default async function UKInvestingPage() {
               Speak to a UK-AU property tax specialist &rarr;
             </Link>
           </div>
+
+          <CountryLeadForm
+            kind="property-budget"
+            countryCode="uk"
+            title="FIRB-eligible new properties in your budget"
+            body="Tell us your rough budget and preferred state — we'll send a shortlist of FIRB-eligible new dwellings, off-the-plan releases and commercial property that match. No obligation."
+            ctaLabel="Send me a shortlist"
+            successHeading="Got it."
+            successBody="A specialist will email you a curated shortlist within 1–2 business days. We'll only share your details with the specialist actively matching your budget."
+            extraFields={[
+              {
+                name: "budget_band",
+                label: "Budget (AUD)",
+                type: "select",
+                required: true,
+                options: [
+                  { value: "under-500k",   label: "Under A$500k" },
+                  { value: "500k-1m",      label: "A$500k – A$1m" },
+                  { value: "1m-2m",        label: "A$1m – A$2m" },
+                  { value: "2m-5m",        label: "A$2m – A$5m" },
+                  { value: "5m-plus",      label: "A$5m+" },
+                ],
+              },
+              {
+                name: "state_pref",
+                label: "Preferred state",
+                type: "select",
+                required: false,
+                options: [
+                  { value: "any", label: "Any state" },
+                  { value: "nsw", label: "NSW (Sydney)" },
+                  { value: "vic", label: "VIC (Melbourne)" },
+                  { value: "qld", label: "QLD (Brisbane / Gold Coast)" },
+                  { value: "wa",  label: "WA (Perth)" },
+                  { value: "sa",  label: "SA (Adelaide)" },
+                  { value: "act", label: "ACT (Canberra)" },
+                ],
+              },
+              {
+                name: "timeline",
+                label: "Timeline",
+                type: "select",
+                required: false,
+                options: [
+                  { value: "0-3m",   label: "Buying in 0–3 months" },
+                  { value: "3-12m",  label: "Buying in 3–12 months" },
+                  { value: "12m+",   label: "Researching, 12+ months out" },
+                ],
+              },
+            ]}
+            accent="emerald"
+          />
         </section>
 
         {/* ── Three paths to ASX shares ── */}
@@ -435,6 +513,45 @@ export default async function UKInvestingPage() {
               Compare GBP → AUD live rates &rarr;
             </Link>
           </div>
+
+          <CountryLeadForm
+            kind="fx-quote"
+            countryCode="uk"
+            title="Personalised GBP → AUD quote"
+            body="Tell us your transfer amount and we'll match you with the cheapest specialist provider for your size. Typical saving vs a high-street UK bank: 2–4% (£2,000–£4,000 on a £100k transfer)."
+            ctaLabel="Get a personalised quote"
+            successHeading="On its way."
+            successBody="A specialist provider will email you a live, locked-in rate quote within 1 business day. No commitment until you're happy with the rate."
+            extraFields={[
+              {
+                name: "transfer_amount_gbp",
+                label: "Transfer amount (£)",
+                type: "select",
+                required: true,
+                options: [
+                  { value: "under-10k",  label: "Under £10,000" },
+                  { value: "10k-50k",    label: "£10,000 – £50,000" },
+                  { value: "50k-250k",   label: "£50,000 – £250,000" },
+                  { value: "250k-1m",    label: "£250,000 – £1,000,000" },
+                  { value: "1m-plus",    label: "£1,000,000+" },
+                ],
+              },
+              {
+                name: "transfer_purpose",
+                label: "Purpose",
+                type: "select",
+                required: false,
+                options: [
+                  { value: "broker-funding", label: "Funding an AU broker account" },
+                  { value: "property",       label: "Property purchase / deposit" },
+                  { value: "moving",         label: "Personal move to Australia" },
+                  { value: "ongoing",        label: "Ongoing transfers (rent / salary / pension)" },
+                  { value: "other",          label: "Something else" },
+                ],
+              },
+            ]}
+            accent="blue"
+          />
         </section>
 
         {/* ── DTA + UK tax side ── */}
@@ -541,6 +658,57 @@ export default async function UKInvestingPage() {
               Australian super for non-residents
             </Link>
           </div>
+
+          <CountryLeadForm
+            kind="pension-transfer"
+            countryCode="uk"
+            title="Get 3 quotes from UK-AU pension transfer specialists"
+            body="QROPS-listed schemes only, both UK and AU sides. We'll match you with up to 3 specialists who handle the full process. No fee for the introduction."
+            ctaLabel="Match me with specialists"
+            successHeading="Matching you now."
+            successBody="Up to 3 specialists will email you within 1–2 business days. They'll review your scheme, age, residency and decide whether QROPS is the right call before quoting."
+            extraFields={[
+              {
+                name: "pension_value_gbp",
+                label: "Approximate pension value (£)",
+                type: "select",
+                required: true,
+                options: [
+                  { value: "under-50k",   label: "Under £50,000" },
+                  { value: "50k-150k",    label: "£50,000 – £150,000" },
+                  { value: "150k-500k",   label: "£150,000 – £500,000" },
+                  { value: "500k-1m",     label: "£500,000 – £1,000,000" },
+                  { value: "1m-plus",     label: "£1,000,000+" },
+                ],
+              },
+              {
+                name: "scheme_type",
+                label: "UK pension type",
+                type: "select",
+                required: false,
+                options: [
+                  { value: "sipp",     label: "SIPP / Personal pension" },
+                  { value: "workplace-dc", label: "Workplace defined contribution" },
+                  { value: "db",       label: "Defined benefit (final salary)" },
+                  { value: "mixed",    label: "Mixed / multiple schemes" },
+                  { value: "unsure",   label: "Not sure" },
+                ],
+              },
+              {
+                name: "age_band",
+                label: "Your age",
+                type: "select",
+                required: false,
+                options: [
+                  { value: "under-45", label: "Under 45" },
+                  { value: "45-54",    label: "45–54" },
+                  { value: "55-64",    label: "55–64" },
+                  { value: "65-plus",  label: "65+" },
+                ],
+              },
+            ]}
+            accent="slate"
+          />
         </section>
 
         {/* ── UK IHT ── */}
