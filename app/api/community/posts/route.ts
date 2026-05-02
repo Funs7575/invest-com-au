@@ -102,7 +102,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Failed to create post" }, { status: 500 });
     }
 
-    // Update thread counters: reply_count, last_reply_at, last_reply_by
+    // Update thread counters: reply_count, last_reply_at
     const { data: currentThread } = await admin
       .from("forum_threads")
       .select("reply_count")
@@ -114,7 +114,6 @@ export async function POST(req: NextRequest) {
       .update({
         reply_count: (currentThread?.reply_count ?? 0) + 1,
         last_reply_at: new Date().toISOString(),
-        last_reply_by: displayName,
       })
       .eq("id", thread_id);
 
