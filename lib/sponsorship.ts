@@ -56,19 +56,71 @@ export function boostFeaturedPartner(
 }
 
 /**
+ * Decide whether a sponsored broker is *applicable* to the user's stated
+ * goal. Without this gate, the prior boost logic could swap a sponsored
+ * crypto exchange ahead of a more-relevant super fund or vice-versa, just
+ * because both happened to score in the top 5. The boost should reward
+ * relevant sponsors, not arbitrary ones.
+ *
+ * Conservative — defaults to allow when the goal is generic (grow, automate,
+ * income — these brokers serve broadly), and only gates on goals with a
+ * clear vertical mismatch (crypto, super, property, trade).
+ */
+function isApplicableToBrokerGoal(broker: Broker, goal: string | undefined): boolean {
+  if (!goal) return true;
+  switch (goal) {
+    case "crypto":
+      return broker.is_crypto === true || broker.platform_type === "crypto_exchange";
+    case "super":
+      return (
+        broker.platform_type === "super_fund" ||
+        broker.smsf_support === true
+      );
+    case "property":
+    case "property-reit":
+      return (
+        broker.platform_type === "property_platform" ||
+        // REITs trade as ETFs on a regular share broker — accept share brokers
+        // when the goal is REIT-specific, but not when it's physical property.
+        (goal === "property-reit" && (broker.platform_type === "share_broker" || !broker.platform_type))
+      );
+    case "property-super":
+      return broker.platform_type === "super_fund" || broker.smsf_support === true;
+    case "trade":
+      return (
+        broker.platform_type === "share_broker" ||
+        broker.platform_type === "cfd_forex" ||
+        !broker.platform_type
+      );
+    case "automate":
+      return broker.platform_type === "robo_advisor" || !broker.platform_type;
+    default:
+      // grow, income, generic, etc. — every broker type is applicable
+      return true;
+  }
+}
+
+/**
  * Subtle quiz boost: if a featured_partner scored in positions
  * minRank through maxRank (0-indexed), swap it up by 1 position.
  * Only boosts by 1 slot to maintain trust.
+ *
+ * Vertical-aware: when `goal` is provided (last param to keep this a
+ * non-breaking addition), only boost a sponsored broker that's actually
+ * applicable to the user's stated goal — don't boost a sponsored share
+ * broker over a super fund when the user picked "super". When `goal` is
+ * omitted, falls back to the legacy goal-blind behaviour.
  */
 export function applyQuizSponsorBoost<
   T extends { broker?: Broker | null }
->(items: T[], minRank: number = 1, maxRank: number = 5): T[] {
+>(items: T[], minRank: number = 1, maxRank: number = 5, goal?: string): T[] {
   const result = [...items];
   const idx = result.findIndex(
     (r, i) =>
       i >= minRank &&
       i <= maxRank &&
-      r.broker?.sponsorship_tier === "featured_partner"
+      r.broker?.sponsorship_tier === "featured_partner" &&
+      isApplicableToBrokerGoal(r.broker, goal)
   );
   if (idx === -1 || idx < 1) return result;
   [result[idx - 1], result[idx]] = [result[idx], result[idx - 1]];

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import type { Broker } from "@/lib/types";
@@ -9,6 +9,15 @@ import { createClient } from "@/lib/supabase/client";
 import QuizComparisonTable from "./QuizComparisonTable";
 import AdvisorLocationStep from "./AdvisorLocationStep";
 import AdvisorMatchedScreen, { type MatchedAdvisor } from "./AdvisorMatchedScreen";
+
+// Map the quiz "amount" answer to the AdvisorLocationStep BUDGETS option
+// values so we don't re-ask information the quiz already collected.
+const QUIZ_AMOUNT_TO_BUDGET: Record<string, string> = {
+  small: "under_100k",
+  medium: "under_100k",
+  large: "100k_500k",
+  whale: "500k_2m",
+};
 
 /* ─── Constants ─── */
 const COMBO_MAP: Record<string, { type: string; label: string; reason: string; icon: string }[]> = {
@@ -98,11 +107,17 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
   const [email, setEmail] = useState("");
   const [contactError, setContactError] = useState("");
 
-  // Location fields (managed by AdvisorLocationStep)
+  // Location fields (managed by AdvisorLocationStep) — budget is pre-filled
+  // from the quiz `amount` answer if available, so the user doesn't have to
+  // re-tell us how much they're investing.
   const [stateValue, setStateValue] = useState("");
   const [postcodeValue, setPostcodeValue] = useState("");
   const [suburbValue, setSuburbValue] = useState("");
-  const [budgetValue, setBudgetValue] = useState("");
+  const [budgetValue, setBudgetValue] = useState(() => {
+    const quizAmount = quizAnswers.amount;
+    if (quizAmount && QUIZ_AMOUNT_TO_BUDGET[quizAmount]) return QUIZ_AMOUNT_TO_BUDGET[quizAmount];
+    return "";
+  });
   const [locationError, setLocationError] = useState("");
 
   // Matching state
@@ -111,14 +126,65 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
   const [loadingMatches, setLoadingMatches] = useState(false);
   const [rematching, setRematching] = useState(false);
   const [confirming, setConfirming] = useState(false);
-  const [confirmedAdvisorId, setConfirmedAdvisorId] = useState<number | null>(null);
+  const [_confirmedAdvisorId, setConfirmedAdvisorId] = useState<number | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
+
+  // Preview advisor — fetched on mount so the contact step shows a real
+  // advisor card above the form, instead of asking for name/phone/email
+  // before the user knows who they're being matched with. Best advisor of
+  // the right type, no location filter (location is collected next step).
+  const [previewAdvisor, setPreviewAdvisor] = useState<MatchedAdvisor | null>(null);
 
   const advisorLabel = ADVISOR_LABELS[advisorType] || "Financial Advisor";
   const advisorHref = ADVISOR_HREFS[advisorType] || "/find-advisor";
   const combos = COMBO_MAP[advisorType] || [];
   const topPlatforms = platformResults.filter((r) => r.broker).slice(0, 3);
   const canSubmitContact = name.trim().length >= 2 && phone.trim().length >= 8 && email.includes("@");
+
+  // Fetch a preview advisor when the contact step loads — best representative
+  // of this advisor type, regardless of location. We're not committing the
+  // user to this advisor; we're showing them what kind of person they'll be
+  // matched with so the contact form feels less blind.
+  useEffect(() => {
+    let cancelled = false;
+    const dbType = TYPE_DB_MAP[advisorType];
+    if (!dbType) return; // "not-sure" or unknown — skip preview
+    (async () => {
+      try {
+        const supabase = createClient();
+        let q = supabase
+          .from("professionals")
+          .select("id, slug, name, firm_name, type, photo_url, rating, review_count, location_display, specialties, fee_description, verified")
+          .eq("status", "active")
+          .eq("verified", true)
+          .eq("type", dbType);
+        if (isInternational) {
+          q = q.eq("accepts_international_clients", true);
+        }
+        const { data } = await q.order("rating", { ascending: false }).order("review_count", { ascending: false }).limit(1);
+        if (cancelled) return;
+        const row = data?.[0] as Record<string, unknown> | undefined;
+        if (!row) return;
+        setPreviewAdvisor({
+          id: row.id as number,
+          slug: row.slug as string,
+          name: row.name as string,
+          firm_name: (row.firm_name as string) ?? null,
+          type: row.type as string,
+          photo_url: (row.photo_url as string) ?? null,
+          rating: (row.rating as number) ?? 0,
+          review_count: (row.review_count as number) ?? 0,
+          location_display: (row.location_display as string) ?? null,
+          specialties: (row.specialties as string[]) ?? [],
+          fee_description: (row.fee_description as string) ?? null,
+          verified: (row.verified as boolean) ?? false,
+        });
+      } catch {
+        /* preview is best-effort — silent failure is acceptable */
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [advisorType, isInternational]);
 
   /* ─── Step 1 → Step 2 ─── */
   const handleContactNext = () => {
@@ -306,6 +372,39 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
               <div className="w-12 h-12 border-4 border-amber-200 border-t-amber-500 rounded-full animate-spin mx-auto mb-4" />
               <p className="text-sm text-slate-500 font-medium">Filtering professionals…</p>
             </div>
+          ) : allMatches.length === 0 ? (
+            // No matches in our directory for this type/state — give the user
+            // a clear next step instead of an empty card. /quotes/post is the
+            // universal fallback ("describe your situation, get quotes").
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-5 md:p-6 text-center">
+              <Icon name="search" size={32} className="text-amber-500 mx-auto mb-3" />
+              <h2 className="text-base md:text-lg font-extrabold text-slate-900 mb-1.5">No verified {advisorLabel}s in our directory yet</h2>
+              <p className="text-sm text-slate-600 mb-4 max-w-md mx-auto">
+                Our directory is still growing. The fastest way to get help right now is to post your situation — verified pros reply with quotes.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                <Link
+                  href={`/quotes/post?context=quiz&type=${advisorType}`}
+                  onClick={() => trackEvent("advisor_no_match_post_job", { advisor_type: advisorType }, "/quiz")}
+                  className="px-4 py-2.5 bg-amber-500 text-white text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors"
+                >
+                  Post your situation →
+                </Link>
+                <Link
+                  href={advisorHref}
+                  onClick={() => trackEvent("advisor_no_match_browse", { advisor_type: advisorType }, "/quiz")}
+                  className="px-4 py-2.5 border border-amber-300 text-amber-700 text-sm font-semibold rounded-lg hover:bg-amber-100 transition-colors"
+                >
+                  Browse {advisorLabel}s
+                </Link>
+              </div>
+              <button
+                onClick={onRestart}
+                className="block mx-auto mt-4 text-xs text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                Restart quiz →
+              </button>
+            </div>
           ) : (
             <>
               <AdvisorMatchedScreen
@@ -412,6 +511,70 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
               : "Based on your answers, you may want to explore professional directories."}
           </p>
         </div>
+
+        {/* Preview advisor card — best representative of this advisor type.
+            Shows the user what they're being matched with BEFORE they hand
+            over name/phone/email, so the form doesn't feel blind. */}
+        {previewAdvisor && (
+          <div className="bg-white border border-slate-200 rounded-xl p-3.5 md:p-4 mb-4 md:mb-5 reveal-screen-in">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 border border-emerald-200 text-emerald-700 text-[0.6rem] md:text-[0.65rem] font-bold uppercase tracking-wider rounded-full">
+                <Icon name="check" size={10} className="text-emerald-600" />
+                Sample match
+              </span>
+              <span className="text-[0.6rem] md:text-[0.65rem] text-slate-400">— typical advisor of this type</span>
+            </div>
+            <div className="flex items-start gap-3">
+              <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-slate-100 flex items-center justify-center shrink-0 overflow-hidden">
+                {previewAdvisor.photo_url ? (
+                  // eslint-disable-next-line @next/next/no-img-element -- external advisor headshots from Supabase storage; next/image not configured for these hosts
+                  <img src={previewAdvisor.photo_url} alt={previewAdvisor.name} className="w-full h-full object-cover" />
+                ) : (
+                  <span className="text-base md:text-lg font-bold text-slate-500">
+                    {previewAdvisor.name.split(" ").map(n => n[0]).slice(0, 2).join("")}
+                  </span>
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <p className="text-sm md:text-base font-bold text-slate-900">{previewAdvisor.name}</p>
+                  {previewAdvisor.verified && (
+                    <span className="inline-flex items-center gap-0.5 px-1.5 py-px bg-blue-50 text-blue-700 text-[0.55rem] md:text-[0.6rem] font-semibold rounded-full">
+                      <Icon name="shield" size={9} />
+                      Verified
+                    </span>
+                  )}
+                </div>
+                {previewAdvisor.firm_name && (
+                  <p className="text-[0.69rem] md:text-xs text-slate-500 truncate">{previewAdvisor.firm_name}</p>
+                )}
+                <div className="flex items-center gap-2 mt-0.5 text-[0.65rem] md:text-xs text-slate-500">
+                  {previewAdvisor.rating > 0 && (
+                    <span className="inline-flex items-center gap-0.5">
+                      <Icon name="star" size={10} className="text-amber-500" />
+                      <strong className="text-slate-700">{previewAdvisor.rating.toFixed(1)}</strong>
+                      {previewAdvisor.review_count > 0 && <span>({previewAdvisor.review_count})</span>}
+                    </span>
+                  )}
+                  <span className="inline-flex items-center gap-0.5">
+                    <Icon name="clock" size={10} />
+                    Replies within 24h
+                  </span>
+                </div>
+                {previewAdvisor.specialties && previewAdvisor.specialties.length > 0 && (
+                  <div className="mt-1.5 flex flex-wrap gap-1">
+                    {previewAdvisor.specialties.slice(0, 3).map((s, i) => (
+                      <span key={i} className="text-[0.6rem] md:text-[0.65rem] px-1.5 py-px bg-slate-100 text-slate-600 rounded-full">{s}</span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+            <p className="text-[0.6rem] md:text-[0.65rem] text-slate-400 mt-2.5 italic">
+              We&rsquo;ll match you with someone like {previewAdvisor.name.split(" ")[0]} based on your location and budget.
+            </p>
+          </div>
+        )}
 
         {/* Lead capture form */}
         <div className="bg-gradient-to-br from-amber-50 to-slate-50 border border-amber-200/60 rounded-xl p-4 md:p-6 mb-5">
