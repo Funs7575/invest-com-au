@@ -6,8 +6,6 @@ import {
   CURRENT_YEAR,
   CURRENT_MONTH_YEAR,
   REVIEW_AUTHOR,
-  SITE_NAME,
-  ORGANIZATION_JSONLD,
 } from "@/lib/seo";
 import {
   ADVERTISER_DISCLOSURE_SHORT,
@@ -45,6 +43,7 @@ const SUB_CATEGORIES = [
   { name: "Watches", slug: "watches", emoji: "⌚" },
   { name: "Coins", slug: "coins", emoji: "🪙" },
   { name: "Whisky", slug: "whisky", emoji: "🥃" },
+  { name: "Sports Memorabilia", slug: "sports-memorabilia", emoji: "🏆" },
 ];
 
 /* ── Featured platforms ── */

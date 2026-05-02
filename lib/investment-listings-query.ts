@@ -140,6 +140,7 @@ export const ALTERNATIVES_SUB_CATEGORIES = [
   "cars",
   "coins",
   "whisky",
+  "sports_memorabilia",
 ] as const;
 
 // Infrastructure and private-credit are URL categories that live
