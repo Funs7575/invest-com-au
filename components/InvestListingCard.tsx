@@ -56,7 +56,16 @@ export default function InvestListingCard({
     ? Object.entries(listing.key_metrics).slice(0, 3)
     : [];
   const dbHeroImage = listing.images?.[0];
-  const heroImage = getListingHeroImage(listing.vertical, listing.id, listing.images);
+  const commodityKey =
+    listing.sub_category ??
+    (listing.key_metrics?.commodity as string | undefined) ??
+    null;
+  const heroImage = getListingHeroImage(
+    listing.vertical,
+    listing.id,
+    listing.images,
+    commodityKey,
+  );
   const heroIsSeed = !dbHeroImage;
   const fallbackGradient = VERTICAL_FALLBACK_GRADIENT[listing.vertical] ?? "from-slate-100 to-slate-50";
   const fallbackIcon = VERTICAL_ICON[listing.vertical] ?? "📊";

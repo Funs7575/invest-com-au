@@ -208,7 +208,16 @@ export default function ListingCard({ listing }: ListingCardProps) {
           path is preserved as a final guard. */}
       <Link href={detailPath} className="block relative aspect-[16/9] overflow-hidden">
         {(() => {
-          const heroImage = getListingHeroImage(listing.vertical, listing.id, listing.images);
+          const commodityKey =
+            listing.sub_category ??
+            (listing.key_metrics?.commodity as string | undefined) ??
+            null;
+          const heroImage = getListingHeroImage(
+            listing.vertical,
+            listing.id,
+            listing.images,
+            commodityKey,
+          );
           return heroImage ? (
             <Image
               src={heroImage}
