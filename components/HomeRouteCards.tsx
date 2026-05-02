@@ -29,6 +29,20 @@ interface RouteCardsProps {
 
 type RouteKind = "compare" | "browse" | "find" | "matched";
 
+interface RouteConfig {
+  kind: RouteKind;
+  audienceEyebrow: string;
+  title: string;
+  subtitle: string;
+  categories: ReadonlyArray<string>;
+  cta: string;
+  href: string;
+  icon: string;
+  accent: string;
+  badge: string;
+  featured?: boolean;
+}
+
 export default function HomeRouteCards({
   brokerCount,
   listingCount,
@@ -37,56 +51,70 @@ export default function HomeRouteCards({
   topListings,
   topAdvisors,
 }: RouteCardsProps) {
-  const routes: ReadonlyArray<{
-    kind: RouteKind;
-    title: string;
-    cta: string;
-    href: string;
-    icon: string;
-    accent: string;
-    audience: string;
-    badge: string;
-    featured?: boolean;
-  }> = [
+  const routes: ReadonlyArray<RouteConfig> = [
     {
       kind: "compare",
-      title: "Compare platforms",
-      cta: "Compare",
+      audienceEyebrow: "If you know what you want",
+      title: "Compare investing platforms",
+      subtitle: "Side-by-side fees, features and ratings.",
+      categories: ["Share brokers", "Crypto", "Robo", "Super", "Savings", "CFDs", "ETFs"],
+      cta: "Compare now",
       href: "/compare",
       icon: "trending-down",
       accent: "#2563eb",
-      audience: "If you know what you want",
-      badge: `${brokerCount || 0} platforms`,
+      badge: `9 categories · ${brokerCount.toLocaleString("en-AU")}+ platforms`,
     },
     {
       kind: "browse",
-      title: "Browse listings",
-      cta: "Browse",
+      audienceEyebrow: "If you want real opportunities",
+      title: "Browse investments for sale",
+      subtitle: "Real Australian businesses, projects and assets — listed by owners and operators.",
+      categories: [
+        "Businesses",
+        "Farmland",
+        "Mining",
+        "Commercial property",
+        "Franchises",
+        "Renewables",
+        "IPOs",
+      ],
+      cta: "Browse opportunities",
       href: "/invest",
       icon: "map-pin",
       accent: "#059669",
-      audience: "If you want real opportunities",
-      badge: `${listingCount || 0} listed`,
+      badge: `28 categories · ${listingCount.toLocaleString("en-AU")} live`,
     },
     {
       kind: "find",
-      title: "Find an expert",
-      cta: "Find",
+      audienceEyebrow: "If you need a pro",
+      title: "Find an Australian expert",
+      subtitle: "Verified advisers and specialists — by region, fee and specialty.",
+      categories: [
+        "Financial advisers",
+        "SMSF accountants",
+        "Mortgage brokers",
+        "Buyer's agents",
+        "Tax agents",
+        "FIRB",
+        "Cross-border",
+      ],
+      cta: "Find an expert",
       href: "/advisors",
       icon: "users",
       accent: "#7c3aed",
-      audience: "If you need a pro",
-      badge: `${professionalCount.toLocaleString("en-AU")} verified`,
+      badge: `9 specialties · ${professionalCount.toLocaleString("en-AU")} verified`,
     },
     {
       kind: "matched",
-      title: "Get matched",
-      cta: "Get matched",
+      audienceEyebrow: "If you're not sure where to start",
+      title: "Match me to the right step",
+      subtitle: "4 quick questions. We route you to the platform, opportunity, expert or guide that fits.",
+      categories: [],
+      cta: "Start the 4-question quiz",
       href: "/quiz",
       icon: "sparkles",
       accent: "#f25822",
-      audience: "If you're not sure where to start",
-      badge: "Free · no email",
+      badge: "60 seconds · Free · No email",
       featured: true,
     },
   ];
@@ -283,11 +311,12 @@ export default function HomeRouteCards({
             letterSpacing: "-.028em",
             fontWeight: 800,
             margin: "6px 0 0",
-            lineHeight: 1.05,
+            lineHeight: 1.1,
             textWrap: "balance",
+            maxWidth: 820,
           }}
         >
-          Compare. Browse. Find. Get matched.
+          Whichever way you want to invest in Australia, we cover it.
         </h2>
       </div>
 
@@ -307,7 +336,7 @@ export default function HomeRouteCards({
               borderRadius: 16,
               overflow: "hidden",
               textDecoration: "none",
-              minHeight: 360,
+              minHeight: 420,
               boxShadow: r.featured
                 ? `0 14px 36px color-mix(in oklch, ${r.accent} 28%, transparent)`
                 : "0 1px 2px rgba(11,20,34,.04)",
@@ -357,20 +386,81 @@ export default function HomeRouteCards({
               <DesignIcon name={r.icon} size={40} strokeWidth={2.2} />
             </div>
 
-            <div style={{ padding: "22px 22px 22px", display: "flex", flexDirection: "column", flex: 1 }}>
+            <div style={{ padding: "18px 20px 22px", display: "flex", flexDirection: "column", flex: 1 }}>
+              <div
+                className="font-mono"
+                style={{
+                  fontSize: 10,
+                  fontWeight: 800,
+                  textTransform: "uppercase",
+                  letterSpacing: ".07em",
+                  color: r.featured ? "rgba(255,255,255,.62)" : r.accent,
+                  marginBottom: 8,
+                }}
+              >
+                {r.audienceEyebrow}
+              </div>
+
               <div
                 className="font-display"
                 style={{
-                  fontSize: 21,
+                  fontSize: 20,
                   fontWeight: 800,
-                  lineHeight: 1.1,
-                  letterSpacing: "-.022em",
-                  marginBottom: 12,
+                  lineHeight: 1.12,
+                  letterSpacing: "-.02em",
+                  marginBottom: 6,
                   color: r.featured ? "white" : "var(--color-ink-900)",
                 }}
               >
                 {r.title}
               </div>
+
+              <div
+                style={{
+                  fontSize: 13,
+                  lineHeight: 1.4,
+                  color: r.featured ? "rgba(255,255,255,.72)" : "var(--color-ink-600)",
+                  marginBottom: 12,
+                }}
+              >
+                {r.subtitle}
+              </div>
+
+              {r.categories.length > 0 && (
+                <div
+                  className="route-cat-strip"
+                  style={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: 4,
+                    marginBottom: 14,
+                  }}
+                >
+                  {r.categories.map((c, i) => (
+                    <span
+                      key={c}
+                      data-idx={i}
+                      className="route-cat-chip"
+                      style={{
+                        fontSize: 10.5,
+                        fontWeight: 700,
+                        padding: "2px 7px",
+                        borderRadius: 99,
+                        background: r.featured
+                          ? "rgba(255,255,255,.08)"
+                          : `color-mix(in oklch, ${r.accent} 7%, white)`,
+                        color: r.featured ? "rgba(255,255,255,.78)" : "var(--color-ink-700)",
+                        border: r.featured
+                          ? "1px solid rgba(255,255,255,.14)"
+                          : `1px solid color-mix(in oklch, ${r.accent} 18%, transparent)`,
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {c}
+                    </span>
+                  ))}
+                </div>
+              )}
 
               {renderPreview(r.kind, !!r.featured)}
 
@@ -398,18 +488,6 @@ export default function HomeRouteCards({
               </div>
 
               <div style={{ flex: 1 }} />
-
-              <div
-                style={{
-                  fontSize: 12,
-                  color: r.featured ? "rgba(255,255,255,.62)" : "var(--color-ink-500)",
-                  marginBottom: 14,
-                  lineHeight: 1.4,
-                  fontStyle: "italic",
-                }}
-              >
-                {r.audience}
-              </div>
 
               <div
                 style={{
@@ -465,11 +543,13 @@ export default function HomeRouteCards({
           <span aria-hidden>·</span>
           <span>{brokerCount.toLocaleString("en-AU")} platforms tracked</span>
           <span aria-hidden>·</span>
-          <span>{listingCount.toLocaleString("en-AU")} live listings</span>
+          <span>{listingCount.toLocaleString("en-AU")} live opportunities</span>
           <span aria-hidden>·</span>
           <span>{professionalCount.toLocaleString("en-AU")} verified experts</span>
           <span aria-hidden>·</span>
-          <span>ASIC-registered</span>
+          <span style={{ color: "var(--color-ink-700)", fontWeight: 800 }}>
+            Free for users — we earn from listings, not from clicks
+          </span>
         </div>
         <Link
           href="/methodology"
@@ -495,6 +575,9 @@ export default function HomeRouteCards({
         }
         @media (max-width: 640px) {
           .home-routes-grid { grid-template-columns: 1fr !important; }
+          .route-cat-chip[data-idx="4"],
+          .route-cat-chip[data-idx="5"],
+          .route-cat-chip[data-idx="6"] { display: none; }
         }
         @keyframes routePulse {
           0%, 100% { opacity: 0.35; transform: scale(0.85); }
