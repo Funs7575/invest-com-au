@@ -3,8 +3,20 @@ name: CI
 on:
   push:
     branches: [main, "claude/**"]
+    # Skip CI on changes that can't affect the build (docs / queue housekeeping
+    # / the LOOP_DONE sentinel). Saves ~30-40% of CI runs that the
+    # audit-remediation loop's queue-update commits previously triggered, plus
+    # the cancellation-thrash where each new commit kills the previous run.
+    # WARNING: paths-ignore only takes effect when EVERY changed path matches.
+    # A PR that touches docs/audits/* AND code still runs CI.
+    paths-ignore:
+      - "docs/audits/**"
+      - "LOOP_DONE"
   pull_request:
     branches: [main]
+    paths-ignore:
+      - "docs/audits/**"
+      - "LOOP_DONE"
 
 concurrency:
   group: ci-${{ github.ref }}
