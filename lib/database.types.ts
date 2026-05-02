@@ -9772,67 +9772,103 @@ export type Database = {
       }
       quiz_leads: {
         Row: {
+          advisor_type: string | null
+          amount: string | null
           answers: Json | null
           captured_at: string | null
+          complexity: string | null
           converted_at: string | null
           drip_last_sent_at: string | null
           drip_step: number
           email: string
+          experience: string | null
           experience_level: string | null
+          goal: string | null
           id: number
           inferred_confidence: number | null
           inferred_vertical: string | null
           investment_range: string | null
+          investor_country: string | null
+          investor_goal_intl: string | null
           last_annual_reminder: string | null
+          location: string | null
+          mode: string | null
           name: string | null
+          priority: string | null
+          property_sub: string | null
           top_match_slug: string | null
           trading_interest: string | null
           unsubscribed: boolean | null
           utm_campaign: string | null
           utm_medium: string | null
           utm_source: string | null
+          visa_status: string | null
         }
         Insert: {
+          advisor_type?: string | null
+          amount?: string | null
           answers?: Json | null
           captured_at?: string | null
+          complexity?: string | null
           converted_at?: string | null
           drip_last_sent_at?: string | null
           drip_step?: number
           email: string
+          experience?: string | null
           experience_level?: string | null
+          goal?: string | null
           id?: number
           inferred_confidence?: number | null
           inferred_vertical?: string | null
           investment_range?: string | null
+          investor_country?: string | null
+          investor_goal_intl?: string | null
           last_annual_reminder?: string | null
+          location?: string | null
+          mode?: string | null
           name?: string | null
+          priority?: string | null
+          property_sub?: string | null
           top_match_slug?: string | null
           trading_interest?: string | null
           unsubscribed?: boolean | null
           utm_campaign?: string | null
           utm_medium?: string | null
           utm_source?: string | null
+          visa_status?: string | null
         }
         Update: {
+          advisor_type?: string | null
+          amount?: string | null
           answers?: Json | null
           captured_at?: string | null
+          complexity?: string | null
           converted_at?: string | null
           drip_last_sent_at?: string | null
           drip_step?: number
           email?: string
+          experience?: string | null
           experience_level?: string | null
+          goal?: string | null
           id?: number
           inferred_confidence?: number | null
           inferred_vertical?: string | null
           investment_range?: string | null
+          investor_country?: string | null
+          investor_goal_intl?: string | null
           last_annual_reminder?: string | null
+          location?: string | null
+          mode?: string | null
           name?: string | null
+          priority?: string | null
+          property_sub?: string | null
           top_match_slug?: string | null
           trading_interest?: string | null
           unsubscribed?: boolean | null
           utm_campaign?: string | null
           utm_medium?: string | null
           utm_source?: string | null
+          visa_status?: string | null
         }
         Relationships: []
       }

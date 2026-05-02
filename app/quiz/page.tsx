@@ -11,13 +11,14 @@ import { scoreQuizResults, type WeightKey, type QuizWeights, type AmountKey } fr
 import QuizQuestionScreen from "./_components/QuizQuestionScreen";
 import QuizAnalyzingScreen from "./_components/QuizAnalyzingScreen";
 import QuizResultsScreen from "./_components/QuizResultsScreen";
-import QuizEmailGate from "./_components/QuizEmailGate";
 import AdvisorResultsScreen from "./_components/AdvisorResultsScreen";
 
 /* ─── Types ─── */
 type QuestionId = "location" | "goal" | "mode" | "experience" | "complexity" | "amount" | "priority" | "advisor_type" | "property_sub" | "investor_country" | "visa_status" | "investor_goal_intl";
 type QuizTrack = "diy" | "advisor" | "international";
-type Phase = "questions" | "email-gate" | "analyzing" | "advisor-analyzing" | "diy-results" | "advisor-results";
+// "email-gate" phase removed — capture is now inline in the results screen
+// so users see the value before being asked. Was a 20-40% drop-off tax.
+type Phase = "questions" | "analyzing" | "advisor-analyzing" | "diy-results" | "advisor-results";
 
 interface UnifiedAnswers {
   location?: string;
@@ -108,7 +109,7 @@ const UNIFIED_QUESTIONS: Record<QuestionId, { text: string; options: { key: stri
     options: [
       { key: "diy", label: "Do it myself", sub: "I'll choose my own platform and investments" },
       { key: "help", label: "Get expert help", sub: "I'd like professional guidance" },
-      { key: "unsure", label: "I'm not sure yet", sub: "Show me both options" },
+      { key: "unsure", label: "I'm not sure yet", sub: "Show me both at the end — I'll pick after seeing the options" },
     ],
   },
   experience: {
@@ -398,9 +399,13 @@ export default function QuizPage() {
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [animating, setAnimating] = useState(false);
   const [resumePrompt, setResumePrompt] = useState(false);
+  const [resumeQuestionNumber, setResumeQuestionNumber] = useState<number | null>(null);
+  const [resumeTotalQuestions, setResumeTotalQuestions] = useState<number | null>(null);
 
-  // Email gate state
-  const [emailStatus, setEmailStatus] = useState<"idle" | "loading" | "error">("idle");
+  // Inline email-capture state (rendered inside results screen, post-results).
+  // "submitted" is a terminal state — the capture component swaps to its
+  // thank-you view; we don't reset it within a session.
+  const [emailCaptureStatus, setEmailCaptureStatus] = useState<"idle" | "loading" | "submitted" | "error">("idle");
 
   // Results UI state
   const [copied, setCopied] = useState(false);
@@ -421,6 +426,9 @@ export default function QuizPage() {
     const saved = loadSavedProgress();
     if (saved && saved.history.length > 0) {
       setResumePrompt(true);
+      // Question number is 1-indexed: history.length = answers given, so they're on Q(history.length + 1)
+      setResumeQuestionNumber(saved.history.length + 1);
+      setResumeTotalQuestions(getTotalSteps(saved.answers));
     }
   }, []);
 
@@ -474,8 +482,15 @@ export default function QuizPage() {
   // Compute scored results (memoised)
   const scoringAnswers = useMemo(() => toScoringAnswers(answers), [answers]);
   const results = useMemo(() => {
-    return scoreQuizResults(scoringAnswers, weights, brokers, quizCampaignWinners, answers.amount as AmountKey | undefined);
-  }, [scoringAnswers, weights, brokers, quizCampaignWinners, answers.amount]);
+    return scoreQuizResults(
+      scoringAnswers,
+      weights,
+      brokers,
+      quizCampaignWinners,
+      answers.amount as AmountKey | undefined,
+      answers.goal,
+    );
+  }, [scoringAnswers, weights, brokers, quizCampaignWinners, answers.amount, answers.goal]);
 
   const hasCryptoResult = useMemo(() => results.some(r => r.broker?.is_crypto), [results]);
 
@@ -553,9 +568,15 @@ export default function QuizPage() {
             setPhase("advisor-results");
           }, 2200);
         } else {
-          // DIY track — show email gate first
+          // DIY track — go straight to analyzing then results. Email
+          // capture is now inline in the results screen (warm capture
+          // post-value, not cold capture pre-value).
           setHistory(newHistory);
-          setPhase("email-gate");
+          setPhase("analyzing");
+          setTimeout(() => {
+            if (!mountedRef.current) return;
+            setPhase("diy-results");
+          }, 1800);
         }
       } else {
         setHistory(newHistory);
@@ -567,10 +588,6 @@ export default function QuizPage() {
   };
 
   const handleBack = () => {
-    if (phase === "email-gate") {
-      setPhase("questions");
-      return;
-    }
     if (history.length > 0) {
       const prev = history[history.length - 1];
       const newHistory = history.slice(0, -1);
@@ -584,8 +601,14 @@ export default function QuizPage() {
     }
   };
 
-  const handleEmailGateSubmit = async (email: string, name: string) => {
-    setEmailStatus("loading");
+  // Inline email capture from the results screen — fires post-value (the
+  // user has already seen their top match + cross-sell). On success the
+  // capture component swaps to its thank-you state; on failure we surface
+  // the error and let the user retry. Sends the full unifiedAnswers so the
+  // /api/quiz-lead route can persist structured columns and downstream
+  // surfaces (drip cron, /best pre-filter) can read goal/amount/etc.
+  const handleInlineEmailSubmit = async (email: string, name: string) => {
+    setEmailCaptureStatus("loading");
     try {
       const res = await fetch("/api/quiz-lead", {
         method: "POST",
@@ -594,30 +617,17 @@ export default function QuizPage() {
           email,
           name: name || undefined,
           answers: scoringAnswers,
+          unifiedAnswers: answers,
           top_match_slug: results[0]?.slug || null,
         }),
       });
       if (!res.ok) throw new Error("Failed");
-      trackEvent("quiz_lead_capture", { source: "quiz", top_match: results[0]?.slug }, "/quiz");
-      trackEvent("pdf_opt_in", { source: "quiz" }, "/quiz");
-      setEmailStatus("idle");
+      trackEvent("quiz_lead_capture", { source: "quiz_inline", top_match: results[0]?.slug }, "/quiz");
+      trackEvent("pdf_opt_in", { source: "quiz_inline" }, "/quiz");
+      setEmailCaptureStatus("submitted");
     } catch {
-      setEmailStatus("error");
+      setEmailCaptureStatus("error");
     }
-    // Always proceed to results regardless of email submission success/failure
-    setPhase("analyzing");
-    setTimeout(() => {
-      if (!mountedRef.current) return;
-      setPhase("diy-results");
-    }, 1800);
-  };
-
-  const handleEmailGateSkip = () => {
-    setPhase("analyzing");
-    setTimeout(() => {
-      if (!mountedRef.current) return;
-      setPhase("diy-results");
-    }, 1800);
   };
 
   const handleShareResult = async () => {
@@ -722,19 +732,14 @@ export default function QuizPage() {
         answers={scoringAnswers}
         unifiedAnswers={answers}
         hasCryptoResult={hasCryptoResult}
-        emailGate={false}
-        gateEmail=""
-        gateStatus="idle"
         copied={copied}
         showScoring={showScoring}
         onSetShowScoring={setShowScoring}
-        onGateEmailChange={() => {}}
-        onGateSubmit={() => {}}
-        onEmailGateSent={() => {}}
-        onGateConsentSet={() => {}}
         onShareResult={handleShareResult}
         onRestart={handleRestart}
         getMatchReasons={getMatchReasons}
+        onEmailCaptureSubmit={handleInlineEmailSubmit}
+        emailCaptureStatus={emailCaptureStatus}
       />
     );
   }
@@ -754,22 +759,26 @@ export default function QuizPage() {
     );
   }
 
-  if (phase === "email-gate") {
-    return (
-      <QuizEmailGate
-        onSubmit={handleEmailGateSubmit}
-        onSkip={handleEmailGateSkip}
-        status={emailStatus}
-      />
-    );
-  }
-
   // Questions phase
   const current = currentId === "advisor_type"
     ? getDynamicAdvisorTypeQuestion(answers)
     : UNIFIED_QUESTIONS[currentId];
   const questionIndex = history.length; // 0-based
   const totalSteps = getTotalSteps(answers);
+
+  // Context banner — shown above the question to set expectation about
+  // the path the user just selected (currently only used for the international
+  // → advisor-only routing, which is otherwise a surprise).
+  const contextBanner = (() => {
+    if (currentId === "investor_country" && isInternational(answers)) {
+      return {
+        tone: "intl" as const,
+        title: "Most international investors need an advisor first",
+        body: "Cross-border tax, FIRB, and visa rules mean an advisor is usually the right starting point. A few quick questions to find the right specialist.",
+      };
+    }
+    return null;
+  })();
 
   return (
     <QuizQuestionScreen
@@ -779,10 +788,33 @@ export default function QuizPage() {
       animating={animating}
       fetchError={fetchError}
       resumePrompt={resumePrompt}
+      resumeQuestionNumber={resumeQuestionNumber}
+      resumeTotalQuestions={resumeTotalQuestions}
+      contextBanner={contextBanner}
       questionIndex={questionIndex}
       totalQuestions={totalSteps}
       onAnswer={handleAnswer}
       onBack={handleBack}
+      onJumpTo={(targetIndex) => {
+        if (targetIndex < 0 || targetIndex >= history.length) return;
+        const targetId = history[targetIndex];
+        if (!targetId) return;
+        // Truncate history to the target index, snap currentId, drop later answers
+        const newHistory = history.slice(0, targetIndex);
+        const newAnswers: UnifiedAnswers = { ...answers };
+        // Clear all answers from history[targetIndex] onwards (the question they're going back to + everything after)
+        for (let i = targetIndex; i < history.length; i++) {
+          const k = history[i];
+          if (k) delete newAnswers[k as keyof UnifiedAnswers];
+        }
+        // Also drop the current question's answer if any
+        delete newAnswers[currentId as keyof UnifiedAnswers];
+        setHistory(newHistory);
+        setCurrentId(targetId);
+        setAnswers(newAnswers);
+        saveProgress(targetId, newAnswers, newHistory);
+        trackEvent("quiz_jump_back", { from: currentId, to: targetId, target_index: targetIndex }, "/quiz");
+      }}
       onResume={() => {
         const saved = loadSavedProgress();
         if (saved) {
