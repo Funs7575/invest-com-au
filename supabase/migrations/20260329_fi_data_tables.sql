@@ -1,3 +1,19 @@
+-- ============================================================================
+-- Migration: 20260329_fi_data_tables.sql
+-- Purpose: Create all fi_* tables for the Foreign Investment Hub —
+--          fi_tax_brackets, fi_dta_countries, fi_dasp_rates,
+--          fi_withholding_rates, fi_property_rules, fi_data_categories,
+--          fi_change_log. These are the DB-backed source of truth for
+--          lib/fi-data-server.ts and the admin foreign-investment seed route.
+--          Includes RLS + service_role policies on all tables.
+-- Rollback: DROP TABLE IF EXISTS fi_change_log, fi_data_categories,
+--             fi_property_rules, fi_withholding_rates, fi_dasp_rates,
+--             fi_dta_countries, fi_tax_brackets CASCADE;
+--   Risk: medium — tables hold seeded reference data populated by the admin
+--   seed route. Dropping loses fi_* data; re-seed via
+--   POST /api/admin/foreign-investment/seed after re-running this migration.
+-- ============================================================================
+
 -- ─────────────────────────────────────────────────────────────────────────────
 -- Foreign Investment Hub: fi_* data tables
 -- Created: 2026-03-29

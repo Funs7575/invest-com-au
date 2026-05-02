@@ -1,3 +1,17 @@
+-- ============================================================================
+-- Migration: 20260316_seed_expert_articles.sql
+-- Purpose: Seed 3 placeholder verified advisor profiles (slugs: james-chen-cfp,
+--          sarah-mitchell-smsf, david-wong-tax) and their associated published
+--          articles for launch day content. Admins can reassign to real advisors.
+-- Rollback: DELETE FROM articles WHERE slug IN (
+--             'is-your-super-fund-really-working-for-you',
+--             'smsf-setup-guide-2026',
+--             'tax-effective-investing-strategies-2026');
+--           DELETE FROM professionals WHERE slug IN (
+--             'james-chen-cfp', 'sarah-mitchell-smsf', 'david-wong-tax');
+--   Risk: low — seed data only; no user-generated content is lost.
+-- ============================================================================
+
 -- Seed: 3 expert advisor articles for launch
 -- Creates 3 verified advisor profiles (placeholders) and publishes their articles.
 -- Admins can reassign articles to real advisors once they apply via /advisor-apply.

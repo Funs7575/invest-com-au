@@ -1,3 +1,17 @@
+-- ============================================================================
+-- Migration: 20260323_enrich_priya_sharma_profile.sql
+-- Purpose: Enrich the priya-sharma mortgage broker profile with rich seed data
+--          (bio, specialties, fee structure, location, verified status) and
+--          seed 8 approved user_reviews so the profile appears fleshed out
+--          for launch. Uses INSERT ... ON CONFLICT DO UPDATE (upsert).
+-- Rollback: DELETE FROM user_reviews WHERE professional_slug = 'priya-sharma';
+--           UPDATE professionals SET bio = NULL, fee_structure = NULL, ...
+--             WHERE slug = 'priya-sharma';
+--   (Partial rollback — profile row was pre-existing; full deletion would
+--   remove the advisor from the platform.)
+--   Risk: low — seed data only; rolling back removes placeholder reviews.
+-- ============================================================================
+
 -- Migration: Enrich Priya Sharma mortgage broker profile with full seed data
 -- Upserts the priya-sharma mortgage broker profile with rich, realistic data
 -- and seeds 8 approved reviews so the profile looks fleshed out.

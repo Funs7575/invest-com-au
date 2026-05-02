@@ -1,3 +1,18 @@
+-- ============================================================================
+-- Migration: 20260402_investment_listings.sql
+-- Purpose: Investment listings marketplace schema — create investment_listings,
+--          listing_enquiries, listing_plans tables with RLS; seed listing_plans
+--          with Free/Starter/Pro/Featured tiers and seed data for investment
+--          listings across AU verticals (shares, property, ETFs, business).
+-- Rollback: DROP TABLE IF EXISTS listing_plans, listing_enquiries,
+--             investment_listings CASCADE;
+--   Note: B-08 (PR #326) later tightened RLS on investment_listings and
+--   listing_enquiries (anon→deny-all + service_role only). The rollback above
+--   drops all three tables including any user-submitted listings and enquiries.
+--   Risk: high — investment_listings may contain real user submissions; only
+--   drop pre-launch or after verified backup.
+-- ============================================================================
+
 -- 20260402_investment_listings.sql
 -- Investment listings marketplace schema and seed data
 -- ============================================================
