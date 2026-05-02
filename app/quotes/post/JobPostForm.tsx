@@ -1,10 +1,38 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import { AdvisorOptInCheckboxes, DEFAULT_ADVISOR_OPT_INS } from "@/components/AdvisorOptInCheckboxes";
 import type { ProfessionalType } from "@/lib/types";
+
+// Map quiz advisor_type slugs (kebab-case) → ProfessionalType (snake_case)
+// for the AdvisorOptInCheckboxes selection. Used when the quiz outcome
+// resolver routes a user here with ?type=advisor-slug.
+const QUIZ_TYPE_TO_PROFESSIONAL: Record<string, ProfessionalType> = {
+  "mortgage-broker": "mortgage_broker",
+  "buyers-agent": "buyers_agent",
+  "financial-planner": "financial_planner",
+  "smsf-accountant": "smsf_accountant",
+  "tax-agent": "tax_agent",
+  "insurance-broker": "insurance_broker",
+};
+
+// Friendly label for the goal that came from the quiz, used to seed the
+// job_title with something more useful than a blank field.
+const GOAL_TO_TITLE_HINT: Record<string, string> = {
+  super: "Help me with my super",
+  property: "Property investment guidance",
+  "property-super": "SMSF property strategy",
+  home: "Home loan / refinance",
+  crypto: "Crypto tax and structuring",
+  trade: "Active trading tax review",
+  income: "Income / dividend strategy",
+  grow: "Long-term wealth-building plan",
+  business: "Australian business setup",
+  help: "I need expert help",
+};
 
 const STATES = ["NSW", "VIC", "QLD", "WA", "SA", "TAS", "ACT", "NT"];
 
@@ -42,16 +70,52 @@ const INITIAL: JobForm = {
 };
 
 export default function JobPostForm() {
+  const searchParams = useSearchParams();
   const [step, setStep] = useState<Step>("details");
   const [form, setForm] = useState<JobForm>(INITIAL);
   const [advisorTypes, setAdvisorTypes] = useState<ProfessionalType[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [resultSlug, setResultSlug] = useState<string | null>(null);
+  // True when the form was pre-populated from quiz query params, used to
+  // surface a "From your quiz" reassurance banner so users don't think the
+  // form is auto-filling itself unexplainably.
+  const [prefilledFromQuiz, setPrefilledFromQuiz] = useState(false);
 
   function set<K extends keyof JobForm>(key: K, v: JobForm[K]) {
     setForm((p) => ({ ...p, [key]: v }));
   }
+
+  // Read quiz handoff params on mount. Quiz outcome resolver routes users
+  // here with: context=quiz, goal, amount, complexity, type, country, visa.
+  // We seed job_title (goal hint) + advisorTypes (from `type`) so the user
+  // doesn't have to re-describe what the quiz already learned.
+  useEffect(() => {
+    const context = searchParams.get("context");
+    if (context !== "quiz") return;
+
+    const goal = searchParams.get("goal");
+    const complexity = searchParams.get("complexity");
+    const type = searchParams.get("type");
+
+    let didPrefill = false;
+
+    if (goal && GOAL_TO_TITLE_HINT[goal]) {
+      const titleHint = complexity === "complex"
+        ? `${GOAL_TO_TITLE_HINT[goal]} (complex situation)`
+        : GOAL_TO_TITLE_HINT[goal];
+      setForm((p) => ({ ...p, job_title: titleHint }));
+      didPrefill = true;
+    }
+
+    if (type && QUIZ_TYPE_TO_PROFESSIONAL[type]) {
+      const professionalType = QUIZ_TYPE_TO_PROFESSIONAL[type];
+      setAdvisorTypes((prev) => prev.includes(professionalType) ? prev : [...prev, professionalType]);
+      didPrefill = true;
+    }
+
+    if (didPrefill) setPrefilledFromQuiz(true);
+  }, [searchParams]);
 
   const canDetails =
     form.job_title.trim().length >= 8 &&
@@ -129,6 +193,17 @@ export default function JobPostForm() {
 
   return (
     <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm">
+      {/* Prefilled-from-quiz banner — soft reassurance that we're carrying
+          their context, not auto-filling the form mysteriously. */}
+      {prefilledFromQuiz && (
+        <div className="mb-6 -mt-2 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2.5 flex items-center gap-2">
+          <Icon name="check" size={14} className="text-amber-600 shrink-0" />
+          <p className="text-xs text-amber-800">
+            <strong>Pre-filled from your quiz.</strong> Edit anything below before posting.
+          </p>
+        </div>
+      )}
+
       {/* Progress */}
       <div className="flex items-center gap-2 mb-8">
         {(["details", "advisors", "contact"] as Step[]).map((s, i) => {

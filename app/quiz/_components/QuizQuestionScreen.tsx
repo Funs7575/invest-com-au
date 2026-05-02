@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 /* ─── Emoji map for the goal question (first question only) ─── */
 const GOAL_EMOJI: Record<string, string> = {
   grow:     "📈",
@@ -18,6 +20,12 @@ interface QuizQuestion {
   options: { label: string; key: string; sub?: string; emoji?: string }[];
 }
 
+interface ContextBanner {
+  tone: "info" | "intl";
+  title: string;
+  body: string;
+}
+
 interface Props {
   step: number;
   questions: QuizQuestion[];
@@ -25,10 +33,14 @@ interface Props {
   animating: boolean;
   fetchError: string | null;
   resumePrompt: boolean;
+  resumeQuestionNumber?: number | null;
+  resumeTotalQuestions?: number | null;
+  contextBanner?: ContextBanner | null;
   questionIndex?: number;
   totalQuestions?: number;
   onAnswer: (key: string) => void;
   onBack: () => void;
+  onJumpTo?: (targetIndex: number) => void;
   onResume: () => void;
   onStartOver: () => void;
   questionHeadingRef: React.RefObject<HTMLHeadingElement | null>;
@@ -41,10 +53,14 @@ export default function QuizQuestionScreen({
   animating,
   fetchError,
   resumePrompt,
+  resumeQuestionNumber,
+  resumeTotalQuestions,
+  contextBanner,
   questionIndex,
   totalQuestions,
   onAnswer,
   onBack,
+  onJumpTo,
   onResume,
   onStartOver,
   questionHeadingRef,
@@ -73,7 +89,9 @@ export default function QuizQuestionScreen({
             <div>
               <p className="text-xs md:text-sm font-semibold text-amber-800">Welcome back!</p>
               <p className="text-[0.62rem] md:text-xs text-amber-700">
-                You have a quiz in progress. Pick up where you left off?
+                {resumeQuestionNumber && resumeTotalQuestions
+                  ? `You were on question ${resumeQuestionNumber} of ${resumeTotalQuestions}. Pick up where you left off?`
+                  : "You have a quiz in progress. Pick up where you left off?"}
               </p>
             </div>
             <div className="flex gap-2 shrink-0">
@@ -93,20 +111,62 @@ export default function QuizQuestionScreen({
           </div>
         )}
 
-        {/* Progress dots — desktop only */}
+        {/* Context banner — explains a path the user just routed into
+            (e.g. international → advisor-only). Set above the progress dots
+            so it reads as a moment of orientation, not noise alongside Q text. */}
+        {contextBanner && (
+          <div
+            className={`mb-4 md:mb-6 rounded-xl p-3 md:p-4 flex items-start gap-3 border ${
+              contextBanner.tone === "intl"
+                ? "bg-blue-50 border-blue-200"
+                : "bg-slate-50 border-slate-200"
+            }`}
+            style={{ animation: "resultCardIn 0.3s ease-out" }}
+          >
+            <span className="text-xl leading-none mt-0.5" aria-hidden="true">
+              {contextBanner.tone === "intl" ? "🌏" : "💡"}
+            </span>
+            <div>
+              <p className={`text-xs md:text-sm font-semibold ${contextBanner.tone === "intl" ? "text-blue-900" : "text-slate-800"}`}>
+                {contextBanner.title}
+              </p>
+              <p className={`text-[0.65rem] md:text-xs leading-relaxed mt-0.5 ${contextBanner.tone === "intl" ? "text-blue-700" : "text-slate-600"}`}>
+                {contextBanner.body}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Progress dots — desktop only. Past dots are clickable so users can
+            jump back to any earlier question without spamming the back button. */}
         <div className="hidden md:flex items-center justify-center gap-2 mb-6">
-          {Array.from({ length: displayTotal }).map((_, i) => (
-            <div
-              key={i}
-              className={`rounded-full transition-all duration-300 ${
-                i < displayIndex
-                  ? "w-3 h-3 bg-amber-500"
-                  : i === displayIndex
-                  ? "w-3 h-3 bg-amber-500 ring-4 ring-amber-200"
-                  : "w-2.5 h-2.5 bg-slate-200"
-              }`}
-            />
-          ))}
+          {Array.from({ length: displayTotal }).map((_, i) => {
+            const isPast = i < displayIndex;
+            const isCurrent = i === displayIndex;
+            const canJump = isPast && typeof onJumpTo === "function";
+            const dotClass = isPast
+              ? "w-3 h-3 bg-amber-500"
+              : isCurrent
+              ? "w-3 h-3 bg-amber-500 ring-4 ring-amber-200"
+              : "w-2.5 h-2.5 bg-slate-200";
+            if (canJump) {
+              return (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => onJumpTo!(i)}
+                  aria-label={`Jump back to question ${i + 1}`}
+                  className={`rounded-full transition-all duration-300 ${dotClass} hover:scale-125 hover:bg-amber-600 cursor-pointer`}
+                />
+              );
+            }
+            return (
+              <div
+                key={i}
+                className={`rounded-full transition-all duration-300 ${dotClass}`}
+              />
+            );
+          })}
         </div>
 
         {/* Progress bar */}
@@ -121,12 +181,12 @@ export default function QuizQuestionScreen({
                   their mind previously had to use the browser back
                   button. This lets them exit cleanly without feeling
                   trapped in the flow. */}
-              <a
+              <Link
                 href="/"
                 className="text-slate-400 hover:text-slate-600 underline-offset-2 hover:underline"
               >
                 Exit quiz
-              </a>
+              </Link>
             </div>
           </div>
           <div

@@ -1,8 +1,10 @@
 "use client";
 
+import Link from "next/link";
 import type { Broker } from "@/lib/types";
 import { trackEvent } from "@/lib/tracking";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
+import type { ThreadAnswers } from "./ThreadCardsStrip";
 
 interface ScoredResult {
   slug: string;
@@ -13,34 +15,49 @@ interface ScoredResult {
 interface Props {
   results: ScoredResult[];
   answers: string[];
-  emailGate: boolean;
-  gateEmail: string;
-  gateStatus: "idle" | "loading" | "error";
+  unifiedAnswers?: ThreadAnswers;
   copied: boolean;
   topMatch: ScoredResult | undefined;
-  onGateEmailChange: (email: string) => void;
-  onGateSubmit: () => void;
-  onEmailGateSent: () => void;
-  onGateConsentSet: () => void;
   onShareResult: () => void;
   onRestart: () => void;
+}
+
+/**
+ * Build a /compare URL pre-filtered with the user's quiz signals so the
+ * compare table lands ready-to-act instead of cold. Adds ?ids= when we have
+ * top picks so compare can highlight/select the matched brokers.
+ */
+function buildCompareUrl(
+  unified: ThreadAnswers | undefined,
+  topSlugs: string[],
+  withIds: boolean,
+): string {
+  const params = new URLSearchParams();
+  if (withIds && topSlugs.length > 0) {
+    params.set("ids", topSlugs.slice(0, 3).join(","));
+  }
+  if (unified?.experience) params.set("quiz_experience", unified.experience);
+  if (unified?.amount) params.set("quiz_amount", unified.amount);
+  if (unified?.priority) params.set("quiz_priority", unified.priority);
+  const qs = params.toString();
+  return qs ? `/compare?${qs}` : "/compare";
 }
 
 export default function QuizResultsFooter({
   results,
   answers: _answers,
-  emailGate: _emailGate,
-  gateEmail: _gateEmail,
-  gateStatus: _gateStatus,
+  unifiedAnswers,
   copied,
   topMatch,
-  onGateEmailChange: _onGateEmailChange,
-  onGateSubmit: _onGateSubmit,
-  onEmailGateSent: _onEmailGateSent,
-  onGateConsentSet: _onGateConsentSet,
   onShareResult,
   onRestart,
 }: Props) {
+  const topSlugs = results.filter(r => r.broker).slice(0, 3).map(r => r.slug);
+  const showPostJobFallback =
+    unifiedAnswers?.complexity === "complex" || unifiedAnswers?.amount === "whale";
+  const compareAllUrl = buildCompareUrl(unifiedAnswers, topSlugs, false);
+  const compareTop3Url = buildCompareUrl(unifiedAnswers, topSlugs, true);
+
   return (
     <>
       <div className="my-3 md:my-6">
@@ -50,12 +67,21 @@ export default function QuizResultsFooter({
       {/* Bottom CTA card */}
       <div className="bg-amber-400 text-slate-900 rounded-xl p-4 md:p-6 mt-1 md:mt-2 mb-4 md:mb-8 text-center result-card-in result-card-in-delay-5">
         <h3 className="text-sm md:text-lg font-bold mb-0.5 md:mb-1">Still not sure?</h3>
-        <p className="text-[0.69rem] md:text-sm text-slate-700 mb-3 md:mb-4">Compare all platforms or read detailed reviews.</p>
+        <p className="text-[0.69rem] md:text-sm text-slate-700 mb-3 md:mb-4">Compare your top picks side-by-side, read a full review, or have a verified pro help you decide.</p>
         <div className="flex flex-row gap-2 md:gap-3 justify-center flex-wrap">
+          {topSlugs.length >= 2 && (
+            <a
+              href={compareTop3Url}
+              onClick={() => trackEvent('quiz_internal_cta', { target: 'compare-top-3', slugs: topSlugs.join(',') }, '/quiz')}
+              className="px-3 py-2 md:px-5 md:py-2.5 bg-slate-900 text-white text-[0.69rem] md:text-sm font-semibold rounded-lg hover:bg-slate-800 transition-colors"
+            >
+              Compare Top {topSlugs.length} →
+            </a>
+          )}
           <a
-            href="/compare"
+            href={compareAllUrl}
             onClick={() => trackEvent('quiz_internal_cta', { target: 'compare' }, '/quiz')}
-            className="px-3 py-2 md:px-5 md:py-2.5 bg-slate-900 text-white text-[0.69rem] md:text-sm font-semibold rounded-lg hover:bg-slate-800 transition-colors"
+            className={`px-3 py-2 md:px-5 md:py-2.5 ${topSlugs.length >= 2 ? "border border-slate-700 text-slate-900 hover:bg-amber-300" : "bg-slate-900 text-white hover:bg-slate-800"} text-[0.69rem] md:text-sm font-semibold rounded-lg transition-colors`}
           >
             Compare All →
           </a>
@@ -68,13 +94,22 @@ export default function QuizResultsFooter({
               {topMatch.broker.name} Review →
             </a>
           )}
-          <a
+          <Link
             href="/find-advisor"
             onClick={() => trackEvent('quiz_internal_cta', { target: 'find-advisor' }, '/quiz')}
             className="px-3 py-2 md:px-5 md:py-2.5 border border-slate-700 text-slate-900 text-[0.69rem] md:text-sm font-semibold rounded-lg hover:bg-amber-300 transition-colors"
           >
             Find Advisor →
-          </a>
+          </Link>
+          {showPostJobFallback && (
+            <Link
+              href="/quotes/post?context=quiz"
+              onClick={() => trackEvent('quiz_internal_cta', { target: 'post-job', reason: unifiedAnswers?.complexity === "complex" ? "complex" : "whale" }, '/quiz')}
+              className="px-3 py-2 md:px-5 md:py-2.5 border border-slate-700 text-slate-900 text-[0.69rem] md:text-sm font-semibold rounded-lg hover:bg-amber-300 transition-colors"
+            >
+              Post a Job →
+            </Link>
+          )}
         </div>
       </div>
 

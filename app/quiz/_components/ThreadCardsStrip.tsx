@@ -5,8 +5,11 @@ import Icon from "@/components/Icon";
 import { trackEvent } from "@/lib/tracking";
 
 /**
- * Subset of UnifiedAnswers from app/quiz/page.tsx that drives thread visibility.
- * Kept narrow on purpose — anything else is irrelevant to bundle suggestions.
+ * Subset of UnifiedAnswers from app/quiz/page.tsx. Originally narrow for
+ * thread-card selection; widened to include `experience` and `property_sub`
+ * because the results screen now passes the same shape to QuizResultsFooter
+ * (compare-URL params) and QuizNextBestActions (cross-sell inference).
+ * Thread-card logic still only reads goal/mode/complexity/amount/priority.
  */
 export interface ThreadAnswers {
   goal?: string;
@@ -14,6 +17,8 @@ export interface ThreadAnswers {
   complexity?: string;
   amount?: string;
   priority?: string;
+  experience?: string;
+  property_sub?: string;
 }
 
 interface ThreadCard {
