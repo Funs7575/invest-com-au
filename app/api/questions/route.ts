@@ -6,17 +6,14 @@ import { isRateLimited } from "@/lib/rate-limit";
 
 const log = logger("questions");
 
+// All fields optional so Zod v4 doesn't emit an invalid_type error for missing
+// required fields (v4 removed the required_error constructor param). Required
+// field presence is enforced by the manual check below.
 const Body = z.object({
-  broker_slug: z.string({ required_error: "Missing required fields" }).min(1, "Missing required fields"),
-  page_slug: z.string({ required_error: "Missing required fields" }).min(1, "Missing required fields"),
-  question: z
-    .string({ required_error: "Missing required fields" })
-    .min(10, "Question must be 10-500 characters")
-    .max(500, "Question must be 10-500 characters"),
-  display_name: z
-    .string({ required_error: "Missing required fields" })
-    .min(2, "Name must be 2-100 characters")
-    .max(100, "Name must be 2-100 characters"),
+  broker_slug: z.string().optional(),
+  page_slug: z.string().optional(),
+  question: z.string().optional(),
+  display_name: z.string().optional(),
   page_type: z.string().optional(),
   email: z.string().email().max(254).nullish(),
 });
@@ -36,20 +33,30 @@ export async function POST(req: NextRequest) {
 
   const parsed = Body.safeParse(raw);
   if (!parsed.success) {
-    const message = parsed.error.issues[0]?.message ?? "Invalid request";
-    return NextResponse.json({ error: message }, { status: 400 });
+    return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 
-  const body = parsed.data;
+  const { broker_slug, page_slug, question, display_name, page_type, email } = parsed.data;
+
+  if (!broker_slug || !page_slug || !question || !display_name) {
+    return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+  }
+  if (question.length < 10 || question.length > 500) {
+    return NextResponse.json({ error: "Question must be 10-500 characters" }, { status: 400 });
+  }
+  if (display_name.length < 2 || display_name.length > 100) {
+    return NextResponse.json({ error: "Name must be 2-100 characters" }, { status: 400 });
+  }
+
   const supabase = await createClient();
 
   const { error } = await supabase.from("broker_questions").insert({
-    broker_slug: body.broker_slug,
-    page_type: body.page_type ?? "broker",
-    page_slug: body.page_slug,
-    question: body.question.trim(),
-    display_name: body.display_name.trim(),
-    email: body.email?.trim() ?? null,
+    broker_slug,
+    page_type: page_type ?? "broker",
+    page_slug,
+    question: question.trim(),
+    display_name: display_name.trim(),
+    email: email?.trim() ?? null,
     status: "pending",
   });
 

@@ -5,16 +5,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 import { isRateLimited } from "@/lib/rate-limit";
 
+// All fields optional so Zod v4 doesn't emit an invalid_type error for missing
+// required fields (v4 removed the required_error constructor param). Required
+// field presence and length constraints are enforced by the manual checks below.
 const ThreadPostBody = z.object({
-  category_slug: z.string({ required_error: "Missing required fields: category_slug, title, body" }).min(1, "Missing required fields: category_slug, title, body"),
-  title: z
-    .string({ required_error: "Missing required fields: category_slug, title, body" })
-    .min(5, "Title must be 5-200 characters")
-    .max(200, "Title must be 5-200 characters"),
-  body: z
-    .string({ required_error: "Missing required fields: category_slug, title, body" })
-    .min(10, "Body must be 10-10000 characters")
-    .max(10000, "Body must be 10-10000 characters"),
+  category_slug: z.string().optional(),
+  title: z.string().optional(),
+  body: z.string().optional(),
 });
 
 const log = logger("community:threads");
@@ -128,11 +125,21 @@ export async function POST(req: NextRequest) {
 
     const parsedBody = ThreadPostBody.safeParse(rawBody);
     if (!parsedBody.success) {
-      const message = parsedBody.error.issues[0]?.message ?? "Invalid request";
-      return NextResponse.json({ error: message }, { status: 400 });
+      return NextResponse.json({ error: "Invalid request" }, { status: 400 });
     }
 
     const { category_slug, title, body: threadBody } = parsedBody.data;
+
+    if (!category_slug || !title || !threadBody) {
+      return NextResponse.json({ error: "Missing required fields: category_slug, title, body" }, { status: 400 });
+    }
+    if (title.trim().length < 5 || title.trim().length > 200) {
+      return NextResponse.json({ error: "Title must be 5-200 characters" }, { status: 400 });
+    }
+    if (threadBody.trim().length < 10 || threadBody.trim().length > 10000) {
+      return NextResponse.json({ error: "Body must be 10-10000 characters" }, { status: 400 });
+    }
+
     const admin = createAdminClient();
 
     // Resolve category
