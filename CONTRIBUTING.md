@@ -34,6 +34,20 @@ much better when everyone uses it.
 - Mark draft PRs as draft — reviewers ignore non-draft PRs unless
   they're ready.
 
+### Launch-hotfix PRs
+
+During the launch window (per `docs/runbooks/launch-day.md`), bug
+fixes use the `launch-hotfix` template — one bug per PR, no feature
+changes, rollback step required in the description. Pick it via:
+
+```
+gh pr create --template launch-hotfix.md
+```
+
+Add the severity label (`P0` / `P1` / `P2` / `P3`) per
+`docs/ops/severity-matrix.md` plus `launch-hotfix`. Merge tier follows
+severity (see `docs/audits/MERGE_AUTHORIZATION.md`).
+
 ## Code style
 
 - TypeScript strict mode is on (including `noUncheckedIndexedAccess`).
