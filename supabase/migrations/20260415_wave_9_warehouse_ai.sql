@@ -10,6 +10,14 @@
 --                                 (reviews / advisors / disputes)
 --   4. churn_scores             — advisor churn-risk snapshots
 --   5. i18n_currency_rates      — daily FX for currency conversion
+--
+-- Rollback (in reverse order):
+--   5. DROP TABLE IF EXISTS public.i18n_currency_rates;
+--   4. DROP TABLE IF EXISTS public.churn_scores;
+--   3. DROP TABLE IF EXISTS public.fraud_signals;
+--   2. DROP TABLE IF EXISTS public.chatbot_conversations;
+--   1. DROP TABLE IF EXISTS public.warehouse_daily_facts;
+--   Note: RLS policies and indexes drop with their tables.
 
 -- ── 1. warehouse_daily_facts ───────────────────────────────────────
 -- Append-only mart table. One row per (day, metric_name) so we

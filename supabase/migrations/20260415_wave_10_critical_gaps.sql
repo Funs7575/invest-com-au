@@ -11,6 +11,27 @@
 -- Extensions to existing tables:
 --   - subscriptions               → grace period + pause + dunning counters
 --   - professionals               → advisor_tier + tier upgraded/downgraded timestamps
+--
+-- Rollback (in reverse order):
+--   Columns added to existing tables:
+--     ALTER TABLE public.professionals
+--       DROP COLUMN IF EXISTS tier_changed_at,
+--       DROP COLUMN IF EXISTS tier_changed_by,
+--       DROP COLUMN IF EXISTS tier_change_reason;
+--     ALTER TABLE public.subscriptions
+--       DROP COLUMN IF EXISTS grace_period_until,
+--       DROP COLUMN IF EXISTS paused_at,
+--       DROP COLUMN IF EXISTS pause_reason,
+--       DROP COLUMN IF EXISTS dunning_attempt_count,
+--       DROP COLUMN IF EXISTS last_dunning_email_at;
+--   New tables (drop in reverse order):
+--   6. DROP TABLE IF EXISTS public.tmds;
+--   5. DROP TABLE IF EXISTS public.data_integrity_issues;
+--   4. DROP TABLE IF EXISTS public.churn_surveys;
+--   3. DROP TABLE IF EXISTS public.complaints_register;
+--   2. DROP TABLE IF EXISTS public.login_attempts;
+--   1. DROP TABLE IF EXISTS public.admin_mfa_enrollments;
+--   Note: RLS policies and indexes drop with their tables.
 
 -- ── 1. admin_mfa_enrollments ───────────────────────────────────────
 -- One row per admin user who has enrolled a TOTP authenticator.
