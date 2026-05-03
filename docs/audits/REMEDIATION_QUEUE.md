@@ -52,7 +52,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | Y | all PRs MERGED | #253/#347 both MERGED | last merged 2026-05-01T22:00Z | Y-05 done (PR #253). Y-08 done (PR #253). Y-05-ENRICH MERGED (#347 — sourcedAt/source/freshness enrichment + 16 new tests). Y-01..Y-04, Y-06, Y-07 pending. |
 | BB | all PRs MERGED | #361/#368 both MERGED | last merged 2026-05-01T22:01Z | BB-03 MERGED (#361 — CGT calc vs ATO, 5 regulator-reference tests). BB-06 MERGED (#368 — mortgage stress vs ASIC+APRA, 8 cases). Other BB items pending. |
 | **AUDIT-SWEEP** | `claude/audit-remediation/audit-sweep-01-02` | #518 OPEN | iter 228 — `907180c` (PR #518: AUDIT-SWEEP-01+02 done); CI running. | AUDIT-SWEEP-01 done. AUDIT-SWEEP-02 done. PR #518 auto-merge-safe (hygiene only). |
-| **MAIN-RESCUE** | `fix/main-rescue-enquire-tests` | #523 OPEN | iter 238 — `49db562` (fix: reset mockIsFlagEnabled inside investor_type loop — vi.clearAllMocks() inside "accepts all valid investor_type values" erased the mock on every iteration); CI running. iter 233 — `2c35cc2` (superset of #522: all 5 broken test files mocked; #522 closed as superseded). | Fixes main CI: isFlagEnabled returns false in placeholder-Supabase env; 5 test files (listings-enquire/checkout, advisor-enquiry, concierge, cron-drip) need mock. PR #523 covers all 5. |
+| **MAIN-RESCUE** | `fix/main-rescue-enquire-tests` | #523 OPEN | iter 240 — `9c74087` (fix: add isFlagEnabled mock to listings.test.ts + sponsorship-comprehensive.test.ts — 2 files missed by PR #523's original 5-file rescue; all 7 failing files now fixed + CI pending). iter 238 — `49db562` (fix: reset mockIsFlagEnabled inside investor_type loop). iter 233 — `2c35cc2` (original rescue: 5 files). | Fixes main CI: 7 test files broken by launch-ops kill-switch additions. PR #523 now covers all 7 (5 in orig + 2 added iter 240). |
 | **R-COVERAGE** | _to be created_ | — | — | **Overall 60% already met (currently 70.94%).** Remaining gap: ≥80% on money/legal libs (`lib/stripe`, `lib/finance`, `lib/compliance`, `lib/sponsorship`) + ≥70% on user-data/money API routes. **Realistic timeline: 3-8 weeks**, not 6-7 months — original estimate based on stale 1.5% baseline. See "R-COVERAGE" section below. |
 | **OBS** | _to be created_ | — | — | Observability layer: SLO dashboards, alerting on main breakage, on-call runbook expansion. ~2 weeks of work once spec'd. See "OBS — observability layer" section below. |
 | **REFACTOR** | _to be created_ | — | — | One major refactor of the messiest area to set the codebase pattern standard. Target TBD on first iteration (likely advisor lifecycle vs sponsorship). See "REFACTOR — pattern-setting refactor" section below. |
@@ -1680,6 +1680,17 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-03 — MAIN-RESCUE iter 240 (fix: add isFlagEnabled mock to listings.test.ts + sponsorship-comprehensive.test.ts)
+
+- Phase 0: Lock acquired. No LOOP_PAUSE sentinel.
+- Phase 1: main synced — up to date.
+- Phase 1.5: No migration in last 24h → skipped.
+- Phase 1.7: main CI — FAILURE (systemic: `Lint · Type-check · Test · Build` failing on all 6 complete-CI in-flight PRs). Root cause: launch-ops pass added `isFlagEnabled` kill-switch guards to routes; test env placeholder Supabase URL causes `isFlagEnabled` to return false → 503 responses. 76 tests failing across 7 files: 5 fixed by PR #523's prior commits, 2 missed (listings.test.ts + sponsorship-comprehensive.test.ts).
+- Phase 2: Not applicable — main itself is broken.
+- Phase 3-5: Extended PR #523 — checked out `fix/main-rescue-enquire-tests`, merged main, added `vi.mock("@/lib/feature-flags")` returning true to both missing test files. Also removed unused `beforeEach` import from sponsorship-comprehensive.test.ts (lint). Ran all 7 failing test files locally → 118 tests passed. Lint clean (0 warnings).
+- Phase 6: Committed `9c74087`, pushed to `fix/main-rescue-enquire-tests`. PR #523 now covers all 7 broken test files.
+- STATUS: MAIN-RESCUE · pr=#523 · commit=9c74087
 
 ### 2026-05-03 — Forward progress iter 239 (stream KK — KK-02: hub silence alert cron)
 
