@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -8,6 +9,10 @@ import { createHash } from "crypto";
 const log = logger("referrals");
 
 const REFERRAL_CODE_REGEX = /^[A-Za-z0-9]{4,16}$/;
+
+const PostBody = z.object({
+  referral_code: z.string().regex(REFERRAL_CODE_REGEX, "Invalid referral code"),
+});
 
 /**
  * Generate a deterministic 8-char alphanumeric referral code from user ID.
@@ -143,20 +148,19 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  let body: Record<string, unknown>;
+  let raw: unknown;
   try {
-    body = await req.json();
+    raw = await req.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  const referralCode = typeof body.referral_code === "string" ? body.referral_code.trim() : "";
-  // Tight format check — alphanumeric 4-16 chars, matching generator output.
-  // Previously any 4-16 char string passed validation, letting callers inject
-  // arbitrary characters (escape sequences, wildcards) into downstream queries.
-  if (!REFERRAL_CODE_REGEX.test(referralCode)) {
+  const parsed = PostBody.safeParse(raw);
+  if (!parsed.success) {
     return NextResponse.json({ error: "Invalid referral code" }, { status: 400 });
   }
+
+  const referralCode = parsed.data.referral_code.trim();
 
   const admin = createAdminClient();
 
