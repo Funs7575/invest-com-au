@@ -496,6 +496,15 @@ Hard dependencies between items in different streams. The loop checks these befo
 
 If a dependency is itself blocked (e.g. V-NEW-02 depends on `lib/compliance.ts` factual-filter implementation, which depends on the founder's compliance copy review), the dependent item surfaces to Blocked with a pointer back to the dependency's blocker. The loop never silently skips a dependency.
 
+### Stream AUDIT-SWEEP — pre-existing audit-script failures (added 2026-05-03 by AI_COLLAB_PROTOCOL bootstrap cycle)
+
+Findings surfaced by `npm run audit:console-calls` and `npm run audit:duplicate-functions` while running the validation suite during the 2026-05-03 collaboration-protocol scaffold (PR #507). Both predate that scaffold — diff was `docs/audits/**` only. Filed here so the standard remediation loop picks them up; AUD-100 shard 7 should *not* re-file these.
+
+| ID | Status | Summary | Est | Notes |
+| --- | --- | --- | --- | --- |
+| AUDIT-SWEEP-01 | pending | `app/api-docs/page.tsx:439` — raw `console.log` violates `audit:console-calls`. Replace with `logger.info` from `lib/logger.ts`, or annotate with `// console-allow: <reason>` if genuinely intentional (this file is dev-only API docs — annotation is plausible). | 1 | Evidence: `npm run audit:console-calls` output 2026-05-03. Policy: `CLAUDE.md` "Single sources of truth" → `lib/logger.ts` (never `console.*`). |
+| AUDIT-SWEEP-02 | pending | Four duplicate function definitions flagged by `audit:duplicate-functions`: `sendAdminNotification` redefined in `app/api/advisor-lead/route.ts` (canonical: `lib/advisor-emails.ts`); `welcomeEmail` redefined in `app/api/cron/investor-drip/route.ts` (canonical: `lib/email-templates.ts`); `isRateLimited` redefined in `app/go/[slug]/route.ts` (canonical: `lib/rate-limit.ts`); `addSlot` redefined in `app/versus/VersusClient.tsx` (canonical: `lib/advisor-booking.ts`). Replace each local definition with an import from the canonical module. | 2 | Evidence: `npm run audit:duplicate-functions` output 2026-05-03. Policy: `CLAUDE.md` "Single sources of truth" — `lib/rate-limit.ts` is the canonical rate-limiter; replicating it in `app/go/[slug]/route.ts` risks inconsistent throttle behaviour. Consider per-callsite whether shadowing is intentional (if so, add to `ALLOWED_NAMES` in the script with a comment) before deleting. |
+
 ### Stream R-COVERAGE — test coverage to ≥60% / 80% / 70% (added 2026-05-02 senior-grade uplift; targets lifted 2026-05-02; baseline corrected 2026-05-02 after stale-memory error)
 
 **CORRECTION 2026-05-02:** initial draft of this stream cited a 1.5% coverage baseline from a stale memory note. Actual `npm run test:coverage` output as of 2026-05-02:
