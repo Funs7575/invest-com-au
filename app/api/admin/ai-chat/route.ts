@@ -1,6 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
+import { isFlagEnabled } from "@/lib/feature-flags";
 import { ADMIN_EMAILS } from "@/lib/admin";
 import { NextRequest, NextResponse } from "next/server";
 import {
@@ -647,6 +648,13 @@ async function executeTool(name: string, input: Record<string, unknown>): Promis
 
 export async function POST(req: NextRequest) {
   try {
+    // Launch-ops kill switch: flip `ai_generation` off in
+    // /admin/automation/flags to halt all AI calls. Same flag as the
+    // public concierge route. See docs/ops/launch-ops-plan.md §4.
+    if (!(await isFlagEnabled("ai_generation"))) {
+      return NextResponse.json({ error: "temporarily_unavailable" }, { status: 503 });
+    }
+
     // Require admin authentication
     const supabaseAuth = await createClient();
     const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
