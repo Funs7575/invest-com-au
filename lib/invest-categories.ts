@@ -1193,6 +1193,834 @@ const categories: InvestCategory[] = [
     ],
     subcategories: [],
   },
+
+  // ─── Bonds & Fixed Income ───
+  {
+    slug: "bonds",
+    label: "Bonds",
+    dbVerticals: ["fund"],
+    dbFundSubCategories: ["bond"],
+    color: {
+      bg: "bg-sky-50",
+      border: "border-sky-200",
+      text: "text-sky-700",
+      accent: "bg-sky-600",
+      gradient: "from-sky-50 to-white",
+    },
+    icon: "landmark",
+    title: `Australian Bonds & Fixed Income Investing (${yr})`,
+    h1: "Australian Bonds & Fixed Income",
+    metaDescription: `Australian Government Bonds (ACGB), corporate bonds, ASX bond ETFs (VGB, AGVT, IAF) and FIIG / XTB access. Yield curve, minimum sizes, tax. ${upd}.`,
+    intro: `Australian fixed income spans Australian Government Bonds (ACGBs), semi-government issuance, corporate bonds, and the listed-bond ETF wrapper market. The asset class trades off equity-like growth for contractual coupons and a defined repayment date — the trade-off is interest-rate risk, credit risk, and lower long-run returns than equities.`,
+    sections: [
+      {
+        heading: "How Australian retail investors actually access bonds",
+        body: "Direct ACGB access via the AOFM's exchange-traded Treasury bonds (eAGBs) on the ASX from any standard brokerage account, with $100 face-value parcels. Listed bond ETFs are the most liquid retail wrapper: Vanguard VGB (Australian government), Betashares AGVT (long-duration government), iShares IAF (composite Aussie bond), and Vanguard VAF cover most of the curve. FIIG Securities is the dominant retail/wholesale corporate bond broker in Australia, with $10,000 minimum parcels. XTB lists exchange-traded corporate bonds on the ASX. Most direct corporate bond issuance is wholesale-only under section 708.",
+      },
+      {
+        heading: "Reading the Australian yield curve",
+        body: "The 3-year and 10-year ACGB yields are the headline benchmarks the RBA, futures markets and corporate bond spreads price off. A normal curve slopes upward — longer maturities offer higher yields. Inversion (3y above 10y) has historically preceded slowdowns. Credit spreads — corporate yield minus government yield — widen in stress and compress in benign markets. Investment-grade A-rated Australian corporate spreads typically run 80–180bps over swap; sub-investment-grade widens materially.",
+      },
+      {
+        heading: "Risks specific to fixed income",
+        body: "Interest-rate risk is the dominant driver: a 1% rise in yields drops a 10-year bond's price by roughly 8–9%. Credit risk applies to corporate and sub-sovereign issuers — defaults are rare in IG but recovery rates compress prices well before default. Inflation risk erodes the real value of fixed coupons; ACGB inflation-linked bonds (TIBs) hedge this directly. Liquidity is thinner than equities outside the most-traded eAGBs and major corporate ETFs.",
+      },
+    ],
+    faqs: [
+      {
+        question: "What are the most popular ASX-listed bond ETFs in Australia?",
+        answer: "Vanguard VGB (Australian government, ~0.16% MER), Vanguard VAF (composite Aussie bond, 0.10% MER), iShares IAF (Aussie composite, 0.15% MER), Betashares AGVT (long-duration government), Betashares CRED (investment-grade corporate), and Vanguard VBND (global aggregate, AUD-hedged) cover most allocation needs. ETFs trade like shares with normal brokerage but no minimum face-value parcel.",
+      },
+      {
+        question: "How are bond coupons and capital gains taxed in Australia?",
+        answer: "Coupon interest is assessable as ordinary income under section 6-5 of ITAA 1997 in the year received. Capital gain or loss on disposal is calculated under the CGT rules; individuals and trusts qualify for the 50% CGT discount on bonds held over 12 months, but the Traditional Securities rules (Division 16E) can recharacterise some of the gain as ordinary income for deeply-discounted bonds. SMSFs receive coupons taxed at 15% in accumulation phase.",
+      },
+      {
+        question: "What's the minimum to buy a corporate bond directly?",
+        answer: "FIIG Securities typically lists $10,000 minimum parcels for retail corporate bonds. XTB exchange-traded bonds on the ASX trade in standard share parcels (no fixed minimum beyond brokerage). Direct wholesale corporate bond issues commonly require $500,000+ under the section 708 wholesale carve-out. The ETF route avoids the minimum-parcel issue entirely.",
+      },
+    ],
+    subcategories: [],
+  },
+
+  // ─── Hybrid Securities ───
+  {
+    slug: "hybrid-securities",
+    label: "Hybrid Securities",
+    dbVerticals: ["fund"],
+    dbFundSubCategories: ["hybrid"],
+    color: {
+      bg: "bg-stone-50",
+      border: "border-stone-200",
+      text: "text-stone-700",
+      accent: "bg-stone-600",
+      gradient: "from-stone-50 to-white",
+    },
+    icon: "shield",
+    title: `Australian Hybrid Securities & Capital Notes (${yr})`,
+    h1: "Australian Hybrid Securities & Capital Notes",
+    metaDescription: `ASX bank hybrids, capital notes and subordinated debt — APRA Basel III tier, conversion risk, distribution stopper rules. ${upd}.`,
+    intro: `Hybrid securities sit between debt and equity in the bank capital stack. Australian bank hybrids — issued by CBA, NAB, Westpac, ANZ and Macquarie — pay franked distributions at a margin over BBSW, with mandatory conversion triggers tied to APRA's regulatory capital framework. Higher running yield than senior debt comes with materially more risk than retail investors typically appreciate.`,
+    sections: [
+      {
+        heading: "Where hybrids sit in the bank capital stack",
+        body: "Australian bank hybrids are typically Additional Tier 1 (AT1) capital under APRA's Basel III framework. AT1 instruments rank below senior unsecured debt, below Tier 2 subordinated debt, and above ordinary equity. They carry non-cumulative discretionary distributions (the issuer can skip a coupon without triggering default), a non-viability conversion trigger (APRA can force conversion to ordinary shares if the issuer is non-viable), and a capital-trigger conversion (mandatory conversion if Common Equity Tier 1 falls below 5.125%).",
+      },
+      {
+        heading: "Pricing and yield mechanics",
+        body: "Most ASX bank hybrids price at a margin over the 90-day BBSW (Bank Bill Swap Rate), with quarterly franked distributions. The grossed-up running yield (cash yield plus franking credits) typically runs 4.0%–6.0% above BBSW. Examples include CBAPI, NABPF, WBCPK and ANZPI. APRA announced in late 2024 that AT1 instruments will be phased out of bank capital — replaced by Tier 2 — which has materially compressed new-issuance margins and shortened the runway for the asset class as a whole.",
+      },
+      {
+        heading: "Risks specific to hybrids",
+        body: "Conversion risk: in stress scenarios, hybrids convert to shares at issuer-favourable ratios that can crystallise material losses. Distribution-stopper risk: APRA can force the issuer to skip distributions without triggering default. Liquidity is thinner than equities — bid-ask spreads widen in stress. Wholesale-only carve-outs apply to some new issues. The asset class behaved more like equity than debt during the March 2020 COVID stress, dropping 20–30% before recovering.",
+      },
+    ],
+    faqs: [
+      {
+        question: "How are hybrid distributions taxed in Australia?",
+        answer: "Distributions on Australian bank hybrids are typically franked dividends, treated under the imputation system. Australian-resident individuals gross up the distribution by the franking credit, pay tax at marginal rate, and offset franking credits against tax payable; excess credits are refundable for low-income holders. SMSFs in accumulation get the 15% rate against the grossed-up amount; SMSFs in pension phase typically receive the franking credits as a refund.",
+      },
+      {
+        question: "What does APRA's AT1 phase-out mean for existing hybrid investors?",
+        answer: "APRA confirmed in December 2024 that Additional Tier 1 capital instruments will be phased out of the Australian banking system, with transition arrangements through to 2032. Existing AT1 hybrids remain on issue until their first call date, at which point the issuer is expected to redeem rather than refinance. Net effect: a slowly shrinking asset class with reduced new supply, supportive for prices of existing notes near-term.",
+      },
+      {
+        question: "Are hybrids appropriate for retail investors?",
+        answer: "ASIC has repeatedly raised concerns about retail investor understanding of hybrid risks, particularly conversion mechanics and distribution-stopper rules. Hybrids are listed on the ASX and accessible to all retail investors via standard brokerage, but the risk profile is closer to deeply-subordinated bank equity than to the term-deposit substitute they are sometimes marketed as. Read the prospectus, model conversion outcomes, and limit position size accordingly.",
+      },
+    ],
+    subcategories: [],
+  },
+
+  // ─── Dividend Investing ───
+  {
+    slug: "dividend-investing",
+    label: "Dividend Investing",
+    dbVerticals: ["fund"],
+    dbFundSubCategories: ["dividend"],
+    color: {
+      bg: "bg-lime-50",
+      border: "border-lime-200",
+      text: "text-lime-700",
+      accent: "bg-lime-600",
+      gradient: "from-lime-50 to-white",
+    },
+    icon: "dollar-sign",
+    title: `Dividend Investing on the ASX (${yr})`,
+    h1: "Dividend Investing on the ASX",
+    metaDescription: `ASX dividend stocks, franking credits, DRPs and high-yield ETFs (VHY, IHD, DVDY). Banks, miners, utilities and the franking-yield illusion. ${upd}.`,
+    intro: `Australia's imputation system makes ASX dividend yield genuinely different from US or European equity income. The Big Four banks, large miners and utilities form the backbone of the high-yield ASX index, with grossed-up yields routinely in the 6%–9% range. The trade-off is concentration risk — the same handful of names dominate every yield-focused portfolio.`,
+    sections: [
+      {
+        heading: "Franking credits and grossed-up yield",
+        body: "Australia's dividend imputation system attaches a franking credit to dividends paid out of company profits already taxed at the corporate rate (currently 30% for large companies, 25% for base-rate entities). Resident individuals gross up the dividend by the franking credit, pay tax at marginal rate, and offset the credit against tax payable — excess credits are refundable for low-income individuals and pension-phase superannuation. A 4% fully-franked dividend grosses up to ~5.7% pre-tax-equivalent yield against unfranked income.",
+      },
+      {
+        heading: "ASX high-yield concentration",
+        body: "The ASX 200 yield is heavily concentrated: the Big Four banks (CBA, NAB, WBC, ANZ), the major miners (BHP, RIO, FMG), the utilities (AGL, Origin, APA), and Telstra account for the bulk of grossed-up dividend dollars distributed by the index. ETF wrappers like Vanguard VHY, iShares IHD and Betashares DVDY systematise this concentration — they are not diversified high-yield portfolios in the international sense but reweighted exposures to the same handful of names.",
+      },
+      {
+        heading: "Dividend reinvestment plans (DRPs)",
+        body: "Most ASX dividend payers offer a DRP — dividends are reinvested into additional shares at a small discount (typically 1.5%–2.5%) to the volume-weighted average price over the pricing window. DRPs are not a tax deferral; the dividend is still assessable in the year declared even though no cash changes hands. CommSec, nabtrade and most brokers handle DRP elections; share registries (Computershare, Link, Boardroom) are the operational counterparty.",
+      },
+    ],
+    faqs: [
+      {
+        question: "What is the franking-yield illusion?",
+        answer: "Companies that pay out 100% of earnings as dividends — common among Australian banks during 2014–2019 — have very little capital available for reinvestment. Total return = dividend + capital growth, and a stretched payout ratio sacrifices the second term. Investors fixated on grossed-up yield often miss that the high-payout name with no growth has lower total return than a moderate-yield name reinvesting at 15% ROE. CBA's payout ratio rerating in 2024–25 illustrates this dynamic.",
+      },
+      {
+        question: "Are franking credits available to foreign investors?",
+        answer: "Generally no. Franking credits are only refundable or offsettable for Australian-resident taxpayers (and SMSFs). Non-resident investors receive the cash dividend and are subject to dividend withholding tax at 30% (typically reduced to 0%–15% under double-tax agreements) on the unfranked portion only — the franked portion is exempt from DWT but the credit itself has no value to the non-resident. This is why some Australian dividend stocks trade on lower implicit yields to foreign holders.",
+      },
+      {
+        question: "Which ASX dividend ETFs are most popular?",
+        answer: "Vanguard VHY (Australian Shares High Yield, ~0.25% MER), iShares IHD (S&P/ASX Dividend Opportunities, ~0.30% MER), Betashares DVDY (Australian Dividend Harvester, ~0.35% MER), and SPDR SYI (MSCI Australia Select High Dividend Yield) are the largest by AUM. Read the index methodology — some screen for sustainability of dividend, others purely rank on trailing yield, which can lead to value-trap concentration.",
+      },
+    ],
+    subcategories: [],
+  },
+
+  // ─── REITs ───
+  {
+    slug: "reits",
+    label: "REITs",
+    dbVerticals: ["fund"],
+    dbFundSubCategories: ["reit"],
+    color: {
+      bg: "bg-emerald-50",
+      border: "border-emerald-200",
+      text: "text-emerald-700",
+      accent: "bg-emerald-600",
+      gradient: "from-emerald-50 to-white",
+    },
+    icon: "building",
+    title: `Australian REITs (A-REITs) — ASX Real Estate (${yr})`,
+    h1: "Australian Real Estate Investment Trusts (A-REITs)",
+    metaDescription: `Compare ASX-listed A-REITs by sector, NTA premium/discount, gearing and yield — Goodman, Stockland, Mirvac, Dexus, Scentre, Charter Hall. ${upd}.`,
+    intro: `A-REITs offer liquid, exchange-traded property exposure across industrial, retail, office, healthcare and diversified sectors. The S&P/ASX 200 A-REIT index has a market capitalisation of approximately $130B+, dominated by Goodman Group on the industrial side and a handful of diversified majors. REIT prices are interest-rate-sensitive; gearing and NTA discount are the two metrics that matter most.`,
+    sections: [
+      {
+        heading: "The Australian REIT landscape by sector",
+        body: "Industrial: Goodman Group (GMG) is the standout, with ~$25B+ market cap and global logistics development pipeline; Centuria Industrial REIT (CIP) and ESR Australia are mid-cap pure-plays. Retail: Scentre Group (SCG, Westfield AU/NZ), Vicinity Centres (VCX), Charter Hall Retail (CQR). Office: Dexus (DXS), Centuria Office REIT (COF). Diversified: Stockland (SGP), Mirvac (MGR), GPT (GPT), Charter Hall Long WALE REIT (CLW). Healthcare: Healthco (HCW), HealthCo Healthcare and Wellness (HCW). Specialised: National Storage REIT (NSR, self-storage).",
+      },
+      {
+        heading: "NTA discount, gearing and rate sensitivity",
+        body: "REIT pricing typically tracks the cycle of interest rates and the gap between unit price and net tangible asset value (NTA). Trading at an NTA discount is normal in a rising-rate environment — it reflects the market's view that valuers haven't yet caught up with current cap rates. Gearing across A-REITs typically runs 25%–35% loan-to-value; APRA has no direct authority but trust constitutions and lending covenants enforce caps. A 1% rise in long-end rates typically triggers 8%–15% A-REIT price compression as cap rates re-rate.",
+      },
+      {
+        heading: "REIT ETFs and managed funds",
+        body: "Vanguard VAP (Australian Property Securities, ~0.23% MER), SPDR SLF (S&P/ASX 200 Listed Property), Betashares MVA (Australian Property) and VanEck MVS provide diversified A-REIT exposure in a single trade. Active managers like Resolution Capital, APN Property Group and Charter Hall Direct run long-only A-REIT mandates targeting active risk against the index. Unlisted property funds (commercial-property-focused) operate alongside the listed market with different liquidity profiles.",
+      },
+    ],
+    faqs: [
+      {
+        question: "How are A-REIT distributions taxed?",
+        answer: "A-REITs are typically Attribution Managed Investment Trusts (AMITs) under Division 276. Distributions flow through the trust untaxed and are characterised by component for the holder — Australian rental income, foreign income, capital gains, and tax-deferred (return of capital) components are all reported separately on the annual AMMA statement. Tax-deferred components reduce cost base under section 104-71 rather than producing immediate assessable income, which can defer tax until disposal.",
+      },
+      {
+        question: "Why do REIT prices fall when interest rates rise?",
+        answer: "Two reinforcing mechanisms. First, valuation: commercial property cap rates re-rate upward as the risk-free rate rises, mechanically lowering the value of the underlying property assets. Second, financing cost: REIT gearing means rising rates increase interest expense on existing debt at refinance and tighten interest cover. The combination produces material price compression, with long-WALE office and retail typically more rate-sensitive than industrial or healthcare.",
+      },
+      {
+        question: "Can I invest in A-REITs through my SMSF?",
+        answer: "Yes — A-REITs are widely used in SMSF portfolios for property exposure that doesn't trigger the in-house asset (s71 SISA) rules or the storage and insurance complexity of direct property. They count toward listed asset allocations under the investment strategy and can hold significant weight without triggering single-asset concentration concerns. Distributions are taxed at 15% in accumulation and tax-free in pension phase up to the transfer balance cap.",
+      },
+    ],
+    subcategories: [],
+  },
+
+  // ─── Crypto Staking ───
+  {
+    slug: "crypto-staking",
+    label: "Crypto Staking",
+    dbVerticals: ["fund"],
+    dbFundSubCategories: ["crypto_staking"],
+    color: {
+      bg: "bg-fuchsia-50",
+      border: "border-fuchsia-200",
+      text: "text-fuchsia-700",
+      accent: "bg-fuchsia-600",
+      gradient: "from-fuchsia-50 to-white",
+    },
+    icon: "bitcoin",
+    title: `Crypto Staking in Australia (${yr})`,
+    h1: "Crypto Staking in Australia",
+    metaDescription: `Stake Ethereum, Solana, ADA and other PoS assets via AUSTRAC-registered Australian exchanges. Slashing, restaking and ATO income treatment. ${upd}.`,
+    intro: `Staking pays a yield for committing proof-of-stake tokens to validate blockchain transactions. Australian retail access runs through AUSTRAC-registered digital currency exchanges — Swyftx, CoinSpot, Independent Reserve, Kraken Australia and Binance Australia. Yields range from 2%–8% on the major PoS assets, with material risks the marketing rarely emphasises.`,
+    sections: [
+      {
+        heading: "How staking actually works in Australia",
+        body: "Most retail users access staking through a custodial exchange — the exchange runs validators and passes through a portion of staking rewards after taking a service fee (typically 15%–25%). Direct (non-custodial) staking via wallets like MetaMask, Phantom or Ledger Live retains custody but adds operational complexity. Liquid-staking tokens (LSTs) such as Lido stETH or Rocket Pool rETH wrap staked positions in a tradeable token — convenient, but introducing additional smart-contract and depeg risk. AUSTRAC registration is mandatory for any exchange operating in Australia; check the Digital Currency Exchange Register before depositing.",
+      },
+      {
+        heading: "Slashing, depeg and counterparty risks",
+        body: "Slashing penalises validators that double-sign or are offline beyond protocol thresholds — losses range from 0.5% (offline) to 100% (severe double-sign) of the staked balance. Custodial exchanges typically pool slashing risk across users but don't always insure against it. LSTs can depeg from the underlying asset during stress — stETH traded ~6% below ETH during the May–June 2022 stress. Restaking protocols (EigenLayer, Symbiotic) layer additional slashing conditions and have counterparty/smart-contract exposure beyond base-layer staking. Custodial exchange failure is the dominant historical loss path — FTX, Celsius and Voyager all held customer staked balances at collapse.",
+      },
+      {
+        heading: "Australian regulatory and tax treatment",
+        body: "AUSTRAC requires DCE registration for any business providing crypto services in Australia. ASIC regulates platforms that offer leveraged or derivatives products on crypto. The ATO's TR 2022/D2 and TD 2014/26 establish that staking rewards are assessable as ordinary income under section 6-5 at the AUD market value on the day of receipt — this creates a capital base for that token equal to the income amount, with subsequent disposal triggering CGT. Tracking is operationally hard; tools like Koinly, CryptoTaxCalculator and CoinTracking integrate with major Australian exchanges.",
+      },
+    ],
+    faqs: [
+      {
+        question: "Which Australian exchanges offer staking?",
+        answer: "Swyftx, CoinSpot, Independent Reserve, Kraken Australia, Binance Australia and OKX Australia all offer staking on major PoS assets — typically ETH, SOL, ADA, DOT, ATOM and AVAX. Yields and lockup periods vary by exchange and protocol. All listed exchanges are AUSTRAC-registered; verify on the AUSTRAC register before depositing. Yield quotes typically exclude the exchange's service fee — read the fine print.",
+      },
+      {
+        question: "How is staking income taxed in Australia?",
+        answer: "Staking rewards are ordinary income at the AUD market value on the day of receipt, per ATO guidance (TR 2022/D2). The amount included becomes the cost base of the received tokens for future CGT purposes. Disposal of the rewarded tokens (sale, swap, transfer) triggers CGT event A1; the 50% CGT discount applies for individuals and trusts holding more than 12 months. Maintain a per-reward record — exchanges' year-end statements vary in quality and the ATO has flagged crypto as a focus area.",
+      },
+      {
+        question: "Can SMSFs stake crypto?",
+        answer: "Possible but operationally complex. SMSF crypto staking must comply with the sole-purpose test (s62 SISA), the in-house asset rules (s71), and the trustee's investment strategy. Custodial staking on a corporate-account exchange typically passes the auditor's separation-of-assets check; non-custodial staking from a personal wallet does not. Australian SMSF auditors increasingly scrutinise crypto holdings; engage an SMSF-specialist auditor before staking.",
+      },
+    ],
+    subcategories: [],
+  },
+
+  // ─── Forex ───
+  {
+    slug: "forex",
+    label: "Forex",
+    dbVerticals: ["fund"],
+    dbFundSubCategories: ["forex"],
+    color: {
+      bg: "bg-zinc-50",
+      border: "border-zinc-200",
+      text: "text-zinc-700",
+      accent: "bg-zinc-600",
+      gradient: "from-zinc-50 to-white",
+    },
+    icon: "globe",
+    title: `Forex Trading in Australia (${yr})`,
+    h1: "Forex Trading in Australia",
+    metaDescription: `Spot FX and CFD forex via ASIC-licensed brokers — Pepperstone, IC Markets, IG, CMC. Leverage caps, AFCA dispute path, ATO income treatment. ${upd}.`,
+    intro: `Retail forex in Australia is regulated as a derivatives product (mostly CFDs over spot FX) under ASIC product intervention orders. The market is dominated by ASIC-licensed providers — Pepperstone, IC Markets, IG, CMC Markets, Saxo and Plus500. Spreads and execution quality have converged among the top tier; the main differentiators are platform, customer service and regulatory standing.`,
+    sections: [
+      {
+        heading: "ASIC product intervention and leverage caps",
+        body: "ASIC's CFD product intervention order (effective March 2021, extended through May 2031) caps retail leverage at 30:1 on major currency pairs (EUR/USD, USD/JPY, GBP/USD, AUD/USD), 20:1 on non-major pairs, 10:1 on commodities and non-major indices, 5:1 on shares, and 2:1 on cryptocurrency CFDs. Negative balance protection is mandatory. Bonuses and gifts for opening or funding accounts are banned. Wholesale clients can opt out of the leverage cap with the section 761G/761GA threshold tests — net assets >$2.5M or income >$250K p.a.",
+      },
+      {
+        heading: "Choosing an Australian forex broker",
+        body: "Verify ASIC AFSL on the AFS Licensee register — the AFSL number must appear on the broker's website and PDS. Check AFCA membership for retail dispute resolution. Look at execution model (true ECN/STP vs market-maker dealing desk), spread structure (tight raw-spread plus commission, or wider all-inclusive), and regulatory history. Pepperstone and IC Markets dominate the Australian raw-spread ECN tier; IG, CMC and Saxo dominate the all-inclusive retail tier; offshore unlicensed brokers should be avoided — the ASIC Moneysmart register flags scam operators regularly.",
+      },
+      {
+        heading: "Risks specific to leveraged FX",
+        body: "Most retail forex CFD accounts lose money — ASIC and ESMA-required disclosures consistently show 65%–85% of retail accounts in net loss over any 12-month window. Leverage amplifies both directions; gap risk during news events or weekend reopens can produce moves beyond stop-loss levels (the broker's negative balance protection caps the maximum loss at the deposited capital, but the position can still go to zero). Funding (overnight rollover) costs accrue daily on held positions, compounding adverse selection over time. FX should be approached as a high-risk speculative activity, not a long-term wealth strategy.",
+      },
+    ],
+    faqs: [
+      {
+        question: "Is forex trading legal in Australia?",
+        answer: "Yes, through ASIC-licensed brokers holding an AFSL with derivatives authorisation. Trading through an unlicensed offshore broker is not illegal for the trader but offers no AFCA dispute resolution and no compensation scheme protection. The Australian Financial Complaints Authority (AFCA) is the external dispute resolution scheme for retail FX disputes with licensed brokers; complaints unresolved within 45 days at the broker level can be lodged with AFCA at no cost.",
+      },
+      {
+        question: "How is forex profit taxed in Australia?",
+        answer: "For retail traders, forex CFD gains and losses are typically assessable as ordinary income (revenue account) under section 6-5 of ITAA 1997 — not capital gains. The ATO position in TR 2005/15 distinguishes between forex held for investment (rare for retail CFDs) and forex held for short-term profit-making — the latter is revenue. Losses are deductible against other ordinary income in the same year. Carrying on a business of trading carries different rules including PSI and non-commercial loss tests; engage a tax adviser if trading volumes are material.",
+      },
+      {
+        question: "What's the difference between spot FX and CFD forex?",
+        answer: "Spot FX is the actual exchange of one currency for another, settled T+2 — used by businesses, banks and large investors via the interbank market. Retail forex offered by Australian brokers is almost universally CFDs (contracts for difference) — synthetic exposure to FX price moves, no physical currency changes hands, settlement is in AUD against the position's AUD-equivalent P&L. CFD forex is the regulated retail product; access to true spot FX requires a wholesale prime-brokerage relationship.",
+      },
+    ],
+    subcategories: [],
+  },
+
+  // ─── Options Trading ───
+  {
+    slug: "options-trading",
+    label: "Options Trading",
+    dbVerticals: ["fund"],
+    dbFundSubCategories: ["options"],
+    color: {
+      bg: "bg-red-50",
+      border: "border-red-200",
+      text: "text-red-700",
+      accent: "bg-red-600",
+      gradient: "from-red-50 to-white",
+    },
+    icon: "trending-up",
+    title: `ASX Options Trading in Australia (${yr})`,
+    h1: "ASX Options Trading in Australia",
+    metaDescription: `ASX equity and index (XJO) options — covered calls, cash-secured puts, leverage and assignment risk. Australian broker access and tax treatment. ${upd}.`,
+    intro: `ASX options give Australian investors the ability to hedge, generate income, or take leveraged positions on the underlying. The ASX runs equity options on around 70 of the most liquid stocks plus index options on the S&P/ASX 200 (XJO). The market is far smaller than the US options market — liquidity, spreads and strike selection are correspondingly narrower.`,
+    sections: [
+      {
+        heading: "ASX option mechanics — American vs European exercise",
+        body: "ASX equity options are American-style — exercisable at any time prior to expiry, settled via physical delivery of the underlying shares. ASX index options on the XJO are European-style — exercisable only at expiry, cash-settled in AUD against the opening index value on expiry day. Standard contract size is 100 shares per option for equity options; XJO options have a $10 multiplier on the index points. Expiry is typically the third Thursday of the month for equity options. Margin is required by the writer (seller) of an option, calculated daily by ASX Clear.",
+      },
+      {
+        heading: "Common Australian retail option strategies",
+        body: "Covered calls — sell call options against owned shares to generate premium income; the trade-off is capping upside above the strike. Common on Big Four banks and large miners as a yield-enhancement play, ~2%–5% annualised premium pickup. Cash-secured puts — sell put options on cash-collateralised positions, willing to be assigned the underlying at the strike; effectively a paid limit order. Protective puts — buy puts to insure long stock positions during expected volatility (earnings, central bank decisions). Spreads — long/short option pairs to define risk and reduce premium cost.",
+      },
+      {
+        heading: "Australian broker access to ASX options",
+        body: "CommSec, nabtrade, Bell Direct, Macquarie Direct and Saxo Australia offer ASX options trading to retail accounts; CMC Markets and IG offer options as part of their derivatives product set. Brokerage typically runs $30–$40 per contract leg or a percentage of premium; ECN-style providers can be cheaper for higher volume. Foreign-exchange access (US options on Interactive Brokers, etc.) is available to Australian retail accounts but introduces tax-reporting complexity and FX risk on the AUD-USD leg.",
+      },
+    ],
+    faqs: [
+      {
+        question: "How are option premiums taxed in Australia?",
+        answer: "The ATO position in TR 2007/D9 and supporting guidance treats option premiums as ordinary income (revenue account) for traders and as capital under the CGT regime for investors using options for hedging and infrequent strategic positions. The line between investor and trader is drawn case-by-case based on volume, intent and sophistication. For most active retail option traders, premiums received and lost are revenue items; premiums paid for puts as long-term portfolio insurance can fall on the capital account.",
+      },
+      {
+        question: "What's the assignment risk on covered calls?",
+        answer: "When you sell (write) a call option and the underlying trades above the strike near expiry, the option is likely to be exercised — you must deliver the shares at the strike price. If you're holding the underlying at a low cost base, exercise crystallises a capital gain you may not have intended. American-style exercise means assignment can occur at any time, particularly around dividend ex-dates when in-the-money calls are commonly exercised early to capture the dividend. Roll the position before ex-date or close out to avoid surprise assignment.",
+      },
+      {
+        question: "How liquid are ASX options?",
+        answer: "Liquidity is concentrated in the largest names — BHP, CBA, NAB, WBC, ANZ, RIO, FMG, CSL and Telstra — and in XJO index options. Bid-ask spreads on liquid contracts are typically 1–3 cents on at-the-money strikes; mid-cap option spreads are wider and out-of-the-money strikes can have meaningful bid-ask gap. Volume is far lower than the US — a typical liquid ASX option has 100–1000 contracts open interest vs millions on a comparable US name. Strategy selection should account for execution slippage.",
+      },
+    ],
+    subcategories: [],
+  },
+
+  // ─── IPOs ───
+  {
+    slug: "ipos",
+    label: "ASX IPOs",
+    dbVerticals: ["startup"],
+    color: {
+      bg: "bg-pink-50",
+      border: "border-pink-200",
+      text: "text-pink-700",
+      accent: "bg-pink-600",
+      gradient: "from-pink-50 to-white",
+    },
+    icon: "rocket",
+    title: `ASX IPOs — Australian Initial Public Offerings (${yr})`,
+    h1: "ASX IPOs — Australian Initial Public Offerings",
+    metaDescription: `Recent ASX IPOs and IPO performance vs the index. Priority broker allocations, escrow lockups, bookbuild dynamics. ${upd}.`,
+    intro: `ASX IPOs cover the full spectrum from sub-$10M micro-cap mining floats to multi-billion-dollar privatisations. The retail allocation pathway runs through priority broker offers (CommSec, nabtrade, Morgans, Bell Potter), public offers via prospectus, and aggregation platforms like OnMarket. Performance varies wildly — large floats are typically heavily oversubscribed, small-cap mining floats often free-fall after listing.`,
+    sections: [
+      {
+        heading: "How retail investors get ASX IPO allocations",
+        body: "Three main routes. Priority broker offers — your retail broker (CommSec, nabtrade, Morgans, Bell Direct) participates in the bookbuild and offers stock to its clients in priority; allocation depends on the broker's sub-allocation, your trading history with the broker, and demand. Public offers — accessible via prospectus, typically $1,000–$2,500 minimum, applied via BPAY or OnMarket. Wholesale broker offers — Macquarie, UBS, JPMorgan, Citi run institutional bookbuilds with HNW retail allocations to private wealth clients. Marquee large-cap IPOs are heavily scaled; mid-cap and small-cap retail allocations are typically more accessible.",
+      },
+      {
+        heading: "Escrow, lockups and prospectus mechanics",
+        body: "ASX Listing Rule Chapter 9 imposes mandatory escrow on certain pre-IPO shareholders of small-cap and mining floats — typically 12 to 24 months. Discretionary escrow is negotiated by the corporate adviser and is common on larger floats. Lockup expiry days frequently trigger material selling pressure as escrowed shareholders crystallise gains. The prospectus is the primary disclosure document under section 710 of the Corporations Act — read the use-of-funds, the financial information, the risk factors and the related-party transactions before applying.",
+      },
+      {
+        heading: "ASX IPO performance vs the index",
+        body: "Australian IPO first-day returns average around 7%–10% based on long-run SIRCA data, but the median is closer to flat — averages are skewed by a long tail of high-pop deals. 12-month post-IPO returns are mixed: the median IPO underperforms the ASX 200 over the medium term, with significant dispersion. The dispersion is wider for small-cap and micro-cap floats, where genuine quality is rare and adverse selection is high. Index inclusion (ASX 200, ASX 300) typically takes 3–9 months post-listing depending on free-float size, and inclusion-driven buying can support price.",
+      },
+    ],
+    faqs: [
+      {
+        question: "How do I subscribe to a public IPO offer in Australia?",
+        answer: "Read the prospectus on the issuer's website or via ASIC's ASIC Connect. Apply through the prospectus application form (BPAY) or via an aggregation platform like OnMarket — minimum is typically $1,000–$2,500. The offer closes on a specified date; allocation is confirmed shortly before listing. If oversubscribed, you receive a scaled allocation. Funds for the unfilled portion are returned to the BPAY account.",
+      },
+      {
+        question: "Why do small-cap ASX IPOs often underperform?",
+        answer: "Adverse selection — the highest-quality private companies don't need to IPO at small-cap valuations. Many small-cap ASX listings are mining or biotech vehicles raising development capital at speculative valuations. Free-float is often tight at listing, with promoters and seed shareholders escrowed; price can spike on listing then drift down through the lockup expiry period. Always read the prospectus' use-of-funds and management track record carefully before subscribing.",
+      },
+      {
+        question: "What's a backdoor listing?",
+        answer: "A backdoor listing is an IPO via reverse takeover of an existing ASX-listed shell company — the operating business is acquired by the shell, share consolidated and renamed. ASX requires the shell's share register, structure and prospectus disclosure to comply with Chapters 1 and 2 of the Listing Rules at the time of the transaction. Backdoor listings are common in mining and biotech where the existing shell already has the listing infrastructure in place; they are subject to the same escrow rules as a fresh IPO.",
+      },
+    ],
+    subcategories: [],
+  },
+
+  // ─── Managed Funds ───
+  {
+    slug: "managed-funds",
+    label: "Managed Funds",
+    dbVerticals: ["fund"],
+    dbFundSubCategories: ["managed_fund"],
+    color: {
+      bg: "bg-violet-50",
+      border: "border-violet-200",
+      text: "text-violet-700",
+      accent: "bg-violet-600",
+      gradient: "from-violet-50 to-white",
+    },
+    icon: "briefcase",
+    title: `Australian Managed Funds (${yr})`,
+    h1: "Australian Managed Funds",
+    metaDescription: `Compare retail and wholesale managed funds in Australia. APIR codes, MERs, mFund settlement, platform vs direct access. ${upd}.`,
+    intro: `Australia's managed fund industry oversees over $4 trillion in assets, spanning retail unit trusts, wholesale funds, ETFs, and superannuation pooled vehicles. Retail access is via fund manager direct, mFund settlement on the ASX, or investment platforms (Netwealth, HUB24, BT Panorama, Macquarie Wrap, North). Choice of access pathway materially affects all-in cost.`,
+    sections: [
+      {
+        heading: "How Australian managed funds are accessed",
+        body: "Direct application — apply to the fund manager via PDS application form, paper or online; settlement via direct debit or BPAY. mFund — the ASX-operated settlement service that lets investors apply for unlisted managed funds through a normal broker (CommSec, nabtrade) using CHESS settlement; available on around 150–200 funds. Platform — investment wrap accounts (Netwealth, HUB24, BT Panorama) offer access to thousands of funds with consolidated reporting and tax statements; platform fees of 0.10%–0.50% apply on top of fund MER. Each access route has different minimum, fee and reporting characteristics.",
+      },
+      {
+        heading: "MER, performance fees and the high-cost-low-cost trade-off",
+        body: "Active Australian equity managed funds typically charge 0.80%–1.50% management fee plus performance fees structured as 15%–20% of returns over a benchmark with a high-water mark. Index ETF wrappers (Vanguard VAS, iShares IOZ, Betashares A200) charge 0.04%–0.12% MER. Long-term net-of-fee performance data (S&P SPIVA Australia) consistently shows the majority of active Australian equity managers underperform the ASX 200 over 10-year windows. The case for active is strongest in inefficient asset classes (small-cap, emerging market, alternatives) and weakest in large-cap Australian and US equity.",
+      },
+      {
+        heading: "Wholesale vs retail funds",
+        body: "Wholesale funds require sophisticated/wholesale investor status (>$2.5M net assets or >$250K income, with accountant certification) and offer lower fees, tighter strategies, and higher minimums ($50K–$500K+). Retail funds carry the full disclosure regime including the PDS, FDS (Fee Disclosure Statement) and TMD (Target Market Determination) under DDO requirements. The economic difference in fees can be material — the same manager might charge 0.50% wholesale and 1.00% retail for substantively the same exposure.",
+      },
+    ],
+    faqs: [
+      {
+        question: "What is an APIR code?",
+        answer: "APIR (Asia Pacific Investment Register) codes are unique six-character identifiers for Australian managed fund products. The code identifies the specific fund, share class and currency unit — for example, VAN0010AU is the Vanguard Australian Shares Index Fund, retail class. APIR codes are used by platforms, registries and reporting providers to track holdings, transactions and distributions. The code is on the front page of every Australian managed fund PDS.",
+      },
+      {
+        question: "What is mFund and how does it differ from an ETF?",
+        answer: "mFund is the ASX-operated settlement service for unlisted managed funds — investors apply for fund units through a CHESS-sponsored broker account, with units held in CHESS like shares. Unlike an ETF, mFund units are priced once daily at the fund's NAV (no intraday trading, no bid-ask spread). mFund covers around 150–200 funds across Australian and global equities, fixed income, multi-asset and alternatives. mFund is a settlement convenience, not a fund product — the underlying fund's strategy, MER and PDS are unchanged from direct application.",
+      },
+      {
+        question: "How are managed fund distributions taxed?",
+        answer: "Most Australian managed funds are Attribution Managed Investment Trusts (AMITs) under Division 276 of ITAA 1997. Distributions are characterised by component on the AMMA tax statement — Australian income, foreign income, franked dividends with credits, capital gains (net of any 50% discount), and tax-deferred amounts. The AMMA statement is issued annually after 30 June; cost-base adjustments for tax-deferred distributions are reported alongside. Holders include the attributed amount in assessable income whether or not it was reinvested.",
+      },
+    ],
+    subcategories: [],
+  },
+
+  // ─── Private Equity ───
+  {
+    slug: "private-equity",
+    label: "Private Equity",
+    dbVerticals: ["fund"],
+    dbFundSubCategories: ["private_equity"],
+    color: {
+      bg: "bg-purple-50",
+      border: "border-purple-200",
+      text: "text-purple-700",
+      accent: "bg-purple-600",
+      gradient: "from-purple-50 to-white",
+    },
+    icon: "briefcase",
+    title: `Private Equity Investment in Australia (${yr})`,
+    h1: "Private Equity Investment in Australia",
+    metaDescription: `Australian and global PE — wholesale-only access via s708, listed PE proxies, J-curve, 7-10 year lockups. Pacific Equity Partners, Quadrant, Adamantem. ${upd}.`,
+    intro: `Private equity funds buy operating businesses with a 4–7 year hold horizon, restructure or scale them, and exit via trade sale, IPO or secondary buyout. Australian-domiciled PE is concentrated among Pacific Equity Partners, Quadrant, Adamantem, BGH and Crescent Capital, plus the Australian arms of Bain Capital, KKR and TPG. Direct fund access is wholesale-only; retail proxies exist on the ASX.`,
+    sections: [
+      {
+        heading: "How private equity funds are structured",
+        body: "Australian PE funds are typically Limited Partnerships — Limited Partners (LPs) provide capital, the General Partner (GP) makes investment decisions and earns management fee plus carried interest. Standard economics: 1.5%–2.0% management fee on committed capital during the investment period, then on invested capital; 20% carried interest above an 8% preferred return with a catch-up. Fund life is typically 10 years (5-year investment period plus 5-year harvest), with 1–2 years of optional extension. LP commitments are drawn down over the investment period as deals close.",
+      },
+      {
+        heading: "Australian and global PE access pathways",
+        body: "Direct fund commitments — wholesale and sophisticated investors only under section 708, minimums typically $250K–$5M+; access for Australian HNW investors via private bank channels (Macquarie Wealth, JBWere, Crestone) or PE feeder funds (Schroders, Hamilton Lane, Pengana). Listed PE proxies on the ASX — Magellan Capital Partners (MFL), Bailador Technology Investments (BTI). Global listed PE — KKR (NYSE), Blackstone (NYSE), Brookfield (NYSE/TSX) trade on offshore exchanges and are accessible via Australian brokers with international access. ETFs like iShares Listed Private Equity (IPRV) wrap a basket of listed PE names.",
+      },
+      {
+        heading: "The J-curve and what to expect",
+        body: "PE returns follow a J-curve — early years see negative IRR as fees are paid against not-yet-revalued investments, with returns building through the harvest period. A typical Australian buyout fund might show -10% IRR in years 1–2, -5% to +5% in years 3–4, +15% to +25% in years 5–7, and final performance crystallised in years 8–10. Cambridge Associates Australian PE benchmark long-run net IRR has been around 12%–15% — comparable to ASX 200 total return but with materially higher illiquidity and dispersion across managers. Past returns do not guarantee future returns and dispersion across funds is wide.",
+      },
+    ],
+    faqs: [
+      {
+        question: "Can retail investors access Australian PE?",
+        answer: "Not directly — Australian PE fund commitments are wholesale-only under the section 708 disclosure exemption, requiring sophisticated/wholesale investor status (>$2.5M net assets or >$250K income with accountant certification) plus the relevant PDS or IM. Retail proxies include ASX-listed PE vehicles like Magellan Capital Partners (MFL) and Bailador Technology Investments (BTI), or global listed PE names accessible through international brokerage. Retail-friendly feeder structures from Pengana and Schroders have started to appear with $50K–$100K minimums.",
+      },
+      {
+        question: "How is carried interest taxed in Australia?",
+        answer: "Carried interest received by an Australian-resident GP partner is generally assessed as ordinary income under Division 6 partnership rules, then potentially recharacterised as a capital gain if the carry is structured through a Limited Partnership or unit trust holding the partnership interest as a CGT asset. The ATO's Taxpayer Alert TA 2018/2 flagged structures intended to convert carry to CGT. Specific structuring depends on the fund's domicile, the GP entity, and the LP's tax position; engage specialist tax counsel.",
+      },
+      {
+        question: "What's the minimum to commit to a PE fund?",
+        answer: "Direct LP commitments to Australian PE funds typically start at $250,000–$1,000,000, with most institutional-quality funds clearing at $5M+. Feeder funds operated by private banks and platforms aggregate retail/wholesale commitments down to $50,000–$100,000 minimums. Listed PE vehicles on the ASX trade like ordinary shares with no minimum beyond brokerage. The illiquidity premium argument for PE only holds if you can size the commitment such that the 7–10 year lockup doesn't constrain other capital needs.",
+      },
+    ],
+    subcategories: [],
+  },
+
+  // ─── SMSF ───
+  {
+    slug: "smsf",
+    label: "SMSF",
+    dbVerticals: ["fund"],
+    dbFundSubCategories: ["smsf"],
+    color: {
+      bg: "bg-teal-50",
+      border: "border-teal-200",
+      text: "text-teal-700",
+      accent: "bg-teal-600",
+      gradient: "from-teal-50 to-white",
+    },
+    icon: "piggy-bank",
+    title: `Self-Managed Super Funds (SMSF) in Australia (${yr})`,
+    h1: "Self-Managed Super Funds in Australia",
+    metaDescription: `SMSF setup, audit, sole-purpose test, in-house asset rules and LRBA constraints. Trustee structure, costs and ATO compliance. ${upd}.`,
+    intro: `Self-managed super funds are private superannuation trusts with up to six members, where members are also trustees. The ATO regulates SMSFs, with around 600,000 funds holding approximately $900B in assets. SMSFs offer investment choice and control superannuation industry funds don't — at the cost of trustee responsibility, mandatory audit, and operational complexity.`,
+    sections: [
+      {
+        heading: "SMSF setup and ongoing costs",
+        body: "Setup costs typically $2,000–$5,000 — trust deed, ABN/TFN registration, ATO regulator registration, electronic service address, bank account setup. A corporate trustee structure costs an extra ~$700 ASIC registration but provides cleaner asset separation, easier member changes, and reduced personal liability versus individual trustees. Annual ongoing costs: independent SMSF audit ($300–$800), accounting and tax return ($1,500–$3,500), ATO supervisory levy ($259), plus any actuarial certificate fees. Total annual running cost typically $2,000–$5,000 — making SMSFs uneconomic below approximately $250,000 in fund assets, per the ATO's own analysis.",
+      },
+      {
+        heading: "Sole-purpose test, in-house assets and key SISA constraints",
+        body: "The sole-purpose test (s62 SISA) requires the fund to be maintained solely for retirement, death, illness or termination-of-employment benefits. The in-house asset rule (s71) restricts loans to, investments in, and leases with related parties to no more than 5% of total fund assets at acquisition. The non-arm's-length income (NALI) rules tax non-arm's-length income at 45%. Limited Recourse Borrowing Arrangements (LRBAs, s67A) allow gearing for property and other single acquirable assets but require the borrowed property be held in a separate bare trust until the loan is repaid. Breaches of these rules can result in non-complying fund status and tax at 45% on the entire fund.",
+      },
+      {
+        heading: "Investment options inside an SMSF",
+        body: "Direct ASX shares, ETFs, and managed funds (no operational restriction). Direct property — both residential and commercial — though residential property must be at arm's length and cannot be acquired from a related party. Commercial property (business real property) can be acquired from a related party at market value, and a related-party business can lease it. Cryptocurrency and overseas listed securities are permitted with appropriate audit support. Collectibles (artwork, wine, coins) are permitted but subject to the in-house asset and sole-purpose test rules — they cannot be held at the trustee's home or used personally. International shares via brokers like Stake, Pearler and Selfwealth are increasingly common in SMSF portfolios.",
+      },
+    ],
+    faqs: [
+      {
+        question: "How much do I need to make an SMSF worthwhile?",
+        answer: "ATO and Productivity Commission analysis indicates SMSFs become cost-competitive with industry funds at approximately $250,000–$500,000 in fund assets, depending on the fee benchmark. Below $200,000, the fixed annual costs ($3,000–$5,000) typically outweigh the fee savings versus a low-cost industry fund (0.50%–1.00% all-in). Above $500,000, SMSF costs scale flat while industry fund fees scale linearly, so the relative cost gap widens in favour of SMSF. Investment-control benefits (direct property, alternatives) are independent of cost comparison.",
+      },
+      {
+        question: "What is an LRBA and when is it appropriate?",
+        answer: "A Limited Recourse Borrowing Arrangement allows an SMSF to borrow to acquire a single asset (typically property) under s67A SISA. The borrowed asset is held in a separate bare trust; the lender's recourse is limited to the asset only — other fund assets are quarantined. LRBAs were heavily marketed in the 2015–2019 property cycle but the ATO and APRA have since tightened scrutiny. They are appropriate for trustees with material fund assets, established income, and a clear long-term investment thesis on the underlying property; they are inappropriate as a leveraged speculation vehicle for marginal trustees.",
+      },
+      {
+        question: "Who can be an SMSF trustee?",
+        answer: "Each member must be a trustee (individual trustee structure) or a director of the corporate trustee company (corporate trustee structure). Members must be at least 18 years old or have a parent/guardian as trustee on their behalf. Disqualified persons under s120 SISA — including those with dishonesty offence convictions, undischarged bankrupts, and those previously disqualified by the ATO — cannot act as trustee. Funds with up to 6 members are permitted (raised from 4 in 2021). Single-member funds are common; both a director-and-shareholder corporate trustee or two individual trustees can satisfy the structural requirements.",
+      },
+    ],
+    subcategories: [],
+  },
+
+  // ─── Commodities ───
+  {
+    slug: "commodities",
+    label: "Commodities",
+    dbVerticals: ["fund"],
+    dbFundSubCategories: ["commodity"],
+    color: {
+      bg: "bg-orange-50",
+      border: "border-orange-200",
+      text: "text-orange-700",
+      accent: "bg-orange-600",
+      gradient: "from-orange-50 to-white",
+    },
+    icon: "coins",
+    title: `Commodities Investment in Australia (${yr})`,
+    h1: "Commodities Investment in Australia",
+    metaDescription: `Gold, silver, oil, LNG, iron ore and copper exposures via ASX stocks, ETFs (GOLD, OOO, MNRS, QRE) and ASX 24 futures. ${upd}.`,
+    intro: `Australia is one of the world's largest commodity exporters — iron ore, LNG, coal, gold, lithium and bauxite dominate export receipts. Retail commodity exposure runs through ASX-listed mining and energy stocks, commodity ETFs that hold the physical or track futures, and the ASX 24 futures market for direct contract access via licensed brokers.`,
+    sections: [
+      {
+        heading: "Commodity exposure routes for Australian investors",
+        body: "Physical-backed ETFs — GOLD (Global X Physical Gold), NGLD (BetaShares Gold Bullion AUD-Hedged), ETPMAG (silver), PMGOLD (Perth Mint Gold) hold allocated bullion and track the underlying metal price closely. Equity ETFs — MNRS (BetaShares Global Gold Miners), QRE (BetaShares ASX 200 Resources), VAP — provide leveraged exposure to commodity prices via mining-company earnings. Futures via ASX 24 (formerly SFE) — wool, grain, energy and electricity contracts — accessible through ASIC-licensed futures brokers (Morgans, Macquarie Futures, Halifax) with margin requirements and overnight rollover. Direct equity in major miners (BHP, RIO, FMG, WDS, STO) for the largest commodity exposures.",
+      },
+      {
+        heading: "How commodity prices affect Australian listed equities",
+        body: "Iron ore — BHP and RIO derive 60%–80% of earnings from iron ore at high prices; FMG is a near-pure iron-ore play. The 62% Fe China benchmark price and AUD/USD exchange rate are the two dominant drivers. Lithium — PLS, MIN, IGO, LTR and AKE earnings track spodumene and battery-grade lithium hydroxide pricing, with material lag from spot moves to realised average pricing. Gold — Australian gold producers (NST, EVN, NEM) earn in AUD-hedged terms — AUD gold price (USD gold price divided by AUD/USD) is the relevant earnings driver. Energy — WDS and STO track LNG long-term contract pricing, oil-linked or hub-linked depending on customer mix.",
+      },
+      {
+        heading: "Tax treatment of physical bullion vs ETFs",
+        body: "Physical gold and silver bullion held by individuals is a CGT asset under section 108-10 — capital gains qualify for the 50% CGT discount after 12 months. Physical-backed ETFs (GOLD, NGLD) are unit trusts and generally generate AMIT tax statements with capital-gains-character distributions; the underlying gold appreciation is captured on disposal of units. Futures and options on commodities are typically revenue items for active traders and capital items for hedgers — the line is drawn case-by-case. SMSFs holding physical bullion must comply with sole-purpose test and in-house asset rules; storage at the trustee's residence triggers compliance issues.",
+      },
+    ],
+    faqs: [
+      {
+        question: "Is investing in commodities a hedge against inflation?",
+        answer: "Historically yes for gold and energy; mixed for industrial commodities. Long-run data shows gold is positively correlated with US realised inflation and negatively correlated with real interest rates. Energy commodities (oil, gas, coal) typically rise during demand-driven inflation but fall in supply-driven recessions. Industrial metals (copper, iron ore) track global growth more than CPI directly. Australian listed-mining exposure carries equity-market beta in addition to commodity-price exposure, which can dilute the inflation-hedge property in stress scenarios.",
+      },
+      {
+        question: "How do I trade commodities futures in Australia?",
+        answer: "Open an account with an ASIC-licensed futures broker — Morgans, Macquarie Futures, Halifax Investment Services, or international brokers with Australian access (Interactive Brokers, Saxo). The ASX 24 (formerly Sydney Futures Exchange) lists wool, grains, electricity and select energy contracts; international exposure runs via the offshore exchanges (CME, ICE, LME). Margin is required (typically 5%–15% of contract value) and positions mark-to-market daily; gap risk on news events can trigger margin calls or position liquidation.",
+      },
+      {
+        question: "Should I hold commodities directly or via mining stocks?",
+        answer: "Direct commodity exposure (physical ETFs, futures) tracks the spot price closely with no operational risk, but no dividend yield and ongoing storage/management fees of 0.20%–0.50%. Mining-stock exposure provides leverage to commodity moves through operating gearing — a 20% rise in iron ore can produce a 50%+ rise in BHP earnings — plus dividend yield and franking credits, but introduces operational, regulatory, geological and management risk. Most diversified portfolios use both: direct ETFs for pure inflation/safe-haven exposure, mining equity for income and growth.",
+      },
+    ],
+    subcategories: [],
+  },
+
+  // ─── Gold ───
+  {
+    slug: "gold",
+    label: "Gold",
+    dbVerticals: ["fund"],
+    dbFundSubCategories: ["gold"],
+    color: {
+      bg: "bg-yellow-50",
+      border: "border-yellow-200",
+      text: "text-yellow-700",
+      accent: "bg-yellow-600",
+      gradient: "from-yellow-50 to-white",
+    },
+    icon: "coins",
+    title: `Investing in Gold in Australia (${yr})`,
+    h1: "Investing in Gold in Australia",
+    metaDescription: `Perth Mint coins and bars, ASX gold ETFs (GOLD, NGLD, GDX), Australian gold producers (NST, EVN). SMSF storage rules, bullion CGT. ${upd}.`,
+    intro: `Australia is the world's second-largest gold producer behind China, with the Perth Mint operating as the country's main refiner and bullion dealer. Retail gold exposure runs through Perth Mint coins and bars, ASX-listed physical-backed ETFs, and Australian gold-mining stocks. Each pathway has different cost, custody and tax characteristics.`,
+    sections: [
+      {
+        heading: "Physical bullion via the Perth Mint",
+        body: "The Perth Mint, owned by the Western Australian Government, is the only Australian-government-guaranteed bullion refiner. Retail products include the Australian Kangaroo coin (1 oz / 1/2 oz / 1/4 oz / 1/10 oz), Australian Lunar Series coins, and cast/minted bars from 1g to 1kg. Buy-back spreads typically run 1%–4% over spot for coins, 0.5%–2% for bars depending on size. The Perth Mint Depository Online (PMDO) lets retail investors hold allocated, unallocated or pool-allocated gold/silver in vault storage from $50 minimum, with ongoing storage fees of 0.50%–1.00% p.a. for allocated.",
+      },
+      {
+        heading: "ASX gold ETFs and gold-miner ETFs",
+        body: "Physical-backed gold ETFs: GOLD (Global X Physical Gold, ~0.40% MER, AUD-quoted), NGLD (BetaShares Gold Bullion AUD-Hedged, ~0.59%), PMGOLD (Perth Mint Gold, ~0.15% — backed by the Perth Mint Gold pool). Gold-miner ETFs: MNRS (BetaShares Global Gold Miners ETF, ~0.57%), GDX (Global X Gold Miners, ~0.51%) — provide leveraged exposure to the gold price through mining-company earnings. The GOLD/MNRS pair illustrates the trade-off: physical gold rose 65% in 2024–25, MNRS rose ~120% over the same window, but with materially higher drawdowns.",
+      },
+      {
+        heading: "Australian gold-mining equities",
+        body: "Major ASX-listed gold producers: Newmont (NEM, primary US listing also on the ASX), Northern Star Resources (NST), Evolution Mining (EVN), Genesis Minerals (GMD), De Grey Mining (DEG, developer-near-producer), Westgold (WGX), Ramelius Resources (RMS). Australian-domiciled gold producers benefit from a weaker AUD relative to USD-denominated gold pricing, since costs are largely AUD and revenue is USD-linked — a rising AUD/USD compresses margins, a falling AUD/USD expands them. Production grade, all-in sustaining cost (AISC), and reserve life are the key operational metrics. AISC under $1,500 USD/oz typically marks a low-cost producer.",
+      },
+    ],
+    faqs: [
+      {
+        question: "How is physical gold taxed in Australia?",
+        answer: "Physical gold bullion held by individuals is a CGT asset under section 108-10 of ITAA 1997 — capital gains on disposal qualify for the 50% CGT discount where held more than 12 months. GST is generally not payable on investment-grade gold (99.5%+ purity in tradable form). Personal-use assets (gold jewellery, decorative coins) are subject to different rules — the personal-use asset exemption applies only for items acquired for less than $10,000. Records of acquisition cost, transaction date and disposal price are essential — Perth Mint and most reputable dealers issue acquisition documentation suitable for ATO purposes.",
+      },
+      {
+        question: "Can my SMSF hold physical gold?",
+        answer: "Yes, with conditions. The investment must satisfy the sole-purpose test (s62 SISA) — held for retirement benefits, not personal use. Bullion cannot be stored at the trustee's home or used as decorative display. Storage in a properly insured third-party vault (Perth Mint Depository, ABC Bullion vault, Custodian Vaults) satisfies the separation-of-assets requirement and is auditable. The collectibles regime under s62A also imposes specific storage and insurance requirements where applicable. Engage an SMSF-specialist auditor before acquiring bullion.",
+      },
+      {
+        question: "What are typical buy-sell spreads on gold in Australia?",
+        answer: "Perth Mint coins: 4%–8% spread on small denominations (1/10 oz Kangaroo), narrowing to 2%–4% on 1 oz and 0.5%–2% on bars (1 oz to 1 kg). Online dealers like ABC Bullion, Ainslie Bullion and Gold Stackers offer competitive spreads — typically 1%–3% over spot for cast bars, 2%–5% on minted bars and coins. PMGOLD on the ASX trades at a tight bid-ask spread (typically 0.05%–0.20%) plus normal brokerage. ETFs (GOLD, NGLD) trade at near-NAV with spreads of 0.10%–0.30%.",
+      },
+    ],
+    subcategories: [],
+  },
+
+  // ─── Lithium ───
+  {
+    slug: "lithium",
+    label: "Lithium",
+    dbVerticals: ["mining"],
+    color: {
+      bg: "bg-gray-50",
+      border: "border-gray-200",
+      text: "text-gray-700",
+      accent: "bg-gray-600",
+      gradient: "from-gray-50 to-white",
+    },
+    icon: "zap",
+    title: `Australian Lithium Mining Investment (${yr})`,
+    h1: "Australian Lithium Mining Investment",
+    metaDescription: `ASX lithium pure-plays (PLS, MIN, LTR, IGO, AKE) and developers. Spodumene vs brine, battery-grade vs technical, LFP/NMC chemistries. ${upd}.`,
+    intro: `Australia is the world's largest lithium producer, supplying around 50% of global lithium output — almost entirely from hard-rock spodumene operations in Western Australia's Greenbushes, Pilgangoora, Mount Marion and Wodgina mines. ASX-listed lithium pure-plays give Australian retail investors direct exposure to the global EV battery supply chain, with all the volatility that implies.`,
+    sections: [
+      {
+        heading: "Australian lithium production landscape",
+        body: "Greenbushes — operated by Talison Lithium (jointly held by IGO and Tianqi/Albemarle); the world's largest hard-rock lithium mine. Pilgangoora — Pilbara Minerals (PLS), Australia's largest pure-play producer; spodumene concentrate sold under offtake agreements with Chinese converters. Mount Marion — Mineral Resources (MIN) joint venture with Albemarle. Wodgina — Mineral Resources/Albemarle JV, on care-and-maintenance through the 2024–2025 lithium price downturn before phased restart. Developers: Liontown Resources (LTR, Kathleen Valley project), Core Lithium (CXO, Finniss), Lake Resources (LKE, brine play in Argentina). Allkem (AKE) merged with US-listed Livent to form Arcadium in 2024.",
+      },
+      {
+        heading: "Spodumene vs brine, battery-grade vs technical",
+        body: "Hard-rock spodumene — mined ore is processed to spodumene concentrate (SC6 grade ~6% Li2O), then converted to battery-grade lithium hydroxide or carbonate by downstream chemical operations (mostly in China). Brine — saline groundwater pumped from below salt flats, evaporated and processed; lower-cost but slower ramp, dominated by Chile, Argentina and China. Battery-grade lithium hydroxide is the preferred input for high-nickel NMC chemistries (Tesla high-end, premium EVs); battery-grade lithium carbonate is preferred for LFP chemistries (Chinese EVs, BYD, lower-cost models). The LFP shift in 2023–2025 changed the relative pricing of carbonate vs hydroxide.",
+      },
+      {
+        heading: "Lithium price cycles and volatility",
+        body: "Lithium prices are notoriously volatile. SC6 spodumene concentrate rose from ~USD 400/t in 2020 to a peak of ~USD 8,000/t in late 2022, fell to ~USD 850/t by mid-2024, and has bounced and flattened in 2025. Battery-grade lithium hydroxide followed a similar but lagged path. Most ASX pure-plays operate at AISC of USD 400–800/t SC6, meaning the 2024–25 price downturn was margin-compressing but not loss-making for the lower-cost producers. Investment thesis depends on long-run EV adoption assumptions and the cycle of supply additions versus demand growth.",
+      },
+    ],
+    faqs: [
+      {
+        question: "Why is Australia such a dominant lithium producer?",
+        answer: "Geological — the WA spodumene deposits at Greenbushes, Pilgangoora and Mount Marion are among the highest-grade and largest hard-rock lithium resources globally. Operational — established mining infrastructure, skilled workforce, and proximity to deepwater export ports (Port Hedland, Esperance) make WA a low-cost spodumene producer. Regulatory — Australia's mining permitting regime is well-established with clear native title and environmental approval pathways. Customer — strong offtake demand from Chinese lithium chemical converters (Tianqi, Ganfeng, Albemarle's Kemerton facility in WA) underpins concentrate sales.",
+      },
+      {
+        question: "What's the difference between spodumene producers and integrated chemical producers?",
+        answer: "Spodumene producers (PLS, MIN at Mount Marion) sell concentrate to Chinese chemical converters and earn a percentage of the hydroxide/carbonate price after conversion costs. Integrated producers (IGO via Greenbushes/Tianqi, Albemarle Kemerton, future Liontown plans) capture more of the value chain — the spread between concentrate value and hydroxide value can be USD 5,000+/t at high prices, USD 1,000+/t at depressed prices. Vertical integration is capital-intensive and operationally complex but materially expands margin per unit at scale.",
+      },
+      {
+        question: "How does FIRB review affect lithium investment?",
+        answer: "Lithium is on Australia's Critical Minerals List and is treated as a national-security sensitive sector under the FIRB framework. Foreign acquisition of substantial interests in Australian lithium projects triggers mandatory FIRB review with national-security assessment by the Department of Home Affairs. Several proposed Chinese acquisitions in 2023–2025 were either restructured or rejected under this regime. Domestic Australian investors via ASX equity face no FIRB constraints; international investors should plan for review timelines of 30–120 days.",
+      },
+    ],
+    subcategories: [],
+  },
+
+  // ─── Uranium ───
+  {
+    slug: "uranium",
+    label: "Uranium",
+    dbVerticals: ["mining"],
+    color: {
+      bg: "bg-green-50",
+      border: "border-green-200",
+      text: "text-green-700",
+      accent: "bg-green-600",
+      gradient: "from-green-50 to-white",
+    },
+    icon: "flame",
+    title: `Australian Uranium Investment (${yr})`,
+    h1: "Australian Uranium Mining Investment",
+    metaDescription: `ASX uranium producers (PDN, BOE), developers (DYL, BMN, AEE), explorers and the Global X ATOM ETF. FIRB double-approval rules. ${upd}.`,
+    intro: `Australia holds the world's largest uranium reserves — approximately 30% of global identified resources — but produces only around 10% of global supply due to long-standing federal and state restrictions. ASX-listed uranium exposure spans operating producers, advanced developers, and exploration plays, plus the Global X Uranium ETF (ATOM). The investment thesis hinges on small modular reactor (SMR) demand and structural supply-demand deficit.`,
+    sections: [
+      {
+        heading: "Australian uranium production and policy",
+        body: "Three operating uranium mines in Australia: Olympic Dam (BHP, copper-gold-uranium polymetallic in SA), Four Mile (Heathgate Resources, ISR in SA), and Honeymoon (Boss Energy BOE, ISR in SA — restarted 2024). Ranger uranium mine in NT closed in 2021 and is in rehabilitation. Western Australia maintains its long-standing ban on new uranium mines under state policy; Queensland's policy stance similarly restricts new development. Federal export controls require all Australian uranium be sold under bilateral safeguards agreements (Nuclear Cooperation Agreements) ensuring peaceful, non-proliferation use only — typically with US, EU, Japan, South Korea, China and India.",
+      },
+      {
+        heading: "ASX uranium investment universe",
+        body: "Producers — Boss Energy (BOE, Honeymoon ISR producer) and Paladin Energy (PDN, Langer Heinrich in Namibia plus Australian exploration). Developers — Deep Yellow (DYL, Tumas in Namibia and Mulga Rock in WA pending state permitting), Bannerman Energy (BMN, Etango in Namibia), Alligator Energy (AGE, Samphire in SA), Aura Energy (AEE, Tiris in Mauritania). Explorers — multiple junior plays in NT, SA, Queensland and offshore. The Global X Uranium ETF (ATOM) on the ASX provides diversified exposure to the global uranium equity universe, including Cameco, Kazatomprom and the major US developers. Most pure-play uranium equities are highly leveraged to the spot uranium price.",
+      },
+      {
+        heading: "Uranium demand thesis and risks",
+        body: "Demand thesis — the IEA projects nuclear capacity to roughly double by 2050 under net-zero scenarios, driven by SMR deployment, French and US life-extensions, and Chinese build-out. Existing operating reactors require ~180Mlb U3O8 annually; primary mine supply runs around 145Mlb, with the gap covered by inventory drawdown, secondary supply (depleted uranium re-enrichment), and Russian sources progressively excluded under sanctions. Risks — uranium price volatility (spot moved from USD 30/lb in 2020 to USD 100+/lb in early 2024 to USD 70/lb mid-2025), permitting delays at Australian projects, geopolitical risk for African production, and the always-present nuclear-incident tail risk that has historically shut entire reactor fleets (Fukushima, Three Mile Island).",
+      },
+    ],
+    faqs: [
+      {
+        question: "Why is Australia's uranium production so much smaller than its reserves?",
+        answer: "State-government policy. Western Australia maintains a long-standing ban on new uranium mines under successive Labor governments. Queensland has similarly restricted new development. Only South Australia and the Northern Territory permit uranium production at scale, and federal export controls limit market access to safeguard-approved customer countries. The political settlement around uranium has been stable for decades — large-scale capacity expansion in WA or Queensland would require material state-government policy change.",
+      },
+      {
+        question: "What is FIRB double-approval for uranium?",
+        answer: "Uranium is treated as a national-security-sensitive sector under the FIRB framework. Foreign acquisition of a substantial interest in an Australian uranium asset typically requires both (a) standard FIRB approval under the Foreign Acquisitions and Takeovers Act, and (b) a separate Department of Home Affairs national-security review and conditional approval, often with non-disposal undertakings and end-use restrictions. Approval timelines run 60–180 days. Domestic Australian investors via ASX equity face no FIRB constraints.",
+      },
+      {
+        question: "How do I invest in uranium without taking single-stock risk?",
+        answer: "Global X Uranium ETF (ATOM) on the ASX — provides diversified exposure to global uranium producers, developers and physical uranium funds. The ASX-listed Sprott Physical Uranium Trust U.U / Yellow Cake (YCA) on the LSE — direct physical uranium exposure (Sprott trust is unlisted in Australia but accessible via offshore brokerage). Diversifying across 3–5 ASX-listed names (BOE, PDN, DYL, BMN, AEE) provides a manual basket. Single-stock uranium plays carry exploration, permitting, technical and price risk in compounding combination.",
+      },
+    ],
+    subcategories: [],
+  },
+
+  // ─── Oil & Gas ───
+  {
+    slug: "oil-gas",
+    label: "Oil & Gas",
+    dbVerticals: ["energy"],
+    color: {
+      bg: "bg-amber-50",
+      border: "border-amber-200",
+      text: "text-amber-700",
+      accent: "bg-amber-600",
+      gradient: "from-amber-50 to-white",
+    },
+    icon: "flame",
+    title: `Australian Oil & Gas Investment (${yr})`,
+    h1: "Australian Oil & Gas Investment",
+    metaDescription: `ASX oil and gas majors (WDS, STO), LNG export thesis, gas reservation policy, petroleum royalties and FIRB national-security review. ${upd}.`,
+    intro: `Australia is the world's second-largest LNG exporter, with operations centred on the North West Shelf, Gorgon, Wheatstone, Ichthys and Pluto projects in WA, plus the Gladstone CSG-LNG complex in Queensland. ASX-listed oil and gas exposure is dominated by Woodside Energy (WDS) and Santos (STO), with mid-cap names including Beach Energy (BPT), Karoon Energy (KAR) and Strike Energy (STX).`,
+    sections: [
+      {
+        heading: "Australian oil and gas sector structure",
+        body: "Woodside Energy (WDS) — the largest pure-play, operating Pluto LNG, Wheatstone and the North West Shelf venture, plus the merged BHP Petroleum US Gulf assets. Santos (STO) — significant CSG-LNG exposure via Gladstone GLNG, plus Cooper Basin and Western Australian assets, with the merger conversation with Woodside live since 2024. Beach Energy (BPT) — Cooper Basin gas and oil. Karoon Energy (KAR) — Brazil deepwater oil. Strike Energy (STX), Cooper Energy (COE) — domestic gas producers servicing east-coast and Western Australian markets. The east-coast domestic gas market is structurally tight, with reservation policy and price caps a recurring political issue.",
+      },
+      {
+        heading: "Gas reservation policy and east-coast market dynamics",
+        body: "Western Australia's domestic gas reservation policy requires LNG project operators to reserve 15% of project gas for the WA domestic market — a long-standing arrangement that has kept WA domestic gas prices relatively contained. The east coast has no equivalent federal reservation policy; gas prices on the east coast surged in 2022–2024, prompting the federal Gas Code of Conduct (December 2023) imposing $12/GJ price caps on uncontracted gas and mandatory information disclosure. The Albanese government has signalled further intervention if east-coast supply tightness continues — a policy risk overhang for Queensland and offshore Bass Strait producers.",
+      },
+      {
+        heading: "Petroleum royalties, PRRT and the tax framework",
+        body: "Petroleum projects in Australia pay a combination of state royalties (Queensland CSG-LNG, NSW), federal royalties on certain offshore projects, and the Petroleum Resource Rent Tax (PRRT) — a profit-based tax of 40% applied to the project's taxable profit after deduction of capital and operating costs. PRRT was reformed in 2024 with a cap on uplifted exploration expenditure deduction at 90% of taxable profit, accelerating PRRT payments from major LNG projects. Royalties are deductible against PRRT. Foreign acquisition of substantial petroleum assets triggers FIRB review with national-security assessment under the strategic-asset framework.",
+      },
+    ],
+    faqs: [
+      {
+        question: "How do Australian LNG project earnings track LNG prices?",
+        answer: "Most Australian LNG cargoes are sold under long-term oil-linked or hub-linked contracts, with contract pricing lagging spot LNG by 3–6 months. JKM (Japan-Korea Marker) is the Asian spot LNG benchmark; Henry Hub and TTF are the US and European hub references. WDS and STO report realised LNG prices that reflect their contract mix — typically 70%–85% long-term contracted, 15%–30% spot. Realised price changes lag spot moves, and capex outlook depends on long-term demand assumptions through to the late 2030s — the disputed timeline for global LNG demand peak.",
+      },
+      {
+        question: "What's the outlook for east-coast Australian gas?",
+        answer: "Structurally tight. Bass Strait depletion and limited new supply from the Cooper Basin combine with QLD CSG-LNG export commitments to leave east-coast domestic supply at risk through 2026–2030. Federal price caps under the Gas Code of Conduct are in place. New supply from Beetaloo Basin (NT, Origin/Tamboran) and offshore Otway Basin developments are the main supply-side catalysts, with regulatory and environmental approval risk. Investment thesis depends on resolution of the supply-policy tension.",
+      },
+      {
+        question: "Are oil and gas stocks compatible with ESG-focused investing?",
+        answer: "Tension. Major Australian super funds (AustralianSuper, Aware Super, HESTA) have material oil-and-gas equity holdings while running stewardship programs targeting net-zero alignment. Pure-divestment strategies (no fossil fuel exposure) are available via specific ETFs (BetaShares ETHI, Vanguard ESGI, etc.). Engagement-focused approaches retain exposure but vote shareholdings on climate transition plans — the Australian say-on-climate motion at WDS and STO AGMs has been a recurring vote. Personal investment philosophy and the role of Australian gas in transition pathways are at the centre of the debate.",
+      },
+    ],
+    subcategories: [],
+  },
+
+  // ─── Hydrogen ───
+  {
+    slug: "hydrogen",
+    label: "Hydrogen",
+    dbVerticals: ["energy"],
+    color: {
+      bg: "bg-neutral-50",
+      border: "border-neutral-200",
+      text: "text-neutral-700",
+      accent: "bg-neutral-600",
+      gradient: "from-neutral-50 to-white",
+    },
+    icon: "flame",
+    title: `Australian Hydrogen Investment (${yr})`,
+    h1: "Australian Hydrogen Investment",
+    metaDescription: `ASX-listed hydrogen plays (HXG, FFI, GLN, HE8), Hydrogen Headstart program, export demand thesis and pre-revenue caution. ${upd}.`,
+    intro: `Australia's hydrogen ambition centres on green hydrogen for export to Japan, South Korea and Europe, plus domestic decarbonisation of steel, fertiliser and heavy transport. The federal Hydrogen Headstart program offers $2B in production credits, with the inaugural shortlist announced in 2024. Most ASX-listed hydrogen pure-plays remain pre-revenue and require equity raises ahead of FID.`,
+    sections: [
+      {
+        heading: "ASX hydrogen investment universe",
+        body: "Pure-play developers — Hexagon Energy Materials (HXG), Province Resources (PRL, joint venture with Total Eren on HyEnergy in WA), Hazer Group (HZR, methane pyrolysis), Pure Hydrogen (PH2), Sparc Hydrogen (SPN), Global Energy Ventures (GEV, hydrogen shipping). Larger names with hydrogen exposure — Fortescue (FMG, via Fortescue Future Industries spin-out plans), Origin Energy (ORG, Hunter Valley Hydrogen Hub), Woodside (WDS, H2OK in the US, H2Perth in WA — though several projects have been cancelled or delayed), AGL (AGL, Hunter Energy Hub conceptual). HE8 (Hydrogen Energy Australia) and similar names trade as speculative pre-revenue plays.",
+      },
+      {
+        heading: "Hydrogen Headstart and federal policy support",
+        body: "The Hydrogen Headstart program (announced May 2023, expanded 2024) provides $2B in production-linked contracts-for-difference for green hydrogen production, with the inaugural shortlist of 6 projects announced in 2024 — Murchison (Province/Total Eren JV), Hunter Valley Hydrogen Hub (Origin), HyEnergy and others. The program closes part of the green-hydrogen production-cost gap relative to grey/blue hydrogen and to international competitors. State-level support includes WA Renewable Hydrogen Strategy, NSW Hydrogen Strategy, and QLD's hydrogen industry roadmap. CEFC and ARENA grant programs supplement equity capital for early-stage projects.",
+      },
+      {
+        heading: "Pre-revenue caution and the export demand thesis",
+        body: "The hydrogen export thesis hinges on customer offtake at delivered prices that close the gap with grey/blue hydrogen and with alternative low-carbon technologies (electrification, batteries, CCS-blue ammonia). Japanese and Korean utilities have signed early offtake LoIs but firm contracts at scale remain limited. Capex per project runs USD 3B–10B+, requiring multi-decade contracts to underwrite. Many ASX hydrogen pure-plays are at the FEED or pre-FEED stage with no revenue, modest cash balances, and recurring equity dilution. Investor risk is high — historical hydrogen-project cancellations include Woodside's H2Perth, multiple Fortescue green-hydrogen projects, and several joint-venture realignments through 2024–2025.",
+      },
+    ],
+    faqs: [
+      {
+        question: "What are the differences between green, blue and grey hydrogen?",
+        answer: "Grey hydrogen — produced from natural gas via steam methane reforming with CO2 vented to atmosphere; the dominant industrial source today. Blue hydrogen — same process with carbon capture and storage (CCS) attached, reducing emissions by 60%–95% depending on capture rate. Green hydrogen — produced via electrolysis of water powered by renewable electricity, near-zero emissions when the input electricity is renewable. The Australian export thesis is dominantly green; CCS-blue projects (Woodside H2OK, Santos Moomba CCS) exist but face emerging concerns about capture rate verification and long-term storage integrity.",
+      },
+      {
+        question: "Why are hydrogen projects so capital-intensive?",
+        answer: "Production economics — at-scale electrolysis projects need 1GW+ of dedicated renewable generation, transmission to electrolyser site, electrolyser stack capex of USD 800–1500/kW, water treatment, hydrogen compression and either ammonia synthesis or liquefaction for export shipping. The integrated capex for a 100,000 tpa green hydrogen project runs USD 3B–10B with payback periods of 12–25 years against current production-cost gaps. Subsidy regimes (Hydrogen Headstart, US IRA s45V, EU CBAM/Hydrogen Bank) are essential to closing the gap to bankability.",
+      },
+      {
+        question: "Is hydrogen investment appropriate for retail Australian investors?",
+        answer: "High-risk speculative exposure only. Most ASX hydrogen pure-plays are pre-revenue, dependent on continued government policy support, and subject to recurring equity dilution and project-cancellation risk. Position size should be small (single-digit % of portfolio at most) and timeline expectations should be 5–15 years. Diversified renewable-energy exposure via ETFs (FUEL, ERTH, CLNE) provides indirect hydrogen exposure with lower single-project risk. Direct allocation to hydrogen pure-plays only after reading the project economics, equity raise pipeline and management track record carefully.",
+      },
+    ],
+    subcategories: [],
+  },
 ];
 
 // ═══════════════════════════════════════════════════════════════════
