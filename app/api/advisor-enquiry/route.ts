@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { isFlagEnabled } from "@/lib/feature-flags";
 import { isRateLimited } from "@/lib/rate-limit";
 import { isValidEmail, isDisposableEmail } from "@/lib/validate-email";
 import { notificationFooter } from "@/lib/email-templates";
@@ -88,6 +89,13 @@ function buildQualificationEmailRows(qd: { source: string; data: Record<string, 
 
 export async function POST(request: NextRequest) {
   try {
+    // Launch-ops kill switch: flip `advisor_enquiry_intake` off in
+    // /admin/automation/flags to pause new advisor lead intake without
+    // taking the page down. See docs/ops/launch-ops-plan.md §4.
+    if (!(await isFlagEnabled("advisor_enquiry_intake"))) {
+      return NextResponse.json({ error: "temporarily_unavailable" }, { status: 503 });
+    }
+
     // Rate limiting (DB-backed, survives serverless cold starts)
     const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
     if (await isRateLimited(`enquiry:${ip}`, 10, 60)) {
