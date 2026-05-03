@@ -2,6 +2,24 @@
 -- Oil & Gas Expansion — vertical enrichment, 12 listings,
 -- 4 new advisor types and 12 professional seeds.
 --
+-- Date: 2026-04-29
+-- Audit ref: codebase-health-2026-04-24.md §4.3 (G-03)
+-- Queue item: G-03 batch 8
+-- Why: enriches the oil-and-gas investment vertical with 12
+--      listings, 4 advisor-type enum values, and 12 professional
+--      seed rows, plus two additive columns on professionals.
+-- Idempotency: ON CONFLICT (slug) DO UPDATE/DO NOTHING;
+--              ADD COLUMN IF NOT EXISTS. Safe to re-apply.
+-- Rollback:
+--   DELETE FROM public.professionals WHERE source = 'seed-oil-gas-2026-04-29';
+--   DELETE FROM public.investment_listings WHERE source = 'oil-gas-expansion';
+--   ALTER TABLE public.professionals
+--     DROP COLUMN IF EXISTS years_experience,
+--     DROP COLUMN IF EXISTS min_investable_assets;
+--   Note: professionals type CHECK constraint swap is idempotent;
+--         if rolling back, verify no live professionals use the
+--         newly-added types before removing the constraint.
+--
 -- Idempotent:
 --   * investment_verticals / investment_listings / professionals
 --     use ON CONFLICT (slug) DO UPDATE / DO NOTHING so re-runs

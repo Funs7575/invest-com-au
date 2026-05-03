@@ -1,6 +1,18 @@
 -- ============================================================
 -- Uranium vertical expansion — new vertical row + 12 listings.
 --
+-- Date: 2026-05-01
+-- Audit ref: codebase-health-2026-04-24.md §4.3 (G-03)
+-- Queue item: G-03 batch 8
+-- Why: seeds the uranium investment vertical row and 12 listings
+--      to power the /uranium programmatic SEO hub.
+-- Idempotency: INSERT … ON CONFLICT (slug) DO NOTHING/DO UPDATE.
+--              Safe to re-apply.
+-- Rollback:
+--   DELETE FROM public.investment_listings WHERE source = 'uranium-expansion';
+--   DELETE FROM public.investment_verticals WHERE slug = 'uranium';
+--   Note: INSERT-only migration; no DDL to reverse.
+--
 -- Unlike the oil-gas expansion this migration does NOT change the
 -- professionals.type CHECK constraint: uranium investment is well
 -- served by existing types (resources_fund_manager, mining_lawyer,
