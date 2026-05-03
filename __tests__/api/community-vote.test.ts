@@ -31,7 +31,7 @@ import { POST } from "@/app/api/community/vote/route";
 
 const USER_ID = "user-abc";
 const AUTHOR_ID = "author-xyz";
-const TARGET_ID = "thread-123";
+const TARGET_ID = 123;
 
 function makeRequest(body?: unknown): NextRequest {
   return new NextRequest("http://localhost/api/community/vote", {
@@ -213,9 +213,9 @@ describe("POST /api/community/vote", () => {
   });
 
   it("works for post target_type", async () => {
-    const target = { id: "post-456", author_id: AUTHOR_ID, vote_score: 1 };
+    const target = { id: 456, author_id: AUTHOR_ID, vote_score: 1 };
     setupNewVoteMocks(target, "forum_posts");
-    const res = await POST(makeRequest({ target_type: "post", target_id: "post-456", vote: -1 }));
+    const res = await POST(makeRequest({ target_type: "post", target_id: 456, vote: -1 }));
     expect(res.status).toBe(200);
     const data = await res.json();
     expect(data.vote_score).toBe(0); // 1 + (-1)

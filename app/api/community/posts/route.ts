@@ -6,9 +6,9 @@ import { logger } from "@/lib/logger";
 import { isRateLimited } from "@/lib/rate-limit";
 
 const PostBody = z.object({
-  thread_id: z.union([z.string().min(1), z.number().int().positive()]),
+  thread_id: z.number().int().positive(),
   body: z.string().min(1).max(5000),
-  parent_id: z.union([z.string(), z.number().int().positive()]).optional(),
+  parent_id: z.number().int().positive().optional(),
 });
 
 const log = logger("community:posts");
