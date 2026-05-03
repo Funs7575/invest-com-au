@@ -1,4 +1,25 @@
+import { isFlagEnabled } from "./feature-flags";
 import type { Broker } from "./types";
+
+// Launch-ops kill switch: flip `sponsored_boosting` off in
+// /admin/automation/flags to disable the boost without taking the
+// comparison pages down. The flag is checked async (cached 30s by
+// lib/feature-flags); boostFeaturedPartner stays sync by reading a
+// module-level "last known" boolean and refreshing in the background.
+// Trade-off: a flip takes up to 30s to propagate. Acceptable for the
+// launch-ops use case (compliance flag bug, RLS leak on sponsorship_tier).
+let sponsoredBoostingEnabled = true;
+let sponsoredBoostingLastChecked = 0;
+const SPONSORED_BOOSTING_TTL_MS = 30_000;
+
+function refreshSponsoredBoostingFlag(): void {
+  const now = Date.now();
+  if (now - sponsoredBoostingLastChecked < SPONSORED_BOOSTING_TTL_MS) return;
+  sponsoredBoostingLastChecked = now;
+  void isFlagEnabled("sponsored_boosting").then((enabled) => {
+    sponsoredBoostingEnabled = enabled;
+  });
+}
 
 /**
  * Sort priority for sponsorship tiers.
@@ -45,6 +66,8 @@ export function boostFeaturedPartner(
   brokers: Broker[],
   targetPosition: number = 0
 ): Broker[] {
+  refreshSponsoredBoostingFlag();
+  if (!sponsoredBoostingEnabled) return [...brokers];
   const result = [...brokers];
   const sponsoredIdx = result.findIndex(
     (b) => b.sponsorship_tier === "featured_partner"
