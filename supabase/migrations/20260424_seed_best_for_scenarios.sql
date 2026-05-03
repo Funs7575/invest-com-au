@@ -1,3 +1,16 @@
+-- Date: 2026-04-24
+-- Audit ref: codebase-health-2026-04-24.md §4.3 (G-03)
+-- Queue item: G-03 batch 8
+-- Why: expands best_for_scenarios from 3 seed rows to 30, powering
+--      27 new programmatic /best-for/<slug> pages.
+-- Idempotency: INSERT ... ON CONFLICT (slug) DO NOTHING. Safe to re-apply.
+-- Rollback:
+--   DELETE FROM public.best_for_scenarios
+--     WHERE slug NOT IN ('day-trading-asx', 'beginners-australia', 'long-term-investing');
+--   Note: INSERT-only migration; no DDL to reverse. The original 3 rows
+--         (seeded in 20260420_wave_16_growth_engine.sql) are preserved.
+--         Re-run this migration to restore the 27 deleted rows.
+
 -- Expand best_for_scenarios from 3 to 30.
 --
 -- Each scenario powers a /best-for/<slug> programmatic SEO page.

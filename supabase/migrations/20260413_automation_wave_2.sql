@@ -1,5 +1,15 @@
 -- Automation wave 2 schema.
 --
+-- Rollback (in reverse order):
+--   7. DROP TABLE IF EXISTS public.automation_verdict_daily;
+--   6. DROP TABLE IF EXISTS public.admin_action_log;
+--   5. DROP TABLE IF EXISTS public.property_suburb_refresh_log;
+--   4. DROP TABLE IF EXISTS public.article_quality_scores;
+--   3. DROP TABLE IF EXISTS public.photo_moderation_log;
+--   2. DROP TABLE IF EXISTS public.automation_kill_switches;
+--   1. DROP TABLE IF EXISTS public.classifier_config;
+--   Note: RLS policies and indexes drop with their tables.
+--
 -- Covers:
 --   1. classifier_config       — live-editable thresholds per classifier
 --   2. automation_kill_switches — system-wide / per-feature disable flag

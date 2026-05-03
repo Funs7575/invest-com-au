@@ -21,6 +21,12 @@
 --     nothing enforces that — they expire instead. This matches how
 --     Google Docs share-links work and is the simplest thing editors
 --     understand.
+--
+-- Rollback (in reverse order):
+--   3. DROP TABLE IF EXISTS public.article_preview_tokens;
+--   2. DROP TABLE IF EXISTS public.article_scorecard_runs;
+--   1. DROP TABLE IF EXISTS public.article_templates;
+--   Note: RLS policies and indexes drop with their tables.
 
 -- ── 1. article_templates ────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.article_templates (
