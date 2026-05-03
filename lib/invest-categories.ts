@@ -366,7 +366,7 @@ const categories: InvestCategory[] = [
       {
         slug: "viticulture",
         label: "Viticulture",
-        dbValue: "horticulture",
+        dbValue: "viticulture",
         title: `Vineyards & Wineries for Sale in Australia (${yr})`,
         h1: "Vineyards & Wineries for Sale in Australia",
         metaDescription: `Buy a vineyard or winery in Australia. Wine country properties in Barossa, Hunter Valley, Margaret River. ${upd}.`,
@@ -475,7 +475,7 @@ const categories: InvestCategory[] = [
       {
         slug: "childcare",
         label: "Childcare",
-        dbValue: "hotel",
+        dbValue: "childcare",
         title: `Childcare Centre Property for Sale in Australia (${yr})`,
         h1: "Childcare Centre Property Investment in Australia",
         metaDescription: `Buy childcare centre property in Australia. Long-lease childcare assets backed by government subsidies. ${upd}.`,
@@ -548,7 +548,7 @@ const categories: InvestCategory[] = [
       {
         slug: "automotive",
         label: "Automotive & Services",
-        dbValue: "home_services",
+        dbValue: "automotive",
         title: `Service & Automotive Franchises in Australia (${yr})`,
         h1: "Service & Automotive Franchises in Australia",
         metaDescription: `Buy a service franchise in Australia. Jim's Group, home services, automotive — browse franchise listings. ${upd}.`,
@@ -633,7 +633,7 @@ const categories: InvestCategory[] = [
       {
         slug: "hydrogen",
         label: "Hydrogen",
-        dbValue: "community_solar",
+        dbValue: "hydrogen",
         title: `Green Hydrogen Investments in Australia (${yr})`,
         h1: "Green Hydrogen Investment Opportunities in Australia",
         metaDescription: `Invest in Australian green hydrogen projects. Export hydrogen, electrolyser projects. ${upd}.`,
