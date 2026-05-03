@@ -13,6 +13,25 @@
 --   - articles / brokers         → last_reviewed_at pass-through
 --
 -- Every table is RLS-enabled and service-role-only.
+--
+-- Rollback (in reverse order):
+--   Columns added to existing tables:
+--     ALTER TABLE public.email_captures
+--       DROP COLUMN IF EXISTS session_id,
+--       DROP COLUMN IF EXISTS recovery_sent_at;
+--     ALTER TABLE public.articles
+--       DROP COLUMN IF EXISTS last_reviewed_at,
+--       DROP COLUMN IF EXISTS last_reviewed_by;
+--     ALTER TABLE public.quiz_leads
+--       DROP COLUMN IF EXISTS inferred_vertical,
+--       DROP COLUMN IF EXISTS inferred_confidence;
+--   New tables (drop in reverse order):
+--   4. DROP TABLE IF EXISTS public.job_queue;
+--   3. DROP TABLE IF EXISTS public.review_sentiment_facets;
+--   2. DROP TABLE IF EXISTS public.search_embeddings;
+--   1. DROP TABLE IF EXISTS public.form_events;
+--   Extension: DROP EXTENSION IF EXISTS vector;  -- only if no other tables use pgvector
+--   Note: RLS policies and indexes drop with their tables.
 
 -- ── pgvector extension ─────────────────────────────────────────────
 CREATE EXTENSION IF NOT EXISTS vector;

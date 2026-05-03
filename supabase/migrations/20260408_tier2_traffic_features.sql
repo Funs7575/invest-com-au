@@ -2,6 +2,20 @@
 -- Tier 2 Traffic Features Migration
 -- Features: Fee Alerts, Suburb Guides, Newsletter Archive
 -- ============================================================
+--
+-- Rollback (in reverse order):
+--   4. DROP TABLE IF EXISTS newsletter_editions;
+--   3. DROP TABLE IF EXISTS newsletter_sends;
+--   2. DROP INDEX IF EXISTS idx_suburb_data_slug;
+--      ALTER TABLE suburb_data
+--        DROP COLUMN IF EXISTS slug,
+--        DROP COLUMN IF EXISTS seo_description,
+--        DROP COLUMN IF EXISTS investment_summary,
+--        DROP COLUMN IF EXISTS infrastructure_notes,
+--        DROP COLUMN IF EXISTS schools_rating,
+--        DROP COLUMN IF EXISTS transport_rating;
+--   1. DROP TABLE IF EXISTS fee_alert_subscriptions;
+--   Note: RLS policies and indexes drop with their tables.
 
 -- ── Feature 7: Fee Alert Subscriptions (formalize) ──────────
 

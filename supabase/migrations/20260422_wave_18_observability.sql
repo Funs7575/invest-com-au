@@ -1,5 +1,21 @@
 -- Wave 18 schema — observability + search analytics.
 --
+-- Date: 2026-04-22
+-- Audit ref: codebase-health-2026-04-24.md §4.3 (G-03)
+-- Queue item: G-03 batch 8
+-- Why: four new observability tables capture raw search queries, web
+--      vitals beacons, daily web vitals rollups, and daily revenue
+--      attribution summaries for the exec dashboard.
+-- Idempotency: CREATE TABLE IF NOT EXISTS. Safe to re-apply.
+-- Rollback (in reverse creation order):
+--   DROP TABLE IF EXISTS public.revenue_attribution_daily;
+--   DROP TABLE IF EXISTS public.web_vitals_daily_rollup;
+--   DROP TABLE IF EXISTS public.web_vitals_samples;
+--   DROP TABLE IF EXISTS public.search_queries;
+--   Note: RLS policies, indexes, and sequences drop with their tables.
+--         Rollup rows are recomputable from attribution_touches and raw
+--         vitals source data.
+--
 -- Tables introduced:
 --   1. search_queries              — anonymous query log for the site search
 --                                     surfaces (articles, advisors, compare)

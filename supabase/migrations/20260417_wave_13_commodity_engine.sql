@@ -19,6 +19,13 @@
 --     articles we publish within 24h of a major story. Each row
 --     references an `articles` row so the normal content pipeline
 --     owns rendering + RSS + related-article surfacing.
+--
+-- Rollback (in reverse order):
+--   4. DROP TABLE IF EXISTS public.commodity_news_briefs;
+--   3. DROP TABLE IF EXISTS public.commodity_etfs;
+--   2. DROP TABLE IF EXISTS public.commodity_stocks;
+--   1. DROP TABLE IF EXISTS public.commodity_sectors;
+--   Note: RLS policies and indexes drop with their tables.
 
 -- ── 1. commodity_sectors ─────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.commodity_sectors (
