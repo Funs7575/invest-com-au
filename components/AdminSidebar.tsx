@@ -11,6 +11,7 @@ const NAV_GROUPS = [
     label: "Dashboards",
     items: [
       { href: "/admin", icon: "bar-chart", label: "Overview" },
+      { href: "/admin/launch", icon: "activity", label: "Launch" },
       { href: "/admin/ai-assistant", icon: "cpu", label: "AI Assistant" },
       { href: "/admin/revenue", icon: "dollar-sign", label: "Revenue" },
       { href: "/admin/pricing", icon: "tag", label: "Lead Pricing" },
@@ -23,6 +24,7 @@ const NAV_GROUPS = [
     label: "Health & Ops",
     items: [
       { href: "/admin/automation", icon: "cpu", label: "Automation" },
+      { href: "/admin/bug-reports", icon: "message-circle", label: "Bug Reports" },
       { href: "/admin/data-health", icon: "activity", label: "Data Health" },
       { href: "/admin/seo-health", icon: "search", label: "SEO Health" },
       { href: "/admin/compliance", icon: "shield-check", label: "Compliance" },

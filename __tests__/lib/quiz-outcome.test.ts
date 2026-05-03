@@ -92,7 +92,7 @@ describe("resolveBestOutcome", () => {
       expect(outcome.ctaHref).toBe("/invest/alternatives");
       expect(outcome.suppressBrokerResults).toBe(true);
       expect(outcome.secondaryActions.some(s => s.href.includes("/advisors/luxury-asset-brokers"))).toBe(true);
-      expect(outcome.secondaryActions.some(s => s.href.includes("/tools/alternative-asset-returns"))).toBe(true);
+      expect(outcome.secondaryActions.some(s => s.href.includes("/tools/alternative-returns"))).toBe(true);
     });
 
     it("routes royalties goal to /invest/royalties + royalty-broker advisor + income-assets cross-sell", () => {

@@ -10,6 +10,7 @@ import {
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 
 export const revalidate = 3600;
+// Build-touch 2026-05-03 — force fresh prerender (cached version had stuck client-render).
 
 export const metadata: Metadata = {
   title: `Pre-IPO Investing in Australia (${CURRENT_YEAR}) — Wholesale-Only Late-Stage Private Deals`,

@@ -210,6 +210,42 @@ const TOOLS: Tool[] = [
     url: "/tools/smsf-checker",
     internal: true,
   },
+  {
+    slug: "should-i-switch",
+    name: "Should I Switch Brokers?",
+    category: "Calculators",
+    rating: 5,
+    description:
+      "Plug in your current brokerage fees, trade frequency and balance to see how much you'd save (or lose) switching to a cheaper platform. Includes transfer-out fee modelling.",
+    pros: ["Per-trade + monthly fee model", "Transfer-out cost included", "Side-by-side savings"],
+    pricing: "Free tool",
+    url: "/tools/should-i-switch",
+    internal: true,
+  },
+  {
+    slug: "visa-investment-calculator",
+    name: "Visa Investment Calculator",
+    category: "Calculators",
+    rating: 5,
+    description:
+      "Models the all-in cost of meeting Australia's significant investor (SIV), business innovation (BIIP) and retirement-class visa investment thresholds — including FIRB, complying-investment fees and time-in-AU rules.",
+    pros: ["SIV / BIIP / 188 / 405", "FIRB cost included", "Complying-investment fees"],
+    pricing: "Free tool",
+    url: "/tools/visa-investment-calculator",
+    internal: true,
+  },
+  {
+    slug: "withholding-tax-calculator",
+    name: "Withholding Tax Calculator",
+    category: "Calculators",
+    rating: 5,
+    description:
+      "Calculates Australian withholding tax on dividends, interest and royalties based on your country of tax residence and the relevant DTA. Covers all 45+ Australian double-tax-agreement partners.",
+    pros: ["45+ DTA partners", "Dividends / interest / royalties", "Sourced from ATO + Treasury"],
+    pricing: "Free tool",
+    url: "/tools/withholding-tax-calculator",
+    internal: true,
+  },
 ];
 
 /* ─── Config ─── */
