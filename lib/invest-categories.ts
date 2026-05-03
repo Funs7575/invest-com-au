@@ -694,7 +694,7 @@ const categories: InvestCategory[] = [
       {
         slug: "healthtech",
         label: "HealthTech",
-        dbValue: "medtech",
+        dbValue: "healthtech",
         title: `HealthTech Startup Investments in Australia (${yr})`,
         h1: "HealthTech Startup Investment Opportunities in Australia",
         metaDescription: `Invest in Australian healthtech startups — telehealth, medtech, digital health, biotech. ${upd}.`,
