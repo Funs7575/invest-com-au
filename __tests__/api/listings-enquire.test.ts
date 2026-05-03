@@ -189,6 +189,7 @@ describe("POST /api/listings/enquire", () => {
     ];
     for (const investor_type of validTypes) {
       vi.clearAllMocks();
+      mockIsFlagEnabled.mockResolvedValue(true);
       mockIsRateLimited.mockResolvedValue(false);
       // Need two calls: one for listing lookup, one for email lookup
       let callCount = 0;
