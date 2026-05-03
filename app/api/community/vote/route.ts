@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
     // Check for existing vote
     const { data: existingVote } = await admin
       .from("forum_votes")
-      .select("id, vote")
+      .select("id, value")
       .eq("target_type", target_type)
       .eq("target_id", target_id)
       .eq("user_id", user.id)
@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
     let reputationDelta = 0;
 
     if (existingVote) {
-      if (existingVote.vote === vote) {
+      if (existingVote.value === vote) {
         // Same vote again: remove the vote (toggle off)
         await admin
           .from("forum_votes")
@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
         // Changing vote direction
         await admin
           .from("forum_votes")
-          .update({ vote, created_at: new Date().toISOString() })
+          .update({ value: vote, created_at: new Date().toISOString() })
           .eq("id", existingVote.id);
 
         scoreDelta = vote * 2; // Swing from -1 to +1 or vice versa
@@ -93,7 +93,7 @@ export async function POST(req: NextRequest) {
           target_type,
           target_id,
           user_id: user.id,
-          vote,
+          value: vote,
         });
 
       if (insertError) {

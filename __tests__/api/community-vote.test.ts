@@ -174,7 +174,7 @@ describe("POST /api/community/vote", () => {
     const target = { id: TARGET_ID, author_id: AUTHOR_ID, vote_score: 5 };
     mockAdminFrom
       .mockImplementationOnce(() => makeSingleBuilder(target, null))          // fetch target
-      .mockImplementationOnce(() => makeSingleBuilder({ id: "v1", vote: 1 }, null)) // existing vote
+      .mockImplementationOnce(() => makeSingleBuilder({ id: 1, value: 1 }, null)) // existing vote
       .mockImplementationOnce(() => makeTerminalBuilder())                    // delete vote
       .mockImplementationOnce(() => makeTerminalBuilder())                    // score update
       .mockImplementationOnce(() => makeUpsertBuilder())                      // rep upsert
@@ -190,7 +190,7 @@ describe("POST /api/community/vote", () => {
     const target = { id: TARGET_ID, author_id: AUTHOR_ID, vote_score: 2 };
     mockAdminFrom
       .mockImplementationOnce(() => makeSingleBuilder(target, null))           // fetch target
-      .mockImplementationOnce(() => makeSingleBuilder({ id: "v1", vote: -1 }, null)) // existing downvote
+      .mockImplementationOnce(() => makeSingleBuilder({ id: 1, value: -1 }, null)) // existing downvote
       .mockImplementationOnce(() => makeTerminalBuilder())                     // update vote record
       .mockImplementationOnce(() => makeTerminalBuilder())                     // score update
       .mockImplementationOnce(() => makeUpsertBuilder())                       // rep upsert
