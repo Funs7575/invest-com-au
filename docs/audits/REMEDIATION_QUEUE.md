@@ -41,7 +41,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | O | all PRs MERGED | #235/#237/#239/#299/#300/#366/#395/#408 all MERGED | last merged 2026-05-02T16:14Z | O-01..O-03 done. O-04 blocked (Stripe live validation). O-05 MERGED (#408). |
 | P | `claude/audit-remediation/p-01-sentry-v10-upgrade` (#468) | — | iter 212 — `331b98e` (PR #468: P-01 — @sentry/nextjs v9.47.1 → v10.51.0; clears 5 Sentry audit findings; removes `as any` cast in next.config.ts); CI success. | P-01 in-progress (PR #468). P-02 (Stripe SDK v17→v22) BLOCKED — requires npm install + local test run to verify webhook type compatibility across 5 major versions; not tractable on Hardware-exception sandbox. Needs a session with full node_modules. |
 | Q | _not started_ | — | — | — |
-| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · `r-05-email-templates-tests` (#471) · `r-06-automation-metrics-tests` (#472) · `r-07-chatbot-tests` (#473) · `r-08-fi-data-server-tests` (#510) · `r-09-tracking-browser-tests` (#511) · `r-09-tracking-tests` (#513) · `r-10-advisor-resolver-db-tests` (#514) | #290/#396/#459 all MERGED · #466/#471/#472/#473/#510/#511/#513/#514 OPEN | iter 226 CI rescue — `47597e4` PR #511 (vi.spyOn fix); `6db4135` PR #514 (as unknown cast + as const). | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459). R-04 in-progress (#466, CI green). R-05 in-progress (#471). R-06 in-progress (#472). R-07 in-progress (#473). R-08 in-progress (#510, CI pending). R-09 in-progress (#511 + #513, rescue pushed). R-10 in-progress (#514, proactive TS fix pushed). R-11 pending. |
+| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · `r-05-email-templates-tests` (#471) · `r-06-automation-metrics-tests` (#472) · `r-07-chatbot-tests` (#473) · `r-08-fi-data-server-tests` (#510) · `r-09-tracking-browser-tests` (#511) · `r-09-tracking-tests` (#513) · `r-10-advisor-resolver-db-tests` (#514) · `r-10-advisor-resolver-tests` (#516) | #290/#396/#459 all MERGED · #466/#471/#472/#473/#510/#511/#513/#514/#516 OPEN | iter 225 — `2237ac6` (PR #516: R-10 parallel-fire supplement — 13 tests in existing tracking.test.ts covering all DB-layer paths; PR #514 adds separate db.test.ts file, no conflict); CI running. | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459). R-04 in-progress (#466, CI green). R-05 in-progress (#471). R-06 in-progress (#472). R-07 in-progress (#473). R-08 in-progress (#510, CI pending). R-09 in-progress (#511 + #513, rescue pushed). R-10 in-progress (#514 + #516, parallel-fire race — different files, both auto-merge-safe). R-11 pending. |
 | S | _not started_ | — | — | — |
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 MERGED 2026-04-28T11:45Z | merged | V-NEW-06 done (commit `a7bd736`) |
@@ -1753,6 +1753,19 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 
 - STATUS: PROGRESS · stream=R · item=R-10 · pr=#514
 - Commit: 208e124 (initial) + 6db4135 (TS fix)
+
+### 2026-05-03 — Forward progress iter 225 (stream R — R-10 parallel-fire supplement: advisor-application-resolver 13-test coverage in existing test file)
+
+- Phase 0: batch iteration in same fire; lock held from batch start.
+- Phase 1: synced main — picked up iter 226 CI rescue update from another fire. PR #514 already opened for R-10 (12 tests, new file advisor-application-resolver-db.test.ts). Race condition detected.
+- Phase 2: no red CI on stream R.
+- Phase 3: R-10 already claimed by PR #514 but touches a different file. My fire's 13 tests modify the existing advisor-application-resolver.test.ts (different file — no merge conflict). Both auto-merge-safe.
+- Phase 4–5: 13 new tests (classifyPendingApplication × 4, applyApplicationVerdict × 5, verifyApplicationEndToEnd × 2, notifyAdminApplicationEscalated × 2). All 25 pass locally. Lint clean.
+- Phase 6: committed `2237ac6`, pushed, opened PR #516. Both #514 + #516 auto-merge-safe; different files; CI running on #516.
+- STATUS: PROGRESS · stream=R · item=R-10 (parallel supplement) · pr=#516
+- Commit: 2237ac6 · Diff: +287 -1 across 1 file
+- Next item: R-DISC-20260429-01 (lib/financial-periods.ts 0% coverage)
+- Remaining: R-DISC-20260429-01/R-11 pending + many other streams pending
 
 ### 2026-05-03 — Forward progress iter 224b (stream R — R-09 parallel-fire supplement: tracking.ts 31-test jsdom coverage in tracking.test.ts)
 
