@@ -28,7 +28,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | B | `claude/audit-remediation/b-08-rls-select-only` (#326) · `b-09a-otp-gate` (#348 draft, parallel-agent) | #326 MERGED 2026-05-01T13:19Z · #348 OPEN (DRAFT, awaiting `LISTING_OWNER_COOKIE_SECRET` env var) | last CI-rescue 2026-05-01T21:43Z (#348) | PR #220 merged (B-01..B-06 done/blocked/FP). B-07 done (`0097159` PR #286). B-08 done — code changes merged via PR #326 commit `476f89f6`. B-09 in-progress on `#348` (parallel-agent, draft). CI-rescue iter 1 (`09c4dfb`, 2026-05-01) merged main before PR #392 types regen — types drift still red. CI-rescue iter 2 (`7da8757e`, 2026-05-01T21:43Z) merged post-#392 main — picked up database.types.ts regen; CI re-run pending. Still DRAFT awaiting `LISTING_OWNER_COOKIE_SECRET` env var (Tier D). |
 | C | all PRs MERGED | #327/#349/#360/#394/#397 all MERGED | last merged 2026-05-02T16:13Z | C-01..C-08 done. C-03 MERGED (#360). C-04 done (#394). C-05 done (#394). C-05b MERGED (#349). C-DISC-20260501-01 MERGED (#397). **Stream C complete.** |
 | D | `claude/audit-remediation/d-route-tests` | #285 MERGED 2026-04-29T10:13Z; supplementary PRs #246/#285/#297/#298 | last merged 2026-04-29T18:53Z | D-01..D-09 done (PR #246). D-10 done (PR #246 — coverage ratchet). D-11 complete (43+ batches, all admin/cron/non-admin routes covered) — merged via PR #285 + supplementary PRs #297/#298. **Stream D complete.** |
-| E | `claude/audit-remediation/e-01-with-validated-body` (#295) · `e-02-batch-*-zod-rollout` (#315/#323/#406/#460) · `e-03-zod-lint-rule` (#313) | #295/#313/#315/#323/#406 MERGED · #460 OPEN | iter 209 CI-RESCUE — `57ae875` (PR #460: remove Zod v4 incompatible required_error from questions + threads — same root cause as batch-3 rescue 9fefb6c); CI re-running | E-01 done (PR #295 — withValidatedBody helper). E-02 in-progress (batches 1+2 done via PR #315/#323 — 8 routes; batch 3 done via PR #406 — 9 CI rescues; batch 4 in-progress via PR #460 — 4 routes: questions, shortlist, referrals, community/threads; CI rescue `57ae875` for Zod v4 required_error; ~1 batch remaining). E-03 done (PR #313 — ESLint rule). E-04 backfill pending. |
+| E | `claude/audit-remediation/e-02-batch-5-zod-rollout` (#469) · `e-02-batch-*-zod-rollout` (#460) · `e-03-zod-lint-rule` (#313) | #295/#313/#315/#323/#406 MERGED · #460/#469 OPEN | iter 213 — `dc2809c` (PR #469: E-02 batch 5 — Zod on community/vote, community/posts, marketplace/impression, marketplace/notify); CI pending | E-01 done (PR #295 — withValidatedBody helper). E-02 in-progress (batches 1+2 MERGED PR #315/#323; batch 3 MERGED PR #406 — note: did not land vote/posts/impression/notify; batch 4 open PR #460 — questions/shortlist/referrals/threads; batch 5 open PR #469 — vote/posts/impression/notify now with Zod). E-02 substantially complete after #460+#469 merge. E-03 done (PR #313 — ESLint rule). E-04 backfill pending. |
 | F | `claude/audit-remediation/f-02..f-06` (multiple PRs) | #293/#294/#301/#354/#355/#370 all MERGED | last merged 2026-05-01T16:00Z | F-01 false-positive. F-02 done (PR #293 — formatDate). F-03 done (PR #370 — formatCurrency). F-04 done (PR #354 — slugify, first wave). F-05 done (PR #294 + #301 followup — console→logger). F-06 done (PR #355 — compliance copy SSOT). F-07/F-08 pending. |
 | G | `claude/audit-remediation/g-03-batch-6-rollback-headers` (#455) · `g-03-batch-7-rollback-headers` (#467) | #307/#310/#311/#314/#316/#342/#352/#405 all MERGED · #455/#467 OPEN | iter 211 — `534a70d` (PR #467: G-03 batch 7 — rollback headers for 10 migrations 20260415–20260419); CI pending | G-01+G-02 done (PR #307). G-03 batch 7 in-progress (#467 — 70/108 covered; ~4 batches still pending). G-04 done (PR #310 + #342). G-04-FINDING-1..5 pending founder authorization. |
 | H | _not started_ | — | — | — |
@@ -697,7 +697,7 @@ Highest priority: critical 2 first.
 | ID | Status | Summary | Est. iterations | Notes |
 | --- | --- | --- | --- | --- |
 | E-01 | done | Author `lib/validation/withValidatedBody.ts` helper + tests | 1 | Done in PR #295. Pattern: `withValidatedBody(schema, async (req, body) => {...})`. |
-| E-02 | in-progress | Convert top-20 highest-traffic routes to Zod (overlap with D-01..D-09) | ~5 | Batch 1 done (PR #315 — 4 top-traffic routes). Batch 2 done (PR #323 — 4 routes). Batch 3 done (PR #406 — community/vote, community/posts, marketplace/impression, marketplace/notify). 12/20 routes converted; ~2 batches still pending. |
+| E-02 | in-progress | Convert top-20 highest-traffic routes to Zod (overlap with D-01..D-09) | ~5 | Batch 1 done (PR #315 — 4 top-traffic routes). Batch 2 done (PR #323 — 4 routes). Batch 3 done (PR #406 — routes other than vote/posts/impression/notify). Batch 4 in-progress (PR #460 — questions, shortlist, referrals, community/threads). Batch 5 in-progress (PR #469 — community/vote, community/posts, marketplace/impression, marketplace/notify). 20/20 routes addressed after #460+#469 merge; E-02 complete on merge. |
 | E-03 | done | ESLint rule: flag new `await req.json()` without immediate `.parse()`/`.safeParse()` | 1 | Done in PR #313 (`invest/no-unvalidated-req-json`). lint-staged `--max-warnings 0` upgrades to commit blocker. Stream I overlap (I-04). |
 | E-04 | pending | Backfill remaining ~206 routes (chunked: ~6 per iteration) | ~35 | Lowest priority within E; ongoing. |
 
@@ -1623,6 +1623,17 @@ Two strategically important surfaces under-served by current nav: (1) investment
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-03 — Forward progress iter 213 (stream E — E-02 batch 5: Zod on community/vote, posts, marketplace/impression, notify)
+
+- Phase 0: Lock active (batch mode, iteration 4/5).
+- Phase 1: Synced main. Already up to date.
+- Phase 2: CI rescue check — #467 (G-03 b7): in_progress. #468 (P-01): in_progress, no failures. #466 (R-04): CI pending. No rescues.
+- Phase 3: A-stream: all batches have open PRs (no new pending). P-01 in-progress (#468). E-02 batch 5 is next (slot 17). PR #460 (batch 4) still open; batch 5 must not touch routes in #460 (questions, shortlist, referrals, threads) to avoid conflicts.
+- Phase 4: ESLint rule `invest/no-unvalidated-req-json` confirmed these 4 routes still flagged. Batch 3 (PR #406) never actually applied Zod to these files on main (single-commit history on each file predates batch 3's branch). Schemas: VoteBody (enum target_type, union target_id, literal union vote), PostBody (union thread_id, string 1-5000 body, optional parent_id), ImpressionBody (string campaign_id/broker_slug, optional page/placement), NotifyBody (all strings, optional link/send_email boolean).
+- Phase 5: Added Zod schemas + safeParse calls to all 4 routes. Manual validation blocks replaced with Zod constraint equivalents. ESLint --max-warnings 0 clean, tsc clean (background job exit 0).
+- Phase 6: Commit `dc2809c`. Branch `claude/audit-remediation/e-02-batch-5-zod-rollout`. PR #469.
+- STATUS: PROGRESS · stream=E · item=E-02 (batch 5) · pr=#469 · commit=dc2809c · diff=+47 -33 across 4 files
 
 ### 2026-05-03 — Forward progress iter 212 (stream P — P-01: @sentry/nextjs v9.47.1 → v10.51.0)
 
