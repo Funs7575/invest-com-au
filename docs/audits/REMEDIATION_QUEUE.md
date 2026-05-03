@@ -41,7 +41,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | O | all PRs MERGED | #235/#237/#239/#299/#300/#366/#395/#408 all MERGED | last merged 2026-05-02T16:14Z | O-01..O-03 done. O-04 blocked (Stripe live validation). O-05 MERGED (#408). |
 | P | `claude/audit-remediation/p-01-sentry-v10-upgrade` (#468) | — | iter 212 — `331b98e` (PR #468: P-01 — @sentry/nextjs v9.47.1 → v10.51.0; clears 5 Sentry audit findings; removes `as any` cast in next.config.ts); CI success. | P-01 in-progress (PR #468). P-02 (Stripe SDK v17→v22) BLOCKED — requires npm install + local test run to verify webhook type compatibility across 5 major versions; not tractable on Hardware-exception sandbox. Needs a session with full node_modules. |
 | Q | _not started_ | — | — | — |
-| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · `r-05-email-templates-tests` (#471) · `r-06-automation-metrics-tests` (#472) · `r-07-chatbot-tests` (#473) · `r-08-fi-data-server-tests` (#510) · `r-09-tracking-browser-tests` (#511) · `r-09-tracking-tests` (#513) · `r-10-advisor-resolver-db-tests` (#514) · `r-10-advisor-resolver-tests` (#516) · `r-10-advisor-application-resolver-tests` (#515) · `r-disc-01-financial-periods-tests` (#517) · `r-11-hooks-shortlist-tests` (#519) | #290/#396/#459 all MERGED · #466/#471/#472/#473/#510/#511/#513/#514/#515/#516/#517/#519 OPEN | iter 229 — `1554334` (PR #519 R-11: useShortlist+useAdvisorShortlist 24 tests; pending CI). | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459). R-04 in-progress (#466, CI green). R-05 in-progress (#471). R-06 in-progress (#472). R-07 in-progress (#473). R-08 in-progress (#510, CI pending). R-09 in-progress (#511 + #513, rescue 6945a27 pushed). R-10 in-progress (#514 + #515 + #516; #515/#516 conflict on same file — recommend merge #514+#515, close #516 as subset). R-DISC-20260429-01 in-progress (#517). R-11 in-progress (#519, CI pending). |
+| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · `r-05-email-templates-tests` (#471) · `r-06-automation-metrics-tests` (#472) · `r-07-chatbot-tests` (#473) · `r-08-fi-data-server-tests` (#510) · `r-09-tracking-browser-tests` (#511) · `r-09-tracking-tests` (#513) · `r-10-advisor-resolver-db-tests` (#514) · `r-10-advisor-resolver-tests` (#516) · `r-10-advisor-application-resolver-tests` (#515) · `r-disc-01-financial-periods-tests` (#517) · `r-11-hooks-shortlist-tests` (#519) · `r-coverage-01-listing-routes` (#521) | #290/#396/#459 all MERGED · #466/#471/#472/#473/#510/#511/#513/#514/#515/#516/#517/#519/#521 OPEN | iter 230 — `a007a5a` (PR #521 R-COVERAGE-01: listing-enquire flag mock fix + advisor opt-in coverage; 16 tests fixed, 4 added; CI running). | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459). R-04 in-progress (#466, CI green). R-05 in-progress (#471). R-06 in-progress (#472). R-07 in-progress (#473). R-08 in-progress (#510, CI pending). R-09 in-progress (#511 + #513, rescue 6945a27 pushed). R-10 in-progress (#514 + #515 + #516; #515/#516 conflict on same file — recommend merge #514+#515, close #516 as subset). R-DISC-20260429-01 in-progress (#517). R-11 in-progress (#519, CI pending). R-COVERAGE-01 in-progress (#521, CI running). |
 | S | _not started_ | — | — | — |
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 MERGED 2026-04-28T11:45Z | merged | V-NEW-06 done (commit `a7bd736`) |
@@ -552,7 +552,7 @@ Pure grind work, ideal for the cloud loop. Long-running stream — expect ~6-7 m
 
 | ID | Status | Summary | Est. iterations | Notes |
 | --- | --- | --- | --- | --- |
-| R-COVERAGE-01 | pending | `app/api/listings/enquire` + `app/api/listings/submit` + `app/api/listings/my-listings` — branch coverage to 80%+ | 2 | Currently passes happy-path; missing edge cases (rate-limit, RLS denial, malformed body). |
+| R-COVERAGE-01 | in-progress (#521) | `app/api/listings/enquire` + `app/api/listings/submit` + `app/api/listings/my-listings` — branch coverage to 80%+ | 2 | Fixed 16 silently-failing enquire tests (isFlagEnabled mock missing); added 503 kill-switch, email-skip, opt-in success, opt-in throw-resilience tests. |
 | R-COVERAGE-02 | pending | `lib/stripe/*` — full coverage on `webhook.ts`, `idempotency.ts`, `pricing.ts`, customer + subscription helpers | 4 | Mock the Stripe SDK; assert idempotency + amount + metadata invariants. |
 | R-COVERAGE-03 | pending | `app/api/quotes/post`, `app/api/quotes/respond`, `app/api/quotes/recent` — full lead lifecycle | 3 | Includes the per-advisor quota + dispute hand-off. |
 | R-COVERAGE-04 | pending | `app/api/admin/payouts/*` + `app/api/admin/affiliate-*` | 3 | Money-out routes — highest-stakes admin endpoints. |
@@ -1678,6 +1678,20 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-03 — Forward progress iter 230 (stream R — R-COVERAGE-01: listing route test fixes + advisor opt-in coverage)
+
+- Phase 0: Lock re-acquired (context-restored batch continuation, iter 3/5).
+- Phase 1: synced main — up to date. No LOOP_PAUSE sentinel.
+- Phase 2: PR #519 (R-11) "Lint · Type-check · Test · Build" in_progress. PR #511 (R-09) shows prior-run failure; rescue commit 6945a27 triggered a new CI run (Vercel checks visible at 22:22Z, main CI check still queued). No active failures on current heads.
+- Phase 3: P (slot 15) — P-01 in-flight, P-02 blocked. R (slot 16) — all R-01..R-11 in-progress; next pending is R-COVERAGE-01.
+- Phase 4: Test-only change. Verification gate: both route files are pure API handlers, no RLS concerns. Confirmed 16 tests were already silently failing locally (503 from isFlagEnabled returning false in placeholder-Supabase test env). Fix is additive mock + 4 new tests.
+- Phase 5: Added isFlagEnabled mock to listings-enquire.test.ts (fixes 16 tests + adds 2 new). Added processAdvisorOptIns mock to listings-submit.test.ts (adds 2 new tests for advisor_opt_ins branch). All 45 tests pass locally.
+- Phase 6: Commit `a007a5a`. Branch `claude/audit-remediation/r-coverage-01-listing-routes`. PR #521.
+- Phase 6.5: Discovery — isFlagEnabled kill-switch pattern exists in other routes too (check-kill-switch should be mocked whenever a route has an isFlagEnabled guard). Noted as a pattern to apply systematically on next R-COVERAGE iterations.
+- STATUS: PROGRESS · stream=R · item=R-COVERAGE-01 · pr=#521 · commit=a007a5a
+- Diff: +62 -0 across 2 files
+- Next item: R-COVERAGE-02 (lib/stripe/* — webhook.ts, idempotency.ts, pricing.ts)
 
 ### 2026-05-03 — Forward progress iter 229 (stream R — R-11: useShortlist + useAdvisorShortlist hook tests)
 
