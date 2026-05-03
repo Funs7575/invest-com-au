@@ -1,6 +1,13 @@
 -- Seed investment listing images with curated Unsplash photos
 -- Each listing gets 3-4 images relevant to its vertical and type
 -- Also adds hero_image column to investment_verticals
+--
+-- Rollback:
+--   1. ALTER TABLE investment_verticals DROP COLUMN IF EXISTS hero_image;
+--   2. UPDATE investment_listings SET images = '{}' WHERE images IS NOT NULL;
+--   Note: The UPDATE seed rows are data-only (no schema change). The images
+--         array on investment_listings had no prior values before this migration
+--         ran, so resetting to empty array is the safe rollback path.
 
 -- ─── Add hero_image to investment_verticals ─────────────────────────────────
 ALTER TABLE investment_verticals ADD COLUMN IF NOT EXISTS hero_image TEXT;
