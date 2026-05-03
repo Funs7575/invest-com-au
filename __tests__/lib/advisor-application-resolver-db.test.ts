@@ -64,7 +64,7 @@ beforeEach(() => {
 describe("classifyPendingApplication", () => {
   it("returns ok:false when DB returns an error", async () => {
     vi.mocked(createAdminClient).mockReturnValue(
-      makeMockClient([{ data: null, error: { message: "connection refused" } }]) as ReturnType<typeof createAdminClient>,
+      makeMockClient([{ data: null, error: { message: "connection refused" } }]) as unknown as ReturnType<typeof createAdminClient>,
     );
     const result = await classifyPendingApplication(1);
     expect(result.ok).toBe(false);
@@ -73,7 +73,7 @@ describe("classifyPendingApplication", () => {
 
   it("returns ok:false when application is not found (null data)", async () => {
     vi.mocked(createAdminClient).mockReturnValue(
-      makeMockClient([{ data: null, error: null }]) as ReturnType<typeof createAdminClient>,
+      makeMockClient([{ data: null, error: null }]) as unknown as ReturnType<typeof createAdminClient>,
     );
     const result = await classifyPendingApplication(1);
     expect(result.ok).toBe(false);
@@ -82,7 +82,7 @@ describe("classifyPendingApplication", () => {
 
   it("returns ok:false with reason 'already_approved' when status is not pending", async () => {
     vi.mocked(createAdminClient).mockReturnValue(
-      makeMockClient([{ data: { id: 1, status: "approved" }, error: null }]) as ReturnType<typeof createAdminClient>,
+      makeMockClient([{ data: { id: 1, status: "approved" }, error: null }]) as unknown as ReturnType<typeof createAdminClient>,
     );
     const result = await classifyPendingApplication(1);
     expect(result.ok).toBe(false);
@@ -98,11 +98,11 @@ describe("classifyPendingApplication", () => {
       specialties: "superannuation", status: "pending",
     };
     vi.mocked(createAdminClient).mockReturnValue(
-      makeMockClient([{ data: pendingApp, error: null }]) as ReturnType<typeof createAdminClient>,
+      makeMockClient([{ data: pendingApp, error: null }]) as unknown as ReturnType<typeof createAdminClient>,
     );
     vi.mocked(classifyApplication).mockReturnValue({
-      verdict: "escalate",
-      confidence: "low",
+      verdict: "escalate" as const,
+      confidence: "low" as const,
       reasons: ["no_afsl_lookup"],
     });
 
@@ -121,11 +121,11 @@ describe("classifyPendingApplication", () => {
 describe("applyApplicationVerdict — escalate", () => {
   it("updates admin_notes and returns applied:true", async () => {
     vi.mocked(createAdminClient).mockReturnValue(
-      makeMockClient([{ data: null, error: null }]) as ReturnType<typeof createAdminClient>,
+      makeMockClient([{ data: null, error: null }]) as unknown as ReturnType<typeof createAdminClient>,
     );
     const result = await applyApplicationVerdict(1, {
-      verdict: "escalate",
-      confidence: "low",
+      verdict: "escalate" as const,
+      confidence: "low" as const,
       reasons: ["no_afsl_lookup"],
     });
     expect(result.applied).toBe(true);
@@ -136,11 +136,11 @@ describe("applyApplicationVerdict — escalate", () => {
 describe("applyApplicationVerdict — reject", () => {
   it("stamps rejection status and returns applied:true (no RESEND_API_KEY)", async () => {
     vi.mocked(createAdminClient).mockReturnValue(
-      makeMockClient([{ data: null, error: null }]) as ReturnType<typeof createAdminClient>,
+      makeMockClient([{ data: null, error: null }]) as unknown as ReturnType<typeof createAdminClient>,
     );
     const result = await applyApplicationVerdict(1, {
-      verdict: "reject",
-      confidence: "high",
+      verdict: "reject" as const,
+      confidence: "high" as const,
       reasons: ["invalid_afsl"],
       rejectionReason: "AFSL number not found on ASIC register",
     });
@@ -166,12 +166,12 @@ describe("applyApplicationVerdict — approve", () => {
         { data: null, error: null },           // slug collision check → .maybeSingle()
         { data: { id: 99 }, error: null },     // insert professional → .single()
         { data: null, error: null },           // stamp application → .then()
-      ]) as ReturnType<typeof createAdminClient>,
+      ]) as unknown as ReturnType<typeof createAdminClient>,
     );
 
     const result = await applyApplicationVerdict(1, {
-      verdict: "approve",
-      confidence: "high",
+      verdict: "approve" as const,
+      confidence: "high" as const,
       reasons: ["afsl_current"],
     });
 
@@ -186,12 +186,12 @@ describe("applyApplicationVerdict — approve", () => {
         { data: null, error: null },                          // slug collision check
         { data: null, error: { message: "duplicate key" } }, // insert fails
         { data: null, error: null },                          // fallback escalation update
-      ]) as ReturnType<typeof createAdminClient>,
+      ]) as unknown as ReturnType<typeof createAdminClient>,
     );
 
     const result = await applyApplicationVerdict(1, {
-      verdict: "approve",
-      confidence: "high",
+      verdict: "approve" as const,
+      confidence: "high" as const,
       reasons: ["afsl_current"],
     });
 
@@ -202,12 +202,12 @@ describe("applyApplicationVerdict — approve", () => {
     vi.mocked(createAdminClient).mockReturnValue(
       makeMockClient([
         { data: null, error: null },  // reload app → null
-      ]) as ReturnType<typeof createAdminClient>,
+      ]) as unknown as ReturnType<typeof createAdminClient>,
     );
 
     const result = await applyApplicationVerdict(1, {
-      verdict: "approve",
-      confidence: "high",
+      verdict: "approve" as const,
+      confidence: "high" as const,
       reasons: ["afsl_current"],
     });
 
@@ -220,7 +220,7 @@ describe("applyApplicationVerdict — approve", () => {
 describe("verifyApplicationEndToEnd", () => {
   it("returns applied:false with escalate verdict when application is not found", async () => {
     vi.mocked(createAdminClient).mockReturnValue(
-      makeMockClient([{ data: null, error: { message: "not found" } }]) as ReturnType<typeof createAdminClient>,
+      makeMockClient([{ data: null, error: { message: "not found" } }]) as unknown as ReturnType<typeof createAdminClient>,
     );
 
     const result = await verifyApplicationEndToEnd(1);
@@ -242,11 +242,11 @@ describe("verifyApplicationEndToEnd", () => {
       makeMockClient([
         { data: pendingApp, error: null }, // classifyPendingApplication → maybeSingle
         { data: null, error: null },       // applyApplicationVerdict escalate → then
-      ]) as ReturnType<typeof createAdminClient>,
+      ]) as unknown as ReturnType<typeof createAdminClient>,
     );
     vi.mocked(classifyApplication).mockReturnValue({
-      verdict: "escalate",
-      confidence: "low",
+      verdict: "escalate" as const,
+      confidence: "low" as const,
       reasons: ["no_afsl_lookup"],
     });
 
@@ -266,8 +266,8 @@ describe("notifyAdminApplicationEscalated", () => {
     vi.stubGlobal("fetch", mockFetch);
 
     await notifyAdminApplicationEscalated(1, "Jane Doe", {
-      verdict: "escalate",
-      confidence: "low",
+      verdict: "escalate" as const,
+      confidence: "low" as const,
       reasons: ["no_afsl_lookup"],
     });
 
@@ -280,8 +280,8 @@ describe("notifyAdminApplicationEscalated", () => {
     vi.stubGlobal("fetch", mockFetch);
 
     await notifyAdminApplicationEscalated(5, "John Smith", {
-      verdict: "escalate",
-      confidence: "medium",
+      verdict: "escalate" as const,
+      confidence: "medium" as const,
       reasons: ["abn_not_found", "no_afsl_lookup"],
     });
 
