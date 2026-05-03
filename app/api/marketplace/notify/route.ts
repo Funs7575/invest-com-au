@@ -1,5 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
+
+const NotifyBody = z.object({
+  broker_slug: z.string().min(1),
+  type: z.string().min(1),
+  title: z.string().min(1),
+  message: z.string().min(1),
+  link: z.string().optional(),
+  send_email: z.boolean().optional().default(false),
+});
 
 /** Escape HTML special chars to prevent XSS in email templates */
 function escapeHtml(str: string): string {
@@ -24,12 +34,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await req.json();
-    const { broker_slug, type, title, message, link, send_email = false } = body;
-
-    if (!broker_slug || !type || !title || !message) {
+    const parsed = NotifyBody.safeParse(await req.json());
+    if (!parsed.success) {
       return NextResponse.json({ error: "broker_slug, type, title, and message are required" }, { status: 400 });
     }
+    const { broker_slug, type, title, message, link, send_email } = parsed.data;
 
     // Insert notification
     const { data: notification, error: insertError } = await supabaseAdmin
