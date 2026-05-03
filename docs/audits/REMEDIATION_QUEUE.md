@@ -52,7 +52,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | Y | all PRs MERGED | #253/#347 both MERGED | last merged 2026-05-01T22:00Z | Y-05 done (PR #253). Y-08 done (PR #253). Y-05-ENRICH MERGED (#347 — sourcedAt/source/freshness enrichment + 16 new tests). Y-01..Y-04, Y-06, Y-07 pending. |
 | BB | all PRs MERGED | #361/#368 both MERGED | last merged 2026-05-01T22:01Z | BB-03 MERGED (#361 — CGT calc vs ATO, 5 regulator-reference tests). BB-06 MERGED (#368 — mortgage stress vs ASIC+APRA, 8 cases). Other BB items pending. |
 | **AUDIT-SWEEP** | `claude/audit-remediation/audit-sweep-01-02` | #518 OPEN | iter 228 — `907180c` (PR #518: AUDIT-SWEEP-01+02 done); CI running. | AUDIT-SWEEP-01 done. AUDIT-SWEEP-02 done. PR #518 auto-merge-safe (hygiene only). |
-| **MAIN-RESCUE** | `fix/main-rescue-enquire-tests` | #523 OPEN | iter 233 — `2c35cc2` (superset of #522: all 5 broken test files mocked; #522 closed as superseded); CI running. | Fixes main CI: isFlagEnabled returns false in placeholder-Supabase env; 5 test files (listings-enquire/checkout, advisor-enquiry, concierge, cron-drip) need mock. PR #523 covers all 5. |
+| **MAIN-RESCUE** | `fix/main-rescue-enquire-tests` | #523 OPEN | iter 238 — `49db562` (fix: reset mockIsFlagEnabled inside investor_type loop — vi.clearAllMocks() inside "accepts all valid investor_type values" erased the mock on every iteration); CI running. iter 233 — `2c35cc2` (superset of #522: all 5 broken test files mocked; #522 closed as superseded). | Fixes main CI: isFlagEnabled returns false in placeholder-Supabase env; 5 test files (listings-enquire/checkout, advisor-enquiry, concierge, cron-drip) need mock. PR #523 covers all 5. |
 | **R-COVERAGE** | _to be created_ | — | — | **Overall 60% already met (currently 70.94%).** Remaining gap: ≥80% on money/legal libs (`lib/stripe`, `lib/finance`, `lib/compliance`, `lib/sponsorship`) + ≥70% on user-data/money API routes. **Realistic timeline: 3-8 weeks**, not 6-7 months — original estimate based on stale 1.5% baseline. See "R-COVERAGE" section below. |
 | **OBS** | _to be created_ | — | — | Observability layer: SLO dashboards, alerting on main breakage, on-call runbook expansion. ~2 weeks of work once spec'd. See "OBS — observability layer" section below. |
 | **REFACTOR** | _to be created_ | — | — | One major refactor of the messiest area to set the codebase pattern standard. Target TBD on first iteration (likely advisor lifecycle vs sponsorship). See "REFACTOR — pattern-setting refactor" section below. |
@@ -1735,6 +1735,16 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 - Phase 6: Commit `8cd2725`. Branch pushed. PR #525.
 - STATUS: PROGRESS · stream=Q · items=Q-02/Q-03/Q-04/Q-05 · pr=#525
 - Diff: +226 LOC across 4 doc files
+
+### 2026-05-03 — CI-RESCUE iter 238 (MAIN-RESCUE — fix vi.clearAllMocks() clobbering mockIsFlagEnabled in investor_type loop)
+
+- Phase 0: No LOOP_PAUSE sentinel.
+- Phase 1: main synced — pulled iter 237 (F-07 batch 1).
+- Phase 2: PR #523 (MAIN-RESCUE) "Lint · Type-check · Test · Build" FAILURE on commit `2c35cc2`.
+- Root cause: `listings-enquire.test.ts` "accepts all valid investor_type values" calls `vi.clearAllMocks()` inside its for-loop, wiping `mockIsFlagEnabled` without resetting it. From iteration 1 onwards, `isFlagEnabled()` returned `undefined` (falsy) so the route hit the kill-switch and returned 503 instead of 201.
+- Fix: Added `mockIsFlagEnabled.mockResolvedValue(true)` inside the loop immediately after `vi.clearAllMocks()` (commit `49db562`). 1-line change.
+- STATUS: CI-RESCUE · stream=MAIN-RESCUE · pr=#523 · commit=49db562
+- Diff: +1 -0 (`__tests__/api/listings-enquire.test.ts`)
 
 ### 2026-05-03 — CI-RESCUE iter 233 (MAIN-RESCUE complete: PR #523 superset of #522; all 5 test files covered)
 
