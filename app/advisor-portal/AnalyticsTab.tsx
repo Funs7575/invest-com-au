@@ -3,6 +3,14 @@
 import Icon from "@/components/Icon";
 import type { Advisor, Stats, Lead, ProfileCompleteness, ViewType } from "./types";
 
+function formatResponseTime(minutes: number | null): string {
+  if (minutes === null) return "—";
+  if (minutes < 60) return `${minutes}m`;
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  return m === 0 ? `${h}h` : `${h}h ${m}m`;
+}
+
 type Props = {
   stats: Stats | null;
   advisor: Advisor | null;
@@ -75,6 +83,42 @@ export default function AnalyticsTab({ stats, advisor, leads, profileCompletenes
               <p className="text-[0.55rem] md:text-xs font-medium">{s.label}</p>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* Response time */}
+      <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-5">
+        <h3 className="text-sm font-bold text-slate-900 mb-3">Response Performance</h3>
+        <div className="flex items-center gap-4">
+          <div className="flex-1 bg-slate-50 rounded-xl p-4 text-center">
+            <p className="text-2xl md:text-3xl font-bold text-slate-900">
+              {formatResponseTime(stats?.avgResponseTimeMinutes ?? null)}
+            </p>
+            <p className="text-xs text-slate-500 mt-1">Avg. time to first response</p>
+            <p className="text-[0.6rem] text-slate-400 mt-0.5">
+              {stats?.avgResponseTimeMinutes == null
+                ? "No responded leads yet"
+                : stats.avgResponseTimeMinutes <= 30
+                  ? "Excellent — faster than 90% of advisors"
+                  : stats.avgResponseTimeMinutes <= 120
+                    ? "Good — aim for under 30 min to maximise conversion"
+                    : "Slow — leads convert 3× better when responded to within 30 min"}
+            </p>
+          </div>
+          <div className="hidden md:flex flex-col gap-2 text-xs text-slate-600 shrink-0 max-w-[200px]">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+              <span>Under 30 min — highest conversion</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0" />
+              <span>30 min – 2 h — good</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-red-400 shrink-0" />
+              <span>Over 2 h — conversion drops sharply</span>
+            </div>
+          </div>
         </div>
       </div>
 

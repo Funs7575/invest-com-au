@@ -65,6 +65,7 @@ export type Stats = {
   totalBilledCents: number; pendingBilledCents: number; reviewCount: number;
   avgRating: string | null; bookingClicks30d: number;
   hotLeadsCount: number; warmLeadsCount: number; coldLeadsCount: number;
+  avgResponseTimeMinutes: number | null;
   phoneClicks: number; websiteClicks: number; bookingClicks: number;
   articleViews: number; searchImpressions: number;
   articles: { title: string; slug: string; views: number; clicks: number }[];

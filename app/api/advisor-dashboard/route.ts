@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
     supabase
       .from("professional_leads")
       .select(
-        "id, user_name, user_email, user_phone, message, source_page, status, quality_score, quality_signals, qualification_data, lead_tier, advisor_notes, contacted_at, converted_at, created_at"
+        "id, user_name, user_email, user_phone, message, source_page, status, quality_score, quality_signals, qualification_data, lead_tier, advisor_notes, contacted_at, converted_at, created_at, responded_at, response_time_minutes"
       )
       .eq("professional_id", advisorId)
       .order("created_at", { ascending: false })
@@ -133,6 +133,20 @@ export async function GET(request: NextRequest) {
   }).length;
   const coldLeadsCount = allLeads.filter((l) => (l.quality_score ?? 0) < 40).length;
 
+  // --- Avg response time ---
+  const respondedLeads = allLeads.filter(
+    (l) => (l as { response_time_minutes?: number | null }).response_time_minutes != null
+  );
+  const avgResponseTimeMinutes =
+    respondedLeads.length > 0
+      ? Math.round(
+          respondedLeads.reduce(
+            (s, l) => s + ((l as { response_time_minutes?: number | null }).response_time_minutes ?? 0),
+            0
+          ) / respondedLeads.length
+        )
+      : null;
+
   // --- Weekly enquiries (last 8 weeks) ---
   const weeklyEnquiries: { weekLabel: string; count: number }[] = [];
   for (let w = 7; w >= 0; w--) {
@@ -198,6 +212,7 @@ export async function GET(request: NextRequest) {
       hotLeadsCount,
       warmLeadsCount,
       coldLeadsCount,
+      avgResponseTimeMinutes,
     },
     viewsByDay: views || [],
     billing: billing || [],
