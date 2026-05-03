@@ -8,10 +8,10 @@
 --             is the single sink for those submissions. It is internal-only —
 --             the founder triages via /admin/bug-reports (PR 7) and replies
 --             using the canned templates in docs/ops/launch-canned-responses.md.
--- Idempotency: CREATE TABLE IF NOT EXISTS; DROP POLICY IF EXISTS before every
---              CREATE POLICY; ALTER TABLE ... ENABLE ROW LEVEL SECURITY is
---              idempotent in PostgreSQL; index uses IF NOT EXISTS; CHECK
---              constraint added via DO block to be re-runnable.
+-- Idempotency: every statement is safe to re-apply — guarded with
+--              IF-NOT-EXISTS / DROP-IF-EXISTS, ALTER TABLE ENABLE ROW LEVEL
+--              SECURITY is idempotent in PostgreSQL, and the CHECK
+--              constraints are added via a DO block.
 -- Rollback:   BEGIN;
 --               DROP TABLE IF EXISTS public.bug_reports;
 --             COMMIT;
