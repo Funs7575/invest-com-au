@@ -41,7 +41,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | O | all PRs MERGED | #235/#237/#239/#299/#300/#366/#395/#408 all MERGED | last merged 2026-05-02T16:14Z | O-01..O-03 done. O-04 blocked (Stripe live validation). O-05 MERGED (#408). |
 | P | `claude/audit-remediation/p-01-sentry-v10-upgrade` (#468) | — | iter 212 — `331b98e` (PR #468: P-01 — @sentry/nextjs v9.47.1 → v10.51.0; clears 5 Sentry audit findings; removes `as any` cast in next.config.ts); CI success. | P-01 in-progress (PR #468). P-02 (Stripe SDK v17→v22) BLOCKED — requires npm install + local test run to verify webhook type compatibility across 5 major versions; not tractable on Hardware-exception sandbox. Needs a session with full node_modules. |
 | Q | _not started_ | — | — | — |
-| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · `r-05-email-templates-tests` (#471) · `r-06-automation-metrics-tests` (#472) · `r-07-chatbot-tests` (#473) · `r-08-fi-data-server-tests` (#510) · `r-09-tracking-browser-tests` (#511) | #290/#396/#459 all MERGED · #466/#471/#472/#473/#510/#511 OPEN | iter 224 — `1a427d0` (PR #511: R-09 — tracking.ts browser functions coverage 33%→≥70%; 12 new jsdom tests: trackClick sendBeacon/fetch paths, trackEvent, trackPageDuration); CI in-progress. | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459 — 18 tests). R-04 in-progress (PR #466, CI success). R-05 in-progress (PR #471). R-06 in-progress (PR #472). R-07 in-progress (PR #473). R-08 in-progress (PR #510, CI pending). R-09 in-progress (PR #511, CI running). R-10..R-11 pending. |
+| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · `r-05-email-templates-tests` (#471) · `r-06-automation-metrics-tests` (#472) · `r-07-chatbot-tests` (#473) · `r-08-fi-data-server-tests` (#510) · `r-09-tracking-browser-tests` (#511) · `r-09-tracking-tests` (#513) | #290/#396/#459 all MERGED · #466/#471/#472/#473/#510/#511/#513 OPEN | iter 224b — `0e43fcc` (PR #513: R-09 parallel-fire supplement — 31 jsdom tests in tracking.test.ts covering all browser paths + more edge cases vs PR #511's 12; both auto-merge-safe, different files, no conflict); CI pending. | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459 — 18 tests). R-04 in-progress (PR #466, CI success). R-05 in-progress (PR #471). R-06 in-progress (PR #472). R-07 in-progress (PR #473). R-08 in-progress (PR #510, CI pending). R-09 in-progress (PR #511 + #513, both CI running; parallel-fire race). R-10..R-11 pending. |
 | S | _not started_ | — | — | — |
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 MERGED 2026-04-28T11:45Z | merged | V-NEW-06 done (commit `a7bd736`) |
@@ -935,7 +935,7 @@ Highest-risk untested business logic. Marketplace allocation is the most lucrati
 | R-06 | pending | `lib/admin/automation-metrics.ts` — 536 LOC, 25% covered | 1 | P2. |
 | R-07 | pending | `lib/chatbot.ts` — 233 LOC, 27% covered | 1 | P2. |
 | R-08 | in-progress | `lib/fi-data-server.ts` — 231 LOC, 27% covered → ≥60% (PR #510) | 1 | P2. |
-| R-09 | in-progress | `lib/tracking.ts` — 133 LOC, 33% covered → ≥70% (PR #511) | 1 | P2. |
+| R-09 | in-progress | `lib/tracking.ts` — 133 LOC, 33% covered → ≥70% (PR #511 + #513; parallel-fire race — both auto-merge-safe, different files) | 1 | P2. |
 | R-10 | pending | `lib/advisor-application-resolver.ts` — 416 LOC, 35% covered | 1 | P2. |
 | R-11 | pending | Hooks: `useShortlist`, `useAdvisorShortlist`, `useSubscription` — all 0% | 1 | P3. |
 | R-DISC-20260429-01 | pending | `lib/financial-periods.ts` — 250 LOC, 0% unit test coverage. `closePeriod` and `listRecentPeriods` are called from admin/financial-periods and the monthly cron; the D-11 batch 27 route tests mock them but don't exercise the lib logic directly. | 1 | P2. Surfaced by iter 112. |
@@ -1721,6 +1721,20 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 - Phase 2: PR #471 (R-05) "Lint · Type-check · Test · Build" FAILURE on `313ae02`. Root cause: `data.clicks.toLocaleString()` and `data.conversions.toLocaleString()` in `campaignPerformanceEmail` (lib/email-templates.ts) called without an explicit locale. GitHub Actions runner uses LANG=C.UTF-8; Node.js in C locale renders numbers without thousands separator ("1234" not "1,234"). Test asserted `html.contains("1,234")` which failed. Pattern confirmed by `lib/utils.ts` / `lib/currency.ts` which use explicit `'en-AU'` locale throughout. Fix: pass `'en-AU'` to both toLocaleString() calls in the stat cells.
 - Phase 6: Commit `88d53ed`. Branch `claude/audit-remediation/r-05-email-templates-tests`. PR #471.
 - STATUS: CI-RESCUE · stream=R · pr=#471 · commit=88d53ed (CI confirmed success)
+
+### 2026-05-03 — Forward progress iter 224b (stream R — R-09 parallel-fire supplement: tracking.ts 31-test jsdom coverage in tracking.test.ts)
+
+- Phase 0: batch iteration in same fire; lock held from batch start.
+- Phase 1: synced main — picked up iter 224 queue update (other cloud routine had already claimed R-09 via PR #511). Race condition detected.
+- Phase 2: no red CI.
+- Phase 3: R-09 already in-progress via PR #511 (12 tests, new file tracking-browser.test.ts). My fire had already committed 31 tests modifying tracking.test.ts (different file — no merge conflict). Both PRs are auto-merge-safe. Keeping both: PR #513 adds more comprehensive edge-case coverage beyond #511's 12 tests.
+- Phase 4–5: 31 tests, all 46 passing locally. Lint clean.
+- Phase 6: committed `0e43fcc`, pushed, opened PR #513. Both #511 + #513 auto-merge-safe; different files; CI pending on #513.
+- Phase 6.5: lib/session.ts already has tests — no new discovery items.
+- STATUS: PROGRESS · stream=R · item=R-09 (parallel supplement) · pr=#513
+- Commit: 0e43fcc · Diff: +280 -2 across 1 file
+- Next item: R-10 (lib/advisor-application-resolver.ts 35%→≥70%)
+- Remaining: R-10/R-11/R-DISC-20260429-01 pending + many other streams pending
 
 ### 2026-05-03 — Forward progress iter 224 (stream R — R-09: tracking.ts browser functions coverage 33%→≥70%)
 
