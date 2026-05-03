@@ -18,6 +18,20 @@
 --   - advisor_cohort_metrics   — monthly signup cohorts → leads /
 --                                spend / active months → powers
 --                                the retention dashboard
+--
+-- Rollback (in reverse order):
+--   Materialized view:
+--     DROP MATERIALIZED VIEW IF EXISTS public.advisor_cohort_metrics;
+--   Columns added to existing tables:
+--     ALTER TABLE public.professionals
+--       DROP COLUMN IF EXISTS health_score,
+--       DROP COLUMN IF EXISTS health_scored_at,
+--       DROP COLUMN IF EXISTS health_factors;
+--   New tables (drop in reverse order):
+--   3. DROP TABLE IF EXISTS public.dynamic_pricing_rules;
+--   2. DROP TABLE IF EXISTS public.newsletter_subscribers;
+--   1. DROP TABLE IF EXISTS public.nps_responses;
+--   Note: RLS policies and indexes drop with their tables.
 
 -- ── 1. nps_responses ───────────────────────────────────────────────
 -- One row per NPS / CSAT answer. Targetable at advisors or users.

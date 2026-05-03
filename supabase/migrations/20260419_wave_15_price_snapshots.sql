@@ -18,6 +18,12 @@
 --     days of commodity snapshots (commodity charts need more
 --     history for "past year" views). Older rows get deleted by the
 --     cleanup cron.
+--
+-- Rollback (in reverse order):
+--   2. DROP TABLE IF EXISTS public.commodity_price_snapshots;
+--   1. DROP TABLE IF EXISTS public.broker_price_snapshots;
+--   Note: RLS policies and indexes drop with their tables.
+--         Snapshot data is regenerable by the cron on the next run.
 
 -- ── 1. broker_price_snapshots ──────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.broker_price_snapshots (

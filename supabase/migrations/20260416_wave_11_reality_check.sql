@@ -16,6 +16,23 @@
 --   - tmds                         — loosen product_type check + add
 --                                    metadata columns
 --   - complaints_register          — SLA warning / escalation stamps
+--
+-- Rollback (in reverse order):
+--   Columns added to existing tables:
+--     ALTER TABLE public.complaints_register
+--       DROP COLUMN IF EXISTS sla_warning_sent_at,
+--       DROP COLUMN IF EXISTS auto_escalated_at;
+--   New tables (drop in reverse order):
+--   9. DROP TABLE IF EXISTS public.anonymous_saves;
+--   8. DROP TABLE IF EXISTS public.revenue_reconciliation_runs;
+--   7. DROP TABLE IF EXISTS public.financial_periods;
+--   6. DROP TABLE IF EXISTS public.advisor_kyc_documents;
+--   5. DROP TABLE IF EXISTS public.article_reactions;
+--   4. DROP TABLE IF EXISTS public.article_comments;
+--   3. DROP TABLE IF EXISTS public.user_bookmarks;
+--   2. DROP TABLE IF EXISTS public.user_quiz_history;
+--   1. DROP TABLE IF EXISTS public.user_notifications;
+--   Note: RLS policies, indexes, and CHECK constraints drop with their tables.
 
 -- ── 1. user_notifications ───────────────────────────────────────────
 -- One row per in-app notification. Users read them from a /account
