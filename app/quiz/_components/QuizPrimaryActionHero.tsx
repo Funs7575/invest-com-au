@@ -60,6 +60,7 @@ const KIND_LABEL: Record<BestOutcome["kind"], string> = {
   "education-first": "Best move: learn the basics first",
   "diy-broker": "Best move: pick a platform",
   "bundle-stack": "Best move: build a stack",
+  "listings-browse": "Best move: browse the listings",
 };
 
 export default function QuizPrimaryActionHero({ outcome }: Props) {
