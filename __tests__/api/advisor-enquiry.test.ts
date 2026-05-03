@@ -3,6 +3,11 @@ import { makeRequest, createChainableBuilder } from "@/__tests__/helpers";
 
 // ── Mocks ──────────────────────────────────────────────────────────────────────
 
+const mockIsFlagEnabled = vi.fn();
+vi.mock("@/lib/feature-flags", () => ({
+  isFlagEnabled: (...args: unknown[]) => mockIsFlagEnabled(...args),
+}));
+
 const mockFrom = vi.fn();
 
 vi.mock("@/lib/supabase/admin", () => ({
@@ -121,8 +126,17 @@ function enquiryRequest(body: Record<string, unknown>, ip = "5.6.7.8") {
 describe("POST /api/advisor-enquiry", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockIsFlagEnabled.mockResolvedValue(true);
     process.env.RESEND_API_KEY = "re_test_key";
     (isRateLimited as ReturnType<typeof vi.fn>).mockResolvedValue(false);
+  });
+
+  it("returns 503 when advisor_enquiry_intake flag is disabled", async () => {
+    mockIsFlagEnabled.mockResolvedValue(false);
+    const res = await POST(enquiryRequest(VALID_BODY));
+    expect(res.status).toBe(503);
+    const json = await res.json();
+    expect(json.error).toBe("temporarily_unavailable");
   });
 
   it("returns 429 when rate limited", async () => {
