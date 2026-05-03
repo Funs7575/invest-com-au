@@ -3,6 +3,11 @@ import type { NextRequest } from "next/server";
 
 // ─── Mocks ───────────────────────────────────────────────────────────────────
 
+const mockIsFlagEnabled = vi.fn();
+vi.mock("@/lib/feature-flags", () => ({
+  isFlagEnabled: (...args: unknown[]) => mockIsFlagEnabled(...args),
+}));
+
 vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({
     debug: vi.fn(),
@@ -86,6 +91,7 @@ const ONE_DAY_AGO = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 describe("GET /api/cron/abandoned-shortlist-drip", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockIsFlagEnabled.mockResolvedValue(true);
     dbIdx = 0;
     dbQueue.length = 0;
     mockIsFeatureDisabled.mockResolvedValue(false);
