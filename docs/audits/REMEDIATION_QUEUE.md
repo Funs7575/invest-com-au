@@ -30,7 +30,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | D | `claude/audit-remediation/d-route-tests` | #285 MERGED 2026-04-29T10:13Z; supplementary PRs #246/#285/#297/#298 | last merged 2026-04-29T18:53Z | D-01..D-09 done (PR #246). D-10 done (PR #246 — coverage ratchet). D-11 complete (43+ batches, all admin/cron/non-admin routes covered) — merged via PR #285 + supplementary PRs #297/#298. **Stream D complete.** |
 | E | `claude/audit-remediation/e-02-batch-5-zod-rollout` (#469) · `e-02-batch-*-zod-rollout` (#460) · `e-03-zod-lint-rule` (#313) | #295/#313/#315/#323/#406 MERGED · #460/#469 OPEN | iter 218 CI rescue 4 — `4e7c04e` (PR #469: null-guard target.author_id before forum_user_profiles upsert; Zod's explicit target_type enum caused TypeScript to properly infer author_id as string\|null, exposing pre-existing assignment to non-nullable user_id); CI re-running | E-01 done (PR #295 — withValidatedBody helper). E-02 in-progress (batches 1+2 MERGED PR #315/#323; batch 3 MERGED PR #406 — note: did not land vote/posts/impression/notify; batch 4 open PR #460 — questions/shortlist/referrals/threads; batch 5 open PR #469 — vote/posts/impression/notify now with Zod). E-02 substantially complete after #460+#469 merge. E-03 done (PR #313 — ESLint rule). E-04 backfill pending. |
 | F | `claude/audit-remediation/f-02..f-06` (multiple PRs) | #293/#294/#301/#354/#355/#370 all MERGED | last merged 2026-05-01T16:00Z | F-01 false-positive. F-02 done (PR #293 — formatDate). F-03 done (PR #370 — formatCurrency). F-04 done (PR #354 — slugify, first wave). F-05 done (PR #294 + #301 followup — console→logger). F-06 done (PR #355 — compliance copy SSOT). F-07/F-08 pending. |
-| G | `claude/audit-remediation/g-03-batch-6-rollback-headers` (#455) · `g-03-batch-7-rollback-headers` (#467) | #307/#310/#311/#314/#316/#342/#352/#405 all MERGED · #455/#467 OPEN | iter 211 — `534a70d` (PR #467: G-03 batch 7 — rollback headers for 10 migrations 20260415–20260419); CI pending | G-01+G-02 done (PR #307). G-03 batch 7 in-progress (#467 — 70/108 covered; ~4 batches still pending). G-04 done (PR #310 + #342). G-04-FINDING-1..5 pending founder authorization. |
+| G | `claude/audit-remediation/g-03-batch-8-rollback-headers` (#520) | #307/#310/#311/#314/#316/#342/#352/#405/#455/#467 all MERGED · #520 OPEN | iter 229 — `52aee43` (PR #520: G-03 batch 8 — rollback headers for 15 remaining migrations; stream complete 208/208); CI pending | G-01+G-02 done (PR #307). **G-03 complete (208/208 covered)** — batches 1-7 (#311/#314/#316/#352/#405/#455/#467) all merged; batch 8 (#520) covers the final 15 files. G-04 done (PR #310 + #342). G-04-FINDING-1..5 pending founder authorization. |
 | H | _not started_ | — | — | — |
 | I | `claude/audit-remediation/i-new-04-main-ci-auto-revert` (#278) · `i-02-drift-detection-ci` (#353) | #278 MERGED 2026-04-28T16:18Z · #353 MERGED 2026-05-01T14:30Z | last merged 2026-05-01T14:30Z | I-NEW-01..05 all done. I-NEW-06 needs-user (Supabase GH Actions secrets). I-01 done via B-07 (PR #286). I-02 done (PR #353). I-03 done via C-08 (PR #327). I-04 done via E-03 (PR #313). I-05 done via D-10 (PR #246). |
 | J | `claude/audit-remediation/j-stripe-webhook` | #288 MERGED 2026-04-29T16:48Z | last merged 2026-04-29T16:48Z | J-01a..J-01e done · J-01d-ext done · J-03/J-05/J-06/J-08/J-09/J-10 done. **Stream J complete** (J-02/J-04/J-07/J-11 false-positives or done out-of-band). |
@@ -717,7 +717,7 @@ Highest priority: critical 2 first.
 | --- | --- | --- | --- | --- |
 | G-01 | done | Idempotency: convert 10 non-idempotent migrations (per audit §5.2) to use `IF NOT EXISTS` / `CREATE OR REPLACE` | 1 | Done in PR #307 (G-01+G-02 combined). |
 | G-02 | done | Rollback headers: add to the 3 migrations missing headers entirely | 1 | Done in PR #307 — 3 migrations (`20260316_add_weekly_rate_drip_log.sql`, `20260316_add_advisor_nudge_tracking.sql`, `20260316_add_lead_outcome_tracking.sql`). |
-| G-03 | in-progress | Rollback headers: backfill explicit reverse-SQL on remaining 108 partial-header migrations | ~10 | 7 batches done — PR #311 (batch 1, 10), PR #314 (batch 2, 10), PR #316 (batch 3, 10), PR #352 (batch 4, 10), PR #405 (batch 5, 10), PR #455 (batch 6, 10), PR #467 (batch 7, 10). 70 of 108 covered; ~4 batches still pending. |
+| G-03 | done | Rollback headers: backfill explicit reverse-SQL on all 208 migration files | ~10 | **Stream complete (208/208).** 8 batches: PR #311 (b1), PR #314 (b2), PR #316 (b3), PR #352 (b4), PR #405 (b5), PR #455 (b6), PR #467 (b7), PR #520 (b8 — 15 files; includes 3 missed 20260414 files + 1 missed 20260426 file + 11 post-scope 20260429–20260511 files). |
 | G-04 | done | Document the 8 partial-failure-marker migrations (audit §5.5) for user to verify in prod | 1 | Doc shipped in PR #310 (`docs/audits/g-04-partial-failure-markers.md`). Verification done by founder via Supabase MCP, logged in PR #342. Result: 3 of 8 clean (#3/#5/#8 — no security data leak), 5 partial-apply findings surfaced as G-04-FINDING-1..5 (pending separate Tier C founder authorization). G-04 itself complete. |
 
 ### Stream I — CI / lint guardrails
@@ -1690,6 +1690,24 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 - Phase 5: Created `__tests__/lib/hooks-useShortlist.test.tsx` — 24 tests: useShortlist (15): hydrate/ignore malformed/toggle add+remove+no-op-at-8/has/clear/persists/listens to CustomEvent/syncs on login/merges remote-first/no fetch when logged out. useAdvisorShortlist (9): hydrate/ignore malformed/toggle add+remove+no-op-at-4/max=4/has/clear/listens to CustomEvent/persist dispatches event. All 24 green locally. Lint clean.
 - Phase 6: Commit `1554334`. Branch `claude/audit-remediation/r-11-hooks-shortlist-tests`. PR #519.
 - STATUS: PROGRESS · stream=R · item=R-11 · pr=#519 · commit=1554334 · diff=+333 -0 (1 file)
+
+### 2026-05-03 — Forward progress iter 229 (stream G — G-03 batch 8: rollback headers for 15 remaining migrations; stream complete)
+
+- Phase 0: context-restored session (batch iteration 5/5).
+- Phase 1: synced main. No LOOP_PAUSE. Main CI green.
+- Phase 2: PR #520 (G-03 b8) just opened — CI pending (Vercel deploying). No failures. No review comments.
+- Phase 3: G-03 batch 8 — next pending item after batch 7 (ended at 20260419_wave_15_price_snapshots.sql).
+- Phase 4: Scanned all 208 migration files for missing rollback headers. Found 15 missing:
+  - 3 from 20260414 (fell in batch 6/7 gap — date 20260414 skipped by batch ordering)
+  - 1 from 20260426_wave_launch_readiness (missed in prior batch 8 coverage)
+  - 11 from 20260429–20260511 (postdate original G-03 scope)
+  Discovery: all remaining 193 other files already had rollback headers added by prior batches.
+- Phase 5: Added rollback blocks to all 15 files. Types covered: DDL tables/columns (DROP TABLE + ALTER DROP COLUMN), index-only (DROP INDEX list), data-only (DELETE with WHERE filters), RLS policy (DROP POLICY by name list), and data normalization UPDATEs (snapshot advisory).
+- Phase 6: committed `52aee43`, pushed, opened PR #520. CI pending.
+
+- STATUS: PROGRESS · stream=G · item=G-03 (batch 8, stream complete) · pr=#520 · commit=52aee43
+- Diff: +279 -0 across 15 files
+- G-03 stream complete: 208/208 migrations now have rollback headers.
 
 ### 2026-05-03 — CI rescue iter 228 (stream R — PR #511 R-09: stub navigator.sendBeacon + mock addEventListener)
 
