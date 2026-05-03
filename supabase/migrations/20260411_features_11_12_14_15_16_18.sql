@@ -3,6 +3,33 @@
 -- User Accounts, Price Drop Notifications, Q&A Upvoting,
 -- Review Verification, Financial Planner API, Regulatory Assessments
 -- ============================================================
+--
+-- NOTE: Per G-04-FINDING-4 (verified 2026-05-01 via Supabase MCP), this
+-- migration did NOT fully apply in the live database. A forward-fix-up
+-- migration is pending founder authorization (Tier C).
+--
+-- Rollback (in reverse order, if migration had applied):
+--   7. DROP TABLE IF EXISTS regulatory_broker_impacts;
+--   6. DROP TABLE IF EXISTS api_request_log;
+--   5. DROP TABLE IF EXISTS api_keys;
+--   4. DROP TABLE IF EXISTS qa_votes;
+--   3. DROP TABLE IF EXISTS price_drop_notifications;
+--   2. DROP TABLE IF EXISTS user_shortlisted_brokers;
+--   1. DROP TABLE IF EXISTS user_saved_comparisons;
+--   Columns added to existing tables:
+--     ALTER TABLE fee_alert_subscriptions DROP COLUMN IF EXISTS price_threshold,
+--       DROP COLUMN IF EXISTS last_notified_at, DROP COLUMN IF EXISTS notification_count;
+--     ALTER TABLE broker_questions DROP COLUMN IF EXISTS vote_count;
+--     ALTER TABLE broker_answers DROP COLUMN IF EXISTS vote_count,
+--       DROP COLUMN IF EXISTS helpful_count;
+--     ALTER TABLE user_reviews DROP COLUMN IF EXISTS is_verified_client,
+--       DROP COLUMN IF EXISTS verified_via, DROP COLUMN IF EXISTS verified_client_at;
+--     ALTER TABLE professional_reviews DROP COLUMN IF EXISTS is_verified_client,
+--       DROP COLUMN IF EXISTS lead_id, DROP COLUMN IF EXISTS verified_client_at;
+--     ALTER TABLE regulatory_alerts DROP COLUMN IF EXISTS affected_broker_slugs,
+--       DROP COLUMN IF EXISTS affected_platform_types, DROP COLUMN IF EXISTS change_category,
+--       DROP COLUMN IF EXISTS user_action_required, DROP COLUMN IF EXISTS compliance_deadline,
+--       DROP COLUMN IF EXISTS views_count;
 
 -- ── Feature 11: User Saved Comparisons ────────────────────────
 

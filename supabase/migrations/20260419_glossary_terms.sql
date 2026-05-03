@@ -5,6 +5,13 @@
 -- deploy. Seeds the table with 200+ existing + new terms across
 -- SMSF, Mining, Foreign Investment, Super, Tax, Property, Crypto,
 -- CFD, Regulatory, and General Finance categories.
+--
+-- Rollback:
+--   1. DROP TABLE IF EXISTS public.glossary_terms;
+--   Note: The INSERT seed data drops with the table. Re-running
+--         this migration re-seeds all terms from the INSERT block
+--         below. Only run rollback if no user-edited terms exist —
+--         admin-added terms not in the seed block will be lost.
 -- ============================================================
 
 CREATE TABLE IF NOT EXISTS public.glossary_terms (
