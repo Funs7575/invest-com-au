@@ -28,6 +28,14 @@ vi.mock("@/lib/resend", () => ({
   sendEmail: vi.fn(() => Promise.resolve({ ok: true })),
 }));
 
+// The listing_enquiry_intake / stripe_checkout feature flags were added in the
+// launch-ops pass. In test environments isFlagEnabled() returns false (placeholder
+// Supabase URL), causing all POST tests to receive 503. Mock to return true.
+const mockIsFlagEnabled = vi.fn().mockResolvedValue(true);
+vi.mock("@/lib/feature-flags", () => ({
+  isFlagEnabled: (...args: unknown[]) => mockIsFlagEnabled(...args),
+}));
+
 // ── Import routes AFTER mocks ────────────────────────────────────────────────
 import { POST as submitPOST } from "@/app/api/listings/submit/route";
 import { POST as enquirePOST } from "@/app/api/listings/enquire/route";
@@ -165,6 +173,7 @@ describe("Listing Submit API — /api/listings/submit", () => {
 describe("Listing Enquire API — /api/listings/enquire", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockIsFlagEnabled.mockResolvedValue(true);
   });
 
   it("should reject enquiry without listing_id", async () => {

@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import {
   getSponsorSortPriority,
   sortWithSponsorship,
@@ -8,6 +8,15 @@ import {
   TIER_PRICING,
 } from "@/lib/sponsorship";
 import type { Broker } from "@/lib/types";
+
+// boostFeaturedPartner calls refreshSponsoredBoostingFlag() which asynchronously
+// reads the `sponsored_boosting` feature flag. In test environments the
+// placeholder Supabase URL causes isFlagEnabled to return false, setting the
+// module-level sponsoredBoostingEnabled=false and disabling the boost for
+// subsequent tests. Mock to return true so the boost always runs in tests.
+vi.mock("@/lib/feature-flags", () => ({
+  isFlagEnabled: vi.fn().mockResolvedValue(true),
+}));
 
 function makeBroker(
   overrides: Partial<Broker> & { slug: string; name: string }
