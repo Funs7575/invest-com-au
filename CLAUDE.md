@@ -32,7 +32,7 @@ npm run test:watch                 # watch mode
 ## Non-obvious things to know
 
 - **Node 20+ required.** Local Node 18 will silently install but builds break at runtime (used `globalThis.AbortSignal.timeout` etc).
-- **`.npmrc` sets `legacy-peer-deps=true`.** Sentry v9 peer-deps target Next ≤15, but we run Next 16. The override is intentional — don't remove it.
+- **`.npmrc` sets `legacy-peer-deps=true`.** Kept as a safety net; the original trigger (Sentry v9 peer-deps targeting Next ≤15) was resolved by the Sentry v10 upgrade. Do not remove — future packages may still need it.
 - **TypeScript strict + `noUncheckedIndexedAccess`.** `arr[0]` is `T | undefined`. CI build fails on TS errors — there's no `ignoreBuildErrors` escape hatch.
 - **Middleware is `proxy.ts`, not `middleware.ts`.** There used to be a duplicate — removed in `1fead77`. Stamping request-ids, cron Bearer auth, and admin route protection all happen in `proxy.ts`.
 - **Two Supabase clients, three call sites.** `lib/supabase/server.ts` (RSC + route handlers, carries user cookies), `lib/supabase/client.ts` (browser), `lib/supabase/admin.ts` (service-role, bypasses RLS). Service-role is a security-sensitive escape hatch — the full allowed scope (from the C-stream audit in PR #327):
