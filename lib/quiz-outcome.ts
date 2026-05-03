@@ -49,7 +49,8 @@ export type OutcomeKind =
   | "calculator-first"
   | "education-first"
   | "diy-broker"
-  | "bundle-stack";
+  | "bundle-stack"
+  | "listings-browse";
 
 export interface SecondaryAction {
   label: string;
@@ -246,64 +247,153 @@ export function resolveBestOutcome(a: UnifiedAnswersInput): BestOutcome {
     };
   }
 
-  // ─── 5. CALCULATOR-FIRST: super or property goal where modeling matters
-  // Picking a fund / platform without running the numbers is putting the
-  // cart before the horse. Surface the calculator as the primary action.
+  // ─── 5a. SUPER: advisor-match with conversion-first primary CTA
+  // Earlier rev had the retirement calc as primary — that's a conversion leak.
+  // SMSF accountant is paid lead-gen ($300-2k CPL) and is the actual right
+  // first move for users with super complexity. Calculators move to secondary.
   if (a.goal === "super" || a.property_sub === "property-super") {
     return {
-      kind: "calculator-first",
-      headline: "Run the numbers before you switch funds",
-      reason: "For super, the calculator answers the real question first: what's my retirement number, and is my fund on track? Pick a fund AFTER you know what 'enough' looks like.",
-      ctaLabel: "Run the retirement calculator →",
-      ctaHref: withParams("/retirement-calculator", {
+      kind: "advisor-match",
+      headline: "An SMSF accountant is your highest-leverage first call",
+      reason: "Super is structure-driven. The right move depends on your balance, fund type, and SMSF eligibility — questions an accountant answers in 15 minutes. Run the retirement number after you know which fund / structure is actually right.",
+      ctaLabel: "Find an SMSF accountant →",
+      ctaHref: withParams("/advisors/smsf-accountants", {
         context: "quiz",
-        amount: a.amount,
-        complexity: a.complexity,
+        budget: a.amount ? QUIZ_AMOUNT_TO_BUDGET[a.amount] : undefined,
       }),
       secondaryActions: [
-        { label: "SMSF calculator", href: "/smsf-calculator" },
-        { label: "Find an SMSF accountant", href: "/advisors/smsf-accountants" },
         { label: "Compare super funds", href: "/compare?filter=super" },
+        { label: "Find a financial planner", href: "/advisors/financial-planners" },
+        { label: "Retirement calculator", href: withParams("/retirement-calculator", { context: "quiz", amount: a.amount }) },
+        { label: "SMSF eligibility checker", href: "/tools/smsf-eligibility-checker" },
       ],
-      tone: "blue",
-      icon: "calculator",
+      tone: "amber",
+      icon: "users",
     };
   }
 
+  // ─── 5b. PROPERTY (physical): mortgage broker first — they're free
+  // (paid by the lender), and the rate they get you dwarfs anything a yield
+  // calculator can save. Calculator + buyer's agent move to secondary.
   if (a.goal === "property" && a.property_sub !== "property-reit") {
     return {
-      kind: "calculator-first",
-      headline: "Model the yield before you buy",
-      reason: "Direct property is leveraged and illiquid — the platform pick matters less than getting the deal economics right. Run the yield + cash-flow numbers, then talk to a buyer's agent and mortgage broker.",
-      ctaLabel: "Run the property-yield calculator →",
-      ctaHref: withParams("/property-yield-calculator", {
-        context: "quiz",
-        amount: a.amount,
-      }),
+      kind: "advisor-match",
+      headline: "Mortgage broker first — they're free and pay for themselves",
+      reason: "Property is rate-driven. A mortgage broker compares 30+ lenders for free (paid by the lender, not you) and the rate they secure typically saves $5-30k over the life of a loan. Then run the yield numbers and find a buyer's agent.",
+      ctaLabel: "Find a mortgage broker →",
+      ctaHref: withParams("/advisors/mortgage-brokers", { context: "quiz" }),
       secondaryActions: [
-        { label: "Property vs shares calculator", href: "/property-vs-shares-calculator" },
-        { label: "Find a mortgage broker", href: "/advisors/mortgage-brokers" },
         { label: "Find a buyer's agent", href: "/advisors/buyers-agents" },
+        { label: "Property-yield calculator", href: withParams("/property-yield-calculator", { context: "quiz", amount: a.amount }) },
+        { label: "Property vs shares calculator", href: "/property-vs-shares-calculator" },
       ],
-      tone: "blue",
-      icon: "calculator",
+      tone: "amber",
+      icon: "home",
       suppressBrokerResults: true,
     };
   }
 
+  // ─── 5c. HOME LOAN: mortgage broker first
   if (a.goal === "home") {
     return {
-      kind: "calculator-first",
-      headline: "Work out repayments first — then pick a broker",
-      reason: "Home loans are personal-advice territory and rate-shopping is what saves you the most. Model your repayments, then have a mortgage broker compare 30+ lenders for free.",
-      ctaLabel: "Mortgage repayment calculator →",
-      ctaHref: withParams("/mortgage-calculator", { context: "quiz", amount: a.amount }),
+      kind: "advisor-match",
+      headline: "Mortgage broker — your free shortcut to the best rate",
+      reason: "A mortgage broker compares 30+ lenders, free to you (paid by the lender). They typically beat the rate you'd get walking into your own bank. Use the calculators to sanity-check repayments at different rate points.",
+      ctaLabel: "Find a mortgage broker →",
+      ctaHref: withParams("/advisors/mortgage-brokers", { context: "quiz" }),
       secondaryActions: [
-        { label: "Find a mortgage broker", href: "/advisors/mortgage-brokers" },
-        { label: "Switching calculator (refinance)", href: "/switching-calculator" },
+        { label: "Mortgage repayment calculator", href: withParams("/mortgage-calculator", { context: "quiz", amount: a.amount }) },
+        { label: "Switching / refinance calculator", href: "/switching-calculator" },
+      ],
+      tone: "amber",
+      icon: "home",
+      suppressBrokerResults: true,
+    };
+  }
+
+  // ─── 5d. ALT-ASSETS: collectibles, whisky, wine, watches, art, coins
+  // Routed to /invest/alternatives (the hub the other session shipped overnight)
+  // with luxury-asset-broker / wine-advisor / art-advisor as secondary actions
+  // and the alt-asset returns calculator as a tertiary tool.
+  if (a.goal === "alt-assets") {
+    return {
+      kind: "listings-browse",
+      headline: "Browse alternative assets — whisky, wine, watches, art, classic cars",
+      reason: "Alt-assets are illiquid and information-asymmetric. Start by seeing what's actually for sale at what prices, then talk to a luxury-asset specialist before committing. We've got 60+ live listings across 6 sub-categories.",
+      ctaLabel: "Browse alternative assets →",
+      ctaHref: "/invest/alternatives",
+      secondaryActions: [
+        { label: "Find a luxury-asset broker", href: "/advisors/luxury-asset-brokers" },
+        { label: "Find a wine / art / classic-car advisor", href: "/find-advisor" },
+        { label: "Alternative-asset returns calculator", href: "/tools/alternative-asset-returns" },
+      ],
+      tone: "amber",
+      icon: "package",
+      suppressBrokerResults: true,
+    };
+  }
+
+  // ─── 5e. ROYALTIES / INCOME-PRODUCING ASSETS
+  // Routed to /invest/royalties (and /invest/income-assets for vending/ATM/etc).
+  // Royalty broker is the conversion path; SMSF eligibility checker is the
+  // structural question (royalties in an SMSF have specific rules).
+  if (a.goal === "royalties") {
+    return {
+      kind: "listings-browse",
+      headline: "Royalties — passive income uncorrelated with broker markets",
+      reason: "Music, mining, IP and pharma royalties pay quarterly distributions tied to underlying revenue. Lower volatility than equities. Many fit in an SMSF if structured right.",
+      ctaLabel: "Browse royalty deals →",
+      ctaHref: "/invest/royalties",
+      secondaryActions: [
+        { label: "Find a royalty broker", href: "/advisors/royalty-brokers" },
+        { label: "Income-producing assets (vending / ATM)", href: "/invest/income-assets" },
+        { label: "SMSF eligibility checker", href: "/tools/smsf-eligibility-checker" },
       ],
       tone: "blue",
-      icon: "calculator",
+      icon: "coins",
+      suppressBrokerResults: true,
+    };
+  }
+
+  // ─── 5f. PRE-IPO / WHOLESALE-INVESTOR DEALS
+  // Wholesale-investor only (s708). Surface the listings hub + the IPO
+  // calendar + the qualified-pro path. Conversion is via "post your criteria"
+  // when the user is a qualified investor with niche needs.
+  if (a.goal === "pre-ipo") {
+    return {
+      kind: "listings-browse",
+      headline: "Pre-IPO + late-stage PE — wholesale investors only",
+      reason: "Pre-IPO and late-stage PE are restricted to s708 wholesale investors ($2.5M+ net worth or $250k+ income p.a.). Browse the deal flow + IPO calendar; if you qualify, post your criteria and brokers will reach out.",
+      ctaLabel: "Browse pre-IPO deals →",
+      ctaHref: "/invest/pre-ipo",
+      secondaryActions: [
+        { label: "Upcoming ASX IPOs (calendar)", href: "/invest/ipo-calendar" },
+        { label: "Find a wholesale-investor accountant", href: "/advisors/financial-planners" },
+        { label: "Post your investment criteria", href: withParams("/quotes/post", { context: "quiz", goal: "pre-ipo" }) },
+      ],
+      tone: "amber",
+      icon: "trending-up",
+      suppressBrokerResults: true,
+    };
+  }
+
+  // ─── 5g. OTHER / I'll describe it — graceful capture
+  // Catch-all for niches we don't yet serve (specific situations, unusual
+  // assets, things our 12 explicit goals don't cover). Routes to /quotes/post
+  // so the user gets a real path forward instead of a wrong-fit broker pick.
+  if (a.goal === "other") {
+    return {
+      kind: "post-job",
+      headline: "Tell us what you need — verified pros will reply with quotes",
+      reason: "Your situation doesn't fit our standard categories. Describe what you're trying to do — verified Australian pros across multiple disciplines reply with quotes within 24h. No obligation, no upfront fee.",
+      ctaLabel: "Post your situation →",
+      ctaHref: withParams("/quotes/post", { context: "quiz", goal: "other" }),
+      secondaryActions: [
+        { label: "Browse all advisor types", href: "/find-advisor" },
+        { label: "Compare platforms anyway", href: "/compare" },
+      ],
+      tone: "violet",
+      icon: "megaphone",
       suppressBrokerResults: true,
     };
   }
