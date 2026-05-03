@@ -1,6 +1,11 @@
+import { z } from "zod";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { isRateLimited } from "@/lib/rate-limit";
+
+const PostBody = z.object({
+  slugs: z.array(z.string()).min(1).max(8),
+});
 
 /**
  * Generate a short alphanumeric share code (8 chars).
@@ -26,82 +31,71 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
 
+  let raw: unknown;
   try {
-    const body = await req.json();
-    const slugs: string[] = body.slugs;
+    raw = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
+  }
 
-    if (!Array.isArray(slugs) || slugs.length === 0 || slugs.length > 8) {
-      return NextResponse.json(
-        { error: "Please provide 1-8 broker slugs." },
-        { status: 400 }
-      );
-    }
+  const parsed = PostBody.safeParse(raw);
+  if (!parsed.success) {
+    return NextResponse.json({ error: "Please provide 1-8 broker slugs." }, { status: 400 });
+  }
 
-    // Validate slugs are simple strings
-    const validSlugs = slugs.filter(
-      (s) => typeof s === "string" && /^[a-z0-9-]+$/.test(s)
-    );
-    if (validSlugs.length === 0) {
-      return NextResponse.json(
-        { error: "Invalid broker slugs." },
-        { status: 400 }
-      );
-    }
+  const validSlugs = parsed.data.slugs.filter((s) => /^[a-z0-9-]+$/.test(s));
+  if (validSlugs.length === 0) {
+    return NextResponse.json({ error: "Invalid broker slugs." }, { status: 400 });
+  }
 
-    const supabase = await createClient();
-    const code = generateCode();
+  const supabase = await createClient();
+  const code = generateCode();
 
-    const { data, error } = await supabase
-      .from("shared_shortlists")
-      .insert({
-        code,
-        broker_slugs: validSlugs,
-      })
-      .select("code")
-      .single();
+  const { data, error } = await supabase
+    .from("shared_shortlists")
+    .insert({
+      code,
+      broker_slugs: validSlugs,
+    })
+    .select("code")
+    .single();
 
-    if (error) {
-      // Handle unique code collision — retry once
-      if (error.code === "23505") {
-        const retryCode = generateCode();
-        const { data: retryData, error: retryError } = await supabase
-          .from("shared_shortlists")
-          .insert({
-            code: retryCode,
-            broker_slugs: validSlugs,
-          })
-          .select("code")
-          .single();
+  if (error) {
+    // Handle unique code collision — retry once
+    if (error.code === "23505") {
+      const retryCode = generateCode();
+      const { data: retryData, error: retryError } = await supabase
+        .from("shared_shortlists")
+        .insert({
+          code: retryCode,
+          broker_slugs: validSlugs,
+        })
+        .select("code")
+        .single();
 
-        if (retryError) {
-          return NextResponse.json(
-            { error: "Failed to generate share link. Try again." },
-            { status: 500 }
-          );
-        }
-
-        return NextResponse.json({
-          code: retryData.code,
-          url: `/shortlist?code=${retryData.code}`,
-        });
+      if (retryError) {
+        return NextResponse.json(
+          { error: "Failed to generate share link. Try again." },
+          { status: 500 }
+        );
       }
 
-      return NextResponse.json(
-        { error: "Failed to create share link." },
-        { status: 500 }
-      );
+      return NextResponse.json({
+        code: retryData.code,
+        url: `/shortlist?code=${retryData.code}`,
+      });
     }
 
-    return NextResponse.json({
-      code: data.code,
-      url: `/shortlist?code=${data.code}`,
-    });
-  } catch {
     return NextResponse.json(
-      { error: "Invalid request body." },
-      { status: 400 }
+      { error: "Failed to create share link." },
+      { status: 500 }
     );
   }
+
+  return NextResponse.json({
+    code: data.code,
+    url: `/shortlist?code=${data.code}`,
+  });
 }
 
 /**
