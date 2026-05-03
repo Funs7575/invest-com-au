@@ -54,11 +54,11 @@ function makeChain(result: unknown) {
   return c;
 }
 
-const OPEN_THREAD = { id: "thread-1", category_id: "cat-1", is_locked: false, is_removed: false };
+const OPEN_THREAD = { id: 1, category_id: 10, is_locked: false, is_removed: false };
 
 const CREATED_POST = {
-  id: "post-1",
-  thread_id: "thread-1",
+  id: 1,
+  thread_id: 1,
   author_name: "poster",
   body: "Hello world",
   parent_id: null,
@@ -81,7 +81,7 @@ function setupSuccessPath(withParent = false) {
     callIndex++;
     if (callIndex === 1) return makeChain({ data: OPEN_THREAD, error: null }); // fetch thread
     if (withParent && callIndex === 2)
-      return makeChain({ data: { id: "parent-post-1" }, error: null }); // fetch parent
+      return makeChain({ data: { id: 2 }, error: null }); // fetch parent
     const postCallIdx = withParent ? 3 : 2;
     if (callIndex === postCallIdx) return makeChain({ data: CREATED_POST, error: null }); // insert
     if (callIndex === postCallIdx + 1) return makeChain({ data: { reply_count: 0 }, error: null }); // select reply_count
@@ -95,7 +95,7 @@ function setupSuccessPath(withParent = false) {
 }
 
 const VALID_BODY = {
-  thread_id: "thread-1",
+  thread_id: 1,
   body: "This is a valid post body.",
 };
 
@@ -129,21 +129,21 @@ describe("POST /api/community/posts", () => {
     const res = await POST(makePost({ body: "Some body" }));
     expect(res.status).toBe(400);
     const json = await res.json();
-    expect(json.error).toMatch(/missing required fields/i);
+    expect(json.error).toMatch(/thread_id and body/i);
   });
 
-  it("returns 400 when body is empty (caught by missing-fields check)", async () => {
-    const res = await POST(makePost({ thread_id: "t1", body: "" }));
+  it("returns 400 when body is empty", async () => {
+    const res = await POST(makePost({ thread_id: 1, body: "" }));
     expect(res.status).toBe(400);
     const json = await res.json();
-    expect(json.error).toMatch(/missing required fields/i);
+    expect(json.error).toMatch(/1-5000 chars/i);
   });
 
   it("returns 400 when body exceeds 5000 characters", async () => {
-    const res = await POST(makePost({ thread_id: "t1", body: "x".repeat(5001) }));
+    const res = await POST(makePost({ thread_id: 1, body: "x".repeat(5001) }));
     expect(res.status).toBe(400);
     const json = await res.json();
-    expect(json.error).toMatch(/1-5000 characters/i);
+    expect(json.error).toMatch(/1-5000 chars/i);
   });
 
   it("returns 404 when thread is not found", async () => {
@@ -184,7 +184,7 @@ describe("POST /api/community/posts", () => {
     mockAdminFrom
       .mockImplementationOnce(() => makeChain({ data: OPEN_THREAD, error: null })) // thread
       .mockImplementationOnce(() => makeChain({ data: null, error: { message: "no parent" } })); // parent
-    const res = await POST(makePost({ ...VALID_BODY, parent_id: "missing-parent" }));
+    const res = await POST(makePost({ ...VALID_BODY, parent_id: 999 }));
     expect(res.status).toBe(404);
     const json = await res.json();
     expect(json.error).toMatch(/parent post not found/i);
@@ -207,7 +207,7 @@ describe("POST /api/community/posts", () => {
     const res = await POST(makePost(VALID_BODY));
     expect(res.status).toBe(201);
     const json = await res.json();
-    expect(json.post).toMatchObject({ id: "post-1", body: "Hello world" });
+    expect(json.post).toMatchObject({ id: 1, body: "Hello world" });
   });
 
   it("derives display name from user email when metadata is empty", async () => {
@@ -233,7 +233,7 @@ describe("POST /api/community/posts", () => {
 
   it("succeeds with valid parent_id in same thread", async () => {
     setupSuccessPath(true);
-    const res = await POST(makePost({ ...VALID_BODY, parent_id: "parent-post-1" }));
+    const res = await POST(makePost({ ...VALID_BODY, parent_id: 2 }));
     expect(res.status).toBe(201);
   });
 });

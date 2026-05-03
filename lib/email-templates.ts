@@ -619,9 +619,9 @@ export function campaignPerformanceEmail(data: {
 
     <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="background:${BG_LIGHT};border-radius:8px;margin-bottom:24px;">
       <tr>
-        ${statCell(data.clicks.toLocaleString(), "Clicks")}
+        ${statCell(data.clicks.toLocaleString('en-AU'), "Clicks")}
         ${statCell(`${data.ctr.toFixed(1)}%`, "CTR")}
-        ${statCell(data.conversions.toLocaleString(), "Conversions", data.conversions > 0 ? BRAND_EMERALD : BRAND_DARK)}
+        ${statCell(data.conversions.toLocaleString('en-AU'), "Conversions", data.conversions > 0 ? BRAND_EMERALD : BRAND_DARK)}
         ${statCell(`$${data.spend.toFixed(2)}`, "Spend", "#dc2626")}
       </tr>
     </table>
