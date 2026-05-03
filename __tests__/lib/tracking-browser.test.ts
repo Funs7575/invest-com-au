@@ -19,6 +19,14 @@ import { trackClick, trackEvent, trackPageDuration } from "@/lib/tracking";
 beforeEach(() => {
   vi.clearAllMocks();
   vi.unstubAllGlobals();
+  // jsdom does not implement navigator.sendBeacon — define a stub so vi.spyOn works
+  if (!("sendBeacon" in navigator)) {
+    Object.defineProperty(navigator, "sendBeacon", {
+      value: vi.fn(),
+      writable: true,
+      configurable: true,
+    });
+  }
 });
 
 afterEach(() => {
@@ -154,8 +162,9 @@ describe("trackEvent", () => {
 
 describe("trackPageDuration", () => {
   it("registers visibilitychange and pagehide listeners", () => {
-    const docSpy = vi.spyOn(document, "addEventListener");
-    const winSpy = vi.spyOn(window, "addEventListener");
+    // Mock addEventListener so no real listeners are attached (prevents bleed into later tests)
+    const docSpy = vi.spyOn(document, "addEventListener").mockImplementation(() => {});
+    const winSpy = vi.spyOn(window, "addEventListener").mockImplementation(() => {});
 
     trackPageDuration("/brokers");
 
