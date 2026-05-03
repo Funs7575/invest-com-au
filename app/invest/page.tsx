@@ -120,6 +120,57 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   "pre-ipo": (
     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
   ),
+  bonds: (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3" /></svg>
+  ),
+  "hybrid-securities": (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+  ),
+  "dividend-investing": (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+  ),
+  reits: (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+  ),
+  "crypto-staking": (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
+  ),
+  forex: (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.6 9h16.8M3.6 15h16.8M11.5 3a17 17 0 000 18M12.5 3a17 17 0 010 18" /></svg>
+  ),
+  "options-trading": (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 17l6-6 4 4 8-8M14 7h7v7" /></svg>
+  ),
+  ipos: (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 14L4 9l5-5M4 9h11a4 4 0 014 4v8" /></svg>
+  ),
+  "managed-funds": (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+  ),
+  "private-equity": (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01" /></svg>
+  ),
+  smsf: (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4M12 3l8 4v6c0 4-3.5 7.5-8 9-4.5-1.5-8-5-8-9V7l8-4z" /></svg>
+  ),
+  commodities: (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+  ),
+  gold: (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 9.5h4a2 2 0 010 4H9V9zm0 4v3" /></svg>
+  ),
+  lithium: (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+  ),
+  uranium: (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="2.5" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} /><ellipse cx="12" cy="12" rx="9" ry="3.5" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} /><ellipse cx="12" cy="12" rx="9" ry="3.5" transform="rotate(60 12 12)" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} /><ellipse cx="12" cy="12" rx="9" ry="3.5" transform="rotate(-60 12 12)" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} /></svg>
+  ),
+  "oil-gas": (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.24 17 7.428c1.5 3.572.18 6.97-1.5 9.572.5-1.428 0-3.572-1-3.572 0 1-.667 1.999-1.5 2.999z" /></svg>
+  ),
+  hydrogen: (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="12" r="3" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} /><circle cx="16" cy="12" r="3" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11 12h2" /></svg>
+  ),
 };
 
 const ACCENT_COLORS: Record<string, { card: string; badge: string; hover: string }> = {
@@ -138,6 +189,23 @@ const ACCENT_COLORS: Record<string, { card: string; badge: string; hover: string
   "income-assets": { card: "border-emerald-200 hover:border-emerald-400", badge: "bg-emerald-100 text-emerald-700", hover: "group-hover:text-emerald-700" },
   "ipo-calendar": { card: "border-indigo-200 hover:border-indigo-400", badge: "bg-indigo-100 text-indigo-700", hover: "group-hover:text-indigo-700" },
   "pre-ipo": { card: "border-red-200 hover:border-red-400", badge: "bg-red-100 text-red-700", hover: "group-hover:text-red-700" },
+  bonds: { card: "border-sky-200 hover:border-sky-400", badge: "bg-sky-100 text-sky-700", hover: "group-hover:text-sky-700" },
+  "hybrid-securities": { card: "border-stone-200 hover:border-stone-400", badge: "bg-stone-100 text-stone-700", hover: "group-hover:text-stone-700" },
+  "dividend-investing": { card: "border-lime-200 hover:border-lime-400", badge: "bg-lime-100 text-lime-700", hover: "group-hover:text-lime-700" },
+  reits: { card: "border-emerald-200 hover:border-emerald-400", badge: "bg-emerald-100 text-emerald-700", hover: "group-hover:text-emerald-700" },
+  "crypto-staking": { card: "border-fuchsia-200 hover:border-fuchsia-400", badge: "bg-fuchsia-100 text-fuchsia-700", hover: "group-hover:text-fuchsia-700" },
+  forex: { card: "border-zinc-200 hover:border-zinc-400", badge: "bg-zinc-100 text-zinc-700", hover: "group-hover:text-zinc-700" },
+  "options-trading": { card: "border-red-200 hover:border-red-400", badge: "bg-red-100 text-red-700", hover: "group-hover:text-red-700" },
+  ipos: { card: "border-pink-200 hover:border-pink-400", badge: "bg-pink-100 text-pink-700", hover: "group-hover:text-pink-700" },
+  "managed-funds": { card: "border-violet-200 hover:border-violet-400", badge: "bg-violet-100 text-violet-700", hover: "group-hover:text-violet-700" },
+  "private-equity": { card: "border-purple-200 hover:border-purple-400", badge: "bg-purple-100 text-purple-700", hover: "group-hover:text-purple-700" },
+  smsf: { card: "border-teal-200 hover:border-teal-400", badge: "bg-teal-100 text-teal-700", hover: "group-hover:text-teal-700" },
+  commodities: { card: "border-orange-200 hover:border-orange-400", badge: "bg-orange-100 text-orange-700", hover: "group-hover:text-orange-700" },
+  gold: { card: "border-yellow-200 hover:border-yellow-400", badge: "bg-yellow-100 text-yellow-700", hover: "group-hover:text-yellow-700" },
+  lithium: { card: "border-gray-200 hover:border-gray-400", badge: "bg-gray-100 text-gray-700", hover: "group-hover:text-gray-700" },
+  uranium: { card: "border-green-200 hover:border-green-400", badge: "bg-green-100 text-green-700", hover: "group-hover:text-green-700" },
+  "oil-gas": { card: "border-amber-200 hover:border-amber-400", badge: "bg-amber-100 text-amber-700", hover: "group-hover:text-amber-700" },
+  hydrogen: { card: "border-neutral-200 hover:border-neutral-400", badge: "bg-neutral-100 text-neutral-700", hover: "group-hover:text-neutral-700" },
 };
 
 const DEFAULT_ACCENT = { card: "border-slate-200 hover:border-slate-400", badge: "bg-slate-100 text-slate-700", hover: "group-hover:text-slate-700" };
@@ -158,6 +226,23 @@ const CATEGORY_DESCRIPTIONS: Record<string, string> = {
   "income-assets": "Vending, ATMs, car washes, laundromats, self-storage & billboards.",
   "ipo-calendar": "Upcoming ASX IPOs, recent listings & broker priority allocations.",
   "pre-ipo": "Wholesale-only late-stage private placements before IPO.",
+  bonds: "Government, corporate & ASX-listed bond ETFs (VGB, AGVT, IAF).",
+  "hybrid-securities": "Bank hybrids, sub-debt & capital notes (CBAPI, NABPF).",
+  "dividend-investing": "ASX 200 high-yield names, franking credits & ETFs (VHY, IHD).",
+  reits: "Goodman, Charter Hall, Mirvac, Stockland — plus VAP, MVA, DJRE.",
+  "crypto-staking": "Stake on AUSTRAC-registered exchanges — Swyftx, CoinSpot, Independent Reserve.",
+  forex: "ASIC-licensed CFD providers — Pepperstone, IC Markets, IG, CMC.",
+  "options-trading": "ASX options market — covered calls, cash-secured puts, XJO index options.",
+  ipos: "Recent ASX IPOs, broker priority allocations & 6-month escrow.",
+  "managed-funds": "Active Australian + global funds, mFund settlement, MER + APIR codes.",
+  "private-equity": "Listed PE structures, wholesale s708 access, 7–10 year lockups.",
+  smsf: "Self-managed super — setup, audit, member limits & SISA s62A.",
+  commodities: "Gold, oil, LNG, iron ore, copper exposures via stocks, ETFs & futures.",
+  gold: "Perth Mint coins/bars, ASX gold ETFs (GOLD, NGLD) & gold miners.",
+  lithium: "ASX lithium pure-plays — PLS, MIN, LTR, IGO, AKE — battery-grade vs technical.",
+  uranium: "ASX producers (PDN, BOE), developers (DYL, BMN), explorers & ATOM ETF.",
+  "oil-gas": "ASX majors (WDS, STO), LNG export, gas reservation policy & FIRB review.",
+  hydrogen: "ASX hydrogen plays (HXG, FFI, GLN), Hydrogen Headstart program & export thesis.",
 };
 
 // Energy + commodity sector hubs. These are EDUCATIONAL pillar pages
