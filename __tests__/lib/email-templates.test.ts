@@ -373,15 +373,18 @@ describe("quizFollowUp1Email", () => {
 });
 
 describe("quizFollowUp2Email", () => {
-  it("renders with broker list", () => {
+  it("renders with broker list and a tradingInterest-matched callout", () => {
     const html = quizFollowUp2Email(
       "Frank",
       [{ name: "Stake", slug: "stake", rating: 4.5, asx_fee: "$3", us_fee: "$0" }],
-      "ETF investing"
+      "Active trading"
     );
     expect(html).toContain("Frank");
     expect(html).toContain("Stake");
-    expect(html).toContain("ETF investing");
+    // The implementation does not echo the raw `tradingInterest` value;
+    // it renders one of four keyword-matched callouts. "Active trading"
+    // hits the "active"/"trad" branch in lib/email-templates.ts.
+    expect(html).toContain("For Active Traders");
   });
 
   it("renders with null tradingInterest", () => {

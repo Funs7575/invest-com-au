@@ -11,6 +11,7 @@ import UtmCapture from "@/components/UtmCapture";
 import RouteChangeFocus from "@/components/RouteChangeFocus";
 import ServiceWorkerRegistrar from "@/components/ServiceWorkerRegistrar";
 import ChatWidget from "@/components/ChatWidget";
+import ReportProblemButton from "@/components/ReportProblemButton";
 import PushNotificationOptIn from "@/components/PushNotificationOptIn";
 import ClaimAnonymousOnAuth from "@/components/ClaimAnonymousOnAuth";
 import NewsletterExitIntentModal from "@/components/NewsletterExitIntentModal";
@@ -104,6 +105,7 @@ export default async function RootLayout({
   // Feature-flag gate for the chat widget — admins can ramp it
   // from 0% → 100% via /admin/automation/flags.
   const chatEnabled = await isFlagEnabled("chatbot_widget");
+  const reportButtonEnabled = await isFlagEnabled("report_button");
   const pushEnabled = await isFlagEnabled("push_notifications");
   // Exit-intent newsletter modal — default-on with a feature flag
   // escape hatch. If no `newsletter_exit_intent` row exists, the
@@ -159,6 +161,7 @@ export default async function RootLayout({
         <ThemeProvider>
           <LayoutShell>{children}</LayoutShell>
           {chatEnabled && <ChatWidget />}
+          {reportButtonEnabled && <ReportProblemButton />}
           {pushEnabled && <Suspense fallback={null}><PushNotificationOptIn /></Suspense>}
           {newsletterExitIntentEnabled && (
             <Suspense fallback={null}>
