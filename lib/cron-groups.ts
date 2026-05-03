@@ -32,7 +32,7 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
     "/api/cron/job-queue-worker",
     "/api/cron/synthetic-checks",
   ],
-  "every-10m": ["/api/cron/confirm-lead-notify"],
+  "every-10m": ["/api/cron/confirm-lead-notify", "/api/cron/lead-sla-check"],
   "every-15m": ["/api/cron/retry-webhooks", "/api/cron/slo-monitor"],
   "every-6h": ["/api/admin/run-migration"],
 
