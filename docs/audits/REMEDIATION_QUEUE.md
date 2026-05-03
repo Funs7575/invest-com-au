@@ -41,7 +41,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | O | all PRs MERGED | #235/#237/#239/#299/#300/#366/#395/#408 all MERGED | last merged 2026-05-02T16:14Z | O-01..O-03 done. O-04 blocked (Stripe live validation). O-05 MERGED (#408). |
 | P | `claude/audit-remediation/p-01-sentry-v10-upgrade` (#468) | — | iter 212 — `331b98e` (PR #468: P-01 — @sentry/nextjs v9.47.1 → v10.51.0; clears 5 Sentry audit findings; removes `as any` cast in next.config.ts); CI pending | P-01 in-progress (PR #468). |
 | Q | _not started_ | — | — | — |
-| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · `r-05-email-templates-tests` (#471) | #290/#396/#459 all MERGED · #466/#471 OPEN | iter 217 — `313ae02` (PR #471: R-05 — 60 tests, email-templates.ts 18%→≥60%); CI pending | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459 — 18 tests). R-04 in-progress (PR #466, CI success). R-05 in-progress (PR #471 — 60 tests covering all 18 exports). R-06..R-11 pending. |
+| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · `r-05-email-templates-tests` (#471) · `r-06-automation-metrics-tests` (#472) | #290/#396/#459 all MERGED · #466/#471/#472 OPEN | iter 219 — `3ed2197` (PR #472: R-06 — automation-metrics.ts async coverage 25%→≥60%; getLatestCronRun + 4 overview functions + getAllFeatureOverviews safeFallback); CI pending | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459 — 18 tests). R-04 in-progress (PR #466, CI success). R-05 in-progress (PR #471 — 60 tests covering all 18 exports). R-06 in-progress (PR #472). R-07..R-11 pending. |
 | S | _not started_ | — | — | — |
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 MERGED 2026-04-28T11:45Z | merged | V-NEW-06 done (commit `a7bd736`) |
@@ -1643,6 +1643,16 @@ Two strategically important surfaces under-served by current nav: (1) investment
 - Phase 5: Added 60 tests across 14 new describe blocks. All 18 exports tested. Key branches: zero-balance warning (lowBalanceEmail), reason block (campaignRejectedEmail), conversions>0 (campaignPerformanceEmail), empty-array fallbacks (weeklyDigestEmail), hasActiveCampaign fork (checkInEmail), with/without deal (quizFollowUp3Email, brokerDripEmail5), notificationFooter with/without email. Replaced 2 broken campaign tests with correct signatures.
 - Phase 6: Commit `313ae02`. Branch `claude/audit-remediation/r-05-email-templates-tests`. PR #471.
 - STATUS: PROGRESS · stream=R · item=R-05 · pr=#471 · commit=313ae02 · diff=+387 -39 (1 test file)
+
+### 2026-05-03 — Forward progress iter 219 (stream R — R-06: automation-metrics.ts async coverage 25%→≥60%)
+
+- Phase 0: Lock active (batch mode, iteration 5/5).
+- Phase 2: PR #469 (E) pending on rescue commit 4e7c04e. PR #471 (R-05) success. PR #467 (G-03 b7) success. PR #468 (P-01) success. PR #460 (E-02 b4) success. No rescues needed.
+- Phase 3: R (slot 16) — R-05 in-flight with CI success → R-06 is next pending item. First item on new branch; created `r-06-automation-metrics-tests`.
+- Phase 4: Target `lib/admin/automation-metrics.ts` 676 LOC, 25% covered. Existing test file covers only `computeHealth` (pure) and static config. 15+ async functions completely untested.
+- Phase 5: Added 245 LOC — `makeChain()` fluent Supabase mock, plus tests for `getLatestCronRun` (3), `getLeadDisputeOverview` (3), `getAdvisorApplicationOverview` (2), `getMarketplaceCampaignOverview` (2), `getAllFeatureOverviews` (2 including safeFallback). TS delta: zero new errors vs main.
+- Phase 6: Commit `3ed2197`. Branch `claude/audit-remediation/r-06-automation-metrics-tests`. PR #472.
+- STATUS: PROGRESS · stream=R · item=R-06 · pr=#472 · commit=3ed2197 · diff=+245 -5 (1 test file)
 
 ### 2026-05-03 — CI rescue iter 218 (stream E — PR #469: null-guard author_id before reputation upsert)
 
