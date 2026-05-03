@@ -1,6 +1,7 @@
 import { getStripe } from "@/lib/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
+import { isFlagEnabled } from "@/lib/feature-flags";
 import { logger } from "@/lib/logger";
 import { getSiteUrl } from "@/lib/url";
 
@@ -16,6 +17,14 @@ interface CheckoutBody {
 
 export async function POST(request: NextRequest) {
   try {
+    // Launch-ops kill switch: flip `stripe_checkout` off in
+    // /admin/automation/flags to pause new Stripe checkout sessions
+    // (webhook backlog, dispute spike, pricing bug). See
+    // docs/ops/launch-ops-plan.md §4.
+    if (!(await isFlagEnabled("stripe_checkout"))) {
+      return NextResponse.json({ error: "temporarily_unavailable" }, { status: 503 });
+    }
+
     let body: Partial<CheckoutBody>;
 
     try {
