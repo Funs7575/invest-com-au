@@ -43,6 +43,17 @@ vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ error: vi.fn(), info: vi.fn(), warn: vi.fn(), debug: vi.fn() })),
 }));
 
+// The listing_enquiry_intake feature flag was added in the launch-ops pass.
+// In test environments NEXT_PUBLIC_SUPABASE_URL is a placeholder, so the real
+// implementation short-circuits to `false` (flag off → 503 kill-switch).
+// Mock it to return `true` by default so the existing tests cover their
+// intended code paths. Individual tests that verify the kill-switch can
+// override via mockIsFlagEnabled.mockResolvedValueOnce(false).
+const mockIsFlagEnabled = vi.fn().mockResolvedValue(true);
+vi.mock("@/lib/feature-flags", () => ({
+  isFlagEnabled: (...args: unknown[]) => mockIsFlagEnabled(...args),
+}));
+
 import { POST } from "@/app/api/listings/enquire/route";
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
@@ -85,10 +96,21 @@ describe("POST /api/listings/enquire", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockIsRateLimited.mockResolvedValue(false);
+    mockIsFlagEnabled.mockResolvedValue(true);
     // Default: listing found + active
     mockFrom.mockReturnValue(makeChain({ data: ACTIVE_LISTING, error: null }));
     mockRpc.mockResolvedValue({ error: null });
     mockSendEmail.mockResolvedValue(undefined);
+  });
+
+  // ── Kill switch ───────────────────────────────────────────────────────────
+
+  it("returns 503 when listing_enquiry_intake flag is off", async () => {
+    mockIsFlagEnabled.mockResolvedValueOnce(false);
+    const res = await POST(makePost(VALID_BODY));
+    expect(res.status).toBe(503);
+    const json = await res.json();
+    expect(json.error).toMatch(/service_unavailable|unavailable/i);
   });
 
   // ── Rate limiting ─────────────────────────────────────────────────────────
@@ -167,6 +189,7 @@ describe("POST /api/listings/enquire", () => {
     ];
     for (const investor_type of validTypes) {
       vi.clearAllMocks();
+      mockIsFlagEnabled.mockResolvedValue(true);
       mockIsRateLimited.mockResolvedValue(false);
       // Need two calls: one for listing lookup, one for email lookup
       let callCount = 0;

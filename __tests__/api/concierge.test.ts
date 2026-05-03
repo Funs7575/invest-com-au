@@ -58,6 +58,14 @@ vi.mock("@anthropic-ai/sdk", () => ({
   })),
 }));
 
+// The ai_generation feature flag was added in the launch-ops pass.
+// In test environments isFlagEnabled() returns false (placeholder Supabase URL),
+// causing all POST tests to receive 503. Mock to return true by default.
+const mockIsFlagEnabled = vi.fn().mockResolvedValue(true);
+vi.mock("@/lib/feature-flags", () => ({
+  isFlagEnabled: (...args: unknown[]) => mockIsFlagEnabled(...args),
+}));
+
 import { POST, GET, DELETE } from "@/app/api/concierge/route";
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
@@ -121,6 +129,7 @@ function makeSelectChain(result: { data: unknown; error: unknown }) {
 describe("POST /api/concierge", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockIsFlagEnabled.mockResolvedValue(true);
     mockIsAllowed.mockResolvedValue(true);
     process.env.ANTHROPIC_API_KEY = "sk-test";
     mockAdminFrom.mockReturnValue(makeInsert());
