@@ -265,7 +265,7 @@ export function resolveBestOutcome(a: UnifiedAnswersInput): BestOutcome {
         { label: "Compare super funds", href: "/compare?filter=super" },
         { label: "Find a financial planner", href: "/advisors/financial-planners" },
         { label: "Retirement calculator", href: withParams("/retirement-calculator", { context: "quiz", amount: a.amount }) },
-        { label: "SMSF eligibility checker", href: "/tools/smsf-eligibility-checker" },
+        { label: "SMSF eligibility checker", href: "/tools/smsf-checker" },
       ],
       tone: "amber",
       icon: "users",
@@ -325,7 +325,7 @@ export function resolveBestOutcome(a: UnifiedAnswersInput): BestOutcome {
       secondaryActions: [
         { label: "Find a luxury-asset broker", href: "/advisors/luxury-asset-brokers" },
         { label: "Find a wine / art / classic-car advisor", href: "/find-advisor" },
-        { label: "Alternative-asset returns calculator", href: "/tools/alternative-asset-returns" },
+        { label: "Alternative-asset returns calculator", href: "/tools/alternative-returns" },
       ],
       tone: "amber",
       icon: "package",
@@ -347,7 +347,7 @@ export function resolveBestOutcome(a: UnifiedAnswersInput): BestOutcome {
       secondaryActions: [
         { label: "Find a royalty broker", href: "/advisors/royalty-brokers" },
         { label: "Income-producing assets (vending / ATM)", href: "/invest/income-assets" },
-        { label: "SMSF eligibility checker", href: "/tools/smsf-eligibility-checker" },
+        { label: "SMSF eligibility checker", href: "/tools/smsf-checker" },
       ],
       tone: "blue",
       icon: "coins",
