@@ -41,7 +41,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | O | all PRs MERGED | #235/#237/#239/#299/#300/#366/#395/#408 all MERGED | last merged 2026-05-02T16:14Z | O-01..O-03 done. O-04 blocked (Stripe live validation). O-05 MERGED (#408). |
 | P | `claude/audit-remediation/p-01-sentry-v10-upgrade` (#468) | — | iter 212 — `331b98e` (PR #468: P-01 — @sentry/nextjs v9.47.1 → v10.51.0; clears 5 Sentry audit findings; removes `as any` cast in next.config.ts); CI pending | P-01 in-progress (PR #468). |
 | Q | _not started_ | — | — | — |
-| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) | #290/#396/#459 all MERGED · #466 OPEN | iter 212 — R-03 MERGED 2026-05-03 (`5e659c0`, PR #459: 18 tests advisor-lead-dispute-resolver); R-04 in-progress PR #466 | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459 — 18 tests). R-04 in-progress (PR #466). R-05..R-11 pending. |
+| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) | #290/#396/#459 all MERGED · #466 OPEN | iter 216 CI rescue — `e43f25c` (PR #466: fix question→question_text in getQuizQuestions test; QuizQuestion interface uses question_text not question); CI re-running | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459 — 18 tests). R-04 in-progress (PR #466). R-05..R-11 pending. |
 | S | _not started_ | — | — | — |
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 MERGED 2026-04-28T11:45Z | merged | V-NEW-06 done (commit `a7bd736`) |
@@ -1623,6 +1623,16 @@ Two strategically important surfaces under-served by current nav: (1) investment
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-03 — CI rescue iter 216 (stream R — PR #466: fix question→question_text in QuizQuestion test)
+
+- Phase 0: Lock active (batch mode, iteration 1/5 of this fire).
+- Phase 1: main diverged by 50 commits locally; reset to origin/main. No LOOP_PAUSE sentinel.
+- Phase 1.7: main CI last run = success (ec2b15b). Proceed.
+- Phase 2: PR #468 (P-01): all green. PR #466 (R-04): "Lint · Type-check · Test · Build" FAILING. PR #469 (E-02 b5): also failing. R is higher priority (slot 16 vs slot 17). No prior CI-RESCUE attempts on #466 — fresh failure.
+- Diagnosis: `getQuizQuestions` returns `Promise<QuizQuestion[]>`; `QuizQuestion` has `question_text: string`, not `question`. Test fixture set `{ question: "..." }` and assertion used `qs[0].question` — TypeScript type error "Property 'question' does not exist on type 'QuizQuestion'". Fix: `question` → `question_text` in both dbData fixture and `expect()` assertion (3 lines). The `getBrokerQuestions` test on line 147 correctly uses `.question` — that returns `BrokerQuestion[]` which does have `question: string`.
+- Phase 6: Commit `e43f25c`. Branch `claude/audit-remediation/r-04-cached-data-tests`. PR #466.
+- STATUS: CI-RESCUE · stream=R · pr=#466
 
 ### 2026-05-03 — CI rescue iter 215 (stream E — PR #469: fix forum_votes column name vote→value)
 
