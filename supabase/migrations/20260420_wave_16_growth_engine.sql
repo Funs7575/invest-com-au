@@ -1,5 +1,18 @@
 -- Wave 16 schema — growth engine.
 --
+-- Date: 2026-04-20
+-- Audit ref: codebase-health-2026-04-24.md §4.3 (G-03)
+-- Queue item: G-03 batch 8
+-- Why: four new tables power programmatic SEO (/best-for/<slug>),
+--      newsletter opt-in/out, and exit-intent A/B analytics.
+-- Idempotency: CREATE TABLE IF NOT EXISTS; safe to re-apply.
+-- Rollback (in reverse creation order):
+--   DROP TABLE IF EXISTS public.exit_intent_events;
+--   DROP TABLE IF EXISTS public.newsletter_subscriptions;
+--   DROP TABLE IF EXISTS public.newsletter_segments;
+--   DROP TABLE IF EXISTS public.best_for_scenarios;
+--   Note: RLS policies, indexes, and sequences drop with their tables.
+--
 -- Tables introduced:
 --   1. best_for_scenarios    — programmatic SEO seed for /best-for/<slug>
 --   2. newsletter_segments   — named segments for targeted sends

@@ -1,5 +1,24 @@
 -- Admin automation dashboard foundations.
 --
+-- Rollback (in reverse order):
+--   2. DROP COLUMN admin override audit cols from lead_disputes, advisor_applications,
+--        investment_listings, user_reviews, professional_reviews:
+--        ALTER TABLE public.lead_disputes DROP COLUMN IF EXISTS admin_overridden_at,
+--          DROP COLUMN IF EXISTS admin_overridden_by, DROP COLUMN IF EXISTS admin_override_reason;
+--        ALTER TABLE public.advisor_applications DROP COLUMN IF EXISTS admin_overridden_at,
+--          DROP COLUMN IF EXISTS admin_overridden_by;
+--        ALTER TABLE public.investment_listings DROP COLUMN IF EXISTS auto_classified_at,
+--          DROP COLUMN IF EXISTS auto_classified_verdict, DROP COLUMN IF EXISTS auto_classified_risk_score,
+--          DROP COLUMN IF EXISTS auto_classified_reasons, DROP COLUMN IF EXISTS admin_overridden_at,
+--          DROP COLUMN IF EXISTS admin_overridden_by;
+--        ALTER TABLE public.user_reviews DROP COLUMN IF EXISTS auto_moderated_at,
+--          DROP COLUMN IF EXISTS auto_moderated_verdict, DROP COLUMN IF EXISTS auto_moderated_reasons,
+--          DROP COLUMN IF EXISTS admin_overridden_at, DROP COLUMN IF EXISTS admin_overridden_by;
+--        ALTER TABLE public.professional_reviews DROP COLUMN IF EXISTS auto_moderated_at,
+--          DROP COLUMN IF EXISTS auto_moderated_verdict, DROP COLUMN IF EXISTS auto_moderated_reasons,
+--          DROP COLUMN IF EXISTS admin_overridden_at, DROP COLUMN IF EXISTS admin_overridden_by;
+--   1. DROP TABLE IF EXISTS public.cron_run_log;
+--
 -- Two changes:
 --   1. New `cron_run_log` table so every cron can persist a run
 --      record on completion. Without this there's no way to answer

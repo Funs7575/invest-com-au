@@ -1,5 +1,31 @@
 -- Wave 17 schema — advisor marketplace v2.
 --
+-- Date: 2026-04-21
+-- Audit ref: codebase-health-2026-04-24.md §4.3 (G-03)
+-- Queue item: G-03 batch 8
+-- Why: adds video intro, availability, booking, and lead-quality signals
+--      to the advisor marketplace to improve conversion and dispute
+--      resolution.
+-- Idempotency: ALTER TABLE IF EXISTS … ADD COLUMN IF NOT EXISTS;
+--              CREATE TABLE/INDEX IF NOT EXISTS. Safe to re-apply.
+-- Rollback (in reverse order):
+--   ALTER TABLE public.professional_leads
+--     DROP CONSTRAINT IF EXISTS professional_leads_quality_band_check;
+--   DROP INDEX IF EXISTS public.idx_professional_leads_quality_band;
+--   ALTER TABLE public.professional_leads
+--     DROP COLUMN IF EXISTS quality_band,
+--     DROP COLUMN IF EXISTS quality_signals;
+--   DROP TABLE IF EXISTS public.advisor_booking_appointments;
+--   DROP INDEX IF EXISTS public.idx_professionals_accepting_search;
+--   ALTER TABLE public.professionals
+--     DROP COLUMN IF EXISTS booking_link,
+--     DROP COLUMN IF EXISTS response_time_hours,
+--     DROP COLUMN IF EXISTS accepts_new_clients,
+--     DROP COLUMN IF EXISTS intro_video_poster_url,
+--     DROP COLUMN IF EXISTS intro_video_url;
+--   Note: advisor_booking_appointments RLS policies and indexes drop
+--         with the table.
+--
 -- Extensions + new tables:
 --   1. professionals.intro_video_url         — hosted video URL (Vimeo/Mux/R2)
 --   2. professionals.intro_video_poster_url  — still frame used as poster
