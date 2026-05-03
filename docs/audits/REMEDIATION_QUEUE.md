@@ -41,7 +41,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | O | all PRs MERGED | #235/#237/#239/#299/#300/#366/#395/#408 all MERGED | last merged 2026-05-02T16:14Z | O-01..O-03 done. O-04 blocked (Stripe live validation). O-05 MERGED (#408). |
 | P | `claude/audit-remediation/p-01-sentry-v10-upgrade` (#468) | — | iter 212 — `331b98e` (PR #468: P-01 — @sentry/nextjs v9.47.1 → v10.51.0; clears 5 Sentry audit findings; removes `as any` cast in next.config.ts); CI success. | P-01 in-progress (PR #468). P-02 (Stripe SDK v17→v22) BLOCKED — requires npm install + local test run to verify webhook type compatibility across 5 major versions; not tractable on Hardware-exception sandbox. Needs a session with full node_modules. |
 | Q | _not started_ | — | — | — |
-| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · `r-05-email-templates-tests` (#471) · `r-06-automation-metrics-tests` (#472) · `r-07-chatbot-tests` (#473) · `r-08-fi-data-server-tests` (#510) · `r-09-tracking-browser-tests` (#511) · `r-09-tracking-tests` (#513) | #290/#396/#459 all MERGED · #466/#471/#472/#473/#510/#511/#513 OPEN | iter 224b — `0e43fcc` (PR #513: R-09 parallel-fire supplement — 31 jsdom tests in tracking.test.ts covering all browser paths + more edge cases vs PR #511's 12; both auto-merge-safe, different files, no conflict); CI pending. | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459 — 18 tests). R-04 in-progress (PR #466, CI success). R-05 in-progress (PR #471). R-06 in-progress (PR #472). R-07 in-progress (PR #473). R-08 in-progress (PR #510, CI pending). R-09 in-progress (PR #511 + #513, both CI running; parallel-fire race). R-10..R-11 pending. |
+| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · `r-05-email-templates-tests` (#471) · `r-06-automation-metrics-tests` (#472) · `r-07-chatbot-tests` (#473) · `r-08-fi-data-server-tests` (#510) · `r-09-tracking-browser-tests` (#511) · `r-09-tracking-tests` (#513) · `r-10-advisor-resolver-db-tests` (#514) | #290/#396/#459 all MERGED · #466/#471/#472/#473/#510/#511/#513/#514 OPEN | iter 226 CI rescue — `47597e4` PR #511 (vi.spyOn fix); `6db4135` PR #514 (as unknown cast + as const). | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459). R-04 in-progress (#466, CI green). R-05 in-progress (#471). R-06 in-progress (#472). R-07 in-progress (#473). R-08 in-progress (#510, CI pending). R-09 in-progress (#511 + #513, rescue pushed). R-10 in-progress (#514, proactive TS fix pushed). R-11 pending. |
 | S | _not started_ | — | — | — |
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 MERGED 2026-04-28T11:45Z | merged | V-NEW-06 done (commit `a7bd736`) |
@@ -936,7 +936,7 @@ Highest-risk untested business logic. Marketplace allocation is the most lucrati
 | R-07 | pending | `lib/chatbot.ts` — 233 LOC, 27% covered | 1 | P2. |
 | R-08 | in-progress | `lib/fi-data-server.ts` — 231 LOC, 27% covered → ≥60% (PR #510) | 1 | P2. |
 | R-09 | in-progress | `lib/tracking.ts` — 133 LOC, 33% covered → ≥70% (PR #511 + #513; parallel-fire race — both auto-merge-safe, different files) | 1 | P2. |
-| R-10 | pending | `lib/advisor-application-resolver.ts` — 416 LOC, 35% covered | 1 | P2. |
+| R-10 | in-progress | `lib/advisor-application-resolver.ts` — 416 LOC, 35% covered → ≥70% (PR #514) | 1 | P2. |
 | R-11 | pending | Hooks: `useShortlist`, `useAdvisorShortlist`, `useSubscription` — all 0% | 1 | P3. |
 | R-DISC-20260429-01 | pending | `lib/financial-periods.ts` — 250 LOC, 0% unit test coverage. `closePeriod` and `listRecentPeriods` are called from admin/financial-periods and the monthly cron; the D-11 batch 27 route tests mock them but don't exercise the lib logic directly. | 1 | P2. Surfaced by iter 112. |
 
@@ -1721,6 +1721,38 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 - Phase 2: PR #471 (R-05) "Lint · Type-check · Test · Build" FAILURE on `313ae02`. Root cause: `data.clicks.toLocaleString()` and `data.conversions.toLocaleString()` in `campaignPerformanceEmail` (lib/email-templates.ts) called without an explicit locale. GitHub Actions runner uses LANG=C.UTF-8; Node.js in C locale renders numbers without thousands separator ("1234" not "1,234"). Test asserted `html.contains("1,234")` which failed. Pattern confirmed by `lib/utils.ts` / `lib/currency.ts` which use explicit `'en-AU'` locale throughout. Fix: pass `'en-AU'` to both toLocaleString() calls in the stat cells.
 - Phase 6: Commit `88d53ed`. Branch `claude/audit-remediation/r-05-email-templates-tests`. PR #471.
 - STATUS: CI-RESCUE · stream=R · pr=#471 · commit=88d53ed (CI confirmed success)
+
+### 2026-05-03 — CI rescue iter 226 (stream R — PR #511 R-09 TypeScript fix; PR #514 R-10 proactive fix)
+
+- Phase 0: batch iteration (iter 226, lock held).
+- Phase 1: synced main — picked up parallel-fire queue update (PR #513 R-09 supplement). No LOOP_PAUSE sentinel.
+- Phase 2: PR #511 (R-09) "Lint · Type-check · Test · Build" FAILURE. First rescue attempt. Root cause (2 TypeScript issues):
+  1. `expect(navigator.sendBeacon).toHaveBeenCalledOnce()` — navigator.sendBeacon typed as real function, not MockInstance; Vitest's `.toHaveBeenCalledOnce()` requires a mock type. Fix: `vi.spyOn(navigator, 'sendBeacon').mockReturnValue(...)` returns a typed MockInstance.
+  2. `mockFetch.mock.calls[0]![1] as RequestInit` — with noUncheckedIndexedAccess, untyped vi.fn() has tuple type `[]`; index 1 is `unknown`. Fix: cast calls[0] `as [string, RequestInit]` before indexing.
+  Also proactively fixed PR #514 (R-10) with same pattern: `as ReturnType<...>` → `as unknown as ReturnType<...>`; string literals → `as const` for verdict/confidence types.
+- Phase 5: fixed `__tests__/lib/tracking-browser.test.ts` (47597e4) and `__tests__/lib/advisor-application-resolver-db.test.ts` (6db4135).
+- Phase 6: pushed both fixes to their respective branches.
+- Phase 7: queue updated. R-10 marked in-progress.
+
+- STATUS: CI-RESCUE · stream=R · pr=#511
+- Rescue commit PR #511: 47597e4
+- Proactive fix PR #514: 6db4135
+
+### 2026-05-03 — Forward progress iter 225 (stream R — R-10: advisor-application-resolver.ts DB-layer coverage 35%→≥70%)
+
+- Phase 0: batch iteration (iter 225, lock held).
+- Phase 1: synced main. No LOOP_PAUSE sentinel.
+- Phase 1.5: skipped.
+- Phase 1.7: main CI green.
+- Phase 2: PR #511 CI still running (in_progress). No confirmed failures yet.
+- Phase 3: picked R-10 (`lib/advisor-application-resolver.ts` — 35% covered, DB-layer functions untested). Branch: `claude/audit-remediation/r-10-advisor-resolver-db-tests`.
+- Phase 4: test-only change. Verification gate passed.
+- Phase 5: created `__tests__/lib/advisor-application-resolver-db.test.ts` (297 lines, 12 tests). `makeMockClient` consumes ordered response queue for multi-step DB flows.
+- Phase 6: committed `208e124`, pushed, opened PR #514.
+- Phase 6.5: noted TypeScript risk in mock casts — proactively patched as `6db4135` after CI rescue.
+
+- STATUS: PROGRESS · stream=R · item=R-10 · pr=#514
+- Commit: 208e124 (initial) + 6db4135 (TS fix)
 
 ### 2026-05-03 — Forward progress iter 224b (stream R — R-09 parallel-fire supplement: tracking.ts 31-test jsdom coverage in tracking.test.ts)
 
