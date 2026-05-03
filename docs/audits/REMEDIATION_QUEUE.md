@@ -35,7 +35,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | I | `claude/audit-remediation/i-new-04-main-ci-auto-revert` (#278) · `i-02-drift-detection-ci` (#353) | #278 MERGED 2026-04-28T16:18Z · #353 MERGED 2026-05-01T14:30Z | last merged 2026-05-01T14:30Z | I-NEW-01..05 all done. I-NEW-06 needs-user (Supabase GH Actions secrets). I-01 done via B-07 (PR #286). I-02 done (PR #353). I-03 done via C-08 (PR #327). I-04 done via E-03 (PR #313). I-05 done via D-10 (PR #246). |
 | J | `claude/audit-remediation/j-stripe-webhook` | #288 MERGED 2026-04-29T16:48Z | last merged 2026-04-29T16:48Z | J-01a..J-01e done · J-01d-ext done · J-03/J-05/J-06/J-08/J-09/J-10 done. **Stream J complete** (J-02/J-04/J-07/J-11 false-positives or done out-of-band). |
 | K | `claude/audit-remediation/k-security-hardening` | #222 MERGED 2026-04-28T15:14Z | last merged 2026-04-28T15:14Z | K-01..K-08 done; K-09 false-positive; K-10..K-15 done — **stream complete** |
-| KK | `claude/audit-remediation/kk-lead-routing-maturity` | #524 OPEN | iter 239 — `8290ded` (KK-02: hub-silence-check cron + 14 tests; hourly, AEST business hours only; CI pending). iter 238 CI-rescue — `9d64b05` (cherry-pick investor_type loop mock reset; CI re-running). | KK-01 in-progress (#524). KK-02 in-progress (#524 same branch, commit 8290ded). KK-03..KK-06 pending. |
+| KK | `claude/audit-remediation/kk-lead-routing-maturity` | #524 OPEN | iter 241 — `1fcddf3` (KK-03: avgResponseTimeMinutes stat + AnalyticsTab Response Performance section + 2 tests; CI pending). iter 239 — `8290ded` (KK-02 hub-silence-check cron). | KK-01 in-progress (#524). KK-02 in-progress (#524, commit 8290ded). KK-03 in-progress (#524, commit 1fcddf3). KK-04..KK-06 pending. |
 | L | `claude/audit-remediation/l-observability` | #289 MERGED 2026-04-29T10:18Z | last merged 2026-04-29T10:18Z | L-04/L-05 done out-of-loop. L-06..L-12 all done (merged via PR #289). L-02/L-03 deferred-post-launch (n8n dormant). L-01 needs-user (SENTRY_AUTH_TOKEN). L-10 false-positive (verified populating). **Stream L complete** (modulo L-01 needs-user). |
 | M | `claude/audit-remediation/m-01b-cover-image-backfill` (#283) · `m-02-versus-json-ld` (#296) · `m-05-glossary-linkifier` (#325) | #283/#296/#325 all MERGED | last merged 2026-05-01T10:29Z | M-01a done out-of-loop (PR #227). M-01b done (PR #283 — engineering side). M-02 done (PR #296). M-03 done (`85c7236`). M-04 done (`353fa3a`). M-05 done (PR #325). M-06 done (PR #283). M-07 done (PR #283). **Stream M complete.** |
 | N | `claude/audit-remediation/n-ux-perf` | #242 MERGED | last merged 2026-04-28 | N-01+N-02 done (`2ec6f89`) · N-03a/b/c done · N-04/N-05 FP · N-06 blocked (deferred-post-launch by founder 2026-05-01 — option 4 chosen) · N-07/N-08/N-09/N-10/N-11 done — **stream complete** (N-06 deferred). |
@@ -1041,7 +1041,7 @@ Operationalises the lead-form surface in `docs/audits/ENTERPRISE_STANDARD.md` so
 | --- | --- | --- | --- | --- |
 | KK-01 | in-flight | Per-source SLA monitoring — alert if a lead sits in the queue past its source's SLA (5 min hot, 30 min warm, 4h cold) | 1-2 | PR #524. `lead-sla-check` cron every 10min; window-based breach detection; Resend ops alert email. |
 | KK-02 | in-progress | Queue health alert — if no leads for a hub for >N hours during business hours, alert | 1 | Implemented: hub-silence-check cron (hourly, AEST business hours). Window-based detection avoids duplicate alerts. Thresholds: financial_planner/mortgage_broker 2h, property_advisor/buyers_agent 4h, tax_agent/smsf_accountant 6h, default 8h. Added to hourly-0 dispatch group. 14 tests. Commit 8290ded on #524. |
-| KK-03 | pending | Advisor response-time tracking — per-advisor mean-time-to-first-response surfaced in advisor portal | 1-2 | Reads `lead_assignments` + `advisor_responses` join; renders into the existing advisor portal dashboard. |
+| KK-03 | in-progress | Advisor response-time tracking — per-advisor mean-time-to-first-response surfaced in advisor portal | 1-2 | Implemented: `avgResponseTimeMinutes` stat from `professional_leads.response_time_minutes`; AnalyticsTab "Response Performance" section with tiered benchmark labels; 2 new tests. Commit 1fcddf3 on #524. |
 | KK-04 | pending | Conversion analytics per source — PostHog funnel `lead_submit:<source>` → `advisor_response` → `outcome` | 1 | Adds the `<source>` discriminator to every existing `submitLead()` call site; back-fills missing variants. |
 | KK-05 | pending | Lead-source routing audit — verify every form on the platform routes to the correct hub-specific queue + tagged with the right source | 1-2 | Walks every page that contains a lead form, asserts the typed `submitLead({ source })` matches the page's hub. CI lint plausible. |
 | KK-06 | pending | Advisor performance dashboard — per-advisor lead volume, accept rate, response time, conversion rate, revenue attribution | 1-2 | Read-only dashboard in advisor portal. Inputs from KK-01/03/04 + existing `advisor_payments` table. |
@@ -1680,6 +1680,21 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-03 — Forward progress iter 241 (stream KK — KK-03: advisor response-time tracking)
+
+- Phase 0: Lock acquired. No LOOP_PAUSE sentinel.
+- Phase 1: main synced. Read queue + defaults.
+- Phase 1.5: No recent migrations → skipped.
+- Phase 1.7: main CI status not checked via gh CLI (using MCP checks on in-flight PRs instead).
+- Phase 2: CI rescue check — PRs #524/525/528/527/529/523/520/518 all CI success. No rescues needed.
+- Phase 3: Priority slot 14 (KK) — KK-03 pending. Checked out `kk-lead-routing-maturity`, pulled.
+- Phase 4: Verification — `professional_leads` already has `responded_at` + `response_time_minutes` columns (confirmed in database.types.ts). No schema change needed. Route uses `createClient()` (authenticated advisor session). No blockers.
+- Phase 5: Extended `app/api/advisor-dashboard/route.ts` SELECT to include `responded_at, response_time_minutes`; computed `avgResponseTimeMinutes` as integer mean of leads where `response_time_minutes IS NOT NULL`; added field to stats response. Added `avgResponseTimeMinutes: number | null` to `Stats` type. Added "Response Performance" section to `AnalyticsTab.tsx` with tiered benchmark labels and colour legend. Added 2 new test cases to `advisor-dashboard.test.ts`. 9/9 tests passed. Lint: 0 errors.
+- Phase 6: Committed `1fcddf3`, pushed to `kk-lead-routing-maturity`. PR #524 updated.
+- Phase 6.5: Discovery sweep — adjacent advisor-portal routes (advisor-appointments, advisor-alerts, advisor-articles) already have test coverage. No new queue items.
+- Phase 7: Queue updated — KK in-flight row updated, KK-03 marked in-progress.
+- STATUS: PROGRESS · stream=KK · item=KK-03 · pr=#524
 
 ### 2026-05-03 — MAIN-RESCUE iter 240 (fix: add isFlagEnabled mock to listings.test.ts + sponsorship-comprehensive.test.ts)
 
