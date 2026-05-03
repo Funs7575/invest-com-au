@@ -6,9 +6,9 @@ every cycle.
 
 ---
 
-## AUD-100 — End-to-end sharded codebase audit (seed)
+## AUD-100 — End-to-end sharded codebase audit
 
-**Status:** `pending` (awaiting founder ratification of shard scope)
+**Status:** `ready-for-codex` (shard scope ratified by founder 2026-05-03)
 **Owner:** Codex (auditor)
 **Opened:** 2026-05-03
 **Target branch:** `claude/codex-codebase-audit-66IH2`
@@ -21,7 +21,7 @@ convert into mergeable PRs via the existing
 `audit-remediation-iteration` machinery rather than a one-shot prose
 report.
 
-### Proposed shards (founder to confirm/override)
+### Shards (ratified 2026-05-03)
 
 1. **Security & auth** — `proxy.ts`, `lib/supabase/admin.ts` call
    sites, `app/api/admin/*`, webhooks, `requireCronAuth` coverage.
@@ -63,9 +63,7 @@ report.
 
 ### Blockers
 
-- Founder has not ratified shard scope. Claude has scaffolded the
-  protocol files; Codex's first claimed cycle was rejected
-  (see `DECISIONS_LOG.md` 2026-05-03).
+None — Codex cleared to begin shard 1.
 
 ---
 
