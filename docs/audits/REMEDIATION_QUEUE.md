@@ -29,7 +29,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | C | all PRs MERGED | #327/#349/#360/#394/#397 all MERGED | last merged 2026-05-02T16:13Z | C-01..C-08 done. C-03 MERGED (#360). C-04 done (#394). C-05 done (#394). C-05b MERGED (#349). C-DISC-20260501-01 MERGED (#397). **Stream C complete.** |
 | D | `claude/audit-remediation/d-route-tests` | #285 MERGED 2026-04-29T10:13Z; supplementary PRs #246/#285/#297/#298 | last merged 2026-04-29T18:53Z | D-01..D-09 done (PR #246). D-10 done (PR #246 — coverage ratchet). D-11 complete (43+ batches, all admin/cron/non-admin routes covered) — merged via PR #285 + supplementary PRs #297/#298. **Stream D complete.** |
 | E | `claude/audit-remediation/e-02-batch-5-zod-rollout` (#469) · `e-02-batch-*-zod-rollout` (#460) · `e-03-zod-lint-rule` (#313) | #295/#313/#315/#323/#406 MERGED · #460/#469 OPEN | iter 218 CI rescue 4 — `4e7c04e` (PR #469: null-guard target.author_id before forum_user_profiles upsert; Zod's explicit target_type enum caused TypeScript to properly infer author_id as string\|null, exposing pre-existing assignment to non-nullable user_id); CI re-running | E-01 done (PR #295 — withValidatedBody helper). E-02 in-progress (batches 1+2 MERGED PR #315/#323; batch 3 MERGED PR #406 — note: did not land vote/posts/impression/notify; batch 4 open PR #460 — questions/shortlist/referrals/threads; batch 5 open PR #469 — vote/posts/impression/notify now with Zod). E-02 substantially complete after #460+#469 merge. E-03 done (PR #313 — ESLint rule). E-04 backfill pending. |
-| F | `claude/audit-remediation/f-02..f-06` (multiple PRs) | #293/#294/#301/#354/#355/#370 all MERGED | last merged 2026-05-01T16:00Z | F-01 false-positive. F-02 done (PR #293 — formatDate). F-03 done (PR #370 — formatCurrency). F-04 done (PR #354 — slugify, first wave). F-05 done (PR #294 + #301 followup — console→logger). F-06 done (PR #355 — compliance copy SSOT). F-07/F-08 pending. |
+| F | `claude/audit-remediation/f-07-json-ld-batch-1` (#527) | #293/#294/#301/#354/#355/#370 all MERGED · #527 OPEN | iter 237 — `19b3630` (F-07 batch 1: 6 calculator pages — retirement/debt/savings/property-yield/non-resident-dividend/franking-credits; CI pending) | F-01 false-positive. F-02 done (PR #293). F-03 done (PR #370). F-04 done (PR #354). F-05 done (PR #294+#301). F-06 done (PR #355). F-07 in-progress (#527 batch 1: 6/42 blocks migrated). F-08 pending. |
 | G | `claude/audit-remediation/g-03-batch-8-rollback-headers` (#520) | #307/#310/#311/#314/#316/#342/#352/#405/#455/#467 all MERGED · #520 OPEN | iter 229 — `52aee43` (PR #520: G-03 batch 8 — rollback headers for 15 remaining migrations; stream complete 208/208); CI pending | G-01+G-02 done (PR #307). **G-03 complete (208/208 covered)** — batches 1-7 (#311/#314/#316/#352/#405/#455/#467) all merged; batch 8 (#520) covers the final 15 files. G-04 done (PR #310 + #342). G-04-FINDING-1..5 pending founder authorization. |
 | H | _not started_ | — | — | — |
 | I | `claude/audit-remediation/i-new-04-main-ci-auto-revert` (#278) · `i-02-drift-detection-ci` (#353) | #278 MERGED 2026-04-28T16:18Z · #353 MERGED 2026-05-01T14:30Z | last merged 2026-05-01T14:30Z | I-NEW-01..05 all done. I-NEW-06 needs-user (Supabase GH Actions secrets). I-01 done via B-07 (PR #286). I-02 done (PR #353). I-03 done via C-08 (PR #327). I-04 done via E-03 (PR #313). I-05 done via D-10 (PR #246). |
@@ -750,7 +750,7 @@ Best done after A/B/C land so the rules don't break in-flight work.
 | F-04 | done | Replace 5 `slugify` re-implementations with `lib/utils.ts` import | 1 | Done in PR #354 (verified) — first wave (1 of 11). 10 follow-ups noted in PR body. |
 | F-05 | done | Replace 12 actionable `console.*` calls with `lib/logger.ts` | 1 | Done in PR #294 (initial 9) + PR #301 (3 deferred files + eslint warning fix). |
 | F-06 | done | Move 4 hardcoded compliance-copy strings to `lib/compliance.ts` (audit §2.2) | 1 | Done in PR #355 — 5 strings moved to SSOT (BrokerCard, FullServiceBrokerCard, VerifiedBadge, AdminHelpPanel + 1). |
-| F-07 | pending | Migrate 42 hardcoded JSON-LD blocks to `lib/schema-markup.ts` helpers | ~6 | ~7 files per iteration. |
+| F-07 | in-flight | Migrate 42 hardcoded JSON-LD blocks to `lib/schema-markup.ts` helpers | ~6 | PR #527 batch 1: 6 calculator pages (retirement, debt, savings, property-yield, non-resident-dividend, franking-credits). 36 blocks remain. |
 | F-08 | pending | Extract shared `components/ui/Card` base, refactor 7 card components | ~3 | Lower priority — visual diffs need careful review. |
 
 ### Stream H — File splits
@@ -1680,6 +1680,21 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-03 — Forward progress iter 237 (stream F — F-07 batch 1: 6 calculator pages JSON-LD → schema-markup helpers)
+
+- Phase 0: Lock carried over from batch continuation. No LOOP_PAUSE sentinel.
+- Phase 1: main synced — up to date (a159806).
+- Phase 1.5: No migration in last 24h → skipped.
+- Phase 1.7: main CI — success. Proceeding.
+- Phase 2: CI rescue check — PR #524 (KK-01) CI success. PR #526 (R-COVERAGE-02) CI pending. PR #527 not yet open. No rescue needed.
+- Phase 3: Priority slot 21 (F) — F-07 pending (first F-07 batch). Checked out `claude/audit-remediation/f-07-json-ld-batch-1` from main.
+- Phase 4: Verified 149 files with inline JSON-LD not using schema-markup helpers. Identified 6 calculator pages with simple WebApplication/SoftwareApplication patterns. calculatorJsonLd() and faqJsonLd() confirmed as correct helpers. breadcrumbJsonLd already present in property-yield and non-resident-dividend.
+- Phase 5: Migrated 6 files: retirement-calculator (WebApplication→calculatorJsonLd), debt-calculator, savings-calculator, property-yield-calculator, non-resident-dividend-calculator (SoftwareApplication→calculatorJsonLd), franking-credits-calculator (SoftwareApplication+FAQ→calculatorJsonLd+faqJsonLd). Net diff: +46 -118.
+- Phase 6: Commit `19b3630`. Branch pushed. PR #527 opened (draft).
+- STATUS: PROGRESS · stream=F · item=F-07 · pr=#527
+- Diff: +46 -118 (net -72 LOC across 6 page files)
+- Note: 36 of 42 hardcoded JSON-LD blocks remain. Batch 2 covers compound-interest, super-contributions, dividend-reinvestment, foreign-investment/*.
 
 ### 2026-05-03 — Forward progress iter 236 (stream R — R-COVERAGE-02: stripe-webhook registry + upsert-subscription + email builder tests)
 
