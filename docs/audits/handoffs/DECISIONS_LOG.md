@@ -5,6 +5,32 @@ who decided.
 
 ---
 
+## 2026-05-03 — Founder ratifies LAUNCH_GATE_9_5 thresholds + AUD-100 shard list
+
+**Decision:** Founder accepted the proposed thresholds in
+`LAUNCH_GATE_9_5.md` (overall ≥ 9.5/10, per-surface ≥ 9.0, zero P0/P1
+in REMEDIATION_QUEUE Streams A/B/C, Sentry release health ≥ 99.5%
+over 7 days pre-cutover) and the 8-shard list in `CURRENT_TASK.md`
+(security/auth, RLS, API hygiene, compliance copy, perf, testing
+gaps, dead code, deps).
+
+**Rationale:** Thresholds are derived from existing repo
+infrastructure (`QUALITY_DASHBOARD.md`, `ENTERPRISE_STANDARD.md`,
+`REMEDIATION_QUEUE.md`) — accepting them aligns the gate with what
+the loop already measures. Shard list covers the high-blast-radius
+surfaces called out in `CLAUDE.md` and the Oct–Dec 2026 migration
+constraints in `COMPANY.md`.
+
+**Decided by:** Founder.
+
+**Effects:**
+- `LAUNCH_GATE_9_5.md` flipped from DRAFT → RATIFIED.
+- `CURRENT_TASK.md` AUD-100 status flipped from `pending` to
+  `ready-for-codex`. Codex cleared to begin shard 1.
+- PR #507 (scaffold) cleared for merge once CI green.
+
+---
+
 ## 2026-05-03 — Bootstrap protocol on Claude side after rejected Codex cycle
 
 **Decision:** Claude scaffolds `AI_COLLAB_PROTOCOL.md`,
