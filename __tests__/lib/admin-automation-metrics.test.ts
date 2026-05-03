@@ -272,10 +272,11 @@ describe("getLeadDisputeOverview", () => {
   });
 
   it("exposes the cron run in lastRun when available", async () => {
+    const recentStartedAt = new Date(Date.now() - 30 * 60 * 1000).toISOString(); // 30 min ago
     const cronRow = {
       name: "auto-resolve-disputes",
-      started_at: "2026-05-02T06:00:00Z",
-      ended_at: "2026-05-02T06:00:30Z",
+      started_at: recentStartedAt,
+      ended_at: new Date(Date.now() - 29 * 60 * 1000).toISOString(),
       duration_ms: 30_000,
       status: "ok",
       stats: { processed: 3 },
