@@ -2,6 +2,18 @@
 -- Tier 1 Revenue Features Migration
 -- Features: Signup Tracking, A/B Testing, Drip Funnel
 -- ============================================================
+--
+-- Rollback (in reverse order):
+--   5. DROP TABLE IF EXISTS drip_affiliate_clicks;
+--   4. ALTER TABLE investor_drip_log
+--        DROP COLUMN IF EXISTS drip_type,
+--        DROP COLUMN IF EXISTS broker_recommendations,
+--        DROP COLUMN IF EXISTS opened_at,
+--        DROP COLUMN IF EXISTS clicked_at;
+--   3. DROP TABLE IF EXISTS site_ab_tests;
+--   2. DROP TABLE IF EXISTS affiliate_monthly_reports;
+--   1. DROP TABLE IF EXISTS broker_signups;
+--   Note: RLS policies and indexes drop with their tables.
 
 -- ── Feature 1: Broker Signup Tracking ───────────────────────
 
