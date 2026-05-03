@@ -1,6 +1,14 @@
 -- 20260402_investment_verticals.sql
 -- Investment verticals table and seed data for the /invest hub
 -- ============================================================
+--
+-- Rollback (in reverse order):
+--   3. DROP INDEX IF EXISTS investment_verticals_sort_idx;
+--   2. DROP INDEX IF EXISTS investment_verticals_slug_idx;
+--   1. DROP TABLE IF EXISTS investment_verticals;
+--   Note: Seed rows (INSERTs) are removed with the table. Re-running the
+--         migration re-seeds them from the INSERT block below.
+--         RLS policies drop with the table — no separate DROP POLICY needed.
 
 CREATE TABLE IF NOT EXISTS investment_verticals (
   id SERIAL PRIMARY KEY,

@@ -3,8 +3,19 @@
 -- Purpose: Create `agent_analytics` — a daily per-agent success-rate
 --          rollup table written by n8n cron jobs and read by the admin
 --          observability dashboard.
--- Rollback: REVOKE grants, DROP policy, DISABLE RLS, DROP indexes,
---           DROP table.
+-- Rollback (in reverse order):
+--   REVOKE SELECT, INSERT, UPDATE, DELETE
+--     ON public.agent_analytics FROM authenticated;
+--   REVOKE SELECT, INSERT, UPDATE, DELETE
+--     ON public.agent_analytics FROM service_role;
+--   DROP POLICY IF EXISTS "Service role can manage analytics"
+--     ON public.agent_analytics;
+--   ALTER TABLE public.agent_analytics DISABLE ROW LEVEL SECURITY;
+--   DROP INDEX IF EXISTS public.idx_agent_analytics_agent_date;
+--   DROP INDEX IF EXISTS public.idx_agent_analytics_date;
+--   DROP INDEX IF EXISTS public.idx_agent_analytics_agent_name;
+--   DROP TABLE IF EXISTS public.agent_analytics;
+--   Note: historical rollup data is lost; recompute from agent logs.
 -- Risk: medium — DROP TABLE discards historical agent-success-rate
 --       rollups. Source data in agent logs survives, so the rollups can
 --       be recomputed; but any time-series gap in the dashboard during
