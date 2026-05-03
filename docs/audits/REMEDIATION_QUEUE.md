@@ -41,7 +41,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | O | all PRs MERGED | #235/#237/#239/#299/#300/#366/#395/#408 all MERGED | last merged 2026-05-02T16:14Z | O-01..O-03 done. O-04 blocked (Stripe live validation). O-05 MERGED (#408). |
 | P | `claude/audit-remediation/p-01-sentry-v10-upgrade` (#468) | — | iter 212 — `331b98e` (PR #468: P-01 — @sentry/nextjs v9.47.1 → v10.51.0; clears 5 Sentry audit findings; removes `as any` cast in next.config.ts); CI success. | P-01 in-progress (PR #468). P-02 (Stripe SDK v17→v22) BLOCKED — requires npm install + local test run to verify webhook type compatibility across 5 major versions; not tractable on Hardware-exception sandbox. Needs a session with full node_modules. |
 | Q | _not started_ | — | — | — |
-| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · `r-05-email-templates-tests` (#471) · `r-06-automation-metrics-tests` (#472) · `r-07-chatbot-tests` (#473) · `r-08-fi-data-server-tests` (#510) · `r-09-tracking-browser-tests` (#511) · `r-09-tracking-tests` (#513) · `r-10-advisor-resolver-db-tests` (#514) · `r-10-advisor-resolver-tests` (#516) · `r-10-advisor-application-resolver-tests` (#515) | #290/#396/#459 all MERGED · #466/#471/#472/#473/#510/#511/#513/#514/#515/#516 OPEN | iter 227 — `1bda57e` PR #515 (R-10 triple-parallel supplement — extends advisor-application-resolver.test.ts 12→38 tests; #515 and #516 both modify same file — conflict; #514 adds separate db.test.ts — no conflict. Recommend merge #514 + #515, close #516 as subset). | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459). R-04 in-progress (#466, CI green). R-05 in-progress (#471). R-06 in-progress (#472). R-07 in-progress (#473). R-08 in-progress (#510, CI pending). R-09 in-progress (#511 + #513, rescue pushed). R-10 in-progress (#514 + #515 + #516; #515/#516 conflict on same file). R-11 pending. |
+| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · `r-05-email-templates-tests` (#471) · `r-06-automation-metrics-tests` (#472) · `r-07-chatbot-tests` (#473) · `r-08-fi-data-server-tests` (#510) · `r-09-tracking-browser-tests` (#511) · `r-09-tracking-tests` (#513) · `r-10-advisor-resolver-db-tests` (#514) · `r-10-advisor-resolver-tests` (#516) · `r-10-advisor-application-resolver-tests` (#515) · `r-disc-01-financial-periods-tests` (#517) | #290/#396/#459 all MERGED · #466/#471/#472/#473/#510/#511/#513/#514/#515/#516/#517 OPEN | iter 226 — `fce958b` (PR #517: R-DISC-20260429-01 — financial-periods 5 new tests for getPeriod + listRecentPeriods; existing file had 6 tests already covering closePeriod/isPeriodClosedAt/previousMonthBounds); CI running. | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459). R-04 in-progress (#466, CI green). R-05 in-progress (#471). R-06 in-progress (#472). R-07 in-progress (#473). R-08 in-progress (#510, CI pending). R-09 in-progress (#511 + #513, rescue pushed). R-10 in-progress (#514 + #515 + #516; #515/#516 conflict on same file — recommend merge #514+#515, close #516 as subset). R-DISC-20260429-01 in-progress (#517). R-11 pending. |
 | S | _not started_ | — | — | — |
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 MERGED 2026-04-28T11:45Z | merged | V-NEW-06 done (commit `a7bd736`) |
@@ -938,7 +938,7 @@ Highest-risk untested business logic. Marketplace allocation is the most lucrati
 | R-09 | in-progress | `lib/tracking.ts` — 133 LOC, 33% covered → ≥70% (PR #511 + #513; parallel-fire race — both auto-merge-safe, different files) | 1 | P2. |
 | R-10 | in-progress | `lib/advisor-application-resolver.ts` — 416 LOC, 35% covered → ≥70% (PR #514) | 1 | P2. |
 | R-11 | pending | Hooks: `useShortlist`, `useAdvisorShortlist`, `useSubscription` — all 0% | 1 | P3. |
-| R-DISC-20260429-01 | pending | `lib/financial-periods.ts` — 250 LOC, 0% unit test coverage. `closePeriod` and `listRecentPeriods` are called from admin/financial-periods and the monthly cron; the D-11 batch 27 route tests mock them but don't exercise the lib logic directly. | 1 | P2. Surfaced by iter 112. |
+| R-DISC-20260429-01 | in-progress | `lib/financial-periods.ts` — existing file had 6 tests (closePeriod/isPeriodClosedAt/previousMonthBounds); added 5 more for getPeriod + listRecentPeriods → PR #517. | 1 | P2. Surfaced by iter 112. Previously noted as 0% — test file was added in iter ~200 (commit 597d6e8) but queue wasn't updated. |
 
 ### Stream S — Architecture artefacts (audit §12)
 
@@ -1753,6 +1753,19 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 
 - STATUS: PROGRESS · stream=R · item=R-10 · pr=#514
 - Commit: 208e124 (initial) + 6db4135 (TS fix)
+
+### 2026-05-03 — Forward progress iter 226 (stream R — R-DISC-20260429-01: financial-periods getPeriod + listRecentPeriods coverage)
+
+- Phase 0: batch iteration in same fire; lock held.
+- Phase 1: synced main — up to date. No LOOP_PAUSE. Main CI green.
+- Phase 2: PR #517 just opened — CI starting (all in_progress/queued), no failures. No review comments.
+- Phase 3: R-DISC-20260429-01 pending. Discovered existing test file already had 6 tests (closePeriod/isPeriodClosedAt/previousMonthBounds) from prior iter ~200, but getPeriod and listRecentPeriods were uncovered.
+- Phase 4–5: added 5 tests (getPeriod × 2, listRecentPeriods × 3). All 11 tests pass locally. Lint clean.
+- Phase 6: committed `fce958b`, pushed, opened PR #517. auto-merge-safe (test-only). CI running.
+- STATUS: PROGRESS · stream=R · item=R-DISC-20260429-01 · pr=#517
+- Commit: fce958b · Diff: +42 -0 across 1 file
+- Next item: AUDIT-SWEEP-01 (console.log in app/api-docs/page.tsx:439)
+- Remaining: AUDIT-SWEEP-01+02, G-03 batch 8, R-11 pending
 
 ### 2026-05-03 — Forward progress iter 227 (stream R — R-10 triple-parallel supplement: advisor-application-resolver.test.ts 12→38 tests)
 
