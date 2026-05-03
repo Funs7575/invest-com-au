@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 import { logger } from "@/lib/logger";
@@ -49,22 +50,11 @@ export const maxDuration = 30;
  * endpoint 401s.
  */
 
-interface Body {
-  professional_id: number;
-  abn?: string | null;
-  afsl_number?: string | null;
-}
-
-function parse(body: unknown): Body | null {
-  if (!body || typeof body !== "object") return null;
-  const b = body as Record<string, unknown>;
-  const id = typeof b.professional_id === "number" ? b.professional_id : null;
-  if (!id || !Number.isFinite(id)) return null;
-  const abn = typeof b.abn === "string" ? b.abn : null;
-  const afsl_number =
-    typeof b.afsl_number === "string" ? b.afsl_number : null;
-  return { professional_id: id, abn, afsl_number };
-}
+const VerifyBody = z.object({
+  professional_id: z.number().int().positive(),
+  abn: z.string().nullable().optional(),
+  afsl_number: z.string().nullable().optional(),
+});
 
 function isAuthorised(req: NextRequest): boolean {
   const adminKey = process.env.ADMIN_API_KEY;
@@ -121,13 +111,20 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
 
-  const parsed = parse(await req.json().catch(() => null));
-  if (!parsed) {
+  let rawBody: unknown;
+  try {
+    rawBody = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid body — professional_id is required" }, { status: 400 });
+  }
+  const bodyResult = VerifyBody.safeParse(rawBody);
+  if (!bodyResult.success) {
     return NextResponse.json(
       { error: "Invalid body — professional_id is required" },
       { status: 400 },
     );
   }
+  const parsed = bodyResult.data;
 
   const supabase = createAdminClient();
 
