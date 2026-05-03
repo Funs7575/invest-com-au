@@ -35,6 +35,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | I | `claude/audit-remediation/i-new-04-main-ci-auto-revert` (#278) · `i-02-drift-detection-ci` (#353) | #278 MERGED 2026-04-28T16:18Z · #353 MERGED 2026-05-01T14:30Z | last merged 2026-05-01T14:30Z | I-NEW-01..05 all done. I-NEW-06 needs-user (Supabase GH Actions secrets). I-01 done via B-07 (PR #286). I-02 done (PR #353). I-03 done via C-08 (PR #327). I-04 done via E-03 (PR #313). I-05 done via D-10 (PR #246). |
 | J | `claude/audit-remediation/j-stripe-webhook` | #288 MERGED 2026-04-29T16:48Z | last merged 2026-04-29T16:48Z | J-01a..J-01e done · J-01d-ext done · J-03/J-05/J-06/J-08/J-09/J-10 done. **Stream J complete** (J-02/J-04/J-07/J-11 false-positives or done out-of-band). |
 | K | `claude/audit-remediation/k-security-hardening` | #222 MERGED 2026-04-28T15:14Z | last merged 2026-04-28T15:14Z | K-01..K-08 done; K-09 false-positive; K-10..K-15 done — **stream complete** |
+| KK | `claude/audit-remediation/kk-lead-routing-maturity` | #524 OPEN | iter 234 — `2024b72` (KK-01: lead-sla-check cron + 10 tests; CI pending) | KK-01 in-progress (#524). KK-02..KK-06 pending. |
 | L | `claude/audit-remediation/l-observability` | #289 MERGED 2026-04-29T10:18Z | last merged 2026-04-29T10:18Z | L-04/L-05 done out-of-loop. L-06..L-12 all done (merged via PR #289). L-02/L-03 deferred-post-launch (n8n dormant). L-01 needs-user (SENTRY_AUTH_TOKEN). L-10 false-positive (verified populating). **Stream L complete** (modulo L-01 needs-user). |
 | M | `claude/audit-remediation/m-01b-cover-image-backfill` (#283) · `m-02-versus-json-ld` (#296) · `m-05-glossary-linkifier` (#325) | #283/#296/#325 all MERGED | last merged 2026-05-01T10:29Z | M-01a done out-of-loop (PR #227). M-01b done (PR #283 — engineering side). M-02 done (PR #296). M-03 done (`85c7236`). M-04 done (`353fa3a`). M-05 done (PR #325). M-06 done (PR #283). M-07 done (PR #283). **Stream M complete.** |
 | N | `claude/audit-remediation/n-ux-perf` | #242 MERGED | last merged 2026-04-28 | N-01+N-02 done (`2ec6f89`) · N-03a/b/c done · N-04/N-05 FP · N-06 blocked (deferred-post-launch by founder 2026-05-01 — option 4 chosen) · N-07/N-08/N-09/N-10/N-11 done — **stream complete** (N-06 deferred). |
@@ -1038,7 +1039,7 @@ Operationalises the lead-form surface in `docs/audits/ENTERPRISE_STANDARD.md` so
 
 | ID | Status | Summary | Est. iterations | Notes |
 | --- | --- | --- | --- | --- |
-| KK-01 | pending | Per-source SLA monitoring — alert if a lead sits in the queue past its source's SLA (5 min hot, 30 min warm, 4h cold) | 1-2 | Reads `leads` table + source variant; cron sweeps for breaches; Sentry alert + ops-channel notification. |
+| KK-01 | in-flight | Per-source SLA monitoring — alert if a lead sits in the queue past its source's SLA (5 min hot, 30 min warm, 4h cold) | 1-2 | PR #524. `lead-sla-check` cron every 10min; window-based breach detection; Resend ops alert email. |
 | KK-02 | pending | Queue health alert — if no leads for a hub for >N hours during business hours, alert | 1 | Per-hub silence threshold configurable; catches broken forms / broken routing / genuinely silent hubs (operator decides per alert). |
 | KK-03 | pending | Advisor response-time tracking — per-advisor mean-time-to-first-response surfaced in advisor portal | 1-2 | Reads `lead_assignments` + `advisor_responses` join; renders into the existing advisor portal dashboard. |
 | KK-04 | pending | Conversion analytics per source — PostHog funnel `lead_submit:<source>` → `advisor_response` → `outcome` | 1 | Adds the `<source>` discriminator to every existing `submitLead()` call site; back-fills missing variants. |
@@ -1679,6 +1680,20 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-03 — Forward progress iter 234 (stream KK — KK-01: lead SLA monitoring cron + 10 tests)
+
+- Phase 0: Lock acquired. No LOOP_PAUSE sentinel.
+- Phase 1: main synced — pulled queue update from iter 233 (d711804→4eff37d, 23 lines queue-only).
+- Phase 1.5: No migration in last 24h, no Supabase-types-drift CI failures on in-flight PRs → skipped.
+- Phase 1.7: main CI — status: success (last run green post-iter-233 MAIN-RESCUE). Proceeding.
+- Phase 2: No red CI on any in-flight PR (PR #524 not yet opened; others pending/success).
+- Phase 3: Priority slot 14 (KK) — first item KK-01 (pending). Created branch `claude/audit-remediation/kk-lead-routing-maturity` from main.
+- Phase 4: Verification — new cron route + test. `professional_leads` confirmed in `lib/database.types.ts` with `quality_score: number | null` and `responded_at: string | null`. Window-based detection chosen (no schema migration needed vs stamp-based approach). DB errors per tier non-fatal.
+- Phase 5: Implemented `app/api/cron/lead-sla-check/route.ts` (137 LOC) + `__tests__/api/cron-lead-sla-check.test.ts` (259 LOC) + `lib/cron-groups.ts` (+1 line, every-10m dispatch group). Total: 397 LOC (+1 changed).
+- Phase 6: Commit `2024b72`. Branch pushed. PR #524 opened (draft).
+- STATUS: PROGRESS · stream=KK · item=KK-01 · pr=#524
+- Diff: +397 -1 (route.ts 137 LOC, test 259 LOC, cron-groups.ts 1 line)
 
 ### 2026-05-03 — CI-RESCUE iter 233 (MAIN-RESCUE complete: PR #523 superset of #522; all 5 test files covered)
 
