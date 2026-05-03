@@ -41,7 +41,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | O | all PRs MERGED | #235/#237/#239/#299/#300/#366/#395/#408 all MERGED | last merged 2026-05-02T16:14Z | O-01..O-03 done. O-04 blocked (Stripe live validation). O-05 MERGED (#408). |
 | P | `claude/audit-remediation/p-01-sentry-v10-upgrade` (#468) | — | iter 212 — `331b98e` (PR #468: P-01 — @sentry/nextjs v9.47.1 → v10.51.0; clears 5 Sentry audit findings; removes `as any` cast in next.config.ts); CI success. | P-01 in-progress (PR #468). P-02 (Stripe SDK v17→v22) BLOCKED — requires npm install + local test run to verify webhook type compatibility across 5 major versions; not tractable on Hardware-exception sandbox. Needs a session with full node_modules. |
 | Q | _not started_ | — | — | — |
-| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · `r-05-email-templates-tests` (#471) · `r-06-automation-metrics-tests` (#472) · `r-07-chatbot-tests` (#473) · `r-08-fi-data-server-tests` (#510) · `r-09-tracking-browser-tests` (#511) · `r-09-tracking-tests` (#513) · `r-10-advisor-resolver-db-tests` (#514) · `r-10-advisor-resolver-tests` (#516) | #290/#396/#459 all MERGED · #466/#471/#472/#473/#510/#511/#513/#514/#516 OPEN | iter 225 — `2237ac6` (PR #516: R-10 parallel-fire supplement — 13 tests in existing tracking.test.ts covering all DB-layer paths; PR #514 adds separate db.test.ts file, no conflict); CI running. | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459). R-04 in-progress (#466, CI green). R-05 in-progress (#471). R-06 in-progress (#472). R-07 in-progress (#473). R-08 in-progress (#510, CI pending). R-09 in-progress (#511 + #513, rescue pushed). R-10 in-progress (#514 + #516, parallel-fire race — different files, both auto-merge-safe). R-11 pending. |
+| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · `r-05-email-templates-tests` (#471) · `r-06-automation-metrics-tests` (#472) · `r-07-chatbot-tests` (#473) · `r-08-fi-data-server-tests` (#510) · `r-09-tracking-browser-tests` (#511) · `r-09-tracking-tests` (#513) · `r-10-advisor-resolver-db-tests` (#514) · `r-10-advisor-resolver-tests` (#516) · `r-10-advisor-application-resolver-tests` (#515) | #290/#396/#459 all MERGED · #466/#471/#472/#473/#510/#511/#513/#514/#515/#516 OPEN | iter 227 — `1bda57e` PR #515 (R-10 triple-parallel supplement — extends advisor-application-resolver.test.ts 12→38 tests; #515 and #516 both modify same file — conflict; #514 adds separate db.test.ts — no conflict. Recommend merge #514 + #515, close #516 as subset). | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459). R-04 in-progress (#466, CI green). R-05 in-progress (#471). R-06 in-progress (#472). R-07 in-progress (#473). R-08 in-progress (#510, CI pending). R-09 in-progress (#511 + #513, rescue pushed). R-10 in-progress (#514 + #515 + #516; #515/#516 conflict on same file). R-11 pending. |
 | S | _not started_ | — | — | — |
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 MERGED 2026-04-28T11:45Z | merged | V-NEW-06 done (commit `a7bd736`) |
@@ -1753,6 +1753,19 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 
 - STATUS: PROGRESS · stream=R · item=R-10 · pr=#514
 - Commit: 208e124 (initial) + 6db4135 (TS fix)
+
+### 2026-05-03 — Forward progress iter 227 (stream R — R-10 triple-parallel supplement: advisor-application-resolver.test.ts 12→38 tests)
+
+- Phase 0: context-restored session (batch continuation from iter 225).
+- Phase 1: synced main — picked up iter 226 CI rescue update. No LOOP_PAUSE. Main CI green.
+- Phase 2: PR #511 CI running (iter 226 rescue in flight). PR #514 has `6db4135` proactive fix running. No confirmed failures on current heads.
+- Phase 3: R-10 already claimed by PR #514 (new db.test.ts file) AND PR #516 (existing test file, 13 tests). My fire extended the existing test file to 38 tests — different approach from #516's 13. NOTE: PR #515 and PR #516 CONFLICT (both modify advisor-application-resolver.test.ts from same base). #515 is strictly a superset of #516: 38 tests vs 13 tests in same file.
+- Phase 4–5: 38 tests total (26 new on top of original 12). safe `as unknown as [string, T][]` mock.calls pattern used throughout.
+- Phase 6: committed `1bda57e`, pushed, opened PR #515. Conflict noted in queue.
+
+- STATUS: PROGRESS · stream=R · item=R-10 (parallel supplement, conflicts with #516) · pr=#515
+- Commit: badfe55 (scaffold) + 1bda57e (tests) · Diff: +380 -2 across 1 file
+- Next item: R-11 pending (hooks)
 
 ### 2026-05-03 — Forward progress iter 225 (stream R — R-10 parallel-fire supplement: advisor-application-resolver 13-test coverage in existing test file)
 
