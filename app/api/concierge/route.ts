@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
+import { isFlagEnabled } from "@/lib/feature-flags";
 import { logger } from "@/lib/logger";
 import crypto from "node:crypto";
 import {
@@ -94,6 +95,16 @@ function ensureSessionId(session_id?: string): string {
 }
 
 export async function POST(req: NextRequest) {
+  // Launch-ops kill switch: flip `ai_generation` off in
+  // /admin/automation/flags to halt all AI calls (runaway cost,
+  // model regression, hallucinated compliance copy). Distinct from
+  // the per-route ai-cost-caps gate below — this one trips the
+  // entire AI surface at once. See docs/ops/launch-ops-plan.md §4
+  // and docs/ops/ai-cost-caps.md.
+  if (!(await isFlagEnabled("ai_generation"))) {
+    return NextResponse.json({ error: "temporarily_unavailable" }, { status: 503 });
+  }
+
   if (
     !(await isAllowed("concierge", ipKey(req), {
       max: 30,
