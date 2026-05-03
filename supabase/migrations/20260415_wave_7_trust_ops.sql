@@ -10,6 +10,13 @@
 --                                policy per table/column
 --
 -- Every table RLS-enabled and service-role only.
+--
+-- Rollback (in reverse order):
+--   4. DROP TABLE IF EXISTS public.retention_rules;
+--   3. DROP TABLE IF EXISTS public.slo_incidents;
+--   2. DROP TABLE IF EXISTS public.slo_definitions;
+--   1. DROP TABLE IF EXISTS public.feature_flags;
+--   Note: RLS policies and indexes drop with their tables.
 
 -- ── 1. feature_flags ───────────────────────────────────────────────
 -- Richer than automation_kill_switches: supports a percentage
