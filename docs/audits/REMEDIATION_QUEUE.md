@@ -30,7 +30,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | D | `claude/audit-remediation/d-route-tests` | #285 MERGED 2026-04-29T10:13Z; supplementary PRs #246/#285/#297/#298 | last merged 2026-04-29T18:53Z | D-01..D-09 done (PR #246). D-10 done (PR #246 — coverage ratchet). D-11 complete (43+ batches, all admin/cron/non-admin routes covered) — merged via PR #285 + supplementary PRs #297/#298. **Stream D complete.** |
 | E | `claude/audit-remediation/e-01-with-validated-body` (#295) · `e-02-batch-*-zod-rollout` (#315/#323/#406/#460) · `e-03-zod-lint-rule` (#313) | #295/#313/#315/#323/#406 MERGED · #460 OPEN | iter 209 CI-RESCUE — `57ae875` (PR #460: remove Zod v4 incompatible required_error from questions + threads — same root cause as batch-3 rescue 9fefb6c); CI re-running | E-01 done (PR #295 — withValidatedBody helper). E-02 in-progress (batches 1+2 done via PR #315/#323 — 8 routes; batch 3 done via PR #406 — 9 CI rescues; batch 4 in-progress via PR #460 — 4 routes: questions, shortlist, referrals, community/threads; CI rescue `57ae875` for Zod v4 required_error; ~1 batch remaining). E-03 done (PR #313 — ESLint rule). E-04 backfill pending. |
 | F | `claude/audit-remediation/f-02..f-06` (multiple PRs) | #293/#294/#301/#354/#355/#370 all MERGED | last merged 2026-05-01T16:00Z | F-01 false-positive. F-02 done (PR #293 — formatDate). F-03 done (PR #370 — formatCurrency). F-04 done (PR #354 — slugify, first wave). F-05 done (PR #294 + #301 followup — console→logger). F-06 done (PR #355 — compliance copy SSOT). F-07/F-08 pending. |
-| G | `claude/audit-remediation/g-03-batch-6-rollback-headers` (#455) | #307/#310/#311/#314/#316/#342/#352/#405 all MERGED · #455 OPEN | iter 203 — `3cc49bb` (PR #455: G-03 batch 6 — rollback headers for 10 migrations 20260402–20260413); CI in_progress | G-01+G-02 done (PR #307). G-03 batch 6 in-progress (#455 — 60/108 covered; ~5 batches still pending). G-04 done (PR #310 + #342). G-04-FINDING-1..5 pending founder authorization. |
+| G | `claude/audit-remediation/g-03-batch-6-rollback-headers` (#455) · `g-03-batch-7-rollback-headers` (#467) | #307/#310/#311/#314/#316/#342/#352/#405 all MERGED · #455/#467 OPEN | iter 211 — `534a70d` (PR #467: G-03 batch 7 — rollback headers for 10 migrations 20260415–20260419); CI pending | G-01+G-02 done (PR #307). G-03 batch 7 in-progress (#467 — 70/108 covered; ~4 batches still pending). G-04 done (PR #310 + #342). G-04-FINDING-1..5 pending founder authorization. |
 | H | _not started_ | — | — | — |
 | I | `claude/audit-remediation/i-new-04-main-ci-auto-revert` (#278) · `i-02-drift-detection-ci` (#353) | #278 MERGED 2026-04-28T16:18Z · #353 MERGED 2026-05-01T14:30Z | last merged 2026-05-01T14:30Z | I-NEW-01..05 all done. I-NEW-06 needs-user (Supabase GH Actions secrets). I-01 done via B-07 (PR #286). I-02 done (PR #353). I-03 done via C-08 (PR #327). I-04 done via E-03 (PR #313). I-05 done via D-10 (PR #246). |
 | J | `claude/audit-remediation/j-stripe-webhook` | #288 MERGED 2026-04-29T16:48Z | last merged 2026-04-29T16:48Z | J-01a..J-01e done · J-01d-ext done · J-03/J-05/J-06/J-08/J-09/J-10 done. **Stream J complete** (J-02/J-04/J-07/J-11 false-positives or done out-of-band). |
@@ -41,7 +41,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | O | all PRs MERGED | #235/#237/#239/#299/#300/#366/#395/#408 all MERGED | last merged 2026-05-02T16:14Z | O-01..O-03 done. O-04 blocked (Stripe live validation). O-05 MERGED (#408). |
 | P | _not started_ | — | — | — |
 | Q | _not started_ | — | — | — |
-| R | `claude/audit-remediation/r-03-dispute-resolver-tests` (#459) | #290/#396 both MERGED · #459 OPEN | iter 206 — `154a93c` (PR #459: R-03 — 18-test suite for advisor-lead-dispute-resolver); CI running | R-01 done (PR #290). R-02 MERGED (#396 — 29 tests auto-bid.ts + 12 tests broker-auth.ts). R-03 in-progress (PR #459). R-04..R-11 pending. |
+| R | `claude/audit-remediation/r-03-dispute-resolver-tests` (#459) · `r-04-cached-data-tests` (#466) | #290/#396 both MERGED · #459/#466 OPEN | iter 211 — PR #466 pre-existing from concurrent session (R-04: 37 tests for lib/cached-data.ts, `auto-merge-safe`); CI pending | R-01 done (PR #290). R-02 MERGED (#396 — 29 tests auto-bid.ts + 12 tests broker-auth.ts). R-03 in-progress (PR #459). R-04 in-progress (PR #466). R-05..R-11 pending. |
 | S | _not started_ | — | — | — |
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 MERGED 2026-04-28T11:45Z | merged | V-NEW-06 done (commit `a7bd736`) |
@@ -707,7 +707,7 @@ Highest priority: critical 2 first.
 | --- | --- | --- | --- | --- |
 | G-01 | done | Idempotency: convert 10 non-idempotent migrations (per audit §5.2) to use `IF NOT EXISTS` / `CREATE OR REPLACE` | 1 | Done in PR #307 (G-01+G-02 combined). |
 | G-02 | done | Rollback headers: add to the 3 migrations missing headers entirely | 1 | Done in PR #307 — 3 migrations (`20260316_add_weekly_rate_drip_log.sql`, `20260316_add_advisor_nudge_tracking.sql`, `20260316_add_lead_outcome_tracking.sql`). |
-| G-03 | in-progress | Rollback headers: backfill explicit reverse-SQL on remaining 108 partial-header migrations | ~10 | 6 batches done — PR #311 (batch 1, 10), PR #314 (batch 2, 10), PR #316 (batch 3, 10), PR #352 (batch 4, 10), PR #405 (batch 5, 10), PR #455 (batch 6, 10). 60 of 108 covered; ~5 batches still pending. |
+| G-03 | in-progress | Rollback headers: backfill explicit reverse-SQL on remaining 108 partial-header migrations | ~10 | 7 batches done — PR #311 (batch 1, 10), PR #314 (batch 2, 10), PR #316 (batch 3, 10), PR #352 (batch 4, 10), PR #405 (batch 5, 10), PR #455 (batch 6, 10), PR #467 (batch 7, 10). 70 of 108 covered; ~4 batches still pending. |
 | G-04 | done | Document the 8 partial-failure-marker migrations (audit §5.5) for user to verify in prod | 1 | Doc shipped in PR #310 (`docs/audits/g-04-partial-failure-markers.md`). Verification done by founder via Supabase MCP, logged in PR #342. Result: 3 of 8 clean (#3/#5/#8 — no security data leak), 5 partial-apply findings surfaced as G-04-FINDING-1..5 (pending separate Tier C founder authorization). G-04 itself complete. |
 
 ### Stream I — CI / lint guardrails
@@ -910,7 +910,7 @@ Highest-risk untested business logic. Marketplace allocation is the most lucrati
 | R-02 | done | `lib/marketplace/auto-bid.ts` — 174 LOC, 0% covered | 1 | P0. Pairs with R-01. Done: commit `ae23f8b` · PR #396 (29 tests). |
 | R-02-DISC-20260501-01 | done | `lib/marketplace/broker-auth.ts` — 77 LOC, 0 tests, no coverage. Only `lib/marketplace/` file without a test. | 1 | Done in commit `1a082b2` · PR #396 (12 tests: getBrokerAccount × 5, requireBrokerAccount × 3, isBrokerUser × 3). |
 | R-03 | in-progress | `lib/advisor-lead-dispute-resolver.ts` — 340 LOC, 0% covered | 1 | P1. PR #459. 18 tests: buildClassifierContext (8) + autoResolveDispute (7) + notifyAdminEscalated (3). All passing locally. |
-| R-04 | pending | `lib/cached-data.ts` — 263 LOC, 0% covered | 1 | P1. |
+| R-04 | in-progress | `lib/cached-data.ts` — 263 LOC, 0% covered | 1 | P1. PR #466 — 37 tests covering all 17 exported functions. Branch `claude/audit-remediation/r-04-cached-data-tests`. |
 | R-05 | pending | `lib/email-templates.ts` — 745 LOC, 18% covered → raise to ≥60% | 1 | P2. |
 | R-06 | pending | `lib/admin/automation-metrics.ts` — 536 LOC, 25% covered | 1 | P2. |
 | R-07 | pending | `lib/chatbot.ts` — 233 LOC, 27% covered | 1 | P2. |
@@ -1623,6 +1623,20 @@ Two strategically important surfaces under-served by current nav: (1) investment
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-03 — Forward progress iter 211 (stream G — G-03 batch 7: rollback headers for 10 migrations 20260415–20260419)
+
+- Phase 0: Lock active (batch mode, iteration 2/5 of new fire).
+- Phase 1: Synced main. `git pull --ff-only origin main` → already up to date.
+- Phase 1.5: No migration commits to main in last 24h; no in-flight Supabase types drift failures. Phase 1.5 skipped.
+- Phase 1.7: main CI last run = success. Proceed.
+- Phase 2: CI rescue check — #460 (E-02 b4): checked; #455 (G-03 b6): checked; #459 (R-03): checked. No failures. No rescue needed.
+- Phase 3: G-stream (slot 19) next: G-03 batch 7 (next 10 migrations after batch 6's 60/108). Batch 6 ended at `20260413_seed_stockbroker_firms.sql`. Batch 7 files: `20260415_wave_6_conversion_intelligence.sql`, `20260415_wave_7_trust_ops.sql`, `20260415_wave_8_growth_engine.sql`, `20260415_wave_9_warehouse_ai.sql`, `20260415_wave_10_critical_gaps.sql`, `20260416_wave_11_reality_check.sql`, `20260417_wave_13_commodity_engine.sql`, `20260418_wave_14_newsroom_engine.sql`, `20260419_glossary_terms.sql`, `20260419_wave_15_price_snapshots.sql`. All 10 had zero rollback headers confirmed.
+- Phase 4: Verified idempotency — all ADD COLUMN/CREATE TABLE use IF NOT EXISTS. Rollback headers added in reverse creation order for each migration.
+- Phase 5: Wrote rollback headers on all 10 migration files. Diff: +130/-0 LOC across 10 files.
+- Phase 6: Branch `claude/audit-remediation/g-03-batch-7-rollback-headers`. Commit `534a70d`. PR #467 opened.
+- Note: R-04 (`lib/cached-data.ts` — 37 tests) was already complete as PR #466 from a concurrent session. Queue updated to reflect in-progress status.
+- STATUS: PROGRESS · stream=G · item=G-03 (batch 7) · pr=#467 · commit=534a70d · diff=+130 -0 across 10 files
 
 ### 2026-05-02 — CI rescue iter 209 (stream E — E-02 batch 4 Zod v4 required_error fix, PR #460)
 
