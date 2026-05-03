@@ -296,7 +296,7 @@ export async function getWinningCampaigns(
  * Record an impression event for a campaign.
  */
 export async function recordImpression(
-  campaignId: number,
+  campaignId: string | number,
   brokerSlug: string,
   page?: string,
   extra?: { placement_id?: number; scenario?: string; device_type?: string }
