@@ -26,6 +26,14 @@ vi.mock("@/lib/stripe", () => ({
   }),
 }));
 
+// The stripe_checkout feature flag was added in the launch-ops pass.
+// In test environments isFlagEnabled() returns false (placeholder Supabase URL),
+// causing all POST tests to receive 503. Mock to return true by default.
+const mockIsFlagEnabled = vi.fn().mockResolvedValue(true);
+vi.mock("@/lib/feature-flags", () => ({
+  isFlagEnabled: (...args: unknown[]) => mockIsFlagEnabled(...args),
+}));
+
 import { POST } from "@/app/api/listings/checkout/route";
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
@@ -65,6 +73,7 @@ const VALID_BODY = {
 describe("POST /api/listings/checkout", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockIsFlagEnabled.mockResolvedValue(true);
     mockAdminFrom
       .mockImplementationOnce(() => makeChain({ data: ACTIVE_PLAN, error: null }))
       .mockImplementationOnce(() => makeChain({ data: ACTIVE_LISTING, error: null }));
