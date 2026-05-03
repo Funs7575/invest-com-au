@@ -41,7 +41,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | O | all PRs MERGED | #235/#237/#239/#299/#300/#366/#395/#408 all MERGED | last merged 2026-05-02T16:14Z | O-01..O-03 done. O-04 blocked (Stripe live validation). O-05 MERGED (#408). |
 | P | `claude/audit-remediation/p-01-sentry-v10-upgrade` (#468) | — | iter 212 — `331b98e` (PR #468: P-01 — @sentry/nextjs v9.47.1 → v10.51.0; clears 5 Sentry audit findings; removes `as any` cast in next.config.ts); CI pending | P-01 in-progress (PR #468). |
 | Q | _not started_ | — | — | — |
-| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) | #290/#396/#459 all MERGED · #466 OPEN | iter 216 CI rescue — `e43f25c` (PR #466: fix question→question_text in getQuizQuestions test; QuizQuestion interface uses question_text not question); CI re-running | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459 — 18 tests). R-04 in-progress (PR #466). R-05..R-11 pending. |
+| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · `r-05-email-templates-tests` (#471) | #290/#396/#459 all MERGED · #466/#471 OPEN | iter 217 — `313ae02` (PR #471: R-05 — 60 tests, email-templates.ts 18%→≥60%); CI pending | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459 — 18 tests). R-04 in-progress (PR #466, CI success). R-05 in-progress (PR #471 — 60 tests covering all 18 exports). R-06..R-11 pending. |
 | S | _not started_ | — | — | — |
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 MERGED 2026-04-28T11:45Z | merged | V-NEW-06 done (commit `a7bd736`) |
@@ -911,7 +911,7 @@ Highest-risk untested business logic. Marketplace allocation is the most lucrati
 | R-02-DISC-20260501-01 | done | `lib/marketplace/broker-auth.ts` — 77 LOC, 0 tests, no coverage. Only `lib/marketplace/` file without a test. | 1 | Done in commit `1a082b2` · PR #396 (12 tests: getBrokerAccount × 5, requireBrokerAccount × 3, isBrokerUser × 3). |
 | R-03 | done | `lib/advisor-lead-dispute-resolver.ts` — 340 LOC, 0% covered | 1 | P1. PR #459 MERGED 2026-05-03. 18 tests: buildClassifierContext (8) + autoResolveDispute (7) + notifyAdminEscalated (3). |
 | R-04 | in-progress | `lib/cached-data.ts` — 263 LOC, 0% covered | 1 | P1. PR #466 — 37 tests covering all 17 exported functions. Branch `claude/audit-remediation/r-04-cached-data-tests`. |
-| R-05 | pending | `lib/email-templates.ts` — 745 LOC, 18% covered → raise to ≥60% | 1 | P2. |
+| R-05 | in-progress | `lib/email-templates.ts` — 745 LOC, 18% covered → raise to ≥60% | 1 | P2. PR #471 — 60 tests, all 18 exports covered. |
 | R-06 | pending | `lib/admin/automation-metrics.ts` — 536 LOC, 25% covered | 1 | P2. |
 | R-07 | pending | `lib/chatbot.ts` — 233 LOC, 27% covered | 1 | P2. |
 | R-08 | pending | `lib/fi-data-server.ts` — 231 LOC, 27% covered | 1 | P2. |
@@ -1633,6 +1633,16 @@ Two strategically important surfaces under-served by current nav: (1) investment
 - Diagnosis: `getQuizQuestions` returns `Promise<QuizQuestion[]>`; `QuizQuestion` has `question_text: string`, not `question`. Test fixture set `{ question: "..." }` and assertion used `qs[0].question` — TypeScript type error "Property 'question' does not exist on type 'QuizQuestion'". Fix: `question` → `question_text` in both dbData fixture and `expect()` assertion (3 lines). The `getBrokerQuestions` test on line 147 correctly uses `.question` — that returns `BrokerQuestion[]` which does have `question: string`.
 - Phase 6: Commit `e43f25c`. Branch `claude/audit-remediation/r-04-cached-data-tests`. PR #466.
 - STATUS: CI-RESCUE · stream=R · pr=#466
+### 2026-05-03 — Forward progress iter 217 (stream R — R-05: email-templates.ts test coverage 18%→≥60%)
+
+- Phase 0: Lock active (batch mode, iteration 3/5).
+- Phase 1: Synced main. Clean state.
+- Phase 2: CI rescue check — #469 (E-02 b5): pending after CI rescue 2. #460 (E-02 b4): success. #467 (G-03 b7): success. #468 (P-01): success. #466 (R-04): success. No rescues needed.
+- Phase 3: A (slot 12): many open PRs, batches in flight. O (slot 13): mostly done. KK (slot 14): not started (large scope). P (slot 15): P-01 in-flight. R (slot 16): R-04 in-flight with CI success → R-05 is next pending item.
+- Phase 4: R-05: `lib/email-templates.ts` 1705 LOC, 18 exports. Existing test file covers 5 exports with 2 broken tests (wrong call signatures). Verification: all exports callable with clear param types.
+- Phase 5: Added 60 tests across 14 new describe blocks. All 18 exports tested. Key branches: zero-balance warning (lowBalanceEmail), reason block (campaignRejectedEmail), conversions>0 (campaignPerformanceEmail), empty-array fallbacks (weeklyDigestEmail), hasActiveCampaign fork (checkInEmail), with/without deal (quizFollowUp3Email, brokerDripEmail5), notificationFooter with/without email. Replaced 2 broken campaign tests with correct signatures.
+- Phase 6: Commit `313ae02`. Branch `claude/audit-remediation/r-05-email-templates-tests`. PR #471.
+- STATUS: PROGRESS · stream=R · item=R-05 · pr=#471 · commit=313ae02 · diff=+387 -39 (1 test file)
 
 ### 2026-05-03 — CI rescue iter 215 (stream E — PR #469: fix forum_votes column name vote→value)
 
