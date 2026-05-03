@@ -1,5 +1,16 @@
 -- Schema additions for Automation Wave 1.
 --
+-- Rollback (in reverse order):
+--   3. DROP TABLE IF EXISTS public.lead_quality_weights;
+--   2. DROP TABLE IF EXISTS public.email_suppression_list;
+--   1. Column drops from altered tables:
+--        ALTER TABLE public.professionals DROP COLUMN IF EXISTS profile_gate_step;
+--        ALTER TABLE public.advisor_credit_topups DROP COLUMN IF EXISTS dunning_step,
+--          DROP COLUMN IF EXISTS dunning_last_attempt_at;
+--        ALTER TABLE public.broker_data_changes DROP COLUMN IF EXISTS auto_applied_at,
+--          DROP COLUMN IF EXISTS auto_applied_tier;
+--   Note: RLS policies and indexes drop with their tables.
+--
 -- Every feature in this wave either reuses existing tables or needs
 -- a small set of new columns / tables. Batching them into a single
 -- migration so the PR is easy to roll forward / back.
