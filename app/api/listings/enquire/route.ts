@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { isFlagEnabled } from "@/lib/feature-flags";
 import { sendEmail } from "@/lib/resend";
 import { escapeHtml } from "@/lib/html-escape";
 import { isRateLimited } from "@/lib/rate-limit";
@@ -23,6 +24,13 @@ interface EnquireBody {
 
 export async function POST(request: NextRequest) {
   try {
+    // Launch-ops kill switch: flip `listing_enquiry_intake` off in
+    // /admin/automation/flags to pause new listing lead intake. See
+    // docs/ops/launch-ops-plan.md §4.
+    if (!(await isFlagEnabled("listing_enquiry_intake"))) {
+      return NextResponse.json({ error: "temporarily_unavailable" }, { status: 503 });
+    }
+
     // Rate limit enquiries
     const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
     if (await isRateLimited(`listing-enquire:${ip}`, 10, 5)) {
