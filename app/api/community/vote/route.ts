@@ -120,7 +120,7 @@ export async function POST(req: NextRequest) {
     // Update author's reputation. Race-safe: ensure profile exists
     // first via upsert with ignoreDuplicates, then read-modify-write
     // the reputation. Same pattern as posts/threads route.
-    if (reputationDelta !== 0) {
+    if (reputationDelta !== 0 && target.author_id) {
       await admin
         .from("forum_user_profiles")
         .upsert(
