@@ -53,6 +53,11 @@ const SLUG_TO_TYPE: Record<string, ProfessionalType> = {
   "wine-advisors": "wine_advisor",
   "art-advisors": "art_advisor",
   "royalty-brokers": "royalty_broker",
+  // Pre-existing types referenced by /invest pages but missing from this map.
+  // Surfaced 2026-05-03 — clicking advisor CTAs from /invest/reits, /invest/ipo-calendar
+  // and /invest/pre-ipo would 404 without these entries.
+  "private-wealth-managers": "private_wealth_manager",
+  "stockbroker-firms": "stockbroker_firm",
 };
 
 const TYPE_DESCRIPTIONS: Record<string, string> = {
