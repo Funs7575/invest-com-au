@@ -39,9 +39,9 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | M | `claude/audit-remediation/m-01b-cover-image-backfill` (#283) · `m-02-versus-json-ld` (#296) · `m-05-glossary-linkifier` (#325) | #283/#296/#325 all MERGED | last merged 2026-05-01T10:29Z | M-01a done out-of-loop (PR #227). M-01b done (PR #283 — engineering side). M-02 done (PR #296). M-03 done (`85c7236`). M-04 done (`353fa3a`). M-05 done (PR #325). M-06 done (PR #283). M-07 done (PR #283). **Stream M complete.** |
 | N | `claude/audit-remediation/n-ux-perf` | #242 MERGED | last merged 2026-04-28 | N-01+N-02 done (`2ec6f89`) · N-03a/b/c done · N-04/N-05 FP · N-06 blocked (deferred-post-launch by founder 2026-05-01 — option 4 chosen) · N-07/N-08/N-09/N-10/N-11 done — **stream complete** (N-06 deferred). |
 | O | all PRs MERGED | #235/#237/#239/#299/#300/#366/#395/#408 all MERGED | last merged 2026-05-02T16:14Z | O-01..O-03 done. O-04 blocked (Stripe live validation). O-05 MERGED (#408). |
-| P | _not started_ | — | — | — |
+| P | `claude/audit-remediation/p-01-sentry-v10-upgrade` (#468) | — | iter 212 — `331b98e` (PR #468: P-01 — @sentry/nextjs v9.47.1 → v10.51.0; clears 5 Sentry audit findings; removes `as any` cast in next.config.ts); CI pending | P-01 in-progress (PR #468). |
 | Q | _not started_ | — | — | — |
-| R | `claude/audit-remediation/r-03-dispute-resolver-tests` (#459) · `r-04-cached-data-tests` (#466) | #290/#396 both MERGED · #459/#466 OPEN | iter 211 — PR #466 pre-existing from concurrent session (R-04: 37 tests for lib/cached-data.ts, `auto-merge-safe`); CI pending | R-01 done (PR #290). R-02 MERGED (#396 — 29 tests auto-bid.ts + 12 tests broker-auth.ts). R-03 in-progress (PR #459). R-04 in-progress (PR #466). R-05..R-11 pending. |
+| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) | #290/#396/#459 all MERGED · #466 OPEN | iter 212 — R-03 MERGED 2026-05-03 (`5e659c0`, PR #459: 18 tests advisor-lead-dispute-resolver); R-04 in-progress PR #466 | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459 — 18 tests). R-04 in-progress (PR #466). R-05..R-11 pending. |
 | S | _not started_ | — | — | — |
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 MERGED 2026-04-28T11:45Z | merged | V-NEW-06 done (commit `a7bd736`) |
@@ -909,7 +909,7 @@ Highest-risk untested business logic. Marketplace allocation is the most lucrati
 | R-01 | done | `lib/marketplace/allocation.ts` — 388 LOC, 0% covered. Cover allocation algorithm + auto-bid edge cases + tier overrides | ~2 | Done in PR #290 MERGED 2026-04-29T10:05Z (`__tests__/api/marketplace-allocation.test.ts` exists; covers allocation + CPC billing). |
 | R-02 | done | `lib/marketplace/auto-bid.ts` — 174 LOC, 0% covered | 1 | P0. Pairs with R-01. Done: commit `ae23f8b` · PR #396 (29 tests). |
 | R-02-DISC-20260501-01 | done | `lib/marketplace/broker-auth.ts` — 77 LOC, 0 tests, no coverage. Only `lib/marketplace/` file without a test. | 1 | Done in commit `1a082b2` · PR #396 (12 tests: getBrokerAccount × 5, requireBrokerAccount × 3, isBrokerUser × 3). |
-| R-03 | in-progress | `lib/advisor-lead-dispute-resolver.ts` — 340 LOC, 0% covered | 1 | P1. PR #459. 18 tests: buildClassifierContext (8) + autoResolveDispute (7) + notifyAdminEscalated (3). All passing locally. |
+| R-03 | done | `lib/advisor-lead-dispute-resolver.ts` — 340 LOC, 0% covered | 1 | P1. PR #459 MERGED 2026-05-03. 18 tests: buildClassifierContext (8) + autoResolveDispute (7) + notifyAdminEscalated (3). |
 | R-04 | in-progress | `lib/cached-data.ts` — 263 LOC, 0% covered | 1 | P1. PR #466 — 37 tests covering all 17 exported functions. Branch `claude/audit-remediation/r-04-cached-data-tests`. |
 | R-05 | pending | `lib/email-templates.ts` — 745 LOC, 18% covered → raise to ≥60% | 1 | P2. |
 | R-06 | pending | `lib/admin/automation-metrics.ts` — 536 LOC, 25% covered | 1 | P2. |
@@ -1623,6 +1623,19 @@ Two strategically important surfaces under-served by current nav: (1) investment
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-03 — Forward progress iter 212 (stream P — P-01: @sentry/nextjs v9.47.1 → v10.51.0)
+
+- Phase 0: Lock active (batch mode, iteration 3/5).
+- Phase 1: Synced main. Pull brought in R-03 MERGED (PR #459, `5e659c0`). Queue updated to reflect.
+- Phase 1.5: No new migration commits in last 24h; no drift failures. Skipped.
+- Phase 1.7: main CI last run = success. Proceed.
+- Phase 2: CI rescue check — #467 (G-03 b7): in_progress (no failures). #466 (R-04): CI pending. #460 (E-02 b4): CI running. No rescues.
+- Phase 3: A-stream: all items in-progress with open PRs (batches waiting merge); no new pending content. P-stream (slot 15) is next: P-01 pending.
+- Phase 4: Sentry v10.51.0 peer-dep check: `next: "^13.2.0 || ^14.0 || ^15.0.0-rc.0 || ^16.0.0-0"` — supports Next 16 cleanly. Runtime API unchanged (Sentry.init, replayIntegration, browserTracingIntegration, captureException, captureRequestError all stable in v10). No test mocks touch Sentry.
+- Phase 5: `npm install @sentry/nextjs@10.51.0`. Removed `as any` cast + `eslint-disable-next-line` from `withSentryConfig()` in `next.config.ts` (now type-safe). Updated CLAUDE.md non-obvious note. npm audit: 5 Sentry moderate findings cleared; 3 remain (anthropic-sdk + postcss/next, unfixable without breaking changes to unrelated packages).
+- Phase 6: Commit `331b98e`. Branch `claude/audit-remediation/p-01-sentry-v10-upgrade`. PR #468.
+- STATUS: PROGRESS · stream=P · item=P-01 · pr=#468 · commit=331b98e · diff=+597 -608 (mostly lockfile)
 
 ### 2026-05-03 — Forward progress iter 211 (stream G — G-03 batch 7: rollback headers for 10 migrations 20260415–20260419)
 
