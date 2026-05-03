@@ -4,6 +4,7 @@ import { logger } from "@/lib/logger";
 import { requireCronAuth } from "@/lib/cron-auth";
 import { wrapCronHandler } from "@/lib/cron-run-log";
 import { isFeatureDisabled } from "@/lib/admin/classifier-config";
+import { isFlagEnabled } from "@/lib/feature-flags";
 import { getSiteUrl } from "@/lib/url";
 import { escapeHtml } from "@/lib/html-escape";
 import { sendEmail } from "@/lib/resend";
@@ -48,6 +49,16 @@ const MAX_BATCH = 500;
 async function handler(req: NextRequest) {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
+
+  // Launch-ops kill switch: flip `email_drip_send` off in
+  // /admin/automation/flags to halt ALL drip campaigns at once
+  // (mass-send incident, suppression list issue, content bug).
+  // Distinct from the per-feature `abandoned_shortlist_drip` gate
+  // below, which targets only this specific drip. See
+  // docs/ops/launch-ops-plan.md §4.
+  if (!(await isFlagEnabled("email_drip_send"))) {
+    return NextResponse.json({ ok: true, skipped: "kill_switch_email_drip_send" });
+  }
 
   if (await isFeatureDisabled("abandoned_shortlist_drip")) {
     return NextResponse.json({ ok: true, skipped: "kill_switch_on" });
