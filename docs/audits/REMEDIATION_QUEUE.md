@@ -41,7 +41,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | O | all PRs MERGED | #235/#237/#239/#299/#300/#366/#395/#408 all MERGED | last merged 2026-05-02T16:14Z | O-01..O-03 done. O-04 blocked (Stripe live validation). O-05 MERGED (#408). |
 | P | `claude/audit-remediation/p-01-sentry-v10-upgrade` (#468) | — | iter 212 — `331b98e` (PR #468: P-01 — @sentry/nextjs v9.47.1 → v10.51.0; clears 5 Sentry audit findings; removes `as any` cast in next.config.ts); CI success. | P-01 in-progress (PR #468). P-02 (Stripe SDK v17→v22) BLOCKED — requires npm install + local test run to verify webhook type compatibility across 5 major versions; not tractable on Hardware-exception sandbox. Needs a session with full node_modules. |
 | Q | _not started_ | — | — | — |
-| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · `r-05-email-templates-tests` (#471) · `r-06-automation-metrics-tests` (#472) · `r-07-chatbot-tests` (#473) · `r-08-fi-data-server-tests` (#510) · `r-09-tracking-browser-tests` (#511) · `r-09-tracking-tests` (#513) · `r-10-advisor-resolver-db-tests` (#514) · `r-10-advisor-resolver-tests` (#516) · `r-10-advisor-application-resolver-tests` (#515) · `r-disc-01-financial-periods-tests` (#517) | #290/#396/#459 all MERGED · #466/#471/#472/#473/#510/#511/#513/#514/#515/#516/#517 OPEN | iter 228 CI rescue — `6945a27` (PR #511 R-09: stub navigator.sendBeacon in jsdom + mock addEventListener to prevent listener bleed; prior rescue 47597e4 fixed vi.spyOn but didn't define the missing property first). | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459). R-04 in-progress (#466, CI green). R-05 in-progress (#471). R-06 in-progress (#472). R-07 in-progress (#473). R-08 in-progress (#510, CI pending). R-09 in-progress (#511 + #513, rescue 6945a27 pushed). R-10 in-progress (#514 + #515 + #516; #515/#516 conflict on same file — recommend merge #514+#515, close #516 as subset). R-DISC-20260429-01 in-progress (#517). R-11 pending. |
+| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · `r-05-email-templates-tests` (#471) · `r-06-automation-metrics-tests` (#472) · `r-07-chatbot-tests` (#473) · `r-08-fi-data-server-tests` (#510) · `r-09-tracking-browser-tests` (#511) · `r-09-tracking-tests` (#513) · `r-10-advisor-resolver-db-tests` (#514) · `r-10-advisor-resolver-tests` (#516) · `r-10-advisor-application-resolver-tests` (#515) · `r-disc-01-financial-periods-tests` (#517) · `r-11-hooks-shortlist-tests` (#519) | #290/#396/#459 all MERGED · #466/#471/#472/#473/#510/#511/#513/#514/#515/#516/#517/#519 OPEN | iter 229 — `1554334` (PR #519 R-11: useShortlist+useAdvisorShortlist 24 tests; pending CI). | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459). R-04 in-progress (#466, CI green). R-05 in-progress (#471). R-06 in-progress (#472). R-07 in-progress (#473). R-08 in-progress (#510, CI pending). R-09 in-progress (#511 + #513, rescue 6945a27 pushed). R-10 in-progress (#514 + #515 + #516; #515/#516 conflict on same file — recommend merge #514+#515, close #516 as subset). R-DISC-20260429-01 in-progress (#517). R-11 in-progress (#519, CI pending). |
 | S | _not started_ | — | — | — |
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 MERGED 2026-04-28T11:45Z | merged | V-NEW-06 done (commit `a7bd736`) |
@@ -938,7 +938,7 @@ Highest-risk untested business logic. Marketplace allocation is the most lucrati
 | R-08 | in-progress | `lib/fi-data-server.ts` — 231 LOC, 27% covered → ≥60% (PR #510) | 1 | P2. |
 | R-09 | in-progress | `lib/tracking.ts` — 133 LOC, 33% covered → ≥70% (PR #511 + #513; parallel-fire race — both auto-merge-safe, different files) | 1 | P2. |
 | R-10 | in-progress | `lib/advisor-application-resolver.ts` — 416 LOC, 35% covered → ≥70% (PR #514) | 1 | P2. |
-| R-11 | pending | Hooks: `useShortlist`, `useAdvisorShortlist`, `useSubscription` — all 0% | 1 | P3. |
+| R-11 | in-progress | Hooks: `useShortlist`, `useAdvisorShortlist`, `useSubscription` — all 0% | 1 | P3. useSubscription already had 7 tests. 24 new tests for useShortlist+useAdvisorShortlist in PR #519. |
 | R-DISC-20260429-01 | in-progress | `lib/financial-periods.ts` — existing file had 6 tests (closePeriod/isPeriodClosedAt/previousMonthBounds); added 5 more for getPeriod + listRecentPeriods → PR #517. | 1 | P2. Surfaced by iter 112. Previously noted as 0% — test file was added in iter ~200 (commit 597d6e8) but queue wasn't updated. |
 
 ### Stream S — Architecture artefacts (audit §12)
@@ -1678,6 +1678,18 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-03 — Forward progress iter 229 (stream R — R-11: useShortlist + useAdvisorShortlist hook tests)
+
+- Phase 0: Lock active (batch mode, iter 2/5). No LOOP_PAUSE sentinel.
+- Phase 1: main up to date.
+- Phase 1.7: main CI success. Proceed.
+- Phase 2: PR #511 CI running rescue `6945a27`. PR #514/#517 CI completing. No new failures visible.
+- Phase 3: Slot 15 (P) — P-01 in-flight/success, P-02 blocked → nothing to pick. Slot 16 (R) — R-11 pending (hooks: useShortlist, useAdvisorShortlist, useSubscription). useSubscription already had 7 tests in `hooks-useSubscription.test.tsx`. R-11 = write tests for the remaining two hooks.
+- Phase 4: Verification gate — test-only addition, no production code. Both hooks are pure localStorage + CustomEvent-based state; no migration or RLS concerns.
+- Phase 5: Created `__tests__/lib/hooks-useShortlist.test.tsx` — 24 tests: useShortlist (15): hydrate/ignore malformed/toggle add+remove+no-op-at-8/has/clear/persists/listens to CustomEvent/syncs on login/merges remote-first/no fetch when logged out. useAdvisorShortlist (9): hydrate/ignore malformed/toggle add+remove+no-op-at-4/max=4/has/clear/listens to CustomEvent/persist dispatches event. All 24 green locally. Lint clean.
+- Phase 6: Commit `1554334`. Branch `claude/audit-remediation/r-11-hooks-shortlist-tests`. PR #519.
+- STATUS: PROGRESS · stream=R · item=R-11 · pr=#519 · commit=1554334 · diff=+333 -0 (1 file)
 
 ### 2026-05-03 — CI rescue iter 228 (stream R — PR #511 R-09: stub navigator.sendBeacon + mock addEventListener)
 
