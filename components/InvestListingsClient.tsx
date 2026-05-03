@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useCallback, useMemo, useState } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import type { InvestmentListing } from "@/lib/types";
@@ -290,51 +289,11 @@ export default function InvestListingsClient({
     [categories],
   );
 
-  const lockedCategoryLabel = lockedCategory
-    ? prettyCategory(lockedCategory, categories)
-    : null;
-  const lockedCategoryColors = lockedCategory
-    ? CATEGORY_COLORS[lockedCategory] ?? CATEGORY_COLORS.all
-    : null;
-
   return (
     <div>
       {pageTitle && (
         <div className="bg-white border-b border-slate-100 py-6 md:py-8">
           <div className="container-custom">
-            {/* Filtered-view framing: makes clear this is a slice of the
-                main /invest marketplace, not a separate catalogue. Only
-                renders when a vertical listings page locks the category. */}
-            {lockedCategory && lockedCategoryLabel && lockedCategoryColors && (
-              <div className="flex items-center gap-2 mb-3 text-xs flex-wrap">
-                <Link
-                  href="/invest"
-                  className="text-slate-500 hover:text-slate-900 font-semibold inline-flex items-center gap-1 transition-colors"
-                >
-                  <span aria-hidden="true">←</span> Browse all listings
-                </Link>
-                <span className="text-slate-300" aria-hidden="true">·</span>
-                <span
-                  className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full font-semibold ring-1 ${lockedCategoryColors.bg} ${lockedCategoryColors.text} ${lockedCategoryColors.ring}`}
-                >
-                  <svg
-                    className="w-3 h-3"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
-                    />
-                  </svg>
-                  Filtered to {lockedCategoryLabel}
-                </span>
-              </div>
-            )}
             <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-slate-900 leading-tight">
               {pageTitle}
             </h1>
