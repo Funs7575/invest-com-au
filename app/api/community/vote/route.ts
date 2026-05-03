@@ -1,8 +1,15 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { logger } from "@/lib/logger";
 import { isAllowed } from "@/lib/rate-limit-db";
+
+const VoteBody = z.object({
+  target_type: z.enum(["thread", "post"]),
+  target_id: z.number().int().positive(),
+  vote: z.union([z.literal(1), z.literal(-1)]),
+});
 
 const log = logger("community:vote");
 
@@ -20,19 +27,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Slow down — voting too fast" }, { status: 429 });
     }
 
-    const body = await req.json();
-    const { target_type, target_id, vote } = body;
-
-    // Validation
-    if (!target_type || !target_id || vote === undefined) {
-      return NextResponse.json({ error: "Missing required fields: target_type, target_id, vote" }, { status: 400 });
+    const parsed = VoteBody.safeParse(await req.json());
+    if (!parsed.success) {
+      return NextResponse.json({ error: "target_type ('thread'|'post'), target_id, and vote (1|-1) are required" }, { status: 400 });
     }
-    if (!["thread", "post"].includes(target_type)) {
-      return NextResponse.json({ error: "target_type must be 'thread' or 'post'" }, { status: 400 });
-    }
-    if (vote !== 1 && vote !== -1) {
-      return NextResponse.json({ error: "vote must be 1 or -1" }, { status: 400 });
-    }
+    const { target_type, target_id, vote } = parsed.data;
 
     const admin = createAdminClient();
     const table = target_type === "thread" ? "forum_threads" : "forum_posts";
@@ -57,7 +56,7 @@ export async function POST(req: NextRequest) {
     // Check for existing vote
     const { data: existingVote } = await admin
       .from("forum_votes")
-      .select("id, vote")
+      .select("id, value")
       .eq("target_type", target_type)
       .eq("target_id", target_id)
       .eq("user_id", user.id)
@@ -67,7 +66,7 @@ export async function POST(req: NextRequest) {
     let reputationDelta = 0;
 
     if (existingVote) {
-      if (existingVote.vote === vote) {
+      if (existingVote.value === vote) {
         // Same vote again: remove the vote (toggle off)
         await admin
           .from("forum_votes")
@@ -80,7 +79,7 @@ export async function POST(req: NextRequest) {
         // Changing vote direction
         await admin
           .from("forum_votes")
-          .update({ vote, created_at: new Date().toISOString() })
+          .update({ value: vote, created_at: new Date().toISOString() })
           .eq("id", existingVote.id);
 
         scoreDelta = vote * 2; // Swing from -1 to +1 or vice versa
@@ -94,7 +93,7 @@ export async function POST(req: NextRequest) {
           target_type,
           target_id,
           user_id: user.id,
-          vote,
+          value: vote,
         });
 
       if (insertError) {
@@ -121,7 +120,7 @@ export async function POST(req: NextRequest) {
     // Update author's reputation. Race-safe: ensure profile exists
     // first via upsert with ignoreDuplicates, then read-modify-write
     // the reputation. Same pattern as posts/threads route.
-    if (reputationDelta !== 0) {
+    if (reputationDelta !== 0 && target.author_id) {
       await admin
         .from("forum_user_profiles")
         .upsert(
