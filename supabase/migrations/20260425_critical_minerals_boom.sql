@@ -1,3 +1,25 @@
+-- Date: 2026-04-25
+-- Audit ref: codebase-health-2026-04-24.md §4.3 (G-03)
+-- Queue item: G-03 batch 8
+-- Why: seeds 15 critical minerals investment listings and one guide
+--      article capitalising on the US-Australia bilateral framework
+--      and China rare earth restriction news cycle.
+-- Idempotency: INSERT ... ON CONFLICT (slug) DO NOTHING. Safe to re-apply.
+-- Rollback:
+--   DELETE FROM public.investment_listings WHERE slug IN (
+--     'mt-weld-south-rare-earths-ndpr', 'darling-range-gallium-germanium',
+--     'kwinana-lithium-hydroxide-refinery-expansion',
+--     'murrin-murrin-south-cobalt-nickel', 'julia-creek-vanadium-battery-storage',
+--     'pilbara-west-lithium-6-targets', 'groote-eylandt-manganese-royalty',
+--     'gawler-craton-iocg-copper-gold', 'north-qld-graphite-battery-anode',
+--     'kambalda-nickel-sulphide-dfs', 'tasmania-tin-tungsten-high-grade',
+--     'gascoyne-rare-earths-monazite-producer', 'lachlan-fold-belt-critical-minerals',
+--     'central-qld-scandium-cobalt', 'stuart-shelf-copper-gold-jv-olympic-dam'
+--   );
+--   DELETE FROM public.articles
+--     WHERE slug = 'australias-critical-minerals-boom-how-to-invest';
+--   Note: INSERT-only migration; no DDL to reverse.
+--
 -- ============================================================
 -- Critical Minerals Boom: 15 new mining listings + boom article
 -- Capitalises on US-Australia $8.5B framework, EU-Australia FTA,
