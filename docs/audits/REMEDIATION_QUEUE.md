@@ -42,7 +42,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | O | all PRs MERGED | #235/#237/#239/#299/#300/#366/#395/#408 all MERGED | last merged 2026-05-02T16:14Z | O-01..O-03 done. O-04 blocked (Stripe live validation). O-05 MERGED (#408). |
 | P | `claude/audit-remediation/p-01-sentry-v10-upgrade` (#468) | — | iter 212 — `331b98e` (PR #468: P-01 — @sentry/nextjs v9.47.1 → v10.51.0; clears 5 Sentry audit findings; removes `as any` cast in next.config.ts); CI success. | P-01 in-progress (PR #468). P-02 (Stripe SDK v17→v22) BLOCKED — requires npm install + local test run to verify webhook type compatibility across 5 major versions; not tractable on Hardware-exception sandbox. Needs a session with full node_modules. |
 | Q | `claude/audit-remediation/q-02-05-recovery-runbooks` | #525 OPEN | iter 235 — `8cd2725` (Q-02..Q-05: RPO/RTO targets + Stripe/Resend/Vercel recovery runbooks); CI running. | Q-01 needs-user (PITR drill). Q-02..Q-05 in-progress (#525). Q-06..Q-15 pending. |
-| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · `r-05-email-templates-tests` (#471) · `r-06-automation-metrics-tests` (#472) · `r-07-chatbot-tests` (#473) · `r-08-fi-data-server-tests` (#510) · `r-09-tracking-browser-tests` (#511) · `r-09-tracking-tests` (#513) · `r-10-advisor-resolver-db-tests` (#514) · `r-10-advisor-resolver-tests` (#516) · `r-10-advisor-application-resolver-tests` (#515) · `r-disc-01-financial-periods-tests` (#517) · `r-11-hooks-shortlist-tests` (#519) · `r-coverage-01-listing-routes` (#521) | #290/#396/#459 all MERGED · #466/#471/#472/#473/#510/#511/#513/#514/#515/#516/#517/#519/#521 OPEN | iter 232 CI-RESCUE — `7e8e532` (PR #521: cherry-pick isFlagEnabled mock from MAIN-RESCUE to unblock 54 tests on branch; CI re-running). | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459). R-04 in-progress (#466, CI green). R-05 in-progress (#471). R-06 in-progress (#472). R-07 in-progress (#473). R-08 in-progress (#510, CI pending). R-09 in-progress (#511 + #513, rescue 6945a27 pushed). R-10 in-progress (#514 + #515 + #516; #515/#516 conflict on same file — recommend merge #514+#515, close #516 as subset). R-DISC-20260429-01 in-progress (#517). R-11 in-progress (#519, CI pending). R-COVERAGE-01 in-progress (#521, CI running). |
+| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · ... · `r-coverage-01-listing-routes` (#521) · `r-coverage-02-stripe-lib` (#526) | #290/#396/#459 all MERGED · #466/#471/#472/#473/#510/#511/#513/#514/#515/#516/#517/#519/#521/#526 OPEN | iter 236 — `0493386` (PR #526: R-COVERAGE-02 — registry + upsert-subscription + email builder tests; 484 LOC; CI pending). iter 232 CI-RESCUE — `7e8e532` (PR #521: cherry-pick isFlagEnabled mock; CI success). | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459). R-04 in-progress (#466, CI green). R-05 in-progress (#471). R-06 in-progress (#472). R-07 in-progress (#473). R-08 in-progress (#510, CI pending). R-09 in-progress (#511 + #513). R-10 in-progress (#514 + #515 + #516). R-DISC-20260429-01 in-progress (#517). R-11 in-progress (#519, CI pending). R-COVERAGE-01 in-progress (#521, CI success). R-COVERAGE-02 in-progress (#526, CI pending). |
 | S | _not started_ | — | — | — |
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 MERGED 2026-04-28T11:45Z | merged | V-NEW-06 done (commit `a7bd736`) |
@@ -555,7 +555,7 @@ Pure grind work, ideal for the cloud loop. Long-running stream — expect ~6-7 m
 | ID | Status | Summary | Est. iterations | Notes |
 | --- | --- | --- | --- | --- |
 | R-COVERAGE-01 | in-progress (#521) | `app/api/listings/enquire` + `app/api/listings/submit` + `app/api/listings/my-listings` — branch coverage to 80%+ | 2 | Fixed 16 silently-failing enquire tests (isFlagEnabled mock missing); added 503 kill-switch, email-skip, opt-in success, opt-in throw-resilience tests. |
-| R-COVERAGE-02 | pending | `lib/stripe/*` — full coverage on `webhook.ts`, `idempotency.ts`, `pricing.ts`, customer + subscription helpers | 4 | Mock the Stripe SDK; assert idempotency + amount + metadata invariants. |
+| R-COVERAGE-02 | in-flight | `lib/stripe-webhook/registry.ts` + `lib/upsert-subscription.ts` + `lib/stripe-webhook/lib/email.ts` — 34 tests across 3 files | 4 | PR #526. registry: dispatch/error-wrapping/fall-through; upsert: out-of-order guard; email: builders + sendTransactionalEmail. |
 | R-COVERAGE-03 | pending | `app/api/quotes/post`, `app/api/quotes/respond`, `app/api/quotes/recent` — full lead lifecycle | 3 | Includes the per-advisor quota + dispute hand-off. |
 | R-COVERAGE-04 | pending | `app/api/admin/payouts/*` + `app/api/admin/affiliate-*` | 3 | Money-out routes — highest-stakes admin endpoints. |
 | R-COVERAGE-05 | pending | `app/api/auth/*` (signin, signup, OTP, password reset) | 3 | Mock Resend, assert rate limits, no info-leak in errors. |
@@ -1680,6 +1680,20 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-03 — Forward progress iter 236 (stream R — R-COVERAGE-02: stripe-webhook registry + upsert-subscription + email builder tests)
+
+- Phase 0: Lock carried over from batch continuation. No LOOP_PAUSE sentinel.
+- Phase 1: main synced — pulled iter 235 queue update (Q row + Q-02..Q-05 PR #525; concurrent session).
+- Phase 1.5: No migration in last 24h → skipped.
+- Phase 1.7: main CI — success (post-iter-233 MAIN-RESCUE). Proceeding.
+- Phase 2: CI rescue check — PR #521 (R-COVERAGE-01): CI success. PR #469 (E stream): CI success. PR #526 not yet open. No rescue needed.
+- Phase 3: Priority slot 16 (R) — R-COVERAGE-02 pending (next after R-COVERAGE-01 which is in-flight/success). KK-01 and Q-02..Q-05 already in-flight from iters 234+235, so R is next independent stream. Checked out new branch `claude/audit-remediation/r-coverage-02-stripe-lib`.
+- Phase 4: Explored lib/stripe-webhook/ structure. Three untested modules found: registry.ts (dispatch loop + error wrapping), lib/upsert-subscription.ts (out-of-order protection guard), lib/email.ts (HTML builders + sendTransactionalEmail). All 9 handler tests already exist in __tests__/lib/stripe-webhook/.
+- Phase 5: Wrote 3 test files: registry.test.ts (131 LOC, 7 tests), upsert-subscription.test.ts (185 LOC, 8 tests), email.test.ts (168 LOC, 19 tests). Total: 484 LOC.
+- Phase 6: Commit `0493386`. Branch pushed. PR #526 opened (draft).
+- STATUS: PROGRESS · stream=R · item=R-COVERAGE-02 · pr=#526
+- Diff: +484 -0 (3 test files only)
 
 ### 2026-05-03 — Forward progress iter 234 (stream KK — KK-01: lead SLA monitoring cron + 10 tests)
 
