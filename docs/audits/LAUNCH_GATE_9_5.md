@@ -5,16 +5,11 @@ migration cutover (per `COMPANY.md`). "9.5" is the target
 `QUALITY_DASHBOARD.md` score — the migration does not proceed below
 this number.
 
-**Status:** DRAFT — criteria require founder ratification before this
-gate is treated as binding. See `DECISIONS_LOG.md` entry 2026-05-03 for
-context.
+**Status:** RATIFIED 2026-05-03. See `DECISIONS_LOG.md`.
 
 ---
 
-## Gating criteria (proposed — TBD ratify)
-
-These are derived from existing repo docs and current dashboard rows.
-Founder must confirm or override each before this file is authoritative.
+## Gating criteria
 
 ### Quality
 
@@ -67,11 +62,8 @@ Founder must confirm or override each before this file is authoritative.
 
 ---
 
-## Open questions for founder
+## Re-evaluation
 
-1. Confirm the 9.5 score floor or set a different number.
-2. Confirm per-surface 9.0 floor or relax for low-traffic surfaces.
-3. Confirm "zero P0/P1" or allow named exceptions with sunset dates.
-4. Define what triggers a re-evaluation (weekly cadence? PR-level?).
-
-Until these are answered, this file is informational, not binding.
+Weekly cadence by default — `QUALITY_DASHBOARD.md` is refreshed and
+this gate is re-checked. Per-PR re-evaluation is not required; the
+existing tier policy in `MERGE_AUTHORIZATION.md` covers per-PR risk.
