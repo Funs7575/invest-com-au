@@ -23,6 +23,7 @@ const NAV_GROUPS = [
     label: "Health & Ops",
     items: [
       { href: "/admin/automation", icon: "cpu", label: "Automation" },
+      { href: "/admin/bug-reports", icon: "message-circle", label: "Bug Reports" },
       { href: "/admin/data-health", icon: "activity", label: "Data Health" },
       { href: "/admin/seo-health", icon: "search", label: "SEO Health" },
       { href: "/admin/compliance", icon: "shield-check", label: "Compliance" },
