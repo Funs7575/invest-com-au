@@ -12,8 +12,8 @@ type ModAction = (typeof VALID_ACTIONS)[number];
 
 const ModerateBody = z.object({
   action: z.enum(["pin", "unpin", "lock", "unlock", "remove"]),
-  thread_id: z.string().optional(),
-  post_id: z.string().optional(),
+  thread_id: z.number().int().positive().optional(),
+  post_id: z.number().int().positive().optional(),
 });
 
 async function isModerator(userId: string, userEmail: string | undefined): Promise<boolean> {
