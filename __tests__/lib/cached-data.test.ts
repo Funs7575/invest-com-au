@@ -272,12 +272,12 @@ describe("getQuizQuestions", () => {
 
   it("returns active quiz questions in order", async () => {
     dbData = [
-      { id: 1, question: "What is your goal?", order_index: 1 },
-      { id: 2, question: "How much experience?", order_index: 2 },
+      { id: 1, question_text: "What is your goal?", order_index: 1 },
+      { id: 2, question_text: "How much experience?", order_index: 2 },
     ];
     const qs = await getQuizQuestions();
     expect(qs).toHaveLength(2);
-    expect(qs[0].question).toBe("What is your goal?");
+    expect(qs[0].question_text).toBe("What is your goal?");
   });
 });
 
