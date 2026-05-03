@@ -35,12 +35,13 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | I | `claude/audit-remediation/i-new-04-main-ci-auto-revert` (#278) · `i-02-drift-detection-ci` (#353) | #278 MERGED 2026-04-28T16:18Z · #353 MERGED 2026-05-01T14:30Z | last merged 2026-05-01T14:30Z | I-NEW-01..05 all done. I-NEW-06 needs-user (Supabase GH Actions secrets). I-01 done via B-07 (PR #286). I-02 done (PR #353). I-03 done via C-08 (PR #327). I-04 done via E-03 (PR #313). I-05 done via D-10 (PR #246). |
 | J | `claude/audit-remediation/j-stripe-webhook` | #288 MERGED 2026-04-29T16:48Z | last merged 2026-04-29T16:48Z | J-01a..J-01e done · J-01d-ext done · J-03/J-05/J-06/J-08/J-09/J-10 done. **Stream J complete** (J-02/J-04/J-07/J-11 false-positives or done out-of-band). |
 | K | `claude/audit-remediation/k-security-hardening` | #222 MERGED 2026-04-28T15:14Z | last merged 2026-04-28T15:14Z | K-01..K-08 done; K-09 false-positive; K-10..K-15 done — **stream complete** |
+| KK | `claude/audit-remediation/kk-lead-routing-maturity` | #524 OPEN | iter 234 — `2024b72` (KK-01: lead-sla-check cron + 10 tests; CI pending) | KK-01 in-progress (#524). KK-02..KK-06 pending. |
 | L | `claude/audit-remediation/l-observability` | #289 MERGED 2026-04-29T10:18Z | last merged 2026-04-29T10:18Z | L-04/L-05 done out-of-loop. L-06..L-12 all done (merged via PR #289). L-02/L-03 deferred-post-launch (n8n dormant). L-01 needs-user (SENTRY_AUTH_TOKEN). L-10 false-positive (verified populating). **Stream L complete** (modulo L-01 needs-user). |
 | M | `claude/audit-remediation/m-01b-cover-image-backfill` (#283) · `m-02-versus-json-ld` (#296) · `m-05-glossary-linkifier` (#325) | #283/#296/#325 all MERGED | last merged 2026-05-01T10:29Z | M-01a done out-of-loop (PR #227). M-01b done (PR #283 — engineering side). M-02 done (PR #296). M-03 done (`85c7236`). M-04 done (`353fa3a`). M-05 done (PR #325). M-06 done (PR #283). M-07 done (PR #283). **Stream M complete.** |
 | N | `claude/audit-remediation/n-ux-perf` | #242 MERGED | last merged 2026-04-28 | N-01+N-02 done (`2ec6f89`) · N-03a/b/c done · N-04/N-05 FP · N-06 blocked (deferred-post-launch by founder 2026-05-01 — option 4 chosen) · N-07/N-08/N-09/N-10/N-11 done — **stream complete** (N-06 deferred). |
 | O | all PRs MERGED | #235/#237/#239/#299/#300/#366/#395/#408 all MERGED | last merged 2026-05-02T16:14Z | O-01..O-03 done. O-04 blocked (Stripe live validation). O-05 MERGED (#408). |
 | P | `claude/audit-remediation/p-01-sentry-v10-upgrade` (#468) | — | iter 212 — `331b98e` (PR #468: P-01 — @sentry/nextjs v9.47.1 → v10.51.0; clears 5 Sentry audit findings; removes `as any` cast in next.config.ts); CI success. | P-01 in-progress (PR #468). P-02 (Stripe SDK v17→v22) BLOCKED — requires npm install + local test run to verify webhook type compatibility across 5 major versions; not tractable on Hardware-exception sandbox. Needs a session with full node_modules. |
-| Q | `claude/audit-remediation/q-02-05-recovery-runbooks` | #525 OPEN | iter 234 — `8cd2725` (Q-02..Q-05: RPO/RTO targets + Stripe/Resend/Vercel recovery runbooks); CI running. | Q-01 needs-user (PITR drill). Q-02..Q-05 in-progress (#525). Q-06..Q-15 pending. |
+| Q | `claude/audit-remediation/q-02-05-recovery-runbooks` | #525 OPEN | iter 235 — `8cd2725` (Q-02..Q-05: RPO/RTO targets + Stripe/Resend/Vercel recovery runbooks); CI running. | Q-01 needs-user (PITR drill). Q-02..Q-05 in-progress (#525). Q-06..Q-15 pending. |
 | R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · `r-05-email-templates-tests` (#471) · `r-06-automation-metrics-tests` (#472) · `r-07-chatbot-tests` (#473) · `r-08-fi-data-server-tests` (#510) · `r-09-tracking-browser-tests` (#511) · `r-09-tracking-tests` (#513) · `r-10-advisor-resolver-db-tests` (#514) · `r-10-advisor-resolver-tests` (#516) · `r-10-advisor-application-resolver-tests` (#515) · `r-disc-01-financial-periods-tests` (#517) · `r-11-hooks-shortlist-tests` (#519) · `r-coverage-01-listing-routes` (#521) | #290/#396/#459 all MERGED · #466/#471/#472/#473/#510/#511/#513/#514/#515/#516/#517/#519/#521 OPEN | iter 232 CI-RESCUE — `7e8e532` (PR #521: cherry-pick isFlagEnabled mock from MAIN-RESCUE to unblock 54 tests on branch; CI re-running). | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459). R-04 in-progress (#466, CI green). R-05 in-progress (#471). R-06 in-progress (#472). R-07 in-progress (#473). R-08 in-progress (#510, CI pending). R-09 in-progress (#511 + #513, rescue 6945a27 pushed). R-10 in-progress (#514 + #515 + #516; #515/#516 conflict on same file — recommend merge #514+#515, close #516 as subset). R-DISC-20260429-01 in-progress (#517). R-11 in-progress (#519, CI pending). R-COVERAGE-01 in-progress (#521, CI running). |
 | S | _not started_ | — | — | — |
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
@@ -1038,7 +1039,7 @@ Operationalises the lead-form surface in `docs/audits/ENTERPRISE_STANDARD.md` so
 
 | ID | Status | Summary | Est. iterations | Notes |
 | --- | --- | --- | --- | --- |
-| KK-01 | pending | Per-source SLA monitoring — alert if a lead sits in the queue past its source's SLA (5 min hot, 30 min warm, 4h cold) | 1-2 | Reads `leads` table + source variant; cron sweeps for breaches; Sentry alert + ops-channel notification. |
+| KK-01 | in-flight | Per-source SLA monitoring — alert if a lead sits in the queue past its source's SLA (5 min hot, 30 min warm, 4h cold) | 1-2 | PR #524. `lead-sla-check` cron every 10min; window-based breach detection; Resend ops alert email. |
 | KK-02 | pending | Queue health alert — if no leads for a hub for >N hours during business hours, alert | 1 | Per-hub silence threshold configurable; catches broken forms / broken routing / genuinely silent hubs (operator decides per alert). |
 | KK-03 | pending | Advisor response-time tracking — per-advisor mean-time-to-first-response surfaced in advisor portal | 1-2 | Reads `lead_assignments` + `advisor_responses` join; renders into the existing advisor portal dashboard. |
 | KK-04 | pending | Conversion analytics per source — PostHog funnel `lead_submit:<source>` → `advisor_response` → `outcome` | 1 | Adds the `<source>` discriminator to every existing `submitLead()` call site; back-fills missing variants. |
@@ -1680,9 +1681,23 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 
 ## Iteration log (most recent at top)
 
-### 2026-05-03 — Forward progress iter 234 (stream Q — Q-02..Q-05: disaster recovery runbooks)
+### 2026-05-03 — Forward progress iter 234 (stream KK — KK-01: lead SLA monitoring cron + 10 tests)
 
-- Phase 0: Lock carried over from batch continuation.
+- Phase 0: Lock acquired. No LOOP_PAUSE sentinel.
+- Phase 1: main synced — pulled queue update from iter 233 (d711804→4eff37d, 23 lines queue-only).
+- Phase 1.5: No migration in last 24h, no Supabase-types-drift CI failures on in-flight PRs → skipped.
+- Phase 1.7: main CI — status: success (last run green post-iter-233 MAIN-RESCUE). Proceeding.
+- Phase 2: No red CI on any in-flight PR (PR #524 not yet opened; others pending/success).
+- Phase 3: Priority slot 14 (KK) — first item KK-01 (pending). Created branch `claude/audit-remediation/kk-lead-routing-maturity` from main.
+- Phase 4: Verification — new cron route + test. `professional_leads` confirmed in `lib/database.types.ts` with `quality_score: number | null` and `responded_at: string | null`. Window-based detection chosen (no schema migration needed vs stamp-based approach). DB errors per tier non-fatal.
+- Phase 5: Implemented `app/api/cron/lead-sla-check/route.ts` (137 LOC) + `__tests__/api/cron-lead-sla-check.test.ts` (259 LOC) + `lib/cron-groups.ts` (+1 line, every-10m dispatch group). Total: 397 LOC (+1 changed).
+- Phase 6: Commit `2024b72`. Branch pushed. PR #524 opened (draft).
+- STATUS: PROGRESS · stream=KK · item=KK-01 · pr=#524
+- Diff: +397 -1 (route.ts 137 LOC, test 259 LOC, cron-groups.ts 1 line)
+
+### 2026-05-03 — Forward progress iter 235 (stream Q — Q-02..Q-05: disaster recovery runbooks)
+
+- Phase 0: Lock carried over from batch continuation (concurrent fire had already used iter 234 for KK).
 - Phase 1: main synced. No LOOP_PAUSE sentinel.
 - Phase 1.7: main CI in_progress (PR #523 CI running after cron-drip fix commit). No main failure — proceed.
 - Phase 2: No active CI failures on in-flight PRs. PR #523 CI in_progress. PR #465/#469 show only Vercel status check (no GH Actions failures visible).
