@@ -41,7 +41,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | O | all PRs MERGED | #235/#237/#239/#299/#300/#366/#395/#408 all MERGED | last merged 2026-05-02T16:14Z | O-01..O-03 done. O-04 blocked (Stripe live validation). O-05 MERGED (#408). |
 | P | `claude/audit-remediation/p-01-sentry-v10-upgrade` (#468) | — | iter 212 — `331b98e` (PR #468: P-01 — @sentry/nextjs v9.47.1 → v10.51.0; clears 5 Sentry audit findings; removes `as any` cast in next.config.ts); CI pending | P-01 in-progress (PR #468). |
 | Q | _not started_ | — | — | — |
-| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · `r-05-email-templates-tests` (#471) · `r-06-automation-metrics-tests` (#472) | #290/#396/#459 all MERGED · #466/#471/#472 OPEN | iter 219 — `3ed2197` (PR #472: R-06 — automation-metrics.ts async coverage 25%→≥60%; getLatestCronRun + 4 overview functions + getAllFeatureOverviews safeFallback); CI pending | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459 — 18 tests). R-04 in-progress (PR #466, CI success). R-05 in-progress (PR #471 — 60 tests covering all 18 exports). R-06 in-progress (PR #472). R-07..R-11 pending. |
+| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · `r-05-email-templates-tests` (#471) · `r-06-automation-metrics-tests` (#472) | #290/#396/#459 all MERGED · #466/#471/#472 OPEN | iter 221 CI rescue 1 — `b0eba87` (PR #472: R-06 — fix hardcoded started_at timestamp in getLeadDisputeOverview test; cadence=1h meant 19h-old fixture returned "red" not "green"); CI re-running. iter 220 — `88d53ed` (PR #471: R-05 CI rescue — explicit en-AU locale in campaignPerformanceEmail toLocaleString; C.UTF-8 CI locale returned "1234" not "1,234"); CI success. | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459 — 18 tests). R-04 in-progress (PR #466, CI success). R-05 in-progress (PR #471 — 60 tests covering all 18 exports). R-06 in-progress (PR #472). R-07..R-11 pending. |
 | S | _not started_ | — | — | — |
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 MERGED 2026-04-28T11:45Z | merged | V-NEW-06 done (commit `a7bd736`) |
@@ -1653,6 +1653,20 @@ Two strategically important surfaces under-served by current nav: (1) investment
 - Phase 5: Added 245 LOC — `makeChain()` fluent Supabase mock, plus tests for `getLatestCronRun` (3), `getLeadDisputeOverview` (3), `getAdvisorApplicationOverview` (2), `getMarketplaceCampaignOverview` (2), `getAllFeatureOverviews` (2 including safeFallback). TS delta: zero new errors vs main.
 - Phase 6: Commit `3ed2197`. Branch `claude/audit-remediation/r-06-automation-metrics-tests`. PR #472.
 - STATUS: PROGRESS · stream=R · item=R-06 · pr=#472 · commit=3ed2197 · diff=+245 -5 (1 test file)
+
+### 2026-05-03 — CI rescue iter 221 (stream R — PR #472: fix hardcoded timestamp in getLeadDisputeOverview test)
+
+- Phase 0: Lock active (batch mode, iteration 4/5).
+- Phase 2: PR #472 (R-06) "Lint · Type-check · Test · Build" FAILURE on `3ed2197`. First rescue attempt — no stuck-detection guard applies. Root cause: "exposes the cron run in lastRun when available" test used `started_at: "2026-05-02T06:00:00Z"` (hardcoded ~19 h before test execution on 2026-05-03); `getLeadDisputeOverview` calls `computeHealth(lastRun, 0, 1 /* cadence hrs */, 20, 50)`, so age 19 h > 2 × cadence 1 h → returned "red", test expected "green". Fix: replace hardcoded timestamp with `new Date(Date.now() - 30 * 60 * 1000).toISOString()` (30 min ago) so the fixture always falls in the healthy window.
+- Phase 6: Commit `b0eba87`. Branch `claude/audit-remediation/r-06-automation-metrics-tests`. PR #472.
+- STATUS: CI-RESCUE · stream=R · pr=#472 · commit=b0eba87
+
+### 2026-05-03 — CI rescue iter 220 (stream R — PR #471: toLocaleString locale fix for C.UTF-8 CI)
+
+- Phase 0: Lock active (batch mode, iteration 3/5).
+- Phase 2: PR #471 (R-05) "Lint · Type-check · Test · Build" FAILURE on `313ae02`. Root cause: `data.clicks.toLocaleString()` and `data.conversions.toLocaleString()` in `campaignPerformanceEmail` (lib/email-templates.ts) called without an explicit locale. GitHub Actions runner uses LANG=C.UTF-8; Node.js in C locale renders numbers without thousands separator ("1234" not "1,234"). Test asserted `html.contains("1,234")` which failed. Pattern confirmed by `lib/utils.ts` / `lib/currency.ts` which use explicit `'en-AU'` locale throughout. Fix: pass `'en-AU'` to both toLocaleString() calls in the stat cells.
+- Phase 6: Commit `88d53ed`. Branch `claude/audit-remediation/r-05-email-templates-tests`. PR #471.
+- STATUS: CI-RESCUE · stream=R · pr=#471 · commit=88d53ed (CI confirmed success)
 
 ### 2026-05-03 — CI rescue iter 218 (stream E — PR #469: null-guard author_id before reputation upsert)
 
