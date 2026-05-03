@@ -10,6 +10,7 @@ import {
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 
 export const revalidate = 3600;
+// Build-touch 2026-05-03 — force fresh prerender (cached version had stuck client-render).
 
 export const metadata: Metadata = {
   title: `Invest in Royalty Streams in Australia (${CURRENT_YEAR}) — Mining, Music & IP Royalties`,
