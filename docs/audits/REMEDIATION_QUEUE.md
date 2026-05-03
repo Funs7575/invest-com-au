@@ -47,7 +47,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 MERGED 2026-04-28T11:45Z | merged | V-NEW-06 done (commit `a7bd736`) |
 | V (V-NEW-07) | `claude/audit-remediation/v-new-07-admin-mfa-enforced` | #256 MERGED 2026-04-28T15:44Z | merged | V-NEW-07a done · V-NEW-07b done (`698bbae`) — **Tier D: needs `ADMIN_MFA_COOKIE_SECRET` ≥32 chars in Vercel before merge** (PR was merged; env var status unclear) |
-| W | all PRs MERGED | #306/#312/#369 all MERGED | last merged 2026-05-01T22:01Z | W-01 done (PR #306). W-NEW-01 done (PR #312). W-02 MERGED (#369 — HubHero server component, 22 tests). W-03..W-15 pending. |
+| W | `claude/audit-remediation/w-03-hub-service-grid` | #306/#312/#369 all MERGED · #529 OPEN | iter 239 — `b1228a0` (W-03: HubServiceGrid server component + 16 tests; CI pending) | W-01 done (PR #306). W-NEW-01 done (PR #312). W-02 MERGED (#369). W-03 in-progress (#529). W-04..W-15 pending. |
 | X | all PRs MERGED | #257/#367 both MERGED | last merged 2026-05-01T22:01Z | X-01 done (PR #257). X-02 MERGED (#367 — /best-for pages admin→anon swap). X-03..X-09 pending. |
 | Y | all PRs MERGED | #253/#347 both MERGED | last merged 2026-05-01T22:00Z | Y-05 done (PR #253). Y-08 done (PR #253). Y-05-ENRICH MERGED (#347 — sourcedAt/source/freshness enrichment + 16 new tests). Y-01..Y-04, Y-06, Y-07 pending. |
 | BB | all PRs MERGED | #361/#368 both MERGED | last merged 2026-05-01T22:01Z | BB-03 MERGED (#361 — CGT calc vs ATO, 5 regulator-reference tests). BB-06 MERGED (#368 — mortgage stress vs ASIC+APRA, 8 cases). Other BB items pending. |
@@ -1748,6 +1748,18 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 - Phase 6: Commit `8cd2725`. Branch pushed. PR #525.
 - STATUS: PROGRESS · stream=Q · items=Q-02/Q-03/Q-04/Q-05 · pr=#525
 - Diff: +226 LOC across 4 doc files
+
+### 2026-05-03 — Forward progress iter 239 (stream W — W-03: HubServiceGrid server component + 16 tests)
+
+- Phase 0: No LOOP_PAUSE sentinel.
+- Phase 1: main synced. No types drift (no migrations).
+- Phase 1.7: main CI — last push was queue update (docs-only); CI not yet checked but no code changes on main.
+- Phase 2: MAIN-RESCUE #523 CI re-running (commit `49db562`). KK #524 and Q #525 rescued (cherry-pick `49db562`; CI re-running). No other streams with confirmed red CI requiring rescue this iteration.
+- Phase 3: W-03 — pending. Branch created `claude/audit-remediation/w-03-hub-service-grid`.
+- Phase 4: Verification — component extraction, no deletions. No prior HubServiceGrid anywhere in codebase.
+- Phase 5: Implemented `components/HubServiceGrid.tsx` (91 LOC) + `__tests__/components/HubServiceGrid.test.tsx` (185 LOC). Total: 276 LOC added. Within 2500 LOC cap.
+- Phase 6: Committed `b1228a0`, pushed, opened PR #529.
+- STATUS: PROGRESS · stream=W · item=W-03 · pr=#529
 
 ### 2026-05-03 — CI-RESCUE iter 238b (KK #524 + Q #525 — cherry-pick investor_type mock reset)
 
