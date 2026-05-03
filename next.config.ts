@@ -274,8 +274,12 @@ const nextConfig: NextConfig = {
 // the build ships as a plain Next.js app with no error tracking
 // instead of failing. Once the env vars are added in Vercel, the
 // wrap auto-re-engages on the next deploy with zero code changes.
+//
+// Using `as any` because Sentry v9 peer-deps target Next.js ≤15 types,
+// but the runtime integration works fine with Next.js 16.
 const sentryWrapped: NextConfig = process.env.SENTRY_AUTH_TOKEN
-  ? (withSentryConfig(nextConfig, {
+  ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (withSentryConfig(nextConfig as any, {
       org: process.env.SENTRY_ORG,
       project: process.env.SENTRY_PROJECT,
       silent: !process.env.CI,
