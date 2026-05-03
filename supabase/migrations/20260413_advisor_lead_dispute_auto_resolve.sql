@@ -1,5 +1,16 @@
 -- Advisor lead dispute auto-resolution.
 --
+-- Rollback:
+--   2. DROP INDEX IF EXISTS idx_lead_disputes_auto_verdict;
+--   1. DROP INDEX IF EXISTS idx_lead_disputes_pending_created;
+--      ALTER TABLE public.lead_disputes
+--        DROP COLUMN IF EXISTS reason_code,
+--        DROP COLUMN IF EXISTS auto_resolved_at,
+--        DROP COLUMN IF EXISTS auto_resolved_verdict,
+--        DROP COLUMN IF EXISTS auto_resolved_confidence,
+--        DROP COLUMN IF EXISTS auto_resolved_reasons,
+--        DROP COLUMN IF EXISTS refunded_cents;
+--
 -- Extends `lead_disputes` so the classifier can record how (and why)
 -- it resolved a dispute without human review. Every existing column
 -- stays as-is; we only add optional metadata so existing code and
