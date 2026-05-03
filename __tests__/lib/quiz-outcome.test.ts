@@ -43,37 +43,91 @@ describe("resolveBestOutcome", () => {
     });
   });
 
-  describe("calculator-first outcome", () => {
-    it("routes super goal to retirement calculator first", () => {
+  describe("conversion-first outcomes (was calculator-first, redesigned 2026-05-03)", () => {
+    it("routes super goal to SMSF accountant — primary CTA is the conversion path, calc moves to secondary", () => {
       const outcome = resolveBestOutcome({
         location: "australia",
         goal: "super",
         mode: "diy",
         amount: "medium",
       });
-      expect(outcome.kind).toBe("calculator-first");
-      expect(outcome.ctaHref).toContain("/retirement-calculator");
+      expect(outcome.kind).toBe("advisor-match");
+      expect(outcome.ctaHref).toContain("/advisors/smsf-accountants");
+      expect(outcome.secondaryActions.some(s => s.href.includes("/retirement-calculator"))).toBe(true);
+      expect(outcome.secondaryActions.some(s => s.href.includes("/compare?filter=super"))).toBe(true);
     });
 
-    it("routes property-physical goal to property-yield calculator and suppresses brokers", () => {
+    it("routes property-physical to mortgage broker — calc is secondary, broker leaderboard suppressed", () => {
       const outcome = resolveBestOutcome({
         location: "australia",
         goal: "property",
         property_sub: "physical",
       });
-      expect(outcome.kind).toBe("calculator-first");
-      expect(outcome.ctaHref).toContain("/property-yield-calculator");
+      expect(outcome.kind).toBe("advisor-match");
+      expect(outcome.ctaHref).toContain("/advisors/mortgage-brokers");
+      expect(outcome.secondaryActions.some(s => s.href.includes("/property-yield-calculator"))).toBe(true);
       expect(outcome.suppressBrokerResults).toBe(true);
     });
 
-    it("routes home-loan goal to mortgage calculator", () => {
+    it("routes home-loan goal to mortgage broker — calc is secondary", () => {
       const outcome = resolveBestOutcome({
         location: "australia",
         goal: "home",
         amount: "large",
       });
-      expect(outcome.kind).toBe("calculator-first");
-      expect(outcome.ctaHref).toContain("/mortgage-calculator");
+      expect(outcome.kind).toBe("advisor-match");
+      expect(outcome.ctaHref).toContain("/advisors/mortgage-brokers");
+      expect(outcome.secondaryActions.some(s => s.href.includes("/mortgage-calculator"))).toBe(true);
+    });
+  });
+
+  describe("listings-browse outcomes (wave 2 — alt-assets / royalties / pre-IPO, shipped 2026-05-03)", () => {
+    it("routes alt-assets goal to /invest/alternatives + luxury-asset advisor + returns calc", () => {
+      const outcome = resolveBestOutcome({
+        location: "australia",
+        goal: "alt-assets",
+        mode: "diy",
+      });
+      expect(outcome.kind).toBe("listings-browse");
+      expect(outcome.ctaHref).toBe("/invest/alternatives");
+      expect(outcome.suppressBrokerResults).toBe(true);
+      expect(outcome.secondaryActions.some(s => s.href.includes("/advisors/luxury-asset-brokers"))).toBe(true);
+      expect(outcome.secondaryActions.some(s => s.href.includes("/tools/alternative-asset-returns"))).toBe(true);
+    });
+
+    it("routes royalties goal to /invest/royalties + royalty-broker advisor + income-assets cross-sell", () => {
+      const outcome = resolveBestOutcome({
+        location: "australia",
+        goal: "royalties",
+      });
+      expect(outcome.kind).toBe("listings-browse");
+      expect(outcome.ctaHref).toBe("/invest/royalties");
+      expect(outcome.secondaryActions.some(s => s.href.includes("/advisors/royalty-brokers"))).toBe(true);
+      expect(outcome.secondaryActions.some(s => s.href.includes("/invest/income-assets"))).toBe(true);
+    });
+
+    it("routes pre-ipo goal to /invest/pre-ipo + IPO calendar + post-job for criteria", () => {
+      const outcome = resolveBestOutcome({
+        location: "australia",
+        goal: "pre-ipo",
+      });
+      expect(outcome.kind).toBe("listings-browse");
+      expect(outcome.ctaHref).toBe("/invest/pre-ipo");
+      expect(outcome.secondaryActions.some(s => s.href.includes("/invest/ipo-calendar"))).toBe(true);
+      expect(outcome.secondaryActions.some(s => s.href.includes("/quotes/post"))).toBe(true);
+    });
+  });
+
+  describe("'other' goal — graceful capture for unrepresented niches", () => {
+    it("routes 'other' goal to post-job with quiz context", () => {
+      const outcome = resolveBestOutcome({
+        location: "australia",
+        goal: "other",
+      });
+      expect(outcome.kind).toBe("post-job");
+      expect(outcome.ctaHref).toContain("/quotes/post");
+      expect(outcome.ctaHref).toContain("goal=other");
+      expect(outcome.suppressBrokerResults).toBe(true);
     });
   });
 
