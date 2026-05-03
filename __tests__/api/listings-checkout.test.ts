@@ -3,6 +3,11 @@ import { NextRequest } from "next/server";
 
 // ── Mocks ──────────────────────────────────────────────────────────────────────
 
+const mockIsFlagEnabled = vi.fn();
+vi.mock("@/lib/feature-flags", () => ({
+  isFlagEnabled: (...args: unknown[]) => mockIsFlagEnabled(...args),
+}));
+
 vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ error: vi.fn(), info: vi.fn(), warn: vi.fn() })),
 }));
@@ -65,6 +70,7 @@ const VALID_BODY = {
 describe("POST /api/listings/checkout", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockIsFlagEnabled.mockResolvedValue(true);
     mockAdminFrom
       .mockImplementationOnce(() => makeChain({ data: ACTIVE_PLAN, error: null }))
       .mockImplementationOnce(() => makeChain({ data: ACTIVE_LISTING, error: null }));
