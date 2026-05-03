@@ -62,7 +62,7 @@ Audited 23 candidate revenue ideas against the actual codebase. Big finding: a l
 | 7 | AI Q&A capture layer | 2–3 wks | 80% built — `lib/chatbot.ts` (RAG, Claude+OpenAI), `lib/embeddings.ts`, `lib/ai-cost-caps.ts` | Production-ready chatbot is admin-only today. Just needs public Q&A landing pages + question-capture form. |
 | 5 | Hybrid auction self-serve | 4–6 wks | 90% built — `lib/marketplace/auto-bid.ts`, `app/admin/marketplace/` | Auction already running. Need: partner self-serve onboarding, quality multiplier (CTR/CR → bid rank), reserve prices, eligibility gate. **Needs legal sign-off before code.** |
 | 10 | Premium research subscription | content only | 90% built — full Stripe (`lib/stripe.ts`), Pro tier (`app/pro/`) | Plumbing complete. Just write the premium content. |
-| **24** | **Cross-border revenue line** (Phase A) | **1–2 days** | **95% built — `lib/advisor-billing.ts` flat-rate today, `email_captures.context.is_international` flag exists** | **Premium 1.75× lead price for cross-border leads + 5 new specialties (UK Pension Transfer, FATCA-Aware US Expat, FIRB Property Non-Resident, SIV/188C, DASP Processing) + filtered CTA wiring on country pages + persona selector + DASP calc + homepage section rewrite around audience A (inbound migrants). $15–40k/yr realistic. See decision log entry 2026-05-01.** |
+| **24** | **Cross-border revenue line** (Phase A) | **~1 day remaining** | **Specialty taxonomy SHIPPED 2026-05-02 in `lib/advisor-specialties.ts:122–138` — UK Pension Transfer, FATCA-Aware US Expat Planning, DASP Processing, FIRB Property (Non-Resident); SIV/188C covered via `immigration_investment_lawyer` type. Wired into `financial_planner`, `tax_agent`, `migration_agent` advisor types. Country pages exist with deep content.** | **Remaining: premium 1.75× lead pricing in `lib/advisor-billing.ts` (~half day), filtered advisor-CTA wiring on country pages so /foreign-investment/uk routes /find-advisor with `?specialty=UK+Pension+Transfer` (~half day), persona selector + DASP calc + homepage rewrite (design/copy work, not engineering). $15–40k/yr realistic. See decision log entry 2026-05-01.** |
 
 ### 🟡 Q2 / year-1
 
@@ -284,8 +284,23 @@ _(empty)_
 
 ---
 
+## Open commitments / revisit-by dates
+
+Time-bound items that need a check-in at a specific date. Don't delete — strike through and timestamp when resolved so we keep the trail.
+
+- **2026-05-16 — Quiz funnel post-deploy review.** PR #434 (quiz outcome resolver, post-results email capture, vertical drips, sponsor-boost vertical-aware) shipped 2026-05-02. Estimated +35–50% end-to-end conversion lift; ground truth requires 14 days of PostHog data on `quiz_outcome_primary_cta` distribution + `quiz_lead_capture` rate + drip open/CTR. Compare actuals vs estimate in this notebook on revisit. Remote-trigger scheduled.
+- **2026-05-09 — Test-posture readiness call.** Currently B-grade: ~71% lib coverage, ~14% API-route line coverage, ~~38 TypeScript errors in test files~~ **TS errors closed by audit-remediation loop — `tsc --noEmit` exits 0 on main as of 2026-05-02 PM (verified)**, 228 untested API routes. Realistic enterprise-grade timeline ~4–6 focused weeks; pre-launch must-do is now just **golden-flow Playwright E2E lockdown** (T-TESTS-02, ~1 week — `__tests__/e2e/` directory currently doesn't exist). Decide on a Friday whether to dedicate a sprint to it.
+- **Drip cron kill-switch.** `abandoned_quiz_drip` is gated by `isFeatureDisabled('abandoned_quiz_drip')` (per `lib/admin/classifier-config`). The 27 vertical drip templates shipped in PR #434 sit dormant until flipped. Estimated +1–2% sitewide conversion uplift when enabled. No revisit date — flip when you're ready for the lead volume.
+
+---
+
 ## Resolved / shipped
 
 Move items here once they ship OR are formally killed. Don't delete — keep the trail so we can see what we built and what we walked away from.
 
-_(empty)_
+- **2026-05-02 — Quiz funnel rebuilt.** PR #434 shipped: 7-outcome resolver (post-job, advisor-match, advisor-browse, calculator-first, education-first, diy-broker, bundle-stack) replaces binary DIY-vs-advisor track; email gate moved post-results (warm capture); 12 structured columns added to `quiz_leads`; 9 vertical drip-template variants × 3 steps = 27 drip templates; `applyQuizSponsorBoost` is vertical-aware (no crypto-sponsor over super result); `/quotes/post` prefills from quiz handoff. Migration applied to prod (project `guggzyqceattncjwvgyc`), 125 tests passing, all 25 CI gates green. Squash commit `f1d2017c` on main. Co-author Claude Opus 4.7.
+
+- **2026-05-02 — Tracker reality-audit findings.** Two queue items I was about to scope as fresh work were already done:
+  - **T-TESTS-01 (38 TypeScript errors in test files):** closed by the audit-remediation loop. `tsc --noEmit` exits 0 on a fresh main pull. The project gotcha note in `MEMORY.md project_test_typescript_drift` is stale and should be cleared. Pre-launch must-do is now just **T-TESTS-02 (golden-flow Playwright lockdown)** since `__tests__/e2e/` doesn't exist yet.
+  - **Cross-border specialty taxonomy (FIN_NOTEBOOK 2026-05-01 backlog #24):** shipped in `lib/advisor-specialties.ts` lines 122–138 with all 5 specialties wired into the relevant advisor types. Phase A's remaining engineering scope is just (a) premium 1.75× pricing in `lib/advisor-billing.ts` and (b) country-page CTA filter wiring. Persona selector + DASP calc + homepage rewrite are design/copy, not engineering.
+  Lesson — don't scope from queue/notebook entries without grepping the code. Two parallel agents (audit-remediation loop + a-stream backfill PRs) close items faster than the trackers update.
