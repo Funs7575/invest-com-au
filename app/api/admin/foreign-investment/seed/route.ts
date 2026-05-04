@@ -18,8 +18,14 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidateTag } from "next/cache";
 import { getAdminEmails } from "@/lib/admin";
 import { logger } from "@/lib/logger";
+import { z } from "zod";
 
 const log = logger("admin-fi-seed");
+
+const SeedBody = z.object({
+  adminEmail: z.string().min(1),
+  resetFirst: z.boolean().optional(),
+});
 import {
   NON_RESIDENT_TAX_BRACKETS,
   RESIDENT_TAX_BRACKETS,
@@ -34,18 +40,22 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  let body: { adminEmail: string; resetFirst?: boolean };
+  let rawBody: unknown;
   try {
-    body = await req.json();
+    rawBody = await req.json();
   } catch (err) {
     log.warn("FI seed invalid JSON", { err: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { adminEmail, resetFirst = false } = body;
+  const parsed = SeedBody.safeParse(rawBody);
+  if (!parsed.success) {
+    return NextResponse.json({ error: "adminEmail is required" }, { status: 400 });
+  }
+  const { adminEmail, resetFirst = false } = parsed.data;
 
   const adminEmails = getAdminEmails();
-  if (!adminEmails.includes((adminEmail ?? "").toLowerCase())) {
+  if (!adminEmails.includes(adminEmail.toLowerCase())) {
     return NextResponse.json({ error: "Not an admin email" }, { status: 403 });
   }
 
