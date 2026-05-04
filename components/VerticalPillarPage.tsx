@@ -34,6 +34,7 @@ import { CATEGORY_COLORS } from "@/lib/internal-links";
 import PillarExitIntent from "@/components/PillarExitIntent";
 import PersonalizedRecommendations from "@/components/PersonalizedRecommendations";
 import VerticalBrokerTable from "@/components/VerticalBrokerTable";
+import FloatingRightCTA from "@/components/FloatingRightCTA";
 
 /* ─── Lead magnet segment mapping ─── */
 
@@ -724,6 +725,14 @@ export default function VerticalPillarPage({
 
       {/* ─── Exit Intent (client component) ─── */}
       <PillarExitIntent slug={config.slug} />
+
+      <FloatingRightCTA
+        href="/quiz"
+        label="Get matched"
+        storageKey={`pillar:${config.slug}`}
+        variant="coral"
+        trackingContext={`pillar:${config.slug}`}
+      />
     </>
   );
 }
