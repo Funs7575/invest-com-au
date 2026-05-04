@@ -66,6 +66,10 @@ export type Stats = {
   avgRating: string | null; bookingClicks30d: number;
   hotLeadsCount: number; warmLeadsCount: number; coldLeadsCount: number;
   avgResponseTimeMinutes: number | null;
+  acceptRate: number;
+  leads7d: number;
+  leadsThisMonth: number;
+  leadsLastMonth: number;
   phoneClicks: number; websiteClicks: number; bookingClicks: number;
   articleViews: number; searchImpressions: number;
   articles: { title: string; slug: string; views: number; clicks: number }[];

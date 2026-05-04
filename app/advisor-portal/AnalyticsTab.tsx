@@ -86,6 +86,45 @@ export default function AnalyticsTab({ stats, advisor, leads, profileCompletenes
         </div>
       </div>
 
+      {/* Lead performance: accept rate + period trend */}
+      <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-5">
+        <h3 className="text-sm font-bold text-slate-900 mb-3">Lead Performance</h3>
+        <div className="grid grid-cols-3 gap-3">
+          <div className="bg-slate-50 rounded-xl p-3 text-center">
+            <p className="text-xl font-bold text-slate-900">{stats?.acceptRate ?? 0}%</p>
+            <p className="text-[0.6rem] text-slate-500 mt-1">Accept Rate</p>
+            <p className="text-[0.55rem] text-slate-400 mt-0.5">
+              {(stats?.acceptRate ?? 0) >= 60 ? "Excellent" : (stats?.acceptRate ?? 0) >= 40 ? "Average — aim for 60%" : "Low — aim for 60%+"}
+            </p>
+          </div>
+          <div className="bg-slate-50 rounded-xl p-3 text-center">
+            <p className="text-xl font-bold text-slate-900">{stats?.leadsThisMonth ?? 0}</p>
+            <p className="text-[0.6rem] text-slate-500 mt-1">This Month</p>
+            <p className="text-[0.55rem] text-slate-400 mt-0.5">{stats?.leads7d ?? 0} in last 7 days</p>
+          </div>
+          <div className="bg-slate-50 rounded-xl p-3 text-center">
+            {(() => {
+              const thisMonth = stats?.leadsThisMonth ?? 0;
+              const lastMonth = stats?.leadsLastMonth ?? 0;
+              const delta = thisMonth - lastMonth;
+              const pct = lastMonth > 0 ? Math.round((delta / lastMonth) * 100) : null;
+              const isUp = delta >= 0;
+              return (
+                <>
+                  <p className={`text-xl font-bold ${isUp ? "text-emerald-600" : "text-red-500"}`}>
+                    {isUp ? "▲" : "▼"} {Math.abs(delta)}
+                  </p>
+                  <p className="text-[0.6rem] text-slate-500 mt-1">vs Last Month</p>
+                  <p className="text-[0.55rem] text-slate-400 mt-0.5">
+                    {pct !== null ? `${pct >= 0 ? "+" : ""}${pct}% change` : "No prior data"}
+                  </p>
+                </>
+              );
+            })()}
+          </div>
+        </div>
+      </div>
+
       {/* Response time */}
       <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-5">
         <h3 className="text-sm font-bold text-slate-900 mb-3">Response Performance</h3>
