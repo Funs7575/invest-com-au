@@ -1,5 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { createHash } from 'crypto';
 import { createRateLimiter } from '@/lib/rate-limiter';
 import { logger } from '@/lib/logger';
@@ -41,20 +42,33 @@ const ALLOWED_EVENTS = new Set([
   'home_hero_click',
 ]);
 
+const TrackEventBody = z.object({
+  event_type: z.string(),
+  event_data: z.record(z.string(), z.unknown()).optional(),
+  page: z.string().optional(),
+  session_id: z.string().optional(),
+});
+
 export async function POST(request: NextRequest) {
-  let body: Record<string, unknown>;
+  let rawBody: unknown;
   try {
-    body = await request.json();
+    rawBody = await request.json();
   } catch {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
   }
-
-  const { event_type, event_data, page, session_id } = body as {
-    event_type?: string;
-    event_data?: Record<string, unknown>;
-    page?: string;
-    session_id?: string;
-  };
+  const bodyResult = TrackEventBody.safeParse(rawBody);
+  if (!bodyResult.success) {
+    // If the failure is specifically about event_type (wrong type), surface that
+    // rather than the generic JSON-parse error so existing tests keep their contract.
+    const hasEventTypeIssue = bodyResult.error.issues.some(
+      issue => issue.path[0] === 'event_type',
+    );
+    return NextResponse.json(
+      { error: hasEventTypeIssue ? 'Invalid event_type' : 'Invalid JSON body' },
+      { status: 400 },
+    );
+  }
+  const { event_type, event_data, page, session_id } = bodyResult.data;
 
   if (!event_type || typeof event_type !== 'string' || !ALLOWED_EVENTS.has(event_type)) {
     return NextResponse.json({ error: 'Invalid event_type' }, { status: 400 });

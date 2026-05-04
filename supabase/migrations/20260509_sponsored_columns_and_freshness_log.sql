@@ -5,6 +5,23 @@
 --     columns, which stay in place for backwards compatibility).
 --   * Create content_freshness_log for audit-trail separate from
 --     the content_calendar queue.
+--
+-- Date: 2026-05-09
+-- Audit ref: codebase-health-2026-04-24.md §4.3 (G-03)
+-- Queue item: G-03 batch 8
+-- Why: adds three brokers columns needed by the sponsored-placement
+--      codebase path (lib/sponsorship.ts reads sponsored/sponsored_tier/
+--      sponsored_until) and creates content_freshness_log for the
+--      editorial freshness audit trail.
+-- Idempotency: ADD COLUMN IF NOT EXISTS;
+--              CREATE TABLE/INDEX IF NOT EXISTS. Safe to re-apply.
+-- Rollback:
+--   DROP TABLE IF EXISTS public.content_freshness_log;
+--   DROP INDEX IF EXISTS public.idx_brokers_sponsored;
+--   ALTER TABLE public.brokers
+--     DROP COLUMN IF EXISTS sponsored_until,
+--     DROP COLUMN IF EXISTS sponsored_tier,
+--     DROP COLUMN IF EXISTS sponsored;
 -- ============================================================
 
 -- ────────────────────────────────────────────────────────────
