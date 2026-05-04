@@ -195,7 +195,7 @@ export default function HomeHero({
 
       <style>{`
         @media (min-width: 1024px) {
-          .hero-shell { grid-template-columns: minmax(0, 1fr) minmax(420px, 480px) !important; }
+          .hero-shell { grid-template-columns: minmax(0, 1fr) minmax(360px, 420px) !important; }
         }
         @media (max-width: 1023px) {
           .hero-right { justify-self: stretch !important; }
