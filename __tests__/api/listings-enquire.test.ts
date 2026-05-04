@@ -3,6 +3,11 @@ import { NextRequest } from "next/server";
 
 // ── Mocks ──────────────────────────────────────────────────────────────────────
 
+const mockIsFlagEnabled = vi.fn();
+vi.mock("@/lib/feature-flags", () => ({
+  isFlagEnabled: (...args: unknown[]) => mockIsFlagEnabled(...args),
+}));
+
 const mockIsRateLimited = vi.fn();
 vi.mock("@/lib/rate-limit", () => ({
   isRateLimited: (...args: unknown[]) => mockIsRateLimited(...args),
@@ -41,17 +46,6 @@ vi.mock("@/lib/html-escape", () => ({
 
 vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ error: vi.fn(), info: vi.fn(), warn: vi.fn(), debug: vi.fn() })),
-}));
-
-// The listing_enquiry_intake feature flag was added in the launch-ops pass.
-// In test environments NEXT_PUBLIC_SUPABASE_URL is a placeholder, so the real
-// implementation short-circuits to `false` (flag off → 503 kill-switch).
-// Mock it to return `true` by default so the existing tests cover their
-// intended code paths. Individual tests that verify the kill-switch can
-// override via mockIsFlagEnabled.mockResolvedValueOnce(false).
-const mockIsFlagEnabled = vi.fn().mockResolvedValue(true);
-vi.mock("@/lib/feature-flags", () => ({
-  isFlagEnabled: (...args: unknown[]) => mockIsFlagEnabled(...args),
 }));
 
 import { POST } from "@/app/api/listings/enquire/route";
@@ -95,22 +89,22 @@ function makeChain(result: unknown) {
 describe("POST /api/listings/enquire", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockIsRateLimited.mockResolvedValue(false);
     mockIsFlagEnabled.mockResolvedValue(true);
+    mockIsRateLimited.mockResolvedValue(false);
     // Default: listing found + active
     mockFrom.mockReturnValue(makeChain({ data: ACTIVE_LISTING, error: null }));
     mockRpc.mockResolvedValue({ error: null });
     mockSendEmail.mockResolvedValue(undefined);
   });
 
-  // ── Kill switch ───────────────────────────────────────────────────────────
+  // ── Feature flag kill-switch ──────────────────────────────────────────────
 
-  it("returns 503 when listing_enquiry_intake flag is off", async () => {
-    mockIsFlagEnabled.mockResolvedValueOnce(false);
+  it("returns 503 when listing_enquiry_intake flag is disabled", async () => {
+    mockIsFlagEnabled.mockResolvedValue(false);
     const res = await POST(makePost(VALID_BODY));
     expect(res.status).toBe(503);
     const json = await res.json();
-    expect(json.error).toMatch(/service_unavailable|unavailable/i);
+    expect(json.error).toBe("temporarily_unavailable");
   });
 
   // ── Rate limiting ─────────────────────────────────────────────────────────
@@ -253,6 +247,21 @@ describe("POST /api/listings/enquire", () => {
     expect(res.status).toBe(201);
     const json = await res.json();
     expect(json.success).toBe(true);
+  });
+
+  it("skips email notification when listing has no contact_email", async () => {
+    let callCount = 0;
+    mockFrom.mockImplementation(() => {
+      callCount++;
+      if (callCount === 1) return makeChain({ data: ACTIVE_LISTING, error: null });
+      if (callCount === 2) return makeChain({ data: null, error: null }); // insert
+      // email lookup returns listing with no contact_email
+      return makeChain({ data: { title: "No Email Listing", slug: "no-email" }, error: null });
+    });
+    mockRpc.mockResolvedValue({ error: null });
+    const res = await POST(makePost(VALID_BODY));
+    expect(res.status).toBe(201);
+    expect(mockSendEmail).not.toHaveBeenCalled();
   });
 
   it("fires email notification best-effort and still returns 201 if email throws", async () => {
