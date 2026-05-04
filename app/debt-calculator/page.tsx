@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { CURRENT_YEAR, SITE_NAME } from "@/lib/seo";
+import { CURRENT_YEAR } from "@/lib/seo";
+import { calculatorJsonLd } from "@/lib/schema-markup";
 import DebtCalculatorClient from "./DebtCalculatorClient";
 import ComplianceFooter from "@/components/ComplianceFooter";
 
@@ -18,20 +19,9 @@ export const metadata: Metadata = {
 };
 
 export default function DebtCalculatorPage() {
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    name: `Debt Consolidation Calculator — ${SITE_NAME}`,
-    description: "Calculate whether consolidating your debts into a single loan could save you money on interest and monthly payments.",
-    url: "https://invest.com.au/debt-calculator",
-    applicationCategory: "FinanceApplication",
-    operatingSystem: "Any",
-    offers: { "@type": "Offer", price: "0", priceCurrency: "AUD" },
-  };
-
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(calculatorJsonLd({ name: "Debt Consolidation Calculator", description: "Calculate whether consolidating your debts into a single loan could save you money on interest and monthly payments.", path: "/debt-calculator" })) }} />
       <DebtCalculatorClient />
       <div className="container-custom pb-8"><ComplianceFooter variant="calculator" /></div>
 
