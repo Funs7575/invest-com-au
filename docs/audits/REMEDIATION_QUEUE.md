@@ -42,7 +42,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | O | all PRs MERGED | #235/#237/#239/#299/#300/#366/#395/#408 all MERGED | last merged 2026-05-02T16:14Z | O-01..O-03 done. O-04 blocked (Stripe live validation). O-05 MERGED (#408). |
 | P | `claude/audit-remediation/p-01-sentry-v10-upgrade` (#468) | — | iter 212 — `331b98e` (PR #468: P-01 — @sentry/nextjs v9.47.1 → v10.51.0; clears 5 Sentry audit findings; removes `as any` cast in next.config.ts); CI success. | P-01 in-progress (PR #468). P-02 (Stripe SDK v17→v22) BLOCKED — requires npm install + local test run to verify webhook type compatibility across 5 major versions; not tractable on Hardware-exception sandbox. Needs a session with full node_modules. |
 | Q | `claude/audit-remediation/q-02-05-recovery-runbooks` | #525 OPEN | iter 243 CI-rescue — `1e33bab` (concurrent: complete 5-file isFlagEnabled mock; CI re-running). iter 242 — `d980bf3` (cherry-pick `9c74087`). iter 235 — `8cd2725` (Q-02..Q-05). | Q-01 needs-user (PITR drill). Q-02..Q-05 in-progress (#525). Q-06..Q-15 pending. |
-| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · ... · `r-coverage-01-listing-routes` (#521) · `r-coverage-02-stripe-lib` (#526) | #290/#396/#459 all MERGED · #466/#471/#472/#473/#510/#511/#513/#514/#515/#516/#517/#519/#521/#526 OPEN | iter 253 CI-rescue — `a29318f` (PR #526: upsert-subscription "older event" test was using yesterday's current_period_start as stripeEventTime proxy, causing skip guard to fire; pass recent start instead). iter 251 CI-rescue — `126eb8ac` (PR #521). | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459). R-04..R-11 in-progress. R-COVERAGE-01 in-progress (#521, CI rescue landed). R-COVERAGE-02 in-progress (#526, CI rescue landed `a29318f`). |
+| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · ... · `r-coverage-01-listing-routes` (#521) · `r-coverage-02-stripe-lib` (#526) · `r-coverage-03-quotes` (#530) | #290/#396/#459 all MERGED · #466/#471/#472/#473/#510/#511/#513/#514/#515/#516/#517/#519/#521/#526/#530 OPEN | iter 255 forward — `1a3c24d` (PR #530: R-COVERAGE-03 quotes/[slug]/accept + reopen route, 26 tests, 13+13). iter 253 CI-rescue — `a29318f` (PR #526: upsert-subscription "older event" test was using yesterday's current_period_start as stripeEventTime proxy, causing skip guard to fire; pass recent start instead). iter 251 CI-rescue — `126eb8ac` (PR #521). | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459). R-04..R-11 in-progress. R-COVERAGE-01 in-progress (#521, CI rescue landed). R-COVERAGE-02 in-progress (#526, CI rescue landed `a29318f`). R-COVERAGE-03 in-flight (#530). |
 | S | _not started_ | — | — | — |
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 MERGED 2026-04-28T11:45Z | merged | V-NEW-06 done (commit `a7bd736`) |
@@ -556,7 +556,7 @@ Pure grind work, ideal for the cloud loop. Long-running stream — expect ~6-7 m
 | --- | --- | --- | --- | --- |
 | R-COVERAGE-01 | in-progress (#521) | `app/api/listings/enquire` + `app/api/listings/submit` + `app/api/listings/my-listings` — branch coverage to 80%+ | 2 | Fixed 16 silently-failing enquire tests (isFlagEnabled mock missing); added 503 kill-switch, email-skip, opt-in success, opt-in throw-resilience tests. |
 | R-COVERAGE-02 | in-flight | `lib/stripe-webhook/registry.ts` + `lib/upsert-subscription.ts` + `lib/stripe-webhook/lib/email.ts` — 34 tests across 3 files | 4 | PR #526. registry: dispatch/error-wrapping/fall-through; upsert: out-of-order guard; email: builders + sendTransactionalEmail. |
-| R-COVERAGE-03 | pending | `app/api/quotes/post`, `app/api/quotes/respond`, `app/api/quotes/recent` — full lead lifecycle | 3 | Includes the per-advisor quota + dispute hand-off. |
+| R-COVERAGE-03 | in-flight (#530) | `app/api/quotes/[slug]/accept` + `app/api/quotes/[slug]/reopen` — 26 tests (13+13) covering accept/reopen consumer auth paths | 3 | PR #530. accept: rate limit, validation, email auth, bid lookup, DB winner/lost/auction updates, fire-and-forget email, 500 path. reopen: rate limit, validation, email auth, winning_bid guard, reopen-limit guard, 7-day extension, 500 path. |
 | R-COVERAGE-04 | pending | `app/api/admin/payouts/*` + `app/api/admin/affiliate-*` | 3 | Money-out routes — highest-stakes admin endpoints. |
 | R-COVERAGE-05 | pending | `app/api/auth/*` (signin, signup, OTP, password reset) | 3 | Mock Resend, assert rate limits, no info-leak in errors. |
 | R-COVERAGE-06 | pending | `lib/sponsorship.ts` — `boostFeaturedPartner`, `isSponsored`, tier ranking | 1 | Behaviour-critical to revenue ranking. |
@@ -1680,6 +1680,18 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-04 — Forward progress iter 255 (stream R — R-COVERAGE-03: quotes/[slug]/accept + reopen route tests)
+
+- Phase 0: Lock acquired.
+- Phase 1: Synced main. Queue read.
+- Phase 2: No red CI on in-flight PRs (E-04 #528, R-COVERAGE-02 #526, KK #524 all had rescues in iters 252/253/254; CI re-running or green).
+- Phase 3: Priority step 16 (R). R-COVERAGE-03 pending — `app/api/quotes/[slug]/accept` + `app/api/quotes/[slug]/reopen` (zero test coverage on consumer bid-acceptance and job re-open flows). Checked out new branch `claude/audit-remediation/r-coverage-03-quotes`.
+- Phase 4: Routes read. Accept route: rate-limit → JSON parse → Zod validate → DB fetch auction → email auth → status check → DB fetch bid → update winner → update lost → update auction → fetch advisor → fire-and-forget email. Reopen route: rate-limit → JSON parse → Zod validate → DB fetch auction → email auth → winning_bid guard → reopen-count guard → DB update (status/ends_at/reopened_count). Tests planned for all branching paths.
+- Phase 5: `__tests__/api/quotes-slug-accept.test.ts` (13 tests) + `__tests__/api/quotes-slug-reopen.test.ts` (13 tests). Mock design: argument-based update dispatch (`data.status === "won"` vs `"lost"`) rather than call-count tracking (count-based breaks because each `from()` call creates a fresh mock with its own counter). Fixed mock after initial run revealed 4 failures. All 26/26 tests pass locally.
+- Phase 6: Commit `1a3c24d`, pushed to `claude/audit-remediation/r-coverage-03-quotes`, PR #530 opened.
+- Phase 7: Queue updated — R in-flight row + R-COVERAGE-03 status.
+- STATUS: PROGRESS · stream=R · item=R-COVERAGE-03 · pr=#530 · commit=1a3c24d
 
 ### 2026-05-04 — CI-RESCUE iter 254 (stream KK — merge main to clear dirty mergeable_state on PR #524)
 
