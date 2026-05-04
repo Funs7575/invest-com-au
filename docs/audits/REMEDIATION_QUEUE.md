@@ -35,7 +35,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | I | `claude/audit-remediation/i-new-04-main-ci-auto-revert` (#278) · `i-02-drift-detection-ci` (#353) | #278 MERGED 2026-04-28T16:18Z · #353 MERGED 2026-05-01T14:30Z | last merged 2026-05-01T14:30Z | I-NEW-01..05 all done. I-NEW-06 needs-user (Supabase GH Actions secrets). I-01 done via B-07 (PR #286). I-02 done (PR #353). I-03 done via C-08 (PR #327). I-04 done via E-03 (PR #313). I-05 done via D-10 (PR #246). |
 | J | `claude/audit-remediation/j-stripe-webhook` | #288 MERGED 2026-04-29T16:48Z | last merged 2026-04-29T16:48Z | J-01a..J-01e done · J-01d-ext done · J-03/J-05/J-06/J-08/J-09/J-10 done. **Stream J complete** (J-02/J-04/J-07/J-11 false-positives or done out-of-band). |
 | K | `claude/audit-remediation/k-security-hardening` | #222 MERGED 2026-04-28T15:14Z | last merged 2026-04-28T15:14Z | K-01..K-08 done; K-09 false-positive; K-10..K-15 done — **stream complete** |
-| KK | `claude/audit-remediation/kk-lead-routing-maturity` | #524 OPEN | iter 254 CI-rescue — `0f19275` (merge main: resolve REMEDIATION_QUEUE.md conflict; 41/41 KK tests pass). iter 244 cont — `5d22141` (sourceBreakdown). | KK-01..KK-06 all done. **KK stream complete.** |
+| KK | `claude/audit-remediation/kk-lead-routing-maturity` | #524 OPEN | iter 258 CI-rescue — `ab3ed67` (merge main: resolve cron-groups conflict; move lead-sla-check from defunct every-10m to every-15m). iter 254 CI-rescue — `0f19275` (merge main: resolve REMEDIATION_QUEUE.md conflict; 41/41 KK tests pass). iter 244 cont — `5d22141` (sourceBreakdown). | KK-01..KK-06 all done. **KK stream complete.** |
 | L | `claude/audit-remediation/l-observability` | #289 MERGED 2026-04-29T10:18Z | last merged 2026-04-29T10:18Z | L-04/L-05 done out-of-loop. L-06..L-12 all done (merged via PR #289). L-02/L-03 deferred-post-launch (n8n dormant). L-01 needs-user (SENTRY_AUTH_TOKEN). L-10 false-positive (verified populating). **Stream L complete** (modulo L-01 needs-user). |
 | M | `claude/audit-remediation/m-01b-cover-image-backfill` (#283) · `m-02-versus-json-ld` (#296) · `m-05-glossary-linkifier` (#325) | #283/#296/#325 all MERGED | last merged 2026-05-01T10:29Z | M-01a done out-of-loop (PR #227). M-01b done (PR #283 — engineering side). M-02 done (PR #296). M-03 done (`85c7236`). M-04 done (`353fa3a`). M-05 done (PR #325). M-06 done (PR #283). M-07 done (PR #283). **Stream M complete.** |
 | N | `claude/audit-remediation/n-ux-perf` | #242 MERGED | last merged 2026-04-28 | N-01+N-02 done (`2ec6f89`) · N-03a/b/c done · N-04/N-05 FP · N-06 blocked (deferred-post-launch by founder 2026-05-01 — option 4 chosen) · N-07/N-08/N-09/N-10/N-11 done — **stream complete** (N-06 deferred). |
@@ -1863,6 +1863,16 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 - Phase 6: Merged main (queue-only), committed `a29318f`, pushed to `claude/audit-remediation/r-coverage-02-stripe-lib`.
 - Phase 7: Queue updated on main (this entry).
 - STATUS: CI-RESCUE · stream=R · pr=#526 · commit=a29318f
+
+### 2026-05-04 — CI-RESCUE iter 258 (stream KK — PR #524 merge-conflict in cron-groups.ts)
+
+- Phase 0: Lock held (batch fire resumed after context compaction).
+- Phase 1: main synced (already up to date).
+- Phase 2: PR #524 (KK) had a merge conflict in `lib/cron-groups.ts` from commit `0664b2b` (cost-cutting: removed every-5m and every-10m schedules). The KK branch referenced `every-10m` for `lead-sla-check`, which no longer exists in vercel.json. Correct fix: move `lead-sla-check` into `every-15m` (which already contains confirm-lead-notify, job-queue-worker, synthetic-checks after the cost-cut restructuring).
+- Phase 5: Resolved conflict in `lib/cron-groups.ts` — `lead-sla-check` added to `every-15m`; `every-30m` kept from main; defunct `every-10m` entry removed.
+- Phase 6: Committed merge `ab3ed67`, pushed to `claude/audit-remediation/kk-lead-routing-maturity`.
+- Phase 7: Queue updated — KK in-flight row updated.
+- STATUS: CI-RESCUE · stream=KK · pr=#524 · commit=ab3ed67
 
 ### 2026-05-04 — CI-RESCUE iter 257 (stream E — PR #528 Zod v4 PropertyKey[] type annotation fix)
 
