@@ -6,6 +6,7 @@ import type { GlossaryEntry } from "@/lib/glossary";
 import { getGlossaryBySlug, getGlossaryEntries } from "@/lib/glossary-db";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
+import FloatingRightCTA from "@/components/FloatingRightCTA";
 
 export const revalidate = 86400; // 24h
 
@@ -177,6 +178,14 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
           </div>
         </div>
       </div>
+
+      <FloatingRightCTA
+        href="/compare"
+        label="Compare platforms"
+        storageKey={`glossary:${slug}`}
+        variant="ink"
+        trackingContext="glossary"
+      />
     </>
   );
 }
