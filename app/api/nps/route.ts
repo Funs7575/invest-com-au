@@ -22,7 +22,7 @@ const NpsBody = z.object({
   respondent_type: z.enum(["user", "advisor", "broker"]),
   trigger: z.string().max(64),
   score: z.number().min(0).max(10),
-  comment: z.string().max(2000).optional(),
+  comment: z.string().optional(), // length capped by .slice(0, 2000) below — truncate, don't reject
   session_id: z.string().max(100).optional(),
   // respondent_id excluded from Zod — handled below with resilient coercion
   // (non-strings coerced to null; strings truncated to 200 chars)
