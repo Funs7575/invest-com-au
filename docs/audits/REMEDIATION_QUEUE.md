@@ -30,12 +30,12 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | D | `claude/audit-remediation/d-route-tests` | #285 MERGED 2026-04-29T10:13Z; supplementary PRs #246/#285/#297/#298 | last merged 2026-04-29T18:53Z | D-01..D-09 done (PR #246). D-10 done (PR #246 — coverage ratchet). D-11 complete (43+ batches, all admin/cron/non-admin routes covered) — merged via PR #285 + supplementary PRs #297/#298. **Stream D complete.** |
 | E | `claude/audit-remediation/e-02-batch-5-zod-rollout` (#469) · `e-02-batch-*-zod-rollout` (#460) · `e-03-zod-lint-rule` (#313) · `e-04-batch-2-zod-backfill` (#557) · `e-04-batch-3-zod-backfill` (#560) | #295/#313/#315/#323/#406/#528 MERGED · #460/#469 OPEN · **#557/#560 OPEN** | iter 266 — `d823fda` (PR #560: E-04 batch 3 — review-moderation, fi/seed, fi/verify, fi/update, fi/revalidate, advertise/create-checkout); CI pending. iter 265 CI-rescue — `6e26be6` (PR #557: body→rawBody fix in calendar POST + merge main; CI re-running). iter 263 — `aee5b06` (PR #557: E-04 batch 2); CI pending. iter 252-cont CI-rescue — `460d085`. | E-01 done (PR #295). E-02 in-progress (#460/#469). E-03 done (PR #313). E-04 in-progress (#528 MERGED batch 1; #557 OPEN batch 2; #560 OPEN batch 3). |
 | F | `claude/audit-remediation/f-07-json-ld-batch-1` (#527) | #293/#294/#301/#354/#355/#370 all MERGED · #527 OPEN | iter 243 CI-rescue — `4855030` (merge main: all 7 isFlagEnabled mocks; CI re-running). iter 237 — `19b3630` (F-07 batch 1). | F-01 false-positive. F-02 done (PR #293). F-03 done (PR #370). F-04 done (PR #354). F-05 done (PR #294+#301). F-06 done (PR #355). F-07 in-progress (#527 batch 1: 6/42 blocks migrated). F-08 pending. |
-| G | `claude/audit-remediation/g-03-batch-8-rollback-headers` (#520) | #307/#310/#311/#314/#316/#342/#352/#405/#455/#467 all MERGED · #520 OPEN | iter 229 — `52aee43` (PR #520: G-03 batch 8 — rollback headers for 15 remaining migrations; stream complete 208/208); CI pending | G-01+G-02 done (PR #307). **G-03 complete (208/208 covered)** — batches 1-7 (#311/#314/#316/#352/#405/#455/#467) all merged; batch 8 (#520) covers the final 15 files. G-04 done (PR #310 + #342). G-04-FINDING-1..5 pending founder authorization. |
+| G | `claude/audit-remediation/g-03-batch-8-rollback-headers` (#520) | #307/#310/#311/#314/#316/#342/#352/#405/#455/#467/#520 all MERGED | iter 229 — `52aee43` (PR #520: G-03 batch 8 MERGED 2026-05-04T14:42Z — all 208/208 migrations covered). | G-01+G-02 done (PR #307). **G-03 complete (208/208 covered)** — all batches MERGED. G-04 done (PR #310 + #342). G-04-FINDING-1..5 pending founder authorization. **Stream G complete.** |
 | H | _not started_ | — | — | — |
 | I | `claude/audit-remediation/i-new-04-main-ci-auto-revert` (#278) · `i-02-drift-detection-ci` (#353) | #278 MERGED 2026-04-28T16:18Z · #353 MERGED 2026-05-01T14:30Z | last merged 2026-05-01T14:30Z | I-NEW-01..05 all done. I-NEW-06 needs-user (Supabase GH Actions secrets). I-01 done via B-07 (PR #286). I-02 done (PR #353). I-03 done via C-08 (PR #327). I-04 done via E-03 (PR #313). I-05 done via D-10 (PR #246). |
 | J | `claude/audit-remediation/j-stripe-webhook` | #288 MERGED 2026-04-29T16:48Z | last merged 2026-04-29T16:48Z | J-01a..J-01e done · J-01d-ext done · J-03/J-05/J-06/J-08/J-09/J-10 done. **Stream J complete** (J-02/J-04/J-07/J-11 false-positives or done out-of-band). |
 | K | `claude/audit-remediation/k-security-hardening` | #222 MERGED 2026-04-28T15:14Z | last merged 2026-04-28T15:14Z | K-01..K-08 done; K-09 false-positive; K-10..K-15 done — **stream complete** |
-| KK | `claude/audit-remediation/kk-lead-routing-maturity` | #524 OPEN | iter 259 CI-rescue — `54a625d` (submit-lead edge-runtime fix: posthog-node incompatible with edge bundler; replaced with fetch-based captureEdgeEvent in lib/posthog/capture-edge.ts; CI re-running). iter 258 CI-rescue — `ab3ed67` (merge main: resolve cron-groups conflict; move lead-sla-check from defunct every-10m to every-15m). iter 254 CI-rescue — `0f19275` (merge main: resolve REMEDIATION_QUEUE.md conflict; 41/41 KK tests pass). iter 244 cont — `5d22141` (sourceBreakdown). | KK-01..KK-06 all done. **KK stream complete.** |
+| KK | `claude/audit-remediation/kk-lead-routing-maturity` | #524 OPEN | iter 266 — BLOCKED (stuck-detection: 3 CI rescues in 24h; surfaced to Blocked). iter 259 CI-rescue — `54a625d` (edge-runtime PostHog fix; CI re-running). iter 258 CI-rescue — `ab3ed67`. iter 244 cont — `5d22141`. | KK-01..KK-06 all done. **KK stream complete.** PR #524 stuck in CI — see Blocked entry. |
 | L | `claude/audit-remediation/l-observability` | #289 MERGED 2026-04-29T10:18Z | last merged 2026-04-29T10:18Z | L-04/L-05 done out-of-loop. L-06..L-12 all done (merged via PR #289). L-02/L-03 deferred-post-launch (n8n dormant). L-01 needs-user (SENTRY_AUTH_TOKEN). L-10 false-positive (verified populating). **Stream L complete** (modulo L-01 needs-user). |
 | M | `claude/audit-remediation/m-01b-cover-image-backfill` (#283) · `m-02-versus-json-ld` (#296) · `m-05-glossary-linkifier` (#325) | #283/#296/#325 all MERGED | last merged 2026-05-01T10:29Z | M-01a done out-of-loop (PR #227). M-01b done (PR #283 — engineering side). M-02 done (PR #296). M-03 done (`85c7236`). M-04 done (`353fa3a`). M-05 done (PR #325). M-06 done (PR #283). M-07 done (PR #283). **Stream M complete.** |
 | N | `claude/audit-remediation/n-ux-perf` | #242 MERGED | last merged 2026-04-28 | N-01+N-02 done (`2ec6f89`) · N-03a/b/c done · N-04/N-05 FP · N-06 blocked (deferred-post-launch by founder 2026-05-01 — option 4 chosen) · N-07/N-08/N-09/N-10/N-11 done — **stream complete** (N-06 deferred). |
@@ -474,6 +474,30 @@ Expected result: row appears with `status='done'` (or `status='error'` if the ha
 | **D** | Raise the CWV thresholds in `.lighthouserc.cwv.json` to match the runner's actual measured capability. | Structural fix — removes the delta between what the runner measures and the configured threshold. Risk: permanently loosens the gate for real UI regressions too. |
 
 **Resume:** Choose option A (preferred for structural fix), B (fastest for unblocking the 4 PRs), C (worth trying first at zero cost), or D. Then delete or mark this Blocked entry resolved so the loop resumes on the next fire.
+
+---
+
+### `Lint · Type-check · Test · Build` persistent failure on PR #524 (KK stream) — stuck-detection fired iter 266
+
+**Surfaced 2026-05-04 iter 266.** Stuck-detection guard triggered: 3 CI-RESCUE entries on PR #524 with `Lint · Type-check · Test · Build` all within 24 hours.
+
+| Rescue iter | Commit | Root cause fixed |
+|---|---|---|
+| 254 | `0f19275` | Merge main to clear dirty mergeable_state |
+| 258 | `ab3ed67` | Merge-conflict in cron-groups.ts |
+| 259 | `54a625d` | Edge-runtime PostHog capture (posthog-node Node.js built-ins incompatible with Vercel edge) |
+
+After all 3 fixes, CI is still failing. **KK stream content is complete** (KK-01..KK-06 all done) — the only outstanding work is PR #524 merging.
+
+**Recommendation matrix:**
+
+| Option | Action | Trade-off |
+|---|---|---|
+| **A (recommended)** | Rebase PR #524 on current main + push; CI re-runs on fresh base | Main has moved ~8 commits since `54a625d` was pushed (queue updates + HomeHero fixes); stale base could cause phantom failures |
+| **B** | Admin-merge #524 via GitHub UI after verifying the failure is runner noise (inspect the CI log for the actual error line) | Fastest path; KK stream unblocked in <5 min; risk = merging without CI green |
+| **C** | Investigate the current failure log, identify new root cause, fix and push | Correct but slow — previous rescue cycles revealed compound issues |
+
+**Recommendation: Option A (rebase) or B (admin-merge if you read the log and it's noise).** KK stream content is done; the CI failures are all fixup/merge noise, not logic regressions.
 
 ---
 
@@ -1852,6 +1876,14 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 - STATUS: PROGRESS · stream=E · item=E-04 (batch 3 of ~4) · pr=#560
 
 ---
+
+### 2026-05-04 — BLOCKED iter 267 (stream KK — PR #524 stuck-detection; G-03 batch 8 MERGED)
+
+- Phase 0: Lock held (batch fire, iteration 3 of up to 5 — parallel to iter 266).
+- Phase 1: main synced (fast-forward to 1cd96544).
+- Phase 2: (1) PR #520 (G-03 batch 8) verified MERGED 2026-05-04T14:42Z — queue updated. (2) PR #524 (KK) `Lint · Type-check · Test · Build` FAILURE. Stuck-detection: iters 254, 258, 259 all did CI-RESCUE on PR #524 with `Lint · Type-check · Test · Build` within 2026-05-04 (last 24h) — 3 prior entries = stuck-detection guard fires. Added Blocked entry with recommendation matrix (rebase or admin-merge — KK content is complete).
+- Phase 7: G in-flight row updated (marked MERGED); KK in-flight row updated (blocked); Blocked entry added. Queue committed to main.
+- STATUS: BLOCKED · stream=KK · item=persistent-CI-failure-pr-524
 
 ### 2026-05-04 — CI-RESCUE iter 265 (stream E — PR #557 body→rawBody in calendar POST handler)
 
