@@ -28,7 +28,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | B | `claude/audit-remediation/b-08-rls-select-only` (#326) · `b-09a-otp-gate` (#348 draft, parallel-agent) | #326 MERGED 2026-05-01T13:19Z · #348 OPEN (DRAFT, awaiting `LISTING_OWNER_COOKIE_SECRET` env var) | last CI-rescue 2026-05-01T21:43Z (#348) | PR #220 merged (B-01..B-06 done/blocked/FP). B-07 done (`0097159` PR #286). B-08 done — code changes merged via PR #326 commit `476f89f6`. B-09 in-progress on `#348` (parallel-agent, draft). CI-rescue iter 1 (`09c4dfb`, 2026-05-01) merged main before PR #392 types regen — types drift still red. CI-rescue iter 2 (`7da8757e`, 2026-05-01T21:43Z) merged post-#392 main — picked up database.types.ts regen; CI re-run pending. Still DRAFT awaiting `LISTING_OWNER_COOKIE_SECRET` env var (Tier D). |
 | C | all PRs MERGED | #327/#349/#360/#394/#397 all MERGED | last merged 2026-05-02T16:13Z | C-01..C-08 done. C-03 MERGED (#360). C-04 done (#394). C-05 done (#394). C-05b MERGED (#349). C-DISC-20260501-01 MERGED (#397). **Stream C complete.** |
 | D | `claude/audit-remediation/d-route-tests` | #285 MERGED 2026-04-29T10:13Z; supplementary PRs #246/#285/#297/#298 | last merged 2026-04-29T18:53Z | D-01..D-09 done (PR #246). D-10 done (PR #246 — coverage ratchet). D-11 complete (43+ batches, all admin/cron/non-admin routes covered) — merged via PR #285 + supplementary PRs #297/#298. **Stream D complete.** |
-| E | `claude/audit-remediation/e-02-batch-5-zod-rollout` (#469) · `e-02-batch-*-zod-rollout` (#460) · `e-03-zod-lint-rule` (#313) · `e-04-batch-2-zod-backfill` (#557) · `e-04-batch-3-zod-backfill` (#560) · `e-04-batch-4-zod-backfill` (#566) | #295/#313/#315/#323/#406/#528 MERGED · #460/#469 OPEN · **#557/#560/#566 OPEN** | iter 270 — `55a052d` (PR #566: E-04 batch 4 — 8 routes: quiz/submit, affiliate/click, claim-listing, developer-leads, broker-review-invite POST, questions/moderate, questions/[id]/vote, questions/[id]/answer); CI pending. iter 271 CI-rescue — `d7d0e82` (PR #557: merge main — refreshing Vercel preview for smoke test; CI re-running). iter 268 CI-rescue — `e219e9e` (PR #560: Zod v4 fixes in fi/update: z.record(z.string(),z.unknown()) + invalid_value; CI re-running). iter 266 — `d823fda` (PR #560: E-04 batch 3 — review-moderation, fi/seed, fi/verify, fi/update, fi/revalidate, advertise/create-checkout); CI pending. iter 265 CI-rescue — `6e26be6` (PR #557: body→rawBody fix in calendar POST + merge main; CI re-running). iter 263 — `aee5b06` (PR #557: E-04 batch 2); CI pending. iter 252-cont CI-rescue — `460d085`. | E-01 done (PR #295). E-02 in-progress (#460/#469). E-03 done (PR #313). E-04 in-progress (#528 MERGED batch 1; #557 OPEN batch 2; #560 OPEN batch 3; #566 OPEN batch 4 — all flagged routes covered). |
+| E | `claude/audit-remediation/e-02-batch-5-zod-rollout` (#469) · `e-02-batch-*-zod-rollout` (#460) · `e-03-zod-lint-rule` (#313) · `e-04-batch-2-zod-backfill` (#557) · `e-04-batch-3-zod-backfill` (#560) · `e-04-batch-4-zod-backfill` (#566) · `e-04-batch-5-zod-backfill` (#567) | #295/#313/#315/#323/#406/#528 MERGED · #460/#469 OPEN · **#557/#560/#566/#567 OPEN** | iter 273 — `2b17503` (PR #567: E-04 batch 5 — 5 routes: account/accept-terms, account/bookmarks, account/delete, analytics/search-log, article-reactions; CI queued). iter 270 — `55a052d` (PR #566: E-04 batch 4 — 8 routes: quiz/submit, affiliate/click, claim-listing, developer-leads, broker-review-invite POST, questions/moderate, questions/[id]/vote, questions/[id]/answer); CI pending. iter 271 CI-rescue — `d7d0e82` (PR #557: merge main — refreshing Vercel preview for smoke test; CI FAILED AGAIN — Vercel "Canceled by Ignored Build Step", 3rd smoke failure, see Blocked). iter 268 CI-rescue — `e219e9e` (PR #560: Zod v4 fixes in fi/update: z.record(z.string(),z.unknown()) + invalid_value; CI re-running). iter 266 — `d823fda` (PR #560: E-04 batch 3 — review-moderation, fi/seed, fi/verify, fi/update, fi/revalidate, advertise/create-checkout); CI pending. iter 265 CI-rescue — `6e26be6` (PR #557: body→rawBody fix in calendar POST + merge main; CI re-running). iter 263 — `aee5b06` (PR #557: E-04 batch 2); CI pending. iter 252-cont CI-rescue — `460d085`. | E-01 done (PR #295). E-02 in-progress (#460/#469). E-03 done (PR #313). E-04 in-progress (#528 MERGED batch 1; #557 OPEN batch 2 — BLOCKED on smoke test; #560 OPEN batch 3; #566 OPEN batch 4; #567 OPEN batch 5 — account/* + analytics/search-log + article-reactions). |
 | F | `claude/audit-remediation/f-07-batch2-json-ld` (#563) | #293/#294/#301/#354/#355/#370/#527 all MERGED · **#563 OPEN** | iter 270 — `764dfa3` (PR #563: F-07 batch 2 — 5 calculator pages; CI pending). iter 243 CI-rescue — `4855030`. iter 237 — `19b3630` (F-07 batch 1). | F-01 false-positive. F-02 done (PR #293). F-03 done (PR #370). F-04 done (PR #354). F-05 done (PR #294+#301). F-06 done (PR #355). **F-07 batch 1 MERGED (#527)** · F-07 batch 2 in-progress (#563: 5 pages, 11/~42 blocks total). F-08 pending. |
 | G | `claude/audit-remediation/g-03-batch-8-rollback-headers` (#520) | #307/#310/#311/#314/#316/#342/#352/#405/#455/#467/#520 all MERGED | iter 229 — `52aee43` (PR #520: G-03 batch 8 MERGED 2026-05-04T14:42Z — all 208/208 migrations covered). | G-01+G-02 done (PR #307). **G-03 complete (208/208 covered)** — all batches MERGED. G-04 done (PR #310 + #342). G-04-FINDING-1..5 pending founder authorization. **Stream G complete.** |
 | H | _not started_ | — | — | — |
@@ -60,6 +60,26 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 ---
 
 ## Blocked — needs human input
+
+### E-04 batch 2 · `Preview smoke test (critical URLs)` persistent failure on PR #557 (surfaced 2026-05-04 by iter 273)
+
+**Pattern:** 3 smoke test failures on PR #557 within 24h (iters 265, 271, and the CI run triggered by `d7d0e82`). Per stuck-detection guard, loop cannot fix this by retrying.
+
+**Root cause:** Vercel commit status shows `"Canceled by Ignored Build Step"` — Vercel determined the push didn't contain Vercel-relevant file changes and reused an existing build. The smoke test gate looks for a Vercel deployment registered under the exact HEAD commit SHA. If Vercel reuses a prior build, no deployment is registered for that SHA, causing the gate to fail on timeout.
+
+**Rescues attempted:**
+- iter 265: `6e26be6` — bodyfix + merge main
+- iter 271: `d7d0e82` — merge main again
+
+**Recommendation matrix:**
+
+| Option | Action | Notes |
+|--------|--------|-------|
+| **A (preferred)** | Admin-merge PR #557 — `Lint · Type-check · Test · Build` is SUCCESS, Zod code is correct | Smoke test failure is confirmed Vercel caching artifact, not a code issue |
+| **B** | Make a trivial meaningful change on the branch (e.g., `// noop` comment in one of the changed files) to force Vercel to register a new build | Hacky but self-service |
+| **C** | Check Vercel project settings — "Ignored Build Step" configuration may be filtering out routes-only changes | Requires Vercel dashboard access |
+
+**Status:** Loop will not attempt further rescues on this check for PR #557 without human intervention.
 
 ### C-03 · `advisor-apply/*` admin imports — scope exception decision needed (surfaced 2026-04-30 by iter 158)
 
@@ -1864,6 +1884,19 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-04 — Forward progress iter 273 (stream E — E-04 batch 5: 5 account/analytics/reactions routes)
+
+- Phase 0: Lock held (batch fire, continuation session after context compaction).
+- Phase 1: main synced to `a227ff8` (parallel fire added FX provider seed migration).
+- Phase 2: PR #557 (E-04 batch 2) smoke test failed AGAIN on `d7d0e82` — Vercel "Canceled by Ignored Build Step"; 3rd failure in 24h, stuck-detection threshold reached. Surfaced to Blocked. PR #566 (E-04 batch 4, parallel fire iter 270): CI pending. PR #524 (KK): iter 272 rescue push, CI queued.
+- Phase 3: Priority slot 17 (E) — E-04 batch 5. Batch 4 (PR #566) covers quiz/submit, affiliate/click, claim-listing, developer-leads, broker-review-invite, questions/*. Batch 5 covers: account/accept-terms, account/bookmarks, account/delete, analytics/search-log, article-reactions.
+- Phase 4: Verification — 5 routes confirmed not in batches 1–4. Manual typeof guards present, straightforward Zod replacements.
+- Phase 5: Implemented Zod schemas on all 5 routes. Dropped redundant `isValidSurface()` / `isValidReaction()` guards (Zod enum is equivalent). Lint clean.
+- Phase 6: Commit `2b17503`, pushed. PR #567 opened (ready). CI queued.
+- Phase 7: E in-flight row updated (batch 5 added). Blocked entry added for PR #557 smoke test.
+
+STATUS: PROGRESS · stream=E · item=E-04-batch-5 · pr=#567
 
 ### 2026-05-04 — Forward progress iter 270 (stream E — E-04 batch 4: Zod validation on 8 remaining routes)
 
