@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
-import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR, SITE_NAME } from "@/lib/seo";
+import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
+import { calculatorJsonLd, faqJsonLd } from "@/lib/schema-markup";
 import CgtClient from "./CgtClient";
 import ComplianceFooter from "@/components/ComplianceFooter";
 
@@ -27,17 +28,12 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image" as const },
 };
 
-const softwareLd = {
-  "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  name: `CGT Calculator — ${SITE_NAME}`,
+const softwareLd = calculatorJsonLd({
+  name: "CGT Calculator",
   description:
     "Free capital gains tax calculator for Australian investors. Includes 50% CGT discount for long-term holdings and calculates tax at marginal rate.",
-  url: absoluteUrl("/cgt-calculator"),
-  applicationCategory: "FinanceApplication",
-  operatingSystem: "Any",
-  offers: { "@type": "Offer", price: "0", priceCurrency: "AUD" },
-};
+  path: "/cgt-calculator",
+});
 
 const breadcrumbLd = breadcrumbJsonLd([
   { name: "Home", url: absoluteUrl("/") },
@@ -45,52 +41,28 @@ const breadcrumbLd = breadcrumbJsonLd([
   { name: "CGT Calculator", url: absoluteUrl("/cgt-calculator") },
 ]);
 
-const faqLd = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: [
-    {
-      "@type": "Question",
-      name: "What is capital gains tax in Australia?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "CGT is the tax you pay on profits from selling investment assets like shares, ETFs, property or crypto. It's not a separate tax — your net capital gain is added to your assessable income and taxed at your marginal rate.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "When do I pay CGT?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "CGT is triggered by a CGT event, usually when you sell, gift or transfer an asset. You report the gain in your tax return for the financial year of the sale and pay it as part of your normal annual tax assessment.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "How is the 50% CGT discount calculated?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "If you hold an asset for more than 12 months as an individual or trust, you discount the gross capital gain by 50% before adding it to taxable income. SMSFs get 33.3%, and companies receive no CGT discount.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "Can I offset losses against capital gains?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Yes. Capital losses offset capital gains in the same financial year. Unused losses carry forward indefinitely against future gains, but not against regular income. Losses apply before the 50% discount.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "Is my main residence CGT-exempt?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Yes, generally. Your main residence is exempt provided it has been your principal place of residence, sits on land under 2 hectares, and hasn't been used to produce income. Partial exemptions apply in mixed-use cases.",
-      },
-    },
-  ],
-};
+const faqLd = faqJsonLd([
+  {
+    q: "What is capital gains tax in Australia?",
+    a: "CGT is the tax you pay on profits from selling investment assets like shares, ETFs, property or crypto. It's not a separate tax — your net capital gain is added to your assessable income and taxed at your marginal rate.",
+  },
+  {
+    q: "When do I pay CGT?",
+    a: "CGT is triggered by a CGT event, usually when you sell, gift or transfer an asset. You report the gain in your tax return for the financial year of the sale and pay it as part of your normal annual tax assessment.",
+  },
+  {
+    q: "How is the 50% CGT discount calculated?",
+    a: "If you hold an asset for more than 12 months as an individual or trust, you discount the gross capital gain by 50% before adding it to taxable income. SMSFs get 33.3%, and companies receive no CGT discount.",
+  },
+  {
+    q: "Can I offset losses against capital gains?",
+    a: "Yes. Capital losses offset capital gains in the same financial year. Unused losses carry forward indefinitely against future gains, but not against regular income. Losses apply before the 50% discount.",
+  },
+  {
+    q: "Is my main residence CGT-exempt?",
+    a: "Yes, generally. Your main residence is exempt provided it has been your principal place of residence, sits on land under 2 hectares, and hasn't been used to produce income. Partial exemptions apply in mixed-use cases.",
+  },
+]);
 
 function Loading() {
   return (
