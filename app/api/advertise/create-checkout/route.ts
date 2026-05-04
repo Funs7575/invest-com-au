@@ -5,6 +5,15 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 import { getSiteUrl } from "@/lib/url";
 import { logger } from "@/lib/logger";
+import { z } from "zod";
+
+const CreateCheckoutBody = z.object({
+  pricing_id: z.number().int().positive(),
+  broker_slug: z.string().regex(/^[a-z0-9-]{2,80}$/),
+  starts_at: z.string().min(1),
+  email: z.string().email(),
+  contact_name: z.string().optional(),
+});
 
 const log = logger("advertise-checkout");
 
@@ -42,28 +51,35 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
 
-  let body: Record<string, unknown>;
+  let rawBody: unknown;
   try {
-    body = (await req.json()) as Record<string, unknown>;
+    rawBody = await req.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const pricingId = Number(body.pricing_id);
-  const brokerSlug = typeof body.broker_slug === "string" ? body.broker_slug.trim() : "";
-  const startsAt = typeof body.starts_at === "string" ? body.starts_at : "";
-  const email = typeof body.email === "string" ? body.email.trim() : "";
-  const contactName = typeof body.contact_name === "string" ? body.contact_name.trim() : "";
+  const parsed = CreateCheckoutBody.safeParse(rawBody);
+  if (!parsed.success) {
+    const field = parsed.error.issues[0]?.path[0];
+    const fieldMsgs: Record<string, string> = {
+      pricing_id: "Invalid pricing_id",
+      broker_slug: "Invalid broker_slug",
+      email: "Invalid email",
+      starts_at: "Invalid starts_at",
+    };
+    return NextResponse.json(
+      { error: fieldMsgs[String(field)] ?? "Invalid request body" },
+      { status: 400 },
+    );
+  }
+  const {
+    pricing_id: pricingId,
+    broker_slug: brokerSlug,
+    starts_at: startsAt,
+    email,
+    contact_name: contactName,
+  } = parsed.data;
 
-  if (!Number.isFinite(pricingId) || pricingId <= 0) {
-    return NextResponse.json({ error: "Invalid pricing_id" }, { status: 400 });
-  }
-  if (!/^[a-z0-9-]{2,80}$/.test(brokerSlug)) {
-    return NextResponse.json({ error: "Invalid broker_slug" }, { status: 400 });
-  }
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return NextResponse.json({ error: "Invalid email" }, { status: 400 });
-  }
   const startMs = Date.parse(startsAt);
   if (Number.isNaN(startMs)) {
     return NextResponse.json({ error: "Invalid starts_at" }, { status: 400 });

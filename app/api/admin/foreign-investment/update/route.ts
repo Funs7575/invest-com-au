@@ -23,6 +23,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidateTag } from "next/cache";
 import { getAdminEmails } from "@/lib/admin";
 import { logger } from "@/lib/logger";
+import { z } from "zod";
 
 const log = logger("admin-fi-update");
 
@@ -34,6 +35,14 @@ const ALLOWED_TABLES = [
   "fi_property_rules",
 ] as const;
 type AllowedTable = (typeof ALLOWED_TABLES)[number];
+
+const UpdateBody = z.object({
+  table: z.enum(ALLOWED_TABLES),
+  id: z.string().min(1),
+  updates: z.record(z.string(), z.unknown()),
+  categoryKey: z.string().min(1),
+  note: z.string().optional(),
+});
 
 // Map table → cache tag to bust
 const TABLE_CACHE_TAGS: Record<AllowedTable, string> = {
@@ -69,29 +78,25 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  let body: {
-    table: string;
-    id: string;
-    updates: Record<string, unknown>;
-    categoryKey: string;
-    note?: string;
-  };
+  let rawBody: unknown;
   try {
-    body = await req.json();
+    rawBody = await req.json();
   } catch (err) {
     log.warn("FI update invalid JSON", { err: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { table, id, updates, categoryKey, note } = body;
-
-  if (!table || !id || !updates || !categoryKey) {
-    return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+  const parsed = UpdateBody.safeParse(rawBody);
+  if (!parsed.success) {
+    const issue = parsed.error.issues[0];
+    const isTableInvalid =
+      issue?.path[0] === "table" && issue.code === "invalid_value";
+    return NextResponse.json(
+      { error: isTableInvalid ? "Table not allowed" : "Missing required fields" },
+      { status: 400 },
+    );
   }
-
-  if (!ALLOWED_TABLES.includes(table as AllowedTable)) {
-    return NextResponse.json({ error: "Table not allowed" }, { status: 400 });
-  }
+  const { table, id, updates, categoryKey, note } = parsed.data;
 
   // adminEmail is now derived from the verified session, not the request body
   const adminEmail = authedEmail;
