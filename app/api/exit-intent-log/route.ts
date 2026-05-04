@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 import { createHash } from "node:crypto";
@@ -7,13 +8,6 @@ import { logger } from "@/lib/logger";
 const log = logger("api:exit-intent-log");
 
 export const runtime = "nodejs";
-
-const VALID_ACTIONS = new Set([
-  "shown",
-  "dismissed",
-  "converted_subscribe",
-  "converted_quiz",
-]);
 
 /**
  * POST /api/exit-intent-log
@@ -27,6 +21,13 @@ const VALID_ACTIONS = new Set([
  * rollup sees `modal_variant`, `action`, `page_path`, a hashed
  * session, and a timestamp. Nothing that identifies a person.
  */
+const ExitIntentBody = z.object({
+  variant: z.string().max(60),
+  action: z.enum(["shown", "dismissed", "converted_subscribe", "converted_quiz"]),
+  session_id: z.string().optional(),
+  page_path: z.string().max(200).optional(),
+});
+
 export async function POST(request: NextRequest) {
   // Generous rate limit — an A/B test that fires once per
   // session tier rarely sends more than a handful of events
@@ -40,15 +41,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
 
-  const body = await request.json().catch(() => ({}));
-  const variant = typeof body.variant === "string" ? body.variant.slice(0, 60) : null;
-  const action = typeof body.action === "string" ? body.action : null;
-  const sessionId = typeof body.session_id === "string" ? body.session_id : null;
-  const pagePath = typeof body.page_path === "string" ? body.page_path.slice(0, 200) : null;
-
-  if (!variant || !action || !VALID_ACTIONS.has(action)) {
+  const rawBody = await request.json().catch(() => null);
+  const bodyResult = ExitIntentBody.safeParse(rawBody);
+  if (!bodyResult.success) {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
+  const { variant, action, session_id: sessionId, page_path: pagePath } = bodyResult.data;
 
   const salt = process.env.IP_HASH_SALT || "invest-com-au";
   const sessionHash = sessionId
