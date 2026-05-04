@@ -148,6 +148,42 @@ export default function AnalyticsTab({ stats, advisor, leads, profileCompletenes
         )}
       </div>
 
+      {/* Lead Source Breakdown */}
+      {stats && stats.sourceBreakdown.length > 0 && (
+        <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-5">
+          <h3 className="text-sm font-bold text-slate-900 mb-1">Lead Source Breakdown</h3>
+          <p className="text-[0.6rem] text-slate-400 mb-3">Where your leads are coming from and how they convert</p>
+          <div className="space-y-2">
+            <div className="grid grid-cols-3 text-[0.6rem] font-medium text-slate-400 uppercase px-1 mb-1">
+              <span>Source</span>
+              <span className="text-center">Leads</span>
+              <span className="text-right">Converted</span>
+            </div>
+            {stats.sourceBreakdown.slice(0, 8).map((row, i) => {
+              const convPct = row.count > 0 ? ((row.converted / row.count) * 100).toFixed(0) : "0";
+              const label = row.source === "unknown" ? "Direct / Unknown"
+                : row.source.startsWith("/quiz") ? "Broker Quiz"
+                : row.source.startsWith("/find-advisor") ? "Find an Advisor"
+                : row.source;
+              return (
+                <div key={i} className="grid grid-cols-3 items-center py-1.5 px-1 rounded-lg hover:bg-slate-50 text-xs">
+                  <span className="text-slate-700 font-medium truncate pr-2" title={row.source}>{label}</span>
+                  <span className="text-center text-slate-600">{row.count}</span>
+                  <span className="text-right text-emerald-600 font-medium">{row.converted} <span className="text-slate-400 font-normal">({convPct}%)</span></span>
+                </div>
+              );
+            })}
+          </div>
+          {/* Accept rate summary */}
+          {stats.totalLeads > 0 && (
+            <div className="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+              <span>Accept rate (non-rejected)</span>
+              <span className="font-semibold text-slate-700">{stats.acceptRate}%</span>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Tips */}
       <div className="bg-gradient-to-r from-violet-50 to-blue-50 border border-violet-200 rounded-xl p-4 md:p-5">
         <h3 className="text-sm font-bold text-slate-900 mb-2 flex items-center gap-1.5">

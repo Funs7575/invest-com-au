@@ -59,9 +59,16 @@ export type BillingRecord = {
   invoice_number?: string; created_at: string;
 };
 
+export type SourceBreakdownItem = {
+  source: string;
+  count: number;
+  converted: number;
+};
+
 export type Stats = {
   totalViews30d: number; totalLeads: number; leads30d: number;
   convertedLeads: number; conversionRate: string;
+  acceptedLeads: number; acceptRate: string;
   totalBilledCents: number; pendingBilledCents: number; reviewCount: number;
   avgRating: string | null; bookingClicks30d: number;
   hotLeadsCount: number; warmLeadsCount: number; coldLeadsCount: number;
@@ -69,6 +76,7 @@ export type Stats = {
   phoneClicks: number; websiteClicks: number; bookingClicks: number;
   articleViews: number; searchImpressions: number;
   articles: { title: string; slug: string; views: number; clicks: number }[];
+  sourceBreakdown: SourceBreakdownItem[];
 };
 
 export type ViewDay = { view_date: string; view_count: number };
