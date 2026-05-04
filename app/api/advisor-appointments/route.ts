@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import {
   listOpenSlots,
   claimSlot,
@@ -7,6 +8,13 @@ import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 import { logger } from "@/lib/logger";
 
 const log = logger("api:advisor-appointments");
+
+const AppointmentBody = z.object({
+  slot_id: z.number().int().positive(),
+  email: z.string().email(),
+  name: z.string().min(1),
+  lead_id: z.number().int().positive().optional(),
+});
 
 export const runtime = "nodejs";
 
@@ -54,18 +62,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
 
-  const body = await request.json().catch(() => ({}));
-  const slotId = typeof body.slot_id === "number" ? body.slot_id : null;
-  const email = typeof body.email === "string" ? body.email : null;
-  const name = typeof body.name === "string" ? body.name : null;
-  const leadId = typeof body.lead_id === "number" ? body.lead_id : null;
-
-  if (!slotId || !email || !name) {
+  const rawBody = await request.json().catch(() => null);
+  const bodyResult = AppointmentBody.safeParse(rawBody);
+  if (!bodyResult.success) {
     return NextResponse.json(
       { error: "Missing slot_id, email or name" },
       { status: 400 },
     );
   }
+  const { slot_id: slotId, email, name, lead_id: leadId } = bodyResult.data;
 
   const result = await claimSlot({
     slotId,
