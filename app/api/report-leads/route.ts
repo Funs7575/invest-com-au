@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isRateLimited } from "@/lib/rate-limit";
-import { isValidEmail } from "@/lib/validate-email";
 import { logger } from "@/lib/logger";
 
 const log = logger("report-leads");
@@ -17,11 +17,11 @@ const log = logger("report-leads");
  * populated and a sensible default investor_type.
  */
 
-interface Payload {
-  report_slug: string;
-  email: string;
-  name: string;
-}
+const ReportLeadBody = z.object({
+  report_slug: z.string().min(1).max(200),
+  email: z.string().email(),
+  name: z.string().min(2).max(120),
+});
 
 export async function POST(req: NextRequest) {
   const ip =
@@ -33,38 +33,25 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  let body: Partial<Payload>;
+  let rawBody: unknown;
   try {
-    body = (await req.json()) as Partial<Payload>;
+    rawBody = await req.json();
   } catch {
-    return NextResponse.json(
-      { success: false, error: "Invalid JSON" },
-      { status: 400 },
-    );
+    return NextResponse.json({ success: false, error: "Invalid JSON" }, { status: 400 });
   }
 
-  const report_slug = typeof body.report_slug === "string" ? body.report_slug.trim() : "";
-  const email = typeof body.email === "string" ? body.email.trim() : "";
-  const name = typeof body.name === "string" ? body.name.trim() : "";
+  const bodyResult = ReportLeadBody.safeParse(rawBody);
+  if (!bodyResult.success) {
+    const field = bodyResult.error.issues[0]?.path[0] as string | undefined;
+    const errorMsg =
+      field === "report_slug" ? "Invalid report_slug"
+      : field === "email" ? "Invalid email"
+      : field === "name" ? "Invalid name"
+      : "Invalid request";
+    return NextResponse.json({ success: false, error: errorMsg }, { status: 400 });
+  }
 
-  if (!report_slug || report_slug.length > 200) {
-    return NextResponse.json(
-      { success: false, error: "Invalid report_slug" },
-      { status: 400 },
-    );
-  }
-  if (!isValidEmail(email)) {
-    return NextResponse.json(
-      { success: false, error: "Invalid email" },
-      { status: 400 },
-    );
-  }
-  if (!name || name.length < 2 || name.length > 120) {
-    return NextResponse.json(
-      { success: false, error: "Invalid name" },
-      { status: 400 },
-    );
-  }
+  const { report_slug, email, name } = bodyResult.data;
 
   try {
     const supabase = createAdminClient();

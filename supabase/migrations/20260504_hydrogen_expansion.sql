@@ -2,6 +2,23 @@
 -- Hydrogen vertical expansion — commodity_sectors row, investment_verticals
 -- row, and 10 ASX hydrogen listings.
 --
+-- Date: 2026-05-04
+-- Audit ref: codebase-health-2026-04-24.md §4.3 (G-03)
+-- Queue item: G-03 batch 8
+-- Why: seeds the hydrogen investment vertical with a commodity_sectors
+--      entry, vertical row, 10 ASX hydrogen listings, commodity stocks,
+--      and commodity ETFs.
+-- Idempotency: ON CONFLICT (slug) DO UPDATE/DO NOTHING. Safe to re-apply.
+-- Rollback:
+--   DELETE FROM public.commodity_etfs WHERE sector_id = (
+--     SELECT id FROM public.commodity_sectors WHERE slug = 'hydrogen');
+--   DELETE FROM public.commodity_stocks WHERE sector_id = (
+--     SELECT id FROM public.commodity_sectors WHERE slug = 'hydrogen');
+--   DELETE FROM public.investment_listings WHERE source = 'hydrogen-expansion';
+--   DELETE FROM public.investment_verticals WHERE slug = 'hydrogen';
+--   DELETE FROM public.commodity_sectors WHERE slug = 'hydrogen';
+--   Note: INSERT-only migration; no DDL to reverse.
+--
 -- No new advisor types — hydrogen is covered by existing
 -- resources_fund_manager, energy_financial_planner, and
 -- foreign_investment_lawyer types.

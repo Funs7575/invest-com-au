@@ -1,5 +1,34 @@
 -- Wave 4: Revenue loop schema.
 --
+-- Date: 2026-04-14
+-- Audit ref: codebase-health-2026-04-24.md §4.3 (G-03)
+-- Queue item: G-03 batch 8
+-- Why: three new tables and seven additive columns power paid advisor
+--      placements, referral payouts, attribution tracking, and drip /
+--      dormant-nudge automations.
+-- Idempotency: CREATE TABLE/INDEX IF NOT EXISTS;
+--              ALTER TABLE … ADD COLUMN IF NOT EXISTS. Safe to re-apply.
+-- Rollback (in reverse creation order):
+--   ALTER TABLE IF EXISTS public.email_captures DROP COLUMN IF EXISTS winback_sent_at;
+--   DROP INDEX IF EXISTS public.idx_email_captures_winback;
+--   ALTER TABLE IF EXISTS public.professionals DROP COLUMN IF EXISTS advisor_dormant_nudged_at;
+--   ALTER TABLE IF EXISTS public.quiz_leads
+--     DROP COLUMN IF EXISTS drip_step,
+--     DROP COLUMN IF EXISTS drip_sent_at;
+--   DROP INDEX IF EXISTS public.idx_quiz_leads_drip;
+--   ALTER TABLE IF EXISTS public.ab_tests
+--     DROP COLUMN IF EXISTS winner_variant,
+--     DROP COLUMN IF EXISTS winner_declared_at,
+--     DROP COLUMN IF EXISTS auto_promote_enabled;
+--   DROP TABLE IF EXISTS public.attribution_touches;
+--   DROP TABLE IF EXISTS public.referral_rewards;
+--   ALTER TABLE public.professionals
+--     DROP COLUMN IF EXISTS referral_code,
+--     DROP COLUMN IF EXISTS referral_count;
+--   DROP TABLE IF EXISTS public.sponsored_placements;
+--   Note: DELETE all attribution + referral rows first if preserving
+--         revenue/analytics data before dropping the tables.
+--
 -- Tables introduced:
 --   1. sponsored_placements   — paid advisor boost tier (bid + cap)
 --   2. referral_rewards       — referral payout state machine
