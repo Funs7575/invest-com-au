@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isRateLimited } from "@/lib/rate-limit";
@@ -6,6 +7,12 @@ import { getSiteUrl } from "@/lib/url";
 import { logger } from "@/lib/logger";
 
 const log = logger("advisor-auth-login");
+
+const AdvisorLoginBody = z.object({
+  email: z.string().min(1),
+  password: z.string().optional(),
+  mode: z.enum(["magic", "password", "signup"]).optional(),
+});
 
 /**
  * POST /api/advisor-auth/login
@@ -15,9 +22,10 @@ const log = logger("advisor-auth-login");
  */
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { email, password, mode = "magic" } = body;
-    if (!email) return NextResponse.json({ error: "Email required" }, { status: 400 });
+    const rawBody = await request.json();
+    const bodyResult = AdvisorLoginBody.safeParse(rawBody);
+    if (!bodyResult.success) return NextResponse.json({ error: "Email required" }, { status: 400 });
+    const { email, password, mode = "magic" } = bodyResult.data;
 
     const trimmed = email.toLowerCase().trim();
 

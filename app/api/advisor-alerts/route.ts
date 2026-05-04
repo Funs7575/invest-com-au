@@ -4,11 +4,19 @@
  * Stores in advisor_search_alerts table (created if needed via upsert).
  */
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isRateLimited } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
 
 const log = logger("advisor-alerts");
+
+const AdvisorAlertBody = z.object({
+  email: z.string().email(),
+  advisor_type: z.string().min(1),
+  location_state: z.string().optional(),
+  location_suburb: z.string().optional(),
+});
 
 export async function POST(request: NextRequest) {
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
@@ -16,18 +24,18 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
   }
 
-  const body = await request.json().catch(() => null);
-  if (!body) return NextResponse.json({ error: "Invalid request" }, { status: 400 });
-
-  const { email, advisor_type, location_state, location_suburb } = body;
-
-  if (!email || typeof email !== "string" || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return NextResponse.json({ error: "A valid email address is required." }, { status: 400 });
+  const rawBody = await request.json().catch(() => null);
+  const bodyResult = AdvisorAlertBody.safeParse(rawBody);
+  if (!bodyResult.success) {
+    const issue = bodyResult.error.issues[0];
+    const msg = issue?.path[0] === "email"
+      ? "A valid email address is required."
+      : issue?.path[0] === "advisor_type"
+        ? "Advisor type is required."
+        : "Invalid request";
+    return NextResponse.json({ error: msg }, { status: 400 });
   }
-
-  if (!advisor_type || typeof advisor_type !== "string") {
-    return NextResponse.json({ error: "Advisor type is required." }, { status: 400 });
-  }
+  const { email, advisor_type, location_state, location_suburb } = bodyResult.data;
 
   const admin = createAdminClient();
 

@@ -3,6 +3,12 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { ADMIN_EMAILS } from "@/lib/admin";
 import { logger } from "@/lib/logger";
+import { z } from "zod";
+
+const ModerateBody = z.object({
+  ids: z.array(z.number().int()).min(1),
+  action: z.enum(["approve", "reject", "flag"]),
+});
 
 const log = logger("admin-review-moderation");
 
@@ -29,21 +35,19 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await req.json();
-    const { ids, action } = body as { ids?: number[]; action?: string };
-
-    if (!ids || !Array.isArray(ids) || ids.length === 0) {
-      return NextResponse.json(
-        { error: "Missing or empty ids array" },
-        { status: 400 }
-      );
+    const rawBody = await req.json();
+    const parsed = ModerateBody.safeParse(rawBody);
+    if (!parsed.success) {
+      const field = parsed.error.issues[0]?.path[0];
+      const msg =
+        field === "ids"
+          ? "Missing or empty ids array"
+          : field === "action"
+            ? "Action must be 'approve', 'reject', or 'flag'"
+            : "Invalid request body";
+      return NextResponse.json({ error: msg }, { status: 400 });
     }
-    if (!action || !["approve", "reject", "flag"].includes(action)) {
-      return NextResponse.json(
-        { error: "Action must be 'approve', 'reject', or 'flag'" },
-        { status: 400 }
-      );
-    }
+    const { ids, action } = parsed.data;
 
     const statusMap: Record<string, string> = {
       approve: "approved",

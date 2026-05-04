@@ -56,13 +56,23 @@ const VerifyBody = z.object({
   afsl_number: z.string().nullable().optional(),
 });
 
+function safeEqual(a: string, b: string): boolean {
+  if (a.length !== b.length) return false;
+  let mismatch = 0;
+  for (let i = 0; i < a.length; i++) {
+    mismatch |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  }
+  return mismatch === 0;
+}
+
 function isAuthorised(req: NextRequest): boolean {
-  const adminKey = process.env.ADMIN_API_KEY;
-  const cronKey = process.env.CRON_SECRET;
   const header = req.headers.get("authorization") ?? "";
   const bearer = header.startsWith("Bearer ") ? header.slice(7) : "";
-  if (adminKey && bearer === adminKey) return true;
-  if (cronKey && bearer === cronKey) return true;
+  if (!bearer) return false;
+  const adminKey = process.env.ADMIN_API_KEY;
+  if (adminKey && adminKey.length >= 16 && safeEqual(bearer, adminKey)) return true;
+  const cronKey = process.env.CRON_SECRET;
+  if (cronKey && cronKey.length >= 16 && safeEqual(bearer, cronKey)) return true;
   return false;
 }
 
