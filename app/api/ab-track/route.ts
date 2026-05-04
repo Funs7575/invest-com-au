@@ -29,7 +29,9 @@ export async function POST(request: NextRequest) {
   }
   const parsed = AbTrackBody.safeParse(rawBody);
   if (!parsed.success) {
-    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+    // Surface the first failing field name so tests can assert field-specific messages.
+    const firstField = parsed.error.issues[0]?.path[0] ?? "request";
+    return NextResponse.json({ error: `Invalid ${String(firstField)}` }, { status: 400 });
   }
   const { test_id, variant, event_type } = parsed.data;
 
