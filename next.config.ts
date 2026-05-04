@@ -258,6 +258,57 @@ const nextConfig: NextConfig = {
         destination: "/invest/:path*",
         permanent: true,
       },
+      // ── GI-stream — /global-investing outbound hub consolidation ──
+      // Wave 1 cornerstone /global-investing/shares/us shipped in PR #542;
+      // GI-08 cloned /etfs/us-exposure → /global-investing/etfs/us and
+      // /etfs/international → /global-investing/etfs/global in this PR.
+      // 8 redirects below collapse fragmented authority into the canonical
+      // hub URLs. Remaining 5 redirects (best/forex*, best/international-shares,
+      // best/best-international-etfs) deferred until their target pages
+      // (/global-investing/currency/best-fx-providers, /global-investing/shares,
+      // /global-investing/etfs) ship in Waves 2-4. See
+      // docs/audits/GLOBAL_INVESTING_PROGRAM.md §3 for the full canonical
+      // redirect map and gating rationale.
+      {
+        source: "/best/us-shares",
+        destination: "/global-investing/shares/us",
+        permanent: true,
+      },
+      {
+        source: "/best/cheapest-us-shares",
+        destination: "/global-investing/shares/us",
+        permanent: true,
+      },
+      {
+        source: "/best/us-shares-5000",
+        destination: "/global-investing/shares/us",
+        permanent: true,
+      },
+      {
+        source: "/best/us-shares-monthly",
+        destination: "/global-investing/shares/us",
+        permanent: true,
+      },
+      {
+        source: "/best/us-fee",
+        destination: "/global-investing/shares/us",
+        permanent: true,
+      },
+      {
+        source: "/best/invest-in-us-shares",
+        destination: "/global-investing/shares/us",
+        permanent: true,
+      },
+      {
+        source: "/etfs/us-exposure",
+        destination: "/global-investing/etfs/us",
+        permanent: true,
+      },
+      {
+        source: "/etfs/international",
+        destination: "/global-investing/etfs/global",
+        permanent: true,
+      },
     ];
   },
 };
