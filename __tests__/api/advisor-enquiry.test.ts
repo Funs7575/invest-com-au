@@ -24,6 +24,14 @@ vi.mock("@/lib/advisor-billing", () => ({
   createLeadInvoice: vi.fn(() => Promise.resolve()),
 }));
 
+// The advisor_enquiry_intake feature flag was added in the launch-ops pass.
+// In test environments isFlagEnabled() returns false (placeholder Supabase URL),
+// causing all POST tests to receive 503. Mock to return true by default.
+const mockIsFlagEnabled = vi.fn().mockResolvedValue(true);
+vi.mock("@/lib/feature-flags", () => ({
+  isFlagEnabled: (...args: unknown[]) => mockIsFlagEnabled(...args),
+}));
+
 // ── Import route AFTER mocks ──────────────────────────────────────────────────
 import { POST } from "@/app/api/advisor-enquiry/route";
 import { isRateLimited } from "@/lib/rate-limit";
@@ -121,6 +129,7 @@ function enquiryRequest(body: Record<string, unknown>, ip = "5.6.7.8") {
 describe("POST /api/advisor-enquiry", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockIsFlagEnabled.mockResolvedValue(true);
     process.env.RESEND_API_KEY = "re_test_key";
     (isRateLimited as ReturnType<typeof vi.fn>).mockResolvedValue(false);
   });
