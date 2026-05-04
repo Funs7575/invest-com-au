@@ -35,7 +35,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | I | `claude/audit-remediation/i-new-04-main-ci-auto-revert` (#278) · `i-02-drift-detection-ci` (#353) | #278 MERGED 2026-04-28T16:18Z · #353 MERGED 2026-05-01T14:30Z | last merged 2026-05-01T14:30Z | I-NEW-01..05 all done. I-NEW-06 needs-user (Supabase GH Actions secrets). I-01 done via B-07 (PR #286). I-02 done (PR #353). I-03 done via C-08 (PR #327). I-04 done via E-03 (PR #313). I-05 done via D-10 (PR #246). |
 | J | `claude/audit-remediation/j-stripe-webhook` | #288 MERGED 2026-04-29T16:48Z | last merged 2026-04-29T16:48Z | J-01a..J-01e done · J-01d-ext done · J-03/J-05/J-06/J-08/J-09/J-10 done. **Stream J complete** (J-02/J-04/J-07/J-11 false-positives or done out-of-band). |
 | K | `claude/audit-remediation/k-security-hardening` | #222 MERGED 2026-04-28T15:14Z | last merged 2026-04-28T15:14Z | K-01..K-08 done; K-09 false-positive; K-10..K-15 done — **stream complete** |
-| KK | `claude/audit-remediation/kk-lead-routing-maturity` | #524 OPEN | iter 246 — `23d54b0` (KK-06: accept rate + period trend dashboard; CI pending). iter 245 — `15bc8a3` (KK-05). iter 244 — `67e095e` (KK-04). | KK-01 in-progress (#524). KK-02 done (8290ded). KK-03 in-progress (1fcddf3). KK-04 in-progress (67e095e). KK-05 in-progress (15bc8a3). KK-06 in-progress (23d54b0). |
+| KK | `claude/audit-remediation/kk-lead-routing-maturity` | #524 OPEN | iter 244 cont — `5d22141` (fix: dedup acceptRate type, add sourceBreakdown to dashboard route; CI pending). iter 246 — `23d54b0` (KK-06). CI-rescue `1708ced`. | KK-01..KK-06 all done. **KK stream complete.** |
 | L | `claude/audit-remediation/l-observability` | #289 MERGED 2026-04-29T10:18Z | last merged 2026-04-29T10:18Z | L-04/L-05 done out-of-loop. L-06..L-12 all done (merged via PR #289). L-02/L-03 deferred-post-launch (n8n dormant). L-01 needs-user (SENTRY_AUTH_TOKEN). L-10 false-positive (verified populating). **Stream L complete** (modulo L-01 needs-user). |
 | M | `claude/audit-remediation/m-01b-cover-image-backfill` (#283) · `m-02-versus-json-ld` (#296) · `m-05-glossary-linkifier` (#325) | #283/#296/#325 all MERGED | last merged 2026-05-01T10:29Z | M-01a done out-of-loop (PR #227). M-01b done (PR #283 — engineering side). M-02 done (PR #296). M-03 done (`85c7236`). M-04 done (`353fa3a`). M-05 done (PR #325). M-06 done (PR #283). M-07 done (PR #283). **Stream M complete.** |
 | N | `claude/audit-remediation/n-ux-perf` | #242 MERGED | last merged 2026-04-28 | N-01+N-02 done (`2ec6f89`) · N-03a/b/c done · N-04/N-05 FP · N-06 blocked (deferred-post-launch by founder 2026-05-01 — option 4 chosen) · N-07/N-08/N-09/N-10/N-11 done — **stream complete** (N-06 deferred). |
@@ -1692,6 +1692,14 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 - Phase 6: Committed `06f8f385`, pushed (clean push).
 - Phase 7: Queue updated — E row updated to batch 2 (12/25 routes migrated).
 - STATUS: PROGRESS · stream=E · item=E-04 batch 2 · pr=#528 · commit=06f8f385 · diff=+102 -94 across 6 files
+
+### 2026-05-04 — CI-rescue + supplement iter 244 cont. (stream KK — vi.fn<typeof fetch> fix + sourceBreakdown)
+
+- Phase 0: Lock held (batch continuation after context compaction).
+- Phase 2: CI rescue — "Tuple type '[]' of length '0'" in cron-hub-silence-check.test.ts:183+234. Fixed `vi.fn<typeof fetch>` typing (`1708ced`). Pushed + CI re-running.
+- Phase 5: After concurrent session did KK-05 (15bc8a31) + KK-06 (23d54b09), merged remote → resolved duplicate `acceptRate: string/number` (kept `number` to match >=60 comparison); added `sourceBreakdown` to advisor-dashboard/route.ts (the actual stats source); added `acceptedLeads` to dashboard response. Type-check: 0 errors. Tests: 12/12 pass (advisor-dashboard). Diff: +17/-6 across 3 files.
+- Phase 6: Committed `5d22141`. Pushed to kk-lead-routing-maturity.
+- STATUS: PROGRESS · stream=KK · item=KK-06 supplement · pr=#524
 
 ### 2026-05-04 — Forward progress iter 246 (stream KK — KK-06: advisor performance dashboard)
 
