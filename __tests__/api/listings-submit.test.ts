@@ -103,7 +103,7 @@ describe("POST /api/listings/submit", () => {
   });
 
   it("accepts all valid vertical values", async () => {
-    const verticals = ["business", "mining", "farmland", "commercial_property", "franchise", "energy", "fund", "startup"];
+    const verticals = ["business", "mining", "farmland", "commercial_property", "franchise", "energy", "fund", "startup", "pre_ipo"];
     for (const vertical of verticals) {
       mockServerFrom.mockReturnValue(makeInsertChain({ data: { id: 1 }, error: null }));
       const res = await POST(makePost({ ...VALID_BODY, vertical }));

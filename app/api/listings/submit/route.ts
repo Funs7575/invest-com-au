@@ -1,12 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
+import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isRateLimited } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
 import { processAdvisorOptIns } from "@/lib/advisor-opt-ins";
+import { withValidatedBody } from "@/lib/validation/withValidatedBody";
 
 const log = logger("listings:submit");
-
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const VALID_VERTICALS = [
   "business",
@@ -18,85 +18,49 @@ const VALID_VERTICALS = [
   "fund",
   "startup",
   "pre_ipo",
-];
+] as const;
 
-interface SubmitBody {
-  vertical: string;
-  title: string;
-  description: string;
-  location_state: string;
-  location_city?: string;
-  asking_price_display?: string;
-  industry?: string;
-  firb_eligible?: boolean;
-  siv_complying?: boolean;
-  contact_name: string;
-  contact_email: string;
-  contact_phone?: string;
-  listing_plan?: string;
-  advisor_opt_ins?: string[];
-}
+const SubmitSchema = z.object({
+  vertical: z.enum(VALID_VERTICALS, {
+    error: () => "A valid investment vertical is required.",
+  }),
+  title: z
+    .string({ error: () => "Title must be at least 5 characters." })
+    .trim()
+    .min(5, "Title must be at least 5 characters."),
+  description: z
+    .string({ error: () => "Description must be at least 50 characters." })
+    .trim()
+    .min(50, "Description must be at least 50 characters."),
+  location_state: z
+    .string({ error: () => "State / Territory is required." })
+    .trim()
+    .min(1, "State / Territory is required."),
+  location_city: z.string().trim().optional(),
+  asking_price_display: z.string().trim().optional(),
+  industry: z.string().trim().optional(),
+  firb_eligible: z.boolean().optional(),
+  siv_complying: z.boolean().optional(),
+  contact_name: z
+    .string({ error: () => "Contact name is required." })
+    .trim()
+    .min(1, "Contact name is required."),
+  contact_email: z
+    .string({ error: () => "A valid contact email is required." })
+    .trim()
+    .email("A valid contact email is required."),
+  contact_phone: z.string().trim().optional(),
+  listing_plan: z.string().optional(),
+  advisor_opt_ins: z.array(z.string()).optional(),
+});
 
-export async function POST(request: NextRequest) {
+export const POST = withValidatedBody(SubmitSchema, async (request: NextRequest, body) => {
   try {
-    // Rate limit listing submissions
     const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
     if (await isRateLimited(`listing-submit:${ip}`, 5, 10)) {
       return NextResponse.json({ error: "Too many submissions. Please try again later." }, { status: 429 });
     }
 
-    let body: Partial<SubmitBody>;
-    try {
-      // eslint-disable-next-line invest/no-unvalidated-req-json -- pre-existing manual validation; Zod refactor tracked as follow-up
-      body = await request.json();
-    } catch {
-      return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
-    }
-
-    // Validate required fields
-    if (!body.vertical || !VALID_VERTICALS.includes(body.vertical)) {
-      return NextResponse.json(
-        { error: "A valid investment vertical is required." },
-        { status: 400 }
-      );
-    }
-
-    if (!body.title || body.title.trim().length < 5) {
-      return NextResponse.json(
-        { error: "Title must be at least 5 characters." },
-        { status: 400 }
-      );
-    }
-
-    if (!body.description || body.description.trim().length < 50) {
-      return NextResponse.json(
-        { error: "Description must be at least 50 characters." },
-        { status: 400 }
-      );
-    }
-
-    if (!body.location_state || body.location_state.trim().length === 0) {
-      return NextResponse.json(
-        { error: "State / Territory is required." },
-        { status: 400 }
-      );
-    }
-
-    if (!body.contact_name || body.contact_name.trim().length === 0) {
-      return NextResponse.json(
-        { error: "Contact name is required." },
-        { status: 400 }
-      );
-    }
-
-    if (!body.contact_email || !EMAIL_REGEX.test(body.contact_email)) {
-      return NextResponse.json(
-        { error: "A valid contact email is required." },
-        { status: 400 }
-      );
-    }
-
-    // Generate a slug from the title
     const baseSlug = body.title
       .toLowerCase()
       .replace(/[^a-z0-9\s-]/g, "")
@@ -112,18 +76,18 @@ export async function POST(request: NextRequest) {
       .from("investment_listings")
       .insert({
         vertical: body.vertical,
-        title: body.title.trim(),
+        title: body.title,
         slug,
-        description: body.description.trim(),
-        location_state: body.location_state.trim(),
-        location_city: body.location_city?.trim() ?? null,
-        price_display: body.asking_price_display?.trim() ?? null,
-        industry: body.industry?.trim() ?? null,
+        description: body.description,
+        location_state: body.location_state,
+        location_city: body.location_city ?? null,
+        price_display: body.asking_price_display ?? null,
+        industry: body.industry ?? null,
         firb_eligible: body.firb_eligible ?? false,
         siv_complying: body.siv_complying ?? false,
-        contact_name: body.contact_name.trim(),
-        contact_email: body.contact_email.trim(),
-        contact_phone: body.contact_phone?.trim() ?? null,
+        contact_name: body.contact_name,
+        contact_email: body.contact_email,
+        contact_phone: body.contact_phone ?? null,
         listing_type: body.listing_plan === "featured" ? "featured" : body.listing_plan === "premium" ? "premium" : "standard",
         status: "pending",
         views: 0,
@@ -140,10 +104,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Fan out advisor opt-ins (non-blocking — never fail the listing for a
-    // downstream lead-create error).
     let opt_ins_queued = 0;
-    if (Array.isArray(body.advisor_opt_ins) && body.advisor_opt_ins.length > 0 && inserted?.id) {
+    if (body.advisor_opt_ins && body.advisor_opt_ins.length > 0 && inserted?.id) {
       try {
         const optInResult = await processAdvisorOptIns({
           admin,
@@ -154,7 +116,7 @@ export async function POST(request: NextRequest) {
           contact_name: body.contact_name,
           contact_phone: body.contact_phone,
           user_location_state: body.location_state,
-          context_note: `Listed: ${body.title?.slice(0, 80)}`,
+          context_note: `Listed: ${body.title.slice(0, 80)}`,
         });
         opt_ins_queued = optInResult.inserted;
       } catch (err) {
@@ -172,4 +134,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+});
