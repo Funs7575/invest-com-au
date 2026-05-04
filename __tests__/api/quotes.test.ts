@@ -35,6 +35,8 @@ vi.mock("@/lib/logger", () => ({
 // ── Mock admin DB ────────────────────────────────────────────────────────────
 
 let mockAuction: Record<string, unknown> | null = null;
+let mockAuctionsList: unknown[] = [];
+let mockAuctionsListError: { message: string } | null = null;
 let mockBids: unknown[] = [];
 let mockInsertResult: { data: unknown; error: unknown } = { data: { id: 1, slug: "test-slug" }, error: null };
 
@@ -50,6 +52,8 @@ const mockAdmin = {
           contains: function () { return this; },
           maybeSingle: () => Promise.resolve({ data: mockAuction, error: null }),
           single: () => Promise.resolve({ data: mockAuction, error: null }),
+          then: (onFulfilled: (v: { data: unknown[]; error: unknown }) => unknown) =>
+            Promise.resolve({ data: mockAuctionsList, error: mockAuctionsListError }).then(onFulfilled),
         }),
         insert: () => ({
           select: () => ({
@@ -111,7 +115,7 @@ const mockAdmin = {
 
 // ── Import routes after mocks ────────────────────────────────────────────────
 
-import { POST } from "@/app/api/quotes/route";
+import { GET as GET_LIST, POST } from "@/app/api/quotes/route";
 import { GET as GET_DETAIL } from "@/app/api/quotes/[slug]/route";
 import { POST as POST_ACCEPT } from "@/app/api/quotes/[slug]/accept/route";
 
@@ -318,5 +322,103 @@ describe("POST /api/quotes/[slug]/accept", () => {
       { params: Promise.resolve({ slug: "test-slug" }) }
     );
     expect(res.status).toBe(429);
+  });
+});
+
+// ── Tests: GET /api/quotes (list) ────────────────────────────────────────────
+
+describe("GET /api/quotes", () => {
+  function makeListRequest(params?: Record<string, string>): NextRequest {
+    const qs = params ? "?" + new URLSearchParams(params).toString() : "";
+    return new NextRequest(`http://localhost/api/quotes${qs}`, {
+      method: "GET",
+      headers: { "x-forwarded-for": "1.2.3.4" },
+    });
+  }
+
+  beforeEach(() => {
+    mockAuctionsList = [];
+    mockAuctionsListError = null;
+    mockBids = [];
+  });
+
+  it("returns 200 with empty jobs array when no auctions", async () => {
+    const res = await GET_LIST(makeListRequest());
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(Array.isArray(body.jobs)).toBe(true);
+    expect(body.jobs).toHaveLength(0);
+  });
+
+  it("returns jobs with bid_counts aggregated", async () => {
+    mockAuctionsList = [{ id: 1, slug: "job-a" }, { id: 2, slug: "job-b" }];
+    mockBids = [{ auction_id: 1 }, { auction_id: 1 }, { auction_id: 2 }];
+    const res = await GET_LIST(makeListRequest());
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.jobs).toHaveLength(2);
+    expect(body.jobs[0].bid_count).toBe(2);
+    expect(body.jobs[1].bid_count).toBe(1);
+  });
+
+  it("accepts valid advisor_type filter without error", async () => {
+    const res = await GET_LIST(makeListRequest({ advisor_type: "financial_planner" }));
+    expect(res.status).toBe(200);
+  });
+
+  it("ignores invalid advisor_type (not in allowlist)", async () => {
+    const res = await GET_LIST(makeListRequest({ advisor_type: "hacker" }));
+    expect(res.status).toBe(200);
+  });
+
+  it("accepts valid AU state filter without error", async () => {
+    const res = await GET_LIST(makeListRequest({ state: "VIC" }));
+    expect(res.status).toBe(200);
+  });
+
+  it("ignores invalid state code", async () => {
+    const res = await GET_LIST(makeListRequest({ state: "ZZ" }));
+    expect(res.status).toBe(200);
+  });
+
+  it("caps limit at 50 regardless of query param", async () => {
+    const res = await GET_LIST(makeListRequest({ limit: "999" }));
+    expect(res.status).toBe(200);
+  });
+
+  it("returns 500 when DB returns error", async () => {
+    mockAuctionsListError = { message: "connection lost" };
+    const res = await GET_LIST(makeListRequest());
+    expect(res.status).toBe(500);
+  });
+});
+
+// ── Tests: POST /api/quotes — additional edge cases ──────────────────────────
+
+describe("POST /api/quotes — edge cases", () => {
+  it("returns 400 when request body is not valid JSON", async () => {
+    const req = new NextRequest("http://localhost/api/quotes", {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-forwarded-for": "1.2.3.4" },
+      body: "{not-json",
+    });
+    const res = await POST(req);
+    expect(res.status).toBe(400);
+  });
+
+  it("silently succeeds for fax honeypot field", async () => {
+    const res = await POST(makeRequest("/api/quotes", { ...VALID_POST_BODY, fax: "12345" }));
+    const body = await res.json();
+    expect(res.status).toBe(200);
+    expect(body.job_id).toBeNull();
+  });
+
+  it("returns 400 for disposable email address", async () => {
+    const { isDisposableEmail } = await import("@/lib/validate-email");
+    vi.mocked(isDisposableEmail).mockReturnValueOnce(true);
+    const res = await POST(makeRequest("/api/quotes", { ...VALID_POST_BODY, contact_email: "user@mailinator.com" }));
+    expect(res.status).toBe(400);
+    const body = await res.json();
+    expect(body.error).toMatch(/real email/i);
   });
 });
