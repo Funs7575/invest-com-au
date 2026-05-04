@@ -175,6 +175,24 @@ from the registry.
 Tier-1 builds MUST hit every level-1 lever; level-2 levers ratchet up
 post-launch. Existing hubs migrate progressively.
 
+> **Updated 2026-05-04 (post-audit re-prioritisation):** `/retirement`
+> promoted from Tier-2 to **Tier-1A** based on audience × $/lead × build
+> cost re-analysis: ~9M Australians in/near retirement (largest
+> unaddressed audience on platform), $300–$1,000/lead, full annuity
+> (Challenger) + reverse-mortgage (Heartland, Household Capital)
+> affiliate stack, and role as anchor of the §7 retiree lifecycle funnel.
+> `/aged-care` co-promoted to Tier-1A (pairs with `/retirement`; ~200
+> nationally-cert advisors so scarce supply with high willingness-to-pay;
+> facility paid listings as second revenue lever). `/family-office`
+> promoted from Tier-3 to **Tier-1B** — highest $/lead on platform
+> ($5K–$20K) and smallest build per anatomy ("pure directory + diagnostic
+> quiz"), so best $/iteration ratio in the entire post-Z list.
+> Execution rows: Z-RT, Z-AC, Z-FO, Z-BS, Z-CX in
+> `docs/audits/REMEDIATION_QUEUE.md`. Pre-existing Tier-1 (`/private-markets`,
+> `/startup`, `/wholesale`) remain Tier-1 — sequencing decided per
+> founder availability of advertiser-side commitments (annuity affiliate
+> accounts, MFO panel, etc.) rather than pure ROI ranking.
+
 ### `/private-markets` (Tier-1, marketplace pattern)
 
 | Priority | Lever | Why |
