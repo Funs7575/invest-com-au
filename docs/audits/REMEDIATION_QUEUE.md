@@ -42,7 +42,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | O | all PRs MERGED | #235/#237/#239/#299/#300/#366/#395/#408 all MERGED | last merged 2026-05-02T16:14Z | O-01..O-03 done. O-04 blocked (Stripe live validation). O-05 MERGED (#408). |
 | P | `claude/audit-remediation/p-01-sentry-v10-upgrade` (#468) | — | iter 212 — `331b98e` (PR #468: P-01 — @sentry/nextjs v9.47.1 → v10.51.0; clears 5 Sentry audit findings; removes `as any` cast in next.config.ts); CI success. | P-01 in-progress (PR #468). P-02 (Stripe SDK v17→v22) BLOCKED — requires npm install + local test run to verify webhook type compatibility across 5 major versions; not tractable on Hardware-exception sandbox. Needs a session with full node_modules. |
 | Q | `claude/audit-remediation/q-02-05-recovery-runbooks` | #525 OPEN | iter 243 CI-rescue — `1e33bab` (concurrent: complete 5-file isFlagEnabled mock; CI re-running). iter 242 — `d980bf3` (cherry-pick `9c74087`). iter 235 — `8cd2725` (Q-02..Q-05). | Q-01 needs-user (PITR drill). Q-02..Q-05 in-progress (#525). Q-06..Q-15 pending. |
-| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · ... · `r-coverage-01-listing-routes` (#521) · `r-coverage-02-stripe-lib` (#526) | #290/#396/#459 all MERGED · #466/#471/#472/#473/#510/#511/#513/#514/#515/#516/#517/#519/#521/#526 OPEN | iter 243 CI-rescue — `3eaa6e6` (merge main: all 7 isFlagEnabled mocks onto #526; CI re-running). iter 236 — `0493386` (PR #526: R-COVERAGE-02). iter 232 CI-RESCUE — `7e8e532` (PR #521: CI success). | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459). R-04 in-progress (#466, CI green). R-05 in-progress (#471). R-06 in-progress (#472). R-07 in-progress (#473). R-08 in-progress (#510, CI pending). R-09 in-progress (#511 + #513). R-10 in-progress (#514 + #515 + #516). R-DISC-20260429-01 in-progress (#517). R-11 in-progress (#519, CI pending). R-COVERAGE-01 in-progress (#521, CI success). R-COVERAGE-02 in-progress (#526, CI pending). |
+| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · ... · `r-coverage-01-listing-routes` (#521) · `r-coverage-02-stripe-lib` (#526) | #290/#396/#459 all MERGED · #466/#471/#472/#473/#510/#511/#513/#514/#515/#516/#517/#519/#521/#526 OPEN | iter 249 CI-rescue — `f214318` (fix vi.fn<[Tuple], Return> → vi.fn<WebhookHandler> in registry.test.ts: Vitest v3 removed tuple overload; CI re-running). iter 243 CI-rescue — `3eaa6e6` (merge main: isFlagEnabled mocks). iter 236 — `0493386` (PR #526: R-COVERAGE-02). | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459). R-04 in-progress (#466). R-05 in-progress (#471). R-06 in-progress (#472). R-07 in-progress (#473). R-08 in-progress (#510). R-09 in-progress (#511+#513). R-10 in-progress (#514+#515+#516). R-DISC-20260429-01 in-progress (#517). R-11 in-progress (#519). R-COVERAGE-01 in-progress (#521, CI success). R-COVERAGE-02 in-progress (#526, CI rescue landed). |
 | S | _not started_ | — | — | — |
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 MERGED 2026-04-28T11:45Z | merged | V-NEW-06 done (commit `a7bd736`) |
@@ -1680,6 +1680,16 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-04 — CI-RESCUE iter 249 (stream R — fix vi.fn Vitest v3 type params in registry.test.ts)
+
+- Phase 0: Lock held (batch fire — iter 2 of up to 5 in this fire).
+- Phase 1: main synced, pulled.
+- Phase 2: CI on PR #526 (R-COVERAGE-02) — FAILING. "Lint · Type-check · Test · Build" failed at 2026-05-04T00:04:30Z (job 74151162176, run 25294543843). Root cause: `registry.test.ts` used `vi.fn<[Stripe.Event, WebhookContext], Promise<WebhookHandlerResult>>()` — the Vitest v1/v2 tuple-overload syntax that was removed in Vitest v3. The project uses `^3.0.0`. All other working tests in the codebase use `vi.fn<FnType>()` form.
+- Phase 5: Fixed 3 occurrences in registry.test.ts: changed `vi.fn<[Stripe.Event, WebhookContext], Promise<WebhookHandlerResult>>` → `vi.fn<WebhookHandler>`. Added `WebhookHandler` to import; removed now-unused `WebhookHandlerResult` import. Merged latest main (queue-only commits).
+- Phase 6: Committed `f214318`, pushed to `claude/audit-remediation/r-coverage-02-stripe-lib`.
+- Phase 7: Queue updated on main (this entry).
+- STATUS: CI-RESCUE · stream=R · pr=#526 · commit=f2143189
 
 ### 2026-05-04 — CI-RESCUE iter 248 (stream E — restore test contracts broken by E-04 batch 2 Zod backfill)
 
