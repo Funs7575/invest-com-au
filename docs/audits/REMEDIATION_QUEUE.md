@@ -42,7 +42,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | O | all PRs MERGED | #235/#237/#239/#299/#300/#366/#395/#408 all MERGED | last merged 2026-05-02T16:14Z | O-01..O-03 done. O-04 blocked (Stripe live validation). O-05 MERGED (#408). |
 | P | `claude/audit-remediation/p-01-sentry-v10-upgrade` (#468) | — | iter 212 — `331b98e` (PR #468: P-01 — @sentry/nextjs v9.47.1 → v10.51.0; clears 5 Sentry audit findings; removes `as any` cast in next.config.ts); CI success. | P-01 in-progress (PR #468). P-02 (Stripe SDK v17→v22) BLOCKED — requires npm install + local test run to verify webhook type compatibility across 5 major versions; not tractable on Hardware-exception sandbox. Needs a session with full node_modules. |
 | Q | `claude/audit-remediation/q-02-05-recovery-runbooks` | #525 OPEN | iter 243 CI-rescue — `1e33bab` (concurrent: complete 5-file isFlagEnabled mock; CI re-running). iter 242 — `d980bf3` (cherry-pick `9c74087`). iter 235 — `8cd2725` (Q-02..Q-05). | Q-01 needs-user (PITR drill). Q-02..Q-05 in-progress (#525). Q-06..Q-15 pending. |
-| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · ... · `r-coverage-01-listing-routes` (#521) · `r-coverage-02-stripe-lib` (#526) | #290/#396/#459 all MERGED · #466/#471/#472/#473/#510/#511/#513/#514/#515/#516/#517/#519/#521/#526 OPEN | iter 249 CI-rescue — `f214318` (fix vi.fn<[Tuple], Return> → vi.fn<WebhookHandler> in registry.test.ts: Vitest v3 removed tuple overload; CI re-running). iter 243 CI-rescue — `3eaa6e6` (merge main: isFlagEnabled mocks). iter 236 — `0493386` (PR #526: R-COVERAGE-02). | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459). R-04 in-progress (#466). R-05 in-progress (#471). R-06 in-progress (#472). R-07 in-progress (#473). R-08 in-progress (#510). R-09 in-progress (#511+#513). R-10 in-progress (#514+#515+#516). R-DISC-20260429-01 in-progress (#517). R-11 in-progress (#519). R-COVERAGE-01 in-progress (#521, CI success). R-COVERAGE-02 in-progress (#526, CI rescue landed). |
+| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · ... · `r-coverage-01-listing-routes` (#521) · `r-coverage-02-stripe-lib` (#526) | #290/#396/#459 all MERGED · #466/#471/#472/#473/#510/#511/#513/#514/#515/#516/#517/#519/#521/#526 OPEN | iter 251 CI-rescue — `126eb8ac` (PR #521: merge main → deduplicate isFlagEnabled mocks; MAIN-RESCUE f7d8166 added same mock to 5 files on branch → duplicate declarations; CI re-running). iter 249 CI-rescue — `f214318` (PR #526: vi.fn Vitest v3 fix). | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459). R-04..R-11 in-progress. R-COVERAGE-01 in-progress (#521, CI rescue landed). R-COVERAGE-02 in-progress (#526, CI rescue landed). |
 | S | _not started_ | — | — | — |
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 MERGED 2026-04-28T11:45Z | merged | V-NEW-06 done (commit `a7bd736`) |
@@ -1680,6 +1680,16 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-04 — CI-RESCUE iter 251 (stream R — R-COVERAGE-01: merge main, deduplicate isFlagEnabled mock blocks)
+
+- Phase 0: Lock held (batch fire — iter 3 of up to 5 in this fire).
+- Phase 1: main synced.
+- Phase 2: PR #521 (R-COVERAGE-01) "Lint · Type-check · Test · Build" FAILURE (run 25293051522, 22:47Z). Root cause: MAIN-RESCUE commit f7d8166 added isFlagEnabled mocks to 7 test files including 5 already modified by PR #521's branch (7e8e532 and a007a5ab). The merge state (branch + main) had duplicate `const mockIsFlagEnabled` declarations and duplicate `vi.mock("@/lib/feature-flags", ...)` registrations — TypeScript throws "Identifier already declared" on duplicate const. Additionally listings-enquire.test.ts had a git-level conflict on the kill-switch test variant.
+- Phase 5: Merged origin/main into branch. Resolved conflict in listings-enquire.test.ts (kept branch version: exact error assertion + mockResolvedValue). Removed MAIN-RESCUE duplicate declarations from advisor-enquiry, concierge, and listings-checkout (all returned to branch HEAD state since branch already had complete mock setup). Verified zero duplicates via grep. Committed merge resolution `126eb8ac`.
+- Phase 6: Pushed to `claude/audit-remediation/r-coverage-01-listing-routes`.
+- Phase 7: Queue updated on main (this entry; iter number corrected from 250→251 since 250 was taken by concurrent session's E-stream ab-track fix).
+- STATUS: CI-RESCUE · stream=R · pr=#521 · commit=126eb8ac
 
 ### 2026-05-04 — CI-RESCUE iter 250 (stream E — fix ab-track field-specific error messages; batch mode iter 1/5)
 
