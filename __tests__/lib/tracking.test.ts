@@ -1,5 +1,12 @@
-import { describe, it, expect } from "vitest";
-import { getAffiliateLink, getBenefitCta, formatPercent, renderStars, AFFILIATE_REL } from "@/lib/tracking";
+/**
+ * @vitest-environment jsdom
+ */
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { getAffiliateLink, getBenefitCta, formatPercent, renderStars, AFFILIATE_REL, trackClick, trackEvent, trackPageDuration } from "@/lib/tracking";
+
+vi.mock("@/lib/session", () => ({
+  getSessionId: vi.fn(() => "test-session-id"),
+}));
 import type { Broker } from "@/lib/types";
 
 function makeBroker(overrides: Partial<Broker> = {}): Broker {
@@ -190,5 +197,276 @@ describe("renderStars", () => {
 
   it("renders 4 full + half at 4.7", () => {
     expect(renderStars(4.7)).toBe("★★★★½");
+  });
+});
+
+// ─── Browser-API functions ────────────────────────────────────────────────────
+
+describe("trackClick", () => {
+  const originalFetch = globalThis.fetch;
+  let beaconSpy: ReturnType<typeof vi.fn>;
+  let fetchSpy: ReturnType<typeof vi.fn>;
+
+  beforeEach(() => {
+    beaconSpy = vi.fn(() => true);
+    Object.defineProperty(navigator, "sendBeacon", {
+      configurable: true,
+      value: beaconSpy,
+    });
+    fetchSpy = vi.fn(() =>
+      Promise.resolve({ json: () => Promise.resolve({ click_id: "abc123" }) }),
+    );
+    globalThis.fetch = fetchSpy as unknown as typeof fetch;
+  });
+
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+    Object.defineProperty(navigator, "sendBeacon", {
+      configurable: true,
+      value: undefined,
+    });
+    delete (window as unknown as Record<string, unknown>).__inv_last_click_id;
+  });
+
+  it("uses sendBeacon when available and it returns true", () => {
+    trackClick("stake", "Stake", "compare", "/share-trading");
+    expect(beaconSpy).toHaveBeenCalledOnce();
+    expect(beaconSpy.mock.calls[0]![0]).toBe("/api/track-click");
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it("payload includes all expected fields", () => {
+    trackClick("stake", "Stake", "compare", "/share-trading", "hero", "best-asx", "card", {
+      userId: "u1",
+      abTestId: "t1",
+      abVariant: "v1",
+    });
+    const blob: Blob = beaconSpy.mock.calls[0]![1] as Blob;
+    return blob.text().then((text) => {
+      const payload = JSON.parse(text);
+      expect(payload.broker_slug).toBe("stake");
+      expect(payload.broker_name).toBe("Stake");
+      expect(payload.source).toBe("compare");
+      expect(payload.page).toBe("/share-trading");
+      expect(payload.layer).toBe("hero");
+      expect(payload.scenario).toBe("best-asx");
+      expect(payload.placement_type).toBe("card");
+      expect(payload.session_id).toBe("test-session-id");
+      expect(payload.user_id).toBe("u1");
+      expect(payload.ab_test_id).toBe("t1");
+      expect(payload.ab_variant).toBe("v1");
+    });
+  });
+
+  it("falls back to fetch when sendBeacon returns false", () => {
+    beaconSpy.mockReturnValue(false);
+    trackClick("stake", "Stake", "compare", "/");
+    expect(fetchSpy).toHaveBeenCalledOnce();
+    expect(fetchSpy.mock.calls[0]![0]).toBe("/api/track-click");
+  });
+
+  it("falls back to fetch when sendBeacon throws", () => {
+    beaconSpy.mockImplementation(() => {
+      throw new Error("beacon error");
+    });
+    trackClick("stake", "Stake", "compare", "/");
+    expect(fetchSpy).toHaveBeenCalledOnce();
+  });
+
+  it("falls back to fetch when sendBeacon is not available", () => {
+    Object.defineProperty(navigator, "sendBeacon", {
+      configurable: true,
+      value: undefined,
+    });
+    trackClick("stake", "Stake", "compare", "/");
+    expect(fetchSpy).toHaveBeenCalledOnce();
+  });
+
+  it("sets window.__inv_last_click_id on fetch success with click_id", async () => {
+    beaconSpy.mockReturnValue(false);
+    trackClick("stake", "Stake", "compare", "/");
+    await vi.waitFor(() =>
+      expect((window as unknown as Record<string, string>).__inv_last_click_id).toBe("abc123"),
+    );
+  });
+
+  it("does not set window.__inv_last_click_id when response has no click_id", async () => {
+    beaconSpy.mockReturnValue(false);
+    fetchSpy.mockResolvedValue({ json: () => Promise.resolve({}) });
+    trackClick("stake", "Stake", "compare", "/");
+    await new Promise((r) => setTimeout(r, 10));
+    expect((window as unknown as Record<string, unknown>).__inv_last_click_id).toBeUndefined();
+  });
+
+  it("silently swallows fetch rejection", async () => {
+    beaconSpy.mockReturnValue(false);
+    fetchSpy.mockRejectedValue(new Error("network error"));
+    expect(() => trackClick("stake", "Stake", "compare", "/")).not.toThrow();
+    await new Promise((r) => setTimeout(r, 10));
+  });
+
+  it("nulls out optional fields when options not provided", () => {
+    trackClick("stake", "Stake", "compare", "/");
+    const blob: Blob = beaconSpy.mock.calls[0]![1] as Blob;
+    return blob.text().then((text) => {
+      const payload = JSON.parse(text);
+      expect(payload.user_id).toBeNull();
+      expect(payload.ab_test_id).toBeNull();
+      expect(payload.ab_variant).toBeNull();
+    });
+  });
+});
+
+describe("trackEvent", () => {
+  const originalFetch = globalThis.fetch;
+  let fetchSpy: ReturnType<typeof vi.fn>;
+
+  beforeEach(() => {
+    fetchSpy = vi.fn(() => Promise.resolve({ ok: true }));
+    globalThis.fetch = fetchSpy as unknown as typeof fetch;
+  });
+
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+  });
+
+  it("calls fetch with correct endpoint and payload", () => {
+    trackEvent("page_view", { section: "hero" }, "/share-trading");
+    expect(fetchSpy).toHaveBeenCalledOnce();
+    const [url, opts] = fetchSpy.mock.calls[0]! as [string, RequestInit];
+    expect(url).toBe("/api/track-event");
+    expect(opts.method).toBe("POST");
+    const body = JSON.parse(opts.body as string);
+    expect(body.event_type).toBe("page_view");
+    expect(body.event_data).toEqual({ section: "hero" });
+    expect(body.page).toBe("/share-trading");
+    expect(body.session_id).toBe("test-session-id");
+  });
+
+  it("uses window.location.pathname when page not provided", () => {
+    // jsdom sets window.location.pathname to "/" by default
+    trackEvent("cta_click");
+    const [, opts] = fetchSpy.mock.calls[0]! as [string, RequestInit];
+    const body = JSON.parse(opts.body as string);
+    expect(body.page).toBe("/");
+  });
+
+  it("defaults eventData to empty object when not provided", () => {
+    trackEvent("signup", undefined, "/auth");
+    const [, opts] = fetchSpy.mock.calls[0]! as [string, RequestInit];
+    const body = JSON.parse(opts.body as string);
+    expect(body.event_data).toEqual({});
+  });
+
+  it("silently swallows fetch rejection (logs warn)", async () => {
+    fetchSpy.mockRejectedValue(new Error("network down"));
+    expect(() => trackEvent("test_event", {}, "/")).not.toThrow();
+    await new Promise((r) => setTimeout(r, 10));
+  });
+});
+
+describe("trackPageDuration", () => {
+  let visibilitySpy: ReturnType<typeof vi.spyOn>;
+  let pageSpy: ReturnType<typeof vi.spyOn>;
+  let beaconSpy: ReturnType<typeof vi.fn>;
+  let visibilityCallback: (() => void) | null = null;
+  let pagehideCallback: (() => void) | null = null;
+
+  beforeEach(() => {
+    beaconSpy = vi.fn();
+    Object.defineProperty(navigator, "sendBeacon", {
+      configurable: true,
+      value: beaconSpy,
+    });
+    visibilityCallback = null;
+    pagehideCallback = null;
+
+    visibilitySpy = vi.spyOn(document, "addEventListener").mockImplementation(
+      (type: string, listener: EventListenerOrEventListenerObject) => {
+        if (type === "visibilitychange") visibilityCallback = listener as () => void;
+      },
+    );
+    pageSpy = vi.spyOn(window, "addEventListener").mockImplementation(
+      (type: string, listener: EventListenerOrEventListenerObject) => {
+        if (type === "pagehide") pagehideCallback = listener as () => void;
+      },
+    );
+  });
+
+  afterEach(() => {
+    visibilitySpy.mockRestore();
+    pageSpy.mockRestore();
+    Object.defineProperty(navigator, "sendBeacon", {
+      configurable: true,
+      value: undefined,
+    });
+    vi.useRealTimers();
+  });
+
+  it("registers visibilitychange and pagehide listeners", () => {
+    trackPageDuration("/test");
+    expect(visibilitySpy).toHaveBeenCalledWith("visibilitychange", expect.any(Function));
+    expect(pageSpy).toHaveBeenCalledWith("pagehide", expect.any(Function));
+  });
+
+  it("sends beacon via pagehide after sufficient duration", () => {
+    vi.useFakeTimers();
+    const startTime = Date.now();
+    trackPageDuration("/test-page");
+    vi.advanceTimersByTime(5000);
+    // Trigger pagehide at +5s
+    vi.spyOn(Date, "now").mockReturnValue(startTime + 5000);
+    pagehideCallback?.();
+    expect(beaconSpy).toHaveBeenCalledOnce();
+    expect(beaconSpy.mock.calls[0]![0]).toBe("/api/track-event");
+    const body = JSON.parse(beaconSpy.mock.calls[0]![1] as string);
+    expect(body.event_type).toBe("page_duration");
+    expect(body.page).toBe("/test-page");
+    expect(body.metadata.duration_seconds).toBe(5);
+  });
+
+  it("does not send beacon for duration < 2s (bounce)", () => {
+    vi.useFakeTimers();
+    const startTime = Date.now();
+    trackPageDuration("/test");
+    vi.spyOn(Date, "now").mockReturnValue(startTime + 1000);
+    pagehideCallback?.();
+    expect(beaconSpy).not.toHaveBeenCalled();
+  });
+
+  it("does not send beacon for duration > 3600s (stale tab)", () => {
+    vi.useFakeTimers();
+    const startTime = Date.now();
+    trackPageDuration("/test");
+    vi.spyOn(Date, "now").mockReturnValue(startTime + 3700 * 1000);
+    pagehideCallback?.();
+    expect(beaconSpy).not.toHaveBeenCalled();
+  });
+
+  it("is idempotent — second call after first send is a no-op", () => {
+    vi.useFakeTimers();
+    const startTime = Date.now();
+    trackPageDuration("/test");
+    vi.spyOn(Date, "now").mockReturnValue(startTime + 10000);
+    pagehideCallback?.();
+    pagehideCallback?.();
+    expect(beaconSpy).toHaveBeenCalledOnce();
+  });
+
+  it("sends beacon on visibilitychange → hidden", () => {
+    vi.useFakeTimers();
+    const startTime = Date.now();
+    trackPageDuration("/test");
+    vi.spyOn(Date, "now").mockReturnValue(startTime + 8000);
+    Object.defineProperty(document, "visibilityState", {
+      configurable: true,
+      value: "hidden",
+    });
+    visibilityCallback?.();
+    expect(beaconSpy).toHaveBeenCalledOnce();
+    Object.defineProperty(document, "visibilityState", {
+      configurable: true,
+      value: "visible",
+    });
   });
 });

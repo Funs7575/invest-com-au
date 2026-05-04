@@ -25,6 +25,11 @@ vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ error: vi.fn(), info: vi.fn(), warn: vi.fn(), debug: vi.fn() })),
 }));
 
+const mockProcessAdvisorOptIns = vi.fn();
+vi.mock("@/lib/advisor-opt-ins", () => ({
+  processAdvisorOptIns: (...args: unknown[]) => mockProcessAdvisorOptIns(...args),
+}));
+
 import { POST } from "@/app/api/listings/submit/route";
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
@@ -63,6 +68,7 @@ describe("POST /api/listings/submit", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockIsRateLimited.mockResolvedValue(false);
+    mockProcessAdvisorOptIns.mockResolvedValue({ inserted: 0 });
   });
 
   it("returns 429 when rate limit exceeded", async () => {
@@ -229,5 +235,30 @@ describe("POST /api/listings/submit", () => {
       }),
     );
     expect(res.status).toBe(200);
+  });
+
+  // ── Advisor opt-in fan-out ────────────────────────────────────────────────
+
+  it("processes advisor opt-ins and returns opt_ins_queued count", async () => {
+    mockServerFrom.mockReturnValue(makeInsertChain({ data: { id: 77 }, error: null }));
+    mockProcessAdvisorOptIns.mockResolvedValue({ inserted: 2 });
+    const res = await POST(
+      makePost({ ...VALID_BODY, advisor_opt_ins: ["mortgage_broker", "financial_planner"] }),
+    );
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json.opt_ins_queued).toBe(2);
+    expect(mockProcessAdvisorOptIns).toHaveBeenCalledOnce();
+  });
+
+  it("returns 200 with opt_ins_queued 0 when processAdvisorOptIns throws", async () => {
+    mockServerFrom.mockReturnValue(makeInsertChain({ data: { id: 88 }, error: null }));
+    mockProcessAdvisorOptIns.mockRejectedValue(new Error("opt-in service down"));
+    const res = await POST(
+      makePost({ ...VALID_BODY, advisor_opt_ins: ["accountant"] }),
+    );
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json.opt_ins_queued).toBe(0);
   });
 });

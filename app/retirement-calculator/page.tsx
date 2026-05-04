@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { CURRENT_YEAR, SITE_NAME } from "@/lib/seo";
+import { CURRENT_YEAR } from "@/lib/seo";
+import { calculatorJsonLd } from "@/lib/schema-markup";
 import RetirementCalculatorClient from "./RetirementCalculatorClient";
 import ComplianceFooter from "@/components/ComplianceFooter";
 
@@ -18,20 +19,9 @@ export const metadata: Metadata = {
 };
 
 export default function RetirementCalculatorPage() {
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    name: `Retirement Calculator — ${SITE_NAME}`,
-    description: "Project your superannuation at retirement and find out if you're on track for the retirement you want.",
-    url: "https://invest.com.au/retirement-calculator",
-    applicationCategory: "FinanceApplication",
-    operatingSystem: "Any",
-    offers: { "@type": "Offer", price: "0", priceCurrency: "AUD" },
-  };
-
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(calculatorJsonLd({ name: "Retirement Calculator", description: "Project your superannuation at retirement and find out if you're on track for the retirement you want.", path: "/retirement-calculator" })) }} />
       <RetirementCalculatorClient />
       <div className="container-custom pb-8"><ComplianceFooter variant="calculator" /></div>
 
