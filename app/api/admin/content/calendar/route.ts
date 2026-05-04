@@ -1,5 +1,9 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+
+const CalendarCreateBody = z.object({ title: z.string().min(1) });
+const CalendarIdBody = z.object({ id: z.number().int().positive() });
 
 export const runtime = "edge";
 
@@ -52,13 +56,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const body = await req.json();
+  const rawBody = await req.json() as Record<string, unknown>;
+  const parsed = CalendarCreateBody.safeParse(rawBody);
+  if (!parsed.success) {
+    return NextResponse.json({ error: "title is required" }, { status: 400 });
+  }
   const supabase = getSupabase();
 
   const { data, error } = await supabase
     .from("content_calendar")
     .insert({
-      title: body.title,
+      title: parsed.data.title,
       target_keyword: body.target_keyword || null,
       secondary_keywords: body.secondary_keywords || [],
       article_type: body.article_type || "article",
@@ -93,18 +101,20 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const body = await req.json();
-  const { id, ...updates } = body;
-
-  if (!id) {
+  const rawPatch = await req.json() as Record<string, unknown>;
+  const patchParsed = CalendarIdBody.safeParse(rawPatch);
+  if (!patchParsed.success) {
     return NextResponse.json({ error: "id is required" }, { status: 400 });
   }
+  const updates = Object.fromEntries(
+    Object.entries(rawPatch).filter(([k]) => k !== "id"),
+  );
 
   const supabase = getSupabase();
   const { data, error } = await supabase
     .from("content_calendar")
     .update(updates)
-    .eq("id", id)
+    .eq("id", patchParsed.data.id)
     .select()
     .single();
 
@@ -124,10 +134,12 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { id } = await req.json();
-  if (!id) {
+  const rawDel = await req.json();
+  const delParsed = CalendarIdBody.safeParse(rawDel);
+  if (!delParsed.success) {
     return NextResponse.json({ error: "id is required" }, { status: 400 });
   }
+  const { id } = delParsed.data;
 
   const supabase = getSupabase();
   const { error } = await supabase
