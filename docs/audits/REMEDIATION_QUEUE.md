@@ -28,7 +28,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | B | `claude/audit-remediation/b-08-rls-select-only` (#326) · `b-09a-otp-gate` (#348 draft, parallel-agent) | #326 MERGED 2026-05-01T13:19Z · #348 OPEN (DRAFT, awaiting `LISTING_OWNER_COOKIE_SECRET` env var) | last CI-rescue 2026-05-01T21:43Z (#348) | PR #220 merged (B-01..B-06 done/blocked/FP). B-07 done (`0097159` PR #286). B-08 done — code changes merged via PR #326 commit `476f89f6`. B-09 in-progress on `#348` (parallel-agent, draft). CI-rescue iter 1 (`09c4dfb`, 2026-05-01) merged main before PR #392 types regen — types drift still red. CI-rescue iter 2 (`7da8757e`, 2026-05-01T21:43Z) merged post-#392 main — picked up database.types.ts regen; CI re-run pending. Still DRAFT awaiting `LISTING_OWNER_COOKIE_SECRET` env var (Tier D). |
 | C | all PRs MERGED | #327/#349/#360/#394/#397 all MERGED | last merged 2026-05-02T16:13Z | C-01..C-08 done. C-03 MERGED (#360). C-04 done (#394). C-05 done (#394). C-05b MERGED (#349). C-DISC-20260501-01 MERGED (#397). **Stream C complete.** |
 | D | `claude/audit-remediation/d-route-tests` | #285 MERGED 2026-04-29T10:13Z; supplementary PRs #246/#285/#297/#298 | last merged 2026-04-29T18:53Z | D-01..D-09 done (PR #246). D-10 done (PR #246 — coverage ratchet). D-11 complete (43+ batches, all admin/cron/non-admin routes covered) — merged via PR #285 + supplementary PRs #297/#298. **Stream D complete.** |
-| E | `claude/audit-remediation/e-02-batch-5-zod-rollout` (#469) · `e-02-batch-*-zod-rollout` (#460) · `e-03-zod-lint-rule` (#313) · `e-04-batch-2-zod-backfill` (#557) | #295/#313/#315/#323/#406/#528 MERGED · #460/#469 OPEN · **#557 OPEN** | iter 263 — `aee5b06` (PR #557: E-04 batch 2 — answers/vote, community/posts/[id], community/threads/[id], admin/content/generate-draft, admin/content/calendar, admin/advisor-moderation); CI pending. iter 252-cont CI-rescue — `460d085`. | E-01 done (PR #295). E-02 in-progress (#460/#469). E-03 done (PR #313). E-04 in-progress (#528 MERGED batch 1; #557 OPEN batch 2). |
+| E | `claude/audit-remediation/e-02-batch-5-zod-rollout` (#469) · `e-02-batch-*-zod-rollout` (#460) · `e-03-zod-lint-rule` (#313) · `e-04-batch-2-zod-backfill` (#557) | #295/#313/#315/#323/#406/#528 MERGED · #460/#469 OPEN · **#557 OPEN** | iter 265 CI-rescue — `6e26be6` (PR #557: body→rawBody fix in calendar POST + merge main; CI re-running). iter 263 — `aee5b06` (PR #557: E-04 batch 2 — 6 community+admin-content routes); CI pending. iter 252-cont CI-rescue — `460d085`. | E-01 done (PR #295). E-02 in-progress (#460/#469). E-03 done (PR #313). E-04 in-progress (#528 MERGED batch 1; #557 OPEN batch 2). |
 | F | `claude/audit-remediation/f-07-json-ld-batch-1` (#527) | #293/#294/#301/#354/#355/#370 all MERGED · #527 OPEN | iter 243 CI-rescue — `4855030` (merge main: all 7 isFlagEnabled mocks; CI re-running). iter 237 — `19b3630` (F-07 batch 1). | F-01 false-positive. F-02 done (PR #293). F-03 done (PR #370). F-04 done (PR #354). F-05 done (PR #294+#301). F-06 done (PR #355). F-07 in-progress (#527 batch 1: 6/42 blocks migrated). F-08 pending. |
 | G | `claude/audit-remediation/g-03-batch-8-rollback-headers` (#520) | #307/#310/#311/#314/#316/#342/#352/#405/#455/#467 all MERGED · #520 OPEN | iter 229 — `52aee43` (PR #520: G-03 batch 8 — rollback headers for 15 remaining migrations; stream complete 208/208); CI pending | G-01+G-02 done (PR #307). **G-03 complete (208/208 covered)** — batches 1-7 (#311/#314/#316/#352/#405/#455/#467) all merged; batch 8 (#520) covers the final 15 files. G-04 done (PR #310 + #342). G-04-FINDING-1..5 pending founder authorization. |
 | H | _not started_ | — | — | — |
@@ -1836,6 +1836,15 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-04 — CI-RESCUE iter 265 (stream E — PR #557 body→rawBody in calendar POST handler)
+
+- Phase 0: Lock held (batch fire, iteration 2 of up to 5).
+- Phase 1: main synced (fast-forward).
+- Phase 2: PR #557 (E stream) — `Lint · Type-check · Test · Build` FAILURE. Root cause: `app/api/admin/content/calendar/route.ts` POST handler used undeclared `body` variable (TS2304 ×13). Zod refactor introduced `rawBody` for the parse call but left the `content_calendar` insert referencing `body.xxx`. Fix: replaced all `body.xxx` with `rawBody["xxx"]` bracket notation. Resolved merge conflict from concurrent remote force-push (origin had stale buggy code). Tests: 47/47 pass (answers-vote, community-posts-id, community-threads-id); lint clean.
+- Phase 6: Commits `3301f22b` (fix) + `6e26be6b` (resolve conflict), pushed `claude/audit-remediation/e-04-batch-2-zod-backfill`. Diff: +13/-13 across 1 file.
+- Phase 7: E in-flight row updated, this log entry. Queue update committed to main.
+- STATUS: CI-RESCUE · stream=E · pr=#557 · commit=6e26be6b
 
 ### 2026-05-04 — CI-RESCUE iter 264 (stream Q — PR #554 fix s.envVar→s.name TS2339)
 
