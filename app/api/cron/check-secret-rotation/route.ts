@@ -131,7 +131,7 @@ export async function GET(req: NextRequest) {
             : "⚪ UNTRACKED";
       const detail =
         s.status === "untracked"
-          ? `Set <code>${s.envVar}_ROTATED_AT</code> in Vercel env vars after rotation`
+          ? `Set <code>${s.name}_ROTATED_AT</code> in Vercel env vars after rotation`
           : s.status === "overdue"
             ? `Rotated ${s.daysSinceRotation}d ago — ${Math.abs(s.daysUntilExpiry ?? 0)}d overdue (window: ${s.windowDays}d)`
             : `Rotated ${s.daysSinceRotation}d ago — ${s.daysUntilExpiry}d remaining (window: ${s.windowDays}d)`;
