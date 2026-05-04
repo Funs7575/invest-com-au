@@ -74,6 +74,7 @@ const MATCH_SELECT = "id, slug, name, firm_name, type, photo_url, rating, review
 export async function POST(request: NextRequest) {
   let body: Record<string, unknown>;
   try {
+    // eslint-disable-next-line invest/no-unvalidated-req-json -- full Zod migration tracked as E-04 batch 4
     body = await request.json();
   } catch (err) {
     log.warn("submit-lead invalid JSON", { err: err instanceof Error ? err.message : String(err) });
