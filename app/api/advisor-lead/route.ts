@@ -33,6 +33,7 @@ const AdvisorLeadSchema = z
     investor_country: z.string().optional(),
     visa_status: z.string().optional(),
     investor_goal_intl: z.string().optional(),
+    source_page: z.string().optional(),
   })
   .passthrough();
 
