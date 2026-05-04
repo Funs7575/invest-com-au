@@ -55,6 +55,7 @@ export default function LocationFlagButton() {
   useEffect(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: localStorage is read post-hydration to keep SSR markup consistent
       if (stored) setOverride(stored);
     } catch {
       /* ignore */
@@ -141,10 +142,12 @@ export default function LocationFlagButton() {
             {supported && !isAU ? (
               <>
                 <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">
-                  Detected location
+                  {override ? "Viewing as" : "Detected location"}
                 </p>
                 <p className="text-sm font-semibold text-slate-900 mb-3">
-                  We&apos;ve detected you&apos;re in {flagEmoji(effective)} {supported.name}.
+                  {override
+                    ? `You're browsing as ${flagEmoji(effective)} ${supported.name}.`
+                    : `We've detected you're in ${flagEmoji(effective)} ${supported.name}.`}
                 </p>
                 <Link
                   href={`/foreign-investment/${supported.slug}`}
