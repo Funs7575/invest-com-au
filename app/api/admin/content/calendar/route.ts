@@ -1,5 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
+import { requireCronAuth } from "@/lib/cron-auth";
 
 export const runtime = "edge";
 
@@ -7,18 +8,13 @@ function getSupabase() {
   return createAdminClient();
 }
 
-function authorize(req: NextRequest): boolean {
-  return req.headers.get("authorization") === `Bearer ${process.env.CRON_SECRET}`;
-}
-
 /**
  * GET /api/admin/content/calendar
  * Query params: ?status=planned&limit=50
  */
 export async function GET(req: NextRequest) {
-  if (!authorize(req)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const unauth = requireCronAuth(req);
+  if (unauth) return unauth;
 
   const url = new URL(req.url);
   const status = url.searchParams.get("status");
@@ -48,9 +44,8 @@ export async function GET(req: NextRequest) {
  * Create a new content calendar item
  */
 export async function POST(req: NextRequest) {
-  if (!authorize(req)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const unauth = requireCronAuth(req);
+  if (unauth) return unauth;
 
   const body = await req.json();
   const supabase = getSupabase();
@@ -89,9 +84,8 @@ export async function POST(req: NextRequest) {
  * Update a content calendar item: { id, ...fields }
  */
 export async function PATCH(req: NextRequest) {
-  if (!authorize(req)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const unauth = requireCronAuth(req);
+  if (unauth) return unauth;
 
   const body = await req.json();
   const { id, ...updates } = body;
@@ -120,9 +114,8 @@ export async function PATCH(req: NextRequest) {
  * Body: { id: number }
  */
 export async function DELETE(req: NextRequest) {
-  if (!authorize(req)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const unauth = requireCronAuth(req);
+  if (unauth) return unauth;
 
   const { id } = await req.json();
   if (!id) {

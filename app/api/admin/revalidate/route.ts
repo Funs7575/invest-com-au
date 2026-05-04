@@ -1,6 +1,7 @@
 import { revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { requireCronAuth } from "@/lib/cron-auth";
 
 /**
  * POST /api/admin/revalidate
@@ -8,8 +9,7 @@ import { z } from "zod";
  * On-demand cache invalidation endpoint. Call this from the admin dashboard
  * (or Supabase webhooks) after content is updated.
  *
- * Auth: requires a Bearer token matching either SUPABASE_SERVICE_ROLE_KEY
- * or CRON_SECRET.
+ * Auth: requires a Bearer token matching CRON_SECRET (via requireCronAuth).
  *
  * Body: { tags: string[] }
  *
@@ -34,23 +34,16 @@ import { z } from "zod";
  *   - "quiz-questions"    — quiz questions
  *
  * Example:
- *   curl -X POST https://invest.com.au/api/admin/revalidate \
- *     -H "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY" \
+ *   curl -X POST https://invest-com-au.vercel.app/api/admin/revalidate \
+ *     -H "Authorization: Bearer $CRON_SECRET" \
  *     -H "Content-Type: application/json" \
  *     -d '{"tags": ["brokers", "broker-reviews"]}'
  */
 const TagsBody = z.object({ tags: z.array(z.string()).min(1) });
 
 export async function POST(req: NextRequest) {
-  const authHeader = req.headers.get("authorization");
-  const token = authHeader?.replace("Bearer ", "");
-
-  if (
-    token !== process.env.SUPABASE_SERVICE_ROLE_KEY &&
-    token !== process.env.CRON_SECRET
-  ) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const unauth = requireCronAuth(req);
+  if (unauth) return unauth;
 
   let rawBody: unknown;
   try {
