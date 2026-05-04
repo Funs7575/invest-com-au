@@ -35,7 +35,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | I | `claude/audit-remediation/i-new-04-main-ci-auto-revert` (#278) · `i-02-drift-detection-ci` (#353) | #278 MERGED 2026-04-28T16:18Z · #353 MERGED 2026-05-01T14:30Z | last merged 2026-05-01T14:30Z | I-NEW-01..05 all done. I-NEW-06 needs-user (Supabase GH Actions secrets). I-01 done via B-07 (PR #286). I-02 done (PR #353). I-03 done via C-08 (PR #327). I-04 done via E-03 (PR #313). I-05 done via D-10 (PR #246). |
 | J | `claude/audit-remediation/j-stripe-webhook` | #288 MERGED 2026-04-29T16:48Z | last merged 2026-04-29T16:48Z | J-01a..J-01e done · J-01d-ext done · J-03/J-05/J-06/J-08/J-09/J-10 done. **Stream J complete** (J-02/J-04/J-07/J-11 false-positives or done out-of-band). |
 | K | `claude/audit-remediation/k-security-hardening` | #222 MERGED 2026-04-28T15:14Z | last merged 2026-04-28T15:14Z | K-01..K-08 done; K-09 false-positive; K-10..K-15 done — **stream complete** |
-| KK | `claude/audit-remediation/kk-lead-routing-maturity` | #524 OPEN | iter 266 — BLOCKED (stuck-detection: 3 CI rescues in 24h; surfaced to Blocked). iter 259 CI-rescue — `54a625d` (edge-runtime PostHog fix; CI re-running). iter 258 CI-rescue — `ab3ed67`. iter 244 cont — `5d22141`. | KK-01..KK-06 all done. **KK stream complete.** PR #524 stuck in CI — see Blocked entry. |
+| KK | `claude/audit-remediation/kk-lead-routing-maturity` | #524 OPEN | iter 269 CI-rescue — `e9a68b7` (TS strictFunctionTypes error: reduce callback `l: { response_time_minutes: number }` → `number \| null`; CI re-running). iter 266 — BLOCKED (stuck-detection). iter 259 CI-rescue — `54a625d`. iter 258 CI-rescue — `ab3ed67`. | KK-01..KK-06 all done. **KK stream complete.** PR #524 CI rescue in-progress. |
 | L | `claude/audit-remediation/l-observability` | #289 MERGED 2026-04-29T10:18Z | last merged 2026-04-29T10:18Z | L-04/L-05 done out-of-loop. L-06..L-12 all done (merged via PR #289). L-02/L-03 deferred-post-launch (n8n dormant). L-01 needs-user (SENTRY_AUTH_TOKEN). L-10 false-positive (verified populating). **Stream L complete** (modulo L-01 needs-user). |
 | M | `claude/audit-remediation/m-01b-cover-image-backfill` (#283) · `m-02-versus-json-ld` (#296) · `m-05-glossary-linkifier` (#325) | #283/#296/#325 all MERGED | last merged 2026-05-01T10:29Z | M-01a done out-of-loop (PR #227). M-01b done (PR #283 — engineering side). M-02 done (PR #296). M-03 done (`85c7236`). M-04 done (`353fa3a`). M-05 done (PR #325). M-06 done (PR #283). M-07 done (PR #283). **Stream M complete.** |
 | N | `claude/audit-remediation/n-ux-perf` | #242 MERGED | last merged 2026-04-28 | N-01+N-02 done (`2ec6f89`) · N-03a/b/c done · N-04/N-05 FP · N-06 blocked (deferred-post-launch by founder 2026-05-01 — option 4 chosen) · N-07/N-08/N-09/N-10/N-11 done — **stream complete** (N-06 deferred). |
@@ -486,8 +486,9 @@ Expected result: row appears with `status='done'` (or `status='error'` if the ha
 | 254 | `0f19275` | Merge main to clear dirty mergeable_state |
 | 258 | `ab3ed67` | Merge-conflict in cron-groups.ts |
 | 259 | `54a625d` | Edge-runtime PostHog capture (posthog-node Node.js built-ins incompatible with Vercel edge) |
+| 269 | `e9a68b7` | TypeScript strictFunctionTypes: reduce callback `l: { response_time_minutes: number }` incompatible with Supabase-inferred `number \| null`; fixed → `number \| null` + `?? 0` guard |
 
-After all 3 fixes, CI is still failing. **KK stream content is complete** (KK-01..KK-06 all done) — the only outstanding work is PR #524 merging.
+**CI re-running on `e9a68b7` as of iter 269.** KK stream content is complete (KK-01..KK-06 all done) — the only outstanding work is PR #524 merging.
 
 **Recommendation matrix:**
 
@@ -1881,6 +1882,17 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 - Phase 6: Commit `d823fda`, pushed. PR #560 opened (ready, not draft).
 - Phase 7: Queue updated — E in-flight row updated, E-04 item updated (batch 3 in-progress), this log entry.
 - STATUS: PROGRESS · stream=E · item=E-04 (batch 3 of ~4) · pr=#560
+
+---
+
+### 2026-05-04 — CI-RESCUE iter 269 (stream KK — reduce callback type fix in advisor-auth/data PATCH)
+
+- Phase 0: Lock held (batch fire, iteration 3 of up to 5 — continuing from compressed session context).
+- Phase 1: main synced (fast-forward to f54b86e — picked up HomeHero.tsx + HomeHeroReel.tsx + queue update from E-04 batch 2 landing).
+- Phase 2: PR #524 (KK) — `Lint · Type-check · Test · Build` FAILURE (job 74314600374, 22:03:52–22:05:41Z, 109s = early TS/lint failure). Prior stuck-detection entry notwithstanding, this is a new root-cause investigation. Exhaustive read of all 16 KK-changed files. Root cause: `app/api/advisor-auth/data/route.ts` line 219 — reduce callback annotated as `l: { response_time_minutes: number }` but Supabase-inferred element type is `{ response_time_minutes: number | null }`. Under `strictFunctionTypes`, this is a contravariance error (narrower annotation not assignable to wider inferred type). Fix: widened to `number | null` + added `?? 0` null guard. Physically different root cause from iters 254/258/259.
+- Phase 6: Commit `e9a68b7`, pushed `claude/audit-remediation/kk-lead-routing-maturity`. Diff: +1/-1 (1 file).
+- Phase 7: KK in-flight row updated; Blocked entry updated with new rescue row; this log entry.
+- STATUS: CI-RESCUE · stream=KK · pr=#524 · commit=e9a68b7
 
 ---
 
