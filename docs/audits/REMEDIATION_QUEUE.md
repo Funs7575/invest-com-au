@@ -28,7 +28,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | B | `claude/audit-remediation/b-08-rls-select-only` (#326) · `b-09a-otp-gate` (#348 draft, parallel-agent) | #326 MERGED 2026-05-01T13:19Z · #348 OPEN (DRAFT, awaiting `LISTING_OWNER_COOKIE_SECRET` env var) | last CI-rescue 2026-05-01T21:43Z (#348) | PR #220 merged (B-01..B-06 done/blocked/FP). B-07 done (`0097159` PR #286). B-08 done — code changes merged via PR #326 commit `476f89f6`. B-09 in-progress on `#348` (parallel-agent, draft). CI-rescue iter 1 (`09c4dfb`, 2026-05-01) merged main before PR #392 types regen — types drift still red. CI-rescue iter 2 (`7da8757e`, 2026-05-01T21:43Z) merged post-#392 main — picked up database.types.ts regen; CI re-run pending. Still DRAFT awaiting `LISTING_OWNER_COOKIE_SECRET` env var (Tier D). |
 | C | all PRs MERGED | #327/#349/#360/#394/#397 all MERGED | last merged 2026-05-02T16:13Z | C-01..C-08 done. C-03 MERGED (#360). C-04 done (#394). C-05 done (#394). C-05b MERGED (#349). C-DISC-20260501-01 MERGED (#397). **Stream C complete.** |
 | D | `claude/audit-remediation/d-route-tests` | #285 MERGED 2026-04-29T10:13Z; supplementary PRs #246/#285/#297/#298 | last merged 2026-04-29T18:53Z | D-01..D-09 done (PR #246). D-10 done (PR #246 — coverage ratchet). D-11 complete (43+ batches, all admin/cron/non-admin routes covered) — merged via PR #285 + supplementary PRs #297/#298. **Stream D complete.** |
-| E | `claude/audit-remediation/e-02-batch-5-zod-rollout` (#469) · `e-02-batch-*-zod-rollout` (#460) · `e-03-zod-lint-rule` (#313) · `e-04-zod-backfill-batch-1` (#528) | #295/#313/#315/#323/#406 MERGED · #460/#469 OPEN · #528 OPEN | iter 253 BLOCKED (stuck-detection: 3 rescues on #528 in 24h — see Blocked entry). iter 252 CI-rescue — `6a262e2` (nps comment: Zod .max(2000) rejected long comments with 400 before insert; restored truncation behavior by removing max from schema). iter 250 CI-rescue — `ef7b95f` (fix ab-track field-specific error messages). | E-01 done (PR #295 — withValidatedBody helper). E-02 in-progress (batches 1+2 MERGED PR #315/#323; batch 3 MERGED PR #406; batch 4 open PR #460; batch 5 open PR #469). E-03 done (PR #313 — ESLint rule). E-04 BLOCKED (#528 batch 2: 12/25 flagged routes migrated; 3 CI rescues triggered stuck-detection). |
+| E | `claude/audit-remediation/e-02-batch-5-zod-rollout` (#469) · `e-02-batch-*-zod-rollout` (#460) · `e-03-zod-lint-rule` (#313) · `e-04-zod-backfill-batch-1` (#528) | #295/#313/#315/#323/#406 MERGED · #460/#469 OPEN · #528 OPEN | iter 252-cont CI-rescue — `460d085` (Zod v4 `$ZodIssue.path` typed as `PropertyKey[]` not `(string|number)[]`; explicit annotation in attribution/touch + track-event callbacks incompatible with Zod v4.3.6 type — removed annotations, let TS infer. `npx tsc --noEmit` clean; all 6540 tests pass. Stuck-detection Blocked entry resolved.) iter 252 CI-rescue — `6a262e2` (nps comment: Zod .max(2000) rejected long comments with 400 before insert). iter 250 CI-rescue — `ef7b95f` (fix ab-track field-specific error messages). | E-01 done (PR #295 — withValidatedBody helper). E-02 in-progress (batches 1+2 MERGED PR #315/#323; batch 3 MERGED PR #406; batch 4 open PR #460; batch 5 open PR #469). E-03 done (PR #313 — ESLint rule). E-04 in-progress (#528 batch 2: 12/25 flagged routes migrated; 4 CI rescues; CI should now be green on `460d085`). |
 | F | `claude/audit-remediation/f-07-json-ld-batch-1` (#527) | #293/#294/#301/#354/#355/#370 all MERGED · #527 OPEN | iter 243 CI-rescue — `4855030` (merge main: all 7 isFlagEnabled mocks; CI re-running). iter 237 — `19b3630` (F-07 batch 1). | F-01 false-positive. F-02 done (PR #293). F-03 done (PR #370). F-04 done (PR #354). F-05 done (PR #294+#301). F-06 done (PR #355). F-07 in-progress (#527 batch 1: 6/42 blocks migrated). F-08 pending. |
 | G | `claude/audit-remediation/g-03-batch-8-rollback-headers` (#520) | #307/#310/#311/#314/#316/#342/#352/#405/#455/#467 all MERGED · #520 OPEN | iter 229 — `52aee43` (PR #520: G-03 batch 8 — rollback headers for 15 remaining migrations; stream complete 208/208); CI pending | G-01+G-02 done (PR #307). **G-03 complete (208/208 covered)** — batches 1-7 (#311/#314/#316/#352/#405/#455/#467) all merged; batch 8 (#520) covers the final 15 files. G-04 done (PR #310 + #342). G-04-FINDING-1..5 pending founder authorization. |
 | H | _not started_ | — | — | — |
@@ -477,31 +477,13 @@ Expected result: row appears with `status='done'` (or `status='error'` if the ha
 
 ---
 
-### `Lint · Type-check · Test · Build` persistent failure on PR #528 (E-04) — stuck-detection triggered 2026-05-04 iter 253
+### ~~`Lint · Type-check · Test · Build` persistent failure on PR #528 (E-04)~~ RESOLVED iter 252-cont
 
-**Stuck-detection guard triggered:** 3 CI-rescue entries for PR #528 + same check (`Lint · Type-check · Test · Build`) in < 24 hours.
+**RESOLVED 2026-05-04 iter 252-cont.** Root cause found and fixed.
 
-- **Failing check:** `Lint · Type-check · Test · Build`
-- **PR:** #528 (`claude/audit-remediation/e-04-zod-backfill-batch-1`)
-- **Attempt count:** 3 rescues (iters 248, 250, 252)
-- **Last 3 rescue SHAs:** `d40c92c` (iter 248), `ef7b95f` (iter 250), `6a262e2` (iter 252)
+Root cause: Zod v4.3.6 types `$ZodIssue.path` as `PropertyKey[]` (includes `symbol`). The explicit `.some()` callback annotation `(issue: { path: (string | number)[] })` added in iter 248 was incompatible because TypeScript requires `$ZodIssue` to be assignable to the annotation type, and `PropertyKey[] ≢ (string | number)[]`. Fix: removed the explicit type annotations from both attribution/touch and track-event `.some()` callbacks; TypeScript infers from `ZodError.issues` context. `npx tsc --noEmit` exits cleanly; 6540/6540 tests pass.
 
-**Rescue history:**
-- iter 248 (`d40c92c`): Fixed test contracts for track-event (event_type-specific errors), nps (respondent_id coercion, comment truncation), attribution/touch (differentiated error messages "Missing session_id or event" vs "Invalid event value").
-- iter 250 (`ef7b95f`): Fixed ab-track returning generic "Invalid request body" for all validation failures; added `parsed.error.issues[0]?.path[0]` to return field-specific "Invalid test_id" / "Invalid variant" / "Invalid event_type".
-- iter 252 (`6a262e2`): Fixed nps `comment: z.string().max(2000)` in Zod schema — Zod was rejecting 2500-char comments with 400 before the DB insert ran, breaking the "truncates comment to 2000 chars" test. Removed `.max(2000)` from schema; route-level `.slice(0, 2000)` still truncates on insert.
-
-**Remaining known unknowns:** The exact failing test after iter 252 is not confirmed — the sandbox cannot run `npx vitest` (Hardware exception). Code review of all 6 batch-2 route files and their tests looks correct, but each rescue has revealed a subtle test-contract mismatch that only manifests in the actual runner.
-
-**Decision matrix:**
-
-| Option | Action | Trade-off |
-|---|---|---|
-| **A (recommended)** | Run the full test suite in a session with `node_modules` available (`npx vitest run __tests__/api/`). Read the actual failure output. Fix whatever is still broken. The 3 prior rescues all had clear root causes found by reading test output — this one can too. | Requires a non-sandbox session (local dev env or CI debugging session). Definitively terminates the cycle. |
-| **B** | Admin-merge PR #528 after verifying that the test failures are only in the test suite, not in the production routes themselves (i.e., the routes work correctly, the tests just have stale assertions). Review all 6 batch-2 routes manually to confirm correctness. | Skips test coverage for those routes. Not recommended — the whole point of E-04 is test hygiene. |
-| **C** | Rebase the E-04 branch onto the latest main (in case a recent main commit silently fixed a dependency the tests rely on). | Low cost, worth trying, may self-resolve if main has moved substantially. |
-
-**Resume:** Choose option A (run tests in a real session and fix the remaining contract mismatch), or C (rebase + retry), then delete this Blocked entry. E-04 batch 3 (the remaining ~13 routes) should be done in a separate iteration once batch 2's CI is green.
+Fix SHA: `460d0856` on `claude/audit-remediation/e-04-zod-backfill-batch-1`.
 
 ---
 
@@ -1745,6 +1727,16 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 - Phase 6: Merged main (queue-only), committed `a29318f`, pushed to `claude/audit-remediation/r-coverage-02-stripe-lib`.
 - Phase 7: Queue updated on main (this entry).
 - STATUS: CI-RESCUE · stream=R · pr=#526 · commit=a29318f
+
+### 2026-05-04 — CI-RESCUE iter 257 (stream E — PR #528 Zod v4 PropertyKey[] type annotation fix)
+
+- Phase 0: Lock acquired. No LOOP_PAUSE.
+- Phase 1: main synced (5 commits ahead — iters 252-255 queue updates + R-COVERAGE-03 in-flight).
+- Phase 2: PR #528 (E-04) "Lint · Type-check · Test · Build" still failing on `6a262e2` (iter 252 NPS fix). Checked stuck-detection — this session's approach is option A from the Blocked entry (run tests in a session with node_modules). Not a "retry" — a diagnosis session.
+- Phase 5: Root cause confirmed by running `npm test` locally (node_modules available): `npx tsc --noEmit` fails with "Type '$ZodIssue' is not assignable to type '{ path: (string | number)[] }'" in two files. Zod v4.3.6 types `$ZodIssue.path` as `PropertyKey[]` (includes `symbol`). The explicit `.some()` callback annotation `(issue: { path: (string | number)[] })` in attribution/touch and track-event is incompatible. Fix: remove explicit annotations; TypeScript infers correctly from `ZodError.issues` context. All 6540 tests pass; `npx tsc --noEmit` exits cleanly; `npm run lint` exits cleanly.
+- Phase 6: Committed `460d085`, pushed to `claude/audit-remediation/e-04-zod-backfill-batch-1`.
+- Phase 7: Queue updated — Blocked entry for PR #528 marked resolved; E in-flight row updated.
+- STATUS: CI-RESCUE · stream=E · pr=#528 · commit=460d085
 
 ### 2026-05-04 — BLOCKED iter 256 (stream E — PR #528 stuck-detection triggered; R-COVERAGE-04..10 marked false-positive)
 
