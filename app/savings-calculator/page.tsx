@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import type { Metadata } from "next";
-import { CURRENT_YEAR, SITE_NAME } from "@/lib/seo";
+import { CURRENT_YEAR } from "@/lib/seo";
+import { calculatorJsonLd } from "@/lib/schema-markup";
 import SavingsCalculatorClient from "./SavingsCalculatorClient";
 import ComplianceFooter from "@/components/ComplianceFooter";
 
@@ -26,20 +27,9 @@ export default async function SavingsCalculatorPage() {
     .eq("platform_type", "savings_account")
     .order("rating", { ascending: false });
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    name: `Savings Rate Calculator — ${SITE_NAME}`,
-    description: "Compare savings account interest rates and calculate how much more you could earn.",
-    url: "https://invest.com.au/savings-calculator",
-    applicationCategory: "FinanceApplication",
-    operatingSystem: "Any",
-    offers: { "@type": "Offer", price: "0", priceCurrency: "AUD" },
-  };
-
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(calculatorJsonLd({ name: "Savings Rate Calculator", description: "Compare savings account interest rates and calculate how much more you could earn.", path: "/savings-calculator" })) }} />
       <SavingsCalculatorClient accounts={accounts || []} />
       <div className="container-custom pb-8"><ComplianceFooter variant="calculator" /></div>
 

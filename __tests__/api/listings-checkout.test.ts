@@ -3,6 +3,11 @@ import { NextRequest } from "next/server";
 
 // ── Mocks ──────────────────────────────────────────────────────────────────────
 
+const mockIsFlagEnabled = vi.fn();
+vi.mock("@/lib/feature-flags", () => ({
+  isFlagEnabled: (...args: unknown[]) => mockIsFlagEnabled(...args),
+}));
+
 vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ error: vi.fn(), info: vi.fn(), warn: vi.fn() })),
 }));
@@ -24,14 +29,6 @@ vi.mock("@/lib/stripe", () => ({
     customers: { list: mockCustomersList, create: mockCustomersCreate },
     checkout: { sessions: { create: mockSessionsCreate } },
   }),
-}));
-
-// The stripe_checkout feature flag was added in the launch-ops pass.
-// In test environments isFlagEnabled() returns false (placeholder Supabase URL),
-// causing all POST tests to receive 503. Mock to return true by default.
-const mockIsFlagEnabled = vi.fn().mockResolvedValue(true);
-vi.mock("@/lib/feature-flags", () => ({
-  isFlagEnabled: (...args: unknown[]) => mockIsFlagEnabled(...args),
 }));
 
 import { POST } from "@/app/api/listings/checkout/route";
