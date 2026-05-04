@@ -29,7 +29,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | C | all PRs MERGED | #327/#349/#360/#394/#397 all MERGED | last merged 2026-05-02T16:13Z | C-01..C-08 done. C-03 MERGED (#360). C-04 done (#394). C-05 done (#394). C-05b MERGED (#349). C-DISC-20260501-01 MERGED (#397). **Stream C complete.** |
 | D | `claude/audit-remediation/d-route-tests` | #285 MERGED 2026-04-29T10:13Z; supplementary PRs #246/#285/#297/#298 | last merged 2026-04-29T18:53Z | D-01..D-09 done (PR #246). D-10 done (PR #246 — coverage ratchet). D-11 complete (43+ batches, all admin/cron/non-admin routes covered) — merged via PR #285 + supplementary PRs #297/#298. **Stream D complete.** |
 | E | `claude/audit-remediation/e-02-batch-5-zod-rollout` (#469) · `e-02-batch-*-zod-rollout` (#460) · `e-03-zod-lint-rule` (#313) · `e-04-batch-2-zod-backfill` (#557) · `e-04-batch-3-zod-backfill` (#560) | #295/#313/#315/#323/#406/#528 MERGED · #460/#469 OPEN · **#557/#560 OPEN** | iter 268 CI-rescue — `e219e9e` (PR #560: Zod v4 fixes in fi/update: z.record(z.string(),z.unknown()) + invalid_value; CI re-running). iter 266 — `d823fda` (PR #560: E-04 batch 3 — review-moderation, fi/seed, fi/verify, fi/update, fi/revalidate, advertise/create-checkout); CI pending. iter 265 CI-rescue — `6e26be6` (PR #557: body→rawBody fix in calendar POST + merge main; CI re-running). iter 263 — `aee5b06` (PR #557: E-04 batch 2); CI pending. iter 252-cont CI-rescue — `460d085`. | E-01 done (PR #295). E-02 in-progress (#460/#469). E-03 done (PR #313). E-04 in-progress (#528 MERGED batch 1; #557 OPEN batch 2; #560 OPEN batch 3). |
-| F | `claude/audit-remediation/f-07-json-ld-batch-1` (#527) | #293/#294/#301/#354/#355/#370 all MERGED · #527 OPEN | iter 243 CI-rescue — `4855030` (merge main: all 7 isFlagEnabled mocks; CI re-running). iter 237 — `19b3630` (F-07 batch 1). | F-01 false-positive. F-02 done (PR #293). F-03 done (PR #370). F-04 done (PR #354). F-05 done (PR #294+#301). F-06 done (PR #355). F-07 in-progress (#527 batch 1: 6/42 blocks migrated). F-08 pending. |
+| F | `claude/audit-remediation/f-07-batch2-json-ld` (#563) | #293/#294/#301/#354/#355/#370/#527 all MERGED · **#563 OPEN** | iter 270 — `764dfa3` (PR #563: F-07 batch 2 — 5 calculator pages; CI pending). iter 243 CI-rescue — `4855030`. iter 237 — `19b3630` (F-07 batch 1). | F-01 false-positive. F-02 done (PR #293). F-03 done (PR #370). F-04 done (PR #354). F-05 done (PR #294+#301). F-06 done (PR #355). **F-07 batch 1 MERGED (#527)** · F-07 batch 2 in-progress (#563: 5 pages, 11/~42 blocks total). F-08 pending. |
 | G | `claude/audit-remediation/g-03-batch-8-rollback-headers` (#520) | #307/#310/#311/#314/#316/#342/#352/#405/#455/#467/#520 all MERGED | iter 229 — `52aee43` (PR #520: G-03 batch 8 MERGED 2026-05-04T14:42Z — all 208/208 migrations covered). | G-01+G-02 done (PR #307). **G-03 complete (208/208 covered)** — all batches MERGED. G-04 done (PR #310 + #342). G-04-FINDING-1..5 pending founder authorization. **Stream G complete.** |
 | H | _not started_ | — | — | — |
 | I | `claude/audit-remediation/i-new-04-main-ci-auto-revert` (#278) · `i-02-drift-detection-ci` (#353) | #278 MERGED 2026-04-28T16:18Z · #353 MERGED 2026-05-01T14:30Z | last merged 2026-05-01T14:30Z | I-NEW-01..05 all done. I-NEW-06 needs-user (Supabase GH Actions secrets). I-01 done via B-07 (PR #286). I-02 done (PR #353). I-03 done via C-08 (PR #327). I-04 done via E-03 (PR #313). I-05 done via D-10 (PR #246). |
@@ -802,7 +802,7 @@ Best done after A/B/C land so the rules don't break in-flight work.
 | F-04 | done | Replace 5 `slugify` re-implementations with `lib/utils.ts` import | 1 | Done in PR #354 (verified) — first wave (1 of 11). 10 follow-ups noted in PR body. |
 | F-05 | done | Replace 12 actionable `console.*` calls with `lib/logger.ts` | 1 | Done in PR #294 (initial 9) + PR #301 (3 deferred files + eslint warning fix). |
 | F-06 | done | Move 4 hardcoded compliance-copy strings to `lib/compliance.ts` (audit §2.2) | 1 | Done in PR #355 — 5 strings moved to SSOT (BrokerCard, FullServiceBrokerCard, VerifiedBadge, AdminHelpPanel + 1). |
-| F-07 | in-flight | Migrate 42 hardcoded JSON-LD blocks to `lib/schema-markup.ts` helpers | ~6 | PR #527 batch 1: 6 calculator pages (retirement, debt, savings, property-yield, non-resident-dividend, franking-credits). 36 blocks remain. |
+| F-07 | in-flight | Migrate 42 hardcoded JSON-LD blocks to `lib/schema-markup.ts` helpers | ~6 | PR #527 batch 1 MERGED: 6 calculator pages (retirement, debt, savings, property-yield, non-resident-dividend, franking-credits). PR #563 batch 2 in-progress: 5 pages (compound-interest, super-contributions, dividend-reinvestment, cgt, smsf). 11/42 done; ~31 remain (advisor-guides, foreign-investment/*, insurance/*, invest/*, compare/* and others). |
 | F-08 | pending | Extract shared `components/ui/Card` base, refactor 7 card components | ~3 | Lower priority — visual diffs need careful review. |
 
 ### Stream H — File splits
@@ -1905,6 +1905,20 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 - Phase 6: Commit `d823fda`, pushed. PR #560 opened (ready, not draft).
 - Phase 7: Queue updated — E in-flight row updated, E-04 item updated (batch 3 in-progress), this log entry.
 - STATUS: PROGRESS · stream=E · item=E-04 (batch 3 of ~4) · pr=#560
+
+---
+
+### 2026-05-04 — Forward progress iter 270 (stream F — F-07 batch 2: 5 calculator pages JSON-LD → schema-markup helpers)
+
+- Phase 0: Lock held (batch fire, iteration 4 of up to 5).
+- Phase 1: main synced (fast-forward to 1c1ad74 then 66531e2 — picked up GI etfs/us + etfs/global pages, gi-redirects test, next.config.ts from parallel session work).
+- Phase 2: CI rescue check — KK #524 just rescued (e9a68b7, CI re-running). Q #554 shows only Vercel check (CI queued from 0d2877b). E #560 shows only Vercel check (CI queued from e219e9e). W #529 shows only Vercel check. F #527 full CI green (all checks success, 00:09:42Z). A #552 only Vercel check. No confirmed failures → no rescue needed this iteration.
+- Phase 3: Priority order: A (4 open PRs, CI all pending — no clear new work to add without knowing CI state); E (CI rescue in progress); F (PR #527 confirmed MERGED — new batch needed). F-07 batch 2 picked. Verified PR #527 MERGED (2026-05-04T14:32:20Z). Created new branch `claude/audit-remediation/f-07-batch2-json-ld` from main.
+- Phase 4: Verified 5 target pages all have inline `WebApplication`/`SoftwareApplication`/`BreadcrumbList`/`FAQPage` objects. `calculatorJsonLd()`, `breadcrumbJsonLd()`, `faqJsonLd()` confirmed as correct helpers (matching batch 1 franking-credits pattern). Bonus fix: cgt-calculator used `SoftwareApplication` (wrong type for a web tool) → `WebApplication` via helper.
+- Phase 5: Migrated compound-interest-calculator, super-contributions-calculator, dividend-reinvestment-calculator (all three: jsonLd + breadcrumbLd + faqLd), cgt-calculator (softwareLd + faqLd; breadcrumb already used helper), smsf-calculator (jsonLd only; moved from inside fn to module scope). 5 files, -131 net LOC.
+- Phase 6: Commit `764dfa3`, pushed to `claude/audit-remediation/f-07-batch2-json-ld`. PR #563 opened.
+- Phase 7: F in-flight row updated (PR #527 → MERGED, #563 → OPEN); F-07 item updated (11/42 done); this log entry.
+- STATUS: PROGRESS · stream=F · item=F-07 (batch 2 of ~6) · pr=#563 · commit=764dfa3
 
 ---
 
