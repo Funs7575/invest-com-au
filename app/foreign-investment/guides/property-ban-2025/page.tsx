@@ -1,3 +1,4 @@
+// dated-strings-exempt — entire page documents a specific legislative ban period (1 April 2025–31 March 2027); all dates are immutable statute references
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";

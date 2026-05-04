@@ -82,6 +82,7 @@ export default async function SmsfInvestmentStrategyPage() {
         <section className="py-12 bg-amber-50 border-y border-amber-200">
           <div className="container-custom max-w-4xl">
             <h2 className="text-xl md:text-2xl font-extrabold text-amber-900 mb-3">Division 296 — what changes from July 2026</h2>
+            {/* dated-ok — Division 296 legislated commencement date, fixed by statute */}
             <p className="text-sm text-amber-900 leading-relaxed">
               From 1 July 2026, the new Division 296 framework applies an additional 30% tax rate on earnings attributable to the portion of a member&rsquo;s total super balance over $3 million. SMSFs with concentrated property or single-asset exposure are most affected because notional gains are included in the calculation. Trustees with balances approaching the threshold should model the impact and consider re-weighting before the transition.
             </p>
