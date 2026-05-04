@@ -3,6 +3,11 @@ import { makeRequest, createChainableBuilder } from "@/__tests__/helpers";
 
 // ── Mocks ──────────────────────────────────────────────────────────────────────
 
+const mockIsFlagEnabled = vi.fn();
+vi.mock("@/lib/feature-flags", () => ({
+  isFlagEnabled: (...args: unknown[]) => mockIsFlagEnabled(...args),
+}));
+
 const mockFrom = vi.fn();
 
 vi.mock("@/lib/supabase/admin", () => ({
@@ -22,14 +27,6 @@ vi.mock("@/lib/email-templates", () => ({
 
 vi.mock("@/lib/advisor-billing", () => ({
   createLeadInvoice: vi.fn(() => Promise.resolve()),
-}));
-
-// The advisor_enquiry_intake feature flag was added in the launch-ops pass.
-// In test environments isFlagEnabled() returns false (placeholder Supabase URL),
-// causing all POST tests to receive 503. Mock to return true by default.
-const mockIsFlagEnabled = vi.fn().mockResolvedValue(true);
-vi.mock("@/lib/feature-flags", () => ({
-  isFlagEnabled: (...args: unknown[]) => mockIsFlagEnabled(...args),
 }));
 
 // ── Import route AFTER mocks ──────────────────────────────────────────────────
@@ -132,6 +129,14 @@ describe("POST /api/advisor-enquiry", () => {
     mockIsFlagEnabled.mockResolvedValue(true);
     process.env.RESEND_API_KEY = "re_test_key";
     (isRateLimited as ReturnType<typeof vi.fn>).mockResolvedValue(false);
+  });
+
+  it("returns 503 when advisor_enquiry_intake flag is disabled", async () => {
+    mockIsFlagEnabled.mockResolvedValue(false);
+    const res = await POST(enquiryRequest(VALID_BODY));
+    expect(res.status).toBe(503);
+    const json = await res.json();
+    expect(json.error).toBe("temporarily_unavailable");
   });
 
   it("returns 429 when rate limited", async () => {
