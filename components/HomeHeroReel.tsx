@@ -31,15 +31,17 @@ interface Props {
   advisorCount: number;
 }
 
+type PanelKey = "compare" | "browse" | "find" | "matched" | "tools";
+
 interface PanelDef {
-  key: string;
-  eyebrow: string;
+  key: PanelKey;
+  headline: string;
+  sublabel: string;
+  cta: string;
   accent: string;
   href: string;
   ariaLabel: string;
 }
-
-type PanelKey = "compare" | "browse" | "find" | "matched" | "tools";
 
 export default function HomeHeroReel({
   brokers,
@@ -53,41 +55,51 @@ export default function HomeHeroReel({
     () => [
       {
         key: "compare",
-        eyebrow: "Compare platforms",
+        headline: `Compare ${brokerCount.toLocaleString("en-AU")}+ platforms`,
+        sublabel: "Side-by-side fees, FX rates, features",
+        cta: "Open compare",
         accent: "rgba(96,165,250,1)",
         href: "/compare",
         ariaLabel: "Compare investing platforms",
       },
       {
         key: "browse",
-        eyebrow: "Browse opportunities",
+        headline: `Browse ${listingCount.toLocaleString("en-AU")} opportunities`,
+        sublabel: "Real Australian businesses, projects, assets",
+        cta: "Browse listings",
         accent: "rgba(52,211,153,1)",
         href: "/invest",
         ariaLabel: "Browse Australian investments for sale",
       },
       {
         key: "find",
-        eyebrow: "Find an expert",
+        headline: "Find a verified expert",
+        sublabel: `${advisorCount.toLocaleString("en-AU")} specialists, by region & fee`,
+        cta: "Meet specialists",
         accent: "rgba(167,139,250,1)",
         href: "/advisors",
         ariaLabel: "Find a verified Australian expert",
       },
       {
         key: "matched",
-        eyebrow: "Get matched",
+        headline: "Get matched in 60s",
+        sublabel: "4 questions · no email · free",
+        cta: "Take the quiz",
         accent: "var(--color-coral-400)",
         href: "/quiz",
         ariaLabel: "Get matched with a 4-question quiz",
       },
       {
         key: "tools",
-        eyebrow: "Tools & data",
+        headline: "See what you'll save",
+        sublabel: "Real cost on a sample $10K USD trade",
+        cta: "Open calculators",
         accent: "rgba(251,191,36,1)",
         href: "/calculators",
         ariaLabel: "Use calculators and data tools",
       },
     ],
-    [],
+    [brokerCount, listingCount, advisorCount],
   );
 
   const [active, setActive] = useState(0);
@@ -115,12 +127,10 @@ export default function HomeHeroReel({
       onBlur={() => setPaused(false)}
     >
       <div className="hero-reel-frame">
-        {/* glow halo */}
-        <div aria-hidden className="hero-reel-glow" />
-
-        {/* header strip — pokie chrome: line indicator + label */}
         <div className="hero-reel-chrome">
-          <span className="hero-reel-label font-mono">Ways to use Invest.com.au</span>
+          <span className="hero-reel-label font-mono">
+            5 ways to use Invest.com.au
+          </span>
           <nav className="hero-reel-pips" aria-label="Reel position">
             {panels.map((p, i) => (
               <button
@@ -128,7 +138,7 @@ export default function HomeHeroReel({
                 type="button"
                 onClick={() => setActive(i)}
                 aria-current={i === active ? "true" : undefined}
-                aria-label={`Show ${p.eyebrow}`}
+                aria-label={`Show ${p.headline}`}
                 className={`hero-reel-pip ${i === active ? "is-active" : ""}`}
                 style={i === active ? { background: p.accent } : undefined}
               />
@@ -136,7 +146,6 @@ export default function HomeHeroReel({
           </nav>
         </div>
 
-        {/* viewport — all panels stacked, only active visible */}
         <div className="hero-reel-viewport" aria-live="polite">
           {panels.map((p, i) => {
             const isActive = i === active;
@@ -150,15 +159,10 @@ export default function HomeHeroReel({
                 className={`hero-reel-panel ${isActive ? "is-active" : ""}`}
               >
                 <PanelInner
-                  panelKey={p.key as PanelKey}
-                  accent={p.accent}
-                  eyebrow={p.eyebrow}
+                  panel={p}
                   brokers={brokers}
                   listings={listings}
                   advisors={advisors}
-                  brokerCount={brokerCount}
-                  listingCount={listingCount}
-                  advisorCount={advisorCount}
                   matchBroker={matchBroker}
                 />
               </Link>
@@ -178,18 +182,11 @@ export default function HomeHeroReel({
           position: relative;
           border-radius: 18px;
           background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
-          border: 1px solid rgba(255,255,255,.18);
+          border: 1px solid rgba(255,255,255,.16);
           backdrop-filter: blur(6px);
           -webkit-backdrop-filter: blur(6px);
           box-shadow: 0 28px 60px -24px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.06);
           overflow: hidden;
-        }
-        .hero-reel-glow {
-          position: absolute;
-          inset: -40px;
-          background: radial-gradient(circle at 70% 50%, rgba(242,88,34,.22), transparent 65%);
-          pointer-events: none;
-          z-index: 0;
         }
         .hero-reel-chrome {
           position: relative;
@@ -208,13 +205,10 @@ export default function HomeHeroReel({
           letter-spacing: .09em;
           color: rgba(255,255,255,.55);
         }
-        .hero-reel-pips {
-          display: inline-flex;
-          gap: 6px;
-        }
+        .hero-reel-pips { display: inline-flex; gap: 6px; }
         .hero-reel-pip {
-          width: 20px;
-          height: 4px;
+          width: 26px;
+          height: 5px;
           border-radius: 99px;
           background: rgba(255,255,255,.18);
           border: none;
@@ -222,23 +216,24 @@ export default function HomeHeroReel({
           cursor: pointer;
           transition: background-color .2s ease, transform .2s ease;
         }
-        .hero-reel-pip:hover { background: rgba(255,255,255,.32); }
+        .hero-reel-pip:hover { background: rgba(255,255,255,.34); }
         .hero-reel-pip.is-active {
-          transform: scaleY(1.4);
+          transform: scaleY(1.3);
+          box-shadow: 0 0 0 3px rgba(255,255,255,.04);
         }
         .hero-reel-viewport {
           position: relative;
-          height: 280px;
+          height: 320px;
           overflow: hidden;
           z-index: 1;
         }
         .hero-reel-panel {
           position: absolute;
           inset: 0;
-          padding: 18px 20px 20px;
+          padding: 22px 24px 20px;
           display: flex;
           flex-direction: column;
-          gap: 12px;
+          gap: 14px;
           color: rgba(255,255,255,.92);
           text-decoration: none;
           opacity: 0;
@@ -252,60 +247,80 @@ export default function HomeHeroReel({
           transform: translateY(0);
           pointer-events: auto;
         }
-        .hero-reel-panel:hover .panel-cta-arrow,
-        .hero-reel-panel:focus-visible .panel-cta-arrow {
-          transform: translateX(3px);
+        .hero-reel-panel:hover .panel-cta-pill,
+        .hero-reel-panel:focus-visible .panel-cta-pill {
+          background: rgba(255,255,255,.14);
+          border-color: rgba(255,255,255,.32);
+        }
+        .hero-reel-panel:hover .panel-cta-pill svg,
+        .hero-reel-panel:focus-visible .panel-cta-pill svg {
+          transform: translateX(2px);
         }
         @media (prefers-reduced-motion: reduce) {
           .hero-reel-panel {
             transition: opacity .25s ease !important;
             transform: none !important;
           }
-          .hero-reel-panel:hover .panel-cta-arrow,
-          .hero-reel-panel:focus-visible .panel-cta-arrow {
+          .hero-reel-panel:hover .panel-cta-pill svg,
+          .hero-reel-panel:focus-visible .panel-cta-pill svg {
             transform: none;
           }
         }
-        .panel-eyebrow {
-          font-size: 11px;
-          font-weight: 800;
-          text-transform: uppercase;
-          letter-spacing: .08em;
+
+        .panel-head { display: flex; flex-direction: column; gap: 4px; }
+        .panel-head .accent-strip {
+          width: 32px;
+          height: 3px;
+          border-radius: 99px;
+          margin-bottom: 8px;
         }
-        .panel-cta {
+        .panel-headline {
+          font-size: 19px;
+          font-weight: 800;
+          letter-spacing: -.015em;
+          line-height: 1.15;
+          color: white;
+        }
+        .panel-sublabel {
+          font-size: 12.5px;
+          color: rgba(255,255,255,.62);
+          letter-spacing: .002em;
+        }
+
+        .panel-cta-pill {
           margin-top: auto;
-          display: flex;
+          align-self: flex-start;
+          display: inline-flex;
           align-items: center;
-          justify-content: space-between;
           gap: 8px;
-          font-size: 11.5px;
+          padding: 7px 14px 7px 16px;
+          border-radius: 999px;
+          background: rgba(255,255,255,.07);
+          border: 1px solid rgba(255,255,255,.18);
+          font-size: 12px;
           font-weight: 800;
           letter-spacing: .03em;
           text-transform: uppercase;
-          color: rgba(255,255,255,.85);
-        }
-        .panel-cta-arrow {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          width: 24px;
-          height: 24px;
-          border-radius: 99px;
-          background: rgba(255,255,255,.10);
           color: white;
-          transition: transform .18s ease, background-color .18s ease;
+          transition: background-color .18s ease, border-color .18s ease;
         }
+        .panel-cta-pill svg { transition: transform .18s ease; }
 
-        /* Compare panel */
+        .compare-rows {
+          display: flex;
+          flex-direction: column;
+          gap: 7px;
+          flex: 1;
+        }
         .compare-row {
           display: flex;
           align-items: center;
           gap: 10px;
-          padding: 8px 12px;
+          padding: 9px 12px;
           border-radius: 10px;
           background: rgba(255,255,255,.06);
           border: 1px solid rgba(255,255,255,.10);
-          font-size: 12.5px;
+          font-size: 13px;
           font-weight: 700;
         }
         .compare-row .dot {
@@ -323,12 +338,11 @@ export default function HomeHeroReel({
         }
         .compare-row .fee {
           font-family: var(--font-mono, ui-monospace, monospace);
-          font-size: 11.5px;
+          font-size: 12px;
           color: rgba(96,165,250,1);
           font-weight: 800;
         }
 
-        /* Browse panel */
         .browse-grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
@@ -341,7 +355,6 @@ export default function HomeHeroReel({
           overflow: hidden;
           background: rgba(255,255,255,.05);
           border: 1px solid rgba(255,255,255,.10);
-          aspect-ratio: 4 / 3;
         }
         .browse-tile-fallback {
           position: absolute;
@@ -350,44 +363,39 @@ export default function HomeHeroReel({
           align-items: center;
           justify-content: center;
           color: rgba(255,255,255,.35);
-          font-size: 14px;
-          font-weight: 700;
         }
         .browse-tile-title {
           position: absolute;
           left: 0;
           right: 0;
           bottom: 0;
-          padding: 5px 7px;
-          background: linear-gradient(180deg, transparent, rgba(0,0,0,.78));
+          padding: 6px 8px;
+          background: linear-gradient(180deg, transparent, rgba(0,0,0,.82));
           color: white;
           font-size: 10.5px;
           font-weight: 700;
-          line-height: 1.15;
+          line-height: 1.18;
           overflow: hidden;
           display: -webkit-box;
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
         }
 
-        /* Find panel */
-        .find-row {
+        .find-stack {
           display: flex;
-          align-items: center;
+          flex-direction: column;
           gap: 12px;
           flex: 1;
         }
-        .find-avatars {
-          display: inline-flex;
-        }
+        .find-avatars { display: inline-flex; }
         .find-avatar {
           position: relative;
-          width: 42px;
-          height: 42px;
+          width: 46px;
+          height: 46px;
           border-radius: 99px;
           overflow: hidden;
           border: 2px solid rgba(13,17,23,.85);
-          margin-left: -8px;
+          margin-left: -10px;
           background: rgba(167,139,250,.22);
         }
         .find-avatar:first-child { margin-left: 0; }
@@ -398,31 +406,25 @@ export default function HomeHeroReel({
           align-items: center;
           justify-content: center;
           color: rgba(255,255,255,.65);
-          font-size: 13px;
+          font-size: 14px;
           font-weight: 800;
         }
-        .find-meta {
+        .find-tags {
           display: flex;
-          flex-direction: column;
-          gap: 2px;
-          min-width: 0;
-        }
-        .find-count {
-          font-size: 22px;
-          font-weight: 800;
-          letter-spacing: -.02em;
-          color: white;
-        }
-        .find-label {
-          font-size: 11.5px;
-          color: rgba(255,255,255,.65);
-        }
-
-        /* Matched panel */
-        .matched-progress {
-          display: flex;
+          flex-wrap: wrap;
           gap: 6px;
         }
+        .find-tag {
+          font-size: 10.5px;
+          font-weight: 700;
+          padding: 4px 9px;
+          border-radius: 99px;
+          background: rgba(167,139,250,.14);
+          color: rgba(216,205,255,1);
+          border: 1px solid rgba(167,139,250,.28);
+        }
+
+        .matched-progress { display: flex; gap: 6px; }
         .matched-progress .step {
           flex: 1;
           height: 6px;
@@ -430,8 +432,8 @@ export default function HomeHeroReel({
           background: var(--color-coral-400);
         }
         .matched-card {
-          margin-top: 4px;
-          padding: 12px 14px;
+          margin-top: 2px;
+          padding: 14px 16px;
           border-radius: 12px;
           background: rgba(255,255,255,.06);
           border: 1px solid rgba(255,255,255,.12);
@@ -445,7 +447,7 @@ export default function HomeHeroReel({
         }
         .matched-name {
           margin-top: 6px;
-          font-size: 18px;
+          font-size: 19px;
           font-weight: 800;
           letter-spacing: -.01em;
           color: white;
@@ -458,35 +460,71 @@ export default function HomeHeroReel({
           font-family: var(--font-mono, ui-monospace, monospace);
         }
 
-        /* Tools panel */
-        .tools-grid {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 8px;
-          flex: 1;
-        }
-        .tools-tile {
-          padding: 10px 12px;
-          border-radius: 10px;
-          background: rgba(255,255,255,.06);
-          border: 1px solid rgba(255,255,255,.10);
+        .savings-block {
           display: flex;
           flex-direction: column;
-          gap: 3px;
+          gap: 14px;
+          flex: 1;
         }
-        .tools-tile .tile-label {
-          font-size: 10.5px;
+        .savings-bars {
+          display: flex;
+          flex-direction: column;
+          gap: 9px;
+        }
+        .savings-bar-row {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          font-size: 12px;
           font-weight: 700;
-          color: rgba(255,255,255,.62);
-          text-transform: uppercase;
-          letter-spacing: .04em;
         }
-        .tools-tile .tile-value {
-          font-size: 16px;
-          font-weight: 800;
-          color: white;
-          letter-spacing: -.01em;
+        .savings-bar-row .label {
+          width: 80px;
+          color: rgba(255,255,255,.78);
+          flex-shrink: 0;
+        }
+        .savings-bar-row .track {
+          flex: 1;
+          height: 12px;
+          border-radius: 99px;
+          background: rgba(255,255,255,.06);
+          border: 1px solid rgba(255,255,255,.10);
+          overflow: hidden;
+          position: relative;
+        }
+        .savings-bar-row .fill {
+          height: 100%;
+          border-radius: 99px;
+        }
+        .savings-bar-row .cost {
+          width: 50px;
+          text-align: right;
           font-family: var(--font-mono, ui-monospace, monospace);
+          color: white;
+        }
+        .savings-bar-row.dim .label,
+        .savings-bar-row.dim .cost { color: rgba(255,255,255,.55); }
+        .savings-bar-row.dim .fill { background: rgba(255,255,255,.22); }
+        .savings-bar-row.win .fill { background: var(--color-coral-400); }
+        .savings-callout {
+          display: flex;
+          align-items: baseline;
+          gap: 10px;
+          padding: 10px 14px;
+          border-radius: 12px;
+          background: rgba(242,88,34,.14);
+          border: 1px solid rgba(242,88,34,.32);
+        }
+        .savings-callout .save-amount {
+          font-size: 22px;
+          font-weight: 800;
+          letter-spacing: -.01em;
+          color: var(--color-coral-400);
+          font-family: var(--font-mono, ui-monospace, monospace);
+        }
+        .savings-callout .save-context {
+          font-size: 11.5px;
+          color: rgba(255,255,255,.7);
         }
       `}</style>
     </div>
@@ -494,73 +532,58 @@ export default function HomeHeroReel({
 }
 
 function PanelInner({
-  panelKey,
-  accent,
-  eyebrow,
+  panel,
   brokers,
   listings,
   advisors,
-  brokerCount,
-  listingCount,
-  advisorCount,
   matchBroker,
 }: {
-  panelKey: PanelKey;
-  accent: string;
-  eyebrow: string;
+  panel: PanelDef;
   brokers: ReadonlyArray<ReelBroker>;
   listings: ReadonlyArray<ReelListing>;
   advisors: ReadonlyArray<ReelAdvisor>;
-  brokerCount: number;
-  listingCount: number;
-  advisorCount: number;
   matchBroker: ReelBroker | undefined;
 }) {
   return (
     <>
-      <div className="panel-eyebrow font-mono" style={{ color: accent }}>
-        {eyebrow}
+      <div className="panel-head">
+        <span
+          className="accent-strip"
+          aria-hidden
+          style={{ background: panel.accent }}
+        />
+        <div className="panel-headline">{panel.headline}</div>
+        <div className="panel-sublabel">{panel.sublabel}</div>
       </div>
 
-      {panelKey === "compare" && <ComparePanel brokers={brokers} accent={accent} />}
-      {panelKey === "browse" && <BrowsePanel listings={listings} />}
-      {panelKey === "find" && <FindPanel advisors={advisors} count={advisorCount} />}
-      {panelKey === "matched" && <MatchedPanel matchBroker={matchBroker} />}
-      {panelKey === "tools" && <ToolsPanel />}
+      {panel.key === "compare" && <ComparePanel brokers={brokers} accent={panel.accent} />}
+      {panel.key === "browse" && <BrowsePanel listings={listings} />}
+      {panel.key === "find" && <FindPanel advisors={advisors} />}
+      {panel.key === "matched" && <MatchedPanel matchBroker={matchBroker} />}
+      {panel.key === "tools" && <SavingsPanel />}
 
-      <div className="panel-cta">
-        <span>
-          {panelKey === "compare" && `${brokerCount.toLocaleString("en-AU")} platforms`}
-          {panelKey === "browse" && `${listingCount.toLocaleString("en-AU")} live`}
-          {panelKey === "find" && `${advisorCount.toLocaleString("en-AU")} verified`}
-          {panelKey === "matched" && "60 seconds · no email"}
-          {panelKey === "tools" && "14 tools"}
-        </span>
-        <span className="panel-cta-arrow" aria-hidden>
-          <DesignIcon name="arrow-right" size={13} strokeWidth={2.6} />
-        </span>
-      </div>
+      <span className="panel-cta-pill" aria-hidden>
+        {panel.cta}
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14m0 0-5-5m5 5-5 5" />
+        </svg>
+      </span>
     </>
   );
 }
 
 function ComparePanel({ brokers, accent }: { brokers: ReadonlyArray<ReelBroker>; accent: string }) {
-  const rows = brokers.slice(0, 3);
   const placeholder: ReelBroker[] = [
-    { name: "CMC Markets", asx_fee: "$11" },
     { name: "Stake", asx_fee: "$3" },
     { name: "Pearler", asx_fee: "$6.50" },
+    { name: "CMC Markets", asx_fee: "$11" },
   ];
-  const display = rows.length >= 3 ? rows : placeholder;
+  const display = brokers.length >= 3 ? brokers.slice(0, 3) : placeholder;
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+    <div className="compare-rows">
       {display.map((b, i) => (
         <div key={`${b.name}-${i}`} className="compare-row">
-          <span
-            className="dot"
-            aria-hidden
-            style={{ background: b.color || accent }}
-          />
+          <span className="dot" aria-hidden style={{ background: b.color || accent }} />
           <span className="name">{b.name}</span>
           <span className="fee">{b.asx_fee || "—"}</span>
         </div>
@@ -570,13 +593,12 @@ function ComparePanel({ brokers, accent }: { brokers: ReadonlyArray<ReelBroker>;
 }
 
 function BrowsePanel({ listings }: { listings: ReadonlyArray<ReelListing> }) {
-  const tiles = listings.slice(0, 3);
   const placeholder: ReelListing[] = [
     { id: "p1", title: "Cattle station, NT", image: null },
     { id: "p2", title: "Cafe chain, VIC", image: null },
     { id: "p3", title: "Solar farm, QLD", image: null },
   ];
-  const display = tiles.length >= 3 ? tiles : placeholder;
+  const display = listings.length >= 3 ? listings.slice(0, 3) : placeholder;
   return (
     <div className="browse-grid">
       {display.map((l) => (
@@ -592,7 +614,7 @@ function BrowsePanel({ listings }: { listings: ReadonlyArray<ReelListing> }) {
             />
           ) : (
             <span className="browse-tile-fallback" aria-hidden>
-              <DesignIcon name="map-pin" size={20} strokeWidth={2.2} />
+              <DesignIcon name="map-pin" size={22} strokeWidth={2.2} />
             </span>
           )}
           <span className="browse-tile-title">{l.title}</span>
@@ -602,13 +624,7 @@ function BrowsePanel({ listings }: { listings: ReadonlyArray<ReelListing> }) {
   );
 }
 
-function FindPanel({
-  advisors,
-  count,
-}: {
-  advisors: ReadonlyArray<ReelAdvisor>;
-  count: number;
-}) {
+function FindPanel({ advisors }: { advisors: ReadonlyArray<ReelAdvisor> }) {
   const items = advisors.filter((a) => a.photo_url).slice(0, 4);
   const fallback: ReelAdvisor[] = [
     { name: "Olivia P", photo_url: null },
@@ -617,8 +633,9 @@ function FindPanel({
     { name: "Tom R", photo_url: null },
   ];
   const display = items.length >= 3 ? items : fallback;
+  const tags = ["SMSF accountant", "Mortgage broker", "Buyer's agent", "Tax agent", "FIRB"];
   return (
-    <div className="find-row">
+    <div className="find-stack">
       <div className="find-avatars">
         {display.map((a, i) => (
           <div key={`${a.name}-${i}`} className="find-avatar">
@@ -627,7 +644,7 @@ function FindPanel({
                 src={a.photo_url}
                 alt=""
                 fill
-                sizes="42px"
+                sizes="46px"
                 style={{ objectFit: "cover" }}
                 unoptimized
               />
@@ -639,9 +656,12 @@ function FindPanel({
           </div>
         ))}
       </div>
-      <div className="find-meta">
-        <span className="find-count">{count.toLocaleString("en-AU")}+</span>
-        <span className="find-label">Verified Australian specialists</span>
+      <div className="find-tags">
+        {tags.map((t) => (
+          <span key={t} className="find-tag">
+            {t}
+          </span>
+        ))}
       </div>
     </div>
   );
@@ -659,28 +679,36 @@ function MatchedPanel({ matchBroker }: { matchBroker: ReelBroker | undefined }) 
         <div className="matched-eyebrow font-mono">Your best match</div>
         <div className="matched-name">{matchBroker?.name || "CMC Markets"}</div>
         <div className="matched-fee">
-          {matchBroker?.asx_fee || "$11"} ASX · {"based on 4 quick questions"}
+          {matchBroker?.asx_fee || "$11"} ASX · 4.9 / 5
         </div>
       </div>
     </>
   );
 }
 
-function ToolsPanel() {
-  const tiles = [
-    { label: "FX Fee Calculator", value: "0.10%" },
-    { label: "Fees Tracked", value: "80+" },
-    { label: "Switching Cost", value: "$0" },
-    { label: "CGT Estimator", value: "50%" },
-  ];
+function SavingsPanel() {
   return (
-    <div className="tools-grid">
-      {tiles.map((t) => (
-        <div key={t.label} className="tools-tile">
-          <span className="tile-label">{t.label}</span>
-          <span className="tile-value">{t.value}</span>
+    <div className="savings-block">
+      <div className="savings-bars">
+        <div className="savings-bar-row dim">
+          <span className="label">CommSec</span>
+          <span className="track">
+            <span className="fill" style={{ width: "100%" }} />
+          </span>
+          <span className="cost">$87</span>
         </div>
-      ))}
+        <div className="savings-bar-row win">
+          <span className="label">Stake</span>
+          <span className="track">
+            <span className="fill" style={{ width: "6%" }} />
+          </span>
+          <span className="cost">$5</span>
+        </div>
+      </div>
+      <div className="savings-callout">
+        <span className="save-amount">$82</span>
+        <span className="save-context">saved on a $10K USD trade</span>
+      </div>
     </div>
   );
 }
