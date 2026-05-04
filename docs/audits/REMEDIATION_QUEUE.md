@@ -41,7 +41,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | N | `claude/audit-remediation/n-ux-perf` | #242 MERGED | last merged 2026-04-28 | N-01+N-02 done (`2ec6f89`) · N-03a/b/c done · N-04/N-05 FP · N-06 blocked (deferred-post-launch by founder 2026-05-01 — option 4 chosen) · N-07/N-08/N-09/N-10/N-11 done — **stream complete** (N-06 deferred). |
 | O | all PRs MERGED | #235/#237/#239/#299/#300/#366/#395/#408 all MERGED | last merged 2026-05-02T16:14Z | O-01..O-03 done. O-04 blocked (Stripe live validation). O-05 MERGED (#408). |
 | P | `claude/audit-remediation/p-01-sentry-v10-upgrade` (#468) | — | iter 212 — `331b98e` (PR #468: P-01 — @sentry/nextjs v9.47.1 → v10.51.0; clears 5 Sentry audit findings; removes `as any` cast in next.config.ts); CI success. | P-01 in-progress (PR #468). P-02 (Stripe SDK v17→v22) BLOCKED — requires npm install + local test run to verify webhook type compatibility across 5 major versions; not tractable on Hardware-exception sandbox. Needs a session with full node_modules. |
-| Q | `claude/audit-remediation/q-02-05-recovery-runbooks` (#525) · `q-06-09-runbooks` (#547) · `q-10-12-runbooks` (#549) | #525 OPEN · #547 OPEN · #549 OPEN | iter 260 — `925b2d4` (PR #549: Q-10 acl-revocation, Q-11 dsar, Q-12 secret-rotation-log; Q-SOC2-02..11 verified done — all files exist in docs/compliance/). iter 259 — `c684960` (PR #547: Q-06..Q-09). iter 235 — `8cd2725` (Q-02..Q-05). | Q-01 needs-user (PITR drill). Q-02..Q-05 in-progress (#525). Q-06..Q-09 in-progress (#547). Q-10..Q-12 in-progress (#549). Q-SOC2-02..11 done (verified iter 260). Q-13..Q-15 pending. |
+| Q | `claude/audit-remediation/q-02-05-recovery-runbooks` (#525) · `q-06-09-runbooks` (#547) · `q-10-12-runbooks` (#549) · `q-13-14-secret-rotation-dpa` (#554) | #525 OPEN · #547 OPEN · #549 OPEN · **#554 OPEN** | iter 263 — `93c9748` (PR #554: Q-13 secret-rotation-check cron + Q-14 vendor DPA tracker). iter 260 — `925b2d4` (PR #549: Q-10 acl-revocation, Q-11 dsar, Q-12 secret-rotation-log; Q-SOC2-02..11 verified done — all files exist in docs/compliance/). iter 259 — `c684960` (PR #547: Q-06..Q-09). iter 235 — `8cd2725` (Q-02..Q-05). | Q-01 needs-user (PITR drill). Q-02..Q-05 in-progress (#525). Q-06..Q-09 in-progress (#547). Q-10..Q-12 in-progress (#549). Q-SOC2-02..11 done (verified iter 260). **Q-13+Q-14 in-progress (#554)**. Q-15 pending. |
 | R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · ... · `r-coverage-01-listing-routes` (#521) · `r-coverage-02-stripe-lib` (#526) · `r-coverage-03-quotes` (#530) · `r-coverage-11-quote-review` (#551) | #290/#396/#459 all MERGED · #466/#471/#472/#473/#510/#511/#513/#514/#515/#516/#517/#519/#521/#526/#530/#551 OPEN | iter 261 forward — `83c763e` (PR #551: R-COVERAGE-11 quotes/[slug]/review — 17 tests, HMAC token auth, rate limit, 12 error paths). iter 255 forward — `1a3c24d` (PR #530: R-COVERAGE-03 quotes/[slug]/accept + reopen, 26 tests). iter 253 CI-rescue — `a29318f` (PR #526). iter 251 CI-rescue — `126eb8ac` (PR #521). | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459). R-04..R-11 in-progress. R-COVERAGE-01 in-progress (#521). R-COVERAGE-02 in-progress (#526). R-COVERAGE-03 in-flight (#530). R-COVERAGE-11 in-flight (#551). |
 | S | _not started_ | — | — | — |
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
@@ -935,8 +935,8 @@ Beyond Stream B's RLS-enable work; addresses policy completeness, FK indexes, se
 | Q-10 | in-progress | Author `docs/runbooks/acl-revocation.md` — ACL/AFSL revocation incident | 1 | P1. Done in PR #549 (`925b2d4`). |
 | Q-11 | in-progress | Author `docs/runbooks/dsar.md` — Data Subject Access Request handling | 1 | P2. Done in PR #549 (`925b2d4`). |
 | Q-12 | in-progress | Create `docs/runbooks/secret-rotation-log.md` — audit trail file referenced by `secret-rotation.md` but never created | 1 | P2. Done in PR #549 (`925b2d4`). |
-| Q-13 | pending | Add cron `/api/cron/check-secret-rotation` — alert when any secret approaches its rotation window | 1 | P2. |
-| Q-14 | pending | Vendor DPA tracker doc: list 8 vendors (Supabase, Stripe, Resend, Vercel, PostHog, Sentry, n8n, Anthropic), DPA status, contact | 1 | P2. |
+| Q-13 | in-progress | Add cron `/api/cron/check-secret-rotation` — alert when any secret approaches its rotation window | 1 | P2. PR #554. |
+| Q-14 | in-progress | Vendor DPA tracker doc: list 8 vendors (Supabase, Stripe, Resend, Vercel, PostHog, Sentry, n8n, Anthropic), DPA status, contact | 1 | P2. PR #554. |
 | Q-15 | pending | Public `/privacy/data-collection` page — what data we collect, retention windows, contact for requests | 1 | P2. APP-1 transparency. |
 | Q-SOC2-01 | needs-user | SOC 2 readiness vendor selection memo — compare Vanta / Drata / Secureframe / Tugboat Logic. Recommend one with cost, time-to-Type-II, integration depth (Vercel, Supabase, Sentry, Stripe). | — | **P1.** Founder action. Required before any policy work has a target framework to map to. ~2h reading + 1h calls. |
 | Q-SOC2-02 | done | Trust Services Criteria coverage matrix — `docs/compliance/soc2-tsc-coverage.md`. | 2 | **P1.** File verified present in `docs/compliance/` (iter 260). |
@@ -1875,6 +1875,21 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 - Phase 6: Merged main (queue-only), committed `a29318f`, pushed to `claude/audit-remediation/r-coverage-02-stripe-lib`.
 - Phase 7: Queue updated on main (this entry).
 - STATUS: CI-RESCUE · stream=R · pr=#526 · commit=a29318f
+
+### 2026-05-04 — Forward progress iter 263 (stream Q — Q-13+Q-14: secret rotation check cron + vendor DPA tracker)
+
+- Phase 0: Lock held (batch fire, iter 5 of up to 5 — final iteration).
+- Phase 1: main synced (fast-forward; picked up HomeHero changes + queue updates).
+- Phase 2: PRs #545/#548/#550/#552 CI — all in-progress or success at last check. No failures requiring rescue.
+- Phase 3: Q stream next pending items: Q-13 (secret rotation cron) + Q-14 (vendor DPA tracker). Picked both as paired (same branch, complementary compliance items). Branch `claude/audit-remediation/q-13-14-secret-rotation-dpa` created from main.
+- Phase 4: verified Q-13 — no existing route at `/api/cron/check-secret-rotation`; `docs/runbooks/secret-rotation.md` exists with rotation schedule (90/180/365 day windows); `sendEmail()` from `lib/resend.ts` is the correct send path. Verified Q-14 — `docs/compliance/` exists with vendor-management.md as a starting point; no DPA-specific tracker present.
+- Phase 5: (1) `app/api/cron/check-secret-rotation/route.ts` — requireCronAuth gate, 7 SECRETS defined with rotation windows, `checkSecret()` reads `{envVar}_ROTATED_AT` env vars, status = ok/due-soon/overdue/untracked, GET handler emails `OPS_ALERT_EMAIL || ADMIN_EMAIL` when any secret needs action. No email when all within window. (2) `lib/cron-groups.ts` — added route to `weekly-mon-9` dispatch group (Mon 09:00 UTC). (3) `docs/compliance/vendor-dpa-tracker.md` — 8 vendors documented with DPA status, SCCs, certifications, action items: Resend DPA unsigned (email legal@resend.com), n8n deployment mode unclear, Anthropic PII-in-prompts audit needed. (4) `__tests__/api/cron-secret-rotation.test.ts` — 9 tests covering all status branches + email routing.
+- Phase 6: Committed `93c9748`, pushed branch, opened PR #554. Hardware exception: no vitest installed; CI is authoritative.
+- Phase 6.5: No adjacent issues found in touched files (cron-groups.ts is a config-only file; vendor-dpa-tracker.md is new).
+- Phase 7: Queue updated on main (this entry). Q-13+Q-14 → in-progress. Q stream in-flight row updated with #554.
+- STATUS: PROGRESS · stream=Q · item=Q-13+Q-14 · pr=#554 · commit=93c9748
+- Diff: 4 files changed, 520 insertions(+), 1 deletion(−)
+- Batch complete (5/5 iterations). Lock released via EXIT trap.
 
 ### 2026-05-04 — Forward progress iter 262 (stream A — A-DISC-20260504-01+02: fix silent broker_notifications inserts in intelligence + support)
 
