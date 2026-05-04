@@ -121,14 +121,17 @@ export default function AdminSupportPage() {
       );
 
       // Send notification to broker
-      await supabase.from("broker_notifications").insert({
-        broker_slug: activeTicket.broker_slug,
-        type: "support_reply",
-        title: "Support Reply",
-        message: `We've replied to your ticket: "${activeTicket.subject}"`,
-        link: "/broker-portal/support",
-        is_read: false,
-        email_sent: false,
+      await fetch("/api/admin/marketplace/campaign-notify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          broker_slug: activeTicket.broker_slug,
+          type: "support_reply",
+          title: "Support Reply",
+          message: `We've replied to your ticket: "${activeTicket.subject}"`,
+          link: "/broker-portal/support",
+          send_email: false,
+        }),
       });
     }
 
@@ -154,14 +157,17 @@ export default function AdminSupportPage() {
 
     // Notify broker of status change
     if (newStatus === "resolved" || newStatus === "closed") {
-      await supabase.from("broker_notifications").insert({
-        broker_slug: activeTicket.broker_slug,
-        type: "support_reply",
-        title: newStatus === "resolved" ? "Ticket Resolved" : "Ticket Closed",
-        message: `Your support ticket "${activeTicket.subject}" has been ${newStatus}.`,
-        link: "/broker-portal/support",
-        is_read: false,
-        email_sent: false,
+      await fetch("/api/admin/marketplace/campaign-notify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          broker_slug: activeTicket.broker_slug,
+          type: "support_reply",
+          title: newStatus === "resolved" ? "Ticket Resolved" : "Ticket Closed",
+          message: `Your support ticket "${activeTicket.subject}" has been ${newStatus}.`,
+          link: "/broker-portal/support",
+          send_email: false,
+        }),
       });
     }
 

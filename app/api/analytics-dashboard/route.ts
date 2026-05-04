@@ -1,19 +1,24 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { getAdminEmails } from "@/lib/admin";
+import { requireCronAuth } from "@/lib/cron-auth";
 
 export const runtime = "edge";
 export const revalidate = 300; // Cache for 5 minutes
 
 export async function GET(req: NextRequest) {
-  // Auth: require CRON_SECRET header OR authenticated admin user via cookie
-  const authHeader = req.headers.get("authorization");
-  const token = authHeader?.replace("Bearer ", "");
-
-  let authorized = token === process.env.CRON_SECRET;
+  // Auth: Bearer CRON_SECRET (programmatic) or cookie admin session (browser).
+  // If an Authorization header is present we gate hard on requireCronAuth so a
+  // bad bearer token doesn't silently fall through to cookie auth.
+  let authorized = false;
+  if (req.headers.get("authorization")) {
+    const unauth = requireCronAuth(req);
+    if (unauth) return unauth;
+    authorized = true;
+  }
 
   if (!authorized) {
-    // Check cookie-based admin session
+    // Cookie path — edge-compatible manual parse (next/headers is Node-only).
     const cookieHeader = req.headers.get("cookie") || "";
     if (cookieHeader.includes("sb-")) {
       const { createServerClient } = await import("@supabase/ssr");

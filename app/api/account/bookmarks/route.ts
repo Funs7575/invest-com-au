@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import {
   listBookmarks,
   addBookmark,
   removeBookmark,
   addAnonymousSave,
-  type BookmarkType,
 } from "@/lib/bookmarks";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 import { logger } from "@/lib/logger";
@@ -22,13 +22,20 @@ export const runtime = "nodejs";
  *            (writes to anonymous_saves when no session user)
  *   DELETE — remove a bookmark (authenticated only)
  */
-const VALID_TYPES = new Set<BookmarkType>([
-  "article",
-  "broker",
-  "advisor",
-  "scenario",
-  "calculator",
-]);
+const BOOKMARK_TYPES = ["article", "broker", "advisor", "scenario", "calculator"] as const;
+
+const BookmarkWriteBody = z.object({
+  type: z.enum(BOOKMARK_TYPES),
+  ref: z.string().min(1).max(200),
+  label: z.string().max(200).optional(),
+  note: z.string().max(2000).optional(),
+  session_id: z.string().max(100).optional(),
+});
+
+const BookmarkDeleteBody = z.object({
+  type: z.enum(BOOKMARK_TYPES),
+  ref: z.string().min(1),
+});
 
 async function getUser() {
   const supabase = await createClient();
@@ -56,17 +63,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
 
-  const body = await request.json().catch(() => ({}));
-  const type = typeof body.type === "string" ? (body.type as BookmarkType) : null;
-  const ref = typeof body.ref === "string" ? body.ref.slice(0, 200) : null;
-  const label = typeof body.label === "string" ? body.label.slice(0, 200) : null;
-  const note = typeof body.note === "string" ? body.note.slice(0, 2000) : null;
-  const sessionId =
-    typeof body.session_id === "string" ? body.session_id.slice(0, 100) : null;
-
-  if (!type || !VALID_TYPES.has(type) || !ref) {
+  const rawBody = await request.json().catch(() => null);
+  const bodyResult = BookmarkWriteBody.safeParse(rawBody);
+  if (!bodyResult.success) {
     return NextResponse.json({ error: "Invalid type or ref" }, { status: 400 });
   }
+  const { type, ref, label, note, session_id: sessionId } = bodyResult.data;
 
   const user = await getUser();
   if (user) {
@@ -90,12 +92,12 @@ export async function DELETE(request: NextRequest) {
   const user = await getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const body = await request.json().catch(() => ({}));
-  const type = typeof body.type === "string" ? (body.type as BookmarkType) : null;
-  const ref = typeof body.ref === "string" ? body.ref : null;
-  if (!type || !VALID_TYPES.has(type) || !ref) {
+  const rawBody = await request.json().catch(() => null);
+  const deleteResult = BookmarkDeleteBody.safeParse(rawBody);
+  if (!deleteResult.success) {
     return NextResponse.json({ error: "Invalid type or ref" }, { status: 400 });
   }
+  const { type, ref } = deleteResult.data;
   const ok = await removeBookmark({ userId: user.id, type, ref });
   return NextResponse.json({ ok });
 }
