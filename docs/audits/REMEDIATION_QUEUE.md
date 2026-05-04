@@ -28,31 +28,31 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | B | `claude/audit-remediation/b-08-rls-select-only` (#326) · `b-09a-otp-gate` (#348 draft, parallel-agent) | #326 MERGED 2026-05-01T13:19Z · #348 OPEN (DRAFT, awaiting `LISTING_OWNER_COOKIE_SECRET` env var) | last CI-rescue 2026-05-01T21:43Z (#348) | PR #220 merged (B-01..B-06 done/blocked/FP). B-07 done (`0097159` PR #286). B-08 done — code changes merged via PR #326 commit `476f89f6`. B-09 in-progress on `#348` (parallel-agent, draft). CI-rescue iter 1 (`09c4dfb`, 2026-05-01) merged main before PR #392 types regen — types drift still red. CI-rescue iter 2 (`7da8757e`, 2026-05-01T21:43Z) merged post-#392 main — picked up database.types.ts regen; CI re-run pending. Still DRAFT awaiting `LISTING_OWNER_COOKIE_SECRET` env var (Tier D). |
 | C | all PRs MERGED | #327/#349/#360/#394/#397 all MERGED | last merged 2026-05-02T16:13Z | C-01..C-08 done. C-03 MERGED (#360). C-04 done (#394). C-05 done (#394). C-05b MERGED (#349). C-DISC-20260501-01 MERGED (#397). **Stream C complete.** |
 | D | `claude/audit-remediation/d-route-tests` | #285 MERGED 2026-04-29T10:13Z; supplementary PRs #246/#285/#297/#298 | last merged 2026-04-29T18:53Z | D-01..D-09 done (PR #246). D-10 done (PR #246 — coverage ratchet). D-11 complete (43+ batches, all admin/cron/non-admin routes covered) — merged via PR #285 + supplementary PRs #297/#298. **Stream D complete.** |
-| E | `claude/audit-remediation/e-02-batch-5-zod-rollout` (#469) · `e-02-batch-*-zod-rollout` (#460) · `e-03-zod-lint-rule` (#313) · `e-04-zod-backfill-batch-1` (#528) | #295/#313/#315/#323/#406 MERGED · #460/#469 OPEN · #528 OPEN | iter 242 CI-rescue — `ea093f5` (cherry-pick `9c74087` — isFlagEnabled mock for listings + sponsorship tests; CI re-running). iter 238 — `aa1015b` (PR #528: E-04 batch 1). | E-01 done (PR #295 — withValidatedBody helper). E-02 in-progress (batches 1+2 MERGED PR #315/#323; batch 3 MERGED PR #406 — note: did not land vote/posts/impression/notify; batch 4 open PR #460 — questions/shortlist/referrals/threads; batch 5 open PR #469 — vote/posts/impression/notify now with Zod). E-02 substantially complete after #460+#469 merge. E-03 done (PR #313 — ESLint rule). E-04 in-progress (#528 batch 1: 6/25 flagged routes migrated). |
-| F | `claude/audit-remediation/f-07-json-ld-batch-1` (#527) | #293/#294/#301/#354/#355/#370 all MERGED · #527 OPEN | iter 242 CI-rescue — `f7fadaa` (cherry-pick `9c74087` — isFlagEnabled mock; CI re-running). iter 237 — `19b3630` (F-07 batch 1). | F-01 false-positive. F-02 done (PR #293). F-03 done (PR #370). F-04 done (PR #354). F-05 done (PR #294+#301). F-06 done (PR #355). F-07 in-progress (#527 batch 1: 6/42 blocks migrated). F-08 pending. |
+| E | `claude/audit-remediation/e-02-batch-5-zod-rollout` (#469) · `e-02-batch-*-zod-rollout` (#460) · `e-03-zod-lint-rule` (#313) · `e-04-zod-backfill-batch-1` (#528) | #295/#313/#315/#323/#406 MERGED · #460/#469 OPEN · #528 OPEN | iter 252 CI-rescue — `6a262e2` (nps comment: Zod .max(2000) rejected long comments with 400 before insert; restored truncation behavior by removing max from schema). iter 250 CI-rescue — `ef7b95f` (fix ab-track field-specific error messages). | E-01 done (PR #295 — withValidatedBody helper). E-02 in-progress (batches 1+2 MERGED PR #315/#323; batch 3 MERGED PR #406; batch 4 open PR #460; batch 5 open PR #469). E-03 done (PR #313 — ESLint rule). E-04 in-progress (#528 batch 2: 12/25 flagged routes migrated; CI rescue landed `6a262e2`). |
+| F | `claude/audit-remediation/f-07-json-ld-batch-1` (#527) | #293/#294/#301/#354/#355/#370 all MERGED · #527 OPEN | iter 243 CI-rescue — `4855030` (merge main: all 7 isFlagEnabled mocks; CI re-running). iter 237 — `19b3630` (F-07 batch 1). | F-01 false-positive. F-02 done (PR #293). F-03 done (PR #370). F-04 done (PR #354). F-05 done (PR #294+#301). F-06 done (PR #355). F-07 in-progress (#527 batch 1: 6/42 blocks migrated). F-08 pending. |
 | G | `claude/audit-remediation/g-03-batch-8-rollback-headers` (#520) | #307/#310/#311/#314/#316/#342/#352/#405/#455/#467 all MERGED · #520 OPEN | iter 229 — `52aee43` (PR #520: G-03 batch 8 — rollback headers for 15 remaining migrations; stream complete 208/208); CI pending | G-01+G-02 done (PR #307). **G-03 complete (208/208 covered)** — batches 1-7 (#311/#314/#316/#352/#405/#455/#467) all merged; batch 8 (#520) covers the final 15 files. G-04 done (PR #310 + #342). G-04-FINDING-1..5 pending founder authorization. |
 | H | _not started_ | — | — | — |
 | I | `claude/audit-remediation/i-new-04-main-ci-auto-revert` (#278) · `i-02-drift-detection-ci` (#353) | #278 MERGED 2026-04-28T16:18Z · #353 MERGED 2026-05-01T14:30Z | last merged 2026-05-01T14:30Z | I-NEW-01..05 all done. I-NEW-06 needs-user (Supabase GH Actions secrets). I-01 done via B-07 (PR #286). I-02 done (PR #353). I-03 done via C-08 (PR #327). I-04 done via E-03 (PR #313). I-05 done via D-10 (PR #246). |
 | J | `claude/audit-remediation/j-stripe-webhook` | #288 MERGED 2026-04-29T16:48Z | last merged 2026-04-29T16:48Z | J-01a..J-01e done · J-01d-ext done · J-03/J-05/J-06/J-08/J-09/J-10 done. **Stream J complete** (J-02/J-04/J-07/J-11 false-positives or done out-of-band). |
 | K | `claude/audit-remediation/k-security-hardening` | #222 MERGED 2026-04-28T15:14Z | last merged 2026-04-28T15:14Z | K-01..K-08 done; K-09 false-positive; K-10..K-15 done — **stream complete** |
-| KK | `claude/audit-remediation/kk-lead-routing-maturity` | #524 OPEN | iter 244 — `e8c83a7` (KK-06: source breakdown + accept rate). KK-05 `15bc8a3` (quiz source_page). KK-04 `67e095e`. CI-rescue `1708ced`. | KK-01..KK-06 all done. **KK stream complete.** |
+| KK | `claude/audit-remediation/kk-lead-routing-maturity` | #524 OPEN | iter 244 cont — `5d22141` (fix: dedup acceptRate type, add sourceBreakdown to dashboard route; CI pending). iter 246 — `23d54b0` (KK-06). CI-rescue `1708ced`. | KK-01..KK-06 all done. **KK stream complete.** |
 | L | `claude/audit-remediation/l-observability` | #289 MERGED 2026-04-29T10:18Z | last merged 2026-04-29T10:18Z | L-04/L-05 done out-of-loop. L-06..L-12 all done (merged via PR #289). L-02/L-03 deferred-post-launch (n8n dormant). L-01 needs-user (SENTRY_AUTH_TOKEN). L-10 false-positive (verified populating). **Stream L complete** (modulo L-01 needs-user). |
 | M | `claude/audit-remediation/m-01b-cover-image-backfill` (#283) · `m-02-versus-json-ld` (#296) · `m-05-glossary-linkifier` (#325) | #283/#296/#325 all MERGED | last merged 2026-05-01T10:29Z | M-01a done out-of-loop (PR #227). M-01b done (PR #283 — engineering side). M-02 done (PR #296). M-03 done (`85c7236`). M-04 done (`353fa3a`). M-05 done (PR #325). M-06 done (PR #283). M-07 done (PR #283). **Stream M complete.** |
 | N | `claude/audit-remediation/n-ux-perf` | #242 MERGED | last merged 2026-04-28 | N-01+N-02 done (`2ec6f89`) · N-03a/b/c done · N-04/N-05 FP · N-06 blocked (deferred-post-launch by founder 2026-05-01 — option 4 chosen) · N-07/N-08/N-09/N-10/N-11 done — **stream complete** (N-06 deferred). |
 | O | all PRs MERGED | #235/#237/#239/#299/#300/#366/#395/#408 all MERGED | last merged 2026-05-02T16:14Z | O-01..O-03 done. O-04 blocked (Stripe live validation). O-05 MERGED (#408). |
 | P | `claude/audit-remediation/p-01-sentry-v10-upgrade` (#468) | — | iter 212 — `331b98e` (PR #468: P-01 — @sentry/nextjs v9.47.1 → v10.51.0; clears 5 Sentry audit findings; removes `as any` cast in next.config.ts); CI success. | P-01 in-progress (PR #468). P-02 (Stripe SDK v17→v22) BLOCKED — requires npm install + local test run to verify webhook type compatibility across 5 major versions; not tractable on Hardware-exception sandbox. Needs a session with full node_modules. |
-| Q | `claude/audit-remediation/q-02-05-recovery-runbooks` | #525 OPEN | iter 242 CI-rescue — `d980bf3` (cherry-pick `9c74087` — isFlagEnabled mock for listings + sponsorship tests; CI re-running). iter 238 CI-rescue — `0654442`. iter 235 — `8cd2725` (Q-02..Q-05). | Q-01 needs-user (PITR drill). Q-02..Q-05 in-progress (#525). Q-06..Q-15 pending. |
-| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · ... · `r-coverage-01-listing-routes` (#521) · `r-coverage-02-stripe-lib` (#526) | #290/#396/#459 all MERGED · #466/#471/#472/#473/#510/#511/#513/#514/#515/#516/#517/#519/#521/#526 OPEN | iter 242 CI-rescue — `42bdba9` (cherry-pick `9c74087` onto #526; CI re-running). iter 236 — `0493386` (PR #526: R-COVERAGE-02). iter 232 CI-RESCUE — `7e8e532` (PR #521: CI success). | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459). R-04 in-progress (#466, CI green). R-05 in-progress (#471). R-06 in-progress (#472). R-07 in-progress (#473). R-08 in-progress (#510, CI pending). R-09 in-progress (#511 + #513). R-10 in-progress (#514 + #515 + #516). R-DISC-20260429-01 in-progress (#517). R-11 in-progress (#519, CI pending). R-COVERAGE-01 in-progress (#521, CI success). R-COVERAGE-02 in-progress (#526, CI pending). |
+| Q | `claude/audit-remediation/q-02-05-recovery-runbooks` | #525 OPEN | iter 243 CI-rescue — `1e33bab` (concurrent: complete 5-file isFlagEnabled mock; CI re-running). iter 242 — `d980bf3` (cherry-pick `9c74087`). iter 235 — `8cd2725` (Q-02..Q-05). | Q-01 needs-user (PITR drill). Q-02..Q-05 in-progress (#525). Q-06..Q-15 pending. |
+| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · ... · `r-coverage-01-listing-routes` (#521) · `r-coverage-02-stripe-lib` (#526) | #290/#396/#459 all MERGED · #466/#471/#472/#473/#510/#511/#513/#514/#515/#516/#517/#519/#521/#526 OPEN | iter 253 CI-rescue — `a29318f` (PR #526: upsert-subscription "older event" test was using yesterday's current_period_start as stripeEventTime proxy, causing skip guard to fire; pass recent start instead). iter 251 CI-rescue — `126eb8ac` (PR #521). | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459). R-04..R-11 in-progress. R-COVERAGE-01 in-progress (#521, CI rescue landed). R-COVERAGE-02 in-progress (#526, CI rescue landed `a29318f`). |
 | S | _not started_ | — | — | — |
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 MERGED 2026-04-28T11:45Z | merged | V-NEW-06 done (commit `a7bd736`) |
 | V (V-NEW-07) | `claude/audit-remediation/v-new-07-admin-mfa-enforced` | #256 MERGED 2026-04-28T15:44Z | merged | V-NEW-07a done · V-NEW-07b done (`698bbae`) — **Tier D: needs `ADMIN_MFA_COOKIE_SECRET` ≥32 chars in Vercel before merge** (PR was merged; env var status unclear) |
-| W | `claude/audit-remediation/w-03-hub-service-grid` | #306/#312/#369 all MERGED · #529 OPEN | iter 242 CI-rescue — `19fdd2f` (cherry-pick `9c74087` — isFlagEnabled mock; CI re-running). iter 239 — `b1228a0` (W-03: HubServiceGrid + 16 tests). | W-01 done (PR #306). W-NEW-01 done (PR #312). W-02 MERGED (#369). W-03 in-progress (#529). W-04..W-15 pending. |
+| W | `claude/audit-remediation/w-03-hub-service-grid` | #306/#312/#369 all MERGED · #529 OPEN | iter 243 CI-rescue — `94acd1a` (merge main: all 7 isFlagEnabled mocks; CI re-running). iter 239 — `b1228a0` (W-03: HubServiceGrid + 16 tests). | W-01 done (PR #306). W-NEW-01 done (PR #312). W-02 MERGED (#369). W-03 in-progress (#529). W-04..W-15 pending. |
 | X | all PRs MERGED | #257/#367 both MERGED | last merged 2026-05-01T22:01Z | X-01 done (PR #257). X-02 MERGED (#367 — /best-for pages admin→anon swap). X-03..X-09 pending. |
 | Y | all PRs MERGED | #253/#347 both MERGED | last merged 2026-05-01T22:00Z | Y-05 done (PR #253). Y-08 done (PR #253). Y-05-ENRICH MERGED (#347 — sourcedAt/source/freshness enrichment + 16 new tests). Y-01..Y-04, Y-06, Y-07 pending. |
 | BB | all PRs MERGED | #361/#368 both MERGED | last merged 2026-05-01T22:01Z | BB-03 MERGED (#361 — CGT calc vs ATO, 5 regulator-reference tests). BB-06 MERGED (#368 — mortgage stress vs ASIC+APRA, 8 cases). Other BB items pending. |
 | **AUDIT-SWEEP** | `claude/audit-remediation/audit-sweep-01-02` | #518 OPEN | iter 228 — `907180c` (PR #518: AUDIT-SWEEP-01+02 done); CI running. | AUDIT-SWEEP-01 done. AUDIT-SWEEP-02 done. PR #518 auto-merge-safe (hygiene only). |
-| **MAIN-RESCUE** | `fix/main-rescue-enquire-tests` | #523 OPEN | iter 240 — `9c74087` (fix: add isFlagEnabled mock to listings.test.ts + sponsorship-comprehensive.test.ts — 2 files missed by PR #523's original 5-file rescue; all 7 failing files now fixed + CI pending). iter 238 — `49db562` (fix: reset mockIsFlagEnabled inside investor_type loop). iter 233 — `2c35cc2` (original rescue: 5 files). | Fixes main CI: 7 test files broken by launch-ops kill-switch additions. PR #523 now covers all 7 (5 in orig + 2 added iter 240). |
+| **MAIN-RESCUE** | `fix/main-rescue-enquire-tests` | #523 **MERGED** `f7d8166` | iter 243 — CI green on `9c74087`; squash-merged as `f7d8166`. All 7 test file mocks now on main. | Complete — 7 test files unblocked; all 6 stream branches updated to include full fix. |
 | **R-COVERAGE** | _to be created_ | — | — | **Overall 60% already met (currently 70.94%).** Remaining gap: ≥80% on money/legal libs (`lib/stripe`, `lib/finance`, `lib/compliance`, `lib/sponsorship`) + ≥70% on user-data/money API routes. **Realistic timeline: 3-8 weeks**, not 6-7 months — original estimate based on stale 1.5% baseline. See "R-COVERAGE" section below. |
 | **OBS** | _to be created_ | — | — | Observability layer: SLO dashboards, alerting on main breakage, on-call runbook expansion. ~2 weeks of work once spec'd. See "OBS — observability layer" section below. |
 | **REFACTOR** | _to be created_ | — | — | One major refactor of the messiest area to set the codebase pattern standard. Target TBD on first iteration (likely advisor lifecycle vs sponsorship). See "REFACTOR — pattern-setting refactor" section below. |
@@ -1039,12 +1039,12 @@ Operationalises the lead-form surface in `docs/audits/ENTERPRISE_STANDARD.md` so
 
 | ID | Status | Summary | Est. iterations | Notes |
 | --- | --- | --- | --- | --- |
-| KK-01 | done | Per-source SLA monitoring — alert if a lead sits in the queue past its source's SLA (5 min hot, 30 min warm, 4h cold) | 1-2 | Commit 5f62f7a7. PR #524. `lead-sla-check` cron every 10min; window-based breach detection; Resend ops alert email. |
-| KK-02 | done | Queue health alert — if no leads for a hub for >N hours during business hours, alert | 1 | Commit 8290ded. hub-silence-check cron (hourly, AEST business hours). Window-based detection. Thresholds: financial_planner/mortgage_broker 2h, property_advisor/buyers_agent 4h, tax_agent/smsf_accountant 6h, default 8h. 14 tests. |
-| KK-03 | done | Advisor response-time tracking — per-advisor mean-time-to-first-response surfaced in advisor portal | 1-2 | Commit 1fcddf3. `avgResponseTimeMinutes` stat from `professional_leads.response_time_minutes`; AnalyticsTab "Response Performance" section; 2 tests. |
-| KK-04 | done | Conversion analytics per source — PostHog funnel `lead_submit:<source>` → `advisor_response` → `outcome` | 1 | Commit 67e095e. source_page discriminator on lead_submitted; new advisor_response + lead_outcome events; captureServerEvent in submit-lead + advisor-auth/data PATCH. |
-| KK-05 | done | Lead-source routing audit — tag quiz advisor-lead submissions with source_page | 1 | Commit 15bc8a3. AdvisorResultsScreen now sends source_page="/quiz"; advisor-lead schema updated; 2 tests. |
-| KK-06 | done | Advisor performance dashboard — per-advisor lead volume, accept rate, response time, conversion rate, source breakdown | 1 | Commit e8c83a7. GET route now returns avgResponseTimeMinutes/avgRating/hotLeadsCount/warmLeadsCount/coldLeadsCount/acceptRate/sourceBreakdown; AnalyticsTab shows Lead Source Breakdown section. |
+| KK-01 | in-flight | Per-source SLA monitoring — alert if a lead sits in the queue past its source's SLA (5 min hot, 30 min warm, 4h cold) | 1-2 | PR #524. `lead-sla-check` cron every 10min; window-based breach detection; Resend ops alert email. |
+| KK-02 | in-progress | Queue health alert — if no leads for a hub for >N hours during business hours, alert | 1 | Implemented: hub-silence-check cron (hourly, AEST business hours). Window-based detection avoids duplicate alerts. Thresholds: financial_planner/mortgage_broker 2h, property_advisor/buyers_agent 4h, tax_agent/smsf_accountant 6h, default 8h. Added to hourly-0 dispatch group. 14 tests. Commit 8290ded on #524. |
+| KK-03 | in-progress | Advisor response-time tracking — per-advisor mean-time-to-first-response surfaced in advisor portal | 1-2 | Implemented: `avgResponseTimeMinutes` stat from `professional_leads.response_time_minutes`; AnalyticsTab "Response Performance" section with tiered benchmark labels; 2 new tests. Commit 1fcddf3 on #524. |
+| KK-04 | in-progress | Conversion analytics per source — PostHog funnel `lead_submit:<source>` → `advisor_response` → `outcome` | 1 | Implemented: `source_page` field added to `lead_submitted` event; new `advisor_response` + `lead_outcome` events in events.ts; `captureServerEvent` added to submit-lead (2 paths) + advisor-auth/data PATCH (contacted → advisor_response, converted/lost → lead_outcome); advisor-lead updated to pass source_page. Commit 67e095e on #524. |
+| KK-05 | in-progress | Lead-source routing audit — verify every form on the platform routes to the correct hub-specific queue + tagged with the right source | 1-2 | Audit complete: all 17 HubLeadForm usages pass a hub-specific `source` prop ✓. AdvisorResultsScreen.tsx (quiz flow → /api/advisor-lead) was missing `source_page` — both handleLocationNext and handleConfirm calls now pass `source_page: "/quiz"`. Added `source_page` to AdvisorLeadSchema explicitly. 2 new tests verify PostHog forwarding and null-when-absent. Commit 15bc8a3 on #524. |
+| KK-06 | in-progress | Advisor performance dashboard — per-advisor lead volume, accept rate, response time, conversion rate, revenue attribution | 1-2 | Implemented: acceptRate (contacted+converted/total), leads7d, leadsThisMonth, leadsLastMonth added to advisor-dashboard route stats. New "Lead Performance" card in AnalyticsTab shows accept rate with tier label, this-month count with 7d sub, month-on-month delta with %change. 3 new tests. Removed stale eightWeeksAgo variable. Commit 23d54b0 on #524. |
 
 ### Stream X — createAdminClient backlog clearance (added 2026-04-27)
 
@@ -1681,16 +1681,131 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 
 ## Iteration log (most recent at top)
 
-### 2026-05-04 — Forward progress iter 244 cont. (stream KK — KK-06: advisor performance dashboard)
+### 2026-05-04 — CI-RESCUE iter 253 (stream R — R-COVERAGE-02: upsertSubscription "older event" test timing)
+
+- Phase 0: Lock held (batch fire, iter 2 of up to 5).
+- Phase 1: main synced (up to date at `df3c320`).
+- Phase 2: PR #526 (R-COVERAGE-02) "Lint · Type-check · Test · Build" still failing after iter 249 vi.fn fix. Root cause (reproduced locally): `upsert-subscription.test.ts` "upserts when the existing updated_at is older than the incoming event time" — `makeSub()` defaults `current_period_start` to `now - 86400s` (yesterday). The guard computes `stripeEventTime = current_period_start * 1000 = yesterday`. With existing `updated_at = 1h ago`, the check `existing.updated_at > stripeEventTime` = `1h ago > yesterday` = TRUE → skip guard fires → upsert not called → `expect(upsertSpy).toHaveBeenCalledOnce()` fails. Fix: pass `current_period_start = now - 30min` (more recent than existing `updated_at = 2h ago`). 9/9 and full 148/148 stripe-webhook tests pass.
+- Phase 6: Merged main (queue-only), committed `a29318f`, pushed to `claude/audit-remediation/r-coverage-02-stripe-lib`.
+- Phase 7: Queue updated on main (this entry).
+- STATUS: CI-RESCUE · stream=R · pr=#526 · commit=a29318f
+
+### 2026-05-04 — CI-RESCUE iter 252 (stream E — nps comment Zod .max(2000) replaced by route-level truncation)
+
+- Phase 0: Lock acquired (batch fire, iter 1 of up to 5). No LOOP_PAUSE. No lock conflict.
+- Phase 1: main realigned to origin/main (local main had diverged 50 commits — stale sandbox state). Synced to `a7ad9ee`.
+- Phase 2: Three red PRs: #528 (E-04), #526 (R-COVERAGE-02), #524 (KK). Checked stuck-detection: each has ≤2 prior rescues — not stuck. Highest-priority = E-04 (#528), stream E, iter order step 5.
+- Phase 5: Root cause: `app/api/nps/route.ts` had `comment: z.string().max(2000).optional()` — Zod rejects a 2500-char comment with 400 before the DB insert runs. The test "truncates comment to 2000 chars" relies on `mockAdminFrom.mock.results[0].value` being populated (insert ran), but it's undefined because validation rejected early. The route already does `comment?.trim().slice(0, 2000)` — Zod max is redundant and breaks the graceful truncation UX. Fix: remove `.max(2000)` from schema, keep route-level slice. 15/15 nps tests pass; 301/301 across all E-04 route tests pass; eslint clean.
+- Phase 6: Committed `6a262e2`, pushed to `claude/audit-remediation/e-04-zod-backfill-batch-1`.
+- Phase 7: Queue updated on main (this entry).
+- STATUS: CI-RESCUE · stream=E · pr=#528 · commit=6a262e2
+
+### 2026-05-04 — CI-RESCUE iter 251 (stream R — R-COVERAGE-01: merge main, deduplicate isFlagEnabled mock blocks)
+
+- Phase 0: Lock held (batch fire — iter 3 of up to 5 in this fire).
+- Phase 1: main synced.
+- Phase 2: PR #521 (R-COVERAGE-01) "Lint · Type-check · Test · Build" FAILURE (run 25293051522, 22:47Z). Root cause: MAIN-RESCUE commit f7d8166 added isFlagEnabled mocks to 7 test files including 5 already modified by PR #521's branch (7e8e532 and a007a5ab). The merge state (branch + main) had duplicate `const mockIsFlagEnabled` declarations and duplicate `vi.mock("@/lib/feature-flags", ...)` registrations — TypeScript throws "Identifier already declared" on duplicate const. Additionally listings-enquire.test.ts had a git-level conflict on the kill-switch test variant.
+- Phase 5: Merged origin/main into branch. Resolved conflict in listings-enquire.test.ts (kept branch version: exact error assertion + mockResolvedValue). Removed MAIN-RESCUE duplicate declarations from advisor-enquiry, concierge, and listings-checkout (all returned to branch HEAD state since branch already had complete mock setup). Verified zero duplicates via grep. Committed merge resolution `126eb8ac`.
+- Phase 6: Pushed to `claude/audit-remediation/r-coverage-01-listing-routes`.
+- Phase 7: Queue updated on main (this entry; iter number corrected from 250→251 since 250 was taken by concurrent session's E-stream ab-track fix).
+- STATUS: CI-RESCUE · stream=R · pr=#521 · commit=126eb8ac
+
+### 2026-05-04 — CI-RESCUE iter 250 (stream E — fix ab-track field-specific error messages; batch mode iter 1/5)
+
+- Phase 0: Lock acquired (batch fire, iter 1 of up to 5). No LOOP_PAUSE. No lock conflict.
+- Phase 1: main synced — fast-forwarded to `a7ad9ee`. Schema drift gate: skipped (no migration in last 24h, no drift failures on in-flight PRs).
+- Phase 1.7: main CI = success. Proceed.
+- Phase 2: PR #528 (E-04 batch 1+2) "Lint · Type-check · Test · Build" FAILURE. This is the 2nd rescue on #528 — iter 248 fixed track-event/nps/attribution-touch but missed ab-track. Root cause: ab-track's Zod error handler returned generic "Invalid request body" for all validation failures; 3 tests assert field-specific messages via regex: test_id missing → `/test_id/i`; variant invalid → `/variant/i`; event_type invalid → `/event_type/i`. Fix: extract `parsed.error.issues[0]?.path[0]` and return `"Invalid <field>"` (same pattern as the iter-248 fixes). Merged latest main into branch (queue-only changes).
+- Phase 6: Committed `ef7b95f`, pushed to `claude/audit-remediation/e-04-zod-backfill-batch-1`.
+- STATUS: CI-RESCUE · stream=E · pr=#528 · commit=ef7b95f
+
+### 2026-05-04 — CI-RESCUE iter 249 (stream R — fix vi.fn Vitest v3 type params in registry.test.ts)
+
+- Phase 0: Lock held (batch fire — iter 2 of up to 5 in this fire).
+- Phase 1: main synced, pulled.
+- Phase 2: CI on PR #526 (R-COVERAGE-02) — FAILING. "Lint · Type-check · Test · Build" failed at 2026-05-04T00:04:30Z (job 74151162176, run 25294543843). Root cause: `registry.test.ts` used `vi.fn<[Stripe.Event, WebhookContext], Promise<WebhookHandlerResult>>()` — the Vitest v1/v2 tuple-overload syntax that was removed in Vitest v3. The project uses `^3.0.0`. All other working tests in the codebase use `vi.fn<FnType>()` form.
+- Phase 5: Fixed 3 occurrences in registry.test.ts: changed `vi.fn<[Stripe.Event, WebhookContext], Promise<WebhookHandlerResult>>` → `vi.fn<WebhookHandler>`. Added `WebhookHandler` to import; removed now-unused `WebhookHandlerResult` import. Merged latest main (queue-only commits).
+- Phase 6: Committed `f214318`, pushed to `claude/audit-remediation/r-coverage-02-stripe-lib`.
+- Phase 7: Queue updated on main (this entry).
+- STATUS: CI-RESCUE · stream=R · pr=#526 · commit=f2143189
+
+### 2026-05-04 — CI-RESCUE iter 248 (stream E — restore test contracts broken by E-04 batch 2 Zod backfill)
+
+- Phase 0: Lock held (batch fire — iter 1 of up to 5 in this fire).
+- Phase 1: main synced.
+- Phase 2: CI on PR #528 — FAILING. E-04 batch 2 Zod schemas introduced strict `z.string()` / `z.enum()` types that broke 3 existing test contracts: (1) track-event returned "Invalid JSON body" for non-string event_type (expected "Invalid event_type"); (2) nps Zod schema rejected non-string respondent_id and >200-char strings (2 tests broken); (3) attribution/touch returned "Missing session_id or event" for invalid event values (expected match for /invalid event/i).
+- Phase 5: Fixed `app/api/track-event/route.ts` — check `bodyResult.error.issues` for event_type path to return correct error. Fixed `app/api/nps/route.ts` — removed respondent_id from Zod schema, handled manually post-parse to allow non-string coercion to null + truncation. Fixed `app/api/attribution/touch/route.ts` — differentiated "Invalid event value" (event present but invalid) vs "Missing session_id or event" (field absent).
+- Phase 6: Committed `d40c92c`, pushed to `claude/audit-remediation/e-04-zod-backfill-batch-1`.
+- Phase 7: Queue updated on main (this entry).
+- STATUS: CI-RESCUE · stream=E · pr=#528 · commit=d40c92c
+
+### 2026-05-04 — Forward progress iter 247 (stream E — E-04 batch 2: Zod backfill on 6 analytics/tracking routes)
+
+- Phase 0: Lock active (batch fire, iter 5 of 5 — final iteration).
+- Phase 1: main synced — already up to date. Checked out `claude/audit-remediation/e-04-zod-backfill-batch-1`.
+- Phase 2: CI on PR #528 — pending from batch 1 push. No failures to rescue.
+- Phase 3: E-04 batch 2 (next 6 routes). Checked out existing branch, merged origin/main (done in prior session segment).
+- Phase 4: Verification — all 6 routes are analytics/tracking paths, no auth dependencies. Zod schemas mirror existing field lists exactly; z.enum replaces inline validation sets.
+- Phase 5: Applied Zod schemas to ab-track, track-event (z.record arity fix for Zod v4), track-click, exit-intent-log, nps (fixed stale body.session_id ref), attribution/touch (removed TouchEvent cast, used z.enum directly). All 6 lint clean.
+- Phase 6: Committed `06f8f385`, pushed (clean push).
+- Phase 7: Queue updated — E row updated to batch 2 (12/25 routes migrated).
+- STATUS: PROGRESS · stream=E · item=E-04 batch 2 · pr=#528 · commit=06f8f385 · diff=+102 -94 across 6 files
+
+### 2026-05-04 — CI-rescue + supplement iter 244 cont. (stream KK — vi.fn<typeof fetch> fix + sourceBreakdown)
 
 - Phase 0: Lock held (batch continuation after context compaction).
-- Phase 2: CI rescue `1708ced` (vi.fn<typeof fetch>) — "Tuple type '[]' of length '0'" in cron-hub-silence-check.test.ts:183+234; fixed by typing fetchMock as `vi.fn<typeof fetch>`. All 18 tests pass. Pushed, CI re-running.
-- Phase 3: KK-04+KK-05 done by concurrent session (67e095e, 15bc8a3). Next pending: KK-06.
-- Phase 4: Verified source_page on professional_leads (20260305). quality_score exists (20260316). avg_response_minutes on professionals (used in search). No migration needed.
-- Phase 5: Added SourceBreakdownItem type + acceptedLeads/acceptRate/sourceBreakdown to Stats. Extended GET allLeads select to include quality_score + source_page; added professionals.single() for avg_response_minutes+rating; computed hot/warm/cold, sourceBreakdown, acceptRate; added eslint-disable on pre-existing unvalidated PATCH body. Added "Lead Source Breakdown" section to AnalyticsTab.tsx. Type-check: 0 errors on changed files. Lint: 0 errors. Diff: +86/-2 across 3 files.
-- Phase 6: Committed `e8c83a7`, pushed.
-- Phase 7: KK in-flight row updated; KK-01..06 all done — stream complete.
+- Phase 2: CI rescue — "Tuple type '[]' of length '0'" in cron-hub-silence-check.test.ts:183+234. Fixed `vi.fn<typeof fetch>` typing (`1708ced`). Pushed + CI re-running.
+- Phase 5: After concurrent session did KK-05 (15bc8a31) + KK-06 (23d54b09), merged remote → resolved duplicate `acceptRate: string/number` (kept `number` to match >=60 comparison); added `sourceBreakdown` to advisor-dashboard/route.ts (the actual stats source); added `acceptedLeads` to dashboard response. Type-check: 0 errors. Tests: 12/12 pass (advisor-dashboard). Diff: +17/-6 across 3 files.
+- Phase 6: Committed `5d22141`. Pushed to kk-lead-routing-maturity.
+- STATUS: PROGRESS · stream=KK · item=KK-06 supplement · pr=#524
+
+### 2026-05-04 — Forward progress iter 246 (stream KK — KK-06: advisor performance dashboard)
+
+- Phase 0: Lock active (batch fire, iter 4 of 5).
+- Phase 1: main synced — already up to date.
+- Phase 2: CI on PR #524 — completed checks all green; Lint/Build, Supabase types, Preview smoke, Bundle still in_progress. No rescue needed.
+- Phase 3: KK-06 pending. Checked out `kk-lead-routing-maturity`, up to date.
+- Phase 4: Verification — KK-06 is read-only dashboard extension. No migration needed; all data from existing `professional_leads` rows already fetched. Only one caller of /api/advisor-dashboard (advisor-portal/page.tsx confirmed by grep).
+- Phase 5: Added 4 new stats fields to advisor-dashboard route (acceptRate, leads7d, leadsThisMonth, leadsLastMonth). Removed pre-existing unused `eightWeeksAgo` variable. Added Stats type fields. Added "Lead Performance" card in AnalyticsTab.tsx (3-col grid: accept rate with tier label, this-month + 7d sub, month-on-month delta). 3 new tests — all 12 pass.
+- Phase 6: Committed `23d54b0` feat(kk): KK-06. Pushed to origin (clean push, no merge needed).
+- Phase 7: Queue updated — KK in-flight row updated, KK-06 marked in-progress.
 - STATUS: PROGRESS · stream=KK · item=KK-06 · pr=#524
+
+### 2026-05-04 — Forward progress iter 245 (stream KK — KK-05: lead-source routing audit)
+
+- Phase 0: Lock active (batch fire, iter 3 of 5).
+- Phase 1: main synced — already up to date.
+- Phase 2: CI on PR #524 — all completed checks green (success); 4 checks in_progress (lint/build, bundle, smoke, delta). No rescue needed.
+- Phase 3: KK-05 pending. Checked out `kk-lead-routing-maturity`, up to date.
+- Phase 4: Audit verification — grepped all 17 HubLeadForm usages across app/; all pass hub-specific `source` prop. AdvisorResultsScreen.tsx → /api/advisor-lead omits `source_page` in both handleLocationNext (line ~220) and handleConfirm (line ~340). Only one caller of AdvisorResultsScreen (app/quiz/page.tsx). Gap confirmed.
+- Phase 5: Added `source_page: "/quiz"` to both fetch bodies in AdvisorResultsScreen.tsx. Added `source_page: z.string().optional()` to AdvisorLeadSchema. Added 2 tests: forwards source_page to PostHog, null when absent. 16 tests pass (14 prior + 2 new). Lint clean.
+- Phase 6: Committed `15bc8a3` feat(kk): KK-05. Pushed to origin (required merge of concurrent commit to cron test).
+- Phase 7: Queue updated — KK in-flight row updated, KK-05 marked in-progress.
+- STATUS: PROGRESS · stream=KK · item=KK-05 · pr=#524
+
+### 2026-05-04 — Forward progress iter 244 (stream KK — KK-04: PostHog lead funnel source discriminator)
+
+- Phase 0: Lock acquired (batch fire, lock held from iter 241).
+- Phase 1: main synced — iter 243 CI-rescue present. All CI green on #524/#525/#528/#527/#529/#523/#520/#518.
+- Phase 2: No CI rescues needed.
+- Phase 3: Priority slot 14 (KK) — KK-04 pending. Checked out `kk-lead-routing-maturity`, pulled + merged origin.
+- Phase 4: Verification — PostHog tracking change; no schema migration. submit-lead uses edge runtime (posthog-node v5 is edge-compatible). advisor-auth/data PATCH already computes response_time_minutes. No blockers.
+- Phase 5: Updated `lib/posthog/events.ts` (added source_page to lead_submitted; added advisor_response + lead_outcome event types). Added `captureServerEvent("lead_submitted")` to 2 success paths in submit-lead/route.ts (platform + advisor-match). Updated advisor-lead/route.ts to pass source_page. Added advisor_response + lead_outcome tracking to advisor-auth/data PATCH; extended select to include source_page. 28/28 submit-lead tests passed. Lint: 0 errors. Diff: +68 -1 across 4 files.
+- Phase 6: Committed `67e095e`, merged origin into branch, pushed to `kk-lead-routing-maturity`.
+- Phase 6.5: No new adjacent issues found.
+- Phase 7: Queue updated — KK in-flight row updated, KK-04 marked in-progress.
+- STATUS: PROGRESS · stream=KK · item=KK-04 · pr=#524
+
+### 2026-05-03 — CI-RESCUE iter 243 (complete isFlagEnabled rescue: merge main into 4 branches; concurrent session fixed Q + KK; PR #523 merged)
+
+- Phase 0: Lock acquired. No LOOP_PAUSE sentinel.
+- Phase 1: main synced — PR #523 squash-merged as `f7d81666` (all 7 test file mocks now on main).
+- Phase 1.5: No migration in last 24h → skipped.
+- Phase 1.7: main CI — `f7d81666` is a test-only change; all other gates were green on PR #523. Main unblocked.
+- Phase 2: Phase 2 continued from iter 242. Merged origin/main into W-03/E-04/F-07/R-COVERAGE-02 branches → all 7 mocks now on those 4 branches (via `f7d81666` in merge). Concurrent session already applied remaining 5-file fix to Q (`1e33babe`) and KK (`4ce4356b`) independently. All 6 branches now have complete isFlagEnabled mock set.
+- Updated in-flight CI columns for W/E/F/R/Q/KK rows.
+- Concurrent session also found and fixed a Zod type regression in E-04: community/moderate/route.ts used z.string() for thread_id/post_id (integer PKs) — rejected valid test inputs with 400. Fixed to z.number().int().positive(). Pushed as `1552413` on E-04 branch (on top of `6b7d5b6`).
+- STATUS: CI-RESCUE · complete · all 6 stream PRs should now pass `Lint · Type-check · Test · Build`
 
 ### 2026-05-03 — CI-RESCUE iter 242 (systemic: cherry-pick isFlagEnabled mock fix to 6 stream branches)
 
