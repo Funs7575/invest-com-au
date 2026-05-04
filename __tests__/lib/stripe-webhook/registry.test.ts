@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import type Stripe from "stripe";
-import type { WebhookContext, WebhookHandlerResult } from "@/lib/stripe-webhook/types";
+import type { WebhookContext, WebhookHandler } from "@/lib/stripe-webhook/types";
 
 import {
   registerHandler,
@@ -40,7 +40,7 @@ describe("stripe-webhook registry", () => {
   });
 
   it("dispatches to a registered handler and returns its result", async () => {
-    const handler = vi.fn<[Stripe.Event, WebhookContext], Promise<WebhookHandlerResult>>(
+    const handler = vi.fn<WebhookHandler>(
       async () => ({ status: "done" }),
     );
     registerHandler("invoice.paid", handler);
@@ -84,10 +84,10 @@ describe("stripe-webhook registry", () => {
   });
 
   it("re-registering an event type replaces the prior handler (idempotent register)", async () => {
-    const first = vi.fn<[Stripe.Event, WebhookContext], Promise<WebhookHandlerResult>>(
+    const first = vi.fn<WebhookHandler>(
       async () => ({ status: "partial", reason: "first" }),
     );
-    const second = vi.fn<[Stripe.Event, WebhookContext], Promise<WebhookHandlerResult>>(
+    const second = vi.fn<WebhookHandler>(
       async () => ({ status: "done" }),
     );
     registerHandler("radar.early_fraud_warning.created", first);
