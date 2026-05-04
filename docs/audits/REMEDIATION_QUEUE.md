@@ -40,7 +40,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | M | `claude/audit-remediation/m-01b-cover-image-backfill` (#283) · `m-02-versus-json-ld` (#296) · `m-05-glossary-linkifier` (#325) | #283/#296/#325 all MERGED | last merged 2026-05-01T10:29Z | M-01a done out-of-loop (PR #227). M-01b done (PR #283 — engineering side). M-02 done (PR #296). M-03 done (`85c7236`). M-04 done (`353fa3a`). M-05 done (PR #325). M-06 done (PR #283). M-07 done (PR #283). **Stream M complete.** |
 | N | `claude/audit-remediation/n-ux-perf` | #242 MERGED | last merged 2026-04-28 | N-01+N-02 done (`2ec6f89`) · N-03a/b/c done · N-04/N-05 FP · N-06 blocked (deferred-post-launch by founder 2026-05-01 — option 4 chosen) · N-07/N-08/N-09/N-10/N-11 done — **stream complete** (N-06 deferred). |
 | O | all PRs MERGED | #235/#237/#239/#299/#300/#366/#395/#408 all MERGED | last merged 2026-05-02T16:14Z | O-01..O-03 done. O-04 blocked (Stripe live validation). O-05 MERGED (#408). |
-| P | `claude/audit-remediation/p-01-sentry-v10-upgrade` (#468) | — | iter 212 — `331b98e` (PR #468: P-01 — @sentry/nextjs v9.47.1 → v10.51.0; clears 5 Sentry audit findings; removes `as any` cast in next.config.ts); CI success. | P-01 in-progress (PR #468). P-02 (Stripe SDK v17→v22) BLOCKED — requires npm install + local test run to verify webhook type compatibility across 5 major versions; not tractable on Hardware-exception sandbox. Needs a session with full node_modules. |
+| P | `claude/audit-remediation/p-01-sentry-v10-upgrade` (#468) · `p-03-04-minor-sdk-bumps` (#575) | #468 MERGED 2026-05-03T11:33Z · **#575 OPEN** | iter 276 — `9e1669e` (PR #575: P-03+P-04 — @anthropic-ai/sdk 0.90→0.93, posthog-js 1.371→1.372, posthog-node 5.30→5.33; CI queued). iter 212 — `331b98e` (PR #468: P-01; CI success). | **P-01 done** (PR #468 MERGED). P-02 (Stripe SDK v17→v22) BLOCKED — requires npm install + local test run; not tractable on Hardware-exception sandbox. **P-03+P-04 in-progress (#575)**. |
 | Q | `claude/audit-remediation/q-02-05-recovery-runbooks` (#525) · `q-06-09-runbooks` (#547) · `q-10-12-runbooks` (#549) · `q-13-14-secret-rotation-dpa` (#554) · `q-15-privacy-data-collection` (#572) | #525 OPEN · #547 OPEN · #549 OPEN · **#554 OPEN** · **#572 OPEN** | iter 274 — `577f774` (PR #572: Q-15 /privacy/data-collection page; CI pending). iter 269 CI-rescue — `5c7af0f` (PR #554: merge main). iter 264 CI-rescue — `0d2877b` (PR #554: fix s.envVar→s.name). iter 263 — `93c9748` (PR #554: Q-13+Q-14). iter 260 — `925b2d4` (PR #549). iter 259 — `c684960` (PR #547). iter 235 — `8cd2725` (Q-02..Q-05). | Q-01 needs-user (PITR drill). Q-02..Q-05 in-progress (#525). Q-06..Q-09 in-progress (#547). Q-10..Q-12 in-progress (#549). Q-SOC2-02..11 done (verified iter 260). **Q-13+Q-14 in-progress (#554)**. **Q-15 in-progress (#572)**. |
 | R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · ... · `r-coverage-01-listing-routes` (#521) · `r-coverage-02-stripe-lib` (#526) · `r-coverage-03-quotes` (#530) · `r-coverage-11-quote-review` (#551) · `r-coverage-12-quotes-qa` (#562) · `r-coverage-13-quotes-get` (#565) · `r-coverage-14-notify-filter` (#573) | #290/#396/#459 all MERGED · #466/#471/#472/#473/#510/#511/#513/#514/#515/#516/#517/#519/#521/#526/#530/#551/#562/#565/#573 OPEN | iter 275 forward — `a730325` (PR #573: R-COVERAGE-14 — notifyMatchingAdvisors alert_preferences filter, 10 tests; CI pending). iter 271 forward — `a5f9774` (PR #565: R-COVERAGE-13 — GET /api/quotes list + 3 POST edge cases; 31 tests, CI pending). iter 270 forward — `fcbeb21` (PR #562: R-COVERAGE-12 — 16 tests for quotes/[slug]/qa GET+POST, dual auth, rate-limit; CI pending). iter 261 forward — `83c763e` (PR #551: R-COVERAGE-11 quotes/[slug]/review — 17 tests, HMAC token auth, rate limit, 12 error paths). iter 255 forward — `1a3c24d` (PR #530: R-COVERAGE-03 quotes/[slug]/accept + reopen, 26 tests). iter 253 CI-rescue — `a29318f` (PR #526). iter 251 CI-rescue — `126eb8ac` (PR #521). | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459). R-04..R-11 in-progress. R-COVERAGE-01 in-progress (#521). R-COVERAGE-02 in-progress (#526). R-COVERAGE-03 in-flight (#530). R-COVERAGE-11 in-flight (#551). R-COVERAGE-12 in-flight (#562). R-COVERAGE-13 in-flight (#565). **R-COVERAGE-14 in-flight (#573).** |
 | S | _not started_ | — | — | — |
@@ -961,10 +961,10 @@ Beyond Stream B's RLS-enable work; addresses policy completeness, FK indexes, se
 
 | ID | Status | Summary | Est. iterations | Notes |
 | --- | --- | --- | --- | --- |
-| P-01 | pending | `@sentry/nextjs` v9.47.1 → v10.50.0 — clears all 5 npm-audit moderate findings | ~2 | P1. Migration guide in Sentry docs; verify sourcemap upload still works. Pairs with L-01. |
-| P-02 | pending | `stripe` SDK v17.7.0 → v22.1.0 (5 majors behind) | ~2 | P1. Webhook event types may have changed; pair with J-stream tests. |
-| P-03 | pending | `@anthropic-ai/sdk` 0.90.0 → 0.91.1 (minor) | 1 | P3. |
-| P-04 | pending | `posthog-js` + `posthog-node` minor bumps | 1 | P3. |
+| P-01 | done | `@sentry/nextjs` v9.47.1 → v10.51.0 — clears all 5 npm-audit moderate findings | ~2 | P1. Done in PR #468 MERGED 2026-05-03T11:33Z. v10.51.0; removed `as any` cast in next.config.ts; CLAUDE.md note updated. |
+| P-02 | blocked | `stripe` SDK v17.7.0 → v22.1.0 (5 majors behind) | ~2 | P1. BLOCKED — requires npm install + local test run to verify webhook type compatibility across 5 major versions; not tractable on Hardware-exception sandbox. Needs a session with full node_modules. |
+| P-03 | in-progress | `@anthropic-ai/sdk` 0.90.0 → 0.93.0 (bumped to latest) | 1 | P3. In-progress PR #575 (`9e1669e`). Bumped to 0.93.0 (latest at time of iteration); also closes 1 of the 3 remaining npm audit moderate findings. |
+| P-04 | in-progress | `posthog-js` 1.371.3 → 1.372.8, `posthog-node` 5.30.1 → 5.33.2 | 1 | P3. In-progress PR #575 (`9e1669e`). Both minor bumps, no API changes. |
 | P-05 | pending | Defer to post-launch: TypeScript 6, ESLint 10, Vitest 4, jsdom 29, @types/node 25 (high blast radius / low gain) | — | Tracked here for visibility; not active. |
 
 ### Stream Q — Disaster recovery + SOC 2 prep (audit §12)
@@ -3774,6 +3774,22 @@ One file changed: `docs/audits/REMEDIATION_QUEUE.md`. No code touched. Tier A do
 
 - STATUS: PROGRESS · stream=R · item=R-COVERAGE-13 · pr=#565 · commit=a5f9774 · diff=+103 -1 (1 file)
 - Next stream: R-COVERAGE-14 or Q-15 or F-07 batch 3
+
+### 2026-05-04 — Forward progress iter 276 (stream P — P-03+P-04: minor SDK bumps)
+
+- Phase 0: lock held from batch start (2026-05-04T23:10:08Z); iter 2 of up to 5.
+- Phase 0.5: no LOOP_PAUSE sentinel.
+- Phase 1: synced main to `b4ef74f` (HUB_BLUEPRINT.md + queue from iter 275). Phase 1.5 skipped (no schema change in last 24h beyond cd10cfb already on main). Phase 1.7: main CI not red.
+- Phase 2: Checked PRs #560/#566/#567/#563/#545 — all show only Vercel Preview Comments success. PR #572 (Q-15): CI in_progress. No failures. No rescue needed.
+- Phase 3: Priority walk — A (slot 12): all in-progress/done. O (slot 13): in-progress. KK (slot 14): BLOCKED. P (slot 15): P-01 MERGED (verified PR #468 MERGED 2026-05-03T11:33Z), P-02 BLOCKED, **P-03 pending → picked**. Also doing P-04 in same iteration (same package.json file, trivial adjacent work).
+- Phase 4: Verification — minor semver bumps (0.x and 1.x/5.x), no API changes at call sites. Confirmed via grep: @anthropic-ai/sdk used only in concierge + admin/ai-chat (both mocked in tests); posthog-node used in lib/posthog/server.ts; posthog-js used in lib/posthog/client.ts (browser).
+- Phase 5: Updated package.json + ran npm install. Versions: @anthropic-ai/sdk 0.90.0→0.93.0 (latest; also fixes 1 npm audit moderate), posthog-js 1.371.3→1.372.8, posthog-node 5.30.1→5.33.2. Tests: 19/19 concierge tests, 25/25 SLO tests. Lint clean on lib/posthog/*.ts.
+- Phase 6: committed `9e1669e`, pushed to `claude/audit-remediation/p-03-04-minor-sdk-bumps`. PR #575 created (ready).
+- Phase 6.5: Discovery — package.json now has 2 remaining npm audit moderates (postcss/next — only fixable by downgrading Next.js; not in scope). No adjacent TS issues.
+- Phase 7: Queue updated — P in-flight row updated (#575), P-01 marked done, P-02 marked blocked, P-03/P-04 marked in-progress (#575).
+
+- STATUS: PROGRESS · stream=P · item=P-03+P-04 · pr=#575 · commit=9e1669e · diff=+25 -25 (package.json + lock only)
+- Next item: R-COVERAGE-15 (stream R, slot 16) or F-07 batch 3 (stream F, slot 21)
 
 ---
 
