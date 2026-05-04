@@ -216,7 +216,7 @@ export async function PATCH(request: NextRequest) {
         .eq("professional_id", lead.professional_id)
         .not("response_time_minutes", "is", null);
       if (allResponded && allResponded.length > 0) {
-        const avg = Math.round(allResponded.reduce((sum: number, l: { response_time_minutes: number }) => sum + l.response_time_minutes, 0) / allResponded.length);
+        const avg = Math.round(allResponded.reduce((sum: number, l: { response_time_minutes: number | null }) => sum + (l.response_time_minutes ?? 0), 0) / allResponded.length);
         await admin.from("professionals").update({ avg_response_minutes: avg }).eq("id", lead.professional_id);
       }
     } catch (err) {
