@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
     // so tests can assert the right error message for each case.
     const rawEvent = (rawBody as Record<string, unknown> | null)?.event;
     const hasInvalidEvent = rawEvent !== undefined &&
-      bodyResult.error.issues.some((issue: { path: (string | number)[] }) => issue.path[0] === 'event');
+      bodyResult.error.issues.some(issue => issue.path[0] === 'event');
     return NextResponse.json(
       { error: hasInvalidEvent ? "Invalid event value" : "Missing session_id or event" },
       { status: 400 },

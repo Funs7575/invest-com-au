@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
     // If the failure is specifically about event_type (wrong type), surface that
     // rather than the generic JSON-parse error so existing tests keep their contract.
     const hasEventTypeIssue = bodyResult.error.issues.some(
-      (issue: { path: (string | number)[] }) => issue.path[0] === 'event_type',
+      issue => issue.path[0] === 'event_type',
     );
     return NextResponse.json(
       { error: hasEventTypeIssue ? 'Invalid event_type' : 'Invalid JSON body' },
