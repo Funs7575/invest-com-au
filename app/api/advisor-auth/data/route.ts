@@ -126,7 +126,7 @@ export async function GET(request: NextRequest) {
       convertedLeads,
       conversionRate: totalLeads > 0 ? ((convertedLeads / totalLeads) * 100).toFixed(1) : "0",
       acceptedLeads,
-      acceptRate: totalLeads > 0 ? ((acceptedLeads / totalLeads) * 100).toFixed(1) : "100",
+      acceptRate: totalLeads > 0 ? parseFloat(((acceptedLeads / totalLeads) * 100).toFixed(1)) : 100,
       hotLeadsCount,
       warmLeadsCount,
       coldLeadsCount,

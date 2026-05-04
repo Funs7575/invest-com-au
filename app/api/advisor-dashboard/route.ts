@@ -155,6 +155,18 @@ export async function GET(request: NextRequest) {
       ? parseFloat(((acceptedLeads / totalLeads) * 100).toFixed(1))
       : 0;
 
+  // --- Source breakdown ---
+  const sourceMap: Record<string, { count: number; converted: number }> = {};
+  for (const lead of allLeads) {
+    const src = (lead.source_page as string | null) ?? "unknown";
+    sourceMap[src] ??= { count: 0, converted: 0 };
+    sourceMap[src].count++;
+    if (lead.status === "converted") sourceMap[src].converted++;
+  }
+  const sourceBreakdown = Object.entries(sourceMap)
+    .sort((a, b) => b[1].count - a[1].count)
+    .map(([source, { count, converted }]) => ({ source, count, converted }));
+
   // --- Period-comparison lead counts ---
   const sevenDaysAgo = new Date(now.getTime() - 7 * 86400000);
   const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -236,10 +248,12 @@ export async function GET(request: NextRequest) {
       warmLeadsCount,
       coldLeadsCount,
       avgResponseTimeMinutes,
+      acceptedLeads,
       acceptRate,
       leads7d,
       leadsThisMonth,
       leadsLastMonth,
+      sourceBreakdown,
     },
     viewsByDay: views || [],
     billing: billing || [],

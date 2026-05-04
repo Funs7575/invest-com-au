@@ -68,15 +68,12 @@ export type SourceBreakdownItem = {
 export type Stats = {
   totalViews30d: number; totalLeads: number; leads30d: number;
   convertedLeads: number; conversionRate: string;
-  acceptedLeads: number; acceptRate: string;
+  acceptedLeads: number; acceptRate: number;
+  leads7d: number; leadsThisMonth: number; leadsLastMonth: number;
   totalBilledCents: number; pendingBilledCents: number; reviewCount: number;
   avgRating: string | null; bookingClicks30d: number;
   hotLeadsCount: number; warmLeadsCount: number; coldLeadsCount: number;
   avgResponseTimeMinutes: number | null;
-  acceptRate: number;
-  leads7d: number;
-  leadsThisMonth: number;
-  leadsLastMonth: number;
   phoneClicks: number; websiteClicks: number; bookingClicks: number;
   articleViews: number; searchImpressions: number;
   articles: { title: string; slug: string; views: number; clicks: number }[];
