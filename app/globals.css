@@ -214,6 +214,30 @@ body {
   opacity: 0.35;
   transform: none;
 }
+/* Direction grammar — arrow inside a primary CTA slides right on hover.
+   The button itself doesn't shift (preserves click target); the arrow does the work. */
+.iv2-cta svg,
+.iv2-cta-ink svg,
+.iv2-cta-ghost svg {
+  transition: transform 0.16s ease;
+}
+.iv2-cta:hover svg,
+.iv2-cta-ink:hover svg,
+.iv2-cta-ghost:hover svg {
+  transform: translateX(2px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .iv2-cta svg,
+  .iv2-cta-ink svg,
+  .iv2-cta-ghost svg {
+    transition: none;
+  }
+  .iv2-cta:hover svg,
+  .iv2-cta-ink:hover svg,
+  .iv2-cta-ghost:hover svg {
+    transform: none;
+  }
+}
 .iv2-cta-ink {
   display: inline-flex;
   align-items: center;
