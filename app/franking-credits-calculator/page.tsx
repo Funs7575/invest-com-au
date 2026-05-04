@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
-import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
+import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
+import { calculatorJsonLd, faqJsonLd } from "@/lib/schema-markup";
 import FrankingClient from "./FrankingClient";
 import ComplianceFooter from "@/components/ComplianceFooter";
 
@@ -27,17 +28,12 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image" as const },
 };
 
-const softwareLd = {
-  "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  name: `Franking Credits Calculator — ${SITE_NAME}`,
+const softwareLd = calculatorJsonLd({
+  name: "Franking Credits Calculator",
   description:
     "Free franking credits calculator for Australian investors. Calculates grossed-up dividends, franking credit offset and after-tax income at your marginal rate.",
-  url: absoluteUrl("/franking-credits-calculator"),
-  applicationCategory: "FinanceApplication",
-  operatingSystem: "Any",
-  offers: { "@type": "Offer", price: "0", priceCurrency: "AUD" },
-};
+  path: "/franking-credits-calculator",
+});
 
 const breadcrumbLd = breadcrumbJsonLd([
   { name: "Home", url: absoluteUrl("/") },
@@ -45,52 +41,28 @@ const breadcrumbLd = breadcrumbJsonLd([
   { name: "Franking Credits Calculator", url: absoluteUrl("/franking-credits-calculator") },
 ]);
 
-const faqLd = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: [
-    {
-      "@type": "Question",
-      name: "What are franking credits?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Franking credits represent the corporate tax an Australian company has already paid on its profits before distributing them as dividends. Shareholders receive a credit for that tax, which can offset their own tax liability or be refunded in cash.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "How do franking credits work?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "You gross up the franked dividend to its pre-tax equivalent and include that grossed-up amount in taxable income, then claim the franking credit as a tax offset. Below the 30% company rate you get a refund; above it you pay top-up tax.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "Are franking credits refundable?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Yes. Australia refunds excess franking credits in cash — if your credits exceed your tax liability, the ATO pays you the difference. This is especially valuable for retirees and SMSFs in pension phase with a 0% tax rate.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "Who receives franking credits?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Australian tax residents holding ASX shares that pay franked dividends. You must satisfy the 45-day holding rule for ordinary shares. Foreign investors generally cannot claim franking credits.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "How do I calculate a grossed-up dividend?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "For a fully franked dividend, multiply the cash amount by 1.4286 (1 / (1 - 0.30)). A $70 fully franked dividend grosses up to $100, with a $30 franking credit. For partial franking, apply the franking percentage to the credit.",
-      },
-    },
-  ],
-};
+const faqLd = faqJsonLd([
+  {
+    q: "What are franking credits?",
+    a: "Franking credits represent the corporate tax an Australian company has already paid on its profits before distributing them as dividends. Shareholders receive a credit for that tax, which can offset their own tax liability or be refunded in cash.",
+  },
+  {
+    q: "How do franking credits work?",
+    a: "You gross up the franked dividend to its pre-tax equivalent and include that grossed-up amount in taxable income, then claim the franking credit as a tax offset. Below the 30% company rate you get a refund; above it you pay top-up tax.",
+  },
+  {
+    q: "Are franking credits refundable?",
+    a: "Yes. Australia refunds excess franking credits in cash — if your credits exceed your tax liability, the ATO pays you the difference. This is especially valuable for retirees and SMSFs in pension phase with a 0% tax rate.",
+  },
+  {
+    q: "Who receives franking credits?",
+    a: "Australian tax residents holding ASX shares that pay franked dividends. You must satisfy the 45-day holding rule for ordinary shares. Foreign investors generally cannot claim franking credits.",
+  },
+  {
+    q: "How do I calculate a grossed-up dividend?",
+    a: "For a fully franked dividend, multiply the cash amount by 1.4286 (1 / (1 - 0.30)). A $70 fully franked dividend grosses up to $100, with a $30 franking credit. For partial franking, apply the franking percentage to the credit.",
+  },
+]);
 
 function Loading() {
   return (

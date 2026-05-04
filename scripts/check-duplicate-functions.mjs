@@ -83,6 +83,29 @@ const FRAMEWORK_NAMES = new Set([
 
 const ALLOWED_NAMES = new Set([
   // Add deliberately-shadowed lib exports here, with a comment.
+
+  // app/api/advisor-lead/route.ts: sendAdminNotification(name, phone, email, advisorType,
+  // quizAnswers, intlContext?) — route-specific rich-HTML lead-notification email.
+  // lib/advisor-emails.ts: sendAdminNotification(subject, body) — generic email helper.
+  // Completely different signatures and purposes; replacing would break both.
+  "sendAdminNotification",
+
+  // app/api/cron/investor-drip/route.ts: welcomeEmail(name) — cron-local HTML template
+  // that evolved independently from lib/email-templates.ts welcomeEmail(name).
+  // Same signature, different template content. Consolidation is a product decision
+  // (whether both templates should converge), not a mechanical refactor.
+  "welcomeEmail",
+
+  // app/go/[slug]/route.ts: isRateLimited(ip) — synchronous, in-memory per-instance
+  // rate limiter (30 req / 60 s). lib/rate-limit.ts: isRateLimited() is async and
+  // DB-backed. Affiliate redirect is latency-critical; DB round-trip is unacceptable.
+  "isRateLimited",
+
+  // app/versus/VersusClient.tsx: addSlot() — React callback that appends an empty slug
+  // to the compare-UI selectedSlugs state array. lib/advisor-booking.ts: addSlot(input)
+  // is an async DB insert that creates a booking availability slot. Same name, unrelated
+  // domains; false-positive from the heuristic scan.
+  "addSlot",
 ]);
 
 const EXPORT_PATTERNS = [

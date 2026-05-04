@@ -17,6 +17,7 @@ const VALID_VERTICALS = [
   "energy",
   "fund",
   "startup",
+  "pre_ipo",
 ];
 
 interface SubmitBody {
@@ -46,6 +47,7 @@ export async function POST(request: NextRequest) {
 
     let body: Partial<SubmitBody>;
     try {
+      // eslint-disable-next-line invest/no-unvalidated-req-json -- pre-existing manual validation; Zod refactor tracked as follow-up
       body = await request.json();
     } catch {
       return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });

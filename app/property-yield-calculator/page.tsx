@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR, SITE_NAME } from "@/lib/seo";
+import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
+import { calculatorJsonLd } from "@/lib/schema-markup";
 import PropertyYieldCalculatorClient from "./PropertyYieldCalculatorClient";
 import ComplianceFooter from "@/components/ComplianceFooter";
 
@@ -24,21 +25,10 @@ export default async function PropertyYieldCalculatorPage() {
     { name: "Property Yield Calculator" },
   ]);
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    name: `Property Yield Calculator — ${SITE_NAME}`,
-    description: "Calculate gross and net rental yield on Australian investment properties.",
-    url: "https://invest.com.au/property-yield-calculator",
-    applicationCategory: "FinanceApplication",
-    operatingSystem: "Any",
-    offers: { "@type": "Offer", price: "0", priceCurrency: "AUD" },
-  };
-
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(calculatorJsonLd({ name: "Property Yield Calculator", description: "Calculate gross and net rental yield on Australian investment properties.", path: "/property-yield-calculator" })) }} />
       <PropertyYieldCalculatorClient />
       <div className="container-custom pb-8"><ComplianceFooter variant="calculator" /></div>
 
