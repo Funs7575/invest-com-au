@@ -1,8 +1,16 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createRateLimiter } from "@/lib/rate-limiter";
 
 const isRateLimited = createRateLimiter(60_000, 120); // 120 events/min per IP (impressions + clicks)
+
+const AbTrackBody = z.object({
+  test_id: z.number().int().positive(),
+  variant: z.enum(["a", "b"]),
+  event_type: z.enum(["impression", "click"]),
+  broker_slug: z.string().optional(),
+});
 
 export async function POST(request: NextRequest) {
   // Rate limit by IP
@@ -13,30 +21,19 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
 
-  let body: Record<string, unknown>;
+  let rawBody: unknown;
   try {
-    body = await request.json();
+    rawBody = await request.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
-
-  const { test_id, variant, event_type, broker_slug } = body as {
-    test_id?: number;
-    variant?: string;
-    event_type?: string;
-    broker_slug?: string;
-  };
-
-  // Validate required fields
-  if (!test_id || typeof test_id !== "number") {
-    return NextResponse.json({ error: "Missing or invalid test_id" }, { status: 400 });
+  const parsed = AbTrackBody.safeParse(rawBody);
+  if (!parsed.success) {
+    // Surface the first failing field name so tests can assert field-specific messages.
+    const firstField = parsed.error.issues[0]?.path[0] ?? "request";
+    return NextResponse.json({ error: `Invalid ${String(firstField)}` }, { status: 400 });
   }
-  if (variant !== "a" && variant !== "b") {
-    return NextResponse.json({ error: "Invalid variant (must be 'a' or 'b')" }, { status: 400 });
-  }
-  if (event_type !== "impression" && event_type !== "click") {
-    return NextResponse.json({ error: "Invalid event_type (must be 'impression' or 'click')" }, { status: 400 });
-  }
+  const { test_id, variant, event_type } = parsed.data;
 
   const supabase = createAdminClient();
 

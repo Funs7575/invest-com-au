@@ -1,5 +1,16 @@
 -- ============================================================
 -- Seed 15 uranium editorial articles.
+--
+-- Date: 2026-05-02
+-- Audit ref: codebase-health-2026-04-24.md §4.3 (G-03)
+-- Queue item: G-03 batch 8
+-- Why: seeds 15 editorial articles covering the uranium vertical
+--      for organic search traffic.
+-- Idempotency: ON CONFLICT (slug) DO NOTHING. Safe to re-apply.
+-- Rollback:
+--   DELETE FROM public.articles WHERE category = 'uranium'
+--     AND created_at::date = '2026-05-02';
+--   Note: INSERT-only migration; no DDL to reverse.
 -- Idempotent: ON CONFLICT (slug) DO NOTHING.
 -- ============================================================
 

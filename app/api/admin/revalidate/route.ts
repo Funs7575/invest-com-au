@@ -1,5 +1,6 @@
 import { revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 
 /**
  * POST /api/admin/revalidate
@@ -38,6 +39,8 @@ import { NextRequest, NextResponse } from "next/server";
  *     -H "Content-Type: application/json" \
  *     -d '{"tags": ["brokers", "broker-reviews"]}'
  */
+const TagsBody = z.object({ tags: z.array(z.string()).min(1) });
+
 export async function POST(req: NextRequest) {
   const authHeader = req.headers.get("authorization");
   const token = authHeader?.replace("Bearer ", "");
@@ -49,24 +52,19 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  let body: { tags?: string[] };
+  let rawBody: unknown;
   try {
-    body = await req.json();
+    rawBody = await req.json();
   } catch {
-    return NextResponse.json(
-      { error: "Invalid JSON body" },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  const tags: string[] = body.tags || [];
-
-  if (tags.length === 0) {
-    return NextResponse.json(
-      { error: "No tags provided" },
-      { status: 400 }
-    );
+  const parsed = TagsBody.safeParse(rawBody);
+  if (!parsed.success) {
+    return NextResponse.json({ error: "No tags provided" }, { status: 400 });
   }
+
+  const { tags } = parsed.data;
 
   // Revalidate each tag (Next.js 16 requires a cacheLife profile as 2nd arg)
   // Using { expire: 0 } for immediate invalidation from admin actions

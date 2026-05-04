@@ -1,6 +1,35 @@
 -- ============================================================
 -- LAUNCH READINESS: Missing tables, thin content seeding,
 -- additional best-for scenarios, commodity data
+--
+-- Date: 2026-04-26
+-- Audit ref: codebase-health-2026-04-24.md §4.3 (G-03)
+-- Queue item: G-03 batch 8
+-- Why: creates newsletter_editions + five forum tables
+--      (forum_categories, forum_user_profiles, forum_threads,
+--       forum_posts, forum_votes), seeds forum categories, two
+--      newsletter editions, and 20 best_for_scenarios rows.
+-- Idempotency: CREATE TABLE IF NOT EXISTS; INSERT … ON CONFLICT DO NOTHING.
+--              Safe to re-apply.
+-- Rollback (in reverse creation order):
+--   DELETE FROM public.best_for_scenarios
+--     WHERE slug IN (
+--       'fractional-shares','copy-trading','margin-lending','family-accounts',
+--       'international-shares-beyond-us','demo-account','asx-small-caps',
+--       'high-frequency-api','ipo-investing','tax-reporting','corporate-accounts',
+--       'sustainable-super','share-trading-seniors','term-deposits',
+--       'high-interest-savings','share-trading-nz','cheapest-etf-portfolio',
+--       'joint-accounts','after-hours-trading','crypto-staking');
+--   DELETE FROM public.newsletter_editions WHERE edition_date IN ('2026-03-22','2026-03-29');
+--   DELETE FROM public.forum_categories WHERE slug IN (
+--       'general','brokers','shares','etfs','super','tax','property','crypto');
+--   DROP TABLE IF EXISTS public.forum_votes;
+--   DROP TABLE IF EXISTS public.forum_posts;
+--   DROP TABLE IF EXISTS public.forum_threads;
+--   DROP TABLE IF EXISTS public.forum_user_profiles;
+--   DROP TABLE IF EXISTS public.forum_categories;
+--   DROP TABLE IF EXISTS public.newsletter_editions;
+--   Note: forum table drop discards all user posts; export before rollback.
 -- ============================================================
 
 -- ────────────────────────────────────────────────────────────

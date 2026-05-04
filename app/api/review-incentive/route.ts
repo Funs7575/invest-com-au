@@ -1,10 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 
 const log = logger("review-incentive");
+
+const ReviewBody = z.object({
+  broker_slug: z.string().regex(/^[a-z0-9-]+$/),
+  rating: z.number().int().min(1).max(5),
+  title: z.string().min(5, "Title must be between 5 and 200 characters").max(200, "Title must be between 5 and 200 characters"),
+  body: z.string().min(100).max(5000, "Review body must be under 5000 characters"),
+  pros: z.array(z.string()).default([]),
+  cons: z.array(z.string()).default([]),
+});
 
 /**
  * GET /api/review-incentive
@@ -81,46 +91,34 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  let input: Record<string, unknown>;
+  let rawBody: unknown;
   try {
-    input = await req.json();
+    rawBody = await req.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  // Validate required fields
-  const brokerSlug = typeof input.broker_slug === "string" ? input.broker_slug.trim() : "";
-  const rating = typeof input.rating === "number" ? input.rating : 0;
-  const title = typeof input.title === "string" ? input.title.trim() : "";
-  const body = typeof input.body === "string" ? input.body.trim() : "";
-  const pros = Array.isArray(input.pros)
-    ? input.pros.filter((p): p is string => typeof p === "string" && p.trim().length > 0).map((p) => p.trim())
-    : [];
-  const cons = Array.isArray(input.cons)
-    ? input.cons.filter((c): c is string => typeof c === "string" && c.trim().length > 0).map((c) => c.trim())
-    : [];
-
-  if (!brokerSlug || !/^[a-z0-9-]+$/.test(brokerSlug)) {
-    return NextResponse.json({ error: "Invalid broker slug" }, { status: 400 });
+  const inputResult = ReviewBody.safeParse(rawBody);
+  if (!inputResult.success) {
+    const issue = inputResult.error.issues[0];
+    const field = issue?.path[0] as string | undefined;
+    if (field === "broker_slug") {
+      return NextResponse.json({ error: "Invalid broker slug" }, { status: 400 });
+    }
+    if (field === "rating") {
+      return NextResponse.json({ error: "Rating must be an integer between 1 and 5" }, { status: 400 });
+    }
+    if (field === "body" && issue?.code === "too_small") {
+      const rawObj = rawBody as Record<string, unknown>;
+      const bodyLen = typeof rawObj.body === "string" ? rawObj.body.length : 0;
+      return NextResponse.json({ error: `Review body must be at least 100 characters (currently ${bodyLen})` }, { status: 400 });
+    }
+    return NextResponse.json({ error: issue?.message ?? "Invalid request" }, { status: 400 });
   }
 
-  if (rating < 1 || rating > 5 || !Number.isInteger(rating)) {
-    return NextResponse.json({ error: "Rating must be an integer between 1 and 5" }, { status: 400 });
-  }
-
-  if (!title || title.length < 5 || title.length > 200) {
-    return NextResponse.json({ error: "Title must be between 5 and 200 characters" }, { status: 400 });
-  }
-
-  if (!body || body.length < 100) {
-    return NextResponse.json({
-      error: `Review body must be at least 100 characters (currently ${body.length})`,
-    }, { status: 400 });
-  }
-
-  if (body.length > 5000) {
-    return NextResponse.json({ error: "Review body must be under 5000 characters" }, { status: 400 });
-  }
+  const { broker_slug: brokerSlug, rating, title, body } = inputResult.data;
+  const pros = inputResult.data.pros.filter((p) => p.trim().length > 0).map((p) => p.trim());
+  const cons = inputResult.data.cons.filter((c) => c.trim().length > 0).map((c) => c.trim());
 
   const admin = createAdminClient();
 
