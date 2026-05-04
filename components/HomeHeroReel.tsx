@@ -33,6 +33,8 @@ interface Props {
 
 type PanelKey = "compare" | "browse" | "find" | "matched" | "tools";
 
+const PANEL_HEIGHT_PX = 380;
+
 interface PanelDef {
   key: PanelKey;
   audience: string;
@@ -190,7 +192,7 @@ export default function HomeHeroReel({
         <div className="hero-reel-viewport" aria-live="polite">
           <div
             className={`hero-reel-stack ${animating ? "is-animating" : ""}`}
-            style={{ transform: `translateY(-${internalIndex * 100}%)` }}
+            style={{ transform: `translateY(-${internalIndex * PANEL_HEIGHT_PX}px)` }}
             onTransitionEnd={handleTransitionEnd}
           >
             {renderedPanels.map((p, i) => {
