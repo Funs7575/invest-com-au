@@ -102,6 +102,13 @@ function getKeyMetric(listing: InvestmentListing): string | null {
       if (raising) return `Raising ${formatCents(raising)}${stage ? ` · ${stage}` : ""}`;
       return null;
     }
+    case "pre_ipo": {
+      const raising = km.raising_cents as number | undefined;
+      const discount = km.ipo_discount_percent as number | undefined;
+      if (raising) return `Raising ${formatCents(raising)}${discount ? ` · ${discount}% IPO discount` : ""}`;
+      if (discount) return `${discount}% IPO discount`;
+      return null;
+    }
     case "alternatives": {
       const subCat = listing.sub_category;
       const estValue = listing.price_display;
@@ -149,6 +156,8 @@ function getDetailPath(vertical: string, slug: string): string {
       return `/invest/funds/${slug}`;
     case "startup":
       return `/invest/startups/listings/${slug}`;
+    case "pre_ipo":
+      return `/invest/pre-ipo/listings/${slug}`;
     case "alternatives":
       return `/invest/alternatives/listings/${slug}`;
     case "private_credit":
@@ -169,6 +178,7 @@ const VERTICAL_GRADIENTS: Record<string, string> = {
   energy: "from-teal-700 to-teal-900",
   fund: "from-indigo-700 to-indigo-900",
   startup: "from-rose-700 to-rose-900",
+  pre_ipo: "from-red-700 to-red-900",
   alternatives: "from-rose-700 to-rose-900",
   private_credit: "from-indigo-700 to-indigo-900",
   infrastructure: "from-cyan-700 to-cyan-900",
@@ -183,6 +193,7 @@ const VERTICAL_ICONS: Record<string, string> = {
   energy: "zap",
   fund: "bar-chart-2",
   startup: "rocket",
+  pre_ipo: "trophy",
   alternatives: "gem",
   private_credit: "credit-card",
   infrastructure: "git-branch",
