@@ -67,20 +67,20 @@ export async function POST(req: NextRequest) {
     .from("content_calendar")
     .insert({
       title: parsed.data.title,
-      target_keyword: body.target_keyword || null,
-      secondary_keywords: body.secondary_keywords || [],
-      article_type: body.article_type || "article",
-      category: body.category || null,
+      target_keyword: rawBody["target_keyword"] ?? null,
+      secondary_keywords: rawBody["secondary_keywords"] ?? [],
+      article_type: rawBody["article_type"] ?? "article",
+      category: rawBody["category"] ?? null,
       status: "planned",
-      assigned_author_id: body.assigned_author_id || null,
-      assigned_reviewer_id: body.assigned_reviewer_id || null,
-      target_publish_date: body.target_publish_date || null,
-      brief: body.brief || null,
-      related_brokers: body.related_brokers || [],
-      related_tools: body.related_tools || [],
-      internal_links: body.internal_links || [],
-      notes: body.notes || null,
-      priority: body.priority || "normal",
+      assigned_author_id: rawBody["assigned_author_id"] ?? null,
+      assigned_reviewer_id: rawBody["assigned_reviewer_id"] ?? null,
+      target_publish_date: rawBody["target_publish_date"] ?? null,
+      brief: rawBody["brief"] ?? null,
+      related_brokers: rawBody["related_brokers"] ?? [],
+      related_tools: rawBody["related_tools"] ?? [],
+      internal_links: rawBody["internal_links"] ?? [],
+      notes: rawBody["notes"] ?? null,
+      priority: rawBody["priority"] ?? "normal",
     })
     .select()
     .single();
