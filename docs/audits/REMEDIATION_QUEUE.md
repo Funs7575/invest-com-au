@@ -42,7 +42,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | O | all PRs MERGED | #235/#237/#239/#299/#300/#366/#395/#408 all MERGED | last merged 2026-05-02T16:14Z | O-01..O-03 done. O-04 blocked (Stripe live validation). O-05 MERGED (#408). |
 | P | `claude/audit-remediation/p-01-sentry-v10-upgrade` (#468) | — | iter 212 — `331b98e` (PR #468: P-01 — @sentry/nextjs v9.47.1 → v10.51.0; clears 5 Sentry audit findings; removes `as any` cast in next.config.ts); CI success. | P-01 in-progress (PR #468). P-02 (Stripe SDK v17→v22) BLOCKED — requires npm install + local test run to verify webhook type compatibility across 5 major versions; not tractable on Hardware-exception sandbox. Needs a session with full node_modules. |
 | Q | `claude/audit-remediation/q-02-05-recovery-runbooks` | #525 OPEN | iter 243 CI-rescue — `1e33bab` (concurrent: complete 5-file isFlagEnabled mock; CI re-running). iter 242 — `d980bf3` (cherry-pick `9c74087`). iter 235 — `8cd2725` (Q-02..Q-05). | Q-01 needs-user (PITR drill). Q-02..Q-05 in-progress (#525). Q-06..Q-15 pending. |
-| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · ... · `r-coverage-01-listing-routes` (#521) · `r-coverage-02-stripe-lib` (#526) | #290/#396/#459 all MERGED · #466/#471/#472/#473/#510/#511/#513/#514/#515/#516/#517/#519/#521/#526 OPEN | iter 251 CI-rescue — `126eb8ac` (PR #521: merge main → deduplicate isFlagEnabled mocks; MAIN-RESCUE f7d8166 added same mock to 5 files on branch → duplicate declarations; CI re-running). iter 249 CI-rescue — `f214318` (PR #526: vi.fn Vitest v3 fix). | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459). R-04..R-11 in-progress. R-COVERAGE-01 in-progress (#521, CI rescue landed). R-COVERAGE-02 in-progress (#526, CI rescue landed). |
+| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · ... · `r-coverage-01-listing-routes` (#521) · `r-coverage-02-stripe-lib` (#526) | #290/#396/#459 all MERGED · #466/#471/#472/#473/#510/#511/#513/#514/#515/#516/#517/#519/#521/#526 OPEN | iter 253 CI-rescue — `a29318f` (PR #526: upsert-subscription "older event" test was using yesterday's current_period_start as stripeEventTime proxy, causing skip guard to fire; pass recent start instead). iter 251 CI-rescue — `126eb8ac` (PR #521). | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459). R-04..R-11 in-progress. R-COVERAGE-01 in-progress (#521, CI rescue landed). R-COVERAGE-02 in-progress (#526, CI rescue landed `a29318f`). |
 | S | _not started_ | — | — | — |
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 MERGED 2026-04-28T11:45Z | merged | V-NEW-06 done (commit `a7bd736`) |
@@ -1680,6 +1680,15 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-04 — CI-RESCUE iter 253 (stream R — R-COVERAGE-02: upsertSubscription "older event" test timing)
+
+- Phase 0: Lock held (batch fire, iter 2 of up to 5).
+- Phase 1: main synced (up to date at `df3c320`).
+- Phase 2: PR #526 (R-COVERAGE-02) "Lint · Type-check · Test · Build" still failing after iter 249 vi.fn fix. Root cause (reproduced locally): `upsert-subscription.test.ts` "upserts when the existing updated_at is older than the incoming event time" — `makeSub()` defaults `current_period_start` to `now - 86400s` (yesterday). The guard computes `stripeEventTime = current_period_start * 1000 = yesterday`. With existing `updated_at = 1h ago`, the check `existing.updated_at > stripeEventTime` = `1h ago > yesterday` = TRUE → skip guard fires → upsert not called → `expect(upsertSpy).toHaveBeenCalledOnce()` fails. Fix: pass `current_period_start = now - 30min` (more recent than existing `updated_at = 2h ago`). 9/9 and full 148/148 stripe-webhook tests pass.
+- Phase 6: Merged main (queue-only), committed `a29318f`, pushed to `claude/audit-remediation/r-coverage-02-stripe-lib`.
+- Phase 7: Queue updated on main (this entry).
+- STATUS: CI-RESCUE · stream=R · pr=#526 · commit=a29318f
 
 ### 2026-05-04 — CI-RESCUE iter 252 (stream E — nps comment Zod .max(2000) replaced by route-level truncation)
 
