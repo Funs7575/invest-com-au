@@ -81,6 +81,8 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 
 **Status:** Loop will not attempt further rescues on this check for PR #557 without human intervention.
 
+**NEW — iter 276 observation:** PR #557 now also shows `Supabase types drift` FAILURE (job 74322633659). PR #524 (KK), checked the same iteration, passed that check. This means #557's branch has stale `lib/database.types.ts` relative to the live DB — likely from schema changes since the last main merge (`d7d0e82`, iter 271). Option A (admin-merge) or rebasing on current main would resolve both failures simultaneously.
+
 ### C-03 · `advisor-apply/*` admin imports — scope exception decision needed (surfaced 2026-04-30 by iter 158)
 
 **Finding:** Phase 4 verification gate: these are PUBLIC endpoints (no cookies, no authenticated layout). Per the gate, admin→server.ts refactors on public routes require human sign-off.
@@ -507,18 +509,19 @@ Expected result: row appears with `status='done'` (or `status='error'` if the ha
 | 258 | `ab3ed67` | Merge-conflict in cron-groups.ts |
 | 259 | `54a625d` | Edge-runtime PostHog capture (posthog-node Node.js built-ins incompatible with Vercel edge) |
 | 269 | `e9a68b7` | TypeScript strictFunctionTypes: reduce callback `l: { response_time_minutes: number }` incompatible with Supabase-inferred `number \| null`; fixed → `number \| null` + `?? 0` guard |
+| 272 | `7c85267` | ESLint `invest/no-unvalidated-req-json` warning on existing `request.json()` in `submit-lead/route.ts` triggered by KK's `source_page` addition; suppressed with per-line disable comment pointing to E-04 |
 
-**CI re-running on `e9a68b7` as of iter 269.** KK stream content is complete (KK-01..KK-06 all done) — the only outstanding work is PR #524 merging.
+**CI STILL FAILING as of iter 276.** Both `Lint · Type-check · Test · Build` (job 74321004106) and `Preview smoke test` (job 74321004130) are red on the latest push `7c85267`. The loop has now attempted 5 rescues on this PR in 24 hours (iters 254, 258, 259, 269, 272). Stuck-detection re-triggered iter 276.
 
 **Recommendation matrix:**
 
 | Option | Action | Trade-off |
 |---|---|---|
-| **A (recommended)** | Rebase PR #524 on current main + push; CI re-runs on fresh base | Main has moved ~8 commits since `54a625d` was pushed (queue updates + HomeHero fixes); stale base could cause phantom failures |
-| **B** | Admin-merge #524 via GitHub UI after verifying the failure is runner noise (inspect the CI log for the actual error line) | Fastest path; KK stream unblocked in <5 min; risk = merging without CI green |
-| **C** | Investigate the current failure log, identify new root cause, fix and push | Correct but slow — previous rescue cycles revealed compound issues |
+| **A (recommended)** | Open CI logs for job 74321004106 → identify which step (lint / type-check / test / build) is failing now → one targeted fix | Each previous rescue fixed a distinct issue; the fix sequence suggests compound issues at merge time; reading the actual log is fastest |
+| **B** | Admin-merge #524 via GitHub UI — KK stream content is complete, E2E / Playwright passed on previous runs, prior failures were all infrastructure/compile issues not logic regressions | Fastest path if you trust the content |
+| **C** | Rebase PR #524 on current main and push; CI re-runs on clean base | Main has moved ~50+ commits since branch was opened; fresh base eliminates any stale-merge compile errors |
 
-**Recommendation: Option A (rebase) or B (admin-merge if you read the log and it's noise).** KK stream content is done; the CI failures are all fixup/merge noise, not logic regressions.
+**Recommendation: Option A (read the CI log) or C (rebase).** KK stream content is done; all prior failures were fixup/merge noise. The smoke test failure (job 74321004130) is likely the same Vercel "Canceled by Ignored Build Step" caching pattern as E-04 batch 2 PR #557 (see that Blocked entry above).
 
 ---
 
@@ -3719,6 +3722,21 @@ One file changed: `docs/audits/REMEDIATION_QUEUE.md`. No code touched. Tier A do
 - Diff: +51 -0 across 1 file (new migration)
 - Next stream: A (drift backfill, priority 12) — C stream has only blocked items remaining
 - Remaining: C-03 blocked · C-04 blocked · C-05 blocked (ArticleBrokerTable) · B-09 blocked · A-01..A-07 pending
+
+---
+
+### 2026-05-04 — BLOCKED iter 276 (stream KK — PR #524 stuck-detection re-triggered)
+
+- Phase 0: lock acquired (batch mode, iter 3 of up to 5).
+- Phase 0.5: no LOOP_PAUSE sentinel.
+- Phase 1: main synced to `b4ef74f` (iter 275 queue update). No migration in last 24h; Phase 1.5 skipped.
+- Phase 1.7: main CI — no red signals detected; proceeding.
+- Phase 2: Checked PR #524 (KK, priority step 14). `Lint · Type-check · Test · Build` FAILURE (job 74321004106) + `Preview smoke test` FAILURE (job 74321004130). Stuck-detection guard: counted prior CI-RESCUE entries for PR #524 + `Lint · Type-check · Test · Build` — iters 254, 258, 259, 269, 272 = 5 entries (4 in last 24h: 258, 259, 269, 272). Threshold 3+ exceeded. Loop cannot fix by retrying.
+- Phase 2 (E-04 #557 observation): `Supabase types drift` FAILURE on PR #557 also detected (job 74322633659). Not a rescue target this iteration (PR is already blocked on smoke test; new failure type noted in blocked entry). Rebase on main would fix both.
+- Phase 3–7: skipped per stuck-detection exit rule.
+- Queue: KK Blocked entry updated with iter 272 rescue + CI-still-failing note + updated recommendation matrix. E-04 batch 2 Blocked entry updated with new Supabase types drift observation.
+
+- STATUS: BLOCKED · stream=KK · item=`Lint · Type-check · Test · Build` persistent failure · pr=#524 · rescue-attempts=5 (4 in 24h) · recommendation=read-CI-log-then-fix-or-admin-merge
 
 ---
 
