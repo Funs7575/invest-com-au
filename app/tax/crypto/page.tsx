@@ -3,6 +3,10 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import SectionHeading from "@/components/SectionHeading";
+import AdvisorPrompt from "@/components/AdvisorPrompt";
+import { createClient } from "@/lib/supabase/server";
+import { getAffiliateLink, AFFILIATE_REL, renderStars } from "@/lib/tracking";
+import type { Broker } from "@/lib/types";
 
 export const revalidate = 86400;
 
@@ -180,7 +184,16 @@ const FAQS = [
   },
 ];
 
-export default function CryptoTaxPage() {
+export default async function CryptoTaxPage() {
+  const supabase = await createClient();
+  const { data: exchangeRows } = await supabase
+    .from("brokers")
+    .select("id, name, slug, color, logo_url, rating, cta_text, benefit_cta, tagline, affiliate_url, status, platform_type, created_at, updated_at, chess_sponsored, smsf_support, is_crypto, deal, editors_pick")
+    .eq("status", "active")
+    .eq("platform_type", "crypto_exchange")
+    .order("rating", { ascending: false })
+    .limit(3);
+  const exchanges: Broker[] = exchangeRows ?? [];
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: SITE_URL },
     { name: "Tax", url: `${SITE_URL}/tax` },
@@ -303,6 +316,49 @@ export default function CryptoTaxPage() {
               All Tax Guides →
             </Link>
           </div>
+        </div>
+      </section>
+
+      {exchanges.length > 0 && (
+        <section className="py-10 bg-white border-t border-slate-200">
+          <div className="container-custom max-w-3xl">
+            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 space-y-4">
+              <div>
+                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">COMPARE EXCHANGES</p>
+                <h2 className="text-lg font-bold text-slate-900">ATO-compliant crypto exchanges used by Australian investors</h2>
+                <p className="text-sm text-slate-500 mt-1">Choose an exchange that provides downloadable transaction history for your tax records.</p>
+              </div>
+              <div className="grid sm:grid-cols-3 gap-3">
+                {exchanges.map((b) => (
+                  <div key={b.slug} className="bg-white rounded-xl border border-slate-200 p-4 flex flex-col gap-3">
+                    <div>
+                      <p className="font-bold text-slate-900 text-sm">{b.name}</p>
+                      <p className="text-xs text-amber-500">{renderStars(Number(b.rating))}</p>
+                      <p className="text-xs text-slate-500 mt-1 line-clamp-2">{b.tagline}</p>
+                    </div>
+                    <div className="mt-auto">
+                      <p className="text-xs font-semibold text-slate-700 mb-2">{b.benefit_cta ?? b.cta_text ?? 'Open Account'}</p>
+                      <a
+                        href={getAffiliateLink(b)}
+                        rel={AFFILIATE_REL}
+                        target="_blank"
+                        className="block text-center w-full px-3 py-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold text-xs rounded-lg transition-colors"
+                      >
+                        {b.cta_text ?? 'Open Account →'}
+                      </a>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      <section className="py-10 bg-slate-50 border-t border-slate-200">
+        <div className="container-custom max-w-3xl">
+          <h2 className="text-lg font-bold text-slate-900 mb-4">Crypto tax getting complicated?</h2>
+          <AdvisorPrompt type="tax_agent" />
         </div>
       </section>
 
