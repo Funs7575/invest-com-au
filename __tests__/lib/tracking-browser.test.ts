@@ -81,7 +81,7 @@ describe("trackClick — fetch fallback path", () => {
       abVariant: "b",
     });
 
-    const call = mockFetch.mock.calls[0] as [string, RequestInit];
+    const call = mockFetch.mock.calls[0] as unknown as [string, RequestInit];
     const body = JSON.parse(call[1].body as string);
     expect(body.broker_slug).toBe("stake");
     expect(body.broker_name).toBe("Stake");
@@ -126,7 +126,7 @@ describe("trackEvent", () => {
     trackEvent("page_view", { broker: "stake" }, "/brokers");
 
     expect(mockFetch).toHaveBeenCalledOnce();
-    const call = mockFetch.mock.calls[0] as [string, RequestInit];
+    const call = mockFetch.mock.calls[0] as unknown as [string, RequestInit];
     expect(call[0]).toBe("/api/track-event");
     expect(call[1].method).toBe("POST");
     const body = JSON.parse(call[1].body as string);
@@ -142,7 +142,7 @@ describe("trackEvent", () => {
 
     trackEvent("click");
 
-    const call = mockFetch.mock.calls[0] as [string, RequestInit];
+    const call = mockFetch.mock.calls[0] as unknown as [string, RequestInit];
     const body = JSON.parse(call[1].body as string);
     expect(body.event_data).toEqual({});
   });

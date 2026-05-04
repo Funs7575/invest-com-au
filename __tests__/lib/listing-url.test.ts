@@ -22,6 +22,7 @@ describe("categoryForListing", () => {
     ["franchise", "franchise"],
     ["fund", "funds"],
     ["mining", "mining"],
+    ["pre_ipo", "pre-ipo"],
     ["startup", "startups"],
   ])("maps vertical %s to slug %s", (vertical, slug) => {
     expect(categoryForListing({ vertical, sub_category: undefined })).toBe(slug);
