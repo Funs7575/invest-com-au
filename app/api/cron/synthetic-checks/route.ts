@@ -13,8 +13,8 @@ export const maxDuration = 60;
  * GET /api/cron/synthetic-checks
  *
  * Synthetic-check probes for the launch window. Per
- * docs/ops/launch-ops-plan.md §5 PR 15. Runs every 5 minutes via the
- * every-5m dispatcher; each probe writes a row to synthetic_check_runs
+ * docs/ops/launch-ops-plan.md §5 PR 15. Runs every 15 minutes via the
+ * every-15m dispatcher; each probe writes a row to synthetic_check_runs
  * (PR 14). When a flow has 2 consecutive failures, sends a single
  * digest email to OPS_ALERT_EMAIL (rate-limited to once per flow per
  * 30 minutes via the table itself — we only re-alert when the

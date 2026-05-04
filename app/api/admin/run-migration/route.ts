@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { requireCronAuth } from "@/lib/cron-auth";
 
 export const dynamic = "force-dynamic";
 
@@ -63,20 +64,14 @@ async function runMigration() {
 
 // GET - for Vercel cron or manual browser check
 export async function GET(request: NextRequest) {
-  const authHeader = request.headers.get("authorization");
-  const expected = process.env.CRON_SECRET;
-  if (!expected || authHeader !== `Bearer ${expected}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const unauth = requireCronAuth(request);
+  if (unauth) return unauth;
   return runMigration();
 }
 
 // POST - for programmatic calls
 export async function POST(request: NextRequest) {
-  const authHeader = request.headers.get("authorization");
-  const expected = process.env.CRON_SECRET || process.env.INTERNAL_API_KEY;
-  if (!expected || authHeader !== `Bearer ${expected}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const unauth = requireCronAuth(request);
+  if (unauth) return unauth;
   return runMigration();
 }
