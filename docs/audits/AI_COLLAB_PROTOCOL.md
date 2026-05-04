@@ -15,14 +15,36 @@ loop, anything Tier E in `MERGE_AUTHORIZATION.md`.
 
 ---
 
+## Mode: PR-review-only (active 2026-05-03)
+
+**Codex does not commit to repo branches.** The file-handoff pattern
+was retired after two consecutive Codex cycles failed verification
+(SHAs that did not exist; stale-branch artifacts; unauthorized scope
+creep). Root cause: Codex's environment cannot reach `origin`, so
+its local commits were unreachable from the actual repo.
+
+Replacement model:
+
+- **Claude** is the only agent committing to branches/PRs.
+- **Codex** reviews PR diffs via the GitHub API (PR comments + review
+  threads). Codex does not commit, does not modify files, does not
+  open branches.
+- Every Claude PR includes the structure required by founder rule:
+  task ID, exact files changed, commands run with output, risk notes,
+  launch-gate criteria moved.
+- Codex feedback still binds to the Evidence Standard below.
+- Handoff files in `docs/audits/handoffs/` remain authoritative for
+  the *current task* and decisions log; they are now Claude-edited
+  only, since Codex no longer commits.
+
 ## Roles
 
-- **Claude** — builder. Implements smallest-safe-change sets, runs the
-  validation suite, writes evidence-backed handoffs, pushes back on
-  weak Codex feedback.
-- **Codex** — auditor. Reviews Claude's diffs and handoffs, raises
-  findings against the rubrics in `ENTERPRISE_STANDARD.md`, proposes
-  alternatives, never merges.
+- **Claude** — builder + scribe. Implements changes, runs validation,
+  edits handoff files, opens PRs, addresses Codex review comments,
+  pushes back on weak feedback.
+- **Codex** — auditor. Posts PR review comments backed by the
+  Evidence Standard. Approves or requests changes. Never merges,
+  never commits.
 
 Neither agent merges Tier C / D / E PRs without founder confirmation
 per `MERGE_AUTHORIZATION.md`.
