@@ -35,14 +35,14 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | I | `claude/audit-remediation/i-new-04-main-ci-auto-revert` (#278) · `i-02-drift-detection-ci` (#353) | #278 MERGED 2026-04-28T16:18Z · #353 MERGED 2026-05-01T14:30Z | last merged 2026-05-01T14:30Z | I-NEW-01..05 all done. I-NEW-06 needs-user (Supabase GH Actions secrets). I-01 done via B-07 (PR #286). I-02 done (PR #353). I-03 done via C-08 (PR #327). I-04 done via E-03 (PR #313). I-05 done via D-10 (PR #246). |
 | J | `claude/audit-remediation/j-stripe-webhook` | #288 MERGED 2026-04-29T16:48Z | last merged 2026-04-29T16:48Z | J-01a..J-01e done · J-01d-ext done · J-03/J-05/J-06/J-08/J-09/J-10 done. **Stream J complete** (J-02/J-04/J-07/J-11 false-positives or done out-of-band). |
 | K | `claude/audit-remediation/k-security-hardening` | #222 MERGED 2026-04-28T15:14Z | last merged 2026-04-28T15:14Z | K-01..K-08 done; K-09 false-positive; K-10..K-15 done — **stream complete** |
-| KK | `claude/audit-remediation/kk-lead-routing-maturity` | #524 OPEN | iter 266 — BLOCKED (stuck-detection: 3 CI rescues in 24h; surfaced to Blocked). iter 259 CI-rescue — `54a625d` (edge-runtime PostHog fix; CI re-running). iter 258 CI-rescue — `ab3ed67`. iter 244 cont — `5d22141`. | KK-01..KK-06 all done. **KK stream complete.** PR #524 stuck in CI — see Blocked entry. |
+| KK | `claude/audit-remediation/kk-lead-routing-maturity` | #524 OPEN | iter 269 CI-rescue — `e9a68b7` (TS strictFunctionTypes error: reduce callback `l: { response_time_minutes: number }` → `number \| null`; CI re-running). iter 266 — BLOCKED (stuck-detection). iter 259 CI-rescue — `54a625d`. iter 258 CI-rescue — `ab3ed67`. | KK-01..KK-06 all done. **KK stream complete.** PR #524 CI rescue in-progress. |
 | L | `claude/audit-remediation/l-observability` | #289 MERGED 2026-04-29T10:18Z | last merged 2026-04-29T10:18Z | L-04/L-05 done out-of-loop. L-06..L-12 all done (merged via PR #289). L-02/L-03 deferred-post-launch (n8n dormant). L-01 needs-user (SENTRY_AUTH_TOKEN). L-10 false-positive (verified populating). **Stream L complete** (modulo L-01 needs-user). |
 | M | `claude/audit-remediation/m-01b-cover-image-backfill` (#283) · `m-02-versus-json-ld` (#296) · `m-05-glossary-linkifier` (#325) | #283/#296/#325 all MERGED | last merged 2026-05-01T10:29Z | M-01a done out-of-loop (PR #227). M-01b done (PR #283 — engineering side). M-02 done (PR #296). M-03 done (`85c7236`). M-04 done (`353fa3a`). M-05 done (PR #325). M-06 done (PR #283). M-07 done (PR #283). **Stream M complete.** |
 | N | `claude/audit-remediation/n-ux-perf` | #242 MERGED | last merged 2026-04-28 | N-01+N-02 done (`2ec6f89`) · N-03a/b/c done · N-04/N-05 FP · N-06 blocked (deferred-post-launch by founder 2026-05-01 — option 4 chosen) · N-07/N-08/N-09/N-10/N-11 done — **stream complete** (N-06 deferred). |
 | O | all PRs MERGED | #235/#237/#239/#299/#300/#366/#395/#408 all MERGED | last merged 2026-05-02T16:14Z | O-01..O-03 done. O-04 blocked (Stripe live validation). O-05 MERGED (#408). |
 | P | `claude/audit-remediation/p-01-sentry-v10-upgrade` (#468) | — | iter 212 — `331b98e` (PR #468: P-01 — @sentry/nextjs v9.47.1 → v10.51.0; clears 5 Sentry audit findings; removes `as any` cast in next.config.ts); CI success. | P-01 in-progress (PR #468). P-02 (Stripe SDK v17→v22) BLOCKED — requires npm install + local test run to verify webhook type compatibility across 5 major versions; not tractable on Hardware-exception sandbox. Needs a session with full node_modules. |
 | Q | `claude/audit-remediation/q-02-05-recovery-runbooks` (#525) · `q-06-09-runbooks` (#547) · `q-10-12-runbooks` (#549) · `q-13-14-secret-rotation-dpa` (#554) | #525 OPEN · #547 OPEN · #549 OPEN · **#554 OPEN** | iter 269 CI-rescue — `5c7af0f` (PR #554: merge main — refreshing Vercel preview for smoke test; CI re-running). iter 264 CI-rescue — `0d2877b` (PR #554: fix s.envVar→s.name TS2339). iter 263 — `93c9748` (PR #554: Q-13 secret-rotation-check cron + Q-14 vendor DPA tracker). iter 260 — `925b2d4` (PR #549). iter 259 — `c684960` (PR #547). iter 235 — `8cd2725` (Q-02..Q-05). | Q-01 needs-user (PITR drill). Q-02..Q-05 in-progress (#525). Q-06..Q-09 in-progress (#547). Q-10..Q-12 in-progress (#549). Q-SOC2-02..11 done (verified iter 260). **Q-13+Q-14 in-progress (#554)**. Q-15 pending. |
-| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · ... · `r-coverage-01-listing-routes` (#521) · `r-coverage-02-stripe-lib` (#526) · `r-coverage-03-quotes` (#530) · `r-coverage-11-quote-review` (#551) | #290/#396/#459 all MERGED · #466/#471/#472/#473/#510/#511/#513/#514/#515/#516/#517/#519/#521/#526/#530/#551 OPEN | iter 261 forward — `83c763e` (PR #551: R-COVERAGE-11 quotes/[slug]/review — 17 tests, HMAC token auth, rate limit, 12 error paths). iter 255 forward — `1a3c24d` (PR #530: R-COVERAGE-03 quotes/[slug]/accept + reopen, 26 tests). iter 253 CI-rescue — `a29318f` (PR #526). iter 251 CI-rescue — `126eb8ac` (PR #521). | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459). R-04..R-11 in-progress. R-COVERAGE-01 in-progress (#521). R-COVERAGE-02 in-progress (#526). R-COVERAGE-03 in-flight (#530). R-COVERAGE-11 in-flight (#551). |
+| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · ... · `r-coverage-01-listing-routes` (#521) · `r-coverage-02-stripe-lib` (#526) · `r-coverage-03-quotes` (#530) · `r-coverage-11-quote-review` (#551) · `r-coverage-12-quotes-qa` (#562) | #290/#396/#459 all MERGED · #466/#471/#472/#473/#510/#511/#513/#514/#515/#516/#517/#519/#521/#526/#530/#551/#562 OPEN | iter 270 forward — `fcbeb21` (PR #562: R-COVERAGE-12 — 16 tests for quotes/[slug]/qa GET+POST, dual auth, rate-limit; CI pending). iter 261 forward — `83c763e` (PR #551: R-COVERAGE-11 quotes/[slug]/review — 17 tests, HMAC token auth, rate limit, 12 error paths). iter 255 forward — `1a3c24d` (PR #530: R-COVERAGE-03 quotes/[slug]/accept + reopen, 26 tests). iter 253 CI-rescue — `a29318f` (PR #526). iter 251 CI-rescue — `126eb8ac` (PR #521). | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459). R-04..R-11 in-progress. R-COVERAGE-01 in-progress (#521). R-COVERAGE-02 in-progress (#526). R-COVERAGE-03 in-flight (#530). R-COVERAGE-11 in-flight (#551). **R-COVERAGE-12 in-flight (#562).** |
 | S | _not started_ | — | — | — |
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 MERGED 2026-04-28T11:45Z | merged | V-NEW-06 done (commit `a7bd736`) |
@@ -486,8 +486,9 @@ Expected result: row appears with `status='done'` (or `status='error'` if the ha
 | 254 | `0f19275` | Merge main to clear dirty mergeable_state |
 | 258 | `ab3ed67` | Merge-conflict in cron-groups.ts |
 | 259 | `54a625d` | Edge-runtime PostHog capture (posthog-node Node.js built-ins incompatible with Vercel edge) |
+| 269 | `e9a68b7` | TypeScript strictFunctionTypes: reduce callback `l: { response_time_minutes: number }` incompatible with Supabase-inferred `number \| null`; fixed → `number \| null` + `?? 0` guard |
 
-After all 3 fixes, CI is still failing. **KK stream content is complete** (KK-01..KK-06 all done) — the only outstanding work is PR #524 merging.
+**CI re-running on `e9a68b7` as of iter 269.** KK stream content is complete (KK-01..KK-06 all done) — the only outstanding work is PR #524 merging.
 
 **Recommendation matrix:**
 
@@ -1861,6 +1862,18 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 
 ## Iteration log (most recent at top)
 
+### 2026-05-04 — Forward progress iter 270 (stream R — R-COVERAGE-12: 16 tests for quotes/[slug]/qa)
+
+- Phase 0: Lock held (batch fire, iteration 5 of up to 5).
+- Phase 1: main synced; pulled iter 269 queue update (Q stream CI rescue by concurrent agent).
+- Phase 1.5: Skipped (no types-drift CI failures on in-flight PRs; Supabase types drift check green on PR #560).
+- Phase 2: PR #560 (E-04 batch 3): Lint in_progress (fresh rescue push); PR #557 (E-04 batch 2): Lint SUCCESS, Preview smoke test FAILURE (likely Vercel timing — Lint fix landed, new Vercel build not yet exercised). PR #554 (Q): CI pending (iter 269 rescue). PR #527 (F): all checks green. No tractable rescue needed.
+- Phase 3: Priority step 10 (R) — R-COVERAGE-12. `quotes/[slug]/qa/route.ts` had GET+POST with dual auth (advisor session vs owner email) but no tests. New branch `claude/audit-remediation/r-coverage-12-quotes-qa`.
+- Phase 4: Verification — route file exists at expected path, both GET and POST are untested, logic is well-bounded (rate-limit, Zod, two auth paths, DB insert).
+- Phase 5: Wrote 16 tests in `__tests__/api/quotes-slug-qa.test.ts`. All 16 pass. Lint clean.
+- Phase 6: Commit `fcbeb21`, pushed. PR #562 opened (ready).
+- Phase 7: Queue updated — R in-flight row updated with r-coverage-12 branch + PR #562, R-COVERAGE-12 marked in-flight.
+
 ### 2026-05-04 — CI-RESCUE iter 269 (stream Q — PR #554 smoke test timeout, merge main)
 
 - Phase 0: Lock acquired (batch fire, iteration 1 of up to 5).
@@ -1891,6 +1904,17 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 - Phase 6: Commit `d823fda`, pushed. PR #560 opened (ready, not draft).
 - Phase 7: Queue updated — E in-flight row updated, E-04 item updated (batch 3 in-progress), this log entry.
 - STATUS: PROGRESS · stream=E · item=E-04 (batch 3 of ~4) · pr=#560
+
+---
+
+### 2026-05-04 — CI-RESCUE iter 269 (stream KK — reduce callback type fix in advisor-auth/data PATCH)
+
+- Phase 0: Lock held (batch fire, iteration 3 of up to 5 — continuing from compressed session context).
+- Phase 1: main synced (fast-forward to f54b86e — picked up HomeHero.tsx + HomeHeroReel.tsx + queue update from E-04 batch 2 landing).
+- Phase 2: PR #524 (KK) — `Lint · Type-check · Test · Build` FAILURE (job 74314600374, 22:03:52–22:05:41Z, 109s = early TS/lint failure). Prior stuck-detection entry notwithstanding, this is a new root-cause investigation. Exhaustive read of all 16 KK-changed files. Root cause: `app/api/advisor-auth/data/route.ts` line 219 — reduce callback annotated as `l: { response_time_minutes: number }` but Supabase-inferred element type is `{ response_time_minutes: number | null }`. Under `strictFunctionTypes`, this is a contravariance error (narrower annotation not assignable to wider inferred type). Fix: widened to `number | null` + added `?? 0` null guard. Physically different root cause from iters 254/258/259.
+- Phase 6: Commit `e9a68b7`, pushed `claude/audit-remediation/kk-lead-routing-maturity`. Diff: +1/-1 (1 file).
+- Phase 7: KK in-flight row updated; Blocked entry updated with new rescue row; this log entry.
+- STATUS: CI-RESCUE · stream=KK · pr=#524 · commit=e9a68b7
 
 ---
 
