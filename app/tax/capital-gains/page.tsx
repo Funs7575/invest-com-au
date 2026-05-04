@@ -130,6 +130,7 @@ Australian tax residents pay CGT on capital gains from foreign assets (shares, p
 const FAQS = [
   {
     question: "When do I have to pay CGT in Australia?",
+    // dated-ok — ATO statutory deadlines (31 Oct = standard, 28 Feb = tax-agent extension); fixed by legislation
     answer: "CGT is not paid at the time of sale — it's included in your income tax assessment for the financial year you sold the asset. If you sell shares in March 2026, the gain is included in your 2025–26 tax return, due 31 October 2026 (or 28 February 2027 with a tax agent). The ATO does not require instalment payments for CGT unless you've been assessed for PAYG instalments.",
   },
   {
