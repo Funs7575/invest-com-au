@@ -137,9 +137,19 @@ export default function HomeHeroReel({
           <span className="hero-reel-label font-mono">
             5 ways to use Invest.com.au
           </span>
-          <span className="hero-reel-pos font-mono" aria-hidden>
-            {String(active + 1).padStart(2, "0")} / {String(panels.length).padStart(2, "0")}
-          </span>
+          <nav className="hero-reel-pips" aria-label="Reel position">
+            {panels.map((p, i) => (
+              <button
+                key={p.key}
+                type="button"
+                onClick={() => setActive(i)}
+                aria-current={i === active ? "true" : undefined}
+                aria-label={`Show ${p.headline}`}
+                className={`hero-reel-pip ${i === active ? "is-active" : ""}`}
+                style={i === active ? { background: p.accent } : undefined}
+              />
+            ))}
+          </nav>
         </div>
 
         <div className="hero-reel-viewport" aria-live="polite">
@@ -166,26 +176,13 @@ export default function HomeHeroReel({
           })}
         </div>
 
-        <nav className="hero-reel-pips" aria-label="Reel position">
-          {panels.map((p, i) => (
-            <button
-              key={p.key}
-              type="button"
-              onClick={() => setActive(i)}
-              aria-current={i === active ? "true" : undefined}
-              aria-label={`Show ${p.headline}`}
-              className={`hero-reel-pip ${i === active ? "is-active" : ""}`}
-              style={i === active ? { background: p.accent } : undefined}
-            />
-          ))}
-        </nav>
       </div>
 
       <style>{`
         .hero-reel {
           position: relative;
           width: 100%;
-          max-width: 400px;
+          max-width: 460px;
           justify-self: end;
         }
         .hero-reel-frame {
@@ -215,15 +212,9 @@ export default function HomeHeroReel({
           letter-spacing: .09em;
           color: rgba(255,255,255,.62);
         }
-        .hero-reel-pos {
-          font-size: 10px;
-          font-weight: 800;
-          letter-spacing: .08em;
-          color: rgba(255,255,255,.42);
-        }
         .hero-reel-viewport {
           position: relative;
-          height: 480px;
+          height: 380px;
           overflow: hidden;
           z-index: 1;
         }
@@ -312,15 +303,11 @@ export default function HomeHeroReel({
         .panel-cta-pill svg { transition: transform .18s ease; }
 
         .hero-reel-pips {
-          display: flex;
+          display: inline-flex;
           gap: 6px;
-          padding: 14px 20px 16px;
-          justify-content: center;
-          background: rgba(255,255,255,.02);
-          border-top: 1px solid rgba(255,255,255,.07);
         }
         .hero-reel-pip {
-          width: 28px;
+          width: 24px;
           height: 5px;
           border-radius: 99px;
           background: rgba(255,255,255,.18);
@@ -373,12 +360,12 @@ export default function HomeHeroReel({
 
         .browse-grid {
           display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 10px;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 8px;
         }
         .browse-tile {
           position: relative;
-          border-radius: 11px;
+          border-radius: 10px;
           overflow: hidden;
           background: rgba(255,255,255,.05);
           border: 1px solid rgba(255,255,255,.10);
@@ -628,9 +615,8 @@ function BrowsePanel({ listings }: { listings: ReadonlyArray<ReelListing> }) {
     { id: "p1", title: "Cattle station, NT", image: null },
     { id: "p2", title: "Cafe chain, VIC", image: null },
     { id: "p3", title: "Solar farm, QLD", image: null },
-    { id: "p4", title: "Almond farm, SA", image: null },
   ];
-  const source = listings.length >= 4 ? listings.slice(0, 4) : placeholder;
+  const source = listings.length >= 3 ? listings.slice(0, 3) : placeholder;
   return (
     <div className="browse-grid">
       {source.map((l) => (
@@ -640,13 +626,13 @@ function BrowsePanel({ listings }: { listings: ReadonlyArray<ReelListing> }) {
               src={l.image}
               alt=""
               fill
-              sizes="(min-width: 1024px) 170px, 40vw"
+              sizes="(min-width: 1024px) 130px, 30vw"
               style={{ objectFit: "cover" }}
               unoptimized
             />
           ) : (
             <span className="browse-tile-fallback" aria-hidden>
-              <DesignIcon name="map-pin" size={26} strokeWidth={2.2} />
+              <DesignIcon name="map-pin" size={22} strokeWidth={2.2} />
             </span>
           )}
           <span className="browse-tile-title">{l.title}</span>
@@ -666,7 +652,7 @@ function FindPanel({ advisors }: { advisors: ReadonlyArray<ReelAdvisor> }) {
     { name: "Ava L", photo_url: null },
   ];
   const display = items.length >= 4 ? items : fallback;
-  const tags = ["SMSF accountant", "Mortgage broker", "Buyer's agent", "Tax agent", "FIRB", "Cross-border"];
+  const tags = ["SMSF accountant", "Mortgage broker", "Buyer's agent", "Tax agent", "FIRB"];
   return (
     <div className="find-stack">
       <div className="find-avatars">
