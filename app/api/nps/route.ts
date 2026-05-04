@@ -24,7 +24,8 @@ const NpsBody = z.object({
   score: z.number().min(0).max(10),
   comment: z.string().max(2000).optional(),
   session_id: z.string().max(100).optional(),
-  respondent_id: z.string().max(200).optional(),
+  // respondent_id excluded from Zod — handled below with resilient coercion
+  // (non-strings coerced to null; strings truncated to 200 chars)
 });
 
 export async function POST(request: NextRequest) {
@@ -37,7 +38,11 @@ export async function POST(request: NextRequest) {
   if (!bodyResult.success) {
     return NextResponse.json({ error: "Invalid submission" }, { status: 400 });
   }
-  const { respondent_type: respondentType, trigger, score, comment, session_id, respondent_id } = bodyResult.data;
+  const { respondent_type: respondentType, trigger, score, comment, session_id } = bodyResult.data;
+  const rawRespondentId = (rawBody as Record<string, unknown> | null)?.respondent_id;
+  const respondent_id: string | null = typeof rawRespondentId === 'string'
+    ? rawRespondentId.slice(0, 200)
+    : null;
 
   const ip = ipKey(request);
   const ipHash = crypto
@@ -49,7 +54,7 @@ export async function POST(request: NextRequest) {
   const supabase = createAdminClient();
   const { error } = await supabase.from("nps_responses").insert({
     respondent_type: respondentType,
-    respondent_id: respondent_id ?? null,
+    respondent_id,
     trigger: trigger.slice(0, 64),
     score: Math.round(score),
     comment: comment?.trim().slice(0, 2000) ?? null,

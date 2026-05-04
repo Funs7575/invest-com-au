@@ -38,7 +38,15 @@ export async function POST(request: NextRequest) {
   const rawBody = await request.json().catch(() => null);
   const bodyResult = TouchBody.safeParse(rawBody);
   if (!bodyResult.success) {
-    return NextResponse.json({ error: "Missing session_id or event" }, { status: 400 });
+    // Differentiate "event field present but bad value" from "field missing entirely"
+    // so tests can assert the right error message for each case.
+    const rawEvent = (rawBody as Record<string, unknown> | null)?.event;
+    const hasInvalidEvent = rawEvent !== undefined &&
+      bodyResult.error.issues.some((issue: { path: (string | number)[] }) => issue.path[0] === 'event');
+    return NextResponse.json(
+      { error: hasInvalidEvent ? "Invalid event value" : "Missing session_id or event" },
+      { status: 400 },
+    );
   }
   const { session_id: sessionId, event, user_key, source, medium, campaign, landing_path, page_path, vertical, value_cents } = bodyResult.data;
 

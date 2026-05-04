@@ -58,7 +58,15 @@ export async function POST(request: NextRequest) {
   }
   const bodyResult = TrackEventBody.safeParse(rawBody);
   if (!bodyResult.success) {
-    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+    // If the failure is specifically about event_type (wrong type), surface that
+    // rather than the generic JSON-parse error so existing tests keep their contract.
+    const hasEventTypeIssue = bodyResult.error.issues.some(
+      (issue: { path: (string | number)[] }) => issue.path[0] === 'event_type',
+    );
+    return NextResponse.json(
+      { error: hasEventTypeIssue ? 'Invalid event_type' : 'Invalid JSON body' },
+      { status: 400 },
+    );
   }
   const { event_type, event_data, page, session_id } = bodyResult.data;
 
