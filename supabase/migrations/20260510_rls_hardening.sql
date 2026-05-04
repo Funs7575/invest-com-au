@@ -1,6 +1,24 @@
 -- ============================================================
 -- RLS hardening — pre-launch security pass
 --
+-- Date: 2026-05-10
+-- Audit ref: codebase-health-2026-04-24.md §4.3 (G-03)
+-- Queue item: G-03 batch 8
+-- Why: (1) critical fix — quiz_leads was readable by anon via a
+--      mis-scoped SELECT policy; replaced with service-role-only.
+--      (2) public-read policies added to commodity_stocks/etfs/sectors,
+--      listing_claims, anonymous_saves, user_quiz_history, and
+--      agreement_acceptances — tables that had RLS enabled but
+--      zero policies (effectively deny-all, breaking live reads).
+-- Idempotency: DROP POLICY IF EXISTS + CREATE POLICY.
+--              ENABLE ROW LEVEL SECURITY if not already enabled.
+--              Safe to re-apply.
+-- Rollback:
+--   Restore the original policies by name if reverting is needed.
+--   The critical fix (quiz_leads) should NOT be reverted — it
+--   closes an active data-leak. For a full rollback list, see the
+--   DROP POLICY statements in this file (each names the prior policy).
+--
 -- 1. CRITICAL FIX: the "Allow service read on quiz_leads" policy
 --    was mis-scoped to {public} SELECT with qual=true. That
 --    exposed every quiz lead's email + answers to anon via

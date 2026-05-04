@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { logger } from "@/lib/logger";
 import { ADMIN_EMAILS } from "@/lib/admin";
 
@@ -8,6 +9,12 @@ const log = logger("community:moderate");
 
 const VALID_ACTIONS = ["pin", "unpin", "lock", "unlock", "remove"] as const;
 type ModAction = (typeof VALID_ACTIONS)[number];
+
+const ModerateBody = z.object({
+  action: z.enum(["pin", "unpin", "lock", "unlock", "remove"]),
+  thread_id: z.number().int().positive().optional(),
+  post_id: z.number().int().positive().optional(),
+});
 
 async function isModerator(userId: string, userEmail: string | undefined): Promise<boolean> {
   if (userEmail && ADMIN_EMAILS.includes(userEmail.toLowerCase())) return true;
@@ -37,16 +44,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Moderator access required" }, { status: 403 });
     }
 
-    const body = await req.json();
-    const { action, thread_id, post_id } = body;
-
-    // Validate action
-    if (!action || !VALID_ACTIONS.includes(action as ModAction)) {
+    let rawBody: unknown;
+    try {
+      rawBody = await req.json();
+    } catch {
+      return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+    }
+    const bodyResult = ModerateBody.safeParse(rawBody);
+    if (!bodyResult.success) {
       return NextResponse.json(
         { error: `Invalid action. Must be one of: ${VALID_ACTIONS.join(", ")}` },
         { status: 400 },
       );
     }
+    const { action, thread_id, post_id } = bodyResult.data;
 
     const admin = createAdminClient();
     const now = new Date().toISOString();
