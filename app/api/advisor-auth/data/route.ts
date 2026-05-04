@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireAdvisorSession } from "@/lib/require-advisor-session";
 import { logger } from "@/lib/logger";
+import { captureServerEvent } from "@/lib/posthog/server";
 
 const log = logger("advisor-auth-data");
 
@@ -134,7 +135,7 @@ export async function PATCH(request: NextRequest) {
   // Verify lead belongs to this advisor
   const { data: lead } = await admin
     .from("professional_leads")
-    .select("id, professional_id, created_at")
+    .select("id, professional_id, created_at, source_page")
     .eq("id", leadId)
     .eq("professional_id", advisorId)
     .single();
@@ -181,6 +182,29 @@ export async function PATCH(request: NextRequest) {
     } catch (err) {
       log.warn("avg response time update failed", { err: err instanceof Error ? err.message : String(err), professionalId: lead.professional_id });
     }
+  }
+
+  // PostHog funnel tracking: advisor_response / lead_outcome
+  const advisorDistinctId = `advisor-${advisorId}`;
+  if (status === "contacted" && typeof updates.response_time_minutes === "number") {
+    captureServerEvent(advisorDistinctId, "advisor_response", {
+      lead_id: leadId as number,
+      advisor_id: advisorId,
+      response_time_minutes: updates.response_time_minutes,
+      lead_source: typeof (lead as Record<string, unknown>).source_page === "string"
+        ? (lead as Record<string, unknown>).source_page as string
+        : null,
+    }).catch((err) => log.warn("posthog advisor_response failed", { err: String(err) }));
+  }
+  if (status === "converted" || status === "lost" || status === "rejected") {
+    captureServerEvent(advisorDistinctId, "lead_outcome", {
+      lead_id: leadId as number,
+      advisor_id: advisorId,
+      outcome: status === "converted" ? "converted" : "lost",
+      lead_source: typeof (lead as Record<string, unknown>).source_page === "string"
+        ? (lead as Record<string, unknown>).source_page as string
+        : null,
+    }).catch((err) => log.warn("posthog lead_outcome failed", { err: String(err) }));
   }
 
   return NextResponse.json({ success: true });
