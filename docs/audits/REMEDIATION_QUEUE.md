@@ -1145,6 +1145,128 @@ priority + §6 Definition of Done.
 | Z-26 | pending | `/super` hub (proper, not just `/super/smsf`) — sub-pages + fee-projection calc + fund table | 6-8 | **P1.** Massive search volume "best super fund"; fund affiliate $50-200/signup. ID renumbered from Z-NEW-12. **Deps:** stream W components, ASX/APRA fund-performance data feed. **DoD:** hub + sub-pages industry-vs-retail / best-super-funds / under-30 / over-60 / consolidate-super / lost-super-finder / switching-super / concessional-vs-non-concessional / division-296 (>$3M tax); top-fund comparison table (APRA performance data — handle staleness via `<DatedStatBadge>`); fee comparison calculator (15-yr projection of $X balance across N funds); quiz "is your super fund underperforming"; 15+ seeded articles; lead source `'super'` routing to super-fund affiliate + advisor queue; tests for fund-table data freshness, fee-projection calc unit (compounding correctness), quiz routing. **Compliance:** factual fund comparison, performance disclaimer, GAW. |
 | Z-27 | pending | `/tax-return` hub — sub-pages + decision-tree quiz + accountant directory | 6-8 | **P2.** June-October seasonal; accountant lead $50-200; plugs into every other hub. ID renumbered from Z-NEW-13. **Deps:** stream W components, BB-03 CGT calc. **DoD:** hub + sub-pages diy-vs-accountant / deductions-by-occupation (programmatic via AA-06) / crypto-tax / property-tax / cgt / negative-gearing-tax / work-from-home-deductions / late-lodgement / etax-vs-mytax-vs-accountant; accountant directory (add NEW advisor type via constraint update); decision tree quiz "DIY or hire accountant" routing; embedded BB-03; 12+ seeded articles; lead source `'tax-return'` routing to accountant queue (specialty-matched: crypto/property/business); tests for hub render, decision-tree quiz routing, CGT calc unit, directory specialty filter. **Compliance:** tax-agent territory, ASIC factual carve-out, no personal tax advice. |
 
+### Stream GI — `/global-investing` outbound hub (added 2026-05-04)
+
+Mirror of `/foreign-investment` for Australians investing globally. Two
+tracks under one hub: **A** direct-outbound (foreign brokers / foreign
+listings / foreign property / FX / foreign super) and **B** indirect via
+AU-listed exposure (region/sector/global ETFs + LICs). Year-1 reasonable
+revenue range AU$500k-2M, weighted heaviest on lever #3 affiliate CPA
+(IBKR/Stake/Tiger/moomoo) and lever #1 advisor lead routing
+(international tax specialists, QROPS advisors, foreign property buyer's
+agents). Reference: `docs/audits/GLOBAL_INVESTING_PROGRAM.md` is the full
+spec; queue items below resolve into shipped pages.
+
+**Sequencing:** Wave 1 (foundation) ships first — hub shell, cornerstone
+US-shares page, redirect map, compliance keys. Then Wave 2 (Track B ETFs
+— bigger funnel) → Wave 3 (tax/calculator moat) → Wave 4 (long-tail).
+Each wave is independently shippable; pause anywhere → still net positive.
+
+**Tier guidance:** page UI / content / docs are Tier A (autonomous merge
+after CI green). Tier C: GI-04 (compliance keys), GI-09 (`broker_markets`
+schema migration). Calculators GI-82 / GI-84 / GI-122 require tax-agent
+review captured in `docs/audits/handoffs/gi-tax-review.md` before merge.
+
+**Anti-goal:** no `/zh` or `/ko` localisation (audience is English-speaking
+AU residents); no bespoke layout per page once W-12 ships HubPage HOC —
+until then mirror `/foreign-investment/page.tsx` as the canonical pattern.
+
+#### Wave 1 — Foundation
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| GI-01 | in-progress | `/global-investing` hub page (HubConfig row + page.tsx + JSON-LD + FAQ + service grid) | 1 | Mirrors `/foreign-investment/page.tsx`. HubConfig row in `lib/verticals.ts` with `audiences:["expat","founder","hnw","retiree"]`, `complianceKey:"general_advice"` (until GI-04 lands), `leadQueue:{kind:"general",topic:"global-investing"}`, `relatedHubs:["foreign-investment","smsf","private-markets"]`. Service grid: shares / etfs / property / currency / tax / lics / bonds / crypto. Hero stats: brokers compared, regions covered, calculators, last verified. **DoD:** page renders, breadcrumb + FAQPage JSON-LD via `lib/seo.ts`, all FAQs sourced from spec §1; ≤3 dated stats wrapped in `<DatedStatBadge>`; mega-menu hand-edit (GI-05) + sitemap (GI-06) follow. |
+| GI-02 | pending | `/global-investing/shares/us` cornerstone (3-5k words) | 2 | THE cornerstone — "buy US shares from Australia". Sections: how it works, broker comparison (IBKR/Stake/Tiger/moomoo/Webull/eToro/CMC International/CommSec International/Pearler/Vested), CHESS vs custodial offshore, FX cost breakdown, W-8BEN explainer, capital-gains-in-AUD, US estate tax exposure (cross-link to GI-83), brokerage-vs-FX cost calculator inline (cross-link to GI-122), FAQ ≥10 entries with FAQPage JSON-LD, comparison table with `Product` + `AggregateRating` schema, sponsorship-aware top-row using `boostFeaturedPartner()`. Affiliate links via `getAffiliateLink()`. Cross-links: `/global-investing/etfs/us` (Track B alt), `/global-investing/tax/w-8ben`, `/global-investing/tax/us-estate-tax`. **Lands BEFORE GI-03 redirects flip.** **DoD:** ≥3,000 words, ≥10 FAQs, schema validated, all dated stats badged. |
+| GI-03 | pending | 301 redirect map in `next.config.ts` | 1 | 13 redirects per spec §3: `/best/{us-shares,cheapest-us-shares,us-shares-5000,us-shares-monthly,us-fee,invest-in-us-shares,international-shares,best-international-etfs,forex,start-forex-trading,low-fx-fees}`, `/etfs/us-exposure`, `/etfs/international`. **GATE: Do NOT flip until GI-02 + GI-08 are green in production.** Add integration test that asserts each `from` returns 301 → `to`. |
+| GI-04 | pending | New `lib/compliance.ts` keys for outbound | 1 | **Tier C — announce before merge.** Add: `GLOBAL_INVESTING_GENERAL_ADVICE`, `US_SECURITIES_DISCLAIMER`, `TAX_AGENT_DISCLAIMER`, `QROPS_DISCLAIMER`, `FX_GENERAL_ADVICE`, `US_ESTATE_TAX_DISCLAIMER`, `FITO_DISCLAIMER`. No inline disclaimers anywhere in GI pages — `lib/compliance.ts` keys only. |
+| GI-05 | pending | Mega-menu entry (Header.tsx hand-edit) | 1 | Hand-edit `components/Header.tsx` until Y-stream (Y-01/Y-02) lands the registry-driven mega-menu. Add `/global-investing` adjacent to `/foreign-investment` in the "Investing internationally" group. Once Y-02 ships, this gets removed in favour of the registry. |
+| GI-06 | pending | Sitemap entry | 1 | Add `/global-investing` and all its sub-pages to `app/sitemap.ts` with `priority: 0.85` for hub, `0.75` for sub-pillars, `0.7` for guides. Once Y-03 ships, this gets removed in favour of registry-driven sitemap. |
+| GI-07 | pending | Cross-link from `/share-trading` vertical → "Trading global markets?" CTA | 1 | Update `lib/verticals.ts` share-trading entry to surface a "Trading global markets?" link in subcategories or sections, pointing to `/global-investing/shares/us`. Prevents `/share-trading` and `/global-investing/shares/us` from cannibalising each other. |
+| GI-08 | pending | Move `/etfs/us-exposure` content to `/global-investing/etfs/us` (clone, then 301) | 1 | Two-phase: (a) clone the existing 362-line page to new path with updated breadcrumbs + canonical; (b) once new URL is indexed, flip 301. Same for `/etfs/international` → `/global-investing/etfs/global`. |
+| GI-09 | pending | `broker_markets` join table migration | 1 | **Tier C — announce before merge.** Replaces fragile `accepts_global_trading` flag pattern. New table `broker_markets (broker_id, market: 'asx'\|'nyse'\|'nasdaq'\|'lse'\|'hkex'\|'tse'\|'nzx'\|'sgx'\|'euronext', supported: bool, notes: text)`. RLS: anon SELECT, service_role write. Backfill from existing data. Idempotent migration with rollback header per G-stream conventions. |
+
+#### Wave 2 — Track B (AU-listed foreign exposure) — bigger traffic funnel
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| GI-20 | pending | `/global-investing/etfs` sub-pillar page | 1 | Hub for region pages. Quick comparison strip + cross-links into each region. Reuse the table component pattern from `/etfs/us-exposure`. |
+| GI-21 | pending | `/global-investing/etfs/china` | 1 | IZZ (iShares China Large-Cap), VAE (Vanguard Asia ex-Japan as China-tilt proxy), ASIA (Betashares Asia Tech Tigers), CIN (Betashares Australian Investment Grade Corporate Bond — wrong; remove) — verify ETF list before write. MER, AUM, holdings concentration, currency hedging stance, dividend treatment. |
+| GI-22 | pending | `/global-investing/etfs/asia` | 1 | VAE, IAA, ASIA, IEM-tilted Asia. |
+| GI-23 | pending | `/global-investing/etfs/japan` | 1 | IJP (iShares MSCI Japan), HJPN (BetaShares Japan ETF — verify). |
+| GI-24 | pending | `/global-investing/etfs/europe` | 1 | IEU (iShares Europe), VEQ (Vanguard FTSE Europe). |
+| GI-25 | pending | `/global-investing/etfs/uk` | 1 | Smaller cohort; IRE-related; verify ASX availability before commit. |
+| GI-26 | pending | `/global-investing/etfs/india` | 1 | NDIA (BetaShares India Quality), INDA-equivalents. |
+| GI-27 | pending | `/global-investing/etfs/emerging-markets` | 1 | IEM, VGE, EMKT. |
+| GI-30 | pending | `/global-investing/lics` sub-pillar page | 1 | LIC (Listed Investment Company) explainer + LIC vs ETF tradeoffs + cross-link to region pages. |
+| GI-31 | pending | `/global-investing/lics/global` | 1 | MFF (Magellan Flagship), WGB (WAM Global), PMC (Platinum Capital), EAI (Ellerston Asian Investments — wrong category; verify), FGG (Future Generation Global). NTA, premium/discount, fee, performance vs benchmark. |
+| GI-32 | pending | `/global-investing/lics/asia` | 1 | Platinum Asia (PAI), Pengana International. |
+| GI-33 | pending | `/global-investing/lics/us` | 1 | Sparse market; small content piece + cross-link to GI-21..27. |
+| GI-101 | pending | `/global-investing/guides/stake-vs-commsec-international` | 1 | Versus matrix; reuse `/etfs/vs/[slugs]` rendering pattern if applicable. |
+| GI-102 | pending | `/global-investing/guides/stake-vs-ibkr` | 1 | |
+| GI-103 | pending | `/global-investing/guides/moomoo-vs-tiger-vs-webull` | 1 | Three-way comparison; the Asian-broker cohort question. |
+| GI-104 | pending | `/global-investing/guides/chess-vs-custodial-international` | 1 | Unique-to-AU angle; explains why Stake/Tiger are custodial and what that means for ownership. |
+| GI-105 | pending | `/global-investing/guides/ibkr-australia-setup` | 1 | Walkthrough — hardest broker to onboard, highest CPA. |
+| GI-111 | pending | `/global-investing/guides/direct-us-vs-asx-listed-equivalent` | 1 | THE bridge between Track A and Track B. Decision framework: when to buy VOO direct vs IVV on ASX. Cross-link to GI-122 calculator. |
+| GI-112 | pending | `/global-investing/guides/global-etf-vs-direct-us` | 1 | VGS vs VOO; very-high intent. |
+
+#### Wave 3 — Tax moat + calculators (the moat that competitors can't copy)
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| GI-80 | pending | `/global-investing/tax` sub-pillar | 1 | Mirrors `/foreign-investment/tax`. Outbound-side DTA framing, FITO, US-source income, foreign-asset CGT. |
+| GI-81 | pending | `/global-investing/tax/fito` | 1 | Foreign Income Tax Offset explainer + worked examples. Cross-link to GI-82 calculator. |
+| GI-82 | pending | `/global-investing/calculators/fito` | 2 | **Tax-agent review required before merge.** Reuse engine from `non-resident-dividend-calculator`; AUD-source income + foreign-source income + foreign tax paid → FITO + AU tax owed. Email-gate "save my results" → tax-specialist routing. |
+| GI-83 | pending | `/global-investing/tax/us-estate-tax` | 1 | The fear-driven advisor lead magnet. Explains 40% estate tax exposure on US-situs assets >US$60k for non-resident aliens. AUS-US treaty unified-credit interaction. Cross-link to GI-84. |
+| GI-84 | pending | `/global-investing/calculators/us-estate-tax-exposure` | 2 | **Tax-agent review required before merge.** Inputs: US securities held + spouse status + AU-resident status. Output: estimated estate tax + suggested mitigations (W-8BEN, AU-domiciled ETFs, structuring through AU LLC/trust). Email-gate → tax-specialist + estate-planning advisor routing. **Highest-LTV lead capture in the build.** |
+| GI-85 | pending | `/global-investing/tax/cgt-on-foreign-shares` | 1 | AUD reporting + FX-affected gains/losses; cost-base in AUD at acquisition; disposal in AUD at sale. Sharesight as solution. |
+| GI-86 | pending | `/global-investing/tax/w-8ben` | 1 | Form walkthrough; high search volume. Step-by-step screenshots with privacy-redacted example. |
+| GI-87 | pending | `/global-investing/tax/dta` | 1 | Outbound-side DTA table — when AU residents earn US/UK/HK/JP/SG/etc income, what withholding tax applies and how to claim FITO. Mirror of `DTASearchTable` from inbound side. |
+| GI-88 | pending | `/global-investing/tax/super-pension-transfer` | 1 | QROPS (UK→AU), US 401(k) for returning Aussies. **Compliance:** needs authorised QROPS advisor partnership OR explicit "factual information only" framing reviewed by tax counsel. |
+| GI-122 | pending | `/global-investing/calculators/direct-vs-asx-cost` | 2 | **The cross-track decision tool — biggest single lead-capture asset.** Inputs: ticker (e.g. VOO) + ASX equivalent (e.g. IVV) + holding period + amount. Output: total cost via Stake (FX + brokerage + custody + W-8BEN simplified) vs total cost via CommSec for IVV. Email-gate "save analysis" → broker affiliate links + tax-specialist route. |
+| GI-121 | pending | `/global-investing/calculators/fx-impact-on-returns` | 1 | Interactive AUD/USD scenario over investment horizon. Hedged vs unhedged outcome difference. |
+| GI-123 | pending | `/global-investing/calculators/total-cost-international-trade` | 1 | Extends existing root `/us-share-costs-calculator` with multi-broker comparison + FX provider option. |
+| GI-130 | pending | `/advisors/global-investing-specialists` advisor vertical | 1 | Mirror `/advisors/international-tax-specialists` pattern. Match users to AU-licensed advisors with foreign-asset/QROPS/US-tax specialty. |
+| GI-131 | pending | Wire calculator results → email-gate → tax-specialist routing | 1 | Reuse existing lead-routing infra; add `lead_source: 'global-investing-calculator'` taxonomy. |
+
+#### Wave 4 — Long-tail + completion
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| GI-10 | pending | `/global-investing/shares` sub-pillar page | 1 | Aggregator over country share pages. |
+| GI-11 | pending | `/global-investing/shares/uk` | 1 | LSE access for AU residents. IBKR + CMC International. |
+| GI-12 | pending | `/global-investing/shares/hong-kong` | 1 | HKEX, China A-shares via Stock Connect. |
+| GI-13 | pending | `/global-investing/shares/japan` | 1 | Topix, Nikkei. |
+| GI-14 | pending | `/global-investing/shares/singapore` | 1 | SGX. |
+| GI-15 | pending | `/global-investing/shares/europe` | 1 | Euronext consolidated. |
+| GI-16 | pending | `/global-investing/shares/new-zealand` | 1 | NZX — often forgotten, low competition. |
+| GI-17 | pending | `/global-investing/shares/[ticker]-from-australia` programmatic — top 50 tickers initial | 3-5 | Top 50 US tickers (Tesla, Apple, Nvidia, Amazon, Microsoft, Meta, Alphabet, Berkshire, JPM, V, etc.) per page: how to buy from AU + brokers that offer + FX considerations + tax. Generate via `generateStaticParams`. Expandable to top 200 over Q2. |
+| GI-40 | pending | `/global-investing/property` sub-pillar | 1 | Outbound foreign property. |
+| GI-41 | pending | `/global-investing/property/new-zealand` | 1 | |
+| GI-42 | pending | `/global-investing/property/united-states` | 1 | FL/TX retiree-investor angle. |
+| GI-43 | pending | `/global-investing/property/indonesia` | 1 | Bali leasehold; **higher compliance load** — explicit risk framing per `lib/compliance.ts` `general_advice` + property disclaimers. |
+| GI-44 | pending | `/global-investing/property/united-kingdom` | 1 | |
+| GI-45 | pending | `/global-investing/property/portugal` | 1 | Golden-Visa equivalent angle. |
+| GI-50 | pending | `/global-investing/currency` sub-pillar | 1 | FX hub. |
+| GI-51 | pending | `/global-investing/currency/best-fx-providers` | 1 | Wise vs OFX vs WorldFirst vs Revolut vs Airwallex. Affiliate-rich. |
+| GI-52 | pending | `/global-investing/currency/multi-currency-accounts` | 1 | |
+| GI-53 | pending | `/global-investing/currency/sending-money-overseas` | 1 | Mirror `/foreign-investment/send-money-australia` (the inbound counterpart). |
+| GI-60 | pending | `/global-investing/bonds` sub-pillar | 1 | |
+| GI-61 | pending | `/global-investing/bonds/us-treasuries` | 1 | High search when AUD weak. IBKR access path. |
+| GI-62 | pending | `/global-investing/bonds/global-bond-etfs` | 1 | AU-listed; consolidates `/etfs/bonds` global tilt. |
+| GI-70 | pending | `/global-investing/crypto` sub-pillar | 1 | Outbound crypto angle. |
+| GI-71 | pending | `/global-investing/crypto/global-exchanges` | 1 | Binance/Kraken/Bybit from AU. **Compliance:** AUSTRAC + crypto-warning. |
+| GI-72 | pending | `/global-investing/crypto/au-vs-global` | 1 | Independent Reserve vs Binance comparison. |
+| GI-90 | pending | `/global-investing/to/[country]` programmatic — 8 countries | 2-3 | Mirror `/foreign-investment/from/[country]`. Per country: best brokers for that market access, tax (DTA reference), key listings, programmatic page. Initial 8: us, uk, nz, jp, sg, hk, in, id. Expandable to 30. |
+| GI-100 | pending | `/global-investing/guides` index page | 1 | Aggregator. |
+| GI-106 | pending | `/global-investing/guides/how-to-fill-w-8ben` | 1 | Companion to GI-86. |
+| GI-107 | pending | `/global-investing/guides/us-estate-tax-australian-investors` | 1 | Long-form companion to GI-83. **Lead-magnet PDF version**. |
+| GI-108 | pending | `/global-investing/guides/fito-explained` | 1 | Companion to GI-81. |
+| GI-109 | pending | `/global-investing/guides/ato-foreign-shares-reporting` | 1 | |
+| GI-110 | pending | `/global-investing/guides/currency-conversion-fees-explained` | 1 | |
+| GI-120 | pending | `/global-investing/calculators` index page | 1 | Aggregator. |
+| GI-140 | pending | Newsletter cohort + push category for "global-investing" | 1 | Lever #6 + #10. Re-uses existing newsletter infra; adds `cohort: 'global-investing'`. |
+| GI-141 | pending | "AU investor's US-tax pack" PDF (lead magnet) | 1 | Lever #9. Gated PDF combining FITO + W-8BEN + US estate tax + CGT-on-foreign. Email capture → newsletter cohort. |
+
 ### Stream AA — Programmatic SEO machine (added 2026-04-27)
 
 Build N templates that consume Supabase data and ISR-render thousands of
