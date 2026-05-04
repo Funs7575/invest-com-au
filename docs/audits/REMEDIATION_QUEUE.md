@@ -28,7 +28,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | B | `claude/audit-remediation/b-08-rls-select-only` (#326) · `b-09a-otp-gate` (#348 draft, parallel-agent) | #326 MERGED 2026-05-01T13:19Z · #348 OPEN (DRAFT, awaiting `LISTING_OWNER_COOKIE_SECRET` env var) | last CI-rescue 2026-05-01T21:43Z (#348) | PR #220 merged (B-01..B-06 done/blocked/FP). B-07 done (`0097159` PR #286). B-08 done — code changes merged via PR #326 commit `476f89f6`. B-09 in-progress on `#348` (parallel-agent, draft). CI-rescue iter 1 (`09c4dfb`, 2026-05-01) merged main before PR #392 types regen — types drift still red. CI-rescue iter 2 (`7da8757e`, 2026-05-01T21:43Z) merged post-#392 main — picked up database.types.ts regen; CI re-run pending. Still DRAFT awaiting `LISTING_OWNER_COOKIE_SECRET` env var (Tier D). |
 | C | all PRs MERGED | #327/#349/#360/#394/#397 all MERGED | last merged 2026-05-02T16:13Z | C-01..C-08 done. C-03 MERGED (#360). C-04 done (#394). C-05 done (#394). C-05b MERGED (#349). C-DISC-20260501-01 MERGED (#397). **Stream C complete.** |
 | D | `claude/audit-remediation/d-route-tests` | #285 MERGED 2026-04-29T10:13Z; supplementary PRs #246/#285/#297/#298 | last merged 2026-04-29T18:53Z | D-01..D-09 done (PR #246). D-10 done (PR #246 — coverage ratchet). D-11 complete (43+ batches, all admin/cron/non-admin routes covered) — merged via PR #285 + supplementary PRs #297/#298. **Stream D complete.** |
-| E | `claude/audit-remediation/e-02-batch-5-zod-rollout` (#469) · `e-02-batch-*-zod-rollout` (#460) · `e-03-zod-lint-rule` (#313) | #295/#313/#315/#323/#406/#528 MERGED · #460/#469 OPEN | iter 252-cont CI-rescue — `460d085` (Zod v4 `$ZodIssue.path` typed as `PropertyKey[]` not `(string|number)[]`; explicit annotation in attribution/touch + track-event callbacks incompatible with Zod v4.3.6 type — removed annotations, let TS infer. `npx tsc --noEmit` clean; all 6540 tests pass. Stuck-detection Blocked entry resolved.) iter 252 CI-rescue — `6a262e2` (nps comment: Zod .max(2000) rejected long comments with 400 before insert). iter 250 CI-rescue — `ef7b95f` (fix ab-track field-specific error messages). | E-01 done (PR #295 — withValidatedBody helper). E-02 in-progress (batches 1+2 MERGED PR #315/#323; batch 3 MERGED PR #406; batch 4 open PR #460; batch 5 open PR #469). E-03 done (PR #313 — ESLint rule). E-04 in-progress (#528 MERGED 2026-05-04T14:42Z batch 1; batch 2 pending). |
+| E | `claude/audit-remediation/e-02-batch-5-zod-rollout` (#469) · `e-02-batch-*-zod-rollout` (#460) · `e-03-zod-lint-rule` (#313) · `e-04-batch-2-zod-backfill` (#557) | #295/#313/#315/#323/#406/#528 MERGED · #460/#469 OPEN · **#557 OPEN** | iter 263 — `aee5b06` (PR #557: E-04 batch 2 — answers/vote, community/posts/[id], community/threads/[id], admin/content/generate-draft, admin/content/calendar, admin/advisor-moderation); CI pending. iter 252-cont CI-rescue — `460d085`. | E-01 done (PR #295). E-02 in-progress (#460/#469). E-03 done (PR #313). E-04 in-progress (#528 MERGED batch 1; #557 OPEN batch 2). |
 | F | `claude/audit-remediation/f-07-json-ld-batch-1` (#527) | #293/#294/#301/#354/#355/#370 all MERGED · #527 OPEN | iter 243 CI-rescue — `4855030` (merge main: all 7 isFlagEnabled mocks; CI re-running). iter 237 — `19b3630` (F-07 batch 1). | F-01 false-positive. F-02 done (PR #293). F-03 done (PR #370). F-04 done (PR #354). F-05 done (PR #294+#301). F-06 done (PR #355). F-07 in-progress (#527 batch 1: 6/42 blocks migrated). F-08 pending. |
 | G | `claude/audit-remediation/g-03-batch-8-rollback-headers` (#520) | #307/#310/#311/#314/#316/#342/#352/#405/#455/#467 all MERGED · #520 OPEN | iter 229 — `52aee43` (PR #520: G-03 batch 8 — rollback headers for 15 remaining migrations; stream complete 208/208); CI pending | G-01+G-02 done (PR #307). **G-03 complete (208/208 covered)** — batches 1-7 (#311/#314/#316/#352/#405/#455/#467) all merged; batch 8 (#520) covers the final 15 files. G-04 done (PR #310 + #342). G-04-FINDING-1..5 pending founder authorization. |
 | H | _not started_ | — | — | — |
@@ -41,7 +41,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | N | `claude/audit-remediation/n-ux-perf` | #242 MERGED | last merged 2026-04-28 | N-01+N-02 done (`2ec6f89`) · N-03a/b/c done · N-04/N-05 FP · N-06 blocked (deferred-post-launch by founder 2026-05-01 — option 4 chosen) · N-07/N-08/N-09/N-10/N-11 done — **stream complete** (N-06 deferred). |
 | O | all PRs MERGED | #235/#237/#239/#299/#300/#366/#395/#408 all MERGED | last merged 2026-05-02T16:14Z | O-01..O-03 done. O-04 blocked (Stripe live validation). O-05 MERGED (#408). |
 | P | `claude/audit-remediation/p-01-sentry-v10-upgrade` (#468) | — | iter 212 — `331b98e` (PR #468: P-01 — @sentry/nextjs v9.47.1 → v10.51.0; clears 5 Sentry audit findings; removes `as any` cast in next.config.ts); CI success. | P-01 in-progress (PR #468). P-02 (Stripe SDK v17→v22) BLOCKED — requires npm install + local test run to verify webhook type compatibility across 5 major versions; not tractable on Hardware-exception sandbox. Needs a session with full node_modules. |
-| Q | `claude/audit-remediation/q-02-05-recovery-runbooks` (#525) · `q-06-09-runbooks` (#547) · `q-10-12-runbooks` (#549) | #525 OPEN · #547 OPEN · #549 OPEN | iter 260 — `925b2d4` (PR #549: Q-10 acl-revocation, Q-11 dsar, Q-12 secret-rotation-log; Q-SOC2-02..11 verified done — all files exist in docs/compliance/). iter 259 — `c684960` (PR #547: Q-06..Q-09). iter 235 — `8cd2725` (Q-02..Q-05). | Q-01 needs-user (PITR drill). Q-02..Q-05 in-progress (#525). Q-06..Q-09 in-progress (#547). Q-10..Q-12 in-progress (#549). Q-SOC2-02..11 done (verified iter 260). Q-13..Q-15 pending. |
+| Q | `claude/audit-remediation/q-02-05-recovery-runbooks` (#525) · `q-06-09-runbooks` (#547) · `q-10-12-runbooks` (#549) · `q-13-14-secret-rotation-dpa` (#554) | #525 OPEN · #547 OPEN · #549 OPEN · **#554 OPEN** | iter 264 CI-rescue — `0d2877b` (PR #554: fix s.envVar→s.name TS2339; CI re-running). iter 263 — `93c9748` (PR #554: Q-13 secret-rotation-check cron + Q-14 vendor DPA tracker). iter 260 — `925b2d4` (PR #549). iter 259 — `c684960` (PR #547). iter 235 — `8cd2725` (Q-02..Q-05). | Q-01 needs-user (PITR drill). Q-02..Q-05 in-progress (#525). Q-06..Q-09 in-progress (#547). Q-10..Q-12 in-progress (#549). Q-SOC2-02..11 done (verified iter 260). **Q-13+Q-14 in-progress (#554)**. Q-15 pending. |
 | R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · ... · `r-coverage-01-listing-routes` (#521) · `r-coverage-02-stripe-lib` (#526) · `r-coverage-03-quotes` (#530) · `r-coverage-11-quote-review` (#551) | #290/#396/#459 all MERGED · #466/#471/#472/#473/#510/#511/#513/#514/#515/#516/#517/#519/#521/#526/#530/#551 OPEN | iter 261 forward — `83c763e` (PR #551: R-COVERAGE-11 quotes/[slug]/review — 17 tests, HMAC token auth, rate limit, 12 error paths). iter 255 forward — `1a3c24d` (PR #530: R-COVERAGE-03 quotes/[slug]/accept + reopen, 26 tests). iter 253 CI-rescue — `a29318f` (PR #526). iter 251 CI-rescue — `126eb8ac` (PR #521). | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459). R-04..R-11 in-progress. R-COVERAGE-01 in-progress (#521). R-COVERAGE-02 in-progress (#526). R-COVERAGE-03 in-flight (#530). R-COVERAGE-11 in-flight (#551). |
 | S | _not started_ | — | — | — |
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
@@ -738,7 +738,7 @@ Highest priority: critical 2 first.
 | E-01 | done | Author `lib/validation/withValidatedBody.ts` helper + tests | 1 | Done in PR #295. Pattern: `withValidatedBody(schema, async (req, body) => {...})`. |
 | E-02 | in-progress | Convert top-20 highest-traffic routes to Zod (overlap with D-01..D-09) | ~5 | Batch 1 done (PR #315 — 4 top-traffic routes). Batch 2 done (PR #323 — 4 routes). Batch 3 done (PR #406 — routes other than vote/posts/impression/notify). Batch 4 in-progress (PR #460 — questions, shortlist, referrals, community/threads). Batch 5 in-progress (PR #469 — community/vote, community/posts, marketplace/impression, marketplace/notify). 20/20 routes addressed after #460+#469 merge; E-02 complete on merge. |
 | E-03 | done | ESLint rule: flag new `await req.json()` without immediate `.parse()`/`.safeParse()` | 1 | Done in PR #313 (`invest/no-unvalidated-req-json`). lint-staged `--max-warnings 0` upgrades to commit blocker. Stream I overlap (I-04). |
-| E-04 | in-progress | Backfill remaining unvalidated routes (chunked: ~6 per iteration) | ~34 | Batch 1 MERGED (PR #528 2026-05-04T14:42Z): admin/revalidate, community/moderate, marketplace/register, report-leads, review-incentive, verify-professional. 6/25 flagged routes migrated. Batch 2 pending. |
+| E-04 | in-progress | Backfill remaining unvalidated routes (chunked: ~6 per iteration) | ~34 | Batch 1 MERGED (PR #528 2026-05-04T14:42Z): admin/revalidate, community/moderate, marketplace/register, report-leads, review-incentive, verify-professional. Batch 2 in-progress (PR #557): answers/[id]/vote, community/posts/[id], community/threads/[id], admin/content/generate-draft, admin/content/calendar, admin/advisor-moderation. 12/~25 flagged routes migrated. Batch 3 pending (~9 routes remaining: admin/advisor-moderation, admin/review-moderation, admin/foreign-investment/*, admin/ai-chat, advertise/create-checkout, quiz/submit, developer-leads, affiliate/click). |
 
 ### Stream G — Migration hygiene
 
@@ -935,8 +935,8 @@ Beyond Stream B's RLS-enable work; addresses policy completeness, FK indexes, se
 | Q-10 | in-progress | Author `docs/runbooks/acl-revocation.md` — ACL/AFSL revocation incident | 1 | P1. Done in PR #549 (`925b2d4`). |
 | Q-11 | in-progress | Author `docs/runbooks/dsar.md` — Data Subject Access Request handling | 1 | P2. Done in PR #549 (`925b2d4`). |
 | Q-12 | in-progress | Create `docs/runbooks/secret-rotation-log.md` — audit trail file referenced by `secret-rotation.md` but never created | 1 | P2. Done in PR #549 (`925b2d4`). |
-| Q-13 | pending | Add cron `/api/cron/check-secret-rotation` — alert when any secret approaches its rotation window | 1 | P2. |
-| Q-14 | pending | Vendor DPA tracker doc: list 8 vendors (Supabase, Stripe, Resend, Vercel, PostHog, Sentry, n8n, Anthropic), DPA status, contact | 1 | P2. |
+| Q-13 | in-progress | Add cron `/api/cron/check-secret-rotation` — alert when any secret approaches its rotation window | 1 | P2. PR #554. |
+| Q-14 | in-progress | Vendor DPA tracker doc: list 8 vendors (Supabase, Stripe, Resend, Vercel, PostHog, Sentry, n8n, Anthropic), DPA status, contact | 1 | P2. PR #554. |
 | Q-15 | pending | Public `/privacy/data-collection` page — what data we collect, retention windows, contact for requests | 1 | P2. APP-1 transparency. |
 | Q-SOC2-01 | needs-user | SOC 2 readiness vendor selection memo — compare Vanta / Drata / Secureframe / Tugboat Logic. Recommend one with cost, time-to-Type-II, integration depth (Vercel, Supabase, Sentry, Stripe). | — | **P1.** Founder action. Required before any policy work has a target framework to map to. ~2h reading + 1h calls. |
 | Q-SOC2-02 | done | Trust Services Criteria coverage matrix — `docs/compliance/soc2-tsc-coverage.md`. | 2 | **P1.** File verified present in `docs/compliance/` (iter 260). |
@@ -1837,6 +1837,16 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 
 ## Iteration log (most recent at top)
 
+### 2026-05-04 — CI-RESCUE iter 264 (stream Q — PR #554 fix s.envVar→s.name TS2339)
+
+- Phase 0: Lock held (batch fire, iteration 1 of up to 5).
+- Phase 1: main synced; local main reset to origin/main (local had unrelated diverged history — no common ancestor).
+- Phase 1.5/1.7: Skipped (no recent schema migration; main CI status not checked — proceeding to Phase 2).
+- Phase 2: PR #554 (Q stream) — `Lint · Type-check · Test · Build` FAILURE + `Preview smoke test` FAILURE + `Bundle size diff vs base` FAILURE. Root cause: `route.ts` line 134 references `s.envVar` where `s` is `SecretStatus` (which has no `envVar` field — only `SecretSpec` does). TypeScript TS2339 causes the build to fail; the preview smoke test and bundle diff fail downstream because the Vercel build fails. Fix: replace `s.envVar` with `s.name` — in all 7 SECRETS entries `name === envVar` ("CRON_SECRET", "INTERNAL_API_KEY", etc.), so output is identical. Tests: 10/10 pass; lint clean.
+- Phase 6: Commit `0d2877b`, pushed `claude/audit-remediation/q-13-14-secret-rotation-dpa`. Diff: +1/-1 across 1 file.
+- Phase 7: Q in-flight row updated, this log entry. Queue update committed to main.
+- STATUS: CI-RESCUE · stream=Q · pr=#554 · commit=0d2877b
+
 ### 2026-05-04 — CI-RESCUE iter 259 (stream KK — edge-compatible PostHog capture in submit-lead)
 
 - Phase 0: Lock held (batch fire, continuation from prior context).
@@ -1875,6 +1885,41 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 - Phase 6: Merged main (queue-only), committed `a29318f`, pushed to `claude/audit-remediation/r-coverage-02-stripe-lib`.
 - Phase 7: Queue updated on main (this entry).
 - STATUS: CI-RESCUE · stream=R · pr=#526 · commit=a29318f
+
+### 2026-05-04 — Forward progress iter 263 (stream Q — Q-13+Q-14: secret rotation check cron + vendor DPA tracker)
+
+- Phase 0: Lock held (batch fire, iter 5 of up to 5 — final iteration).
+- Phase 1: main synced (fast-forward; picked up HomeHero changes + queue updates).
+- Phase 2: PRs #545/#548/#550/#552 CI — all in-progress or success at last check. No failures requiring rescue.
+- Phase 3: Q stream next pending items: Q-13 (secret rotation cron) + Q-14 (vendor DPA tracker). Picked both as paired (same branch, complementary compliance items). Branch `claude/audit-remediation/q-13-14-secret-rotation-dpa` created from main.
+- Phase 4: verified Q-13 — no existing route at `/api/cron/check-secret-rotation`; `docs/runbooks/secret-rotation.md` exists with rotation schedule (90/180/365 day windows); `sendEmail()` from `lib/resend.ts` is the correct send path. Verified Q-14 — `docs/compliance/` exists with vendor-management.md as a starting point; no DPA-specific tracker present.
+- Phase 5: (1) `app/api/cron/check-secret-rotation/route.ts` — requireCronAuth gate, 7 SECRETS defined with rotation windows, `checkSecret()` reads `{envVar}_ROTATED_AT` env vars, status = ok/due-soon/overdue/untracked, GET handler emails `OPS_ALERT_EMAIL || ADMIN_EMAIL` when any secret needs action. No email when all within window. (2) `lib/cron-groups.ts` — added route to `weekly-mon-9` dispatch group (Mon 09:00 UTC). (3) `docs/compliance/vendor-dpa-tracker.md` — 8 vendors documented with DPA status, SCCs, certifications, action items: Resend DPA unsigned (email legal@resend.com), n8n deployment mode unclear, Anthropic PII-in-prompts audit needed. (4) `__tests__/api/cron-secret-rotation.test.ts` — 9 tests covering all status branches + email routing.
+- Phase 6: Committed `93c9748`, pushed branch, opened PR #554. Hardware exception: no vitest installed; CI is authoritative.
+- Phase 6.5: No adjacent issues found in touched files (cron-groups.ts is a config-only file; vendor-dpa-tracker.md is new).
+- Phase 7: Queue updated on main (this entry). Q-13+Q-14 → in-progress. Q stream in-flight row updated with #554.
+- STATUS: PROGRESS · stream=Q · item=Q-13+Q-14 · pr=#554 · commit=93c9748
+- Diff: 4 files changed, 520 insertions(+), 1 deletion(−)
+- Batch complete (5/5 iterations). Lock released via EXIT trap.
+
+### 2026-05-04 — Forward progress iter 263 (stream E — E-04 batch 2: Zod validation on 6 community + admin-content routes)
+
+- Phase 0: Lock acquired (batch fire, iter 1 of up to 5). No LOOP_PAUSE.
+- Phase 1: main synced (reset --hard to origin/main at `0a07b94`; 50-commit divergence from prior session resolved).
+- Phase 1.5: Skipped — no recent migration commits, no Supabase types drift CI failures on in-flight PRs.
+- Phase 1.7: Main CI: latest check on PR #527 shows full CI green (2026-05-04T00:09:42Z). Main is healthy.
+- Phase 2: CI audit across in-flight PRs. PRs #552/#550/#548 (A stream): Vercel Preview only — no full CI run yet, no failures. PRs #527/#530 (F/R): full CI green. PR #472 (R-06): full CI green. PR #473 (R-07): full CI green. No CI rescue needed.
+- Phase 3: Priority order step 12 (A): A-05 batches 1-3 done in PRs #451/#452/#453; "broker portal ab_tests gap" is a discovery note not a queue item — A-05 effectively complete pending queue groomin. Steps 13-16 (O/KK/P/R): O-04 blocked, KK complete, P-01 in-flight, R items all have open PRs. Step 17 (E): E-04 batch 2 pending. Picked E-04 batch 2.
+- Phase 4: Verification gate: test-only/code change. All 6 routes have existing test coverage. Error message strings verified to match test assertions. Edge-runtime routes (generate-draft, calendar) confirmed: Zod is pure JS, edge-compatible.
+- Phase 5: Migrated 6 routes — answers/[id]/vote (VoteBody z.union literal), community/posts/[id] PATCH (PatchBody trim+min+max), community/threads/[id] PATCH (PatchBody + refine at-least-one-field), admin/content/generate-draft (GenerateDraftBody calendarId int+positive), admin/content/calendar POST+PATCH+DELETE (CalendarCreateBody/CalendarIdBody), admin/advisor-moderation PATCH (ModerateBody ids-array + action enum). +77/-48 across 6 files.
+- Phase 6: Committed `aee5b06`, pushed branch, opened PR #557. auto-merge-safe (code-only, tests preserved).
+- Phase 6.5: Discovery sweep — `admin/content/batch-generate` has no req.json() calls; `community/posts/route.ts` already has Zod. No new items.
+- Phase 7: Queue updated — E in-flight row updated, E-04 item updated (batch 2 in-progress), this log entry.
+
+- STATUS: PROGRESS · stream=E · item=E-04 (batch 2 of ~4) · pr=#557
+- Branch: claude/audit-remediation/e-04-batch-2-zod-backfill
+- Commit: aee5b06 · Diff: +77 -48 across 6 files
+- Next item: E-04 batch 3 (~9 routes remaining) or Q-13/Q-14 (step 18)
+- Remaining: ~30+ pending · several blocked · 190+ done
 
 ### 2026-05-04 — Forward progress iter 262 (stream A — A-DISC-20260504-01+02: fix silent broker_notifications inserts in intelligence + support)
 
