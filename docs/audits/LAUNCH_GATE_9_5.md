@@ -9,6 +9,26 @@ this number.
 
 ---
 
+## Critical section — open security/auth items (highest priority)
+
+Tracked here at the top so cycle-by-cycle progress is visible. Each
+PR cycle updates this section first: marks items green when fixed,
+adds new items as Codex review or audit scripts surface them.
+
+| Item | Severity | File | Status |
+|---|---|---|---|
+| `run-migration` ad-hoc auth + mixed-secret fallback | P1 | `app/api/admin/run-migration/route.ts` | ✅ fixed in PR (this cycle) — switched to `requireCronAuth`, removed `INTERNAL_API_KEY` fallback. |
+| `marketplace/notify` accepts service-role key as bearer | P0 | `app/api/marketplace/notify/route.ts:33` | 🔴 open — filed as `A-91` in queue. Service-role-as-auth-token is a critical anti-pattern (see `CLAUDE.md` admin-client allowed-scope). |
+| `marketplace/campaigns` UI sends literal `"browser-admin"` as `x-internal-key` | P1 | `app/admin/marketplace/campaigns/page.tsx:131` | 🔴 open — filed as `A-92`. Caller is broken (env vars never equal that literal) AND attempts client-side auth bypass. |
+| Open-coded `Bearer ${CRON_SECRET}` checks across `app/api/admin/*` (drift from `requireCronAuth`) | P2 | 6+ files | 🟡 open — filed as `A-93` in queue. Per-file PRs to migrate. |
+| `quotes/[slug]/review`, `analytics-dashboard`, `verify-professional` open-coded auth | P2 | 3 files | 🟡 open — filed as `A-94`. |
+
+Re-checked every cycle. Items move to ✅ when the fix lands on `main`.
+New items append below; do not delete fixed items — they're audit
+trail for the launch-gate review.
+
+---
+
 ## Gating criteria
 
 ### Quality
