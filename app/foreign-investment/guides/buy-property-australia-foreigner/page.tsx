@@ -5,6 +5,10 @@ import { FIRB_FEES, STATE_SURCHARGES } from "@/lib/firb-data";
 import { FIRB_DISCLAIMER } from "@/lib/compliance";
 import SectionHeading from "@/components/SectionHeading";
 import ComplianceFooter from "@/components/ComplianceFooter";
+import AdvisorPrompt from "@/components/AdvisorPrompt";
+import { createClient } from "@/lib/supabase/server";
+import { getAffiliateLink, AFFILIATE_REL, renderStars } from "@/lib/tracking";
+import type { Broker } from "@/lib/types";
 
 export const metadata: Metadata = {
   title: "How to Buy Property in Australia as a Foreigner (2026 Guide)",
@@ -28,6 +32,21 @@ export const metadata: Metadata = {
 };
 
 export const revalidate = 86400;
+
+export default async function BuyPropertyAustralieForeignerPage() {
+  const supabase = await createClient();
+  const { data: fxProviders } = await supabase
+    .from("brokers")
+    .select("id, name, slug, color, affiliate_url, rating, tagline, cta_text, benefit_cta")
+    .eq("platform_type", "fx_provider")
+    .eq("status", "active")
+    .order("rating", { ascending: false })
+    .limit(3);
+
+  return <BuyPropertyAustralieForeignerPageInner fxProviders={fxProviders} />;
+}
+
+type FxProvider = Pick<Broker, "id" | "name" | "slug" | "color" | "affiliate_url" | "rating" | "tagline" | "cta_text" | "benefit_cta">;
 
 const STEPS = [
   {
@@ -116,7 +135,7 @@ const FAQS = [
   },
 ];
 
-export default function BuyPropertyAustralieForeignerPage() {
+function BuyPropertyAustralieForeignerPageInner({ fxProviders }: { fxProviders: FxProvider[] | null }) {
   return (
     <div className="bg-white min-h-screen">
       <script
@@ -430,6 +449,49 @@ export default function BuyPropertyAustralieForeignerPage() {
             ))}
           </div>
         </section>
+
+        {/* ── Advisor CTAs ── */}
+        <AdvisorPrompt
+          type="property_advisor"
+          heading="Find a buyer's agent who specialises in foreign purchases"
+        />
+
+        <AdvisorPrompt
+          type="mortgage_broker"
+          heading="Non-resident investment loan"
+        />
+
+        {/* ── FX mini-strip ── */}
+        {fxProviders && fxProviders.length > 0 && (
+          <section className="bg-slate-50 border border-slate-200 rounded-2xl p-6 space-y-4">
+            <div>
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">FX Providers</p>
+              <h2 className="text-lg font-bold text-slate-900">Transfer your deposit to Australia</h2>
+              <p className="text-sm text-slate-500 mt-1">Use a specialist FX provider — not your bank — to transfer your deposit. Savings of 1–3% on $500K = $5,000–15,000.</p>
+            </div>
+            <div className="grid sm:grid-cols-3 gap-3">
+              {fxProviders.map((b) => (
+                <div key={b.slug} className="bg-white rounded-xl border border-slate-200 p-4 flex flex-col gap-3">
+                  <div>
+                    <p className="font-bold text-slate-900 text-sm">{b.name}</p>
+                    <p className="text-xs text-amber-500">{renderStars(Number(b.rating ?? 0))}</p>
+                    <p className="text-xs text-slate-500 mt-1 line-clamp-2">{b.tagline}</p>
+                  </div>
+                  <div className="mt-auto">
+                    <a
+                      href={getAffiliateLink(b as Broker)}
+                      rel={AFFILIATE_REL}
+                      target="_blank"
+                      className="block text-center w-full px-3 py-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold text-xs rounded-lg transition-colors"
+                    >
+                      {b.cta_text ?? "Learn More →"}
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* ── Disclaimer ── */}
         <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
