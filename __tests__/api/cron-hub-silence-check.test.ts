@@ -43,7 +43,7 @@ vi.mock("@/lib/supabase/admin", () => ({
   }),
 }));
 
-const fetchMock = vi.fn(() => Promise.resolve(new Response("{}", { status: 200 })));
+const fetchMock = vi.fn<typeof fetch>(() => Promise.resolve(new Response("{}", { status: 200 })));
 vi.stubGlobal("fetch", fetchMock);
 
 // ── Constants ─────────────────────────────────────────────────────────────────
