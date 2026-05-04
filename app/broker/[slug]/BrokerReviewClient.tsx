@@ -23,6 +23,7 @@ import {
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import RecentlyViewed, { trackView } from "@/components/RecentlyViewed";
 import StickyCTABar from "@/components/StickyCTABar";
+import BrokerStickyRightRail from "@/components/BrokerStickyRightRail";
 import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
 import FeeVerifiedPill from "@/components/FeeVerifiedPill";
 import CountUp from "@/components/CountUp";
@@ -1189,6 +1190,7 @@ export default function BrokerReviewClient({
       </div>
 
       <StickyCTABar broker={b} detail={stickyDetail} context="review" />
+      <BrokerStickyRightRail broker={b} context="review" />
     </div>
   );
 }
