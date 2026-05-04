@@ -41,7 +41,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | N | `claude/audit-remediation/n-ux-perf` | #242 MERGED | last merged 2026-04-28 | N-01+N-02 done (`2ec6f89`) · N-03a/b/c done · N-04/N-05 FP · N-06 blocked (deferred-post-launch by founder 2026-05-01 — option 4 chosen) · N-07/N-08/N-09/N-10/N-11 done — **stream complete** (N-06 deferred). |
 | O | all PRs MERGED | #235/#237/#239/#299/#300/#366/#395/#408 all MERGED | last merged 2026-05-02T16:14Z | O-01..O-03 done. O-04 blocked (Stripe live validation). O-05 MERGED (#408). |
 | P | `claude/audit-remediation/p-01-sentry-v10-upgrade` (#468) | — | iter 212 — `331b98e` (PR #468: P-01 — @sentry/nextjs v9.47.1 → v10.51.0; clears 5 Sentry audit findings; removes `as any` cast in next.config.ts); CI success. | P-01 in-progress (PR #468). P-02 (Stripe SDK v17→v22) BLOCKED — requires npm install + local test run to verify webhook type compatibility across 5 major versions; not tractable on Hardware-exception sandbox. Needs a session with full node_modules. |
-| Q | `claude/audit-remediation/q-02-05-recovery-runbooks` | #525 OPEN | iter 243 CI-rescue — `1e33bab` (concurrent: complete 5-file isFlagEnabled mock; CI re-running). iter 242 — `d980bf3` (cherry-pick `9c74087`). iter 235 — `8cd2725` (Q-02..Q-05). | Q-01 needs-user (PITR drill). Q-02..Q-05 in-progress (#525). Q-06..Q-15 pending. |
+| Q | `claude/audit-remediation/q-02-05-recovery-runbooks` (#525) · `q-06-09-runbooks` (#547) | #525 OPEN · #547 OPEN | iter 259 — `c684960` (PR #547: Q-06 read-replica-failure, Q-07 stripe-webhook-backlog, Q-08 regulatory-data-request, Q-09 security-breach-git). iter 243 CI-rescue — `1e33bab` (concurrent: complete 5-file isFlagEnabled mock; CI re-running). iter 235 — `8cd2725` (Q-02..Q-05). | Q-01 needs-user (PITR drill). Q-02..Q-05 in-progress (#525). Q-06..Q-09 in-progress (#547). Q-10..Q-15 pending. |
 | R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · ... · `r-coverage-01-listing-routes` (#521) · `r-coverage-02-stripe-lib` (#526) · `r-coverage-03-quotes` (#530) | #290/#396/#459 all MERGED · #466/#471/#472/#473/#510/#511/#513/#514/#515/#516/#517/#519/#521/#526/#530 OPEN | iter 255 forward — `1a3c24d` (PR #530: R-COVERAGE-03 quotes/[slug]/accept + reopen route, 26 tests, 13+13). iter 253 CI-rescue — `a29318f` (PR #526: upsert-subscription "older event" test was using yesterday's current_period_start as stripeEventTime proxy, causing skip guard to fire; pass recent start instead). iter 251 CI-rescue — `126eb8ac` (PR #521). | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459). R-04..R-11 in-progress. R-COVERAGE-01 in-progress (#521, CI rescue landed). R-COVERAGE-02 in-progress (#526, CI rescue landed `a29318f`). R-COVERAGE-03 in-flight (#530). |
 | S | _not started_ | — | — | — |
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
@@ -927,10 +927,10 @@ Beyond Stream B's RLS-enable work; addresses policy completeness, FK indexes, se
 | Q-03 | in-progress | Author `docs/runbooks/stripe-account-recovery.md` — MFA reset, API key re-issue, domain verification | 1 | P1. Done in PR #525 (`8cd2725`). |
 | Q-04 | in-progress | Author `docs/runbooks/resend-account-recovery.md` — domain re-verification, audience export | 1 | P1. Done in PR #525 (`8cd2725`). |
 | Q-05 | in-progress | Author `docs/runbooks/vercel-team-recovery.md` — SSO break, owner change, billing-locked recovery | 1 | P1. Done in PR #525 (`8cd2725`). |
-| Q-06 | pending | Author `docs/runbooks/read-replica-failure.md` | 1 | P1. |
-| Q-07 | pending | Author `docs/runbooks/stripe-webhook-backlog.md` — manual replay, compensation logic | 1 | P1. |
-| Q-08 | pending | Author `docs/runbooks/regulatory-data-request.md` — ASIC / OAIC subject-access escalation path | 1 | P1. |
-| Q-09 | pending | Author `docs/runbooks/security-breach-git.md` — leaked credential incident response | 1 | P1. |
+| Q-06 | in-progress | Author `docs/runbooks/read-replica-failure.md` | 1 | P1. Done in PR #547 (`c684960`). |
+| Q-07 | in-progress | Author `docs/runbooks/stripe-webhook-backlog.md` — manual replay, compensation logic | 1 | P1. Done in PR #547 (`c684960`). |
+| Q-08 | in-progress | Author `docs/runbooks/regulatory-data-request.md` — ASIC / OAIC subject-access escalation path | 1 | P1. Done in PR #547 (`c684960`). |
+| Q-09 | in-progress | Author `docs/runbooks/security-breach-git.md` — leaked credential incident response | 1 | P1. Done in PR #547 (`c684960`). |
 | Q-10 | pending | Author `docs/runbooks/acl-revocation.md` — ACL/AFSL revocation incident | 1 | P1. |
 | Q-11 | pending | Author `docs/runbooks/dsar.md` — Data Subject Access Request handling | 1 | P2. |
 | Q-12 | pending | Create `docs/runbooks/secret-rotation-log.md` — audit trail file referenced by `secret-rotation.md` but never created | 1 | P2. |
@@ -1883,6 +1883,17 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 - Commit: acd61c4
 - Diff: 4 files changed, 274 insertions(+), 37 deletions(−)
 - Next: A-93 (requireCronAuth migration for 6 open-coded CRON_SECRET routes)
+
+### 2026-05-04 — Forward progress iter 259 (stream Q — Q-06..Q-09: four P1 DR/SOC2 runbooks)
+
+- Phase 0: Lock held (batch fire). No LOOP_PAUSE.
+- Phase 1: main synced (HomeHero component changes from another merged PR; fast-forward).
+- Phase 2: CI rescue check — KK #524 CI in_progress (fresh merge from iter 258). F #527 CI green. R-COVERAGE-03 #530 CI green. E #528, G #520, Q #525, W #529, R-COVERAGE-02 #526, AUDIT-SWEEP #518 all showing only Vercel preview checks (bypass applied or CI from prior pushes still valid). No rescues needed.
+- Phase 3: R (slot 16) — R-07 already has a test file (`__tests__/lib/chatbot.test.ts`) so it's in-progress; R-COVERAGE-11 is undetermined. Q (slot 18) — Q-06..09 are P1 runbooks, well-defined, no deps. Picked Q-06..09 as a batch.
+- Phase 4: Wrote four runbooks: read-replica-failure.md (Supabase lag/unreachable/pgBouncer), stripe-webhook-backlog.md (Stripe CLI replay, 72h window, compensation SQL), regulatory-data-request.md (ASIC/OAIC/ATO legal hold + extraction queries), security-breach-git.md (rotation table, BFG history rewrite, breach escalation). Matched existing runbook format.
+- Phase 6: Committed `c684960`, pushed to `claude/audit-remediation/q-06-09-runbooks`. PR #547 created (draft).
+- Phase 7: Queue updated — Q in-flight row updated, Q-06..09 marked in-progress, iter 259 log added.
+- STATUS: PROGRESS · stream=Q · items=Q-06..Q-09 · pr=#547 · commit=c684960 · diff=+518 -0 (4 files)
 
 ### 2026-05-04 — CI-RESCUE iter 258 (stream KK — PR #524 merge-conflict in cron-groups.ts)
 
