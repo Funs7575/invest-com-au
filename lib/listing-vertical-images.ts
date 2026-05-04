@@ -140,6 +140,12 @@ const VERTICAL_IMAGES: Record<string, ReadonlyArray<string>> = {
     "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=1200&h=675&q=80&auto=format&fit=crop",
     "https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=1200&h=675&q=80&auto=format&fit=crop",
   ],
+  pre_ipo: [
+    "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=1200&h=675&q=80&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1200&h=675&q=80&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1551836022-deb4988cc6c0?w=1200&h=675&q=80&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1444653614773-995cb1ef9efa?w=1200&h=675&q=80&auto=format&fit=crop",
+  ],
 };
 
 const GENERIC_FALLBACK_POOL: ReadonlyArray<string> = [

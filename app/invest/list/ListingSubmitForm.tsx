@@ -15,6 +15,7 @@ const VERTICALS = [
   { value: "franchise", label: "Franchise Opportunity", icon: "🏪", desc: "Territory or franchise resale" },
   { value: "fund", label: "Investment Fund", icon: "📈", desc: "Managed fund or investment scheme" },
   { value: "startup", label: "Startup / Venture", icon: "🚀", desc: "Equity crowdfunding or angel raise" },
+  { value: "pre_ipo", label: "Pre-IPO (Wholesale)", icon: "🏛️", desc: "Late-stage private placement — sophisticated investors only (s708)" },
 ];
 
 const STATES = [
@@ -354,6 +355,7 @@ export default function ListingSubmitForm() {
                 form.vertical === "mining" ? "e.g. WA Lithium Tenement — 380ha, Pilbara" :
                 form.vertical === "farmland" ? "e.g. 1,200ha Grazing Property, Dubbo NSW" :
                 form.vertical === "energy" ? "e.g. 28 MW Solar Farm Development — QLD, Approved" :
+                form.vertical === "pre_ipo" ? "e.g. Series D Pre-IPO Round — Australian Fintech, $50M Raise" :
                 "Descriptive title for your listing"
               }
               className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent"
