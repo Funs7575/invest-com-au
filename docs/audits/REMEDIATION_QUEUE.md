@@ -28,7 +28,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | B | `claude/audit-remediation/b-08-rls-select-only` (#326) · `b-09a-otp-gate` (#348 draft, parallel-agent) | #326 MERGED 2026-05-01T13:19Z · #348 OPEN (DRAFT, awaiting `LISTING_OWNER_COOKIE_SECRET` env var) | last CI-rescue 2026-05-01T21:43Z (#348) | PR #220 merged (B-01..B-06 done/blocked/FP). B-07 done (`0097159` PR #286). B-08 done — code changes merged via PR #326 commit `476f89f6`. B-09 in-progress on `#348` (parallel-agent, draft). CI-rescue iter 1 (`09c4dfb`, 2026-05-01) merged main before PR #392 types regen — types drift still red. CI-rescue iter 2 (`7da8757e`, 2026-05-01T21:43Z) merged post-#392 main — picked up database.types.ts regen; CI re-run pending. Still DRAFT awaiting `LISTING_OWNER_COOKIE_SECRET` env var (Tier D). |
 | C | all PRs MERGED | #327/#349/#360/#394/#397 all MERGED | last merged 2026-05-02T16:13Z | C-01..C-08 done. C-03 MERGED (#360). C-04 done (#394). C-05 done (#394). C-05b MERGED (#349). C-DISC-20260501-01 MERGED (#397). **Stream C complete.** |
 | D | `claude/audit-remediation/d-route-tests` | #285 MERGED 2026-04-29T10:13Z; supplementary PRs #246/#285/#297/#298 | last merged 2026-04-29T18:53Z | D-01..D-09 done (PR #246). D-10 done (PR #246 — coverage ratchet). D-11 complete (43+ batches, all admin/cron/non-admin routes covered) — merged via PR #285 + supplementary PRs #297/#298. **Stream D complete.** |
-| E | `claude/audit-remediation/e-02-batch-5-zod-rollout` (#469) · `e-02-batch-*-zod-rollout` (#460) · `e-03-zod-lint-rule` (#313) · `e-04-batch-2-zod-backfill` (#557) | #295/#313/#315/#323/#406/#528 MERGED · #460/#469 OPEN · **#557 OPEN** | iter 265 CI-rescue — `6e26be6` (PR #557: body→rawBody fix in calendar POST + merge main; CI re-running). iter 263 — `aee5b06` (PR #557: E-04 batch 2 — 6 community+admin-content routes); CI pending. iter 252-cont CI-rescue — `460d085`. | E-01 done (PR #295). E-02 in-progress (#460/#469). E-03 done (PR #313). E-04 in-progress (#528 MERGED batch 1; #557 OPEN batch 2). |
+| E | `claude/audit-remediation/e-02-batch-5-zod-rollout` (#469) · `e-02-batch-*-zod-rollout` (#460) · `e-03-zod-lint-rule` (#313) · `e-04-batch-2-zod-backfill` (#557) · `e-04-batch-3-zod-backfill` (#560) | #295/#313/#315/#323/#406/#528 MERGED · #460/#469 OPEN · **#557/#560 OPEN** | iter 266 — `d823fda` (PR #560: E-04 batch 3 — review-moderation, fi/seed, fi/verify, fi/update, fi/revalidate, advertise/create-checkout); CI pending. iter 265 CI-rescue — `6e26be6` (PR #557: body→rawBody fix in calendar POST + merge main; CI re-running). iter 263 — `aee5b06` (PR #557: E-04 batch 2); CI pending. iter 252-cont CI-rescue — `460d085`. | E-01 done (PR #295). E-02 in-progress (#460/#469). E-03 done (PR #313). E-04 in-progress (#528 MERGED batch 1; #557 OPEN batch 2; #560 OPEN batch 3). |
 | F | `claude/audit-remediation/f-07-json-ld-batch-1` (#527) | #293/#294/#301/#354/#355/#370 all MERGED · #527 OPEN | iter 243 CI-rescue — `4855030` (merge main: all 7 isFlagEnabled mocks; CI re-running). iter 237 — `19b3630` (F-07 batch 1). | F-01 false-positive. F-02 done (PR #293). F-03 done (PR #370). F-04 done (PR #354). F-05 done (PR #294+#301). F-06 done (PR #355). F-07 in-progress (#527 batch 1: 6/42 blocks migrated). F-08 pending. |
 | G | `claude/audit-remediation/g-03-batch-8-rollback-headers` (#520) | #307/#310/#311/#314/#316/#342/#352/#405/#455/#467 all MERGED · #520 OPEN | iter 229 — `52aee43` (PR #520: G-03 batch 8 — rollback headers for 15 remaining migrations; stream complete 208/208); CI pending | G-01+G-02 done (PR #307). **G-03 complete (208/208 covered)** — batches 1-7 (#311/#314/#316/#352/#405/#455/#467) all merged; batch 8 (#520) covers the final 15 files. G-04 done (PR #310 + #342). G-04-FINDING-1..5 pending founder authorization. |
 | H | _not started_ | — | — | — |
@@ -738,7 +738,7 @@ Highest priority: critical 2 first.
 | E-01 | done | Author `lib/validation/withValidatedBody.ts` helper + tests | 1 | Done in PR #295. Pattern: `withValidatedBody(schema, async (req, body) => {...})`. |
 | E-02 | in-progress | Convert top-20 highest-traffic routes to Zod (overlap with D-01..D-09) | ~5 | Batch 1 done (PR #315 — 4 top-traffic routes). Batch 2 done (PR #323 — 4 routes). Batch 3 done (PR #406 — routes other than vote/posts/impression/notify). Batch 4 in-progress (PR #460 — questions, shortlist, referrals, community/threads). Batch 5 in-progress (PR #469 — community/vote, community/posts, marketplace/impression, marketplace/notify). 20/20 routes addressed after #460+#469 merge; E-02 complete on merge. |
 | E-03 | done | ESLint rule: flag new `await req.json()` without immediate `.parse()`/`.safeParse()` | 1 | Done in PR #313 (`invest/no-unvalidated-req-json`). lint-staged `--max-warnings 0` upgrades to commit blocker. Stream I overlap (I-04). |
-| E-04 | in-progress | Backfill remaining unvalidated routes (chunked: ~6 per iteration) | ~34 | Batch 1 MERGED (PR #528 2026-05-04T14:42Z): admin/revalidate, community/moderate, marketplace/register, report-leads, review-incentive, verify-professional. Batch 2 in-progress (PR #557): answers/[id]/vote, community/posts/[id], community/threads/[id], admin/content/generate-draft, admin/content/calendar, admin/advisor-moderation. 12/~25 flagged routes migrated. Batch 3 pending (~9 routes remaining: admin/advisor-moderation, admin/review-moderation, admin/foreign-investment/*, admin/ai-chat, advertise/create-checkout, quiz/submit, developer-leads, affiliate/click). |
+| E-04 | in-progress | Backfill remaining unvalidated routes (chunked: ~6 per iteration) | ~34 | Batch 1 MERGED (PR #528 2026-05-04T14:42Z): admin/revalidate, community/moderate, marketplace/register, report-leads, review-incentive, verify-professional. Batch 2 in-progress (PR #557): answers/[id]/vote, community/posts/[id], community/threads/[id], admin/content/generate-draft, admin/content/calendar, admin/advisor-moderation. Batch 3 in-progress (PR #560): admin/review-moderation, admin/foreign-investment/seed, admin/foreign-investment/verify, admin/foreign-investment/update, admin/foreign-investment/revalidate, advertise/create-checkout. 18/~25 flagged routes migrated. Batch 4 pending (~7 routes remaining: admin/ai-chat, quiz/submit, developer-leads, affiliate/click, and any remaining flagged by lint). |
 
 ### Stream G — Migration hygiene
 
@@ -1836,6 +1836,22 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-04 — Forward progress iter 266 (stream E — E-04 batch 3: Zod validation on 6 admin & advertise routes)
+
+- Phase 0: Lock held (batch fire, continuation from iter 263/265).
+- Phase 1: main synced (rebased onto origin/main post-iter-265).
+- Phase 1.5: Skipped (no recent migration commits; no types-drift CI failures on in-flight PRs).
+- Phase 1.7: Skipped (main CI not checked — continuation fire).
+- Phase 2: PR #557 CI in_progress at time of check — no failures, no rescue needed (iter 265 had already pushed the fix).
+- Phase 3: Step 17 (E) — E-04 batch 3. Created branch `claude/audit-remediation/e-04-batch-3-zod-backfill`. 6 routes: admin/review-moderation, fi/seed, fi/verify, fi/update, fi/revalidate, advertise/create-checkout.
+- Phase 4: All routes use simple body shapes (string/number/boolean fields, one enum). fi/update's `z.enum(ALLOWED_TABLES)` consolidates two-step missing+allowlist check. No edge-runtime issues (all routes nodejs or no runtime export).
+- Phase 5: Added Zod schemas + safeParse to all 6 files. Error messages preserved exactly. Date-range business logic in create-checkout kept as-is post-parse. 110 insertions / 62 deletions (172 lines diff, under 500 LOC cap). No node_modules — tsc gate skipped (hardware exception). No existing tests on these routes.
+- Phase 6: Commit `d823fda`, pushed. PR #560 opened (ready, not draft).
+- Phase 7: Queue updated — E in-flight row updated, E-04 item updated (batch 3 in-progress), this log entry.
+- STATUS: PROGRESS · stream=E · item=E-04 (batch 3 of ~4) · pr=#560
+
+---
 
 ### 2026-05-04 — CI-RESCUE iter 265 (stream E — PR #557 body→rawBody in calendar POST handler)
 
