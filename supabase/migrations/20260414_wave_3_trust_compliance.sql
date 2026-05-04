@@ -1,5 +1,26 @@
 -- Wave 3: Trust + compliance foundations.
 --
+-- Date: 2026-04-14
+-- Audit ref: codebase-health-2026-04-24.md §4.3 (G-03)
+-- Queue item: G-03 batch 8
+-- Why: four tables/columns lay the trust + compliance foundations:
+--      DB-backed rate limiting, crash-robust Stripe idempotency,
+--      immutable money-movement audit log, and GDPR/Privacy Act
+--      data-request tracking.
+-- Idempotency: CREATE TABLE/INDEX IF NOT EXISTS;
+--              ALTER TABLE … ADD COLUMN IF NOT EXISTS. Safe to re-apply.
+-- Rollback (in reverse creation order):
+--   DROP TABLE IF EXISTS public.privacy_data_requests;
+--   DROP TABLE IF EXISTS public.financial_audit_log;
+--   ALTER TABLE public.stripe_webhook_events
+--     DROP COLUMN IF EXISTS processing_started_at,
+--     DROP COLUMN IF EXISTS processed_at,
+--     DROP COLUMN IF EXISTS status;
+--   DROP INDEX IF EXISTS public.idx_stripe_webhook_events_status_stale;
+--   DROP TABLE IF EXISTS public.rate_limit_buckets;
+--   Note: financial_audit_log is append-only; dropping it discards the
+--         full money-movement history. Export before any rollback.
+--
 -- Tables:
 --   1. rate_limit_buckets        — DB-backed token bucket (survives cold starts)
 --   2. stripe_webhook_events     — add processing/done status for crash-robust idempotency

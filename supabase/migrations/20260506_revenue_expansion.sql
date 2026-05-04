@@ -1,6 +1,29 @@
 -- ============================================================
 -- Revenue expansion — phase 1 DB migration
 --
+-- Date: 2026-05-06
+-- Audit ref: codebase-health-2026-04-24.md §4.3 (G-03)
+-- Queue item: G-03 batch 8
+-- Why: adds 4 advisor types, 4 new tables (fund_listings,
+--      developer_leads, newsletter_sponsors, sector_reports),
+--      and seeds 8 fund_listings + 3 sector_reports rows.
+-- Idempotency: CREATE TABLE/INDEX IF NOT EXISTS;
+--              INSERT … ON CONFLICT (slug) DO NOTHING;
+--              CHECK-constraint DROP IF EXISTS + ADD. Safe to re-apply.
+-- Rollback (in reverse creation order):
+--   DELETE FROM public.sector_reports WHERE source = 'revenue-expansion-2026-05-06';
+--   DELETE FROM public.fund_listings WHERE source = 'revenue-expansion-2026-05-06';
+--   DROP TABLE IF EXISTS public.sector_reports;
+--   DROP TABLE IF EXISTS public.newsletter_sponsors;
+--   DROP TABLE IF EXISTS public.developer_leads;
+--   DROP TABLE IF EXISTS public.fund_listings;
+--   ALTER TABLE public.professionals
+--     DROP COLUMN IF EXISTS fund_manager_type,
+--     DROP COLUMN IF EXISTS fund_aum_millions;
+--   Note: CHECK constraint swap on professionals.type is reversible
+--         by removing the 4 added enum values, but only if no live
+--         professional rows use those types.
+--
 -- 1A. Add 4 new advisor types to professionals.type CHECK.
 -- 1B. fund_listings table (structured fund directory).
 -- 1C. developer_leads table (fund / listing / report lead capture).
