@@ -4,6 +4,7 @@ import { logger } from "@/lib/logger";
 import { notificationFooter } from "@/lib/email-templates";
 import { escapeHtml } from "@/lib/html-escape";
 import { isRateLimited } from "@/lib/rate-limit";
+import { z } from "zod";
 
 const log = logger("questions");
 
@@ -23,16 +24,14 @@ export async function POST(
       return NextResponse.json({ error: "Invalid question ID" }, { status: 400 });
     }
 
-    const body = await req.json();
-    const { answer, display_name } = body;
-
-    // Validation
-    if (!answer || answer.trim().length < 10) {
-      return NextResponse.json({ error: "Answer must be at least 10 characters" }, { status: 400 });
+    const parsed = z.object({
+      answer: z.string().trim().min(10, "Answer must be at least 10 characters").max(2000, "Answer must be under 2000 characters"),
+      display_name: z.string().optional(),
+    }).safeParse(await req.json());
+    if (!parsed.success) {
+      return NextResponse.json({ error: parsed.error.errors[0]?.message ?? "Invalid request" }, { status: 400 });
     }
-    if (answer.length > 2000) {
-      return NextResponse.json({ error: "Answer must be under 2000 characters" }, { status: 400 });
-    }
+    const { answer, display_name } = parsed.data;
 
     const supabase = await createClient();
 
@@ -92,7 +91,7 @@ export async function POST(
 
     const { error } = await supabase.from("broker_answers").insert({
       question_id: questionId,
-      answer: answer.trim(),
+      answer,
       answered_by: answeredBy,
       author_slug: authorSlug,
       display_name: typeof display_name === "string" ? display_name.trim().slice(0, 80) || null : null,
