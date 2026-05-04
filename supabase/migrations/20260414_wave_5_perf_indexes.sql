@@ -1,5 +1,31 @@
 -- Wave 5: DB indexes on observed hot query paths.
 --
+-- Date: 2026-04-14
+-- Audit ref: codebase-health-2026-04-24.md §4.3 (G-03)
+-- Queue item: G-03 batch 8
+-- Why: 20+ composite and partial indexes closing observed N+1 /
+--      full-scan patterns on affiliate_clicks, allocation_decisions,
+--      analytics_events, conversion_events, lead_disputes,
+--      professional_leads, user_reviews, advisor_profile_views,
+--      broker_answers, and other hot tables.
+-- Idempotency: CREATE INDEX IF NOT EXISTS. Safe to re-apply.
+-- Rollback: drop each index individually using IF NOT EXISTS — all are
+--   purely additive and can be removed without data loss. Key ones:
+--   DROP INDEX IF EXISTS public.idx_affiliate_clicks_clicked;
+--   DROP INDEX IF EXISTS public.idx_affiliate_clicks_broker_clicked;
+--   DROP INDEX IF EXISTS public.idx_affiliate_clicks_session;
+--   DROP INDEX IF EXISTS public.idx_allocation_decisions_created;
+--   DROP INDEX IF EXISTS public.idx_allocation_decisions_placement;
+--   DROP INDEX IF EXISTS public.idx_analytics_events_type_created;
+--   DROP INDEX IF EXISTS public.idx_conversion_events_created;
+--   DROP INDEX IF EXISTS public.idx_lead_disputes_status_created;
+--   DROP INDEX IF EXISTS public.idx_professional_leads_composite;
+--   DROP INDEX IF EXISTS public.idx_professional_leads_unresponded;
+--   DROP INDEX IF EXISTS public.idx_user_reviews_broker_published;
+--   DROP INDEX IF EXISTS public.idx_professional_reviews_prof_published;
+--   DROP INDEX IF EXISTS public.idx_advisor_profile_views_prof_date;
+--   (see file body for the remaining index names)
+--
 -- These target the N+1 / full-scan patterns found by inspecting
 -- the query planner + grepping the codebase. All IF NOT EXISTS so
 -- re-runs are safe.

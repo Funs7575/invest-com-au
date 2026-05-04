@@ -1,6 +1,23 @@
 -- ============================================================
 -- Professionals data normalisation — pre-launch hygiene.
 --
+-- Date: 2026-05-11
+-- Audit ref: codebase-health-2026-04-24.md §4.3 (G-03)
+-- Queue item: G-03 batch 8
+-- Why: normalises professionals table data before launch:
+--      strips "AFSL " prefix + space from ABNs, labels legacy
+--      verified rows, revokes verified=true on empty profiles,
+--      and enables booking_enabled where booking_link is set.
+-- Idempotency: all UPDATEs are WHERE-filtered; re-applying
+--              is safe (WHERE conditions become false once applied).
+-- Rollback:
+--   UPDATE public.professionals SET afsl_number = 'AFSL ' || afsl_number
+--     WHERE afsl_number !~ 'AFSL ' AND afsl_number IS NOT NULL;
+--   Note: data normalisation UPDATEs are hard to reverse precisely
+--         because the WHERE conditions rely on pre-migration state.
+--         Take a snapshot of the professionals table before applying
+--         this migration if rollback may be needed.
+--
 -- 1. Strip "AFSL " prefix from afsl_number.
 -- 2. Strip spaces from abn.
 -- 3. Label legacy verified rows with verification_method='seeded_data'.
