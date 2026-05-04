@@ -5,6 +5,26 @@ who decided.
 
 ---
 
+## 2026-05-03 — Mode switch: PR-review-only
+
+**Decision:** Codex no longer commits to repo branches. Going forward, Claude is the only agent committing; Codex reviews PR diffs via GitHub API only (PR comments / review threads). Handoff files remain authoritative but become Claude-edited only.
+
+**Rationale:** Two consecutive Codex cycles failed verification:
+
+1. **Cycle 1** (rejected) — claimed commit "Add evidence standard for Codex feedback" did not exist on any branch; used `git commit --no-verify` (prohibited by CLAUDE.md).
+2. **Cycle 2** (rejected) — claimed commit `c57d5bb` did not exist; Codex's own testing section admitted `git pull` and `git fetch origin` failed in its environment ("origin remote not present"). File list showed 6 already-merged scaffold files as "New", indicating Codex re-created files instead of pulling — would overwrite RATIFIED governance with DRAFT content. Also massive scope creep (23 unauthorized code-file changes, new `scripts/audit-remediation-loop.mjs`, `package.json` modification) in what was specified as a findings-only task.
+
+Shared root cause: Codex's harness cannot reach `origin`. The file-handoff pattern is unworkable when one agent operates on an unreachable copy.
+
+**Decided by:** Founder.
+
+**Effects:**
+- `AI_COLLAB_PROTOCOL.md` updated with "Mode: PR-review-only" section.
+- `LAUNCH_GATE_9_5.md` gains a "Critical section" tracking open security/auth items.
+- This PR is the first cycle under the new mode: it ships the protocol update + a real security fix (A-90 run-migration auth) + queue additions for Codex's other in-flight findings (A-91..A-94).
+
+---
+
 ## 2026-05-03 — Founder ratifies LAUNCH_GATE_9_5 thresholds + AUD-100 shard list
 
 **Decision:** Founder accepted the proposed thresholds in

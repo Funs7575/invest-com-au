@@ -28,21 +28,21 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | B | `claude/audit-remediation/b-08-rls-select-only` (#326) · `b-09a-otp-gate` (#348 draft, parallel-agent) | #326 MERGED 2026-05-01T13:19Z · #348 OPEN (DRAFT, awaiting `LISTING_OWNER_COOKIE_SECRET` env var) | last CI-rescue 2026-05-01T21:43Z (#348) | PR #220 merged (B-01..B-06 done/blocked/FP). B-07 done (`0097159` PR #286). B-08 done — code changes merged via PR #326 commit `476f89f6`. B-09 in-progress on `#348` (parallel-agent, draft). CI-rescue iter 1 (`09c4dfb`, 2026-05-01) merged main before PR #392 types regen — types drift still red. CI-rescue iter 2 (`7da8757e`, 2026-05-01T21:43Z) merged post-#392 main — picked up database.types.ts regen; CI re-run pending. Still DRAFT awaiting `LISTING_OWNER_COOKIE_SECRET` env var (Tier D). |
 | C | all PRs MERGED | #327/#349/#360/#394/#397 all MERGED | last merged 2026-05-02T16:13Z | C-01..C-08 done. C-03 MERGED (#360). C-04 done (#394). C-05 done (#394). C-05b MERGED (#349). C-DISC-20260501-01 MERGED (#397). **Stream C complete.** |
 | D | `claude/audit-remediation/d-route-tests` | #285 MERGED 2026-04-29T10:13Z; supplementary PRs #246/#285/#297/#298 | last merged 2026-04-29T18:53Z | D-01..D-09 done (PR #246). D-10 done (PR #246 — coverage ratchet). D-11 complete (43+ batches, all admin/cron/non-admin routes covered) — merged via PR #285 + supplementary PRs #297/#298. **Stream D complete.** |
-| E | `claude/audit-remediation/e-02-batch-5-zod-rollout` (#469) · `e-02-batch-*-zod-rollout` (#460) · `e-03-zod-lint-rule` (#313) · `e-04-zod-backfill-batch-1` (#528) | #295/#313/#315/#323/#406 MERGED · #460/#469 OPEN · #528 OPEN | iter 252 CI-rescue — `6a262e2` (nps comment: Zod .max(2000) rejected long comments with 400 before insert; restored truncation behavior by removing max from schema). iter 250 CI-rescue — `ef7b95f` (fix ab-track field-specific error messages). | E-01 done (PR #295 — withValidatedBody helper). E-02 in-progress (batches 1+2 MERGED PR #315/#323; batch 3 MERGED PR #406; batch 4 open PR #460; batch 5 open PR #469). E-03 done (PR #313 — ESLint rule). E-04 in-progress (#528 batch 2: 12/25 flagged routes migrated; CI rescue landed `6a262e2`). |
+| E | `claude/audit-remediation/e-02-batch-5-zod-rollout` (#469) · `e-02-batch-*-zod-rollout` (#460) · `e-03-zod-lint-rule` (#313) · `e-04-zod-backfill-batch-1` (#528) | #295/#313/#315/#323/#406 MERGED · #460/#469 OPEN · #528 OPEN | iter 252-cont CI-rescue — `460d085` (Zod v4 `$ZodIssue.path` typed as `PropertyKey[]` not `(string|number)[]`; explicit annotation in attribution/touch + track-event callbacks incompatible with Zod v4.3.6 type — removed annotations, let TS infer. `npx tsc --noEmit` clean; all 6540 tests pass. Stuck-detection Blocked entry resolved.) iter 252 CI-rescue — `6a262e2` (nps comment: Zod .max(2000) rejected long comments with 400 before insert). iter 250 CI-rescue — `ef7b95f` (fix ab-track field-specific error messages). | E-01 done (PR #295 — withValidatedBody helper). E-02 in-progress (batches 1+2 MERGED PR #315/#323; batch 3 MERGED PR #406; batch 4 open PR #460; batch 5 open PR #469). E-03 done (PR #313 — ESLint rule). E-04 in-progress (#528 batch 2: 12/25 flagged routes migrated; 4 CI rescues; CI should now be green on `460d085`). |
 | F | `claude/audit-remediation/f-07-json-ld-batch-1` (#527) | #293/#294/#301/#354/#355/#370 all MERGED · #527 OPEN | iter 243 CI-rescue — `4855030` (merge main: all 7 isFlagEnabled mocks; CI re-running). iter 237 — `19b3630` (F-07 batch 1). | F-01 false-positive. F-02 done (PR #293). F-03 done (PR #370). F-04 done (PR #354). F-05 done (PR #294+#301). F-06 done (PR #355). F-07 in-progress (#527 batch 1: 6/42 blocks migrated). F-08 pending. |
 | G | `claude/audit-remediation/g-03-batch-8-rollback-headers` (#520) | #307/#310/#311/#314/#316/#342/#352/#405/#455/#467 all MERGED · #520 OPEN | iter 229 — `52aee43` (PR #520: G-03 batch 8 — rollback headers for 15 remaining migrations; stream complete 208/208); CI pending | G-01+G-02 done (PR #307). **G-03 complete (208/208 covered)** — batches 1-7 (#311/#314/#316/#352/#405/#455/#467) all merged; batch 8 (#520) covers the final 15 files. G-04 done (PR #310 + #342). G-04-FINDING-1..5 pending founder authorization. |
 | H | _not started_ | — | — | — |
 | I | `claude/audit-remediation/i-new-04-main-ci-auto-revert` (#278) · `i-02-drift-detection-ci` (#353) | #278 MERGED 2026-04-28T16:18Z · #353 MERGED 2026-05-01T14:30Z | last merged 2026-05-01T14:30Z | I-NEW-01..05 all done. I-NEW-06 needs-user (Supabase GH Actions secrets). I-01 done via B-07 (PR #286). I-02 done (PR #353). I-03 done via C-08 (PR #327). I-04 done via E-03 (PR #313). I-05 done via D-10 (PR #246). |
 | J | `claude/audit-remediation/j-stripe-webhook` | #288 MERGED 2026-04-29T16:48Z | last merged 2026-04-29T16:48Z | J-01a..J-01e done · J-01d-ext done · J-03/J-05/J-06/J-08/J-09/J-10 done. **Stream J complete** (J-02/J-04/J-07/J-11 false-positives or done out-of-band). |
 | K | `claude/audit-remediation/k-security-hardening` | #222 MERGED 2026-04-28T15:14Z | last merged 2026-04-28T15:14Z | K-01..K-08 done; K-09 false-positive; K-10..K-15 done — **stream complete** |
-| KK | `claude/audit-remediation/kk-lead-routing-maturity` | #524 OPEN | iter 244 cont — `5d22141` (fix: dedup acceptRate type, add sourceBreakdown to dashboard route; CI pending). iter 246 — `23d54b0` (KK-06). CI-rescue `1708ced`. | KK-01..KK-06 all done. **KK stream complete.** |
+| KK | `claude/audit-remediation/kk-lead-routing-maturity` | #524 OPEN | iter 254 CI-rescue — `0f19275` (merge main: resolve REMEDIATION_QUEUE.md conflict; 41/41 KK tests pass). iter 244 cont — `5d22141` (sourceBreakdown). | KK-01..KK-06 all done. **KK stream complete.** |
 | L | `claude/audit-remediation/l-observability` | #289 MERGED 2026-04-29T10:18Z | last merged 2026-04-29T10:18Z | L-04/L-05 done out-of-loop. L-06..L-12 all done (merged via PR #289). L-02/L-03 deferred-post-launch (n8n dormant). L-01 needs-user (SENTRY_AUTH_TOKEN). L-10 false-positive (verified populating). **Stream L complete** (modulo L-01 needs-user). |
 | M | `claude/audit-remediation/m-01b-cover-image-backfill` (#283) · `m-02-versus-json-ld` (#296) · `m-05-glossary-linkifier` (#325) | #283/#296/#325 all MERGED | last merged 2026-05-01T10:29Z | M-01a done out-of-loop (PR #227). M-01b done (PR #283 — engineering side). M-02 done (PR #296). M-03 done (`85c7236`). M-04 done (`353fa3a`). M-05 done (PR #325). M-06 done (PR #283). M-07 done (PR #283). **Stream M complete.** |
 | N | `claude/audit-remediation/n-ux-perf` | #242 MERGED | last merged 2026-04-28 | N-01+N-02 done (`2ec6f89`) · N-03a/b/c done · N-04/N-05 FP · N-06 blocked (deferred-post-launch by founder 2026-05-01 — option 4 chosen) · N-07/N-08/N-09/N-10/N-11 done — **stream complete** (N-06 deferred). |
 | O | all PRs MERGED | #235/#237/#239/#299/#300/#366/#395/#408 all MERGED | last merged 2026-05-02T16:14Z | O-01..O-03 done. O-04 blocked (Stripe live validation). O-05 MERGED (#408). |
 | P | `claude/audit-remediation/p-01-sentry-v10-upgrade` (#468) | — | iter 212 — `331b98e` (PR #468: P-01 — @sentry/nextjs v9.47.1 → v10.51.0; clears 5 Sentry audit findings; removes `as any` cast in next.config.ts); CI success. | P-01 in-progress (PR #468). P-02 (Stripe SDK v17→v22) BLOCKED — requires npm install + local test run to verify webhook type compatibility across 5 major versions; not tractable on Hardware-exception sandbox. Needs a session with full node_modules. |
 | Q | `claude/audit-remediation/q-02-05-recovery-runbooks` | #525 OPEN | iter 243 CI-rescue — `1e33bab` (concurrent: complete 5-file isFlagEnabled mock; CI re-running). iter 242 — `d980bf3` (cherry-pick `9c74087`). iter 235 — `8cd2725` (Q-02..Q-05). | Q-01 needs-user (PITR drill). Q-02..Q-05 in-progress (#525). Q-06..Q-15 pending. |
-| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · ... · `r-coverage-01-listing-routes` (#521) · `r-coverage-02-stripe-lib` (#526) | #290/#396/#459 all MERGED · #466/#471/#472/#473/#510/#511/#513/#514/#515/#516/#517/#519/#521/#526 OPEN | iter 253 CI-rescue — `a29318f` (PR #526: upsert-subscription "older event" test was using yesterday's current_period_start as stripeEventTime proxy, causing skip guard to fire; pass recent start instead). iter 251 CI-rescue — `126eb8ac` (PR #521). | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459). R-04..R-11 in-progress. R-COVERAGE-01 in-progress (#521, CI rescue landed). R-COVERAGE-02 in-progress (#526, CI rescue landed `a29318f`). |
+| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · ... · `r-coverage-01-listing-routes` (#521) · `r-coverage-02-stripe-lib` (#526) · `r-coverage-03-quotes` (#530) | #290/#396/#459 all MERGED · #466/#471/#472/#473/#510/#511/#513/#514/#515/#516/#517/#519/#521/#526/#530 OPEN | iter 255 forward — `1a3c24d` (PR #530: R-COVERAGE-03 quotes/[slug]/accept + reopen route, 26 tests, 13+13). iter 253 CI-rescue — `a29318f` (PR #526: upsert-subscription "older event" test was using yesterday's current_period_start as stripeEventTime proxy, causing skip guard to fire; pass recent start instead). iter 251 CI-rescue — `126eb8ac` (PR #521). | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459). R-04..R-11 in-progress. R-COVERAGE-01 in-progress (#521, CI rescue landed). R-COVERAGE-02 in-progress (#526, CI rescue landed `a29318f`). R-COVERAGE-03 in-flight (#530). |
 | S | _not started_ | — | — | — |
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 MERGED 2026-04-28T11:45Z | merged | V-NEW-06 done (commit `a7bd736`) |
@@ -477,6 +477,16 @@ Expected result: row appears with `status='done'` (or `status='error'` if the ha
 
 ---
 
+### ~~`Lint · Type-check · Test · Build` persistent failure on PR #528 (E-04)~~ RESOLVED iter 252-cont
+
+**RESOLVED 2026-05-04 iter 252-cont.** Root cause found and fixed.
+
+Root cause: Zod v4.3.6 types `$ZodIssue.path` as `PropertyKey[]` (includes `symbol`). The explicit `.some()` callback annotation `(issue: { path: (string | number)[] })` added in iter 248 was incompatible because TypeScript requires `$ZodIssue` to be assignable to the annotation type, and `PropertyKey[] ≢ (string | number)[]`. Fix: removed the explicit type annotations from both attribution/touch and track-event `.some()` callbacks; TypeScript infers from `ZodError.issues` context. `npx tsc --noEmit` exits cleanly; 6540/6540 tests pass.
+
+Fix SHA: `460d0856` on `claude/audit-remediation/e-04-zod-backfill-batch-1`.
+
+---
+
 ## Pending work
 
 ### Cross-stream dependencies (added 2026-04-27 enterprise-standard reorder)
@@ -498,6 +508,20 @@ Hard dependencies between items in different streams. The loop checks these befo
 - **HH-01 + HH-02** (mobile apps) depend on all DD-* items shipped + stable for ≥30 days.
 
 If a dependency is itself blocked (e.g. V-NEW-02 depends on `lib/compliance.ts` factual-filter implementation, which depends on the founder's compliance copy review), the dependent item surfaces to Blocked with a pointer back to the dependency's blocker. The loop never silently skips a dependency.
+
+### Stream AUD-100 — security/auth findings from Codex shard 1 review (added 2026-05-03)
+
+Codex flagged ad-hoc auth + mixed-secret patterns in admin/internal routes during AUD-100 shard 1. Codex's commit was unreachable (SHA `c57d5bb` did not exist), so findings re-filed here by Claude after independent verification of each cited file. Each item carries `file:line` evidence and policy citation per the Evidence Standard.
+
+| ID | Status | Summary | Est | Notes |
+| --- | --- | --- | --- | --- |
+| ~~A-90~~ | done | `app/api/admin/run-migration/route.ts` — ad-hoc bearer check + `CRON_SECRET \|\| INTERNAL_API_KEY` fallback removed; route now uses `requireCronAuth`. | 0 | Closed in mode-switch PR (this cycle). Test added: `__tests__/api/admin-run-migration.test.ts`. Policy: `CLAUDE.md` "Vercel cron routes … use `requireCronAuth(req)`". |
+| A-91 | pending | `app/api/marketplace/notify/route.ts:33` accepts `SUPABASE_SERVICE_ROLE_KEY` as a bearer-equivalent header value. Service-role keys grant unrestricted DB access; using one as a request auth token means any log/cache/proxy that captures the request body or header leaks total DB compromise. Remove the service-role check; keep `INTERNAL_API_KEY` only. | 1 | Evidence: `app/api/marketplace/notify/route.ts:33` — literal `authHeader !== process.env.SUPABASE_SERVICE_ROLE_KEY`. Policy: `CLAUDE.md` admin-client allowed-scope: service role is for `lib/supabase/admin.ts` server-only use, never as a request credential. **Caller note**: `app/admin/marketplace/campaigns/page.tsx:131` sends `"browser-admin"` literal — see A-92, must be fixed together or admin notify UI breaks. |
+| A-92 | pending | `app/admin/marketplace/campaigns/page.tsx:131` sends `x-internal-key: "browser-admin"` — a literal string from a client component. The route's auth check rejects this (the literal equals neither env var), so either the UI is silently broken or it's relying on the route's permissive OR-fallback. Replace with a server action or a server-only API route that holds the secret. | 2 | Paired dependency with A-91; investigate together. Currently broken-by-design. Policy: `ARCHITECTURE.md` server-side secret handling. |
+| A-93 | pending | Open-coded `Bearer ${process.env.CRON_SECRET}` auth checks in admin routes drift from `requireCronAuth`: `app/api/admin/content/generate-draft/route.ts:17`, `app/api/admin/content/calendar/route.ts:11`, `app/api/admin/automation/trigger/route.ts:56`, `app/api/admin/foreign-investment/seed/route.ts:33`, `app/api/admin/foreign-investment/revalidate/route.ts:33`, `app/api/admin/revalidate/route.ts:50`. Each lacks the entropy floor + fail-closed guard `requireCronAuth` provides. Migrate one file per PR. | 6 | Policy: `CLAUDE.md` "Vercel cron routes … use `requireCronAuth(req)`". `lib/cron-auth.ts:65` is the canonical helper. |
+| A-94 | pending | Same drift outside `admin/`: `app/api/quotes/[slug]/review/route.ts:19`, `app/api/analytics-dashboard/route.ts:13`, `app/api/verify-professional/route.ts:61`. Migrate to `requireCronAuth` (or admin-cookie auth where the route is user-facing). | 3 | Companion to A-93; per-file PRs. |
+| A-95 | done (resolved by hostname correction) | Original framing: "/api/admin/run-migration returns 404 in production". Diagnosis 2026-05-04: the original verification curl used `invest.com.au` as the hostname, but production is currently served via the Vercel alias `invest-com-au.vercel.app` — apex switchover is deferred until AFSL license (target ~Oct 2026 cutover per `COMPANY.md`). Re-run with correct hostname: `curl -i https://invest-com-au.vercel.app/api/admin/run-migration -H "Authorization: Bearer $CRON_SECRET"` returns 401 without auth, 200 with — route works, A-90 verifies. **Loop convention going forward: when probing "production" routes, use `invest-com-au.vercel.app`, NOT `invest.com.au`. The apex still resolves to a pre-Vercel cPanel host and will until license-grant.** | — | — |
+| A-96 | deferred-post-launch | Apex domain `invest.com.au` not yet bound to Vercel project. **This is intentional, not a misconfiguration.** Apex still points at the pre-Vercel cPanel/nginx host because the founder doesn't yet hold an AFSL license — financial-advice content should not be served from the canonical domain until the license is granted (target ~Oct–Dec 2026 cutover per `COMPANY.md`). Until then: Vercel alias = production. At license-grant time, the cutover work is: (1) add `invest.com.au` + `www.invest.com.au` in Vercel dashboard → Project → Settings → Domains; (2) update registrar A/AAAA + CNAME records to Vercel's recommendations; (3) wait for DNS propagation; (4) update canonical URL in `lib/seo.ts` (`SITE_URL`), `app/sitemap.ts`, OG image generators, transactional email templates; (5) verify all five external-link surfaces on the new apex. **Track inside the Oct–Dec 2026 cutover plan, not as ongoing P0 debt.** | 1 (founder, post-license) | Vercel project `prj_miPLXyjwXbqNnGLOFijBHbjXWESY` `domains` array: `[invest-com-au-finns-projects-2deaa68c.vercel.app, invest-com-au-git-main-finns-projects-2deaa68c.vercel.app]`. Origin `invest.com.au` resolves to nginx with `x-httpd-modphp: 1`, `host-header: 8441280b0c35cbc1147f8ba998a563a7`. |
 
 ### Stream AUDIT-SWEEP — pre-existing audit-script failures (added 2026-05-03 by AI_COLLAB_PROTOCOL bootstrap cycle)
 
@@ -556,14 +580,14 @@ Pure grind work, ideal for the cloud loop. Long-running stream — expect ~6-7 m
 | --- | --- | --- | --- | --- |
 | R-COVERAGE-01 | in-progress (#521) | `app/api/listings/enquire` + `app/api/listings/submit` + `app/api/listings/my-listings` — branch coverage to 80%+ | 2 | Fixed 16 silently-failing enquire tests (isFlagEnabled mock missing); added 503 kill-switch, email-skip, opt-in success, opt-in throw-resilience tests. |
 | R-COVERAGE-02 | in-flight | `lib/stripe-webhook/registry.ts` + `lib/upsert-subscription.ts` + `lib/stripe-webhook/lib/email.ts` — 34 tests across 3 files | 4 | PR #526. registry: dispatch/error-wrapping/fall-through; upsert: out-of-order guard; email: builders + sendTransactionalEmail. |
-| R-COVERAGE-03 | pending | `app/api/quotes/post`, `app/api/quotes/respond`, `app/api/quotes/recent` — full lead lifecycle | 3 | Includes the per-advisor quota + dispute hand-off. |
-| R-COVERAGE-04 | pending | `app/api/admin/payouts/*` + `app/api/admin/affiliate-*` | 3 | Money-out routes — highest-stakes admin endpoints. |
-| R-COVERAGE-05 | pending | `app/api/auth/*` (signin, signup, OTP, password reset) | 3 | Mock Resend, assert rate limits, no info-leak in errors. |
-| R-COVERAGE-06 | pending | `lib/sponsorship.ts` — `boostFeaturedPartner`, `isSponsored`, tier ranking | 1 | Behaviour-critical to revenue ranking. |
-| R-COVERAGE-07 | pending | `lib/tracking.ts` — `getAffiliateLink`, `getBenefitCta`, `renderStars` | 1 | UTM building + click tracking. |
-| R-COVERAGE-08 | pending | `lib/dated-stats.ts` + `lib/seo.ts` | 1 | Date-format edge cases, JSON-LD shape. |
-| R-COVERAGE-09 | pending | `lib/compliance.ts` — disclosure constants + interpolation helpers | 1 | Legal-correctness — every change here needs test confirmation. |
-| R-COVERAGE-10 | pending | `lib/finance/*` (formatters, calculators) | 2 | AUD currency, percentage, tax-calculation helpers. |
+| R-COVERAGE-03 | in-flight (#530) | `app/api/quotes/[slug]/accept` + `app/api/quotes/[slug]/reopen` — 26 tests (13+13) covering accept/reopen consumer auth paths | 3 | PR #530. accept: rate limit, validation, email auth, bid lookup, DB winner/lost/auction updates, fire-and-forget email, 500 path. reopen: rate limit, validation, email auth, winning_bid guard, reopen-limit guard, 7-day extension, 500 path. |
+| R-COVERAGE-04 | false-positive | `app/api/admin/payouts/*` + `app/api/admin/affiliate-*` | — | **False-positive** — neither route directory exists. No `app/api/admin/payouts/` or `app/api/admin/affiliate-*/` found. D-stream covered all admin routes in `app/api/admin/*` that exist. Verified iter 256. |
+| R-COVERAGE-05 | false-positive | `app/api/auth/*` (signin, signup, OTP, password reset) | — | **False-positive** — only `app/api/auth/signout/route.ts` exists; no signin/signup/OTP/password-reset routes at that path (auth is handled by Supabase client-side). D-09 already covers `auth/signout` (100% coverage per D-stream audit). Verified iter 256. |
+| R-COVERAGE-06 | false-positive | `lib/sponsorship.ts` — `boostFeaturedPartner`, `isSponsored`, tier ranking | — | **False-positive** — `lib/sponsorship.ts` already has 3 test files: `__tests__/lib/sponsorship.test.ts`, `__tests__/lib/sponsorship-ranking.test.ts`, `__tests__/lib/sponsorship-tiers.test.ts`. Comprehensive coverage of `isSponsored`, `boostFeaturedPartner`, tier ranking, tie-break rules. Verified iter 256. |
+| R-COVERAGE-07 | false-positive | `lib/tracking.ts` — `getAffiliateLink`, `getBenefitCta`, `renderStars` | — | **False-positive** — `__tests__/lib/tracking.test.ts` exists and covers `getAffiliateLink`, `getBenefitCta`, `renderStars`, UTM building, and click tracking. Verified iter 256. |
+| R-COVERAGE-08 | false-positive | `lib/dated-stats.ts` + `lib/seo.ts` | — | **False-positive** — both modules have tests: `__tests__/lib/dated-stats.test.ts` and `__tests__/lib/seo.test.ts`. Date-format edge cases and JSON-LD shapes are already exercised. Verified iter 256. |
+| R-COVERAGE-09 | false-positive | `lib/compliance.ts` — disclosure constants + interpolation helpers | — | **False-positive** — `__tests__/lib/compliance.test.ts` and `__tests__/lib/compliance-config.test.ts` both exist, covering disclosure constants and interpolation helpers. Verified iter 256. |
+| R-COVERAGE-10 | false-positive | `lib/finance/*` (formatters, calculators) | — | **False-positive** — `lib/finance/` directory does not exist. Finance utilities live directly in `lib/` (e.g., `lib/calculators.ts`, `lib/formatters.ts`). R-COVERAGE-M2-B already tracks the correct path for finance formatter coverage. Verified iter 256. |
 | R-COVERAGE-11..N | pending | One iteration per remaining hot module until M1 (30% overall) hit | ~30 | Scout + queue more items per iteration as the loop discovers new gaps. |
 | R-COVERAGE-M2-A | pending | Lift `lib/stripe/*` to ≥80% — full edge-case coverage on webhook idempotency, refund flows, subscription upgrades/downgrades, customer migration | 4 | Done after M1; needs the Stripe SDK mock matrix mature from R-COVERAGE-02. |
 | R-COVERAGE-M2-B | pending | Lift `lib/finance/*` to ≥80% — currency formatting edge cases (negative, zero, > AUD 1B, non-AUD), tax calculations, fee tier boundaries | 3 | Money-correctness tests; pair with finance team if questions on rounding. |
@@ -1121,6 +1145,128 @@ priority + §6 Definition of Done.
 | Z-26 | pending | `/super` hub (proper, not just `/super/smsf`) — sub-pages + fee-projection calc + fund table | 6-8 | **P1.** Massive search volume "best super fund"; fund affiliate $50-200/signup. ID renumbered from Z-NEW-12. **Deps:** stream W components, ASX/APRA fund-performance data feed. **DoD:** hub + sub-pages industry-vs-retail / best-super-funds / under-30 / over-60 / consolidate-super / lost-super-finder / switching-super / concessional-vs-non-concessional / division-296 (>$3M tax); top-fund comparison table (APRA performance data — handle staleness via `<DatedStatBadge>`); fee comparison calculator (15-yr projection of $X balance across N funds); quiz "is your super fund underperforming"; 15+ seeded articles; lead source `'super'` routing to super-fund affiliate + advisor queue; tests for fund-table data freshness, fee-projection calc unit (compounding correctness), quiz routing. **Compliance:** factual fund comparison, performance disclaimer, GAW. |
 | Z-27 | pending | `/tax-return` hub — sub-pages + decision-tree quiz + accountant directory | 6-8 | **P2.** June-October seasonal; accountant lead $50-200; plugs into every other hub. ID renumbered from Z-NEW-13. **Deps:** stream W components, BB-03 CGT calc. **DoD:** hub + sub-pages diy-vs-accountant / deductions-by-occupation (programmatic via AA-06) / crypto-tax / property-tax / cgt / negative-gearing-tax / work-from-home-deductions / late-lodgement / etax-vs-mytax-vs-accountant; accountant directory (add NEW advisor type via constraint update); decision tree quiz "DIY or hire accountant" routing; embedded BB-03; 12+ seeded articles; lead source `'tax-return'` routing to accountant queue (specialty-matched: crypto/property/business); tests for hub render, decision-tree quiz routing, CGT calc unit, directory specialty filter. **Compliance:** tax-agent territory, ASIC factual carve-out, no personal tax advice. |
 
+### Stream GI — `/global-investing` outbound hub (added 2026-05-04)
+
+Mirror of `/foreign-investment` for Australians investing globally. Two
+tracks under one hub: **A** direct-outbound (foreign brokers / foreign
+listings / foreign property / FX / foreign super) and **B** indirect via
+AU-listed exposure (region/sector/global ETFs + LICs). Year-1 reasonable
+revenue range AU$500k-2M, weighted heaviest on lever #3 affiliate CPA
+(IBKR/Stake/Tiger/moomoo) and lever #1 advisor lead routing
+(international tax specialists, QROPS advisors, foreign property buyer's
+agents). Reference: `docs/audits/GLOBAL_INVESTING_PROGRAM.md` is the full
+spec; queue items below resolve into shipped pages.
+
+**Sequencing:** Wave 1 (foundation) ships first — hub shell, cornerstone
+US-shares page, redirect map, compliance keys. Then Wave 2 (Track B ETFs
+— bigger funnel) → Wave 3 (tax/calculator moat) → Wave 4 (long-tail).
+Each wave is independently shippable; pause anywhere → still net positive.
+
+**Tier guidance:** page UI / content / docs are Tier A (autonomous merge
+after CI green). Tier C: GI-04 (compliance keys), GI-09 (`broker_markets`
+schema migration). Calculators GI-82 / GI-84 / GI-122 require tax-agent
+review captured in `docs/audits/handoffs/gi-tax-review.md` before merge.
+
+**Anti-goal:** no `/zh` or `/ko` localisation (audience is English-speaking
+AU residents); no bespoke layout per page once W-12 ships HubPage HOC —
+until then mirror `/foreign-investment/page.tsx` as the canonical pattern.
+
+#### Wave 1 — Foundation
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| GI-01 | in-progress | `/global-investing` hub page (HubConfig row + page.tsx + JSON-LD + FAQ + service grid) | 1 | Mirrors `/foreign-investment/page.tsx`. HubConfig row in `lib/verticals.ts` with `audiences:["expat","founder","hnw","retiree"]`, `complianceKey:"general_advice"` (until GI-04 lands), `leadQueue:{kind:"general",topic:"global-investing"}`, `relatedHubs:["foreign-investment","smsf","private-markets"]`. Service grid: shares / etfs / property / currency / tax / lics / bonds / crypto. Hero stats: brokers compared, regions covered, calculators, last verified. **DoD:** page renders, breadcrumb + FAQPage JSON-LD via `lib/seo.ts`, all FAQs sourced from spec §1; ≤3 dated stats wrapped in `<DatedStatBadge>`; mega-menu hand-edit (GI-05) + sitemap (GI-06) follow. |
+| GI-02 | pending | `/global-investing/shares/us` cornerstone (3-5k words) | 2 | THE cornerstone — "buy US shares from Australia". Sections: how it works, broker comparison (IBKR/Stake/Tiger/moomoo/Webull/eToro/CMC International/CommSec International/Pearler/Vested), CHESS vs custodial offshore, FX cost breakdown, W-8BEN explainer, capital-gains-in-AUD, US estate tax exposure (cross-link to GI-83), brokerage-vs-FX cost calculator inline (cross-link to GI-122), FAQ ≥10 entries with FAQPage JSON-LD, comparison table with `Product` + `AggregateRating` schema, sponsorship-aware top-row using `boostFeaturedPartner()`. Affiliate links via `getAffiliateLink()`. Cross-links: `/global-investing/etfs/us` (Track B alt), `/global-investing/tax/w-8ben`, `/global-investing/tax/us-estate-tax`. **Lands BEFORE GI-03 redirects flip.** **DoD:** ≥3,000 words, ≥10 FAQs, schema validated, all dated stats badged. |
+| GI-03 | pending | 301 redirect map in `next.config.ts` | 1 | 13 redirects per spec §3: `/best/{us-shares,cheapest-us-shares,us-shares-5000,us-shares-monthly,us-fee,invest-in-us-shares,international-shares,best-international-etfs,forex,start-forex-trading,low-fx-fees}`, `/etfs/us-exposure`, `/etfs/international`. **GATE: Do NOT flip until GI-02 + GI-08 are green in production.** Add integration test that asserts each `from` returns 301 → `to`. |
+| GI-04 | pending | New `lib/compliance.ts` keys for outbound | 1 | **Tier C — announce before merge.** Add: `GLOBAL_INVESTING_GENERAL_ADVICE`, `US_SECURITIES_DISCLAIMER`, `TAX_AGENT_DISCLAIMER`, `QROPS_DISCLAIMER`, `FX_GENERAL_ADVICE`, `US_ESTATE_TAX_DISCLAIMER`, `FITO_DISCLAIMER`. No inline disclaimers anywhere in GI pages — `lib/compliance.ts` keys only. |
+| GI-05 | pending | Mega-menu entry (Header.tsx hand-edit) | 1 | Hand-edit `components/Header.tsx` until Y-stream (Y-01/Y-02) lands the registry-driven mega-menu. Add `/global-investing` adjacent to `/foreign-investment` in the "Investing internationally" group. Once Y-02 ships, this gets removed in favour of the registry. |
+| GI-06 | pending | Sitemap entry | 1 | Add `/global-investing` and all its sub-pages to `app/sitemap.ts` with `priority: 0.85` for hub, `0.75` for sub-pillars, `0.7` for guides. Once Y-03 ships, this gets removed in favour of registry-driven sitemap. |
+| GI-07 | pending | Cross-link from `/share-trading` vertical → "Trading global markets?" CTA | 1 | Update `lib/verticals.ts` share-trading entry to surface a "Trading global markets?" link in subcategories or sections, pointing to `/global-investing/shares/us`. Prevents `/share-trading` and `/global-investing/shares/us` from cannibalising each other. |
+| GI-08 | pending | Move `/etfs/us-exposure` content to `/global-investing/etfs/us` (clone, then 301) | 1 | Two-phase: (a) clone the existing 362-line page to new path with updated breadcrumbs + canonical; (b) once new URL is indexed, flip 301. Same for `/etfs/international` → `/global-investing/etfs/global`. |
+| GI-09 | pending | `broker_markets` join table migration | 1 | **Tier C — announce before merge.** Replaces fragile `accepts_global_trading` flag pattern. New table `broker_markets (broker_id, market: 'asx'\|'nyse'\|'nasdaq'\|'lse'\|'hkex'\|'tse'\|'nzx'\|'sgx'\|'euronext', supported: bool, notes: text)`. RLS: anon SELECT, service_role write. Backfill from existing data. Idempotent migration with rollback header per G-stream conventions. |
+
+#### Wave 2 — Track B (AU-listed foreign exposure) — bigger traffic funnel
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| GI-20 | pending | `/global-investing/etfs` sub-pillar page | 1 | Hub for region pages. Quick comparison strip + cross-links into each region. Reuse the table component pattern from `/etfs/us-exposure`. |
+| GI-21 | pending | `/global-investing/etfs/china` | 1 | IZZ (iShares China Large-Cap), VAE (Vanguard Asia ex-Japan as China-tilt proxy), ASIA (Betashares Asia Tech Tigers), CIN (Betashares Australian Investment Grade Corporate Bond — wrong; remove) — verify ETF list before write. MER, AUM, holdings concentration, currency hedging stance, dividend treatment. |
+| GI-22 | pending | `/global-investing/etfs/asia` | 1 | VAE, IAA, ASIA, IEM-tilted Asia. |
+| GI-23 | pending | `/global-investing/etfs/japan` | 1 | IJP (iShares MSCI Japan), HJPN (BetaShares Japan ETF — verify). |
+| GI-24 | pending | `/global-investing/etfs/europe` | 1 | IEU (iShares Europe), VEQ (Vanguard FTSE Europe). |
+| GI-25 | pending | `/global-investing/etfs/uk` | 1 | Smaller cohort; IRE-related; verify ASX availability before commit. |
+| GI-26 | pending | `/global-investing/etfs/india` | 1 | NDIA (BetaShares India Quality), INDA-equivalents. |
+| GI-27 | pending | `/global-investing/etfs/emerging-markets` | 1 | IEM, VGE, EMKT. |
+| GI-30 | pending | `/global-investing/lics` sub-pillar page | 1 | LIC (Listed Investment Company) explainer + LIC vs ETF tradeoffs + cross-link to region pages. |
+| GI-31 | pending | `/global-investing/lics/global` | 1 | MFF (Magellan Flagship), WGB (WAM Global), PMC (Platinum Capital), EAI (Ellerston Asian Investments — wrong category; verify), FGG (Future Generation Global). NTA, premium/discount, fee, performance vs benchmark. |
+| GI-32 | pending | `/global-investing/lics/asia` | 1 | Platinum Asia (PAI), Pengana International. |
+| GI-33 | pending | `/global-investing/lics/us` | 1 | Sparse market; small content piece + cross-link to GI-21..27. |
+| GI-101 | pending | `/global-investing/guides/stake-vs-commsec-international` | 1 | Versus matrix; reuse `/etfs/vs/[slugs]` rendering pattern if applicable. |
+| GI-102 | pending | `/global-investing/guides/stake-vs-ibkr` | 1 | |
+| GI-103 | pending | `/global-investing/guides/moomoo-vs-tiger-vs-webull` | 1 | Three-way comparison; the Asian-broker cohort question. |
+| GI-104 | pending | `/global-investing/guides/chess-vs-custodial-international` | 1 | Unique-to-AU angle; explains why Stake/Tiger are custodial and what that means for ownership. |
+| GI-105 | pending | `/global-investing/guides/ibkr-australia-setup` | 1 | Walkthrough — hardest broker to onboard, highest CPA. |
+| GI-111 | pending | `/global-investing/guides/direct-us-vs-asx-listed-equivalent` | 1 | THE bridge between Track A and Track B. Decision framework: when to buy VOO direct vs IVV on ASX. Cross-link to GI-122 calculator. |
+| GI-112 | pending | `/global-investing/guides/global-etf-vs-direct-us` | 1 | VGS vs VOO; very-high intent. |
+
+#### Wave 3 — Tax moat + calculators (the moat that competitors can't copy)
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| GI-80 | pending | `/global-investing/tax` sub-pillar | 1 | Mirrors `/foreign-investment/tax`. Outbound-side DTA framing, FITO, US-source income, foreign-asset CGT. |
+| GI-81 | pending | `/global-investing/tax/fito` | 1 | Foreign Income Tax Offset explainer + worked examples. Cross-link to GI-82 calculator. |
+| GI-82 | pending | `/global-investing/calculators/fito` | 2 | **Tax-agent review required before merge.** Reuse engine from `non-resident-dividend-calculator`; AUD-source income + foreign-source income + foreign tax paid → FITO + AU tax owed. Email-gate "save my results" → tax-specialist routing. |
+| GI-83 | pending | `/global-investing/tax/us-estate-tax` | 1 | The fear-driven advisor lead magnet. Explains 40% estate tax exposure on US-situs assets >US$60k for non-resident aliens. AUS-US treaty unified-credit interaction. Cross-link to GI-84. |
+| GI-84 | pending | `/global-investing/calculators/us-estate-tax-exposure` | 2 | **Tax-agent review required before merge.** Inputs: US securities held + spouse status + AU-resident status. Output: estimated estate tax + suggested mitigations (W-8BEN, AU-domiciled ETFs, structuring through AU LLC/trust). Email-gate → tax-specialist + estate-planning advisor routing. **Highest-LTV lead capture in the build.** |
+| GI-85 | pending | `/global-investing/tax/cgt-on-foreign-shares` | 1 | AUD reporting + FX-affected gains/losses; cost-base in AUD at acquisition; disposal in AUD at sale. Sharesight as solution. |
+| GI-86 | pending | `/global-investing/tax/w-8ben` | 1 | Form walkthrough; high search volume. Step-by-step screenshots with privacy-redacted example. |
+| GI-87 | pending | `/global-investing/tax/dta` | 1 | Outbound-side DTA table — when AU residents earn US/UK/HK/JP/SG/etc income, what withholding tax applies and how to claim FITO. Mirror of `DTASearchTable` from inbound side. |
+| GI-88 | pending | `/global-investing/tax/super-pension-transfer` | 1 | QROPS (UK→AU), US 401(k) for returning Aussies. **Compliance:** needs authorised QROPS advisor partnership OR explicit "factual information only" framing reviewed by tax counsel. |
+| GI-122 | pending | `/global-investing/calculators/direct-vs-asx-cost` | 2 | **The cross-track decision tool — biggest single lead-capture asset.** Inputs: ticker (e.g. VOO) + ASX equivalent (e.g. IVV) + holding period + amount. Output: total cost via Stake (FX + brokerage + custody + W-8BEN simplified) vs total cost via CommSec for IVV. Email-gate "save analysis" → broker affiliate links + tax-specialist route. |
+| GI-121 | pending | `/global-investing/calculators/fx-impact-on-returns` | 1 | Interactive AUD/USD scenario over investment horizon. Hedged vs unhedged outcome difference. |
+| GI-123 | pending | `/global-investing/calculators/total-cost-international-trade` | 1 | Extends existing root `/us-share-costs-calculator` with multi-broker comparison + FX provider option. |
+| GI-130 | pending | `/advisors/global-investing-specialists` advisor vertical | 1 | Mirror `/advisors/international-tax-specialists` pattern. Match users to AU-licensed advisors with foreign-asset/QROPS/US-tax specialty. |
+| GI-131 | pending | Wire calculator results → email-gate → tax-specialist routing | 1 | Reuse existing lead-routing infra; add `lead_source: 'global-investing-calculator'` taxonomy. |
+
+#### Wave 4 — Long-tail + completion
+
+| ID | Status | Summary | Est. iterations | Notes |
+| --- | --- | --- | --- | --- |
+| GI-10 | pending | `/global-investing/shares` sub-pillar page | 1 | Aggregator over country share pages. |
+| GI-11 | pending | `/global-investing/shares/uk` | 1 | LSE access for AU residents. IBKR + CMC International. |
+| GI-12 | pending | `/global-investing/shares/hong-kong` | 1 | HKEX, China A-shares via Stock Connect. |
+| GI-13 | pending | `/global-investing/shares/japan` | 1 | Topix, Nikkei. |
+| GI-14 | pending | `/global-investing/shares/singapore` | 1 | SGX. |
+| GI-15 | pending | `/global-investing/shares/europe` | 1 | Euronext consolidated. |
+| GI-16 | pending | `/global-investing/shares/new-zealand` | 1 | NZX — often forgotten, low competition. |
+| GI-17 | pending | `/global-investing/shares/[ticker]-from-australia` programmatic — top 50 tickers initial | 3-5 | Top 50 US tickers (Tesla, Apple, Nvidia, Amazon, Microsoft, Meta, Alphabet, Berkshire, JPM, V, etc.) per page: how to buy from AU + brokers that offer + FX considerations + tax. Generate via `generateStaticParams`. Expandable to top 200 over Q2. |
+| GI-40 | pending | `/global-investing/property` sub-pillar | 1 | Outbound foreign property. |
+| GI-41 | pending | `/global-investing/property/new-zealand` | 1 | |
+| GI-42 | pending | `/global-investing/property/united-states` | 1 | FL/TX retiree-investor angle. |
+| GI-43 | pending | `/global-investing/property/indonesia` | 1 | Bali leasehold; **higher compliance load** — explicit risk framing per `lib/compliance.ts` `general_advice` + property disclaimers. |
+| GI-44 | pending | `/global-investing/property/united-kingdom` | 1 | |
+| GI-45 | pending | `/global-investing/property/portugal` | 1 | Golden-Visa equivalent angle. |
+| GI-50 | pending | `/global-investing/currency` sub-pillar | 1 | FX hub. |
+| GI-51 | pending | `/global-investing/currency/best-fx-providers` | 1 | Wise vs OFX vs WorldFirst vs Revolut vs Airwallex. Affiliate-rich. |
+| GI-52 | pending | `/global-investing/currency/multi-currency-accounts` | 1 | |
+| GI-53 | pending | `/global-investing/currency/sending-money-overseas` | 1 | Mirror `/foreign-investment/send-money-australia` (the inbound counterpart). |
+| GI-60 | pending | `/global-investing/bonds` sub-pillar | 1 | |
+| GI-61 | pending | `/global-investing/bonds/us-treasuries` | 1 | High search when AUD weak. IBKR access path. |
+| GI-62 | pending | `/global-investing/bonds/global-bond-etfs` | 1 | AU-listed; consolidates `/etfs/bonds` global tilt. |
+| GI-70 | pending | `/global-investing/crypto` sub-pillar | 1 | Outbound crypto angle. |
+| GI-71 | pending | `/global-investing/crypto/global-exchanges` | 1 | Binance/Kraken/Bybit from AU. **Compliance:** AUSTRAC + crypto-warning. |
+| GI-72 | pending | `/global-investing/crypto/au-vs-global` | 1 | Independent Reserve vs Binance comparison. |
+| GI-90 | pending | `/global-investing/to/[country]` programmatic — 8 countries | 2-3 | Mirror `/foreign-investment/from/[country]`. Per country: best brokers for that market access, tax (DTA reference), key listings, programmatic page. Initial 8: us, uk, nz, jp, sg, hk, in, id. Expandable to 30. |
+| GI-100 | pending | `/global-investing/guides` index page | 1 | Aggregator. |
+| GI-106 | pending | `/global-investing/guides/how-to-fill-w-8ben` | 1 | Companion to GI-86. |
+| GI-107 | pending | `/global-investing/guides/us-estate-tax-australian-investors` | 1 | Long-form companion to GI-83. **Lead-magnet PDF version**. |
+| GI-108 | pending | `/global-investing/guides/fito-explained` | 1 | Companion to GI-81. |
+| GI-109 | pending | `/global-investing/guides/ato-foreign-shares-reporting` | 1 | |
+| GI-110 | pending | `/global-investing/guides/currency-conversion-fees-explained` | 1 | |
+| GI-120 | pending | `/global-investing/calculators` index page | 1 | Aggregator. |
+| GI-140 | pending | Newsletter cohort + push category for "global-investing" | 1 | Lever #6 + #10. Re-uses existing newsletter infra; adds `cohort: 'global-investing'`. |
+| GI-141 | pending | "AU investor's US-tax pack" PDF (lead magnet) | 1 | Lever #9. Gated PDF combining FITO + W-8BEN + US estate tax + CGT-on-foreign. Email capture → newsletter cohort. |
+
 ### Stream AA — Programmatic SEO machine (added 2026-04-27)
 
 Build N templates that consume Supabase data and ISR-render thousands of
@@ -1676,10 +1822,38 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 | N-04 | "Skip-to-main-content link missing in Navigation (WCAG 2.1 AA fail)" | Iter 40 Phase 4 verification: `components/LayoutShell.tsx` lines 40–45 already has a correct skip-link: `<a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[200] ...">Skip to main content</a>`. The `<main id="main-content">` target is at line 49. Implementation predates iter 40; audit missed it because Navigation.tsx was the stated target but the link lives in LayoutShell. | 2026-04-27 |
 | N-05 | "6 components have icon-only buttons missing `aria-label`" | Iter 40 Phase 4 verification of all 6 named components: `InfoTip` (`aria-label="More info"` at line 37), `AdminHelpPanel` (dynamic `aria-label={open ? "Close help" : "Help for this page"}` at line 334), `AdminNotifications` (`aria-label="Notifications"` at line 234), `BottomSheet` (`aria-label="Close"` at line 87), `OnThisPage` (`aria-label="Close navigation"` at line 123 + text on all other buttons), `CollapsibleSection` (both buttons have visible text: "Show less" / "Show all N items"). All compliant. | 2026-04-27 |
 | L-10 | "PostHog mirror webhook `posthog_events_mirror` table is empty in live" | Iter 130 Supabase MCP check: table has 71 `$pageview` rows, latest 2026-04-29T14:47Z. Edge Function `posthog-webhook-ingest` v2 is ACTIVE. Webhook was correctly configured before the audit and has been populating since. | 2026-04-29 |
+| R-COVERAGE-04 | "Add tests for `app/api/admin/payouts/*` + `app/api/admin/affiliate-*`" | Neither route directory exists. D-stream covered all admin routes that do exist. | 2026-05-04 |
+| R-COVERAGE-05 | "Add tests for `app/api/auth/*` (signin, signup, OTP, password reset)" | Only `app/api/auth/signout/route.ts` exists — auth is client-side via Supabase. D-09 already covers signout at 100%. | 2026-05-04 |
+| R-COVERAGE-06 | "Add tests for `lib/sponsorship.ts` — `boostFeaturedPartner`, `isSponsored`, tier ranking" | Three test files already exist: `__tests__/lib/sponsorship.test.ts`, `sponsorship-ranking.test.ts`, `sponsorship-tiers.test.ts`. Comprehensive coverage. | 2026-05-04 |
+| R-COVERAGE-07 | "Add tests for `lib/tracking.ts` — `getAffiliateLink`, `getBenefitCta`, `renderStars`" | `__tests__/lib/tracking.test.ts` already exists covering all three helpers + UTM building + click tracking. | 2026-05-04 |
+| R-COVERAGE-08 | "Add tests for `lib/dated-stats.ts` + `lib/seo.ts`" | Both already tested: `__tests__/lib/dated-stats.test.ts` + `__tests__/lib/seo.test.ts`. | 2026-05-04 |
+| R-COVERAGE-09 | "Add tests for `lib/compliance.ts` — disclosure constants + interpolation helpers" | `__tests__/lib/compliance.test.ts` + `__tests__/lib/compliance-config.test.ts` both exist. | 2026-05-04 |
+| R-COVERAGE-10 | "Add tests for `lib/finance/*` (formatters, calculators)" | `lib/finance/` directory does not exist. Finance utilities are in root `lib/`. R-COVERAGE-M2-B tracks the correct target. | 2026-05-04 |
 
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-04 — Forward progress iter 255 (stream R — R-COVERAGE-03: quotes/[slug]/accept + reopen route tests)
+
+- Phase 0: Lock acquired.
+- Phase 1: Synced main. Queue read.
+- Phase 2: No red CI on in-flight PRs (E-04 #528, R-COVERAGE-02 #526, KK #524 all had rescues in iters 252/253/254; CI re-running or green).
+- Phase 3: Priority step 16 (R). R-COVERAGE-03 pending — `app/api/quotes/[slug]/accept` + `app/api/quotes/[slug]/reopen` (zero test coverage on consumer bid-acceptance and job re-open flows). Checked out new branch `claude/audit-remediation/r-coverage-03-quotes`.
+- Phase 4: Routes read. Accept route: rate-limit → JSON parse → Zod validate → DB fetch auction → email auth → status check → DB fetch bid → update winner → update lost → update auction → fetch advisor → fire-and-forget email. Reopen route: rate-limit → JSON parse → Zod validate → DB fetch auction → email auth → winning_bid guard → reopen-count guard → DB update (status/ends_at/reopened_count). Tests planned for all branching paths.
+- Phase 5: `__tests__/api/quotes-slug-accept.test.ts` (13 tests) + `__tests__/api/quotes-slug-reopen.test.ts` (13 tests). Mock design: argument-based update dispatch (`data.status === "won"` vs `"lost"`) rather than call-count tracking (count-based breaks because each `from()` call creates a fresh mock with its own counter). Fixed mock after initial run revealed 4 failures. All 26/26 tests pass locally.
+- Phase 6: Commit `1a3c24d`, pushed to `claude/audit-remediation/r-coverage-03-quotes`, PR #530 opened.
+- Phase 7: Queue updated — R in-flight row + R-COVERAGE-03 status.
+- STATUS: PROGRESS · stream=R · item=R-COVERAGE-03 · pr=#530 · commit=1a3c24d
+
+### 2026-05-04 — CI-RESCUE iter 254 (stream KK — merge main to clear dirty mergeable_state on PR #524)
+
+- Phase 0: Lock held (batch fire, iter 3 of up to 5).
+- Phase 1: main synced (up to date at `634aeef`).
+- Phase 2: PR #524 (KK) — `mergeable_state: "dirty"` (conflict with main). CI run at 00:28Z failed. Only conflict was `docs/audits/REMEDIATION_QUEUE.md` (queue has many updates since KK was last synced). Resolved by taking main's version (queue updates always flow from main, branch state is irrelevant). 41/41 KK tests pass post-merge.
+- Phase 6: Committed merge `0f19275`, pushed to `claude/audit-remediation/kk-lead-routing-maturity`.
+- Phase 7: Queue updated on main (this entry).
+- STATUS: CI-RESCUE · stream=KK · pr=#524 · commit=0f19275
 
 ### 2026-05-04 — CI-RESCUE iter 253 (stream R — R-COVERAGE-02: upsertSubscription "older event" test timing)
 
@@ -1689,6 +1863,25 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 - Phase 6: Merged main (queue-only), committed `a29318f`, pushed to `claude/audit-remediation/r-coverage-02-stripe-lib`.
 - Phase 7: Queue updated on main (this entry).
 - STATUS: CI-RESCUE · stream=R · pr=#526 · commit=a29318f
+
+### 2026-05-04 — CI-RESCUE iter 257 (stream E — PR #528 Zod v4 PropertyKey[] type annotation fix)
+
+- Phase 0: Lock acquired. No LOOP_PAUSE.
+- Phase 1: main synced (5 commits ahead — iters 252-255 queue updates + R-COVERAGE-03 in-flight).
+- Phase 2: PR #528 (E-04) "Lint · Type-check · Test · Build" still failing on `6a262e2` (iter 252 NPS fix). Checked stuck-detection — this session's approach is option A from the Blocked entry (run tests in a session with node_modules). Not a "retry" — a diagnosis session.
+- Phase 5: Root cause confirmed by running `npm test` locally (node_modules available): `npx tsc --noEmit` fails with "Type '$ZodIssue' is not assignable to type '{ path: (string | number)[] }'" in two files. Zod v4.3.6 types `$ZodIssue.path` as `PropertyKey[]` (includes `symbol`). The explicit `.some()` callback annotation `(issue: { path: (string | number)[] })` in attribution/touch and track-event is incompatible. Fix: remove explicit annotations; TypeScript infers correctly from `ZodError.issues` context. All 6540 tests pass; `npx tsc --noEmit` exits cleanly; `npm run lint` exits cleanly.
+- Phase 6: Committed `460d085`, pushed to `claude/audit-remediation/e-04-zod-backfill-batch-1`.
+- Phase 7: Queue updated — Blocked entry for PR #528 marked resolved; E in-flight row updated.
+- STATUS: CI-RESCUE · stream=E · pr=#528 · commit=460d085
+
+### 2026-05-04 — BLOCKED iter 256 (stream E — PR #528 stuck-detection triggered; R-COVERAGE-04..10 marked false-positive)
+
+- Phase 0: Lock acquired (batch fire, context restored after concurrent sessions took iters 253-255).
+- Phase 1: main synced (concurrent sessions had already done iters 251-255 while context was being restored).
+- Phase 2: PR #528 (E-04) "Lint · Type-check · Test · Build" FAILURE. Checked stuck-detection: iters 248, 250, 252 = 3 CI-rescue entries on same PR + same check in < 24h. **Stuck-detection guard triggered.**
+- Phase 4 (verification sweep): R-COVERAGE-04..10 all verified false-positive by grepping for referenced paths — none of the claimed route paths/directories exist, or the modules already have comprehensive tests. R-COVERAGE-03 was already picked up as a valid item by iter 255 (reinterpreted to cover the actual quotes routes). See false-positive table for details on R-COVERAGE-04..10.
+- Phase 7: Surfaced Blocked entry for PR #528 persistent failure. Marked R-COVERAGE-04..10 as false-positive in items table and "Resolved as false positives" table. Updated E in-flight row.
+- STATUS: BLOCKED · stream=E · item=persistent-CI-failure-PR-528
 
 ### 2026-05-04 — CI-RESCUE iter 252 (stream E — nps comment Zod .max(2000) replaced by route-level truncation)
 

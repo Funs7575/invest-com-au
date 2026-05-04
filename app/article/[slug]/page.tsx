@@ -24,6 +24,7 @@ import Icon from "@/components/Icon";
 import AdSlot from "@/components/AdSlot";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
 import LinkifiedText from "@/components/LinkifiedText";
+import FloatingRightCTA from "@/components/FloatingRightCTA";
 
 export const revalidate = 3600; // ISR: revalidate every hour
 
@@ -802,6 +803,14 @@ export default async function ArticlePage({
           </div>
         </div>
       </div>
+      <FloatingRightCTA
+        href="/compare"
+        label="Compare brokers"
+        storageKey={`article:${slug}`}
+        variant="ink"
+        trackingContext="article"
+        mobileOnly
+      />
     </div>
   );
 }

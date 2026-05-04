@@ -1,6 +1,16 @@
 -- ============================================================
 -- Seed 15 oil-gas editorial articles.
 --
+-- Date: 2026-04-30
+-- Audit ref: codebase-health-2026-04-24.md §4.3 (G-03)
+-- Queue item: G-03 batch 8
+-- Why: seeds 15 editorial articles covering the oil-and-gas
+--      investment vertical to support organic search traffic.
+-- Idempotency: ON CONFLICT (slug) DO NOTHING. Safe to re-apply.
+-- Rollback:
+--   DELETE FROM public.articles WHERE category = 'oil-gas'
+--     AND created_at::date = '2026-04-30';
+--   Note: INSERT-only migration; no DDL to reverse.
 -- Idempotent: ON CONFLICT (slug) DO NOTHING — if an article
 -- already exists with the same slug, the insert is a no-op.
 -- To refresh content, update by slug manually.

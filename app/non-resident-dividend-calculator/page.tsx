@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
-import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR, SITE_NAME } from "@/lib/seo";
+import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
+import { calculatorJsonLd } from "@/lib/schema-markup";
 import ComplianceFooter from "@/components/ComplianceFooter";
 import NonResidentDividendClient from "./NonResidentDividendClient";
 
@@ -19,17 +20,12 @@ export const metadata: Metadata = {
   },
 };
 
-const softwareLd = {
-  "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  name: `Non-Resident Dividend Calculator — ${SITE_NAME}`,
+const softwareLd = calculatorJsonLd({
+  name: "Non-Resident Dividend Calculator",
   description:
     "Calculate withholding tax and final cash dividends for non-residents receiving Australian share distributions.",
-  url: absoluteUrl("/non-resident-dividend-calculator"),
-  applicationCategory: "FinanceApplication",
-  operatingSystem: "Any",
-  offers: { "@type": "Offer", price: "0", priceCurrency: "AUD" },
-};
+  path: "/non-resident-dividend-calculator",
+});
 
 const breadcrumbLd = breadcrumbJsonLd([
   { name: "Home", url: absoluteUrl("/") },

@@ -25,15 +25,15 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
   "hourly-5": ["/api/cron/broker-snapshot"],
   "hourly-15": ["/api/cron/automation-verdict-rollup", "/api/cron/quote-expiry-reminders"],
   "hourly-20": ["/api/cron/cron-freshness"],
-  "hourly-30": ["/api/cron/embeddings-refresh"],
+  "hourly-30": ["/api/cron/embeddings-refresh", "/api/cron/slo-monitor"],
 
-  "every-5m": [
-    "/api/cron/heartbeat",
+  "every-15m": [
     "/api/cron/job-queue-worker",
     "/api/cron/synthetic-checks",
+    "/api/cron/confirm-lead-notify",
+    "/api/cron/lead-sla-check",
   ],
-  "every-10m": ["/api/cron/confirm-lead-notify", "/api/cron/lead-sla-check"],
-  "every-15m": ["/api/cron/retry-webhooks", "/api/cron/slo-monitor"],
+  "every-30m": ["/api/cron/heartbeat", "/api/cron/retry-webhooks"],
   "every-6h": ["/api/admin/run-migration"],
 
   "daily-0": ["/api/cron/auto-publish"],

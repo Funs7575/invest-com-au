@@ -9,6 +9,28 @@ this number.
 
 ---
 
+## Critical section — open security/auth items (highest priority)
+
+Tracked here at the top so cycle-by-cycle progress is visible. Each
+PR cycle updates this section first: marks items green when fixed,
+adds new items as Codex review or audit scripts surface them.
+
+| Item | Severity | File | Status |
+|---|---|---|---|
+| `run-migration` ad-hoc auth + mixed-secret fallback | P1 | `app/api/admin/run-migration/route.ts` | ⚠️ **fixed in code (PR #536, merged `bf966f59`); prod verification blocked.** Production curls returned 404 on all four verification probes (CRON_SECRET GET/POST, INTERNAL_API_KEY GET, no-auth GET) — the route is unreachable, not failing auth. Source-side investigation ruled out routing config, middleware, basePath, and rewrites; root cause is in the deployment layer (Vercel build/bundling/aliasing). See A-95 for diagnosis follow-up. The code-level security improvement stands and is covered by 5/5 unit tests; the **behavioural** verification remains pending until reachability is restored. |
+| Route reachability — `/api/admin/run-migration` returned 404 when probed against `invest.com.au` | n/a | verification used wrong hostname | ✅ resolved 2026-05-04: production URL is the Vercel alias `https://invest-com-au.vercel.app`, not the apex `invest.com.au` (apex switchover is deferred pending AFSL license, target ~Oct 2026 cutover per `COMPANY.md`). Re-run probe: `curl -i https://invest-com-au.vercel.app/api/admin/run-migration -H "Authorization: Bearer $CRON_SECRET"` returns 401 without auth, 200 with auth — route is fine, A-90 code fix verifies correctly. A-95 / A-96 closed. |
+| Apex domain `invest.com.au` not yet bound to Vercel | deferred-post-launch | DNS | 🟡 intentional — apex stays on prior host until AFSL license is granted. At license-grant time: add `invest.com.au` and `www.invest.com.au` in Vercel dashboard, update registrar A/AAAA + CNAME records, wait for DNS propagation, swap canonical URLs in code (sitemap, OG, email links, SEO helpers in `lib/seo.ts`). Tracked as part of the Oct–Dec 2026 cutover window. |
+| `marketplace/notify` accepts service-role key as bearer | P0 | `app/api/marketplace/notify/route.ts:33` | 🔴 open — filed as `A-91` in queue. Service-role-as-auth-token is a critical anti-pattern (see `CLAUDE.md` admin-client allowed-scope). |
+| `marketplace/campaigns` UI sends literal `"browser-admin"` as `x-internal-key` | P1 | `app/admin/marketplace/campaigns/page.tsx:131` | 🔴 open — filed as `A-92`. Caller is broken (env vars never equal that literal) AND attempts client-side auth bypass. |
+| Open-coded `Bearer ${CRON_SECRET}` checks across `app/api/admin/*` (drift from `requireCronAuth`) | P2 | 6+ files | 🟡 open — filed as `A-93` in queue. Per-file PRs to migrate. |
+| `quotes/[slug]/review`, `analytics-dashboard`, `verify-professional` open-coded auth | P2 | 3 files | 🟡 open — filed as `A-94`. |
+
+Re-checked every cycle. Items move to ✅ when the fix lands on `main`.
+New items append below; do not delete fixed items — they're audit
+trail for the launch-gate review.
+
+---
+
 ## Gating criteria
 
 ### Quality

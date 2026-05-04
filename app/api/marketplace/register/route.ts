@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import crypto from "crypto";
 import { isRateLimited } from "@/lib/rate-limit";
@@ -6,6 +7,16 @@ import { ADMIN_EMAIL } from "@/lib/admin";
 import { logger } from "@/lib/logger";
 
 const log = logger("marketplace:register");
+
+const RegisterBody = z.object({
+  email: z.string().email(),
+  password: z.string().min(8, "Password must be at least 8 characters."),
+  full_name: z.string().min(1),
+  company_name: z.string().min(1),
+  phone: z.string().optional(),
+  broker_slug: z.string().optional(),
+  website: z.string().optional(),
+});
 
 /** Escape HTML special chars to prevent XSS in email templates */
 function escapeHtml(str: string): string {
@@ -24,23 +35,23 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Too many registration attempts. Please try again later." }, { status: 429 });
     }
 
-    const body = await req.json();
-    const { email, password, full_name, company_name, phone, broker_slug, website } = body;
-
-    // Validate required fields
-    if (!email || !password || !full_name || !company_name) {
+    const rawBody = await req.json();
+    const bodyResult = RegisterBody.safeParse(rawBody);
+    if (!bodyResult.success) {
+      const issue = bodyResult.error.issues[0];
+      const field = issue?.path[0] as string | undefined;
+      if (field === "password") {
+        return NextResponse.json({ error: "Password must be at least 8 characters." }, { status: 400 });
+      }
+      if (field === "email") {
+        return NextResponse.json({ error: "Email, password, full name, and company name are required." }, { status: 400 });
+      }
       return NextResponse.json(
         { error: "Email, password, full name, and company name are required." },
         { status: 400 }
       );
     }
-
-    if (password.length < 8) {
-      return NextResponse.json(
-        { error: "Password must be at least 8 characters." },
-        { status: 400 }
-      );
-    }
+    const { email, password, full_name, company_name, phone, broker_slug, website } = bodyResult.data;
 
     // Check if email already has a broker account
     const { data: existingAccount } = await supabaseAdmin

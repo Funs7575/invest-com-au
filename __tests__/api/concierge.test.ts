@@ -3,6 +3,11 @@ import { NextRequest } from "next/server";
 
 // ── Mocks ──────────────────────────────────────────────────────────────────────
 
+const mockIsFlagEnabled = vi.fn();
+vi.mock("@/lib/feature-flags", () => ({
+  isFlagEnabled: (...args: unknown[]) => mockIsFlagEnabled(...args),
+}));
+
 const mockIsAllowed = vi.fn();
 vi.mock("@/lib/rate-limit-db", () => ({
   isAllowed: (...args: unknown[]) => mockIsAllowed(...args),
@@ -56,14 +61,6 @@ vi.mock("@anthropic-ai/sdk", () => ({
   default: vi.fn().mockImplementation(() => ({
     messages: { stream: (...args: unknown[]) => mockMessagesStream(...args) },
   })),
-}));
-
-// The ai_generation feature flag was added in the launch-ops pass.
-// In test environments isFlagEnabled() returns false (placeholder Supabase URL),
-// causing all POST tests to receive 503. Mock to return true by default.
-const mockIsFlagEnabled = vi.fn().mockResolvedValue(true);
-vi.mock("@/lib/feature-flags", () => ({
-  isFlagEnabled: (...args: unknown[]) => mockIsFlagEnabled(...args),
 }));
 
 import { POST, GET, DELETE } from "@/app/api/concierge/route";
@@ -133,6 +130,14 @@ describe("POST /api/concierge", () => {
     mockIsAllowed.mockResolvedValue(true);
     process.env.ANTHROPIC_API_KEY = "sk-test";
     mockAdminFrom.mockReturnValue(makeInsert());
+  });
+
+  it("returns 503 when ai_generation flag is disabled", async () => {
+    mockIsFlagEnabled.mockResolvedValue(false);
+    const res = await POST(makePost({ message: "hello" }));
+    expect(res.status).toBe(503);
+    const json = await res.json();
+    expect(json.error).toBe("temporarily_unavailable");
   });
 
   it("returns 429 when rate limited", async () => {

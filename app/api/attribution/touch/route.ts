@@ -1,12 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { recordTouch, type TouchEvent } from "@/lib/attribution";
+import { recordTouch } from "@/lib/attribution";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 import { logger } from "@/lib/logger";
 
 const log = logger("attribution:touch");
 
 export const runtime = "nodejs";
+
+const TouchBody = z.object({
+  session_id: z.string(),
+  event: z.enum(["view", "click", "signup", "lead", "conversion"]),
+  user_key: z.string().optional(),
+  source: z.string().optional(),
+  medium: z.string().optional(),
+  campaign: z.string().optional(),
+  landing_path: z.string().optional(),
+  page_path: z.string().optional(),
+  vertical: z.string().optional(),
+  value_cents: z.number().optional(),
+});
 
 /**
  * POST /api/attribution/touch
@@ -21,15 +35,20 @@ export const runtime = "nodejs";
  * browse behaviour.
  */
 export async function POST(request: NextRequest) {
-  const body = await request.json().catch(() => ({}));
-  const sessionId = typeof body.session_id === "string" ? body.session_id : null;
-  const event = typeof body.event === "string" ? (body.event as TouchEvent) : null;
-  if (!sessionId || !event) {
-    return NextResponse.json({ error: "Missing session_id or event" }, { status: 400 });
+  const rawBody = await request.json().catch(() => null);
+  const bodyResult = TouchBody.safeParse(rawBody);
+  if (!bodyResult.success) {
+    // Differentiate "event field present but bad value" from "field missing entirely"
+    // so tests can assert the right error message for each case.
+    const rawEvent = (rawBody as Record<string, unknown> | null)?.event;
+    const hasInvalidEvent = rawEvent !== undefined &&
+      bodyResult.error.issues.some(issue => issue.path[0] === 'event');
+    return NextResponse.json(
+      { error: hasInvalidEvent ? "Invalid event value" : "Missing session_id or event" },
+      { status: 400 },
+    );
   }
-  if (!["view", "click", "signup", "lead", "conversion"].includes(event)) {
-    return NextResponse.json({ error: "Invalid event" }, { status: 400 });
-  }
+  const { session_id: sessionId, event, user_key, source, medium, campaign, landing_path, page_path, vertical, value_cents } = bodyResult.data;
 
   // Per-session rate limit — per-IP limits are too coarse because
   // proxied offices share IPs
@@ -42,15 +61,15 @@ export async function POST(request: NextRequest) {
     supabase,
     {
       sessionId,
-      userKey: typeof body.user_key === "string" ? body.user_key : null,
+      userKey: user_key ?? null,
       event,
-      source: typeof body.source === "string" ? body.source : null,
-      medium: typeof body.medium === "string" ? body.medium : null,
-      campaign: typeof body.campaign === "string" ? body.campaign : null,
-      landingPath: typeof body.landing_path === "string" ? body.landing_path : null,
-      pagePath: typeof body.page_path === "string" ? body.page_path : null,
-      vertical: typeof body.vertical === "string" ? body.vertical : null,
-      valueCents: typeof body.value_cents === "number" ? body.value_cents : null,
+      source: source ?? null,
+      medium: medium ?? null,
+      campaign: campaign ?? null,
+      landingPath: landing_path ?? null,
+      pagePath: page_path ?? null,
+      vertical: vertical ?? null,
+      valueCents: value_cents ?? null,
     },
     !!request.headers.get("referer"),
   );

@@ -18,6 +18,7 @@ export const maxDuration = 60;
  * cron name and compares it to the expected cadence:
  *
  *   hourly → 2h since last success
+ *   every-30m → 90m
  *   every-15m → 45m
  *   daily → 30h
  *   weekly → 8 days
@@ -38,10 +39,12 @@ interface CronExpectation {
 // a one-cycle miss.
 const EXPECTATIONS: CronExpectation[] = [
   // Every-few-minutes
-  { name: "retry-webhooks", maxAgeMs: 45 * 60_000, cadence: "15m" },
-  { name: "job-queue-worker", maxAgeMs: 20 * 60_000, cadence: "5m" },
-  { name: "confirm-lead-notify", maxAgeMs: 30 * 60_000, cadence: "10m" },
-  { name: "slo-monitor", maxAgeMs: 45 * 60_000, cadence: "15m" },
+  { name: "heartbeat", maxAgeMs: 90 * 60_000, cadence: "30m" },
+  { name: "retry-webhooks", maxAgeMs: 90 * 60_000, cadence: "30m" },
+  { name: "job-queue-worker", maxAgeMs: 45 * 60_000, cadence: "15m" },
+  { name: "synthetic-checks", maxAgeMs: 45 * 60_000, cadence: "15m" },
+  { name: "confirm-lead-notify", maxAgeMs: 45 * 60_000, cadence: "15m" },
+  { name: "slo-monitor", maxAgeMs: 2 * 3_600_000, cadence: "hourly" },
   // Hourly
   { name: "auto-resolve-disputes", maxAgeMs: 2 * 3_600_000, cadence: "hourly" },
   { name: "embeddings-refresh", maxAgeMs: 2 * 3_600_000, cadence: "hourly" },

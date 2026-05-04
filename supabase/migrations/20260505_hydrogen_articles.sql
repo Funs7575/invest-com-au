@@ -1,5 +1,16 @@
 -- ============================================================
 -- Seed 12 hydrogen editorial articles.
+--
+-- Date: 2026-05-05
+-- Audit ref: codebase-health-2026-04-24.md §4.3 (G-03)
+-- Queue item: G-03 batch 8
+-- Why: seeds 12 editorial articles covering the hydrogen vertical
+--      for organic search traffic.
+-- Idempotency: ON CONFLICT (slug) DO NOTHING. Safe to re-apply.
+-- Rollback:
+--   DELETE FROM public.articles WHERE category = 'hydrogen'
+--     AND created_at::date = '2026-05-05';
+--   Note: INSERT-only migration; no DDL to reverse.
 -- Idempotent: ON CONFLICT (slug) DO NOTHING.
 -- ============================================================
 

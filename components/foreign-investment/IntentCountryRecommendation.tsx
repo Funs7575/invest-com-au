@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { getIntentCountry, intentCountryMeta } from "@/lib/intent-context";
+import IntentCountryRecommendationCard from "./IntentCountryRecommendationCard";
 
 type SurfaceKind = "compare" | "advisors" | "invest";
 
@@ -44,32 +44,14 @@ export default async function IntentCountryRecommendation({
   if (!rec) return null;
 
   return (
-    <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 md:p-5 my-4">
-      <div className="flex items-start justify-between gap-4 flex-wrap">
-        <div className="flex items-start gap-3">
-          <span aria-hidden className="text-2xl leading-none mt-0.5">
-            {meta.flag}
-          </span>
-          <div>
-            <p className="text-xs font-extrabold uppercase tracking-wider text-amber-700 mb-0.5">
-              Recommended for {meta.label}
-            </p>
-            <h3 className="text-base font-bold text-slate-900 mb-1">
-              {rec.title}
-            </h3>
-            <p className="text-sm text-slate-700 max-w-xl leading-snug">
-              {rec.body}
-            </p>
-          </div>
-        </div>
-        <Link
-          href={rec.href}
-          className="shrink-0 px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold text-sm rounded-lg transition-colors"
-        >
-          {rec.cta} &rarr;
-        </Link>
-      </div>
-    </div>
+    <IntentCountryRecommendationCard
+      flag={meta.flag}
+      audienceLabel={meta.label}
+      title={rec.title}
+      body={rec.body}
+      href={rec.href}
+      cta={rec.cta}
+    />
   );
 }
 
