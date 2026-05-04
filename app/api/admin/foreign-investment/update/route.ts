@@ -39,7 +39,7 @@ type AllowedTable = (typeof ALLOWED_TABLES)[number];
 const UpdateBody = z.object({
   table: z.enum(ALLOWED_TABLES),
   id: z.string().min(1),
-  updates: z.record(z.unknown()),
+  updates: z.record(z.string(), z.unknown()),
   categoryKey: z.string().min(1),
   note: z.string().optional(),
 });
@@ -90,7 +90,7 @@ export async function POST(req: NextRequest) {
   if (!parsed.success) {
     const issue = parsed.error.issues[0];
     const isTableInvalid =
-      issue?.path[0] === "table" && issue.code === "invalid_enum_value";
+      issue?.path[0] === "table" && issue.code === "invalid_value";
     return NextResponse.json(
       { error: isTableInvalid ? "Table not allowed" : "Missing required fields" },
       { status: 400 },
