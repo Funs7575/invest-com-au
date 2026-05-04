@@ -1,5 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import { createHash } from 'crypto';
 import { detectDeviceType } from '@/lib/device-detect';
 import { createRateLimiter } from '@/lib/rate-limiter';
@@ -16,29 +17,29 @@ function hashIP(ip: string): string {
   return createHash('sha256').update(salt + ip).digest('hex').slice(0, 16);
 }
 
+const TrackClickBody = z.object({
+  broker_slug: z.string().min(1),
+  broker_name: z.string().optional(),
+  source: z.string().optional(),
+  page: z.string().optional(),
+  layer: z.string().optional(),
+  session_id: z.string().optional(),
+  scenario: z.string().optional(),
+  placement_type: z.string().optional(),
+});
+
 export async function POST(request: NextRequest) {
-  // Parse body with error handling
-  let body: Record<string, unknown>;
+  let rawBody: unknown;
   try {
-    body = await request.json();
+    rawBody = await request.json();
   } catch {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
   }
-
-  const { broker_name, broker_slug, source, page, layer, session_id, scenario, placement_type } = body as {
-    broker_name?: string;
-    broker_slug?: string;
-    source?: string;
-    page?: string;
-    layer?: string;
-    session_id?: string;
-    scenario?: string;
-    placement_type?: string;
-  };
-
-  if (!broker_slug || typeof broker_slug !== 'string') {
+  const bodyResult = TrackClickBody.safeParse(rawBody);
+  if (!bodyResult.success) {
     return NextResponse.json({ error: 'Missing broker_slug' }, { status: 400 });
   }
+  const { broker_slug, broker_name, source, page, layer, session_id, scenario, placement_type } = bodyResult.data;
 
   // Rate limit check
   const forwarded = request.headers.get('x-forwarded-for');
