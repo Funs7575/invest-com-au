@@ -45,6 +45,7 @@ const CATEGORY_COLORS: Record<
   franchise: { bg: "bg-purple-100", text: "text-purple-700", ring: "ring-purple-300" },
   "renewable-energy": { bg: "bg-emerald-100", text: "text-emerald-700", ring: "ring-emerald-300" },
   startups: { bg: "bg-indigo-100", text: "text-indigo-700", ring: "ring-indigo-300" },
+  "pre-ipo": { bg: "bg-red-100", text: "text-red-700", ring: "ring-red-300" },
   alternatives: { bg: "bg-rose-100", text: "text-rose-700", ring: "ring-rose-300" },
   "private-credit": { bg: "bg-teal-100", text: "text-teal-700", ring: "ring-teal-300" },
   infrastructure: { bg: "bg-cyan-100", text: "text-cyan-700", ring: "ring-cyan-300" },
