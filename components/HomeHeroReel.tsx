@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { DesignIcon } from "@/components/design/DesignIcon";
@@ -108,16 +108,48 @@ export default function HomeHeroReel({
     [brokerCount, listingCount, advisorCount],
   );
 
-  const [active, setActive] = useState(0);
+  // Internal index can go from 0..N (N = clone of panel 0 used for seamless wrap).
+  const [internalIndex, setInternalIndex] = useState(0);
+  const [animating, setAnimating] = useState(true);
   const [paused, setPaused] = useState(false);
+  const reArmRef = useRef<number | null>(null);
 
+  // Auto-advance like a slot reel: always rolls forward
   useEffect(() => {
     if (paused) return;
     const id = setInterval(() => {
-      setActive((a) => (a + 1) % panels.length);
+      setAnimating(true);
+      setInternalIndex((i) => i + 1);
     }, 5000);
     return () => clearInterval(id);
-  }, [paused, panels.length]);
+  }, [paused]);
+
+  // After we land on the cloned panel (index = N), instant-snap back to 0
+  // without animation, then re-enable animation for the next tick.
+  useEffect(() => {
+    return () => {
+      if (reArmRef.current !== null) cancelAnimationFrame(reArmRef.current);
+    };
+  }, []);
+
+  const realActive = internalIndex % panels.length;
+  const renderedPanels: ReadonlyArray<PanelDef> = [...panels, panels[0]!];
+
+  const handleTransitionEnd = (e: React.TransitionEvent<HTMLDivElement>) => {
+    if (e.propertyName !== "transform") return;
+    if (internalIndex >= panels.length) {
+      setAnimating(false);
+      setInternalIndex(0);
+      reArmRef.current = requestAnimationFrame(() => {
+        reArmRef.current = requestAnimationFrame(() => setAnimating(true));
+      });
+    }
+  };
+
+  const goTo = (i: number) => {
+    setAnimating(true);
+    setInternalIndex(i);
+  };
 
   const matchBroker = brokers[0];
 
@@ -142,40 +174,48 @@ export default function HomeHeroReel({
               <button
                 key={p.key}
                 type="button"
-                onClick={() => setActive(i)}
-                aria-current={i === active ? "true" : undefined}
+                onClick={() => goTo(i)}
+                aria-current={i === realActive ? "true" : undefined}
                 aria-label={`Show ${p.headline}`}
-                className={`hero-reel-pip ${i === active ? "is-active" : ""}`}
-                style={i === active ? { background: p.accent } : undefined}
+                className={`hero-reel-pip ${i === realActive ? "is-active" : ""}`}
+                style={i === realActive ? { background: p.accent } : undefined}
               />
             ))}
           </nav>
         </div>
 
+        {/* Slot-machine reel: the stack scrolls vertically; only the panel
+            in the viewport is visible. Rendering [...panels, panels[0]]
+            so we can always advance forward and snap back invisibly. */}
         <div className="hero-reel-viewport" aria-live="polite">
-          {panels.map((p, i) => {
-            const isActive = i === active;
-            return (
-              <Link
-                key={p.key}
-                href={p.href}
-                aria-label={p.ariaLabel}
-                aria-hidden={!isActive}
-                tabIndex={isActive ? 0 : -1}
-                className={`hero-reel-panel ${isActive ? "is-active" : ""}`}
-              >
-                <PanelInner
-                  panel={p}
-                  brokers={brokers}
-                  listings={listings}
-                  advisors={advisors}
-                  matchBroker={matchBroker}
-                />
-              </Link>
-            );
-          })}
+          <div
+            className={`hero-reel-stack ${animating ? "is-animating" : ""}`}
+            style={{ transform: `translateY(-${internalIndex * 100}%)` }}
+            onTransitionEnd={handleTransitionEnd}
+          >
+            {renderedPanels.map((p, i) => {
+              const isVisible = i === internalIndex;
+              return (
+                <Link
+                  key={`${p.key}-${i}`}
+                  href={p.href}
+                  aria-label={p.ariaLabel}
+                  aria-hidden={!isVisible}
+                  tabIndex={isVisible ? 0 : -1}
+                  className="hero-reel-panel"
+                >
+                  <PanelInner
+                    panel={p}
+                    brokers={brokers}
+                    listings={listings}
+                    advisors={advisors}
+                    matchBroker={matchBroker}
+                  />
+                </Link>
+              );
+            })}
+          </div>
         </div>
-
       </div>
 
       <style>{`
@@ -218,25 +258,24 @@ export default function HomeHeroReel({
           overflow: hidden;
           z-index: 1;
         }
+        .hero-reel-stack {
+          display: flex;
+          flex-direction: column;
+          will-change: transform;
+        }
+        .hero-reel-stack.is-animating {
+          transition: transform .55s cubic-bezier(.18, .9, .25, 1);
+        }
         .hero-reel-panel {
-          position: absolute;
-          inset: 0;
+          height: 380px;
+          flex-shrink: 0;
           padding: 26px 24px 24px;
           display: flex;
           flex-direction: column;
           gap: 14px;
           color: rgba(255,255,255,.92);
           text-decoration: none;
-          opacity: 0;
-          transform: translateY(10px);
-          pointer-events: none;
-          transition: opacity .35s cubic-bezier(.2,.8,.2,1),
-                      transform .42s cubic-bezier(.2,.8,.2,1);
-        }
-        .hero-reel-panel.is-active {
-          opacity: 1;
-          transform: translateY(0);
-          pointer-events: auto;
+          box-sizing: border-box;
         }
         .hero-reel-panel:hover .panel-cta-pill,
         .hero-reel-panel:focus-visible .panel-cta-pill {
@@ -248,9 +287,8 @@ export default function HomeHeroReel({
           transform: translateX(2px);
         }
         @media (prefers-reduced-motion: reduce) {
-          .hero-reel-panel {
-            transition: opacity .25s ease !important;
-            transform: none !important;
+          .hero-reel-stack.is-animating {
+            transition: transform .15s ease;
           }
           .hero-reel-panel:hover .panel-cta-pill svg,
           .hero-reel-panel:focus-visible .panel-cta-pill svg {
@@ -582,7 +620,7 @@ function PanelInner({
 
       <span className="panel-cta-pill" aria-hidden>
         {panel.cta}
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6">
           <path strokeLinecap="round" strokeLinejoin="round" d="M5 12h14m0 0-5-5m5 5-5 5" />
         </svg>
       </span>
