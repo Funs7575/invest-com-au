@@ -286,9 +286,9 @@ describe("notifyAdminApplicationEscalated", () => {
     });
 
     expect(mockFetch).toHaveBeenCalledOnce();
-    const [url, opts] = mockFetch.mock.calls[0]!;
+    const [url, opts] = mockFetch.mock.calls[0]! as unknown as [string, RequestInit];
     expect(url).toBe("https://api.resend.com/emails");
-    const body = JSON.parse((opts as RequestInit).body as string);
+    const body = JSON.parse(opts.body as string);
     expect(body.to).toBe("admin@invest.com.au");
     expect(body.subject).toContain("John Smith");
     expect(body.subject).toContain("escalated");

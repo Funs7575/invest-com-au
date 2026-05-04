@@ -1154,7 +1154,7 @@ const categories: InvestCategory[] = [
   {
     slug: "pre-ipo",
     label: "Pre-IPO",
-    dbVerticals: ["startup"],
+    dbVerticals: ["pre_ipo"],
     color: {
       bg: "bg-red-50",
       border: "border-red-200",
