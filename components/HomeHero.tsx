@@ -28,7 +28,7 @@ export default function HomeHero({
       style={{
         background: "var(--color-ink-900)",
         color: "white",
-        padding: "64px 36px 56px",
+        padding: "72px 36px 64px",
         position: "relative",
         overflow: "hidden",
       }}
@@ -56,15 +56,15 @@ export default function HomeHero({
         className="hero-shell"
         style={{
           position: "relative",
-          maxWidth: 1280,
+          maxWidth: 1240,
           margin: "0 auto",
           display: "grid",
           gridTemplateColumns: "minmax(0, 1fr)",
-          gap: 48,
+          gap: 36,
           alignItems: "start",
         }}
       >
-        <div style={{ minWidth: 0, maxWidth: 920 }}>
+        <div style={{ minWidth: 0, maxWidth: 720 }}>
           <span
             className="iv2-pill"
             style={{
@@ -91,13 +91,13 @@ export default function HomeHero({
           <h1
             className="font-display"
             style={{
-              fontSize: "clamp(38px, 5.5vw, 60px)",
-              lineHeight: 0.98,
-              letterSpacing: "-.04em",
+              fontSize: "clamp(36px, 4.6vw, 54px)",
+              lineHeight: 1,
+              letterSpacing: "-.035em",
               fontWeight: 800,
-              margin: "18px 0 0",
+              margin: "20px 0 0",
               color: "white",
-              maxWidth: 820,
+              maxWidth: 700,
               textWrap: "balance",
             }}
           >
@@ -107,11 +107,11 @@ export default function HomeHero({
 
           <p
             style={{
-              fontSize: 17,
+              fontSize: 16.5,
               lineHeight: 1.55,
               color: "rgba(255,255,255,.78)",
-              maxWidth: 700,
-              margin: "20px 0 0",
+              maxWidth: 620,
+              margin: "22px 0 0",
             }}
           >
             Compare brokers, crypto exchanges, super funds and savings accounts. Browse real
@@ -119,7 +119,7 @@ export default function HomeHero({
             Find a verified expert. Or answer 4 questions to get matched. No jargon, no email.
           </p>
 
-          <p style={{ marginTop: 28, fontSize: 11, color: "rgba(255,255,255,.45)" }}>
+          <p style={{ marginTop: 36, fontSize: 11, color: "rgba(255,255,255,.45)" }}>
             General information only. Always check licensing, fees, risks and suitability before proceeding.
           </p>
         </div>
@@ -132,7 +132,7 @@ export default function HomeHero({
             width: "100%",
             display: "flex",
             flexDirection: "column",
-            gap: 18,
+            gap: 28,
             justifySelf: "end",
           }}
         >
@@ -195,7 +195,7 @@ export default function HomeHero({
 
       <style>{`
         @media (min-width: 1024px) {
-          .hero-shell { grid-template-columns: minmax(0, 1.1fr) minmax(360px, 0.9fr) !important; }
+          .hero-shell { grid-template-columns: minmax(0, 1fr) minmax(420px, 480px) !important; }
         }
         @media (max-width: 1023px) {
           .hero-right { justify-self: stretch !important; }
