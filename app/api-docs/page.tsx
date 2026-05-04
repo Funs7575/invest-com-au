@@ -436,7 +436,7 @@ async function getBrokers() {
     headers: { Authorization: \`Bearer \${API_KEY}\` },
   });
   const { data, meta } = await res.json();
-  console.log(\`Found \${meta.total} brokers\`);
+  console.log(\`Found \${meta.total} brokers\`); // console-allow: code-example
   return data;
 }
 
