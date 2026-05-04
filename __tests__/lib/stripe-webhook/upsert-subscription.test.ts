@@ -132,13 +132,16 @@ describe("upsertSubscription", () => {
   });
 
   it("upserts when the existing updated_at is older than the incoming event time", async () => {
-    const oldTs = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+    // existing.updated_at = 2h ago; incoming current_period_start = 30min ago
+    // stripeEventTime = 30min ago > 2h ago → guard does NOT fire → upsert runs
+    const oldTs = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
+    const recentStart = Math.floor((Date.now() - 30 * 60 * 1000) / 1000);
     const { client, upsertSpy } = makeAdmin({
       profileData: { id: "user-uuid-4" },
       subscriptionData: { updated_at: oldTs, status: "active" },
     });
     const log = makeLog();
-    await upsertSubscription(makeSub(), client, log);
+    await upsertSubscription(makeSub({ current_period_start: recentStart }), client, log);
     expect(upsertSpy).toHaveBeenCalledOnce();
     expect(log.error).not.toHaveBeenCalled();
   });
