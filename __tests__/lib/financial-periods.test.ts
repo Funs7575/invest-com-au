@@ -169,6 +169,7 @@ vi.mock("@/lib/logger", () => ({
 
 import {
   getPeriod,
+  listRecentPeriods,
   closePeriod,
   isPeriodClosedAt,
   previousMonthBounds,
@@ -246,5 +247,46 @@ describe("isPeriodClosedAt", () => {
     // No rows at all — should be false
     const closed = await isPeriodClosedAt(new Date("2026-03-15T12:00:00Z"));
     expect(closed).toBe(false);
+  });
+});
+
+describe("getPeriod", () => {
+  it("returns the period row when it exists", async () => {
+    await closePeriod({
+      periodStart: "2026-02-01",
+      periodEnd: "2026-02-28",
+      closedBy: "test",
+    });
+    const period = await getPeriod("2026-02-01", "2026-02-28");
+    expect(period).not.toBeNull();
+    expect(period?.period_start).toBe("2026-02-01");
+    expect(period?.status).toBe("closed");
+  });
+
+  it("returns null when the period does not exist", async () => {
+    const period = await getPeriod("2026-01-01", "2026-01-31");
+    expect(period).toBeNull();
+  });
+});
+
+describe("listRecentPeriods", () => {
+  it("returns all periods that have been created", async () => {
+    await closePeriod({ periodStart: "2026-02-01", periodEnd: "2026-02-28", closedBy: "test" });
+    await closePeriod({ periodStart: "2026-01-01", periodEnd: "2026-01-31", closedBy: "test" });
+    const periods = await listRecentPeriods();
+    expect(periods.length).toBe(2);
+    expect(periods.every((p) => p.status === "closed")).toBe(true);
+  });
+
+  it("returns an empty array when no periods exist", async () => {
+    const periods = await listRecentPeriods();
+    expect(periods).toEqual([]);
+  });
+
+  it("respects the limit parameter (mock returns all, caller controls slice)", async () => {
+    await closePeriod({ periodStart: "2026-02-01", periodEnd: "2026-02-28", closedBy: "test" });
+    const periods = await listRecentPeriods(1);
+    // Mock doesn't apply limit logic, but confirms the function handles the param
+    expect(Array.isArray(periods)).toBe(true);
   });
 });

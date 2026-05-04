@@ -89,6 +89,15 @@ second monitor. Do not improvise.
 - [ ] Public stats: traffic, signups, errors, p95 latency. Posted to
       #launch.
 
+## Recovery objectives (RPO / RTO)
+
+| Objective | Target | Rationale |
+|-----------|--------|-----------|
+| **RPO** — max data loss | 24 h | Supabase PITR captures WAL continuously; 24 h is the fallback window if PITR is unavailable and the last daily dump is used. In practice, PITR can recover to within seconds of failure. |
+| **RTO** — max time to restore | 1 h | Budget: PITR restore ~15 min + smoke test ~15 min + DNS re-propagation (if needed) ~30 min. Vercel + edge functions roll back in < 5 min independently. |
+
+These targets cover the primary Supabase database. For Vercel/edge outages the effective RTO is minutes (see `launch-rollback.md`). Validate the RPO/RTO by running the PITR restore drill (Q-01 in the audit queue) at least once before launch.
+
 ## If something breaks
 
 - **Page errors but most traffic OK** → triage in Sentry, hotfix PR.
