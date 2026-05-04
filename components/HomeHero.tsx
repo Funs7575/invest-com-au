@@ -1,7 +1,28 @@
 import Link from "next/link";
 import { DesignIcon } from "@/components/design/DesignIcon";
+import HomeHeroReel, {
+  type ReelBroker,
+  type ReelListing,
+  type ReelAdvisor,
+} from "@/components/HomeHeroReel";
 
-export default function HomeHero() {
+interface HomeHeroProps {
+  topBrokers: ReadonlyArray<ReelBroker>;
+  topListings: ReadonlyArray<ReelListing>;
+  topAdvisors: ReadonlyArray<ReelAdvisor>;
+  brokerCount: number;
+  listingCount: number;
+  advisorCount: number;
+}
+
+export default function HomeHero({
+  topBrokers,
+  topListings,
+  topAdvisors,
+  brokerCount,
+  listingCount,
+  advisorCount,
+}: HomeHeroProps) {
   return (
     <section
       style={{
@@ -31,109 +52,156 @@ export default function HomeHero() {
         }}
       />
 
-      <div style={{ position: "relative", maxWidth: 920, margin: "0 auto" }}>
-        <span
-          className="iv2-pill"
-          style={{
-            background: "rgba(255,255,255,.06)",
-            color: "white",
-            border: "1px solid rgba(255,255,255,.14)",
-            fontSize: 11.5,
-            padding: "5px 12px",
-          }}
-        >
+      <div
+        className="hero-shell"
+        style={{
+          position: "relative",
+          maxWidth: 1280,
+          margin: "0 auto",
+          display: "grid",
+          gridTemplateColumns: "minmax(0, 1fr)",
+          gap: 48,
+          alignItems: "start",
+        }}
+      >
+        <div style={{ minWidth: 0, maxWidth: 920 }}>
           <span
-            aria-hidden
+            className="iv2-pill"
             style={{
-              width: 6,
-              height: 6,
-              borderRadius: 99,
-              background: "var(--color-coral-400)",
-              boxShadow: "0 0 0 4px rgba(242,88,34,.18)",
-            }}
-          />
-          Independent &middot; ASIC-registered &middot; No commission incentive &middot; Est. 1996
-        </span>
-
-        <h1
-          className="font-display"
-          style={{
-            fontSize: "clamp(38px, 5.5vw, 60px)",
-            lineHeight: 0.98,
-            letterSpacing: "-.04em",
-            fontWeight: 800,
-            margin: "18px 0 0",
-            color: "white",
-            maxWidth: 820,
-            textWrap: "balance",
-          }}
-        >
-          Compare investing platforms, see what&apos;s for sale, or find an expert &mdash;{" "}
-          <span style={{ color: "var(--color-coral-400)" }}>all in one place.</span>
-        </h1>
-
-        <p
-          style={{
-            fontSize: 17,
-            lineHeight: 1.55,
-            color: "rgba(255,255,255,.78)",
-            maxWidth: 700,
-            margin: "20px 0 0",
-          }}
-        >
-          Compare brokers, crypto exchanges, super funds and savings accounts. Browse real
-          Australian investment opportunities &mdash; businesses, farmland, mining, property.
-          Find a verified expert. Or answer 4 questions to get matched. No jargon, no email.
-        </p>
-
-        <div
-          style={{
-            marginTop: 28,
-            display: "flex",
-            flexWrap: "wrap",
-            gap: 12,
-            alignItems: "center",
-          }}
-        >
-          <Link
-            href="/quiz"
-            className="iv2-cta"
-            style={{
-              fontSize: 16,
-              fontWeight: 700,
-              padding: "14px 24px",
-              borderRadius: 12,
-              background: "var(--color-coral-400)",
+              background: "rgba(255,255,255,.06)",
               color: "white",
-              boxShadow: "0 8px 24px rgba(242,88,34,.32)",
+              border: "1px solid rgba(255,255,255,.14)",
+              fontSize: 11.5,
+              padding: "5px 12px",
             }}
           >
-            Get matched in 60 seconds <DesignIcon name="arrow-right" size={16} strokeWidth={2.6} />
-          </Link>
-          <Link
-            href="#routes"
+            <span
+              aria-hidden
+              style={{
+                width: 6,
+                height: 6,
+                borderRadius: 99,
+                background: "var(--color-coral-400)",
+                boxShadow: "0 0 0 4px rgba(242,88,34,.18)",
+              }}
+            />
+            Independent &middot; ASIC-registered &middot; No commission incentive &middot; Est. 1996
+          </span>
+
+          <h1
+            className="font-display"
             style={{
-              fontSize: 14,
-              fontWeight: 700,
-              padding: "13px 20px",
-              borderRadius: 12,
-              border: "1px solid rgba(255,255,255,.18)",
+              fontSize: "clamp(38px, 5.5vw, 60px)",
+              lineHeight: 0.98,
+              letterSpacing: "-.04em",
+              fontWeight: 800,
+              margin: "18px 0 0",
               color: "white",
-              background: "rgba(255,255,255,.04)",
-              textDecoration: "none",
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 8,
+              maxWidth: 820,
+              textWrap: "balance",
             }}
           >
-            Skip the quiz <DesignIcon name="arrow-right" size={14} strokeWidth={2.4} />
-          </Link>
+            Compare investing platforms, see what&apos;s for sale, or find an expert &mdash;{" "}
+            <span style={{ color: "var(--color-coral-400)" }}>all in one place.</span>
+          </h1>
+
+          <p
+            style={{
+              fontSize: 17,
+              lineHeight: 1.55,
+              color: "rgba(255,255,255,.78)",
+              maxWidth: 700,
+              margin: "20px 0 0",
+            }}
+          >
+            Compare brokers, crypto exchanges, super funds and savings accounts. Browse real
+            Australian investment opportunities &mdash; businesses, farmland, mining, property.
+            Find a verified expert. Or answer 4 questions to get matched. No jargon, no email.
+          </p>
+
+          <p style={{ marginTop: 28, fontSize: 11, color: "rgba(255,255,255,.45)" }}>
+            General information only. Always check licensing, fees, risks and suitability before proceeding.
+          </p>
         </div>
 
-        <p style={{ marginTop: 24, fontSize: 11, color: "rgba(255,255,255,.45)" }}>
-          General information only. Always check licensing, fees, risks and suitability before proceeding.
-        </p>
+        {/* Right column — pokie-reel visual + CTAs below */}
+        <div
+          className="hero-right"
+          style={{
+            position: "relative",
+            width: "100%",
+            display: "flex",
+            flexDirection: "column",
+            gap: 18,
+            justifySelf: "end",
+          }}
+        >
+          <HomeHeroReel
+            brokers={topBrokers}
+            listings={topListings}
+            advisors={topAdvisors}
+            brokerCount={brokerCount}
+            listingCount={listingCount}
+            advisorCount={advisorCount}
+          />
+
+          {/* CTAs — right-aligned, ghost first, orange on the far right (pokies-lever position) */}
+          <div
+            className="hero-ctas"
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 12,
+              alignItems: "center",
+              justifyContent: "flex-end",
+            }}
+          >
+            <Link
+              href="#routes"
+              style={{
+                fontSize: 14,
+                fontWeight: 700,
+                padding: "13px 20px",
+                borderRadius: 12,
+                border: "1px solid rgba(255,255,255,.18)",
+                color: "white",
+                background: "rgba(255,255,255,.04)",
+                textDecoration: "none",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+              }}
+            >
+              Skip the quiz <DesignIcon name="arrow-right" size={14} strokeWidth={2.4} />
+            </Link>
+            <Link
+              href="/quiz"
+              className="iv2-cta"
+              style={{
+                fontSize: 16,
+                fontWeight: 700,
+                padding: "14px 24px",
+                borderRadius: 12,
+                background: "var(--color-coral-400)",
+                color: "white",
+                boxShadow: "0 8px 24px rgba(242,88,34,.32)",
+              }}
+            >
+              Get matched in 60 seconds <DesignIcon name="arrow-right" size={16} strokeWidth={2.6} />
+            </Link>
+          </div>
+        </div>
       </div>
+
+      <style>{`
+        @media (min-width: 1024px) {
+          .hero-shell { grid-template-columns: minmax(0, 1.1fr) minmax(360px, 0.9fr) !important; }
+        }
+        @media (max-width: 1023px) {
+          .hero-right { justify-self: stretch !important; }
+          .hero-ctas { justify-content: flex-start !important; }
+        }
+      `}</style>
     </section>
   );
 }

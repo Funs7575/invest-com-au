@@ -72,6 +72,7 @@ const investMegaMenu = [
 ];
 
 const foreignDropdown = [
+  { label: "Global Investing for Australians", href: "/global-investing", desc: "AU residents investing overseas — US shares, ETFs, FX, tax" },
   { label: "Foreign Investment Hub", href: "/foreign-investment", desc: "Start here — all verticals covered" },
   { label: "Shares for Non-Residents", href: "/foreign-investment/shares", desc: "Broker eligibility & withholding tax" },
   { label: "Crypto for Non-Residents", href: "/foreign-investment/crypto", desc: "AUSTRAC KYC & CGT treatment" },

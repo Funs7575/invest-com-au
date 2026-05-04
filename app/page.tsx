@@ -123,6 +123,16 @@ export default async function HomePage() {
     .slice(0, 5)
     .map((a) => ({ name: a.name, photo_url: a.photo_url ?? null }));
 
+  // Hero reel — needs broker color for the panel-1 dot.
+  const topBrokersForHero = compareBrokers
+    .slice(0, 3)
+    .map((b) => ({ name: b.name, asx_fee: b.asx_fee, color: b.color }));
+
+  const topAdvisorsForHero = advisorList
+    .filter((a) => a.photo_url)
+    .slice(0, 4)
+    .map((a) => ({ name: a.name, photo_url: a.photo_url ?? null }));
+
   // Curate listings for the homepage teaser:
   //   1. Prefer listings with at least one image (better hero unit)
   //   2. Weight by paid tier: premium > featured > standard
@@ -221,7 +231,14 @@ export default async function HomePage() {
         }}
       />
 
-      <HomeHero />
+      <HomeHero
+        topBrokers={topBrokersForHero}
+        topListings={topListingsForCards}
+        topAdvisors={topAdvisorsForHero}
+        brokerCount={brokerCount}
+        listingCount={totalListingCount}
+        advisorCount={totalProfessionalCount}
+      />
 
       <ScrollFadeIn>
         <HomeRouteCards
