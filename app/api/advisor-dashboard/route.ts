@@ -22,7 +22,6 @@ export async function GET(request: NextRequest) {
   const supabase = await createClient();
   const now = new Date();
   const thirtyDaysAgo = new Date(now.getTime() - 30 * 86400000).toISOString();
-  const eightWeeksAgo = new Date(now.getTime() - 56 * 86400000).toISOString();
 
   const [
     { data: advisor },
@@ -147,6 +146,30 @@ export async function GET(request: NextRequest) {
         )
       : null;
 
+  // --- Accept rate (contacted or converted / total) ---
+  const acceptedLeads = allLeads.filter(
+    (l) => l.status === "contacted" || l.status === "converted"
+  ).length;
+  const acceptRate =
+    totalLeads > 0
+      ? parseFloat(((acceptedLeads / totalLeads) * 100).toFixed(1))
+      : 0;
+
+  // --- Period-comparison lead counts ---
+  const sevenDaysAgo = new Date(now.getTime() - 7 * 86400000);
+  const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const leads7d = allLeads.filter(
+    (l) => new Date(l.created_at) >= sevenDaysAgo
+  ).length;
+  const leadsThisMonth = allLeads.filter(
+    (l) => new Date(l.created_at) >= thisMonthStart
+  ).length;
+  const leadsLastMonth = allLeads.filter((l) => {
+    const d = new Date(l.created_at);
+    return d >= lastMonthStart && d < thisMonthStart;
+  }).length;
+
   // --- Weekly enquiries (last 8 weeks) ---
   const weeklyEnquiries: { weekLabel: string; count: number }[] = [];
   for (let w = 7; w >= 0; w--) {
@@ -213,6 +236,10 @@ export async function GET(request: NextRequest) {
       warmLeadsCount,
       coldLeadsCount,
       avgResponseTimeMinutes,
+      acceptRate,
+      leads7d,
+      leadsThisMonth,
+      leadsLastMonth,
     },
     viewsByDay: views || [],
     billing: billing || [],
