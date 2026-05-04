@@ -5,7 +5,7 @@ import { isValidEmail, isDisposableEmail } from "@/lib/validate-email";
 import { logger } from "@/lib/logger";
 import { extractUtm, type UtmParams } from "@/lib/utm";
 import { sendNewLeadNotification, sendLeadConfirmationToUser } from "@/lib/advisor-emails";
-import { captureServerEvent } from "@/lib/posthog/server";
+import { captureEdgeEvent } from "@/lib/posthog/capture-edge";
 
 export const runtime = "edge";
 
@@ -180,14 +180,14 @@ export async function POST(request: NextRequest) {
     const pid = typeof (body as Record<string, unknown>).distinct_id === "string"
       ? (body as Record<string, unknown>).distinct_id as string
       : `anon-${crypto.randomUUID()}`;
-    captureServerEvent(pid, "lead_submitted", {
+    captureEdgeEvent(pid, "lead_submitted", {
       lead_source: "platform",
       source_page: typeof source_page === "string" ? source_page : null,
       advisor_match_count: 0,
       quiz_completed: false,
       utm_source: (utm as UtmParams).utm_source ?? null,
       utm_campaign: (utm as UtmParams).utm_campaign ?? null,
-    }).catch(() => null);
+    });
 
     return NextResponse.json({ success: true, lead_id: lead?.id });
   }
@@ -639,14 +639,14 @@ export async function POST(request: NextRequest) {
     const distinctId = typeof (body as Record<string, unknown>).distinct_id === "string"
       ? (body as Record<string, unknown>).distinct_id as string
       : `anon-${crypto.randomUUID()}`;
-    captureServerEvent(distinctId, "lead_submitted", {
+    captureEdgeEvent(distinctId, "lead_submitted", {
       lead_source: "advisor-match",
       source_page: typeof source_page === "string" ? source_page : null,
       advisor_match_count: matchedId ? 1 : 0,
       quiz_completed: !!(user_intent?.need),
       utm_source: (utm as UtmParams).utm_source ?? null,
       utm_campaign: (utm as UtmParams).utm_campaign ?? null,
-    }).catch(() => null);
+    });
   }
 
   return NextResponse.json({
