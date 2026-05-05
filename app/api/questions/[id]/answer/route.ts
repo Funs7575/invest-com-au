@@ -29,7 +29,7 @@ export async function POST(
       display_name: z.string().optional(),
     }).safeParse(await req.json());
     if (!parsed.success) {
-      return NextResponse.json({ error: parsed.error.errors[0]?.message ?? "Invalid request" }, { status: 400 });
+      return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "Invalid request" }, { status: 400 });
     }
     const { answer, display_name } = parsed.data;
 
