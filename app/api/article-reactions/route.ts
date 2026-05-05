@@ -1,13 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import {
   getReactionCounts,
   hashIp,
-  isValidReaction,
   reactToArticle,
-  type ReactionKind,
 } from "@/lib/article-comments";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
+
+const ReactBody = z.object({
+  slug: z.string().min(1),
+  reaction: z.enum(["helpful", "like", "confused", "disagree"]),
+});
 
 export const runtime = "nodejs";
 
@@ -37,15 +41,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
 
-  const body = await request.json().catch(() => ({}));
-  const slug = typeof body.slug === "string" ? body.slug : null;
-  const reaction = body.reaction as ReactionKind;
-  if (!slug || !isValidReaction(reaction)) {
+  const parsed = ReactBody.safeParse(await request.json().catch(() => ({})));
+  if (!parsed.success) {
     return NextResponse.json(
       { error: "Missing slug or reaction" },
       { status: 400 },
     );
   }
+  const { slug, reaction } = parsed.data;
 
   // Prefer authenticated user id so the dedup is permanent. Anonymous
   // visitors dedup by IP hash (salted server-side).
