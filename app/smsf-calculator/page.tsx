@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { CURRENT_YEAR, SITE_NAME } from "@/lib/seo";
+import { CURRENT_YEAR } from "@/lib/seo";
+import { calculatorJsonLd } from "@/lib/schema-markup";
 import SMSFCalculatorClient from "./SMSFCalculatorClient";
 import ComplianceFooter from "@/components/ComplianceFooter";
 
@@ -17,21 +18,16 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image" as const },
 };
 
-export default function SMSFCalculatorPage() {
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    name: `SMSF Eligibility Calculator — ${SITE_NAME}`,
-    description: "Calculate whether a Self-Managed Super Fund is worth it compared to your current super fund.",
-    url: "https://invest.com.au/smsf-calculator",
-    applicationCategory: "FinanceApplication",
-    operatingSystem: "Any",
-    offers: { "@type": "Offer", price: "0", priceCurrency: "AUD" },
-  };
+const softwareLd = calculatorJsonLd({
+  name: "SMSF Eligibility Calculator",
+  description: "Calculate whether a Self-Managed Super Fund is worth it compared to your current super fund.",
+  path: "/smsf-calculator",
+});
 
+export default function SMSFCalculatorPage() {
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareLd) }} />
       <SMSFCalculatorClient />
       <div className="container-custom pb-8"><ComplianceFooter variant="calculator" /></div>
 

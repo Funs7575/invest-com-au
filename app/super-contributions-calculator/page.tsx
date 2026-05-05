@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { CURRENT_YEAR, SITE_NAME } from "@/lib/seo";
+import { CURRENT_YEAR, absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
+import { calculatorJsonLd, faqJsonLd } from "@/lib/schema-markup";
 import SuperContributionsClient from "./SuperContributionsClient";
 import ComplianceFooter from "@/components/ComplianceFooter";
 
@@ -25,75 +26,41 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image" as const },
 };
 
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "WebApplication",
-  name: `Super Contributions Calculator — ${SITE_NAME}`,
+const softwareLd = calculatorJsonLd({
+  name: "Super Contributions Calculator",
   description:
     "Calculate your FY2026 concessional and non-concessional super contribution caps, tax savings from salary sacrifice, and Division 293 liability.",
-  url: "https://invest.com.au/super-contributions-calculator",
-  applicationCategory: "FinanceApplication",
-  operatingSystem: "Any",
-  offers: { "@type": "Offer", price: "0", priceCurrency: "AUD" },
-};
+  path: "/super-contributions-calculator",
+});
 
-const breadcrumbLd = {
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  itemListElement: [
-    { "@type": "ListItem", position: 1, name: "Home", item: "https://invest.com.au" },
-    {
-      "@type": "ListItem",
-      position: 2,
-      name: "Super Contributions Calculator",
-      item: "https://invest.com.au/super-contributions-calculator",
-    },
-  ],
-};
+const breadcrumbLd = breadcrumbJsonLd([
+  { name: "Home", url: absoluteUrl("/") },
+  { name: "Super Contributions Calculator", url: absoluteUrl("/super-contributions-calculator") },
+]);
 
-const faqLd = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: [
-    {
-      "@type": "Question",
-      name: "What is the concessional super contribution cap for FY2026?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "The concessional (before-tax) contribution cap is $30,000 for FY2026. This includes employer super guarantee (SG) contributions and any salary sacrifice or personal deductible contributions you make.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "What is the non-concessional super contribution cap?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "The non-concessional (after-tax) contribution cap is $120,000 per year for FY2026. If eligible, you can use the bring-forward rule to contribute up to $360,000 over three years.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "What is Division 293 tax?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Division 293 is an additional 15% tax on concessional super contributions for individuals with income (including super contributions) exceeding $250,000. This brings the total super tax rate to 30% for high earners, rather than the standard 15%.",
-      },
-    },
-    {
-      "@type": "Question",
-      name: "Can I carry forward unused super contribution caps?",
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: "Yes, if your total super balance is below $500,000 on 30 June of the previous financial year, you can carry forward unused concessional cap amounts from the preceding five financial years and use them in a single year.",
-      },
-    },
-  ],
-};
+const faqLd = faqJsonLd([
+  {
+    q: "What is the concessional super contribution cap for FY2026?",
+    a: "The concessional (before-tax) contribution cap is $30,000 for FY2026. This includes employer super guarantee (SG) contributions and any salary sacrifice or personal deductible contributions you make.",
+  },
+  {
+    q: "What is the non-concessional super contribution cap?",
+    a: "The non-concessional (after-tax) contribution cap is $120,000 per year for FY2026. If eligible, you can use the bring-forward rule to contribute up to $360,000 over three years.",
+  },
+  {
+    q: "What is Division 293 tax?",
+    a: "Division 293 is an additional 15% tax on concessional super contributions for individuals with income (including super contributions) exceeding $250,000. This brings the total super tax rate to 30% for high earners, rather than the standard 15%.",
+  },
+  {
+    q: "Can I carry forward unused super contribution caps?",
+    a: "Yes, if your total super balance is below $500,000 on 30 June of the previous financial year, you can carry forward unused concessional cap amounts from the preceding five financial years and use them in a single year.",
+  },
+]);
 
 export default function SuperContributionsCalculatorPage() {
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
       <SuperContributionsClient />
