@@ -3,6 +3,8 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 import { isValidEmail } from "@/lib/validate-email";
 import { logger } from "@/lib/logger";
+import { z } from "zod";
+import { withValidatedBody } from "@/lib/validation/withValidatedBody";
 
 const log = logger("quiz-submit");
 
@@ -23,11 +25,11 @@ export const runtime = "nodejs";
  * submit compact payloads without the full wizard state.
  */
 
-interface Body {
-  answers: Record<string, unknown>;
-  email: string;
-  name?: string;
-}
+const BodySchema = z.object({
+  answers: z.record(z.unknown()),
+  email: z.string().refine(isValidEmail, "Invalid email"),
+  name: z.string().max(120).optional(),
+});
 
 interface BrokerRow {
   id: number;
@@ -48,33 +50,6 @@ function toNumber(v: number | string | null | undefined): number | null {
   if (v == null) return null;
   const n = typeof v === "string" ? parseFloat(v) : v;
   return Number.isFinite(n) ? n : null;
-}
-
-function parse(input: unknown): { ok: true; data: Body } | { ok: false; error: string } {
-  if (!input || typeof input !== "object") {
-    return { ok: false, error: "Invalid body" };
-  }
-  const b = input as Record<string, unknown>;
-  const answers = b.answers;
-  if (!answers || typeof answers !== "object" || Array.isArray(answers)) {
-    return { ok: false, error: "answers must be an object" };
-  }
-  const email = typeof b.email === "string" ? b.email.trim() : "";
-  if (!isValidEmail(email)) {
-    return { ok: false, error: "Invalid email" };
-  }
-  const name =
-    typeof b.name === "string" && b.name.length <= 120
-      ? b.name.trim()
-      : undefined;
-  return {
-    ok: true,
-    data: {
-      answers: answers as Record<string, unknown>,
-      email,
-      name,
-    },
-  };
 }
 
 function scoreBroker(
@@ -145,7 +120,7 @@ async function topMatches(
     .slice(0, 3);
 }
 
-export async function POST(req: NextRequest) {
+export const POST = withValidatedBody(BodySchema, async (req: NextRequest, body) => {
   if (
     !(await isAllowed("quiz_submit", ipKey(req), {
       max: 3,
@@ -158,32 +133,14 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  let raw: unknown;
-  try {
-    raw = await req.json();
-  } catch {
-    return NextResponse.json(
-      { ok: false, error: "Invalid JSON" },
-      { status: 400 },
-    );
-  }
-
-  const v = parse(raw);
-  if (!v.ok) {
-    return NextResponse.json(
-      { ok: false, error: v.error },
-      { status: 400 },
-    );
-  }
-
-  const matches = await topMatches(v.data.answers);
+  const matches = await topMatches(body.answers);
 
   try {
     const supabase = createAdminClient();
     const { error } = await supabase.from("quiz_leads").insert({
-      email: v.data.email,
-      name: v.data.name ?? null,
-      answers: v.data.answers,
+      email: body.email,
+      name: body.name ?? null,
+      answers: body.answers,
       top_match_slug: matches[0]?.slug ?? null,
       captured_at: new Date().toISOString(),
     });
@@ -207,4 +164,4 @@ export async function POST(req: NextRequest) {
     matches: matches.map((m) => m.slug),
     matchDetails: matches,
   });
-}
+});
