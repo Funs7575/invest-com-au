@@ -781,20 +781,6 @@ export default function QuizPage() {
         body: "Cross-border tax, FIRB, and visa rules mean an advisor is usually the right starting point. A few quick questions to find the right specialist.",
       };
     }
-    if (currentId === "complexity" && (answers.goal === "help" || answers.mode === "help")) {
-      return {
-        tone: "info" as const,
-        title: "You chose expert help — we’ll tailor the specialist match",
-        body: "This route skips platform-only questions so we can recommend the most relevant advisor for your situation.",
-      };
-    }
-    if (currentId === "experience" && answers.mode === "diy") {
-      return {
-        tone: "info" as const,
-        title: "You chose the DIY route",
-        body: "We’ll now focus on experience, amount, and priorities to rank platforms for self-directed investing.",
-      };
-    }
     return null;
   })();
 
