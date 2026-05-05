@@ -3,6 +3,7 @@ import crypto from "crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isRateLimited } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
+import { z } from "zod";
 
 const log = logger("qa-vote");
 
@@ -25,14 +26,13 @@ export async function POST(
       return NextResponse.json({ error: "Invalid question ID" }, { status: 400 });
     }
 
-    const body = await req.json();
-    const vote = body.vote;
-    if (vote !== 1 && vote !== -1) {
-      return NextResponse.json(
-        { error: "Vote must be 1 or -1" },
-        { status: 400 }
-      );
+    const parsed = z.object({
+      vote: z.union([z.literal(1), z.literal(-1)]),
+    }).safeParse(await req.json());
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Vote must be 1 or -1" }, { status: 400 });
     }
+    const { vote } = parsed.data;
 
     const voterIdentifier = crypto
       .createHash("sha256")

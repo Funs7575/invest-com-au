@@ -4,6 +4,8 @@ import { isRateLimited } from "@/lib/rate-limit";
 import { isValidEmail } from "@/lib/validate-email";
 import { logger } from "@/lib/logger";
 import { extractUtm, utmForInsert } from "@/lib/utm";
+import { z } from "zod";
+import { withValidatedBody } from "@/lib/validation/withValidatedBody";
 
 const log = logger("developer-leads");
 
@@ -29,89 +31,21 @@ const log = logger("developer-leads");
  * if RESEND_API_KEY is set, we fire and forget; otherwise we log.
  */
 
-const ALLOWED_INVESTOR_TYPES = [
-  "retail",
-  "wholesale",
-  "smsf",
-  "foreign",
-] as const;
+const BodySchema = z.object({
+  fund_id: z.number().int().finite().nullish(),
+  listing_id: z.number().int().finite().nullish(),
+  report_slug: z.string().max(200).nullish(),
+  full_name: z.string().min(2).max(120),
+  email: z.string().refine(isValidEmail, "Invalid email"),
+  phone: z.string().max(40).nullish(),
+  investment_amount_range: z.string().max(60).nullish(),
+  investor_type: z.enum(["retail", "wholesale", "smsf", "foreign"]),
+  message: z.string().max(2000).nullish(),
+});
 
-type InvestorType = (typeof ALLOWED_INVESTOR_TYPES)[number];
+type LeadPayload = z.infer<typeof BodySchema>;
 
-interface LeadPayload {
-  fund_id?: number | null;
-  listing_id?: number | null;
-  report_slug?: string | null;
-  full_name: string;
-  email: string;
-  phone?: string | null;
-  investment_amount_range?: string | null;
-  investor_type: InvestorType;
-  message?: string | null;
-}
-
-function validate(
-  body: Record<string, unknown>,
-): { ok: true; data: LeadPayload } | { ok: false; error: string } {
-  const full_name =
-    typeof body.full_name === "string" ? body.full_name.trim() : "";
-  const email = typeof body.email === "string" ? body.email.trim() : "";
-  const investor_type =
-    typeof body.investor_type === "string" ? body.investor_type : "";
-
-  if (!full_name || full_name.length < 2 || full_name.length > 120) {
-    return { ok: false, error: "Invalid name" };
-  }
-  if (!isValidEmail(email)) {
-    return { ok: false, error: "Invalid email" };
-  }
-  if (!ALLOWED_INVESTOR_TYPES.includes(investor_type as InvestorType)) {
-    return { ok: false, error: "Invalid investor_type" };
-  }
-
-  const phone =
-    typeof body.phone === "string" && body.phone.length <= 40
-      ? body.phone.trim() || null
-      : null;
-  const message =
-    typeof body.message === "string" && body.message.length <= 2000
-      ? body.message.trim() || null
-      : null;
-  const investment_amount_range =
-    typeof body.investment_amount_range === "string" &&
-    body.investment_amount_range.length <= 60
-      ? body.investment_amount_range.trim() || null
-      : null;
-  const fund_id =
-    typeof body.fund_id === "number" && Number.isFinite(body.fund_id)
-      ? body.fund_id
-      : null;
-  const listing_id =
-    typeof body.listing_id === "number" && Number.isFinite(body.listing_id)
-      ? body.listing_id
-      : null;
-  const report_slug =
-    typeof body.report_slug === "string" && body.report_slug.length <= 200
-      ? body.report_slug.trim() || null
-      : null;
-
-  return {
-    ok: true,
-    data: {
-      fund_id,
-      listing_id,
-      report_slug,
-      full_name,
-      email,
-      phone,
-      investment_amount_range,
-      investor_type: investor_type as InvestorType,
-      message,
-    },
-  };
-}
-
-export async function POST(req: NextRequest) {
+export const POST = withValidatedBody(BodySchema, async (req: NextRequest, body) => {
   // Rate limit by IP: 5 submissions per 10-minute window.
   const ip =
     req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
@@ -122,39 +56,21 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  let body: Record<string, unknown>;
-  try {
-    body = (await req.json()) as Record<string, unknown>;
-  } catch {
-    return NextResponse.json(
-      { success: false, error: "Invalid JSON" },
-      { status: 400 },
-    );
-  }
-
-  const validated = validate(body);
-  if (!validated.ok) {
-    return NextResponse.json(
-      { success: false, error: validated.error },
-      { status: 400 },
-    );
-  }
-
-  const utm = extractUtm(body, new URL(req.url));
+  const utm = extractUtm(body as Record<string, unknown>, new URL(req.url));
   const utmFields = utmForInsert(utm);
 
   try {
     const supabase = createAdminClient();
     const { error } = await supabase.from("developer_leads").insert({
-      fund_id: validated.data.fund_id,
-      listing_id: validated.data.listing_id,
-      report_slug: validated.data.report_slug,
-      full_name: validated.data.full_name,
-      email: validated.data.email,
-      phone: validated.data.phone,
-      investment_amount_range: validated.data.investment_amount_range,
-      investor_type: validated.data.investor_type,
-      message: validated.data.message,
+      fund_id: body.fund_id ?? null,
+      listing_id: body.listing_id ?? null,
+      report_slug: body.report_slug ?? null,
+      full_name: body.full_name,
+      email: body.email,
+      phone: body.phone ?? null,
+      investment_amount_range: body.investment_amount_range ?? null,
+      investor_type: body.investor_type,
+      message: body.message ?? null,
       utm_source: utmFields.utm_source ?? null,
       utm_medium: utmFields.utm_medium ?? null,
     });
@@ -167,9 +83,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Fire-and-forget admin notification. If RESEND_API_KEY is not
-    // set, skip silently — the lead is captured regardless.
-    void notifyAdmin(validated.data).catch((err) =>
+    void notifyAdmin(body).catch((err) =>
       log.warn("admin_notify_failed", { err: String(err) }),
     );
 
@@ -181,7 +95,7 @@ export async function POST(req: NextRequest) {
       { status: 500 },
     );
   }
-}
+});
 
 async function notifyAdmin(lead: LeadPayload): Promise<void> {
   const key = process.env.RESEND_API_KEY;
