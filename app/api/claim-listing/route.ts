@@ -3,6 +3,8 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { isRateLimited } from "@/lib/rate-limit";
 import { isValidEmail } from "@/lib/validate-email";
 import { logger } from "@/lib/logger";
+import { z } from "zod";
+import { withValidatedBody } from "@/lib/validation/withValidatedBody";
 
 const log = logger("claim-listing");
 
@@ -22,71 +24,17 @@ const log = logger("claim-listing");
  *   }
  */
 
-const ALLOWED_TYPES = ["broker", "advisor", "listing"] as const;
-type ClaimType = (typeof ALLOWED_TYPES)[number];
+const BodySchema = z.object({
+  claim_type: z.enum(["broker", "advisor", "listing"]),
+  target_slug: z.string().min(1).max(200),
+  full_name: z.string().min(2).max(120),
+  email: z.string().refine(isValidEmail, "Invalid email"),
+  company_role: z.string().max(120).nullish(),
+  phone: z.string().max(40).nullish(),
+  message: z.string().max(2000).nullish(),
+});
 
-interface Payload {
-  claim_type: ClaimType;
-  target_slug: string;
-  full_name: string;
-  email: string;
-  company_role: string | null;
-  phone: string | null;
-  message: string | null;
-}
-
-function validate(
-  body: Record<string, unknown>,
-): { ok: true; data: Payload } | { ok: false; error: string } {
-  const claim_type =
-    typeof body.claim_type === "string" ? body.claim_type : "";
-  const target_slug =
-    typeof body.target_slug === "string" ? body.target_slug.trim() : "";
-  const full_name =
-    typeof body.full_name === "string" ? body.full_name.trim() : "";
-  const email = typeof body.email === "string" ? body.email.trim() : "";
-
-  if (!ALLOWED_TYPES.includes(claim_type as ClaimType)) {
-    return { ok: false, error: "Invalid claim_type" };
-  }
-  if (!target_slug || target_slug.length > 200) {
-    return { ok: false, error: "Invalid target_slug" };
-  }
-  if (!full_name || full_name.length < 2 || full_name.length > 120) {
-    return { ok: false, error: "Invalid name" };
-  }
-  if (!isValidEmail(email)) {
-    return { ok: false, error: "Invalid email" };
-  }
-
-  const company_role =
-    typeof body.company_role === "string" && body.company_role.length <= 120
-      ? body.company_role.trim() || null
-      : null;
-  const phone =
-    typeof body.phone === "string" && body.phone.length <= 40
-      ? body.phone.trim() || null
-      : null;
-  const message =
-    typeof body.message === "string" && body.message.length <= 2000
-      ? body.message.trim() || null
-      : null;
-
-  return {
-    ok: true,
-    data: {
-      claim_type: claim_type as ClaimType,
-      target_slug,
-      full_name,
-      email,
-      company_role,
-      phone,
-      message,
-    },
-  };
-}
-
-export async function POST(req: NextRequest) {
+export const POST = withValidatedBody(BodySchema, async (req: NextRequest, body) => {
   const ip =
     req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
   if (await isRateLimited(`claim-listing:${ip}`, 3, 10)) {
@@ -96,34 +44,16 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  let body: Record<string, unknown>;
-  try {
-    body = (await req.json()) as Record<string, unknown>;
-  } catch {
-    return NextResponse.json(
-      { success: false, error: "Invalid JSON" },
-      { status: 400 },
-    );
-  }
-
-  const v = validate(body);
-  if (!v.ok) {
-    return NextResponse.json(
-      { success: false, error: v.error },
-      { status: 400 },
-    );
-  }
-
   try {
     const supabase = createAdminClient();
     const { error } = await supabase.from("listing_claims").insert({
-      claim_type: v.data.claim_type,
-      target_slug: v.data.target_slug,
-      full_name: v.data.full_name,
-      email: v.data.email,
-      company_role: v.data.company_role,
-      phone: v.data.phone,
-      message: v.data.message,
+      claim_type: body.claim_type,
+      target_slug: body.target_slug,
+      full_name: body.full_name,
+      email: body.email,
+      company_role: body.company_role ?? null,
+      phone: body.phone ?? null,
+      message: body.message ?? null,
     });
     if (error) {
       log.error("insert_failed", { error: error.message });
@@ -133,8 +63,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Fire-and-forget admin notification (no-op if Resend not configured)
-    void notifyAdmin(v.data).catch((err) =>
+    void notifyAdmin({
+      claim_type: body.claim_type,
+      target_slug: body.target_slug,
+      full_name: body.full_name,
+      email: body.email,
+      company_role: body.company_role ?? null,
+      phone: body.phone ?? null,
+      message: body.message ?? null,
+    }).catch((err) =>
       log.warn("admin_notify_failed", { err: String(err) }),
     );
 
@@ -146,9 +83,10 @@ export async function POST(req: NextRequest) {
       { status: 500 },
     );
   }
-}
+});
 
-async function notifyAdmin(claim: Payload): Promise<void> {
+type ClaimData = { claim_type: string; target_slug: string; full_name: string; email: string; company_role: string | null; phone: string | null; message: string | null };
+async function notifyAdmin(claim: ClaimData): Promise<void> {
   const key = process.env.RESEND_API_KEY;
   const to = process.env.LEADS_NOTIFY_EMAIL;
   if (!key || !to) return;
