@@ -93,23 +93,17 @@ export const SHOW_AFFILIATE_LINKS = true;
 
 // ─── CTA Text Helpers ────────────────────────────────────────────────────────
 
-/** Primary CTA text for the main funnel */
-export const PRIMARY_CTA_TEXT = SHOW_MATCH_LANGUAGE
-  ? "Start My Free Match"
-  : "Compare Platforms";
+/** Primary CTA text for the main funnel. Public UX label for the /quiz guided matching flow. */
+export const PRIMARY_CTA_TEXT = "Get matched";
 
 /** Primary CTA href */
-export const PRIMARY_CTA_HREF = SHOW_QUIZ_MATCH ? "/quiz" : "/compare";
+export const PRIMARY_CTA_HREF = "/quiz";
 
 /** Secondary CTA text */
-export const SECONDARY_CTA_TEXT = SHOW_MATCH_LANGUAGE
-  ? "Find the Right Advisor"
-  : "Browse Directories";
+export const SECONDARY_CTA_TEXT = "Browse manually";
 
 /** Secondary CTA href */
-export const SECONDARY_CTA_HREF = SHOW_MATCH_LANGUAGE
-  ? "/find-advisor"
-  : "/advisors";
+export const SECONDARY_CTA_HREF = "/compare";
 
 /** Advisor directory heading */
 export const ADVISOR_DIRECTORY_HEADING = SHOW_GENERIC_VERIFIED
