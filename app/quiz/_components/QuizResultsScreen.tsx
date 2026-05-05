@@ -70,6 +70,15 @@ export default function QuizResultsScreen({
   const heroEnabled = outcome.kind !== "diy-broker";
   const showBrokerResults = !outcome.suppressBrokerResults;
   const showRunnerUps = !outcome.suppressRunnerUps;
+  const isBrokerPrimaryOutcome = outcome.kind === "diy-broker";
+  const headingText = isBrokerPrimaryOutcome
+    ? (alternativesCount > 0
+      ? `Your top match (and ${alternativesCount} ${alternativesCount === 1 ? "alternative" : "alternatives"})`
+      : "Your top match")
+    : "Your best next step";
+  const subheadingText = isBrokerPrimaryOutcome
+    ? "Scored against the criteria you selected — your #1 first, alternatives below."
+    : "Based on your answers, this is the strongest next move. Platform options are shown below when relevant.";
 
   // Edge case: no platforms matched (data fetch failed or empty DB)
   if (allResults.length === 0) {
@@ -126,11 +135,9 @@ export default function QuizResultsScreen({
             </div>
           </div>
           <h1 className="text-xl md:text-3xl font-extrabold mb-1 md:mb-2">
-            {alternativesCount > 0
-              ? `Your top match (and ${alternativesCount} ${alternativesCount === 1 ? "alternative" : "alternatives"})`
-              : "Your top match"}
+            {headingText}
           </h1>
-          <p className="text-[0.69rem] md:text-base text-slate-600">Scored against the criteria you selected — your #1 first, alternatives below.</p>
+          <p className="text-[0.69rem] md:text-base text-slate-600">{subheadingText}</p>
           <div className="flex items-center justify-center gap-2 md:gap-3 mt-2 md:mt-3 text-[0.62rem] md:text-xs text-slate-400">
             <span className="flex items-center gap-1">
               <svg className="w-2.5 h-2.5 md:w-3 md:h-3 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
