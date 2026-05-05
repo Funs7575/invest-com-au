@@ -127,7 +127,7 @@ export async function POST(req: Request) {
       action: z.enum(["approve", "reject"]),
     }).safeParse(await req.json());
     if (!parsed.success) {
-      return NextResponse.json({ error: parsed.error.errors[0]?.message ?? "Invalid request" }, { status: 400 });
+      return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "Invalid request" }, { status: 400 });
     }
     const { type, id, action } = parsed.data;
 

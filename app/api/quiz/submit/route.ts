@@ -26,7 +26,7 @@ export const runtime = "nodejs";
  */
 
 const BodySchema = z.object({
-  answers: z.record(z.unknown()),
+  answers: z.record(z.string(), z.unknown()),
   email: z.string().refine(isValidEmail, "Invalid email"),
   name: z.string().max(120).optional(),
 });
