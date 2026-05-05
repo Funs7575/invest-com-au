@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
-import { z } from "zod";
-import { withValidatedBody } from "@/lib/validation/withValidatedBody";
 
 /**
  * GET /api/broker-review-invite?token=…
@@ -94,34 +92,37 @@ export async function GET(req: NextRequest) {
  * submissions (visitors writing reviews without an invite); this
  * endpoint is for the short-path invite flow.
  */
-const PostBodySchema = z.object({
-  token: z.string().regex(/^[0-9a-f-]{36}$/i, "Invalid token"),
-  rating: z.number().int().min(1).max(5),
-  body: z.string().min(50, "Review body must be 50-4000 characters").max(4000, "Review body must be 50-4000 characters"),
-  title: z.string().optional(),
-  display_name: z.string().optional(),
-  fees_rating: z.number().int().min(1).max(5).optional(),
-  platform_rating: z.number().int().min(1).max(5).optional(),
-  support_rating: z.number().int().min(1).max(5).optional(),
-  reliability_rating: z.number().int().min(1).max(5).optional(),
-  experience_months: z.number().int().min(0).optional(),
-});
-
-export const POST = withValidatedBody(PostBodySchema, async (req: NextRequest, data) => {
+export async function POST(req: NextRequest) {
   if (!(await isAllowed("broker_review_invite_post", ipKey(req), { max: 5, refillPerSec: 0.05 }))) {
     return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
+  let body: Record<string, unknown>;
+  try {
+    body = (await req.json()) as Record<string, unknown>;
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+  }
 
-  const token = data.token;
-  const rating = data.rating;
-  const reviewBody = data.body.trim();
-  const title = data.title?.trim() ?? "";
-  const display_name = data.display_name?.trim() ?? "";
-  const fees_rating = data.fees_rating;
-  const platform_rating = data.platform_rating;
-  const support_rating = data.support_rating;
-  const reliability_rating = data.reliability_rating;
-  const experience_months = data.experience_months;
+  const token = typeof body.token === "string" ? body.token : "";
+  const rating = Number(body.rating);
+  const reviewBody = typeof body.body === "string" ? body.body.trim() : "";
+  const title = typeof body.title === "string" ? body.title.trim() : "";
+  const display_name = typeof body.display_name === "string" ? body.display_name.trim() : "";
+  const fees_rating = Number(body.fees_rating);
+  const platform_rating = Number(body.platform_rating);
+  const support_rating = Number(body.support_rating);
+  const reliability_rating = Number(body.reliability_rating);
+  const experience_months = Number(body.experience_months);
+
+  if (!/^[0-9a-f-]{36}$/i.test(token)) {
+    return NextResponse.json({ error: "Invalid token" }, { status: 400 });
+  }
+  if (!(rating >= 1 && rating <= 5)) {
+    return NextResponse.json({ error: "Rating must be 1-5" }, { status: 400 });
+  }
+  if (reviewBody.length < 50 || reviewBody.length > 4000) {
+    return NextResponse.json({ error: "Review body must be 50-4000 characters" }, { status: 400 });
+  }
 
   const supabase = createAdminClient();
   const { data: invite } = await supabase
@@ -145,11 +146,11 @@ export const POST = withValidatedBody(PostBodySchema, async (req: NextRequest, d
       rating: Math.round(rating),
       title: title || null,
       body: reviewBody,
-      fees_rating: fees_rating != null ? Math.round(fees_rating) : null,
-      platform_rating: platform_rating != null ? Math.round(platform_rating) : null,
-      support_rating: support_rating != null ? Math.round(support_rating) : null,
-      reliability_rating: reliability_rating != null ? Math.round(reliability_rating) : null,
-      experience_months: experience_months != null ? Math.round(experience_months) : null,
+      fees_rating: Number.isFinite(fees_rating) ? Math.round(fees_rating) : null,
+      platform_rating: Number.isFinite(platform_rating) ? Math.round(platform_rating) : null,
+      support_rating: Number.isFinite(support_rating) ? Math.round(support_rating) : null,
+      reliability_rating: Number.isFinite(reliability_rating) ? Math.round(reliability_rating) : null,
+      experience_months: Number.isFinite(experience_months) ? Math.round(experience_months) : null,
       status: "pending_moderation",
       verified_at: new Date().toISOString(),
     })
@@ -170,4 +171,4 @@ export const POST = withValidatedBody(PostBodySchema, async (req: NextRequest, d
     .eq("id", invite.id);
 
   return NextResponse.json({ ok: true });
-});
+}

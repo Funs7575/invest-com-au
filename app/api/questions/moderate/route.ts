@@ -3,7 +3,6 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 import { ADMIN_EMAILS } from "@/lib/admin";
-import { z } from "zod";
 
 const log = logger("questions");
 
@@ -121,15 +120,19 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const parsed = z.object({
-      type: z.enum(["question", "answer"]),
-      id: z.number().int().positive(),
-      action: z.enum(["approve", "reject"]),
-    }).safeParse(await req.json());
-    if (!parsed.success) {
-      return NextResponse.json({ error: parsed.error.errors[0]?.message ?? "Invalid request" }, { status: 400 });
+    const body = await req.json();
+    const { type, id, action } = body;
+
+    // Validate inputs
+    if (!type || !id || !action) {
+      return NextResponse.json({ error: "Missing type, id, or action" }, { status: 400 });
     }
-    const { type, id, action } = parsed.data;
+    if (!["question", "answer"].includes(type)) {
+      return NextResponse.json({ error: "Type must be 'question' or 'answer'" }, { status: 400 });
+    }
+    if (!["approve", "reject"].includes(action)) {
+      return NextResponse.json({ error: "Action must be 'approve' or 'reject'" }, { status: 400 });
+    }
 
     const supabase = createAdminClient();
     const table = type === "question" ? "broker_questions" : "broker_answers";
