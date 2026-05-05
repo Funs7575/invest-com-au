@@ -80,9 +80,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Authentication required" }, { status: 401 });
   }
 
-  const rawBody = await request.json().catch(() => ({}));
-  const bodyResult = AccountDeleteBody.safeParse(rawBody);
-  const reason = bodyResult.success ? (bodyResult.data.reason ?? null) : null;
+  const parsed = AccountDeleteBody.safeParse(await request.json().catch(() => ({})));
+  const reason: string | null = parsed.success ? (parsed.data.reason ?? null) : null;
 
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || null;
   const userAgent = request.headers.get("user-agent")?.slice(0, 500) || null;
