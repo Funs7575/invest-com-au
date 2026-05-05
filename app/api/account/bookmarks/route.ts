@@ -24,15 +24,15 @@ export const runtime = "nodejs";
  */
 const BOOKMARK_TYPES = ["article", "broker", "advisor", "scenario", "calculator"] as const;
 
-const BookmarkWriteBody = z.object({
+const AddBookmarkBody = z.object({
   type: z.enum(BOOKMARK_TYPES),
   ref: z.string().min(1).max(200),
-  label: z.string().max(200).optional(),
-  note: z.string().max(2000).optional(),
-  session_id: z.string().max(100).optional(),
+  label: z.string().max(200).nullish(),
+  note: z.string().max(2000).nullish(),
+  session_id: z.string().max(100).nullish(),
 });
 
-const BookmarkDeleteBody = z.object({
+const RemoveBookmarkBody = z.object({
   type: z.enum(BOOKMARK_TYPES),
   ref: z.string().min(1),
 });
@@ -63,16 +63,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
 
-  const rawBody = await request.json().catch(() => null);
-  const bodyResult = BookmarkWriteBody.safeParse(rawBody);
-  if (!bodyResult.success) {
+  const parsed = AddBookmarkBody.safeParse(await request.json().catch(() => ({})));
+  if (!parsed.success) {
     return NextResponse.json({ error: "Invalid type or ref" }, { status: 400 });
   }
-  const { type, ref, label, note, session_id: sessionId } = bodyResult.data;
+  const { type, ref, label = null, note = null, session_id: sessionId = null } = parsed.data;
 
   const user = await getUser();
   if (user) {
-    const ok = await addBookmark({ userId: user.id, type, ref, label, note });
+    const ok = await addBookmark({ userId: user.id, type, ref, label: label ?? null, note: note ?? null });
     return NextResponse.json({ ok });
   }
 
@@ -83,7 +82,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const ok = await addAnonymousSave({ sessionId, type, ref, label });
+  const ok = await addAnonymousSave({ sessionId, type, ref, label: label ?? null });
   if (!ok) log.warn("anonymous save failed", { sessionId, type, ref });
   return NextResponse.json({ ok, anonymous: true });
 }
@@ -92,12 +91,11 @@ export async function DELETE(request: NextRequest) {
   const user = await getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const rawBody = await request.json().catch(() => null);
-  const deleteResult = BookmarkDeleteBody.safeParse(rawBody);
-  if (!deleteResult.success) {
+  const parsed = RemoveBookmarkBody.safeParse(await request.json().catch(() => ({})));
+  if (!parsed.success) {
     return NextResponse.json({ error: "Invalid type or ref" }, { status: 400 });
   }
-  const { type, ref } = deleteResult.data;
+  const { type, ref } = parsed.data;
   const ok = await removeBookmark({ userId: user.id, type, ref });
   return NextResponse.json({ ok });
 }
