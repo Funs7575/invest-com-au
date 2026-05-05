@@ -6,8 +6,8 @@ import { logger } from "@/lib/logger";
 const log = logger("accept-terms");
 
 const AcceptTermsBody = z.object({
-  tos_version: z.string().max(50),
-  privacy_version: z.string().max(50),
+  tos_version: z.string().min(1).max(50),
+  privacy_version: z.string().min(1).max(50),
 });
 
 export const runtime = "nodejs";
@@ -35,15 +35,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Authentication required" }, { status: 401 });
   }
 
-  const rawBody = await request.json().catch(() => null);
-  const bodyResult = AcceptTermsBody.safeParse(rawBody);
-  if (!bodyResult.success) {
+  const parsed = AcceptTermsBody.safeParse(await request.json().catch(() => ({})));
+  if (!parsed.success) {
     return NextResponse.json(
       { error: "tos_version and privacy_version are required" },
       { status: 400 }
     );
   }
-  const { tos_version, privacy_version } = bodyResult.data;
+  const { tos_version, privacy_version } = parsed.data;
 
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || null;
   const userAgent = request.headers.get("user-agent")?.slice(0, 500) || null;

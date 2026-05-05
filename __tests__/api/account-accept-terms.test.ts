@@ -105,14 +105,12 @@ describe("POST /api/account/accept-terms", () => {
     });
   });
 
-  it("truncates oversized version strings to 50 chars", async () => {
+  it("rejects oversized version strings (>50 chars) with 400", async () => {
     mockGetUser.mockResolvedValueOnce({ data: { user: { id: "u1" } } });
     const long = "x".repeat(500);
-    await POST(makeReq({ tos_version: long, privacy_version: long }));
-    expect((insertCalls[0]?.tos_version as string).length).toBeLessThanOrEqual(50);
-    expect((insertCalls[0]?.privacy_version as string).length).toBeLessThanOrEqual(
-      50,
-    );
+    const res = await POST(makeReq({ tos_version: long, privacy_version: long }));
+    expect(res.status).toBe(400);
+    expect(insertCalls).toHaveLength(0);
   });
 
   it("treats a duplicate-row error (23505) as success (idempotent)", async () => {
