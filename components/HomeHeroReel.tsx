@@ -535,6 +535,37 @@ export default function HomeHeroReel({
           letter-spacing: -.01em;
           font-family: var(--font-mono, ui-monospace, monospace);
         }
+
+
+        /* Conflict-safe vertical progress override: keep main markup, only reposition the pips. */
+        .hero-reel-frame .hero-reel-pips {
+          position: absolute;
+          top: 62px;
+          right: 14px;
+          bottom: 22px;
+          z-index: 4;
+          display: grid;
+          grid-template-columns: none;
+          grid-template-rows: repeat(5, minmax(0, 1fr));
+          gap: 7px;
+          width: 5px;
+        }
+        .hero-reel-frame .hero-reel-pip {
+          width: 5px;
+          height: auto;
+          min-height: 24px;
+          transition: background-color .2s ease, transform .2s ease, width .2s ease;
+        }
+        .hero-reel-frame .hero-reel-pip.is-active {
+          width: 7px;
+          transform: translateX(-1px);
+        }
+        .hero-reel-frame .hero-reel-viewport {
+          height: 320px;
+        }
+        .hero-reel-frame .hero-reel-panel {
+          padding-right: 38px;
+        }
       `}</style>
     </div>
   );
