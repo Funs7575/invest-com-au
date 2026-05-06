@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { DesignIcon } from "@/components/design/DesignIcon";
@@ -93,15 +93,33 @@ export default function HomeHeroReel({
   );
 
   const [active, setActive] = useState(0);
+  const [exiting, setExiting] = useState<number | null>(null);
   const [paused, setPaused] = useState(false);
+
+  const showPanel = useCallback(
+    (next: number | ((current: number) => number)) => {
+      const resolved = typeof next === "function" ? next(active) : next;
+      if (resolved === active) return;
+
+      setExiting(active);
+      setActive(resolved);
+    },
+    [active],
+  );
+
+  useEffect(() => {
+    if (exiting === null) return;
+    const id = window.setTimeout(() => setExiting(null), 520);
+    return () => window.clearTimeout(id);
+  }, [exiting]);
 
   useEffect(() => {
     if (paused) return;
-    const id = setInterval(() => {
-      setActive((a) => (a + 1) % panels.length);
+    const id = window.setInterval(() => {
+      showPanel((a) => (a + 1) % panels.length);
     }, AUTO_ROTATE_MS);
-    return () => clearInterval(id);
-  }, [paused, panels.length]);
+    return () => window.clearInterval(id);
+  }, [paused, panels.length, showPanel]);
 
   const matchBroker = brokers[0];
 
@@ -120,7 +138,7 @@ export default function HomeHeroReel({
         {/* glow halo */}
         <div aria-hidden className="hero-reel-glow" />
 
-        {/* header strip — pokie chrome: line indicator + label */}
+        {/* header strip — pokie chrome: horizontal segmented bar + label */}
         <div className="hero-reel-chrome">
           <span className="hero-reel-label font-mono">Ways to use Invest.com.au</span>
           <nav className="hero-reel-pips" aria-label="Reel position">
@@ -128,7 +146,7 @@ export default function HomeHeroReel({
               <button
                 key={p.key}
                 type="button"
-                onClick={() => setActive(i)}
+                onClick={() => showPanel(i)}
                 aria-current={i === active ? "true" : undefined}
                 aria-label={`Show ${p.eyebrow}`}
                 className={`hero-reel-pip ${i === active ? "is-active" : ""}`}
@@ -138,7 +156,7 @@ export default function HomeHeroReel({
           </nav>
         </div>
 
-        {/* viewport — all panels stacked, only active visible */}
+        {/* viewport — panels roll top-to-bottom like a pokie reel */}
         <div className="hero-reel-viewport" aria-live="polite">
           {panels.map((p, i) => {
             const isActive = i === active;
@@ -149,7 +167,7 @@ export default function HomeHeroReel({
                 aria-label={p.ariaLabel}
                 aria-hidden={!isActive}
                 tabIndex={isActive ? 0 : -1}
-                className={`hero-reel-panel ${isActive ? "is-active" : ""}`}
+                className={`hero-reel-panel ${isActive ? "is-active" : ""} ${exiting === i ? "is-exiting" : ""}`}
               >
                 <PanelInner
                   panelKey={p.key as PanelKey}
@@ -197,8 +215,9 @@ export default function HomeHeroReel({
           position: relative;
           z-index: 2;
           display: flex;
-          align-items: center;
-          justify-content: space-between;
+          flex-direction: column;
+          align-items: stretch;
+          gap: 9px;
           padding: 12px 18px;
           border-bottom: 1px solid rgba(255,255,255,.08);
           background: rgba(255,255,255,.03);
@@ -211,11 +230,13 @@ export default function HomeHeroReel({
           color: rgba(255,255,255,.55);
         }
         .hero-reel-pips {
-          display: inline-flex;
+          display: grid;
+          grid-template-columns: repeat(5, minmax(0, 1fr));
           gap: 6px;
+          width: 100%;
         }
         .hero-reel-pip {
-          width: 20px;
+          width: 100%;
           height: 4px;
           border-radius: 99px;
           background: rgba(255,255,255,.18);
@@ -226,13 +247,31 @@ export default function HomeHeroReel({
         }
         .hero-reel-pip:hover { background: rgba(255,255,255,.32); }
         .hero-reel-pip.is-active {
-          transform: scaleY(1.4);
+          transform: scaleY(1.65);
         }
         .hero-reel-viewport {
           position: relative;
           height: 280px;
           overflow: hidden;
           z-index: 1;
+        }
+        .hero-reel-viewport::before,
+        .hero-reel-viewport::after {
+          content: "";
+          position: absolute;
+          left: 0;
+          right: 0;
+          height: 34px;
+          z-index: 3;
+          pointer-events: none;
+        }
+        .hero-reel-viewport::before {
+          top: 0;
+          background: linear-gradient(180deg, rgba(13,17,23,.58), transparent);
+        }
+        .hero-reel-viewport::after {
+          bottom: 0;
+          background: linear-gradient(0deg, rgba(13,17,23,.58), transparent);
         }
         .hero-reel-panel {
           position: absolute;
@@ -244,15 +283,21 @@ export default function HomeHeroReel({
           color: rgba(255,255,255,.92);
           text-decoration: none;
           opacity: 0;
-          transform: translateY(10px);
+          transform: translateY(-112%);
           pointer-events: none;
-          transition: opacity .35s cubic-bezier(.2,.8,.2,1),
-                      transform .42s cubic-bezier(.2,.8,.2,1);
+          transition: opacity .3s cubic-bezier(.2,.8,.2,1),
+                      transform .52s cubic-bezier(.16,1,.3,1);
+          will-change: transform, opacity;
         }
         .hero-reel-panel.is-active {
           opacity: 1;
           transform: translateY(0);
           pointer-events: auto;
+        }
+        .hero-reel-panel.is-exiting {
+          opacity: 0;
+          transform: translateY(112%);
+          pointer-events: none;
         }
         .hero-reel-panel:hover .panel-cta-arrow,
         .hero-reel-panel:focus-visible .panel-cta-arrow {
