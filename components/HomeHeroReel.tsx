@@ -144,7 +144,7 @@ export default function HomeHeroReel({
         </div>
 
         {/* vertical segmented progress bar follows the reel direction */}
-        <nav className="hero-reel-pips" aria-label="Reel position">
+        <nav className="hero-reel-pips" aria-label="Vertical reel position">
           {panels.map((p, i) => (
             <button
               key={p.key}
@@ -152,6 +152,7 @@ export default function HomeHeroReel({
               onClick={() => showPanel(i)}
               aria-current={i === active ? "true" : undefined}
               aria-label={`Show ${p.eyebrow}`}
+              title={`Show ${p.eyebrow}`}
               className={`hero-reel-pip ${i === active ? "is-active" : ""}`}
               style={i === active ? { background: p.accent } : undefined}
             />
