@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { logger } from "@/lib/logger";
 import { sendEmail } from "@/lib/resend";
 
 const log = logger("account-delete");
+
+const AccountDeleteBody = z.object({
+  reason: z.string().max(1000).optional(),
+});
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -75,8 +80,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Authentication required" }, { status: 401 });
   }
 
-  const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
-  const reason = typeof body.reason === "string" ? body.reason.slice(0, 1000) : null;
+  const parsed = AccountDeleteBody.safeParse(await request.json().catch(() => ({})));
+  const reason: string | null = parsed.success ? (parsed.data.reason ?? null) : null;
 
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || null;
   const userAgent = request.headers.get("user-agent")?.slice(0, 500) || null;

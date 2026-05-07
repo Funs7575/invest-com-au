@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import SectionHeading from "@/components/SectionHeading";
+import AdvisorPrompt from "@/components/AdvisorPrompt";
 
 export const revalidate = 86400;
 
@@ -311,6 +312,15 @@ export default function NegativeGearingPage() {
               Find a Financial Planner →
             </Link>
           </div>
+        </div>
+      </section>
+
+      <section className="py-10 bg-white border-t border-slate-200">
+        <div className="container-custom max-w-3xl space-y-4">
+          <h2 className="text-lg font-bold text-slate-900">Find an investment loan</h2>
+          <AdvisorPrompt type="mortgage_broker" />
+          <h2 className="text-lg font-bold text-slate-900 pt-2">Structure your negative gearing correctly</h2>
+          <AdvisorPrompt type="tax_agent" />
         </div>
       </section>
 

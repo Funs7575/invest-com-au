@@ -616,15 +616,17 @@ export default function AdvertiserIntelligencePage() {
   // Quick action: send notification
   const handleSendNotification = async (slug: string) => {
     if (!notifMessage.trim()) return;
-    const supabase = createClient();
-    await supabase.from("broker_notifications").insert({
-      broker_slug: slug,
-      type: "recommendation",
-      title: "Admin Recommendation",
-      message: notifMessage.trim(),
-      link: "/broker-portal/campaigns",
-      is_read: false,
-      email_sent: false,
+    await fetch("/api/admin/marketplace/campaign-notify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        broker_slug: slug,
+        type: "recommendation",
+        title: "Admin Recommendation",
+        message: notifMessage.trim(),
+        link: "/broker-portal/campaigns",
+        send_email: false,
+      }),
     });
     setNotifMessage("");
     setNotifBroker(null);

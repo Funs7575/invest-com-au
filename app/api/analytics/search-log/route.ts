@@ -1,8 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
-import { logSearchQuery, isValidSurface } from "@/lib/search-analytics";
+import { z } from "zod";
+import { logSearchQuery } from "@/lib/search-analytics";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 
 export const runtime = "nodejs";
+
+const SearchLogBody = z.object({
+  query: z.string().min(1),
+  surface: z.enum(["articles", "advisors", "compare", "best_for", "topic", "tag", "quiz", "global"]),
+  result_count: z.number().nullish(),
+  result_clicked: z.boolean().optional(),
+  clicked_rank: z.number().nullish(),
+  session_id: z.string().nullish(),
+});
 
 /**
  * POST /api/analytics/search-log
@@ -29,21 +39,19 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "rate_limited" }, { status: 429 });
   }
 
-  const body = await request.json().catch(() => ({}));
-  const query = typeof body.query === "string" ? body.query : null;
-  const surface = body.surface;
-  if (!query || !isValidSurface(surface)) {
+  const parsed = SearchLogBody.safeParse(await request.json().catch(() => ({})));
+  if (!parsed.success) {
     return NextResponse.json({ error: "invalid_request" }, { status: 400 });
   }
+  const { query, surface, result_count, result_clicked, clicked_rank, session_id } = parsed.data;
 
   const ok = await logSearchQuery({
     queryText: query,
     surface,
-    resultCount: typeof body.result_count === "number" ? body.result_count : null,
-    resultClicked: body.result_clicked === true,
-    clickedRank:
-      typeof body.clicked_rank === "number" ? body.clicked_rank : null,
-    sessionId: typeof body.session_id === "string" ? body.session_id : null,
+    resultCount: result_count ?? null,
+    resultClicked: result_clicked ?? false,
+    clickedRank: clicked_rank ?? null,
+    sessionId: session_id ?? null,
   });
 
   if (!ok) {

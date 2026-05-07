@@ -176,15 +176,20 @@ export default function HomeHero({
             </Link>
             <Link
               href="/quiz"
-              className="iv2-cta"
+              className="hero-cta-pokie"
               style={{
                 fontSize: 16,
                 fontWeight: 700,
                 padding: "14px 24px",
                 borderRadius: 12,
-                background: "var(--color-coral-400)",
+                background:
+                  "linear-gradient(180deg, var(--color-coral-400), var(--color-coral-500))",
                 color: "white",
-                boxShadow: "0 8px 24px rgba(242,88,34,.32)",
+                textDecoration: "none",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 8,
+                whiteSpace: "nowrap",
               }}
             >
               Get matched in 60 seconds <DesignIcon name="arrow-right" size={16} strokeWidth={2.6} />
@@ -195,11 +200,51 @@ export default function HomeHero({
 
       <style>{`
         @media (min-width: 1024px) {
-          .hero-shell { grid-template-columns: minmax(0, 1fr) minmax(360px, 420px) !important; }
+          .hero-shell { grid-template-columns: minmax(0, 1fr) minmax(420px, 480px) !important; }
         }
         @media (max-width: 1023px) {
           .hero-right { justify-self: stretch !important; }
           .hero-ctas { justify-content: flex-start !important; }
+        }
+
+        /* Pokie-button breathing glow on the orange CTA */
+        @keyframes heroPokieBreath {
+          0%, 100% {
+            transform: scale(1);
+            box-shadow:
+              0 8px 24px rgba(242,88,34,.34),
+              0 0 0 0 rgba(242,88,34,.36),
+              inset 0 1px 0 rgba(255,255,255,.18);
+          }
+          50% {
+            transform: scale(1.025);
+            box-shadow:
+              0 12px 32px rgba(242,88,34,.5),
+              0 0 0 8px rgba(242,88,34,0),
+              inset 0 1px 0 rgba(255,255,255,.18);
+          }
+        }
+        .hero-cta-pokie {
+          animation: heroPokieBreath 3.2s ease-in-out infinite;
+          transition: transform 0.16s ease, box-shadow 0.16s ease;
+        }
+        .hero-cta-pokie:hover {
+          transform: scale(1.04) translateY(-1px);
+          animation-play-state: paused;
+        }
+        .hero-cta-pokie svg { transition: transform .16s ease; }
+        .hero-cta-pokie:hover svg { transform: translateX(2px); }
+        @media (prefers-reduced-motion: reduce) {
+          .hero-cta-pokie {
+            animation: none;
+            box-shadow:
+              0 8px 24px rgba(242,88,34,.34),
+              inset 0 1px 0 rgba(255,255,255,.18);
+          }
+          .hero-cta-pokie:hover {
+            transform: none;
+          }
+          .hero-cta-pokie:hover svg { transform: none; }
         }
       `}</style>
     </section>
