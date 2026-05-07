@@ -218,8 +218,105 @@ export interface CountryConfig {
    * 4–6 items per country. Lets a returning user jump straight to the
    * filtered slice that matches them instead of re-deriving the path
    * through the country guide every visit.
+   *
+   * Also re-used as the homepage popular-starting-points strip when this
+   * country is selected — Country Mode keeps a single source of truth
+   * for the country's headline links rather than duplicating copy.
    */
   defaultActions?: ReadonlyArray<QuickAction>;
+
+  // ─── Country Mode hooks (optional) ───────────────────────────────────
+  //
+  // Read by surfaces *other* than this country's foreign-investment hub
+  // — the homepage country-mode preview strips, the quiz prefill, the
+  // soft GeoIP prompt, Phase-5 language routing. All optional with
+  // global-feed fallbacks: a half-populated config produces the global
+  // homepage, never a broken or fake-supply one.
+
+  /**
+   * Filters the homepage listings preview when this country is the
+   * resolved Country Mode. `verticals` are slugs from `lib/verticals.ts`
+   * (e.g. "property", "shares"). `firb: true` further narrows to FIRB-
+   * eligible listings — meaningful for inbound property corridors. When
+   * omitted, the homepage falls through to the global listings feed.
+   */
+  homepageListingFilters?: {
+    verticals: ReadonlyArray<string>;
+    firb?: boolean;
+  };
+
+  /**
+   * Filters the homepage experts preview. `specialties` are advisor-type
+   * strings stored on `professionals` rows (free-text — e.g. "tax",
+   * "buyers-agent", "mortgage-broker"). `languages` is a list of ISO
+   * 639-1 codes (e.g. "zh", "ar") that narrows to experts who can serve
+   * the user in the target language. When omitted, falls through to
+   * the global experts feed.
+   */
+  homepageExpertFilters?: {
+    specialties: ReadonlyArray<string>;
+    languages?: ReadonlyArray<string>;
+  };
+
+  /**
+   * Filters the homepage compare-platforms preview. `types` are the
+   * `PlatformType` enum values to surface (typically share_broker for
+   * inbound corridors, plus crypto_exchange for crypto-active markets).
+   * `nonResidentsOnly: true` narrows to platforms with
+   * `accepts_non_residents = true` — meaningful for share_broker /
+   * cfd_forex / crypto_exchange where the column is populated. When
+   * omitted, falls through to the global compare grid.
+   */
+  homepagePlatformFilters?: {
+    types: ReadonlyArray<PlatformType>;
+    nonResidentsOnly?: boolean;
+  };
+
+  /**
+   * Tools to surface first in the homepage tools strip when this
+   * country is selected. Each entry is a tool slug plus optional URL
+   * params to pre-fill (e.g. `{ from: "GBP" }` on the FX-corridor
+   * calculator). The full tools list still renders — country mode
+   * re-ranks, it doesn't replace.
+   */
+  homepageFeaturedTools?: ReadonlyArray<{
+    slug: string;
+    label: string;
+    deeplinkParams?: Record<string, string>;
+  }>;
+
+  /**
+   * Languages the country-mode user is likely to read/speak — drives
+   * expert-language filtering today and Phase-5 language routing
+   * tomorrow. ISO 639-1 codes (e.g. ["en", "zh"], ["ar", "en"]).
+   */
+  preferredLanguages?: ReadonlyArray<string>;
+
+  // ─── Phase-5 language hooks (scaffolding only, not read yet) ─────────
+  //
+  // Reserved for the Language Mode work in Phase 5. Defining the shape
+  // now lets country configs declare language intent (RTL, default,
+  // route map) without restructuring later. Nothing reads these in
+  // Phase 1 — they exist purely so Phase 5 plugs into a stable
+  // interface.
+
+  /** Whether any of this country's supported languages is right-to-left (Arabic). */
+  hasRtlLanguage?: boolean;
+  /** Default language code for users in this country (ISO 639-1). */
+  defaultLanguage?: string;
+  /** All languages a user from this country may want (ISO 639-1 codes). */
+  supportedLanguages?: ReadonlyArray<string>;
+  /**
+   * Map from language code to the localised version of this country's
+   * hub (e.g. `{ "zh-Hans": "/zh/foreign-investment/china" }`). Phase 5
+   * will read this to emit hreflang and language-switcher links.
+   */
+  languageRoutes?: Record<string, string>;
+  /**
+   * Phase-5 readiness flag: true once translations + RTL pass exist
+   * for this country. Phase 1 ships this as undefined/false everywhere.
+   */
+  rtlReady?: boolean;
 
   /** Optional red-banner callout above the audiences section (e.g. US worldwide-tax warning). */
   criticalWarning?: CriticalWarning;
