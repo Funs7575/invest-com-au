@@ -47,8 +47,8 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 MERGED 2026-04-28T11:45Z | merged | V-NEW-06 done (commit `a7bd736`) |
 | V (V-NEW-07) | `claude/audit-remediation/v-new-07-admin-mfa-enforced` | #256 MERGED 2026-04-28T15:44Z | merged | V-NEW-07a done · V-NEW-07b done (`698bbae`) — **Tier D: needs `ADMIN_MFA_COOKIE_SECRET` ≥32 chars in Vercel before merge** (PR was merged; env var status unclear) |
-| W | `claude/audit-remediation/w-04-hub-article-strip` (#598) | #306/#312/#369/#529 all MERGED · **#598 OPEN** | iter 286 — `ef47b16` (W-04: HubArticleStrip component + 18 tests, smsf+grants pages migrated; CI in progress). | W-01 done (PR #306). W-NEW-01 done (PR #312). W-02 done (PR #369). W-03 **done** (PR #529 MERGED 2026-05-04). **W-04 in-flight (#598 OPEN — CI pending)**. W-05..W-15 pending. |
-| X | `claude/audit-remediation/x-03-research-swap` (#596) | #257/#367 both MERGED · **#596 OPEN** | iter 285 — `d890ec8` (X-03: /research pages admin→anon swap; CI in progress). | X-01 done (PR #257). X-02 MERGED (#367 — /best-for pages admin→anon swap). **X-03 in-flight (#596 OPEN — CI pending)**. X-04..X-09 pending. |
+| W | `claude/audit-remediation/w-05-hub-deep-dive-grid` (#599) | #306/#312/#369/#529 all MERGED · **#598 OPEN** · **#599 OPEN** | CI-rescue iter 289 — `8ff272c` (PR #598 W-04: merge main → force new Vercel build for smoke-test timeout). iter 287 — `d5a17cc` (W-05: HubDeepDiveGrid component + 20 tests, smsf+dividends pages migrated). | W-01 done (PR #306). W-NEW-01 done (PR #312). W-02 done (PR #369). W-03 **done** (PR #529 MERGED 2026-05-04). **W-04 in-flight (#598 OPEN — smoke-test rescued)**. **W-05 in-flight (#599 OPEN — CI pending)**. W-06..W-15 pending. |
+| X | `claude/audit-remediation/x-04-funds-swap` (#600) | #257/#367 both MERGED · **#596 OPEN** · **#600 OPEN** | iter 288 — `77e2ba7` (X-04: /invest/funds pages admin→anon swap + eslint-disable removal; CI queued). | X-01 done (PR #257). X-02 MERGED (#367 — /best-for pages admin→anon swap). **X-03 in-flight (#596 OPEN — CI pending)**. **X-04 in-flight (#600 OPEN — CI queued)**. X-05..X-09 pending. |
 | Y | all PRs MERGED | #253/#347 both MERGED | last merged 2026-05-01T22:00Z | Y-05 done (PR #253). Y-08 done (PR #253). Y-05-ENRICH MERGED (#347 — sourcedAt/source/freshness enrichment + 16 new tests). Y-01..Y-04, Y-06, Y-07 pending. |
 | BB | all PRs MERGED | #361/#368 both MERGED | last merged 2026-05-01T22:01Z | BB-03 MERGED (#361 — CGT calc vs ATO, 5 regulator-reference tests). BB-06 MERGED (#368 — mortgage stress vs ASIC+APRA, 8 cases). Other BB items pending. |
 | **AUDIT-SWEEP** | `claude/audit-remediation/audit-sweep-01-02` | #518 **MERGED 2026-05-04** | last merged 2026-05-04 | AUDIT-SWEEP-01 done. AUDIT-SWEEP-02 done. Stream complete. |
@@ -1138,8 +1138,8 @@ rule from `warn` to `error`. Extension of stream C philosophy.
 | --- | --- | --- | --- | --- |
 | X-01 | done | Audit + classify all 17 backlog files; produce per-file decision matrix | 1 | Done in commit `87bcef9e` (PR #257). `docs/audits/x-admin-backlog-decision-matrix.md` classifies the 18 files into 4 buckets: 11 SWAP (anon-readable RLS confirmed via `001_initial.sql` + `20260510_rls_hardening.sql`), 2 SWAP-WITH-MIGRATION (`broker_transfer_guides` lacks a policy — add one then swap), 3 KEEP-ADMIN with documented per-file justifications (preview/[token] draft articles via signed token; advisor-portal/health + upgrade read `advisor_sessions` which has no anon RLS by design), 2 NEEDS-API-ROUTE (`go/[slug]/apply` + `go/[slug]/route.ts`). Sequencing: X-02..X-08 are independent and parallel-eligible with W-stream. X-09 ratchet last. Open questions surfaced for founder: `broker_transfer_guides` + `campaigns` policy state (both in types.ts but no migration); shared `requireAdvisorSession()` helper extraction. |
 | X-02 | in-progress (parallel-agent) | Swap batch 1 — `/best-for/` family (3 files) | 1 | In-progress on PR #367 (parallel-agent on `claude/audit-remediation/x-02-best-for-admin-swap`). Reads `articles` (public-read) — straight swap. |
-| X-03 | pending | Swap batch 2 — `/research/` family (2 files) | 1 | Same. |
-| X-04 | pending | Swap batch 3 — `/invest/funds/` family (2 files) | 1 | Verify `funds` table RLS; swap or migrate policy. |
+| X-03 | in-progress | Swap batch 2 — `/research/` family (2 files) | 1 | In-progress on PR #596. `sector_reports` anon SELECT policy confirmed in `20260510_rls_hardening.sql`. |
+| X-04 | in-progress | Swap batch 3 — `/invest/funds/` family (2 files) | 1 | In-progress on PR #600. `fund_listings` anon SELECT policy (`USING (status = 'active')`) confirmed in `20260510_rls_hardening.sql`. eslint-disable comment removed. |
 | X-05 | pending | Swap batch 4 — `/invest/[slug]/etfs/`, `/invest/[slug]/stocks/`, `/invest/[slug]/stocks/[ticker]/` (3 files) | 1 | Verify ETF/stock RLS; swap. |
 | X-06 | pending | Swap batch 5 — `/how-to/transfer-from/` (2 files) | 1 | |
 | X-07 | pending | Swap batch 6 — `/advisors/search`, `/foreign-investment/siv`, `/advisor-portal/health`, `/advisor-portal/upgrade` (4 files) | 1 | advisor-portal pages may legitimately need admin — surface to Blocked if so. |
@@ -1504,8 +1504,8 @@ rule from `warn` to `error`. Extension of stream C philosophy.
 | --- | --- | --- | --- | --- |
 | X-01 | done | Audit + classify all 17 backlog files; produce per-file decision matrix | 1 | Done in commit `87bcef9e` (PR #257). `docs/audits/x-admin-backlog-decision-matrix.md` classifies the 18 files into 4 buckets: 11 SWAP (anon-readable RLS confirmed via `001_initial.sql` + `20260510_rls_hardening.sql`), 2 SWAP-WITH-MIGRATION (`broker_transfer_guides` lacks a policy — add one then swap), 3 KEEP-ADMIN with documented per-file justifications (preview/[token] draft articles via signed token; advisor-portal/health + upgrade read `advisor_sessions` which has no anon RLS by design), 2 NEEDS-API-ROUTE (`go/[slug]/apply` + `go/[slug]/route.ts`). Sequencing: X-02..X-08 are independent and parallel-eligible with W-stream. X-09 ratchet last. Open questions surfaced for founder: `broker_transfer_guides` + `campaigns` policy state (both in types.ts but no migration); shared `requireAdvisorSession()` helper extraction. |
 | X-02 | in-progress (parallel-agent) | Swap batch 1 — `/best-for/` family (3 files) | 1 | In-progress on PR #367 (parallel-agent on `claude/audit-remediation/x-02-best-for-admin-swap`). Reads `articles` (public-read) — straight swap. |
-| X-03 | pending | Swap batch 2 — `/research/` family (2 files) | 1 | Same. |
-| X-04 | pending | Swap batch 3 — `/invest/funds/` family (2 files) | 1 | Verify `funds` table RLS; swap or migrate policy. |
+| X-03 | in-progress | Swap batch 2 — `/research/` family (2 files) | 1 | In-progress on PR #596. `sector_reports` anon SELECT policy confirmed in `20260510_rls_hardening.sql`. |
+| X-04 | in-progress | Swap batch 3 — `/invest/funds/` family (2 files) | 1 | In-progress on PR #600. `fund_listings` anon SELECT policy (`USING (status = 'active')`) confirmed in `20260510_rls_hardening.sql`. eslint-disable comment removed. |
 | X-05 | pending | Swap batch 4 — `/invest/[slug]/etfs/`, `/invest/[slug]/stocks/`, `/invest/[slug]/stocks/[ticker]/` (3 files) | 1 | Verify ETF/stock RLS; swap. |
 | X-06 | pending | Swap batch 5 — `/how-to/transfer-from/` (2 files) | 1 | |
 | X-07 | pending | Swap batch 6 — `/advisors/search`, `/foreign-investment/siv`, `/advisor-portal/health`, `/advisor-portal/upgrade` (4 files) | 1 | advisor-portal pages may legitimately need admin — surface to Blocked if so. |
@@ -1952,6 +1952,48 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-07 — CI-rescue iter 289 (stream W — W-04 smoke-test rescue, PR #598)
+
+- Phase 0: batch mode (iter 1 of ≤5). Lock active. No LOOP_PAUSE.
+- Phase 1: main synced to `2cc10cf`. Phase 1.5 skipped (no recent migration). Phase 1.7: main CI green.
+- Phase 2: PR #598 (W-04) `Preview smoke test` FAILURE — first occurrence. Root cause: main had advanced past PR's base SHA `d26a65d`; Vercel reused prior build, no deployment registered for HEAD SHA. Merged main into `w-04-hub-article-strip` to force new Vercel build.
+- Phase 6: Rescue commit `8ff272c` on `claude/audit-remediation/w-04-hub-article-strip`, pushed to origin.
+- Phase 7: Queue updated on main.
+
+- STATUS: CI-RESCUE · stream=W · pr=#598 · commit=8ff272c
+
+---
+
+### 2026-05-07 — Forward progress iter 288 (stream X — X-04: /invest/funds pages admin→anon swap)
+
+- Phase 0: batch mode (iter 5 of 5). Lock active. No LOOP_PAUSE.
+- Phase 1: main synced (already up to date). Phase 1.5 skipped. Phase 1.7: no CI failures on main.
+- Phase 2: PRs #596/#598/#599 all CI in progress/queued. No red CI on any stream.
+- Phase 3: X stream (slot 28). X-04 next after X-03. Branch `x-04-funds-swap` created from main.
+- Phase 4: Verified `fund_listings` anon SELECT policy in `20260510_rls_hardening.sql` — `USING (status = 'active')` matches `.eq("status", "active")` queries in both fund pages. Also removes the eslint-disable comment that documented the pre-migration gap (now resolved). 3 total call sites across 2 files.
+- Phase 5: `app/invest/funds/page.tsx` + `app/invest/funds/[slug]/page.tsx` — eslint-disable comment removed, `createAdminClient` → `await createClient()` (3 call sites). Both fetchFund/fetchRelated/fetchFunds functions now use anon-key SSR client.
+- Phase 6: Commit `77e2ba7` on `claude/audit-remediation/x-04-funds-swap`, pushed, PR #600 opened. Subscribed to PR activity.
+- Phase 7: Queue updated on main. Batch complete (5 of 5). Next iter: W-06 (HubAdvisorCTA) or X-05 (/invest/[slug]/etfs family).
+
+- STATUS: PROGRESS · stream=X · item=X-04 · pr=#600
+
+---
+
+### 2026-05-07 — Forward progress iter 287 (stream W — W-05: HubDeepDiveGrid extraction)
+
+- Phase 0: batch mode (iter 4 of 5). Lock active. No LOOP_PAUSE.
+- Phase 1: main synced (d26a65d — includes auto-regen of database.types.ts by cloud routine). Phase 1.5 skipped. Phase 1.7: no CI failures on main.
+- Phase 2: PRs #596/#598/#599 all CI in progress/queued. PR #597 (R-COVERAGE-15) CI queued. No red CI on any stream.
+- Phase 3: W stream (slot 27). W-05 next after W-04. Branch `w-05-hub-deep-dive-grid` created fresh from main.
+- Phase 4: Pure display component — no Supabase or auth implications. Verified callers: smsf (deep-dives section, 6 items, 3-col, "Read guide" CTA) and dividends (four entry points, 4 items, 4-col, no CTA).
+- Phase 5: `components/HubDeepDiveGrid.tsx` created (97 LOC). Inline 36-line deep-dives section in smsf and 18-line section in dividends replaced. `__tests__/components/HubDeepDiveGrid.test.tsx` written (20 tests: structure, subheading, card content, CTA, columns, theming, card isolation, per-page parity).
+- Phase 6: Commit `d5a17cc` on `claude/audit-remediation/w-05-hub-deep-dive-grid`, pushed, PR #599 opened. Subscribed to PR activity.
+- Phase 7: Queue updated on main. Next item (iter 288): W-06 or X-04 (next admin backlog swap).
+
+- STATUS: PROGRESS · stream=W · item=W-05 · pr=#599
+
+---
 
 ### 2026-05-07 — Forward progress iter 286 (stream W — W-04: HubArticleStrip extraction)
 
