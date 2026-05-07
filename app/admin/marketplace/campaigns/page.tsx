@@ -114,19 +114,32 @@ export default function AdminCampaignsPage() {
         budget_exhausted: `Your campaign "${campaign.name}" has exhausted its budget. Top up your wallet to resume.`,
       };
 
-      // admin-auth route — inserts notification via admin client + sends email
-      fetch("/api/admin/marketplace/campaign-notify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          broker_slug: campaign.broker_slug,
-          type: notifTypes[newStatus],
-          title: notifTitles[newStatus],
-          message: notifMessages[newStatus],
-          link: "/broker-portal/campaigns",
-          send_email: true,
-        }),
-      }).catch((err) => log.error("campaign notification failed", { err: err instanceof Error ? err.message : String(err) }));
+      supabase.from("broker_notifications").insert({
+        broker_slug: campaign.broker_slug,
+        type: notifTypes[newStatus],
+        title: notifTitles[newStatus],
+        message: notifMessages[newStatus],
+        link: "/broker-portal/campaigns",
+        is_read: false,
+        email_sent: false,
+      }).then(() => {
+        // Also send email notification
+        fetch("/api/marketplace/notify", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-internal-key": "browser-admin",
+          },
+          body: JSON.stringify({
+            broker_slug: campaign.broker_slug,
+            type: notifTypes[newStatus],
+            title: notifTitles[newStatus],
+            message: notifMessages[newStatus],
+            link: "/broker-portal/campaigns",
+            send_email: true,
+          }),
+        }).catch((err) => log.error("campaign notification failed", { err: err instanceof Error ? err.message : String(err) }));
+      });
     }
 
     await loadCampaigns();
@@ -191,16 +204,14 @@ export default function AdminCampaignsPage() {
         };
         const n = notifMap[newStatus];
         if (n) {
-          // admin-auth route — inserts notification via admin client (no email for bulk actions)
-          await fetch("/api/admin/marketplace/campaign-notify", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              broker_slug: campaign.broker_slug,
-              ...n,
-              link: "/broker-portal/campaigns",
-              send_email: false,
-            }),
+          await supabase.from("broker_notifications").insert({
+            broker_slug: campaign.broker_slug,
+            type: n.type,
+            title: n.title,
+            message: n.message,
+            link: "/broker-portal/campaigns",
+            is_read: false,
+            email_sent: false,
           });
         }
       }
