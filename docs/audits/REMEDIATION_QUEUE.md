@@ -47,8 +47,8 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 MERGED 2026-04-28T11:45Z | merged | V-NEW-06 done (commit `a7bd736`) |
 | V (V-NEW-07) | `claude/audit-remediation/v-new-07-admin-mfa-enforced` | #256 MERGED 2026-04-28T15:44Z | merged | V-NEW-07a done · V-NEW-07b done (`698bbae`) — **Tier D: needs `ADMIN_MFA_COOKIE_SECRET` ≥32 chars in Vercel before merge** (PR was merged; env var status unclear) |
-| W | `claude/audit-remediation/w-05-hub-deep-dive-grid` (#599) | #306/#312/#369/#529 all MERGED · **#598 OPEN** · **#599 OPEN** | CI-rescue iter 289 — `8ff272c` (PR #598 W-04: merge main → force new Vercel build for smoke-test timeout). iter 287 — `d5a17cc` (W-05: HubDeepDiveGrid component + 20 tests, smsf+dividends pages migrated). | W-01 done (PR #306). W-NEW-01 done (PR #312). W-02 done (PR #369). W-03 **done** (PR #529 MERGED 2026-05-04). **W-04 in-flight (#598 OPEN — smoke-test rescued)**. **W-05 in-flight (#599 OPEN — CI pending)**. W-06..W-15 pending. |
-| X | `claude/audit-remediation/x-04-funds-swap` (#600) | #257/#367 both MERGED · **#596 OPEN** · **#600 OPEN** | CI-rescue iter 290 — `b433780` (PR #596 X-03: merge main → force new Vercel build for smoke-test timeout). iter 288 — `77e2ba7` (X-04: /invest/funds pages admin→anon swap). | X-01 done (PR #257). X-02 MERGED (#367 — /best-for pages admin→anon swap). **X-03 in-flight (#596 OPEN — smoke-test rescued)**. **X-04 in-flight (#600 OPEN — CI queued)**. X-05..X-09 pending. |
+| W | `claude/audit-remediation/w-05-hub-deep-dive-grid` (#599) | #306/#312/#369/#529 all MERGED · **#598 OPEN** · **#599 OPEN** | CI-rescue iter 291 — `b66bbc7` (PR #599 W-05: merge main → force new Vercel build for smoke-test timeout). CI-rescue iter 289 — `8ff272c` (PR #598 W-04: merge main). iter 287 — `d5a17cc` (W-05: HubDeepDiveGrid component + 20 tests, smsf+dividends pages migrated). | W-01 done (PR #306). W-NEW-01 done (PR #312). W-02 done (PR #369). W-03 **done** (PR #529 MERGED 2026-05-04). **W-04 in-flight (#598 OPEN — smoke-test rescued)**. **W-05 in-flight (#599 OPEN — smoke-test rescued)**. W-06..W-15 pending. |
+| X | `claude/audit-remediation/x-04-funds-swap` (#600) | #257/#367 both MERGED · **#596 OPEN** · **#600 OPEN** | CI-rescue iter 291 — `0c5b599` (PR #600 X-04: merge main → force new Vercel build for smoke-test timeout). CI-rescue iter 290 — `b433780` (PR #596 X-03: merge main). iter 288 — `77e2ba7` (X-04: /invest/funds pages admin→anon swap). | X-01 done (PR #257). X-02 MERGED (#367 — /best-for pages admin→anon swap). **X-03 in-flight (#596 OPEN — smoke-test rescued)**. **X-04 in-flight (#600 OPEN — smoke-test rescued)**. X-05..X-09 pending. |
 | Y | all PRs MERGED | #253/#347 both MERGED | last merged 2026-05-01T22:00Z | Y-05 done (PR #253). Y-08 done (PR #253). Y-05-ENRICH MERGED (#347 — sourcedAt/source/freshness enrichment + 16 new tests). Y-01..Y-04, Y-06, Y-07 pending. |
 | BB | all PRs MERGED | #361/#368 both MERGED | last merged 2026-05-01T22:01Z | BB-03 MERGED (#361 — CGT calc vs ATO, 5 regulator-reference tests). BB-06 MERGED (#368 — mortgage stress vs ASIC+APRA, 8 cases). Other BB items pending. |
 | **AUDIT-SWEEP** | `claude/audit-remediation/audit-sweep-01-02` | #518 **MERGED 2026-05-04** | last merged 2026-05-04 | AUDIT-SWEEP-01 done. AUDIT-SWEEP-02 done. Stream complete. |
@@ -1952,6 +1952,18 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-07 — CI-rescue iter 291 (streams W + X — smoke-test rescue, PR #599 W-05 + PR #600 X-04)
+
+- Phase 0: batch mode. Lock active.
+- Phase 1.7: Main CI healthy — no rescue needed.
+- Phase 2: PR #599 (W-05) `Preview smoke test` FAILURE — Lint/Build SUCCESS, smoke test = Vercel reused-build artifact. Merged main into `w-05-hub-deep-dive-grid`, pushed `b66bbc7`. PR #600 (X-04) also had `Preview smoke test` FAILURE (Lint/Build SUCCESS in newer run — initial lint failure was transient). Merged main into `x-04-funds-swap`, pushed `0c5b599`.
+- Phase 6: Rescue commits pushed to both branches.
+- Phase 7: Queue updated on main.
+
+- STATUS: CI-RESCUE · stream=W+X · pr=#599+#600 · commits=b66bbc7,0c5b599
+
+---
 
 ### 2026-05-07 — CI-rescue iter 290 (stream X — X-03 smoke-test rescue, PR #596)
 
