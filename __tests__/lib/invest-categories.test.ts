@@ -6,6 +6,8 @@ import {
   getSubcategoryBySlug,
   getAllSubcategorySlugs,
   getCategoryDbFilter,
+  getOpportunityCategories,
+  getGuideCategories,
 } from "@/lib/invest-categories";
 
 describe("invest-categories data integrity", () => {
@@ -116,6 +118,82 @@ describe("getAllSubcategorySlugs", () => {
       expect(typeof p.category).toBe("string");
       expect(typeof p.subcategory).toBe("string");
     }
+  });
+});
+
+describe("IA intent (2026-05-07 refactor)", () => {
+  const cats = getAllInvestCategories();
+
+  it("every category carries an intent", () => {
+    for (const cat of cats) {
+      expect(cat.intent).toMatch(/^(opportunity|compare|guide)$/);
+    }
+  });
+
+  it("getOpportunityCategories returns the 15 canonical opportunity verticals", () => {
+    const slugs = getOpportunityCategories()
+      .map((c) => c.slug)
+      .sort();
+    expect(slugs).toEqual(
+      [
+        "alternatives",
+        "buy-business",
+        "commercial-property",
+        "farmland",
+        "franchise",
+        "funds",
+        "income-assets",
+        "infrastructure",
+        "mining",
+        "pre-ipo",
+        "private-credit",
+        "private-equity",
+        "renewable-energy",
+        "royalties",
+        "startups",
+      ].sort(),
+    );
+  });
+
+  it("the 4 redirected slugs are tagged as compare", () => {
+    const compareSlugs = cats
+      .filter((c) => c.intent === "compare")
+      .map((c) => c.slug)
+      .sort();
+    expect(compareSlugs).toEqual(
+      ["dividend-investing", "forex", "ipos", "managed-funds"].sort(),
+    );
+  });
+
+  it("the 13 guide slugs (sector hubs + retained education) are tagged as guide", () => {
+    const guideSlugs = getGuideCategories()
+      .map((c) => c.slug)
+      .sort();
+    expect(guideSlugs).toEqual(
+      [
+        "bonds",
+        "commodities",
+        "crypto-staking",
+        "gold",
+        "hybrid-securities",
+        "hydrogen",
+        "ipo-calendar",
+        "lithium",
+        "oil-gas",
+        "options-trading",
+        "reits",
+        "smsf",
+        "uranium",
+      ].sort(),
+    );
+  });
+
+  it("intent partitions are exhaustive and disjoint", () => {
+    const buckets = { opportunity: 0, compare: 0, guide: 0 };
+    for (const cat of cats) buckets[cat.intent]++;
+    expect(buckets.opportunity + buckets.compare + buckets.guide).toBe(
+      cats.length,
+    );
   });
 });
 

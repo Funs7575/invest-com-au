@@ -28,6 +28,13 @@ export interface FundListing {
   featured: boolean | null;
   featured_tier: "standard" | "premium" | "platinum" | null;
   status: string | null;
+  // Disclosure columns added by 20260507_fund_listings_disclosure_columns.
+  // Optional/nullable so the directory page (which doesn't select them)
+  // and detail page (which does, via select("*")) both compile, and so
+  // detail-page renders are safe pre- and post-migration.
+  pds_url?: string | null;
+  im_url?: string | null;
+  expression_of_interest_only?: boolean | null;
 }
 
 const FUND_TYPE_LABELS: Record<FundType, string> = {
