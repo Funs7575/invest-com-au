@@ -3,6 +3,10 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import HubLeadForm from "@/components/leads/HubLeadForm";
+import AdvisorPrompt from "@/components/AdvisorPrompt";
+import { createClient } from "@/lib/supabase/server";
+import { getAffiliateLink, AFFILIATE_REL, renderStars } from "@/lib/tracking";
+import type { Broker } from "@/lib/types";
 
 export const revalidate = 3600;
 
@@ -19,12 +23,26 @@ export const metadata: Metadata = {
   },
 };
 
-export default function SmsfCryptoPage() {
+type CryptoExchange = Pick<Broker, "id" | "name" | "slug" | "color" | "affiliate_url" | "rating" | "tagline" | "cta_text" | "benefit_cta">;
+
+export default async function SmsfCryptoPage() {
+  const supabase = await createClient();
+  const { data: cryptoExchanges } = await supabase
+    .from("brokers")
+    .select("id, name, slug, color, affiliate_url, rating, tagline, cta_text, benefit_cta")
+    .eq("platform_type", "crypto_exchange")
+    .eq("status", "active")
+    .order("rating", { ascending: false })
+    .limit(3);
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
     { name: "SMSF", url: absoluteUrl("/smsf") },
     { name: "Crypto", url: absoluteUrl("/smsf/crypto") },
   ]);
+  return <SmsfCryptoPageInner cryptoExchanges={cryptoExchanges} breadcrumb={breadcrumb} />;
+}
+
+function SmsfCryptoPageInner({ cryptoExchanges, breadcrumb }: { cryptoExchanges: CryptoExchange[] | null; breadcrumb: object }) {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
@@ -123,8 +141,49 @@ export default function SmsfCryptoPage() {
           </div>
         </section>
 
+        {/* ── Crypto exchange mini-strip ── */}
+        {cryptoExchanges && cryptoExchanges.length > 0 && (
+          <section className="py-12 bg-white border-t border-slate-200">
+            <div className="container-custom max-w-5xl">
+              <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 space-y-4">
+                <div>
+                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Crypto Exchanges</p>
+                  <h2 className="text-lg font-bold text-slate-900">SMSF-eligible crypto exchanges</h2>
+                  <p className="text-sm text-slate-500 mt-1">Ensure the exchange can issue tax reports in the format your SMSF auditor requires.</p>
+                </div>
+                <div className="grid sm:grid-cols-3 gap-3">
+                  {cryptoExchanges.map((b) => (
+                    <div key={b.slug} className="bg-white rounded-xl border border-slate-200 p-4 flex flex-col gap-3">
+                      <div>
+                        <p className="font-bold text-slate-900 text-sm">{b.name}</p>
+                        <p className="text-xs text-amber-500">{renderStars(Number(b.rating ?? 0))}</p>
+                        <p className="text-xs text-slate-500 mt-1 line-clamp-2">{b.tagline}</p>
+                      </div>
+                      <div className="mt-auto">
+                        <a
+                          href={getAffiliateLink(b as Broker)}
+                          rel={AFFILIATE_REL}
+                          target="_blank"
+                          className="block text-center w-full px-3 py-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold text-xs rounded-lg transition-colors"
+                        >
+                          {b.cta_text ?? "Learn More →"}
+                        </a>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ── Advisor CTA + Lead Form ── */}
         <section className="py-12 bg-slate-50 border-t border-slate-200">
-          <div className="container-custom max-w-2xl">
+          <div className="container-custom max-w-2xl space-y-6">
+            <AdvisorPrompt
+              type="smsf_accountant"
+              heading="Crypto in SMSFs: get the compliance right"
+            />
             <HubLeadForm
               heading="Speak to an SMSF crypto specialist"
               subheading="Deed update, investment strategy review, and dedicated account setup — without breaching the sole-purpose test."
