@@ -47,7 +47,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 MERGED 2026-04-28T11:45Z | merged | V-NEW-06 done (commit `a7bd736`) |
 | V (V-NEW-07) | `claude/audit-remediation/v-new-07-admin-mfa-enforced` | #256 MERGED 2026-04-28T15:44Z | merged | V-NEW-07a done · V-NEW-07b done (`698bbae`) — **Tier D: needs `ADMIN_MFA_COOKIE_SECRET` ≥32 chars in Vercel before merge** (PR was merged; env var status unclear) |
-| W | `claude/audit-remediation/w-03-hub-service-grid` | #306/#312/#369/#529 all MERGED | last merged 2026-05-04 | W-01 done (PR #306). W-NEW-01 done (PR #312). W-02 done (PR #369). W-03 **done** (PR #529 MERGED 2026-05-04). W-04..W-15 pending. |
+| W | `claude/audit-remediation/w-04-hub-article-strip` (#598) | #306/#312/#369/#529 all MERGED · **#598 OPEN** | iter 286 — `ef47b16` (W-04: HubArticleStrip component + 18 tests, smsf+grants pages migrated; CI in progress). | W-01 done (PR #306). W-NEW-01 done (PR #312). W-02 done (PR #369). W-03 **done** (PR #529 MERGED 2026-05-04). **W-04 in-flight (#598 OPEN — CI pending)**. W-05..W-15 pending. |
 | X | `claude/audit-remediation/x-03-research-swap` (#596) | #257/#367 both MERGED · **#596 OPEN** | iter 285 — `d890ec8` (X-03: /research pages admin→anon swap; CI in progress). | X-01 done (PR #257). X-02 MERGED (#367 — /best-for pages admin→anon swap). **X-03 in-flight (#596 OPEN — CI pending)**. X-04..X-09 pending. |
 | Y | all PRs MERGED | #253/#347 both MERGED | last merged 2026-05-01T22:00Z | Y-05 done (PR #253). Y-08 done (PR #253). Y-05-ENRICH MERGED (#347 — sourcedAt/source/freshness enrichment + 16 new tests). Y-01..Y-04, Y-06, Y-07 pending. |
 | BB | all PRs MERGED | #361/#368 both MERGED | last merged 2026-05-01T22:01Z | BB-03 MERGED (#361 — CGT calc vs ATO, 5 regulator-reference tests). BB-06 MERGED (#368 — mortgage stress vs ASIC+APRA, 8 cases). Other BB items pending. |
@@ -1952,6 +1952,21 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-07 — Forward progress iter 286 (stream W — W-04: HubArticleStrip extraction)
+
+- Phase 0: batch mode (iter 3 of 5). Lock active. No LOOP_PAUSE.
+- Phase 1: main synced (16fa189→2c9cd4d — cloud routine added R-COVERAGE-15 PR #597 + S CI-rescue). Phase 1.5 skipped. Phase 1.7: no CI failures on main.
+- Phase 2: PR #596 (X-03) CI in progress, no failures. PR #597 (R-COVERAGE-15) CI queued. PR #595 (R-COVERAGE-RATCHET) open/clean. PR #594 (S) CI-rescue done. No red CI on any stream.
+- Phase 3: W stream (slot 27). W-04 next. Branch `w-04-hub-article-strip` created fresh from main.
+- Phase 4: Verified `smsf/page.tsx` and `grants/page.tsx` both use `createClient()` (anon) — display-only extraction, no security or auth implications.
+- Phase 5: `components/HubArticleStrip.tsx` created (90 LOC). Inline 30-line article sections in both pages replaced with single-line component call. `__tests__/components/HubArticleStrip.test.tsx` written (18 tests: structure, card content, columns, theming, isolation, per-page parity).
+- Phase 6: Commit `ef47b16` on `claude/audit-remediation/w-04-hub-article-strip`, pushed, PR #598 opened. Subscribed to PR activity.
+- Phase 7: Queue updated on main. Next item: W-05 (HubDeepDiveGrid extraction) or X-04 (next /admin-backlog swap).
+
+- STATUS: PROGRESS · stream=W · item=W-04 · pr=#598
+
+---
 
 ### 2026-05-07 — Forward progress iter 285 (stream X — X-03: /research pages admin→anon swap)
 
