@@ -46,6 +46,10 @@ npm run test:watch                 # watch mode
 - **Coverage thresholds in `vitest.config.mts` are floors.** Set just below current to catch regressions without blocking legitimately untested new code. Ratchet them up as coverage grows; don't lower.
 - **Webkit + mobile-safari are configured in `playwright.config.ts` but only chromium runs in the a11y job.** The a11y job passes `--project=chromium` because webkit had flaky networkidle timeouts that added ~3 min to PRs. Full E2E still runs all three.
 - **Build failing "in an unrelated PR"? Check for shared TS errors.** Dependabot PRs open with a stale commit SHA; if main landed a TS fix after the PR opened, the PR will fail until rebased via `@dependabot rebase`.
+- **Vitest `vi.mock()` hoisting.** `vi.mock(...)` is hoisted to the top of the test file before any `const`/`let`. Test code that declares `const mockX = vi.fn();` at module scope and then references `mockX` inside a `vi.mock()` factory will fail at runtime with "There was an error when mocking a module". Wrap the var: `const { mockX } = vi.hoisted(() => ({ mockX: vi.fn() }));`.
+- **Tests that depend on an env var being _unset_ must `vi.stubEnv("X", "")`, not just `vi.unstubAllEnvs()`.** CI's `.github/workflows/ci.yml` `env:` block stubs `RESEND_API_KEY=placeholder`, `STRIPE_SECRET_KEY=placeholder`, etc. `unstubAllEnvs()` only reverts vitest's own stubs — the underlying CI value remains, so the test passes locally (where the var is undefined) but fails in CI.
+- **Pre-push hook** (`.husky/pre-push`) runs `tsc --noEmit` + `npm run audit:rate-limits -- --strict` + `npm run test:changed -- --silent`. `tsc` on the full project OOMs at the default 4 GB heap on small dev machines — prefix with `NODE_OPTIONS="--max-old-space-size=5120"` if you hit it. The hook short-circuits when `node_modules` is missing (relevant for agent worktrees that skip `npm install` — push from the main worktree to get checks).
+- **Zod schemas reject by default.** `z.string().max(N)` returns 400 on oversized input — it does not truncate. If a route should be permissive (treat invalid input as null and proceed) read with `Schema.safeParse(...)` and use `parsed.success ? parsed.data.x : null` rather than `.parse()`.
 
 ## Single sources of truth — don't duplicate
 
@@ -76,6 +80,13 @@ Reaching for a hardcoded disclaimer, a new affiliate URL builder, or a fresh JSO
 
 `vitest` + `@vitest/coverage-v8` are grouped in `.github/dependabot.yml`. Bumping them separately causes "Running mixed versions is not supported" CI crashes — we hit this on 2026-04-20. If you add a new peer-coupled dev-dep pair, group it too.
 
+## Audit-remediation loop
+
+- **Source of truth** for in-flight audit work: `docs/audits/REMEDIATION_QUEUE.md`. Hand-edit to reorder, drop, or unblock items.
+- **Drives**: 9 cloud RemoteTrigger routines firing every ~7-8 min, plus a daily scout (`0 2 * * *` UTC) that appends new drift to the queue. They live outside git and outside `gh run list` — only inspectable via `RemoteTrigger action=list`.
+- **Slash commands**: `/audit-remediation-iteration`, `/audit-remediation-scout` (in `.claude/commands/`).
+- The loop sometimes force-pushes a stream branch to fresh main. GitHub may not fire CI workflows on a force-update — push an empty commit (`git commit --allow-empty -m "ci: re-trigger"`) to fire a fresh run.
+
 ## Merge authorization
 
 Tiered policy at `docs/audits/MERGE_AUTHORIZATION.md`. Read before merging any agent-authored PR.
@@ -87,6 +98,13 @@ Tiered policy at `docs/audits/MERGE_AUTHORIZATION.md`. Read before merging any a
 - **Tier E** (force-push / branch delete / repo settings / workflow disablement / anything `git revert` can't undo) → never autonomous, require explicit fresh consent every time
 
 Founder-authored PRs are out of scope.
+
+**Admin-merge caution**: when admin-merging an agent-authored PR that adds a *new* test file, run `npx vitest run <new-test-file>` locally first. Admin-merge bypasses CI; vi.mock() hoisting bugs and mock-chain method gaps slip through to main, where the auto-revert workflow then drafts a noisy revert PR. The 30 sec local check is much cheaper than the cleanup. (For PRs that only modify existing tests or only change non-test code, the risk is lower.)
+
+## Founder identity
+
+- `finn@invest.com.au` — admin login (uses ADMIN_EMAILS allow-list, MFA-protected per V-NEW-07).
+- `finnduns@gmail.com` — used for user-experience dogfooding; treat as a regular site visitor.
 
 ## Before shipping
 
