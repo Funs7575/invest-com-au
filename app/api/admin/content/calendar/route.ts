@@ -1,6 +1,10 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { requireCronAuth } from "@/lib/cron-auth";
+
+const CalendarCreateBody = z.object({ title: z.string().min(1) });
+const CalendarIdBody = z.object({ id: z.number().int().positive() });
 
 export const runtime = "edge";
 
@@ -47,27 +51,31 @@ export async function POST(req: NextRequest) {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
-  const body = await req.json();
+  const rawBody = await req.json() as Record<string, unknown>;
+  const parsed = CalendarCreateBody.safeParse(rawBody);
+  if (!parsed.success) {
+    return NextResponse.json({ error: "title is required" }, { status: 400 });
+  }
   const supabase = getSupabase();
 
   const { data, error } = await supabase
     .from("content_calendar")
     .insert({
-      title: body.title,
-      target_keyword: body.target_keyword || null,
-      secondary_keywords: body.secondary_keywords || [],
-      article_type: body.article_type || "article",
-      category: body.category || null,
+      title: parsed.data.title,
+      target_keyword: rawBody["target_keyword"] ?? null,
+      secondary_keywords: rawBody["secondary_keywords"] ?? [],
+      article_type: rawBody["article_type"] ?? "article",
+      category: rawBody["category"] ?? null,
       status: "planned",
-      assigned_author_id: body.assigned_author_id || null,
-      assigned_reviewer_id: body.assigned_reviewer_id || null,
-      target_publish_date: body.target_publish_date || null,
-      brief: body.brief || null,
-      related_brokers: body.related_brokers || [],
-      related_tools: body.related_tools || [],
-      internal_links: body.internal_links || [],
-      notes: body.notes || null,
-      priority: body.priority || "normal",
+      assigned_author_id: rawBody["assigned_author_id"] ?? null,
+      assigned_reviewer_id: rawBody["assigned_reviewer_id"] ?? null,
+      target_publish_date: rawBody["target_publish_date"] ?? null,
+      brief: rawBody["brief"] ?? null,
+      related_brokers: rawBody["related_brokers"] ?? [],
+      related_tools: rawBody["related_tools"] ?? [],
+      internal_links: rawBody["internal_links"] ?? [],
+      notes: rawBody["notes"] ?? null,
+      priority: rawBody["priority"] ?? "normal",
     })
     .select()
     .single();
@@ -87,18 +95,20 @@ export async function PATCH(req: NextRequest) {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
-  const body = await req.json();
-  const { id, ...updates } = body;
-
-  if (!id) {
+  const rawPatch = await req.json() as Record<string, unknown>;
+  const patchParsed = CalendarIdBody.safeParse(rawPatch);
+  if (!patchParsed.success) {
     return NextResponse.json({ error: "id is required" }, { status: 400 });
   }
+  const updates = Object.fromEntries(
+    Object.entries(rawPatch).filter(([k]) => k !== "id"),
+  );
 
   const supabase = getSupabase();
   const { data, error } = await supabase
     .from("content_calendar")
     .update(updates)
-    .eq("id", id)
+    .eq("id", patchParsed.data.id)
     .select()
     .single();
 
@@ -117,10 +127,12 @@ export async function DELETE(req: NextRequest) {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
-  const { id } = await req.json();
-  if (!id) {
+  const rawDel = await req.json();
+  const delParsed = CalendarIdBody.safeParse(rawDel);
+  if (!delParsed.success) {
     return NextResponse.json({ error: "id is required" }, { status: 400 });
   }
+  const { id } = delParsed.data;
 
   const supabase = getSupabase();
   const { error } = await supabase

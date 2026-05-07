@@ -1,7 +1,10 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { slugify } from "@/lib/utils";
 import { requireCronAuth } from "@/lib/cron-auth";
+
+const GenerateDraftBody = z.object({ calendarId: z.number().int().positive() });
 
 export const runtime = "edge";
 export const maxDuration = 120;
@@ -25,13 +28,15 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const { calendarId } = await req.json();
-  if (!calendarId) {
+  const rawBody = await req.json();
+  const parsed = GenerateDraftBody.safeParse(rawBody);
+  if (!parsed.success) {
     return NextResponse.json(
       { error: "calendarId is required" },
       { status: 400 }
     );
   }
+  const { calendarId } = parsed.data;
 
   const supabase = createAdminClient();
 
