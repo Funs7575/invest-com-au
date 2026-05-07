@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl } from "@/lib/seo";
 import HubLeadForm from "@/components/leads/HubLeadForm";
+import AdvisorPrompt from "@/components/AdvisorPrompt";
 
 export const revalidate = 3600;
 
@@ -102,7 +103,15 @@ export default function SmsfPropertyPage() {
         </section>
 
         <section className="py-12 bg-slate-50 border-y border-slate-200">
-          <div className="container-custom max-w-2xl">
+          <div className="container-custom max-w-2xl space-y-6">
+            <AdvisorPrompt
+              type="smsf_accountant"
+              heading="Get specialist SMSF advice before investing in property"
+            />
+            <AdvisorPrompt
+              type="mortgage_broker"
+              heading="SMSF limited recourse borrowing arrangement (LRBA)"
+            />
             <HubLeadForm
               heading="Speak to an SMSF property specialist"
               subheading="LRBA structuring, bare-trust setup, deed update — get the structure right before you make an offer."
