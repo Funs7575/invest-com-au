@@ -98,7 +98,7 @@ describe("POST /api/developer-leads", () => {
     const res = await POST(makePost({ ...VALID_BODY, full_name: "A" }));
     expect(res.status).toBe(400);
     const json = await res.json();
-    expect(json.error).toMatch(/invalid name/i);
+    expect(json.error).toMatch(/full_name/i);
   });
 
   it("returns 400 when full_name is missing", async () => {
@@ -123,7 +123,7 @@ describe("POST /api/developer-leads", () => {
     const res = await POST(makePost({ ...VALID_BODY, investor_type: "hni" }));
     expect(res.status).toBe(400);
     const json = await res.json();
-    expect(json.error).toMatch(/invalid investor_type/i);
+    expect(json.error).toMatch(/investor_type/i);
   });
 
   it("accepts all valid investor_type values", async () => {

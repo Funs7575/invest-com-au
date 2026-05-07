@@ -25,7 +25,9 @@ vi.mock("@/lib/supabase/admin", () => ({
       limit: vi.fn().mockReturnThis(),
       gte: vi.fn().mockReturnThis(),
       single: vi.fn().mockResolvedValue({ data: null, error: null }),
+      maybeSingle: vi.fn().mockResolvedValue({ data: null, error: null }),
     })),
+    rpc: vi.fn().mockResolvedValue({ data: null, error: null }),
   })),
 }));
 

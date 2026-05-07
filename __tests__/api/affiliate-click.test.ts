@@ -79,14 +79,14 @@ describe("POST /api/affiliate/click", () => {
     const res = await POST(makePost({}));
     expect(res.status).toBe(400);
     const json = await res.json();
-    expect(json.error).toMatch(/Invalid broker_slug/i);
+    expect(json.error).toMatch(/broker_slug/i);
   });
 
   it("returns 400 when broker_slug is too long (>120 chars)", async () => {
     const res = await POST(makePost({ broker_slug: "x".repeat(121) }));
     expect(res.status).toBe(400);
     const json = await res.json();
-    expect(json.error).toMatch(/Invalid broker_slug/i);
+    expect(json.error).toMatch(/broker_slug/i);
   });
 
   it("returns 404 when broker does not exist", async () => {
@@ -200,17 +200,11 @@ describe("POST /api/affiliate/click", () => {
     expect((insertArgs as unknown as Record<string, unknown>)?.ip_hash).toBeNull();
   });
 
-  it("truncates optional string fields that exceed max length to null", async () => {
-    let callCount = 0;
-    mockAdminFrom.mockImplementation(() => {
-      callCount++;
-      if (callCount === 1) return makeBrokerChain({ data: BROKER_ROW, error: null });
-      return makeInsertChain({ error: null });
-    });
-    // source max is 200 chars — 201-char string should be dropped to null
+  it("rejects optional string fields that exceed max length with 400", async () => {
+    // source max is 200 chars — 201-char string fails Zod validation
     const res = await POST(
       makePost({ broker_slug: "commsec", source: "x".repeat(201) }),
     );
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(400);
   });
 });
