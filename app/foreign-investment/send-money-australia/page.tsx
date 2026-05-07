@@ -2,6 +2,9 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import { FOREIGN_INVESTOR_GENERAL_DISCLAIMER } from "@/lib/compliance";
+import { createClient } from "@/lib/supabase/server";
+import { getAffiliateLink, AFFILIATE_REL, renderStars } from "@/lib/tracking";
+import type { Broker } from "@/lib/types";
 import ForeignInvestmentNav from "../ForeignInvestmentNav";
 import SectionHeading from "@/components/SectionHeading";
 
@@ -26,80 +29,17 @@ export const metadata: Metadata = {
   alternates: { canonical: `${SITE_URL}/foreign-investment/send-money-australia` },
 };
 
-export const revalidate = 86400;
+export const revalidate = 3600;
 
-const PROVIDERS = [
-  {
-    name: "Wise",
-    type: "FX Specialist",
-    bestFor: "Everyday transfers, smaller amounts (under $50K)",
-    fee: "~0.3–1.5% total cost",
-    rate: "Mid-market rate + small fee",
-    minTransfer: "No minimum",
-    maxTransfer: "Varies by country",
-    settlementOk: false,
-    affiliateUrl: "https://wise.com",
-    pros: ["Transparent pricing", "Real exchange rate", "Fast (often same-day)", "Multi-currency account", "Excellent for share account funding"],
-    cons: ["Not accepted for property settlement", "Per-transfer fee model can add up on frequent small transfers"],
-    rating: 4.8,
-  },
-  {
-    name: "OFX",
-    type: "FX Specialist",
-    bestFor: "Large transfers, property settlement preparation",
-    fee: "~0.5–1% margin",
-    rate: "Competitive — better for large amounts",
-    minTransfer: "AUD 1,000",
-    maxTransfer: "No upper limit",
-    settlementOk: false,
-    affiliateUrl: "https://www.ofx.com",
-    pros: ["No transfer fees on amounts over $10K", "Dedicated dealers for large amounts", "Forward contracts available (lock in rate)", "Excellent for property-related transfers"],
-    cons: ["Not accepted directly for settlement (funds must go to your AU bank account first)", "Less competitive on smaller amounts"],
-    rating: 4.6,
-  },
-  {
-    name: "WorldFirst",
-    type: "FX Specialist",
-    bestFor: "Business transfers, high-value personal transfers",
-    fee: "Competitive — negotiable for large amounts",
-    rate: "Competitive spot rates",
-    minTransfer: "AUD 1,000",
-    maxTransfer: "No limit",
-    settlementOk: false,
-    affiliateUrl: "https://www.worldfirst.com",
-    pros: ["Strong for business and high-net-worth", "Dedicated account managers", "Good for recurring transfers", "Part of Ant Group (reliable)"],
-    cons: ["Better for business than retail", "Rate transparency less obvious upfront"],
-    rating: 4.4,
-  },
-  {
-    name: "Big Four Bank (ANZ/CBA/NAB/Westpac)",
-    type: "Bank Transfer",
-    bestFor: "Property settlement (required), convenience",
-    fee: "~2–4% above mid-market rate",
-    rate: "Significantly worse than specialists",
-    minTransfer: "No minimum",
-    maxTransfer: "Large amounts may need prior arrangement",
-    settlementOk: true,
-    affiliateUrl: null,
-    pros: ["Required for property settlement (conveyancers only accept bank-issued transfers)", "Familiar, trusted", "Can handle large amounts without concern"],
-    cons: ["Terrible exchange rates vs specialists", "Fees for international transfers ($20–35 per transfer)", "Never use for FX conversion if you can avoid it"],
-    rating: 2.8,
-  },
-  {
-    name: "Remitly",
-    type: "Remittance Service",
-    bestFor: "Smaller, frequent personal transfers",
-    fee: "~1–3% depending on speed",
-    rate: "Competitive for personal/consumer transfers",
-    minTransfer: "No minimum",
-    maxTransfer: "Lower limits than OFX/WorldFirst",
-    settlementOk: false,
-    affiliateUrl: "https://www.remitly.com",
-    pros: ["Fast and reliable", "Good for personal smaller amounts", "Popular in South/Southeast Asia"],
-    cons: ["Transfer limits may be too low for property down payments", "Not suitable for large investment transfers"],
-    rating: 4.2,
-  },
-];
+const SETTLEMENT_OK: Record<string, boolean> = {
+  wise: false,
+  ofx: false,
+  worldfirst: false,
+  torfx: false,
+  remitly: false,
+  currencyfair: false,
+  airwallex: false,
+};
 
 const COST_EXAMPLE_AMOUNT = 500_000;
 
@@ -130,7 +70,17 @@ const FAQS = [
   },
 ];
 
-export default function SendMoneyAustraliaPage() {
+export default async function SendMoneyAustraliaPage() {
+  const supabase = await createClient();
+  const { data: providersData } = await supabase
+    .from("brokers")
+    .select("id, name, slug, color, affiliate_url, rating, tagline, cta_text, benefit_cta, pros, cons, regulated_by, min_deposit, year_founded")
+    .eq("platform_type", "fx_provider")
+    .eq("status", "active")
+    .order("rating", { ascending: false });
+
+  const providers = (providersData ?? []) as unknown as Broker[];
+
   return (
     <div className="bg-white min-h-screen">
       <script
@@ -254,84 +204,169 @@ export default function SendMoneyAustraliaPage() {
             sub="Detailed breakdown for foreign investors moving money into Australia."
           />
           <div className="space-y-4">
-            {PROVIDERS.map((p) => (
-              <div key={p.name} className="border border-slate-200 rounded-2xl overflow-hidden hover:border-amber-200 transition-colors">
-                <div className="p-5">
-                  <div className="flex items-start justify-between gap-4 flex-wrap mb-4">
-                    <div>
-                      <div className="flex items-center gap-3 mb-1">
-                        <h3 className="font-extrabold text-slate-900 text-base">{p.name}</h3>
-                        <span className="text-xs font-semibold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">{p.type}</span>
-                        {p.settlementOk && (
-                          <span className="text-xs font-bold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">Settlement OK</span>
+            {providers.length > 0 ? providers.map((p) => {
+              const settlementOk = SETTLEMENT_OK[p.slug] ?? false;
+              const pros = Array.isArray(p.pros) ? (p.pros as string[]) : [];
+              const cons = Array.isArray(p.cons) ? (p.cons as string[]) : [];
+              return (
+                <div key={p.id} className="border border-slate-200 rounded-2xl overflow-hidden hover:border-amber-200 transition-colors">
+                  <div className="p-5">
+                    <div className="flex items-start justify-between gap-4 flex-wrap mb-4">
+                      <div>
+                        <div className="flex items-center gap-3 mb-1 flex-wrap">
+                          <h3 className="font-extrabold text-slate-900 text-base">{p.name}</h3>
+                          <span className="text-xs font-semibold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">FX Specialist</span>
+                          {settlementOk && (
+                            <span className="text-xs font-bold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">Settlement OK</span>
+                          )}
+                        </div>
+                        {p.tagline && <p className="text-sm text-slate-500">Best for: {p.tagline}</p>}
+                      </div>
+                      {p.rating && (
+                        <div className="text-right">
+                          <p className="font-extrabold text-2xl text-amber-600">{renderStars(p.rating)} {p.rating.toFixed(1)}</p>
+                          <p className="text-xs text-slate-400">rating</p>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+                      {[
+                        { label: "Min Transfer", value: p.min_deposit || "No minimum" },
+                        { label: "Regulated by", value: p.regulated_by || "—" },
+                        { label: "Founded", value: p.year_founded ? String(p.year_founded) : "—" },
+                        { label: "Settlement", value: settlementOk ? "✓ Accepted" : "✗ Not accepted" },
+                      ].map((item) => (
+                        <div key={item.label} className="bg-slate-50 rounded-lg p-2">
+                          <p className="text-xs text-slate-500 mb-0.5">{item.label}</p>
+                          <p className={`text-xs font-bold ${item.label === "Settlement" && !settlementOk ? "text-red-600" : item.label === "Settlement" && settlementOk ? "text-emerald-600" : "text-slate-800"}`}>
+                            {item.value}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+
+                    {(pros.length > 0 || cons.length > 0) && (
+                      <div className="grid sm:grid-cols-2 gap-4 mb-4">
+                        {pros.length > 0 && (
+                          <div>
+                            <p className="text-xs font-semibold text-emerald-700 mb-1.5">Pros</p>
+                            <ul className="space-y-1">
+                              {pros.map((pro) => (
+                                <li key={pro} className="flex items-start gap-1.5 text-xs text-slate-600">
+                                  <svg className="w-3 h-3 text-emerald-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                  </svg>
+                                  {pro}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                        {cons.length > 0 && (
+                          <div>
+                            <p className="text-xs font-semibold text-red-600 mb-1.5">Cons</p>
+                            <ul className="space-y-1">
+                              {cons.map((con) => (
+                                <li key={con} className="flex items-start gap-1.5 text-xs text-slate-600">
+                                  <svg className="w-3 h-3 text-red-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                  </svg>
+                                  {con}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
                         )}
                       </div>
-                      <p className="text-sm text-slate-500">Best for: {p.bestFor}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-extrabold text-2xl text-amber-600">★ {p.rating.toFixed(1)}</p>
-                      <p className="text-xs text-slate-400">rating</p>
-                    </div>
-                  </div>
+                    )}
 
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
-                    {[
-                      { label: "Fee/Margin", value: p.fee },
-                      { label: "Rate", value: p.rate },
-                      { label: "Min Transfer", value: p.minTransfer },
-                      { label: "Settlement", value: p.settlementOk ? "✓ Accepted" : "✗ Not accepted" },
-                    ].map((item) => (
-                      <div key={item.label} className="bg-slate-50 rounded-lg p-2">
-                        <p className="text-xs text-slate-500 mb-0.5">{item.label}</p>
-                        <p className={`text-xs font-bold ${item.label === "Settlement" && !p.settlementOk ? "text-red-600" : item.label === "Settlement" && p.settlementOk ? "text-emerald-600" : "text-slate-800"}`}>
-                          {item.value}
-                        </p>
-                      </div>
-                    ))}
+                    {p.affiliate_url && (
+                      <a
+                        href={getAffiliateLink(p)}
+                        target="_blank"
+                        rel={AFFILIATE_REL}
+                        className="inline-flex items-center gap-2 px-4 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold rounded-xl text-sm transition-colors"
+                      >
+                        {p.cta_text || `Compare ${p.name} Rates`} &rarr;
+                      </a>
+                    )}
                   </div>
+                </div>
+              );
+            }) : (
+              <div className="bg-slate-50 border border-slate-200 rounded-2xl p-8 text-center">
+                <p className="text-slate-500 mb-4">Loading provider data...</p>
+                <p className="text-sm text-slate-400">
+                  <Link href="/compare/fx" className="text-amber-600 underline">View FX provider comparison</Link>
+                </p>
+              </div>
+            )}
 
-                  <div className="grid sm:grid-cols-2 gap-4 mb-4">
-                    <div>
-                      <p className="text-xs font-semibold text-emerald-700 mb-1.5">Pros</p>
-                      <ul className="space-y-1">
-                        {p.pros.map((pro) => (
-                          <li key={pro} className="flex items-start gap-1.5 text-xs text-slate-600">
-                            <svg className="w-3 h-3 text-emerald-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
-                            {pro}
-                          </li>
-                        ))}
-                      </ul>
+            {/* Big Four bank — always shown as a static entry */}
+            <div className="border border-slate-200 rounded-2xl overflow-hidden hover:border-amber-200 transition-colors opacity-80">
+              <div className="p-5">
+                <div className="flex items-start justify-between gap-4 flex-wrap mb-4">
+                  <div>
+                    <div className="flex items-center gap-3 mb-1 flex-wrap">
+                      <h3 className="font-extrabold text-slate-900 text-base">Big Four Bank (ANZ/CBA/NAB/Westpac)</h3>
+                      <span className="text-xs font-semibold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">Bank Transfer</span>
+                      <span className="text-xs font-bold bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full">Settlement OK</span>
                     </div>
-                    <div>
-                      <p className="text-xs font-semibold text-red-600 mb-1.5">Cons</p>
-                      <ul className="space-y-1">
-                        {p.cons.map((con) => (
-                          <li key={con} className="flex items-start gap-1.5 text-xs text-slate-600">
-                            <svg className="w-3 h-3 text-red-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                            {con}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                    <p className="text-sm text-slate-500">Best for: Property settlement (required), convenience</p>
                   </div>
+                  <div className="text-right">
+                    <p className="font-extrabold text-2xl text-amber-600">★★½☆☆ 2.8</p>
+                    <p className="text-xs text-slate-400">rating</p>
+                  </div>
+                </div>
 
-                  {p.affiliateUrl && (
-                    <a
-                      href={p.affiliateUrl}
-                      target="_blank"
-                      rel="noopener noreferrer sponsored"
-                      className="inline-flex items-center gap-2 px-4 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold rounded-xl text-sm transition-colors"
-                    >
-                      Compare {p.name} Rates &rarr;
-                    </a>
-                  )}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+                  {[
+                    { label: "Min Transfer", value: "No minimum" },
+                    { label: "Est. Margin", value: "~2–4%" },
+                    { label: "Max Transfer", value: "By arrangement" },
+                    { label: "Settlement", value: "✓ Accepted" },
+                  ].map((item) => (
+                    <div key={item.label} className="bg-slate-50 rounded-lg p-2">
+                      <p className="text-xs text-slate-500 mb-0.5">{item.label}</p>
+                      <p className={`text-xs font-bold ${item.label === "Settlement" ? "text-emerald-600" : "text-slate-800"}`}>
+                        {item.value}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-xs font-semibold text-emerald-700 mb-1.5">Pros</p>
+                    <ul className="space-y-1">
+                      {["Required for property settlement", "Familiar and trusted", "Can handle large amounts"].map((pro) => (
+                        <li key={pro} className="flex items-start gap-1.5 text-xs text-slate-600">
+                          <svg className="w-3 h-3 text-emerald-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                          {pro}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold text-red-600 mb-1.5">Cons</p>
+                    <ul className="space-y-1">
+                      {["Terrible exchange rates vs specialists", "$20–35 per international transfer fee", "Never use for FX conversion if you can avoid it"].map((con) => (
+                        <li key={con} className="flex items-start gap-1.5 text-xs text-slate-600">
+                          <svg className="w-3 h-3 text-red-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                          {con}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
               </div>
-            ))}
+            </div>
           </div>
         </section>
 
