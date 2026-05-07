@@ -47,7 +47,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 MERGED 2026-04-28T11:45Z | merged | V-NEW-06 done (commit `a7bd736`) |
 | V (V-NEW-07) | `claude/audit-remediation/v-new-07-admin-mfa-enforced` | #256 MERGED 2026-04-28T15:44Z | merged | V-NEW-07a done · V-NEW-07b done (`698bbae`) — **Tier D: needs `ADMIN_MFA_COOKIE_SECRET` ≥32 chars in Vercel before merge** (PR was merged; env var status unclear) |
-| W | `claude/audit-remediation/w-04-hub-article-strip` (#598) | #306/#312/#369/#529 all MERGED · **#598 OPEN** | iter 286 — `ef47b16` (W-04: HubArticleStrip component + 18 tests, smsf+grants pages migrated; CI in progress). | W-01 done (PR #306). W-NEW-01 done (PR #312). W-02 done (PR #369). W-03 **done** (PR #529 MERGED 2026-05-04). **W-04 in-flight (#598 OPEN — CI pending)**. W-05..W-15 pending. |
+| W | `claude/audit-remediation/w-05-hub-deep-dive-grid` (#599) | #306/#312/#369/#529 all MERGED · **#598 OPEN** · **#599 OPEN** | iter 287 — `d5a17cc` (W-05: HubDeepDiveGrid component + 20 tests, smsf+dividends pages migrated; CI in progress). | W-01 done (PR #306). W-NEW-01 done (PR #312). W-02 done (PR #369). W-03 **done** (PR #529 MERGED 2026-05-04). **W-04 in-flight (#598 OPEN)**. **W-05 in-flight (#599 OPEN — CI pending)**. W-06..W-15 pending. |
 | X | `claude/audit-remediation/x-03-research-swap` (#596) | #257/#367 both MERGED · **#596 OPEN** | iter 285 — `d890ec8` (X-03: /research pages admin→anon swap; CI in progress). | X-01 done (PR #257). X-02 MERGED (#367 — /best-for pages admin→anon swap). **X-03 in-flight (#596 OPEN — CI pending)**. X-04..X-09 pending. |
 | Y | all PRs MERGED | #253/#347 both MERGED | last merged 2026-05-01T22:00Z | Y-05 done (PR #253). Y-08 done (PR #253). Y-05-ENRICH MERGED (#347 — sourcedAt/source/freshness enrichment + 16 new tests). Y-01..Y-04, Y-06, Y-07 pending. |
 | BB | all PRs MERGED | #361/#368 both MERGED | last merged 2026-05-01T22:01Z | BB-03 MERGED (#361 — CGT calc vs ATO, 5 regulator-reference tests). BB-06 MERGED (#368 — mortgage stress vs ASIC+APRA, 8 cases). Other BB items pending. |
@@ -1952,6 +1952,21 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-07 — Forward progress iter 287 (stream W — W-05: HubDeepDiveGrid extraction)
+
+- Phase 0: batch mode (iter 4 of 5). Lock active. No LOOP_PAUSE.
+- Phase 1: main synced (d26a65d — includes auto-regen of database.types.ts by cloud routine). Phase 1.5 skipped. Phase 1.7: no CI failures on main.
+- Phase 2: PRs #596/#598/#599 all CI in progress/queued. PR #597 (R-COVERAGE-15) CI queued. No red CI on any stream.
+- Phase 3: W stream (slot 27). W-05 next after W-04. Branch `w-05-hub-deep-dive-grid` created fresh from main.
+- Phase 4: Pure display component — no Supabase or auth implications. Verified callers: smsf (deep-dives section, 6 items, 3-col, "Read guide" CTA) and dividends (four entry points, 4 items, 4-col, no CTA).
+- Phase 5: `components/HubDeepDiveGrid.tsx` created (97 LOC). Inline 36-line deep-dives section in smsf and 18-line section in dividends replaced. `__tests__/components/HubDeepDiveGrid.test.tsx` written (20 tests: structure, subheading, card content, CTA, columns, theming, card isolation, per-page parity).
+- Phase 6: Commit `d5a17cc` on `claude/audit-remediation/w-05-hub-deep-dive-grid`, pushed, PR #599 opened. Subscribed to PR activity.
+- Phase 7: Queue updated on main. Next item (iter 288): W-06 or X-04 (next admin backlog swap).
+
+- STATUS: PROGRESS · stream=W · item=W-05 · pr=#599
+
+---
 
 ### 2026-05-07 — Forward progress iter 286 (stream W — W-04: HubArticleStrip extraction)
 
