@@ -2,7 +2,11 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import { FOREIGN_INVESTOR_GENERAL_DISCLAIMER } from "@/lib/compliance";
+import { createClient } from "@/lib/supabase/server";
+import { getAffiliateLink, AFFILIATE_REL, renderStars } from "@/lib/tracking";
+import type { Broker } from "@/lib/types";
 import SectionHeading from "@/components/SectionHeading";
+import AdvisorPrompt from "@/components/AdvisorPrompt";
 
 export const metadata: Metadata = {
   title: "Can Non-Residents Open an Australian Bank Account? (2026 Guide)",
@@ -25,7 +29,7 @@ export const metadata: Metadata = {
   alternates: { canonical: `${SITE_URL}/foreign-investment/guides/non-resident-bank-account` },
 };
 
-export const revalidate = 86400;
+export const revalidate = 3600;
 
 const BANKS = [
   {
@@ -122,7 +126,23 @@ const FAQS = [
   },
 ];
 
-export default function NonResidentBankAccountPage() {
+const FX_BEST_FOR: Record<string, string> = {
+  wise: "Best for regular transfers",
+  ofx: "Best for large transfers",
+  torfx: "Best for personal service",
+};
+
+export default async function NonResidentBankAccountPage() {
+  const supabase = await createClient();
+  const { data: fxProviders } = await supabase
+    .from("brokers")
+    .select("id, name, slug, color, affiliate_url, rating, tagline, cta_text, benefit_cta, pros, cons, regulated_by, min_deposit")
+    .eq("platform_type", "fx_provider")
+    .eq("status", "active")
+    .order("rating", { ascending: false });
+
+  const providers = (fxProviders ?? []) as unknown as Broker[];
+
   return (
     <div className="bg-white min-h-screen">
       <script
@@ -251,7 +271,7 @@ export default function NonResidentBankAccountPage() {
               <div key={bank.bank} className={`border rounded-xl p-5 ${bank.acceptsNonResident ? "border-slate-200 hover:border-amber-200" : "border-slate-100 bg-slate-50/50 opacity-70"} transition-colors`}>
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-2">
+                    <div className="flex items-center gap-3 mb-2 flex-wrap">
                       <h3 className="font-bold text-slate-800">{bank.bank}</h3>
                       <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${bank.acceptsNonResident ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-700"}`}>
                         {bank.acceptsNonResident ? "Accepts non-residents" : "Does not accept non-residents"}
@@ -266,6 +286,18 @@ export default function NonResidentBankAccountPage() {
                   </div>
                   <div className="text-right shrink-0">
                     <span className="text-xs text-slate-400">{bank.accountType}</span>
+                    {bank.acceptsNonResident && (
+                      <div className="mt-2">
+                        <a
+                          href={bank.url}
+                          target="_blank"
+                          rel="noopener noreferrer nofollow"
+                          className="text-xs font-semibold text-slate-500 hover:text-slate-700 transition-colors"
+                        >
+                          Visit &rarr;
+                        </a>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -300,30 +332,83 @@ export default function NonResidentBankAccountPage() {
           </div>
         </section>
 
-        {/* ── Wise/OFX alternatives ── */}
-        <section className="bg-blue-50 border border-blue-200 rounded-2xl p-6">
-          <h2 className="font-bold text-blue-800 mb-3 text-lg">International money transfer: use Wise or OFX instead</h2>
-          <p className="text-sm text-blue-700 leading-relaxed mb-4">
-            For moving money <em>into</em> Australia from overseas, specialist FX providers like Wise and OFX charge
-            significantly lower fees and offer better exchange rates than the Big Four banks&apos; international transfer
-            products. Savings of 1–3% on large transfers can amount to thousands of dollars.
-          </p>
-          <div className="grid sm:grid-cols-3 gap-4 mb-4">
-            {[
-              { provider: "Wise", advantage: "Mid-market exchange rate + small fixed fee. Excellent for transfers under $50K.", rate: "~0.3–1.5% fee" },
-              { provider: "OFX", advantage: "No transfer fees over $10K, competitive rates for larger amounts. Good for property-related transfers.", rate: "~0.5–1% margin" },
-              { provider: "WorldFirst", advantage: "Good for business and high-value transfers. Dedicated account managers for large amounts.", rate: "Competitive" },
-            ].map((p) => (
-              <div key={p.provider} className="bg-white rounded-xl border border-blue-200 p-4">
-                <h3 className="font-bold text-slate-800 mb-1">{p.provider}</h3>
-                <p className="text-xs text-slate-600 leading-relaxed mb-1">{p.advantage}</p>
-                <span className="text-xs font-semibold text-blue-700">{p.rate}</span>
-              </div>
-            ))}
+        {/* ── FX provider comparison ── */}
+        <section>
+          <SectionHeading
+            eyebrow="FX Transfer Providers"
+            title="International money transfer: use a specialist, not your bank"
+            sub="For moving money into Australia from overseas, specialist FX providers offer significantly better exchange rates and lower fees than the Big Four banks. Savings of 1–3% on large transfers can amount to thousands of dollars."
+          />
+          {providers.length > 0 ? (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {providers.map((p) => {
+                const bestFor = FX_BEST_FOR[p.slug];
+                const pros = Array.isArray(p.pros) ? (p.pros as string[]).slice(0, 3) : [];
+                return (
+                  <div key={p.id} className="border border-slate-200 rounded-2xl p-5 hover:border-amber-200 transition-colors flex flex-col">
+                    <div className="flex items-start justify-between gap-2 mb-3">
+                      <div>
+                        <div className="flex items-center gap-2 flex-wrap mb-1">
+                          <h3 className="font-extrabold text-slate-900">{p.name}</h3>
+                          {bestFor && (
+                            <span className="text-xs font-bold bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">{bestFor}</span>
+                          )}
+                        </div>
+                        {p.rating && (
+                          <p className="text-xs text-amber-600 font-semibold">{renderStars(p.rating)} {p.rating.toFixed(1)}</p>
+                        )}
+                      </div>
+                    </div>
+                    {p.tagline && (
+                      <p className="text-xs text-slate-600 leading-relaxed mb-3">{p.tagline}</p>
+                    )}
+                    {pros.length > 0 && (
+                      <ul className="space-y-1 mb-3">
+                        {pros.map((pro) => (
+                          <li key={pro} className="flex items-start gap-1.5 text-xs text-slate-600">
+                            <svg className="w-3 h-3 text-emerald-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                            {pro}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    <div className="flex gap-3 text-xs text-slate-500 mb-4">
+                      {p.regulated_by && <span>Regulated: {p.regulated_by}</span>}
+                      {p.min_deposit && <span>Min: {p.min_deposit}</span>}
+                    </div>
+                    <div className="mt-auto">
+                      <a
+                        href={p.affiliate_url ? getAffiliateLink(p) : "/compare/fx"}
+                        rel={AFFILIATE_REL}
+                        target="_blank"
+                        className="block w-full text-center px-4 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold rounded-xl text-sm transition-colors"
+                      >
+                        {p.cta_text || `Visit ${p.name}`} &rarr;
+                      </a>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="bg-blue-50 border border-blue-200 rounded-2xl p-6">
+              <p className="text-sm text-blue-700 leading-relaxed mb-4">
+                For moving money <em>into</em> Australia from overseas, specialist FX providers like Wise and OFX charge
+                significantly lower fees and offer better exchange rates than the Big Four banks&apos; international transfer
+                products. Savings of 1–3% on large transfers can amount to thousands of dollars.
+              </p>
+              <Link href="/foreign-investment/send-money-australia" className="inline-flex items-center gap-1.5 text-sm font-bold text-blue-700 hover:text-blue-800">
+                Compare FX transfer providers in detail &rarr;
+              </Link>
+            </div>
+          )}
+          <div className="mt-4 text-center">
+            <Link href="/foreign-investment/send-money-australia" className="text-sm font-semibold text-amber-600 hover:text-amber-700">
+              See full FX provider comparison &rarr;
+            </Link>
           </div>
-          <Link href="/foreign-investment/send-money-australia" className="inline-flex items-center gap-1.5 text-sm font-bold text-blue-700 hover:text-blue-800">
-            Compare FX transfer providers in detail &rarr;
-          </Link>
         </section>
 
         {/* ── Step-by-step how to open ── */}
@@ -365,6 +450,12 @@ export default function NonResidentBankAccountPage() {
               </div>
             ))}
           </div>
+        </section>
+
+        {/* ── Tax advisor prompt ── */}
+        <section>
+          <h2 className="text-lg font-bold text-slate-800 mb-4">Need help with non-resident tax?</h2>
+          <AdvisorPrompt context="tax" />
         </section>
 
         {/* ── Related ── */}
