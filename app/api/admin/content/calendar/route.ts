@@ -1,6 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import { requireCronAuth } from "@/lib/cron-auth";
 
 const CalendarCreateBody = z.object({ title: z.string().min(1) });
 const CalendarIdBody = z.object({ id: z.number().int().positive() });
@@ -11,18 +12,13 @@ function getSupabase() {
   return createAdminClient();
 }
 
-function authorize(req: NextRequest): boolean {
-  return req.headers.get("authorization") === `Bearer ${process.env.CRON_SECRET}`;
-}
-
 /**
  * GET /api/admin/content/calendar
  * Query params: ?status=planned&limit=50
  */
 export async function GET(req: NextRequest) {
-  if (!authorize(req)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const unauth = requireCronAuth(req);
+  if (unauth) return unauth;
 
   const url = new URL(req.url);
   const status = url.searchParams.get("status");
@@ -52,9 +48,8 @@ export async function GET(req: NextRequest) {
  * Create a new content calendar item
  */
 export async function POST(req: NextRequest) {
-  if (!authorize(req)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const unauth = requireCronAuth(req);
+  if (unauth) return unauth;
 
   const rawBody = await req.json() as Record<string, unknown>;
   const parsed = CalendarCreateBody.safeParse(rawBody);
@@ -97,9 +92,8 @@ export async function POST(req: NextRequest) {
  * Update a content calendar item: { id, ...fields }
  */
 export async function PATCH(req: NextRequest) {
-  if (!authorize(req)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const unauth = requireCronAuth(req);
+  if (unauth) return unauth;
 
   const rawPatch = await req.json() as Record<string, unknown>;
   const patchParsed = CalendarIdBody.safeParse(rawPatch);
@@ -130,9 +124,8 @@ export async function PATCH(req: NextRequest) {
  * Body: { id: number }
  */
 export async function DELETE(req: NextRequest) {
-  if (!authorize(req)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const unauth = requireCronAuth(req);
+  if (unauth) return unauth;
 
   const rawDel = await req.json();
   const delParsed = CalendarIdBody.safeParse(rawDel);
