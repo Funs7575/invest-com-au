@@ -216,7 +216,10 @@ describe("GET /api/cron/lead-sla-check", () => {
   });
 
   it("skips alert email when RESEND_API_KEY is not set", async () => {
-    vi.unstubAllEnvs();
+    // Force-unset, not just unstub. CI ci.yml sets RESEND_API_KEY=placeholder,
+    // so vi.unstubAllEnvs() would only revert to that placeholder value, not
+    // empty — causing the test to fail in CI but pass locally.
+    vi.stubEnv("RESEND_API_KEY", "");
     dbQueue.push(
       { data: [lead({ id: 99 })] },
       { data: [] },
