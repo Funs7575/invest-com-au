@@ -20,9 +20,26 @@ export interface InvestSubcategory {
   faqs: { question: string; answer: string }[];
 }
 
+/**
+ * IA intent (added 2026-05-07).
+ * - `opportunity` — genuine deal/asset browse vertical, surfaced in /invest
+ *   category strip, mega-menus, footer, and sitemap as a Browse-Opportunities
+ *   destination.
+ * - `compare` — historically lived under /invest but is platform/product
+ *   comparison content. The 4 entries with this intent are intercepted by
+ *   `redirects()` in next.config.ts and 301 to their canonical Compare home;
+ *   they remain in `categories[]` only because the catch-all sitemap
+ *   iterators read this list. They are NOT rendered by /invest.
+ * - `guide` — asset-class education / sector-hub content kept live for SEO
+ *   but hidden from the Opportunities IA.
+ */
+export type InvestCategoryIntent = "opportunity" | "compare" | "guide";
+
 export interface InvestCategory {
   /** URL slug — used in /invest/{slug}/listings */
   slug: string;
+  /** IA intent — see InvestCategoryIntent. Drives Browse-Opportunities visibility. */
+  intent: InvestCategoryIntent;
   /** Display label */
   label: string;
   /** DB vertical value(s) in investment_listings.vertical */
@@ -48,10 +65,63 @@ export interface InvestCategory {
 }
 
 // ═══════════════════════════════════════════════════════════════════
+// Intent map (IA refactor 2026-05-07).
+// Tagging happens via this map rather than inline on each entry to
+// keep the diff to /invest/<slug>/listings additions tiny — the 32
+// categories below are otherwise unchanged. `getAllInvestCategories()`
+// hydrates the intent onto each entry at module load time.
+// ═══════════════════════════════════════════════════════════════════
+
+const INTENT_BY_SLUG: Record<string, InvestCategoryIntent> = {
+  // Opportunity (15) — true Browse-Opportunities verticals.
+  "buy-business": "opportunity",
+  franchise: "opportunity",
+  mining: "opportunity",
+  farmland: "opportunity",
+  "commercial-property": "opportunity",
+  "renewable-energy": "opportunity",
+  startups: "opportunity",
+  alternatives: "opportunity",
+  "private-credit": "opportunity",
+  infrastructure: "opportunity",
+  funds: "opportunity",
+  "pre-ipo": "opportunity",
+  "private-equity": "opportunity",
+  royalties: "opportunity",
+  "income-assets": "opportunity",
+
+  // Compare (4) — 301-redirected to canonical Compare/duplicate. The
+  // entries are kept in categories[] for back-compat with iterators
+  // that key off the array; redirects in next.config.ts intercept the
+  // URLs before render.
+  forex: "compare",
+  "managed-funds": "compare",
+  "dividend-investing": "compare",
+  ipos: "compare",
+
+  // Guide (13) — sector hubs + retained asset-class education. Live at
+  // their URL, hidden from /invest IA / mega-menus / footer / sitemap
+  // category-listing emission.
+  gold: "guide",
+  lithium: "guide",
+  uranium: "guide",
+  "oil-gas": "guide",
+  hydrogen: "guide",
+  smsf: "guide",
+  "options-trading": "guide",
+  reits: "guide",
+  bonds: "guide",
+  "hybrid-securities": "guide",
+  "crypto-staking": "guide",
+  "ipo-calendar": "guide",
+  commodities: "guide",
+};
+
+// ═══════════════════════════════════════════════════════════════════
 // Category definitions
 // ═══════════════════════════════════════════════════════════════════
 
-const categories: InvestCategory[] = [
+const categoriesRaw: Omit<InvestCategory, "intent">[] = [
   // ─── Buy a Business ───
   {
     slug: "buy-business",
@@ -2023,12 +2093,39 @@ const categories: InvestCategory[] = [
   },
 ];
 
+// Hydrate intent onto every entry at module load. Slugs missing from
+// INTENT_BY_SLUG default to "guide" — the safest IA fallback (a new
+// uncategorised entry will be hidden from Browse-Opportunities until
+// its intent is set explicitly).
+const categories: InvestCategory[] = categoriesRaw.map((c) => ({
+  ...c,
+  intent: INTENT_BY_SLUG[c.slug] ?? "guide",
+}));
+
 // ═══════════════════════════════════════════════════════════════════
 // Lookup helpers
 // ═══════════════════════════════════════════════════════════════════
 
 export function getAllInvestCategories(): InvestCategory[] {
   return categories;
+}
+
+/**
+ * Categories with `intent === "opportunity"` — drives /invest category
+ * strip, mega-menus, footer, sitemap. Excludes Compare-redirected and
+ * Guide entries.
+ */
+export function getOpportunityCategories(): InvestCategory[] {
+  return categories.filter((c) => c.intent === "opportunity");
+}
+
+/**
+ * Categories with `intent === "guide"` — sector hubs and retained
+ * asset-class education kept live for SEO but hidden from Opportunities
+ * IA. Useful if a future "Guides" hub wants to enumerate them.
+ */
+export function getGuideCategories(): InvestCategory[] {
+  return categories.filter((c) => c.intent === "guide");
 }
 
 export function getInvestCategoryBySlug(slug: string): InvestCategory | undefined {

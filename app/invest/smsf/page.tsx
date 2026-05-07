@@ -541,7 +541,7 @@ export default async function SmsfInvestmentPage() {
           <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Explore Related Investment Guides</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
-              { title: "Dividend Investing", href: "/invest/dividend-investing", desc: "High-yield ASX stocks, franking credits explained, and dividend ETFs." },
+              { title: "Dividend Investing", href: "/dividends", desc: "High-yield ASX stocks, franking credits explained, and dividend ETFs." },
               { title: "Private Credit & P2P Lending", href: "/invest/private-credit", desc: "Private credit funds and P2P platforms offering yields above term deposits." },
               { title: "A-REITs", href: "/invest/reits", desc: "ASX-listed property trusts for diversified real estate exposure and income." },
               { title: "Hybrid Securities", href: "/invest/hybrid-securities", desc: "ASX-listed bank hybrids offering franked yields above term deposits." },

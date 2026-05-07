@@ -6,7 +6,7 @@ import JobPostForm from "./JobPostForm";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: `Post a Job — Get Quotes from Verified Advisors (${CURRENT_YEAR})`,
+  title: `Post a Request — Get Quotes from Verified Advisors (${CURRENT_YEAR})`,
   description:
     "Tell us what you need help with — mortgage, financial planning, tax, SMSF, property — and have verified Australian advisors quote you. Free to post, free to compare, no obligation.",
   alternates: { canonical: `${SITE_URL}/quotes/post` },
@@ -23,7 +23,7 @@ export default function PostJobPage() {
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
     { name: "Quotes", url: `${SITE_URL}/quotes` },
-    { name: "Get a Quote" },
+    { name: "Post a Request" },
   ]);
 
   return (
@@ -41,7 +41,7 @@ export default function PostJobPage() {
               Free advisor quotes — Australia-wide
             </p>
             <h1 className="text-3xl sm:text-5xl font-extrabold mb-4">
-              Get verified advisors to quote on your job
+              Post a request — verified advisors will quote you
             </h1>
             <p className="text-slate-300 max-w-2xl mx-auto leading-relaxed">
               Post what you need help with — mortgage, financial planning, SMSF, tax, property, insurance — and Australian advisors will compete for your business. You pick. Free to post.

@@ -165,7 +165,7 @@ export default async function SmsfInvestmentStrategyPage() {
           <div className="container-custom max-w-4xl">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
               <Link href="/etfs" className="rounded-lg border border-slate-200 bg-white p-4 hover:bg-slate-50 font-bold text-slate-900">ETF Hub →</Link>
-              <Link href="/invest/dividend-investing" className="rounded-lg border border-slate-200 bg-white p-4 hover:bg-slate-50 font-bold text-slate-900">Dividend investing →</Link>
+              <Link href="/dividends" className="rounded-lg border border-slate-200 bg-white p-4 hover:bg-slate-50 font-bold text-slate-900">Dividend investing →</Link>
               <Link href="/invest/gold" className="rounded-lg border border-slate-200 bg-white p-4 hover:bg-slate-50 font-bold text-slate-900">Gold &amp; precious metals →</Link>
             </div>
           </div>

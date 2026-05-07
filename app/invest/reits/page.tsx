@@ -471,7 +471,7 @@ export default async function ReitsPage() {
             {[
               { title: "Commercial Property", href: "/invest/commercial-property", desc: "Invest in Australian commercial property — offices, retail, industrial." },
               { title: "Infrastructure", href: "/invest/infrastructure", desc: "Toll roads, airports, utilities and ports for stable inflation-linked income." },
-              { title: "Dividend Investing", href: "/invest/dividend-investing", desc: "High-yield ASX stocks, franking credits explained, and dividend ETFs." },
+              { title: "Dividend Investing", href: "/dividends", desc: "High-yield ASX stocks, franking credits explained, and dividend ETFs." },
               { title: "SMSF Investment Guide", href: "/invest/smsf", desc: "What SMSFs actually invest in — property, shares, crypto and more." },
             ].map((guide) => (
               <Link key={guide.href} href={guide.href} className="group bg-white border border-slate-200 rounded-xl p-5 hover:border-amber-200 hover:shadow-md transition-all">
