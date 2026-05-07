@@ -61,27 +61,47 @@ function verticalToPath(vertical: string, slug: string): string {
   return pathMap[vertical] || `/invest/${vertical}/${slug}`;
 }
 
+type Stage = "email" | "code" | "results";
+
 export default function MyListingsPage() {
+  const [stage, setStage] = useState<Stage>("email");
   const [email, setEmail] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [code, setCode] = useState("");
+  const [sendingCode, setSendingCode] = useState(false);
+  const [verifying, setVerifying] = useState(false);
+  const [loadingListings, setLoadingListings] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [listings, setListings] = useState<Listing[]>([]);
   const [enquiries, setEnquiries] = useState<Record<number, Enquiry[]>>({});
   const [expandedListing, setExpandedListing] = useState<number | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email.trim()) return;
-
-    setLoading(true);
+  const resetToEmail = () => {
+    setStage("email");
+    setCode("");
     setError(null);
+    setListings([]);
+    setEnquiries({});
+    setExpandedListing(null);
+  };
 
+  const fetchListings = async (currentEmail: string) => {
+    setLoadingListings(true);
+    setError(null);
     try {
       const res = await fetch(
-        `/api/listings/my-listings?email=${encodeURIComponent(email.trim())}`
+        `/api/listings/my-listings?email=${encodeURIComponent(currentEmail)}`,
+        { credentials: "same-origin" },
       );
       const data = await res.json();
+
+      if (res.status === 401) {
+        // Cookie missing/expired/email-mismatch — bounce to OTP flow.
+        setStage("email");
+        setError(
+          "Verification expired. Please re-enter your email to receive a new code.",
+        );
+        return;
+      }
 
       if (!res.ok) {
         setError(data.error || "Something went wrong.");
@@ -90,11 +110,90 @@ export default function MyListingsPage() {
 
       setListings(data.listings || []);
       setEnquiries(data.enquiries || {});
-      setSubmitted(true);
+      setStage("results");
     } catch {
       setError("Failed to load listings. Please try again.");
     } finally {
-      setLoading(false);
+      setLoadingListings(false);
+    }
+  };
+
+  const handleSendCode = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim()) return;
+
+    setSendingCode(true);
+    setError(null);
+
+    try {
+      const res = await fetch("/api/verify-otp/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim() }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setError(data.error || "Failed to send verification code.");
+        return;
+      }
+      setStage("code");
+    } catch {
+      setError("Network error. Please try again.");
+    } finally {
+      setSendingCode(false);
+    }
+  };
+
+  const handleVerifyCode = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmed = code.trim();
+    if (trimmed.length !== 6) {
+      setError("Please enter the 6-digit code from your email.");
+      return;
+    }
+
+    setVerifying(true);
+    setError(null);
+
+    try {
+      const res = await fetch("/api/listings/my-listings/verify", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim(), code: trimmed }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setError(data.error || "Incorrect code. Please try again.");
+        return;
+      }
+      // Cookie is now set; fetch the listings.
+      await fetchListings(email.trim());
+    } catch {
+      setError("Network error. Please try again.");
+    } finally {
+      setVerifying(false);
+    }
+  };
+
+  const handleResendCode = async () => {
+    setError(null);
+    setSendingCode(true);
+    try {
+      const res = await fetch("/api/verify-otp/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim() }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setError(data.error || "Failed to resend the code.");
+        return;
+      }
+    } catch {
+      setError("Network error. Please try again.");
+    } finally {
+      setSendingCode(false);
     }
   };
 
@@ -111,16 +210,17 @@ export default function MyListingsPage() {
           </p>
         </div>
 
-        {/* Email lookup form */}
-        {!submitted && (
+        {/* Step 1: email */}
+        {stage === "email" && (
           <div className="bg-white rounded-xl border border-slate-200 p-6 md:p-8 max-w-lg">
             <h2 className="text-lg font-bold text-slate-900 mb-2">
               Find your listings
             </h2>
             <p className="text-sm text-slate-500 mb-6">
-              Enter the email you used to submit your listing.
+              Enter the email you used to submit your listing. We&apos;ll send
+              you a 6-digit code to verify it&apos;s you.
             </p>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSendCode} className="space-y-4">
               <div>
                 <label
                   htmlFor="email"
@@ -138,31 +238,90 @@ export default function MyListingsPage() {
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
-              {error && (
-                <p className="text-sm text-red-600">{error}</p>
-              )}
+              {error && <p className="text-sm text-red-600">{error}</p>}
               <button
                 type="submit"
-                disabled={loading}
+                disabled={sendingCode}
                 className="w-full bg-blue-600 text-white font-semibold py-2.5 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
               >
-                {loading ? "Looking up..." : "View my listings"}
+                {sendingCode ? "Sending code..." : "Send code"}
               </button>
             </form>
           </div>
         )}
 
-        {/* Results */}
-        {submitted && (
+        {/* Step 2: 6-digit code */}
+        {stage === "code" && (
+          <div className="bg-white rounded-xl border border-slate-200 p-6 md:p-8 max-w-lg">
+            <h2 className="text-lg font-bold text-slate-900 mb-2">
+              Enter the code
+            </h2>
+            <p className="text-sm text-slate-500 mb-6">
+              We sent a 6-digit code to{" "}
+              <strong className="text-slate-700">{email}</strong>. Enter it
+              below to view your listings.
+            </p>
+            <form onSubmit={handleVerifyCode} className="space-y-4">
+              <div>
+                <label
+                  htmlFor="code"
+                  className="block text-sm font-medium text-slate-700 mb-1"
+                >
+                  6-digit code
+                </label>
+                <input
+                  id="code"
+                  type="text"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  pattern="[0-9]{6}"
+                  maxLength={6}
+                  required
+                  value={code}
+                  onChange={(e) =>
+                    setCode(e.target.value.replace(/[^0-9]/g, "").slice(0, 6))
+                  }
+                  placeholder="123456"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-lg tracking-widest text-center font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
+              {error && <p className="text-sm text-red-600">{error}</p>}
+              <button
+                type="submit"
+                disabled={verifying || loadingListings}
+                className="w-full bg-blue-600 text-white font-semibold py-2.5 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+              >
+                {verifying || loadingListings
+                  ? "Verifying..."
+                  : "Verify and view listings"}
+              </button>
+              <div className="flex items-center justify-between text-xs text-slate-500">
+                <button
+                  type="button"
+                  onClick={resetToEmail}
+                  className="hover:text-slate-700 underline-offset-2 hover:underline"
+                >
+                  Use a different email
+                </button>
+                <button
+                  type="button"
+                  onClick={handleResendCode}
+                  disabled={sendingCode}
+                  className="hover:text-slate-700 underline-offset-2 hover:underline disabled:opacity-50"
+                >
+                  {sendingCode ? "Sending..." : "Resend code"}
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+
+        {/* Step 3: results */}
+        {stage === "results" && (
           <div>
             {/* Back / change email */}
             <button
-              onClick={() => {
-                setSubmitted(false);
-                setListings([]);
-                setEnquiries({});
-                setExpandedListing(null);
-              }}
+              onClick={resetToEmail}
               className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800 mb-6"
             >
               <Icon name="arrow-left" size={14} />
@@ -234,27 +393,43 @@ export default function MyListingsPage() {
                         <p className="text-lg font-extrabold text-slate-900 mb-3">
                           {formatPrice(
                             listing.asking_price_cents,
-                            listing.price_display
+                            listing.price_display,
                           )}
                         </p>
 
                         {/* Stats row */}
                         <div className="flex flex-wrap gap-4 text-xs text-slate-500">
                           <span className="flex items-center gap-1">
-                            <Icon name="eye" size={13} className="text-slate-400" />
+                            <Icon
+                              name="eye"
+                              size={13}
+                              className="text-slate-400"
+                            />
                             {listing.views} views
                           </span>
                           <span className="flex items-center gap-1">
-                            <Icon name="mail" size={13} className="text-slate-400" />
+                            <Icon
+                              name="mail"
+                              size={13}
+                              className="text-slate-400"
+                            />
                             {listing.enquiries} enquiries
                           </span>
                           <span className="flex items-center gap-1">
-                            <Icon name="calendar" size={13} className="text-slate-400" />
+                            <Icon
+                              name="calendar"
+                              size={13}
+                              className="text-slate-400"
+                            />
                             Listed {formatDate(listing.created_at)}
                           </span>
                           {listing.expires_at && (
                             <span className="flex items-center gap-1">
-                              <Icon name="clock" size={13} className="text-slate-400" />
+                              <Icon
+                                name="clock"
+                                size={13}
+                                className="text-slate-400"
+                              />
                               Expires {formatDate(listing.expires_at)}
                             </span>
                           )}
@@ -266,7 +441,7 @@ export default function MyListingsPage() {
                             <Link
                               href={verticalToPath(
                                 listing.vertical,
-                                listing.slug
+                                listing.slug,
                               )}
                               className="text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1"
                             >
@@ -278,7 +453,7 @@ export default function MyListingsPage() {
                             <button
                               onClick={() =>
                                 setExpandedListing(
-                                  isExpanded ? null : listing.id
+                                  isExpanded ? null : listing.id,
                                 )
                               }
                               className="text-sm text-slate-600 hover:text-slate-800 font-medium flex items-center gap-1"
