@@ -48,26 +48,55 @@ interface IntentCountryMeta {
   currency: string;
   /** ATO non-resident DTA status — quick UX hint, not legal advice */
   hasDta: boolean;
+  /**
+   * Answer key the `investor_country` quiz question stores for this country.
+   * Mirrors the `key` values in `UNIFIED_QUESTIONS.investor_country.options`
+   * in app/quiz/page.tsx — they're snake_case, not the 2-letter intent code.
+   *
+   * Some quiz keys aren't yet rendered as options (jp, kr, sa) — Step 12 adds
+   * those options. The map is the single source of truth so the option list
+   * and the link prefill agree.
+   */
+  quizKey: string;
+  /**
+   * ISO 3166-1 alpha-2 code, uppercase. Matches the `country` field that
+   * `/api/geo` returns from `x-vercel-ip-country`. Note `uk` → "GB" — UK is
+   * not an official ISO alpha-2 (it's an exceptionally-reserved alias),
+   * Vercel returns "GB".
+   */
+  iso: string;
 }
 
 const KNOWN: Record<IntentCountryCode, IntentCountryMeta> = {
-  uk: { slug: "united-kingdom",       label: "UK investors",         flag: "🇬🇧", currency: "GBP", hasDta: true },
-  us: { slug: "united-states",        label: "US investors",         flag: "🇺🇸", currency: "USD", hasDta: true },
-  cn: { slug: "china",                label: "Chinese investors",    flag: "🇨🇳", currency: "CNY", hasDta: true },
-  in: { slug: "india",                label: "Indian investors",     flag: "🇮🇳", currency: "INR", hasDta: true },
-  jp: { slug: "japan",                label: "Japanese investors",   flag: "🇯🇵", currency: "JPY", hasDta: true },
-  sg: { slug: "singapore",            label: "Singapore investors",  flag: "🇸🇬", currency: "SGD", hasDta: true },
-  hk: { slug: "hong-kong",            label: "HK investors",         flag: "🇭🇰", currency: "HKD", hasDta: false },
-  kr: { slug: "south-korea",          label: "Korean investors",     flag: "🇰🇷", currency: "KRW", hasDta: true },
-  my: { slug: "malaysia",             label: "Malaysian investors",  flag: "🇲🇾", currency: "MYR", hasDta: true },
-  nz: { slug: "new-zealand",          label: "NZ investors",         flag: "🇳🇿", currency: "NZD", hasDta: true },
-  ae: { slug: "united-arab-emirates", label: "UAE investors",        flag: "🇦🇪", currency: "AED", hasDta: true },
-  sa: { slug: "saudi-arabia",         label: "Saudi investors",      flag: "🇸🇦", currency: "SAR", hasDta: false },
+  uk: { slug: "united-kingdom",       label: "UK investors",         flag: "🇬🇧", currency: "GBP", hasDta: true,  quizKey: "uk",            iso: "GB" },
+  us: { slug: "united-states",        label: "US investors",         flag: "🇺🇸", currency: "USD", hasDta: true,  quizKey: "usa",           iso: "US" },
+  cn: { slug: "china",                label: "Chinese investors",    flag: "🇨🇳", currency: "CNY", hasDta: true,  quizKey: "china",         iso: "CN" },
+  in: { slug: "india",                label: "Indian investors",     flag: "🇮🇳", currency: "INR", hasDta: true,  quizKey: "india",         iso: "IN" },
+  jp: { slug: "japan",                label: "Japanese investors",   flag: "🇯🇵", currency: "JPY", hasDta: true,  quizKey: "japan",         iso: "JP" },
+  sg: { slug: "singapore",            label: "Singapore investors",  flag: "🇸🇬", currency: "SGD", hasDta: true,  quizKey: "singapore",     iso: "SG" },
+  hk: { slug: "hong-kong",            label: "HK investors",         flag: "🇭🇰", currency: "HKD", hasDta: false, quizKey: "hong_kong",     iso: "HK" },
+  kr: { slug: "south-korea",          label: "Korean investors",     flag: "🇰🇷", currency: "KRW", hasDta: true,  quizKey: "south_korea",   iso: "KR" },
+  my: { slug: "malaysia",             label: "Malaysian investors",  flag: "🇲🇾", currency: "MYR", hasDta: true,  quizKey: "malaysia",      iso: "MY" },
+  nz: { slug: "new-zealand",          label: "NZ investors",         flag: "🇳🇿", currency: "NZD", hasDta: true,  quizKey: "new_zealand",   iso: "NZ" },
+  ae: { slug: "united-arab-emirates", label: "UAE investors",        flag: "🇦🇪", currency: "AED", hasDta: true,  quizKey: "uae",           iso: "AE" },
+  sa: { slug: "saudi-arabia",         label: "Saudi investors",      flag: "🇸🇦", currency: "SAR", hasDta: false, quizKey: "saudi_arabia",  iso: "SA" },
 };
 
 const CODE_BY_SLUG: Record<string, IntentCountryCode> = Object.fromEntries(
   (Object.entries(KNOWN) as [IntentCountryCode, IntentCountryMeta][]).map(
     ([code, meta]) => [meta.slug, code],
+  ),
+);
+
+const CODE_BY_QUIZ_KEY: Record<string, IntentCountryCode> = Object.fromEntries(
+  (Object.entries(KNOWN) as [IntentCountryCode, IntentCountryMeta][]).map(
+    ([code, meta]) => [meta.quizKey, code],
+  ),
+);
+
+const CODE_BY_ISO: Record<string, IntentCountryCode> = Object.fromEntries(
+  (Object.entries(KNOWN) as [IntentCountryCode, IntentCountryMeta][]).map(
+    ([code, meta]) => [meta.iso, code],
   ),
 );
 
@@ -82,9 +111,47 @@ export function intentCountryFromSlug(
   return CODE_BY_SLUG[slug] ?? null;
 }
 
+/**
+ * Resolve a quiz `investor_country` answer key (e.g. "hong_kong", "uae")
+ * back to its `IntentCountryCode`. Returns null for unknown keys including
+ * the "other" option, which has no canonical country.
+ */
+export function intentCountryFromQuizKey(
+  key: string | null | undefined,
+): IntentCountryCode | null {
+  if (!key) return null;
+  return CODE_BY_QUIZ_KEY[key] ?? null;
+}
+
+/**
+ * Resolve an ISO 3166-1 alpha-2 code (case-insensitive) to an
+ * `IntentCountryCode`. Used by the GeoIP soft-prompt path: `/api/geo`
+ * returns the raw header value, which is uppercase but we accept either.
+ * Returns null for any country not in the supported set.
+ */
+export function intentCountryFromIso(
+  iso: string | null | undefined,
+): IntentCountryCode | null {
+  if (!iso) return null;
+  return CODE_BY_ISO[iso.toUpperCase()] ?? null;
+}
+
 export function intentCountryMeta(code: IntentCountryCode): IntentCountryMeta {
   return KNOWN[code];
 }
+
+/** Convenience: quiz answer key for an `IntentCountryCode`. */
+export function quizKeyForIntentCode(code: IntentCountryCode): string {
+  return KNOWN[code].quizKey;
+}
+
+/** Convenience: ISO 3166-1 alpha-2 (uppercase) for an `IntentCountryCode`. */
+export function isoForIntentCode(code: IntentCountryCode): string {
+  return KNOWN[code].iso;
+}
+
+/** All supported `IntentCountryCode` values, in insertion order. */
+export const INTENT_COUNTRY_CODES = Object.keys(KNOWN) as readonly IntentCountryCode[];
 
 /**
  * Read the user's intent country from the cookie. Returns null if
