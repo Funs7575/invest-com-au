@@ -2,9 +2,10 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import { STATE_SURCHARGES } from "@/lib/firb-data";
-import { FIRB_DISCLAIMER, FOREIGN_BUYER_STAMP_DUTY_WARNING } from "@/lib/compliance";
+import { FOREIGN_BUYER_STAMP_DUTY_WARNING } from "@/lib/compliance";
 import SectionHeading from "@/components/SectionHeading";
 import ComplianceFooter from "@/components/ComplianceFooter";
+import AdvisorPrompt from "@/components/AdvisorPrompt";
 
 export const metadata: Metadata = {
   title: "Foreign Buyer Stamp Duty by State (2026)",
@@ -331,6 +332,17 @@ export default function StampDutyForeignBuyersPage() {
             ))}
           </div>
         </section>
+
+        {/* ── Advisor CTAs ── */}
+        <AdvisorPrompt
+          type="tax_agent"
+          heading="Get a stamp duty and tax estimate for your purchase"
+        />
+
+        <AdvisorPrompt
+          type="property_advisor"
+          heading="Find a conveyancer or buyer's agent"
+        />
 
         <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
           <p className="text-xs text-slate-500 leading-relaxed">{FOREIGN_BUYER_STAMP_DUTY_WARNING}</p>
