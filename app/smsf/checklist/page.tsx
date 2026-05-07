@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, absoluteUrl } from "@/lib/seo";
 import SmsfChecklistClient from "./SmsfChecklistClient";
+import AdvisorPrompt from "@/components/AdvisorPrompt";
 
 export const revalidate = 86400;
 
@@ -36,6 +37,15 @@ export default function SmsfChecklistPage() {
         <section className="py-10 bg-slate-50">
           <div className="container-custom max-w-3xl">
             <SmsfChecklistClient />
+          </div>
+        </section>
+
+        <section className="py-12 bg-white border-t border-slate-200">
+          <div className="container-custom max-w-2xl">
+            <AdvisorPrompt
+              type="smsf_accountant"
+              heading="Work through your SMSF checklist with an expert"
+            />
           </div>
         </section>
       </div>
