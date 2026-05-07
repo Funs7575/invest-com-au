@@ -2,6 +2,10 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl } from "@/lib/seo";
 import HubLeadForm from "@/components/leads/HubLeadForm";
+import AdvisorPrompt from "@/components/AdvisorPrompt";
+import { createClient } from "@/lib/supabase/server";
+import { getAffiliateLink, AFFILIATE_REL, renderStars } from "@/lib/tracking";
+import type { Broker } from "@/lib/types";
 
 export const revalidate = 3600;
 
@@ -18,7 +22,16 @@ export const metadata: Metadata = {
   },
 };
 
-export default function SmsfInvestmentStrategyPage() {
+export default async function SmsfInvestmentStrategyPage() {
+  const supabase = await createClient();
+  const { data: smsfBrokers } = await supabase
+    .from("brokers")
+    .select("id, name, slug, color, affiliate_url, rating, tagline, cta_text, benefit_cta")
+    .eq("smsf_support", true)
+    .eq("status", "active")
+    .order("rating", { ascending: false })
+    .limit(3);
+
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
     { name: "SMSF", url: absoluteUrl("/smsf") },
@@ -70,6 +83,7 @@ export default function SmsfInvestmentStrategyPage() {
           <div className="container-custom max-w-4xl">
             <h2 className="text-xl md:text-2xl font-extrabold text-amber-900 mb-3">Division 296 — what changes from July 2026</h2>
             <p className="text-sm text-amber-900 leading-relaxed">
+              {/* // dated-ok — Division 296 legislated commencement date, fixed by statute */}
               From 1 July 2026, the new Division 296 framework applies an additional 30% tax rate on earnings attributable to the portion of a member&rsquo;s total super balance over $3 million. SMSFs with concentrated property or single-asset exposure are most affected because notional gains are included in the calculation. Trustees with balances approaching the threshold should model the impact and consider re-weighting before the transition.
             </p>
           </div>
@@ -95,8 +109,48 @@ export default function SmsfInvestmentStrategyPage() {
           </div>
         </section>
 
+        {/* ── SMSF broker mini-strip ── */}
+        {smsfBrokers && smsfBrokers.length > 0 && (
+          <section className="py-12 bg-white border-t border-slate-200">
+            <div className="container-custom max-w-5xl">
+              <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 space-y-4">
+                <div>
+                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Share Brokers</p>
+                  <h2 className="text-lg font-bold text-slate-900">Platforms that support SMSF investment strategies</h2>
+                  <p className="text-sm text-slate-500 mt-1">Your SMSF needs a broker that issues HINs to the fund — not to individual members.</p>
+                </div>
+                <div className="grid sm:grid-cols-3 gap-3">
+                  {smsfBrokers.map((b) => (
+                    <div key={b.slug} className="bg-white rounded-xl border border-slate-200 p-4 flex flex-col gap-3">
+                      <div>
+                        <p className="font-bold text-slate-900 text-sm">{b.name}</p>
+                        <p className="text-xs text-amber-500">{renderStars(Number(b.rating ?? 0))}</p>
+                        <p className="text-xs text-slate-500 mt-1 line-clamp-2">{b.tagline}</p>
+                      </div>
+                      <div className="mt-auto">
+                        <a
+                          href={getAffiliateLink(b as Broker)}
+                          rel={AFFILIATE_REL}
+                          target="_blank"
+                          className="block text-center w-full px-3 py-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold text-xs rounded-lg transition-colors"
+                        >
+                          {b.cta_text ?? "Learn More →"}
+                        </a>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
         <section className="py-12 bg-slate-50 border-t border-slate-200">
-          <div className="container-custom max-w-2xl">
+          <div className="container-custom max-w-2xl space-y-6">
+            <AdvisorPrompt
+              type="smsf_accountant"
+              heading="Get your SMSF investment strategy reviewed"
+            />
             <HubLeadForm
               heading="Get a financial planner to review your SMSF strategy"
               subheading="A formal review against ATO guidance plus a Division 296 stress-test for high-balance members."
