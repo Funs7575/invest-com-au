@@ -3521,6 +3521,7 @@ export type Database = {
           fee_stale: boolean | null
           fee_stale_since: string | null
           fee_verified_date: string | null
+          foreign_investor_notes: string | null
           fx_rate: number | null
           headquarters: string | null
           icon: string | null
@@ -3597,6 +3598,7 @@ export type Database = {
           fee_stale?: boolean | null
           fee_stale_since?: string | null
           fee_verified_date?: string | null
+          foreign_investor_notes?: string | null
           fx_rate?: number | null
           headquarters?: string | null
           icon?: string | null
@@ -3673,6 +3675,7 @@ export type Database = {
           fee_stale?: boolean | null
           fee_stale_since?: string | null
           fee_verified_date?: string | null
+          foreign_investor_notes?: string | null
           fx_rate?: number | null
           headquarters?: string | null
           icon?: string | null

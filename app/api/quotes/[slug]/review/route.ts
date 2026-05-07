@@ -9,7 +9,7 @@ const log = logger("quotes:review");
 
 const ReviewSubmit = z.object({
   token: z.string().min(8).max(128),
-  reviewer_email: z.string().email("A valid email is required."),
+  reviewer_email: z.string().trim().email("A valid email is required."),
   rating: z.number().int().min(1).max(5),
   body: z.string().max(2000).optional(),
   reviewer_display_name: z.string().min(1).max(80).optional(),

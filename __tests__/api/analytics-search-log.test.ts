@@ -66,10 +66,9 @@ describe("POST /api/analytics/search-log", () => {
   });
 
   it("returns 400 when surface is invalid", async () => {
-    mockIsValidSurface.mockReturnValue(false);
+    // Zod enum on the route rejects unknown surface values directly
     const res = await POST(makeRequest({ query: "etf broker", surface: "bad_surface" }));
     expect(res.status).toBe(400);
-    expect(mockIsValidSurface).toHaveBeenCalledWith("bad_surface");
   });
 
   it("returns 200 ok:true when log succeeds", async () => {

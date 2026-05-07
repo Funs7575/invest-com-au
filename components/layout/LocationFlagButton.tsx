@@ -2,32 +2,38 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
+import { COUNTRY_CONFIGS } from "@/lib/foreign-investment-country-data";
+import type { IntentCountryCode } from "@/lib/intent-context";
 
 // ─── Country data (single source of truth, used to be split across
 // InternationalBanner) ──────────────────────────────────────────────────────
 
 // 12 corridors invest.com.au has dedicated guides for. Order roughly by
 // migration volume into Australia, then by financial-corridor importance.
+//
+// `intentCode` maps the ISO 3166-1 alpha-2 country code (used by
+// /api/geo and the localStorage override) to the IntentCountryCode used
+// throughout the app's CountryConfig system. Most are a direct
+// lowercase match; only GB → uk diverges (GB is the ISO code, "uk" is
+// the intent slug).
 const SUPPORTED_COUNTRIES: ReadonlyArray<{
   code: string;
   name: string;
-  // Country page slug. Most are /foreign-investment/{slug}, but we keep this
-  // explicit so the UK / US / China / India bespoke pages route differently
-  // from the templated [country] dynamic page.
+  intentCode: IntentCountryCode;
   slug: string;
 }> = [
-  { code: "GB", name: "the UK", slug: "united-kingdom" },
-  { code: "IN", name: "India", slug: "india" },
-  { code: "CN", name: "China", slug: "china" },
-  { code: "US", name: "the US", slug: "united-states" },
-  { code: "SG", name: "Singapore", slug: "singapore" },
-  { code: "HK", name: "Hong Kong", slug: "hong-kong" },
-  { code: "NZ", name: "New Zealand", slug: "new-zealand" },
-  { code: "AE", name: "the UAE", slug: "united-arab-emirates" },
-  { code: "KR", name: "South Korea", slug: "south-korea" },
-  { code: "JP", name: "Japan", slug: "japan" },
-  { code: "MY", name: "Malaysia", slug: "malaysia" },
-  { code: "SA", name: "Saudi Arabia", slug: "saudi-arabia" },
+  { code: "GB", name: "the UK", intentCode: "uk", slug: "united-kingdom" },
+  { code: "IN", name: "India", intentCode: "in", slug: "india" },
+  { code: "CN", name: "China", intentCode: "cn", slug: "china" },
+  { code: "US", name: "the US", intentCode: "us", slug: "united-states" },
+  { code: "SG", name: "Singapore", intentCode: "sg", slug: "singapore" },
+  { code: "HK", name: "Hong Kong", intentCode: "hk", slug: "hong-kong" },
+  { code: "NZ", name: "New Zealand", intentCode: "nz", slug: "new-zealand" },
+  { code: "AE", name: "the UAE", intentCode: "ae", slug: "united-arab-emirates" },
+  { code: "KR", name: "South Korea", intentCode: "kr", slug: "south-korea" },
+  { code: "JP", name: "Japan", intentCode: "jp", slug: "japan" },
+  { code: "MY", name: "Malaysia", intentCode: "my", slug: "malaysia" },
+  { code: "SA", name: "Saudi Arabia", intentCode: "sa", slug: "saudi-arabia" },
 ];
 
 // Convert a 2-letter ISO 3166-1 alpha-2 code to its flag emoji by mapping
@@ -136,7 +142,7 @@ export default function LocationFlagButton() {
       {open && (
         <div
           role="menu"
-          className="absolute right-0 top-full mt-2 z-[60] w-[320px] bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/60 overflow-hidden"
+          className="absolute right-0 top-full mt-2 z-[60] w-[360px] bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/60 overflow-hidden"
         >
           <div className="p-4">
             {supported && !isAU ? (
@@ -149,25 +155,60 @@ export default function LocationFlagButton() {
                     ? `You're browsing as ${flagEmoji(effective)} ${supported.name}.`
                     : `We've detected you're in ${flagEmoji(effective)} ${supported.name}.`}
                 </p>
-                <Link
-                  href={`/foreign-investment/${supported.slug}`}
-                  onClick={() => setOpen(false)}
-                  className="block p-3 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-xl mb-2 transition-colors group"
-                >
-                  <p className="text-sm font-bold text-slate-900">
-                    Investing in Australia from {supported.name}? &rarr;
-                  </p>
-                  <p className="text-xs text-slate-600 mt-0.5">
-                    Country-specific guide: tax, FIRB, brokers and specialists.
-                  </p>
-                </Link>
+                {(() => {
+                  const actions = COUNTRY_CONFIGS[supported.intentCode]?.defaultActions ?? [];
+                  if (actions.length > 0) {
+                    return (
+                      <div className="-mx-1 mb-2 max-h-[320px] overflow-y-auto">
+                        {actions.map((a) => (
+                          <Link
+                            key={a.href + a.label}
+                            href={a.href}
+                            onClick={() => setOpen(false)}
+                            className="flex items-start gap-3 px-3 py-2 rounded-xl hover:bg-amber-50 transition-colors group"
+                          >
+                            <span aria-hidden className="text-base leading-tight mt-0.5">{a.emoji}</span>
+                            <span className="flex-1 min-w-0">
+                              <span className="block text-sm font-semibold text-slate-900 group-hover:text-amber-800 truncate">
+                                {a.label}
+                              </span>
+                              <span className="block text-xs text-slate-500 leading-snug line-clamp-2">
+                                {a.sublabel}
+                              </span>
+                            </span>
+                            <span aria-hidden className="text-slate-400 group-hover:text-amber-600 text-sm shrink-0 mt-0.5">
+                              →
+                            </span>
+                          </Link>
+                        ))}
+                      </div>
+                    );
+                  }
+                  // Fallback: country isn't in COUNTRY_CONFIGS (shouldn't
+                  // happen for the 12 supported codes, but the typed map is
+                  // Partial<Record<…>> so handle defensively).
+                  return (
+                    <Link
+                      href={`/foreign-investment/${supported.slug}`}
+                      onClick={() => setOpen(false)}
+                      className="block p-3 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-xl mb-2 transition-colors group"
+                    >
+                      <p className="text-sm font-bold text-slate-900">
+                        Investing in Australia from {supported.name}? &rarr;
+                      </p>
+                      <p className="text-xs text-slate-600 mt-0.5">
+                        Country-specific guide: tax, FIRB, brokers and specialists.
+                      </p>
+                    </Link>
+                  );
+                })()}
                 <button
                   type="button"
                   onClick={() => {
                     setOverrideAndPersist("AU");
                     setOpen(false);
                   }}
-                  className="block w-full text-left text-xs text-slate-500 hover:text-slate-900 underline underline-offset-2"
+                  className="block w-full text-left text-xs text-slate-500 hover:text-slate-900 underline underline-offset-2 mt-2"
                 >
                   I&apos;m browsing as an Australian &rarr;
                 </button>

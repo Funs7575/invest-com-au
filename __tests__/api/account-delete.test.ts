@@ -138,13 +138,14 @@ describe("/api/account/delete", () => {
       expect(upsertCalls[0]?.email).toBe("");
     });
 
-    it("truncates oversized reason to 1000 chars", async () => {
+    it("treats oversized reason (>1000 chars) as null and proceeds", async () => {
       mockGetUser.mockResolvedValueOnce({
         data: { user: { id: "u1", email: "u@x.com" } },
       });
       const longReason = "x".repeat(5000);
-      await POST(makeReq("POST", { reason: longReason }));
-      expect((upsertCalls[0]?.reason as string).length).toBeLessThanOrEqual(1000);
+      const res = await POST(makeReq("POST", { reason: longReason }));
+      expect(res.status).toBe(200);
+      expect(upsertCalls[0]?.reason).toBeNull();
     });
 
     it("ignores non-string reason", async () => {
