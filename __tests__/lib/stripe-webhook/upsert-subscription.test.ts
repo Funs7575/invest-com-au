@@ -185,4 +185,63 @@ describe("upsertSubscription", () => {
     const [data] = upsertSpy.mock.calls[0] as [Record<string, unknown>];
     expect(data.cancel_at_period_end).toBe(true);
   });
+
+  it("uses cancel_at for stripeEventTime when cancel_at is set and is newer than existing", async () => {
+    // cancel_at = 1h from now; existing.updated_at = 2h ago → event is "newer" → upsert runs
+    const cancelAtSec = Math.floor((Date.now() + 60 * 60 * 1000) / 1000);
+    const oldTs = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
+    const { client, upsertSpy } = makeAdmin({
+      profileData: { id: "user-uuid-cancel-new" },
+      subscriptionData: { updated_at: oldTs, status: "active" },
+    });
+    const log = makeLog();
+    await upsertSubscription(makeSub({ cancel_at: cancelAtSec }), client, log);
+    expect(upsertSpy).toHaveBeenCalledOnce();
+  });
+
+  it("uses cancel_at for stripeEventTime when cancel_at is set and is older than existing (skips)", async () => {
+    // cancel_at = 1h ago; existing.updated_at = 30min ago → event is "older" → skip
+    const cancelAtSec = Math.floor((Date.now() - 60 * 60 * 1000) / 1000);
+    const recentTs = new Date(Date.now() - 30 * 60 * 1000).toISOString();
+    const { client, upsertSpy } = makeAdmin({
+      profileData: { id: "user-uuid-cancel-old" },
+      subscriptionData: { updated_at: recentTs, status: "active" },
+    });
+    const log = makeLog();
+    await upsertSubscription(makeSub({ cancel_at: cancelAtSec }), client, log);
+    expect(upsertSpy).not.toHaveBeenCalled();
+    expect(log.info).toHaveBeenCalledOnce();
+  });
+
+  it("falls back to Date.now() for stripeEventTime when both cancel_at and current_period_start are falsy", async () => {
+    // Both falsy → stripeEventTime ≈ now; existing.updated_at = 1h from now (future) → skip
+    const futureTs = new Date(Date.now() + 60 * 60 * 1000).toISOString();
+    const { client, upsertSpy } = makeAdmin({
+      profileData: { id: "user-uuid-fallback" },
+      subscriptionData: { updated_at: futureTs, status: "active" },
+    });
+    const log = makeLog();
+    await upsertSubscription(
+      makeSub({ cancel_at: null, current_period_start: 0 }),
+      client,
+      log,
+    );
+    expect(upsertSpy).not.toHaveBeenCalled();
+    expect(log.info).toHaveBeenCalledOnce();
+  });
+
+  it("sets price_id and plan_interval to null when items array is empty", async () => {
+    const { client, upsertSpy } = makeAdmin({
+      profileData: { id: "user-uuid-empty-items" },
+    });
+    const log = makeLog();
+    await upsertSubscription(
+      makeSub({ items: { data: [] } as unknown as Stripe.Subscription["items"] }),
+      client,
+      log,
+    );
+    const [data] = upsertSpy.mock.calls[0] as [Record<string, unknown>];
+    expect(data.price_id).toBeNull();
+    expect(data.plan_interval).toBeNull();
+  });
 });

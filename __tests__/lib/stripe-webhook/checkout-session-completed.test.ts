@@ -370,4 +370,143 @@ describe("handleCheckoutSessionCompleted", () => {
       expect.any(Object),
     );
   });
+
+  it("short-circuits with done when sponsored_placement booking already exists (re-delivery guard)", async () => {
+    const ctx = makeCtx({
+      "sponsored_placement_bookings": () => thenable({ id: "existing_bk_1" }),
+    });
+    const result = await handleCheckoutSessionCompleted(
+      makeSession({
+        metadata: {
+          kind: "sponsored_placement",
+          broker_id: "10",
+          broker_slug: "commsec",
+          broker_name: "CommSec",
+          tier: "premium_top",
+          starts_at: "2026-05-01",
+          ends_at: "2026-05-31",
+          duration_days: "30",
+        },
+        payment_status: "paid",
+      }),
+      ctx,
+    );
+    expect(result).toEqual({ status: "done" });
+    expect(ctx.log.info).toHaveBeenCalledWith(
+      "sponsored_placement booking already exists",
+      expect.objectContaining({ session_id: "cs_test" }),
+    );
+    expect(mockSendEmail).not.toHaveBeenCalled();
+  });
+
+  it("lazy-fetches invoice URL when session.invoice is a string ID", async () => {
+    const ctx = makeCtx({
+      "sponsored_placement_bookings": () => ({
+        ...thenable(null),
+        insert: vi.fn().mockReturnThis(),
+        then: vi.fn((cb: (v: unknown) => void) => {
+          cb({ data: null, error: null });
+          return Promise.resolve();
+        }),
+      }),
+    });
+    await handleCheckoutSessionCompleted(
+      makeSession({
+        metadata: {
+          kind: "sponsored_placement",
+          broker_id: "10",
+          broker_slug: "commsec",
+          broker_name: "CommSec",
+          tier: "premium_top",
+          starts_at: "2026-05-01",
+          ends_at: "2026-05-31",
+          duration_days: "30",
+        },
+        payment_status: "paid",
+        invoice: "inv_string_abc" as unknown as Stripe.Checkout.Session["invoice"],
+      }),
+      ctx,
+    );
+    expect(ctx.stripe.invoices.retrieve).toHaveBeenCalledWith("inv_string_abc");
+  });
+
+  it("uses hosted_invoice_url from invoice object when invoice is not a string", async () => {
+    const ctx = makeCtx({
+      "sponsored_placement_bookings": () => ({
+        ...thenable(null),
+        insert: vi.fn().mockReturnThis(),
+        then: vi.fn((cb: (v: unknown) => void) => {
+          cb({ data: null, error: null });
+          return Promise.resolve();
+        }),
+      }),
+    });
+    await handleCheckoutSessionCompleted(
+      makeSession({
+        metadata: {
+          kind: "sponsored_placement",
+          broker_id: "10",
+          broker_slug: "commsec",
+          broker_name: "CommSec",
+          tier: "premium_top",
+          starts_at: "2026-05-01",
+          ends_at: "2026-05-31",
+          duration_days: "30",
+          contact_email: "buyer@broker.com",
+        },
+        payment_status: "paid",
+        invoice: { hosted_invoice_url: "https://inv.stripe.com/direct-obj" } as unknown as Stripe.Checkout.Session["invoice"],
+      }),
+      ctx,
+    );
+    // Did NOT call Stripe invoices.retrieve (it was an object, not a string)
+    expect(ctx.stripe.invoices.retrieve).not.toHaveBeenCalled();
+  });
+
+  it("logs error when investment_listings update fails", async () => {
+    let listingCallCount = 0;
+    const ctx = makeCtx({
+      "listing_plans": () => thenable({ plan_name: "Standard", features: { listing_duration_days: 30 } }),
+      "investment_listings": () => {
+        listingCallCount++;
+        if (listingCallCount === 1) {
+          return {
+            ...thenable(),
+            then: vi.fn((cb: (v: unknown) => void) => {
+              cb({ data: null, error: { message: "constraint violation" } });
+              return Promise.resolve();
+            }),
+          };
+        }
+        return thenable({ title: "SAAS Co", slug: "saas-co" });
+      },
+    });
+    await handleCheckoutSessionCompleted(
+      makeSession({
+        metadata: { type: "listing_payment", listing_id: "5", plan_id: "2", contact_email: "owner@test.com" },
+      }),
+      ctx,
+    );
+    expect(ctx.log.error).toHaveBeenCalledWith(
+      "Listing activation error",
+      expect.objectContaining({ listingId: 5 }),
+    );
+  });
+
+  it("defaults listing duration to 30 days when plan features are null", async () => {
+    const ctx = makeCtx({
+      "listing_plans": () => thenable({ plan_name: "Standard", features: null }),
+      "investment_listings": () => thenable({ title: "SAAS Co", slug: "saas-co" }),
+    });
+    await handleCheckoutSessionCompleted(
+      makeSession({
+        metadata: { type: "listing_payment", listing_id: "5", plan_id: "2" },
+      }),
+      ctx,
+    );
+    expect(ctx.log.info).toHaveBeenCalledWith(
+      "Listing activated",
+      expect.objectContaining({ durationDays: 30 }),
+    );
+  });
 });
