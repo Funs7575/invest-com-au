@@ -248,7 +248,7 @@ describe("POST /api/advisor-lead", () => {
     expect(res.status).toBe(200);
 
     const call = captureMock.mock.calls.find(
-      ([, evt]: [unknown, string]) => evt === "lead_submitted",
+      (args) => args[1] === "lead_submitted",
     );
     expect(call).toBeDefined();
     const props = call?.[2] as Record<string, unknown>;
@@ -265,7 +265,7 @@ describe("POST /api/advisor-lead", () => {
     expect(res.status).toBe(200);
 
     const call = captureMock.mock.calls.find(
-      ([, evt]: [unknown, string]) => evt === "lead_submitted",
+      (args) => args[1] === "lead_submitted",
     );
     expect(call).toBeDefined();
     const props = call?.[2] as Record<string, unknown>;
