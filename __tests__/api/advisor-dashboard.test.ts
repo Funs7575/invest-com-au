@@ -57,7 +57,13 @@ function makeAdvisor(overrides = {}) {
   };
 }
 
-function makeLead(created_at: string, status = "new", quality_score = 80) {
+function makeLead(
+  created_at: string,
+  status = "new",
+  quality_score = 80,
+  response_time_minutes: number | null = null,
+  responded_at: string | null = null,
+) {
   return {
     id: Math.random(),
     user_name: "Test User",
@@ -73,6 +79,8 @@ function makeLead(created_at: string, status = "new", quality_score = 80) {
     contacted_at: null,
     converted_at: null,
     created_at,
+    responded_at,
+    response_time_minutes,
   };
 }
 
@@ -294,6 +302,106 @@ describe("GET /api/advisor-dashboard", () => {
     expect(data.stats.avgRating).toBeNull();
   });
 
+  it("computes avgResponseTimeMinutes as mean of responded leads", async () => {
+    const now = new Date().toISOString();
+    // 3 leads: two responded (20min, 40min), one not
+    const leads = [
+      makeLead(now, "contacted", 80, 20, now),
+      makeLead(now, "contacted", 55, 40, now),
+      makeLead(now, "new", 60, null, null),
+    ];
+
+    mockFrom.mockImplementation((table: string) => {
+      if (table === "advisor_sessions") {
+        const builder = createChainableBuilder("advisor_sessions");
+        builder.single = vi.fn(() =>
+          Promise.resolve({
+            data: { professional_id: ADVISOR_ID, expires_at: new Date(Date.now() + 86400000).toISOString() },
+            error: null,
+          }),
+        );
+        return builder;
+      }
+      if (table === "professionals") {
+        const builder = createChainableBuilder("professionals");
+        builder.single = vi.fn(() => Promise.resolve({ data: makeAdvisor(), error: null }));
+        return builder;
+      }
+      if (table === "professional_leads") {
+        const builder = createChainableBuilder("professional_leads");
+        builder.then = vi.fn((cb: (v: { data: unknown[]; error: null }) => void) => {
+          cb({ data: leads, error: null });
+          return Promise.resolve();
+        });
+        return builder;
+      }
+      if (table === "lead_pricing") {
+        const builder = createChainableBuilder("lead_pricing");
+        builder.single = vi.fn(() => Promise.resolve({ data: null, error: null }));
+        return builder;
+      }
+      const builder = createChainableBuilder(table);
+      builder.then = vi.fn((cb: (v: { data: unknown[]; error: null }) => void) => {
+        cb({ data: [], error: null });
+        return Promise.resolve();
+      });
+      return builder;
+    });
+
+    const res = await GET(makeGet(SESSION_TOKEN));
+    const data = await res.json();
+    expect(data.stats.avgResponseTimeMinutes).toBe(30); // (20+40)/2
+  });
+
+  it("returns avgResponseTimeMinutes null when no leads have responded_at", async () => {
+    const now = new Date().toISOString();
+    const leads = [
+      makeLead(now, "new", 80, null, null),
+      makeLead(now, "new", 55, null, null),
+    ];
+
+    mockFrom.mockImplementation((table: string) => {
+      if (table === "advisor_sessions") {
+        const builder = createChainableBuilder("advisor_sessions");
+        builder.single = vi.fn(() =>
+          Promise.resolve({
+            data: { professional_id: ADVISOR_ID, expires_at: new Date(Date.now() + 86400000).toISOString() },
+            error: null,
+          }),
+        );
+        return builder;
+      }
+      if (table === "professionals") {
+        const builder = createChainableBuilder("professionals");
+        builder.single = vi.fn(() => Promise.resolve({ data: makeAdvisor(), error: null }));
+        return builder;
+      }
+      if (table === "professional_leads") {
+        const builder = createChainableBuilder("professional_leads");
+        builder.then = vi.fn((cb: (v: { data: unknown[]; error: null }) => void) => {
+          cb({ data: leads, error: null });
+          return Promise.resolve();
+        });
+        return builder;
+      }
+      if (table === "lead_pricing") {
+        const builder = createChainableBuilder("lead_pricing");
+        builder.single = vi.fn(() => Promise.resolve({ data: null, error: null }));
+        return builder;
+      }
+      const builder = createChainableBuilder(table);
+      builder.then = vi.fn((cb: (v: { data: unknown[]; error: null }) => void) => {
+        cb({ data: [], error: null });
+        return Promise.resolve();
+      });
+      return builder;
+    });
+
+    const res = await GET(makeGet(SESSION_TOKEN));
+    const data = await res.json();
+    expect(data.stats.avgResponseTimeMinutes).toBeNull();
+  });
+
   it("classifies lead quality buckets correctly", async () => {
     const now = new Date().toISOString();
     const leads = [
@@ -348,5 +456,92 @@ describe("GET /api/advisor-dashboard", () => {
     expect(data.stats.warmLeadsCount).toBe(1);
     expect(data.stats.coldLeadsCount).toBe(1);
     expect(data.weeklyEnquiries).toHaveLength(8); // 8-week window always returned
+  });
+
+  // ── KK-06: accept rate + period comparisons ──
+
+  function makeFromWithLeads(leads: ReturnType<typeof makeLead>[]) {
+    return (table: string) => {
+      if (table === "advisor_sessions") {
+        const b = createChainableBuilder("advisor_sessions");
+        b.single = vi.fn(() =>
+          Promise.resolve({
+            data: { professional_id: ADVISOR_ID, expires_at: new Date(Date.now() + 86400000).toISOString() },
+            error: null,
+          }),
+        );
+        return b;
+      }
+      if (table === "professionals") {
+        const b = createChainableBuilder("professionals");
+        b.single = vi.fn(() => Promise.resolve({ data: makeAdvisor(), error: null }));
+        return b;
+      }
+      if (table === "professional_leads") {
+        const b = createChainableBuilder("professional_leads");
+        b.then = vi.fn((cb: (v: { data: unknown[]; error: null }) => void) => {
+          cb({ data: leads, error: null });
+          return Promise.resolve();
+        });
+        return b;
+      }
+      if (table === "lead_pricing") {
+        const b = createChainableBuilder("lead_pricing");
+        b.single = vi.fn(() => Promise.resolve({ data: null, error: null }));
+        return b;
+      }
+      const b = createChainableBuilder(table);
+      b.then = vi.fn((cb: (v: { data: unknown[]; error: null }) => void) => {
+        cb({ data: [], error: null });
+        return Promise.resolve();
+      });
+      return b;
+    };
+  }
+
+  it("computes acceptRate from contacted and converted leads", async () => {
+    const now = new Date().toISOString();
+    const leads = [
+      makeLead(now, "contacted"),
+      makeLead(now, "converted"),
+      makeLead(now, "new"),
+    ];
+    mockFrom.mockImplementation(makeFromWithLeads(leads));
+    const res = await GET(makeGet(SESSION_TOKEN));
+    const data = await res.json();
+    // 2 accepted out of 3 = 66.7%
+    expect(data.stats.acceptRate).toBeCloseTo(66.7, 1);
+  });
+
+  it("acceptRate is 0 when there are no leads", async () => {
+    mockFrom.mockImplementation(makeFromWithLeads([]));
+    const res = await GET(makeGet(SESSION_TOKEN));
+    const data = await res.json();
+    expect(data.stats.acceptRate).toBe(0);
+  });
+
+  it("computes leads7d, leadsThisMonth, leadsLastMonth correctly", async () => {
+    const now = new Date();
+    const yesterday = new Date(now.getTime() - 86400000).toISOString();
+    const fiveDaysAgo = new Date(now.getTime() - 5 * 86400000).toISOString();
+    const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const prevMonthMid = new Date(now.getFullYear(), now.getMonth() - 1, 15).toISOString();
+    // 2 leads within last 7 days (and this month), 1 lead last month
+    const leads = [
+      makeLead(yesterday),
+      makeLead(fiveDaysAgo),
+      makeLead(prevMonthMid),
+    ];
+    // Only the first two are ≥ thisMonthStart when thisMonthStart ≤ 5 days ago.
+    // Guard: if we're early in the month (day < 6), fiveDaysAgo lands in last month.
+    const expectedThisMonth = [yesterday, fiveDaysAgo].filter(
+      (d) => new Date(d) >= thisMonthStart
+    ).length;
+    mockFrom.mockImplementation(makeFromWithLeads(leads));
+    const res = await GET(makeGet(SESSION_TOKEN));
+    const data = await res.json();
+    expect(data.stats.leads7d).toBe(2); // yesterday + 5 days ago both within 7d
+    expect(data.stats.leadsThisMonth).toBe(expectedThisMonth);
+    expect(data.stats.leadsLastMonth).toBeGreaterThanOrEqual(1); // prevMonthMid
   });
 });
