@@ -43,7 +43,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | P | `claude/audit-remediation/p-01-sentry-v10-upgrade` (#468) · `p-03-04-minor-sdk-bumps` (#575) | #468 MERGED 2026-05-03T11:33Z · **#575 OPEN** | iter 276 — `9e1669e` (PR #575: P-03+P-04 — @anthropic-ai/sdk 0.90→0.93, posthog-js 1.371→1.372, posthog-node 5.30→5.33; CI queued). iter 212 — `331b98e` (PR #468: P-01; CI success). | **P-01 done** (PR #468 MERGED). P-02 (Stripe SDK v17→v22) BLOCKED — requires npm install + local test run; not tractable on Hardware-exception sandbox. **P-03+P-04 in-progress (#575)**. |
 | Q | `claude/audit-remediation/q-02-05-recovery-runbooks` (#525) · `q-06-09-runbooks` (#547) · `q-10-12-runbooks` (#549) · `q-13-14-secret-rotation-dpa` (#554) · `q-15-privacy-data-collection` (#572) | #525 OPEN · #547 OPEN · #549 OPEN · **#554 OPEN** · **#572 OPEN** | iter 274 — `577f774` (PR #572: Q-15 /privacy/data-collection page; CI pending). iter 269 CI-rescue — `5c7af0f` (PR #554: merge main). iter 264 CI-rescue — `0d2877b` (PR #554: fix s.envVar→s.name). iter 263 — `93c9748` (PR #554: Q-13+Q-14). iter 260 — `925b2d4` (PR #549). iter 259 — `c684960` (PR #547). iter 235 — `8cd2725` (Q-02..Q-05). | Q-01 needs-user (PITR drill). Q-02..Q-05 in-progress (#525). Q-06..Q-09 in-progress (#547). Q-10..Q-12 in-progress (#549). Q-SOC2-02..11 done (verified iter 260). **Q-13+Q-14 in-progress (#554)**. **Q-15 in-progress (#572)**. |
 | R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · ... · `r-coverage-01-listing-routes` (#521) · `r-coverage-02-stripe-lib` (#526) · `r-coverage-03-quotes` (#530) · `r-coverage-11-quote-review` (#551) · `r-coverage-12-quotes-qa` (#562) · `r-coverage-13-quotes-get` (#565) · `r-coverage-14-notify-filter` (#573) · `r-coverage-ratchet` (#595) | #290/#396/#459/#472/#473 all MERGED · #466/#471/#510/#511/#513/#514/#515/#516/#517/#519/#521/#526/#530/#551/#562/#565/#573/#595 OPEN | iter 280 — `92db4d5` (PR #595: R-COVERAGE-RATCHET M1 — vitest.config.mts global floors 44/73/63→65/74/74, API-route floor 13/58/30→40/62/40; CI queued). iter 278 — queue sync: R-06 (PR #472 MERGED 2026-05-03) + R-07 (PR #473 MERGED 2026-05-03) marked done. iter 277 CI-rescue — `82f05f1` (PR #573: merge main to force Vercel build — smoke test failed on test-only push; CI re-running). iter 275 forward — `a730325` (PR #573: R-COVERAGE-14 — 10 tests). iter 271 forward — `a5f9774` (PR #565: R-COVERAGE-13 — GET /api/quotes list + 3 POST edge cases; 31 tests, CI pending). iter 270 forward — `fcbeb21` (PR #562: R-COVERAGE-12 — 16 tests for quotes/[slug]/qa GET+POST, dual auth, rate-limit; CI pending). iter 261 forward — `83c763e` (PR #551: R-COVERAGE-11 quotes/[slug]/review — 17 tests, HMAC token auth, rate limit, 12 error paths). iter 255 forward — `1a3c24d` (PR #530: R-COVERAGE-03 quotes/[slug]/accept + reopen, 26 tests). iter 253 CI-rescue — `a29318f` (PR #526). iter 251 CI-rescue — `126eb8ac` (PR #521). | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459). **R-06 MERGED (#472)**. **R-07 MERGED (#473)**. R-04/R-05/R-08..R-11 in-progress. R-COVERAGE-01 in-progress (#521). R-COVERAGE-02 in-progress (#526). R-COVERAGE-03 in-flight (#530). R-COVERAGE-11 in-flight (#551). R-COVERAGE-12 in-flight (#562). R-COVERAGE-13 in-flight (#565). **R-COVERAGE-14 in-flight (#573)**. **R-COVERAGE-RATCHET in-flight (#595)**. |
-| S | `claude/audit-remediation/s-architecture` | **#594 OPEN** | iter 279 — `c6e9e57` (S-01: docs/user-journey.md — 4-path Mermaid diagram; CI queued). | S-01 done (iter 279). S-02..S-05 pending. |
+| S | `claude/audit-remediation/s-architecture` | **#594 OPEN** | iter 281 — `2a6f112` (S-02: docs/agent-system.md — 19 agents × 5 tiers × 24 tables; CI queued). iter 279 — `c6e9e57` (S-01: docs/user-journey.md — 4-path Mermaid diagram; CI queued). | S-01 done (iter 279). **S-02 done (iter 281)**. S-03..S-05 pending. |
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 MERGED 2026-04-28T11:45Z | merged | V-NEW-06 done (commit `a7bd736`) |
 | V (V-NEW-07) | `claude/audit-remediation/v-new-07-admin-mfa-enforced` | #256 MERGED 2026-04-28T15:44Z | merged | V-NEW-07a done · V-NEW-07b done (`698bbae`) — **Tier D: needs `ADMIN_MFA_COOKIE_SECRET` ≥32 chars in Vercel before merge** (PR was merged; env var status unclear) |
@@ -1028,7 +1028,7 @@ Diagrams + API contracts + missing-runbook overflow from Q.
 | ID | Status | Summary | Est. iterations | Notes |
 | --- | --- | --- | --- | --- |
 | S-01 | done | Mermaid sequence diagram: user → quiz → lead → advisor → billing (with PostHog events, Stripe webhooks, Resend touches) | 1 | Done iter 279 · commit `c6e9e57` · PR #594. `docs/user-journey.md` — 4 paths, PostHog event ref, Resend touchpoints, Stripe webhooks, key DB tables. |
-| S-02 | pending | Agent-system topology diagram: 19 agents × 5 escalation tiers × DB-table linkages | 1 | P2. Live in `docs/agent-system.md`. |
+| S-02 | done | Agent-system topology diagram: 19 agents × 5 escalation tiers × DB-table linkages | 1 | Done iter 281 · commit `2a6f112` · PR #594. `docs/agent-system.md` — escalation hierarchy flowchart, 19-agent network graph, agent↔table linkage matrix, per-agent routing table, forbidden-actions list. |
 | S-03 | pending | OpenAPI spec for `/api/v1/*` (brokers, compare, docs) — public-API contract | ~2 | P2. Use openapi-typescript or hand-author. |
 | S-04 | pending | Document Stream-J handler-registry pattern (architectural decision record) | 1 | P3. |
 | S-05 | pending | Update `ARCHITECTURE.md` with cron-dispatch-group pattern (39 entries → 73 implementations) | 1 | P3. Non-obvious for new dev. |
@@ -1951,6 +1951,20 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-07 — Forward progress iter 281 (stream S — S-02: agent-system topology diagram)
+
+- Phase 0: batch iter 3 of 5. No LOOP_PAUSE.
+- Phase 1: main synced (61b7404). Phase 1.5 skipped. Phase 1.7: no CI failures.
+- Phase 2: No tractable CI rescue (only Vercel status visible on all in-flight PRs).
+- Phase 3: S stream (step 22), existing branch `s-architecture`. S-01 done by concurrent iter 279. S-02 next.
+- Phase 4: Docs-only — no tsc/lint needed. Content sourced from COMPANY.md §agents + §tables + §escalation.
+- Phase 5: `docs/agent-system.md` written (147 lines): escalation hierarchy Mermaid flowchart, 19-agent network graph, 19-table + 5-shared-table linkage matrices, per-agent routing table, forbidden-actions list.
+- Phase 6: Commit `2a6f112` on `s-architecture`, pushed to PR #594.
+
+- STATUS: PROGRESS · stream=S · item=S-02 · pr=#594
+
+---
 
 ### 2026-05-07 — Forward progress iter 278 (stream R — queue sync: R-06 + R-07 marked done)
 
