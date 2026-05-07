@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
 import AdminShell from "@/components/AdminShell";
 import { downloadCSV } from "@/lib/csv-export";
 import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
+import { slugify } from "@/lib/utils";
 import InfoTip from "@/components/InfoTip";
 
 interface CourseRow {
@@ -63,65 +64,69 @@ export default function AdminCoursesPage() {
     status: "draft",
   });
 
-  useEffect(() => {
-    fetchData();
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const supabase = createClient();
+
+      // Fetch courses with creator
+      const { data: coursesData } = await supabase
+        .from("courses")
+        .select("id, slug, title, status, price, pro_price, revenue_share_percent, featured, sort_order, created_at, creator:team_members(id, full_name)")
+        .order("sort_order", { ascending: true });
+
+      // Supabase returns joined relations as arrays; normalise to single object
+      type RawCourse = Omit<CourseRow, "creator"> & { creator: CourseRow["creator"] | CourseRow["creator"][] };
+      const normalized: CourseRow[] = ((coursesData ?? []) as RawCourse[]).map((c) => ({
+        ...c,
+        creator: Array.isArray(c.creator) ? c.creator[0] ?? null : c.creator ?? null,
+      }));
+      setCourses(normalized);
+
+      // Fetch team members for creator dropdown
+      const { data: members } = await supabase
+        .from("team_members")
+        .select("id, full_name")
+        .order("full_name");
+
+      setCreators(members || []);
+
+      // Fetch revenue summary
+      const { data: revenueData } = await supabase
+        .from("course_revenue")
+        .select("creator_id, total_amount, creator_amount, platform_amount, creator:team_members(full_name)");
+
+      // Group by creator
+      type RawRevenue = { creator_id: number; total_amount: number; creator_amount: number; platform_amount: number; creator: { full_name: string } | { full_name: string }[] | null };
+      const grouped = new Map<number, RevenueByCreator>();
+      ((revenueData ?? []) as RawRevenue[]).forEach((r) => {
+        const existing = grouped.get(r.creator_id);
+        if (existing) {
+          existing.total_revenue += r.total_amount;
+          existing.creator_share += r.creator_amount;
+          existing.platform_share += r.platform_amount;
+          existing.purchases += 1;
+        } else {
+          grouped.set(r.creator_id, {
+            creator_id: r.creator_id,
+            creator_name: (Array.isArray(r.creator) ? r.creator[0]?.full_name : r.creator?.full_name) || "Unknown",
+            total_revenue: r.total_amount,
+            creator_share: r.creator_amount,
+            platform_share: r.platform_amount,
+            purchases: 1,
+          });
+        }
+      });
+
+      setRevenue(Array.from(grouped.values()));
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  const fetchData = async () => {
-    const supabase = createClient();
-
-    // Fetch courses with creator
-    const { data: coursesData } = await supabase
-      .from("courses")
-      .select("id, slug, title, status, price, pro_price, revenue_share_percent, featured, sort_order, created_at, creator:team_members(id, full_name)")
-      .order("sort_order", { ascending: true });
-
-    // Supabase returns joined relations as arrays; normalise to single object
-    type RawCourse = Omit<CourseRow, "creator"> & { creator: CourseRow["creator"] | CourseRow["creator"][] };
-    const normalized: CourseRow[] = ((coursesData ?? []) as RawCourse[]).map((c) => ({
-      ...c,
-      creator: Array.isArray(c.creator) ? c.creator[0] ?? null : c.creator ?? null,
-    }));
-    setCourses(normalized);
-
-    // Fetch team members for creator dropdown
-    const { data: members } = await supabase
-      .from("team_members")
-      .select("id, full_name")
-      .order("full_name");
-
-    setCreators(members || []);
-
-    // Fetch revenue summary
-    const { data: revenueData } = await supabase
-      .from("course_revenue")
-      .select("creator_id, total_amount, creator_amount, platform_amount, creator:team_members(full_name)");
-
-    // Group by creator
-    type RawRevenue = { creator_id: number; total_amount: number; creator_amount: number; platform_amount: number; creator: { full_name: string } | { full_name: string }[] | null };
-    const grouped = new Map<number, RevenueByCreator>();
-    ((revenueData ?? []) as RawRevenue[]).forEach((r) => {
-      const existing = grouped.get(r.creator_id);
-      if (existing) {
-        existing.total_revenue += r.total_amount;
-        existing.creator_share += r.creator_amount;
-        existing.platform_share += r.platform_amount;
-        existing.purchases += 1;
-      } else {
-        grouped.set(r.creator_id, {
-          creator_id: r.creator_id,
-          creator_name: (Array.isArray(r.creator) ? r.creator[0]?.full_name : r.creator?.full_name) || "Unknown",
-          total_revenue: r.total_amount,
-          creator_share: r.creator_amount,
-          platform_share: r.platform_amount,
-          purchases: 1,
-        });
-      }
-    });
-
-    setRevenue(Array.from(grouped.values()));
-    setLoading(false);
-  };
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const cloneCourse = (c: CourseRow) => {
     setForm({
@@ -143,12 +148,6 @@ export default function AdminCoursesPage() {
     setShowCreate(true);
   };
 
-  const autoSlug = (title: string) =>
-    title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-|-$/g, "");
-
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.title.trim()) return;
@@ -157,7 +156,7 @@ export default function AdminCoursesPage() {
     const supabase = createClient();
     const { error } = await supabase.from("courses").insert({
       title: form.title.trim(),
-      slug: form.slug || autoSlug(form.title),
+      slug: form.slug || slugify(form.title),
       subtitle: form.subtitle || null,
       description: form.description || null,
       price: Math.round(parseFloat(form.price || "0") * 100),
@@ -256,7 +255,7 @@ export default function AdminCoursesPage() {
               <input
                 type="text"
                 value={form.title}
-                onChange={(e) => setForm({ ...form, title: e.target.value, slug: autoSlug(e.target.value) })}
+                onChange={(e) => setForm({ ...form, title: e.target.value, slug: slugify(e.target.value) })}
                 className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"
                 required
               />

@@ -4,6 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 import { isRateLimited } from "@/lib/rate-limit";
+import { slugify } from "@/lib/utils";
 
 // All fields optional so Zod v4 doesn't emit an invalid_type error for missing
 // required fields (v4 removed the required_error constructor param). Required
@@ -15,14 +16,6 @@ const ThreadPostBody = z.object({
 });
 
 const log = logger("community:threads");
-
-function generateSlug(title: string): string {
-  return title
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "")
-    .slice(0, 80);
-}
 
 export async function GET(req: NextRequest) {
   try {
@@ -161,7 +154,7 @@ export async function POST(req: NextRequest) {
       user.email?.split("@")[0] ||
       "Anonymous";
 
-    const slug = generateSlug(title.trim());
+    const slug = slugify(title.trim()).slice(0, 80);
 
     // Insert thread
     const { data: thread, error: insertError } = await admin

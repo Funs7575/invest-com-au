@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import AdminShell from "@/components/AdminShell";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import { useToast } from "@/components/Toast";
 import { downloadCSV } from "@/lib/csv-export";
 import type { TeamMember } from "@/lib/types";
+import { slugify } from "@/lib/utils";
 
 const ROLES = [
   { value: "contributor", label: "Contributor" },
@@ -22,13 +23,6 @@ const ROLE_COLORS: Record<string, string> = {
   expert_reviewer: "bg-emerald-50 text-emerald-700",
 };
 
-function slugify(name: string): string {
-  return name
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-}
-
 export default function TeamMembersPage() {
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [editing, setEditing] = useState<TeamMember | null>(null);
@@ -38,10 +32,10 @@ export default function TeamMembersPage() {
   const [deleteTarget, setDeleteTarget] = useState<TeamMember | null>(null);
   const [autoSlug, setAutoSlug] = useState(true);
 
-  const supabase = createClient();
   const { toast } = useToast();
 
-  const load = async () => {
+  const load = useCallback(async () => {
+    const supabase = createClient();
     const { data, error } = await supabase
       .from("team_members")
       .select("*")
@@ -51,11 +45,11 @@ export default function TeamMembersPage() {
     } else {
       setMembers(data || []);
     }
-  };
+  }, [toast]);
 
   useEffect(() => {
     load();
-  }, []);
+  }, [load]);
 
   const handleSave = async (formData: FormData) => {
     const full_name = (formData.get("full_name") as string)?.trim();
@@ -80,6 +74,7 @@ export default function TeamMembersPage() {
     }
 
     setSaving(true);
+    const supabase = createClient();
 
     const credentialsRaw = (formData.get("credentials") as string) || "";
     const credentials = credentialsRaw
@@ -144,6 +139,7 @@ export default function TeamMembersPage() {
 
   const handleDelete = async () => {
     if (!deleteTarget) return;
+    const supabase = createClient();
     try {
       const { error } = await supabase
         .from("team_members")

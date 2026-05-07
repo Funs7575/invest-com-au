@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
 import AdminShell from "@/components/AdminShell";
@@ -8,6 +8,7 @@ import ConfirmDialog from "@/components/ConfirmDialog";
 import { downloadCSV } from "@/lib/csv-export";
 import TableSkeleton from "@/components/TableSkeleton";
 import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
+import { slugify } from "@/lib/utils";
 
 interface ConsultationRow {
   id: number;
@@ -78,59 +79,56 @@ export default function AdminConsultationsPage() {
 
   const [form, setForm] = useState(emptyForm);
 
-  useEffect(() => {
-    fetchData();
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const supabase = createClient();
+
+      // Fetch consultations with consultant
+      const { data: consultData } = await supabase
+        .from("consultations")
+        .select("*, consultant:team_members(id, full_name)")
+        .order("sort_order", { ascending: true });
+
+      type RawConsultation = Omit<ConsultationRow, "consultant"> & {
+        consultant: ConsultationRow["consultant"] | ConsultationRow["consultant"][];
+      };
+      const normalized: ConsultationRow[] = ((consultData ?? []) as RawConsultation[]).map((c) => ({
+        ...c,
+        consultant: Array.isArray(c.consultant) ? c.consultant[0] ?? null : c.consultant ?? null,
+      }));
+      setConsultations(normalized);
+
+      // Fetch team members for dropdown
+      const { data: members } = await supabase
+        .from("team_members")
+        .select("id, full_name")
+        .order("full_name");
+      setConsultants(members || []);
+
+      // Fetch bookings with consultation title
+      const { data: bookingData } = await supabase
+        .from("consultation_bookings")
+        .select("*, consultation:consultations(title)")
+        .order("booked_at", { ascending: false })
+        .limit(100);
+
+      type RawBooking = Omit<BookingRow, "consultation"> & {
+        consultation: BookingRow["consultation"] | BookingRow["consultation"][];
+      };
+      const normalizedBookings: BookingRow[] = ((bookingData ?? []) as RawBooking[]).map((b) => ({
+        ...b,
+        consultation: Array.isArray(b.consultation) ? b.consultation[0] ?? null : b.consultation ?? null,
+      }));
+      setBookings(normalizedBookings);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  const fetchData = async () => {
-    const supabase = createClient();
-
-    // Fetch consultations with consultant
-    const { data: consultData } = await supabase
-      .from("consultations")
-      .select("*, consultant:team_members(id, full_name)")
-      .order("sort_order", { ascending: true });
-
-    type RawConsultation = Omit<ConsultationRow, "consultant"> & {
-      consultant: ConsultationRow["consultant"] | ConsultationRow["consultant"][];
-    };
-    const normalized: ConsultationRow[] = ((consultData ?? []) as RawConsultation[]).map((c) => ({
-      ...c,
-      consultant: Array.isArray(c.consultant) ? c.consultant[0] ?? null : c.consultant ?? null,
-    }));
-    setConsultations(normalized);
-
-    // Fetch team members for dropdown
-    const { data: members } = await supabase
-      .from("team_members")
-      .select("id, full_name")
-      .order("full_name");
-    setConsultants(members || []);
-
-    // Fetch bookings with consultation title
-    const { data: bookingData } = await supabase
-      .from("consultation_bookings")
-      .select("*, consultation:consultations(title)")
-      .order("booked_at", { ascending: false })
-      .limit(100);
-
-    type RawBooking = Omit<BookingRow, "consultation"> & {
-      consultation: BookingRow["consultation"] | BookingRow["consultation"][];
-    };
-    const normalizedBookings: BookingRow[] = ((bookingData ?? []) as RawBooking[]).map((b) => ({
-      ...b,
-      consultation: Array.isArray(b.consultation) ? b.consultation[0] ?? null : b.consultation ?? null,
-    }));
-    setBookings(normalizedBookings);
-
-    setLoading(false);
-  };
-
-  const autoSlug = (title: string) =>
-    title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-|-$/g, "");
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -140,7 +138,7 @@ export default function AdminConsultationsPage() {
     const supabase = createClient();
     const payload = {
       title: form.title.trim(),
-      slug: form.slug || autoSlug(form.title),
+      slug: form.slug || slugify(form.title),
       description: form.description || null,
       consultant_id: form.consultant_id ? parseInt(form.consultant_id) : null,
       duration_minutes: parseInt(form.duration_minutes) || 30,
@@ -377,7 +375,7 @@ export default function AdminConsultationsPage() {
                   setForm({
                     ...form,
                     title: e.target.value,
-                    slug: editingId ? form.slug : autoSlug(e.target.value),
+                    slug: editingId ? form.slug : slugify(e.target.value),
                   })
                 }
                 className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"

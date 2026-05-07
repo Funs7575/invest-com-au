@@ -7,6 +7,7 @@ import { trackEvent, trackClick, getAffiliateLink, AFFILIATE_REL, trackPageDurat
 import { getStoredUtm } from "@/components/UtmCapture";
 import { storeQualificationData } from "@/lib/qualification-store";
 import AdvisorMatchCTA from "@/components/AdvisorMatchCTA";
+import { formatCurrency } from "@/lib/utils";
 
 type Account = {
   id: number; slug: string; name: string; platform_type: string;
@@ -16,10 +17,6 @@ type Account = {
 function parseRate(fee: string): number {
   const match = fee.match(/([\d.]+)/);
   return match ? parseFloat(match[1]) : 0;
-}
-
-function formatCurrency(n: number): string {
-  return new Intl.NumberFormat("en-AU", { style: "currency", currency: "AUD", maximumFractionDigits: 0 }).format(n);
 }
 
 export default function SavingsCalculatorClient({ accounts, inline }: { accounts: Account[]; inline?: boolean }) {
@@ -92,7 +89,7 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
       {!inline && <div className="bg-gradient-to-br from-amber-500 via-amber-600 to-amber-800 text-white py-8 md:py-14 px-4">
         <div className="container-custom max-w-3xl text-center">
           <h1 className="text-xl md:text-3xl font-extrabold mb-2">Are you earning enough on your savings?</h1>
-          <p className="text-sm md:text-base text-amber-100">Enter your balance and current rate — we'll show you exactly how much more you could earn.</p>
+          <p className="text-sm md:text-base text-amber-100">Enter your balance and current rate — we&apos;ll show you exactly how much more you could earn.</p>
           <div className="mt-3"><SocialProofCounter variant="badge" /></div>
         </div>
       </div>}
@@ -165,8 +162,8 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
                 </>
               ) : (
                 <>
-                  <p className="text-lg font-bold text-slate-700">You're already earning a competitive rate!</p>
-                  <p className="text-sm text-slate-500 mt-1">At {currentRate}%, you're close to the best available rates in Australia.</p>
+                  <p className="text-lg font-bold text-slate-700">You&apos;re already earning a competitive rate!</p>
+                  <p className="text-sm text-slate-500 mt-1">At {currentRate}%, you&apos;re close to the best available rates in Australia.</p>
                 </>
               )}
             </div>
@@ -270,7 +267,7 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
             <div className="bg-white border border-slate-200 rounded-2xl p-5 md:p-8">
               <h2 className="text-lg font-bold text-slate-900 mb-3">Why Your Savings Rate Matters</h2>
               <p className="text-sm text-slate-600 leading-relaxed mb-4">
-                Most Australians leave their savings in a Big 4 bank transaction account earning 0.01-0.5%. Meanwhile, online banks like ING, Ubank, and Macquarie offer 5%+ with simple conditions. On a $50,000 balance, the difference between 0.5% and 5.5% is <strong>$2,500 per year</strong> — that's real money lost to inertia.
+                Most Australians leave their savings in a Big 4 bank transaction account earning 0.01-0.5%. Meanwhile, online banks like ING, Ubank, and Macquarie offer 5%+ with simple conditions. On a $50,000 balance, the difference between 0.5% and 5.5% is <strong>$2,500 per year</strong> — that&apos;s real money lost to inertia.
               </p>
               <p className="text-sm text-slate-600 leading-relaxed mb-4">
                 All savings accounts listed here are with ADI-regulated Australian banks, meaning your deposits are government-guaranteed up to $250,000 per person per institution under the Financial Claims Scheme.

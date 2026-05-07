@@ -1,9 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import crypto from "crypto";
 import { isRateLimited } from "@/lib/rate-limit";
 import { ADMIN_EMAIL } from "@/lib/admin";
 import { logger } from "@/lib/logger";
+import { withValidatedBody } from "@/lib/validation/withValidatedBody";
+import { slugify } from "@/lib/utils";
 
 const log = logger("marketplace:register");
 
@@ -16,7 +19,17 @@ function escapeHtml(str: string): string {
     .replace(/"/g, "&quot;");
 }
 
-export async function POST(req: NextRequest) {
+const RegisterBody = z.object({
+  email: z.string().optional(),
+  password: z.string().optional(),
+  full_name: z.string().optional(),
+  company_name: z.string().optional(),
+  phone: z.string().optional(),
+  broker_slug: z.string().optional(),
+  website: z.string().optional(),
+});
+
+export const POST = withValidatedBody(RegisterBody, async (req, body) => {
   try {
     const supabaseAdmin = createAdminClient();
     const ip = req.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
@@ -24,7 +37,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Too many registration attempts. Please try again later." }, { status: 429 });
     }
 
-    const body = await req.json();
     const { email, password, full_name, company_name, phone, broker_slug, website } = body;
 
     // Validate required fields
@@ -57,10 +69,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Generate broker slug if not provided
-    const slug = broker_slug || company_name
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-|-$/g, "");
+    const slug = broker_slug || slugify(company_name ?? "");
 
     // Create Supabase auth user
     const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
@@ -172,4 +181,4 @@ export async function POST(req: NextRequest) {
   } catch {
     return NextResponse.json({ error: "Internal server error." }, { status: 500 });
   }
-}
+});

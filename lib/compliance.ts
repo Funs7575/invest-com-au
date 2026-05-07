@@ -144,6 +144,13 @@ export const AFCA_REFERENCE =
   "Visit afca.org.au or call 1800 931 678.";
 
 /**
+ * Admin-facing reminder shown in the /admin/subscribers help panel.
+ * Sending to unsubscribed users violates the Spam Act 2003 (Cth).
+ */
+export const ADMIN_SPAM_COMPLIANCE_NOTE =
+  "Never send emails to unsubscribed users — this violates Australian spam laws.";
+
+/**
  * Financial Services Guide (FSG) notice.
  * ASIC requires that financial services providers give clients an FSG before providing services.
  * As a comparison site (not an AFSL holder), we reference this requirement and point users

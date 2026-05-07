@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isRateLimited } from "@/lib/rate-limit";
@@ -7,6 +8,8 @@ import { notificationFooter } from "@/lib/email-templates";
 import { getSiteUrl } from "@/lib/url";
 import { getAdminEmail, getAdminEmails } from "@/lib/admin";
 import { logger } from "@/lib/logger";
+import { withValidatedBody } from "@/lib/validation/withValidatedBody";
+import { slugify } from "@/lib/utils";
 
 const log = logger("advisor-articles");
 
@@ -28,9 +31,35 @@ function calcReadTime(wordCount: number): number {
   return Math.max(1, Math.round(wordCount / 220));
 }
 
-function slugify(text: string): string {
-  return text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 80);
-}
+const ArticlePostBody = z.object({
+  professional_id: z.number(),
+  title: z.string(),
+  content: z.string(),
+  excerpt: z.string().optional(),
+  category: z.string().optional(),
+  tags: z.array(z.string()).optional(),
+  pricing_tier: z.string().optional(),
+  action: z.string().optional(),
+});
+
+const ArticlePutBody = z.object({
+  id: z.number(),
+  action: z.string().optional(),
+  reviewed_by: z.string().optional(),
+  admin_notes: z.string().nullish(),
+  rejection_reason: z.string().optional(),
+  payment_reference: z.string().optional(),
+  title: z.string().optional(),
+  content: z.string().optional(),
+  excerpt: z.string().optional(),
+  meta_title: z.string().optional(),
+  meta_description: z.string().optional(),
+  category: z.string().optional(),
+  featured: z.boolean().optional(),
+  related_brokers: z.unknown().optional(),
+  related_advisor_types: z.unknown().optional(),
+  pricing_tier: z.string().optional(),
+});
 
 async function logMod(supabase: Awaited<ReturnType<typeof createClient>>, articleId: number, action: string, by: string, notes?: string, oldStatus?: string, newStatus?: string) {
   const { error } = await supabase.from("advisor_article_moderation_log").insert({ article_id: articleId, action, performed_by: by, notes, old_status: oldStatus, new_status: newStatus });
@@ -104,12 +133,11 @@ export async function GET(request: NextRequest) {
   return NextResponse.json(data || []);
 }
 
-export async function POST(request: NextRequest) {
+export const POST = withValidatedBody(ArticlePostBody, async (request, body) => {
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
   if (await isRateLimited(`advisor_article:${ip}`, 10, 60)) return NextResponse.json({ error: "Too many requests" }, { status: 429 });
 
   const supabase = await createClient();
-  const body = await request.json();
   const { professional_id, title, content, excerpt, category, tags, pricing_tier, action } = body;
   if (!professional_id || !title?.trim() || !content?.trim()) return NextResponse.json({ error: "Title and content required" }, { status: 400 });
 
@@ -136,7 +164,7 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  const articleSlug = slugify(title.trim()) + "-" + Date.now().toString(36);
+  const articleSlug = slugify(title.trim()).slice(0, 80) + "-" + Date.now().toString(36);
 
   const { data: article, error } = await supabase.from("advisor_articles").insert({
     professional_id: pro.id, author_name: pro.name, author_firm: pro.firm_name, author_slug: pro.slug,
@@ -158,17 +186,16 @@ export async function POST(request: NextRequest) {
       wrap("New Article Submitted", `<p style="color:#64748b;font-size:14px"><strong>${pro.name}</strong> (${pro.firm_name || "Independent"}) submitted an article.</p><p style="color:#334155;font-size:15px;font-weight:600">"${title}"</p><p style="color:#64748b;font-size:13px">Category: ${category || "General"} \xb7 Tier: ${pricing_tier || "standard"} \xb7 ${wordCount} words \xb7 ${readTime} min read</p>`, "Review \u2192", `${SITE_URL}/admin/advisor-articles`));
   }
   return NextResponse.json(article);
-}
+});
 
-export async function PUT(request: NextRequest) {
+export const PUT = withValidatedBody(ArticlePutBody, async (request, body) => {
   const supabase = await createClient();
-  const body = await request.json();
   const { id, action, ...updates } = body;
   if (!id) return NextResponse.json({ error: "Article ID required" }, { status: 400 });
 
   // Admin-only actions require auth verification
   const ADMIN_ACTIONS = ["approve", "request_revision", "reject", "mark_paid", "waive_fee", "publish", "unpublish", "admin_edit"];
-  if (ADMIN_ACTIONS.includes(action)) {
+  if (action && ADMIN_ACTIONS.includes(action)) {
     const adminEmail = await verifyAdmin();
     if (!adminEmail) return NextResponse.json({ error: "Unauthorized — admin access required" }, { status: 401 });
   }
@@ -182,7 +209,7 @@ export async function PUT(request: NextRequest) {
   if (action === "approve") {
     const { error } = await supabase.from("advisor_articles").update({ status: "approved", reviewed_at: new Date().toISOString(), reviewed_by: updates.reviewed_by || "admin", admin_notes: updates.admin_notes || null }).eq("id", id);
     if (error) return NextResponse.json({ error: "Operation failed" }, { status: 500 });
-    await logMod(supabase, id, "approved", updates.reviewed_by || "admin", updates.admin_notes, oldStatus, "approved");
+    await logMod(supabase, id, "approved", updates.reviewed_by || "admin", updates.admin_notes ?? undefined, oldStatus, "approved");
     if (advEmail) await sendEmail(advEmail, `Article approved: "${artTitle}"`, wrap("Article Approved ✓", `<p style="color:#334155;font-size:14px">Hi ${advName.split(" ")[0]},</p><p style="color:#64748b;font-size:14px"><strong>"${artTitle}"</strong> has been approved!</p>${updates.admin_notes ? `<p style="background:#f8fafc;padding:10px;border-radius:6px;font-size:13px;color:#64748b;border-left:3px solid #7c3aed"><strong>Note:</strong> ${updates.admin_notes}</p>` : ""}<p style="color:#64748b;font-size:14px">Once payment is confirmed, it will be published with your profile linked.</p>`, "View Portal →", `${SITE_URL}/advisor-portal`));
     return NextResponse.json({ status: "approved" });
   }
@@ -231,7 +258,7 @@ export async function PUT(request: NextRequest) {
 
   if (action === "admin_edit") {
     const fields: Record<string, unknown> = {};
-    for (const k of ["title", "content", "excerpt", "meta_title", "meta_description", "category", "featured", "related_brokers", "related_advisor_types"]) {
+    for (const k of ["title", "content", "excerpt", "meta_title", "meta_description", "category", "featured", "related_brokers", "related_advisor_types"] as const) {
       if (updates[k] !== undefined) fields[k] = updates[k];
     }
     if (updates.content) {
@@ -254,7 +281,7 @@ export async function PUT(request: NextRequest) {
     if (/(contact me|call us|my firm|visit our website|book a consultation with me|sign up now)/i.test(checkContent)) return NextResponse.json({ error: "Article contains promotional language." }, { status: 400 });
 
     const sf: Record<string, unknown> = { status: "submitted", submitted_at: new Date().toISOString() };
-    for (const k of ["title", "content", "excerpt", "category"]) { if (updates[k]) sf[k] = updates[k]; }
+    for (const k of ["title", "content", "excerpt", "category"] as const) { if (updates[k]) sf[k] = updates[k]; }
     if (updates.content) { sf.word_count = submitWc; sf.read_time = calcReadTime(submitWc); }
     const { error } = await supabase.from("advisor_articles").update(sf).eq("id", id);
     if (error) return NextResponse.json({ error: "Operation failed" }, { status: 500 });
@@ -265,7 +292,7 @@ export async function PUT(request: NextRequest) {
 
   // Generic save draft
   const df: Record<string, unknown> = {};
-  for (const k of ["title", "content", "excerpt", "category", "pricing_tier"]) { if (updates[k]) df[k] = updates[k]; }
+  for (const k of ["title", "content", "excerpt", "category", "pricing_tier"] as const) { if (updates[k]) df[k] = updates[k]; }
   if (updates.content) {
     const wc = calcWordCount(updates.content);
     df.word_count = wc;
@@ -274,4 +301,4 @@ export async function PUT(request: NextRequest) {
   const { error } = await supabase.from("advisor_articles").update(df).eq("id", id);
   if (error) return NextResponse.json({ error: "Operation failed" }, { status: 500 });
   return NextResponse.json({ updated: true });
-}
+});

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
+import { ADMIN_SPAM_COMPLIANCE_NOTE } from "@/lib/compliance";
 
 interface HelpEntry {
   title: string;
@@ -82,7 +83,7 @@ const helpContent: Record<string, { description: string; tips: HelpEntry[] }> = 
     description: "View and manage all email signups from across the site. This includes quiz leads (visitors who completed the broker recommendation quiz), newsletter subscribers, and other email captures.",
     tips: [
       { title: "Signup Sources", items: ["Quiz — completed the broker recommendation quiz and left their email.", "Newsletter — signed up for the weekly email newsletter.", "Footer — entered their email in the site footer signup form.", "Article — signed up via the email capture form inside an article."] },
-      { title: "Managing Subscribers", items: ["Use filters to segment subscribers by source, date, or status.", "Export the list as CSV for use in your email marketing platform.", "Unsubscribed users are kept in the list but marked as inactive.", "Never send emails to unsubscribed users — this violates Australian spam laws."] },
+      { title: "Managing Subscribers", items: ["Use filters to segment subscribers by source, date, or status.", "Export the list as CSV for use in your email marketing platform.", "Unsubscribed users are kept in the list but marked as inactive.", ADMIN_SPAM_COMPLIANCE_NOTE] },
     ],
   },
   "/admin/pro-subscribers": {
@@ -304,17 +305,15 @@ const walkthroughKeys: Record<string, string> = {
 
 export default function AdminHelpPanel() {
   const pathname = usePathname();
-  const [open, setOpen] = useState(false);
+  const [openedOnPathname, setOpenedOnPathname] = useState<string | null>(null);
+  const open = openedOnPathname === pathname;
   const content = helpContent[pathname];
   const walkthroughKey = walkthroughKeys[pathname || ""];
-
-  // Close on route change
-  useEffect(() => { setOpen(false); }, [pathname]);
 
   // Close on Escape
   useEffect(() => {
     if (!open) return;
-    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
+    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") setOpenedOnPathname(null); };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [open]);
@@ -325,7 +324,7 @@ export default function AdminHelpPanel() {
     <>
       {/* Trigger button */}
       <button
-        onClick={() => setOpen(!open)}
+        onClick={() => setOpenedOnPathname(open ? null : pathname)}
         className={`fixed bottom-4 right-4 z-40 w-10 h-10 rounded-full shadow-lg flex items-center justify-center text-lg font-bold transition-all ${
           open
             ? "bg-slate-800 text-white rotate-45 scale-110"
@@ -342,7 +341,7 @@ export default function AdminHelpPanel() {
         <>
           <div
             className="fixed inset-0 z-30 bg-black/10 md:bg-transparent"
-            onClick={() => setOpen(false)}
+            onClick={() => setOpenedOnPathname(null)}
           />
           <div className="fixed bottom-16 right-4 z-40 w-80 max-h-[70vh] bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden flex flex-col animate-in fade-in slide-in-from-bottom-2 duration-200">
             {/* Header */}
@@ -383,7 +382,7 @@ export default function AdminHelpPanel() {
                   <button
                     onClick={() => {
                       localStorage.removeItem(walkthroughKey);
-                      setOpen(false);
+                      setOpenedOnPathname(null);
                       window.location.reload();
                     }}
                     className="text-[0.6rem] text-amber-600 hover:text-amber-700 font-semibold"

@@ -7,12 +7,9 @@ import SocialProofCounter from "@/components/SocialProofCounter";
 import { trackEvent, trackPageDuration } from "@/lib/tracking";
 import { getStoredUtm } from "@/components/UtmCapture";
 import { storeQualificationData } from "@/lib/qualification-store";
+import { formatCurrency } from "@/lib/utils";
 
 /* ── helpers ─────────────────────────────────────────── */
-
-function formatCurrency(n: number): string {
-  return new Intl.NumberFormat("en-AU", { style: "currency", currency: "AUD", maximumFractionDigits: 0 }).format(n);
-}
 
 function formatCurrencyExact(n: number): string {
   return new Intl.NumberFormat("en-AU", { style: "currency", currency: "AUD", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
@@ -146,7 +143,7 @@ export default function MortgageCalculatorClient() {
       <div className="bg-gradient-to-br from-rose-600 via-rose-700 to-rose-800 text-white py-8 md:py-14 px-4">
         <div className="container-custom max-w-3xl text-center">
           <h1 className="text-xl md:text-3xl font-extrabold mb-2">How much will your mortgage really cost?</h1>
-          <p className="text-sm md:text-base text-rose-100">Enter your loan details — we'll show you monthly repayments, total interest, and how rate changes affect the cost.</p>
+          <p className="text-sm md:text-base text-rose-100">Enter your loan details — we&apos;ll show you monthly repayments, total interest, and how rate changes affect the cost.</p>
           <div className="mt-3"><SocialProofCounter variant="badge" /></div>
         </div>
       </div>

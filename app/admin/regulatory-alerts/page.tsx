@@ -8,6 +8,7 @@ import { downloadCSV } from "@/lib/csv-export";
 import TableSkeleton from "@/components/TableSkeleton";
 import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
 import type { RegulatoryAlert } from "@/lib/types";
+import { slugify } from "@/lib/utils";
 
 interface FormData {
   title: string;
@@ -37,15 +38,7 @@ const emptyForm: FormData = {
   status: "draft",
 };
 
-function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-}
-
 export default function RegulatoryAlertsPage() {
-  const supabase = createClient();
   const [items, setItems] = useState<RegulatoryAlert[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -65,13 +58,17 @@ export default function RegulatoryAlertsPage() {
 
   const load = useCallback(async () => {
     setLoading(true);
-    const { data } = await supabase
-      .from("regulatory_alerts")
-      .select("*")
-      .order("created_at", { ascending: false });
-    if (data) setItems(data as RegulatoryAlert[]);
-    setLoading(false);
-  }, [supabase]);
+    try {
+      const supabase = createClient();
+      const { data } = await supabase
+        .from("regulatory_alerts")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (data) setItems(data as RegulatoryAlert[]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     load();
@@ -118,6 +115,7 @@ export default function RegulatoryAlertsPage() {
       return;
     }
 
+    const supabase = createClient();
     let actionItemsJson;
     try {
       actionItemsJson = JSON.parse(form.action_items);
@@ -166,6 +164,7 @@ export default function RegulatoryAlertsPage() {
 
   const deleteItem = async () => {
     if (!deleteTarget) return;
+    const supabase = createClient();
     const { error } = await supabase
       .from("regulatory_alerts")
       .delete()

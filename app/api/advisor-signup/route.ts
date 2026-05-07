@@ -1,26 +1,42 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isRateLimited } from "@/lib/rate-limit";
 import { isValidEmail } from "@/lib/validate-email";
 import { logger } from "@/lib/logger";
+import { withValidatedBody } from "@/lib/validation/withValidatedBody";
+import { slugify } from "@/lib/utils";
 
 const log = logger("advisor-signup");
 
-function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
+const AdvisorSignupBody = z.object({
+  name: z.string().optional(),
+  email: z.string().optional(),
+  phone: z.string().optional(),
+  firm_name: z.string().optional(),
+  type: z.string().optional(),
+  afsl_number: z.string().optional(),
+  abn: z.string().optional(),
+  registration_number: z.string().optional(),
+  specialties: z.unknown().optional(),
+  location_state: z.string().optional(),
+  location_suburb: z.string().optional(),
+  bio: z.string().optional(),
+  fee_structure: z.string().optional(),
+  fee_description: z.string().optional(),
+  pitch_message: z.string().optional(),
+  years_experience: z.unknown().optional(),
+  client_types: z.string().optional(),
+  languages: z.string().optional(),
+});
 
-export async function POST(request: NextRequest) {
+export const POST = withValidatedBody(AdvisorSignupBody, async (request, body) => {
   try {
     const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
     if (await isRateLimited(`advisor_signup:${ip}`, 3, 60)) {
       return NextResponse.json({ error: "Too many signup attempts. Please try again later." }, { status: 429 });
     }
 
-    const body = await request.json();
     const {
       name,
       email,
@@ -223,4 +239,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
-}
+});

@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useEffect, useState, use } from "react";
+import React, { useEffect, useState, use, useCallback } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
 import AdminShell from "@/components/AdminShell";
 import ConfirmDialog from "@/components/ConfirmDialog";
+import { slugify } from "@/lib/utils";
 
 interface CourseData {
   id: number;
@@ -71,37 +72,38 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
     content: "",
   });
 
-  useEffect(() => {
-    fetchData();
+  const fetchData = useCallback(async () => {
+    setLoading(true);
+    try {
+      const supabase = createClient();
+
+      const { data: courseData } = await supabase
+        .from("courses")
+        .select("*")
+        .eq("slug", slug)
+        .single();
+
+      if (courseData) {
+        setCourse(courseData as CourseData);
+        setCourseForm(courseData as CourseData);
+      }
+
+      const { data: lessonData } = await supabase
+        .from("course_lessons")
+        .select("*")
+        .eq("course_slug", slug)
+        .order("module_index")
+        .order("lesson_index");
+
+      setLessons((lessonData as LessonRow[]) || []);
+    } finally {
+      setLoading(false);
+    }
   }, [slug]);
 
-  const fetchData = async () => {
-    const supabase = createClient();
-
-    const { data: courseData } = await supabase
-      .from("courses")
-      .select("*")
-      .eq("slug", slug)
-      .single();
-
-    if (courseData) {
-      setCourse(courseData as CourseData);
-      setCourseForm(courseData as CourseData);
-    }
-
-    const { data: lessonData } = await supabase
-      .from("course_lessons")
-      .select("*")
-      .eq("course_slug", slug)
-      .order("module_index")
-      .order("lesson_index");
-
-    setLessons((lessonData as LessonRow[]) || []);
-    setLoading(false);
-  };
-
-  const autoSlug = (title: string) =>
-    title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const handleSaveCourse = async () => {
     if (!course) return;
@@ -151,7 +153,7 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
     const { error } = await supabase.from("course_lessons").insert({
       course_slug: slug,
       title: lessonForm.title,
-      slug: lessonForm.slug || autoSlug(lessonForm.title),
+      slug: lessonForm.slug || slugify(lessonForm.title),
       module_index: parseInt(lessonForm.module_index),
       module_title: lessonForm.module_title,
       lesson_index: parseInt(lessonForm.lesson_index),
@@ -461,7 +463,7 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
               <input
                 type="text"
                 value={lessonForm.title}
-                onChange={(e) => setLessonForm({ ...lessonForm, title: e.target.value, slug: autoSlug(e.target.value) })}
+                onChange={(e) => setLessonForm({ ...lessonForm, title: e.target.value, slug: slugify(e.target.value) })}
                 className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"
                 required
               />
