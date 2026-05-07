@@ -40,7 +40,7 @@ const PATHWAYS = [
   },
   {
     title: "Existing SIV Holders (188C)",
-    blurb: "If you hold a 188C visa granted before 31 July 2024, your complying investment obligations continue unchanged. The transition to permanent 888C remains.",
+    blurb: "If you hold a 188C visa granted before 31 July 2024, your complying investment obligations continue unchanged. The transition to permanent 888C remains.", // dated-ok — SIV closure is a fixed historical date
     href: "/foreign-investment/siv",
     cta: "SIV transition →",
   },
@@ -85,6 +85,7 @@ export default function VisaInvestmentPage() {
           <div className="container-custom max-w-5xl flex items-start gap-3">
             <Icon name="alert-triangle" size={20} className="text-amber-700 mt-0.5 shrink-0" />
             <p className="text-sm text-amber-900 leading-relaxed">
+              {/* // dated-ok — SIV closure is a fixed historical date, will not change */}
               <strong>SIV / BIIP closed.</strong> The Significant Investor Visa and Business Innovation and Investment Program permanently closed to new applications on 31 July 2024. The pathways below reflect the current {CURRENT_YEAR} landscape.
             </p>
           </div>
