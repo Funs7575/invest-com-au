@@ -21,7 +21,7 @@
  * per-handler cron entries, copy the arrays below back into vercel.json.
  */
 export const CRON_GROUPS: Record<string, readonly string[]> = {
-  "hourly-0": ["/api/cron/auto-resolve-disputes", "/api/cron/cron-health-alert"],
+  "hourly-0": ["/api/cron/auto-resolve-disputes", "/api/cron/cron-health-alert", "/api/cron/hub-silence-check"],
   "hourly-5": ["/api/cron/broker-snapshot"],
   "hourly-15": ["/api/cron/automation-verdict-rollup", "/api/cron/quote-expiry-reminders"],
   "hourly-20": ["/api/cron/cron-freshness"],
@@ -31,6 +31,7 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
     "/api/cron/job-queue-worker",
     "/api/cron/synthetic-checks",
     "/api/cron/confirm-lead-notify",
+    "/api/cron/lead-sla-check",
   ],
   "every-30m": ["/api/cron/heartbeat", "/api/cron/retry-webhooks"],
   "every-6h": ["/api/admin/run-migration"],

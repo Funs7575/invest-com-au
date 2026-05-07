@@ -22,7 +22,6 @@ export async function GET(request: NextRequest) {
   const supabase = await createClient();
   const now = new Date();
   const thirtyDaysAgo = new Date(now.getTime() - 30 * 86400000).toISOString();
-  const eightWeeksAgo = new Date(now.getTime() - 56 * 86400000).toISOString();
 
   const [
     { data: advisor },
@@ -44,7 +43,7 @@ export async function GET(request: NextRequest) {
     supabase
       .from("professional_leads")
       .select(
-        "id, user_name, user_email, user_phone, message, source_page, status, quality_score, quality_signals, qualification_data, lead_tier, advisor_notes, contacted_at, converted_at, created_at"
+        "id, user_name, user_email, user_phone, message, source_page, status, quality_score, quality_signals, qualification_data, lead_tier, advisor_notes, contacted_at, converted_at, created_at, responded_at, response_time_minutes"
       )
       .eq("professional_id", advisorId)
       .order("created_at", { ascending: false })
@@ -133,6 +132,56 @@ export async function GET(request: NextRequest) {
   }).length;
   const coldLeadsCount = allLeads.filter((l) => (l.quality_score ?? 0) < 40).length;
 
+  // --- Avg response time ---
+  const respondedLeads = allLeads.filter(
+    (l) => (l as { response_time_minutes?: number | null }).response_time_minutes != null
+  );
+  const avgResponseTimeMinutes =
+    respondedLeads.length > 0
+      ? Math.round(
+          respondedLeads.reduce(
+            (s, l) => s + ((l as { response_time_minutes?: number | null }).response_time_minutes ?? 0),
+            0
+          ) / respondedLeads.length
+        )
+      : null;
+
+  // --- Accept rate (contacted or converted / total) ---
+  const acceptedLeads = allLeads.filter(
+    (l) => l.status === "contacted" || l.status === "converted"
+  ).length;
+  const acceptRate =
+    totalLeads > 0
+      ? parseFloat(((acceptedLeads / totalLeads) * 100).toFixed(1))
+      : 0;
+
+  // --- Source breakdown ---
+  const sourceMap: Record<string, { count: number; converted: number }> = {};
+  for (const lead of allLeads) {
+    const src = (lead.source_page as string | null) ?? "unknown";
+    sourceMap[src] ??= { count: 0, converted: 0 };
+    sourceMap[src].count++;
+    if (lead.status === "converted") sourceMap[src].converted++;
+  }
+  const sourceBreakdown = Object.entries(sourceMap)
+    .sort((a, b) => b[1].count - a[1].count)
+    .map(([source, { count, converted }]) => ({ source, count, converted }));
+
+  // --- Period-comparison lead counts ---
+  const sevenDaysAgo = new Date(now.getTime() - 7 * 86400000);
+  const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const leads7d = allLeads.filter(
+    (l) => new Date(l.created_at) >= sevenDaysAgo
+  ).length;
+  const leadsThisMonth = allLeads.filter(
+    (l) => new Date(l.created_at) >= thisMonthStart
+  ).length;
+  const leadsLastMonth = allLeads.filter((l) => {
+    const d = new Date(l.created_at);
+    return d >= lastMonthStart && d < thisMonthStart;
+  }).length;
+
   // --- Weekly enquiries (last 8 weeks) ---
   const weeklyEnquiries: { weekLabel: string; count: number }[] = [];
   for (let w = 7; w >= 0; w--) {
@@ -198,6 +247,13 @@ export async function GET(request: NextRequest) {
       hotLeadsCount,
       warmLeadsCount,
       coldLeadsCount,
+      avgResponseTimeMinutes,
+      acceptedLeads,
+      acceptRate,
+      leads7d,
+      leadsThisMonth,
+      leadsLastMonth,
+      sourceBreakdown,
     },
     viewsByDay: views || [],
     billing: billing || [],

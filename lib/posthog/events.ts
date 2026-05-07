@@ -4,6 +4,8 @@ export type EventName =
   | 'advisor_viewed'
   | 'advisor_contacted'
   | 'lead_submitted'
+  | 'advisor_response'
+  | 'lead_outcome'
 
 export interface EventProps {
   quiz_started: {
@@ -33,10 +35,23 @@ export interface EventProps {
   }
   lead_submitted: {
     lead_source: string
+    source_page: string | null
     advisor_match_count: number
     quiz_completed: boolean
     utm_source: string | null
     utm_campaign: string | null
+  }
+  advisor_response: {
+    lead_id: number
+    advisor_id: number
+    response_time_minutes: number
+    lead_source: string | null
+  }
+  lead_outcome: {
+    lead_id: number
+    advisor_id: number
+    outcome: 'converted' | 'lost' | 'no_response'
+    lead_source: string | null
   }
 }
 
