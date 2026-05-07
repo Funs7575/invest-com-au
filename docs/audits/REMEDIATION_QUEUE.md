@@ -48,7 +48,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 MERGED 2026-04-28T11:45Z | merged | V-NEW-06 done (commit `a7bd736`) |
 | V (V-NEW-07) | `claude/audit-remediation/v-new-07-admin-mfa-enforced` | #256 MERGED 2026-04-28T15:44Z | merged | V-NEW-07a done · V-NEW-07b done (`698bbae`) — **Tier D: needs `ADMIN_MFA_COOKIE_SECRET` ≥32 chars in Vercel before merge** (PR was merged; env var status unclear) |
 | W | `claude/audit-remediation/w-03-hub-service-grid` | #306/#312/#369/#529 all MERGED | last merged 2026-05-04 | W-01 done (PR #306). W-NEW-01 done (PR #312). W-02 done (PR #369). W-03 **done** (PR #529 MERGED 2026-05-04). W-04..W-15 pending. |
-| X | all PRs MERGED | #257/#367 both MERGED | last merged 2026-05-01T22:01Z | X-01 done (PR #257). X-02 MERGED (#367 — /best-for pages admin→anon swap). X-03..X-09 pending. |
+| X | `claude/audit-remediation/x-03-research-swap` (#596) | #257/#367 both MERGED · **#596 OPEN** | iter 285 — `d890ec8` (X-03: /research pages admin→anon swap; CI in progress). | X-01 done (PR #257). X-02 MERGED (#367 — /best-for pages admin→anon swap). **X-03 in-flight (#596 OPEN — CI pending)**. X-04..X-09 pending. |
 | Y | all PRs MERGED | #253/#347 both MERGED | last merged 2026-05-01T22:00Z | Y-05 done (PR #253). Y-08 done (PR #253). Y-05-ENRICH MERGED (#347 — sourcedAt/source/freshness enrichment + 16 new tests). Y-01..Y-04, Y-06, Y-07 pending. |
 | BB | all PRs MERGED | #361/#368 both MERGED | last merged 2026-05-01T22:01Z | BB-03 MERGED (#361 — CGT calc vs ATO, 5 regulator-reference tests). BB-06 MERGED (#368 — mortgage stress vs ASIC+APRA, 8 cases). Other BB items pending. |
 | **AUDIT-SWEEP** | `claude/audit-remediation/audit-sweep-01-02` | #518 **MERGED 2026-05-04** | last merged 2026-05-04 | AUDIT-SWEEP-01 done. AUDIT-SWEEP-02 done. Stream complete. |
@@ -1951,6 +1951,21 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-07 — Forward progress iter 285 (stream X — X-03: /research pages admin→anon swap)
+
+- Phase 0: batch mode (iter 2 of 5). Lock active. No LOOP_PAUSE.
+- Phase 1: main synced (fa8698e). Phase 1.5 skipped. Phase 1.7: no CI failures on main.
+- Phase 2: PR #596 just created — CI in progress, no failures. PRs #593/#594/#595 open, no red CI.
+- Phase 3: X stream (slot 28). Branch `x-03-research-swap` created fresh from main.
+- Phase 4: Verified `sector_reports` has anon SELECT policy ("anon read published sector_reports") in both `20260429_o_iter7_rls_editorial_obs_secrets.sql` and `20260510_rls_hardening.sql`. Safe to swap.
+- Phase 5: `app/research/page.tsx` + `app/research/[slug]/page.tsx` — `createAdminClient()` → `await createClient()` (3 call sites across 2 files). 10 LOC changed.
+- Phase 6: Commit `d890ec8` on `claude/audit-remediation/x-03-research-swap`, pushed, PR #596 opened. CI in progress (Lint/Type-check/Test/Build + Supabase types drift + smoke test all running). Subscribed to PR activity.
+- Phase 7: Queue updated on main. Next item: W-04 (HubArticleStrip extraction, slot 27) or X-04..X-09 (remaining admin swap pages).
+
+- STATUS: PROGRESS · stream=X · item=X-03 · pr=#596
+
+---
 
 ### 2026-05-07 — Queue grooming iter 284 (multi-stream merge confirmation)
 
