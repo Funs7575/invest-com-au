@@ -3,15 +3,13 @@ import { NextRequest } from "next/server";
 
 // ── Mocks ──────────────────────────────────────────────────────────────────────
 
-const { mockAdminFrom, mockRequireAdmin } = vi.hoisted(() => ({
-  mockAdminFrom: vi.fn(),
-  mockRequireAdmin: vi.fn(),
-}));
+const mockAdminFrom = vi.fn();
 
 vi.mock("@/lib/supabase/admin", () => ({
   createAdminClient: vi.fn(() => ({ from: mockAdminFrom })),
 }));
 
+const mockRequireAdmin = vi.fn();
 vi.mock("@/lib/require-admin", () => ({
   requireAdmin: mockRequireAdmin,
 }));
