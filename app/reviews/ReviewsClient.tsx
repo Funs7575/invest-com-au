@@ -361,6 +361,7 @@ function getPlatformLabel(type: PlatformType): string {
     cfd_forex: "CFD & Forex",
     savings_account: "Savings Account",
     term_deposit: "Term Deposit",
+    fx_provider: "FX Provider",
   };
   return labels[type] || type;
 }
@@ -376,6 +377,7 @@ function getPlatformColor(type: PlatformType): string {
     cfd_forex: "bg-rose-50 text-rose-700",
     savings_account: "bg-teal-50 text-teal-700",
     term_deposit: "bg-amber-50 text-amber-700",
+    fx_provider: "bg-sky-50 text-sky-700",
   };
   return colors[type] || "bg-slate-50 text-slate-700";
 }
