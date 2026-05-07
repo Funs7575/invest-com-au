@@ -20,53 +20,53 @@ const propertyDropdown = [
   { label: "Find an Advisor", href: "/find-advisor", desc: "Match with a verified professional" },
 ];
 
+// IA refactor 2026-05-07: top-level "Invest" mega-menu rebuilt around
+// the Browse-Opportunities axis. Demoted slugs (super/smsf/forex/
+// options/managed-funds/dividend-investing/reits/bonds/hybrid-
+// securities/crypto-staking/ipos/ipo-calendar/commodities) are removed
+// — Compare-tagged ones 301 to canonical via next.config.ts; Guide-
+// tagged ones stay live but are reachable only via search/direct
+// links. Asset-class education is reachable via the "Asset class
+// guides" pointer at the bottom and via /share-trading + /super.
 const investMegaMenu = [
   {
-    title: "Sectors & Assets",
+    title: "Browse Opportunities",
     items: [
+      { label: "All Opportunities", href: "/invest", desc: "Australian investment marketplace" },
       { label: "Investment Funds", href: "/invest/funds", desc: "Managed, syndicated, infrastructure, wholesale" },
       { label: "Mining & Resources", href: "/invest/mining", desc: "Iron ore, copper & critical minerals" },
+      { label: "Buy a Business", href: "/invest/buy-business", desc: "SME acquisitions" },
+      { label: "Franchises", href: "/invest/franchise", desc: "Food, fitness, automotive franchises" },
+      { label: "Farmland & Agriculture", href: "/invest/farmland", desc: "Livestock, cropping, water" },
+      { label: "Commercial Property", href: "/invest/commercial-property", desc: "Office, industrial, hotels" },
+      { label: "Renewable Energy", href: "/invest/renewable-energy", desc: "Solar, wind & battery" },
+      { label: "Startups & Tech", href: "/invest/startups", desc: "VC, angel, crowdfunding" },
+    ],
+  },
+  {
+    title: "Income, Credit & Alternatives",
+    items: [
+      { label: "Private Credit & P2P", href: "/invest/private-credit", desc: "La Trobe, Qualitas, Metrics" },
+      { label: "Private Equity", href: "/invest/private-equity", desc: "Listed PE structures, wholesale s708" },
+      { label: "Pre-IPO (Wholesale)", href: "/invest/pre-ipo", desc: "Late-stage private placements" },
+      { label: "Infrastructure", href: "/invest/infrastructure", desc: "Toll roads, airports, utilities" },
+      { label: "Alternatives", href: "/invest/alternatives", desc: "Wine, art, cars, watches & more" },
+      { label: "Royalty Streams", href: "/invest/royalties", desc: "Mining, music, IP & oil-gas royalties" },
+      { label: "Income-Asset Businesses", href: "/invest/income-assets", desc: "Vending, ATMs, self-storage" },
+      { label: "Sell a Business", href: "/sell-business", desc: "Valuation, broker, CGT concessions" },
+    ],
+  },
+  {
+    title: "Sector hubs",
+    items: [
       { label: "Oil & Gas", href: "/invest/oil-gas", desc: "ASX majors, LNG, refineries" },
       { label: "Uranium", href: "/invest/uranium", desc: "Paladin, Boss Energy, ATOM ETF" },
       { label: "Lithium", href: "/invest/lithium", desc: "Pilbara producers & processing" },
       { label: "Hydrogen", href: "/invest/hydrogen", desc: "Green H2, fuel cells & HGEN ETF" },
       { label: "Gold & Precious Metals", href: "/invest/gold", desc: "Perth Mint, ETFs, ASX miners" },
-      { label: "Renewable Energy", href: "/invest/renewable-energy", desc: "Solar, wind & battery" },
-      { label: "Buy a Business", href: "/invest/buy-business", desc: "SME acquisitions" },
-      { label: "Farmland & Agriculture", href: "/invest/farmland", desc: "Livestock, cropping, water" },
-      { label: "Commercial Property", href: "/invest/commercial-property", desc: "Office, industrial, hotels" },
-      { label: "Startups & Tech", href: "/invest/startups", desc: "VC, angel, crowdfunding" },
-      { label: "Infrastructure", href: "/invest/infrastructure", desc: "Toll roads, airports, utilities" },
-      { label: "ASX IPO Calendar", href: "/invest/ipo-calendar", desc: "Upcoming IPOs & recent listings" },
-      { label: "Pre-IPO (Wholesale)", href: "/invest/pre-ipo", desc: "Late-stage private placements" },
-    ],
-  },
-  {
-    title: "Markets & Trading",
-    items: [
-      { label: "Shares & ETFs", href: "/compare", desc: "Compare ASX trading platforms" },
-      { label: "Managed & Index Funds", href: "/invest/managed-funds", desc: "Vanguard, Betashares, iShares" },
-      { label: "Dividend Investing", href: "/invest/dividend-investing", desc: "Franking credits & high-yield ASX" },
-      { label: "A-REITs", href: "/invest/reits", desc: "ASX-listed property trusts" },
-      { label: "Options & Derivatives", href: "/invest/options-trading", desc: "ETOs, CFDs, warrants & futures" },
-      { label: "Forex Trading", href: "/invest/forex", desc: "AUD/USD, ASIC-regulated brokers" },
-      { label: "Commodities", href: "/invest/commodities", desc: "Gold, silver, oil & resource ETFs" },
-    ],
-  },
-  {
-    title: "Income & Alternatives",
-    items: [
-      { label: "Private Credit & P2P", href: "/invest/private-credit", desc: "La Trobe, Qualitas, Metrics" },
-      { label: "Bonds & Fixed Income", href: "/invest/bonds", desc: "Government & corporate bonds" },
-      { label: "Hybrid Securities", href: "/invest/hybrid-securities", desc: "Bank hybrids & APRA phase-out" },
-      { label: "Alternatives", href: "/invest/alternatives", desc: "Wine, art, cars, watches & more" },
-      { label: "Crypto Staking & DeFi", href: "/invest/crypto-staking", desc: "Staking, DeFi & crypto ETFs" },
-      { label: "SMSF Investment Guide", href: "/invest/smsf", desc: "What SMSFs invest in & how" },
-      { label: "Super & SMSF", href: "/compare/super", desc: "Super fund comparisons" },
-      { label: "Dividend Hub", href: "/dividends", desc: "Franking credits, ASX yield & ETFs" },
-      { label: "Sell a Business", href: "/sell-business", desc: "Valuation, broker, CGT concessions" },
-      { label: "Royalty Streams", href: "/invest/royalties", desc: "Mining, music, IP & oil-gas royalties" },
-      { label: "Income-Asset Businesses", href: "/invest/income-assets", desc: "Vending, ATMs, self-storage, car washes" },
+      { label: "Compare share-trading platforms →", href: "/share-trading", desc: "ETFs, options, dividends — via brokers" },
+      { label: "Compare super funds →", href: "/super", desc: "Super, SMSF platforms" },
+      { label: "Compare CFD & forex →", href: "/cfd", desc: "Leveraged platforms (ASIC-regulated)" },
     ],
   },
 ];
@@ -94,7 +94,7 @@ const advisorsMegaMenu: { title: string; items: { label: string; href: string; d
   {
     title: "Financial",
     items: [
-      { label: "Get a Quote (Live Marketplace)", href: "/quotes", desc: "Post a job, advisors compete to quote" },
+      { label: "Post a Request", href: "/quotes/post", desc: "Verified advisors compete to quote you" },
       { label: "Financial Planners", href: "/advisors/financial-planners", desc: "Wealth strategy & retirement" },
       { label: "SMSF Accountants", href: "/advisors/smsf-accountants", desc: "Self-managed super specialists" },
       { label: "Wealth Managers", href: "/advisors/wealth-managers", desc: "Portfolio management for HNW" },
@@ -188,35 +188,34 @@ const popularLinks = [
 
 const mobileNavSections = [
   {
-    title: "Invest by Sector",
+    title: "Browse Opportunities",
     items: [
-      { name: "All Investment Verticals", href: "/invest" },
+      { name: "All Opportunities", href: "/invest" },
       { name: "Investment Funds", href: "/invest/funds" },
-      { name: "SMSF Hub", href: "/smsf" },
-      { name: "Research Reports", href: "/research" },
       { name: "Mining & Resources", href: "/invest/mining" },
-      { name: "Oil & Gas", href: "/invest/oil-gas" },
-      { name: "Uranium", href: "/invest/uranium" },
-      { name: "Lithium", href: "/invest/lithium" },
-      { name: "Hydrogen", href: "/invest/hydrogen" },
-      { name: "Gold & Precious Metals", href: "/invest/gold" },
       { name: "Buy a Business", href: "/invest/buy-business" },
+      { name: "Franchises", href: "/invest/franchise" },
       { name: "Farmland & Agriculture", href: "/invest/farmland" },
       { name: "Commercial Property", href: "/invest/commercial-property" },
       { name: "Renewable Energy", href: "/invest/renewable-energy" },
       { name: "Startups & Tech", href: "/invest/startups" },
       { name: "Private Credit & P2P", href: "/invest/private-credit" },
-      { name: "A-REITs", href: "/invest/reits" },
-      { name: "Managed & Index Funds", href: "/invest/managed-funds" },
-      { name: "Dividend Investing", href: "/invest/dividend-investing" },
-      { name: "Options & Derivatives", href: "/invest/options-trading" },
-      { name: "Forex Trading", href: "/invest/forex" },
-      { name: "Commodities", href: "/invest/commodities" },
-      { name: "Alternatives", href: "/invest/alternatives" },
+      { name: "Private Equity", href: "/invest/private-equity" },
+      { name: "Pre-IPO (Wholesale)", href: "/invest/pre-ipo" },
       { name: "Infrastructure", href: "/invest/infrastructure" },
-      { name: "Hybrid Securities", href: "/invest/hybrid-securities" },
-      { name: "Crypto Staking & DeFi", href: "/invest/crypto-staking" },
-      { name: "SMSF Investment Guide", href: "/invest/smsf" },
+      { name: "Alternatives", href: "/invest/alternatives" },
+      { name: "Royalty Streams", href: "/invest/royalties" },
+      { name: "Income-Asset Businesses", href: "/invest/income-assets" },
+    ],
+  },
+  {
+    title: "Sector hubs (Education)",
+    items: [
+      { name: "Oil & Gas", href: "/invest/oil-gas" },
+      { name: "Uranium", href: "/invest/uranium" },
+      { name: "Lithium", href: "/invest/lithium" },
+      { name: "Hydrogen", href: "/invest/hydrogen" },
+      { name: "Gold & Precious Metals", href: "/invest/gold" },
     ],
   },
   {
@@ -287,10 +286,15 @@ const mobileNavSections = [
   {
     title: "Compare Platforms",
     items: [
-      { name: "Compare", href: "/compare" },
+      { name: "Compare All", href: "/compare" },
+      { name: "Share Trading", href: "/share-trading" },
+      { name: "Super Funds", href: "/super" },
+      { name: "Crypto", href: "/crypto" },
+      { name: "Savings", href: "/savings" },
+      { name: "CFD & Forex", href: "/cfd" },
+      { name: "ETF Hub", href: "/etfs" },
       { name: "Best Platforms", href: "/best" },
       { name: "Best Broker For…", href: "/best-for" },
-      { name: "ETF Hub", href: "/etfs" },
       { name: "Fee Tracker", href: "/fee-tracker" },
       { name: "Deals & Offers", href: "/deals" },
       { name: "Broker vs Broker", href: "/versus" },
@@ -348,7 +352,7 @@ function InvestMegaDropdown({ isActive }: { isActive: boolean }) {
           isActive ? "text-slate-900 bg-slate-50" : ""
         }`}
       >
-        Invest
+        Opportunities
         <Icon name="chevron-down" size={14} className={`text-slate-400 transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
       {open && (
@@ -376,22 +380,25 @@ function InvestMegaDropdown({ isActive }: { isActive: boolean }) {
               <div>
                 <p className="text-[0.65rem] font-extrabold uppercase tracking-wider text-amber-500 mb-2">Quick Links</p>
                 <Link href="/invest" onClick={() => setOpen(false)} className="block text-sm font-bold text-slate-900 hover:text-amber-600 py-1 transition-colors">
-                  All Verticals
+                  All Opportunities
                 </Link>
-                <Link href="/invest" onClick={() => setOpen(false)} className="block text-sm font-bold text-slate-900 hover:text-amber-600 py-1 transition-colors">
-                  Marketplace
+                <Link href="/invest/funds" onClick={() => setOpen(false)} className="block text-sm font-bold text-slate-900 hover:text-amber-600 py-1 transition-colors">
+                  Fund Opportunities
                 </Link>
                 <Link href="/invest/gold" onClick={() => setOpen(false)} className="block text-sm font-bold text-slate-900 hover:text-amber-600 py-1 transition-colors">
                   Gold
                 </Link>
-                <Link href="/invest/ipos" onClick={() => setOpen(false)} className="block text-sm font-bold text-slate-900 hover:text-amber-600 py-1 transition-colors">
-                  IPOs
-                </Link>
                 <Link href="/invest/private-equity" onClick={() => setOpen(false)} className="block text-sm font-bold text-slate-900 hover:text-amber-600 py-1 transition-colors">
                   Private Equity
                 </Link>
+                <Link href="/invest/pre-ipo" onClick={() => setOpen(false)} className="block text-sm font-bold text-slate-900 hover:text-amber-600 py-1 transition-colors">
+                  Pre-IPO
+                </Link>
                 <Link href="/invest/list" onClick={() => setOpen(false)} className="block text-sm font-bold text-slate-900 hover:text-amber-600 py-1 transition-colors">
                   List a Listing
+                </Link>
+                <Link href="/advertise" onClick={() => setOpen(false)} className="block text-sm font-bold text-slate-900 hover:text-amber-600 py-1 transition-colors">
+                  Become a Sponsor
                 </Link>
               </div>
               <Link
@@ -436,7 +443,7 @@ function AdvisorsMegaDropdown({ isActive }: { isActive: boolean }) {
         aria-haspopup="true"
         aria-expanded={open}
       >
-        Advisors
+        Find Experts
         <Icon name="chevron-down" size={14} className={`text-slate-400 transition-transform ${open ? "rotate-180" : ""}`} aria-hidden="true" />
       </button>
       {open && (
@@ -705,7 +712,7 @@ export default function Header() {
               href="/quiz"
               className="bg-amber-500 hover:bg-amber-600 text-white px-5 py-2.5 rounded-lg font-bold transition-all shadow-sm hover:shadow-md flex items-center gap-2 text-sm"
             >
-              Get matched
+              Get Matched
               <Icon name="arrow-right" size={16} />
             </Link>
           </div>
@@ -765,7 +772,7 @@ export default function Header() {
                 onClick={() => setMenuOpen(false)}
                 className="block w-full py-3 min-h-11 text-center text-sm font-extrabold text-white bg-amber-500 rounded-xl hover:bg-amber-600 transition-colors"
               >
-                Get matched
+                Get Matched
               </Link>
               <div className="flex gap-2">
                 <Link

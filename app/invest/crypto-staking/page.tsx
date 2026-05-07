@@ -473,8 +473,8 @@ export default async function CryptoStakingPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
               { title: "Options & Derivatives", href: "/invest/options-trading", desc: "ASX-listed options, CFDs, warrants and futures for Australian traders." },
-              { title: "Forex Trading", href: "/invest/forex", desc: "AUD/USD pairs, ASIC-regulated brokers, spreads and leverage limits." },
-              { title: "Managed Funds & Index Funds", href: "/invest/managed-funds", desc: "Compare passive index funds and actively managed strategies in Australia." },
+              { title: "Forex Trading", href: "/cfd", desc: "AUD/USD pairs, ASIC-regulated CFD-forex brokers, spreads and leverage limits." },
+              { title: "Managed Funds & Index Funds", href: "/invest/funds", desc: "Browse the fund directory — passive index and actively managed strategies." },
               { title: "Alternative Investments", href: "/invest/alternatives", desc: "Wine, art, classic cars, watches and collectibles as investment assets." },
             ].map((guide) => (
               <Link key={guide.href} href={guide.href} className="group bg-white border border-slate-200 rounded-xl p-5 hover:border-amber-200 hover:shadow-md transition-all">

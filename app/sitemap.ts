@@ -4,7 +4,10 @@ import { getAllCategorySlugs } from "@/lib/best-broker-categories";
 import { getAllCostScenarioSlugs } from "@/lib/cost-scenarios";
 import { getAllCitySlugs } from "@/lib/cities";
 import { getAllGuideSlugs } from "@/lib/how-to-guides";
-import { getAllInvestCategorySlugs, getAllSubcategorySlugs } from "@/lib/invest-categories";
+import {
+  getOpportunityCategories,
+  getAllSubcategorySlugs,
+} from "@/lib/invest-categories";
 import { listingUrl } from "@/lib/listing-url";
 import type { InvestListingVertical, PlatformType } from "@/lib/types";
 import { generateVersusPairs } from "@/lib/versus-pairs";
@@ -25,16 +28,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages = [
     "", "/compare", "/versus", "/reviews", "/calculators",
     "/term-deposits", "/robo-advisors", "/property-platforms", "/research-tools",
-    "/invest",
-    "/invest/mining", "/invest/buy-business", "/invest/farmland",
-    "/invest/commercial-property", "/invest/renewable-energy", "/invest/startups",
-    "/invest/private-credit", "/invest/reits", "/invest/managed-funds",
-    "/invest/dividend-investing", "/invest/options-trading", "/invest/forex",
-    "/invest/commodities", "/invest/alternatives", "/invest/infrastructure",
-    "/invest/hybrid-securities", "/invest/crypto-staking", "/invest/smsf",
-    "/invest/private-equity", "/invest/bonds", "/invest/gold", "/invest/ipos",
-    "/invest/oil-gas", "/invest/lithium", "/invest/uranium", "/invest/hydrogen",
-    "/invest/royalties", "/invest/income-assets", "/invest/ipo-calendar", "/invest/pre-ipo",
+    "/invest", "/invest/funds",
+    // Browse-Opportunities (intent: opportunity) — IA refactor 2026-05-07.
+    // The 4 Compare-tagged slugs (forex, managed-funds, dividend-investing,
+    // ipos) are 301-redirected via next.config.ts and intentionally absent
+    // from the sitemap. The 13 Guide-tagged slugs (sector hubs +
+    // smsf/options-trading/reits/bonds/hybrid-securities/crypto-staking/
+    // ipo-calendar/commodities) stay live but are surfaced lower-priority.
+    "/invest/mining", "/invest/buy-business", "/invest/franchise",
+    "/invest/farmland", "/invest/commercial-property", "/invest/renewable-energy",
+    "/invest/startups", "/invest/private-credit", "/invest/alternatives",
+    "/invest/infrastructure", "/invest/private-equity", "/invest/pre-ipo",
+    "/invest/royalties", "/invest/income-assets",
+    // Sector hubs (intent: guide)
+    "/invest/oil-gas", "/invest/lithium", "/invest/uranium", "/invest/hydrogen", "/invest/gold",
+    // Asset-class education (intent: guide) — kept for SEO continuity
+    "/invest/smsf", "/invest/options-trading", "/invest/reits",
+    "/invest/bonds", "/invest/hybrid-securities", "/invest/crypto-staking",
+    "/invest/ipo-calendar", "/invest/commodities",
     "/smsf", "/smsf/auditors",
     "/research",
     "/foreign-investment/siv",
@@ -678,7 +689,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   // Category listing pages: /invest/{category}/listings
-  const investCategoryPages = getAllInvestCategorySlugs().map((slug) => ({
+  // Only emit /invest/<slug>/listings URLs for opportunity-tagged categories.
+  // The 12 demoted categories (4 Compare-redirected + 8 Guide) don't have
+  // /listings subdirectories and would emit dead URLs.
+  const investCategoryPages = getOpportunityCategories().map((c) => c.slug).map((slug) => ({
     url: `${baseUrl}/invest/${slug}/listings`,
     lastModified: new Date(),
     changeFrequency: "weekly" as const,
