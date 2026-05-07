@@ -1,0 +1,113 @@
+import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+import { requireAdmin } from "@/lib/require-admin";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { logger } from "@/lib/logger";
+
+const log = logger("admin-campaign-notify");
+
+const NotifyBody = z.object({
+  broker_slug: z.string().min(1),
+  type: z.string().min(1),
+  title: z.string().min(1),
+  message: z.string().min(1),
+  link: z.string().optional(),
+  send_email: z.boolean().optional().default(false),
+});
+
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+/**
+ * POST /api/admin/marketplace/campaign-notify
+ * Admin-session–gated endpoint for inserting broker notifications + optional email.
+ * Used by the admin campaigns page instead of direct browser-client DB writes,
+ * which fail against broker_notifications' deny-all RLS policy.
+ */
+export async function POST(req: NextRequest) {
+  const guard = await requireAdmin();
+  if (!guard.ok) return guard.response;
+
+  const parsed = NotifyBody.safeParse(await req.json());
+  if (!parsed.success) {
+    return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+  }
+
+  const { broker_slug, type, title, message, link, send_email } = parsed.data;
+  const supabaseAdmin = createAdminClient();
+
+  const { data: notification, error } = await supabaseAdmin
+    .from("broker_notifications")
+    .insert({
+      broker_slug,
+      type,
+      title,
+      message,
+      link: link ?? null,
+      is_read: false,
+      email_sent: false,
+    })
+    .select("id")
+    .single();
+
+  if (error) {
+    log.error("insert failed", { error: error.message });
+    return NextResponse.json({ error: "Failed to create notification" }, { status: 500 });
+  }
+
+  if (send_email && process.env.RESEND_API_KEY) {
+    const { data: account } = await supabaseAdmin
+      .from("broker_accounts")
+      .select("email, full_name, company_name")
+      .eq("broker_slug", broker_slug)
+      .eq("status", "active")
+      .maybeSingle();
+
+    if (account?.email) {
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://invest.com.au";
+      try {
+        await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            from: "Invest.com.au <partners@invest.com.au>",
+            to: [account.email],
+            subject: `[Partner Portal] ${String(title).slice(0, 100)}`,
+            html: `
+              <div style="font-family: 'Inter', system-ui, sans-serif; max-width: 560px; margin: 0 auto;">
+                <div style="background: #0f172a; padding: 16px 24px; border-radius: 12px 12px 0 0;">
+                  <span style="color: #f59e0b; font-weight: 800; font-size: 14px;">Invest.com.au</span>
+                  <span style="color: #94a3b8; font-size: 12px;"> · Partner Portal</span>
+                </div>
+                <div style="background: #fff; border: 1px solid #e2e8f0; border-top: none; padding: 24px; border-radius: 0 0 12px 12px;">
+                  <h2 style="margin: 0 0 8px; font-size: 18px; color: #0f172a;">${escapeHtml(String(title))}</h2>
+                  <p style="margin: 0 0 16px; font-size: 14px; color: #475569; line-height: 1.6;">${escapeHtml(String(message))}</p>
+                  ${link ? `<a href="${baseUrl}${link}" style="display: inline-block; padding: 10px 20px; background: #0f172a; color: #fff; text-decoration: none; border-radius: 8px; font-size: 13px; font-weight: 600;">View in Portal →</a>` : ""}
+                  <p style="margin: 24px 0 0; font-size: 12px; color: #94a3b8;">
+                    You received this because you have an active partner account on Invest.com.au.
+                  </p>
+                </div>
+              </div>
+            `,
+          }),
+        });
+        await supabaseAdmin
+          .from("broker_notifications")
+          .update({ email_sent: true })
+          .eq("id", notification.id);
+      } catch (err) {
+        log.error("email send failed", { err });
+      }
+    }
+  }
+
+  return NextResponse.json({ success: true, notification_id: notification.id });
+}
