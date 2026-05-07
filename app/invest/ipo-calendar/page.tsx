@@ -46,7 +46,7 @@ const ACCESS_ROUTES = [
     label: "General public offer",
     body:
       "Some IPOs include a general public offer accessible without a brokerage relationship — you complete the application form attached to the prospectus and pay by BPAY or cheque. Public offers are most common on smaller-cap (sub-$200M) ASX listings where the corporate advisor needs broad retail subscription to hit the minimum spread. ASIC requires every IPO to include a prospectus accessible via OnMarket, the company website and offerlists.",
-    cta: { label: "Browse the prospectus library", href: "/invest/ipos" },
+    cta: { label: "Browse the prospectus library", href: "/invest/funds" },
   },
   {
     id: "onmarket",

@@ -50,10 +50,10 @@ export function SiteFooter() {
             { label: "Fee Alerts", href: "/fee-alerts" },
           ]} />
 
-          {/* Column 3 — Invest */}
-          <FooterColumn title="Invest" items={[
-            { label: "All Verticals", href: "/invest" },
-            { label: "Investment Marketplace", href: "/invest/listings" },
+          {/* Column 3 — Browse Opportunities */}
+          <FooterColumn title="Browse Opportunities" items={[
+            { label: "All Opportunities", href: "/invest" },
+            { label: "Fund Opportunities", href: "/invest/funds" },
             { label: "Mining", href: "/invest/mining" },
             { label: "Farmland", href: "/invest/farmland" },
             { label: "Buy a Business", href: "/invest/buy-business" },
@@ -62,8 +62,8 @@ export function SiteFooter() {
             { label: "Private Credit", href: "/invest/private-credit" },
           ]} />
 
-          {/* Column 4 — Property & Advisors */}
-          <FooterColumn title="Property & Advisors" items={[
+          {/* Column 4 — Find Experts & Property */}
+          <FooterColumn title="Find Experts & Property" items={[
             { label: "Investment Property", href: "/property" },
             { label: "Suburb Research", href: "/property/suburbs" },
             { label: "Buyer's Agents", href: "/property/buyer-agents" },
@@ -83,7 +83,8 @@ export function SiteFooter() {
             { label: "Annual Report", href: "/reports/annual" },
             { label: "Write a Review", href: "/reviews/write" },
             { label: "Foreign Investors", href: "/foreign-investment" },
-            { label: "Quiz", href: "/quiz" },
+            { label: "Get Matched", href: "/quiz" },
+            { label: "Post a Request", href: "/quotes/post" },
           ]} />
 
           {/* Column 6 — Company & Account */}

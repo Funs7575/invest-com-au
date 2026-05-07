@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+// eslint-disable-next-line no-restricted-imports -- pre-IA-refactor; admin client used here historically because the original schema lacked an anon SELECT policy on fund_listings. Migrate to createClient + an explicit anon policy on status='active' in a follow-up; out of scope for the 2026-05-07 IA refactor.
 import { createAdminClient } from "@/lib/supabase/admin";
 import Icon from "@/components/Icon";
 import RegisterInterestForm from "@/components/funds/RegisterInterestForm";
@@ -105,8 +106,8 @@ export default async function FundDetailPage({
 
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
-    { name: "Invest", url: `${SITE_URL}/invest` },
-    { name: "Funds", url: `${SITE_URL}/invest/funds` },
+    { name: "Opportunities", url: `${SITE_URL}/invest` },
+    { name: "Fund opportunities", url: `${SITE_URL}/invest/funds` },
     { name: fund.title },
   ]);
 
@@ -130,11 +131,11 @@ export default async function FundDetailPage({
               </Link>
               <span className="text-slate-300">/</span>
               <Link href="/invest" className="hover:text-slate-900">
-                Invest
+                Opportunities
               </Link>
               <span className="text-slate-300">/</span>
               <Link href="/invest/funds" className="hover:text-slate-900">
-                Funds
+                Fund opportunities
               </Link>
               <span className="text-slate-300">/</span>
               <span className="text-slate-900 font-medium line-clamp-1">
@@ -151,21 +152,6 @@ export default async function FundDetailPage({
                   Featured
                 </span>
               )}
-              {fund.siv_complying && (
-                <span className="text-[11px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
-                  SIV Complying
-                </span>
-              )}
-              {fund.firb_relevant && (
-                <span className="text-[11px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-800">
-                  FIRB Relevant
-                </span>
-              )}
-              {fund.open_to_retail && (
-                <span className="text-[11px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800">
-                  Retail Accessible
-                </span>
-              )}
             </div>
 
             <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-slate-900 leading-tight">
@@ -176,6 +162,69 @@ export default async function FundDetailPage({
                 Managed by <strong>{fund.manager_name}</strong>
               </p>
             )}
+
+            {/* Eligibility & disclosure band — up to 8 conditional pills.
+                pds_url, im_url, expression_of_interest_only come from
+                migration 20260507_fund_listings_disclosure_columns.sql.
+                Pre-migration deploys: those three columns are undefined,
+                so the corresponding pills simply don't render. */}
+            <div className="mt-4 border-t border-slate-200 pt-3">
+              <p className="text-[10px] font-bold uppercase tracking-wide text-slate-500 mb-2">
+                Eligibility &amp; disclosure
+              </p>
+              <div className="flex flex-wrap items-center gap-1.5">
+                {fund.open_to_retail === true && (
+                  <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800">
+                    Retail accessible
+                  </span>
+                )}
+                {fund.open_to_retail === false && (
+                  <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-slate-200 text-slate-800">
+                    Wholesale / sophisticated only
+                  </span>
+                )}
+                {(fund.siv_complying || fund.firb_relevant) && (
+                  <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-violet-100 text-violet-800">
+                    Foreign-investor relevant
+                  </span>
+                )}
+                {fund.siv_complying && (
+                  <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+                    SIV relevant
+                  </span>
+                )}
+                {fund.firb_relevant && (
+                  <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-800">
+                    FIRB relevant
+                  </span>
+                )}
+                {fund.pds_url && (
+                  <a
+                    href={fund.pds_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-800 hover:bg-indigo-200"
+                  >
+                    PDS available ↗
+                  </a>
+                )}
+                {fund.im_url && (
+                  <a
+                    href={fund.im_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-800 hover:bg-indigo-200"
+                  >
+                    IM available ↗
+                  </a>
+                )}
+                {fund.expression_of_interest_only && (
+                  <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800">
+                    Expression of interest only
+                  </span>
+                )}
+              </div>
+            </div>
           </div>
         </section>
 
@@ -204,6 +253,12 @@ export default async function FundDetailPage({
                   <Metric label="Fund size" value={formatCentsAud(fund.fund_size_cents)} />
                   <Metric label="Retail access" value={fund.open_to_retail ? "Yes" : "Wholesale only"} />
                 </dl>
+                <p className="text-[11px] text-slate-500 mt-3 leading-relaxed">
+                  <strong>Target return, if disclosed — not guaranteed.</strong>{" "}
+                  Past performance is not a reliable indicator of future
+                  returns. Targets are projections set by the manager and may
+                  not be met.
+                </p>
               </div>
 
               {(fund.siv_complying || fund.firb_relevant) && (
@@ -253,8 +308,51 @@ export default async function FundDetailPage({
             </div>
 
             {/* Sticky sidebar */}
-            <aside className="lg:sticky lg:top-6 lg:self-start">
+            <aside className="lg:sticky lg:top-6 lg:self-start space-y-4">
               <RegisterInterestForm fundId={fund.id} fundTitle={fund.title} />
+
+              {/* Need advice first? Routes to expert / matching / request
+                  surfaces. Required for regulated fund-opportunity pages
+                  per the IA refactor — gives users a clear non-fund path
+                  before they register interest. */}
+              <div className="bg-white border border-slate-200 rounded-xl p-5">
+                <p className="text-sm font-bold text-slate-900 mb-1">
+                  Need advice first?
+                </p>
+                <p className="text-xs text-slate-500 mb-3 leading-relaxed">
+                  This page is general information only. Speak to a licensed
+                  adviser before committing.
+                </p>
+                <ul className="space-y-1.5 text-sm">
+                  <li>
+                    <Link
+                      href="/advisors?type=financial"
+                      className="text-amber-700 font-semibold hover:underline inline-flex items-center gap-1"
+                    >
+                      Find an adviser
+                      <Icon name="arrow-right" size={12} />
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/quiz"
+                      className="text-amber-700 font-semibold hover:underline inline-flex items-center gap-1"
+                    >
+                      Get matched
+                      <Icon name="arrow-right" size={12} />
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/quotes/post"
+                      className="text-amber-700 font-semibold hover:underline inline-flex items-center gap-1"
+                    >
+                      Post a request
+                      <Icon name="arrow-right" size={12} />
+                    </Link>
+                  </li>
+                </ul>
+              </div>
             </aside>
           </div>
         </section>
