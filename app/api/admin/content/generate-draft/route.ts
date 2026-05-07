@@ -1,6 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { slugify } from "@/lib/utils";
+import { requireCronAuth } from "@/lib/cron-auth";
 
 export const runtime = "edge";
 export const maxDuration = 120;
@@ -13,10 +14,8 @@ export const maxDuration = 120;
  * Pulls broker data from the database to give the AI real fee data context.
  */
 export async function POST(req: NextRequest) {
-  const authHeader = req.headers.get("authorization");
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const unauth = requireCronAuth(req);
+  if (unauth) return unauth;
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
