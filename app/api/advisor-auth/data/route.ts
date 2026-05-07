@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireAdvisorSession } from "@/lib/require-advisor-session";
 import { logger } from "@/lib/logger";
+import { captureServerEvent } from "@/lib/posthog/server";
 
 const log = logger("advisor-auth-data");
 
@@ -23,6 +24,7 @@ export async function GET(request: NextRequest) {
     { data: billing },
     { data: views },
     { data: reviews },
+    { data: professional },
   ] = await Promise.all([
     // Recent leads (last 90 days)
     admin
@@ -31,10 +33,10 @@ export async function GET(request: NextRequest) {
       .eq("professional_id", advisorId)
       .order("created_at", { ascending: false })
       .limit(50),
-    // All leads count
+    // All leads — quality_score and source_page for hot/warm/cold + source breakdown
     admin
       .from("professional_leads")
-      .select("id, status, created_at", { count: "exact" })
+      .select("id, status, created_at, quality_score, source_page", { count: "exact" })
       .eq("professional_id", advisorId),
     // Billing records
     admin
@@ -57,6 +59,12 @@ export async function GET(request: NextRequest) {
       .eq("professional_id", advisorId)
       .eq("status", "approved")
       .order("created_at", { ascending: false }),
+    // Professional record for avg_response_minutes
+    admin
+      .from("professionals")
+      .select("avg_response_minutes, rating, review_count")
+      .eq("id", advisorId)
+      .single(),
   ]);
 
   // Calculate stats
@@ -64,8 +72,26 @@ export async function GET(request: NextRequest) {
   const totalLeads = allLeads?.length || 0;
   const leads30d = (allLeads || []).filter(l => new Date(l.created_at) >= new Date(thirtyDaysAgo)).length;
   const convertedLeads = (allLeads || []).filter(l => l.status === "converted").length;
+  const acceptedLeads = (allLeads || []).filter(l => l.status !== "rejected").length;
   const totalBilled = (billing || []).reduce((s, b) => s + (b.amount_cents || 0), 0);
   const pendingBilled = (billing || []).filter(b => b.status === "pending" || b.status === "invoiced").reduce((s, b) => s + (b.amount_cents || 0), 0);
+
+  // Hot/warm/cold lead counts (from quality_score)
+  const hotLeadsCount = (allLeads || []).filter(l => (l.quality_score ?? 0) >= 70).length;
+  const warmLeadsCount = (allLeads || []).filter(l => { const qs = l.quality_score ?? 0; return qs >= 40 && qs < 70; }).length;
+  const coldLeadsCount = totalLeads - hotLeadsCount - warmLeadsCount;
+
+  // Source breakdown — leads grouped by source_page
+  const sourceMap: Record<string, { count: number; converted: number }> = {};
+  for (const lead of allLeads || []) {
+    const src = (lead.source_page as string | null) ?? "unknown";
+    sourceMap[src] ??= { count: 0, converted: 0 };
+    sourceMap[src].count++;
+    if (lead.status === "converted") sourceMap[src].converted++;
+  }
+  const sourceBreakdown = Object.entries(sourceMap)
+    .sort((a, b) => b[1].count - a[1].count)
+    .map(([source, { count, converted }]) => ({ source, count, converted }));
 
   // Fetch article analytics
   const { data: articles } = await admin
@@ -87,6 +113,10 @@ export async function GET(request: NextRequest) {
     engagementCounts[ev.event_type] = (engagementCounts[ev.event_type] || 0) + 1;
   }
 
+  const avgResponseTimeMinutes = (professional as { avg_response_minutes: number | null } | null)?.avg_response_minutes ?? null;
+  const avgRatingRaw = (professional as { rating: number | null } | null)?.rating;
+  const avgRating = avgRatingRaw != null ? avgRatingRaw.toFixed(1) : null;
+
   return NextResponse.json({
     leads: leads || [],
     stats: {
@@ -95,9 +125,17 @@ export async function GET(request: NextRequest) {
       leads30d,
       convertedLeads,
       conversionRate: totalLeads > 0 ? ((convertedLeads / totalLeads) * 100).toFixed(1) : "0",
+      acceptedLeads,
+      acceptRate: totalLeads > 0 ? parseFloat(((acceptedLeads / totalLeads) * 100).toFixed(1)) : 100,
+      hotLeadsCount,
+      warmLeadsCount,
+      coldLeadsCount,
+      avgResponseTimeMinutes,
+      avgRating,
       totalBilledCents: totalBilled,
       pendingBilledCents: pendingBilled,
       reviewCount: reviews?.length || 0,
+      bookingClicks30d: engagementCounts["advisor_booking_click"] || 0,
       // Engagement analytics
       phoneClicks: engagementCounts["advisor_phone_click"] || 0,
       websiteClicks: engagementCounts["advisor_website_click"] || 0,
@@ -111,6 +149,8 @@ export async function GET(request: NextRequest) {
         views: a.view_count || 0,
         clicks: a.profile_clicks || 0,
       })),
+      // Source breakdown for performance dashboard
+      sourceBreakdown,
     },
     viewsByDay: views || [],
     billing: billing || [],
@@ -123,6 +163,7 @@ export async function PATCH(request: NextRequest) {
   const advisorId = await requireAdvisorSession(request);
   if (!advisorId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
 
+  // eslint-disable-next-line invest/no-unvalidated-req-json -- internal advisor session; fields validated inline below
   const { leadId, status, notes } = await request.json();
   if (!leadId) return NextResponse.json({ error: "Lead ID required" }, { status: 400 });
 
@@ -134,7 +175,7 @@ export async function PATCH(request: NextRequest) {
   // Verify lead belongs to this advisor
   const { data: lead } = await admin
     .from("professional_leads")
-    .select("id, professional_id, created_at")
+    .select("id, professional_id, created_at, source_page")
     .eq("id", leadId)
     .eq("professional_id", advisorId)
     .single();
@@ -175,12 +216,35 @@ export async function PATCH(request: NextRequest) {
         .eq("professional_id", lead.professional_id)
         .not("response_time_minutes", "is", null);
       if (allResponded && allResponded.length > 0) {
-        const avg = Math.round(allResponded.reduce((sum: number, l: { response_time_minutes: number }) => sum + l.response_time_minutes, 0) / allResponded.length);
+        const avg = Math.round(allResponded.reduce((sum: number, l: { response_time_minutes: number | null }) => sum + (l.response_time_minutes ?? 0), 0) / allResponded.length);
         await admin.from("professionals").update({ avg_response_minutes: avg }).eq("id", lead.professional_id);
       }
     } catch (err) {
       log.warn("avg response time update failed", { err: err instanceof Error ? err.message : String(err), professionalId: lead.professional_id });
     }
+  }
+
+  // PostHog funnel tracking: advisor_response / lead_outcome
+  const advisorDistinctId = `advisor-${advisorId}`;
+  if (status === "contacted" && typeof updates.response_time_minutes === "number") {
+    captureServerEvent(advisorDistinctId, "advisor_response", {
+      lead_id: leadId as number,
+      advisor_id: advisorId,
+      response_time_minutes: updates.response_time_minutes,
+      lead_source: typeof (lead as Record<string, unknown>).source_page === "string"
+        ? (lead as Record<string, unknown>).source_page as string
+        : null,
+    }).catch((err) => log.warn("posthog advisor_response failed", { err: String(err) }));
+  }
+  if (status === "converted" || status === "lost" || status === "rejected") {
+    captureServerEvent(advisorDistinctId, "lead_outcome", {
+      lead_id: leadId as number,
+      advisor_id: advisorId,
+      outcome: status === "converted" ? "converted" : "lost",
+      lead_source: typeof (lead as Record<string, unknown>).source_page === "string"
+        ? (lead as Record<string, unknown>).source_page as string
+        : null,
+    }).catch((err) => log.warn("posthog lead_outcome failed", { err: String(err) }));
   }
 
   return NextResponse.json({ success: true });

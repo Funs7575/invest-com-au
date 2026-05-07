@@ -5,6 +5,7 @@ import { isValidEmail, isDisposableEmail } from "@/lib/validate-email";
 import { logger } from "@/lib/logger";
 import { extractUtm, type UtmParams } from "@/lib/utm";
 import { sendNewLeadNotification, sendLeadConfirmationToUser } from "@/lib/advisor-emails";
+import { captureEdgeEvent } from "@/lib/posthog/capture-edge";
 
 export const runtime = "edge";
 
@@ -73,6 +74,7 @@ const MATCH_SELECT = "id, slug, name, firm_name, type, photo_url, rating, review
 export async function POST(request: NextRequest) {
   let body: Record<string, unknown>;
   try {
+    // eslint-disable-next-line invest/no-unvalidated-req-json -- full Zod migration tracked as E-04 batch 4
     body = await request.json();
   } catch (err) {
     log.warn("submit-lead invalid JSON", { err: err instanceof Error ? err.message : String(err) });
@@ -175,6 +177,18 @@ export async function POST(request: NextRequest) {
       log.error("Platform lead insert failed", { error: error.message });
       return NextResponse.json({ error: "Failed to save lead" }, { status: 500 });
     }
+
+    const pid = typeof (body as Record<string, unknown>).distinct_id === "string"
+      ? (body as Record<string, unknown>).distinct_id as string
+      : `anon-${crypto.randomUUID()}`;
+    captureEdgeEvent(pid, "lead_submitted", {
+      lead_source: "platform",
+      source_page: typeof source_page === "string" ? source_page : null,
+      advisor_match_count: 0,
+      quiz_completed: false,
+      utm_source: (utm as UtmParams).utm_source ?? null,
+      utm_campaign: (utm as UtmParams).utm_campaign ?? null,
+    });
 
     return NextResponse.json({ success: true, lead_id: lead?.id });
   }
@@ -621,6 +635,20 @@ export async function POST(request: NextRequest) {
     rematch: !!rematch,
     excluded: excludeArray.length,
   });
+
+  if (lead?.id) {
+    const distinctId = typeof (body as Record<string, unknown>).distinct_id === "string"
+      ? (body as Record<string, unknown>).distinct_id as string
+      : `anon-${crypto.randomUUID()}`;
+    captureEdgeEvent(distinctId, "lead_submitted", {
+      lead_source: "advisor-match",
+      source_page: typeof source_page === "string" ? source_page : null,
+      advisor_match_count: matchedId ? 1 : 0,
+      quiz_completed: !!(user_intent?.need),
+      utm_source: (utm as UtmParams).utm_source ?? null,
+      utm_campaign: (utm as UtmParams).utm_campaign ?? null,
+    });
+  }
 
   return NextResponse.json({
     success: true,
