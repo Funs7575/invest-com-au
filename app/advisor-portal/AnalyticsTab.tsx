@@ -3,6 +3,14 @@
 import Icon from "@/components/Icon";
 import type { Advisor, Stats, Lead, ProfileCompleteness, ViewType } from "./types";
 
+function formatResponseTime(minutes: number | null): string {
+  if (minutes === null) return "—";
+  if (minutes < 60) return `${minutes}m`;
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  return m === 0 ? `${h}h` : `${h}h ${m}m`;
+}
+
 type Props = {
   stats: Stats | null;
   advisor: Advisor | null;
@@ -78,6 +86,81 @@ export default function AnalyticsTab({ stats, advisor, leads, profileCompletenes
         </div>
       </div>
 
+      {/* Lead performance: accept rate + period trend */}
+      <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-5">
+        <h3 className="text-sm font-bold text-slate-900 mb-3">Lead Performance</h3>
+        <div className="grid grid-cols-3 gap-3">
+          <div className="bg-slate-50 rounded-xl p-3 text-center">
+            <p className="text-xl font-bold text-slate-900">{stats?.acceptRate ?? 0}%</p>
+            <p className="text-[0.6rem] text-slate-500 mt-1">Accept Rate</p>
+            <p className="text-[0.55rem] text-slate-400 mt-0.5">
+              {(stats?.acceptRate ?? 0) >= 60 ? "Excellent" : (stats?.acceptRate ?? 0) >= 40 ? "Average — aim for 60%" : "Low — aim for 60%+"}
+            </p>
+          </div>
+          <div className="bg-slate-50 rounded-xl p-3 text-center">
+            <p className="text-xl font-bold text-slate-900">{stats?.leadsThisMonth ?? 0}</p>
+            <p className="text-[0.6rem] text-slate-500 mt-1">This Month</p>
+            <p className="text-[0.55rem] text-slate-400 mt-0.5">{stats?.leads7d ?? 0} in last 7 days</p>
+          </div>
+          <div className="bg-slate-50 rounded-xl p-3 text-center">
+            {(() => {
+              const thisMonth = stats?.leadsThisMonth ?? 0;
+              const lastMonth = stats?.leadsLastMonth ?? 0;
+              const delta = thisMonth - lastMonth;
+              const pct = lastMonth > 0 ? Math.round((delta / lastMonth) * 100) : null;
+              const isUp = delta >= 0;
+              return (
+                <>
+                  <p className={`text-xl font-bold ${isUp ? "text-emerald-600" : "text-red-500"}`}>
+                    {isUp ? "▲" : "▼"} {Math.abs(delta)}
+                  </p>
+                  <p className="text-[0.6rem] text-slate-500 mt-1">vs Last Month</p>
+                  <p className="text-[0.55rem] text-slate-400 mt-0.5">
+                    {pct !== null ? `${pct >= 0 ? "+" : ""}${pct}% change` : "No prior data"}
+                  </p>
+                </>
+              );
+            })()}
+          </div>
+        </div>
+      </div>
+
+      {/* Response time */}
+      <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-5">
+        <h3 className="text-sm font-bold text-slate-900 mb-3">Response Performance</h3>
+        <div className="flex items-center gap-4">
+          <div className="flex-1 bg-slate-50 rounded-xl p-4 text-center">
+            <p className="text-2xl md:text-3xl font-bold text-slate-900">
+              {formatResponseTime(stats?.avgResponseTimeMinutes ?? null)}
+            </p>
+            <p className="text-xs text-slate-500 mt-1">Avg. time to first response</p>
+            <p className="text-[0.6rem] text-slate-400 mt-0.5">
+              {stats?.avgResponseTimeMinutes == null
+                ? "No responded leads yet"
+                : stats.avgResponseTimeMinutes <= 30
+                  ? "Excellent — faster than 90% of advisors"
+                  : stats.avgResponseTimeMinutes <= 120
+                    ? "Good — aim for under 30 min to maximise conversion"
+                    : "Slow — leads convert 3× better when responded to within 30 min"}
+            </p>
+          </div>
+          <div className="hidden md:flex flex-col gap-2 text-xs text-slate-600 shrink-0 max-w-[200px]">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+              <span>Under 30 min — highest conversion</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0" />
+              <span>30 min – 2 h — good</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-red-400 shrink-0" />
+              <span>Over 2 h — conversion drops sharply</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Article performance */}
       <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-5">
         <h3 className="text-sm font-bold text-slate-900 mb-1">Article Performance</h3>
@@ -103,6 +186,42 @@ export default function AnalyticsTab({ stats, advisor, leads, profileCompletenes
           </div>
         )}
       </div>
+
+      {/* Lead Source Breakdown */}
+      {stats && stats.sourceBreakdown.length > 0 && (
+        <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-5">
+          <h3 className="text-sm font-bold text-slate-900 mb-1">Lead Source Breakdown</h3>
+          <p className="text-[0.6rem] text-slate-400 mb-3">Where your leads are coming from and how they convert</p>
+          <div className="space-y-2">
+            <div className="grid grid-cols-3 text-[0.6rem] font-medium text-slate-400 uppercase px-1 mb-1">
+              <span>Source</span>
+              <span className="text-center">Leads</span>
+              <span className="text-right">Converted</span>
+            </div>
+            {stats.sourceBreakdown.slice(0, 8).map((row, i) => {
+              const convPct = row.count > 0 ? ((row.converted / row.count) * 100).toFixed(0) : "0";
+              const label = row.source === "unknown" ? "Direct / Unknown"
+                : row.source.startsWith("/quiz") ? "Broker Quiz"
+                : row.source.startsWith("/find-advisor") ? "Find an Advisor"
+                : row.source;
+              return (
+                <div key={i} className="grid grid-cols-3 items-center py-1.5 px-1 rounded-lg hover:bg-slate-50 text-xs">
+                  <span className="text-slate-700 font-medium truncate pr-2" title={row.source}>{label}</span>
+                  <span className="text-center text-slate-600">{row.count}</span>
+                  <span className="text-right text-emerald-600 font-medium">{row.converted} <span className="text-slate-400 font-normal">({convPct}%)</span></span>
+                </div>
+              );
+            })}
+          </div>
+          {/* Accept rate summary */}
+          {stats.totalLeads > 0 && (
+            <div className="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+              <span>Accept rate (non-rejected)</span>
+              <span className="font-semibold text-slate-700">{stats.acceptRate}%</span>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Tips */}
       <div className="bg-gradient-to-r from-violet-50 to-blue-50 border border-violet-200 rounded-xl p-4 md:p-5">
