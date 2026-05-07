@@ -24,12 +24,12 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 
 | Stream | Branch | PR | Last CI | Items in flight |
 | --- | --- | --- | --- | --- |
-| A | `a-91-92-marketplace-notify-auth` (#545) · `a-93-require-cron-auth` (#548) · `a-94-auth-hardening` (#550) · `a-disc-marketplace-notify-fix` (#552) | #449/#451/#452/#453/#454/#456/#457/#461/#462/#463/#465 all MERGED 2026-05-02/03 · **#545/#548/#550/#552 OPEN** | iter 262 — `74f4f1b` (PR #552: A-DISC-01+02 intelligence/support pages fixed); CI pending. iter 261 — `35668e4` (PR #550); CI pending. iter 260 — `e44a597` (PR #548); CI pending. iter 259 — `acd61c4` (PR #545); CI pending. | A-91+A-92 in-progress (#545). A-93 (#548). A-94 (#550). A-DISC-01+02 (#552). A-05 done (iter 274 queue correction — batch 2 covered all remaining ops tables). AUD-100 shard complete. |
+| A | `a-91-92-marketplace-notify-auth` (#545) · `a-93-require-cron-auth` (#548) · `a-94-auth-hardening` (#550) · `a-disc-marketplace-notify-fix` (#552) | #449/#451/#452/#453/#454/#456/#457/#461/#462/#463/#465 all MERGED 2026-05-02/03 · #545/#548/#550/#552 all MERGED 2026-05-07 | all merged 2026-05-07 | A-91+A-92 done (PR #545 MERGED 2026-05-07). A-93 done (PR #548 MERGED 2026-05-07). A-94 done (PR #550 MERGED 2026-05-04). A-DISC-01+02 done (PR #552 MERGED 2026-05-04). A-05 done (iter 274). AUD-100 shard complete. **Stream A complete.** |
 | B | `claude/audit-remediation/b-08-rls-select-only` (#326) · `b-09a-otp-gate` (#348) | #326 MERGED 2026-05-01T13:19Z · #348 **MERGED 2026-05-07** (`e58524b`) | last merged 2026-05-07 | PR #220 merged (B-01..B-06 done/blocked/FP). B-07 done (`0097159` PR #286). B-08 done (PR #326). B-09 done (PR #348 — OTP gate + drop anon SELECT on listing_enquiries). **Stream B complete.** |
 | C | all PRs MERGED | #327/#349/#360/#394/#397 all MERGED | last merged 2026-05-02T16:13Z | C-01..C-08 done. C-03 MERGED (#360). C-04 done (#394). C-05 done (#394). C-05b MERGED (#349). C-DISC-20260501-01 MERGED (#397). **Stream C complete.** |
 | D | `claude/audit-remediation/d-route-tests` | #285 MERGED 2026-04-29T10:13Z; supplementary PRs #246/#285/#297/#298 | last merged 2026-04-29T18:53Z | D-01..D-09 done (PR #246). D-10 done (PR #246 — coverage ratchet). D-11 complete (43+ batches, all admin/cron/non-admin routes covered) — merged via PR #285 + supplementary PRs #297/#298. **Stream D complete.** |
-| E | `claude/audit-remediation/e-02-batch-5-zod-rollout` (#469) · `e-04-batch-2-zod-backfill` (#557) · `e-04-batch-3-zod-backfill` (#560) · `e-04-batch-4-zod-backfill` (#566) · `e-04-batch-5-zod-backfill` (#567) | #295/#313/#315/#323/#406/#528/#460 MERGED · **#469/#557/#560/#566/#567 OPEN** | iter 273 — `2b17503` (PR #567: E-04 batch 5 — 5 routes: account/accept-terms, account/bookmarks, account/delete, analytics/search-log, article-reactions; CI queued). iter 270 — `55a052d` (PR #566: E-04 batch 4 — 8 routes: quiz/submit, affiliate/click, claim-listing, developer-leads, broker-review-invite POST, questions/moderate, questions/[id]/vote, questions/[id]/answer); CI pending. iter 271 CI-rescue — `d7d0e82` (PR #557: merge main — refreshing Vercel preview for smoke test; CI FAILED AGAIN — Vercel "Canceled by Ignored Build Step", 3rd smoke failure, see Blocked). iter 268 CI-rescue — `e219e9e` (PR #560: Zod v4 fixes in fi/update: z.record(z.string(),z.unknown()) + invalid_value; CI re-running). iter 266 — `d823fda` (PR #560: E-04 batch 3 — review-moderation, fi/seed, fi/verify, fi/update, fi/revalidate, advertise/create-checkout); CI pending. iter 265 CI-rescue — `6e26be6` (PR #557: body→rawBody fix in calendar POST + merge main; CI re-running). iter 263 — `aee5b06` (PR #557: E-04 batch 2); CI pending. iter 252-cont CI-rescue — `460d085`. | E-01 done (PR #295). E-02 in-progress (#460/#469). E-03 done (PR #313). E-04 in-progress (#528 MERGED batch 1; #557 OPEN batch 2 — BLOCKED on smoke test; #560 OPEN batch 3; #566 OPEN batch 4; #567 OPEN batch 5 — account/* + analytics/search-log + article-reactions). |
-| F | `claude/audit-remediation/f-07-batch2-json-ld` (#563) | #293/#294/#301/#354/#355/#370/#527 all MERGED · **#563 OPEN** | iter 270 — `764dfa3` (PR #563: F-07 batch 2 — 5 calculator pages; CI pending). iter 243 CI-rescue — `4855030`. iter 237 — `19b3630` (F-07 batch 1). | F-01 false-positive. F-02 done (PR #293). F-03 done (PR #370). F-04 done (PR #354). F-05 done (PR #294+#301). F-06 done (PR #355). **F-07 batch 1 MERGED (#527)** · F-07 batch 2 in-progress (#563: 5 pages, 11/~42 blocks total). F-08 pending. |
+| E | `claude/audit-remediation/e-02-batch-5-zod-rollout` (#469) · `e-04-batch-2-zod-backfill` (#557) · `e-04-batch-3-zod-backfill` (#560) · `e-04-batch-4-zod-backfill` (#566) · `e-04-batch-5-zod-backfill` (#567) | #295/#313/#315/#323/#406/#528/#460 MERGED · #469/#557/#560/#566/#567 all MERGED 2026-05-03/05/07 | all merged 2026-05-07 | E-01 done (PR #295). **E-02 done** (PR #469 MERGED 2026-05-03 — batch 5). E-03 done (PR #313). **E-04 done** (batches 1–5 all MERGED: #528/#557/#560/#566/#567). **Stream E complete.** |
+| F | `claude/audit-remediation/f-07-batch2-json-ld` (#563) | #293/#294/#301/#354/#355/#370/#527/#563 all MERGED | last merged 2026-05-05 | F-01 false-positive. F-02 done (PR #293). F-03 done (PR #370). F-04 done (PR #354). F-05 done (PR #294+#301). F-06 done (PR #355). **F-07 batch 1 MERGED (#527)** · **F-07 batch 2 MERGED (#563 — 5 calculator pages, 2026-05-05)**. F-08 BLOCKED (visual review required — see Blocked section). |
 | G | `claude/audit-remediation/g-03-batch-8-rollback-headers` (#520) | #307/#310/#311/#314/#316/#342/#352/#405/#455/#467/#520 all MERGED | iter 229 — `52aee43` (PR #520: G-03 batch 8 MERGED 2026-05-04T14:42Z — all 208/208 migrations covered). | G-01+G-02 done (PR #307). **G-03 complete (208/208 covered)** — all batches MERGED. G-04 done (PR #310 + #342). G-04-FINDING-1..5 pending founder authorization. **Stream G complete.** |
 | H | _not started_ | — | — | — |
 | I | `claude/audit-remediation/i-new-04-main-ci-auto-revert` (#278) · `i-02-drift-detection-ci` (#353) | #278 MERGED 2026-04-28T16:18Z · #353 MERGED 2026-05-01T14:30Z | last merged 2026-05-01T14:30Z | I-NEW-01..05 all done. I-NEW-06 needs-user (Supabase GH Actions secrets). I-01 done via B-07 (PR #286). I-02 done (PR #353). I-03 done via C-08 (PR #327). I-04 done via E-03 (PR #313). I-05 done via D-10 (PR #246). |
@@ -40,10 +40,10 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | M | `claude/audit-remediation/m-01b-cover-image-backfill` (#283) · `m-02-versus-json-ld` (#296) · `m-05-glossary-linkifier` (#325) | #283/#296/#325 all MERGED | last merged 2026-05-01T10:29Z | M-01a done out-of-loop (PR #227). M-01b done (PR #283 — engineering side). M-02 done (PR #296). M-03 done (`85c7236`). M-04 done (`353fa3a`). M-05 done (PR #325). M-06 done (PR #283). M-07 done (PR #283). **Stream M complete.** |
 | N | `claude/audit-remediation/n-ux-perf` | #242 MERGED | last merged 2026-04-28 | N-01+N-02 done (`2ec6f89`) · N-03a/b/c done · N-04/N-05 FP · N-06 blocked (deferred-post-launch by founder 2026-05-01 — option 4 chosen) · N-07/N-08/N-09/N-10/N-11 done — **stream complete** (N-06 deferred). |
 | O | `claude/audit-remediation/o-01-iter9-rls-catchup` (#593) | #235/#237/#239/#299/#300/#366/#395/#408 all MERGED · **#593 OPEN** | iter 278 — `c46081b` (O-01 iter 9: 57-table catch-up migration, applied to live DB via MCP; CI queued). | O-01 **done** (iter 9, #593 — all 57 zero-policy tables resolved in live DB). O-02 done. O-03 done. O-04 blocked (Stripe live validation). O-05 done (PR #408). |
-| P | `claude/audit-remediation/p-01-sentry-v10-upgrade` (#468) · `p-03-04-minor-sdk-bumps` (#575) | #468 MERGED 2026-05-03T11:33Z · **#575 OPEN** | iter 276 — `9e1669e` (PR #575: P-03+P-04 — @anthropic-ai/sdk 0.90→0.93, posthog-js 1.371→1.372, posthog-node 5.30→5.33; CI queued). iter 212 — `331b98e` (PR #468: P-01; CI success). | **P-01 done** (PR #468 MERGED). P-02 (Stripe SDK v17→v22) BLOCKED — requires npm install + local test run; not tractable on Hardware-exception sandbox. **P-03+P-04 in-progress (#575)**. |
-| Q | `claude/audit-remediation/q-02-05-recovery-runbooks` (#525) · `q-06-09-runbooks` (#547) · `q-10-12-runbooks` (#549) · `q-13-14-secret-rotation-dpa` (#554) · `q-15-privacy-data-collection` (#572) | #525 OPEN · #547 OPEN · #549 OPEN · **#554 OPEN** · **#572 OPEN** | iter 274 — `577f774` (PR #572: Q-15 /privacy/data-collection page; CI pending). iter 269 CI-rescue — `5c7af0f` (PR #554: merge main). iter 264 CI-rescue — `0d2877b` (PR #554: fix s.envVar→s.name). iter 263 — `93c9748` (PR #554: Q-13+Q-14). iter 260 — `925b2d4` (PR #549). iter 259 — `c684960` (PR #547). iter 235 — `8cd2725` (Q-02..Q-05). | Q-01 needs-user (PITR drill). Q-02..Q-05 in-progress (#525). Q-06..Q-09 in-progress (#547). Q-10..Q-12 in-progress (#549). Q-SOC2-02..11 done (verified iter 260). **Q-13+Q-14 in-progress (#554)**. **Q-15 in-progress (#572)**. |
-| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · ... · `r-coverage-01-listing-routes` (#521) · `r-coverage-02-stripe-lib` (#526) · `r-coverage-03-quotes` (#530) · `r-coverage-11-quote-review` (#551) · `r-coverage-12-quotes-qa` (#562) · `r-coverage-13-quotes-get` (#565) · `r-coverage-14-notify-filter` (#573) | #290/#396/#459/#472/#473 all MERGED · #466/#471/#510/#511/#513/#514/#515/#516/#517/#519/#521/#526/#530/#551/#562/#565/#573 OPEN | iter 278 — queue sync: R-06 (PR #472 MERGED 2026-05-03) + R-07 (PR #473 MERGED 2026-05-03) marked done. iter 277 CI-rescue — `82f05f1` (PR #573: merge main to force Vercel build — smoke test failed on test-only push; CI re-running). iter 275 forward — `a730325` (PR #573: R-COVERAGE-14 — 10 tests). iter 271 forward — `a5f9774` (PR #565: R-COVERAGE-13 — GET /api/quotes list + 3 POST edge cases; 31 tests, CI pending). iter 270 forward — `fcbeb21` (PR #562: R-COVERAGE-12 — 16 tests for quotes/[slug]/qa GET+POST, dual auth, rate-limit; CI pending). iter 261 forward — `83c763e` (PR #551: R-COVERAGE-11 quotes/[slug]/review — 17 tests, HMAC token auth, rate limit, 12 error paths). iter 255 forward — `1a3c24d` (PR #530: R-COVERAGE-03 quotes/[slug]/accept + reopen, 26 tests). iter 253 CI-rescue — `a29318f` (PR #526). iter 251 CI-rescue — `126eb8ac` (PR #521). | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459). **R-06 MERGED (#472)**. **R-07 MERGED (#473)**. R-04/R-05/R-08..R-11 in-progress. R-COVERAGE-01 in-progress (#521). R-COVERAGE-02 in-progress (#526). R-COVERAGE-03 in-flight (#530). R-COVERAGE-11 in-flight (#551). R-COVERAGE-12 in-flight (#562). R-COVERAGE-13 in-flight (#565). **R-COVERAGE-14 in-flight (#573).** |
-| S | `claude/audit-remediation/s-architecture` | **#594 OPEN** | iter 279 — `c6e9e57` (S-01: docs/user-journey.md — 4-path Mermaid diagram; CI queued). | S-01 done (iter 279). S-02..S-05 pending. |
+| P | `claude/audit-remediation/p-01-sentry-v10-upgrade` (#468) · `p-03-04-minor-sdk-bumps` (#575) | #468 MERGED 2026-05-03T11:33Z · #575 MERGED 2026-05-04 | last merged 2026-05-04 | **P-01 done** (PR #468 MERGED). P-02 (Stripe SDK v17→v22) BLOCKED — requires npm install + local test run; not tractable on Hardware-exception sandbox. **P-03+P-04 done** (PR #575 MERGED 2026-05-04). **Stream P complete** (P-02 blocked). |
+| Q | `claude/audit-remediation/q-02-05-recovery-runbooks` (#525) · `q-06-09-runbooks` (#547) · `q-10-12-runbooks` (#549) · `q-13-14-secret-rotation-dpa` (#554) · `q-15-privacy-data-collection` (#572) | #525 MERGED 2026-05-04 · #547 MERGED 2026-05-05 · #549 MERGED 2026-05-05 · #554 MERGED 2026-05-04 · #572 MERGED 2026-05-04 | all merged 2026-05-05 | Q-01 needs-user (PITR drill). **Q-02..Q-05 done** (PR #525 MERGED 2026-05-04). **Q-06..Q-09 done** (PR #547 MERGED 2026-05-05). **Q-10..Q-12 done** (PR #549 MERGED 2026-05-05). Q-SOC2-02..11 done (verified iter 260). **Q-13+Q-14 done** (PR #554 MERGED 2026-05-04). **Q-15 done** (PR #572 MERGED 2026-05-04). **Stream Q complete** (Q-01 needs-user). |
+| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · ... · `r-coverage-01-listing-routes` (#521) · `r-coverage-02-stripe-lib` (#526) · `r-coverage-03-quotes` (#530) · `r-coverage-11-quote-review` (#551) · `r-coverage-12-quotes-qa` (#562) · `r-coverage-13-quotes-get` (#565) · `r-coverage-14-notify-filter` (#573) · `r-coverage-ratchet` (#595) | #290/#396/#459/#466/#471/#472/#473/#510/#511/#513/#514/#516/#517/#519/#521/#526/#530/#551/#562/#565/#573 all MERGED · **#595 OPEN** (clean) | iter 280 — `92db4d5` (PR #595: R-COVERAGE-RATCHET M1 — vitest.config.mts global floors 44/73/63→65/74/74, API-route floor 13/58/30→40/62/40; CI queued). iter 278 — queue sync: R-06 (PR #472 MERGED 2026-05-03) + R-07 (PR #473 MERGED 2026-05-03) marked done. iter 277 CI-rescue — `82f05f1` (PR #573: merge main to force Vercel build — smoke test failed on test-only push; CI re-running). iter 275 forward — `a730325` (PR #573: R-COVERAGE-14 — 10 tests). iter 271 forward — `a5f9774` (PR #565: R-COVERAGE-13 — GET /api/quotes list + 3 POST edge cases; 31 tests, CI pending). iter 270 forward — `fcbeb21` (PR #562: R-COVERAGE-12 — 16 tests for quotes/[slug]/qa GET+POST, dual auth, rate-limit; CI pending). iter 261 forward — `83c763e` (PR #551: R-COVERAGE-11 quotes/[slug]/review — 17 tests, HMAC token auth, rate limit, 12 error paths). iter 255 forward — `1a3c24d` (PR #530: R-COVERAGE-03 quotes/[slug]/accept + reopen, 26 tests). iter 253 CI-rescue — `a29318f` (PR #526). iter 251 CI-rescue — `126eb8ac` (PR #521). | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459). **R-06 done** (#472). **R-07 done** (#473). **R-04 done** (#466). **R-05 done** (#471). **R-08 done** (#510). **R-09 done** (#511/#513). **R-10 done** (#514/#516). **R-11 done** (#519). **R-DISC-20260429-01 done** (#517). **R-COVERAGE-01..14 all done** (iters 251–277, PRs #521/#526/#530/#551/#562/#565/#573 all MERGED). **R-COVERAGE-RATCHET M1 in-flight (#595 OPEN — clean)**. R-COVERAGE-M2-A..N pending (next). |
+| S | `claude/audit-remediation/s-architecture` | **#594 OPEN** | iter 283 — `9e4907b` (S-04+S-05: docs/adr/0001-stripe-webhook-handler-registry.md + ARCHITECTURE.md cron-dispatch section; CI queued). iter 282 — `81e5857` (S-03: docs/api/openapi-v1.yaml — OpenAPI 3.1.0 spec, 5 endpoints, component schemas, BearerAuth; CI queued). iter 281 — `2a6f112` (S-02: docs/agent-system.md — 19 agents × 5 tiers × 24 tables; CI queued). iter 279 — `c6e9e57` (S-01: docs/user-journey.md — 4-path Mermaid diagram; CI queued). | S-01 done (iter 279). **S-02 done (iter 281)**. **S-03 done (iter 282)**. **S-04 done (iter 283)**. **S-05 done (iter 283)**. **Stream S complete.** |
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 MERGED 2026-04-28T11:45Z | merged | V-NEW-06 done (commit `a7bd736`) |
 | V (V-NEW-07) | `claude/audit-remediation/v-new-07-admin-mfa-enforced` | #256 MERGED 2026-04-28T15:44Z | merged | V-NEW-07a done · V-NEW-07b done (`698bbae`) — **Tier D: needs `ADMIN_MFA_COOKIE_SECRET` ≥32 chars in Vercel before merge** (PR was merged; env var status unclear) |
@@ -648,7 +648,7 @@ Pure grind work, ideal for the cloud loop. Long-running stream — expect ~6-7 m
 | R-COVERAGE-M2-C | pending | Lift `lib/compliance.ts` to ≥80% — every disclosure variant, every interpolation, every locale | 2 | Legal-correctness; tests act as documentation of which copy applies where. |
 | R-COVERAGE-M2-D | pending | Lift `lib/sponsorship.ts` to ≥80% — full ranking matrix, tier boundaries, tie-break rules | 2 | Revenue-ranking; regressions here directly affect partner placement fairness. |
 | R-COVERAGE-M2-E..N | pending | Backfill route coverage to 60% overall, then 70% on the user-data/money API surface | ~50-70 | Bulk of M2/M3. Each iteration: one route file or one helper module. |
-| R-COVERAGE-RATCHET | pending | After each milestone, update `vitest.config.mts` coverage thresholds so future PRs can't regress below the new floor | 3 (one per milestone) | Forward-only protection — prevents the floor from sliding. |
+| R-COVERAGE-RATCHET | in-progress (#595) | After each milestone, update `vitest.config.mts` coverage thresholds so future PRs can't regress below the new floor | 3 (one per milestone) | **M1 ratchet done (iter 280, PR #595):** global 44/73/63→65/74/74 (lines/branches/fns), API-route 13/58/30→40/62/40. M2/M3 ratchets pending (once per-lib measurements captured). |
 
 ---
 
@@ -1028,10 +1028,10 @@ Diagrams + API contracts + missing-runbook overflow from Q.
 | ID | Status | Summary | Est. iterations | Notes |
 | --- | --- | --- | --- | --- |
 | S-01 | done | Mermaid sequence diagram: user → quiz → lead → advisor → billing (with PostHog events, Stripe webhooks, Resend touches) | 1 | Done iter 279 · commit `c6e9e57` · PR #594. `docs/user-journey.md` — 4 paths, PostHog event ref, Resend touchpoints, Stripe webhooks, key DB tables. |
-| S-02 | pending | Agent-system topology diagram: 19 agents × 5 escalation tiers × DB-table linkages | 1 | P2. Live in `docs/agent-system.md`. |
-| S-03 | pending | OpenAPI spec for `/api/v1/*` (brokers, compare, docs) — public-API contract | ~2 | P2. Use openapi-typescript or hand-author. |
-| S-04 | pending | Document Stream-J handler-registry pattern (architectural decision record) | 1 | P3. |
-| S-05 | pending | Update `ARCHITECTURE.md` with cron-dispatch-group pattern (39 entries → 73 implementations) | 1 | P3. Non-obvious for new dev. |
+| S-02 | done | Agent-system topology diagram: 19 agents × 5 escalation tiers × DB-table linkages | 1 | Done iter 281 · commit `2a6f112` · PR #594. `docs/agent-system.md` — escalation hierarchy flowchart, 19-agent network graph, agent↔table linkage matrix, per-agent routing table, forbidden-actions list. |
+| S-03 | done | OpenAPI spec for `/api/v1/*` (brokers, compare, docs) — public-API contract | ~2 | Done iter 282 · commit `81e5857` · PR #594. `docs/api/openapi-v1.yaml` — OpenAPI 3.1.0, 5 endpoints (brokers list/detail/compare/docs/api-keys), `BrokerSummary`/`BrokerProfile`/`FeeChangelogEntry` schemas, `BearerAuth`, `x-rate-limits` extension (free/basic/pro/enterprise tiers). |
+| S-04 | done | Document Stream-J handler-registry pattern (architectural decision record) | 1 | Done iter 283 · commit `9e4907b` · PR #594. `docs/adr/0001-stripe-webhook-handler-registry.md` — context (1197-LOC monolith), decision (Map<eventType,handler> + WebhookContext + idempotency state machine), consequences, alternatives considered. |
+| S-05 | done | Update `ARCHITECTURE.md` with cron-dispatch-group pattern (39 entries → 73 implementations) | 1 | Done iter 283 · commit `9e4907b` · PR #594. New "Cron dispatch" section: fan-out pattern, routing gotcha (_dispatch→dispatch), loopback origin, how-to-add-handler guide. Migration trigger threshold updated. |
 
 ### Stream T — Deferred dependency upgrades (added 2026-04-26 iter 22+ "max 100%" expansion)
 
@@ -1952,6 +1952,72 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 
 ## Iteration log (most recent at top)
 
+### 2026-05-07 — Queue grooming iter 284 (multi-stream merge confirmation)
+
+- Phase 0: batch mode (iter 1 of 5). Lock acquired. No LOOP_PAUSE.
+- Phase 1: main synced (3102f28 — force-push from origin, reset local to match). No LOOP_PAUSE.
+- Phase 1.5 skipped (no recent migration commits, no types-drift CI failures visible).
+- Phase 1.7: CI checks via GitHub MCP — all open PRs show only Vercel status; no red CI on stream branches.
+- Phase 2: Checked 30+ PRs across all in-flight streams. All previously listed as "OPEN" confirmed MERGED:
+  - Stream A: #545 (A-91+92 2026-05-07), #548 (A-93 2026-05-07), #550 (A-94 2026-05-04), #552 (A-DISC-01+02 2026-05-04) → stream A complete
+  - Stream E: #469 (E-02 batch 5 2026-05-03), #557 (E-04 batch 2 2026-05-07), #560 (E-04 batch 3 2026-05-04), #566 (E-04 batch 4 2026-05-05), #567 (E-04 batch 5 2026-05-05) → stream E complete
+  - Stream F: #563 (F-07 batch 2 2026-05-05) → F-08 blocked only
+  - Stream P: #575 (P-03+P-04 2026-05-04) → stream P complete (P-02 blocked)
+  - Stream Q: #525 (Q-02..05 2026-05-04), #547 (Q-06..09 2026-05-05), #549 (Q-10..12 2026-05-05), #554 (Q-13+14 2026-05-04), #572 (Q-15 2026-05-04) → stream Q complete (Q-01 needs-user)
+  - Stream R: #466/#471/#510/#511/#513/#514/#516/#517/#519 (R-04..R-11, R-DISC-20260429-01), #521/#526/#530/#551/#562/#565/#573 (R-COVERAGE-01..14) all MERGED → only #595 (R-COVERAGE-RATCHET M1) open and clean
+  - Still OPEN: PR #593 (O-01 iter 9, needs-human-review), PR #594 (S stream complete, open), PR #595 (R-COVERAGE-RATCHET, clean)
+- Phase 3: Queue grooming is this iteration's work — queue was 20+ iterations stale on 7 streams.
+- Phase 5: Updated in-flight table rows for streams A, E, F, P, Q, R to reflect actual merged state.
+- Phase 6: n/a (no stream branch work this iteration — grooming only).
+- Phase 7: Queue updated on main. Next item: R-COVERAGE-M2-A (lib/stripe/* to ≥80%) on next iteration.
+
+- STATUS: PROGRESS · stream=GROOM · item=queue-groom-284 · pr=n/a
+
+---
+
+### 2026-05-07 — Forward progress iter 283 (stream S — S-04+S-05: ADR-0001 + ARCHITECTURE.md cron-dispatch)
+
+- Phase 0: batch iter 5 of 5. No LOOP_PAUSE.
+- Phase 1: main synced (cc3df61). Phase 1.5 skipped. Phase 1.7: no CI failures.
+- Phase 2: No tractable CI rescue (only Vercel status visible on all in-flight PRs).
+- Phase 3: S stream (step 22), existing branch `s-architecture`. S-01/S-02/S-03 done. S-04+S-05 next.
+- Phase 4: Docs-only — no tsc/lint needed. Research: Explore agent read lib/stripe-webhook/ registry pattern + lib/cron-groups.ts + dispatch/[group]/route.ts.
+- Phase 5a: `docs/adr/0001-stripe-webhook-handler-registry.md` written: formal ADR for Stream-J handler-registry. Context (1197-LOC monolith, no idempotency, no testability), decision (Map<eventType,handler>, WebhookContext injection, crash-robust idempotency state machine), consequences (independent testability, test seam exports), alternatives considered.
+- Phase 5b: `ARCHITECTURE.md` — new "Cron dispatch" section inserted between Caching strategy and Observability. 38 vercel.json entries → 73 handlers via lib/cron-groups.ts. Covers fan-out, loopback origin, _dispatch routing gotcha, how-to-add-handler guide. Updated file-tree comment + migration trigger threshold.
+- Phase 6: Commit `9e4907b` on `s-architecture`, pushed to PR #594. Stream S complete (all 5 items done).
+
+- STATUS: PROGRESS · stream=S · items=S-04+S-05 · pr=#594 · stream=COMPLETE
+
+---
+
+### 2026-05-07 — Forward progress iter 282 (stream S — S-03: OpenAPI 3.1.0 spec)
+
+- Phase 0: batch iter 4 of 5. No LOOP_PAUSE.
+- Phase 1: main synced (24c5323). Phase 1.5 skipped. Phase 1.7: no CI failures.
+- Phase 2: No tractable CI rescue (only Vercel status visible on all in-flight PRs).
+- Phase 3: S stream (step 22), existing branch `s-architecture`. S-01/S-02 done. S-03 next.
+- Phase 4: Docs-only — no tsc/lint needed. Cross-checked all 5 source route files for accurate field lists, enum values, auth requirements.
+- Phase 5: `docs/api/openapi-v1.yaml` written (416 lines): OpenAPI 3.1.0 spec for all 5 v1 routes + OPTIONS handlers. Component schemas: `BrokerSummary` (30 public fields), `BrokerProfile` (+review_content/fee_source_url/fee_changelog), `FeeChangelogEntry`, `ListMeta`, `CompareMeta`, `ApiKeyRequest/Response`, `ErrorResponse`. `BearerAuth` (Bearer `ica_<32-hex>`). `x-rate-limits` extension (free/basic/pro/enterprise). Two server URLs (pre/post-launch).
+- Phase 6: Commit `81e5857` on `s-architecture`, pushed to PR #594.
+
+- STATUS: PROGRESS · stream=S · item=S-03 · pr=#594
+
+---
+
+### 2026-05-07 — Forward progress iter 281 (stream S — S-02: agent-system topology diagram)
+
+- Phase 0: batch iter 3 of 5. No LOOP_PAUSE.
+- Phase 1: main synced (61b7404). Phase 1.5 skipped. Phase 1.7: no CI failures.
+- Phase 2: No tractable CI rescue (only Vercel status visible on all in-flight PRs).
+- Phase 3: S stream (step 22), existing branch `s-architecture`. S-01 done by concurrent iter 279. S-02 next.
+- Phase 4: Docs-only — no tsc/lint needed. Content sourced from COMPANY.md §agents + §tables + §escalation.
+- Phase 5: `docs/agent-system.md` written (147 lines): escalation hierarchy Mermaid flowchart, 19-agent network graph, 19-table + 5-shared-table linkage matrices, per-agent routing table, forbidden-actions list.
+- Phase 6: Commit `2a6f112` on `s-architecture`, pushed to PR #594.
+
+- STATUS: PROGRESS · stream=S · item=S-02 · pr=#594
+
+---
+
 ### 2026-05-07 — Forward progress iter 278 (stream R — queue sync: R-06 + R-07 marked done)
 
 - Phase 0: batch iter 1 of 5 (lock held). No LOOP_PAUSE sentinel present.
@@ -1962,6 +2028,21 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 - Phase 6: Commit to main directly (queue-only commit, `docs/audits/**` in `paths-ignore` — no CI trigger).
 
 - STATUS: PROGRESS · stream=R · item=R-06+R-07 · pr=#472+#473
+
+---
+
+### 2026-05-07 — Forward progress iter 280 (stream R — R-COVERAGE-RATCHET M1: vitest threshold ratchet)
+
+- Phase 0: batch iter (lock held). No LOOP_PAUSE sentinel present.
+- Phase 1: main synced. Phase 1.5 skipped (no recent migration). Phase 1.7: no CI failures visible.
+- Phase 2: No tractable CI rescue. All in-flight PRs show only Vercel status (no GitHub Actions failures).
+- Phase 3: Priority walk — R stream (step 16). Concurrent fire already did iter 279 (S-01). R-COVERAGE-RATCHET is first pending R item that doesn't depend on in-flight PRs.
+- Phase 4: Verification — vitest.config.mts read; thresholds confirmed stale (44/73/63 from 2026-04-27 vs 70.94%/79.61%/79.04% measured 2026-05-02).
+- Phase 5: Updated `vitest.config.mts` thresholds: global lines/stmt 44→65, branches 73→74, functions 63→74. API-route glob 13/58/30→40/62/40. Lint clean.
+- Phase 6: Commit `92db4d5` on `r-coverage-ratchet`, pushed. PR #595 opened.
+- Discovery sweep: vitest.config.mts touched — no adjacent lib helpers or test files to scan.
+
+- STATUS: PROGRESS · stream=R · item=R-COVERAGE-RATCHET · pr=#595
 
 ---
 
