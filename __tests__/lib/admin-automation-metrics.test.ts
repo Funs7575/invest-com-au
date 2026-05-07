@@ -14,6 +14,16 @@ import {
   getLatestCronRun,
   getLeadDisputeOverview,
   getAdvisorApplicationOverview,
+  getListingScamOverview,
+  getTextModerationOverview,
+  getLeadSlaOverview,
+  getProfileGateOverview,
+  getDunningOverview,
+  getBrokerChangesOverview,
+  getAfslExpiryOverview,
+  getEmailBouncesOverview,
+  getMonthlyReportsOverview,
+  getQualityWeightsOverview,
   getMarketplaceCampaignOverview,
   getAllFeatureOverviews,
 } from "@/lib/admin/automation-metrics";
@@ -393,5 +403,297 @@ describe("getAllFeatureOverviews", () => {
     const crashed = results.find((r) => r.feature === "lead_disputes");
     expect(crashed?.health).toBe("unknown");
     expect(crashed?.lastRun?.errorMessage).toContain("DB unavailable");
+  });
+});
+
+describe("getListingScamOverview", () => {
+  beforeEach(() => { vi.clearAllMocks(); });
+
+  it("aggregates auto_classified_verdict counts correctly", async () => {
+    const recentData = [
+      { status: "active", auto_classified_verdict: "auto_approve" },
+      { status: "active", auto_classified_verdict: "auto_approve" },
+      { status: "rejected", auto_classified_verdict: "auto_reject" },
+      { status: "pending", auto_classified_verdict: "escalate" },
+      { status: "pending", auto_classified_verdict: null },
+    ];
+    mockAdminFrom
+      .mockImplementationOnce(() => makeChain({ count: 3, data: null }))
+      .mockImplementationOnce(() => makeChain({ data: recentData, error: null }));
+    const result = await getListingScamOverview();
+    expect(result.feature).toBe("listing_scam");
+    expect(result.pending).toBe(3);
+    expect(result.recentCounts.autoActed).toBe(3);    // 2 auto_approve + 1 auto_reject
+    expect(result.recentCounts.escalated).toBe(1);
+    expect(result.recentCounts.approved).toBe(2);
+    expect(result.recentCounts.rejected).toBe(1);
+    expect(result.recentCounts.total).toBe(5);
+    expect(result.lastRun).toBeNull();               // not cron-driven
+  });
+
+  it("returns zero counts on empty data", async () => {
+    mockAdminFrom
+      .mockImplementationOnce(() => makeChain({ count: 0 }))
+      .mockImplementationOnce(() => makeChain({ data: [], error: null }));
+    const result = await getListingScamOverview();
+    expect(result.pending).toBe(0);
+    expect(result.recentCounts.total).toBe(0);
+    expect(result.health).toBe("unknown");
+  });
+});
+
+describe("getTextModerationOverview", () => {
+  beforeEach(() => { vi.clearAllMocks(); });
+
+  it("merges user_reviews and professional_reviews pending counts and recent data", async () => {
+    const brokerRecent = [
+      { auto_moderated_verdict: "auto_publish", status: "published" },
+      { auto_moderated_verdict: "escalate", status: "pending" },
+    ];
+    const advisorRecent = [
+      { auto_moderated_verdict: "auto_reject", status: "rejected" },
+    ];
+    // 4 parallel from() calls: pendingBroker, pendingAdvisor, brokerRecent, advisorRecent
+    mockAdminFrom
+      .mockImplementationOnce(() => makeChain({ count: 8 }))                        // user_reviews pending
+      .mockImplementationOnce(() => makeChain({ count: 4 }))                        // professional_reviews pending
+      .mockImplementationOnce(() => makeChain({ data: brokerRecent, error: null })) // user_reviews recent
+      .mockImplementationOnce(() => makeChain({ data: advisorRecent, error: null })); // professional_reviews recent
+    const result = await getTextModerationOverview();
+    expect(result.feature).toBe("text_moderation");
+    expect(result.pending).toBe(12);                  // 8 + 4
+    expect(result.recentCounts.autoActed).toBe(2);    // auto_publish + auto_reject
+    expect(result.recentCounts.escalated).toBe(1);
+    expect(result.recentCounts.approved).toBe(1);     // auto_publish
+    expect(result.recentCounts.rejected).toBe(1);     // auto_reject
+    expect(result.recentCounts.total).toBe(3);        // 2 broker + 1 advisor
+    expect(result.lastRun).toBeNull();
+  });
+
+  it("returns zero counts when both tables are empty", async () => {
+    mockAdminFrom
+      .mockImplementationOnce(() => makeChain({ count: 0 }))
+      .mockImplementationOnce(() => makeChain({ count: 0 }))
+      .mockImplementationOnce(() => makeChain({ data: [], error: null }))
+      .mockImplementationOnce(() => makeChain({ data: [], error: null }));
+    const result = await getTextModerationOverview();
+    expect(result.pending).toBe(0);
+    expect(result.recentCounts.total).toBe(0);
+    expect(result.health).toBe("unknown");
+  });
+});
+
+describe("getLeadSlaOverview (cronOnlyOverview)", () => {
+  beforeEach(() => { vi.clearAllMocks(); });
+
+  it("returns pending count from paused-SLA-miss professionals and lastRun from cron log", async () => {
+    const cronRow = {
+      name: "enforce-lead-sla",
+      started_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+      ended_at: new Date().toISOString(),
+      duration_ms: 5000,
+      status: "ok",
+      stats: { warned1: 7 },
+      error_message: null,
+      triggered_by: "cron",
+    };
+    // queueQuery (professionals paused sla_miss) then cron_run_log
+    mockAdminFrom
+      .mockImplementationOnce(() => makeChain({ count: 3 }))
+      .mockImplementationOnce(() => makeChain({ data: cronRow, error: null }));
+    const result = await getLeadSlaOverview();
+    expect(result.feature).toBe("lead_sla");
+    expect(result.pending).toBe(3);
+    expect(result.lastRun?.status).toBe("ok");
+    expect(result.recentCounts.autoActed).toBe(7);   // stats.warned1
+    expect(result.health).toBe("green");
+  });
+
+  it("returns unknown health when cron has never run", async () => {
+    mockAdminFrom
+      .mockImplementationOnce(() => makeChain({ count: 0 }))
+      .mockImplementationOnce(() => makeChain({ data: null, error: null })); // no cron row
+    const result = await getLeadSlaOverview();
+    expect(result.health).toBe("unknown");
+    expect(result.recentCounts.autoActed).toBe(0);
+  });
+});
+
+describe("getProfileGateOverview", () => {
+  beforeEach(() => { vi.clearAllMocks(); });
+
+  it("returns professionals awaiting profile gate as pending", async () => {
+    mockAdminFrom
+      .mockImplementationOnce(() => makeChain({ count: 11 }))
+      .mockImplementationOnce(() => makeChain({ data: null, error: null }));
+    const result = await getProfileGateOverview();
+    expect(result.feature).toBe("profile_gate_drip");
+    expect(result.pending).toBe(11);
+    expect(result.display.cronName).toBe("advisor-profile-gate-drip");
+  });
+});
+
+describe("getDunningOverview", () => {
+  beforeEach(() => { vi.clearAllMocks(); });
+
+  it("returns failed credit topup count as pending", async () => {
+    mockAdminFrom
+      .mockImplementationOnce(() => makeChain({ count: 5 }))
+      .mockImplementationOnce(() => makeChain({ data: null, error: null }));
+    const result = await getDunningOverview();
+    expect(result.feature).toBe("advisor_dunning");
+    expect(result.pending).toBe(5);
+    expect(result.display.cronName).toBe("advisor-dunning");
+  });
+});
+
+describe("getBrokerChangesOverview", () => {
+  beforeEach(() => { vi.clearAllMocks(); });
+
+  it("counts auto-applied (non-require-admin) changes as autoActed and approved", async () => {
+    const recentData = [
+      { auto_applied_at: "2026-05-01T10:00:00Z", auto_applied_tier: "auto" },
+      { auto_applied_at: "2026-05-01T11:00:00Z", auto_applied_tier: "reviewable" },
+      { auto_applied_at: null, auto_applied_tier: "require_admin" },  // escalated
+      { auto_applied_at: null, auto_applied_tier: null },              // escalated
+    ];
+    mockAdminFrom
+      .mockImplementationOnce(() => makeChain({ count: 2 }))
+      .mockImplementationOnce(() => makeChain({ data: recentData, error: null }));
+    const result = await getBrokerChangesOverview();
+    expect(result.feature).toBe("broker_data_changes");
+    expect(result.pending).toBe(2);
+    expect(result.recentCounts.autoActed).toBe(2);   // 2 auto_applied, neither require_admin
+    expect(result.recentCounts.approved).toBe(2);    // 2 rows with auto_applied_at set
+    expect(result.recentCounts.escalated).toBe(2);   // require_admin + null tier
+    expect(result.recentCounts.total).toBe(4);
+    expect(result.lastRun).toBeNull();
+  });
+
+  it("returns zero counts on empty DB result", async () => {
+    mockAdminFrom
+      .mockImplementationOnce(() => makeChain({ count: 0 }))
+      .mockImplementationOnce(() => makeChain({ data: [], error: null }));
+    const result = await getBrokerChangesOverview();
+    expect(result.pending).toBe(0);
+    expect(result.recentCounts.total).toBe(0);
+  });
+});
+
+describe("getAfslExpiryOverview", () => {
+  beforeEach(() => { vi.clearAllMocks(); });
+
+  it("returns advisors with ceased/suspended AFSL as pending", async () => {
+    mockAdminFrom
+      .mockImplementationOnce(() => makeChain({ count: 2 }))
+      .mockImplementationOnce(() => makeChain({ data: null, error: null }));
+    const result = await getAfslExpiryOverview();
+    expect(result.feature).toBe("afsl_expiry");
+    expect(result.pending).toBe(2);
+    expect(result.display.cronName).toBe("afsl-expiry-monitor");
+  });
+});
+
+describe("getEmailBouncesOverview", () => {
+  beforeEach(() => { vi.clearAllMocks(); });
+
+  it("uses suppression list size as pending count and stats.pulled_from_resend as autoActed", async () => {
+    const cronRow = {
+      name: "email-bounce-sweep",
+      started_at: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
+      ended_at: new Date().toISOString(),
+      duration_ms: 2000,
+      status: "ok",
+      stats: { pulled_from_resend: 14 },
+      error_message: null,
+      triggered_by: "cron",
+    };
+    mockAdminFrom
+      .mockImplementationOnce(() => makeChain({ count: 250 }))  // email_suppression_list count
+      .mockImplementationOnce(() => makeChain({ data: cronRow, error: null }));
+    const result = await getEmailBouncesOverview();
+    expect(result.feature).toBe("email_bounces");
+    expect(result.pending).toBe(250);
+    expect(result.recentCounts.autoActed).toBe(14);
+    expect(result.recentCounts.total).toBe(250);
+    // health uses Infinity for warn/critical on pending (0 health-relevant pending) → green
+    expect(result.health).toBe("green");
+  });
+
+  it("returns unknown health when cron has never run", async () => {
+    mockAdminFrom
+      .mockImplementationOnce(() => makeChain({ count: 0 }))
+      .mockImplementationOnce(() => makeChain({ data: null, error: null }));
+    const result = await getEmailBouncesOverview();
+    expect(result.health).toBe("unknown");
+    expect(result.recentCounts.autoActed).toBe(0);
+  });
+});
+
+describe("getMonthlyReportsOverview", () => {
+  beforeEach(() => { vi.clearAllMocks(); });
+
+  it("always has pending=0; derives autoActed from stats.emailed and total from stats.scanned", async () => {
+    const cronRow = {
+      name: "monthly-advisor-reports",
+      started_at: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+      ended_at: new Date().toISOString(),
+      duration_ms: 60_000,
+      status: "ok",
+      stats: { emailed: 42, scanned: 50 },
+      error_message: null,
+      triggered_by: "cron",
+    };
+    mockAdminFrom.mockImplementationOnce(() => makeChain({ data: cronRow, error: null }));
+    const result = await getMonthlyReportsOverview();
+    expect(result.feature).toBe("monthly_reports");
+    expect(result.pending).toBe(0);
+    expect(result.recentCounts.autoActed).toBe(42);  // stats.emailed
+    expect(result.recentCounts.total).toBe(50);      // stats.scanned
+  });
+
+  it("returns 0 for autoActed and total when cron stats are absent", async () => {
+    mockAdminFrom.mockImplementationOnce(() => makeChain({ data: null, error: null }));
+    const result = await getMonthlyReportsOverview();
+    expect(result.recentCounts.autoActed).toBe(0);
+    expect(result.recentCounts.total).toBe(0);
+    expect(result.health).toBe("unknown");
+  });
+});
+
+describe("getQualityWeightsOverview", () => {
+  beforeEach(() => { vi.clearAllMocks(); });
+
+  it("derives autoActed from stats.signals_computed and total from model_version", async () => {
+    const cronRow = {
+      name: "lead-quality-weights",
+      started_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+      ended_at: new Date().toISOString(),
+      duration_ms: 10_000,
+      status: "ok",
+      stats: { signals_computed: 33 },
+      error_message: null,
+      triggered_by: "cron",
+    };
+    // cron_run_log then lead_quality_weights version
+    mockAdminFrom
+      .mockImplementationOnce(() => makeChain({ data: cronRow, error: null }))
+      .mockImplementationOnce(() => makeChain({ data: { model_version: 7 }, error: null }));
+    const result = await getQualityWeightsOverview();
+    expect(result.feature).toBe("quality_weights");
+    expect(result.pending).toBe(0);
+    expect(result.recentCounts.autoActed).toBe(33);  // stats.signals_computed
+    expect(result.recentCounts.total).toBe(7);       // model_version
+    expect(result.health).toBe("green");
+  });
+
+  it("returns 0 totals when DB returns null for both queries", async () => {
+    mockAdminFrom
+      .mockImplementationOnce(() => makeChain({ data: null, error: null }))
+      .mockImplementationOnce(() => makeChain({ data: null, error: null }));
+    const result = await getQualityWeightsOverview();
+    expect(result.recentCounts.autoActed).toBe(0);
+    expect(result.recentCounts.total).toBe(0);
+    expect(result.health).toBe("unknown");
   });
 });
