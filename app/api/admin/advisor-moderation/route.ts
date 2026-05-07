@@ -1,8 +1,14 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { ADMIN_EMAILS } from "@/lib/admin";
 import { logger } from "@/lib/logger";
+
+const ModerateBody = z.object({
+  ids: z.array(z.number().int()).min(1),
+  action: z.enum(["approve", "reject"]),
+});
 
 const log = logger("admin-advisor-moderation");
 
@@ -29,21 +35,17 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await req.json();
-    const { ids, action } = body as { ids?: number[]; action?: string };
-
-    if (!ids || !Array.isArray(ids) || ids.length === 0) {
+    const rawBody = await req.json();
+    const parsed = ModerateBody.safeParse(rawBody);
+    if (!parsed.success) {
+      const issue = parsed.error.issues[0];
+      const field = typeof issue?.path[0] === "string" ? issue.path[0] : "input";
       return NextResponse.json(
-        { error: "Missing or empty ids array" },
+        { error: field === "action" ? "Action must be 'approve' or 'reject'" : "Missing or empty ids array" },
         { status: 400 }
       );
     }
-    if (!action || !["approve", "reject"].includes(action)) {
-      return NextResponse.json(
-        { error: "Action must be 'approve' or 'reject'" },
-        { status: 400 }
-      );
-    }
+    const { ids, action } = parsed.data;
 
     const supabase = createAdminClient();
 
