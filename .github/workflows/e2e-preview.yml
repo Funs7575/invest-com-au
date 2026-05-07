@@ -167,7 +167,7 @@ jobs:
         # green/red is noise. Failure surface is important enough
         # to interrupt.
         if: failure()
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const url = process.env.E2E_BASE_URL;
