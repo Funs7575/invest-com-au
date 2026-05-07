@@ -235,4 +235,40 @@ describe("POST /api/advisor-lead", () => {
     const ctx = args.context as Record<string, unknown>;
     expect((ctx.investor_country as string).length).toBeLessThanOrEqual(50);
   });
+
+  // ── Source-page routing ──
+
+  it("forwards source_page to PostHog lead_submitted event", async () => {
+    const { captureServerEvent } = await import("@/lib/posthog/server");
+    const captureMock = captureServerEvent as ReturnType<typeof vi.fn>;
+    captureMock.mockClear();
+
+    const req = buildRequest({ ...VALID, source_page: "/quiz" });
+    const res = await POST(req);
+    expect(res.status).toBe(200);
+
+    const call = captureMock.mock.calls.find(
+      (args) => args[1] === "lead_submitted",
+    );
+    expect(call).toBeDefined();
+    const props = call?.[2] as Record<string, unknown>;
+    expect(props.source_page).toBe("/quiz");
+  });
+
+  it("sets source_page null when not supplied by client", async () => {
+    const { captureServerEvent } = await import("@/lib/posthog/server");
+    const captureMock = captureServerEvent as ReturnType<typeof vi.fn>;
+    captureMock.mockClear();
+
+    const req = buildRequest(VALID); // no source_page
+    const res = await POST(req);
+    expect(res.status).toBe(200);
+
+    const call = captureMock.mock.calls.find(
+      (args) => args[1] === "lead_submitted",
+    );
+    expect(call).toBeDefined();
+    const props = call?.[2] as Record<string, unknown>;
+    expect(props.source_page).toBeNull();
+  });
 });
