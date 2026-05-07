@@ -67,7 +67,7 @@ jobs:
         # change busts it cleanly. Next.js uses .next/cache for
         # webpack module persistence + type-checking incrementals;
         # a warm cache cuts production-build time by ~30–50%.
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: .next/cache
           key: nextjs-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-${{ hashFiles('app/**/*.{ts,tsx}', 'components/**/*.{ts,tsx}', 'lib/**/*.{ts,tsx}', 'next.config.ts', 'tsconfig.json') }}
@@ -243,7 +243,7 @@ jobs:
 
       - name: Cache Playwright browsers
         id: playwright-cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}-chromium-webkit
@@ -510,7 +510,7 @@ jobs:
           echo "version=$PW_VERSION" >> "$GITHUB_OUTPUT"
       - name: Cache Playwright browser (chromium-only)
         id: playwright-cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}-chromium

@@ -1,9 +1,19 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { logger } from "@/lib/logger";
 import { ADMIN_EMAILS } from "@/lib/admin";
 import { isRateLimited } from "@/lib/rate-limit";
+
+const PatchBody = z
+  .object({
+    title: z.string().trim().min(5).max(200).optional(),
+    body: z.string().trim().min(10).max(10000).optional(),
+  })
+  .refine((d) => d.title !== undefined || d.body !== undefined, {
+    message: "No fields to update",
+  });
 
 const log = logger("community:thread");
 
@@ -136,27 +146,20 @@ export async function PATCH(
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const body = await req.json();
+    const rawBody = await req.json();
+    const parsed = PatchBody.safeParse(rawBody);
+    if (!parsed.success) {
+      const issue = parsed.error.issues[0];
+      const msg =
+        issue?.message === "No fields to update"
+          ? "No fields to update"
+          : `Invalid ${typeof issue?.path[0] === "string" ? issue.path[0] : "input"}`;
+      return NextResponse.json({ error: msg }, { status: 400 });
+    }
+
     const updates: Record<string, unknown> = {};
-
-    if (body.title !== undefined) {
-      if (typeof body.title !== "string" || body.title.trim().length < 5 || body.title.trim().length > 200) {
-        return NextResponse.json({ error: "Title must be 5-200 characters" }, { status: 400 });
-      }
-      updates.title = body.title.trim();
-    }
-
-    if (body.body !== undefined) {
-      if (typeof body.body !== "string" || body.body.trim().length < 10 || body.body.trim().length > 10000) {
-        return NextResponse.json({ error: "Body must be 10-10000 characters" }, { status: 400 });
-      }
-      updates.body = body.body.trim();
-    }
-
-    if (Object.keys(updates).length === 0) {
-      return NextResponse.json({ error: "No fields to update" }, { status: 400 });
-    }
-
+    if (parsed.data.title !== undefined) updates.title = parsed.data.title;
+    if (parsed.data.body !== undefined) updates.body = parsed.data.body;
     updates.updated_at = new Date().toISOString();
 
     const { data: updated, error: updateError } = await admin
