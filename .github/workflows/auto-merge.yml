@@ -82,7 +82,7 @@ jobs:
     steps:
       - name: Resolve target PR numbers
         id: targets
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const eventName = context.eventName;
@@ -111,7 +111,7 @@ jobs:
 
       - name: Evaluate gates and post countdown
         if: ${{ fromJSON(steps.targets.outputs.prs)[0] != null }}
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         env:
           PR_NUMBERS: ${{ steps.targets.outputs.prs }}
         with:
@@ -135,7 +135,7 @@ jobs:
           sparse-checkout-cone-mode: false
 
       - name: Sweep open auto-merge-safe PRs
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const script = require('./.github/workflows/scripts/auto-merge.js');
