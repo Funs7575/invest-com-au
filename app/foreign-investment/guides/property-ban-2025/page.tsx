@@ -1,3 +1,4 @@
+// dated-strings-exempt — entire page documents a specific legislative ban period (1 April 2025–31 March 2027); all dates are immutable statute references
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
@@ -5,6 +6,10 @@ import { STATE_SURCHARGES } from "@/lib/firb-data";
 import { FIRB_DISCLAIMER } from "@/lib/compliance";
 import SectionHeading from "@/components/SectionHeading";
 import ComplianceFooter from "@/components/ComplianceFooter";
+import AdvisorPrompt from "@/components/AdvisorPrompt";
+import { createClient } from "@/lib/supabase/server";
+import { getAffiliateLink, AFFILIATE_REL, renderStars } from "@/lib/tracking";
+import type { Broker } from "@/lib/types";
 
 export const metadata: Metadata = {
   title: "Australia's Foreign Buyer Property Ban 2025–2027: What You Can (and Can't) Buy",
@@ -29,7 +34,16 @@ export const metadata: Metadata = {
 
 export const revalidate = 86400;
 
-export default function PropertyBan2025Page() {
+export default async function PropertyBan2025Page() {
+  const supabase = await createClient();
+  const { data: nonResidentBrokers } = await supabase
+    .from("brokers")
+    .select("id, name, slug, color, affiliate_url, rating, tagline, cta_text, benefit_cta, asx_fee")
+    .eq("platform_type", "share_broker")
+    .eq("accepts_non_residents", true)
+    .eq("status", "active")
+    .order("rating", { ascending: false })
+    .limit(3);
   return (
     <div className="bg-white min-h-screen">
       <script
@@ -378,6 +392,44 @@ export default function PropertyBan2025Page() {
             ))}
           </div>
         </section>
+
+        {/* ── Advisor CTA ── */}
+        <AdvisorPrompt
+          type="property_advisor"
+          heading="Alternatives to direct property: find a buyer's agent"
+        />
+
+        {/* ── Non-resident broker mini-strip ── */}
+        {nonResidentBrokers && nonResidentBrokers.length > 0 && (
+          <section className="bg-slate-50 border border-slate-200 rounded-2xl p-6 space-y-4">
+            <div>
+              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Share Brokers</p>
+              <h2 className="text-lg font-bold text-slate-900">ASX brokers that accept non-residents</h2>
+              <p className="text-sm text-slate-500 mt-1">Non-residents can still invest in Australian shares while the property ban is in effect.</p>
+            </div>
+            <div className="grid sm:grid-cols-3 gap-3">
+              {nonResidentBrokers.map((b) => (
+                <div key={b.slug} className="bg-white rounded-xl border border-slate-200 p-4 flex flex-col gap-3">
+                  <div>
+                    <p className="font-bold text-slate-900 text-sm">{b.name}</p>
+                    <p className="text-xs text-amber-500">{renderStars(Number(b.rating ?? 0))}</p>
+                    <p className="text-xs text-slate-500 mt-1 line-clamp-2">{b.tagline}</p>
+                  </div>
+                  <div className="mt-auto">
+                    <a
+                      href={getAffiliateLink(b as Broker)}
+                      rel={AFFILIATE_REL}
+                      target="_blank"
+                      className="block text-center w-full px-3 py-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold text-xs rounded-lg transition-colors"
+                    >
+                      {b.cta_text ?? "Learn More →"}
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
           <p className="text-xs text-slate-500 leading-relaxed">{FIRB_DISCLAIMER}</p>
