@@ -42,13 +42,13 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | O | `claude/audit-remediation/o-01-iter9-rls-catchup` (#593) | #235/#237/#239/#299/#300/#366/#395/#408 all MERGED · **#593 OPEN** | iter 278 — `c46081b` (O-01 iter 9: 57-table catch-up migration, applied to live DB via MCP; CI queued). | O-01 **done** (iter 9, #593 — all 57 zero-policy tables resolved in live DB). O-02 done. O-03 done. O-04 blocked (Stripe live validation). O-05 done (PR #408). |
 | P | `claude/audit-remediation/p-01-sentry-v10-upgrade` (#468) · `p-03-04-minor-sdk-bumps` (#575) | #468 MERGED 2026-05-03T11:33Z · #575 MERGED 2026-05-04 | last merged 2026-05-04 | **P-01 done** (PR #468 MERGED). P-02 (Stripe SDK v17→v22) BLOCKED — requires npm install + local test run; not tractable on Hardware-exception sandbox. **P-03+P-04 done** (PR #575 MERGED 2026-05-04). **Stream P complete** (P-02 blocked). |
 | Q | `claude/audit-remediation/q-02-05-recovery-runbooks` (#525) · `q-06-09-runbooks` (#547) · `q-10-12-runbooks` (#549) · `q-13-14-secret-rotation-dpa` (#554) · `q-15-privacy-data-collection` (#572) | #525 MERGED 2026-05-04 · #547 MERGED 2026-05-05 · #549 MERGED 2026-05-05 · #554 MERGED 2026-05-04 · #572 MERGED 2026-05-04 | all merged 2026-05-05 | Q-01 needs-user (PITR drill). **Q-02..Q-05 done** (PR #525 MERGED 2026-05-04). **Q-06..Q-09 done** (PR #547 MERGED 2026-05-05). **Q-10..Q-12 done** (PR #549 MERGED 2026-05-05). Q-SOC2-02..11 done (verified iter 260). **Q-13+Q-14 done** (PR #554 MERGED 2026-05-04). **Q-15 done** (PR #572 MERGED 2026-05-04). **Stream Q complete** (Q-01 needs-user). |
-| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · ... · `r-coverage-01-listing-routes` (#521) · `r-coverage-02-stripe-lib` (#526) · `r-coverage-03-quotes` (#530) · `r-coverage-11-quote-review` (#551) · `r-coverage-12-quotes-qa` (#562) · `r-coverage-13-quotes-get` (#565) · `r-coverage-14-notify-filter` (#573) · `r-coverage-ratchet` (#595) · `r-coverage-15-quote-slug` (#597) | #290/#396/#459/#466/#471/#472/#473/#510/#511/#513/#514/#516/#517/#519/#521/#526/#530/#551/#562/#565/#573 all MERGED · **#595 OPEN** (clean) · **#597 OPEN** (CI queued) | iter 284 — `4029423` (PR #597: R-COVERAGE-15 — GET /api/quotes/[slug] job detail + bids, 10 tests; CI queued). iter 280 — `92db4d5` (PR #595: R-COVERAGE-RATCHET M1 — vitest.config.mts global floors 44/73/63→65/74/74, API-route floor 13/58/30→40/62/40; CI queued). iter 277 CI-rescue — `82f05f1` (PR #573: merge main to force Vercel build). iter 275 forward — `a730325` (PR #573: R-COVERAGE-14 — 10 tests). | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459). **R-06 done** (#472). **R-07 done** (#473). **R-04 done** (#466). **R-05 done** (#471). **R-08 done** (#510). **R-09 done** (#511/#513). **R-10 done** (#514/#516). **R-11 done** (#519). **R-DISC-20260429-01 done** (#517). **R-COVERAGE-01..14 all done** (iters 251–277, PRs #521/#526/#530/#551/#562/#565/#573 all MERGED). **R-COVERAGE-RATCHET M1 in-flight (#595 OPEN — clean)**. **R-COVERAGE-15 in-flight (#597)**. R-COVERAGE-16..N pending. |
+| R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · ... · `r-coverage-01-listing-routes` (#521) · `r-coverage-02-stripe-lib` (#526) · `r-coverage-03-quotes` (#530) · `r-coverage-11-quote-review` (#551) · `r-coverage-12-quotes-qa` (#562) · `r-coverage-13-quotes-get` (#565) · `r-coverage-14-notify-filter` (#573) · `r-coverage-ratchet` (#595) · `r-coverage-15-quote-slug` (#597) · `r-coverage-m2a-stripe` (#601) | #290/#396/#459/#466/#471/#472/#473/#510/#511/#513/#514/#516/#517/#519/#521/#526/#530/#551/#562/#565/#573 all MERGED · **#595 OPEN** (clean) · **#597 OPEN** (CI queued) · **#601 OPEN** (smoke-test rescued) | CI-rescue iter 292 — `2fd0264` (PR #601: merge main → re-trigger Vercel smoke-test). iter 288 — `37eecca` (PR #601: R-COVERAGE-M2-A batch 1 — 11 stripe webhook edge-case tests). iter 284 — `4029423` (PR #597: R-COVERAGE-15 — GET /api/quotes/[slug] job detail + bids, 10 tests; CI queued). iter 280 — `92db4d5` (PR #595: R-COVERAGE-RATCHET M1 — vitest.config.mts global floors 44/73/63→65/74/74, API-route floor 13/58/30→40/62/40; CI queued). iter 277 CI-rescue — `82f05f1` (PR #573: merge main to force Vercel build). iter 275 forward — `a730325` (PR #573: R-COVERAGE-14 — 10 tests). | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459). **R-06 done** (#472). **R-07 done** (#473). **R-04 done** (#466). **R-05 done** (#471). **R-08 done** (#510). **R-09 done** (#511/#513). **R-10 done** (#514/#516). **R-11 done** (#519). **R-DISC-20260429-01 done** (#517). **R-COVERAGE-01..14 all done** (iters 251–277, PRs #521/#526/#530/#551/#562/#565/#573 all MERGED). **R-COVERAGE-RATCHET M1 in-flight (#595 OPEN — clean)**. **R-COVERAGE-15 in-flight (#597)**. **R-COVERAGE-M2-A in-flight (#601 OPEN — batch 1)**. R-COVERAGE-16..N pending. |
 | S | `claude/audit-remediation/s-architecture` | **#594 OPEN** | CI-rescue iter 284 — `ff241ed` (merge main: Supabase types drift false-positive confirmed diff=0; Preview smoke test failure 1st occurrence, merge-main triggers fresh Vercel run). iter 283 — `9e4907b` (S-04+S-05: docs/adr/0001-stripe-webhook-handler-registry.md + ARCHITECTURE.md cron-dispatch section). | S-01 done (iter 279). **S-02 done (iter 281)**. **S-03 done (iter 282)**. **S-04 done (iter 283)**. **S-05 done (iter 283)**. **Stream S complete.** |
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 MERGED 2026-04-28T11:45Z | merged | V-NEW-06 done (commit `a7bd736`) |
 | V (V-NEW-07) | `claude/audit-remediation/v-new-07-admin-mfa-enforced` | #256 MERGED 2026-04-28T15:44Z | merged | V-NEW-07a done · V-NEW-07b done (`698bbae`) — **Tier D: needs `ADMIN_MFA_COOKIE_SECRET` ≥32 chars in Vercel before merge** (PR was merged; env var status unclear) |
-| W | `claude/audit-remediation/w-05-hub-deep-dive-grid` (#599) | #306/#312/#369/#529 all MERGED · **#598 OPEN** · **#599 OPEN** | iter 287 — `d5a17cc` (W-05: HubDeepDiveGrid component + 20 tests, smsf+dividends pages migrated; CI in progress). | W-01 done (PR #306). W-NEW-01 done (PR #312). W-02 done (PR #369). W-03 **done** (PR #529 MERGED 2026-05-04). **W-04 in-flight (#598 OPEN)**. **W-05 in-flight (#599 OPEN — CI pending)**. W-06..W-15 pending. |
-| X | `claude/audit-remediation/x-04-funds-swap` (#600) | #257/#367 both MERGED · **#596 OPEN** · **#600 OPEN** | iter 288 — `77e2ba7` (X-04: /invest/funds pages admin→anon swap + eslint-disable removal; CI queued). | X-01 done (PR #257). X-02 MERGED (#367 — /best-for pages admin→anon swap). **X-03 in-flight (#596 OPEN — CI pending)**. **X-04 in-flight (#600 OPEN — CI queued)**. X-05..X-09 pending. |
+| W | `claude/audit-remediation/w-06-hub-advisor-cta` (#602) | #306/#312/#369/#529 all MERGED · **#598 OPEN** · **#599 OPEN** · **#602 OPEN** | iter 293 — `a17a503` (W-06: HubAdvisorCTA component + 8 tests, 7 hub pages migrated; CI queued). CI-rescue iter 291 — `b66bbc7` (PR #599 W-05: merge main). CI-rescue iter 289 — `8ff272c` (PR #598 W-04: merge main). iter 287 — `d5a17cc` (W-05: HubDeepDiveGrid + 20 tests). | W-01 done (PR #306). W-NEW-01 done (PR #312). W-02 done (PR #369). W-03 **done** (PR #529 MERGED 2026-05-04). **W-04 in-flight (#598 OPEN — smoke-test rescued)**. **W-05 in-flight (#599 OPEN — smoke-test rescued)**. **W-06 in-flight (#602 OPEN — CI queued)**. W-07..W-15 pending. |
+| X | `claude/audit-remediation/x-04-funds-swap` (#600) | #257/#367 both MERGED · **#596 OPEN** · **#600 OPEN** | CI-rescue iter 291 — `0c5b599` (PR #600 X-04: merge main → force new Vercel build for smoke-test timeout). CI-rescue iter 290 — `b433780` (PR #596 X-03: merge main). iter 288 — `77e2ba7` (X-04: /invest/funds pages admin→anon swap). | X-01 done (PR #257). X-02 MERGED (#367 — /best-for pages admin→anon swap). **X-03 in-flight (#596 OPEN — smoke-test rescued)**. **X-04 in-flight (#600 OPEN — smoke-test rescued)**. X-05..X-09 pending. |
 | Y | all PRs MERGED | #253/#347 both MERGED | last merged 2026-05-01T22:00Z | Y-05 done (PR #253). Y-08 done (PR #253). Y-05-ENRICH MERGED (#347 — sourcedAt/source/freshness enrichment + 16 new tests). Y-01..Y-04, Y-06, Y-07 pending. |
 | BB | all PRs MERGED | #361/#368 both MERGED | last merged 2026-05-01T22:01Z | BB-03 MERGED (#361 — CGT calc vs ATO, 5 regulator-reference tests). BB-06 MERGED (#368 — mortgage stress vs ASIC+APRA, 8 cases). Other BB items pending. |
 | **AUDIT-SWEEP** | `claude/audit-remediation/audit-sweep-01-02` | #518 **MERGED 2026-05-04** | last merged 2026-05-04 | AUDIT-SWEEP-01 done. AUDIT-SWEEP-02 done. Stream complete. |
@@ -644,7 +644,7 @@ Pure grind work, ideal for the cloud loop. Long-running stream — expect ~6-7 m
 | R-COVERAGE-14 | in-flight (#573) | `notifyMatchingAdvisors` alert_preferences filter (advisor_types / states / budget_bands) — 10 tests | 1 | PR #573 (`a730325`). New file `__tests__/api/quotes-advisor-notify.test.ts` to avoid conflict with #565. Thenable mock for professionals table + flushPromises() drain. |
 | R-COVERAGE-15 | in-progress (#597) | `GET /api/quotes/[slug]` job detail + bids — 10 tests (rate-limit 429, 404 DB error, 404 null, 200 with bids, 200 null→[], 200 empty, multi-bid order, IP key, 500 throw, advisor profile shape) | 1 | PR #597 (`4029423`). New file `__tests__/api/quotes-slug-detail.test.ts`. |
 | R-COVERAGE-16..N | pending | One iteration per remaining hot module until M3 targets hit | ~26 | Scout + queue more items per iteration as the loop discovers new gaps. |
-| R-COVERAGE-M2-A | pending | Lift `lib/stripe/*` to ≥80% — full edge-case coverage on webhook idempotency, refund flows, subscription upgrades/downgrades, customer migration | 4 | Done after M1; needs the Stripe SDK mock matrix mature from R-COVERAGE-02. |
+| R-COVERAGE-M2-A | in-progress (#601) | Lift `lib/stripe/*` to ≥80% — full edge-case coverage on webhook idempotency, refund flows, subscription upgrades/downgrades, customer migration | 4 | Batch 1 done (iter 288, PR #601): 11 tests targeting cancel_at timestamp branch, empty items[], sponsored_placement re-delivery guard, invoice string lazy-fetch, listing update error, listing duration fallback, no-email customer, customer-ID object form. Batches 2-3 pending (M2-B..N coverage targets). |
 | R-COVERAGE-M2-B | pending | Lift `lib/finance/*` to ≥80% — currency formatting edge cases (negative, zero, > AUD 1B, non-AUD), tax calculations, fee tier boundaries | 3 | Money-correctness tests; pair with finance team if questions on rounding. |
 | R-COVERAGE-M2-C | pending | Lift `lib/compliance.ts` to ≥80% — every disclosure variant, every interpolation, every locale | 2 | Legal-correctness; tests act as documentation of which copy applies where. |
 | R-COVERAGE-M2-D | pending | Lift `lib/sponsorship.ts` to ≥80% — full ranking matrix, tier boundaries, tie-break rules | 2 | Revenue-ranking; regressions here directly affect partner placement fairness. |
@@ -1100,7 +1100,7 @@ its own tests; existing hubs migrate progressively. Reference:
 | W-03 | pending | Extract `<HubServiceGrid>` + tests | 1 | |
 | W-04 | pending | Extract `<HubArticleStrip>` (Supabase-fed, anon-client) + tests | 1 | Replaces the duplicated try/catch + select pattern in 4+ hubs. |
 | W-05 | pending | Extract `<HubDeepDiveGrid>` + tests | 1 | |
-| W-06 | pending | Extract `<HubAdvisorCTA>` + tests | 1 | Lever #1 — bottom-of-page lead capture. |
+| W-06 | in-flight | Extract `<HubAdvisorCTA>` + tests | 1 | **PR #602 OPEN**. `components/HubAdvisorCTA.tsx` created; 8 tests; 7 hub pages migrated (negative-gearing, lump-sum/redundancy, smsf/setup, sell-business, visa-investment, grants/emdg, grants/igp). Lever #1 — bottom-of-page lead capture. |
 | W-07 | pending | Extract `<HubFAQ>` (JSON-LD-emitting) + tests | 1 | |
 | W-08 | pending | Extract `<DirectoryGrid>` + `<DirectoryFilter>` + `<DirectoryCard>` + tests | 2 | Generalised from `/smsf/auditors`. Supports sponsored top-row slot (lever #2). |
 | W-09 | pending | Extract `<CalculatorShell>` (wrapper with disclaimer + share + save-results email-gate) + tests | 1 | Wraps existing R&D / SMSF / valuation / lump-sum / negative-gearing / dividends calculators. |
@@ -1480,7 +1480,7 @@ its own tests; existing hubs migrate progressively. Reference:
 | W-03 | pending | Extract `<HubServiceGrid>` + tests | 1 | |
 | W-04 | pending | Extract `<HubArticleStrip>` (Supabase-fed, anon-client) + tests | 1 | Replaces the duplicated try/catch + select pattern in 4+ hubs. |
 | W-05 | pending | Extract `<HubDeepDiveGrid>` + tests | 1 | |
-| W-06 | pending | Extract `<HubAdvisorCTA>` + tests | 1 | Lever #1 — bottom-of-page lead capture. |
+| W-06 | in-flight | Extract `<HubAdvisorCTA>` + tests | 1 | **PR #602 OPEN**. `components/HubAdvisorCTA.tsx` created; 8 tests; 7 hub pages migrated (negative-gearing, lump-sum/redundancy, smsf/setup, sell-business, visa-investment, grants/emdg, grants/igp). Lever #1 — bottom-of-page lead capture. |
 | W-07 | pending | Extract `<HubFAQ>` (JSON-LD-emitting) + tests | 1 | |
 | W-08 | pending | Extract `<DirectoryGrid>` + `<DirectoryFilter>` + `<DirectoryCard>` + tests | 2 | Generalised from `/smsf/auditors`. Supports sponsored top-row slot (lever #2). |
 | W-09 | pending | Extract `<CalculatorShell>` (wrapper with disclaimer + share + save-results email-gate) + tests | 1 | Wraps existing R&D / SMSF / valuation / lump-sum / negative-gearing / dividends calculators. |
@@ -1953,6 +1953,65 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 
 ## Iteration log (most recent at top)
 
+### 2026-05-07 — Forward progress iter 293 (stream W — W-06: HubAdvisorCTA extraction)
+
+- Item: W-06 — Extract `<HubAdvisorCTA>` + tests
+- Branch: `claude/audit-remediation/w-06-hub-advisor-cta`
+- PR: #602 (OPEN, CI queued)
+- Commit: `a17a503`
+- Phase 4 verification: confirmed pattern across 17 HubLeadForm callsites. 7 pages have clean standalone section pattern; 3 (smsf/property, smsf/crypto, smsf/investment-strategy) have HubLeadForm alongside AdvisorPrompt in shared section — not migrated.
+- Work: `components/HubAdvisorCTA.tsx` (wraps HubLeadForm in standard section+container layout, accepts optional className override); `__tests__/components/HubAdvisorCTA.test.tsx` (8 tests); 7 hub pages migrated.
+- Local gates: tsc skipped (Hardware exception — no node_modules); vitest skipped (no node_modules); CI is authoritative.
+- Phase 7: Queue updated on main (W-06 → in-flight, #602).
+
+STATUS: PROGRESS · stream=W · item=W-06 · pr=#602
+
+### 2026-05-07 — CI-rescue iter 292 (stream R — R-COVERAGE-M2-A smoke-test rescue, PR #601)
+
+- Phase 0: batch mode (iter 3 of ≤5). Lock active.
+- Phase 2: PR #601 (R-COVERAGE-M2-A) `Preview smoke test` FAILURE — Lint/Build SUCCESS (in_progress earlier, no failure found), smoke test = Vercel reused-build artifact. Merged main into `r-coverage-m2a-stripe`, pushed `2fd0264`.
+- Phase 6: Rescue commit pushed.
+- Phase 7: Queue updated on main.
+
+- STATUS: CI-RESCUE · stream=R · pr=#601 · commit=2fd0264
+
+---
+
+### 2026-05-07 — CI-rescue iter 291 (streams W + X — smoke-test rescue, PR #599 W-05 + PR #600 X-04)
+
+- Phase 0: batch mode. Lock active.
+- Phase 1.7: Main CI healthy — no rescue needed.
+- Phase 2: PR #599 (W-05) `Preview smoke test` FAILURE — Lint/Build SUCCESS, smoke test = Vercel reused-build artifact. Merged main into `w-05-hub-deep-dive-grid`, pushed `b66bbc7`. PR #600 (X-04) also had `Preview smoke test` FAILURE (Lint/Build SUCCESS in newer run — initial lint failure was transient). Merged main into `x-04-funds-swap`, pushed `0c5b599`.
+- Phase 6: Rescue commits pushed to both branches.
+- Phase 7: Queue updated on main.
+
+- STATUS: CI-RESCUE · stream=W+X · pr=#599+#600 · commits=b66bbc7,0c5b599
+
+---
+
+### 2026-05-07 — CI-rescue iter 290 (stream X — X-03 smoke-test rescue, PR #596)
+
+- Phase 0: batch mode (iter 2 of ≤5). Lock active.
+- Phase 2: PR #596 (X-03) `Preview smoke test` FAILURE — first occurrence (same Vercel-reused-build pattern as PR #598). Merged main into `x-03-research-swap`.
+- Phase 6: Rescue commit `b433780` pushed to origin.
+- Phase 7: Queue updated on main.
+
+- STATUS: CI-RESCUE · stream=X · pr=#596 · commit=b433780
+
+---
+
+### 2026-05-07 — CI-rescue iter 289 (stream W — W-04 smoke-test rescue, PR #598)
+
+- Phase 0: batch mode (iter 1 of ≤5). Lock active. No LOOP_PAUSE.
+- Phase 1: main synced to `2cc10cf`. Phase 1.5 skipped (no recent migration). Phase 1.7: main CI green.
+- Phase 2: PR #598 (W-04) `Preview smoke test` FAILURE — first occurrence. Root cause: main had advanced past PR's base SHA `d26a65d`; Vercel reused prior build, no deployment registered for HEAD SHA. Merged main into `w-04-hub-article-strip` to force new Vercel build.
+- Phase 6: Rescue commit `8ff272c` on `claude/audit-remediation/w-04-hub-article-strip`, pushed to origin.
+- Phase 7: Queue updated on main.
+
+- STATUS: CI-RESCUE · stream=W · pr=#598 · commit=8ff272c
+
+---
+
 ### 2026-05-07 — Forward progress iter 288 (stream X — X-04: /invest/funds pages admin→anon swap)
 
 - Phase 0: batch mode (iter 5 of 5). Lock active. No LOOP_PAUSE.
@@ -1965,6 +2024,23 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 - Phase 7: Queue updated on main. Batch complete (5 of 5). Next iter: W-06 (HubAdvisorCTA) or X-05 (/invest/[slug]/etfs family).
 
 - STATUS: PROGRESS · stream=X · item=X-04 · pr=#600
+
+---
+
+### 2026-05-07 — Forward progress iter 289 (stream R — R-COVERAGE-M2-A batch 1: stripe webhook edge-case coverage)
+
+- Phase 0: batch mode (iter 2 of 5 (concurrent with iter 288 X-04)). Lock active. No LOOP_PAUSE.
+- Phase 1: main synced (d26a65d→4c8e3b2 — includes iter 287 W-05 queue update). No LOOP_PAUSE.
+- Phase 1.5: Skipped — no recent migration commits, no Supabase types drift failures on in-flight PRs (PRs #596/#599 both show `Supabase types drift` SUCCESS after prior auto-regen).
+- Phase 1.7: Main CI healthy (last run: success).
+- Phase 2: CI check on all in-flight PRs. PR #595/#597/#598 only show Vercel checks (CI not yet triggered). PR #596 (X-03): Lint/Build/Preview in_progress, no failures. PR #599 (W-05): Lint/Build in_progress, no failures. No CI rescues needed.
+- Phase 3: Priority walk. A (step 12): complex migration scouting, deferred. R (step 16): R-COVERAGE-M2-A pending — highest actionable item. Branch `claude/audit-remediation/r-coverage-m2a-stripe` created from main.
+- Phase 4: Test-only item — no migration/refactor gate applies. Verified target: `lib/stripe-webhook/*.ts` modules, all production code paths. 11 uncovered branches identified across 4 test files.
+- Phase 5: Added 11 edge-case tests: 4 to `upsert-subscription.test.ts` (cancel_at branches, Date.now() fallback, empty items), 5 to `checkout-session-completed.test.ts` (re-delivery guard, invoice string lazy-fetch, invoice object, listing error, listing duration fallback), 2 to `customer-subscription.test.ts` (no-email customer, customer object form), 1 to `invoice.test.ts` (customer ID object form). Hardware exception: tsc only produced pre-existing stripe-module-not-found noise (node_modules absent); CI is authoritative.
+- Phase 6: Commit `37eecca` on `claude/audit-remediation/r-coverage-m2a-stripe`, pushed, PR #601 opened.
+- Phase 7: Queue updated — R in-flight row updated (#601 added), R-COVERAGE-M2-A marked in-progress.
+
+- STATUS: PROGRESS · stream=R · item=R-COVERAGE-M2-A · pr=#601
 
 ---
 

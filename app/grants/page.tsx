@@ -29,7 +29,7 @@ const GRANT_CARDS = [
     badge: "FEDERAL · OPEN NOW",
     badgeTone: "emerald",
     blurb:
-      "43.5% refundable cash offset on eligible R&D spend. 30 April 2026 registration deadline for FY2025.",
+      "43.5% refundable cash offset on eligible R&D spend. 30 April 2026 registration deadline for FY2025.", // dated-ok — fixed ATO deadline for a specific fiscal year
   },
   {
     title: "EMDG",
