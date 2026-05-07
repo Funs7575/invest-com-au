@@ -165,10 +165,8 @@ describe("/api/account/bookmarks", () => {
       });
     });
 
-    it("truncates oversized ref/label/note before forwarding", async () => {
-      mockGetUser.mockResolvedValueOnce({ data: { user: { id: "u1" } } });
-      addBookmarkMock.mockResolvedValueOnce(true);
-      await POST(
+    it("rejects oversized ref/label/note with 400", async () => {
+      const res = await POST(
         jsonRequest("POST", {
           type: "scenario",
           ref: "r".repeat(500),
@@ -176,14 +174,8 @@ describe("/api/account/bookmarks", () => {
           note: "n".repeat(5000),
         }),
       );
-      const call = addBookmarkMock.mock.calls[0]?.[0] as {
-        ref: string;
-        label: string;
-        note: string;
-      };
-      expect(call.ref.length).toBeLessThanOrEqual(200);
-      expect(call.label.length).toBeLessThanOrEqual(200);
-      expect(call.note.length).toBeLessThanOrEqual(2000);
+      expect(res.status).toBe(400);
+      expect(addBookmarkMock).not.toHaveBeenCalled();
     });
   });
 
