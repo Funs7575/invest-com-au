@@ -103,55 +103,59 @@ export default function Footer() {
               </p>
             </div>
 
-            {/* Invest by Sector */}
+            {/* Browse Opportunities */}
             <div>
-              <h4 className="text-white font-semibold mb-2 md:mb-3 text-xs md:text-sm">Invest by Sector</h4>
+              <h4 className="text-white font-semibold mb-2 md:mb-3 text-xs md:text-sm">Browse Opportunities</h4>
               <ul className="space-y-1.5 md:space-y-2 text-xs md:text-sm">
-                <li><Link href="/invest" className="hover:text-white transition-colors inline-block py-0.5">All Verticals</Link></li>
-                <li><Link href="/invest/funds" className="hover:text-white transition-colors inline-block py-0.5">Investment Funds</Link></li>
-                <li><Link href="/smsf" className="hover:text-white transition-colors inline-block py-0.5">SMSF Hub</Link></li>
-                <li><Link href="/research" className="hover:text-white transition-colors inline-block py-0.5">Research Reports</Link></li>
+                <li><Link href="/invest" className="hover:text-white transition-colors inline-block py-0.5">All Opportunities</Link></li>
+                <li><Link href="/invest/funds" className="hover:text-white transition-colors inline-block py-0.5">Fund Opportunities</Link></li>
                 <li><Link href="/foreign-investment/siv" className="hover:text-white transition-colors inline-block py-0.5">Significant Investor Visa</Link></li>
                 <li><Link href="/invest/mining" className="hover:text-white transition-colors inline-block py-0.5">Mining & Resources</Link></li>
-                <li><Link href="/invest/oil-gas" className="hover:text-white transition-colors inline-block py-0.5">Oil &amp; Gas</Link></li>
-                <li><Link href="/invest/lithium" className="hover:text-white transition-colors inline-block py-0.5">Lithium</Link></li>
-                <li><Link href="/invest/uranium" className="hover:text-white transition-colors inline-block py-0.5">Uranium</Link></li>
-                <li><Link href="/invest/hydrogen" className="hover:text-white transition-colors inline-block py-0.5">Hydrogen</Link></li>
+                <li><Link href="/invest/oil-gas" className="hover:text-white transition-colors inline-block py-0.5">Oil &amp; Gas (sector hub)</Link></li>
+                <li><Link href="/invest/lithium" className="hover:text-white transition-colors inline-block py-0.5">Lithium (sector hub)</Link></li>
+                <li><Link href="/invest/uranium" className="hover:text-white transition-colors inline-block py-0.5">Uranium (sector hub)</Link></li>
+                <li><Link href="/invest/hydrogen" className="hover:text-white transition-colors inline-block py-0.5">Hydrogen (sector hub)</Link></li>
                 <li><Link href="/invest/buy-business" className="hover:text-white transition-colors inline-block py-0.5">Buy a Business</Link></li>
+                <li><Link href="/invest/franchise" className="hover:text-white transition-colors inline-block py-0.5">Franchises</Link></li>
                 <li><Link href="/invest/farmland" className="hover:text-white transition-colors inline-block py-0.5">Farmland</Link></li>
                 <li><Link href="/invest/commercial-property" className="hover:text-white transition-colors inline-block py-0.5">Commercial Property</Link></li>
                 <li><Link href="/invest/renewable-energy" className="hover:text-white transition-colors inline-block py-0.5">Renewable Energy</Link></li>
                 <li><Link href="/invest/startups" className="hover:text-white transition-colors inline-block py-0.5">Startups & Tech</Link></li>
+                <li><Link href="/invest/private-credit" className="hover:text-white transition-colors inline-block py-0.5">Private Credit</Link></li>
+                <li><Link href="/invest/private-equity" className="hover:text-white transition-colors inline-block py-0.5">Private Equity</Link></li>
+                <li><Link href="/invest/pre-ipo" className="hover:text-white transition-colors inline-block py-0.5">Pre-IPO (Wholesale)</Link></li>
                 <li><Link href="/invest/royalties" className="hover:text-white transition-colors inline-block py-0.5">Royalties</Link></li>
                 <li><Link href="/invest/income-assets" className="hover:text-white transition-colors inline-block py-0.5">Income-Asset Businesses</Link></li>
-                <li><Link href="/invest/ipo-calendar" className="hover:text-white transition-colors inline-block py-0.5">ASX IPO Calendar</Link></li>
-                <li><Link href="/invest/pre-ipo" className="hover:text-white transition-colors inline-block py-0.5">Pre-IPO (Wholesale)</Link></li>
+                <li><Link href="/invest/list" className="hover:text-white transition-colors inline-block py-0.5">List an Opportunity</Link></li>
                 <li><Link href="/sell-business" className="hover:text-white transition-colors inline-block py-0.5">Sell a Business</Link></li>
-                <li><Link href="/dividends" className="hover:text-white transition-colors inline-block py-0.5">Dividends</Link></li>
               </ul>
             </div>
 
-            {/* Platforms */}
+            {/* Compare Platforms */}
             <div>
-              <h4 className="text-white font-semibold mb-2 md:mb-3 text-xs md:text-sm">Platforms</h4>
+              <h4 className="text-white font-semibold mb-2 md:mb-3 text-xs md:text-sm">Compare Platforms</h4>
               <ul className="space-y-1.5 md:space-y-2 text-xs md:text-sm">
                 <li><Link href="/compare" className="hover:text-white transition-colors inline-block py-0.5">Compare All</Link></li>
-                <li><Link href="/compare?category=shares" className="hover:text-white transition-colors inline-block py-0.5">Share Trading</Link></li>
-                <li><Link href="/compare?category=crypto" className="hover:text-white transition-colors inline-block py-0.5">Crypto Exchanges</Link></li>
-                <li><Link href="/compare/super" className="hover:text-white transition-colors inline-block py-0.5">Super Funds</Link></li>
+                <li><Link href="/share-trading" className="hover:text-white transition-colors inline-block py-0.5">Share Trading</Link></li>
+                <li><Link href="/crypto" className="hover:text-white transition-colors inline-block py-0.5">Crypto Exchanges</Link></li>
+                <li><Link href="/super" className="hover:text-white transition-colors inline-block py-0.5">Super Funds</Link></li>
+                <li><Link href="/cfd" className="hover:text-white transition-colors inline-block py-0.5">CFD &amp; Forex</Link></li>
                 <li><Link href="/best/robo-advisors" className="hover:text-white transition-colors inline-block py-0.5">Robo-Advisors</Link></li>
-                <li><Link href="/compare?category=savings" className="hover:text-white transition-colors inline-block py-0.5">Savings Accounts</Link></li>
+                <li><Link href="/savings" className="hover:text-white transition-colors inline-block py-0.5">Savings Accounts</Link></li>
                 <li><Link href="/etfs" className="hover:text-white transition-colors inline-block py-0.5">ETF Hub</Link></li>
+                <li><Link href="/dividends" className="hover:text-white transition-colors inline-block py-0.5">Dividend Hub</Link></li>
                 <li><Link href="/fee-tracker" className="hover:text-white transition-colors inline-block py-0.5">Fee Tracker</Link></li>
                 <li><Link href="/versus" className="hover:text-white transition-colors inline-block py-0.5">Head-to-Head</Link></li>
                 <li><Link href="/deals" className="hover:text-white transition-colors inline-block py-0.5">Deals</Link></li>
               </ul>
             </div>
 
-            {/* Property & Advisors — own column */}
+            {/* Find Experts & Property — own column */}
             <div>
-              <h4 className="text-white font-semibold mb-2 md:mb-3 text-xs md:text-sm">Property &amp; Advisors</h4>
+              <h4 className="text-white font-semibold mb-2 md:mb-3 text-xs md:text-sm">Find Experts &amp; Property</h4>
               <ul className="space-y-1.5 md:space-y-2 text-xs md:text-sm">
+                <li><Link href="/quotes/post" className="hover:text-white transition-colors inline-block py-0.5">Post a Request</Link></li>
+                <li><Link href="/quiz" className="hover:text-white transition-colors inline-block py-0.5">Get Matched</Link></li>
                 <li><Link href="/find-advisor" className="hover:text-white transition-colors inline-block py-0.5">Find My Advisor — Free</Link></li>
                 <li><Link href="/advisors" className="hover:text-white transition-colors inline-block py-0.5">Advisor Directory</Link></li>
                 <li><Link href="/advisors/search" className="hover:text-white transition-colors inline-block py-0.5">Advanced Search</Link></li>
@@ -191,7 +195,7 @@ export default function Footer() {
                 <li><Link href="/insurance" className="hover:text-white transition-colors inline-block py-0.5">Insurance Hub</Link></li>
                 <li><Link href="/calculators" className="hover:text-white transition-colors inline-block py-0.5">Calculators</Link></li>
                 <li><Link href="/glossary" className="hover:text-white transition-colors inline-block py-0.5">Glossary</Link></li>
-                <li><Link href="/quiz" className="hover:text-white transition-colors inline-block py-0.5">Platform Quiz</Link></li>
+                <li><Link href="/quiz" className="hover:text-white transition-colors inline-block py-0.5">Get Matched</Link></li>
               </ul>
               <h4 className="text-white font-semibold mb-2 md:mb-3 text-xs md:text-sm">Company</h4>
               <ul className="space-y-1.5 md:space-y-2 text-xs md:text-sm">

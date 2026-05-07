@@ -42,7 +42,7 @@ const platformsMenu = {
     { label: "Compare All Platforms", href: "/compare" },
     { label: "Broker vs Broker", href: "/versus" },
     { label: "Current Deals", href: "/deals" },
-    ...(SHOW_MATCH_LANGUAGE ? [{ label: "Get matched (60s)", href: "/quiz" }] : []),
+    ...(SHOW_MATCH_LANGUAGE ? [{ label: "Get Matched (60s)", href: "/quiz" }] : []),
     { label: "Fee Calculator", href: "/calculators" },
   ],
 };
@@ -73,24 +73,26 @@ const advisorsMenu = {
   ],
 };
 
-// Browse listings — combines the old `opportunitiesMenu` (sectors / markets /
-// income / tools) with property listings split out from the deleted
-// `propertyMenu`. Property professionals (mortgage brokers, buyer's agents)
-// moved to `advisorsMenu.property` instead.
+// Browse Opportunities — IA refactor 2026-05-07. Demoted slugs (super,
+// smsf, forex, options-trading, managed-funds, dividend-investing,
+// reits, bonds, hybrid-securities, crypto-staking, ipos, ipo-calendar,
+// commodities) are dropped from the mega-menu. Compare-tagged ones
+// 301 to canonical Compare via next.config.ts; Guide-tagged ones stay
+// live but are intentionally not surfaced in primary nav. Asset-class
+// education users can find via search or the Compare links below.
 const listingsMenu = {
-  sectors: [
+  opportunities: [
+    { label: "All Opportunities", href: "/invest", desc: "Australian investment marketplace" },
     { label: "Investment Funds", href: "/invest/funds", desc: "Managed, syndicated, infrastructure, wholesale" },
     { label: "Mining & Resources", href: "/invest/mining", desc: "Iron ore, copper & critical minerals" },
-    { label: "Oil & Gas", href: "/invest/oil-gas", desc: "ASX majors, LNG, refineries" },
-    { label: "Uranium", href: "/invest/uranium", desc: "Paladin, Boss Energy, ATOM ETF" },
-    { label: "Lithium", href: "/invest/lithium", desc: "Pilbara producers & processing" },
-    { label: "Hydrogen", href: "/invest/hydrogen", desc: "Green H2, fuel cells & HGEN ETF" },
-    { label: "Gold & Precious Metals", href: "/invest/gold", desc: "Perth Mint, ETFs & ASX miners" },
-    { label: "Renewable Energy", href: "/invest/renewable-energy", desc: "Solar, wind, battery" },
     { label: "Buy a Business", href: "/invest/buy-business", desc: "SME acquisitions" },
+    { label: "Franchises", href: "/invest/franchise", desc: "Food, fitness, automotive franchises" },
     { label: "Farmland & Agriculture", href: "/invest/farmland", desc: "Livestock, cropping, water" },
+    { label: "Renewable Energy", href: "/invest/renewable-energy", desc: "Solar, wind, battery" },
     { label: "Startups & Tech", href: "/invest/startups", desc: "VC, angel, crowdfunding" },
-    { label: "Infrastructure", href: "/invest/infrastructure", desc: "Toll roads, airports, utilities" },
+    { label: "Alternatives", href: "/invest/alternatives", desc: "Wine, art, cars, watches & more" },
+    { label: "Royalty Streams", href: "/invest/royalties", desc: "Mining, music, IP & oil-gas royalties" },
+    { label: "Income-Asset Businesses", href: "/invest/income-assets", desc: "Vending, ATMs, self-storage" },
   ],
   property: [
     { label: "Investment Property Hub", href: "/property", desc: "Listings, suburb data, loans" },
@@ -99,28 +101,21 @@ const listingsMenu = {
     { label: "Commercial Property", href: "/invest/commercial-property", desc: "Office, industrial, hotels" },
     { label: "Foreign Buyer Rules (FIRB)", href: "/property/foreign-investment", desc: "FIRB calculator & compliance" },
   ],
-  marketsIncome: [
-    { label: "Managed & Index Funds", href: "/invest/managed-funds", desc: "Vanguard, Betashares, iShares" },
-    { label: "Dividend Investing", href: "/invest/dividend-investing", desc: "Franking credits & high-yield ASX" },
-    { label: "A-REITs", href: "/invest/reits", desc: "ASX-listed property trusts" },
+  privateMarkets: [
     { label: "Private Credit & P2P", href: "/invest/private-credit", desc: "La Trobe, Qualitas, Metrics" },
-    { label: "Bonds & Fixed Income", href: "/invest/bonds", desc: "Government & corporate bonds" },
-    { label: "Hybrid Securities", href: "/invest/hybrid-securities", desc: "Bank hybrids & APRA phase-out" },
-    { label: "Alternatives", href: "/invest/alternatives", desc: "Wine, art, cars, watches & more" },
-    { label: "Crypto Staking & DeFi", href: "/invest/crypto-staking", desc: "Staking, DeFi & crypto ETFs" },
-    { label: "SMSF Investment Guide", href: "/invest/smsf", desc: "What SMSFs invest in & how" },
+    { label: "Private Equity", href: "/invest/private-equity", desc: "Listed PE structures, wholesale s708" },
+    { label: "Pre-IPO (Wholesale)", href: "/invest/pre-ipo", desc: "Late-stage private placements" },
+    { label: "Infrastructure", href: "/invest/infrastructure", desc: "Toll roads, airports, utilities" },
   ],
-  tools: [
-    // /invest IS the marketplace now (was the old /invest/listings before
-    // pre-launch consolidation). Single canonical link, no redundant
-    // "browse all" + "marketplace" entries.
-    { label: "Investment Marketplace", href: "/invest" },
-    { label: "Private Equity", href: "/invest/private-equity" },
-    { label: "Options & Derivatives", href: "/invest/options-trading" },
-    { label: "Forex Trading", href: "/invest/forex" },
-    { label: "Commodities", href: "/invest/commodities" },
-    { label: "IPO Calendar", href: "/invest/ipos" },
-    { label: "FIRB-Eligible Only", href: "/invest?firb=true" },
+  sectorHubs: [
+    { label: "Oil & Gas", href: "/invest/oil-gas", desc: "ASX majors, LNG, refineries" },
+    { label: "Uranium", href: "/invest/uranium", desc: "Paladin, Boss Energy, ATOM ETF" },
+    { label: "Lithium", href: "/invest/lithium", desc: "Pilbara producers & processing" },
+    { label: "Hydrogen", href: "/invest/hydrogen", desc: "Green H2, fuel cells & HGEN ETF" },
+    { label: "Gold & Precious Metals", href: "/invest/gold", desc: "Perth Mint, ETFs & ASX miners" },
+    { label: "FIRB-Eligible Only", href: "/invest?firb=true", desc: "Foreign-investor relevant deals" },
+    { label: "List an Opportunity →", href: "/invest/list", desc: "Post a deal to the marketplace" },
+    { label: "Become a Sponsor →", href: "/advertise", desc: "Featured placement, disclosed" },
   ],
 };
 
@@ -265,26 +260,27 @@ const mobileSections = [
     ],
   },
   {
-    title: "Post a job",
+    title: "Post a Request",
     items: [
-      { name: "Post a brief — free", href: "/quotes/post" },
-      { name: "See active jobs", href: "/quotes" },
+      { name: "Post a request — free", href: "/quotes/post" },
+      { name: "See active requests", href: "/quotes" },
       { name: "Recent wins", href: "/quotes/recent-wins" },
     ],
   },
   {
-    title: "Investments for sale",
+    title: "Browse Opportunities",
     items: [
-      { name: "Investment Marketplace", href: "/invest" },
+      { name: "All Opportunities", href: "/invest" },
       { name: "Investment Funds", href: "/invest/funds" },
       { name: "Mining & Resources", href: "/invest/mining" },
-      { name: "Oil & Gas", href: "/invest/oil-gas" },
-      { name: "Uranium", href: "/invest/uranium" },
-      { name: "Lithium", href: "/invest/lithium" },
-      { name: "Hydrogen", href: "/invest/hydrogen" },
-      { name: "Gold & Precious Metals", href: "/invest/gold" },
+      { name: "Oil & Gas (sector hub)", href: "/invest/oil-gas" },
+      { name: "Uranium (sector hub)", href: "/invest/uranium" },
+      { name: "Lithium (sector hub)", href: "/invest/lithium" },
+      { name: "Hydrogen (sector hub)", href: "/invest/hydrogen" },
+      { name: "Gold & Precious Metals (sector hub)", href: "/invest/gold" },
       { name: "Renewable Energy", href: "/invest/renewable-energy" },
       { name: "Buy a Business", href: "/invest/buy-business" },
+      { name: "Franchises", href: "/invest/franchise" },
       { name: "Farmland & Agriculture", href: "/invest/farmland" },
       { name: "Startups & Tech", href: "/invest/startups" },
       { name: "Infrastructure", href: "/invest/infrastructure" },
@@ -293,19 +289,14 @@ const mobileSections = [
       { name: "Suburb Research", href: "/property/suburbs" },
       { name: "Commercial Property", href: "/invest/commercial-property" },
       { name: "Foreign Buyer Rules (FIRB)", href: "/property/foreign-investment" },
-      { name: "Managed & Index Funds", href: "/invest/managed-funds" },
-      { name: "Dividend Investing", href: "/invest/dividend-investing" },
-      { name: "A-REITs", href: "/invest/reits" },
       { name: "Private Credit & P2P", href: "/invest/private-credit" },
-      { name: "Bonds & Fixed Income", href: "/invest/bonds" },
-      { name: "Hybrid Securities", href: "/invest/hybrid-securities" },
       { name: "Alternatives", href: "/invest/alternatives" },
-      { name: "Crypto Staking & DeFi", href: "/invest/crypto-staking" },
-      { name: "SMSF Investment Guide", href: "/invest/smsf" },
-      { name: "Options & Derivatives", href: "/invest/options-trading" },
-      { name: "Forex Trading", href: "/invest/forex" },
       { name: "Private Equity", href: "/invest/private-equity" },
-      { name: "IPO Calendar", href: "/invest/ipos" },
+      { name: "Pre-IPO (Wholesale)", href: "/invest/pre-ipo" },
+      { name: "Royalty Streams", href: "/invest/royalties" },
+      { name: "Income-Asset Businesses", href: "/invest/income-assets" },
+      { name: "List an Opportunity →", href: "/invest/list" },
+      { name: "Become a Sponsor →", href: "/advertise" },
     ],
   },
   {
@@ -514,7 +505,7 @@ export function Navigation() {
                   >
                     <div>
                       <p className="font-bold text-slate-900 text-sm">Or have them come to you</p>
-                      <p className="text-xs text-slate-500 mt-0.5">Post a brief &mdash; free, quotes in 24h</p>
+                      <p className="text-xs text-slate-500 mt-0.5">Post a Request &mdash; free, quotes in 24h</p>
                     </div>
                     <svg className="w-5 h-5 text-emerald-600 shrink-0 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -578,16 +569,16 @@ export function Navigation() {
                 also has a side-by-side "Or have them come to you →" cross-link
                 to /quotes/post for visitors who land on Experts first. */}
 
-            {/* ─── 4. Browse listings ──────────────────────────────────────────── */}
-            <MegaMenuDropdown label="Listings" isActive={isListingsActive} menuWidth="min-w-[800px]">
+            {/* ─── 4. Browse Opportunities ─────────────────────────────────────── */}
+            <MegaMenuDropdown label="Browse Opportunities" isActive={isListingsActive} menuWidth="min-w-[800px]">
               <div className="p-5">
                 <Link
                   href="/invest"
                   className="flex items-center justify-between p-3 bg-gradient-to-r from-amber-50 to-amber-100/60 border border-amber-200 rounded-xl mb-4 hover:border-amber-300 transition-colors group"
                 >
                   <div>
-                    <p className="font-bold text-slate-900 text-sm">Browse the full marketplace</p>
-                    <p className="text-xs text-slate-500 mt-0.5">Every active deal across 27 verticals &mdash; filterable in one place</p>
+                    <p className="font-bold text-slate-900 text-sm">Browse the full opportunities marketplace</p>
+                    <p className="text-xs text-slate-500 mt-0.5">Every active deal across opportunity verticals &mdash; filterable in one place</p>
                   </div>
                   <svg className="w-5 h-5 text-amber-600 shrink-0 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -596,9 +587,9 @@ export function Navigation() {
 
                 <div className="grid grid-cols-4 gap-5">
                   <div>
-                    <p className="text-[0.60rem] font-bold text-amber-500 uppercase tracking-wider mb-2">Browse deals</p>
+                    <p className="text-[0.60rem] font-bold text-amber-500 uppercase tracking-wider mb-2">Browse opportunities</p>
                     <div className="space-y-0.5">
-                      {listingsMenu.sectors.map((item) => (
+                      {listingsMenu.opportunities.map((item) => (
                         <Link
                           key={item.href}
                           href={item.href}
@@ -626,9 +617,9 @@ export function Navigation() {
                     </div>
                   </div>
                   <div>
-                    <p className="text-[0.60rem] font-bold text-amber-500 uppercase tracking-wider mb-2">Asset-class guides</p>
+                    <p className="text-[0.60rem] font-bold text-amber-500 uppercase tracking-wider mb-2">Private &amp; alternatives</p>
                     <div className="space-y-0.5">
-                      {listingsMenu.marketsIncome.map((item) => (
+                      {listingsMenu.privateMarkets.map((item) => (
                         <Link
                           key={item.href}
                           href={item.href}
@@ -641,9 +632,9 @@ export function Navigation() {
                     </div>
                   </div>
                   <div className="border-l border-slate-100 pl-4">
-                    <p className="text-[0.60rem] font-bold text-amber-500 uppercase tracking-wider mb-2">More &amp; filters</p>
+                    <p className="text-[0.60rem] font-bold text-amber-500 uppercase tracking-wider mb-2">Sector hubs &amp; supply</p>
                     <div className="space-y-0.5">
-                      {listingsMenu.tools.map((item) => (
+                      {listingsMenu.sectorHubs.map((item) => (
                         <Link
                           key={item.href}
                           href={item.href}
@@ -752,7 +743,7 @@ export function Navigation() {
               href="/quiz"
               className="bg-amber-500 text-slate-900 px-4 py-2 rounded-lg text-xs font-bold transition-all hover:bg-amber-600 min-h-11 inline-flex items-center cursor-pointer"
             >
-              Get matched
+              Get Matched
             </Link>
             <button
               onClick={() => setMobileOpen((v) => !v)}

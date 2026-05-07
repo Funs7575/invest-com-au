@@ -462,9 +462,9 @@ export default async function OptionsDerivativesPage() {
           <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Explore Related Investment Guides</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
-              { title: "Forex Trading", href: "/invest/forex", desc: "AUD/USD pairs, ASIC-regulated brokers, spreads and leverage limits." },
+              { title: "Forex Trading", href: "/cfd", desc: "AUD/USD pairs, ASIC-regulated CFD-forex brokers, spreads and leverage limits." },
               { title: "Commodities", href: "/invest/commodities", desc: "Invest in gold, silver, oil and more from Australia via ETFs and futures." },
-              { title: "Managed Funds & Index Funds", href: "/invest/managed-funds", desc: "Compare passive index funds and actively managed strategies in Australia." },
+              { title: "Managed Funds & Index Funds", href: "/invest/funds", desc: "Browse the fund directory — passive index and actively managed strategies." },
               { title: "Crypto Staking & DeFi", href: "/invest/crypto-staking", desc: "Earn yield through staking, DeFi protocols and crypto ETFs on the ASX." },
             ].map((guide) => (
               <Link key={guide.href} href={guide.href} className="group bg-white border border-slate-200 rounded-xl p-5 hover:border-amber-200 hover:shadow-md transition-all">

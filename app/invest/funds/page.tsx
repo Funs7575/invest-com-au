@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+// eslint-disable-next-line no-restricted-imports -- pre-IA-refactor; admin client used here historically because the original schema lacked an anon SELECT policy on fund_listings. Migrate to createClient + an explicit anon policy on status='active' in a follow-up; out of scope for the 2026-05-07 IA refactor.
 import { createAdminClient } from "@/lib/supabase/admin";
 import FundsDirectoryClient, { type FundListing } from "./FundsDirectoryClient";
 import VerticalMarketplaceListings from "@/components/marketplace/VerticalMarketplaceListings";
@@ -9,14 +10,14 @@ import VerticalMarketplaceListings from "@/components/marketplace/VerticalMarket
 export const revalidate = 600;
 
 export const metadata: Metadata = {
-  title: `Australian Investment Funds Directory (${CURRENT_YEAR}) — Managed, Syndicated, Infrastructure & Wholesale`,
+  title: `Australian Investment Fund Opportunities (${CURRENT_YEAR}) — Managed, Syndicated, Wholesale & SIV-Relevant`,
   description:
-    "Browse Australian managed funds, syndicated property funds, infrastructure funds, and wholesale unlisted funds. Filter by minimum investment, SIV-complying, retail-accessible. Register interest and connect with fund managers.",
+    "Browse Australian managed, syndicated, infrastructure, wholesale and SIV-relevant fund opportunities. Filter by minimum investment, retail-accessible or wholesale. General information only — no fund is the 'best fund for you' without personal advice.",
   alternates: { canonical: `${SITE_URL}/invest/funds` },
   openGraph: {
-    title: `Australian Investment Funds Directory (${CURRENT_YEAR})`,
+    title: `Australian Investment Fund Opportunities (${CURRENT_YEAR})`,
     description:
-      "Managed funds, syndicated property, infrastructure, and wholesale funds in Australia. Filter by fund type, minimum investment, SIV eligibility.",
+      "Managed, syndicated, infrastructure, wholesale and SIV-relevant fund opportunities in Australia. Filter by fund type, minimum investment, foreign-investor eligibility.",
     url: `${SITE_URL}/invest/funds`,
   },
 };
@@ -44,8 +45,8 @@ export default async function FundsPage() {
 
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
-    { name: "Invest", url: `${SITE_URL}/invest` },
-    { name: "Investment Funds" },
+    { name: "Opportunities", url: `${SITE_URL}/invest` },
+    { name: "Fund opportunities" },
   ]);
 
   return (
@@ -67,47 +68,161 @@ export default async function FundsPage() {
               </Link>
               <span className="text-slate-600">/</span>
               <Link href="/invest" className="hover:text-white">
-                Invest
+                Opportunities
               </Link>
               <span className="text-slate-600">/</span>
-              <span className="text-white font-medium">Investment Funds</span>
+              <span className="text-white font-medium">Fund opportunities</span>
             </nav>
 
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-3 max-w-3xl">
-              Australian Investment Funds &amp; Opportunities
+              Australian Investment Fund Opportunities
             </h1>
             <p className="text-base md:text-lg text-slate-300 leading-relaxed max-w-3xl">
               Browse Australian managed, syndicated property, infrastructure,
               and wholesale unlisted funds — with transparent minimums, target
               returns, and fund sizes. Filter for retail-accessible or
-              SIV-complying options. Register interest and connect with AFSL-licensed
+              SIV-relevant options. Register interest and connect with AFSL-licensed
               fund managers.
             </p>
-            <p className="text-xs text-slate-400 mt-4 max-w-2xl">
-              General information only — not financial product advice. Always
-              read the relevant PDS or Information Memorandum and consider your
-              own circumstances before investing.
+            <div className="mt-4 px-4 py-3 rounded-lg bg-amber-100/10 border border-amber-300/30 text-sm text-amber-50 max-w-2xl">
+              <strong>General information only — not financial product advice.</strong>{" "}
+              No fund is the &ldquo;best fund for you&rdquo; without personal
+              advice. Past performance is not a reliable indicator of future
+              returns.
+            </div>
+            <p className="text-xs text-slate-400 mt-3 max-w-2xl">
+              Always read the relevant PDS or Information Memorandum and
+              consider your own circumstances before registering interest.
+            </p>
+            <p className="text-xs text-slate-400 mt-2 max-w-2xl">
+              Looking to compare super funds, savings accounts, share-trading
+              platforms or ETFs?{" "}
+              <Link href="/compare" className="underline hover:no-underline">
+                Visit Compare
+              </Link>
+              .
             </p>
           </div>
         </section>
 
-        <Suspense fallback={<div className="min-h-[60vh]" />}>
-          <FundsDirectoryClient funds={funds} />
-        </Suspense>
+        {/* ── Section anchor strip ── */}
+        <div className="border-b border-slate-200 bg-white sticky top-0 z-10">
+          <div className="container-custom flex flex-wrap gap-x-6 gap-y-2 py-3 text-xs md:text-sm">
+            <a
+              href="#directory"
+              className="font-semibold text-slate-700 hover:text-amber-700"
+            >
+              Fund directory
+            </a>
+            <a
+              href="#sponsored"
+              className="font-semibold text-slate-700 hover:text-amber-700"
+            >
+              Sponsored &amp; curated
+            </a>
+            <a
+              href="#advice"
+              className="font-semibold text-slate-700 hover:text-amber-700"
+            >
+              Need advice first?
+            </a>
+          </div>
+        </div>
 
-        {/* Additional fund opportunities in the general marketplace
-            (investment_listings with vertical='funds'). Separate from
-            the fund_listings directory above — this surfaces
-            syndicated and SIV-tagged opportunities the editorial team
-            has curated. */}
-        <VerticalMarketplaceListings
-          vertical="funds"
-          accent="amber"
-          limit={6}
-          heading="More fund opportunities"
-          sub="Editorial-curated investment opportunities with vertical='funds' in our marketplace — syndicated, SIV-complying, and wholesale deal flow."
-          id="fund-marketplace"
-        />
+        {/* ── 1. Fund directory ── */}
+        <section id="directory" aria-labelledby="directory-heading">
+          <div className="container-custom pt-8 md:pt-10">
+            <h2
+              id="directory-heading"
+              className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2"
+            >
+              Fund directory
+            </h2>
+            <p className="text-sm text-slate-600 max-w-3xl">
+              All active funds in the directory. Use the filters to narrow by
+              fund type, minimum investment and retail/wholesale eligibility.
+            </p>
+          </div>
+          <Suspense fallback={<div className="min-h-[60vh]" />}>
+            <FundsDirectoryClient funds={funds} />
+          </Suspense>
+        </section>
+
+        {/* ── 2. Sponsored / curated fund opportunities ──
+            investment_listings rows with vertical='funds'. Separate from
+            the fund_listings directory above — editorial-curated
+            syndicated and SIV-tagged opportunities. Disclosed advertiser
+            relationship. */}
+        <section id="sponsored" aria-labelledby="sponsored-heading" className="bg-slate-50">
+          <VerticalMarketplaceListings
+            vertical="funds"
+            accent="amber"
+            limit={6}
+            heading="Sponsored &amp; curated fund opportunities"
+            sub="Editorial-curated investment opportunities tagged 'funds' in our marketplace — syndicated, SIV-relevant, and wholesale deal flow. Featured placements are paid; selection is editorial."
+            id="sponsored-listings"
+          />
+        </section>
+
+        {/* ── 3. Need advice before registering interest? ── */}
+        <section
+          id="advice"
+          aria-labelledby="advice-heading"
+          className="py-10 md:py-14 bg-white border-t border-slate-200"
+        >
+          <div className="container-custom max-w-5xl">
+            <h2
+              id="advice-heading"
+              className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2"
+            >
+              Need advice before registering interest?
+            </h2>
+            <p className="text-sm text-slate-600 mb-6 max-w-3xl">
+              Fund opportunities are general information only. For
+              personal financial product advice — including suitability,
+              tax, foreign-investor and SMSF implications — speak to a
+              licensed adviser. Three ways to get help:
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+              <Link
+                href="/advisors?type=financial"
+                className="group block rounded-xl border border-slate-200 bg-white p-5 hover:shadow-md hover:border-amber-300 transition-all"
+              >
+                <h3 className="font-bold text-base text-slate-900 group-hover:text-amber-700 mb-1">
+                  Find an adviser
+                </h3>
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  Browse verified financial advisers, SMSF accountants and
+                  wealth managers. Filter by location and specialty.
+                </p>
+              </Link>
+              <Link
+                href="/quiz"
+                className="group block rounded-xl border border-slate-200 bg-white p-5 hover:shadow-md hover:border-amber-300 transition-all"
+              >
+                <h3 className="font-bold text-base text-slate-900 group-hover:text-amber-700 mb-1">
+                  Get matched
+                </h3>
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  Answer up to 6 questions to match you with platforms or
+                  advisers that fit your situation.
+                </p>
+              </Link>
+              <Link
+                href="/quotes/post"
+                className="group block rounded-xl border border-slate-200 bg-white p-5 hover:shadow-md hover:border-amber-300 transition-all"
+              >
+                <h3 className="font-bold text-base text-slate-900 group-hover:text-amber-700 mb-1">
+                  Post a request
+                </h3>
+                <p className="text-xs text-slate-500 leading-relaxed">
+                  Tell verified advisers what you need help with — they
+                  quote you. Free to post; no obligation.
+                </p>
+              </Link>
+            </div>
+          </div>
+        </section>
       </div>
     </>
   );

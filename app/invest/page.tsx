@@ -8,7 +8,7 @@ import {
   ORGANIZATION_JSONLD,
   SITE_NAME,
 } from "@/lib/seo";
-import { getAllInvestCategories } from "@/lib/invest-categories";
+import { getOpportunityCategories } from "@/lib/invest-categories";
 import type { InvestCategory } from "@/lib/invest-categories";
 import {
   ADVERTISER_DISCLOSURE_SHORT,
@@ -36,14 +36,14 @@ export const revalidate = 3600;
 // top (visitors see deals immediately), sector discovery below as secondary
 // browsing affordance. /invest/listings now redirects here (next.config.ts).
 export const metadata: Metadata = {
-  title: `Invest in Australia — Investment Marketplace (${CURRENT_YEAR}) | ${SITE_NAME}`,
+  title: `Australian Investment Opportunities — Marketplace (${CURRENT_YEAR}) | ${SITE_NAME}`,
   description:
-    "Browse verified Australian investment opportunities — businesses for sale, mining tenements, farmland, commercial property, franchises, renewable energy projects, startups, alternatives and managed funds. Filterable in one place.",
+    "Browse Australian investment opportunities — businesses for sale, mining tenements, farmland, commercial property, franchises, renewable energy projects, startups, alternatives, private credit and managed funds. To compare super funds, share-trading platforms or savings accounts, visit Compare.",
   alternates: { canonical: "/invest" },
   openGraph: {
-    title: `Invest in Australia — Investment Marketplace (${CURRENT_YEAR})`,
+    title: `Australian Investment Opportunities — Marketplace (${CURRENT_YEAR})`,
     description:
-      "Browse verified Australian investment opportunities — businesses, farmland, mining, commercial property, startups, alternatives & funds. All in one filterable marketplace.",
+      "Browse Australian investment opportunities — businesses, farmland, mining, commercial property, startups, alternatives, private credit & funds. All filterable in one place.",
     url: absoluteUrl("/invest"),
   },
   twitter: { card: "summary_large_image" },
@@ -270,15 +270,27 @@ export default async function InvestMarketplacePage() {
     if (!v) continue;
     verticalCounts[v] = (verticalCounts[v] || 0) + 1;
   }
-  const sortedCounts = Object.entries(verticalCounts).sort(
-    ([, a], [, b]) => b - a,
-  );
+  const sortedCounts = Object.entries(verticalCounts)
+    // Drop counts for verticals that aren't part of the opportunity IA.
+    // Filter is applied lazily below — we still need the full counts
+    // for category-card rollups via getCategoryCount().
+    .sort(([, a], [, b]) => b - a);
 
-  const categories = getAllInvestCategories();
+  // /invest is the canonical Browse-Opportunities surface. Compare-tagged
+  // categories are 301-redirected upstream; Guide-tagged categories stay
+  // live but are hidden here. See lib/invest-categories.ts INTENT_BY_SLUG.
+  const categories = getOpportunityCategories();
   const categoryTabs = categories.map((c) => ({
     slug: c.slug,
     label: c.label,
   }));
+
+  // Build the set of DB vertical values that map to an opportunity
+  // category — used to prune the per-vertical count strip below so it
+  // doesn't surface demoted verticals.
+  const opportunityVerticalSet = new Set<string>(
+    categories.flatMap((c) => c.dbVerticals as readonly string[]),
+  );
 
   function getCategoryCount(cat: InvestCategory): number {
     return cat.dbVerticals.reduce((sum, v) => sum + (verticalCounts[v] || 0), 0);
@@ -293,7 +305,7 @@ export default async function InvestMarketplacePage() {
   const itemListJsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: "Australian Investment Marketplace",
+    name: "Australian Investment Opportunities",
     numberOfItems: listings.length,
     itemListElement: listings.slice(0, 50).map((l, i) => ({
       "@type": "ListItem",
@@ -306,14 +318,14 @@ export default async function InvestMarketplacePage() {
   // ── JSON-LD: BreadcrumbList ──
   const breadcrumbs = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
-    { name: "Invest" },
+    { name: "Opportunities" },
   ]);
 
   // ── JSON-LD: WebPage ──
   const webPageJsonLd = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    name: "Australian Investment Marketplace",
+    name: "Australian Investment Opportunities",
     description: metadata.description,
     url: absoluteUrl("/invest"),
     publisher: ORGANIZATION_JSONLD,
@@ -335,7 +347,7 @@ export default async function InvestMarketplacePage() {
           <nav className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
             <Link href="/" className="hover:text-slate-900">Home</Link>
             <span className="mx-2">/</span>
-            <span className="text-slate-700">Invest</span>
+            <span className="text-slate-700">Opportunities</span>
           </nav>
 
           {/* Header */}
@@ -343,12 +355,18 @@ export default async function InvestMarketplacePage() {
             <div className="mb-3"><IntentCountryBadge /></div>
             <IntentCountryRecommendation surface="invest" />
             <h1 className="text-xl md:text-4xl font-extrabold mb-2 md:mb-3 text-slate-900">
-              Australian Investment Marketplace
+              Australian Investment Opportunities &mdash; Marketplace
             </h1>
             <p className="text-xs md:text-base text-slate-600 mb-2">
-              Browse verified investment opportunities across Australia &mdash; businesses for sale,
+              Browse Australian investment opportunities &mdash; businesses for sale,
               mining tenements, farmland, commercial property, franchises, renewable energy
-              projects, startups, alternatives and managed funds.
+              projects, startups, alternatives, private credit and managed funds. Looking
+              to compare super funds, share-trading platforms, savings accounts or
+              ETFs?{" "}
+              <Link href="/compare" className="text-amber-700 underline hover:no-underline">
+                Visit Compare
+              </Link>
+              .
             </p>
             <p className="text-[0.56rem] md:text-xs text-slate-400">
               {ADVERTISER_DISCLOSURE_SHORT}
@@ -381,18 +399,20 @@ export default async function InvestMarketplacePage() {
                 Active listings by vertical
               </p>
               <div className="flex flex-wrap gap-2">
-                {sortedCounts.map(([slug, count]) => (
-                  <Link
-                    key={slug}
-                    href={`/invest/${slug}/listings`}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-50 hover:bg-amber-50 border border-slate-200 hover:border-amber-200 transition-colors text-xs"
-                  >
-                    <span className="font-semibold text-slate-700 capitalize">
-                      {slug.replace(/-/g, " ")}
-                    </span>
-                    <span className="font-extrabold text-amber-700 tabular-nums">{count}</span>
-                  </Link>
-                ))}
+                {sortedCounts
+                  .filter(([slug]) => opportunityVerticalSet.has(slug))
+                  .map(([slug, count]) => (
+                    <Link
+                      key={slug}
+                      href={`/invest/${slug}/listings`}
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-50 hover:bg-amber-50 border border-slate-200 hover:border-amber-200 transition-colors text-xs"
+                    >
+                      <span className="font-semibold text-slate-700 capitalize">
+                        {slug.replace(/-/g, " ")}
+                      </span>
+                      <span className="font-extrabold text-amber-700 tabular-nums">{count}</span>
+                    </Link>
+                  ))}
               </div>
             </div>
           </div>
@@ -405,7 +425,7 @@ export default async function InvestMarketplacePage() {
         <div className="container-custom max-w-6xl mt-12 md:mt-16">
           <div className="border-t border-slate-200 pt-8 md:pt-10">
             <h2 className="text-lg md:text-2xl font-bold mb-1 text-slate-900">
-              Browse by category
+              Browse opportunities by category
             </h2>
             <p className="text-xs md:text-sm text-slate-500 mb-4 md:mb-5">
               Filter the marketplace by what you&apos;re looking to buy or invest in.
@@ -494,6 +514,72 @@ export default async function InvestMarketplacePage() {
             </ScrollReveal>
           </div>
         </div>
+        {/* ── Supply-side CTAs (List / Sponsor / Promote overseas) ── */}
+        <div className="container-custom max-w-6xl mt-12 md:mt-16">
+          <div className="border-t border-slate-200 pt-8 md:pt-10">
+            <h2 className="text-lg md:text-2xl font-bold mb-1 text-slate-900">
+              Have an opportunity to promote?
+            </h2>
+            <p className="text-xs md:text-sm text-slate-500 mb-4 md:mb-5 max-w-3xl">
+              Get your deal, fund or asset class in front of Australian and
+              foreign-investor traffic across this marketplace.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 mb-10 md:mb-12">
+              <Link
+                href="/invest/list"
+                className="group block rounded-xl border border-slate-200 bg-white p-4 md:p-5 transition-all duration-200 hover:shadow-lg hover:border-amber-300"
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="shrink-0 p-1.5 rounded-lg bg-amber-100 text-amber-700">
+                    <Icon name="plus-circle" size={18} />
+                  </span>
+                  <h3 className="font-bold text-sm md:text-base text-slate-900 group-hover:text-amber-700">
+                    List an opportunity
+                  </h3>
+                </div>
+                <p className="text-[0.62rem] md:text-xs text-slate-500 leading-relaxed">
+                  Post a business, fund, syndicate or asset for sale. Reaches
+                  retail and wholesale buyers Australia-wide.
+                </p>
+              </Link>
+              <Link
+                href="/advertise"
+                className="group block rounded-xl border border-slate-200 bg-white p-4 md:p-5 transition-all duration-200 hover:shadow-lg hover:border-amber-300"
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="shrink-0 p-1.5 rounded-lg bg-amber-100 text-amber-700">
+                    <Icon name="star" size={18} />
+                  </span>
+                  <h3 className="font-bold text-sm md:text-base text-slate-900 group-hover:text-amber-700">
+                    Become a sponsor
+                  </h3>
+                </div>
+                <p className="text-[0.62rem] md:text-xs text-slate-500 leading-relaxed">
+                  Featured placement on category pages, best-of lists and
+                  pillar articles. Disclosed advertiser relationship.
+                </p>
+              </Link>
+              <Link
+                href="/contact?topic=promote-overseas"
+                className="group block rounded-xl border border-slate-200 bg-white p-4 md:p-5 transition-all duration-200 hover:shadow-lg hover:border-amber-300"
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="shrink-0 p-1.5 rounded-lg bg-amber-100 text-amber-700">
+                    <Icon name="globe" size={18} />
+                  </span>
+                  <h3 className="font-bold text-sm md:text-base text-slate-900 group-hover:text-amber-700">
+                    Promote to overseas investors
+                  </h3>
+                </div>
+                <p className="text-[0.62rem] md:text-xs text-slate-500 leading-relaxed">
+                  SIV and FIRB-relevant opportunities. Country-targeted
+                  placement on /investing-from/* and foreign-investment hubs.
+                </p>
+              </Link>
+            </div>
+          </div>
+        </div>
+
         <HomeToolsStrip />
       </div>
     </>
