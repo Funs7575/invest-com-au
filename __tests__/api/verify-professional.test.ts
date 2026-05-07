@@ -114,8 +114,9 @@ function setupAdminMocks(
 describe("POST /api/verify-professional", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.stubEnv("ADMIN_API_KEY", "test-admin-key");
-    vi.stubEnv("CRON_SECRET", "test-cron-secret");
+    // A-94 entropy floor requires >=16 chars on these auth keys
+    vi.stubEnv("ADMIN_API_KEY", "test-admin-key-long-enough-16ch");
+    vi.stubEnv("CRON_SECRET", "test-cron-secret-long-enough-16");
     mockIsAllowed.mockResolvedValue(true);
     mockVerifyAbn.mockResolvedValue({ valid: true, abn: "51824753556", status: "Active", error: null });
     mockVerifyAfsl.mockResolvedValue({ valid: true, afsl: "123456", licenceStatus: "Current", error: null });
@@ -135,18 +136,18 @@ describe("POST /api/verify-professional", () => {
   it("returns 401 when both env keys are unset", async () => {
     vi.stubEnv("ADMIN_API_KEY", "");
     vi.stubEnv("CRON_SECRET", "");
-    const res = await POST(makePost({ professional_id: 42 }, "test-admin-key"));
+    const res = await POST(makePost({ professional_id: 42 }, "test-admin-key-long-enough-16ch"));
     expect(res.status).toBe(401);
   });
 
   it("returns 429 when rate limited", async () => {
     mockIsAllowed.mockResolvedValue(false);
-    const res = await POST(makePost({ professional_id: 42 }, "test-admin-key"));
+    const res = await POST(makePost({ professional_id: 42 }, "test-admin-key-long-enough-16ch"));
     expect(res.status).toBe(429);
   });
 
   it("returns 400 when professional_id is missing", async () => {
-    const res = await POST(makePost({}, "test-admin-key"));
+    const res = await POST(makePost({}, "test-admin-key-long-enough-16ch"));
     expect(res.status).toBe(400);
     const body = await res.json();
     expect(body.error).toMatch(/professional_id/i);
@@ -154,14 +155,14 @@ describe("POST /api/verify-professional", () => {
 
   it("returns 404 when professional not found", async () => {
     setupAdminMocks(null);
-    const res = await POST(makePost({ professional_id: 99 }, "test-admin-key"));
+    const res = await POST(makePost({ professional_id: 99 }, "test-admin-key-long-enough-16ch"));
     expect(res.status).toBe(404);
   });
 
   it("returns outcome=passed when ABN check passes", async () => {
     mockVerifyAfsl.mockResolvedValue(null); // no AFSL to check
     const res = await POST(
-      makePost({ professional_id: 42, abn: "51824753556" }, "test-admin-key")
+      makePost({ professional_id: 42, abn: "51824753556" }, "test-admin-key-long-enough-16ch")
     );
     expect(res.status).toBe(200);
     const body = await res.json();
@@ -172,7 +173,7 @@ describe("POST /api/verify-professional", () => {
   it("returns outcome=passed when AFSL check passes", async () => {
     mockVerifyAbn.mockResolvedValue(null); // no ABN to check
     const res = await POST(
-      makePost({ professional_id: 42, afsl_number: "123456" }, "test-admin-key")
+      makePost({ professional_id: 42, afsl_number: "123456" }, "test-admin-key-long-enough-16ch")
     );
     expect(res.status).toBe(200);
     const body = await res.json();
@@ -182,7 +183,7 @@ describe("POST /api/verify-professional", () => {
 
   it("returns outcome=passed with method=abn+afsl when both pass", async () => {
     const res = await POST(
-      makePost({ professional_id: 42, abn: "51824753556", afsl_number: "123456" }, "test-admin-key")
+      makePost({ professional_id: 42, abn: "51824753556", afsl_number: "123456" }, "test-admin-key-long-enough-16ch")
     );
     expect(res.status).toBe(200);
     const body = await res.json();
@@ -193,7 +194,7 @@ describe("POST /api/verify-professional", () => {
   it("returns outcome=failed when ABN check fails", async () => {
     mockVerifyAbn.mockResolvedValue({ valid: false, abn: "51824753556", status: "Cancelled", error: "ABN is cancelled" });
     const res = await POST(
-      makePost({ professional_id: 42, abn: "51824753556" }, "test-admin-key")
+      makePost({ professional_id: 42, abn: "51824753556" }, "test-admin-key-long-enough-16ch")
     );
     expect(res.status).toBe(200);
     const body = await res.json();
@@ -205,7 +206,7 @@ describe("POST /api/verify-professional", () => {
     mockVerifyAfsl.mockResolvedValue(null);
     // Force the route to have null ABN/AFSL on the pro record too
     setupAdminMocks({ ...PROFESSIONAL, abn: null, afsl_number: null });
-    const res = await POST(makePost({ professional_id: 42 }, "test-admin-key"));
+    const res = await POST(makePost({ professional_id: 42 }, "test-admin-key-long-enough-16ch"));
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.outcome).toBe("partial");
@@ -226,12 +227,12 @@ describe("POST /api/verify-professional", () => {
       };
     });
 
-    await POST(makePost({ professional_id: 42 }, "test-admin-key"));
+    await POST(makePost({ professional_id: 42 }, "test-admin-key-long-enough-16ch"));
     expect(insertMock).toHaveBeenCalledOnce();
   });
 
   it("accepts CRON_SECRET as valid bearer token", async () => {
-    const res = await POST(makePost({ professional_id: 42 }, "test-cron-secret"));
+    const res = await POST(makePost({ professional_id: 42 }, "test-cron-secret-long-enough-16"));
     expect(res.status).toBe(200);
   });
 });

@@ -26,12 +26,12 @@ const log = logger("claim-listing");
 
 const BodySchema = z.object({
   claim_type: z.enum(["broker", "advisor", "listing"]),
-  target_slug: z.string().min(1).max(200),
-  full_name: z.string().min(2).max(120),
-  email: z.string().refine(isValidEmail, "Invalid email"),
-  company_role: z.string().max(120).nullish(),
-  phone: z.string().max(40).nullish(),
-  message: z.string().max(2000).nullish(),
+  target_slug: z.string().trim().min(1).max(200),
+  full_name: z.string().trim().min(2).max(120),
+  email: z.string().trim().refine(isValidEmail, "Invalid email"),
+  company_role: z.string().trim().max(120).nullish(),
+  phone: z.string().trim().max(40).nullish(),
+  message: z.string().trim().max(2000).nullish(),
 });
 
 export const POST = withValidatedBody(BodySchema, async (req: NextRequest, body) => {
