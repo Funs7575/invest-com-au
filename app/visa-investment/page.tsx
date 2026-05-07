@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl } from "@/lib/seo";
 import Icon from "@/components/Icon";
-import HubLeadForm from "@/components/leads/HubLeadForm";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 3600;
 
@@ -125,18 +125,15 @@ export default function VisaInvestmentPage() {
         </section>
 
         {/* Lead form */}
-        <section className="py-12 bg-white">
-          <div className="container-custom max-w-2xl">
-            <HubLeadForm
-              heading="Speak to a migration agent or immigration investment lawyer"
-              subheading="The right specialist will assess eligibility, sequence applications, and avoid the documentation traps that derail most investor applications."
-              intent={{ need: "planning", context: ["estate_planning"] }}
-              source="visa_investment_hub"
-              ctaLabel="Get matched with a specialist"
-              extraFields={[{ name: "current_country", label: "Current country of residence" }, { name: "intended_pathway", label: "Pathway of interest" }]}
-            />
-          </div>
-        </section>
+        <HubAdvisorCTA
+          heading="Speak to a migration agent or immigration investment lawyer"
+          subheading="The right specialist will assess eligibility, sequence applications, and avoid the documentation traps that derail most investor applications."
+          intent={{ need: "planning", context: ["estate_planning"] }}
+          source="visa_investment_hub"
+          ctaLabel="Get matched with a specialist"
+          extraFields={[{ name: "current_country", label: "Current country of residence" }, { name: "intended_pathway", label: "Pathway of interest" }]}
+          className="py-12 bg-white"
+        />
 
         <section className="py-10 bg-slate-50 border-t border-slate-200">
           <div className="container-custom max-w-4xl">

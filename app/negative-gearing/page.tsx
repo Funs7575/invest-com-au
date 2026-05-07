@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl } from "@/lib/seo";
 import Icon from "@/components/Icon";
-import HubLeadForm from "@/components/leads/HubLeadForm";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 3600;
 
@@ -101,17 +101,13 @@ export default function NegativeGearingHubPage() {
           </div>
         </section>
 
-        <section className="py-12 bg-slate-50 border-t border-slate-200">
-          <div className="container-custom max-w-2xl">
-            <HubLeadForm
-              heading="Speak to a tax agent about your investment property"
-              subheading="Tax structuring, depreciation schedules and capital-growth modelling — get the strategy right before you sign a contract."
-              intent={{ need: "tax", context: ["tax_optimization"] }}
-              source="negative_gearing_hub"
-              ctaLabel="Find a tax agent"
-            />
-          </div>
-        </section>
+        <HubAdvisorCTA
+          heading="Speak to a tax agent about your investment property"
+          subheading="Tax structuring, depreciation schedules and capital-growth modelling — get the strategy right before you sign a contract."
+          intent={{ need: "tax", context: ["tax_optimization"] }}
+          source="negative_gearing_hub"
+          ctaLabel="Find a tax agent"
+        />
 
         <section className="py-10 bg-white border-t border-slate-200">
           <div className="container-custom max-w-4xl">
