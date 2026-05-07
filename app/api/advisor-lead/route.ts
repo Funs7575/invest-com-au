@@ -33,6 +33,7 @@ const AdvisorLeadSchema = z
     investor_country: z.string().optional(),
     visa_status: z.string().optional(),
     investor_goal_intl: z.string().optional(),
+    source_page: z.string().optional(),
   })
   .passthrough();
 
@@ -268,6 +269,7 @@ export async function POST(request: NextRequest) {
     : `anonymous-lead-${crypto.randomUUID()}`;
   captureServerEvent(distinctId, "lead_submitted", {
     lead_source: isIntl ? "advisor-lead-international" : "advisor-lead",
+    source_page: typeof rawObj.source_page === "string" ? rawObj.source_page : null,
     advisor_match_count: Object.keys(sanitizedAnswers).length,
     quiz_completed: !!quiz_answers,
     utm_source: utm.utm_source ?? null,
