@@ -1,9 +1,12 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { logger } from "@/lib/logger";
 import { ADMIN_EMAILS } from "@/lib/admin";
 import { isRateLimited } from "@/lib/rate-limit";
+
+const PatchBody = z.object({ body: z.string().trim().min(1).max(5000) });
 
 const log = logger("community:post");
 
@@ -61,16 +64,16 @@ export async function PATCH(
       return NextResponse.json({ error: "Forbidden: only the author can edit a post" }, { status: 403 });
     }
 
-    const body = await req.json();
-
-    if (!body.body || typeof body.body !== "string" || body.body.trim().length < 1 || body.body.trim().length > 5000) {
+    const rawBody = await req.json();
+    const parsed = PatchBody.safeParse(rawBody);
+    if (!parsed.success) {
       return NextResponse.json({ error: "Body must be 1-5000 characters" }, { status: 400 });
     }
 
     const { data: updated, error: updateError } = await admin
       .from("forum_posts")
       .update({
-        body: body.body.trim(),
+        body: parsed.data.body,
         updated_at: new Date().toISOString(),
       })
       .eq("id", id)
