@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import { createClient } from "@/lib/supabase/server";
 import Icon from "@/components/Icon";
+import HubDeepDiveGrid from "@/components/HubDeepDiveGrid";
 
 export const revalidate = 3600;
 
@@ -249,43 +250,19 @@ export default async function SmsfHubPage() {
         )}
 
         {/* SMSF deep-dive sub-pages */}
-        <section className="py-12 bg-white border-t border-slate-200">
-          <div className="container-custom max-w-6xl">
-            <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2">
-              SMSF deep-dives
-            </h2>
-            <p className="text-sm text-slate-600 mb-6">
-              Practical guides for the most common SMSF questions and the strategies retail super can&rsquo;t deliver.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {[
-                { title: "How to Set Up an SMSF", desc: "7-step setup, $800–$3,500 cost breakdown, individual vs corporate trustee.", href: "/smsf/setup" },
-                { title: "Crypto in Your SMSF", desc: "ATO rules, the 15% (or 0%) tax outcome and how to actually buy without breaching the sole-purpose test.", href: "/smsf/crypto" },
-                { title: "SMSF Property Investment", desc: "LRBA borrowing, residential vs commercial, costs and the $300K minimum balance.", href: "/smsf/property" },
-                { title: "SMSF Investment Strategy", desc: "The 5 mandatory elements, three model portfolios and Division 296 considerations.", href: "/smsf/investment-strategy" },
-                { title: "SMSF Compliance Checklist", desc: "12 setup, ongoing and review obligations — interactive tracker.", href: "/smsf/checklist" },
-                { title: "SMSF Cost Calculator", desc: "Project SMSF setup and ongoing costs against a retail super fund — see when SMSF breaks even.", href: "/smsf-calculator" },
-              ].map((card) => (
-                <Link
-                  key={card.href}
-                  href={card.href}
-                  className="group bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl p-5 transition-colors"
-                >
-                  <h3 className="text-base font-extrabold text-slate-900 group-hover:text-amber-700 mb-1.5">
-                    {card.title}
-                  </h3>
-                  <p className="text-sm text-slate-600 leading-relaxed mb-3">
-                    {card.desc}
-                  </p>
-                  <span className="inline-flex items-center gap-1.5 text-sm font-bold text-amber-600 group-hover:underline">
-                    Read guide
-                    <Icon name="arrow-right" size={14} />
-                  </span>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
+        <HubDeepDiveGrid
+          heading="SMSF deep-dives"
+          subheading="Practical guides for the most common SMSF questions and the strategies retail super can't deliver."
+          items={[
+            { title: "How to Set Up an SMSF", desc: "7-step setup, $800–$3,500 cost breakdown, individual vs corporate trustee.", href: "/smsf/setup" },
+            { title: "Crypto in Your SMSF", desc: "ATO rules, the 15% (or 0%) tax outcome and how to actually buy without breaching the sole-purpose test.", href: "/smsf/crypto" },
+            { title: "SMSF Property Investment", desc: "LRBA borrowing, residential vs commercial, costs and the $300K minimum balance.", href: "/smsf/property" },
+            { title: "SMSF Investment Strategy", desc: "The 5 mandatory elements, three model portfolios and Division 296 considerations.", href: "/smsf/investment-strategy" },
+            { title: "SMSF Compliance Checklist", desc: "12 setup, ongoing and review obligations — interactive tracker.", href: "/smsf/checklist" },
+            { title: "SMSF Cost Calculator", desc: "Project SMSF setup and ongoing costs against a retail super fund — see when SMSF breaks even.", href: "/smsf-calculator" },
+          ]}
+          cta="Read guide"
+        />
 
         {/* GAW footer */}
         <section className="py-8 bg-slate-50 border-t border-slate-200">
