@@ -637,10 +637,10 @@ export default function QuizPage() {
   const handleShareResult = async () => {
     const shareUrl = window.location.href;
     const topBrokerName = results[0]?.broker?.name || "my top platform";
-    const shareText = `I filtered platforms on Invest.com.au and ${topBrokerName} ranked highest for my criteria! Try the filter tool:`;
+    const shareText = `I got matched on Invest.com.au and ${topBrokerName} ranked highest for my criteria! Try Get Matched:`;
     if (typeof navigator.share === "function") {
       try {
-        await navigator.share({ title: "My Platform Filter Results", text: shareText, url: shareUrl });
+        await navigator.share({ title: "My Get Matched Results", text: shareText, url: shareUrl });
         trackEvent("quiz_share", { method: "native", top_broker: results[0]?.slug }, "/quiz");
         return;
       } catch { /* cancelled */ }

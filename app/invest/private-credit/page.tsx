@@ -444,7 +444,7 @@ export default async function PrivateCreditPage() {
             {[
               { title: "Hybrid Securities", href: "/invest/hybrid-securities", desc: "ASX-listed bank hybrids offering franked yields above term deposits." },
               { title: "Bonds & Fixed Income", href: "/invest/bonds", desc: "Government and corporate bonds for stable income and capital preservation." },
-              { title: "Managed Funds & Index Funds", href: "/invest/managed-funds", desc: "Compare passive index funds and actively managed strategies in Australia." },
+              { title: "Managed Funds & Index Funds", href: "/invest/funds", desc: "Browse the fund directory — passive index and actively managed strategies." },
               { title: "SMSF Investment Guide", href: "/invest/smsf", desc: "What SMSFs actually invest in — property, shares, crypto and more." },
             ].map((guide) => (
               <Link key={guide.href} href={guide.href} className="group bg-white border border-slate-200 rounded-xl p-5 hover:border-amber-200 hover:shadow-md transition-all">

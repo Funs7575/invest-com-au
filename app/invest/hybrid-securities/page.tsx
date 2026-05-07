@@ -435,7 +435,7 @@ export default async function HybridSecuritiesPage() {
             {[
               { title: "Private Credit & P2P Lending", href: "/invest/private-credit", desc: "Private credit funds and P2P platforms offering yields above term deposits." },
               { title: "Bonds & Fixed Income", href: "/invest/bonds", desc: "Government and corporate bonds for stable income and capital preservation." },
-              { title: "Dividend Investing", href: "/invest/dividend-investing", desc: "High-yield ASX stocks, franking credits explained, and dividend ETFs." },
+              { title: "Dividend Investing", href: "/dividends", desc: "High-yield ASX stocks, franking credits explained, and dividend ETFs." },
               { title: "SMSF Investment Guide", href: "/invest/smsf", desc: "What SMSFs actually invest in — property, shares, crypto and more." },
             ].map((guide) => (
               <Link key={guide.href} href={guide.href} className="group bg-white border border-slate-200 rounded-xl p-5 hover:border-amber-200 hover:shadow-md transition-all">
