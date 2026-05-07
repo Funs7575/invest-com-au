@@ -97,7 +97,7 @@ export default function LumpSumHubPage() {
                 { label: "Property", href: "/property" },
                 { label: "SMSF boost", href: "/smsf" },
                 { label: "Term deposits", href: "/compare?category=term-deposits" },
-                { label: "Managed funds", href: "/invest/managed-funds" },
+                { label: "Managed funds", href: "/invest/funds" },
               ].map((c) => (
                 <Link key={c.href} href={c.href} className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm font-bold text-slate-900 hover:bg-amber-50 hover:border-amber-300 transition-colors text-center">
                   {c.label}

@@ -466,7 +466,7 @@ export default async function CommoditiesPage() {
               { title: "Gold Investment", href: "/invest/gold", desc: "Perth Mint, ASX gold ETFs, physical bullion and gold mining stocks." },
               { title: "Mining & Resources", href: "/invest/mining", desc: "ASX mining stocks, lithium, iron ore and resource sector investing." },
               { title: "Infrastructure", href: "/invest/infrastructure", desc: "Toll roads, airports, utilities and ports for stable inflation-linked income." },
-              { title: "Managed Funds & Index Funds", href: "/invest/managed-funds", desc: "Compare passive index funds and actively managed strategies in Australia." },
+              { title: "Managed Funds & Index Funds", href: "/invest/funds", desc: "Browse the fund directory — passive index and actively managed strategies." },
             ].map((guide) => (
               <Link key={guide.href} href={guide.href} className="group bg-white border border-slate-200 rounded-xl p-5 hover:border-amber-200 hover:shadow-md transition-all">
                 <h3 className="font-bold text-slate-900 group-hover:text-amber-600 transition-colors">{guide.title}</h3>

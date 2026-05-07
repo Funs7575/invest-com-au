@@ -129,6 +129,37 @@ const nextConfig: NextConfig = {
         destination: "/invest",
         permanent: true,
       },
+      // ── IA refactor 2026-05-07: Compare / Browse / Experts / Match / Request ──
+      // /invest used to host platform-comparison categories (forex,
+      // managed-funds) and near-duplicate IPO + dividend pages. The IA
+      // now treats /invest as Browse-Opportunities only; the four URLs
+      // below 301 to their canonical Compare or canonical-of-pair home.
+      // The other 8 demoted categories (smsf, options-trading, reits,
+      // bonds, hybrid-securities, crypto-staking, ipo-calendar,
+      // commodities) stay live as `intent: "guide"` SEO/education pages
+      // — hidden from /invest IA but reachable via search and direct
+      // links. No directory deletes; revert by commenting these four
+      // lines out.
+      {
+        source: "/invest/forex",
+        destination: "/cfd",
+        permanent: true,
+      },
+      {
+        source: "/invest/managed-funds",
+        destination: "/invest/funds",
+        permanent: true,
+      },
+      {
+        source: "/invest/dividend-investing",
+        destination: "/dividends",
+        permanent: true,
+      },
+      {
+        source: "/invest/ipos",
+        destination: "/invest/ipo-calendar",
+        permanent: true,
+      },
       // /start is retired — the unified quiz at /quiz serves both DIY and advisor tracks
       {
         source: "/start",

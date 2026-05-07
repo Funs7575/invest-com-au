@@ -43,10 +43,10 @@ const SEARCH_INDEX: SearchItem[] = [
   { title: "Startups & Tech", href: "/invest/startups", category: "Invest", description: "VC, angel investing & crowdfunding" },
   { title: "Private Credit & P2P", href: "/invest/private-credit", category: "Invest", description: "La Trobe, Qualitas, Metrics" },
   { title: "A-REITs", href: "/invest/reits", category: "Invest", description: "ASX-listed property trusts" },
-  { title: "Managed & Index Funds", href: "/invest/managed-funds", category: "Invest", description: "Vanguard, Betashares, iShares" },
-  { title: "Dividend Investing", href: "/invest/dividend-investing", category: "Invest", description: "High-yield ASX stocks & franking credits" },
-  { title: "Options & Derivatives", href: "/invest/options-trading", category: "Invest", description: "ETOs, CFDs, warrants & futures" },
-  { title: "Forex Trading", href: "/invest/forex", category: "Invest", description: "AUD/USD, ASIC-regulated brokers" },
+  { title: "Managed & Index Funds", href: "/invest/funds", category: "Invest", description: "Vanguard, Betashares, iShares — within fund directory" },
+  { title: "Dividend Investing", href: "/dividends", category: "Compare", description: "High-yield ASX stocks & franking credits" },
+  { title: "Options & Derivatives", href: "/invest/options-trading", category: "Guides", description: "ETOs, CFDs, warrants & futures" },
+  { title: "Forex Trading", href: "/cfd", category: "Compare", description: "AUD/USD, ASIC-regulated CFD-forex brokers" },
   { title: "Commodities", href: "/invest/commodities", category: "Invest", description: "Gold, silver, oil & resource ETFs" },
   { title: "Alternative Investments", href: "/invest/alternatives", category: "Invest", description: "Wine, art, cars, watches & collectibles" },
   { title: "Infrastructure Funds", href: "/invest/infrastructure", category: "Invest", description: "Toll roads, airports, utilities" },
@@ -56,7 +56,7 @@ const SEARCH_INDEX: SearchItem[] = [
   { title: "Bonds & Fixed Income", href: "/invest/bonds", category: "Invest", description: "Government & corporate bonds" },
   { title: "Gold & Precious Metals", href: "/invest/gold", category: "Invest", description: "Perth Mint, ETFs & bullion" },
   { title: "Private Equity", href: "/invest/private-equity", category: "Invest", description: "PE & hedge fund access" },
-  { title: "IPOs & New Listings", href: "/invest/ipos", category: "Invest", description: "Upcoming ASX IPOs" },
+  { title: "IPOs & New Listings", href: "/invest/ipo-calendar", category: "Guides", description: "Upcoming ASX IPOs" },
   { title: "Franchise Opportunities", href: "/invest/franchise", category: "Invest", description: "Proven business models" },
 
   // Property
