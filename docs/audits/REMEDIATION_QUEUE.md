@@ -43,7 +43,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | P | `claude/audit-remediation/p-01-sentry-v10-upgrade` (#468) · `p-03-04-minor-sdk-bumps` (#575) | #468 MERGED 2026-05-03T11:33Z · **#575 OPEN** | iter 276 — `9e1669e` (PR #575: P-03+P-04 — @anthropic-ai/sdk 0.90→0.93, posthog-js 1.371→1.372, posthog-node 5.30→5.33; CI queued). iter 212 — `331b98e` (PR #468: P-01; CI success). | **P-01 done** (PR #468 MERGED). P-02 (Stripe SDK v17→v22) BLOCKED — requires npm install + local test run; not tractable on Hardware-exception sandbox. **P-03+P-04 in-progress (#575)**. |
 | Q | `claude/audit-remediation/q-02-05-recovery-runbooks` (#525) · `q-06-09-runbooks` (#547) · `q-10-12-runbooks` (#549) · `q-13-14-secret-rotation-dpa` (#554) · `q-15-privacy-data-collection` (#572) | #525 OPEN · #547 OPEN · #549 OPEN · **#554 OPEN** · **#572 OPEN** | iter 274 — `577f774` (PR #572: Q-15 /privacy/data-collection page; CI pending). iter 269 CI-rescue — `5c7af0f` (PR #554: merge main). iter 264 CI-rescue — `0d2877b` (PR #554: fix s.envVar→s.name). iter 263 — `93c9748` (PR #554: Q-13+Q-14). iter 260 — `925b2d4` (PR #549). iter 259 — `c684960` (PR #547). iter 235 — `8cd2725` (Q-02..Q-05). | Q-01 needs-user (PITR drill). Q-02..Q-05 in-progress (#525). Q-06..Q-09 in-progress (#547). Q-10..Q-12 in-progress (#549). Q-SOC2-02..11 done (verified iter 260). **Q-13+Q-14 in-progress (#554)**. **Q-15 in-progress (#572)**. |
 | R | `claude/audit-remediation/r-04-cached-data-tests` (#466) · ... · `r-coverage-01-listing-routes` (#521) · `r-coverage-02-stripe-lib` (#526) · `r-coverage-03-quotes` (#530) · `r-coverage-11-quote-review` (#551) · `r-coverage-12-quotes-qa` (#562) · `r-coverage-13-quotes-get` (#565) · `r-coverage-14-notify-filter` (#573) | #290/#396/#459/#472/#473 all MERGED · #466/#471/#510/#511/#513/#514/#515/#516/#517/#519/#521/#526/#530/#551/#562/#565/#573 OPEN | iter 278 — queue sync: R-06 (PR #472 MERGED 2026-05-03) + R-07 (PR #473 MERGED 2026-05-03) marked done. iter 277 CI-rescue — `82f05f1` (PR #573: merge main to force Vercel build — smoke test failed on test-only push; CI re-running). iter 275 forward — `a730325` (PR #573: R-COVERAGE-14 — 10 tests). iter 271 forward — `a5f9774` (PR #565: R-COVERAGE-13 — GET /api/quotes list + 3 POST edge cases; 31 tests, CI pending). iter 270 forward — `fcbeb21` (PR #562: R-COVERAGE-12 — 16 tests for quotes/[slug]/qa GET+POST, dual auth, rate-limit; CI pending). iter 261 forward — `83c763e` (PR #551: R-COVERAGE-11 quotes/[slug]/review — 17 tests, HMAC token auth, rate limit, 12 error paths). iter 255 forward — `1a3c24d` (PR #530: R-COVERAGE-03 quotes/[slug]/accept + reopen, 26 tests). iter 253 CI-rescue — `a29318f` (PR #526). iter 251 CI-rescue — `126eb8ac` (PR #521). | R-01 done (PR #290). R-02 MERGED (#396). R-03 MERGED (#459). **R-06 MERGED (#472)**. **R-07 MERGED (#473)**. R-04/R-05/R-08..R-11 in-progress. R-COVERAGE-01 in-progress (#521). R-COVERAGE-02 in-progress (#526). R-COVERAGE-03 in-flight (#530). R-COVERAGE-11 in-flight (#551). R-COVERAGE-12 in-flight (#562). R-COVERAGE-13 in-flight (#565). **R-COVERAGE-14 in-flight (#573).** |
-| S | `claude/audit-remediation/s-architecture` | — (new branch, PR pending) | iter 279 — S-01 `docs/user-journey.md` (4-path Mermaid diagram). | S-01 done (iter 279). S-02..S-05 pending. |
+| S | `claude/audit-remediation/s-architecture` | **#594 OPEN** | iter 279 — `c6e9e57` (S-01: docs/user-journey.md — 4-path Mermaid diagram; CI queued). | S-01 done (iter 279). S-02..S-05 pending. |
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 MERGED 2026-04-28T11:45Z | merged | V-NEW-06 done (commit `a7bd736`) |
 | V (V-NEW-07) | `claude/audit-remediation/v-new-07-admin-mfa-enforced` | #256 MERGED 2026-04-28T15:44Z | merged | V-NEW-07a done · V-NEW-07b done (`698bbae`) — **Tier D: needs `ADMIN_MFA_COOKIE_SECRET` ≥32 chars in Vercel before merge** (PR was merged; env var status unclear) |
@@ -65,9 +65,9 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 
 **Item:** Extract shared `components/ui/Card` base, refactor 7 card components to use it.
 
-**Status:** `components/ui/Card.tsx` already exists (4 variants, 4 padding sizes). The 7+ card components (`BrokerCard`, `DealCard`, `ListingCard`, `InvestListingCard`, `HomeRouteCards`, `AsxTickerCard`, `EtfComparisonCard`, `IntentCountryRecommendationCard`, `FullServiceBrokerCard`) each have custom layout/styling and do NOT yet import from `ui/Card`.
+**Status:** `components/ui/Card.tsx` already exists (4 variants, 4 padding sizes). The 9 card components (`BrokerCard`, `DealCard`, `ListingCard`, `InvestListingCard`, `HomeRouteCards`, `AsxTickerCard`, `EtfComparisonCard`, `IntentCountryRecommendationCard`, `FullServiceBrokerCard`) each have custom layout/styling and do NOT yet import from `ui/Card`.
 
-**Why blocked:** The loop cannot start a dev server to verify visual correctness of refactored card components. The F-08 item note explicitly says "visual diffs need careful review." Incorrect refactors (wrong padding, missing border-radius, broken overflow) would not be caught by vitest but would produce user-visible regressions. CLAUDE.md §"Before shipping" requires browser testing for UI changes — the loop's sandbox doesn't support this.
+**Why blocked:** The loop cannot start a dev server to verify visual correctness of refactored card components. CLAUDE.md §"Before shipping" requires browser testing for UI changes. The item note explicitly says "visual diffs need careful review." Incorrect refactors (wrong padding, missing border-radius, broken overflow) would not be caught by vitest but would produce user-visible regressions.
 
 **Recommendation matrix:**
 
@@ -1027,7 +1027,7 @@ Diagrams + API contracts + missing-runbook overflow from Q.
 
 | ID | Status | Summary | Est. iterations | Notes |
 | --- | --- | --- | --- | --- |
-| S-01 | done | Mermaid sequence diagram: user → quiz → lead → advisor → billing (with PostHog events, Stripe webhooks, Resend touches) | 1 | Done iter 279. `docs/user-journey.md` — 4 paths (DIY broker, advisor match, advisor billing, lead outcome), PostHog event ref table, Resend touchpoints table, Stripe webhook table, key DB tables. |
+| S-01 | done | Mermaid sequence diagram: user → quiz → lead → advisor → billing (with PostHog events, Stripe webhooks, Resend touches) | 1 | Done iter 279 · commit `c6e9e57` · PR #594. `docs/user-journey.md` — 4 paths, PostHog event ref, Resend touchpoints, Stripe webhooks, key DB tables. |
 | S-02 | pending | Agent-system topology diagram: 19 agents × 5 escalation tiers × DB-table linkages | 1 | P2. Live in `docs/agent-system.md`. |
 | S-03 | pending | OpenAPI spec for `/api/v1/*` (brokers, compare, docs) — public-API contract | ~2 | P2. Use openapi-typescript or hand-author. |
 | S-04 | pending | Document Stream-J handler-registry pattern (architectural decision record) | 1 | P3. |
@@ -1968,17 +1968,17 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 ### 2026-05-07 — Forward progress iter 279 (stream S — S-01: user journey Mermaid diagram)
 
 - Phase 0: batch iter 2 of 5 (lock still held).
-- Phase 1: main synced post-iter-278 push (`a8f8a5b`). Phase 1.5 skipped. Phase 1.7: main CI not checked (local git server).
-- Phase 2: No tractable CI rescue (no GitHub CI data on local-only stream branches; PR #524/KK merged, stuck-detection moot).
-- Phase 3: Priority walk. A (slot 12): A-91..A-94/A-DISC in-progress. R (slot 16): R-08..R-11/R-COVERAGE in-progress. E (slot 17): in-progress. Q (slot 18): in-progress. F (slot 21): F-07 in-progress; F-08 next item. S (slot 22): all pending.
-- Phase 4 (F-08): Verification — `components/ui/Card.tsx` base already exists (4 variants, 4 padding sizes). 9 card components need refactoring but none import it. Surfaced as Blocked: loop cannot run dev server to verify visual output; CLAUDE.md §"Before shipping" requires browser testing for UI changes.
-- Phase 3b: Pick S-01 (first pending item in slot 22 stream S). No branch yet — create new branch `claude/audit-remediation/s-architecture`.
-- Phase 4 (S-01): Verification passed — docs-only change, no TS files changed, no tsc/lint needed. Content accuracy verified against: `lib/posthog/events.ts` (event types), `app/quiz/page.tsx` (`quiz_started`/`quiz_completed` tracking), `app/api/advisor-lead/route.ts` (Resend + PostHog server-side), `app/api/quotes/route.ts` (`notifyMatchingAdvisors`), `app/api/advisor-auth/payment/route.ts` (Stripe Checkout), `lib/stripe-webhook/handlers/checkout-session-completed.ts` (6 sub-flows), `lib/advisor-lead-dispute-resolver.ts` (dispute → refund), cron routes.
-- Phase 5: `docs/user-journey.md` written — 4 paths (A: DIY broker, B: advisor match, C: advisor billing, D: lead outcome), PostHog event ref, Resend touchpoints, Stripe webhooks, key DB tables. Diff: +174 lines (docs only).
-- Phase 6: Commit on `s-architecture` branch, push, PR opened.
-- Queue update: S-01 → done, F-08 → blocked + Blocked section entry added, S in-flight row added.
+- Phase 1: main synced to `a8f8a5b` (iter 278 queue update). Phase 1.5 skipped. Phase 1.7: no local CI data.
+- Phase 2: No tractable CI rescue. PR #524 (KK) MERGED — stuck-detection moot. No GitHub CI data on other local-only stream branches.
+- Phase 3: Priority walk. A/R/E/Q: in-progress. F (slot 21): F-07 batch 2 in-progress (#563); F-08 next.
+- Phase 4 (F-08): `components/ui/Card.tsx` base already exists. 9 card components don't import it. Blocked: loop cannot run dev server to verify visual output; CLAUDE.md requires browser testing for UI changes.
+- Phase 3b: Pick S-01 (slot 22, first pending item). New branch `claude/audit-remediation/s-architecture`.
+- Phase 4 (S-01): Docs-only — no tsc/lint needed. Content verified against: `lib/posthog/events.ts`, `app/quiz/page.tsx`, `app/api/advisor-lead/route.ts`, `app/api/quotes/route.ts`, `app/api/advisor-auth/payment/route.ts`, `lib/stripe-webhook/handlers/checkout-session-completed.ts`, `lib/advisor-lead-dispute-resolver.ts`, cron routes.
+- Phase 5: `docs/user-journey.md` written — 174 lines. 4 Mermaid sequence diagrams + 3 reference tables.
+- Phase 6: Commit `c6e9e57` on `s-architecture`, pushed. PR #594 opened (ready, Tier A — docs only).
+- Queue update on main: S in-flight row added (#594), F-08 blocked, S-01 done, F-08 Blocked section entry added, iter 279 log.
 
-- STATUS: PROGRESS · stream=S · item=S-01 · pr=TBD
+- STATUS: PROGRESS · stream=S · item=S-01 · pr=#594
 
 ---
 
