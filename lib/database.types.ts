@@ -6832,16 +6832,19 @@ export type Database = {
           contact_name: string | null
           created_at: string | null
           description: string | null
+          expression_of_interest_only: boolean | null
           featured: boolean | null
           featured_tier: string | null
           firb_relevant: boolean | null
           fund_size_cents: number | null
           fund_type: string | null
           id: number
+          im_url: string | null
           manager_name: string | null
           min_investment_cents: number | null
           monthly_fee_cents: number | null
           open_to_retail: boolean | null
+          pds_url: string | null
           report_url: string | null
           siv_complying: boolean | null
           slug: string
@@ -6854,16 +6857,19 @@ export type Database = {
           contact_name?: string | null
           created_at?: string | null
           description?: string | null
+          expression_of_interest_only?: boolean | null
           featured?: boolean | null
           featured_tier?: string | null
           firb_relevant?: boolean | null
           fund_size_cents?: number | null
           fund_type?: string | null
           id?: number
+          im_url?: string | null
           manager_name?: string | null
           min_investment_cents?: number | null
           monthly_fee_cents?: number | null
           open_to_retail?: boolean | null
+          pds_url?: string | null
           report_url?: string | null
           siv_complying?: boolean | null
           slug: string
@@ -6876,16 +6882,19 @@ export type Database = {
           contact_name?: string | null
           created_at?: string | null
           description?: string | null
+          expression_of_interest_only?: boolean | null
           featured?: boolean | null
           featured_tier?: string | null
           firb_relevant?: boolean | null
           fund_size_cents?: number | null
           fund_type?: string | null
           id?: number
+          im_url?: string | null
           manager_name?: string | null
           min_investment_cents?: number | null
           monthly_fee_cents?: number | null
           open_to_retail?: boolean | null
+          pds_url?: string | null
           report_url?: string | null
           siv_complying?: boolean | null
           slug?: string
@@ -13325,3 +13334,4 @@ export const Constants = {
     Enums: {},
   },
 } as const
+
