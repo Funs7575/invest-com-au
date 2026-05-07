@@ -232,6 +232,7 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
           investor_country: investorCountry || null,
           visa_status: visaStatus || null,
           investor_goal_intl: investorGoalIntl || null,
+          source_page: "/quiz",
         }),
       });
       trackEvent("advisor_lead_submit", { advisor_type: advisorType, state: stateValue }, "/quiz");
@@ -349,6 +350,7 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
           matched_advisor_slug: advisor.slug,
           confirmed: true,
           consent: true,
+          source_page: "/quiz",
         }),
       });
       setConfirmedAdvisorId(advisor.id);
