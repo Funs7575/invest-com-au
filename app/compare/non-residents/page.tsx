@@ -8,7 +8,7 @@ import type { Broker } from "@/lib/types";
 import SectionHeading from "@/components/SectionHeading";
 import ComplianceFooter from "@/components/ComplianceFooter";
 import BrokerLogo from "@/components/BrokerLogo";
-import { AFFILIATE_REL } from "@/lib/tracking";
+import { AFFILIATE_REL, getAffiliateLink, renderStars } from "@/lib/tracking";
 import CompareNav from "../CompareNav";
 
 export const metadata: Metadata = {
@@ -39,7 +39,7 @@ async function getNonResidentBrokers(): Promise<Broker[]> {
     const supabase = await createClient();
     const { data } = await supabase
       .from("brokers")
-      .select("id, name, slug, color, logo_url, cta_text, affiliate_url, rating, asx_fee, asx_fee_value, us_fee, us_fee_value, fx_rate, chess_sponsored, accepts_non_residents, foreign_investor_notes, platform_type, regulated_by, status, tagline, deal, deal_text, editors_pick, updated_at, fee_last_checked, fee_verified_date")
+      .select("id, name, slug, color, logo_url, cta_text, affiliate_url, rating, asx_fee, asx_fee_value, us_fee, us_fee_value, fx_rate, chess_sponsored, accepts_non_residents, foreign_investor_notes, platform_type, regulated_by, status, tagline, deal, deal_text, editors_pick, updated_at, fee_last_checked, fee_verified_date, min_deposit, pros")
       .eq("accepts_non_residents", true)
       .eq("status", "active")
       .order("rating", { ascending: false });
@@ -98,7 +98,10 @@ export default async function NonResidentBrokersPage() {
     getAllBrokers(),
   ]);
 
-  const acceptCount = nonResidentBrokers.length;
+  const shareBrokers = nonResidentBrokers.filter((b) => b.platform_type !== "fx_provider");
+  const fxProviders = nonResidentBrokers.filter((b) => b.platform_type === "fx_provider");
+
+  const acceptCount = shareBrokers.length;
   const totalCount = allBrokers.length;
 
   return (
@@ -185,9 +188,9 @@ export default async function NonResidentBrokersPage() {
             sub="These brokers have confirmed they accept non-residents. Always verify eligibility for your specific country before applying."
           />
 
-          {nonResidentBrokers.length > 0 ? (
+          {shareBrokers.length > 0 ? (
             <div className="space-y-4">
-              {nonResidentBrokers.map((broker, index) => (
+              {shareBrokers.map((broker, index) => (
                 <div key={broker.id} className="border border-slate-200 rounded-2xl overflow-hidden hover:border-amber-200 transition-colors">
                   <div className="p-5">
                     <div className="flex items-start gap-4">
@@ -256,7 +259,7 @@ export default async function NonResidentBrokersPage() {
                     <div className="flex gap-3 mt-4">
                       {broker.affiliate_url && (
                         <a
-                          href={broker.affiliate_url}
+                          href={getAffiliateLink(broker)}
                           target="_blank"
                           rel={AFFILIATE_REL}
                           className="flex-1 text-center px-4 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold rounded-xl text-sm transition-colors"
@@ -285,6 +288,108 @@ export default async function NonResidentBrokersPage() {
             </div>
           )}
         </section>
+
+        {/* ── FX Transfer Providers ── */}
+        {fxProviders.length > 0 && (
+          <section>
+            <SectionHeading
+              eyebrow="FX Transfer Providers"
+              title="FX Transfer Providers for Non-Residents"
+              sub="Non-residents always need to transfer money into Australia. These FX specialists are the most cost-effective way to do it — significantly cheaper than bank transfers."
+            />
+            <div className="space-y-4">
+              {fxProviders.map((provider) => {
+                const pros = Array.isArray(provider.pros) ? (provider.pros as string[]).slice(0, 3) : [];
+                return (
+                  <div key={provider.id} className="border border-slate-200 rounded-2xl overflow-hidden hover:border-amber-200 transition-colors">
+                    <div className="p-5">
+                      <div className="flex items-start gap-4">
+                        <div className="shrink-0">
+                          <BrokerLogo broker={provider} size="lg" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start gap-3 flex-wrap mb-2">
+                            <div>
+                              <Link href={`/broker/${provider.slug}`} className="font-extrabold text-slate-900 hover:text-amber-700 text-base">
+                                {provider.name}
+                              </Link>
+                            </div>
+                            {provider.rating && (
+                              <span className="text-sm font-bold text-amber-600 ml-auto shrink-0">{renderStars(provider.rating)} {provider.rating.toFixed(1)}/5</span>
+                            )}
+                          </div>
+
+                          {provider.tagline && (
+                            <p className="text-sm text-slate-500 mb-3">{provider.tagline}</p>
+                          )}
+
+                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-3">
+                            {[
+                              { label: "Min Transfer", value: provider.min_deposit || "No minimum" },
+                              { label: "Regulated by", value: provider.regulated_by || "—" },
+                              { label: "Type", value: "FX Specialist" },
+                            ].map((item) => (
+                              <div key={item.label} className="bg-slate-50 rounded-lg p-2 text-center">
+                                <p className="text-xs text-slate-500 mb-0.5">{item.label}</p>
+                                <p className="text-sm font-bold text-slate-800">{item.value}</p>
+                              </div>
+                            ))}
+                          </div>
+
+                          {provider.foreign_investor_notes && (
+                            <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 mb-3">
+                              <p className="text-xs text-emerald-800">
+                                <span className="font-bold">Non-resident eligibility: </span>
+                                {provider.foreign_investor_notes}
+                              </p>
+                            </div>
+                          )}
+
+                          {pros.length > 0 && (
+                            <ul className="flex flex-wrap gap-2 mb-3">
+                              {pros.map((pro) => (
+                                <li key={pro} className="flex items-center gap-1 text-xs text-slate-600 bg-slate-50 px-2 py-1 rounded-lg">
+                                  <svg className="w-3 h-3 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                  </svg>
+                                  {pro}
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="flex gap-3 mt-4">
+                        {provider.affiliate_url && (
+                          <a
+                            href={getAffiliateLink(provider)}
+                            target="_blank"
+                            rel={AFFILIATE_REL}
+                            className="flex-1 text-center px-4 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold rounded-xl text-sm transition-colors"
+                          >
+                            {provider.cta_text || "Get Started"} &rarr;
+                          </a>
+                        )}
+                        <Link
+                          href={`/broker/${provider.slug}`}
+                          className="px-4 py-2.5 border border-slate-200 hover:border-slate-300 text-slate-600 hover:text-slate-800 font-semibold rounded-xl text-sm transition-colors"
+                        >
+                          Full Review
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="mt-4 text-center">
+              <Link href="/foreign-investment/send-money-australia" className="text-sm font-semibold text-amber-600 hover:text-amber-700">
+                Full FX provider comparison &rarr;
+              </Link>
+            </div>
+          </section>
+        )}
 
         {/* ── Why most don't accept non-residents ── */}
         <section>
