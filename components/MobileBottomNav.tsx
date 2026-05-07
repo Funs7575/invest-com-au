@@ -5,9 +5,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 // Sticky mobile bottom navigation — four tabs that mirror the homepage
-// route cards: Compare / Listings / Experts / Get matched. The fourth
-// tab points at /quiz (the guided matching flow); "Pathfinder" stays as
-// internal/explanatory language only.
+// route cards: Compare / Opportunities / Experts / Get Matched. The
+// fourth tab points at /quiz (the guided matching flow).
 const TABS: ReadonlyArray<{ label: string; href: string; icon: React.ReactNode; matchPrefix: string }> = [
   {
     label: "Compare",
@@ -20,7 +19,7 @@ const TABS: ReadonlyArray<{ label: string; href: string; icon: React.ReactNode; 
     ),
   },
   {
-    label: "Listings",
+    label: "Opportunities",
     href: "/invest",
     matchPrefix: "/invest",
     icon: (
@@ -45,7 +44,7 @@ const TABS: ReadonlyArray<{ label: string; href: string; icon: React.ReactNode; 
     ),
   },
   {
-    label: "Get matched",
+    label: "Get Matched",
     href: "/quiz",
     matchPrefix: "/quiz",
     icon: (
