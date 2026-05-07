@@ -1,5 +1,5 @@
-import { render, screen } from "@testing-library/react";
 import { vi, describe, it, expect } from "vitest";
+import { render, screen } from "./setup";
 import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 vi.mock("@/components/leads/HubLeadForm", () => ({
