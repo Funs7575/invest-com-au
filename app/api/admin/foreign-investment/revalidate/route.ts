@@ -12,8 +12,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { revalidateTag } from "next/cache";
 import { getAdminEmails } from "@/lib/admin";
 import { logger } from "@/lib/logger";
+import { z } from "zod";
 
 const log = logger("admin-fi-revalidate");
+
+const RevalidateBody = z.object({
+  adminEmail: z.string().min(1),
+});
 
 const FI_CACHE_TAGS = [
   "fi-data",
@@ -34,16 +39,21 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  let body: { adminEmail: string };
+  let rawBody: unknown;
   try {
-    body = await req.json();
+    rawBody = await req.json();
   } catch (err) {
     log.warn("FI revalidate invalid JSON", { err: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
+  const parsed = RevalidateBody.safeParse(rawBody);
+  if (!parsed.success) {
+    return NextResponse.json({ error: "adminEmail is required" }, { status: 400 });
+  }
+
   const adminEmails = getAdminEmails();
-  if (!adminEmails.includes((body.adminEmail ?? "").toLowerCase())) {
+  if (!adminEmails.includes(parsed.data.adminEmail.toLowerCase())) {
     return NextResponse.json({ error: "Not an admin email" }, { status: 403 });
   }
 

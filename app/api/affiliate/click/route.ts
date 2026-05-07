@@ -3,6 +3,8 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 import { logger } from "@/lib/logger";
 import crypto from "node:crypto";
+import { z } from "zod";
+import { withValidatedBody } from "@/lib/validation/withValidatedBody";
 
 const log = logger("affiliate-click");
 
@@ -22,57 +24,26 @@ export const runtime = "nodejs";
  * several clicks per page visit).
  */
 
-interface Body {
-  broker_slug: string;
-  source?: string | null;
-  page?: string | null;
-  placement_type?: string | null;
-  utm_source?: string | null;
-  utm_medium?: string | null;
-  utm_campaign?: string | null;
-  scenario?: string | null;
-  session_id?: string | null;
-  device_type?: string | null;
-  layer?: string | null;
-}
-
-function parse(input: unknown): { ok: true; data: Body } | { ok: false; error: string } {
-  if (!input || typeof input !== "object") {
-    return { ok: false, error: "Invalid body" };
-  }
-  const b = input as Record<string, unknown>;
-  const broker_slug = typeof b.broker_slug === "string" ? b.broker_slug.trim() : "";
-  if (!broker_slug || broker_slug.length > 120) {
-    return { ok: false, error: "Invalid broker_slug" };
-  }
-  const str = (k: string, max = 200): string | null => {
-    const v = b[k];
-    return typeof v === "string" && v.length <= max ? v.trim() || null : null;
-  };
-  return {
-    ok: true,
-    data: {
-      broker_slug,
-      source: str("source"),
-      page: str("page", 500),
-      placement_type: str("placement_type"),
-      utm_source: str("utm_source"),
-      utm_medium: str("utm_medium"),
-      utm_campaign: str("utm_campaign"),
-      scenario: str("scenario"),
-      session_id: str("session_id", 120),
-      device_type: str("device_type", 40),
-      layer: str("layer"),
-    },
-  };
-}
+const BodySchema = z.object({
+  broker_slug: z.string().min(1).max(120),
+  source: z.string().max(200).nullish(),
+  page: z.string().max(500).nullish(),
+  placement_type: z.string().max(200).nullish(),
+  utm_source: z.string().max(200).nullish(),
+  utm_medium: z.string().max(200).nullish(),
+  utm_campaign: z.string().max(200).nullish(),
+  scenario: z.string().max(200).nullish(),
+  session_id: z.string().max(120).nullish(),
+  device_type: z.string().max(40).nullish(),
+  layer: z.string().max(200).nullish(),
+});
 
 function hashIp(ip: string): string {
   const salt = process.env.IP_HASH_SALT ?? "invest-com-au";
   return crypto.createHash("sha256").update(salt + ip).digest("hex").slice(0, 32);
 }
 
-export async function POST(req: NextRequest) {
+export const POST = withValidatedBody(BodySchema, async (req: NextRequest, body) => {
   if (
     !(await isAllowed("affiliate_click", ipKey(req), {
       max: 60,
@@ -85,31 +56,13 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  let raw: unknown;
-  try {
-    raw = await req.json();
-  } catch {
-    return NextResponse.json(
-      { ok: false, error: "Invalid JSON" },
-      { status: 400 },
-    );
-  }
-
-  const v = parse(raw);
-  if (!v.ok) {
-    return NextResponse.json(
-      { ok: false, error: v.error },
-      { status: 400 },
-    );
-  }
-
   try {
     // admin — click tracking must capture all broker statuses for revenue/editorial analytics
     const supabase = createAdminClient();
     const { data: broker, error: brokerErr } = await supabase
       .from("brokers")
       .select("id, slug, name, status")
-      .eq("slug", v.data.broker_slug)
+      .eq("slug", body.broker_slug)
       .maybeSingle();
     if (brokerErr || !broker) {
       return NextResponse.json(
@@ -127,23 +80,23 @@ export async function POST(req: NextRequest) {
       broker_id: broker.id,
       broker_slug: broker.slug,
       broker_name: broker.name,
-      source: v.data.source,
-      page: v.data.page,
-      placement_type: v.data.placement_type,
-      utm_source: v.data.utm_source,
-      utm_medium: v.data.utm_medium,
-      utm_campaign: v.data.utm_campaign,
-      scenario: v.data.scenario,
-      session_id: v.data.session_id,
-      device_type: v.data.device_type,
-      layer: v.data.layer,
+      source: body.source ?? null,
+      page: body.page ?? null,
+      placement_type: body.placement_type ?? null,
+      utm_source: body.utm_source ?? null,
+      utm_medium: body.utm_medium ?? null,
+      utm_campaign: body.utm_campaign ?? null,
+      scenario: body.scenario ?? null,
+      session_id: body.session_id ?? null,
+      device_type: body.device_type ?? null,
+      layer: body.layer ?? null,
       user_agent: userAgent,
       ip_hash: ip === "unknown" ? null : hashIp(ip),
       clicked_at: new Date().toISOString(),
     });
     if (insertErr) {
       log.error("insert_failed", {
-        broker: v.data.broker_slug,
+        broker: body.broker_slug,
         error: insertErr.message,
       });
       return NextResponse.json(
@@ -160,4 +113,4 @@ export async function POST(req: NextRequest) {
       { status: 500 },
     );
   }
-}
+});

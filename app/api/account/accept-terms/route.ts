@@ -1,8 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { logger } from "@/lib/logger";
 
 const log = logger("accept-terms");
+
+const AcceptTermsBody = z.object({
+  tos_version: z.string().max(50),
+  privacy_version: z.string().max(50),
+});
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -29,20 +35,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Authentication required" }, { status: 401 });
   }
 
-  const body = (await request.json().catch(() => ({}))) as Record<string, unknown>;
-  const tos_version =
-    typeof body.tos_version === "string" ? body.tos_version.slice(0, 50) : null;
-  const privacy_version =
-    typeof body.privacy_version === "string"
-      ? body.privacy_version.slice(0, 50)
-      : null;
-
-  if (!tos_version || !privacy_version) {
+  const rawBody = await request.json().catch(() => null);
+  const bodyResult = AcceptTermsBody.safeParse(rawBody);
+  if (!bodyResult.success) {
     return NextResponse.json(
       { error: "tos_version and privacy_version are required" },
       { status: 400 }
     );
   }
+  const { tos_version, privacy_version } = bodyResult.data;
 
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || null;
   const userAgent = request.headers.get("user-agent")?.slice(0, 500) || null;

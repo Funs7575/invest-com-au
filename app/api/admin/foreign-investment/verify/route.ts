@@ -14,8 +14,14 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidateTag } from "next/cache";
 import { getAdminEmails } from "@/lib/admin";
 import { logger } from "@/lib/logger";
+import { z } from "zod";
 
 const log = logger("admin-fi-verify");
+
+const VerifyBody = z.object({
+  categoryKey: z.string().min(1),
+  note: z.string().optional(),
+});
 
 export async function POST(req: NextRequest) {
   // ── Auth ──────────────────────────────────────────────────
@@ -37,22 +43,19 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  let body: { categoryKey: string; note?: string };
+  let rawBody: unknown;
   try {
-    body = await req.json();
+    rawBody = await req.json();
   } catch (err) {
     log.warn("FI verify invalid JSON", { err: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { categoryKey, note } = body;
-
-  if (!categoryKey) {
-    return NextResponse.json(
-      { error: "categoryKey is required" },
-      { status: 400 }
-    );
+  const parsed = VerifyBody.safeParse(rawBody);
+  if (!parsed.success) {
+    return NextResponse.json({ error: "categoryKey is required" }, { status: 400 });
   }
+  const { categoryKey, note } = parsed.data;
 
   const adminEmail = authedEmail;
 
