@@ -92,7 +92,11 @@ async function seed() {
   ];
 
   for (const b of brokers) {
-    const { error } = await supabase.from("brokers").upsert(b, { onConflict: "slug" });
+    // supabase-js 2.105+ has RejectExcessProperties that rejects union shapes.
+    // The brokers list has different optional-field combinations per row — fine for a seed.
+    const { error } = await supabase
+      .from("brokers")
+      .upsert(b as Record<string, unknown>, { onConflict: "slug" });
     if (error) console.error("brokers upsert failed", b.slug, error.message);
   }
   console.log(`  ✓ ${brokers.length} brokers`);
@@ -261,7 +265,7 @@ async function seed() {
   for (const p of periods) {
     const { error } = await supabase
       .from("financial_periods")
-      .upsert(p, { onConflict: "period_start,period_end" });
+      .upsert(p as Record<string, unknown>, { onConflict: "period_start,period_end" });
     if (error) console.error("financial_periods upsert failed", p.period_start, error.message);
   }
   console.log(`  ✓ ${periods.length} financial periods`);
