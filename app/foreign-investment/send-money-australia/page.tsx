@@ -157,7 +157,7 @@ export default async function SendMoneyAustraliaPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-amber-200">
-                  <th className="text-start pb-2 font-semibold text-slate-600 text-xs">Provider</th>
+                  <th className="text-left pb-2 font-semibold text-slate-600 text-xs">Provider</th>
                   <th className="text-right pb-2 font-semibold text-slate-600 text-xs">Est. margin</th>
                   <th className="text-right pb-2 font-semibold text-slate-600 text-xs">Cost on $500K</th>
                   <th className="text-right pb-2 font-semibold text-slate-600 text-xs">You receive</th>
@@ -182,7 +182,7 @@ export default async function SendMoneyAustraliaPage() {
                       </td>
                       <td className="py-2 text-right font-bold text-slate-800">
                         ${received.toLocaleString("en-AU")}
-                        {isBest && <span className="ms-1 text-xs text-emerald-600">Best</span>}
+                        {isBest && <span className="ml-1 text-xs text-emerald-600">Best</span>}
                       </td>
                     </tr>
                   );
