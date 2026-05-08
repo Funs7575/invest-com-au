@@ -77,7 +77,9 @@ describe("computeMortgage — P&I defaults", () => {
     const r = computeMortgage({ principal: 500_000, annualRatePct: 6, termYears: 30 });
     expect(r.type).toBe("pi");
     expect(r.monthlyRepayment).toBeCloseTo(2997.75, 0);
-    expect(r.totalRepaid).toBeCloseTo(2997.75 * 360, 0);
+    // totalRepaid = monthlyRepayment × 360; monthly is 2997.752..., not exactly 2997.75,
+    // so the product differs from 2997.75×360 by ~0.95 — use numDigits=-1 (±5 tolerance).
+    expect(r.totalRepaid).toBeCloseTo(2997.75 * 360, -1);
     expect(r.totalInterest).toBeCloseTo(r.totalRepaid - 500_000, 0);
     expect(r.totalCost).toBe(r.totalRepaid);
   });
