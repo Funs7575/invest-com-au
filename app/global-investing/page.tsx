@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import SectionHeading from "@/components/SectionHeading";
+import HubFAQ from "@/components/HubFAQ";
+import type { FaqItem } from "@/components/HubFAQ";
 
 export const revalidate = 86400;
 
@@ -25,46 +27,38 @@ export const metadata: Metadata = {
   alternates: { canonical: `${SITE_URL}/global-investing` },
 };
 
-const HUB_FAQS = [
+const HUB_FAQS: FaqItem[] = [
   {
-    question: "Can Australian residents invest in overseas markets?",
-    answer:
-      "Yes. Australian residents can invest globally through two main routes. (1) Direct: open a foreign broker account (IBKR, Stake, Tiger AU, moomoo AU, Webull AU, eToro, CommSec International, CMC International, Pearler) and buy stocks listed on NYSE/NASDAQ/LSE/HKEX/TSE/SGX/NZX directly. (2) Indirect: buy AU-listed ETFs and LICs that hold foreign shares — IVV (S&P 500), VGS (developed markets), VAE (Asia), IZZ (China), IEU (Europe), MFF/PMC (global LICs). Track A pays better per conversion to brokers; Track B is the lower-friction path for most Australians.",
+    q: "Can Australian residents invest in overseas markets?",
+    a: "Yes. Australian residents can invest globally through two main routes. (1) Direct: open a foreign broker account (IBKR, Stake, Tiger AU, moomoo AU, Webull AU, eToro, CommSec International, CMC International, Pearler) and buy stocks listed on NYSE/NASDAQ/LSE/HKEX/TSE/SGX/NZX directly. (2) Indirect: buy AU-listed ETFs and LICs that hold foreign shares — IVV (S&P 500), VGS (developed markets), VAE (Asia), IZZ (China), IEU (Europe), MFF/PMC (global LICs). Track A pays better per conversion to brokers; Track B is the lower-friction path for most Australians.",
   },
   {
-    question: "Is it cheaper to buy US shares directly or via ASX-listed ETFs?",
-    answer:
-      "It depends on your holding period, amount, and brokerage. For long-term holders, AU-listed ETFs like IVV (0.04% MER) often win after factoring FX conversion fees, foreign brokerage, custodial fees, and the W-8BEN paperwork. For active traders or specific stock exposure (e.g. you want Tesla, not the S&P 500), direct US shares are necessary. Use our /global-investing/calculators/direct-vs-asx-cost tool to compute total cost for your specific scenario, including FX (typically 0.40–0.70% spread on Stake/CommSec International, 0.002% on IBKR), brokerage, and tax friction.",
+    q: "Is it cheaper to buy US shares directly or via ASX-listed ETFs?",
+    a: "It depends on your holding period, amount, and brokerage. For long-term holders, AU-listed ETFs like IVV (0.04% MER) often win after factoring FX conversion fees, foreign brokerage, custodial fees, and the W-8BEN paperwork. For active traders or specific stock exposure (e.g. you want Tesla, not the S&P 500), direct US shares are necessary. Use our /global-investing/calculators/direct-vs-asx-cost tool to compute total cost for your specific scenario, including FX (typically 0.40–0.70% spread on Stake/CommSec International, 0.002% on IBKR), brokerage, and tax friction.",
   },
   {
-    question: "Do I need to fill out a W-8BEN form to buy US shares?",
-    answer:
-      "Yes. The W-8BEN is a US IRS form that confirms you are a non-US resident eligible for reduced US tax rates under the Australia-US Double Tax Agreement. Without it, the IRS withholds 30% of US-source dividends; with it, the rate drops to 15%. Most AU-friendly brokers (Stake, IBKR, CommSec International, Tiger, moomoo) handle the W-8BEN inside their account-opening flow. The form is valid for three years and must be re-signed at expiry.",
+    q: "Do I need to fill out a W-8BEN form to buy US shares?",
+    a: "Yes. The W-8BEN is a US IRS form that confirms you are a non-US resident eligible for reduced US tax rates under the Australia-US Double Tax Agreement. Without it, the IRS withholds 30% of US-source dividends; with it, the rate drops to 15%. Most AU-friendly brokers (Stake, IBKR, CommSec International, Tiger, moomoo) handle the W-8BEN inside their account-opening flow. The form is valid for three years and must be re-signed at expiry.",
   },
   {
-    question: "What is US estate tax and does it apply to Australian investors?",
-    answer:
-      "Yes — and most Australian investors don't know about it. The US imposes federal estate tax on US-situs assets held by non-resident aliens, with a low exemption of US$60,000 (compared to the US$13.6M exemption for US residents). If you die holding more than US$60,000 of US shares directly through a foreign broker, your estate may owe up to 40% federal estate tax on the excess. The Australia-US Estate Tax Treaty provides a unified credit that significantly mitigates this, but it's not automatic and requires proper structuring. AU-listed ETFs (like IVV) are NOT US-situs assets and avoid this exposure entirely. See /global-investing/tax/us-estate-tax for the full explainer and exposure calculator.",
+    q: "What is US estate tax and does it apply to Australian investors?",
+    a: "Yes — and most Australian investors don't know about it. The US imposes federal estate tax on US-situs assets held by non-resident aliens, with a low exemption of US$60,000 (compared to the US$13.6M exemption for US residents). If you die holding more than US$60,000 of US shares directly through a foreign broker, your estate may owe up to 40% federal estate tax on the excess. The Australia-US Estate Tax Treaty provides a unified credit that significantly mitigates this, but it's not automatic and requires proper structuring. AU-listed ETFs (like IVV) are NOT US-situs assets and avoid this exposure entirely. See /global-investing/tax/us-estate-tax for the full explainer and exposure calculator.",
   },
   {
-    question: "How are gains on foreign shares taxed in Australia?",
-    answer:
-      "Australian residents pay capital gains tax (CGT) on worldwide gains, including foreign shares. Cost base is calculated in AUD at the time of acquisition (using the RBA spot rate or your actual exchange rate); disposal value is calculated in AUD at the time of sale. This means FX movements affect your AUD-denominated gain even when the share price is flat. Foreign-source dividend income is also assessable. Where foreign tax has been paid (e.g. 15% US withholding), you may claim a Foreign Income Tax Offset (FITO) up to the AU tax payable on that income. See /global-investing/tax/cgt-on-foreign-shares and /global-investing/tax/fito for worked examples.",
+    q: "How are gains on foreign shares taxed in Australia?",
+    a: "Australian residents pay capital gains tax (CGT) on worldwide gains, including foreign shares. Cost base is calculated in AUD at the time of acquisition (using the RBA spot rate or your actual exchange rate); disposal value is calculated in AUD at the time of sale. This means FX movements affect your AUD-denominated gain even when the share price is flat. Foreign-source dividend income is also assessable. Where foreign tax has been paid (e.g. 15% US withholding), you may claim a Foreign Income Tax Offset (FITO) up to the AU tax payable on that income. See /global-investing/tax/cgt-on-foreign-shares and /global-investing/tax/fito for worked examples.",
   },
   {
-    question: "Which Australian brokers are best for international shares?",
-    answer:
-      "Depends on what you want. Stake offers fee-free US shares (with FX spread); Interactive Brokers (IBKR) has the lowest FX spread (~0.002%) and broadest market access (LSE, HKEX, TSE) but a steeper learning curve; Tiger AU and moomoo AU compete aggressively on signup bonuses; CommSec International is the bank-broker option with established trust; Webull and eToro fit specific niches. The custody model differs — Stake/Tiger/moomoo are custodial (held in nominee), CommSec International offers DRS (Direct Registration). See /global-investing/shares/us for the full broker comparison and /global-investing/guides/chess-vs-custodial-international for the ownership-model explainer.",
+    q: "Which Australian brokers are best for international shares?",
+    a: "Depends on what you want. Stake offers fee-free US shares (with FX spread); Interactive Brokers (IBKR) has the lowest FX spread (~0.002%) and broadest market access (LSE, HKEX, TSE) but a steeper learning curve; Tiger AU and moomoo AU compete aggressively on signup bonuses; CommSec International is the bank-broker option with established trust; Webull and eToro fit specific niches. The custody model differs — Stake/Tiger/moomoo are custodial (held in nominee), CommSec International offers DRS (Direct Registration). See /global-investing/shares/us for the full broker comparison and /global-investing/guides/chess-vs-custodial-international for the ownership-model explainer.",
   },
   {
-    question: "Should I use a hedged or unhedged international ETF?",
-    answer:
-      "Most long-term Australian investors use unhedged. Over decades, currency exposure averages out and hedging costs (~0.06% p.a. on IVV vs IHVV) compound against returns. Unhedged means your AUD value rises when AUD weakens vs the foreign currency, and vice versa — this provides natural diversification against AUD-specific risk. Hedged ETFs (IHVV, HNDQ) make sense for shorter holding periods or when you want pure equity-return exposure without FX overlay. Decide based on horizon, not last quarter's FX move.",
+    q: "Should I use a hedged or unhedged international ETF?",
+    a: "Most long-term Australian investors use unhedged. Over decades, currency exposure averages out and hedging costs (~0.06% p.a. on IVV vs IHVV) compound against returns. Unhedged means your AUD value rises when AUD weakens vs the foreign currency, and vice versa — this provides natural diversification against AUD-specific risk. Hedged ETFs (IHVV, HNDQ) make sense for shorter holding periods or when you want pure equity-return exposure without FX overlay. Decide based on horizon, not last quarter's FX move.",
   },
   {
-    question: "What FX provider should I use for international transfers?",
-    answer:
-      "For one-off broker funding, Wise typically beats banks by 1.5–2% on AUD/USD. For larger transfers (>AU$50k) OFX and WorldFirst offer better rates with dedicated dealers. For ongoing multi-currency accounts, Wise and Revolut offer card spending in foreign currencies. Bank-to-bank international transfers are usually the worst option (1.5–3% spread plus fixed fees). See /global-investing/currency/best-fx-providers for the full comparison.",
+    q: "What FX provider should I use for international transfers?",
+    a: "For one-off broker funding, Wise typically beats banks by 1.5–2% on AUD/USD. For larger transfers (>AU$50k) OFX and WorldFirst offer better rates with dedicated dealers. For ongoing multi-currency accounts, Wise and Revolut offer card spending in foreign currencies. Bank-to-bank international transfers are usually the worst option (1.5–3% spread plus fixed fees). See /global-investing/currency/best-fx-providers for the full comparison.",
   },
 ];
 
@@ -173,20 +167,10 @@ export default function GlobalInvestingHubPage() {
     { name: "Global Investing" },
   ]);
 
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: HUB_FAQS.map((f) => ({
-      "@type": "Question",
-      name: f.question,
-      acceptedAnswer: { "@type": "Answer", text: f.answer },
-    })),
-  };
 
   return (
     <div className="bg-white min-h-screen">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
 
       {/* ── Hero ─────────────────────────────────────────────────────── */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
@@ -316,31 +300,12 @@ export default function GlobalInvestingHubPage() {
         </div>
       </section>
 
-      {/* ── FAQ ─────────────────────────────────────────────────────── */}
-      <section className="bg-slate-50 border-b border-slate-100 py-10">
-        <div className="container-custom">
-          <SectionHeading
-            eyebrow="FAQ"
-            title="Common questions about investing globally from Australia"
-          />
-          <div className="space-y-3 max-w-4xl">
-            {HUB_FAQS.map((faq) => (
-              <details
-                key={faq.question}
-                className="bg-white border border-slate-200 rounded-xl p-4 group"
-              >
-                <summary className="font-bold text-sm text-slate-900 cursor-pointer list-none flex items-start gap-3">
-                  <span className="text-amber-500 mt-0.5 group-open:rotate-90 transition-transform">&rarr;</span>
-                  <span className="flex-1">{faq.question}</span>
-                </summary>
-                <p className="mt-3 ml-7 text-xs text-slate-600 leading-relaxed whitespace-pre-line">
-                  {faq.answer}
-                </p>
-              </details>
-            ))}
-          </div>
-        </div>
-      </section>
+      <HubFAQ
+        items={HUB_FAQS}
+        heading="Common questions about investing globally from Australia"
+        eyebrow="FAQ"
+        className="bg-slate-50 border-b border-slate-100 py-10"
+      />
 
       {/* ── Cross-link to inbound counterpart ───────────────────────── */}
       <section className="bg-white py-10">
