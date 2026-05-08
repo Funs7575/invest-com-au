@@ -746,4 +746,113 @@ describe("handleCheckoutSessionCompleted", () => {
       ),
     ).resolves.toEqual({ status: "done" });
   });
+
+  // ── batch 3 — uncovered guard / catch-block paths ─────────────────────────
+
+  it("listing_payment: skips activation when listing_id is 0 or absent", async () => {
+    const ctx = makeCtx();
+    await handleCheckoutSessionCompleted(
+      makeSession({
+        metadata: { type: "listing_payment", listing_id: "0", plan_id: "2" },
+      }),
+      ctx,
+    );
+    expect(ctx.log.info).not.toHaveBeenCalledWith(
+      "Listing activated",
+      expect.any(Object),
+    );
+  });
+
+  it("advisor_credit_topup: skips flow when professional_id is 0 or absent", async () => {
+    const ctx = makeCtx();
+    await handleCheckoutSessionCompleted(
+      makeSession({
+        metadata: { type: "advisor_credit_topup", professional_id: "0" },
+        amount_total: 5000,
+      }),
+      ctx,
+    );
+    expect(ctx.log.info).not.toHaveBeenCalledWith(
+      "Advisor credit topped up",
+      expect.any(Object),
+    );
+  });
+
+  it("advisor_credit_topup: logs error when professionals email lookup throws (catch block)", async () => {
+    let profCalls = 0;
+    const ctx = makeCtx({
+      "professionals": () => {
+        profCalls++;
+        if (profCalls === 1) {
+          return thenable({ credit_balance_cents: 500, lifetime_credit_cents: 2000 });
+        }
+        if (profCalls === 2) {
+          return thenable(); // update — succeeds via then()
+        }
+        // Third call: select email/name inside try block — throws
+        return {
+          ...thenable(),
+          maybeSingle: vi.fn().mockRejectedValue(new Error("Connection lost")),
+        };
+      },
+    });
+    await handleCheckoutSessionCompleted(
+      makeSession({
+        metadata: { type: "advisor_credit_topup", professional_id: "42", topup_id: "0" },
+        amount_total: 5000,
+      }),
+      ctx,
+    );
+    expect(ctx.log.error).toHaveBeenCalledWith(
+      "Advisor topup receipt lookup failed",
+      expect.objectContaining({ error: "Connection lost" }),
+    );
+  });
+
+  it("advisor_featured: skips flow when professional_id is 0 or absent", async () => {
+    const ctx = makeCtx();
+    await handleCheckoutSessionCompleted(
+      makeSession({
+        metadata: { type: "advisor_featured", professional_id: "0" },
+        amount_total: 9900,
+      }),
+      ctx,
+    );
+    expect(ctx.log.info).not.toHaveBeenCalledWith(
+      "Advisor featured activated",
+      expect.any(Object),
+    );
+  });
+
+  it("advisor_featured: logs error when advisor lookup throws (catch block)", async () => {
+    let profCalls = 0;
+    const ctx = makeCtx({
+      "professionals": () => {
+        profCalls++;
+        if (profCalls === 1) {
+          return thenable(); // update featured_until — succeeds via then()
+        }
+        // Second call: select email/name/slug inside try block — throws
+        return {
+          ...thenable(),
+          maybeSingle: vi.fn().mockRejectedValue(new Error("Network timeout")),
+        };
+      },
+    });
+    await handleCheckoutSessionCompleted(
+      makeSession({
+        metadata: { type: "advisor_featured", professional_id: "42" },
+        amount_total: 9900,
+      }),
+      ctx,
+    );
+    expect(ctx.log.info).toHaveBeenCalledWith(
+      "Advisor featured activated",
+      expect.any(Object),
+    );
+    expect(ctx.log.error).toHaveBeenCalledWith(
+      "Advisor featured receipt lookup failed",
+      expect.objectContaining({ error: "Network timeout" }),
+    );
+  });
 });
