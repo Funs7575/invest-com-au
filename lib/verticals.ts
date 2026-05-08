@@ -93,6 +93,8 @@ export interface HubHeroStat {
   dataAsOf: string;  // ISO date — feeds <DatedStatBadge>
   stalesAt: string;  // ISO date — feeds stale-data CI gate (V-NEW-01)
   source?: string;   // attribution URL when applicable
+  /** Optional sub-label rendered below the value (e.g. "Companies < $20M turnover"). */
+  subtitle?: string;
 }
 
 export interface HubCta {
