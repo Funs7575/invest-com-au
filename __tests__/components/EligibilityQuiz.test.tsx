@@ -9,6 +9,12 @@ import EligibilityQuiz, {
   type QuizAnswers,
 } from "@/components/EligibilityQuiz";
 
+vi.mock("@/components/Icon", () => ({
+  default: ({ name, ...rest }: { name: string; [key: string]: unknown }) => (
+    <span data-testid={`icon-${name}`} {...rest} />
+  ),
+}));
+
 const QUESTIONS: QuizQuestion[] = [
   {
     id: "industry",
