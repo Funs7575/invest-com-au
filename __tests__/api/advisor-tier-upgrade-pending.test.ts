@@ -36,7 +36,9 @@ let advisorRow: {
 } | null = null;
 let prorationRows: Array<{ id: number; amount_cents: number; reference_id: string }> = [];
 let subRow: { stripe_subscription_id: string } | null = null;
-const mockUpdate = vi.fn(() => ({ eq: vi.fn().mockResolvedValue({ data: null, error: null }) }));
+const mockUpdate = vi.fn((_payload: Record<string, unknown>) => ({
+  eq: vi.fn().mockResolvedValue({ data: null, error: null }),
+}));
 
 vi.mock("@/lib/supabase/admin", () => ({
   createAdminClient: () => ({

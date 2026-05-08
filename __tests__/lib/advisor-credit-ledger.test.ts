@@ -184,7 +184,7 @@ function prosTableStub() {
       }
       return Promise.resolve({ data: pro, error: null });
     },
-    then: (cb: (v: { data: null; error: null }) => unknown) => {
+    then: (cb: (v: { data: null; error: { code?: string; message: string } | null }) => unknown) => {
       // For update without .single() — apply
       if (updates) {
         const id = filters["id"] as number | undefined;
@@ -231,7 +231,7 @@ function applyFilters(rows: LedgerRow[], filters: Record<string, unknown>) {
           if (r[col] == null) return false;
           continue;
         }
-        if ((r as Record<string, unknown>)[key] !== val) return false;
+        if ((r as unknown as Record<string, unknown>)[key] !== val) return false;
       }
       return true;
     })

@@ -50,7 +50,7 @@ vi.mock("@/lib/stripe", () => ({
   }),
 }));
 
-const mockRecordLedgerEntry = vi.fn(() =>
+const mockRecordLedgerEntry = vi.fn((..._args: unknown[]) =>
   Promise.resolve({ entry: { id: 1 }, balanceAfterCents: 0, idempotent: false }),
 );
 vi.mock("@/lib/advisor-credit-ledger", () => ({

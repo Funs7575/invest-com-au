@@ -282,10 +282,10 @@ describe("handleChargeRefunded — advisor flow", () => {
     const adminFrom = vi.fn().mockImplementation((table: string) => {
       if (table === "course_purchases" || table === "course_revenue") {
         return {
+          ...writeBuilder(),
           select: vi.fn().mockReturnThis(),
           eq: vi.fn().mockReturnThis(),
           maybeSingle: vi.fn().mockResolvedValue({ data: null }),
-          ...writeBuilder(),
         };
       }
       if (table === "wallet_transactions") {
