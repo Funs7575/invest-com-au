@@ -98,7 +98,7 @@ docs/runbooks/             Incident response procedures
 .github/workflows/         CI pipelines
 proxy.ts                   Edge middleware (auth, headers, CSP)
 next.config.ts             Next.js config (images, redirects, Sentry, bundle analyzer)
-vercel.json                Cron job schedule
+vercel.json                Cron schedule (38 dispatch entries → 73 handlers via lib/cron-groups.ts)
 ```
 
 ## Request lifecycle
@@ -163,6 +163,68 @@ Tables fall into roughly four classes:
 - **DB queries**: `lib/cache.ts` wraps `unstable_cache` for hot
   read-only queries (broker list, advisor list, taxonomy).
 - **Affiliate tracking**: `force-dynamic` — never cached.
+
+## Cron dispatch
+
+Vercel's hard cap is 40 cron jobs per project. The platform has 73
+individual cron handler routes but only 38 `vercel.json` schedule
+entries — the gap is covered by a **dispatch-group fan-out** pattern.
+
+### How it works
+
+`vercel.json` triggers `GET /api/cron/dispatch/[group]` once per unique
+schedule. The `[group]` slug (e.g. `daily-2`, `hourly-0`, `every-15m`)
+maps to an array of handler paths in `lib/cron-groups.ts`. The
+dispatcher fetches all handlers for the group **in parallel** using
+`Promise.allSettled`, forwarding the original `Authorization: Bearer
+$CRON_SECRET` header so each handler's own `requireCronAuth()` check
+still guards the real work.
+
+```
+vercel.json                     lib/cron-groups.ts
+  "0 2 * * *"              "daily-2": [
+    → /cron/dispatch/daily-2  →   "/api/cron/lead-quality-weights",
+                                  "/api/cron/low-balance-alerts",
+                                  "/api/cron/gdpr-retention-purge",
+                                  ...7 more handlers
+                               ]
+```
+
+Each dispatched handler:
+- Keeps its own `runtime`, `maxDuration`, and `requireCronAuth` call.
+- Logs independently to `cron_run_log` via `wrapCronHandler`.
+- Is independently testable and deployable.
+
+The dispatcher itself logs a `cron_run_log` row per handler and returns
+HTTP 207 (multi-status) if any handler fails, so `/api/health` and the
+heartbeat alert surface partial failures.
+
+### Critical routing note
+
+The dispatcher **must** live at `app/api/cron/dispatch/[group]/` (not
+`_dispatch/[group]/`). Next.js treats `_*` folders as private and does
+not register them as routes. The original implementation used the
+`_dispatch` name and was silently unreachable for 12 days before the
+routing bug was caught (2026-04-16 → 2026-04-28).
+
+### Adding a new cron handler
+
+1. Create `app/api/cron/<name>/route.ts`. Call `requireCronAuth(req)`
+   first; wrap body with `wrapCronHandler`.
+2. Add the path to the appropriate group in `lib/cron-groups.ts`, or
+   create a new group if no existing schedule fits.
+3. If a new group is created, add the corresponding entry to
+   `vercel.json` pointing to `/api/cron/dispatch/<new-group>`.
+4. Do **not** add the handler path directly to `vercel.json` — that
+   bypasses the dispatcher and consumes a scarce cron slot.
+
+### Loopback origin
+
+The dispatcher fetches handlers via `VERCEL_PROJECT_PRODUCTION_URL`
+(the protection-free alias), **not** `req.url`'s origin. Vercel's
+Deployment Protection blocks loopback requests to the unique deployment
+URL before they reach any route handler. Falls back to `new URL(req.url).origin`
+for `npm run dev`.
 
 ## Observability
 
@@ -229,8 +291,10 @@ temporary decision with the trigger that makes it not-temporary:
   marketplace project + an admin project when admin work starts being
   blocked by marketplace deploys, or when total functions > 100.
 - **Cron jobs hard-coded in `vercel.json`** → migrate to Inngest /
-  Trigger.dev when we cross 30 cron jobs OR when one job's runtime
-  exceeds 5 min (Vercel cron limit).
+  Trigger.dev when we cross 40 unique schedules (Vercel cron cap; current
+  dispatch pattern buys headroom to ~120+ handlers at the cost of
+  parallel fan-out within a schedule) OR when one job's runtime exceeds
+  5 min (Vercel cron limit).
 - **Test suite runs on a single runner** → shard across 4 runners when
   total runtime exceeds 12 min on PRs.
 - **Single Supabase project for prod + staging** → split when staging
