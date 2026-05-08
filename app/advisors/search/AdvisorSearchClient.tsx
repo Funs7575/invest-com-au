@@ -9,6 +9,7 @@ import {
   AU_LANGUAGES,
   type ProfessionalType,
 } from "@/lib/types";
+import { trackEvent } from "@/lib/tracking";
 
 interface AdvisorRow {
   id: number;
@@ -235,7 +236,13 @@ export default function AdvisorSearchClient({ initialAdvisors }: Props) {
               Advanced Advisor Search
             </h1>
             <Link
-              href={`/concierge?seed=${encodeURIComponent("I'm thinking about hiring a financial advisor. What should I look for, and what questions should I ask?")}`}
+              href="/concierge?finder=advisor-finder"
+              onClick={() =>
+                trackEvent("concierge_seed_clicked", {
+                  finder: "advisor-finder",
+                  source: "advisor_search_header",
+                })
+              }
               className="inline-flex items-center gap-1.5 bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 hover:text-slate-900 font-bold text-xs md:text-sm px-3 py-1.5 rounded-full transition-colors shadow-sm shrink-0"
             >
               Not sure what to look for? Ask the AI →
