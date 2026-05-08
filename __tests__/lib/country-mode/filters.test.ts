@@ -14,34 +14,48 @@ describe("getHomepageFiltersForCountry", () => {
     });
   });
 
-  describe("supported country codes — population status", () => {
-    // Step 7 populates HK as the Phase 1 model country; the other 11 fall
-    // back to global until Phase 2. The two assertions below are the
-    // contract: populated countries return runtime filter shapes, the
-    // rest return nulls so wrappers render the global teasers.
-    const POPULATED: ReadonlyArray<string> = ["hk"];
-
-    it.each(INTENT_COUNTRY_CODES.filter((c) => !POPULATED.includes(c)))(
-      "%s returns null filters (not yet populated)",
-      (code) => {
-        const result = getHomepageFiltersForCountry(code);
-        expect(result.listings).toBeNull();
-        expect(result.experts).toBeNull();
-        expect(result.platforms).toBeNull();
-        expect(result.tools).toEqual([]);
-      },
-    );
-
-    it("hk returns populated runtime filter shapes", () => {
-      const result = getHomepageFiltersForCountry("hk");
+  describe("all 12 countries return populated runtime filter shapes (Phase 2 saturation)", () => {
+    // Phase 2 saturates all 12 corridors. Each must return non-null
+    // listings/experts/platforms shapes — the supply-threshold gate is
+    // what hides empty strips at runtime, but the filter shape itself
+    // should always be defined.
+    it.each(INTENT_COUNTRY_CODES)("%s returns populated filter shapes", (code) => {
+      const result = getHomepageFiltersForCountry(code);
       expect(result.listings).not.toBeNull();
-      expect(result.listings?.verticals).toContain("commercial-property");
+      expect(result.listings?.verticals.length).toBeGreaterThanOrEqual(2);
       expect(result.experts).not.toBeNull();
-      expect(result.experts?.specialties).toContain("tax");
+      expect(result.experts?.specialties.length).toBeGreaterThanOrEqual(2);
       expect(result.platforms).not.toBeNull();
-      expect(result.platforms?.types).toContain("share_broker");
-      expect(result.platforms?.nonResidentsOnly).toBe(true);
-      expect(result.tools.length).toBeGreaterThan(0);
+      expect(result.platforms?.types.length).toBeGreaterThanOrEqual(1);
+      expect(result.tools.length).toBeGreaterThanOrEqual(2);
+    });
+
+    it("uses canonical advisor type strings (snake_case from lib/verticals.ts)", () => {
+      // Phase 1 shipped HK with "tax", "buyers-agent", "mortgage-broker"
+      // — the wrong format. Phase 2 fixed them to the canonical
+      // snake_case forms. This guards against the regression.
+      const hk = getHomepageFiltersForCountry("hk");
+      expect(hk.experts?.specialties).toContain("tax_agent");
+      expect(hk.experts?.specialties).toContain("property_advisor");
+      // Common types we expect to appear across multiple corridors:
+      const allSpecialties = INTENT_COUNTRY_CODES.flatMap(
+        (code) => getHomepageFiltersForCountry(code).experts?.specialties ?? [],
+      );
+      // At least one country uses each of the canonical types.
+      ["tax_agent", "smsf_accountant", "property_advisor", "wealth_manager", "financial_planner"].forEach(
+        (canonicalType) => {
+          expect(allSpecialties).toContain(canonicalType);
+        },
+      );
+    });
+
+    it("NZ is the only nonResidentsOnly: false (Trans-Tasman gives full access)", () => {
+      const nz = getHomepageFiltersForCountry("nz");
+      expect(nz.platforms?.nonResidentsOnly).toBe(false);
+      INTENT_COUNTRY_CODES.filter((c) => c !== "nz").forEach((code) => {
+        const result = getHomepageFiltersForCountry(code);
+        expect(result.platforms?.nonResidentsOnly).toBe(true);
+      });
     });
   });
 
