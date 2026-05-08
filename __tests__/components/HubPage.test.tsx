@@ -81,7 +81,7 @@ describe("HubPage", () => {
     render(<HubPage config={MINIMAL_CONFIG} />);
     expect(screen.getByTestId("hub-page-compliance")).toBeInTheDocument();
     expect(screen.getByTestId("hub-page-compliance")).toHaveTextContent(
-      "General advice warning."
+      "general in nature"
     );
   });
 

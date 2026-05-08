@@ -44,21 +44,26 @@ export default defineConfig({
       // Measured: lines/stmt 44.45%, branches 73.02%, functions 63.74%.
       // API-route floor (D-10): scoped run with app/api/**/*.ts only:
       // lines/stmt 13.82%, branches 58.35%, functions 30.18%.
-      // Floors set 1pp below measurements per ratchet policy.
+      //
+      // 2026-05-07: seventh ratchet — D-11 (100+ route batches) + R-stream
+      // lib tests + KK/W/J/C/E stream additions. R-COVERAGE-RATCHET M1.
+      // Measured 2026-05-02: lines/stmt 70.94%, branches 79.61%, fns 79.04%.
+      // Floors set ~5-6pp below measurements (wider buffer than 1pp because
+      // in-flight PRs add new code before tests; prevents false CI failures).
+      // API-route floor raised proportionally from D-11 batch coverage.
       thresholds: {
-        lines: 44,
-        functions: 63,
-        branches: 73,
-        statements: 44,
-        // API-route floor (D-10). Measured 2026-04-27 post D-01..D-09:
-        // 13.82% lines, 58.35% branches, 30.18% fns.
-        // 228 untested routes remain (D-11); this floor catches
-        // regressions in the 9 covered routes without penalising them.
+        lines: 65,
+        functions: 74,
+        branches: 74,
+        statements: 65,
+        // API-route floor. Raised from 13/58/30 (D-10, Apr 2026) after
+        // D-11 added tests for virtually all existing routes (batches 1-23+,
+        // ~110 route files covered). Conservative 5pp buffer applied.
         "app/api/**/*.ts": {
-          lines: 13,
-          branches: 58,
-          functions: 30,
-          statements: 13,
+          lines: 40,
+          branches: 62,
+          functions: 40,
+          statements: 40,
         },
       },
     },

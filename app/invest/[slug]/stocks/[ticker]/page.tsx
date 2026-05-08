@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 import Icon from "@/components/Icon";
 
 export const revalidate = 3600;
@@ -41,7 +41,7 @@ interface BrokerRow {
 
 async function fetchStock(sectorSlug: string, ticker: string): Promise<StockRow | null> {
   try {
-    const supabase = createAdminClient();
+    const supabase = await createClient();
     const { data } = await supabase
       .from("commodity_stocks")
       .select("*")
@@ -57,7 +57,7 @@ async function fetchStock(sectorSlug: string, ticker: string): Promise<StockRow 
 
 async function fetchSector(slug: string): Promise<SectorRow | null> {
   try {
-    const supabase = createAdminClient();
+    const supabase = await createClient();
     const { data } = await supabase
       .from("commodity_sectors")
       .select("slug, display_name")
@@ -72,7 +72,7 @@ async function fetchSector(slug: string): Promise<SectorRow | null> {
 
 async function fetchRelated(sectorSlug: string, excludeTicker: string): Promise<StockRow[]> {
   try {
-    const supabase = createAdminClient();
+    const supabase = await createClient();
     const { data } = await supabase
       .from("commodity_stocks")
       .select("id, sector_slug, ticker, company_name, market_cap_bucket, dividend_yield_pct, pe_ratio, blurb, primary_exposure, foreign_ownership_risk, last_reviewed_at, status, included_in_indices")
@@ -89,7 +89,7 @@ async function fetchRelated(sectorSlug: string, excludeTicker: string): Promise<
 
 async function fetchTopBrokers(): Promise<BrokerRow[]> {
   try {
-    const supabase = createAdminClient();
+    const supabase = await createClient();
     const { data } = await supabase
       .from("brokers")
       .select("slug, name, logo_url, asx_fee, rating, chess_sponsored, tagline, affiliate_url")
