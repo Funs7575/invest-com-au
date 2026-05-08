@@ -163,7 +163,8 @@ export default function RdTaxCalculator() {
             </p>
 
             <div className="mt-5 rounded-lg bg-amber-500/10 border border-amber-500/30 px-4 py-3 text-sm text-amber-100">
-              <strong className="text-amber-300">FY2025 deadline:</strong> registration with AusIndustry must be lodged by 30 April 2026. {/* dated-ok — historical ATO regulatory deadline for FY2025 */}
+              {/* // dated-ok — historical ATO regulatory deadline for FY2025; immutable */}
+              <strong className="text-amber-300">FY2025 deadline:</strong> registration with AusIndustry must be lodged by 30 April 2026.
             </div>
           </div>
         </div>
