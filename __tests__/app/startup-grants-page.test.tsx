@@ -9,7 +9,7 @@
  * URL canonical: /startup/grants  (/grants 301-redirects here via next.config.ts).
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen } from "../components/setup";
+import { render, screen, within } from "../components/setup";
 import StartupGrantsHubPage from "@/app/startup/grants/page";
 
 // ── Mocks ────────────────────────────────────────────────────────────────────
@@ -105,12 +105,14 @@ describe("StartupGrantsHubPage", () => {
 
   it("renders the six grant program cards", async () => {
     render(await StartupGrantsHubPage());
-    expect(screen.getByText("R&D Tax Incentive")).toBeInTheDocument();
-    expect(screen.getByText("EMDG")).toBeInTheDocument();
-    expect(screen.getByText("Industry Growth Program")).toBeInTheDocument();
-    expect(screen.getByText("NSW MVP Ventures")).toBeInTheDocument();
-    expect(screen.getByText("Advance Queensland")).toBeInTheDocument();
-    expect(screen.getByText("LaunchVic")).toBeInTheDocument();
+    // Scope to service grid to avoid matching duplicate text in hero stats/CTAs
+    const serviceGrid = screen.getByTestId("hub-page-service-grid");
+    expect(within(serviceGrid).getByText("R&D Tax Incentive")).toBeInTheDocument();
+    expect(within(serviceGrid).getByText("EMDG")).toBeInTheDocument();
+    expect(within(serviceGrid).getByText("Industry Growth Program")).toBeInTheDocument();
+    expect(within(serviceGrid).getByText("NSW MVP Ventures")).toBeInTheDocument();
+    expect(within(serviceGrid).getByText("Advance Queensland")).toBeInTheDocument();
+    expect(within(serviceGrid).getByText("LaunchVic")).toBeInTheDocument();
   });
 
   // ── Eligibility quiz CTA section ─────────────────────────────────────────
@@ -124,9 +126,10 @@ describe("StartupGrantsHubPage", () => {
 
   it("eligibility quiz CTA links to /grants/eligibility-quiz", async () => {
     render(await StartupGrantsHubPage());
-    expect(
-      screen.getByRole("link", { name: /check my eligibility/i })
-    ).toHaveAttribute("href", "/grants/eligibility-quiz");
+    // Both hero primaryCta and children CTA link here — verify all point to the right URL
+    screen.getAllByRole("link", { name: /check my eligibility/i }).forEach((link) => {
+      expect(link).toHaveAttribute("href", "/grants/eligibility-quiz");
+    });
   });
 
   // ── R&D Tax calculator ───────────────────────────────────────────────────
