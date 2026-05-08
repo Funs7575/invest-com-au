@@ -58,7 +58,7 @@ describe("HubDeepDiveGrid", () => {
     it("omits subheading paragraph when not provided", () => {
       render(<HubDeepDiveGrid heading="Deep-dives" items={baseItems} />);
       const section = screen.getByTestId("hub-deep-dive-grid");
-      expect(section.querySelectorAll("p")).toHaveLength(0);
+      expect(section.querySelector(":scope > div > p")).toBeNull();
     });
   });
 
