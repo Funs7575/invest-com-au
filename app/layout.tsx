@@ -4,6 +4,7 @@ import { JetBrains_Mono, Source_Serif_4 } from "next/font/google";
 import { Suspense } from "react";
 import "./globals.css";
 import LayoutShell from "@/components/LayoutShell";
+import CountryModeBanner from "@/components/country-mode/CountryModeBanner";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import { PostHogProvider } from "@/components/PostHogProvider";
@@ -159,7 +160,7 @@ export default async function RootLayout({
         <Suspense fallback={null}><ClaimAnonymousOnAuth /></Suspense>
 
         <ThemeProvider>
-          <LayoutShell>{children}</LayoutShell>
+          <LayoutShell countryModeBanner={<CountryModeBanner />}>{children}</LayoutShell>
           {chatEnabled && <ChatWidget />}
           {reportButtonEnabled && <ReportProblemButton />}
           {pushEnabled && <Suspense fallback={null}><PushNotificationOptIn /></Suspense>}
