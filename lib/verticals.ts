@@ -93,6 +93,7 @@ export interface HubHeroStat {
   dataAsOf: string;  // ISO date — feeds <DatedStatBadge>
   stalesAt: string;  // ISO date — feeds stale-data CI gate (V-NEW-01)
   source?: string;   // attribution URL when applicable
+  subtitle?: string; // secondary descriptor rendered below the value
 }
 
 export interface HubCta {
