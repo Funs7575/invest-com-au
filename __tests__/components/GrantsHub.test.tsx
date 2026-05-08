@@ -8,7 +8,7 @@
  *   - Grants-specific content is present (grant cards, compliance text)
  */
 import { describe, it, expect, vi } from "vitest";
-import { render, screen } from "./setup";
+import { render, screen, within } from "./setup";
 import HubPage from "@/components/HubPage";
 import { grantsHubConfig } from "@/lib/hub-configs/grants";
 
@@ -121,8 +121,9 @@ describe("GrantsHub migration — <HubPage> with grantsHubConfig", () => {
       </div>
     );
     render(<HubPage config={grantsHubConfig} serviceGrid={grantCards} />);
-    expect(screen.getByTestId("hub-page-service-grid")).toBeInTheDocument();
-    expect(screen.getByText("R&D Tax Incentive")).toBeInTheDocument();
+    const slot = screen.getByTestId("hub-page-service-grid");
+    expect(slot).toBeInTheDocument();
+    expect(within(slot).getByText("R&D Tax Incentive")).toBeInTheDocument();
   });
 
   it("renders advisor CTA slot", () => {
