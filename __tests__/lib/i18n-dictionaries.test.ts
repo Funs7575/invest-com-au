@@ -32,7 +32,13 @@ describe("foreign-investment dictionaries", () => {
     expect(new Set(counts).size).toBe(1);
   });
 
-  it.each(LOCALES)(
+  // Phase 5a added `ar` to the Locale union but its dictionary hasn't
+  // been authored yet — getForeignInvestmentDict falls back to EN for
+  // unauthored locales (see lib/i18n/dictionaries.ts). The href-prefix
+  // contract only applies to locales with their own dict entries.
+  const POPULATED_LOCALES = LOCALES.filter((l) => l !== "ar");
+
+  it.each(POPULATED_LOCALES)(
     "uses locale-correct href prefix on topicCards for %s",
     (locale) => {
       const cards = getForeignInvestmentDict(locale).topicCards;
@@ -47,6 +53,15 @@ describe("foreign-investment dictionaries", () => {
       }
     },
   );
+
+  it("ar falls back to en dictionary (Phase 5a Partial<Record<Locale,…>> fallback)", () => {
+    // Confirms the documented Partial-with-fallback behaviour: until a
+    // native-Arabic reviewer pass produces ar dictionary entries, ar
+    // requests get EN content.
+    const ar = getForeignInvestmentDict("ar");
+    const en = getForeignInvestmentDict("en");
+    expect(ar.meta.title).toBe(en.meta.title);
+  });
 });
 
 describe("sub-page dictionaries", () => {
