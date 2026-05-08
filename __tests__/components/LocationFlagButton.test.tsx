@@ -226,11 +226,15 @@ describe("LocationFlagButton", () => {
 
     it("trigger does NOT show country name when state is merely suggested", async () => {
       render(<LocationFlagButton />);
-      await waitFor(() => expect(mockFetch).toHaveBeenCalled());
+      // Wait for the aria-label flip — fetch having returned isn't enough,
+      // the .then chain has to resolve and React has to commit. Matches the
+      // pattern in the sibling "shows soft prompt" test above; bare
+      // mockFetch.toHaveBeenCalled() flakes under coverage instrumentation.
+      const trigger = await screen.findByRole("button", {
+        name: /Investing from Hong Kong/i,
+      });
       // Country name is suppressed in the trigger when not user-confirmed.
       // The trigger still shows the flag (matching detected) but no label.
-      const trigger = screen.getByRole("button", { name: /Investing from Hong Kong/i });
-      // 'Hong Kong' label is absent from the trigger; only flag + chevron
       expect(trigger.textContent ?? "").not.toContain("Hong Kong");
     });
 
