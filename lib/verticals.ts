@@ -1151,3 +1151,121 @@ export const SMSF_HUB_CONFIG: HubConfig = {
   ],
   schemaTypes: ["FinancialService", "FAQPage"],
 };
+
+// ── Dividends hub ────────────────────────────────────────────────────────────
+export const DIVIDENDS_HUB_CONFIG: HubConfig = {
+  slug: "dividends",
+  title: `Dividend Investing Australia ${yr}: Franking Credits, Stocks & ETFs`,
+  metaDescription:
+    "Australia's franking system makes dividend investing structurally different. High-yield ASX stocks, dividend ETFs, franking-credit calculator and the SMSF crossover.",
+  audiences: ["retiree", "trustee"],
+  complianceKey: "general_advice",
+
+  hero: {
+    headline: "Dividend Investing in Australia: Franking Credits, High-Yield Stocks & ETFs",
+    subhead:
+      "Australia's franking system makes dividend investing structurally different — and uniquely powerful inside super and SMSF wrappers. Here's how to use it.",
+    stats: [
+      {
+        label: "ASX avg yield",
+        value: "~4.2%",
+        dataAsOf: "2025-06-30",
+        stalesAt: "2026-12-31",
+        subtitle: "much higher than US/UK index",
+      },
+      {
+        label: "Franking add-on",
+        value: "42.86%",
+        dataAsOf: "2025-06-30",
+        stalesAt: "2030-06-30",
+        subtitle: "for fully-franked dividends",
+      },
+      {
+        label: "SMSFs",
+        value: "1.1M",
+        dataAsOf: "2025-06-30",
+        stalesAt: "2027-06-30",
+        subtitle: "claim full franking refunds in pension phase",
+      },
+      {
+        label: "Reinvestment",
+        value: "DRP",
+        dataAsOf: "2025-01-01",
+        stalesAt: "2027-01-01",
+        subtitle: "available at most ASX payers",
+      },
+    ],
+    primaryCta: { label: "Compare Share Platforms", href: "/compare", lever: "affiliate_cpa" },
+    secondaryCta: { label: "Franking Calculator", href: "/dividends/calculator", lever: "lead_routing" },
+  },
+
+  serviceGrid: [
+    {
+      title: "ASX High-Yield Stocks",
+      description:
+        "WDS, the major banks, BHP, Telstra and more — with franking analysis.",
+      href: "/article/high-dividend-asx-stocks-2026",
+      icon: "trending-up",
+    },
+    {
+      title: "Dividend ETFs",
+      description:
+        "VHY, A200, HVST, IHD compared on yield, fees and methodology.",
+      href: "/article/best-dividend-etfs-australia",
+      icon: "bar-chart-2",
+    },
+    {
+      title: "Franking Credits Explained",
+      description:
+        "How the offset works, who benefits most, who doesn't.",
+      href: "/dividends/franking-credits",
+      icon: "info",
+    },
+    {
+      title: "Franking Calculator",
+      description:
+        "Enter dividend amount, franking %, your tax rate. See the after-tax outcome.",
+      href: "/dividends/calculator",
+      icon: "calculator",
+    },
+  ],
+
+  faqs: [
+    {
+      question: "How do franking credits work in Australia?",
+      answer:
+        "When an Australian company pays corporate tax (30%) before distributing dividends, the franking credits represent that pre-paid tax. Shareholders include the grossed-up dividend in their assessable income, then receive a tax offset equal to the credits. If your marginal rate is below 30%, you receive a refund. In a pension-phase SMSF, the fund pays zero tax and receives the full 42.86% credit as a cash refund.",
+    },
+    {
+      question: "Which ASX stocks have the highest fully-franked dividend yield?",
+      answer:
+        "The major banks (Commonwealth Bank, Westpac, ANZ, NAB) and resource majors (BHP, Woodside) consistently rank among the highest fully-franked payers. Yield rankings change with share prices and payout decisions — always check the current dividend yield and confirm the franking percentage before investing.",
+    },
+    {
+      question: "Are dividend ETFs better than picking individual stocks?",
+      answer:
+        "Dividend ETFs (VHY, A200, IHD) provide diversification and remove single-stock risk at the cost of a management fee (0.06%–0.54% per year). They suit investors who want passive dividend income without actively monitoring individual company results. High-conviction investors may achieve higher effective yields through concentrated stock selection, but with greater concentration risk.",
+    },
+    {
+      question: "Can an SMSF claim a full franking credit refund?",
+      answer:
+        "Yes. An SMSF in accumulation phase pays 15% tax and claims franking credits as an offset — any excess credits reduce other tax. An SMSF in pension phase pays zero tax and receives the full franking credit as a cash refund. This is one of the most powerful tax outcomes available to Australian self-directed investors.",
+    },
+  ],
+
+  leadQueue: { kind: "general", topic: "dividends" },
+  relatedHubs: ["smsf", "super", "negative-gearing"],
+  articleFilters: {
+    category_in: ["investing"],
+    tags: ["dividends", "franking-credits", "asx"],
+  },
+  primaryKeywords: [
+    "dividend investing Australia",
+    "franking credits explained",
+    "high yield ASX stocks",
+    "dividend ETFs Australia",
+    "SMSF franking refund",
+    "fully franked dividends",
+  ],
+  schemaTypes: ["FinancialService", "FAQPage"],
+};
