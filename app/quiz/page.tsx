@@ -7,6 +7,7 @@ import { trackEvent as phTrack } from "@/lib/posthog/events";
 import { storeQualificationData } from "@/lib/qualification-store";
 import { getPlacementWinners, type PlacementWinner } from "@/lib/sponsorship";
 import { scoreQuizResults, type WeightKey, type QuizWeights, type AmountKey } from "@/lib/quiz-scoring";
+import { intentCountryFromSlug, quizKeyForIntentCode } from "@/lib/intent-context";
 
 import QuizQuestionScreen from "./_components/QuizQuestionScreen";
 import QuizAnalyzingScreen from "./_components/QuizAnalyzingScreen";
@@ -60,16 +61,19 @@ const UNIFIED_QUESTIONS: Record<QuestionId, { text: string; options: { key: stri
   investor_country: {
     text: "Which country are you based in?",
     options: [
-      { key: "singapore",    label: "Singapore",     emoji: "🇸🇬" },
-      { key: "hong_kong",    label: "Hong Kong",     emoji: "🇭🇰" },
-      { key: "china",        label: "China",         emoji: "🇨🇳" },
-      { key: "india",        label: "India",         emoji: "🇮🇳" },
-      { key: "uae",          label: "UAE / Middle East", emoji: "🇦🇪" },
-      { key: "uk",           label: "United Kingdom", emoji: "🇬🇧" },
-      { key: "usa",          label: "United States", emoji: "🇺🇸" },
-      { key: "malaysia",     label: "Malaysia",      emoji: "🇲🇾" },
-      { key: "new_zealand",  label: "New Zealand",   emoji: "🇳🇿" },
-      { key: "other",        label: "Other country", emoji: "🌍" },
+      { key: "singapore",     label: "Singapore",     emoji: "🇸🇬" },
+      { key: "hong_kong",     label: "Hong Kong",     emoji: "🇭🇰" },
+      { key: "china",         label: "China",         emoji: "🇨🇳" },
+      { key: "india",         label: "India",         emoji: "🇮🇳" },
+      { key: "uae",           label: "UAE / Middle East", emoji: "🇦🇪" },
+      { key: "uk",            label: "United Kingdom", emoji: "🇬🇧" },
+      { key: "usa",           label: "United States", emoji: "🇺🇸" },
+      { key: "malaysia",      label: "Malaysia",      emoji: "🇲🇾" },
+      { key: "new_zealand",   label: "New Zealand",   emoji: "🇳🇿" },
+      { key: "japan",         label: "Japan",         emoji: "🇯🇵" },
+      { key: "south_korea",   label: "South Korea",   emoji: "🇰🇷" },
+      { key: "saudi_arabia",  label: "Saudi Arabia",  emoji: "🇸🇦" },
+      { key: "other",         label: "Other country", emoji: "🌍" },
     ],
   },
   visa_status: {
@@ -434,6 +438,39 @@ export default function QuizPage() {
       setResumeQuestionNumber(saved.history.length + 1);
       setResumeTotalQuestions(getTotalSteps(saved.answers));
     }
+  }, []);
+
+  // Country Mode URL prefill — soft default only, never skips Q1.
+  // Country pages and the popular-links strip link to /quiz?country=<slug>
+  // (and optionally &intent=<key>). We pre-seed investor_country and
+  // investor_goal_intl so the user doesn't have to re-enter them after
+  // confirming the location question. We do NOT pre-set `location` —
+  // an HK-resident, an HK passport-holder living in AU, and an Aussie
+  // expat in HK all might land here, and Q1 is the only signal that
+  // distinguishes them. Prefill is a hint, not a bypass. Per user
+  // decision #6 in the v2 plan.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const countryParam = params.get("country");
+    const intentParam = params.get("intent");
+    if (!countryParam && !intentParam) return;
+
+    const seed: Partial<UnifiedAnswers> = {};
+    if (countryParam) {
+      const code = intentCountryFromSlug(countryParam);
+      if (code) seed.investor_country = quizKeyForIntentCode(code);
+    }
+    if (intentParam) {
+      const validIntents = ["property", "shares", "savings", "business"];
+      if (validIntents.includes(intentParam)) {
+        seed.investor_goal_intl = intentParam;
+      }
+    }
+
+    // Only seed when answers are still empty — don't override saved
+    // progress or in-flight user input.
+    setAnswers((prev) => (Object.keys(prev).length === 0 ? { ...prev, ...seed } : prev));
   }, []);
 
   useEffect(() => {
