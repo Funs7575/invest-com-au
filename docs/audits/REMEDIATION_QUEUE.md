@@ -37,7 +37,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | U | `claude/audit-remediation/u-04-url-canonicals` | #226/#319/#399/#457/#520/#561 | U-01..U-04 done. | U-04 merged ✓ |
 | V | `claude/audit-remediation/v-07-auth-hardening` | #227/#320/#400/#457/#521/#562 | V-01..V-07 done. | V-07 merged ✓ |
 | W | `claude/audit-remediation/w-12-hub-page-hoc` (W-15 remaining) | #306/#312/#369/#529/#598/#599/#602/#604/#605/#606/#607/#608/#609/#612 | **#609 MERGED 2026-05-08** (W-12+W-13+W-15 dividends). **#612 MERGED 2026-05-08** (W-14 grants→/startup/grants). W-04..W-15 all MERGED. | All W tasks merged ✓ |
-| X | `claude/audit-remediation/x-06-how-to-transfer` (#641) · `x-07-siv-advisors` (#643) · `x-08-go-apply` (#644) | #257/#367/#596/#600/#610 MERGED · **#641 OPEN** (X-06) · **#643 OPEN** (X-07) · **#644 OPEN** (X-08) | X-06 (#641 CI running), X-07 (#643 CI running), X-08 (#644 CI running). X-09 (ESLint ratchet) pending. | X-09 merged |
+| X | `claude/audit-remediation/x-09-preview-advisor-final` · **#641/#643/#644/#646 OPEN** | #257/#367/#596/#600/#610 MERGED · **#641 OPEN** (X-06) · **#643 OPEN** (X-07) · **#644 OPEN** (X-08) · **#646 OPEN** (X-09) | X-06 (#641 CI ✓), X-07 (#643 CI ✓), X-08 (#644 CI ✓), X-09 (#646 open — preview/[token] swap + advisor-portal keep-admin annotations). **Stream X complete** once all 4 PRs merge. | All X PRs merged |
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
 | Z | `claude/audit-remediation/z-04-zero-state-ux` | #230/#323/#403/#457/#524/#565 | Z-01..Z-04 done. | Z-04 merged ✓ |
 
@@ -901,6 +901,32 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-08 — iter 320 (X — X-09: swap preview/[token] + annotate advisor-portal keep-admin)
+
+**PR:** #646 (`claude/audit-remediation/x-09-preview-advisor-final`) — OPEN, CI in_progress.
+
+**Why:** `app/preview/[token]/page.tsx` used `createAdminClient` (service-role) to read `articles`
+for token-gated draft previews, despite `articles` having `CREATE POLICY "Public read articles"
+ON articles FOR SELECT USING (TRUE)` (001_initial.sql:185). The anon server client is sufficient
+once `resolvePreviewToken` validates the share token. `app/advisor-portal/health/page.tsx` and
+`app/advisor-portal/upgrade/page.tsx` KEEP admin client (read `advisor_sessions`, deny-all RLS
+by design) — annotated with eslint-disable to document the rationale inline.
+
+**What shipped:**
+- `app/preview/[token]/page.tsx`: `createAdminClient` → `await createClient()` (1 call site).
+- `app/advisor-portal/health/page.tsx`: added keep-admin eslint-disable comment on import line.
+- `app/advisor-portal/upgrade/page.tsx`: same.
+
+**Stream X complete** once #641/#643/#644/#646 all merge — every non-admin/non-API `app/` page
+now uses anon server client OR carries a documented keep-admin annotation.
+
+**Commit:** `6f28e3e` (+4/-2 LOC, 3 files). Note: iter counter bumped from 319→320 due to concurrent
+fire collision (concurrent fire used 319 for X-08 before this entry could be committed to main).
+
+STATUS: PROGRESS · stream=X · item=X-09 · pr=#646
+
+---
 
 ### 2026-05-08 — iter 317 (X — X-06: swap createAdminClient→createClient in /how-to/transfer-from)
 
