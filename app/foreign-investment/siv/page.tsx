@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 import { FOREIGN_INVESTOR_GENERAL_DISCLAIMER } from "@/lib/compliance";
 import ForeignInvestmentNav from "../ForeignInvestmentNav";
 import SectionHeading from "@/components/SectionHeading";
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
 
 async function fetchSivFunds(): Promise<FundListing[]> {
   try {
-    const supabase = createAdminClient();
+    const supabase = await createClient();
     const { data } = await supabase
       .from("fund_listings")
       .select(
