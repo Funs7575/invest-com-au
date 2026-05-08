@@ -1,0 +1,416 @@
+openapi: 3.1.0
+info:
+  title: invest.com.au Broker API
+  version: "1.0"
+  description: |
+    Public B2B API for Australian broker and investment-platform data.
+
+    **Authentication:** All endpoints except `/api/v1/docs` require a valid API key
+    as a Bearer token (`Authorization: Bearer ica_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`).
+
+    Request an API key: `POST /api/v1/api-keys` or email api@invest.com.au.
+
+    **Base URL (pre-launch):** `https://invest-com-au.vercel.app`
+    **Base URL (post-launch, Nov 2026+):** `https://invest.com.au`
+  contact:
+    email: api@invest.com.au
+  license:
+    name: Commercial — contact api@invest.com.au for terms
+
+servers:
+  - url: https://invest-com-au.vercel.app
+    description: Current production (pre-domain-cutover)
+  - url: https://invest.com.au
+    description: Post-launch production (Nov 2026+)
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description: "API key in format `ica_<32-hex-chars>`. Obtain via POST /api/v1/api-keys."
+
+  schemas:
+    BrokerSummary:
+      type: object
+      description: Broker data returned in list and compare responses.
+      properties:
+        id:            { type: integer }
+        name:          { type: string }
+        slug:          { type: string, example: "stake" }
+        tagline:       { type: string, nullable: true }
+        asx_fee:       { type: string, nullable: true, example: "$3.00" }
+        asx_fee_value: { type: number, nullable: true, example: 3.0 }
+        us_fee:        { type: string, nullable: true, example: "$0" }
+        us_fee_value:  { type: number, nullable: true, example: 0.0 }
+        fx_rate:       { type: number, nullable: true, example: 0.6 }
+        chess_sponsored: { type: boolean, nullable: true }
+        smsf_support:    { type: boolean, nullable: true }
+        is_crypto:       { type: boolean, nullable: true }
+        platform_type:
+          type: string
+          nullable: true
+          enum: [share_broker, crypto_exchange, cfd_forex, multi_asset, robo_advisor, savings]
+        rating:          { type: number, nullable: true, example: 4.5 }
+        inactivity_fee:  { type: string, nullable: true }
+        min_deposit:     { type: string, nullable: true }
+        markets:         { type: array, items: { type: string }, nullable: true }
+        regulated_by:    { type: string, nullable: true, example: "ASIC" }
+        year_founded:    { type: integer, nullable: true }
+        headquarters:    { type: string, nullable: true }
+        fee_verified_date: { type: string, format: date, nullable: true }
+        status:          { type: string, enum: [active, inactive, suspended] }
+        pros:            { type: array, items: { type: string }, nullable: true }
+        cons:            { type: array, items: { type: string }, nullable: true }
+        payment_methods: { type: array, items: { type: string }, nullable: true }
+        platforms:       { type: array, items: { type: string }, nullable: true }
+        deal:            { type: string, nullable: true }
+        deal_text:       { type: string, nullable: true }
+        editors_pick:    { type: boolean, nullable: true }
+        icon:            { type: string, nullable: true }
+        color:           { type: string, nullable: true }
+        updated_at:      { type: string, format: date-time }
+
+    BrokerProfile:
+      allOf:
+        - $ref: '#/components/schemas/BrokerSummary'
+        - type: object
+          description: Extended single-broker profile (adds review_content, fee_source_url, fee_changelog).
+          properties:
+            review_content: { type: string, nullable: true }
+            fee_source_url: { type: string, format: uri, nullable: true }
+            fee_changelog:
+              type: array
+              items:
+                $ref: '#/components/schemas/FeeChangelogEntry'
+
+    FeeChangelogEntry:
+      type: object
+      properties:
+        field_name:  { type: string, example: "asx_fee_value" }
+        old_value:   { type: string, nullable: true }
+        new_value:   { type: string, nullable: true }
+        change_type: { type: string, enum: [create, update, delete] }
+        changed_at:  { type: string, format: date-time }
+        source:      { type: string, nullable: true }
+
+    ListMeta:
+      type: object
+      properties:
+        total:      { type: integer }
+        limit:      { type: integer }
+        offset:     { type: integer }
+        updated_at: { type: string, format: date-time }
+
+    CompareMeta:
+      type: object
+      properties:
+        count:      { type: integer }
+        updated_at: { type: string, format: date-time }
+
+    ApiKeyRequest:
+      type: object
+      required: [email, name]
+      properties:
+        email:
+          type: string
+          format: email
+          example: "developer@example.com"
+        name:
+          type: string
+          maxLength: 100
+          example: "Jane Smith"
+        company_name:
+          type: string
+          maxLength: 100
+          nullable: true
+          example: "Acme Financial"
+        use_case:
+          type: string
+          maxLength: 500
+          nullable: true
+          example: "Building a broker comparison widget for our fintech app"
+
+    ApiKeyResponse:
+      type: object
+      properties:
+        api_key:
+          type: string
+          description: "Full API key — shown exactly once. Store it securely."
+          example: "ica_a3f2b19c4e8d7f6a2b1c9e0d4f3a2b1c"
+        message:
+          type: string
+          example: "API key created successfully. This key is shown once — store it securely."
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Unauthorized"
+
+security:
+  - BearerAuth: []
+
+paths:
+  /api/v1/brokers:
+    get:
+      operationId: listBrokers
+      summary: List brokers
+      description: |
+        Returns all active brokers with public fields. Supports filtering by
+        platform type, CHESS sponsorship, SMSF support, crypto status, and
+        pagination.
+
+        **Cache:** responses are cached for 1 hour (`Cache-Control: public, max-age=3600`).
+      tags: [Brokers]
+      parameters:
+        - name: platform_type
+          in: query
+          schema:
+            type: string
+            enum: [share_broker, crypto_exchange, cfd_forex, multi_asset, robo_advisor, savings]
+          description: Filter by platform type.
+        - name: chess_sponsored
+          in: query
+          schema: { type: boolean }
+          description: Filter by CHESS sponsorship.
+        - name: smsf_support
+          in: query
+          schema: { type: boolean }
+          description: Filter by SMSF-account support.
+        - name: is_crypto
+          in: query
+          schema: { type: boolean }
+          description: Filter crypto exchanges.
+        - name: limit
+          in: query
+          schema: { type: integer, default: 20, minimum: 1, maximum: 100 }
+          description: Results per page. Default 20, max 100.
+        - name: offset
+          in: query
+          schema: { type: integer, default: 0, minimum: 0 }
+          description: Pagination offset.
+      responses:
+        "200":
+          description: Broker list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/BrokerSummary' }
+                  meta:
+                    $ref: '#/components/schemas/ListMeta'
+        "401":
+          description: Missing or invalid API key
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+    options:
+      operationId: listBrokersCors
+      summary: CORS preflight
+      tags: [Brokers]
+      security: []
+      responses:
+        "204": { description: CORS preflight response }
+
+  /api/v1/brokers/{slug}:
+    get:
+      operationId: getBroker
+      summary: Get broker by slug
+      description: |
+        Returns a single broker's full public profile including review content,
+        fee source URL, and the last 10 fee change-log entries.
+
+        **Cache:** responses are cached for 1 hour.
+      tags: [Brokers]
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[a-z0-9-]+$'
+          description: "Broker URL slug (e.g. `stake`, `commsec`, `selfwealth`)."
+      responses:
+        "200":
+          description: Broker profile
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data: { $ref: '#/components/schemas/BrokerProfile' }
+        "400":
+          description: Invalid slug format
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        "401":
+          description: Missing or invalid API key
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        "404":
+          description: Broker not found
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+    options:
+      operationId: getBrokerCors
+      summary: CORS preflight
+      tags: [Brokers]
+      security: []
+      responses:
+        "204": { description: CORS preflight response }
+
+  /api/v1/compare:
+    get:
+      operationId: compareBrokers
+      summary: Compare brokers
+      description: |
+        Returns side-by-side comparison data for 2–5 brokers specified by slug.
+
+        **Cache:** responses are cached for 1 hour.
+      tags: [Brokers]
+      parameters:
+        - name: slugs
+          in: query
+          required: true
+          schema:
+            type: string
+          description: "Comma-separated broker slugs. Min 2, max 5. Example: `stake,commsec,selfwealth`."
+      responses:
+        "200":
+          description: Comparison data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/BrokerSummary' }
+                  meta:
+                    $ref: '#/components/schemas/CompareMeta'
+        "400":
+          description: Invalid request (missing slugs, too few/many brokers)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        "401":
+          description: Missing or invalid API key
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+    options:
+      operationId: compareBrokersCors
+      summary: CORS preflight
+      tags: [Brokers]
+      security: []
+      responses:
+        "204": { description: CORS preflight response }
+
+  /api/v1/api-keys:
+    post:
+      operationId: createApiKey
+      summary: Request API key
+      description: |
+        Creates a new API key for B2B access to the broker data API.
+
+        - Key format: `ica_<32-hex-chars>`
+        - The plain key is returned **exactly once** — store it securely.
+        - Only the SHA-256 hash is stored server-side.
+        - Max 3 keys per email address.
+        - Sends a confirmation email via Resend.
+
+        **Rate limit:** 5 requests per IP per hour; 3 per email per day.
+      tags: [Authentication]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ApiKeyRequest' }
+      responses:
+        "200":
+          description: API key created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiKeyResponse' }
+        "400":
+          description: Validation error (invalid email, name too short, etc.)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        "409":
+          description: Max keys per email reached (3)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        "429":
+          description: Rate limit exceeded
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+    options:
+      operationId: createApiKeyCors
+      summary: CORS preflight
+      tags: [Authentication]
+      security: []
+      responses:
+        "204": { description: CORS preflight response }
+
+  /api/v1/docs:
+    get:
+      operationId: getDocs
+      summary: API documentation (JSON)
+      description: |
+        Returns a JSON description of all available endpoints, rate limits,
+        and usage examples. No authentication required.
+      tags: [Meta]
+      security: []
+      responses:
+        "200":
+          description: API documentation object
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Inline documentation object (not schema-typed).
+    options:
+      operationId: getDocsCors
+      summary: CORS preflight
+      tags: [Meta]
+      security: []
+      responses:
+        "204": { description: CORS preflight response }
+
+x-rate-limits:
+  free:       { per_minute: 30,  per_day: 1000 }
+  basic:      { per_minute: 60,  per_day: 5000 }
+  pro:        { per_minute: 120, per_day: 25000 }
+  enterprise: { per_minute: 300, per_day: 100000 }
