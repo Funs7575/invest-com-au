@@ -1,9 +1,15 @@
 /**
  * @vitest-environment jsdom
  */
-import { describe, it, expect } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { describe, it, expect, vi } from "vitest";
+import { render, screen } from "./setup";
 import CrossHubLinks, { HUB_REGISTRY } from "@/components/CrossHubLinks";
+
+vi.mock("@/components/Icon", () => ({
+  default: ({ name, ...rest }: { name: string; [key: string]: unknown }) => (
+    <span data-testid={`icon-${name}`} {...rest} />
+  ),
+}));
 
 describe("CrossHubLinks", () => {
   it("renders the section container", () => {
