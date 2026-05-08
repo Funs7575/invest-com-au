@@ -37,7 +37,8 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | U | `claude/audit-remediation/u-04-url-canonicals` | #226/#319/#399/#457/#520/#561 | U-01..U-04 done. | U-04 merged ✓ |
 | V | `claude/audit-remediation/v-07-auth-hardening` | #227/#320/#400/#457/#521/#562 | V-01..V-07 done. | V-07 merged ✓ |
 | W | `claude/audit-remediation/w-12-hub-page-hoc` (W-15 remaining) | #306/#312/#369/#529/#598/#599/#602/#604/#605/#606/#607/#608/#609/#612 | **#609 MERGED 2026-05-08** (W-12+W-13+W-15 dividends). **#612 MERGED 2026-05-08** (W-14 grants→/startup/grants). W-04..W-15 all MERGED. | All W tasks merged ✓ |
-| X | `claude/audit-remediation/x-06-how-to-transfer` (#641) · `x-07-siv-advisors` (#643) · `x-08-go-apply` (#644) | #257/#367/#596/#600/#610 MERGED · **#641 OPEN** (X-06) · **#643 OPEN** (X-07) · **#644 OPEN** (X-08) | X-06 (#641 CI running), X-07 (#643 CI running), X-08 (#644 CI running). X-09 (ESLint ratchet) pending. | X-09 merged |
+| X | `claude/audit-remediation/x-09-preview-advisor-final` (#646) · `x-09-eslint-ratchet` (#648) | #257/#367/#596/#600/#610 MERGED · **#641 OPEN** (X-06) · **#643 OPEN** (X-07) · **#644 OPEN** (X-08) · **#646 OPEN** (X-09a) · **#648 OPEN** (X-09b) | X-06 (#641 CI ✓), X-07 (#643 CI ✓), X-08 (#644 CI ✓), X-09a (#646 — preview/[token] swap + keep-admin annotations), X-09b (#648 — ESLint ratchet). **Stream X complete** once all 5 PRs merge. | All X PRs merged |
+| WW | `claude/audit-remediation/ww-01-watchlist-data-model` · **#651 OPEN** | **#651 OPEN** (WW-01) | WW-01 migration applied to live DB, types regenerated. | All WW tasks merged |
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
 | Z | `claude/audit-remediation/z-04-zero-state-ux` | #230/#323/#403/#457/#524/#565 | Z-01..Z-04 done. | Z-04 merged ✓ |
 
@@ -439,8 +440,8 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 ### Stream WW — Watchlist / portfolio tracker
 
 | Item | Status | Description | Est. iters | Notes |
-|------|--------|-------------|--------------|-------|
-| WW-01 | pending | Watchlist data model (Supabase table, RLS, user-scoped) | ~3 | |
+|------|--------|-------------|------------|-------|
+| WW-01 | **in-flight** | Watchlist data model (Supabase table, RLS, user-scoped) | ~3 | PR #651 open, CI running. Migration applied to live DB. Types regenerated. |
 | WW-02 | pending | Watchlist UI (`/account/watchlist`) | ~4 | Deps: WW-01. |
 | WW-03 | pending | Watchlist price alerts (email + in-app, cron-driven) | ~4 | Deps: WW-02+DD-02. |
 | WW-04 | pending | Portfolio tracker (manual entry, cost-basis tracking) | ~6 | Deps: WW-02. Long-term. |
@@ -902,6 +903,56 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-08 — iter 321 (WW — WW-01: user_watchlist_items data model, RLS, types regen)
+
+**PR:** #651 (`claude/audit-remediation/ww-01-watchlist-data-model`) — OPEN, CI running.
+
+**Why:** No watchlist table existed. Users could only persist anonymous comparison snapshots
+(`anonymous_saves`) but had no user-scoped, persistent watchlist of investable items to monitor.
+WW-01 creates the Supabase-backed foundation for WW-02 (UI) and WW-03 (price alerts).
+
+**What shipped:**
+- `supabase/migrations/20260716_ww01_user_watchlist_items.sql`: new table with UNIQUE
+  (user_id, item_type, item_slug) constraint, two indexes, ENABLE+FORCE RLS, two policies:
+  "users can manage own watchlist" (authenticated FOR ALL, `user_id = auth.uid()`) and
+  "service_role full access" (FOR ALL TO service_role — for WW-03 price-alert cron).
+- `lib/database.types.ts`: regenerated via Supabase MCP to expose `user_watchlist_items`
+  Row/Insert/Update types to WW-02's client code.
+
+**Migration applied:** to live DB project `guggzyqceattncjwvgyc` via Supabase MCP ✓
+**Prior policies:** none (table did not exist) — confirmed via grep.
+**Idempotency:** `CREATE TABLE IF NOT EXISTS`, `CREATE INDEX IF NOT EXISTS`,
+`DROP POLICY IF EXISTS` before each `CREATE POLICY`.
+
+**Commit:** `4bd86d7` (+104/-0 LOC, 2 files — migration + types regen).
+
+STATUS: PROGRESS · stream=WW · item=WW-01 · pr=#651
+
+---
+
+### 2026-05-08 — iter 320c (X — X-09a: swap preview/[token] + annotate advisor-portal keep-admin)
+
+**PR:** #646 (`claude/audit-remediation/x-09-preview-advisor-final`) — OPEN, CI in_progress.
+
+**Why:** `app/preview/[token]/page.tsx` used `createAdminClient` (service-role) to read `articles`
+for token-gated draft previews, despite `articles` having `CREATE POLICY "Public read articles"
+ON articles FOR SELECT USING (TRUE)` (001_initial.sql:185). The anon server client is sufficient
+once `resolvePreviewToken` validates the share token. `app/advisor-portal/health/page.tsx` and
+`app/advisor-portal/upgrade/page.tsx` KEEP admin client (read `advisor_sessions`, deny-all RLS
+by design) — annotated with eslint-disable to document the rationale inline.
+
+**What shipped:**
+- `app/preview/[token]/page.tsx`: `createAdminClient` → `await createClient()` (1 call site).
+- `app/advisor-portal/health/page.tsx`: added keep-admin eslint-disable comment on import line.
+- `app/advisor-portal/upgrade/page.tsx`: same.
+
+**Commit:** `6f28e3e` (+4/-2 LOC, 3 files). Note: iter counter suffix "c" because concurrent fires
+used 320/320b for X-09b ESLint ratchet (#648) and DDD/GGG housekeeping respectively.
+
+STATUS: PROGRESS · stream=X · item=X-09a · pr=#646
+
+---
 
 ### 2026-05-08 — iter 320 (queue housekeeping — DDD/GGG FPs, E stream sync)
 
@@ -2049,7 +2100,7 @@ CI green.
 
 ---
 
-### 2026-02-24 — iter 172 (B-01)
+## 2026-02-24 — iter 172 (B-01)
 
 **PR:** #208-d (B-01 edge fn secrets) MERGED.
 
@@ -2058,3 +2109,5 @@ CI green.
 ---
 
 ### 2026-02-24 — iter 171 (audit bootstrap)
+
+Initial audit remediation queue created. Streams A–Z scaffolded.
