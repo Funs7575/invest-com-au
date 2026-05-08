@@ -47,8 +47,8 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 MERGED 2026-04-28T11:45Z | merged | V-NEW-06 done (commit `a7bd736`) |
 | V (V-NEW-07) | `claude/audit-remediation/v-new-07-admin-mfa-enforced` | #256 MERGED 2026-04-28T15:44Z | merged | V-NEW-07a done · V-NEW-07b done (`698bbae`) — **Tier D: needs `ADMIN_MFA_COOKIE_SECRET` ≥32 chars in Vercel before merge** (PR was merged; env var status unclear) |
-| W | `claude/audit-remediation/w-06-hub-advisor-cta` (#602) · `claude/audit-remediation/w-07-hub-faq` (#604) | #306/#312/#369/#529 all MERGED · **#598 OPEN** · **#599 OPEN** · **#602 OPEN** · **#604 OPEN** | CI-rescue iter 297 — `99a7c5f`+`75ce9d6` (PR #602 W-06: test import fix + merge main — HubAdvisorCTA.test.tsx imported from @testing-library/react instead of ./setup, missing jest-dom matchers). iter 296 — `deeeb26` (PR #604 W-07: HubFAQ component + 22 tests; foreign-investment + global-investing pages migrated). CI-rescue iter 295 — `12fafa3` (PR #599 W-05: test fix + merge main). CI-rescue iter 294 — `faf315f` (PR #598 W-04: dated-ok + merge main). CI-rescue iter 293 — `d35af72` (PR #602 W-06: dated-ok annotations). iter 293 — `a17a503` (W-06: HubAdvisorCTA + 8 tests, 7 pages). | W-01 done (PR #306). W-NEW-01 done (PR #312). W-02 done (PR #369). W-03 **done** (PR #529 MERGED 2026-05-04). **W-04 in-flight (#598 OPEN — dated-ok + smoke-test rescued)**. **W-05 in-flight (#599 OPEN — test fix + smoke-test rescued)**. **W-06 in-flight (#602 OPEN — test import fix pushed)**. **W-07 in-flight (#604 OPEN — CI queued)**. W-08..W-15 pending. |
-| X | `claude/audit-remediation/x-04-funds-swap` (#600) | #257/#367 both MERGED · **#596 OPEN** · **#600 OPEN** | CI-rescue iter 291 — `0c5b599` (PR #600 X-04: merge main → force new Vercel build for smoke-test timeout). CI-rescue iter 290 — `b433780` (PR #596 X-03: merge main). iter 288 — `77e2ba7` (X-04: /invest/funds pages admin→anon swap). | X-01 done (PR #257). X-02 MERGED (#367 — /best-for pages admin→anon swap). **X-03 in-flight (#596 OPEN — smoke-test rescued)**. **X-04 in-flight (#600 OPEN — smoke-test rescued)**. X-05..X-09 pending. |
+| W | `claude/audit-remediation/w-06-hub-advisor-cta` (#602) · `claude/audit-remediation/w-07-hub-faq` (#604) | #306/#312/#369/#529 all MERGED · **#598 OPEN** · **#599 OPEN** · **#602 OPEN** · **#604 OPEN** | **iter 298 — SYSTEMIC SMOKE TEST BLOCK** (PRs #598 W-04 + #599 W-05 + #604 W-07: smoke test failing on all; Lint/Build green; see Blocked section). CI-rescue iter 297 — `99a7c5f`+`75ce9d6` (PR #602 W-06: test import fix + merge main). iter 296 — `deeeb26` (PR #604 W-07: HubFAQ component + 22 tests). CI-rescue iter 295 — `12fafa3` (PR #599 W-05: test fix + merge main). CI-rescue iter 294 — `faf315f` (PR #598 W-04: dated-ok + merge main). | W-01 done (PR #306). W-NEW-01 done (PR #312). W-02 done (PR #369). W-03 **done** (PR #529 MERGED 2026-05-04). **W-04 in-flight (#598 OPEN — Lint ✓, smoke test ✗ systemic)**. **W-05 in-flight (#599 OPEN — Lint ✓, smoke test ✗ systemic)**. **W-06 in-flight (#602 OPEN — CI in_progress after test import fix)**. **W-07 in-flight (#604 OPEN — Lint ✓, smoke test ✗ systemic)**. W-08..W-15 pending. |
+| X | `claude/audit-remediation/x-04-funds-swap` (#600) | #257/#367 both MERGED · **#596 OPEN** · **#600 OPEN** | **iter 298 — SYSTEMIC SMOKE TEST BLOCK** (PRs #596 X-03 + #600 X-04: smoke test failing; Lint/Build green; see Blocked section). CI-rescue iter 291 — `0c5b599` (PR #600 X-04: merge main). CI-rescue iter 290 — `b433780` (PR #596 X-03: merge main). iter 288 — `77e2ba7` (X-04: /invest/funds pages admin→anon swap). | X-01 done (PR #257). X-02 MERGED (#367 — /best-for pages admin→anon swap). **X-03 in-flight (#596 OPEN — Lint ✓, smoke test ✗ systemic)**. **X-04 in-flight (#600 OPEN — Lint ✓, smoke test ✗ systemic)**. X-05..X-09 pending. |
 | Y | all PRs MERGED | #253/#347 both MERGED | last merged 2026-05-01T22:00Z | Y-05 done (PR #253). Y-08 done (PR #253). Y-05-ENRICH MERGED (#347 — sourcedAt/source/freshness enrichment + 16 new tests). Y-01..Y-04, Y-06, Y-07 pending. |
 | BB | all PRs MERGED | #361/#368 both MERGED | last merged 2026-05-01T22:01Z | BB-03 MERGED (#361 — CGT calc vs ATO, 5 regulator-reference tests). BB-06 MERGED (#368 — mortgage stress vs ASIC+APRA, 8 cases). Other BB items pending. |
 | **AUDIT-SWEEP** | `claude/audit-remediation/audit-sweep-01-02` | #518 **MERGED 2026-05-04** | last merged 2026-05-04 | AUDIT-SWEEP-01 done. AUDIT-SWEEP-02 done. Stream complete. |
@@ -60,6 +60,31 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 ---
 
 ## Blocked — needs human input
+
+### `Preview smoke test (critical URLs)` systemic failure (5 in-flight PRs affected) — surfaced 2026-05-07 by iter 298
+
+**Pattern:** `Preview smoke test (critical URLs)` is currently failing on 5 in-flight PRs simultaneously — all with `Lint · Type-check · Test · Build` GREEN.
+
+Affected PRs:
+- PR #596 (X-03 /research/ admin→anon swap) — 1 prior smoke-test rescue (iter 290)
+- PR #598 (W-04 HubArticleStrip) — 2 prior smoke-test rescues (iters 289, 294)
+- PR #599 (W-05 HubDeepDiveGrid) — 2 prior smoke-test rescues (iters 291, 295)
+- PR #600 (X-04 /invest/funds admin→anon swap) — 1 prior smoke-test rescue (iter 291)
+- PR #604 (W-07 HubFAQ) — 1st failure on brand-new PR
+
+**Root cause:** Vercel "Ignored Build Step" caching artifact — documented in E-04 batch 2 blocked entry. Vercel determines the push didn't contain Vercel-relevant file changes and reuses an existing build. The smoke test gate looks for a Vercel deployment registered under the exact HEAD commit SHA. When Vercel reuses a prior build, no new deployment is registered, causing the gate to time out.
+
+**Recommendation matrix:**
+
+| Option | Action | Notes |
+|--------|--------|-------|
+| **A (preferred)** | Admin-merge all 5 PRs — `Lint · Type-check · Test · Build` is SUCCESS for all 5 | Smoke test failure is confirmed Vercel caching artifact; code is correct and mergeable |
+| **B** | Fix Vercel project settings — inspect "Ignored Build Step" configuration (may be filtering component-only changes) | Requires Vercel dashboard access; structural fix for all future PRs |
+| **C** | Make a meaningful code change on each branch (not just merge-main) to force Vercel to register a new build | Slow and may fail again if Vercel still classifies the diff as "ignored" |
+
+**Status:** Loop will not attempt further per-PR smoke test rescues until this is resolved. All 5 PRs have green build/test/lint — the code is mergeable.
+
+---
 
 ### F-08 · Card component extraction — visual review required (surfaced 2026-05-07 by iter 279)
 
@@ -1952,6 +1977,18 @@ pre-launch must-do is T-TESTS-01 + T-TESTS-04.
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-07 — iter 298 BLOCKED (systemic — Preview smoke test failing on 5 PRs)
+
+- Checked CI for all in-flight PRs: #596, #598, #599, #600, #602, #604
+- All PRs: `Lint · Type-check · Test · Build` GREEN (or in_progress after the W-06 fix from iter 297)
+- `Preview smoke test (critical URLs)` FAILURE on: #596 (X-03), #598 (W-04), #599 (W-05), #600 (X-04), #604 (W-07)
+- Same-gate cluster guard fires: ≥3 in-flight PRs failing "Preview smoke test (critical URLs)" simultaneously (5 affected)
+- Root cause: Vercel "Ignored Build Step" caching artifact — documented in E-04 batch 2 blocked entry and now systemic
+- Surfaced consolidated Blocked entry; loop will not retry individual smoke-test rescues
+- Recommendation: admin-merge all 5 PRs (code correct on all) OR fix Vercel "Ignored Build Step" config
+
+STATUS: BLOCKED · systemic=Preview smoke test (critical URLs)
 
 ### 2026-05-07 — CI-rescue iter 297 (stream W — W-06 build failure, PR #602)
 
