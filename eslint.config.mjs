@@ -344,17 +344,17 @@ const eslintConfig = [
     // API / account routes are exempt because they legitimately need
     // elevated access.
     //
-    // Set as "warn" because there is a backlog of ~17 public pages still
-    // importing the admin client (best-for, invest/funds, research,
-    // how-to/transfer-from, advisors/search, etc). Ratchet to "error"
-    // once the backlog is cleared.
-    files: ["app/**/page.tsx", "app/**/layout.tsx"],
+    // Ratcheted to "error" in X-09 (PR #645) after the X-02..X-08 backlog
+    // of ~17 public pages was cleared. The five remaining KEEP-ADMIN files
+    // each carry a per-file eslint-disable-next-line annotation documenting
+    // which exception category applies (see x-admin-backlog-decision-matrix.md).
+    files: ["app/**/page.tsx", "app/**/layout.tsx", "app/**/route.ts"],
     ignores: ["app/admin/**", "app/api/**", "app/account/**"],
     rules: {
-      "no-restricted-imports": ["warn", {
+      "no-restricted-imports": ["error", {
         paths: [{
           name: "@/lib/supabase/admin",
-          message: "createAdminClient bypasses RLS and must not be used in public RSC pages. Use createClient from @/lib/supabase/server instead.",
+          message: "createAdminClient bypasses RLS and must not be used in public RSC pages or route handlers. Use createClient from @/lib/supabase/server instead, or add an eslint-disable-next-line annotation documenting the exception category.",
         }],
       }],
     },

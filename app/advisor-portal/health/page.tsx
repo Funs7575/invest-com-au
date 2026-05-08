@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+// eslint-disable-next-line no-restricted-imports -- X-09 keep-admin: advisor session cookie validation requires service-role read of advisor_sessions; that table has no anon policy by design
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { HealthFactor } from "@/lib/advisor-health";
 

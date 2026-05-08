@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+// eslint-disable-next-line no-restricted-imports -- X-09 keep-admin: token-gated draft preview; service-role enforces draft access regardless of row-level policy state on articles
 import { createAdminClient } from "@/lib/supabase/admin";
 import { resolvePreviewToken } from "@/lib/article-preview-tokens";
 

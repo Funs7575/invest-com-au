@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-restricted-imports -- X-09 keep-admin: route reads campaigns (service-role-only SELECT, no anon policy per 20260610120000 migration) for CPC billing and writes affiliate_clicks (anon-writable per 001_initial + 20260309, but same client used for consistency). Server-only redirect+telemetry endpoint.
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "crypto";
