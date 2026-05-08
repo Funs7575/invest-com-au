@@ -123,6 +123,8 @@ export interface ServiceCard {
   description: string;
   href: string;
   icon?: string;
+  /** CTA button label — defaults to "Learn more" when absent. */
+  cta?: string;
 }
 
 /** Long-form deep-dive card — links to `<hub>/<slug>` long-tail content. */
