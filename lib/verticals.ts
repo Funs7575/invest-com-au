@@ -123,6 +123,8 @@ export interface ServiceCard {
   description: string;
   href: string;
   icon?: string;
+  /** CTA label for the card's action link (e.g. "Find SMSF Auditors"). Defaults to "Learn more" in HubPage. */
+  cta?: string;
 }
 
 /** Long-form deep-dive card — links to `<hub>/<slug>` long-tail content. */
