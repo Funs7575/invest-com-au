@@ -124,7 +124,7 @@ export default function StampDutyForeignBuyersPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
               <thead>
-                <tr className="bg-slate-50 border-b border-slate-200 text-left">
+                <tr className="bg-slate-50 border-b border-slate-200 text-start">
                   <th className="px-4 py-3 font-semibold text-slate-600 text-xs">State / Territory</th>
                   <th className="px-4 py-3 font-semibold text-slate-600 text-xs">Stamp Duty Surcharge</th>
                   <th className="px-4 py-3 font-semibold text-slate-600 text-xs hidden md:table-cell">Land Tax Surcharge</th>
@@ -136,7 +136,7 @@ export default function StampDutyForeignBuyersPage() {
                   <tr key={s.stateCode} className="hover:bg-slate-50 transition-colors">
                     <td className="px-4 py-3">
                       <span className="font-medium text-slate-800">{s.state}</span>
-                      <span className="ml-2 text-xs text-slate-400">{s.stateCode}</span>
+                      <span className="ms-2 text-xs text-slate-400">{s.stateCode}</span>
                     </td>
                     <td className="px-4 py-3">
                       <span className={`font-bold text-lg ${s.surchargePercent > 0 ? "text-red-700" : "text-emerald-700"}`}>
@@ -173,7 +173,7 @@ export default function StampDutyForeignBuyersPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
               <thead>
-                <tr className="bg-slate-50 border-b border-slate-200 text-left">
+                <tr className="bg-slate-50 border-b border-slate-200 text-start">
                   <th className="px-4 py-3 font-semibold text-slate-600 text-xs">State</th>
                   <th className="px-4 py-3 font-semibold text-slate-600 text-xs">Rate</th>
                   {PRICE_EXAMPLES.map((p) => (
