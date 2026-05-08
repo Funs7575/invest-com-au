@@ -54,6 +54,13 @@ const SORT_OPTIONS: { key: SortKey; label: string }[] = [
 
 const RESULTS_PER_PAGE = 12;
 
+// Seed prompt sent to /api/concierge when a user clicks the
+// "Ask the AI concierge" CTA. Kept educational (avoids personal-advice
+// triggers) and short enough to satisfy the concierge's 200-char seed
+// cap. Same string is used on /advisors/search for consistency.
+const ADVISOR_FINDER_SEED =
+  "I'm thinking about hiring a financial advisor. What should I look for, and what questions should I ask?";
+
 function formatCents(cents: number): string {
   return `$${(cents / 100).toLocaleString("en-AU", { maximumFractionDigits: 0 })}`;
 }
@@ -471,6 +478,13 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
             >
               Get matched
               <Icon name="arrow-right" size={14} />
+            </Link>
+            <Link
+              href={`/concierge?seed=${encodeURIComponent(ADVISOR_FINDER_SEED)}`}
+              className="inline-flex items-center gap-1.5 bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 hover:text-slate-900 font-bold text-xs md:text-sm px-4 py-2 rounded-full transition-colors shadow-sm"
+            >
+              <Icon name="message-circle" size={14} />
+              Ask the AI concierge
             </Link>
             <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-full shadow-sm text-[0.65rem] md:text-xs font-semibold text-slate-700">
               <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
