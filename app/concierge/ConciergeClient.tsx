@@ -4,6 +4,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Icon from "@/components/Icon";
+import { trackEvent } from "@/lib/tracking";
+import { lookupSeed, isFinderKey } from "@/lib/concierge-seeds";
 
 /**
  * Full-page concierge chat UI.
@@ -15,10 +17,33 @@ import Icon from "@/components/Icon";
  * steers readers to /advisors for personal questions.
  */
 
+interface Citation {
+  type: string;
+  id: string;
+  title: string;
+  score: number;
+}
+
 interface Message {
   role: "user" | "assistant";
   content: string;
   id: string;
+  citations?: Citation[];
+}
+
+function citationHref(c: Citation): string {
+  switch (c.type) {
+    case "article":
+      return `/article/${c.id}`;
+    case "broker":
+      return `/broker/${c.id}`;
+    case "advisor":
+      return `/advisor/${c.id}`;
+    case "qa":
+      return `/q/${c.id}`;
+    default:
+      return "#";
+  }
 }
 
 const STARTERS = [
@@ -65,10 +90,6 @@ function renderContent(content: string): React.ReactNode {
   return parts;
 }
 
-// Seed-param length cap. Long enough for any reasonable starter,
-// short enough that a malicious URL can't ship a full prompt-injection
-// payload. The /api/concierge route still rate-limits + cost-caps.
-const SEED_MAX_LEN = 200;
 
 export default function ConciergeClient() {
   const [sessionId, setSessionId] = useState<string | null>(null);
@@ -126,7 +147,7 @@ export default function ConciergeClient() {
   }, [messages, streaming]);
 
   const send = useCallback(
-    async (message: string) => {
+    async (message: string, opts?: { finder?: string }) => {
       const clean = message.trim();
       if (!clean || streaming) return;
       setError(null);
@@ -158,6 +179,7 @@ export default function ConciergeClient() {
             message: clean,
             session_id: sessionId ?? undefined,
             history,
+            finder: opts?.finder,
           }),
           signal: ac.signal,
         });
@@ -185,6 +207,7 @@ export default function ConciergeClient() {
             try {
               const json = JSON.parse(line.slice(5).trim()) as
                 | { type: "session"; session_id: string }
+                | { type: "retrieved"; docs: Citation[] }
                 | { type: "delta"; text: string }
                 | { type: "done"; tokens_in: number; tokens_out: number }
                 | { type: "error"; message: string };
@@ -196,6 +219,15 @@ export default function ConciergeClient() {
                 } catch {
                   // ignore
                 }
+              } else if (json.type === "retrieved") {
+                // Attach the citations to the in-flight assistant
+                // message so they render under the reply.
+                const docs = Array.isArray(json.docs) ? json.docs.slice(0, 4) : [];
+                setMessages((prev) =>
+                  prev.map((m) =>
+                    m.id === assistantId ? { ...m, citations: docs } : m,
+                  ),
+                );
               } else if (json.type === "delta") {
                 setMessages((prev) =>
                   prev.map((m) =>
@@ -244,18 +276,22 @@ export default function ConciergeClient() {
     abortRef.current?.abort();
   }, []);
 
-  // Auto-fire a seed prompt from the URL (?seed=…) on first mount,
-  // but only when starting fresh. Skipped if a stored session is
-  // hydrating or any messages already exist. Length-capped to bound
-  // any abuse vector — the route also rate-limits + cost-caps.
+  // Auto-fire a named seed prompt from the URL (?finder=<key>) on
+  // first mount, but only when starting fresh. The finder key is
+  // resolved against a server-defined allowlist in
+  // lib/concierge-seeds.ts — unknown keys are ignored, so a crafted
+  // URL can't ship arbitrary text into the chat.
   useEffect(() => {
     if (seedFiredRef.current) return;
     if (hydrating) return;
     if (messages.length > 0) return;
-    const seed = searchParams?.get("seed")?.trim() ?? "";
-    if (!seed || seed.length > SEED_MAX_LEN) return;
+    const finderRaw = searchParams?.get("finder") ?? "";
+    if (!isFinderKey(finderRaw)) return;
+    const seed = lookupSeed(finderRaw);
+    if (!seed) return;
     seedFiredRef.current = true;
-    void send(seed);
+    trackEvent("concierge_seed_fired", { finder: finderRaw, source: "auto" });
+    void send(seed.prompt, { finder: finderRaw });
     // Intentionally omit `send` from deps — it changes when streaming
     // flips, and seedFiredRef already guards against double-fire.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -396,9 +432,27 @@ export default function ConciergeClient() {
                           <span className="w-1.5 h-1.5 rounded-full bg-slate-400 animate-pulse [animation-delay:300ms]" />
                         </span>
                       ) : (
-                        <p className="whitespace-pre-wrap">
-                          {renderContent(m.content)}
-                        </p>
+                        <>
+                          <p className="whitespace-pre-wrap">
+                            {renderContent(m.content)}
+                          </p>
+                          {m.role === "assistant" && m.citations && m.citations.length > 0 && (
+                            <div className="mt-2 pt-2 border-t border-slate-200 text-[0.65rem] text-slate-500">
+                              <span className="font-semibold">Sources:</span>{" "}
+                              {m.citations.map((c, idx) => (
+                                <span key={`${c.type}-${c.id}`}>
+                                  {idx > 0 && " · "}
+                                  <Link
+                                    href={citationHref(c)}
+                                    className="underline hover:text-slate-700"
+                                  >
+                                    {c.title.slice(0, 40) || c.id}
+                                  </Link>
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </>
                       )}
                     </div>
                   </li>
