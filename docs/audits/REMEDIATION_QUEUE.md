@@ -47,7 +47,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 MERGED 2026-04-28T11:45Z | merged | V-NEW-06 done (commit `a7bd736`) |
 | V (V-NEW-07) | `claude/audit-remediation/v-new-07-admin-mfa-enforced` | #256 MERGED 2026-04-28T15:44Z | merged | V-NEW-07a done · V-NEW-07b done (`698bbae`) — **Tier D: needs `ADMIN_MFA_COOKIE_SECRET` ≥32 chars in Vercel before merge** (PR was merged; env var status unclear) |
-| W | `claude/audit-remediation/w-06-hub-advisor-cta` (#602) · `claude/audit-remediation/w-07-hub-faq` (#604) · `claude/audit-remediation/w-08-directory-grid` (#605) · `claude/audit-remediation/w-09-calculator-shell` (#606) · `claude/audit-remediation/w-10-eligibility-quiz` (#607) · `claude/audit-remediation/w-11-cross-hub-links` (#608) · `claude/audit-remediation/w-12-hub-page` (#609) · `claude/audit-remediation/w-14-grants-migration` (#612) | #306/#312/#369/#529 all MERGED · **#598 OPEN** · **#599 OPEN** · **#602 OPEN** · **#604 OPEN** · **#605 OPEN** · **#606 OPEN** · **#607 OPEN** · **#608 OPEN** | iter 313 — `671e567` (PR #609 W-15 iter 1: /dividends migrated onto HubPage + DIVIDENDS_HUB_CONFIG + 18 tests). CI-rescue iter 311 — `00e7fc6` (PR #612 W-14: remove stale dated string from R&D card blurb). iter 310 — `12790b8` (PR #612 W-14: /grants→HubPage + /startup/grants canonical + 301 + 18 tests). iter 309 — `c6c55c7` (PR #609 W-13: /smsf migrated onto HubPage + 18 smoke tests). CI-rescue iter 308 — `b6d40f7` (PR #607 W-10: ./setup import). CI-rescue iter 307 — `dee6f3e` (PR #608 W-11: ./setup import + Icon mock). CI-rescue iter 306b — `6904b05` (PR #609 W-12: ./setup import fix). iter 304 — `80c1faa` (PR #609 W-12 sub-item 1: HubPage HOC + 17 tests). iter 303 — `c70de66` (PR #608 W-11: CrossHubLinks + 12 tests). iter 302 — `4ef90fb` (PR #607 W-10: EligibilityQuiz + 14 tests). iter 301 — `039978f` (PR #606 W-09: CalculatorShell + 21 tests). | W-01 done (PR #306). W-NEW-01 done (PR #312). W-02 done (PR #369). W-03 **done** (PR #529). **W-04 in-flight (#598 — Lint ✓, smoke test ✗ systemic)**. **W-05 in-flight (#599 — Lint ✓, smoke test ✗ systemic)**. **W-06 in-flight (#602)**. **W-07 in-flight (#604 — Lint ✓, smoke test ✗ systemic)**. **W-08 in-flight (#605 OPEN)**. **W-09 in-flight (#606 OPEN — Lint ✓, smoke test ✗ systemic)**. **W-10 in-flight (#607 OPEN — Lint·Test·Build ✓ post iter-308)**. **W-11 in-flight (#608 OPEN — Lint·Test·Build ✓ post iter-307)**. **W-12 in-flight (#609 OPEN — W-13 + W-15-iter-1 pushed)**. **W-14 in-flight (#612 OPEN — Dated strings fix pushed)**. W-15 in-progress (5 hubs remaining: sell-business, learn, lump-sum-investing, negative-gearing, visa-investment). |
+| W | `claude/audit-remediation/w-06-hub-advisor-cta` (#602) · `claude/audit-remediation/w-07-hub-faq` (#604) · `claude/audit-remediation/w-08-directory-grid` (#605) · `claude/audit-remediation/w-09-calculator-shell` (#606) · `claude/audit-remediation/w-10-eligibility-quiz` (#607) · `claude/audit-remediation/w-11-cross-hub-links` (#608) · `claude/audit-remediation/w-12-hub-page` (#609) · `claude/audit-remediation/w-14-grants-migration` (#612) | #306/#312/#369/#529 all MERGED · **#598 OPEN** · **#599 OPEN** · **#602 OPEN** · **#604 OPEN** · **#605 OPEN** · **#606 OPEN** · **#607 OPEN** · **#608 OPEN** | iter 313 — `671e567` (PR #609 W-15 iter 1: /dividends migrated onto HubPage + DIVIDENDS_HUB_CONFIG + 18 tests). CI-rescue iter 311 — `00e7fc6` (PR #612 W-14: remove stale dated string from R&D card blurb). iter 310 — `12790b8` (PR #612 W-14: /grants→HubPage + /startup/grants canonical + 301 + 18 tests). iter 309 — `c6c55c7` (PR #609 W-13: /smsf migrated onto HubPage + 18 smoke tests). CI-rescue iter 308 — `b6d40f7` (PR #607 W-10: ./setup import). CI-rescue iter 307 — `dee6f3e` (PR #608 W-11: ./setup import + Icon mock). CI-rescue iter 306b — `6904b05` (PR #609 W-12: ./setup import fix). iter 304 — `80c1faa` (PR #609 W-12 sub-item 1: HubPage HOC + 17 tests). iter 303 — `c70de66` (PR #608 W-11: CrossHubLinks + 12 tests). iter 302 — `4ef90fb` (PR #607 W-10: EligibilityQuiz + 14 tests). iter 301 — `039978f` (PR #606 W-09: CalculatorShell + 21 tests). | W-01 done (PR #306). W-NEW-01 done (PR #312). W-02 done (PR #369). W-03 **done** (PR #529). **W-04 in-flight (#598 — Lint ✓, smoke test ✗ systemic)**. **W-05 in-flight (#599 — Lint ✓, smoke test ✗ systemic)**. **W-06 in-flight (#602)**. **W-07 in-flight (#604 — Lint ✓, smoke test ✗ systemic)**. **W-08 in-flight (#605 OPEN)**. **W-09 in-flight (#606 OPEN — Lint ✓, smoke test ✗ systemic)**. **W-10 in-flight (#607 OPEN — Lint·Test·Build ✓ post iter-308)**. **W-11 in-flight (#608 OPEN — Lint·Test·Build ✓ post iter-307)**. **W-12 in-flight (#609 OPEN — W-13 + W-15-iter-1 pushed)**. **W-14 BLOCKED (#612 OPEN — Lint·Test·Build fails 4m49s; test step unidentifiable via static analysis — see Blocked section)**. W-15 in-progress (5 hubs remaining: sell-business, learn, lump-sum-investing, negative-gearing, visa-investment). |
 | X | `claude/audit-remediation/x-04-funds-swap` (#600) · `claude/audit-remediation/x-05-invest-slug-swap` (#610) | #257/#367 both MERGED · **#596 OPEN** · **#600 OPEN** | **iter 298 — SYSTEMIC SMOKE TEST BLOCK** (PRs #596 X-03 + #600 X-04: smoke test failing; Lint/Build green; see Blocked section). CI-rescue iter 291 — `0c5b599` (PR #600 X-04: merge main). CI-rescue iter 290 — `b433780` (PR #596 X-03: merge main). iter 288 — `77e2ba7` (X-04: /invest/funds pages admin→anon swap). | X-01 done (PR #257). X-02 MERGED (#367). **X-03 in-flight (#596 — Lint ✓, smoke test ✗ systemic)**. **X-04 in-flight (#600 — Lint ✓, smoke test ✗ systemic)**. X-05..X-09 pending. |
 | Y | all PRs MERGED | #253/#347 both MERGED | last merged 2026-05-01T22:00Z | Y-05 done (PR #253). Y-08 done (PR #253). Y-05-ENRICH MERGED (#347 — sourcedAt/source/freshness enrichment + 16 new tests). Y-01..Y-04, Y-06, Y-07 pending. |
 | BB | all PRs MERGED | #361/#368 both MERGED | last merged 2026-05-01T22:01Z | BB-03 MERGED (#361 — CGT calc vs ATO, 5 regulator-reference tests). BB-06 MERGED (#368 — mortgage stress vs ASIC+APRA, 8 cases). Other BB items pending. |
@@ -83,6 +83,52 @@ Affected PRs:
 | **C** | Make a meaningful code change on each branch (not just merge-main) to force Vercel to register a new build | Slow and may fail again if Vercel still classifies the diff as "ignored" |
 
 **Status:** Loop will not attempt further per-PR smoke test rescues until this is resolved. All 5 PRs have green build/test/lint — the code is mergeable.
+
+---
+
+### W-14 · `Lint · Type-check · Test · Build` unidentifiable failure on PR #612 — surfaced 2026-05-08 by iter 313 (this fire)
+
+**Item:** W-14 — /grants → HubPage migration + /startup/grants relocation.
+
+**PR:** #612 OPEN, branch `claude/audit-remediation/w-14-grants-migration`, HEAD `00e7fc6`.
+
+**Failing check:** `Lint · Type-check · Test · Build` — CI run `25531277247`, job `74937956448`, duration 4m49s.
+
+**Investigation summary (iter 313 CI rescue — second attempt):**
+
+Evidence gathered from PR comments:
+- **Build succeeds**: `bundle-size.yml` workflow ran `npm run build` and posted a comment showing `/startup/grants` at +1.8 KB. The Next.js build is NOT the cause.
+- **Tests fail (not coverage threshold)**: The `code-quality-pr` bot shows `—` for ALL M01 coverage metrics (lines, branches, functions). This happens when no coverage report is generated, which means vitest exits before completing (test assertion failure), not a threshold failure.
+- **Typed strings gate**: NOW passes (iter 311 fixed the dated string).
+- **TypeScript**: PR #609 (same branch base, has W-15 additions) fails in ~2min (tsc step). PR #612 fails in 4m49s (tsc+lint pass, tests fail).
+
+Static analysis performed — no error found:
+- All TypeScript types: `subtitle?`, `cta?`, `"grants"` ComplianceKey, `LeadQueueRoute` grants/smsf variants — all correct.
+- All test assertions: HubPage `toHaveTextContent("insurance cover")` → SUPER_WARNING ✓; "Grant rules"/"AusIndustry" → GRANTS_WARNING ✓; breadcrumb `names.contains("Startup")` → `slugToLabel("startup")` ✓.
+- All imports: HubPage.tsx, GrantsHub.test.tsx, SmsfHub.test.tsx — all resolved.
+- ESLint: `dangerouslySetInnerHTML={{ __html: JSON.stringify(...) }}` — compliant with `invest/no-unsafe-inner-html`.
+- Coverage thresholds: new lib/hub-configs/*.ts files are data-only; 100% covered when imported by tests; no functions/branches to miss.
+- No circular imports.
+- jsdom environment: all 3 new test files have `@vitest-environment jsdom` annotation AND glob matches.
+- vi.mock("@/components/Icon"): JSX factory in mock is valid (tsconfig `jsx: "react-jsx"`).
+- DatedStatBadge (stale SMSF stats): renders stale indicator (⚠) when stalesAt past — no test asserts ⚠ is absent.
+- `app/grants/page.tsx` redirect stub: `permanentRedirect()` returns `never`, assignable to any type — no tsc error.
+
+**Why blocked:** The CI log is needed to identify the specific failing test and assertion. Static analysis of 540+ lines of new test code found no logical errors. The loop cannot make a targeted fix without knowing which test is failing.
+
+**CI log URL:** `https://github.com/Funs7575/invest-com-au/actions/runs/25531277247/job/74937956448`
+
+**Recommendation matrix:**
+
+| Option | Action |
+|--------|--------|
+| **A (preferred)** | Check CI log at URL above. The failure is in `npm run test:coverage` — look for the first `FAIL` or `Error:` line after the tests start. |
+| **B** | Admin-merge PR #612 if the human verifies the 3 new test files look correct and the failure is likely runner noise or environment issue. |
+| **C** | Delete and re-create the branch from current main, re-apply W-14 changes cleanly without the W-12 merge commit — this removes any potential state from the merge. |
+
+**Stuck-detection count:** 2 CI rescue attempts on this check (iters 311 + this fire). Next fire that picks this up would be the 3rd — trigger the stuck guard.
+
+**Status:** Loop will not attempt further W-14 CI rescues without human direction on the specific failing assertion.
 
 ---
 
@@ -2004,6 +2050,18 @@ STATUS: PROGRESS · stream=W · item=W-15 · pr=#609
 - Next item: W-03 (Extract HubServiceGrid + tests) or R-COVERAGE-M2-A batch 3
 
 STATUS: PROGRESS · stream=R · item=R-COVERAGE-M2-A · pr=#601 · commit=1dc4684
+
+### 2026-05-08 — CI rescue iter 313b (stream W — W-14: CI failure on PR #612 surfaced as BLOCKED)
+
+- Item: W-14 CI rescue iter 2 — `Lint · Type-check · Test · Build` failure on PR #612
+- Branch: `claude/audit-remediation/w-14-grants-migration`
+- PR: #612 (OPEN)
+- Commit: `00e7fc6` (no new commit pushed — root cause not found)
+- Investigation: Evidence from PR comments confirms build succeeds (bundle-size +1.8KB for /startup/grants). Quality delta shows `—` for all coverage metrics → tests fail before coverage report is generated. 540+ lines of new test code reviewed — no logical assertion errors found. Possible explanations: runner environment issue, vi.mock hoisting edge case, jsdom rendering difference. Cannot identify without CI log.
+- Stuck-detection: second CI-RESCUE attempt on same check. Surfaced to Blocked per protocol. Next attempt (3rd) would trigger stuck guard.
+- CI log URL: `https://github.com/Funs7575/invest-com-au/actions/runs/25531277247/job/74937956448`
+
+STATUS: BLOCKED · stream=W · item=W-14 · pr=#612
 
 ### 2026-05-08 — CI rescue iter 311 (stream W — W-14: Dated strings gate fix on PR #612)
 
