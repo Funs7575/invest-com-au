@@ -3,7 +3,14 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { COUNTRY_CONFIGS } from "@/lib/foreign-investment-country-data";
-import type { IntentCountryCode } from "@/lib/intent-context";
+import {
+  INTENT_COUNTRY_COOKIE,
+  type IntentCountryCode,
+} from "@/lib/intent-context";
+import {
+  setIntentCountryAction,
+  clearIntentCountryAction,
+} from "@/lib/intent-context-actions";
 
 // ─── Country data (single source of truth, used to be split across
 // InternationalBanner) ──────────────────────────────────────────────────────
@@ -49,6 +56,13 @@ function flagEmoji(code: string): string {
 
 const STORAGE_KEY = "iv-location-flag-override";
 
+function hasIntentCountryCookie(): boolean {
+  if (typeof document === "undefined") return false;
+  return document.cookie
+    .split("; ")
+    .some((c) => c.startsWith(`${INTENT_COUNTRY_COOKIE}=`));
+}
+
 export default function LocationFlagButton() {
   const [open, setOpen] = useState(false);
   const [override, setOverride] = useState<string | null>(null);
@@ -58,11 +72,28 @@ export default function LocationFlagButton() {
   // Read any previously-set override from localStorage. We don't render the
   // localStorage value during SSR (hydration mismatch risk) — wait for
   // useEffect to populate it.
+  //
+  // Migration: if localStorage has a non-AU supported override but the
+  // iv_intent_country cookie isn't set, sync it. Existing users who
+  // selected a country before Country Mode wired the server action need
+  // this one-time write so the homepage / advisors / compare surfaces
+  // pick up their preference. localStorage "AU" maps to "no country
+  // mode" so we explicitly skip it.
   useEffect(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: localStorage is read post-hydration to keep SSR markup consistent
       if (stored) setOverride(stored);
+      if (stored && stored !== "AU" && !hasIntentCountryCookie()) {
+        const match = SUPPORTED_COUNTRIES.find((c) => c.code === stored);
+        if (match) {
+          // Fire-and-forget — server action sets the cookie via
+          // Set-Cookie. No need to await: the page is already rendered
+          // with localStorage as the override; the cookie just needs
+          // to land before the next navigation.
+          void setIntentCountryAction(match.intentCode);
+        }
+      }
     } catch {
       /* ignore */
     }
@@ -134,9 +165,14 @@ export default function LocationFlagButton() {
             ? "Switch to investing-from-overseas view"
             : `Investing from ${supported?.name ?? "overseas"}? Switch view`
         }
-        className="p-2 rounded-xl text-base hover:bg-slate-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 leading-none"
+        className="px-2 py-2 rounded-xl text-base hover:bg-slate-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 leading-none flex items-center gap-1.5"
       >
         <span aria-hidden>{flagEmoji(effective)}</span>
+        {!isAU && supported && (
+          <span className="hidden sm:inline text-xs font-medium text-slate-700">
+            {supported.name.replace(/^the /, "")}
+          </span>
+        )}
       </button>
 
       {open && (
@@ -206,6 +242,10 @@ export default function LocationFlagButton() {
                   type="button"
                   onClick={() => {
                     setOverrideAndPersist("AU");
+                    // Clear the cookie too — otherwise downstream
+                    // surfaces (compare, advisors, homepage strips)
+                    // would still see the previous country preference.
+                    void clearIntentCountryAction();
                     setOpen(false);
                   }}
                   className="block w-full text-left text-xs text-slate-500 hover:text-slate-900 underline underline-offset-2 mt-2"
@@ -247,8 +287,12 @@ export default function LocationFlagButton() {
                   onClick={() => {
                     // Setting the override here lets the user "stick" to a
                     // country view if they intentionally pick one. The flag
-                    // updates to match.
+                    // updates to match. The cookie write feeds downstream
+                    // SSR surfaces (advisors / compare / homepage strips)
+                    // — without it, picking a country here only affected
+                    // this component's local UI.
                     setOverrideAndPersist(c.code);
+                    void setIntentCountryAction(c.intentCode);
                     setOpen(false);
                   }}
                   className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-white transition-colors"

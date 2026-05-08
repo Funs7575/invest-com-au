@@ -53,6 +53,16 @@ describe("isKnownIntentCountry", () => {
     expect(isKnownIntentCountry("UK")).toBe(false); // case-sensitive intent code
     expect(isKnownIntentCountry("")).toBe(false);
   });
+
+  it("rejects prototype-chain keys (hasOwnProperty hardening)", () => {
+    // Without hasOwnProperty.call, `value in KNOWN` walks the prototype
+    // chain and would accept these. Each one would then either crash a
+    // downstream consumer or write a garbage cookie value.
+    expect(isKnownIntentCountry("__proto__")).toBe(false);
+    expect(isKnownIntentCountry("toString")).toBe(false);
+    expect(isKnownIntentCountry("hasOwnProperty")).toBe(false);
+    expect(isKnownIntentCountry("constructor")).toBe(false);
+  });
 });
 
 describe("intentCountryFromSlug", () => {

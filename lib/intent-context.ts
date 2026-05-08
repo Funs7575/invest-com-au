@@ -101,7 +101,11 @@ const CODE_BY_ISO: Record<string, IntentCountryCode> = Object.fromEntries(
 );
 
 export function isKnownIntentCountry(value: string): value is IntentCountryCode {
-  return value in KNOWN;
+  // Use hasOwnProperty rather than `in` so prototype-chain keys
+  // ("__proto__", "toString", "constructor") don't slip past the type
+  // guard and reach setIntentCountryAction or intentCountryMeta — which
+  // would either crash or write a garbage cookie.
+  return Object.prototype.hasOwnProperty.call(KNOWN, value);
 }
 
 export function intentCountryFromSlug(
