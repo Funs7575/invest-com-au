@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl } from "@/lib/seo";
 import Icon from "@/components/Icon";
-import HubLeadForm from "@/components/leads/HubLeadForm";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 3600;
 
@@ -102,21 +102,18 @@ export default function SellBusinessHubPage() {
           </div>
         </section>
 
-        <section className="py-12 bg-white">
-          <div className="container-custom max-w-2xl">
-            <HubLeadForm
-              heading="Get a free business valuation consultation"
-              subheading="A specialist broker will run a market-comparable analysis on your industry and provide an indicative range — usually within one business day."
-              intent={{ need: "planning", context: ["estate_planning"] }}
-              source="sell_business_hub"
-              ctaLabel="Get matched with a broker"
-              extraFields={[
-                { name: "industry", label: "Industry" },
-                { name: "annual_revenue", label: "Annual revenue (AUD)", type: "number" },
-              ]}
-            />
-          </div>
-        </section>
+        <HubAdvisorCTA
+          heading="Get a free business valuation consultation"
+          subheading="A specialist broker will run a market-comparable analysis on your industry and provide an indicative range — usually within one business day."
+          intent={{ need: "planning", context: ["estate_planning"] }}
+          source="sell_business_hub"
+          ctaLabel="Get matched with a broker"
+          extraFields={[
+            { name: "industry", label: "Industry" },
+            { name: "annual_revenue", label: "Annual revenue (AUD)", type: "number" },
+          ]}
+          className="py-12 bg-white"
+        />
 
         <section className="py-10 bg-slate-50 border-t border-slate-200">
           <div className="container-custom max-w-4xl">

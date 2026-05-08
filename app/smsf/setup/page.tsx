@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl } from "@/lib/seo";
-import HubLeadForm from "@/components/leads/HubLeadForm";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
 import { createClient } from "@/lib/supabase/server";
 import { getAffiliateLink, AFFILIATE_REL, renderStars } from "@/lib/tracking";
@@ -144,17 +144,14 @@ export default async function SmsfSetupPage() {
           </div>
         </section>
 
-        <section className="py-12 bg-slate-50 border-y border-slate-200">
-          <div className="container-custom max-w-2xl">
-            <HubLeadForm
-              heading="Find an SMSF accountant or auditor"
-              subheading="A specialist will set up the deed, register with the ATO and run the first audit cycle. Setup is the easy part — ongoing compliance is where most SMSFs trip up."
-              intent={{ need: "smsf", context: ["smsf_setup"] }}
-              source="smsf_setup"
-              ctaLabel="Find an SMSF specialist"
-            />
-          </div>
-        </section>
+        <HubAdvisorCTA
+          heading="Find an SMSF accountant or auditor"
+          subheading="A specialist will set up the deed, register with the ATO and run the first audit cycle. Setup is the easy part — ongoing compliance is where most SMSFs trip up."
+          intent={{ need: "smsf", context: ["smsf_setup"] }}
+          source="smsf_setup"
+          ctaLabel="Find an SMSF specialist"
+          className="py-12 bg-slate-50 border-y border-slate-200"
+        />
 
         <section className="py-10 bg-white border-t border-slate-200">
           <div className="container-custom max-w-4xl">
