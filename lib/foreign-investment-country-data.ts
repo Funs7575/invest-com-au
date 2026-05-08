@@ -1007,6 +1007,26 @@ export const UK_CONFIG: CountryConfig = {
       q: "Should I hedge GBP/AUD currency exposure on my Australian investments?",
       a: "GBP/AUD has moved by 30%+ in the last decade, and FX risk often dominates equity returns over short horizons. Many UK investors with substantial Australian holdings use AUD-hedged ETFs on the LSE, or hold a portion of their portfolio in GBP to dampen volatility. This is a planning question — the right answer depends on whether you intend to spend the AUD or convert it back to GBP.",
     },
+    {
+      q: "Does my AU investment income flow through the UK Personal Savings Allowance or Dividend Allowance?",
+      a: "Yes. Australian-source dividends count toward your UK Dividend Allowance (currently £500/year) and are taxed at UK dividend rates (8.75% / 33.75% / 39.35%) above that. Australian-source interest counts toward your Personal Savings Allowance (£1,000 basic rate, £500 higher rate, £0 additional rate). UK tax is calculated on the gross AU income, with foreign tax credit relief for the AU withholding paid. General information only — see a UK chartered tax adviser for your specific marginal rate.",
+    },
+    {
+      q: "How does UK CGT interact with Australian CGT when I sell ASX shares?",
+      a: "If you are UK tax resident at the time of disposal, UK CGT applies on the gain (10% / 20% / 24% depending on rate band and asset type) measured in GBP using HMRC spot rates at acquisition and sale. Australia generally does not impose CGT on listed-share gains held by non-residents (TARP-only rule), so UK is normally the only jurisdiction taxing the gain. The temporary non-resident rules can claw back gains realised during a short overseas spell — get advice before disposing while abroad. General information only — confirm with HMRC guidance HS261 or a specialist.",
+    },
+    {
+      q: "Can I keep using my UK ISA contributions while I am also investing in Australia?",
+      a: "Yes — UK ISA eligibility is based on UK tax residency, not where the underlying assets sit, so you can keep contributing the £20,000/year allowance while holding a separate non-ISA Australian portfolio. You cannot move ASX-listed shares into an ISA wrapper (only LSE-listed), but BHP, Rio Tinto and other dual-listed names can sit inside an ISA via their UK lines. The ATO does not recognise the ISA wrapper, so AU-source income inside an ISA is still taxable in Australia at the relevant non-resident rate.",
+    },
+    {
+      q: "What happens to my UK SIPP if I move to Australia and become AU tax resident?",
+      a: "The SIPP itself stays in the UK and remains a UK pension scheme. Australia generally does not tax UK pension growth while preserved, but lump-sum withdrawals taken after AU residency starts can be partly assessable under s 305-70 ITAA 1997 (the 'applicable fund earnings' rule). Many UK→AU migrants choose to crystallise the SIPP in the six months before departure or transfer to a QROPS-listed AU fund. General information only — UK-AU pension specialist advice is essential before any draw or transfer.",
+    },
+    {
+      q: "Do I need to declare my AU bank account on HMRC's worldwide disclosure or under CRS?",
+      a: "If you are UK tax resident you must report worldwide income on Self Assessment (SA106 for foreign income) regardless of where the account sits. Australia and the UK both participate in the OECD Common Reporting Standard, so AU banks and brokers automatically share account balances and income with HMRC via the ATO. Practical effect: assume HMRC sees your AU accounts and reconcile them on your return. General information only — see HMRC's Worldwide Disclosure Facility guidance.",
+    },
   ],
 
   related: [
@@ -1613,6 +1633,26 @@ export const US_CONFIG: CountryConfig = {
     {
       q: "Should I use Interactive Brokers or open an Australian broker?",
       a: "For most US persons, Interactive Brokers is the path of least resistance — they accept US persons under FATCA, offer full ASX access, and handle the cross-border reporting infrastructure. Australian retail brokers typically refuse US persons because of the FATCA compliance cost. If you have an Australian bank account and want CHESS sponsorship, IBKR Australia (with its CHESS option) is the closest available equivalent.",
+    },
+    {
+      q: "Does Australian super count as a 'foreign grantor trust' for US tax, and what does that mean?",
+      a: "The IRS has not issued definitive guidance, and most US-AU specialists take the conservative position that Australian super is a foreign grantor trust requiring annual Forms 3520 and 3520-A. Practical consequences: employer super contributions may be currently taxable to you under US rules, and earnings inside super may not benefit from US tax deferral. Some practitioners argue super is a Section 402(b) employees' trust, but this is unsettled. General information only — engage a US-AU tax specialist before filing.",
+    },
+    {
+      q: "Are franking credits worth anything to me as a US person?",
+      a: "Largely no. Franking credits are a domestic Australian device that refunds Australian corporate tax to AU resident shareholders; they are not refundable to non-residents and are not creditable on US Form 1116. The benefit you do get is that fully franked dividends carry 0% Australian withholding, so 100% of the gross dividend lands with you — but the embedded corporate tax is a real cost not recoverable in the US. Many US persons therefore prefer ASX names with high cash dividends regardless of franking, paired with the 15% DTA WHT.",
+    },
+    {
+      q: "Will my Australian property trigger FIRPTA-style reporting in the US?",
+      a: "FIRPTA itself is a US inbound rule that does not apply to AU real estate. But as a US person you must include AU rental income on Form 1040 Schedule E, depreciate the building under MACRS (40-year ADS for foreign real property), and report the AU title-holding entity on Forms 8858 / 5471 / 8865 if you held it through a company or partnership. AU CGT on disposal is creditable via Form 1116 in the passive basket. General information only — see a cross-border CPA before purchase.",
+    },
+    {
+      q: "What is the Net Investment Income Tax (NIIT) impact on my Australian portfolio?",
+      a: "The 3.8% NIIT applies to US persons whose modified AGI exceeds $200K single / $250K joint, on net investment income including AU dividends, interest and capital gains. NIIT is not creditable against AU withholding under the US-AU DTA — it is a layered US-only tax on top of regular US income tax and any AU tax already paid. Plan for an effective combined US rate roughly 3.8 percentage points higher than your bracket suggests. General information only — confirm with your tax preparer.",
+    },
+    {
+      q: "How does the US estate tax interact with Australian assets I own?",
+      a: "If you are a US citizen or domiciliary, the US estate tax applies to your worldwide estate (current exemption ~$13.6M individual, set to halve in 2026 absent legislation), including AU shares, super and property. Australia abolished inheritance tax in 1979, so the US estate tax is the entire exposure on AU assets — no foreign credit is available because Australia does not tax the same event. The US-AU estate tax treaty (1953) provides limited situs relief but does not change the base liability. General information only — see a US estate planner for your numbers.",
     },
   ],
 
@@ -2507,6 +2547,26 @@ export const HK_CONFIG: CountryConfig = {
     { q: "Does Hong Kong tax my Australian dividends?", a: "Generally no. HK uses a territorial tax system — foreign-source income (including AU dividends, interest and rental income) is not subject to HK profits tax or salaries tax. The 15% AU dividend WHT is typically your final tax on the income." },
     { q: "I'm an Australian living in Hong Kong — am I still an AU tax resident?", a: "Probably yes, in many cases. The ATO uses a multi-factor test (permanent home, family ties, employment, intention) — not just a days-based test. Many AU expats in HK technically remain AU tax residents and owe AU tax on worldwide income. Engage a specialist before assuming non-resident status." },
     { q: "What pathways exist from HK to AU residency?", a: "Skilled migration (189/190/491), the HK-specific pathway visa stream for HK BN(O)/SAR/HKBN passport holders, and the Significant Investor Visa (188C → 888C) at $5M+. Recent years have seen high HK→AU migration; specialist migration advice strongly recommended." },
+    {
+      q: "Has the OECD Pillar Two / global minimum tax changed my Hong Kong tax position on AU investments?",
+      a: "Not for individual investors. Pillar Two applies a 15% global minimum corporate tax to multinational groups with consolidated revenue above EUR 750M and is implemented in HK via the Inland Revenue (Amendment) (Minimum Tax for Multinational Enterprise Groups) Ordinance from 2025. Personal investment income earned by HK individuals from AU sources continues under HK's territorial system — generally not taxable in HK. General information only — corporate investors at the threshold should consult a tax adviser.",
+    },
+    {
+      q: "Are the BN(O) visa holders in the UK still eligible for the HK-AU DTA on AU dividends?",
+      a: "DTA eligibility hinges on tax residency at the time of payment, not nationality. A BN(O) holder living in the UK is typically UK tax resident and accesses the UK-AU DTA (also 15% on unfranked dividends, 5% on royalties), not the HK-AU DTA. Spending part of the year in HK could put you at risk of UK statutory residence test triggers — get UK and HK advice before splitting time. General information only — confirm tax residency annually before assuming a treaty rate.",
+    },
+    {
+      q: "What is the AU tax effect if I sell my HK home and move the proceeds into AU property?",
+      a: "Australia does not tax HK-source capital gains for non-AU-residents, so the HK sale is outside AU CGT. Once you become AU tax resident, your global cost base is reset to the market value at the date of becoming resident under s 855-45 ITAA 1997 (the 'CGT event I1 / I2' framework) for foreign-located CGT assets, so future appreciation is the AU CGT base. AU stamp duty on the new purchase still applies (see the relevant state). General information only — pre-residency planning advice is high-leverage; see an AU tax specialist before arriving.",
+    },
+    {
+      q: "Are HK SFC-licensed brokers usable to access ASX, or do I need an offshore broker?",
+      a: "Most HK SFC-licensed retail brokers focus on HKEX, US and China markets and do not offer ASX directly. Interactive Brokers HK (SFC-licensed) is the most common path for HK residents wanting ASX exposure, with Saxo HK as the alternative. Some HK private banks can execute ASX block trades on a relationship basis. Verify SFC licence and ASX market access before opening. General information — not a broker recommendation.",
+    },
+    {
+      q: "Does Hong Kong stamp duty apply when I buy AU shares or property?",
+      a: "No — HK stamp duty applies to HK-listed share transfers and HK real property only. Buying ASX shares or AU property triggers AU-side duties only: brokerage fees plus any state stamp duty on property (NSW 8% surcharge, VIC 8%, QLD 7%, etc., on top of standard duty). General information only — see the relevant state revenue office for a property quote.",
+    },
   ],
   related: [
     { title: "Buy Property in Australia as a Foreigner", href: "/foreign-investment/guides/buy-property-australia-foreigner" },
