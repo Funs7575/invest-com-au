@@ -61,7 +61,7 @@ These are the priority items. Each one is a real table the app depends on whose 
 | `content_calendar` | 20 | `app/admin/content-calendar/page.tsx` — editorial calendar. | A-09 (content tables) |
 | `content_products` | 0 | Type-only; likely retired or never shipped. Verify. | A-99 (retire from types) |
 | `conversion_events` | 7 | `app/api/marketplace/postback/route.ts` — affiliate postback / conversion stream. | A-05 (affiliate / finance) |
-| `country_investment_profiles` | 1 | `app/foreign-investment/[country]/page.tsx`. Foreign-investment content data. Note `foreign_investment_dta` IS in migrations; this is likely a related but separate table or a renaming. | A-09 (content tables) — verify rename |
+| `country_investment_profiles` | 0 | Reader retired in Country Mode Phase 4 (RFC 2026-05-08). Rows for the 12 IntentCountryCode hubs deactivated; table preserved for a possible future admin/CMS surface. | A-09 (content tables) — preserved, no live reads |
 | `courses` | 9 | `app/admin/courses/page.tsx` — paid course catalog. | A-10 (consultations / courses) |
 | `course_lessons` | 6 | Per-course lesson rows. | A-10 (consultations / courses) |
 | `course_progress` | 2 | `app/api/course/progress/route.ts` — user progress through lessons. User-data → RLS required. | A-10 (consultations / courses) |
