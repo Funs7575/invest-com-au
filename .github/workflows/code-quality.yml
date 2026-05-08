@@ -30,7 +30,15 @@ jobs:
 
       - uses: actions/setup-node@v6
         with:
-          node-version: "20"
+          # 22 (not 20) — @supabase/supabase-js v2 requires native
+          # WebSocket support (Node 22+) when constructing a client
+          # without an explicit `ws` transport. The metrics collector
+          # builds a Supabase client to pull M04/M07/M08/M09/M10/M12;
+          # on Node 20 it dies with "Node.js 20 detected without
+          # native WebSocket support" before the script reaches main().
+          # CLAUDE.md says Node 20+ required, but Vercel builds on 24
+          # and we want the collector job to match.
+          node-version: "22"
           cache: "npm"
 
       - name: Install
