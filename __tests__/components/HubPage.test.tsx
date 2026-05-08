@@ -1,10 +1,16 @@
 /**
  * @vitest-environment jsdom
  */
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import HubPage from "@/components/HubPage";
 import type { HubConfig } from "@/lib/verticals";
+
+vi.mock("@/components/Icon", () => ({
+  default: ({ name, ...rest }: { name: string; [key: string]: unknown }) => (
+    <span data-testid={`icon-${name}`} {...rest} />
+  ),
+}));
 
 const MINIMAL_CONFIG: HubConfig = {
   slug: "smsf",
