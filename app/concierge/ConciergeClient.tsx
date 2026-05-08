@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 
@@ -64,6 +65,11 @@ function renderContent(content: string): React.ReactNode {
   return parts;
 }
 
+// Seed-param length cap. Long enough for any reasonable starter,
+// short enough that a malicious URL can't ship a full prompt-injection
+// payload. The /api/concierge route still rate-limits + cost-caps.
+const SEED_MAX_LEN = 200;
+
 export default function ConciergeClient() {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -74,6 +80,8 @@ export default function ConciergeClient() {
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const abortRef = useRef<AbortController | null>(null);
+  const searchParams = useSearchParams();
+  const seedFiredRef = useRef(false);
 
   // Restore session id on mount and fetch stored history.
   useEffect(() => {
@@ -235,6 +243,23 @@ export default function ConciergeClient() {
   const stopStream = useCallback(() => {
     abortRef.current?.abort();
   }, []);
+
+  // Auto-fire a seed prompt from the URL (?seed=…) on first mount,
+  // but only when starting fresh. Skipped if a stored session is
+  // hydrating or any messages already exist. Length-capped to bound
+  // any abuse vector — the route also rate-limits + cost-caps.
+  useEffect(() => {
+    if (seedFiredRef.current) return;
+    if (hydrating) return;
+    if (messages.length > 0) return;
+    const seed = searchParams?.get("seed")?.trim() ?? "";
+    if (!seed || seed.length > SEED_MAX_LEN) return;
+    seedFiredRef.current = true;
+    void send(seed);
+    // Intentionally omit `send` from deps — it changes when streaming
+    // flips, and seedFiredRef already guards against double-fire.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hydrating, messages.length, searchParams]);
 
   const clearSession = useCallback(async () => {
     if (streaming) return;
