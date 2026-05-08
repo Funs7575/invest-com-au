@@ -2,8 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
-// eslint-disable-next-line no-restricted-imports -- pre-IA-refactor; admin client used here historically because the original schema lacked an anon SELECT policy on fund_listings. Migrate to createClient + an explicit anon policy on status='active' in a follow-up; out of scope for the 2026-05-07 IA refactor.
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 import Icon from "@/components/Icon";
 import RegisterInterestForm from "@/components/funds/RegisterInterestForm";
 import type { FundListing } from "../FundsDirectoryClient";
@@ -12,7 +11,10 @@ export const revalidate = 600;
 
 async function fetchFund(slug: string): Promise<FundListing | null> {
   try {
-    const supabase = createAdminClient();
+    // RLS-respecting client. fund_listings has a public SELECT policy for
+    // anon + authenticated where status = 'active'. The .eq filter below
+    // is redundant with the policy but kept for query-clarity.
+    const supabase = await createClient();
     const { data } = await supabase
       .from("fund_listings")
       .select("*")
@@ -28,7 +30,7 @@ async function fetchFund(slug: string): Promise<FundListing | null> {
 async function fetchRelated(fundType: string | null, excludeId: number): Promise<FundListing[]> {
   if (!fundType) return [];
   try {
-    const supabase = createAdminClient();
+    const supabase = await createClient();
     const { data } = await supabase
       .from("fund_listings")
       .select("id, title, slug, fund_type, manager_name, min_investment_cents, target_return_percent, featured, featured_tier, siv_complying, open_to_retail, description, fund_size_cents, firb_relevant, status")
