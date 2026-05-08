@@ -47,7 +47,7 @@ _None yet — will be populated as the loop opens stream branches & PRs._
 | V | `claude/audit-remediation/v-polish-extras` (#252) · `v-new-02-factual-filter` (#346) | #252 MERGED 2026-04-28T11:23Z · #346 MERGED 2026-05-01T13:57Z | last merged 2026-05-01T13:57Z | V-NEW-04 done (`5aadce3`) · V-NEW-01 done (`a99c5db0`) · V-NEW-02 done (PR #346 — `filterFactualOutput()` AFSL gate) · V-NEW-03 done (`84bde1f`). V-NEW-02b deferred (B-stream follow-up). |
 | V (V-NEW-06) | `claude/audit-remediation/v-new-06-ai-cost-caps` | #258 MERGED 2026-04-28T11:45Z | merged | V-NEW-06 done (commit `a7bd736`) |
 | V (V-NEW-07) | `claude/audit-remediation/v-new-07-admin-mfa-enforced` | #256 MERGED 2026-04-28T15:44Z | merged | V-NEW-07a done · V-NEW-07b done (`698bbae`) — **Tier D: needs `ADMIN_MFA_COOKIE_SECRET` ≥32 chars in Vercel before merge** (PR was merged; env var status unclear) |
-| W | `claude/audit-remediation/w-06-hub-advisor-cta` (#602) · `claude/audit-remediation/w-07-hub-faq` (#604) · `claude/audit-remediation/w-08-directory-grid` (#605) · `claude/audit-remediation/w-09-calculator-shell` (#606) · `claude/audit-remediation/w-10-eligibility-quiz` (#607) · `claude/audit-remediation/w-11-cross-hub-links` (#608) · `claude/audit-remediation/w-12-hub-page` (#609) | #306/#312/#369/#529 all MERGED · **#598 MERGED 2026-05-08** · **#599 MERGED 2026-05-08** · **#602 MERGED 2026-05-08** · **#604 MERGED 2026-05-08** · **#605 MERGED 2026-05-08** · **#606 MERGED 2026-05-08** · **#607 MERGED 2026-05-08** · **#608 MERGED 2026-05-08** · **#609 MERGED 2026-05-08** | CI-rescue iter 304 — `3ad5710` (PR #607 W-10: add missing Icon mock to EligibilityQuiz test). iter 304 — `80c1faa` (PR #609 W-12 sub-item 1: HubPage HOC + 17 tests). iter 303 — `c70de66` (PR #608 W-11: CrossHubLinks + 12 tests). iter 302 — `4ef90fb` (PR #607 W-10: EligibilityQuiz + 14 tests). iter 301 — `039978f` (PR #606 W-09: CalculatorShell + 21 tests + RdTaxCalculator migrated). iter 300 — `c25ffa0` (PR #605 W-08 sub-item 2: SmsfAuditorsClient migrated to DirectoryGrid). iter 299 — `da6edc3` (PR #605 W-08 sub-item 1: DirectoryCard + DirectoryFilter + DirectoryGrid + 35 tests). **iter 298 — SYSTEMIC SMOKE TEST BLOCK** (PRs #598+#599+#604 smoke test failing; Lint/Build green; see Blocked section). CI-rescue iter 297 — `99a7c5f`+`75ce9d6` (PR #602 W-06: test import fix + merge main). iter 296 — `deeeb26` (PR #604 W-07). | W-01 done (PR #306). W-NEW-01 done (PR #312). W-02 done (PR #369). W-03 **done** (PR #529). **W-04 done** (PR #598 MERGED 2026-05-08). **W-05 done** (PR #599 MERGED 2026-05-08). **W-06 done** (PR #602 MERGED 2026-05-08). **W-07 done** (PR #604 MERGED 2026-05-08). **W-08 done** (PR #605 MERGED 2026-05-08). **W-09 done** (PR #606 MERGED 2026-05-08). **W-10 done** (PR #607 MERGED 2026-05-08). **W-11 done** (PR #608 MERGED 2026-05-08). **W-12 done** (PR #609 MERGED 2026-05-08). W-13..W-15 pending. |
+| W | `claude/audit-remediation/w-13-smsf-hubpage` (#634) | #306/#312/#369/#529 all MERGED · **#598 MERGED 2026-05-08** · **#599 MERGED 2026-05-08** · **#602 MERGED 2026-05-08** · **#604 MERGED 2026-05-08** · **#605 MERGED 2026-05-08** · **#606 MERGED 2026-05-08** · **#607 MERGED 2026-05-08** · **#608 MERGED 2026-05-08** · **#609 MERGED 2026-05-08** · **#634 CI pending** | iter 305 — `28c00e5` (PR #634 W-13: 18 smoke tests for /smsf HubPage migration). CI-rescue iter 304 — `3ad5710` (PR #607 W-10: add missing Icon mock to EligibilityQuiz test). iter 304 — `80c1faa` (PR #609 W-12 sub-item 1: HubPage HOC + 17 tests). iter 303 — `c70de66` (PR #608 W-11: CrossHubLinks + 12 tests). iter 302 — `4ef90fb` (PR #607 W-10: EligibilityQuiz + 14 tests). iter 301 — `039978f` (PR #606 W-09: CalculatorShell + 21 tests + RdTaxCalculator migrated). iter 300 — `c25ffa0` (PR #605 W-08 sub-item 2: SmsfAuditorsClient migrated to DirectoryGrid). iter 299 — `da6edc3` (PR #605 W-08 sub-item 1: DirectoryCard + DirectoryFilter + DirectoryGrid + 35 tests). | W-01 done (PR #306). W-NEW-01 done (PR #312). W-02 done (PR #369). W-03 **done** (PR #529). **W-04 done** (PR #598 MERGED 2026-05-08). **W-05 done** (PR #599 MERGED 2026-05-08). **W-06 done** (PR #602 MERGED 2026-05-08). **W-07 done** (PR #604 MERGED 2026-05-08). **W-08 done** (PR #605 MERGED 2026-05-08). **W-09 done** (PR #606 MERGED 2026-05-08). **W-10 done** (PR #607 MERGED 2026-05-08). **W-11 done** (PR #608 MERGED 2026-05-08). **W-12 done** (PR #609 MERGED 2026-05-08). **W-13 done** (PR #634 CI pending). W-14..W-15 pending. |
 | X | all PRs MERGED | #257/#367/#596/#600 all MERGED · last merged 2026-05-08 | all merged 2026-05-08 (X-03+X-04). | X-01 done (PR #257). X-02 done (#367). **X-03 done** (PR #596 MERGED 2026-05-08). **X-04 done** (PR #600 MERGED 2026-05-08). X-05..X-09 pending. |
 | Y | all PRs MERGED | #253/#347 both MERGED | last merged 2026-05-01T22:00Z | Y-05 done (PR #253). Y-08 done (PR #253). Y-05-ENRICH MERGED (#347 — sourcedAt/source/freshness enrichment + 16 new tests). Y-01..Y-04, Y-06, Y-07 pending. |
 | BB | all PRs MERGED | #361/#368 both MERGED | last merged 2026-05-01T22:01Z | BB-03 MERGED (#361 — CGT calc vs ATO, 5 regulator-reference tests). BB-06 MERGED (#368 — mortgage stress vs ASIC+APRA, 8 cases). Other BB items pending. |
@@ -1143,7 +1143,7 @@ its own tests; existing hubs migrate progressively. Reference:
 | W-10 | done | Extract `<EligibilityQuiz>` (generalised from `/grants/eligibility-quiz`) + tests | 1 | Done — PR #607 MERGED 2026-05-08. `components/EligibilityQuiz.tsx` (158 LOC) + 14 tests. |
 | W-11 | done | Build `<CrossHubLinks>` rail driven by registry adjacency + tests | 1 | Done — PR #608 MERGED 2026-05-08. `components/CrossHubLinks.tsx` (151 LOC) + 12 tests. HUB_REGISTRY covers 17 hubs. |
 | W-12 | done | Build `<HubPage>` HOC (renders all slots from a `HubConfig`) + tests | 2 | Done — PR #609 MERGED 2026-05-08. `components/HubPage.tsx` (189 LOC) + 17 tests. |
-| W-13 | pending | Migrate `/smsf` onto `<HubPage>` (proof-of-template) + smoke tests | 1 | First migration; validates the design. |
+| W-13 | done | Migrate `/smsf` onto `<HubPage>` (proof-of-template) + smoke tests | 1 | Done — PR #634 (CI pending). `/smsf/page.tsx` already used `<HubPage>` with `SMSF_HUB_CONFIG`; W-13 delivered 18 smoke tests (`__tests__/app/smsf-hub-page.test.tsx`). |
 | W-14 | pending | Migrate `/grants` onto `<HubPage>` (relocate to `/startup/grants` with 301 redirect; preserve old URL) + smoke tests | 1 | Coordinates with Z-08. |
 | W-15 | pending | Migrate remaining existing hubs (`/dividends`, `/sell-business`, `/learn`, `/lump-sum-investing`, `/negative-gearing`, `/visa-investment`) onto `<HubPage>` (1 hub per iteration) + smoke tests | ~6 | One hub per iteration. |
 | W-NEW-01 | done | Calculator math reference test pattern (drafts the ATO/ASIC worked-example reference test scaffolding that every BB-* item inherits) | 1 | Done in PR #312 MERGED 2026-04-30T17:43Z (`feat(w): W-NEW-01 — calculator regulator-reference test pattern + first proof`). Pattern shipped + first proof attached to existing calculator; unblocks BB-* stream. |
@@ -1523,7 +1523,7 @@ its own tests; existing hubs migrate progressively. Reference:
 | W-10 | done | Extract `<EligibilityQuiz>` (generalised from `/grants/eligibility-quiz`) + tests | 1 | Done — PR #607 MERGED 2026-05-08. `components/EligibilityQuiz.tsx` (158 LOC) + 14 tests. |
 | W-11 | done | Build `<CrossHubLinks>` rail driven by registry adjacency + tests | 1 | Done — PR #608 MERGED 2026-05-08. `components/CrossHubLinks.tsx` (151 LOC) + 12 tests. HUB_REGISTRY covers 17 hubs. |
 | W-12 | done | Build `<HubPage>` HOC (renders all slots from a `HubConfig`) + tests | 2 | Done — PR #609 MERGED 2026-05-08. `components/HubPage.tsx` (189 LOC) + 17 tests. |
-| W-13 | pending | Migrate `/smsf` onto `<HubPage>` (proof-of-template) + smoke tests | 1 | First migration; validates the design. |
+| W-13 | done | Migrate `/smsf` onto `<HubPage>` (proof-of-template) + smoke tests | 1 | Done — PR #634 (CI pending). `/smsf/page.tsx` already used `<HubPage>` with `SMSF_HUB_CONFIG`; W-13 delivered 18 smoke tests (`__tests__/app/smsf-hub-page.test.tsx`). |
 | W-14 | pending | Migrate `/grants` onto `<HubPage>` (relocate to `/startup/grants` with 301 redirect; preserve old URL) + smoke tests | 1 | Coordinates with Z-08. |
 | W-15 | pending | Migrate remaining existing hubs (`/dividends`, `/sell-business`, `/learn`, `/lump-sum-investing`, `/negative-gearing`, `/visa-investment`) onto `<HubPage>` (1 hub per iteration) + smoke tests | ~6 | One hub per iteration. |
 
@@ -4292,6 +4292,25 @@ One file changed: `docs/audits/REMEDIATION_QUEUE.md`. No code touched. Tier A do
 
 - STATUS: PROGRESS · stream=queue-housekeeping · items=18-PRs-merged · commit=TBD
 - Next item: A-03 batch 5 — revenue/content tables RLS backfill
+
+---
+
+### 2026-05-08 — Forward progress iter 305 (stream W — W-13: /smsf HubPage smoke tests)
+
+- Item: W-13 — Migrate `/smsf` onto `<HubPage>` (proof-of-template) + smoke tests
+- Branch: `claude/audit-remediation/w-13-smsf-hubpage` · PR: #634
+- Phase 0: lock held. No LOOP_PAUSE sentinel.
+- Phase 1: main at `5cfba55` (iter 305 queue housekeeping — queue-housekeeping-iter305 branch, PR #633). Queue read end-to-end.
+- Phase 1.5: skipped — no migration in last 24h; no inflight PR failing Supabase types drift.
+- Phase 1.7: main CI — last run success. Main healthy.
+- Phase 2: No in-flight PRs with active CI (all previously merged). No rescue needed.
+- Phase 3: Priority walk — W next; W-13 pending.
+- Phase 4: Verified `/smsf/page.tsx` already uses `<HubPage config={SMSF_HUB_CONFIG}>` (HOC migration done in prior W-12 work). W-13 remaining deliverable: 18 smoke tests.
+- Phase 5: Created `__tests__/app/smsf-hub-page.test.tsx` (219 LOC, 18 tests). Mock chain: `vi.hoisted` + `setupArticlesMock` helper. Hardware exception applied — node_modules absent, CI is authoritative gate.
+- Phase 6: Committed `28c00e5` (`test(w): W-13 smoke tests for /smsf HubPage migration (18 tests)`), pushed, PR #634 opened.
+- Phase 7: Queue updated — W-13 marked done in both stream-W sections, in-flight table updated.
+
+STATUS: PROGRESS · stream=W · item=W-13 · pr=#634
 
 ---
 
