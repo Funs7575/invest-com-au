@@ -218,8 +218,105 @@ export interface CountryConfig {
    * 4–6 items per country. Lets a returning user jump straight to the
    * filtered slice that matches them instead of re-deriving the path
    * through the country guide every visit.
+   *
+   * Also re-used as the homepage popular-starting-points strip when this
+   * country is selected — Country Mode keeps a single source of truth
+   * for the country's headline links rather than duplicating copy.
    */
   defaultActions?: ReadonlyArray<QuickAction>;
+
+  // ─── Country Mode hooks (optional) ───────────────────────────────────
+  //
+  // Read by surfaces *other* than this country's foreign-investment hub
+  // — the homepage country-mode preview strips, the quiz prefill, the
+  // soft GeoIP prompt, Phase-5 language routing. All optional with
+  // global-feed fallbacks: a half-populated config produces the global
+  // homepage, never a broken or fake-supply one.
+
+  /**
+   * Filters the homepage listings preview when this country is the
+   * resolved Country Mode. `verticals` are slugs from `lib/verticals.ts`
+   * (e.g. "property", "shares"). `firb: true` further narrows to FIRB-
+   * eligible listings — meaningful for inbound property corridors. When
+   * omitted, the homepage falls through to the global listings feed.
+   */
+  homepageListingFilters?: {
+    verticals: ReadonlyArray<string>;
+    firb?: boolean;
+  };
+
+  /**
+   * Filters the homepage experts preview. `specialties` are advisor-type
+   * strings stored on `professionals` rows (free-text — e.g. "tax",
+   * "buyers-agent", "mortgage-broker"). `languages` is a list of ISO
+   * 639-1 codes (e.g. "zh", "ar") that narrows to experts who can serve
+   * the user in the target language. When omitted, falls through to
+   * the global experts feed.
+   */
+  homepageExpertFilters?: {
+    specialties: ReadonlyArray<string>;
+    languages?: ReadonlyArray<string>;
+  };
+
+  /**
+   * Filters the homepage compare-platforms preview. `types` are the
+   * `PlatformType` enum values to surface (typically share_broker for
+   * inbound corridors, plus crypto_exchange for crypto-active markets).
+   * `nonResidentsOnly: true` narrows to platforms with
+   * `accepts_non_residents = true` — meaningful for share_broker /
+   * cfd_forex / crypto_exchange where the column is populated. When
+   * omitted, falls through to the global compare grid.
+   */
+  homepagePlatformFilters?: {
+    types: ReadonlyArray<PlatformType>;
+    nonResidentsOnly?: boolean;
+  };
+
+  /**
+   * Tools to surface first in the homepage tools strip when this
+   * country is selected. Each entry is a tool slug plus optional URL
+   * params to pre-fill (e.g. `{ from: "GBP" }` on the FX-corridor
+   * calculator). The full tools list still renders — country mode
+   * re-ranks, it doesn't replace.
+   */
+  homepageFeaturedTools?: ReadonlyArray<{
+    slug: string;
+    label: string;
+    deeplinkParams?: Record<string, string>;
+  }>;
+
+  /**
+   * Languages the country-mode user is likely to read/speak — drives
+   * expert-language filtering today and Phase-5 language routing
+   * tomorrow. ISO 639-1 codes (e.g. ["en", "zh"], ["ar", "en"]).
+   */
+  preferredLanguages?: ReadonlyArray<string>;
+
+  // ─── Phase-5 language hooks (scaffolding only, not read yet) ─────────
+  //
+  // Reserved for the Language Mode work in Phase 5. Defining the shape
+  // now lets country configs declare language intent (RTL, default,
+  // route map) without restructuring later. Nothing reads these in
+  // Phase 1 — they exist purely so Phase 5 plugs into a stable
+  // interface.
+
+  /** Whether any of this country's supported languages is right-to-left (Arabic). */
+  hasRtlLanguage?: boolean;
+  /** Default language code for users in this country (ISO 639-1). */
+  defaultLanguage?: string;
+  /** All languages a user from this country may want (ISO 639-1 codes). */
+  supportedLanguages?: ReadonlyArray<string>;
+  /**
+   * Map from language code to the localised version of this country's
+   * hub (e.g. `{ "zh-Hans": "/zh/foreign-investment/china" }`). Phase 5
+   * will read this to emit hreflang and language-switcher links.
+   */
+  languageRoutes?: Record<string, string>;
+  /**
+   * Phase-5 readiness flag: true once translations + RTL pass exist
+   * for this country. Phase 1 ships this as undefined/false everywhere.
+   */
+  rtlReady?: boolean;
 
   /** Optional red-banner callout above the audiences section (e.g. US worldwide-tax warning). */
   criticalWarning?: CriticalWarning;
@@ -2109,6 +2206,7 @@ export const IN_CONFIG: CountryConfig = {
 export const HK_CONFIG: CountryConfig = {
   code: "hk",
   defaultActions: [
+    { emoji: "🤝", label: "Get matched for HK investors", sublabel: "60-second quiz — broker, advisor, or property strategy", href: "/quiz?country=hong-kong" },
     { emoji: "🇭🇰", label: "Investing in Australia from Hong Kong", sublabel: "DTA, no HK CGT, FIRB, ASX brokers — full guide", href: "/foreign-investment/hong-kong" },
     { emoji: "📈", label: "Brokers that accept HK residents", sublabel: "IBKR HK + Saxo HK most common", href: "/compare/non-residents" },
     { emoji: "🏠", label: "FIRB-eligible new properties", sublabel: "Sydney/Melbourne CBD apartments most popular with HK buyers", href: "/invest?firb=eligible" },
@@ -2116,6 +2214,46 @@ export const HK_CONFIG: CountryConfig = {
     { emoji: "🛂", label: "HK → AU pathway visas", sublabel: "BN(O)/SAR/HKBN holders have a reserved migration stream", href: "/advisors/migration-agents" },
     { emoji: "👤", label: "Find an HK-AU advisor", sublabel: "Cross-border tax + AU residency + FIRB", href: "/advisors" },
   ],
+  // Phase 1 model country for Country Mode homepage personalisation.
+  // The other 11 country configs fall back to global until Phase 2 fills
+  // them in. Numbers are conservative — supply thresholds (2 listings,
+  // 2 experts, 3 platforms) gate visibility regardless.
+  homepageListingFilters: {
+    // HK investors most often consider AU commercial property, business
+    // acquisitions, and private-market funds (per addendum module copy).
+    // These map to existing investment_listings.vertical slugs.
+    verticals: ["commercial-property", "buy-business", "funds"],
+    firb: false,
+  },
+  homepageExpertFilters: {
+    // Cross-border tax, buyer's agents, mortgage brokers — the three
+    // most-asked expert types for HK→AU investors. languages includes
+    // zh (Chinese, encompasses both Mandarin and Cantonese readers via
+    // ISO 639-1) and the Cantonese-specific yue tag where the
+    // `professionals.languages` jsonb has it.
+    specialties: ["tax", "buyers-agent", "mortgage-broker"],
+    languages: ["zh", "yue", "en"],
+  },
+  homepagePlatformFilters: {
+    // ASX shares + crypto are the active inbound corridors. Non-residents
+    // flag is on so we surface only brokers explicitly accepting HK IDs.
+    types: ["share_broker", "crypto_exchange"],
+    nonResidentsOnly: true,
+  },
+  // Featured tools for the global tools-strip re-rank. `slug` is the
+  // tool's href — HomeToolsStrip hoists the matching entries to the
+  // front of the existing list (no replacement, no shrinkage). FIRB
+  // cost + CGT + mortgage are the three calculators most relevant to
+  // HK property + ASX investors. WHT calculator and FX-corridor
+  // calculator are flagged for Phase 2 once they land in the global
+  // tools list — adding them to homepageFeaturedTools today would be
+  // a no-op because there's nothing for the rerank to hoist.
+  homepageFeaturedTools: [
+    { slug: "/property/foreign-investment", label: "FIRB cost (HK buyers)" },
+    { slug: "/cgt-calculator", label: "CGT for non-residents" },
+    { slug: "/mortgage-calculator", label: "Mortgage repayments" },
+  ],
+  preferredLanguages: ["en", "zh", "yue"],
   slug: "hong-kong",
   countryName: "Hong Kong",
   countryShort: "HK",

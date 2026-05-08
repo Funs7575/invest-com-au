@@ -340,7 +340,18 @@ A `status = 'published'` allow-SELECT policy would fix the public pages but leav
 
 ---
 
-### G-04 · Partial-failure-marker migrations need founder verification (surfaced 2026-04-30 by agent)
+### G-04 · Partial-failure-marker migrations — verified 2026-05-08
+
+**Update 2026-05-08:** Full verification ran via Supabase MCP `execute_sql`. Results in `docs/audits/g-04-verification-results-2026-05-08.md`. Six of eight migrations clean. Two findings surfaced:
+
+- **M2 — `best_for_scenarios` 20 slugs missing** (P2, customer-visible 404s on `/best/<slug>` for 20 scenarios). Forward-fix migration ready (verbatim re-run of the original idempotent INSERT block). Pending founder Tier C authorisation.
+- **M6 — `20260411_features_11_12_14_15_16_18.sql` entire migration never applied to live** (P1, 7 tables + 17 column ALTERs missing; 11 prod code paths affected). Forward-fix migration ready (verbatim re-run of the original idempotent file). Pending founder Tier C authorisation.
+
+Migrations 1, 3, 5, 7, 8 verified clean — no action needed. Migration 4 (advisor photos) is not a partial-failure: 17/167 advisors with NULL `photo_url` were inserted post-migration; optional cosmetic backfill noted in the verification doc.
+
+---
+
+### G-04 ORIGINAL · Partial-failure-marker migrations need founder verification (surfaced 2026-04-30 by agent)
 
 **Finding:** 8 migrations contain partial-failure markers (audit §5.5) indicating uncertain prod state — 2 with `TODO.md` references, 6 where the file ends with a trailing `--` comment after the last SQL statement (a pattern that has historically caused some pipelines to silently truncate the final statement). See `docs/audits/g-04-partial-failure-markers.md` for the per-migration verification SQL + recovery actions. The 8 migrations:
 
