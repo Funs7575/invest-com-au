@@ -11,6 +11,8 @@ import {
   setIntentCountryAction,
   clearIntentCountryAction,
 } from "@/lib/intent-context-actions";
+import { COUNTRY_MODE_OPEN_SELECTOR_EVENT } from "@/components/country-mode/CountryModeBannerSwitchButton";
+import { trackEvent } from "@/lib/tracking";
 
 // ─── Country data (single source of truth, used to be split across
 // InternationalBanner) ──────────────────────────────────────────────────────
@@ -55,6 +57,7 @@ function flagEmoji(code: string): string {
 }
 
 const STORAGE_KEY = "iv-location-flag-override";
+const DISMISSED_KEY = "iv-country-prompt-dismissed";
 
 function hasIntentCountryCookie(): boolean {
   if (typeof document === "undefined") return false;
@@ -67,6 +70,7 @@ export default function LocationFlagButton() {
   const [open, setOpen] = useState(false);
   const [override, setOverride] = useState<string | null>(null);
   const [detectedCountry, setDetectedCountry] = useState<string | null>(null);
+  const [dismissed, setDismissed] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   // Read any previously-set override from localStorage. We don't render the
@@ -84,6 +88,7 @@ export default function LocationFlagButton() {
       const stored = localStorage.getItem(STORAGE_KEY);
       // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: localStorage is read post-hydration to keep SSR markup consistent
       if (stored) setOverride(stored);
+      if (localStorage.getItem(DISMISSED_KEY) === "1") setDismissed(true);
       if (stored && stored !== "AU" && !hasIntentCountryCookie()) {
         const match = SUPPORTED_COUNTRIES.find((c) => c.code === stored);
         if (match) {
@@ -137,6 +142,15 @@ export default function LocationFlagButton() {
     };
   }, [open]);
 
+  // Listen for the open-selector custom event — fired by
+  // CountryModeBanner's "Switch country" button. Decoupled from the
+  // banner so neither component imports the other directly.
+  useEffect(() => {
+    const handler = () => setOpen(true);
+    window.addEventListener(COUNTRY_MODE_OPEN_SELECTOR_EVENT, handler);
+    return () => window.removeEventListener(COUNTRY_MODE_OPEN_SELECTOR_EVENT, handler);
+  }, []);
+
   const setOverrideAndPersist = useCallback((value: string | null) => {
     setOverride(value);
     try {
@@ -149,9 +163,21 @@ export default function LocationFlagButton() {
 
   // Effective country = explicit override (user clicked one in the popover)
   // OR detected country OR fallback "AU" so the button always renders a flag.
-  const effective = override ?? detectedCountry ?? "AU";
+  // When the user has dismissed the soft-prompt, ignore the detected
+  // signal so the popover treats them as AU/global rather than re-prompting.
+  const detectedEffective = !override && dismissed ? null : detectedCountry;
+  const effective = override ?? detectedEffective ?? "AU";
   const supported = SUPPORTED_COUNTRIES.find((c) => c.code === effective);
-  const isAU = effective === "AU";
+  // Three popover states:
+  //   - explicit:  user picked a country (override) → show actions list + reset
+  //   - suggested: GeoIP detected an unconfirmed country → soft prompt
+  //   - generic:   AU / no signal → "Investing from overseas?" generic CTA
+  const popoverState: "explicit" | "suggested" | "generic" =
+    supported && override
+      ? "explicit"
+      : supported && !override && detectedEffective
+        ? "suggested"
+        : "generic";
 
   return (
     <div ref={ref} className="relative">
@@ -161,14 +187,19 @@ export default function LocationFlagButton() {
         aria-haspopup="menu"
         aria-expanded={open}
         aria-label={
-          isAU
-            ? "Switch to investing-from-overseas view"
-            : `Investing from ${supported?.name ?? "overseas"}? Switch view`
+          popoverState === "explicit" && supported
+            ? `Currently viewing as ${supported.name}. Switch country`
+            : popoverState === "suggested" && supported
+              ? `Investing from ${supported.name}? Switch view`
+              : "Switch to investing-from-overseas view"
         }
         className="px-2 py-2 rounded-xl text-base hover:bg-slate-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 leading-none flex items-center gap-1.5"
       >
         <span aria-hidden>{flagEmoji(effective)}</span>
-        {!isAU && supported && (
+        {/* Country name only renders for confirmed selection — a detected
+        but unconfirmed country shouldn't put a name in the nav, since
+        the user hasn't agreed they're in country mode yet. */}
+        {popoverState === "explicit" && supported && (
           <>
             {/* Mobile: ISO short ("HK"). ≥sm: full short name ("Hong Kong"). */}
             <span className="sm:hidden text-xs font-semibold text-slate-700">
@@ -191,15 +222,61 @@ export default function LocationFlagButton() {
           className="absolute right-0 top-full mt-2 z-[60] w-[360px] bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/60 overflow-hidden"
         >
           <div className="p-4">
-            {supported && !isAU ? (
+            {popoverState === "suggested" && supported ? (
               <>
                 <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">
-                  {override ? "Viewing as" : "Detected location"}
+                  Suggested
                 </p>
                 <p className="text-sm font-semibold text-slate-900 mb-3">
-                  {override
-                    ? `You're browsing as ${flagEmoji(effective)} ${supported.name}.`
-                    : `We've detected you're in ${flagEmoji(effective)} ${supported.name}.`}
+                  Looks like you&rsquo;re in {flagEmoji(effective)} {supported.name}. See the {supported.name.replace(/^the /, "")} investor view?
+                </p>
+                <div className="flex flex-col gap-2">
+                  <Link
+                    href={`/foreign-investment/${supported.slug}`}
+                    onClick={() => {
+                      setOverrideAndPersist(supported.code);
+                      void setIntentCountryAction(supported.intentCode);
+                      trackEvent("country_mode_selected", {
+                        country: supported.intentCode,
+                        source: "popover_suggestion",
+                      });
+                      setOpen(false);
+                    }}
+                    className="block text-center bg-amber-400 hover:bg-amber-300 text-slate-900 font-semibold px-3 py-2 rounded-xl transition-colors"
+                  >
+                    View {supported.name.replace(/^the /, "")} version
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      // Don't lie about location — keep override empty
+                      // but mark the prompt dismissed so the popover
+                      // shows the generic state next time.
+                      try {
+                        localStorage.setItem(DISMISSED_KEY, "1");
+                      } catch {
+                        /* ignore */
+                      }
+                      setDismissed(true);
+                      trackEvent("country_mode_dismissed", {
+                        country: supported.intentCode,
+                        source: "popover_suggestion",
+                      });
+                      setOpen(false);
+                    }}
+                    className="text-center text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 transition-colors"
+                  >
+                    Stay on global
+                  </button>
+                </div>
+              </>
+            ) : popoverState === "explicit" && supported ? (
+              <>
+                <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">
+                  Viewing as
+                </p>
+                <p className="text-sm font-semibold text-slate-900 mb-3">
+                  You&rsquo;re browsing as {flagEmoji(effective)} {supported.name}.
                 </p>
                 {(() => {
                   const actions = COUNTRY_CONFIGS[supported.intentCode]?.defaultActions ?? [];
@@ -303,6 +380,10 @@ export default function LocationFlagButton() {
                     // this component's local UI.
                     setOverrideAndPersist(c.code);
                     void setIntentCountryAction(c.intentCode);
+                    trackEvent("country_mode_selected", {
+                      country: c.intentCode,
+                      source: "popover_grid",
+                    });
                     setOpen(false);
                   }}
                   className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-white transition-colors"

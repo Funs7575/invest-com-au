@@ -24,12 +24,20 @@ describe("intentCountryMeta", () => {
   it.each(INTENT_COUNTRY_CODES)("%s has all required fields populated", (code) => {
     const meta = intentCountryMeta(code);
     expect(meta.slug).toBeTruthy();
+    expect(meta.name).toBeTruthy();
     expect(meta.label).toBeTruthy();
     expect(meta.flag).toBeTruthy();
     expect(meta.currency).toMatch(/^[A-Z]{3}$/);
     expect(meta.quizKey).toBeTruthy();
     expect(meta.iso).toMatch(/^[A-Z]{2}$/);
     expect(typeof meta.hasDta).toBe("boolean");
+  });
+
+  it("name is a place name (not the 'investors' label)", () => {
+    expect(intentCountryMeta("uk").name).toBe("the UK");
+    expect(intentCountryMeta("hk").name).toBe("Hong Kong");
+    expect(intentCountryMeta("sa").name).toBe("Saudi Arabia");
+    expect(intentCountryMeta("uk").name).not.toBe(intentCountryMeta("uk").label);
   });
 
   it("uk maps to GB ISO (UK is reserved, not official alpha-2)", () => {

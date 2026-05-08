@@ -24,9 +24,24 @@ const QuizPromptBar = dynamic(() => import("@/components/QuizPromptBar"), { ssr:
 const ExitIntentPopup = dynamic(() => import("@/components/ExitIntentPopup"), { ssr: false });
 const StickyAdFooter = dynamic(() => import("@/components/StickyAdFooter"), { ssr: false });
 const TrackingPixels = dynamic(() => import("@/components/TrackingPixels"), { ssr: false });
+// Country Mode soft prompt — CSR-only (reads /api/geo + localStorage),
+// renders only when the user has no preference and GeoIP detects a
+// supported corridor. See docs/architecture/country-mode.md.
+const GeoSoftPrompt = dynamic(() => import("@/components/country-mode/GeoSoftPrompt"), { ssr: false });
 
+interface LayoutShellProps {
+  children: React.ReactNode;
+  /**
+   * Country Mode persistent banner — server-rendered in app/layout.tsx
+   * (so it reads the iv_intent_country cookie on the request) and
+   * passed through as a slot. We can't import the server component
+   * directly in this client wrapper; the slot pattern keeps cookie
+   * reads on the server while letting LayoutShell stay client.
+   */
+  countryModeBanner?: React.ReactNode;
+}
 
-export default function LayoutShell({ children }: { children: React.ReactNode }) {
+export default function LayoutShell({ children, countryModeBanner }: LayoutShellProps) {
   const pathname = usePathname();
   const isAdmin = pathname.startsWith("/admin");
 
@@ -44,6 +59,7 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
       </a>
 
       <Navigation />
+      {countryModeBanner}
       <main id="main-content" className="min-h-screen pb-14 sm:pb-0">{children}</main>
       <SiteFooter />
       <CookieBanner />
@@ -52,6 +68,7 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
       <ExitIntentPopup />
       <StickyAdFooter />
       <TrackingPixels />
+      <GeoSoftPrompt />
     </>
   );
 }

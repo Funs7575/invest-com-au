@@ -40,6 +40,14 @@ export type IntentCountryCode =
 interface IntentCountryMeta {
   /** Folder name under app/foreign-investment/ */
   slug: string;
+  /**
+   * Place name used in banner/prompt copy, e.g. "the UK", "Hong Kong",
+   * "Saudi Arabia". Differs from `label` (which suffixes "investors")
+   * and `slug` (which is hyphenated for URLs). Articles ("the") are
+   * baked in where natural so copy reads "Looks like you're in <name>"
+   * without needing per-country sentence templates.
+   */
+  name: string;
   /** UI label, e.g. "UK investors" */
   label: string;
   /** Emoji flag for badges */
@@ -68,18 +76,18 @@ interface IntentCountryMeta {
 }
 
 const KNOWN: Record<IntentCountryCode, IntentCountryMeta> = {
-  uk: { slug: "united-kingdom",       label: "UK investors",         flag: "🇬🇧", currency: "GBP", hasDta: true,  quizKey: "uk",            iso: "GB" },
-  us: { slug: "united-states",        label: "US investors",         flag: "🇺🇸", currency: "USD", hasDta: true,  quizKey: "usa",           iso: "US" },
-  cn: { slug: "china",                label: "Chinese investors",    flag: "🇨🇳", currency: "CNY", hasDta: true,  quizKey: "china",         iso: "CN" },
-  in: { slug: "india",                label: "Indian investors",     flag: "🇮🇳", currency: "INR", hasDta: true,  quizKey: "india",         iso: "IN" },
-  jp: { slug: "japan",                label: "Japanese investors",   flag: "🇯🇵", currency: "JPY", hasDta: true,  quizKey: "japan",         iso: "JP" },
-  sg: { slug: "singapore",            label: "Singapore investors",  flag: "🇸🇬", currency: "SGD", hasDta: true,  quizKey: "singapore",     iso: "SG" },
-  hk: { slug: "hong-kong",            label: "HK investors",         flag: "🇭🇰", currency: "HKD", hasDta: false, quizKey: "hong_kong",     iso: "HK" },
-  kr: { slug: "south-korea",          label: "Korean investors",     flag: "🇰🇷", currency: "KRW", hasDta: true,  quizKey: "south_korea",   iso: "KR" },
-  my: { slug: "malaysia",             label: "Malaysian investors",  flag: "🇲🇾", currency: "MYR", hasDta: true,  quizKey: "malaysia",      iso: "MY" },
-  nz: { slug: "new-zealand",          label: "NZ investors",         flag: "🇳🇿", currency: "NZD", hasDta: true,  quizKey: "new_zealand",   iso: "NZ" },
-  ae: { slug: "united-arab-emirates", label: "UAE investors",        flag: "🇦🇪", currency: "AED", hasDta: true,  quizKey: "uae",           iso: "AE" },
-  sa: { slug: "saudi-arabia",         label: "Saudi investors",      flag: "🇸🇦", currency: "SAR", hasDta: false, quizKey: "saudi_arabia",  iso: "SA" },
+  uk: { slug: "united-kingdom",       name: "the UK",        label: "UK investors",         flag: "🇬🇧", currency: "GBP", hasDta: true,  quizKey: "uk",            iso: "GB" },
+  us: { slug: "united-states",        name: "the US",        label: "US investors",         flag: "🇺🇸", currency: "USD", hasDta: true,  quizKey: "usa",           iso: "US" },
+  cn: { slug: "china",                name: "China",         label: "Chinese investors",    flag: "🇨🇳", currency: "CNY", hasDta: true,  quizKey: "china",         iso: "CN" },
+  in: { slug: "india",                name: "India",         label: "Indian investors",     flag: "🇮🇳", currency: "INR", hasDta: true,  quizKey: "india",         iso: "IN" },
+  jp: { slug: "japan",                name: "Japan",         label: "Japanese investors",   flag: "🇯🇵", currency: "JPY", hasDta: true,  quizKey: "japan",         iso: "JP" },
+  sg: { slug: "singapore",            name: "Singapore",     label: "Singapore investors",  flag: "🇸🇬", currency: "SGD", hasDta: true,  quizKey: "singapore",     iso: "SG" },
+  hk: { slug: "hong-kong",            name: "Hong Kong",     label: "HK investors",         flag: "🇭🇰", currency: "HKD", hasDta: false, quizKey: "hong_kong",     iso: "HK" },
+  kr: { slug: "south-korea",          name: "South Korea",   label: "Korean investors",     flag: "🇰🇷", currency: "KRW", hasDta: true,  quizKey: "south_korea",   iso: "KR" },
+  my: { slug: "malaysia",             name: "Malaysia",      label: "Malaysian investors",  flag: "🇲🇾", currency: "MYR", hasDta: true,  quizKey: "malaysia",      iso: "MY" },
+  nz: { slug: "new-zealand",          name: "New Zealand",   label: "NZ investors",         flag: "🇳🇿", currency: "NZD", hasDta: true,  quizKey: "new_zealand",   iso: "NZ" },
+  ae: { slug: "united-arab-emirates", name: "the UAE",       label: "UAE investors",        flag: "🇦🇪", currency: "AED", hasDta: true,  quizKey: "uae",           iso: "AE" },
+  sa: { slug: "saudi-arabia",         name: "Saudi Arabia",  label: "Saudi investors",      flag: "🇸🇦", currency: "SAR", hasDta: false, quizKey: "saudi_arabia",  iso: "SA" },
 };
 
 const CODE_BY_SLUG: Record<string, IntentCountryCode> = Object.fromEntries(
