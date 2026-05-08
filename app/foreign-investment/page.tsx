@@ -16,6 +16,8 @@ import DTASearchTable from "./DTASearchTable";
 import ForeignInvestmentNav from "./ForeignInvestmentNav";
 import WHTCalculator from "./WHTCalculator";
 import SectionHeading from "@/components/SectionHeading";
+import HubFAQ from "@/components/HubFAQ";
+import type { FaqItem } from "@/components/HubFAQ";
 
 export const metadata: Metadata = {
   title: "Investing in Australia from Overseas — Complete Guide 2026",
@@ -50,47 +52,39 @@ export const metadata: Metadata = {
 
 export const revalidate = 86400;
 
-const HUB_FAQS = [
+const HUB_FAQS: FaqItem[] = [
   {
-    question: "Can foreigners invest in Australia?",
-    answer:
-      "Yes. Non-residents can invest in Australian shares, crypto, savings accounts, and some property — but specific rules, taxes, and eligibility restrictions apply to each asset class. Key obligations include withholding tax on dividends (30% unfranked, reduced by DTA) and interest (10%), FIRB approval for property, and enhanced KYC for financial accounts.",
+    q: "Can foreigners invest in Australia?",
+    a: "Yes. Non-residents can invest in Australian shares, crypto, savings accounts, and some property — but specific rules, taxes, and eligibility restrictions apply to each asset class. Key obligations include withholding tax on dividends (30% unfranked, reduced by DTA) and interest (10%), FIRB approval for property, and enhanced KYC for financial accounts.",
   },
   {
-    question: "Do non-residents pay tax in Australia?",
-    answer:
-      "Non-residents pay Australian tax only on income sourced in Australia. Unlike residents, there is no tax-free threshold — tax applies from the first dollar at 30% (up to $135,000) for the 2025–26 year. Withholding tax is deducted automatically on dividends and interest. Non-residents generally do NOT owe Australian CGT on most listed shares, but DO owe CGT on Australian real property.",
+    q: "Do non-residents pay tax in Australia?",
+    a: "Non-residents pay Australian tax only on income sourced in Australia. Unlike residents, there is no tax-free threshold — tax applies from the first dollar at 30% (up to $135,000) for the 2025–26 year. Withholding tax is deducted automatically on dividends and interest. Non-residents generally do NOT owe Australian CGT on most listed shares, but DO owe CGT on Australian real property.",
   },
   {
-    question: "What is the withholding tax rate for foreign investors?",
-    answer:
-      "Withholding tax rates are: unfranked dividends 30% (or lower under a DTA), fully franked dividends 0% (tax already paid via imputation), interest 10%, royalties 30% (or lower under DTA). Australia has DTAs with 40+ countries that reduce these rates — for example, US residents pay 15% on dividends and UK residents also 15%.",
+    q: "What is the withholding tax rate for foreign investors?",
+    a: "Withholding tax rates are: unfranked dividends 30% (or lower under a DTA), fully franked dividends 0% (tax already paid via imputation), interest 10%, royalties 30% (or lower under DTA). Australia has DTAs with 40+ countries that reduce these rates — for example, US residents pay 15% on dividends and UK residents also 15%.",
   },
   {
-    question: "What is DASP and how much will I get back?",
-    answer:
-      "DASP is the Departing Australia Superannuation Payment — the mechanism for temporary visa holders to claim their super when leaving Australia. For most temp visa holders, DASP withholding is 35% on the taxed element. Working Holiday Makers pay 65% across all components. You apply via the ATO's DASP portal after your visa has ceased.",
+    q: "What is DASP and how much will I get back?",
+    a: "DASP is the Departing Australia Superannuation Payment — the mechanism for temporary visa holders to claim their super when leaving Australia. For most temp visa holders, DASP withholding is 35% on the taxed element. Working Holiday Makers pay 65% across all components. You apply via the ATO's DASP portal after your visa has ceased.",
   },
   {
-    question: "Do I need FIRB approval to buy property in Australia?",
-    answer:
-      // dated-ok — FIRB Foreign Buyer Ban window fixed by Foreign Acquisitions & Takeovers Amendment 2024; review at expiry (March 2027).
-      "Yes, if you are a non-resident or temporary visa holder. Non-residents can only buy new dwellings, off-the-plan properties, or vacant land for development. From 1 April 2025 to 31 March 2027, the Australian Government has also banned foreign persons — including temporary residents — from purchasing established (existing) dwellings. Exceptions may apply in limited cases. Stamp duty surcharges of 7–8% (depending on state) apply on top of standard stamp duty. FIRB application fees start at $14,100 for properties up to $1 million.",
+    q: "Do I need FIRB approval to buy property in Australia?",
+    // dated-ok — FIRB Foreign Buyer Ban window fixed by Foreign Acquisitions & Takeovers Amendment 2024; review at expiry (March 2027).
+    a: "Yes, if you are a non-resident or temporary visa holder. Non-residents can only buy new dwellings, off-the-plan properties, or vacant land for development. From 1 April 2025 to 31 March 2027, the Australian Government has also banned foreign persons — including temporary residents — from purchasing established (existing) dwellings. Exceptions may apply in limited cases. Stamp duty surcharges of 7–8% (depending on state) apply on top of standard stamp duty. FIRB application fees start at $14,100 for properties up to $1 million.",
   },
   {
-    question: "Which Australian share brokers accept non-residents?",
-    answer:
-      "Very few Australian-based retail brokers accept true non-residents (people without an Australian address). Interactive Brokers is the standout exception — available in 200+ countries. Most domestic brokers (CommSec, Stake, Moomoo) require an Australian residential address. Temporary visa holders in Australia can generally open accounts normally.",
+    q: "Which Australian share brokers accept non-residents?",
+    a: "Very few Australian-based retail brokers accept true non-residents (people without an Australian address). Interactive Brokers is the standout exception — available in 200+ countries. Most domestic brokers (CommSec, Stake, Moomoo) require an Australian residential address. Temporary visa holders in Australia can generally open accounts normally.",
   },
   {
-    question: "What is a Double Tax Agreement (DTA)?",
-    answer:
-      "A DTA is a bilateral treaty between Australia and another country that prevents income from being taxed twice. DTAs reduce the Australian withholding tax rate on dividends, interest, and royalties for residents of the treaty country. Australia has DTAs with over 40 countries. If your country has a DTA with Australia, you may pay significantly less withholding tax.",
+    q: "What is a Double Tax Agreement (DTA)?",
+    a: "A DTA is a bilateral treaty between Australia and another country that prevents income from being taxed twice. DTAs reduce the Australian withholding tax rate on dividends, interest, and royalties for residents of the treaty country. Australia has DTAs with over 40 countries. If your country has a DTA with Australia, you may pay significantly less withholding tax.",
   },
   {
-    question: "Can temporary visa holders in Australia invest normally?",
-    answer:
-      "It depends on your tax residency status, which is determined by the ATO's residency tests — not automatically assumed for all visa holders. Most temporary workers who live and work in Australia will pass the 'resides' test and be treated as Australian tax residents, allowing them to open brokerage, crypto, and savings accounts as residents. However, working holiday makers (subclass 417 and 462) are generally not Australian tax residents for tax purposes. Always confirm your residency status before assuming resident treatment applies.",
+    q: "Can temporary visa holders in Australia invest normally?",
+    a: "It depends on your tax residency status, which is determined by the ATO's residency tests — not automatically assumed for all visa holders. Most temporary workers who live and work in Australia will pass the 'resides' test and be treated as Australian tax residents, allowing them to open brokerage, crypto, and savings accounts as residents. However, working holiday makers (subclass 417 and 462) are generally not Australian tax residents for tax purposes. Always confirm your residency status before assuming resident treatment applies.",
   },
 ];
 
@@ -135,20 +129,10 @@ export default async function ForeignInvestmentHubPage() {
     { name: "Foreign Investment Hub" },
   ]);
 
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: HUB_FAQS.map((f) => ({
-      "@type": "Question",
-      name: f.question,
-      acceptedAnswer: { "@type": "Answer", text: f.answer },
-    })),
-  };
 
   return (
     <div className="bg-white min-h-screen">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
 
       <ForeignInvestmentNav current="/foreign-investment" />
 
@@ -515,28 +499,12 @@ export default async function ForeignInvestmentHubPage() {
         </div>
       </section>
 
-      {/* ── FAQ ──────────────────────────────────────────────────────── */}
-      <section className="py-12 md:py-16">
-        <div className="container-custom max-w-3xl">
-          <SectionHeading
-            eyebrow="Common questions"
-            title="Frequently asked questions"
-          />
-          <div className="space-y-4">
-            {HUB_FAQS.map((faq) => (
-              <details key={faq.question} className="group bg-white rounded-xl border border-slate-200">
-                <summary className="px-5 py-4 text-sm font-bold text-slate-900 cursor-pointer list-none flex items-center justify-between hover:bg-slate-50 rounded-xl transition-colors">
-                  {faq.question}
-                  <span className="text-slate-400 group-open:rotate-180 transition-transform text-base ml-3">⌄</span>
-                </summary>
-                <div className="px-5 pb-4 text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
-                  {faq.answer}
-                </div>
-              </details>
-            ))}
-          </div>
-        </div>
-      </section>
+      <HubFAQ
+        items={HUB_FAQS}
+        heading="Frequently asked questions"
+        eyebrow="Common questions"
+        className="py-12 md:py-16"
+      />
 
       {/* ── Disclaimer ───────────────────────────────────────────────── */}
       <section className="py-6 bg-slate-50 border-t border-slate-200">

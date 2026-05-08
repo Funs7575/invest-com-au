@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 import Icon from "@/components/Icon";
 import ReportGate from "./ReportGate";
 
@@ -34,7 +34,7 @@ const SECTOR_LABELS: Record<string, string> = {
 
 async function fetchReport(slug: string): Promise<ReportRow | null> {
   try {
-    const supabase = createAdminClient();
+    const supabase = await createClient();
     const { data } = await supabase
       .from("sector_reports")
       .select("*")
@@ -53,7 +53,7 @@ async function fetchRelated(
 ): Promise<ReportRow[]> {
   if (!sector) return [];
   try {
-    const supabase = createAdminClient();
+    const supabase = await createClient();
     const { data } = await supabase
       .from("sector_reports")
       .select("id, title, slug, sector, summary, sponsor_name, sponsor_logo_url, gated, published_at, report_url, status")
