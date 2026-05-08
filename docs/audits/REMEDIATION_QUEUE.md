@@ -14,7 +14,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 
 | Stream | Branch | PRs (history → latest) | Notes | Done-when |
 |--------|--------|------------------------|-------|-----------|
-| A | `claude/audit-remediation/a-04-rls-anon-select` | #207/#322/#351/#352/#353/#354/#355/#378/#380/#381/#382/#457/#540 | A-01..A-04 done. A-05 pending (broker_reviews, broker_ratings). | A-05 merged |
+| A | _complete_ | #207/#322/#351/#352/#353/#354/#355/#378/#380/#381/#382/#457/#540 | A-01..A-04 done. A-05 resolved as **false-positive** — broker_reviews/broker_ratings don't exist in schema (user_reviews covered by A-02). **Stream complete.** | A-05 merged ✓ |
 | B | `claude/audit-remediation/b-09-edge-fn-secrets` | #208/#301/#457 | B-01..B-08 done. B-09 blocked (see Blocked). | B-09 unblocked + merged |
 | C | `claude/audit-remediation/c-05-index-coverage` | #209/#302/#338/#356/#357/#358/#359/#360/#361/#362/#457/#541 | C-01..C-02 done. C-03..C-05 blocked (see Blocked). | C-05 merged |
 | D | `claude/audit-remediation/d-09-seo-drift` | #210/#303/#339/#363/#364/#365/#366/#457/#542 | D-01..D-09 done. | D-09 merged ✓ |
@@ -37,7 +37,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | U | `claude/audit-remediation/u-04-url-canonicals` | #226/#319/#399/#457/#520/#561 | U-01..U-04 done. | U-04 merged ✓ |
 | V | `claude/audit-remediation/v-07-auth-hardening` | #227/#320/#400/#457/#521/#562 | V-01..V-07 done. | V-07 merged ✓ |
 | W | `claude/audit-remediation/w-12-hub-page-hoc` (W-15 remaining) | #306/#312/#369/#529/#598/#599/#602/#604/#605/#606/#607/#608/#609/#612 | **#609 MERGED 2026-05-08** (W-12+W-13+W-15 dividends). **#612 MERGED 2026-05-08** (W-14 grants→/startup/grants). W-04..W-15 all MERGED. | All W tasks merged ✓ |
-| X | `claude/audit-remediation/x-06-how-to-transfer` (X-06 pending) | #257/#367/#596/#600/#610 all MERGED 2026-05-08 | queue-sync iter 315 — X-03 (#596), X-04 (#600), X-05 (#610) all MERGED. X-06 branch pending. | X-06 merged |
+| X | `claude/audit-remediation/x-06-how-to-transfer` · **#641 OPEN** | #257/#367/#596/#600/#610 MERGED · **#641** | X-03 (#596), X-04 (#600), X-05 (#610) MERGED. **#641 OPEN** (X-06 — clear createAdminClient from /how-to/transfer-from, 2 files). | X-06 merged |
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
 | Z | `claude/audit-remediation/z-04-zero-state-ux` | #230/#323/#403/#457/#524/#565 | Z-01..Z-04 done. | Z-04 merged ✓ |
 
@@ -880,6 +880,7 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 
 | Stream | Final PR | Completed | Notes |
 |--------|----------|-----------|-------|
+| A | #540 | iter 317 | A-01..A-04 done; A-05 false-positive (broker_reviews/broker_ratings don't exist in schema) |
 | D | #542 | iter 198 | D-01..D-09 all merged |
 | H | #545 | iter 210 | H-01..H-06 all merged |
 | I | #546 | iter 215 | I-01..I-05 all merged |
@@ -900,6 +901,26 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-08 — iter 318 (X — X-06: clear createAdminClient from /how-to/transfer-from)
+
+**PR:** #641 (`claude/audit-remediation/x-06-how-to-transfer`) — OPEN, CI running.
+
+**Why:** `/how-to/transfer-from/page.tsx` and `/how-to/transfer-from/[broker_slug]/page.tsx` used `createAdminClient()` (service-role) on public-reference tables that already carry anon SELECT policies. `broker_transfer_guides` has an anon SELECT policy from A-04 migration `20260604140001`; `brokers` has `"Public read for active brokers"` from `001_initial.sql`. Service-role was an unnecessary escalation on a public ISR page with no auth context.
+
+**What shipped:** 6 `createAdminClient()` calls replaced with `await createClient()` across 2 files (index page: 2 call sites; detail page: 4 call sites incl. `generateStaticParams`). No logic changes.
+
+**Commit:** `09bc9146` (2 files, 8 insertions / 8 deletions). Hardware exception: CI is authoritative gate.
+
+---
+
+### 2026-05-08 — iter 317 (A — A-05 false-positive: broker_reviews/broker_ratings don't exist)
+
+**Status:** False-positive. No code shipped. Stream moved to Done.
+
+**Why:** Queue item A-05 referenced `broker_reviews` and `broker_ratings` as tables needing anon SELECT RLS policies. Verification found: neither table exists in any migration (`supabase/migrations/*.sql`) or in `lib/database.types.ts`. The review/ratings functionality is served by `user_reviews` (RLS-covered by A-02, migration `20260603120007_a02_backfill_user_data_user_reviews.sql`). A stream complete — all items done or resolved as false-positive.
+
+---
 
 ### 2026-05-08 — iter 316 (R — R-COVERAGE-M2-B: CGT+mortgage+currency.formatAUD test coverage)
 
