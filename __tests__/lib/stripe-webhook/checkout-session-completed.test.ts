@@ -370,4 +370,489 @@ describe("handleCheckoutSessionCompleted", () => {
       expect.any(Object),
     );
   });
+
+  it("short-circuits with done when sponsored_placement booking already exists (re-delivery guard)", async () => {
+    const ctx = makeCtx({
+      "sponsored_placement_bookings": () => thenable({ id: "existing_bk_1" }),
+    });
+    const result = await handleCheckoutSessionCompleted(
+      makeSession({
+        metadata: {
+          kind: "sponsored_placement",
+          broker_id: "10",
+          broker_slug: "commsec",
+          broker_name: "CommSec",
+          tier: "premium_top",
+          starts_at: "2026-05-01",
+          ends_at: "2026-05-31",
+          duration_days: "30",
+        },
+        payment_status: "paid",
+      }),
+      ctx,
+    );
+    expect(result).toEqual({ status: "done" });
+    expect(ctx.log.info).toHaveBeenCalledWith(
+      "sponsored_placement booking already exists",
+      expect.objectContaining({ session_id: "cs_test" }),
+    );
+    expect(mockSendEmail).not.toHaveBeenCalled();
+  });
+
+  it("lazy-fetches invoice URL when session.invoice is a string ID", async () => {
+    const ctx = makeCtx({
+      "sponsored_placement_bookings": () => ({
+        ...thenable(null),
+        insert: vi.fn().mockReturnThis(),
+        then: vi.fn((cb: (v: unknown) => void) => {
+          cb({ data: null, error: null });
+          return Promise.resolve();
+        }),
+      }),
+    });
+    await handleCheckoutSessionCompleted(
+      makeSession({
+        metadata: {
+          kind: "sponsored_placement",
+          broker_id: "10",
+          broker_slug: "commsec",
+          broker_name: "CommSec",
+          tier: "premium_top",
+          starts_at: "2026-05-01",
+          ends_at: "2026-05-31",
+          duration_days: "30",
+        },
+        payment_status: "paid",
+        invoice: "inv_string_abc" as unknown as Stripe.Checkout.Session["invoice"],
+      }),
+      ctx,
+    );
+    expect(ctx.stripe.invoices.retrieve).toHaveBeenCalledWith("inv_string_abc");
+  });
+
+  it("uses hosted_invoice_url from invoice object when invoice is not a string", async () => {
+    const ctx = makeCtx({
+      "sponsored_placement_bookings": () => ({
+        ...thenable(null),
+        insert: vi.fn().mockReturnThis(),
+        then: vi.fn((cb: (v: unknown) => void) => {
+          cb({ data: null, error: null });
+          return Promise.resolve();
+        }),
+      }),
+    });
+    await handleCheckoutSessionCompleted(
+      makeSession({
+        metadata: {
+          kind: "sponsored_placement",
+          broker_id: "10",
+          broker_slug: "commsec",
+          broker_name: "CommSec",
+          tier: "premium_top",
+          starts_at: "2026-05-01",
+          ends_at: "2026-05-31",
+          duration_days: "30",
+          contact_email: "buyer@broker.com",
+        },
+        payment_status: "paid",
+        invoice: { hosted_invoice_url: "https://inv.stripe.com/direct-obj" } as unknown as Stripe.Checkout.Session["invoice"],
+      }),
+      ctx,
+    );
+    // Did NOT call Stripe invoices.retrieve (it was an object, not a string)
+    expect(ctx.stripe.invoices.retrieve).not.toHaveBeenCalled();
+  });
+
+  it("logs error when investment_listings update fails", async () => {
+    let listingCallCount = 0;
+    const ctx = makeCtx({
+      "listing_plans": () => thenable({ plan_name: "Standard", features: { listing_duration_days: 30 } }),
+      "investment_listings": () => {
+        listingCallCount++;
+        if (listingCallCount === 1) {
+          return {
+            ...thenable(),
+            then: vi.fn((cb: (v: unknown) => void) => {
+              cb({ data: null, error: { message: "constraint violation" } });
+              return Promise.resolve();
+            }),
+          };
+        }
+        return thenable({ title: "SAAS Co", slug: "saas-co" });
+      },
+    });
+    await handleCheckoutSessionCompleted(
+      makeSession({
+        metadata: { type: "listing_payment", listing_id: "5", plan_id: "2", contact_email: "owner@test.com" },
+      }),
+      ctx,
+    );
+    expect(ctx.log.error).toHaveBeenCalledWith(
+      "Listing activation error",
+      expect.objectContaining({ listingId: 5 }),
+    );
+  });
+
+  it("defaults listing duration to 30 days when plan features are null", async () => {
+    const ctx = makeCtx({
+      "listing_plans": () => thenable({ plan_name: "Standard", features: null }),
+      "investment_listings": () => thenable({ title: "SAAS Co", slug: "saas-co" }),
+    });
+    await handleCheckoutSessionCompleted(
+      makeSession({
+        metadata: { type: "listing_payment", listing_id: "5", plan_id: "2" },
+      }),
+      ctx,
+    );
+    expect(ctx.log.info).toHaveBeenCalledWith(
+      "Listing activated",
+      expect.objectContaining({ durationDays: 30 }),
+    );
+  });
+
+  // ── batch 2 — additional edge-case coverage ────────────────────────────────
+
+  it("course flow: handles null course lookup (uses courseSlug as title fallback)", async () => {
+    const ctx = makeCtx({
+      courses: () => ({ ...thenable(null), maybeSingle: vi.fn().mockResolvedValue({ data: null, error: null }) }),
+      course_purchases: () => ({
+        ...thenable(),
+        upsert: vi.fn().mockReturnThis(),
+        select: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue({ data: { id: "pu_1" }, error: null }),
+      }),
+    });
+    const result = await handleCheckoutSessionCompleted(
+      makeSession({ metadata: { type: "course", supabase_user_id: "u1", course_slug: "my-course" } }),
+      ctx,
+    );
+    expect(result).toEqual({ status: "done" });
+    // email sent with courseSlug as fallback title
+    expect(mockSendEmail).toHaveBeenCalledWith(
+      "user@test.com",
+      expect.stringContaining("my-course"),
+      expect.anything(),
+    );
+  });
+
+  it("advisor_credit_topup: skips idempotency check when topupId is 0", async () => {
+    const idempotencySelect = vi.fn();
+    const ctx = makeCtx({
+      advisor_credit_topups: () => ({
+        ...thenable(),
+        select: idempotencySelect.mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        single: vi.fn().mockResolvedValue({ data: null, error: null }),
+      }),
+      professionals: () => thenable({ credit_balance_cents: 5000, lifetime_credit_cents: 5000, email: "adv@test.com", name: "Adv" }),
+    });
+    await handleCheckoutSessionCompleted(
+      makeSession({
+        metadata: { type: "advisor_credit_topup", professional_id: "7" },
+        // topup_id intentionally absent → parseInt("" || "0") = 0
+      }),
+      ctx,
+    );
+    // The idempotency select on advisor_credit_topups should NOT have been called
+    // (topupId === 0 means the guard is skipped)
+    expect(idempotencySelect).not.toHaveBeenCalled();
+  });
+
+  it("advisor_credit_topup: updates lead_price_cents when per_lead_cents metadata present", async () => {
+    const updateFn = vi.fn().mockReturnThis();
+    const eqFn = vi.fn().mockReturnThis();
+    let profCallCount = 0;
+    const ctx = makeCtx({
+      professionals: () => {
+        profCallCount++;
+        const t = thenable({ credit_balance_cents: 0, lifetime_credit_cents: 0, email: "adv@test.com", name: "Adv" });
+        return { ...t, update: updateFn, eq: eqFn };
+      },
+    });
+    await handleCheckoutSessionCompleted(
+      makeSession({
+        metadata: { type: "advisor_credit_topup", professional_id: "7", per_lead_cents: "2500" },
+      }),
+      ctx,
+    );
+    expect(updateFn).toHaveBeenCalledWith(
+      expect.objectContaining({ lead_price_cents: 2500 }),
+    );
+  });
+
+  it("advisor_featured: uses session.customer_email when advisor lookup returns null", async () => {
+    const ctx = makeCtx({
+      professionals: () => ({
+        ...thenable(null),
+        update: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        select: vi.fn().mockReturnThis(),
+        maybeSingle: vi.fn().mockResolvedValue({ data: null, error: null }),
+        then: vi.fn((cb: (v: unknown) => void) => {
+          cb({ data: null, error: null });
+          return Promise.resolve();
+        }),
+      }),
+    });
+    await handleCheckoutSessionCompleted(
+      makeSession({
+        metadata: { type: "advisor_featured", professional_id: "9" },
+        customer_email: "session-email@test.com",
+      }),
+      ctx,
+    );
+    expect(mockSendEmail).toHaveBeenCalledWith(
+      "session-email@test.com",
+      expect.stringContaining("Featured"),
+      expect.anything(),
+    );
+  });
+
+  it("consultation: skips booking when consultation not found in DB", async () => {
+    const upsertFn = vi.fn();
+    const ctx = makeCtx({
+      consultations: () => ({
+        ...thenable(null),
+        maybeSingle: vi.fn().mockResolvedValue({ data: null, error: null }),
+      }),
+      consultation_bookings: () => ({ ...thenable(), upsert: upsertFn }),
+    });
+    await handleCheckoutSessionCompleted(
+      makeSession({
+        metadata: { type: "consultation", supabase_user_id: "u2", consultation_slug: "tax-review" },
+      }),
+      ctx,
+    );
+    // Booking should NOT be attempted when consultation is null
+    expect(upsertFn).not.toHaveBeenCalled();
+  });
+
+  it("consultation: logs error when booking upsert fails", async () => {
+    const ctx = makeCtx({
+      consultations: () => ({
+        ...thenable({ id: "c1", title: "Tax Review" }),
+        maybeSingle: vi.fn().mockResolvedValue({ data: { id: "c1", title: "Tax Review" }, error: null }),
+      }),
+      consultation_bookings: () => ({
+        ...thenable(),
+        upsert: vi.fn().mockReturnThis(),
+        then: vi.fn((cb: (v: unknown) => void) => {
+          cb({ data: null, error: { message: "unique constraint" } });
+          return Promise.resolve();
+        }),
+      }),
+    });
+    await handleCheckoutSessionCompleted(
+      makeSession({
+        metadata: { type: "consultation", supabase_user_id: "u2", consultation_slug: "tax-review" },
+      }),
+      ctx,
+    );
+    expect(ctx.log.error).toHaveBeenCalledWith(
+      "Consultation booking upsert error",
+      expect.objectContaining({ error: "unique constraint" }),
+    );
+  });
+
+  it("consultation: sends confirmation email on successful booking", async () => {
+    const ctx = makeCtx({
+      consultations: () => ({
+        ...thenable({ id: "c1", title: "Tax Review" }),
+        select: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        maybeSingle: vi.fn().mockResolvedValue({ data: { id: "c1", title: "Tax Review" }, error: null }),
+      }),
+      consultation_bookings: () => ({
+        ...thenable(),
+        upsert: vi.fn().mockReturnThis(),
+        then: vi.fn((cb: (v: unknown) => void) => {
+          cb({ data: null, error: null });
+          return Promise.resolve();
+        }),
+      }),
+    });
+    await handleCheckoutSessionCompleted(
+      makeSession({
+        metadata: { type: "consultation", supabase_user_id: "u2", consultation_slug: "tax-review" },
+        customer_email: "client@test.com",
+      }),
+      ctx,
+    );
+    expect(mockSendEmail).toHaveBeenCalledWith(
+      "client@test.com",
+      expect.stringContaining("Tax Review"),
+      expect.anything(),
+    );
+    expect(mockBuildConsultationConfirmation).toHaveBeenCalledWith(
+      "Tax Review",
+      "tax-review",
+      4900,
+    );
+  });
+
+  it("sponsored_placement: skips block when payment_status is not 'paid'", async () => {
+    const insertFn = vi.fn();
+    const ctx = makeCtx({
+      sponsored_placement_bookings: () => ({ ...thenable(), insert: insertFn }),
+    });
+    await handleCheckoutSessionCompleted(
+      makeSession({
+        metadata: {
+          kind: "sponsored_placement",
+          broker_id: "10",
+          tier: "premium_top",
+          starts_at: "2026-05-01",
+          ends_at: "2026-05-31",
+        },
+        payment_status: "unpaid" as Stripe.Checkout.Session["payment_status"],
+      }),
+      ctx,
+    );
+    expect(insertFn).not.toHaveBeenCalled();
+  });
+
+  it("sponsored_placement: swallows invoice retrieval error (non-fatal)", async () => {
+    const ctx = makeCtx({
+      sponsored_placement_bookings: () => ({
+        ...thenable(null),
+        insert: vi.fn().mockReturnThis(),
+        then: vi.fn((cb: (v: unknown) => void) => {
+          cb({ data: null, error: null });
+          return Promise.resolve();
+        }),
+      }),
+    });
+    (ctx.stripe.invoices.retrieve as ReturnType<typeof vi.fn>).mockRejectedValue(
+      new Error("Stripe API error"),
+    );
+    // Should NOT throw — invoice retrieval failure is caught and treated as non-fatal
+    await expect(
+      handleCheckoutSessionCompleted(
+        makeSession({
+          metadata: {
+            kind: "sponsored_placement",
+            broker_id: "10",
+            broker_slug: "commsec",
+            broker_name: "CommSec",
+            tier: "premium_top",
+            starts_at: "2026-05-01",
+            ends_at: "2026-05-31",
+            duration_days: "30",
+          },
+          payment_status: "paid",
+          invoice: "inv_throw" as unknown as Stripe.Checkout.Session["invoice"],
+        }),
+        ctx,
+      ),
+    ).resolves.toEqual({ status: "done" });
+  });
+
+  // ── batch 3 — uncovered guard / catch-block paths ─────────────────────────
+
+  it("listing_payment: skips activation when listing_id is 0 or absent", async () => {
+    const ctx = makeCtx();
+    await handleCheckoutSessionCompleted(
+      makeSession({
+        metadata: { type: "listing_payment", listing_id: "0", plan_id: "2" },
+      }),
+      ctx,
+    );
+    expect(ctx.log.info).not.toHaveBeenCalledWith(
+      "Listing activated",
+      expect.any(Object),
+    );
+  });
+
+  it("advisor_credit_topup: skips flow when professional_id is 0 or absent", async () => {
+    const ctx = makeCtx();
+    await handleCheckoutSessionCompleted(
+      makeSession({
+        metadata: { type: "advisor_credit_topup", professional_id: "0" },
+        amount_total: 5000,
+      }),
+      ctx,
+    );
+    expect(ctx.log.info).not.toHaveBeenCalledWith(
+      "Advisor credit topped up",
+      expect.any(Object),
+    );
+  });
+
+  it("advisor_credit_topup: logs error when professionals email lookup throws (catch block)", async () => {
+    let profCalls = 0;
+    const ctx = makeCtx({
+      "professionals": () => {
+        profCalls++;
+        if (profCalls === 1) {
+          return thenable({ credit_balance_cents: 500, lifetime_credit_cents: 2000 });
+        }
+        if (profCalls === 2) {
+          return thenable(); // update — succeeds via then()
+        }
+        // Third call: select email/name inside try block — throws
+        return {
+          ...thenable(),
+          maybeSingle: vi.fn().mockRejectedValue(new Error("Connection lost")),
+        };
+      },
+    });
+    await handleCheckoutSessionCompleted(
+      makeSession({
+        metadata: { type: "advisor_credit_topup", professional_id: "42", topup_id: "0" },
+        amount_total: 5000,
+      }),
+      ctx,
+    );
+    expect(ctx.log.error).toHaveBeenCalledWith(
+      "Advisor topup receipt lookup failed",
+      expect.objectContaining({ error: "Connection lost" }),
+    );
+  });
+
+  it("advisor_featured: skips flow when professional_id is 0 or absent", async () => {
+    const ctx = makeCtx();
+    await handleCheckoutSessionCompleted(
+      makeSession({
+        metadata: { type: "advisor_featured", professional_id: "0" },
+        amount_total: 9900,
+      }),
+      ctx,
+    );
+    expect(ctx.log.info).not.toHaveBeenCalledWith(
+      "Advisor featured activated",
+      expect.any(Object),
+    );
+  });
+
+  it("advisor_featured: logs error when advisor lookup throws (catch block)", async () => {
+    let profCalls = 0;
+    const ctx = makeCtx({
+      "professionals": () => {
+        profCalls++;
+        if (profCalls === 1) {
+          return thenable(); // update featured_until — succeeds via then()
+        }
+        // Second call: select email/name/slug inside try block — throws
+        return {
+          ...thenable(),
+          maybeSingle: vi.fn().mockRejectedValue(new Error("Network timeout")),
+        };
+      },
+    });
+    await handleCheckoutSessionCompleted(
+      makeSession({
+        metadata: { type: "advisor_featured", professional_id: "42" },
+        amount_total: 9900,
+      }),
+      ctx,
+    );
+    expect(ctx.log.info).toHaveBeenCalledWith(
+      "Advisor featured activated",
+      expect.any(Object),
+    );
+    expect(ctx.log.error).toHaveBeenCalledWith(
+      "Advisor featured receipt lookup failed",
+      expect.objectContaining({ error: "Network timeout" }),
+    );
+  });
 });
