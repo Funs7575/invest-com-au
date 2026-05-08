@@ -123,6 +123,39 @@ export const handleCustomerSubscriptionUpdated: WebhookHandler = async (event, c
 };
 
 export const handleCustomerSubscriptionDeleted: WebhookHandler = async (event, ctx) => {
-  await upsertSubscription(event.data.object as Stripe.Subscription, ctx.admin, ctx.log);
+  const subscription = event.data.object as Stripe.Subscription;
+  await upsertSubscription(subscription, ctx.admin, ctx.log);
+
+  // Deferred-downgrade flip: when the tier-upgrade route initiated a
+  // downgrade with cancel_at_period_end + metadata.pending_tier, this
+  // is the moment the cycle actually ends and we land the new tier.
+  const pendingTier = subscription.metadata?.pending_tier;
+  const advisorIdMeta = subscription.metadata?.advisor_id;
+  if (pendingTier && advisorIdMeta) {
+    const advisorId = parseInt(advisorIdMeta, 10);
+    if (Number.isFinite(advisorId)) {
+      // pending_tier / pending_tier_effective_at land via the
+      // PR-B3 migration; until the typed DB regenerates we cast
+      // through `unknown` to keep the update payload as-is.
+      const update: Record<string, unknown> = {
+        advisor_tier: pendingTier,
+        pending_tier: null,
+        pending_tier_effective_at: null,
+        tier_changed_at: new Date().toISOString(),
+        tier_change_reason: "deferred_downgrade_cycle_end",
+      };
+      await ctx.admin
+        .from("professionals")
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- PR-B3 columns not yet in regenerated database.types.ts
+        .update(update as any)
+        .eq("id", advisorId);
+      ctx.log.info("Deferred downgrade flipped at cycle end", {
+        advisorId,
+        pendingTier,
+        subscriptionId: subscription.id,
+      });
+    }
+  }
+
   return { status: "done" };
 };

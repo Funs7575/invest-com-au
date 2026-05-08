@@ -62,6 +62,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/articles", "/scenarios", "/quiz", "/deals", "/stories", "/about", "/how-we-earn", "/privacy",
     "/privacy/data-collection", "/privacy/data-rights",
     "/methodology", "/how-we-verify", "/terms", "/switch", "/editorial-policy", "/benchmark",
+    "/billing-policy",
     "/health-scores", "/alerts", "/whats-new", "/costs", "/fee-impact", "/fee-alerts", "/score",
     "/glossary", "/complaints", "/contact", "/advisors", "/find-advisor", "/community",
     "/community/share-trading", "/community/etfs-index-funds", "/community/crypto",
