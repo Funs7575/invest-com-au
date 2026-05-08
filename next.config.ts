@@ -340,6 +340,16 @@ const nextConfig: NextConfig = {
         destination: "/global-investing/etfs/global",
         permanent: true,
       },
+      // ── W-14: /grants hub relocated to /startup/grants ──
+      // Canonical URL moves so the grants hub sits inside the /startup
+      // content cluster. Subroutes (/grants/eligibility-quiz, /grants/rd-tax-
+      // incentive, /grants/emdg, /grants/industry-growth-program) keep their
+      // current paths — only the hub index moves.
+      {
+        source: "/grants",
+        destination: "/startup/grants",
+        permanent: true,
+      },
     ];
   },
 };
