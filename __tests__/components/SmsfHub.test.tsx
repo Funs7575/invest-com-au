@@ -100,7 +100,7 @@ describe("SmsfHub migration — <HubPage> with SMSF_HUB_CONFIG", () => {
   it("renders smsf compliance block with super warning text", () => {
     render(<HubPage config={SMSF_HUB_CONFIG} />);
     const block = screen.getByTestId("hub-page-compliance");
-    expect(block).toHaveTextContent("General advice warning.");
+    expect(block).toHaveTextContent("general in nature");
     expect(block).toHaveTextContent("insurance cover");
   });
 

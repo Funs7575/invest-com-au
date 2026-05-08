@@ -104,7 +104,7 @@ describe("DividendsHub migration — <HubPage> with DIVIDENDS_HUB_CONFIG", () =>
   it("renders compliance block with general advice warning text", () => {
     render(<HubPage config={DIVIDENDS_HUB_CONFIG} />);
     const block = screen.getByTestId("hub-page-compliance");
-    expect(block).toHaveTextContent("General advice warning.");
+    expect(block).toHaveTextContent("general in nature");
   });
 
   it("renders service grid slot with entry point card titles", () => {
