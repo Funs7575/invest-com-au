@@ -106,6 +106,9 @@ export default function HubHero({
                     label={stat.label}
                   />
                 </dd>
+                {stat.subtitle && (
+                  <p className="text-[10px] text-slate-400 mt-0.5">{stat.subtitle}</p>
+                )}
                 {stat.source && (
                   <p className="text-[10px] text-slate-400 mt-0.5">
                     Source:{" "}
