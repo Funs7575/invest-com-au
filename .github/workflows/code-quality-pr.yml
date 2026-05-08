@@ -23,7 +23,11 @@ jobs:
 
       - uses: actions/setup-node@v6
         with:
-          node-version: "20"
+          # Node 22 needed for the metrics collector — @supabase/supabase-js
+          # v2 requires native WebSocket support to construct a client; Node 20
+          # lacks it and throws on createClient(). Mirrors the fix landed for
+          # code-quality.yml in cd787eda.
+          node-version: "22"
           cache: "npm"
 
       - name: Install
