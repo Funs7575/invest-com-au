@@ -2206,6 +2206,7 @@ export const IN_CONFIG: CountryConfig = {
 export const HK_CONFIG: CountryConfig = {
   code: "hk",
   defaultActions: [
+    { emoji: "🤝", label: "Get matched for HK investors", sublabel: "60-second quiz — broker, advisor, or property strategy", href: "/quiz?country=hong-kong" },
     { emoji: "🇭🇰", label: "Investing in Australia from Hong Kong", sublabel: "DTA, no HK CGT, FIRB, ASX brokers — full guide", href: "/foreign-investment/hong-kong" },
     { emoji: "📈", label: "Brokers that accept HK residents", sublabel: "IBKR HK + Saxo HK most common", href: "/compare/non-residents" },
     { emoji: "🏠", label: "FIRB-eligible new properties", sublabel: "Sydney/Melbourne CBD apartments most popular with HK buyers", href: "/invest?firb=eligible" },
@@ -2213,6 +2214,49 @@ export const HK_CONFIG: CountryConfig = {
     { emoji: "🛂", label: "HK → AU pathway visas", sublabel: "BN(O)/SAR/HKBN holders have a reserved migration stream", href: "/advisors/migration-agents" },
     { emoji: "👤", label: "Find an HK-AU advisor", sublabel: "Cross-border tax + AU residency + FIRB", href: "/advisors" },
   ],
+  // Phase 1 model country for Country Mode homepage personalisation.
+  // The other 11 country configs fall back to global until Phase 2 fills
+  // them in. Numbers are conservative — supply thresholds (2 listings,
+  // 2 experts, 3 platforms) gate visibility regardless.
+  homepageListingFilters: {
+    // HK investors most often consider AU commercial property, business
+    // acquisitions, and private-market funds (per addendum module copy).
+    // These map to existing investment_listings.vertical slugs.
+    verticals: ["commercial-property", "buy-business", "funds"],
+    firb: false,
+  },
+  homepageExpertFilters: {
+    // Cross-border tax, buyer's agents, mortgage brokers — the three
+    // most-asked expert types for HK→AU investors. languages includes
+    // zh (Chinese, encompasses both Mandarin and Cantonese readers via
+    // ISO 639-1) and the Cantonese-specific yue tag where the
+    // `professionals.languages` jsonb has it.
+    specialties: ["tax", "buyers-agent", "mortgage-broker"],
+    languages: ["zh", "yue", "en"],
+  },
+  homepagePlatformFilters: {
+    // ASX shares + crypto are the active inbound corridors. Non-residents
+    // flag is on so we surface only brokers explicitly accepting HK IDs.
+    types: ["share_broker", "crypto_exchange"],
+    nonResidentsOnly: true,
+  },
+  // Featured tools for the (future, Step 9) tools-strip re-rank: WHT
+  // calculator with the HK preset, FX corridor calculator pre-set to
+  // HKD→AUD. Intentionally short — the global tools strip remains the
+  // full surface; Country Mode only re-ranks.
+  homepageFeaturedTools: [
+    {
+      slug: "withholding-tax-calculator",
+      label: "Withholding tax for HK residents",
+      deeplinkParams: { country: "hk" },
+    },
+    {
+      slug: "send-money-australia",
+      label: "HKD → AUD transfers",
+      deeplinkParams: { from: "HKD" },
+    },
+  ],
+  preferredLanguages: ["en", "zh", "yue"],
   slug: "hong-kong",
   countryName: "Hong Kong",
   countryShort: "HK",

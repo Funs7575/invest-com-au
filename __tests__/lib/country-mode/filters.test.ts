@@ -14,17 +14,34 @@ describe("getHomepageFiltersForCountry", () => {
     });
   });
 
-  describe("supported country code without homepage* fields populated", () => {
-    // Step 3 added the optional fields to the interface; Step 7 will
-    // populate them on a per-country basis. Until then, every country
-    // returns null filters — which the homepage wrappers read as
-    // "render the global teaser, no country filtering."
-    it.each(INTENT_COUNTRY_CODES)("%s returns null filters when no fields set", (code) => {
-      const result = getHomepageFiltersForCountry(code);
-      expect(result.listings).toBeNull();
-      expect(result.experts).toBeNull();
-      expect(result.platforms).toBeNull();
-      expect(result.tools).toEqual([]);
+  describe("supported country codes — population status", () => {
+    // Step 7 populates HK as the Phase 1 model country; the other 11 fall
+    // back to global until Phase 2. The two assertions below are the
+    // contract: populated countries return runtime filter shapes, the
+    // rest return nulls so wrappers render the global teasers.
+    const POPULATED: ReadonlyArray<string> = ["hk"];
+
+    it.each(INTENT_COUNTRY_CODES.filter((c) => !POPULATED.includes(c)))(
+      "%s returns null filters (not yet populated)",
+      (code) => {
+        const result = getHomepageFiltersForCountry(code);
+        expect(result.listings).toBeNull();
+        expect(result.experts).toBeNull();
+        expect(result.platforms).toBeNull();
+        expect(result.tools).toEqual([]);
+      },
+    );
+
+    it("hk returns populated runtime filter shapes", () => {
+      const result = getHomepageFiltersForCountry("hk");
+      expect(result.listings).not.toBeNull();
+      expect(result.listings?.verticals).toContain("commercial-property");
+      expect(result.experts).not.toBeNull();
+      expect(result.experts?.specialties).toContain("tax");
+      expect(result.platforms).not.toBeNull();
+      expect(result.platforms?.types).toContain("share_broker");
+      expect(result.platforms?.nonResidentsOnly).toBe(true);
+      expect(result.tools.length).toBeGreaterThan(0);
     });
   });
 

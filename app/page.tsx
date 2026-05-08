@@ -11,6 +11,9 @@ import HomeCompareDeepDive, { type CompareBroker } from "@/components/HomeCompar
 import HomeCrossBorder from "@/components/HomeCrossBorder";
 import HomeFridayBriefing from "@/components/HomeFridayBriefing";
 import HomeHowWeEarn from "@/components/HomeHowWeEarn";
+import CountryListingsPreview from "@/components/country-mode/CountryListingsPreview";
+import CountryExpertsPreview from "@/components/country-mode/CountryExpertsPreview";
+import CountryComparePreview from "@/components/country-mode/CountryComparePreview";
 import ScrollFadeIn from "@/components/ScrollFadeIn";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import { ORGANIZATION_JSONLD, SITE_URL } from "@/lib/seo";
@@ -259,13 +262,25 @@ export default async function HomePage() {
         <HomePathfinder />
       </ScrollFadeIn>
 
+      {/* Country Mode preview wrappers — read iv_intent_country cookie in
+      their own subtree so the rest of the homepage stays ISR-cacheable.
+      Each renders nothing when no country selected, when the country has
+      no homepage* filters configured, or when the filtered slice falls
+      below the supply threshold. The global teasers below carry the
+      experience in those cases. See docs/architecture/country-mode.md. */}
+      <CountryComparePreview />
+
       <ScrollFadeIn>
         <HomeCompareDeepDive brokers={compareBrokers} />
       </ScrollFadeIn>
 
+      <CountryListingsPreview />
+
       <ScrollFadeIn>
         <HomeListingsTeaser listings={listingList} totalCount={totalListingCount} />
       </ScrollFadeIn>
+
+      <CountryExpertsPreview />
 
       <ScrollFadeIn>
         <HomeAdvisorsTeaser advisors={advisorList} totalCount={totalProfessionalCount} />
