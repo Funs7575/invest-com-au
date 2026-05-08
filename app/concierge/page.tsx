@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR, SITE_NAME } from "@/lib/seo";
 import ComplianceFooter from "@/components/ComplianceFooter";
 import ConciergeClient from "./ConciergeClient";
@@ -45,7 +46,9 @@ export default function ConciergePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(applicationLd) }}
       />
-      <ConciergeClient />
+      <Suspense fallback={null}>
+        <ConciergeClient />
+      </Suspense>
       <div className="container-custom pb-8 pt-2">
         <ComplianceFooter variant="default" />
       </div>
