@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl } from "@/lib/seo";
 import Icon from "@/components/Icon";
-import HubLeadForm from "@/components/leads/HubLeadForm";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 3600;
 
@@ -121,18 +121,14 @@ export default function EmdgPage() {
         </section>
 
         {/* Lead form */}
-        <section className="py-12 bg-slate-50 border-t border-slate-200">
-          <div className="container-custom max-w-2xl">
-            <HubLeadForm
-              heading="Connect with an EMDG consultant"
-              subheading="Tier classification has a meaningful impact on the cheque size. A specialist gets it right and structures the reimbursement evidence."
-              intent={{ need: "tax", context: ["tax_optimization"] }}
-              source="grants_emdg"
-              ctaLabel="Get matched with an EMDG specialist"
-              extraFields={[{ name: "company", label: "Company name" }, { name: "target_markets", label: "Target export markets" }]}
-            />
-          </div>
-        </section>
+        <HubAdvisorCTA
+          heading="Connect with an EMDG consultant"
+          subheading="Tier classification has a meaningful impact on the cheque size. A specialist gets it right and structures the reimbursement evidence."
+          intent={{ need: "tax", context: ["tax_optimization"] }}
+          source="grants_emdg"
+          ctaLabel="Get matched with an EMDG specialist"
+          extraFields={[{ name: "company", label: "Company name" }, { name: "target_markets", label: "Target export markets" }]}
+        />
 
         {/* Cross-links */}
         <section className="py-10 bg-white border-t border-slate-200">
