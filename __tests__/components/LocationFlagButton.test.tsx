@@ -36,25 +36,32 @@ describe("LocationFlagButton", () => {
   });
 
   describe("trigger label", () => {
-    it("renders flag-only when AU (default state)", async () => {
+    it("renders flag + chevron with no country name when AU (default state)", async () => {
       render(<LocationFlagButton />);
       const trigger = screen.getByRole("button", {
         name: /switch to investing-from-overseas view/i,
       });
       expect(trigger).toBeInTheDocument();
-      // The country name short label is hidden (Tailwind 'hidden sm:inline')
-      // when AU. Asserting absence of any of the supported-country names
-      // suffices.
+      // Chevron telegraphs "menu" affordance — must always render.
+      expect(trigger).toHaveTextContent("▾");
+      // No country name on default state.
       expect(screen.queryByText(/Hong Kong|UK|India|Singapore/)).not.toBeInTheDocument();
     });
 
-    it("renders flag + short name when a country is selected (override → state)", async () => {
+    it("renders flag + ISO + long name + chevron when a country is selected", async () => {
       // Pre-stamp localStorage so the first effect picks it up
       localStorage.setItem("iv-location-flag-override", "HK");
       render(<LocationFlagButton />);
-      // Wait for the post-mount effect that reads localStorage
-      const nameLabel = await screen.findByText("Hong Kong");
-      expect(nameLabel).toBeInTheDocument();
+      const trigger = await screen.findByRole("button", {
+        name: /Investing from Hong Kong/i,
+      });
+      // Both the mobile-only ISO and the desktop long name render in the
+      // DOM (Tailwind responsive classes don't compute in jsdom). Both
+      // should be present so screen-readers and breakpoint switches
+      // hand off cleanly.
+      expect(trigger).toHaveTextContent("Hong Kong");
+      expect(trigger).toHaveTextContent("HK");
+      expect(trigger).toHaveTextContent("▾");
     });
   });
 
@@ -90,20 +97,20 @@ describe("LocationFlagButton", () => {
     });
   });
 
-  describe("'I'm browsing as Australian' clears cookie + resets localStorage", () => {
+  describe("'Show me the global view' clears cookie + resets localStorage", () => {
     it("calls clearIntentCountryAction and stores AU in localStorage", async () => {
       const user = userEvent.setup();
       // Start with HK as the active country so the popover renders the
-      // "Viewing as" branch with the AU-reset link.
+      // "Viewing as" branch with the global-reset button.
       localStorage.setItem("iv-location-flag-override", "HK");
       render(<LocationFlagButton />);
 
       // Wait for the override to settle, then open the popover
       await screen.findByText("Hong Kong");
-      await user.click(screen.getByRole("button"));
+      await user.click(screen.getByRole("button", { name: /Investing from Hong Kong/i }));
 
       const resetButton = await screen.findByRole("button", {
-        name: /browsing as an Australian/i,
+        name: /show me the global view/i,
       });
       await user.click(resetButton);
 

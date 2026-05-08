@@ -169,10 +169,20 @@ export default function LocationFlagButton() {
       >
         <span aria-hidden>{flagEmoji(effective)}</span>
         {!isAU && supported && (
-          <span className="hidden sm:inline text-xs font-medium text-slate-700">
-            {supported.name.replace(/^the /, "")}
-          </span>
+          <>
+            {/* Mobile: ISO short ("HK"). ≥sm: full short name ("Hong Kong"). */}
+            <span className="sm:hidden text-xs font-semibold text-slate-700">
+              {supported.code}
+            </span>
+            <span className="hidden sm:inline text-xs font-medium text-slate-700">
+              {supported.name.replace(/^the /, "")}
+            </span>
+          </>
         )}
+        {/* Always-on chevron — telegraphs that the trigger is a menu, not a label. */}
+        <span aria-hidden className="text-[0.6rem] text-slate-400 leading-none">
+          ▾
+        </span>
       </button>
 
       {open && (
@@ -248,9 +258,9 @@ export default function LocationFlagButton() {
                     void clearIntentCountryAction();
                     setOpen(false);
                   }}
-                  className="block w-full text-left text-xs text-slate-500 hover:text-slate-900 underline underline-offset-2 mt-2"
+                  className="block w-full text-center text-sm font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 mt-3 transition-colors"
                 >
-                  I&apos;m browsing as an Australian &rarr;
+                  Show me the global view
                 </button>
               </>
             ) : (
