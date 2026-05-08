@@ -93,6 +93,7 @@ export interface HubHeroStat {
   dataAsOf: string;  // ISO date — feeds <DatedStatBadge>
   stalesAt: string;  // ISO date — feeds stale-data CI gate (V-NEW-01)
   source?: string;   // attribution URL when applicable
+  subtitle?: string; // secondary descriptor rendered below the value
 }
 
 export interface HubCta {
@@ -123,6 +124,8 @@ export interface ServiceCard {
   description: string;
   href: string;
   icon?: string;
+  /** CTA button label — defaults to "Learn more" when absent. */
+  cta?: string;
 }
 
 /** Long-form deep-dive card — links to `<hub>/<slug>` long-tail content. */
@@ -1000,3 +1003,270 @@ export function getRelatedVerticals(currentSlug: string): RelatedVertical[] {
 }
 
 export { VERTICALS };
+
+// ── Hub configs ──────────────────────────────────────────────────────────────
+
+export const SMSF_HUB_CONFIG: HubConfig = {
+  slug: "smsf",
+  title: `SMSF Investment & Services Hub (${yr})`,
+  metaDescription:
+    "Australia's SMSF services hub. Find ASIC-approved SMSF auditors, SMSF specialist advisers, property-in-SMSF accountants, and investment strategy help. 600,000+ Australian SMSFs; $900B+ in assets.",
+  audiences: ["trustee", "retiree"],
+  complianceKey: "smsf",
+
+  hero: {
+    headline: "SMSF Investment & Services Hub",
+    subhead:
+      "600,000+ Australians run their own Self-Managed Super Fund, collectively managing $900B+ in assets. Find ASIC-approved SMSF auditors, AFSL-licensed specialist advisers, and the experts who make property-in-SMSF, LRBA structuring, and pension-phase transitions work.",
+    stats: [
+      {
+        label: "SMSFs in Australia",
+        value: "600,000+",
+        dataAsOf: "2025-06-30",
+        stalesAt: "2027-06-30",
+        source: "https://www.ato.gov.au/super/self-managed-super-funds/self-managed-super-fund-statistics/",
+      },
+      {
+        label: "Assets under management",
+        value: "$900B+",
+        dataAsOf: "2025-06-30",
+        stalesAt: "2027-06-30",
+        source: "https://www.ato.gov.au/super/self-managed-super-funds/self-managed-super-fund-statistics/",
+      },
+      {
+        label: "Australians 55+ run an SMSF",
+        value: "1 in 3",
+        dataAsOf: "2025-06-30",
+        stalesAt: "2027-06-30",
+      },
+    ],
+    primaryCta: { label: "Find an SMSF Specialist", href: "/quiz?vertical=smsf", lever: "lead_routing" },
+    secondaryCta: { label: "Read the SMSF Guide", href: "/invest/smsf", lever: "affiliate_cpa" },
+  },
+
+  serviceGrid: [
+    {
+      title: "Setup & Administration",
+      description:
+        "SMSF establishment, trust deed, ongoing administration, and annual lodgement. Typical setup $1,000–$3,000; ongoing $1,500–$5,000/year.",
+      href: "/advisors/smsf-specialists",
+      icon: "building",
+      cta: "Find SMSF Specialists",
+    },
+    {
+      title: "Annual Auditing",
+      description:
+        "Every SMSF must be audited annually by an ASIC-approved auditor with an SMSF Auditor Number (SAN). Simple audits $300–$700; complex $800–$1,500+.",
+      href: "/smsf/auditors",
+      icon: "shield-check",
+      cta: "Find SMSF Auditors",
+    },
+    {
+      title: "Property in SMSF",
+      description:
+        "LRBA borrowing structures, in-specie transfers, direct property purchase, commercial-property-in-SMSF strategy. LRBA structuring $2,000–$5,000.",
+      href: "/advisors/smsf-specialists?focus=property",
+      icon: "home",
+      cta: "Find SMSF Property Experts",
+    },
+    {
+      title: "Investment Strategy",
+      description:
+        "Written investment strategy review, asset allocation, concentration management, pension-phase transition, and death benefit nominations.",
+      href: "/advisors/smsf-specialists",
+      icon: "trending-up",
+      cta: "Find Strategy Advisers",
+    },
+  ],
+
+  deepDives: [
+    {
+      title: "How to Set Up an SMSF",
+      excerpt: "7-step setup, $800–$3,500 cost breakdown, individual vs corporate trustee.",
+      href: "/smsf/setup",
+    },
+    {
+      title: "Crypto in Your SMSF",
+      excerpt: "ATO rules, the 15% (or 0%) tax outcome and how to actually buy without breaching the sole-purpose test.",
+      href: "/smsf/crypto",
+    },
+    {
+      title: "SMSF Property Investment",
+      excerpt: "LRBA borrowing, residential vs commercial, costs and the $300K minimum balance.",
+      href: "/smsf/property",
+    },
+    {
+      title: "SMSF Investment Strategy",
+      excerpt: "The 5 mandatory elements, three model portfolios and Division 296 considerations.",
+      href: "/smsf/investment-strategy",
+    },
+    {
+      title: "SMSF Compliance Checklist",
+      excerpt: "12 setup, ongoing and review obligations — interactive tracker.",
+      href: "/smsf/checklist",
+    },
+    {
+      title: "SMSF Cost Calculator",
+      excerpt: "Project SMSF setup and ongoing costs against a retail super fund — see when SMSF breaks even.",
+      href: "/smsf-calculator",
+    },
+  ],
+
+  faqs: [
+    {
+      question: "How much does it cost to set up and run an SMSF?",
+      answer:
+        "Setup costs range from $800–$3,500 (corporate trustee) or $500–$1,500 (individual trustees). Annual running costs — including audit, accounting, and ASIC fees — typically sit between $1,500 and $5,000. SMSFs generally become cost-competitive with retail super around a $200,000–$250,000 balance.",
+    },
+    {
+      question: "Who must audit an SMSF?",
+      answer:
+        "Every SMSF must be audited each year by an ASIC-approved SMSF auditor holding a current SMSF Auditor Number (SAN). Your accountant cannot audit your own fund — the auditor must be independent. Simple audits cost $300–$700; complex funds (with property or borrowing) $800–$1,500+.",
+    },
+    {
+      question: "Can an SMSF borrow to buy property?",
+      answer:
+        "Yes, via a Limited Recourse Borrowing Arrangement (LRBA). The asset is held in a holding trust until the loan is repaid, then transferred to the SMSF. Residential property must meet the 'sole purpose test' (investment only — you cannot live in it). Structuring an LRBA typically costs $2,000–$5,000 in legal and adviser fees, plus the lender's requirements.",
+    },
+    {
+      question: "What can an SMSF invest in?",
+      answer:
+        "SMSFs can invest in ASX shares, international shares, term deposits, residential and commercial property, ETFs, managed funds, bonds, cryptocurrency, private company shares, collectibles (with strict rules), and more — provided investments meet the sole purpose test and the fund's written investment strategy. The fund may not invest in assets for the benefit of members outside the fund (the 'in-house assets' rule limits related-party investments to 5% of fund assets).",
+    },
+  ],
+
+  leadQueue: { kind: "smsf", advisorType: "smsf_accountant" },
+  relatedHubs: ["super", "property", "crypto"],
+  articleFilters: {
+    category_in: ["smsf"],
+    tags: ["smsf_accountant", "smsf_auditor", "smsf_specialist"],
+  },
+  primaryKeywords: [
+    "SMSF setup Australia",
+    "SMSF auditors",
+    "SMSF specialist advisers",
+    "property in SMSF",
+    "LRBA borrowing",
+    "SMSF investment strategy",
+    "self managed super fund",
+  ],
+  schemaTypes: ["FinancialService", "FAQPage"],
+};
+
+// ── Dividends hub ────────────────────────────────────────────────────────────
+export const DIVIDENDS_HUB_CONFIG: HubConfig = {
+  slug: "dividends",
+  title: `Dividend Investing Australia ${yr}: Franking Credits, Stocks & ETFs`,
+  metaDescription:
+    "Australia's franking system makes dividend investing structurally different. High-yield ASX stocks, dividend ETFs, franking-credit calculator and the SMSF crossover.",
+  audiences: ["retiree", "trustee"],
+  complianceKey: "general_advice",
+
+  hero: {
+    headline: "Dividend Investing in Australia: Franking Credits, High-Yield Stocks & ETFs",
+    subhead:
+      "Australia's franking system makes dividend investing structurally different — and uniquely powerful inside super and SMSF wrappers. Here's how to use it.",
+    stats: [
+      {
+        label: "ASX avg yield",
+        value: "~4.2%",
+        dataAsOf: "2025-06-30",
+        stalesAt: "2026-12-31",
+        subtitle: "much higher than US/UK index",
+      },
+      {
+        label: "Franking add-on",
+        value: "42.86%",
+        dataAsOf: "2025-06-30",
+        stalesAt: "2030-06-30",
+        subtitle: "for fully-franked dividends",
+      },
+      {
+        label: "SMSFs",
+        value: "1.1M",
+        dataAsOf: "2025-06-30",
+        stalesAt: "2027-06-30",
+        subtitle: "claim full franking refunds in pension phase",
+      },
+      {
+        label: "Reinvestment",
+        value: "DRP",
+        dataAsOf: "2025-01-01",
+        stalesAt: "2027-01-01",
+        subtitle: "available at most ASX payers",
+      },
+    ],
+    primaryCta: { label: "Compare Share Platforms", href: "/compare", lever: "affiliate_cpa" },
+    secondaryCta: { label: "Franking Calculator", href: "/dividends/calculator", lever: "lead_routing" },
+  },
+
+  serviceGrid: [
+    {
+      title: "ASX High-Yield Stocks",
+      description:
+        "WDS, the major banks, BHP, Telstra and more — with franking analysis.",
+      href: "/article/high-dividend-asx-stocks-2026",
+      icon: "trending-up",
+    },
+    {
+      title: "Dividend ETFs",
+      description:
+        "VHY, A200, HVST, IHD compared on yield, fees and methodology.",
+      href: "/article/best-dividend-etfs-australia",
+      icon: "bar-chart-2",
+    },
+    {
+      title: "Franking Credits Explained",
+      description:
+        "How the offset works, who benefits most, who doesn't.",
+      href: "/dividends/franking-credits",
+      icon: "info",
+    },
+    {
+      title: "Franking Calculator",
+      description:
+        "Enter dividend amount, franking %, your tax rate. See the after-tax outcome.",
+      href: "/dividends/calculator",
+      icon: "calculator",
+    },
+  ],
+
+  faqs: [
+    {
+      question: "How do franking credits work in Australia?",
+      answer:
+        "When an Australian company pays corporate tax (30%) before distributing dividends, the franking credits represent that pre-paid tax. Shareholders include the grossed-up dividend in their assessable income, then receive a tax offset equal to the credits. If your marginal rate is below 30%, you receive a refund. In a pension-phase SMSF, the fund pays zero tax and receives the full 42.86% credit as a cash refund.",
+    },
+    {
+      question: "Which ASX stocks have the highest fully-franked dividend yield?",
+      answer:
+        "The major banks (Commonwealth Bank, Westpac, ANZ, NAB) and resource majors (BHP, Woodside) consistently rank among the highest fully-franked payers. Yield rankings change with share prices and payout decisions — always check the current dividend yield and confirm the franking percentage before investing.",
+    },
+    {
+      question: "Are dividend ETFs better than picking individual stocks?",
+      answer:
+        "Dividend ETFs (VHY, A200, IHD) provide diversification and remove single-stock risk at the cost of a management fee (0.06%–0.54% per year). They suit investors who want passive dividend income without actively monitoring individual company results. High-conviction investors may achieve higher effective yields through concentrated stock selection, but with greater concentration risk.",
+    },
+    {
+      question: "Can an SMSF claim a full franking credit refund?",
+      answer:
+        "Yes. An SMSF in accumulation phase pays 15% tax and claims franking credits as an offset — any excess credits reduce other tax. An SMSF in pension phase pays zero tax and receives the full franking credit as a cash refund. This is one of the most powerful tax outcomes available to Australian self-directed investors.",
+    },
+  ],
+
+  leadQueue: { kind: "general", topic: "dividends" },
+  relatedHubs: ["smsf", "super", "negative-gearing"],
+  articleFilters: {
+    category_in: ["investing"],
+    tags: ["dividends", "franking-credits", "asx"],
+  },
+  primaryKeywords: [
+    "dividend investing Australia",
+    "franking credits explained",
+    "high yield ASX stocks",
+    "dividend ETFs Australia",
+    "SMSF franking refund",
+    "fully franked dividends",
+  ],
+  schemaTypes: ["FinancialService", "FAQPage"],
+};

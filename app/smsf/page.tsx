@@ -1,17 +1,18 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import { SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import { createClient } from "@/lib/supabase/server";
 import Icon from "@/components/Icon";
-import HubArticleStrip from "@/components/HubArticleStrip";
-import HubDeepDiveGrid from "@/components/HubDeepDiveGrid";
+import HubPage from "@/components/HubPage";
+import HubServiceGrid from "@/components/HubServiceGrid";
+import type { HubServiceItem } from "@/components/HubServiceGrid";
+import { SMSF_HUB_CONFIG } from "@/lib/verticals";
 
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: `SMSF Investment & Services Hub (${CURRENT_YEAR}) — Setup, Audit, Property & Strategy`,
-  description:
-    "Australia's SMSF services hub. Find ASIC-approved SMSF auditors, SMSF specialist advisers, property-in-SMSF accountants, and investment strategy help. 600,000+ Australian SMSFs; $900B+ in assets.",
+  description: SMSF_HUB_CONFIG.metaDescription,
   alternates: { canonical: `${SITE_URL}/smsf` },
   openGraph: {
     title: `SMSF Investment & Services Hub (${CURRENT_YEAR})`,
@@ -21,7 +22,7 @@ export const metadata: Metadata = {
   },
 };
 
-const SERVICE_CARDS = [
+const SMSF_SERVICE_ITEMS: HubServiceItem[] = [
   {
     title: "Setup & Administration",
     icon: "building",
@@ -63,16 +64,20 @@ async function fetchSmsfArticles() {
       .from("articles")
       .select("slug, title, excerpt, category, published_at")
       .eq("status", "published")
-      .or("category.eq.smsf,related_advisor_types.cs.{smsf_accountant},related_advisor_types.cs.{smsf_auditor},related_advisor_types.cs.{smsf_specialist}")
+      .or(
+        "category.eq.smsf,related_advisor_types.cs.{smsf_accountant},related_advisor_types.cs.{smsf_auditor},related_advisor_types.cs.{smsf_specialist}"
+      )
       .order("published_at", { ascending: false })
       .limit(6);
-    return (data as Array<{
-      slug: string;
-      title: string;
-      excerpt: string | null;
-      category: string | null;
-      published_at: string | null;
-    }> | null) || [];
+    return (
+      (data as Array<{
+        slug: string;
+        title: string;
+        excerpt: string | null;
+        category: string | null;
+        published_at: string | null;
+      }> | null) || []
+    );
   } catch {
     return [];
   }
@@ -80,107 +85,106 @@ async function fetchSmsfArticles() {
 
 export default async function SmsfHubPage() {
   const articles = await fetchSmsfArticles();
-
-  const breadcrumb = breadcrumbJsonLd([
-    { name: "Home", url: `${SITE_URL}/` },
-    { name: "SMSF" },
-  ]);
+  const deepDives = SMSF_HUB_CONFIG.deepDives ?? [];
 
   return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
-      />
-
-      <div className="bg-white min-h-screen">
-        {/* Hero */}
-        <section className="bg-slate-900 text-white py-10 md:py-14">
-          <div className="container-custom">
-            <nav
-              className="flex items-center gap-1.5 text-xs text-slate-400 mb-5"
-              aria-label="Breadcrumb"
+    <HubPage
+      config={SMSF_HUB_CONFIG}
+      serviceGrid={
+        <HubServiceGrid
+          heading="Four SMSF service categories"
+          items={SMSF_SERVICE_ITEMS}
+          columns={2}
+        />
+      }
+    >
+      {/* Cross-link to SMSF investment guide */}
+      <section className="py-10 bg-slate-50 border-y border-slate-200">
+        <div className="container-custom max-w-4xl">
+          <div className="bg-white border border-slate-200 rounded-xl p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center gap-6">
+            <div className="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center shrink-0">
+              <Icon name="book-open" size={22} className="text-amber-600" />
+            </div>
+            <div className="flex-1">
+              <h2 className="text-lg md:text-xl font-extrabold text-slate-900 mb-1">
+                SMSF Investment Guide
+              </h2>
+              <p className="text-sm text-slate-600">
+                Read our comprehensive guide to what SMSFs can invest in, how
+                the concessional tax environment works, and the trustee
+                obligations that matter.
+              </p>
+            </div>
+            <Link
+              href="/invest/smsf"
+              className="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm px-5 py-2.5 rounded-lg shrink-0"
             >
-              <Link href="/" className="hover:text-white">
-                Home
-              </Link>
-              <span className="text-slate-600">/</span>
-              <span className="text-white font-medium">SMSF</span>
-            </nav>
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-3 max-w-3xl">
-              SMSF Investment &amp; Services Hub
-            </h1>
-            <p className="text-base md:text-lg text-slate-300 leading-relaxed max-w-3xl mb-6">
-              600,000+ Australians run their own Self-Managed Super Fund,
-              collectively managing $900B+ in assets. Find ASIC-approved SMSF
-              auditors, AFSL-licensed specialist advisers, and the experts who
-              make property-in-SMSF, LRBA structuring, and pension-phase
-              transitions work.
-            </p>
-
-            {/* Stats bar */}
-            <div className="grid grid-cols-3 gap-3 md:gap-4 max-w-2xl">
-              {[
-                { v: "600,000", l: "SMSFs in Australia" },
-                { v: "$900B", l: "Assets under management" },
-                { v: "1 in 3", l: "Australians 55+ run an SMSF" },
-              ].map((s) => (
-                <div
-                  key={s.l}
-                  className="bg-white/10 border border-white/10 rounded-lg px-3 py-2"
-                >
-                  <dt className="text-[10px] font-bold uppercase text-slate-400 tracking-wide">
-                    {s.l}
-                  </dt>
-                  <dd className="text-lg md:text-xl font-extrabold text-white mt-0.5">
-                    {s.v}
-                  </dd>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-6">
-              <Link
-                href="/quiz?vertical=smsf"
-                className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-extrabold text-sm md:text-base px-6 py-3 rounded-lg transition-colors"
-              >
-                Find an SMSF Specialist
-                <Icon name="arrow-right" size={16} />
-              </Link>
-            </div>
+              Read the guide
+              <Icon name="arrow-right" size={14} />
+            </Link>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Service cards */}
+      {/* Featured articles */}
+      {articles.length > 0 && (
         <section className="py-12 bg-white">
           <div className="container-custom max-w-6xl">
             <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-6">
-              Four SMSF service categories
+              Featured SMSF articles
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {SERVICE_CARDS.map((card) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {articles.map((a) => (
                 <Link
-                  key={card.title}
-                  href={card.href}
-                  className="group bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl p-6 transition-colors"
+                  key={a.slug}
+                  href={`/article/${a.slug}`}
+                  className="block bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl p-5 transition-colors"
                 >
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center shrink-0">
-                      <Icon
-                        name={card.icon}
-                        size={20}
-                        className="text-amber-700"
-                      />
-                    </div>
-                    <h3 className="text-lg font-extrabold text-slate-900 group-hover:text-amber-700">
-                      {card.title}
-                    </h3>
-                  </div>
+                  <h3 className="text-sm font-extrabold text-slate-900 leading-tight mb-2 line-clamp-2">
+                    {a.title}
+                  </h3>
+                  {a.excerpt && (
+                    <p className="text-xs text-slate-600 leading-relaxed line-clamp-3">
+                      {a.excerpt}
+                    </p>
+                  )}
+                  <p className="text-xs font-bold text-amber-600 mt-3 inline-flex items-center gap-1">
+                    Read article
+                    <Icon name="arrow-right" size={12} />
+                  </p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Deep-dives grid */}
+      {deepDives.length > 0 && (
+        <section className="py-12 bg-white border-t border-slate-200">
+          <div className="container-custom max-w-6xl">
+            <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2">
+              SMSF deep-dives
+            </h2>
+            <p className="text-sm text-slate-600 mb-6">
+              Practical guides for the most common SMSF questions and the
+              strategies retail super can&rsquo;t deliver.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {deepDives.map((card) => (
+                <Link
+                  key={card.href}
+                  href={card.href}
+                  className="group bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl p-5 transition-colors"
+                >
+                  <h3 className="text-base font-extrabold text-slate-900 group-hover:text-amber-700 mb-1.5">
+                    {card.title}
+                  </h3>
                   <p className="text-sm text-slate-600 leading-relaxed mb-3">
-                    {card.description}
+                    {card.excerpt}
                   </p>
                   <span className="inline-flex items-center gap-1.5 text-sm font-bold text-amber-600 group-hover:underline">
-                    {card.cta}
+                    Read guide
                     <Icon name="arrow-right" size={14} />
                   </span>
                 </Link>
@@ -188,68 +192,7 @@ export default async function SmsfHubPage() {
             </div>
           </div>
         </section>
-
-        {/* Cross-link to investment guide */}
-        <section className="py-10 bg-slate-50 border-y border-slate-200">
-          <div className="container-custom max-w-4xl">
-            <div className="bg-white border border-slate-200 rounded-xl p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center gap-6">
-              <div className="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center shrink-0">
-                <Icon name="book-open" size={22} className="text-amber-600" />
-              </div>
-              <div className="flex-1">
-                <h2 className="text-lg md:text-xl font-extrabold text-slate-900 mb-1">
-                  SMSF Investment Guide
-                </h2>
-                <p className="text-sm text-slate-600">
-                  Read our comprehensive guide to what SMSFs can invest in,
-                  how the concessional tax environment works, and the
-                  trustee obligations that matter.
-                </p>
-              </div>
-              <Link
-                href="/invest/smsf"
-                className="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm px-5 py-2.5 rounded-lg shrink-0"
-              >
-                Read the guide
-                <Icon name="arrow-right" size={14} />
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* Featured articles */}
-        <HubArticleStrip heading="Featured SMSF articles" articles={articles} />
-
-        {/* SMSF deep-dive sub-pages */}
-        <HubDeepDiveGrid
-          heading="SMSF deep-dives"
-          subheading="Practical guides for the most common SMSF questions and the strategies retail super can't deliver."
-          items={[
-            { title: "How to Set Up an SMSF", desc: "7-step setup, $800–$3,500 cost breakdown, individual vs corporate trustee.", href: "/smsf/setup" },
-            { title: "Crypto in Your SMSF", desc: "ATO rules, the 15% (or 0%) tax outcome and how to actually buy without breaching the sole-purpose test.", href: "/smsf/crypto" },
-            { title: "SMSF Property Investment", desc: "LRBA borrowing, residential vs commercial, costs and the $300K minimum balance.", href: "/smsf/property" },
-            { title: "SMSF Investment Strategy", desc: "The 5 mandatory elements, three model portfolios and Division 296 considerations.", href: "/smsf/investment-strategy" },
-            { title: "SMSF Compliance Checklist", desc: "12 setup, ongoing and review obligations — interactive tracker.", href: "/smsf/checklist" },
-            { title: "SMSF Cost Calculator", desc: "Project SMSF setup and ongoing costs against a retail super fund — see when SMSF breaks even.", href: "/smsf-calculator" },
-          ]}
-          cta="Read guide"
-        />
-
-        {/* GAW footer */}
-        <section className="py-8 bg-slate-50 border-t border-slate-200">
-          <div className="container-custom max-w-4xl">
-            <p className="text-[11px] text-slate-500 leading-relaxed">
-              <strong>General advice warning.</strong> The information on this
-              page is general in nature and does not constitute personal
-              financial advice. SMSFs are complex. Before making any decisions
-              about your superannuation or tax strategy, consult an
-              AFSL-authorised financial adviser, a registered tax agent, and
-              — for audits — an ASIC-approved SMSF auditor. We do not provide
-              financial product advice.
-            </p>
-          </div>
-        </section>
-      </div>
-    </>
+      )}
+    </HubPage>
   );
 }
