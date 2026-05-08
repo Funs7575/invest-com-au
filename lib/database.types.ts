@@ -2006,6 +2006,113 @@ export type Database = {
         }
         Relationships: []
       }
+      api_keys: {
+        Row: {
+          allowed_endpoints: string[] | null
+          company_name: string | null
+          created_at: string | null
+          expires_at: string | null
+          id: string
+          is_active: boolean | null
+          key_hash: string
+          key_prefix: string
+          last_used_at: string | null
+          name: string
+          owner_email: string
+          owner_name: string | null
+          rate_limit_per_day: number | null
+          rate_limit_per_minute: number | null
+          requests_today: number | null
+          requests_total: number | null
+          tier: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          allowed_endpoints?: string[] | null
+          company_name?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          key_hash: string
+          key_prefix: string
+          last_used_at?: string | null
+          name: string
+          owner_email: string
+          owner_name?: string | null
+          rate_limit_per_day?: number | null
+          rate_limit_per_minute?: number | null
+          requests_today?: number | null
+          requests_total?: number | null
+          tier?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          allowed_endpoints?: string[] | null
+          company_name?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          key_hash?: string
+          key_prefix?: string
+          last_used_at?: string | null
+          name?: string
+          owner_email?: string
+          owner_name?: string | null
+          rate_limit_per_day?: number | null
+          rate_limit_per_minute?: number | null
+          requests_today?: number | null
+          requests_total?: number | null
+          tier?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      api_request_log: {
+        Row: {
+          api_key_id: string | null
+          created_at: string | null
+          endpoint: string
+          id: number
+          ip_address: string | null
+          method: string
+          response_time_ms: number | null
+          status_code: number | null
+          user_agent: string | null
+        }
+        Insert: {
+          api_key_id?: string | null
+          created_at?: string | null
+          endpoint: string
+          id?: never
+          ip_address?: string | null
+          method?: string
+          response_time_ms?: number | null
+          status_code?: number | null
+          user_agent?: string | null
+        }
+        Update: {
+          api_key_id?: string | null
+          created_at?: string | null
+          endpoint?: string
+          id?: never
+          ip_address?: string | null
+          method?: string
+          response_time_ms?: number | null
+          status_code?: number | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "api_request_log_api_key_id_fkey"
+            columns: ["api_key_id"]
+            isOneToOne: false
+            referencedRelation: "api_keys"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       article_comments: {
         Row: {
           article_slug: string
@@ -2864,11 +2971,13 @@ export type Database = {
           author_slug: string | null
           created_at: string | null
           display_name: string | null
+          helpful_count: number | null
           id: number
           is_accepted: boolean | null
           question_id: number
           status: string | null
           updated_at: string | null
+          vote_count: number | null
         }
         Insert: {
           answer: string
@@ -2876,11 +2985,13 @@ export type Database = {
           author_slug?: string | null
           created_at?: string | null
           display_name?: string | null
+          helpful_count?: number | null
           id?: number
           is_accepted?: boolean | null
           question_id: number
           status?: string | null
           updated_at?: string | null
+          vote_count?: number | null
         }
         Update: {
           answer?: string
@@ -2888,11 +2999,13 @@ export type Database = {
           author_slug?: string | null
           created_at?: string | null
           display_name?: string | null
+          helpful_count?: number | null
           id?: number
           is_accepted?: boolean | null
           question_id?: number
           status?: string | null
           updated_at?: string | null
+          vote_count?: number | null
         }
         Relationships: [
           {
@@ -3263,6 +3376,7 @@ export type Database = {
           question: string
           status: string | null
           updated_at: string | null
+          vote_count: number | null
         }
         Insert: {
           broker_slug: string
@@ -3275,6 +3389,7 @@ export type Database = {
           question: string
           status?: string | null
           updated_at?: string | null
+          vote_count?: number | null
         }
         Update: {
           broker_slug?: string
@@ -3287,6 +3402,7 @@ export type Database = {
           question?: string
           status?: string | null
           updated_at?: string | null
+          vote_count?: number | null
         }
         Relationships: []
       }
@@ -5559,6 +5675,54 @@ export type Database = {
         }
         Relationships: []
       }
+      data_export_requests: {
+        Row: {
+          created_at: string | null
+          download_url: string | null
+          email: string
+          error_message: string | null
+          expires_at: string | null
+          fulfilled_at: string | null
+          id: number
+          ip_address: unknown
+          requested_at: string
+          status: string
+          updated_at: string | null
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          download_url?: string | null
+          email: string
+          error_message?: string | null
+          expires_at?: string | null
+          fulfilled_at?: string | null
+          id?: number
+          ip_address?: unknown
+          requested_at?: string
+          status?: string
+          updated_at?: string | null
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          download_url?: string | null
+          email?: string
+          error_message?: string | null
+          expires_at?: string | null
+          fulfilled_at?: string | null
+          id?: number
+          ip_address?: unknown
+          requested_at?: string
+          status?: string
+          updated_at?: string | null
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       data_integrity_issues: {
         Row: {
           check_name: string
@@ -6065,6 +6229,9 @@ export type Database = {
           email: string
           frequency: string | null
           id: number
+          last_notified_at: string | null
+          notification_count: number | null
+          price_threshold: number | null
           unsubscribe_token: string
           verified: boolean | null
           verify_token: string | null
@@ -6076,6 +6243,9 @@ export type Database = {
           email: string
           frequency?: string | null
           id?: number
+          last_notified_at?: string | null
+          notification_count?: number | null
+          price_threshold?: number | null
           unsubscribe_token: string
           verified?: boolean | null
           verify_token?: string | null
@@ -6087,6 +6257,9 @@ export type Database = {
           email?: string
           frequency?: string | null
           id?: number
+          last_notified_at?: string | null
+          notification_count?: number | null
+          price_threshold?: number | null
           unsubscribe_token?: string
           verified?: boolean | null
           verify_token?: string | null
@@ -8618,6 +8791,47 @@ export type Database = {
         }
         Relationships: []
       }
+      price_drop_notifications: {
+        Row: {
+          broker_slug: string
+          change_percent: number | null
+          field_name: string
+          id: number
+          new_value: string
+          old_value: string
+          sent_at: string | null
+          subscription_id: number | null
+        }
+        Insert: {
+          broker_slug: string
+          change_percent?: number | null
+          field_name: string
+          id?: never
+          new_value: string
+          old_value: string
+          sent_at?: string | null
+          subscription_id?: number | null
+        }
+        Update: {
+          broker_slug?: string
+          change_percent?: number | null
+          field_name?: string
+          id?: never
+          new_value?: string
+          old_value?: string
+          sent_at?: string | null
+          subscription_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "price_drop_notifications_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "fee_alert_subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       privacy_data_requests: {
         Row: {
           completed_at: string | null
@@ -8866,6 +9080,8 @@ export type Database = {
           created_at: string | null
           expertise_rating: number | null
           id: number
+          is_verified_client: boolean | null
+          lead_id: number | null
           moderation_notes: string | null
           professional_id: number
           rating: number
@@ -8877,6 +9093,7 @@ export type Database = {
           used_services: boolean | null
           value_for_money_rating: number | null
           verified: boolean | null
+          verified_client_at: string | null
         }
         Insert: {
           admin_overridden_at?: string | null
@@ -8889,6 +9106,8 @@ export type Database = {
           created_at?: string | null
           expertise_rating?: number | null
           id?: number
+          is_verified_client?: boolean | null
+          lead_id?: number | null
           moderation_notes?: string | null
           professional_id: number
           rating: number
@@ -8900,6 +9119,7 @@ export type Database = {
           used_services?: boolean | null
           value_for_money_rating?: number | null
           verified?: boolean | null
+          verified_client_at?: string | null
         }
         Update: {
           admin_overridden_at?: string | null
@@ -8912,6 +9132,8 @@ export type Database = {
           created_at?: string | null
           expertise_rating?: number | null
           id?: number
+          is_verified_client?: boolean | null
+          lead_id?: number | null
           moderation_notes?: string | null
           professional_id?: number
           rating?: number
@@ -8923,6 +9145,7 @@ export type Database = {
           used_services?: boolean | null
           value_for_money_rating?: number | null
           verified?: boolean | null
+          verified_client_at?: string | null
         }
         Relationships: [
           {
@@ -9704,6 +9927,33 @@ export type Database = {
         }
         Relationships: []
       }
+      qa_votes: {
+        Row: {
+          created_at: string | null
+          id: number
+          target_id: number
+          target_type: string
+          vote_value: number
+          voter_identifier: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: never
+          target_id: number
+          target_type: string
+          vote_value?: number
+          voter_identifier: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: never
+          target_id?: number
+          target_type?: string
+          vote_value?: number
+          voter_identifier?: string
+        }
+        Relationships: []
+      }
       quarterly_reports: {
         Row: {
           cover_image_url: string | null
@@ -10036,8 +10286,12 @@ export type Database = {
       regulatory_alerts: {
         Row: {
           action_items: Json | null
+          affected_broker_slugs: string[] | null
+          affected_platform_types: string[] | null
           alert_type: string
           body: string | null
+          change_category: string | null
+          compliance_deadline: string | null
           created_at: string | null
           effective_date: string | null
           id: number
@@ -10050,11 +10304,17 @@ export type Database = {
           status: string
           title: string
           updated_at: string | null
+          user_action_required: boolean | null
+          views_count: number | null
         }
         Insert: {
           action_items?: Json | null
+          affected_broker_slugs?: string[] | null
+          affected_platform_types?: string[] | null
           alert_type: string
           body?: string | null
+          change_category?: string | null
+          compliance_deadline?: string | null
           created_at?: string | null
           effective_date?: string | null
           id?: never
@@ -10067,11 +10327,17 @@ export type Database = {
           status?: string
           title: string
           updated_at?: string | null
+          user_action_required?: boolean | null
+          views_count?: number | null
         }
         Update: {
           action_items?: Json | null
+          affected_broker_slugs?: string[] | null
+          affected_platform_types?: string[] | null
           alert_type?: string
           body?: string | null
+          change_category?: string | null
+          compliance_deadline?: string | null
           created_at?: string | null
           effective_date?: string | null
           id?: never
@@ -10084,6 +10350,41 @@ export type Database = {
           status?: string
           title?: string
           updated_at?: string | null
+          user_action_required?: boolean | null
+          views_count?: number | null
+        }
+        Relationships: []
+      }
+      regulatory_broker_impacts: {
+        Row: {
+          alert_id: number
+          broker_response: string | null
+          broker_slug: string
+          created_at: string | null
+          estimated_fee_change: number | null
+          id: number
+          impact_description: string
+          impact_level: string
+        }
+        Insert: {
+          alert_id: number
+          broker_response?: string | null
+          broker_slug: string
+          created_at?: string | null
+          estimated_fee_change?: number | null
+          id?: never
+          impact_description: string
+          impact_level: string
+        }
+        Update: {
+          alert_id?: number
+          broker_response?: string | null
+          broker_slug?: string
+          created_at?: string | null
+          estimated_fee_change?: number | null
+          id?: never
+          impact_description?: string
+          impact_level?: string
         }
         Relationships: []
       }
@@ -11627,6 +11928,7 @@ export type Database = {
           fees_rating: number | null
           id: number
           ip_hash: string | null
+          is_verified_client: boolean | null
           moderation_note: string | null
           platform_rating: number | null
           pros: string | null
@@ -11638,6 +11940,8 @@ export type Database = {
           updated_at: string | null
           verification_token: string | null
           verified_at: string | null
+          verified_client_at: string | null
+          verified_via: string | null
         }
         Insert: {
           admin_overridden_at?: string | null
@@ -11656,6 +11960,7 @@ export type Database = {
           fees_rating?: number | null
           id?: number
           ip_hash?: string | null
+          is_verified_client?: boolean | null
           moderation_note?: string | null
           platform_rating?: number | null
           pros?: string | null
@@ -11667,6 +11972,8 @@ export type Database = {
           updated_at?: string | null
           verification_token?: string | null
           verified_at?: string | null
+          verified_client_at?: string | null
+          verified_via?: string | null
         }
         Update: {
           admin_overridden_at?: string | null
@@ -11685,6 +11992,7 @@ export type Database = {
           fees_rating?: number | null
           id?: number
           ip_hash?: string | null
+          is_verified_client?: boolean | null
           moderation_note?: string | null
           platform_rating?: number | null
           pros?: string | null
@@ -11696,6 +12004,8 @@ export type Database = {
           updated_at?: string | null
           verification_token?: string | null
           verified_at?: string | null
+          verified_client_at?: string | null
+          verified_via?: string | null
         }
         Relationships: [
           {
@@ -11703,6 +12013,76 @@ export type Database = {
             columns: ["broker_id"]
             isOneToOne: false
             referencedRelation: "brokers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_saved_comparisons: {
+        Row: {
+          broker_slugs: string[]
+          created_at: string | null
+          id: string
+          name: string
+          notes: string | null
+          quiz_results: Json | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          broker_slugs?: string[]
+          created_at?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          quiz_results?: Json | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          broker_slugs?: string[]
+          created_at?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          quiz_results?: Json | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_saved_comparisons_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_shortlisted_brokers: {
+        Row: {
+          added_at: string | null
+          broker_slug: string
+          id: number
+          user_id: string
+        }
+        Insert: {
+          added_at?: string | null
+          broker_slug: string
+          id?: never
+          user_id: string
+        }
+        Update: {
+          added_at?: string | null
+          broker_slug?: string
+          id?: never
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_shortlisted_brokers_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
