@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
-// eslint-disable-next-line no-restricted-imports -- pre-IA-refactor; admin client used here historically because the original schema lacked an anon SELECT policy on fund_listings. Migrate to createClient + an explicit anon policy on status='active' in a follow-up; out of scope for the 2026-05-07 IA refactor.
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 import FundsDirectoryClient, { type FundListing } from "./FundsDirectoryClient";
 import VerticalMarketplaceListings from "@/components/marketplace/VerticalMarketplaceListings";
 
@@ -24,7 +23,7 @@ export const metadata: Metadata = {
 
 async function fetchFunds(): Promise<FundListing[]> {
   try {
-    const supabase = createAdminClient();
+    const supabase = await createClient();
     const { data } = await supabase
       .from("fund_listings")
       .select(
