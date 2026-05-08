@@ -20,6 +20,15 @@ export interface EventProps {
     risk_profile: string | null
     top_match_slug: string | null
     match_count: number
+    /**
+     * Country Mode dimension — quiz answer key for investor_country
+     * (e.g. "hong_kong", "uk", "saudi_arabia") or null when the user
+     * stayed on the domestic / Australian-resident track. Set by both
+     * the URL-prefill path (/quiz?country=) and by users who manually
+     * pick a country at Q1. Lets analytics break quiz_completed by
+     * inbound corridor without a separate event name.
+     */
+    country: string | null
   }
   advisor_viewed: {
     advisor_id: number
