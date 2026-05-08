@@ -8,7 +8,6 @@
  * below the supply threshold so the global teaser carries the experience.
  */
 
-import Link from "next/link";
 import Image from "next/image";
 import { intentCountryMeta } from "@/lib/intent-context";
 import { getIntentCountry } from "@/lib/intent-context-server";
@@ -17,6 +16,7 @@ import {
   getHomepageFiltersForCountry,
 } from "@/lib/country-mode";
 import { createClient } from "@/lib/supabase/server";
+import TrackedCountryLink from "./TrackedCountryLink";
 
 interface PreviewExpert {
   slug: string;
@@ -78,18 +78,25 @@ export default async function CountryExpertsPreview() {
               Specialists for investors from {meta.name}
             </h2>
           </div>
-          <Link
+          <TrackedCountryLink
             href="/advisors"
+            eventName="country_expert_click"
+            country={code}
+            source="see_all"
             className="text-sm font-medium text-amber-700 hover:text-amber-900 underline underline-offset-2"
           >
             See all experts &rarr;
-          </Link>
+          </TrackedCountryLink>
         </div>
         <ul className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {visible.map((e) => (
             <li key={e.slug}>
-              <Link
+              <TrackedCountryLink
                 href={`/advisors/${e.slug}`}
+                eventName="country_expert_click"
+                country={code}
+                targetId={e.slug}
+                source="homepage_preview"
                 className="group block bg-slate-50 hover:bg-amber-50 border border-slate-200 hover:border-amber-200 rounded-xl p-3 transition-colors"
               >
                 <div className="flex items-start gap-3">
@@ -118,7 +125,7 @@ export default async function CountryExpertsPreview() {
                     )}
                   </div>
                 </div>
-              </Link>
+              </TrackedCountryLink>
             </li>
           ))}
         </ul>

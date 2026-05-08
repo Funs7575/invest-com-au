@@ -13,7 +13,6 @@
  * cookies() is called.
  */
 
-import Link from "next/link";
 import Image from "next/image";
 import { intentCountryMeta } from "@/lib/intent-context";
 import { getIntentCountry } from "@/lib/intent-context-server";
@@ -22,6 +21,7 @@ import {
   getHomepageFiltersForCountry,
 } from "@/lib/country-mode";
 import { createClient } from "@/lib/supabase/server";
+import TrackedCountryLink from "./TrackedCountryLink";
 
 interface PreviewListing {
   id: number;
@@ -85,18 +85,25 @@ export default async function CountryListingsPreview() {
               Investments often considered by investors from {meta.name}
             </h2>
           </div>
-          <Link
+          <TrackedCountryLink
             href="/invest"
+            eventName="country_listing_click"
+            country={code}
+            source="see_all"
             className="text-sm font-medium text-amber-700 hover:text-amber-900 underline underline-offset-2"
           >
             See all opportunities &rarr;
-          </Link>
+          </TrackedCountryLink>
         </div>
         <ul className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {visible.map((l) => (
             <li key={l.id}>
-              <Link
+              <TrackedCountryLink
                 href={`/invest/${l.vertical}/${l.slug}`}
+                eventName="country_listing_click"
+                country={code}
+                targetId={l.id}
+                source="homepage_preview"
                 className="group block bg-slate-50 hover:bg-amber-50 border border-slate-200 hover:border-amber-200 rounded-xl overflow-hidden transition-colors"
               >
                 {l.hero_image && (
@@ -123,7 +130,7 @@ export default async function CountryListingsPreview() {
                     </p>
                   )}
                 </div>
-              </Link>
+              </TrackedCountryLink>
             </li>
           ))}
         </ul>
