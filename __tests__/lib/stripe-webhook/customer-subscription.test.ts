@@ -166,6 +166,22 @@ describe("handleCustomerSubscriptionCreated", () => {
     expect(adminCall).toBeDefined();
     expect(adminCall![1]).toContain(CUSTOMER.email!);
   });
+
+  it("does NOT send welcome email when customer has no email (non-deleted)", async () => {
+    const noEmailCustomer = { id: "cus_test", object: "customer" } as unknown as Stripe.Customer;
+    const ctx = makeCtx(vi.fn().mockResolvedValue(noEmailCustomer));
+    await handleCustomerSubscriptionCreated(makeCreatedEvent(), ctx);
+    expect(mockSendTransactionalEmail).not.toHaveBeenCalled();
+  });
+
+  it("resolves customer ID from object form when customer is not a string", async () => {
+    const ctx = makeCtx();
+    const subWithObjCustomer: Partial<Stripe.Subscription> = {
+      customer: { id: "cus_obj_form", object: "customer" } as unknown as Stripe.Customer,
+    };
+    await handleCustomerSubscriptionCreated(makeCreatedEvent(subWithObjCustomer), ctx);
+    expect(ctx.stripe.customers.retrieve).toHaveBeenCalledWith("cus_obj_form");
+  });
 });
 
 describe("handleCustomerSubscriptionUpdated", () => {
