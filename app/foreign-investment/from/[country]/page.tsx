@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import { FOREIGN_INVESTOR_GENERAL_DISCLAIMER, DTA_DISCLAIMER } from "@/lib/compliance";
 import { DTA_COUNTRIES, DEFAULT_WHT, type DTACountry } from "@/lib/foreign-investment-data";
+import { intentCountryFromIso, intentCountryMeta } from "@/lib/intent-context";
 import type { Broker } from "@/lib/types";
 import ForeignInvestmentNav from "../../ForeignInvestmentNav";
 import SectionHeading from "@/components/SectionHeading";
@@ -83,6 +84,17 @@ export default async function CountryForeignInvestmentPage({
   params: Promise<{ country: string }>;
 }) {
   const { country } = await params;
+
+  // Country Mode redirect: the 12 supported countries have richer
+  // /foreign-investment/<slug> hubs than this tax-only template. Funnel
+  // those visitors (and their inbound link equity) to the canonical
+  // surface. The other ~32 DTA-only corridors (Brazil, Czech Republic,
+  // etc.) keep this page as their dedicated tax overview.
+  const intentCode = intentCountryFromIso(country);
+  if (intentCode) {
+    redirect(`/foreign-investment/${intentCountryMeta(intentCode).slug}`);
+  }
+
   const dtaCountry = getCountryBySlug(country);
   if (!dtaCountry) notFound();
 

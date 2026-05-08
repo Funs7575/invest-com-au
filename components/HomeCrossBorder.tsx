@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { DesignIcon } from "@/components/design/DesignIcon";
 import { FlagChip } from "@/components/design/Atoms";
+import { isoForIntentCode } from "@/lib/intent-context";
+import { getIntentCountry } from "@/lib/intent-context-server";
 
 // Cards on the homepage section serve audience A (inbound migrants — largest
 // absolute LTV). The other three cross-border audiences (US-AU dual citizens,
@@ -39,7 +41,32 @@ const ARRIVALS: ReadonlyArray<{
   },
 ];
 
-export default function HomeCrossBorder() {
+/**
+ * Hoist the matching arrival card to position 1 when the user is in
+ * country mode. Copy stays unchanged, no fifth card — just a small
+ * "we noticed you're from here" affordance. Falls through silently for
+ * countries not in the 4-card set (HK, SG, NZ, JP, KR, MY, AE, SA),
+ * preserving the FIN_NOTEBOOK 2026-05-01 stance against broadening
+ * the cross-border framing.
+ */
+function reorderForPriority(
+  arrivals: ReadonlyArray<(typeof ARRIVALS)[number]>,
+  priorityIso: string | null,
+): ReadonlyArray<(typeof ARRIVALS)[number]> {
+  if (!priorityIso) return arrivals;
+  const idx = arrivals.findIndex((a) => a.code === priorityIso);
+  if (idx <= 0) return arrivals; // not found, or already first
+  return [arrivals[idx]!, ...arrivals.slice(0, idx), ...arrivals.slice(idx + 1)];
+}
+
+export default async function HomeCrossBorder() {
+  const code = await getIntentCountry();
+  const priorityIso = code ? isoForIntentCode(code) : null;
+  const ordered = reorderForPriority(ARRIVALS, priorityIso);
+  return <HomeCrossBorderInner arrivals={ordered} />;
+}
+
+function HomeCrossBorderInner({ arrivals }: { arrivals: ReadonlyArray<(typeof ARRIVALS)[number]> }) {
   return (
     <section style={{ padding: "56px 36px 60px", maxWidth: 1280, margin: "0 auto" }}>
       <div style={{ marginBottom: 24, maxWidth: 720 }}>
@@ -74,7 +101,7 @@ export default function HomeCrossBorder() {
       </div>
 
       <div className="home-crossborder-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }}>
-        {ARRIVALS.map((p) => (
+        {arrivals.map((p) => (
           <Link
             key={p.code}
             href={p.href}
