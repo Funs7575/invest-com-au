@@ -59,7 +59,33 @@ const FEATURED_TOOLS: ReadonlyArray<ToolEntry> = [
   },
 ];
 
-export default function HomeToolsStrip() {
+interface HomeToolsStripProps {
+  /**
+   * Optional list of tool hrefs to hoist to the front of the strip.
+   * Order within the list is preserved; tools not in the list stay
+   * in their original order behind the hoisted ones. The strip never
+   * shrinks — Country Mode re-ranks, doesn't replace.
+   */
+  featuredHrefs?: ReadonlyArray<string>;
+}
+
+function reorderForFeatured(
+  tools: ReadonlyArray<ToolEntry>,
+  featuredHrefs: ReadonlyArray<string> | undefined,
+): ReadonlyArray<ToolEntry> {
+  if (!featuredHrefs || featuredHrefs.length === 0) return tools;
+  const featuredSet = new Set(featuredHrefs);
+  // Preserve the order in `featuredHrefs` for hoisted tools, then
+  // append the remaining tools in their original order.
+  const hoisted = featuredHrefs
+    .map((href) => tools.find((t) => t.href === href))
+    .filter((t): t is ToolEntry => Boolean(t));
+  const rest = tools.filter((t) => !featuredSet.has(t.href));
+  return [...hoisted, ...rest];
+}
+
+export default function HomeToolsStrip({ featuredHrefs }: HomeToolsStripProps = {}) {
+  const orderedTools = reorderForFeatured(FEATURED_TOOLS, featuredHrefs);
   return (
     <section
       style={{
@@ -126,7 +152,7 @@ export default function HomeToolsStrip() {
           gap: 10,
         }}
       >
-        {FEATURED_TOOLS.map((t) => (
+        {orderedTools.map((t) => (
           <Link
             key={t.href}
             href={t.href}
