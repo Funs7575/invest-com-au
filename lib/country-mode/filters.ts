@@ -14,6 +14,7 @@ import {
   getCountryConfig,
   type QuickAction,
 } from "../foreign-investment-country-data";
+import type { AdvisorType } from "../advisor-types";
 import type { IntentCountryCode } from "../intent-context";
 import type { PlatformType } from "../types";
 
@@ -23,7 +24,7 @@ export interface HomepageListingFiltersRuntime {
 }
 
 export interface HomepageExpertFiltersRuntime {
-  specialties: ReadonlyArray<string>;
+  specialties: ReadonlyArray<AdvisorType>;
   languages: ReadonlyArray<string>;
 }
 
