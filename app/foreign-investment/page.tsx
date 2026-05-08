@@ -163,25 +163,25 @@ export default async function ForeignInvestmentHubPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-5">
                 <Link
                   href="/foreign-investment/shares"
-                  className="px-4 py-2.5 border border-slate-200 hover:bg-slate-50 hover:border-amber-300 text-slate-700 hover:text-slate-900 font-semibold rounded-xl text-xs text-left transition-colors"
+                  className="px-4 py-2.5 border border-slate-200 hover:bg-slate-50 hover:border-amber-300 text-slate-700 hover:text-slate-900 font-semibold rounded-xl text-xs text-start transition-colors"
                 >
                   I want to buy Australian shares &rarr;
                 </Link>
                 <Link
                   href="/foreign-investment/property"
-                  className="px-4 py-2.5 border border-slate-200 hover:bg-slate-50 hover:border-amber-300 text-slate-700 hover:text-slate-900 font-semibold rounded-xl text-xs text-left transition-colors"
+                  className="px-4 py-2.5 border border-slate-200 hover:bg-slate-50 hover:border-amber-300 text-slate-700 hover:text-slate-900 font-semibold rounded-xl text-xs text-start transition-colors"
                 >
                   I want to buy property &rarr;
                 </Link>
                 <Link
                   href="/foreign-investment/super"
-                  className="px-4 py-2.5 border border-slate-200 hover:bg-slate-50 hover:border-amber-300 text-slate-700 hover:text-slate-900 font-semibold rounded-xl text-xs text-left transition-colors"
+                  className="px-4 py-2.5 border border-slate-200 hover:bg-slate-50 hover:border-amber-300 text-slate-700 hover:text-slate-900 font-semibold rounded-xl text-xs text-start transition-colors"
                 >
                   I&apos;m leaving Australia — super &amp; tax help &rarr;
                 </Link>
                 <Link
                   href="#find-your-situation"
-                  className="px-4 py-2.5 border border-slate-200 hover:bg-slate-50 hover:border-amber-300 text-slate-700 hover:text-slate-900 font-semibold rounded-xl text-xs text-left transition-colors"
+                  className="px-4 py-2.5 border border-slate-200 hover:bg-slate-50 hover:border-amber-300 text-slate-700 hover:text-slate-900 font-semibold rounded-xl text-xs text-start transition-colors"
                 >
                   I&apos;m an expat or new migrant &rarr;
                 </Link>
