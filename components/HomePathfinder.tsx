@@ -1,11 +1,26 @@
 import Link from "next/link";
 import { DesignIcon } from "@/components/design/DesignIcon";
+import {
+  getIntentCountry,
+  intentCountryMeta,
+} from "@/lib/intent-context";
 
 // Pathfinder section — secondary affordance for visitors who don't know
 // which route to pick. Per v5 spec the quiz lives BELOW the route cards
 // (not as the dominant hero card), so it helps users who are unsure
 // without overwhelming everyone else.
-export default function HomePathfinder() {
+//
+// When the user is in country mode, the Get-matched CTA carries the
+// country slug forward as ?country=<slug> so the quiz prefills the
+// international track (Step 12 wires the prefill itself). Copy stays
+// global — adding "for HK investors" here would clash with the
+// CountryPopularLinks strip directly above which already calls that
+// out explicitly.
+export default async function HomePathfinder() {
+  const code = await getIntentCountry();
+  const quizHref = code
+    ? `/quiz?country=${intentCountryMeta(code).slug}`
+    : "/quiz";
   return (
     <section style={{ padding: "40px 36px", maxWidth: 1280, margin: "0 auto" }}>
       <div
@@ -87,7 +102,7 @@ export default function HomePathfinder() {
             </li>
           </ul>
           <Link
-            href="/quiz"
+            href={quizHref}
             className="iv2-cta"
             style={{ fontSize: 14, padding: "12px 22px", borderRadius: 11 }}
           >

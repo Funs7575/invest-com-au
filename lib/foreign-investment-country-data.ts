@@ -2240,21 +2240,18 @@ export const HK_CONFIG: CountryConfig = {
     types: ["share_broker", "crypto_exchange"],
     nonResidentsOnly: true,
   },
-  // Featured tools for the (future, Step 9) tools-strip re-rank: WHT
-  // calculator with the HK preset, FX corridor calculator pre-set to
-  // HKD→AUD. Intentionally short — the global tools strip remains the
-  // full surface; Country Mode only re-ranks.
+  // Featured tools for the global tools-strip re-rank. `slug` is the
+  // tool's href — HomeToolsStrip hoists the matching entries to the
+  // front of the existing list (no replacement, no shrinkage). FIRB
+  // cost + CGT + mortgage are the three calculators most relevant to
+  // HK property + ASX investors. WHT calculator and FX-corridor
+  // calculator are flagged for Phase 2 once they land in the global
+  // tools list — adding them to homepageFeaturedTools today would be
+  // a no-op because there's nothing for the rerank to hoist.
   homepageFeaturedTools: [
-    {
-      slug: "withholding-tax-calculator",
-      label: "Withholding tax for HK residents",
-      deeplinkParams: { country: "hk" },
-    },
-    {
-      slug: "send-money-australia",
-      label: "HKD → AUD transfers",
-      deeplinkParams: { from: "HKD" },
-    },
+    { slug: "/property/foreign-investment", label: "FIRB cost (HK buyers)" },
+    { slug: "/cgt-calculator", label: "CGT for non-residents" },
+    { slug: "/mortgage-calculator", label: "Mortgage repayments" },
   ],
   preferredLanguages: ["en", "zh", "yue"],
   slug: "hong-kong",
