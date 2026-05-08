@@ -22,6 +22,7 @@ import {
   getHomepageFiltersForCountry,
 } from "@/lib/country-mode";
 import { createClient } from "@/lib/supabase/server";
+import TrackedCountryLink from "@/components/country-mode/TrackedCountryLink";
 
 interface PreviewListing {
   id: number;
@@ -95,8 +96,15 @@ export default async function CountryListingsPreview() {
         <ul className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           {visible.map((l) => (
             <li key={l.id}>
-              <Link
+              <TrackedCountryLink
                 href={`/invest/${l.vertical}/${l.slug}`}
+                eventType="country_listing_click"
+                eventData={{
+                  country: code,
+                  listing_slug: l.slug,
+                  vertical: l.vertical,
+                  placement: "homepage_listings_preview",
+                }}
                 className="group block bg-slate-50 hover:bg-amber-50 border border-slate-200 hover:border-amber-200 rounded-xl overflow-hidden transition-colors"
               >
                 {l.hero_image && (
@@ -123,7 +131,7 @@ export default async function CountryListingsPreview() {
                     </p>
                   )}
                 </div>
-              </Link>
+              </TrackedCountryLink>
             </li>
           ))}
         </ul>

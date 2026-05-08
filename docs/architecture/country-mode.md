@@ -123,8 +123,18 @@ form) and extends one typed event:
 - `quiz_completed` (existing event) — extended with `country` dimension
   carrying the quiz key (e.g. `"hong_kong"`)
 
-Three click-event hooks (`country_listing_click`, `country_expert_click`,
-`country_tool_click`) are deferred to Phase 2 — easily reconstructed
+Two of the originally-deferred click-event hooks now fire from the
+homepage preview strips via `components/country-mode/TrackedCountryLink`:
+
+- `country_listing_click` — fired by `CountryListingsPreview` items.
+  `event_data: { country, listing_slug, vertical, placement }`.
+- `country_expert_click` — fired by `CountryExpertsPreview` items.
+  `event_data: { country, expert_slug, expert_type, placement }`.
+
+`country_tool_click` is still deferred — wiring it requires touching
+`HomeToolsStrip` so that featured tools (those hoisted by
+`CountryToolsStripWrapper`) fire a country-attributed event distinct
+from a default-order tool click. Easy to reconstruct in the meantime
 from `pathname` + cookie dimension on `$pageview`.
 
 ## Phase 5 language hooks (scaffolding only)
