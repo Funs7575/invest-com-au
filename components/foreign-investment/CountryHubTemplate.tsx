@@ -525,7 +525,7 @@ export default async function CountryHubTemplate({ config }: Props) {
                       {item.label}
                     </span>
                   </div>
-                  <p className="text-xs text-slate-600 leading-relaxed ml-6">{item.body}</p>
+                  <p className="text-xs text-slate-600 leading-relaxed ms-6">{item.body}</p>
                 </Link>
               ))}
             </div>
@@ -634,7 +634,7 @@ export default async function CountryHubTemplate({ config }: Props) {
           <div className="overflow-x-auto mb-5">
             <table className="w-full text-sm border border-slate-200 rounded-xl overflow-hidden">
               <thead>
-                <tr className="bg-slate-50 border-b border-slate-200 text-left">
+                <tr className="bg-slate-50 border-b border-slate-200 text-start">
                   <th className="px-4 py-3 font-semibold text-slate-600 text-xs">Income type</th>
                   <th className="px-4 py-3 font-semibold text-slate-600 text-xs">Without DTA</th>
                   <th className="px-4 py-3 font-semibold text-slate-600 text-xs">With DTA ({config.countryShort} residents)</th>
