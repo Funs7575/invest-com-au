@@ -230,9 +230,17 @@ export default function AdvisorSearchClient({ initialAdvisors }: Props) {
         </nav>
 
         <div className="mb-6">
-          <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-1">
-            Advanced Advisor Search
-          </h1>
+          <div className="flex items-start justify-between gap-3 flex-wrap mb-1">
+            <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900">
+              Advanced Advisor Search
+            </h1>
+            <Link
+              href={`/concierge?seed=${encodeURIComponent("I'm thinking about hiring a financial advisor. What should I look for, and what questions should I ask?")}`}
+              className="inline-flex items-center gap-1.5 bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 hover:text-slate-900 font-bold text-xs md:text-sm px-3 py-1.5 rounded-full transition-colors shadow-sm shrink-0"
+            >
+              Not sure what to look for? Ask the AI →
+            </Link>
+          </div>
           <p className="text-sm text-slate-600">
             Filter ASIC-registered Australian advisors by specialty, location,
             language, availability and international-client status.{" "}

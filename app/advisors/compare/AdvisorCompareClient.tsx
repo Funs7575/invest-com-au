@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { useAdvisorShortlist } from "@/lib/hooks/useAdvisorShortlist";
@@ -140,10 +141,38 @@ const COMPARE_ROWS: { label: string; render: (a: AdvisorData) => React.ReactNode
   },
 ];
 
+// Slug shape: lowercase letters, digits, hyphens. Reject anything else
+// so a crafted ?add=… URL can't inject arbitrary text into the
+// shortlist (which is rendered/used as part of API URLs downstream).
+const SLUG_RE = /^[a-z0-9][a-z0-9-]{0,80}$/;
+
 export default function AdvisorCompareClient() {
-  const { slugs, toggle, clear } = useAdvisorShortlist();
+  const { slugs, toggle, clear, has } = useAdvisorShortlist();
   const [advisors, setAdvisors] = useState<AdvisorData[]>([]);
   const [loading, setLoading] = useState(true);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const addHandledRef = useRef(false);
+
+  // Deep-link support: /advisors/compare?add=<slug> auto-toggles the
+  // slug into the shortlist and strips the param from the URL. Lets
+  // the AI concierge, marketing emails, or partner sites populate the
+  // compare matrix in one click. Idempotent — re-clicking the link
+  // doesn't double-toggle thanks to addHandledRef + has().
+  useEffect(() => {
+    if (addHandledRef.current) return;
+    const raw = searchParams?.get("add")?.trim().toLowerCase() ?? "";
+    if (!raw) return;
+    addHandledRef.current = true;
+    if (SLUG_RE.test(raw) && !has(raw)) {
+      toggle(raw);
+    }
+    // Strip the param so refresh / share doesn't re-toggle.
+    router.replace(pathname ?? "/advisors/compare", { scroll: false });
+    // toggle/has change identity on every render; guarded by ref.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams, pathname, router]);
 
   useEffect(() => {
     if (slugs.length === 0) {
