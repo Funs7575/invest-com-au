@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import HubHero from "@/components/HubHero";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
-import { GENERAL_ADVICE_WARNING, CRYPTO_WARNING, SUPER_WARNING } from "@/lib/compliance";
+import { GENERAL_ADVICE_WARNING, CRYPTO_WARNING, SUPER_WARNING, GRANTS_WARNING } from "@/lib/compliance";
 import type { HubConfig, ComplianceKey } from "@/lib/verticals";
 
 /**
@@ -74,6 +74,8 @@ function getComplianceText(key: ComplianceKey): string {
       return `${SUPER_WARNING} ${GENERAL_ADVICE_WARNING}`;
     case "smsf":
       return `${SUPER_WARNING} ${GENERAL_ADVICE_WARNING}`;
+    case "grants":
+      return `${GRANTS_WARNING} ${GENERAL_ADVICE_WARNING}`;
     default:
       return GENERAL_ADVICE_WARNING;
   }
