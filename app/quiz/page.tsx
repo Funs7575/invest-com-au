@@ -538,8 +538,8 @@ export default function QuizPage() {
   // Track completion + persist results
   useEffect(() => {
     if ((phase === "diy-results" || phase === "advisor-results") && brokers.length > 0) {
-      trackEvent('quiz_complete', { answers: scoringAnswers, top_broker: results[0]?.slug || null }, '/quiz');
-      trackEvent('quiz_completed', { top_match: results[0]?.slug || null }, '/quiz');
+      trackEvent('quiz_complete', { answers: scoringAnswers, top_broker: results[0]?.slug || null, country: answers.investor_country ?? null }, '/quiz');
+      trackEvent('quiz_completed', { top_match: results[0]?.slug || null, country: answers.investor_country ?? null }, '/quiz');
       phTrack('quiz_completed', {
         quiz_type: phase === 'advisor-results' ? 'advisor_match' : 'diy_broker',
         time_taken_seconds: quizStartedAtRef.current
@@ -550,6 +550,7 @@ export default function QuizPage() {
         risk_profile: answers.experience ?? null,
         top_match_slug: results[0]?.slug ?? null,
         match_count: results.length,
+        country: answers.investor_country ?? null,
       });
       try {
         const topResults = results.slice(0, 5).filter(r => r.broker).map(r => ({
