@@ -259,6 +259,15 @@ describe("handleInvoicePaymentFailedEvent", () => {
       expect.objectContaining({ invoice: "in_fail" }),
     );
   });
+
+  it("resolves customer ID from object form for dunning email lookup", async () => {
+    const ctx = makeCtx();
+    await handleInvoicePaymentFailedEvent(
+      makeInvoiceFailedEvent({ customer: { id: "cus_obj_fail" } as unknown as string }),
+      ctx,
+    );
+    expect(ctx.stripe.customers.retrieve).toHaveBeenCalledWith("cus_obj_fail");
+  });
 });
 
 // ── handleInvoicePaymentActionRequiredEvent ───────────────────────────────────
