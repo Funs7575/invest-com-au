@@ -5,6 +5,8 @@ import Icon from "@/components/Icon";
 import LeadScoreBadge from "@/components/LeadScoreBadge";
 import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
 import type { Advisor, Stats, Lead, ProfileCompleteness, Review, ViewDay, WeeklyEnquiry, ViewType } from "./types";
+import type { BillingSummary } from "./billing/types";
+import PinnedBillingWidget from "./billing/PinnedBillingWidget";
 
 type Props = {
   advisor: Advisor | null;
@@ -18,12 +20,14 @@ type Props = {
   isPending: boolean;
   onNavigate: (v: ViewType) => void;
   onDismissOnboarding: () => void;
+  /** Pre-fetched summary; widget renders a free-leads pill if absent. */
+  billingSummary?: BillingSummary | null;
 };
 
 export default function DashboardTab({
   advisor, stats, leads, profileCompleteness, reviews,
   viewsByDay, weeklyEnquiries, dismissedOnboarding, isPending,
-  onNavigate, onDismissOnboarding,
+  onNavigate, onDismissOnboarding, billingSummary,
 }: Props) {
   return (
     <>
@@ -69,75 +73,51 @@ export default function DashboardTab({
         ))}
       </div>
 
-      {/* Credit balance banner */}
-      {(() => {
-        const balance = advisor?.credit_balance_cents || 0;
-        const leadPrice = advisor?.lead_price_cents || 3980;
-        const freeLeadsUsed = advisor?.free_leads_used || 0;
-        const hasFreeLeads = freeLeadsUsed < 2;
-        const leadsRemaining = hasFreeLeads ? (2 - freeLeadsUsed) : Math.floor(balance / leadPrice);
-        const isLow = !hasFreeLeads && leadsRemaining <= 2 && balance > 0;
-        const isEmpty = !hasFreeLeads && balance <= 0;
+      {/* Free-leads notice (advisor still on the launch trial) */}
+      {(advisor?.free_leads_used ?? 0) < 3 && (
+        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 mb-4 flex items-center justify-between gap-3">
+          <div>
+            <p className="text-sm font-bold text-emerald-800">
+              {3 - (advisor?.free_leads_used ?? 0)} free trial leads remaining
+            </p>
+            <p className="text-xs text-emerald-700 mt-0.5">
+              Your first 3 leads are on us — convert one to unlock the discounted lead pricing.
+            </p>
+          </div>
+          <button
+            onClick={() => onNavigate("billing")}
+            className="px-3 py-1.5 bg-emerald-600 text-white text-xs font-bold rounded-lg hover:bg-emerald-700 transition-colors shrink-0"
+          >
+            See pricing
+          </button>
+        </div>
+      )}
 
-        return (
-          <>
-            {isEmpty && (
-              <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-4 flex items-start gap-3">
-                <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
-                  <Icon name="alert-triangle" size={16} className="text-red-600" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-bold text-red-800">Credit balance empty — leads paused</p>
-                  <p className="text-xs text-red-600 mt-0.5">You won&rsquo;t receive new enquiries until you top up your credit balance.</p>
-                </div>
-                <button
-                  onClick={() => onNavigate("billing")}
-                  className="px-3 py-1.5 bg-red-600 text-white text-xs font-bold rounded-lg hover:bg-red-700 transition-colors shrink-0"
-                >
-                  Top Up Now
-                </button>
-              </div>
-            )}
-            {isLow && (
-              <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-4 flex items-start gap-3">
-                <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
-                  <Icon name="alert-triangle" size={16} className="text-amber-600" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-bold text-amber-800">Low credit balance — {leadsRemaining} lead{leadsRemaining !== 1 ? "s" : ""} remaining</p>
-                  <p className="text-xs text-amber-600 mt-0.5">Top up soon to avoid missing incoming enquiries.</p>
-                </div>
-                <button
-                  onClick={() => onNavigate("billing")}
-                  className="px-3 py-1.5 bg-amber-500 text-white text-xs font-bold rounded-lg hover:bg-amber-600 transition-colors shrink-0"
-                >
-                  Top Up
-                </button>
-              </div>
-            )}
-            <div className={`rounded-xl p-4 mb-6 text-white flex items-center justify-between ${isEmpty ? "bg-gradient-to-r from-red-700 to-red-900" : isLow ? "bg-gradient-to-r from-amber-500 to-amber-700" : "bg-gradient-to-r from-violet-600 to-violet-800"}`}>
-              <div>
-                <p className={`text-[0.65rem] font-semibold uppercase tracking-wider ${isEmpty ? "text-red-200" : isLow ? "text-amber-100" : "text-violet-200"}`}>Lead Credit Balance</p>
-                <p className="text-2xl font-extrabold">${(balance / 100).toFixed(0)}</p>
-                <p className={`text-[0.62rem] mt-0.5 ${isEmpty ? "text-red-200" : isLow ? "text-amber-100" : "text-violet-200"}`}>
-                  {hasFreeLeads
-                    ? `${2 - freeLeadsUsed} free leads remaining`
-                    : isEmpty
-                      ? "No credits — top up to receive leads"
-                      : `~${leadsRemaining} leads remaining`
-                  }
-                </p>
-              </div>
-              <button
-                onClick={() => onNavigate("billing")}
-                className="px-5 py-2.5 bg-white text-sm font-bold rounded-lg hover:opacity-90 transition-opacity shrink-0 text-slate-800"
-              >
-                Buy Credits
-              </button>
-            </div>
-          </>
-        );
-      })()}
+      {/* Unified billing widget — replaces the prior credit banner */}
+      {billingSummary
+        ? <PinnedBillingWidget summary={billingSummary} />
+        : (advisor?.credit_balance_cents ?? 0) > 0
+          ? (
+            <PinnedBillingWidget
+              summary={{
+                balance_cents: advisor?.credit_balance_cents ?? 0,
+                lifetime_credit_cents: advisor?.lifetime_credit_cents ?? 0,
+                lifetime_spend_cents: advisor?.lifetime_lead_spend_cents ?? 0,
+                expiring_soon_cents: 0,
+                free_leads_used: advisor?.free_leads_used ?? 0,
+                free_leads_remaining: Math.max(0, 3 - (advisor?.free_leads_used ?? 0)),
+                lead_price_cents: advisor?.lead_price_cents ?? 4900,
+                advisor_tier: "free",
+                pending_tier: null,
+                pending_tier_effective_at: null,
+                has_payment_method: false,
+                has_stripe_customer: false,
+                ledger_first_page: [],
+                ledger_total: 0,
+              }}
+            />
+          )
+          : null}
 
       {/* Onboarding Checklist */}
       {profileCompleteness && profileCompleteness.score < 80 && !dismissedOnboarding && (

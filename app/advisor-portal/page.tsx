@@ -4,13 +4,13 @@ import { useState, useEffect, useCallback } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import Icon from "@/components/Icon";
-import LeadScoreBadge from "@/components/LeadScoreBadge";
 import AdvisorPortalLogin from "./AdvisorPortalLogin";
 import type {
   Advisor,
-  Lead, BillingRecord, Stats, ViewDay, Review, WeeklyEnquiry, ProfileCompleteness,
+  Lead, Stats, ViewDay, Review, WeeklyEnquiry, ProfileCompleteness,
   CategoryPricing, DisputeModal, ViewType,
 } from "./types";
+import type { BillingSummary } from "./billing/types";
 
 const DashboardTab = dynamic(() => import("./DashboardTab"));
 const LeadsTab = dynamic(() => import("./LeadsTab"));
@@ -26,11 +26,11 @@ export default function AdvisorPortalPage() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
   const [viewsByDay, setViewsByDay] = useState<ViewDay[]>([]);
-  const [billing, setBilling] = useState<BillingRecord[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [categoryPricing, setCategoryPricing] = useState<CategoryPricing | null>(null);
   const [weeklyEnquiries, setWeeklyEnquiries] = useState<WeeklyEnquiry[]>([]);
   const [profileCompleteness, setProfileCompleteness] = useState<ProfileCompleteness | null>(null);
+  const [billingSummary, setBillingSummary] = useState<BillingSummary | null>(null);
   const [loading, setLoading] = useState(true);
   const [leadSearch, setLeadSearch] = useState("");
   const [leadStatusFilter, setLeadStatusFilter] = useState<"all" | "new" | "contacted" | "converted" | "lost">("all");
@@ -103,18 +103,24 @@ export default function AdvisorPortalPage() {
 
   const loadData = useCallback(async () => {
     try {
-      const res = await fetch("/api/advisor-dashboard");
-      if (res.ok) {
-        const data = await res.json();
+      const [dashRes, summaryRes] = await Promise.all([
+        fetch("/api/advisor-dashboard"),
+        fetch("/api/advisor-auth/billing-summary"),
+      ]);
+      if (dashRes.ok) {
+        const data = await dashRes.json();
         setLeads(data.leads);
         setStats(data.stats);
         setViewsByDay(data.viewsByDay);
-        setBilling(data.billing);
         setReviews(data.reviews);
         setWeeklyEnquiries(data.weeklyEnquiries || []);
         setProfileCompleteness(data.profileCompleteness || null);
         if (data.categoryPricing) setCategoryPricing(data.categoryPricing);
         if (data.advisor) setAdvisor(data.advisor);
+      }
+      if (summaryRes.ok) {
+        const summary = (await summaryRes.json()) as BillingSummary;
+        setBillingSummary(summary);
       }
     } catch { /* ignore */ }
   }, []);
@@ -264,6 +270,7 @@ export default function AdvisorPortalPage() {
             isPending={isPending}
             onNavigate={setView}
             onDismissOnboarding={() => setDismissedOnboarding(true)}
+            billingSummary={billingSummary}
           />
         )}
 
@@ -303,9 +310,8 @@ export default function AdvisorPortalPage() {
           <BillingTab
             advisor={advisor}
             stats={stats}
-            categoryPricing={categoryPricing}
-            billing={billing}
             onNavigate={setView}
+            initialSummary={billingSummary}
           />
         )}
 
