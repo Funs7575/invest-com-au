@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { getIntentCountry, intentCountryMeta } from "@/lib/intent-context";
+import { intentCountryMeta } from "@/lib/intent-context";
+import { getIntentCountry } from "@/lib/intent-context-server";
 import ClearIntentCountryButton from "./ClearIntentCountryButton";
 
 /**
