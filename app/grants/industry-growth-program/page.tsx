@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl } from "@/lib/seo";
 import Icon from "@/components/Icon";
-import HubLeadForm from "@/components/leads/HubLeadForm";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 3600;
 
@@ -100,18 +100,15 @@ export default function IgpPage() {
         </section>
 
         {/* Lead form */}
-        <section className="py-12 bg-white">
-          <div className="container-custom max-w-2xl">
-            <HubLeadForm
-              heading="Get help with your IGP application"
-              subheading="At Stream 2 dollar values, the difference between a self-written and a professionally-supported application is significant."
-              intent={{ need: "tax", context: ["tax_optimization"] }}
-              source="grants_igp"
-              ctaLabel="Get matched with a grants specialist"
-              extraFields={[{ name: "company", label: "Company name" }, { name: "stream", label: "Target stream (1 or 2)" }]}
-            />
-          </div>
-        </section>
+        <HubAdvisorCTA
+          heading="Get help with your IGP application"
+          subheading="At Stream 2 dollar values, the difference between a self-written and a professionally-supported application is significant."
+          intent={{ need: "tax", context: ["tax_optimization"] }}
+          source="grants_igp"
+          ctaLabel="Get matched with a grants specialist"
+          extraFields={[{ name: "company", label: "Company name" }, { name: "stream", label: "Target stream (1 or 2)" }]}
+          className="py-12 bg-white"
+        />
 
         {/* Cross-links */}
         <section className="py-10 bg-slate-50 border-t border-slate-200">

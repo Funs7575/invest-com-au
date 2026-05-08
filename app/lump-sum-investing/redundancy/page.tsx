@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl } from "@/lib/seo";
-import HubLeadForm from "@/components/leads/HubLeadForm";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 3600;
 
@@ -80,17 +80,13 @@ export default function RedundancyPage() {
           </div>
         </section>
 
-        <section className="py-12 bg-slate-50 border-t border-slate-200">
-          <div className="container-custom max-w-2xl">
-            <HubLeadForm
-              heading="Speak to a financial planner about your redundancy"
-              subheading="Tax window planning, super contribution sequencing and the right cash-buffer level for your circumstances."
-              intent={{ need: "planning", context: ["retirement"] }}
-              source="lump_sum_redundancy"
-              ctaLabel="Find a financial planner"
-            />
-          </div>
-        </section>
+        <HubAdvisorCTA
+          heading="Speak to a financial planner about your redundancy"
+          subheading="Tax window planning, super contribution sequencing and the right cash-buffer level for your circumstances."
+          intent={{ need: "planning", context: ["retirement"] }}
+          source="lump_sum_redundancy"
+          ctaLabel="Find a financial planner"
+        />
 
         <section className="py-10 bg-white border-t border-slate-200">
           <div className="container-custom max-w-4xl">

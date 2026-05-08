@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, absoluteUrl } from "@/lib/seo";
 import Icon from "@/components/Icon";
-import HubLeadForm from "@/components/leads/HubLeadForm";
+import HubAdvisorCTA from "@/components/HubAdvisorCTA";
 
 export const revalidate = 3600;
 
@@ -40,7 +40,7 @@ const PATHWAYS = [
   },
   {
     title: "Existing SIV Holders (188C)",
-    blurb: "If you hold a 188C visa granted before 31 July 2024, your complying investment obligations continue unchanged. The transition to permanent 888C remains.",
+    blurb: "If you hold a 188C visa granted before 31 July 2024, your complying investment obligations continue unchanged. The transition to permanent 888C remains.", // dated-ok — SIV closure is a fixed historical date
     href: "/foreign-investment/siv",
     cta: "SIV transition →",
   },
@@ -85,6 +85,7 @@ export default function VisaInvestmentPage() {
           <div className="container-custom max-w-5xl flex items-start gap-3">
             <Icon name="alert-triangle" size={20} className="text-amber-700 mt-0.5 shrink-0" />
             <p className="text-sm text-amber-900 leading-relaxed">
+              {/* // dated-ok — SIV closure is a fixed historical date, will not change */}
               <strong>SIV / BIIP closed.</strong> The Significant Investor Visa and Business Innovation and Investment Program permanently closed to new applications on 31 July 2024. The pathways below reflect the current {CURRENT_YEAR} landscape.
             </p>
           </div>
@@ -125,18 +126,15 @@ export default function VisaInvestmentPage() {
         </section>
 
         {/* Lead form */}
-        <section className="py-12 bg-white">
-          <div className="container-custom max-w-2xl">
-            <HubLeadForm
-              heading="Speak to a migration agent or immigration investment lawyer"
-              subheading="The right specialist will assess eligibility, sequence applications, and avoid the documentation traps that derail most investor applications."
-              intent={{ need: "planning", context: ["estate_planning"] }}
-              source="visa_investment_hub"
-              ctaLabel="Get matched with a specialist"
-              extraFields={[{ name: "current_country", label: "Current country of residence" }, { name: "intended_pathway", label: "Pathway of interest" }]}
-            />
-          </div>
-        </section>
+        <HubAdvisorCTA
+          heading="Speak to a migration agent or immigration investment lawyer"
+          subheading="The right specialist will assess eligibility, sequence applications, and avoid the documentation traps that derail most investor applications."
+          intent={{ need: "planning", context: ["estate_planning"] }}
+          source="visa_investment_hub"
+          ctaLabel="Get matched with a specialist"
+          extraFields={[{ name: "current_country", label: "Current country of residence" }, { name: "intended_pathway", label: "Pathway of interest" }]}
+          className="py-12 bg-white"
+        />
 
         <section className="py-10 bg-slate-50 border-t border-slate-200">
           <div className="container-custom max-w-4xl">
