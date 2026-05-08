@@ -12,6 +12,14 @@ import {
   capRejectionPayload,
 } from "@/lib/ai-cost-caps";
 import { sendCap80Alert } from "@/lib/ai-cost-alerts";
+import { embedText } from "@/lib/embeddings";
+import { classifyUserMessage } from "@/lib/chatbot";
+import {
+  buildConciergeSystemPrompt,
+  validateNoHallucinations,
+  type ConciergeRetrievedDoc,
+} from "@/lib/concierge-retrieval";
+import { isFinderKey, type FinderKey } from "@/lib/concierge-seeds";
 
 const log = logger("concierge");
 
@@ -34,33 +42,13 @@ export const maxDuration = 60;
 
 const MODEL = "claude-sonnet-4-20250514";
 const MAX_TOKENS = 1000;
-
-const SYSTEM_PROMPT = `You are the invest.com.au investment concierge.
-You help Australians find the right investment platforms, advisors,
-and opportunities. You have access to Australia's leading comparison
-platform.
-
-Guidelines:
-- Keep responses concise. Aim for 3-6 sentences per turn with actionable
-  links where possible.
-- Always include at least one relevant internal link when you mention a
-  comparison, tool, or hub. Format: [Compare brokers](/compare).
-- Never give personal financial advice. Recommend seeking a licensed
-  AFSL-authorised adviser for personal situations.
-- Never state a broker is "best" universally; frame recommendations as
-  "best for X" scenarios and point to /best-for when appropriate.
-- For SMSF questions, point to /smsf. For foreign investors, point to
-  /foreign-investment. For funds, /invest/funds. For the energy sector,
-  /invest/oil-gas / /invest/uranium / /invest/hydrogen.
-- Decline questions about specific stocks or crypto trades — say we
-  cover platforms and educational context only.
-
-Platform: invest.com.au.`;
+const RAG_TOP_K = 6;
 
 interface Body {
   message: string;
   session_id?: string;
   history?: Array<{ role: "user" | "assistant"; content: string }>;
+  finder?: FinderKey;
 }
 
 function parse(input: unknown): { ok: true; data: Body } | { ok: false; error: string } {
@@ -86,7 +74,52 @@ function parse(input: unknown): { ok: true; data: Body } | { ok: false; error: s
       }
     }
   }
-  return { ok: true, data: { message, session_id, history } };
+  const finder = isFinderKey(b.finder) ? (b.finder as FinderKey) : undefined;
+  return { ok: true, data: { message, session_id, history, finder } };
+}
+
+/**
+ * Vector-search the user's message against `search_embeddings`.
+ * Best-effort: failures (missing OPENAI_API_KEY in dev, KNN RPC
+ * timeout) return [] rather than throwing, so the concierge still
+ * answers — just without retrieval grounding.
+ */
+async function retrieveContext(
+  message: string,
+  limit = RAG_TOP_K,
+): Promise<ConciergeRetrievedDoc[]> {
+  try {
+    const embedding = await embedText(message);
+    if (!embedding) return [];
+    const supabase = createAdminClient();
+    const { data, error } = await supabase.rpc("search_embeddings_knn", {
+      query_embedding: embedding.vector,
+      match_limit: limit,
+      match_type: null,
+    });
+    if (error) {
+      log.warn("rag_retrieval_failed", { err: error.message });
+      return [];
+    }
+    return (data || []).map(
+      (r: {
+        document_type: string;
+        document_id: string;
+        title: string | null;
+        body_excerpt: string | null;
+        distance: number;
+      }) => ({
+        document_type: r.document_type,
+        document_id: r.document_id,
+        title: r.title || "",
+        body_excerpt: r.body_excerpt || "",
+        score: Math.max(0, 1 - (r.distance || 0)),
+      }),
+    );
+  } catch (err) {
+    log.warn("rag_retrieval_threw", { err: err instanceof Error ? err.message : String(err) });
+    return [];
+  }
 }
 
 function ensureSessionId(session_id?: string): string {
@@ -116,6 +149,7 @@ export async function POST(req: NextRequest) {
 
   let raw: unknown;
   try {
+    // eslint-disable-next-line invest/no-unvalidated-req-json -- validated via parse() below
     raw = await req.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
@@ -124,6 +158,20 @@ export async function POST(req: NextRequest) {
   const v = parse(raw);
   if (!v.ok) {
     return NextResponse.json({ error: v.error }, { status: 400 });
+  }
+
+  // Defensive classifier — refuses prompt-injection + frames
+  // personal-advice asks with a compliant template before any
+  // Anthropic call. Same rules as /api/chatbot.
+  const classification = classifyUserMessage(v.data.message);
+  if (classification.flagged) {
+    return NextResponse.json(
+      {
+        error: "blocked",
+        reason: classification.reason,
+      },
+      { status: 400 },
+    );
   }
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
@@ -154,6 +202,11 @@ export async function POST(req: NextRequest) {
   const session_id = ensureSessionId(v.data.session_id);
   const client = new Anthropic({ apiKey });
 
+  // Retrieve before streaming — the model needs the context block
+  // in its system prompt. Failure is non-fatal (returns []).
+  const retrieved = await retrieveContext(v.data.message);
+  const systemPrompt = buildConciergeSystemPrompt(retrieved);
+
   // Persist the user message first so we have a record even if
   // streaming fails halfway through.
   const supabase = createAdminClient();
@@ -162,6 +215,7 @@ export async function POST(req: NextRequest) {
     role: "user",
     content: v.data.message,
     model: MODEL,
+    context: { finder: v.data.finder ?? null, retrieved_count: retrieved.length },
   });
 
   // Build messages array — trim history to the last 10 turns to
@@ -182,11 +236,28 @@ export async function POST(req: NextRequest) {
         ),
       );
 
+      // Stream retrieval citations so the UI can render "Sources" under
+      // the reply as it arrives. Trimmed shape — full body_excerpt isn't
+      // needed client-side.
+      controller.enqueue(
+        encoder.encode(
+          `data: ${JSON.stringify({
+            type: "retrieved",
+            docs: retrieved.map((d) => ({
+              type: d.document_type,
+              id: d.document_id,
+              title: d.title,
+              score: d.score,
+            })),
+          })}\n\n`,
+        ),
+      );
+
       try {
         const response = client.messages.stream({
           model: MODEL,
           max_tokens: MAX_TOKENS,
-          system: SYSTEM_PROMPT,
+          system: systemPrompt,
           messages: [
             ...trimmedHistory,
             { role: "user", content: v.data.message },
@@ -226,9 +297,21 @@ export async function POST(req: NextRequest) {
           ),
         );
       } finally {
-        // Persist the assistant reply (best-effort; never blocks the
-        // stream closure).
+        // Persist the assistant reply + retrieval context (best-effort;
+        // never blocks the stream closure). Hallucination guardrail
+        // runs warn-only pre-launch — gives us real-world signal on
+        // how often the model invents slugs before we promote to
+        // refuse + retry. See lib/concierge-retrieval.ts.
         if (assembledAssistant) {
+          const hallucinated = validateNoHallucinations(assembledAssistant, retrieved);
+          if (hallucinated.length > 0) {
+            log.warn("concierge_hallucinated_slugs", {
+              session_id,
+              finder: v.data.finder ?? null,
+              hallucinated,
+              retrieved_count: retrieved.length,
+            });
+          }
           void supabase.from("chatbot_conversations").insert({
             session_id,
             role: "assistant",
@@ -236,6 +319,16 @@ export async function POST(req: NextRequest) {
             model: MODEL,
             tokens_in: tokensIn,
             tokens_out: tokensOut,
+            context: {
+              retrieved: retrieved.map((d) => ({
+                type: d.document_type,
+                id: d.document_id,
+                title: d.title,
+              })),
+              hallucinated_slugs: hallucinated,
+            },
+            flagged: hallucinated.length > 0,
+            flagged_reason: hallucinated.length > 0 ? "hallucinated_slug" : null,
           });
         }
         // V-NEW-06: post-record usage + 80% alert. Fire-and-forget;
