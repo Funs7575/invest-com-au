@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 import { resolvePreviewToken } from "@/lib/article-preview-tokens";
 
 export const dynamic = "force-dynamic";
@@ -45,7 +45,7 @@ export default async function DraftPreviewPage({ params }: Props) {
   const resolved = await resolvePreviewToken(token);
   if (!resolved) notFound();
 
-  const supabase = createAdminClient();
+  const supabase = await createClient();
   const { data } = await supabase
     .from("articles")
     .select(

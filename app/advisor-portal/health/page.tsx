@@ -1,6 +1,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+// eslint-disable-next-line no-restricted-imports -- X-09 keep-admin: reads `advisor_sessions` (deny-all RLS by design; no anon/auth policy) for cookie-based advisor auth. Same pattern as advisor-portal/upgrade and require-advisor-session.ts.
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { HealthFactor } from "@/lib/advisor-health";
 
