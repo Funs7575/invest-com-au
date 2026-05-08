@@ -15,8 +15,8 @@ describe("locale registry", () => {
     expect(DEFAULT_LOCALE).toBe("en");
   });
 
-  it("includes en + zh + ko and nothing else", () => {
-    expect([...LOCALES].sort()).toEqual(["en", "ko", "zh"]);
+  it("includes en + zh + ko + ar (Phase 5a added ar for UAE / Saudi)", () => {
+    expect([...LOCALES].sort()).toEqual(["ar", "en", "ko", "zh"]);
   });
 
   it("every locale has a BCP-47 tag and a UI label", () => {
