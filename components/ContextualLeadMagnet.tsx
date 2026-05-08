@@ -5,6 +5,7 @@ import Link from "next/link";
 import { trackEvent } from "@/lib/tracking";
 import { CURRENT_YEAR } from "@/lib/seo";
 import { useSubscription } from "@/lib/hooks/useSubscription";
+import { isValidEmail } from "@/lib/validate-email";
 
 export type LeadSegment = "fee-audit" | "smsf-checklist" | "us-shares-guide" | "switching-checklist" | "beginner-guide";
 
@@ -82,9 +83,6 @@ export default function ContextualLeadMagnet({ segment = "fee-audit" }: { segmen
 
   // Ad-free: hide lead magnets for Pro users
   if (isPro) return null;
-
-  const isValidEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
-
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!email || !isValidEmail(email) || !consent) return;

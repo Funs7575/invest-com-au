@@ -4,15 +4,12 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import SocialProofCounter from "@/components/SocialProofCounter";
-import { trackEvent, trackPageDuration } from "@/lib/tracking";
+import { trackEvent, trackPageDuration, formatPercent } from "@/lib/tracking";
 import { getStoredUtm } from "@/components/UtmCapture";
 import { formatCurrency } from "@/lib/utils";
 
 /* ─── helpers ─── */
-
-function formatPercent(n: number): string {
-  return n.toFixed(2) + "%";
-}
+// formatPercent imported from lib/tracking; default 2 decimals matches old local impl.
 
 function yieldColor(grossYield: number): { bg: string; text: string; border: string; label: string } {
   if (grossYield >= 5) return { bg: "bg-emerald-50", text: "text-emerald-700", border: "border-emerald-200", label: "Strong yield" };
