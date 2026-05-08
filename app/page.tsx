@@ -14,6 +14,7 @@ import HomeHowWeEarn from "@/components/HomeHowWeEarn";
 import CountryListingsPreview from "@/components/country-mode/CountryListingsPreview";
 import CountryExpertsPreview from "@/components/country-mode/CountryExpertsPreview";
 import CountryComparePreview from "@/components/country-mode/CountryComparePreview";
+import CountryPopularLinks from "@/components/country-mode/CountryPopularLinks";
 import ScrollFadeIn from "@/components/ScrollFadeIn";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import { ORGANIZATION_JSONLD, SITE_URL } from "@/lib/seo";
@@ -257,6 +258,8 @@ export default async function HomePage() {
       <ScrollFadeIn>
         <HomeToolsStrip />
       </ScrollFadeIn>
+
+      <CountryPopularLinks />
 
       <ScrollFadeIn>
         <HomePathfinder />
