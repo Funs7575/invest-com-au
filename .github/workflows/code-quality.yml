@@ -43,14 +43,74 @@ jobs:
         run: npm run test:coverage -- --reporter=dot
         continue-on-error: true
 
-      - name: Lighthouse top-5 mobile (best-effort)
+      # Lighthouse top-5 mobile — runs the same set of canonical pages
+      # that .lighthouserc.json defines (/, /compare, /quiz,
+      # /find-advisor, /fee-impact). Reuses the .next build from the
+      # `Install` step's `npm ci` (we don't have an artifact dependency
+      # here — this is the weekly job, not the per-PR pipeline). Build
+      # fresh so the score reflects current main, not yesterday's
+      # cached output.
+      #
+      # The treosh action writes scores into
+      # ./.lighthouseci/manifest.json — we read the median performance
+      # score per URL and emit a JSON array as `lighthouse=[91,87,…]`.
+      # The collector script (collectFromLighthouse in
+      # scripts/collect-quality-metrics.ts) takes the median of that
+      # array as M11.
+      #
+      # continue-on-error keeps the snapshot step running if LH itself
+      # fails — when scores are missing the collector falls through to
+      # the baseline value and the rest of the dashboard updates.
+      - name: Build for Lighthouse
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder
+          SUPABASE_SERVICE_ROLE_KEY: placeholder
+          RESEND_API_KEY: placeholder
+          STRIPE_SECRET_KEY: placeholder
+          STRIPE_WEBHOOK_SECRET: placeholder
+          NEXT_PUBLIC_SITE_URL: http://localhost:3000
+          CRON_SECRET: placeholder
+
+      - name: Run Lighthouse against canonical pages
+        id: lh-run
+        continue-on-error: true
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          configPath: ./.lighthouserc.json
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+
+      - name: Extract LH median performance scores
         id: lh
         continue-on-error: true
         run: |
-          # Stub for the first iteration. Replace with a real Lighthouse
-          # run against the Vercel preview URL once that pipeline is in
-          # place. For now, emit baseline so the dashboard renders.
-          echo "lighthouse=[0,0,0,0,0]" >> "$GITHUB_OUTPUT"
+          set -eu
+          if [ ! -f ".lighthouseci/manifest.json" ]; then
+            echo "No LH manifest — falling back to baseline"
+            echo "lighthouse=[0,0,0,0,0]" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          # The manifest has multiple runs per URL; we want the
+          # representative perf score per URL. The treosh action sets
+          # `isRepresentativeRun: true` on the run it picked as the
+          # median. node-only one-liner — keeps the workflow file
+          # readable while doing the JSON work properly.
+          SCORES=$(node -e '
+            const m = JSON.parse(require("fs").readFileSync(".lighthouseci/manifest.json","utf8"));
+            const byUrl = {};
+            for (const r of m) {
+              if (!r.isRepresentativeRun) continue;
+              const summary = JSON.parse(require("fs").readFileSync(r.jsonPath,"utf8"));
+              const perf = summary?.categories?.performance?.score;
+              if (typeof perf === "number") byUrl[r.url] = Math.round(perf * 100);
+            }
+            const arr = Object.values(byUrl);
+            console.log(JSON.stringify(arr.length ? arr : [0,0,0,0,0]));
+          ')
+          echo "lighthouse=$SCORES" >> "$GITHUB_OUTPUT"
+          echo "Captured LH scores: $SCORES"
 
       - name: Collect metrics
         env:
