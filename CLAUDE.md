@@ -60,6 +60,7 @@ npm run test:watch                 # watch mode
 | Affiliate links + benefit CTAs + star rendering | `lib/tracking.ts`                                      |
 | Sponsorship ranking helpers                  | `lib/sponsorship.ts`                                      |
 | Vertical config (pillar pages, categories)   | `lib/verticals.ts`                                        |
+| Country Mode (priority chain, filters, supply thresholds) | `lib/country-mode/` + `lib/intent-context.ts` (see `docs/architecture/country-mode.md`) |
 | Locale registry + path helpers               | `lib/i18n/locales.ts`, `lib/i18n/dictionaries.ts`         |
 | Schema.org JSON-LD builders                  | `lib/schema-markup.ts`                                    |
 | Structured logging                           | `lib/logger.ts` (never `console.*`)                       |

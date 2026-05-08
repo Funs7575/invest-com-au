@@ -1,4 +1,5 @@
-import { getIntentCountry, intentCountryMeta } from "@/lib/intent-context";
+import { intentCountryMeta } from "@/lib/intent-context";
+import { getIntentCountry } from "@/lib/intent-context-server";
 import IntentCountryRecommendationCard from "./IntentCountryRecommendationCard";
 
 type SurfaceKind = "compare" | "advisors" | "invest";
