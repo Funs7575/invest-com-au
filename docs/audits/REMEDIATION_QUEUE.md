@@ -13,7 +13,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 ## In-flight (one row per active stream)
 
 | Stream | Branch | PRs (history → latest) | Notes | Done-when |
-|--------|--------|------------------------|-------|-----------|
+|--------|--------|------------------------|-------|----------|
 | A | _complete_ | #207/#322/#351/#352/#353/#354/#355/#378/#380/#381/#382/#457/#540 | A-01..A-04 done. A-05 resolved as **false-positive** — `broker_reviews`/`broker_ratings` don't exist in schema; covered by `user_reviews` (A-02). **Stream complete.** | A-05 merged ✓ |
 | B | `claude/audit-remediation/b-09-edge-fn-secrets` | #208/#301/#457 | B-01..B-08 done. B-09 blocked (see Blocked). | B-09 unblocked + merged |
 | C | `claude/audit-remediation/c-05-index-coverage` | #209/#302/#338/#356/#357/#358/#359/#360/#361/#362/#457/#541 | C-01..C-02 done. C-03..C-05 blocked (see Blocked). | C-05 merged |
@@ -37,7 +37,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | U | `claude/audit-remediation/u-04-url-canonicals` | #226/#319/#399/#457/#520/#561 | U-01..U-04 done. | U-04 merged ✓ |
 | V | `claude/audit-remediation/v-07-auth-hardening` | #227/#320/#400/#457/#521/#562 | V-01..V-07 done. | V-07 merged ✓ |
 | W | `claude/audit-remediation/w-12-hub-page-hoc` (W-15 remaining) | #306/#312/#369/#529/#598/#599/#602/#604/#605/#606/#607/#608/#609/#612 | **#609 MERGED 2026-05-08** (W-12+W-13+W-15 dividends). **#612 MERGED 2026-05-08** (W-14 grants→/startup/grants). W-04..W-15 all MERGED. | All W tasks merged ✓ |
-| X | `claude/audit-remediation/x-06-how-to-transfer` (#641) · `x-07-siv-advisors` (#643) · `x-08-go-apply` (#644) | #257/#367/#596/#600/#610 MERGED · **#641 OPEN** (X-06) · **#643 OPEN** (X-07) · **#644 OPEN** (X-08) | X-06 (#641 CI running), X-07 (#643 CI running), X-08 (#644 CI running). X-09 (ESLint ratchet) pending. | X-09 merged |
+| X | `claude/audit-remediation/x-06-how-to-transfer` (#641) · `x-07-siv-advisors` (#643) · `x-08-go-apply` (#644) · `x-09-eslint-ratchet` (#648) | #257/#367/#596/#600/#610 MERGED · **#641 OPEN** (X-06) · **#643 OPEN** (X-07) · **#644 OPEN** (X-08) · **#648 OPEN** (X-09, CI expected-red until #641/#643/#644 merge) | X-06 (#641), X-07 (#643), X-08 (#644) CI running. X-09 (#648) open — must merge after predecessors. | X-09 merged |
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
 | Z | `claude/audit-remediation/z-04-zero-state-ux` | #230/#323/#403/#457/#524/#565 | Z-01..Z-04 done. | Z-04 merged ✓ |
 
@@ -921,6 +921,25 @@ STATUS: PROGRESS · stream=X · item=X-06 · pr=#641
 
 ---
 
+### 2026-05-08 — iter 320 (X — X-09: ratchet no-restricted-imports warn→error + annotate KEEP-ADMIN files)
+
+**PR:** #648 (`claude/audit-remediation/x-09-eslint-ratchet`) — OPEN, CI queued.
+
+**Why:** The X-02..X-08 iterations cleared the backlog of ~17 public pages using `createAdminClient()` for anonymous traffic. X-09 closes the loop by ratcheting `eslint.config.mjs` from `"warn"` to `"error"` for `app/**/page.tsx`, `app/**/layout.tsx`, and `app/**/route.ts` — making future drift a hard CI failure. The 4 legitimate KEEP-ADMIN files on main are annotated with per-file `eslint-disable-next-line` comments documenting the exception category.
+
+**What shipped:**
+- `eslint.config.mjs`: `"warn"` → `"error"`, extended files matcher to include `app/**/route.ts`, updated comment to reference X-09.
+- `app/preview/[token]/page.tsx`: annotated (token-gated draft preview).
+- `app/advisor-portal/health/page.tsx`: annotated (advisor_sessions service-role read).
+- `app/advisor-portal/upgrade/page.tsx`: annotated (same advisor_sessions pattern).
+- `app/go/[slug]/route.ts`: annotated (campaigns service-role SELECT; telemetry endpoint).
+
+**Merge dependency:** CI on #648 is intentionally red until #641/#643/#644 merge (those PRs swap the remaining 5 unannotated files that the new `error` level correctly rejects). Do not rescue #648 CI.
+
+STATUS: PROGRESS · stream=X · item=X-09 · pr=#648
+
+---
+
 ### 2026-05-08 — iter 319 (X — X-08: swap go/[slug]/apply + annotate go/[slug]/route KEEP-ADMIN)
 
 **PR:** #644 (`claude/audit-remediation/x-08-go-apply`) — OPEN, CI in_progress.
@@ -1150,7 +1169,7 @@ Coverage audit complete. RATCHET M1 queued as next R-stream item.
 _Note: Iters 282–293 ran between 2026-04-21 and 2026-04-28 and were not individually logged in the live queue (context was archived). Entries reconstructed from git log and PR merge timestamps._
 
 | Iter | Date | Action | PR |
-|------|------|--------|----|---|
+|------|------|--------|-------|---|
 | 282 | 2026-04-21 | R — COVERAGE-09 ratchet | #566 |
 | 283 | 2026-04-21 | R — COVERAGE-10 ratchet | #567 |
 | 284 | 2026-04-22 | R — COVERAGE-11 ratchet | #568 |
