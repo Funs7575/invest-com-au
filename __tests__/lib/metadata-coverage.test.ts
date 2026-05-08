@@ -30,6 +30,7 @@ const ALLOWLIST = new Set<string>([
   "app/broker/page.tsx",
   "app/course/page.tsx",
   "app/course/[slug]/page.tsx",
+  "app/grants/page.tsx",
 ]);
 
 const META_PATTERN = /export\s+(?:const|async\s+function)\s+(metadata|generateMetadata)/;
