@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import Icon from "@/components/Icon";
+import CalculatorShell from "@/components/CalculatorShell";
 import HubLeadForm from "@/components/leads/HubLeadForm";
 import { formatAUD } from "@/lib/currency";
 
@@ -48,13 +48,22 @@ export default function RdTaxCalculator() {
   }
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-      <div className="bg-slate-900 px-6 py-4 text-white flex items-center gap-3">
-        <Icon name="calculator" size={20} className="text-amber-400" />
-        <h3 className="text-lg md:text-xl font-extrabold">R&amp;D Tax Incentive Calculator</h3>
-      </div>
-
-      <div className="p-6 md:p-8 space-y-7">
+    <CalculatorShell
+      title="R&D Tax Incentive Calculator"
+      iconName="calculator"
+      disclaimer="Estimate only. Actual refund depends on AusIndustry assessment, allowable expenditure rules, related-party adjustments and your final tax position. General information — not tax advice."
+      leadForm={
+        <HubLeadForm
+          heading="Get a free assessment from a registered R&D tax advisor"
+          subheading="A specialist will review your activities, validate the eligible percentage, and structure your records before lodgement."
+          intent={{ need: "tax", context: ["tax_optimization"] }}
+          source="rd_calculator"
+          ctaLabel="Get my free assessment"
+          extraFields={[{ name: "company", label: "Company name" }]}
+        />
+      }
+    >
+      <div className="space-y-7">
         {/* Step 1 — financials */}
         <div>
           <div className="flex items-center gap-2 mb-3">
@@ -154,27 +163,13 @@ export default function RdTaxCalculator() {
             </p>
 
             <div className="mt-5 rounded-lg bg-amber-500/10 border border-amber-500/30 px-4 py-3 text-sm text-amber-100">
+              {/* // dated-ok — historical ATO regulatory deadline for FY2025; immutable */}
               <strong className="text-amber-300">FY2025 deadline:</strong> registration with AusIndustry must be lodged by 30 April 2026.
             </div>
           </div>
         </div>
 
-        {/* Lead form */}
-        <div>
-          <HubLeadForm
-            heading="Get a free assessment from a registered R&D tax advisor"
-            subheading="A specialist will review your activities, validate the eligible percentage, and structure your records before lodgement."
-            intent={{ need: "tax", context: ["tax_optimization"] }}
-            source="rd_calculator"
-            ctaLabel="Get my free assessment"
-            extraFields={[{ name: "company", label: "Company name" }]}
-          />
-        </div>
-
-        <p className="text-[11px] text-slate-500 leading-relaxed">
-          Estimate only. Actual refund depends on AusIndustry assessment, allowable expenditure rules, related-party adjustments and your final tax position. General information — not tax advice.
-        </p>
       </div>
-    </div>
+    </CalculatorShell>
   );
 }

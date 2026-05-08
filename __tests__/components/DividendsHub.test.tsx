@@ -9,7 +9,7 @@
  *   - Dividends-specific content is present in each slot
  */
 import { describe, it, expect, vi } from "vitest";
-import { render, screen } from "./setup";
+import { render, screen, within } from "./setup";
 import HubPage from "@/components/HubPage";
 import { DIVIDENDS_HUB_CONFIG } from "@/lib/verticals";
 
@@ -118,11 +118,12 @@ describe("DividendsHub migration — <HubPage> with DIVIDENDS_HUB_CONFIG", () =>
     render(
       <HubPage config={DIVIDENDS_HUB_CONFIG} serviceGrid={serviceGridNode} />
     );
-    expect(screen.getByTestId("hub-page-service-grid")).toBeInTheDocument();
-    expect(screen.getByText("ASX High-Yield Stocks")).toBeInTheDocument();
-    expect(screen.getByText("Dividend ETFs")).toBeInTheDocument();
-    expect(screen.getByText("Franking Credits Explained")).toBeInTheDocument();
-    expect(screen.getByText("Franking Calculator")).toBeInTheDocument();
+    const slot = screen.getByTestId("hub-page-service-grid");
+    expect(slot).toBeInTheDocument();
+    expect(within(slot).getByText("ASX High-Yield Stocks")).toBeInTheDocument();
+    expect(within(slot).getByText("Dividend ETFs")).toBeInTheDocument();
+    expect(within(slot).getByText("Franking Credits Explained")).toBeInTheDocument();
+    expect(within(slot).getByText("Franking Calculator")).toBeInTheDocument();
   });
 
   it("renders children slot with SMSF crossover and platform CTA sections", () => {
