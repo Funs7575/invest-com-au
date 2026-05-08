@@ -1,38 +1,56 @@
 import { test, expect } from "@playwright/test";
 
 /**
- * Smoke checks for the cheap-now AI advisor surface shipped 2026-05-08:
- *   1. /advisors hero has the "Ask the AI concierge" CTA → /concierge?seed=…
+ * Smoke checks for the AI advisor surface:
+ *   1. /advisors hero has "Ask the AI concierge" CTA → /concierge?finder=advisor-finder
  *   2. /advisors/search header has the same CTA shape
- *   3. /concierge?seed=<text> auto-fires a POST /api/concierge with that text
- *   4. /concierge?seed=… does NOT auto-fire when a stored session is hydrating
- *   5. /advisors/compare?add=<slug> toggles the slug into the shortlist and
+ *   3. /concierge?finder=advisor-finder auto-fires a POST /api/concierge
+ *      (with finder=advisor-finder + the server-mapped prompt)
+ *   4. /concierge?finder=… does NOT auto-fire when a stored session is hydrating
+ *   5. ConciergeClient renders Sources block when SSE emits a 'retrieved' event
+ *   6. Unknown finder values do NOT auto-fire
+ *   7. /advisors/compare?add=<slug> toggles the slug into the shortlist and
  *      strips the ?add= param from the URL
  *
- * /api/concierge is intercepted in tests 3 + 4 so we never make a real
+ * /api/concierge is intercepted in tests 3-6 so we never make a real
  * Claude call (zero added inference cost).
  */
 
-const SEED_TEXT =
+// Server-side prompt for finder=advisor-finder; kept in sync with
+// CONCIERGE_SEEDS in lib/concierge-seeds.ts. If you edit that file,
+// update this string.
+const ADVISOR_FINDER_PROMPT =
   "I'm thinking about hiring a financial advisor. What should I look for, and what questions should I ask?";
 
-function mockConciergeStream(sessionId = "test-session-1234") {
-  // Minimal SSE stream that satisfies ConciergeClient's parser.
-  return [
+function mockConciergeStream(opts?: {
+  sessionId?: string;
+  text?: string;
+  retrieved?: Array<{ type: string; id: string; title: string; score: number }>;
+}) {
+  const sessionId = opts?.sessionId ?? "test-session-1234";
+  const text = opts?.text ?? "Mock concierge reply.";
+  const events = [
     `data: ${JSON.stringify({ type: "session", session_id: sessionId })}\n\n`,
-    `data: ${JSON.stringify({ type: "delta", text: "Mock concierge reply." })}\n\n`,
+  ];
+  if (opts?.retrieved) {
+    events.push(
+      `data: ${JSON.stringify({ type: "retrieved", docs: opts.retrieved })}\n\n`,
+    );
+  }
+  events.push(
+    `data: ${JSON.stringify({ type: "delta", text })}\n\n`,
     `data: ${JSON.stringify({ type: "done", tokens_in: 0, tokens_out: 0 })}\n\n`,
-  ].join("");
+  );
+  return events.join("");
 }
 
-test.describe("Advisor AI surface — cheap-now plan", () => {
-  test("/advisors hero shows the AI concierge CTA pointing to /concierge?seed=…", async ({ page }) => {
+test.describe("Advisor AI surface", () => {
+  test("/advisors hero shows the AI concierge CTA pointing to /concierge?finder=advisor-finder", async ({ page }) => {
     await page.goto("/advisors");
     const cta = page.getByRole("link", { name: /Ask the AI concierge/i });
     await expect(cta).toBeVisible();
     const href = await cta.getAttribute("href");
-    expect(href).toContain("/concierge?seed=");
-    expect(decodeURIComponent(href ?? "")).toContain("hiring a financial advisor");
+    expect(href).toBe("/concierge?finder=advisor-finder");
   });
 
   test("/advisors/search header shows the AI CTA", async ({ page }) => {
@@ -40,10 +58,10 @@ test.describe("Advisor AI surface — cheap-now plan", () => {
     const cta = page.getByRole("link", { name: /Ask the AI/i });
     await expect(cta).toBeVisible();
     const href = await cta.getAttribute("href");
-    expect(href).toContain("/concierge?seed=");
+    expect(href).toBe("/concierge?finder=advisor-finder");
   });
 
-  test("/concierge?seed=… auto-fires a POST /api/concierge with the seed text", async ({ page }) => {
+  test("/concierge?finder=advisor-finder auto-fires a POST /api/concierge with the mapped prompt + finder", async ({ page }) => {
     let capturedRequestBody: unknown = null;
 
     await page.route("**/api/concierge", async (route, request) => {
@@ -64,16 +82,17 @@ test.describe("Advisor AI surface — cheap-now plan", () => {
       await route.fulfill({ status: 200, contentType: "application/json", body: '{"messages":[]}' });
     });
 
-    await page.goto(`/concierge?seed=${encodeURIComponent(SEED_TEXT)}`);
+    await page.goto("/concierge?finder=advisor-finder");
 
     await expect(page.locator("text=Mock concierge reply.")).toBeVisible({ timeout: 10_000 });
 
     expect(capturedRequestBody).not.toBeNull();
-    const body = capturedRequestBody as { message?: string };
-    expect(body.message).toBe(SEED_TEXT);
+    const body = capturedRequestBody as { message?: string; finder?: string };
+    expect(body.message).toBe(ADVISOR_FINDER_PROMPT);
+    expect(body.finder).toBe("advisor-finder");
   });
 
-  test("/concierge?seed=… does NOT auto-fire when a stored session is hydrating", async ({ page, context }) => {
+  test("/concierge?finder=… does NOT auto-fire when a stored session is hydrating", async ({ page, context }) => {
     let postCount = 0;
     await context.addInitScript(() => {
       try {
@@ -110,11 +129,54 @@ test.describe("Advisor AI surface — cheap-now plan", () => {
       await route.fulfill({ status: 200, body: "" });
     });
 
-    await page.goto(`/concierge?seed=${encodeURIComponent(SEED_TEXT)}`);
+    await page.goto("/concierge?finder=advisor-finder");
 
     // Wait until prior history has rendered.
     await expect(page.locator("text=Earlier answer")).toBeVisible({ timeout: 10_000 });
     // Give the seed effect a chance to NOT fire.
+    await page.waitForTimeout(800);
+
+    expect(postCount).toBe(0);
+  });
+
+  test("ConciergeClient renders the Sources block when SSE emits a 'retrieved' event", async ({ page }) => {
+    await page.route("**/api/concierge", async (route, request) => {
+      if (request.method() === "POST") {
+        await route.fulfill({
+          status: 200,
+          contentType: "text/event-stream; charset=utf-8",
+          body: mockConciergeStream({
+            retrieved: [
+              { type: "advisor", id: "casey-lin", title: "Casey Lin — Acme Wealth", score: 0.91 },
+              { type: "broker", id: "commsec", title: "CommSec", score: 0.84 },
+            ],
+            text: "Here is some general information.",
+          }),
+        });
+        return;
+      }
+      await route.fulfill({ status: 200, contentType: "application/json", body: '{"messages":[]}' });
+    });
+
+    await page.goto("/concierge?finder=advisor-finder");
+
+    await expect(page.locator("text=Sources:")).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByRole("link", { name: /Casey Lin/i })).toBeVisible();
+    await expect(page.getByRole("link", { name: /CommSec/i })).toBeVisible();
+  });
+
+  test("an unknown finder value does NOT auto-fire", async ({ page }) => {
+    let postCount = 0;
+    await page.route("**/api/concierge**", async (route, request) => {
+      if (request.method() === "POST") postCount += 1;
+      await route.fulfill({
+        status: 200,
+        contentType: request.method() === "POST" ? "text/event-stream; charset=utf-8" : "application/json",
+        body: request.method() === "POST" ? mockConciergeStream() : '{"messages":[]}',
+      });
+    });
+
+    await page.goto("/concierge?finder=unknown-finder-key");
     await page.waitForTimeout(800);
 
     expect(postCount).toBe(0);
