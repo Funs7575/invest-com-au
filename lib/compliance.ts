@@ -26,6 +26,17 @@ export const GENERAL_ADVICE_WARNING =
 export const PDS_CONSIDERATION =
   "Consider the PDS and TMD before making a decision.";
 
+/**
+ * Government grants disclaimer — used on /grants and /startup/grants hub.
+ * Grant rules, amounts, and deadlines change frequently. Eligibility is
+ * determined by AusIndustry, Austrade or the relevant state agency.
+ */
+export const GRANTS_WARNING =
+  "Grant rules, amounts and deadlines change. Eligibility for the R&D Tax Incentive, EMDG, " +
+  "Industry Growth Program and state programs depends on your specific circumstances and is " +
+  "determined by AusIndustry, Austrade or the relevant state agency. " +
+  "Engage a registered R&D tax advisor or grants consultant before lodging.";
+
 /** Short risk warning — placed near every outbound CTA button */
 export const RISK_WARNING_CTA =
   "General information only \u2014 not financial advice or a personal recommendation.";
