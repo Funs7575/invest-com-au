@@ -85,9 +85,17 @@ async function handler(req: NextRequest) {
   stats.brokers = await upsertEmbeddings(supabase, brokerInputs);
 
   // ── Advisors ──
+  // Embed text intentionally pulls in specialties / qualifications /
+  // fee / location / languages / ideal_client / years_experience as
+  // well as bio. Queries like "Brisbane SMSF flat-fee Mandarin" will
+  // miss against name+firm+bio alone — almost none of those words
+  // live in `bio`. Same number of embed calls; embed cost barely
+  // moves (advisors only re-embed when source_updated_at advances).
   const { data: advisors } = await supabase
     .from("professionals")
-    .select("id, slug, name, firm_name, bio, updated_at")
+    .select(
+      "id, slug, name, firm_name, type, bio, specialties, qualifications, languages, fee_structure, fee_description, location_display, ideal_client, years_experience, updated_at",
+    )
     .eq("status", "active")
     .order("updated_at", { ascending: false })
     .limit(EMBED_BATCH_LIMIT);
@@ -98,7 +106,7 @@ async function handler(req: NextRequest) {
     title: `${a.name}${a.firm_name ? " — " + a.firm_name : ""}`,
     body_excerpt: ((a.bio as string) || "").slice(0, 500),
     source_updated_at: a.updated_at as string,
-    embed_text: `${a.name}\n${a.firm_name || ""}\n\n${(a.bio as string) || ""}`,
+    embed_text: buildAdvisorEmbedText(a as AdvisorRow),
   }));
   stats.advisors = await upsertEmbeddings(supabase, advisorInputs);
 
@@ -107,6 +115,70 @@ async function handler(req: NextRequest) {
 }
 
 type AdminClient = ReturnType<typeof createAdminClient>;
+
+export interface AdvisorRow {
+  name?: string | null;
+  firm_name?: string | null;
+  type?: string | null;
+  bio?: string | null;
+  specialties?: unknown;
+  qualifications?: unknown;
+  languages?: unknown;
+  fee_structure?: string | null;
+  fee_description?: string | null;
+  location_display?: string | null;
+  ideal_client?: string | null;
+  years_experience?: number | null;
+}
+
+function jsonbToStrings(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value
+    .map((v) => (typeof v === "string" ? v : typeof v === "object" && v && "label" in v ? String((v as { label: unknown }).label) : ""))
+    .filter((s) => s.trim().length > 0);
+}
+
+/**
+ * Builds the embedding chunk for an advisor row. Pure, exported for
+ * tests. Includes structured signals (specialties, qualifications,
+ * fees, location, languages, ideal client, years of experience) so
+ * RAG queries that mention those concepts actually hit.
+ */
+export function buildAdvisorEmbedText(a: AdvisorRow): string {
+  const lines: string[] = [];
+  if (a.name) lines.push(a.name);
+  if (a.firm_name) lines.push(a.firm_name);
+  if (a.type) lines.push(a.type.replace(/_/g, " "));
+  if (a.bio && a.bio.trim().length > 0) lines.push("", a.bio.trim());
+
+  const specialties = jsonbToStrings(a.specialties);
+  if (specialties.length > 0) lines.push(`Specialties: ${specialties.join(", ")}`);
+
+  const qualifications = jsonbToStrings(a.qualifications);
+  if (qualifications.length > 0) lines.push(`Qualifications: ${qualifications.join(", ")}`);
+
+  const languages = jsonbToStrings(a.languages);
+  if (languages.length > 0) lines.push(`Languages: ${languages.join(", ")}`);
+
+  const feeBits: string[] = [];
+  if (a.fee_structure) feeBits.push(a.fee_structure);
+  if (a.fee_description) feeBits.push(a.fee_description);
+  if (feeBits.length > 0) lines.push(`Fees: ${feeBits.join(" — ")}`);
+
+  if (a.location_display) lines.push(`Location: ${a.location_display}`);
+
+  if (a.ideal_client && a.ideal_client.trim().length > 0) {
+    lines.push(`Ideal client: ${a.ideal_client.trim()}`);
+  }
+
+  if (typeof a.years_experience === "number" && a.years_experience > 0) {
+    lines.push(`Experience: ${a.years_experience} years`);
+  }
+
+  // Cap at 8000 chars to match embedText's truncation, keeps token
+  // cost predictable even if some advisor has a wall-of-text bio.
+  return lines.join("\n").slice(0, 8000);
+}
 
 interface EmbeddingInput {
   document_type: string;
