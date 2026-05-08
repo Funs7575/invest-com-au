@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 import Icon from "@/components/Icon";
 
 export const revalidate = 1800;
@@ -29,7 +29,7 @@ interface SectorRow {
 
 async function fetchSector(slug: string): Promise<SectorRow | null> {
   try {
-    const supabase = createAdminClient();
+    const supabase = await createClient();
     const { data } = await supabase
       .from("commodity_sectors")
       .select("slug, display_name, hero_description")
@@ -44,7 +44,7 @@ async function fetchSector(slug: string): Promise<SectorRow | null> {
 
 async function fetchStocks(sectorSlug: string): Promise<StockRow[]> {
   try {
-    const supabase = createAdminClient();
+    const supabase = await createClient();
     const { data } = await supabase
       .from("commodity_stocks")
       .select(
@@ -61,7 +61,7 @@ async function fetchStocks(sectorSlug: string): Promise<StockRow[]> {
 
 export async function generateStaticParams() {
   try {
-    const supabase = createAdminClient();
+    const supabase = await createClient();
     const { data } = await supabase
       .from("commodity_sectors")
       .select("slug")
