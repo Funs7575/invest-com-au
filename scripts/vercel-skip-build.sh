@@ -1,34 +1,27 @@
 #!/bin/bash
 # Vercel "Ignored Build Step" — exit 0 = SKIP build, exit 1 = BUILD.
 #
-# Wired in via vercel.json's `ignoreCommand`. Three skip rules:
+# Wired in via vercel.json's `ignoreCommand`. Two skip rules:
 #
-#   1. Loop-authored branches (claude/audit-remediation/*) — these are
-#      code-only iterations verified by CI; nobody browses preview URLs
-#      for them. Skipping saves ~30-50% of build CPU on a busy loop day.
-#
-#   2. Docs-only commits — only files under docs/, *.md at root, or the
+#   1. Docs-only commits — only files under docs/, *.md at root, or the
 #      remediation queue/log files. No runtime impact, no need to build.
 #
-#   3. Loop pause sentinel commits (LOOP_PAUSE) — pause/resume commits
+#   2. Loop pause sentinel commits (LOOP_PAUSE) — pause/resume commits
 #      touch a single file and don't change behaviour.
 #
-# Anything else falls through and builds normally.
+# Anything else builds normally — including loop-authored branches
+# (claude/audit-remediation/*). Loop PRs MUST build because the
+# `Preview smoke test (critical URLs)` CI gate looks up the Vercel
+# deployment registered to the head SHA; if no build runs, no
+# deployment exists, and the gate times out — forcing admin-merge
+# bypasses on every loop PR. The CPU savings from skipping loop
+# branches were not worth that ergonomic cost.
 
 set -e
 
-ref="${VERCEL_GIT_COMMIT_REF:-}"
 sha="${VERCEL_GIT_COMMIT_SHA:-HEAD}"
 
-# Rule 1 — loop branches
-case "$ref" in
-  claude/audit-remediation/*)
-    echo "skip: loop-authored branch ($ref)"
-    exit 0
-    ;;
-esac
-
-# Rule 2/3 — files-changed inspection
+# Files-changed inspection
 # `git diff --quiet` exits 0 if no diff (i.e. excluded paths cover
 # everything), so we invert: if --quiet returns 0 after excluding
 # docs/markdown/queue files, the commit is docs-only and we skip.
