@@ -1,9 +1,7 @@
 import Link from "next/link";
 import { DesignIcon } from "@/components/design/DesignIcon";
-import {
-  getIntentCountry,
-  intentCountryMeta,
-} from "@/lib/intent-context";
+import { intentCountryMeta } from "@/lib/intent-context";
+import { getIntentCountry } from "@/lib/intent-context-server";
 
 // Pathfinder section — secondary affordance for visitors who don't know
 // which route to pick. Per v5 spec the quiz lives BELOW the route cards

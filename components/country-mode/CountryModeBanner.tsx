@@ -11,10 +11,8 @@
  * appears site-wide.
  */
 
-import {
-  getIntentCountry,
-  intentCountryMeta,
-} from "@/lib/intent-context";
+import { intentCountryMeta } from "@/lib/intent-context";
+import { getIntentCountry } from "@/lib/intent-context-server";
 import { clearIntentCountryAction } from "@/lib/intent-context-actions";
 import CountryModeBannerSwitchButton from "./CountryModeBannerSwitchButton";
 

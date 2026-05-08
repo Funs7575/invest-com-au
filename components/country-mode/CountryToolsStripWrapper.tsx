@@ -9,7 +9,7 @@
  * featured tools, HomeToolsStrip renders in its default order.
  */
 
-import { getIntentCountry } from "@/lib/intent-context";
+import { getIntentCountry } from "@/lib/intent-context-server";
 import { getHomepageFiltersForCountry } from "@/lib/country-mode";
 import HomeToolsStrip from "@/components/HomeToolsStrip";
 

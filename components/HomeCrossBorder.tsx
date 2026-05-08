@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { DesignIcon } from "@/components/design/DesignIcon";
 import { FlagChip } from "@/components/design/Atoms";
-import { getIntentCountry, isoForIntentCode } from "@/lib/intent-context";
+import { isoForIntentCode } from "@/lib/intent-context";
+import { getIntentCountry } from "@/lib/intent-context-server";
 
 // Cards on the homepage section serve audience A (inbound migrants — largest
 // absolute LTV). The other three cross-border audiences (US-AU dual citizens,

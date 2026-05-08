@@ -5,15 +5,9 @@ const { mockGetIntentCountry } = vi.hoisted(() => ({
   mockGetIntentCountry: vi.fn(),
 }));
 
-vi.mock("@/lib/intent-context", async () => {
-  const actual = await vi.importActual<typeof import("@/lib/intent-context")>(
-    "@/lib/intent-context",
-  );
-  return {
-    ...actual,
-    getIntentCountry: mockGetIntentCountry,
-  };
-});
+vi.mock("@/lib/intent-context-server", () => ({
+  getIntentCountry: mockGetIntentCountry,
+}));
 
 import HomePathfinder from "@/components/HomePathfinder";
 

@@ -22,15 +22,9 @@ const { mockGetIntentCountry, mockGetFilters, mockSupabaseLimit } = vi.hoisted((
   mockSupabaseLimit: vi.fn(),
 }));
 
-vi.mock("@/lib/intent-context", async () => {
-  const actual = await vi.importActual<typeof import("@/lib/intent-context")>(
-    "@/lib/intent-context",
-  );
-  return {
-    ...actual,
-    getIntentCountry: mockGetIntentCountry,
-  };
-});
+vi.mock("@/lib/intent-context-server", () => ({
+  getIntentCountry: mockGetIntentCountry,
+}));
 
 vi.mock("@/lib/country-mode", async () => {
   const actual = await vi.importActual<typeof import("@/lib/country-mode")>(

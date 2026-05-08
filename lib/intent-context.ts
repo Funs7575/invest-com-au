@@ -12,9 +12,14 @@
  * Compare → Advisors → Invest, the filter follows them without each
  * page having to forward the param. The badge keeps it visible and
  * the clear action is one click away — discoverable, not magic.
+ *
+ * This module is shared between server and client code — the quiz
+ * (a client component) imports the slug↔quizKey map. The server-only
+ * cookie reader (`getIntentCountry`) lives in
+ * `intent-context-server.ts` so this file stays free of
+ * `next/headers` and can be bundled into client components without
+ * the Turbopack "next/headers in client" build error.
  */
-
-import { cookies } from "next/headers";
 
 export const INTENT_COUNTRY_COOKIE = "iv_intent_country";
 const TTL_SECONDS = 60 * 60 * 24 * 90; // 90 days
@@ -164,19 +169,6 @@ export function isoForIntentCode(code: IntentCountryCode): string {
 
 /** All supported `IntentCountryCode` values, in insertion order. */
 export const INTENT_COUNTRY_CODES = Object.keys(KNOWN) as readonly IntentCountryCode[];
-
-/**
- * Read the user's intent country from the cookie. Returns null if
- * the cookie isn't set or if the value isn't a known country code.
- *
- * Server-side only — uses next/headers cookies().
- */
-export async function getIntentCountry(): Promise<IntentCountryCode | null> {
-  const c = await cookies();
-  const raw = c.get(INTENT_COUNTRY_COOKIE)?.value;
-  if (!raw) return null;
-  return isKnownIntentCountry(raw) ? raw : null;
-}
 
 /**
  * Cookie max-age, exposed for callers that need to pass it through to

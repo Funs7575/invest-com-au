@@ -10,10 +10,8 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import {
-  getIntentCountry,
-  intentCountryMeta,
-} from "@/lib/intent-context";
+import { intentCountryMeta } from "@/lib/intent-context";
+import { getIntentCountry } from "@/lib/intent-context-server";
 import {
   applySupplyThresholds,
   getHomepageFiltersForCountry,

@@ -1,21 +1,15 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, userEvent } from "./setup";
 
-// Mock getIntentCountry — banner reads the cookie via next/headers, so
-// the test stubs the resolved value.
+// Mock getIntentCountry — banner reads the cookie via next/headers via
+// the server-only module split. The test stubs the resolved value.
 const { mockGetIntentCountry } = vi.hoisted(() => ({
   mockGetIntentCountry: vi.fn(),
 }));
 
-vi.mock("@/lib/intent-context", async () => {
-  const actual = await vi.importActual<typeof import("@/lib/intent-context")>(
-    "@/lib/intent-context",
-  );
-  return {
-    ...actual,
-    getIntentCountry: mockGetIntentCountry,
-  };
-});
+vi.mock("@/lib/intent-context-server", () => ({
+  getIntentCountry: mockGetIntentCountry,
+}));
 
 import CountryModeBanner from "@/components/country-mode/CountryModeBanner";
 
