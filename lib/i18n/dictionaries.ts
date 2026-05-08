@@ -263,20 +263,14 @@ const KO: ForeignInvestmentDict = {
   },
 };
 
-// Partial — Phase 5a added `ar` to the Locale union but its dictionary
-// hasn't been authored yet. getForeignInvestmentDict falls back to EN
-// for locales without entries; that's safer than blocking the locale
-// registry on translation throughput. The fallback is a load-bearing
-// behaviour: don't tighten the type without first authoring entries
-// for every Locale member.
-const DICTIONARIES: Partial<Record<Locale, ForeignInvestmentDict>> = {
+const DICTIONARIES: Record<Locale, ForeignInvestmentDict> = {
   en: EN,
   zh: ZH,
   ko: KO,
 };
 
 export function getForeignInvestmentDict(locale: Locale): ForeignInvestmentDict {
-  return DICTIONARIES[locale] ?? EN;
+  return DICTIONARIES[locale];
 }
 
 /* ─── Sub-page dictionaries: SIV, Property, Tax ─────────────── */
@@ -741,9 +735,7 @@ const TAX_KO: SubPageDict = {
     "일반적인 정보 안내. 비거주자 세제는 본국 세제, 세무 거주 상태, 조약 지위와 상호 작용합니다. 여기 수치에 의존하기 전에 국가간 경험이 있는 세무 대리인의 도움을 받으세요.",
 };
 
-// Same Partial pattern as DICTIONARIES — locales without an entry
-// fall back to en. See the comment above DICTIONARIES.
-const SUB_PAGE_DICTS: Record<"siv" | "property" | "tax", Partial<Record<Locale, SubPageDict>>> = {
+const SUB_PAGE_DICTS: Record<"siv" | "property" | "tax", Record<Locale, SubPageDict>> = {
   siv: { en: SIV_EN, zh: SIV_ZH, ko: SIV_KO },
   property: { en: PROPERTY_EN, zh: PROPERTY_ZH, ko: PROPERTY_KO },
   tax: { en: TAX_EN, zh: TAX_ZH, ko: TAX_KO },
@@ -753,6 +745,5 @@ export function getSubPageDict(
   slug: "siv" | "property" | "tax",
   locale: Locale,
 ): SubPageDict {
-  const slugDicts = SUB_PAGE_DICTS[slug];
-  return slugDicts[locale] ?? slugDicts.en!;
+  return SUB_PAGE_DICTS[slug][locale];
 }

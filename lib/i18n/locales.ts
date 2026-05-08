@@ -5,21 +5,16 @@
  * higher than the cost of not translating it. Add a locale here only
  * when there's real content for it in every dictionary key below.
  *
- * Active locales:
- *   en  — English (en-AU). Source of truth.
- *   zh  — Simplified Chinese (zh-CN). Dominates FIRB search; populated
- *         in dictionaries.ts. Phase 5b will split into zh-Hans + zh-Hant
- *         once a Traditional-Chinese editor pass exists.
- *   ko  — Korean (ko-KR). Active SIV / property search cohort.
- *   ar  — Arabic (ar-AE). RTL. Phase 5 POC: AE_CONFIG_AR translations
- *         drive the /ar/foreign-investment/united-arab-emirates page.
- *         Other Arabic pages roll out as native-Arabic reviewer
- *         throughput allows.
+ * Our two launch locales target the two largest non-English foreign
+ * investor audiences hitting /foreign-investment/*:
+ *
+ *   zh — Mandarin Chinese, Simplified (zh-CN). Dominates FIRB search.
+ *   ko — Korean (ko-KR). Active SIV / property search cohort.
  *
  * Do NOT add "zh-TW" or regional variants until we have native editors
  * confirming the Simplified/Traditional split matters for the audience.
  */
-export const LOCALES = ["en", "zh", "ko", "ar"] as const;
+export const LOCALES = ["en", "zh", "ko"] as const;
 
 export type Locale = (typeof LOCALES)[number];
 
@@ -30,7 +25,6 @@ export const BCP47_TAG: Record<Locale, string> = {
   en: "en-AU",
   zh: "zh-CN",
   ko: "ko-KR",
-  ar: "ar-AE",
 };
 
 /** Human label rendered in the language switcher UI. */
@@ -38,19 +32,6 @@ export const LOCALE_LABEL: Record<Locale, string> = {
   en: "English",
   zh: "中文",
   ko: "한국어",
-  ar: "العربية",
-};
-
-/**
- * Whether the locale's primary script is right-to-left. Drives
- * `<html dir=…>` and conditional logical-property class swaps.
- * Phase 1+2 didn't read this; Phase 5 wires it into the root layout.
- */
-export const LOCALE_DIR: Record<Locale, "ltr" | "rtl"> = {
-  en: "ltr",
-  zh: "ltr",
-  ko: "ltr",
-  ar: "rtl",
 };
 
 export function isLocale(x: string): x is Locale {
@@ -58,14 +39,14 @@ export function isLocale(x: string): x is Locale {
 }
 
 /**
- * Strip a leading /zh or /ko or /ar prefix so we can look up the
- * canonical English path for hreflang + canonical URLs.
+ * Strip a leading /zh or /ko prefix so we can look up the canonical
+ * English path for hreflang + canonical URLs.
  */
 export function stripLocalePrefix(pathname: string): {
   locale: Locale;
   path: string;
 } {
-  const match = pathname.match(/^\/(zh|ko|ar)(\/.*)?$/);
+  const match = pathname.match(/^\/(zh|ko)(\/.*)?$/);
   if (match) {
     const locale = match[1] as Locale;
     const path = match[2] || "/";
