@@ -24,6 +24,7 @@
 
 import type { IntentCountryCode } from "./intent-context";
 import type { PlatformType } from "./types";
+import type { AdvisorType } from "./advisor-types";
 
 // ─── Shared types ────────────────────────────────────────────────────
 
@@ -246,15 +247,19 @@ export interface CountryConfig {
   };
 
   /**
-   * Filters the homepage experts preview. `specialties` are advisor-type
-   * strings stored on `professionals` rows (free-text — e.g. "tax",
-   * "buyers-agent", "mortgage-broker"). `languages` is a list of ISO
-   * 639-1 codes (e.g. "zh", "ar") that narrows to experts who can serve
-   * the user in the target language. When omitted, falls through to
-   * the global experts feed.
+   * Filters the homepage experts preview. `specialties` is a list of
+   * `AdvisorType` values matched against `professionals.type` exactly
+   * (snake_case — e.g. "tax_agent", "buyers_agent", "mortgage_broker").
+   * The DB column is untyped TEXT, so the AdvisorType union is what
+   * stops a typo from turning the experts strip into a silent zero-row
+   * query — see `lib/advisor-types.ts` for the canonical list and the
+   * 2026-05-08 audit notes. `languages` is a list of ISO 639-1 codes
+   * (e.g. "zh", "ar") that narrows to experts who can serve the user
+   * in the target language. When omitted, falls through to the global
+   * experts feed.
    */
   homepageExpertFilters?: {
-    specialties: ReadonlyArray<string>;
+    specialties: ReadonlyArray<AdvisorType>;
     languages?: ReadonlyArray<string>;
   };
 
