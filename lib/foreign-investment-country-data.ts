@@ -526,6 +526,24 @@ export const UK_CONFIG: CountryConfig = {
     { emoji: "🧾", label: "UK-AU pension transfer (QROPS)", sublabel: "Specialist advisors for the highest-risk cross-border decision", href: "/advisors/international-tax-specialists" },
     { emoji: "👤", label: "Find a UK-AU specialist", sublabel: "HMRC SA106, IHT, FIRB — cross-border advisors", href: "/advisors/international-tax-specialists" },
   ],
+  homepageListingFilters: {
+    verticals: ["commercial-property", "buy-business", "funds"],
+    firb: false,
+  },
+  homepageExpertFilters: {
+    specialties: ["tax_agent", "smsf_accountant", "property_advisor", "migration_agent"],
+    languages: ["en"],
+  },
+  homepagePlatformFilters: {
+    types: ["share_broker", "super_fund", "fx_provider"],
+    nonResidentsOnly: true,
+  },
+  homepageFeaturedTools: [
+    { slug: "/property/foreign-investment", label: "FIRB tool" },
+    { slug: "/retirement-calculator", label: "Pension transfer planner" },
+    { slug: "/cgt-calculator", label: "CGT for non-residents" },
+  ],
+  preferredLanguages: ["en"],
   slug: "united-kingdom",
   countryName: "United Kingdom",
   countryShort: "UK",
@@ -1185,6 +1203,26 @@ export const US_CONFIG: CountryConfig = {
     { emoji: "💱", label: "USD → AUD transfers", sublabel: "Wise/OFX vs US wires — saves 1.5–3% on size", href: "/foreign-investment/send-money-australia" },
     { emoji: "👤", label: "Find a US-AU CPA", sublabel: "FBAR/FATCA/PFIC + Forms 8938, 8621, 3520 — specialist territory", href: "/advisors/international-tax-specialists" },
   ],
+  homepageListingFilters: {
+    verticals: ["commercial-property", "buy-business", "funds"],
+    firb: false,
+  },
+  homepageExpertFilters: {
+    specialties: ["tax_agent", "smsf_accountant", "financial_planner", "migration_agent"],
+    languages: ["en"],
+  },
+  // Skip crypto_exchange + robo_advisor — PFIC reporting on foreign
+  // managed funds is a worldwide-tax trap for US persons.
+  homepagePlatformFilters: {
+    types: ["share_broker", "fx_provider"],
+    nonResidentsOnly: true,
+  },
+  homepageFeaturedTools: [
+    { slug: "/property/foreign-investment", label: "FIRB tool" },
+    { slug: "/cgt-calculator", label: "CGT for non-residents" },
+    { slug: "/retirement-calculator", label: "Super vs 401(k) planner" },
+  ],
+  preferredLanguages: ["en"],
   slug: "united-states",
   countryName: "United States",
   countryShort: "US",
@@ -1736,6 +1774,26 @@ export const CN_CONFIG: CountryConfig = {
     { emoji: "🛂", label: "Significant Investor Visa pathway", sublabel: "$5M+ removes FIRB and foreign-buyer constraints permanently", href: "/foreign-investment/siv" },
     { emoji: "👤", label: "Find a Mandarin-speaking advisor", sublabel: "Cross-border tax + FIRB + capital structuring", href: "/advisors" },
   ],
+  homepageListingFilters: {
+    verticals: ["commercial-property", "buy-business", "funds"],
+    firb: false,
+  },
+  homepageExpertFilters: {
+    specialties: ["tax_agent", "property_advisor", "mortgage_broker", "migration_agent"],
+    languages: ["zh", "en"],
+  },
+  // Lead with fx_provider + property_platform — China's USD 50K/yr SAFE
+  // quota makes capital-flow planning the dominant primary use case.
+  homepagePlatformFilters: {
+    types: ["fx_provider", "property_platform"],
+    nonResidentsOnly: true,
+  },
+  homepageFeaturedTools: [
+    { slug: "/property/foreign-investment", label: "FIRB tool" },
+    { slug: "/mortgage-calculator", label: "Non-resident mortgage" },
+    { slug: "/cgt-calculator", label: "CGT for non-residents" },
+  ],
+  preferredLanguages: ["zh", "en"],
   slug: "china",
   countryName: "China",
   countryShort: "China",
@@ -1960,6 +2018,24 @@ export const IN_CONFIG: CountryConfig = {
     { emoji: "💰", label: "Claim your stranded super (DASP)", sublabel: "If you worked in AU on a temp visa — 35% tax but worth claiming", href: "/foreign-investment/super" },
     { emoji: "👤", label: "Find an India-AU tax specialist", sublabel: "Schedule FA reporting, DASP, FIRB, ECTA expertise", href: "/advisors/international-tax-specialists" },
   ],
+  homepageListingFilters: {
+    verticals: ["commercial-property", "buy-business", "funds"],
+    firb: false,
+  },
+  homepageExpertFilters: {
+    specialties: ["tax_agent", "property_advisor", "mortgage_broker", "migration_agent"],
+    languages: ["hi", "en"],
+  },
+  homepagePlatformFilters: {
+    types: ["share_broker", "fx_provider", "property_platform"],
+    nonResidentsOnly: true,
+  },
+  homepageFeaturedTools: [
+    { slug: "/property/foreign-investment", label: "FIRB tool" },
+    { slug: "/cgt-calculator", label: "CGT for NRIs" },
+    { slug: "/mortgage-calculator", label: "Non-resident mortgage" },
+  ],
+  preferredLanguages: ["hi", "en"],
   slug: "india",
   countryName: "India",
   countryShort: "India",
@@ -2214,40 +2290,24 @@ export const HK_CONFIG: CountryConfig = {
     { emoji: "🛂", label: "HK → AU pathway visas", sublabel: "BN(O)/SAR/HKBN holders have a reserved migration stream", href: "/advisors/migration-agents" },
     { emoji: "👤", label: "Find an HK-AU advisor", sublabel: "Cross-border tax + AU residency + FIRB", href: "/advisors" },
   ],
-  // Phase 1 model country for Country Mode homepage personalisation.
-  // The other 11 country configs fall back to global until Phase 2 fills
-  // them in. Numbers are conservative — supply thresholds (2 listings,
-  // 2 experts, 3 platforms) gate visibility regardless.
+  // Country Mode homepage personalisation — Phase 2 saturation.
+  // Filter values use the canonical advisor-type strings from
+  // lib/verticals.ts (snake_case: tax_agent, property_advisor, etc.)
+  // not the dash-separated form. Phase 1 shipped HK with the wrong
+  // format which silently failed via the supply-threshold gate; this
+  // fix corrects HK + adds the other 11 corridors.
   homepageListingFilters: {
-    // HK investors most often consider AU commercial property, business
-    // acquisitions, and private-market funds (per addendum module copy).
-    // These map to existing investment_listings.vertical slugs.
     verticals: ["commercial-property", "buy-business", "funds"],
     firb: false,
   },
   homepageExpertFilters: {
-    // Cross-border tax, buyer's agents, mortgage brokers — the three
-    // most-asked expert types for HK→AU investors. languages includes
-    // zh (Chinese, encompasses both Mandarin and Cantonese readers via
-    // ISO 639-1) and the Cantonese-specific yue tag where the
-    // `professionals.languages` jsonb has it.
-    specialties: ["tax", "buyers-agent", "mortgage-broker"],
+    specialties: ["tax_agent", "property_advisor", "mortgage_broker"],
     languages: ["zh", "yue", "en"],
   },
   homepagePlatformFilters: {
-    // ASX shares + crypto are the active inbound corridors. Non-residents
-    // flag is on so we surface only brokers explicitly accepting HK IDs.
     types: ["share_broker", "crypto_exchange"],
     nonResidentsOnly: true,
   },
-  // Featured tools for the global tools-strip re-rank. `slug` is the
-  // tool's href — HomeToolsStrip hoists the matching entries to the
-  // front of the existing list (no replacement, no shrinkage). FIRB
-  // cost + CGT + mortgage are the three calculators most relevant to
-  // HK property + ASX investors. WHT calculator and FX-corridor
-  // calculator are flagged for Phase 2 once they land in the global
-  // tools list — adding them to homepageFeaturedTools today would be
-  // a no-op because there's nothing for the rerank to hoist.
   homepageFeaturedTools: [
     { slug: "/property/foreign-investment", label: "FIRB cost (HK buyers)" },
     { slug: "/cgt-calculator", label: "CGT for non-residents" },
@@ -2470,6 +2530,24 @@ export const SG_CONFIG: CountryConfig = {
     { emoji: "💱", label: "SGD → AUD transfers", sublabel: "Wise/OFX vs DBS/OCBC/UOB — saves 1–2% on size", href: "/foreign-investment/send-money-australia" },
     { emoji: "👤", label: "Find an SG-AU specialist", sublabel: "Multilingual cross-border tax + FIRB advisors", href: "/advisors" },
   ],
+  homepageListingFilters: {
+    verticals: ["funds", "commercial-property", "buy-business"],
+    firb: false,
+  },
+  homepageExpertFilters: {
+    specialties: ["tax_agent", "wealth_manager", "financial_planner", "property_advisor"],
+    languages: ["en", "zh"],
+  },
+  homepagePlatformFilters: {
+    types: ["share_broker", "crypto_exchange", "fx_provider"],
+    nonResidentsOnly: true,
+  },
+  homepageFeaturedTools: [
+    { slug: "/property/foreign-investment", label: "FIRB tool" },
+    { slug: "/cgt-calculator", label: "CGT for non-residents" },
+    { slug: "/portfolio-xray", label: "Portfolio X-ray" },
+  ],
+  preferredLanguages: ["en", "zh"],
   slug: "singapore",
   countryName: "Singapore",
   countryShort: "Singapore",
@@ -2687,6 +2765,26 @@ export const NZ_CONFIG: CountryConfig = {
     { emoji: "💱", label: "NZD → AUD transfers", sublabel: "One of the most liquid corridors — Wise/OFX wins", href: "/foreign-investment/send-money-australia" },
     { emoji: "👤", label: "Find a Trans-Tasman tax specialist", sublabel: "FIF rules, AU CGT, super vs KiwiSaver", href: "/advisors/international-tax-specialists" },
   ],
+  homepageListingFilters: {
+    verticals: ["funds", "commercial-property", "buy-business"],
+    firb: false,
+  },
+  homepageExpertFilters: {
+    specialties: ["smsf_accountant", "financial_planner", "tax_agent", "property_advisor"],
+    languages: ["en"],
+  },
+  // TTS Kiwis get resident-equivalent platform access — nonResidentsOnly
+  // is the only country where it's deliberately false.
+  homepagePlatformFilters: {
+    types: ["share_broker", "super_fund", "robo_advisor"],
+    nonResidentsOnly: false,
+  },
+  homepageFeaturedTools: [
+    { slug: "/retirement-calculator", label: "KiwiSaver to Super" },
+    { slug: "/portfolio-xray", label: "Portfolio X-ray" },
+    { slug: "/cgt-calculator", label: "CGT calculator" },
+  ],
+  preferredLanguages: ["en"],
   slug: "new-zealand",
   countryName: "New Zealand",
   countryShort: "NZ",
@@ -2931,6 +3029,24 @@ export const JP_CONFIG: CountryConfig = {
     { emoji: "💱", label: "JPY → AUD transfers", sublabel: "Wise/GoRemit vs MUFG/SMBC/Mizuho — saves 1.5–2.5%", href: "/foreign-investment/send-money-australia" },
     { emoji: "👤", label: "Find a Japan-AU tax specialist", sublabel: "Inheritance tax exposure + DTA optimisation", href: "/advisors/international-tax-specialists" },
   ],
+  homepageListingFilters: {
+    verticals: ["funds", "commercial-property", "buy-business"],
+    firb: false,
+  },
+  homepageExpertFilters: {
+    specialties: ["tax_agent", "financial_planner", "smsf_accountant"],
+    languages: ["ja", "en"],
+  },
+  homepagePlatformFilters: {
+    types: ["share_broker", "crypto_exchange", "fx_provider"],
+    nonResidentsOnly: true,
+  },
+  homepageFeaturedTools: [
+    { slug: "/cgt-calculator", label: "CGT for non-residents" },
+    { slug: "/property/foreign-investment", label: "FIRB tool" },
+    { slug: "/portfolio-xray", label: "Portfolio X-ray" },
+  ],
+  preferredLanguages: ["ja", "en"],
   slug: "japan",
   countryName: "Japan",
   countryShort: "Japan",
@@ -3166,6 +3282,23 @@ export const KR_CONFIG: CountryConfig = {
     { emoji: "💱", label: "KRW → AUD transfers", sublabel: "Wise/Sentbe vs Korean retail banks — saves 1–2%", href: "/foreign-investment/send-money-australia" },
     { emoji: "👤", label: "Find a Korea-AU tax specialist", sublabel: "KAFTA, exit tax, DTA optimisation", href: "/advisors/international-tax-specialists" },
   ],
+  homepageListingFilters: {
+    verticals: ["funds", "commercial-property", "buy-business"],
+    firb: false,
+  },
+  homepageExpertFilters: {
+    specialties: ["tax_agent", "financial_planner", "property_advisor"],
+    languages: ["ko", "en"],
+  },
+  homepagePlatformFilters: {
+    types: ["share_broker", "crypto_exchange", "fx_provider"],
+    nonResidentsOnly: true,
+  },
+  homepageFeaturedTools: [
+    { slug: "/cgt-calculator", label: "CGT for non-residents" },
+    { slug: "/property/foreign-investment", label: "FIRB tool" },
+  ],
+  preferredLanguages: ["ko", "en"],
   slug: "south-korea",
   countryName: "South Korea",
   countryShort: "Korea",
@@ -3400,6 +3533,24 @@ export const MY_CONFIG: CountryConfig = {
     { emoji: "💱", label: "MYR → AUD transfers", sublabel: "Wise/Instarem vs Maybank/CIMB — saves 1–2%", href: "/foreign-investment/send-money-australia" },
     { emoji: "👤", label: "Find a Malaysia-AU specialist", sublabel: "Cross-border tax + Labuan structuring", href: "/advisors/international-tax-specialists" },
   ],
+  homepageListingFilters: {
+    verticals: ["commercial-property", "buy-business", "funds"],
+    firb: false,
+  },
+  homepageExpertFilters: {
+    specialties: ["tax_agent", "property_advisor", "mortgage_broker", "migration_agent"],
+    languages: ["ms", "zh", "en"],
+  },
+  homepagePlatformFilters: {
+    types: ["property_platform", "fx_provider", "share_broker"],
+    nonResidentsOnly: true,
+  },
+  homepageFeaturedTools: [
+    { slug: "/property/foreign-investment", label: "FIRB tool" },
+    { slug: "/mortgage-calculator", label: "Non-resident mortgage" },
+    { slug: "/cgt-calculator", label: "CGT for non-residents" },
+  ],
+  preferredLanguages: ["ms", "en", "zh"],
   slug: "malaysia",
   countryName: "Malaysia",
   countryShort: "Malaysia",
@@ -3633,6 +3784,25 @@ export const AE_CONFIG: CountryConfig = {
     { emoji: "💱", label: "AED → AUD transfers", sublabel: "Wise/OFX vs Emirates NBD/ADCB — saves 1–2%", href: "/foreign-investment/send-money-australia" },
     { emoji: "👤", label: "Find a UAE-AU specialist", sublabel: "No-DTA structuring + Arabic-speaking advisors", href: "/advisors" },
   ],
+  homepageListingFilters: {
+    verticals: ["commercial-property", "buy-business", "funds"],
+    firb: false,
+  },
+  homepageExpertFilters: {
+    specialties: ["tax_agent", "property_advisor", "wealth_manager", "mortgage_broker"],
+    languages: ["ar", "en"],
+  },
+  homepagePlatformFilters: {
+    types: ["share_broker", "crypto_exchange", "property_platform"],
+    nonResidentsOnly: true,
+  },
+  homepageFeaturedTools: [
+    { slug: "/property/foreign-investment", label: "FIRB tool" },
+    { slug: "/mortgage-calculator", label: "Non-resident mortgage" },
+    { slug: "/cgt-calculator", label: "CGT for non-residents" },
+  ],
+  preferredLanguages: ["ar", "en"],
+  hasRtlLanguage: true,
   slug: "united-arab-emirates",
   countryName: "United Arab Emirates",
   countryShort: "UAE",
@@ -3870,6 +4040,27 @@ export const SA_CONFIG: CountryConfig = {
     { emoji: "🏠", label: "FIRB-eligible new properties", sublabel: "Government-linked investors face additional national-interest review", href: "/invest?firb=eligible" },
     { emoji: "👤", label: "Find a Saudi-AU specialist", sublabel: "No-DTA structuring + Islamic finance + Arabic-speaking advisors", href: "/advisors" },
   ],
+  homepageListingFilters: {
+    verticals: ["commercial-property", "farmland", "buy-business"],
+    firb: false,
+  },
+  homepageExpertFilters: {
+    specialties: ["tax_agent", "property_advisor", "wealth_manager", "mortgage_broker"],
+    languages: ["ar", "en"],
+  },
+  // Skip crypto_exchange — KSA regulatory ambiguity. Lead with property
+  // + fx for sovereign/family capital flows.
+  homepagePlatformFilters: {
+    types: ["property_platform", "fx_provider", "share_broker"],
+    nonResidentsOnly: true,
+  },
+  homepageFeaturedTools: [
+    { slug: "/property/foreign-investment", label: "FIRB tool" },
+    { slug: "/mortgage-calculator", label: "Non-resident mortgage" },
+    { slug: "/cgt-calculator", label: "CGT for non-residents" },
+  ],
+  preferredLanguages: ["ar", "en"],
+  hasRtlLanguage: true,
   slug: "saudi-arabia",
   countryName: "Saudi Arabia",
   countryShort: "Saudi Arabia",
