@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import { createClient } from "@/lib/supabase/server";
 import Icon from "@/components/Icon";
+import HubArticleStrip from "@/components/HubArticleStrip";
 import HubDeepDiveGrid from "@/components/HubDeepDiveGrid";
 
 export const revalidate = 3600;
@@ -217,37 +218,7 @@ export default async function SmsfHubPage() {
         </section>
 
         {/* Featured articles */}
-        {articles.length > 0 && (
-          <section className="py-12 bg-white">
-            <div className="container-custom max-w-6xl">
-              <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-6">
-                Featured SMSF articles
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {articles.map((a) => (
-                  <Link
-                    key={a.slug}
-                    href={`/article/${a.slug}`}
-                    className="block bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl p-5 transition-colors"
-                  >
-                    <h3 className="text-sm font-extrabold text-slate-900 leading-tight mb-2 line-clamp-2">
-                      {a.title}
-                    </h3>
-                    {a.excerpt && (
-                      <p className="text-xs text-slate-600 leading-relaxed line-clamp-3">
-                        {a.excerpt}
-                      </p>
-                    )}
-                    <p className="text-xs font-bold text-amber-600 mt-3 inline-flex items-center gap-1">
-                      Read article
-                      <Icon name="arrow-right" size={12} />
-                    </p>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
+        <HubArticleStrip heading="Featured SMSF articles" articles={articles} />
 
         {/* SMSF deep-dive sub-pages */}
         <HubDeepDiveGrid
