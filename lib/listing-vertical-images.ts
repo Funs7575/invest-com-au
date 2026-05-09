@@ -83,6 +83,13 @@ function normaliseSubKey(s: string | null | undefined): string | null {
 }
 
 const VERTICAL_IMAGES: Record<string, ReadonlyArray<string>> = {
+  "digital-infrastructure": [
+    "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200&h=675&q=80&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?w=1200&h=675&q=80&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=1200&h=675&q=80&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1600508774634-4e11d34730e2?w=1200&h=675&q=80&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1591808216268-ce0b82787efe?w=1200&h=675&q=80&auto=format&fit=crop",
+  ],
   business: [
     "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&h=675&q=80&auto=format&fit=crop",
     "https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=1200&h=675&q=80&auto=format&fit=crop",

@@ -7,7 +7,7 @@ import { CURRENT_YEAR } from "@/lib/seo";
 import { useSubscription } from "@/lib/hooks/useSubscription";
 import { isValidEmail } from "@/lib/validate-email";
 
-export type LeadSegment = "fee-audit" | "smsf-checklist" | "us-shares-guide" | "switching-checklist" | "beginner-guide";
+export type LeadSegment = "fee-audit" | "smsf-checklist" | "us-shares-guide" | "switching-checklist" | "beginner-guide" | "digital-infrastructure-briefing";
 
 interface SegmentConfig {
   badge: string;
@@ -70,6 +70,16 @@ const SEGMENTS: Record<LeadSegment, SegmentConfig> = {
     source: "lead-magnet-beginner-guide",
     successTitle: "Check your inbox!",
     successText: "We've sent the Beginner Guide to your email.",
+  },
+  "digital-infrastructure-briefing": {
+    badge: "Free Briefing",
+    title: `Digital Infrastructure Briefing — ${CURRENT_YEAR} AU Outlook`,
+    description: "14-page PDF covering ASX-listed data-centre operators, hyperscaler buildout pipeline, AI-compute economics, FIRB framework for foreign investors, and how to qualify for wholesale-only co-investment.",
+    buttonText: "Get the Briefing",
+    consentText: "I agree to receive the Digital Infrastructure Briefing and occasional updates from Invest.com.au.",
+    source: "lead-magnet-digital-infrastructure-briefing",
+    successTitle: "Check your inbox!",
+    successText: "We've sent the Digital Infrastructure Briefing to your email.",
   },
 };
 
