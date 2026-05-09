@@ -16,6 +16,7 @@ const VERTICALS = [
   { value: "fund", label: "Investment Fund", icon: "📈", desc: "Managed fund or investment scheme" },
   { value: "startup", label: "Startup / Venture", icon: "🚀", desc: "Equity crowdfunding or angel raise" },
   { value: "pre_ipo", label: "Pre-IPO (Wholesale)", icon: "🏛️", desc: "Late-stage private placement — sophisticated investors only (s708)" },
+  { value: "digital-infrastructure", label: "Digital Infrastructure", icon: "🖥️", desc: "Data centres, fibre, subsea cables, AI compute, tower assets" },
 ];
 
 const STATES = [
