@@ -37,6 +37,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
+  // eslint-disable-next-line invest/no-unvalidated-req-json -- Pre-existing admin-only route validating each field via narrow string/number type guards inline; admin gate has already authenticated. Tracked for migration to withValidatedBody in a dedicated cleanup PR.
   const body = await request.json().catch(() => ({}));
   const feature = typeof body.feature === "string" ? body.feature : null;
   const rowId = typeof body.rowId === "number" ? body.rowId : null;
@@ -145,19 +146,23 @@ async function overrideLeadDispute(
     .maybeSingle();
   const billAmount = lead?.bill_amount_cents || 0;
 
+  // All credit movements go through the ledger so admin overrides are
+  // sourced + idempotent + appear in the advisor's unified history.
+  const { recordLedgerEntry } = await import("@/lib/advisor-credit-ledger");
+
   if (targetVerdict === "approved") {
-    // Credit the advisor the original bill amount (if not already refunded)
-    if (!dispute.refunded_cents) {
-      const { data: advisor } = await admin
-        .from("professionals")
-        .select("credit_balance_cents")
-        .eq("id", dispute.professional_id)
-        .single();
-      const currentBalance = advisor?.credit_balance_cents || 0;
-      await admin
-        .from("professionals")
-        .update({ credit_balance_cents: currentBalance + billAmount })
-        .eq("id", dispute.professional_id);
+    if (!dispute.refunded_cents && billAmount > 0) {
+      await recordLedgerEntry({
+        professionalId: dispute.professional_id,
+        amountCents: billAmount,
+        kind: "lead_dispute_refund",
+        description: `Admin override — dispute #${disputeId} approved (lead #${dispute.lead_id})`,
+        referenceType: "advisor_lead_disputes",
+        referenceId: String(disputeId),
+        expiresAt: null,
+        createdBy: `admin:${adminEmail}`,
+        metadata: { override_reason: reason, lead_id: dispute.lead_id },
+      });
       await admin
         .from("professional_leads")
         .update({ billed: false, outcome: "refunded_dispute" })
@@ -174,22 +179,24 @@ async function overrideLeadDispute(
       })
       .eq("id", disputeId);
   } else {
-    // Reversing an approved → rejected. Debit the previously-credited
-    // balance back. This could fail if the advisor has spent it in
-    // the meantime; in that case we leave the balance as-is and
-    // accept the accounting discrepancy — the log captures it.
+    // Reversing an approved → rejected. Claw back the prior refund via
+    // an admin_adjustment ledger row (negative). The unique reference
+    // namespace ("admin_override_clawback") avoids colliding with the
+    // original lead_dispute_refund entry. If the advisor has spent the
+    // credit in the meantime, the balance can go negative — the cache
+    // update will reflect that and ops can manually settle.
     if ((dispute.refunded_cents || 0) > 0) {
-      const { data: advisor } = await admin
-        .from("professionals")
-        .select("credit_balance_cents")
-        .eq("id", dispute.professional_id)
-        .single();
-      const currentBalance = advisor?.credit_balance_cents || 0;
-      const newBalance = Math.max(0, currentBalance - (dispute.refunded_cents || 0));
-      await admin
-        .from("professionals")
-        .update({ credit_balance_cents: newBalance })
-        .eq("id", dispute.professional_id);
+      await recordLedgerEntry({
+        professionalId: dispute.professional_id,
+        amountCents: -(dispute.refunded_cents || 0),
+        kind: "admin_adjustment",
+        description: `Admin override — clawback of dispute #${disputeId} refund`,
+        referenceType: "admin_override_clawback",
+        referenceId: String(disputeId),
+        expiresAt: null,
+        createdBy: `admin:${adminEmail}`,
+        metadata: { override_reason: reason, original_refund_cents: dispute.refunded_cents },
+      });
     }
     await admin
       .from("lead_disputes")
