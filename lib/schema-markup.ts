@@ -365,3 +365,45 @@ export function calculatorJsonLd(input: CalculatorSchemaInput) {
     offers: { "@type": "Offer", price: "0", priceCurrency: "AUD" },
   };
 }
+
+// ─── Government scheme / GovernmentService ────────────────────
+
+export interface GovernmentSchemeSchemaInput {
+  name: string;
+  description: string;
+  serviceType: string;            // e.g. "Visa pathway", "Tax concession"
+  countryName: string;            // e.g. "United Kingdom"
+  sourceName: string;             // e.g. "HMRC ROPS notification list"
+  sourceUrl: string;
+  pagePath: string;               // e.g. "/foreign-investment/united-kingdom"
+}
+
+/**
+ * GovernmentService JSON-LD for a foreign-investment scheme/grant card.
+ *
+ * Schema.org's `GovernmentService` covers programmes administered by a
+ * government body that change a person's legal/tax/visa standing — the
+ * exact shape of the rows in `country_schemes`. Search engines surface
+ * these as rich results for "<scheme> Australia" queries.
+ *
+ * The `provider` is the cited regulator (HMRC, ATO, IRS, FIRB, …); the
+ * `mainEntityOfPage` lifts the page that hosts the card so the source
+ * citation is preserved end-to-end.
+ */
+export function governmentServiceJsonLd(input: GovernmentSchemeSchemaInput) {
+  return compact({
+    "@context": "https://schema.org",
+    "@type": "GovernmentService",
+    name: input.name,
+    description: input.description,
+    serviceType: input.serviceType,
+    areaServed: { "@type": "Country", name: input.countryName },
+    provider: {
+      "@type": "GovernmentOrganization",
+      name: input.sourceName,
+      url: input.sourceUrl,
+    },
+    mainEntityOfPage: absoluteUrl(input.pagePath),
+    audience: { "@type": "Audience", audienceType: "Cross-border investor" },
+  });
+}

@@ -102,6 +102,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
     }
 
+    // eslint-disable-next-line invest/no-unvalidated-req-json -- Pre-existing public lead-submission endpoint validating each field via inline guards downstream (typeof + non-empty checks). Tracked for migration to withValidatedBody in a dedicated cleanup PR.
     const body = await request.json();
     const { professional_id, user_name, user_email, user_phone, message, source_page } = body;
 
@@ -315,35 +316,52 @@ export async function POST(request: NextRequest) {
         }).eq("id", professional_id);
       }
     } else if (hasSufficientCredit) {
-      // Atomic deduction — prevents race condition where two simultaneous leads
-      // both read the same balance and both deduct, causing double-billing.
-      // We use a WHERE clause to ensure balance hasn't changed since we read it.
-      const { data: updated, error: deductError } = await supabase
-        .from("professionals")
-        .update({
-          credit_balance_cents: balance - priceCents,
-          lifetime_lead_spend_cents: (advisor?.lifetime_lead_spend_cents || 0) + priceCents,
-        })
-        .eq("id", professional_id)
-        .gte("credit_balance_cents", priceCents) // Only deduct if still sufficient
-        .select("credit_balance_cents")
-        .single();
-
-      // If the atomic update failed (race condition), mark lead as unbilled
-      if (deductError || !updated) {
+      // Route the deduction through the credit ledger so every lead spend
+      // is sourced + auditable; the helper handles its own concurrent-
+      // write retry and the (kind, reference) unique index guards against
+      // double-billing under retried lead inserts.
+      let ledgerOk = false;
+      try {
+        const { recordLedgerEntry } = await import("@/lib/advisor-credit-ledger");
+        await recordLedgerEntry({
+          professionalId: professional_id,
+          amountCents: -priceCents,
+          kind: "lead_spend",
+          description: `Lead: ${user_name.trim()} (quality: ${score}/100, tier: ${leadTier})`,
+          referenceType: "professional_lead",
+          referenceId: String(lead.id),
+          createdBy: "system:advisor-enquiry",
+          metadata: { lead_tier: leadTier, quality_score: score },
+        });
+        ledgerOk = true;
+      } catch (err) {
+        // Ledger write failed (advisor not found, schema, etc.) — fall
+        // through to mark the lead unbilled so an admin can resolve.
+        // We do NOT mutate the cached balance directly because the ledger
+        // is the source of truth.
         await supabase.from("professional_leads").update({
           billed: false,
           bill_amount_cents: priceCents,
         }).eq("id", lead.id);
+        // Surface in logs without aborting lead delivery.
+         
+        console.error("[advisor-enquiry] ledger write failed", {
+          err: err instanceof Error ? err.message : String(err),
+          professional_id,
+          leadId: lead.id,
+        });
       }
 
-      // Create billing record (status: paid since deducted from credit)
+      // Create billing record so the existing portal "Lead Charges"
+      // table keeps working until PR-B2 ships the unified ledger view.
       await supabase.from("advisor_billing").insert({
         professional_id,
         lead_id: lead.id,
         amount_cents: priceCents,
-        description: `Lead: ${user_name.trim()} (quality: ${score}/100) — deducted from credit`,
-        status: "paid",
+        description: ledgerOk
+          ? `Lead: ${user_name.trim()} (quality: ${score}/100) — deducted from credit`
+          : `Lead: ${user_name.trim()} (quality: ${score}/100) — credit deduction pending`,
+        status: ledgerOk ? "paid" : "pending",
       });
     } else {
       // Insufficient credit — create pending billing record, lead still delivered
