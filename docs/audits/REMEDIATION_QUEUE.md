@@ -44,7 +44,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | WW | `claude/audit-remediation/ww-01-watchlist-data-model` | **#651 MERGED** | WW-01 migration + WW-02 watchlist UI done. WW-03/04 blocked (DD-02 dep). **Streams WW-01+WW-02 merged.** | All WW tasks merged ✓ |
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
 | Z | `claude/audit-remediation/z-04-zero-state-ux` | #230/#323/#403/#457/#524/#565 | Z-01..Z-04 done. | Z-04 merged ✓ |
-| KK | `claude/audit-remediation/kk-01-internal-link-audit` · **#TBD OPEN** | — | KK-01 done (iter 331b — 192 orphans classified, audit script + findings doc). | KK-04 merged |
+| KK | `claude/audit-remediation/kk-01-internal-link-audit` · **#667 OPEN** | **#667 OPEN** (KK-01) | KK-01 done (iter 331b — 192 orphans classified, audit script + findings doc). | KK-04 merged |
 
 ---
 
@@ -927,7 +927,7 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 
 **Stream:** KK  
 **Item:** KK-01 (internal link audit — identify orphaned pages + over-linked hubs)  
-**Branch:** `claude/audit-remediation/kk-01-internal-link-audit` (PR TBD)
+**PR:** #667 (`claude/audit-remediation/kk-01-internal-link-audit`) — OPEN.
 
 **What was done:**
 - Wrote `scripts/internal-link-audit.mjs` (170 LOC): scans 524 `app/**/page.tsx` routes and
