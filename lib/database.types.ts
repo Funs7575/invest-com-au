@@ -6149,6 +6149,7 @@ export type Database = {
       feature_flags: {
         Row: {
           allowlist: string[]
+          archived_at: string | null
           created_at: string
           denylist: string[]
           description: string | null
@@ -6162,6 +6163,7 @@ export type Database = {
         }
         Insert: {
           allowlist?: string[]
+          archived_at?: string | null
           created_at?: string
           denylist?: string[]
           description?: string | null
@@ -6175,6 +6177,7 @@ export type Database = {
         }
         Update: {
           allowlist?: string[]
+          archived_at?: string | null
           created_at?: string
           denylist?: string[]
           description?: string | null
