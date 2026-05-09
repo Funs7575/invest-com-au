@@ -42,10 +42,19 @@ vi.mock("@/lib/url", () => ({
   getSiteUrl: () => "https://invest.com.au",
 }));
 
+const mockSubscriptionsUpdate = vi.fn();
 vi.mock("@/lib/stripe", () => ({
   getStripe: () => ({
     checkout: { sessions: { create: mockCheckoutCreate } },
+    subscriptions: { update: (...args: unknown[]) => mockSubscriptionsUpdate(...args) },
   }),
+}));
+
+const mockRecordLedgerEntry = vi.fn((..._args: unknown[]) =>
+  Promise.resolve({ entry: { id: 1 }, balanceAfterCents: 0, idempotent: false }),
+);
+vi.mock("@/lib/advisor-credit-ledger", () => ({
+  recordLedgerEntry: (...args: unknown[]) => mockRecordLedgerEntry(...args),
 }));
 
 import { POST } from "@/app/api/advisor-auth/tier-upgrade/route";
@@ -203,23 +212,34 @@ describe("POST /api/advisor-auth/tier-upgrade", () => {
     expect(json.message).toBe("Already on this tier");
   });
 
-  it("downgrades immediately, audits, and enqueues confirmation email", async () => {
+  it("defers downgrade to end of cycle, writes proration credit, queues email", async () => {
     withAdvisorTier("pro");
     const res = await POST(
       makePost({ target_tier: "growth", billing: "monthly" }),
     );
     expect(res.status).toBe(200);
     const json = await res.json();
-    expect(json.action).toBe("downgraded");
-    expect(json.tier).toBe("growth");
+    // No more immediate flip — the action is now deferred_downgrade.
+    expect(json.action).toBe("deferred_downgrade");
+    expect(json.pending_tier).toBe("growth");
+    expect(json.tier).toBe("pro"); // current tier UNCHANGED until cycle end
+    expect(json.pending_tier_effective_at).toBeTruthy();
 
-    // Direct stamp on professionals
+    // pending_tier stamped on the advisor row (advisor_tier untouched here).
     const proCalls = supabaseCalls.professionals || [];
     const updateCall = proCalls.find((c) => c.method === "update");
     expect(updateCall).toBeDefined();
     const updateArgs = updateCall?.args[0] as Record<string, unknown>;
-    expect(updateArgs.advisor_tier).toBe("growth");
-    expect(updateArgs.tier_change_reason).toBe("self_service_downgrade");
+    expect(updateArgs.pending_tier).toBe("growth");
+    expect(updateArgs.advisor_tier).toBeUndefined();
+
+    // Proration credit lands via the ledger helper.
+    expect(mockRecordLedgerEntry).toHaveBeenCalledWith(
+      expect.objectContaining({
+        kind: "tier_proration_credit",
+        professionalId: 42,
+      }),
+    );
 
     expect(mockRecordFinancialAudit).toHaveBeenCalled();
     expect(mockEnqueueJob).toHaveBeenCalledWith(
