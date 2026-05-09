@@ -4,18 +4,11 @@ import { NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 import { ADMIN_EMAILS } from "@/lib/admin";
 import { z } from "zod";
+import { escapeHtml } from "@/lib/html-escape";
 
 const log = logger("questions");
 
 /** Escape HTML special chars to prevent XSS in email templates */
-function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
-
 /** Fire-and-forget answer notification email via Resend */
 async function notifyQuestionAsker(
   answerId: number,

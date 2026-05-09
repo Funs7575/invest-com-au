@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import HubHero from "@/components/HubHero";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING, CRYPTO_WARNING, SUPER_WARNING, GRANTS_WARNING } from "@/lib/compliance";
 import type { HubConfig, ComplianceKey } from "@/lib/verticals";
 
@@ -81,22 +82,6 @@ function getComplianceText(key: ComplianceKey): string {
   }
 }
 
-/** Build FAQPage JSON-LD from HubConfig.faqs. */
-function faqJsonLd(faqs: HubConfig["faqs"]) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqs.map((faq) => ({
-      "@type": "Question",
-      name: faq.question,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: faq.answer,
-      },
-    })),
-  };
-}
-
 export default function HubPage({
   config,
   serviceGrid,
@@ -126,11 +111,17 @@ export default function HubPage({
         data-testid="hub-page-breadcrumb-ld"
       />
 
-      {/* JSON-LD — FAQPage (only when faqs present) */}
+      {/* JSON-LD — FAQPage (only when faqs present). HubConfig.faqs uses
+          {question, answer}; lib/schema-markup faqJsonLd takes {q, a} —
+          map at the call site rather than re-implement the JSON-LD shape. */}
       {hasFaqs && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd(config.faqs)) }}
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(
+              faqJsonLd(config.faqs.map((f) => ({ q: f.question, a: f.answer })))
+            ),
+          }}
           data-testid="hub-page-faq-ld"
         />
       )}

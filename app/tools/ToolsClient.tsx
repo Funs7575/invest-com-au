@@ -263,7 +263,7 @@ const CATEGORY_BADGE_COLORS: Record<string, string> = {
   Calculators: "bg-fuchsia-100 text-fuchsia-700",
 };
 
-function renderStars(rating: number) {
+function classifyStars(rating: number) {
   const full = Math.floor(rating);
   const hasHalf = rating - full >= 0.3;
   const stars: string[] = [];
@@ -330,7 +330,7 @@ export default function ToolsClient() {
         {/* Card Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {filtered.map((tool) => {
-            const stars = renderStars(tool.rating);
+            const stars = classifyStars(tool.rating);
             const badgeColor = CATEGORY_BADGE_COLORS[tool.category] || "bg-slate-100 text-slate-700";
 
             return (

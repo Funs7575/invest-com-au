@@ -7,6 +7,7 @@ import { downloadCSV } from "@/lib/csv-export";
 import TableSkeleton from "@/components/TableSkeleton";
 import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
 import type { QuarterlyReport } from "@/lib/types";
+import { slugify } from "@/lib/utils";
 
 interface FormData {
   title: string;
@@ -33,13 +34,6 @@ const emptyForm: FormData = {
   new_entrants: "",
   status: "draft",
 };
-
-function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-}
 
 export default function QuarterlyReportsPage() {
   // C-05b: this page used to call `lib/supabase/client.ts` (browser
