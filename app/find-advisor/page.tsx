@@ -30,6 +30,8 @@ interface MatchedAdvisor {
   specialties: string[];
   fee_description: string | null;
   verified: boolean;
+  /** Used by the response-time badge — null when no leads have been logged yet. */
+  avg_response_minutes?: number | null;
 }
 
 interface QuizState {
@@ -1239,12 +1241,20 @@ function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches,
               <Icon name="zap" size={14} className="text-white" />
               <span className="text-xs font-bold tracking-wide uppercase">Your Matched Advisor</span>
             </div>
-            {currentMatch.verified && (
-              <div className="flex items-center gap-1 bg-white/20 backdrop-blur-sm rounded-full px-2.5 py-0.5">
-                <Icon name="shield-check" size={12} className="text-white" />
-                <span className="text-[0.65rem] font-semibold text-white">ASIC Verified</span>
-              </div>
-            )}
+            <div className="flex items-center gap-1.5">
+              {currentMatch.avg_response_minutes != null && currentMatch.avg_response_minutes <= 60 && (
+                <div className="flex items-center gap-1 bg-emerald-500/30 backdrop-blur-sm rounded-full px-2.5 py-0.5" title="Average response under 60 minutes">
+                  <Icon name="zap" size={12} className="text-white" />
+                  <span className="text-[0.65rem] font-semibold text-white">Fast reply (&lt;1h)</span>
+                </div>
+              )}
+              {currentMatch.verified && (
+                <div className="flex items-center gap-1 bg-white/20 backdrop-blur-sm rounded-full px-2.5 py-0.5">
+                  <Icon name="shield-check" size={12} className="text-white" />
+                  <span className="text-[0.65rem] font-semibold text-white">ASIC Verified</span>
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="p-5 md:p-6">
