@@ -59,7 +59,7 @@ Audited 23 candidate revenue ideas against the actual codebase. Big finding: a l
 |---|------|-------------|---------------------|--------------|
 | 1 | Concierge wealth-stack builder | 3–4 wks | 70% built — extend `app/quiz/` + `lib/quiz-scoring.ts` | Quiz already does multi-product matching for brokers; extend to super/savings/robo. `app/api/concierge/route.ts` exists. |
 | 4 | Rate alerts → high-intent email list | 2–3 wks | 30% built | Resend pipeline + cron infra reusable. Smallest build of any idea. |
-| 7 | AI Q&A capture layer | 2–3 wks | 80% built — `lib/chatbot.ts` (RAG, Claude+OpenAI), `lib/embeddings.ts`, `lib/ai-cost-caps.ts` | Production-ready chatbot is admin-only today. Just needs public Q&A landing pages + question-capture form. |
+| 7 | AI Q&A capture layer | 2–3 wks | 80% built — `lib/chatbot.ts` (RAG, Claude+OpenAI), `lib/embeddings.ts`, `lib/ai-cost-caps.ts` | **🟡 IN-FLIGHT 2026-05-09 — queued as audit-remediation stream QQ. Brief at `docs/audits/qq-ai-qa-capture-brief.md`. 10 sub-tasks (QQ-01..QQ-10), compliance gate at QQ-08. Cloud loop picks up on next fire.** Production-ready chatbot is admin-only today. Just needs public Q&A landing pages + question-capture form. |
 | 5 | Hybrid auction self-serve | 4–6 wks | 90% built — `lib/marketplace/auto-bid.ts`, `app/admin/marketplace/` | Auction already running. Need: partner self-serve onboarding, quality multiplier (CTR/CR → bid rank), reserve prices, eligibility gate. **Needs legal sign-off before code.** |
 | 10 | Premium research subscription | content only | 90% built — full Stripe (`lib/stripe.ts`), Pro tier (`app/pro/`) | Plumbing complete. Just write the premium content. |
 | **24** | **Cross-border revenue line** (Phase A) | **~1 day remaining** | **Specialty taxonomy SHIPPED 2026-05-02 in `lib/advisor-specialties.ts:122–138` — UK Pension Transfer, FATCA-Aware US Expat Planning, DASP Processing, FIRB Property (Non-Resident); SIV/188C covered via `immigration_investment_lawyer` type. Wired into `financial_planner`, `tax_agent`, `migration_agent` advisor types. Country pages exist with deep content.** | **Remaining: premium 1.75× lead pricing in `lib/advisor-billing.ts` (~half day), filtered advisor-CTA wiring on country pages so /foreign-investment/uk routes /find-advisor with `?specialty=UK+Pension+Transfer` (~half day), persona selector + DASP calc + homepage rewrite (design/copy work, not engineering). $15–40k/yr realistic. See decision log entry 2026-05-01.** |
@@ -280,7 +280,27 @@ These are explicitly **don't build** decisions. Captured so future Claude sessio
 
 Drop new ideas here as they come up. Evaluate when time permits — assign a priority (P1–P5) and move into the appropriate section above.
 
-_(empty)_
+### 2026-05-09 — Visual content / rich-media upgrades to listings
+
+Captured during conversation with Claude. Re-evaluate against the 6-month pre-launch window — most should ship.
+
+- **App screenshot galleries** on `/broker/[slug]`, `/crypto/[slug]`, `/savings/[slug]`. 3–5 real screenshots per platform (login, trade, portfolio, fees, mobile/desktop). ~1–2 wks build (gallery component + admin upload + `ImageObject` schema). Quarterly maintenance ~30 min/platform. Real moat vs Canstar/Finder. **Provisional P1.**
+- **Custom OG images per `/best/[slug]`** — extend existing `/api/og` to render category-specific imagery (top 3 platform logos + key stat). Almost free; existing infra. Drives social CTR. **Provisional P1, smallest build.**
+- **Animated fee-impact visualisation component.** "$50k at 0.10% vs 0.30% over 10 years" — pure SVG/Canvas, no media production. Reusable across every fee page. Big trust signal. **Provisional P1.**
+- **Annotated screenshots calling out fees / hidden costs / UX friction.** ~1–2 days/platform editorial. Highly shareable on Twitter/Reddit. Worth doing for top-10 platforms per vertical. **Provisional P2, editorial-bandwidth-bound.**
+- **60–90s video walkthroughs.** Self-shot screencast + voiceover. Evergreen SEO + YouTube discovery. ~3–4h per video. **Provisional P2, depends on whether anyone will actually shoot them.**
+- **3D scans of commercial property syndicate assets** (BrickX, DomaCom etc). Underlying platforms don't have these themselves. $500–1500/property × syndicate-property-churns-quarterly = negative ROI. **Provisional P5 — skip.**
+- **Advisor video bios on profile pages.** 5–15% advisor uptake (supply problem). Selection bias toward camera-ready advisors. **Provisional P4 — defer until 1000+ active advisors.**
+- **Office tour 360° photos for firm pages.** Same supply problem. **Provisional P5 — skip.**
+- **Drone/aerial property shots, interactive floor plans.** You're not the source — platform is. Doesn't scale. **Provisional P5 — skip.**
+
+**Next action:** stand up "OG" stream brief for the custom-OG-images sub-idea (smallest, highest cost-leverage, ~3–5 days cloud loop work). The screenshot gallery + fee-impact component are larger streams; brief them after OG ships.
+
+### 2026-05-09 — Recruitment marketplace (firm ↔ advisor matching)
+
+Evaluated in conversation. Reframe: not "recruiter search" but "firm-to-advisor lead-gen", reusing `marketplace_placements` + `advisor_credit_ledger` + `advisor_firm_invitations`. Two-sided cold start is the constraint (advisors didn't opt in to be recruited; needs explicit "open to roles" toggle). Sized at $500k–$2M ARR ceiling. **Provisional P3 — sit until QQ ships and at least one inbound from a firm asking to hire. Don't build founder-pushed.**
+
+The narrower, cheaper variant: a "Careers" tab on `/firm/[slug]` profiles. ~half day. Reveals demand without a marketplace build. **Provisional P2 sub-task — bundle into a future firm-profile-improvements stream.**
 
 ---
 
