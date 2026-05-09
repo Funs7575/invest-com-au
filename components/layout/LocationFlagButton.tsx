@@ -56,6 +56,20 @@ function flagEmoji(code: string): string {
   );
 }
 
+// Slugs that have a /ar/ Arabic country page. When the visitor picks
+// one of these, we route them to the Arabic version so they land in
+// their native script + RTL layout. PR queue #6 — Phase 5 completion.
+// Saudi Arabia will be added once the SA Arabic translation lands.
+const ARABIC_COUNTRY_SLUGS: ReadonlySet<string> = new Set([
+  "united-arab-emirates",
+]);
+
+function countryHubUrl(slug: string): string {
+  return ARABIC_COUNTRY_SLUGS.has(slug)
+    ? `/ar/foreign-investment/${slug}`
+    : `/foreign-investment/${slug}`;
+}
+
 const STORAGE_KEY = "iv-location-flag-override";
 const DISMISSED_KEY = "iv-country-prompt-dismissed";
 
@@ -232,7 +246,7 @@ export default function LocationFlagButton() {
                 </p>
                 <div className="flex flex-col gap-2">
                   <Link
-                    href={`/foreign-investment/${supported.slug}`}
+                    href={countryHubUrl(supported.slug)}
                     onClick={() => {
                       setOverrideAndPersist(supported.code);
                       void setIntentCountryAction(supported.intentCode);
@@ -370,7 +384,7 @@ export default function LocationFlagButton() {
               {SUPPORTED_COUNTRIES.map((c) => (
                 <Link
                   key={c.code}
-                  href={`/foreign-investment/${c.slug}`}
+                  href={countryHubUrl(c.slug)}
                   onClick={() => {
                     // Setting the override here lets the user "stick" to a
                     // country view if they intentionally pick one. The flag
