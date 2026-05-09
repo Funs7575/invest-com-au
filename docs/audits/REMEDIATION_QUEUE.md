@@ -40,7 +40,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | X | `claude/audit-remediation/x-09-preview-advisor-final` (#646) · `x-09-eslint-ratchet` (#648) | #257/#367/#596/#600/#610 MERGED · **#641 OPEN** (X-06) · **#643 OPEN** (X-07) · **#644 OPEN** (X-08) · **#646 OPEN** (X-09a) · **#648 OPEN** (X-09b) | X-06 (#641 CI ✓), X-07 (#643 CI ✓), X-08 (#644 CI ✓), X-09a (#646 — preview/[token] swap + keep-admin annotations), X-09b (#648 — ESLint ratchet). **Stream X complete** once all 5 PRs merge. | All X PRs merged |
 | EE | `claude/audit-remediation/ee-01-error-boundaries` · **#653 OPEN** | **#653 OPEN** (EE-01) | EE-01 done + EE-02/03/04 FP. Fixes quiz/calculators/savings-calc error.tsx. EE-05 pending. | EE-05 merged |
 | FF | `claude/audit-remediation/ff-01-feature-flag-audit` · **#656 OPEN** | **#656 OPEN** (FF-01) | FF-01 done — seeded 8 missing flags. FF-02/03/04 pending. | FF-04 merged |
-| OOO | `claude/audit-remediation/ooo-01-runbook-audit` · **#652 OPEN** | — · **#652 OPEN** | OOO-01 done. OOO-04 FP. OOO-02 done (iter 324b). OOO-03 done (on-call-rotation.md, iter 325b). **Stream complete.** | OOO-03 merged ✓ |
+| OOO | `claude/audit-remediation/ooo-01-runbook-audit` · **#652 OPEN** | — · **#652 OPEN** | OOO-01 done (#652 CI red — types drift fixed in iter 323b). OOO-04 false-positive. OOO-02/03 pending. | OOO-03 merged |
 | WW | `claude/audit-remediation/ww-01-watchlist-data-model` · **#651 OPEN** | **#651 OPEN** (WW-01) | WW-01 migration applied to live DB, types regenerated. | All WW tasks merged |
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
 | Z | `claude/audit-remediation/z-04-zero-state-ux` | #230/#323/#403/#457/#524/#565 | Z-01..Z-04 done. | Z-04 merged ✓ |
@@ -693,11 +693,11 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|--------------|-------|
 | OOO-01 | ~~done~~ | ~~Runbook audit (identify gaps vs. `docs/runbooks/` inventory)~~ | ~2 | README updated (30 runbooks inventoried), supabase-slow.md + slo-breach.md created, gap register added. PR #652. |
-| OOO-02 | ~~done~~ | ~~Incident severity classification runbook~~ | ~2 | `docs/runbooks/incident-severity.md` created. P0-P4 severity table, decision guide, impact reference, escalation path, Slack templates, slo_incidents SQL, de-escalation criteria. PR #652 commit 8b91ddc. |
-| OOO-03 | ~~done~~ | ~~On-call rotation runbook (contacts, escalation path)~~ | ~2 | `docs/runbooks/on-call-rotation.md` created. Contact table, paging steps by severity, rotation schedule, vendor escalation contacts, handoff checklist. PR #652 commit b43b280. |
+| OOO-02 | pending | Incident severity classification runbook | ~2 | Deps: OOO-01 ✓. |
+| OOO-03 | pending | On-call rotation runbook (contacts, escalation path) | ~2 | Deps: OOO-01 ✓. |
 | OOO-04 | ~~false-positive~~ | ~~Data breach response runbook (OAIC notification requirements)~~ | — | `breach-notification.md` fully covers NDB 30-day clock, GDPR 72h, P0-P3 severity matrix, OAIC form, individual notification template. |
 
-**Stream OOO entry condition:** All items done (OOO-01/02/03 done, OOO-04 false-positive). Stream complete.
+**Stream OOO entry condition:** OOO-01 done. OOO-02 can start immediately.
 
 ---
 
@@ -916,39 +916,32 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 | A | #540 | iter 317 | A-01..A-04 done; A-05 false-positive (broker_reviews/broker_ratings not in schema) |
 | DDD | — | iter 320 | DDD-01..03 all false-positive — `export-data`, `delete`, `gdpr-retention-purge` pre-existed with tests |
 | EE (partial) | #653 | iter 322 | EE-01 done (audit — root covers all routes, 3 files fixed). EE-02/03/04 false-positive — RouteErrorBoundary + RouteLoadingSkeleton pre-existed. EE-05 still pending. |
+| OOO (partial) | — | iter 321b | OOO-04 false-positive — `breach-notification.md` fully covers OAIC NDB 30-day clock, GDPR 72h, P0-P3 severity matrix |
 
 ---
 
 ## Iteration log (most recent at top)
 
-### 2026-05-09 — iter 325b (OOO — OOO-03: on-call rotation runbook)
+### 2026-05-09 — iter 326 (CI-rescue EE — driftallowlist for user_watchlist_items)
 
-**PR:** #652 (`claude/audit-remediation/ooo-01-runbook-audit`) — OPEN, OOO-03 commit pushed.
+**PR:** #653 (`claude/audit-remediation/ee-01-error-boundaries`) — OPEN, CI re-running.
 
-**Why:** `incident-severity.md` (OOO-02) and `breach-notification.md` both instruct "page the on-call engineer" but no runbook defined who that is, how to reach them, or what the rotation schedule is. The OOO-01 gap register listed this as OOO-03.
-
-**What shipped:**
-- `docs/runbooks/on-call-rotation.md` (new, commit `b43b280`): priority contact table (Fin → Best Friend → Fin escalation), paging steps per severity (P0/P1: call + Signal within 15 min, P2: ticket + #incidents, P3/P4: ticket only), rotation schedule with OOO/travel substitution note (Fin in Asia May 2026–Dec 2028), vendor escalation contacts (Supabase, Stripe, Vercel, Resend, OAIC, compliance firm), shift handoff checklist with resolved/noted templates, post-incident pointer to slo-breach.md.
-- `docs/runbooks/README.md`: added incident-severity.md and on-call-rotation.md to SLO & observability inventory; marked both OOO-02/03 as done in gap register.
-- Queue: OOO-03 marked done, OOO in-flight row updated to "Stream complete."
-
-OOO stream is now complete: OOO-01 (runbook audit), OOO-02 (severity classification), OOO-03 (on-call rotation) all done; OOO-04 false-positive.
-
-STATUS: PROGRESS · stream=OOO · item=OOO-03 · pr=#652
-
----
-
-### 2026-05-09 — iter 324b (OOO — OOO-02: incident severity classification runbook)
-
-**PR:** #652 (`claude/audit-remediation/ooo-01-runbook-audit`) — OPEN, OOO-02 commit pushed.
-
-**Why:** The OOO-01 runbook audit (iter 321b) identified that no general-purpose severity classification runbook existed — only `breach-notification.md` had a breach-specific P0-P3 matrix. On-call engineers had no single source of truth for triage priority across all alert types. This item was OOO-02 in the gap register added to `docs/runbooks/README.md` in iter 321b.
+**Why:** "Database types drift gate" failed on EE (#653) because `lib/database.types.ts`
+(regenerated in iter 323 to fix the "Supabase types drift" gate) includes `user_watchlist_items`
+but the WW-01 migration file hasn't merged to main yet, so the local gate sees the type
+without a CREATE TABLE statement. The `.driftallowlist` escape hatch is the designed solution
+for this cross-stream transitional state.
 
 **What shipped:**
-- `docs/runbooks/incident-severity.md` (new, 163 lines, commit `8b91ddc`): P0-P4 severity table with response SLAs (P0: respond 15 min/resolve 1h, P1: 30 min/4h, P2: 2h/24h, P3: 24h, P4: no SLA), ordered "stop at first yes" decision guide, impact-reference table per service area (broker listings, quiz, checkout/Stripe, advisor profiles, email, admin panel, database, cron), escalation path tree, internal `#incidents` Slack template + external status-page template, `slo_incidents` INSERT SQL, de-escalation criteria with status-update templates, post-incident pointer to slo-breach.md.
-- Queue: OOO-02 marked done, OOO in-flight row restored + updated (parallel fire `77b107a` had reverted OOO state again).
+- `.driftallowlist`: added `user_watchlist_items # WW-01: migration in PR #651, pending merge`
+  with a note to remove the entry once #651 merges and EE is rebased.
 
-STATUS: PROGRESS · stream=OOO · item=OOO-02 · pr=#652
+**Commit:** `127df6a2` (push `dd89fc59..127df6a2`)
+
+**Side note:** PR #651 (WW-01) is fully CI green (all gates pass). Ready to merge (Tier C —
+new schema migration: announce intent and merge unless STOP).
+
+STATUS: CI-RESCUE · stream=EE · pr=#653
 
 ---
 
@@ -995,6 +988,22 @@ diverging from the established pattern in `notification_preferences.rls.test.ts`
 **Commit:** `f38d8cb0`
 
 STATUS: CI-RESCUE · stream=WW · pr=#651
+
+---
+
+### 2026-05-09 — iter 323b (CI-RESCUE: OOO #652 types drift + queue restore)
+
+**PR:** #652 (`claude/audit-remediation/ooo-01-runbook-audit`) — OPEN, CI re-running.
+
+**Scope:** CI rescue for PR #652 (OOO stream) + queue restore after parallel-fire revert.
+
+**Why:** PR #652 failed "Supabase types drift" and "Preview smoke test". Same WW-01 types drift root cause as iter 323 (EE). Additionally, the parallel fire for iter 322 (EE stream, commit e8ebff5) reverted the OOO queue state — restored here.
+
+**What shipped:**
+- `lib/database.types.ts` regenerated on OOO stream branch (`8f63c6a`) — adds `user_watchlist_items` types so PR #652 passes drift gate.
+- `docs/audits/REMEDIATION_QUEUE.md`: OOO row restored to in-flight table; OOO pending section corrected (OOO-01 ~~done~~, OOO-04 ~~false-positive~~); iter 321b log entry restored.
+
+STATUS: CI-RESCUE · stream=OOO · pr=#652
 
 ---
 
@@ -1350,7 +1359,7 @@ Coverage audit complete. RATCHET M1 queued as next R-stream item.
 _Note: Iters 282–293 ran between 2026-04-21 and 2026-04-28 and were not individually logged in the live queue (context was archived). Entries reconstructed from git log and PR merge timestamps._
 
 | Iter | Date | Action | PR |
-|------|------|--------|----|-|
+|------|------|--------|---|-|
 | 282 | 2026-04-21 | R — COVERAGE-09 ratchet | #566 |
 | 283 | 2026-04-21 | R — COVERAGE-10 ratchet | #567 |
 | 284 | 2026-04-22 | R — COVERAGE-11 ratchet | #568 |
