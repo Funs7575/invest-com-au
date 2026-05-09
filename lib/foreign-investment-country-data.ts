@@ -1007,6 +1007,26 @@ export const UK_CONFIG: CountryConfig = {
       q: "Should I hedge GBP/AUD currency exposure on my Australian investments?",
       a: "GBP/AUD has moved by 30%+ in the last decade, and FX risk often dominates equity returns over short horizons. Many UK investors with substantial Australian holdings use AUD-hedged ETFs on the LSE, or hold a portion of their portfolio in GBP to dampen volatility. This is a planning question — the right answer depends on whether you intend to spend the AUD or convert it back to GBP.",
     },
+    {
+      q: "Does my AU investment income flow through the UK Personal Savings Allowance or Dividend Allowance?",
+      a: "Yes. Australian-source dividends count toward your UK Dividend Allowance (currently £500/year) and are taxed at UK dividend rates (8.75% / 33.75% / 39.35%) above that. Australian-source interest counts toward your Personal Savings Allowance (£1,000 basic rate, £500 higher rate, £0 additional rate). UK tax is calculated on the gross AU income, with foreign tax credit relief for the AU withholding paid. General information only — see a UK chartered tax adviser for your specific marginal rate.",
+    },
+    {
+      q: "How does UK CGT interact with Australian CGT when I sell ASX shares?",
+      a: "If you are UK tax resident at the time of disposal, UK CGT applies on the gain (10% / 20% / 24% depending on rate band and asset type) measured in GBP using HMRC spot rates at acquisition and sale. Australia generally does not impose CGT on listed-share gains held by non-residents (TARP-only rule), so UK is normally the only jurisdiction taxing the gain. The temporary non-resident rules can claw back gains realised during a short overseas spell — get advice before disposing while abroad. General information only — confirm with HMRC guidance HS261 or a specialist.",
+    },
+    {
+      q: "Can I keep using my UK ISA contributions while I am also investing in Australia?",
+      a: "Yes — UK ISA eligibility is based on UK tax residency, not where the underlying assets sit, so you can keep contributing the £20,000/year allowance while holding a separate non-ISA Australian portfolio. You cannot move ASX-listed shares into an ISA wrapper (only LSE-listed), but BHP, Rio Tinto and other dual-listed names can sit inside an ISA via their UK lines. The ATO does not recognise the ISA wrapper, so AU-source income inside an ISA is still taxable in Australia at the relevant non-resident rate.",
+    },
+    {
+      q: "What happens to my UK SIPP if I move to Australia and become AU tax resident?",
+      a: "The SIPP itself stays in the UK and remains a UK pension scheme. Australia generally does not tax UK pension growth while preserved, but lump-sum withdrawals taken after AU residency starts can be partly assessable under s 305-70 ITAA 1997 (the 'applicable fund earnings' rule). Many UK→AU migrants choose to crystallise the SIPP in the six months before departure or transfer to a QROPS-listed AU fund. General information only — UK-AU pension specialist advice is essential before any draw or transfer.",
+    },
+    {
+      q: "Do I need to declare my AU bank account on HMRC's worldwide disclosure or under CRS?",
+      a: "If you are UK tax resident you must report worldwide income on Self Assessment (SA106 for foreign income) regardless of where the account sits. Australia and the UK both participate in the OECD Common Reporting Standard, so AU banks and brokers automatically share account balances and income with HMRC via the ATO. Practical effect: assume HMRC sees your AU accounts and reconcile them on your return. General information only — see HMRC's Worldwide Disclosure Facility guidance.",
+    },
   ],
 
   related: [
@@ -1614,6 +1634,26 @@ export const US_CONFIG: CountryConfig = {
       q: "Should I use Interactive Brokers or open an Australian broker?",
       a: "For most US persons, Interactive Brokers is the path of least resistance — they accept US persons under FATCA, offer full ASX access, and handle the cross-border reporting infrastructure. Australian retail brokers typically refuse US persons because of the FATCA compliance cost. If you have an Australian bank account and want CHESS sponsorship, IBKR Australia (with its CHESS option) is the closest available equivalent.",
     },
+    {
+      q: "Does Australian super count as a 'foreign grantor trust' for US tax, and what does that mean?",
+      a: "The IRS has not issued definitive guidance, and most US-AU specialists take the conservative position that Australian super is a foreign grantor trust requiring annual Forms 3520 and 3520-A. Practical consequences: employer super contributions may be currently taxable to you under US rules, and earnings inside super may not benefit from US tax deferral. Some practitioners argue super is a Section 402(b) employees' trust, but this is unsettled. General information only — engage a US-AU tax specialist before filing.",
+    },
+    {
+      q: "Are franking credits worth anything to me as a US person?",
+      a: "Largely no. Franking credits are a domestic Australian device that refunds Australian corporate tax to AU resident shareholders; they are not refundable to non-residents and are not creditable on US Form 1116. The benefit you do get is that fully franked dividends carry 0% Australian withholding, so 100% of the gross dividend lands with you — but the embedded corporate tax is a real cost not recoverable in the US. Many US persons therefore prefer ASX names with high cash dividends regardless of franking, paired with the 15% DTA WHT.",
+    },
+    {
+      q: "Will my Australian property trigger FIRPTA-style reporting in the US?",
+      a: "FIRPTA itself is a US inbound rule that does not apply to AU real estate. But as a US person you must include AU rental income on Form 1040 Schedule E, depreciate the building under MACRS (40-year ADS for foreign real property), and report the AU title-holding entity on Forms 8858 / 5471 / 8865 if you held it through a company or partnership. AU CGT on disposal is creditable via Form 1116 in the passive basket. General information only — see a cross-border CPA before purchase.",
+    },
+    {
+      q: "What is the Net Investment Income Tax (NIIT) impact on my Australian portfolio?",
+      a: "The 3.8% NIIT applies to US persons whose modified AGI exceeds $200K single / $250K joint, on net investment income including AU dividends, interest and capital gains. NIIT is not creditable against AU withholding under the US-AU DTA — it is a layered US-only tax on top of regular US income tax and any AU tax already paid. Plan for an effective combined US rate roughly 3.8 percentage points higher than your bracket suggests. General information only — confirm with your tax preparer.",
+    },
+    {
+      q: "How does the US estate tax interact with Australian assets I own?",
+      a: "If you are a US citizen or domiciliary, the US estate tax applies to your worldwide estate (current exemption ~$13.6M individual, set to halve in 2026 absent legislation), including AU shares, super and property. Australia abolished inheritance tax in 1979, so the US estate tax is the entire exposure on AU assets — no foreign credit is available because Australia does not tax the same event. The US-AU estate tax treaty (1953) provides limited situs relief but does not change the base liability. General information only — see a US estate planner for your numbers.",
+    },
   ],
 
   related: [
@@ -1994,6 +2034,26 @@ export const CN_CONFIG: CountryConfig = {
     { q: "Do Chinese citizens pay Chinese tax on their Australian investments?", a: "Since the 2019 individual income tax reform, Chinese tax residents must declare worldwide income — including AU-source dividends, interest, royalties and capital gains. The China-Australia DTA prevents double taxation by allowing credit in China for AU withholding tax paid." },
     { q: "Is the Significant Investor Visa worth it?", a: "For HNW Chinese investors who want to remove the FIRB and foreign-buyer constraints permanently, the SIV ($5M into complying investments) is the most direct path. It bypasses the points-tested skilled stream and has no age limit. Specialist migration advice essential — eligible-investment criteria are strict." },
     { q: "What's CRS and does it apply to me?", a: "Australia and China both participate in the Common Reporting Standard. AU financial institutions automatically report account information about Chinese tax residents to the ATO, which shares with Chinese tax authorities. Practical effect: assume your AU holdings are visible to Chinese authorities for tax compliance purposes." },
+    {
+      q: "Do my dividends through Stock Connect to ASX shares qualify for the 15% DTA rate?",
+      a: "There is no Stock Connect link to the ASX — Shanghai/Shenzhen-Hong Kong Connect covers HK-listed equities only. To access ASX directly from mainland China you need a non-resident-friendly broker (typically Interactive Brokers) or a QDII fund product offered by a mainland Chinese fund manager. Dividends paid to a mainland-tax-resident individual via a direct broker account qualify for the 15% AU WHT rate under the China-AU DTA, provided the broker has the right tax residency documentation on file.",
+    },
+    {
+      q: "Can my AU investment income legally feed into a SAFE-approved overseas business or family office structure?",
+      a: "Yes, but only via a separately approved channel. SAFE's USD 50,000 personal annual quota is for individuals; offshore family offices, QDLP/QDIE products and approved corporate ODI channels operate under their own quotas with separate SAFE filings. Many mainland HNW families use a combination of personal quota, family-member quotas and a Hong Kong or Singapore wealth-management vehicle holding the AU portfolio. Specialist Sino-AU cross-border structuring advice is essential — SAFE rules change and substance requirements have tightened since 2017.",
+    },
+    {
+      q: "Is my AU rental income or capital gain taxable in mainland China?",
+      a: "Yes if you are a China tax resident under the 183-day rule. Since the 2019 IIT reform, residents declare global income on the annual reconciliation (汇算清缴) due 30 June following the tax year, with foreign tax credit allowed for AU tax paid on the same income at the lower of the AU rate or the equivalent China rate. The China-AU DTA prevents true double taxation but does not exempt the income. General information only — see a registered mainland tax agent for your specific filing.",
+    },
+    {
+      q: "If I sell AU property as a mainland Chinese resident, what is my AU tax bill?",
+      a: "AU residential property is taxable real property (TARP) so AU CGT applies to non-residents on disposal at non-resident rates (no 50% CGT discount, no main residence exemption since 2020). Foreign Resident Capital Gains Withholding of 12.5% on contract price applies at settlement and is creditable against your final assessment. The China-AU DTA does not exempt this gain. General information only — engage an Australian tax agent before exchange.",
+    },
+    {
+      q: "Do CRS reports between Australia and China cover my super and brokerage account?",
+      a: "Yes. The ATO automatically reports balances and income on accounts held by mainland-Chinese tax residents to China's State Taxation Administration via OECD CRS exchanges. This includes super accumulation accounts, broker accounts and most investment products above the de minimis threshold. Practical effect: your AU holdings are visible to mainland authorities for tax reconciliation. General information only — see your registered tax agent before any non-disclosure assumption.",
+    },
   ],
   related: [
     { title: "Buy Property in Australia as a Foreigner", href: "/foreign-investment/guides/buy-property-australia-foreigner" },
@@ -2265,6 +2325,26 @@ export const IN_CONFIG: CountryConfig = {
     { q: "Can I claim my Australian super as an NRI?", a: "Only if you previously worked in Australia on a temporary visa (DASP). DASP is not available to Australian citizens or PRs — only to ex-temp-visa holders who have permanently departed. The DASP tax rate is 35% for most ex-temp visas, 65% for Working Holiday Makers." },
     { q: "What's the ECTA and does it affect investment?", a: "The Australia–India Economic Cooperation and Trade Agreement (in force December 2022) reduces tariffs on Australian exports to India and includes some investment-friendly provisions. It does not change DTA rates, FIRB thresholds or property rules — but it improves the broader investment relationship." },
     { q: "Does India tax my AU rental income?", a: "Yes. Indian tax residents must declare AU-source rental income on their ITR under 'Income from House Property'. The India-Australia DTA permits a foreign tax credit for the AU tax paid on the same income — preventing double taxation." },
+    {
+      q: "How does my NRI tax residency status (NRI vs RNOR vs ROR) change my AU investment reporting?",
+      a: "An NRI pays Indian tax only on India-source income, so AU dividends and capital gains are outside the Indian tax net entirely. RNOR (Resident but Not Ordinarily Resident) status, available for typically two years on return to India, also exempts foreign-source income not derived from a business controlled in India. ROR (Resident and Ordinarily Resident) brings worldwide AU income into the Indian return with FTC for AU tax paid. Status is determined annually under s 6 of the Income-tax Act. General information only — confirm with a chartered accountant before assuming NRI status.",
+    },
+    {
+      q: "Do I need to file Schedule FA for my ASX shares once I become a Resident in India?",
+      a: "Yes. Once you are tax resident in India (Ordinarily Resident), Schedule FA of the ITR requires disclosure of every foreign asset held during the relevant financial year — including ASX shares, AU bank accounts, AU super and AU property — with peak balance and dates of acquisition. Non-disclosure attracts penalties under the Black Money Act 2015 of up to INR 10 lakh per default plus tax + interest. Schedule FA filing applies even if there was no income or gain. General information only — see a CA familiar with Black Money Act compliance.",
+    },
+    {
+      q: "Can I use my LRS quota to fund both an ASX broker and an AU property deposit in the same year?",
+      a: "Yes — the US$250,000 LRS quota is a combined annual cap across all permitted purposes (investment in shares, property purchase, education, gifts, maintenance of relatives etc.) per individual per Indian financial year (April-March). You can split it any way you choose. RBI raised the TCS (Tax Collected at Source) on LRS remittances above INR 7 lakh to 20% from October 2023 (with carve-outs for education and medical), refundable against your Indian tax. General information only — check current TCS rates with your remitting bank.",
+    },
+    {
+      q: "Is DASP worth claiming if my AU super balance is small?",
+      a: "Usually yes if you have permanently left Australia on a temporary visa. The DASP tax (35% for most ex-temp visas, 65% for ex-Working-Holiday-Maker visas under DASP WHM rules) is high, but the alternative is leaving funds preserved indefinitely with no realistic path to access. ATO data shows hundreds of millions in unclaimed temp-visa super. The application is online via ATO and free; specialist help only needed if your fund will not pay or your visa history is complex.",
+    },
+    {
+      q: "Does the India-Australia ECTA give me any direct tax relief?",
+      a: "No on tax — ECTA is a trade and economic agreement that reduces tariffs and mobility frictions but does not amend the India-AU DTA rates (15% on unfranked dividends, 15% on interest, 10–15% on royalties depending on type). The DTA was amended via the 2011 protocol and that remains the operative tax instrument. ECTA's main investor benefits are visa pathways for Indian professionals and reduced barriers for cross-border services trade. General information only.",
+    },
   ],
   related: [
     { title: "Buy Property in Australia as a Foreigner", href: "/foreign-investment/guides/buy-property-australia-foreigner" },
@@ -2507,6 +2587,26 @@ export const HK_CONFIG: CountryConfig = {
     { q: "Does Hong Kong tax my Australian dividends?", a: "Generally no. HK uses a territorial tax system — foreign-source income (including AU dividends, interest and rental income) is not subject to HK profits tax or salaries tax. The 15% AU dividend WHT is typically your final tax on the income." },
     { q: "I'm an Australian living in Hong Kong — am I still an AU tax resident?", a: "Probably yes, in many cases. The ATO uses a multi-factor test (permanent home, family ties, employment, intention) — not just a days-based test. Many AU expats in HK technically remain AU tax residents and owe AU tax on worldwide income. Engage a specialist before assuming non-resident status." },
     { q: "What pathways exist from HK to AU residency?", a: "Skilled migration (189/190/491), the HK-specific pathway visa stream for HK BN(O)/SAR/HKBN passport holders, and the Significant Investor Visa (188C → 888C) at $5M+. Recent years have seen high HK→AU migration; specialist migration advice strongly recommended." },
+    {
+      q: "Has the OECD Pillar Two / global minimum tax changed my Hong Kong tax position on AU investments?",
+      a: "Not for individual investors. Pillar Two applies a 15% global minimum corporate tax to multinational groups with consolidated revenue above EUR 750M and is implemented in HK via the Inland Revenue (Amendment) (Minimum Tax for Multinational Enterprise Groups) Ordinance from 2025. Personal investment income earned by HK individuals from AU sources continues under HK's territorial system — generally not taxable in HK. General information only — corporate investors at the threshold should consult a tax adviser.",
+    },
+    {
+      q: "Are the BN(O) visa holders in the UK still eligible for the HK-AU DTA on AU dividends?",
+      a: "DTA eligibility hinges on tax residency at the time of payment, not nationality. A BN(O) holder living in the UK is typically UK tax resident and accesses the UK-AU DTA (also 15% on unfranked dividends, 5% on royalties), not the HK-AU DTA. Spending part of the year in HK could put you at risk of UK statutory residence test triggers — get UK and HK advice before splitting time. General information only — confirm tax residency annually before assuming a treaty rate.",
+    },
+    {
+      q: "What is the AU tax effect if I sell my HK home and move the proceeds into AU property?",
+      a: "Australia does not tax HK-source capital gains for non-AU-residents, so the HK sale is outside AU CGT. Once you become AU tax resident, your global cost base is reset to the market value at the date of becoming resident under s 855-45 ITAA 1997 (the 'CGT event I1 / I2' framework) for foreign-located CGT assets, so future appreciation is the AU CGT base. AU stamp duty on the new purchase still applies (see the relevant state). General information only — pre-residency planning advice is high-leverage; see an AU tax specialist before arriving.",
+    },
+    {
+      q: "Are HK SFC-licensed brokers usable to access ASX, or do I need an offshore broker?",
+      a: "Most HK SFC-licensed retail brokers focus on HKEX, US and China markets and do not offer ASX directly. Interactive Brokers HK (SFC-licensed) is the most common path for HK residents wanting ASX exposure, with Saxo HK as the alternative. Some HK private banks can execute ASX block trades on a relationship basis. Verify SFC licence and ASX market access before opening. General information — not a broker recommendation.",
+    },
+    {
+      q: "Does Hong Kong stamp duty apply when I buy AU shares or property?",
+      a: "No — HK stamp duty applies to HK-listed share transfers and HK real property only. Buying ASX shares or AU property triggers AU-side duties only: brokerage fees plus any state stamp duty on property (NSW 8% surcharge, VIC 8%, QLD 7%, etc., on top of standard duty). General information only — see the relevant state revenue office for a property quote.",
+    },
   ],
   related: [
     { title: "Buy Property in Australia as a Foreigner", href: "/foreign-investment/guides/buy-property-australia-foreigner" },
@@ -2741,6 +2841,26 @@ export const SG_CONFIG: CountryConfig = {
     { q: "Does Singapore tax my AU dividends?", a: "Generally no. Singapore's territorial tax system means foreign-source income (including AU dividends, interest, royalties and rental income) is generally not subject to SG income tax. The 15% AU dividend WHT is typically your final tax." },
     { q: "I'm an Australian living in Singapore — am I still an AU tax resident?", a: "Probably yes in many cases. The ATO uses a multi-factor test (permanent home, family ties, employment, intention) — not just days. Many AU expats in SG retain AU tax residency and owe AU tax on worldwide income. Engage a specialist before assuming non-resident status." },
     { q: "What's the best AU broker for a Singapore resident?", a: "Interactive Brokers (Singapore-regulated) is the most-used option for serious investors — full ASX access, multi-currency support, MAS-regulated. Saxo Singapore is the alternative with a more polished UI. Verify eligibility directly before opening." },
+    {
+      q: "How do Singapore Variable Capital Companies (VCCs) hold ASX shares for family-office investors?",
+      a: "A VCC is a flexible Singapore corporate structure widely used by single and multi-family offices to hold global portfolios including ASX equities. VCC investment income from AU sources gets the 15% DTA WHT on unfranked dividends and 0% on franked, the same as a direct individual holder, provided the VCC is the beneficial owner and substance-and-management tests are met. Section 13O/13U fund tax incentives can exempt qualifying VCC income from Singapore tax with MAS approval. General information only — engage a Singapore tax adviser before structuring.",
+    },
+    {
+      q: "What does the AANZSCEPA / SAFTA combination do for Singapore investors versus AUSFTA for Americans?",
+      a: "Singapore-AU investors operate under the Singapore-Australia FTA (SAFTA, 2003, deepened 2017) and AANZSCEPA, which together provide higher FIRB screening thresholds for Singapore private investors in non-sensitive sectors (currently aligned with the AUSFTA A$1.339B threshold for SAFTA-covered investors), national treatment and ISDS protections. Treatment is broadly comparable to US investors under AUSFTA. The DTA still governs tax separately. General information only — confirm the current threshold at firb.gov.au.",
+    },
+    {
+      q: "Is my AU rental income remittable to Singapore tax-free under the foreign-sourced income exemption?",
+      a: "Generally yes for individuals — foreign-source rental income received in Singapore by an individual is exempt under section 13(7A) of the Singapore Income Tax Act. The corresponding Singapore corporate exemption (s 13(8)) is conditional on the headline tax test (foreign tax of 15%+ paid in the source country) and the subject-to-tax test, which AU rental income generally satisfies. Practical result: AU 32.5%+ non-resident rental tax is typically the only tax on the income. General information only — confirm with IRAS guidance for your specific facts.",
+    },
+    {
+      q: "Does Singapore stamp duty apply to my AU property purchase?",
+      a: "No — Singapore Additional Buyer's Stamp Duty (ABSD) and Buyer's Stamp Duty are levied on Singapore residential property only, not foreign property. Your AU stamp duty bill is the relevant cost: standard state stamp duty plus the foreign-buyer surcharge (NSW 8%, VIC 8%, QLD 7%, WA 7%, SA 7%, ACT 0%). General information only — see the relevant state revenue office for an exact calculation.",
+    },
+    {
+      q: "If I am a Singapore PR rather than citizen, do I face different AU rules?",
+      a: "No — Australian foreign-investment rules treat 'foreign person' based on AU residency for tax purposes, not your home-country citizenship versus PR. A Singapore PR who is non-AU-resident is treated identically to a Singapore citizen non-AU-resident for FIRB, the established-dwelling ban, foreign-buyer stamp duty surcharges and DTA dividend WHT rates. General information only — see firb.gov.au and the relevant state revenue office.",
+    },
   ],
   related: [
     { title: "Buy Property in Australia as a Foreigner", href: "/foreign-investment/guides/buy-property-australia-foreigner" },
@@ -3005,6 +3125,26 @@ export const NZ_CONFIG: CountryConfig = {
     { q: "Are franking credits accessible to NZ residents?", a: "Yes — under the NZ-AU DTA Article 10A, NZ residents can access AU franking credits attached to fully franked dividends. This effectively eliminates AU tax on franked dividends. Practical implementation depends on your NZ tax position." },
     { q: "What's the best NZ-based broker for ASX shares?", a: "Sharesies, Hatch and InvestNow all offer ASX access from NZ with NZD funding. For active traders, Interactive Brokers' NZ entity offers full ASX exposure with tighter spreads. Cross-listed stocks (NZX + ASX) are also a path for NZX-only investors." },
     { q: "Do NZ FIF rules apply to my Australian shares?", a: "Possibly. NZ's Foreign Investment Fund (FIF) regime applies to overseas portfolio investments above NZ$50,000 — but most ASX-listed shares qualify for the Australian Resident exemption. Direct AU listed shares typically aren't FIF; AU-domiciled funds and ETFs may be. Specialist NZ tax advice essential." },
+    {
+      q: "Do AU dividends I receive count toward my NZ Foreign Investment Fund (FIF) calculation?",
+      a: "Most direct ASX-listed shares qualify for the 'Australian-resident company' exemption from FIF under sections EX 31–36 of the NZ Income Tax Act 2007, meaning you treat dividends as ordinary foreign-source income (not under FIF) on your NZ IR3. AU-domiciled ETFs and managed funds are typically not exempt and fall into FIF (usually FDR or CV method) above the NZ$50,000 cost-base threshold. The 15% AU DTA WHT applies and is creditable against your NZ tax. General information only — confirm with IR's FIF list and a NZ tax adviser.",
+    },
+    {
+      q: "Is the Trans-Tasman portability scheme worth using to move my KiwiSaver into AU super?",
+      a: "It depends on age and intent. Funds transferred from KiwiSaver into a participating AU super fund retain their KiwiSaver-rules access age (65) for the KiwiSaver-sourced component, while the AU-sourced component remains under AU preservation rules. There is no exit tax on the KiwiSaver→AU direction. The reverse direction (AU super→KiwiSaver) attracts an effective 15% AU DASP-equivalent treatment, materially better than the 35% DASP rate for non-trans-Tasman exits. General information — see your KiwiSaver provider and an AU super fund on the SuperCRT participating list.",
+    },
+    {
+      q: "Do NZ citizens pay foreign-buyer stamp duty surcharges on AU property?",
+      a: "It depends on the state and your specific status. NZ citizens holding the Special Category Visa (SCV 444, automatic on entry) are treated as 'foreign persons' for state stamp duty surcharge purposes in most states unless they hold AU permanent residency or have spent the qualifying period in Australia — VIC and NSW apply 8% Foreign Purchaser Additional Duty in these cases. Some states (e.g., QLD) have NZ-citizen carve-outs. FIRB itself is waived for SCV 444 holders. General information only — check the relevant state revenue office before exchange.",
+    },
+    {
+      q: "If I hold AU property as a NZ tax resident, where do I pay tax on the rental income?",
+      a: "Both. Australia taxes the AU-source rental at non-resident rates (32.5% from $0 up to $135K, then 37%, then 45%) with deductions allowed. NZ also taxes you on worldwide income as a NZ tax resident, with foreign tax credit for the AU tax paid via section LJ 1. The DTA gives Australia primary taxing rights on real property income. NZ rental losses on the AU property are ring-fenced under the residential rental loss ring-fencing rules. General information only — see a Trans-Tasman tax adviser.",
+    },
+    {
+      q: "Does the Closer Economic Relations (CER) agreement give NZ direct investors any FIRB benefit?",
+      a: "Yes. NZ private investors benefit from the higher non-sensitive-business FIRB threshold (currently A$1.339B indexed) under CER's investment provisions, on par with AUSFTA. Sensitive sectors and agricultural land remain at lower thresholds. NZ government and SOE investors face $0 thresholds and case-by-case review. The DTA governs tax separately. General information only — confirm at firb.gov.au.",
+    },
   ],
   related: [
     { title: "Australian Superannuation Guide", href: "/foreign-investment/super" },
@@ -3258,6 +3398,26 @@ export const JP_CONFIG: CountryConfig = {
     { q: "Does Japan tax my AU rental income?", a: "Yes if you are a Japanese permanent tax resident (5+ years out of last 10). AU rental income is reportable on the Japanese 確定申告; foreign tax credit available for AU income tax paid. Non-permanent residents (under 5 years) only pay Japanese tax on Japan-source + remitted income." },
     { q: "Does Japanese inheritance tax apply to AU property?", a: "Yes for Japanese tax residents. Japan taxes Japanese tax residents' worldwide estates on death — including AU property and shares. Australia abolished inheritance tax in 1979, so the Japanese inheritance tax is the entire exposure. Long-term Japanese residents should plan around this with a specialist." },
     { q: "What's the Japan critical minerals story?", a: "Japan's battery, EV and clean-energy industries depend on Australian lithium, rare earths, cobalt and nickel. POSCO, Mitsui, Toyota Tsusho and others have multi-billion-dollar AU mining stakes. The Tokyo Minerals Ministerial (March 2026) has accelerated joint financing — making this one of the more active corporate investment themes for Japanese investors." },
+    {
+      q: "If I am a non-permanent resident of Japan (under 5 years), how is my AU income taxed?",
+      a: "Non-permanent residents (永住者以外の居住者 — fewer than 5 years of Japanese residency in the last 10) are taxed in Japan only on Japan-source income plus foreign-source income paid in or remitted to Japan. AU dividends paid to your AU broker account and not remitted to Japan are typically outside the Japanese tax net during this window. AU WHT (15% under the DTA) still applies. Once you cross the 5-year threshold and become a permanent resident for tax purposes (永住者), worldwide income becomes assessable. General information only — confirm with a Japanese certified tax accountant (税理士).",
+    },
+    {
+      q: "Does the Japan exit tax (国外転出時課税) apply when I move from Japan to Australia?",
+      a: "Yes if you have held Japanese tax residency for 5+ years in the last 10 and your global financial assets exceed JPY 100 million on the date of departure. The exit tax taxes unrealised capital gains on listed and unlisted securities (including AU shares held via a Japan-domiciled account) at standard CGT rates. Deferred-payment elections are possible for up to 5 years (extendable to 10) with collateral. The exit tax can be recalculated if you return to Japan within 5 years and still hold the assets. General information only — Japanese tax adviser essential before departure.",
+    },
+    {
+      q: "How does Japanese inheritance tax interact with the franked-dividend strategy on death?",
+      a: "Japanese inheritance tax (相続税) is assessed on the deceased's worldwide estate at progressive rates up to 55% above the basic deduction (JPY 30M + 6M per heir). AU listed shares are valued at the closing price at death — franking credit history does not change the base value for Japanese IHT purposes. Australia abolished inheritance tax in 1979, so Japan IHT is the entire exposure on the AU portfolio. The 10-year residency rule (extended from 5 in 2017) applies for IHT residency. General information only — Japan-AU estate planning specialist essential.",
+    },
+    {
+      q: "Can a Japanese GK or KK structure hold ASX shares more efficiently than personal ownership?",
+      a: "Sometimes, but not as a tax-arbitrage device. A Japanese GK/KK holding ASX shares pays Japanese corporate tax on the dividend income (subject to the foreign dividend exclusion of 95% if the holding is 25%+ for 6+ months under the DTA's qualifying holdings rule), and the AU 15% DTA WHT rate still applies. Holding via a corporate is typically chosen for governance and succession reasons rather than headline tax. General information only — see a 税理士 with cross-border experience before structuring.",
+    },
+    {
+      q: "What is the JAEPA-related FIRB threshold for Japanese investors versus the general threshold?",
+      a: "JAEPA does not give Japanese investors a private-business FIRB threshold uplift comparable to AUSFTA's A$1.339B threshold — Japanese private investors are screened at the general A$339M (non-sensitive sectors) threshold, indexed annually. JAEPA does provide investment-chapter protections (national treatment, MFN, ISDS). Government and SOE investors face a $0 threshold and case-by-case review regardless of treaty. General information only — see firb.gov.au for the current indexed thresholds.",
+    },
   ],
   related: [
     { title: "Buy Property in Australia as a Foreigner", href: "/foreign-investment/guides/buy-property-australia-foreigner" },
@@ -3509,6 +3669,26 @@ export const KR_CONFIG: CountryConfig = {
     { q: "Does Korea tax my AU rental income?", a: "Yes if you are a Korean tax resident. Worldwide income is declared on the annual NTS return, with foreign tax credit available for AU tax paid. Foreign accounts above KRW 500M must be reported separately." },
     { q: "What's the Korean exit tax and does it affect AU emigration?", a: "Korea imposes an exit tax on unrealised capital gains in major Korean stock holdings when residents emigrate. If you're moving from Korea to Australia long-term, model the exit tax impact carefully — it may bite on Korean equity positions even before any AU transactions." },
     { q: "What's the lithium / critical minerals investment story?", a: "Korean battery makers (Samsung SDI, LG Energy Solution, SK On) need lithium hydroxide for EV cathodes. Australia supplies ~50% of global lithium. POSCO has built lithium hydroxide capacity with AU partners; SK Innovation has off-take agreements; LG Energy has joint ventures. The 78-project AU Critical Minerals Prospectus targets Korean co-investors specifically." },
+    {
+      q: "Does the 22% Korean financial investment income tax (금융투자소득세) apply to my AU share gains?",
+      a: "The Korean financial investment income tax was deferred again in late 2024 and remains in flux as of FY2026 — current law continues to tax overseas listed-share gains as overseas equity capital gains at a 22% rate (20% national + 2% local) above the KRW 2.5 million annual threshold, paid via a separate May filing. AU 15% DTA WHT applies to dividends but Australia generally does not tax non-resident listed-share capital gains, so the Korean rate is the only gain tax. General information only — confirm current law with a Korean tax adviser before disposal.",
+    },
+    {
+      q: "Is the foreign-account reporting requirement (해외금융계좌신고) triggered by my AU broker?",
+      a: "Yes if your aggregate foreign financial account balances exceed KRW 500 million at any month-end during the year. Reporting is filed to the NTS by 30 June of the following year and covers AU broker accounts, bank accounts, super (in some interpretations) and crypto held offshore. Non-disclosure penalties scale up to 20% of unreported balances plus criminal exposure. CRS reporting from Australia means the NTS already has visibility on most of these accounts. General information only — see a Korean tax adviser if you cross the threshold.",
+    },
+    {
+      q: "How does the Korean exit tax (국외전출세) apply if I move from Korea to Australia?",
+      a: "Korea's exit tax applies to 'large shareholders' of Korean listed companies (typically 1%+ stake or KRW 10 billion+ in value, narrower thresholds for unlisted) on emigration, taxing unrealised gains at 20–25%. It is a Korean-side tax on Korean equity holdings, not on your AU portfolio. Deferred payment elections are possible for up to 5 years with collateral, and there is a refund mechanism if you sell within 5 years at a lower price or return to Korea without disposing. General information only — Korean specialist advice essential before departure.",
+    },
+    {
+      q: "Does KAFTA give Korean investors a higher FIRB threshold like AUSFTA does for Americans?",
+      a: "Yes — KAFTA (in force 2014) provides Korean private investors with the higher non-sensitive-business FIRB threshold (currently A$1.339B indexed) on par with AUSFTA. Sensitive sectors (media, telco, transport, defence-related) and agricultural land remain at lower thresholds. KAFTA also includes ISDS protection. The DTA governs tax separately — KAFTA does not change WHT rates. General information only — confirm current thresholds at firb.gov.au.",
+    },
+    {
+      q: "Are Korean batteries and EV companies' AU mining stakes a way for me to get exposure as a retail investor?",
+      a: "Indirectly. POSCO Future M, LG Energy Solution and SK On are KOSPI-listed and you can hold them in your Korean brokerage account, giving exposure to AU lithium/nickel supply chains via their off-take agreements and JV stakes. Direct retail co-investment in the same private mining JVs is generally not available outside the institutional pipeline. ASX-listed lithium and rare-earth juniors offer pure-play exposure but with materially higher single-stock risk. General information — not investment advice.",
+    },
   ],
   related: [
     { title: "Buy Property in Australia as a Foreigner", href: "/foreign-investment/guides/buy-property-australia-foreigner" },
@@ -3760,6 +3940,26 @@ export const MY_CONFIG: CountryConfig = {
     { q: "Do I need FIRB approval as a Malaysian non-resident?", a: "Yes. Non-resident Malaysians need FIRB approval for any AU property purchase. New dwellings are generally approved; established dwellings are banned for foreign buyers until 31 March 2027." },
     { q: "What's a Labuan IBFC structure and is it useful?", a: "Labuan International Business and Financial Centre is a Malaysian offshore jurisdiction with low tax rates and access to Malaysia's DTA network. Some Malaysian HNW investors use Labuan entities for international investment structuring. Specialist advice is essential — Labuan structures must satisfy substance and beneficial-ownership requirements to access DTA benefits." },
     { q: "Does Malaysia tax my AU rental income?", a: "Recent reforms have narrowed Malaysia's territorial exemption for individuals on remitted foreign income. AU rental income remitted to Malaysia may now be taxable in some cases — specialist Malaysian tax advice essential." },
+    {
+      q: "Has Malaysia's foreign-source income exemption changed how my AU investment income is taxed?",
+      a: "Yes. From 1 January 2022, the historical blanket exemption for foreign-source income remitted to Malaysia was narrowed. For individuals, foreign-source income remitted to Malaysia is exempt until 31 December 2026 under transitional rules, after which the position will depend on whether the source country's headline tax rate test is met. AU dividends and rental income generally satisfy the headline test (AU corporate rate 30%, individual non-resident rate 32.5%+). General information only — confirm with LHDN guidance before remitting large sums.",
+    },
+    {
+      q: "Does the MM2H (Malaysia My Second Home) program affect my AU investor status?",
+      a: "No — MM2H is an inbound Malaysian visa for foreigners and does not change your AU tax residency, FIRB classification or DTA treatment. The relevant axes for AU rules are AU tax residency (yes/no) and 'foreign person' status under the FATA — which depend on your AU situation, not your Malaysian visa. Malaysian citizens holding MM2H sponsorship for foreign relatives are still treated as Malaysian tax residents. General information only.",
+    },
+    {
+      q: "How does Malaysian RPGT interact with AU CGT on disposing of AU property?",
+      a: "RPGT (Real Property Gains Tax) is a Malaysian tax on disposal of Malaysian real property and shares in Malaysian real-property companies — it does not apply to your AU property. Your AU property disposal triggers AU CGT at non-resident rates (no 50% discount, no main residence exemption since 2020) plus 12.5% Foreign Resident Capital Gains Withholding at settlement. Malaysian-side tax depends on your residency status and whether the gain is remitted under the foreign-source income rules. General information only — see a Malaysian tax adviser.",
+    },
+    {
+      q: "Is a Labuan structure recognised under the Malaysia-AU DTA?",
+      a: "Partially. The DTA was amended by protocol to clarify that Labuan entities electing the 3% tax rate under the Labuan Business Activity Tax Act may not be entitled to all DTA benefits (treaty-shopping concern). Labuan companies that elect to be taxed under the standard Malaysian Income Tax Act are typically treated as fully entitled. Substance and beneficial-ownership tests must be met. General information only — Labuan structuring advice from a specialist firm is essential before relying on DTA benefits.",
+    },
+    {
+      q: "What state stamp duty surcharge applies to a Malaysian buying Melbourne off-the-plan?",
+      a: "Victoria charges 8% Foreign Purchaser Additional Duty on top of standard stamp duty (rising up to 6.5% on $960k+) — so a A$1m Melbourne off-the-plan apartment incurs roughly A$135k total stamp duty (~A$55k standard + A$80k FPAD) before FIRB application fees (currently A$14,700 for properties up to A$1m). VIC also charges 4% Absentee Owner Surcharge on annual land tax. General information only — see the SRO Victoria calculator for an exact quote.",
+    },
   ],
   related: [
     { title: "Buy Property in Australia as a Foreigner", href: "/foreign-investment/guides/buy-property-australia-foreigner" },
@@ -4016,6 +4216,26 @@ export const AE_CONFIG: CountryConfig = {
     { q: "Can I still buy AU property as a UAE resident?", a: "New dwellings yes (with FIRB approval). Established dwellings are banned for foreign buyers until 31 March 2027. State foreign-buyer stamp duty surcharges (7–8%) apply on top of standard stamp duty." },
     { q: "I'm an Australian living in UAE — am I still an AU tax resident?", a: "Often yes, despite living in UAE. The ATO uses a multi-factor test (permanent home, family ties, employment, intention) — not just days. Many AU expats in UAE retain AU residency and owe AU tax on worldwide income — losing the UAE zero-tax advantage. Engage a specialist before assuming non-resident status." },
     { q: "Does the UAE corporate tax (introduced 2023) affect individual investors?", a: "Generally no for personal investment income. UAE corporate tax applies to UAE-licensed businesses with profits above AED 375K. Personal investment income (dividends, interest, capital gains) earned by individual UAE residents is not subject to corporate or personal tax." },
+    {
+      q: "How is the new UAE 9% corporate tax (effective 2023) applied to my offshore-investment-holding company?",
+      a: "UAE corporate tax applies to UAE-resident juridical persons on their worldwide income at 9% above AED 375K, with a 0% rate on Qualifying Free Zone Person income meeting substance and qualifying-activity tests. A UAE company holding ASX shares as part of its passive investment portfolio is generally subject to 9% on its taxable income, though dividend income from substantial shareholdings (5%+ for 12 months) qualifies for the participation exemption. The 30% / 0% AU WHT is creditable. General information only — see a UAE tax adviser before structuring.",
+    },
+    {
+      q: "Without a UAE-AU DTA, can I still claim treaty rates by routing through a DTA-country entity?",
+      a: "Only if substance and beneficial-ownership tests are met and anti-treaty-shopping rules do not apply. The ATO and AUSTRAC scrutinise conduit structures, and Australia has imported many of the OECD's PPT (principal purpose test) and LOB-style protections via the MLI. Routing UAE money through a Singapore or HK holding company purely to capture the 15% DTA rate without genuine substance risks denial of treaty benefits. General information only — international tax structuring requires specialist advice.",
+    },
+    {
+      q: "What is my effective tax rate as a UAE resident on a high-franking ASX dividend portfolio?",
+      a: "Roughly 0% on franked dividends (AU 0% WHT on franked component + 0% UAE personal income tax) and 30% on unfranked dividends (AU 30% non-DTA WHT + 0% UAE personal income tax). A 100% franked Australian-banks portfolio yielding a 6% gross dividend therefore distributes net proceeds at very close to the gross yield. The trade-off is concentration risk in the AU financials/resources sectors. General information — not investment advice.",
+    },
+    {
+      q: "Does AU Foreign Resident Capital Gains Withholding (FRCGW) apply to me as a UAE-based seller?",
+      a: "Yes for AU real property and certain real-property-rich entities. FRCGW is currently 12.5% of contract price withheld by the purchaser's solicitor at settlement and remitted to the ATO unless you produce a clearance certificate (which non-residents cannot obtain on TARP assets). It is creditable against your final AU CGT assessment, not a final tax. Listed-share gains held by a UAE non-resident are generally outside AU CGT (TARP-only rule). General information only — see an AU tax agent before listing.",
+    },
+    {
+      q: "What additional FIRB scrutiny applies if my investor is a UAE government-linked entity (e.g., Mubadala, ADIA)?",
+      a: "Foreign government investors (defined under the FATA to include sovereign wealth funds and entities 20%+ government-owned) face a $0 monetary threshold and case-by-case national-interest review for any direct investment, regardless of the UAE absence from FTA-uplift schedules. Substantial-interest acquisitions in critical infrastructure, critical minerals, agribusiness or sensitive land are likely to attract conditions. General information only — see firb.gov.au's foreign-government-investor guidance and engage FIRB-experienced legal counsel.",
+    },
   ],
   related: [
     { title: "Buy Property in Australia as a Foreigner", href: "/foreign-investment/guides/buy-property-australia-foreigner" },
@@ -4261,6 +4481,26 @@ export const SA_CONFIG: CountryConfig = {
     { q: "What Islamic finance options are available in Australia?", a: "MCCA (Muslim Community Co-operative Australia) and Hejaz Financial Services are the longest-established providers of Shariah-compliant home finance (Ijarah, diminishing Musharakah). Shariah-screened ASX equity portfolios and Islamic managed funds also available. The Australian sukuk market is less developed than Malaysia or UAE." },
     { q: "Does PIF's Australian activity affect individual Saudi investors?", a: "Indirectly. PIF's growing AU presence improves diplomatic and investment relationships, supporting continued AU openness to Saudi capital. PIF's deals require separate FIRB national-interest review regardless of size; individual Saudi investors face standard non-resident rules without this additional layer." },
     { q: "Can I get an Australian visa through investment?", a: "Yes — the Significant Investor Visa (188C → 888C) requires $5M+ in complying investments and has no age limit; the Premium Investor (188D) requires $15M+ for a faster path. Both popular with Saudi HNW migrants. Specialist migration advice essential — eligible-investment criteria are strict." },
+    {
+      q: "Does Saudi Zakat apply to my Australian investments?",
+      a: "Zakat at 2.5% of Zakatable assets is a religious obligation for Saudi Muslims and is administered by ZATCA for Saudi nationals' Saudi-resident businesses. Personal investment portfolios held by Saudi-citizen individuals are typically self-assessed Zakat outside the corporate ZATCA system, with the 2.5% applying to the net Zakatable base (cash, shares held for trade) annually. Australian-side tax (30% non-DTA WHT on unfranked, 0% on franked) is unaffected by Zakat. General information — see a qualified Islamic finance scholar / accountant for your personal calculation.",
+    },
+    {
+      q: "Can I get Shariah-compliant ASX exposure without buying individual stocks?",
+      a: "Yes, via Shariah-screened managed funds (Hejaz Equity Fund), Shariah-compliant ETFs, and segregated-managed accounts run by Australian Islamic finance providers (MCCA, Hejaz, Crescent Wealth). Screens typically exclude alcohol, gambling, conventional financials, pork, adult entertainment, and apply the AAOIFI debt-to-equity / interest-income / non-permissible-income ratio limits. Roughly 30–40% of ASX 300 names pass typical screens. General information — confirm the Shariah supervisory board on each product before subscribing.",
+    },
+    {
+      q: "Is Saudi PIF activity in Australian critical minerals open to retail co-investment?",
+      a: "Generally no for direct co-investment alongside PIF — those vehicles are private and limited to institutional partners. Retail Saudi investors gain exposure indirectly via ASX-listed lithium, cobalt, rare-earth and copper miners, or via PIF-aligned themes (battery materials, hydrogen, agri). Some PIF subsidiaries (e.g., Manara Minerals JV with Ma'aden) take stakes in ASX-listed entities, which retail investors can shadow at market. General information — not investment advice.",
+    },
+    {
+      q: "What's the AU side of buying agricultural land or water rights as a Saudi investor?",
+      a: "Agricultural land triggers FIRB review at much lower thresholds than other real estate: A$15M cumulative agricultural land holdings (lifetime, not per transaction). Water entitlements above A$5M cumulative also need FIRB approval. Sensitive land near defence sites, ports, or critical infrastructure faces enhanced national-interest scrutiny. The Foreign Ownership of Agricultural Land Register (administered by the ATO) requires registration of all foreign agricultural-land interests. General information only — see firb.gov.au and an FIRB-experienced lawyer.",
+    },
+    {
+      q: "Can I bring my GOSI / EOSB pension entitlement into Australia if I migrate?",
+      a: "GOSI (General Organization for Social Insurance) entitlements are a Saudi-government-administered scheme and have no portability mechanism into Australian super. End-of-service benefit (EOSB) lump sums are paid out in Saudi at the end of service and are typically Saudi-tax-free; once received, they can be remitted to Australia and contributed to AU super within the personal contribution caps (currently $30,000/year concessional, $120,000/year non-concessional, with 3-year bring-forward to $360,000 if eligible). General information only — see a migration / cross-border tax specialist.",
+    },
   ],
   related: [
     { title: "UAE investors in Australia", href: "/foreign-investment/united-arab-emirates" },
