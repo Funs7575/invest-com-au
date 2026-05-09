@@ -18,6 +18,7 @@ import WHTCalculator from "./WHTCalculator";
 import SectionHeading from "@/components/SectionHeading";
 import HubFAQ from "@/components/HubFAQ";
 import type { FaqItem } from "@/components/HubFAQ";
+import CountryRuleAlerts from "@/components/CountryRuleAlerts";
 
 export const metadata: Metadata = {
   title: "Investing in Australia from Overseas — Complete Guide 2026",
@@ -135,6 +136,10 @@ export default async function ForeignInvestmentHubPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
 
       <ForeignInvestmentNav current="/foreign-investment" />
+
+      <div className="container-custom pt-2">
+        <CountryRuleAlerts />
+      </div>
 
       {/* ── Hero ─────────────────────────────────────────────────────── */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
