@@ -6,6 +6,7 @@ import AdvisorsClient from "./AdvisorsClient";
 import HomeToolsStrip from "@/components/HomeToolsStrip";
 import IntentCountryBadge from "@/components/foreign-investment/IntentCountryBadge";
 import IntentCountryRecommendation from "@/components/foreign-investment/IntentCountryRecommendation";
+import CountryRuleAlerts from "@/components/CountryRuleAlerts";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
 import { logger } from "@/lib/logger";
 
@@ -82,6 +83,7 @@ export default function AdvisorsPage() {
       <div className="container-custom pt-4">
         <IntentCountryBadge />
         <IntentCountryRecommendation surface="advisors" />
+        <CountryRuleAlerts />
       </div>
       <Suspense fallback={<AdvisorsLoading />}>
         <AdvisorsData />
