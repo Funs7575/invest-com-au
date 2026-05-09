@@ -13,6 +13,7 @@ import Icon from "@/components/Icon";
 import { trackEvent } from "@/lib/tracking";
 import { submitLead } from "@/lib/submit-lead-client";
 import EligibilityQuizSkipBanner from "@/components/EligibilityQuizSkipBanner";
+import CountryRuleAlerts from "@/components/CountryRuleAlerts";
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
@@ -606,6 +607,7 @@ function FindAdvisorQuiz() {
         {/* Step 1 */}
         {quiz.step === 1 && (
           <>
+            <CountryRuleAlerts />
             <EligibilityQuizSkipBanner />
             <Step1 onSelect={handleIntent} />
           </>
