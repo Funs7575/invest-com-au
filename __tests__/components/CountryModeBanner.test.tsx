@@ -31,7 +31,7 @@ describe("CountryModeBanner", () => {
     expect(screen.getByText(/HK investors/i)).toBeInTheDocument();
     // Both escape hatches present
     expect(screen.getByRole("button", { name: /switch country/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /view global/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /back to australia/i })).toBeInTheDocument();
   });
 
   it("'Switch country' dispatches the open-selector custom event", async () => {
@@ -46,11 +46,11 @@ describe("CountryModeBanner", () => {
     window.removeEventListener("country-mode:open-selector", listener);
   });
 
-  it("'View global' button is a form submit (calls clearIntentCountryAction server action)", async () => {
+  it("'Back to Australia' button is a form submit (calls clearIntentCountryAction server action)", async () => {
     mockGetIntentCountry.mockResolvedValue("sa");
     const ui = await CountryModeBanner();
     render(<>{ui}</>);
-    const button = screen.getByRole("button", { name: /view global/i });
+    const button = screen.getByRole("button", { name: /back to australia/i });
     expect(button).toHaveAttribute("type", "submit");
     // The server action wiring is exercised at the framework level — the
     // contract here is just "this is a form submit, the action prop on
