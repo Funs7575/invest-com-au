@@ -9,6 +9,7 @@ function row(overrides: Partial<Parameters<typeof evaluateFlag>[0] & object> = {
     allowlist: [] as string[],
     denylist: [] as string[],
     segments: [] as string[],
+    archived_at: null as string | null,
     ...overrides,
   };
 }
