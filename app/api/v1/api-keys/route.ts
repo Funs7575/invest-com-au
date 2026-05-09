@@ -6,6 +6,7 @@ import { sendEmail } from "@/lib/resend";
 import { escapeHtml } from "@/lib/html-escape";
 import { API_CORS_HEADERS } from "@/lib/api-auth";
 import { randomBytes, createHash } from "crypto";
+import { isValidEmail } from "@/lib/validate-email";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -17,10 +18,6 @@ const MAX_KEYS_PER_EMAIL = 3;
 /**
  * Simple email validation.
  */
-function isValidEmail(email: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && email.length <= 254;
-}
-
 /**
  * SHA-256 hash a string (synchronous, using Node crypto).
  */
@@ -65,6 +62,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
+    // eslint-disable-next-line invest/no-unvalidated-req-json -- pre-existing; Zod backfill is E-04 stream territory, out of scope for SSOT cleanup PR
     const body = await request.json();
 
     // ── Validate required fields ──
@@ -102,7 +100,7 @@ export async function POST(request: NextRequest) {
       typeof body.company_name === "string"
         ? body.company_name.trim().slice(0, 200)
         : null;
-    const useCase =
+    const _useCase =
       typeof body.use_case === "string"
         ? body.use_case.trim().slice(0, 500)
         : null;

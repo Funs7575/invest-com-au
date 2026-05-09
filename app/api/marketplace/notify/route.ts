@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { escapeHtml } from "@/lib/html-escape";
 
 const NotifyBody = z.object({
   broker_slug: z.string().min(1),
@@ -12,14 +13,6 @@ const NotifyBody = z.object({
 });
 
 /** Escape HTML special chars to prevent XSS in email templates */
-function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
-
 /**
  * Internal notification API — sends broker notifications and optionally emails.
  * Called by other API routes / cron jobs. Requires INTERNAL_API_KEY.

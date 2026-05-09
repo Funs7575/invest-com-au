@@ -6,6 +6,7 @@ import { isValidEmail, isDisposableEmail } from '@/lib/validate-email';
 import { logger } from '@/lib/logger';
 import { recordQuizSubmission } from '@/lib/quiz-history';
 import { createClient } from '@/lib/supabase/server';
+import { escapeHtml } from "@/lib/html-escape";
 
 /**
  * Body schema. The legacy `answers` (string[]) is preserved for
@@ -94,14 +95,6 @@ function inferVertical(a: UnifiedAnswers | undefined): string | null {
 }
 
 /** Escape HTML special chars to prevent XSS in email templates */
-function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
-
 /** Send personalized quiz results email */
 async function sendQuizResultsEmail(
   email: string,
