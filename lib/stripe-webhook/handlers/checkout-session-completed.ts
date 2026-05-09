@@ -166,25 +166,37 @@ export const handleCheckoutSessionCompleted: WebhookHandler = async (
         }
       }
 
-      const { data: pro } = await supabase
-        .from("professionals")
-        .select("credit_balance_cents, lifetime_credit_cents")
-        .eq("id", professionalId)
-        .single();
+      // Route through the credit ledger so the (kind, reference_id)
+      // unique constraint makes this safe under webhook replay and the
+      // ledger keeps a sourced row for every cent of movement. We pass
+      // ctx.admin through so the test harness's mocked client drives
+      // the helper's queries.
+      const { recordLedgerEntry } = await import("@/lib/advisor-credit-ledger");
+      const expiresAt = new Date();
+      expiresAt.setMonth(expiresAt.getMonth() + 24); // top-ups expire 24 months from issue
+      await recordLedgerEntry({
+        professionalId,
+        amountCents,
+        kind: "topup",
+        description: `Stripe top-up — A$${(amountCents / 100).toFixed(2)} (${session.metadata?.pack_slug ?? "custom"})`,
+        referenceType: "advisor_credit_topup",
+        referenceId: topupId ? String(topupId) : session.id,
+        expiresAt,
+        createdBy: "webhook",
+        metadata: {
+          stripe_session_id: session.id,
+          pack_slug: session.metadata?.pack_slug,
+          per_lead_cents: session.metadata?.per_lead_cents,
+        },
+        supabase,
+      });
 
-      await supabase
-        .from("professionals")
-        .update({
-          credit_balance_cents: (pro?.credit_balance_cents || 0) + amountCents,
-          lifetime_credit_cents:
-            (pro?.lifetime_credit_cents || 0) + amountCents,
-          ...(session.metadata?.per_lead_cents
-            ? {
-                lead_price_cents: parseInt(session.metadata.per_lead_cents),
-              }
-            : {}),
-        })
-        .eq("id", professionalId);
+      if (session.metadata?.per_lead_cents) {
+        await supabase
+          .from("professionals")
+          .update({ lead_price_cents: parseInt(session.metadata.per_lead_cents) })
+          .eq("id", professionalId);
+      }
 
       if (topupId) {
         await supabase

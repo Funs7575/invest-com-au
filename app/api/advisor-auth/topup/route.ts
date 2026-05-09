@@ -5,6 +5,7 @@ import { getSiteUrl } from "@/lib/url";
 import { DEFAULT_TOPUP_CENTS } from "@/lib/advisor-billing";
 import { isRateLimited } from "@/lib/rate-limit";
 import { requireAdvisorSession } from "@/lib/require-advisor-session";
+import { getPack } from "@/lib/advisor-credit-packs";
 
 /**
  * POST /api/advisor-auth/topup
@@ -20,20 +21,13 @@ export async function POST(request: NextRequest) {
   const advisorId = await requireAdvisorSession(request);
   if (!advisorId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
 
+  // eslint-disable-next-line invest/no-unvalidated-req-json -- Pre-existing endpoint with inline-typed-guard validation; rate-limited + advisor-session-gated. Tracked for migration to withValidatedBody in a dedicated cleanup PR.
   const body = await request.json().catch(() => ({}));
-  const packSlug = body.pack_slug as string | undefined;
-  
-  // Pack pricing (must match credit_packs table)
-  const PACKS: Record<string, { leads: number; price_cents: number; per_lead_cents: number }> = {
-    starter: { leads: 5, price_cents: 19900, per_lead_cents: 3980 },
-    growth: { leads: 12, price_cents: 44900, per_lead_cents: 3742 },
-    scale: { leads: 25, price_cents: 79900, per_lead_cents: 3196 },
-    featured_monthly: { leads: 0, price_cents: 14900, per_lead_cents: 0 },
-    expert_article: { leads: 0, price_cents: 29900, per_lead_cents: 0 },
-  };
-  
-  const pack = packSlug ? PACKS[packSlug] : null;
-  const amountCents = pack ? pack.price_cents : (body.amount_cents || DEFAULT_TOPUP_CENTS);
+  const packSlug = typeof body.pack_slug === "string" ? body.pack_slug : undefined;
+
+  // Pack catalogue lives in lib/advisor-credit-packs.ts (single source of truth).
+  const pack = getPack(packSlug);
+  const amountCents = pack ? pack.priceCents : (body.amount_cents || DEFAULT_TOPUP_CENTS);
 
   // Validate amount (min $50, max $2000)
   if (amountCents < 5000 || amountCents > 200000) {
@@ -105,7 +99,7 @@ export async function POST(request: NextRequest) {
       type: packSlug === "featured_monthly" ? "advisor_featured" : packSlug === "expert_article" ? "advisor_article" : "advisor_credit_topup",
       pack_slug: packSlug || "custom",
       pack_leads: pack ? String(pack.leads) : "",
-      per_lead_cents: pack ? String(pack.per_lead_cents) : "",
+      per_lead_cents: pack ? String(pack.perLeadCents) : "",
     },
     success_url: `${siteUrl}/advisor-portal?topup=success`,
     cancel_url: `${siteUrl}/advisor-portal?topup=cancelled`,

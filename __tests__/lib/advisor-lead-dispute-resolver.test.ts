@@ -80,6 +80,60 @@ function updateChain(error: unknown = null) {
   return { update: vi.fn().mockReturnValue(chain) };
 }
 
+/**
+ * Insert chain that returns the inserted row (for advisor_credit_ledger).
+ *   .insert(row).select("*").single() → { data, error }
+ */
+function insertChain(row: Record<string, unknown>) {
+  return {
+    insert: vi.fn().mockReturnValue({
+      select: vi.fn().mockReturnValue({
+        single: vi.fn(() => Promise.resolve({ data: row, error: null })),
+      }),
+    }),
+  };
+}
+
+/** Helper: build the 4 mockFrom slots that recordLedgerEntry consumes
+ * for a fresh credit insert (no prior idempotent row, advisor exists,
+ * insert succeeds, cache update succeeds).
+ */
+function pushLedgerEntrySlots(opts: {
+  professionalId: number;
+  amountCents: number;
+  beforeBalance: number;
+  ledgerId: number;
+  kind: string;
+  refType: string;
+  refId: string;
+}) {
+  const afterBalance = opts.beforeBalance + opts.amountCents;
+  // 1. Idempotency check on advisor_credit_ledger (returns null = first time)
+  mockFrom.mockImplementationOnce(() => maybySingle(null));
+  // 2. Read professionals row (current balance + lifetime totals)
+  mockFrom.mockImplementationOnce(() =>
+    singleResult({
+      credit_balance_cents: opts.beforeBalance,
+      lifetime_credit_cents: 0,
+      lifetime_lead_spend_cents: 0,
+    }),
+  );
+  // 3. Insert into advisor_credit_ledger
+  mockFrom.mockImplementationOnce(() =>
+    insertChain({
+      id: opts.ledgerId,
+      professional_id: opts.professionalId,
+      amount_cents: opts.amountCents,
+      balance_after_cents: afterBalance,
+      kind: opts.kind,
+      reference_type: opts.refType,
+      reference_id: opts.refId,
+    }),
+  );
+  // 4. Update professionals.credit_balance_cents (cache write)
+  mockFrom.mockImplementationOnce(() => updateChain());
+}
+
 // ── Fixtures ─────────────────────────────────────────────────────────────────
 
 const DISPUTE_ID = 42;
@@ -266,17 +320,24 @@ describe("autoResolveDispute", () => {
     expect(result.refundedCents).toBe(0);
   });
 
-  it("refund verdict — credits advisor balance and closes dispute", async () => {
+  it("refund verdict — credits advisor balance via ledger and closes dispute", async () => {
     setupContextMocks();
     mockClassifyDispute.mockReturnValue({
       verdict: "refund",
       confidence: "high",
       reasons: ["spam_likely"],
     });
-    // applyRefund DB sequence:
+    // applyRefund routes the credit through recordLedgerEntry now.
+    pushLedgerEntrySlots({
+      professionalId: 1,
+      amountCents: 4900,
+      beforeBalance: 10000,
+      ledgerId: 99,
+      kind: "lead_dispute_refund",
+      refType: "advisor_lead_disputes",
+      refId: String(DISPUTE_ID),
+    });
     mockFrom
-      .mockImplementationOnce(() => singleResult({ credit_balance_cents: 10000 })) // read balance
-      .mockImplementationOnce(() => updateChain())                                  // update balance
       .mockImplementationOnce(() => updateChain())                                  // mark lead
       .mockImplementationOnce(() => updateChain())                                  // waive billing
       .mockImplementationOnce(() => updateChain());                                 // close dispute
@@ -310,13 +371,15 @@ describe("autoResolveDispute", () => {
     expect(mockRecordFinancialAudit).not.toHaveBeenCalled();
   });
 
-  it("credit update DB error — falls back to escalate", async () => {
+  it("credit ledger error — falls back to escalate", async () => {
     setupContextMocks();
     mockClassifyDispute.mockReturnValue({ verdict: "refund", confidence: "high", reasons: [] });
+    // Idempotency check passes (no prior row), but the professionals
+    // read fails — recordLedgerEntry throws, dispute resolver escalates.
     mockFrom
-      .mockImplementationOnce(() => singleResult({ credit_balance_cents: 5000 })) // read balance
-      .mockImplementationOnce(() => updateChain({ message: "conflict" }))          // update FAILS
-      .mockImplementationOnce(() => updateChain());                                // escalated fallback dispute update
+      .mockImplementationOnce(() => maybySingle(null))                              // no prior ledger row
+      .mockImplementationOnce(() => singleResult(null, { message: "advisor read failed" })) // read fails
+      .mockImplementationOnce(() => updateChain());                                 // escalated fallback dispute update
 
     const result = await autoResolveDispute(DISPUTE_ID);
     expect(result.verdict).toBe("escalate");
@@ -326,12 +389,19 @@ describe("autoResolveDispute", () => {
   it("records financial audit on successful refund", async () => {
     setupContextMocks();
     mockClassifyDispute.mockReturnValue({ verdict: "refund", confidence: "high", reasons: [] });
+    pushLedgerEntrySlots({
+      professionalId: 1,
+      amountCents: 4900,
+      beforeBalance: 0,
+      ledgerId: 100,
+      kind: "lead_dispute_refund",
+      refType: "advisor_lead_disputes",
+      refId: String(DISPUTE_ID),
+    });
     mockFrom
-      .mockImplementationOnce(() => singleResult({ credit_balance_cents: 0 }))
-      .mockImplementationOnce(() => updateChain())
-      .mockImplementationOnce(() => updateChain())
-      .mockImplementationOnce(() => updateChain())
-      .mockImplementationOnce(() => updateChain());
+      .mockImplementationOnce(() => updateChain())   // mark lead
+      .mockImplementationOnce(() => updateChain())   // waive billing
+      .mockImplementationOnce(() => updateChain());  // close dispute
     mockFrom.mockImplementationOnce(() => maybySingle(null)); // no email found
 
     await autoResolveDispute(DISPUTE_ID);
