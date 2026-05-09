@@ -21,6 +21,7 @@ export type Advisor = {
   free_leads_used?: number; lead_price_cents?: number;
   credit_balance_cents?: number; lifetime_credit_cents?: number; lifetime_lead_spend_cents?: number;
   featured_until?: string;
+  advisor_tier?: string | null;
 };
 
 export type FirmMember = { id: number; name: string; slug: string; email?: string; type: string; photo_url?: string; verified?: boolean; status?: string; created_at: string; role?: string; is_firm_admin?: boolean };
