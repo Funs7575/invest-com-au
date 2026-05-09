@@ -8,6 +8,7 @@
  * Split so the classifier can be unit-tested in isolation without
  * mocking Supabase, Stripe or email.
  */
+// eslint-disable-next-line no-restricted-imports -- Cron-style automation: dispute auto-resolver runs without a user JWT and must read disputes / professional_leads / advisors across users. Documented service-role-legitimate use per CLAUDE.md "Two Supabase clients".
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 import { ADMIN_EMAIL } from "@/lib/admin";
@@ -214,56 +215,70 @@ async function applyRefund(
   const supabase = createAdminClient();
   const nowIso = new Date().toISOString();
 
-  // Credit back the advisor's prepaid balance. Read-modify-write with
-  // an optimistic lock so concurrent refunds don't race and under-
-  // credit the advisor. Matches the pattern in advisor-enquiry.
+  // Credit back via the advisor credit ledger. Idempotent under the
+  // (kind, reference_type, reference_id) unique index so re-runs of the
+  // resolver don't double-refund. The cache write inside
+  // recordLedgerEntry uses the same optimistic-lock pattern as the
+  // legacy direct-update path.
   if (billAmountCents > 0) {
-    const { data: advisor } = await supabase
-      .from("professionals")
-      .select("credit_balance_cents")
-      .eq("id", advisorId)
-      .single();
-    const currentBalance = advisor?.credit_balance_cents || 0;
+    try {
+      const { recordLedgerEntry } = await import("@/lib/advisor-credit-ledger");
+      const ledgerResult = await recordLedgerEntry({
+        professionalId: advisorId,
+        amountCents: billAmountCents,
+        kind: "lead_dispute_refund",
+        description: `Auto-resolved dispute #${disputeId} — refunded lead #${leadId}`,
+        referenceType: "advisor_lead_disputes",
+        referenceId: String(disputeId),
+        expiresAt: null, // refunded credits don't expire
+        createdBy: "system:dispute-resolver",
+        metadata: {
+          leadId,
+          verdict: result.verdict,
+          confidence: result.confidence,
+          reasons: result.reasons,
+        },
+      });
 
-    const { error: creditErr } = await supabase
-      .from("professionals")
-      .update({
-        credit_balance_cents: currentBalance + billAmountCents,
-      })
-      .eq("id", advisorId)
-      .eq("credit_balance_cents", currentBalance);
-
-    if (creditErr) {
+      // Financial audit trail — AFSL s912D record-keeping requirement.
+      await recordFinancialAudit({
+        actorType: "system",
+        actorId: "advisor-lead-dispute-resolver",
+        action: "refund",
+        resourceType: "advisor_credit_balance",
+        resourceId: advisorId,
+        amountCents: billAmountCents,
+        oldValue: { credit_balance_cents: ledgerResult.balanceAfterCents - billAmountCents },
+        newValue: { credit_balance_cents: ledgerResult.balanceAfterCents },
+        reason: `Auto-resolved dispute #${disputeId}: ${result.reasons.join(", ")}`,
+        context: {
+          disputeId,
+          leadId,
+          verdict: result.verdict,
+          confidence: result.confidence,
+          ledgerId: ledgerResult.entry.id,
+          idempotent: ledgerResult.idempotent,
+        },
+      });
+    } catch (err) {
       log.error("Credit refund failed — escalating", {
         disputeId,
         advisorId,
         billAmountCents,
-        error: creditErr.message,
+        error: err instanceof Error ? err.message : String(err),
       });
-      // Optimistic lock lost or DB error. Fall back to escalating so
-      // a human can manually refund — we'd rather not auto-approve
-      // a refund that didn't actually land in the advisor's balance.
+      // Fall back to escalating so a human can manually refund — we'd
+      // rather not auto-approve a refund that didn't actually land in
+      // the advisor's balance.
       return applyEscalated(disputeId, {
         verdict: "escalate",
         confidence: "low",
-        reasons: [...result.reasons, "credit_refund_failed_" + creditErr.message],
+        reasons: [
+          ...result.reasons,
+          "credit_refund_failed_" + (err instanceof Error ? err.message : "unknown"),
+        ],
       });
     }
-
-    // Financial audit trail — AFSL s912D record-keeping requirement.
-    // Fire-and-forget; a failure here never blocks the refund.
-    await recordFinancialAudit({
-      actorType: "system",
-      actorId: "advisor-lead-dispute-resolver",
-      action: "refund",
-      resourceType: "advisor_credit_balance",
-      resourceId: advisorId,
-      amountCents: billAmountCents,
-      oldValue: { credit_balance_cents: currentBalance },
-      newValue: { credit_balance_cents: currentBalance + billAmountCents },
-      reason: `Auto-resolved dispute #${disputeId}: ${result.reasons.join(", ")}`,
-      context: { disputeId, leadId, verdict: result.verdict, confidence: result.confidence },
-    });
   }
 
   // Mark the lead no longer billed so it's clearly refunded in the
