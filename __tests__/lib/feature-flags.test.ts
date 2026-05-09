@@ -1,5 +1,22 @@
-import { describe, it, expect } from "vitest";
-import { evaluateFlag, rolloutHash } from "@/lib/feature-flags";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+
+const { mockMaybySingle, mockUpdateEq, mockUpdateFn, mockFrom } = vi.hoisted(() => {
+  const mockMaybySingle = vi.fn();
+  const mockUpdateEq = vi.fn();
+  const mockUpdateFn = vi.fn();
+  const mockFrom = vi.fn();
+  return { mockMaybySingle, mockUpdateEq, mockUpdateFn, mockFrom };
+});
+
+vi.mock("@/lib/supabase/admin", () => ({
+  createAdminClient: () => ({ from: mockFrom }),
+}));
+
+vi.mock("@/lib/logger", () => ({
+  logger: () => ({ info: vi.fn(), warn: vi.fn(), error: vi.fn() }),
+}));
+
+import { evaluateFlag, rolloutHash, loadFlag, invalidateFlagCache } from "@/lib/feature-flags";
 
 function row(overrides: Partial<Parameters<typeof evaluateFlag>[0] & object> = {}) {
   return {
@@ -9,6 +26,7 @@ function row(overrides: Partial<Parameters<typeof evaluateFlag>[0] & object> = {
     allowlist: [] as string[],
     denylist: [] as string[],
     segments: [] as string[],
+    archived_at: null as string | null,
     ...overrides,
   };
 }
@@ -134,5 +152,86 @@ describe("evaluateFlag — percentage rollout", () => {
     }
     expect(trueCount).toBeGreaterThan(10);
     expect(trueCount).toBeLessThan(60);
+  });
+});
+
+describe("loadFlag — last_evaluated_at fire-and-forget", () => {
+  const dbRow = {
+    flag_key: "ff04_test",
+    enabled: true,
+    rollout_pct: 100,
+    allowlist: [],
+    denylist: [],
+    segments: [],
+    archived_at: null,
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    invalidateFlagCache();
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "https://test.supabase.co");
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  function makeSelectChain(data: unknown, error: null | { message: string } = null) {
+    return {
+      select: vi.fn().mockReturnValue({
+        eq: vi.fn().mockReturnValue({
+          is: vi.fn().mockReturnValue({
+            abortSignal: vi.fn().mockReturnValue({
+              maybeSingle: mockMaybySingle.mockResolvedValue({ data, error }),
+            }),
+          }),
+        }),
+      }),
+    };
+  }
+
+  it("fires last_evaluated_at update when row is returned", async () => {
+    let callCount = 0;
+    mockUpdateEq.mockResolvedValue({ error: null });
+    mockUpdateFn.mockReturnValue({ eq: mockUpdateEq });
+    mockFrom.mockImplementation(() => {
+      callCount++;
+      if (callCount === 1) return makeSelectChain(dbRow);
+      return { update: mockUpdateFn };
+    });
+
+    const result = await loadFlag("ff04_test");
+    await new Promise((r) => setTimeout(r, 0)); // flush microtasks
+
+    expect(result).toMatchObject({ flag_key: "ff04_test" });
+    expect(mockUpdateFn).toHaveBeenCalledWith(
+      expect.objectContaining({ last_evaluated_at: expect.any(String) }),
+    );
+    expect(mockUpdateEq).toHaveBeenCalledWith("flag_key", "ff04_test");
+  });
+
+  it("does not fire update when row is null", async () => {
+    mockFrom.mockReturnValue(makeSelectChain(null));
+
+    const result = await loadFlag("missing_flag");
+    await new Promise((r) => setTimeout(r, 0));
+
+    expect(result).toBeNull();
+    expect(mockUpdateFn).not.toHaveBeenCalled();
+  });
+
+  it("write error is logged but does not throw", async () => {
+    let callCount = 0;
+    mockUpdateEq.mockResolvedValue({ error: { message: "write error" } });
+    mockUpdateFn.mockReturnValue({ eq: mockUpdateEq });
+    mockFrom.mockImplementation(() => {
+      callCount++;
+      if (callCount === 1) return makeSelectChain(dbRow);
+      return { update: mockUpdateFn };
+    });
+
+    await expect(loadFlag("ff04_test")).resolves.toMatchObject({ flag_key: "ff04_test" });
+    await new Promise((r) => setTimeout(r, 0));
+    // No throw — write errors are suppressed (fire-and-forget)
   });
 });
