@@ -1004,6 +1004,8 @@ export interface Professional {
   firm_name?: string;
   type: ProfessionalType;
   specialties: string[];
+  /** PR #619 country-mode Phase 4. Same shape as brokers.country_eligibility. */
+  country_eligibility?: Record<string, unknown> | null;
   location_state?: string;
   location_suburb?: string;
   location_display?: string;
