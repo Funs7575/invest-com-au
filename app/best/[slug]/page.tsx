@@ -38,6 +38,8 @@ import {
 } from "@/lib/compliance";
 import { getArticleFiltersForBestPage, CATEGORY_COLORS } from "@/lib/internal-links";
 import { boostFeaturedPartner, isSponsored } from "@/lib/sponsorship";
+import { getIntentCountry } from "@/lib/intent-context-server";
+import { filterByCountryEligibility } from "@/lib/country-mode/eligibility-filter";
 import SponsorBadge from "@/components/SponsorBadge";
 import JargonTooltip from "@/components/JargonTooltip";
 import OnThisPage from "@/components/OnThisPage";
@@ -105,15 +107,24 @@ export default async function BestBrokerPage({
     orParts.push(`tags.ov.{${articleFilters.tags.join(",")}}`);
   }
 
-  // Fetch brokers + articles in parallel
-  const [{ data: brokers }, articleResult] = await Promise.all([
+  // Fetch brokers + articles + visitor's intent country in parallel
+  const [{ data: brokers }, articleResult, intentCountry] = await Promise.all([
     supabase.from("brokers").select("*").eq("status", "active"),
     orParts.length > 0
       ? supabase.from("articles").select("id, title, slug, category, read_time").or(orParts.join(",")).limit(3)
       : Promise.resolve({ data: null }),
+    getIntentCountry(),
   ]);
 
-  const allBrokers = (brokers as Broker[]) || [];
+  // Country-eligibility filter: hide brokers that block the visitor's country
+  // (or whose allow-list excludes it). When intentCountry is null this is a no-op.
+  // PR #619 added the schema; this is the first reader.
+  const eligibleBrokers = filterByCountryEligibility(
+    (brokers as Broker[]) || [],
+    intentCountry,
+  );
+
+  const allBrokers = eligibleBrokers;
   const filtered = boostFeaturedPartner(
     allBrokers.filter(cat.filter).sort(cat.sort),
     0
