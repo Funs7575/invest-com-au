@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 import ApplyClient from "./ApplyClient";
 
 export const revalidate = 3600;
@@ -31,7 +31,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const supabase = createAdminClient();
+  const supabase = await createClient();
 
   const { data: broker } = await supabase
     .from("brokers")
@@ -56,7 +56,7 @@ export default async function ApplyPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const supabase = createAdminClient();
+  const supabase = await createClient();
 
   const { data: broker } = await supabase
     .from("brokers")

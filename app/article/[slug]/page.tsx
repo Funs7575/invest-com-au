@@ -21,6 +21,7 @@ import { CATEGORY_COLORS, getBestPagesForArticle, getClusterLinksForArticle } fr
 import ClusterNav from "@/components/ClusterNav";
 import ArticleComments from "@/components/ArticleComments";
 import Icon from "@/components/Icon";
+import RelatedContentGrid from "@/components/RelatedContentGrid";
 import AdSlot from "@/components/AdSlot";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
 import LinkifiedText from "@/components/LinkifiedText";
@@ -615,41 +616,19 @@ export default async function ArticlePage({
               <ArticleComments slug={slug} />
 
               {/* Related Articles */}
-              {relatedArticles.length > 0 && (
-                <div className="mt-8 md:mt-12">
-                  <h3 className="text-lg md:text-xl font-bold mb-3 md:mb-6">Related Articles</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-5">
-                    {relatedArticles.map((ra) => {
-                      const raCategoryColor =
-                        CATEGORY_COLORS[ra.category || ""] ||
-                        "bg-slate-100 text-slate-700";
-                      return (
-                        <Link
-                          key={ra.id}
-                          href={`/article/${ra.slug}`}
-                          className="border border-slate-200 rounded-xl p-4 md:p-5 hover:shadow-md transition-all bg-white flex flex-col"
-                        >
-                          {ra.category && (
-                            <span
-                              className={`text-[0.69rem] md:text-xs font-semibold px-2 md:px-2.5 py-0.5 rounded-full self-start mb-1.5 md:mb-2 ${raCategoryColor}`}
-                            >
-                              {ra.category}
-                            </span>
-                          )}
-                          <h4 className="text-sm font-bold mb-1 md:mb-2 line-clamp-2 flex-1">
-                            {ra.title}
-                          </h4>
-                          {ra.read_time && (
-                            <span className="text-[0.69rem] md:text-xs text-slate-400">
-                              {ra.read_time} min read
-                            </span>
-                          )}
-                        </Link>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
+              <RelatedContentGrid
+                heading="Related Articles"
+                items={relatedArticles.map((ra) => ({
+                  id: ra.id,
+                  href: `/article/${ra.slug}`,
+                  title: ra.title,
+                  badgeText: ra.category ?? undefined,
+                  badgeClass: ra.category
+                    ? (CATEGORY_COLORS[ra.category] ?? "bg-slate-100 text-slate-700")
+                    : undefined,
+                  meta: ra.read_time ? `${ra.read_time} min read` : undefined,
+                }))}
+              />
 
               {/* Best Broker Guide Links */}
               {(() => {
