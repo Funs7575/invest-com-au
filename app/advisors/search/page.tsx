@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 import { logger } from "@/lib/logger";
 import AdvisorSearchClient from "./AdvisorSearchClient";
 
@@ -57,7 +57,7 @@ interface AdvisorRow {
 export default async function AdvisorSearchPage() {
   let advisors: AdvisorRow[] = [];
   try {
-    const supabase = createAdminClient();
+    const supabase = await createClient();
     const { data, error } = await supabase
       .from("professionals")
       .select(
