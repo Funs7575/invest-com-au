@@ -44,6 +44,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | WW | `claude/audit-remediation/ww-01-watchlist-data-model` | **#651 MERGED** | WW-01 migration + WW-02 watchlist UI done. WW-03/04 blocked (DD-02 dep). **Streams WW-01+WW-02 merged.** | All WW tasks merged ✓ |
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
 | Z | `claude/audit-remediation/z-04-zero-state-ux` | #230/#323/#403/#457/#524/#565 | Z-01..Z-04 done. | Z-04 merged ✓ |
+| KK | `claude/audit-remediation/kk-01-internal-link-audit` · **#TBD OPEN** | — | KK-01 done (iter 331b — 192 orphans classified, audit script + findings doc). | KK-04 merged |
 
 ---
 
@@ -302,7 +303,7 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|--------------|-------|
-| KK-01 | pending | Internal link audit (identify orphaned pages + over-linked hubs) | ~2 | |
+| KK-01 | **done** | Internal link audit (identify orphaned pages + over-linked hubs) | — | 192 orphans classified, 1 over-linked hub, 8 calculator additions recommended. `scripts/internal-link-audit.mjs` + `docs/audits/kk-01-internal-link-audit.md`. |
 | KK-02 | pending | Related-content widget (bottom of article pages) | ~3 | Deps: KK-01. |
 | KK-03 | pending | Topic cluster map (pillar ↔ cluster ↔ supporting visualised) | ~3 | Deps: KK-01. |
 | KK-04 | pending | Automated internal link injection (LSI-based, configurable density) | ~5 | Deps: KK-02+KK-03. Risky — needs kill-switch. |
@@ -921,6 +922,34 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-09 — iter 331b (KK-01 — internal link audit)
+
+**Stream:** KK  
+**Item:** KK-01 (internal link audit — identify orphaned pages + over-linked hubs)  
+**Branch:** `claude/audit-remediation/kk-01-internal-link-audit` (PR TBD)
+
+**What was done:**
+- Wrote `scripts/internal-link-audit.mjs` (170 LOC): scans 524 `app/**/page.tsx` routes and
+  all `.tsx`/`.ts` files in `app/`, `lib/`, `components/` for `href` / `to` props; computes
+  in-degree (inbound link count) and out-degree per file; classifies orphans, low-linked, and
+  over-linked pages.
+- Ran the script: 192 orphaned pages, 1 over-linked hub (`components/Footer.tsx` — 64 links,
+  expected), 82 low-linked pages (in-degree = 1).
+- Wrote `docs/audits/kk-01-internal-link-audit.md` (140 LOC): classifies all orphans into
+  expected vs. actionable, provides priority fix list, recommends 8 calculator additions to
+  `/calculators` hub card grid as highest-impact quick win.
+
+**Key findings:**
+- 8 calculator pages are orphaned (debt, FIRE, mortgage, property-vs-shares, retirement, SMSF,
+  super-contributions, dividend-reinvestment) — add to `/calculators` hub.
+- 6 insurance sub-types `/insurance/health` etc. missing from `/insurance` hub.
+- `/etfs/bonds`, `/etfs/international`, `/etfs/sectors` missing from `/etfs` hub.
+- Dynamic content routes (`/article/[slug]` etc.) are expected orphans — discovered via sitemap.
+
+STATUS: PROGRESS · stream=KK · item=KK-01
+
+---
 
 ### 2026-05-09 — iter 331 (merge wave: EE/OOO/WW/X-09a/X-07/X-08 + X-06/07/08 rebase)
 
