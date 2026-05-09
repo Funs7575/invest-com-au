@@ -63,7 +63,7 @@ export default async function CountryListingsPreview() {
       Array.isArray(r.images) && r.images.length > 0 ? (r.images[0] as string) : null,
   }));
 
-  const result = applySupplyThresholds(rows, "listings");
+  const result = applySupplyThresholds(rows, "listings", code);
   if (result.didFallback) return null;
 
   const meta = intentCountryMeta(code);
