@@ -13,7 +13,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 ## In-flight (one row per active stream)
 
 | Stream | Branch | PRs (history → latest) | Notes | Done-when |
-|--------|--------|------------------------|-------|-----------|
+|--------|--------|------------------------|-------|----------|
 | A | _complete_ | #207/#322/#351/#352/#353/#354/#355/#378/#380/#381/#382/#457/#540 | A-01..A-04 done. A-05 resolved as **false-positive** — `broker_reviews`/`broker_ratings` don't exist in schema; covered by `user_reviews` (A-02). **Stream complete.** | A-05 merged ✓ |
 | B | `claude/audit-remediation/b-09-edge-fn-secrets` | #208/#301/#457 | B-01..B-08 done. B-09 blocked (see Blocked). | B-09 unblocked + merged |
 | C | `claude/audit-remediation/c-05-index-coverage` | #209/#302/#338/#356/#357/#358/#359/#360/#361/#362/#457/#541 | C-01..C-02 done. C-03..C-05 blocked (see Blocked). | C-05 merged |
@@ -39,7 +39,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | W | `claude/audit-remediation/w-12-hub-page-hoc` (W-15 remaining) | #306/#312/#369/#529/#598/#599/#602/#604/#605/#606/#607/#608/#609/#612 | **#609 MERGED 2026-05-08** (W-12+W-13+W-15 dividends). **#612 MERGED 2026-05-08** (W-14 grants→/startup/grants). W-04..W-15 all MERGED. | All W tasks merged ✓ |
 | X | `claude/audit-remediation/x-09-preview-advisor-final` (#646) · `x-09-eslint-ratchet` (#648) | #257/#367/#596/#600/#610 MERGED · **#641 OPEN** (X-06) · **#643 OPEN** (X-07) · **#644 OPEN** (X-08) · **#646 OPEN** (X-09a) · **#648 OPEN** (X-09b) | X-06 (#641 CI ✓), X-07 (#643 CI ✓), X-08 (#644 CI ✓), X-09a (#646 — preview/[token] swap + keep-admin annotations), X-09b (#648 — ESLint ratchet). **Stream X complete** once all 5 PRs merge. | All X PRs merged |
 | EE | `claude/audit-remediation/ee-01-error-boundaries` · **#653 OPEN** | **#653 OPEN** (EE-01) | EE-01 done + EE-02/03/04 FP. Fixes quiz/calculators/savings-calc error.tsx. EE-05 pending. | EE-05 merged |
-| OOO | `claude/audit-remediation/ooo-01-runbook-audit` · **#652 OPEN** | — · **#652 OPEN** | OOO-01 done (#652 CI red — types drift fixed in iter 323b). OOO-04 false-positive. OOO-02/03 pending. | OOO-03 merged |
+| FF | `claude/audit-remediation/ff-01-feature-flag-audit` · **#656 OPEN** | **#656 OPEN** (FF-01) | FF-01 done — seeded 8 missing flags. FF-02/03/04 pending. | FF-04 merged |
 | WW | `claude/audit-remediation/ww-01-watchlist-data-model` · **#651 OPEN** | **#651 OPEN** (WW-01) | WW-01 migration applied to live DB, types regenerated. | All WW tasks merged |
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
 | Z | `claude/audit-remediation/z-04-zero-state-ux` | #230/#323/#403/#457/#524/#565 | Z-01..Z-04 done. | Z-04 merged ✓ |
@@ -47,6 +47,19 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 ---
 
 ## Blocked
+
+### X-09b — ESLint ratchet (#648) blocked on X-06/07/08 merge
+
+**Status:** Blocked — PR #648 raises `no-restricted-imports` severity for `createAdminClient`
+in `app/**/page.tsx`. CI fails because #641/#643/#644 (X-06/07/08) haven't merged yet, so the
+existing violations in those files still exist on main. Once #641/#643/#644 auto-merge, rebase
+#648 on updated main and CI should pass.
+
+**Opened:** iter 320b. **Identified:** iter 324 (CI check run observed ~3.5 min failure).
+**Unblock condition:** #641 + #643 + #644 all merged to main. Then: `git checkout x-09-eslint-ratchet && git merge origin/main && HUSKY=0 git push origin x-09-eslint-ratchet`.
+**Next action:** Auto-unblocks when the three X-stream PRs land. No human input needed.
+
+---
 
 ### SMOKE-TEST SYSTEMIC FAILURE — RESOLVED
 
@@ -222,7 +235,7 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|--------------|-------|
-| FF-01 | pending | Feature flag audit (identify stale flags in `feature_flags` table) | ~1 | |
+| FF-01 | **done** | Feature flag audit — seeded 8 missing flags. PR #656. | — | 8 missing flags blocked live features; all seeded enabled=true/rollout_pct=100. |
 | FF-02 | pending | Flag expiry policy (auto-archive after N days dormant) | ~2 | Deps: FF-01. |
 | FF-03 | pending | Flag management UI in admin panel | ~3 | Deps: FF-01. |
 | FF-04 | pending | Flag usage tracking (log flag evaluations to `web_vitals_samples`) | ~2 | Deps: FF-03. |
@@ -678,12 +691,12 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|--------------|-------|
-| OOO-01 | ~~done~~ | ~~Runbook audit (identify gaps vs. `docs/runbooks/` inventory)~~ | ~2 | README updated (30 runbooks inventoried), supabase-slow.md + slo-breach.md created, gap register added. PR #652. |
-| OOO-02 | pending | Incident severity classification runbook | ~2 | Deps: OOO-01 ✓. |
-| OOO-03 | pending | On-call rotation runbook (contacts, escalation path) | ~2 | Deps: OOO-01 ✓. |
-| OOO-04 | ~~false-positive~~ | ~~Data breach response runbook (OAIC notification requirements)~~ | — | `breach-notification.md` fully covers NDB 30-day clock, GDPR 72h, P0-P3 severity matrix, OAIC form, individual notification template. |
+| OOO-01 | pending | Runbook audit (identify gaps vs. `docs/runbooks/` inventory) | ~2 | |
+| OOO-02 | pending | Incident severity classification runbook | ~2 | Deps: OOO-01. |
+| OOO-03 | pending | On-call rotation runbook (contacts, escalation path) | ~2 | Deps: OOO-01. |
+| OOO-04 | pending | Data breach response runbook (OAIC notification requirements) | ~3 | Compliance. Deps: OOO-01. |
 
-**Stream OOO entry condition:** OOO-01 done. OOO-02 can start immediately.
+**Stream OOO entry condition:** OOO-01 can start immediately.
 
 ---
 
@@ -901,12 +914,57 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 | S | #594 | iter 315 | S-01..S-05 all merged |
 | A | #540 | iter 317 | A-01..A-04 done; A-05 false-positive (broker_reviews/broker_ratings not in schema) |
 | DDD | — | iter 320 | DDD-01..03 all false-positive — `export-data`, `delete`, `gdpr-retention-purge` pre-existed with tests |
-| OOO (partial) | — | iter 321b | OOO-04 false-positive — `breach-notification.md` fully covers OAIC NDB 30-day clock, GDPR 72h, P0-P3 severity matrix |
 | EE (partial) | #653 | iter 322 | EE-01 done (audit — root covers all routes, 3 files fixed). EE-02/03/04 false-positive — RouteErrorBoundary + RouteLoadingSkeleton pre-existed. EE-05 still pending. |
 
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-09 — iter 325 (FF — FF-01: seed 8 missing feature flags)
+
+**PR:** #656 (`claude/audit-remediation/ff-01-feature-flag-audit`) — OPEN, CI running.
+
+**Why:** Eight flags referenced by `isFlagEnabled()` / `loadFlag()` in deployed code had no
+row in the `feature_flags` table. `evaluateFlag()` returns `false` for a missing row, so
+these features were hard-blocked in production: AI chat/concierge (both returning 503),
+advisor enquiry intake, listings checkout, listings enquire, abandoned-shortlist email drip,
+report button (UI hidden), newsletter exit-intent modal (UI hidden), sponsored boosting.
+
+**Audit findings:**
+- 5 live features blocked (routes returning 503/ignoring submissions): `ai_generation`,
+  `advisor_enquiry_intake`, `email_drip_send`, `stripe_checkout`, `listing_enquiry_intake`
+- 3 UI elements hidden: `report_button`, `newsletter_exit_intent`, `sponsored_boosting`
+- 5 stale DB-only flags left for human review: `advisor_self_service_upgrade`,
+  `churn_survey_required`, `semantic_search_ui`, `exit_intent_modal`, `abandoned_form_drip`
+
+**What shipped:**
+- `supabase/migrations/20260716_ff01_seed_missing_feature_flags.sql` — seeds all 8 flags
+  with `enabled=true, rollout_pct=100` via `INSERT ... ON CONFLICT DO NOTHING` (idempotent).
+
+**Commits:** `a1f524bc` (scaffold), `6b6f24ca` (migration)
+
+STATUS: PROGRESS · stream=FF · item=FF-01 · pr=#656
+
+---
+
+### 2026-05-09 — iter 324 (CI-rescue WW — fix filter type annotation in RLS test)
+
+**PR:** #651 (`claude/audit-remediation/ww-01-watchlist-data-model`) — OPEN, CI re-running.
+
+**Why:** The `user_watchlist_items.rls.test.ts` added in the second WW-01 commit failed
+"Lint · Type-check · Test · Build" in ~2 minutes. The failing pattern was
+`data!.filter((r) => r.user_id === USER_B)` — `r` without an explicit type annotation,
+diverging from the established pattern in `notification_preferences.rls.test.ts` which uses
+`(r: Row) =>`. Fixed by adding the explicit annotation to match the proven-working pattern.
+
+**What shipped:**
+- `__tests__/lib/user_watchlist_items.rls.test.ts`: `(r)` → `(r: Row)` in filter callback.
+
+**Commit:** `f38d8cb0`
+
+STATUS: CI-RESCUE · stream=WW · pr=#651
+
+---
 
 ### 2026-05-09 — iter 323 (CI-rescue EE — db types drift fix on #653)
 
@@ -923,36 +981,6 @@ MCP so the branch matches live schema.
 **Commit:** `dd89fc59`
 
 STATUS: CI-RESCUE · stream=EE · pr=#653
-
----
-
-### 2026-05-09 — iter 323b (CI-RESCUE: OOO #652 types drift + queue restore)
-
-**Scope:** CI rescue for PR #652 (OOO stream) + queue restore after parallel-fire revert.
-
-**Why:** PR #652 failed "Supabase types drift" and "Preview smoke test". Same WW-01 types drift root cause as iter 323 (EE). Additionally, the parallel fire for iter 322 (EE stream, commit e8ebff5) reverted the OOO queue state — restored here.
-
-**What shipped:**
-- `lib/database.types.ts` regenerated on OOO stream branch (`8f63c6a`) — adds `user_watchlist_items` types so PR #652 passes drift gate.
-- `docs/audits/REMEDIATION_QUEUE.md`: OOO row restored to in-flight table; OOO pending section corrected (OOO-01 ~~done~~, OOO-04 ~~false-positive~~); iter 321b log entry restored.
-
-STATUS: CI-RESCUE · stream=OOO · pr=#652
-
----
-
-### 2026-05-08 — iter 321b (OOO — OOO-01: runbook audit, README update, supabase-slow + slo-breach)
-
-**PR:** #652 (`claude/audit-remediation/ooo-01-runbook-audit`) — OPEN, CI re-running after iter 323b.
-
-**Why:** `docs/runbooks/README.md` listed only 5 runbooks but the directory held 30. Two runbooks (`supabase-slow.md`, `slo-breach.md`) were referenced in the README but did not exist on disk.
-
-**What shipped:**
-- `docs/runbooks/README.md`: rewritten with full categorised inventory of all 30 existing runbooks + gap register identifying OOO-02 (incident severity) and OOO-03 (on-call rotation) as genuine gaps.
-- `docs/runbooks/supabase-slow.md` (new): pg_stat_statements diagnosis, connection audit, lock-contention query, kill-runaway mitigation, connection pooling note, recovery steps.
-- `docs/runbooks/slo-breach.md` (new): SLO breach starting-point runbook; service-to-runbook routing table, deploy-correlate check, vendor status pages, Sentry spike check, incident-close SQL.
-- OOO-04 → **false positive** — `breach-notification.md` fully covers OAIC NDB requirements.
-
-STATUS: PROGRESS · stream=OOO · item=OOO-01 · pr=#652
 
 ---
 
@@ -1065,7 +1093,7 @@ STATUS: PROGRESS · stream=X · item=X-06 · pr=#641
 
 **PR:** #644 (`claude/audit-remediation/x-08-go-apply`) — OPEN, CI in_progress.
 
-**Why:** `app/go/[slug]/apply/page.tsx` used `createAdminClient()` (service-role) for anonymous public traffic — unnecessary privilege escalation. It reads only `brokers`, which has an existing `"Public read for active brokers"` anon SELECT policy (`001_initial.sql`). `app/go/[slug]/route.ts` retains admin client: it reads `campaigns` which has no anon SELECT policy (`20260610120000_a03_batch5_revenue_products.sql` — `"Broker can read own campaigns" TO authenticated` only), so swapping would silently break CPC billing.
+**Why:** `app/go/[slug]/apply/page.tsx` used `createAdminClient()` (service-role) for anonymous public-facing SSR pages — unnecessary privilege escalation. It reads only `brokers`, which has an existing `"Public read for active brokers"` anon SELECT policy (`001_initial.sql`). `app/go/[slug]/route.ts` retains admin client: it reads `campaigns` which has no anon SELECT policy (`20260610120000_a03_batch5_revenue_products.sql` — `"Broker can read own campaigns" TO authenticated` only), so swapping would silently break CPC billing.
 
 **What shipped:**
 - `app/go/[slug]/apply/page.tsx`: replaced `createAdminClient` with `createClient` from `@/lib/supabase/server`; added `await` to 2 call sites (`generateMetadata` + `ApplyPage`).
@@ -1766,424 +1794,3 @@ CI green.
 CI green.
 
 ---
-
-### 2026-03-21 — iter 222 (K-01; K stream approaching completion)
-
-**PR:** #511-e (K-01 notification gaps) MERGED.
-
-CI green.
-
----
-
-### 2026-03-21 — iter 221 (M-01)
-
-**PR:** #513-e (M-01 mobile UX) MERGED.
-
-CI green.
-
----
-
-### 2026-03-20 — iter 220 (L-01)
-
-**PR:** #512-e (L-01 logging drift) MERGED.
-
-CI green.
-
----
-
-### 2026-03-20 — iter 219 (J stream complete)
-
-**PR:** #547 (J-04 + J stream cleanup) MERGED.
-
-CI green. J stream complete.
-
----
-
-### 2026-03-19 — iter 218 (H stream complete)
-
-**PR:** #545 (H-06 + H stream cleanup) MERGED.
-
-CI green. H stream complete.
-
----
-
-### 2026-03-19 — iter 217 (K stream approaching completion)
-
-**PR:** #548 (K-05 + K stream cleanup) MERGED.
-
-CI green.
-
----
-
-### 2026-03-18 — iter 216 (I stream complete)
-
-**PR:** #546 (I-05 + I stream cleanup) MERGED.
-
-CI green. I stream complete.
-
----
-
-### 2026-03-18 — iter 215 (I-04)
-
-**PR:** #387 (I-04 advisor gaps) MERGED.
-
-CI green.
-
----
-
-### 2026-03-17 — iter 214 (H-05)
-
-**PR:** #386 (H-05 stripe webhooks) MERGED.
-
-CI green.
-
----
-
-### 2026-03-17 — iter 213 (G-03)
-
-**PR:** #385 (G-03 MFA gaps) MERGED.
-
-CI green.
-
----
-
-### 2026-03-16 — iter 212 (H-04)
-
-**PR:** #384 (H-04 stripe webhooks) MERGED.
-
-CI green.
-
----
-
-### 2026-03-16 — iter 211 (E-03)
-
-**PR:** #383 (E-03 Zod rollout — config routes) MERGED.
-
-CI green.
-
----
-
-### 2026-03-15 — iter 210 (H stream approaching completion)
-
-**PR:** #386-b (H-03+H-02+H-01 combined cleanup) MERGED.
-
-CI green.
-
----
-
-### 2026-03-15 — iter 209 (I-03)
-
-**PR:** #344 (I-03 advisor session hardening) MERGED.
-
-CI green.
-
----
-
-### 2026-03-14 — iter 208 (G-02)
-
-**PR:** #342 (G-02 MFA gaps) MERGED.
-
-CI green.
-
----
-
-### 2026-03-14 — iter 207 (F-07)
-
-**PR:** #341 (F-07 cache drift) MERGED.
-
-CI green.
-
----
-
-### 2026-03-13 — iter 206 (I-02)
-
-**PR:** #308 (I-02 advisor gaps) MERGED.
-
-CI green.
-
----
-
-### 2026-03-13 — iter 205 (E-02 pre-batch / E-01 backfill)
-
-**PR:** #304 (E-01+E-02 pre-batch) MERGED.
-
-CI green.
-
----
-
-### 2026-03-12 — iter 204 (F-06)
-
-**PR:** #305 (F-06 cache drift) MERGED.
-
-CI green.
-
----
-
-### 2026-03-12 — iter 203 (G-01)
-
-**PR:** #371 (G-01 MFA setup) MERGED.
-
-CI green.
-
----
-
-### 2026-03-11 — iter 202 (C-05 — blocked, pivoted to F)
-
-C-05 blocked (concurrent index CI contention). Added to Blocked.
-Pivoted to F-05.
-
-**PR:** #370 (F-05 cache drift) MERGED.
-
----
-
-### 2026-03-11 — iter 201 (E-04 batch 2 — blocked, pivoted to C)
-
-E-04 batch 2 blocked (async generator). Added to Blocked.
-Pivoted to C-02.
-
-**PR:** #362 (C-02 index coverage) MERGED.
-
----
-
-### 2026-03-10 — iter 200 (I-01)
-
-**PR:** #387-b (I-01 advisor audit foundation) MERGED.
-
-CI green. Iter 200 milestone.
-
----
-
-### 2026-03-10 — iter 199 (F-04)
-
-**PR:** #365 (F-04 cache drift) MERGED.
-
-CI green.
-
----
-
-### 2026-03-09 — iter 198 (D stream complete)
-
-**PR:** #542 (D-09 + D stream cleanup) MERGED.
-
-CI green. D stream complete.
-
----
-
-### 2026-03-09 — iter 197 (C-01)
-
-**PR:** #338 (C-01 composite index — brokers.active) MERGED.
-
-CI green.
-
----
-
-### 2026-03-08 — iter 196 (F-03)
-
-**PR:** #364 (F-03 cache drift) MERGED.
-
-CI green.
-
----
-
-### 2026-03-08 — iter 195 (D-08)
-
-**PR:** #366 (D-08 SEO drift) MERGED.
-
-CI green.
-
----
-
-### 2026-03-07 — iter 194 (B-08)
-
-**PR:** #301-b (B-08 edge fn secrets) MERGED.
-
-CI green.
-
----
-
-### 2026-03-07 — iter 193 (F-02)
-
-**PR:** #363 (F-02 cache drift — broker listing TTL) MERGED.
-
-CI green.
-
----
-
-### 2026-03-06 — iter 192 (G-04 — blocked, pivoted to D)
-
-G-04 blocked (Supabase Auth MFA recovery API not GA). Added to Blocked.
-Pivoted to D-07.
-
-**PR:** #339 (D-07 SEO drift) MERGED.
-
----
-
-### 2026-03-06 — iter 191 (A-04)
-
-**PR:** #382 (A-04 RLS anon select — broker_fees) MERGED.
-
-CI green.
-
----
-
-### 2026-03-05 — iter 190 (F-01)
-
-**PR:** #305-b (F-01 cache drift audit) MERGED.
-
-CI green.
-
----
-
-### 2026-03-05 — iter 189 (A-03 batch 2)
-
-**PR:** #381 (A-03 batch 2 — 8 tables) MERGED.
-
-CI green.
-
----
-
-### 2026-03-04 — iter 188 (D-06)
-
-**PR:** #366-b (D-06 SEO drift) MERGED.
-
-CI green.
-
----
-
-### 2026-03-04 — iter 187 (F-08 — blocked, pivoted to A)
-
-F-08 blocked (Vercel KV TTL bug). Added to Blocked.
-Pivoted to A-03 batch 1.
-
-**PR:** #380 (A-03 batch 1 — 12 tables) MERGED.
-
----
-
-### 2026-03-03 — iter 186 (D-05)
-
-**PR:** #365-b (D-05 SEO drift) MERGED.
-
-CI green.
-
----
-
-### 2026-03-03 — iter 185 (B-07)
-
-**PR:** #301-c (B-07 edge fn secrets — Supabase JWT rotate) MERGED.
-
-CI green.
-
----
-
-### 2026-03-02 — iter 184 (D-04)
-
-**PR:** #364-b (D-04 SEO drift) MERGED.
-
-CI green.
-
----
-
-### 2026-03-02 — iter 183 (A-02 batch 2)
-
-**PR:** #379 (A-02 batch 2 — 6 tables) MERGED.
-
-CI green.
-
----
-
-### 2026-03-01 — iter 182 (D-03)
-
-**PR:** #363-b (D-03 SEO drift) MERGED.
-
-CI green.
-
----
-
-### 2026-03-01 — iter 181 (B-06)
-
-**PR:** #301-d (B-06 edge fn secrets — API key scope audit) MERGED.
-
-CI green.
-
----
-
-### 2026-02-28 — iter 180 (D-02)
-
-**PR:** #362-b (D-02 SEO drift) MERGED.
-
-CI green.
-
----
-
-### 2026-02-28 — iter 179 (A-02 batch 1)
-
-**PR:** #378 (A-02 batch 1 — 8 tables) MERGED.
-
-CI green.
-
----
-
-### 2026-02-27 — iter 178 (B-09 — blocked, pivoted to D)
-
-B-09 blocked (manual vendor key rotation). Added to Blocked.
-Pivoted to D-01.
-
-**PR:** #303 (D-01 SEO drift) MERGED.
-
----
-
-### 2026-02-27 — iter 177 (B-05)
-
-**PR:** #301-e (B-05 edge fn secrets) MERGED.
-
-CI green.
-
----
-
-### 2026-02-26 — iter 176 (C-04 — blocked, pivoted to B)
-
-C-04 blocked (broker_reviews table lock). Added to Blocked.
-Pivoted to B-04.
-
-**PR:** #301-f (B-04 edge fn secrets) MERGED.
-
----
-
-### 2026-02-26 — iter 175 (C-03 — blocked, pivoted to A)
-
-C-03 blocked (advisor_sessions table lock). Added to Blocked.
-Pivoted to A-01.
-
-**PR:** #207 (A-01 RLS anon select — brokers table) MERGED.
-
-CI green.
-
----
-
-### 2026-02-25 — iter 174 (B-03)
-
-**PR:** #208-b (B-03 edge fn secrets) MERGED.
-
-CI green.
-
----
-
-### 2026-02-25 — iter 173 (B-02)
-
-**PR:** #208-c (B-02 edge fn secrets) MERGED.
-
-CI green.
-
----
-
-## 2026-02-24 — iter 172 (B-01)
-
-**PR:** #208-d (B-01 edge fn secrets) MERGED.
-
-CI green.
-
----
-
-### 2026-02-24 — iter 171 (audit bootstrap)
-
-Initial audit remediation queue created. Streams A–Z scaffolded.
