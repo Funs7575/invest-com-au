@@ -31,15 +31,15 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | O | `claude/audit-remediation/o-04-rls-zero-policy` | #221/#314/#350/#393/#457/#515/#552/#593 | **#593 MERGED 2026-05-08** — all 57 zero-policy tables remediated. | O-04 merged ✓ |
 | P | `claude/audit-remediation/p-05-perf-budgets` | #222/#315/#394/#457/#516/#553 | P-01..P-05 done. | P-05 merged ✓ |
 | Q | `claude/audit-remediation/q-05-quiz-integrity` | #223/#316/#395/#457/#517/#554 | Q-01..Q-05 done. | Q-05 merged ✓ |
-| R | `claude/audit-remediation/r-coverage-m2b-calculators` · **#640 OPEN** (CI queued) | #290/#396/#459/#466/#471/#472/#473/#510/#511/#513/#514/#516/#517/#519/#521/#526/#527/#528/#529/#530/#531/#532/#533/#534/#535/#536/#537/#538/#539/#540/#541/#542/#543/#544/#545/#546/#547/#548/#549/#550/#551/#552/#553/#554/#555/#556/#557/#558/#559/#560/#561/#562/#563/#564/#565/#566/#567/#568/#569/#570/#571/#572/#573/#574/#575/#576/#577/#578/#579/#580/#581/#582/#583/#584/#585/#586/#587/#588/#589/#590/#591/#592/#593/#594/#595/#596/#597/#598/#599/#600/#601/#602/#603/#604/#605/#606/#607/#608/#609/#610/#611/#612/#640 | **#595 MERGED** (RATCHET M1 — coverage floors raised). **#597 MERGED** (R-COVERAGE-15). **#601 MERGED** (M2-A done — 12 files). **#640 OPEN** (M2-B — CGT+mortgage+currency.formatAUD, 3 test files, 368 LOC). | #640 merged |
+| R | `claude/audit-remediation/r-coverage-m2b-calculators` · **#640 OPEN** (CI retriggered iter 332) | #290/#396/#459/#466/#471/#472/#473/#510/#511/#513/#514/#516/#517/#519/#521/#526/#527/#528/#529/#530/#531/#532/#533/#534/#535/#536/#537/#538/#539/#540/#541/#542/#543/#544/#545/#546/#547/#548/#549/#550/#551/#552/#553/#554/#555/#556/#557/#558/#559/#560/#561/#562/#563/#564/#565/#566/#567/#568/#569/#570/#571/#572/#573/#574/#575/#576/#577/#578/#579/#580/#581/#582/#583/#584/#585/#586/#587/#588/#589/#590/#591/#592/#593/#594/#595/#596/#597/#598/#599/#600/#601/#602/#603/#604/#605/#606/#607/#608/#609/#610/#611/#612/#640 | **#595 MERGED** (RATCHET M1 — coverage floors raised). **#597 MERGED** (R-COVERAGE-15). **#601 MERGED** (M2-A done — 12 files). **#640 OPEN** (M2-B — CGT+mortgage+currency.formatAUD, 3 test files, 368 LOC). CI retriggered via empty commit (iter 332 — force-push had silenced GitHub Actions). | #640 merged |
 | S | _complete_ | **#594 MERGED 2026-05-08** (`ee498f8c`) | queue-sync iter 315 — #594 MERGED. | S-01..S-05 done. **Stream complete.** |
 | T | `claude/audit-remediation/t-05-type-safety` | #225/#318/#398/#457/#519/#560 | T-01..T-05 done. | T-05 merged ✓ |
 | U | `claude/audit-remediation/u-04-url-canonicals` | #226/#319/#399/#457/#520/#561 | U-01..U-04 done. | U-04 merged ✓ |
 | V | `claude/audit-remediation/v-07-auth-hardening` | #227/#320/#400/#457/#521/#562 | V-01..V-07 done. | V-07 merged ✓ |
 | W | `claude/audit-remediation/w-12-hub-page-hoc` (W-15 remaining) | #306/#312/#369/#529/#598/#599/#602/#604/#605/#606/#607/#608/#609/#612 | **#609 MERGED 2026-05-08** (W-12+W-13+W-15 dividends). **#612 MERGED 2026-05-08** (W-14 grants→/startup/grants). W-04..W-15 all MERGED. | All W tasks merged ✓ |
-| X | `claude/audit-remediation/x-09-preview-advisor-final` · `x-09-eslint-ratchet` (#648) | #257/#367/#596/#600/#610/#643/#644/#646 MERGED · **#641 OPEN** (X-06 — CI running) · **#648 OPEN** (X-09b) | X-06 (#641 rebased iter 331 — CI running), X-07 (#643 MERGED), X-08 (#644 MERGED), X-09a (#646 MERGED). X-09b (#648 blocked on X-06). **Stream X complete** once X-06+X-09b merge. | All X PRs merged |
+| X | `claude/audit-remediation/x-09-preview-advisor-final` · `x-09-eslint-ratchet` (#648) | #257/#367/#596/#600/#610/#646 MERGED · **#641 OPEN** (X-06) · **#643 OPEN** (X-07) · **#644 OPEN** (X-08) · **#648 OPEN** (X-09b) | X-06 (#641 CI retriggered iter 332), X-07 (#643 OPEN — auto-merge-safe, CI retriggered iter 332), X-08 (#644 OPEN — auto-merge-safe, CI retriggered iter 332), X-09a (#646 MERGED). X-09b (#648 blocked on X-06). **Stream X complete** once X-06/07/08+X-09b merge. | All X PRs merged |
 | EE | `claude/audit-remediation/ee-01-error-boundaries` | **#653 MERGED** (EE-01+EE-05) | EE-01 done + EE-02/03/04 FP + EE-05 done. **Stream complete.** | #653 merged ✓ |
-| FF | `claude/audit-remediation/ff-01-feature-flag-audit` · **#656 OPEN** | **#656 OPEN** (FF-01..FF-04) | FF-01 done. FF-02 done (iter 329, commit `b276f56a`). FF-02 CI rescue (iter 330, commit `2b869f91`). FF-03 false-positive (flag mgmt UI pre-existed W-07 commit `6723b24`). FF-04 done (iter 330, `last_evaluated_at` + loadFlag(), commit `aa34e77`). **Stream complete.** | FF-04 merged |
+| FF | `claude/audit-remediation/ff-01-feature-flag-audit` · **#656 OPEN** | **#656 OPEN** (FF-01..FF-04) | FF-01 done. FF-02 done (iter 329, commit `b276f56a`). FF-02 CI rescue (iter 330, commit `2b869f91`). FF-03 false-positive (flag mgmt UI pre-existed W-07 commit `6723b24`). FF-04 done (iter 330, `last_evaluated_at` + loadFlag(), commit `aa34e77`). Rebased on main (iter 332 — stale `user_watchlist_items` from driftallowlist cleaned, 23 commits behind main resolved). CI retriggered. **Stream complete.** | FF-04 merged |
 | OOO | `claude/audit-remediation/ooo-01-runbook-audit` | **#652 MERGED** | OOO-01 done. OOO-04 FP. OOO-02 done. OOO-03 done. **Stream complete.** | OOO-03 merged ✓ |
 | WW | `claude/audit-remediation/ww-01-watchlist-data-model` | **#651 MERGED** | WW-01 migration + WW-02 watchlist UI done. WW-03/04 blocked (DD-02 dep). **Streams WW-01+WW-02 merged.** | All WW tasks merged ✓ |
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
@@ -166,13 +166,13 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|--------------|-------|
-| AA-01 | pending | Advisor profile completeness score (surface in dashboard) | ~3 | Deps: I-05. |
-| AA-02 | pending | Onboarding checklist UI (step indicators, completion gating) | ~4 | Deps: AA-01. |
-| AA-03 | pending | Email drip for incomplete onboarding (3-day, 7-day, 14-day) | ~3 | Deps: AA-02. |
-| AA-04 | pending | Advisor public profile SEO (canonical URL, JSON-LD Person schema) | ~2 | Deps: AA-01. |
-| AA-05 | pending | Advisor review-request flow (post-session prompt) | ~3 | Deps: AA-02. |
+| AA-01 | ~~false-positive~~ | ~~Advisor profile completeness score (surface in dashboard)~~ | — | `profileCompleteness` widget fully implemented in `app/advisor-portal/DashboardTab.tsx` (onboarding checklist + compact progress bar + missing fields). `ProfileCompleteness` type in `types.ts`. Score computed in `app/api/advisor-dashboard/route.ts`. Verified iter 332. |
+| AA-02 | ~~false-positive~~ | ~~Onboarding checklist UI (step indicators, completion gating)~~ | — | Checklist with step indicators already in `DashboardTab.tsx` lines 143–176. Completion gating via `isPending` banner (`app/advisor-portal/page.tsx`). Verified iter 332. |
+| AA-03 | ~~false-positive~~ | ~~Email drip for incomplete onboarding (3-day, 7-day, 14-day)~~ | — | `app/api/cron/advisor-onboarding/route.ts` (Day 2 + Day 5 drip) + `app/api/cron/advisor-profile-gate-drip/route.ts` (Day 1/3/7/14/21 gate drip). Verified iter 332. |
+| AA-04 | ~~false-positive~~ | ~~Advisor public profile SEO (canonical URL, JSON-LD Person schema)~~ | — | `app/advisor/[slug]/page.tsx` has `alternates: { canonical }` + `"@type": "Person"` JSON-LD + `LocalBusiness` schema. Verified iter 332. |
+| AA-05 | ~~false-positive~~ | ~~Advisor review-request flow (post-session prompt)~~ | — | `app/api/cron/quote-review-requests/route.ts` — 14-day post-engagement review request cron, stamps `review_request_sent_at`. Verified iter 332. |
 
-**Stream AA entry condition:** I-05 merged (done). Ready to start.
+**Stream AA entry condition:** I-05 merged (done). **Stream AA complete — all items false-positive.**
 
 ---
 
@@ -180,13 +180,13 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|--------------|-------|
-| BB-01 | pending | Broker vs-broker comparison page (`/compare/[broker-a]-vs-[broker-b]`) | ~5 | Deps: D-09. |
-| BB-02 | pending | Comparison table component (fee diff, feature matrix) | ~4 | Deps: BB-01. |
-| BB-03 | pending | SEO metadata + JSON-LD for comparison pages | ~2 | Deps: BB-01. |
-| BB-04 | pending | Internal linking (broker detail pages → comparison pages) | ~2 | Deps: BB-03. |
-| BB-05 | pending | Affiliate CTA placement on comparison pages | ~1 | Deps: BB-04. |
+| BB-01 | ~~false-positive~~ | ~~Broker vs-broker comparison page (`/compare/[broker-a]-vs-[broker-b]`)~~ | — | `app/versus/[slugs]/page.tsx` fully implements broker vs-broker comparison. All broker pairs generated via `generatePairs()`. Verified iter 332. |
+| BB-02 | ~~false-positive~~ | ~~Comparison table component (fee diff, feature matrix)~~ | — | `app/versus/VersusClient.tsx` — full comparison table with fee diff, feature matrix, winner-by-scenario, community vote. Verified iter 332. |
+| BB-03 | ~~false-positive~~ | ~~SEO metadata + JSON-LD for comparison pages~~ | — | `app/versus/[slugs]/page.tsx` has `alternates: { canonical }` + `versusComparisonJsonLd` + `FAQPage` schema. Verified iter 332. |
+| BB-04 | ~~false-positive~~ | ~~Internal linking (broker detail pages → comparison pages)~~ | — | "Popular comparisons" widget in `VersusClient.tsx` + `VersusHubSearch.tsx`. Verified iter 332. |
+| BB-05 | ~~false-positive~~ | ~~Affiliate CTA placement on comparison pages~~ | — | `VersusClient.tsx` uses `getAffiliateLink`, `getBenefitCta`, `trackClick` from `lib/tracking`. Verified iter 332. |
 
-**Stream BB entry condition:** D-09 merged (done). Ready to start.
+**Stream BB entry condition:** D-09 merged (done). **Stream BB complete — all items false-positive.**
 
 ---
 
@@ -917,10 +917,40 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 | DDD | — | iter 320 | DDD-01..03 all false-positive — `export-data`, `delete`, `gdpr-retention-purge` pre-existed with tests |
 | OOO (partial) | — | iter 321b | OOO-04 false-positive — `breach-notification.md` fully covers OAIC NDB 30-day clock, GDPR 72h, P0-P3 severity matrix |
 | EE (partial) | #653 | iter 322 | EE-01 done (audit — root covers all routes, 3 files fixed). EE-02/03/04 false-positive — RouteErrorBoundary + RouteLoadingSkeleton pre-existed. EE-05 still pending. |
+| AA | — | iter 332 | All 5 items false-positive — profile completeness widget, onboarding checklist, email drips, Person JSON-LD, review-request cron all pre-existed. |
+| BB | — | iter 332 | All 5 items false-positive — `/versus/[slugs]` with comparison table, JSON-LD, internal linking, affiliate CTAs all pre-existed. |
 
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-09 — iter 332 (CI retriggers + FF rebase + AA/BB false-positive sweep)
+
+**CI retriggered** (empty commit pushes — GitHub Actions doesn't fire on force-push):
+- #641 (X-06 `how-to-transfer`) — empty commit, CI now queued
+- #643 (X-07 `siv-advisors`) — empty commit, CI now queued
+- #644 (X-08 `go-apply`) — empty commit, CI now queued
+- #640 (R M2-B calculators) — empty commit, CI now queued
+
+**FF branch rebased** on main (23 commits behind): branch
+`claude/audit-remediation/ff-01-feature-flag-audit` rebased, stale
+`user_watchlist_items` entry removed from `.driftallowlist` (WW-01 merged to main),
+force-pushed. #656 no longer has merge conflicts.
+
+**AA stream — all false positives:**
+- AA-01: `profileCompleteness` widget already in `DashboardTab.tsx`
+- AA-02: onboarding checklist + `isPending` gate already in advisor portal
+- AA-03: `advisor-onboarding` + `advisor-profile-gate-drip` crons pre-exist
+- AA-04: `app/advisor/[slug]/page.tsx` has canonical + Person JSON-LD
+- AA-05: `quote-review-requests` cron pre-exists
+
+**BB stream — all false positives:**
+- BB-01..BB-05: `app/versus/[slugs]` has full comparison page, table, JSON-LD,
+  internal linking via `VersusHubSearch`, affiliate CTAs via `lib/tracking`.
+
+STATUS: PROGRESS · stream=AA+BB · item=false-positive-sweep
+
+---
 
 ### 2026-05-09 — iter 331 (merge wave: EE/OOO/WW/X-09a/X-07/X-08 + X-06/07/08 rebase)
 
