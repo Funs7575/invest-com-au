@@ -61,6 +61,11 @@ export async function proxy(request: NextRequest) {
   // x-request-id via request.headers.get('x-request-id').
   const forwardedHeaders = new Headers(request.headers)
   forwardedHeaders.set('x-request-id', requestId)
+  // Country Mode / Language Mode: stamp the pathname so the root
+  // layout can derive the active locale from the URL prefix and set
+  // <html lang> + <html dir> dynamically. Server components have no
+  // other way to read the pathname for root layouts (no params).
+  forwardedHeaders.set('x-pathname', pathname)
 
   const response = NextResponse.next({
     request: { headers: forwardedHeaders },
