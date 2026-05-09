@@ -3,6 +3,7 @@ import { z } from "zod";
 import { requireAdmin } from "@/lib/require-admin";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
+import { escapeHtml } from "@/lib/html-escape";
 
 const log = logger("admin-campaign-notify");
 
@@ -14,14 +15,6 @@ const NotifyBody = z.object({
   link: z.string().optional(),
   send_email: z.boolean().optional().default(false),
 });
-
-function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
 
 /**
  * POST /api/admin/marketplace/campaign-notify

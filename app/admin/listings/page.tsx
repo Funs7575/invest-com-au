@@ -5,6 +5,7 @@ import AdminShell from "@/components/AdminShell";
 import Icon from "@/components/Icon";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import { createClient } from "@/lib/supabase/client";
+import { formatDate } from "@/lib/utils";
 
 interface Listing {
   id: number;
@@ -47,14 +48,6 @@ function formatPrice(cents: number | null, display: string | null): string {
   return `$${(cents / 100).toLocaleString("en-AU")}`;
 }
 
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString("en-AU", {
-    day: "numeric",
-    month: "short",
-    year: "2-digit",
-  });
-}
-
 export default function AdminListingsPage() {
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
@@ -76,6 +69,7 @@ export default function AdminListingsPage() {
   }, [supabase]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- pre-existing pattern, refactor is post-launch hub-data-fetch redesign
     fetchListings();
   }, [fetchListings]);
 
@@ -306,7 +300,7 @@ export default function AdminListingsPage() {
 
                     {/* Created */}
                     <td className="px-4 py-3 text-slate-500 text-xs hidden lg:table-cell">
-                      {formatDate(listing.created_at)}
+                      {formatDate(listing.created_at, { style: "short-year" })}
                     </td>
 
                     {/* Actions */}

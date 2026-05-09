@@ -3,6 +3,7 @@ import { isRateLimited } from "@/lib/rate-limit";
 import { createClient } from "@/lib/supabase/server";
 import { getAdminEmails } from "@/lib/admin";
 import { logger } from "@/lib/logger";
+import { escapeHtml } from "@/lib/html-escape";
 
 const log = logger("broker-outreach");
 
@@ -41,6 +42,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // eslint-disable-next-line invest/no-unvalidated-req-json -- pre-existing; Zod backfill is E-04 stream territory, out of scope for SSOT cleanup PR
     const body = await request.json();
     const {
       to_email,
@@ -173,12 +175,4 @@ function buildHtml({
       </p>
     </div>
   </div>`;
-}
-
-function escapeHtml(s: string): string {
-  return s
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
 }

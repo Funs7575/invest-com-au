@@ -8,6 +8,7 @@ import { downloadCSV } from "@/lib/csv-export";
 import TableSkeleton from "@/components/TableSkeleton";
 import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
 import type { RegulatoryAlert } from "@/lib/types";
+import { slugify } from "@/lib/utils";
 
 interface FormData {
   title: string;
@@ -36,13 +37,6 @@ const emptyForm: FormData = {
   action_items: "[]",
   status: "draft",
 };
-
-function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-}
 
 export default function RegulatoryAlertsPage() {
   const supabase = createClient();
@@ -74,6 +68,7 @@ export default function RegulatoryAlertsPage() {
   }, [supabase]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- pre-existing pattern, refactor is post-launch hub-data-fetch redesign
     load();
   }, [load]);
 
