@@ -9,7 +9,9 @@ import Icon from "@/components/Icon";
 import ShortlistButton from "@/components/ShortlistButton";
 import BrokerLogo from "@/components/BrokerLogo";
 import FeeVerifiedPill from "@/components/FeeVerifiedPill";
+import EligibilityBadge from "@/components/EligibilityBadge";
 import { isSponsored } from "@/lib/sponsorship";
+import type { IntentCountryCode } from "@/lib/intent-context";
 
 export default memo(function BrokerCard({
   broker,
@@ -18,6 +20,7 @@ export default memo(function BrokerCard({
   isSelected,
   onToggleSelect,
   selectionDisabled,
+  intentCountry = null,
 }: {
   broker: Broker;
   badge?: string;
@@ -25,6 +28,11 @@ export default memo(function BrokerCard({
   isSelected?: boolean;
   onToggleSelect?: (slug: string) => void;
   selectionDisabled?: boolean;
+  /** PR queue #12 — visitor's resolved intent country. When set, the
+   *  card renders an EligibilityBadge based on the broker's
+   *  country_eligibility column. Caller is responsible for resolving
+   *  the cookie (server) or hook value (client). */
+  intentCountry?: IntentCountryCode | null;
 }) {
   const isSponsoredBroker = isSponsored(broker);
   const isShareOrCFD = broker.platform_type === 'share_broker' || broker.platform_type === 'cfd_forex';
@@ -68,13 +76,15 @@ export default memo(function BrokerCard({
         <div className="flex items-center gap-2.5 mb-2">
           <BrokerLogo broker={broker} size="md" />
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5 flex-wrap">
               <a href={`/broker/${broker.slug}`} className="font-bold text-sm text-slate-900 hover:text-slate-700 transition-colors truncate">
                 {broker.name}
               </a>
               {broker.affiliate_url && !isSponsoredBroker && (
                 <span title={AFFILIATE_AD_TOOLTIP} className="text-[0.6rem] font-semibold px-1 py-0.5 bg-slate-100 text-slate-400 rounded uppercase tracking-wide shrink-0">Ad</span>
               )}
+              {/* PR queue #12 — eligibility badge when visitor has intent country */}
+              <EligibilityBadge entity={broker} intentCountry={intentCountry} compact />
             </div>
             <div className="flex items-center gap-1.5">
               <span className="text-amber-400 text-xs">{renderStars(broker.rating || 0)}</span>
