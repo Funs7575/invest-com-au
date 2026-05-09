@@ -39,7 +39,7 @@ export default async function CountryModeBanner() {
               type="submit"
               className="text-slate-600 hover:text-slate-900 underline underline-offset-2"
             >
-              View global
+              Back to Australia <span aria-hidden>🇦🇺</span>
             </button>
           </form>
         </div>
