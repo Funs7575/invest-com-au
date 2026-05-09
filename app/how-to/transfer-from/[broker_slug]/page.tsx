@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 import Icon from "@/components/Icon";
 
 export const revalidate = 3600;
@@ -41,7 +41,7 @@ interface BrokerRow {
 
 async function fetchGuide(brokerSlug: string): Promise<GuideRow | null> {
   try {
-    const supabase = createAdminClient();
+    const supabase = await createClient();
     const { data } = await supabase
       .from("broker_transfer_guides")
       .select("*")
@@ -55,7 +55,7 @@ async function fetchGuide(brokerSlug: string): Promise<GuideRow | null> {
 
 async function fetchBroker(slug: string): Promise<BrokerRow | null> {
   try {
-    const supabase = createAdminClient();
+    const supabase = await createClient();
     const { data } = await supabase
       .from("brokers")
       .select("slug, name, logo_url, rating, tagline, asx_fee, chess_sponsored, smsf_support")
@@ -69,7 +69,7 @@ async function fetchBroker(slug: string): Promise<BrokerRow | null> {
 
 async function fetchTopBrokers(excludeSlug: string): Promise<BrokerRow[]> {
   try {
-    const supabase = createAdminClient();
+    const supabase = await createClient();
     const { data } = await supabase
       .from("brokers")
       .select("slug, name, logo_url, rating, tagline, asx_fee, chess_sponsored, smsf_support")
@@ -86,7 +86,7 @@ async function fetchTopBrokers(excludeSlug: string): Promise<BrokerRow[]> {
 
 export async function generateStaticParams() {
   try {
-    const supabase = createAdminClient();
+    const supabase = await createClient();
     const { data } = await supabase
       .from("broker_transfer_guides")
       .select("broker_slug");
