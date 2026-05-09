@@ -1,4 +1,8 @@
 "use client";
+// dated-strings-exempt: alert dates are static regulatory effective-dates
+// shipped as a transitional in-code seed; #15 part 2 moves these to a
+// `country_rule_alerts` table with stalesAt per row, at which point this
+// file is deleted and the gate applies to the new DB-backed renderer.
 
 /**
  * CountryRuleAlerts — surfaces 1-2 high-impact rule-change notifications
