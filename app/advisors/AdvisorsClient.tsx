@@ -7,6 +7,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import type { Professional, ProfessionalType, AdvisorFirm } from "@/lib/types";
+import EligibilityBadge from "@/components/EligibilityBadge";
 import { PROFESSIONAL_TYPE_LABELS, PROFESSIONAL_TYPE_ICONS, AU_STATES } from "@/lib/types";
 import Icon from "@/components/Icon";
 import VerifiedBadge from "@/components/VerifiedBadge";
@@ -158,7 +159,7 @@ function UseMyLocation({ onLocate }: { onLocate: (lat: number, lng: number) => v
   );
 }
 
-export default function AdvisorsClient({ professionals, initialType, initialState, pageTitle, pageDescription, faqs = [], editorial, firms = [], firmMemberCounts = {} }: {
+export default function AdvisorsClient({ professionals, initialType, initialState, pageTitle, pageDescription, faqs = [], editorial, firms = [], firmMemberCounts = {}, intentCountry = null }: {
   professionals: Professional[];
   initialType?: ProfessionalType;
   initialState?: string;
@@ -168,6 +169,8 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
   editorial?: { howToChoose: string[]; costGuide: string; industryInsight: string };
   firms?: AdvisorFirm[];
   firmMemberCounts?: Record<number, number>;
+  /** PR queue #12.5 — visitor's resolved intent country. When set, every advisor card renders an EligibilityBadge based on country_eligibility. */
+  intentCountry?: import("@/lib/intent-context").IntentCountryCode | null;
 }) {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -915,6 +918,8 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                                 Fast reply
                               </span>
                             )}
+                            {/* PR queue #12.5 — eligibility badge per visitor's intent country */}
+                            <EligibilityBadge entity={pro} intentCountry={intentCountry} compact />
                             {pro.accepts_international_clients && (
                               <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100">🌏 Intl</span>
                             )}
