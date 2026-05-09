@@ -179,14 +179,14 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 ### Stream BB — Broker comparison deep-links
 
 | Item | Status | Description | Est. iters | Notes |
-|------|--------|-------------|--------------|-------|
-| BB-01 | pending | Broker vs-broker comparison page (`/compare/[broker-a]-vs-[broker-b]`) | ~5 | Deps: D-09. |
-| BB-02 | pending | Comparison table component (fee diff, feature matrix) | ~4 | Deps: BB-01. |
-| BB-03 | pending | SEO metadata + JSON-LD for comparison pages | ~2 | Deps: BB-01. |
-| BB-04 | pending | Internal linking (broker detail pages → comparison pages) | ~2 | Deps: BB-03. |
-| BB-05 | pending | Affiliate CTA placement on comparison pages | ~1 | Deps: BB-04. |
+|------|--------|-------------|------------|-------|
+| BB-01 | ~~false-positive~~ | ~~Broker vs-broker comparison page (`/compare/[broker-a]-vs-[broker-b]`)~~ | — | `app/versus/[slugs]/page.tsx` — full SEO page, 50+ pre-rendered pairs (`POPULAR_PAIRS`). URL is `/versus/` rather than `/compare/` but feature is complete: popular-pairs ISR, `generateStaticParams`, `generateMetadata`, OG image. |
+| BB-02 | ~~false-positive~~ | ~~Comparison table component (fee diff, feature matrix)~~ | — | `app/versus/VersusClient.tsx` (734 LOC): fee diff, feature matrix, winner-by-scenario, community vote. `components/ComparisonTableSkeleton.tsx` also exists. |
+| BB-03 | ~~false-positive~~ | ~~SEO metadata + JSON-LD for comparison pages~~ | — | `versusComparisonJsonLd()` in `lib/schema-markup.ts` (line 319). Metadata + breadcrumb JSON-LD in `versus/[slugs]/page.tsx`. |
+| BB-04 | ~~false-positive~~ | ~~Internal linking (broker detail pages → comparison pages)~~ | — | `app/broker/[slug]/page.tsx` queries `versus_editorials` and renders links to `/versus/[slug]` (lines 146–330). |
+| BB-05 | ~~false-positive~~ | ~~Affiliate CTA placement on comparison pages~~ | — | `VersusClient.tsx`: `getAffiliateLink`, `trackClick`, `AFFILIATE_REL`, `StickyCTABar` all wired up. |
 
-**Stream BB entry condition:** D-09 merged (done). Ready to start.
+**Stream BB entry condition:** All items pre-existed under `/versus/` route. Stream resolved as false-positive (iter 333).
 
 ---
 
@@ -918,10 +918,26 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 | OOO (partial) | — | iter 321b | OOO-04 false-positive — `breach-notification.md` fully covers OAIC NDB 30-day clock, GDPR 72h, P0-P3 severity matrix |
 | EE (partial) | #653 | iter 322 | EE-01 done (audit — root covers all routes, 3 files fixed). EE-02/03/04 false-positive — RouteErrorBoundary + RouteLoadingSkeleton pre-existed. EE-05 still pending. |
 | AA | — | iter 332 | AA-01..AA-05 all false-positive — completeness score, onboarding checklist, email drip, public profile SEO, and review-request flow all pre-existed. ADV stream entry condition (AA-04 done) now satisfied. |
+| BB | — | iter 333 | BB-01..BB-05 all false-positive — feature exists under `/versus/` route: `versus/[slugs]/page.tsx` (full SEO + 50+ pairs), `VersusClient.tsx` (734 LOC), `versusComparisonJsonLd`, internal links from broker detail pages, affiliate CTAs in VersusClient. |
 
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-09 — iter 333 (BB — all 5 items false-positive)
+
+**Why:** Verification sweep of stream BB found all 5 items pre-exist under `/versus/` (different URL prefix from spec but same feature):
+- BB-01: `app/versus/[slugs]/page.tsx` — full broker vs-broker comparison page with 50+ POPULAR_PAIRS pre-rendered at build time, `generateStaticParams`, `generateMetadata`, OG images, ISR revalidate 1800s.
+- BB-02: `app/versus/VersusClient.tsx` (734 LOC) — comparison table with fee diff, feature matrix, winner-by-scenario, community vote. `components/ComparisonTableSkeleton.tsx` also exists.
+- BB-03: `versusComparisonJsonLd()` in `lib/schema-markup.ts` line 319. Breadcrumb JSON-LD + full metadata in `versus/[slugs]/page.tsx`.
+- BB-04: `app/broker/[slug]/page.tsx` queries `versus_editorials` table and renders `/versus/[slug]` links for internal linking.
+- BB-05: `VersusClient.tsx` has `getAffiliateLink`, `trackClick`, `AFFILIATE_REL`, `StickyCTABar` wired to affiliate CTAs.
+
+No code changes. Queue-only update.
+
+STATUS: PROGRESS · stream=BB · item=BB-01..BB-05 (all false-positive)
+
+---
 
 ### 2026-05-09 — iter 332 (AA — all 5 items false-positive)
 
