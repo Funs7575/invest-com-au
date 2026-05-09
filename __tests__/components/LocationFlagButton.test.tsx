@@ -109,11 +109,11 @@ describe("LocationFlagButton", () => {
     });
   });
 
-  describe("'Show me the global view' clears cookie + resets localStorage", () => {
+  describe("'Switch to Australia' clears cookie + resets localStorage", () => {
     it("calls clearIntentCountryAction and stores AU in localStorage", async () => {
       const user = userEvent.setup();
       // Start with HK as the active country so the popover renders the
-      // "Viewing as" branch with the global-reset button.
+      // "Viewing as" branch with the AU-reset button.
       localStorage.setItem("iv-location-flag-override", "HK");
       render(<LocationFlagButton />);
 
@@ -124,7 +124,7 @@ describe("LocationFlagButton", () => {
       );
 
       const resetButton = await screen.findByRole("button", {
-        name: /show me the global view/i,
+        name: /switch to australia/i,
       });
       await user.click(resetButton);
 
