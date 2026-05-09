@@ -40,6 +40,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | X | `claude/audit-remediation/x-09-preview-advisor-final` (#646) · `x-09-eslint-ratchet` (#648) | #257/#367/#596/#600/#610 MERGED · **#641 OPEN** (X-06) · **#643 OPEN** (X-07) · **#644 OPEN** (X-08) · **#646 OPEN** (X-09a) · **#648 OPEN** (X-09b) | X-06 (#641 CI ✓), X-07 (#643 CI ✓), X-08 (#644 CI ✓), X-09a (#646 — preview/[token] swap + keep-admin annotations), X-09b (#648 — ESLint ratchet). **Stream X complete** once all 5 PRs merge. | All X PRs merged |
 | EE | `claude/audit-remediation/ee-01-error-boundaries` · **#653 OPEN** | **#653 OPEN** (EE-01) | EE-01 done + EE-02/03/04 FP. Fixes quiz/calculators/savings-calc error.tsx. EE-05 pending. | EE-05 merged |
 | FF | `claude/audit-remediation/ff-01-feature-flag-audit` · **#656 OPEN** | **#656 OPEN** (FF-01) | FF-01 done — seeded 8 missing flags. FF-02/03/04 pending. | FF-04 merged |
+| OOO | `claude/audit-remediation/ooo-01-runbook-audit` · **#652 OPEN** | — · **#652 OPEN** | OOO-01 done. OOO-04 FP. OOO-02 done (incident-severity.md, iter 324b). OOO-03 pending. | OOO-03 merged |
 | WW | `claude/audit-remediation/ww-01-watchlist-data-model` · **#651 OPEN** | **#651 OPEN** (WW-01) | WW-01 migration applied to live DB, types regenerated. | All WW tasks merged |
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
 | Z | `claude/audit-remediation/z-04-zero-state-ux` | #230/#323/#403/#457/#524/#565 | Z-01..Z-04 done. | Z-04 merged ✓ |
@@ -691,12 +692,12 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|--------------|-------|
-| OOO-01 | pending | Runbook audit (identify gaps vs. `docs/runbooks/` inventory) | ~2 | |
-| OOO-02 | pending | Incident severity classification runbook | ~2 | Deps: OOO-01. |
-| OOO-03 | pending | On-call rotation runbook (contacts, escalation path) | ~2 | Deps: OOO-01. |
-| OOO-04 | pending | Data breach response runbook (OAIC notification requirements) | ~3 | Compliance. Deps: OOO-01. |
+| OOO-01 | ~~done~~ | ~~Runbook audit (identify gaps vs. `docs/runbooks/` inventory)~~ | ~2 | README updated (30 runbooks inventoried), supabase-slow.md + slo-breach.md created, gap register added. PR #652. |
+| OOO-02 | ~~done~~ | ~~Incident severity classification runbook~~ | ~2 | `docs/runbooks/incident-severity.md` created. P0-P4 severity table, decision guide, impact reference, escalation path, Slack templates, slo_incidents SQL, de-escalation criteria. PR #652 commit 8b91ddc. |
+| OOO-03 | pending | On-call rotation runbook (contacts, escalation path) | ~2 | Deps: OOO-01 ✓, OOO-02 ✓. |
+| OOO-04 | ~~false-positive~~ | ~~Data breach response runbook (OAIC notification requirements)~~ | — | `breach-notification.md` fully covers NDB 30-day clock, GDPR 72h, P0-P3 severity matrix, OAIC form, individual notification template. |
 
-**Stream OOO entry condition:** OOO-01 can start immediately.
+**Stream OOO entry condition:** OOO-01 + OOO-02 done. OOO-03 can start immediately.
 
 ---
 
@@ -919,6 +920,20 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-09 — iter 324b (OOO — OOO-02: incident severity classification runbook)
+
+**PR:** #652 (`claude/audit-remediation/ooo-01-runbook-audit`) — OPEN, OOO-02 commit pushed.
+
+**Why:** The OOO-01 runbook audit (iter 321b) identified that no general-purpose severity classification runbook existed — only `breach-notification.md` had a breach-specific P0-P3 matrix. On-call engineers had no single source of truth for triage priority across all alert types. This item was OOO-02 in the gap register added to `docs/runbooks/README.md` in iter 321b.
+
+**What shipped:**
+- `docs/runbooks/incident-severity.md` (new, 163 lines, commit `8b91ddc`): P0-P4 severity table with response SLAs (P0: respond 15 min/resolve 1h, P1: 30 min/4h, P2: 2h/24h, P3: 24h, P4: no SLA), ordered "stop at first yes" decision guide, impact-reference table per service area (broker listings, quiz, checkout/Stripe, advisor profiles, email, admin panel, database, cron), escalation path tree, internal `#incidents` Slack template + external status-page template, `slo_incidents` INSERT SQL, de-escalation criteria with status-update templates, post-incident pointer to slo-breach.md.
+- Queue: OOO-02 marked done, OOO in-flight row restored + updated (parallel fire `77b107a` had reverted OOO state again).
+
+STATUS: PROGRESS · stream=OOO · item=OOO-02 · pr=#652
+
+---
 
 ### 2026-05-09 — iter 325 (FF — FF-01: seed 8 missing feature flags)
 
