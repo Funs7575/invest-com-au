@@ -108,7 +108,7 @@ describe("user_watchlist_items — RLS isolation", () => {
 
   it("user A cannot SELECT user B's watchlist rows", async () => {
     const { data } = await clientA.select();
-    expect(data!.filter((r) => r.user_id === USER_B)).toHaveLength(0);
+    expect(data!.filter((r: Row) => r.user_id === USER_B)).toHaveLength(0);
   });
 
   it("user B can SELECT their own watchlist rows", async () => {
