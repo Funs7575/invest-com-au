@@ -3,6 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { requireCronAuth } from "@/lib/cron-auth";
 import { sendEmail } from "@/lib/resend";
 import { logger } from "@/lib/logger";
+import { escapeHtml } from "@/lib/html-escape";
 
 const log = logger("cron:synthetic-checks");
 
@@ -204,17 +205,6 @@ async function maybeAlert(
   if (!result.ok) {
     log.warn("synthetic-checks alert email failed", { error: result.error });
   }
-}
-
-const HTML_ESCAPES: Record<string, string> = {
-  "&": "&amp;",
-  "<": "&lt;",
-  ">": "&gt;",
-  '"': "&quot;",
-  "'": "&#39;",
-};
-function escapeHtml(s: string): string {
-  return s.replace(/[&<>"']/g, (ch) => HTML_ESCAPES[ch] ?? ch);
 }
 
 export async function GET(req: NextRequest) {

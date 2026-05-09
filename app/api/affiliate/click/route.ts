@@ -38,7 +38,11 @@ const BodySchema = z.object({
   layer: z.string().max(200).nullish(),
 });
 
-function hashIp(ip: string): string {
+function hashClickIp(ip: string): string {
+  // Affiliate-click hashing reverses (salt + ip) ordering vs lib/article-comments
+  // hashIp (which uses ip + salt). Different concat → different hash output for
+  // the same IP, so click fingerprints don't accidentally cross-reference comment
+  // fingerprints. Renamed from hashIp to make this domain isolation explicit.
   const salt = process.env.IP_HASH_SALT ?? "invest-com-au";
   return crypto.createHash("sha256").update(salt + ip).digest("hex").slice(0, 32);
 }
@@ -91,7 +95,7 @@ export const POST = withValidatedBody(BodySchema, async (req: NextRequest, body)
       device_type: body.device_type ?? null,
       layer: body.layer ?? null,
       user_agent: userAgent,
-      ip_hash: ip === "unknown" ? null : hashIp(ip),
+      ip_hash: ip === "unknown" ? null : hashClickIp(ip),
       clicked_at: new Date().toISOString(),
     });
     if (insertErr) {

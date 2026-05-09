@@ -6,6 +6,7 @@ import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 import { sendEmail } from "@/lib/resend";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { withValidatedBody } from "@/lib/validation/withValidatedBody";
+import { escapeHtml } from "@/lib/html-escape";
 
 export const runtime = "nodejs";
 
@@ -157,14 +158,3 @@ function truncate(s: string, n: number): string {
   return s.length <= n ? s : `${s.slice(0, n - 1)}…`;
 }
 
-const HTML_ESCAPES: Record<string, string> = {
-  "&": "&amp;",
-  "<": "&lt;",
-  ">": "&gt;",
-  '"': "&quot;",
-  "'": "&#39;",
-};
-
-function escapeHtml(s: string): string {
-  return s.replace(/[&<>"']/g, (ch) => HTML_ESCAPES[ch] ?? ch);
-}
