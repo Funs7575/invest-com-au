@@ -906,6 +906,24 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 
 ## Iteration log (most recent at top)
 
+### 2026-05-09 — iter 323 (CI-rescue EE — db types drift fix on #653)
+
+**PR:** #653 (`claude/audit-remediation/ee-01-error-boundaries`) — OPEN, CI re-running.
+
+**Why:** WW-01 (iter 321) applied the `user_watchlist_items` migration to the live DB before PR #651
+merged to main. Any PR opened against main after that migration was applied fails the "Supabase
+types drift" gate, including #653. The fix is to regenerate `lib/database.types.ts` via Supabase
+MCP so the branch matches live schema.
+
+**What shipped:**
+- `lib/database.types.ts` regenerated (+27 lines — only `user_watchlist_items` Row/Insert/Update/Relationships block added). All other table definitions unchanged.
+
+**Commit:** `dd89fc59`
+
+STATUS: CI-RESCUE · stream=EE · pr=#653
+
+---
+
 ### 2026-05-08 — iter 322 (EE — EE-01/EE-02 audit + fix: quiz/calculators/savings-calc error boundaries)
 
 **PR:** #653 (`claude/audit-remediation/ee-01-error-boundaries`) — OPEN, CI running.
