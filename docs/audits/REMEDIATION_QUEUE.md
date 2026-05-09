@@ -894,6 +894,50 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 
 ---
 
+### Stream CMP — Comparison / UX overhaul (added 2026-05-09)
+
+Plan: `/home/finnduns/.claude/plans/ok-audit-agaisnt-what-enumerated-honey.md` (single source of truth — every item below cross-references a section in that file).
+
+**Foundation already shipped on `claude/comparison-overhaul/foundation`:**
+- `lib/calculator-state.ts` + `__tests__/lib/calculator-state.test.ts`
+- `lib/heatmap.ts` + `__tests__/lib/heatmap.test.ts`
+- `lib/tco.ts` + `__tests__/lib/tco.test.ts`
+- `lib/switch-scripts.ts` + `app/switch-scripts/page.tsx` + `app/switch-scripts/[broker-slug]/page.tsx` (3 seeds: commsec, stake, selfwealth)
+- `components/charts/SVGRadarChart.tsx` + `__tests__/components/SVGRadarChart.test.tsx`
+- `lib/hooks/useComparisonCart.ts` (composes `useShortlist` + localStorage non-broker layer; cap=6)
+- `app/api/calculator-state/route.ts` (GET + POST)
+- Migration `20260720_cmp_w1a_user_calculator_state.sql` (table + RLS + `anonymous_saves.calculator_state` column)
+- `lib/bookmarks.ts:158` extended to claim calculator state in same flow
+
+| Item | Status | Description | Est. iters | Notes |
+|------|--------|-------------|------------|-------|
+| CMP-W1A-INT | pending | Integrate `lib/calculator-state.ts` into 3 highest-traffic calculators (`/tco-calculator`, `/savings-calculator`, `/mortgage-calculator`): debounced autosave + prefill banner + URL-param entry. | ~3 | Plan §W1-A. Reuse `getPrefillFor("tco", state)` per `PREFILL_RULES`. |
+| CMP-W1B-DRAWER | pending | `components/ComparisonCart.tsx` — floating button (counter badge) + `BottomSheet` mobile drawer + sticky desktop drawer; mounted in `app/layout.tsx`. Uses `useComparisonCart`. Toast on add. | ~4 | Plan §W1-B. |
+| CMP-W1B-MATRIX | pending | Extend `app/shortlist/compare/page.tsx` to render mixed broker/advisor/ETF rows + `<TrueCostCell>` column. `app/api/comparison-matrix/route.ts` returns side-by-side comparable fields per kind. | ~3 | Plan §W1-B. Composes with W1-D. |
+| CMP-W1B-SCHEMA | pending | Migration: `user_saved_comparisons.advisor_slugs TEXT[]` + `etf_tickers TEXT[]`; extend `BookmarkType` union to include `'etf'` + DB CHECK constraint relax + extend `claimAnonymousSaves` for ETF type. | ~2 | Plan §W1-B. Idempotent. |
+| CMP-W1C-TABLE | pending | `components/HeatmapTable.tsx` — wraps existing `BrokerComparisonTable.tsx`/`AdvisorCompareMatrix.tsx`/`ShortlistClient` matrix with `decorate()` + corner glyph + ARIA rank label. | ~2 | Plan §W1-C. Use `lib/heatmap.ts` (already shipped). |
+| CMP-W1C-SWIPE | pending | Add `embla-carousel-react` dep; `components/SwipeRow.tsx` mobile-only carousel for matrix rows. `md:hidden` swap. Playwright a11y test on chromium. | ~2 | Plan §W1-C. |
+| CMP-W1D-CELL | pending | `components/TrueCostCell.tsx` — renders `$0 → $X/yr` with popover listing components + `<DatedStatBadge>` source per row. Wire into `/tco-calculator`, `/versus/[slugs]`, `/best/*`, comparison matrix. | ~3 | Plan §W1-D. Use `lib/tco.ts` (already shipped). |
+| CMP-W1D-SCHEMA | pending | Add `brokers.account_transfer_out_fee NUMERIC` if missing (check schema first). Idempotent. | ~1 | Plan §W1-D. |
+| CMP-W2A-CRON | pending | `app/api/cron/fee-change-diff/route.ts` (hourly): diff structured fee fields (`asx_fee_value`, `us_fee_value`, `fx_rate`, `inactivity_fee_value`, `account_transfer_out_fee`) via `broker_data_changes` rows; send via existing `feeChangeAlertEmail`. + 2 indexes. | ~3 | Plan §W2-A. Frequency=`instant` only; weekly bundled by existing `fee-digest`. NEVER diff page-hash flips. |
+| CMP-W2B-PERSONA | **blocked** | `lib/persona-match.ts` + `components/PersonaMatchBadge.tsx` + `PersonaMatchPopover.tsx`. Reads `user_quiz_history.answers`. Label MUST be "Matches your stated criteria" — never "best for you". Founder/legal review of weights table required before merge. | ~4 | Plan §W2-B. **Tier C + needs-user blocker — do NOT pick until founder approves weights.** |
+| CMP-W2C-SURVEY | pending | 30-day outcome survey: 3 columns on `professional_leads` + `notification_preferences.outcome_survey` + `app/api/cron/lead-outcome-survey/route.ts` + `app/api/lead-outcome/route.ts` + `app/lead-outcome/[token]/page.tsx`. Idempotency via `lead_outcome_survey_sends` table + unique partial index. | ~4 | Plan §W2-C. Tier C — review email copy. |
+| CMP-S1-FRESH | pending | `/fees-freshness` public leaderboard + `<FeesFreshnessIndicator>` auto-render on broker cards site-wide. Composes `stale-fee-editorial` cron + `dated-stats-check` cron + `<DatedStatBadge>`. | ~2 | Plan §S1 (synergy). |
+| CMP-S2-DRIP | pending | Abandoned-comparison drip cron: if user pinned ≥2 brokers + no lead within 48h, send "Still comparing? Here's the cost difference" using W1-D true-cost numbers. Extends `abandoned-shortlist-drip`. | ~2 | Plan §S2 (synergy). |
+| CMP-S3-EMBED | pending | Add referer-counter to `/api/widget` + `<EmbedAnalyticsBadge>` on `BrokerCard.tsx`: "Embedded on N sites this month". Aggregation view only (no PII). | ~2 | Plan §S3 (synergy). |
+| CMP-S4-AI | pending | Extend `/api/concierge` with cart-builder mode: "show me crypto exchanges with no FX fees" → returns matching items + "Add all to comparison cart" button → `useComparisonCart`. Compliance: existing `filterFactualOutput()` gate. | ~3 | Plan §S4 (synergy). |
+| CMP-S5-COUNTRY | pending | Read `iv_intent_country` cookie inside `computePersonaMatch`; tweak weights for UK/US/etc. corridors (e.g. GBP-AUD FX cost weighted higher for UK investor). | ~1 | Plan §S5 (synergy). Depends on W2B (persona). |
+| CMP-S6-CTX | pending | When user submits lead from cart matrix, enrich `qualification_data` with `comparison_context: {compared: string[], weighted_on: string, viewed_for_seconds: number}`. | ~2 | Plan §S6 (synergy). |
+| CMP-S7-RESURRECT | pending | Saved-comparison resurrection cron: weekly check for `user_saved_comparisons` rows with stale fee data → email "your saved comparison from N weeks ago has new pricing". | ~1 | Plan §S7 (synergy). |
+| CMP-W3A-AISUM | pending | "Summarize this comparison for me" button on cart matrix. Anthropic SDK + `filterFactualOutput()` gate. 3-bullet output citing underlying data. | ~3 | Plan §W3-A. **Tier C** — compliance review on prompt + output template. Best after W2-B + W2-C land for quality signal. |
+| CMP-W3C-SANKEY | pending | `components/charts/SVGSankeyChart.tsx` — Sankey diagram for cost breakdown ("$1000 yearly cost split across brokerage / FX / inactivity / transfer"). Composes with `lib/tco.ts` components. | ~3 | Plan §W3-C. SVG only (codebase convention). Radar chart already shipped. |
+
+**Stream CMP entry condition:** Foundation libs already on `claude/comparison-overhaul/foundation` (open PR). After that PR merges to main, CMP-W1A-INT can start immediately. CMP-W2B-PERSONA stays blocked until founder approves weights table — surface to "Blocked — needs human input" when picked.
+
+**Compliance note:** every CMP item that surfaces ranking/scoring per user MUST run any dynamic copy through `filterFactualOutput()` (`lib/compliance.ts`) and use `RISK_WARNING_CTA` constant. Never "best for you", "you should", "recommended". The cart matrix and TCO/heatmap views are factual visualisations of disclosed numerics — low risk. Persona ranking (W2-B) is the high-risk item — see plan §W2-B AFSL gate.
+
+---
+
 
 ## Done + Iteration log
 
