@@ -20,8 +20,6 @@
  * advisor's `specialties` array.
  */
 
-import type { AdvisorSpecialty } from "./advisor-specialties";
-
 /**
  * The 4 cross-border specialties that justify premium pricing
  * (ASIC RG 246-friendly: pricing reflects effort + risk profile +
@@ -86,5 +84,3 @@ export function calculateLeadPriceCents(
   return Math.round(basePriceCents * tierMultiplier * crossBorder);
 }
 
-// Re-export for callers that want the type
-export type { AdvisorSpecialty };
