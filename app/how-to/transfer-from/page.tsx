@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 import Icon from "@/components/Icon";
 
 export const revalidate = 3600;
@@ -30,7 +30,7 @@ interface BrokerRow {
 
 async function fetchGuides(): Promise<GuideRow[]> {
   try {
-    const supabase = createAdminClient();
+    const supabase = await createClient();
     const { data } = await supabase
       .from("broker_transfer_guides")
       .select(
@@ -46,7 +46,7 @@ async function fetchGuides(): Promise<GuideRow[]> {
 async function fetchBrokers(slugs: string[]): Promise<Record<string, BrokerRow>> {
   if (slugs.length === 0) return {};
   try {
-    const supabase = createAdminClient();
+    const supabase = await createClient();
     const { data } = await supabase
       .from("brokers")
       .select("slug, name, logo_url")
