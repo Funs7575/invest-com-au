@@ -163,7 +163,16 @@ If multiple streams have red CI (and the stuck-detection guards above don't fire
 
 ### Phase 3 — Pick the next item
 
-Walk `REMEDIATION_DEFAULTS.md`'s priority order. For each stream in order:
+**Selection overrides first** (added 2026-05-09 — see "Selection overrides" section in `REMEDIATION_DEFAULTS.md`). Run these checks in order BEFORE walking the linear priority list. Each override skips the linear walk if it picks a candidate.
+
+1. **Tier-0 anonymity preempt.** If any `CL-01..CL-09` item is `pending` and not `blocked`, pick it. Print `STATUS: PROGRESS · override=tier-0` in the iteration log.
+2. **Tier-1 critical-path preempt.** If `LL-01` (logged-in user profile + dashboard) is `pending` and not `blocked`, pick it. Print `STATUS: PROGRESS · override=tier-1-critical-path`. Reason: it unblocks 15+ downstream items (LL-02, LX-02/04, GT-01/02, DF-01..04, AT-01..04, CD-01, DV-01) per DEFAULTS.md Tier-1 section.
+3. **Unblock-driven tiebreaker.** When the linear walk produces multiple candidates at the same effective priority (e.g. two streams have unblocked items at slot N), prefer the candidate whose stream-letter has the most `depends-on:<stream>` references in `REMEDIATION_QUEUE.md`. Estimate via `grep -c "depends-on:<X>" docs/audits/REMEDIATION_QUEUE.md` for each candidate stream. Print `STATUS: PROGRESS · override=unblock-driven-tiebreaker` when this fires.
+4. **Otherwise:** walk the linear priority list as before.
+
+The override-vs-linear ratio is visible by grepping the iteration log for `override=`. If overrides never fire over a 50-iteration window, either the Tier-0/1 work is genuinely complete (good) or the loop is not reading DEFAULTS.md properly (regression — surface to founder).
+
+Then, walk `REMEDIATION_DEFAULTS.md`'s priority order. For each stream in order:
 
 - **Skip items with status `blocked` or `false-positive`** — these are not picked up by the loop. Blocked items are the user's call; false-positives are already resolved.
 - If the stream's queue section has a `pending` item, that's the candidate.
@@ -290,13 +299,53 @@ If the iteration's status is `STATUS: ALL-BLOCKED` (everything is blocked but no
 ```bash
 git checkout main
 git pull --ff-only origin main
+
+# Snapshot the queue file size BEFORE editing — used by the truncation
+# guard below. Added 2026-05-09 after the queue file was truncated twice
+# in 24h via partial MCP push (recovered as PRs #660→#661 and earlier).
+QUEUE_FILE=docs/audits/REMEDIATION_QUEUE.md
+PRE_EDIT_LINES=$(wc -l < "$QUEUE_FILE")
+
 # ...edit docs/audits/REMEDIATION_QUEUE.md...
-git add docs/audits/REMEDIATION_QUEUE.md
+
+# TRUNCATION GUARD — refuse to push if the queue shrank by more than 10%.
+# Iteration edits append a Done-row + iteration-log entry; a healthy edit
+# grows the file, never shrinks it noticeably. A >10% drop almost always
+# means a partial write (MCP push lost lines, Read returned a truncated
+# view, etc.) — pushing that overwrites real queue state with garbage.
+POST_EDIT_LINES=$(wc -l < "$QUEUE_FILE")
+SHRINK_PCT=$(awk -v p="$PRE_EDIT_LINES" -v q="$POST_EDIT_LINES" \
+  'BEGIN { if (p == 0) print 0; else printf "%d", ((p - q) * 100) / p }')
+if [ "$SHRINK_PCT" -gt 10 ]; then
+  echo "STATUS: BLOCKED · queue-truncation-guard"
+  echo "Pre-edit lines:  $PRE_EDIT_LINES"
+  echo "Post-edit lines: $POST_EDIT_LINES (dropped ${SHRINK_PCT}%)"
+  echo "Refusing to push. Run \`git checkout -- $QUEUE_FILE\` to discard,"
+  echo "investigate the truncation, then retry the queue edit."
+  git checkout -- "$QUEUE_FILE"
+  exit 1
+fi
+
+git add "$QUEUE_FILE"
 HUSKY=0 git commit -m "chore(audit): queue update — iter <N>, <item-ID> <status>
 
 Refs: #<tracking-issue>"
 HUSKY=0 git push origin main
 ```
+
+**Why the guard exists.** The queue file grew to 4,282 lines before the
+2026-05-09 compaction. At that size, partial reads (MCP read-tool default
+limit, network truncation) and partial writes (concurrent push race
+losing the tail) were repeatedly producing post-edit files smaller than
+the pre-edit file. The guard catches that class of failure before it
+hits main. Real iteration edits add ~5–15 lines (Done-row + iter-log
+entry); the 10% threshold is comfortably above noise.
+
+**False positives.** The guard fires legitimately if the iteration's
+work is "compact a Done section into the archive" — that's the only
+real shrink case. In that scenario, the iteration should bypass the
+guard explicitly by setting `BYPASS_TRUNCATION_GUARD=1` in env and
+documenting the pre- and post-line counts in the commit body.
 
 In `docs/audits/REMEDIATION_QUEUE.md`:
 
