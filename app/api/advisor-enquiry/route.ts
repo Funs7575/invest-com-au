@@ -256,7 +256,7 @@ export async function POST(request: NextRequest) {
     // First 2 leads are free (trial), then deduct from credit balance
     const { data: advisor } = await supabase
       .from("professionals")
-      .select("free_leads_used, lead_price_cents, credit_balance_cents, lifetime_lead_spend_cents, total_leads, low_credit_alert_sent_at, specialties")
+      .select("free_leads_used, lead_price_cents, credit_balance_cents, lifetime_lead_spend_cents, total_leads, low_credit_alert_sent_at, specialties, avg_response_minutes")
       .eq("id", professional_id)
       .single();
 
@@ -293,10 +293,20 @@ export async function POST(request: NextRequest) {
     // DASP / FIRB Property (Non-Resident). Stacks with tier multiplier
     // because cross-border + international is the highest-LTV combination
     // (UK arrival into AU with non-resident mortgage flow).
+    //
+    // Response-time reward (PR queue #9 PR-X2): pairs with the visitor-
+    // side "Fast reply (<1h)" badge. 25% off when avg_response_minutes
+    // ≤ 60. Applied AFTER cross-border so a fast advisor on a cross-
+    // border lead sees a discount on top of the premium.
     const { crossBorderLeadMultiplier } = await import("@/lib/advisor-billing-multipliers");
+    const { responseTimeMultiplier } = await import("@/lib/advisor-billing-response-time");
     const priceCents = isFree
       ? 0
-      : Math.round(tieredCents * crossBorderLeadMultiplier(advisor?.specialties));
+      : Math.round(
+          tieredCents
+            * crossBorderLeadMultiplier(advisor?.specialties)
+            * responseTimeMultiplier(advisor?.avg_response_minutes),
+        );
     const balance = advisor?.credit_balance_cents || 0;
     const hasSufficientCredit = balance >= priceCents;
 
