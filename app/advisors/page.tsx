@@ -28,8 +28,9 @@ export const metadata: Metadata = {
 
 async function AdvisorsData() {
   const supabase = await createClient();
+  const { getIntentCountry } = await import("@/lib/intent-context-server");
 
-  const [proResult, firmResult] = await Promise.all([
+  const [proResult, firmResult, intentCountry] = await Promise.all([
     supabase
       .from("professionals")
       .select("*")
@@ -42,6 +43,7 @@ async function AdvisorsData() {
       .select("*")
       .eq("status", "active")
       .order("name", { ascending: true }),
+    getIntentCountry(),
   ]);
 
   // Surface Supabase errors to the error boundary so users see a retry
@@ -65,7 +67,7 @@ async function AdvisorsData() {
     if (p.firm_id) firmMemberCounts[p.firm_id] = (firmMemberCounts[p.firm_id] || 0) + 1;
   });
 
-  return <AdvisorsClient professionals={professionals} firms={firms} firmMemberCounts={firmMemberCounts} />;
+  return <AdvisorsClient professionals={professionals} firms={firms} firmMemberCounts={firmMemberCounts} intentCountry={intentCountry} />;
 }
 
 export default function AdvisorsPage() {
