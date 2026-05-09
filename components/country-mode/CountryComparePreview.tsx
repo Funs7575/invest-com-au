@@ -55,7 +55,7 @@ export default async function CountryComparePreview() {
 
   const rows: PreviewBroker[] = (data ?? []) as PreviewBroker[];
 
-  const result = applySupplyThresholds(rows, "platforms");
+  const result = applySupplyThresholds(rows, "platforms", code);
   if (result.didFallback) return null;
 
   const meta = intentCountryMeta(code);
