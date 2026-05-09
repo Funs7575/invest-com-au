@@ -38,6 +38,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | V | `claude/audit-remediation/v-07-auth-hardening` | #227/#320/#400/#457/#521/#562 | V-01..V-07 done. | V-07 merged ✓ |
 | W | `claude/audit-remediation/w-12-hub-page-hoc` (W-15 remaining) | #306/#312/#369/#529/#598/#599/#602/#604/#605/#606/#607/#608/#609/#612 | **#609 MERGED 2026-05-08** (W-12+W-13+W-15 dividends). **#612 MERGED 2026-05-08** (W-14 grants→/startup/grants). W-04..W-15 all MERGED. | All W tasks merged ✓ |
 | X | `claude/audit-remediation/x-09-preview-advisor-final` · `x-09-eslint-ratchet` (#648) | #257/#367/#596/#600/#610/#643/#644/#646 MERGED · **#641 OPEN** (X-06 — CI running) · **#648 OPEN** (X-09b) | X-06 (#641 rebased iter 331 — CI running), X-07 (#643 MERGED), X-08 (#644 MERGED), X-09a (#646 MERGED). X-09b (#648 blocked on X-06). **Stream X complete** once X-06+X-09b merge. | All X PRs merged |
+| CC | `claude/audit-remediation/cc-01-country-mode-audit` · **#673 OPEN** | **#673 OPEN** | CC-01 done (audit + gap report `docs/audits/country-mode-gaps.md`). CC-03 false-positive. CC-02/CC-04/CC-05 pending. | CC-05 merged |
 | EE | `claude/audit-remediation/ee-01-error-boundaries` | **#653 MERGED** (EE-01+EE-05) | EE-01 done + EE-02/03/04 FP + EE-05 done. **Stream complete.** | #653 merged ✓ |
 | FF | `claude/audit-remediation/ff-01-feature-flag-audit` · **#656 OPEN** | **#656 OPEN** (FF-01..FF-04) | FF-01 done. FF-02 done (iter 329, commit `b276f56a`). FF-02 CI rescue (iter 330, commit `2b869f91`). FF-03 false-positive (flag mgmt UI pre-existed W-07 commit `6723b24`). FF-04 done (iter 330, `last_evaluated_at` + loadFlag(), commit `aa34e77`). **Stream complete.** | FF-04 merged |
 | OOO | `claude/audit-remediation/ooo-01-runbook-audit` | **#652 MERGED** | OOO-01 done. OOO-04 FP. OOO-02 done. OOO-03 done. **Stream complete.** | OOO-03 merged ✓ |
@@ -194,11 +195,11 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
-| CC-01 | **done** | Country-mode coverage audit (identify gaps vs. `lib/country-mode/`) | — | Audit complete (iter 334). Findings: infrastructure solid; all 6 country configs have homepage filters; 4 gaps documented below for CC-02..CC-05. |
-| CC-02 | pending | NZ supply-threshold tuning (current thresholds too aggressive) | ~2 | Deps: CC-01 ✓. Gap: `SUPPLY_THRESHOLDS` is global (listings:2, experts:2, platforms:3). NZ expert filter (`smsf_accountant`, `financial_planner`, `tax_agent`, `property_advisor` + `languages:["en"]`) likely returns <2 → expert strip silently hides. Fix: add `PER_COUNTRY_THRESHOLDS` map in `supply-thresholds.ts` + lower NZ expert threshold to 1; OR broaden NZ specialty list to include `buyer_agent`. |
-| CC-03 | pending | IN/SG/HK intent-context wiring (priority-chain gaps) | ~3 | Deps: CC-01 ✓. Gap: IN/SG/HK configs exist but `CountryListingsPreview` / `CountryExpertsPreview` query results unverified. Risk: language specialty filters (IN: `["en","hi"]`, SG/HK: Mandarin/Cantonese) may produce 0-row results if advisors lack language tags. Fix: audit actual advisor language-tag coverage in DB + add fallback to `["en"]` when multi-language returns 0. |
-| CC-04 | pending | Country-mode E2E tests (Playwright, 3 locales) | ~3 | Deps: CC-02+CC-03. Gap: zero E2E tests for country-mode. Priority: NZ (cookie-resolved), HK (geo-resolved), IN (URL-param). Test: strip renders when supply ≥ threshold; strips hidden when below; GeoSoftPrompt fires on first visit. |
-| CC-05 | pending | Locale-aware sitemap entries for non-AU locales | ~2 | Deps: CC-03. Gap: `app/sitemap.ts` has no hreflang entries. `/foreign-investment/<country>` pages exist for all 6 countries but no `x-default` / `en-AU` / `en-GB` alternates signal to crawlers. Fix: add alternates block to sitemap for each country's `/foreign-investment/<slug>` URL. |
+| CC-01 | **done** | Country-mode coverage audit (identify gaps vs. `lib/country-mode/`) | — | Audit complete (iter 334). Full gap report at `docs/audits/country-mode-gaps.md`. Infrastructure solid; all 12 country configs have homepage filters. 4 gaps documented for CC-02..CC-05. PR #675. |
+| CC-02 | pending | NZ supply-threshold tuning (current thresholds too aggressive) | ~2 | Deps: CC-01 ✓. Gap: `SUPPLY_THRESHOLDS` is global (listings:2, experts:2, platforms:3). NZ expert filter likely returns <2 → expert strip silently hides. Fix: add `PER_COUNTRY_THRESHOLDS` map or broaden NZ specialty list. Verify with DB supply query first. |
+| CC-03 | pending | IN/SG/HK intent-context wiring (priority-chain gaps) | ~3 | Deps: CC-01 ✓. Infrastructure wired; gap is content: language specialty filters (IN: `["en","hi"]`, SG/HK: Mandarin/Cantonese) may produce 0-row results if advisors lack language tags. Fix: audit language-tag coverage + add fallback to `["en"]` when multi-language returns 0. |
+| CC-04 | pending | Country-mode E2E tests (Playwright, 3 locales) | ~3 | Deps: CC-02+CC-03. Confirmed gap — zero E2E tests for country-mode. Priority: NZ (cookie-resolved), HK (geo-resolved), IN (URL-param). |
+| CC-05 | pending | Locale-aware sitemap entries for non-AU locales | ~2 | Deps: CC-03. Gap: `app/sitemap.ts` has no hreflang entries for locale-prefixed paths. |
 
 **Stream CC entry condition:** CC-01 done (iter 334). CC-02 can start immediately.
 
@@ -927,19 +928,16 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 
 ### 2026-05-09 — iter 334 (CC-01 — country-mode coverage audit)
 
-**Stream CC entry condition:** No hard deps. CC-01 is the baseline audit.
-
 **Audit findings:**
-1. **Infrastructure solid**: `CountryListingsPreview`, `CountryExpertsPreview`, `CountryPopularLinks` all wired in `app/page.tsx`. 5-level priority chain (URL → cookie → GeoIP → AU/global) implemented in `lib/country-mode/resolve-country.ts`.
-2. **All 6 IntentCountryCodes have homepage filters**: UK, US, IN, SG, HK, NZ all define `homepageListingFilters`, `homepageExpertFilters`, `homepagePlatformFilters` in `lib/foreign-investment-country-data.ts`.
-3. **NZ gap (CC-02)**: `SUPPLY_THRESHOLDS` is global-only (no per-country overrides). NZ expert filter uses `specialties: ["smsf_accountant","financial_planner","tax_agent","property_advisor"]` + `languages:["en"]`. If fewer than 2 NZ-focused advisors match, the expert strip silently hides. Supply threshold for NZ experts should be 1 (given smaller market), not 2.
-4. **IN/SG/HK gap (CC-03)**: Configs exist but `CountryListingsPreview`/`CountryExpertsPreview` query results unverified. Language specialty filters (IN `["en","hi"]`, HK/SG Mandarin/Cantonese) may produce 0-row results if advisors lack language tags in DB. Need: audit advisor language-tag coverage + add `["en"]` fallback.
-5. **E2E gap (CC-04)**: Zero Playwright tests for country-mode resolution, strip rendering, or GeoSoftPrompt.
-6. **Sitemap gap (CC-05)**: `app/sitemap.ts` has no hreflang entries for `/foreign-investment/<country>` pages (6 countries × 1 page = 6 missing alternates).
+1. **Infrastructure solid**: 5-level priority chain in `resolve-country.ts`. All 12 country configs have `homepageListingFilters` / `homepageExpertFilters` / `homepagePlatformFilters` in `foreign-investment-country-data.ts`.
+2. **NZ gap (CC-02)**: `SUPPLY_THRESHOLDS` is global-only. NZ expert filter may return <2 in a small market → strip silently hides. Threshold may need per-country override.
+3. **IN/SG/HK gap (CC-03)**: Language specialty filters (IN `["en","hi"]`, HK/SG Mandarin/Cantonese) may produce 0-row results if advisors lack language tags. Need audit + `["en"]` fallback.
+4. **E2E gap (CC-04)**: Zero Playwright tests for country-mode resolution, strip rendering, or GeoSoftPrompt.
+5. **Sitemap gap (CC-05)**: `app/sitemap.ts` has no hreflang entries for locale-prefixed paths.
 
-No code changes. Queue-only update.
+Full gap report: `docs/audits/country-mode-gaps.md` (PR #675).
 
-STATUS: PROGRESS · stream=CC · item=CC-01 · Diff: queue update only
+STATUS: PROGRESS · stream=CC · item=CC-01 (audit done)
 
 ---
 
