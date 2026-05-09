@@ -149,6 +149,14 @@ export const LISTING_VERTICALS: readonly ListingVertical[] = [
     kind: "capital-markets",
     order: 90,
   },
+  {
+    slug: "digital-infrastructure",
+    label: "Digital Infrastructure",
+    description: "Data centres, fibre, subsea cables, AI compute and tower assets",
+    icon: "cpu",
+    kind: "capital-markets",
+    order: 95,
+  },
 ];
 
 /** Canonical slugs only — useful for route static params + validation. */

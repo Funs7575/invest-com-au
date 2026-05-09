@@ -18,6 +18,7 @@ const VALID_VERTICALS = [
   "fund",
   "startup",
   "pre_ipo",
+  "digital-infrastructure",
 ] as const;
 
 const SubmitSchema = z.object({
