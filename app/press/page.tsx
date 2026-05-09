@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { SITE_NAME, SITE_URL } from "@/lib/seo";
+import { absoluteUrl, breadcrumbJsonLd, SITE_NAME, SITE_URL } from "@/lib/seo";
+import JsonLd from "@/components/JsonLd";
 
 export const revalidate = 86400;
 
@@ -36,8 +37,14 @@ const BRAND_COLORS = [
  *      as a source the media actually cites.
  */
 export default function PressPage() {
+  const breadcrumb = breadcrumbJsonLd([
+    { name: "Home", url: absoluteUrl("/") },
+    { name: "Press & Media" },
+  ]);
+
   return (
     <div className="py-8 md:py-14">
+      <JsonLd data={breadcrumb} testId="press-jsonld" />
       <div className="container-custom max-w-4xl">
         <nav className="text-xs md:text-sm text-slate-500 mb-3">
           <Link href="/" className="hover:text-slate-900">Home</Link>

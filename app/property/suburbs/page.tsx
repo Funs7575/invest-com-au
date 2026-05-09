@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import SuburbsClient from "./SuburbsClient";
 import ComplianceFooter from "@/components/ComplianceFooter";
+import JsonLd from "@/components/JsonLd";
+import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 
 export const revalidate = 3600;
 
@@ -17,8 +19,14 @@ export const metadata: Metadata = {
 };
 
 export default function SuburbResearchPage() {
+  const breadcrumb = breadcrumbJsonLd([
+    { name: "Home", url: absoluteUrl("/") },
+    { name: "Property", url: absoluteUrl("/properties") },
+    { name: "Suburb Research" },
+  ]);
   return (
     <>
+      <JsonLd data={breadcrumb} testId="suburbs-jsonld" />
       <SuburbsClient />
       <div className="max-w-6xl mx-auto px-4 pb-8">
         <ComplianceFooter variant="property" />
