@@ -86,6 +86,12 @@ Every runbook MUST have these sections (the template helps):
 
 ### SLO & observability
 
+- [`incident-severity.md`](./incident-severity.md) — P0-P4 severity
+  classification guide; ordered decision tree, response SLAs, impact
+  reference table, escalation path, Slack templates
+- [`on-call-rotation.md`](./on-call-rotation.md) — who is on-call,
+  how to page them, rotation schedule, vendor escalation contacts,
+  shift handoff checklist
 - [`slo-breach.md`](./slo-breach.md) — the SLO monitor opened
   a new incident; use this as a starting point then branch to
   the service-specific runbook
@@ -142,10 +148,9 @@ cp docs/runbooks/TEMPLATE.md docs/runbooks/my-service-issue.md
 
 ## Gap register (OOO-01 audit — 2026-05-08)
 
-The following runbooks are planned but not yet written.
-Each becomes a queue item in the OOO stream.
+All gaps identified in the OOO-01 audit have been resolved.
 
-| Missing | Why needed | Queue item |
-|---------|-----------|------------|
-| `incident-severity.md` | No general severity matrix; only breach-notification.md has one (P0-P3, breach-specific). On-call needs a single source of truth for triage. | OOO-02 |
-| `on-call-rotation.md` | breach-notification.md instructs "page the on-call engineer" but no runbook defines who that is, the rotation schedule, or the escalation path. | OOO-03 |
+| Missing | Why needed | Queue item | Status |
+|---------|-----------|------------|--------|
+| `incident-severity.md` | No general severity matrix; only breach-notification.md had one (P0-P3, breach-specific). On-call needs a single source of truth for triage. | OOO-02 | **Done** — created 2026-05-09 |
+| `on-call-rotation.md` | breach-notification.md instructs "page the on-call engineer" but no runbook defined who that is, the rotation schedule, or the escalation path. | OOO-03 | **Done** — created 2026-05-09 |
