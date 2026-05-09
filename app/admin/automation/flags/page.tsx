@@ -15,6 +15,7 @@ interface FlagRow {
   segments: string[] | null;
   description: string | null;
   updated_at?: string;
+  last_evaluated_at?: string | null;
 }
 
 /**
@@ -34,7 +35,7 @@ export default async function AdminFeatureFlagsPage() {
   const { data } = await supabase
     .from("feature_flags")
     .select(
-      "flag_key, enabled, rollout_pct, allowlist, denylist, segments, description, updated_at",
+      "flag_key, enabled, rollout_pct, allowlist, denylist, segments, description, updated_at, last_evaluated_at",
     )
     .order("flag_key", { ascending: true });
 
@@ -68,6 +69,7 @@ export default async function AdminFeatureFlagsPage() {
               denylist: f.denylist ?? [],
               segments: f.segments ?? [],
               description: f.description ?? "",
+              last_evaluated_at: f.last_evaluated_at ?? null,
             }))}
           />
         )}

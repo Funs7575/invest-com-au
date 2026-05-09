@@ -12,8 +12,9 @@ export const runtime = "nodejs";
  *
  *   GET   — list every flag row
  *   PATCH — { flag_key, enabled?, rollout_pct?, allowlist?,
- *              denylist?, segments?, description? }
+ *              denylist?, segments?, description?, archive? }
  *           Partial update of a single flag row.
+ *           archive:true sets archived_at; archive:false clears it.
  *
  * Flag rows are seeded via migration and hand-edited here.
  * We don't expose DELETE — a removed flag should be disabled
@@ -59,6 +60,8 @@ export async function PATCH(request: NextRequest) {
   if (Array.isArray(body.segments)) update.segments = body.segments;
   if (typeof body.description === "string")
     update.description = body.description.slice(0, 500);
+  if (body.archive === true) update.archived_at = new Date().toISOString();
+  if (body.archive === false) update.archived_at = null;
 
   if (Object.keys(update).length === 0) {
     return NextResponse.json({ error: "no_updates" }, { status: 400 });
@@ -81,6 +84,8 @@ export async function PATCH(request: NextRequest) {
   if (Array.isArray(update.denylist)) auditChanges.denylist = update.denylist as string[];
   if (Array.isArray(update.segments)) auditChanges.segments = update.segments as string[];
   if (typeof update.description === "string") auditChanges.description = update.description;
+  if (typeof update.archived_at === "string") auditChanges.archived_at = update.archived_at;
+  if (update.archived_at === null) auditChanges.archived_at = "";
   await supabase.from("admin_audit_log").insert({
     action: "feature_flag:updated",
     entity_type: "feature_flag",
