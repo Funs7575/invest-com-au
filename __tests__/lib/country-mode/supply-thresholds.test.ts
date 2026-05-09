@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import {
   applySupplyThresholds,
   SUPPLY_THRESHOLDS,
+  PER_COUNTRY_THRESHOLDS,
 } from "@/lib/country-mode";
 
 describe("SUPPLY_THRESHOLDS", () => {
@@ -75,5 +76,64 @@ describe("applySupplyThresholds", () => {
     const result = applySupplyThresholds(oneShyOfPlatforms, "platforms");
     expect(result.rows).toEqual([]);
     expect(result.didFallback).toBe(true);
+  });
+});
+
+describe("PER_COUNTRY_THRESHOLDS", () => {
+  it("has NZ experts threshold lower than the global default", () => {
+    expect(PER_COUNTRY_THRESHOLDS["NZ"]?.experts).toBe(1);
+    expect((PER_COUNTRY_THRESHOLDS["NZ"]?.experts ?? 0) < SUPPLY_THRESHOLDS.experts).toBe(true);
+  });
+});
+
+describe("applySupplyThresholds — per-country overrides", () => {
+  it("NZ experts: one expert passes (below global threshold of 2)", () => {
+    expect(applySupplyThresholds(["nz-expert-1"], "experts", "NZ")).toEqual({
+      rows: ["nz-expert-1"],
+      didFallback: false,
+    });
+  });
+
+  it("NZ experts: zero experts still falls back", () => {
+    expect(applySupplyThresholds([], "experts", "NZ")).toEqual({
+      rows: [],
+      didFallback: true,
+    });
+  });
+
+  it("non-NZ country still uses global experts threshold", () => {
+    // AU: one expert is below global threshold of 2
+    expect(applySupplyThresholds(["au-expert-1"], "experts", "AU")).toEqual({
+      rows: [],
+      didFallback: true,
+    });
+    // AU: two experts passes
+    expect(applySupplyThresholds(["au-1", "au-2"], "experts", "AU")).toEqual({
+      rows: ["au-1", "au-2"],
+      didFallback: false,
+    });
+  });
+
+  it("no countryCode falls back to global threshold", () => {
+    expect(applySupplyThresholds(["x"], "experts")).toEqual({
+      rows: [],
+      didFallback: true,
+    });
+    expect(applySupplyThresholds(["x"], "experts", null)).toEqual({
+      rows: [],
+      didFallback: true,
+    });
+  });
+
+  it("NZ listings and platforms use global thresholds (no NZ override)", () => {
+    // NZ only overrides experts; listings/platforms use global
+    expect(applySupplyThresholds(["a"], "listings", "NZ")).toEqual({
+      rows: [],
+      didFallback: true,
+    });
+    expect(applySupplyThresholds(["a", "b"], "listings", "NZ")).toEqual({
+      rows: ["a", "b"],
+      didFallback: false,
+    });
   });
 });
