@@ -43,6 +43,7 @@ export interface SubmitLeadResult {
   success?: boolean;
   lead_id?: number | null;
   matched?: unknown | null;
+  no_more_matches?: boolean;
   error?: string;
 }
 
