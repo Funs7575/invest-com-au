@@ -12,6 +12,7 @@ import { Card } from "@/components/ui/Card";
 import Icon from "@/components/Icon";
 import { trackEvent } from "@/lib/tracking";
 import { submitLead } from "@/lib/submit-lead-client";
+import EligibilityQuizSkipBanner from "@/components/EligibilityQuizSkipBanner";
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
@@ -603,7 +604,12 @@ function FindAdvisorQuiz() {
         )}
 
         {/* Step 1 */}
-        {quiz.step === 1 && <Step1 onSelect={handleIntent} />}
+        {quiz.step === 1 && (
+          <>
+            <EligibilityQuizSkipBanner />
+            <Step1 onSelect={handleIntent} />
+          </>
+        )}
 
         {/* Step 2 */}
         {quiz.step === 2 && quiz.intent && (
