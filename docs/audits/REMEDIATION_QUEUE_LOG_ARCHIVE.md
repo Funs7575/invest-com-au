@@ -1,1 +1,1 @@
-placeholder - see note
+placeholder
