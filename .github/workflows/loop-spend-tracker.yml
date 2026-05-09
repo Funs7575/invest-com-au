@@ -87,6 +87,52 @@ jobs:
           est_tokens=$((baseline_tokens + per_commit_tokens))
           est_tokens_m=$(awk "BEGIN {printf \"%.1f\", $est_tokens / 1000000}")
 
+          # Per-stream ROI breakdown (added 2026-05-09 in the loop-infrastructure
+          # overhaul). Bucket the 24h loop commits by stream-letter parsed from
+          # the conventional-commit scope (e.g. `feat(bb): ...` → stream BB).
+          # Then cross-reference against PRs MERGED in the same window — a
+          # stream with many commits but zero merged PRs is the FP-sweep
+          # signature that wasted ~10 iterations on 2026-05-08 (AA/BB DISC).
+          stream_report=""
+          flagged_streams=""
+          merged_prs_24h=$(gh pr list --state merged --search "merged:>=$today" \
+            --limit 100 --json headRefName,title 2>/dev/null || echo '[]')
+
+          for stream in a b c d e f g h i j k l m n o p q r s t u v w x y z aa bb cc dd ee ff gg kk ooo ww pp cl ll lx em ob gt df qa cd rr mk sm cm at dv co; do
+            # Match commit scopes: feat(stream), fix(stream), refactor(stream),
+            # test(stream), chore(stream). Case-insensitive.
+            stream_commits=$(git log --since="$since" --oneline --no-merges \
+              --pretty=format:"%s" 2>/dev/null \
+              | grep -ciE "^(feat|fix|refactor|test|chore|docs)\(${stream}(-[a-z0-9-]+)?\)" || echo 0)
+
+            # Count merged PRs whose title carries this stream's scope.
+            stream_merged_prs=$(echo "$merged_prs_24h" \
+              | jq -r --arg s "$stream" \
+                '[.[] | select(.title | test("^(feat|fix|refactor|test|chore|docs)\\(" + $s + "(-[a-z0-9-]+)?\\)"; "i"))] | length' \
+              2>/dev/null || echo 0)
+
+            if [ "$stream_commits" -gt 0 ]; then
+              stream_report+="| ${stream^^} | $stream_commits | $stream_merged_prs |"$'\n'
+
+              # FP-sweep detector: ≥5 commits but 0 merged PRs in 24h is the
+              # signature of an iteration loop chasing items that get swept
+              # as false-positive. Threshold tunable.
+              if [ "$stream_commits" -ge 5 ] && [ "$stream_merged_prs" -eq 0 ]; then
+                flagged_streams+="${stream^^} (${stream_commits} commits, 0 merged PRs) "
+              fi
+            fi
+          done
+
+          if [ -z "$stream_report" ]; then
+            stream_report="_no per-stream activity in last 24h_"
+          fi
+          echo ""
+          echo "Per-stream activity (last 24h):"
+          echo "$stream_report"
+          if [ -n "$flagged_streams" ]; then
+            echo "FP-sweep candidates: $flagged_streams"
+          fi
+
           # Trailing 7-day average from existing rows in track file
           trailing_avg=0
           if [ -f "$TRACK_FILE" ]; then
@@ -101,6 +147,16 @@ jobs:
             alert_level="critical"
           elif [ "$loop_commits" -gt "$COMMITS_WARN" ]; then
             alert_level="warn"
+          fi
+
+          # Per-stream FP-sweep alert (added 2026-05-09): even when total
+          # commits are below WARN, a single stream with >=5 commits and 0
+          # merged PRs in 24h indicates an iteration loop wasting cycles
+          # on items that downstream agents are sweeping as false-positive.
+          # Bump alert to warn if this fires while total is still ok.
+          if [ -n "$flagged_streams" ] && [ "$alert_level" = "ok" ]; then
+            alert_level="warn"
+            echo "Alert escalated to WARN due to per-stream FP-sweep pattern: $flagged_streams"
           fi
 
           echo "Today: $today"
@@ -177,6 +233,14 @@ jobs:
           | PRs opened (last 24h) | $prs_opened | — |
           | Est tokens (24h) | ${est_tokens_m}M | — |
           | Trailing 7-day avg | $trailing_avg commits/day | — |
+
+          ## Per-stream activity (last 24h)
+
+          | Stream | Commits | Merged PRs |
+          | --- | --- | --- |
+          $stream_report
+
+          ${flagged_streams:+**⚠ FP-sweep candidates:** \`$flagged_streams\` — these streams shipped commits but no merged PRs in the last 24h. That's the false-positive sweep signature (iteration agents writing rejection rows to the queue without anything reaching main). Investigate before tomorrow's fire.}
 
           ## What this means
 
