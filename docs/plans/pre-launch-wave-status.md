@@ -2,7 +2,7 @@
 
 **Plan source:** `docs/plans/sleepy-growing-planet.md`
 **Loop prompt:** `docs/plans/pre-launch-wave-loop-prompt.md`
-**Last updated:** 2026-05-09 (initial design)
+**Last updated:** 2026-05-09 ~23:50 UTC (post-burst reconciliation; W1.3 in Tier C window)
 
 ---
 
@@ -37,20 +37,22 @@
 | # | Item | Tier | Status | PR | Notes |
 |---|---|---|---|---|---|
 | 1 | PR #645 rebase + CI + merge (bundled wave) | C | ✅ done 14:37 UTC | #645 | A1+F1+B1+B2+B3 shipped together |
-| 2 | PR-X4 — annual-billing dashboard prompt | B | 🔄 PR open, CI in flight | #682 | 4 files, +110 lines, 8/8 vitest local |
-| 3 | **NEW: Country-eligibility broker/advisor filter UI** | B | pending | — | Schema (PR #619+#623) is wasted until UI reads it. Half day. ~$5-10k MRR uplift. Filter `/best/[slug]` + `/find-advisor` by visitor's `iv_intent_country` against `country_eligibility.allowed_countries`/`blocked_countries` |
-| 4 | **NEW: Cross-border specialty CTA wiring** | A | pending | — | FIN_NOTEBOOK 2026-05-01 Phase A remaining. Half day. ~$15k+/yr. Each `/foreign-investment/<slug>` page's "Find specialist" CTA → `/find-advisor?specialty=UK+Pension+Transfer` (mapped per country) |
-| 5 | **NEW: Premium 1.75× lead pricing for cross-border specialties** | B | pending | — | FIN_NOTEBOOK Phase A remaining. Half day. ~$15-40k/yr direct margin. Edit `lib/advisor-billing.ts` to apply multiplier when lead specialty matches the cross-border set |
-| 6 | **NEW: Saudi Arabia Arabic page + UAE/SA → /ar/ auto-route** | B | pending | — | Completes Phase 5d+5e+5g. ~1 day. Clone UAE Arabic structure for SA; modify LocationFlagButton click handler to route UAE/SA → /ar/...; language toggle |
-| 7 | **NEW: Response-time badge on advisor cards** | A | pending | — | Mirror PR-X2 on visitor side. Half day. Badge advisors with `avg_response_minutes < 60` on `/find-advisor` cards. Lifts conversion |
-| 8 | PR-X1 — auto-topup at low balance | **C** | pending | — | Highest-stakes; opt-in + $500 cap + 24h cooldown. Tier C announce + 30-min wait + 2hr post-merge observation |
-| 9 | PR-X2 — lead-quality SLA + response-time reward (advisor side) | B | pending | — | Pairs with item #7. "Respond in 60 min, next lead at 25% off". Affects ranker; 15-min observation |
-| 10 | PR-X3 — firm-level billing dashboard | **C** | pending | — | Aggregates `firm_credit_balance_cents` view across firm's advisors. New `/firm-portal/billing` route |
-| 11 | PR-X5 — investor / end-user accounts | B | pending | — | Depends on PR-A1 foundation (in #645). New `investor_profiles` table; auth flows; saved searches/comparisons. Ship in 4 parts: migration → auth scaffold → portal shell → saved-comparisons feature. **NOT** week-sized — pre-launch window has runway, ship parts iteratively |
-| 12 | **NEW: Eligibility match badge on cards** | A | pending | — | Visible signal on every broker/advisor/fund card based on visitor's iv_intent_country + country_eligibility column (PR #619). 🟢 accepts / 🟡 visa-required / 🔴 not available. Compounds with PR #683 filter (filter hides incompatible; badge highlights matches). ~half day |
-| 13 | **NEW: Eligibility-aware quiz skip banner** | A | pending | — | On /find-advisor entry: "🇺🇰 We have 4 UK-AU specialists — skip quiz?" Reduces quiz friction for users who've already declared country. ~1 day. Item #12 must ship first |
-| 14 | **NEW: Cross-page smart recommendations strip** | B | pending | — | After find-advisor quiz, save answers + cookie. On subsequent pages render "Based on your profile: [matched advisors / brokers / opportunities]". Ranker uses quiz intent + country + budget. ~2-3 days |
-| 15 | **NEW: Personalized notifications (rule changes / opportunities)** | C | pending | — | In-app banners or email pushes for country-relevant rule changes ("FIRB threshold changes Mar 2026 — affects UK residents"). Per founder 2026-05-09 "no post-launch deferral": ship infra now (table + admin CRUD + banner component), seed with 2-3 real notifications, expand content over the runway |
+| 2 | PR-X4 — annual-billing dashboard prompt | B | ✅ done | #682 | 4 files, +110 lines, 8/8 vitest local |
+| 3 | Country-eligibility broker/advisor filter UI | B | ✅ done | #683 | `/best/[slug]` filter on visitor `iv_intent_country` |
+| 4 | Cross-border specialty CTA wiring | A | ✅ done | #684 | `/foreign-investment/<slug>` CTAs route to specialty-prefilled find-advisor |
+| 5 | Premium 1.75× lead pricing for cross-border specialties | B | ✅ done | #685 | `lib/advisor-billing.ts` multiplier on cross-border set |
+| 6 | Saudi Arabia Arabic page + UAE/SA → /ar/ auto-route | B | ✅ partial | #687 | UAE → /ar/ click routing landed; Saudi clone + lang toggle still open. Re-queued as W?? |
+| 7 | Response-time badge on advisor cards | A | ✅ done | #686 | Visitor-side mirror of PR-X2 on `/find-advisor` |
+| 8 | PR-X1 — auto-topup at low balance | C | ✅ done | #688 | Daily cron + opt-in + $500 cap + 24h cooldown |
+| 9 | PR-X2 — lead-quality SLA + response-time reward | B | ✅ done | #690 | Ranker reward for <60min avg response |
+| 10 | PR-X3 — firm-level billing dashboard | C | pending | — | Aggregates `firm_credit_balance_cents` across firm's advisors → `/firm-portal/billing`. Re-queued as Wave 4 #23 |
+| 11 | PR-X5 — investor / end-user accounts | B | pending | — | Now covered by master prompt Wave 2 (PR-X5a..X5m, items #5-17) |
+| 12 | Eligibility match badge on cards | A | ✅ done | #691 | 🟢/🟡/🔴 on broker cards |
+| 12.5 | Extend EligibilityBadge to advisor-card surfaces | A | ✅ done | #693 | Mirror of #691 on `AdvisorsClient` |
+| 13 | Eligibility-aware quiz skip banner | A | ✅ done | #692 | `/find-advisor` entry — "We have N <country> specialists — skip quiz?" |
+| 14 | Cross-page smart recommendations strip | B | pending | — | Re-queued as master prompt Wave 4 #20 |
+| 15 | Personalized notifications (rule changes / opportunities) | C | ✅ partial | #694, #695 | Banner component + mount on `/find-advisor` and `/advisors`. Wave 4 #21/#22 (DB+admin CRUD + email digest) still queued |
+| 16 | W1.3 — JSON-LD audit + ratchet (master-prompt Wave 1 #3) | C | 🔄 Tier C window started ~23:50 UTC | #697 | Tier C because `.github/workflows/ci.yml`. CI green except known Supabase-types-drift flake (also failed in #698/#699) and Vercel-skipped smoke test. Local `node scripts/check-jsonld-coverage.mjs` ✅; 30/30 vitest. Next fire merges if no STOP by ~00:20 UTC |
 
 ## Decision log
 
@@ -66,6 +68,8 @@
 - 2026-05-09 14:35 | meta | Tier C gate = 30-min observation | Recommended balance per founder's prior pattern in workflow memory
 - 2026-05-09 14:35 | meta | Auto-topup = opt-in + $500 cap + 24h cooldown | All three guardrails layered; defense in depth
 - 2026-05-09 14:35 | #2 | Split-or-bundle deferred to per-iteration | If single PR works, ship; if Tier C blocks, split
+- 2026-05-09 ~23:50 | #16 | PR #697 reclassified A→C, posted Tier C announce | Previous fire opened PR #697 as draft tagged Tier A. CLAUDE.md tier policy lists `.github/workflows` as Tier C; the PR adds a step to `ci.yml`. Posted `📢 Tier C intent` comment, marked ready for review, started 30-min STOP window. Two CI failures audited as infra-noise: Supabase types drift is an active flake (failed in already-merged #698/#699), Preview smoke test failed because Vercel marked the build "Ignored" so no preview URL exists. Local gate + 30 vitest tests pass.
+- 2026-05-09 ~23:50 | meta | Status doc reconciled to git ground-truth | Old queue (#1-15) was authored before the burst that shipped 11 of its items today. Re-mapped each row to its merged PR or to the master prompt's Wave-2/4 successor where the work continues.
 
 ## Pause history
 
@@ -83,4 +87,4 @@
 
 (Tier C items get 2hr post-merge observation. Loop watches Sentry, Vercel deploy, billing flows; logs anomalies here.)
 
-— none yet —
+- 2026-05-09 ~23:50 UTC | #16 (PR #697) | Tier C STOP window OPENED — not yet merged. 30-min STOP elapses ~00:20 UTC. Next fire: if no STOP comment in PR, admin-merge (`gh pr merge 697 --squash --admin --delete-branch`), then start 2 hr Sentry/Vercel observation. Founder STOP fallback: tag PR with `do-not-merge` label or comment STOP.
