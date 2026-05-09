@@ -56,7 +56,7 @@ export default async function CountryExpertsPreview() {
     photo_url: r.photo_url,
   }));
 
-  const result = applySupplyThresholds(rows, "experts");
+  const result = applySupplyThresholds(rows, "experts", code);
   if (result.didFallback) return null;
 
   const meta = intentCountryMeta(code);
