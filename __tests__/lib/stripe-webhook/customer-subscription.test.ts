@@ -220,6 +220,46 @@ describe("handleCustomerSubscriptionDeleted", () => {
     const result = await handleCustomerSubscriptionDeleted(makeDeletedEvent(), ctx);
     expect(result).toEqual({ status: "done" });
   });
+
+  it("flips advisor_tier when subscription metadata carries pending_tier + advisor_id", async () => {
+    const eqSpy = vi.fn();
+    const updateSpy = vi.fn().mockReturnValue({ eq: eqSpy });
+    const fromSpy = vi.fn().mockReturnValue({ update: updateSpy });
+    const ctx = {
+      admin: { from: fromSpy } as unknown as WebhookContext["admin"],
+      stripe: {} as WebhookContext["stripe"],
+      log: { error: vi.fn(), info: vi.fn(), warn: vi.fn(), debug: vi.fn() },
+    };
+    const event = {
+      id: "evt_sub_deleted_pending",
+      type: "customer.subscription.deleted",
+      data: {
+        object: {
+          ...SUBSCRIPTION,
+          metadata: { pending_tier: "growth", advisor_id: "42" },
+        } as Stripe.Subscription,
+      },
+    } as unknown as Stripe.Event;
+
+    await handleCustomerSubscriptionDeleted(event, ctx);
+    expect(fromSpy).toHaveBeenCalledWith("professionals");
+    const updatePayload = updateSpy.mock.calls[0]?.[0] as Record<string, unknown>;
+    expect(updatePayload.advisor_tier).toBe("growth");
+    expect(updatePayload.pending_tier).toBeNull();
+    expect(eqSpy).toHaveBeenCalledWith("id", 42);
+  });
+
+  it("skips the deferred-downgrade flip when metadata.pending_tier is absent", async () => {
+    const fromSpy = vi.fn();
+    const ctx = {
+      admin: { from: fromSpy } as unknown as WebhookContext["admin"],
+      stripe: {} as WebhookContext["stripe"],
+      log: { error: vi.fn(), info: vi.fn(), warn: vi.fn(), debug: vi.fn() },
+    };
+    await handleCustomerSubscriptionDeleted(makeDeletedEvent(), ctx);
+    // SUBSCRIPTION has no pending_tier metadata — fromSpy never invoked.
+    expect(fromSpy).not.toHaveBeenCalled();
+  });
 });
 
 describe("handleCustomerSubscriptionTrialWillEnd", () => {
