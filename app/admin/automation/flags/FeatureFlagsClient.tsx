@@ -10,6 +10,7 @@ interface Flag {
   denylist: string[];
   segments: string[];
   description: string;
+  last_evaluated_at: string | null;
 }
 
 interface Props {
@@ -167,6 +168,12 @@ export default function FeatureFlagsClient({ initialFlags }: Props) {
                     {flag.denylist.length > 0
                       ? `${flag.denylist.length} entries`
                       : "empty"}
+                  </p>
+                  <p>
+                    <strong className="text-slate-700">Last evaluated:</strong>{" "}
+                    {flag.last_evaluated_at
+                      ? new Date(flag.last_evaluated_at).toLocaleString()
+                      : "never"}
                   </p>
                 </div>
               </div>
