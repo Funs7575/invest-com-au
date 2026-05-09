@@ -256,7 +256,7 @@ export async function POST(request: NextRequest) {
     // First 2 leads are free (trial), then deduct from credit balance
     const { data: advisor } = await supabase
       .from("professionals")
-      .select("free_leads_used, lead_price_cents, credit_balance_cents, lifetime_lead_spend_cents, total_leads, low_credit_alert_sent_at")
+      .select("free_leads_used, lead_price_cents, credit_balance_cents, lifetime_lead_spend_cents, total_leads, low_credit_alert_sent_at, specialties")
       .eq("id", professional_id)
       .single();
 
@@ -283,11 +283,20 @@ export async function POST(request: NextRequest) {
     const isFree = freeUsed < (categoryFreeLeads || freeTrialCount);
     // Pricing tiers: international = 3x, qualified = 2x, standard = 1x
     const basePriceCents = advisor?.lead_price_cents || categoryPrice;
-    const priceCents = isFree ? 0 : (
+    const tieredCents = isFree ? 0 : (
       leadTier === "international" ? basePriceCents * 3 :
       leadTier === "qualified" ? (categoryQualifiedPrice || basePriceCents * 2) :
       basePriceCents
     );
+    // Cross-border specialty premium (PR queue #5, FIN_NOTEBOOK Phase A):
+    // 1.75× when the advisor sells leads in UK Pension Transfer / FATCA /
+    // DASP / FIRB Property (Non-Resident). Stacks with tier multiplier
+    // because cross-border + international is the highest-LTV combination
+    // (UK arrival into AU with non-resident mortgage flow).
+    const { crossBorderLeadMultiplier } = await import("@/lib/advisor-billing-multipliers");
+    const priceCents = isFree
+      ? 0
+      : Math.round(tieredCents * crossBorderLeadMultiplier(advisor?.specialties));
     const balance = advisor?.credit_balance_cents || 0;
     const hasSufficientCredit = balance >= priceCents;
 
