@@ -39,6 +39,7 @@ interface FlagRow {
   allowlist: string[];
   denylist: string[];
   segments: string[];
+  archived_at: string | null;
 }
 
 const CACHE_TTL_MS = 30_000;
@@ -156,8 +157,9 @@ export async function loadFlag(flagKey: string): Promise<FlagRow | null> {
     const supabase = createAdminClient();
     const { data, error } = await supabase
       .from("feature_flags")
-      .select("flag_key, enabled, rollout_pct, allowlist, denylist, segments")
+      .select("flag_key, enabled, rollout_pct, allowlist, denylist, segments, archived_at")
       .eq("flag_key", flagKey)
+      .is("archived_at", null)
       .abortSignal(AbortSignal.timeout(FETCH_TIMEOUT_MS))
       .maybeSingle();
     if (error) {

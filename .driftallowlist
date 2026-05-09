@@ -133,3 +133,7 @@ trading_signals            # trading product never shipped
 
 # PostGIS extension-managed (out of scope — comes from CREATE EXTENSION postgis)
 spatial_ref_sys
+
+# WW-01: migration in PR #651 (ww-01-watchlist-data-model), pending merge to main.
+# Remove once #651 merges and this branch is rebased.
+user_watchlist_items
