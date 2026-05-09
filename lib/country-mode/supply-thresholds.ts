@@ -23,6 +23,20 @@ export const SUPPLY_THRESHOLDS = {
 
 export type SupplyKind = keyof typeof SUPPLY_THRESHOLDS;
 
+/**
+ * Per-country overrides for supply thresholds. Only populated where a
+ * country's market size justifies a lower bar than the global default.
+ *
+ * NZ experts: 1 instead of 2. The NZ advisor market is legitimately
+ * smaller — one qualified NZ-focused expert is enough to surface a
+ * real recommendation rather than hiding the strip entirely.
+ */
+export const PER_COUNTRY_THRESHOLDS: Partial<
+  Record<string, Partial<Record<SupplyKind, number>>>
+> = {
+  NZ: { experts: 1 },
+};
+
 export interface SupplyResult<T> {
   /** Rows the caller should render. Empty when below threshold. */
   rows: ReadonlyArray<T>;
@@ -50,8 +64,10 @@ export interface SupplyResult<T> {
 export function applySupplyThresholds<T>(
   rows: ReadonlyArray<T>,
   kind: SupplyKind,
+  countryCode?: string | null,
 ): SupplyResult<T> {
-  const threshold = SUPPLY_THRESHOLDS[kind];
+  const perCountry = countryCode ? PER_COUNTRY_THRESHOLDS[countryCode] : undefined;
+  const threshold = perCountry?.[kind] ?? SUPPLY_THRESHOLDS[kind];
   if (rows.length < threshold) {
     return { rows: [], didFallback: true };
   }
