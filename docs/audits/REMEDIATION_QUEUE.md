@@ -303,8 +303,8 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|--------------|-------|
-| KK-01 | pending | Internal link audit (identify orphaned pages + over-linked hubs) | ~2 | |
-| KK-02 | pending | Related-content widget (bottom of article pages) | ~3 | Deps: KK-01. |
+| KK-01 | **done** | Internal link audit (identify orphaned pages + over-linked hubs) | — | PR #667. `scripts/internal-link-audit.mjs` + `docs/audits/kk-01-internal-link-audit.md`. |
+| KK-02 | **done** | Related-content widget (bottom of article pages) | — | `components/RelatedContentGrid.tsx`. Applied to `article/[slug]` + `research/[slug]`. PR #670. |
 | KK-03 | pending | Topic cluster map (pillar ↔ cluster ↔ supporting visualised) | ~3 | Deps: KK-01. |
 | KK-04 | pending | Automated internal link injection (LSI-based, configurable density) | ~5 | Deps: KK-02+KK-03. Risky — needs kill-switch. |
 
@@ -988,6 +988,27 @@ STATUS: PROGRESS · stream=BB · item=BB-01..BB-05 (all false-positive)
 No code changes. Queue-only update.
 
 STATUS: PROGRESS · stream=AA · item=AA-01..AA-05 (all false-positive)
+
+---
+
+### 2026-05-09 — iter 331c (KK-02 — RelatedContentGrid component)
+
+**Stream:** KK  
+**Item:** KK-02 (related-content widget — bottom of article pages)  
+**Branch:** `claude/audit-remediation/kk-02-related-content-widget` · **PR #670**
+
+**What was done:**
+- Created `components/RelatedContentGrid.tsx` (~65 LOC): generic reusable grid for related
+  content links. Props: `items: RelatedItem[]`, `heading`, `cardClass`. Data-agnostic — callers
+  map their specific fields (category, read_time, sponsor_name, etc.) to the generic shape.
+- `app/article/[slug]/page.tsx`: replaced 33-line inline related-articles block with a
+  9-line `<RelatedContentGrid>` invocation. Identical rendered output, zero logic change.
+- `app/research/[slug]/page.tsx`: replaced 22-line inline related-reports block with a
+  9-line `<RelatedContentGrid>` invocation. Identical rendered output, zero logic change.
+- Net: −60 LOC inline JSX, +65 LOC component (net +5, all reusable).
+- Phase 1.5 auto-rescue: `lib/database.types.ts` regenerated (archived_at on feature_flags) — PR #673.
+
+STATUS: PROGRESS · stream=KK · item=KK-02 · pr=#670
 
 ---
 
