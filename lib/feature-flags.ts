@@ -175,6 +175,22 @@ export async function loadFlag(flagKey: string): Promise<FlagRow | null> {
     }
     const row = (data as FlagRow | null) || null;
     cache.set(flagKey, { row, at: now });
+    // FF-04: fire-and-forget — lets the expiry cron tell an actively-used
+    // disabled flag from a truly dormant one without blocking the caller.
+    if (row) {
+      void supabase
+        .from("feature_flags")
+        .update({ last_evaluated_at: new Date().toISOString() })
+        .eq("flag_key", flagKey)
+        .then(({ error: writeErr }) => {
+          if (writeErr) {
+            log.warn("feature_flags last_evaluated_at update failed", {
+              flag: flagKey,
+              error: writeErr.message,
+            });
+          }
+        });
+    }
     return row;
   } catch (err) {
     log.warn("feature_flags threw", {
