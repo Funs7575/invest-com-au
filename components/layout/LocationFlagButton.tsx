@@ -337,7 +337,7 @@ export default function LocationFlagButton() {
                   }}
                   className="block w-full text-center text-sm font-medium text-slate-700 hover:text-slate-900 hover:bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 mt-3 transition-colors"
                 >
-                  Show me the global view
+                  Switch to Australia <span aria-hidden>🇦🇺</span>
                 </button>
               </>
             ) : (
