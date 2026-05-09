@@ -15,6 +15,8 @@ import RememberCountry from "@/components/foreign-investment/RememberCountry";
 import CountryLeadForm from "@/components/foreign-investment/CountryLeadForm";
 import CountryAudiencesSection from "@/components/foreign-investment/sections/CountryAudiencesSection";
 import CountryFaqSection from "@/components/foreign-investment/sections/CountryFaqSection";
+import CountrySchemesSection from "@/components/foreign-investment/CountrySchemesSection";
+import { isoForIntentCode } from "@/lib/intent-context";
 import SectionHeading from "@/components/SectionHeading";
 import ForeignInvestmentNav from "@/app/foreign-investment/ForeignInvestmentNav";
 
@@ -694,6 +696,13 @@ export default async function CountryHubTemplate({ config }: Props) {
             </div>
           </section>
         )}
+
+        {/* ── Government schemes & grants ── */}
+        <CountrySchemesSection
+          countryCode={isoForIntentCode(config.code)}
+          countryName={config.countryName}
+          pagePath={`/foreign-investment/${config.slug}`}
+        />
 
         {/* ── Retirement transfer (QROPS etc.) ── */}
         {config.retirementTransfer && (
