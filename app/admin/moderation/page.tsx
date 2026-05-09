@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import AdminShell from "@/components/AdminShell";
 import { logger } from "@/lib/logger";
+import { formatDate } from "@/lib/utils";
 
 const log = logger("admin-moderation");
 
@@ -50,14 +51,6 @@ function truncate(text: string, lines: number = 2): string {
   const parts = text.split("\n").slice(0, lines);
   const joined = parts.join(" ").trim();
   return joined.length > 180 ? joined.slice(0, 177) + "..." : joined;
-}
-
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("en-AU", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
 }
 
 /* ── Page ── */
@@ -235,6 +228,7 @@ export default function ModerationQueuePage() {
     setLoading(false);
   }, [supabase]);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect -- pre-existing pattern, refactor is post-launch hub-data-fetch redesign
   useEffect(() => { load(); }, [load]);
 
   /* ── Stats ── */

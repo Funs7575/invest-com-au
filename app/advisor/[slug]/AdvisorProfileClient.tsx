@@ -17,6 +17,7 @@ import { trackEvent as phTrack } from "@/lib/posthog/events";
 import { getVerificationConfig, getVerificationLinks } from "@/lib/advisor-verification";
 import { getQualificationData } from "@/lib/qualification-store";
 import { useAdvisorShortlist } from "@/lib/hooks/useAdvisorShortlist";
+import { isValidEmail } from "@/lib/validate-email";
 
 const TYPE_TO_PLATFORMS: Record<string, { label: string; href: string }[]> = {
   smsf_accountant: [
@@ -174,7 +175,6 @@ export default function AdvisorProfileClient({
   }, [pro.slug, pro.id, pro.type, pro.booking_link, pro.name, pro.firm_name, pro.location_display]);
 
   const typeLabel = PROFESSIONAL_TYPE_LABELS[pro.type] || "Financial Professional";
-  const isValidEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
   const nameError = touched.name && !name.trim() ? "Name is required" : "";
   const emailError =
     touched.email && !email.trim()

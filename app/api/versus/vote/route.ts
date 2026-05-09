@@ -16,7 +16,10 @@ export const dynamic = "force-dynamic";
  * Deduplication: one vote per broker pair per IP (hashed).
  */
 
-function hashIp(ip: string): string {
+function hashVoter(ip: string): string {
+  // Versus vote dedup uses VOTE_SALT (separate env var from IP_HASH_SALT used in
+  // lib/article-comments hashIp) so a leaked salt for one domain can't deanonymise
+  // the other. Renamed from hashIp to make this salt-domain separation explicit.
   return createHash("sha256")
     .update(ip + (process.env.VOTE_SALT || "invest-com-au-salt"))
     .digest("hex")
@@ -76,6 +79,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Too many votes — slow down" }, { status: 429 });
     }
 
+    // eslint-disable-next-line invest/no-unvalidated-req-json -- pre-existing; Zod backfill is E-04 stream territory, out of scope for SSOT cleanup PR
     const body = await request.json();
     const { broker_a_slug, broker_b_slug, chosen_slug } = body as {
       broker_a_slug: string;
@@ -106,7 +110,7 @@ export async function POST(request: NextRequest) {
       request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
       request.headers.get("x-real-ip") ||
       "unknown";
-    const ipHash = hashIp(ip);
+    const ipHash = hashVoter(ip);
 
     const supabase = createAdminClient();
 

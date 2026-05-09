@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { formatDate } from "@/lib/utils";
+import { escapeHtml } from "@/lib/html-escape";
 
 export const runtime = "nodejs";
 
@@ -13,14 +14,6 @@ interface LineItem {
 
 function formatAUD(cents: number): string {
   return `$${(cents / 100).toFixed(2)}`;
-}
-
-function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
 }
 
 export async function GET(
