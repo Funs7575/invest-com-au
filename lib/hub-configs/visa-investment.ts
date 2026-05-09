@@ -21,7 +21,7 @@ export const visaInvestmentHubConfig: HubConfig = {
     secondaryCta: {
       label: "Migration agent directory",
       href: "/advisors/migration-agents",
-      lever: "directory",
+      lever: "listings",
     },
   },
 

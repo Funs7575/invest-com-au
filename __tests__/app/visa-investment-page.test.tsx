@@ -98,7 +98,7 @@ describe("VisaInvestmentHubPage", () => {
 
   it("SIV closure banner mentions 31 July 2024", () => {
     render(<VisaInvestmentHubPage />);
-    expect(screen.getByText(/31 July 2024/)).toBeInTheDocument();
+    expect(screen.getAllByText(/31 July 2024/).length).toBeGreaterThan(0);
   });
 
   // ── Country cross-links ──────────────────────────────────────────────────
