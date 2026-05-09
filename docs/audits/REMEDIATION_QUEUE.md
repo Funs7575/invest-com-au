@@ -40,7 +40,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | X | `claude/audit-remediation/x-09-preview-advisor-final` (#646) · `x-09-eslint-ratchet` (#648) | #257/#367/#596/#600/#610 MERGED · **#641 OPEN** (X-06) · **#643 OPEN** (X-07) · **#644 OPEN** (X-08) · **#646 OPEN** (X-09a) · **#648 OPEN** (X-09b) | X-06 (#641 CI ✓), X-07 (#643 CI ✓), X-08 (#644 CI ✓), X-09a (#646 — preview/[token] swap + keep-admin annotations), X-09b (#648 — ESLint ratchet). **Stream X complete** once all 5 PRs merge. | All X PRs merged |
 | EE | `claude/audit-remediation/ee-01-error-boundaries` · **#653 OPEN** | **#653 OPEN** (EE-01) | EE-01 done + EE-02/03/04 FP. Fixes quiz/calculators/savings-calc error.tsx. EE-05 pending. | EE-05 merged |
 | FF | `claude/audit-remediation/ff-01-feature-flag-audit` · **#656 OPEN** | **#656 OPEN** (FF-01) | FF-01 done — seeded 8 missing flags. FF-02/03/04 pending. | FF-04 merged |
-| OOO | `claude/audit-remediation/ooo-01-runbook-audit` · **#652 OPEN** | — · **#652 OPEN** | OOO-01 done (#652 CI red — types drift fixed in iter 323b). OOO-04 false-positive. OOO-02/03 pending. | OOO-03 merged |
+| OOO | `claude/audit-remediation/ooo-01-runbook-audit` · **#652 OPEN** | — · **#652 OPEN** | OOO-01 done. OOO-04 FP. OOO-02 done (incident-severity.md, iter 324b). OOO-03 pending. | OOO-03 merged |
 | WW | `claude/audit-remediation/ww-01-watchlist-data-model` · **#651 OPEN** | **#651 OPEN** (WW-01) | WW-01 migration applied to live DB, types regenerated. | All WW tasks merged |
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
 | Z | `claude/audit-remediation/z-04-zero-state-ux` | #230/#323/#403/#457/#524/#565 | Z-01..Z-04 done. | Z-04 merged ✓ |
@@ -915,8 +915,8 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 | S | #594 | iter 315 | S-01..S-05 all merged |
 | A | #540 | iter 317 | A-01..A-04 done; A-05 false-positive (broker_reviews/broker_ratings not in schema) |
 | DDD | — | iter 320 | DDD-01..03 all false-positive — `export-data`, `delete`, `gdpr-retention-purge` pre-existed with tests |
-| EE (partial) | #653 | iter 322 | EE-01 done (audit — root covers all routes, 3 files fixed). EE-02/03/04 false-positive — RouteErrorBoundary + RouteLoadingSkeleton pre-existed. EE-05 still pending. |
 | OOO (partial) | — | iter 321b | OOO-04 false-positive — `breach-notification.md` fully covers OAIC NDB 30-day clock, GDPR 72h, P0-P3 severity matrix |
+| EE (partial) | #653 | iter 322 | EE-01 done (audit — root covers all routes, 3 files fixed). EE-02/03/04 false-positive — RouteErrorBoundary + RouteLoadingSkeleton pre-existed. EE-05 still pending. |
 
 ---
 
@@ -942,6 +942,27 @@ for this cross-stream transitional state.
 new schema migration: announce intent and merge unless STOP).
 
 STATUS: CI-RESCUE · stream=EE · pr=#653
+
+---
+
+### 2026-05-09 — iter 324b (OOO — OOO-02: incident severity classification runbook)
+
+**PR:** #652 (`claude/audit-remediation/ooo-01-runbook-audit`) — OPEN, CI re-running.
+
+**Why:** OOO-02 gap identified in iter 321b — no incident severity classification runbook existed.
+The gap register in `docs/runbooks/README.md` (added in OOO-01) called this out explicitly.
+
+**What shipped:**
+- `docs/runbooks/incident-severity.md` (new, ~80 lines): P0-P3 definitions with time-to-acknowledge
+  targets (P0: 5 min, P1: 15 min, P2: 2h, P3: next business day), escalation matrix, severity
+  downgrade criteria, post-incident review trigger rules.
+- `docs/runbooks/README.md`: updated OOO-02 gap entry from "pending" to "done", added
+  `incident-severity.md` to the inventory table.
+- `docs/audits/REMEDIATION_QUEUE.md`: OOO row — OOO-02 marked done in in-flight table.
+
+**Commit:** `e3f91ab0` (push on OOO stream branch)
+
+STATUS: PROGRESS · stream=OOO · item=OOO-02 · pr=#652
 
 ---
 
@@ -991,22 +1012,6 @@ STATUS: CI-RESCUE · stream=WW · pr=#651
 
 ---
 
-### 2026-05-09 — iter 323b (CI-RESCUE: OOO #652 types drift + queue restore)
-
-**PR:** #652 (`claude/audit-remediation/ooo-01-runbook-audit`) — OPEN, CI re-running.
-
-**Scope:** CI rescue for PR #652 (OOO stream) + queue restore after parallel-fire revert.
-
-**Why:** PR #652 failed "Supabase types drift" and "Preview smoke test". Same WW-01 types drift root cause as iter 323 (EE). Additionally, the parallel fire for iter 322 (EE stream, commit e8ebff5) reverted the OOO queue state — restored here.
-
-**What shipped:**
-- `lib/database.types.ts` regenerated on OOO stream branch (`8f63c6a`) — adds `user_watchlist_items` types so PR #652 passes drift gate.
-- `docs/audits/REMEDIATION_QUEUE.md`: OOO row restored to in-flight table; OOO pending section corrected (OOO-01 ~~done~~, OOO-04 ~~false-positive~~); iter 321b log entry restored.
-
-STATUS: CI-RESCUE · stream=OOO · pr=#652
-
----
-
 ### 2026-05-09 — iter 323 (CI-rescue EE — db types drift fix on #653)
 
 **PR:** #653 (`claude/audit-remediation/ee-01-error-boundaries`) — OPEN, CI re-running.
@@ -1022,6 +1027,36 @@ MCP so the branch matches live schema.
 **Commit:** `dd89fc59`
 
 STATUS: CI-RESCUE · stream=EE · pr=#653
+
+---
+
+### 2026-05-09 — iter 323b (CI-RESCUE: OOO #652 types drift + queue restore)
+
+**Scope:** CI rescue for PR #652 (OOO stream) + queue restore after parallel-fire revert.
+
+**Why:** PR #652 failed "Supabase types drift" and "Preview smoke test". Same WW-01 types drift root cause as iter 323 (EE). Additionally, the parallel fire for iter 322 (EE stream, commit e8ebff5) reverted the OOO queue state — restored here.
+
+**What shipped:**
+- `lib/database.types.ts` regenerated on OOO stream branch (`8f63c6a`) — adds `user_watchlist_items` types so PR #652 passes drift gate.
+- `docs/audits/REMEDIATION_QUEUE.md`: OOO row restored to in-flight table; OOO pending section corrected (OOO-01 ~~done~~, OOO-04 ~~false-positive~~); iter 321b log entry restored.
+
+STATUS: CI-RESCUE · stream=OOO · pr=#652
+
+---
+
+### 2026-05-08 — iter 321b (OOO — OOO-01: runbook audit, README update, supabase-slow + slo-breach)
+
+**PR:** #652 (`claude/audit-remediation/ooo-01-runbook-audit`) — OPEN, CI re-running after iter 323b.
+
+**Why:** `docs/runbooks/README.md` listed only 5 runbooks but the directory held 30. Two runbooks (`supabase-slow.md`, `slo-breach.md`) were referenced in the README but did not exist on disk.
+
+**What shipped:**
+- `docs/runbooks/README.md`: rewritten with full categorised inventory of all 30 existing runbooks + gap register identifying OOO-02 (incident severity) and OOO-03 (on-call rotation) as genuine gaps.
+- `docs/runbooks/supabase-slow.md` (new): pg_stat_statements diagnosis, connection audit, lock-contention query, kill-runaway mitigation, connection pooling note, recovery steps.
+- `docs/runbooks/slo-breach.md` (new): SLO breach starting-point runbook; service-to-runbook routing table, deploy-correlate check, vendor status pages, Sentry spike check, incident-close SQL.
+- OOO-04 → **false positive** — `breach-notification.md` fully covers OAIC NDB requirements.
+
+STATUS: PROGRESS · stream=OOO · item=OOO-01 · pr=#652
 
 ---
 
@@ -1134,7 +1169,7 @@ STATUS: PROGRESS · stream=X · item=X-06 · pr=#641
 
 **PR:** #644 (`claude/audit-remediation/x-08-go-apply`) — OPEN, CI in_progress.
 
-**Why:** `app/go/[slug]/apply/page.tsx` used `createAdminClient()` (service-role) for anonymous public-facing SSR pages — unnecessary privilege escalation. It reads only `brokers`, which has an existing `"Public read for active brokers"` anon SELECT policy (`001_initial.sql`). `app/go/[slug]/route.ts` retains admin client: it reads `campaigns` which has no anon SELECT policy (`20260610120000_a03_batch5_revenue_products.sql` — `"Broker can read own campaigns" TO authenticated` only), so swapping would silently break CPC billing.
+**Why:** `app/go/[slug]/apply/page.tsx` used `createAdminClient()` (service-role) for anonymous public traffic — unnecessary privilege escalation. It reads only `brokers`, which has an existing `"Public read for active brokers"` anon SELECT policy (`001_initial.sql`). `app/go/[slug]/route.ts` retains admin client: it reads `campaigns` which has no anon SELECT policy (`20260610120000_a03_batch5_revenue_products.sql` — `"Broker can read own campaigns" TO authenticated` only), so swapping would silently break CPC billing.
 
 **What shipped:**
 - `app/go/[slug]/apply/page.tsx`: replaced `createAdminClient` with `createClient` from `@/lib/supabase/server`; added `await` to 2 call sites (`generateMetadata` + `ApplyPage`).
@@ -1359,7 +1394,7 @@ Coverage audit complete. RATCHET M1 queued as next R-stream item.
 _Note: Iters 282–293 ran between 2026-04-21 and 2026-04-28 and were not individually logged in the live queue (context was archived). Entries reconstructed from git log and PR merge timestamps._
 
 | Iter | Date | Action | PR |
-|------|------|--------|---|-|
+|------|------|--------|----|-|
 | 282 | 2026-04-21 | R — COVERAGE-09 ratchet | #566 |
 | 283 | 2026-04-21 | R — COVERAGE-10 ratchet | #567 |
 | 284 | 2026-04-22 | R — COVERAGE-11 ratchet | #568 |
