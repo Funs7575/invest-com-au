@@ -8,6 +8,8 @@ import { CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import NotificationBell from "@/components/NotificationBell";
 import ThemeToggle from "@/components/ThemeToggle";
+import { MegaMenu } from "@/components/MegaMenu";
+import type { MegaMenuSidebar } from "@/components/MegaMenu";
 
 const propertyDropdown = [
   { label: "Investment Property", href: "/property", desc: "New developments, suburb data & more" },
@@ -332,259 +334,45 @@ const mobileNavSections = [
   },
 ];
 
-function InvestMegaDropdown({ isActive }: { isActive: boolean }) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-  const timeout = useRef<ReturnType<typeof setTimeout>>(undefined);
+const investSidebar: MegaMenuSidebar = {
+  heading: "Quick Links",
+  links: [
+    { label: "All Opportunities", href: "/invest" },
+    { label: "Fund Opportunities", href: "/invest/funds" },
+    { label: "Gold", href: "/invest/gold" },
+    { label: "Private Equity", href: "/invest/private-equity" },
+    { label: "Pre-IPO", href: "/invest/pre-ipo" },
+    { label: "List a Listing", href: "/invest/list" },
+    { label: "Become a Sponsor", href: "/advertise" },
+  ],
+  ctaLabel: "Browse All",
+  ctaHref: "/invest",
+};
 
-  const enter = () => { clearTimeout(timeout.current); setOpen(true); };
-  const leave = () => { timeout.current = setTimeout(() => setOpen(false), 150); };
+const advisorsSidebar: MegaMenuSidebar = {
+  heading: "All",
+  links: [
+    { label: "View All Advisors", href: "/advisors" },
+    { label: "Advanced Search", href: "/advisors/search" },
+    { label: "Find-an-Advisor Quiz", href: "/find-advisor" },
+    { label: "FIRB Specialists", href: "/advisors/firb-specialists" },
+    { label: "International Tax", href: "/advisors/international-tax-specialists" },
+  ],
+  ctaLabel: "List your practice",
+  ctaHref: "/for-advisors",
+};
 
-  useEffect(() => {
-    return () => clearTimeout(timeout.current);
-  }, []);
-
-  return (
-    <div ref={ref} className="relative" onMouseEnter={enter} onMouseLeave={leave}>
-      <button
-        onClick={() => setOpen(!open)}
-        className={`px-4 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-bold rounded-lg transition-colors flex items-center gap-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-700/40 ${
-          isActive ? "text-slate-900 bg-slate-50" : ""
-        }`}
-      >
-        Opportunities
-        <Icon name="chevron-down" size={14} className={`text-slate-400 transition-transform ${open ? "rotate-180" : ""}`} />
-      </button>
-      {open && (
-        <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 z-50">
-          <div className="bg-white rounded-xl border border-slate-200 shadow-xl p-5 flex gap-6" style={{ width: "720px" }}>
-            {investMegaMenu.map((col) => (
-              <div key={col.title} className="flex-1 min-w-0">
-                <p className="text-[0.65rem] font-extrabold uppercase tracking-wider text-amber-500 mb-2 px-2">{col.title}</p>
-                <div className="space-y-0.5">
-                  {col.items.map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      onClick={() => setOpen(false)}
-                      className="block px-2 py-1.5 rounded-lg hover:bg-slate-50 transition-colors group"
-                    >
-                      <div className="text-sm font-bold text-slate-900 group-hover:text-amber-600 transition-colors">{item.label}</div>
-                      <div className="text-[0.68rem] text-slate-400 leading-tight">{item.desc}</div>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            ))}
-            <div className="border-l border-slate-100 pl-5 flex flex-col justify-between" style={{ minWidth: "140px" }}>
-              <div>
-                <p className="text-[0.65rem] font-extrabold uppercase tracking-wider text-amber-500 mb-2">Quick Links</p>
-                <Link href="/invest" onClick={() => setOpen(false)} className="block text-sm font-bold text-slate-900 hover:text-amber-600 py-1 transition-colors">
-                  All Opportunities
-                </Link>
-                <Link href="/invest/funds" onClick={() => setOpen(false)} className="block text-sm font-bold text-slate-900 hover:text-amber-600 py-1 transition-colors">
-                  Fund Opportunities
-                </Link>
-                <Link href="/invest/gold" onClick={() => setOpen(false)} className="block text-sm font-bold text-slate-900 hover:text-amber-600 py-1 transition-colors">
-                  Gold
-                </Link>
-                <Link href="/invest/private-equity" onClick={() => setOpen(false)} className="block text-sm font-bold text-slate-900 hover:text-amber-600 py-1 transition-colors">
-                  Private Equity
-                </Link>
-                <Link href="/invest/pre-ipo" onClick={() => setOpen(false)} className="block text-sm font-bold text-slate-900 hover:text-amber-600 py-1 transition-colors">
-                  Pre-IPO
-                </Link>
-                <Link href="/invest/list" onClick={() => setOpen(false)} className="block text-sm font-bold text-slate-900 hover:text-amber-600 py-1 transition-colors">
-                  List a Listing
-                </Link>
-                <Link href="/advertise" onClick={() => setOpen(false)} className="block text-sm font-bold text-slate-900 hover:text-amber-600 py-1 transition-colors">
-                  Become a Sponsor
-                </Link>
-              </div>
-              <Link
-                href="/invest"
-                onClick={() => setOpen(false)}
-                className="mt-3 flex items-center gap-1.5 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold text-xs px-3 py-2 rounded-lg transition-colors"
-              >
-                Browse All <Icon name="arrow-right" size={12} />
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-/**
- * Advisors mega dropdown — categorised four-column layout plus an
- * "All" quick-links rail with Advanced Search. Mirrors the invest
- * mega dropdown structure so the nav feels consistent.
- */
-function AdvisorsMegaDropdown({ isActive }: { isActive: boolean }) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-  const timeout = useRef<ReturnType<typeof setTimeout>>(undefined);
-
-  const enter = () => { clearTimeout(timeout.current); setOpen(true); };
-  const leave = () => { timeout.current = setTimeout(() => setOpen(false), 150); };
-
-  useEffect(() => {
-    return () => clearTimeout(timeout.current);
-  }, []);
-
-  return (
-    <div ref={ref} className="relative" onMouseEnter={enter} onMouseLeave={leave}>
-      <button
-        onClick={() => setOpen(!open)}
-        className={`px-4 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-bold rounded-lg transition-colors flex items-center gap-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-700/40 ${
-          isActive ? "text-slate-900 bg-slate-50" : ""
-        }`}
-        aria-haspopup="true"
-        aria-expanded={open}
-      >
-        Find Experts
-        <Icon name="chevron-down" size={14} className={`text-slate-400 transition-transform ${open ? "rotate-180" : ""}`} aria-hidden="true" />
-      </button>
-      {open && (
-        <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 z-50">
-          <div className="bg-white rounded-xl border border-slate-200 shadow-xl p-5 flex gap-6" style={{ width: "820px" }}>
-            {advisorsMegaMenu.map((col) => (
-              <div key={col.title} className="flex-1 min-w-0">
-                <p className="text-[0.65rem] font-extrabold uppercase tracking-wider text-amber-500 mb-2 px-2">{col.title}</p>
-                <div className="space-y-0.5">
-                  {col.items.map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      onClick={() => setOpen(false)}
-                      className="block px-2 py-1.5 rounded-lg hover:bg-slate-50 transition-colors group"
-                    >
-                      <div className="text-sm font-bold text-slate-900 group-hover:text-amber-600 transition-colors">{item.label}</div>
-                      <div className="text-[0.68rem] text-slate-400 leading-tight">{item.desc}</div>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            ))}
-            <div className="border-l border-slate-100 pl-5 flex flex-col justify-between" style={{ minWidth: "150px" }}>
-              <div>
-                <p className="text-[0.65rem] font-extrabold uppercase tracking-wider text-amber-500 mb-2">All</p>
-                <Link href="/advisors" onClick={() => setOpen(false)} className="block text-sm font-bold text-slate-900 hover:text-amber-600 py-1 transition-colors">
-                  View All Advisors
-                </Link>
-                <Link href="/advisors/search" onClick={() => setOpen(false)} className="block text-sm font-bold text-slate-900 hover:text-amber-600 py-1 transition-colors">
-                  Advanced Search
-                </Link>
-                <Link href="/find-advisor" onClick={() => setOpen(false)} className="block text-sm font-bold text-slate-900 hover:text-amber-600 py-1 transition-colors">
-                  Find-an-Advisor Quiz
-                </Link>
-                <div className="mt-3 pt-3 border-t border-slate-100">
-                  <p className="text-[0.6rem] uppercase tracking-wider text-slate-400 mb-1">Specialists</p>
-                  <Link href="/advisors/firb-specialists" onClick={() => setOpen(false)} className="block text-xs text-slate-600 hover:text-amber-600 py-0.5 transition-colors">
-                    FIRB Specialists
-                  </Link>
-                  <Link href="/advisors/international-tax-specialists" onClick={() => setOpen(false)} className="block text-xs text-slate-600 hover:text-amber-600 py-0.5 transition-colors">
-                    International Tax
-                  </Link>
-                </div>
-              </div>
-              <Link
-                href="/for-advisors"
-                onClick={() => setOpen(false)}
-                className="mt-3 flex items-center gap-1.5 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold text-xs px-3 py-2 rounded-lg transition-colors"
-              >
-                List your practice <Icon name="arrow-right" size={12} aria-hidden="true" />
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-/**
- * Tools mega dropdown — surfaces calculators, SMSF, business and grants
- * tools that previously only existed in the mobile drawer. Mirrors the
- * Invest / Advisors mega dropdown structure: four columns + a Learn rail.
- */
-function ToolsMegaDropdown({ isActive }: { isActive: boolean }) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-  const timeout = useRef<ReturnType<typeof setTimeout>>(undefined);
-
-  const enter = () => { clearTimeout(timeout.current); setOpen(true); };
-  const leave = () => { timeout.current = setTimeout(() => setOpen(false), 150); };
-
-  useEffect(() => {
-    return () => clearTimeout(timeout.current);
-  }, []);
-
-  return (
-    <div ref={ref} className="relative" onMouseEnter={enter} onMouseLeave={leave}>
-      <button
-        onClick={() => setOpen(!open)}
-        className={`px-4 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-bold rounded-lg transition-colors flex items-center gap-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-700/40 ${
-          isActive ? "text-slate-900 bg-slate-50" : ""
-        }`}
-        aria-haspopup="true"
-        aria-expanded={open}
-      >
-        Tools
-        <Icon name="chevron-down" size={14} className={`text-slate-400 transition-transform ${open ? "rotate-180" : ""}`} aria-hidden="true" />
-      </button>
-      {open && (
-        <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 z-50">
-          <div className="bg-white rounded-xl border border-slate-200 shadow-xl p-5 flex gap-6" style={{ width: "860px" }}>
-            {toolsMegaMenu.map((col) => (
-              <div key={col.title} className="flex-1 min-w-0">
-                <p className="text-[0.65rem] font-extrabold uppercase tracking-wider text-amber-500 mb-2 px-2">{col.title}</p>
-                <div className="space-y-0.5">
-                  {col.items.map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      onClick={() => setOpen(false)}
-                      className="block px-2 py-1.5 rounded-lg hover:bg-slate-50 transition-colors group"
-                    >
-                      <div className="text-sm font-bold text-slate-900 group-hover:text-amber-600 transition-colors">{item.label}</div>
-                      <div className="text-[0.68rem] text-slate-400 leading-tight">{item.desc}</div>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            ))}
-            <div className="border-l border-slate-100 pl-5 flex flex-col justify-between" style={{ minWidth: "140px" }}>
-              <div>
-                <p className="text-[0.65rem] font-extrabold uppercase tracking-wider text-amber-500 mb-2">Learn</p>
-                <Link href="/learn" onClick={() => setOpen(false)} className="block text-sm font-bold text-slate-900 hover:text-amber-600 py-1 transition-colors">
-                  Learn to Invest
-                </Link>
-                <Link href="/articles" onClick={() => setOpen(false)} className="block text-sm font-bold text-slate-900 hover:text-amber-600 py-1 transition-colors">
-                  Articles &amp; Guides
-                </Link>
-                <Link href="/how-to" onClick={() => setOpen(false)} className="block text-sm font-bold text-slate-900 hover:text-amber-600 py-1 transition-colors">
-                  How-To Guides
-                </Link>
-                <Link href="/glossary" onClick={() => setOpen(false)} className="block text-sm font-bold text-slate-900 hover:text-amber-600 py-1 transition-colors">
-                  Glossary
-                </Link>
-              </div>
-              <Link
-                href="/calculators"
-                onClick={() => setOpen(false)}
-                className="mt-3 flex items-center gap-1.5 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold text-xs px-3 py-2 rounded-lg transition-colors"
-              >
-                All tools <Icon name="arrow-right" size={12} aria-hidden="true" />
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
+const toolsSidebar: MegaMenuSidebar = {
+  heading: "Learn",
+  links: [
+    { label: "Learn to Invest", href: "/learn" },
+    { label: "Articles & Guides", href: "/articles" },
+    { label: "How-To Guides", href: "/how-to" },
+    { label: "Glossary", href: "/glossary" },
+  ],
+  ctaLabel: "All tools",
+  ctaHref: "/calculators",
+};
 
 function DesktopDropdown({
   label,
@@ -694,12 +482,12 @@ export default function Header() {
 
           {/* Desktop Nav */}
           <nav className="hidden lg:flex space-x-1 items-center ml-8" aria-label="Main navigation">
-            <InvestMegaDropdown isActive={isInvestActive} />
+            <MegaMenu label="Opportunities" columns={investMegaMenu} sidebar={investSidebar} isActive={isInvestActive} width={720} />
             <DesktopDropdown label="Property & Finance" items={propertyDropdown} isActive={isPropertyActive} />
-            <AdvisorsMegaDropdown isActive={isAdvisorsActive} />
+            <MegaMenu label="Find Experts" columns={advisorsMegaMenu} sidebar={advisorsSidebar} isActive={isAdvisorsActive} width={820} />
             <div className="h-6 w-px bg-slate-200 mx-2" />
             <DesktopDropdown label="Compare Platforms" items={platformsDropdown} isActive={isPlatformsActive} />
-            <ToolsMegaDropdown isActive={isToolsActive} />
+            <MegaMenu label="Tools" columns={toolsMegaMenu} sidebar={toolsSidebar} isActive={isToolsActive} width={860} />
             <div className="h-6 w-px bg-slate-200 mx-2" />
             <DesktopDropdown label="Investing from Abroad" items={foreignDropdown} isActive={isForeignActive} />
           </nav>
