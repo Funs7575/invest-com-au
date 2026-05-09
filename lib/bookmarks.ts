@@ -180,6 +180,23 @@ export async function claimAnonymousSaves(
       return 0;
     }
 
+    // Also claim any anonymous calculator state held on the same session row
+    // (CMP W1-A — extends the claim flow without forking the entry point).
+    // This must run BEFORE the row is marked claimed_at, since the helper reads
+    // the same row by `claimed_at IS NULL`.
+    let calcStateClaimed = 0;
+    try {
+      const { claimAnonymousCalculatorState } = await import(
+        "@/lib/calculator-state"
+      );
+      calcStateClaimed = await claimAnonymousCalculatorState(sessionId, userId);
+    } catch (err) {
+      log.warn("claim calculator state failed", {
+        userId,
+        err: err instanceof Error ? err.message : String(err),
+      });
+    }
+
     // Mark the source rows claimed
     await supabase
       .from("anonymous_saves")
@@ -190,7 +207,11 @@ export async function claimAnonymousSaves(
       .eq("session_id", sessionId)
       .is("claimed_at", null);
 
-    log.info("Claimed anonymous saves", { userId, count: pending.length });
+    log.info("Claimed anonymous saves", {
+      userId,
+      count: pending.length,
+      calcStateClaimed,
+    });
     return pending.length;
   } catch (err) {
     log.warn("claimAnonymousSaves threw", {
