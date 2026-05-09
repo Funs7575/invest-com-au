@@ -42,6 +42,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | FF | `claude/audit-remediation/ff-01-feature-flag-audit` · **#656 OPEN** | **#656 OPEN** (FF-01..FF-04) | FF-01 done. FF-02 done (iter 329, commit `b276f56a`). FF-02 CI rescue (iter 330, commit `2b869f91`). FF-03 false-positive (flag mgmt UI pre-existed W-07 commit `6723b24`). FF-04 done (iter 330, `last_evaluated_at` + loadFlag(), commit `aa34e77`). **Stream complete.** | FF-04 merged |
 | OOO | `claude/audit-remediation/ooo-01-runbook-audit` · **#652 OPEN** | — · **#652 OPEN** | OOO-01 done. OOO-04 FP. OOO-02 done (iter 324b commit 93372f0). OOO-03 done (iter 325b commit a610b2d). Types drift fixed (iter 327b commit c543803). **Stream complete — CI re-running.** | OOO-03 merged ✓ |
 | WW | `claude/audit-remediation/ww-01-watchlist-data-model` · **#651 OPEN** | **#651 OPEN** (WW-01+WW-02) | WW-01 migration + WW-02 watchlist UI done (iter 322b). WW-03/04 blocked (DD-02 dep). | All WW tasks merged |
+| KK | `claude/audit-remediation/kk-lead-routing-maturity` · **#663 OPEN** | **#663 OPEN** (KK-01) | KK-01 done (iter 331 — typed `submitLead()` client, migrated 3 raw fetch callers, commit `4e431a5`). Note: lead-sla-check + enforce-lead-sla crons pre-exist. KK-02..05 pending. | All KK tasks merged |
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
 | Z | `claude/audit-remediation/z-04-zero-state-ux` | #230/#323/#403/#457/#524/#565 | Z-01..Z-04 done. | Z-04 merged ✓ |
 
