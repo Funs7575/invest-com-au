@@ -18,7 +18,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | B | `claude/audit-remediation/b-09-edge-fn-secrets` | #208/#301/#457 | B-01..B-08 done. B-09 blocked (see Blocked). | B-09 unblocked + merged |
 | C | `claude/audit-remediation/c-05-index-coverage` | #209/#302/#338/#356/#357/#358/#359/#360/#361/#362/#457/#541 | C-01..C-02 done. C-03..C-05 blocked (see Blocked). | C-05 merged |
 | D | `claude/audit-remediation/d-09-seo-drift` | #210/#303/#339/#363/#364/#365/#366/#457/#542 | D-01..D-09 done. | D-09 merged ✓ |
-| E | `claude/audit-remediation/e-02-batch-5-zod-rollout` (#469) · `e-04-batch-2-zod-backfill` (#557) · `e-04-batch-3-zod-backfill` (#558) | #211/#304/#340/#368/#379/#383/#457/#458/#459/#460/#461/#462/#463/#464/#465/#466/#467/#468/#469/#555/#556/#557/#558 | E-02 batch 1-4 done, batch 5 (#469) open. E-04 batch 1 done (#555/#556), batch 2 blocked, batch 3 open. | All E-02+E-04 batches merged |
+| E | `claude/audit-remediation/e-02-batch-5-zod-rollout` (#469) · `e-04-batch-2-zod-backfill` (#557) · `e-04-batch-3-zod-backfill` (#558) | #211/#304/#340/#368/#379/#383/#457/#458/#459/#460/#461/#462/#463/#464/#465/#466/#467/#468/#469/#555/#556/#557/#558 | E-02 batch 1-5 all MERGED (#469 merged 2026-05-03). E-04 batch 1 done (#555/#556), batch 2 blocked, **batch 3 MERGED** (#558 per iter 279). | All E-02+E-04 batches merged |
 | F | `claude/audit-remediation/f-08-cache-drift` | #212/#305/#341/#370/#384/#457/#470/#543 | F-01..F-07 done. F-08 blocked (see Blocked). | F-08 unblocked + merged |
 | G | `claude/audit-remediation/g-04-mfa-gaps` | #213/#306/#342/#371/#385/#457/#471/#544 | G-01..G-03 done. G-04 blocked (see Blocked). | G-04 unblocked + merged |
 | H | `claude/audit-remediation/h-06-stripe-webhooks` | #214/#307/#343/#386/#457/#472/#545 | H-01..H-06 done. | H-06 merged ✓ |
@@ -37,7 +37,10 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | U | `claude/audit-remediation/u-04-url-canonicals` | #226/#319/#399/#457/#520/#561 | U-01..U-04 done. | U-04 merged ✓ |
 | V | `claude/audit-remediation/v-07-auth-hardening` | #227/#320/#400/#457/#521/#562 | V-01..V-07 done. | V-07 merged ✓ |
 | W | `claude/audit-remediation/w-12-hub-page-hoc` (W-15 remaining) | #306/#312/#369/#529/#598/#599/#602/#604/#605/#606/#607/#608/#609/#612 | **#609 MERGED 2026-05-08** (W-12+W-13+W-15 dividends). **#612 MERGED 2026-05-08** (W-14 grants→/startup/grants). W-04..W-15 all MERGED. | All W tasks merged ✓ |
-| X | `claude/audit-remediation/x-09-preview-advisor-final` · **#641/#643/#644/#646 OPEN** | #257/#367/#596/#600/#610 MERGED · **#641 OPEN** (X-06) · **#643 OPEN** (X-07) · **#644 OPEN** (X-08) · **#646 OPEN** (X-09) | X-06 (#641 CI ✓), X-07 (#643 CI ✓), X-08 (#644 CI ✓), X-09 (#646 open — preview/[token] swap + advisor-portal keep-admin annotations). **Stream X complete** once all 4 PRs merge. | All X PRs merged |
+| X | `claude/audit-remediation/x-09-preview-advisor-final` (#646) · `x-09-eslint-ratchet` (#648) | #257/#367/#596/#600/#610 MERGED · **#641 OPEN** (X-06) · **#643 OPEN** (X-07) · **#644 OPEN** (X-08) · **#646 OPEN** (X-09a) · **#648 OPEN** (X-09b) | X-06 (#641 CI ✓), X-07 (#643 CI ✓), X-08 (#644 CI ✓), X-09a (#646 — preview/[token] swap + keep-admin annotations), X-09b (#648 — ESLint ratchet). **Stream X complete** once all 5 PRs merge. | All X PRs merged |
+| EE | `claude/audit-remediation/ee-01-error-boundaries` · **#653 OPEN** | **#653 OPEN** (EE-01) | EE-01 done + EE-02/03/04 FP. Fixes quiz/calculators/savings-calc error.tsx. EE-05 pending. | EE-05 merged |
+| OOO | `claude/audit-remediation/ooo-01-runbook-audit` · **#652 OPEN** | — · **#652 OPEN** | OOO-01 done (#652 CI red — types drift fixed in iter 323b). OOO-04 false-positive. OOO-02/03 pending. | OOO-03 merged |
+| WW | `claude/audit-remediation/ww-01-watchlist-data-model` · **#651 OPEN** | **#651 OPEN** (WW-01) | WW-01 migration applied to live DB, types regenerated. | All WW tasks merged |
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
 | Z | `claude/audit-remediation/z-04-zero-state-ux` | #230/#323/#403/#457/#524/#565 | Z-01..Z-04 done. | Z-04 merged ✓ |
 
@@ -205,11 +208,11 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|--------------|-------|
-| EE-01 | pending | Global error boundary audit (identify routes missing `error.tsx`) | ~2 | |
-| EE-02 | pending | Standardised error boundary component (design + implement) | ~3 | Deps: EE-01. |
-| EE-03 | pending | Skeleton/loading fallback audit (identify routes missing `loading.tsx`) | ~2 | |
-| EE-04 | pending | Standardised loading skeleton component | ~2 | Deps: EE-03. |
-| EE-05 | pending | E2E tests for error + loading states | ~3 | Deps: EE-02+EE-04. |
+| EE-01 | **done** | Global error boundary audit (identify routes missing `error.tsx`) | — | Root `app/error.tsx` covers all 523 routes. 3 bespoke files fixed (quiz/calculators/savings-calc). PR #653. |
+| EE-02 | ~~false-positive~~ | ~~Standardised error boundary component (design + implement)~~ | — | `components/RouteErrorBoundary` already exists. |
+| EE-03 | ~~false-positive~~ | ~~Skeleton/loading fallback audit (identify routes missing `loading.tsx`)~~ | — | `app/loading.tsx` (root) + `components/RouteLoadingSkeleton` already exist. |
+| EE-04 | ~~false-positive~~ | ~~Standardised loading skeleton component~~ | — | `RouteLoadingSkeleton` pre-existed. |
+| EE-05 | pending | E2E tests for error + loading states | ~3 | Deps: EE-02+EE-04 (FP — can start now). |
 
 **Stream EE entry condition:** No hard deps. Can start any time.
 
@@ -439,8 +442,8 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 ### Stream WW — Watchlist / portfolio tracker
 
 | Item | Status | Description | Est. iters | Notes |
-|------|--------|-------------|--------------|-------|
-| WW-01 | pending | Watchlist data model (Supabase table, RLS, user-scoped) | ~3 | |
+|------|--------|-------------|------------|-------|
+| WW-01 | **in-flight** | Watchlist data model (Supabase table, RLS, user-scoped) | ~3 | PR #651 open, CI running. Migration applied to live DB. Types regenerated. |
 | WW-02 | pending | Watchlist UI (`/account/watchlist`) | ~4 | Deps: WW-01. |
 | WW-03 | pending | Watchlist price alerts (email + in-app, cron-driven) | ~4 | Deps: WW-02+DD-02. |
 | WW-04 | pending | Portfolio tracker (manual entry, cost-basis tracking) | ~6 | Deps: WW-02. Long-term. |
@@ -528,15 +531,15 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 
 ---
 
-### Stream DDD — Data export / portability
+### Stream DDD — Data export / portability ✓ RESOLVED AS FALSE POSITIVE
 
 | Item | Status | Description | Est. iters | Notes |
-|------|--------|-------------|--------------|-------|
-| DDD-01 | pending | GDPR data export endpoint (`/api/account/export`) | ~3 | Compliance: required. |
-| DDD-02 | pending | GDPR account deletion endpoint (`/api/account/delete`) | ~3 | Compliance: required. Deps: DDD-01. |
-| DDD-03 | pending | Data retention policy enforcement (auto-purge after N months) | ~4 | Deps: DDD-02. |
+|------|--------|-------------|------------|-------|
+| DDD-01 | ~~false-positive~~ | ~~GDPR data export endpoint (`/api/account/export`)~~ | — | `app/api/account/export-data/route.ts` + `__tests__/api/account-export-data.test.ts` exist. Implemented with rate limiting, APP 12 compliance note, async export cron. |
+| DDD-02 | ~~false-positive~~ | ~~GDPR account deletion endpoint (`/api/account/delete`)~~ | — | `app/api/account/delete/route.ts` + `__tests__/api/account-delete.test.ts` exist. POST + DELETE handlers, 30-day grace, confirmation email, APP 11 / GDPR Art 17. |
+| DDD-03 | ~~false-positive~~ | ~~Data retention policy enforcement (auto-purge after N months)~~ | — | `app/api/cron/gdpr-retention-purge/route.ts` exists — runs `retention_rules` table, hard-delete and anonymise strategies. |
 
-**Stream DDD entry condition:** DDD-01 is compliance-required. Priority elevated.
+**Stream DDD entry condition:** All items pre-existed. Stream resolved as false-positive (iter 319).
 
 ---
 
@@ -568,17 +571,17 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 
 ---
 
-### Stream GGG — Glossary / financial terms
+### Stream GGG — Glossary / financial terms (GGG-01..03 resolved; GGG-04..05 pending)
 
 | Item | Status | Description | Est. iters | Notes |
-|------|--------|-------------|--------------|-------|
-| GGG-01 | pending | Glossary data model (Supabase `glossary_terms` table, 500+ terms) | ~3 | |
-| GGG-02 | pending | Glossary index page (`/glossary`) | ~2 | Deps: GGG-01. |
-| GGG-03 | pending | Glossary term page (`/glossary/[term]`) | ~2 | Deps: GGG-01. |
-| GGG-04 | pending | Inline term tooltips (hover definition on first mention in articles) | ~4 | Deps: GGG-03. |
-| GGG-05 | pending | Glossary SEO (DefinedTerm JSON-LD, alphabetical canonical structure) | ~2 | Deps: GGG-03. |
+|------|--------|-------------|------------|-------|
+| GGG-01 | ~~false-positive~~ | ~~Glossary data model (Supabase `glossary_terms` table, 500+ terms)~~ | — | `glossary_terms` table in `lib/database.types.ts` + migrations. `__tests__/lib/glossary-db.test.ts` + `__tests__/lib/glossary.test.ts` exist. |
+| GGG-02 | ~~false-positive~~ | ~~Glossary index page (`/glossary`)~~ | — | `app/glossary/page.tsx` exists. |
+| GGG-03 | ~~false-positive~~ | ~~Glossary term page (`/glossary/[term]`)~~ | — | `app/glossary/[term]/` directory exists. |
+| GGG-04 | pending | Inline term tooltips (hover definition on first mention in articles) | ~4 | No tooltip component found. Deps: GGG-03 ✓. |
+| GGG-05 | pending | Glossary SEO (DefinedTerm JSON-LD, alphabetical canonical structure) | ~2 | Needs verification. Deps: GGG-03 ✓. |
 
-**Stream GGG entry condition:** GGG-01 can start immediately.
+**Stream GGG entry condition:** GGG-01..03 resolved as false-positives (iter 319). GGG-04 can start immediately.
 
 ---
 
@@ -675,12 +678,12 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|--------------|-------|
-| OOO-01 | pending | Runbook audit (identify gaps vs. `docs/runbooks/` inventory) | ~2 | |
-| OOO-02 | pending | Incident severity classification runbook | ~2 | Deps: OOO-01. |
-| OOO-03 | pending | On-call rotation runbook (contacts, escalation path) | ~2 | Deps: OOO-01. |
-| OOO-04 | pending | Data breach response runbook (OAIC notification requirements) | ~3 | Compliance. Deps: OOO-01. |
+| OOO-01 | ~~done~~ | ~~Runbook audit (identify gaps vs. `docs/runbooks/` inventory)~~ | ~2 | README updated (30 runbooks inventoried), supabase-slow.md + slo-breach.md created, gap register added. PR #652. |
+| OOO-02 | pending | Incident severity classification runbook | ~2 | Deps: OOO-01 ✓. |
+| OOO-03 | pending | On-call rotation runbook (contacts, escalation path) | ~2 | Deps: OOO-01 ✓. |
+| OOO-04 | ~~false-positive~~ | ~~Data breach response runbook (OAIC notification requirements)~~ | — | `breach-notification.md` fully covers NDB 30-day clock, GDPR 72h, P0-P3 severity matrix, OAIC form, individual notification template. |
 
-**Stream OOO entry condition:** OOO-01 can start immediately.
+**Stream OOO entry condition:** OOO-01 done. OOO-02 can start immediately.
 
 ---
 
@@ -897,12 +900,114 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 | Z | #565 | iter 267 | Z-01..Z-04 all merged |
 | S | #594 | iter 315 | S-01..S-05 all merged |
 | A | #540 | iter 317 | A-01..A-04 done; A-05 false-positive (broker_reviews/broker_ratings not in schema) |
+| DDD | — | iter 320 | DDD-01..03 all false-positive — `export-data`, `delete`, `gdpr-retention-purge` pre-existed with tests |
+| OOO (partial) | — | iter 321b | OOO-04 false-positive — `breach-notification.md` fully covers OAIC NDB 30-day clock, GDPR 72h, P0-P3 severity matrix |
+| EE (partial) | #653 | iter 322 | EE-01 done (audit — root covers all routes, 3 files fixed). EE-02/03/04 false-positive — RouteErrorBoundary + RouteLoadingSkeleton pre-existed. EE-05 still pending. |
 
 ---
 
 ## Iteration log (most recent at top)
 
-### 2026-05-08 — iter 320 (X — X-09: swap preview/[token] + annotate advisor-portal keep-admin)
+### 2026-05-09 — iter 323 (CI-rescue EE — db types drift fix on #653)
+
+**PR:** #653 (`claude/audit-remediation/ee-01-error-boundaries`) — OPEN, CI re-running.
+
+**Why:** WW-01 (iter 321) applied the `user_watchlist_items` migration to the live DB before PR #651
+merged to main. Any PR opened against main after that migration was applied fails the "Supabase
+types drift" gate, including #653. The fix is to regenerate `lib/database.types.ts` via Supabase
+MCP so the branch matches live schema.
+
+**What shipped:**
+- `lib/database.types.ts` regenerated (+27 lines — only `user_watchlist_items` Row/Insert/Update/Relationships block added). All other table definitions unchanged.
+
+**Commit:** `dd89fc59`
+
+STATUS: CI-RESCUE · stream=EE · pr=#653
+
+---
+
+### 2026-05-09 — iter 323b (CI-RESCUE: OOO #652 types drift + queue restore)
+
+**Scope:** CI rescue for PR #652 (OOO stream) + queue restore after parallel-fire revert.
+
+**Why:** PR #652 failed "Supabase types drift" and "Preview smoke test". Same WW-01 types drift root cause as iter 323 (EE). Additionally, the parallel fire for iter 322 (EE stream, commit e8ebff5) reverted the OOO queue state — restored here.
+
+**What shipped:**
+- `lib/database.types.ts` regenerated on OOO stream branch (`8f63c6a`) — adds `user_watchlist_items` types so PR #652 passes drift gate.
+- `docs/audits/REMEDIATION_QUEUE.md`: OOO row restored to in-flight table; OOO pending section corrected (OOO-01 ~~done~~, OOO-04 ~~false-positive~~); iter 321b log entry restored.
+
+STATUS: CI-RESCUE · stream=OOO · pr=#652
+
+---
+
+### 2026-05-08 — iter 321b (OOO — OOO-01: runbook audit, README update, supabase-slow + slo-breach)
+
+**PR:** #652 (`claude/audit-remediation/ooo-01-runbook-audit`) — OPEN, CI re-running after iter 323b.
+
+**Why:** `docs/runbooks/README.md` listed only 5 runbooks but the directory held 30. Two runbooks (`supabase-slow.md`, `slo-breach.md`) were referenced in the README but did not exist on disk.
+
+**What shipped:**
+- `docs/runbooks/README.md`: rewritten with full categorised inventory of all 30 existing runbooks + gap register identifying OOO-02 (incident severity) and OOO-03 (on-call rotation) as genuine gaps.
+- `docs/runbooks/supabase-slow.md` (new): pg_stat_statements diagnosis, connection audit, lock-contention query, kill-runaway mitigation, connection pooling note, recovery steps.
+- `docs/runbooks/slo-breach.md` (new): SLO breach starting-point runbook; service-to-runbook routing table, deploy-correlate check, vendor status pages, Sentry spike check, incident-close SQL.
+- OOO-04 → **false positive** — `breach-notification.md` fully covers OAIC NDB requirements.
+
+STATUS: PROGRESS · stream=OOO · item=OOO-01 · pr=#652
+
+---
+
+### 2026-05-08 — iter 322 (EE — EE-01/EE-02 audit + fix: quiz/calculators/savings-calc error boundaries)
+
+**PR:** #653 (`claude/audit-remediation/ee-01-error-boundaries`) — OPEN, CI running.
+
+**Why:** EE-01 audit found that all 523 routes are covered by the root `app/error.tsx` — no
+missing error boundaries. However three bespoke route error.tsx files skipped Sentry error capture
+and used emoji placeholders. `app/savings-calculator/error.tsx` additionally leaked raw
+`error.message` to users (potential stack-trace exposure). `components/RouteErrorBoundary` and
+`components/RouteLoadingSkeleton` both pre-existed — EE-02/EE-03/EE-04 are false-positives.
+
+**What shipped:**
+- `app/quiz/error.tsx` → 2-line re-export of `RouteErrorBoundary` (adds Sentry capture)
+- `app/calculators/error.tsx` → same
+- `app/savings-calculator/error.tsx` → same (also removes raw error.message leakage)
+
+Also: pushed empty commit to X-06 branch (`claude/audit-remediation/x-06-how-to-transfer`)
+to re-trigger CI that had not run on #641.
+
+**Commit:** `5778a89b` (-69 net LOC, 3 files).
+
+STATUS: PROGRESS · stream=EE · item=EE-01 · pr=#653
+
+---
+
+### 2026-05-08 — iter 321 (WW — WW-01: user_watchlist_items data model, RLS, types regen)
+
+**PR:** #651 (`claude/audit-remediation/ww-01-watchlist-data-model`) — OPEN, CI running.
+
+**Why:** No watchlist table existed. Users could only persist anonymous comparison snapshots
+(`anonymous_saves`) but had no user-scoped, persistent watchlist of investable items to monitor.
+WW-01 creates the Supabase-backed foundation for WW-02 (UI) and WW-03 (price alerts).
+
+**What shipped:**
+- `supabase/migrations/20260716_ww01_user_watchlist_items.sql`: new table with UNIQUE
+  (user_id, item_type, item_slug) constraint, two indexes, ENABLE+FORCE RLS, two policies:
+  "users can manage own watchlist" (authenticated FOR ALL, `user_id = auth.uid()`) and
+  "service_role full access" (FOR ALL TO service_role — for WW-03 price-alert cron).
+- `lib/database.types.ts`: regenerated via Supabase MCP to expose `user_watchlist_items`
+  Row/Insert/Update types to WW-02's client code.
+
+**Migration applied:** to live DB project `guggzyqceattncjwvgyc` via Supabase MCP ✓
+**Prior policies:** none (table did not exist) — confirmed via grep.
+**Idempotency:** `CREATE TABLE IF NOT EXISTS`, `CREATE INDEX IF NOT EXISTS`,
+`DROP POLICY IF EXISTS` before each `CREATE POLICY`.
+
+**Commit:** `4bd86d7` (+104/-0 LOC, 2 files — migration + types regen).
+
+STATUS: PROGRESS · stream=WW · item=WW-01 · pr=#651
+
+---
+
+### 2026-05-08 — iter 320c (X — X-09a: swap preview/[token] + annotate advisor-portal keep-admin)
 
 **PR:** #646 (`claude/audit-remediation/x-09-preview-advisor-final`) — OPEN, CI in_progress.
 
@@ -918,13 +1023,22 @@ by design) — annotated with eslint-disable to document the rationale inline.
 - `app/advisor-portal/health/page.tsx`: added keep-admin eslint-disable comment on import line.
 - `app/advisor-portal/upgrade/page.tsx`: same.
 
-**Stream X complete** once #641/#643/#644/#646 all merge — every non-admin/non-API `app/` page
-now uses anon server client OR carries a documented keep-admin annotation.
+**Commit:** `6f28e3e` (+4/-2 LOC, 3 files). Note: iter counter suffix "c" because concurrent fires
+used 320/320b for X-09b ESLint ratchet (#648) and DDD/GGG housekeeping respectively.
 
-**Commit:** `6f28e3e` (+4/-2 LOC, 3 files). Note: iter counter bumped from 319→320 due to concurrent
-fire collision (concurrent fire used 319 for X-08 before this entry could be committed to main).
+STATUS: PROGRESS · stream=X · item=X-09a · pr=#646
 
-STATUS: PROGRESS · stream=X · item=X-09 · pr=#646
+---
+
+### 2026-05-08 — iter 320 (queue housekeeping — DDD/GGG FPs, E stream sync)
+
+**Status:** False-positives resolved. No code shipped.
+
+**DDD stream (all false-positives):** DDD-01 (`/api/account/export-data/route.ts`), DDD-02 (`/api/account/delete/route.ts`), DDD-03 (`/api/cron/gdpr-retention-purge/route.ts`) all pre-exist in codebase with tests. Compliance work was already done outside the queue. Stream moved to Done.
+
+**GGG stream (partial false-positive):** GGG-01 (`glossary_terms` DB table + tests), GGG-02 (`app/glossary/page.tsx`), GGG-03 (`app/glossary/[term]/`) all pre-exist. GGG-04 (inline tooltips) and GGG-05 (Glossary SEO) remain genuinely pending — no tooltip component found.
+
+**E stream sync:** E-02 batch 5 (#469) confirmed MERGED 2026-05-03. E-04 batch 3 (#558) confirmed MERGED per iter 279 log. Queue notes were stale. Updated In-flight table.
 
 ---
 
@@ -1176,7 +1290,7 @@ Coverage audit complete. RATCHET M1 queued as next R-stream item.
 _Note: Iters 282–293 ran between 2026-04-21 and 2026-04-28 and were not individually logged in the live queue (context was archived). Entries reconstructed from git log and PR merge timestamps._
 
 | Iter | Date | Action | PR |
-|------|------|--------|----|---|
+|------|------|--------|----|-|
 | 282 | 2026-04-21 | R — COVERAGE-09 ratchet | #566 |
 | 283 | 2026-04-21 | R — COVERAGE-10 ratchet | #567 |
 | 284 | 2026-04-22 | R — COVERAGE-11 ratchet | #568 |
@@ -1222,7 +1336,7 @@ CI green. E-04 batch 3 done. Batch 2 remains blocked.
 
 ### 2026-04-18 — iter 277 (E-04 batch 2 — blocked, pivoted to R)
 
-E-04 batch 2 blocked (async generator pattern). Added to Blocked section.
+E-04 batch 2 blocked (async generator). Added to Blocked section.
 Pivoted to R-COVERAGE-05.
 
 **PR:** #557-c (R-COVERAGE-05) MERGED.
@@ -2062,7 +2176,7 @@ CI green.
 
 ---
 
-### 2026-02-24 — iter 172 (B-01)
+## 2026-02-24 — iter 172 (B-01)
 
 **PR:** #208-d (B-01 edge fn secrets) MERGED.
 
