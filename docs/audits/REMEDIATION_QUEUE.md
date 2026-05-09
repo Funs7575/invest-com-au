@@ -37,11 +37,11 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | U | `claude/audit-remediation/u-04-url-canonicals` | #226/#319/#399/#457/#520/#561 | U-01..U-04 done. | U-04 merged ✓ |
 | V | `claude/audit-remediation/v-07-auth-hardening` | #227/#320/#400/#457/#521/#562 | V-01..V-07 done. | V-07 merged ✓ |
 | W | `claude/audit-remediation/w-12-hub-page-hoc` (W-15 remaining) | #306/#312/#369/#529/#598/#599/#602/#604/#605/#606/#607/#608/#609/#612 | **#609 MERGED 2026-05-08** (W-12+W-13+W-15 dividends). **#612 MERGED 2026-05-08** (W-14 grants→/startup/grants). W-04..W-15 all MERGED. | All W tasks merged ✓ |
-| X | `claude/audit-remediation/x-09-preview-advisor-final` (#646) · `x-09-eslint-ratchet` (#648) | #257/#367/#596/#600/#610 MERGED · **#641 OPEN** (X-06) · **#643 OPEN** (X-07) · **#644 OPEN** (X-08) · **#646 OPEN** (X-09a) · **#648 OPEN** (X-09b) | X-06 (#641 CI re-running — iter 326 types fix), X-07 (#643 CI ✓), X-08 (#644 CI ✓), X-09a (#646 CI re-running — iter 327b types fix 8ecefa5), X-09b (#648 blocked). **Stream X complete** once X-06/07/08/09a merge. | All X PRs merged |
-| EE | `claude/audit-remediation/ee-01-error-boundaries` · **#653 OPEN** | **#653 OPEN** (EE-01+EE-05) | EE-01 done + EE-02/03/04 FP + EE-05 done (iter 327c — E2E regression tests, commit `1da6416`). **Stream complete.** | #653 merged |
+| X | `claude/audit-remediation/x-09-preview-advisor-final` · `x-09-eslint-ratchet` (#648) | #257/#367/#596/#600/#610/#643/#644/#646 MERGED · **#641 OPEN** (X-06 — CI running) · **#648 OPEN** (X-09b) | X-06 (#641 rebased iter 331 — CI running), X-07 (#643 MERGED), X-08 (#644 MERGED), X-09a (#646 MERGED). X-09b (#648 blocked on X-06). **Stream X complete** once X-06+X-09b merge. | All X PRs merged |
+| EE | `claude/audit-remediation/ee-01-error-boundaries` | **#653 MERGED** (EE-01+EE-05) | EE-01 done + EE-02/03/04 FP + EE-05 done. **Stream complete.** | #653 merged ✓ |
 | FF | `claude/audit-remediation/ff-01-feature-flag-audit` · **#656 OPEN** | **#656 OPEN** (FF-01..FF-04) | FF-01 done. FF-02 done (iter 329, commit `b276f56a`). FF-02 CI rescue (iter 330, commit `2b869f91`). FF-03 false-positive (flag mgmt UI pre-existed W-07 commit `6723b24`). FF-04 done (iter 330, `last_evaluated_at` + loadFlag(), commit `aa34e77`). **Stream complete.** | FF-04 merged |
-| OOO | `claude/audit-remediation/ooo-01-runbook-audit` · **#652 OPEN** | — · **#652 OPEN** | OOO-01 done. OOO-04 FP. OOO-02 done (iter 324b commit 93372f0). OOO-03 done (iter 325b commit a610b2d). Types drift fixed (iter 327b commit c543803). **Stream complete — CI re-running.** | OOO-03 merged ✓ |
-| WW | `claude/audit-remediation/ww-01-watchlist-data-model` · **#651 OPEN** | **#651 OPEN** (WW-01+WW-02) | WW-01 migration + WW-02 watchlist UI done (iter 322b). WW-03/04 blocked (DD-02 dep). | All WW tasks merged |
+| OOO | `claude/audit-remediation/ooo-01-runbook-audit` | **#652 MERGED** | OOO-01 done. OOO-04 FP. OOO-02 done. OOO-03 done. **Stream complete.** | OOO-03 merged ✓ |
+| WW | `claude/audit-remediation/ww-01-watchlist-data-model` | **#651 MERGED** | WW-01 migration + WW-02 watchlist UI done. WW-03/04 blocked (DD-02 dep). **Streams WW-01+WW-02 merged.** | All WW tasks merged ✓ |
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
 | Z | `claude/audit-remediation/z-04-zero-state-ux` | #230/#323/#403/#457/#524/#565 | Z-01..Z-04 done. | Z-04 merged ✓ |
 
@@ -921,6 +921,28 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-09 — iter 331 (merge wave: EE/OOO/WW/X-09a/X-07/X-08 + X-06/07/08 rebase)
+
+**PRs merged:** #653 (EE stream complete), #652 (OOO stream complete), #651 (WW-01+WW-02),
+#646 (X-09a), #643 (X-07 — rebased then squash-merged), #644 (X-08 — rebased then
+squash-merged).
+
+**X-06 rebased** (branch `x-06-how-to-transfer`, force-pushed): removed stale
+`user_watchlist_items` entry from `.driftallowlist` (WW-01 migration now on main). CI
+running on #641.
+
+**X-07 and X-08 rebased** then merged: had queue-update docs commits that conflicted with the
+restored main queue — skipped those commits during rebase (queue is authoritative on main).
+
+**X-09b (#648) still blocked** — depends on X-06 (#641) merging.
+
+**Also fixed:** removed stale `user_watchlist_items` from `.driftallowlist` on main (WW-01
+migration in #651 is now on main; gate would otherwise warn on every CI run).
+
+STATUS: PROGRESS · stream=X+EE+OOO+WW · merge-wave
+
+---
 
 ### 2026-05-09 — iter 330 (queue restore — REMEDIATION_QUEUE.md truncation recovery)
 
