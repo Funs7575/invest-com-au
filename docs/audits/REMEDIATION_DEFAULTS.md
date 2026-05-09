@@ -290,14 +290,22 @@ Pairs/triplets that must ship together to compound their leverage:
 - **CC-02 + CC-03 + CC-04** — super/tax/grants analyzers (all built on CC-01; slot 42)
 - **BB-02 + BB-03** — salary-sacrifice optimiser + CGT calc (both `<CalculatorShell>`-based, similar test scaffolding; slot 45)
 
-**2026-04-27 hub-revenue extension (founder brief: "make every hub leverage every monetisation opportunity, deep-dive then execute").** Four streams added (W/X/Y/Z) for hub foundation + registry-driven nav + Tier-1 hub builds. Strategic doc: `docs/audits/HUB_BLUEPRINT.md`. Streams added to priority order below; founder may hand-edit to slot above quality streams if velocity outweighs polish.
-
-24. **W (hub foundation)** — extract `<HubHero>`, `<HubServiceGrid>`, `<HubArticleStrip>`, `<HubDeepDiveGrid>`, `<HubAdvisorCTA>`, `<HubFAQ>`, `<DirectoryGrid>` family, `<CalculatorShell>`, `<EligibilityQuiz>`, `<CrossHubLinks>`, `<HubPage>` HOC. Migrate `/smsf` and `/grants` first (proof). Without this layer every new hub re-implements layout — biggest velocity multiplier in the roadmap. Items W-01..W-15.
-25. **X (admin backlog)** — clear `createAdminClient` from the 17 public RSC pages identified during the foundation audit; ratchet `eslint.config.mjs` rule from `warn` to `error`. Extension of stream C. Items X-01..X-09.
-26. **Y (registry + nav + dated-stats)** — registry-driven `<MegaMenu>` replacing the 666-line hardcoded `Header.tsx`, auto-sitemap, breadcrumbs from registry, `<DatedStatBadge>` + cron stale-check + CI lint that fails build on unwrapped dated claims. Items Y-01..Y-08. Depends on W landing.
-27. **Z (Tier-1 hub builds)** — `/private-markets`, `/startup` (absorbs `/grants`), `/wholesale`. Each hub: HubConfig row + sub-pages + directory + calculator + quiz + lead magnet + article seeds + smoke E2E. Items Z-01..Z-21. Depends on Y landing. Tier-2/3 hubs (`/retirement`, `/aged-care`, `/angel`, `/business-for-sale`, `/crypto-exchange`, `/crypto-tax`, `/family-office`, `/find-accountant`, `/find-mortgage-broker`) queued as new streams after Z lands.
+_(2026-05-09 cleanup: a duplicated copy of the W/X/Y/Z hub-revenue extension paragraph that previously lived here has been removed. The canonical entries are slots 27–30 above. See `feedback_loop_overhaul_2026_05_09.md` in user memory for the audit that surfaced this.)_
 
 `needs-user` items in any stream surface to Blocked when picked. The loop notes the question and continues to the next non-blocked item.
+
+## Selection overrides (added 2026-05-09 — fixes Tier-0/Tier-1 starvation)
+
+Priority order above is a numbered list, but the iteration command's Phase 3 walks it linearly and never reaches the Tier-0/Tier-1 entries (slots 61–83) because earlier slots always have pending items. **The linear walk silently broke Tier-0 enforcement for ~14 days** (CL-* anonymity infra and LL-01 logged-in-user critical-path were never picked despite being marked "preempts slot 1" / "longest critical path — unblocks 15+ items").
+
+**Override rule (must run before linear walk):**
+
+1. **Tier-0 preempt:** if any CL-01..CL-09 item is `pending` and not `blocked`, pick it first regardless of slot. Reason: anonymity is structural — must land before any public surface ships, otherwise founder PII is irretrievable post-launch.
+2. **Critical-path preempt:** if LL-01 is `pending` and not `blocked`, pick it next. Reason: it unblocks 15+ downstream items (LL-02, LX-02, LX-04, GT-01, GT-02, DF-01..04, AT-01..04, CD-01, DV-01). Every iteration spent on a non-critical-path item while LL-01 sits pending costs us downstream throughput.
+3. **Unblock-driven tiebreaker:** when multiple slots tie (same priority, multiple streams unblocked), prefer the candidate whose stream-letter section unblocks the most other items. Estimate by: count of `depends-on:<this-stream>` references in the queue. Highest count wins.
+4. Otherwise, walk the linear priority list as before.
+
+Iteration command's Phase 3 must run these checks in order before falling through to the linear walk. If an override picks an item, log `STATUS: PROGRESS · override=tier-0` (or `tier-1-critical-path`, or `unblock-driven-tiebreaker`) so the override-vs-linear ratio is visible in the iteration log.
 
 ## Enterprise standard enforcement
 

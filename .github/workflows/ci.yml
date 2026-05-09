@@ -17,6 +17,17 @@ on:
     paths-ignore:
       - "docs/audits/**"
       - "LOOP_DONE"
+  # Allow programmatic re-trigger from auto-rebase-loop-prs.yml after a bot
+  # force-push. GITHUB_TOKEN-driven pushes don't fire workflow runs (GitHub
+  # safeguard against infinite loops), so without this dispatch trigger the
+  # rebased SHA sits with stale CI and the audit-remediation loop wastes
+  # iterations doing manual `ci: re-trigger` empty commits.
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Branch ref to run CI against (e.g. claude/audit-remediation/x-stream)"
+        required: false
+        type: string
 
 concurrency:
   group: ci-${{ github.ref }}
