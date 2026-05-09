@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { JetBrains_Mono, Source_Serif_4 } from "next/font/google";
 import { Suspense } from "react";
+import { headers } from "next/headers";
+import { stripLocalePrefix, BCP47_TAG, LOCALE_DIR } from "@/lib/i18n/locales";
 import "./globals.css";
 import LayoutShell from "@/components/LayoutShell";
 import CountryModeBanner from "@/components/country-mode/CountryModeBanner";
@@ -117,8 +119,19 @@ export default async function RootLayout({
     ? newsletterExitIntentFlag.enabled &&
       newsletterExitIntentFlag.rollout_pct > 0
     : true;
+
+  // Country Mode / Language Mode: derive the active locale from the
+  // URL prefix and set <html lang> + <html dir> accordingly. proxy.ts
+  // stamps x-pathname so we can read it here (Next.js root layouts
+  // don't get pathname via params).
+  const headerStore = await headers();
+  const pathname = headerStore.get("x-pathname") ?? "/";
+  const { locale } = stripLocalePrefix(pathname);
+  const htmlLang = BCP47_TAG[locale];
+  const htmlDir = LOCALE_DIR[locale];
+
   return (
-    <html lang="en-AU" suppressHydrationWarning className={`${inter.variable} ${jetbrainsMono.variable} ${sourceSerif.variable}`}>
+    <html lang={htmlLang} dir={htmlDir} suppressHydrationWarning className={`${inter.variable} ${jetbrainsMono.variable} ${sourceSerif.variable}`}>
       {/* Inline script adds .js-ready immediately so CSS animations only run when JS is available.
           Without this, hero-fade-up starts at opacity:0 and stays invisible until JS loads. */}
       <head>
