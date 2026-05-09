@@ -109,6 +109,17 @@ jobs:
               if git push --force-with-lease origin "$head"; then
                 echo "  ✅ rebased + pushed PR #$pr"
                 rebased=$((rebased + 1))
+                # Re-trigger CI on the rebased SHA. GITHUB_TOKEN pushes don't
+                # fire workflow runs (GitHub safeguard against infinite loops),
+                # so without an explicit workflow_dispatch the rebased branch
+                # sits with stale CI and the loop wastes iterations doing
+                # manual `ci: re-trigger` empty commits. Added 2026-05-09 in
+                # the loop-infrastructure overhaul.
+                if gh workflow run ci.yml --ref "$head" 2>/dev/null; then
+                  echo "  🔁 dispatched CI for $head"
+                else
+                  echo "  ⚠ ci.yml dispatch failed (workflow_dispatch may be missing) — branch will rely on next manual trigger"
+                fi
               else
                 echo "  ⚠ force-push rejected (lease lost) — somebody pushed concurrently; skipping"
                 git rebase --abort 2>/dev/null || true

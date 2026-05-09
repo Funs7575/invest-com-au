@@ -8,7 +8,12 @@ A dedicated **discovery** fire. Doesn't ship code; only updates the queue.
 
 The scout is the loop's eyes. Where `/audit-remediation-iteration` *consumes* the queue, the scout *extends* it — by re-running the audit toolkit and appending new items for anything the existing queue doesn't already cover.
 
-**Cadence:** runs daily at 02:00 UTC (pre-dawn AEST) via the `audit-remediation-scout` cloud routine. Manual fires via `/audit-remediation-scout` from any session.
+**Cadence (updated 2026-05-09):** primary path is now **on-demand** — the founder runs `/audit-remediation-scout` from any session when discovery is wanted (after a stream completes, after a quiet ship-rate stretch, or after suspicious gaps are noticed). The daily cloud routine has been **downgraded to every 3 days at 02:00 UTC** (was daily) to drop one fixed-cost ~50k token baseline per day. Fully on-demand was considered but kept as a backstop in case the founder forgets to fire it manually.
+
+**On-demand triggers worth knowing:**
+- After a stream is marked `_complete_` in the queue — fresh discovery may find adjacent gaps that the stream's tunnel-vision missed.
+- After 48h with ship-rate < 5 merged PRs/day — the loop may be starving for unblocked items; a scout fire might surface a quick win.
+- After a major schema change or migration lands — the per-iteration discovery sweep won't catch system-wide drift.
 
 **Sibling to:** the per-iteration discovery sweep (Phase 6.5 of `/audit-remediation-iteration`). The per-iteration sweep catches drift in the area being worked. The scout catches systemic drift across the whole codebase. Both are needed — the per-iteration sweep is a tiny audit per iteration, the scout is a full audit per day.
 
@@ -110,7 +115,17 @@ If any audit script fails, log the failure and continue — one missing audit do
 
 ### Phase 2 — Diff against queue
 
-For each finding, grep `docs/audits/REMEDIATION_QUEUE.md` for the file path or symbol. If found, skip — already tracked. If not, prepare an append.
+For each finding, dedupe in **two passes** (added 2026-05-09 after the AA-01..05 / BB-01..05 false-positive sweep — 10/10 scout-generated DISC items were rejected by iteration agents because they overlapped already-tracked stream coverage):
+
+**Pass 1 — Stream-section dedupe (NEW, runs first).** Map the finding to its stream-letter (table below). Check if `## <Stream> ` or `| <Stream> |` exists in `REMEDIATION_QUEUE.md`. If the stream is documented AND has any unmerged items, only proceed to Pass 2 when the finding is a **specific gap not implied by the stream description**. Examples:
+
+- ❌ Skip: stream BB exists ("calculator farm — borrowing power, CGT, mortgage stress…") and the finding is `components/calculators/CGTCalculator.tsx has no test`. The stream description already covers calculator work; the iteration agent will catch this as part of the BB-* item that ships the calculator. Adding a BB-DISC row creates a false-positive sweep.
+- ✅ Proceed to Pass 2: stream BB exists and the finding is `lib/financial-math.ts has 24% test coverage`. Lib-level coverage is not implied by the stream's per-calculator scope; this is a specific gap.
+- ✅ Proceed to Pass 2: stream X is documented as "clear createAdminClient from 17 RSC pages" but the finding is `app/api/internal-only/route.ts uses createAdminClient + has no auth gate`. The route handler is API-side, not RSC; explicitly outside the stream's scope.
+
+If unsure whether the finding is "implied by the stream description," **skip it** — the per-iteration discovery sweep (Phase 6.5 of `/audit-remediation-iteration`) will surface it when an iteration touches the area. Missed findings are recoverable; FP sweeps cost ~5k tokens each.
+
+**Pass 2 — Literal-symbol dedupe (existing).** Grep `REMEDIATION_QUEUE.md` for the file path or symbol. If found, skip — already tracked. If not, prepare an append.
 
 Stream-letter mapping (so new items go to the right queue section):
 
@@ -149,7 +164,9 @@ Print the summary lines from the Output section above. Done.
 - **Never** ship source code. Scout = queue updates only.
 - **Skip findings already in `done` or `false-positive` status** — verified-resolved items shouldn't reappear.
 - **Cap at 50 new items per fire.** Bulk discovery should surface as a `SCOUT-BACKLOG` summary entry, not as 200 individual rows.
-- **Confidence floor:** only append findings you'd bet the founder would also flag. Aspirational discovery is noise; missed real issues are recoverable on the next fire.
+- **Confidence floor:** only append findings you'd bet the founder would also flag. Aspirational discovery is noise; missed real issues are recoverable on the next fire. **Test:** if you cannot quote the exact failing audit-script line / file path / table name that proves the gap exists, the finding is below the floor — drop it. Do not append findings derived from "the codebase ought to have X."
+- **Stream-section dedupe is mandatory** (Phase 2, Pass 1) — adding a `<STREAM>-DISC-NN` for work already implied by the stream's description is the most common scout failure mode (10/10 false positives in the 2026-05-08 fire). When in doubt, skip and let the per-iteration discovery sweep catch it.
+- **FP rate gate:** if the most recent scout fire produced ≥3 items that subsequent iterations swept as false-positive, the next scout fire opens a `[ACTION REQUIRED]` issue instead of writing items, asking the founder to review the dedupe rules.
 - **Lock is separate** from the iteration lock — scout can run concurrently with iterations.
 - **No live-DB queries.** If the scout would need live DB access (e.g. row counts, advisor findings), surface as `needs-user` with a SQL snippet for the founder to run via Supabase MCP.
 
