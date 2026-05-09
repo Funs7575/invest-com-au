@@ -53,6 +53,8 @@ export interface Broker {
   icon?: string;
   logo_url?: string;
   cta_text?: string;
+  /** PR #619 country-mode Phase 4. JSONB shape: { allowed_countries?, blocked_countries?, visa_required?, verified_at?, notes? } */
+  country_eligibility?: Record<string, unknown> | null;
   benefit_cta?: string;
   tagline?: string;
   asx_fee?: string;
