@@ -37,8 +37,8 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | U | `claude/audit-remediation/u-04-url-canonicals` | #226/#319/#399/#457/#520/#561 | U-01..U-04 done. | U-04 merged ✓ |
 | V | `claude/audit-remediation/v-07-auth-hardening` | #227/#320/#400/#457/#521/#562 | V-01..V-07 done. | V-07 merged ✓ |
 | W | `claude/audit-remediation/w-12-hub-page-hoc` (W-15 remaining) | #306/#312/#369/#529/#598/#599/#602/#604/#605/#606/#607/#608/#609/#612 | **#609 MERGED 2026-05-08** (W-12+W-13+W-15 dividends). **#612 MERGED 2026-05-08** (W-14 grants→/startup/grants). W-04..W-15 all MERGED. | All W tasks merged ✓ |
-| X | `claude/audit-remediation/x-09-preview-advisor-final` · `x-09-eslint-ratchet` (#648) | #257/#367/#596/#600/#610/#643/#644/#646 MERGED · **#641 OPEN** (X-06 — CI running) · **#648 OPEN** (X-09b) | X-06 (#641 rebased iter 331 — CI running), X-07 (#643 MERGED), X-08 (#644 MERGED), X-09a (#646 MERGED). X-09b (#648 blocked on X-06). **Stream X complete** once X-06+X-09b merge. | All X PRs merged |
-| CC | `claude/audit-remediation/cc-01-country-mode-audit` · **#673 OPEN** | **#673 OPEN** | CC-01 done (audit + gap report `docs/audits/country-mode-gaps.md`). CC-03 false-positive. CC-02/CC-04/CC-05 pending. | CC-05 merged |
+| X | `claude/audit-remediation/x-09-preview-advisor-final` · `x-09-eslint-ratchet` (#648) | #257/#367/#596/#600/#610/#643/#644/#646 MERGED · **#641 OPEN** (X-06 — CI retriggered iter 335) · **#648 OPEN** (X-09b) | X-06 (#641 rebased iter 335 on main+types-fix — CI running), X-07 (#643 MERGED), X-08 (#644 MERGED), X-09a (#646 MERGED). X-09b (#648 blocked on X-06). **Stream X complete** once X-06+X-09b merge. | All X PRs merged |
+| CC | `claude/audit-remediation/cc-01-country-mode-audit` · **#678 OPEN** | **#675 MERGED** (CC-01 audit) · **#678 OPEN** (CC-04 E2E) | CC-01 done. CC-03 false-positive. CC-04 done (iter 335 — 7 Playwright tests, PR #678). CC-02/CC-05 pending. | CC-05 merged |
 | EE | `claude/audit-remediation/ee-01-error-boundaries` | **#653 MERGED** (EE-01+EE-05) | EE-01 done + EE-02/03/04 FP + EE-05 done. **Stream complete.** | #653 merged ✓ |
 | FF | `claude/audit-remediation/ff-01-feature-flag-audit` · **#656 OPEN** | **#656 OPEN** (FF-01..FF-04) | FF-01 done. FF-02 done (iter 329, commit `b276f56a`). FF-02 CI rescue (iter 330, commit `2b869f91`). FF-03 false-positive (flag mgmt UI pre-existed W-07 commit `6723b24`). FF-04 done (iter 330, `last_evaluated_at` + loadFlag(), commit `aa34e77`). **Stream complete.** | FF-04 merged |
 | OOO | `claude/audit-remediation/ooo-01-runbook-audit` | **#652 MERGED** | OOO-01 done. OOO-04 FP. OOO-02 done. OOO-03 done. **Stream complete.** | OOO-03 merged ✓ |
@@ -921,10 +921,30 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 | AA | — | iter 332 | AA-01..AA-05 all false-positive — completeness score, onboarding checklist, email drip, public profile SEO, and review-request flow all pre-existed. ADV stream entry condition (AA-04 done) now satisfied. |
 | BB | — | iter 333 | BB-01..BB-05 all false-positive — feature exists under `/versus/` route: `versus/[slugs]/page.tsx` (full SEO + 50+ pairs), `VersusClient.tsx` (734 LOC), `versusComparisonJsonLd`, internal links from broker detail pages, affiliate CTAs in VersusClient. |
 | CC (partial) | — | iter 334 | CC-01 done — audit complete. 4 gaps documented: NZ threshold tuning (CC-02), IN/SG/HK filter verification (CC-03), E2E tests (CC-04), sitemap hreflang (CC-05). |
+| CC (partial) | #678 | iter 335 | CC-04 done — 7 Playwright tests for cookie→banner, geo→soft-prompt, dismiss persistence. CC-02/CC-05 still pending. |
 
 ---
 
 ## Iteration log (most recent at top)
+
+### 2026-05-09 — iter 335 (CI-RESCUE types drift + CC-04 E2E tests)
+
+**Phase 1.5 auto-rescue:** `feature_flags.archived_at` (FF-04 migration) was in the live
+Supabase schema but not in `lib/database.types.ts` on main. This caused "Supabase types drift"
+FAILURE on #641 (X-06) and #640 (R M2-B). Fix: regenerated `lib/database.types.ts` via
+`mcp__Supabase__generate_typescript_types` (3-line addition), merged via PR #677 (`25d9f38`).
+Both #641 and #640 rebased on updated main + empty commits pushed to retrigger CI.
+
+**CC-04 (E2E tests):** Added `e2e/country-mode.spec.ts` — 7 Playwright test cases:
+- Cookie → `CountryModeBanner`: set cookie → banner visible; persists across reload; "View
+  global" clears it.
+- GeoIP → `GeoSoftPrompt`: /api/geo mocked via page.route(); soft prompt appears, dismissal
+  writes `iv-country-prompt-dismissed=1` to localStorage, pre-seeded dismissal flag suppresses
+  prompt, existing cookie suppresses prompt (cookie wins priority chain).
+- **PR:** #678 (`claude/audit-remediation/cc-01-country-mode-audit`) — OPEN, CI running.
+
+STATUS: CI-RESCUE · stream=X+R · pr=#641/#640 (types drift resolved)
+STATUS: PROGRESS · stream=CC · item=CC-04 · pr=#678
 
 ### 2026-05-09 — iter 334 (CC-01 — country-mode coverage audit)
 
