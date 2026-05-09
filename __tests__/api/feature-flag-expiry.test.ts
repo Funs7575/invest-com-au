@@ -3,11 +3,9 @@ import { NextRequest } from "next/server";
 
 // rls-isolation: feature_flags
 
-const { mockSelect, mockUpdate, mockFrom } = vi.hoisted(() => {
-  const mockSelect = vi.fn();
-  const mockUpdate = vi.fn();
+const { mockFrom } = vi.hoisted(() => {
   const mockFrom = vi.fn();
-  return { mockSelect, mockUpdate, mockFrom };
+  return { mockFrom };
 });
 
 vi.mock("@/lib/supabase/admin", () => ({
@@ -25,26 +23,6 @@ vi.mock("@/lib/cron-auth", () => ({
 vi.mock("@/lib/logger", () => ({
   logger: () => ({ info: vi.fn(), warn: vi.fn(), error: vi.fn() }),
 }));
-
-// Chain builder for Supabase query mock
-function makeChain(result: { data: unknown; error: null | { message: string } }) {
-  const chain: Record<string, unknown> = {};
-  const methods = ["select", "update", "eq", "is", "lt"];
-  for (const m of methods) {
-    chain[m] = vi.fn(() => chain);
-  }
-  (chain as Record<string, unknown>).then = undefined;
-  // Make it a thenable for await
-  Object.assign(chain, result);
-  // Last method returns the result
-  for (const m of methods) {
-    (chain[m] as ReturnType<typeof vi.fn>).mockImplementation(() => ({
-      ...chain,
-      ...result,
-    }));
-  }
-  return chain;
-}
 
 import { GET } from "@/app/api/cron/feature-flag-expiry/route";
 
@@ -68,11 +46,6 @@ describe("GET /api/cron/feature-flag-expiry", () => {
           }),
         }),
       }),
-      update: vi.fn().mockReturnValue({
-        eq: vi.fn().mockReturnValue({
-          is: vi.fn().mockResolvedValue({ data: null, error: null }),
-        }),
-      }),
     });
 
     const res = await GET(makeReq());
@@ -89,7 +62,6 @@ describe("GET /api/cron/feature-flag-expiry", () => {
     mockFrom.mockImplementation(() => {
       callCount++;
       if (callCount === 1) {
-        // First call: select candidates
         return {
           select: vi.fn().mockReturnValue({
             eq: vi.fn().mockReturnValue({
@@ -100,7 +72,6 @@ describe("GET /api/cron/feature-flag-expiry", () => {
           }),
         };
       }
-      // Subsequent calls: update
       return {
         update: vi.fn().mockReturnValue({
           eq: vi.fn().mockReturnValue({
