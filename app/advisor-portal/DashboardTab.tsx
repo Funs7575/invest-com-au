@@ -7,6 +7,7 @@ import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
 import type { Advisor, Stats, Lead, ProfileCompleteness, Review, ViewDay, WeeklyEnquiry, ViewType } from "./types";
 import type { BillingSummary } from "./billing/types";
 import PinnedBillingWidget from "./billing/PinnedBillingWidget";
+import AnnualBillingPrompt from "./billing/AnnualBillingPrompt";
 
 type Props = {
   advisor: Advisor | null;
@@ -92,6 +93,9 @@ export default function DashboardTab({
           </button>
         </div>
       )}
+
+      {/* Annual-billing nudge for paid-tier advisors — PR-X4 */}
+      <AnnualBillingPrompt advisorTier={advisor?.advisor_tier ?? null} />
 
       {/* Unified billing widget — replaces the prior credit banner */}
       {billingSummary
