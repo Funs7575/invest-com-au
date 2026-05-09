@@ -3,9 +3,10 @@ import { NextRequest } from "next/server";
 
 // rls-isolation: feature_flags
 
-const { mockFrom } = vi.hoisted(() => {
+const { mockFrom, mockInvalidateFlagCache } = vi.hoisted(() => {
   const mockFrom = vi.fn();
-  return { mockFrom };
+  const mockInvalidateFlagCache = vi.fn();
+  return { mockFrom, mockInvalidateFlagCache };
 });
 
 vi.mock("@/lib/supabase/admin", () => ({
@@ -13,7 +14,7 @@ vi.mock("@/lib/supabase/admin", () => ({
 }));
 
 vi.mock("@/lib/feature-flags", () => ({
-  invalidateFlagCache: vi.fn(),
+  invalidateFlagCache: mockInvalidateFlagCache,
 }));
 
 vi.mock("@/lib/cron-auth", () => ({
@@ -54,8 +55,6 @@ describe("GET /api/cron/feature-flag-expiry", () => {
   });
 
   it("archives eligible flags and invalidates cache", async () => {
-    const { invalidateFlagCache } = await import("@/lib/feature-flags");
-
     const candidate = { flag_key: "old_flag", updated_at: "2025-01-01T00:00:00Z" };
 
     let callCount = 0;
@@ -86,7 +85,7 @@ describe("GET /api/cron/feature-flag-expiry", () => {
 
     expect(body.archived).toBe(1);
     expect(body.archivedKeys).toContain("old_flag");
-    expect(invalidateFlagCache).toHaveBeenCalledWith("old_flag");
+    expect(mockInvalidateFlagCache).toHaveBeenCalledWith("old_flag");
   });
 
   it("returns 500 when fetch fails", async () => {
