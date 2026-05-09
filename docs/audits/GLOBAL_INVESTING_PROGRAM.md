@@ -361,7 +361,7 @@ A GI-stream item ships only when:
 ## 10. Anti-goals
 
 - **No `/zh` or `/ko` localisation for outbound.** Audience is English-speaking AU residents.
-- **No new dynamic `[country]` route at hub level** (only at `/to/[country]`). Avoids URL ambiguity with `/foreign-investment/[country]`.
+- **No new dynamic `[country]` route at hub level** (only at `/to/[country]`). Inbound side is config-driven standalone routes per country (`/foreign-investment/<slug>`, see `docs/rfcs/2026-05-08-country-mode-renderer-unification.md`); outbound should mirror that pattern rather than introduce a new dynamic hub.
 - **No bespoke layout per page** once W-12 ships HubPage HOC. Until then, follow `/foreign-investment/page.tsx` as the canonical hand-rolled pattern.
 - **No outbound DASP duplication.** DASP belongs in `/foreign-investment/super`. One cross-link from `/global-investing/tax/super-pension-transfer` is enough.
 - **No brand/visual differentiation** between inbound and outbound hubs. Two hubs, one design system.
