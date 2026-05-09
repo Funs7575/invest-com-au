@@ -54,7 +54,7 @@ function resolveAdvisorTypes(need: string, context?: string[]): string[] {
 
 /* ─── Common select fields for matching queries ─── */
 
-const MATCH_SELECT = "id, slug, name, firm_name, type, photo_url, rating, review_count, location_display, location_state, specialties, fee_description, verified, bio, email";
+const MATCH_SELECT = "id, slug, name, firm_name, type, photo_url, rating, review_count, location_display, location_state, specialties, fee_description, verified, bio, email, avg_response_minutes";
 
 /**
  * POST /api/submit-lead
