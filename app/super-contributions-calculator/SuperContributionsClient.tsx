@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { formatCurrency } from "@/lib/utils";
+import { formatPercent } from "@/lib/tracking";
 
 /* ── constants (FY2026) ── */
 
@@ -15,10 +16,8 @@ const SUPER_TAX_RATE = 0.15;
 const CARRY_FORWARD_BALANCE_THRESHOLD = 500_000;
 
 /* ── helpers ── */
-
-function formatPercent(n: number): string {
-  return `${n.toFixed(1)}%`;
-}
+// formatPercent imported from lib/tracking; pass 1-decimal at call sites
+// where this calculator wants 1-decimal (e.g. tax-rate displays).
 
 /** Australian marginal income tax rate (FY2026, incl. 2% Medicare Levy) */
 function marginalRate(income: number): number {
@@ -319,9 +318,9 @@ export default function SuperContributionsClient() {
                 </p>
                 <p className="text-xs text-emerald-700 mt-1">
                   By contributing {formatCurrency(extraConcessional)} to super instead of taking it as income, you pay{" "}
-                  {formatPercent(result.effectiveSuperTaxRate * 100)} super tax instead of your{" "}
-                  {formatPercent(result.marginal * 100)} marginal rate —{" "}
-                  saving {formatPercent(result.taxSavingPerDollar * 100)} per dollar.
+                  {formatPercent(result.effectiveSuperTaxRate * 100, 1)} super tax instead of your{" "}
+                  {formatPercent(result.marginal * 100, 1)} marginal rate —{" "}
+                  saving {formatPercent(result.taxSavingPerDollar * 100, 1)} per dollar.
                 </p>
               </div>
             )}

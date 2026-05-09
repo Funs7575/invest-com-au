@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getSiteUrl } from "@/lib/url";
 import { logger } from "@/lib/logger";
+import { escapeHtml } from "@/lib/html-escape";
 
 const log = logger("lead-outcome");
 
@@ -21,6 +22,7 @@ export async function POST(request: NextRequest) {
     if (await isRateLimited(`lead-outcome:${ip}`, 10, 60)) {
       return NextResponse.json({ error: "Too many requests." }, { status: 429 });
     }
+    // eslint-disable-next-line invest/no-unvalidated-req-json -- pre-existing; Zod backfill is E-04 stream territory, out of scope for SSOT cleanup PR
     const body = await request.json();
     const { lead_id, outcome, sale_price_cents, success_fee_cents, notes } = body;
 
@@ -209,14 +211,6 @@ export async function GET(request: NextRequest) {
 }
 
 /** Escape HTML special chars */
-function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
-
 /** Render a simple branded HTML page for GET responses */
 function renderHtml(title: string, body: string): string {
   return `<!DOCTYPE html>
