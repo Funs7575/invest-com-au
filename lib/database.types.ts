@@ -12087,6 +12087,33 @@ export type Database = {
           },
         ]
       }
+      user_watchlist_items: {
+        Row: {
+          added_at: string
+          display_name: string | null
+          id: number
+          item_slug: string
+          item_type: string
+          user_id: string
+        }
+        Insert: {
+          added_at?: string
+          display_name?: string | null
+          id?: never
+          item_slug: string
+          item_type: string
+          user_id: string
+        }
+        Update: {
+          added_at?: string
+          display_name?: string | null
+          id?: never
+          item_slug?: string
+          item_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       versus_editorials: {
         Row: {
           broker_a_slug: string
@@ -13714,3 +13741,4 @@ export const Constants = {
     Enums: {},
   },
 } as const
+
