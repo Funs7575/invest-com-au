@@ -92,21 +92,27 @@ look ambiguously curated).
 Phase 1 model country: **Hong Kong**. The other 11 fall back to global
 until Phase 2 fills them in.
 
-## Dual renderer for `/foreign-investment/<country>`
+## Single renderer for `/foreign-investment/<country>`
 
-Two paths exist today:
+One path:
 
 - **`app/foreign-investment/<slug>/page.tsx`** (standalone, config-driven).
   Each of the 12 countries has its own thin route file rendering
-  `<CountryHubTemplate config={…_CONFIG} />`. This is the canonical
-  surface.
-- **`app/foreign-investment/[country]/page.tsx`** (dynamic, DB-backed).
-  Older path that queries `country_investment_profiles` etc. Now
-  shadowed by the standalones for the 12 country-mode codes; reachable
-  only for slugs not in that set.
+  `<CountryHubTemplate config={…_CONFIG} />`. Source of truth for copy
+  is `lib/foreign-investment-country-data.ts`.
 
-Phase 4 will unify these — RFC required because backfill from config →
-DB or vice versa is non-trivial. Phase 1 leaves both in place.
+Phase 4 retired the dynamic `[country]` renderer (deleted in the
+renderer-unification PR; rationale in
+`docs/rfcs/2026-05-08-country-mode-renderer-unification.md`).
+`country_investment_profiles` rows for the 12 supported ISO codes are
+deactivated by `supabase/migrations/20260516120000_deactivate_legacy_country_investment_profiles.sql` —
+the table itself is preserved in case a future admin/CMS tool wants it.
+
+Per-broker / per-advisor eligibility lives on
+`brokers.country_eligibility` and `professionals.country_eligibility`
+(JSONB, added in Phase 4). `CountryHubTemplate` and `/best/[slug]`
+filter by the visitor's `IntentCountryCode` against
+`allowed_countries` / `blocked_countries`.
 
 ## Tracking
 
