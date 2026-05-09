@@ -5,6 +5,7 @@ import crypto from "crypto";
 import { isRateLimited } from "@/lib/rate-limit";
 import { ADMIN_EMAIL } from "@/lib/admin";
 import { logger } from "@/lib/logger";
+import { escapeHtml } from "@/lib/html-escape";
 
 const log = logger("marketplace:register");
 
@@ -19,14 +20,6 @@ const RegisterBody = z.object({
 });
 
 /** Escape HTML special chars to prevent XSS in email templates */
-function escapeHtml(str: string): string {
-  return str
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
-
 export async function POST(req: NextRequest) {
   try {
     const supabaseAdmin = createAdminClient();

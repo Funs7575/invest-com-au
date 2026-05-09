@@ -3,6 +3,7 @@ import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 import { logger } from "@/lib/logger";
+import { escapeHtml } from "@/lib/html-escape";
 import {
   verifyAbn,
   normaliseAbn,
@@ -285,18 +286,4 @@ async function notifyAdmin(
       html: body,
     }),
   });
-}
-
-function escapeHtml(s: string): string {
-  return s.replace(
-    /[&<>"']/g,
-    (ch) =>
-      ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;",
-      })[ch] || ch,
-  );
 }
