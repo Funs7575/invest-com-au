@@ -214,11 +214,13 @@ jobs:
             "$today" "$alert_level" "${stream_json_entries%,}" "$flagged_json_arr" \
             > "$STREAM_JSON"
 
-          # Commit if any change
-          if ! git diff --quiet "$TRACK_FILE" "$STREAM_JSON"; then
-            git config user.name "loop-spend-tracker[bot]"
-            git config user.email "loop-spend-tracker@invest.com.au"
-            git add "$TRACK_FILE" "$STREAM_JSON"
+          # Commit if any change. Stage first so git diff --cached can detect
+          # both modified-tracked AND newly-added files (the untracked
+          # STREAM_JSON file confuses plain `git diff --quiet`).
+          git config user.name "loop-spend-tracker[bot]"
+          git config user.email "loop-spend-tracker@invest.com.au"
+          git add "$TRACK_FILE" "$STREAM_JSON"
+          if ! git diff --cached --quiet; then
             git commit -m "chore(ops): loop spend snapshot $today (commits=$loop_commits, est=${est_tokens_m}M)"
 
             # Retry push up to 3× in case main moved
