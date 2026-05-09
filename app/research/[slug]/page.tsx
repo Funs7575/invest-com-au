@@ -5,6 +5,7 @@ import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import { createClient } from "@/lib/supabase/server";
 import Icon from "@/components/Icon";
 import ReportGate from "./ReportGate";
+import RelatedContentGrid from "@/components/RelatedContentGrid";
 
 export const revalidate = 3600;
 
@@ -206,31 +207,17 @@ export default async function ReportPage({
         {related.length > 0 && (
           <section className="py-10 bg-white border-t border-slate-200">
             <div className="container-custom max-w-6xl">
-              <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 mb-6">
-                Related reports
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {related.map((r) => (
-                  <Link
-                    key={r.id}
-                    href={`/research/${r.slug}`}
-                    className="block bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl p-5 transition-colors"
-                  >
-                    <h3 className="text-sm font-extrabold text-slate-900 leading-tight line-clamp-2">
-                      {r.title}
-                    </h3>
-                    {r.sponsor_name && (
-                      <p className="text-[11px] text-slate-500 mt-1">
-                        Sponsored by {r.sponsor_name}
-                      </p>
-                    )}
-                    <p className="text-xs font-bold text-amber-600 mt-3 inline-flex items-center gap-1">
-                      View report
-                      <Icon name="arrow-right" size={12} />
-                    </p>
-                  </Link>
-                ))}
-              </div>
+              <RelatedContentGrid
+                heading="Related reports"
+                cardClass="block bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl p-5 transition-colors flex flex-col"
+                items={related.map((r) => ({
+                  id: r.id,
+                  href: `/research/${r.slug}`,
+                  title: r.title,
+                  badgeText: r.sector ?? undefined,
+                  meta: r.sponsor_name ? `Sponsored by ${r.sponsor_name}` : undefined,
+                }))}
+              />
             </div>
           </section>
         )}
