@@ -136,8 +136,3 @@ user_watchlist_items       # WW-01: remove once #651 merges and types are rebase
 
 # PostGIS extension-managed (out of scope — comes from CREATE EXTENSION postgis)
 spatial_ref_sys
-
-# WW-01: migration exists in PR #651 (ww-01-watchlist-data-model), pending merge.
-# Types regenerated on this OOO branch to fix the Supabase types drift gate (iter 328).
-# Remove this entry once #651 merges to main and this branch is rebased.
-user_watchlist_items
