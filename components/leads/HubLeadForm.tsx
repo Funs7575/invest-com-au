@@ -3,6 +3,7 @@
 import { useState, type FormEvent, type ReactNode } from "react";
 import Icon from "@/components/Icon";
 import { isValidEmailClient, isDisposableEmail } from "@/lib/validate-email";
+import { submitLead } from "@/lib/submit-lead-client";
 
 type Intent = {
   need: string;
@@ -61,6 +62,13 @@ export default function HubLeadForm({
       return;
     }
 
+    // Honeypot: the hidden "website" field is never filled by real users.
+    // Bots that auto-fill all inputs will populate it — silent rejection.
+    if (String(fd.get("website") || "")) {
+      setDone(true);
+      return;
+    }
+
     setSubmitting(true);
 
     // Domain-specific extras get appended to source_page so the
@@ -74,29 +82,18 @@ export default function HubLeadForm({
     const sourcePage = extras.length ? `${source}|${extras.join("|")}` : source;
 
     try {
-      const res = await fetch("/api/submit-lead", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          lead_type: "advisor",
-          user_email: email,
-          user_name: name || undefined,
-          user_phone: phone || undefined,
-          user_location_state: state || undefined,
-          user_intent: intent,
-          source_page: sourcePage,
-          website: String(fd.get("website") || ""),
-        }),
+      await submitLead({
+        lead_type: "advisor",
+        user_email: email,
+        user_name: name || undefined,
+        user_phone: phone || undefined,
+        user_location_state: state || undefined,
+        user_intent: intent,
+        source_page: sourcePage,
       });
-      const json = await res.json();
-      if (!res.ok) {
-        setError(json?.error || "Something went wrong. Please try again.");
-        setSubmitting(false);
-        return;
-      }
       setDone(true);
-    } catch {
-      setError("Network error. Please try again.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
       setSubmitting(false);
     }
   }

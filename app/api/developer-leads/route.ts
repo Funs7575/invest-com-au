@@ -6,6 +6,7 @@ import { logger } from "@/lib/logger";
 import { extractUtm, utmForInsert } from "@/lib/utm";
 import { z } from "zod";
 import { withValidatedBody } from "@/lib/validation/withValidatedBody";
+import { escapeHtml } from "@/lib/html-escape";
 
 const log = logger("developer-leads");
 
@@ -129,18 +130,4 @@ async function notifyAdmin(lead: LeadPayload): Promise<void> {
       html,
     }),
   });
-}
-
-function escapeHtml(s: string): string {
-  return s.replace(
-    /[&<>"']/g,
-    (ch) =>
-      ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;",
-      })[ch] || ch,
-  );
 }

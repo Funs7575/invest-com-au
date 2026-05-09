@@ -11,6 +11,7 @@ import { Select } from "@/components/ui/Select";
 import { Card } from "@/components/ui/Card";
 import Icon from "@/components/Icon";
 import { trackEvent } from "@/lib/tracking";
+import { submitLead } from "@/lib/submit-lead-client";
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
@@ -373,57 +374,43 @@ function FindAdvisorQuiz() {
 
   /** Find a matching advisor WITHOUT creating a lead or sending any emails (dry run). */
   const findMatch = async (excludeList: number[] = []) => {
-    const res = await fetch("/api/submit-lead", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        lead_type: "advisor",
-        user_email: quiz.email.trim(),
-        user_name: quiz.firstName.trim(),
-        user_phone: quiz.phone.trim() || undefined,
-        user_location_state: quiz.state,
-        user_postcode: quiz.postcode || undefined,
-        user_suburb: quiz.suburb || undefined,
-        user_intent: {
-          need: intentToNeed(quiz.intent!),
-          context: quiz.context,
-          budget: quiz.budget,
-        },
-        source_page: "/find-advisor",
-        exclude_advisor_ids: excludeList,
-        dry_run: true,
-      }),
+    return submitLead({
+      lead_type: "advisor",
+      user_email: quiz.email.trim(),
+      user_name: quiz.firstName.trim(),
+      user_phone: quiz.phone.trim() || undefined,
+      user_location_state: quiz.state,
+      user_postcode: quiz.postcode || undefined,
+      user_suburb: quiz.suburb || undefined,
+      user_intent: {
+        need: intentToNeed(quiz.intent!),
+        context: quiz.context,
+        budget: quiz.budget,
+      },
+      source_page: "/find-advisor",
+      exclude_advisor_ids: excludeList,
+      dry_run: true,
     });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Something went wrong.");
-    return data;
   };
 
   /** Confirm a previewed advisor: creates the lead and sends advisor email. */
   const confirmMatch = async (advisorId: number) => {
-    const res = await fetch("/api/submit-lead", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        lead_type: "advisor",
-        user_email: quiz.email.trim(),
-        user_name: quiz.firstName.trim(),
-        user_phone: quiz.phone.trim() || undefined,
-        user_location_state: quiz.state,
-        user_postcode: quiz.postcode || undefined,
-        user_suburb: quiz.suburb || undefined,
-        user_intent: {
-          need: intentToNeed(quiz.intent!),
-          context: quiz.context,
-          budget: quiz.budget,
-        },
-        source_page: "/find-advisor",
-        confirm_advisor_id: advisorId,
-      }),
+    return submitLead({
+      lead_type: "advisor",
+      user_email: quiz.email.trim(),
+      user_name: quiz.firstName.trim(),
+      user_phone: quiz.phone.trim() || undefined,
+      user_location_state: quiz.state,
+      user_postcode: quiz.postcode || undefined,
+      user_suburb: quiz.suburb || undefined,
+      user_intent: {
+        need: intentToNeed(quiz.intent!),
+        context: quiz.context,
+        budget: quiz.budget,
+      },
+      source_page: "/find-advisor",
+      confirm_advisor_id: advisorId,
     });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Something went wrong.");
-    return data;
   };
 
   const validateStep4 = () => {
