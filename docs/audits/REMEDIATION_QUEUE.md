@@ -37,7 +37,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | U | `claude/audit-remediation/u-04-url-canonicals` | #226/#319/#399/#457/#520/#561 | U-01..U-04 done. | U-04 merged ✓ |
 | V | `claude/audit-remediation/v-07-auth-hardening` | #227/#320/#400/#457/#521/#562 | V-01..V-07 done. | V-07 merged ✓ |
 | W | `claude/audit-remediation/w-12-hub-page-hoc` (W-15 remaining) | #306/#312/#369/#529/#598/#599/#602/#604/#605/#606/#607/#608/#609/#612 | **#609 MERGED 2026-05-08** (W-12+W-13+W-15 dividends). **#612 MERGED 2026-05-08** (W-14 grants→/startup/grants). W-04..W-15 all MERGED. | All W tasks merged ✓ |
-| X | `claude/audit-remediation/x-09b-ratchet-final` | #257/#367/#596/#600/#610/#641/#643/#644/#646 MERGED · **#702 OPEN** (X-09b — CI running) | X-06 (#641 MERGED 2026-05-09). X-07 (#643 MERGED). X-08 (#644 MERGED). X-09a (#646 MERGED). X-09b: **#702 OPEN** (fresh branch — unrelated-history issue with #648 resolved; fix find/[advisor-type]/[city] + eslint ratchet). Last CI: pending — pushed iter 336. | All X PRs merged |
+| X | `claude/audit-remediation/x-09b-ratchet-final` | #257/#367/#596/#600/#610/#641/#643/#644/#646 MERGED · **#702 OPEN** (X-09b — CI running) | X-06 (#641 MERGED 2026-05-09). X-07 (#643 MERGED). X-08 (#644 MERGED). X-09a (#646 MERGED). X-09b: **#702 OPEN** (fresh branch — unrelated-history issue with #648 resolved; fix find/[advisor-type]/[city] + eslint ratchet). Last CI: CI-rescue in flight — df53205 pushed iter 340. | All X PRs merged |
 | CC | `claude/audit-remediation/cc-01-country-mode-audit` | **#675 MERGED** (CC-01) · **#678 MERGED 2026-05-09** (CC-04 E2E) | CC-01 done. CC-03 false-positive. CC-04 MERGED (#678). CC-02/CC-05 pending. | CC-05 merged |
 | EE | `claude/audit-remediation/ee-01-error-boundaries` | **#653 MERGED** (EE-01+EE-05) | EE-01 done + EE-02/03/04 FP + EE-05 done. **Stream complete.** | #653 merged ✓ |
 | FF | `claude/audit-remediation/ff-01-feature-flag-audit` | **#656 MERGED 2026-05-09** (`4da4004f`) | FF-01..FF-04 done. FF-03 false-positive. **Stream complete.** | FF-04 merged ✓ |
@@ -437,7 +437,7 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 | UU-03 | pending | Review appeal flow (user can contest rejection) | ~3 | Deps: UU-01. |
 | UU-04 | pending | Review export (CSV download for compliance audit) | ~2 | Deps: UU-01. |
 
-**Stream UU entry condition:** A-05 merged. Deps on A stream.
+**Stream UU entry condition:** A-05 merged. Deps on AA stream.
 
 ---
 
@@ -971,6 +971,14 @@ _Compacted 2026-05-09: 1,223 lines of completed-stream summary + iteration log e
 _The most recent ~24h of iteration log entries (iter ~325 onwards) are temporarily missing from both files — they were lost in the 2026-05-09 truncation incident (recovered as PR #661) before the rotate-iteration-log workflow could archive them. Loop's stuck-detection guard should not regress because the iteration command's Phase 2 falls back to PR-CI history when iter log entries are absent._
 
 See [`REMEDIATION_QUEUE_LOG_ARCHIVE.md`](./REMEDIATION_QUEUE_LOG_ARCHIVE.md) for historical iteration log + completed-stream summary.
+
+---
+
+### Iter 340 · 2026-05-10 · Stream X · X-09b · CI-RESCUE · STATUS: CI-RESCUE
+
+**What was done:** CI rescue for PR #702 (X-09b). Root cause: after `lib/database.types.ts` was regenerated to add `user_calculator_state` (with `state: Json` column), `tsc --noEmit` failed because `CalculatorStateMap = Record<string, QualificationData>` is not assignable to `Json`. The incompatibility: `QualificationData.data` is `Record<string, unknown>` and `unknown` is not assignable to `Json | undefined`. Fix: added `import type { Json } from "@/lib/database.types"` and cast `state: merged as unknown as Json` in both upsert call sites in `lib/calculator-state.ts` (`writeDbState` + `claimAnonymousCalculatorState`) and in `app/api/calculator-state/route.ts` POST handler. A concurrent cloud fire (commit `67eaaf4`) had also fixed the test mock (`vi.mock("@/lib/supabase/admin")` → `vi.mock("@/lib/supabase/static")`) so the unit tests now target the correct module. Pushed `df53205`.
+
+**Status:** `STATUS: CI-RESCUE · stream=X · pr=#702`
 
 ---
 
