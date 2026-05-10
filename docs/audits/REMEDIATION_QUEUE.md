@@ -19,7 +19,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | C | `claude/audit-remediation/c-05-index-coverage` | #209/#302/#338/#356/#357/#358/#359/#360/#361/#362/#457/#541 | C-01..C-02 done. C-03..C-05 blocked (see Blocked). | C-05 merged |
 | D | `claude/audit-remediation/d-09-seo-drift` | #210/#303/#339/#363/#364/#365/#366/#457/#542 | D-01..D-09 done. | D-09 merged ✓ |
 | E | `claude/audit-remediation/e-02-batch-5-zod-rollout` (#469) · `e-04-batch-2-zod-backfill` (#557) · `e-04-batch-3-zod-backfill` (#558) | #211/#304/#340/#368/#379/#383/#457/#458/#459/#460/#461/#462/#463/#464/#465/#466/#467/#468/#469/#555/#556/#557/#558 | E-02 batch 1-5 all MERGED (#469 merged 2026-05-03). E-04 batch 1 done (#555/#556), batch 2 blocked, **batch 3 MERGED** (#558 per iter 279). | All E-02+E-04 batches merged |
-| F | `claude/audit-remediation/f-08-cache-drift` · `claude/audit-remediation/f-disc-20260510-hygiene` | #212/#305/#341/#370/#384/#457/#470/#543 · **#741 OPEN** | F-01..F-07 done. F-08 blocked (see Blocked). F-DISC-01 done (#741, commit `c41702a`). F-DISC-02..07 false-positives (verified: different API signatures/units — not safe drop-in replacements). | F-08 unblocked + merged |
+| F | `claude/audit-remediation/f-08-cache-drift` · `claude/audit-remediation/f-disc-20260510-hygiene` | #212/#305/#341/#370/#384/#457/#470/#543 · **#741 OPEN** | F-01..F-07 done. F-08 blocked (see Blocked). F-DISC-01 done (#741, commit `c41702a`). F-DISC-02..07 false-positives (verified: different API signatures/units — not safe drop-in replacements). CI rescue iter 348: types regenerated (`418c030`) + `business_accounts`/`investor_goals` to driftallowlist (`e0304b4`) — both CI gates fixed. | F-08 unblocked + merged |
 | G | `claude/audit-remediation/g-04-mfa-gaps` | #213/#306/#342/#371/#385/#457/#471/#544 | G-01..G-03 done. G-04 blocked (see Blocked). | G-04 unblocked + merged |
 | H | `claude/audit-remediation/h-06-stripe-webhooks` | #214/#307/#343/#386/#457/#472/#545 | H-01..H-06 done. | H-06 merged ✓ |
 | I | `claude/audit-remediation/i-05-advisor-gaps` | #215/#308/#344/#387/#457/#473/#546 | I-01..I-05 done. | I-05 merged ✓ |
@@ -42,7 +42,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | EE | `claude/audit-remediation/ee-01-error-boundaries` | **#653 MERGED** (EE-01+EE-05) | EE-01 done + EE-02/03/04 FP + EE-05 done. **Stream complete.** | #653 merged ✓ |
 | FF | `claude/audit-remediation/ff-01-feature-flag-audit` | **#656 MERGED 2026-05-09** (`4da4004f`) | FF-01..FF-04 done. FF-03 false-positive. **Stream complete.** | FF-04 merged ✓ |
 | OOO | `claude/audit-remediation/ooo-01-runbook-audit` | **#652 MERGED** | OOO-01 done. OOO-04 FP. OOO-02 done. OOO-03 done. **Stream complete.** | OOO-03 merged ✓ |
-| KK | `claude/audit-remediation/kk-04-link-injection` | **#703 MERGED 2026-05-10** (KK-03) · **#711 MERGED 2026-05-10** (KK-04 iter 1) | KK-01 done (#667). KK-02 done (#670). KK-03: **#703 MERGED 2026-05-10** (`57cfce7`). KK-04 iter 1: **#711 MERGED 2026-05-10** (`34455f2b` — `internal_link_injection` flag + density cap + kill-switch + 6 tests). KK-04 iters 2-5 pending. | KK-04 merged |
+| KK | `claude/audit-remediation/kk-04-iter2-cluster-targets` | **#703 MERGED 2026-05-10** (KK-03) · **#711 MERGED 2026-05-10** (KK-04 iter 1) · **#742 OPEN** (KK-04 iter 2) | KK-01 done (#667). KK-02 done (#670). KK-03: **#703 MERGED 2026-05-10** (`57cfce7`). KK-04 iter 1: **#711 MERGED 2026-05-10** (`34455f2b` — `internal_link_injection` flag + density cap + kill-switch + 6 tests). KK-04 iter 2: **#742 OPEN** (`99018e0` — `affinity` annotations on 20 targets + `splitByLinksForArticle` + `getArticleClusterIds` + article page wired + 8 tests). KK-04 iters 3-5 pending. | KK-04 merged |
 | PP | `claude/audit-remediation/pp-01-bundle-budget` | **#706 MERGED 2026-05-10** (PP-01) | PP-01: **#706 MERGED 2026-05-10** (all CI green — founder merged). PP-02..05 pending. | All PP tasks merged |
 | WW | `claude/audit-remediation/ww-01-watchlist-data-model` | **#651 MERGED** | WW-01 migration + WW-02 watchlist UI done. WW-03/04 blocked (DD-02 dep). **Streams WW-01+WW-02 merged.** | All WW tasks merged ✓ |
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
@@ -994,6 +994,22 @@ _Compacted 2026-05-09: 1,223 lines of completed-stream summary + iteration log e
 _The most recent ~24h of iteration log entries (iter ~325 onwards) are temporarily missing from both files — they were lost in the 2026-05-09 truncation incident (recovered as PR #661) before the rotate-iteration-log workflow could archive them. Loop's stuck-detection guard should not regress because the iteration command's Phase 2 falls back to PR-CI history when iter log entries are absent._
 
 See [`REMEDIATION_QUEUE_LOG_ARCHIVE.md`](./REMEDIATION_QUEUE_LOG_ARCHIVE.md) for historical iteration log + completed-stream summary.
+
+---
+
+### Iter 348 · 2026-05-10 · CI rescue — F (#741) driftallowlist + KK (#742) types fix · STATUS: CI-RESCUE
+
+**What was done:** Phase 2: F (#741) had "Supabase types drift" fixed by prior commit but "Database types drift gate" newly failing — `business_accounts` and `investor_goals` exist in live DB but no migration file; gate requires allowlist entry. Added both tables to `.driftallowlist` with W2 Phase justification comments, committed `e0304b4`, pushed. KK (#742) had "Supabase types drift" failing — cherry-picked the types regeneration commit (`418c030`) from F-DISC branch to KK-04 branch (commit `b404349`), pushed. Both branches now have updated types + allowlist.
+
+**Status:** `STATUS: CI-RESCUE · stream=F+KK · pr=#741+#742`
+
+---
+
+### Iter 347 · 2026-05-10 · Stream KK · KK-04 iter 2 — cluster-aware link injection · STATUS: PROGRESS
+
+**What was done:** Phase 3: KK is in-flight, KK-04 iter 2 pending. Phase 4: verified `lib/topic-clusters.ts` cluster IDs. Phase 5: (a) Added `affinity?: string[]` to `LinkTarget` interface. (b) Annotated 20 INTERNAL_LINK_TARGETS entries with cluster IDs (broker targets → `best-brokers`, SMSF targets → `super-australia`, financial planners → `investing-beginners`+`super-australia`, tax calculators → `tax-investing`, property advisors → `property-investing`, ETF hub → `etfs-australia`, research reports → `research-tools`). (c) Added `splitByLinksForArticle(text, clusterIds, maxLinks)` — two-pass: collect all first-occurrence matches, sort affine-first, take top N, reconstruct in positional order. (d) Added `getArticleClusterIds(slug)` to `lib/internal-links.ts`. (e) Updated `components/LinkifiedText.tsx` with `clusterIds?` prop. (f) Wired `getArticleClusterIds(slug)` + `clusterIds={articleClusterIds}` into all 3 `<LinkifiedText>` instances in `app/article/[slug]/page.tsx`. (g) Added 8 tests in 2 describe blocks. Phase 6: commit `99018e0`, PR #742 opened.
+
+**Status:** `STATUS: PROGRESS · stream=KK · item=KK-04 · iter=2 · pr=#742`
 
 ---
 
