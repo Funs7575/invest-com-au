@@ -119,6 +119,50 @@ describe("GLOSSARY_LINK_TARGETS", () => {
   });
 });
 
+describe("splitByLinks — density cap (maxLinks)", () => {
+  it("caps injected links to the specified maximum", () => {
+    const text = "CommSec and SelfWealth and Pearler are all brokers.";
+    const out = splitByLinks(text, 2);
+    const links = out.filter((p) => typeof p !== "string");
+    expect(links.length).toBe(2);
+  });
+
+  it("maxLinks=0 injects no links and returns the full text as one string", () => {
+    const out = splitByLinks("CommSec is a broker.", 0);
+    expect(out).toHaveLength(1);
+    expect(out[0]).toBe("CommSec is a broker.");
+  });
+
+  it("maxLinks=1 injects exactly one link", () => {
+    const out = splitByLinks("CommSec and SelfWealth.", 1);
+    const links = out.filter((p) => typeof p !== "string");
+    expect(links.length).toBe(1);
+  });
+
+  it("without a cap, injects all first occurrences (existing behaviour)", () => {
+    const text = "CommSec and SelfWealth and Pearler.";
+    const out = splitByLinks(text);
+    const links = out.filter((p) => typeof p !== "string");
+    // Three distinct broker keywords — all should be linked.
+    expect(links.length).toBe(3);
+  });
+
+  it("preserves the full text content after capping — no characters lost", () => {
+    const original = "CommSec and SelfWealth and Pearler end.";
+    const out = splitByLinks(original, 1);
+    const reconstructed = out.map((p) => (typeof p === "string" ? p : p.label)).join("");
+    expect(reconstructed).toBe(original);
+  });
+
+  it("skipped keywords after cap appear as plain text, not links", () => {
+    const out = splitByLinks("CommSec and SelfWealth and Pearler.", 1);
+    const plainParts = out.filter((p) => typeof p === "string").join("");
+    // "SelfWealth" and "Pearler" should appear in plain text segments.
+    expect(plainParts).toContain("SelfWealth");
+    expect(plainParts).toContain("Pearler");
+  });
+});
+
 describe("splitByLinks — glossary terms", () => {
   it("links a glossary term in prose", () => {
     // "Dividend" is a glossary term not covered by INTERNAL_LINK_TARGETS
