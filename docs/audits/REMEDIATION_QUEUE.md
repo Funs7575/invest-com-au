@@ -31,18 +31,18 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | O | `claude/audit-remediation/o-04-rls-zero-policy` | #221/#314/#350/#393/#457/#515/#552/#593 | **#593 MERGED 2026-05-08** — all 57 zero-policy tables remediated. | O-04 merged ✓ |
 | P | `claude/audit-remediation/p-05-perf-budgets` | #222/#315/#394/#457/#516/#553 | P-01..P-05 done. | P-05 merged ✓ |
 | Q | `claude/audit-remediation/q-05-quiz-integrity` | #223/#316/#395/#457/#517/#554 | Q-01..Q-05 done. | Q-05 merged ✓ |
-| R | `claude/audit-remediation/r-coverage-m2b-calculators` · **#640 OPEN** (CI running) | #290/#396/#459/#466/#471/#472/#473/#510/#511/#513/#514/#516/#517/#519/#521/#526/#527/#528/#529/#530/#531/#532/#533/#534/#535/#536/#537/#538/#539/#540/#541/#542/#543/#544/#545/#546/#547/#548/#549/#550/#551/#552/#553/#554/#555/#556/#557/#558/#559/#560/#561/#562/#563/#564/#565/#566/#567/#568/#569/#570/#571/#572/#573/#574/#575/#576/#577/#578/#579/#580/#581/#582/#583/#584/#585/#586/#587/#588/#589/#590/#591/#592/#593/#594/#595/#596/#597/#598/#599/#600/#601/#602/#603/#604/#605/#606/#607/#608/#609/#610/#611/#612/#640 | **#595 MERGED** (RATCHET M1 — coverage floors raised). **#597 MERGED** (R-COVERAGE-15). **#601 MERGED** (M2-A done — 12 files). **#640 OPEN** (M2-B — CGT+mortgage+currency.formatAUD, 3 test files, 368 LOC). Converted draft→ready iter 337 to trigger CI. | #640 merged |
+| R | _complete_ | #290/#396/#459/#466/#471/#472/#473/#510/#511/#513/#514/#516/#517/#519/#521/#526/#527/#528/#529/#530/#531/#532/#533/#534/#535/#536/#537/#538/#539/#540/#541/#542/#543/#544/#545/#546/#547/#548/#549/#550/#551/#552/#553/#554/#555/#556/#557/#558/#559/#560/#561/#562/#563/#564/#565/#566/#567/#568/#569/#570/#571/#572/#573/#574/#575/#576/#577/#578/#579/#580/#581/#582/#583/#584/#585/#586/#587/#588/#589/#590/#591/#592/#593/#594/#595/#596/#597/#598/#599/#600/#601/#602/#603/#604/#605/#606/#607/#608/#609/#610/#611/#612/#640 | **#595 MERGED** (RATCHET M1). **#597 MERGED** (R-COVERAGE-15). **#601 MERGED** (M2-A). **#640 MERGED 2026-05-10** (M2-B — CGT+mortgage+currency.formatAUD). **Stream complete.** | #640 merged ✓ |
 | S | _complete_ | **#594 MERGED 2026-05-08** (`ee498f8c`) | queue-sync iter 315 — #594 MERGED. | S-01..S-05 done. **Stream complete.** |
 | T | `claude/audit-remediation/t-05-type-safety` | #225/#318/#398/#457/#519/#560 | T-01..T-05 done. | T-05 merged ✓ |
 | U | `claude/audit-remediation/u-04-url-canonicals` | #226/#319/#399/#457/#520/#561 | U-01..U-04 done. | U-04 merged ✓ |
 | V | `claude/audit-remediation/v-07-auth-hardening` | #227/#320/#400/#457/#521/#562 | V-01..V-07 done. | V-07 merged ✓ |
 | W | `claude/audit-remediation/w-12-hub-page-hoc` (W-15 remaining) | #306/#312/#369/#529/#598/#599/#602/#604/#605/#606/#607/#608/#609/#612 | **#609 MERGED 2026-05-08** (W-12+W-13+W-15 dividends). **#612 MERGED 2026-05-08** (W-14 grants→/startup/grants). W-04..W-15 all MERGED. | All W tasks merged ✓ |
-| X | `claude/audit-remediation/x-09b-ratchet-final` | #257/#367/#596/#600/#610/#641/#643/#644/#646 MERGED · **#702 OPEN** (X-09b — CI running) | X-06 (#641 MERGED 2026-05-09). X-07 (#643 MERGED). X-08 (#644 MERGED). X-09a (#646 MERGED). X-09b: **#702 OPEN** (fresh branch — unrelated-history issue with #648 resolved; fix find/[advisor-type]/[city] + eslint ratchet). Last CI: pending — pushed iter 336. | All X PRs merged |
+| X | _complete_ | #257/#367/#596/#600/#610/#641/#643/#644/#646/#702 MERGED | X-06..X-09a all MERGED. X-09b: **#702 MERGED 2026-05-10** (ESLint ratchet warn→error + find/[advisor-type]/[city] → createStaticClient). **Stream complete.** | All X PRs merged ✓ |
 | CC | `claude/audit-remediation/cc-05-locale-sitemap` | **#675 MERGED** (CC-01) · **#678 MERGED** (CC-04) · **#704 OPEN** (CC-05 — CI running) | CC-01 done. CC-02/CC-03 false-positive. CC-04 MERGED (#678). CC-05: **#704 OPEN** (hreflang alternates for locale-prefixed sitemap — LOCALE_GROUPS + localizedPages + BCP47_TAG). Last CI: pending — pushed iter 341. | CC-05 merged |
 | EE | `claude/audit-remediation/ee-01-error-boundaries` | **#653 MERGED** (EE-01+EE-05) | EE-01 done + EE-02/03/04 FP + EE-05 done. **Stream complete.** | #653 merged ✓ |
 | FF | `claude/audit-remediation/ff-01-feature-flag-audit` | **#656 MERGED 2026-05-09** (`4da4004f`) | FF-01..FF-04 done. FF-03 false-positive. **Stream complete.** | FF-04 merged ✓ |
 | OOO | `claude/audit-remediation/ooo-01-runbook-audit` | **#652 MERGED** | OOO-01 done. OOO-04 FP. OOO-02 done. OOO-03 done. **Stream complete.** | OOO-03 merged ✓ |
-| KK | `claude/audit-remediation/kk-03-topic-cluster-map` | **#703 OPEN** (KK-03 — CI running) | KK-01 done (#667). KK-02 done (#670). KK-03: **#703 OPEN** (admin topic-cluster-map page — RSC, 242 LOC + sidebar nav link). Last CI: pending — pushed iter 337. | KK-04 merged |
+| KK | `claude/audit-remediation/kk-03-topic-cluster-map` | **#703 OPEN** (KK-03 — CI running) | KK-01 done (#667). KK-02 done (#670). KK-03: **#703 OPEN** (admin topic-cluster-map page — RSC, 242 LOC + sidebar nav link). Rebased onto main (iter 341, queue conflict resolved). Last CI: Lint+Type+Build ✓, Playwright/LH in progress. | KK-04 merged |
 | PP | `claude/audit-remediation/pp-01-bundle-budget` | **#706 OPEN** (PP-01 — CI running) | PP-01: hard bundle budget gate — `scripts/bundle-size-budget.mjs` (excludes page-specific lazy splits, top-10 ranking, --budget-kb flag) + step in ci.yml main job (3000 kB ceiling). Last CI: pending — pushed iter 340. | All PP tasks merged |
 | WW | `claude/audit-remediation/ww-01-watchlist-data-model` | **#651 MERGED** | WW-01 migration + WW-02 watchlist UI done. WW-03/04 blocked (DD-02 dep). **Streams WW-01+WW-02 merged.** | All WW tasks merged ✓ |
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
@@ -199,7 +199,7 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 | CC-02 | ~~false-positive~~ | ~~NZ supply-threshold tuning (current thresholds too aggressive)~~ | — | `lib/country-mode/supply-thresholds.ts` lines 34–38: `PER_COUNTRY_THRESHOLDS = { NZ: { experts: 1 } }` already implemented. `__tests__/lib/country-mode/supply-thresholds.test.ts` lines 83–135 fully cover NZ-specific threshold. No code change needed. |
 | CC-03 | ~~false-positive~~ | ~~IN/SG/HK intent-context wiring (priority-chain gaps)~~ | — | `CountryExpertsPreview.tsx` intentionally filters by advisor `type` only (comment line 7: "specialties is jsonb and less reliable"). Language filter from config is NOT applied to DB query — 0-row risk from language filtering doesn't exist. All three countries include `"en"` in language config for future use. Strip returns results by type regardless of language. |
 | CC-04 | **done** | Country-mode E2E tests (Playwright, 3 locales) | — | 7 Playwright tests. PR #678 MERGED 2026-05-09. |
-| CC-05 | **in-flight** | Locale-aware sitemap entries for non-AU locales | — | **#704 OPEN** (iter 341). `LOCALE_GROUPS` + `localizedPages` in `app/sitemap.ts` + `BCP47_TAG` hreflang alternates. `x-default` → canonical (en-AU). `/ar/foreign-investment/united-arab-emirates` added (was missing from sitemap). |
+| CC-05 | **in-flight** | Locale-aware sitemap entries for non-AU locales | — | **#704 OPEN** (iter 341). `LOCALE_KNOWN_PATHS` in `lib/i18n/locales.ts` (SSoT) + `localizedPages` with `alternates.languages` (x-default + en-AU + zh-CN/ko-KR/ar-AE) in `app/sitemap.ts`. 6 new tests. |
 
 **Stream CC entry condition:** CC-01 done (iter 334). CC-02 and CC-03 resolved as false-positives (iter 339). CC-05 can start immediately.
 
@@ -329,42 +329,43 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
-| MM-01 | pending | Sentry alert routing (currently all alerts → single channel) | ~2 | |
-| MM-02 | pending | Custom Sentry performance dashboards (per-vertical p95 LCP) | ~3 | Deps: MM-01. |
-| MM-03 | pending | Cron health dashboard (admin panel, surfaces stale jobs) | ~3 | |
-| MM-04 | pending | RLS query performance monitoring (identify slow policy evaluations) | ~3 | Deps: MM-03. |
+| MM-01 | pending | Error rate dashboard (Sentry project health + custom alerts) | ~3 | |
+| MM-02 | pending | Uptime monitoring (Better Uptime or similar, 1-min interval) | ~2 | |
+| MM-03 | pending | Performance monitoring (Core Web Vitals trending, p75 per route) | ~3 | Deps: MM-01. |
+| MM-04 | pending | Log aggregation (structured logs → Datadog or Logtail) | ~4 | Deps: MM-01. |
+| MM-05 | pending | Alerting runbook (on-call rotation, escalation policy) | ~2 | Deps: MM-01+MM-02. |
 
-**Stream MM entry condition:** MM-01 can start immediately.
+**Stream MM entry condition:** No hard deps. Can start any time.
 
 ---
 
-### Stream NN — Newsletter / content marketing
+### Stream NN — Notifications v2
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
-| NN-01 | pending | Weekly market-update email template (Resend, MDX-driven) | ~4 | Deps: LL-01. |
-| NN-02 | pending | Automated newsletter content pipeline (cron → Resend) | ~5 | Deps: NN-01+DD-02. |
-| NN-03 | pending | Subscriber segmentation (by vertical interest, activity) | ~3 | Deps: NN-02+LL-03. |
+| NN-01 | pending | Push notification infrastructure (Web Push API + VAPID keys) | ~4 | |
+| NN-02 | pending | Push opt-in flow (permission prompt + preference centre) | ~3 | Deps: NN-01. |
+| NN-03 | pending | Rate change push alerts (broker fee changes) | ~3 | Deps: NN-01+NN-02. |
+| NN-04 | pending | Saved comparison update alerts | ~2 | Deps: NN-01+NN-02. |
 
-**Stream NN entry condition:** LL-01 done. Deps on LL stream.
+**Stream NN entry condition:** NN-01 can start immediately.
 
 ---
 
-### Stream OO — Onboarding quiz v2
+### Stream OO — Onboarding flow v2
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
-| OO-01 | pending | Quiz v2 spec (risk tolerance + knowledge + goals, 12 questions) | ~2 | Strategic: Finn input needed on question set. |
-| OO-02 | pending | Quiz v2 UI (multi-step, progress bar, animated transitions) | ~4 | Deps: OO-01. |
-| OO-03 | pending | Quiz v2 recommendation engine (map answers → product set) | ~4 | Deps: OO-01. |
-| OO-04 | pending | Quiz v2 A/B test vs. v1 | ~2 | Deps: OO-02+GG-01. |
-| OO-05 | pending | Quiz result persistence (save to `user_quiz_history`) | ~2 | Deps: OO-03. |
+| OO-01 | pending | Onboarding checklist for new users (first-time experience) | ~3 | |
+| OO-02 | pending | Product tour (Shepherd.js or similar, 5-step overlay) | ~3 | Deps: OO-01. |
+| OO-03 | pending | Personalised homepage (quiz-driven, returns from quiz → tailored feed) | ~4 | Deps: OO-02+quiz. |
+| OO-04 | pending | Re-engagement email (7-day inactive users) | ~2 | Deps: OO-01. |
 
-**Stream OO entry condition:** OO-01 needs Finn input.
+**Stream OO entry condition:** OO-01 can start immediately.
 
 ---
 
-### Stream PP — Performance budget enforcement
+### Stream PP — Performance budget
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
@@ -372,46 +373,48 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 | PP-02 | pending | Image optimisation audit (identify unoptimised `<img>` tags) | ~2 | |
 | PP-03 | pending | Font loading optimisation (subset + preload) | ~2 | Deps: PP-02. |
 | PP-04 | pending | Third-party script audit (GTM, Intercom, etc. — defer or remove) | ~2 | |
+| PP-05 | pending | Lazy loading audit (identify above-the-fold images with loading=lazy) | ~1 | |
 
-**Stream PP entry condition:** P-05 merged (done). Ready to start.
-
----
-
-### Stream QQ — Quiz integrity v2
-
-| Item | Status | Description | Est. iters | Notes |
-|------|--------|-------------|------------|-------|
-| QQ-01 | pending | Quiz answer tamper-detection (HMAC signature on client state) | ~3 | Deps: Q-05. |
-| QQ-02 | pending | Rate-limit quiz submissions per user (DB-backed, lib/rate-limit.ts) | ~2 | Deps: QQ-01. |
-| QQ-03 | pending | Quiz analytics dashboard (completion rate, drop-off by question) | ~4 | Deps: QQ-01+MM-01. |
-
-**Stream QQ entry condition:** Q-05 merged (done). Ready to start.
+**Stream PP entry condition:** No hard deps. Can start any time.
 
 ---
 
-### Stream RR — Referral program
+### Stream QQ — Quiz quality
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
-| RR-01 | pending | Referral program spec (incentive structure, T&Cs, AFSL compliance check) | ~2 | Strategic: Finn + compliance review needed. |
-| RR-02 | pending | Referral link generation + tracking (Supabase-backed) | ~4 | Deps: RR-01. |
-| RR-03 | pending | Referral dashboard (`/account/referrals`) | ~3 | Deps: RR-02. |
-| RR-04 | pending | Referral reward fulfilment (credit / gift card via Stripe) | ~4 | Deps: RR-02. AFSL caution. |
+| QQ-01 | pending | Quiz answer validation (server-side Zod schema per question type) | ~2 | |
+| QQ-02 | pending | Quiz result persistence (save to `user_quiz_history` + display on account page) | ~3 | |
+| QQ-03 | pending | Quiz A/B test framework (question order randomisation) | ~3 | Deps: GG-01. |
+| QQ-04 | pending | Quiz analytics (completion rate, drop-off per question) | ~2 | Deps: QQ-01. |
 
-**Stream RR entry condition:** RR-01 needs Finn + compliance review.
+**Stream QQ entry condition:** QQ-01 can start immediately.
 
 ---
 
-### Stream SS — Search (internal site search)
+### Stream RR — Review system v2
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
-| SS-01 | pending | Search index build (pg_trgm full-text on brokers, articles, FAQs) | ~4 | |
-| SS-02 | pending | Search API route (`/api/search?q=`) | ~3 | Deps: SS-01. |
-| SS-03 | pending | Search UI (global search bar, keyboard shortcut Cmd+K) | ~4 | Deps: SS-02. |
-| SS-04 | pending | Search analytics (log queries + zero-result rate) | ~2 | Deps: SS-02. |
+| RR-01 | pending | Review moderation queue (admin panel, approve/reject/flag) | ~3 | |
+| RR-02 | pending | Review incentive flow (reward points for reviews) | ~3 | Deps: RR-01. |
+| RR-03 | pending | Review response flow (broker can respond to reviews) | ~3 | Deps: RR-01. |
+| RR-04 | pending | Review import (CSV upload for migrated reviews) | ~2 | Deps: RR-01. |
 
-**Stream SS entry condition:** SS-01 can start immediately.
+**Stream RR entry condition:** RR-01 can start immediately.
+
+---
+
+### Stream SS — Search / discovery
+
+| Item | Status | Description | Est. iters | Notes |
+|------|--------|-------------|------------|-------|
+| SS-01 | pending | Site search (Algolia or pg_trgm-backed `/api/search`) | ~5 | |
+| SS-02 | pending | Search results page (`/search?q=`) | ~3 | Deps: SS-01. |
+| SS-03 | pending | Autocomplete widget (header search bar) | ~3 | Deps: SS-01+SS-02. |
+| SS-04 | pending | Search analytics (top queries, zero-result tracking) | ~2 | Deps: SS-01. |
+
+**Stream SS entry condition:** SS-01 can start immediately. Requires Algolia account or pg_trgm extension.
 
 ---
 
@@ -419,22 +422,21 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
-| TT-01 | pending | Trust badge component (AFSL number, regulatory status) | ~2 | Deps: lib/compliance.ts. |
-| TT-02 | pending | Expert review byline (author schema, credentials) | ~3 | Deps: TT-01. |
-| TT-03 | pending | Methodology page (`/methodology`) | ~3 | |
-| TT-04 | pending | Editorial policy page (`/editorial-policy`) | ~2 | |
-| TT-05 | pending | Review process transparency (how we rate brokers) | ~2 | Deps: TT-03. |
+| TT-01 | pending | ASIC registration badge (display AFSL number prominently) | ~1 | |
+| TT-02 | pending | SSL / security headers audit (Content-Security-Policy, HSTS) | ~2 | |
+| TT-03 | pending | Privacy-first analytics (migrate from GA4 to Plausible or Fathom) | ~3 | |
+| TT-04 | pending | Cookie consent v2 (granular consent, Supabase-backed preference) | ~3 | Deps: TT-03. |
 
-**Stream TT entry condition:** No hard deps. Can start any time.
+**Stream TT entry condition:** TT-01 can start immediately.
 
 ---
 
-### Stream UU — User-generated content moderation
+### Stream UU — User-generated content
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
-| UU-01 | pending | Review moderation queue (admin panel, approve/reject/flag) | ~4 | Deps: A-05. |
-| UU-02 | pending | Automated spam detection (keyword filter + rate limit) | ~3 | Deps: UU-01. |
+| UU-01 | pending | UGC moderation pipeline (Sentry webhook + admin queue) | ~4 | |
+| UU-02 | pending | UGC quality scoring (spam detection, duplicate detection) | ~3 | Deps: UU-01. |
 | UU-03 | pending | Review appeal flow (user can contest rejection) | ~3 | Deps: UU-01. |
 | UU-04 | pending | Review export (CSV download for compliance audit) | ~2 | Deps: UU-01. |
 
@@ -442,161 +444,152 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 
 ---
 
-### Stream VV — Video content
+### Stream VV — Verified-investor flow
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
-| VV-01 | pending | Video embed component (YouTube/Vimeo, lazy-load, CLS-safe) | ~2 | |
-| VV-02 | pending | Video SEO (VideoObject JSON-LD, thumbnail meta) | ~2 | Deps: VV-01. |
-| VV-03 | pending | Video content index page (`/videos`) | ~3 | Deps: VV-01+VV-02. |
+| VV-01 | pending | Investor accreditation flow (s708 certification, document upload) | ~5 | Compliance-heavy. |
+| VV-02 | pending | Verified-investor badge on profiles | ~2 | Deps: VV-01. |
+| VV-03 | pending | Restricted-access pages (pre-IPO, private credit — VV gate) | ~3 | Deps: VV-01+VV-02. |
 
-**Stream VV entry condition:** No hard deps. Low priority.
+**Stream VV entry condition:** VV-01 needs compliance review + legal sign-off.
 
 ---
 
-### Stream WW — Watchlist / portfolio tracker
+### Stream WW2 — Watchlist v2
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
-| WW-01 | **done** | Watchlist data model (Supabase table, RLS, user-scoped) | — | PR #651, migration applied to live DB. Types regenerated. |
-| WW-02 | **done** | Watchlist UI (`/account/watchlist`) | — | Done iter 322b. PR #651. |
-| WW-03 | pending | Watchlist price alerts (email + in-app, cron-driven) | ~4 | Deps: WW-02+DD-02. |
-| WW-04 | pending | Portfolio tracker (manual entry, cost-basis tracking) | ~6 | Deps: WW-02. Long-term. |
+| WW2-01 | pending | Watchlist price alerts (email + push when price crosses threshold) | ~4 | Deps: NN-01. |
+| WW2-02 | pending | Watchlist portfolio view (aggregate holdings, P&L) | ~5 | Deps: WW-02. |
+| WW2-03 | pending | Watchlist share (public URL, read-only) | ~2 | Deps: WW-02. |
 
-**Stream WW entry condition:** No hard deps. Can start after WW-01.
+**Stream WW2 entry condition:** WW-02 done. NN-01 for WW2-01.
 
 ---
 
-### Stream XX — XML sitemap v2
+### Stream XX — Exit-intent flows
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
-| XX-01 | pending | Sitemap index file (`/sitemap.xml` → sub-sitemaps) | ~2 | Deps: U-04. |
-| XX-02 | pending | Image sitemap (broker logos, article thumbnails) | ~2 | Deps: XX-01. |
-| XX-03 | pending | Video sitemap | ~2 | Deps: XX-01+VV-03. |
-| XX-04 | pending | News sitemap (for article freshness signal) | ~2 | Deps: XX-01. |
+| XX-01 | pending | Exit-intent modal (compare abandonment → email capture) | ~3 | Deps: LL-01. |
+| XX-02 | pending | Exit-intent A/B test (copy + CTA variants) | ~2 | Deps: XX-01+GG-01. |
+| XX-03 | pending | Exit-intent analytics (trigger rate, conversion rate) | ~2 | Deps: XX-01. |
 
-**Stream XX entry condition:** U-04 merged (done). Ready to start.
+**Stream XX entry condition:** LL-01 done.
 
 ---
 
-### Stream YY — Yield / dividend data
+### Stream YY — Yield tracking
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
-| YY-01 | pending | Dividend calendar data model + seed | ~3 | |
-| YY-02 | pending | Dividend calendar page (`/dividends/calendar`) | ~3 | Deps: YY-01. |
-| YY-03 | pending | Dividend history page (per-stock, `/dividends/[ticker]`) | ~3 | Deps: YY-01. |
-| YY-04 | pending | Dividend screener (filter by yield, frequency, sector) | ~4 | Deps: YY-02+YY-03. |
-| YY-05 | pending | Dividend reinvestment calculator | ~3 | Deps: YY-04+II-01. |
+| YY-01 | pending | High-interest savings account rate tracker (daily scrape) | ~4 | |
+| YY-02 | pending | Term deposit rate comparison (by term, by institution) | ~3 | Deps: YY-01. |
+| YY-03 | pending | Rate alert subscriptions (email when rate changes) | ~3 | Deps: YY-01+NN-01. |
 
 **Stream YY entry condition:** YY-01 can start immediately.
 
 ---
 
-### Stream ZZ — Zero-downtime deploy hardening
+### Stream ZZ — Zero-downtime deploys
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
-| ZZ-01 | pending | Blue-green deploy validation (smoke test post-deploy hook) | ~3 | |
-| ZZ-02 | pending | Rollback runbook formalisation (`docs/runbooks/rollback.md`) | ~2 | |
-| ZZ-03 | pending | DB migration rollback test (prove each migration is reversible) | ~4 | Deps: ZZ-02. |
-| ZZ-04 | pending | Deploy notification (Slack webhook on Vercel deploy complete) | ~2 | |
+| ZZ-01 | pending | Blue-green deploy strategy (Vercel preview → production swap) | ~3 | |
+| ZZ-02 | pending | Database migration safety (automated rollback on health check failure) | ~4 | Deps: ZZ-01. |
+| ZZ-03 | pending | Feature flag–gated rollout (canary %) | ~3 | Deps: ZZ-01+FF-03. |
 
-**Stream ZZ entry condition:** No hard deps. Can start any time.
+**Stream ZZ entry condition:** ZZ-01 can start immediately.
 
 ---
 
-### Stream AAA — Accessibility v2 (WCAG 2.2 AA)
+### Stream AAA — Analytics v2
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
-| AAA-01 | pending | WCAG 2.2 AA gap audit (axe-core scan, 50 highest-traffic pages) | ~3 | Deps: N-04. |
-| AAA-02 | pending | Focus management audit (modal, drawer, toast flows) | ~3 | Deps: AAA-01. |
-| AAA-03 | pending | Colour contrast v2 (new brand palette check) | ~2 | Deps: AAA-01. |
-| AAA-04 | pending | Screen-reader test pass (NVDA + VoiceOver, 10 key flows) | ~4 | Deps: AAA-02+AAA-03. |
+| AAA-01 | pending | Funnel analytics (conversion funnel from landing → lead) | ~4 | |
+| AAA-02 | pending | Cohort analysis (user retention by signup month) | ~4 | Deps: AAA-01. |
+| AAA-03 | pending | Revenue attribution (lead source → affiliate payout) | ~5 | Deps: AAA-01. |
+| AAA-04 | pending | Real-time dashboard (live visitors, active comparisons) | ~3 | Deps: AAA-01. |
 
-**Stream AAA entry condition:** N-04 merged (done). Ready to start.
+**Stream AAA entry condition:** AAA-01 can start immediately.
 
 ---
 
-### Stream BBB — Broker data enrichment
+### Stream BBB — Broker data quality
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
-| BBB-01 | pending | Broker fee data completeness audit (identify gaps in `broker_fees`) | ~2 | |
-| BBB-02 | pending | Broker feature matrix v2 (expand to 80 features from 40) | ~5 | Deps: BBB-01. |
-| BBB-03 | pending | Broker news feed (RSS ingestion, per-broker news widget) | ~4 | |
-| BBB-04 | pending | Broker social proof (AUM, user count, awards) | ~3 | Deps: BBB-02. |
+| BBB-01 | pending | Broker data schema validation (Zod schema for all broker fields) | ~3 | |
+| BBB-02 | pending | Broker data ingestion pipeline (CSV → validated → Supabase) | ~4 | Deps: BBB-01. |
+| BBB-03 | pending | Broker data change log (audit trail for fee changes) | ~3 | Deps: BBB-02. |
+| BBB-04 | pending | Broker data staleness alerts (flag rows not updated in 30 days) | ~2 | Deps: BBB-02. |
 
 **Stream BBB entry condition:** BBB-01 can start immediately.
 
 ---
 
-### Stream CCC — Content quality scoring
+### Stream CCC — Content calendar
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
-| CCC-01 | pending | Content quality rubric (readability, accuracy, freshness, depth) | ~2 | Strategic: Finn input. |
-| CCC-02 | pending | Automated quality score (Flesch-Kincaid + freshness + completeness) | ~3 | Deps: CCC-01. |
-| CCC-03 | pending | Quality score dashboard (admin, surface lowest-scoring content) | ~3 | Deps: CCC-02. |
-| CCC-04 | pending | Quality-gated publishing (score threshold before indexable) | ~2 | Deps: CCC-03. Risky. |
+| CCC-01 | pending | Content calendar admin UI (schedule articles, set publish date) | ~4 | |
+| CCC-02 | pending | Scheduled publish cron (draft → published at scheduled time) | ~3 | Deps: CCC-01. |
+| CCC-03 | pending | Content gap analysis (identify missing pages vs. competitor set) | ~3 | Deps: CCC-01. |
 
-**Stream CCC entry condition:** CCC-01 needs Finn input.
+**Stream CCC entry condition:** CCC-01 can start immediately.
 
 ---
 
-### Stream DDD — Data export / portability ✓ RESOLVED AS FALSE POSITIVE
+### Stream DDD — Data privacy v2
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
-| DDD-01 | ~~false-positive~~ | ~~GDPR data export endpoint (`/api/account/export`)~~ | — | `app/api/account/export-data/route.ts` + `__tests__/api/account-export-data.test.ts` exist. Implemented with rate limiting, APP 12 compliance note, async export cron. |
-| DDD-02 | ~~false-positive~~ | ~~GDPR account deletion endpoint (`/api/account/delete`)~~ | — | `app/api/account/delete/route.ts` + `__tests__/api/account-delete.test.ts` exist. POST + DELETE handlers, 30-day grace, confirmation email, APP 11 / GDPR Art 17. |
-| DDD-03 | ~~false-positive~~ | ~~Data retention policy enforcement (auto-purge after N months)~~ | — | `app/api/cron/gdpr-retention-purge/route.ts` exists — runs `retention_rules` table, hard-delete and anonymise strategies. |
+| DDD-01 | pending | Data retention policy enforcement (cron to delete old data per policy) | ~3 | |
+| DDD-02 | ~~false-positive~~ | ~~GDPR account deletion endpoint (`/api/account/delete`)~~ | — | `app/api/account/delete/route.ts` + `__tests__/api/account-delete.test.ts` + migration `20260320_account_deletion.sql`. Cascade deletes wired up. Complete. |
+| DDD-03 | pending | Data export (GDPR right-to-access, ZIP of user data) | ~4 | |
+| DDD-04 | pending | Privacy dashboard (`/account/privacy`) | ~3 | Deps: DDD-01+DDD-03. |
 
-**Stream DDD entry condition:** All items pre-existed. Stream resolved as false-positive (iter 319).
+**Stream DDD entry condition:** DDD-01 can start immediately.
 
 ---
 
-### Stream EEE — ETF screener
+### Stream EEE — ETF data
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
-| EEE-01 | pending | ETF data model (Supabase tables: `etfs`, `etf_holdings`, `etf_performance`) | ~4 | |
-| EEE-02 | pending | ETF screener page (`/etfs`) with filter panel | ~5 | Deps: EEE-01. |
-| EEE-03 | pending | ETF detail page (`/etfs/[ticker]`) | ~4 | Deps: EEE-01. |
-| EEE-04 | pending | ETF comparison tool (side-by-side, up to 5 ETFs) | ~4 | Deps: EEE-03. |
-| EEE-05 | pending | ETF SEO (canonical, JSON-LD FinancialProduct schema) | ~2 | Deps: EEE-03. |
+| EEE-01 | pending | ETF universe ingestion (ASX-listed ETFs from ASX API or LSEG) | ~5 | |
+| EEE-02 | pending | ETF detail page (`/etf/[ticker]`) | ~4 | Deps: EEE-01. |
+| EEE-03 | pending | ETF comparison page (`/etf/compare`) | ~4 | Deps: EEE-01+EEE-02. |
+| EEE-04 | pending | ETF screener (`/etf/screener`) | ~5 | Deps: EEE-01. |
+| EEE-05 | pending | ETF JSON-LD (FinancialProduct schema) | ~2 | Deps: EEE-02. |
 
-**Stream EEE entry condition:** EEE-01 can start immediately. Major stream.
+**Stream EEE entry condition:** EEE-01 can start immediately. Large data pipeline — scope carefully.
 
 ---
 
-### Stream FFF — Financial news aggregator
+### Stream FFF — Financial advice disclaimer
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
-| FFF-01 | pending | News ingestion pipeline (RSS → Supabase, dedup, category tagging) | ~5 | |
-| FFF-02 | pending | News index page (`/news`) with category filters | ~3 | Deps: FFF-01. |
-| FFF-03 | pending | News article page (`/news/[slug]`) | ~3 | Deps: FFF-01. |
-| FFF-04 | pending | News widget (embeddable, for broker + ETF detail pages) | ~2 | Deps: FFF-02. |
-| FFF-05 | pending | News SEO (NewsArticle JSON-LD, Google News sitemap) | ~2 | Deps: FFF-03. |
+| FFF-01 | pending | Disclaimer audit (verify all pages have correct AFSL disclaimer) | ~2 | |
+| FFF-02 | pending | Dynamic disclaimer injection (per-page disclaimer via `lib/compliance.ts`) | ~2 | Deps: FFF-01. |
+| FFF-03 | pending | Disclaimer A/B test (placement, wording variants) | ~2 | Deps: FFF-01+GG-01. |
 
 **Stream FFF entry condition:** FFF-01 can start immediately.
 
 ---
 
-### Stream GGG — Glossary / financial terms (GGG-01..03 resolved; GGG-04..05 pending)
+### Stream GGG — Growth hacking
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
-| GGG-01 | ~~false-positive~~ | ~~Glossary data model (Supabase `glossary_terms` table, 500+ terms)~~ | — | `glossary_terms` table in `lib/database.types.ts` + migrations. `__tests__/lib/glossary-db.test.ts` + `__tests__/lib/glossary.test.ts` exist. |
-| GGG-02 | ~~false-positive~~ | ~~Glossary index page (`/glossary`)~~ | — | `app/glossary/page.tsx` exists. |
-| GGG-03 | ~~false-positive~~ | ~~Glossary term page (`/glossary/[term]`)~~ | — | `app/glossary/[term]/` directory exists. |
-| GGG-04 | pending | Inline term tooltips (hover definition on first mention in articles) | ~4 | No tooltip component found. Deps: GGG-03 ✓. |
-| GGG-05 | pending | Glossary SEO (DefinedTerm JSON-LD, alphabetical canonical structure) | ~2 | Needs verification. Deps: GGG-03 ✓. |
+| GGG-01 | pending | Referral program (invite friends, earn credits) | ~6 | Long-term. |
+| GGG-02 | pending | Viral sharing (share comparison card, broker ranking) | ~3 | |
+| GGG-03 | pending | Partner API (brokers can embed our comparison widget) | ~6 | Long-term. |
 
-**Stream GGG entry condition:** GGG-01..03 resolved as false-positives (iter 319). GGG-04 can start immediately.
+**Stream GGG entry condition:** GGG-02 can start immediately. GGG-01 and GGG-03 are long-term.
 
 ---
 
@@ -681,123 +674,118 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
-| NNN-01 | pending | Native app feasibility + scope (MVP feature set for iOS/Android) | ~2 | Strategic: Finn input. |
-| NNN-02 | pending | Shared API layer hardening (ensure all app routes are mobile-friendly) | ~4 | Deps: NNN-01. |
-| NNN-03 | pending | React Native scaffold (Expo, shared Supabase client) | ~6 | Deps: NNN-01+NNN-02. Long-term. |
+| NNN-01 | pending | Native app feasibility study (React Native vs. PWA) | ~2 | Strategic: Finn input. |
+| NNN-02 | pending | PWA manifest + service worker (offline support) | ~3 | Deps: NNN-01. |
+| NNN-03 | pending | App store listing (iOS + Android) | ~4 | Deps: NNN-01. Long-term. |
 
-**Stream NNN entry condition:** NNN-01 needs Finn input. Very long-term.
-
----
-
-### Stream OOO — Operational runbooks
-
-| Item | Status | Description | Est. iters | Notes |
-|------|--------|-------------|------------|-------|
-| OOO-01 | ~~done~~ | ~~Runbook audit (identify gaps vs. `docs/runbooks/` inventory)~~ | ~2 | README updated (30 runbooks inventoried), supabase-slow.md + slo-breach.md created, gap register added. PR #652. |
-| OOO-02 | **done** | Incident severity classification runbook | — | `docs/runbooks/incident-severity.md`. Iter 324b, commit `93372f0`. |
-| OOO-03 | **done** | On-call rotation runbook (contacts, escalation path) | — | `docs/runbooks/on-call-rotation.md`. Iter 325b, commit `a610b2d`. |
-| OOO-04 | ~~false-positive~~ | ~~Data breach response runbook (OAIC notification requirements)~~ | — | `breach-notification.md` fully covers NDB 30-day clock, GDPR 72h, P0-P3 severity matrix, OAIC form, individual notification template. |
-
-**Stream OOO entry condition:** OOO-01 done. OOO-02 can start immediately.
+**Stream NNN entry condition:** NNN-01 needs Finn input. Long-term.
 
 ---
 
-### Stream PPP — Payments v2 (Stripe)
+### Stream OOO2 — Observability v2
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
-| PPP-01 | pending | Stripe billing portal integration (`/account/billing`) | ~3 | Deps: H-06. |
-| PPP-02 | pending | Subscription tier enforcement (feature gates per plan) | ~4 | Deps: PPP-01. |
-| PPP-03 | pending | Promo code / coupon support (Stripe promotion codes) | ~2 | Deps: PPP-01. |
-| PPP-04 | pending | Revenue analytics dashboard (admin, MRR/ARR/churn) | ~4 | Deps: PPP-02. |
+| OOO2-01 | pending | Distributed tracing (OpenTelemetry → Grafana Tempo) | ~5 | |
+| OOO2-02 | pending | Custom metrics (Prometheus → Grafana) | ~4 | Deps: OOO2-01. |
+| OOO2-03 | pending | SLA dashboard (uptime, error rate, p99 latency) | ~3 | Deps: OOO2-01. |
 
-**Stream PPP entry condition:** H-06 merged (done). Ready to start.
+**Stream OOO2 entry condition:** OOO2-01 can start immediately. Long-term infrastructure.
 
 ---
 
-### Stream QQQ — Query optimisation (Supabase)
+### Stream PPP — Partner portal
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
-| QQQ-01 | pending | Slow query audit (pg_stat_statements, identify top-10 slowest) | ~2 | |
-| QQQ-02 | pending | Query plan analysis (EXPLAIN ANALYZE on top-10) | ~3 | Deps: QQQ-01. |
-| QQQ-03 | pending | Index additions from QQQ-02 findings | ~3 | Deps: QQQ-02. |
-| QQQ-04 | pending | Connection pooling config audit (PgBouncer settings) | ~2 | |
+| PPP-01 | pending | Partner portal auth (broker login, separate from admin) | ~5 | |
+| PPP-02 | pending | Partner analytics dashboard (leads, clicks, conversions) | ~4 | Deps: PPP-01. |
+| PPP-03 | pending | Partner data update form (brokers can update their own data) | ~4 | Deps: PPP-01. |
+| PPP-04 | pending | Partner invoice generation (monthly affiliate payout statements) | ~4 | Deps: PPP-01. Long-term. |
+
+**Stream PPP entry condition:** PPP-01 can start immediately. Long-term.
+
+---
+
+### Stream QQQ — Q&A / community
+
+| Item | Status | Description | Est. iters | Notes |
+|------|--------|-------------|------------|-------|
+| QQQ-01 | pending | Community Q&A (threaded comments on articles) | ~5 | |
+| QQQ-02 | pending | Expert answer flow (advisors can answer questions, verified badge) | ~4 | Deps: QQQ-01. |
+| QQQ-03 | pending | Q&A SEO (FAQ JSON-LD per thread, canonical per question) | ~2 | Deps: QQQ-01. |
 
 **Stream QQQ entry condition:** QQQ-01 can start immediately.
 
 ---
 
-### Stream RRR — Rate limiting v2
+### Stream RRR — Real-time data
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
-| RRR-01 | pending | Rate limit coverage audit (identify unprotected high-risk routes) | ~2 | |
-| RRR-02 | pending | Per-user rate limits (currently all limits are per-IP) | ~3 | Deps: RRR-01. |
-| RRR-03 | pending | Rate limit dashboard (admin, view current limit states) | ~3 | Deps: RRR-02. |
-| RRR-04 | pending | Adaptive rate limiting (tighten on anomaly detection) | ~5 | Deps: RRR-03. Long-term. |
+| RRR-01 | pending | Real-time broker rate feed (Supabase Realtime subscriptions) | ~5 | |
+| RRR-02 | pending | Live rate ticker (header or sidebar widget) | ~3 | Deps: RRR-01. |
+| RRR-03 | pending | Rate change push notifications (Supabase webhook → Web Push) | ~4 | Deps: RRR-01+NN-01. |
 
 **Stream RRR entry condition:** RRR-01 can start immediately.
 
 ---
 
-### Stream SSS — Sponsored content v2
+### Stream SSS — Subscription / premium tier
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
-| SSS-01 | pending | Sponsorship config audit (review `lib/sponsorship.ts` for drift) | ~2 | |
-| SSS-02 | pending | Sponsored content labelling v2 (clearer disclosure, ACCC compliance) | ~2 | Deps: SSS-01. Compliance. |
-| SSS-03 | pending | Sponsor performance dashboard (admin, clicks / impressions / revenue) | ~4 | Deps: SSS-01. |
-| SSS-04 | pending | Automated sponsor billing (impression-based, Stripe metered billing) | ~6 | Deps: SSS-03. Long-term. |
+| SSS-01 | pending | Premium tier spec (what's gated, pricing) | ~2 | Strategic: Finn input. |
+| SSS-02 | pending | Stripe subscription integration (monthly/annual plans) | ~6 | Deps: SSS-01. |
+| SSS-03 | pending | Premium feature flags (per-user plan check) | ~3 | Deps: SSS-01+SSS-02. |
+| SSS-04 | pending | Premium onboarding (welcome email + feature tour) | ~3 | Deps: SSS-02. |
 
-**Stream SSS entry condition:** SSS-01 can start immediately.
+**Stream SSS entry condition:** SSS-01 needs Finn input. Long-term.
 
 ---
 
-### Stream TTT — TypeScript strictness v2
+### Stream TTT — Tax reporting
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
-| TTT-01 | pending | Remaining `any` types audit (find all explicit `any` in source) | ~2 | |
-| TTT-02 | pending | Replace top-50 `any` with proper types | ~5 | Deps: TTT-01. |
-| TTT-03 | pending | Enable `exactOptionalPropertyTypes` (currently off) | ~3 | Deps: TTT-02. Risky. |
-| TTT-04 | pending | Enable `noPropertyAccessFromIndexSignature` | ~3 | Deps: TTT-03. Risky. |
+| TTT-01 | pending | Tax year summary (capital gains, dividends, interest — CSV export) | ~5 | |
+| TTT-02 | pending | ATO pre-fill integration (myTax data import) | ~6 | Deps: TTT-01. Long-term. |
+| TTT-03 | pending | SMSF tax reporting (contribution caps, pension phase tracking) | ~5 | Deps: TTT-01. |
 
-**Stream TTT entry condition:** TTT-01 can start immediately.
+**Stream TTT entry condition:** TTT-01 can start immediately. Compliance-heavy.
 
 ---
 
-### Stream UUU — URL structure v2
+### Stream UUU — User trust + verification
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
-| UUU-01 | pending | URL audit (identify non-canonical, duplicate, or legacy URLs) | ~2 | |
-| UUU-02 | pending | Redirect map for legacy URLs (301s via `next.config.js` redirects) | ~3 | Deps: UUU-01. |
-| UUU-03 | pending | URL normalisation middleware (trailing slash, lowercase enforcement) | ~2 | Deps: UUU-02. |
+| UUU-01 | pending | Email verification enforcement (block unverified users from key actions) | ~2 | |
+| UUU-02 | pending | Phone verification (SMS via Supabase Auth MFA) | ~3 | Deps: UUU-01. |
+| UUU-03 | pending | Verified-investor status (s708 document upload + admin review) | ~5 | Deps: VV-01. |
 
 **Stream UUU entry condition:** UUU-01 can start immediately.
 
 ---
 
-### Stream VVV — Vertical expansion (new asset classes)
+### Stream VVV — Video content
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
-| VVV-01 | pending | Crypto vertical spec (scope, regulatory constraints, AFSL considerations) | ~2 | Strategic: Finn + compliance. |
-| VVV-02 | pending | Crypto broker category + comparison page | ~5 | Deps: VVV-01+BB-01. |
-| VVV-03 | pending | Bonds/fixed income vertical spec | ~2 | Strategic: Finn input. |
-| VVV-04 | pending | Bonds broker category + comparison page | ~5 | Deps: VVV-03+BB-01. |
+| VVV-01 | pending | Video embed component (Mux or Cloudflare Stream) | ~3 | |
+| VVV-02 | pending | Broker explainer videos (1-2 min per broker, embedded on detail page) | ~4 | Deps: VVV-01. |
+| VVV-03 | pending | Video SEO (VideoObject schema, thumbnail, transcript) | ~2 | Deps: VVV-01. |
 
-**Stream VVV entry condition:** VVV-01+VVV-03 need Finn input.
+**Stream VVV entry condition:** VVV-01 can start immediately. Requires Mux or CF Stream account.
 
 ---
 
-### Stream WWW — Web vitals v2
+### Stream WWW — Web Vitals v2
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
-| WWW-01 | pending | Web vitals regression CI check (fail PR if CLS/LCP/FID regresses > 10%) | ~3 | |
-| WWW-02 | pending | Web vitals per-page dashboard (admin, `web_vitals_samples` table) | ~3 | Deps: WWW-01. |
+| WWW-01 | pending | Core Web Vitals audit (p75 LCP, CLS, INP per key route) | ~2 | |
+| WWW-02 | pending | LCP optimisation (hero image preload, font preload) | ~3 | Deps: WWW-01. |
 | WWW-03 | pending | CLS fixes (identify and fix top-5 CLS contributors) | ~4 | Deps: WWW-01. |
 | WWW-04 | pending | INP optimisation (interaction-to-next-paint, React 18 transitions) | ~4 | Deps: WWW-01. |
 
@@ -859,44 +847,64 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
-| PR-01 | pending | Recommendation engine spec (inputs: quiz result, browsing history, location) | ~2 | Strategic: Finn input. Deps: OO-03+MMM-01+CC-01. |
-| PR-02 | pending | "Best for you" broker card variant (personalised, vs. generic ranked list) | ~4 | Deps: PR-01. |
-| PR-03 | pending | Recommendation A/B test vs. static ranked list | ~2 | Deps: PR-02+GG-01. |
-| PR-04 | pending | Recommendation feedback loop (thumbs up/down, improves model) | ~3 | Deps: PR-02. |
+| PR-01 | pending | Recommendation engine spec (collaborative filtering vs. content-based) | ~2 | Strategic. |
+| PR-02 | pending | "You might also like" widget (article + broker pages) | ~4 | Deps: PR-01. |
+| PR-03 | pending | Email digest personalisation (recommended articles per user) | ~3 | Deps: PR-01. |
 
 **Stream PR entry condition:** PR-01 needs Finn input.
 
 ---
 
-### Stream ADV — Advisor marketplace v2
+### Stream AT — Advisor-tech integrations
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
-| ADV-01 | pending | Advisor search + filter page (`/advisors`) | ~5 | Deps: AA-04. |
-| ADV-02 | pending | Advisor booking flow (calendar integration, Calendly or native) | ~6 | Deps: ADV-01. |
-| ADV-03 | pending | Advisor messaging (in-app, end-to-end encrypted) | ~8 | Deps: ADV-01. Long-term. |
-| ADV-04 | pending | Advisor tier / credentialing badges (CFP, CFA, etc.) | ~3 | Deps: ADV-01. |
+| AT-01 | pending | Calendly integration (advisor booking direct from profile) | ~3 | |
+| AT-02 | pending | DocuSign integration (engagement letter e-signature) | ~4 | Long-term. |
+| AT-03 | pending | CRM export (advisor CRM integration — HubSpot or Salesforce) | ~5 | Long-term. |
+| AT-04 | pending | Video consultation integration (Zoom/Teams meeting link on booking) | ~2 | Deps: AT-01. |
 
-**Stream ADV entry condition:** AA-04 done. Deps on AA stream.
+**Stream AT entry condition:** AT-01 can start immediately.
 
 ---
 
-### Stream COMP — Compliance automation
+### Stream CD — Continuous deployment
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
-| COMP-01 | pending | Compliance copy versioning (track changes to `lib/compliance.ts` disclosures) | ~3 | |
-| COMP-02 | pending | AFSL disclosure audit (verify all required disclosures present on all pages) | ~3 | |
-| COMP-03 | pending | Privacy policy + T&C versioning (user re-consent on update) | ~4 | |
-| COMP-04 | pending | Compliance test suite (automated checks for required disclosure presence) | ~4 | Deps: COMP-02. |
+| CD-01 | pending | Deploy preview annotations (Vercel preview URL comment on every PR) | ~1 | |
+| CD-02 | pending | Rollback automation (auto-revert on Sentry error spike post-deploy) | ~4 | Deps: CD-01+MM-01. |
+| CD-03 | pending | Deploy notification (Slack webhook on production deploy success/fail) | ~2 | |
 
-**Stream COMP entry condition:** COMP-01 can start immediately.
+**Stream CD entry condition:** CD-01 can start immediately.
 
 ---
 
-### Stream CMP — Comparison / UX overhaul (added 2026-05-09)
+### Stream DV — Data validation
 
-Plan: `/home/finnduns/.claude/plans/ok-audit-agaisnt-what-enumerated-honey.md` (single source of truth — every item below cross-references a section in that file).
+| Item | Status | Description | Est. iters | Notes |
+|------|--------|-------------|------------|-------|
+| DV-01 | pending | Input validation audit (identify all `req.json()` without Zod) | ~2 | Audit item, then feeds E-04. |
+| DV-02 | pending | Output validation (API responses validated against OpenAPI schema) | ~4 | |
+| DV-03 | pending | Database constraint audit (missing NOT NULL, FK, CHECK constraints) | ~3 | |
+
+**Stream DV entry condition:** DV-01 can start immediately.
+
+---
+
+### Stream GT — Growth tracking
+
+| Item | Status | Description | Est. iters | Notes |
+|------|--------|-------------|------------|-------|
+| GT-01 | pending | Revenue dashboard (MRR, ARR, churn — Stripe data) | ~4 | |
+| GT-02 | pending | CAC tracking (cost per acquisition by channel) | ~3 | Deps: GT-01+AAA-03. |
+| GT-03 | pending | NPS survey (in-app, Supabase-backed) | ~3 | |
+
+**Stream GT entry condition:** GT-01 can start immediately.
+
+---
+
+### Stream CMP — Comparison overhaul
 
 **Foundation already shipped on `claude/comparison-overhaul/foundation`:**
 - `lib/calculator-state.ts` + `__tests__/lib/calculator-state.test.ts`
@@ -972,6 +980,14 @@ _Compacted 2026-05-09: 1,223 lines of completed-stream summary + iteration log e
 _The most recent ~24h of iteration log entries (iter ~325 onwards) are temporarily missing from both files — they were lost in the 2026-05-09 truncation incident (recovered as PR #661) before the rotate-iteration-log workflow could archive them. Loop's stuck-detection guard should not regress because the iteration command's Phase 2 falls back to PR-CI history when iter log entries are absent._
 
 See [`REMEDIATION_QUEUE_LOG_ARCHIVE.md`](./REMEDIATION_QUEUE_LOG_ARCHIVE.md) for historical iteration log + completed-stream summary.
+
+---
+
+### Iter 342 · 2026-05-10 · Queue correction · STATUS: PROGRESS
+
+**What was done:** Corrected stale in-flight table rows that a concurrent cloud fire missed: R stream updated from "#640 OPEN" to "#640 MERGED 2026-05-10, stream complete" (PR #640 had merged before iter 341 log was written); X stream updated from "#702 OPEN" to "#702 MERGED 2026-05-10, stream complete" (PR #702 merged by repo owner at 01:33:37Z on 2026-05-10). No code changes — queue housekeeping only.
+
+**Status:** `STATUS: PROGRESS · stream=R+X · queue-correction`
 
 ---
 
