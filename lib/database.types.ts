@@ -7463,6 +7463,48 @@ export type Database = {
         }
         Relationships: []
       }
+      investor_holdings: {
+        Row: {
+          acquired_at: string
+          auth_user_id: string
+          broker_slug: string | null
+          cost_basis_per_share_cents: number
+          created_at: string
+          exchange: string
+          id: number
+          notes: string | null
+          shares: number
+          ticker: string
+          updated_at: string
+        }
+        Insert: {
+          acquired_at: string
+          auth_user_id: string
+          broker_slug?: string | null
+          cost_basis_per_share_cents: number
+          created_at?: string
+          exchange: string
+          id?: never
+          notes?: string | null
+          shares: number
+          ticker: string
+          updated_at?: string
+        }
+        Update: {
+          acquired_at?: string
+          auth_user_id?: string
+          broker_slug?: string | null
+          cost_basis_per_share_cents?: number
+          created_at?: string
+          exchange?: string
+          id?: never
+          notes?: string | null
+          shares?: number
+          ticker?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       investor_journey_touchpoints: {
         Row: {
           active: boolean | null
