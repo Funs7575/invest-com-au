@@ -19,7 +19,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | C | `claude/audit-remediation/c-05-index-coverage` | #209/#302/#338/#356/#357/#358/#359/#360/#361/#362/#457/#541 | C-01..C-02 done. C-03..C-05 blocked (see Blocked). | C-05 merged |
 | D | `claude/audit-remediation/d-09-seo-drift` | #210/#303/#339/#363/#364/#365/#366/#457/#542 | D-01..D-09 done. | D-09 merged ✓ |
 | E | `claude/audit-remediation/e-02-batch-5-zod-rollout` (#469) · `e-04-batch-2-zod-backfill` (#557) · `e-04-batch-3-zod-backfill` (#558) | #211/#304/#340/#368/#379/#383/#457/#458/#459/#460/#461/#462/#463/#464/#465/#466/#467/#468/#469/#555/#556/#557/#558 | E-02 batch 1-5 all MERGED (#469 merged 2026-05-03). E-04 batch 1 done (#555/#556), batch 2 blocked, **batch 3 MERGED** (#558 per iter 279). | All E-02+E-04 batches merged |
-| F | `claude/audit-remediation/f-08-cache-drift` · `claude/audit-remediation/f-disc-20260510-hygiene` | #212/#305/#341/#370/#384/#457/#470/#543 · **#741 OPEN** | F-01..F-07 done. F-08 blocked (see Blocked). F-DISC-01 done (#741, commit `c41702a`). F-DISC-02..07 false-positives (verified: different API signatures/units — not safe drop-in replacements). | F-08 unblocked + merged |
+| F | `claude/audit-remediation/f-08-cache-drift` · `claude/audit-remediation/f-disc-20260510-hygiene` | #212/#305/#341/#370/#384/#457/#470/#543 · **#741 OPEN** | F-01..F-07 done. F-08 blocked (see Blocked). F-DISC-01 done (#741, commit `c41702a`). F-DISC-02..07 false-positives. CI rescue (iter 347): a0d8c16 regen+driftallowlist for business_accounts/investor_goals; retrigger `5b163a8` pushed to fire fresh CI for driftallowlist HEAD `e0304b4`. | F-08 unblocked + merged |
 | G | `claude/audit-remediation/g-04-mfa-gaps` | #213/#306/#342/#371/#385/#457/#471/#544 | G-01..G-03 done. G-04 blocked (see Blocked). | G-04 unblocked + merged |
 | H | `claude/audit-remediation/h-06-stripe-webhooks` | #214/#307/#343/#386/#457/#472/#545 | H-01..H-06 done. | H-06 merged ✓ |
 | I | `claude/audit-remediation/i-05-advisor-gaps` | #215/#308/#344/#387/#457/#473/#546 | I-01..I-05 done. | I-05 merged ✓ |
@@ -42,7 +42,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | EE | `claude/audit-remediation/ee-01-error-boundaries` | **#653 MERGED** (EE-01+EE-05) | EE-01 done + EE-02/03/04 FP + EE-05 done. **Stream complete.** | #653 merged ✓ |
 | FF | `claude/audit-remediation/ff-01-feature-flag-audit` | **#656 MERGED 2026-05-09** (`4da4004f`) | FF-01..FF-04 done. FF-03 false-positive. **Stream complete.** | FF-04 merged ✓ |
 | OOO | `claude/audit-remediation/ooo-01-runbook-audit` | **#652 MERGED** | OOO-01 done. OOO-04 FP. OOO-02 done. OOO-03 done. **Stream complete.** | OOO-03 merged ✓ |
-| KK | `claude/audit-remediation/kk-04-link-injection` | **#703 MERGED 2026-05-10** (KK-03) · **#711 MERGED 2026-05-10** (KK-04 iter 1) | KK-01 done (#667). KK-02 done (#670). KK-03: **#703 MERGED 2026-05-10** (`57cfce7`). KK-04 iter 1: **#711 MERGED 2026-05-10** (`34455f2b` — `internal_link_injection` flag + density cap + kill-switch + 6 tests). KK-04 iters 2-5 pending. | KK-04 merged |
+| KK | `claude/audit-remediation/kk-04-link-injection` · `claude/audit-remediation/kk-04-iter2-cluster-selection` · `claude/audit-remediation/kk-04-iter3-density-config` | **#703 MERGED 2026-05-10** (KK-03) · **#711 MERGED 2026-05-10** (KK-04 iter 1) · **#743 OPEN** (KK-04 iter 2) · **#744 OPEN** (KK-04 iter 3) | KK-01 done (#667). KK-02 done (#670). KK-03: **#703 MERGED 2026-05-10** (`57cfce7`). KK-04 iter 1: **#711 MERGED 2026-05-10** (`34455f2b` — flag + density cap + kill-switch + 6 tests). KK-04 iter 2: **#743 OPEN** (`ee87690` LSI/cluster-aware selection; CI rescue cherry-picked regen+driftallowlist). KK-04 iter 3: **#744 OPEN** (per-article-type density config). KK-04 iters 4-5 pending. | KK-04 merged |
 | PP | `claude/audit-remediation/pp-01-bundle-budget` | **#706 MERGED 2026-05-10** (PP-01) | PP-01: **#706 MERGED 2026-05-10** (all CI green — founder merged). PP-02..05 pending. | All PP tasks merged |
 | WW | `claude/audit-remediation/ww-01-watchlist-data-model` | **#651 MERGED** | WW-01 migration + WW-02 watchlist UI done. WW-03/04 blocked (DD-02 dep). **Streams WW-01+WW-02 merged.** | All WW tasks merged ✓ |
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
@@ -320,7 +320,7 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 | KK-01 | **done** | Internal link audit (identify orphaned pages + over-linked hubs) | — | PR #667. `scripts/internal-link-audit.mjs` + `docs/audits/kk-01-internal-link-audit.md`. |
 | KK-02 | **done** | Related-content widget (bottom of article pages) | — | `components/RelatedContentGrid.tsx`. Applied to `article/[slug]` + `research/[slug]`. PR #670. |
 | KK-03 | **done** | Topic cluster map (pillar ↔ cluster ↔ supporting visualised) | ~3 | Deps: KK-01. **#703 MERGED 2026-05-10** (`57cfce7`). |
-| KK-04 | **in-flight** (iter 1 MERGED; iters 2-5 pending) | Automated internal link injection (LSI-based, configurable density) | ~5 | Deps: KK-02+KK-03. **#711 MERGED 2026-05-10** (`34455f2b` iter 344+345). Iter 1 done: kill-switch + density cap. Iter 2: LSI/cluster-aware target selection. Iter 3: per-article-type density config. Iter 4: admin UI (override per article). Iter 5: integration tests + Playwright smoke. |
+| KK-04 | **in-flight** (iters 1-3 done; iters 4-5 pending) | Automated internal link injection (LSI-based, configurable density) | ~5 | Deps: KK-02+KK-03. **#711 MERGED 2026-05-10** (`34455f2b` iter 344+345). Iter 1 done: kill-switch + density cap. Iter 2: **#743 OPEN** — LSI/cluster-aware target selection (`ee87690`). Iter 3: **#744 OPEN** — per-article-type density config (`linkDensityForCategory`). Iter 4: admin UI (override per article). Iter 5: integration tests + Playwright smoke. |
 
 **Stream KK entry condition:** KK-01 can start immediately.
 
@@ -994,6 +994,30 @@ _Compacted 2026-05-09: 1,223 lines of completed-stream summary + iteration log e
 _The most recent ~24h of iteration log entries (iter ~325 onwards) are temporarily missing from both files — they were lost in the 2026-05-09 truncation incident (recovered as PR #661) before the rotate-iteration-log workflow could archive them. Loop's stuck-detection guard should not regress because the iteration command's Phase 2 falls back to PR-CI history when iter log entries are absent._
 
 See [`REMEDIATION_QUEUE_LOG_ARCHIVE.md`](./REMEDIATION_QUEUE_LOG_ARCHIVE.md) for historical iteration log + completed-stream summary.
+
+---
+
+### Iter 349 · 2026-05-10 · Stream KK · KK-04 iter 3 — per-article-type density config · STATUS: PROGRESS
+
+**What was done:** Batch iter 3. Phase 2: no new CI failures on in-flight PRs beyond those rescued in iter 348. Phase 3: picked KK-04 iter 3 (per-article-type density config) — next unblocked KK item. Phase 4: verified article page uses hardcoded `maxLinks={5}` for all categories; iter 3 introduces `linkDensityForCategory(category)` to vary the cap by article type. Phase 5: added `LINK_DENSITY_BY_CATEGORY` map + `linkDensityForCategory` export to `lib/keyword-linking.ts`; updated `app/article/[slug]/page.tsx` to derive `articleLinkDensity` via the new function; added 4 tests to `__tests__/lib/keyword-linking.test.ts`. Phase 6: committed + pushed `claude/audit-remediation/kk-04-iter3-density-config`, PR #744 opened.
+
+**Status:** `STATUS: PROGRESS · stream=KK · item=KK-04-iter3 · pr=#744`
+
+---
+
+### Iter 348 · 2026-05-10 · Stream KK+F · CI rescue — Supabase types drift (#743) + Database types drift retrigger (#741) · STATUS: CI-RESCUE
+
+**What was done:** Phase 2: PR #743 (KK-04 iter 2) — `Supabase types drift` FAILURE (live DB has business_accounts + investor_goals + account_kind_membership not in main's lib/database.types.ts). PR #741 (F-DISC) — `Database types drift gate` FAILURE on intermediate commit `a0d8c16` before driftallowlist fix `e0304b4`. Rescue: (a) KK branch — cherry-picked `a0d8c16` (regen, +200 LOC) + `e0304b4` (driftallowlist +4 lines) from F branch; pushed to unblock Supabase types drift on #743. (b) F branch — pushed empty retrigger commit `5b163a8` to fire fresh CI for driftallowlist HEAD `e0304b4`.
+
+**Status:** `STATUS: CI-RESCUE · stream=KK+F · pr=#743+#741`
+
+---
+
+### Iter 347 · 2026-05-10 · Stream KK · KK-04 iter 2 — LSI/cluster-aware internal link selection · STATUS: PROGRESS
+
+**What was done:** Phase 2: PR #741 (F-DISC-01) checked — force-pushed clean branch after stripping bad auto-regen commit (prior context). Phase 3: picked KK-04 iter 2 (LSI/cluster-aware target selection). Phase 5: (a) `lib/keyword-linking.ts` — added `pillarPathForCategory(category?)` mapping 17 article categories to hub pillar paths; added `getClusterPaths(pillarPath)` returning full cluster Set from topic-clusters; updated `splitByLinks` signature with optional `pillarPath` param; added cluster-aware two-pass algorithm (pass 1: collect all first-occurrence matches; pass 2: rank cluster-relevant first then by text position, slice to maxLinks; reconstruct in text order); added `pillarPath?` stub to `linkifyHtml` for forward compat. (b) `components/LinkifiedText.tsx` — added `pillarPath?` prop, threaded through to `splitByLinks`. (c) `app/article/[slug]/page.tsx` — added `pillarPathForCategory` import, derives `articlePillarPath` from article category, passes to all 3 `<LinkifiedText>` usages. (d) `__tests__/lib/keyword-linking.test.ts` — 10 new tests across 3 suites (pillarPathForCategory, getClusterPaths, cluster-aware splitByLinks). Phase 6: commit `ee87690`, PR #743 opened.
+
+**Status:** `STATUS: PROGRESS · stream=KK · item=KK-04-iter2 · pr=#743 · commit=ee87690`
 
 ---
 
