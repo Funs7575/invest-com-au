@@ -25,6 +25,7 @@ import RelatedContentGrid from "@/components/RelatedContentGrid";
 import AdSlot from "@/components/AdSlot";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
 import LinkifiedText from "@/components/LinkifiedText";
+import { getArticleLinkDensity } from "@/lib/keyword-linking";
 import FloatingRightCTA from "@/components/FloatingRightCTA";
 import { isFlagEnabled } from "@/lib/feature-flags";
 
@@ -117,6 +118,7 @@ export default async function ArticlePage({
   const articleReviewer = a.reviewer ?? null;
   const isEnhanced = ENHANCED_SLUGS.includes(slug);
   const articleClusterIds = getArticleClusterIds(slug);
+  const articleLinkDensity = getArticleLinkDensity(a.category);
 
   // Parallelize independent queries with Promise.all
   const relatedBrokersPromise = (a.related_brokers && a.related_brokers.length > 0)
@@ -428,7 +430,7 @@ export default async function ArticlePage({
                       text={a.sections[0].body}
                       skipHrefs={[`/article/${a.slug}`]}
                       disabled={!linkInjectionEnabled}
-                      maxLinks={5}
+                      maxLinks={articleLinkDensity}
                       clusterIds={articleClusterIds}
                     />
                   </section>
@@ -460,7 +462,7 @@ export default async function ArticlePage({
                           text={section.body}
                           skipHrefs={[`/article/${a.slug}`]}
                           disabled={!linkInjectionEnabled}
-                          maxLinks={5}
+                          maxLinks={articleLinkDensity}
                           clusterIds={articleClusterIds}
                         />
                       </section>
@@ -515,7 +517,7 @@ export default async function ArticlePage({
                             text={section.body}
                             skipHrefs={[`/article/${a.slug}`]}
                             disabled={!linkInjectionEnabled}
-                            maxLinks={5}
+                            maxLinks={articleLinkDensity}
                             clusterIds={articleClusterIds}
                           />
                         </section>

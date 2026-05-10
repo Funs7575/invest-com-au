@@ -134,6 +134,46 @@ export const GLOSSARY_LINK_TARGETS: readonly LinkTarget[] = GLOSSARY_ENTRIES
     rel: "glossary",
   }));
 
+// ── Per-article-category link density config ──────────────────────────────
+
+/**
+ * Default max unique links injected per LinkifiedText block, keyed by
+ * article category slug. Lower = sparser (news briefs); higher = richer
+ * (deep educational guides). The article page uses this so density
+ * scales with content type without manual per-article config.
+ */
+export const ARTICLE_LINK_DENSITY: Readonly<Record<string, number>> = {
+  news: 2,            // short news items — keep linking minimal
+  reviews: 3,         // broker reviews — link related brokers/calculators
+  beginners: 4,       // educational content — more helpful cross-links
+  strategy: 4,        // strategy guides — link related tools/advisors
+  tax: 4,             // tax content — link calculators and advisors
+  smsf: 5,            // SMSF-heavy — many relevant targets (auditors, specialists, tools)
+  etfs: 3,
+  crypto: 3,
+  "robo-advisors": 3,
+  "research-tools": 3,
+  "micro-investing": 3,
+  super: 4,
+  property: 4,
+  "cfd-forex": 3,
+  "credit-cards": 2,
+  savings: 2,
+  "money-transfers": 2,
+};
+
+/** Fallback density when the article has no category or an unrecognised one. */
+export const DEFAULT_ARTICLE_LINK_DENSITY = 3;
+
+/**
+ * Returns the link density (max unique links per text block) for the given
+ * article category. Case-insensitive; falls back to DEFAULT_ARTICLE_LINK_DENSITY.
+ */
+export function getArticleLinkDensity(category?: string | null): number {
+  if (!category) return DEFAULT_ARTICLE_LINK_DENSITY;
+  return ARTICLE_LINK_DENSITY[category.toLowerCase()] ?? DEFAULT_ARTICLE_LINK_DENSITY;
+}
+
 function escapeRegex(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }

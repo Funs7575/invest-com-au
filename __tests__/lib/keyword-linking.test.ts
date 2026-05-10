@@ -2,6 +2,9 @@ import { describe, it, expect } from "vitest";
 import {
   INTERNAL_LINK_TARGETS,
   GLOSSARY_LINK_TARGETS,
+  ARTICLE_LINK_DENSITY,
+  DEFAULT_ARTICLE_LINK_DENSITY,
+  getArticleLinkDensity,
   linkifyHtml,
   splitByLinks,
   splitByLinksForArticle,
@@ -314,5 +317,45 @@ describe("linkifyHtml", () => {
     const out = linkifyHtml("<p>CommSec without closing");
     expect(out).toContain("<p>");
     expect(out.length).toBeGreaterThan(0);
+  });
+});
+
+describe("getArticleLinkDensity — per-category density config", () => {
+  it("returns DEFAULT_ARTICLE_LINK_DENSITY for undefined category", () => {
+    expect(getArticleLinkDensity(undefined)).toBe(DEFAULT_ARTICLE_LINK_DENSITY);
+  });
+
+  it("returns DEFAULT_ARTICLE_LINK_DENSITY for null category", () => {
+    expect(getArticleLinkDensity(null)).toBe(DEFAULT_ARTICLE_LINK_DENSITY);
+  });
+
+  it("returns DEFAULT_ARTICLE_LINK_DENSITY for unknown category", () => {
+    expect(getArticleLinkDensity("unknown-category-xyz")).toBe(DEFAULT_ARTICLE_LINK_DENSITY);
+  });
+
+  it("news category gets lower density than smsf", () => {
+    const news = getArticleLinkDensity("news");
+    const smsf = getArticleLinkDensity("smsf");
+    expect(news).toBeLessThan(smsf);
+  });
+
+  it("returns correct density for known categories", () => {
+    expect(getArticleLinkDensity("news")).toBe(ARTICLE_LINK_DENSITY["news"]);
+    expect(getArticleLinkDensity("smsf")).toBe(ARTICLE_LINK_DENSITY["smsf"]);
+    expect(getArticleLinkDensity("beginners")).toBe(ARTICLE_LINK_DENSITY["beginners"]);
+    expect(getArticleLinkDensity("tax")).toBe(ARTICLE_LINK_DENSITY["tax"]);
+  });
+
+  it("is case-insensitive", () => {
+    expect(getArticleLinkDensity("NEWS")).toBe(ARTICLE_LINK_DENSITY["news"]);
+    expect(getArticleLinkDensity("SMSF")).toBe(ARTICLE_LINK_DENSITY["smsf"]);
+    expect(getArticleLinkDensity("Beginners")).toBe(ARTICLE_LINK_DENSITY["beginners"]);
+  });
+
+  it("all entries in ARTICLE_LINK_DENSITY are positive integers", () => {
+    for (const [, density] of Object.entries(ARTICLE_LINK_DENSITY)) {
+      expect(Number.isInteger(density)).toBe(true);
+      expect(density).toBeGreaterThan(0);
+    }
   });
 });
