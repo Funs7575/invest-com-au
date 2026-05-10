@@ -3,6 +3,7 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { claimAnonymousSaves } from "@/lib/bookmarks";
 import { claimSessionQuizzes } from "@/lib/quiz-history";
+import { syncQuizToInvestorProfile } from "@/lib/investor-profiles";
 import { logger } from "@/lib/logger";
 
 const log = logger("api:account:claim-anonymous");
@@ -52,15 +53,28 @@ export async function POST(request: NextRequest) {
     claimSessionQuizzes(sessionId, user.id),
   ]);
 
+  // After the quiz row is attached to the user, sync structured signals
+  // (life-event flags, intent country, budget, experience) into
+  // investor_profiles for the smart-recs ranker. Best-effort. (W2 Phase 2.)
+  let profileSynced = false;
+  if (quizzesClaimed > 0) {
+    profileSynced = await syncQuizToInvestorProfile({
+      userId: user.id,
+      sessionId,
+    });
+  }
+
   log.info("Anonymous state claimed", {
     userId: user.id,
     bookmarksClaimed,
     quizzesClaimed,
+    profileSynced,
   });
 
   return NextResponse.json({
     ok: true,
     bookmarks_claimed: bookmarksClaimed,
     quizzes_claimed: quizzesClaimed,
+    profile_synced: profileSynced,
   });
 }
