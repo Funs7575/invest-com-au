@@ -5209,7 +5209,7 @@ export type Database = {
           alert_key: string
           body: string
           country_code: string
-          created_at: string | null
+          created_at: string
           cta_href: string | null
           cta_label: string | null
           display_order: number
@@ -5218,39 +5218,39 @@ export type Database = {
           severity: string
           source: string
           stales_at: string
-          updated_at: string | null
+          updated_at: string
         }
         Insert: {
           active?: boolean
           alert_key: string
           body: string
           country_code: string
-          created_at?: string | null
+          created_at?: string
           cta_href?: string | null
           cta_label?: string | null
           display_order?: number
           headline: string
-          id?: number
+          id?: never
           severity: string
           source: string
           stales_at: string
-          updated_at?: string | null
+          updated_at?: string
         }
         Update: {
           active?: boolean
           alert_key?: string
           body?: string
           country_code?: string
-          created_at?: string | null
+          created_at?: string
           cta_href?: string | null
           cta_label?: string | null
           display_order?: number
           headline?: string
-          id?: number
+          id?: never
           severity?: string
           source?: string
           stales_at?: string
-          updated_at?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
