@@ -40,6 +40,14 @@ export const QUIZ_SESSION_TTL_SECONDS = 60 * 60 * 24 * 90; // 90 days, matches i
 
 const log = logger("quiz-profile");
 
+/**
+ * Lightweight typed shape for the bits of quiz answers the ranker uses.
+ * Captured from `answers.raw` keys — see `app/quiz/page.tsx` for the
+ * canonical option list. Values are case-insensitive lower-snake.
+ */
+export type QuizBudget = "small" | "medium" | "large" | "whale" | null;
+export type QuizExperience = "beginner" | "intermediate" | "pro" | null;
+
 export interface QuizProfile {
   sessionId: string;
   /** Inferred vertical from the quiz (broker_diy / advisor_match / international / etc.) */
@@ -48,6 +56,10 @@ export interface QuizProfile {
   topMatchSlug: string | null;
   /** Intent country if the quiz captured one (separate from iv_intent_country) */
   intentCountry: IntentCountryCode | null;
+  /** Budget band from the quiz — feeds the ranker's price-tier preference */
+  budget: QuizBudget;
+  /** Experience level — beginner = simpler tools, pro = advanced features */
+  experience: QuizExperience;
   /** ISO timestamp of when the row was completed (null = quiz abandoned mid-flow) */
   completedAt: string | null;
   /** ISO timestamp of when the row was first inserted */
@@ -121,6 +133,8 @@ export const getQuizProfile = cache(async (): Promise<QuizProfile | null> => {
       vertical: data.inferred_vertical ?? null,
       topMatchSlug: data.top_match_slug ?? null,
       intentCountry: extractIntentCountry(data.answers),
+      budget: extractBudget(data.answers),
+      experience: extractExperience(data.answers),
       completedAt: data.completed_at ?? null,
       createdAt: data.created_at as string,
     };
@@ -147,6 +161,38 @@ function extractIntentCountry(answers: unknown): IntentCountryCode | null {
   const key = raw.investor_country;
   if (typeof key !== "string") return null;
   return QUIZ_KEY_TO_INTENT[key] ?? null;
+}
+
+/**
+ * Extract the budget answer. The quiz stores the option key under
+ * `answers.raw.amount` (small / medium / large / whale per
+ * `INVESTMENT_MAP` in `/api/quiz-lead/route.ts`). Return null when the
+ * answer is missing or unrecognised so the ranker degrades gracefully.
+ */
+function extractBudget(answers: unknown): QuizBudget {
+  if (!answers || typeof answers !== "object") return null;
+  const raw = (answers as Record<string, unknown>).raw as
+    | Record<string, unknown>
+    | undefined;
+  if (!raw || typeof raw !== "object") return null;
+  const v = raw.amount;
+  if (v === "small" || v === "medium" || v === "large" || v === "whale") {
+    return v;
+  }
+  return null;
+}
+
+function extractExperience(answers: unknown): QuizExperience {
+  if (!answers || typeof answers !== "object") return null;
+  const raw = (answers as Record<string, unknown>).raw as
+    | Record<string, unknown>
+    | undefined;
+  if (!raw || typeof raw !== "object") return null;
+  const v = raw.experience;
+  if (v === "beginner" || v === "intermediate" || v === "pro") {
+    return v;
+  }
+  return null;
 }
 
 const QUIZ_KEY_TO_INTENT: Record<string, IntentCountryCode> = {

@@ -47,6 +47,8 @@ interface BrokerRow extends EntityWithEligibility {
   rating: number | null;
   logo_url: string | null;
   platform_type: string | null;
+  asx_fee_value: number | null;
+  us_fee_value: number | null;
 }
 
 interface AdvisorRow extends EntityWithEligibility {
@@ -56,6 +58,7 @@ interface AdvisorRow extends EntityWithEligibility {
   type: string;
   photo_url: string | null;
   rating: number | null;
+  advisor_tier: string | null;
 }
 
 const BROKER_VERTICALS = new Set([
@@ -101,24 +104,26 @@ export default async function SmartRecommendationsStrip() {
     const { data } = await supabase
       .from("brokers")
       .select(
-        "slug, name, rating, logo_url, platform_type, country_eligibility, status, sponsorship_tier, promoted_placement",
+        "slug, name, rating, logo_url, platform_type, country_eligibility, status, sponsorship_tier, promoted_placement, asx_fee_value, us_fee_value",
       )
       .eq("status", "active")
       .order("promoted_placement", { ascending: false })
       .order("rating", { ascending: false })
       .limit(QUERY_LIMIT);
 
-    const filtered = filterByCountryEligibility(
+    const eligible = filterByCountryEligibility(
       (data as BrokerRow[] | null) ?? [],
       intentCountry,
     );
-    if (filtered.length < MIN_ITEMS_TO_SHOW) return null;
+    if (eligible.length < MIN_ITEMS_TO_SHOW) return null;
+
+    const ranked = rankBrokers(eligible, profile);
 
     return renderStrip({
       kind: "brokers",
       profile,
       intentCountry,
-      items: filtered.slice(0, MIN_ITEMS_TO_SHOW).map((b) => ({
+      items: ranked.slice(0, MIN_ITEMS_TO_SHOW).map((b) => ({
         slug: b.slug,
         name: b.name,
         href: `/brokers/${b.slug}`,
@@ -131,7 +136,7 @@ export default async function SmartRecommendationsStrip() {
   const { data } = await supabase
     .from("professionals")
     .select(
-      "slug, name, firm_name, type, photo_url, rating, country_eligibility, status, verified",
+      "slug, name, firm_name, type, photo_url, rating, country_eligibility, status, verified, advisor_tier",
     )
     .eq("status", "active")
     .eq("verified", true)
@@ -139,17 +144,19 @@ export default async function SmartRecommendationsStrip() {
     .order("review_count", { ascending: false })
     .limit(QUERY_LIMIT);
 
-  const filtered = filterByCountryEligibility(
+  const eligible = filterByCountryEligibility(
     (data as AdvisorRow[] | null) ?? [],
     intentCountry,
   );
-  if (filtered.length < MIN_ITEMS_TO_SHOW) return null;
+  if (eligible.length < MIN_ITEMS_TO_SHOW) return null;
+
+  const ranked = rankAdvisors(eligible, profile);
 
   return renderStrip({
     kind: "advisors",
     profile,
     intentCountry,
-    items: filtered.slice(0, MIN_ITEMS_TO_SHOW).map((a) => ({
+    items: ranked.slice(0, MIN_ITEMS_TO_SHOW).map((a) => ({
       slug: a.slug,
       name: a.name,
       href: `/advisors/${a.slug}`,
@@ -157,6 +164,77 @@ export default async function SmartRecommendationsStrip() {
       sub: a.firm_name ?? a.type,
     })),
   });
+}
+
+/**
+ * Score brokers by fit to the visitor's quiz profile. Higher = better.
+ * Inputs: rating, fee bands, beginner-friendly tag. Profile signals:
+ * budget (small → favour low fees), experience (beginner → favour
+ * beginner-friendly). When the profile is null the function degrades to
+ * "best by rating" — same order as the input would be.
+ */
+export function rankBrokers(
+  rows: ReadonlyArray<BrokerRow>,
+  profile: QuizProfile | null,
+): BrokerRow[] {
+  const scored = rows.map((b) => ({ row: b, score: scoreBroker(b, profile) }));
+  scored.sort((a, b) => b.score - a.score);
+  return scored.map((s) => s.row);
+}
+
+function scoreBroker(b: BrokerRow, profile: QuizProfile | null): number {
+  let score = (b.rating ?? 0) * 10;
+  if (!profile) return score;
+
+  // Budget = small → cheap brokers win. asx_fee_value is per-trade in AUD;
+  // anything ≤ $5 is cheap, > $15 is expensive. Linear-ish bonus.
+  if (profile.budget === "small" && typeof b.asx_fee_value === "number") {
+    if (b.asx_fee_value <= 5) score += 15;
+    else if (b.asx_fee_value <= 10) score += 8;
+    else if (b.asx_fee_value > 20) score -= 8;
+  }
+  // Whale → premium tier brokers (us_fee_value low matters less; access matters more).
+  if (profile.budget === "whale" && typeof b.us_fee_value === "number") {
+    if (b.us_fee_value <= 1) score += 10;
+  }
+
+  // Beginner → simpler/cheaper brokers tend to win regardless of rating
+  // (beginner-friendliness lives in `broker_scenario_scores.beginner_weight`
+  // which would need a join — a future enhancement; for now we approximate
+  // with "low fees + high rating" because the data we already have here
+  // correlates well enough that the strip remains useful).
+  if (profile.experience === "beginner" && typeof b.asx_fee_value === "number" && b.asx_fee_value <= 5) {
+    score += 6;
+  }
+
+  return score;
+}
+
+/**
+ * Score advisors by fit to the visitor's quiz profile. Profile signals:
+ * budget (whale → premium tier advisors). Sparser than the broker
+ * scoring because advisor data has fewer comparable numeric fields.
+ */
+export function rankAdvisors(
+  rows: ReadonlyArray<AdvisorRow>,
+  profile: QuizProfile | null,
+): AdvisorRow[] {
+  const scored = rows.map((a) => ({ row: a, score: scoreAdvisor(a, profile) }));
+  scored.sort((a, b) => b.score - a.score);
+  return scored.map((s) => s.row);
+}
+
+function scoreAdvisor(a: AdvisorRow, profile: QuizProfile | null): number {
+  let score = (a.rating ?? 0) * 10;
+  if (!profile) return score;
+
+  if (profile.budget === "whale" || profile.budget === "large") {
+    if (a.advisor_tier === "premium" || a.advisor_tier === "vip") score += 12;
+  }
+  if (profile.budget === "small") {
+    if (a.advisor_tier === "vip") score -= 8; // cheap budgets won't book VIP
+  }
+  return score;
 }
 
 interface StripItem {
