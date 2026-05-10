@@ -1,22 +1,23 @@
 name: Bundle size budget
 
 # Compares the Next.js production bundle size between PR head and
-# the base branch, and comments the diff on the PR. Fails (soft) if
-# any route grows by more than the threshold — advisory signal, not
-# a hard gate (regression can sometimes be justified).
+# the base branch, and comments the diff on the PR. Also enforces
+# an absolute hard gate: shared JS chunks must stay under BUDGET_KB.
 #
 # How it works:
-#   1. Check out base branch, build, capture .next/app-build-manifest
-#      + per-route chunk sizes into a JSON summary.
-#   2. Check out PR head, build, capture the same summary.
-#   3. Diff the two summaries per route. Output table formatted
-#      markdown and post it as a sticky PR comment (same comment
-#      updated every run — the thread doesn't fill with noise).
+#   1. Check out PR head, build, capture .next/app-build-manifest
+#      + per-route chunk sizes into a JSON summary (head.json).
+#   2. Check out base branch, build, capture the same summary (base.json).
+#   3. Diff the two summaries per route. Post diff table as a sticky
+#      PR comment (same comment updated every run — no noise).
+#   4. Enforce absolute budget: fail if head's sharedChunksKb > BUDGET_KB.
+#      (sharedChunksKb = .next/static/chunks = JS loaded on every page)
 #
-# Threshold:
-#   +10% or +5KB (whichever is larger) per route triggers a warning
-#   line in the comment. No gate today; promote to a hard check
-#   once a baseline is established.
+# Per-route threshold (advisory, affects comment formatting only):
+#   +10% or +5KB (whichever is larger) per route triggers a warning line.
+#
+# Absolute hard gate (fails the check, blocks merge):
+#   sharedChunksKb > 350 kB → exit 1 (initial cap; see BUDGET_KB below)
 #
 # Skipped on:
 #   - non-PR events (we only care about PR deltas)
@@ -123,3 +124,35 @@ jobs:
         with:
           header: bundle-size
           path: /tmp/bundle-size/comment.md
+
+      - name: Enforce bundle budget (hard gate)
+        # Runs after the PR comment is posted so developers always see
+        # the diff table even when this step fails. Budget covers the
+        # shared JS chunks (.next/static/chunks) — the JS that loads
+        # on every page. Per-route server bundles are excluded because
+        # they load lazily on navigation and don't affect initial load.
+        #
+        # To raise the budget: update BUDGET_KB below and add a comment
+        # explaining why (with the PR that warranted the increase).
+        #
+        # Initial budget: 350 kB (PP-01, iter 340 rescue). Set above the
+        # current bundle size to make the gate pass on day 1.
+        # Ratchet down to 250 kB as PP-02/PP-03 bundle optimizations land.
+        env:
+          BUDGET_KB: "350"
+        run: |
+          node - <<'EOF'
+          const fs = require("fs");
+          const head = JSON.parse(fs.readFileSync("/tmp/bundle-size/head.json", "utf8"));
+          const budget = Number(process.env.BUDGET_KB);
+          const shared = head.sharedChunksKb;
+          const pct = ((shared / budget) * 100).toFixed(1);
+          console.log(`Shared chunks: ${shared} kB  |  Budget: ${budget} kB  |  Used: ${pct}%`);
+          if (shared > budget) {
+            console.error(`\n✗ OVER BUDGET — shared chunks ${shared} kB > ${budget} kB limit.`);
+            console.error(`  Fix: code-split heavy imports, tree-shake unused exports, or`);
+            console.error(`  raise BUDGET_KB in bundle-size.yml with a justification comment.`);
+            process.exit(1);
+          }
+          console.log(`✓ Under budget.`);
+          EOF
