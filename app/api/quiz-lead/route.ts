@@ -6,6 +6,7 @@ import { isValidEmail, isDisposableEmail } from '@/lib/validate-email';
 import { logger } from '@/lib/logger';
 import { recordQuizSubmission } from '@/lib/quiz-history';
 import { setQuizSessionCookie } from '@/lib/quiz-profile';
+import { syncQuizToInvestorProfile } from '@/lib/investor-profiles';
 import { createClient } from '@/lib/supabase/server';
 import { escapeHtml } from "@/lib/html-escape";
 
@@ -392,6 +393,17 @@ export async function POST(request: NextRequest) {
       // is signed in, server-side reads scope by user_id directly.
       if (safeSessionId && !user?.id) {
         await setQuizSessionCookie(safeSessionId);
+      }
+
+      // Sync structured signals (life-event flags, intent country, budget,
+      // experience) to investor_profiles for the smart-recs ranker. Best-
+      // effort; failures don't block the quiz submission. Authed users only —
+      // anon users get this sync at claim-on-signup time. (W2 Phase 2.)
+      if (user?.id) {
+        await syncQuizToInvestorProfile({
+          userId: user.id,
+          sessionId: safeSessionId,
+        });
       }
     }
   } catch (err) {
