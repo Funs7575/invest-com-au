@@ -6,6 +6,12 @@ import { logger } from "@/lib/logger";
 import { extractUtm, type UtmParams } from "@/lib/utm";
 import { sendNewLeadNotification, sendLeadConfirmationToUser } from "@/lib/advisor-emails";
 import { captureEdgeEvent } from "@/lib/posthog/capture-edge";
+import { getIntentCountry } from "@/lib/intent-context-server";
+import {
+  filterByCountryEligibility,
+  isEligibleForCountry,
+  type EntityWithEligibility,
+} from "@/lib/country-mode/eligibility-filter";
 
 export const runtime = "edge";
 
@@ -54,7 +60,15 @@ function resolveAdvisorTypes(need: string, context?: string[]): string[] {
 
 /* ─── Common select fields for matching queries ─── */
 
-const MATCH_SELECT = "id, slug, name, firm_name, type, photo_url, rating, review_count, location_display, location_state, specialties, fee_description, verified, bio, email, avg_response_minutes";
+const MATCH_SELECT = "id, slug, name, firm_name, type, photo_url, rating, review_count, location_display, location_state, specialties, fee_description, verified, bio, email, avg_response_minutes, country_eligibility";
+
+/**
+ * Per-attempt fetch limit when matching. Each ranked query pulls
+ * `MATCH_FETCH_LIMIT` candidates so post-fetch country-eligibility
+ * filtering (PR #619 / Phase 4) can skip ineligible top picks
+ * without losing the cascading fallback.
+ */
+const MATCH_FETCH_LIMIT = 20;
 
 /**
  * POST /api/submit-lead
@@ -200,6 +214,11 @@ export async function POST(request: NextRequest) {
   const advisorTypes = resolveAdvisorTypes(need, context);
   const userState = typeof user_location_state === "string" ? user_location_state : null;
 
+  // Visitor's resolved intent country (from iv_intent_country cookie).
+  // Used to filter advisors whose country_eligibility excludes the
+  // visitor — see filterByCountryEligibility for decision rules.
+  const intentCountry = await getIntentCountry();
+
   // ─── confirm_advisor_id fast-path ───
   // User already previewed an advisor and clicked "Connect" — skip matching,
   // fetch that specific advisor and proceed straight to lead creation.
@@ -213,6 +232,21 @@ export async function POST(request: NextRequest) {
 
     if (!confirmedAdvisor) {
       return NextResponse.json({ error: "Advisor not found" }, { status: 404 });
+    }
+
+    // Country-eligibility gate: if the user's intent country is in the
+    // advisor's blocked_countries, refuse the confirm (an advisor that
+    // doesn't serve UK residents shouldn't get a UK lead even if the
+    // user manually clicked Connect on a stale matched-list entry).
+    if (!isEligibleForCountry(confirmedAdvisor as EntityWithEligibility, intentCountry)) {
+      log.info("Confirm blocked by country eligibility", {
+        advisor_id: confirm_advisor_id,
+        intent_country: intentCountry,
+      });
+      return NextResponse.json(
+        { error: "This advisor isn't available for your country.", reason: "country_ineligible" },
+        { status: 409 },
+      );
     }
 
     // Dedup: prevent double-lead if user clicks "Connect" twice (network retry / double-click)
@@ -390,7 +424,9 @@ export async function POST(request: NextRequest) {
   // 24h ago for round-robin fairness
   const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 
-  // Helper: build match query with exclusion
+  // Helper: build match query with exclusion. Pulls up to MATCH_FETCH_LIMIT
+  // candidates ordered by quality so post-fetch country-eligibility filtering
+  // can skip an ineligible top pick without losing the cascading fallback.
   function buildMatchQuery(opts: { state?: string; roundRobin?: boolean; anyType?: boolean }) {
     let query = supabase
       .from("professionals")
@@ -411,7 +447,20 @@ export async function POST(request: NextRequest) {
     return query
       .order("rating", { ascending: false })
       .order("review_count", { ascending: false })
-      .limit(1);
+      .limit(MATCH_FETCH_LIMIT);
+  }
+
+  // Take the highest-ranked candidate eligible for the visitor's
+  // country. When intentCountry is null, simply returns the top pick.
+  function pickFirstEligible(
+    rows: ReadonlyArray<Record<string, unknown>> | null | undefined,
+  ): Record<string, unknown> | null {
+    if (!rows || rows.length === 0) return null;
+    const eligible = filterByCountryEligibility(
+      rows as ReadonlyArray<EntityWithEligibility & Record<string, unknown>>,
+      intentCountry,
+    );
+    return eligible[0] ?? null;
   }
 
   // Try matching with 4-level fallback
@@ -420,46 +469,53 @@ export async function POST(request: NextRequest) {
   // Attempt 1: Same state + round-robin + exclusion
   if (userState) {
     const { data } = await buildMatchQuery({ state: userState, roundRobin: true });
-    if (data && data.length > 0) matchedAdvisor = data[0];
+    matchedAdvisor = pickFirstEligible(data);
   }
 
   // Attempt 2: Same state + exclusion (ignore round-robin)
   if (!matchedAdvisor && userState) {
     const { data } = await buildMatchQuery({ state: userState });
-    if (data && data.length > 0) matchedAdvisor = data[0];
+    matchedAdvisor = pickFirstEligible(data);
   }
 
   // Attempt 3: Any state + exclusion
   if (!matchedAdvisor) {
     const { data } = await buildMatchQuery({});
-    if (data && data.length > 0) matchedAdvisor = data[0];
+    matchedAdvisor = pickFirstEligible(data);
   }
 
   // Attempt 4: Any advisor + exclusion (any type)
   if (!matchedAdvisor) {
     const { data } = await buildMatchQuery({ anyType: true });
-    if (data && data.length > 0) matchedAdvisor = data[0];
+    matchedAdvisor = pickFirstEligible(data);
   }
 
-  // Attempt 5: Absolute fallback — if all advisors excluded, tell user
-  if (!matchedAdvisor && excludeArray.length > 0) {
-    // Try without exclusions to see if there are ANY advisors
+  // Attempt 5: Absolute fallback — if all advisors are excluded or
+  // every candidate is country-ineligible, tell the user. Original
+  // gate was `excludeArray.length > 0`; we also enter this branch
+  // when intentCountry filtered out the entire pool so a UK visitor
+  // (whose every match was blocked) gets a clear message instead of
+  // a silent null-professional lead.
+  if (!matchedAdvisor && (excludeArray.length > 0 || intentCountry !== null)) {
     const { data } = await supabase
       .from("professionals")
       .select(MATCH_SELECT)
       .eq("status", "active")
       .eq("verified", true)
       .order("rating", { ascending: false })
-      .limit(1);
+      .limit(MATCH_FETCH_LIMIT);
 
-    if (!data || data.length === 0) {
-      // No advisors at all
+    const anyEligible = pickFirstEligible(data);
+    if (!anyEligible) {
+      // No advisors at all (or none eligible for visitor's country)
       return NextResponse.json({
         success: true,
         lead_id: null,
         matched: null,
         no_more_matches: true,
-        message: "We've matched you with all available advisors in this category. Browse our full directory for more options.",
+        message: intentCountry
+          ? "No advisors in our network currently serve your country. Browse our full directory or contact us for help."
+          : "We've matched you with all available advisors in this category. Browse our full directory for more options.",
       });
     }
 
