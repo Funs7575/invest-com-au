@@ -39,7 +39,16 @@ Exactly one of:
 
 Execute these phases in order. **By default, stop at the end of phase 7 — do not pick up a second item.**
 
-**Batch mode (added 2026-04-28 after iter 82 — throughput optimisation).** When the invoker explicitly requests batched iterations (e.g. cloud routine prompt: "run up to 5 iterations in this fire"), instead of exiting after Phase 7, loop back to Phase 2 (CI rescue check) for up to N total items. Stop when total cumulative diff exceeds ~5000 LOC, or when any iteration returns `STATUS: LOCKED`, `STATUS: BLOCKED` (surface), `STATUS: ALL-BLOCKED`, or `STATUS: COMPLETE`. The lock is acquired once at the start and released once at the end of the batch (single trap covers the whole run). Per-fire setup cost (clone, install, sync) amortises across multiple items, giving ~2-3× throughput per cloud fire. Between iterations: `git fetch origin main && git pull --ff-only origin main` so the next item picks up the queue update from the previous one. Items in the same batch should still be from independent streams — batching does NOT relax the "never cross-commit between streams in one iteration" rule (each iteration in the batch is self-contained, just chained).
+**Batch mode (added 2026-04-28; default-on for Tier A items 2026-05-10 — throughput optimisation).** Instead of exiting after Phase 7, loop back to Phase 2 (CI rescue check) for up to N total items per fire. Stop when total cumulative diff exceeds ~5000 LOC, or when any iteration returns `STATUS: LOCKED`, `STATUS: BLOCKED` (surface), `STATUS: ALL-BLOCKED`, or `STATUS: COMPLETE`.
+
+**Default behaviour (changed 2026-05-10 after the country-mode burst found per-fire setup cost was the dominant tax):**
+- If the next-up queue items are **Tier A** (per `MERGE_AUTHORIZATION.md`'s allowlist — tests, docs, content, page UI, layouts, translation files, components/Hub*, etc.), batch up to **5 items per fire by default**. No invoker flag needed.
+- If the next-up queue item is **Tier B**, batch up to **2 items per fire by default**. The 15-min observation window is hard-gated by CI and proceeds in parallel for the second item.
+- If the next-up queue item is **Tier C**, exit after one item (the announce-then-merge contract is per-PR; chaining Tier C items in one fire compounds risk).
+
+**Explicit invoker overrides** (e.g. cloud routine prompt: "run up to 5 iterations in this fire") take precedence over the default — invoker can request more or fewer.
+
+The lock is acquired once at the start and released once at the end of the batch (single trap covers the whole run). Per-fire setup cost (clone, install, sync) amortises across multiple items, giving ~2-3× throughput per cloud fire. Between iterations: `git fetch origin main && git pull --ff-only origin main` so the next item picks up the queue update from the previous one. Items in the same batch should still be from independent streams — batching does NOT relax the "never cross-commit between streams in one iteration" rule (each iteration in the batch is self-contained, just chained).
 
 ### Phase 0 — Lock
 
@@ -224,7 +233,12 @@ If verification rules out the item, surface a Blocked entry with the question fo
 
 Execute the item. Hard limits:
 
-- Diff cap: ≤ ~500 LOC excluding generated/data files. Larger work splits — break the queue item into sub-items in this iteration's update, do the first sub-item.
+- **Diff cap by item kind** (raised 2026-05-10 after content items were
+  artificially split):
+  - **Code refactor / API / lib changes**: ≤ ~500 LOC excluding generated/data files
+  - **Content / data / docs / tests / locale translations**: ≤ ~1500 LOC (registry-style additions, FAQ enrichment, translation files, test additions don't have the same revert blast radius as code; cap at the same number as `MERGE_AUTHORIZATION.md`'s Tier A diff cap)
+  - **Schema migrations**: ≤ ~200 LOC of SQL — migrations are per-table, larger ones almost always indicate two migrations forced into one
+  - Larger work splits — break the queue item into sub-items in this iteration's update, do the first sub-item.
 - One stream branch per iteration. Never touch another stream's files.
 
 Local gates before commit. **Per the Hardware exception in `REMEDIATION_DEFAULTS.md`, whole-codebase `tsc` is skipped on this sandbox** — file-targeted only:

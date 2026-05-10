@@ -26,15 +26,28 @@ const STATE_PATH = ".github/auto-merge-state.json";
 const SAFE_PATTERNS = [
   "app/**/page.tsx",          // article-seed-only or copy-only — verified
                               // by content-detection logic below
+  "app/**/layout.tsx",        // layouts that mount existing components
+                              // (validated against denylist; touching auth
+                              // would still hit lib/auth/** denylist)
+  "app/ar/**/*.tsx",          // Arabic locale variants — translation work
+                              // mirrors English pages (Phase 5b/5d)
   "scripts/seed-*.ts",
   "content/**/*.md",
   "docs/**/*.md",
   "lib/verticals.ts",
+  "lib/i18n/translations/*.ts", // pure-data translation files (POC + future
+                              // locales). Importing them never affects
+                              // runtime control flow.
+  "lib/foreign-investment-country-data.ts", // 5k-line data registry —
+                              // changes here are content (FAQ entries,
+                              // metadata, hero copy). Code paths reading
+                              // it are tested separately.
   "public/**",
   "components/Hub*.tsx",      // extracted hub components — pure
                               // presentational once stream W lands
   "__tests__/**/*.test.ts",   // test additions only — deletions handled
                               // by the file-status check below
+  "__tests__/**/*.test.tsx",  // .tsx test variants
 ];
 
 // BLOCKED denylist patterns. Any match flips the PR to
