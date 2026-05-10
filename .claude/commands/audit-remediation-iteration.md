@@ -177,10 +177,26 @@ Then, walk `REMEDIATION_DEFAULTS.md`'s priority order. For each stream in order:
 - **Skip items with status `blocked` or `false-positive`** — these are not picked up by the loop. Blocked items are the user's call; false-positives are already resolved.
 - If the stream's queue section has a `pending` item, that's the candidate.
 - If the candidate is the very first item of that stream and the stream has no branch yet:
+  - **PRECONDITION — duplicate-PR guard (added 2026-05-10 after the X-09 / PP-01 / KK-01 duplicate-PR cleanup).** Before creating the branch, search for an open PR already covering this stream item:
+
+    ```bash
+    DUP=$(gh pr list --state open --search "<X-NN> in:title" --json number,title,headRefName \
+            --jq '.[] | select(.title | test("\\b<X-NN>\\b"))' )
+    if [ -n "$DUP" ]; then
+      echo "STATUS: DUPLICATE · open PR already covers <X-NN>:"
+      echo "$DUP" | jq .
+      # Mark the queue item as `in_flight` referencing the existing PR (don't open a parallel one).
+      # If the existing PR is stale (>7 days old, no recent push), prefer to rebase its branch
+      # rather than open a duplicate. Surface to founder if the existing PR's approach diverges.
+      exit 0
+    fi
+    ```
+
+    Why: 2026-05-10 cleanup closed three duplicate-PR pairs (#648 vs #702 ratcheting X-09, #649 vs #706 shipping PP-01, #667 superseded by #703's KK-01 bundle). Each pair burned ~160k tokens on the loser. The dedup guard catches the second-comer before any code is written.
   - Create branch from `main`: `git checkout -b claude/audit-remediation/<letter>-<slug>`.
   - Make an initial empty commit (`git commit --allow-empty -m "chore(<stream-letter>): scaffold remediation stream"`).
   - Push: `git push -u origin <branch>`.
-  - Open a PR via `mcp__github__create_pull_request` with title `chore(<stream-letter>): <stream title> [audit remediation]` and body referencing the audit + tracking issue. Open it READY (not draft) — the `auto-merge-label.js` workflow applies `needs-human-review` automatically on touched paths, which is the actual safety gate; draft state on top of that is pure friction.
+  - Open a PR via `mcp__github__create_pull_request` with title `chore(<stream-letter>): <stream title> [audit remediation]` and body referencing the audit + tracking issue. The body MUST include a `## Supersedes` section (e.g. `## Supersedes\n\n_None._` or a list of `#NNN` it replaces) — the `auto-close-superseded.yml` workflow reads this on merge and closes named PRs automatically. Open it READY (not draft) — the `auto-merge-label.js` workflow applies `needs-human-review` automatically on touched paths, which is the actual safety gate; draft state on top of that is pure friction.
   - Update queue's In-flight table with branch + PR number.
 - Otherwise checkout the existing stream branch and pull.
 
