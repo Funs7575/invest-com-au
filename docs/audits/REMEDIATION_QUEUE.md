@@ -315,12 +315,12 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
-| LL-01 | pending | Newsletter signup (modal + inline, Resend list integration) | ~3 | |
-| LL-02 | pending | Lead magnet PDF delivery (investment guide, gated by email) | ~3 | Deps: LL-01. |
-| LL-03 | pending | Email preference centre (`/account/notifications`) | ~3 | Deps: LL-01. |
-| LL-04 | pending | Transactional email audit (review all Resend templates) | ~2 | Deps: LL-01. |
+| LL-01 | ~~false-positive~~ | ~~Newsletter signup (modal + inline, Resend list integration)~~ | — | `components/NewsletterSignup.tsx` (188 LOC, full/compact variants), `components/NewsletterExitIntentModal.tsx` (255 LOC), `app/api/newsletter/subscribe/route.ts` (131 LOC, Zod+rate-limit+Resend), `lib/newsletter.ts` (251 LOC), `app/newsletter/page.tsx`. Complete. |
+| LL-02 | ~~false-positive~~ | ~~Lead magnet PDF delivery (investment guide, gated by email)~~ | — | `components/LeadMagnet.tsx`, `components/ContextualLeadMagnet.tsx`, SMSF checklist email gate in `app/smsf/checklist/SmsfChecklistClient.tsx` → `source:"smsf_checklist"` → subscribe API. |
+| LL-03 | ~~false-positive~~ | ~~Email preference centre (`/account/notifications`)~~ | — | `app/account/notifications/page.tsx` + `app/account/notifications/NotificationsList.tsx` + `app/api/account/notifications/route.ts` all exist. |
+| LL-04 | ~~false-positive~~ | ~~Transactional email audit (review all Resend templates)~~ | — | `lib/newsletter.ts`, `lib/quote-emails.ts`, `lib/advisor-booking.ts` cover all transactional email templates. Complete. |
 
-**Stream LL entry condition:** LL-01 can start immediately.
+**Stream LL entry condition:** All items pre-existed. Stream resolved as false-positive (iter 338).
 
 ---
 
@@ -971,6 +971,14 @@ _Compacted 2026-05-09: 1,223 lines of completed-stream summary + iteration log e
 _The most recent ~24h of iteration log entries (iter ~325 onwards) are temporarily missing from both files — they were lost in the 2026-05-09 truncation incident (recovered as PR #661) before the rotate-iteration-log workflow could archive them. Loop's stuck-detection guard should not regress because the iteration command's Phase 2 falls back to PR-CI history when iter log entries are absent._
 
 See [`REMEDIATION_QUEUE_LOG_ARCHIVE.md`](./REMEDIATION_QUEUE_LOG_ARCHIVE.md) for historical iteration log + completed-stream summary.
+
+---
+
+### Iter 338 · 2026-05-10 · Stream LL · LL-01..LL-04 · STATUS: PROGRESS (false-positive)
+
+**What was done:** Phase 4 verification gate caught a false-positive: the entire LL (Lead-gen / email capture) stream pre-exists. Evidence: `components/NewsletterSignup.tsx` (188 LOC, full + compact variants + Resend integration), `components/NewsletterExitIntentModal.tsx` (255 LOC), `app/api/newsletter/subscribe/route.ts` (131 LOC, Zod validation + DB rate-limit + Resend), `lib/newsletter.ts` (251 LOC), `app/newsletter/page.tsx`, `__tests__/api/newsletter-subscribe.test.ts`. LL-02: `components/LeadMagnet.tsx` + `components/ContextualLeadMagnet.tsx` + SMSF checklist email gate. LL-03: `app/account/notifications/` (page + list + API route). LL-04: `lib/quote-emails.ts` + `lib/advisor-booking.ts` cover all transactional templates. All 4 items marked false-positive. No code committed.
+
+**Status:** `STATUS: PROGRESS · stream=LL · item=LL-01..LL-04 · false-positive`
 
 ---
 
