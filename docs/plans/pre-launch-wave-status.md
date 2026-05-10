@@ -2,7 +2,7 @@
 
 **Plan source:** `docs/plans/pre-launch-wave-master-prompt.md` (Wave 1-6)
 **Loop prompt:** `docs/plans/pre-launch-wave-loop-prompt.md`
-**Last updated:** 2026-05-09 (cron iter — JSON-LD audit + ratchet shipped)
+**Last updated:** 2026-05-10 (overnight burst landed; PR cleanup + W4.21 migration applied)
 
 ---
 
@@ -55,7 +55,7 @@ The original 15-item legacy queue was largely shipped during the 2026-05-09 burs
 | 12.5 | EligibilityBadge on advisor cards | A | ✅ done | #693 |
 | 13 | Eligibility-aware quiz skip banner | A | ✅ done | #692 |
 | 14 | Cross-page smart recommendations strip | B | pending → see Wave 4 #20 in master prompt | — |
-| 15 | Personalized notifications (rule changes / opportunities) | C | partial | #694 (banner shipped) — DB+CRUD+digest tracked in Wave 4 #21/#22 |
+| 15 | Personalized notifications (rule changes / opportunities) | C | partial | #694 + #695 (banner + mount), #712 in-flight (DB+CRUD) — digest tracked in Wave 4 #22 |
 
 ### Wave 1-6 master queue
 
@@ -71,7 +71,7 @@ Source: `docs/plans/pre-launch-wave-master-prompt.md`. Lowercase rows mirror tha
 | W3.18 | Verified user reviews engine | B | pending | — | mirror PR #441 moderation |
 | W3.19 | First Home Buyer end-to-end journey | B | pending | — | 4 monetization levers |
 | W4.20 | Smart recommendations strip (legacy #14) | B | pending | — | 2-3 days |
-| W4.21 | Country rule alerts DB + admin CRUD (legacy #15 part 2) | B | pending | — | migrate ALERTS_BY_COUNTRY |
+| W4.21 | Country rule alerts DB + admin CRUD (legacy #15 part 2) | C | in-flight | #712 | migration applied to live 2026-05-10 12:30 UTC; awaiting CI drift re-check + merge |
 | W4.22 | Country rule alerts email digest (legacy #15 part 4) | B | pending | — | weekly Resend cron |
 | W4.23 | PR-X3 firm billing dashboard (legacy #10) | C | pending | — | aggregate view |
 | W5.24 | Embed comparison widget | A | pending | — | iframe + UTM |
@@ -97,6 +97,8 @@ Source: `docs/plans/pre-launch-wave-master-prompt.md`. Lowercase rows mirror tha
 - 2026-05-09 22:25 | W1.3 | Picked JSON-LD audit + ratchet over W1.1/W1.2 | W1.1 (AI Concierge, 2 days) and W1.2 (calculator funnel, 1-2 days) won't fit in one cron fire; W1.3 is a half-day Tier A item that ships cleanly end-to-end. Lowest-numbered tractable Wave-1 item.
 - 2026-05-09 22:25 | W1.3 | Coverage gate strategy = "≥1 JSON-LD block per public route" | Per-type checks (Article vs FAQPage vs FinancialProduct) considered and rejected as too brittle — same page legitimately ships several blocks; new schema.org types appear regularly. Type correctness stays with page authors.
 - 2026-05-09 22:25 | W1.3 | noindex pages auto-exempt | Pages with `robots.index: false` opt out of search indexing; rich-snippet schema is wasted work. Detected via metadata-text scan
+- 2026-05-10 12:30 | PR cleanup | Closed 5 stale/superseded PRs (#648, #649, #614, #667, #603), 2 stale status-doc drafts (#701, #708), 1 diverged feature PR (#705 → reopened as #713 cleanly rebased) | Memory `feedback_decision_quality.md` says optimize for long-term quality. Diverged branches with hundreds of phantom-deleted lines make review harder than re-cherry-picking onto main. Each close commented with the supersede path so trail is preserved.
+- 2026-05-10 12:30 | W4.21 | Tier C migration applied via Supabase MCP ahead of merge | Drift check is the chicken-and-egg between PR types regen and live schema; applying the migration first lets drift pass on re-run. Migration is additive (new table, RLS+FORCE, anon SELECT only on `active=true`), idempotent, no FKs. Applied 7 seed rows mirroring the in-code map being removed in the same PR. Founder explicitly authorized via responsive Tier C override.
 
 ## Pause history
 
