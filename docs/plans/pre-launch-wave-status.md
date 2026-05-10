@@ -1,7 +1,26 @@
 # Pre-launch wave — autonomous loop status
 
+<!--
+  ┌──────────────────────────────────────────────────────────────────┐
+  │  SINGLE-OWNER FILE                                               │
+  │  Only the pre-launch wave loop writes to this doc directly.      │
+  │  Other actors (audit-remediation loop, manual edits, the         │
+  │  founder, scout cron, etc.) MUST drop their proposed updates as  │
+  │  a new file under `docs/plans/queue-updates/` — the wave loop    │
+  │  consumes that inbox on its next iter and merges into here.      │
+  │                                                                  │
+  │  Why: 2026-05-10 saw three competing drafts (#701, #708, #714)   │
+  │  that all tried to reconcile this doc at the same time. The      │
+  │  loops have no shared lock, so concurrent edits race; the inbox  │
+  │  pattern collapses races into ordered append-then-merge.         │
+  │                                                                  │
+  │  See `docs/plans/queue-updates/README.md` for the inbox format.  │
+  └──────────────────────────────────────────────────────────────────┘
+-->
+
 **Plan source:** `docs/plans/pre-launch-wave-master-prompt.md` (Wave 1-6)
 **Loop prompt:** `docs/plans/pre-launch-wave-loop-prompt.md`
+**Update inbox:** `docs/plans/queue-updates/` (other actors drop notes here)
 **Last updated:** 2026-05-10 (cron iter — country rule alerts DB + admin CRUD shipped)
 
 ---

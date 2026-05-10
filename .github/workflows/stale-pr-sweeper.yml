@@ -1,0 +1,265 @@
+name: Stale-PR sweeper
+
+# Daily cron that flags + auto-closes PRs that have drifted too far from
+# main to be reasonably mergeable. Two failure modes from 2026-05-10's
+# cleanup motivated this:
+#   • #603 (SSOT consolidation): branched 2026-05-07, sat untouched until
+#     2026-05-10 by which point main had moved 657 files / 68k lines past
+#     it. No human noticed it had become un-rebaseable.
+#   • #705 (advisor eligibility filter): branched off pre-launch-wave
+#     during the 2026-05-09 burst; branch ended 600+ commits behind main
+#     within 24 hours. The diff against main showed thousands of phantom
+#     "deletions" that were really just "stuff main had merged since".
+#
+# Both cases were silently rotting PRs: nobody was working on them, but
+# they sat in `gh pr list` adding noise to triage. This workflow surfaces
+# them automatically.
+#
+# Two-stage policy:
+#   Stage 1 (label-only): comment with the staleness metric + apply
+#     `stale-pr` label. This is the "rebase or close" nudge.
+#   Stage 2 (auto-close): if the PR still has `stale-pr` >48h after the
+#     label was applied AND nothing else has touched it, close with
+#     a pointer comment. Force-pushing or pushing a fresh commit
+#     resets the clock (the label gets removed in stage 1's logic when
+#     the branch is no longer behind).
+#
+# Safety:
+#   • Opt-IN by branch prefix, not opt-out. Only branches whose head ref
+#     matches one of LOOP_BRANCH_PREFIXES (claude/, pre-launch/,
+#     chore/audit-loop-, chore/loop-) get processed. Anything else is
+#     ignored — founder-authored feature branches, dependabot, etc. are
+#     never touched. (Initially I keyed on author login, but loop work
+#     pushes from the founder's GitHub identity, so author is unreliable.)
+#   • Skips PRs with the `do-not-stale` or `pinned` label — explicit opt-out.
+#   • Reads label-applied timestamp from the issue events API, not from
+#     PR.updatedAt (which gets bumped by the label itself, defeating the
+#     48h clock).
+#   • Comments + labels via GITHUB_TOKEN — does not require a PAT.
+
+on:
+  schedule:
+    # 03:00 UTC daily — off-peak, after the 02:00 audit-remediation scout
+    # cron has finished, before the European morning when founder is most
+    # likely to be reviewing PRs.
+    - cron: "0 3 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+concurrency:
+  group: stale-pr-sweeper
+  cancel-in-progress: false
+
+env:
+  COMMITS_BEHIND_THRESHOLD: "100"  # PRs >N commits behind main get flagged
+  IDLE_DAYS_THRESHOLD: "7"          # PRs untouched for >N days get flagged
+  AUTO_CLOSE_HOURS: "48"            # close N hours after stale-pr label is applied
+  STALE_LABEL: "stale-pr"
+  OPT_OUT_LABELS: "do-not-stale,pinned"
+  # Comma-separated list of branch prefixes the sweeper is allowed to
+  # process. Opt-in: anything not matching is skipped.
+  LOOP_BRANCH_PREFIXES: "claude/,pre-launch/,chore/audit-loop-,chore/loop-,feat/audit-,feat/pre-launch-"
+
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Sweep stale PRs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          REPO="${GITHUB_REPOSITORY}"
+          NOW_EPOCH=$(date -u +%s)
+          IDLE_SEC=$(( IDLE_DAYS_THRESHOLD * 86400 ))
+          AUTO_CLOSE_SEC=$(( AUTO_CLOSE_HOURS * 3600 ))
+
+          # Ensure the stale-pr label exists. Idempotent — if it's already
+          # there, gh exits non-zero, which we swallow.
+          gh label create "$STALE_LABEL" \
+            --repo "$REPO" \
+            --color "fbca04" \
+            --description "Branch is too far behind main; rebase or auto-close in 48h" \
+            2>/dev/null || true
+
+          # Pull every open PR. The fields we need:
+          #   number, headRefName, author, labels, updatedAt
+          mapfile -t prs < <(gh pr list \
+            --repo "$REPO" \
+            --state open \
+            --limit 200 \
+            --json number,headRefName,author,labels,updatedAt \
+            --jq '.[] | @base64')
+
+          if [ "${#prs[@]}" -eq 0 ]; then
+            echo "No open PRs."
+            exit 0
+          fi
+
+          echo "Considering ${#prs[@]} open PR(s)…"
+
+          flagged=0
+          closed=0
+          unstuck=0
+
+          for row in "${prs[@]}"; do
+            pr_json=$(echo "$row" | base64 -d)
+            num=$(echo "$pr_json" | jq -r '.number')
+            head=$(echo "$pr_json" | jq -r '.headRefName')
+            author=$(echo "$pr_json" | jq -r '.author.login')
+            updated_at=$(echo "$pr_json" | jq -r '.updatedAt')
+            labels=$(echo "$pr_json" | jq -r '.labels[].name' | tr '\n' ',' || true)
+
+            echo ""
+            echo "=== PR #$num · branch=$head · author=$author ==="
+
+            # Opt-IN by branch prefix. Authors are unreliable (loop work
+            # pushes from the founder's identity). Branch-prefix is the
+            # signal that distinguishes loop-authored PRs from
+            # human-authored feature work.
+            in_scope=0
+            IFS=',' read -ra LOOP_PREFIXES <<< "$LOOP_BRANCH_PREFIXES"
+            for prefix in "${LOOP_PREFIXES[@]}"; do
+              if [[ "$head" == "$prefix"* ]]; then
+                in_scope=1
+                break
+              fi
+            done
+            if [ "$in_scope" = "0" ]; then
+              echo "  ↪ skipping (branch prefix not in LOOP_BRANCH_PREFIXES)"
+              continue
+            fi
+
+            # Skip explicit opt-outs.
+            opt_out=0
+            IFS=',' read -ra OPT_OUT_ARR <<< "$OPT_OUT_LABELS"
+            for ol in "${OPT_OUT_ARR[@]}"; do
+              if echo ",$labels," | grep -q ",$ol,"; then
+                opt_out=1
+                break
+              fi
+            done
+            if [ "$opt_out" = "1" ]; then
+              echo "  ↪ skipping (opt-out label present)"
+              continue
+            fi
+
+            # Fetch the branch so we can compute commits-behind. If the
+            # branch was deleted post-close, skip.
+            if ! git fetch origin "$head" 2>/dev/null; then
+              echo "  ⚠ branch fetch failed — skipping"
+              continue
+            fi
+
+            commits_behind=$(git rev-list --count "FETCH_HEAD..origin/main")
+            updated_epoch=$(date -u -d "$updated_at" +%s)
+            idle_sec=$(( NOW_EPOCH - updated_epoch ))
+            idle_days=$(( idle_sec / 86400 ))
+
+            echo "  commits behind main: $commits_behind"
+            echo "  idle: ${idle_days}d ($idle_sec s)"
+
+            already_stale=0
+            if echo ",$labels," | grep -q ",$STALE_LABEL,"; then
+              already_stale=1
+            fi
+
+            is_stale=0
+            if [ "$commits_behind" -gt "$COMMITS_BEHIND_THRESHOLD" ]; then
+              is_stale=1
+              reason="$commits_behind commits behind main (threshold: $COMMITS_BEHIND_THRESHOLD)"
+            elif [ "$idle_sec" -gt "$IDLE_SEC" ]; then
+              is_stale=1
+              reason="${idle_days} days since last activity (threshold: $IDLE_DAYS_THRESHOLD)"
+            fi
+
+            if [ "$is_stale" = "0" ]; then
+              # PR is healthy — if it's currently labeled stale, the
+              # author has un-staled it (rebased or pushed). Remove the
+              # label so the 48h close clock resets.
+              if [ "$already_stale" = "1" ]; then
+                echo "  ✓ no longer stale — removing label"
+                gh pr edit "$num" --repo "$REPO" --remove-label "$STALE_LABEL" || true
+                unstuck=$(( unstuck + 1 ))
+              else
+                echo "  ✓ healthy — nothing to do"
+              fi
+              continue
+            fi
+
+            # PR is stale. Two paths: first-flag (apply label + comment),
+            # or auto-close (already labeled >$AUTO_CLOSE_HOURS ago).
+            if [ "$already_stale" = "0" ]; then
+              echo "  🟡 first-flag — applying label + comment"
+              body="🤖 **Stale-PR sweeper:** this PR is $reason. Rebase onto main + push, or close it. If neither happens in the next $AUTO_CLOSE_HOURS hours, the sweeper will auto-close it."$'\n\n'"To opt out of staleness checks, apply the \`do-not-stale\` label."
+              gh pr comment "$num" --repo "$REPO" --body "$body"
+              gh pr edit "$num" --repo "$REPO" --add-label "$STALE_LABEL"
+              flagged=$(( flagged + 1 ))
+              continue
+            fi
+
+            # Already labeled — find when. The label's "labeled" event in
+            # the issue timeline tells us the apply timestamp. We close
+            # only if that's >$AUTO_CLOSE_HOURS old AND nothing has been
+            # pushed to the branch since.
+            label_event=$(gh api "repos/$REPO/issues/$num/events" \
+              --jq "[.[] | select(.event == \"labeled\" and .label.name == \"$STALE_LABEL\")] | last")
+            if [ -z "$label_event" ] || [ "$label_event" = "null" ]; then
+              echo "  ⚠ labeled but no event found — re-labelling to reset clock"
+              gh pr edit "$num" --repo "$REPO" --remove-label "$STALE_LABEL" || true
+              gh pr edit "$num" --repo "$REPO" --add-label "$STALE_LABEL" || true
+              continue
+            fi
+
+            label_at=$(echo "$label_event" | jq -r '.created_at')
+            label_epoch=$(date -u -d "$label_at" +%s)
+            since_label=$(( NOW_EPOCH - label_epoch ))
+
+            # Branch may have moved since the label was applied (rebase /
+            # new push). git rev-list against the current head — if it's
+            # NOT $commits_behind anymore, someone is working on it.
+            head_sha=$(git rev-parse FETCH_HEAD)
+            head_committer_date=$(git show -s --format=%cI "$head_sha")
+            head_epoch=$(date -u -d "$head_committer_date" +%s)
+            if [ "$head_epoch" -gt "$label_epoch" ]; then
+              echo "  ✓ branch was pushed after label applied — not closing"
+              continue
+            fi
+
+            if [ "$since_label" -lt "$AUTO_CLOSE_SEC" ]; then
+              hrs_left=$(( (AUTO_CLOSE_SEC - since_label) / 3600 ))
+              echo "  🟡 still in grace period — ${hrs_left}h left before close"
+              continue
+            fi
+
+            echo "  🔴 auto-closing — labeled $((since_label / 3600))h ago, no activity since"
+            gh pr close "$num" --repo "$REPO" --comment "🤖 **Stale-PR sweeper:** auto-closing — this PR was flagged $((since_label / 3600))h ago and the branch has not been updated since. Reopen + rebase if you want to revive it."
+            closed=$(( closed + 1 ))
+          done
+
+          echo ""
+          echo "=== Summary ==="
+          echo "Flagged: $flagged"
+          echo "Auto-closed: $closed"
+          echo "Un-stuck (label removed): $unstuck"
+
+          # Emit a compact GitHub-actions summary line.
+          {
+            echo "## Stale-PR sweeper summary"
+            echo ""
+            echo "- Flagged: $flagged"
+            echo "- Auto-closed: $closed"
+            echo "- Un-stuck (label removed): $unstuck"
+          } >> "$GITHUB_STEP_SUMMARY"
