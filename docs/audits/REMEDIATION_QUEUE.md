@@ -42,8 +42,8 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | EE | `claude/audit-remediation/ee-01-error-boundaries` | **#653 MERGED** (EE-01+EE-05) | EE-01 done + EE-02/03/04 FP + EE-05 done. **Stream complete.** | #653 merged ✓ |
 | FF | `claude/audit-remediation/ff-01-feature-flag-audit` | **#656 MERGED 2026-05-09** (`4da4004f`) | FF-01..FF-04 done. FF-03 false-positive. **Stream complete.** | FF-04 merged ✓ |
 | OOO | `claude/audit-remediation/ooo-01-runbook-audit` | **#652 MERGED** | OOO-01 done. OOO-04 FP. OOO-02 done. OOO-03 done. **Stream complete.** | OOO-03 merged ✓ |
-| KK | `claude/audit-remediation/kk-04-link-injection` | **#703 MERGED 2026-05-10** (KK-03) · **#711 OPEN** (KK-04 iter 1) | KK-01 done (#667). KK-02 done (#670). KK-03: **#703 MERGED 2026-05-10** (`57cfce7` — admin topic-cluster-map page). KK-04 iter 1: **#711 OPEN** (`internal_link_injection` flag + `splitByLinks(maxLinks)` density cap + `LinkifiedText disabled/maxLinks` props + article page kill-switch + 6 tests). | KK-04 merged |
-| PP | `claude/audit-remediation/pp-01-bundle-budget` | **#706 OPEN** (PP-01 — CI running) | PP-01: hard bundle budget gate — `scripts/bundle-size-budget.mjs` (excludes page-specific lazy splits, top-10 ranking, --budget-kb flag) + step in ci.yml main job (3000 kB ceiling). Last CI: pending — pushed iter 340. | All PP tasks merged |
+| KK | `claude/audit-remediation/kk-04-link-injection` | **#703 MERGED 2026-05-10** (KK-03) · **#711 MERGED 2026-05-10** (KK-04 iter 1) | KK-01 done (#667). KK-02 done (#670). KK-03: **#703 MERGED 2026-05-10** (`57cfce7`). KK-04 iter 1: **#711 MERGED 2026-05-10** (`34455f2b` — `internal_link_injection` flag + density cap + kill-switch + 6 tests). KK-04 iters 2-5 pending. | KK-04 merged |
+| PP | `claude/audit-remediation/pp-01-bundle-budget` | **#706 OPEN** (PP-01 — CI re-triggered) | PP-01: hard bundle budget gate — `scripts/bundle-size-budget.mjs` + step in ci.yml. Last CI: re-triggered iter 345 (commit `61b4147` — CI never fired on force-pushed `c10f6db`). | All PP tasks merged |
 | WW | `claude/audit-remediation/ww-01-watchlist-data-model` | **#651 MERGED** | WW-01 migration + WW-02 watchlist UI done. WW-03/04 blocked (DD-02 dep). **Streams WW-01+WW-02 merged.** | All WW tasks merged ✓ |
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
 | Z | `claude/audit-remediation/z-04-zero-state-ux` | #230/#323/#403/#457/#524/#565 | Z-01..Z-04 done. | Z-04 merged ✓ |
@@ -320,7 +320,7 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 | KK-01 | **done** | Internal link audit (identify orphaned pages + over-linked hubs) | — | PR #667. `scripts/internal-link-audit.mjs` + `docs/audits/kk-01-internal-link-audit.md`. |
 | KK-02 | **done** | Related-content widget (bottom of article pages) | — | `components/RelatedContentGrid.tsx`. Applied to `article/[slug]` + `research/[slug]`. PR #670. |
 | KK-03 | **done** | Topic cluster map (pillar ↔ cluster ↔ supporting visualised) | ~3 | Deps: KK-01. **#703 MERGED 2026-05-10** (`57cfce7`). |
-| KK-04 | **in-flight** (iter 1 of ~5) | Automated internal link injection (LSI-based, configurable density) | ~5 | Deps: KK-02+KK-03. **#711 OPEN** (iter 344). Kill-switch (`internal_link_injection` flag) + `splitByLinks(maxLinks)` density cap + `LinkifiedText disabled/maxLinks` props. Iters 2-4: LSI/cluster-aware target selection + per-type density config + admin UI. |
+| KK-04 | **in-flight** (iter 1 MERGED; iters 2-5 pending) | Automated internal link injection (LSI-based, configurable density) | ~5 | Deps: KK-02+KK-03. **#711 MERGED 2026-05-10** (`34455f2b` iter 344+345). Iter 1 done: kill-switch + density cap. Iter 2: LSI/cluster-aware target selection. Iter 3: per-article-type density config. Iter 4: admin UI (override per article). Iter 5: integration tests + Playwright smoke. |
 
 **Stream KK entry condition:** KK-01 can start immediately.
 
@@ -994,6 +994,14 @@ _Compacted 2026-05-09: 1,223 lines of completed-stream summary + iteration log e
 _The most recent ~24h of iteration log entries (iter ~325 onwards) are temporarily missing from both files — they were lost in the 2026-05-09 truncation incident (recovered as PR #661) before the rotate-iteration-log workflow could archive them. Loop's stuck-detection guard should not regress because the iteration command's Phase 2 falls back to PR-CI history when iter log entries are absent._
 
 See [`REMEDIATION_QUEUE_LOG_ARCHIVE.md`](./REMEDIATION_QUEUE_LOG_ARCHIVE.md) for historical iteration log + completed-stream summary.
+
+---
+
+### Iter 345 · 2026-05-10 · Stream KK · KK-04 iter 1 merge + PP CI re-trigger · STATUS: PROGRESS
+
+**What was done:** Continued from iter 344 (context compacted). Phase 2: checked PR #711 (KK-04 iter 1) CI — all hard gates green (`Lint · Type-check · Test · Build` ✓, all security/RLS/types gates ✓, Lighthouse ✓, A11y ✓; Playwright still in_progress but advisory only). Merged #711 via squash (Tier B — additive feature, no security). SHA `34455f2b`. Phase 2 also: pushed queue update to main (commit `280ab9b` via MCP — git push blocked by proxy 403). PR #706 (PP-01): CI never fired on force-pushed SHA `c10f6db`; pushed trivial comment fix to `scripts/bundle-size-budget.mjs` (commit `61b4147`) to trigger fresh CI run.
+
+**Status:** `STATUS: PROGRESS · stream=KK · KK-04-iter-1=merged · PP-01=CI-retriggered · pr=#706`
 
 ---
 
