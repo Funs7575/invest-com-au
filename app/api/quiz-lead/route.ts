@@ -5,6 +5,7 @@ import { isAllowed, ipKey } from '@/lib/rate-limit-db';
 import { isValidEmail, isDisposableEmail } from '@/lib/validate-email';
 import { logger } from '@/lib/logger';
 import { recordQuizSubmission } from '@/lib/quiz-history';
+import { setQuizSessionCookie } from '@/lib/quiz-profile';
 import { createClient } from '@/lib/supabase/server';
 import { escapeHtml } from "@/lib/html-escape";
 
@@ -385,6 +386,13 @@ export async function POST(request: NextRequest) {
         topMatchSlug: safeTopMatch,
         completed: true,
       });
+      // Persist the session id so subsequent page renders can fetch
+      // this profile and surface a "based on your quiz" recommendations
+      // strip without re-prompting (W4.20). Anon-only — once the user
+      // is signed in, server-side reads scope by user_id directly.
+      if (safeSessionId && !user?.id) {
+        await setQuizSessionCookie(safeSessionId);
+      }
     }
   } catch (err) {
     log.warn('quiz-history record failed (non-blocking)', {
