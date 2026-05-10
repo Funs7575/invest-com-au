@@ -171,6 +171,8 @@ describe("getQuizProfile", () => {
       vertical: "advisor_match",
       topMatchSlug: "stake",
       intentCountry: "uk",
+      budget: null,
+      experience: null,
       completedAt: "2026-05-10T12:00:00Z",
       createdAt: "2026-05-10T11:55:00Z",
     });
@@ -262,5 +264,50 @@ describe("getQuizProfile", () => {
     const profile = await getQuizProfile();
     expect(profile?.completedAt).toBeNull();
     expect(profile?.vertical).toBe("trade");
+  });
+
+  it("extracts budget + experience when present in answers.raw", async () => {
+    cookieStore.set(QUIZ_SESSION_COOKIE, "s1");
+    lookupRow = {
+      session_id: "s1",
+      answers: { raw: { amount: "whale", experience: "pro" } },
+      inferred_vertical: null,
+      top_match_slug: null,
+      completed_at: null,
+      created_at: "2026-05-10T11:55:00Z",
+    };
+    const profile = await getQuizProfile();
+    expect(profile?.budget).toBe("whale");
+    expect(profile?.experience).toBe("pro");
+  });
+
+  it("returns null for unknown budget / experience values", async () => {
+    cookieStore.set(QUIZ_SESSION_COOKIE, "s1");
+    lookupRow = {
+      session_id: "s1",
+      answers: { raw: { amount: "tiny", experience: "dabbler" } },
+      inferred_vertical: null,
+      top_match_slug: null,
+      completed_at: null,
+      created_at: "2026-05-10T11:55:00Z",
+    };
+    const profile = await getQuizProfile();
+    expect(profile?.budget).toBeNull();
+    expect(profile?.experience).toBeNull();
+  });
+
+  it("budget + experience default to null when raw is missing", async () => {
+    cookieStore.set(QUIZ_SESSION_COOKIE, "s1");
+    lookupRow = {
+      session_id: "s1",
+      answers: {},
+      inferred_vertical: null,
+      top_match_slug: null,
+      completed_at: null,
+      created_at: "2026-05-10T11:55:00Z",
+    };
+    const profile = await getQuizProfile();
+    expect(profile?.budget).toBeNull();
+    expect(profile?.experience).toBeNull();
   });
 });
