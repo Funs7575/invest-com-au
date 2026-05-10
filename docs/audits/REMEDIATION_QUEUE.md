@@ -38,11 +38,11 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | V | `claude/audit-remediation/v-07-auth-hardening` | #227/#320/#400/#457/#521/#562 | V-01..V-07 done. | V-07 merged ✓ |
 | W | `claude/audit-remediation/w-12-hub-page-hoc` (W-15 remaining) | #306/#312/#369/#529/#598/#599/#602/#604/#605/#606/#607/#608/#609/#612 | **#609 MERGED 2026-05-08** (W-12+W-13+W-15 dividends). **#612 MERGED 2026-05-08** (W-14 grants→/startup/grants). W-04..W-15 all MERGED. | All W tasks merged ✓ |
 | X | _complete_ | #257/#367/#596/#600/#610/#641/#643/#644/#646/#702 MERGED | X-06..X-09a all MERGED. X-09b: **#702 MERGED 2026-05-10** (ESLint ratchet warn→error + find/[advisor-type]/[city] → createStaticClient). **Stream complete.** | All X PRs merged ✓ |
-| CC | `claude/audit-remediation/cc-05-locale-sitemap` | **#675 MERGED** (CC-01) · **#678 MERGED** (CC-04) · **#704 OPEN** (CC-05 — CI running) | CC-01 done. CC-02/CC-03 false-positive. CC-04 MERGED (#678). CC-05: **#704 OPEN** (hreflang alternates for locale-prefixed sitemap — LOCALE_GROUPS + localizedPages + BCP47_TAG). Last CI: pending — pushed iter 341. | CC-05 merged |
+| CC | _complete_ | **#675 MERGED** (CC-01) · **#678 MERGED** (CC-04) · **#704 MERGED 2026-05-10** (CC-05) | CC-01 done. CC-02/CC-03 false-positive. CC-04 MERGED (#678). CC-05: **#704 MERGED 2026-05-10** (`ccf29307` — LOCALE_KNOWN_PATHS + localizedPages + BCP47_TAG). **Stream complete.** | CC-05 merged ✓ |
 | EE | `claude/audit-remediation/ee-01-error-boundaries` | **#653 MERGED** (EE-01+EE-05) | EE-01 done + EE-02/03/04 FP + EE-05 done. **Stream complete.** | #653 merged ✓ |
 | FF | `claude/audit-remediation/ff-01-feature-flag-audit` | **#656 MERGED 2026-05-09** (`4da4004f`) | FF-01..FF-04 done. FF-03 false-positive. **Stream complete.** | FF-04 merged ✓ |
 | OOO | `claude/audit-remediation/ooo-01-runbook-audit` | **#652 MERGED** | OOO-01 done. OOO-04 FP. OOO-02 done. OOO-03 done. **Stream complete.** | OOO-03 merged ✓ |
-| KK | `claude/audit-remediation/kk-03-topic-cluster-map` | **#703 OPEN** (KK-03 — CI running) | KK-01 done (#667). KK-02 done (#670). KK-03: **#703 OPEN** (admin topic-cluster-map page — RSC, 242 LOC + sidebar nav link). Rebased onto main (iter 341, queue conflict resolved). Last CI: Lint+Type+Build ✓, Playwright/LH in progress. | KK-04 merged |
+| KK | `claude/audit-remediation/kk-04-link-injection` | **#703 MERGED 2026-05-10** (KK-03) · **#711 OPEN** (KK-04 iter 1) | KK-01 done (#667). KK-02 done (#670). KK-03: **#703 MERGED 2026-05-10** (`57cfce7` — admin topic-cluster-map page). KK-04 iter 1: **#711 OPEN** (`internal_link_injection` flag + `splitByLinks(maxLinks)` density cap + `LinkifiedText disabled/maxLinks` props + article page kill-switch + 6 tests). | KK-04 merged |
 | PP | `claude/audit-remediation/pp-01-bundle-budget` | **#706 OPEN** (PP-01 — CI running) | PP-01: hard bundle budget gate — `scripts/bundle-size-budget.mjs` (excludes page-specific lazy splits, top-10 ranking, --budget-kb flag) + step in ci.yml main job (3000 kB ceiling). Last CI: pending — pushed iter 340. | All PP tasks merged |
 | WW | `claude/audit-remediation/ww-01-watchlist-data-model` | **#651 MERGED** | WW-01 migration + WW-02 watchlist UI done. WW-03/04 blocked (DD-02 dep). **Streams WW-01+WW-02 merged.** | All WW tasks merged ✓ |
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
@@ -199,7 +199,7 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 | CC-02 | ~~false-positive~~ | ~~NZ supply-threshold tuning (current thresholds too aggressive)~~ | — | `lib/country-mode/supply-thresholds.ts` lines 34–38: `PER_COUNTRY_THRESHOLDS = { NZ: { experts: 1 } }` already implemented. `__tests__/lib/country-mode/supply-thresholds.test.ts` lines 83–135 fully cover NZ-specific threshold. No code change needed. |
 | CC-03 | ~~false-positive~~ | ~~IN/SG/HK intent-context wiring (priority-chain gaps)~~ | — | `CountryExpertsPreview.tsx` intentionally filters by advisor `type` only (comment line 7: "specialties is jsonb and less reliable"). Language filter from config is NOT applied to DB query — 0-row risk from language filtering doesn't exist. All three countries include `"en"` in language config for future use. Strip returns results by type regardless of language. |
 | CC-04 | **done** | Country-mode E2E tests (Playwright, 3 locales) | — | 7 Playwright tests. PR #678 MERGED 2026-05-09. |
-| CC-05 | **in-flight** | Locale-aware sitemap entries for non-AU locales | — | **#704 OPEN** (iter 341). `LOCALE_KNOWN_PATHS` in `lib/i18n/locales.ts` (SSoT) + `localizedPages` with `alternates.languages` (x-default + en-AU + zh-CN/ko-KR/ar-AE) in `app/sitemap.ts`. 6 new tests. |
+| CC-05 | **done** | Locale-aware sitemap entries for non-AU locales | — | **#704 MERGED 2026-05-10**. `LOCALE_KNOWN_PATHS` in `lib/i18n/locales.ts` (SSoT) + `localizedPages` with `alternates.languages` (x-default + en-AU + zh-CN/ko-KR/ar-AE) in `app/sitemap.ts`. 6 new tests. |
 
 **Stream CC entry condition:** CC-01 done (iter 334). CC-02 and CC-03 resolved as false-positives (iter 339). CC-05 can start immediately.
 
@@ -319,8 +319,8 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 |------|--------|-------------|------------|-------|
 | KK-01 | **done** | Internal link audit (identify orphaned pages + over-linked hubs) | — | PR #667. `scripts/internal-link-audit.mjs` + `docs/audits/kk-01-internal-link-audit.md`. |
 | KK-02 | **done** | Related-content widget (bottom of article pages) | — | `components/RelatedContentGrid.tsx`. Applied to `article/[slug]` + `research/[slug]`. PR #670. |
-| KK-03 | **in-flight** | Topic cluster map (pillar ↔ cluster ↔ supporting visualised) | ~3 | Deps: KK-01. **#703 OPEN** — `/admin/topic-clusters` RSC page: 10 cluster cards, 5 stats, ×2+ cross-cluster badges, sidebar nav link. |
-| KK-04 | pending | Automated internal link injection (LSI-based, configurable density) | ~5 | Deps: KK-02+KK-03. Risky — needs kill-switch. |
+| KK-03 | **done** | Topic cluster map (pillar ↔ cluster ↔ supporting visualised) | ~3 | Deps: KK-01. **#703 MERGED 2026-05-10** (`57cfce7`). |
+| KK-04 | **in-flight** (iter 1 of ~5) | Automated internal link injection (LSI-based, configurable density) | ~5 | Deps: KK-02+KK-03. **#711 OPEN** (iter 344). Kill-switch (`internal_link_injection` flag) + `splitByLinks(maxLinks)` density cap + `LinkifiedText disabled/maxLinks` props. Iters 2-4: LSI/cluster-aware target selection + per-type density config + admin UI. |
 
 **Stream KK entry condition:** KK-01 can start immediately.
 
@@ -997,6 +997,22 @@ See [`REMEDIATION_QUEUE_LOG_ARCHIVE.md`](./REMEDIATION_QUEUE_LOG_ARCHIVE.md) for
 
 ---
 
+### Iter 344 · 2026-05-10 · Stream KK · KK-04 iter 1 · STATUS: PROGRESS
+
+**What was done:** Phase 2: PR #704 (CC-05) — `mergeable_state: "clean"`, merged via squash (Tier B — sitemap metadata, no security). SHA `ccf29307`. CC stream complete. PR #706 (PP-01) — `mergeable_state: "unstable"` (Lint+Type+Build still in_progress). Phase 3: picked KK-04 (automated internal link injection) — KK stream, slot 14 in priority order, deps KK-02+KK-03 now both done. Created branch `claude/audit-remediation/kk-04-link-injection`. Phase 5: (a) Migration `20260721_kk04_link_injection_flag.sql` seeds `internal_link_injection` feature flag (enabled=true, rollout_pct=100 — preserves existing behaviour; admin can flip to false to kill without deploy). (b) `lib/keyword-linking.ts` `splitByLinks(text, maxLinks=Infinity)` — new optional density cap param; stops injecting new links once `used.size >= maxLinks`, text after cap renders as plain text. (c) `components/LinkifiedText.tsx` — new `disabled` (kill-switch, renders plain text) and `maxLinks` props. (d) `app/article/[slug]/page.tsx` — adds `isFlagEnabled("internal_link_injection")` to the Promise.all; threads `disabled={!linkInjectionEnabled}` and `maxLinks={5}` into all three `LinkifiedText` usages. (e) 6 new tests in `__tests__/lib/keyword-linking.test.ts` covering the density cap. PR #711 opened.
+
+**Status:** `STATUS: PROGRESS · stream=KK · item=KK-04 · iter=1 · pr=#711`
+
+---
+
+### Iter 343 · 2026-05-10 · Stream KK+PP · KK-03 merge + PP-01 rebase · STATUS: PROGRESS
+
+**What was done:** Phase 2 CI review: PR #703 (KK-03) — all required checks green (Lint+Type+Build ✓, LH ✓, A11y ✓, Playwright still in_progress but not a hard gate). Merged via squash (Tier B — additive admin page, no security/migration). SHA `57cfce7`. KK-04 now unblocked (deps KK-02+KK-03 both done). PR #704 (CC-05) — Vercel green, LH/Playwright in_progress. PR #706 (PP-01) — `mergeable_state: "dirty"` (queue file conflict after main advanced since branch was cut). Rebased locally: `git rebase origin/main`, took main's queue file at each of 3 conflicting commits, force-pushed `48b8565`. CI now re-running. **Tier C note for PP-01**: PR #706 touches `.github/workflows/ci.yml` — per MERGE_AUTHORIZATION.md Tier C policy, announcing intent to merge here. Merge after CI green unless "STOP" is signalled. Note: iter 343 log was lost in scout fire `67e57bf` overwrite — recovered here.
+
+**Status:** `STATUS: PROGRESS · stream=KK+PP · KK-03=merged · PP-01=rebased`
+
+---
+
 ### Iter 342 · 2026-05-10 · Queue correction · STATUS: PROGRESS
 
 **What was done:** Corrected stale in-flight table rows that a concurrent cloud fire missed: R stream updated from "#640 OPEN" to "#640 MERGED 2026-05-10, stream complete" (PR #640 had merged before iter 341 log was written); X stream updated from "#702 OPEN" to "#702 MERGED 2026-05-10, stream complete" (PR #702 merged by repo owner at 01:33:37Z on 2026-05-10). No code changes — queue housekeeping only.
@@ -1048,5 +1064,3 @@ See [`REMEDIATION_QUEUE_LOG_ARCHIVE.md`](./REMEDIATION_QUEUE_LOG_ARCHIVE.md) for
 ### Iter 337 · 2026-05-10 · Stream KK · KK-03 · STATUS: PROGRESS
 
 **What was done:** Batch iter 2. Phase 2: PR #702 (X-09b) CI mostly green (2 checks still running, no failures). PR #640 (R-M2B) was a draft — converted to ready-for-review to trigger full CI. Phase 3 selection: KK-03 (priority slot 14 — first unblocked item after B-09/C-03..05/O post-merge residuals all blocked). Created branch `claude/audit-remediation/kk-03-topic-cluster-map` from main. Built `/admin/topic-clusters` RSC page: 10 cluster cards, 5 summary stats (clusters/pages/unique slugs/article slugs/cross-cluster), spoke grids with ×2+ badge on shared pages, cross-cluster chips on each pillar, "How it works" panel. Added sidebar nav link in Content group. 242 LOC. Opened PR #703. Queue: added KK row to In-flight table, KK-03 marked in-flight, R row updated.
-
-**Status:** `STATUS: PROGRESS · stream=KK · item=KK-03 · pr=#703`
