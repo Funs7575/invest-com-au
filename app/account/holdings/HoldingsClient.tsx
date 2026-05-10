@@ -16,6 +16,15 @@ export interface HoldingRow {
   acquiredAt: string;
   brokerSlug: string | null;
   notes: string | null;
+  /** Current market price in cents. Null when upstream is down + no
+   *  stale fallback exists. UI renders "—" in that case. */
+  currentPriceCents: number | null;
+  /** ISO 4217 currency code of the current price, e.g. "AUD" / "USD".
+   *  May differ from cost basis (which is always AUD by convention). */
+  currentPriceCurrency: string | null;
+  currentPriceSource: "yahoo" | "coingecko" | "stale" | null;
+  /** ISO timestamp of the price's `fetched_at` for the "as of N ago" label. */
+  currentPriceFetchedAt: string | null;
 }
 
 interface Props {
@@ -35,6 +44,20 @@ const EXCHANGES = ["ASX","NASDAQ","NYSE","LSE","HKEX","SGX","TYO","KRX","CRYPTO"
 const fmtCents = (cents: number) =>
   (cents / 100).toLocaleString("en-AU", { style: "currency", currency: "AUD" });
 
+const fmtCurrency = (cents: number, currency: string) =>
+  (cents / 100).toLocaleString("en-AU", {
+    style: "currency",
+    currency: currency || "AUD",
+    currencyDisplay: "narrowSymbol",
+  });
+
+const fmtPct = (deltaCents: number, baseCents: number) => {
+  if (baseCents === 0) return "—";
+  const pct = (deltaCents / baseCents) * 100;
+  const sign = pct >= 0 ? "+" : "−";
+  return `${sign}${Math.abs(pct).toFixed(1)}%`;
+};
+
 const fmtShares = (n: number) =>
   n.toLocaleString("en-AU", { maximumFractionDigits: 4 });
 
@@ -51,7 +74,23 @@ export default function HoldingsClient({ initialItems, brokers }: Props) {
       0,
     );
     const positionCount = items.length;
-    return { totalCostCents, positionCount };
+    // Current value totals — only counts positions with a price. Mixed-currency
+    // portfolios are an MVP gap: we sum AUD + USD prices into one number on
+    // the assumption most retail AU users hold AUD-only or AUD-dominant
+    // portfolios. The UI surfaces a footnote when any non-AUD position exists.
+    let totalValueCents = 0;
+    let pricedPositionCount = 0;
+    let hasNonAud = false;
+    for (const h of items) {
+      if (h.currentPriceCents == null) continue;
+      totalValueCents += Math.round(h.shares * h.currentPriceCents);
+      pricedPositionCount += 1;
+      if (h.currentPriceCurrency && h.currentPriceCurrency !== "AUD") hasNonAud = true;
+    }
+    const totalGainCents = pricedPositionCount === positionCount
+      ? totalValueCents - totalCostCents
+      : null;
+    return { totalCostCents, totalValueCents, totalGainCents, positionCount, pricedPositionCount, hasNonAud };
   }, [items]);
 
   const score = useMemo(
@@ -117,6 +156,13 @@ export default function HoldingsClient({ initialItems, brokers }: Props) {
         acquiredAt: j.item.acquired_at,
         brokerSlug: j.item.broker_slug,
         notes: j.item.notes,
+        // Newly-added rows don't have a price yet; the user sees a "—" until
+        // the next page render fetches it from the cache. (We could fire off
+        // the lookup client-side here but it'd duplicate the server path.)
+        currentPriceCents: null,
+        currentPriceCurrency: null,
+        currentPriceSource: null,
+        currentPriceFetchedAt: null,
       };
       setItems((prev) => [newRow, ...prev]);
     } catch (e) {
@@ -208,15 +254,34 @@ export default function HoldingsClient({ initialItems, brokers }: Props) {
       )}
 
       {/* Totals strip */}
-      <section className="grid grid-cols-2 gap-3">
+      <section className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
           <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Positions</p>
           <p className="text-2xl font-bold text-slate-900 mt-1">{totals.positionCount}</p>
         </div>
         <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4">
-          <p className="text-xs font-semibold uppercase tracking-wider text-emerald-700">Total cost basis</p>
+          <p className="text-xs font-semibold uppercase tracking-wider text-emerald-700">Cost basis</p>
           <p className="text-2xl font-bold text-emerald-900 mt-1">{fmtCents(totals.totalCostCents)}</p>
-          <p className="text-xs text-emerald-700 mt-1">Sum of shares × cost/share. Current value lookup ships in PR-X5c iter 2.</p>
+          <p className="text-xs text-emerald-700 mt-1">Sum of shares × cost/share.</p>
+        </div>
+        <div className="bg-sky-50 border border-sky-200 rounded-xl p-4">
+          <p className="text-xs font-semibold uppercase tracking-wider text-sky-700">Current value</p>
+          {totals.pricedPositionCount === 0 ? (
+            <p className="text-2xl font-bold text-sky-900 mt-1">—</p>
+          ) : (
+            <p className="text-2xl font-bold text-sky-900 mt-1">{fmtCents(totals.totalValueCents)}</p>
+          )}
+          {totals.totalGainCents !== null ? (
+            <p className={`text-xs mt-1 ${totals.totalGainCents >= 0 ? "text-emerald-700" : "text-red-700"}`}>
+              {totals.totalGainCents >= 0 ? "+" : "−"}
+              {fmtCents(Math.abs(totals.totalGainCents))} ({fmtPct(totals.totalGainCents, totals.totalCostCents)})
+            </p>
+          ) : (
+            <p className="text-xs text-sky-700 mt-1">
+              {totals.pricedPositionCount}/{totals.positionCount} priced
+              {totals.hasNonAud ? " · mixed currency" : ""}
+            </p>
+          )}
         </div>
       </section>
 
@@ -341,9 +406,31 @@ export default function HoldingsClient({ initialItems, brokers }: Props) {
                   )}
                 </div>
                 <div className="text-right shrink-0">
-                  <div className="text-sm font-semibold text-slate-900">
-                    {fmtCents(h.shares * h.costBasisPerShareCents)}
+                  {h.currentPriceCents != null ? (
+                    <>
+                      <div className="text-sm font-semibold text-slate-900">
+                        {fmtCurrency(h.shares * h.currentPriceCents, h.currentPriceCurrency ?? "AUD")}
+                      </div>
+                      <RowGainLabel
+                        valueCents={h.shares * h.currentPriceCents}
+                        costCents={h.shares * h.costBasisPerShareCents}
+                        currency={h.currentPriceCurrency}
+                      />
+                    </>
+                  ) : (
+                    <div className="text-sm text-slate-400">—</div>
+                  )}
+                  <div className="text-[11px] text-slate-500 mt-0.5">
+                    cost {fmtCents(h.shares * h.costBasisPerShareCents)}
                   </div>
+                  {h.currentPriceSource === "stale" && (
+                    <div
+                      className="text-[10px] text-amber-700 mt-0.5"
+                      title="Latest live fetch failed; showing the most recent cached price."
+                    >
+                      stale price
+                    </div>
+                  )}
                   <button
                     type="button"
                     onClick={() => void handleDelete(h.id)}
@@ -358,6 +445,38 @@ export default function HoldingsClient({ initialItems, brokers }: Props) {
           </ul>
         )}
       </section>
+    </div>
+  );
+}
+
+/**
+ * Per-row gain/loss label. Skipped when the price currency differs from
+ * AUD (cost basis is AUD-only) — comparing AUD cost vs USD value would
+ * mislead. We surface the value in its native currency without an
+ * apples-to-oranges delta.
+ */
+function RowGainLabel({
+  valueCents,
+  costCents,
+  currency,
+}: {
+  valueCents: number;
+  costCents: number;
+  currency: string | null;
+}) {
+  if (currency && currency !== "AUD") {
+    return (
+      <div className="text-xs text-slate-500" title={`Value in ${currency}; cost basis stored in AUD`}>
+        {currency} price · cost in AUD
+      </div>
+    );
+  }
+  const delta = valueCents - costCents;
+  const cls = delta >= 0 ? "text-emerald-700" : "text-red-700";
+  return (
+    <div className={`text-xs ${cls}`}>
+      {delta >= 0 ? "+" : "−"}
+      {fmtCents(Math.abs(delta))} ({fmtPct(delta, costCents)})
     </div>
   );
 }
