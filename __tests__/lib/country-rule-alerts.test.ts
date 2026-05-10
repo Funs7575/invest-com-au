@@ -124,7 +124,7 @@ describe("getActiveAlertsForCountry", () => {
       from: vi.fn().mockReturnValue(mockQuery),
     } as never);
 
-    const { getActiveAlertsForCountry } = await import("@/lib/country-rule-alerts");
+    const { getActiveAlertsForCountry } = await import("@/lib/country-rule-alerts-server");
     const result = await getActiveAlertsForCountry("UK");
 
     expect(eqSpy).toHaveBeenCalledWith("country_code", "uk");
@@ -137,7 +137,7 @@ describe("getActiveAlertsForCountry", () => {
     const fromSpy = vi.fn();
     mockedCreateClient.mockResolvedValue({ from: fromSpy } as never);
 
-    const { getActiveAlertsForCountry } = await import("@/lib/country-rule-alerts");
+    const { getActiveAlertsForCountry } = await import("@/lib/country-rule-alerts-server");
     const result = await getActiveAlertsForCountry("zz");
 
     expect(result).toEqual([]);
@@ -145,13 +145,13 @@ describe("getActiveAlertsForCountry", () => {
   });
 
   it("returns empty array for empty country", async () => {
-    const { getActiveAlertsForCountry } = await import("@/lib/country-rule-alerts");
+    const { getActiveAlertsForCountry } = await import("@/lib/country-rule-alerts-server");
     expect(await getActiveAlertsForCountry("")).toEqual([]);
   });
 
   it("returns empty array on supabase failure", async () => {
     mockedCreateClient.mockRejectedValue(new Error("boom"));
-    const { getActiveAlertsForCountry } = await import("@/lib/country-rule-alerts");
+    const { getActiveAlertsForCountry } = await import("@/lib/country-rule-alerts-server");
     expect(await getActiveAlertsForCountry("uk")).toEqual([]);
   });
 
@@ -172,7 +172,7 @@ describe("getActiveAlertsForCountry", () => {
       from: vi.fn().mockReturnValue(mockQuery),
     } as never);
 
-    const { getActiveAlertsForCountry } = await import("@/lib/country-rule-alerts");
+    const { getActiveAlertsForCountry } = await import("@/lib/country-rule-alerts-server");
     const result = await getActiveAlertsForCountry("uk");
     expect(result.map((r) => r.alert_key)).toEqual(["uk-1", "uk-3"]);
   });

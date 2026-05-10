@@ -1,18 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
 
-vi.mock("@/lib/country-rule-alerts", async () => {
-  const actual = await vi.importActual<typeof import("@/lib/country-rule-alerts")>(
-    "@/lib/country-rule-alerts",
-  );
-  return {
-    ...actual,
-    getActiveAlertsForCountry: vi.fn(),
-  };
-});
+vi.mock("@/lib/country-rule-alerts-server", () => ({
+  getActiveAlertsForCountry: vi.fn(),
+}));
 
 import { GET } from "@/app/api/country-rule-alerts/route";
-import { getActiveAlertsForCountry } from "@/lib/country-rule-alerts";
+import { getActiveAlertsForCountry } from "@/lib/country-rule-alerts-server";
 
 const mockedFetch = vi.mocked(getActiveAlertsForCountry);
 

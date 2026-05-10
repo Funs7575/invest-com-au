@@ -14,7 +14,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { getActiveAlertsForCountry } from "@/lib/country-rule-alerts";
+import { getActiveAlertsForCountry } from "@/lib/country-rule-alerts-server";
 
 export const runtime = "nodejs";
 

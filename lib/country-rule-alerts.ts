@@ -1,22 +1,19 @@
 /**
- * Country-rule-alerts data layer.
+ * Country-rule-alerts shared types + zod schemas.
  *
- * Reads `country_rule_alerts` rows for a given lowercase 2-letter
- * intent-country code (uk/us/cn/in/jp/sg/hk/kr/my/nz/ae/sa). The table
- * is RLS-public-on-active so we use the anon `createClient()` from
- * `lib/supabase/server.ts` — no service-role key needed for reads.
+ * Client- and server-safe. The server-only fetch helper that pulls
+ * rows from Supabase lives in `country-rule-alerts-server.ts` so this
+ * module can be imported by client components (the admin editor) and
+ * shared types stay in one place.
  *
  * Editorial team writes via /admin/country-rule-alerts (service-role);
- * the public client component fetches via /api/country-rule-alerts which
- * proxies to this helper.
+ * the public client component fetches via /api/country-rule-alerts.
  *
- * Replaces the hardcoded ALERTS_BY_COUNTRY map that previously lived in
- * components/CountryRuleAlerts.tsx (W4.21 in pre-launch-wave-master-prompt).
+ * Replaces the hardcoded ALERTS_BY_COUNTRY map that previously lived
+ * in components/CountryRuleAlerts.tsx (W4.21).
  */
 
 import { z } from "zod";
-import { createClient } from "@/lib/supabase/server";
-import { isKnownIntentCountry } from "@/lib/intent-context";
 
 export const AlertSeveritySchema = z.enum(["info", "warning", "urgent"]);
 export type AlertSeverity = z.infer<typeof AlertSeveritySchema>;
@@ -68,36 +65,3 @@ export const SEVERITY_LABELS: Record<AlertSeverity, string> = {
   warning: "Warning",
   urgent: "Urgent",
 };
-
-const PUBLIC_COLUMNS =
-  "alert_key, severity, headline, body, source, cta_href, cta_label";
-
-/**
- * Fetch active alerts for a country, ordered by display_order.
- * Returns [] for unknown countries or on any DB error — the alerts
- * banner is best-effort and must never break a page render.
- */
-export async function getActiveAlertsForCountry(
-  countryCode: string,
-): Promise<PublicRuleAlert[]> {
-  const code = countryCode.trim().toLowerCase();
-  if (!isKnownIntentCountry(code)) return [];
-
-  try {
-    const supabase = await createClient();
-    const { data } = await supabase
-      .from("country_rule_alerts")
-      .select(PUBLIC_COLUMNS)
-      .eq("country_code", code)
-      .eq("active", true)
-      .order("display_order", { ascending: true });
-
-    if (!data) return [];
-
-    return data
-      .map((row) => PublicRuleAlertSchema.safeParse(row))
-      .flatMap((parsed) => (parsed.success ? [parsed.data] : []));
-  } catch {
-    return [];
-  }
-}
