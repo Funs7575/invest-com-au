@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
+import { filterByCountryEligibility } from "@/lib/country-mode/eligibility-filter";
 import type { Professional, AdvisorFirm } from "@/lib/types";
 import type { Metadata } from "next";
 import AdvisorsClient from "./AdvisorsClient";
@@ -60,8 +61,13 @@ async function AdvisorsData() {
     throw new Error("Failed to load advisors. Please try again.");
   }
 
-  // Count team members per firm
-  const professionals = (proResult.data as Professional[]) || [];
+  // Hide advisors whose country_eligibility blocks the visitor's
+  // intent country. Compounds with the per-card EligibilityBadge —
+  // filter hides explicit non-matches (US-only firms for a UK visitor),
+  // badge highlights matches and visa-required cases. No-op when
+  // intentCountry is null.
+  const allProfessionals = (proResult.data as Professional[]) || [];
+  const professionals = filterByCountryEligibility(allProfessionals, intentCountry);
   const firms = (firmResult.data as AdvisorFirm[]) || [];
   const firmMemberCounts: Record<number, number> = {};
   professionals.forEach(p => {
