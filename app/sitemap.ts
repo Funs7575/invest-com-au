@@ -8,10 +8,17 @@ import {
   getOpportunityCategories,
   getAllSubcategorySlugs,
 } from "@/lib/invest-categories";
-import { localePath, type Locale } from "@/lib/i18n/locales";
+import { localePath, LOCALE_KNOWN_PATHS, type Locale } from "@/lib/i18n/locales";
 import { listingUrl } from "@/lib/listing-url";
 import type { InvestListingVertical, PlatformType } from "@/lib/types";
 import { generateVersusPairs } from "@/lib/versus-pairs";
+
+// Locale-prefixed paths derived from LOCALE_KNOWN_PATHS (single source of truth).
+// To add a new locale page: create app/<locale>/<path>/page.tsx and add the
+// canonical English path to LOCALE_KNOWN_PATHS in lib/i18n/locales.ts.
+const localeSitemapPaths = Object.entries(LOCALE_KNOWN_PATHS).flatMap(
+  ([locale, paths]) => (paths ?? []).map((p) => localePath(p, locale as Locale)),
+);
 
 // Regenerate sitemap at most once per day — avoids per-request DB queries
 export const revalidate = 86400;
@@ -115,7 +122,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/global-investing",
     // Foreign investment hub (inbound — world → AU)
     "/foreign-investment",
-    // Locale-prefixed pages are emitted separately below (via LOCALE_PAGES).
+    // Locale-prefixed pages (zh, ko, ar) — auto-generated from LOCALE_KNOWN_PATHS.
+    // The source of truth is lib/i18n/locales.ts; add new locale pages there.
+    ...localeSitemapPaths,
     "/foreign-investment/property", "/foreign-investment/tax", "/foreign-investment/super",
     "/foreign-investment/shares", "/foreign-investment/energy",
     "/foreign-investment/savings", "/foreign-investment/cfd",

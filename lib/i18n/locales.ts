@@ -82,3 +82,33 @@ export function localePath(path: string, locale: Locale): string {
   if (locale === DEFAULT_LOCALE) return path;
   return `/${locale}${path === "/" ? "" : path}`;
 }
+
+/**
+ * Canonical English paths that have locale-prefixed pages in the app
+ * directory, keyed by non-default locale.
+ *
+ * This is the single source of truth for the sitemap and any other
+ * consumer that needs to know which routes exist in each locale.
+ * To add a new locale page:
+ *   1. Create app/<locale>/<path>/page.tsx
+ *   2. Add the canonical English path to LOCALE_KNOWN_PATHS[locale]
+ *
+ * `en` is intentionally absent — English paths need no prefix.
+ */
+export const LOCALE_KNOWN_PATHS: Partial<Record<Locale, readonly string[]>> = {
+  zh: [
+    "/foreign-investment",
+    "/foreign-investment/siv",
+    "/foreign-investment/property",
+    "/foreign-investment/tax",
+  ],
+  ko: [
+    "/foreign-investment",
+    "/foreign-investment/siv",
+    "/foreign-investment/property",
+    "/foreign-investment/tax",
+  ],
+  ar: [
+    "/foreign-investment/united-arab-emirates",
+  ],
+};
