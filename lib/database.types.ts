@@ -5203,6 +5203,57 @@ export type Database = {
         }
         Relationships: []
       }
+      country_rule_alerts: {
+        Row: {
+          active: boolean
+          alert_key: string
+          body: string
+          country_code: string
+          created_at: string | null
+          cta_href: string | null
+          cta_label: string | null
+          display_order: number
+          headline: string
+          id: number
+          severity: string
+          source: string
+          stales_at: string
+          updated_at: string | null
+        }
+        Insert: {
+          active?: boolean
+          alert_key: string
+          body: string
+          country_code: string
+          created_at?: string | null
+          cta_href?: string | null
+          cta_label?: string | null
+          display_order?: number
+          headline: string
+          id?: number
+          severity: string
+          source: string
+          stales_at: string
+          updated_at?: string | null
+        }
+        Update: {
+          active?: boolean
+          alert_key?: string
+          body?: string
+          country_code?: string
+          created_at?: string | null
+          cta_href?: string | null
+          cta_label?: string | null
+          display_order?: number
+          headline?: string
+          id?: number
+          severity?: string
+          source?: string
+          stales_at?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       course_lessons: {
         Row: {
           content: string | null
