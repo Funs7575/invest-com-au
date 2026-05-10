@@ -11,6 +11,7 @@ import {
 import { listingUrl } from "@/lib/listing-url";
 import type { InvestListingVertical, PlatformType } from "@/lib/types";
 import { generateVersusPairs } from "@/lib/versus-pairs";
+import { BCP47_TAG } from "@/lib/i18n/locales";
 
 // Regenerate sitemap at most once per day — avoids per-request DB queries
 export const revalidate = 86400;
@@ -48,7 +49,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/invest/ipo-calendar", "/invest/commodities",
     "/smsf", "/smsf/auditors",
     "/research",
-    "/foreign-investment/siv",
     "/invest/buy-business/listings", "/invest/mining/listings",
     "/invest/farmland/listings", "/invest/commercial-property/listings",
     "/invest/franchise/listings", "/invest/renewable-energy/listings",
@@ -112,20 +112,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/learn",
     // Global investing hub (outbound — AU residents → world)
     "/global-investing",
-    // Foreign investment hub (inbound — world → AU)
-    "/foreign-investment",
-    // Localised foreign-investor hub + sub-pages (zh, ko)
-    "/zh/foreign-investment", "/ko/foreign-investment",
-    "/zh/foreign-investment/siv", "/ko/foreign-investment/siv",
-    "/zh/foreign-investment/property", "/ko/foreign-investment/property",
-    "/zh/foreign-investment/tax", "/ko/foreign-investment/tax",
-    "/foreign-investment/property", "/foreign-investment/tax", "/foreign-investment/super",
+    // Foreign investment hub — hreflang-aware entries generated in localizedPages below.
+    // Non-localised sub-pages remain here; UAE is also in localizedPages (ar variant).
+    "/foreign-investment/super",
     "/foreign-investment/shares", "/foreign-investment/energy",
     "/foreign-investment/savings", "/foreign-investment/cfd",
     "/foreign-investment/send-money-australia",
     "/foreign-investment/hong-kong", "/foreign-investment/china",
     "/foreign-investment/singapore", "/foreign-investment/united-kingdom",
-    "/foreign-investment/united-arab-emirates",
     "/foreign-investment/guides",
     "/foreign-investment/guides/buy-property-australia-foreigner",
     "/foreign-investment/guides/stamp-duty-foreign-buyers",
@@ -849,5 +843,43 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
   );
 
-  return [...staticPages, ...bestPages, ...bestForPages, ...commodityPages, ...stockDetailPages, ...transferGuidePages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...howToPages, ...expertArticlePages, ...advisorPages, ...advisorTypePages, ...advisorStatePages, ...advisorCityPages, ...advisorLocationPages, ...investingCityPages, ...glossaryPages, ...firmPages, ...propertyListingPages, ...suburbGuidePages, ...propertyHubPages, ...newHubPages, newsletterArchivePage, ...newsletterEditionPages, ...investStaticPages, ...investCategoryPages, ...investSubcategoryPages, ...investListingPages, ...stockbrokerFirmPages, ...quoteJobPages, ...quoteCategoryStatePages];
+  // Locale-aware pages — each group links canonical ↔ locale alternates via hreflang.
+  // These replace the previously bare static-path entries for the same URLs.
+  // x-default always points to the canonical (en-AU) path.
+  const LOCALE_GROUPS: Array<{
+    canonical: string;
+    canonicalPriority: number;
+    localePaths: Partial<Record<"zh" | "ko" | "ar", string>>;
+  }> = [
+    { canonical: "/foreign-investment",           canonicalPriority: 0.9, localePaths: { zh: "/zh/foreign-investment",           ko: "/ko/foreign-investment"           } },
+    { canonical: "/foreign-investment/siv",        canonicalPriority: 0.7, localePaths: { zh: "/zh/foreign-investment/siv",        ko: "/ko/foreign-investment/siv"        } },
+    { canonical: "/foreign-investment/property",   canonicalPriority: 0.7, localePaths: { zh: "/zh/foreign-investment/property",   ko: "/ko/foreign-investment/property"   } },
+    { canonical: "/foreign-investment/tax",        canonicalPriority: 0.7, localePaths: { zh: "/zh/foreign-investment/tax",        ko: "/ko/foreign-investment/tax"        } },
+    { canonical: "/foreign-investment/united-arab-emirates", canonicalPriority: 0.7, localePaths: { ar: "/ar/foreign-investment/united-arab-emirates" } },
+  ];
+
+  const localizedPages: MetadataRoute.Sitemap = LOCALE_GROUPS.flatMap(
+    ({ canonical, canonicalPriority, localePaths }) => {
+      const languages: Record<string, string> = {
+        [BCP47_TAG.en]: `${baseUrl}${canonical}`,
+        "x-default": `${baseUrl}${canonical}`,
+      };
+      for (const [locale, localePath] of Object.entries(localePaths) as [keyof typeof BCP47_TAG, string][]) {
+        languages[BCP47_TAG[locale]] = `${baseUrl}${localePath}`;
+      }
+      const alternates = { languages };
+      return [
+        { url: `${baseUrl}${canonical}`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: canonicalPriority, alternates },
+        ...Object.values(localePaths).map((localePath) => ({
+          url: `${baseUrl}${localePath}`,
+          lastModified: new Date(),
+          changeFrequency: "weekly" as const,
+          priority: Math.min(canonicalPriority, 0.7) as number,
+          alternates,
+        })),
+      ];
+    },
+  );
+
+  return [...staticPages, ...localizedPages, ...bestPages, ...bestForPages, ...commodityPages, ...stockDetailPages, ...transferGuidePages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...howToPages, ...expertArticlePages, ...advisorPages, ...advisorTypePages, ...advisorStatePages, ...advisorCityPages, ...advisorLocationPages, ...investingCityPages, ...glossaryPages, ...firmPages, ...propertyListingPages, ...suburbGuidePages, ...propertyHubPages, ...newHubPages, newsletterArchivePage, ...newsletterEditionPages, ...investStaticPages, ...investCategoryPages, ...investSubcategoryPages, ...investListingPages, ...stockbrokerFirmPages, ...quoteJobPages, ...quoteCategoryStatePages];
 }
