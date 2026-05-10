@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { CURRENT_YEAR } from "@/lib/seo";
+import SmartRecommendationsStrip from "@/components/SmartRecommendationsStrip";
 
 export const metadata: Metadata = {
   title: `Find the Right Advisor for You (${CURRENT_YEAR})`,
@@ -14,5 +15,10 @@ export const metadata: Metadata = {
 };
 
 export default function FindAdvisorLayout({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
+  return (
+    <>
+      <SmartRecommendationsStrip />
+      {children}
+    </>
+  );
 }

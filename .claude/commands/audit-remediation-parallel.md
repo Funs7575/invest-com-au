@@ -100,7 +100,28 @@ default 4 GB OOMs on this sandbox; 5 GB is enough.
 
 ## Step 4 — Open PRs
 
-For each branch:
+**PRECONDITION — duplicate-PR guard (added 2026-05-10).** For each item ID
+about to ship as a PR, first check no open PR already covers it:
+
+```bash
+for ITEM in <X-NN> <Y-NN> <Z-NN>; do
+  DUP=$(gh pr list --state open --search "$ITEM in:title" --json number,title \
+          --jq ".[] | select(.title | test(\"\\\\b$ITEM\\\\b\"))")
+  if [ -n "$DUP" ]; then
+    echo "DUPLICATE for $ITEM — skipping. Existing PR:"
+    echo "$DUP" | jq .
+    # Mark the queue row as in_flight referencing the existing PR; do NOT open a parallel one.
+  fi
+done
+```
+
+If a duplicate is found for any item, drop that item from this fire. Better
+to ship 2 of 3 cleanly than to ship 3 with one going to waste. The 2026-05-10
+cleanup closed #648 vs #702, #649 vs #706, #667 vs #703 — each pair was a
+parallel-fire collision that this gate catches.
+
+For non-duplicate items, open the PR. The PR body MUST include a `## Supersedes`
+section so the `auto-close-superseded.yml` workflow can pick it up on merge:
 
 ```bash
 gh pr create \
@@ -113,6 +134,10 @@ gh pr create \
 
 ## Queue item
 {ITEM_ID} — see docs/audits/REMEDIATION_QUEUE.md
+
+## Supersedes
+_None._
+<!-- or: list of #NNN this PR replaces. The auto-close workflow reads this section on merge. -->
 
 ## Test plan
 - [ ] CI green
