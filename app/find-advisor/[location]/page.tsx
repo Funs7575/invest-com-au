@@ -1,4 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
+import { getIntentCountry } from "@/lib/intent-context-server";
+import { filterByCountryEligibility } from "@/lib/country-mode/eligibility-filter";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import {
@@ -146,13 +148,23 @@ export default async function LocationAdvisorPage({ params }: { params: Promise<
   const supabase = await createClient();
   let query = supabase.from("professionals").select("*").eq("status", "active").eq("location_state", loc.stateCode);
   if (specialtyType) query = query.eq("type", specialtyType);
-  const { data: advisors } = await query;
+  const [{ data: advisors }, intentCountry] = await Promise.all([
+    query,
+    getIntentCountry(),
+  ]);
+
+  // Hide advisors whose country_eligibility blocks the visitor's
+  // intent country (or whose allow-list excludes it). When no intent
+  // country is set this is a no-op. Compounds with PR queue #12.5 —
+  // the eligibility badge highlights matches; this filter hides
+  // explicit non-matches.
+  const eligibleAdvisors = filterByCountryEligibility(advisors || [], intentCountry);
 
   // Rank via the learned lead_quality_weights blend rather than
   // sorting by raw rating. The ranker falls back to curated defaults
   // if the weights table is empty, so this is safe on a fresh DB.
   const weights = await getLatestQualityWeights(supabase);
-  const allAdvisors = rankAdvisors(advisors || [], weights);
+  const allAdvisors = rankAdvisors(eligibleAdvisors, weights);
 
   // JSON-LD
   const jsonLd = {
@@ -227,7 +239,7 @@ export default async function LocationAdvisorPage({ params }: { params: Promise<
         ) : (
           <div className="bg-slate-50 border border-slate-200 rounded-xl p-8 text-center">
             <p className="text-lg font-bold text-slate-900 mb-2">No {type.toLowerCase()}s listed in {loc.city} yet</p>
-            <p className="text-sm text-slate-500 mb-4">We're growing our network. Check back soon or browse all advisors.</p>
+            <p className="text-sm text-slate-500 mb-4">We&apos;re growing our network. Check back soon or browse all advisors.</p>
             <Link href="/find-advisor" className="inline-block px-5 py-2.5 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800">
               Browse All Advisors →
             </Link>
@@ -240,7 +252,7 @@ export default async function LocationAdvisorPage({ params }: { params: Promise<
           <p>When choosing a {type.toLowerCase()} in {loc.city}, look for: verified credentials (AFSL or authorised representative status), transparent fee structure (fee-for-service is generally better for clients than commission-based), relevant specialties for your situation, and positive client reviews.</p>
           <p>All advisors listed on Invest.com.au have their credentials independently verified. We check AFSL status, ASIC registration, and professional memberships before listing any advisor.</p>
           <h3 className="text-base font-bold text-slate-900">How Much Does a {type} in {loc.city} Cost?</h3>
-          <p>Financial advice fees in {loc.city} typically range from $2,500-$5,000 for an initial Statement of Advice (SOA), with ongoing fees of $2,000-$4,000 per year. Some advisors offer fixed-fee packages while others charge hourly ($200-$450/hour). Fee-for-service advisors don't receive commissions, which means their advice is less likely to be conflicted.</p>
+          <p>Financial advice fees in {loc.city} typically range from $2,500-$5,000 for an initial Statement of Advice (SOA), with ongoing fees of $2,000-$4,000 per year. Some advisors offer fixed-fee packages while others charge hourly ($200-$450/hour). Fee-for-service advisors don&apos;t receive commissions, which means their advice is less likely to be conflicted.</p>
         </div>
 
         {/* Cross-links to other locations */}
