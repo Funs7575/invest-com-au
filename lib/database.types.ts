@@ -3844,6 +3844,57 @@ export type Database = {
           },
         ]
       }
+      business_accounts: {
+        Row: {
+          abn: string | null
+          acn: string | null
+          auth_user_id: string
+          business_name: string
+          created_at: string
+          employees_band: string | null
+          id: number
+          industry: string | null
+          legal_name: string | null
+          primary_state: string | null
+          revenue_band: string | null
+          status: string
+          updated_at: string
+          year_established: number | null
+        }
+        Insert: {
+          abn?: string | null
+          acn?: string | null
+          auth_user_id: string
+          business_name: string
+          created_at?: string
+          employees_band?: string | null
+          id?: never
+          industry?: string | null
+          legal_name?: string | null
+          primary_state?: string | null
+          revenue_band?: string | null
+          status?: string
+          updated_at?: string
+          year_established?: number | null
+        }
+        Update: {
+          abn?: string | null
+          acn?: string | null
+          auth_user_id?: string
+          business_name?: string
+          created_at?: string
+          employees_band?: string | null
+          id?: never
+          industry?: string | null
+          legal_name?: string | null
+          primary_state?: string | null
+          revenue_band?: string | null
+          status?: string
+          updated_at?: string
+          year_established?: number | null
+        }
+        Relationships: []
+      }
       buyer_agents: {
         Row: {
           agency_name: string | null
@@ -12563,6 +12614,17 @@ export type Database = {
       }
     }
     Views: {
+      account_kind_membership: {
+        Row: {
+          auth_user_id: string | null
+          created_at: string | null
+          display_label: string | null
+          kind: string | null
+          kind_id: string | null
+          status: string | null
+        }
+        Relationships: []
+      }
       admin_advisor_health: {
         Row: {
           admin_tags: string[] | null
