@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
+import { useCalculatorState } from "@/hooks/use-calculator-state";
 
 function fmt(n: number) {
   return new Intl.NumberFormat("en-AU", { style: "currency", currency: "AUD", maximumFractionDigits: 0 }).format(n);
@@ -14,6 +15,49 @@ export default function FireCalculatorClient() {
   const [annualExpenses, setAnnualExpenses] = useState(60_000);
   const [returnRate, setReturnRate] = useState(7);
   const [withdrawalRate, setWithdrawalRate] = useState(4);
+
+  // Cross-calc persistence (CMP W2 Phase 1).
+  const {
+    value: persistedInputs,
+    setValue: setPersistedInputs,
+    isHydrated: persistHydrated,
+  } = useCalculatorState<{
+    current_age: number;
+    current_savings: number;
+    annual_savings: number;
+    annual_expenses: number;
+    return_rate: number;
+    withdrawal_rate: number;
+  }>("fire_calculator", {
+    current_age: 30,
+    current_savings: 50_000,
+    annual_savings: 30_000,
+    annual_expenses: 60_000,
+    return_rate: 7,
+    withdrawal_rate: 4,
+  });
+
+  useEffect(() => {
+    if (!persistHydrated) return;
+    if (typeof persistedInputs.current_age === "number") setCurrentAge(persistedInputs.current_age);
+    if (typeof persistedInputs.current_savings === "number") setCurrentSavings(persistedInputs.current_savings);
+    if (typeof persistedInputs.annual_savings === "number") setAnnualSavings(persistedInputs.annual_savings);
+    if (typeof persistedInputs.annual_expenses === "number") setAnnualExpenses(persistedInputs.annual_expenses);
+    if (typeof persistedInputs.return_rate === "number") setReturnRate(persistedInputs.return_rate);
+    if (typeof persistedInputs.withdrawal_rate === "number") setWithdrawalRate(persistedInputs.withdrawal_rate);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- hydrate once
+  }, [persistHydrated]);
+
+  useEffect(() => {
+    setPersistedInputs({
+      current_age: currentAge,
+      current_savings: currentSavings,
+      annual_savings: annualSavings,
+      annual_expenses: annualExpenses,
+      return_rate: returnRate,
+      withdrawal_rate: withdrawalRate,
+    });
+  }, [currentAge, currentSavings, annualSavings, annualExpenses, returnRate, withdrawalRate, setPersistedInputs]);
 
   const result = useMemo(() => {
     const r = returnRate / 100;
