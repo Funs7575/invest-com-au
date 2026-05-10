@@ -1,8 +1,37 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import {
+  chooseCallbackRedirect,
+  getKindsForUser,
+  setActiveKind,
+} from "@/lib/account-kinds";
 
 const log = logger("auth-callback");
+
+/**
+ * Decide where to send the user after a successful auth, based on the
+ * kinds they hold. Workspace-style routing per W2 Phase 2.5:
+ *   0 kinds  → fallback (typically /account; lazy investor provisioning)
+ *   1 kind   → that kind's portal, set iv_active_kind cookie
+ *   2+ kinds → /account/select-workspace, no cookie set
+ */
+async function postAuthRedirectUrl(origin: string, fallbackNext: string): Promise<URL> {
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return new URL(fallbackNext, origin);
+    const memberships = await getKindsForUser(user.id);
+    const { redirect, setKind } = chooseCallbackRedirect(memberships, fallbackNext);
+    if (setKind) await setActiveKind(setKind);
+    return new URL(redirect, origin);
+  } catch (err) {
+    log.warn("postAuthRedirectUrl threw — falling back", {
+      err: err instanceof Error ? err.message : String(err),
+    });
+    return new URL(fallbackNext, origin);
+  }
+}
 
 /**
  * Magic-link / email OTP callback. Supabase redirects here after the
@@ -72,7 +101,7 @@ export async function GET(request: NextRequest) {
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
-      return NextResponse.redirect(new URL(next, origin));
+      return NextResponse.redirect(await postAuthRedirectUrl(origin, next));
     }
     log.warn("exchangeCodeForSession failed", {
       error: error.message,
@@ -98,7 +127,7 @@ export async function GET(request: NextRequest) {
       token_hash: tokenHash,
     });
     if (!error) {
-      return NextResponse.redirect(new URL(next, origin));
+      return NextResponse.redirect(await postAuthRedirectUrl(origin, next));
     }
     log.warn("verifyOtp failed", {
       error: error.message,
