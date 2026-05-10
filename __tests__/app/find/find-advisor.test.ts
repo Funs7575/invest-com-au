@@ -4,8 +4,8 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 
 const { mockFrom } = vi.hoisted(() => ({ mockFrom: vi.fn() }));
 
-vi.mock("@/lib/supabase/admin", () => ({
-  createAdminClient: () => ({ from: mockFrom }),
+vi.mock("@/lib/supabase/static", () => ({
+  createStaticClient: () => ({ from: mockFrom }),
 }));
 
 vi.mock("@/lib/logger", () => ({
