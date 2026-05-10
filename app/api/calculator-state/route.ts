@@ -22,6 +22,7 @@ import { createClient } from "@/lib/supabase/server";
 import { logger } from "@/lib/logger";
 import { isRateLimited } from "@/lib/rate-limit";
 import type { CalculatorStateMap } from "@/lib/calculator-state";
+import type { Json } from "@/lib/database.types";
 
 const log = logger("calculator-state-api");
 
@@ -132,7 +133,7 @@ export async function POST(request: NextRequest) {
       .upsert(
         {
           user_id: user.id,
-          state: merged,
+          state: merged as unknown as Json,
           updated_at: new Date().toISOString(),
         },
         { onConflict: "user_id" },
