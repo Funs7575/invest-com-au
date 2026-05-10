@@ -1,4 +1,6 @@
 import PropertiesClient from "./PropertiesClient";
+import JsonLd from "@/components/JsonLd";
+import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 
 export const metadata = {
   title: "Investment Property Listings — Australian Property Opportunities (2026)",
@@ -23,5 +25,14 @@ export const metadata = {
 export const revalidate = 3600;
 
 export default function PropertiesPage() {
-  return <PropertiesClient />;
+  const breadcrumb = breadcrumbJsonLd([
+    { name: "Home", url: absoluteUrl("/") },
+    { name: "Investment Properties" },
+  ]);
+  return (
+    <>
+      <JsonLd data={breadcrumb} testId="properties-jsonld" />
+      <PropertiesClient />
+    </>
+  );
 }
