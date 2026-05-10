@@ -38,12 +38,12 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | V | `claude/audit-remediation/v-07-auth-hardening` | #227/#320/#400/#457/#521/#562 | V-01..V-07 done. | V-07 merged ✓ |
 | W | `claude/audit-remediation/w-12-hub-page-hoc` (W-15 remaining) | #306/#312/#369/#529/#598/#599/#602/#604/#605/#606/#607/#608/#609/#612 | **#609 MERGED 2026-05-08** (W-12+W-13+W-15 dividends). **#612 MERGED 2026-05-08** (W-14 grants→/startup/grants). W-04..W-15 all MERGED. | All W tasks merged ✓ |
 | X | _complete_ | #257/#367/#596/#600/#610/#641/#643/#644/#646/#702 MERGED | X-06..X-09a all MERGED. X-09b: **#702 MERGED 2026-05-10** (ESLint ratchet warn→error + find/[advisor-type]/[city] → createStaticClient). **Stream complete.** | All X PRs merged ✓ |
-| CC | `claude/audit-remediation/cc-05-locale-sitemap` | **#675 MERGED** (CC-01) · **#678 MERGED** (CC-04) · **#704 OPEN** (CC-05 — CI running) | CC-01 done. CC-02/CC-03 false-positive. CC-04 MERGED (#678). CC-05: **#704 OPEN** (hreflang alternates for locale-prefixed sitemap — LOCALE_GROUPS + localizedPages + BCP47_TAG). Last CI: Vercel ✓, Playwright/LH in progress. | CC-05 merged |
+| CC | `claude/audit-remediation/cc-05-locale-sitemap` | **#675 MERGED** (CC-01) · **#678 MERGED** (CC-04) · **#704 OPEN** (CC-05 — CI running) | CC-01 done. CC-02/CC-03 false-positive. CC-04 MERGED (#678). CC-05: **#704 OPEN** (hreflang alternates for locale-prefixed sitemap — LOCALE_GROUPS + localizedPages + BCP47_TAG). Last CI: pending — pushed iter 341. | CC-05 merged |
 | EE | `claude/audit-remediation/ee-01-error-boundaries` | **#653 MERGED** (EE-01+EE-05) | EE-01 done + EE-02/03/04 FP + EE-05 done. **Stream complete.** | #653 merged ✓ |
 | FF | `claude/audit-remediation/ff-01-feature-flag-audit` | **#656 MERGED 2026-05-09** (`4da4004f`) | FF-01..FF-04 done. FF-03 false-positive. **Stream complete.** | FF-04 merged ✓ |
 | OOO | `claude/audit-remediation/ooo-01-runbook-audit` | **#652 MERGED** | OOO-01 done. OOO-04 FP. OOO-02 done. OOO-03 done. **Stream complete.** | OOO-03 merged ✓ |
-| KK | `claude/audit-remediation/kk-03-topic-cluster-map` | **#703 MERGED 2026-05-10** (KK-03) | KK-01 done (#667). KK-02 done (#670). KK-03: **#703 MERGED** (admin topic-cluster-map page — RSC, 242 LOC + sidebar nav link). KK-04 now unblocked (deps KK-02+KK-03 both done). | KK-04 merged |
-| PP | `claude/audit-remediation/pp-01-bundle-budget` | **#706 OPEN** (PP-01 — CI re-running after rebase) | PP-01: hard bundle budget gate — `scripts/bundle-size-budget.mjs` + `bundle-budget` job in `ci.yml` (250 kB ceiling on shared JS chunks). Rebased onto main (iter 343, queue conflict resolved). Last CI: pending — `48b8565` pushed iter 343. **⚠ Tier C (touches .github/workflows/ci.yml) — announce intent before merge.** | All PP tasks merged |
+| KK | `claude/audit-remediation/kk-03-topic-cluster-map` | **#703 OPEN** (KK-03 — CI running) | KK-01 done (#667). KK-02 done (#670). KK-03: **#703 OPEN** (admin topic-cluster-map page — RSC, 242 LOC + sidebar nav link). Rebased onto main (iter 341, queue conflict resolved). Last CI: Lint+Type+Build ✓, Playwright/LH in progress. | KK-04 merged |
+| PP | `claude/audit-remediation/pp-01-bundle-budget` | **#706 OPEN** (PP-01 — CI running) | PP-01: hard bundle budget gate — `scripts/bundle-size-budget.mjs` (excludes page-specific lazy splits, top-10 ranking, --budget-kb flag) + step in ci.yml main job (3000 kB ceiling). Last CI: pending — pushed iter 340. | All PP tasks merged |
 | WW | `claude/audit-remediation/ww-01-watchlist-data-model` | **#651 MERGED** | WW-01 migration + WW-02 watchlist UI done. WW-03/04 blocked (DD-02 dep). **Streams WW-01+WW-02 merged.** | All WW tasks merged ✓ |
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
 | Z | `claude/audit-remediation/z-04-zero-state-ux` | #230/#323/#403/#457/#524/#565 | Z-01..Z-04 done. | Z-04 merged ✓ |
@@ -233,6 +233,20 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 
 ---
 
+### Stream F — Console + duplicate-function DISC items (scout fire 2026-05-10)
+
+| Item | Status | Description | Est. iters | Notes |
+|------|--------|-------------|------------|-------|
+| F-DISC-20260510-01 | pending | `console.error` at `app/api/advisor-enquiry/route.ts:367` — raw call fails `audit:console-calls`. Replace with `logger.error` from `lib/logger.ts`. | ~1 | Surfaced by scout fire 2026-05-10. Exact line: `console.error("[advisor-enquiry] ledger write failed", {`. |
+| F-DISC-20260510-02 | pending | `formatCurrency` from `lib/currency.ts` shadowed locally in 7 files — fails `audit:duplicate-functions`. Files: `app/admin/affiliate-links/page.tsx`, `app/admin/analytics/AdminAnalyticsClient.tsx`, `app/admin/marketplace/attribution/page.tsx`, `app/mortgage-calculator/MortgageCalculatorClient.tsx`, `app/property/foreign-investment/CostCalculator.tsx`, `app/property/foreign-investment/page.tsx`, `app/savings-calculator/SavingsCalculatorClient.tsx`. | ~1 | Surfaced by scout fire 2026-05-10. Fix: replace local def with `import { formatCurrency } from '@/lib/currency'`. |
+| F-DISC-20260510-03 | pending | `sendEmail` from `lib/resend.ts` shadowed locally in 6 files — fails `audit:duplicate-functions`. Files: `app/api/advisor-articles/route.ts`, `app/api/cron/advisor-dunning/route.ts`, `app/api/cron/advisor-profile-gate-drip/route.ts`, `app/api/cron/afsl-expiry-monitor/route.ts`, `app/api/cron/enforce-lead-sla/route.ts`, `app/api/cron/monthly-advisor-reports/route.ts`. | ~1 | Surfaced by scout fire 2026-05-10. Fix: replace local def with `import { sendEmail } from '@/lib/resend'`. |
+| F-DISC-20260510-04 | pending | `requireAdmin` from `lib/require-admin.ts` shadowed locally in 5 admin route files — fails `audit:duplicate-functions`. Files: `app/api/admin/advisor-applications/route.ts`, `app/api/admin/bd-pipeline/route.ts`, `app/api/admin/competitors/route.ts`, `app/api/admin/country-schemes/route.ts`, `app/api/admin/fee-queue/route.ts`. | ~1 | Surfaced by scout fire 2026-05-10. Fix: replace local def with `import { requireAdmin } from '@/lib/require-admin'`. |
+| F-DISC-20260510-05 | pending | `slugify` from `lib/utils.ts` shadowed locally in 4 files — fails `audit:duplicate-functions`. Files: `app/admin/team-members/page.tsx`, `app/api/advisor-articles/route.ts`, `app/api/advisor-signup/route.ts`, `app/api/quotes/route.ts`. | ~1 | Surfaced by scout fire 2026-05-10. Fix: replace local def with `import { slugify } from '@/lib/utils'`. |
+| F-DISC-20260510-06 | pending | `formatAUD` from `lib/currency.ts` shadowed locally in 4 files — fails `audit:duplicate-functions`. Files: `app/api/broker-portal/invoices/[id]/pdf/route.ts`, `app/broker-portal/invoices/[id]/page.tsx`, `app/broker-portal/invoices/page.tsx`, `components/Money.tsx`. | ~1 | Surfaced by scout fire 2026-05-10. Fix: replace local def with `import { formatAUD } from '@/lib/currency'`. |
+| F-DISC-20260510-07 | pending | `storeQualificationData` from `lib/qualification-store.ts` shadowed locally in 3 calculator client files — fails `audit:duplicate-functions`. Files: `app/property-yield-calculator/PropertyYieldCalculatorClient.tsx`, `app/score/ScoreClient.tsx`, `app/smsf-calculator/SMSFCalculatorClient.tsx`. | ~1 | Surfaced by scout fire 2026-05-10. Fix: replace local def with `import { storeQualificationData } from '@/lib/qualification-store'`. |
+
+---
+
 ### Stream FF — Feature flag lifecycle
 
 | Item | Status | Description | Est. iters | Notes |
@@ -305,8 +319,8 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 |------|--------|-------------|------------|-------|
 | KK-01 | **done** | Internal link audit (identify orphaned pages + over-linked hubs) | — | PR #667. `scripts/internal-link-audit.mjs` + `docs/audits/kk-01-internal-link-audit.md`. |
 | KK-02 | **done** | Related-content widget (bottom of article pages) | — | `components/RelatedContentGrid.tsx`. Applied to `article/[slug]` + `research/[slug]`. PR #670. |
-| KK-03 | **done** | Topic cluster map (pillar ↔ cluster ↔ supporting visualised) | — | **#703 MERGED 2026-05-10**. `/admin/topic-clusters` RSC page: 10 cluster cards, 5 stats, ×2+ badges, cross-cluster chips, sidebar nav link. |
-| KK-04 | pending | Automated internal link injection (LSI-based, configurable density) | ~5 | Deps: KK-02+KK-03 (✓ both done). Risky — needs kill-switch. |
+| KK-03 | **in-flight** | Topic cluster map (pillar ↔ cluster ↔ supporting visualised) | ~3 | Deps: KK-01. **#703 OPEN** — `/admin/topic-clusters` RSC page: 10 cluster cards, 5 stats, ×2+ cross-cluster badges, sidebar nav link. |
+| KK-04 | pending | Automated internal link injection (LSI-based, configurable density) | ~5 | Deps: KK-02+KK-03. Risky — needs kill-switch. |
 
 **Stream KK entry condition:** KK-01 can start immediately.
 
@@ -369,7 +383,7 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
-| PP-01 | **in-flight** | Bundle size budget CI check — hard gate in ci.yml main job | — | **#706 OPEN** (iter 340). `scripts/bundle-size-budget.mjs` + step after build. 250 kB ceiling on shared JS chunks. Rebased iter 343. **Tier C — merge intent announced.** |
+| PP-01 | **in-flight** | Bundle size budget CI check — hard gate in ci.yml main job | — | **#706 OPEN** (iter 340). `scripts/bundle-size-budget.mjs` + step after build. 3000 kB ceiling. |
 | PP-02 | pending | Image optimisation audit (identify unoptimised `<img>` tags) | ~2 | |
 | PP-03 | pending | Font loading optimisation (subset + preload) | ~2 | Deps: PP-02. |
 | PP-04 | pending | Third-party script audit (GTM, Intercom, etc. — defer or remove) | ~2 | |
@@ -980,14 +994,6 @@ _Compacted 2026-05-09: 1,223 lines of completed-stream summary + iteration log e
 _The most recent ~24h of iteration log entries (iter ~325 onwards) are temporarily missing from both files — they were lost in the 2026-05-09 truncation incident (recovered as PR #661) before the rotate-iteration-log workflow could archive them. Loop's stuck-detection guard should not regress because the iteration command's Phase 2 falls back to PR-CI history when iter log entries are absent._
 
 See [`REMEDIATION_QUEUE_LOG_ARCHIVE.md`](./REMEDIATION_QUEUE_LOG_ARCHIVE.md) for historical iteration log + completed-stream summary.
-
----
-
-### Iter 343 · 2026-05-10 · Stream KK+PP · KK-03 merge + PP-01 rebase · STATUS: PROGRESS
-
-**What was done:** Phase 2 CI review: PR #703 (KK-03) — all required checks green (Lint+Type+Build ✓, LH ✓, A11y ✓, Playwright still in_progress but not a hard gate). Merged via squash (Tier B — additive admin page, no security/migration). SHA `57cfce7`. KK-04 is now unblocked (deps KK-02+KK-03 both done). PR #704 (CC-05) — Vercel green, LH/Playwright still in_progress. PR #706 (PP-01) — `mergeable_state: "dirty"` (queue file conflict after main advanced 8 commits since branch was cut). Rebased locally: `git rebase origin/main`, took main's queue file at each of 3 conflicting commits, force-pushed `48b8565`. CI now re-running. **Tier C note for PP-01**: PR #706 touches `.github/workflows/ci.yml` — per MERGE_AUTHORIZATION.md Tier C policy, announcing intent to merge here. Merge after CI green unless "STOP" is signalled.
-
-**Status:** `STATUS: PROGRESS · stream=KK+PP · KK-03=merged · PP-01=rebased`
 
 ---
 
