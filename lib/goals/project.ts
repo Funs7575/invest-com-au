@@ -75,8 +75,16 @@ export function projectGoal(input: GoalInput, todayMs: number = Date.now()): Goa
 }
 
 function monthsBetween(fromMs: number, toIso: string): number {
-  const to = new Date(`${toIso}T00:00:00Z`).getTime();
-  const ms = to - fromMs;
-  if (ms <= 0) return 0;
-  return Math.floor(ms / (30.44 * 86400_000));
+  const to = new Date(`${toIso}T00:00:00Z`);
+  const from = new Date(fromMs);
+  if (to.getTime() <= fromMs) return 0;
+  // Calendar-month math, not millisecond-average. 2026-01-01 → 2027-01-01
+  // is exactly 12 months, not 11.99 (which 365 / 30.44 would yield).
+  let months =
+    (to.getUTCFullYear() - from.getUTCFullYear()) * 12 +
+    (to.getUTCMonth() - from.getUTCMonth());
+  // Round down by one if we haven't yet passed the day-of-month threshold
+  // (e.g. Jan 15 → Feb 14 should be 0 months, not 1).
+  if (to.getUTCDate() < from.getUTCDate()) months -= 1;
+  return Math.max(0, months);
 }
