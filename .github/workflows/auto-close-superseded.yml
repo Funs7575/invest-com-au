@@ -1,0 +1,172 @@
+name: Auto-close superseded PRs
+
+# When a PR merges, parse its body for a `## Supersedes` section listing
+# `#NNN` references. For each open PR named, post a pointer comment and
+# close it. The merging PR is the canonical replacement.
+#
+# Why this exists:
+#   2026-05-10's cleanup closed three duplicate-PR pairs by hand:
+#     • #648 (X-09) was superseded by #702 (X-09b) — same intent, cleaner approach
+#     • #649 (PP-01 separate workflow) was superseded by #706 (PP-01 in ci.yml)
+#     • #667 (KK-01 audit) was superseded by #703 (KK-03 bundle that included it)
+#   Each pair sat open until manually triaged. Token cost on the loser
+#   PR was already paid. With this workflow, the bundling/canonical PR
+#   declares its supersede list in the body, and merge fires the close.
+#
+# Format (in the merging PR's body):
+#   ## Supersedes
+#   - #NNN — short reason
+#   - #MMM — short reason
+#
+# Or:
+#   ## Supersedes
+#   _None._
+#
+# The workflow extracts only the lines between `## Supersedes` and the
+# next `## ` heading. Anything outside that section is ignored, so
+# casual `#NNN` references in the Summary or commit messages don't get
+# accidentally closed.
+#
+# Safety:
+#   • Only fires on `pull_request: closed` with merged=true.
+#   • Skips numbers that are already closed (idempotent re-runs are
+#     no-ops, e.g. when a workflow re-runs on the same merged PR).
+#   • Will NOT close PRs from another repo (cross-repo `#NNN` references
+#     are not supported — gh resolves to the current repo by default).
+#   • Comments BEFORE closing so the trail is preserved if the close
+#     itself fails (e.g., transient API error).
+
+on:
+  pull_request:
+    types: [closed]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: auto-close-superseded-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  close-superseded:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Parse supersedes + close
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MERGED_PR: ${{ github.event.pull_request.number }}
+          MERGED_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${PR_BODY:-}" ]; then
+            echo "No PR body — nothing to parse."
+            exit 0
+          fi
+
+          # Extract the Supersedes section: everything between
+          #   ^## Supersedes
+          # and the next `## ` line (or EOF). awk is more robust than
+          # sed here for handling edge cases (no trailing heading, blank
+          # lines, etc.).
+          section=$(printf '%s\n' "$PR_BODY" | awk '
+            /^## Supersedes[[:space:]]*$/ { in_section = 1; next }
+            in_section && /^## / { exit }
+            in_section { print }
+          ')
+
+          if [ -z "$section" ]; then
+            echo "No '## Supersedes' section found — nothing to close."
+            exit 0
+          fi
+
+          echo "=== Supersedes section ==="
+          echo "$section"
+          echo "=========================="
+
+          # Pull every #NNN reference. Strip backticks (in case someone
+          # wrote `#123`), HTML comments, and the literal "_None._" text.
+          numbers=$(echo "$section" \
+            | sed -e 's/<!--[^>]*-->//g' \
+                  -e 's/`//g' \
+                  -e 's/_None\._//g' \
+            | grep -oE '#[0-9]+' \
+            | sed 's/#//' \
+            | sort -u || true)
+
+          if [ -z "$numbers" ]; then
+            echo "Section present but no #NNN references — done."
+            exit 0
+          fi
+
+          echo "Will attempt to close: $numbers"
+
+          closed=0
+          skipped=0
+          failed=0
+
+          for n in $numbers; do
+            # Don't close ourselves (in case someone references the
+            # merged PR's own number for some reason).
+            if [ "$n" = "$MERGED_PR" ]; then
+              echo "  ↪ #$n is the merging PR itself — skipping"
+              skipped=$(( skipped + 1 ))
+              continue
+            fi
+
+            state=$(gh pr view "$n" --repo "$REPO" --json state --jq '.state' 2>/dev/null || echo "MISSING")
+
+            case "$state" in
+              OPEN)
+                echo "  → closing #$n"
+                close_body="🤖 **Auto-close (superseded):** this PR was named in the \`## Supersedes\` section of #$MERGED_PR ($MERGED_TITLE), which has now merged. Closing as superseded."$'\n\n'"If this is wrong, reopen the PR and remove the reference from #$MERGED_PR's body for next time."
+                if gh pr comment "$n" --repo "$REPO" --body "$close_body" ; then
+                  if gh pr close "$n" --repo "$REPO" ; then
+                    closed=$(( closed + 1 ))
+                  else
+                    echo "  ⚠ comment posted but close failed for #$n"
+                    failed=$(( failed + 1 ))
+                  fi
+                else
+                  echo "  ⚠ comment failed for #$n"
+                  failed=$(( failed + 1 ))
+                fi
+                ;;
+              CLOSED|MERGED)
+                echo "  ↪ #$n already $state — skipping"
+                skipped=$(( skipped + 1 ))
+                ;;
+              MISSING)
+                echo "  ⚠ #$n not found in this repo — skipping"
+                skipped=$(( skipped + 1 ))
+                ;;
+              *)
+                echo "  ⚠ #$n unexpected state: $state — skipping"
+                skipped=$(( skipped + 1 ))
+                ;;
+            esac
+          done
+
+          echo ""
+          echo "=== Summary ==="
+          echo "Closed: $closed | Skipped: $skipped | Failed: $failed"
+
+          {
+            echo "## Auto-close superseded summary"
+            echo ""
+            echo "Triggered by merge of #$MERGED_PR — $MERGED_TITLE"
+            echo ""
+            echo "- Closed: $closed"
+            echo "- Skipped (already closed / not found / self): $skipped"
+            echo "- Failed: $failed"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          # Don't fail the job on close errors — the workflow has already
+          # done its best, and a hard failure here would obscure other
+          # signals. Errors are surfaced in the summary.
+          exit 0
