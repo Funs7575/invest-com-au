@@ -1931,6 +1931,7 @@ export type Database = {
       anonymous_saves: {
         Row: {
           bookmark_type: string
+          calculator_state: Json
           claimed_at: string | null
           claimed_by_user_id: string | null
           created_at: string
@@ -1941,6 +1942,7 @@ export type Database = {
         }
         Insert: {
           bookmark_type: string
+          calculator_state?: Json
           claimed_at?: string | null
           claimed_by_user_id?: string | null
           created_at?: string
@@ -1951,6 +1953,7 @@ export type Database = {
         }
         Update: {
           bookmark_type?: string
+          calculator_state?: Json
           claimed_at?: string | null
           claimed_by_user_id?: string | null
           created_at?: string
@@ -11777,6 +11780,24 @@ export type Database = {
           label?: string | null
           note?: string | null
           ref?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_calculator_state: {
+        Row: {
+          state: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          state?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          state?: Json
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
