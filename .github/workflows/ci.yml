@@ -67,6 +67,9 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: JSON-LD coverage gate
+        run: node scripts/check-jsonld-coverage.mjs
+
       - name: Test with coverage
         run: npm run test:coverage
 

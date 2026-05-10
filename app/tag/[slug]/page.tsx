@@ -4,6 +4,8 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { Article } from "@/lib/types";
+import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
+import JsonLd from "@/components/JsonLd";
 
 export const revalidate = 3600;
 
@@ -52,9 +54,15 @@ export default async function TagPage({ params }: Props) {
   if (articles.length === 0) notFound();
 
   const tagDisplay = prettifyTag(slug);
+  const breadcrumb = breadcrumbJsonLd([
+    { name: "Home", url: absoluteUrl("/") },
+    { name: "Articles", url: absoluteUrl("/articles") },
+    { name: `Tag: ${tagDisplay}` },
+  ]);
 
   return (
     <div className="py-6 md:py-12">
+      <JsonLd data={breadcrumb} testId="tag-jsonld" />
       <div className="container-custom">
         <nav className="text-xs md:text-sm text-slate-500 mb-2 md:mb-4">
           <Link href="/" className="hover:text-slate-900">Home</Link>
