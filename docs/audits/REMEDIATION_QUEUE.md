@@ -42,7 +42,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | EE | `claude/audit-remediation/ee-01-error-boundaries` | **#653 MERGED** (EE-01+EE-05) | EE-01 done + EE-02/03/04 FP + EE-05 done. **Stream complete.** | #653 merged ✓ |
 | FF | `claude/audit-remediation/ff-01-feature-flag-audit` | **#656 MERGED 2026-05-09** (`4da4004f`) | FF-01..FF-04 done. FF-03 false-positive. **Stream complete.** | FF-04 merged ✓ |
 | OOO | `claude/audit-remediation/ooo-01-runbook-audit` | **#652 MERGED** | OOO-01 done. OOO-04 FP. OOO-02 done. OOO-03 done. **Stream complete.** | OOO-03 merged ✓ |
-| KK | `claude/audit-remediation/kk-04-link-injection` · `claude/audit-remediation/kk-04-iter2-cluster-selection` · `claude/audit-remediation/kk-04-iter3-density-config` | **#703 MERGED 2026-05-10** (KK-03) · **#711 MERGED 2026-05-10** (KK-04 iter 1) · **#743 OPEN** (KK-04 iter 2) · **#744 OPEN** (KK-04 iter 3) | KK-01 done (#667). KK-02 done (#670). KK-03: **#703 MERGED 2026-05-10** (`57cfce7`). KK-04 iter 1: **#711 MERGED 2026-05-10** (`34455f2b` — flag + density cap + kill-switch + 6 tests). KK-04 iter 2: **#743 OPEN** (`ee87690` LSI/cluster-aware selection; CI rescue cherry-picked regen+driftallowlist). KK-04 iter 3: **#744 OPEN** (per-article-type density config). KK-04 iters 4-5 pending. | KK-04 merged |
+| KK | `claude/audit-remediation/kk-04-link-injection` · `claude/audit-remediation/kk-04-iter2-cluster-selection` · `claude/audit-remediation/kk-04-iter3-density-config` · `claude/audit-remediation/kk-04-iter4-admin-density-override` · `claude/audit-remediation/kk-04-iter5-integration-tests` | **#703 MERGED 2026-05-10** (KK-03) · **#711 MERGED 2026-05-10** (KK-04 iter 1) · **#743 OPEN** (KK-04 iter 2) · **#747 OPEN** (KK-04 iter 3) · **#749 OPEN** (KK-04 iter 4) · **#751 OPEN** (KK-04 iter 5) | KK-01 done (#667). KK-02 done (#670). KK-03: **#703 MERGED 2026-05-10** (`57cfce7`). KK-04 iter 1: **#711 MERGED 2026-05-10** (`34455f2b` — flag + density cap + kill-switch + 6 tests). KK-04 iter 2: **#743 OPEN** (LSI/cluster-aware selection; CI rescue — regen+driftallowlist cherry-picked). KK-04 iter 3: **#747 OPEN** (per-category density config `linkDensityForCategory`; retrigger `f938ad6` pushed after driftallowlist fix for listing_owner_accounts+property_holdings). KK-04 iter 4: **#749 OPEN** (`link_density_override` col + admin editor UI + save API + article page; migration `20260510_kk04_articles_link_density_override.sql`). KK-04 iter 5: **#751 OPEN** (Playwright smoke `e2e/link-injection.spec.ts` + 11 unit tests + 4 integration tests for override). All 5 iters complete — pending merge in order. | KK-04 merged |
 | PP | `claude/audit-remediation/pp-01-bundle-budget` | **#706 MERGED 2026-05-10** (PP-01) | PP-01: **#706 MERGED 2026-05-10** (all CI green — founder merged). PP-02..05 pending. | All PP tasks merged |
 | WW | `claude/audit-remediation/ww-01-watchlist-data-model` | **#651 MERGED** | WW-01 migration + WW-02 watchlist UI done. WW-03/04 blocked (DD-02 dep). **Streams WW-01+WW-02 merged.** | All WW tasks merged ✓ |
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
@@ -997,11 +997,35 @@ See [`REMEDIATION_QUEUE_LOG_ARCHIVE.md`](./REMEDIATION_QUEUE_LOG_ARCHIVE.md) for
 
 ---
 
+### Iter 352 · 2026-05-10 · Stream KK · KK-04 iter 5 — Playwright smoke + unit + integration tests · STATUS: PROGRESS
+
+**What was done:** Batch iter 5. Phase 2: PR #749 (KK-04 iter 4) queued in CI; no failures yet. Phase 3: picked KK-04 iter 5 (test coverage for link-injection feature). Phase 4: confirmed iter 4 migration/types/UI all committed; iter 5 adds coverage. Phase 5: (a) `e2e/link-injection.spec.ts` — 4 Playwright smoke tests (articles listing renders, navigate to article, amber links have valid hrefs, no JS errors; article-dependent tests use `test.skip()` if staging has no seeded articles). (b) `__tests__/lib/keyword-linking.test.ts` — 10 new unit tests across 2 new suites: "splitByLinks — edge cases" (keyword at start/end, multiple keywords, text reconstruction, numeric string, word-boundary FIRB/FIRBs) and "linkifyHtml — edge cases" (`rel=glossary` on glossary targets, `<code>` block untouched, title attr preserved, amber CSS class present). (c) `__tests__/integration/articles-editor.int.test.ts` — 4 new integration tests: `link_density_override` persisted for valid integer (3), null when cleared, out-of-range (999) → null, zero accepted. Phase 6: committed + pushed `claude/audit-remediation/kk-04-iter5-integration-tests`, PR #751 opened. Batch of 5 iters complete.
+
+**Status:** `STATUS: PROGRESS · stream=KK · item=KK-04-iter5 · pr=#751`
+
+---
+
+### Iter 351 · 2026-05-10 · Stream KK · KK-04 iter 4 — admin density override · STATUS: PROGRESS
+
+**What was done:** Batch iter 4. Phase 2: PR #747 (KK-04 iter 3) — `Supabase types drift` and `Database types drift gate` rescued; retrigger commit `f938ad6` pushed after driftallowlist fix for `listing_owner_accounts` + `property_holdings`. CI re-running. Phase 3: picked KK-04 iter 4 (per-article density override column + admin UI). Phase 4: confirmed no `link_density_override` column exists in any migration; verified admin editor `ArticleEditorClient.tsx` has no density control. Phase 5: (a) Migration `supabase/migrations/20260510_kk04_articles_link_density_override.sql` — adds `link_density_override smallint` nullable column to `articles` with 0–20 range constraint (idempotent). (b) `lib/database.types.ts` — added `link_density_override: number | null` to articles Row/Insert/Update. (c) `lib/types.ts` — added `link_density_override?: number | null` to `Article` interface. (d) `app/admin/articles/editor/[slug]/ArticleEditorClient.tsx` — added `linkDensityOverride` state + number input UI (0–20, blank=category default). (e) `app/admin/articles/editor/[slug]/page.tsx` — added column to select + prop pass. (f) `app/api/admin/articles-editor/save/route.ts` — parses and validates override (null for out-of-range). (g) `app/article/[slug]/page.tsx` — derives `articleLinkDensity` from `link_density_override ?? 5`, passes as `maxLinks` to all 3 `<LinkifiedText>`. Phase 6: committed + pushed `claude/audit-remediation/kk-04-iter4-admin-density-override`, PR #749 opened.
+
+**Status:** `STATUS: PROGRESS · stream=KK · item=KK-04-iter4 · pr=#749`
+
+---
+
+### Iter 350 · 2026-05-10 · Stream KK · CI rescue — Database types drift gate (#747) + driftallowlist fix · STATUS: CI-RESCUE
+
+**What was done:** Phase 2: PR #747 (KK-04 iter 3) — `Database types drift gate` FAILURE. Root cause: regen cherry-pick from iter 348 picked up 5 newly-typed tables (`business_accounts`, `investor_goals`, `listing_owner_accounts`, `property_holdings`, `account_kind_membership`) but `.driftallowlist` on the iter 3 branch only had 2 (`business_accounts`, `investor_goals`). Diagnosed locally by running `node scripts/check-database-types-drift.mjs` on iter 3 branch. Fix: added `listing_owner_accounts` and `property_holdings` to `.driftallowlist`; pushed retrigger commit `f938ad6` to `claude/audit-remediation/kk-04-iter3-density-config`. `account_kind_membership` is a VIEW (not a TABLE), so not subject to the drift gate. PR #741 (F-DISC): `Database types drift gate` also shows in prior iteration — same driftallowlist fix covers it. CI re-queued.
+
+**Status:** `STATUS: CI-RESCUE · stream=KK · pr=#747`
+
+---
+
 ### Iter 349 · 2026-05-10 · Stream KK · KK-04 iter 3 — per-article-type density config · STATUS: PROGRESS
 
-**What was done:** Batch iter 3. Phase 2: no new CI failures on in-flight PRs beyond those rescued in iter 348. Phase 3: picked KK-04 iter 3 (per-article-type density config) — next unblocked KK item. Phase 4: verified article page uses hardcoded `maxLinks={5}` for all categories; iter 3 introduces `linkDensityForCategory(category)` to vary the cap by article type. Phase 5: added `LINK_DENSITY_BY_CATEGORY` map + `linkDensityForCategory` export to `lib/keyword-linking.ts`; updated `app/article/[slug]/page.tsx` to derive `articleLinkDensity` via the new function; added 4 tests to `__tests__/lib/keyword-linking.test.ts`. Phase 6: committed + pushed `claude/audit-remediation/kk-04-iter3-density-config`, PR #744 opened.
+**What was done:** Batch iter 3. Phase 2: no new CI failures on in-flight PRs beyond those rescued in iter 348. Phase 3: picked KK-04 iter 3 (per-article-type density config) — next unblocked KK item. Phase 4: verified article page uses hardcoded `maxLinks={5}` for all categories; iter 3 introduces `linkDensityForCategory(category)` to vary the cap by article type. Phase 5: added `LINK_DENSITY_BY_CATEGORY` map + `linkDensityForCategory` export to `lib/keyword-linking.ts`; updated `app/article/[slug]/page.tsx` to derive `articleLinkDensity` via the new function; added 4 tests to `__tests__/lib/keyword-linking.test.ts`. Phase 6: committed + pushed `claude/audit-remediation/kk-04-iter3-density-config`, PR #747 opened.
 
-**Status:** `STATUS: PROGRESS · stream=KK · item=KK-04-iter3 · pr=#744`
+**Status:** `STATUS: PROGRESS · stream=KK · item=KK-04-iter3 · pr=#747`
 
 ---
 
