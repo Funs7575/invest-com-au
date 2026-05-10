@@ -193,7 +193,7 @@ export function useCalculatorState<T extends Record<string, unknown>>(
     setValue((prev) => ({ ...prev, ...(prefill as Partial<T>) }));
     // Find which source rule fired so the UI can attribute it.
     for (const rule of PREFILL_RULES[key]!) {
-      if (session[rule.from]) return rule.from;
+      if (session[rule.fromCalculator]) return rule.fromCalculator;
     }
     return null;
   }, [key, setValue]);
