@@ -5,6 +5,7 @@ import {
   BCP47_TAG,
   LOCALE_LABEL,
   LOCALE_DIR,
+  LOCALE_KNOWN_PATHS,
   isLocale,
   stripLocalePrefix,
   localePath,
@@ -132,5 +133,59 @@ describe("type-level guard", () => {
     // every element of LOCALES is type-compatible with Locale.
     const all: Locale[] = [...LOCALES];
     expect(all).toHaveLength(4);
+  });
+});
+
+describe("LOCALE_KNOWN_PATHS (CC-05 — locale-aware sitemap)", () => {
+  it("does not include 'en' — default locale needs no prefix", () => {
+    expect(LOCALE_KNOWN_PATHS.en).toBeUndefined();
+  });
+
+  it("includes ar with the UAE foreign-investment page", () => {
+    expect(LOCALE_KNOWN_PATHS.ar).toContain(
+      "/foreign-investment/united-arab-emirates",
+    );
+  });
+
+  it("includes zh and ko foreign-investment hub paths", () => {
+    expect(LOCALE_KNOWN_PATHS.zh).toContain("/foreign-investment");
+    expect(LOCALE_KNOWN_PATHS.ko).toContain("/foreign-investment");
+  });
+
+  it("zh and ko paths are symmetric (same set)", () => {
+    const zh = [...(LOCALE_KNOWN_PATHS.zh ?? [])].sort();
+    const ko = [...(LOCALE_KNOWN_PATHS.ko ?? [])].sort();
+    expect(zh).toEqual(ko);
+  });
+
+  it("generates correct locale-prefixed URLs via localePath", () => {
+    const arPrefixed = (LOCALE_KNOWN_PATHS.ar ?? []).map((p) =>
+      localePath(p, "ar"),
+    );
+    expect(arPrefixed).toContain("/ar/foreign-investment/united-arab-emirates");
+
+    const zhPrefixed = (LOCALE_KNOWN_PATHS.zh ?? []).map((p) =>
+      localePath(p, "zh"),
+    );
+    expect(zhPrefixed).toContain("/zh/foreign-investment");
+    expect(zhPrefixed).toContain("/zh/foreign-investment/siv");
+    expect(zhPrefixed).toContain("/zh/foreign-investment/property");
+    expect(zhPrefixed).toContain("/zh/foreign-investment/tax");
+  });
+
+  it("all paths start with '/'", () => {
+    Object.values(LOCALE_KNOWN_PATHS).forEach((paths) => {
+      (paths ?? []).forEach((p) => {
+        expect(p).toMatch(/^\//);
+      });
+    });
+  });
+
+  it("no path is the root '/' — root locale pages are not yet supported", () => {
+    Object.values(LOCALE_KNOWN_PATHS).forEach((paths) => {
+      (paths ?? []).forEach((p) => {
+        expect(p).not.toBe("/");
+      });
+    });
   });
 });
