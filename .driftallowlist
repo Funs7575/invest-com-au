@@ -140,7 +140,3 @@ fund_reviews              # fund review content — backfill migration pending
 
 # PostGIS extension-managed (out of scope — comes from CREATE EXTENSION postgis)
 spatial_ref_sys
-
-# W2 Phase — tables created in Supabase dashboard without migration files; pending Stream A backfill
-business_accounts  # W2 Phase 2.5 — business account type; migration pending
-investor_goals     # W2 Phase 2 — investor goals tracking; migration pending
