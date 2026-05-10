@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { getIntentCountry } from "@/lib/intent-context-server";
 import { filterByCountryEligibility } from "@/lib/country-mode/eligibility-filter";
+import WhatsAppContactButton from "@/components/WhatsAppContactButton";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import {
@@ -201,9 +202,12 @@ export default async function LocationAdvisorPage({ params }: { params: Promise<
         <h1 className="text-2xl md:text-4xl font-extrabold text-slate-900 mb-2">
           Best {type}s in {loc.city}
         </h1>
-        <p className="text-sm md:text-base text-slate-500 mb-6">
+        <p className="text-sm md:text-base text-slate-500 mb-4">
           {loc.description} All advisors hold verified Australian credentials.
         </p>
+        <div className="mb-6">
+          <WhatsAppContactButton sourcePath={`/find-advisor/${location}`} variant="full" />
+        </div>
 
         {allAdvisors.length > 0 ? (
           <div className="space-y-3">
