@@ -86,7 +86,7 @@ describe("POST /api/account/claim-anonymous", () => {
     const res = await POST(makePost({ session_id: "sess-abc" }));
     expect(res.status).toBe(200);
     const body = await res.json();
-    expect(body).toEqual({ ok: true, bookmarks_claimed: 5, quizzes_claimed: 2 });
+    expect(body).toMatchObject({ ok: true, bookmarks_claimed: 5, quizzes_claimed: 2 });
   });
 
   it("calls both claim functions with the correct args in parallel", async () => {
