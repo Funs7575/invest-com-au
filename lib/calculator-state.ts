@@ -13,6 +13,7 @@
  */
 
 import type { QualificationData } from "@/lib/qualification-store";
+import type { Json } from "@/lib/database.types";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 
@@ -118,7 +119,7 @@ export async function writeDbState(
       .upsert(
         {
           user_id: userId,
-          state: merged,
+          state: merged as unknown as Json,
           updated_at: new Date().toISOString(),
         },
         { onConflict: "user_id" },
@@ -193,7 +194,7 @@ export async function claimAnonymousCalculatorState(
       .upsert(
         {
           user_id: userId,
-          state: merged,
+          state: merged as unknown as Json,
           updated_at: new Date().toISOString(),
         },
         { onConflict: "user_id" },
