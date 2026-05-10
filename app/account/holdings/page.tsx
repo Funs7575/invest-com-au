@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import HoldingsClient, { type HoldingRow } from "./HoldingsClient";
+import { getCurrentPricesBatch, keyOf } from "@/lib/holdings/value";
 
 export const dynamic = "force-dynamic";
 
@@ -44,7 +45,28 @@ export default async function HoldingsPage() {
     acquiredAt: r.acquired_at,
     brokerSlug: r.broker_slug,
     notes: r.notes,
+    currentPriceCents: null, // populated below from cache/upstream
+    currentPriceCurrency: null,
+    currentPriceSource: null,
+    currentPriceFetchedAt: null,
   }));
+
+  // Fetch current prices in parallel (cache-first; falls back to upstream
+  // for cold/expired entries; falls back to stale cache when upstream is down).
+  if (initialItems.length > 0) {
+    const priceMap = await getCurrentPricesBatch(
+      initialItems.map((h) => ({ ticker: h.ticker, exchange: h.exchange })),
+    );
+    for (const h of initialItems) {
+      const v = priceMap.get(keyOf(h.ticker, h.exchange));
+      if (v) {
+        h.currentPriceCents = v.priceCents;
+        h.currentPriceCurrency = v.currency;
+        h.currentPriceSource = v.source;
+        h.currentPriceFetchedAt = v.fetchedAt;
+      }
+    }
+  }
 
   const brokerOptions = (brokers ?? []).map((b) => ({
     slug: b.slug as string,
