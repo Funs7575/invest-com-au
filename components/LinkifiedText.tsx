@@ -23,6 +23,12 @@ interface Props {
    * Default: unlimited (existing behaviour when omitted).
    */
   maxLinks?: number;
+  /**
+   * Hub pillar path for the article's topic cluster (e.g. "/smsf", "/tax").
+   * When provided with `maxLinks`, cluster-relevant links fill the cap first.
+   * Obtain via `pillarPathForCategory(article.category)`.
+   */
+  pillarPath?: string;
 }
 
 /**
@@ -34,7 +40,7 @@ interface Props {
  * returns an array of `string | {href,label}` nodes that React renders
  * natively.
  */
-export default function LinkifiedText({ text, skipHrefs, className, disabled, maxLinks }: Props) {
+export default function LinkifiedText({ text, skipHrefs, className, disabled, maxLinks, pillarPath }: Props) {
   if (!text) return null;
 
   const wrapperClass = `max-w-none text-slate-700 leading-relaxed whitespace-pre-line ${className ?? ""}`;
@@ -44,7 +50,7 @@ export default function LinkifiedText({ text, skipHrefs, className, disabled, ma
   }
 
   const skip = new Set(skipHrefs ?? []);
-  const parts = splitByLinks(text, maxLinks);
+  const parts = splitByLinks(text, maxLinks, pillarPath);
 
   return (
     <div className={wrapperClass}>
