@@ -31,7 +31,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | O | `claude/audit-remediation/o-04-rls-zero-policy` | #221/#314/#350/#393/#457/#515/#552/#593 | **#593 MERGED 2026-05-08** — all 57 zero-policy tables remediated. | O-04 merged ✓ |
 | P | `claude/audit-remediation/p-05-perf-budgets` | #222/#315/#394/#457/#516/#553 | P-01..P-05 done. | P-05 merged ✓ |
 | Q | `claude/audit-remediation/q-05-quiz-integrity` | #223/#316/#395/#457/#517/#554 | Q-01..Q-05 done. | Q-05 merged ✓ |
-| R | `claude/audit-remediation/r-coverage-m2b-calculators` · **#640 OPEN** (CI queued) | #290/#396/#459/#466/#471/#472/#473/#510/#511/#513/#514/#516/#517/#519/#521/#526/#527/#528/#529/#530/#531/#532/#533/#534/#535/#536/#537/#538/#539/#540/#541/#542/#543/#544/#545/#546/#547/#548/#549/#550/#551/#552/#553/#554/#555/#556/#557/#558/#559/#560/#561/#562/#563/#564/#565/#566/#567/#568/#569/#570/#571/#572/#573/#574/#575/#576/#577/#578/#579/#580/#581/#582/#583/#584/#585/#586/#587/#588/#589/#590/#591/#592/#593/#594/#595/#596/#597/#598/#599/#600/#601/#602/#603/#604/#605/#606/#607/#608/#609/#610/#611/#612/#640 | **#595 MERGED** (RATCHET M1 — coverage floors raised). **#597 MERGED** (R-COVERAGE-15). **#601 MERGED** (M2-A done — 12 files). **#640 OPEN** (M2-B — CGT+mortgage+currency.formatAUD, 3 test files, 368 LOC). | #640 merged |
+| R | `claude/audit-remediation/r-coverage-m2b-calculators` · **#640 OPEN** (CI running) | #290/#396/#459/#466/#471/#472/#473/#510/#511/#513/#514/#516/#517/#519/#521/#526/#527/#528/#529/#530/#531/#532/#533/#534/#535/#536/#537/#538/#539/#540/#541/#542/#543/#544/#545/#546/#547/#548/#549/#550/#551/#552/#553/#554/#555/#556/#557/#558/#559/#560/#561/#562/#563/#564/#565/#566/#567/#568/#569/#570/#571/#572/#573/#574/#575/#576/#577/#578/#579/#580/#581/#582/#583/#584/#585/#586/#587/#588/#589/#590/#591/#592/#593/#594/#595/#596/#597/#598/#599/#600/#601/#602/#603/#604/#605/#606/#607/#608/#609/#610/#611/#612/#640 | **#595 MERGED** (RATCHET M1 — coverage floors raised). **#597 MERGED** (R-COVERAGE-15). **#601 MERGED** (M2-A done — 12 files). **#640 OPEN** (M2-B — CGT+mortgage+currency.formatAUD, 3 test files, 368 LOC). Converted draft→ready iter 337 to trigger CI. | #640 merged |
 | S | _complete_ | **#594 MERGED 2026-05-08** (`ee498f8c`) | queue-sync iter 315 — #594 MERGED. | S-01..S-05 done. **Stream complete.** |
 | T | `claude/audit-remediation/t-05-type-safety` | #225/#318/#398/#457/#519/#560 | T-01..T-05 done. | T-05 merged ✓ |
 | U | `claude/audit-remediation/u-04-url-canonicals` | #226/#319/#399/#457/#520/#561 | U-01..U-04 done. | U-04 merged ✓ |
@@ -42,6 +42,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | EE | `claude/audit-remediation/ee-01-error-boundaries` | **#653 MERGED** (EE-01+EE-05) | EE-01 done + EE-02/03/04 FP + EE-05 done. **Stream complete.** | #653 merged ✓ |
 | FF | `claude/audit-remediation/ff-01-feature-flag-audit` | **#656 MERGED 2026-05-09** (`4da4004f`) | FF-01..FF-04 done. FF-03 false-positive. **Stream complete.** | FF-04 merged ✓ |
 | OOO | `claude/audit-remediation/ooo-01-runbook-audit` | **#652 MERGED** | OOO-01 done. OOO-04 FP. OOO-02 done. OOO-03 done. **Stream complete.** | OOO-03 merged ✓ |
+| KK | `claude/audit-remediation/kk-03-topic-cluster-map` | **#703 OPEN** (KK-03 — CI running) | KK-01 done (#667). KK-02 done (#670). KK-03: **#703 OPEN** (admin topic-cluster-map page — RSC, 242 LOC + sidebar nav link). Last CI: pending — pushed iter 337. | KK-04 merged |
 | WW | `claude/audit-remediation/ww-01-watchlist-data-model` | **#651 MERGED** | WW-01 migration + WW-02 watchlist UI done. WW-03/04 blocked (DD-02 dep). **Streams WW-01+WW-02 merged.** | All WW tasks merged ✓ |
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
 | Z | `claude/audit-remediation/z-04-zero-state-ux` | #230/#323/#403/#457/#524/#565 | Z-01..Z-04 done. | Z-04 merged ✓ |
@@ -303,7 +304,7 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 |------|--------|-------------|------------|-------|
 | KK-01 | **done** | Internal link audit (identify orphaned pages + over-linked hubs) | — | PR #667. `scripts/internal-link-audit.mjs` + `docs/audits/kk-01-internal-link-audit.md`. |
 | KK-02 | **done** | Related-content widget (bottom of article pages) | — | `components/RelatedContentGrid.tsx`. Applied to `article/[slug]` + `research/[slug]`. PR #670. |
-| KK-03 | pending | Topic cluster map (pillar ↔ cluster ↔ supporting visualised) | ~3 | Deps: KK-01. |
+| KK-03 | **in-flight** | Topic cluster map (pillar ↔ cluster ↔ supporting visualised) | ~3 | Deps: KK-01. **#703 OPEN** — `/admin/topic-clusters` RSC page: 10 cluster cards, 5 stats, ×2+ cross-cluster badges, sidebar nav link. |
 | KK-04 | pending | Automated internal link injection (LSI-based, configurable density) | ~5 | Deps: KK-02+KK-03. Risky — needs kill-switch. |
 
 **Stream KK entry condition:** KK-01 can start immediately.
@@ -978,3 +979,11 @@ See [`REMEDIATION_QUEUE_LOG_ARCHIVE.md`](./REMEDIATION_QUEUE_LOG_ARCHIVE.md) for
 **What was done:** Detected that PR #641 (X-06), #643 (X-07), #644 (X-08), and #678 (CC-04) had all merged to main since the last queue update. X-09b was blocked (#648) due to unrelated-history issue (main force-push). Found `claude/audit-remediation/x-09b-ratchet-final` branch already prepped with the correct fix: switched `app/find/[advisor-type]/[city]/page.tsx` from `createAdminClient` to `createClient`/`createStaticClient` (professionals table has anon SELECT policy) + ratcheted `eslint.config.mjs` warn→error. Created PR #702. Updated queue: X row updated, CC-04 marked merged, X-09b blocked entry resolved.
 
 **Status:** `STATUS: PROGRESS · stream=X · item=X-09b · pr=#702`
+
+---
+
+### Iter 337 · 2026-05-10 · Stream KK · KK-03 · STATUS: PROGRESS
+
+**What was done:** Batch iter 2. Phase 2: PR #702 (X-09b) CI mostly green (2 checks still running, no failures). PR #640 (R-M2B) was a draft — converted to ready-for-review to trigger full CI. Phase 3 selection: KK-03 (priority slot 14 — first unblocked item after B-09/C-03..05/O post-merge residuals all blocked). Created branch `claude/audit-remediation/kk-03-topic-cluster-map` from main. Built `/admin/topic-clusters` RSC page: 10 cluster cards, 5 summary stats (clusters/pages/unique slugs/article slugs/cross-cluster), spoke grids with ×2+ badge on shared pages, cross-cluster chips on each pillar, "How it works" panel. Added sidebar nav link in Content group. 242 LOC. Opened PR #703. Queue: added KK row to In-flight table, KK-03 marked in-flight, R row updated.
+
+**Status:** `STATUS: PROGRESS · stream=KK · item=KK-03 · pr=#703`
