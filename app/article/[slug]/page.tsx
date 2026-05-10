@@ -26,6 +26,7 @@ import AdSlot from "@/components/AdSlot";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
 import LinkifiedText from "@/components/LinkifiedText";
 import FloatingRightCTA from "@/components/FloatingRightCTA";
+import { isFlagEnabled } from "@/lib/feature-flags";
 
 export const revalidate = 3600; // ISR: revalidate every hour
 
@@ -141,12 +142,13 @@ export default async function ArticlePage({
     ? supabase.from("articles").select("slug, title, category, read_time, id, tags").eq("status", "published").neq("category", a.category || "").neq("slug", slug).overlaps("tags", a.tags).order("published_at", { ascending: false }).limit(3)
     : Promise.resolve({ data: null });
 
-  const [relatedBrokersRes, fxBrokersRes, allActiveBrokersRes, relatedArticlesRes, crossCategoryRes] = await Promise.all([
+  const [relatedBrokersRes, fxBrokersRes, allActiveBrokersRes, relatedArticlesRes, crossCategoryRes, linkInjectionEnabled] = await Promise.all([
     relatedBrokersPromise,
     fxBrokersPromise,
     allActiveBrokersPromise,
     relatedArticlesPromise,
     crossCategoryPromise,
+    isFlagEnabled("internal_link_injection"),
   ]);
 
   const relatedBrokers = (relatedBrokersRes.data as Broker[]) || [];
@@ -424,6 +426,8 @@ export default async function ArticlePage({
                     <LinkifiedText
                       text={a.sections[0].body}
                       skipHrefs={[`/article/${a.slug}`]}
+                      disabled={!linkInjectionEnabled}
+                      maxLinks={5}
                     />
                   </section>
 
@@ -453,6 +457,8 @@ export default async function ArticlePage({
                         <LinkifiedText
                           text={section.body}
                           skipHrefs={[`/article/${a.slug}`]}
+                          disabled={!linkInjectionEnabled}
+                          maxLinks={5}
                         />
                       </section>
                     )
@@ -505,6 +511,8 @@ export default async function ArticlePage({
                           <LinkifiedText
                             text={section.body}
                             skipHrefs={[`/article/${a.slug}`]}
+                            disabled={!linkInjectionEnabled}
+                            maxLinks={5}
                           />
                         </section>
                         {/* In-content ad after 2nd section (only if 4+ sections for density) */}
