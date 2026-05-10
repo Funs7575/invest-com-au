@@ -1,6 +1,15 @@
 import Link from "next/link";
 import { BCP47_TAG, LOCALE_LABEL, LOCALES, type Locale } from "@/lib/i18n/locales";
 import { getSubPageDict, type SubPageDict } from "@/lib/i18n/dictionaries";
+import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
+import JsonLd from "@/components/JsonLd";
+
+const SUB_PAGE_HUB_LABEL: Record<Locale, string> = {
+  en: "Foreign investment",
+  zh: "外国人投资",
+  ko: "외국인 투자",
+  ar: "الاستثمار الأجنبي",
+};
 
 interface Props {
   locale: Locale;
@@ -31,8 +40,16 @@ export default function ForeignInvestmentSubPage({ locale, slug }: Props) {
   const dict: SubPageDict = getSubPageDict(slug, locale);
   const canonicalPath = `/${locale === "en" ? "" : `${locale}/`}foreign-investment/${slug}`;
 
+  const hubPath = locale === "en" ? "/foreign-investment" : `/${locale}/foreign-investment`;
+  const breadcrumb = breadcrumbJsonLd([
+    { name: "Home", url: absoluteUrl(locale === "en" ? "/" : `/${locale}`) },
+    { name: SUB_PAGE_HUB_LABEL[locale], url: absoluteUrl(hubPath) },
+    { name: dict.hero.heading },
+  ]);
+
   return (
     <div lang={BCP47_TAG[locale]}>
+      <JsonLd data={breadcrumb} testId="foreign-investment-subpage-jsonld" />
       <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-10 md:py-14">
         <div className="container-custom max-w-4xl">
           <p className="text-[11px] font-bold uppercase tracking-wide text-amber-300 mb-2">

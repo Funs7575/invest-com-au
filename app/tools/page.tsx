@@ -1,4 +1,6 @@
 import ToolsClient from "./ToolsClient";
+import JsonLd from "@/components/JsonLd";
+import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 
 export const metadata = {
   title: "Best Financial Tools & Apps in Australia (2026)",
@@ -23,5 +25,14 @@ export const metadata = {
 export const revalidate = 3600;
 
 export default function ToolsPage() {
-  return <ToolsClient />;
+  const breadcrumb = breadcrumbJsonLd([
+    { name: "Home", url: absoluteUrl("/") },
+    { name: "Financial Tools & Apps" },
+  ]);
+  return (
+    <>
+      <JsonLd data={breadcrumb} testId="tools-jsonld" />
+      <ToolsClient />
+    </>
+  );
 }

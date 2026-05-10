@@ -1,8 +1,8 @@
 # Pre-launch wave — autonomous loop status
 
-**Plan source:** `docs/plans/sleepy-growing-planet.md`
+**Plan source:** `docs/plans/pre-launch-wave-master-prompt.md` (Wave 1-6)
 **Loop prompt:** `docs/plans/pre-launch-wave-loop-prompt.md`
-**Last updated:** 2026-05-09 (initial design)
+**Last updated:** 2026-05-09 (cron iter — JSON-LD audit + ratchet shipped)
 
 ---
 
@@ -34,23 +34,51 @@
 
 ## Queue (in order)
 
-| # | Item | Tier | Status | PR | Notes |
+### Legacy queue (sleepy-growing-planet plan) — reconciliation
+
+The original 15-item legacy queue was largely shipped during the 2026-05-09 burst (29 PRs). The master prompt at `docs/plans/pre-launch-wave-master-prompt.md` is now the source of truth; this section is kept for audit traceability.
+
+| # | Item | Tier | Status | PR |
+|---|---|---|---|---|
+| 1 | PR #645 rebase + CI + merge (bundled wave) | C | ✅ done | #645 |
+| 2 | PR-X4 — annual-billing dashboard prompt | B | ✅ done | #682 |
+| 3 | Country-eligibility broker/advisor filter UI | B | ✅ done | #683 |
+| 4 | Cross-border specialty CTA wiring | A | ✅ done | #684 |
+| 5 | Premium 1.75× lead pricing for cross-border specialties | B | ✅ done | #685 |
+| 6 | Saudi Arabia Arabic page + UAE/SA → /ar/ auto-route | B | partial | #687 (UAE only — SA Arabic page deferred to Wave 6 housekeeping) |
+| 7 | Response-time badge on advisor cards | A | ✅ done | #686 |
+| 8 | PR-X1 — auto-topup at low balance | C | ✅ done | #688 |
+| 9 | PR-X2 — lead-quality SLA + response-time reward | B | ✅ done | #690 |
+| 10 | PR-X3 — firm-level billing dashboard | C | pending → see Wave 4 #23 in master prompt | — |
+| 11 | PR-X5 — investor / end-user accounts | B | pending → see Wave 2 in master prompt | — |
+| 12 | Eligibility match badge on cards | A | ✅ done | #691 |
+| 12.5 | EligibilityBadge on advisor cards | A | ✅ done | #693 |
+| 13 | Eligibility-aware quiz skip banner | A | ✅ done | #692 |
+| 14 | Cross-page smart recommendations strip | B | pending → see Wave 4 #20 in master prompt | — |
+| 15 | Personalized notifications (rule changes / opportunities) | C | partial | #694 (banner shipped) — DB+CRUD+digest tracked in Wave 4 #21/#22 |
+
+### Wave 1-6 master queue
+
+Source: `docs/plans/pre-launch-wave-master-prompt.md`. Lowercase rows mirror that file's tables — status flips here as iters land.
+
+| # | PR | Tier | Status | PR # | Notes |
 |---|---|---|---|---|---|
-| 1 | PR #645 rebase + CI + merge (bundled wave) | C | ✅ done 14:37 UTC | #645 | A1+F1+B1+B2+B3 shipped together |
-| 2 | PR-X4 — annual-billing dashboard prompt | B | 🔄 PR open, CI in flight | #682 | 4 files, +110 lines, 8/8 vitest local |
-| 3 | **NEW: Country-eligibility broker/advisor filter UI** | B | pending | — | Schema (PR #619+#623) is wasted until UI reads it. Half day. ~$5-10k MRR uplift. Filter `/best/[slug]` + `/find-advisor` by visitor's `iv_intent_country` against `country_eligibility.allowed_countries`/`blocked_countries` |
-| 4 | **NEW: Cross-border specialty CTA wiring** | A | pending | — | FIN_NOTEBOOK 2026-05-01 Phase A remaining. Half day. ~$15k+/yr. Each `/foreign-investment/<slug>` page's "Find specialist" CTA → `/find-advisor?specialty=UK+Pension+Transfer` (mapped per country) |
-| 5 | **NEW: Premium 1.75× lead pricing for cross-border specialties** | B | pending | — | FIN_NOTEBOOK Phase A remaining. Half day. ~$15-40k/yr direct margin. Edit `lib/advisor-billing.ts` to apply multiplier when lead specialty matches the cross-border set |
-| 6 | **NEW: Saudi Arabia Arabic page + UAE/SA → /ar/ auto-route** | B | pending | — | Completes Phase 5d+5e+5g. ~1 day. Clone UAE Arabic structure for SA; modify LocationFlagButton click handler to route UAE/SA → /ar/...; language toggle |
-| 7 | **NEW: Response-time badge on advisor cards** | A | pending | — | Mirror PR-X2 on visitor side. Half day. Badge advisors with `avg_response_minutes < 60` on `/find-advisor` cards. Lifts conversion |
-| 8 | PR-X1 — auto-topup at low balance | **C** | pending | — | Highest-stakes; opt-in + $500 cap + 24h cooldown. Tier C announce + 30-min wait + 2hr post-merge observation |
-| 9 | PR-X2 — lead-quality SLA + response-time reward (advisor side) | B | pending | — | Pairs with item #7. "Respond in 60 min, next lead at 25% off". Affects ranker; 15-min observation |
-| 10 | PR-X3 — firm-level billing dashboard | **C** | pending | — | Aggregates `firm_credit_balance_cents` view across firm's advisors. New `/firm-portal/billing` route |
-| 11 | PR-X5 — investor / end-user accounts | B | pending | — | Depends on PR-A1 foundation (in #645). New `investor_profiles` table; auth flows; saved searches/comparisons. Ship in 4 parts: migration → auth scaffold → portal shell → saved-comparisons feature. **NOT** week-sized — pre-launch window has runway, ship parts iteratively |
-| 12 | **NEW: Eligibility match badge on cards** | A | pending | — | Visible signal on every broker/advisor/fund card based on visitor's iv_intent_country + country_eligibility column (PR #619). 🟢 accepts / 🟡 visa-required / 🔴 not available. Compounds with PR #683 filter (filter hides incompatible; badge highlights matches). ~half day |
-| 13 | **NEW: Eligibility-aware quiz skip banner** | A | pending | — | On /find-advisor entry: "🇺🇰 We have 4 UK-AU specialists — skip quiz?" Reduces quiz friction for users who've already declared country. ~1 day. Item #12 must ship first |
-| 14 | **NEW: Cross-page smart recommendations strip** | B | pending | — | After find-advisor quiz, save answers + cookie. On subsequent pages render "Based on your profile: [matched advisors / brokers / opportunities]". Ranker uses quiz intent + country + budget. ~2-3 days |
-| 15 | **NEW: Personalized notifications (rule changes / opportunities)** | C | pending | — | In-app banners or email pushes for country-relevant rule changes ("FIRB threshold changes Mar 2026 — affects UK residents"). Per founder 2026-05-09 "no post-launch deferral": ship infra now (table + admin CRUD + banner component), seed with 2-3 real notifications, expand content over the runway |
+| W1.1 | AI Concierge homepage entry | B | pending | — | 2 days |
+| W1.2 | Calculator → lead capture funnel | B | pending | — | 1-2 days, 8+ calculators |
+| W1.3 | JSON-LD audit + ratchet | A | ✅ done | (this iter) | scripts/check-jsonld-coverage.mjs + 13 page fixes + CI gate |
+| W1.4 | Reverse marketplace ("Post a Request") | C | pending | — | 4-5 days, lib/stripe |
+| W2.5–W2.17 | PR-X5a–PR-X5m investor accounts | B/C | pending | — | 13 PRs across 5 phases |
+| W3.18 | Verified user reviews engine | B | pending | — | mirror PR #441 moderation |
+| W3.19 | First Home Buyer end-to-end journey | B | pending | — | 4 monetization levers |
+| W4.20 | Smart recommendations strip (legacy #14) | B | pending | — | 2-3 days |
+| W4.21 | Country rule alerts DB + admin CRUD (legacy #15 part 2) | B | pending | — | migrate ALERTS_BY_COUNTRY |
+| W4.22 | Country rule alerts email digest (legacy #15 part 4) | B | pending | — | weekly Resend cron |
+| W4.23 | PR-X3 firm billing dashboard (legacy #10) | C | pending | — | aggregate view |
+| W5.24 | Embed comparison widget | A | pending | — | iframe + UTM |
+| W5.25 | WhatsApp lead capture | B | pending | — | per-country gate |
+| W5.26 | Sponsored placement A/B testing | B | pending | — | placement_experiments table |
+| W5.27 | Halal / Sharia investing hub | B | pending | — | new vertical |
+| W6.28 | Stale PR sweep | maintenance | pending | — | pre-flight rebase loop |
 
 ## Decision log
 
@@ -66,6 +94,9 @@
 - 2026-05-09 14:35 | meta | Tier C gate = 30-min observation | Recommended balance per founder's prior pattern in workflow memory
 - 2026-05-09 14:35 | meta | Auto-topup = opt-in + $500 cap + 24h cooldown | All three guardrails layered; defense in depth
 - 2026-05-09 14:35 | #2 | Split-or-bundle deferred to per-iteration | If single PR works, ship; if Tier C blocks, split
+- 2026-05-09 22:25 | W1.3 | Picked JSON-LD audit + ratchet over W1.1/W1.2 | W1.1 (AI Concierge, 2 days) and W1.2 (calculator funnel, 1-2 days) won't fit in one cron fire; W1.3 is a half-day Tier A item that ships cleanly end-to-end. Lowest-numbered tractable Wave-1 item.
+- 2026-05-09 22:25 | W1.3 | Coverage gate strategy = "≥1 JSON-LD block per public route" | Per-type checks (Article vs FAQPage vs FinancialProduct) considered and rejected as too brittle — same page legitimately ships several blocks; new schema.org types appear regularly. Type correctness stays with page authors.
+- 2026-05-09 22:25 | W1.3 | noindex pages auto-exempt | Pages with `robots.index: false` opt out of search indexing; rich-snippet schema is wasted work. Detected via metadata-text scan
 
 ## Pause history
 
