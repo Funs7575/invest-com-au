@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { logger } from "@/lib/logger";
 import AdvisorSearchClient from "./AdvisorSearchClient";
+import JsonLd from "@/components/JsonLd";
+import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 
 const log = logger("advisors-search");
 
@@ -77,5 +79,16 @@ export default async function AdvisorSearchPage() {
     });
   }
 
-  return <AdvisorSearchClient initialAdvisors={advisors} />;
+  const breadcrumb = breadcrumbJsonLd([
+    { name: "Home", url: absoluteUrl("/") },
+    { name: "Find an Advisor", url: absoluteUrl("/find-advisor") },
+    { name: "Advanced Search" },
+  ]);
+
+  return (
+    <>
+      <JsonLd data={breadcrumb} testId="advisors-search-jsonld" />
+      <AdvisorSearchClient initialAdvisors={advisors} />
+    </>
+  );
 }
