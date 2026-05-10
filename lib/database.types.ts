@@ -7134,6 +7134,89 @@ export type Database = {
         }
         Relationships: []
       }
+      fund_reviews: {
+        Row: {
+          body: string
+          communication_rating: number | null
+          cons: string | null
+          created_at: string
+          display_name: string
+          email: string
+          fees_rating: number | null
+          fund_id: number
+          fund_slug: string
+          hold_period_months: number | null
+          id: number
+          ip_hash: string | null
+          manager_rating: number | null
+          moderation_note: string | null
+          performance_rating: number | null
+          pros: string | null
+          rating: number
+          status: string
+          title: string
+          updated_at: string
+          verification_token: string | null
+          verified_at: string | null
+        }
+        Insert: {
+          body: string
+          communication_rating?: number | null
+          cons?: string | null
+          created_at?: string
+          display_name: string
+          email: string
+          fees_rating?: number | null
+          fund_id: number
+          fund_slug: string
+          hold_period_months?: number | null
+          id?: number
+          ip_hash?: string | null
+          manager_rating?: number | null
+          moderation_note?: string | null
+          performance_rating?: number | null
+          pros?: string | null
+          rating: number
+          status?: string
+          title: string
+          updated_at?: string
+          verification_token?: string | null
+          verified_at?: string | null
+        }
+        Update: {
+          body?: string
+          communication_rating?: number | null
+          cons?: string | null
+          created_at?: string
+          display_name?: string
+          email?: string
+          fees_rating?: number | null
+          fund_id?: number
+          fund_slug?: string
+          hold_period_months?: number | null
+          id?: number
+          ip_hash?: string | null
+          manager_rating?: number | null
+          moderation_note?: string | null
+          performance_rating?: number | null
+          pros?: string | null
+          rating?: number
+          status?: string
+          title?: string
+          updated_at?: string
+          verification_token?: string | null
+          verified_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fund_reviews_fund_id_fkey"
+            columns: ["fund_id"]
+            isOneToOne: false
+            referencedRelation: "fund_listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       glossary_terms: {
         Row: {
           category: string | null

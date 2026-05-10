@@ -5,6 +5,8 @@ import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import { createClient } from "@/lib/supabase/server";
 import Icon from "@/components/Icon";
 import RegisterInterestForm from "@/components/funds/RegisterInterestForm";
+import FundReviewsList from "@/components/FundReviewsList";
+import type { FundReview, FundReviewStats } from "@/lib/types";
 import type { FundListing } from "../FundsDirectoryClient";
 
 export const revalidate = 600;
@@ -21,6 +23,43 @@ async function fetchFund(slug: string): Promise<FundListing | null> {
     return (data as FundListing | null) || null;
   } catch {
     return null;
+  }
+}
+
+async function fetchReviews(fundId: number): Promise<{ reviews: FundReview[]; stats: FundReviewStats | null }> {
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("fund_reviews")
+      .select(
+        "id, fund_id, fund_slug, display_name, rating, title, body, pros, cons, performance_rating, communication_rating, fees_rating, manager_rating, hold_period_months, status, created_at",
+      )
+      .eq("fund_id", fundId)
+      .eq("status", "approved")
+      .order("created_at", { ascending: false })
+      .limit(20);
+
+    const reviews = (data ?? []) as FundReview[];
+    if (reviews.length === 0) return { reviews, stats: null };
+
+    const avg = (key: keyof FundReview) => {
+      const nums = reviews.map((r) => r[key]).filter((v): v is number => typeof v === "number");
+      if (nums.length === 0) return undefined;
+      return nums.reduce((a, b) => a + b, 0) / nums.length;
+    };
+
+    const stats: FundReviewStats = {
+      fund_id: fundId,
+      review_count: reviews.length,
+      average_rating: reviews.reduce((a, r) => a + r.rating, 0) / reviews.length,
+      avg_performance_rating: avg("performance_rating"),
+      avg_communication_rating: avg("communication_rating"),
+      avg_fees_rating: avg("fees_rating"),
+      avg_manager_rating: avg("manager_rating"),
+    };
+    return { reviews, stats };
+  } catch {
+    return { reviews: [], stats: null };
   }
 }
 
@@ -97,7 +136,10 @@ export default async function FundDetailPage({
   const { slug } = await params;
   const fund = await fetchFund(slug);
   if (!fund) notFound();
-  const related = await fetchRelated(fund.fund_type, fund.id);
+  const [related, { reviews, stats: reviewStats }] = await Promise.all([
+    fetchRelated(fund.fund_type, fund.id),
+    fetchReviews(fund.id),
+  ]);
 
   const typeLabel = fund.fund_type
     ? FUND_TYPE_LABELS[fund.fund_type] ?? "Fund"
@@ -303,6 +345,15 @@ export default async function FundDetailPage({
                   returns. Consider obtaining personal advice from a licensed
                   adviser before investing.
                 </p>
+              </div>
+
+              <div className="bg-white border border-slate-200 rounded-xl p-6">
+                <FundReviewsList
+                  reviews={reviews}
+                  stats={reviewStats}
+                  fundSlug={fund.slug}
+                  fundTitle={fund.title}
+                />
               </div>
             </div>
 
