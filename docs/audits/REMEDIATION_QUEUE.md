@@ -195,12 +195,12 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
 | CC-01 | **done** | Country-mode coverage audit (identify gaps vs. `lib/country-mode/`) | — | Audit complete (iter 334). Full gap report at `docs/audits/country-mode-gaps.md`. Infrastructure solid; all 12 country configs have homepage filters. 4 gaps documented for CC-02..CC-05. PR #675. |
-| CC-02 | pending | NZ supply-threshold tuning (current thresholds too aggressive) | ~2 | Deps: CC-01 ✓. Gap: `SUPPLY_THRESHOLDS` is global (listings:2, experts:2, platforms:3). NZ expert filter likely returns <2 → expert strip silently hides. Fix: add `PER_COUNTRY_THRESHOLDS` map or broaden NZ specialty list. Verify with DB supply query first. |
-| CC-03 | pending | IN/SG/HK intent-context wiring (priority-chain gaps) | ~3 | Deps: CC-01 ✓. Infrastructure wired; gap is content: language specialty filters (IN: `["en","hi"]`, SG/HK: Mandarin/Cantonese) may produce 0-row results if advisors lack language tags. Fix: audit language-tag coverage + add fallback to `["en"]` when multi-language returns 0. |
+| CC-02 | ~~false-positive~~ | ~~NZ supply-threshold tuning (current thresholds too aggressive)~~ | — | `lib/country-mode/supply-thresholds.ts` lines 34–38: `PER_COUNTRY_THRESHOLDS = { NZ: { experts: 1 } }` already implemented. `__tests__/lib/country-mode/supply-thresholds.test.ts` lines 83–135 fully cover NZ-specific threshold. No code change needed. |
+| CC-03 | ~~false-positive~~ | ~~IN/SG/HK intent-context wiring (priority-chain gaps)~~ | — | `CountryExpertsPreview.tsx` intentionally filters by advisor `type` only (comment line 7: "specialties is jsonb and less reliable"). Language filter from config is NOT applied to DB query — 0-row risk from language filtering doesn't exist. All three countries include `"en"` in language config for future use. Strip returns results by type regardless of language. |
 | CC-04 | **done** | Country-mode E2E tests (Playwright, 3 locales) | — | 7 Playwright tests. PR #678 MERGED 2026-05-09. |
-| CC-05 | pending | Locale-aware sitemap entries for non-AU locales | ~2 | Deps: CC-03. Gap: `app/sitemap.ts` has no hreflang entries for locale-prefixed paths. |
+| CC-05 | pending | Locale-aware sitemap entries for non-AU locales | ~2 | Deps: CC-03 ✓ (FP resolved). Gap: `app/sitemap.ts` has no hreflang entries for locale-prefixed paths. Can start now. |
 
-**Stream CC entry condition:** CC-01 done (iter 334). CC-02 can start immediately.
+**Stream CC entry condition:** CC-01 done (iter 334). CC-02 and CC-03 resolved as false-positives (iter 339). CC-05 can start immediately.
 
 ---
 
@@ -971,6 +971,14 @@ _Compacted 2026-05-09: 1,223 lines of completed-stream summary + iteration log e
 _The most recent ~24h of iteration log entries (iter ~325 onwards) are temporarily missing from both files — they were lost in the 2026-05-09 truncation incident (recovered as PR #661) before the rotate-iteration-log workflow could archive them. Loop's stuck-detection guard should not regress because the iteration command's Phase 2 falls back to PR-CI history when iter log entries are absent._
 
 See [`REMEDIATION_QUEUE_LOG_ARCHIVE.md`](./REMEDIATION_QUEUE_LOG_ARCHIVE.md) for historical iteration log + completed-stream summary.
+
+---
+
+### Iter 339 · 2026-05-10 · Stream CC · CC-02+CC-03 · STATUS: PROGRESS (false-positive)
+
+**What was done:** Phase 4 verification gate caught CC-02 and CC-03 as false-positives. CC-02: `lib/country-mode/supply-thresholds.ts` already has `PER_COUNTRY_THRESHOLDS = { NZ: { experts: 1 } }` (lines 34–38) — exactly the NZ threshold tuning the audit requested. Comprehensive tests at `__tests__/lib/country-mode/supply-thresholds.test.ts` (lines 83–135) cover all NZ cases. CC-03: `CountryExpertsPreview.tsx` explicitly documents (line 7 comment) that it filters by advisor `type` only, not by language — the "language specialty filters produce 0-row results" risk described in the queue doesn't materialize because language is not applied in the DB query at all. All three countries (IN/SG/HK) already include `"en"` in their language config arrays for future use. CC-05 dependency on CC-03 was a false dependency — CC-05 can start immediately. Updated CC-05 notes accordingly.
+
+**Status:** `STATUS: PROGRESS · stream=CC · item=CC-02+CC-03 · false-positive`
 
 ---
 
