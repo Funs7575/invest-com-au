@@ -6,6 +6,7 @@ import SocialProofCounter from "@/components/SocialProofCounter";
 import { trackEvent, trackClick, getAffiliateLink, AFFILIATE_REL, trackPageDuration } from "@/lib/tracking";
 import { getStoredUtm } from "@/components/UtmCapture";
 import { storeQualificationData } from "@/lib/qualification-store";
+import { useCalculatorState } from "@/hooks/use-calculator-state";
 import AdvisorMatchCTA from "@/components/AdvisorMatchCTA";
 
 type Account = {
@@ -29,6 +30,27 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
   const [emailGated, setEmailGated] = useState(false);
   const [email, setEmail] = useState("");
   const [emailSubmitted, setEmailSubmitted] = useState(false);
+
+  // Cross-calculator persistence (CMP W2 Phase 1).
+  const {
+    value: persistedInputs,
+    setValue: setPersistedInputs,
+    isHydrated: persistHydrated,
+  } = useCalculatorState<{ balance: number; current_rate: number }>(
+    "savings_calculator",
+    { balance: 25000, current_rate: 0.5 },
+  );
+
+  useEffect(() => {
+    if (!persistHydrated) return;
+    if (typeof persistedInputs.balance === "number") setBalance(persistedInputs.balance);
+    if (typeof persistedInputs.current_rate === "number") setCurrentRate(persistedInputs.current_rate);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- hydrate once
+  }, [persistHydrated]);
+
+  useEffect(() => {
+    setPersistedInputs({ balance, current_rate: currentRate });
+  }, [balance, currentRate, setPersistedInputs]);
 
   useEffect(() => { trackPageDuration("/savings-calculator"); }, []);
 

@@ -7,6 +7,7 @@ import SocialProofCounter from "@/components/SocialProofCounter";
 import { trackEvent, trackPageDuration } from "@/lib/tracking";
 import { getStoredUtm } from "@/components/UtmCapture";
 import { storeQualificationData } from "@/lib/qualification-store";
+import { useCalculatorState } from "@/hooks/use-calculator-state";
 
 /* ── helpers ─────────────────────────────────────────── */
 
@@ -41,6 +42,51 @@ export default function MortgageCalculatorClient() {
   const [loanTerm, setLoanTerm] = useState<25 | 30>(30);
   const [repaymentType, setRepaymentType] = useState<RepaymentType>("pi");
   const [showResults, setShowResults] = useState(false);
+
+  // Cross-calculator persistence (sessionStorage immediate + DB write-through
+  // for signed-in users via /api/calculator-state). Hydrates from URL params
+  // on mount for shareable deep-links. CMP W2 Phase 1.
+  const {
+    value: persistedInputs,
+    setValue: setPersistedInputs,
+    isHydrated: persistHydrated,
+  } = useCalculatorState<{
+    loan_amount: number;
+    interest_rate: number;
+    loan_term: 25 | 30;
+    repayment_type: RepaymentType;
+  }>("mortgage_calculator", {
+    loan_amount: 600000,
+    interest_rate: 6.0,
+    loan_term: 30,
+    repayment_type: "pi",
+  });
+
+  // One-shot hydration from persisted state → local useState (existing UX
+  // unchanged). Local writes flow back to persisted state via the effect below.
+  useEffect(() => {
+    if (!persistHydrated) return;
+    if (typeof persistedInputs.loan_amount === "number")
+      setLoanAmount(persistedInputs.loan_amount);
+    if (typeof persistedInputs.interest_rate === "number")
+      setInterestRate(persistedInputs.interest_rate);
+    if (persistedInputs.loan_term === 25 || persistedInputs.loan_term === 30)
+      setLoanTerm(persistedInputs.loan_term);
+    if (persistedInputs.repayment_type === "pi" || persistedInputs.repayment_type === "io")
+      setRepaymentType(persistedInputs.repayment_type);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: hydrate ONCE on first ready signal
+  }, [persistHydrated]);
+
+  // Live-sync local inputs → persistence layer. Internal debounce on the hook
+  // throttles DB writes to once per 5s after last change.
+  useEffect(() => {
+    setPersistedInputs({
+      loan_amount: loanAmount,
+      interest_rate: interestRate,
+      loan_term: loanTerm,
+      repayment_type: repaymentType,
+    });
+  }, [loanAmount, interestRate, loanTerm, repaymentType, setPersistedInputs]);
   const [emailGated, setEmailGated] = useState(false);
   const [email, setEmail] = useState("");
   const [emailSubmitted, setEmailSubmitted] = useState(false);
