@@ -59,9 +59,9 @@ function flagEmoji(code: string): string {
 // Slugs that have a /ar/ Arabic country page. When the visitor picks
 // one of these, we route them to the Arabic version so they land in
 // their native script + RTL layout. PR queue #6 — Phase 5 completion.
-// Saudi Arabia will be added once the SA Arabic translation lands.
 const ARABIC_COUNTRY_SLUGS: ReadonlySet<string> = new Set([
   "united-arab-emirates",
+  "saudi-arabia",
 ]);
 
 function countryHubUrl(slug: string): string {
