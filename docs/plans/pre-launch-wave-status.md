@@ -2,7 +2,7 @@
 
 **Plan source:** `docs/plans/pre-launch-wave-master-prompt.md` (Wave 1-6)
 **Loop prompt:** `docs/plans/pre-launch-wave-loop-prompt.md`
-**Last updated:** 2026-05-09 (cron iter — JSON-LD audit + ratchet shipped)
+**Last updated:** 2026-05-10 01:13 UTC — W1.3 (JSON-LD coverage gate) merged via PR #697 (Tier C window elapsed without STOP); 2 hr post-merge observation window open until ~03:13 UTC
 
 ---
 
@@ -65,7 +65,7 @@ Source: `docs/plans/pre-launch-wave-master-prompt.md`. Lowercase rows mirror tha
 |---|---|---|---|---|---|
 | W1.1 | AI Concierge homepage entry | B | pending | — | 2 days |
 | W1.2 | Calculator → lead capture funnel | B | pending | — | 1-2 days, 8+ calculators |
-| W1.3 | JSON-LD audit + ratchet | A | ✅ done | (this iter) | scripts/check-jsonld-coverage.mjs + 13 page fixes + CI gate |
+| W1.3 | JSON-LD audit + ratchet | C* | ✅ done | #697 | scripts/check-jsonld-coverage.mjs + 13 page fixes + CI gate. *Re-classified to Tier C at PR open (workflows/ci.yml touch); 30-min STOP window opened 2026-05-09 23:50 UTC, no STOP, merged 2026-05-10 01:13 UTC |
 | W1.4 | Reverse marketplace ("Post a Request") | C | pending | — | 4-5 days, lib/stripe |
 | W2.5–W2.17 | PR-X5a–PR-X5m investor accounts | B/C | pending | — | 13 PRs across 5 phases |
 | W3.18 | Verified user reviews engine | B | pending | — | mirror PR #441 moderation |
@@ -114,4 +114,4 @@ Source: `docs/plans/pre-launch-wave-master-prompt.md`. Lowercase rows mirror tha
 
 (Tier C items get 2hr post-merge observation. Loop watches Sentry, Vercel deploy, billing flows; logs anomalies here.)
 
-— none yet —
+- **2026-05-10 01:13 UTC — PR #697 (W1.3 JSON-LD coverage gate)** — squash-merged to main as `cf6b4a16`. Tier C window opened 2026-05-09 23:50 UTC; elapsed >1 hr without STOP; required CI was green (Lint/Type-check/Test/Build, RLS, Stripe gates, Dated strings, A11y, E2E, Lighthouse, Bundle, Secret scan, RLS isolation, RLS migration). Known infra flake `Supabase types drift` red (same job failed in #698/#699 which already merged) and `Preview smoke` red because Vercel skipped the preview build (no preview URL → smoke can't reach any path). 2 hr post-merge observation window runs until ~03:13 UTC. Next fire: confirm Vercel deploy of `cf6b4a16` to production is healthy and no Sentry spike, then close window.
