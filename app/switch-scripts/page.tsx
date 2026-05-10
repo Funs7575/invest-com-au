@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { listSwitchScripts } from "@/lib/switch-scripts";
-import { absoluteUrl, SITE_NAME } from "@/lib/seo";
+import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import JsonLd from "@/components/JsonLd";
 
 export const revalidate = 3600;
 
@@ -15,15 +16,20 @@ export const metadata: Metadata = {
 
 export default function SwitchScriptsIndexPage() {
   const scripts = listSwitchScripts();
+  const breadcrumb = breadcrumbJsonLd([
+    { name: "Home", url: absoluteUrl("/") },
+    { name: "Broker Switch Scripts" },
+  ]);
   return (
     <main className="mx-auto max-w-4xl px-4 py-10 md:py-14">
+      <JsonLd data={breadcrumb} testId="switch-scripts-jsonld" />
       <header className="mb-10">
         <h1 className="text-3xl font-bold text-slate-900 md:text-4xl">
           Broker switch scripts
         </h1>
         <p className="mt-3 max-w-2xl text-lg text-slate-700">
           Most users never ask their existing broker for a better deal — and
-          most brokers won't volunteer one. These scripts help you negotiate
+          most brokers won&rsquo;t volunteer one. These scripts help you negotiate
           first, then walk you through the transfer process if you do decide to
           leave (CHESS in-specie for ASX, ACATS for US, with AU tax notes).
         </p>

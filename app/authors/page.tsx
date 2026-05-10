@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
-import { formatRole, SITE_NAME } from "@/lib/seo";
+import { absoluteUrl, breadcrumbJsonLd, formatRole, SITE_NAME } from "@/lib/seo";
+import JsonLd from "@/components/JsonLd";
 
 export const revalidate = 3600;
 
@@ -39,8 +40,14 @@ export default async function AuthorsIndexPage() {
 
   const members = (data as (TeamMember & { display_order: number | null })[] | null) || [];
 
+  const breadcrumb = breadcrumbJsonLd([
+    { name: "Home", url: absoluteUrl("/") },
+    { name: "Our Editorial Team" },
+  ]);
+
   return (
     <div className="py-8 md:py-14">
+      <JsonLd data={breadcrumb} testId="authors-jsonld" />
       <div className="container-custom max-w-5xl">
         <nav className="text-xs md:text-sm text-slate-500 mb-3">
           <Link href="/" className="hover:text-slate-900">Home</Link>
