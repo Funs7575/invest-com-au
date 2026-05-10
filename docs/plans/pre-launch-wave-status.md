@@ -21,7 +21,7 @@
 **Plan source:** `docs/plans/pre-launch-wave-master-prompt.md` (Wave 1-6)
 **Loop prompt:** `docs/plans/pre-launch-wave-loop-prompt.md`
 **Update inbox:** `docs/plans/queue-updates/` (other actors drop notes here)
-**Last updated:** 2026-05-10 (cron iter — country rule alerts DB + admin CRUD shipped)
+**Last updated:** 2026-05-10 (cron iter — status doc reconcile: W4.20/W4.22/W5.24/W5.25/W5.27 done; W2 phases #1, #2, #2.5, follow-ups in flight)
 
 ---
 
@@ -82,21 +82,21 @@ Source: `docs/plans/pre-launch-wave-master-prompt.md`. Lowercase rows mirror tha
 
 | # | PR | Tier | Status | PR # | Notes |
 |---|---|---|---|---|---|
-| W1.1 | AI Concierge homepage entry | B | pending | — | 2 days |
-| W1.2 | Calculator → lead capture funnel | B | pending | — | 1-2 days, 8+ calculators |
-| W1.3 | JSON-LD audit + ratchet | A | ✅ done | (this iter) | scripts/check-jsonld-coverage.mjs + 13 page fixes + CI gate |
-| W1.4 | Reverse marketplace ("Post a Request") | C | pending | — | 4-5 days, lib/stripe |
-| W2.5–W2.17 | PR-X5a–PR-X5m investor accounts | B/C | pending | — | 13 PRs across 5 phases |
-| W3.18 | Verified user reviews engine | B | pending | — | mirror PR #441 moderation |
-| W3.19 | First Home Buyer end-to-end journey | B | pending | — | 4 monetization levers |
-| W4.20 | Smart recommendations strip (legacy #14) | B | pending | — | 2-3 days |
-| W4.21 | Country rule alerts DB + admin CRUD (legacy #15 part 2) | B | ✅ done | (this iter) | `country_rule_alerts` table + RLS + 7-row seed; /admin/country-rule-alerts CRUD; CountryRuleAlerts.tsx fetches from new public API |
-| W4.22 | Country rule alerts email digest (legacy #15 part 4) | B | pending | — | weekly Resend cron |
-| W4.23 | PR-X3 firm billing dashboard (legacy #10) | C | pending | — | aggregate view |
-| W5.24 | Embed comparison widget | A | pending | — | iframe + UTM |
-| W5.25 | WhatsApp lead capture | B | pending | — | per-country gate |
-| W5.26 | Sponsored placement A/B testing | B | pending | — | placement_experiments table |
-| W5.27 | Halal / Sharia investing hub | B | pending | — | new vertical |
+| W1.1 | AI Concierge homepage entry | B | pending | — | 2 days — multi-fire |
+| W1.2 | Calculator → lead capture funnel | B | pending | — | 1-2 days, 8+ calculators — multi-fire |
+| W1.3 | JSON-LD audit + ratchet | A | ✅ done | #697 | scripts/check-jsonld-coverage.mjs + 13 page fixes + CI gate |
+| W1.4 | Reverse marketplace ("Post a Request") | C | pending | — | 4-5 days, lib/stripe — multi-fire |
+| W2.5–W2.17 | PR-X5a–PR-X5m investor accounts | B/C | in flight | #721, #724, #725, #726, #727 merged; #733-#739 open | Phase 1 (X5a/c/d holdings + portfolio health + brokerage coach), Phase 1 follow-up (Yahoo+CoinGecko price lookup), Phase 1 calc state hook + 5 retrofits, Phase 2 investor_profiles + quiz sync, Phase 2.5 workspace plumbing all merged. Open: Track A workspace switcher mount (#733), Phase 3 business_owner kind (#734), Phase 4 listing_owner promotion (#735), per-portal kind gates (#736), Phase 2 follow-up flags UI (#737), Phase 8 property holdings (#738), Phase 9 goals tracker (#739). |
+| W3.18 | Verified user reviews engine | B | partial | broker+advisor done pre-W3 (`user_reviews` table, `/api/user-review`, `/api/advisor-review`, `/admin/user-reviews` moderation, broker page display) — funds extension pending | mirror PR #441 moderation |
+| W3.19 | First Home Buyer end-to-end journey | B | pending | — | 4 monetization levers — multi-fire |
+| W4.20 | Smart recommendations strip (legacy #14) | B | ✅ done | #715, #717 | foundation + extra placements + budget/experience ranker |
+| W4.21 | Country rule alerts DB + admin CRUD (legacy #15 part 2) | B | ✅ done | #712 | `country_rule_alerts` table + RLS + 7-row seed; /admin/country-rule-alerts CRUD; CountryRuleAlerts.tsx fetches from new public API |
+| W4.22 | Country rule alerts email digest (legacy #15 part 4) | B | ✅ done | #718 | weekly Resend cron — `feat(cron): country-rule-alerts weekly digest` |
+| W4.23 | PR-X3 firm billing dashboard (legacy #10) | C | pending | — | aggregate view — multi-fire, Tier C |
+| W5.24 | Embed comparison widget | A | ✅ done | (pre-existing) | `/embed` page + `/api/widget` GET with CORS + UTM (`?ref=widget&source=embed`) + Shadow-DOM render + `__tests__/api/widget.test.ts` (10 cases). Verified 2026-05-10 reconcile. |
+| W5.25 | WhatsApp lead capture | B | ✅ done | #722 | HK/IN/CN/SG country-gated |
+| W5.26 | Sponsored placement A/B testing | B | pending | — | placement_experiments table — single-PR Tier B |
+| W5.27 | Halal / Sharia investing hub | B | ✅ done | #723 | Sharia-compliant super, home finance, ETFs, AAOIFI screen — W5.27 foundation |
 | W6.28 | Stale PR sweep | maintenance | pending | — | pre-flight rebase loop |
 
 ## Decision log
@@ -118,6 +118,8 @@ Source: `docs/plans/pre-launch-wave-master-prompt.md`. Lowercase rows mirror tha
 - 2026-05-09 22:25 | W1.3 | noindex pages auto-exempt | Pages with `robots.index: false` opt out of search indexing; rich-snippet schema is wasted work. Detected via metadata-text scan
 - 2026-05-10 02:15 | W4.21 | Picked W4.21 over W1.1/W1.2/W1.4 for one-fire scope | W1.1 (concierge homepage) and W1.2 (calculator funnel × 8) and W1.4 (reverse marketplace, Tier C) are all multi-day. W4.21 is well-bounded — schema + admin CRUD + consumer refactor + tests, single PR. Component header comment already scoped this exact PR. Skipped W2.5 (PR-X5a investor accounts foundation) because it gates the rest of Wave 2 — better to ship as a focused multi-fire sequence
 - 2026-05-10 02:15 | W4.21 | country_code stored as lowercase IntentCountryCode | country_schemes uses uppercase ISO-2 (GB/US/IN). Picked lowercase here to match the existing iv_intent_country cookie value the consumer reads — no case-mapping at read time, simpler RLS-public reads, CHECK constraint covers the 12 known intent countries
+- 2026-05-10 ~22:30 | meta | Status doc reconciled to actual repo state | This iter found the queue table out of sync with shipped code: W4.20 (#715, #717), W4.22 (#718), W5.25 (#722), W5.27 (#723) all merged. W5.24 (Embed comparison widget) was already present in repo (`app/embed/`, `app/api/widget/route.ts`, full test coverage in `__tests__/api/widget.test.ts`) — pre-existing, not loop-attributed. W3.18 broker+advisor reviews infra already in place pre-Wave-3 (`user_reviews` table, submit/verify/moderate routes, admin moderation page) — only the funds extension is remaining for that item. W2 progression observed: PR #721, #724, #725, #726, #727 merged (Phase 1 holdings/portfolio/health, calc state hook + retrofits, Phase 2 investor_profiles + quiz sync, Phase 2.5 workspace plumbing); PRs #733-#739 open and in flight by parallel agents. Updated queue rows accordingly so the next fire picks the right item.
+- 2026-05-10 ~22:30 | iter | No new feature shipped this fire | Rationale: surveyed Wave 1-6 queue, all one-fire-tractable Tier A/B items already done (W1.3, W4.20, W4.21, W4.22, W5.24, W5.25, W5.27); remaining pending items are either multi-day (W1.1/W1.2/W1.4/W3.19), Tier C (W4.23), or substantial single-PRs that need full survey (W5.26 placement_experiments) better suited to a fresh fire with full discovery budget. W2 phases are saturated with in-flight PRs from parallel agents. Best contribution: lock the status doc to reality so the next fire can pick correctly.
 
 ## Pause history
 
