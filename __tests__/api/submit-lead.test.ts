@@ -14,6 +14,15 @@ vi.mock("@/lib/rate-limit", () => ({
   isRateLimited: vi.fn(() => Promise.resolve(false)),
 }));
 
+import type { IntentCountryCode } from "@/lib/intent-context";
+
+const mockGetIntentCountry = vi.fn<
+  () => Promise<IntentCountryCode | null>
+>(() => Promise.resolve(null));
+vi.mock("@/lib/intent-context-server", () => ({
+  getIntentCountry: () => mockGetIntentCountry(),
+}));
+
 const mockSendNewLeadNotification = vi.fn((..._args: unknown[]) =>
   Promise.resolve(),
 );
@@ -55,6 +64,20 @@ function resetCalls() {
   for (const k of Object.keys(supabaseCalls)) delete supabaseCalls[k];
 }
 
+const ADVISOR_BLOCKS_UK = {
+  ...ADVISOR,
+  id: 2,
+  slug: "blocks-uk",
+  country_eligibility: { blocked_countries: ["GB"] },
+};
+
+const ADVISOR_ALLOWS_UK = {
+  ...ADVISOR,
+  id: 3,
+  slug: "allows-uk",
+  country_eligibility: { allowed_countries: ["GB", "AU"] },
+};
+
 function buildRequest(body: Record<string, unknown>, ip = "9.9.9.9") {
   return makeRequest("/api/submit-lead", body, { ip });
 }
@@ -70,6 +93,7 @@ describe("POST /api/submit-lead", () => {
       createChainableBuilder(table, supabaseCalls),
     );
     (isRateLimited as ReturnType<typeof vi.fn>).mockResolvedValue(false);
+    mockGetIntentCountry.mockResolvedValue(null);
   });
 
   // ── Validation ──
@@ -433,6 +457,186 @@ describe("POST /api/submit-lead", () => {
       const insertArgs = insertCall?.args[0] as Record<string, unknown>;
       // gold tier → 6000 cents
       expect(insertArgs.revenue_value_cents).toBe(6000);
+    });
+  });
+
+  // ── Country eligibility (PR #619 / Phase 4) ──
+
+  describe("country eligibility filtering", () => {
+    it("skips an advisor whose blocked_countries includes the visitor's country and picks the next eligible one", async () => {
+      mockGetIntentCountry.mockResolvedValue("uk");
+      mockFrom.mockImplementation((table: string) => {
+        const b = createChainableBuilder(table, supabaseCalls);
+        if (table === "professionals") {
+          b.limit = vi.fn(() => {
+            supabaseCalls[table]?.push({ method: "limit", args: [] });
+            // Top-ranked candidate blocks UK; next candidate allows UK.
+            return Promise.resolve({
+              data: [ADVISOR_BLOCKS_UK, ADVISOR_ALLOWS_UK],
+              error: null,
+            });
+          });
+          b.single = vi.fn(() =>
+            Promise.resolve({ data: { advisor_tier: "silver" }, error: null }),
+          );
+        }
+        if (table === "leads") {
+          b.single = vi.fn(() =>
+            Promise.resolve({ data: { id: 9001 }, error: null }),
+          );
+        }
+        return b;
+      });
+
+      const req = buildRequest({
+        lead_type: "advisor",
+        user_email: "uk-visitor@test.com",
+        user_name: "UK Visitor",
+        user_location_state: "NSW",
+        user_intent: { need: "planning" },
+      });
+      const res = await POST(req);
+      expect(res.status).toBe(200);
+      const json = await res.json();
+      // Next eligible (id 3) wins, not the blocked top pick (id 2)
+      expect(json.matched.id).toBe(3);
+      expect(json.matched.slug).toBe("allows-uk");
+    });
+
+    it("returns no_more_matches with country-specific message when every advisor blocks the visitor's country", async () => {
+      mockGetIntentCountry.mockResolvedValue("uk");
+      mockFrom.mockImplementation((table: string) => {
+        const b = createChainableBuilder(table, supabaseCalls);
+        if (table === "professionals") {
+          b.limit = vi.fn(() => {
+            supabaseCalls[table]?.push({ method: "limit", args: [] });
+            // All candidates block UK
+            return Promise.resolve({
+              data: [ADVISOR_BLOCKS_UK],
+              error: null,
+            });
+          });
+        }
+        return b;
+      });
+
+      const req = buildRequest({
+        lead_type: "advisor",
+        user_email: "uk-blocked@test.com",
+        user_location_state: "NSW",
+        user_intent: { need: "planning" },
+      });
+      const res = await POST(req);
+      expect(res.status).toBe(200);
+      const json = await res.json();
+      expect(json.no_more_matches).toBe(true);
+      expect(json.matched).toBe(null);
+      expect(json.message).toContain("country");
+    });
+
+    it("does not filter when visitor has no intent country (preserves prior behavior)", async () => {
+      mockGetIntentCountry.mockResolvedValue(null);
+      mockFrom.mockImplementation((table: string) => {
+        const b = createChainableBuilder(table, supabaseCalls);
+        if (table === "professionals") {
+          b.limit = vi.fn(() => {
+            supabaseCalls[table]?.push({ method: "limit", args: [] });
+            // Top pick blocks UK — but visitor has no intent country, so include
+            return Promise.resolve({
+              data: [ADVISOR_BLOCKS_UK],
+              error: null,
+            });
+          });
+          b.single = vi.fn(() =>
+            Promise.resolve({ data: { advisor_tier: "bronze" }, error: null }),
+          );
+        }
+        if (table === "leads") {
+          b.single = vi.fn(() =>
+            Promise.resolve({ data: { id: 9100 }, error: null }),
+          );
+        }
+        return b;
+      });
+
+      const req = buildRequest({
+        lead_type: "advisor",
+        user_email: "au-visitor@test.com",
+        user_location_state: "NSW",
+        user_intent: { need: "planning" },
+      });
+      const res = await POST(req);
+      expect(res.status).toBe(200);
+      const json = await res.json();
+      expect(json.matched.id).toBe(2);
+    });
+
+    it("rejects confirm_advisor_id when the advisor's blocked_countries includes the visitor", async () => {
+      mockGetIntentCountry.mockResolvedValue("uk");
+      mockFrom.mockImplementation((table: string) => {
+        const b = createChainableBuilder(table, supabaseCalls);
+        if (table === "professionals") {
+          b.single = vi.fn(() =>
+            Promise.resolve({ data: ADVISOR_BLOCKS_UK, error: null }),
+          );
+        }
+        return b;
+      });
+
+      const req = buildRequest({
+        lead_type: "advisor",
+        user_email: "uk-confirm@test.com",
+        confirm_advisor_id: 2,
+      });
+      const res = await POST(req);
+      expect(res.status).toBe(409);
+      const json = await res.json();
+      expect(json.reason).toBe("country_ineligible");
+      expect(mockSendNewLeadNotification).not.toHaveBeenCalled();
+    });
+
+    it("allows confirm_advisor_id when the advisor explicitly allows the visitor's country", async () => {
+      mockGetIntentCountry.mockResolvedValue("uk");
+      let professionalsCallCount = 0;
+      let leadCallCount = 0;
+      mockFrom.mockImplementation((table: string) => {
+        const b = createChainableBuilder(table, supabaseCalls);
+        if (table === "professionals") {
+          b.single = vi.fn(() => {
+            professionalsCallCount++;
+            return Promise.resolve({
+              data:
+                professionalsCallCount === 1
+                  ? ADVISOR_ALLOWS_UK
+                  : { advisor_tier: "silver" },
+              error: null,
+            });
+          });
+        }
+        if (table === "leads") {
+          b.single = vi.fn(() => {
+            leadCallCount++;
+            return Promise.resolve({
+              data: leadCallCount === 1 ? null : { id: 9200 },
+              error: leadCallCount === 1 ? { code: "PGRST116" } : null,
+            });
+          });
+        }
+        return b;
+      });
+
+      const req = buildRequest({
+        lead_type: "advisor",
+        user_email: "uk-confirm-ok@test.com",
+        user_name: "UK OK",
+        user_intent: { need: "planning" },
+        confirm_advisor_id: 3,
+      });
+      const res = await POST(req);
+      expect(res.status).toBe(200);
+      const json = await res.json();
+      expect(json.lead_id).toBe(9200);
+      expect(json.matched.id).toBe(3);
     });
   });
 });

@@ -37,8 +37,8 @@
 | # | Item | Tier | Status | PR | Notes |
 |---|---|---|---|---|---|
 | 1 | PR #645 rebase + CI + merge (bundled wave) | C | ✅ done 14:37 UTC | #645 | A1+F1+B1+B2+B3 shipped together |
-| 2 | PR-X4 — annual-billing dashboard prompt | B | 🔄 PR open, CI in flight | #682 | 4 files, +110 lines, 8/8 vitest local |
-| 3 | **NEW: Country-eligibility broker/advisor filter UI** | B | pending | — | Schema (PR #619+#623) is wasted until UI reads it. Half day. ~$5-10k MRR uplift. Filter `/best/[slug]` + `/find-advisor` by visitor's `iv_intent_country` against `country_eligibility.allowed_countries`/`blocked_countries` |
+| 2 | PR-X4 — annual-billing dashboard prompt | B | ✅ done 15:26 UTC | #682 | 4 files, +110 lines, 8/8 vitest local |
+| 3 | **NEW: Country-eligibility broker/advisor filter UI** | B | 🔄 in flight (iter 3) | TBD | Schema readers: /advisors page, /find-advisor/[location], /api/submit-lead all now apply filterByCountryEligibility. /best/[slug] was already wired (PR #683). 5 new tests in submit-lead suite |
 | 4 | **NEW: Cross-border specialty CTA wiring** | A | pending | — | FIN_NOTEBOOK 2026-05-01 Phase A remaining. Half day. ~$15k+/yr. Each `/foreign-investment/<slug>` page's "Find specialist" CTA → `/find-advisor?specialty=UK+Pension+Transfer` (mapped per country) |
 | 5 | **NEW: Premium 1.75× lead pricing for cross-border specialties** | B | pending | — | FIN_NOTEBOOK Phase A remaining. Half day. ~$15-40k/yr direct margin. Edit `lib/advisor-billing.ts` to apply multiplier when lead specialty matches the cross-border set |
 | 6 | **NEW: Saudi Arabia Arabic page + UAE/SA → /ar/ auto-route** | B | pending | — | Completes Phase 5d+5e+5g. ~1 day. Clone UAE Arabic structure for SA; modify LocationFlagButton click handler to route UAE/SA → /ar/...; language toggle |
@@ -66,6 +66,7 @@
 - 2026-05-09 14:35 | meta | Tier C gate = 30-min observation | Recommended balance per founder's prior pattern in workflow memory
 - 2026-05-09 14:35 | meta | Auto-topup = opt-in + $500 cap + 24h cooldown | All three guardrails layered; defense in depth
 - 2026-05-09 14:35 | #2 | Split-or-bundle deferred to per-iteration | If single PR works, ship; if Tier C blocks, split
+- 2026-05-10 00:25 | #3 | Wired country-eligibility filter to advisor surfaces | Three readers added: `/advisors` server fetch (compounds with EligibilityBadge), `/find-advisor/[location]` city listings, `/api/submit-lead` matching cascade (post-fetch filter on bumped limit=20 so blocked top-pick falls through to next eligible). `confirm_advisor_id` returns 409 when blocked. Country-specific `no_more_matches` message when whole pool blocked. /best/[slug] was already wired in PR #683 — broker side complete.
 
 ## Pause history
 
