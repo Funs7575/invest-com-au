@@ -163,6 +163,15 @@ export function getClusterLinksForArticle(articleSlug: string): ClusterLink[] {
 }
 
 /**
+ * Returns the topic cluster IDs the given article belongs to.
+ * Convenience wrapper for use in RSC pages that need to pass `clusterIds`
+ * to `<LinkifiedText>` for KK-04 cluster-aware link injection.
+ */
+export function getArticleClusterIds(articleSlug: string): string[] {
+  return getClustersForArticle(articleSlug).map((c) => c.cluster.id);
+}
+
+/**
  * Returns cluster-based internal links for a /best/ page.
  */
 export function getClusterLinksForBestPage(bestSlug: string): ClusterLink[] {

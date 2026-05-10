@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { splitByLinks } from "@/lib/keyword-linking";
+import { splitByLinks, splitByLinksForArticle } from "@/lib/keyword-linking";
 
 interface Props {
   text: string;
@@ -23,6 +23,13 @@ interface Props {
    * Default: unlimited (existing behaviour when omitted).
    */
   maxLinks?: number;
+  /**
+   * Topic cluster IDs the current article belongs to (KK-04 iter 2).
+   * When provided alongside `maxLinks`, cluster-affine link targets are
+   * promoted to fill the cap before positionally-earlier non-affine ones.
+   * Obtained via `getClustersForArticle(slug).map(c => c.cluster.id)`.
+   */
+  clusterIds?: string[];
 }
 
 /**
@@ -34,7 +41,7 @@ interface Props {
  * returns an array of `string | {href,label}` nodes that React renders
  * natively.
  */
-export default function LinkifiedText({ text, skipHrefs, className, disabled, maxLinks }: Props) {
+export default function LinkifiedText({ text, skipHrefs, className, disabled, maxLinks, clusterIds }: Props) {
   if (!text) return null;
 
   const wrapperClass = `max-w-none text-slate-700 leading-relaxed whitespace-pre-line ${className ?? ""}`;
@@ -44,7 +51,9 @@ export default function LinkifiedText({ text, skipHrefs, className, disabled, ma
   }
 
   const skip = new Set(skipHrefs ?? []);
-  const parts = splitByLinks(text, maxLinks);
+  const parts = clusterIds?.length
+    ? splitByLinksForArticle(text, clusterIds, maxLinks)
+    : splitByLinks(text, maxLinks);
 
   return (
     <div className={wrapperClass}>

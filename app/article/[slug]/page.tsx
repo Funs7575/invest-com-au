@@ -17,7 +17,7 @@ import AuthorByline from "@/components/AuthorByline";
 import OnThisPage from "@/components/OnThisPage";
 import { absoluteUrl, breadcrumbJsonLd, articleAuthorJsonLd, articleFaqJsonLd, CURRENT_MONTH_YEAR, ORGANIZATION_JSONLD } from "@/lib/seo";
 import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
-import { CATEGORY_COLORS, getBestPagesForArticle, getClusterLinksForArticle } from "@/lib/internal-links";
+import { CATEGORY_COLORS, getBestPagesForArticle, getClusterLinksForArticle, getArticleClusterIds } from "@/lib/internal-links";
 import ClusterNav from "@/components/ClusterNav";
 import ArticleComments from "@/components/ArticleComments";
 import Icon from "@/components/Icon";
@@ -116,6 +116,7 @@ export default async function ArticlePage({
   const articleAuthor = a.author ?? null;
   const articleReviewer = a.reviewer ?? null;
   const isEnhanced = ENHANCED_SLUGS.includes(slug);
+  const articleClusterIds = getArticleClusterIds(slug);
 
   // Parallelize independent queries with Promise.all
   const relatedBrokersPromise = (a.related_brokers && a.related_brokers.length > 0)
@@ -428,6 +429,7 @@ export default async function ArticlePage({
                       skipHrefs={[`/article/${a.slug}`]}
                       disabled={!linkInjectionEnabled}
                       maxLinks={5}
+                      clusterIds={articleClusterIds}
                     />
                   </section>
 
@@ -459,6 +461,7 @@ export default async function ArticlePage({
                           skipHrefs={[`/article/${a.slug}`]}
                           disabled={!linkInjectionEnabled}
                           maxLinks={5}
+                          clusterIds={articleClusterIds}
                         />
                       </section>
                     )
@@ -513,6 +516,7 @@ export default async function ArticlePage({
                             skipHrefs={[`/article/${a.slug}`]}
                             disabled={!linkInjectionEnabled}
                             maxLinks={5}
+                            clusterIds={articleClusterIds}
                           />
                         </section>
                         {/* In-content ad after 2nd section (only if 4+ sections for density) */}

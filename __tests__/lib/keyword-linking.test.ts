@@ -4,6 +4,7 @@ import {
   GLOSSARY_LINK_TARGETS,
   linkifyHtml,
   splitByLinks,
+  splitByLinksForArticle,
 } from "@/lib/keyword-linking";
 
 describe("INTERNAL_LINK_TARGETS", () => {
@@ -182,6 +183,90 @@ describe("splitByLinks — glossary terms", () => {
     const link = out.find((p) => typeof p !== "string");
     if (typeof link !== "string" && link) {
       expect(link.href).toBe("/advisors/smsf-accountants");
+    }
+  });
+});
+
+describe("splitByLinksForArticle — cluster-aware priority", () => {
+  it("falls back to splitByLinks when no clusterIds provided", () => {
+    const text = "CommSec and SelfWealth and Pearler.";
+    expect(splitByLinksForArticle(text, [])).toEqual(splitByLinks(text));
+  });
+
+  it("falls back to splitByLinks when maxLinks is unlimited", () => {
+    const text = "CommSec and SelfWealth.";
+    expect(splitByLinksForArticle(text, ["best-brokers"])).toEqual(
+      splitByLinks(text),
+    );
+  });
+
+  it("promotes cluster-affine keywords over positionally-earlier non-affine ones", () => {
+    // "SMSF" (affinity: super-australia) appears AFTER "CommSec" (affinity: best-brokers).
+    // With clusterIds=["super-australia"] and maxLinks=1, SMSF should win the slot.
+    const text = "CommSec is a broker. You can hold SMSF assets there.";
+    const out = splitByLinksForArticle(text, ["super-australia"], 1);
+    const links = out.filter((p) => typeof p !== "string");
+    expect(links).toHaveLength(1);
+    if (typeof links[0] !== "string" && links[0]) {
+      expect(links[0].href).toBe("/smsf");
+    }
+  });
+
+  it("still links positionally-first keyword when it is also cluster-affine", () => {
+    // Both CommSec and SelfWealth are affine to best-brokers; CommSec appears first.
+    const text = "CommSec and SelfWealth are brokers.";
+    const out = splitByLinksForArticle(text, ["best-brokers"], 1);
+    const links = out.filter((p) => typeof p !== "string");
+    expect(links).toHaveLength(1);
+    if (typeof links[0] !== "string" && links[0]) {
+      expect(links[0].href).toBe("/broker/commsec");
+    }
+  });
+
+  it("preserves full text content — no characters lost after cluster reordering", () => {
+    const original = "CommSec offers research and SMSF support.";
+    const out = splitByLinksForArticle(original, ["super-australia"], 1);
+    const reconstructed = out
+      .map((p) => (typeof p === "string" ? p : p.label))
+      .join("");
+    expect(reconstructed).toBe(original);
+  });
+
+  it("non-affine links fill remaining cap slots when affine ones are exhausted", () => {
+    // Only SMSF is affine to super-australia; CommSec and SelfWealth are not.
+    // With maxLinks=2, SMSF gets slot 1, then positional order fills slot 2.
+    const text = "CommSec and SelfWealth plus SMSF investing.";
+    const out = splitByLinksForArticle(text, ["super-australia"], 2);
+    const links = out.filter(
+      (p): p is { href: string; label: string } => typeof p !== "string",
+    );
+    expect(links).toHaveLength(2);
+    const hrefs = links.map((l) => l.href);
+    expect(hrefs).toContain("/smsf");
+  });
+});
+
+describe("INTERNAL_LINK_TARGETS — affinity annotations", () => {
+  it("all affinity arrays contain valid non-empty cluster IDs", () => {
+    for (const t of INTERNAL_LINK_TARGETS) {
+      if (t.affinity) {
+        expect(Array.isArray(t.affinity)).toBe(true);
+        for (const id of t.affinity) {
+          expect(typeof id).toBe("string");
+          expect(id.trim()).toBeTruthy();
+        }
+      }
+    }
+  });
+
+  it("broker targets have best-brokers affinity", () => {
+    const brokerKeywords = ["CommSec", "SelfWealth", "Pearler", "Moomoo", "Superhero"];
+    for (const kw of brokerKeywords) {
+      const target = INTERNAL_LINK_TARGETS.find(
+        (t) => t.keyword.toLowerCase() === kw.toLowerCase(),
+      );
+      expect(target).toBeDefined();
+      expect(target?.affinity).toContain("best-brokers");
     }
   });
 });
