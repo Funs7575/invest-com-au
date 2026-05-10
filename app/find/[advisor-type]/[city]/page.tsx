@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createStaticClient } from "@/lib/supabase/static";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR, SITE_NAME } from "@/lib/seo";
 import { logger } from "@/lib/logger";
 
@@ -41,7 +41,7 @@ function citySlugToDisplay(slug: string): string {
 
 export async function generateStaticParams() {
   try {
-    const supabase = createAdminClient();
+    const supabase = createStaticClient();
     const { data, error } = await supabase
       .from("professionals")
       .select("type, location_suburb")
@@ -122,7 +122,7 @@ interface AdvisorRow {
 }
 
 async function getAdvisors(dbType: string, city: string): Promise<AdvisorRow[]> {
-  const supabase = createAdminClient();
+  const supabase = createStaticClient();
   const { data, error } = await supabase
     .from("professionals")
     .select(
