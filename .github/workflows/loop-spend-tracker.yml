@@ -48,6 +48,7 @@ env:
   COMMITS_WARN: "40"
   COMMITS_CRIT: "80"
   TRACK_FILE: "docs/ops/loop-spend.md"
+  STREAM_JSON: "docs/ops/loop-spend-streams-latest.json"
 
 jobs:
   snapshot:
@@ -95,6 +96,7 @@ jobs:
           # signature that wasted ~10 iterations on 2026-05-08 (AA/BB DISC).
           stream_report=""
           flagged_streams=""
+          stream_json_entries=""
           merged_prs_24h=$(gh pr list --state merged --search "merged:>=$today" \
             --limit 100 --json headRefName,title 2>/dev/null || echo '[]')
 
@@ -113,6 +115,7 @@ jobs:
 
             if [ "$stream_commits" -gt 0 ]; then
               stream_report+="| ${stream^^} | $stream_commits | $stream_merged_prs |"$'\n'
+              stream_json_entries+="{\"stream\":\"${stream^^}\",\"commits\":${stream_commits},\"mergedPrs\":${stream_merged_prs}},"
 
               # FP-sweep detector: ≥5 commits but 0 merged PRs in 24h is the
               # signature of an iteration loop chasing items that get swept
@@ -196,11 +199,28 @@ jobs:
             "$today" "$loop_commits" "$all_commits" "$prs_opened" "$est_tokens_m" "$alert_level" \
             >> "$TRACK_FILE"
 
-          # Commit if any change
-          if ! git diff --quiet "$TRACK_FILE"; then
-            git config user.name "loop-spend-tracker[bot]"
-            git config user.email "loop-spend-tracker@invest.com.au"
-            git add "$TRACK_FILE"
+          # Write per-stream JSON snapshot (overwritten each day) — consumed by
+          # the /admin/loop-status dashboard. The .md history above is for trend;
+          # this file is for "what's hot right now per stream".
+          mkdir -p "$(dirname "$STREAM_JSON")"
+          flagged_json_arr="[]"
+          if [ -n "$flagged_streams" ]; then
+            quoted=$(echo "$flagged_streams" | awk '{
+              for (i=1; i<=NF; i++) if ($i ~ /^[A-Z]+$/) printf "\"%s\",", $i
+            }' | sed 's/,$//')
+            flagged_json_arr="[$quoted]"
+          fi
+          printf '{"date":"%s","alert":"%s","streams":[%s],"flagged":%s}\n' \
+            "$today" "$alert_level" "${stream_json_entries%,}" "$flagged_json_arr" \
+            > "$STREAM_JSON"
+
+          # Commit if any change. Stage first so git diff --cached can detect
+          # both modified-tracked AND newly-added files (the untracked
+          # STREAM_JSON file confuses plain `git diff --quiet`).
+          git config user.name "loop-spend-tracker[bot]"
+          git config user.email "loop-spend-tracker@invest.com.au"
+          git add "$TRACK_FILE" "$STREAM_JSON"
+          if ! git diff --cached --quiet; then
             git commit -m "chore(ops): loop spend snapshot $today (commits=$loop_commits, est=${est_tokens_m}M)"
 
             # Retry push up to 3× in case main moved
