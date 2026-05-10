@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
+import { useCalculatorState } from "@/hooks/use-calculator-state";
 
 /**
  * FIRB fee estimator
@@ -146,6 +147,33 @@ export default function FirbFeeEstimatorClient() {
   );
   const [investorType, setInvestorType] = useState<InvestorType>("private");
   const [valueAud, setValueAud] = useState<string>("10000000");
+
+  // Cross-calc persistence (CMP W2 Phase 1).
+  const {
+    value: persistedInputs,
+    setValue: setPersistedInputs,
+    isHydrated: persistHydrated,
+  } = useCalculatorState<{ asset_class: AssetClass; investor_type: InvestorType; value_aud: string }>(
+    "firb_fee_estimator",
+    {
+      asset_class: "energy_critical_infrastructure",
+      investor_type: "private",
+      value_aud: "10000000",
+    },
+  );
+
+  useEffect(() => {
+    if (!persistHydrated) return;
+    if (typeof persistedInputs.asset_class === "string") setAssetClass(persistedInputs.asset_class);
+    if (persistedInputs.investor_type === "private" || persistedInputs.investor_type === "foreign_government")
+      setInvestorType(persistedInputs.investor_type);
+    if (typeof persistedInputs.value_aud === "string") setValueAud(persistedInputs.value_aud);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- hydrate once
+  }, [persistHydrated]);
+
+  useEffect(() => {
+    setPersistedInputs({ asset_class: assetClass, investor_type: investorType, value_aud: valueAud });
+  }, [assetClass, investorType, valueAud, setPersistedInputs]);
 
   const valueCents = useMemo(() => {
     const n = parseFloat(valueAud) || 0;
