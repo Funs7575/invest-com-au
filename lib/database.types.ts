@@ -7583,6 +7583,60 @@ export type Database = {
         }
         Relationships: []
       }
+      investor_profiles: {
+        Row: {
+          auth_user_id: string
+          budget_band: string | null
+          created_at: string
+          display_name: string | null
+          experience_level: string | null
+          id: number
+          intent_country_snapshot: string | null
+          is_business_owner: boolean
+          is_cross_border: boolean
+          is_fhb: boolean
+          is_hnw: boolean
+          is_pre_retiree: boolean
+          meta: Json
+          primary_vertical: string | null
+          updated_at: string
+        }
+        Insert: {
+          auth_user_id: string
+          budget_band?: string | null
+          created_at?: string
+          display_name?: string | null
+          experience_level?: string | null
+          id?: never
+          intent_country_snapshot?: string | null
+          is_business_owner?: boolean
+          is_cross_border?: boolean
+          is_fhb?: boolean
+          is_hnw?: boolean
+          is_pre_retiree?: boolean
+          meta?: Json
+          primary_vertical?: string | null
+          updated_at?: string
+        }
+        Update: {
+          auth_user_id?: string
+          budget_band?: string | null
+          created_at?: string
+          display_name?: string | null
+          experience_level?: string | null
+          id?: never
+          intent_country_snapshot?: string | null
+          is_business_owner?: boolean
+          is_cross_border?: boolean
+          is_fhb?: boolean
+          is_hnw?: boolean
+          is_pre_retiree?: boolean
+          meta?: Json
+          primary_vertical?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       job_queue: {
         Row: {
           attempts: number
