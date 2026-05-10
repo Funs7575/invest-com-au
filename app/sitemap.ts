@@ -8,6 +8,7 @@ import {
   getOpportunityCategories,
   getAllSubcategorySlugs,
 } from "@/lib/invest-categories";
+import { localePath, type Locale } from "@/lib/i18n/locales";
 import { listingUrl } from "@/lib/listing-url";
 import type { InvestListingVertical, PlatformType } from "@/lib/types";
 import { generateVersusPairs } from "@/lib/versus-pairs";
@@ -114,11 +115,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/global-investing",
     // Foreign investment hub (inbound — world → AU)
     "/foreign-investment",
-    // Localised foreign-investor hub + sub-pages (zh, ko)
-    "/zh/foreign-investment", "/ko/foreign-investment",
-    "/zh/foreign-investment/siv", "/ko/foreign-investment/siv",
-    "/zh/foreign-investment/property", "/ko/foreign-investment/property",
-    "/zh/foreign-investment/tax", "/ko/foreign-investment/tax",
+    // Locale-prefixed pages are emitted separately below (via LOCALE_PAGES).
     "/foreign-investment/property", "/foreign-investment/tax", "/foreign-investment/super",
     "/foreign-investment/shares", "/foreign-investment/energy",
     "/foreign-investment/savings", "/foreign-investment/cfd",
@@ -849,5 +846,32 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
   );
 
-  return [...staticPages, ...bestPages, ...bestForPages, ...commodityPages, ...stockDetailPages, ...transferGuidePages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...howToPages, ...expertArticlePages, ...advisorPages, ...advisorTypePages, ...advisorStatePages, ...advisorCityPages, ...advisorLocationPages, ...investingCityPages, ...glossaryPages, ...firmPages, ...propertyListingPages, ...suburbGuidePages, ...propertyHubPages, ...newHubPages, newsletterArchivePage, ...newsletterEditionPages, ...investStaticPages, ...investCategoryPages, ...investSubcategoryPages, ...investListingPages, ...stockbrokerFirmPages, ...quoteJobPages, ...quoteCategoryStatePages];
+  // Locale-prefixed pages (CC-05). Source of truth for which locale×path
+  // combinations have real pages in app/<locale>/. Add new entries here when
+  // a new locale page goes live — the sitemap auto-updates on next ISR cycle.
+  // Priority tiers: zh/ko foreign-investment hub = 0.7 (live, SEO-indexed);
+  // ar = 0.5 (Phase 5 POC — one page, lower crawl budget allocation).
+  const LOCALE_PAGES: Array<{ locale: Exclude<Locale, "en">; canonicalPath: string; priority: number }> = [
+    // Simplified Chinese — foreign-investment hub
+    { locale: "zh", canonicalPath: "/foreign-investment",          priority: 0.7 },
+    { locale: "zh", canonicalPath: "/foreign-investment/siv",      priority: 0.6 },
+    { locale: "zh", canonicalPath: "/foreign-investment/property", priority: 0.6 },
+    { locale: "zh", canonicalPath: "/foreign-investment/tax",      priority: 0.6 },
+    // Korean — same hub
+    { locale: "ko", canonicalPath: "/foreign-investment",          priority: 0.7 },
+    { locale: "ko", canonicalPath: "/foreign-investment/siv",      priority: 0.6 },
+    { locale: "ko", canonicalPath: "/foreign-investment/property", priority: 0.6 },
+    { locale: "ko", canonicalPath: "/foreign-investment/tax",      priority: 0.6 },
+    // Arabic — UAE-specific page (Phase 5 POC, RTL)
+    { locale: "ar", canonicalPath: "/foreign-investment/united-arab-emirates", priority: 0.5 },
+  ];
+
+  const localePages = LOCALE_PAGES.map(({ locale, canonicalPath, priority }) => ({
+    url: `${baseUrl}${localePath(canonicalPath, locale)}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority,
+  }));
+
+  return [...staticPages, ...localePages, ...bestPages, ...bestForPages, ...commodityPages, ...stockDetailPages, ...transferGuidePages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...howToPages, ...expertArticlePages, ...advisorPages, ...advisorTypePages, ...advisorStatePages, ...advisorCityPages, ...advisorLocationPages, ...investingCityPages, ...glossaryPages, ...firmPages, ...propertyListingPages, ...suburbGuidePages, ...propertyHubPages, ...newHubPages, newsletterArchivePage, ...newsletterEditionPages, ...investStaticPages, ...investCategoryPages, ...investSubcategoryPages, ...investListingPages, ...stockbrokerFirmPages, ...quoteJobPages, ...quoteCategoryStatePages];
 }
