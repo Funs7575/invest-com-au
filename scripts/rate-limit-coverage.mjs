@@ -101,6 +101,12 @@ const EXEMPT_PATTERNS = [
   // rate limiting inside the handler would cost CDN cache hits with
   // zero threat-model benefit.
   { match: /\/api\/geo(\/|$)/, reason: "edge route w/ 1h CDN cache; provider-pooled" },
+  // Public read of country_rule_alerts (W4.21). Single ?country= query
+  // param against an enum allow-list, no PII, no writes. Cache-Control
+  // sets s-maxage=300 + stale-while-revalidate=600 so Vercel's CDN
+  // absorbs repeats from the same IP. Per-IP throttle inside the
+  // handler would cost cache hits with no real threat model.
+  { match: /\/api\/country-rule-alerts(\/|$)/, reason: "public read w/ 5m CDN cache; provider-pooled" },
 ];
 
 async function findRouteFiles(dir) {
