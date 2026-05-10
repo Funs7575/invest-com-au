@@ -42,8 +42,8 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | EE | `claude/audit-remediation/ee-01-error-boundaries` | **#653 MERGED** (EE-01+EE-05) | EE-01 done + EE-02/03/04 FP + EE-05 done. **Stream complete.** | #653 merged ✓ |
 | FF | `claude/audit-remediation/ff-01-feature-flag-audit` | **#656 MERGED 2026-05-09** (`4da4004f`) | FF-01..FF-04 done. FF-03 false-positive. **Stream complete.** | FF-04 merged ✓ |
 | OOO | `claude/audit-remediation/ooo-01-runbook-audit` | **#652 MERGED** | OOO-01 done. OOO-04 FP. OOO-02 done. OOO-03 done. **Stream complete.** | OOO-03 merged ✓ |
-| KK | `claude/audit-remediation/kk-04-iter2-cluster-targets` | **#703 MERGED 2026-05-10** (KK-03) · **#711 MERGED 2026-05-10** (KK-04 iter 1) · **#742 OPEN** (KK-04 iter 2) | KK-01 done (#667). KK-02 done (#670). KK-03: **#703 MERGED 2026-05-10** (`57cfce7`). KK-04 iter 1: **#711 MERGED 2026-05-10** (`34455f2b` — `internal_link_injection` flag + density cap + kill-switch + 6 tests). KK-04 iter 2: **#742 OPEN** (`99018e0` — `affinity` annotations on 20 targets + `splitByLinksForArticle` + `getArticleClusterIds` + article page wired + 8 tests). KK-04 iters 3-5 pending. | KK-04 merged |
-| PP | `claude/audit-remediation/pp-01-bundle-budget` | **#706 MERGED 2026-05-10** (PP-01) | PP-01: **#706 MERGED 2026-05-10** (all CI green — founder merged). PP-02..05 pending. | All PP tasks merged |
+| KK | `claude/audit-remediation/kk-04-iter2-cluster-targets` | **#703 MERGED 2026-05-10** (KK-03) · **#711 MERGED 2026-05-10** (KK-04 iter 1) · **#742 OPEN** (KK-04 iters 2+3) | KK-01 done (#667). KK-02 done (#670). KK-03: **#703 MERGED 2026-05-10** (`57cfce7`). KK-04 iter 1: **#711 MERGED 2026-05-10** (`34455f2b` — `internal_link_injection` flag + density cap + kill-switch + 6 tests). KK-04 iter 2: **#742** (`99018e0` — `affinity` annotations on 20 targets + `splitByLinksForArticle` + `getArticleClusterIds` + article page wired + 8 tests). KK-04 iter 3: **#742** (`61d5c50` — `ARTICLE_LINK_DENSITY` map + `getArticleLinkDensity()` + 3 LinkifiedText instances wired + 7 tests). KK-04 iters 4-5 pending. | KK-04 merged |
+| PP | `claude/audit-remediation/pp-02-image-audit` | **#706 MERGED 2026-05-10** (PP-01) · **#745 OPEN** (PP-02) | PP-01: **#706 MERGED 2026-05-10** (all CI green — founder merged). PP-02: **#745 OPEN** (`5d5cb94` — 4 raw `<img>` → next/image in quotes + quiz; 2 in widget/route.ts are intentional HTML-string-only). PP-03..05 pending. | All PP tasks merged |
 | WW | `claude/audit-remediation/ww-01-watchlist-data-model` | **#651 MERGED** | WW-01 migration + WW-02 watchlist UI done. WW-03/04 blocked (DD-02 dep). **Streams WW-01+WW-02 merged.** | All WW tasks merged ✓ |
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
 | Z | `claude/audit-remediation/z-04-zero-state-ux` | #230/#323/#403/#457/#524/#565 | Z-01..Z-04 done. | Z-04 merged ✓ |
@@ -384,7 +384,7 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
 | PP-01 | **done** | Bundle size budget CI check — hard gate in ci.yml main job | — | **#706 MERGED 2026-05-10** (founder merged, all CI green). `scripts/bundle-size-budget.mjs` + step after build. 3000 kB ceiling. |
-| PP-02 | pending | Image optimisation audit (identify unoptimised `<img>` tags) | ~2 | |
+| PP-02 | **in-flight** | Image optimisation audit (identify unoptimised `<img>` tags) | ~2 | **#745 OPEN** — 4 raw `<img>` converted to `<Image>` (quotes + quiz). 2 intentional exclusions in widget/route.ts. |
 | PP-03 | pending | Font loading optimisation (subset + preload) | ~2 | Deps: PP-02. |
 | PP-04 | pending | Third-party script audit (GTM, Intercom, etc. — defer or remove) | ~2 | |
 | PP-05 | pending | Lazy loading audit (identify above-the-fold images with loading=lazy) | ~1 | |
@@ -994,6 +994,22 @@ _Compacted 2026-05-09: 1,223 lines of completed-stream summary + iteration log e
 _The most recent ~24h of iteration log entries (iter ~325 onwards) are temporarily missing from both files — they were lost in the 2026-05-09 truncation incident (recovered as PR #661) before the rotate-iteration-log workflow could archive them. Loop's stuck-detection guard should not regress because the iteration command's Phase 2 falls back to PR-CI history when iter log entries are absent._
 
 See [`REMEDIATION_QUEUE_LOG_ARCHIVE.md`](./REMEDIATION_QUEUE_LOG_ARCHIVE.md) for historical iteration log + completed-stream summary.
+
+---
+
+### Iter 350 · 2026-05-10 · Stream PP · PP-02 image optimisation audit · STATUS: PROGRESS
+
+**What was done:** Phase 3: PP is next pending stream (PP-02: image optimisation audit). Phase 4: grep found 6 raw `<img>` usages. Phase 5: Audited all 6. Converted 4 to `<Image>` from next/image — advisor avatars (40×40px) in InstantMatchPanel, QuoteBidsClient, quotes/by/[type]/[state] page, and quiz AdvisorResultsScreen (56×56px). Supabase storage already in `next.config.ts` `remotePatterns`. Documented 2 intentional exclusions in `app/api/widget/route.ts` (raw HTML string generation for embeddable widget — next/image is a React component and cannot be used). Also checked `loading="lazy"` on `<Image>` components — 7 occurrences found (PP-05 scope — to be addressed in PP-05). Cherry-picked types update + driftallowlist from F-DISC to avoid "Supabase types drift" CI failure. Phase 6: commit `5d5cb94`, PR #745 opened.
+
+**Status:** `STATUS: PROGRESS · stream=PP · item=PP-02 · pr=#745`
+
+---
+
+### Iter 349 · 2026-05-10 · Stream KK · KK-04 iter 3 — per-article-category density config · STATUS: PROGRESS
+
+**What was done:** Phase 3: KK in-flight, KK-04 iter 3 pending. Phase 5: Added `ARTICLE_LINK_DENSITY` record + `DEFAULT_ARTICLE_LINK_DENSITY` + `getArticleLinkDensity(category)` to `lib/keyword-linking.ts`. Density values: news/credit-cards/savings/money-transfers=2, reviews/etfs/crypto/etc=3, beginners/strategy/tax/super/property=4, smsf=5, unknown→3. Wired `getArticleLinkDensity(a.category)` into `app/article/[slug]/page.tsx` replacing 3× hardcoded `maxLinks={5}`. Added `getArticleLinkDensity` + 3 new exports to test imports; added 7-test suite covering undefined/null/unknown fallbacks, news<smsf ordering, known-category correctness, case-insensitivity, and positive-integer invariant. Phase 6: commit `61d5c50`, pushed to #742.
+
+**Status:** `STATUS: PROGRESS · stream=KK · item=KK-04 · iter=3 · pr=#742`
 
 ---
 
