@@ -160,8 +160,12 @@ export type TextOrLink =
  * objects. Only the first occurrence of each keyword is linked —
  * subsequent occurrences render as plain text. Safe for React
  * rendering without dangerouslySetInnerHTML.
+ *
+ * @param maxLinks - Maximum unique keywords to inject as links. Defaults to
+ *   unlimited (all first occurrences). Pass a small integer (e.g. 5) to cap
+ *   link density per text block — text after the cap renders as plain text.
  */
-export function splitByLinks(text: string): TextOrLink[] {
+export function splitByLinks(text: string, maxLinks = Infinity): TextOrLink[] {
   if (!text) return [];
   const out: TextOrLink[] = [];
   const used = new Set<string>();
@@ -169,6 +173,10 @@ export function splitByLinks(text: string): TextOrLink[] {
   let lastIndex = 0;
   let m: RegExpExecArray | null;
   while ((m = rx.exec(text)) !== null) {
+    // Density cap: once we've injected maxLinks unique keywords, skip further
+    // injections. The regex still scans forward so remaining text is captured
+    // correctly in the final text.slice(lastIndex) below.
+    if (used.size >= maxLinks) continue;
     const match = m[0];
     const key = match.toLowerCase();
     if (used.has(key)) continue;
