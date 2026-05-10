@@ -11,7 +11,7 @@
  * vendor chunks), so they directly set the First Load JS floor.
  *
  * Exit codes:
- *   0 — within budget
+ *   0 — within budget (gate passes)
  *   1 — budget exceeded (fail CI)
  *
  * Usage:
