@@ -273,7 +273,10 @@ Always include the section, even if empty, so the workflow's grep is reliable. -
 
 - **Tier A** (docs / data / page UI / additive tests): merge after CI green, no observation
 - **Tier B** (refactor / additive API tests / RLS migrations): merge after CI green, **observe Sentry + Vercel for 15 min**, revert if anomaly
-- **Tier C** (webhooks / cron / lib/stripe / lib/supabase/admin / AFSL pages / new schema migrations / BB/CC/DD/EE streams): post a `📢 Tier C intent` comment on the PR + **wait 30 min** for STOP unless founder is responsive in chat (in which case merge immediately) → merge → **2hr post-merge observation** (Sentry + Vercel deploy + Stripe events if applicable)
+- **Tier C** (webhooks / cron / lib/stripe / lib/supabase/admin / AFSL pages / new schema migrations / BB/CC/DD/EE streams): post a `📢 Tier C intent` comment on the PR + **wait** for STOP, then merge → **2hr post-merge observation** (Sentry + Vercel deploy + Stripe events if applicable). Wait length depends on the `LOOP_RESPONSIVE` sentinel:
+  - **`LOOP_RESPONSIVE` file present at repo root** → wait **5 min**. The file's presence is founder's explicit signal that they're at the keyboard; long waits in this state add friction without adding safety. Founder drops the file by `touch LOOP_RESPONSIVE && git add LOOP_RESPONSIVE && git commit -m "ops: loop responsive" && git push`. Inverse: deleting the file restores the 30-min default. (Added 2026-05-10 after the country-mode burst showed Tier C immediate-merge under founder supervision was working without incident.)
+  - **`LOOP_RESPONSIVE` file absent** → wait **30 min** (the conservative default). This is the right behaviour when founder is asleep / AFK / silent.
+  - **Founder explicitly says "hurry"/"go"/"merge it" in chat in the last 5 min** → merge immediately regardless of sentinel. Direct supervision overrides timers.
 - **Tier D** (PR body says "set X env var first" / has `do-not-merge` label): refuse autonomous merge; queue for founder
 - **Tier E** (force-push / branch delete / repo settings / workflow disablement): never autonomous
 
