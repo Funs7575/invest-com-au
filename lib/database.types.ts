@@ -7197,6 +7197,39 @@ export type Database = {
         }
         Relationships: []
       }
+      holdings_price_cache: {
+        Row: {
+          currency: string
+          exchange: string
+          fetched_at: string
+          id: number
+          last_attempt_at: string
+          price_cents: number
+          source: string
+          ticker: string
+        }
+        Insert: {
+          currency: string
+          exchange: string
+          fetched_at?: string
+          id?: never
+          last_attempt_at?: string
+          price_cents: number
+          source: string
+          ticker: string
+        }
+        Update: {
+          currency?: string
+          exchange?: string
+          fetched_at?: string
+          id?: never
+          last_attempt_at?: string
+          price_cents?: number
+          source?: string
+          ticker?: string
+        }
+        Relationships: []
+      }
       i18n_currency_rates: {
         Row: {
           base_currency: string
