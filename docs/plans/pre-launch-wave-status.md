@@ -2,7 +2,7 @@
 
 **Plan source:** `docs/plans/pre-launch-wave-master-prompt.md` (Wave 1-6)
 **Loop prompt:** `docs/plans/pre-launch-wave-loop-prompt.md`
-**Last updated:** 2026-05-09 (cron iter — JSON-LD audit + ratchet shipped)
+**Last updated:** 2026-05-10 (cron iter — country rule alerts DB + admin CRUD shipped)
 
 ---
 
@@ -71,7 +71,7 @@ Source: `docs/plans/pre-launch-wave-master-prompt.md`. Lowercase rows mirror tha
 | W3.18 | Verified user reviews engine | B | pending | — | mirror PR #441 moderation |
 | W3.19 | First Home Buyer end-to-end journey | B | pending | — | 4 monetization levers |
 | W4.20 | Smart recommendations strip (legacy #14) | B | pending | — | 2-3 days |
-| W4.21 | Country rule alerts DB + admin CRUD (legacy #15 part 2) | B | pending | — | migrate ALERTS_BY_COUNTRY |
+| W4.21 | Country rule alerts DB + admin CRUD (legacy #15 part 2) | B | ✅ done | (this iter) | `country_rule_alerts` table + RLS + 7-row seed; /admin/country-rule-alerts CRUD; CountryRuleAlerts.tsx fetches from new public API |
 | W4.22 | Country rule alerts email digest (legacy #15 part 4) | B | pending | — | weekly Resend cron |
 | W4.23 | PR-X3 firm billing dashboard (legacy #10) | C | pending | — | aggregate view |
 | W5.24 | Embed comparison widget | A | pending | — | iframe + UTM |
@@ -97,6 +97,8 @@ Source: `docs/plans/pre-launch-wave-master-prompt.md`. Lowercase rows mirror tha
 - 2026-05-09 22:25 | W1.3 | Picked JSON-LD audit + ratchet over W1.1/W1.2 | W1.1 (AI Concierge, 2 days) and W1.2 (calculator funnel, 1-2 days) won't fit in one cron fire; W1.3 is a half-day Tier A item that ships cleanly end-to-end. Lowest-numbered tractable Wave-1 item.
 - 2026-05-09 22:25 | W1.3 | Coverage gate strategy = "≥1 JSON-LD block per public route" | Per-type checks (Article vs FAQPage vs FinancialProduct) considered and rejected as too brittle — same page legitimately ships several blocks; new schema.org types appear regularly. Type correctness stays with page authors.
 - 2026-05-09 22:25 | W1.3 | noindex pages auto-exempt | Pages with `robots.index: false` opt out of search indexing; rich-snippet schema is wasted work. Detected via metadata-text scan
+- 2026-05-10 02:15 | W4.21 | Picked W4.21 over W1.1/W1.2/W1.4 for one-fire scope | W1.1 (concierge homepage) and W1.2 (calculator funnel × 8) and W1.4 (reverse marketplace, Tier C) are all multi-day. W4.21 is well-bounded — schema + admin CRUD + consumer refactor + tests, single PR. Component header comment already scoped this exact PR. Skipped W2.5 (PR-X5a investor accounts foundation) because it gates the rest of Wave 2 — better to ship as a focused multi-fire sequence
+- 2026-05-10 02:15 | W4.21 | country_code stored as lowercase IntentCountryCode | country_schemes uses uppercase ISO-2 (GB/US/IN). Picked lowercase here to match the existing iv_intent_country cookie value the consumer reads — no case-mapping at read time, simpler RLS-public reads, CHECK constraint covers the 12 known intent countries
 
 ## Pause history
 
