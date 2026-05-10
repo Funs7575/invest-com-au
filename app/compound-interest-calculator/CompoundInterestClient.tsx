@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
+import { useCalculatorState } from "@/hooks/use-calculator-state";
 
 const FREQ_OPTIONS = [
   { label: "Monthly", value: 12 },
@@ -19,6 +20,30 @@ export default function CompoundInterestClient() {
   const [years, setYears] = useState(20);
   const [monthly, setMonthly] = useState(200);
   const [freq, setFreq] = useState(12);
+
+  // Cross-calc persistence (CMP W2 Phase 1).
+  const {
+    value: persistedInputs,
+    setValue: setPersistedInputs,
+    isHydrated: persistHydrated,
+  } = useCalculatorState<{ principal: number; rate: number; years: number; monthly: number; freq: number }>(
+    "compound_interest_calculator",
+    { principal: 10_000, rate: 7, years: 20, monthly: 200, freq: 12 },
+  );
+
+  useEffect(() => {
+    if (!persistHydrated) return;
+    if (typeof persistedInputs.principal === "number") setPrincipal(persistedInputs.principal);
+    if (typeof persistedInputs.rate === "number") setRate(persistedInputs.rate);
+    if (typeof persistedInputs.years === "number") setYears(persistedInputs.years);
+    if (typeof persistedInputs.monthly === "number") setMonthly(persistedInputs.monthly);
+    if (typeof persistedInputs.freq === "number") setFreq(persistedInputs.freq);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- hydrate once
+  }, [persistHydrated]);
+
+  useEffect(() => {
+    setPersistedInputs({ principal, rate, years, monthly, freq });
+  }, [principal, rate, years, monthly, freq, setPersistedInputs]);
 
   const result = useMemo(() => {
     const r = rate / 100;
