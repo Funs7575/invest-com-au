@@ -40,6 +40,7 @@ const NAV_GROUPS = [
       { href: "/admin/advisor-articles", icon: "star", label: "Expert Articles" },
       { href: "/admin/content-calendar", icon: "calendar", label: "Content Calendar" },
       { href: "/admin/questions", icon: "message-circle", label: "Q&A" },
+      { href: "/admin/topic-clusters", icon: "git-branch", label: "Topic Clusters" },
     ],
   },
   {
