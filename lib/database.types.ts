@@ -3844,6 +3844,57 @@ export type Database = {
           },
         ]
       }
+      business_accounts: {
+        Row: {
+          abn: string | null
+          acn: string | null
+          auth_user_id: string
+          business_name: string
+          created_at: string
+          employees_band: string | null
+          id: number
+          industry: string | null
+          legal_name: string | null
+          primary_state: string | null
+          revenue_band: string | null
+          status: string
+          updated_at: string
+          year_established: number | null
+        }
+        Insert: {
+          abn?: string | null
+          acn?: string | null
+          auth_user_id: string
+          business_name: string
+          created_at?: string
+          employees_band?: string | null
+          id?: never
+          industry?: string | null
+          legal_name?: string | null
+          primary_state?: string | null
+          revenue_band?: string | null
+          status?: string
+          updated_at?: string
+          year_established?: number | null
+        }
+        Update: {
+          abn?: string | null
+          acn?: string | null
+          auth_user_id?: string
+          business_name?: string
+          created_at?: string
+          employees_band?: string | null
+          id?: never
+          industry?: string | null
+          legal_name?: string | null
+          primary_state?: string | null
+          revenue_band?: string | null
+          status?: string
+          updated_at?: string
+          year_established?: number | null
+        }
+        Relationships: []
+      }
       buyer_agents: {
         Row: {
           agency_name: string | null
@@ -7496,6 +7547,51 @@ export type Database = {
         }
         Relationships: []
       }
+      investor_goals: {
+        Row: {
+          auth_user_id: string
+          created_at: string
+          current_balance_cents: number
+          expected_return_pct: number
+          goal_type: string
+          id: number
+          label: string
+          monthly_contribution_cents: number
+          notes: string | null
+          target_cents: number
+          target_date: string
+          updated_at: string
+        }
+        Insert: {
+          auth_user_id: string
+          created_at?: string
+          current_balance_cents?: number
+          expected_return_pct?: number
+          goal_type: string
+          id?: never
+          label: string
+          monthly_contribution_cents?: number
+          notes?: string | null
+          target_cents: number
+          target_date: string
+          updated_at?: string
+        }
+        Update: {
+          auth_user_id?: string
+          created_at?: string
+          current_balance_cents?: number
+          expected_return_pct?: number
+          goal_type?: string
+          id?: never
+          label?: string
+          monthly_contribution_cents?: number
+          notes?: string | null
+          target_cents?: number
+          target_date?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       investor_holdings: {
         Row: {
           acquired_at: string
@@ -8012,6 +8108,7 @@ export type Database = {
       listing_claims: {
         Row: {
           admin_notes: string | null
+          auth_user_id: string | null
           claim_type: string
           company_role: string | null
           created_at: string | null
@@ -8025,6 +8122,7 @@ export type Database = {
         }
         Insert: {
           admin_notes?: string | null
+          auth_user_id?: string | null
           claim_type: string
           company_role?: string | null
           created_at?: string | null
@@ -8038,6 +8136,7 @@ export type Database = {
         }
         Update: {
           admin_notes?: string | null
+          auth_user_id?: string | null
           claim_type?: string
           company_role?: string | null
           created_at?: string | null
@@ -8100,6 +8199,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      listing_owner_accounts: {
+        Row: {
+          auth_user_id: string
+          created_at: string
+          display_name: string | null
+          email_verified_at: string | null
+          id: number
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          auth_user_id: string
+          created_at?: string
+          display_name?: string | null
+          email_verified_at?: string | null
+          id?: never
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          auth_user_id?: string
+          created_at?: string
+          display_name?: string | null
+          email_verified_at?: string | null
+          id?: never
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       listing_plans: {
         Row: {
@@ -9853,6 +9982,66 @@ export type Database = {
           stripe_customer_id?: string | null
           updated_at?: string | null
           website?: string | null
+        }
+        Relationships: []
+      }
+      property_holdings: {
+        Row: {
+          address_line: string
+          auth_user_id: string
+          created_at: string
+          current_value_estimate_cents: number | null
+          id: number
+          is_investment_property: boolean
+          loan_balance_cents: number | null
+          loan_rate_pct: number | null
+          notes: string | null
+          postcode: string | null
+          property_type: string | null
+          purchase_date: string
+          purchase_price_cents: number
+          state: string | null
+          suburb: string | null
+          updated_at: string
+          weekly_rent_cents: number | null
+        }
+        Insert: {
+          address_line: string
+          auth_user_id: string
+          created_at?: string
+          current_value_estimate_cents?: number | null
+          id?: never
+          is_investment_property?: boolean
+          loan_balance_cents?: number | null
+          loan_rate_pct?: number | null
+          notes?: string | null
+          postcode?: string | null
+          property_type?: string | null
+          purchase_date: string
+          purchase_price_cents: number
+          state?: string | null
+          suburb?: string | null
+          updated_at?: string
+          weekly_rent_cents?: number | null
+        }
+        Update: {
+          address_line?: string
+          auth_user_id?: string
+          created_at?: string
+          current_value_estimate_cents?: number | null
+          id?: never
+          is_investment_property?: boolean
+          loan_balance_cents?: number | null
+          loan_rate_pct?: number | null
+          notes?: string | null
+          postcode?: string | null
+          property_type?: string | null
+          purchase_date?: string
+          purchase_price_cents?: number
+          state?: string | null
+          suburb?: string | null
+          updated_at?: string
+          weekly_rent_cents?: number | null
         }
         Relationships: []
       }
@@ -12563,6 +12752,17 @@ export type Database = {
       }
     }
     Views: {
+      account_kind_membership: {
+        Row: {
+          auth_user_id: string | null
+          created_at: string | null
+          display_label: string | null
+          kind: string | null
+          kind_id: string | null
+          status: string | null
+        }
+        Relationships: []
+      }
       admin_advisor_health: {
         Row: {
           admin_tags: string[] | null
