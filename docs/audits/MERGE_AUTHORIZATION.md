@@ -62,6 +62,8 @@ The fix is a **tiered policy** with **layered safeguards** so the policy can be 
 - Explicit pre-merge announcement to the founder ("about to merge #N — does X, rollback is Y, CI is green").
 - 1-sentence wait. If the founder replies with `STOP` or any "hold" / "wait" / "no" within the wait, abort. Anything else (including silence followed by the next message being unrelated) counts as confirmation — don't re-ask.
 
+The pre-launch wave loop layers a longer 30-min wait on top of this when the founder isn't supervising — that's a separate dial driven by the `LOOP_RESPONSIVE` sentinel in `docs/plans/pre-launch-wave-master-prompt.md`. The audit-remediation loop uses the 1-sentence wait above unconditionally.
+
 **Action:** announce, then merge with `gh pr merge <N> --squash --delete-branch=false`.
 
 ### Tier D — Hard hold (don't merge regardless of tier)
