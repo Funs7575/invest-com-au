@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import BuyerAgentsClient from "./BuyerAgentsClient";
 import ComplianceFooter from "@/components/ComplianceFooter";
+import JsonLd from "@/components/JsonLd";
+import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 
 export const revalidate = 3600;
 
@@ -17,8 +19,14 @@ export const metadata: Metadata = {
 };
 
 export default function BuyerAgentsPage() {
+  const breadcrumb = breadcrumbJsonLd([
+    { name: "Home", url: absoluteUrl("/") },
+    { name: "Property", url: absoluteUrl("/properties") },
+    { name: "Buyer's Agents" },
+  ]);
   return (
     <>
+      <JsonLd data={breadcrumb} testId="buyer-agents-jsonld" />
       <BuyerAgentsClient />
       <div className="max-w-6xl mx-auto px-4 pb-8">
         <ComplianceFooter variant="property" />
