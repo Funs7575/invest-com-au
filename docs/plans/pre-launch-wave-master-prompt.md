@@ -214,8 +214,29 @@ If pre-push hook fails:
 
 ### Step 6 — Open PR
 
+**PRECONDITION — duplicate-PR guard (added 2026-05-10).** Before opening, check
+no open PR already covers this queue item. The two loops (audit-remediation +
+this one) plus manual edits all share the same repo, and 2026-05-10's cleanup
+closed nine duplicates. Search by the queue ID and the feature keyword:
+
 ```bash
-gh pr create --base main --head <branch> --title "<conventional-title>" --body "<markdown body with summary, scope, tier, test plan>"
+QUEUE_ID="<W4.NN-or-queue-N>"           # e.g. "W4.20" or "queue #14"
+FEATURE_KEY="<one stable keyword>"      # e.g. "country-rule-alerts" or "smart-recommendations"
+
+DUP=$(gh pr list --state open --search "$QUEUE_ID OR $FEATURE_KEY in:title" \
+        --json number,title,headRefName,createdAt)
+if [ "$(echo "$DUP" | jq 'length')" != "0" ]; then
+  echo "DUPLICATE — open PR(s) already cover this work:"
+  echo "$DUP" | jq .
+  # If existing PR is fresh + on track → mark this item as in-flight referencing it; STOP.
+  # If existing PR is stale (>7 days, no recent push) → rebase its branch + push there
+  # rather than opening a parallel PR. Surface to founder if approaches diverge meaningfully.
+  exit 0
+fi
+```
+
+```bash
+gh pr create --base main --head <branch> --title "<conventional-title>" --body "<markdown body with summary, scope, tier, supersedes, test plan>"
 ```
 
 PR body template:
@@ -231,6 +252,12 @@ PR body template:
 
 ## Files
 <bullet list>
+
+## Supersedes
+_None._
+<!-- or: list of #NNN this PR replaces. The auto-close-superseded workflow
+reads this section on merge and closes the named PRs with a pointer comment.
+Always include the section, even if empty, so the workflow's grep is reliable. -->
 
 ## Test plan
 - [x] vitest local: <result>
@@ -270,10 +297,25 @@ Then go to Step 1 for the next item.
 
 ### Step 10 — Update status doc
 
-Append to `docs/plans/pre-launch-wave-status.md` at end of each iter:
-- Item row → status `done` (with PR# + merge timestamp)
-- Decision log entry if any judgment call was made
-- Observation log entry for Tier C items
+**This loop is the SINGLE OWNER** of `docs/plans/pre-launch-wave-status.md`.
+Every other actor (audit-remediation loop, manual edits, founder, scout cron)
+drops their suggested updates as files in `docs/plans/queue-updates/` —
+consume that inbox here, then write the integrated update.
+
+Order of operations:
+
+1. **Drain the inbox.** List `docs/plans/queue-updates/*.md` (skip
+   `README.md`). Read each — they're free-form notes from other actors
+   suggesting status changes, decision-log entries, or cross-references.
+   You're the editor: keep what's useful, summarise, drop noise.
+2. **Write the integrated update** to `docs/plans/pre-launch-wave-status.md`:
+   - Item row → status `done` (with PR# + merge timestamp)
+   - Decision log entry if any judgment call was made
+   - Observation log entry for Tier C items
+   - Cross-references from inbox notes that landed
+3. **Delete consumed inbox files** in the same commit. The deletion is the
+   trigger that tells the inbox the update has been integrated.
+4. Commit message: `chore(plans): status doc reconcile — iter <N> + drained <K> inbox files`.
 
 ---
 
