@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
+import { useCalculatorState } from "@/hooks/use-calculator-state";
 
 /**
  * Non-resident CGT exemption checker
@@ -59,6 +60,36 @@ export default function NonResidentCgtClient() {
   const [step, setStep] = useState(0);
   const [assetType, setAssetType] = useState<AssetType | null>(null);
   const [stake, setStake] = useState<StakePct | null>(null);
+
+  const {
+    value: persistedInputs,
+    setValue: setPersistedInputs,
+    isHydrated: persistHydrated,
+  } = useCalculatorState<{
+    step: number;
+    asset_type: AssetType | null;
+    stake: StakePct | null;
+  }>("non_resident_cgt_checker", {
+    step: 0,
+    asset_type: null,
+    stake: null,
+  });
+
+  useEffect(() => {
+    if (!persistHydrated) return;
+    if (typeof persistedInputs.step === "number") setStep(persistedInputs.step);
+    if (persistedInputs.asset_type === null || typeof persistedInputs.asset_type === "string") {
+      setAssetType(persistedInputs.asset_type as AssetType | null);
+    }
+    if (persistedInputs.stake === null || typeof persistedInputs.stake === "string") {
+      setStake(persistedInputs.stake as StakePct | null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- hydrate once
+  }, [persistHydrated]);
+
+  useEffect(() => {
+    setPersistedInputs({ step, asset_type: assetType, stake });
+  }, [step, assetType, stake, setPersistedInputs]);
 
   function reset() {
     setStep(0);
