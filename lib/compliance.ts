@@ -69,6 +69,17 @@ export const REGULATORY_NOTE =
   "We are an information service. Always verify information with the product issuer before " +
   "making a decision.";
 
+/**
+ * Fictional persona slugs created during early development (CL-01/CL-02).
+ * These slugs no longer link from any public page; if a DB record exists for
+ * any of them, the author/reviewer page must carry `noindex` so search engines
+ * do not surface them and cannot be used to identify the founder.
+ */
+export const NOINDEX_PERSONA_SLUGS: ReadonlySet<string> = new Set([
+  "finn-webster",
+  "alex-reid",
+]);
+
 /** Course affiliate disclosure — shown on course pages near broker CTAs */
 export const COURSE_AFFILIATE_DISCLOSURE =
   "This course contains links to broker platforms. We may earn a commission if you sign up through these links. " +
