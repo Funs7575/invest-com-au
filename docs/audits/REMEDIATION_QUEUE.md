@@ -50,6 +50,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | QQ | `claude/audit-remediation/qq-01-public-qa-surface` | (none yet) | QQ-01..QQ-10 pending. Public AI Q&A capture surface — promote production RAG chatbot from admin-only to public SEO/lead-capture surface. Brief: `docs/audits/qq-ai-qa-capture-brief.md` (drafted 2026-05-09 from FIN_NOTEBOOK.md ship-now item #7). QQ-08 is a compliance gate — surfaces to Blocked until `docs/audits/qq-compliance-signoff.md` is committed by a human reviewer. | All QQ tasks merged |
 | MM | `claude/audit-remediation/mm-01-marketplace-coverage-audit` | **MM-V01 delivered locally 2026-05-09** (Digital Infrastructure / data centres — `lib/listing-verticals.ts`, `app/invest/list/ListingSubmitForm.tsx`, `app/api/listings/submit/route.ts`, `lib/listing-vertical-images.ts`, `components/ContextualLeadMagnet.tsx`, new `supabase/migrations/20260509_digital_infrastructure_vertical.sql`, new `app/invest/digital-infrastructure/page.tsx`). Pending commit + PR. | **MM-V01 Digital Infrastructure DELIVERED locally 2026-05-09** (pending commit). MM-AUDIT next on cloud loop, then remaining MM-V02..V09 + MM-S01..S06 + MM-CONTENT + MM-UX + MM-INTEG. Plan: `docs/audits/MM-marketplace-expansion-plan.md`. New: **MM-V09 Startup vertical expansion** (deepen existing `/invest/startups` from 226 LOC to ~500 LOC + sector pages + round-instrument explainers + ESIC tax explainer + 12+ seed listings + pitch event aggregation). All wholesale-only / MIS-adjacent verticals reuse the existing s708 gating pattern from pre-IPO listings. No AFSL upgrade required pre-launch. | All MM phases merged |
 | TT | `claude/audit-remediation/tt-02-security-headers` | **#764 MERGED 2026-05-11** (TT-01) · **#772 OPEN** (TT-02) | TT-01: **#764 MERGED 2026-05-11** (iter 357 `dd4ed37`; ASIC badge; squash SHA `1ee4da8`). TT-02: **#772 OPEN** (cloud loop `b6bf74d`; COOP header + expanded Permissions-Policy + PostHog CSP connect-src; Tier B — CI in_progress, all gates passing except Lint+Build). | TT-04 merged |
+| CMP | `claude/audit-remediation/cmp-dq-05-raw-rankings` | **#775 OPEN** (CMP-DQ-05 + CMP-TR-01 + CMP-TR-02 + CMP-TR-03) | CMP-DQ-05 iter 361 `28f454e`. CMP-TR-01 iter 362 `690e929` — /methodology rewrite. CMP-TR-02 iter 363 `12a1cee` — /broker/[slug]/changelog page. CMP-TR-03 iter 364 `8595066` — editorialNote field + dissent callout on /best pages. | All CMP tasks merged |
 | SP | `claude/audit-remediation/sp-01-capability-audit` | (none yet) | **BLOCKED — waiting on MM-V09 completion.** Startup Portal — founder-side auth + round management + data room + wholesale-investor (s708) certification + ESIC verification + investor sector-thesis matching. New auth context mirroring advisor-portal pattern. Brief: `docs/audits/sp-startup-portal-brief.md` (drafted 2026-05-09). 13 sub-tasks SP-01..SP-13 (~25–35 iters, ~3–4 calendar weeks). SP-12 is the compliance gate. SP starts only after MM-V09 ships to avoid building against a moving listings model. | All SP tasks merged + compliance signoff |
 
 ---
@@ -963,14 +964,14 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 | CMP-DQ-02 | pending | **Mistake prevention prompts.** Active interception when a user is about to pick a broker that conflicts with their stated quiz answer (e.g. picks Stake but quiz says SMSF investor — Stake doesn't offer SMSF). Rule table per broker × per quiz answer. | ~3 | Decision quality. Cheap to ship; huge UX win on path-to-decision. |
 | CMP-DQ-03 | pending | **"Why this over that" reverse-justification.** User picks a broker → page surfaces 3-4 specific reasons it beats the runners-up *for their persona*. Validates the decision + creates shareable rationale. Depends on W2-B persona match. | ~3 | Decision quality. |
 | CMP-DQ-04 | pending | **Anti-recency-bias signal.** Comparison surfaces show "Top this month: X / Top over 12 months: Y. Differs because…". Counters over-weighting of promotional changes. Requires monthly snapshot table or a derived view over `broker_data_changes` + sponsorship history. | ~3 | Decision quality. |
-| CMP-DQ-05 | pending | **Disclosed weights toggle.** Toggle on every comparison: "Show raw rankings without sponsorship boost". Already-existing `lib/sponsorship.ts` `boostFeaturedPartner` becomes opt-out at the URL level (`?raw=1`). | ~2 | Decision quality + transparency. Trivial engineering, big trust signal. |
+| CMP-DQ-05 | **in_flight** | **Disclosed weights toggle.** Toggle on every comparison: "Show raw rankings without sponsorship boost". Already-existing `lib/sponsorship.ts` `boostFeaturedPartner` becomes opt-out at the URL level (`?raw=1`). | ~2 | Decision quality + transparency. Trivial engineering, big trust signal. **#775 OPEN** (iter 361, commit `28f454e`). |
 | CMP-SP-01 | pending | **★ "What people like you picked" — anonymous cohort stat.** "76% of users who compared these 3 brokers chose Stake (n=312, last 90 days)". Factual observed behaviour — safe under s766B(6)(7). Reads `user_quiz_history` + `user_saved_comparisons` + `leads`. Privacy floor: minimum n=20. | ~3 | **Top pick — best ROI.** Composes existing data into a moat-building feature. |
 | CMP-SP-02 | pending | **Switch counter.** "23 users switched from CommSec to SelfWealth in last 30 days." Privacy-preserving rolled-up stat from leads + outcome data. Embed at top of each `/switch-scripts/[broker-slug]` page. | ~2 | Social proof. Pairs with W3-B switch scripts. |
 | CMP-SP-03 | pending | **Reviews tied to use case.** Same broker rated differently by SMSF vs daily-trader vs FHB cohorts. Wire `user_quiz_history.inferred_vertical` into review submission + render the per-cohort average alongside the overall star. | ~3 | Social proof. Reuses existing review surface. |
 | CMP-SP-04 | pending | **Verified-investor badge on reviews.** Reviewer holds an account at the broker → confirmed via Stripe Identity / broker SSO. Eliminates fake reviews. Adjacent to DD-02 (verified-by-invest.com.au advisor badge). | ~4 | Social proof. Tier C (touches identity verification). |
-| CMP-TR-01 | pending | **★ Open methodology page.** Public `/methodology` listing every weight, every affiliate relationship, every editorial change to rankings (date + reason). Most comparison sites hide this — radical transparency moat. Content + git-log surface; minimal engineering. | ~3 | **Top-pick triad part 1.** |
-| CMP-TR-02 | pending | **Per-broker public changelog.** `/broker/[slug]/changelog` showing fees over time, outages, ASIC notices, regulator actions. Reads existing `fee_changelog` JSONB + `broker_data_changes`. Makes invest.com.au the historical reference for AU brokers. | ~3 | **Top-pick triad part 2.** |
-| CMP-TR-03 | pending | **Editorial dissent line.** "Our editorial team's pick differs from the algorithmic ranking. Here's why." Single-line override per `/best/*` category when applicable. Distinguishes from purely-data-driven aggregators. | ~2 | Trust. Editorial workflow piece — needs a CMS field. |
+| CMP-TR-01 | **in_flight** | **★ Open methodology page.** Public `/methodology` listing every weight, every affiliate relationship, every editorial change to rankings (date + reason). Most comparison sites hide this — radical transparency moat. Content + git-log surface; minimal engineering. | ~3 | **#775 OPEN** (iter 362, commit `690e929`). Top-pick triad part 1. |
+| CMP-TR-02 | **in_flight** | **Per-broker public changelog.** `/broker/[slug]/changelog` showing fees over time, outages, ASIC notices, regulator actions. Reads existing `fee_changelog` JSONB + `broker_data_changes`. Makes invest.com.au the historical reference for AU brokers. | ~3 | **#775 OPEN** (iter 363, commit `12a1cee`). Top-pick triad part 2. |
+| CMP-TR-03 | **in_flight** | **Editorial dissent line.** "Our editorial team's pick differs from the algorithmic ranking. Here's why." Single-line override per `/best/*` category when applicable. Distinguishes from purely-data-driven aggregators. | ~2 | **#775 OPEN** (iter 364, commit `8595066`). Trust. Editorial workflow piece. |
 | CMP-TR-04 | pending | **Independence dashboard.** Public page showing rough revenue split by broker partner (buckets, not exact dollars). "12% from CommSec, 18% from Stake, 0% from Westpac (no relationship)." | ~2 | **Top-pick triad part 3.** Founder/finance-team aggregation work; easy engineering. |
 | CMP-RT-01 | pending | **★ Annual "your year in investing" wrap-up.** Spotify-Wrapped style. Year in numbers (brokers compared, switches, fees saved, quiz priority shifts). Highly shareable. Pulls users back every January. Composes `user_quiz_history` + `user_saved_comparisons` + `professional_leads.outcome`. | ~3 | **Best engagement-per-engineer-hour in the round.** Annual cron + share card. |
 | CMP-RT-02 | pending | **Quarterly check-in email.** "It's been 3 months since you picked Stake — want to re-check whether it still suits you?" Cron over `professional_leads` joined to `notification_preferences`. Composes with W2-C 30-day outcome survey. | ~2 | Retention. Cron-only build. |
@@ -995,6 +996,38 @@ _Compacted 2026-05-09: 1,223 lines of completed-stream summary + iteration log e
 _The most recent ~24h of iteration log entries (iter ~325 onwards) are temporarily missing from both files — they were lost in the 2026-05-09 truncation incident (recovered as PR #661) before the rotate-iteration-log workflow could archive them. Loop's stuck-detection guard should not regress because the iteration command's Phase 2 falls back to PR-CI history when iter log entries are absent._
 
 See [`REMEDIATION_QUEUE_LOG_ARCHIVE.md`](./REMEDIATION_QUEUE_LOG_ARCHIVE.md) for historical iteration log + completed-stream summary.
+
+---
+
+### Iter 364 · 2026-05-11 · Stream CMP · CMP-TR-03 editorial dissent line · STATUS: PROGRESS
+
+**What was done:** Phase 2: no CI failures. Phase 3: picked CMP-TR-03 (editorial dissent line — Tier A, ~2 iters). Phase 5: (1) Added `editorialNote?: string` to `BestBrokerCategory` interface with JSDoc. (2) Added editorial notes to "beginners" (CHESS vs fee) and "low-fees" (hidden FX costs). (3) `app/best/[slug]/page.tsx` — amber callout rendered when `cat.editorialNote` is set. Commit `8595066`. Diff: +23/-0.
+
+**Status:** `STATUS: PROGRESS · stream=CMP · item=CMP-TR-03 · branch=claude/audit-remediation/cmp-dq-05-raw-rankings · pr=#775 · commit=8595066 · diff=+23/-0`
+
+---
+
+### Iter 363 · 2026-05-11 · Stream CMP · CMP-TR-02 per-broker public changelog · STATUS: PROGRESS
+
+**What was done:** Phase 2: no CI failures. Phase 3: picked CMP-TR-02 (per-broker public changelog — Tier A). Phase 5: new `app/broker/[slug]/changelog/page.tsx` — ISR page querying `broker_data_changes` (limit 100); human-readable field labels + change type badges + old→new formatting; empty state; source attribution; links to /methodology. 4 tests: heading, empty state, formatted values, back link. Commit `12a1cee`. Diff: +344/-0.
+
+**Status:** `STATUS: PROGRESS · stream=CMP · item=CMP-TR-02 · branch=claude/audit-remediation/cmp-dq-05-raw-rankings · pr=#775 · commit=12a1cee · diff=+344/-0`
+
+---
+
+### Iter 362 · 2026-05-11 · Stream CMP · CMP-TR-01 open methodology page · STATUS: PROGRESS
+
+**What was done:** Phase 2: no CI failures. Phase 3: picked CMP-TR-01. Phase 5: full rewrite of `app/methodology/page.tsx` — ranking algorithm section (4 factors), sponsorship pricing table from `TIER_PRICING`, affiliate/referral section, editorial changelog (4 dated entries). 6 smoke tests. Commit `690e929`. Diff: +347/-139.
+
+**Status:** `STATUS: PROGRESS · stream=CMP · item=CMP-TR-01 · branch=claude/audit-remediation/cmp-dq-05-raw-rankings · pr=#775 · commit=690e929 · diff=+347/-139`
+
+---
+
+### Iter 361 · 2026-05-11 · Stream CMP · CMP-DQ-05 disclosed weights toggle · STATUS: PROGRESS
+
+**What was done:** Phase 2: no CI failures blocking work. Phase 3: picked CMP-DQ-05 (disclosed weights toggle — Tier A, ~2 iters). Phase 5: (1) `lib/sponsorship.ts` — added `{ raw = false }` option to `boostFeaturedPartner()`. (2) `app/best/[slug]/page.tsx` — searchParams.raw wiring + toggle link. (3) 4 new tests. All 15 tests green. Commit `28f454e`, PR #775 opened. Diff: +58/-4.
+
+**Status:** `STATUS: PROGRESS · stream=CMP · item=CMP-DQ-05 · branch=claude/audit-remediation/cmp-dq-05-raw-rankings · pr=#775 · commit=28f454e · diff=+58/-4`
 
 ---
 
