@@ -53,11 +53,51 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | CMP | `claude/audit-remediation/cmp-w1a-int-calculator-autosave` | **#782 OPEN** (CMP-W1A-INT iter 1+2) | CMP foundation (#689) merged 2026-05-09. CMP-W1A-INT iter 1: (iter 363 `fafd7a2`). CMP-W1A-INT iter 2: **iter 364 `352af9a`** — fixed TCO PREFILL_RULES (savings.balance→tco.amt; removed 3 invalid field mappings); added useUrlSync + ShareResultsButton to savings + mortgage calculators; updated unit tests. W1A-INT **complete** (all 3 calcs have autosave+prefill+URL sync+share). Last CI: pending — pushed 2026-05-11. | All CMP tasks merged |
 | SP | `claude/audit-remediation/sp-01-capability-audit` | (none yet) | **BLOCKED — waiting on MM-V09 completion.** Startup Portal — founder-side auth + round management + data room + wholesale-investor (s708) certification + ESIC verification + investor sector-thesis matching. New auth context mirroring advisor-portal pattern. Brief: `docs/audits/sp-startup-portal-brief.md` (drafted 2026-05-09). 13 sub-tasks SP-01..SP-13 (~25–35 iters, ~3–4 calendar weeks). SP-12 is the compliance gate. SP starts only after MM-V09 ships to avoid building against a moving listings model. | All SP tasks merged + compliance signoff |
 | MAIN-RESCUE | `fix/main-rescue-next-security-patch` | **#793 OPEN** | next 16.2.4→16.2.6 patch (13 high CVEs — GHSA-492v-c6pp-mqqv et al.). Unblocks "Dependency vulnerabilities" CI gate failing on all open PRs (CMP #782 + future PRs). npm audit --audit-level=high exits 0 after. iter 365. | Merged to main |
-| CL | `claude/audit-remediation/cl-01-about-entity-only` | **#795 OPEN** (CL-01..CL-04 + CL-06 + CL-09) | CL-01 done (`549bfb1`): /about entity-only. CL-02 done (`64a46ca`): noindex persona slugs. CL-03 done (`0aaf763`): OPS_ALERT_EMAIL in bug-report + synthetic-checks. CL-04 done (`0d942b7`): AFSL_STATUS_DISCLOSURE on /about. CL-06 done (`aa17850`): REVIEW_AUTHOR entity-level in lib/seo.ts; finn@ removed from ADMIN_EMAILS defaults in lib/admin.ts + proxy.ts. CL-09 done (`af22343`): anonymity-gate CI job in .github/workflows/ci.yml. CL-05 (WHOIS audit), CL-07 (social media entity-only), CL-08 (press inquiry handling), CL-10 (quarterly anonymity audit cron) — pending. Last CI: CL-09 pushed 2026-05-11. | All CL tasks merged |
+| CL | `claude/audit-remediation/cl-01-about-entity-only` | **#795 OPEN** (CL-01..CL-04 + CL-06 + CL-09 + CL-10) | CL-01 done (`549bfb1`). CL-02 done (`64a46ca`). CL-03 done (`0aaf763`). CL-04 done (`0d942b7`). CL-06 done (`aa17850`). CL-07 **false-positive** — social links in source are entity-level (@investcomau, linkedin.com/company/invest-com-au); no personal accounts in code. CL-08 **false-positive** — press page already uses press@invest.com.au; no personal email in code. CL-09 done (`af22343`): anonymity-gate CI job. CL-10 done (`0a74526`): quarterly-anonymity-audit cron + vercel.json quarterly schedule. CL-05 **blocked** (WHOIS privacy — requires registrar action, not a code change). | All CL tasks merged |
+
+---
+
+## Blocked — needs human input
+
+### CL-05 — WHOIS domain privacy (registrar action required)
+
+WHOIS for invest.com.au may expose registrant personal details. This cannot
+be fixed in code — it requires enabling WHOIS privacy (also called "domain
+privacy" or "registrant privacy") through the domain registrar for
+`invest.com.au`. Steps:
+1. Log in to the domain registrar where `invest.com.au` is registered.
+2. Find the domain management page and look for "WHOIS Privacy", "Domain Privacy", or "Privacy Protection".
+3. Enable it. This replaces personal details in the public WHOIS record with the registrar's proxy contact.
+4. Allow 24–48 hours for WHOIS propagation.
+
+If the registrar doesn't offer WHOIS privacy (some .com.au registrars don't),
+consider transferring to one that does (e.g., Crazy Domains, VentraIP, Cloudflare Registrar).
+
+Once done, delete this blocked entry and mark CL-05 as done in the stream table.
+
+---
+
+## Resolved as false positives
+
+| Item | Reason |
+|------|--------|
+| CL-07 (social media entity-only) | Source code social links are entity-level: `@investcomau` on X/Twitter, `linkedin.com/company/invest-com-au`. No personal founder accounts referenced in shipped code. |
+| CL-08 (press inquiry handling) | `app/press/page.tsx` and `app/contact/page.tsx` already use `press@invest.com.au` (role address). No founder personal email in code. |
 
 ---
 
 ## Iteration log (most recent first)
+
+### iter 372 — 2026-05-11 — CL-10 + CL-07/08 FP + CL-05 Blocked
+
+- **Stream:** CL (anonymity infrastructure — Tier-0 preempt)
+- **Items:** CL-10 done; CL-07 + CL-08 false-positive; CL-05 surfaced to Blocked
+- **Branch:** `claude/audit-remediation/cl-01-about-entity-only`
+- **PR:** #795 OPEN
+- **Commit:** `0a74526`
+- **Diff:** +140 -1 across 3 files (new route.ts + cron-groups.ts + vercel.json)
+- **What:** CL-10: Added `/api/cron/quarterly-anonymity-audit` — fetches /, /about, /methodology, /how-we-verify, /brokers, /sitemap.xml and scans HTML for PII patterns. Sends alert to OPS_ALERT_EMAIL if found. Registered in CRON_GROUPS["quarterly-1-3"] and wired to quarterly schedule `0 3 1 1,4,7,10 *` in vercel.json (39th of 40 allowed entries). CL-07 + CL-08: Verified source code — all social links are entity-level, press page uses press@ role address; no code changes needed; resolved as false-positives. CL-05: WHOIS privacy requires registrar action; surfaced to Blocked with resolution steps.
+- **STATUS: PROGRESS · stream=CL · item=CL-10 · pr=#795**
 
 ### iter 371 — 2026-05-11 — CL-09
 
@@ -78,7 +118,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 - **PR:** #795 OPEN
 - **Commit:** `aa17850`
 - **Diff:** +7 -7 across 3 files
-- **What:** Swept the three remaining code-level founder PII surfaces. (1) lib/seo.ts REVIEW_AUTHOR replaced — was name="Finn Webster", jobTitle="Founder & Lead Editor", url="/reviewers/finn-webster"; now entity-level name="invest.com.au Research Team", url="/about". This eliminates personal identity from article E-E-A-T JSON-LD. (2) lib/admin.ts getAdminEmails() default stripped of `finn@invest.com.au` — default is now `admin@invest.com.au` only; production sets ADMIN_EMAILS env var. (3) getFinObjectionEmails() fallback changed from `finn@invest.com.au` to `ops@invest.com.au`. (4) proxy.ts ADMIN_EMAILS guard default likewise stripped to `admin@invest.com.au` only. Verified callers: getAdminEmails() is imported by 15+ admin-gated routes; REVIEW_AUTHOR by lib/schema-markup.ts. Changes are string-only, no type changes, no behavioral change when env vars are set (which they are in production).
+- **What:** Swept the three remaining code-level founder PII surfaces. (1) lib/seo.ts REVIEW_AUTHOR replaced — was name="Finn Webster", jobTitle="Founder & Lead Editor", url="/reviewers/finn-webster"; now entity-level name="invest.com.au Research Team", url="/about". This eliminates personal identity from article E-E-A-T JSON-LD. (2) lib/admin.ts getAdminEmails() default stripped of `finn@invest.com.au` — default is now `admin@invest.com.au` only; production sets ADMIN_EMAILS env var. (3) getFinObjectionEmails() fallback changed from `finn@invest.com.au` to `ops@invest.com.au`. (4) proxy.ts ADMIN_EMAILS guard default likewise stripped to `admin@invest.com.au` only.
 - **STATUS: PROGRESS · stream=CL · item=CL-06 · pr=#795**
 
 ### iter 369 — 2026-05-11 — CL-03
@@ -89,7 +129,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 - **PR:** #795 OPEN (updated to CL-01 + CL-02 + CL-03 + CL-04)
 - **Commit:** `0aaf763`
 - **Diff:** +4 -7 across 2 files
-- **What:** PII sweep found `finn@invest.com.au` hardcoded as ALERT_RECIPIENT in two operational routes. /api/bug-report had it hardcoded directly (no env var). /api/cron/synthetic-checks had it as OPS_ALERT_EMAIL fallback. Replaced both with `process.env.OPS_ALERT_EMAIL || "ops@invest.com.au"`. Updated bug-report comment to remove "founder address" language. OPS_ALERT_EMAIL env var should be set in Vercel env vars. Remaining hardcoded `finn@` references are in lib/admin.ts and proxy.ts (ADMIN_EMAILS defaults) and test files — lib/admin.ts is security-sensitive and deferred; test files are non-production.
+- **What:** PII sweep found `finn@invest.com.au` hardcoded as ALERT_RECIPIENT in two operational routes. /api/bug-report had it hardcoded directly (no env var). /api/cron/synthetic-checks had it as OPS_ALERT_EMAIL fallback. Replaced both with `process.env.OPS_ALERT_EMAIL || "ops@invest.com.au"`.
 - **STATUS: PROGRESS · stream=CL · item=CL-03 · pr=#795**
 
 ### iter 368 — 2026-05-11 — CL-02
@@ -100,7 +140,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 - **PR:** #795 OPEN (updated to CL-01 + CL-02 + CL-04)
 - **Commit:** `64a46ca`
 - **Diff:** +23 across 3 files
-- **What:** Added NOINDEX_PERSONA_SLUGS ReadonlySet to lib/compliance.ts SSOT (finn-webster, alex-reid). Propagated to generateMetadata in app/authors/[slug]/page.tsx and app/reviewers/[slug]/page.tsx — any DB record with a persona slug now renders with robots: {index: false, follow: false}. Pages already 404 if record doesn't exist (eq status active gate); noindex is defence-in-depth for legacy DB records.
+- **What:** Added NOINDEX_PERSONA_SLUGS ReadonlySet to lib/compliance.ts SSOT (finn-webster, alex-reid). Propagated to generateMetadata in app/authors/[slug]/page.tsx and app/reviewers/[slug]/page.tsx.
 - **STATUS: PROGRESS · stream=CL · item=CL-02 · pr=#795**
 
 ### iter 367 — 2026-05-11 — CL-04
@@ -111,7 +151,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 - **PR:** #795 OPEN (updated to CL-01 + CL-04)
 - **Commit:** `0d942b7`
 - **Diff:** +4 across 1 file
-- **What:** Verified all AFSL disclosure surfaces (Footer, FSG, billing-policy, CompactDisclosure, SiteFooter) already entity-only using lib/compliance.ts SSOT. Added AFSL_STATUS_DISCLOSURE to /about page Disclaimers section — the primary compliance surface for ASIC/journalist review, which previously only had GENERAL_ADVICE_WARNING. Updated PR #795 title to reflect CL-01+CL-04 bundle.
+- **What:** Added AFSL_STATUS_DISCLOSURE to /about page Disclaimers section.
 - **STATUS: PROGRESS · stream=CL · item=CL-04 · pr=#795**
 
 ### iter 366 — 2026-05-11 — CL-01
@@ -122,7 +162,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 - **PR:** #795 OPEN
 - **Commit:** `549bfb1`
 - **Diff:** +24 -25 across 1 file
-- **What:** Removed "Finn Webster — Founder & Lead Editor" persona card (and Alex Reid, Editorial Team cards) from `/about` page. Replaced with 3 entity-level editorial-structure cards (Tier 1 named author, Tier 2 Research Team, Compliance Review). No individual names now appear on the about page. Orphaned `/authors/finn-webster` route is CL-02 scope. Override fired: `STATUS: PROGRESS · override=tier-0`.
+- **What:** Removed "Finn Webster — Founder & Lead Editor" persona card from `/about` page. Replaced with 3 entity-level editorial-structure cards.
 - **STATUS: PROGRESS · stream=CL · item=CL-01 · pr=#795**
 
 ### iter 365 — 2026-05-11 — MAIN-RESCUE
@@ -132,5 +172,5 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 - **Branch:** `fix/main-rescue-next-security-patch`
 - **PR:** #793 OPEN
 - **Commit:** `41981c4`
-- **What:** npm advisory database gained 13 high-severity CVEs for next@16.2.4 after recent merges, causing "Dependency vulnerabilities" CI gate to fail on all open PRs. Bumped next to 16.2.6 (upstream patch release, no API changes). `npm audit --audit-level=high --omit=dev` now exits 0. postcss moderate advisory remains (requires breaking downgrade, not blocked by CI gate).
+- **What:** npm advisory database gained 13 high-severity CVEs for next@16.2.4 after recent merges, causing "Dependency vulnerabilities" CI gate to fail on all open PRs. Bumped next to 16.2.6 (upstream patch release, no API changes). `npm audit --audit-level=high --omit=dev` now exits 0.
 - **STATUS: MAIN-RESCUE · pr=#793**
