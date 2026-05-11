@@ -11,12 +11,44 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { withValidatedBody } from "@/lib/validation/withValidatedBody";
 import {
+  getActiveKind,
   getKindsForUser,
   isWorkspaceKind,
   portalForKind,
   setActiveKind,
 } from "@/lib/account-kinds";
 import { logger } from "@/lib/logger";
+
+/**
+ * GET /api/account/active-kind — returns the user's memberships + the
+ * currently-active kind cookie. The header WorkspaceSwitcher fetches
+ * this on mount so it can render the right pill without server-rendering
+ * server-component logic inside a client tree.
+ */
+export async function GET() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
+    // Unauthenticated → empty state. Don't 401 because this is a
+    // best-effort UX endpoint.
+    return NextResponse.json({ memberships: [], active: null });
+  }
+
+  const [memberships, active] = await Promise.all([
+    getKindsForUser(user.id),
+    getActiveKind(),
+  ]);
+
+  return NextResponse.json({
+    memberships: memberships.map((m) => ({
+      kind: m.kind,
+      kind_id: m.kindId,
+      status: m.status,
+      display_label: m.displayLabel,
+    })),
+    active,
+  });
+}
 
 const log = logger("api:account:active-kind");
 
