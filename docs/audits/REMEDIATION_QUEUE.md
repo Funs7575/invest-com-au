@@ -13,7 +13,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 ## In-flight (one row per active stream)
 
 | Stream | Branch | PRs (history → latest) | Notes | Done-when |
-|--------|--------|------------------------|-------|----------|
+|--------|--------|------------------------|-------|-----------|
 | A | _complete_ | #207/#322/#351/#352/#353/#354/#355/#378/#380/#381/#382/#457/#540 | A-01..A-04 done. A-05 resolved as **false-positive** — `broker_reviews`/`broker_ratings` don't exist in schema; covered by `user_reviews` (A-02). **Stream complete.** | A-05 merged ✓ |
 | B | `claude/audit-remediation/b-09-edge-fn-secrets` | #208/#301/#457 | B-01..B-08 done. B-09 blocked (see Blocked). | B-09 unblocked + merged |
 | C | `claude/audit-remediation/c-05-index-coverage` | #209/#302/#338/#356/#357/#358/#359/#360/#361/#362/#457/#541 | C-01..C-02 done. C-03..C-05 blocked (see Blocked). | C-05 merged |
@@ -53,7 +53,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | CMP | `claude/audit-remediation/cmp-w1a-int-calculator-autosave` | **#782 OPEN** | CMP-W1A-INT complete. Last CI: pending. | All CMP tasks merged |
 | SP | (none yet) | (none yet) | **BLOCKED — waiting on MM-V09 completion.** | All SP tasks merged + compliance signoff |
 | MAIN-RESCUE | `fix/main-rescue-next-security-patch` | **#793 OPEN** | next 16.2.4→16.2.6 patch. | Merged to main |
-| CL | `claude/audit-remediation/cl-01-about-entity-only` | **#795 OPEN** (CL-01..CL-04 + CL-06 + CL-09 + CL-10) | CL-01..CL-04, CL-06, CL-09, CL-10 done. CL-07+CL-08 false-positive. CL-05 blocked (WHOIS registrar action). Last CI: in_progress. | All CL tasks merged |
+| CL | `claude/audit-remediation/cl-01-about-entity-only` | **#795 OPEN** (CL-01..CL-04 + CL-06 + CL-09 + CL-10) | CL-01..CL-04, CL-06, CL-09, CL-10 done. CL-07+CL-08 false-positive. CL-05 blocked (WHOIS registrar action). CI rescue iter 374: fixed logger arg order + origin ternary (`306f995`), rebased on main. Last CI: pending — pushed 2026-05-11. | All CL tasks merged |
 
 ---
 
@@ -83,6 +83,17 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 374 — 2026-05-11 — CI-RESCUE CL (#795)
+
+- **Stream:** CL (anonymity infrastructure — Tier-0 preempt)
+- **Item:** CI rescue — quarterly-anonymity-audit route type errors
+- **Branch:** `claude/audit-remediation/cl-01-about-entity-only`
+- **PR:** #795 OPEN
+- **Commit:** `306f995`
+- **Diff:** +8 -8 across 1 file
+- **What:** `npm run type-check` failed on `app/api/cron/quarterly-anonymity-audit/route.ts` — three `log.info/warn` calls used the pino-style `(meta, msg)` arg order but this codebase's logger signature is `(msg: string, meta?: LogMeta)`. Also fixed a ternary precedence bug in the `origin` computation (the `||` bound more tightly than the `?:`, causing NEXT_PUBLIC_SITE_URL presence to select the wrong branch). Rebased the branch on main (was behind by 8 queue-update commits). Type-check green (`TYPE-CHECK OK`) before push.
+- **STATUS: CI-RESCUE · stream=CL · pr=#795**
 
 ### iter 373 — 2026-05-11 — TT-04
 
