@@ -58,6 +58,9 @@ export const SPONSORED_DISCLOSURE_SHORT =
 export const COMPANY_LEGAL_NAME = "Invest.com.au Pty Ltd";
 export const COMPANY_ACN = "093 882 421";
 export const COMPANY_ABN = "90 093 882 421";
+/** ASIC company register — canonical lookup URL for ACN 093 882 421 */
+export const ASIC_REGISTER_URL =
+  "https://connectonline.asic.gov.au/RegistrySearch/faces/landing/panelSearch.jspx?searchType=OrgAndBus&searchText=093882421";
 
 /** Regulatory note */
 export const REGULATORY_NOTE =

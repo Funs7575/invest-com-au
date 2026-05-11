@@ -137,6 +137,7 @@ investor_goals            # goals-tracking feature — backfill migration pendin
 listing_owner_accounts    # marketplace listing-owner portal — backfill migration pending
 property_holdings         # portfolio / property-investing feature — backfill migration pending
 fund_reviews              # fund review content — backfill migration pending
+placement_experiments     # A/B placement testing feature — dashboard-created 2026-05-11, backfill migration pending
 
 # PostGIS extension-managed (out of scope — comes from CREATE EXTENSION postgis)
 spatial_ref_sys
