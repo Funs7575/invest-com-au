@@ -41,6 +41,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | CC | _complete_ | **#675 MERGED** (CC-01) · **#678 MERGED** (CC-04) · **#704 MERGED 2026-05-10** (CC-05) | CC-01 done. CC-02/CC-03 false-positive. CC-04 MERGED (#678). CC-05: **#704 MERGED 2026-05-10** (`ccf29307` — LOCALE_KNOWN_PATHS + localizedPages + BCP47_TAG). **Stream complete.** | CC-05 merged ✓ |
 | EE | `claude/audit-remediation/ee-01-error-boundaries` | **#653 MERGED** (EE-01+EE-05) | EE-01 done + EE-02/03/04 FP + EE-05 done. **Stream complete.** | #653 merged ✓ |
 | FF | `claude/audit-remediation/ff-01-feature-flag-audit` | **#656 MERGED 2026-05-09** (`4da4004f`) | FF-01..FF-04 done. FF-03 false-positive. **Stream complete.** | FF-04 merged ✓ |
+| GG | `claude/audit-remediation/gg-02-homepage-hero-ab` · `claude/audit-remediation/gg-03-broker-card-ab` | **#757 OPEN** (GG-02) · **#758 OPEN** (GG-03) | GG-01 FP (iter 352). GG-02: **#757 OPEN** — `HomeHeroCTA` client component (7 tests). GG-03: **#758 OPEN** — `BrokerCard.activeTests` prop + ABTestCTA in mobile compare view (3 tests). GG-04 FP (iter 352). | GG-02+GG-03 merged |
 | OOO | `claude/audit-remediation/ooo-01-runbook-audit` | **#652 MERGED** | OOO-01 done. OOO-04 FP. OOO-02 done. OOO-03 done. **Stream complete.** | OOO-03 merged ✓ |
 | KK | `claude/audit-remediation/kk-04-link-injection` · `claude/audit-remediation/kk-04-iter2-cluster-selection` · `claude/audit-remediation/kk-04-iter3-density-config` · `claude/audit-remediation/kk-04-iter4-admin-density-override` · `claude/audit-remediation/kk-04-iter5-integration-tests` | **#703 MERGED 2026-05-10** (KK-03) · **#711 MERGED 2026-05-10** (KK-04 iter 1) · **#743 OPEN** (KK-04 iter 2) · **#747 OPEN** (KK-04 iter 3) · **#749 OPEN** (KK-04 iter 4) · **#751 OPEN** (KK-04 iter 5) | KK-01 done (#667). KK-02 done (#670). KK-03: **#703 MERGED 2026-05-10** (`57cfce7`). KK-04 iter 1: **#711 MERGED 2026-05-10** (`34455f2b` — flag + density cap + kill-switch + 6 tests). KK-04 iter 2: **#743 OPEN** (LSI/cluster-aware selection; CI rescue iter 353: Supabase types regen pushed). KK-04 iter 3: **#747 OPEN** (per-category density config `linkDensityForCategory`; CI rescue iter 351: JSON-encoding corruption of database.types.ts fixed, commit `67fb916`). KK-04 iter 4: **#749 OPEN** (`link_density_override` col + admin editor UI + save API + article page). KK-04 iter 5: **#751 OPEN** (Playwright smoke + 11 unit tests + 4 integration tests; CI rescue iter 351: JSON-encoding corruption of database.types.ts fixed, commit `cf4765f`). All 5 iters complete — pending merge in order. | KK-04 merged |
 | PP | `claude/audit-remediation/pp-01-bundle-budget` | **#706 MERGED 2026-05-10** (PP-01) | PP-01: **#706 MERGED 2026-05-10** (all CI green — founder merged). PP-02..05 pending. | All PP tasks merged |
@@ -264,12 +265,12 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
-| GG-01 | pending | A/B test infrastructure (server-side, cookie-based, Supabase-backed) | ~5 | Deps: FF-03. |
-| GG-02 | pending | Homepage hero A/B test (CTA copy variants) | ~2 | Deps: GG-01. |
-| GG-03 | pending | Broker card CTA A/B test (button text + colour) | ~2 | Deps: GG-01. |
-| GG-04 | pending | Experiment results dashboard (admin panel) | ~4 | Deps: GG-01+GG-02+GG-03. |
+| ~~GG-01~~ | ~~false-positive~~ | ~~A/B test infrastructure (server-side, cookie-based, Supabase-backed)~~ | — | `lib/ab-test.ts`, `ab_tests` table, `ABTestCTA`, `/api/ab-track`, `/api/cron/ab-auto-promote`, tests all pre-exist (iter 352). |
+| GG-02 | **done** | Homepage hero A/B test (CTA copy variants) | — | PR #757. `HomeHeroCTA` client component; 7 tests; fetches `site_ab_tests?page=/` on mount. |
+| GG-03 | **in-flight** | Broker card CTA A/B test (button text + colour) | ~2 | **#758 OPEN** — `BrokerCard.activeTests` prop + ABTestCTA in mobile compare view; 3 tests. |
+| ~~GG-04~~ | ~~false-positive~~ | ~~Experiment results dashboard (admin panel)~~ | — | `app/admin/ab-tests/page.tsx` (508 LOC) + broker-portal pages all pre-exist (iter 352). |
 
-**Stream GG entry condition:** FF-03 done. Deps on FF stream.
+**Stream GG entry condition:** FF-03 done. GG-01+GG-04 FP (iter 352). GG-02 done (#757). GG-03 in-flight (#758).
 
 ---
 
@@ -994,6 +995,30 @@ _Compacted 2026-05-09: 1,223 lines of completed-stream summary + iteration log e
 _The most recent ~24h of iteration log entries (iter ~325 onwards) are temporarily missing from both files — they were lost in the 2026-05-09 truncation incident (recovered as PR #661) before the rotate-iteration-log workflow could archive them. Loop's stuck-detection guard should not regress because the iteration command's Phase 2 falls back to PR-CI history when iter log entries are absent._
 
 See [`REMEDIATION_QUEUE_LOG_ARCHIVE.md`](./REMEDIATION_QUEUE_LOG_ARCHIVE.md) for historical iteration log + completed-stream summary.
+
+---
+
+### Iter 354 · 2026-05-11 · Stream GG · GG-03 — Broker card mobile CTA A/B test · STATUS: PROGRESS
+
+**What was done:** Phase 2: #757 (GG-02) CI in_progress, no failures. Phase 3: picked GG-03 (Broker card CTA A/B test). Phase 4: verified `ABTestCTA` not wired into `BrokerCard`'s mobile CTA; `CompareClient.tsx` fetches `activeABTests` but passes it only to the desktop `CompareDesktopTable`, not the mobile `BrokerCard` loop — genuine pending item. Phase 5: (a) `components/BrokerCard.tsx` — added `activeTests?: ABTestConfig[]` prop (default `[]`) + `ABTestCTA` import; when `activeTests.length > 0 && context === 'compare'`, renders `ABTestCTA` instead of static `<a>` + `getBenefitCta()`; non-compare contexts unaffected; callers without prop unaffected (backwards-compat). (b) `app/compare/CompareClient.tsx` — passes `activeABTests` (already in state) to mobile BrokerCard loop. (c) `__tests__/components/BrokerCard.test.tsx` — mocked `ABTestCTA`; 3 new tests: ABTestCTA renders when tests active + context=compare, static CTA when no tests, static CTA when non-compare context. Phase 6: committed `3bd4251`, pushed, PR #758 opened.
+
+**Status:** `STATUS: PROGRESS · stream=GG · item=GG-03 · pr=#758 · commit=3bd4251`
+
+---
+
+### Iter 353 · 2026-05-11 · Stream GG · GG-02 — Homepage hero A/B test CTA · STATUS: PROGRESS
+
+**What was done:** Phase 3: picked GG-02 (Homepage hero A/B test). Phase 4: verified `ABTestCTA` only wired into `/compare` desktop table; homepage hero uses static `<Link href="/quiz">` — genuine pending. Phase 5: `components/HomeHeroCTA.tsx` (86 LOC, client component, fetches `site_ab_tests?page=/` on mount, cookie-sticky variant, impression+click tracking); `HomeHero.tsx` swaps static Link for `HomeHeroCTA`; 7 unit tests. Phase 6: committed `6128330`, PR #757 opened.
+
+**Status:** `STATUS: PROGRESS · stream=GG · item=GG-02 · pr=#757 · commit=6128330`
+
+---
+
+### Iter 352 · 2026-05-11 · Stream GG · GG-01 + GG-04 false-positive verification · STATUS: PROGRESS (false-positive)
+
+**What was done:** Phase 4 verification: GG-01 (`lib/ab-test.ts`, `ABTestCTA`, `/api/ab-track`, cron, tests all pre-exist). GG-04 (`app/admin/ab-tests/page.tsx` 508 LOC, broker-portal pages all pre-exist). Both marked false-positive. GG-02 + GG-03 confirmed genuine pending (ABTestCTA only on `/compare` desktop table).
+
+**Status:** `STATUS: PROGRESS · stream=GG · item=GG-01+GG-04 · false-positive`
 
 ---
 
