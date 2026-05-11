@@ -971,6 +971,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               isSelected={selected.has(broker.slug)}
               onToggleSelect={toggleSelected}
               selectionDisabled={!selected.has(broker.slug) && selected.size >= 4}
+              activeTests={activeABTests}
             />
           ))}
         </div>

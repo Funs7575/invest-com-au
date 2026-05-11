@@ -2,6 +2,13 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "./setup";
 import BrokerCard from "@/components/BrokerCard";
 import type { Broker } from "@/lib/types";
+import type { ABTestConfig } from "@/lib/ab-test";
+
+vi.mock("@/components/ABTestCTA", () => ({
+  default: ({ broker }: { broker: { name: string } }) => (
+    <a href="#ab-test" data-testid="ab-test-cta">{broker.name} AB-CTA</a>
+  ),
+}));
 
 /**
  * Factory for creating test broker data with sensible defaults.
@@ -250,5 +257,42 @@ describe("BrokerCard", () => {
     const ctaLink = screen.getByText("Go to IB").closest("a");
     // getAffiliateLink returns /go/{slug} when affiliate_url is set
     expect(ctaLink).toHaveAttribute("href", "/go/interactive-brokers");
+  });
+
+  describe("A/B test CTA (GG-03)", () => {
+    const makeTest = (overrides: Partial<ABTestConfig> = {}): ABTestConfig => ({
+      id: 10,
+      name: "Broker Card Test",
+      test_type: "cta",
+      status: "running",
+      traffic_split: 50,
+      variant_a: { text: "Open Account" },
+      variant_b: { text: "Visit Site" },
+      ...overrides,
+    });
+
+    it("renders ABTestCTA instead of static CTA when activeTests provided and context='compare'", () => {
+      const broker = makeBroker({ name: "Stake", benefit_cta: "Open Stake" });
+      render(<BrokerCard broker={broker} context="compare" activeTests={[makeTest()]} />);
+
+      expect(screen.getByTestId("ab-test-cta")).toBeInTheDocument();
+      expect(screen.queryByText("Open Stake")).not.toBeInTheDocument();
+    });
+
+    it("renders static CTA when activeTests is empty", () => {
+      const broker = makeBroker({ benefit_cta: "Open Stake" });
+      render(<BrokerCard broker={broker} context="compare" activeTests={[]} />);
+
+      expect(screen.queryByTestId("ab-test-cta")).not.toBeInTheDocument();
+      expect(screen.getByText("Open Stake")).toBeInTheDocument();
+    });
+
+    it("renders static CTA when context is not 'compare'", () => {
+      const broker = makeBroker({ benefit_cta: "Open Stake" });
+      render(<BrokerCard broker={broker} context="review" activeTests={[makeTest()]} />);
+
+      expect(screen.queryByTestId("ab-test-cta")).not.toBeInTheDocument();
+      expect(screen.getByText("Open Stake")).toBeInTheDocument();
+    });
   });
 });

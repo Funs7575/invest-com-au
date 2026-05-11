@@ -12,6 +12,8 @@ import FeeVerifiedPill from "@/components/FeeVerifiedPill";
 import EligibilityBadge from "@/components/EligibilityBadge";
 import { isSponsored } from "@/lib/sponsorship";
 import type { IntentCountryCode } from "@/lib/intent-context";
+import type { ABTestConfig } from "@/lib/ab-test";
+import ABTestCTA from "@/components/ABTestCTA";
 
 export default memo(function BrokerCard({
   broker,
@@ -21,6 +23,7 @@ export default memo(function BrokerCard({
   onToggleSelect,
   selectionDisabled,
   intentCountry = null,
+  activeTests = [],
 }: {
   broker: Broker;
   badge?: string;
@@ -33,6 +36,10 @@ export default memo(function BrokerCard({
    *  country_eligibility column. Caller is responsible for resolving
    *  the cookie (server) or hook value (client). */
   intentCountry?: IntentCountryCode | null;
+  /** GG-03 — active A/B tests for the current page. When provided and
+   *  a running test exists, the mobile CTA uses ABTestCTA for variant
+   *  text/colour. Only applied when context is 'compare'. */
+  activeTests?: ABTestConfig[];
 }) {
   const isSponsoredBroker = isSponsored(broker);
   const isShareOrCFD = broker.platform_type === 'share_broker' || broker.platform_type === 'cfd_forex';
@@ -93,15 +100,23 @@ export default memo(function BrokerCard({
           </div>
           <div className="flex items-center gap-1.5 shrink-0">
             <ShortlistButton slug={broker.slug} name={broker.name} size="sm" />
-            <a
-              href={getAffiliateLink(broker)}
-              target="_blank"
-              rel={AFFILIATE_REL}
-              onClick={() => trackClick(broker.slug, broker.name, 'compare-mobile', window.location.pathname, context)}
-              className="px-3 py-1.5 text-[0.69rem] font-bold rounded-lg bg-amber-500 text-white hover:bg-amber-600 active:bg-amber-700 active:scale-[0.98] transition-all"
-            >
-              {getBenefitCta(broker, context)}
-            </a>
+            {activeTests.length > 0 && context === 'compare' ? (
+              <ABTestCTA
+                broker={broker}
+                activeTests={activeTests}
+                page={typeof window !== 'undefined' ? window.location.pathname : '/compare'}
+              />
+            ) : (
+              <a
+                href={getAffiliateLink(broker)}
+                target="_blank"
+                rel={AFFILIATE_REL}
+                onClick={() => trackClick(broker.slug, broker.name, 'compare-mobile', window.location.pathname, context)}
+                className="px-3 py-1.5 text-[0.69rem] font-bold rounded-lg bg-amber-500 text-white hover:bg-amber-600 active:bg-amber-700 active:scale-[0.98] transition-all"
+              >
+                {getBenefitCta(broker, context)}
+              </a>
+            )}
           </div>
         </div>
 
