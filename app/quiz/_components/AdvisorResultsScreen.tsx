@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import Icon from "@/components/Icon";
 import type { Broker } from "@/lib/types";
 import { trackEvent } from "@/lib/tracking";
@@ -529,8 +530,7 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
             <div className="flex items-start gap-3">
               <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-slate-100 flex items-center justify-center shrink-0 overflow-hidden">
                 {previewAdvisor.photo_url ? (
-                  // eslint-disable-next-line @next/next/no-img-element -- external advisor headshots from Supabase storage; next/image not configured for these hosts
-                  <img src={previewAdvisor.photo_url} alt={previewAdvisor.name} className="w-full h-full object-cover" />
+                  <Image src={previewAdvisor.photo_url} alt={previewAdvisor.name} width={56} height={56} className="object-cover" />
                 ) : (
                   <span className="text-base md:text-lg font-bold text-slate-500">
                     {previewAdvisor.name.split(" ").map(n => n[0]).slice(0, 2).join("")}
