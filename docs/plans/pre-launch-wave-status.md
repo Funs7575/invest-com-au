@@ -21,7 +21,7 @@
 **Plan source:** `docs/plans/pre-launch-wave-master-prompt.md` (Wave 1-6)
 **Loop prompt:** `docs/plans/pre-launch-wave-loop-prompt.md`
 **Update inbox:** `docs/plans/queue-updates/` (other actors drop notes here)
-**Last updated:** 2026-05-10 (cron iter — country rule alerts DB + admin CRUD shipped)
+**Last updated:** 2026-05-11 (cron iter — W5.26 placement A/B testing shipped via #761; #759 closed/superseded)
 
 ---
 
@@ -95,7 +95,7 @@ Source: `docs/plans/pre-launch-wave-master-prompt.md`. Lowercase rows mirror tha
 | W4.23 | PR-X3 firm billing dashboard (legacy #10) | C | pending | — | aggregate view |
 | W5.24 | Embed comparison widget | A | pending | — | iframe + UTM |
 | W5.25 | WhatsApp lead capture | B | pending | — | per-country gate |
-| W5.26 | Sponsored placement A/B testing | B | pending | — | placement_experiments table |
+| W5.26 | Sponsored placement A/B testing | B | in flight | #761 | `placement_experiments` table + RPC, `/admin/placement-experiments` CRUD, `/best/[slug]` server-side variant assignment via IP+UA fingerprint, impression/click beacons via `<PlacementImpressionTracker>`. Migration already applied to live DB. #759 closed/superseded after smoke-commit polluted history + proxy 403 on existing-branch push. |
 | W5.27 | Halal / Sharia investing hub | B | pending | — | new vertical |
 | W6.28 | Stale PR sweep | maintenance | pending | — | pre-flight rebase loop |
 
@@ -118,6 +118,10 @@ Source: `docs/plans/pre-launch-wave-master-prompt.md`. Lowercase rows mirror tha
 - 2026-05-09 22:25 | W1.3 | noindex pages auto-exempt | Pages with `robots.index: false` opt out of search indexing; rich-snippet schema is wasted work. Detected via metadata-text scan
 - 2026-05-10 02:15 | W4.21 | Picked W4.21 over W1.1/W1.2/W1.4 for one-fire scope | W1.1 (concierge homepage) and W1.2 (calculator funnel × 8) and W1.4 (reverse marketplace, Tier C) are all multi-day. W4.21 is well-bounded — schema + admin CRUD + consumer refactor + tests, single PR. Component header comment already scoped this exact PR. Skipped W2.5 (PR-X5a investor accounts foundation) because it gates the rest of Wave 2 — better to ship as a focused multi-fire sequence
 - 2026-05-10 02:15 | W4.21 | country_code stored as lowercase IntentCountryCode | country_schemes uses uppercase ISO-2 (GB/US/IN). Picked lowercase here to match the existing iv_intent_country cookie value the consumer reads — no case-mapping at read time, simpler RLS-public reads, CHECK constraint covers the 12 known intent countries
+- 2026-05-11 01:25 | W5.26 | Picked W5.26 over W3.18/W4.23/W5.26-alts for one-fire scope | Master prompt + reconciled queue (PR #740) marked W5.26 as the only single-PR Tier B item remaining tractable in one fire. W1.1/W1.2/W1.4 are multi-day; W3.18 funds-extension already in flight via #752; W4.23 is multi-day Tier C; W3.19 is multi-day. W5.26 ships as a coherent unit: schema + RPC + admin CRUD + server-side variant pick + impression/click beacons + tests
+- 2026-05-11 01:25 | W5.26 | Assignment fingerprint = x-forwarded-for + user-agent | No existing per-visitor anon cookie (`iv_quiz_session` is only set after quiz submit; `iv_intent_country` is per-country not per-visitor). Adding a fresh cookie + setting it requires either middleware (proxy.ts touch → Tier C) or a client-side roundtrip that creates FOUC on every page. The IP+UA hash is stable for the same visitor on the same network within a session, deterministic per-experiment-id, and reads ZERO new state. Acceptable v1 trade-off; future work can swap to a proper cookie when the proxy edit budget allows
+- 2026-05-11 01:25 | W5.26 | Anon RPC, not service-role | `increment_placement_event` is SECURITY DEFINER with GRANT EXECUTE TO anon. The function elevates internally so `createAdminClient` from a `lib/*` helper is unnecessary (and would trip the no-restricted-imports lint rule). Admin CRUD still uses createAdminClient because it lives under `app/api/admin/*` which is the documented service-role-allowed path
+- 2026-05-11 01:35 | W5.26 | Closed #759, reopened as #761 after smoke-commit pollution | First push to `pre-launch/placement-experiments-010851` succeeded; subsequent pushes hit proxy 403 on receive-pack, retried many times with identical failure. Tested with HTTP curl directly: receive-pack returns 403 consistently. Worked around with `mcp__github__push_files` for the MCP smoke test, but that introduced a smoke artefact commit. Cleaned up via `delete_file`, but the smoke history persisted on the branch. Cherry-picked the feature commit + types-order fix onto a fresh branch off main (`pre-launch/placement-experiments-clean`) where pushes worked normally, then closed #759 referencing #761. Net effect: clean two-commit history on the new branch, same code as the original PR, no smoke artefact in #761's diff
 
 ## Pause history
 
