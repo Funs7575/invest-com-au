@@ -156,7 +156,6 @@ export default async function ArticlePage({
   const allFxBrokers = (fxBrokersRes.data as Broker[]) || [];
   const allBrokersForWidget = (allActiveBrokersRes.data as Broker[]) || [];
   const articlePillarPath = pillarPathForCategory(a.category);
-  const articleLinkDensity = linkDensityForCategory(a.category);
   const relatedArticles = [
     ...((relatedArticlesRes.data || []) as Article[]),
     ...((crossCategoryRes.data || []) as Article[]).filter(
@@ -181,8 +180,8 @@ export default async function ArticlePage({
     CATEGORY_COLORS[a.category || ""] || "bg-slate-100 text-slate-700";
   const calcInfo = a.related_calc ? CALC_NAMES[a.related_calc] : null;
   const pagePath = `/article/${slug}`;
-  // Per-article density override takes precedence over the category default (5).
-  const articleLinkDensity = typeof a.link_density_override === "number" ? a.link_density_override : 5;
+  // Per-article density override takes precedence over the category default.
+  const articleLinkDensity = typeof a.link_density_override === "number" ? a.link_density_override : linkDensityForCategory(a.category);
 
   // JSON-LD schema for all articles — prefer structured author over flat fields
   const authorBlock = articleAuthor

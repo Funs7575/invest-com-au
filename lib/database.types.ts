@@ -2448,7 +2448,6 @@ export type Database = {
           last_audited_at: string | null
           last_reviewed_at: string | null
           last_reviewed_by: string | null
-          link_density_override: number | null
           meta_description: string | null
           meta_title: string | null
           needs_update: boolean | null
@@ -2489,7 +2488,6 @@ export type Database = {
           last_audited_at?: string | null
           last_reviewed_at?: string | null
           last_reviewed_by?: string | null
-          link_density_override?: number | null
           meta_description?: string | null
           meta_title?: string | null
           needs_update?: boolean | null
@@ -2530,7 +2528,6 @@ export type Database = {
           last_audited_at?: string | null
           last_reviewed_at?: string | null
           last_reviewed_by?: string | null
-          link_density_override?: number | null
           meta_description?: string | null
           meta_title?: string | null
           needs_update?: boolean | null
