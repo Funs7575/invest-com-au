@@ -7,6 +7,7 @@ import SocialProofCounter from "@/components/SocialProofCounter";
 import { trackEvent, trackPageDuration } from "@/lib/tracking";
 import { getStoredUtm } from "@/components/UtmCapture";
 import { formatCurrency } from "@/lib/utils";
+import { useCalculatorState } from "@/hooks/use-calculator-state";
 
 /* ── helpers ── */
 
@@ -58,6 +59,44 @@ export default function SMSFCalculatorClient() {
   const [emailGated, setEmailGated] = useState(false);
   const [email, setEmail] = useState("");
   const [emailSubmitted, setEmailSubmitted] = useState(false);
+
+  const {
+    value: persistedInputs,
+    setValue: setPersistedInputs,
+    isHydrated: persistHydrated,
+  } = useCalculatorState<{
+    balance: number;
+    annual_contribution: number;
+    current_fee_percent: number;
+    expected_return: number;
+    years_to_retirement: number;
+  }>("smsf_calculator", {
+    balance: 300_000,
+    annual_contribution: 27_500,
+    current_fee_percent: 1.2,
+    expected_return: 7,
+    years_to_retirement: 20,
+  });
+
+  useEffect(() => {
+    if (!persistHydrated) return;
+    if (typeof persistedInputs.balance === "number") setBalance(persistedInputs.balance);
+    if (typeof persistedInputs.annual_contribution === "number") setAnnualContribution(persistedInputs.annual_contribution);
+    if (typeof persistedInputs.current_fee_percent === "number") setCurrentFeePercent(persistedInputs.current_fee_percent);
+    if (typeof persistedInputs.expected_return === "number") setExpectedReturn(persistedInputs.expected_return);
+    if (typeof persistedInputs.years_to_retirement === "number") setYearsToRetirement(persistedInputs.years_to_retirement);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- hydrate once
+  }, [persistHydrated]);
+
+  useEffect(() => {
+    setPersistedInputs({
+      balance,
+      annual_contribution: annualContribution,
+      current_fee_percent: currentFeePercent,
+      expected_return: expectedReturn,
+      years_to_retirement: yearsToRetirement,
+    });
+  }, [balance, annualContribution, currentFeePercent, expectedReturn, yearsToRetirement, setPersistedInputs]);
 
   useEffect(() => { trackPageDuration("/smsf-calculator"); }, []);
 
