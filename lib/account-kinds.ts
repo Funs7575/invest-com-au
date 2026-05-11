@@ -28,11 +28,10 @@ const log = logger("account-kinds");
 export const ACTIVE_KIND_COOKIE = "iv_active_kind";
 export const ACTIVE_KIND_TTL_SECONDS = 60 * 60 * 24 * 30; // 30 days
 
-// AccountKind today only includes "advisor" + "broker_partner" — adding
-// "investor" + "business_owner" + "listing_owner" is Phase 3+4 work.
-// For Phase 2.5 we surface "investor" as a string literal here so the
-// chooser works end-to-end before the union expansion lands.
-export type WorkspaceKind = AccountKind | "investor" | "business_owner" | "listing_owner";
+// As of W2 Phase 3, AccountKind covers all 5 workspace kinds. WorkspaceKind
+// is kept as an alias for call-site readability ("workspace" semantics
+// vs "account membership" semantics) but they're the same union.
+export type WorkspaceKind = AccountKind;
 
 export interface KindMembership {
   authUserId: string;
