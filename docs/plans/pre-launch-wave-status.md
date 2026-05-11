@@ -21,7 +21,7 @@
 **Plan source:** `docs/plans/pre-launch-wave-master-prompt.md` (Wave 1-6)
 **Loop prompt:** `docs/plans/pre-launch-wave-loop-prompt.md`
 **Update inbox:** `docs/plans/queue-updates/` (other actors drop notes here)
-**Last updated:** 2026-05-10 (cron iter — country rule alerts DB + admin CRUD shipped)
+**Last updated:** 2026-05-11 (cron iter — W1.2 calc lead-capture in flight via #797; reconciled W4.20/W4.22/W5.24/W5.27 as done)
 
 ---
 
@@ -83,20 +83,20 @@ Source: `docs/plans/pre-launch-wave-master-prompt.md`. Lowercase rows mirror tha
 | # | PR | Tier | Status | PR # | Notes |
 |---|---|---|---|---|---|
 | W1.1 | AI Concierge homepage entry | B | pending | — | 2 days |
-| W1.2 | Calculator → lead capture funnel | B | pending | — | 1-2 days, 8+ calculators |
-| W1.3 | JSON-LD audit + ratchet | A | ✅ done | (this iter) | scripts/check-jsonld-coverage.mjs + 13 page fixes + CI gate |
+| W1.2 | Calculator → lead capture funnel | B | in flight | #797 | CalculatorLeadCapture on 19 calc clients + tests; HubLeadForm-backed |
+| W1.3 | JSON-LD audit + ratchet | A | ✅ done | (prior iter) | scripts/check-jsonld-coverage.mjs + 13 page fixes + CI gate |
 | W1.4 | Reverse marketplace ("Post a Request") | C | pending | — | 4-5 days, lib/stripe |
-| W2.5–W2.17 | PR-X5a–PR-X5m investor accounts | B/C | pending | — | 13 PRs across 5 phases |
-| W3.18 | Verified user reviews engine | B | pending | — | mirror PR #441 moderation |
+| W2.5–W2.17 | PR-X5a–PR-X5m investor accounts | B/C | mostly done | #724–#739 | Phase 1, 2, 2.5, 3, 4, 8, 9 shipped; remaining slices in flight |
+| W3.18 | Verified user reviews engine | B | in flight | #752 | mirror PR #441 moderation |
 | W3.19 | First Home Buyer end-to-end journey | B | pending | — | 4 monetization levers |
-| W4.20 | Smart recommendations strip (legacy #14) | B | pending | — | 2-3 days |
-| W4.21 | Country rule alerts DB + admin CRUD (legacy #15 part 2) | B | ✅ done | (this iter) | `country_rule_alerts` table + RLS + 7-row seed; /admin/country-rule-alerts CRUD; CountryRuleAlerts.tsx fetches from new public API |
-| W4.22 | Country rule alerts email digest (legacy #15 part 4) | B | pending | — | weekly Resend cron |
+| W4.20 | Smart recommendations strip (legacy #14) | B | ✅ done | (prior iter) | SmartRecommendationsStrip mounted on foreign-investment, best/[slug], find-advisor, super, crypto, cfd, savings, share-trading layouts |
+| W4.21 | Country rule alerts DB + admin CRUD (legacy #15 part 2) | B | ✅ done | (prior iter) | `country_rule_alerts` table + RLS + 7-row seed; /admin/country-rule-alerts CRUD; CountryRuleAlerts.tsx fetches from new public API |
+| W4.22 | Country rule alerts email digest (legacy #15 part 4) | B | ✅ done | #718 | weekly Resend cron at app/api/cron/country-rule-alerts-digest; wired to weekly-mon-9 cron group |
 | W4.23 | PR-X3 firm billing dashboard (legacy #10) | C | pending | — | aggregate view |
-| W5.24 | Embed comparison widget | A | pending | — | iframe + UTM |
-| W5.25 | WhatsApp lead capture | B | pending | — | per-country gate |
-| W5.26 | Sponsored placement A/B testing | B | pending | — | placement_experiments table |
-| W5.27 | Halal / Sharia investing hub | B | pending | — | new vertical |
+| W5.24 | Embed comparison widget | A | ✅ done | (prior iter) | /embed page + /api/widget JS-injection endpoint with Shadow DOM isolation + ?ref=widget&source=embed UTM tagging |
+| W5.25 | WhatsApp lead capture | B | partial | (prior iter) | lib/whatsapp.ts + WhatsAppContactButton component mounted on find-advisor/[location]; per-country gate (hk/in/cn/sg) |
+| W5.26 | Sponsored placement A/B testing | B | in flight | #761 | placement_experiments table |
+| W5.27 | Halal / Sharia investing hub | B | ✅ done | #723 | /halal-investing hub — Sharia-compliant super, home finance, ETFs, AAOIFI screen |
 | W6.28 | Stale PR sweep | maintenance | pending | — | pre-flight rebase loop |
 
 ## Decision log
@@ -118,6 +118,10 @@ Source: `docs/plans/pre-launch-wave-master-prompt.md`. Lowercase rows mirror tha
 - 2026-05-09 22:25 | W1.3 | noindex pages auto-exempt | Pages with `robots.index: false` opt out of search indexing; rich-snippet schema is wasted work. Detected via metadata-text scan
 - 2026-05-10 02:15 | W4.21 | Picked W4.21 over W1.1/W1.2/W1.4 for one-fire scope | W1.1 (concierge homepage) and W1.2 (calculator funnel × 8) and W1.4 (reverse marketplace, Tier C) are all multi-day. W4.21 is well-bounded — schema + admin CRUD + consumer refactor + tests, single PR. Component header comment already scoped this exact PR. Skipped W2.5 (PR-X5a investor accounts foundation) because it gates the rest of Wave 2 — better to ship as a focused multi-fire sequence
 - 2026-05-10 02:15 | W4.21 | country_code stored as lowercase IntentCountryCode | country_schemes uses uppercase ISO-2 (GB/US/IN). Picked lowercase here to match the existing iv_intent_country cookie value the consumer reads — no case-mapping at read time, simpler RLS-public reads, CHECK constraint covers the 12 known intent countries
+- 2026-05-11 23:30 | W1.2 | Picked W1.2 over W1.1/W1.4 for one-fire scope | W1.1 (concierge homepage, 2 days) and W1.4 (reverse marketplace, Tier C, 4-5 days) won't fit one cron fire. W1.2 ships as one PR — reusable component + tests + mount on all 19 calculators. Component wraps existing HubLeadForm so submit path is the proven `/api/submit-lead` flow; calc-specific `need` + `contextKeys` route the lead to the right specialist
+- 2026-05-11 23:30 | W1.2 | source_page tagged `/calculator-leadbox\|calc=<slug>` for attribution | matches existing HubLeadForm convention (hub leads use `<source>\|key=value`). Lets analytics isolate calc-driven leads from hub-driven without a schema change
+- 2026-05-11 23:30 | W1.2 | CalculatorLeadCapture coexists with AdvisorMatchCTA rather than replacing it | The link CTA serves users who want to browse; the form serves users ready to commit. Both have measurable funnels — keep both, measure both, optimise per surface later
+- 2026-05-11 23:35 | reconcile | Marked W4.20/W4.22/W5.24/W5.27 as ✅ done, W3.18 + W5.26 + W2 phases as in flight/done | Status doc was 9 days stale; verified each item by direct codebase + PR-history check (W4.22 = PR #718, W5.27 = PR #723, W5.24 = April batch #14dfda4e, W4.20 = SmartRecommendationsStrip mounted on 8 layouts, W3.18 = PR #752 open, W5.26 = PR #761 open)
 
 ## Pause history
 
