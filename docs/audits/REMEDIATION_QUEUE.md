@@ -53,11 +53,22 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | CMP | `claude/audit-remediation/cmp-w1a-int-calculator-autosave` | **#782 OPEN** (CMP-W1A-INT iter 1+2) | CMP foundation (#689) merged 2026-05-09. CMP-W1A-INT iter 1: (iter 363 `fafd7a2`). CMP-W1A-INT iter 2: **iter 364 `352af9a`** — fixed TCO PREFILL_RULES (savings.balance→tco.amt; removed 3 invalid field mappings); added useUrlSync + ShareResultsButton to savings + mortgage calculators; updated unit tests. W1A-INT **complete** (all 3 calcs have autosave+prefill+URL sync+share). Last CI: pending — pushed 2026-05-11. | All CMP tasks merged |
 | SP | `claude/audit-remediation/sp-01-capability-audit` | (none yet) | **BLOCKED — waiting on MM-V09 completion.** Startup Portal — founder-side auth + round management + data room + wholesale-investor (s708) certification + ESIC verification + investor sector-thesis matching. New auth context mirroring advisor-portal pattern. Brief: `docs/audits/sp-startup-portal-brief.md` (drafted 2026-05-09). 13 sub-tasks SP-01..SP-13 (~25–35 iters, ~3–4 calendar weeks). SP-12 is the compliance gate. SP starts only after MM-V09 ships to avoid building against a moving listings model. | All SP tasks merged + compliance signoff |
 | MAIN-RESCUE | `fix/main-rescue-next-security-patch` | **#793 OPEN** | next 16.2.4→16.2.6 patch (13 high CVEs — GHSA-492v-c6pp-mqqv et al.). Unblocks "Dependency vulnerabilities" CI gate failing on all open PRs (CMP #782 + future PRs). npm audit --audit-level=high exits 0 after. iter 365. | Merged to main |
-| CL | `claude/audit-remediation/cl-01-about-entity-only` | **#795 OPEN** (CL-01 + CL-02 + CL-03 + CL-04) | CL-01 done (`549bfb1`): /about entity-only editorial section. CL-04 done (`0d942b7`): AFSL_STATUS_DISCLOSURE added to /about disclaimers. CL-02 done (`64a46ca`): NOINDEX_PERSONA_SLUGS set in lib/compliance.ts; noindex propagated to author/reviewer generateMetadata. CL-03 done (`0aaf763`): finn@invest.com.au hardcoded fallbacks replaced with OPS_ALERT_EMAIL env var in /api/bug-report and /api/cron/synthetic-checks. CL-05 (WHOIS audit), CL-06 (repo PII sweep), CL-07 (social media entity-only), CL-08 (press inquiry handling), CL-09 (anonymity stress test CI gate), CL-10 (quarterly anonymity audit cron) — all pending. | All CL tasks merged |
+| CL | `claude/audit-remediation/cl-01-about-entity-only` | **#795 OPEN** (CL-01..CL-04 + CL-06) | CL-01 done (`549bfb1`): /about entity-only. CL-02 done (`64a46ca`): noindex persona slugs. CL-03 done (`0aaf763`): OPS_ALERT_EMAIL in bug-report + synthetic-checks. CL-04 done (`0d942b7`): AFSL_STATUS_DISCLOSURE on /about. CL-06 done (`aa17850`): REVIEW_AUTHOR entity-level in lib/seo.ts; finn@ removed from ADMIN_EMAILS defaults in lib/admin.ts + proxy.ts. CL-05 (WHOIS audit), CL-07 (social media entity-only), CL-08 (press inquiry handling), CL-09 (anonymity stress test CI gate), CL-10 (quarterly anonymity audit cron) — all pending. Last CI: CL-06 pushed 2026-05-11T23:25Z. | All CL tasks merged |
 
 ---
 
 ## Iteration log (most recent first)
+
+### iter 370 — 2026-05-11 — CL-06
+
+- **Stream:** CL (anonymity infrastructure — Tier-0 preempt)
+- **Item:** CL-06 — repo PII sweep (lib/seo.ts, lib/admin.ts, proxy.ts)
+- **Branch:** `claude/audit-remediation/cl-01-about-entity-only`
+- **PR:** #795 OPEN
+- **Commit:** `aa17850`
+- **Diff:** +7 -7 across 3 files
+- **What:** Swept the three remaining code-level founder PII surfaces. (1) lib/seo.ts REVIEW_AUTHOR replaced — was name="Finn Webster", jobTitle="Founder & Lead Editor", url="/reviewers/finn-webster"; now entity-level name="invest.com.au Research Team", url="/about". This eliminates personal identity from article E-E-A-T JSON-LD. (2) lib/admin.ts getAdminEmails() default stripped of `finn@invest.com.au` — default is now `admin@invest.com.au` only; production sets ADMIN_EMAILS env var. (3) getFinObjectionEmails() fallback changed from `finn@invest.com.au` to `ops@invest.com.au`. (4) proxy.ts ADMIN_EMAILS guard default likewise stripped to `admin@invest.com.au` only. Verified callers: getAdminEmails() is imported by 15+ admin-gated routes; REVIEW_AUTHOR by lib/schema-markup.ts. Changes are string-only, no type changes, no behavioral change when env vars are set (which they are in production).
+- **STATUS: PROGRESS · stream=CL · item=CL-06 · pr=#795**
 
 ### iter 369 — 2026-05-11 — CL-03
 
