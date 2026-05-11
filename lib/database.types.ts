@@ -8931,6 +8931,51 @@ export type Database = {
         }
         Relationships: []
       }
+      placement_experiments: {
+        Row: {
+          created_at: string
+          ended_at: string | null
+          id: number
+          metrics: Json
+          name: string
+          notes: string | null
+          slug: string
+          started_at: string | null
+          status: string
+          updated_at: string
+          variants: Json
+          winner_variant: string | null
+        }
+        Insert: {
+          created_at?: string
+          ended_at?: string | null
+          id?: never
+          metrics?: Json
+          name: string
+          notes?: string | null
+          slug: string
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+          variants: Json
+          winner_variant?: string | null
+        }
+        Update: {
+          created_at?: string
+          ended_at?: string | null
+          id?: never
+          metrics?: Json
+          name?: string
+          notes?: string | null
+          slug?: string
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+          variants?: Json
+          winner_variant?: string | null
+        }
+        Relationships: []
+      }
       platform_snapshots: {
         Row: {
           created_at: string
@@ -13390,6 +13435,14 @@ export type Database = {
       gettransactionid: { Args: never; Returns: unknown }
       increment_advisor_view: {
         Args: { p_date: string; p_professional_id: number }
+        Returns: undefined
+      }
+      increment_placement_event: {
+        Args: {
+          p_event_type: string
+          p_experiment_id: number
+          p_variant: string
+        }
         Returns: undefined
       }
       increment_listing_enquiries: {
