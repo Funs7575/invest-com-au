@@ -7,6 +7,7 @@ import SocialProofCounter from "@/components/SocialProofCounter";
 import { trackEvent, trackPageDuration, formatPercent } from "@/lib/tracking";
 import { getStoredUtm } from "@/components/UtmCapture";
 import { formatCurrency } from "@/lib/utils";
+import { useCalculatorState } from "@/hooks/use-calculator-state";
 
 /* ─── helpers ─── */
 // formatPercent imported from lib/tracking; default 2 decimals matches old local impl.
@@ -73,6 +74,68 @@ export default function PropertyYieldCalculatorClient() {
   const [emailGated, setEmailGated] = useState(false);
   const [email, setEmail] = useState("");
   const [emailSubmitted, setEmailSubmitted] = useState(false);
+
+  const {
+    value: persistedInputs,
+    setValue: setPersistedInputs,
+    isHydrated: persistHydrated,
+  } = useCalculatorState<{
+    purchase_price: number;
+    weekly_rent: number;
+    council_rates: number;
+    insurance: number;
+    maintenance: number;
+    management_pct: number;
+    strata: number;
+    other_expenses: number;
+    show_mortgage: boolean;
+    loan_amount: number;
+    interest_rate: number;
+  }>("property_yield_calculator", {
+    purchase_price: 750000,
+    weekly_rent: 550,
+    council_rates: 2000,
+    insurance: 1500,
+    maintenance: 2000,
+    management_pct: 7,
+    strata: 0,
+    other_expenses: 0,
+    show_mortgage: false,
+    loan_amount: 600000,
+    interest_rate: 6.2,
+  });
+
+  useEffect(() => {
+    if (!persistHydrated) return;
+    if (typeof persistedInputs.purchase_price === "number") setPurchasePrice(persistedInputs.purchase_price);
+    if (typeof persistedInputs.weekly_rent === "number") setWeeklyRent(persistedInputs.weekly_rent);
+    if (typeof persistedInputs.council_rates === "number") setCouncilRates(persistedInputs.council_rates);
+    if (typeof persistedInputs.insurance === "number") setInsurance(persistedInputs.insurance);
+    if (typeof persistedInputs.maintenance === "number") setMaintenance(persistedInputs.maintenance);
+    if (typeof persistedInputs.management_pct === "number") setManagementPct(persistedInputs.management_pct);
+    if (typeof persistedInputs.strata === "number") setStrata(persistedInputs.strata);
+    if (typeof persistedInputs.other_expenses === "number") setOtherExpenses(persistedInputs.other_expenses);
+    if (typeof persistedInputs.show_mortgage === "boolean") setShowMortgage(persistedInputs.show_mortgage);
+    if (typeof persistedInputs.loan_amount === "number") setLoanAmount(persistedInputs.loan_amount);
+    if (typeof persistedInputs.interest_rate === "number") setInterestRate(persistedInputs.interest_rate);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- hydrate once
+  }, [persistHydrated]);
+
+  useEffect(() => {
+    setPersistedInputs({
+      purchase_price: purchasePrice,
+      weekly_rent: weeklyRent,
+      council_rates: councilRates,
+      insurance,
+      maintenance,
+      management_pct: managementPct,
+      strata,
+      other_expenses: otherExpenses,
+      show_mortgage: showMortgage,
+      loan_amount: loanAmount,
+      interest_rate: interestRate,
+    });
+  }, [purchasePrice, weeklyRent, councilRates, insurance, maintenance, managementPct, strata, otherExpenses, showMortgage, loanAmount, interestRate, setPersistedInputs]);
 
   useEffect(() => { trackPageDuration("/property-yield-calculator"); }, []);
 
