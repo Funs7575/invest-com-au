@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { formatCurrency } from "@/lib/utils";
 import { formatPercent } from "@/lib/tracking";
+import { useCalculatorState } from "@/hooks/use-calculator-state";
 
 /* ── constants (FY2026) ── */
 
@@ -37,6 +38,48 @@ export default function SuperContributionsClient() {
   const [nonConcessional, setNonConcessional] = useState(0);
   const [superBalance, setSuperBalance] = useState(150_000);
   const [unusedCarryForward, setUnusedCarryForward] = useState(0);
+
+  const {
+    value: persistedInputs,
+    setValue: setPersistedInputs,
+    isHydrated: persistHydrated,
+  } = useCalculatorState<{
+    income: number;
+    current_concessional: number;
+    extra_concessional: number;
+    non_concessional: number;
+    super_balance: number;
+    unused_carry_forward: number;
+  }>("super_contributions_calculator", {
+    income: 90_000,
+    current_concessional: 12_000,
+    extra_concessional: 5_000,
+    non_concessional: 0,
+    super_balance: 150_000,
+    unused_carry_forward: 0,
+  });
+
+  useEffect(() => {
+    if (!persistHydrated) return;
+    if (typeof persistedInputs.income === "number") setIncome(persistedInputs.income);
+    if (typeof persistedInputs.current_concessional === "number") setCurrentConcessional(persistedInputs.current_concessional);
+    if (typeof persistedInputs.extra_concessional === "number") setExtraConcessional(persistedInputs.extra_concessional);
+    if (typeof persistedInputs.non_concessional === "number") setNonConcessional(persistedInputs.non_concessional);
+    if (typeof persistedInputs.super_balance === "number") setSuperBalance(persistedInputs.super_balance);
+    if (typeof persistedInputs.unused_carry_forward === "number") setUnusedCarryForward(persistedInputs.unused_carry_forward);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- hydrate once
+  }, [persistHydrated]);
+
+  useEffect(() => {
+    setPersistedInputs({
+      income,
+      current_concessional: currentConcessional,
+      extra_concessional: extraConcessional,
+      non_concessional: nonConcessional,
+      super_balance: superBalance,
+      unused_carry_forward: unusedCarryForward,
+    });
+  }, [income, currentConcessional, extraConcessional, nonConcessional, superBalance, unusedCarryForward, setPersistedInputs]);
 
   const result = useMemo(() => {
     const totalConcessional = currentConcessional + extraConcessional;
