@@ -364,7 +364,7 @@ export async function POST(request: NextRequest) {
         }).eq("id", lead.id);
         // Surface in logs without aborting lead delivery.
          
-        console.error("[advisor-enquiry] ledger write failed", {
+        log.error("ledger write failed", {
           err: err instanceof Error ? err.message : String(err),
           professional_id,
           leadId: lead.id,
