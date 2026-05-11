@@ -133,7 +133,6 @@ trading_signals            # trading product never shipped
 
 # Recent additions (dashboard-created via Supabase UI, pending Stream A backfill migration)
 business_accounts         # account-system expansion (Phase 2/3) — backfill migration pending
-investor_goals            # goals-tracking feature — backfill migration pending
 listing_owner_accounts    # marketplace listing-owner portal — backfill migration pending
 property_holdings         # portfolio / property-investing feature — backfill migration pending
 fund_reviews              # fund review content — backfill migration pending
@@ -143,4 +142,3 @@ spatial_ref_sys
 
 # W2 Phase — tables created in Supabase dashboard without migration files; pending Stream A backfill
 business_accounts  # W2 Phase 2.5 — business account type; migration pending
-investor_goals     # W2 Phase 2 — investor goals tracking; migration pending

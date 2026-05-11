@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import HoldingsClient, { type HoldingRow } from "./HoldingsClient";
+import type { GoalRow } from "./GoalsBlock";
 import { getCurrentPricesBatch, keyOf } from "@/lib/holdings/value";
 
 export const dynamic = "force-dynamic";
@@ -21,9 +22,10 @@ export default async function HoldingsPage() {
     redirect("/account/login?redirect=/account/holdings");
   }
 
-  // Fetch holdings + the broker fee table in parallel — the latter feeds
-  // the switching coach (asx_fee_value is the comparison axis).
-  const [{ data: holdings }, { data: brokers }] = await Promise.all([
+  // Fetch holdings + broker fee table + goals in parallel. Brokers feed
+  // the switching coach (asx_fee_value is the comparison axis); goals
+  // feed the goal-projection block.
+  const [{ data: holdings }, { data: brokers }, { data: goals }] = await Promise.all([
     supabase
       .from("investor_holdings")
       .select(
@@ -34,6 +36,12 @@ export default async function HoldingsPage() {
       .from("brokers")
       .select("slug, name, asx_fee_value")
       .eq("status", "active"),
+    supabase
+      .from("investor_goals")
+      .select(
+        "id, label, goal_type, target_cents, target_date, current_balance_cents, monthly_contribution_cents, expected_return_pct, notes",
+      )
+      .order("target_date", { ascending: true }),
   ]);
 
   const initialItems: HoldingRow[] = (holdings ?? []).map((r) => ({
@@ -74,6 +82,18 @@ export default async function HoldingsPage() {
     asx_fee_value: typeof b.asx_fee_value === "number" ? b.asx_fee_value : null,
   }));
 
+  const initialGoals: GoalRow[] = (goals ?? []).map((g) => ({
+    id: g.id as number,
+    label: g.label as string,
+    goalType: g.goal_type as string,
+    targetCents: Number(g.target_cents),
+    targetDate: g.target_date as string,
+    currentBalanceCents: Number(g.current_balance_cents),
+    monthlyContributionCents: Number(g.monthly_contribution_cents),
+    expectedReturnPct: Number(g.expected_return_pct),
+    notes: (g.notes as string | null) ?? null,
+  }));
+
   return (
     <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
       <header className="mb-6">
@@ -84,7 +104,11 @@ export default async function HoldingsPage() {
           treatment.
         </p>
       </header>
-      <HoldingsClient initialItems={initialItems} brokers={brokerOptions} />
+      <HoldingsClient
+        initialItems={initialItems}
+        brokers={brokerOptions}
+        initialGoals={initialGoals}
+      />
     </main>
   );
 }
