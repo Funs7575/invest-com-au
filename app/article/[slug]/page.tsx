@@ -27,7 +27,7 @@ import AdvisorPrompt from "@/components/AdvisorPrompt";
 import LinkifiedText from "@/components/LinkifiedText";
 import FloatingRightCTA from "@/components/FloatingRightCTA";
 import { isFlagEnabled } from "@/lib/feature-flags";
-import { pillarPathForCategory } from "@/lib/keyword-linking";
+import { pillarPathForCategory, linkDensityForCategory } from "@/lib/keyword-linking";
 
 export const revalidate = 3600; // ISR: revalidate every hour
 
@@ -156,6 +156,7 @@ export default async function ArticlePage({
   const allFxBrokers = (fxBrokersRes.data as Broker[]) || [];
   const allBrokersForWidget = (allActiveBrokersRes.data as Broker[]) || [];
   const articlePillarPath = pillarPathForCategory(a.category);
+  const articleLinkDensity = linkDensityForCategory(a.category);
   const relatedArticles = [
     ...((relatedArticlesRes.data || []) as Article[]),
     ...((crossCategoryRes.data || []) as Article[]).filter(
@@ -429,7 +430,7 @@ export default async function ArticlePage({
                       text={a.sections[0].body}
                       skipHrefs={[`/article/${a.slug}`]}
                       disabled={!linkInjectionEnabled}
-                      maxLinks={5}
+                      maxLinks={articleLinkDensity}
                       pillarPath={articlePillarPath}
                     />
                   </section>
@@ -461,7 +462,7 @@ export default async function ArticlePage({
                           text={section.body}
                           skipHrefs={[`/article/${a.slug}`]}
                           disabled={!linkInjectionEnabled}
-                          maxLinks={5}
+                          maxLinks={articleLinkDensity}
                           pillarPath={articlePillarPath}
                         />
                       </section>
@@ -516,7 +517,7 @@ export default async function ArticlePage({
                             text={section.body}
                             skipHrefs={[`/article/${a.slug}`]}
                             disabled={!linkInjectionEnabled}
-                            maxLinks={5}
+                            maxLinks={articleLinkDensity}
                             pillarPath={articlePillarPath}
                           />
                         </section>

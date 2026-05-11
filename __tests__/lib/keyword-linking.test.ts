@@ -6,6 +6,7 @@ import {
   splitByLinks,
   pillarPathForCategory,
   getClusterPaths,
+  linkDensityForCategory,
 } from "@/lib/keyword-linking";
 
 describe("INTERNAL_LINK_TARGETS", () => {
@@ -311,5 +312,36 @@ describe("splitByLinks — cluster-aware selection", () => {
     const withoutPillar = splitByLinks(text, 1);
     // Both should inject CommSec (first in text) since no cluster context applies
     expect(withUnknown).toEqual(withoutPillar);
+  });
+});
+
+describe("linkDensityForCategory", () => {
+  it("returns higher density for long-form categories like smsf and tax", () => {
+    expect(linkDensityForCategory("smsf")).toBeGreaterThan(5);
+    expect(linkDensityForCategory("tax")).toBeGreaterThan(5);
+  });
+
+  it("returns lower density for short-format categories like calculators", () => {
+    expect(linkDensityForCategory("calculators")).toBeLessThan(5);
+  });
+
+  it("returns the default density for unknown categories", () => {
+    expect(linkDensityForCategory("news")).toBe(5);
+    expect(linkDensityForCategory("unknown-vertical")).toBe(5);
+  });
+
+  it("returns the default density when category is undefined or empty", () => {
+    expect(linkDensityForCategory(undefined)).toBe(5);
+    expect(linkDensityForCategory("")).toBe(5);
+  });
+
+  it("is case-insensitive", () => {
+    expect(linkDensityForCategory("SMSF")).toBe(linkDensityForCategory("smsf"));
+    expect(linkDensityForCategory("Tax & Strategy")).toBe(linkDensityForCategory("tax & strategy"));
+  });
+
+  it("accepts a custom default density", () => {
+    expect(linkDensityForCategory("unknown", 3)).toBe(3);
+    expect(linkDensityForCategory(undefined, 2)).toBe(2);
   });
 });
