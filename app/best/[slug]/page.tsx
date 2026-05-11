@@ -88,10 +88,13 @@ export async function generateMetadata({
 
 export default async function BestBrokerPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ raw?: string }>;
 }) {
-  const { slug } = await params;
+  const [{ slug }, { raw: rawParam }] = await Promise.all([params, searchParams]);
+  const showRaw = rawParam === "1";
   const cat = getCategoryBySlug(slug);
   if (!cat) notFound();
 
@@ -127,7 +130,8 @@ export default async function BestBrokerPage({
   const allBrokers = eligibleBrokers;
   const filtered = boostFeaturedPartner(
     allBrokers.filter(cat.filter).sort(cat.sort),
-    0
+    0,
+    { raw: showRaw }
   );
   const topPick = filtered[0] || null;
   const hasSponsored = filtered.some(isSponsored);
@@ -271,6 +275,23 @@ export default async function BestBrokerPage({
                 {SPONSORED_DISCLOSURE_SHORT}
               </p>
             )}
+            <p className="text-[0.56rem] md:text-xs text-slate-400 mt-1">
+              {showRaw ? (
+                <>
+                  Showing pure rating order.{" "}
+                  <Link href={`/best/${slug}`} className="underline hover:text-slate-600">
+                    Restore default ranking
+                  </Link>
+                </>
+              ) : (
+                <>
+                  Rankings may reflect sponsorship.{" "}
+                  <Link href={`/best/${slug}?raw=1`} className="underline hover:text-slate-600">
+                    Show unsponsored order
+                  </Link>
+                </>
+              )}
+            </p>
           </div>
 
           {/* General Advice Warning — collapsed on mobile, visible on desktop */}
