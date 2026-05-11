@@ -196,6 +196,45 @@ export type TextOrLink =
   | string
   | { href: string; label: string; title?: string; rel?: string };
 
+// Per-category link density caps. Long-form evergreen content (SMSF, tax,
+// foreign-investment) benefits from more internal links; short formats
+// (calculators, news) are capped tighter to avoid cluttering the UI.
+const LINK_DENSITY_BY_CATEGORY: Readonly<Record<string, number>> = {
+  smsf: 7,
+  "super & smsf": 7,
+  super: 6,
+  tax: 6,
+  "tax & strategy": 6,
+  etfs: 6,
+  "foreign-investment": 6,
+  invest: 5,
+  investing: 5,
+  property: 5,
+  advisors: 5,
+  dividends: 5,
+  insurance: 4,
+  compare: 4,
+  research: 4,
+  startup: 4,
+  calculators: 3,
+};
+
+/**
+ * Returns the configured maximum link count for an article category.
+ * Used to drive `maxLinks` in `<LinkifiedText>` so denser evergreen articles
+ * get more internal links while calculators and short news stay clean.
+ *
+ * @param category      - Article category string (case-insensitive).
+ * @param defaultDensity - Fallback when the category is absent or unknown.
+ */
+export function linkDensityForCategory(
+  category?: string,
+  defaultDensity = 5,
+): number {
+  if (!category) return defaultDensity;
+  return LINK_DENSITY_BY_CATEGORY[category.toLowerCase()] ?? defaultDensity;
+}
+
 /**
  * Splits a plain-text string into an array of strings and link
  * objects. Only the first occurrence of each keyword is linked —
