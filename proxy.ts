@@ -264,7 +264,7 @@ export async function proxy(request: NextRequest) {
         }
 
         // Only allow admin emails — use strict allowlist (consistent with API routes)
-        const adminEmails = (process.env.ADMIN_EMAILS || 'admin@invest.com.au,finn@invest.com.au').split(',').map(e => e.trim().toLowerCase());
+        const adminEmails = (process.env.ADMIN_EMAILS || 'admin@invest.com.au').split(',').map(e => e.trim().toLowerCase());
         const isAdminUser = adminEmails.includes(user.email?.toLowerCase() || '');
         if (!isAdminUser) {
           const url = request.nextUrl.clone()
