@@ -68,9 +68,9 @@ export async function GET(request: NextRequest) {
 
   const origin =
     process.env.NEXT_PUBLIC_SITE_URL ||
-    process.env.VERCEL_PROJECT_PRODUCTION_URL
+    (process.env.VERCEL_PROJECT_PRODUCTION_URL
       ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-      : new URL(request.url).origin;
+      : new URL(request.url).origin);
 
   const pagesToProbe = [
     `${origin}/`,
@@ -81,17 +81,17 @@ export async function GET(request: NextRequest) {
     `${origin}/sitemap.xml`,
   ];
 
-  log.info({ pageCount: pagesToProbe.length }, "starting anonymity audit probes");
+  log.info("starting anonymity audit probes", { pageCount: pagesToProbe.length });
 
   const results = await Promise.all(pagesToProbe.map(probePage));
 
   const violations = results.filter((r) => r.hits.length > 0);
   const errors = results.filter((r) => r.error !== null && r.hits.length === 0);
 
-  log.info(
-    { violations: violations.length, errors: errors.length },
-    "anonymity audit complete",
-  );
+  log.info("anonymity audit complete", {
+    violations: violations.length,
+    errors: errors.length,
+  });
 
   if (violations.length > 0) {
     const rows = violations
@@ -118,7 +118,7 @@ export async function GET(request: NextRequest) {
         <p style="color:#6b7280;font-size:12px">Sent by /api/cron/quarterly-anonymity-audit</p>
       `,
     });
-    log.warn({ violations }, "anonymity violations found — digest sent");
+    log.warn("anonymity violations found — digest sent", { violations });
   }
 
   return NextResponse.json({
