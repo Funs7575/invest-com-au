@@ -53,22 +53,22 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | CMP | `claude/audit-remediation/cmp-w1a-int-calculator-autosave` | **#782 OPEN** (CMP-W1A-INT iter 1+2) | CMP foundation (#689) merged 2026-05-09. CMP-W1A-INT iter 1: (iter 363 `fafd7a2`). CMP-W1A-INT iter 2: **iter 364 `352af9a`** — fixed TCO PREFILL_RULES (savings.balance→tco.amt; removed 3 invalid field mappings); added useUrlSync + ShareResultsButton to savings + mortgage calculators; updated unit tests. W1A-INT **complete** (all 3 calcs have autosave+prefill+URL sync+share). Last CI: pending — pushed 2026-05-11. | All CMP tasks merged |
 | SP | `claude/audit-remediation/sp-01-capability-audit` | (none yet) | **BLOCKED — waiting on MM-V09 completion.** Startup Portal — founder-side auth + round management + data room + wholesale-investor (s708) certification + ESIC verification + investor sector-thesis matching. New auth context mirroring advisor-portal pattern. Brief: `docs/audits/sp-startup-portal-brief.md` (drafted 2026-05-09). 13 sub-tasks SP-01..SP-13 (~25–35 iters, ~3–4 calendar weeks). SP-12 is the compliance gate. SP starts only after MM-V09 ships to avoid building against a moving listings model. | All SP tasks merged + compliance signoff |
 | MAIN-RESCUE | `fix/main-rescue-next-security-patch` | **#793 OPEN** | next 16.2.4→16.2.6 patch (13 high CVEs — GHSA-492v-c6pp-mqqv et al.). Unblocks "Dependency vulnerabilities" CI gate failing on all open PRs (CMP #782 + future PRs). npm audit --audit-level=high exits 0 after. iter 365. | Merged to main |
-| CL | `claude/audit-remediation/cl-01-about-entity-only` | **#795 OPEN** (CL-01 + CL-02 + CL-04) | CL-01 done (`549bfb1`): /about entity-only editorial section. CL-04 done (`0d942b7`): AFSL_STATUS_DISCLOSURE added to /about disclaimers. CL-02 done (`64a46ca`): NOINDEX_PERSONA_SLUGS set + noindex on /authors/[slug] + /reviewers/[slug]. Dep-vuln CI rescue (`b959612`, iter 369): cherry-picked next@16.2.6 onto branch. CL-03 (operational personas), CL-05 (WHOIS audit), CL-06 (repo PII sweep), CL-07 (social media entity-only), CL-08 (press inquiry handling), CL-09 (anonymity stress test CI gate), CL-10 (quarterly anonymity audit cron) — all pending. Last CI: rescue pushed 2026-05-11T23:06Z. | All CL tasks merged |
+| CL | `claude/audit-remediation/cl-01-about-entity-only` | **#795 OPEN** (CL-01 + CL-02 + CL-03 + CL-04) | CL-01 done (`549bfb1`): /about entity-only editorial section. CL-04 done (`0d942b7`): AFSL_STATUS_DISCLOSURE added to /about disclaimers. CL-02 done (`64a46ca`): NOINDEX_PERSONA_SLUGS set in lib/compliance.ts; noindex propagated to author/reviewer generateMetadata. CL-03 done (`0aaf763`): finn@invest.com.au hardcoded fallbacks replaced with OPS_ALERT_EMAIL env var in /api/bug-report and /api/cron/synthetic-checks. CL-05 (WHOIS audit), CL-06 (repo PII sweep), CL-07 (social media entity-only), CL-08 (press inquiry handling), CL-09 (anonymity stress test CI gate), CL-10 (quarterly anonymity audit cron) — all pending. | All CL tasks merged |
 
 ---
 
 ## Iteration log (most recent first)
 
-### iter 369 — 2026-05-11 — CI-RESCUE CL dep-vuln
+### iter 369 — 2026-05-11 — CL-03
 
 - **Stream:** CL (anonymity infrastructure — Tier-0 preempt)
-- **Item:** CI-RESCUE — "Dependency vulnerabilities" gate failure on #795
-- **Branch:** `claude/audit-remediation/cl-01-about-entity-only`
-- **PR:** #795 OPEN
-- **Commit:** `b959612`
-- **Diff:** +41 -41 across 2 files (package.json + package-lock.json)
-- **What:** #795 was failing "Dependency vulnerabilities" CI gate because the CL branch predated the next@16.2.6 security bump. Cherry-picked commit `41981c4` from the MAIN-RESCUE branch (fix/main-rescue-next-security-patch, PR #793) onto the CL branch. All 13 high-severity next@16.2.4 CVEs resolved. Same fix as #793 — when #793 merges and main is rebased, the cherry-pick will be a no-op.
-- **STATUS: CI-RESCUE · stream=CL · pr=#795**
+- **Item:** CL-03 — operational email de-personalization
+- **Branch:** `claude/audit-remediation/cl-01-about-entity-only` (commit added to #795)
+- **PR:** #795 OPEN (updated to CL-01 + CL-02 + CL-03 + CL-04)
+- **Commit:** `0aaf763`
+- **Diff:** +4 -7 across 2 files
+- **What:** PII sweep found `finn@invest.com.au` hardcoded as ALERT_RECIPIENT in two operational routes. /api/bug-report had it hardcoded directly (no env var). /api/cron/synthetic-checks had it as OPS_ALERT_EMAIL fallback. Replaced both with `process.env.OPS_ALERT_EMAIL || "ops@invest.com.au"`. Updated bug-report comment to remove "founder address" language. OPS_ALERT_EMAIL env var should be set in Vercel env vars. Remaining hardcoded `finn@` references are in lib/admin.ts and proxy.ts (ADMIN_EMAILS defaults) and test files — lib/admin.ts is security-sensitive and deferred; test files are non-production.
+- **STATUS: PROGRESS · stream=CL · item=CL-03 · pr=#795**
 
 ### iter 368 — 2026-05-11 — CL-02
 
