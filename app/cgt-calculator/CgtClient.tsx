@@ -82,7 +82,7 @@ export default function CgtClient() {
               <p>
                 <strong className="text-slate-900">Common exemptions:</strong> Your main residence is generally CGT-exempt.
                 Personal use assets under $10,000 are exempt. Collectibles under $500 are exempt. Pre-CGT assets (acquired
-                before 20 September 1985) are exempt. Superannuation is taxed separately under its own rules. And losses can
+                before 20 September 1985) are exempt. Superannuation is taxed separately under its own rules. And losses can {/* // dated-ok — legal definition of pre-CGT assets, will never change */}
                 be carried forward indefinitely to offset future gains.
               </p>
             </div>
