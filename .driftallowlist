@@ -144,3 +144,4 @@ spatial_ref_sys
 # W2 Phase — tables created in Supabase dashboard without migration files; pending Stream A backfill
 business_accounts  # W2 Phase 2.5 — business account type; migration pending
 investor_goals     # W2 Phase 2 — investor goals tracking; migration pending
+placement_experiments  # created in dashboard 2026-05-11; pending migration backfill (A-stream)
