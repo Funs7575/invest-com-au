@@ -53,11 +53,22 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | CMP | `claude/audit-remediation/cmp-w1a-int-calculator-autosave` | **#782 OPEN** (CMP-W1A-INT iter 1+2) | CMP foundation (#689) merged 2026-05-09. CMP-W1A-INT iter 1: (iter 363 `fafd7a2`). CMP-W1A-INT iter 2: **iter 364 `352af9a`** — fixed TCO PREFILL_RULES (savings.balance→tco.amt; removed 3 invalid field mappings); added useUrlSync + ShareResultsButton to savings + mortgage calculators; updated unit tests. W1A-INT **complete** (all 3 calcs have autosave+prefill+URL sync+share). Last CI: pending — pushed 2026-05-11. | All CMP tasks merged |
 | SP | `claude/audit-remediation/sp-01-capability-audit` | (none yet) | **BLOCKED — waiting on MM-V09 completion.** Startup Portal — founder-side auth + round management + data room + wholesale-investor (s708) certification + ESIC verification + investor sector-thesis matching. New auth context mirroring advisor-portal pattern. Brief: `docs/audits/sp-startup-portal-brief.md` (drafted 2026-05-09). 13 sub-tasks SP-01..SP-13 (~25–35 iters, ~3–4 calendar weeks). SP-12 is the compliance gate. SP starts only after MM-V09 ships to avoid building against a moving listings model. | All SP tasks merged + compliance signoff |
 | MAIN-RESCUE | `fix/main-rescue-next-security-patch` | **#793 OPEN** | next 16.2.4→16.2.6 patch (13 high CVEs — GHSA-492v-c6pp-mqqv et al.). Unblocks "Dependency vulnerabilities" CI gate failing on all open PRs (CMP #782 + future PRs). npm audit --audit-level=high exits 0 after. iter 365. | Merged to main |
-| CL | `claude/audit-remediation/cl-01-about-entity-only` | **#795 OPEN** (CL-01 + CL-04) | CL-01 done (`549bfb1`): /about entity-only editorial section. CL-04 done (`0d942b7`): AFSL_STATUS_DISCLOSURE added to /about disclaimers. CL-02 (author page deindex), CL-03 (operational personas), CL-05 (WHOIS audit), CL-06 (repo PII sweep), CL-07 (social media entity-only), CL-08 (press inquiry handling), CL-09 (anonymity stress test CI gate), CL-10 (quarterly anonymity audit cron) — all pending. | All CL tasks merged |
+| CL | `claude/audit-remediation/cl-01-about-entity-only` | **#795 OPEN** (CL-01 + CL-02 + CL-04) | CL-01 done (`549bfb1`): /about entity-only editorial section. CL-04 done (`0d942b7`): AFSL_STATUS_DISCLOSURE added to /about disclaimers. CL-02 done (`64a46ca`): NOINDEX_PERSONA_SLUGS set added to lib/compliance.ts; noindex propagated to generateMetadata in /authors/[slug] and /reviewers/[slug]. CL-03 (operational personas), CL-05 (WHOIS audit), CL-06 (repo PII sweep), CL-07 (social media entity-only), CL-08 (press inquiry handling), CL-09 (anonymity stress test CI gate), CL-10 (quarterly anonymity audit cron) — all pending. | All CL tasks merged |
 
 ---
 
 ## Iteration log (most recent first)
+
+### iter 368 — 2026-05-11 — CL-02
+
+- **Stream:** CL (anonymity infrastructure — Tier-0 preempt)
+- **Item:** CL-02 — noindex persona slugs (finn-webster, alex-reid)
+- **Branch:** `claude/audit-remediation/cl-01-about-entity-only` (commit added to #795)
+- **PR:** #795 OPEN (updated to CL-01 + CL-02 + CL-04)
+- **Commit:** `64a46ca`
+- **Diff:** +23 across 3 files
+- **What:** Added NOINDEX_PERSONA_SLUGS ReadonlySet to lib/compliance.ts SSOT (finn-webster, alex-reid). Propagated to generateMetadata in app/authors/[slug]/page.tsx and app/reviewers/[slug]/page.tsx — any DB record with a persona slug now renders with robots: {index: false, follow: false}. Pages already 404 if record doesn't exist (eq status active gate); noindex is defence-in-depth for legacy DB records.
+- **STATUS: PROGRESS · stream=CL · item=CL-02 · pr=#795**
 
 ### iter 367 — 2026-05-11 — CL-04
 
