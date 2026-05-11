@@ -244,11 +244,10 @@ export interface PrefillRule {
 }
 
 export const PREFILL_RULES: Record<string, PrefillRule[]> = {
-  // TCO calculator can prefill from savings + mortgage calcs
+  // TCO: use savings balance as a rough trade-size anchor.
+  // Users who track savings typically invest portions of that balance per trade.
   tco: [
-    { fromCalculator: "savings_calculator", fromField: "monthly_contribution", toField: "monthly_amount" },
-    { fromCalculator: "savings_calculator", fromField: "horizon_years", toField: "horizon_years" },
-    { fromCalculator: "mortgage_calculator", fromField: "annual_income", toField: "annual_income" },
+    { fromCalculator: "savings_calculator", fromField: "balance", toField: "amt" },
   ],
   // Mortgage calculator can prefill deposit from savings balance
   mortgage_calculator: [

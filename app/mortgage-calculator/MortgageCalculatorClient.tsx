@@ -8,6 +8,7 @@ import { trackEvent, trackPageDuration } from "@/lib/tracking";
 import { getStoredUtm } from "@/components/UtmCapture";
 import { storeQualificationData } from "@/lib/qualification-store";
 import { useCalculatorState } from "@/hooks/use-calculator-state";
+import { useUrlSync, ShareResultsButton } from "@/app/calculators/_components/CalcShared";
 import CalcPrefillBanner from "@/components/CalcPrefillBanner";
 
 /* ── helpers ─────────────────────────────────────────── */
@@ -97,6 +98,14 @@ export default function MortgageCalculatorClient() {
   const [emailSubmitted, setEmailSubmitted] = useState(false);
 
   useEffect(() => { trackPageDuration("/mortgage-calculator"); }, []);
+
+  // Keep URL in sync so shareable links carry current inputs.
+  useUrlSync({
+    mortgage_calculator_loan_amount: String(loanAmount),
+    mortgage_calculator_interest_rate: String(interestRate),
+    mortgage_calculator_loan_term: String(loanTerm),
+    mortgage_calculator_repayment_type: repaymentType,
+  });
 
   /* ── derived calculations ─────────────────────────── */
 
@@ -461,6 +470,8 @@ export default function MortgageCalculatorClient() {
                 <Link href="/switching-calculator" className="text-xs px-3 py-1.5 bg-slate-100 text-slate-700 font-semibold rounded-lg hover:bg-slate-200">Broker Switching Calc →</Link>
               </div>
             </div>
+
+            <ShareResultsButton />
           </>
         )}
       </div>

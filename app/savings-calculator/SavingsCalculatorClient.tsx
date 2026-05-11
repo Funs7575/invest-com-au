@@ -7,6 +7,7 @@ import { trackEvent, trackClick, getAffiliateLink, AFFILIATE_REL, trackPageDurat
 import { getStoredUtm } from "@/components/UtmCapture";
 import { storeQualificationData } from "@/lib/qualification-store";
 import { useCalculatorState } from "@/hooks/use-calculator-state";
+import { useUrlSync, ShareResultsButton } from "@/app/calculators/_components/CalcShared";
 import AdvisorMatchCTA from "@/components/AdvisorMatchCTA";
 import CalcPrefillBanner from "@/components/CalcPrefillBanner";
 
@@ -59,6 +60,12 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
   }, [balance, currentRate, setPersistedInputs]);
 
   useEffect(() => { trackPageDuration("/savings-calculator"); }, []);
+
+  // Keep URL in sync so shareable links carry current inputs.
+  useUrlSync({
+    savings_calculator_balance: String(balance),
+    savings_calculator_current_rate: String(currentRate),
+  });
 
   const ranked = accounts
     .map(a => {
@@ -312,6 +319,8 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
                 <Link href="/switching-calculator" className="text-xs px-3 py-1.5 bg-slate-100 text-slate-700 font-semibold rounded-lg hover:bg-slate-200">Broker Switching Calc →</Link>
               </div>
             </div>
+
+            <ShareResultsButton />
           </>
         )}
       </div>

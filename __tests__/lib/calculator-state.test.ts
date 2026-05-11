@@ -64,16 +64,16 @@ describe("mergeStates", () => {
 });
 
 describe("getPrefillFor", () => {
-  it("maps savings → tco fields", () => {
+  it("maps savings balance → tco amt", () => {
     const state: CalculatorStateMap = {
       savings_calculator: {
         source: "savings_calculator",
-        data: { monthly_contribution: 500, horizon_years: 10, current_balance: 25000 },
+        data: { balance: 25000, current_rate: 4.5 },
         captured_at: "2026-05-09T00:00:00Z",
       },
     };
     const prefill = getPrefillFor("tco", state);
-    expect(prefill).toEqual({ monthly_amount: 500, horizon_years: 10 });
+    expect(prefill).toEqual({ amt: 25000 });
   });
 
   it("returns empty when source calculator is absent", () => {
@@ -84,13 +84,13 @@ describe("getPrefillFor", () => {
     const state: CalculatorStateMap = {
       savings_calculator: {
         source: "savings_calculator",
-        data: { monthly_contribution: 500, horizon_years: null, current_balance: "" },
+        data: { balance: null, current_rate: 4.5 },
         captured_at: "2026-05-09T00:00:00Z",
       },
     };
     const prefill = getPrefillFor("tco", state);
-    expect(prefill.monthly_amount).toBe(500);
-    expect("horizon_years" in prefill).toBe(false);
+    // balance is null → skipped; no amt entry
+    expect("amt" in prefill).toBe(false);
   });
 
   it("does not crash for unknown destination calculator", () => {
