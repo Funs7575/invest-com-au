@@ -13437,20 +13437,20 @@ export type Database = {
         Args: { p_date: string; p_professional_id: number }
         Returns: undefined
       }
-      increment_placement_event: {
-        Args: {
-          p_event_type: string
-          p_experiment_id: number
-          p_variant: string
-        }
-        Returns: undefined
-      }
       increment_listing_enquiries: {
         Args: { listing_id: number }
         Returns: undefined
       }
       increment_listing_views: {
         Args: { listing_id: number }
+        Returns: undefined
+      }
+      increment_placement_event: {
+        Args: {
+          p_event_type: string
+          p_experiment_id: number
+          p_variant: string
+        }
         Returns: undefined
       }
       is_admin: { Args: never; Returns: boolean }
