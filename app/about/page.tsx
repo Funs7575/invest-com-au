@@ -2,6 +2,7 @@ import Link from "next/link";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import {
   GENERAL_ADVICE_WARNING,
+  AFSL_STATUS_DISCLOSURE,
   COMPANY_LEGAL_NAME,
   COMPANY_ACN,
   COMPANY_ABN,
@@ -220,6 +221,9 @@ export default function AboutPage() {
                 <p>
                   <strong>Past Performance:</strong> Past performance is not a reliable indicator of future performance.
                   Investment returns can go up and down, and you may receive back less than you invested.
+                </p>
+                <p>
+                  <strong>AFSL Status:</strong> {AFSL_STATUS_DISCLOSURE}
                 </p>
               </div>
             </div>
