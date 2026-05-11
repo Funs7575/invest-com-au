@@ -53,6 +53,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | CMP | `claude/audit-remediation/cmp-w1a-int-calculator-autosave` | **#782 OPEN** (CMP-W1A-INT iter 1+2) | CMP foundation (#689) merged 2026-05-09. CMP-W1A-INT iter 1: (iter 363 `fafd7a2`). CMP-W1A-INT iter 2: **iter 364 `352af9a`** — fixed TCO PREFILL_RULES (savings.balance→tco.amt; removed 3 invalid field mappings); added useUrlSync + ShareResultsButton to savings + mortgage calculators; updated unit tests. W1A-INT **complete** (all 3 calcs have autosave+prefill+URL sync+share). Last CI: pending — pushed 2026-05-11. | All CMP tasks merged |
 | SP | `claude/audit-remediation/sp-01-capability-audit` | (none yet) | **BLOCKED — waiting on MM-V09 completion.** Startup Portal — founder-side auth + round management + data room + wholesale-investor (s708) certification + ESIC verification + investor sector-thesis matching. New auth context mirroring advisor-portal pattern. Brief: `docs/audits/sp-startup-portal-brief.md` (drafted 2026-05-09). 13 sub-tasks SP-01..SP-13 (~25–35 iters, ~3–4 calendar weeks). SP-12 is the compliance gate. SP starts only after MM-V09 ships to avoid building against a moving listings model. | All SP tasks merged + compliance signoff |
 | HH | `claude/audit-remediation/hh-01-help-centre` | **#791 OPEN** (HH-01) | HH-01 iter 365: `lib/help-content.ts` (4 categories × 8 articles registry) + `/help`, `/help/[category]`, `/help/[category]/[article]` pages; BreadcrumbList + FAQPage JSON-LD; ISR 86400s. CI pending. | All HH tasks merged |
+| JJ | `claude/audit-remediation/jj-01-careers-page` | **#792 OPEN** (JJ-01) | JJ-01 iter 366: `/about/careers` static page; 3 open roles (SWE/Content/SEO); BreadcrumbList JSON-LD; ISR 86400s. CI queued. | All JJ tasks merged |
 
 ---
 
@@ -293,10 +294,10 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
-| II-01 | pending | Compound interest calculator (`/calculators/compound-interest`) | ~3 | |
-| II-02 | pending | Brokerage fee calculator (`/calculators/brokerage-fees`) | ~3 | Deps: BB-01. |
-| II-03 | pending | ETF cost comparison calculator (`/calculators/etf-cost`) | ~3 | Deps: II-02. |
-| II-04 | pending | Tax on investment returns calculator (CGT, dividend withholding) | ~4 | |
+| II-01 | ~~false-positive~~ | ~~Compound interest calculator (`/calculators/compound-interest`)~~ | — | `app/compound-interest-calculator/CompoundInterestClient.tsx` (286 LOC): full implementation with principal/rate/years/monthly-contribution/compounding-frequency inputs, CMP persistence via `useCalculatorState("compound_interest_calculator")`. Linked from `/calculators` hub as tile. |
+| II-02 | ~~false-positive~~ | ~~Brokerage fee calculator (`/calculators/brokerage-fees`)~~ | — | `app/trade-cost-calculator/` (134+132 LOC): "Compare Brokerage Across Every Australian Platform" — live per-broker brokerage/FX/minimum-fee comparison. Linked from hub as "Trade Cost" tile. |
+| II-03 | pending | ETF cost comparison calculator (`/calculators/etf-cost`) | ~3 | Deps: II-02 (satisfied — FP). No existing ETF cost comparison calculator found. |
+| II-04 | ~~false-positive~~ | ~~Tax on investment returns calculator (CGT, dividend withholding)~~ | — | `app/cgt-calculator/` (CGT: 138+92 LOC) + `app/tax-optimizer/` (TaxOptimizerClient 272 LOC: CGT harvesting + franking credits + dividend withholding) both exist. |
 | II-05 | pending | Calculator SEO (canonical, JSON-LD HowTo schema) | ~2 | Deps: II-01..II-04. |
 
 **Stream II entry condition:** II-01 and II-04 have no hard deps. II-02 deps on BB-01.
@@ -307,7 +308,7 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
-| JJ-01 | pending | Careers page (`/about/careers`) with open roles | ~2 | |
+| JJ-01 | **in_flight** | Careers page (`/about/careers`) with open roles | ~2 | **#792 OPEN** (iter 366 `10c3500`). |
 | JJ-02 | pending | Role detail page (`/about/careers/[role]`) | ~2 | Deps: JJ-01. |
 | JJ-03 | pending | Application form (name, email, CV upload to Supabase Storage) | ~4 | Deps: JJ-02. |
 | JJ-04 | pending | Application review in admin panel | ~3 | Deps: JJ-03. |
@@ -997,6 +998,14 @@ _Compacted 2026-05-09: 1,223 lines of completed-stream summary + iteration log e
 _The most recent ~24h of iteration log entries (iter ~325 onwards) are temporarily missing from both files — they were lost in the 2026-05-09 truncation incident (recovered as PR #661) before the rotate-iteration-log workflow could archive them. Loop's stuck-detection guard should not regress because the iteration command's Phase 2 falls back to PR-CI history when iter log entries are absent._
 
 See [`REMEDIATION_QUEUE_LOG_ARCHIVE.md`](./REMEDIATION_QUEUE_LOG_ARCHIVE.md) for historical iteration log + completed-stream summary.
+
+---
+
+### Iter 366 · 2026-05-11 · Streams II+JJ · II FP resolution + JJ-01 careers page · STATUS: PROGRESS
+
+**What was done:** Phase 0.5: no LOOP_PAUSE. Phase 1: synced main. Phase 1.5: no recent migrations, skipped. Phase 1.7: main CI pending (queue commits); no failures. Phase 2: #791 (HH-01) CI: Supabase types drift ✓, all security gates ✓, database types drift ✓; Lint/Build in_progress — no failures. Phase 3: linear walk → II stream (first pending after HH). Phase 4 verification gate (II-01): `app/compound-interest-calculator/CompoundInterestClient.tsx` exists (286 LOC, full CMP `useCalculatorState` integration) → **false-positive**. Phase 4 (II-02): `app/trade-cost-calculator/` (134+132 LOC, "Compare Brokerage Across Every Australian Platform") → **false-positive**. Phase 4 (II-04): `app/cgt-calculator/` + `app/tax-optimizer/TaxOptimizerClient.tsx` (CGT + dividend withholding + franking credits) → **false-positive**. II-03 (ETF cost comparison): no existing implementation found → **genuine gap**, dep II-02 satisfied (FP). Linear walk continues → JJ-01 (careers page, no hard deps). Phase 5: created `app/about/careers/page.tsx` (187 LOC): 3 static open roles (SWE/Content/SEO), BreadcrumbList JSON-LD, ISR 86400s, role cards with team/type/location badges, email CTA, speculative application block. Commit `10c3500`, PR #792.
+
+**Status:** `STATUS: PROGRESS · streams=II+JJ · FP=II-01+II-02+II-04 · item=JJ-01 · pr=#792 · commit=10c3500`
 
 ---
 
