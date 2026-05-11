@@ -193,6 +193,40 @@ jobs:
           path: gitleaks.sarif
           if-no-files-found: ignore
 
+  anonymity-gate:
+    name: Anonymity gate (no founder PII in source)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v6
+      - name: Scan source for founder PII
+        # CL-09: prevents founder PII from re-entering shipped source.
+        # Docs, tests, and CLAUDE.md are excluded — PII there is expected
+        # (audit trail, test fixtures). Only lib/, app/, components/, proxy.ts
+        # are checked.
+        run: |
+          set -euo pipefail
+          FOUND=0
+          PATTERNS=("finn@invest\\.com\\.au" "finnduns@gmail\\.com" "Finn Webster")
+          for PATTERN in "${PATTERNS[@]}"; do
+            MATCHES=$(grep -rn "$PATTERN" \
+              --include="*.ts" --include="*.tsx" --include="*.js" \
+              --exclude="*.test.ts" --exclude="*.test.tsx" \
+              --exclude="*.spec.ts" --exclude="*.spec.tsx" \
+              lib app components proxy.ts 2>/dev/null || true)
+            if [ -n "$MATCHES" ]; then
+              echo "❌ Found '$PATTERN' in source (not a test/doc file):"
+              echo "$MATCHES"
+              FOUND=1
+            fi
+          done
+          if [ "$FOUND" -eq 1 ]; then
+            echo "Anonymity gate failed. Use entity-level identifiers in shipped code."
+            exit 1
+          fi
+          echo "✅ Anonymity gate passed."
+
   dependency-scan:
     name: Dependency vulnerabilities
     runs-on: ubuntu-latest
