@@ -20,6 +20,7 @@
  */
 
 import { GLOSSARY_ENTRIES } from "@/lib/glossary";
+import { getPillarForPath } from "@/lib/content/topic-clusters";
 
 export interface LinkTarget {
   /** Keyword match (case-insensitive, word-boundary) */
@@ -151,6 +152,46 @@ function findTarget(matchedText: string): LinkTarget | undefined {
   return SORTED_TARGETS.find((l) => l.keyword.toLowerCase() === lower);
 }
 
+/**
+ * Maps an article category string to its hub pillar path in the topic cluster
+ * map. Pass the result to `splitByLinks` / `linkifyHtml` so cluster-relevant
+ * links are preferred when the density cap is active.
+ */
+export function pillarPathForCategory(category?: string): string | undefined {
+  if (!category) return undefined;
+  const map: Record<string, string> = {
+    smsf: "/smsf",
+    "super & smsf": "/smsf",
+    super: "/super",
+    tax: "/tax",
+    "tax & strategy": "/tax",
+    etfs: "/etfs",
+    property: "/property",
+    insurance: "/insurance",
+    "foreign-investment": "/foreign-investment",
+    invest: "/invest",
+    investing: "/invest",
+    calculators: "/calculators",
+    compare: "/compare",
+    advisors: "/advisors",
+    research: "/research",
+    startup: "/startup",
+    dividends: "/dividends",
+  };
+  return map[category.toLowerCase()];
+}
+
+/**
+ * Returns the full set of hrefs belonging to a pillar's topic cluster
+ * (pillar + cluster pages + supporting pages). Empty set when the path
+ * is not a registered pillar.
+ */
+export function getClusterPaths(pillarPath: string): Set<string> {
+  const cluster = getPillarForPath(pillarPath);
+  if (!cluster) return new Set();
+  return new Set([cluster.pillar, ...cluster.clusters, ...cluster.supporting]);
+}
+
 export type TextOrLink =
   | string
   | { href: string; label: string; title?: string; rel?: string };
@@ -161,36 +202,95 @@ export type TextOrLink =
  * subsequent occurrences render as plain text. Safe for React
  * rendering without dangerouslySetInnerHTML.
  *
- * @param maxLinks - Maximum unique keywords to inject as links. Defaults to
+ * @param maxLinks   - Maximum unique keywords to inject as links. Defaults to
  *   unlimited (all first occurrences). Pass a small integer (e.g. 5) to cap
  *   link density per text block — text after the cap renders as plain text.
+ * @param pillarPath - Optional hub pillar path (e.g. "/smsf", "/tax") for
+ *   the article's topic cluster. When provided alongside a finite `maxLinks`,
+ *   the density cap is filled with cluster-relevant links first, then any
+ *   remaining slots with generic links — so an SMSF article's 5 auto-links
+ *   skew toward SMSF pages rather than unrelated broker or glossary entries.
+ *   Obtain the pillar path via `pillarPathForCategory(article.category)`.
  */
-export function splitByLinks(text: string, maxLinks = Infinity): TextOrLink[] {
+export function splitByLinks(
+  text: string,
+  maxLinks = Infinity,
+  pillarPath?: string,
+): TextOrLink[] {
   if (!text) return [];
-  const out: TextOrLink[] = [];
-  const used = new Set<string>();
+
+  const clusterPaths = pillarPath ? getClusterPaths(pillarPath) : new Set<string>();
+  const useClusterAware = clusterPaths.size > 0 && maxLinks < Infinity;
+
+  if (!useClusterAware) {
+    // Fast path: original single-pass algorithm (preserves all existing behaviour).
+    const out: TextOrLink[] = [];
+    const used = new Set<string>();
+    const rx = new RegExp(COMBINED_REGEX_SOURCE, "gi");
+    let lastIndex = 0;
+    let m: RegExpExecArray | null;
+    while ((m = rx.exec(text)) !== null) {
+      if (used.size >= maxLinks) continue;
+      const match = m[0];
+      const key = match.toLowerCase();
+      if (used.has(key)) continue;
+      const target = findTarget(match);
+      if (!target) continue;
+      used.add(key);
+      if (m.index > lastIndex) out.push(text.slice(lastIndex, m.index));
+      out.push({ href: target.href, label: match, title: target.title, rel: target.rel });
+      lastIndex = m.index + match.length;
+    }
+    if (lastIndex < text.length) out.push(text.slice(lastIndex));
+    return out;
+  }
+
+  // Cluster-aware two-pass path:
+  //   Pass 1 — collect ALL first-occurrence matches in text order.
+  //   Pass 2 — select up to maxLinks, preferring cluster-relevant targets.
+  //   Reconstruct — emit selected matches in text order, plain text for the rest.
+  interface MatchInfo {
+    index: number;
+    length: number;
+    match: string;
+    target: LinkTarget;
+    inCluster: boolean;
+  }
+  const allMatches: MatchInfo[] = [];
+  const seenKeys = new Set<string>();
   const rx = new RegExp(COMBINED_REGEX_SOURCE, "gi");
-  let lastIndex = 0;
   let m: RegExpExecArray | null;
   while ((m = rx.exec(text)) !== null) {
-    // Density cap: once we've injected maxLinks unique keywords, skip further
-    // injections. The regex still scans forward so remaining text is captured
-    // correctly in the final text.slice(lastIndex) below.
-    if (used.size >= maxLinks) continue;
     const match = m[0];
     const key = match.toLowerCase();
-    if (used.has(key)) continue;
+    if (seenKeys.has(key)) continue;
     const target = findTarget(match);
     if (!target) continue;
-    used.add(key);
-    if (m.index > lastIndex) out.push(text.slice(lastIndex, m.index));
-    out.push({
-      href: target.href,
-      label: match,
-      title: target.title,
-      rel: target.rel,
+    seenKeys.add(key);
+    allMatches.push({
+      index: m.index,
+      length: match.length,
+      match,
+      target,
+      inCluster: clusterPaths.has(target.href),
     });
-    lastIndex = m.index + match.length;
+  }
+
+  // Rank: cluster-relevant first, then by text position. Slice to maxLinks.
+  const ranked = [...allMatches].sort((a, b) => {
+    if (a.inCluster !== b.inCluster) return a.inCluster ? -1 : 1;
+    return a.index - b.index;
+  });
+  const selectedIndices = new Set(ranked.slice(0, maxLinks).map((mi) => mi.index));
+
+  // Rebuild in original text order so the output reads naturally.
+  const out: TextOrLink[] = [];
+  let lastIndex = 0;
+  for (const { index, length, match, target } of allMatches) {
+    if (!selectedIndices.has(index)) continue;
+    if (index > lastIndex) out.push(text.slice(lastIndex, index));
+    out.push({ href: target.href, label: match, title: target.title, rel: target.rel });
+    lastIndex = index + length;
   }
   if (lastIndex < text.length) out.push(text.slice(lastIndex));
   return out;
@@ -206,8 +306,13 @@ export function splitByLinks(text: string, maxLinks = Infinity): TextOrLink[] {
  *   - Content inside tag attributes (href, alt, etc.)
  *
  * First-occurrence semantics per keyword so prose stays readable.
+ *
+ * @param pillarPath - Reserved for future cluster-aware density capping.
+ *   Accepted now so callers can be forward-compatible without a signature
+ *   change when a `maxLinks` param is added to `linkifyHtml`.
  */
-export function linkifyHtml(html: string): string {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function linkifyHtml(html: string, pillarPath?: string): string {
   if (!html) return "";
   const used = new Set<string>();
   let out = "";
