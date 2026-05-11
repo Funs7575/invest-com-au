@@ -47,8 +47,8 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | WW | _complete_ | **#651 MERGED** | WW-01+WW-02 merged. WW-03/04 blocked (DD-02 dep). | All WW tasks merged ✓ |
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
 | Z | `claude/audit-remediation/z-04-zero-state-ux` | #230/#323/#403/#457/#524/#565 | Z-01..Z-04 done. | Z-04 merged ✓ |
-| QQ | `claude/audit-remediation/qq-01-public-qa-surface` | (none yet) | QQ-01..QQ-10 pending. QQ-08 is a compliance gate — surfaces to Blocked until `docs/audits/qq-compliance-signoff.md` is committed by a human reviewer. | All QQ tasks merged |
-| MM | `claude/audit-remediation/mm-01-marketplace-coverage-audit` | (none yet — MM-V01 pending commit) | MM-V01 delivered locally 2026-05-09. Pending commit + PR. | All MM phases merged |
+| QQ | `claude/audit-remediation/qq-01-public-qa-surface` | **#800 OPEN** (QQ-01) | QQ-01 done (`281a83a`): capability audit doc — safe-to-expose subset of chatbot/embeddings/ai-cost-caps, admin-only assumptions, lib/qa-chatbot.ts scope. QQ-02..QQ-10 pending. QQ-08 compliance gate blocks public-route exposure until `docs/audits/qq-compliance-signoff.md` is committed. Last CI: pending — pushed 2026-05-11. | All QQ tasks merged |
+| MM | `claude/audit-remediation/mm-01-marketplace-coverage-audit` | (none yet) | MM-V01 already on main (committed in f024bc2 with KK/F bundle). MM-AUDIT (Phase 1 coverage doc) next, then MM-V02..V09 + MM-S01..S06 + MM-CONTENT + MM-UX + MM-INTEG. | All MM phases merged |
 | TT | `claude/audit-remediation/tt-04-ga4-removal` | **#764 MERGED** (TT-01) · **#772 MERGED** (TT-02) · **#779 MERGED** (TT-03) · **#799 OPEN** (TT-04) | TT-01..TT-03 MERGED. TT-04: **#799 OPEN** (iter 373 `e8453d0`; GA4 removed from layout; Plausible sole analytics; connect-src tightened). Last CI: in_progress. | TT-04 merged |
 | CMP | `claude/audit-remediation/cmp-w1a-int-calculator-autosave` | **#782 OPEN** | CMP-W1A-INT complete. Last CI: pending. | All CMP tasks merged |
 | SP | (none yet) | (none yet) | **BLOCKED — waiting on MM-V09 completion.** | All SP tasks merged + compliance signoff |
@@ -84,6 +84,17 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 
 ## Iteration log (most recent first)
 
+### iter 375 — 2026-05-11 — QQ-01
+
+- **Stream:** QQ (public AI Q&A capture surface)
+- **Item:** QQ-01 — capability audit & API surface spec
+- **Branch:** `claude/audit-remediation/qq-01-public-qa-surface`
+- **PR:** #800 OPEN
+- **Commit:** `281a83a`
+- **Diff:** +204 across 1 file (new `docs/audits/qq-01-capability-audit.md`)
+- **What:** Audited `lib/chatbot.ts` (367 LOC), `lib/embeddings.ts` (199 LOC), `lib/ai-cost-caps.ts` (343 LOC), `/api/chatbot/route.ts`, `/api/concierge/route.ts`. Safe-to-expose subset: `classifyUserMessage()`, `buildChatPrompt()`, `embedText()` (pure/auth-free). `respondToMessage()` NOT safe for public (admin client + chatbot_conversations write). New route needs: IP-keyed rate limit (10 req/hr), `qa_capture` route in ai-cost-caps with separate spend caps, `lib/qa-chatbot.ts` wrapper (QQ-03). QQ-08 compliance gate confirmed. Sub-task scopes refined for QQ-02..QQ-10. Named duplicate: PR #794 is quiz Zod schemas (E stream), not QQ — confirmed naming collision only.
+- **STATUS: PROGRESS · stream=QQ · item=QQ-01 · pr=#800**
+
 ### iter 374 — 2026-05-11 — CI-RESCUE CL (#795)
 
 - **Stream:** CL (anonymity infrastructure — Tier-0 preempt)
@@ -92,7 +103,7 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 - **PR:** #795 OPEN
 - **Commit:** `306f995`
 - **Diff:** +8 -8 across 1 file
-- **What:** `npm run type-check` failed on `app/api/cron/quarterly-anonymity-audit/route.ts` — three `log.info/warn` calls used the pino-style `(meta, msg)` arg order but this codebase's logger signature is `(msg: string, meta?: LogMeta)`. Also fixed a ternary precedence bug in the `origin` computation (the `||` bound more tightly than the `?:`, causing NEXT_PUBLIC_SITE_URL presence to select the wrong branch). Rebased the branch on main (was behind by 8 queue-update commits). Type-check green (`TYPE-CHECK OK`) before push.
+- **What:** `npm run type-check` failed on `app/api/cron/quarterly-anonymity-audit/route.ts` — three `log.info/warn` calls used the pino-style `(meta, msg)` arg order but this codebase's logger signature is `(msg: string, meta?: LogMeta)`. Also fixed a ternary precedence bug in the `origin` computation. Rebased the branch on main (was behind by 8 queue-update commits). Type-check green before push.
 - **STATUS: CI-RESCUE · stream=CL · pr=#795**
 
 ### iter 373 — 2026-05-11 — TT-04
@@ -103,67 +114,49 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 - **PR:** #799 OPEN
 - **Commit:** `e8453d0`
 - **Diff:** +5 -5 across 5 files
-- **What:** Removed `<GoogleAnalytics />` from `app/layout.tsx` now that TT-03 Plausible integration is merged. Tightened proxy.ts connect-src by removing `*.google-analytics.com` and `*.analytics.google.com` (GA4 data endpoints — `www.googletagmanager.com` retained for Google Ads/TrackingPixels.tsx). Added TT-04 note to GoogleAnalytics.tsx. Updated PlausibleAnalytics.tsx comment to reflect completion. Updated admin SEO health "Next Steps" from GA4 to Plausible env var. WebVitals and FloatingRightCTA already guard `"gtag" in window` — not broken. Tier C (proxy.ts CSP narrowing, intent announced here).
+- **What:** Removed `<GoogleAnalytics />` from `app/layout.tsx` now that TT-03 Plausible integration is merged. Tightened proxy.ts connect-src by removing `*.google-analytics.com` and `*.analytics.google.com`. Tier C (proxy.ts CSP narrowing, intent announced here).
 - **STATUS: PROGRESS · stream=TT · item=TT-04 · pr=#799**
 
 ### iter 372 — 2026-05-11 — CL-10 + CL-07/08 FP + CL-05 Blocked
 
 - **Stream:** CL (anonymity infrastructure — Tier-0 preempt)
 - **Items:** CL-10 done; CL-07 + CL-08 false-positive; CL-05 surfaced to Blocked
-- **Branch:** `claude/audit-remediation/cl-01-about-entity-only`
-- **PR:** #795 OPEN
 - **Commit:** `0a74526`
-- **Diff:** +140 -1 across 3 files
-- **What:** CL-10: Added `/api/cron/quarterly-anonymity-audit` route + CRON_GROUPS registration + quarterly vercel.json schedule (`0 3 1 1,4,7,10 *`). CL-07 + CL-08: verified false-positives. CL-05: surfaced to Blocked (WHOIS registrar action required).
 - **STATUS: PROGRESS · stream=CL · item=CL-10 · pr=#795**
 
 ### iter 371 — 2026-05-11 — CL-09
 
 - **Stream:** CL (anonymity infrastructure — Tier-0 preempt)
-- **Item:** CL-09 — anonymity stress test CI gate
-- **Branch:** `claude/audit-remediation/cl-01-about-entity-only`
-- **PR:** #795 OPEN
 - **Commit:** `af22343`
-- **Diff:** +34 across 1 file (.github/workflows/ci.yml)
-- **What:** Added `anonymity-gate` job to ci.yml that greps lib/, app/, components/, proxy.ts for founder PII patterns on every PR.
 - **STATUS: PROGRESS · stream=CL · item=CL-09 · pr=#795**
 
 ### iter 370 — 2026-05-11 — CL-06
 
 - **Stream:** CL (anonymity infrastructure — Tier-0 preempt)
-- **Item:** CL-06 — repo PII sweep (lib/seo.ts, lib/admin.ts, proxy.ts)
-- **Branch:** `claude/audit-remediation/cl-01-about-entity-only`
-- **PR:** #795 OPEN
 - **Commit:** `aa17850`
-- **Diff:** +7 -7 across 3 files
-- **What:** REVIEW_AUTHOR entity-level; finn@ removed from ADMIN_EMAILS defaults.
 - **STATUS: PROGRESS · stream=CL · item=CL-06 · pr=#795**
 
 ### iter 369 — 2026-05-11 — CL-03
 
 - **Stream:** CL (anonymity infrastructure — Tier-0 preempt)
-- **Item:** CL-03 — operational email de-personalization
 - **Commit:** `0aaf763`
 - **STATUS: PROGRESS · stream=CL · item=CL-03 · pr=#795**
 
 ### iter 368 — 2026-05-11 — CL-02
 
 - **Stream:** CL (anonymity infrastructure — Tier-0 preempt)
-- **Item:** CL-02 — noindex persona slugs
 - **Commit:** `64a46ca`
 - **STATUS: PROGRESS · stream=CL · item=CL-02 · pr=#795**
 
 ### iter 367 — 2026-05-11 — CL-04
 
 - **Stream:** CL (anonymity infrastructure — Tier-0 preempt)
-- **Item:** CL-04 — AFSL disclosure on /about page
 - **Commit:** `0d942b7`
 - **STATUS: PROGRESS · stream=CL · item=CL-04 · pr=#795**
 
 ### iter 366 — 2026-05-11 — CL-01
 
 - **Stream:** CL (anonymity infrastructure — Tier-0 preempt)
-- **Item:** CL-01 — /about page entity-only
 - **Commit:** `549bfb1`
 - **STATUS: PROGRESS · stream=CL · item=CL-01 · pr=#795**
 
