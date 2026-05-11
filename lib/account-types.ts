@@ -20,21 +20,28 @@
  * from.
  */
 
-export type AccountKind = "advisor" | "broker_partner";
+export type AccountKind =
+  | "advisor"
+  | "broker_partner"
+  | "investor"        // investor_profiles.auth_user_id (end-user dashboard)
+  | "business_owner"  // business_accounts.auth_user_id (W2 Phase 3)
+  | "listing_owner";  // listing_owner_accounts.auth_user_id (W2 Phase 4 — table pending)
 
 /**
- * Reserved future kinds (commented for grep discoverability — uncomment
- * when the corresponding entity table ships and follow the
- * auth_user_id + unique-index + RLS pattern documented in
- * docs/architecture/account-types.md):
+ * Reserved future kinds (uncomment when the corresponding entity table
+ * ships):
  *
- *   - "listing_owner"       → CRE seller marketplace (real estate licence)
  *   - "wholesale_operator"  → fund managers (s708 sophisticated investor)
- *   - "investor_profile"    → end-user dogfood (saved searches, GDPR)
  *   - "firm_partner"        → firm-admin role (separate from advisor)
  */
 
-export const ACTIVE_ACCOUNT_KINDS: readonly AccountKind[] = ["advisor", "broker_partner"];
+export const ACTIVE_ACCOUNT_KINDS: readonly AccountKind[] = [
+  "advisor",
+  "broker_partner",
+  "investor",
+  "business_owner",
+  "listing_owner",
+];
 
 export function isAccountKind(value: unknown): value is AccountKind {
   return typeof value === "string" && (ACTIVE_ACCOUNT_KINDS as readonly string[]).includes(value);

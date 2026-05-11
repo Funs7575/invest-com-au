@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Icon from "@/components/Icon";
 import HubLeadForm from "@/components/leads/HubLeadForm";
+import { useCalculatorState } from "@/hooks/use-calculator-state";
 
 type Q = {
   id: string;
@@ -148,6 +149,35 @@ export default function EligibilityQuizClient() {
   const [done, setDone] = useState(false);
   const results = useMemo(() => (done ? evaluate(answers) : []), [done, answers]);
 
+  // Persist answers across sessions for signed-in business-owner users
+  // (W2 Phase 3). Anonymous users still get sessionStorage continuity via
+  // the same hook. Stored under `grants_eligibility_quiz` so the
+  // /business-portal/grants surface can read them later without re-prompt.
+  const {
+    value: persistedAnswers,
+    setValue: setPersistedAnswers,
+    isHydrated: persistHydrated,
+  } = useCalculatorState<Answers>("grants_eligibility_quiz", {});
+
+  useEffect(() => {
+    if (!persistHydrated) return;
+    if (persistedAnswers && Object.keys(persistedAnswers).length > 0) {
+      setAnswers(persistedAnswers);
+      // If the persisted answers cover every question, jump to results.
+      if (QUESTIONS.every((q) => typeof persistedAnswers[q.id] === "string")) {
+        setDone(true);
+        setStep(QUESTIONS.length);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- hydrate once
+  }, [persistHydrated]);
+
+  useEffect(() => {
+    if (Object.keys(answers).length > 0) {
+      setPersistedAnswers(answers);
+    }
+  }, [answers, setPersistedAnswers]);
+
   function answer(q: Q, value: string) {
     const next = { ...answers, [q.id]: value };
     setAnswers(next);
@@ -160,6 +190,7 @@ export default function EligibilityQuizClient() {
 
   function reset() {
     setAnswers({});
+    setPersistedAnswers({});
     setStep(0);
     setDone(false);
   }
