@@ -41,14 +41,14 @@ const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-jetbrains-mono",
-  weight: ["400", "500", "700", "800"],
+  weight: ["400", "700", "800"],
 });
 
 const sourceSerif = Source_Serif_4({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-source-serif",
-  weight: ["400", "500", "600"],
+  weight: ["400"],
 });
 
 export const metadata: Metadata = {
