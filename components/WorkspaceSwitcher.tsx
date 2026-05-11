@@ -1,25 +1,24 @@
 /**
- * Workspace switcher for the header (W2 Phase 2.5).
+ * Workspace switcher pill (W2 Phase 2.5).
  *
- * Server component. Reads the active-kind cookie + the user's full
- * membership list. When the user holds 2+ kinds, renders a "Acting as: X"
- * pill linking to /account/select-workspace. When the user holds only 1
- * kind, renders nothing (no UI clutter for single-kind users).
+ * Client component. Fetches `/api/account/active-kind` GET on mount to
+ * learn the user's memberships + active kind. Renders nothing for
+ * unauthenticated users or single-kind users (no UI clutter).
  *
- * The switcher itself doesn't expose a dropdown — clicking jumps to the
- * chooser page where users see the full set of options + descriptions.
- * Avoids menu bloat in the header on smaller screens.
+ * Multi-kind users see a "Acting as: X" pill that links to
+ * /account/select-workspace where they can switch context. The chooser
+ * page itself sets the cookie + redirects to the chosen portal.
+ *
+ * Designed to live inside the existing client-component Header.tsx tree
+ * without forcing a server-component refactor of the header.
  */
 
-import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
-import {
-  getActiveKind,
-  getKindsForUser,
-  type WorkspaceKind,
-} from "@/lib/account-kinds";
+"use client";
 
-const KIND_LABEL: Record<WorkspaceKind, string> = {
+import { useEffect, useState } from "react";
+import Link from "next/link";
+
+const KIND_LABEL: Record<string, string> = {
   investor: "Investor",
   advisor: "Advisor",
   broker_partner: "Broker partner",
@@ -27,27 +26,50 @@ const KIND_LABEL: Record<WorkspaceKind, string> = {
   listing_owner: "Listing owner",
 };
 
-export default async function WorkspaceSwitcher() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return null;
+interface Membership {
+  kind: string;
+  kind_id: string;
+  status: string;
+  display_label: string;
+}
 
-  const memberships = await getKindsForUser(user.id);
-  // Single-kind users (or users with 0 kinds = lazy investor only) don't
-  // need a switcher. Render nothing.
-  if (memberships.length < 2) return null;
+interface ActiveKindResponse {
+  memberships: Membership[];
+  active: string | null;
+}
 
-  const active = await getActiveKind();
-  const label = active ? KIND_LABEL[active] : "Choose workspace";
+export default function WorkspaceSwitcher() {
+  const [data, setData] = useState<ActiveKindResponse | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/account/active-kind", { method: "GET" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => {
+        if (cancelled || !j) return;
+        setData(j as ActiveKindResponse);
+      })
+      .catch(() => {
+        /* non-blocking */
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  if (!data || data.memberships.length < 2) return null;
+
+  const label = data.active ? KIND_LABEL[data.active] : "Choose workspace";
 
   return (
     <Link
       href="/account/select-workspace"
-      className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-full bg-slate-100 text-slate-700 hover:bg-slate-200"
+      className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-full bg-slate-100 text-slate-700 hover:bg-slate-200 transition-colors"
       title="Switch workspace"
+      data-testid="workspace-switcher"
     >
       <span aria-hidden>⇄</span>
-      <span>Acting as: {label}</span>
+      <span>Acting as: {label ?? "Workspace"}</span>
     </Link>
   );
 }

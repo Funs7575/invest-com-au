@@ -31,6 +31,7 @@ import { createClient } from "@/lib/supabase/server";
 import { intentCountryMeta, type IntentCountryCode } from "@/lib/intent-context";
 import { getIntentCountry } from "@/lib/intent-context-server";
 import { getQuizProfile, type QuizProfile } from "@/lib/quiz-profile";
+import { getInvestorProfile, type InvestorProfile } from "@/lib/investor-profiles";
 import {
   filterByCountryEligibility,
   type EntityWithEligibility,
@@ -88,17 +89,59 @@ function pickKind(profile: QuizProfile | null): RecKind {
   return "advisors";
 }
 
+/**
+ * Merge structured `investor_profiles` columns over the cookie-backed
+ * QuizProfile. Returns null when both sources are empty so downstream
+ * code can fall back to country-only mode.
+ *
+ * Precedence: investor_profiles (signed-in, structured) wins on conflicts;
+ * QuizProfile fills any gaps. The ranker's score functions accept a
+ * QuizProfile-shaped object (vertical / topMatchSlug / intentCountry /
+ * budget / experience / completedAt / createdAt), so the merge produces
+ * one of those shapes regardless of source.
+ */
+function mergeProfileSignals(
+  investor: InvestorProfile | null,
+  quiz: QuizProfile | null,
+): QuizProfile | null {
+  if (!investor && !quiz) return null;
+  return {
+    sessionId: quiz?.sessionId ?? investor?.authUserId ?? "",
+    vertical: investor?.primaryVertical ?? quiz?.vertical ?? null,
+    topMatchSlug: quiz?.topMatchSlug ?? null,
+    intentCountry: investor?.intentCountrySnapshot ?? quiz?.intentCountry ?? null,
+    budget: investor?.budgetBand ?? quiz?.budget ?? null,
+    experience: investor?.experienceLevel ?? quiz?.experience ?? null,
+    completedAt: quiz?.completedAt ?? null,
+    createdAt: investor?.createdAt ?? quiz?.createdAt ?? new Date().toISOString(),
+  };
+}
+
 export default async function SmartRecommendationsStrip() {
-  const [profile, fallbackCountry] = await Promise.all([
+  // Read all three signal sources in parallel:
+  //  - quiz-session cookie → user_quiz_history row (anon-friendly)
+  //  - iv_intent_country cookie (anon-friendly)
+  //  - investor_profiles row (signed-in only; structured columns)
+  // The investor_profiles read is gated to signed-in users to avoid an
+  // admin-client query on every anon page render.
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  const [profile, fallbackCountry, investorProfile] = await Promise.all([
     getQuizProfile(),
     getIntentCountry(),
+    user ? getInvestorProfile(user.id) : Promise.resolve(null),
   ]);
 
-  const intentCountry = profile?.intentCountry ?? fallbackCountry;
-  if (!profile && !intentCountry) return null;
+  // Merge precedence: signed-in investor_profiles > quiz cookie profile >
+  // intent-country cookie. Each layer fills gaps in the next.
+  const mergedProfile = mergeProfileSignals(investorProfile, profile);
+  const intentCountry =
+    investorProfile?.intentCountrySnapshot ??
+    profile?.intentCountry ??
+    fallbackCountry;
+  if (!mergedProfile && !intentCountry) return null;
 
-  const kind = pickKind(profile);
-  const supabase = await createClient();
+  const kind = pickKind(mergedProfile);
 
   if (kind === "brokers") {
     const { data } = await supabase
@@ -117,11 +160,11 @@ export default async function SmartRecommendationsStrip() {
     );
     if (eligible.length < MIN_ITEMS_TO_SHOW) return null;
 
-    const ranked = rankBrokers(eligible, profile);
+    const ranked = rankBrokers(eligible, mergedProfile);
 
     return renderStrip({
       kind: "brokers",
-      profile,
+      profile: mergedProfile,
       intentCountry,
       items: ranked.slice(0, MIN_ITEMS_TO_SHOW).map((b) => ({
         slug: b.slug,
@@ -150,11 +193,11 @@ export default async function SmartRecommendationsStrip() {
   );
   if (eligible.length < MIN_ITEMS_TO_SHOW) return null;
 
-  const ranked = rankAdvisors(eligible, profile);
+  const ranked = rankAdvisors(eligible, mergedProfile);
 
   return renderStrip({
     kind: "advisors",
-    profile,
+    profile: mergedProfile,
     intentCountry,
     items: ranked.slice(0, MIN_ITEMS_TO_SHOW).map((a) => ({
       slug: a.slug,
