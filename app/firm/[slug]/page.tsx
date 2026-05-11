@@ -137,6 +137,7 @@ export default async function FirmProfilePage({ params }: { params: Promise<{ sl
                       width={96}
                       height={96}
                       className="w-full h-full object-contain"
+                      priority
                     />
                   ) : (
                     <span className="text-2xl sm:text-3xl font-bold text-violet-600">
