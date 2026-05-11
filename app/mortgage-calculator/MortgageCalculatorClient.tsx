@@ -8,6 +8,7 @@ import { trackEvent, trackPageDuration } from "@/lib/tracking";
 import { getStoredUtm } from "@/components/UtmCapture";
 import { storeQualificationData } from "@/lib/qualification-store";
 import { useCalculatorState } from "@/hooks/use-calculator-state";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 /* ── helpers ─────────────────────────────────────────── */
 
@@ -192,7 +193,7 @@ export default function MortgageCalculatorClient() {
       <div className="bg-gradient-to-br from-rose-600 via-rose-700 to-rose-800 text-white py-8 md:py-14 px-4">
         <div className="container-custom max-w-3xl text-center">
           <h1 className="text-xl md:text-3xl font-extrabold mb-2">How much will your mortgage really cost?</h1>
-          <p className="text-sm md:text-base text-rose-100">Enter your loan details — we'll show you monthly repayments, total interest, and how rate changes affect the cost.</p>
+          <p className="text-sm md:text-base text-rose-100">Enter your loan details — we&apos;ll show you monthly repayments, total interest, and how rate changes affect the cost.</p>
           <div className="mt-3"><SocialProofCounter variant="badge" /></div>
         </div>
       </div>
@@ -433,6 +434,13 @@ export default function MortgageCalculatorClient() {
               needKey="mortgage"
               headline="Could a broker get you a better rate?"
               description="Mortgage brokers compare 30+ lenders to find you the lowest rate — their service is free, paid by lenders."
+            />
+
+            <CalculatorLeadCapture
+              calcSlug="mortgage-calculator"
+              calcTitle="mortgage repayment"
+              need="mortgage"
+              contextKeys={["mortgage", "home-loan"]}
             />
 
             {/* SEO content */}

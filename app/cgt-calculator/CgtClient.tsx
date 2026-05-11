@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import CgtCalculator from "@/app/calculators/_components/CgtCalculator";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 export default function CgtClient() {
   const searchParams = useSearchParams();
@@ -40,6 +41,13 @@ export default function CgtClient() {
         </div>
 
         <CgtCalculator searchParams={searchParams} />
+
+        <CalculatorLeadCapture
+          calcSlug="cgt-calculator"
+          calcTitle="CGT"
+          need="tax"
+          contextKeys={["cgt", "tax-planning"]}
+        />
 
         <div className="mt-8 md:mt-12 space-y-6">
           <div className="bg-white border border-slate-200 rounded-xl p-5 md:p-6">

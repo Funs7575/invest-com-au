@@ -8,6 +8,7 @@ import { trackEvent, trackPageDuration } from "@/lib/tracking";
 import { getStoredUtm } from "@/components/UtmCapture";
 import { storeQualificationData } from "@/lib/qualification-store";
 import AdvisorMatchCTA from "@/components/AdvisorMatchCTA";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 import { formatCurrency } from "@/lib/utils";
 import { useCalculatorState } from "@/hooks/use-calculator-state";
 
@@ -444,6 +445,13 @@ export default function RetirementCalculatorClient() {
                 description="A financial planner builds a strategy around your goals, super, investments, and tax — so you can retire with confidence."
               />
             </div>
+
+            <CalculatorLeadCapture
+              calcSlug="retirement-calculator"
+              calcTitle="retirement projection"
+              need="planning"
+              contextKeys={["retirement", "super-planning"]}
+            />
 
             {/* SEO content */}
             <div className="bg-white border border-slate-200 rounded-2xl p-5 md:p-8">
