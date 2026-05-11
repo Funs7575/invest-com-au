@@ -43,7 +43,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | FF | `claude/audit-remediation/ff-01-feature-flag-audit` | **#656 MERGED 2026-05-09** (`4da4004f`) | FF-01..FF-04 done. FF-03 false-positive. **Stream complete.** | FF-04 merged ✓ |
 | OOO | `claude/audit-remediation/ooo-01-runbook-audit` | **#652 MERGED** | OOO-01 done. OOO-04 FP. OOO-02 done. OOO-03 done. **Stream complete.** | OOO-03 merged ✓ |
 | KK | `claude/audit-remediation/kk-04-iter4-admin-density-override` · `claude/audit-remediation/kk-04-iter5-integration-tests` | **#703 MERGED 2026-05-10** (KK-03) · **#711 MERGED 2026-05-10** (KK-04 iter 1) · **#743 MERGED 2026-05-11** (KK-04 iter 2) · **#747 MERGED 2026-05-11** (KK-04 iter 3) · **#749 OPEN** (KK-04 iter 4) · **#751 OPEN** (KK-04 iter 5) | KK-01 done (#667). KK-02 done (#670). KK-03: **#703 MERGED 2026-05-10** (`57cfce7`). KK-04 iter 1: **#711 MERGED 2026-05-10** (`34455f2b`). KK-04 iter 2: **#743 MERGED 2026-05-11** (`3792739`). KK-04 iter 3: **#747 MERGED 2026-05-11** (`d8fc9f8` — Tier B squash, per-category density). KK-04 iter 4: **#749 OPEN** (iter 356 rebase `8cdb1e0`; link_density_override + admin editor; Tier C migration — **needs human review**). KK-04 iter 5: **#751 OPEN** (iter 356 rebase `b329073`; 11 unit + 4 integration + 4 Playwright tests). CI re-running on #749+#751 after rebase. | KK-04 merged |
-| PP | `claude/audit-remediation/pp-01-bundle-budget` · `claude/audit-remediation/pp-03-font-loading` | **#706 MERGED 2026-05-10** (PP-01) · **#745 OPEN** (PP-02) · **#755 OPEN** (PP-03) | PP-01: **#706 MERGED 2026-05-10** (all CI green). PP-02: **#745 OPEN** (image audit — raw img → next/image). PP-03: **#755 OPEN** (font weight trim — drop JetBrains 500, Source Serif 500+600). PP-04..05 pending. | All PP tasks merged |
+| PP | `claude/audit-remediation/pp-01-bundle-budget` · `claude/audit-remediation/pp-03-font-loading` · `claude/audit-remediation/pp-05-lazy-load-audit` | **#706 MERGED 2026-05-10** (PP-01) · **#745 OPEN** (PP-02) · **#755 OPEN** (PP-03) · **#768 OPEN** (PP-05) | PP-01: **#706 MERGED 2026-05-10** (all CI green). PP-02: **#745 OPEN** (image audit — raw img → next/image). PP-03: **#755 OPEN** (font weight trim — drop JetBrains 500, Source Serif 500+600). PP-05: **#768 OPEN** (iter 358 `9657f23`; add priority to firm logo; Tier A, auto-merge-safe). PP-04 pending. | All PP tasks merged |
 | WW | `claude/audit-remediation/ww-01-watchlist-data-model` | **#651 MERGED** | WW-01 migration + WW-02 watchlist UI done. WW-03/04 blocked (DD-02 dep). **Streams WW-01+WW-02 merged.** | All WW tasks merged ✓ |
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
 | Z | `claude/audit-remediation/z-04-zero-state-ux` | #230/#323/#403/#457/#524/#565 | Z-01..Z-04 done. | Z-04 merged ✓ |
@@ -388,7 +388,7 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 | PP-02 | pending | Image optimisation audit (identify unoptimised `<img>` tags) | ~2 | |
 | PP-03 | pending | Font loading optimisation (subset + preload) | ~2 | Deps: PP-02. |
 | PP-04 | pending | Third-party script audit (GTM, Intercom, etc. — defer or remove) | ~2 | |
-| PP-05 | pending | Lazy loading audit (identify above-the-fold images with loading=lazy) | ~1 | |
+| PP-05 | in_flight | Lazy loading audit (identify above-the-fold images with loading=lazy) | ~1 | **#768 OPEN** (iter 358, `9657f23`) |
 
 **Stream PP entry condition:** No hard deps. Can start any time.
 
@@ -995,6 +995,14 @@ _Compacted 2026-05-09: 1,223 lines of completed-stream summary + iteration log e
 _The most recent ~24h of iteration log entries (iter ~325 onwards) are temporarily missing from both files — they were lost in the 2026-05-09 truncation incident (recovered as PR #661) before the rotate-iteration-log workflow could archive them. Loop's stuck-detection guard should not regress because the iteration command's Phase 2 falls back to PR-CI history when iter log entries are absent._
 
 See [`REMEDIATION_QUEUE_LOG_ARCHIVE.md`](./REMEDIATION_QUEUE_LOG_ARCHIVE.md) for historical iteration log + completed-stream summary.
+
+---
+
+### Iter 358 · 2026-05-11 · Stream PP · PP-05 lazy loading audit + types regen · STATUS: PROGRESS
+
+**What was done:** Phase 1.5: `Supabase types drift` failing on #749/#741/#755 — live DB gained `placement_experiments` table + `increment_placement_event` RPC not in `lib/database.types.ts`. Regenerated via Supabase MCP (53 lines added). Added `placement_experiments` to `.driftallowlist` (no migration; dashboard-created). PR #767 opened; `Database types drift gate` passed. Phase 3: picked PP-05 (lazy loading audit, ~1 iter, Tier A). Full scan of 71 files using `next/image`: `ListingImageGallery` correct (hero has `priority`, thumbnails have `loading="lazy"`); `firm/[slug]/page.tsx` — firm logo (96×96, above-fold) missing `priority` (broker equivalent already had it) → added; all other images (48–72px avatars in below-fold lists) correctly unprioritised. PR #768 opened (Tier A, auto-merge-safe). CI pending on #767+#768.
+
+**Status:** `STATUS: PROGRESS · stream=PP · item=PP-05 · pr=#768 · commit=9657f23 · types-regen=pr#767`
 
 ---
 
