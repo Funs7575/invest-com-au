@@ -21,7 +21,7 @@
 **Plan source:** `docs/plans/pre-launch-wave-master-prompt.md` (Wave 1-6)
 **Loop prompt:** `docs/plans/pre-launch-wave-loop-prompt.md`
 **Update inbox:** `docs/plans/queue-updates/` (other actors drop notes here)
-**Last updated:** 2026-05-10 (cron iter — status doc reconcile: W4.20/W4.22/W5.24/W5.25/W5.27 done; W2 phases #1, #2, #2.5, follow-ups in flight)
+**Last updated:** 2026-05-11 (cron iter — adopted PR #740 reconcile; W3.18 funds extension in flight via #752)
 
 ---
 
@@ -87,7 +87,7 @@ Source: `docs/plans/pre-launch-wave-master-prompt.md`. Lowercase rows mirror tha
 | W1.3 | JSON-LD audit + ratchet | A | ✅ done | #697 | scripts/check-jsonld-coverage.mjs + 13 page fixes + CI gate |
 | W1.4 | Reverse marketplace ("Post a Request") | C | pending | — | 4-5 days, lib/stripe — multi-fire |
 | W2.5–W2.17 | PR-X5a–PR-X5m investor accounts | B/C | in flight | #721, #724, #725, #726, #727 merged; #733-#739 open | Phase 1 (X5a/c/d holdings + portfolio health + brokerage coach), Phase 1 follow-up (Yahoo+CoinGecko price lookup), Phase 1 calc state hook + 5 retrofits, Phase 2 investor_profiles + quiz sync, Phase 2.5 workspace plumbing all merged. Open: Track A workspace switcher mount (#733), Phase 3 business_owner kind (#734), Phase 4 listing_owner promotion (#735), per-portal kind gates (#736), Phase 2 follow-up flags UI (#737), Phase 8 property holdings (#738), Phase 9 goals tracker (#739). |
-| W3.18 | Verified user reviews engine | B | partial | broker+advisor done pre-W3 (`user_reviews` table, `/api/user-review`, `/api/advisor-review`, `/admin/user-reviews` moderation, broker page display) — funds extension pending | mirror PR #441 moderation |
+| W3.18 | Verified user reviews engine | B | partial | broker+advisor done pre-W3 (`user_reviews` table, `/api/user-review`, `/api/advisor-review`, `/admin/user-reviews` moderation, broker page display); funds extension in flight via #752 | mirror PR #441 moderation |
 | W3.19 | First Home Buyer end-to-end journey | B | pending | — | 4 monetization levers — multi-fire |
 | W4.20 | Smart recommendations strip (legacy #14) | B | ✅ done | #715, #717 | foundation + extra placements + budget/experience ranker |
 | W4.21 | Country rule alerts DB + admin CRUD (legacy #15 part 2) | B | ✅ done | #712 | `country_rule_alerts` table + RLS + 7-row seed; /admin/country-rule-alerts CRUD; CountryRuleAlerts.tsx fetches from new public API |
@@ -120,6 +120,7 @@ Source: `docs/plans/pre-launch-wave-master-prompt.md`. Lowercase rows mirror tha
 - 2026-05-10 02:15 | W4.21 | country_code stored as lowercase IntentCountryCode | country_schemes uses uppercase ISO-2 (GB/US/IN). Picked lowercase here to match the existing iv_intent_country cookie value the consumer reads — no case-mapping at read time, simpler RLS-public reads, CHECK constraint covers the 12 known intent countries
 - 2026-05-10 ~22:30 | meta | Status doc reconciled to actual repo state | This iter found the queue table out of sync with shipped code: W4.20 (#715, #717), W4.22 (#718), W5.25 (#722), W5.27 (#723) all merged. W5.24 (Embed comparison widget) was already present in repo (`app/embed/`, `app/api/widget/route.ts`, full test coverage in `__tests__/api/widget.test.ts`) — pre-existing, not loop-attributed. W3.18 broker+advisor reviews infra already in place pre-Wave-3 (`user_reviews` table, submit/verify/moderate routes, admin moderation page) — only the funds extension is remaining for that item. W2 progression observed: PR #721, #724, #725, #726, #727 merged (Phase 1 holdings/portfolio/health, calc state hook + retrofits, Phase 2 investor_profiles + quiz sync, Phase 2.5 workspace plumbing); PRs #733-#739 open and in flight by parallel agents. Updated queue rows accordingly so the next fire picks the right item.
 - 2026-05-10 ~22:30 | iter | No new feature shipped this fire | Rationale: surveyed Wave 1-6 queue, all one-fire-tractable Tier A/B items already done (W1.3, W4.20, W4.21, W4.22, W5.24, W5.25, W5.27); remaining pending items are either multi-day (W1.1/W1.2/W1.4/W3.19), Tier C (W4.23), or substantial single-PRs that need full survey (W5.26 placement_experiments) better suited to a fresh fire with full discovery budget. W2 phases are saturated with in-flight PRs from parallel agents. Best contribution: lock the status doc to reality so the next fire can pick correctly.
+- 2026-05-11 00:14 | iter | Adopted PR #740 (status doc reconcile) per duplicate-PR guard | Found PR #740 (fresh, 1-iter-old) already covers this fire's reconciliation work — same five-item "✅ done" flip and same survey conclusion I would have written. Per master-prompt rule "If existing PR is fresh + on track → mark this item as in-flight referencing it; STOP", I did not open a parallel PR. Instead refreshed branch via update_pull_request_branch (which merged main's `c3a19667` Supabase-types-drift fix that was one of #740's two CI failures), pushed two-line refresh (Last-updated stamp + W3.18 #752 cross-ref), marked ready for review, and pushed it through to merge. W3.18 funds extension also clocked as in-flight via #752; minor row-text refresh accordingly.
 
 ## Pause history
 
