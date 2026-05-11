@@ -294,6 +294,16 @@ export default async function BestBrokerPage({
             </p>
           </div>
 
+          {/* Editorial dissent note — shown when editors' perspective differs from pure algorithmic ranking */}
+          {cat.editorialNote && (
+            <div className="bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-3 flex items-start gap-2">
+              <span className="text-amber-500 text-xs shrink-0 mt-0.5">&#9998;</span>
+              <p className="text-[0.65rem] md:text-xs text-amber-800 leading-relaxed">
+                <strong>Editor&apos;s note:</strong> {cat.editorialNote}
+              </p>
+            </div>
+          )}
+
           {/* General Advice Warning — collapsed on mobile, visible on desktop */}
           <div className="hidden md:block bg-slate-50 border border-slate-200 rounded-lg p-3 mb-3 text-[0.69rem] text-slate-500 leading-relaxed">
             <strong className="text-slate-600">⚠️ General Advice Warning:</strong>{" "}
