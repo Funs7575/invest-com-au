@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import { trackClick, trackEvent, getAffiliateLink, AFFILIATE_REL } from "@/lib/tracking";
@@ -10,6 +10,7 @@ import LeadMagnet from "@/components/LeadMagnet";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
 import { storeQualificationData } from "@/lib/qualification-store";
 import AdvisorMatchCTA from "@/components/AdvisorMatchCTA";
+import { useCalculatorState } from "@/hooks/use-calculator-state";
 
 type Holding = {
   id: string;
@@ -18,14 +19,41 @@ type Holding = {
   avg_trade_size: number;
 };
 
+const DEFAULT_HOLDINGS: Holding[] = [
+  { id: "1", market: "asx", trades_per_year: 12, avg_trade_size: 2000 },
+];
+
 export default function PortfolioCalculatorClient({ brokers, inline }: { brokers: Broker[]; inline?: boolean }) {
-  const [holdings, setHoldings] = useState<Holding[]>([
-    { id: "1", market: "asx", trades_per_year: 12, avg_trade_size: 2000 },
-  ]);
+  const [holdings, setHoldings] = useState<Holding[]>(DEFAULT_HOLDINGS);
   const [currentBroker, setCurrentBroker] = useState("");
   const [showResults, setShowResults] = useState(false);
   const [email, setEmail] = useState("");
   const [emailCaptured, setEmailCaptured] = useState(false);
+
+  const {
+    value: persistedInputs,
+    setValue: setPersistedInputs,
+    isHydrated: persistHydrated,
+  } = useCalculatorState<{
+    holdings: Holding[];
+    current_broker: string;
+  }>("portfolio_calculator", {
+    holdings: DEFAULT_HOLDINGS,
+    current_broker: "",
+  });
+
+  useEffect(() => {
+    if (!persistHydrated) return;
+    if (Array.isArray(persistedInputs.holdings) && persistedInputs.holdings.length > 0) {
+      setHoldings(persistedInputs.holdings);
+    }
+    if (typeof persistedInputs.current_broker === "string") setCurrentBroker(persistedInputs.current_broker);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- hydrate once
+  }, [persistHydrated]);
+
+  useEffect(() => {
+    setPersistedInputs({ holdings, current_broker: currentBroker });
+  }, [holdings, currentBroker, setPersistedInputs]);
 
   const addHolding = () => {
     setHoldings([...holdings, {
