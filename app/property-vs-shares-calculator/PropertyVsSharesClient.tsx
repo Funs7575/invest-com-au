@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
+import { useCalculatorState } from "@/hooks/use-calculator-state";
 
 const MORTGAGE_RATE = 0.065; // 6.5% assumption
 
@@ -20,6 +21,52 @@ export default function PropertyVsSharesClient() {
   const [holdingCosts, setHoldingCosts] = useState(1.5);
   const [sharesReturn, setSharesReturn] = useState(9);
   const [years, setYears] = useState(10);
+
+  const {
+    value: persistedInputs,
+    setValue: setPersistedInputs,
+    isHydrated: persistHydrated,
+  } = useCalculatorState<{
+    deposit: number;
+    property_value: number;
+    property_growth: number;
+    rental_yield: number;
+    holding_costs: number;
+    shares_return: number;
+    years: number;
+  }>("property_vs_shares_calculator", {
+    deposit: 150_000,
+    property_value: 750_000,
+    property_growth: 5,
+    rental_yield: 3.5,
+    holding_costs: 1.5,
+    shares_return: 9,
+    years: 10,
+  });
+
+  useEffect(() => {
+    if (!persistHydrated) return;
+    if (typeof persistedInputs.deposit === "number") setDeposit(persistedInputs.deposit);
+    if (typeof persistedInputs.property_value === "number") setPropertyValue(persistedInputs.property_value);
+    if (typeof persistedInputs.property_growth === "number") setPropertyGrowth(persistedInputs.property_growth);
+    if (typeof persistedInputs.rental_yield === "number") setRentalYield(persistedInputs.rental_yield);
+    if (typeof persistedInputs.holding_costs === "number") setHoldingCosts(persistedInputs.holding_costs);
+    if (typeof persistedInputs.shares_return === "number") setSharesReturn(persistedInputs.shares_return);
+    if (typeof persistedInputs.years === "number") setYears(persistedInputs.years);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- hydrate once
+  }, [persistHydrated]);
+
+  useEffect(() => {
+    setPersistedInputs({
+      deposit,
+      property_value: propertyValue,
+      property_growth: propertyGrowth,
+      rental_yield: rentalYield,
+      holding_costs: holdingCosts,
+      shares_return: sharesReturn,
+      years,
+    });
+  }, [deposit, propertyValue, propertyGrowth, rentalYield, holdingCosts, sharesReturn, years, setPersistedInputs]);
 
   const result = useMemo(() => {
     const dep = deposit;
