@@ -52,6 +52,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | TT | `claude/audit-remediation/tt-03-privacy-analytics` | **#764 MERGED 2026-05-11** (TT-01) · **#772 MERGED 2026-05-11** (TT-02) · **#779 MERGED 2026-05-11** (TT-03 iter 1) | TT-01: **#764 MERGED 2026-05-11** (`1ee4da8`). TT-02: **#772 MERGED 2026-05-11** (`fa5532e`). TT-03 iter 1: **#779 MERGED 2026-05-11** (`33130522`; iter 362 `f5b12dd`; Plausible Analytics component + CSP + 3 tests; all hard gates + Lint/Build + LH + A11y ✓; merged post-iter-363 with Playwright advisory in_progress; Tier C proxy.ts, intent announced iter 362). TT-04 pending (depends TT-03). | TT-04 merged |
 | CMP | `claude/audit-remediation/cmp-w1a-int-calculator-autosave` | **#782 OPEN** (CMP-W1A-INT iter 1+2) | CMP foundation (#689) merged 2026-05-09. CMP-W1A-INT iter 1: (iter 363 `fafd7a2`). CMP-W1A-INT iter 2: **iter 364 `352af9a`** — fixed TCO PREFILL_RULES (savings.balance→tco.amt; removed 3 invalid field mappings); added useUrlSync + ShareResultsButton to savings + mortgage calculators; updated unit tests. W1A-INT **complete** (all 3 calcs have autosave+prefill+URL sync+share). Last CI: pending — pushed 2026-05-11. | All CMP tasks merged |
 | SP | `claude/audit-remediation/sp-01-capability-audit` | (none yet) | **BLOCKED — waiting on MM-V09 completion.** Startup Portal — founder-side auth + round management + data room + wholesale-investor (s708) certification + ESIC verification + investor sector-thesis matching. New auth context mirroring advisor-portal pattern. Brief: `docs/audits/sp-startup-portal-brief.md` (drafted 2026-05-09). 13 sub-tasks SP-01..SP-13 (~25–35 iters, ~3–4 calendar weeks). SP-12 is the compliance gate. SP starts only after MM-V09 ships to avoid building against a moving listings model. | All SP tasks merged + compliance signoff |
+| HH | `claude/audit-remediation/hh-01-help-centre` | **#791 OPEN** (HH-01) | HH-01 iter 365: `lib/help-content.ts` (4 categories × 8 articles registry) + `/help`, `/help/[category]`, `/help/[category]/[article]` pages; BreadcrumbList + FAQPage JSON-LD; ISR 86400s. CI pending. | All HH tasks merged |
 
 ---
 
@@ -279,7 +280,7 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
-| HH-01 | pending | Help centre page structure (`/help`, `/help/[category]`, `/help/[category]/[article]`) | ~4 | |
+| HH-01 | **in_flight** | Help centre page structure (`/help`, `/help/[category]`, `/help/[category]/[article]`) | ~4 | **#791 OPEN** (iter 365 `6e22f03`). |
 | HH-02 | pending | FAQ JSON-LD integration (reuse `lib/schema-markup.ts` `normaliseFaqs`) | ~2 | Deps: HH-01. |
 | HH-03 | pending | Help centre search (client-side, Fuse.js) | ~3 | Deps: HH-01+HH-02. |
 | HH-04 | pending | Article feedback widget (was-this-helpful, Supabase-backed) | ~2 | Deps: HH-01. |
@@ -996,6 +997,14 @@ _Compacted 2026-05-09: 1,223 lines of completed-stream summary + iteration log e
 _The most recent ~24h of iteration log entries (iter ~325 onwards) are temporarily missing from both files — they were lost in the 2026-05-09 truncation incident (recovered as PR #661) before the rotate-iteration-log workflow could archive them. Loop's stuck-detection guard should not regress because the iteration command's Phase 2 falls back to PR-CI history when iter log entries are absent._
 
 See [`REMEDIATION_QUEUE_LOG_ARCHIVE.md`](./REMEDIATION_QUEUE_LOG_ARCHIVE.md) for historical iteration log + completed-stream summary.
+
+---
+
+### Iter 365 · 2026-05-11 · Stream HH · HH-01 — help centre page structure · STATUS: PROGRESS
+
+**What was done:** Phase 0.5: no LOOP_PAUSE. Phase 1: synced main (`27bce1f` — queue-restore recovery). Phase 1.5: no recent migrations, skipped. Phase 1.7: main CI state — pending from recent queue commits; no failures detected. Phase 2: #791 (HH-01) just opened — CI pending Vercel deploy; no failures. Phase 3: selection overrides: CL/LL not applicable; linear walk → HH stream (no hard deps, first pending stream after CMP). Dedup guard: no existing PR. Phase 4: verified `lib/schema-markup.ts:faqJsonLd` takes `{q,a}[]`; `lib/seo.ts:breadcrumbJsonLd` takes `{name,url?}[]` with absolute URLs — implementation uses `absoluteUrl()` correctly and maps `{question,answer}→{q,a}`. Phase 5: created `lib/help-content.ts` (HelpFaq/HelpArticle/HelpCategory interfaces; 4 categories × 8 articles; `getCategoryBySlug` + `getArticleBySlug` helpers); `app/help/page.tsx` (index, BreadcrumbList JSON-LD, ISR 86400); `app/help/[category]/page.tsx` (category listing, generateStaticParams, BreadcrumbList JSON-LD); `app/help/[category]/[article]/page.tsx` (article page, generateStaticParams, BreadcrumbList + FAQPage JSON-LD, body/FAQ/related/contact). Phase 6: committed `6e22f03` to branch `claude/audit-remediation/hh-01-help-centre`, pushed, PR #791 opened (Tier A — static content + page UI, no server/API/migration changes).
+
+**Status:** `STATUS: PROGRESS · stream=HH · item=HH-01 · pr=#791 · commit=6e22f03`
 
 ---
 
