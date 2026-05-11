@@ -54,6 +54,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | SP | `claude/audit-remediation/sp-01-capability-audit` | (none yet) | **BLOCKED — waiting on MM-V09 completion.** Startup Portal — founder-side auth + round management + data room + wholesale-investor (s708) certification + ESIC verification + investor sector-thesis matching. New auth context mirroring advisor-portal pattern. Brief: `docs/audits/sp-startup-portal-brief.md` (drafted 2026-05-09). 13 sub-tasks SP-01..SP-13 (~25–35 iters, ~3–4 calendar weeks). SP-12 is the compliance gate. SP starts only after MM-V09 ships to avoid building against a moving listings model. | All SP tasks merged + compliance signoff |
 | HH | `claude/audit-remediation/hh-01-help-centre` | **#791 OPEN** (HH-01) | HH-01 iter 365: `lib/help-content.ts` (4 categories × 8 articles registry) + `/help`, `/help/[category]`, `/help/[category]/[article]` pages; BreadcrumbList + FAQPage JSON-LD; ISR 86400s. CI pending. | All HH tasks merged |
 | JJ | `claude/audit-remediation/jj-01-careers-page` | **#792 OPEN** (JJ-01) | JJ-01 iter 366: `/about/careers` static page; 3 open roles (SWE/Content/SEO); BreadcrumbList JSON-LD; ISR 86400s. CI queued. | All JJ tasks merged |
+| QQ | `claude/audit-remediation/qq-01-quiz-answer-validation` | **#794 OPEN** (QQ-01) | QQ-01 iter 367: `lib/quiz-answer-schemas.ts` (per-field enum Zod schemas with `.catch(undefined)` for backward compat); `app/api/quiz-lead/route.ts` imports UnifiedAnswersSchema from lib; 10 unit tests. CI queued. | All QQ tasks merged |
 
 ---
 
@@ -401,7 +402,7 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
-| QQ-01 | pending | Quiz answer validation (server-side Zod schema per question type) | ~2 | |
+| QQ-01 | **in_flight** | Quiz answer validation (server-side Zod schema per question type) | ~2 | **#794 OPEN** (iter 367 `a1dd932`). |
 | QQ-02 | pending | Quiz result persistence (save to `user_quiz_history` + display on account page) | ~3 | |
 | QQ-03 | pending | Quiz A/B test framework (question order randomisation) | ~3 | Deps: GG-01. |
 | QQ-04 | pending | Quiz analytics (completion rate, drop-off per question) | ~2 | Deps: QQ-01. |
@@ -998,6 +999,14 @@ _Compacted 2026-05-09: 1,223 lines of completed-stream summary + iteration log e
 _The most recent ~24h of iteration log entries (iter ~325 onwards) are temporarily missing from both files — they were lost in the 2026-05-09 truncation incident (recovered as PR #661) before the rotate-iteration-log workflow could archive them. Loop's stuck-detection guard should not regress because the iteration command's Phase 2 falls back to PR-CI history when iter log entries are absent._
 
 See [`REMEDIATION_QUEUE_LOG_ARCHIVE.md`](./REMEDIATION_QUEUE_LOG_ARCHIVE.md) for historical iteration log + completed-stream summary.
+
+---
+
+### Iter 367 · 2026-05-11 · Stream QQ · QQ-01 — per-field Zod enum schemas for quiz answers · STATUS: PROGRESS
+
+**What was done:** Phase 0.5: no LOOP_PAUSE. Phase 1: synced main. Phase 2: #791 (HH-01), #792 (JJ-01), #794 (QQ-01) — CI queued/running; no failures. Phase 3: linear walk → QQ-01 (next pending after JJ; no hard deps). Phase 4: verified `app/api/quiz-lead/route.ts` uses generic `z.string().max(50).optional()` for all 12 `UnifiedAnswers` fields — no semantic validation against allowed enum values. Valid concern: any string value could be stored in quiz_leads columns (goal, mode, experience, etc.) bypassing the known-value constraint. Phase 5: created `lib/quiz-answer-schemas.ts` — per-question-type `z.enum([...values]).optional().catch(undefined)` schemas. `.catch(undefined)` critical: quiz-lead submission is revenue-critical, must degrade gracefully for old app versions sending obsolete values. Updated `app/api/quiz-lead/route.ts` to import `UnifiedAnswersSchema` + `UnifiedAnswers` type from lib instead of inline definition. Created `__tests__/lib/quiz-answer-schemas.test.ts` — 10 unit tests covering accept/reject/coerce for each schema type. Commit `a1dd932`, PR #794.
+
+**Status:** `STATUS: PROGRESS · stream=QQ · item=QQ-01 · pr=#794 · commit=a1dd932`
 
 ---
 
