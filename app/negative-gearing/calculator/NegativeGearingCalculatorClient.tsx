@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import HubLeadForm from "@/components/leads/HubLeadForm";
 import { formatAUD } from "@/lib/currency";
+import { useCalculatorState } from "@/hooks/use-calculator-state";
 
 const TAX_RATES = [
   { label: "0% — under threshold", rate: 0 },
@@ -19,6 +20,48 @@ export default function NegativeGearingCalculatorClient() {
   const [otherCosts, setOtherCosts] = useState<number>(7_000);
   const [marginalRate, setMarginalRate] = useState<number>(0.37);
   const [growthRate, setGrowthRate] = useState<number>(4);
+
+  const {
+    value: persistedInputs,
+    setValue: setPersistedInputs,
+    isHydrated: persistHydrated,
+  } = useCalculatorState<{
+    property_value: number;
+    rental_income: number;
+    interest: number;
+    other_costs: number;
+    marginal_rate: number;
+    growth_rate: number;
+  }>("negative_gearing_calculator", {
+    property_value: 850_000,
+    rental_income: 28_000,
+    interest: 35_000,
+    other_costs: 7_000,
+    marginal_rate: 0.37,
+    growth_rate: 4,
+  });
+
+  useEffect(() => {
+    if (!persistHydrated) return;
+    if (typeof persistedInputs.property_value === "number") setPropertyValue(persistedInputs.property_value);
+    if (typeof persistedInputs.rental_income === "number") setRentalIncome(persistedInputs.rental_income);
+    if (typeof persistedInputs.interest === "number") setInterest(persistedInputs.interest);
+    if (typeof persistedInputs.other_costs === "number") setOtherCosts(persistedInputs.other_costs);
+    if (typeof persistedInputs.marginal_rate === "number") setMarginalRate(persistedInputs.marginal_rate);
+    if (typeof persistedInputs.growth_rate === "number") setGrowthRate(persistedInputs.growth_rate);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- hydrate once
+  }, [persistHydrated]);
+
+  useEffect(() => {
+    setPersistedInputs({
+      property_value: propertyValue,
+      rental_income: rentalIncome,
+      interest,
+      other_costs: otherCosts,
+      marginal_rate: marginalRate,
+      growth_rate: growthRate,
+    });
+  }, [propertyValue, rentalIncome, interest, otherCosts, marginalRate, growthRate, setPersistedInputs]);
 
   const calc = useMemo(() => {
     const totalCosts = interest + otherCosts;
