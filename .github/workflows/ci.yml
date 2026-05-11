@@ -215,7 +215,7 @@ jobs:
           npm audit --audit-level=high --omit=dev
 
       - name: Dependency review
-        uses: actions/dependency-review-action@v4
+        uses: actions/dependency-review-action@v5
         # continue-on-error because this action can fail on init
         # for public personal repos without GitHub Advanced Security.
         # npm audit above is the blocking check; dep-review is
