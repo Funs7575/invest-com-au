@@ -53,10 +53,22 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | CMP | `claude/audit-remediation/cmp-w1a-int-calculator-autosave` | **#782 OPEN** (CMP-W1A-INT iter 1+2) | CMP foundation (#689) merged 2026-05-09. CMP-W1A-INT iter 1: (iter 363 `fafd7a2`). CMP-W1A-INT iter 2: **iter 364 `352af9a`** — fixed TCO PREFILL_RULES (savings.balance→tco.amt; removed 3 invalid field mappings); added useUrlSync + ShareResultsButton to savings + mortgage calculators; updated unit tests. W1A-INT **complete** (all 3 calcs have autosave+prefill+URL sync+share). Last CI: pending — pushed 2026-05-11. | All CMP tasks merged |
 | SP | `claude/audit-remediation/sp-01-capability-audit` | (none yet) | **BLOCKED — waiting on MM-V09 completion.** Startup Portal — founder-side auth + round management + data room + wholesale-investor (s708) certification + ESIC verification + investor sector-thesis matching. New auth context mirroring advisor-portal pattern. Brief: `docs/audits/sp-startup-portal-brief.md` (drafted 2026-05-09). 13 sub-tasks SP-01..SP-13 (~25–35 iters, ~3–4 calendar weeks). SP-12 is the compliance gate. SP starts only after MM-V09 ships to avoid building against a moving listings model. | All SP tasks merged + compliance signoff |
 | MAIN-RESCUE | `fix/main-rescue-next-security-patch` | **#793 OPEN** | next 16.2.4→16.2.6 patch (13 high CVEs — GHSA-492v-c6pp-mqqv et al.). Unblocks "Dependency vulnerabilities" CI gate failing on all open PRs (CMP #782 + future PRs). npm audit --audit-level=high exits 0 after. iter 365. | Merged to main |
+| CL | `claude/audit-remediation/cl-01-about-entity-only` | **#795 OPEN** | CL-01 done: /about page entity-only (removed "Finn Webster" founder persona + Alex Reid + Editorial Team cards; replaced with Tier 1/2/Compliance entity-level cards). CL-02 (editorial team page / author page deindex), CL-03 (operational personas), CL-04 (AFSL disclosure), CL-05 (WHOIS audit), CL-06 (repo PII sweep), CL-07 (social media entity-only), CL-08 (press inquiry handling), CL-09 (anonymity stress test CI gate), CL-10 (quarterly anonymity audit cron) — all pending. | All CL tasks merged |
 
 ---
 
 ## Iteration log (most recent first)
+
+### iter 366 — 2026-05-11 — CL-01
+
+- **Stream:** CL (anonymity infrastructure — Tier-0 preempt)
+- **Item:** CL-01 — /about page entity-only
+- **Branch:** `claude/audit-remediation/cl-01-about-entity-only`
+- **PR:** #795 OPEN
+- **Commit:** `549bfb1`
+- **Diff:** +24 -25 across 1 file
+- **What:** Removed "Finn Webster — Founder & Lead Editor" persona card (and Alex Reid, Editorial Team cards) from `/about` page. Replaced with 3 entity-level editorial-structure cards (Tier 1 named author, Tier 2 Research Team, Compliance Review). No individual names now appear on the about page. Orphaned `/authors/finn-webster` route is CL-02 scope. Override fired: `STATUS: PROGRESS · override=tier-0`.
+- **STATUS: PROGRESS · stream=CL · item=CL-01 · pr=#795**
 
 ### iter 365 — 2026-05-11 — MAIN-RESCUE
 
