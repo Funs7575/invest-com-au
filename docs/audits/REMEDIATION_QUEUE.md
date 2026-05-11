@@ -52,3 +52,18 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | TT | `claude/audit-remediation/tt-03-privacy-analytics` | **#764 MERGED 2026-05-11** (TT-01) · **#772 MERGED 2026-05-11** (TT-02) · **#779 MERGED 2026-05-11** (TT-03 iter 1) | TT-01: **#764 MERGED 2026-05-11** (`1ee4da8`). TT-02: **#772 MERGED 2026-05-11** (`fa5532e`). TT-03 iter 1: **#779 MERGED 2026-05-11** (`33130522`; iter 362 `f5b12dd`; Plausible Analytics component + CSP + 3 tests; all hard gates + Lint/Build + LH + A11y ✓; merged post-iter-363 with Playwright advisory in_progress; Tier C proxy.ts, intent announced iter 362). TT-04 pending (depends TT-03). | TT-04 merged |
 | CMP | `claude/audit-remediation/cmp-w1a-int-calculator-autosave` | **#782 OPEN** (CMP-W1A-INT iter 1+2) | CMP foundation (#689) merged 2026-05-09. CMP-W1A-INT iter 1: (iter 363 `fafd7a2`). CMP-W1A-INT iter 2: **iter 364 `352af9a`** — fixed TCO PREFILL_RULES (savings.balance→tco.amt; removed 3 invalid field mappings); added useUrlSync + ShareResultsButton to savings + mortgage calculators; updated unit tests. W1A-INT **complete** (all 3 calcs have autosave+prefill+URL sync+share). Last CI: pending — pushed 2026-05-11. | All CMP tasks merged |
 | SP | `claude/audit-remediation/sp-01-capability-audit` | (none yet) | **BLOCKED — waiting on MM-V09 completion.** Startup Portal — founder-side auth + round management + data room + wholesale-investor (s708) certification + ESIC verification + investor sector-thesis matching. New auth context mirroring advisor-portal pattern. Brief: `docs/audits/sp-startup-portal-brief.md` (drafted 2026-05-09). 13 sub-tasks SP-01..SP-13 (~25–35 iters, ~3–4 calendar weeks). SP-12 is the compliance gate. SP starts only after MM-V09 ships to avoid building against a moving listings model. | All SP tasks merged + compliance signoff |
+| MAIN-RESCUE | `fix/main-rescue-next-security-patch` | **#793 OPEN** | next 16.2.4→16.2.6 patch (13 high CVEs — GHSA-492v-c6pp-mqqv et al.). Unblocks "Dependency vulnerabilities" CI gate failing on all open PRs (CMP #782 + future PRs). npm audit --audit-level=high exits 0 after. iter 365. | Merged to main |
+
+---
+
+## Iteration log (most recent first)
+
+### iter 365 — 2026-05-11 — MAIN-RESCUE
+
+- **Stream:** MAIN-RESCUE (systemic dep-vuln gate failure)
+- **Item:** next-security-patch (next 16.2.4→16.2.6)
+- **Branch:** `fix/main-rescue-next-security-patch`
+- **PR:** #793 OPEN
+- **Commit:** `41981c4`
+- **What:** npm advisory database gained 13 high-severity CVEs for next@16.2.4 after recent merges, causing "Dependency vulnerabilities" CI gate to fail on all open PRs. Bumped next to 16.2.6 (upstream patch release, no API changes). `npm audit --audit-level=high --omit=dev` now exits 0. postcss moderate advisory remains (requires breaking downgrade, not blocked by CI gate).
+- **STATUS: MAIN-RESCUE · pr=#793**
