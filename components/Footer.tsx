@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE, CRYPTO_WARNING, REGULATORY_NOTE, AFSL_STATUS_DISCLOSURE, FSG_NOTE, COMPANY_LEGAL_NAME, COMPANY_ACN, COMPANY_ABN } from "@/lib/compliance";
+import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE, CRYPTO_WARNING, REGULATORY_NOTE, AFSL_STATUS_DISCLOSURE, FSG_NOTE, COMPANY_LEGAL_NAME, COMPANY_ACN, COMPANY_ABN, ASIC_REGISTER_URL } from "@/lib/compliance";
 
 // Collapsible sections (less critical detail, users can expand if needed)
 const collapsibleSections = [
@@ -101,6 +101,18 @@ export default function Footer() {
                 <span className="hidden md:inline">Australia&apos;s independent investing hub. Compare platforms, find verified advisors — shares, crypto, super, property &amp; more. Always free.</span>
                 <span className="md:hidden text-slate-400">Compare platforms &amp; find verified advisors. Always free.</span>
               </p>
+              <a
+                href={ASIC_REGISTER_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-3 inline-flex items-center gap-1.5 rounded border border-slate-600 bg-slate-700/50 px-2.5 py-1.5 text-[0.65rem] text-slate-300 hover:border-slate-500 hover:text-white transition-colors"
+                aria-label="View Invest.com.au Pty Ltd on the ASIC company register"
+              >
+                <svg className="w-3 h-3 shrink-0 text-amber-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                </svg>
+                <span>Registered with ASIC · ACN {COMPANY_ACN}</span>
+              </a>
             </div>
 
             {/* Browse Opportunities */}
