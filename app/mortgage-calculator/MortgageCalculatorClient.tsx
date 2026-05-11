@@ -8,6 +8,7 @@ import { trackEvent, trackPageDuration } from "@/lib/tracking";
 import { getStoredUtm } from "@/components/UtmCapture";
 import { storeQualificationData } from "@/lib/qualification-store";
 import { useCalculatorState } from "@/hooks/use-calculator-state";
+import CalcPrefillBanner from "@/components/CalcPrefillBanner";
 
 /* ── helpers ─────────────────────────────────────────── */
 
@@ -42,14 +43,16 @@ export default function MortgageCalculatorClient() {
   const [loanTerm, setLoanTerm] = useState<25 | 30>(30);
   const [repaymentType, setRepaymentType] = useState<RepaymentType>("pi");
   const [showResults, setShowResults] = useState(false);
+  const [prefillSource, setPrefillSource] = useState<string | null>(null);
 
   // Cross-calculator persistence (sessionStorage immediate + DB write-through
   // for signed-in users via /api/calculator-state). Hydrates from URL params
-  // on mount for shareable deep-links. CMP W2 Phase 1.
+  // on mount for shareable deep-links. CMP W1-A.
   const {
     value: persistedInputs,
     setValue: setPersistedInputs,
     isHydrated: persistHydrated,
+    prefillFrom,
   } = useCalculatorState<{
     loan_amount: number;
     interest_rate: number;
@@ -74,6 +77,8 @@ export default function MortgageCalculatorClient() {
       setLoanTerm(persistedInputs.loan_term);
     if (persistedInputs.repayment_type === "pi" || persistedInputs.repayment_type === "io")
       setRepaymentType(persistedInputs.repayment_type);
+    const source = prefillFrom();
+    if (source) setPrefillSource(source);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: hydrate ONCE on first ready signal
   }, [persistHydrated]);
 
@@ -192,12 +197,15 @@ export default function MortgageCalculatorClient() {
       <div className="bg-gradient-to-br from-rose-600 via-rose-700 to-rose-800 text-white py-8 md:py-14 px-4">
         <div className="container-custom max-w-3xl text-center">
           <h1 className="text-xl md:text-3xl font-extrabold mb-2">How much will your mortgage really cost?</h1>
-          <p className="text-sm md:text-base text-rose-100">Enter your loan details — we'll show you monthly repayments, total interest, and how rate changes affect the cost.</p>
+          <p className="text-sm md:text-base text-rose-100">Enter your loan details — we&apos;ll show you monthly repayments, total interest, and how rate changes affect the cost.</p>
           <div className="mt-3"><SocialProofCounter variant="badge" /></div>
         </div>
       </div>
 
       <div className="container-custom max-w-3xl py-6 md:py-10">
+        {prefillSource && (
+          <CalcPrefillBanner source={prefillSource} onDismiss={() => setPrefillSource(null)} />
+        )}
         {/* Input form */}
         <div className="bg-white border border-slate-200 rounded-2xl p-5 md:p-8 shadow-sm mb-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">

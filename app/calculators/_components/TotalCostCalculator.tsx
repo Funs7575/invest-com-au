@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, AFFILIATE_REL } from "@/lib/tracking";
 import { getParam, useUrlSync, AnimatedNumber, ShareResultsButton } from "./CalcShared";
+import { useCalculatorState } from "@/hooks/use-calculator-state";
+import CalcPrefillBanner from "@/components/CalcPrefillBanner";
 
 interface Props {
   brokers: Broker[];
@@ -14,6 +16,37 @@ export default function TotalCostCalculator({ brokers, searchParams }: Props) {
   const [asxTradesMonth, setAsxTradesMonth] = useState(() => getParam(searchParams, "tco_asx") || "4");
   const [usTradesMonth, setUsTradesMonth] = useState(() => getParam(searchParams, "tco_us") || "2");
   const [tradeAmount, setTradeAmount] = useState(() => getParam(searchParams, "tco_amt") || "2000");
+  const [prefillSource, setPrefillSource] = useState<string | null>(null);
+
+  // Cross-calculator persistence (sessionStorage immediate + DB write-through
+  // for signed-in users via /api/calculator-state). Hydrates from URL params
+  // on mount for shareable deep-links. CMP W1-A.
+  const {
+    value: persisted,
+    setValue: setPersisted,
+    isHydrated,
+    prefillFrom,
+  } = useCalculatorState<{ asx: string; us: string; amt: string }>(
+    "tco",
+    { asx: asxTradesMonth, us: usTradesMonth, amt: tradeAmount },
+  );
+
+  // One-shot hydration: sessionStorage / DB → local state (URL params already
+  // applied by getParam above; hook URL hydration uses tco_asx/us/amt prefix).
+  useEffect(() => {
+    if (!isHydrated) return;
+    if (persisted.asx) setAsxTradesMonth(persisted.asx);
+    if (persisted.us) setUsTradesMonth(persisted.us);
+    if (persisted.amt) setTradeAmount(persisted.amt);
+    const source = prefillFrom();
+    if (source) setPrefillSource(source);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- hydrate once
+  }, [isHydrated]);
+
+  // Live-sync local inputs → persistence layer (debounced 5s DB write via hook).
+  useEffect(() => {
+    setPersisted({ asx: asxTradesMonth, us: usTradesMonth, amt: tradeAmount });
+  }, [asxTradesMonth, usTradesMonth, tradeAmount, setPersisted]);
 
   useUrlSync({ calc: "tco", tco_asx: asxTradesMonth, tco_us: usTradesMonth, tco_amt: tradeAmount });
 
@@ -65,6 +98,10 @@ export default function TotalCostCalculator({ brokers, searchParams }: Props) {
       <p className="text-[0.69rem] md:text-sm text-slate-500 mb-3 md:mb-6">
         Enter your trading habits and see the exact yearly cost at every platform — brokerage + FX fees combined.
       </p>
+
+      {prefillSource && (
+        <CalcPrefillBanner source={prefillSource} onDismiss={() => setPrefillSource(null)} />
+      )}
 
       {/* Inputs */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 mb-3 md:mb-6">
@@ -129,6 +166,7 @@ export default function TotalCostCalculator({ brokers, searchParams }: Props) {
               setAsxTradesMonth(p.asx);
               setUsTradesMonth(p.us);
               setTradeAmount(p.amt);
+              setPersisted({ asx: p.asx, us: p.us, amt: p.amt });
             }}
             className="px-3 py-1.5 rounded-full text-xs font-medium bg-slate-50 text-slate-600 border border-slate-200 hover:bg-slate-100 transition-colors"
           >

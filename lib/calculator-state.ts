@@ -14,6 +14,7 @@
 
 import type { QualificationData } from "@/lib/qualification-store";
 import type { Json } from "@/lib/database.types";
+// eslint-disable-next-line no-restricted-imports -- service-role needed for user_calculator_state upsert (authenticated-user table; RLS requires service-role for the read-then-merge pattern). See CLAUDE.md § allowed admin.ts scope.
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 
@@ -249,14 +250,14 @@ export const PREFILL_RULES: Record<string, PrefillRule[]> = {
     { fromCalculator: "savings_calculator", fromField: "horizon_years", toField: "horizon_years" },
     { fromCalculator: "mortgage_calculator", fromField: "annual_income", toField: "annual_income" },
   ],
-  // Mortgage calculator can prefill from savings (deposit) + borrowing-power
+  // Mortgage calculator can prefill deposit from savings balance
   mortgage_calculator: [
-    { fromCalculator: "savings_calculator", fromField: "current_balance", toField: "deposit" },
+    { fromCalculator: "savings_calculator", fromField: "balance", toField: "deposit" },
     { fromCalculator: "borrowing_power_calculator", fromField: "annual_income", toField: "annual_income" },
   ],
-  // Borrowing-power can prefill from savings deposit
+  // Borrowing-power can prefill deposit from savings balance
   borrowing_power_calculator: [
-    { fromCalculator: "savings_calculator", fromField: "current_balance", toField: "deposit" },
+    { fromCalculator: "savings_calculator", fromField: "balance", toField: "deposit" },
   ],
 };
 

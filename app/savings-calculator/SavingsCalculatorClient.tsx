@@ -8,6 +8,7 @@ import { getStoredUtm } from "@/components/UtmCapture";
 import { storeQualificationData } from "@/lib/qualification-store";
 import { useCalculatorState } from "@/hooks/use-calculator-state";
 import AdvisorMatchCTA from "@/components/AdvisorMatchCTA";
+import CalcPrefillBanner from "@/components/CalcPrefillBanner";
 
 type Account = {
   id: number; slug: string; name: string; platform_type: string;
@@ -31,11 +32,14 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
   const [email, setEmail] = useState("");
   const [emailSubmitted, setEmailSubmitted] = useState(false);
 
-  // Cross-calculator persistence (CMP W2 Phase 1).
+  const [prefillSource, setPrefillSource] = useState<string | null>(null);
+
+  // Cross-calculator persistence (CMP W1-A).
   const {
     value: persistedInputs,
     setValue: setPersistedInputs,
     isHydrated: persistHydrated,
+    prefillFrom,
   } = useCalculatorState<{ balance: number; current_rate: number }>(
     "savings_calculator",
     { balance: 25000, current_rate: 0.5 },
@@ -45,6 +49,8 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
     if (!persistHydrated) return;
     if (typeof persistedInputs.balance === "number") setBalance(persistedInputs.balance);
     if (typeof persistedInputs.current_rate === "number") setCurrentRate(persistedInputs.current_rate);
+    const source = prefillFrom();
+    if (source) setPrefillSource(source);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- hydrate once
   }, [persistHydrated]);
 
@@ -114,12 +120,15 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
       {!inline && <div className="bg-gradient-to-br from-amber-500 via-amber-600 to-amber-800 text-white py-8 md:py-14 px-4">
         <div className="container-custom max-w-3xl text-center">
           <h1 className="text-xl md:text-3xl font-extrabold mb-2">Are you earning enough on your savings?</h1>
-          <p className="text-sm md:text-base text-amber-100">Enter your balance and current rate — we'll show you exactly how much more you could earn.</p>
+          <p className="text-sm md:text-base text-amber-100">Enter your balance and current rate — we&apos;ll show you exactly how much more you could earn.</p>
           <div className="mt-3"><SocialProofCounter variant="badge" /></div>
         </div>
       </div>}
 
       <div className={inline ? "" : "container-custom max-w-3xl py-6 md:py-10"}>
+        {prefillSource && (
+          <CalcPrefillBanner source={prefillSource} onDismiss={() => setPrefillSource(null)} />
+        )}
         {/* Input form */}
         <div className="bg-white border border-slate-200 rounded-2xl p-5 md:p-8 shadow-sm mb-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
@@ -187,8 +196,8 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
                 </>
               ) : (
                 <>
-                  <p className="text-lg font-bold text-slate-700">You're already earning a competitive rate!</p>
-                  <p className="text-sm text-slate-500 mt-1">At {currentRate}%, you're close to the best available rates in Australia.</p>
+                  <p className="text-lg font-bold text-slate-700">You&apos;re already earning a competitive rate!</p>
+                  <p className="text-sm text-slate-500 mt-1">At {currentRate}%, you&apos;re close to the best available rates in Australia.</p>
                 </>
               )}
             </div>
@@ -292,7 +301,7 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
             <div className="bg-white border border-slate-200 rounded-2xl p-5 md:p-8">
               <h2 className="text-lg font-bold text-slate-900 mb-3">Why Your Savings Rate Matters</h2>
               <p className="text-sm text-slate-600 leading-relaxed mb-4">
-                Most Australians leave their savings in a Big 4 bank transaction account earning 0.01-0.5%. Meanwhile, online banks like ING, Ubank, and Macquarie offer 5%+ with simple conditions. On a $50,000 balance, the difference between 0.5% and 5.5% is <strong>$2,500 per year</strong> — that's real money lost to inertia.
+                Most Australians leave their savings in a Big 4 bank transaction account earning 0.01-0.5%. Meanwhile, online banks like ING, Ubank, and Macquarie offer 5%+ with simple conditions. On a $50,000 balance, the difference between 0.5% and 5.5% is <strong>$2,500 per year</strong> — that&apos;s real money lost to inertia.
               </p>
               <p className="text-sm text-slate-600 leading-relaxed mb-4">
                 All savings accounts listed here are with ADI-regulated Australian banks, meaning your deposits are government-guaranteed up to $250,000 per person per institution under the Financial Claims Scheme.
