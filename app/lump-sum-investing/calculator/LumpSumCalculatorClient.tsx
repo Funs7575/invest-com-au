@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import HubLeadForm from "@/components/leads/HubLeadForm";
 import { formatAUD } from "@/lib/currency";
+import { useCalculatorState } from "@/hooks/use-calculator-state";
 
 const TAX_OPTIONS = [
   { id: "none",   label: "No tax (super pension)",  rate: 0 },
@@ -38,6 +39,38 @@ export default function LumpSumCalculatorClient() {
   const [returnRate, setReturnRate] = useState<number>(7);
   const [years, setYears] = useState<number>(15);
   const [taxId, setTaxId] = useState<string>("32.5");
+
+  const {
+    value: persistedInputs,
+    setValue: setPersistedInputs,
+    isHydrated: persistHydrated,
+  } = useCalculatorState<{
+    lump_sum: number;
+    monthly: number;
+    return_rate: number;
+    years: number;
+    tax_id: string;
+  }>("lump_sum_calculator", {
+    lump_sum: 100_000,
+    monthly: 0,
+    return_rate: 7,
+    years: 15,
+    tax_id: "32.5",
+  });
+
+  useEffect(() => {
+    if (!persistHydrated) return;
+    if (typeof persistedInputs.lump_sum === "number") setLumpSum(persistedInputs.lump_sum);
+    if (typeof persistedInputs.monthly === "number") setMonthly(persistedInputs.monthly);
+    if (typeof persistedInputs.return_rate === "number") setReturnRate(persistedInputs.return_rate);
+    if (typeof persistedInputs.years === "number") setYears(persistedInputs.years);
+    if (typeof persistedInputs.tax_id === "string") setTaxId(persistedInputs.tax_id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- hydrate once
+  }, [persistHydrated]);
+
+  useEffect(() => {
+    setPersistedInputs({ lump_sum: lumpSum, monthly, return_rate: returnRate, years, tax_id: taxId });
+  }, [lumpSum, monthly, returnRate, years, taxId, setPersistedInputs]);
 
   const tax = useMemo(() => TAX_OPTIONS.find((t) => t.id === taxId) || TAX_OPTIONS[2]!, [taxId]);
 
