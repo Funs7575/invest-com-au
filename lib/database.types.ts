@@ -7185,6 +7185,89 @@ export type Database = {
         }
         Relationships: []
       }
+      fund_reviews: {
+        Row: {
+          body: string
+          communication_rating: number | null
+          cons: string | null
+          created_at: string
+          display_name: string
+          email: string
+          fees_rating: number | null
+          fund_id: number
+          fund_slug: string
+          hold_period_months: number | null
+          id: number
+          ip_hash: string | null
+          manager_rating: number | null
+          moderation_note: string | null
+          performance_rating: number | null
+          pros: string | null
+          rating: number
+          status: string
+          title: string
+          updated_at: string
+          verification_token: string | null
+          verified_at: string | null
+        }
+        Insert: {
+          body: string
+          communication_rating?: number | null
+          cons?: string | null
+          created_at?: string
+          display_name: string
+          email: string
+          fees_rating?: number | null
+          fund_id: number
+          fund_slug: string
+          hold_period_months?: number | null
+          id?: number
+          ip_hash?: string | null
+          manager_rating?: number | null
+          moderation_note?: string | null
+          performance_rating?: number | null
+          pros?: string | null
+          rating: number
+          status?: string
+          title: string
+          updated_at?: string
+          verification_token?: string | null
+          verified_at?: string | null
+        }
+        Update: {
+          body?: string
+          communication_rating?: number | null
+          cons?: string | null
+          created_at?: string
+          display_name?: string
+          email?: string
+          fees_rating?: number | null
+          fund_id?: number
+          fund_slug?: string
+          hold_period_months?: number | null
+          id?: number
+          ip_hash?: string | null
+          manager_rating?: number | null
+          moderation_note?: string | null
+          performance_rating?: number | null
+          pros?: string | null
+          rating?: number
+          status?: string
+          title?: string
+          updated_at?: string
+          verification_token?: string | null
+          verified_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fund_reviews_fund_id_fkey"
+            columns: ["fund_id"]
+            isOneToOne: false
+            referencedRelation: "fund_listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       glossary_terms: {
         Row: {
           category: string | null
@@ -7544,6 +7627,51 @@ export type Database = {
           email?: string
           id?: number
           sent_at?: string | null
+        }
+        Relationships: []
+      }
+      investor_goals: {
+        Row: {
+          auth_user_id: string
+          created_at: string
+          current_balance_cents: number
+          expected_return_pct: number
+          goal_type: string
+          id: number
+          label: string
+          monthly_contribution_cents: number
+          notes: string | null
+          target_cents: number
+          target_date: string
+          updated_at: string
+        }
+        Insert: {
+          auth_user_id: string
+          created_at?: string
+          current_balance_cents?: number
+          expected_return_pct?: number
+          goal_type: string
+          id?: never
+          label: string
+          monthly_contribution_cents?: number
+          notes?: string | null
+          target_cents: number
+          target_date: string
+          updated_at?: string
+        }
+        Update: {
+          auth_user_id?: string
+          created_at?: string
+          current_balance_cents?: number
+          expected_return_pct?: number
+          goal_type?: string
+          id?: never
+          label?: string
+          monthly_contribution_cents?: number
+          notes?: string | null
+          target_cents?: number
+          target_date?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -8800,6 +8928,51 @@ export type Database = {
           target_id?: number | null
           target_type?: string
           verdict?: string
+        }
+        Relationships: []
+      }
+      placement_experiments: {
+        Row: {
+          created_at: string
+          ended_at: string | null
+          id: number
+          metrics: Json
+          name: string
+          notes: string | null
+          slug: string
+          started_at: string | null
+          status: string
+          updated_at: string
+          variants: Json
+          winner_variant: string | null
+        }
+        Insert: {
+          created_at?: string
+          ended_at?: string | null
+          id?: never
+          metrics?: Json
+          name: string
+          notes?: string | null
+          slug: string
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+          variants: Json
+          winner_variant?: string | null
+        }
+        Update: {
+          created_at?: string
+          ended_at?: string | null
+          id?: never
+          metrics?: Json
+          name?: string
+          notes?: string | null
+          slug?: string
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+          variants?: Json
+          winner_variant?: string | null
         }
         Relationships: []
       }
@@ -13270,6 +13443,14 @@ export type Database = {
       }
       increment_listing_views: {
         Args: { listing_id: number }
+        Returns: undefined
+      }
+      increment_placement_event: {
+        Args: {
+          p_event_type: string
+          p_experiment_id: number
+          p_variant: string
+        }
         Returns: undefined
       }
       is_admin: { Args: never; Returns: boolean }
