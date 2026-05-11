@@ -49,6 +49,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | Z | `claude/audit-remediation/z-04-zero-state-ux` | #230/#323/#403/#457/#524/#565 | Z-01..Z-04 done. | Z-04 merged ✓ |
 | QQ | `claude/audit-remediation/qq-01-public-qa-surface` | (none yet) | QQ-01..QQ-10 pending. Public AI Q&A capture surface — promote production RAG chatbot from admin-only to public SEO/lead-capture surface. Brief: `docs/audits/qq-ai-qa-capture-brief.md` (drafted 2026-05-09 from FIN_NOTEBOOK.md ship-now item #7). QQ-08 is a compliance gate — surfaces to Blocked until `docs/audits/qq-compliance-signoff.md` is committed by a human reviewer. | All QQ tasks merged |
 | MM | `claude/audit-remediation/mm-01-marketplace-coverage-audit` | **MM-V01 delivered locally 2026-05-09** (Digital Infrastructure / data centres — `lib/listing-verticals.ts`, `app/invest/list/ListingSubmitForm.tsx`, `app/api/listings/submit/route.ts`, `lib/listing-vertical-images.ts`, `components/ContextualLeadMagnet.tsx`, new `supabase/migrations/20260509_digital_infrastructure_vertical.sql`, new `app/invest/digital-infrastructure/page.tsx`). Pending commit + PR. | **MM-V01 Digital Infrastructure DELIVERED locally 2026-05-09** (pending commit). MM-AUDIT next on cloud loop, then remaining MM-V02..V09 + MM-S01..S06 + MM-CONTENT + MM-UX + MM-INTEG. Plan: `docs/audits/MM-marketplace-expansion-plan.md`. New: **MM-V09 Startup vertical expansion** (deepen existing `/invest/startups` from 226 LOC to ~500 LOC + sector pages + round-instrument explainers + ESIC tax explainer + 12+ seed listings + pitch event aggregation). All wholesale-only / MIS-adjacent verticals reuse the existing s708 gating pattern from pre-IPO listings. No AFSL upgrade required pre-launch. | All MM phases merged |
+| TT | `claude/audit-remediation/tt-01-asic-badge` | **#764 OPEN** (TT-01) | TT-01: **#764 OPEN** (iter 357 `dd4ed37`; ASIC registration badge in footer brand column; Tier A — `auto-merge-safe`). CI pending. | TT-04 merged |
 | SP | `claude/audit-remediation/sp-01-capability-audit` | (none yet) | **BLOCKED — waiting on MM-V09 completion.** Startup Portal — founder-side auth + round management + data room + wholesale-investor (s708) certification + ESIC verification + investor sector-thesis matching. New auth context mirroring advisor-portal pattern. Brief: `docs/audits/sp-startup-portal-brief.md` (drafted 2026-05-09). 13 sub-tasks SP-01..SP-13 (~25–35 iters, ~3–4 calendar weeks). SP-12 is the compliance gate. SP starts only after MM-V09 ships to avoid building against a moving listings model. | All SP tasks merged + compliance signoff |
 
 ---
@@ -436,7 +437,7 @@ compliance boundary — AFSL audit log must be readable by compliance role).
 
 | Item | Status | Description | Est. iters | Notes |
 |------|--------|-------------|------------|-------|
-| TT-01 | pending | ASIC registration badge (display AFSL number prominently) | ~1 | |
+| TT-01 | in_flight | ASIC registration badge (display ACN registration with ASIC link) | ~1 | **#764 OPEN** (iter 357, `dd4ed37`) |
 | TT-02 | pending | SSL / security headers audit (Content-Security-Policy, HSTS) | ~2 | |
 | TT-03 | pending | Privacy-first analytics (migrate from GA4 to Plausible or Fathom) | ~3 | |
 | TT-04 | pending | Cookie consent v2 (granular consent, Supabase-backed preference) | ~3 | Deps: TT-03. |
@@ -994,6 +995,14 @@ _Compacted 2026-05-09: 1,223 lines of completed-stream summary + iteration log e
 _The most recent ~24h of iteration log entries (iter ~325 onwards) are temporarily missing from both files — they were lost in the 2026-05-09 truncation incident (recovered as PR #661) before the rotate-iteration-log workflow could archive them. Loop's stuck-detection guard should not regress because the iteration command's Phase 2 falls back to PR-CI history when iter log entries are absent._
 
 See [`REMEDIATION_QUEUE_LOG_ARCHIVE.md`](./REMEDIATION_QUEUE_LOG_ARCHIVE.md) for historical iteration log + completed-stream summary.
+
+---
+
+### Iter 357 · 2026-05-11 · Stream TT · TT-01 ASIC registration badge · STATUS: PROGRESS
+
+**What was done:** Phase 1: synced main. Phase 3: picked TT-01 (first item in new TT trust-signals stream). Created branch `claude/audit-remediation/tt-01-asic-badge`, scaffold commit, then implementation commit `dd4ed37`. Changes: (1) `lib/compliance.ts` — added `ASIC_REGISTER_URL` (ASIC Connect canonical URL for ACN 093882421) as single source of truth; (2) `components/Footer.tsx` — imported `ASIC_REGISTER_URL`, added inline trust badge below brand tagline: shield icon + "Registered with ASIC · ACN 093 882 421" linked to ASIC register in new tab. Badge is styled as a low-profile bordered chip on `bg-slate-800`. Note: queue item said "display AFSL number" but company does NOT hold an AFSL — badge correctly shows ASIC company registration (ACN) instead; `AFSL_STATUS_DISCLOSURE` already present in amber banner. Opened PR #764 (Tier A, `auto-merge-safe`). CI pending.
+
+**Status:** `STATUS: PROGRESS · stream=TT · item=TT-01 · pr=#764 · commit=dd4ed37`
 
 ---
 
