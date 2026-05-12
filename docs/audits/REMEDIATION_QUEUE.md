@@ -48,7 +48,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
 | Z | `claude/audit-remediation/z-04-zero-state-ux` | #230/#323/#403/#457/#524/#565 | Z-01..Z-04 done. | Z-04 merged ✓ |
 | QQ | `claude/audit-remediation/qq-01-public-qa-surface` | **#800 OPEN** (QQ-01+QQ-02) | QQ-01 done (`281a83a`): capability audit doc. QQ-02 done (`596676b`): added `"qa_capture"` to RouteConfig.route union + `loadQaCaptureConfig()` ($2/IP/day, $50/day global); confirmed search_embeddings is service-role-only (admin client justified). QQ-03..QQ-10 pending. QQ-08 compliance gate blocks public-route exposure. Last CI: pending — pushed 2026-05-12. | All QQ tasks merged |
-| MM | `claude/audit-remediation/mm-01-marketplace-coverage-audit` · `claude/audit-remediation/mm-v01b-digital-infra-listings` | **#801 OPEN** (MM-AUDIT) · **#803 OPEN** (MM-V01b+V01c) | MM-V01 already on main (f024bc2). MM-AUDIT done (#801). MM-V01b done (#803 `369cbef`): /invest/digital-infrastructure/listings/. MM-V01c done (#803 `8512381`): /invest/funds/listings/ (P0 gap #2). Next: MM-V02 (public-social-infrastructure vertical). Last CI: pending — pushed 2026-05-12. | All MM phases merged |
+| MM | `claude/audit-remediation/mm-01-marketplace-coverage-audit` · `claude/audit-remediation/mm-v01b-digital-infra-listings` | **#801 OPEN** (MM-AUDIT) · **#803 OPEN** (MM-V01b+V01c+dep-vuln-rescue) | MM-V01 already on main (f024bc2). MM-AUDIT done (#801). MM-V01b done (#803 `369cbef`): /invest/digital-infrastructure/listings/. MM-V01c done (#803 `8512381`): /invest/funds/listings/ (P0 gap #2). dep-vuln CI rescue done (#803 `d240e3d`): next 16.2.4→16.2.6 to clear dep-vuln gate. Next: MM-V02 (public-social-infrastructure vertical). Last CI: fixing dep-vuln — pushed 2026-05-12 (`d240e3d`). | All MM phases merged |
 | TT | `claude/audit-remediation/tt-04-ga4-removal` | **#764 MERGED** (TT-01) · **#772 MERGED** (TT-02) · **#779 MERGED** (TT-03) · **#799 OPEN** (TT-04) | TT-01..TT-03 MERGED. TT-04: **#799 OPEN** (iter 373 `e8453d0`; GA4 removed from layout; Plausible sole analytics; connect-src tightened). Last CI: in_progress. | TT-04 merged |
 | CMP | `claude/audit-remediation/cmp-w1a-int-calculator-autosave` | **#782 OPEN** | CMP-W1A-INT complete. Last CI: pending. | All CMP tasks merged |
 | SP | (none yet) | (none yet) | **BLOCKED — waiting on MM-V09 completion.** | All SP tasks merged + compliance signoff |
@@ -83,6 +83,17 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 381 — 2026-05-12 — CI-RESCUE MM (#803)
+
+- **Stream:** MM (marketplace expansion)
+- **Item:** CI rescue — dep-vuln gate: next 16.2.4→16.2.6
+- **Branch:** `claude/audit-remediation/mm-v01b-digital-infra-listings`
+- **PR:** #803 OPEN
+- **Commit:** `d240e3d`
+- **Diff:** +41 -41 across 2 files (package.json + package-lock.json)
+- **What:** `Dependency vulnerabilities` gate failed on #803 because main still carries next@16.2.4 (13 high CVEs). The branch introduced no new packages so the failure was inherited from main. MAIN-RESCUE PR #793 patches this in its own branch but isn't merged yet. Applied the same next 16.2.4→16.2.6 upgrade directly to the MM branch so the gate clears independently. After upgrade: 0 high/critical, 2 moderate (postcss/next — below gate threshold). When #793 merges to main and #803 rebases, the conflict on these two files is trivially no-op (both sides target 16.2.6).
+- **STATUS: CI-RESCUE · stream=MM · pr=#803**
 
 ### iter 380 — 2026-05-12 — QQ-02
 
