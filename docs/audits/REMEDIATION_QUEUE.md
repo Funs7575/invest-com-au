@@ -54,6 +54,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | SP | (none yet) | (none yet) | **BLOCKED — waiting on MM-V09 completion.** | All SP tasks merged + compliance signoff |
 | MAIN-RESCUE | `fix/main-rescue-next-security-patch` | **#793 OPEN** | next 16.2.4→16.2.6 patch. | Merged to main |
 | CL | `claude/audit-remediation/cl-01-about-entity-only` | **#795 OPEN** (CL-01..CL-04 + CL-06 + CL-09 + CL-10) | CL-01..CL-04, CL-06, CL-09, CL-10 done. CL-07+CL-08 false-positive. CL-05 blocked (WHOIS registrar action). CI rescue iter 383: centralised entity emails in compliance.ts (`aacdcf8`) — triggers Vercel redeployment so smoke test can find preview URL. Last CI: success (Vercel) — `aacdcf8`. | All CL tasks merged |
+| LL | `claude/audit-remediation/ll-01-personal-dashboard` | **#807 OPEN** (LL-01) | LL-01 done (`8008bf1`): `/account/dashboard` RSC — welcome header, 3-card financial snapshot (goals/holdings/watchlist), nearest-goal progress bar, profile completeness nudge, personalised action links (investor_profile flags), 10-card nav grid. Unblocks 15+ downstream items. LL-02 pending (profile-driven advisor matching v2). Last CI: pending — pushed 2026-05-12 (`8008bf1`). | All LL tasks merged |
 
 ---
 
@@ -84,6 +85,17 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 391 — 2026-05-12 — LL-01 [Tier-1 preempt]
+
+- **Stream:** LL (logged-in user infrastructure)
+- **Item:** LL-01 — personal financial dashboard (`/account/dashboard`)
+- **Branch:** `claude/audit-remediation/ll-01-personal-dashboard`
+- **PR:** #807 OPEN
+- **Commit:** `8008bf1`
+- **Diff:** +296 -0 (1 new file)
+- **What:** Built `app/account/dashboard/page.tsx` — RSC personal financial dashboard for the investor portal. `enforcePortalKind("investor")` gate. Five parallel Supabase queries (user_profiles, investor_goals, investor_holdings, user_watchlist_items, investor_profiles). Sections: welcome header, financial snapshot (3 clickable snapshot cards), nearest-goal progress bar (with formatted dollars + % progress), profile completeness nudge (blue card, progress bar, hidden at 100%), personalised recommended-for-you actions (driven by investor_profile flags: is_fhb→/first-home-buyer, is_pre_retiree→/super, is_hnw→/wholesale, is_cross_border→/foreign-investment, is_business_owner→/account/upgrade/business; fallback to /quiz + /find-advisor), 10-card account navigation grid. No schema migration — uses existing tables. Note: user_profiles not yet in database.types.ts (types drift pre-existing); query works at runtime via Supabase schema API. Unblocks LL-02, LX-02, LX-04, GT-01/02, DF-01..04, AT-01..04, CD-01, DV-01.
+- **STATUS: PROGRESS · stream=LL · item=LL-01 · pr=#807 · override=tier-1-critical-path**
 
 ### iter 390 — 2026-05-12 — MM-V08 [batch-end]
 
