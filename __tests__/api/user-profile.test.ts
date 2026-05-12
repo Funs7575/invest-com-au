@@ -57,7 +57,9 @@ describe("GET /api/user-profile", () => {
     mockGetUser.mockResolvedValueOnce({ data: { user: null } });
     const res = await GET();
     expect(res.status).toBe(401);
-    expect(await res.json()).toMatchObject({ error: expect.stringContaining("sign in") });
+    expect(await res.json()).toMatchObject({
+      error: expect.stringContaining("sign in"),
+    });
   });
 
   it("returns { profile } when profile row exists", async () => {
@@ -108,7 +110,9 @@ describe("PUT /api/user-profile", () => {
     mockGetUser.mockResolvedValueOnce({ data: { user: USER } });
     const res = await PUT(makePut({ unknown_field: "value" }));
     expect(res.status).toBe(400);
-    expect(await res.json()).toMatchObject({ error: expect.stringContaining("invalid") });
+    expect(await res.json()).toMatchObject({
+      error: expect.stringContaining("invalid"),
+    });
   });
 
   it("rejects invalid investing_experience enum value (no allowed fields → 400)", async () => {
@@ -149,13 +153,40 @@ describe("PUT /api/user-profile", () => {
     );
   });
 
+  it("accepts onboarding completion as a standalone update", async () => {
+    mockGetUser.mockResolvedValueOnce({ data: { user: USER } });
+    const chain = makeChain({
+      data: { ...PROFILE, onboarding_completed: true },
+      error: null,
+    });
+    mockFrom.mockReturnValue(chain);
+    const res = await PUT(makePut({ onboarding_completed: true }));
+    expect(res.status).toBe(200);
+    expect(chain.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({ onboarding_completed: true }),
+      expect.anything(),
+    );
+  });
+
   it("filters interested_in to known values and caps at 8", async () => {
     mockGetUser.mockResolvedValueOnce({ data: { user: USER } });
     const chain = makeChain({ data: PROFILE, error: null });
     mockFrom.mockReturnValue(chain);
-    const interests = ["shares", "etfs", "crypto", "super", "property", "savings", "insurance", "cfd_forex", "bogus"];
+    const interests = [
+      "shares",
+      "etfs",
+      "crypto",
+      "super",
+      "property",
+      "savings",
+      "insurance",
+      "cfd_forex",
+      "bogus",
+    ];
     await PUT(makePut({ interested_in: interests }));
-    const upsertCall = chain.upsert.mock.calls[0][0] as { interested_in: string[] };
+    const upsertCall = chain.upsert.mock.calls[0][0] as {
+      interested_in: string[];
+    };
     expect(upsertCall.interested_in).not.toContain("bogus");
     expect(upsertCall.interested_in.length).toBeLessThanOrEqual(8);
   });
@@ -166,7 +197,9 @@ describe("PUT /api/user-profile", () => {
     mockFrom.mockReturnValue(chain);
     const longName = "  " + "A".repeat(150) + "  ";
     await PUT(makePut({ display_name: longName }));
-    const upsertCall = chain.upsert.mock.calls[0][0] as { display_name: string };
+    const upsertCall = chain.upsert.mock.calls[0][0] as {
+      display_name: string;
+    };
     expect(upsertCall.display_name.length).toBe(100);
     expect(upsertCall.display_name).not.toMatch(/^\s/);
   });
@@ -181,7 +214,9 @@ describe("PUT /api/user-profile", () => {
 
   it("returns 503 when createClient throws during PUT", async () => {
     mockGetUser.mockResolvedValueOnce({ data: { user: USER } });
-    mockFrom.mockImplementation(() => { throw new Error("connection refused"); });
+    mockFrom.mockImplementation(() => {
+      throw new Error("connection refused");
+    });
     const res = await PUT(makePut({ display_name: "Alice" }));
     expect(res.status).toBe(503);
   });
