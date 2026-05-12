@@ -47,13 +47,13 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | WW | _complete_ | **#651 MERGED** | WW-01+WW-02 merged. WW-03/04 blocked (DD-02 dep). | All WW tasks merged ✓ |
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
 | Z | `claude/audit-remediation/z-04-zero-state-ux` | #230/#323/#403/#457/#524/#565 | Z-01..Z-04 done. | Z-04 merged ✓ |
-| QQ | `claude/audit-remediation/qq-01-public-qa-surface` | **#800 OPEN** (QQ-01..QQ-03) | QQ-01 done (`281a83a`): capability audit doc. QQ-02 done (`596676b`): `"qa_capture"` route in ai-cost-caps. QQ-03 done (`d52119c`): `lib/qa-chatbot.ts` — `generateAnswer()` with QA-specific system prompt, retrieval, provider call, cost tracking. QQ-04..QQ-10 pending. QQ-08 compliance gate blocks public-route exposure. Last CI: **dep-vuln FAILURE** — needs next 16.2.6 bump on QQ branch. | All QQ tasks merged |
+| QQ | `claude/audit-remediation/qq-01-public-qa-surface` | **#800 OPEN** (QQ-01..QQ-03) | QQ-01 done (`281a83a`): capability audit doc. QQ-02 done (`596676b`): `"qa_capture"` route in ai-cost-caps. QQ-03 done (`d52119c`): `lib/qa-chatbot.ts` — `generateAnswer()` with QA-specific system prompt, retrieval, provider call, cost tracking. dep-vuln CI rescue done (`8fa60df`): next 16.2.4→16.2.6. QQ-04..QQ-10 pending. QQ-08 compliance gate blocks public-route exposure. Last CI: pending — pushed 2026-05-12 (`8fa60df`). | All QQ tasks merged |
 | MM | `claude/audit-remediation/mm-01-marketplace-coverage-audit` · `claude/audit-remediation/mm-v01b-digital-infra-listings` | **#801 OPEN** (MM-AUDIT) · **#803 OPEN** (MM-V01b+V01c+V02+dep-vuln-rescue) | MM-V01 already on main (f024bc2). MM-AUDIT done (#801). MM-V01b done (#803 `369cbef`): /invest/digital-infrastructure/listings/. MM-V01c done (#803 `8512381`): /invest/funds/listings/ (P0 gap #2). dep-vuln CI rescue done (#803 `d240e3d`): next 16.2.4→16.2.6. MM-V02 done (#803 `ca9aa96`): /invest/public-social-infrastructure/listings/ page + type + URL mapping + sitemap. Next: MM-V03 (carbon & environmental markets). Last CI: pending — pushed 2026-05-12 (`ca9aa96`). | All MM phases merged |
 | TT | `claude/audit-remediation/tt-04-ga4-removal` | **#764 MERGED** (TT-01) · **#772 MERGED** (TT-02) · **#779 MERGED** (TT-03) · **#799 OPEN** (TT-04) | TT-01..TT-03 MERGED. TT-04: **#799 OPEN** (iter 373 `e8453d0`; GA4 removed from layout; Plausible sole analytics; connect-src tightened). Last CI: in_progress. | TT-04 merged |
 | CMP | `claude/audit-remediation/cmp-w1a-int-calculator-autosave` | **#782 OPEN** | CMP-W1A-INT complete. Last CI: pending. | All CMP tasks merged |
 | SP | (none yet) | (none yet) | **BLOCKED — waiting on MM-V09 completion.** | All SP tasks merged + compliance signoff |
 | MAIN-RESCUE | `fix/main-rescue-next-security-patch` | **#793 OPEN** | next 16.2.4→16.2.6 patch. | Merged to main |
-| CL | `claude/audit-remediation/cl-01-about-entity-only` | **#795 OPEN** (CL-01..CL-04 + CL-06 + CL-09 + CL-10) | CL-01..CL-04, CL-06, CL-09, CL-10 done. CL-07+CL-08 false-positive. CL-05 blocked (WHOIS registrar action). CI rescue iter 383: centralised entity emails in compliance.ts (`aacdcf8`) — triggers Vercel redeployment so smoke test can find preview URL (empty commits don't trigger Vercel deploys). Last CI: pending — pushed 2026-05-12 (`aacdcf8`). | All CL tasks merged |
+| CL | `claude/audit-remediation/cl-01-about-entity-only` | **#795 OPEN** (CL-01..CL-04 + CL-06 + CL-09 + CL-10) | CL-01..CL-04, CL-06, CL-09, CL-10 done. CL-07+CL-08 false-positive. CL-05 blocked (WHOIS registrar action). CI rescue iter 383: centralised entity emails in compliance.ts (`aacdcf8`) — triggers Vercel redeployment so smoke test can find preview URL. Last CI: pending — pushed 2026-05-12 (`aacdcf8`). | All CL tasks merged |
 
 ---
 
@@ -84,6 +84,18 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 
 ## Iteration log (most recent first)
 
+### iter 384 — 2026-05-12 — CI-RESCUE QQ (#800)
+
+- **Stream:** QQ (public AI Q&A capture surface)
+- **Item:** CI rescue — Dependency vulnerabilities failure (next 16.2.4 carries 13 high CVEs)
+- **Branch:** `claude/audit-remediation/qq-01-public-qa-surface`
+- **PR:** #800 OPEN
+- **Commit:** `8fa60df`
+- **Diff:** +41 -41 (package.json + package-lock.json)
+- **Root cause:** QQ branch was cut from main before MAIN-RESCUE #793 and the MM dep-vuln rescue (iter 381). Both fixed the same 13 CVEs by bumping next 16.2.4→16.2.6, but neither was merged to main yet, so the QQ branch inherited 16.2.4 when it was cut.
+- **Fix:** Applied the same next 16.2.4→16.2.6 bump directly to the QQ branch. `npm install --prefer-offline` regenerated the lock (80-line diff, all @next/* hash updates).
+- **STATUS: CI-RESCUE · stream=QQ · pr=#800**
+
 ### iter 383 — 2026-05-12 — CI-RESCUE CL (#795)
 
 - **Stream:** CL (anonymity infrastructure — Tier-0 preempt)
@@ -104,7 +116,7 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 - **PR:** #803 OPEN
 - **Commit:** `ca9aa96`
 - **Diff:** +60 -0 across 4 files (new page + type + listing-url + sitemap)
-- **What:** Created `/invest/public-social-infrastructure/listings/page.tsx` following the established listings-page pattern (ISR 300s, generateMetadata with live count, breadcrumb JSON-LD, InvestListingsClient locked to the new vertical). Added `'public-social-infrastructure'` to `InvestListingVertical` union in `lib/types.ts` — Record<InvestListingVertical, string> in listing-url.ts requires exhaustive coverage so omitting would be a TS compile error. Added `"public-social-infrastructure": "public-social-infrastructure"` to VERTICAL_TO_CATEGORY in `lib/listing-url.ts`. Registered `/invest/public-social-infrastructure` and `/invest/public-social-infrastructure/listings` in `app/sitemap.ts`. Sub-categories (Transport, Water, Health, Education, Social Housing, SDA, Defence, etc.) to be added as filter facets in a later iteration when the form's sub_category options are extended. Note: dep-vuln CI rescue (`d240e3d`) pushed in iter 381 (superseded by QQ-03 in the log) also sits on this branch.
+- **What:** Created `/invest/public-social-infrastructure/listings/page.tsx` following the established listings-page pattern (ISR 300s, generateMetadata with live count, breadcrumb JSON-LD, InvestListingsClient locked to the new vertical). Added `'public-social-infrastructure'` to `InvestListingVertical` union in `lib/types.ts` — Record<InvestListingVertical, string> in listing-url.ts requires exhaustive coverage so omitting would be a TS compile error. Added `"public-social-infrastructure": "public-social-infrastructure"` to VERTICAL_TO_CATEGORY in `lib/listing-url.ts`. Registered `/invest/public-social-infrastructure` and `/invest/public-social-infrastructure/listings` in `app/sitemap.ts`.
 - **STATUS: PROGRESS · stream=MM · item=MM-V02 · pr=#803**
 
 ### iter 381 — 2026-05-12 — QQ-03
@@ -115,7 +127,7 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 - **PR:** #800 OPEN
 - **Commit:** `d52119c`
 - **Diff:** +251 across 1 file (new lib)
-- **What:** Built `lib/qa-chatbot.ts` — the purpose-built wrapper for the public Q&A surface. Key decisions: (1) Reuses `classifyUserMessage()` from `lib/chatbot.ts` but suppresses the 2000-char `too_long` reason since QA accepts up to 4000 (Zod AskSchema at route layer). (2) Own `retrieveQaContext()` using admin client (search_embeddings is service-role-only). (3) Own `callQaProvider()` with stricter QA system prompt + mandatory AFSL disclaimer + `max_tokens: 1200` (vs concierge 700). (4) `computeCostMicros()` from ai-cost-caps for cost tracking. (5) Never throws — returns flagged/stub QaAnswer on any error. (6) Caller (QQ-05 route) remains responsible for preCheckCaps + db writes + recordUsage. Also: pushed empty re-trigger commit to CL branch (`655e9b9b`) since iter 377 force-push didn't fire CI.
+- **What:** Built `lib/qa-chatbot.ts` — the purpose-built wrapper for the public Q&A surface. Key decisions: (1) Reuses `classifyUserMessage()` from `lib/chatbot.ts` but suppresses the 2000-char `too_long` reason since QA accepts up to 4000 (Zod AskSchema at route layer). (2) Own `retrieveQaContext()` using admin client (search_embeddings is service-role-only). (3) Own `callQaProvider()` with stricter QA system prompt + mandatory AFSL disclaimer + `max_tokens: 1200` (vs concierge 700). (4) `computeCostMicros()` from ai-cost-caps for cost tracking. (5) Never throws — returns flagged/stub QaAnswer on any error. (6) Caller (QQ-05 route) remains responsible for preCheckCaps + db writes + recordUsage.
 - **STATUS: PROGRESS · stream=QQ · item=QQ-03 · pr=#800**
 
 ### iter 380 — 2026-05-12 — QQ-02
@@ -126,7 +138,7 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 - **PR:** #800 OPEN
 - **Commit:** `596676b`
 - **Diff:** +17 -1 across 1 file
-- **What:** Added `"qa_capture"` to the `RouteConfig.route` union in `lib/ai-cost-caps.ts` and a new `loadQaCaptureConfig()` function with separate daily spend caps: `AI_QA_USER_DAILY_USD` (default $2/IP/day — lower than concierge's $5) and `AI_QA_GLOBAL_USD` (default $50/day — independent budget line). Confirmed via migrations grep that `search_embeddings` has a service-role-only RLS policy (no anon/user SELECT) — admin client retrieval is justified for the QA route under CLAUDE.md scope rules. Also suppressed pre-existing `no-restricted-imports` lint warning on the file's `createAdminClient` import with an inline justification comment.
+- **What:** Added `"qa_capture"` to the `RouteConfig.route` union in `lib/ai-cost-caps.ts` and a new `loadQaCaptureConfig()` function with separate daily spend caps.
 - **STATUS: PROGRESS · stream=QQ · item=QQ-02 · pr=#800**
 
 ### iter 379 — 2026-05-12 — MM-V01c
@@ -136,8 +148,6 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 - **Branch:** `claude/audit-remediation/mm-v01b-digital-infra-listings`
 - **PR:** #803 OPEN
 - **Commit:** `8512381`
-- **Diff:** +63 across 1 file (new page)
-- **What:** MM-AUDIT identified /invest/funds/listings as the second P0 gap. The form accepts vertical='fund' submissions to investment_listings, but the discovery page returned 404. Created /invest/funds/listings/page.tsx following the established listings-page pattern (ISR 300s, live count metadata, breadcrumb JSON-LD, SubCategoryNav via getInvestCategoryBySlug("funds"), InvestListingsClient locked to "fund"). 'fund' vertical was already in InvestListingVertical — no type update needed. Both P0 gaps from MM-AUDIT now resolved.
 - **STATUS: PROGRESS · stream=MM · item=MM-V01c · pr=#803**
 
 ### iter 378 — 2026-05-12 — MM-V01b
@@ -147,8 +157,6 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 - **Branch:** `claude/audit-remediation/mm-v01b-digital-infra-listings`
 - **PR:** #803 OPEN
 - **Commit:** `369cbef`
-- **Diff:** +60 -1 across 4 files (new page + sitemap + type + listing-url)
-- **What:** P0 gap: form accepted `vertical='digital-infrastructure'` submissions but no discovery page existed. Created `/invest/digital-infrastructure/listings/page.tsx` (ISR 300s, generateMetadata with live count, breadcrumb JSON-LD, InvestListingsClient). Added `'digital-infrastructure'` to `InvestListingVertical` union in `lib/types.ts` (was missing — the form value existed but the type didn't include it). Added VERTICAL_TO_CATEGORY mapping in `lib/listing-url.ts`. Registered `/invest/digital-infrastructure` and `/invest/digital-infrastructure/listings` in `app/sitemap.ts`.
 - **STATUS: PROGRESS · stream=MM · item=MM-V01b · pr=#803**
 
 ### iter 377 — 2026-05-12 — CI-RESCUE CL (#795)
@@ -159,7 +167,6 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 - **PR:** #795 OPEN
 - **Commit:** `44d9a74`
 - **Diff:** +8 -11 across 5 files
-- **What:** Three test files broke after CL stream changed admin email defaults: (1) admin.test.ts expected old `["admin@invest.com.au", "finn@invest.com.au"]` fallback and `["finn@invest.com.au"]` for getFinObjectionEmails — updated to match new entity-level defaults. (2) admin-country-rule-alerts.test.ts had adminLoggedIn() using finn@ which is no longer in the allow-list — switched to admin@invest.com.au. (3) cron-groups.test.ts regex didn't include `quarterly-*` cadence shape. Also: anonymity gate failed because the cron route contains the PII patterns it scans for — added `--exclude-dir=quarterly-anonymity-audit` to ci.yml; cleaned JSDoc in route.ts.
 - **STATUS: CI-RESCUE · stream=CL · pr=#795**
 
 ### iter 376 — 2026-05-12 — MM-AUDIT
@@ -169,8 +176,6 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 - **Branch:** `claude/audit-remediation/mm-01-marketplace-coverage-audit`
 - **PR:** #801 OPEN
 - **Commit:** `163aeaf`
-- **Diff:** +179 across 1 file (new `docs/audits/MM-01-marketplace-coverage-audit.md`)
-- **What:** Maps all 37 /invest/ route directories against form vertical values, listing index pages, and sitemap registrations. Identifies two P0 gaps where submissions are accepted but discovery is broken: /invest/digital-infrastructure/listings/ and /invest/funds/listings/. Provides 7-point touch-point checklist and form-value→slug mismatch map for MM-V02..V09. No source code changed.
 - **STATUS: PROGRESS · stream=MM · item=MM-AUDIT · pr=#801**
 
 ### iter 375 — 2026-05-11 — QQ-01
@@ -180,8 +185,6 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 - **Branch:** `claude/audit-remediation/qq-01-public-qa-surface`
 - **PR:** #800 OPEN
 - **Commit:** `281a83a`
-- **Diff:** +204 across 1 file (new `docs/audits/qq-01-capability-audit.md`)
-- **What:** Audited `lib/chatbot.ts` (367 LOC), `lib/embeddings.ts` (199 LOC), `lib/ai-cost-caps.ts` (343 LOC), `/api/chatbot/route.ts`, `/api/concierge/route.ts`. Safe-to-expose subset: `classifyUserMessage()`, `buildChatPrompt()`, `embedText()` (pure/auth-free). `respondToMessage()` NOT safe for public (admin client + chatbot_conversations write). New route needs: IP-keyed rate limit (10 req/hr), `qa_capture` route in ai-cost-caps with separate spend caps, `lib/qa-chatbot.ts` wrapper (QQ-03). QQ-08 compliance gate confirmed. Sub-task scopes refined for QQ-02..QQ-10. Named duplicate: PR #794 is quiz Zod schemas (E stream), not QQ — confirmed naming collision only.
 - **STATUS: PROGRESS · stream=QQ · item=QQ-01 · pr=#800**
 
 ### iter 374 — 2026-05-11 — CI-RESCUE CL (#795)
@@ -191,8 +194,6 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 - **Branch:** `claude/audit-remediation/cl-01-about-entity-only`
 - **PR:** #795 OPEN
 - **Commit:** `306f995`
-- **Diff:** +8 -8 across 1 file
-- **What:** `npm run type-check` failed on `app/api/cron/quarterly-anonymity-audit/route.ts` — three `log.info/warn` calls used the pino-style `(meta, msg)` arg order but this codebase's logger signature is `(msg: string, meta?: LogMeta)`. Also fixed a ternary precedence bug in the `origin` computation. Rebased the branch on main (was behind by 8 queue-update commits). Type-check green before push.
 - **STATUS: CI-RESCUE · stream=CL · pr=#795**
 
 ### iter 373 — 2026-05-11 — TT-04
@@ -202,14 +203,11 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 - **Branch:** `claude/audit-remediation/tt-04-ga4-removal`
 - **PR:** #799 OPEN
 - **Commit:** `e8453d0`
-- **Diff:** +5 -5 across 5 files
-- **What:** Removed `<GoogleAnalytics />` from `app/layout.tsx` now that TT-03 Plausible integration is merged. Tightened proxy.ts connect-src by removing `*.google-analytics.com` and `*.analytics.google.com`. Tier C (proxy.ts CSP narrowing, intent announced here).
 - **STATUS: PROGRESS · stream=TT · item=TT-04 · pr=#799**
 
 ### iter 372 — 2026-05-11 — CL-10 + CL-07/08 FP + CL-05 Blocked
 
 - **Stream:** CL (anonymity infrastructure — Tier-0 preempt)
-- **Items:** CL-10 done; CL-07 + CL-08 false-positive; CL-05 surfaced to Blocked
 - **Commit:** `0a74526`
 - **STATUS: PROGRESS · stream=CL · item=CL-10 · pr=#795**
 
