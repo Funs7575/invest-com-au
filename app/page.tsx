@@ -10,7 +10,6 @@ import HomePostAJob from "@/components/HomePostAJob";
 import HomeCompareDeepDive, { type CompareBroker } from "@/components/HomeCompareDeepDive";
 import HomeCrossBorder from "@/components/HomeCrossBorder";
 import HomeFridayBriefing from "@/components/HomeFridayBriefing";
-import HomeHowWeEarn from "@/components/HomeHowWeEarn";
 import CountryListingsPreview from "@/components/country-mode/CountryListingsPreview";
 import CountryExpertsPreview from "@/components/country-mode/CountryExpertsPreview";
 import CountryComparePreview from "@/components/country-mode/CountryComparePreview";
@@ -298,10 +297,6 @@ export default async function HomePage() {
 
       <ScrollFadeIn>
         <HomeFridayBriefing />
-      </ScrollFadeIn>
-
-      <ScrollFadeIn>
-        <HomeHowWeEarn />
       </ScrollFadeIn>
 
       <ScrollFadeIn>
