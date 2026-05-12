@@ -5,6 +5,7 @@ import Link from "next/link";
 import { formatCurrency } from "@/lib/utils";
 import { formatPercent } from "@/lib/tracking";
 import { useCalculatorState } from "@/hooks/use-calculator-state";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 /* ── constants (FY2026) ── */
 
@@ -476,6 +477,13 @@ export default function SuperContributionsClient() {
             </div>
           </div>
         </div>
+
+        <CalculatorLeadCapture
+          calcSlug="super-contributions-calculator"
+          calcTitle="super contribution"
+          need="planning"
+          contextKeys={["super-contributions", "concessional-cap"]}
+        />
 
         {/* Disclaimer */}
         <p className="text-[0.65rem] text-slate-400 mt-8 leading-relaxed">

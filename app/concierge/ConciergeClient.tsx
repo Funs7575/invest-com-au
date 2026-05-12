@@ -6,6 +6,7 @@ import Link from "next/link";
 import Icon from "@/components/Icon";
 import { trackEvent } from "@/lib/tracking";
 import { lookupSeed, isFinderKey } from "@/lib/concierge-seeds";
+import ConciergeBookingHandoff from "@/components/ConciergeBookingHandoff";
 
 /**
  * Full-page concierge chat UI.
@@ -55,6 +56,20 @@ const STARTERS = [
 ];
 
 const SESSION_KEY = "ic_concierge_session_v1";
+const PENDING_PROMPT_KEY = "ic_concierge_pending_prompt_v1";
+const MAX_PENDING_PROMPT_LEN = 200;
+
+function readPendingPrompt(): string | null {
+  try {
+    const raw = sessionStorage.getItem(PENDING_PROMPT_KEY);
+    if (!raw) return null;
+    sessionStorage.removeItem(PENDING_PROMPT_KEY);
+    const clean = raw.replace(/\s+/g, " ").trim().slice(0, MAX_PENDING_PROMPT_LEN);
+    return clean || null;
+  } catch {
+    return null;
+  }
+}
 
 function genId(): string {
   return Math.random().toString(36).slice(2, 10);
@@ -276,15 +291,30 @@ export default function ConciergeClient() {
     abortRef.current?.abort();
   }, []);
 
-  // Auto-fire a named seed prompt from the URL (?finder=<key>) on
-  // first mount, but only when starting fresh. The finder key is
-  // resolved against a server-defined allowlist in
-  // lib/concierge-seeds.ts — unknown keys are ignored, so a crafted
-  // URL can't ship arbitrary text into the chat.
+  // Auto-fire on first mount when starting fresh. Two sources, in priority order:
+  //   1. sessionStorage `ic_concierge_pending_prompt_v1` — the homepage
+  //      concierge entry component writes the visitor's free-text question
+  //      here, then navigates to /concierge. Same-origin only, so this can't
+  //      be planted by a crafted URL.
+  //   2. URL `?finder=<key>` — allowlisted starter prompt from deep-links
+  //      in /advisors, /advisors/search, post-quiz drop-offs, etc.
   useEffect(() => {
     if (seedFiredRef.current) return;
     if (hydrating) return;
     if (messages.length > 0) return;
+
+    const pending = readPendingPrompt();
+    if (pending) {
+      seedFiredRef.current = true;
+      trackEvent("concierge_seed_fired", {
+        finder: null,
+        source: "homepage-entry",
+        prompt_length: pending.length,
+      });
+      void send(pending);
+      return;
+    }
+
     const finderRaw = searchParams?.get("finder") ?? "";
     if (!isFinderKey(finderRaw)) return;
     const seed = lookupSeed(finderRaw);
@@ -334,6 +364,18 @@ export default function ConciergeClient() {
   const canSend = useMemo(
     () => input.trim().length > 0 && !streaming,
     [input, streaming],
+  );
+
+  const showHandoff = useMemo(
+    () =>
+      messages.some(
+        (m) => m.role === "assistant" && m.content.trim().length > 0,
+      ),
+    [messages],
+  );
+  const firstUserMessage = useMemo(
+    () => messages.find((m) => m.role === "user")?.content ?? null,
+    [messages],
   );
 
   return (
@@ -503,6 +545,14 @@ export default function ConciergeClient() {
               </button>
             )}
           </form>
+
+          {showHandoff && (
+            <ConciergeBookingHandoff
+              firstUserMessage={firstUserMessage}
+              sessionId={sessionId}
+              messagesCount={messages.length}
+            />
+          )}
 
           <p className="text-[11px] text-slate-500 leading-relaxed mt-3">
             <strong>General information only.</strong> The concierge is an AI
