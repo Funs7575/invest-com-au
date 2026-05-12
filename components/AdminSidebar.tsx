@@ -60,6 +60,7 @@ const NAV_GROUPS = [
       { href: "/admin/affiliate-dashboard", icon: "pie-chart", label: "Affiliate Performance" },
       { href: "/admin/sponsored-queue", icon: "calendar", label: "Sponsored Queue" },
       { href: "/admin/ab-tests", icon: "git-branch", label: "A/B Tests" },
+      { href: "/admin/placement-experiments", icon: "arrow-right-left", label: "Placement A/B" },
       { href: "/admin/fee-queue", icon: "dollar-sign", label: "Fee Queue" },
       { href: "/admin/deal-of-month", icon: "trophy", label: "Deal of Month" },
     ],

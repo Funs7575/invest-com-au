@@ -8,7 +8,6 @@ import "./globals.css";
 import LayoutShell from "@/components/LayoutShell";
 import CountryModeBanner from "@/components/country-mode/CountryModeBanner";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import GoogleAnalytics from "@/components/GoogleAnalytics";
 import PlausibleAnalytics from "@/components/PlausibleAnalytics";
 import { PostHogProvider } from "@/components/PostHogProvider";
 import UtmCapture from "@/components/UtmCapture";
@@ -166,7 +165,6 @@ export default async function RootLayout({
             </p>
           </div>
         </noscript>
-        <GoogleAnalytics />
         <PlausibleAnalytics />
         <PostHogProvider>
         <Suspense fallback={null}><UtmCapture /></Suspense>
