@@ -5,6 +5,7 @@ import Link from "next/link";
 import Icon from "@/components/Icon";
 import type { Broker } from "@/lib/types";
 import TradeCostCalculator from "@/app/calculators/_components/TradeCostCalculator";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 export default function TradeCostClient({ brokers }: { brokers: Broker[] }) {
   const searchParams = useSearchParams();
@@ -43,6 +44,13 @@ export default function TradeCostClient({ brokers }: { brokers: Broker[] }) {
 
         {/* Calculator */}
         <TradeCostCalculator brokers={brokers} searchParams={searchParams} />
+
+        <CalculatorLeadCapture
+          calcSlug="trade-cost-calculator"
+          calcTitle="trade cost"
+          need="wealth"
+          contextKeys={["broker-trade-cost", "cost-optimisation"]}
+        />
 
         {/* SEO content */}
         <div className="mt-8 md:mt-12 space-y-6">

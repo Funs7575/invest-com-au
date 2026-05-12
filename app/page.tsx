@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
 import HomeHero from "@/components/HomeHero";
+import HomeConciergeEntry from "@/components/HomeConciergeEntry";
 import HomeRouteCards from "@/components/HomeRouteCards";
 import CountryToolsStripWrapper from "@/components/country-mode/CountryToolsStripWrapper";
 import HomePathfinder from "@/components/HomePathfinder";
@@ -243,6 +244,8 @@ export default async function HomePage() {
         listingCount={totalListingCount}
         advisorCount={totalProfessionalCount}
       />
+
+      <HomeConciergeEntry />
 
       <ScrollFadeIn>
         <HomeRouteCards
