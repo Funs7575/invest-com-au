@@ -54,7 +54,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | SP | (none yet) | (none yet) | **BLOCKED — waiting on MM-V09 completion.** | All SP tasks merged + compliance signoff |
 | MAIN-RESCUE | `fix/main-rescue-next-security-patch` | **#793 OPEN** | next 16.2.4→16.2.6 patch. | Merged to main |
 | CL | `claude/audit-remediation/cl-01-about-entity-only` | **#795 OPEN** (CL-01..CL-04 + CL-06 + CL-09 + CL-10) | CL-01..CL-04, CL-06, CL-09, CL-10 done. CL-07+CL-08 false-positive. CL-05 blocked (WHOIS registrar action). CI rescue iter 383: centralised entity emails in compliance.ts (`aacdcf8`) — triggers Vercel redeployment so smoke test can find preview URL. Last CI: success (Vercel) — `aacdcf8`. | All CL tasks merged |
-| LL | `claude/audit-remediation/ll-01-personal-dashboard` | **#807 OPEN** (LL-01..LL-02) | LL-01 done (`8008bf1`): `/account/dashboard` RSC — welcome header, 3-card financial snapshot (goals/holdings/watchlist), nearest-goal progress bar, profile completeness nudge, personalised action links (investor_profile flags), 10-card nav grid. LL-02 done (`b9d0631`): profile-driven advisor matching — `app/api/account/advisor-matches/route.ts` (GET, auth-gated, top-6 advisors by profile flags + budget band); `fetchMatchedAdvisors()` in dashboard shows top 3 as advisor cards; priority chain: isFhb→mortgage_broker / isPreRetiree→retirement_planning specialty / isHnw→investment_advice specialty / isBusinessOwner→business_advisory specialty / isCrossBorder→accepts_international. LL-03 pending (watchlist + email digests — deps LL-01 ✓). Last CI: pending — pushed 2026-05-12 (`b9d0631`). | All LL tasks merged |
+| LL | `claude/audit-remediation/ll-01-personal-dashboard` | **#807 OPEN** (LL-01..LL-03) | LL-01 done (`8008bf1`): `/account/dashboard` RSC. LL-02 done (`b9d0631`): profile-driven advisor matching — `/api/account/advisor-matches` + dashboard grid. LL-03 done (`a2c6f27`): watchlist digest prefs — `/api/account/digest-prefs` GET+PUT (JSONB meta merge, no migration) + `DigestToggle.tsx` client toggle; watchlist page shows email notification section. LL-04 pending (reviews + ratings — deps LL-01 ✓). LL-05 blocked (live chat AI routing — deps V-NEW-02 + CC-06 not yet done). Last CI: pending — pushed 2026-05-12 (`a2c6f27`). | All LL tasks merged |
 
 ---
 
@@ -85,6 +85,17 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 393 — 2026-05-12 — LL-03
+
+- **Stream:** LL (logged-in user infrastructure)
+- **Item:** LL-03 — watchlist + email digests
+- **Branch:** `claude/audit-remediation/ll-01-personal-dashboard`
+- **PR:** #807 OPEN
+- **Commit:** `a2c6f27`
+- **Diff:** +171 -5 across 3 files (2 new files, 1 modified)
+- **What:** Watchlist page already existed (false-positive on watchlist sub-feature). Delivered the email digest preferences part: created `app/api/account/digest-prefs/route.ts` (GET returns `{ watchlist_digest, advisor_digest }` from `investor_profiles.meta`; PUT merges new pref keys into meta via `upsertInvestorProfile()` — no schema migration needed, uses existing JSONB `meta` column). Created `app/account/watchlist/DigestToggle.tsx` — accessible toggle switch (`role=switch`, `aria-checked`) with optimistic update + rollback on error. Extended `app/account/watchlist/page.tsx` to parallel-fetch investor profile alongside watchlist items and render a "Email notifications" card at the bottom with the DigestToggle wired to `watchlist_digest` key. LL-04 (reviews + ratings) pending; LL-05 (live chat) blocked on V-NEW-02 + CC-06.
+- **STATUS: PROGRESS · stream=LL · item=LL-03 · pr=#807**
 
 ### iter 392 — 2026-05-12 — LL-02
 
