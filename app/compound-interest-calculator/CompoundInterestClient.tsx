@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { useCalculatorState } from "@/hooks/use-calculator-state";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 const FREQ_OPTIONS = [
   { label: "Monthly", value: 12 },
@@ -276,6 +277,13 @@ export default function CompoundInterestClient() {
             </div>
           </div>
         </div>
+
+        <CalculatorLeadCapture
+          calcSlug="compound-interest-calculator"
+          calcTitle="compound interest"
+          need="planning"
+          contextKeys={["compound-interest", "wealth-building"]}
+        />
 
         <p className="text-[0.65rem] text-slate-400 mt-8 leading-relaxed">
           This calculator provides general information only and does not constitute financial advice. Returns shown are projections only and are not guaranteed. Past performance is not indicative of future performance. Always seek independent financial advice before making investment decisions.
