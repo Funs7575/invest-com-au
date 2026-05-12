@@ -8,6 +8,7 @@ import { trackEvent, trackPageDuration } from "@/lib/tracking";
 import { getStoredUtm } from "@/components/UtmCapture";
 import { formatCurrency } from "@/lib/utils";
 import { useCalculatorState } from "@/hooks/use-calculator-state";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 /* ── helpers ── */
 
@@ -459,6 +460,13 @@ export default function SMSFCalculatorClient() {
                 description="An SMSF specialist handles setup, compliance, audit, and investment strategy — so you can focus on growing your wealth."
               />
             </div>
+
+            <CalculatorLeadCapture
+              calcSlug="smsf-calculator"
+              calcTitle="SMSF cost"
+              need="smsf"
+              contextKeys={["smsf", "self-managed-super"]}
+            />
 
             {/* SEO content */}
             <div className="bg-white border border-slate-200 rounded-2xl p-5 md:p-8 space-y-4">
