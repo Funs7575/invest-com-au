@@ -16,6 +16,7 @@ export const VERTICAL_TO_CATEGORY: Record<InvestListingVertical, string> = {
   mining: "mining",
   pre_ipo: "pre-ipo",
   "public-social-infrastructure": "public-social-infrastructure",
+  royalties: "royalties",
   startup: "startups",
 };
 
