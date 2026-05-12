@@ -21,7 +21,7 @@
 **Plan source:** `docs/plans/pre-launch-wave-master-prompt.md` (Wave 1-6)
 **Loop prompt:** `docs/plans/pre-launch-wave-loop-prompt.md`
 **Update inbox:** `docs/plans/queue-updates/` (other actors drop notes here)
-**Last updated:** 2026-05-12 (cron iter — W1.1 concierge homepage entry + booking handoff in flight via #802)
+**Last updated:** 2026-05-12 (cron iter — W1.1 concierge homepage entry shipped via #802)
 
 ---
 
@@ -82,7 +82,7 @@ Source: `docs/plans/pre-launch-wave-master-prompt.md`. Lowercase rows mirror tha
 
 | # | PR | Tier | Status | PR # | Notes |
 |---|---|---|---|---|---|
-| W1.1 | AI Concierge homepage entry | B | in flight | #802 | HomeConciergeEntry mounted under hero + ConciergeBookingHandoff card (sessionStorage seed → /concierge auto-fire; first user msg → /find-advisor seed). 16 new tests; RAG already wired via search_embeddings_knn |
+| W1.1 | AI Concierge homepage entry | B | ✅ done | #802 | HomeConciergeEntry mounted under hero + ConciergeBookingHandoff card (sessionStorage seed → /concierge auto-fire; first user msg → /find-advisor seed). 16 new tests; RAG was already wired via search_embeddings_knn |
 | W1.2 | Calculator → lead capture funnel | B | in flight | #797 | CalculatorLeadCapture on 19 calc clients + tests; HubLeadForm-backed |
 | W1.3 | JSON-LD audit + ratchet | A | ✅ done | (this iter) | scripts/check-jsonld-coverage.mjs + 13 page fixes + CI gate |
 | W1.4 | Reverse marketplace ("Post a Request") | C | pending | — | 4-5 days, lib/stripe |
