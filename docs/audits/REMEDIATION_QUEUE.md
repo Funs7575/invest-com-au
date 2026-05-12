@@ -47,7 +47,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | WW | _complete_ | **#651 MERGED** | WW-01+WW-02 merged. WW-03/04 blocked (DD-02 dep). | All WW tasks merged ✓ |
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
 | Z | `claude/audit-remediation/z-04-zero-state-ux` | #230/#323/#403/#457/#524/#565 | Z-01..Z-04 done. | Z-04 merged ✓ |
-| QQ | `claude/audit-remediation/qq-01-public-qa-surface` | **#800 OPEN** (QQ-01) | QQ-01 done (`281a83a`): capability audit doc — safe-to-expose subset of chatbot/embeddings/ai-cost-caps, admin-only assumptions, lib/qa-chatbot.ts scope. QQ-02..QQ-10 pending. QQ-08 compliance gate blocks public-route exposure until `docs/audits/qq-compliance-signoff.md` is committed. Last CI: pending — pushed 2026-05-11. | All QQ tasks merged |
+| QQ | `claude/audit-remediation/qq-01-public-qa-surface` | **#800 OPEN** (QQ-01+QQ-02) | QQ-01 done (`281a83a`): capability audit doc. QQ-02 done (`596676b`): added `"qa_capture"` to RouteConfig.route union + `loadQaCaptureConfig()` ($2/IP/day, $50/day global); confirmed search_embeddings is service-role-only (admin client justified). QQ-03..QQ-10 pending. QQ-08 compliance gate blocks public-route exposure. Last CI: pending — pushed 2026-05-12. | All QQ tasks merged |
 | MM | `claude/audit-remediation/mm-01-marketplace-coverage-audit` · `claude/audit-remediation/mm-v01b-digital-infra-listings` | **#801 OPEN** (MM-AUDIT) · **#803 OPEN** (MM-V01b+V01c) | MM-V01 already on main (f024bc2). MM-AUDIT done (#801). MM-V01b done (#803 `369cbef`): /invest/digital-infrastructure/listings/. MM-V01c done (#803 `8512381`): /invest/funds/listings/ (P0 gap #2). Next: MM-V02 (public-social-infrastructure vertical). Last CI: pending — pushed 2026-05-12. | All MM phases merged |
 | TT | `claude/audit-remediation/tt-04-ga4-removal` | **#764 MERGED** (TT-01) · **#772 MERGED** (TT-02) · **#779 MERGED** (TT-03) · **#799 OPEN** (TT-04) | TT-01..TT-03 MERGED. TT-04: **#799 OPEN** (iter 373 `e8453d0`; GA4 removed from layout; Plausible sole analytics; connect-src tightened). Last CI: in_progress. | TT-04 merged |
 | CMP | `claude/audit-remediation/cmp-w1a-int-calculator-autosave` | **#782 OPEN** | CMP-W1A-INT complete. Last CI: pending. | All CMP tasks merged |
@@ -83,6 +83,17 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 380 — 2026-05-12 — QQ-02
+
+- **Stream:** QQ (public AI Q&A capture surface)
+- **Item:** QQ-02 — add `qa_capture` route to ai-cost-caps
+- **Branch:** `claude/audit-remediation/qq-01-public-qa-surface`
+- **PR:** #800 OPEN
+- **Commit:** `596676b`
+- **Diff:** +17 -1 across 1 file
+- **What:** Added `"qa_capture"` to the `RouteConfig.route` union in `lib/ai-cost-caps.ts` and a new `loadQaCaptureConfig()` function with separate daily spend caps: `AI_QA_USER_DAILY_USD` (default $2/IP/day — lower than concierge's $5) and `AI_QA_GLOBAL_USD` (default $50/day — independent budget line). Confirmed via migrations grep that `search_embeddings` has a service-role-only RLS policy (no anon/user SELECT) — admin client retrieval is justified for the QA route under CLAUDE.md scope rules. Also suppressed pre-existing `no-restricted-imports` lint warning on the file's `createAdminClient` import with an inline justification comment.
+- **STATUS: PROGRESS · stream=QQ · item=QQ-02 · pr=#800**
 
 ### iter 379 — 2026-05-12 — MM-V01c
 
