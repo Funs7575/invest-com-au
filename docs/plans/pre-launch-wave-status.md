@@ -21,7 +21,7 @@
 **Plan source:** `docs/plans/pre-launch-wave-master-prompt.md` (Wave 1-6)
 **Loop prompt:** `docs/plans/pre-launch-wave-loop-prompt.md`
 **Update inbox:** `docs/plans/queue-updates/` (other actors drop notes here)
-**Last updated:** 2026-05-10 (cron iter — country rule alerts DB + admin CRUD shipped)
+**Last updated:** 2026-05-12 (cron iter — W1.1 concierge homepage entry + booking handoff in flight via #802)
 
 ---
 
@@ -82,8 +82,8 @@ Source: `docs/plans/pre-launch-wave-master-prompt.md`. Lowercase rows mirror tha
 
 | # | PR | Tier | Status | PR # | Notes |
 |---|---|---|---|---|---|
-| W1.1 | AI Concierge homepage entry | B | pending | — | 2 days |
-| W1.2 | Calculator → lead capture funnel | B | pending | — | 1-2 days, 8+ calculators |
+| W1.1 | AI Concierge homepage entry | B | in flight | #802 | HomeConciergeEntry mounted under hero + ConciergeBookingHandoff card (sessionStorage seed → /concierge auto-fire; first user msg → /find-advisor seed). 16 new tests; RAG already wired via search_embeddings_knn |
+| W1.2 | Calculator → lead capture funnel | B | in flight | #797 | CalculatorLeadCapture on 19 calc clients + tests; HubLeadForm-backed |
 | W1.3 | JSON-LD audit + ratchet | A | ✅ done | (this iter) | scripts/check-jsonld-coverage.mjs + 13 page fixes + CI gate |
 | W1.4 | Reverse marketplace ("Post a Request") | C | pending | — | 4-5 days, lib/stripe |
 | W2.5–W2.17 | PR-X5a–PR-X5m investor accounts | B/C | pending | — | 13 PRs across 5 phases |
@@ -118,6 +118,10 @@ Source: `docs/plans/pre-launch-wave-master-prompt.md`. Lowercase rows mirror tha
 - 2026-05-09 22:25 | W1.3 | noindex pages auto-exempt | Pages with `robots.index: false` opt out of search indexing; rich-snippet schema is wasted work. Detected via metadata-text scan
 - 2026-05-10 02:15 | W4.21 | Picked W4.21 over W1.1/W1.2/W1.4 for one-fire scope | W1.1 (concierge homepage) and W1.2 (calculator funnel × 8) and W1.4 (reverse marketplace, Tier C) are all multi-day. W4.21 is well-bounded — schema + admin CRUD + consumer refactor + tests, single PR. Component header comment already scoped this exact PR. Skipped W2.5 (PR-X5a investor accounts foundation) because it gates the rest of Wave 2 — better to ship as a focused multi-fire sequence
 - 2026-05-10 02:15 | W4.21 | country_code stored as lowercase IntentCountryCode | country_schemes uses uppercase ISO-2 (GB/US/IN). Picked lowercase here to match the existing iv_intent_country cookie value the consumer reads — no case-mapping at read time, simpler RLS-public reads, CHECK constraint covers the 12 known intent countries
+- 2026-05-12 00:15 | W1.1 | Picked W1.1 over W1.4/W3.19/W4.23 for this fire | W1.1 has been deferred 3 fires in a row as "too big for one cron"; verified the existing /concierge already has RAG against broker/advisor/fund/article data wired via search_embeddings_knn (the queue note "wire RAG to live data" was already satisfied). Remaining work was scoped to two surgical pieces — homepage entry + booking handoff CTA — which fit one fire cleanly. W1.4 still 4-5 days + Tier C; W3.19 multi-component, W4.23 Tier C — none fit one fire
+- 2026-05-12 00:15 | W1.1 | Homepage concierge entry sits BELOW HomeHero, not replacing it | "Move concierge to homepage hero" interpreted as "promote to above-the-fold homepage position", not "rip out the existing hero". The marketing hero has carefully-designed pokie-reel mechanics and a primary "Get matched" CTA — destroying it for a chat input would lose conversion paths that are already measurable. Concierge entry slots directly below as a dedicated section
+- 2026-05-12 00:15 | W1.1 | Free-text prompt forwarded via sessionStorage, not URL | URL `?seed=<text>` would expose an injection vector — the existing /concierge?finder=<key> route already validates against an allowlist for that exact reason. sessionStorage is same-origin, max 200 chars, single-read-and-clear so a refresh doesn't replay. Tracking events tag source=input vs source=chip so funnel attribution stays clean
+- 2026-05-12 00:15 | W1.1 | Dep-vuln CI check failure is unrelated chronic noise | The check flagged on #802 against an upstream advisory; my diff touches no package.json / lockfile. Same pattern flagged on recent audit-remediation iters as "CI-RESCUE CL dep-vuln" (iter 369). Per founder memory, chronic CI checks unrelated to the diff don't block merge — the audit-remediation loop owns upstream advisory triage
 
 ## Pause history
 
