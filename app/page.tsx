@@ -258,10 +258,6 @@ export default async function HomePage() {
         />
       </ScrollFadeIn>
 
-      <ScrollFadeIn>
-        <CountryToolsStripWrapper />
-      </ScrollFadeIn>
-
       <CountryPopularLinks />
 
       <ScrollFadeIn>
@@ -306,6 +302,10 @@ export default async function HomePage() {
 
       <ScrollFadeIn>
         <HomeHowWeEarn />
+      </ScrollFadeIn>
+
+      <ScrollFadeIn>
+        <CountryToolsStripWrapper />
       </ScrollFadeIn>
 
       <MobileBottomNav />
