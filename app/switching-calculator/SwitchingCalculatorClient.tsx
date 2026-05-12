@@ -10,6 +10,7 @@ import { getStoredUtm } from "@/components/UtmCapture";
 import type { Broker } from "@/lib/types";
 import { storeQualificationData } from "@/lib/qualification-store";
 import AdvisorMatchCTA from "@/components/AdvisorMatchCTA";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 function parseFee(feeStr: string | null | undefined): { flat: number; pct: number } {
   if (!feeStr) return { flat: 0, pct: 0 };
@@ -334,6 +335,15 @@ export default function SwitchingCalculatorClient({ brokers, inline }: { brokers
           </div>
         )}
 
+        {showResults && (
+          <CalculatorLeadCapture
+            calcSlug="switching-calculator"
+            calcTitle="broker switching"
+            need="wealth"
+            contextKeys={["broker-switching", "cost-optimisation"]}
+          />
+        )}
+
         {/* SEO content */}
         <div className="mt-8 md:mt-12 space-y-6 text-sm text-slate-600 leading-relaxed">
           {/* Contextual advisor prompt for large portfolios */}
@@ -353,7 +363,7 @@ export default function SwitchingCalculatorClient({ brokers, inline }: { brokers
           <p>Switching is easier than most people think. For CHESS-sponsored brokers, your HIN (Holder Identification Number) transfers directly — your shares stay in your name throughout. The process typically takes 3-5 business days. Read our <Link href="/switch" className="text-violet-600 hover:underline">complete switching guide</Link> for step-by-step instructions.</p>
           <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mt-4">
             <p className="text-sm font-bold text-amber-800 mb-1">Also check your savings rate</p>
-            <p className="text-xs text-amber-600">Most Australians earn 0.01% on their cash while top accounts offer 5%+. On $50k, that's $2,750/year difference.</p>
+            <p className="text-xs text-amber-600">Most Australians earn 0.01% on their cash while top accounts offer 5%+. On $50k, that&apos;s $2,750/year difference.</p>
             <Link href="/savings-calculator" className="inline-block mt-2 text-xs font-bold text-amber-700 hover:underline">Try the Savings Calculator →</Link>
           </div>
         </div>

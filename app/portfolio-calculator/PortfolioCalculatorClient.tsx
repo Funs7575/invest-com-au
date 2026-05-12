@@ -10,6 +10,7 @@ import LeadMagnet from "@/components/LeadMagnet";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
 import { storeQualificationData } from "@/lib/qualification-store";
 import AdvisorMatchCTA from "@/components/AdvisorMatchCTA";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 import { useCalculatorState } from "@/hooks/use-calculator-state";
 
 type Holding = {
@@ -378,6 +379,13 @@ export default function PortfolioCalculatorClient({ brokers, inline }: { brokers
                 description="A tax agent can help you maximise deductions on brokerage, platform fees, and investment-related expenses."
               />
             </div>
+
+            <CalculatorLeadCapture
+              calcSlug="portfolio-calculator"
+              calcTitle="portfolio"
+              need="wealth"
+              contextKeys={["portfolio-construction", "asset-allocation"]}
+            />
 
             <LeadMagnet />
           </>

@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { useCalculatorState } from "@/hooks/use-calculator-state";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 function fmt(n: number) {
   return new Intl.NumberFormat("en-AU", { style: "currency", currency: "AUD", maximumFractionDigits: 0 }).format(n);
@@ -331,6 +332,13 @@ export default function FireCalculatorClient() {
             </div>
           </div>
         </div>
+
+        <CalculatorLeadCapture
+          calcSlug="fire-calculator"
+          calcTitle="FIRE projection"
+          need="planning"
+          contextKeys={["fire", "early-retirement"]}
+        />
 
         <p className="text-[0.65rem] text-slate-400 mt-8 leading-relaxed">
           This calculator provides general information only and does not constitute financial advice. Returns are not guaranteed and the 4% withdrawal rate is based on US historical data and may not reflect Australian market conditions. Speak with a licensed financial adviser before making retirement planning decisions.
