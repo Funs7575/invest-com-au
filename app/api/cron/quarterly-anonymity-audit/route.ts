@@ -14,9 +14,8 @@ export const maxDuration = 60;
  * CL-10: Quarterly live-page anonymity audit (runs on first day of each
  * quarter via Vercel cron — see vercel.json). Fetches a representative
  * sample of public pages and scans their HTML for founder PII patterns
- * (`finn@invest.com.au`, `finnduns@gmail.com`, `Finn Webster`). If any
- * match is found the digest is emailed to OPS_ALERT_EMAIL so it can be
- * resolved before the next quarter.
+ * (see PII_PATTERNS below). If any match is found the digest is emailed
+ * to OPS_ALERT_EMAIL so it can be resolved before the next quarter.
  *
  * This is the runtime complement to the CI-gate (CL-09) that scans
  * source at PR time. It catches PII that could enter through DB content,

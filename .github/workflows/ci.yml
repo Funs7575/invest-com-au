@@ -214,6 +214,7 @@ jobs:
               --include="*.ts" --include="*.tsx" --include="*.js" \
               --exclude="*.test.ts" --exclude="*.test.tsx" \
               --exclude="*.spec.ts" --exclude="*.spec.tsx" \
+              --exclude-dir="quarterly-anonymity-audit" \
               lib app components proxy.ts 2>/dev/null || true)
             if [ -n "$MATCHES" ]; then
               echo "❌ Found '$PATTERN' in source (not a test/doc file):"
