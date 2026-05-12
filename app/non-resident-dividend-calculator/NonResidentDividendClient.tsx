@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import { useCalculatorState } from "@/hooks/use-calculator-state";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 /**
  * Non-resident Australian dividend calculator
@@ -283,6 +284,15 @@ export default function NonResidentDividendClient() {
                 </tbody>
               </table>
             </div>
+          </div>
+
+          <div className="mt-6">
+            <CalculatorLeadCapture
+              calcSlug="non-resident-dividend-calculator"
+              calcTitle="non-resident dividend"
+              need="tax"
+              contextKeys={["non-resident", "withholding-tax", "cross-border"]}
+            />
           </div>
         </div>
       </section>

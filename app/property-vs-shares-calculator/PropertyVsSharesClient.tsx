@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { useCalculatorState } from "@/hooks/use-calculator-state";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 const MORTGAGE_RATE = 0.065; // 6.5% assumption
 
@@ -435,6 +436,13 @@ export default function PropertyVsSharesClient() {
             </div>
           </div>
         </div>
+
+        <CalculatorLeadCapture
+          calcSlug="property-vs-shares-calculator"
+          calcTitle="property vs shares"
+          need="planning"
+          contextKeys={["asset-allocation", "property-vs-shares"]}
+        />
 
         <p className="text-[0.65rem] text-slate-400 mt-8 leading-relaxed">
           This calculator provides general information only and does not constitute financial or property investment advice. Assumes a {(MORTGAGE_RATE * 100).toFixed(1)}% interest rate on a 30-year principal and interest loan. Property figures do not include stamp duty, conveyancing, property management fees or depreciation. Returns are not guaranteed. Always obtain independent advice before making investment decisions.
