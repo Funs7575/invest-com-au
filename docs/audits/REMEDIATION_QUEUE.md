@@ -48,7 +48,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
 | Z | `claude/audit-remediation/z-04-zero-state-ux` | #230/#323/#403/#457/#524/#565 | Z-01..Z-04 done. | Z-04 merged ✓ |
 | QQ | `claude/audit-remediation/qq-01-public-qa-surface` | **#800 OPEN** (QQ-01..QQ-07) | QQ-01 done (`281a83a`): capability audit doc. QQ-02 done (`596676b`): `"qa_capture"` route in ai-cost-caps. QQ-03 done (`d52119c`): `lib/qa-chatbot.ts` — `generateAnswer()` with QA-specific system prompt, retrieval, provider call, cost tracking. dep-vuln CI rescue done (`8fa60df`): next 16.2.4→16.2.6. QQ-04 done (`ae0eaa3`): `components/QuestionCaptureForm.tsx` + 8-test suite. QQ-07 done (`1ca09b2`): `lib/qa-ctas.ts` — per-category CTA mapping (18 categories; fallback to /find-advisor; RSC-safe). QQ-05 pending (needs qa_questions/qa_answers schema migration first). QQ-08 compliance gate blocks public exposure. QQ-06/QQ-09/QQ-10 pending. Last CI: pending — pushed 2026-05-12 (`1ca09b2`). | All QQ tasks merged |
-| MM | `claude/audit-remediation/mm-01-marketplace-coverage-audit` · `claude/audit-remediation/mm-v01b-digital-infra-listings` | **#801 OPEN** (MM-AUDIT) · **#803 OPEN** (MM-V01b+V01c+V02+V03+V04+dep-vuln-rescue) | MM-V01 already on main (f024bc2). MM-AUDIT done (#801). MM-V01b done (#803 `369cbef`): /invest/digital-infrastructure/listings/. MM-V01c done (#803 `8512381`): /invest/funds/listings/ (P0 gap #2). dep-vuln CI rescue done (#803 `d240e3d`): next 16.2.4→16.2.6. MM-V02 done (#803 `ca9aa96`): /invest/public-social-infrastructure/listings/ page + type + URL mapping + sitemap. MM-V03 done (#803 `62aceac`): /invest/carbon-environmental-markets/listings/ page + type + URL mapping + sitemap. MM-V04 done (#803 `512055c`): /invest/royalties/listings/ page + 'royalties' type + listing-url + sitemap. MM-V05 false-positive — `app/invest/alternatives/listings/` already exists on main; resolved in FP table below. Next: MM-V07 (aquaculture & marine). Last CI: success (Vercel) — `512055c`. | All MM phases merged |
+| MM | `claude/audit-remediation/mm-01-marketplace-coverage-audit` · `claude/audit-remediation/mm-v01b-digital-infra-listings` | **#801 OPEN** (MM-AUDIT) · **#803 OPEN** (MM-V01b+V01c+V02+V03+V04+V07+dep-vuln-rescue) | MM-V01 already on main (f024bc2). MM-AUDIT done (#801). MM-V01b done (#803 `369cbef`): /invest/digital-infrastructure/listings/. MM-V01c done (#803 `8512381`): /invest/funds/listings/ (P0 gap #2). dep-vuln CI rescue done (#803 `d240e3d`): next 16.2.4→16.2.6. MM-V02 done (#803 `ca9aa96`): /invest/public-social-infrastructure/listings/ page + type + URL mapping + sitemap. MM-V03 done (#803 `62aceac`): /invest/carbon-environmental-markets/listings/ page + type + URL mapping + sitemap. MM-V04 done (#803 `512055c`): /invest/royalties/listings/ page + 'royalties' type + listing-url + sitemap. MM-V05 false-positive — alternatives/listings already on main. MM-V07 done (#803 `42eb238`): /invest/aquaculture/listings/ page + 'aquaculture' type + listing-url + sitemap. Next: MM-V06 (wholesale-only alternatives) or MM-V08 (livestock & equine). Last CI: pending — pushed 2026-05-12 (`42eb238`). | All MM phases merged |
 | TT | `claude/audit-remediation/tt-04-ga4-removal` | **#764 MERGED** (TT-01) · **#772 MERGED** (TT-02) · **#779 MERGED** (TT-03) · **#799 OPEN** (TT-04) | TT-01..TT-03 MERGED. TT-04: **#799 OPEN** (iter 373 `e8453d0`; GA4 removed from layout; Plausible sole analytics; connect-src tightened). Last CI: in_progress. | TT-04 merged |
 | CMP | `claude/audit-remediation/cmp-w1a-int-calculator-autosave` | **#782 OPEN** | CMP-W1A-INT complete. Last CI: pending. | All CMP tasks merged |
 | SP | (none yet) | (none yet) | **BLOCKED — waiting on MM-V09 completion.** | All SP tasks merged + compliance signoff |
@@ -85,6 +85,17 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 
 ## Iteration log (most recent first)
 
+### iter 389 — 2026-05-12 — MM-V07
+
+- **Stream:** MM (marketplace expansion)
+- **Item:** MM-V07 — aquaculture & marine listings discovery page
+- **Branch:** `claude/audit-remediation/mm-v01b-digital-infra-listings`
+- **PR:** #803 OPEN
+- **Commit:** `42eb238`
+- **Diff:** +59 -0 across 4 files (new page + `'aquaculture'` type union member + listing-url entry + 2 sitemap rows)
+- **What:** Created `/invest/aquaculture/listings/page.tsx` following the established vertical listings pattern (ISR 300s, `generateMetadata` with live count, breadcrumb JSON-LD, `InvestListingsClient` locked to the new vertical). Added `'aquaculture'` to `InvestListingVertical` union in `lib/types.ts` (alphabetically first — `Record<InvestListingVertical, string>` is exhaustive so omitting would be a TS compile error). Added `aquaculture: "aquaculture"` to `VERTICAL_TO_CATEGORY` in `lib/listing-url.ts`. Registered `/invest/aquaculture` and `/invest/aquaculture/listings` in `app/sitemap.ts`. Sub-categories per MM-V07 plan: salmon farming, oyster leases, abalone, prawn, mussel cultivation, land-based RAS, seaweed/kelp farming, fishing licences/quota. Note: MM-V06 (wholesale-only alternatives) queued for next batch.
+- **STATUS: PROGRESS · stream=MM · item=MM-V07 · pr=#803**
+
 ### iter 388 — 2026-05-12 — QQ-07
 
 - **Stream:** QQ (public AI Q&A capture surface)
@@ -93,7 +104,7 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 - **PR:** #800 OPEN
 - **Commit:** `1ca09b2`
 - **Diff:** +117 -0 (1 new file)
-- **What:** Created `lib/qa-ctas.ts` — single source of truth for per-category CTA destinations on the public Q&A surface. Maps all 9 PlatformType-based categories (share_broker, crypto_exchange, robo_advisor, research_tool, super_fund, property_platform, cfd_forex, savings_account, term_deposit), fx_provider, 2 composite topic categories (managed_funds, property), 4 cross-border specialties (cross_border:uk/us/firb/nz), and advisor/general. 18 categories total. Fallback `DEFAULT_CTA` → /find-advisor for unmapped/empty input. Pure data module — no client-side imports, safe in RSC contexts. `trackEvent` deliberately excluded; callers fire it from client components. Also resolved MM-V05 as false-positive (alternatives/listings page already on main).
+- **What:** Created `lib/qa-ctas.ts` — single source of truth for per-category CTA destinations on the public Q&A surface. Maps all 9 PlatformType-based categories, fx_provider, 2 composite topic categories, 4 cross-border specialties (cross_border:uk/us/firb/nz), and advisor/general. 18 categories total. Fallback `DEFAULT_CTA` → /find-advisor for unmapped/empty input. Pure data module — no client-side imports, safe in RSC contexts. Also resolved MM-V05 as false-positive.
 - **STATUS: PROGRESS · stream=QQ · item=QQ-07 · pr=#800**
 
 ### iter 387 — 2026-05-12 — QQ-04
@@ -104,7 +115,7 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 - **PR:** #800 OPEN
 - **Commit:** `ae0eaa3`
 - **Diff:** +418 -0 across 2 files (new component + new test file)
-- **What:** Built `QuestionCaptureForm` — "use client" component with textarea (10–500 chars), optional email (RFC5322-shaped), category select pre-filled from props. POSTs to `/api/answers/ask` (QQ-05). Surfaces pending-moderation state on success, client-side validation errors for too-short/too-long/malformed-email, rate-limit 429 error, and network error. 8-test suite covers render, prop pre-fill, validation (short, long, bad email), happy-path submit + payload shape, 429, and network failure. Component embeds on `/best/[slug]` (category=slug), `/find-advisor` (category=advisor), and homepage Q&A strip.
+- **What:** Built `QuestionCaptureForm` — "use client" component with textarea (10–500 chars), optional email (RFC5322-shaped), category select pre-filled from props. POSTs to `/api/answers/ask` (QQ-05). Surfaces pending-moderation state on success, client-side validation errors for too-short/too-long/malformed-email, rate-limit 429 error, and network error. 8-test suite covers render, prop pre-fill, validation, happy-path submit, 429, and network failure.
 - **STATUS: PROGRESS · stream=QQ · item=QQ-04 · pr=#800**
 
 ### iter 386 — 2026-05-12 — MM-V04
@@ -115,7 +126,6 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 - **PR:** #803 OPEN
 - **Commit:** `512055c`
 - **Diff:** +59 -0 across 4 files (new page + `'royalties'` type union member + listing-url entry + sitemap row)
-- **What:** Created `/invest/royalties/listings/page.tsx` using the established vertical listings pattern (ISR 300s, `generateMetadata` with live count, breadcrumb JSON-LD, `InvestListingsClient` locked to the new vertical). Added `'royalties'` to `InvestListingVertical` union in `lib/types.ts` — the `Record<InvestListingVertical, string>` in `listing-url.ts` is exhaustive, so omitting it would be a TS compile error. Added `royalties: "royalties"` to `VERTICAL_TO_CATEGORY`. Registered `/invest/royalties/listings` in `app/sitemap.ts`. Content page `/invest/royalties` (482 LOC) pre-existed; this iteration adds the discovery/listings page that was missing.
 - **STATUS: PROGRESS · stream=MM · item=MM-V04 · pr=#803**
 
 ### iter 385 — 2026-05-12 — MM-V03
@@ -126,7 +136,6 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 - **PR:** #803 OPEN
 - **Commit:** `62aceac`
 - **Diff:** +66 -1 across 4 files (new page + type + listing-url + sitemap)
-- **What:** Created `/invest/carbon-environmental-markets/listings/page.tsx` following the established vertical listings pattern (ISR 300s, generateMetadata with live count, breadcrumb JSON-LD, InvestListingsClient locked to the new vertical). Added `'carbon-environmental-markets'` to `InvestListingVertical` union in `lib/types.ts` — Record<InvestListingVertical, string> in listing-url.ts requires exhaustive coverage so omitting would be a TS compile error. Added `"carbon-environmental-markets": "carbon-environmental-markets"` to VERTICAL_TO_CATEGORY in `lib/listing-url.ts`. Registered `/invest/carbon-environmental-markets` and `/invest/carbon-environmental-markets/listings` in `app/sitemap.ts`. Compliance TODO embedded in page.tsx: ACCUs are financial products under the Corporations Act 2001 and may trigger MIS licensing requirements — gate to wholesale investors or present as lead-gen until legal sign-off (see MM-marketplace-expansion-plan.md § MM-V03).
 - **STATUS: PROGRESS · stream=MM · item=MM-V03 · pr=#803**
 
 ### iter 384 — 2026-05-12 — CI-RESCUE QQ (#800)
@@ -136,9 +145,6 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 - **Branch:** `claude/audit-remediation/qq-01-public-qa-surface`
 - **PR:** #800 OPEN
 - **Commit:** `8fa60df`
-- **Diff:** +41 -41 (package.json + package-lock.json)
-- **Root cause:** QQ branch was cut from main before MAIN-RESCUE #793 and the MM dep-vuln rescue (iter 381). Both fixed the same 13 CVEs by bumping next 16.2.4→16.2.6, but neither was merged to main yet, so the QQ branch inherited 16.2.4 when it was cut.
-- **Fix:** Applied the same next 16.2.4→16.2.6 bump directly to the QQ branch.
 - **STATUS: CI-RESCUE · stream=QQ · pr=#800**
 
 ### iter 383 — 2026-05-12 — CI-RESCUE CL (#795)
@@ -148,9 +154,6 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 - **Branch:** `claude/audit-remediation/cl-01-about-entity-only`
 - **PR:** #795 OPEN
 - **Commit:** `aacdcf8`
-- **Diff:** +6 -1 (lib/compliance.ts)
-- **Root cause:** Empty re-trigger commit `655e9b9b` (iter 381) did not trigger a new Vercel preview deployment — Vercel skips deploys when no files change. The smoke test job polls GitHub deployments by head SHA; finding none for `655e9b9b`, it timed out at 6 min.
-- **Fix:** Extracted `CORRECTIONS_EMAIL`, `OPS_EMAIL`, `PRESS_EMAIL` as named exports from `lib/compliance.ts` — legitimate improvement that triggers Vercel to build a fresh preview.
 - **STATUS: CI-RESCUE · stream=CL · pr=#795**
 
 ### iter 382 — 2026-05-12 — MM-V02
@@ -160,7 +163,6 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 - **Branch:** `claude/audit-remediation/mm-v01b-digital-infra-listings`
 - **PR:** #803 OPEN
 - **Commit:** `ca9aa96`
-- **Diff:** +60 -0 across 4 files (new page + type + listing-url + sitemap)
 - **STATUS: PROGRESS · stream=MM · item=MM-V02 · pr=#803**
 
 ### iter 381 — 2026-05-12 — QQ-03
@@ -202,7 +204,6 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ### iter 377 — 2026-05-12 — CI-RESCUE CL (#795)
 
 - **Stream:** CL (anonymity infrastructure — Tier-0 preempt)
-- **Item:** CI rescue — test mocks + anonymity gate + cron-groups regex
 - **Commit:** `44d9a74`
 - **STATUS: CI-RESCUE · stream=CL · pr=#795**
 
