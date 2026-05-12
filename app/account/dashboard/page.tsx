@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import { enforcePortalKind } from "@/lib/portal-gate";
-import { getInvestorProfile } from "@/lib/investor-profiles";
+import { getInvestorProfile, type InvestorProfile } from "@/lib/investor-profiles";
 
 export const dynamic = "force-dynamic";
 
@@ -58,6 +59,74 @@ function profileCompleteness(profile: UserProfile | null): number {
     !!(profile.interested_in && profile.interested_in.length > 0),
   ];
   return Math.round((checks.filter(Boolean).length / checks.length) * 100);
+}
+
+type AdvisorMatch = {
+  id: number;
+  slug: string;
+  name: string;
+  type: string;
+  firm_name: string | null;
+  location_display: string | null;
+  photo_url: string | null;
+  rating: number | null;
+  review_count: number | null;
+  verified: boolean | null;
+};
+
+const BUDGET_MAX: Record<string, number | null> = {
+  small: 500_000,
+  medium: 5_000_000,
+  large: 10_000_000,
+  whale: null,
+};
+
+async function fetchMatchedAdvisors(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  profile: InvestorProfile | null,
+): Promise<{ advisors: AdvisorMatch[]; matchBasis: string }> {
+  let typeFilter: string | null = null;
+  let specialtyFilter: string | null = null;
+  let internationalFilter: boolean | null = null;
+  let matchBasis = "Top-rated advisors";
+
+  if (profile?.isFhb) {
+    typeFilter = "mortgage_broker";
+    matchBasis = "First home buyer specialists";
+  } else if (profile?.isPreRetiree) {
+    specialtyFilter = "retirement_planning";
+    matchBasis = "Retirement planning specialists";
+  } else if (profile?.isHnw) {
+    specialtyFilter = "investment_advice";
+    matchBasis = "Wealth management specialists";
+  } else if (profile?.isBusinessOwner) {
+    specialtyFilter = "business_advisory";
+    matchBasis = "Business advisory specialists";
+  } else if (profile?.isCrossBorder) {
+    internationalFilter = true;
+    matchBasis = "International investor specialists";
+  }
+
+  const budgetMax =
+    profile?.budgetBand ? (BUDGET_MAX[profile.budgetBand] ?? null) : null;
+
+  let query = supabase
+    .from("professionals")
+    .select("id, slug, name, type, firm_name, location_display, photo_url, rating, review_count, verified")
+    .eq("status", "active")
+    .eq("accepts_new_clients", true)
+    .order("rating", { ascending: false, nullsFirst: false })
+    .limit(3);
+
+  if (typeFilter) query = query.eq("type", typeFilter);
+  if (specialtyFilter) query = query.contains("specialties", [specialtyFilter]);
+  if (internationalFilter) query = query.eq("accepts_international", true);
+  if (budgetMax !== null) {
+    query = query.or(`min_investment_cents.is.null,min_investment_cents.lte.${budgetMax}`);
+  }
+
+  const { data } = await query;
+  return { advisors: (data ?? []) as AdvisorMatch[], matchBasis };
 }
 
 type SnapshotCardProps = {
@@ -128,6 +197,10 @@ export default async function PersonalDashboardPage() {
   const holdingsCount = holdingsRes.count ?? 0;
   const watchlistCount = watchlistRes.count ?? 0;
   const completeness = profileCompleteness(profile);
+
+  // LL-02: fetch profile-matched advisors after profile is resolved
+  const { advisors: matchedAdvisors, matchBasis: advisorMatchBasis } =
+    await fetchMatchedAdvisors(supabase, investorProfile);
 
   const displayName = profile?.display_name ?? investorProfile?.displayName ?? null;
   const firstName = displayName?.split(" ")[0] ?? null;
@@ -272,6 +345,67 @@ export default async function PersonalDashboardPage() {
           ))}
         </div>
       </section>
+
+      {/* Profile-matched advisors (LL-02) */}
+      {matchedAdvisors.length > 0 && (
+        <section aria-labelledby="advisors-heading" className="mb-8">
+          <div className="flex items-center justify-between mb-3">
+            <h2 id="advisors-heading" className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              {advisorMatchBasis}
+            </h2>
+            <Link href="/find-advisor" className="text-xs text-violet-600 font-semibold hover:underline">
+              See all →
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {matchedAdvisors.map((adv) => (
+              <Link
+                key={adv.id}
+                href={`/advisor/${adv.slug}`}
+                className="flex items-start gap-3 p-3 bg-white border border-slate-200 rounded-xl hover:border-violet-300 hover:shadow-sm transition-all group"
+              >
+                <div className="relative w-10 h-10 shrink-0">
+                  {adv.photo_url ? (
+                    <Image
+                      src={adv.photo_url}
+                      alt={adv.name}
+                      fill
+                      className="rounded-full object-cover"
+                      sizes="40px"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-700 text-sm font-bold">
+                      {adv.name.charAt(0)}
+                    </div>
+                  )}
+                </div>
+                <div className="min-w-0">
+                  <div className="text-sm font-semibold text-slate-900 truncate group-hover:text-violet-700 transition-colors">
+                    {adv.name}
+                  </div>
+                  {adv.firm_name && (
+                    <div className="text-xs text-slate-500 truncate">{adv.firm_name}</div>
+                  )}
+                  {adv.location_display && (
+                    <div className="text-xs text-slate-400 truncate mt-0.5">{adv.location_display}</div>
+                  )}
+                  {adv.rating !== null && (
+                    <div className="flex items-center gap-1 mt-1">
+                      <svg className="w-3 h-3 text-amber-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                      <span className="text-xs font-semibold text-slate-700">{adv.rating.toFixed(1)}</span>
+                      {adv.review_count !== null && (
+                        <span className="text-xs text-slate-400">({adv.review_count})</span>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Navigation grid */}
       <section aria-labelledby="nav-heading">
