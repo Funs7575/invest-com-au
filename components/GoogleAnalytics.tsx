@@ -1,3 +1,5 @@
+// TT-04: removed from app/layout.tsx. Component kept for reference / re-enable.
+// Plausible Analytics (PlausibleAnalytics.tsx) is now the sole page analytics.
 "use client";
 
 import Script from "next/script";
