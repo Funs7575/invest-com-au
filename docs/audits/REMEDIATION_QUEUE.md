@@ -53,7 +53,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | CMP | `claude/audit-remediation/cmp-w1a-int-calculator-autosave` | **#782 OPEN** | CMP-W1A-INT complete. Last CI: pending. | All CMP tasks merged |
 | SP | (none yet) | (none yet) | **BLOCKED — waiting on MM-V09 completion.** | All SP tasks merged + compliance signoff |
 | MAIN-RESCUE | `fix/main-rescue-next-security-patch` | **#793 OPEN** | next 16.2.4→16.2.6 patch. | Merged to main |
-| CL | `claude/audit-remediation/cl-01-about-entity-only` | **#795 OPEN** (CL-01..CL-04 + CL-06 + CL-09 + CL-10) | CL-01..CL-04, CL-06, CL-09, CL-10 done. CL-07+CL-08 false-positive. CL-05 blocked (WHOIS registrar action). CI rescue iter 374: fixed logger arg order + origin ternary (`306f995`), rebased on main. Last CI: pending — pushed 2026-05-11. | All CL tasks merged |
+| CL | `claude/audit-remediation/cl-01-about-entity-only` | **#795 OPEN** (CL-01..CL-04 + CL-06 + CL-09 + CL-10) | CL-01..CL-04, CL-06, CL-09, CL-10 done. CL-07+CL-08 false-positive. CL-05 blocked (WHOIS registrar action). CI rescue iter 377: fixed test mocks (admin email fallbacks changed by CL) + anonymity gate (exclude quarterly-audit dir) + cron-groups regex (`44d9a74`). Last CI: pending — pushed 2026-05-12. | All CL tasks merged |
 
 ---
 
@@ -83,6 +83,17 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 377 — 2026-05-12 — CI-RESCUE CL (#795)
+
+- **Stream:** CL (anonymity infrastructure — Tier-0 preempt)
+- **Item:** CI rescue — test mocks + anonymity gate + cron-groups regex
+- **Branch:** `claude/audit-remediation/cl-01-about-entity-only`
+- **PR:** #795 OPEN
+- **Commit:** `44d9a74`
+- **Diff:** +8 -11 across 5 files
+- **What:** Three test files broke after CL stream changed admin email defaults: (1) admin.test.ts expected old `["admin@invest.com.au", "finn@invest.com.au"]` fallback and `["finn@invest.com.au"]` for getFinObjectionEmails — updated to match new entity-level defaults. (2) admin-country-rule-alerts.test.ts had adminLoggedIn() using finn@ which is no longer in the allow-list — switched to admin@invest.com.au. (3) cron-groups.test.ts regex didn't include `quarterly-*` cadence shape. Also: anonymity gate failed because the cron route contains the PII patterns it scans for — added `--exclude-dir=quarterly-anonymity-audit` to ci.yml; cleaned JSDoc in route.ts.
+- **STATUS: CI-RESCUE · stream=CL · pr=#795**
 
 ### iter 376 — 2026-05-12 — MM-AUDIT
 
