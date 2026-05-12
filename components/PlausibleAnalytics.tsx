@@ -10,7 +10,7 @@ const PLAUSIBLE_DOMAIN = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN;
  * data-domain attribute tells Plausible which site to attribute traffic to.
  *
  * No consent gate needed (see TT-03 migration notes in REMEDIATION_QUEUE.md).
- * GA4 removal (GoogleAnalytics.tsx + NEXT_PUBLIC_GA_ID) is deferred to TT-03 iter 2.
+ * GA4 (GoogleAnalytics.tsx) was removed in TT-04 — Plausible is now the sole page analytics.
  */
 export default function PlausibleAnalytics() {
   if (!PLAUSIBLE_DOMAIN) return null;
