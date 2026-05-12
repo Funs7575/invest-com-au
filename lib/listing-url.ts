@@ -7,6 +7,7 @@ import type { InvestmentListing, InvestListingVertical } from "@/lib/types";
 export const VERTICAL_TO_CATEGORY: Record<InvestListingVertical, string> = {
   business: "buy-business",
   commercial_property: "commercial-property",
+  "digital-infrastructure": "digital-infrastructure",
   energy: "renewable-energy",
   farmland: "farmland",
   franchise: "franchise",
