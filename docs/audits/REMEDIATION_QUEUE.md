@@ -54,7 +54,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | SP | (none yet) | (none yet) | **BLOCKED — waiting on MM-V09 completion.** | All SP tasks merged + compliance signoff |
 | MAIN-RESCUE | `fix/main-rescue-next-security-patch` | **#793 OPEN** | next 16.2.4→16.2.6 patch. | Merged to main |
 | CL | `claude/audit-remediation/cl-01-about-entity-only` | **#795 OPEN** (CL-01..CL-04 + CL-06 + CL-09 + CL-10) | CL-01..CL-04, CL-06, CL-09, CL-10 done. CL-07+CL-08 false-positive. CL-05 blocked (WHOIS registrar action). CI rescue iter 383: centralised entity emails in compliance.ts (`aacdcf8`) — triggers Vercel redeployment so smoke test can find preview URL. Last CI: success (Vercel) — `aacdcf8`. | All CL tasks merged |
-| LL | `claude/audit-remediation/ll-01-personal-dashboard` | **#807 OPEN** (LL-01) | LL-01 done (`8008bf1`): `/account/dashboard` RSC — welcome header, 3-card financial snapshot (goals/holdings/watchlist), nearest-goal progress bar, profile completeness nudge, personalised action links (investor_profile flags), 10-card nav grid. Unblocks 15+ downstream items. LL-02 pending (profile-driven advisor matching v2). Last CI: pending — pushed 2026-05-12 (`8008bf1`). | All LL tasks merged |
+| LL | `claude/audit-remediation/ll-01-personal-dashboard` | **#807 OPEN** (LL-01..LL-02) | LL-01 done (`8008bf1`): `/account/dashboard` RSC — welcome header, 3-card financial snapshot (goals/holdings/watchlist), nearest-goal progress bar, profile completeness nudge, personalised action links (investor_profile flags), 10-card nav grid. LL-02 done (`b9d0631`): profile-driven advisor matching — `app/api/account/advisor-matches/route.ts` (GET, auth-gated, top-6 advisors by profile flags + budget band); `fetchMatchedAdvisors()` in dashboard shows top 3 as advisor cards; priority chain: isFhb→mortgage_broker / isPreRetiree→retirement_planning specialty / isHnw→investment_advice specialty / isBusinessOwner→business_advisory specialty / isCrossBorder→accepts_international. LL-03 pending (watchlist + email digests — deps LL-01 ✓). Last CI: pending — pushed 2026-05-12 (`b9d0631`). | All LL tasks merged |
 
 ---
 
@@ -85,6 +85,17 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 392 — 2026-05-12 — LL-02
+
+- **Stream:** LL (logged-in user infrastructure)
+- **Item:** LL-02 — profile-driven advisor matching v2
+- **Branch:** `claude/audit-remediation/ll-01-personal-dashboard`
+- **PR:** #807 OPEN
+- **Commit:** `b9d0631`
+- **Diff:** +285 -1 across 2 files
+- **What:** Created `app/api/account/advisor-matches/route.ts` — authenticated GET route returning top-6 advisors matched to the logged-in user's investor profile. Auth via `createClient()`, profile flags via `getInvestorProfile()`. Priority chain: `isFhb`→`mortgage_broker` | `isPreRetiree`→`retirement_planning` specialty (`.contains`) | `isHnw`→`investment_advice` specialty | `isBusinessOwner`→`business_advisory` specialty | `isCrossBorder`→`accepts_international=true` | else top-rated. Budget filter: `.or("min_investment_cents.is.null,min_investment_cents.lte.${budgetMax}")`. Returns `AdvisorMatchesResponse { advisors, match_basis }` with exported types for future callers. Also extended `app/account/dashboard/page.tsx`: added `fetchMatchedAdvisors()` RSC helper (same logic, limit 3), `AdvisorMatch` type, `BUDGET_MAX` constant, advisor grid section below recommended-for-you (shows photo via `next/image`, name, firm, location, star rating; hidden when no results). Unblocks: LX-02, LX-04, GT-01/02, DF-01..04, AT-01..04, CD-01, DV-01 — all now have both LL-01 and LL-02 landed.
+- **STATUS: PROGRESS · stream=LL · item=LL-02 · pr=#807**
 
 ### iter 391 — 2026-05-12 — LL-01 [Tier-1 preempt]
 
