@@ -48,7 +48,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
 | Z | `claude/audit-remediation/z-04-zero-state-ux` | #230/#323/#403/#457/#524/#565 | Z-01..Z-04 done. | Z-04 merged ✓ |
 | QQ | `claude/audit-remediation/qq-01-public-qa-surface` | **#800 OPEN** (QQ-01..QQ-03) | QQ-01 done (`281a83a`): capability audit doc. QQ-02 done (`596676b`): `"qa_capture"` route in ai-cost-caps. QQ-03 done (`d52119c`): `lib/qa-chatbot.ts` — `generateAnswer()` with QA-specific system prompt, retrieval, provider call, cost tracking. dep-vuln CI rescue done (`8fa60df`): next 16.2.4→16.2.6. QQ-04..QQ-10 pending. QQ-08 compliance gate blocks public-route exposure. Last CI: pending — pushed 2026-05-12 (`8fa60df`). | All QQ tasks merged |
-| MM | `claude/audit-remediation/mm-01-marketplace-coverage-audit` · `claude/audit-remediation/mm-v01b-digital-infra-listings` | **#801 OPEN** (MM-AUDIT) · **#803 OPEN** (MM-V01b+V01c+V02+dep-vuln-rescue) | MM-V01 already on main (f024bc2). MM-AUDIT done (#801). MM-V01b done (#803 `369cbef`): /invest/digital-infrastructure/listings/. MM-V01c done (#803 `8512381`): /invest/funds/listings/ (P0 gap #2). dep-vuln CI rescue done (#803 `d240e3d`): next 16.2.4→16.2.6. MM-V02 done (#803 `ca9aa96`): /invest/public-social-infrastructure/listings/ page + type + URL mapping + sitemap. Next: MM-V03 (carbon & environmental markets). Last CI: pending — pushed 2026-05-12 (`ca9aa96`). | All MM phases merged |
+| MM | `claude/audit-remediation/mm-01-marketplace-coverage-audit` · `claude/audit-remediation/mm-v01b-digital-infra-listings` | **#801 OPEN** (MM-AUDIT) · **#803 OPEN** (MM-V01b+V01c+V02+V03+dep-vuln-rescue) | MM-V01 already on main (f024bc2). MM-AUDIT done (#801). MM-V01b done (#803 `369cbef`): /invest/digital-infrastructure/listings/. MM-V01c done (#803 `8512381`): /invest/funds/listings/ (P0 gap #2). dep-vuln CI rescue done (#803 `d240e3d`): next 16.2.4→16.2.6. MM-V02 done (#803 `ca9aa96`): /invest/public-social-infrastructure/listings/ page + type + URL mapping + sitemap. MM-V03 done (#803 `62aceac`): /invest/carbon-environmental-markets/listings/ page + type + URL mapping + sitemap. Compliance TODO embedded in page: ACCUs may trigger MIS rules — gate to wholesale or treat as lead-gen until legal sign-off. Next: MM-V04 (royalties & IP). Last CI: pending — pushed 2026-05-12 (`62aceac`). | All MM phases merged |
 | TT | `claude/audit-remediation/tt-04-ga4-removal` | **#764 MERGED** (TT-01) · **#772 MERGED** (TT-02) · **#779 MERGED** (TT-03) · **#799 OPEN** (TT-04) | TT-01..TT-03 MERGED. TT-04: **#799 OPEN** (iter 373 `e8453d0`; GA4 removed from layout; Plausible sole analytics; connect-src tightened). Last CI: in_progress. | TT-04 merged |
 | CMP | `claude/audit-remediation/cmp-w1a-int-calculator-autosave` | **#782 OPEN** | CMP-W1A-INT complete. Last CI: pending. | All CMP tasks merged |
 | SP | (none yet) | (none yet) | **BLOCKED — waiting on MM-V09 completion.** | All SP tasks merged + compliance signoff |
@@ -84,6 +84,17 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 
 ## Iteration log (most recent first)
 
+### iter 385 — 2026-05-12 — MM-V03
+
+- **Stream:** MM (marketplace expansion)
+- **Item:** MM-V03 — carbon & environmental markets listings discovery page
+- **Branch:** `claude/audit-remediation/mm-v01b-digital-infra-listings`
+- **PR:** #803 OPEN
+- **Commit:** `62aceac`
+- **Diff:** +66 -1 across 4 files (new page + type + listing-url + sitemap)
+- **What:** Created `/invest/carbon-environmental-markets/listings/page.tsx` following the established vertical listings pattern (ISR 300s, generateMetadata with live count, breadcrumb JSON-LD, InvestListingsClient locked to the new vertical). Added `'carbon-environmental-markets'` to `InvestListingVertical` union in `lib/types.ts` — Record<InvestListingVertical, string> in listing-url.ts requires exhaustive coverage so omitting would be a TS compile error. Added `"carbon-environmental-markets": "carbon-environmental-markets"` to VERTICAL_TO_CATEGORY in `lib/listing-url.ts`. Registered `/invest/carbon-environmental-markets` and `/invest/carbon-environmental-markets/listings` in `app/sitemap.ts`. Compliance TODO embedded in page.tsx: ACCUs are financial products under the Corporations Act 2001 and may trigger MIS licensing requirements — gate to wholesale investors or present as lead-gen until legal sign-off (see MM-marketplace-expansion-plan.md § MM-V03).
+- **STATUS: PROGRESS · stream=MM · item=MM-V03 · pr=#803**
+
 ### iter 384 — 2026-05-12 — CI-RESCUE QQ (#800)
 
 - **Stream:** QQ (public AI Q&A capture surface)
@@ -93,7 +104,7 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 - **Commit:** `8fa60df`
 - **Diff:** +41 -41 (package.json + package-lock.json)
 - **Root cause:** QQ branch was cut from main before MAIN-RESCUE #793 and the MM dep-vuln rescue (iter 381). Both fixed the same 13 CVEs by bumping next 16.2.4→16.2.6, but neither was merged to main yet, so the QQ branch inherited 16.2.4 when it was cut.
-- **Fix:** Applied the same next 16.2.4→16.2.6 bump directly to the QQ branch. `npm install --prefer-offline` regenerated the lock (80-line diff, all @next/* hash updates).
+- **Fix:** Applied the same next 16.2.4→16.2.6 bump directly to the QQ branch.
 - **STATUS: CI-RESCUE · stream=QQ · pr=#800**
 
 ### iter 383 — 2026-05-12 — CI-RESCUE CL (#795)
@@ -104,8 +115,8 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 - **PR:** #795 OPEN
 - **Commit:** `aacdcf8`
 - **Diff:** +6 -1 (lib/compliance.ts)
-- **Root cause:** Empty re-trigger commit `655e9b9b` (iter 381) did not trigger a new Vercel preview deployment — Vercel skips deploys when no files change. The smoke test job polls GitHub deployments by head SHA; finding none for `655e9b9b`, it timed out at 6 min and failed with "No Vercel preview URL found". (The actual page code was correct — the `Lint·Type-check·Test·Build` gate was green.)
-- **Fix:** Pushed a real file-change commit: extracted `CORRECTIONS_EMAIL`, `OPS_EMAIL`, `PRESS_EMAIL` as named exports from `lib/compliance.ts` (the corrections address was hardcoded inline in `EDITORIAL_ACCURACY_COMMITMENT`). This legitimate improvement triggers Vercel to build a new preview, giving the smoke test a valid URL.
+- **Root cause:** Empty re-trigger commit `655e9b9b` (iter 381) did not trigger a new Vercel preview deployment — Vercel skips deploys when no files change. The smoke test job polls GitHub deployments by head SHA; finding none for `655e9b9b`, it timed out at 6 min.
+- **Fix:** Extracted `CORRECTIONS_EMAIL`, `OPS_EMAIL`, `PRESS_EMAIL` as named exports from `lib/compliance.ts` — legitimate improvement that triggers Vercel to build a fresh preview.
 - **STATUS: CI-RESCUE · stream=CL · pr=#795**
 
 ### iter 382 — 2026-05-12 — MM-V02
@@ -116,7 +127,6 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 - **PR:** #803 OPEN
 - **Commit:** `ca9aa96`
 - **Diff:** +60 -0 across 4 files (new page + type + listing-url + sitemap)
-- **What:** Created `/invest/public-social-infrastructure/listings/page.tsx` following the established listings-page pattern (ISR 300s, generateMetadata with live count, breadcrumb JSON-LD, InvestListingsClient locked to the new vertical). Added `'public-social-infrastructure'` to `InvestListingVertical` union in `lib/types.ts` — Record<InvestListingVertical, string> in listing-url.ts requires exhaustive coverage so omitting would be a TS compile error. Added `"public-social-infrastructure": "public-social-infrastructure"` to VERTICAL_TO_CATEGORY in `lib/listing-url.ts`. Registered `/invest/public-social-infrastructure` and `/invest/public-social-infrastructure/listings` in `app/sitemap.ts`.
 - **STATUS: PROGRESS · stream=MM · item=MM-V02 · pr=#803**
 
 ### iter 381 — 2026-05-12 — QQ-03
@@ -126,8 +136,6 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 - **Branch:** `claude/audit-remediation/qq-01-public-qa-surface`
 - **PR:** #800 OPEN
 - **Commit:** `d52119c`
-- **Diff:** +251 across 1 file (new lib)
-- **What:** Built `lib/qa-chatbot.ts` — the purpose-built wrapper for the public Q&A surface. Key decisions: (1) Reuses `classifyUserMessage()` from `lib/chatbot.ts` but suppresses the 2000-char `too_long` reason since QA accepts up to 4000 (Zod AskSchema at route layer). (2) Own `retrieveQaContext()` using admin client (search_embeddings is service-role-only). (3) Own `callQaProvider()` with stricter QA system prompt + mandatory AFSL disclaimer + `max_tokens: 1200` (vs concierge 700). (4) `computeCostMicros()` from ai-cost-caps for cost tracking. (5) Never throws — returns flagged/stub QaAnswer on any error. (6) Caller (QQ-05 route) remains responsible for preCheckCaps + db writes + recordUsage.
 - **STATUS: PROGRESS · stream=QQ · item=QQ-03 · pr=#800**
 
 ### iter 380 — 2026-05-12 — QQ-02
@@ -137,8 +145,6 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 - **Branch:** `claude/audit-remediation/qq-01-public-qa-surface`
 - **PR:** #800 OPEN
 - **Commit:** `596676b`
-- **Diff:** +17 -1 across 1 file
-- **What:** Added `"qa_capture"` to the `RouteConfig.route` union in `lib/ai-cost-caps.ts` and a new `loadQaCaptureConfig()` function with separate daily spend caps.
 - **STATUS: PROGRESS · stream=QQ · item=QQ-02 · pr=#800**
 
 ### iter 379 — 2026-05-12 — MM-V01c
@@ -163,45 +169,30 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 
 - **Stream:** CL (anonymity infrastructure — Tier-0 preempt)
 - **Item:** CI rescue — test mocks + anonymity gate + cron-groups regex
-- **Branch:** `claude/audit-remediation/cl-01-about-entity-only`
-- **PR:** #795 OPEN
 - **Commit:** `44d9a74`
-- **Diff:** +8 -11 across 5 files
 - **STATUS: CI-RESCUE · stream=CL · pr=#795**
 
 ### iter 376 — 2026-05-12 — MM-AUDIT
 
 - **Stream:** MM (marketplace expansion)
-- **Item:** MM-AUDIT — Phase 1 marketplace coverage audit (prerequisite doc)
-- **Branch:** `claude/audit-remediation/mm-01-marketplace-coverage-audit`
-- **PR:** #801 OPEN
 - **Commit:** `163aeaf`
 - **STATUS: PROGRESS · stream=MM · item=MM-AUDIT · pr=#801**
 
 ### iter 375 — 2026-05-11 — QQ-01
 
 - **Stream:** QQ (public AI Q&A capture surface)
-- **Item:** QQ-01 — capability audit & API surface spec
-- **Branch:** `claude/audit-remediation/qq-01-public-qa-surface`
-- **PR:** #800 OPEN
 - **Commit:** `281a83a`
 - **STATUS: PROGRESS · stream=QQ · item=QQ-01 · pr=#800**
 
 ### iter 374 — 2026-05-11 — CI-RESCUE CL (#795)
 
 - **Stream:** CL (anonymity infrastructure — Tier-0 preempt)
-- **Item:** CI rescue — quarterly-anonymity-audit route type errors
-- **Branch:** `claude/audit-remediation/cl-01-about-entity-only`
-- **PR:** #795 OPEN
 - **Commit:** `306f995`
 - **STATUS: CI-RESCUE · stream=CL · pr=#795**
 
 ### iter 373 — 2026-05-11 — TT-04
 
 - **Stream:** TT (privacy-analytics)
-- **Item:** TT-04 — GA4 removal; Plausible as sole page analytics
-- **Branch:** `claude/audit-remediation/tt-04-ga4-removal`
-- **PR:** #799 OPEN
 - **Commit:** `e8453d0`
 - **STATUS: PROGRESS · stream=TT · item=TT-04 · pr=#799**
 
@@ -213,43 +204,36 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 
 ### iter 371 — 2026-05-11 — CL-09
 
-- **Stream:** CL (anonymity infrastructure — Tier-0 preempt)
 - **Commit:** `af22343`
 - **STATUS: PROGRESS · stream=CL · item=CL-09 · pr=#795**
 
 ### iter 370 — 2026-05-11 — CL-06
 
-- **Stream:** CL (anonymity infrastructure — Tier-0 preempt)
 - **Commit:** `aa17850`
 - **STATUS: PROGRESS · stream=CL · item=CL-06 · pr=#795**
 
 ### iter 369 — 2026-05-11 — CL-03
 
-- **Stream:** CL (anonymity infrastructure — Tier-0 preempt)
 - **Commit:** `0aaf763`
 - **STATUS: PROGRESS · stream=CL · item=CL-03 · pr=#795**
 
 ### iter 368 — 2026-05-11 — CL-02
 
-- **Stream:** CL (anonymity infrastructure — Tier-0 preempt)
 - **Commit:** `64a46ca`
 - **STATUS: PROGRESS · stream=CL · item=CL-02 · pr=#795**
 
 ### iter 367 — 2026-05-11 — CL-04
 
-- **Stream:** CL (anonymity infrastructure — Tier-0 preempt)
 - **Commit:** `0d942b7`
 - **STATUS: PROGRESS · stream=CL · item=CL-04 · pr=#795**
 
 ### iter 366 — 2026-05-11 — CL-01
 
-- **Stream:** CL (anonymity infrastructure — Tier-0 preempt)
 - **Commit:** `549bfb1`
 - **STATUS: PROGRESS · stream=CL · item=CL-01 · pr=#795**
 
 ### iter 365 — 2026-05-11 — MAIN-RESCUE
 
-- **Stream:** MAIN-RESCUE
 - **Commit:** `41981c4`
 - **What:** next 16.2.4→16.2.6 (13 high CVEs).
 - **STATUS: MAIN-RESCUE · pr=#793**
