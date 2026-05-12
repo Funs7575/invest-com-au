@@ -119,7 +119,7 @@ jobs:
         # comment body through $GITHUB_OUTPUT. The heredoc approach
         # broke with 'Matching delimiter not found' when the markdown
         # content had patterns that collided with the shell delimiter.
-        uses: marocchino/sticky-pull-request-comment@v2
+        uses: marocchino/sticky-pull-request-comment@v3
         with:
           header: bundle-size
           path: /tmp/bundle-size/comment.md
