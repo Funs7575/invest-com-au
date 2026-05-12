@@ -10,7 +10,7 @@ import AdSlot from "@/components/AdSlot";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
 import LeadMagnet from "@/components/LeadMagnet";
 
-type FilterType = 'all' | 'shares' | 'beginner' | 'chess' | 'free' | 'us' | 'smsf' | 'low-fx' | 'crypto' | 'robo' | 'research' | 'super' | 'property' | 'cfd' | 'savings' | 'term-deposits' | 'has-deal';
+type FilterType = string;
 
 interface Props {
   sorted: Broker[];
@@ -84,13 +84,13 @@ export default function CompareFooter({ sorted, brokers, activeFilter }: Props) 
       {/* Contextual risk warnings based on active filter */}
       <div className="mt-2 text-[0.65rem] md:text-[0.72rem] text-slate-400 text-center leading-relaxed max-w-3xl mx-auto space-y-1.5">
         <p>{PDS_CONSIDERATION} {FSG_NOTE}</p>
-        {(activeFilter === 'cfd' || activeFilter === 'all') && (
+        {(activeFilter === 'cfd' || activeFilter === 'cfd-forex' || activeFilter === 'all') && (
           <p className="text-red-400/80">{CFD_WARNING_SHORT}</p>
         )}
-        {(activeFilter === 'crypto' || activeFilter === 'all') && (
+        {(activeFilter === 'crypto' || activeFilter === 'crypto-exchanges' || activeFilter === 'all') && (
           <p className="text-amber-500/80">{CRYPTO_WARNING}</p>
         )}
-        {(activeFilter === 'super' || activeFilter === 'all') && (
+        {(activeFilter === 'super' || activeFilter === 'super-funds' || activeFilter === 'all') && (
           <p>{SUPER_WARNING_SHORT}</p>
         )}
         <p>{AFCA_REFERENCE}</p>
@@ -105,10 +105,10 @@ export default function CompareFooter({ sorted, brokers, activeFilter }: Props) 
       />
 
       {/* Contextual advisor prompt — changes based on active filter */}
-      {(activeFilter === 'smsf' || activeFilter === 'property' || activeFilter === 'all') && (
+      {(activeFilter === 'smsf' || activeFilter === 'smsf-brokers' || activeFilter === 'property' || activeFilter === 'property-platforms' || activeFilter === 'all') && (
         <div className="mt-4 md:mt-6">
           <AdvisorPrompt
-            context={activeFilter === 'smsf' ? 'smsf' : activeFilter === 'property' ? 'property' : 'general'}
+            context={(activeFilter === 'smsf' || activeFilter === 'smsf-brokers') ? 'smsf' : (activeFilter === 'property' || activeFilter === 'property-platforms') ? 'property' : 'general'}
             compact={activeFilter === 'all'}
           />
         </div>
