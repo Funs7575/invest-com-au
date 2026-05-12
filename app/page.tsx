@@ -1,7 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
 import HomeHero from "@/components/HomeHero";
-import HomeConciergeEntry from "@/components/HomeConciergeEntry";
 import HomeRouteCards from "@/components/HomeRouteCards";
 import CountryToolsStripWrapper from "@/components/country-mode/CountryToolsStripWrapper";
 import HomePathfinder from "@/components/HomePathfinder";
@@ -245,7 +244,8 @@ export default async function HomePage() {
         advisorCount={totalProfessionalCount}
       />
 
-      <HomeConciergeEntry />
+      {/* Temporarily hidden for the next few months. Keep the component intact
+          so the homepage AI concierge entry can be restored without rebuilding it. */}
 
       <ScrollFadeIn>
         <HomeRouteCards
@@ -256,10 +256,6 @@ export default async function HomePage() {
           topListings={topListingsForCards}
           topAdvisors={topAdvisorsForCards}
         />
-      </ScrollFadeIn>
-
-      <ScrollFadeIn>
-        <CountryToolsStripWrapper />
       </ScrollFadeIn>
 
       <CountryPopularLinks />
@@ -306,6 +302,10 @@ export default async function HomePage() {
 
       <ScrollFadeIn>
         <HomeHowWeEarn />
+      </ScrollFadeIn>
+
+      <ScrollFadeIn>
+        <CountryToolsStripWrapper />
       </ScrollFadeIn>
 
       <MobileBottomNav />
