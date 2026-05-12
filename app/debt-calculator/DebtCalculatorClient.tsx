@@ -5,6 +5,7 @@ import Link from "next/link";
 import Icon from "@/components/Icon";
 import SocialProofCounter from "@/components/SocialProofCounter";
 import AdvisorMatchCTA from "@/components/AdvisorMatchCTA";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 import { trackEvent, trackPageDuration } from "@/lib/tracking";
 import { getStoredUtm } from "@/components/UtmCapture";
 import { storeQualificationData } from "@/lib/qualification-store";
@@ -576,6 +577,13 @@ export default function DebtCalculatorClient() {
                 description="A debt advisor can negotiate with creditors, restructure repayments, and create a plan to get you debt-free faster."
               />
             </div>
+
+            <CalculatorLeadCapture
+              calcSlug="debt-calculator"
+              calcTitle="debt consolidation"
+              need="planning"
+              contextKeys={["debt-payoff", "consolidation"]}
+            />
 
             {/* SEO content */}
             <div className="bg-white border border-slate-200 rounded-2xl p-5 md:p-8">

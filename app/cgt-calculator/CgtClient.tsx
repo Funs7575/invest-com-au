@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import CgtCalculator from "@/app/calculators/_components/CgtCalculator";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 export default function CgtClient() {
   const searchParams = useSearchParams();
@@ -41,6 +42,13 @@ export default function CgtClient() {
 
         <CgtCalculator searchParams={searchParams} />
 
+        <CalculatorLeadCapture
+          calcSlug="cgt-calculator"
+          calcTitle="CGT"
+          need="tax"
+          contextKeys={["cgt", "tax-planning"]}
+        />
+
         <div className="mt-8 md:mt-12 space-y-6">
           <div className="bg-white border border-slate-200 rounded-xl p-5 md:p-6">
             <h2 className="text-base md:text-lg font-bold text-slate-900 mb-3">How capital gains tax works in Australia</h2>
@@ -74,7 +82,7 @@ export default function CgtClient() {
               <p>
                 <strong className="text-slate-900">Common exemptions:</strong> Your main residence is generally CGT-exempt.
                 Personal use assets under $10,000 are exempt. Collectibles under $500 are exempt. Pre-CGT assets (acquired
-                before 20 September 1985) are exempt. Superannuation is taxed separately under its own rules. And losses can
+                before 20 September 1985) are exempt. Superannuation is taxed separately under its own rules. And losses can {/* // dated-ok — legal definition of pre-CGT assets, will never change */}
                 be carried forward indefinitely to offset future gains.
               </p>
             </div>
