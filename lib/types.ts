@@ -1354,6 +1354,7 @@ export type InvestListingVertical =
   | 'farmland'
   | 'franchise'
   | 'fund'
+  | 'livestock'
   | 'mining'
   | 'pre_ipo'
   | 'public-social-infrastructure'
