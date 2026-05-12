@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 import type { Broker } from "@/lib/types";
 import TotalCostCalculator from "@/app/calculators/_components/TotalCostCalculator";
 import Link from "next/link";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 export default function TcoClient({ brokers }: { brokers: Broker[] }) {
   const searchParams = useSearchParams();
@@ -34,6 +35,13 @@ export default function TcoClient({ brokers }: { brokers: Broker[] }) {
         {/* Calculator */}
         <TotalCostCalculator brokers={brokers} searchParams={searchParams} />
 
+        <CalculatorLeadCapture
+          calcSlug="tco-calculator"
+          calcTitle="broker total cost"
+          need="wealth"
+          contextKeys={["broker-tco", "cost-optimisation"]}
+        />
+
         {/* How it works */}
         <div className="mt-8 md:mt-12 space-y-6">
           <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 md:p-6">
@@ -49,7 +57,7 @@ export default function TcoClient({ brokers }: { brokers: Broker[] }) {
               </div>
               <div>
                 <p className="font-semibold text-slate-800 mb-1">3. Total cost of ownership</p>
-                <p>We sum all costs for a full year. The "cheapest" label shows which platform minimises your total spend based on your trading pattern.</p>
+                <p>We sum all costs for a full year. The &ldquo;cheapest&rdquo; label shows which platform minimises your total spend based on your trading pattern.</p>
               </div>
             </div>
           </div>
