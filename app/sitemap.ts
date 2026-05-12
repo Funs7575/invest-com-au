@@ -41,7 +41,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/invest/startups", "/invest/private-credit", "/invest/alternatives",
     "/invest/infrastructure", "/invest/private-equity", "/invest/pre-ipo",
     "/invest/royalties", "/invest/income-assets", "/invest/digital-infrastructure",
-    "/invest/public-social-infrastructure",
+    "/invest/public-social-infrastructure", "/invest/carbon-environmental-markets",
     // Sector hubs (intent: guide)
     "/invest/oil-gas", "/invest/lithium", "/invest/uranium", "/invest/hydrogen", "/invest/gold",
     // Asset-class education (intent: guide) — kept for SEO continuity
@@ -57,6 +57,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/invest/private-credit/listings", "/invest/infrastructure/listings",
     "/invest/digital-infrastructure/listings",
     "/invest/public-social-infrastructure/listings",
+    "/invest/carbon-environmental-markets/listings",
     "/foreign-investment/united-states", "/foreign-investment/japan", "/foreign-investment/india",
     "/foreign-investment/malaysia", "/foreign-investment/new-zealand", "/foreign-investment/south-korea",
     "/foreign-investment/saudi-arabia",

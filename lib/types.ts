@@ -1346,6 +1346,7 @@ export interface FirmInvitation {
 
 export type InvestListingVertical =
   | 'business'
+  | 'carbon-environmental-markets'
   | 'commercial_property'
   | 'digital-infrastructure'
   | 'energy'
