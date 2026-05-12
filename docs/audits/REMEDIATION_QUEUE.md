@@ -47,8 +47,8 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | WW | _complete_ | **#651 MERGED** | WW-01+WW-02 merged. WW-03/04 blocked (DD-02 dep). | All WW tasks merged ✓ |
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
 | Z | `claude/audit-remediation/z-04-zero-state-ux` | #230/#323/#403/#457/#524/#565 | Z-01..Z-04 done. | Z-04 merged ✓ |
-| QQ | `claude/audit-remediation/qq-01-public-qa-surface` | **#800 OPEN** (QQ-01..QQ-07) | QQ-01 done (`281a83a`): capability audit doc. QQ-02 done (`596676b`): `"qa_capture"` route in ai-cost-caps. QQ-03 done (`d52119c`): `lib/qa-chatbot.ts` — `generateAnswer()` with QA-specific system prompt, retrieval, provider call, cost tracking. dep-vuln CI rescue done (`8fa60df`): next 16.2.4→16.2.6. QQ-04 done (`ae0eaa3`): `components/QuestionCaptureForm.tsx` + 8-test suite. QQ-07 done (`1ca09b2`): `lib/qa-ctas.ts` — per-category CTA mapping (18 categories; fallback to /find-advisor; RSC-safe). QQ-05 pending (needs qa_questions/qa_answers schema migration first). QQ-08 compliance gate blocks public exposure. QQ-06/QQ-09/QQ-10 pending. Last CI: pending — pushed 2026-05-12 (`1ca09b2`). | All QQ tasks merged |
-| MM | `claude/audit-remediation/mm-01-marketplace-coverage-audit` · `claude/audit-remediation/mm-v01b-digital-infra-listings` | **#801 OPEN** (MM-AUDIT) · **#803 OPEN** (MM-V01b+V01c+V02+V03+V04+V07+dep-vuln-rescue) | MM-V01 already on main (f024bc2). MM-AUDIT done (#801). MM-V01b done (#803 `369cbef`): /invest/digital-infrastructure/listings/. MM-V01c done (#803 `8512381`): /invest/funds/listings/ (P0 gap #2). dep-vuln CI rescue done (#803 `d240e3d`): next 16.2.4→16.2.6. MM-V02 done (#803 `ca9aa96`): /invest/public-social-infrastructure/listings/ page + type + URL mapping + sitemap. MM-V03 done (#803 `62aceac`): /invest/carbon-environmental-markets/listings/ page + type + URL mapping + sitemap. MM-V04 done (#803 `512055c`): /invest/royalties/listings/ page + 'royalties' type + listing-url + sitemap. MM-V05 false-positive — alternatives/listings already on main. MM-V07 done (#803 `42eb238`): /invest/aquaculture/listings/ page + 'aquaculture' type + listing-url + sitemap. Next: MM-V06 (wholesale-only alternatives) or MM-V08 (livestock & equine). Last CI: pending — pushed 2026-05-12 (`42eb238`). | All MM phases merged |
+| QQ | `claude/audit-remediation/qq-01-public-qa-surface` | **#800 OPEN** (QQ-01..QQ-07) | QQ-01 done (`281a83a`): capability audit doc. QQ-02 done (`596676b`): `"qa_capture"` route in ai-cost-caps. QQ-03 done (`d52119c`): `lib/qa-chatbot.ts` — `generateAnswer()` with QA-specific system prompt, retrieval, provider call, cost tracking. dep-vuln CI rescue done (`8fa60df`): next 16.2.4→16.2.6. QQ-04 done (`ae0eaa3`): `components/QuestionCaptureForm.tsx` + 8-test suite. QQ-07 done (`1ca09b2`): `lib/qa-ctas.ts` — per-category CTA mapping (18 categories; fallback to /find-advisor; RSC-safe). QQ-05 pending (needs qa_questions/qa_answers schema migration first — Tier C, announce before merge). QQ-08 compliance gate blocks public exposure. QQ-06/QQ-09/QQ-10 pending. Last CI: pending — pushed 2026-05-12 (`1ca09b2`). | All QQ tasks merged |
+| MM | `claude/audit-remediation/mm-01-marketplace-coverage-audit` · `claude/audit-remediation/mm-v01b-digital-infra-listings` | **#801 OPEN** (MM-AUDIT) · **#803 OPEN** (MM-V01b+V01c+V02+V03+V04+V07+V08+dep-vuln-rescue) | MM-V01 already on main (f024bc2). MM-AUDIT done (#801). MM-V01b done (#803 `369cbef`): /invest/digital-infrastructure/listings/. MM-V01c done (#803 `8512381`): /invest/funds/listings/ (P0 gap #2). dep-vuln CI rescue done (#803 `d240e3d`): next 16.2.4→16.2.6. MM-V02 done (#803 `ca9aa96`): /invest/public-social-infrastructure/listings/ page + type + URL mapping + sitemap. MM-V03 done (#803 `62aceac`): /invest/carbon-environmental-markets/listings/ page + type + URL mapping + sitemap. MM-V04 done (#803 `512055c`): /invest/royalties/listings/ page + 'royalties' type + listing-url + sitemap. MM-V05 false-positive — alternatives/listings already on main. MM-V07 done (#803 `42eb238`): /invest/aquaculture/listings/ page + 'aquaculture' type + listing-url + sitemap. MM-V08 done (#803 `6789f61`): /invest/livestock/listings/ page + 'livestock' type + listing-url + sitemap. Next: MM-V06 (wholesale-only alternatives — litigation funding, PE, VC, hedge funds, ILS). Last CI: pending — pushed 2026-05-12 (`6789f61`). | All MM phases merged |
 | TT | `claude/audit-remediation/tt-04-ga4-removal` | **#764 MERGED** (TT-01) · **#772 MERGED** (TT-02) · **#779 MERGED** (TT-03) · **#799 OPEN** (TT-04) | TT-01..TT-03 MERGED. TT-04: **#799 OPEN** (iter 373 `e8453d0`; GA4 removed from layout; Plausible sole analytics; connect-src tightened). Last CI: in_progress. | TT-04 merged |
 | CMP | `claude/audit-remediation/cmp-w1a-int-calculator-autosave` | **#782 OPEN** | CMP-W1A-INT complete. Last CI: pending. | All CMP tasks merged |
 | SP | (none yet) | (none yet) | **BLOCKED — waiting on MM-V09 completion.** | All SP tasks merged + compliance signoff |
@@ -85,6 +85,17 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 
 ## Iteration log (most recent first)
 
+### iter 390 — 2026-05-12 — MM-V08 [batch-end]
+
+- **Stream:** MM (marketplace expansion)
+- **Item:** MM-V08 — livestock & equine syndication listings discovery page
+- **Branch:** `claude/audit-remediation/mm-v01b-digital-infra-listings`
+- **PR:** #803 OPEN
+- **Commit:** `6789f61`
+- **Diff:** +59 -0 across 4 files (new page + `'livestock'` type union member + listing-url entry + 2 sitemap rows)
+- **What:** Created `/invest/livestock/listings/page.tsx` following the established vertical listings pattern (ISR 300s, `generateMetadata` with live count, breadcrumb JSON-LD, `InvestListingsClient` locked to the new vertical). Added `'livestock'` to `InvestListingVertical` union in `lib/types.ts` (alphabetically between 'fund' and 'mining'). Added `livestock: "livestock"` to `VERTICAL_TO_CATEGORY` in `lib/listing-url.ts`. Registered `/invest/livestock` and `/invest/livestock/listings` in `app/sitemap.ts`. Sub-categories per MM-V08 plan: thoroughbred racehorse syndication (Magic Millions, Inglis), cattle herd investment (Wagyu, Angus, Brahman), sheep/wool programs, stud/breeding rights, genetic programs. Next: MM-V06 (wholesale-only alternatives — Tier C, s708 gate design required; announce intent before merge).
+- **STATUS: PROGRESS · stream=MM · item=MM-V08 · pr=#803**
+
 ### iter 389 — 2026-05-12 — MM-V07
 
 - **Stream:** MM (marketplace expansion)
@@ -93,7 +104,7 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 - **PR:** #803 OPEN
 - **Commit:** `42eb238`
 - **Diff:** +59 -0 across 4 files (new page + `'aquaculture'` type union member + listing-url entry + 2 sitemap rows)
-- **What:** Created `/invest/aquaculture/listings/page.tsx` following the established vertical listings pattern (ISR 300s, `generateMetadata` with live count, breadcrumb JSON-LD, `InvestListingsClient` locked to the new vertical). Added `'aquaculture'` to `InvestListingVertical` union in `lib/types.ts` (alphabetically first — `Record<InvestListingVertical, string>` is exhaustive so omitting would be a TS compile error). Added `aquaculture: "aquaculture"` to `VERTICAL_TO_CATEGORY` in `lib/listing-url.ts`. Registered `/invest/aquaculture` and `/invest/aquaculture/listings` in `app/sitemap.ts`. Sub-categories per MM-V07 plan: salmon farming, oyster leases, abalone, prawn, mussel cultivation, land-based RAS, seaweed/kelp farming, fishing licences/quota. Note: MM-V06 (wholesale-only alternatives) queued for next batch.
+- **What:** Created `/invest/aquaculture/listings/page.tsx` following the established vertical listings pattern (ISR 300s, `generateMetadata` with live count, breadcrumb JSON-LD, `InvestListingsClient` locked to the new vertical). Added `'aquaculture'` to `InvestListingVertical` union in `lib/types.ts`. Added `aquaculture: "aquaculture"` to `VERTICAL_TO_CATEGORY`. Registered `/invest/aquaculture` and `/invest/aquaculture/listings` in `app/sitemap.ts`. Sub-categories: salmon farming, oyster leases, abalone, prawn, mussel, land-based RAS, seaweed/kelp, fishing licences/quota.
 - **STATUS: PROGRESS · stream=MM · item=MM-V07 · pr=#803**
 
 ### iter 388 — 2026-05-12 — QQ-07
@@ -141,99 +152,72 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ### iter 384 — 2026-05-12 — CI-RESCUE QQ (#800)
 
 - **Stream:** QQ (public AI Q&A capture surface)
-- **Item:** CI rescue — Dependency vulnerabilities failure (next 16.2.4 carries 13 high CVEs)
-- **Branch:** `claude/audit-remediation/qq-01-public-qa-surface`
-- **PR:** #800 OPEN
 - **Commit:** `8fa60df`
 - **STATUS: CI-RESCUE · stream=QQ · pr=#800**
 
 ### iter 383 — 2026-05-12 — CI-RESCUE CL (#795)
 
 - **Stream:** CL (anonymity infrastructure — Tier-0 preempt)
-- **Item:** CI rescue — Preview smoke test timing out (no Vercel deploy for empty commits)
-- **Branch:** `claude/audit-remediation/cl-01-about-entity-only`
-- **PR:** #795 OPEN
 - **Commit:** `aacdcf8`
 - **STATUS: CI-RESCUE · stream=CL · pr=#795**
 
 ### iter 382 — 2026-05-12 — MM-V02
 
 - **Stream:** MM (marketplace expansion)
-- **Item:** MM-V02 — public-social-infrastructure listings discovery page
-- **Branch:** `claude/audit-remediation/mm-v01b-digital-infra-listings`
-- **PR:** #803 OPEN
 - **Commit:** `ca9aa96`
 - **STATUS: PROGRESS · stream=MM · item=MM-V02 · pr=#803**
 
 ### iter 381 — 2026-05-12 — QQ-03
 
 - **Stream:** QQ (public AI Q&A capture surface)
-- **Item:** QQ-03 — `lib/qa-chatbot.ts` — `generateAnswer()` public wrapper
-- **Branch:** `claude/audit-remediation/qq-01-public-qa-surface`
-- **PR:** #800 OPEN
 - **Commit:** `d52119c`
 - **STATUS: PROGRESS · stream=QQ · item=QQ-03 · pr=#800**
 
 ### iter 380 — 2026-05-12 — QQ-02
 
 - **Stream:** QQ (public AI Q&A capture surface)
-- **Item:** QQ-02 — add `qa_capture` route to ai-cost-caps
-- **Branch:** `claude/audit-remediation/qq-01-public-qa-surface`
-- **PR:** #800 OPEN
 - **Commit:** `596676b`
 - **STATUS: PROGRESS · stream=QQ · item=QQ-02 · pr=#800**
 
 ### iter 379 — 2026-05-12 — MM-V01c
 
 - **Stream:** MM (marketplace expansion)
-- **Item:** MM-V01c — funds listings discovery page (P0 gap #2)
-- **Branch:** `claude/audit-remediation/mm-v01b-digital-infra-listings`
-- **PR:** #803 OPEN
 - **Commit:** `8512381`
 - **STATUS: PROGRESS · stream=MM · item=MM-V01c · pr=#803**
 
 ### iter 378 — 2026-05-12 — MM-V01b
 
 - **Stream:** MM (marketplace expansion)
-- **Item:** MM-V01b — digital-infrastructure listings discovery page (P0 gap)
-- **Branch:** `claude/audit-remediation/mm-v01b-digital-infra-listings`
-- **PR:** #803 OPEN
 - **Commit:** `369cbef`
 - **STATUS: PROGRESS · stream=MM · item=MM-V01b · pr=#803**
 
 ### iter 377 — 2026-05-12 — CI-RESCUE CL (#795)
 
-- **Stream:** CL (anonymity infrastructure — Tier-0 preempt)
 - **Commit:** `44d9a74`
 - **STATUS: CI-RESCUE · stream=CL · pr=#795**
 
 ### iter 376 — 2026-05-12 — MM-AUDIT
 
-- **Stream:** MM (marketplace expansion)
 - **Commit:** `163aeaf`
 - **STATUS: PROGRESS · stream=MM · item=MM-AUDIT · pr=#801**
 
 ### iter 375 — 2026-05-11 — QQ-01
 
-- **Stream:** QQ (public AI Q&A capture surface)
 - **Commit:** `281a83a`
 - **STATUS: PROGRESS · stream=QQ · item=QQ-01 · pr=#800**
 
 ### iter 374 — 2026-05-11 — CI-RESCUE CL (#795)
 
-- **Stream:** CL (anonymity infrastructure — Tier-0 preempt)
 - **Commit:** `306f995`
 - **STATUS: CI-RESCUE · stream=CL · pr=#795**
 
 ### iter 373 — 2026-05-11 — TT-04
 
-- **Stream:** TT (privacy-analytics)
 - **Commit:** `e8453d0`
 - **STATUS: PROGRESS · stream=TT · item=TT-04 · pr=#799**
 
 ### iter 372 — 2026-05-11 — CL-10 + CL-07/08 FP + CL-05 Blocked
 
-- **Stream:** CL (anonymity infrastructure — Tier-0 preempt)
 - **Commit:** `0a74526`
 - **STATUS: PROGRESS · stream=CL · item=CL-10 · pr=#795**
 
