@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { getInvestorProfile } from "@/lib/investor-profiles";
 import WatchlistClient from "./WatchlistClient";
+import DigestToggle from "./DigestToggle";
 
 export const dynamic = "force-dynamic";
 
@@ -21,11 +23,18 @@ export default async function WatchlistPage() {
     redirect("/account/login?redirect=/account/watchlist");
   }
 
-  const { data } = await supabase
-    .from("user_watchlist_items")
-    .select("id, item_type, item_slug, display_name, added_at")
-    .eq("user_id", user.id)
-    .order("added_at", { ascending: false });
+  const [watchlistRes, investorProfile] = await Promise.all([
+    supabase
+      .from("user_watchlist_items")
+      .select("id, item_type, item_slug, display_name, added_at")
+      .eq("user_id", user.id)
+      .order("added_at", { ascending: false }),
+    getInvestorProfile(user.id),
+  ]);
+
+  const { data } = watchlistRes;
+  const digestMeta = investorProfile?.meta ?? {};
+  const watchlistDigestEnabled = digestMeta.watchlist_digest === true;
 
   const items = (data ?? []).map((row) => ({
     id: row.id as number,
@@ -55,6 +64,18 @@ export default async function WatchlistPage() {
         </div>
 
         <WatchlistClient initialItems={items} />
+
+        <div className="mt-8 rounded-xl border border-slate-200 bg-white p-5">
+          <h2 className="text-sm font-semibold text-slate-800 mb-4">Email notifications</h2>
+          <div className="space-y-4">
+            <DigestToggle
+              digestKey="watchlist_digest"
+              label="Weekly watchlist digest"
+              description="Get a weekly summary of price movements and news for items on your watchlist."
+              initialEnabled={watchlistDigestEnabled}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
