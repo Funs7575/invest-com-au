@@ -48,7 +48,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
 | Z | `claude/audit-remediation/z-04-zero-state-ux` | #230/#323/#403/#457/#524/#565 | Z-01..Z-04 done. | Z-04 merged ✓ |
 | QQ | `claude/audit-remediation/qq-01-public-qa-surface` | **#800 OPEN** (QQ-01..QQ-03) | QQ-01 done (`281a83a`): capability audit doc. QQ-02 done (`596676b`): `"qa_capture"` route in ai-cost-caps. QQ-03 done (`d52119c`): `lib/qa-chatbot.ts` — `generateAnswer()` with QA-specific system prompt, retrieval, provider call, cost tracking. dep-vuln CI rescue done (`8fa60df`): next 16.2.4→16.2.6. QQ-04..QQ-10 pending. QQ-08 compliance gate blocks public-route exposure. Last CI: pending — pushed 2026-05-12 (`8fa60df`). | All QQ tasks merged |
-| MM | `claude/audit-remediation/mm-01-marketplace-coverage-audit` · `claude/audit-remediation/mm-v01b-digital-infra-listings` | **#801 OPEN** (MM-AUDIT) · **#803 OPEN** (MM-V01b+V01c+V02+V03+dep-vuln-rescue) | MM-V01 already on main (f024bc2). MM-AUDIT done (#801). MM-V01b done (#803 `369cbef`): /invest/digital-infrastructure/listings/. MM-V01c done (#803 `8512381`): /invest/funds/listings/ (P0 gap #2). dep-vuln CI rescue done (#803 `d240e3d`): next 16.2.4→16.2.6. MM-V02 done (#803 `ca9aa96`): /invest/public-social-infrastructure/listings/ page + type + URL mapping + sitemap. MM-V03 done (#803 `62aceac`): /invest/carbon-environmental-markets/listings/ page + type + URL mapping + sitemap. Compliance TODO embedded in page: ACCUs may trigger MIS rules — gate to wholesale or treat as lead-gen until legal sign-off. Next: MM-V04 (royalties & IP). Last CI: pending — pushed 2026-05-12 (`62aceac`). | All MM phases merged |
+| MM | `claude/audit-remediation/mm-01-marketplace-coverage-audit` · `claude/audit-remediation/mm-v01b-digital-infra-listings` | **#801 OPEN** (MM-AUDIT) · **#803 OPEN** (MM-V01b+V01c+V02+V03+V04+dep-vuln-rescue) | MM-V01 already on main (f024bc2). MM-AUDIT done (#801). MM-V01b done (#803 `369cbef`): /invest/digital-infrastructure/listings/. MM-V01c done (#803 `8512381`): /invest/funds/listings/ (P0 gap #2). dep-vuln CI rescue done (#803 `d240e3d`): next 16.2.4→16.2.6. MM-V02 done (#803 `ca9aa96`): /invest/public-social-infrastructure/listings/ page + type + URL mapping + sitemap. MM-V03 done (#803 `62aceac`): /invest/carbon-environmental-markets/listings/ page + type + URL mapping + sitemap. Compliance TODO embedded in page: ACCUs may trigger MIS rules — gate to wholesale or treat as lead-gen until legal sign-off. MM-V04 done (#803 `512055c`): /invest/royalties/listings/ page + 'royalties' type + listing-url + sitemap. Next: MM-V05 (alternative collectibles). Last CI: pending — pushed 2026-05-12 (`512055c`). | All MM phases merged |
 | TT | `claude/audit-remediation/tt-04-ga4-removal` | **#764 MERGED** (TT-01) · **#772 MERGED** (TT-02) · **#779 MERGED** (TT-03) · **#799 OPEN** (TT-04) | TT-01..TT-03 MERGED. TT-04: **#799 OPEN** (iter 373 `e8453d0`; GA4 removed from layout; Plausible sole analytics; connect-src tightened). Last CI: in_progress. | TT-04 merged |
 | CMP | `claude/audit-remediation/cmp-w1a-int-calculator-autosave` | **#782 OPEN** | CMP-W1A-INT complete. Last CI: pending. | All CMP tasks merged |
 | SP | (none yet) | (none yet) | **BLOCKED — waiting on MM-V09 completion.** | All SP tasks merged + compliance signoff |
@@ -83,6 +83,17 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 386 — 2026-05-12 — MM-V04
+
+- **Stream:** MM (marketplace expansion)
+- **Item:** MM-V04 — royalties & IP listings discovery page
+- **Branch:** `claude/audit-remediation/mm-v01b-digital-infra-listings`
+- **PR:** #803 OPEN
+- **Commit:** `512055c`
+- **Diff:** +59 -0 across 4 files (new page + `'royalties'` type union member + listing-url entry + sitemap row)
+- **What:** Created `/invest/royalties/listings/page.tsx` using the established vertical listings pattern (ISR 300s, `generateMetadata` with live count, breadcrumb JSON-LD, `InvestListingsClient` locked to the new vertical). Added `'royalties'` to `InvestListingVertical` union in `lib/types.ts` — the `Record<InvestListingVertical, string>` in `listing-url.ts` is exhaustive, so omitting it would be a TS compile error. Added `royalties: "royalties"` to `VERTICAL_TO_CATEGORY`. Registered `/invest/royalties/listings` in `app/sitemap.ts`. Content page `/invest/royalties` (482 LOC) pre-existed; this iteration adds the discovery/listings page that was missing.
+- **STATUS: PROGRESS · stream=MM · item=MM-V04 · pr=#803**
 
 ### iter 385 — 2026-05-12 — MM-V03
 
