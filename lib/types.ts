@@ -1354,6 +1354,7 @@ export type InvestListingVertical =
   | 'fund'
   | 'mining'
   | 'pre_ipo'
+  | 'public-social-infrastructure'
   | 'startup';
 
 export interface InvestmentListing {
