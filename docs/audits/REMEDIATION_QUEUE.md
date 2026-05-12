@@ -48,7 +48,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
 | Z | `claude/audit-remediation/z-04-zero-state-ux` | #230/#323/#403/#457/#524/#565 | Z-01..Z-04 done. | Z-04 merged ✓ |
 | QQ | `claude/audit-remediation/qq-01-public-qa-surface` | **#800 OPEN** (QQ-01) | QQ-01 done (`281a83a`): capability audit doc — safe-to-expose subset of chatbot/embeddings/ai-cost-caps, admin-only assumptions, lib/qa-chatbot.ts scope. QQ-02..QQ-10 pending. QQ-08 compliance gate blocks public-route exposure until `docs/audits/qq-compliance-signoff.md` is committed. Last CI: pending — pushed 2026-05-11. | All QQ tasks merged |
-| MM | `claude/audit-remediation/mm-01-marketplace-coverage-audit` · `claude/audit-remediation/mm-v01b-digital-infra-listings` | **#801 OPEN** (MM-AUDIT) · **#803 OPEN** (MM-V01b) | MM-V01 already on main (f024bc2). MM-AUDIT done (#801). MM-V01b done (#803 `369cbef`): /invest/digital-infrastructure/listings/ page created; InvestListingVertical type updated; sitemap registered. Next P0 gap: /invest/funds/listings/. Last CI: pending — pushed 2026-05-12. | All MM phases merged |
+| MM | `claude/audit-remediation/mm-01-marketplace-coverage-audit` · `claude/audit-remediation/mm-v01b-digital-infra-listings` | **#801 OPEN** (MM-AUDIT) · **#803 OPEN** (MM-V01b+V01c) | MM-V01 already on main (f024bc2). MM-AUDIT done (#801). MM-V01b done (#803 `369cbef`): /invest/digital-infrastructure/listings/. MM-V01c done (#803 `8512381`): /invest/funds/listings/ (P0 gap #2). Next: MM-V02 (public-social-infrastructure vertical). Last CI: pending — pushed 2026-05-12. | All MM phases merged |
 | TT | `claude/audit-remediation/tt-04-ga4-removal` | **#764 MERGED** (TT-01) · **#772 MERGED** (TT-02) · **#779 MERGED** (TT-03) · **#799 OPEN** (TT-04) | TT-01..TT-03 MERGED. TT-04: **#799 OPEN** (iter 373 `e8453d0`; GA4 removed from layout; Plausible sole analytics; connect-src tightened). Last CI: in_progress. | TT-04 merged |
 | CMP | `claude/audit-remediation/cmp-w1a-int-calculator-autosave` | **#782 OPEN** | CMP-W1A-INT complete. Last CI: pending. | All CMP tasks merged |
 | SP | (none yet) | (none yet) | **BLOCKED — waiting on MM-V09 completion.** | All SP tasks merged + compliance signoff |
@@ -83,6 +83,17 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 379 — 2026-05-12 — MM-V01c
+
+- **Stream:** MM (marketplace expansion)
+- **Item:** MM-V01c — funds listings discovery page (P0 gap #2)
+- **Branch:** `claude/audit-remediation/mm-v01b-digital-infra-listings`
+- **PR:** #803 OPEN
+- **Commit:** `8512381`
+- **Diff:** +63 across 1 file (new page)
+- **What:** MM-AUDIT identified /invest/funds/listings as the second P0 gap. The form accepts vertical='fund' submissions to investment_listings, but the discovery page returned 404. Created /invest/funds/listings/page.tsx following the established listings-page pattern (ISR 300s, live count metadata, breadcrumb JSON-LD, SubCategoryNav via getInvestCategoryBySlug("funds"), InvestListingsClient locked to "fund"). 'fund' vertical was already in InvestListingVertical — no type update needed. Both P0 gaps from MM-AUDIT now resolved.
+- **STATUS: PROGRESS · stream=MM · item=MM-V01c · pr=#803**
 
 ### iter 378 — 2026-05-12 — MM-V01b
 
