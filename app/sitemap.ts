@@ -59,6 +59,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/invest/public-social-infrastructure/listings",
     "/invest/carbon-environmental-markets/listings",
     "/invest/royalties/listings",
+    "/invest/aquaculture", "/invest/aquaculture/listings",
     "/foreign-investment/united-states", "/foreign-investment/japan", "/foreign-investment/india",
     "/foreign-investment/malaysia", "/foreign-investment/new-zealand", "/foreign-investment/south-korea",
     "/foreign-investment/saudi-arabia",

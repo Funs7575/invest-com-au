@@ -1345,6 +1345,7 @@ export interface FirmInvitation {
 // ═══════════════════════════════════════════════
 
 export type InvestListingVertical =
+  | 'aquaculture'
   | 'business'
   | 'carbon-environmental-markets'
   | 'commercial_property'
