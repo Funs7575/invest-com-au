@@ -21,7 +21,7 @@
 **Plan source:** `docs/plans/pre-launch-wave-master-prompt.md` (Wave 1-6)
 **Loop prompt:** `docs/plans/pre-launch-wave-loop-prompt.md`
 **Update inbox:** `docs/plans/queue-updates/` (other actors drop notes here)
-**Last updated:** 2026-05-12 (cron iter — W1.1 concierge homepage entry shipped via #802)
+**Last updated:** 2026-05-12 (cron iter — W1.2 calculator lead-capture funnel shipped via #797)
 
 ---
 
@@ -83,7 +83,7 @@ Source: `docs/plans/pre-launch-wave-master-prompt.md`. Lowercase rows mirror tha
 | # | PR | Tier | Status | PR # | Notes |
 |---|---|---|---|---|---|
 | W1.1 | AI Concierge homepage entry | B | ✅ done | #802 | HomeConciergeEntry mounted under hero + ConciergeBookingHandoff card (sessionStorage seed → /concierge auto-fire; first user msg → /find-advisor seed). 16 new tests; RAG was already wired via search_embeddings_knn |
-| W1.2 | Calculator → lead capture funnel | B | in flight | #797 | CalculatorLeadCapture on 19 calc clients + tests; HubLeadForm-backed |
+| W1.2 | Calculator → lead capture funnel | B | ✅ done | #797 | Merged 2026-05-12 ~01:07 UTC. CalculatorLeadCapture on 19 calc clients + tests; HubLeadForm-backed |
 | W1.3 | JSON-LD audit + ratchet | A | ✅ done | (this iter) | scripts/check-jsonld-coverage.mjs + 13 page fixes + CI gate |
 | W1.4 | Reverse marketplace ("Post a Request") | C | pending | — | 4-5 days, lib/stripe |
 | W2.5–W2.17 | PR-X5a–PR-X5m investor accounts | B/C | pending | — | 13 PRs across 5 phases |
@@ -122,6 +122,7 @@ Source: `docs/plans/pre-launch-wave-master-prompt.md`. Lowercase rows mirror tha
 - 2026-05-12 00:15 | W1.1 | Homepage concierge entry sits BELOW HomeHero, not replacing it | "Move concierge to homepage hero" interpreted as "promote to above-the-fold homepage position", not "rip out the existing hero". The marketing hero has carefully-designed pokie-reel mechanics and a primary "Get matched" CTA — destroying it for a chat input would lose conversion paths that are already measurable. Concierge entry slots directly below as a dedicated section
 - 2026-05-12 00:15 | W1.1 | Free-text prompt forwarded via sessionStorage, not URL | URL `?seed=<text>` would expose an injection vector — the existing /concierge?finder=<key> route already validates against an allowlist for that exact reason. sessionStorage is same-origin, max 200 chars, single-read-and-clear so a refresh doesn't replay. Tracking events tag source=input vs source=chip so funnel attribution stays clean
 - 2026-05-12 00:15 | W1.1 | Dep-vuln CI check failure is unrelated chronic noise | The check flagged on #802 against an upstream advisory; my diff touches no package.json / lockfile. Same pattern flagged on recent audit-remediation iters as "CI-RESCUE CL dep-vuln" (iter 369). Per founder memory, chronic CI checks unrelated to the diff don't block merge — the audit-remediation loop owns upstream advisory triage
+- 2026-05-12 01:07 | W1.2 | Closed in-flight Tier B PR #797 end-to-end | CI green except chronic dep-vuln + Lighthouse-CWV (advisory) noise; observation window had elapsed (~1.5h from open). A parallel fire concurrently flipped W1.1's status row (#802 also merged this fire); rebased onto its update + appended this W1.2 flip rather than stomping it
 
 ## Pause history
 
