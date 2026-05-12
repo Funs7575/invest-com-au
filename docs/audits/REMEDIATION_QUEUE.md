@@ -48,7 +48,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
 | Z | `claude/audit-remediation/z-04-zero-state-ux` | #230/#323/#403/#457/#524/#565 | Z-01..Z-04 done. | Z-04 merged ✓ |
 | QQ | `claude/audit-remediation/qq-01-public-qa-surface` | **#800 OPEN** (QQ-01) | QQ-01 done (`281a83a`): capability audit doc — safe-to-expose subset of chatbot/embeddings/ai-cost-caps, admin-only assumptions, lib/qa-chatbot.ts scope. QQ-02..QQ-10 pending. QQ-08 compliance gate blocks public-route exposure until `docs/audits/qq-compliance-signoff.md` is committed. Last CI: pending — pushed 2026-05-11. | All QQ tasks merged |
-| MM | `claude/audit-remediation/mm-01-marketplace-coverage-audit` | (none yet) | MM-V01 already on main (committed in f024bc2 with KK/F bundle). MM-AUDIT (Phase 1 coverage doc) next, then MM-V02..V09 + MM-S01..S06 + MM-CONTENT + MM-UX + MM-INTEG. | All MM phases merged |
+| MM | `claude/audit-remediation/mm-01-marketplace-coverage-audit` | **#801 OPEN** (MM-AUDIT) | MM-V01 already on main (committed in f024bc2 with KK/F bundle). MM-AUDIT (Phase 1 coverage doc) done (`163aeaf`). Next: MM-V01b (digital-infrastructure listings page — P0 gap), then MM-V02..V09. Last CI: pending — pushed 2026-05-12. | All MM phases merged |
 | TT | `claude/audit-remediation/tt-04-ga4-removal` | **#764 MERGED** (TT-01) · **#772 MERGED** (TT-02) · **#779 MERGED** (TT-03) · **#799 OPEN** (TT-04) | TT-01..TT-03 MERGED. TT-04: **#799 OPEN** (iter 373 `e8453d0`; GA4 removed from layout; Plausible sole analytics; connect-src tightened). Last CI: in_progress. | TT-04 merged |
 | CMP | `claude/audit-remediation/cmp-w1a-int-calculator-autosave` | **#782 OPEN** | CMP-W1A-INT complete. Last CI: pending. | All CMP tasks merged |
 | SP | (none yet) | (none yet) | **BLOCKED — waiting on MM-V09 completion.** | All SP tasks merged + compliance signoff |
@@ -83,6 +83,17 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 376 — 2026-05-12 — MM-AUDIT
+
+- **Stream:** MM (marketplace expansion)
+- **Item:** MM-AUDIT — Phase 1 marketplace coverage audit (prerequisite doc)
+- **Branch:** `claude/audit-remediation/mm-01-marketplace-coverage-audit`
+- **PR:** #801 OPEN
+- **Commit:** `163aeaf`
+- **Diff:** +179 across 1 file (new `docs/audits/MM-01-marketplace-coverage-audit.md`)
+- **What:** Maps all 37 /invest/ route directories against form vertical values, listing index pages, and sitemap registrations. Identifies two P0 gaps where submissions are accepted but discovery is broken: /invest/digital-infrastructure/listings/ and /invest/funds/listings/. Provides 7-point touch-point checklist and form-value→slug mismatch map for MM-V02..V09. No source code changed.
+- **STATUS: PROGRESS · stream=MM · item=MM-AUDIT · pr=#801**
 
 ### iter 375 — 2026-05-11 — QQ-01
 
