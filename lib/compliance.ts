@@ -4,6 +4,11 @@
  * Do NOT hardcode disclosure wording anywhere else in the codebase.
  */
 
+/** Entity-level operational email addresses — update here to propagate everywhere. */
+export const CORRECTIONS_EMAIL = "corrections@invest.com.au";
+export const OPS_EMAIL = "ops@invest.com.au";
+export const PRESS_EMAIL = "press@invest.com.au";
+
 /** Full advertiser disclosure — used in footer, dedicated disclosure sections */
 export const ADVERTISER_DISCLOSURE =
   "Advertising and referral fees may be received from some listed businesses. " +
@@ -207,7 +212,7 @@ export const RG234_COMPLIANCE_NOTE =
  */
 export const EDITORIAL_ACCURACY_COMMITMENT =
   "We are committed to accuracy and regularly review our content. If you believe any information " +
-  "is incorrect, outdated, or misleading, please contact us at corrections@invest.com.au. " +
+  `is incorrect, outdated, or misleading, please contact us at ${CORRECTIONS_EMAIL}. ` +
   "We will investigate and update the information promptly.";
 
 /**
