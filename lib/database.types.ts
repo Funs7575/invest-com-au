@@ -12758,6 +12758,33 @@ export type Database = {
         }
         Relationships: []
       }
+      watchlist_alert_preferences: {
+        Row: {
+          alerts_opted_in: boolean
+          created_at: string
+          last_digest_sent_at: string | null
+          last_digest_window_start: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          alerts_opted_in?: boolean
+          created_at?: string
+          last_digest_sent_at?: string | null
+          last_digest_window_start?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          alerts_opted_in?: boolean
+          created_at?: string
+          last_digest_sent_at?: string | null
+          last_digest_window_start?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       web_vitals_daily_rollup: {
         Row: {
           device_kind: string
