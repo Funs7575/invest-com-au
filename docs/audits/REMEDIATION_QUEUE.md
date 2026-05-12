@@ -47,13 +47,13 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | WW | _complete_ | **#651 MERGED** | WW-01+WW-02 merged. WW-03/04 blocked (DD-02 dep). | All WW tasks merged ✓ |
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
 | Z | `claude/audit-remediation/z-04-zero-state-ux` | #230/#323/#403/#457/#524/#565 | Z-01..Z-04 done. | Z-04 merged ✓ |
-| QQ | `claude/audit-remediation/qq-01-public-qa-surface` | **#800 OPEN** (QQ-01..QQ-03) | QQ-01 done (`281a83a`): capability audit doc. QQ-02 done (`596676b`): `"qa_capture"` route in ai-cost-caps. QQ-03 done (`d52119c`): `lib/qa-chatbot.ts` — `generateAnswer()` with QA-specific system prompt, retrieval, provider call, cost tracking. QQ-04..QQ-10 pending. QQ-08 compliance gate blocks public-route exposure. Last CI: pending — pushed 2026-05-12. | All QQ tasks merged |
+| QQ | `claude/audit-remediation/qq-01-public-qa-surface` | **#800 OPEN** (QQ-01..QQ-03) | QQ-01 done (`281a83a`): capability audit doc. QQ-02 done (`596676b`): `"qa_capture"` route in ai-cost-caps. QQ-03 done (`d52119c`): `lib/qa-chatbot.ts` — `generateAnswer()` with QA-specific system prompt, retrieval, provider call, cost tracking. QQ-04..QQ-10 pending. QQ-08 compliance gate blocks public-route exposure. Last CI: **dep-vuln FAILURE** — needs next 16.2.6 bump on QQ branch. | All QQ tasks merged |
 | MM | `claude/audit-remediation/mm-01-marketplace-coverage-audit` · `claude/audit-remediation/mm-v01b-digital-infra-listings` | **#801 OPEN** (MM-AUDIT) · **#803 OPEN** (MM-V01b+V01c+V02+dep-vuln-rescue) | MM-V01 already on main (f024bc2). MM-AUDIT done (#801). MM-V01b done (#803 `369cbef`): /invest/digital-infrastructure/listings/. MM-V01c done (#803 `8512381`): /invest/funds/listings/ (P0 gap #2). dep-vuln CI rescue done (#803 `d240e3d`): next 16.2.4→16.2.6. MM-V02 done (#803 `ca9aa96`): /invest/public-social-infrastructure/listings/ page + type + URL mapping + sitemap. Next: MM-V03 (carbon & environmental markets). Last CI: pending — pushed 2026-05-12 (`ca9aa96`). | All MM phases merged |
 | TT | `claude/audit-remediation/tt-04-ga4-removal` | **#764 MERGED** (TT-01) · **#772 MERGED** (TT-02) · **#779 MERGED** (TT-03) · **#799 OPEN** (TT-04) | TT-01..TT-03 MERGED. TT-04: **#799 OPEN** (iter 373 `e8453d0`; GA4 removed from layout; Plausible sole analytics; connect-src tightened). Last CI: in_progress. | TT-04 merged |
 | CMP | `claude/audit-remediation/cmp-w1a-int-calculator-autosave` | **#782 OPEN** | CMP-W1A-INT complete. Last CI: pending. | All CMP tasks merged |
 | SP | (none yet) | (none yet) | **BLOCKED — waiting on MM-V09 completion.** | All SP tasks merged + compliance signoff |
 | MAIN-RESCUE | `fix/main-rescue-next-security-patch` | **#793 OPEN** | next 16.2.4→16.2.6 patch. | Merged to main |
-| CL | `claude/audit-remediation/cl-01-about-entity-only` | **#795 OPEN** (CL-01..CL-04 + CL-06 + CL-09 + CL-10) | CL-01..CL-04, CL-06, CL-09, CL-10 done. CL-07+CL-08 false-positive. CL-05 blocked (WHOIS registrar action). CI rescue iter 377: fixed test mocks + anonymity gate + cron-groups regex (`44d9a74`). Re-trigger empty commit pushed iter 381 (`655e9b9b`) — CI was not firing after iter 377 force-push. Last CI: pending — re-triggered 2026-05-12. | All CL tasks merged |
+| CL | `claude/audit-remediation/cl-01-about-entity-only` | **#795 OPEN** (CL-01..CL-04 + CL-06 + CL-09 + CL-10) | CL-01..CL-04, CL-06, CL-09, CL-10 done. CL-07+CL-08 false-positive. CL-05 blocked (WHOIS registrar action). CI rescue iter 383: centralised entity emails in compliance.ts (`aacdcf8`) — triggers Vercel redeployment so smoke test can find preview URL (empty commits don't trigger Vercel deploys). Last CI: pending — pushed 2026-05-12 (`aacdcf8`). | All CL tasks merged |
 
 ---
 
@@ -83,6 +83,18 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 383 — 2026-05-12 — CI-RESCUE CL (#795)
+
+- **Stream:** CL (anonymity infrastructure — Tier-0 preempt)
+- **Item:** CI rescue — Preview smoke test timing out (no Vercel deploy for empty commits)
+- **Branch:** `claude/audit-remediation/cl-01-about-entity-only`
+- **PR:** #795 OPEN
+- **Commit:** `aacdcf8`
+- **Diff:** +6 -1 (lib/compliance.ts)
+- **Root cause:** Empty re-trigger commit `655e9b9b` (iter 381) did not trigger a new Vercel preview deployment — Vercel skips deploys when no files change. The smoke test job polls GitHub deployments by head SHA; finding none for `655e9b9b`, it timed out at 6 min and failed with "No Vercel preview URL found". (The actual page code was correct — the `Lint·Type-check·Test·Build` gate was green.)
+- **Fix:** Pushed a real file-change commit: extracted `CORRECTIONS_EMAIL`, `OPS_EMAIL`, `PRESS_EMAIL` as named exports from `lib/compliance.ts` (the corrections address was hardcoded inline in `EDITORIAL_ACCURACY_COMMITMENT`). This legitimate improvement triggers Vercel to build a new preview, giving the smoke test a valid URL.
+- **STATUS: CI-RESCUE · stream=CL · pr=#795**
 
 ### iter 382 — 2026-05-12 — MM-V02
 
