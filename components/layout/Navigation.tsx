@@ -719,7 +719,7 @@ export function Navigation() {
             <AccountButton />
             <Link
               href="/quiz"
-              className="bg-gradient-to-br from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 active:from-amber-700 active:to-orange-700 text-white px-4 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm hover:shadow-md active:scale-[0.97] inline-flex items-center gap-2 cursor-pointer"
+              className="bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-slate-900 px-4 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm hover:shadow-md active:scale-[0.97] inline-flex items-center gap-2 cursor-pointer"
             >
               Get matched
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -741,7 +741,7 @@ export function Navigation() {
             </button>
             <Link
               href="/quiz"
-              className="bg-gradient-to-br from-amber-500 to-orange-500 text-white px-4 py-2 rounded-lg text-xs font-bold transition-all hover:from-amber-600 hover:to-orange-600 min-h-11 inline-flex items-center cursor-pointer"
+              className="bg-amber-500 text-slate-900 px-4 py-2 rounded-lg text-xs font-bold transition-all hover:bg-amber-600 min-h-11 inline-flex items-center cursor-pointer"
             >
               Get Matched
             </Link>

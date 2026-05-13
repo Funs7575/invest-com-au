@@ -13,6 +13,7 @@ const XIcon = ({ className }: { className?: string }) => (
 );
 import type { Broker } from "@/lib/types";
 import { trackEvent, getAffiliateLink, trackClick, AFFILIATE_REL } from "@/lib/tracking";
+import BrokerCard from "@/components/BrokerCard";
 import SocialProofCounter from "@/components/SocialProofCounter";
 import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
 import { getMostRecentFeeCheck } from "@/lib/utils";
@@ -26,33 +27,101 @@ import CompareFooter from "./_components/CompareFooter";
 import CompareCrossSellBanner from "@/components/CompareCrossSellBanner";
 import type { ABTestConfig } from "@/lib/ab-test";
 import { createClient } from "@/lib/supabase/client";
-import {
-  CATEGORY_ALIASES,
-  CATEGORY_SCHEMAS,
-  DEFAULT_COST_INPUTS,
-  SCENARIOS,
-  filterBrokers,
-  rankBrokers,
-  scenarioCategory,
-  sortRankedBrokers,
-  updateShortlist,
-  type CompareCategory,
-  type CostInputs,
-  type FeatureFilter,
-  type ScenarioMode,
-  type SortCol,
-} from "@/lib/compare-engine";
 
-const platformTypes: { key: CompareCategory; label: string; short?: string }[] = Object.values(CATEGORY_SCHEMAS).map((schema) => ({
-  key: schema.key,
-  label: schema.label,
-  short: schema.shortLabel,
-}));
+type PlatformType = 'all' | 'shares' | 'crypto' | 'super' | 'robo' | 'savings' | 'term-deposits' | 'property' | 'cfd' | 'research';
+type FeatureFilter = 'chess' | 'free' | 'smsf' | 'low-fx' | 'us' | 'has-deal';
+type SortCol = 'name' | 'asx_fee_value' | 'us_fee_value' | 'fx_rate' | 'rating';
 
-const filters = platformTypes; // for URL compat
+/* ─── Vertical-specific column/sort config ─── */
+const VERTICAL_CONFIG: Record<PlatformType, {
+  sortOptions: { col: SortCol; label: string }[];
+  featureLabel: string; // replaces "ASX Fee" in mobile cards etc.
+  featureFilters: FeatureFilter[];
+  description: string;
+}> = {
+  all: {
+    sortOptions: [{ col: 'rating', label: 'Rating' }, { col: 'asx_fee_value', label: 'ASX Fee' }, { col: 'us_fee_value', label: 'US Fee' }, { col: 'fx_rate', label: 'FX Rate' }, { col: 'name', label: 'Name' }],
+    featureLabel: 'ASX Fee',
+    featureFilters: ['chess', 'free', 'smsf', 'low-fx', 'us', 'has-deal'],
+    description: 'Compare fees, features & safety across Australian investing platforms.',
+  },
+  shares: {
+    sortOptions: [{ col: 'rating', label: 'Rating' }, { col: 'asx_fee_value', label: 'Brokerage' }, { col: 'us_fee_value', label: 'US Fee' }, { col: 'fx_rate', label: 'FX Rate' }, { col: 'name', label: 'Name' }],
+    featureLabel: 'Brokerage',
+    featureFilters: ['chess', 'free', 'smsf', 'low-fx', 'us', 'has-deal'],
+    description: 'Compare brokerage fees, CHESS sponsorship, market access & features.',
+  },
+  crypto: {
+    sortOptions: [{ col: 'rating', label: 'Rating' }, { col: 'asx_fee_value', label: 'Trading Fee' }, { col: 'name', label: 'Name' }],
+    featureLabel: 'Trading Fee',
+    featureFilters: ['has-deal'],
+    description: 'Compare spreads, AUD deposits, staking, custody & coin coverage.',
+  },
+  super: {
+    sortOptions: [{ col: 'rating', label: 'Rating' }, { col: 'asx_fee_value', label: 'Admin Fee' }, { col: 'name', label: 'Name' }],
+    featureLabel: 'Admin Fee',
+    featureFilters: ['has-deal'],
+    description: 'Compare admin fees, investment options, insurance & fund performance.',
+  },
+  robo: {
+    sortOptions: [{ col: 'rating', label: 'Rating' }, { col: 'asx_fee_value', label: 'Mgmt Fee' }, { col: 'name', label: 'Name' }],
+    featureLabel: 'Mgmt Fee',
+    featureFilters: ['has-deal'],
+    description: 'Compare management fees, portfolios, minimums & automation features.',
+  },
+  savings: {
+    sortOptions: [{ col: 'rating', label: 'Rating' }, { col: 'name', label: 'Name' }],
+    featureLabel: 'Interest Rate',
+    featureFilters: ['has-deal'],
+    description: 'Compare interest rates, bonus conditions & access for savings accounts.',
+  },
+  'term-deposits': {
+    sortOptions: [{ col: 'rating', label: 'Rating' }, { col: 'name', label: 'Name' }],
+    featureLabel: 'Rate',
+    featureFilters: ['has-deal'],
+    description: 'Compare term deposit rates, terms, minimum deposits & institutions.',
+  },
+  property: {
+    sortOptions: [{ col: 'rating', label: 'Rating' }, { col: 'asx_fee_value', label: 'Min Investment' }, { col: 'name', label: 'Name' }],
+    featureLabel: 'Min Investment',
+    featureFilters: ['has-deal'],
+    description: 'Compare property investment platforms, minimum investment & returns.',
+  },
+  cfd: {
+    sortOptions: [{ col: 'rating', label: 'Rating' }, { col: 'asx_fee_value', label: 'Commission' }, { col: 'fx_rate', label: 'Spread' }, { col: 'name', label: 'Name' }],
+    featureLabel: 'Commission',
+    featureFilters: ['has-deal'],
+    description: 'Compare CFD/forex spreads, commissions, leverage & regulation.',
+  },
+  research: {
+    sortOptions: [{ col: 'rating', label: 'Rating' }, { col: 'asx_fee_value', label: 'Price' }, { col: 'name', label: 'Name' }],
+    featureLabel: 'Price',
+    featureFilters: ['has-deal'],
+    description: 'Compare charting, screeners, alerts, portfolio tools & pricing.',
+  },
+};
 
-/** Map URL ?category= values to platform category keys */
-const CATEGORY_TO_FILTER: Record<string, CompareCategory> = CATEGORY_ALIASES;
+const platformTypes: { key: PlatformType; label: string; short?: string }[] = [
+  { key: 'all', label: 'All Platforms' },
+  { key: 'shares', label: 'Share Trading', short: 'Brokerages' },
+  { key: 'crypto', label: 'Crypto Exchanges' },
+  { key: 'super', label: 'Super Funds' },
+  { key: 'robo', label: 'Robo-Advisors' },
+  { key: 'savings', label: 'Savings Accounts' },
+  { key: 'term-deposits', label: 'Term Deposits' },
+  { key: 'property', label: 'Property' },
+  { key: 'cfd', label: 'CFD & Forex' },
+  { key: 'research', label: 'Research Tools' },
+];
+
+const featureFilters: { key: FeatureFilter; label: string; icon: string }[] = [
+  { key: 'chess', label: 'CHESS Sponsored', icon: 'shield' },
+  { key: 'free', label: '$0 Trades', icon: 'zap' },
+  { key: 'us', label: 'US Shares', icon: 'globe' },
+  { key: 'smsf', label: 'SMSF Support', icon: 'building' },
+  { key: 'low-fx', label: 'Low FX (<0.5%)', icon: 'dollar-sign' },
+  { key: 'has-deal', label: 'Has Deal', icon: 'tag' },
+];
 
 const maxFeeOptions = [
   { value: 999, label: 'Any' },
@@ -69,13 +138,30 @@ const minRatingOptions = [
   { value: 3.5, label: '3.5+' },
 ];
 
-const featureFilterMeta: Record<FeatureFilter, { label: string; icon: string }> = {
-  chess: { label: 'CHESS Sponsored', icon: 'shield' },
-  free: { label: '$0 Trades', icon: 'zap' },
-  us: { label: 'US Shares', icon: 'globe' },
-  smsf: { label: 'SMSF Support', icon: 'building' },
-  'low-fx': { label: 'Low FX (<0.5%)', icon: 'dollar-sign' },
-  'has-deal': { label: 'Has Deal', icon: 'tag' },
+const filters = platformTypes; // for URL compat
+
+/** Map URL ?category= values to platform type keys */
+const CATEGORY_TO_FILTER: Record<string, PlatformType> = {
+  shares: 'shares',
+  crypto: 'crypto',
+  robo: 'robo',
+  'robo-advisors': 'robo',
+  'research-tools': 'research',
+  research: 'research',
+  'super-funds': 'super',
+  super: 'super',
+  property: 'property',
+  'cfd-forex': 'cfd',
+  cfd: 'cfd',
+  savings: 'savings',
+  'term-deposits': 'term-deposits',
+};
+
+const feeTooltips: Record<string, string> = {
+  asx_fee_value: "The fee your platform charges each time you buy or sell Australian shares.",
+  us_fee_value: "The fee to buy or sell US shares — like Apple, Tesla, or US ETFs.",
+  fx_rate: "The currency conversion markup when you buy shares in a foreign currency. Lower is better.",
+  chess: "Shares registered in your name on the ASX register — not held by your platform. Safer if the platform goes bust.",
 };
 
 function InfoTip({ text }: { text: string }) {
@@ -121,8 +207,8 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
   // Derive initial filter/query from URL params (?filter= or ?category=)
   const urlFilter = searchParams.get("filter");
   const urlCategory = searchParams.get("category");
-  const initialFilter: CompareCategory = (() => {
-    if (urlFilter && platformTypes.some(fl => fl.key === urlFilter)) return urlFilter as CompareCategory;
+  const initialFilter: PlatformType = (() => {
+    if (urlFilter && platformTypes.some(fl => fl.key === urlFilter)) return urlFilter as PlatformType;
     if (urlCategory && CATEGORY_TO_FILTER[urlCategory]) return CATEGORY_TO_FILTER[urlCategory];
     return 'all';
   })();
@@ -131,7 +217,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
   // Sort state is URL-persisted so shared/bookmarked compare pages recreate
   // exactly what the recipient expected to see (critical for "look at this
   // broker ranking" affiliate share-outs).
-  const validSortCols: SortCol[] = ['name', 'asx_fee_value', 'us_fee_value', 'fx_rate', 'rating', 'estimated_annual_cost', 'rank_score'];
+  const validSortCols: SortCol[] = ['name', 'asx_fee_value', 'us_fee_value', 'fx_rate', 'rating'];
   const urlSortCol = searchParams.get("sort");
   const initialSortCol: SortCol = (urlSortCol && (validSortCols as string[]).includes(urlSortCol))
     ? (urlSortCol as SortCol)
@@ -157,7 +243,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
     return next;
   })();
   const [searchQuery, setSearchQuery] = useState(urlQuery);
-  const [activeFilter, setActiveFilter] = useState<CompareCategory>(initialFilter);
+  const [activeFilter, setActiveFilter] = useState<PlatformType>(initialFilter);
   const [activeFeatures, setActiveFeatures] = useState<Set<FeatureFilter>>(initialFeatures);
   const [maxFee, setMaxFee] = useState(999);
   const [minRating, setMinRating] = useState(0);
@@ -170,8 +256,6 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
   const [selected, setSelected] = useState<Set<string>>(initialSelected);
   const [showMobileCompare, setShowMobileCompare] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
-  const [scenario, setScenario] = useState<ScenarioMode | "none">((searchParams.get("scenario") as ScenarioMode) || "none");
-  const [costInputs, setCostInputs] = useState<CostInputs>(DEFAULT_COST_INPUTS);
 
   // Sync URL when filter, search or sort changes (for sharing/bookmarking).
   // Using replaceState (not push) so the back button doesn't get polluted
@@ -199,13 +283,8 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
     } else {
       url.searchParams.set('dir', 'asc');
     }
-    if (scenario === 'none') {
-      url.searchParams.delete('scenario');
-    } else {
-      url.searchParams.set('scenario', scenario);
-    }
     window.history.replaceState({}, '', url.toString());
-  }, [activeFilter, searchQuery, sortCol, sortDir, scenario]);
+  }, [activeFilter, searchQuery, sortCol, sortDir]);
 
   // Marketplace campaign allocation
   const [campaignWinners, setCampaignWinners] = useState<PlacementWinner[]>([]);
@@ -242,13 +321,34 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
 
   // Build a map of platform filter key → top broker logo URLs (up to 4 per category)
   const filterLogos = useMemo(() => {
-    const PLATFORM_KEY_MAP = CATEGORY_SCHEMAS;
+    const PLATFORM_KEY_MAP: Record<string, PlatformType | 'crypto'> = {
+      shares: 'shares',
+      crypto: 'crypto',
+      robo: 'robo',
+      research: 'research',
+      super: 'super',
+      property: 'property',
+      cfd: 'cfd',
+      savings: 'savings',
+      'term-deposits': 'term-deposits',
+    };
 
     const result: Record<string, { slug: string; name: string; logo_url?: string; color: string }[]> = {};
 
-    for (const [filterKey, schema] of Object.entries(PLATFORM_KEY_MAP)) {
-      let matches = brokers.filter(b => schema.platformTypes.includes(b.platform_type) || (schema.key === 'crypto-exchanges' && b.is_crypto));
-      if (schema.include) matches = matches.filter(schema.include);
+    for (const [filterKey] of Object.entries(PLATFORM_KEY_MAP)) {
+      let matches: Broker[];
+      switch (filterKey) {
+        case 'shares': matches = brokers.filter(b => (b.platform_type || 'share_broker') === 'share_broker'); break;
+        case 'crypto': matches = brokers.filter(b => b.is_crypto); break;
+        case 'robo': matches = brokers.filter(b => b.platform_type === 'robo_advisor'); break;
+        case 'research': matches = brokers.filter(b => b.platform_type === 'research_tool'); break;
+        case 'super': matches = brokers.filter(b => b.platform_type === 'super_fund'); break;
+        case 'property': matches = brokers.filter(b => b.platform_type === 'property_platform'); break;
+        case 'cfd': matches = brokers.filter(b => b.platform_type === 'cfd_forex'); break;
+        case 'savings': matches = brokers.filter(b => b.platform_type === 'savings_account'); break;
+        case 'term-deposits': matches = brokers.filter(b => b.platform_type === 'term_deposit'); break;
+        default: matches = [];
+      }
       // Sort by rating desc, take top 4 with logo_url
       const withLogos = matches
         .filter(b => b.logo_url)
@@ -270,12 +370,15 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
 
   function toggleSelected(slug: string) {
     setSelected(prev => {
-      const before = Array.from(prev);
-      const after = updateShortlist(before, slug, 4);
-      if (!prev.has(slug) && after.includes(slug)) {
+      const next = new Set(prev);
+      if (next.has(slug)) {
+        next.delete(slug);
+      } else {
+        if (next.size >= 4) return prev; // cap at 4
+        next.add(slug);
         trackEvent('compare_select', { broker: slug }, '/compare');
       }
-      return new Set(after);
+      return next;
     });
   }
 
@@ -290,7 +393,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
     const f = searchParams.get("filter");
     const c = searchParams.get("category");
     if (f && platformTypes.some(fl => fl.key === f)) {
-      setActiveFilter(f as CompareCategory);
+      setActiveFilter(f as PlatformType);
     } else if (c && CATEGORY_TO_FILTER[c]) {
       setActiveFilter(CATEGORY_TO_FILTER[c]);
     } else if (!f && !c) {
@@ -317,32 +420,78 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
     }
   }
 
-  const effectiveCategory = scenarioCategory(scenario, activeFilter);
-  const schema = CATEGORY_SCHEMAS[effectiveCategory];
-  const filtered = useMemo(() => filterBrokers(brokers, {
-    category: activeFilter,
-    features: activeFeatures,
-    maxFee,
-    minRating,
-    searchQuery,
-    scenario,
-  }), [brokers, activeFilter, activeFeatures, maxFee, minRating, searchQuery, scenario]);
+  const filtered = useMemo(() => {
+    let list = [...brokers];
+    
+    // 1. Platform type filter (single-select)
+    switch (activeFilter) {
+      case 'shares': list = list.filter(b => (b.platform_type || 'share_broker') === 'share_broker'); break;
+      case 'crypto': list = list.filter(b => b.is_crypto); break;
+      case 'robo': list = list.filter(b => b.platform_type === 'robo_advisor'); break;
+      case 'research': list = list.filter(b => b.platform_type === 'research_tool'); break;
+      case 'super': list = list.filter(b => b.platform_type === 'super_fund'); break;
+      case 'property': list = list.filter(b => b.platform_type === 'property_platform'); break;
+      case 'cfd': list = list.filter(b => b.platform_type === 'cfd_forex'); break;
+      case 'savings': list = list.filter(b => b.platform_type === 'savings_account'); break;
+      case 'term-deposits': list = list.filter(b => b.platform_type === 'term_deposit'); break;
+    }
+    
+    // 2. Feature filters (multi-select — all must match)
+    if (activeFeatures.has('chess')) list = list.filter(b => b.chess_sponsored);
+    if (activeFeatures.has('free')) list = list.filter(b => (b.asx_fee_value === 0) || (b.us_fee_value === 0));
+    if (activeFeatures.has('us')) list = list.filter(b => b.us_fee_value != null && b.us_fee_value <= 5);
+    if (activeFeatures.has('smsf')) list = list.filter(b => b.smsf_support);
+    if (activeFeatures.has('low-fx')) list = list.filter(b => b.fx_rate != null && b.fx_rate > 0 && b.fx_rate < 0.5);
+    if (activeFeatures.has('has-deal')) list = list.filter(b => b.deal && b.deal_text);
+    
+    // 3. Fee range filter
+    if (maxFee < 999) {
+      list = list.filter(b => (b.asx_fee_value ?? 999) <= maxFee);
+    }
+    
+    // 4. Rating filter
+    if (minRating > 0) {
+      list = list.filter(b => (b.rating ?? 0) >= minRating);
+    }
+    
+    // 5. Text search filter
+    if (searchQuery.trim()) {
+      const q = searchQuery.trim().toLowerCase();
+      list = list.filter(b =>
+        b.name.toLowerCase().includes(q) ||
+        (b.tagline && b.tagline.toLowerCase().includes(q)) ||
+        b.slug.toLowerCase().includes(q)
+      );
+    }
+    return list;
+  }, [brokers, activeFilter, activeFeatures, maxFee, minRating, searchQuery]);
 
-  const ranked = useMemo(() => rankBrokers(filtered, scenario, costInputs), [filtered, scenario, costInputs]);
-
-  const sortedRows = useMemo(() => {
+  const sorted = useMemo(() => {
+    // Campaign winners from marketplace get priority over sponsorship tiers
     const campaignWinnerSlugs = new Set(campaignWinners.map(w => w.broker_slug));
-    return sortRankedBrokers(ranked, sortCol, sortDir).sort((a, b) => {
-      const aCampaign = campaignWinnerSlugs.has(a.broker.slug) ? 0 : 1;
-      const bCampaign = campaignWinnerSlugs.has(b.broker.slug) ? 0 : 1;
-      if (aCampaign !== bCampaign) return aCampaign - bCampaign;
-      const aPriority = getSponsorSortPriority(a.broker.sponsorship_tier);
-      const bPriority = getSponsorSortPriority(b.broker.sponsorship_tier);
-      return aPriority - bPriority;
-    });
-  }, [ranked, sortCol, sortDir, campaignWinners]);
 
-  const sorted = useMemo(() => sortedRows.map(row => row.broker), [sortedRows]);
+    const baseSorted = [...filtered].sort((a, b) => {
+      // Campaign winners get top priority (position 0)
+      const aIsCampaignWinner = campaignWinnerSlugs.has(a.slug) ? 0 : 1;
+      const bIsCampaignWinner = campaignWinnerSlugs.has(b.slug) ? 0 : 1;
+      if (aIsCampaignWinner !== bIsCampaignWinner) return aIsCampaignWinner - bIsCampaignWinner;
+
+      // Then sponsored brokers
+      const aPriority = getSponsorSortPriority(a.sponsorship_tier);
+      const bPriority = getSponsorSortPriority(b.sponsorship_tier);
+      if (aPriority !== bPriority) return aPriority - bPriority;
+
+      // Then apply user's selected sort
+      const av = a[sortCol] ?? 999;
+      const bv = b[sortCol] ?? 999;
+      if (typeof av === 'string' && typeof bv === 'string') {
+        return av.toLowerCase() < bv.toLowerCase() ? -sortDir : sortDir;
+      }
+      return ((av as number) - (bv as number)) * sortDir;
+    });
+
+    return baseSorted;
+  }, [filtered, sortCol, sortDir, campaignWinners]);
 
   // Compute editor picks
   const editorPicks = useMemo(() => {
@@ -509,65 +658,6 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
           );
         })()}
 
-        <section className="mb-4 grid gap-3 lg:grid-cols-[1.1fr_0.9fr]" aria-label="Scenario and true-cost calculator">
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-            <div className="flex items-start justify-between gap-3 mb-3">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-wide text-blue-700">Scenario modes</p>
-                <h2 className="text-lg font-extrabold text-slate-900">Rank by a general scenario</h2>
-                <p className="text-xs text-slate-500 mt-1">{schema.description} Rankings are factual comparisons, not personal financial advice or a recommendation.</p>
-              </div>
-              <select
-                value={scenario}
-                onChange={(e) => setScenario(e.target.value as ScenarioMode | "none")}
-                className="rounded-lg border border-slate-200 px-3 py-2 text-sm font-semibold"
-                aria-label="Scenario mode"
-              >
-                <option value="none">No scenario</option>
-                {SCENARIOS.map((item) => <option key={item.key} value={item.key}>{item.label}</option>)}
-              </select>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {SCENARIOS.map((item) => (
-                <button
-                  key={item.key}
-                  onClick={() => setScenario(item.key)}
-                  className={`rounded-full px-3 py-1.5 text-xs font-semibold transition-colors ${scenario === item.key ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}`}
-                  title={item.description}
-                >
-                  {item.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4 shadow-sm">
-            <p className="text-xs font-bold uppercase tracking-wide text-emerald-700">True-cost calculator</p>
-            <h2 className="text-lg font-extrabold text-slate-900">Estimate annual platform cost</h2>
-            <p className="text-xs text-slate-500 mb-3">Inputs are used only for the indicative annual-cost column. Check provider terms before acting.</p>
-            <div className="grid grid-cols-2 gap-2">
-              {[
-                ['tradesPerMonth', 'ASX trades/mo'],
-                ['averageTradeSize', 'Avg ASX trade'],
-                ['usTradesPerMonth', 'US trades/mo'],
-                ['averageUsTradeSize', 'Avg US trade'],
-                ['portfolioBalance', 'Portfolio/balance'],
-              ].map(([key, label]) => (
-                <label key={key} className="text-[0.7rem] font-semibold text-slate-600">
-                  {label}
-                  <input
-                    type="number"
-                    min="0"
-                    value={costInputs[key as keyof CostInputs]}
-                    onChange={(e) => setCostInputs((prev) => ({ ...prev, [key]: Number(e.target.value) }))}
-                    className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-sm"
-                  />
-                </label>
-              ))}
-            </div>
-          </div>
-        </section>
-
         {/* Desktop Filter System */}
         <div className="hidden md:block mb-4 space-y-3">
           {/* Row 1: Platform type pills with logos */}
@@ -598,18 +688,16 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
           
           {/* Row 2: Feature toggles + Advanced filters */}
           <div className="flex items-center gap-2 flex-wrap">
-            {schema.featureFilters.map(key => {
-              const f = featureFilterMeta[key];
-              return (
+            {featureFilters.map(f => (
               <button
-                key={key}
+                key={f.key}
                 onClick={() => setActiveFeatures(prev => {
                   const next = new Set(prev);
-                  if (next.has(key)) next.delete(key); else next.add(key);
+                  if (next.has(f.key)) next.delete(f.key); else next.add(f.key);
                   return next;
                 })}
                 className={`shrink-0 px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all flex items-center gap-1.5 ${
-                  activeFeatures.has(key)
+                  activeFeatures.has(f.key)
                     ? 'bg-emerald-50 border-emerald-300 text-emerald-700 shadow-sm'
                     : 'bg-white border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-700'
                 }`}
@@ -617,7 +705,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                 <Icon name={f.icon} size={12} />
                 {f.label}
               </button>
-            );})}
+            ))}
             
             <span className="w-px h-5 bg-slate-200 mx-1" />
             
@@ -696,7 +784,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             <div className="mb-4">
               <p className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-400 mb-2">Sort by</p>
               <div className="flex flex-wrap gap-2">
-                {schema.sortOptions.map(s => (
+                {(VERTICAL_CONFIG[activeFilter as PlatformType] || VERTICAL_CONFIG.all).sortOptions.map(s => (
                   <button
                     key={s.col}
                     onClick={() => handleSort(s.col)}
@@ -737,25 +825,23 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             <div className="mb-4">
               <p className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-400 mb-2">Features</p>
               <div className="flex flex-wrap gap-2">
-                {schema.featureFilters.map(key => {
-                  const f = featureFilterMeta[key];
-                  return (
+                {featureFilters.map(f => (
                   <button
-                    key={key}
+                    key={f.key}
                     onClick={() => setActiveFeatures(prev => {
                       const next = new Set(prev);
-                      if (next.has(key)) next.delete(key); else next.add(key);
+                      if (next.has(f.key)) next.delete(f.key); else next.add(f.key);
                       return next;
                     })}
                     className={`px-3 py-2 text-sm font-medium rounded-full ${
-                      activeFeatures.has(key)
+                      activeFeatures.has(f.key)
                         ? 'bg-emerald-600 text-white shadow-sm'
                         : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                     }`}
                   >
                     {f.label}
                   </button>
-                );})}
+                ))}
               </div>
             </div>
             {/* Fee & Rating */}
@@ -848,8 +934,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
         {/* Desktop Table */}
         <div ref={resultsRef} className="scroll-mt-16">
         <CompareDesktopTable
-          rows={sortedRows}
-          schema={schema}
+          sorted={sorted}
           activeFilter={activeFilter}
           searchQuery={searchQuery}
           sortCol={sortCol}
@@ -863,6 +948,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
           onToggleSelected={toggleSelected}
           sortArrow={sortArrow}
           InfoTip={InfoTip}
+          feeTooltips={feeTooltips}
         />
 
         {/* Mobile Cards */}
@@ -876,45 +962,17 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               Tap ○ to select 2–4 for side-by-side comparison
             </div>
           )}
-          {sortedRows.map(row => {
-            const broker = row.broker;
-            const mobileColumns = schema.columns.slice(0, 4);
-            return (
-            <article key={broker.id} data-testid="compare-mobile-card" className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
-              <div className="flex items-start gap-3">
-                <input
-                  type="checkbox"
-                  checked={selected.has(broker.slug)}
-                  disabled={!selected.has(broker.slug) && selected.size >= 4}
-                  onChange={() => toggleSelected(broker.slug)}
-                  className="mt-1 h-5 w-5 accent-slate-900"
-                  aria-label={`Pin ${broker.name} to shortlist`}
-                />
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center justify-between gap-2">
-                    <Link href={`/broker/${broker.slug}`} className="font-bold text-slate-900 truncate">{broker.name}</Link>
-                    <span className="rounded-full bg-slate-100 px-2 py-1 text-[0.62rem] font-bold uppercase text-slate-500">{row.commercialDisclosure}</span>
-                  </div>
-                  {editorPicks[broker.slug] && !isSponsored(broker) && <p className="text-[0.68rem] font-semibold text-emerald-700">{editorPicks[broker.slug]}</p>}
-                </div>
-              </div>
-              <div className="mt-3 grid grid-cols-2 gap-2">
-                {mobileColumns.map((column) => (
-                  <div key={column.key} className="rounded-xl bg-slate-50 p-2">
-                    <p className="text-[0.62rem] font-bold uppercase tracking-wide text-slate-400">{column.label}</p>
-                    <p className="text-sm font-semibold text-slate-800">{column.value(broker, row)}</p>
-                  </div>
-                ))}
-              </div>
-              <details className="mt-3 rounded-xl border border-slate-100 bg-white p-2 text-xs text-slate-600">
-                <summary className="cursor-pointer font-bold text-slate-800">Why this result?</summary>
-                <ul className="mt-2 list-disc pl-4 space-y-1">
-                  {row.why.map((why) => <li key={why}>{why}</li>)}
-                </ul>
-              </details>
-            </article>
-            );
-          })}
+          {sorted.map(broker => (
+            <BrokerCard
+              key={broker.id}
+              broker={broker}
+              badge={isSponsored(broker) ? undefined : editorPicks[broker.slug]}
+              context="compare"
+              isSelected={selected.has(broker.slug)}
+              onToggleSelect={toggleSelected}
+              selectionDisabled={!selected.has(broker.slug) && selected.size >= 4}
+            />
+          ))}
         </div>
         </div>{/* close scroll ref */}
 
@@ -931,39 +989,6 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
           onToggleMobileCompare={() => setShowMobileCompare(prev => !prev)}
           onToggleSelected={toggleSelected}
         />
-
-
-
-        {selected.size > 0 && (
-          <aside className="fixed right-4 top-24 z-30 hidden w-80 rounded-2xl border border-slate-200 bg-white p-4 shadow-2xl lg:block" aria-label="Pinned provider shortlist drawer">
-            <div className="mb-3 flex items-center justify-between">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-wide text-blue-700">Shortlist</p>
-                <h2 className="text-lg font-extrabold text-slate-900">Pinned providers ({selected.size}/4)</h2>
-              </div>
-              <button onClick={() => setSelected(new Set())} className="text-xs font-semibold text-slate-400 hover:text-slate-700">Clear</button>
-            </div>
-            {selected.size < 2 && <p className="mb-3 rounded-lg bg-amber-50 p-2 text-xs text-amber-800">Pin at least 2 providers for a side-by-side shortlist.</p>}
-            <div className="space-y-2">
-              {Array.from(selected).map((slug) => {
-                const row = sortedRows.find((item) => item.broker.slug === slug) ?? rankBrokers(brokers.filter((item) => item.slug === slug), scenario, costInputs)[0];
-                if (!row) return null;
-                return (
-                  <div key={slug} className="rounded-xl border border-slate-100 p-3">
-                    <div className="flex items-start justify-between gap-2">
-                      <div>
-                        <p className="font-bold text-slate-900">{row.broker.name}</p>
-                        <p className="text-xs text-slate-500">Annual cost: ${row.estimatedAnnualCost.toLocaleString('en-AU')}</p>
-                      </div>
-                      <button onClick={() => toggleSelected(slug)} className="text-xs font-bold text-red-500">Remove</button>
-                    </div>
-                    <p className="mt-2 text-xs text-slate-600">{row.why[0]}</p>
-                  </div>
-                );
-              })}
-            </div>
-          </aside>
-        )}
 
         {sorted.length === 0 && (
           <div className="text-center py-8 md:py-12 text-slate-500" role="status">
