@@ -237,6 +237,30 @@ export default function OnboardingClient() {
           router.push("/account");
           return;
         }
+
+        setForm((current) => ({
+          ...current,
+          display_name:
+            typeof profile?.display_name === "string" && profile.display_name.trim()
+              ? profile.display_name
+              : user.user_metadata?.display_name || user.email?.split("@")[0] || current.display_name,
+          state: typeof profile?.state === "string" ? profile.state : current.state,
+          investing_experience:
+            typeof profile?.investing_experience === "string"
+              ? profile.investing_experience
+              : current.investing_experience,
+          investment_goals:
+            typeof profile?.investment_goals === "string"
+              ? profile.investment_goals
+              : current.investment_goals,
+          portfolio_size:
+            typeof profile?.portfolio_size === "string"
+              ? profile.portfolio_size
+              : current.portfolio_size,
+          interested_in: Array.isArray(profile?.interested_in)
+            ? profile.interested_in.filter((item: unknown): item is string => typeof item === "string")
+            : current.interested_in,
+        }));
       } finally {
         if (!cancelled) setChecking(false);
       }
