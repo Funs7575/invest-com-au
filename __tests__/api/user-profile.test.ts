@@ -15,6 +15,15 @@ vi.mock("@/lib/supabase/server", () => ({
   })),
 }));
 
+vi.mock("@/lib/logger", () => ({
+  logger: () => ({
+    debug: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+  }),
+}));
+
 // ── Import after mocks ────────────────────────────────────────────────────────
 
 import { GET, PUT } from "@/app/api/user-profile/route";
@@ -166,6 +175,47 @@ describe("PUT /api/user-profile", () => {
       expect.objectContaining({ onboarding_completed: true }),
       expect.anything(),
     );
+  });
+
+
+  it("does not block onboarding completion when optional profile detail save fails", async () => {
+    mockGetUser.mockResolvedValueOnce({ data: { user: USER } });
+    const failingChain = makeChain({
+      data: null,
+      error: {
+        code: "23514",
+        details: "portfolio_size check failed",
+        hint: null,
+        message: "constraint",
+      },
+    });
+    const retryChain = makeChain({
+      data: { ...PROFILE, onboarding_completed: true },
+      error: null,
+    });
+    mockFrom.mockReturnValueOnce(failingChain).mockReturnValueOnce(retryChain);
+
+    const res = await PUT(makePut({
+      onboarding_completed: true,
+      display_name: "Alice",
+      portfolio_size: "50k_200k",
+      state: "NSW",
+    }));
+
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({
+      profile: { ...PROFILE, onboarding_completed: true },
+    });
+    expect(retryChain.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: USER.id,
+        email: USER.email,
+        onboarding_completed: true,
+      }),
+      { onConflict: "id" },
+    );
+    expect(retryChain.upsert.mock.calls[0][0]).not.toHaveProperty("portfolio_size");
+    expect(retryChain.upsert.mock.calls[0][0]).not.toHaveProperty("state");
   });
 
   it("filters interested_in to known values and caps at 8", async () => {
