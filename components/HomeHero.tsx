@@ -172,7 +172,7 @@ export default function HomeHero({
                 gap: 8,
               }}
             >
-              Skip the quiz <DesignIcon name="arrow-right" size={14} strokeWidth={2.4} />
+              Explore options <DesignIcon name="arrow-right" size={14} strokeWidth={2.4} />
             </Link>
             <Link
               href="/quiz"
