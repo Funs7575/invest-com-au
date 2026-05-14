@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { SITE_NAME, absoluteUrl } from "@/lib/seo";
 
 export const metadata: Metadata = {
@@ -90,6 +91,19 @@ export default function QuizLayout({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(howToJsonLd) }}
       />
+      <div className="bg-amber-50 border-b border-amber-200">
+        <div className="max-w-5xl mx-auto px-4 py-3 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+          <p className="text-xs text-amber-900 leading-snug flex-1">
+            <strong>Get Matched has been upgraded.</strong> The new flow builds you a full Investment Action Plan — not just a broker shortlist.
+          </p>
+          <Link
+            href="/get-matched"
+            className="inline-flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-4 py-2 rounded-lg whitespace-nowrap"
+          >
+            Try the new Get Matched →
+          </Link>
+        </div>
+      </div>
       {children}
     </>
   );
