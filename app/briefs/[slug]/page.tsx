@@ -40,9 +40,9 @@ export async function generateMetadata({
     .eq("slug", slug)
     .eq("flow_type", "accept")
     .maybeSingle();
-  const title = data?.job_title || "Investor Brief";
+  const title = data?.job_title || "Match Request";
   return {
-    title: `${title} — Brief Tracker (${CURRENT_YEAR})`,
+    title: `${title} — Your Quote Status (${CURRENT_YEAR})`,
     robots: { index: false, follow: false },
     alternates: { canonical: `${SITE_URL}/briefs/${slug}` },
   };
@@ -117,7 +117,7 @@ export default async function BriefTrackerPage({
 
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
-    { name: "Investor Briefs", url: `${SITE_URL}/briefs` },
+    { name: "Match Requests", url: `${SITE_URL}/briefs` },
     { name: brief.job_title },
   ]);
 
@@ -136,10 +136,10 @@ export default async function BriefTrackerPage({
             </Link>
             <span>/</span>
             <Link href="/briefs/new" className="hover:text-slate-700">
-              Investor Briefs
+              Match Requests
             </Link>
             <span>/</span>
-            <span className="text-slate-700">Brief Tracker</span>
+            <span className="text-slate-700">Quote Status</span>
           </div>
 
           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-1">
@@ -266,8 +266,8 @@ export default async function BriefTrackerPage({
           {/* Email-key reveal */}
           {emailMatches && (
             <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-xs text-emerald-800">
-              You&apos;re viewing this Brief Tracker as the brief owner. We&apos;ll
-              email <strong>{brief.contact_email}</strong> when anything changes.
+              You&apos;re viewing your Match Request status. We&apos;ll
+              email <strong>{brief.contact_email}</strong> when a verified pro responds or anything changes.
             </div>
           )}
           {!emailMatches && (

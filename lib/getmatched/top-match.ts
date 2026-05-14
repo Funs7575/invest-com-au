@@ -144,3 +144,75 @@ export async function computeTopMatch(
     return null;
   }
 }
+
+/**
+ * Multi-match variant: returns the top-N brokers as a carousel-ready
+ * array. Each one carries a `tier` (1 = best, 2-N = runner-ups) so the
+ * client can style the hero card differently from the comparison slots.
+ *
+ * Same scoring path as `computeTopMatch`. Same defensive try/catch —
+ * returns [] on any DB failure so the caller can skip the carousel.
+ */
+export async function computeTopMatches(
+  answers: ActionPlanAnswers,
+  vertical: Vertical | null,
+  limit = 3,
+): Promise<TopMatch[]> {
+  try {
+    const admin = createAdminClient();
+
+    const [brokersRes, weightsRes] = await Promise.all([
+      admin.from("brokers").select("*").eq("status", "active"),
+      admin.from("quiz_weights").select("*"),
+    ]);
+    if (brokersRes.error) throw brokersRes.error;
+    if (weightsRes.error) throw weightsRes.error;
+
+    const brokers = (brokersRes.data ?? []) as Broker[];
+    const weightRows = (weightsRes.data ?? []) as Array<{
+      broker_slug: string;
+    } & QuizWeights>;
+    if (brokers.length === 0 || weightRows.length === 0) return [];
+
+    const weightsMap: Record<string, QuizWeights> = {};
+    for (const row of weightRows) {
+      const { broker_slug, ...weights } = row;
+      weightsMap[broker_slug] = weights as QuizWeights;
+    }
+
+    const answersList = buildAnswersList(answers);
+    const amount = mapBudgetToAmount(answers.budget_band as string | undefined);
+    const goal = answers.intent as string | undefined;
+
+    const scored = scoreQuizResults(
+      answersList,
+      weightsMap,
+      brokers,
+      [],
+      amount,
+      goal,
+    );
+
+    return scored
+      .filter((s) => s.broker)
+      .slice(0, limit)
+      .map((s, i) => ({
+        kind: "broker" as const,
+        slug: s.broker!.slug,
+        name: s.broker!.name,
+        logo_url: s.broker!.logo_url ?? null,
+        rating: s.broker!.rating ?? null,
+        rating_count: null,
+        one_line_why: oneLineWhy(s.broker!, vertical),
+        cta_label: i === 0 ? "See full review" : "View",
+        cta_href: `/broker/${s.broker!.slug}`,
+        vertical,
+        tier: i + 1,
+      }));
+  } catch (err) {
+    log.warn("computeTopMatches failed (skipping carousel)", {
+      err: err instanceof Error ? err.message : String(err),
+    });
+    return [];
+  }
+}

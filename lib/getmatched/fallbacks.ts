@@ -475,10 +475,10 @@ export const FALLBACK_TEMPLATES: Record<RouteType, ResultTemplate> = {
       { label: "Compare two profiles side-by-side" },
       { label: "Create a brief for one professional" },
     ],
-    primary_cta: { label: "Browse individuals", href: "/advisors?provider_type=individual" },
+    primary_cta: { label: "Browse verified experts", href: "/advisors?provider_type=individual" },
     secondary_ctas: [
       { label: "Or consider a firm", href: "/advisors?provider_type=firm" },
-      { label: "Create an Investor Brief", href: "/briefs/new" },
+      { label: "Get Quotes from Verified Experts", href: "/briefs/new" },
     ],
     cross_sells: [
       { label: "Questions to ask any adviser", href: "/articles", icon: "message-circle" },
@@ -501,7 +501,7 @@ export const FALLBACK_TEMPLATES: Record<RouteType, ResultTemplate> = {
     primary_cta: { label: "Browse firms", href: "/advisors?provider_type=firm" },
     secondary_ctas: [
       { label: "View firm reviews", href: "/advisors" },
-      { label: "Create an Investor Brief", href: "/briefs/new" },
+      { label: "Get Quotes from Firms", href: "/briefs/new" },
     ],
     cross_sells: [
       { label: "Firm vs individual: how to pick", href: "/articles", icon: "users" },
@@ -512,17 +512,17 @@ export const FALLBACK_TEMPLATES: Record<RouteType, ResultTemplate> = {
     id: -1004,
     route: "expert_team",
     intent_slug: null,
-    headline: "Verified Expert Team",
+    headline: "Verified Pro Squad",
     why_text:
-      "Your situation usually involves more than one professional. A verified expert team coordinates the work so you don't.",
+      "Your situation usually involves more than one professional. A verified Pro Squad coordinates the work so you don't — accountant, adviser, broker all in one team.",
     checklist: [
-      { label: "Browse verified expert teams", href: "/advisors#expert-teams" },
-      { label: "See who is on each team" },
-      { label: "Create an Investor Brief for a team" },
+      { label: "Browse verified Pro Squads", href: "/advisors#expert-teams" },
+      { label: "See who is on each squad" },
+      { label: "Get Quotes from a Pro Squad" },
     ],
-    primary_cta: { label: "Browse expert teams", href: "/advisors#expert-teams" },
+    primary_cta: { label: "Browse Pro Squads", href: "/advisors#expert-teams" },
     secondary_ctas: [
-      { label: "Create an Investor Brief", href: "/briefs/new" },
+      { label: "Get Quotes from a Pro Squad", href: "/briefs/new" },
       { label: "Who do I need on my team?", href: "/articles" },
     ],
     cross_sells: [
@@ -534,15 +534,15 @@ export const FALLBACK_TEMPLATES: Record<RouteType, ResultTemplate> = {
     id: -1005,
     route: "investor_brief",
     intent_slug: null,
-    headline: "Create an Investor Brief",
+    headline: "Get Quotes from Verified Pros",
     why_text:
-      "You're ready to be contacted by a verified provider. We'll route your masked brief to the right professionals.",
+      "You're ready to be contacted by a verified Australian professional. We'll route your masked Match Request to the right pros — you stay anonymous until you choose to share your details.",
     checklist: [
-      { label: "Confirm the goal of your brief" },
-      { label: "Pick smart-match, direct or multi-response" },
+      { label: "Confirm what you need" },
+      { label: "Choose smart-match, direct, or multi-response" },
       { label: "Add contact and consent" },
     ],
-    primary_cta: { label: "Create brief", href: "/briefs/new" },
+    primary_cta: { label: "Get Quotes", href: "/briefs/new" },
     secondary_ctas: [
       { label: "Browse providers first", href: "/advisors" },
     ],
@@ -555,18 +555,18 @@ export const FALLBACK_TEMPLATES: Record<RouteType, ResultTemplate> = {
     id: -1006,
     route: "listing_brief",
     intent_slug: null,
-    headline: "Prepare Your Listing",
+    headline: "Sell with Us",
     why_text:
-      "You're on the seller side. A successful listing usually needs a few moving parts — legal, financial, valuation, marketing. Prepare a Listing Brief and we'll route it to the right verified professionals, or hand-pick them yourself below.",
+      "You're on the seller side. A successful listing usually needs a few moving parts — legal, financial, valuation, marketing. List your deal with us and we'll route it to the right verified Australian professionals, or hand-pick them yourself below.",
     checklist: [
       { label: "Listing readiness check" },
       { label: "Get a transaction lawyer for the contract" },
       { label: "Get an accountant on tax structuring" },
       { label: "Get an independent valuation" },
       { label: "Prepare your due-diligence pack" },
-      { label: "Create your Listing Brief" },
+      { label: "List your deal" },
     ],
-    primary_cta: { label: "Create Listing Brief", href: "/briefs/new?template=listing_readiness" },
+    primary_cta: { label: "Sell with Us", href: "/briefs/new?template=listing_readiness" },
     secondary_ctas: [
       { label: "Post your opportunity", href: "/invest" },
       { label: "Speak to listing experts", href: "/advisors" },
@@ -582,15 +582,15 @@ export const FALLBACK_TEMPLATES: Record<RouteType, ResultTemplate> = {
     id: -1007,
     route: "second_opinion",
     intent_slug: null,
-    headline: "Second Opinion Brief",
+    headline: "Get a Second Opinion",
     why_text:
-      "You want an independent review of advice or a deal. Verified professionals can review it under their own licence and terms.",
+      "You want an independent review of advice or a deal. Verified Australian professionals can review it under their own licence and terms.",
     checklist: [
       { label: "Describe what needs reviewing" },
       { label: "Pick the right review type" },
-      { label: "Create your Second Opinion Brief" },
+      { label: "Request your second opinion" },
     ],
-    primary_cta: { label: "Create Second Opinion Brief", href: "/briefs/new?template=second_opinion" },
+    primary_cta: { label: "Get a Second Opinion", href: "/briefs/new?template=second_opinion" },
     secondary_ctas: [
       { label: "Find a licensed adviser", href: "/advisors?type=financial_planner" },
       { label: "Find a tax / accounting reviewer", href: "/advisors?type=tax_agent" },

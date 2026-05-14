@@ -209,6 +209,9 @@ export interface TopMatch {
    *  /advisors/<slug> for advisors. */
   cta_href: string;
   vertical: Vertical | null;
+  /** 1 = best match (hero card), 2-N = runner-ups (slim comparison cards).
+   *  Optional so single-match calls keep working. */
+  tier?: number;
 }
 
 export type EmbedContext =
