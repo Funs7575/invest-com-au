@@ -5,14 +5,20 @@ import type { InvestmentListing, InvestListingVertical } from "@/lib/types";
  * URL category slug used in the /invest/{category}/listings/{slug} routes.
  */
 export const VERTICAL_TO_CATEGORY: Record<InvestListingVertical, string> = {
+  aquaculture: "aquaculture",
   business: "buy-business",
+  "carbon-environmental-markets": "carbon-environmental-markets",
   commercial_property: "commercial-property",
+  "digital-infrastructure": "digital-infrastructure",
   energy: "renewable-energy",
   farmland: "farmland",
   franchise: "franchise",
   fund: "funds",
+  livestock: "livestock",
   mining: "mining",
   pre_ipo: "pre-ipo",
+  "public-social-infrastructure": "public-social-infrastructure",
+  royalties: "royalties",
   startup: "startups",
 };
 

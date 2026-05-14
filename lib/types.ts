@@ -1345,14 +1345,20 @@ export interface FirmInvitation {
 // ═══════════════════════════════════════════════
 
 export type InvestListingVertical =
+  | 'aquaculture'
   | 'business'
+  | 'carbon-environmental-markets'
   | 'commercial_property'
+  | 'digital-infrastructure'
   | 'energy'
   | 'farmland'
   | 'franchise'
   | 'fund'
+  | 'livestock'
   | 'mining'
   | 'pre_ipo'
+  | 'public-social-infrastructure'
+  | 'royalties'
   | 'startup';
 
 export interface InvestmentListing {
