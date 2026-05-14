@@ -7,6 +7,12 @@ import { absoluteUrl, breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo
 import { BRIEF_TEMPLATE_LABELS } from "@/lib/briefs/templates";
 import { estimateBundledPrice } from "@/lib/expert-teams/pricing";
 import Icon from "@/components/Icon";
+import OutcomeBadge from "@/components/outcomes/OutcomeBadge";
+import TestimonialList from "@/components/outcomes/TestimonialList";
+import {
+  getProviderOutcomeBadge,
+  getPublicTestimonials,
+} from "@/lib/outcomes/profile-display";
 import SquadStack from "./_components/SquadStack";
 import BundledPricePreview from "./_components/BundledPricePreview";
 
@@ -127,6 +133,12 @@ export default async function TeamProfilePage({ params }: PageProps) {
     }),
   );
 
+  // Outcome flywheel data (fail-soft, both null → section hides).
+  const [outcomeBadge, testimonials] = await Promise.all([
+    getProviderOutcomeBadge({ teamId: team.id }),
+    getPublicTestimonials({ teamId: team.id, limit: 5 }),
+  ]);
+
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
     { name: "Experts", url: absoluteUrl("/advisors") },
@@ -208,7 +220,17 @@ export default async function TeamProfilePage({ params }: PageProps) {
             </div>
           )}
 
+          {outcomeBadge && (
+            <div className="flex items-center gap-2">
+              <OutcomeBadge badge={outcomeBadge} />
+            </div>
+          )}
+
           <BundledPricePreview estimate={priceEstimate} />
+
+          {testimonials.length > 0 && (
+            <TestimonialList testimonials={testimonials} />
+          )}
 
           <SquadStack members={squadMembers} />
 
