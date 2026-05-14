@@ -27,14 +27,17 @@ type NextStep =
 
 interface StartResponse {
   plan_id: number;
-  share_token: string;
+  share_token: string | null;
   session_id: string;
   next: NextStep;
+  ephemeral?: boolean;
+  ephemeral_reason?: string | null;
 }
 
 interface AnswerResponse {
   plan_id: number;
   next: NextStep;
+  ephemeral?: boolean;
 }
 
 interface ResolveResponse {
@@ -43,6 +46,19 @@ interface ResolveResponse {
   recommended_brief_template: string | null;
   accept_credits_cost: number | null;
   recommended_providers: { kind: string; id: number }[];
+  ephemeral?: boolean;
+}
+
+interface ErrorResponse {
+  error: string;
+  code?: string;
+  detail?: string;
+}
+
+interface ErrorState {
+  message: string;
+  code?: string;
+  detail?: string;
 }
 
 interface Props {
@@ -68,10 +84,14 @@ export default function GetMatchedClient(props: Props) {
   const [shareToken, setShareToken] = useState<string | null>(null);
   const [step, setStep] = useState<NextStep | null>(null);
   const [answers, setAnswers] = useState<ActionPlanAnswers>({});
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<ErrorState | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<ResolveResponse | null>(null);
+  // Ephemeral mode: the server couldn't persist a plan row (migrations
+  // pending), so we hold all state client-side and disable save / brief
+  // creation until the DB is ready.
+  const [ephemeral, setEphemeral] = useState(false);
 
   // Anonymous session id, persisted across refreshes so Back keeps progress.
   const sessionIdRef = useRef<string>("");
@@ -103,20 +123,28 @@ export default function GetMatchedClient(props: Props) {
           source_page: window.location.pathname,
         }),
       });
-      const data = (await res.json()) as StartResponse | { error: string };
+      const data = (await res.json()) as StartResponse | ErrorResponse;
       if (!res.ok || !("plan_id" in data)) {
-        throw new Error("error" in data ? data.error : "Failed to start.");
+        const errData = data as ErrorResponse;
+        setError({
+          message: errData.error ?? "Failed to start.",
+          code: errData.code,
+          detail: errData.detail,
+        });
+        return;
       }
       setPlanId(data.plan_id);
       setShareToken(data.share_token);
       setAnswers(startPrefill);
       setStep(data.next);
+      if (data.ephemeral) setEphemeral(true);
       if (data.next.done) {
-        // Pre-filled everything — go straight to resolve.
-        await resolve(data.plan_id);
+        await resolve(data.plan_id, startPrefill);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to start.");
+      setError({
+        message: err instanceof Error ? err.message : "Failed to start.",
+      });
     } finally {
       setLoading(false);
     }
@@ -127,7 +155,7 @@ export default function GetMatchedClient(props: Props) {
   }, [start]);
 
   async function submitAnswer(value: ActionPlanAnswers[string]) {
-    if (!planId || !step || step.done) return;
+    if (planId === null || !step || step.done) return;
     setSubmitting(true);
     setError(null);
     const slug = step.question.slug;
@@ -142,39 +170,60 @@ export default function GetMatchedClient(props: Props) {
           plan_id: planId,
           question_slug: slug,
           value,
+          // Always send the latest answers so the server can resolve
+          // ephemerally without a DB lookup if needed.
+          answers: nextAnswers,
         }),
       });
-      const data = (await res.json()) as AnswerResponse | { error: string };
+      const data = (await res.json()) as AnswerResponse | ErrorResponse;
       if (!res.ok || !("plan_id" in data)) {
-        throw new Error("error" in data ? data.error : "Failed.");
+        const errData = data as ErrorResponse;
+        setError({
+          message: errData.error ?? "Failed to save answer.",
+          code: errData.code,
+          detail: errData.detail,
+        });
+        return;
       }
+      if (data.ephemeral) setEphemeral(true);
       setStep(data.next);
       if (data.next.done) {
-        await resolve(planId);
+        await resolve(data.plan_id, nextAnswers);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to save answer.");
+      setError({
+        message: err instanceof Error ? err.message : "Failed to save answer.",
+      });
     } finally {
       setSubmitting(false);
     }
   }
 
-  async function resolve(id: number) {
+  async function resolve(id: number, finalAnswers: ActionPlanAnswers) {
     setSubmitting(true);
     setError(null);
     try {
       const res = await fetch("/api/get-matched/resolve", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan_id: id }),
+        body: JSON.stringify({ plan_id: id, answers: finalAnswers }),
       });
-      const data = (await res.json()) as ResolveResponse | { error: string };
+      const data = (await res.json()) as ResolveResponse | ErrorResponse;
       if (!res.ok || !("plan" in data)) {
-        throw new Error("error" in data ? data.error : "Failed to resolve.");
+        const errData = data as ErrorResponse;
+        setError({
+          message: errData.error ?? "Failed to resolve.",
+          code: errData.code,
+          detail: errData.detail,
+        });
+        return;
       }
+      if (data.ephemeral) setEphemeral(true);
       setResult(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to resolve.");
+      setError({
+        message: err instanceof Error ? err.message : "Failed to resolve.",
+      });
     } finally {
       setSubmitting(false);
     }
@@ -191,15 +240,39 @@ export default function GetMatchedClient(props: Props) {
   if (error) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center p-6">
-        <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl p-4 max-w-md">
-          {error}
-          <button
-            type="button"
-            onClick={() => void start()}
-            className="mt-3 block text-xs underline"
-          >
-            Try again
-          </button>
+        <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl p-5 max-w-lg">
+          <p className="font-semibold mb-2">Get Matched ran into a problem</p>
+          <p className="mb-3">{error.message}</p>
+          {error.code && (
+            <p className="text-[11px] uppercase tracking-widest text-red-500 mb-1">
+              Code: {error.code}
+            </p>
+          )}
+          {error.detail && error.detail !== error.message && (
+            <details className="mt-2">
+              <summary className="cursor-pointer text-xs text-red-600 hover:underline">
+                Technical detail
+              </summary>
+              <pre className="mt-2 text-[11px] whitespace-pre-wrap break-all text-red-700/80">
+                {error.detail}
+              </pre>
+            </details>
+          )}
+          <div className="mt-4 flex flex-wrap gap-3">
+            <button
+              type="button"
+              onClick={() => void start()}
+              className="text-xs font-semibold underline"
+            >
+              Try again
+            </button>
+            <Link
+              href="/compare"
+              className="text-xs font-semibold underline"
+            >
+              Browse comparisons instead
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -210,8 +283,12 @@ export default function GetMatchedClient(props: Props) {
       <ActionPlanScreen
         result={result}
         shareToken={shareToken}
+        ephemeral={ephemeral}
         onChecklistToggle={async (index) => {
-          if (!planId) return;
+          // Skip the DB write when we're in ephemeral mode — checklist
+          // toggles are still visually applied via local state in the
+          // screen component.
+          if (!planId || ephemeral) return;
           await fetch(`/api/get-matched/plans/${planId}/checklist`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -219,7 +296,7 @@ export default function GetMatchedClient(props: Props) {
           });
         }}
         onSaveByEmail={async (email) => {
-          if (!planId) return null;
+          if (!planId || ephemeral) return null;
           const res = await fetch(`/api/get-matched/plans/${planId}/save`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -230,7 +307,7 @@ export default function GetMatchedClient(props: Props) {
           return data.view_url as string;
         }}
         onCreateBrief={() => {
-          if (!planId) return;
+          if (!planId || ephemeral) return;
           router.push(`/briefs/new?plan_id=${planId}`);
         }}
         onRestart={() => {
@@ -585,6 +662,7 @@ function humanise(s: string): string {
 function ActionPlanScreen({
   result,
   shareToken,
+  ephemeral,
   onChecklistToggle,
   onSaveByEmail,
   onCreateBrief,
@@ -592,6 +670,7 @@ function ActionPlanScreen({
 }: {
   result: ResolveResponse;
   shareToken: string | null;
+  ephemeral: boolean;
   onChecklistToggle: (index: number) => Promise<void>;
   onSaveByEmail: (email: string) => Promise<string | null>;
   onCreateBrief: () => void;
@@ -722,8 +801,17 @@ function ActionPlanScreen({
             ))}
           </ul>
 
+          {ephemeral && (
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-4 text-sm text-amber-900">
+              <p className="font-semibold mb-1">Preview mode</p>
+              <p>
+                Your plan is shown here for review. Saving it to your account and routing a brief to verified professionals is temporarily unavailable while we finish setting up the database. The cross-sell links below all work — explore them now, or come back to save your plan once the system is fully online.
+              </p>
+            </div>
+          )}
+
           <div className="flex flex-col gap-3">
-            {result.recommended_brief_template ? (
+            {result.recommended_brief_template && !ephemeral ? (
               <button
                 type="button"
                 onClick={onCreateBrief}
@@ -784,7 +872,9 @@ function ActionPlanScreen({
           </section>
         )}
 
-        {/* Save your plan strip */}
+        {/* Save your plan strip — hidden in ephemeral mode because the
+            save endpoints depend on a DB-backed plan row. */}
+        {!ephemeral && (
         <section className="bg-white border border-slate-200 rounded-2xl p-5 mb-6">
           <p className="font-semibold text-slate-900 mb-1">
             Want to save this action plan or send a brief to verified professionals?
@@ -837,6 +927,7 @@ function ActionPlanScreen({
             </p>
           )}
         </section>
+        )}
 
         <div className="text-center">
           <button

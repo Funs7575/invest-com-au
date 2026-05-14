@@ -14,6 +14,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 
+import { getFallbackTemplate } from "./fallbacks";
 import type { IntentSlug, ResultTemplate, RouteType } from "./types";
 
 const log = logger("getmatched:templates");
@@ -46,31 +47,12 @@ export async function getResultTemplate(
       .maybeSingle();
     if (generic) return generic as ResultTemplate;
   } catch (err) {
-    log.warn("getResultTemplate failed", {
+    log.warn("getResultTemplate failed (using code-defined fallback)", {
       route,
       intentSlug,
       err: err instanceof Error ? err.message : String(err),
     });
   }
 
-  return fallbackTemplate(route);
-}
-
-function fallbackTemplate(route: RouteType): ResultTemplate {
-  return {
-    id: -1,
-    route,
-    intent_slug: null,
-    headline: "Your Investment Action Plan",
-    why_text:
-      "Here is the route that matches your answers. Invest.com.au provides general information only — the professional, firm or team you engage delivers the service under their own licence.",
-    checklist: [
-      { label: "Review your answers" },
-      { label: "Pick your next step" },
-    ],
-    primary_cta: { label: "Browse next steps", href: "/" },
-    secondary_ctas: [],
-    cross_sells: [],
-    enabled: true,
-  };
+  return getFallbackTemplate(route);
 }
