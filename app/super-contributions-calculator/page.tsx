@@ -3,6 +3,7 @@ import { CURRENT_YEAR, absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import { calculatorJsonLd, faqJsonLd } from "@/lib/schema-markup";
 import SuperContributionsClient from "./SuperContributionsClient";
 import ComplianceFooter from "@/components/ComplianceFooter";
+import CalcToPlanBridge from "@/components/get-matched/CalcToPlanBridge";
 
 export const revalidate = 86400;
 
@@ -64,7 +65,10 @@ export default function SuperContributionsCalculatorPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
       <SuperContributionsClient />
-      <div className="container-custom pb-8"><ComplianceFooter variant="calculator" /></div>
+      <div className="container-custom pb-8">
+        <CalcToPlanBridge goal="super" />
+        <ComplianceFooter variant="calculator" />
+      </div>
 
     </>
   );

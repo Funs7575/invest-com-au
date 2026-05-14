@@ -258,7 +258,7 @@ export default function BriefForm() {
           <Icon name="check-circle" size={28} className="text-emerald-600" />
         </div>
         <h2 className="text-2xl font-extrabold text-slate-900 mb-2">
-          Investor Brief created
+          Match Request sent
         </h2>
         <p className="text-slate-600 text-sm leading-relaxed mb-6 max-w-md mx-auto">
           {heldForReview
@@ -276,7 +276,7 @@ export default function BriefForm() {
             )}`}
             className="inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold px-6 py-3 rounded-xl transition-colors"
           >
-            View your Brief Tracker
+            View your Quote Status
             <Icon name="arrow-right" size={16} />
           </Link>
           <Link
@@ -342,10 +342,10 @@ export default function BriefForm() {
         <div className="space-y-6">
           <div>
             <h2 className="text-xl font-bold text-slate-900 mb-1">
-              Pick a brief template
+              What kind of help do you need?
             </h2>
             <p className="text-sm text-slate-500">
-              Each template asks the right structured questions so verified providers can respond well.
+              Pick the closest match. We ask a few structured questions so verified pros can quote you well.
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -703,7 +703,7 @@ export default function BriefForm() {
                 </>
               ) : (
                 <>
-                  Create Investor Brief <Icon name="check" size={16} />
+                  Send Match Request <Icon name="check" size={16} />
                 </>
               )}
             </button>
