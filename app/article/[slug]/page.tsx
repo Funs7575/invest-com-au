@@ -27,7 +27,7 @@ import AdvisorPrompt from "@/components/AdvisorPrompt";
 import LinkifiedText from "@/components/LinkifiedText";
 import FloatingRightCTA from "@/components/FloatingRightCTA";
 import { isFlagEnabled } from "@/lib/feature-flags";
-import { pillarPathForCategory } from "@/lib/keyword-linking";
+import { pillarPathForCategory, linkDensityForCategory } from "@/lib/keyword-linking";
 
 export const revalidate = 3600; // ISR: revalidate every hour
 
@@ -180,6 +180,8 @@ export default async function ArticlePage({
     CATEGORY_COLORS[a.category || ""] || "bg-slate-100 text-slate-700";
   const calcInfo = a.related_calc ? CALC_NAMES[a.related_calc] : null;
   const pagePath = `/article/${slug}`;
+  // Per-article density override takes precedence over the category default.
+  const articleLinkDensity = typeof a.link_density_override === "number" ? a.link_density_override : linkDensityForCategory(a.category);
 
   // JSON-LD schema for all articles — prefer structured author over flat fields
   const authorBlock = articleAuthor
@@ -429,7 +431,7 @@ export default async function ArticlePage({
                       text={a.sections[0].body}
                       skipHrefs={[`/article/${a.slug}`]}
                       disabled={!linkInjectionEnabled}
-                      maxLinks={5}
+                      maxLinks={articleLinkDensity}
                       pillarPath={articlePillarPath}
                     />
                   </section>
@@ -461,7 +463,7 @@ export default async function ArticlePage({
                           text={section.body}
                           skipHrefs={[`/article/${a.slug}`]}
                           disabled={!linkInjectionEnabled}
-                          maxLinks={5}
+                          maxLinks={articleLinkDensity}
                           pillarPath={articlePillarPath}
                         />
                       </section>
@@ -516,7 +518,7 @@ export default async function ArticlePage({
                             text={section.body}
                             skipHrefs={[`/article/${a.slug}`]}
                             disabled={!linkInjectionEnabled}
-                            maxLinks={5}
+                            maxLinks={articleLinkDensity}
                             pillarPath={articlePillarPath}
                           />
                         </section>

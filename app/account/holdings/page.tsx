@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import HoldingsClient, { type HoldingRow } from "./HoldingsClient";
 import { getCurrentPricesBatch, keyOf } from "@/lib/holdings/value";
+import { enforcePortalKind } from "@/lib/portal-gate";
 
 export const dynamic = "force-dynamic";
 
@@ -12,6 +13,12 @@ export const metadata: Metadata = {
 };
 
 export default async function HoldingsPage() {
+  // Strict-separation gate: holdings is investor-workspace data only. An
+  // advisor in advisor workspace navigating here gets redirected back to
+  // /account/select-workspace. RLS already isolates by auth.uid(); the
+  // gate just makes the workspace promise visible at the UX layer.
+  await enforcePortalKind("investor");
+
   const supabase = await createClient();
   const {
     data: { user },

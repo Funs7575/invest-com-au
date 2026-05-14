@@ -8,7 +8,9 @@ import { trackEvent, trackPageDuration } from "@/lib/tracking";
 import { getStoredUtm } from "@/components/UtmCapture";
 import { storeQualificationData } from "@/lib/qualification-store";
 import AdvisorMatchCTA from "@/components/AdvisorMatchCTA";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 import { formatCurrency } from "@/lib/utils";
+import { useCalculatorState } from "@/hooks/use-calculator-state";
 
 export default function RetirementCalculatorClient() {
   const [currentAge, setCurrentAge] = useState(35);
@@ -24,6 +26,60 @@ export default function RetirementCalculatorClient() {
   const [emailGated, setEmailGated] = useState(false);
   const [email, setEmail] = useState("");
   const [emailSubmitted, setEmailSubmitted] = useState(false);
+
+  const {
+    value: persistedInputs,
+    setValue: setPersistedInputs,
+    isHydrated: persistHydrated,
+  } = useCalculatorState<{
+    current_age: number;
+    retirement_age: number;
+    current_super: number;
+    annual_salary: number;
+    employer_rate: number;
+    additional_contributions: number;
+    expected_return: number;
+    inflation_rate: number;
+    desired_income: number;
+  }>("retirement_calculator", {
+    current_age: 35,
+    retirement_age: 67,
+    current_super: 150000,
+    annual_salary: 100000,
+    employer_rate: 12,
+    additional_contributions: 0,
+    expected_return: 7,
+    inflation_rate: 3,
+    desired_income: 60000,
+  });
+
+  useEffect(() => {
+    if (!persistHydrated) return;
+    if (typeof persistedInputs.current_age === "number") setCurrentAge(persistedInputs.current_age);
+    if (typeof persistedInputs.retirement_age === "number") setRetirementAge(persistedInputs.retirement_age);
+    if (typeof persistedInputs.current_super === "number") setCurrentSuper(persistedInputs.current_super);
+    if (typeof persistedInputs.annual_salary === "number") setAnnualSalary(persistedInputs.annual_salary);
+    if (typeof persistedInputs.employer_rate === "number") setEmployerRate(persistedInputs.employer_rate);
+    if (typeof persistedInputs.additional_contributions === "number") setAdditionalContributions(persistedInputs.additional_contributions);
+    if (typeof persistedInputs.expected_return === "number") setExpectedReturn(persistedInputs.expected_return);
+    if (typeof persistedInputs.inflation_rate === "number") setInflationRate(persistedInputs.inflation_rate);
+    if (typeof persistedInputs.desired_income === "number") setDesiredIncome(persistedInputs.desired_income);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- hydrate once
+  }, [persistHydrated]);
+
+  useEffect(() => {
+    setPersistedInputs({
+      current_age: currentAge,
+      retirement_age: retirementAge,
+      current_super: currentSuper,
+      annual_salary: annualSalary,
+      employer_rate: employerRate,
+      additional_contributions: additionalContributions,
+      expected_return: expectedReturn,
+      inflation_rate: inflationRate,
+      desired_income: desiredIncome,
+    });
+  }, [currentAge, retirementAge, currentSuper, annualSalary, employerRate, additionalContributions, expectedReturn, inflationRate, desiredIncome, setPersistedInputs]);
 
   useEffect(() => { trackPageDuration("/retirement-calculator"); }, []);
 
@@ -389,6 +445,13 @@ export default function RetirementCalculatorClient() {
                 description="A financial planner builds a strategy around your goals, super, investments, and tax — so you can retire with confidence."
               />
             </div>
+
+            <CalculatorLeadCapture
+              calcSlug="retirement-calculator"
+              calcTitle="retirement projection"
+              need="planning"
+              contextKeys={["retirement", "super-planning"]}
+            />
 
             {/* SEO content */}
             <div className="bg-white border border-slate-200 rounded-2xl p-5 md:p-8">

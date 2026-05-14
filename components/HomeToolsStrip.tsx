@@ -108,19 +108,6 @@ export default function HomeToolsStrip({ featuredHrefs }: HomeToolsStripProps = 
           <span className="iv2-mini" style={{ color: "var(--color-coral-600)" }}>
             ● Free tools, no signup
           </span>
-          <h2
-            className="font-display"
-            style={{
-              fontSize: 22,
-              letterSpacing: "-.02em",
-              fontWeight: 800,
-              margin: "4px 0 0",
-              lineHeight: 1.15,
-              color: "var(--color-ink-900)",
-            }}
-          >
-            25 calculators and tools for Australian investors
-          </h2>
         </div>
         <Link
           href="/calculators"
@@ -140,7 +127,7 @@ export default function HomeToolsStrip({ featuredHrefs }: HomeToolsStripProps = 
             background: "white",
           }}
         >
-          See all 25 <DesignIcon name="arrow-right" size={12} strokeWidth={2.4} />
+          See all tools <DesignIcon name="arrow-right" size={12} strokeWidth={2.4} />
         </Link>
       </div>
 

@@ -1,7 +1,9 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
+import { useCalculatorState } from "@/hooks/use-calculator-state";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 function fmt(n: number) {
   return new Intl.NumberFormat("en-AU", { style: "currency", currency: "AUD", maximumFractionDigits: 0 }).format(n);
@@ -16,6 +18,39 @@ export default function DividendReinvestmentClient() {
   const [divYield, setDivYield] = useState(4);
   const [growth, setGrowth] = useState(6);
   const [years, setYears] = useState(20);
+
+  const {
+    value: persistedInputs,
+    setValue: setPersistedInputs,
+    isHydrated: persistHydrated,
+  } = useCalculatorState<{
+    price: number;
+    shares: number;
+    div_yield: number;
+    growth: number;
+    years: number;
+  }>("dividend_reinvestment_calculator", {
+    price: 50,
+    shares: 1000,
+    div_yield: 4,
+    growth: 6,
+    years: 20,
+  });
+
+  useEffect(() => {
+    if (!persistHydrated) return;
+    if (typeof persistedInputs.price === "number") setPrice(persistedInputs.price);
+    if (typeof persistedInputs.shares === "number") setShares(persistedInputs.shares);
+    if (typeof persistedInputs.div_yield === "number") setDivYield(persistedInputs.div_yield);
+    if (typeof persistedInputs.growth === "number") setGrowth(persistedInputs.growth);
+    if (typeof persistedInputs.years === "number") setYears(persistedInputs.years);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- hydrate once
+  }, [persistHydrated]);
+
+  useEffect(() => {
+    setPersistedInputs({ price, shares, div_yield: divYield, growth, years });
+  }, [price, shares, divYield, growth, years, setPersistedInputs]);
+
   const result = useMemo(() => {
     const dy = divYield / 100;
     const gr = growth / 100;
@@ -256,6 +291,13 @@ export default function DividendReinvestmentClient() {
             </div>
           </div>
         </div>
+
+        <CalculatorLeadCapture
+          calcSlug="dividend-reinvestment-calculator"
+          calcTitle="DRP projection"
+          need="wealth"
+          contextKeys={["dividend-reinvestment", "drp"]}
+        />
 
         <p className="text-[0.65rem] text-slate-400 mt-8 leading-relaxed">
           This calculator provides general information only and does not constitute financial advice. Projections assume constant dividend yield and share price growth, which will vary in practice. Dividends received via DRP are still assessable income in Australia. Always verify your tax position with a registered tax agent.

@@ -12,6 +12,7 @@ interface InitialArticle {
   category: string | null;
   tags: string[] | null;
   status: string;
+  link_density_override: number | null;
 }
 
 interface Template {
@@ -75,6 +76,9 @@ export default function ArticleEditorClient({
   const [tagsCsv, setTagsCsv] = useState((initialArticle?.tags || []).join(", "));
   const [templateSlug, setTemplateSlug] = useState<string>("");
   const [status, setStatus] = useState(initialArticle?.status || "draft");
+  const [linkDensityOverride, setLinkDensityOverride] = useState<number | null>(
+    initialArticle?.link_density_override ?? null,
+  );
 
   const tags = useMemo(
     () => tagsCsv.split(",").map((t) => t.trim()).filter(Boolean),
@@ -175,6 +179,7 @@ export default function ArticleEditorClient({
           category: category || null,
           tags,
           status: publish ? "published" : "draft",
+          link_density_override: linkDensityOverride,
         }),
       });
       const json = await res.json().catch(() => ({}));
@@ -314,6 +319,33 @@ export default function ArticleEditorClient({
               />
             </label>
           </div>
+
+          <label className="block mb-3">
+            <span className="block text-xs font-semibold text-slate-700 mb-1">
+              Link density override{" "}
+              <span className="font-normal text-slate-500">
+                (0–20, blank = use category default)
+              </span>
+            </span>
+            <input
+              type="number"
+              min={0}
+              max={20}
+              step={1}
+              value={linkDensityOverride ?? ""}
+              onChange={(e) => {
+                const raw = e.target.value;
+                if (raw === "") {
+                  setLinkDensityOverride(null);
+                } else {
+                  const n = parseInt(raw, 10);
+                  if (!isNaN(n) && n >= 0 && n <= 20) setLinkDensityOverride(n);
+                }
+              }}
+              placeholder="e.g. 3 for a short promo piece"
+              className="w-48 rounded-lg border border-slate-300 px-3 py-2 text-sm"
+            />
+          </label>
 
           <label className="block">
             <span className="flex items-center justify-between text-xs font-semibold text-slate-700 mb-1">

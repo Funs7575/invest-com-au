@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { enforcePortalKind } from "@/lib/portal-gate";
 
 export const metadata: Metadata = {
   title: "Advisor Portal — Invest.com.au",
@@ -6,6 +7,9 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function AdvisorPortalLayout({ children }: { children: React.ReactNode }) {
+export const dynamic = "force-dynamic";
+
+export default async function AdvisorPortalLayout({ children }: { children: React.ReactNode }) {
+  await enforcePortalKind("advisor");
   return <>{children}</>;
 }

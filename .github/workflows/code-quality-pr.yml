@@ -19,7 +19,7 @@ jobs:
     timeout-minutes: 12
     if: ${{ !contains(github.event.pull_request.title, '[skip-quality]') }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: actions/setup-node@v6
         with:
@@ -87,7 +87,7 @@ jobs:
           BASE: ${{ steps.diff.outputs.BASE }}
 
       - name: Upsert PR comment
-        uses: marocchino/sticky-pull-request-comment@v2
+        uses: marocchino/sticky-pull-request-comment@v3
         with:
           header: quality-delta
           path: /tmp/comment.md

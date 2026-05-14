@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import WatchlistAlertsToggle from "./WatchlistAlertsToggle";
 import WatchlistClient from "./WatchlistClient";
 
 export const dynamic = "force-dynamic";
@@ -35,6 +36,13 @@ export default async function WatchlistPage() {
     added_at: row.added_at as string,
   }));
 
+  const { data: alertPref } = await supabase
+    .from("watchlist_alert_preferences")
+    .select("alerts_opted_in")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  const alertsOptedIn = alertPref?.alerts_opted_in ?? false;
+
   return (
     <div className="py-6 md:py-10">
       <div className="container-custom max-w-3xl">
@@ -53,6 +61,8 @@ export default async function WatchlistPage() {
             </p>
           </div>
         </div>
+
+        <WatchlistAlertsToggle initialOptedIn={alertsOptedIn} hasItems={items.length > 0} />
 
         <WatchlistClient initialItems={items} />
       </div>

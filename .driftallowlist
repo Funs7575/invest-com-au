@@ -137,6 +137,12 @@ investor_goals            # goals-tracking feature — backfill migration pendin
 listing_owner_accounts    # marketplace listing-owner portal — backfill migration pending
 property_holdings         # portfolio / property-investing feature — backfill migration pending
 fund_reviews              # fund review content — backfill migration pending
+placement_experiments     # A/B placement testing feature — dashboard-created 2026-05-11, backfill migration pending
 
 # PostGIS extension-managed (out of scope — comes from CREATE EXTENSION postgis)
 spatial_ref_sys
+
+# W2 Phase — tables created in Supabase dashboard without migration files; pending Stream A backfill
+business_accounts  # W2 Phase 2.5 — business account type; migration pending
+investor_goals     # W2 Phase 2 — investor goals tracking; migration pending
+placement_experiments  # created in dashboard 2026-05-11; pending migration backfill (A-stream)

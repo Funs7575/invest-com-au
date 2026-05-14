@@ -8931,6 +8931,51 @@ export type Database = {
         }
         Relationships: []
       }
+      placement_experiments: {
+        Row: {
+          created_at: string
+          ended_at: string | null
+          id: number
+          metrics: Json
+          name: string
+          notes: string | null
+          slug: string
+          started_at: string | null
+          status: string
+          updated_at: string
+          variants: Json
+          winner_variant: string | null
+        }
+        Insert: {
+          created_at?: string
+          ended_at?: string | null
+          id?: never
+          metrics?: Json
+          name: string
+          notes?: string | null
+          slug: string
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+          variants: Json
+          winner_variant?: string | null
+        }
+        Update: {
+          created_at?: string
+          ended_at?: string | null
+          id?: never
+          metrics?: Json
+          name?: string
+          notes?: string | null
+          slug?: string
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+          variants?: Json
+          winner_variant?: string | null
+        }
+        Relationships: []
+      }
       platform_snapshots: {
         Row: {
           created_at: string
@@ -12713,6 +12758,33 @@ export type Database = {
         }
         Relationships: []
       }
+      watchlist_alert_preferences: {
+        Row: {
+          alerts_opted_in: boolean
+          created_at: string
+          last_digest_sent_at: string | null
+          last_digest_window_start: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          alerts_opted_in?: boolean
+          created_at?: string
+          last_digest_sent_at?: string | null
+          last_digest_window_start?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          alerts_opted_in?: boolean
+          created_at?: string
+          last_digest_sent_at?: string | null
+          last_digest_window_start?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       web_vitals_daily_rollup: {
         Row: {
           device_kind: string
@@ -13398,6 +13470,14 @@ export type Database = {
       }
       increment_listing_views: {
         Args: { listing_id: number }
+        Returns: undefined
+      }
+      increment_placement_event: {
+        Args: {
+          p_event_type: string
+          p_experiment_id: number
+          p_variant: string
+        }
         Returns: undefined
       }
       is_admin: { Args: never; Returns: boolean }
