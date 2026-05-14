@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { requireAdvisorSession } from "@/lib/require-advisor-session";
+import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 import { submitForVerification } from "@/lib/expert-teams";
 import { logger } from "@/lib/logger";
 
@@ -11,6 +12,9 @@ export async function POST(
   ctx: { params: Promise<{ id: string }> },
 ) {
   try {
+    if (!(await isAllowed("expert_teams_submit", ipKey(request), { max: 10, refillPerSec: 0.05 }))) {
+      return NextResponse.json({ error: "Too many requests." }, { status: 429 });
+    }
     const advisorId = await requireAdvisorSession(request);
     if (!advisorId) {
       return NextResponse.json({ error: "Sign in required." }, { status: 401 });

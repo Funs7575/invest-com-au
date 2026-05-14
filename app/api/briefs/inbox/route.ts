@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { requireAdvisorSession } from "@/lib/require-advisor-session";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 import { maskBriefForProvider } from "@/lib/briefs/mask";
 import { logger } from "@/lib/logger";
 import type { BriefRow } from "@/lib/briefs/types";
@@ -27,6 +28,9 @@ const log = logger("briefs:inbox");
  */
 export async function GET(request: NextRequest) {
   try {
+    if (!(await isAllowed("briefs_inbox", ipKey(request), { max: 60, refillPerSec: 1 }))) {
+      return NextResponse.json({ error: "Too many requests." }, { status: 429 });
+    }
     const advisorId = await requireAdvisorSession(request);
     if (!advisorId) {
       return NextResponse.json({ error: "Sign in required." }, { status: 401 });

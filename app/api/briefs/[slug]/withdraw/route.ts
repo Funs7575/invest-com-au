@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 import { createAdminClient } from "@/lib/supabase/admin";
+import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 import { logger } from "@/lib/logger";
 
 const log = logger("briefs:withdraw");
@@ -22,6 +23,9 @@ export async function POST(
   ctx: { params: Promise<{ slug: string }> },
 ) {
   try {
+    if (!(await isAllowed("briefs_withdraw", ipKey(request), { max: 10, refillPerSec: 0.1 }))) {
+      return NextResponse.json({ error: "Too many requests." }, { status: 429 });
+    }
     const { slug } = await ctx.params;
     let rawBody: unknown;
     try {

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireAdvisorSession } from "@/lib/require-advisor-session";
+import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 import { logger } from "@/lib/logger";
 import { AcceptBriefRequest } from "@/lib/api-schemas";
 import { acceptBrief } from "@/lib/briefs/credits";
@@ -14,6 +15,9 @@ export async function POST(
   ctx: { params: Promise<{ slug: string }> },
 ) {
   try {
+    if (!(await isAllowed("briefs_accept", ipKey(request), { max: 30, refillPerSec: 0.5 }))) {
+      return NextResponse.json({ error: "Too many requests." }, { status: 429 });
+    }
     const advisorId = await requireAdvisorSession(request);
     if (!advisorId) {
       return NextResponse.json({ error: "Sign in required." }, { status: 401 });
