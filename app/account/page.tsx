@@ -6,6 +6,7 @@ import AccountActionPlansTiles from "./AccountActionPlansTiles";
 import { createClient } from "@/lib/supabase/server";
 import { getKindsForUser, type KindMembership } from "@/lib/account-kinds";
 import { listPlansForUser } from "@/lib/getmatched/action-plans";
+import { listForUser as listSavedSearchesForUser } from "@/lib/saved-searches";
 import type { ActionPlan } from "@/lib/getmatched/types";
 
 export const dynamic = "force-dynamic";
@@ -21,14 +22,19 @@ export default async function AccountPage() {
   // the existing legacy account UX (subscription, notification prefs).
   let memberships: KindMembership[] = [];
   let plans: ActionPlan[] = [];
+  let savedSearchCount = 0;
   try {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
-      [memberships, plans] = await Promise.all([
+      const [m, p, s] = await Promise.all([
         getKindsForUser(user.id),
         listPlansForUser(user.id),
+        listSavedSearchesForUser(user.id),
       ]);
+      memberships = m;
+      plans = p;
+      savedSearchCount = s.length;
     }
   } catch {
     /* fall through with empty memberships — AccountClient still renders */
@@ -41,9 +47,12 @@ export default async function AccountPage() {
           <AccountActionPlansTiles plans={plans} />
         </div>
       )}
-      {memberships.length > 0 && (
+      {(memberships.length > 0 || savedSearchCount > 0) && (
         <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-8">
-          <AccountKindCards memberships={memberships} />
+          <AccountKindCards
+            memberships={memberships}
+            savedSearchCount={savedSearchCount}
+          />
         </div>
       )}
       <Suspense fallback={<div className="py-16 text-center animate-pulse"><div className="h-8 w-48 bg-slate-200 rounded mx-auto" /></div>}>
