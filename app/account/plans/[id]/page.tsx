@@ -7,6 +7,7 @@ import { getPlanById } from "@/lib/getmatched/action-plans";
 import { getResultTemplate } from "@/lib/getmatched/templates";
 import type { IntentSlug, RouteType } from "@/lib/getmatched/types";
 import Icon from "@/components/Icon";
+import SharePlanButton from "./SharePlanButton";
 
 export const dynamic = "force-dynamic";
 
@@ -116,6 +117,7 @@ export default async function MyPlanDetailPage({
             >
               <Icon name="edit" size={14} /> Edit answers
             </Link>
+            <SharePlanButton shareToken={plan.share_token} />
           </div>
         </div>
 
