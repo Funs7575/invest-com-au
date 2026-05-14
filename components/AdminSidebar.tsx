@@ -91,6 +91,7 @@ const NAV_GROUPS = [
       { href: "/admin/routing-rules", icon: "git-branch", label: "Routing Rules" },
       { href: "/admin/risk-flags", icon: "shield", label: "Risk Flags" },
       { href: "/admin/listings/moderation", icon: "list-checks", label: "Listing Briefs (moderation)" },
+      { href: "/admin/pro-affiliate", icon: "link", label: "Pro affiliate program" },
     ],
   },
   {
