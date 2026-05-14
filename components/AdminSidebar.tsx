@@ -82,6 +82,25 @@ const NAV_GROUPS = [
     ],
   },
   {
+    label: "Brief Marketplace",
+    items: [
+      { href: "/admin/briefs", icon: "edit", label: "Investor Briefs" },
+      { href: "/admin/expert-teams", icon: "users", label: "Expert Teams" },
+      { href: "/admin/credit-pricing", icon: "coins", label: "Credit Pricing" },
+      { href: "/admin/routing-rules", icon: "git-branch", label: "Routing Rules" },
+      { href: "/admin/risk-flags", icon: "shield", label: "Risk Flags" },
+    ],
+  },
+  {
+    label: "Get Matched",
+    items: [
+      { href: "/admin/intents", icon: "target", label: "Intents" },
+      { href: "/admin/get-matched/questions", icon: "message-circle", label: "Questions" },
+      { href: "/admin/get-matched/result-templates", icon: "layout", label: "Result Templates" },
+      { href: "/admin/get-matched/funnel", icon: "filter", label: "Funnel" },
+    ],
+  },
+  {
     label: "Users",
     items: [
       { href: "/admin/subscribers", icon: "mail", label: "Subscribers" },

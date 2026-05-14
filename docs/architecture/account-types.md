@@ -5,26 +5,29 @@ a single Supabase `auth.users` table. This doc is the source of truth for
 how to add a new account kind without making a structural mistake.
 
 Read this if you're about to:
-- introduce a new "professional" type beyond advisors and broker partners
-  (CRE listing owners, fund operators, end-user investor profiles, firm
-  partners),
+- introduce a sixth kind (wholesale operator, firm partner, etc.),
 - relax or replace the single-account-per-user invariant,
 - add an admin/billing/auth path that needs to branch on what kind of
   account is logged in.
 
 ## Today
 
-Two kinds of authenticated accounts exist in production. Each lives in
+Five kinds of authenticated accounts exist in production. Each lives in
 its own entity table, each links to `auth.users` via a unique-indexed
 `auth_user_id` column, and each owns its own RLS policies. There is no
 central `accounts` registry — at current volume it would be premature
-normalisation.
+normalisation. Multi-kind users are unioned via the
+`account_kind_membership` view (current definition in
+`supabase/migrations/20260510240000_listing_owner_accounts.sql`).
 
-| Kind             | Entity table       | Compliance scope                | Login flow                         |
-|------------------|--------------------|---------------------------------|------------------------------------|
-| `advisor`        | `professionals`    | AFSL Class 1/2 (per advisor)    | magic link via `/advisor-portal`   |
-| `broker_partner` | `broker_accounts`  | None (marketplace, no AFSL)     | magic link via `/broker-portal`    |
-| (admin)          | `ADMIN_EMAILS` allow-list (env var) | Internal staff, MFA-protected per V-NEW-07 | `/admin/login` |
+| Kind             | Entity table              | Portal               | Compliance scope                |
+|------------------|---------------------------|----------------------|---------------------------------|
+| `advisor`        | `professionals`           | `/advisor-portal`    | AFSL Class 1/2 (per advisor)    |
+| `broker_partner` | `broker_accounts`         | `/broker-portal`     | None (marketplace, no AFSL)     |
+| `investor`       | `investor_profiles`       | `/account`           | GDPR / Privacy Act (end-user data)|
+| `business_owner` | `business_accounts`       | `/business-portal`   | None — factual computation only (grants, R&D, sell-prep)|
+| `listing_owner`  | `listing_owner_accounts`  | `/invest/my-listings`| NSW/VIC/QLD real-estate licence (per listing)|
+| (admin)          | `ADMIN_EMAILS` allow-list (env var) | `/admin/login` | Internal staff, MFA-protected per V-NEW-07 |
 
 Admins are deliberately not an entity table — the allow-list
 (`lib/admin.ts:getAdminEmails`) is the simplest possible representation
@@ -33,9 +36,13 @@ requirement). If we ever onboard external admin-style users (e.g.
 agency partners with admin views), promote that case to its own kind.
 
 A single `auth.users` row can hold at most one row per kind, enforced by
-unique indexes on each entity table's `auth_user_id`. The same person
-can hold both an advisor row *and* a broker_partner row by linking to
-the same auth user — this is allowed today and used in practice.
+unique indexes on each entity table's `auth_user_id`. Real-world users
+hold multiple kinds simultaneously — e.g. a sole-trader financial
+planner is `advisor` + `business_owner` + `investor` at once. The
+`account_kind_membership` view UNIONs across all entity tables so callers
+can answer "what hats does this user wear?" in one query; portal layouts
+read the `iv_active_kind` cookie (set via `/api/account/active-kind`)
+to decide which workspace context to render.
 
 ### Code references
 
@@ -81,25 +88,22 @@ on `auth.users` — that's premature normalisation we'll regret.
 7. **Tests** — RLS isolation test (kind A cannot read kind B's rows),
    auth-guard test (401/200), happy-path test for the onboarding flow.
 
-## Future kinds (planned)
+## Future kinds (planned, not yet shipped)
 
 These are kinds we have a clear product reason for but have not yet
 shipped. Each would follow the pattern above.
 
 | Kind                   | Entity table         | Compliance scope                                        |
 |------------------------|----------------------|---------------------------------------------------------|
-| `listing_owner`        | `listing_owners`     | NSW/VIC/QLD real-estate licence (varies by state)       |
 | `wholesale_operator`   | `wholesale_operators`| Corporations Act s708 sophisticated-investor declaration|
-| `investor_profile`     | `investor_profiles`  | GDPR / Privacy Act (end-user data, saved searches)      |
 | `firm_partner`         | `firm_partners`      | AFSL licensee delegation; admin-of-firm role            |
 
-`investor_profile` is the highest-leverage of the four — it's the
-foundation for the gated matchmaker save flow and personalised content
-post-launch. `firm_partner` separates the firm-admin role from the
-individual-advisor role on `professionals` (today firm admins are
-flagged via `professionals.is_firm_admin`, which is fine for
-single-table firm management but breaks down once firms want
-non-advising admins).
+`firm_partner` separates the firm-admin role from the individual-advisor
+role on `professionals` (today firm admins are flagged via
+`professionals.is_firm_admin`, which is fine for single-table firm
+management but breaks down once firms want non-advising admins).
+`wholesale_operator` unblocks rendering wholesale offers to declared
+s708 investors without a retail-investor compliance liability.
 
 ## Compliance considerations per kind
 
@@ -113,15 +117,25 @@ non-advising admins).
   (target market determination, ranked-by-paid disclosure). The
   `SPONSORED_DISCLOSURE` constant in `lib/compliance.ts` covers the
   surface copy.
-- **`listing_owner`** (future) — NSW/VIC/QLD licence numbers must be
-  recorded on the entity row and surfaced on the listing. Wash-sale and
-  underquoting rules apply per state.
+- **`investor`** — GDPR / Privacy Act data subject. Delete-on-request must
+  cascade through `investor_profiles`, `investor_watchlists`,
+  `investor_holdings`, `investor_goals`, `property_holdings`,
+  saved searches, comparisons, and newsletter preferences. Personalised
+  outputs must remain comparison or factual-computation — no personal
+  advice surfaces pre-AFSL.
+- **`business_owner`** — no AFSL exposure today; grants/R&D/sell-prep
+  surfaces are factual computation over the user's stated business
+  attributes (industry, revenue band, employees band, state). ABN/ACN
+  collected but not yet verified against ABR; verification deferred until
+  there's a downstream surface (lead routing, paid tier) that requires it.
+- **`listing_owner`** — claimed listings expose the owner's contact
+  information; verification today is via OTP-cookie or magic-link. If a
+  listing carries NSW/VIC/QLD real-estate licence claims, the licence
+  number must be recorded on the listing row and the wash-sale /
+  underquoting rules of that state apply.
 - **`wholesale_operator`** (future) — store the s708 declaration with
   versioned consent. Block retail-investor surfaces from rendering
   wholesale offers without the declaration on file.
-- **`investor_profile`** (future) — GDPR data subject rights mean
-  delete-on-request must cascade through saved searches, comparisons,
-  newsletter preferences. Treat as a separate compliance review.
 - **`firm_partner`** (future) — inherits the firm's AFSL; firm-admin
   actions (adding/removing advisors, pooling credit) need audit-log
   entries that name both the firm and the actor.
