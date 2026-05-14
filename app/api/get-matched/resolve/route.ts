@@ -9,6 +9,7 @@ import {
   resolveActionPlan,
 } from "@/lib/getmatched/engine";
 import { computeTopMatch } from "@/lib/getmatched/top-match";
+import { buildMatchExplainer } from "@/lib/getmatched/explainer";
 import { logEvent } from "@/lib/getmatched/events";
 import { classifyGetMatchedError, errorResponse } from "@/lib/getmatched/errors";
 import { logger } from "@/lib/logger";
@@ -109,6 +110,13 @@ export async function POST(request: NextRequest) {
         primary_href: resolved.primaryHref,
         vertical: resolved.vertical,
         advisor_type: resolved.advisorType,
+        match_explainer: buildMatchExplainer({
+          answers,
+          intent: resolved.intent,
+          route: resolved.route,
+          vertical: resolved.vertical,
+          advisorType: resolved.advisorType,
+        }),
         ephemeral: true,
       });
     }
@@ -226,6 +234,13 @@ export async function POST(request: NextRequest) {
       primary_href: resolved.primaryHref,
       vertical: resolved.vertical,
       advisor_type: resolved.advisorType,
+      match_explainer: buildMatchExplainer({
+        answers: plan.answers,
+        intent: resolved.intent,
+        route: resolved.route,
+        vertical: resolved.vertical,
+        advisorType: resolved.advisorType,
+      }),
     });
   } catch (err) {
     // Outer catastrophic catch — try to compute the plan from whatever
@@ -256,6 +271,13 @@ export async function POST(request: NextRequest) {
         recommended_brief_template: resolved.recommendedBriefTemplate,
         accept_credits_cost: resolved.acceptCreditsCost,
         recommended_providers: providers,
+        match_explainer: buildMatchExplainer({
+          answers,
+          intent: resolved.intent,
+          route: resolved.route,
+          vertical: resolved.vertical,
+          advisorType: resolved.advisorType,
+        }),
         ephemeral: true,
       });
     } catch {

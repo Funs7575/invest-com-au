@@ -17,6 +17,7 @@ import QuestionCard from "./_components/QuestionCard";
 import ProgressDots from "./_components/ProgressDots";
 import AnalyzingScreen from "./_components/AnalyzingScreen";
 import TopMatchCard from "./_components/TopMatchCard";
+import MatchExplainerCard from "./_components/MatchExplainerCard";
 
 type NextStep =
   | {
@@ -56,6 +57,7 @@ interface ResolveResponse {
   primary_href?: string;
   vertical?: Vertical | null;
   advisor_type?: string | null;
+  match_explainer?: { score: number; bullets: string[] };
   ephemeral?: boolean;
 }
 
@@ -648,6 +650,14 @@ function ActionPlanScreen({
               Your answers mention topics that need a quick safety check. If you ask for quotes from this plan, we&apos;ll confirm before sending it to verified pros — usually within a business day.
             </p>
           </div>
+        )}
+
+        {/* Match-score badge + "why we matched you here" transparency strip */}
+        {result.match_explainer && (
+          <MatchExplainerCard
+            score={result.match_explainer.score}
+            bullets={result.match_explainer.bullets}
+          />
         )}
 
         {/* Top-match hero card — only present for `compare` route */}
