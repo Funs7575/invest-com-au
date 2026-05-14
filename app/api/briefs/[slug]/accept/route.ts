@@ -7,6 +7,7 @@ import { logger } from "@/lib/logger";
 import { AcceptBriefRequest } from "@/lib/api-schemas";
 import { acceptBrief } from "@/lib/briefs/credits";
 import { isProfessionalOnTeam } from "@/lib/expert-teams";
+import { sendConsumerProviderAccepted } from "@/lib/marketplace-emails";
 
 const log = logger("briefs:accept");
 
@@ -41,7 +42,7 @@ export async function POST(
     const admin = createAdminClient();
     const { data: brief } = await admin
       .from("advisor_auctions")
-      .select("id, contact_email, contact_name, contact_phone")
+      .select("id, slug, job_title, contact_email, contact_name, contact_phone")
       .eq("slug", slug)
       .eq("flow_type", "accept")
       .maybeSingle();
@@ -99,6 +100,24 @@ export async function POST(
       credits: result.creditsSpent,
     });
 
+    // ── Notify the consumer their brief was accepted (N1) ──
+    // Fire-and-forget. We need to look up the accepting provider's name
+    // for the email body. Failures swallowed.
+    if (brief.contact_email && typeof brief.contact_email === "string") {
+      void notifyConsumerOfAcceptance({
+        consumerEmail: brief.contact_email as string,
+        consumerName: (brief.contact_name as string) ?? "",
+        briefTitle: (brief.job_title as string) ?? "Your Match Request",
+        briefSlug: brief.slug as string,
+        professionalId: advisorId,
+        teamId,
+      }).catch((err) => {
+        log.warn("notifyConsumerOfAcceptance failed", {
+          err: err instanceof Error ? err.message : String(err),
+        });
+      });
+    }
+
     return NextResponse.json({
       success: true,
       credits_spent: result.creditsSpent,
@@ -116,4 +135,49 @@ export async function POST(
     });
     return NextResponse.json({ error: "Failed to accept brief." }, { status: 500 });
   }
+}
+
+// ─── Consumer notification helper (N1) ───────────────────────────────────
+
+async function notifyConsumerOfAcceptance(input: {
+  consumerEmail: string;
+  consumerName: string;
+  briefTitle: string;
+  briefSlug: string;
+  professionalId: number;
+  teamId: number | null;
+}): Promise<void> {
+  const admin = createAdminClient();
+
+  // Look up provider name. Team route uses the team name; individual /
+  // firm route uses the professional name.
+  let providerName = "A verified pro";
+  let providerKind: "individual" | "firm" | "expert_team" = "individual";
+
+  if (input.teamId) {
+    const { data: team } = await admin
+      .from("expert_teams")
+      .select("name")
+      .eq("id", input.teamId)
+      .maybeSingle();
+    if (team?.name) providerName = team.name as string;
+    providerKind = "expert_team";
+  } else {
+    const { data: pro } = await admin
+      .from("professionals")
+      .select("name, firm_id")
+      .eq("id", input.professionalId)
+      .maybeSingle();
+    if (pro?.name) providerName = pro.name as string;
+    providerKind = pro?.firm_id ? "firm" : "individual";
+  }
+
+  await sendConsumerProviderAccepted({
+    consumerEmail: input.consumerEmail,
+    consumerName: input.consumerName,
+    briefTitle: input.briefTitle,
+    briefSlug: input.briefSlug,
+    providerName,
+    providerKind,
+  });
 }
