@@ -1,14 +1,14 @@
 /**
- * Squad-to-squad (Expert Team) marketplace emails.
+ * Squad-to-squad (Expert Team) marketplace emails — cross-team workflows
+ * (claim notifications, referrals, assignments). Distinct from
+ * `lib/marketplace-emails.ts` which handles consumer ↔ provider mail.
  *
- * Distinct from `lib/marketplace-emails.ts` (consumer ↔ provider) — these
- * are for cross-team workflows: referrals, assignments, etc. Each helper
- * is fire-and-forget and never throws; failures are logged and the API
- * response proceeds.
+ * Compliance: passive language only ("Sarah claimed the brief"), never
+ * advice phrasing. Consumer-facing terminology uses "Match Request" /
+ * "Pro Squad" per `lib/consumer-copy.ts`.
  *
- * Created fresh in this worktree — `lib/team-brief-assignments.ts` from
- * PR #836 may add its own email helpers in parallel. If both files land
- * they're additive (different exported functions).
+ * Every helper is fire-and-forget — failures are logged but never thrown,
+ * so an email blip can't break an API response.
  */
 
 // eslint-disable-next-line no-restricted-imports -- cross-team email needs to read members across teams; service-role legitimate per CLAUDE.md.
@@ -25,12 +25,12 @@ function wrap(title: string, body: string): string {
   return `<div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;color:#334155"><div style="background:#0f172a;padding:20px 24px;border-radius:12px 12px 0 0"><h1 style="color:white;margin:0;font-size:18px">${title}</h1></div><div style="background:#f8fafc;padding:24px;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 12px 12px">${body}</div></div>`;
 }
 
-function btn(href: string, label: string, color = "#0ea5e9"): string {
+function btn(href: string, label: string, color = "#f59e0b"): string {
   return `<div style="text-align:center;margin:24px 0"><a href="${href}" style="display:inline-block;padding:12px 32px;background:${color};color:white;text-decoration:none;border-radius:8px;font-size:14px;font-weight:600">${label}</a></div>`;
 }
 
 function disclosure(): string {
-  return `<p style="font-size:11px;color:#94a3b8;margin-top:20px">Invest.com.au — Pro Squad referral notification. <a href="${SITE_URL}/account/notifications" style="color:#94a3b8">Email preferences</a></p>`;
+  return `<p style="font-size:11px;color:#94a3b8;margin-top:20px">General information only — not personal advice. <a href="${SITE_URL}/privacy" style="color:#94a3b8">Privacy</a> · <a href="${SITE_URL}/account/notifications" style="color:#94a3b8">Email preferences</a></p>`;
 }
 
 function escapeHtml(s: string): string {
@@ -40,6 +40,38 @@ function escapeHtml(s: string): string {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
+}
+
+/**
+ * Sent fire-and-forget to every other active member of the Pro Squad when
+ * one member claims an accepted Match Request. Recipient excludes the
+ * claimer themselves.
+ *
+ * Copy is passive: "Sarah claimed the brief" — never "Sarah will advise".
+ */
+export async function sendSquadClaimNotification(input: {
+  recipientEmail: string;
+  recipientName: string;
+  claimerName: string;
+  teamSlug: string;
+  teamName: string;
+  briefTitle: string;
+}): Promise<boolean> {
+  const inboxUrl = `${SITE_URL}/teams/${input.teamSlug}/inbox`;
+  const { ok } = await sendEmail({
+    from: FROM,
+    to: input.recipientEmail,
+    subject: `${input.claimerName} claimed the ${input.briefTitle} Match Request`,
+    html: wrap(
+      "A squad-mate has claimed a Match Request",
+      `<p style="font-size:15px">Hi ${input.recipientName || "there"},</p>
+      <p style="font-size:14px;color:#475569"><strong>${input.claimerName}</strong> claimed the <strong>${input.briefTitle}</strong> Match Request for ${input.teamName}.</p>
+      <p style="font-size:13px;color:#475569">View the squad inbox to see who is on what, hand off a brief, or pick up an unclaimed one.</p>
+      ${btn(inboxUrl, "Open the squad inbox →")}
+      ${disclosure()}`,
+    ),
+  });
+  return ok;
 }
 
 export interface ReferralReceivedEmailInput {
