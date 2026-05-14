@@ -61,13 +61,18 @@ export function isSponsored(broker: Broker): boolean {
  * Moves the broker to `targetPosition` (0-indexed) IF they already
  * passed the category filter (i.e. they are in the list) and are below target.
  * Returns a new array — does not mutate input.
+ *
+ * Pass `raw: true` to opt out of the boost (e.g. ?raw=1 URL param).
+ * This gives users a transparent view of rankings without any sponsorship
+ * influence — they still see the same brokers, just in pure rating order.
  */
 export function boostFeaturedPartner(
   brokers: Broker[],
-  targetPosition: number = 0
+  targetPosition: number = 0,
+  { raw = false }: { raw?: boolean } = {}
 ): Broker[] {
   refreshSponsoredBoostingFlag();
-  if (!sponsoredBoostingEnabled) return [...brokers];
+  if (raw || !sponsoredBoostingEnabled) return [...brokers];
   const result = [...brokers];
   const sponsoredIdx = result.findIndex(
     (b) => b.sponsorship_tier === "featured_partner"
