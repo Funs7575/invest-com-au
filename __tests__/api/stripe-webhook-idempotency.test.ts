@@ -30,7 +30,7 @@ import {
 // ─── Swappable mock target ────────────────────────────────────────────────────
 // vi.mock is hoisted, so all describe blocks share a single mock factory.
 // Each describe's beforeEach swaps `activeMockFrom` to its own harness.mockFrom.
-let activeMockFrom: ReturnType<typeof vi.fn<(...args: unknown[]) => unknown>>;
+let activeMockFrom: (...args: unknown[]) => unknown;
 
 // ─── Module mocks (must be hoisted before route import) ──────────────────────
 
@@ -106,7 +106,7 @@ function makeChargeData(overrides: Record<string, unknown> = {}): Record<string,
 function setupBeforeEach(harness: IdempotencyHarness, withCustomerEmail = false) {
   vi.clearAllMocks();
   harness.reset();
-  activeMockFrom = harness.mockFrom;
+  activeMockFrom = harness.mockFrom as unknown as (...args: unknown[]) => unknown;
   process.env.STRIPE_WEBHOOK_SECRET = "whsec_test";
   mockHandleInvoicePaid.mockResolvedValue(undefined);
   mockHandleInvoicePaymentFailed.mockResolvedValue(undefined);
