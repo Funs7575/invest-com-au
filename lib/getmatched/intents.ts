@@ -10,6 +10,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 
+import { FALLBACK_INTENTS } from "./fallbacks";
 import type { IntentDef, IntentSlug, RouteType } from "./types";
 
 const log = logger("getmatched:intents");
@@ -17,18 +18,19 @@ const log = logger("getmatched:intents");
 export async function getEnabledIntents(): Promise<IntentDef[]> {
   try {
     const admin = createAdminClient();
-    const { data } = await admin
+    const { data, error } = await admin
       .from("intent_taxonomy")
       .select("*")
       .eq("enabled", true)
       .order("sort_order", { ascending: true });
-    return (data ?? []) as IntentDef[];
+    if (error) throw error;
+    if (data && data.length > 0) return data as IntentDef[];
   } catch (err) {
-    log.warn("getEnabledIntents failed", {
+    log.warn("getEnabledIntents failed (using code-defined fallback)", {
       err: err instanceof Error ? err.message : String(err),
     });
-    return [];
   }
+  return FALLBACK_INTENTS;
 }
 
 export async function getIntent(slug: IntentSlug | string): Promise<IntentDef | null> {

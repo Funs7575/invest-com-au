@@ -330,13 +330,22 @@ export const StartGetMatchedRequest = z.object({
 });
 
 export const AnswerQuestionRequest = z.object({
-  plan_id: z.number().int().positive(),
+  // `0` means "ephemeral mode" — the server didn't persist a plan row
+  // because the DB wasn't ready. The client carries the full answer state
+  // in `answers` so the server can resolve the next question without a
+  // DB lookup.
+  plan_id: z.number().int().nonnegative(),
   question_slug: z.string().min(1).max(80),
   value: PlainAnswerValue,
+  answers: z.record(z.string(), PlainAnswerValue).optional(),
 });
 
 export const ResolvePlanRequest = z.object({
-  plan_id: z.number().int().positive(),
+  // Same convention as `AnswerQuestionRequest` — `0` means ephemeral; the
+  // client passes the full `answers` so the engine can resolve without a
+  // DB-backed plan row.
+  plan_id: z.number().int().nonnegative(),
+  answers: z.record(z.string(), PlainAnswerValue).optional(),
 });
 
 export const SavePlanRequest = z.object({
