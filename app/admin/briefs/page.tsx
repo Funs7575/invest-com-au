@@ -63,13 +63,28 @@ export default function AdminBriefsPage() {
   }, [load]);
 
   async function reviewAction(id: number, action: "approve" | "reject") {
+    // On reject, surface a prompt so the admin captures a reason that's
+    // emailed back to the consumer. Empty reasons are allowed but
+    // discouraged.
+    let note: string | null = null;
+    if (action === "reject") {
+      const r = typeof window !== "undefined"
+        ? window.prompt(
+            "Reject reason (sent to the consumer in the rejection email — keep it short and respectful):",
+            "",
+          )
+        : null;
+      if (r === null) return; // cancelled
+      note = r.trim() || null;
+    }
+
     setBusy(id);
     setError(null);
     try {
       const res = await fetch(`/api/admin/briefs/${id}/risk`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action }),
+        body: JSON.stringify({ action, ...(note ? { note } : {}) }),
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json?.error ?? "Action failed");
@@ -82,7 +97,7 @@ export default function AdminBriefsPage() {
   }
 
   return (
-    <AdminShell title="Investor Briefs" subtitle="Risk review queue, routing visibility, and audit.">
+    <AdminShell title="Match Requests" subtitle="Risk review queue, routing visibility, and audit.">
       <div className="bg-white border border-slate-200 rounded-xl p-4">
         <div className="flex flex-wrap gap-2 mb-4">
           {TABS.map((t) => (
