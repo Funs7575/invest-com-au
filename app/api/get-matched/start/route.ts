@@ -5,6 +5,7 @@ import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 import { createPlan } from "@/lib/getmatched/action-plans";
 import { getQuestions, nextQuestion } from "@/lib/getmatched/questions";
 import { logEvent } from "@/lib/getmatched/events";
+import { classifyGetMatchedError, errorResponse } from "@/lib/getmatched/errors";
 import { logger } from "@/lib/logger";
 
 const log = logger("get-matched:start");
@@ -54,12 +55,11 @@ export async function POST(request: NextRequest) {
       next,
     });
   } catch (err) {
+    const classified = classifyGetMatchedError(err);
     log.error("start error", {
-      err: err instanceof Error ? err.message : String(err),
+      err: classified.detail,
+      code: classified.code,
     });
-    return NextResponse.json(
-      { error: "Failed to start Get Matched." },
-      { status: 500 },
-    );
+    return errorResponse(classified, "Failed to start Get Matched.");
   }
 }

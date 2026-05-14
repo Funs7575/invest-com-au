@@ -9,6 +9,7 @@ import {
   resolveActionPlan,
 } from "@/lib/getmatched/engine";
 import { logEvent } from "@/lib/getmatched/events";
+import { classifyGetMatchedError, errorResponse } from "@/lib/getmatched/errors";
 import { logger } from "@/lib/logger";
 
 const log = logger("get-matched:resolve");
@@ -98,12 +99,11 @@ export async function POST(request: NextRequest) {
       recommended_providers: providers,
     });
   } catch (err) {
+    const classified = classifyGetMatchedError(err);
     log.error("resolve error", {
-      err: err instanceof Error ? err.message : String(err),
+      err: classified.detail,
+      code: classified.code,
     });
-    return NextResponse.json(
-      { error: "Failed to resolve action plan." },
-      { status: 500 },
-    );
+    return errorResponse(classified, "Failed to resolve action plan.");
   }
 }

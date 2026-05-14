@@ -42,56 +42,68 @@ export async function resolveEligibleProviders(
     return directProviders(brief);
   }
 
-  const admin = createAdminClient();
-  const { data: rulesData } = await admin
-    .from("brief_routing_rules")
-    .select("id, name, priority, enabled, match_conditions, route_to")
-    .eq("enabled", true)
-    .order("priority", { ascending: true });
+  try {
+    const admin = createAdminClient();
+    const { data: rulesData, error } = await admin
+      .from("brief_routing_rules")
+      .select("id, name, priority, enabled, match_conditions, route_to")
+      .eq("enabled", true)
+      .order("priority", { ascending: true });
+    if (error) throw error;
 
-  const rules = (rulesData ?? []) as RoutingRuleRow[];
+    const rules = (rulesData ?? []) as RoutingRuleRow[];
 
-  // First matching rule wins for ordering; if none matches, fall through
-  // to the implicit any-provider behaviour.
-  const matched = rules.find((r) => ruleMatches(r.match_conditions, brief));
+    // First matching rule wins for ordering; if none matches, fall through
+    // to the implicit any-provider behaviour.
+    const matched = rules.find((r) => ruleMatches(r.match_conditions, brief));
 
-  if (!matched) {
-    log.info("resolveEligibleProviders: no rule matched", { briefId: brief.id });
-    return anyProviders(brief);
+    if (!matched) {
+      log.info("resolveEligibleProviders: no rule matched", { briefId: brief.id });
+      return anyProviders(brief);
+    }
+
+    const prefer = (matched.route_to.prefer ?? "any") as ProviderKind | "any";
+    const fallback = Array.isArray(matched.route_to.fallback)
+      ? (matched.route_to.fallback as ProviderKind[])
+      : [];
+    const teamCategory =
+      typeof matched.route_to.team_category === "string"
+        ? (matched.route_to.team_category as string)
+        : null;
+
+    const out: EligibleProvider[] = [];
+
+    if (prefer === "expert_team") {
+      out.push(...(await fetchExpertTeams(brief, teamCategory)));
+    } else if (prefer === "individual") {
+      out.push(...(await fetchIndividuals(brief)));
+    } else if (prefer === "firm") {
+      out.push(...(await fetchFirms(brief)));
+    } else {
+      out.push(
+        ...(await fetchExpertTeams(brief, teamCategory)),
+        ...(await fetchIndividuals(brief)),
+        ...(await fetchFirms(brief)),
+      );
+    }
+
+    for (const fb of fallback) {
+      if (fb === "expert_team") out.push(...(await fetchExpertTeams(brief, teamCategory)));
+      if (fb === "individual") out.push(...(await fetchIndividuals(brief)));
+      if (fb === "firm") out.push(...(await fetchFirms(brief)));
+    }
+
+    return dedupe(out).slice(0, MAX_RESULTS);
+  } catch (err) {
+    // Routing tables missing (migration pending) or unreachable. Empty
+    // recommendations are an acceptable degradation — the result screen
+    // still shows the action plan + checklist + CTAs.
+    log.warn("resolveEligibleProviders failed", {
+      briefId: brief.id,
+      err: err instanceof Error ? err.message : String(err),
+    });
+    return [];
   }
-
-  const prefer = (matched.route_to.prefer ?? "any") as ProviderKind | "any";
-  const fallback = Array.isArray(matched.route_to.fallback)
-    ? (matched.route_to.fallback as ProviderKind[])
-    : [];
-  const teamCategory =
-    typeof matched.route_to.team_category === "string"
-      ? (matched.route_to.team_category as string)
-      : null;
-
-  const out: EligibleProvider[] = [];
-
-  if (prefer === "expert_team") {
-    out.push(...(await fetchExpertTeams(brief, teamCategory)));
-  } else if (prefer === "individual") {
-    out.push(...(await fetchIndividuals(brief)));
-  } else if (prefer === "firm") {
-    out.push(...(await fetchFirms(brief)));
-  } else {
-    out.push(
-      ...(await fetchExpertTeams(brief, teamCategory)),
-      ...(await fetchIndividuals(brief)),
-      ...(await fetchFirms(brief)),
-    );
-  }
-
-  for (const fb of fallback) {
-    if (fb === "expert_team") out.push(...(await fetchExpertTeams(brief, teamCategory)));
-    if (fb === "individual") out.push(...(await fetchIndividuals(brief)));
-    if (fb === "firm") out.push(...(await fetchFirms(brief)));
-  }
-
-  return dedupe(out).slice(0, MAX_RESULTS);
 }
 
 function ruleMatches(conditions: Record<string, unknown>, brief: BriefRow): boolean {

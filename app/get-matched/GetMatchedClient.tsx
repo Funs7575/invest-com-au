@@ -45,6 +45,18 @@ interface ResolveResponse {
   recommended_providers: { kind: string; id: number }[];
 }
 
+interface ErrorResponse {
+  error: string;
+  code?: string;
+  detail?: string;
+}
+
+interface ErrorState {
+  message: string;
+  code?: string;
+  detail?: string;
+}
+
 interface Props {
   initialGoal: string | null;
   initialIntent: string | null;
@@ -68,7 +80,7 @@ export default function GetMatchedClient(props: Props) {
   const [shareToken, setShareToken] = useState<string | null>(null);
   const [step, setStep] = useState<NextStep | null>(null);
   const [answers, setAnswers] = useState<ActionPlanAnswers>({});
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<ErrorState | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<ResolveResponse | null>(null);
@@ -103,20 +115,27 @@ export default function GetMatchedClient(props: Props) {
           source_page: window.location.pathname,
         }),
       });
-      const data = (await res.json()) as StartResponse | { error: string };
+      const data = (await res.json()) as StartResponse | ErrorResponse;
       if (!res.ok || !("plan_id" in data)) {
-        throw new Error("error" in data ? data.error : "Failed to start.");
+        const errData = data as ErrorResponse;
+        setError({
+          message: errData.error ?? "Failed to start.",
+          code: errData.code,
+          detail: errData.detail,
+        });
+        return;
       }
       setPlanId(data.plan_id);
       setShareToken(data.share_token);
       setAnswers(startPrefill);
       setStep(data.next);
       if (data.next.done) {
-        // Pre-filled everything — go straight to resolve.
         await resolve(data.plan_id);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to start.");
+      setError({
+        message: err instanceof Error ? err.message : "Failed to start.",
+      });
     } finally {
       setLoading(false);
     }
@@ -144,16 +163,24 @@ export default function GetMatchedClient(props: Props) {
           value,
         }),
       });
-      const data = (await res.json()) as AnswerResponse | { error: string };
+      const data = (await res.json()) as AnswerResponse | ErrorResponse;
       if (!res.ok || !("plan_id" in data)) {
-        throw new Error("error" in data ? data.error : "Failed.");
+        const errData = data as ErrorResponse;
+        setError({
+          message: errData.error ?? "Failed to save answer.",
+          code: errData.code,
+          detail: errData.detail,
+        });
+        return;
       }
       setStep(data.next);
       if (data.next.done) {
         await resolve(planId);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to save answer.");
+      setError({
+        message: err instanceof Error ? err.message : "Failed to save answer.",
+      });
     } finally {
       setSubmitting(false);
     }
@@ -168,13 +195,21 @@ export default function GetMatchedClient(props: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ plan_id: id }),
       });
-      const data = (await res.json()) as ResolveResponse | { error: string };
+      const data = (await res.json()) as ResolveResponse | ErrorResponse;
       if (!res.ok || !("plan" in data)) {
-        throw new Error("error" in data ? data.error : "Failed to resolve.");
+        const errData = data as ErrorResponse;
+        setError({
+          message: errData.error ?? "Failed to resolve.",
+          code: errData.code,
+          detail: errData.detail,
+        });
+        return;
       }
       setResult(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to resolve.");
+      setError({
+        message: err instanceof Error ? err.message : "Failed to resolve.",
+      });
     } finally {
       setSubmitting(false);
     }
@@ -191,15 +226,39 @@ export default function GetMatchedClient(props: Props) {
   if (error) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center p-6">
-        <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl p-4 max-w-md">
-          {error}
-          <button
-            type="button"
-            onClick={() => void start()}
-            className="mt-3 block text-xs underline"
-          >
-            Try again
-          </button>
+        <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl p-5 max-w-lg">
+          <p className="font-semibold mb-2">Get Matched ran into a problem</p>
+          <p className="mb-3">{error.message}</p>
+          {error.code && (
+            <p className="text-[11px] uppercase tracking-widest text-red-500 mb-1">
+              Code: {error.code}
+            </p>
+          )}
+          {error.detail && error.detail !== error.message && (
+            <details className="mt-2">
+              <summary className="cursor-pointer text-xs text-red-600 hover:underline">
+                Technical detail
+              </summary>
+              <pre className="mt-2 text-[11px] whitespace-pre-wrap break-all text-red-700/80">
+                {error.detail}
+              </pre>
+            </details>
+          )}
+          <div className="mt-4 flex flex-wrap gap-3">
+            <button
+              type="button"
+              onClick={() => void start()}
+              className="text-xs font-semibold underline"
+            >
+              Try again
+            </button>
+            <Link
+              href="/compare"
+              className="text-xs font-semibold underline"
+            >
+              Browse comparisons instead
+            </Link>
+          </div>
         </div>
       </div>
     );

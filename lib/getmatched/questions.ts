@@ -22,6 +22,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 
+import { FALLBACK_QUESTIONS } from "./fallbacks";
 import type { ActionPlanAnswers, QuestionDef, QuestionMode } from "./types";
 
 const log = logger("getmatched:questions");
@@ -34,16 +35,25 @@ export async function getQuestions(mode: QuestionMode = "both"): Promise<Questio
       .select("*")
       .eq("enabled", true);
     if (mode !== "both") q = q.in("mode", [mode, "both"]);
-    const { data } = await q
+    const { data, error } = await q
       .order("step", { ascending: true })
       .order("sort_order", { ascending: true });
-    return (data ?? []) as QuestionDef[];
+    if (error) throw error;
+    if (data && data.length > 0) return data as QuestionDef[];
   } catch (err) {
-    log.warn("getQuestions failed", {
+    log.warn("getQuestions failed (using code-defined fallback)", {
       err: err instanceof Error ? err.message : String(err),
     });
-    return [];
   }
+  return filterQuestionsByMode(FALLBACK_QUESTIONS, mode);
+}
+
+function filterQuestionsByMode(
+  questions: QuestionDef[],
+  mode: QuestionMode,
+): QuestionDef[] {
+  if (mode === "both") return questions;
+  return questions.filter((q) => q.mode === mode || q.mode === "both");
 }
 
 export interface NextQuestionResult {
