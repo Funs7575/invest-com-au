@@ -29,6 +29,7 @@
  */
 
 import { logger } from "@/lib/logger";
+// eslint-disable-next-line no-restricted-imports -- ai_token_usage is cross-user (global spend aggregation); site_settings is service-role-only config. Both require admin client per CLAUDE.md scope rules.
 import { createAdminClient } from "@/lib/supabase/admin";
 
 const log = logger("ai-cost-caps");
@@ -87,7 +88,7 @@ function dollarsEnvToMicros(envValue: string | undefined, defaultUsd: number): n
 }
 
 export interface RouteConfig {
-  route: "concierge" | "admin_agent";
+  route: "concierge" | "admin_agent" | "qa_capture";
   subjectType: "public_session" | "admin_user";
   perSubjectMicros: number;
   globalMicros: number;
@@ -112,6 +113,21 @@ export function loadAdminAgentConfig(): RouteConfig {
     perSubjectMicros: dollarsEnvToMicros(process.env.AI_ADMIN_USER_DAILY_USD, 50),
     globalMicros: dollarsEnvToMicros(process.env.AI_GLOBAL_ADMIN_USD, 100),
     label: "admin AI agent",
+  };
+}
+
+// QQ-02: Public Q&A answer engine — separate spend budget from the concierge.
+// Env vars: AI_QA_USER_DAILY_USD (default $2/IP/day), AI_QA_GLOBAL_USD (default $50/day).
+// Note: search_embeddings retrieval uses createAdminClient() — the table has a
+// service-role-only RLS policy (no anon/user SELECT). This is acceptable per
+// CLAUDE.md admin.ts scope rules (read-only RPC on a service-role-only table).
+export function loadQaCaptureConfig(): RouteConfig {
+  return {
+    route: "qa_capture",
+    subjectType: "public_session",
+    perSubjectMicros: dollarsEnvToMicros(process.env.AI_QA_USER_DAILY_USD, 2),
+    globalMicros: dollarsEnvToMicros(process.env.AI_QA_GLOBAL_USD, 50),
+    label: "Q&A answer engine",
   };
 }
 
