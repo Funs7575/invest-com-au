@@ -89,6 +89,7 @@ export default function BillingClient(props: Props) {
     <div className="space-y-6">
       {/* Balance card */}
       <section
+        data-tour="balance"
         className={`rounded-2xl border p-5 sm:p-6 ${
           isLowBalance
             ? "bg-amber-50 border-amber-200"
@@ -163,7 +164,7 @@ export default function BillingClient(props: Props) {
           </div>
         ) : (
           <div className="space-y-4">
-            <label className="flex items-start gap-3">
+            <label data-tour="auto-recharge" className="flex items-start gap-3">
               <input
                 type="checkbox"
                 checked={autoEnabled}
