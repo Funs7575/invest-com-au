@@ -39,33 +39,44 @@ export async function getAcceptCost({
   briefTemplate,
   providerKind,
 }: AcceptCostQuery): Promise<number> {
-  const admin = createAdminClient();
-  const { data } = await admin
-    .from("brief_credit_prices")
-    .select("brief_template, provider_type, credits_cost")
-    .in("brief_template", [briefTemplate, "general"])
-    .in("provider_type", [providerKind, "any"]);
+  try {
+    const admin = createAdminClient();
+    const { data, error } = await admin
+      .from("brief_credit_prices")
+      .select("brief_template, provider_type, credits_cost")
+      .in("brief_template", [briefTemplate, "general"])
+      .in("provider_type", [providerKind, "any"]);
+    if (error) throw error;
 
-  const rows = (data ?? []) as {
-    brief_template: string;
-    provider_type: string;
-    credits_cost: number;
-  }[];
+    const rows = (data ?? []) as {
+      brief_template: string;
+      provider_type: string;
+      credits_cost: number;
+    }[];
 
-  const exact = rows.find(
-    (r) => r.brief_template === briefTemplate && r.provider_type === providerKind,
-  );
-  if (exact) return exact.credits_cost;
+    const exact = rows.find(
+      (r) => r.brief_template === briefTemplate && r.provider_type === providerKind,
+    );
+    if (exact) return exact.credits_cost;
 
-  const tmplAny = rows.find(
-    (r) => r.brief_template === briefTemplate && r.provider_type === "any",
-  );
-  if (tmplAny) return tmplAny.credits_cost;
+    const tmplAny = rows.find(
+      (r) => r.brief_template === briefTemplate && r.provider_type === "any",
+    );
+    if (tmplAny) return tmplAny.credits_cost;
 
-  const genericAny = rows.find(
-    (r) => r.brief_template === "general" && r.provider_type === "any",
-  );
-  if (genericAny) return genericAny.credits_cost;
+    const genericAny = rows.find(
+      (r) => r.brief_template === "general" && r.provider_type === "any",
+    );
+    if (genericAny) return genericAny.credits_cost;
+  } catch (err) {
+    // Pricing table not ready (migration pending) or unreachable. Fall back
+    // to the constant so the result screen still renders a sensible cost.
+    log.warn("getAcceptCost failed (using fallback constant)", {
+      briefTemplate,
+      providerKind,
+      err: err instanceof Error ? err.message : String(err),
+    });
+  }
 
   return 2;
 }
