@@ -3,6 +3,7 @@ import { CURRENT_YEAR } from "@/lib/seo";
 import { calculatorJsonLd } from "@/lib/schema-markup";
 import SMSFCalculatorClient from "./SMSFCalculatorClient";
 import ComplianceFooter from "@/components/ComplianceFooter";
+import CalcToPlanBridge from "@/components/get-matched/CalcToPlanBridge";
 
 export const revalidate = 3600;
 
@@ -29,7 +30,14 @@ export default function SMSFCalculatorPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareLd) }} />
       <SMSFCalculatorClient />
-      <div className="container-custom pb-8"><ComplianceFooter variant="calculator" /></div>
+      <div className="container-custom pb-8">
+        <CalcToPlanBridge
+          goal="super"
+          headline="Want a personalised SMSF action plan?"
+          subtitle="We'll match you with verified SMSF accountants and Pro Squads to set up your fund the right way."
+        />
+        <ComplianceFooter variant="calculator" />
+      </div>
 
     </>
   );
