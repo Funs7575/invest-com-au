@@ -111,11 +111,32 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ plan_id: plan.id, next });
   } catch (err) {
+    // Outer catastrophic catch — degrade to an ephemeral next-question
+    // computation rather than surfacing a 500 to the user. This is
+    // pre-launch defensive: a broken /answer breaks the whole flow.
     const classified = classifyGetMatchedError(err);
-    log.error("answer error", {
+    log.error("answer error (degrading to ephemeral)", {
       err: classified.detail,
       code: classified.code,
     });
-    return errorResponse(classified, "Failed to save answer.");
+    try {
+      const body = (await request.clone().json().catch(() => ({}))) as {
+        question_slug?: string;
+        value?: unknown;
+        answers?: Record<string, unknown>;
+      };
+      const questions = await getQuestions("both");
+      const question = questions.find((q) => q.slug === body.question_slug);
+      const mergedAnswers = {
+        ...(body.answers ?? {}),
+        ...(question
+          ? { [question.maps_to]: body.value, [question.slug]: body.value }
+          : {}),
+      } as ActionPlanAnswers;
+      const next = nextQuestion(questions, mergedAnswers, "both");
+      return NextResponse.json({ plan_id: 0, next, ephemeral: true });
+    } catch {
+      return errorResponse(classified, "Failed to save answer.");
+    }
   }
 }

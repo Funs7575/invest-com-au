@@ -198,11 +198,38 @@ export async function POST(request: NextRequest) {
       recommended_providers: providers,
     });
   } catch (err) {
+    // Outer catastrophic catch — try to compute the plan from whatever
+    // answers the client passed, so the user still sees a working action
+    // plan rather than a 500.
     const classified = classifyGetMatchedError(err);
-    log.error("resolve error", {
+    log.error("resolve error (degrading to ephemeral)", {
       err: classified.detail,
       code: classified.code,
     });
-    return errorResponse(classified, "Failed to resolve action plan.");
+    try {
+      const body = (await request.clone().json().catch(() => ({}))) as {
+        answers?: Record<string, unknown>;
+      };
+      const answers = (body.answers ?? {}) as ActionPlanAnswers;
+      const intents = await getEnabledIntents();
+      const resolved = await resolveActionPlan({ answers, intents });
+      const providers = await recommendedProviders({
+        intent: resolved.intent,
+        route: resolved.route,
+        briefTemplate: resolved.recommendedBriefTemplate,
+        budgetBand: resolved.budgetBand,
+        locationState: resolved.locationState,
+      });
+      return NextResponse.json({
+        plan: buildEphemeralPlan(answers, resolved),
+        template: resolved.template,
+        recommended_brief_template: resolved.recommendedBriefTemplate,
+        accept_credits_cost: resolved.acceptCreditsCost,
+        recommended_providers: providers,
+        ephemeral: true,
+      });
+    } catch {
+      return errorResponse(classified, "Failed to resolve action plan.");
+    }
   }
 }
