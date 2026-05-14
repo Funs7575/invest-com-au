@@ -9,6 +9,7 @@ import { sendProviderNewMatchRequest } from "@/lib/marketplace-emails";
 import { sendEmail } from "@/lib/resend";
 import { SITE_URL } from "@/lib/seo";
 import type { BriefRow } from "@/lib/briefs/types";
+import { enqueueUserNotificationByEmail } from "@/lib/user-notifications";
 
 const log = logger("admin:briefs:risk");
 
@@ -161,6 +162,14 @@ async function notifyOnApproval(brief: BriefRow): Promise<void> {
           <p style="font-size:11px;color:#94a3b8;margin-top:20px">General information only — not personal advice.</p>
         </div>`,
       });
+
+      // In-app inbox (C1 / mm06): drop a row alongside the email.
+      void enqueueUserNotificationByEmail(brief.contact_email, {
+        kind: "generic",
+        title: "Your Match Request is live",
+        body: `Re: ${brief.job_title ?? "Match Request"}. Verified pros can now see it.`,
+        href: `/briefs/${brief.slug}`,
+      });
     }
   } catch (err) {
     log.warn("notifyOnApproval threw", {
@@ -188,6 +197,16 @@ async function notifyOnRejection(brief: BriefRow, reason: string | null): Promis
         <p style="margin:16px 0"><a href="${SITE_URL}/get-matched" style="display:inline-block;padding:10px 24px;background:#f59e0b;color:#0f172a;text-decoration:none;border-radius:6px;font-weight:600">Start a new request</a></p>
         <p style="font-size:11px;color:#94a3b8;margin-top:20px">General information only — not personal advice.</p>
       </div>`,
+    });
+
+    // In-app inbox (C1 / mm06): rejection notice alongside the email.
+    void enqueueUserNotificationByEmail(brief.contact_email, {
+      kind: "generic",
+      title: "Your Match Request needs a small rewording",
+      body: reason
+        ? `Reason: ${reason}`
+        : "Our safety check flagged the wording. Try rebuilding the request.",
+      href: `/get-matched`,
     });
   } catch (err) {
     log.warn("notifyOnRejection threw", {

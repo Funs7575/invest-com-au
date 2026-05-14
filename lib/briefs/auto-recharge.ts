@@ -20,6 +20,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { getStripe } from "@/lib/stripe";
 import { getPack } from "@/lib/advisor-credit-packs";
 import { logger } from "@/lib/logger";
+import { enqueueUserNotification } from "@/lib/user-notifications";
 
 const log = logger("briefs:auto-recharge");
 
@@ -29,6 +30,7 @@ interface ProRow {
   id: number;
   email: string | null;
   name: string | null;
+  auth_user_id: string | null;
   credit_balance_cents: number | null;
   auto_recharge_enabled: boolean;
   auto_recharge_threshold_credits: number | null;
@@ -38,13 +40,36 @@ interface ProRow {
   auto_recharge_last_attempted_at: string | null;
 }
 
+/**
+ * Fire-and-forget inbox notification for the recharging pro. Looks up
+ * `auth_user_id` directly on the professionals row (added by migration
+ * 20260429) — no email→userId scan needed.
+ */
+async function notifyProInbox(
+  pro: ProRow,
+  kind: "topup_succeeded" | "topup_failed",
+  body: string,
+): Promise<void> {
+  if (!pro.auth_user_id) return;
+  await enqueueUserNotification({
+    authUserId: pro.auth_user_id,
+    kind,
+    title:
+      kind === "topup_succeeded"
+        ? "Auto-recharge processed"
+        : "Auto-recharge failed",
+    body,
+    href: "/pros/billing",
+  });
+}
+
 export async function maybeAutoRecharge(professionalId: number): Promise<void> {
   try {
     const admin = createAdminClient();
     const { data } = await admin
       .from("professionals")
       .select(
-        "id, email, name, credit_balance_cents, auto_recharge_enabled, auto_recharge_threshold_credits, auto_recharge_pack_slug, stripe_customer_id, stripe_default_payment_method, auto_recharge_last_attempted_at",
+        "id, email, name, auth_user_id, credit_balance_cents, auto_recharge_enabled, auto_recharge_threshold_credits, auto_recharge_pack_slug, stripe_customer_id, stripe_default_payment_method, auto_recharge_last_attempted_at",
       )
       .eq("id", professionalId)
       .maybeSingle();
@@ -137,6 +162,18 @@ export async function maybeAutoRecharge(professionalId: number): Promise<void> {
       pack: pack.slug,
       amountCents: pack.priceCents,
     });
+
+    // ── In-app inbox (C1 / mm06) ────────────────────────────────────
+    // The Stripe payment_intent is off_session + confirm:true above —
+    // a clean return means the charge succeeded and the webhook will
+    // grant credits asynchronously. We notify "succeeded" optimistically;
+    // any later refund / dispute lands its own row via the refund
+    // webhook handler.
+    void notifyProInbox(
+      pro,
+      "topup_succeeded",
+      `${pack.leads} credits topped up via auto-recharge (A$${(pack.priceCents / 100).toFixed(0)}).`,
+    );
   } catch (err) {
     // Common failures: card declined, auth required, customer deleted.
     // Stripe surfaces these as `StripeCardError` — we log and let the
@@ -147,5 +184,26 @@ export async function maybeAutoRecharge(professionalId: number): Promise<void> {
       professionalId,
       err: err instanceof Error ? err.message : String(err),
     });
+
+    // ── In-app inbox (C1 / mm06) ───────────────────────────────────
+    // Surface the failure in the pro's inbox so they can take action
+    // (update card, top up manually) without checking email.
+    try {
+      const admin = createAdminClient();
+      const { data: pro } = await admin
+        .from("professionals")
+        .select("id, email, name, auth_user_id")
+        .eq("id", professionalId)
+        .maybeSingle();
+      if (pro?.auth_user_id) {
+        await notifyProInbox(
+          pro as ProRow,
+          "topup_failed",
+          "We couldn't charge your saved card. Top up manually or update your payment method.",
+        );
+      }
+    } catch {
+      /* silent — inbox failure must never re-throw out of auto-recharge */
+    }
   }
 }
