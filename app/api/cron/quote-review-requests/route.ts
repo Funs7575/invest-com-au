@@ -39,6 +39,7 @@ export async function GET(req: NextRequest) {
     .from("advisor_auctions")
     .select("id, slug, job_title, contact_email, contact_name, winning_bid_id, updated_at")
     .eq("source", "public_job")
+    .eq("flow_type", "auction")
     .not("winning_bid_id", "is", null)
     .is("review_request_sent_at", null)
     .lte("updated_at", cutoff)
