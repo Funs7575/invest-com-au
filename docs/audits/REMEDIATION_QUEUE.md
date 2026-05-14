@@ -74,6 +74,28 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 
 ---
 
+### Dependency vulnerabilities systemic failure (3 in-flight PRs: #800, #803, #807) — 2026-05-14
+
+The `Dependency vulnerabilities` CI check is failing on three in-flight PRs simultaneously, triggering the same-gate cluster guard (≥3 PRs, same check name). Surfaced by iter 394.
+
+**Root cause:** `postcss < 8.5.10` — "PostCSS has XSS via Unescaped `</style>` in its CSS Stringify Output" (GHSA-qx2v-qp2m-jg93, moderate). The vulnerability exists inside next.js's own bundled `postcss` (`node_modules/next/node_modules/postcss`). All next.js versions from `9.3.4-canary.0` through `16.3.0-canary.5` are affected. The project is on next `16.2.6` (latest stable), which falls in the vulnerable range.
+
+**Affected PRs:**
+- #800 (QQ stream) — dep-vuln failure only
+- #803 (MM stream) — dep-vuln + Accessibility (axe-core) + Preview smoke test failures
+- #807 (LL stream) — dep-vuln + Accessibility (axe-core) failures
+
+**No safe upgrade path currently exists.** `next@16.3.0` stable has not been released. `npm audit fix --force` would downgrade next to `9.3.3` — a breaking change. The direct `postcss` dependency in `package.json` is already `^8.5.14` (patched); only next's bundled copy is vulnerable.
+
+**Decision matrix:**
+- **(a) Change audit threshold (recommended short-term):** Update the dep-vuln CI check to `--audit-level=high`. This moderate CVE is in next.js's internal CSS compiler (server-side CSS stringify), not in user-facing HTML output. The exploit path requires influencing CSS inputs to the build server, which is not the threat model for invest.com.au.
+- **(b) Audit ignore:** Add `GHSA-qx2v-qp2m-jg93` to an audit ignore list (`.nsprc` or similar). Remove when next ≥16.3.0 ships.
+- **(c) Wait for next 16.3.0:** When `next@>=16.3.0` stable releases, `npm install next@latest` on main, commit, rebase affected stream branches (#800, #803, #807). Monitor npm weekly.
+
+**Once resolved:** delete this blocked entry and run the next iteration — Phase 2 will rescue #803 (Accessibility + Preview smoke test) and #807 (Accessibility) before the batch proceeds to LL-04.
+
+---
+
 ## Resolved as false positives
 
 | Item | Reason |
@@ -85,6 +107,15 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 394 — 2026-05-14 — dep-vuln systemic cluster-guard
+
+- **Stream:** systemic (QQ #800, MM #803, LL #807)
+- **Phase:** 2 — CI rescue check
+- **Trigger:** Same-gate cluster guard: `Dependency vulnerabilities` failing on 3 in-flight PRs simultaneously
+- **Root cause:** `postcss < 8.5.10` (GHSA-qx2v-qp2m-jg93, moderate) bundled inside next.js ≤16.2.6. No safe upgrade path — next@16.3.0 stable not yet released.
+- **Additional per-PR failures (not systemic):** #803: Accessibility (axe-core) + Preview smoke test; #807: Accessibility (axe-core). These will be rescued once dep-vuln gate is resolved.
+- **STATUS: BLOCKED · systemic=Dependency vulnerabilities**
 
 ### iter 393 — 2026-05-12 — LL-03
 
