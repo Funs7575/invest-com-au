@@ -13,7 +13,18 @@
  * Both consumers now import from here.
  */
 
-export type CreditPackSlug = "starter" | "growth" | "scale" | "featured_monthly" | "expert_article";
+export type CreditPackSlug =
+  | "starter"
+  | "growth"
+  | "scale"
+  | "featured_monthly"
+  | "expert_article"
+  // Brief-marketplace packs — sized for Match Request acceptance costs
+  // (typical brief = 2-25 credits). Smaller increments than the legacy
+  // lead packs above.
+  | "marketplace_10"
+  | "marketplace_50"
+  | "marketplace_200";
 
 export interface CreditPack {
   slug: CreditPackSlug;
@@ -66,6 +77,41 @@ export const LEAD_CREDIT_PACKS: readonly CreditPack[] = [
   },
 ];
 
+/** Brief-marketplace credit packs — sized for typical Match Request
+ *  accept costs (2-25 credits). Same `credit_balance_cents` ledger as
+ *  the legacy packs above; the API webhook treats both identically. */
+export const MARKETPLACE_CREDIT_PACKS: readonly CreditPack[] = [
+  {
+    slug: "marketplace_10",
+    name: "10 Credits",
+    leads: 10,
+    priceCents: 9900,
+    perLeadCents: 990,
+    description: "Good for 1-3 Match Requests",
+    isCredit: true,
+  },
+  {
+    slug: "marketplace_50",
+    name: "50 Credits",
+    leads: 50,
+    priceCents: 44900,
+    perLeadCents: 898,
+    description: "Most popular — 5-10 briefs",
+    badge: "Most Popular",
+    isCredit: true,
+  },
+  {
+    slug: "marketplace_200",
+    name: "200 Credits",
+    leads: 200,
+    priceCents: 159900,
+    perLeadCents: 799,
+    description: "20% savings per credit",
+    badge: "Best Value",
+    isCredit: true,
+  },
+];
+
 /** Add-on packs — featured placement + expert article — not credit. */
 export const ADDON_PACKS: readonly CreditPack[] = [
   {
@@ -89,7 +135,7 @@ export const ADDON_PACKS: readonly CreditPack[] = [
 ];
 
 const ALL_PACKS: ReadonlyMap<CreditPackSlug, CreditPack> = new Map(
-  [...LEAD_CREDIT_PACKS, ...ADDON_PACKS].map((p) => [p.slug, p]),
+  [...LEAD_CREDIT_PACKS, ...MARKETPLACE_CREDIT_PACKS, ...ADDON_PACKS].map((p) => [p.slug, p]),
 );
 
 export function getPack(slug: string | undefined | null): CreditPack | null {
