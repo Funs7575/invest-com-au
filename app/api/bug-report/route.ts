@@ -12,18 +12,15 @@ export const runtime = "nodejs";
 
 const log = logger("bug-report");
 
-const ALERT_RECIPIENT = "finn@invest.com.au";
+const ALERT_RECIPIENT = process.env.OPS_ALERT_EMAIL || "ops@invest.com.au";
 
 /**
  * POST /api/bug-report
  *
  * Backs the sitewide "Report a problem" button (PR 6 of launch-ops-plan.md).
  * Stores the row in `bug_reports` (PR 4 migration) via the service-role
- * client and emails an alert to the founder so triage can happen from the
- * inbox instead of the admin UI.
- *
- * Per `docs/ops/launch-ops-plan.md` decision #2, alerts go to a single
- * founder address — no Slack v1.
+ * client and emails an alert to the ops inbox so triage can happen from the
+ * inbox instead of the admin UI. Configure OPS_ALERT_EMAIL in Vercel env vars.
  *
  * Rate limit: 5/min per IP via `lib/rate-limit-db`. Generous enough that an
  * honest user submitting a couple of follow-up reports isn't blocked, tight

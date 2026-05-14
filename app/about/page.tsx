@@ -2,6 +2,7 @@ import Link from "next/link";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import {
   GENERAL_ADVICE_WARNING,
+  AFSL_STATUS_DISCLOSURE,
   COMPANY_LEGAL_NAME,
   COMPANY_ACN,
   COMPANY_ABN,
@@ -146,38 +147,37 @@ export default function AboutPage() {
 
           {/* Editorial Team */}
           <section className="mb-10">
-            <h2 className="text-2xl font-extrabold text-brand mb-2">Our Editorial Team</h2>
-            <p className="text-sm text-slate-600 mb-4">Every article, review, and comparison on Invest.com.au is written, reviewed, and fact-checked by qualified professionals.</p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <h2 className="text-2xl font-extrabold text-brand mb-3">Editorial Structure</h2>
+            <p className="text-slate-700 mb-6 leading-relaxed">
+              Every article, review, and comparison on Invest.com.au is produced and
+              fact-checked by qualified financial professionals operating independently
+              of our commercial relationships.
+            </p>
+            <div className="space-y-3">
               {[
                 {
-                  name: "Finn Webster",
-                  role: "Founder & Lead Editor",
-                  credentials: "CFA Level II Candidate · Former equities analyst · Tested 20+ broker accounts",
-                  href: "/authors/finn-webster",
-                  desc: "Finn founded Invest.com.au to bring transparent, independent investing information to everyday Australians. He writes and edits our platform comparisons and investing guides.",
+                  tier: "Tier 1 — Expert Deep-Dive Guides",
+                  desc: "In-depth pillar articles are authored by named financial professionals with relevant qualifications (CFP, CPA, RG146). Each article displays the author's credentials and Person schema. Authored under the editorial oversight of Invest.com.au Pty Ltd.",
+                  badge: "Named author · Person schema",
                 },
                 {
-                  name: "Alex Reid",
-                  role: "Fact-Checker & Reviewer",
-                  credentials: "Diploma of Financial Planning (RG146) · Former ASIC Compliance Analyst · FPA Member",
-                  href: "/reviewers/alex-reid",
-                  desc: "Alex fact-checks all content on the site. With 12 years in financial services including ASIC compliance, Alex ensures our information meets the highest accuracy standards.",
+                  tier: "Tier 2 — Platform Reviews & Comparisons",
+                  desc: "Platform comparisons, fee reviews, and category articles are produced by the invest.com.au Research Team — in-house analysts who maintain our 6-factor rating database and conduct quarterly fee audits across every listed platform.",
+                  badge: "invest.com.au Research Team",
                 },
                 {
-                  name: "Editorial Team",
-                  role: "Research & Analysis",
-                  credentials: "Standardised 6-factor rating methodology · Quarterly fee audits · Independent of partnerships",
-                  href: "/authors/editorial-team",
-                  desc: "Our wider editorial team conducts the daily research, fee verification, and platform testing that powers every comparison on the site.",
+                  tier: "Compliance & Accuracy Review",
+                  desc: "All content is reviewed for factual accuracy and ASIC compliance before publication. Financial data is sourced from product disclosure statements (PDS) and verified against product issuer websites. Corrections policy: errors are corrected within 24 hours of identification.",
+                  badge: "Independent review",
                 },
-              ].map((person) => (
-                <Link key={person.name} href={person.href} className="bg-white border border-slate-200 rounded-xl p-4 hover:border-slate-300 hover:shadow-sm transition-all">
-                  <h3 className="font-bold text-sm text-slate-900">{person.name}</h3>
-                  <p className="text-xs text-violet-600 font-medium mt-0.5">{person.role}</p>
-                  <p className="text-xs text-slate-500 mt-2 leading-relaxed">{person.desc}</p>
-                  <p className="text-[0.65rem] text-slate-600 mt-2 leading-relaxed">{person.credentials}</p>
-                </Link>
+              ].map((item) => (
+                <div key={item.tier} className="border border-slate-200 rounded-xl p-4">
+                  <div className="flex items-start justify-between gap-3 mb-2">
+                    <h3 className="font-bold text-slate-900">{item.tier}</h3>
+                    <span className="shrink-0 text-xs bg-amber/10 text-amber-700 font-medium px-2 py-0.5 rounded-full">{item.badge}</span>
+                  </div>
+                  <p className="text-sm text-slate-600 leading-relaxed">{item.desc}</p>
+                </div>
               ))}
             </div>
           </section>
@@ -221,6 +221,9 @@ export default function AboutPage() {
                 <p>
                   <strong>Past Performance:</strong> Past performance is not a reliable indicator of future performance.
                   Investment returns can go up and down, and you may receive back less than you invested.
+                </p>
+                <p>
+                  <strong>AFSL Status:</strong> {AFSL_STATUS_DISCLOSURE}
                 </p>
               </div>
             </div>

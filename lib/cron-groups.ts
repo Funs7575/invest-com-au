@@ -128,4 +128,5 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
   ],
   "monthly-1-10": ["/api/cron/winback-drip"],
   "monthly-2-3": ["/api/cron/month-end-close"],
+  "quarterly-1-3": ["/api/cron/quarterly-anonymity-audit"],
 };
