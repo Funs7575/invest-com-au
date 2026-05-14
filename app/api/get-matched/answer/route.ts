@@ -7,6 +7,7 @@ import { getQuestions, nextQuestion } from "@/lib/getmatched/questions";
 import { logEvent } from "@/lib/getmatched/events";
 import { classifyGetMatchedError, errorResponse } from "@/lib/getmatched/errors";
 import { logger } from "@/lib/logger";
+import type { ActionPlanAnswers } from "@/lib/getmatched/types";
 
 const log = logger("get-matched:answer");
 
@@ -31,12 +32,7 @@ export async function POST(request: NextRequest) {
         { status: 400 },
       );
     }
-    const { plan_id, question_slug, value } = parsed.data;
-
-    const plan = await getPlanById(plan_id);
-    if (!plan) {
-      return NextResponse.json({ error: "Plan not found." }, { status: 404 });
-    }
+    const { plan_id, question_slug, value, answers: clientAnswers } = parsed.data;
 
     const questions = await getQuestions("both");
     const question = questions.find((q) => q.slug === question_slug);
@@ -44,7 +40,54 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unknown question." }, { status: 400 });
     }
 
-    // Idempotent: same answer for same slug = no-op.
+    // ── Ephemeral path ───────────────────────────────────────────────────
+    // plan_id === 0 means the client never got a persisted plan row
+    // (start route degraded to ephemeral mode because the DB wasn't
+    // ready). Compute the next question purely from the answers the
+    // client passed and return without touching the DB.
+    if (plan_id === 0) {
+      const baseAnswers = (clientAnswers ?? {}) as ActionPlanAnswers;
+      const mergedAnswers: ActionPlanAnswers = {
+        ...baseAnswers,
+        [question.maps_to]: value,
+        [question_slug]: value,
+      };
+      const next = nextQuestion(questions, mergedAnswers, "both");
+      return NextResponse.json({ plan_id: 0, next, ephemeral: true });
+    }
+
+    // ── DB-backed path ───────────────────────────────────────────────────
+    let plan;
+    try {
+      plan = await getPlanById(plan_id);
+    } catch (err) {
+      const classified = classifyGetMatchedError(err);
+      if (
+        classified.code === "database_not_ready" ||
+        classified.code === "supabase_not_configured" ||
+        classified.code === "supabase_unreachable"
+      ) {
+        // The plan row used to exist but the DB is now unreachable.
+        // Degrade to ephemeral using whatever answers the client passed.
+        log.warn("getPlanById failed — degrading to ephemeral", {
+          plan_id,
+          code: classified.code,
+        });
+        const baseAnswers = (clientAnswers ?? {}) as ActionPlanAnswers;
+        const mergedAnswers: ActionPlanAnswers = {
+          ...baseAnswers,
+          [question.maps_to]: value,
+          [question_slug]: value,
+        };
+        const next = nextQuestion(questions, mergedAnswers, "both");
+        return NextResponse.json({ plan_id: 0, next, ephemeral: true });
+      }
+      throw err;
+    }
+    if (!plan) {
+      return NextResponse.json({ error: "Plan not found." }, { status: 404 });
+    }
+
     const mergedAnswers = {
       ...plan.answers,
       [question.maps_to]: value,

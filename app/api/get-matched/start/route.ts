@@ -33,26 +33,61 @@ export async function POST(request: NextRequest) {
     }
     const { session_id, mode, prefill, source_page } = parsed.data;
 
-    const plan = await createPlan({
-      sessionId: session_id,
-      initialAnswers: prefill ?? {},
-    });
+    // Try DB-backed plan creation. If the table isn't ready yet (fresh
+    // Supabase project pre-migration), fall through to ephemeral mode —
+    // the user can still answer questions and see their plan; saving is
+    // disabled until migrations apply.
+    let planId = 0;
+    let shareToken: string | null = null;
+    let ephemeral = false;
+    let ephemeralReason: string | null = null;
+    const initialAnswers = prefill ?? {};
+    try {
+      const plan = await createPlan({
+        sessionId: session_id,
+        initialAnswers,
+      });
+      planId = plan.id;
+      shareToken = plan.share_token;
+    } catch (err) {
+      const classified = classifyGetMatchedError(err);
+      // Database-related failures degrade to ephemeral mode. Anything else
+      // (e.g. unexpected internal error) still bubbles up as a 500.
+      if (
+        classified.code === "database_not_ready" ||
+        classified.code === "supabase_not_configured" ||
+        classified.code === "supabase_unreachable"
+      ) {
+        ephemeral = true;
+        ephemeralReason = classified.code;
+        log.warn("createPlan failed — degrading to ephemeral mode", {
+          code: classified.code,
+          detail: classified.detail,
+        });
+      } else {
+        throw err;
+      }
+    }
 
     const questions = await getQuestions(mode);
-    const next = nextQuestion(questions, plan.answers, mode);
+    const next = nextQuestion(questions, initialAnswers, mode);
 
-    void logEvent({
-      sessionId: session_id,
-      eventType: "started",
-      sourcePage: source_page,
-      payload: { mode, plan_id: plan.id },
-    });
+    if (!ephemeral) {
+      void logEvent({
+        sessionId: session_id,
+        eventType: "started",
+        sourcePage: source_page,
+        payload: { mode, plan_id: planId },
+      });
+    }
 
     return NextResponse.json({
-      plan_id: plan.id,
-      share_token: plan.share_token,
+      plan_id: planId,
+      share_token: shareToken,
       session_id,
       next,
+      ephemeral,
+      ephemeral_reason: ephemeralReason,
     });
   } catch (err) {
     const classified = classifyGetMatchedError(err);
