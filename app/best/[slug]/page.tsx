@@ -96,10 +96,13 @@ export async function generateMetadata({
 
 export default async function BestBrokerPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ raw?: string }>;
 }) {
-  const { slug } = await params;
+  const [{ slug }, { raw: rawParam }] = await Promise.all([params, searchParams]);
+  const showRaw = rawParam === "1";
   const cat = getCategoryBySlug(slug);
   if (!cat) notFound();
 
@@ -135,7 +138,8 @@ export default async function BestBrokerPage({
   const allBrokers = eligibleBrokers;
   const naturalOrder = boostFeaturedPartner(
     allBrokers.filter(cat.filter).sort(cat.sort),
-    0
+    0,
+    { raw: showRaw }
   );
 
   // Placement A/B testing (W5.26). When an active experiment is configured
@@ -301,7 +305,34 @@ export default async function BestBrokerPage({
                 {SPONSORED_DISCLOSURE_SHORT}
               </p>
             )}
+            <p className="text-[0.56rem] md:text-xs text-slate-400 mt-1">
+              {showRaw ? (
+                <>
+                  Showing pure rating order.{" "}
+                  <Link href={`/best/${slug}`} className="underline hover:text-slate-600">
+                    Restore default ranking
+                  </Link>
+                </>
+              ) : (
+                <>
+                  Rankings may reflect sponsorship.{" "}
+                  <Link href={`/best/${slug}?raw=1`} className="underline hover:text-slate-600">
+                    Show unsponsored order
+                  </Link>
+                </>
+              )}
+            </p>
           </div>
+
+          {/* Editorial dissent note — shown when editors' perspective differs from pure algorithmic ranking */}
+          {cat.editorialNote && (
+            <div className="bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-3 flex items-start gap-2">
+              <span className="text-amber-500 text-xs shrink-0 mt-0.5">&#9998;</span>
+              <p className="text-[0.65rem] md:text-xs text-amber-800 leading-relaxed">
+                <strong>Editor&apos;s note:</strong> {cat.editorialNote}
+              </p>
+            </div>
+          )}
 
           {/* General Advice Warning — collapsed on mobile, visible on desktop */}
           <div className="hidden md:block bg-slate-50 border border-slate-200 rounded-lg p-3 mb-3 text-[0.69rem] text-slate-500 leading-relaxed">

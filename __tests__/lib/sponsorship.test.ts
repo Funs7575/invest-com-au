@@ -125,4 +125,32 @@ describe("boostFeaturedPartner", () => {
     boostFeaturedPartner(brokers, 0);
     expect(brokers[0].slug).toBe(original[0].slug);
   });
+
+  it("raw:true skips boost and preserves original order", () => {
+    const brokers = [
+      makeBroker({ slug: "a", rating: 5 }),
+      makeBroker({ slug: "b", rating: 4 }),
+      makeBroker({ slug: "sponsored", sponsorship_tier: "featured_partner", rating: 3 }),
+    ];
+    const result = boostFeaturedPartner(brokers, 0, { raw: true });
+    expect(result[0].slug).toBe("a");
+    expect(result[1].slug).toBe("b");
+    expect(result[2].slug).toBe("sponsored");
+  });
+
+  it("raw:false is equivalent to the default (boost applied)", () => {
+    const brokers = [
+      makeBroker({ slug: "a", rating: 5 }),
+      makeBroker({ slug: "sponsored", sponsorship_tier: "featured_partner", rating: 1 }),
+    ];
+    const withRawFalse = boostFeaturedPartner(brokers, 0, { raw: false });
+    const withDefault = boostFeaturedPartner(brokers, 0);
+    expect(withRawFalse.map((b) => b.slug)).toEqual(withDefault.map((b) => b.slug));
+  });
+
+  it("raw:true returns a new array (does not mutate)", () => {
+    const brokers = [makeBroker({ slug: "a" })];
+    const result = boostFeaturedPartner(brokers, 0, { raw: true });
+    expect(result).not.toBe(brokers);
+  });
 });

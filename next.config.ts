@@ -163,8 +163,14 @@ const nextConfig: NextConfig = {
       // /start is retired — the unified quiz at /quiz serves both DIY and advisor tracks
       {
         source: "/start",
-        destination: "/quiz",
+        destination: "/get-matched",
         permanent: false,
+      },
+      // /quiz fully replaced by /get-matched (pre-launch — no transition banner).
+      {
+        source: "/quiz",
+        destination: "/get-matched",
+        permanent: true,
       },
       {
         source: "/course",

@@ -38,7 +38,7 @@ export const maxDuration = 60;
  */
 
 const PROBE_TIMEOUT_MS = 8_000;
-const ALERT_RECIPIENT = process.env.OPS_ALERT_EMAIL || "finn@invest.com.au";
+const ALERT_RECIPIENT = process.env.OPS_ALERT_EMAIL || "ops@invest.com.au";
 
 interface ProbeResult {
   flow: string;

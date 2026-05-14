@@ -10,6 +10,7 @@ import {
   formatRole,
   SITE_NAME,
 } from "@/lib/seo";
+import { NOINDEX_PERSONA_SLUGS } from "@/lib/compliance";
 
 export const revalidate = 3600;
 
@@ -34,10 +35,15 @@ export async function generateMetadata({
     member.short_bio ||
     `${member.full_name} is a ${formatRole(member.role).toLowerCase()} at ${SITE_NAME}. They review and fact-check financial product content.`;
 
+  const robots = NOINDEX_PERSONA_SLUGS.has(slug)
+    ? { index: false, follow: false }
+    : undefined;
+
   const ogImageUrl = `/api/og?title=${encodeURIComponent(member.full_name)}&subtitle=${encodeURIComponent(formatRole(member.role) + " at " + SITE_NAME)}&type=default`;
   return {
     title,
     description,
+    ...(robots && { robots }),
     openGraph: {
       type: "profile" as const,
       title,

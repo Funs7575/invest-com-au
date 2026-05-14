@@ -1,11 +1,14 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { computeHealthScore } from "@/lib/holdings/health-score";
 import {
   buildSwitchingCoach,
   type BrokerForCoach,
 } from "@/lib/holdings/switching-coach";
+import CsvImportModal from "./CsvImportModal";
+import TaxSummaryButton from "./TaxSummaryButton";
 
 export interface HoldingRow {
   id: number;
@@ -243,12 +246,12 @@ export default function HoldingsClient({ initialItems, brokers }: Props) {
           </div>
           <p className="text-sm text-amber-900/90">{coach.summary}</p>
           {coach.estSavingCents > 0 && (
-            <a
+            <Link
               href="/best/share-trading"
               className="inline-block mt-3 text-sm font-semibold text-amber-900 underline underline-offset-2"
             >
               Compare brokers →
-            </a>
+            </Link>
           )}
         </section>
       )}
@@ -283,6 +286,11 @@ export default function HoldingsClient({ initialItems, brokers }: Props) {
             </p>
           )}
         </div>
+      </section>
+
+      {/* CSV import — bulk import from a broker export (e.g. CommSec). */}
+      <section>
+        <CsvImportModal />
       </section>
 
       {/* Add form */}
@@ -445,6 +453,10 @@ export default function HoldingsClient({ initialItems, brokers }: Props) {
           </ul>
         )}
       </section>
+
+      {/* Tax-year summary export + advisor handoff. Sits below the list
+          so users see what they have before deciding to export. */}
+      <TaxSummaryButton />
     </div>
   );
 }
