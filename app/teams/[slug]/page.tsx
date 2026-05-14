@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 
 import { createClient } from "@/lib/supabase/server";
+// eslint-disable-next-line no-restricted-imports -- Member-only "Open squad inbox" CTA detection: looks up the calling professional (status pending or active, can_appear_publicly may be false) and their expert_team_members row. The anon-RLS policy on expert_team_members only exposes public members, so the admin client is required to detect non-public memberships. The page resolves the calling auth user first and reads only their own membership row.
+import { createAdminClient } from "@/lib/supabase/admin";
 import { absoluteUrl, breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import { BRIEF_TEMPLATE_LABELS } from "@/lib/briefs/templates";
 import { estimateBundledPrice } from "@/lib/expert-teams/pricing";
@@ -141,6 +143,36 @@ export default async function TeamProfilePage({ params }: PageProps) {
     getPublicTestimonials({ teamId: team.id, limit: 5 }),
   ]);
 
+  // Is the calling visitor an active member of this team? If so, surface
+  // the "Open squad inbox" link in the trust strip. We resolve the user
+  // via the anon auth cookie, then look up the professional + membership
+  // with the admin client because the anon RLS on expert_team_members
+  // only exposes can_appear_publicly=true members (a private member
+  // would not see their own link otherwise).
+  const {
+    data: { user: callingUser },
+  } = await admin.auth.getUser();
+  let isActiveMember = false;
+  if (callingUser) {
+    const adminClient = createAdminClient();
+    const { data: callingPro } = await adminClient
+      .from("professionals")
+      .select("id")
+      .or(`auth_user_id.eq.${callingUser.id},email.eq.${callingUser.email}`)
+      .in("status", ["active", "pending"])
+      .maybeSingle();
+    if (callingPro) {
+      const { data: callingMember } = await adminClient
+        .from("expert_team_members")
+        .select("status")
+        .eq("team_id", team.id)
+        .eq("professional_id", callingPro.id)
+        .maybeSingle();
+      isActiveMember =
+        !!callingMember && (callingMember.status as string) === "active";
+    }
+  }
+
   // Verification tier — derived from member count + unique disciplines +
   // outcome scoreboard. Pure function over data we already loaded.
   const uniqueDisciplines = new Set(
@@ -192,6 +224,14 @@ export default async function TeamProfilePage({ params }: PageProps) {
             <span className="text-xs text-slate-500">
               {String(team.team_category).replace(/_/g, " ")} · {String(team.team_type).replace(/_/g, " ")}
             </span>
+            {isActiveMember && (
+              <Link
+                href={`/teams/${slug}/inbox`}
+                className="ml-auto inline-flex items-center gap-1 text-xs font-semibold text-amber-700 hover:underline"
+              >
+                Open squad inbox →
+              </Link>
+            )}
           </div>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-3">
             {team.name as string}
