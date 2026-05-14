@@ -8,6 +8,7 @@ import {
   recommendedProviders,
   resolveActionPlan,
 } from "@/lib/getmatched/engine";
+import { computeTopMatch } from "@/lib/getmatched/top-match";
 import { logEvent } from "@/lib/getmatched/events";
 import { classifyGetMatchedError, errorResponse } from "@/lib/getmatched/errors";
 import { logger } from "@/lib/logger";
@@ -84,19 +85,30 @@ export async function POST(request: NextRequest) {
     if (plan_id === 0) {
       const answers = (clientAnswers ?? {}) as ActionPlanAnswers;
       const resolved = await resolveActionPlan({ answers, intents });
-      const providers = await recommendedProviders({
-        intent: resolved.intent,
-        route: resolved.route,
-        briefTemplate: resolved.recommendedBriefTemplate,
-        budgetBand: resolved.budgetBand,
-        locationState: resolved.locationState,
-      });
+      const [providers, topMatch] = await Promise.all([
+        recommendedProviders({
+          intent: resolved.intent,
+          route: resolved.route,
+          briefTemplate: resolved.recommendedBriefTemplate,
+          budgetBand: resolved.budgetBand,
+          locationState: resolved.locationState,
+        }),
+        // Only compute the top-match hero card for the `compare` route —
+        // the only one where a scored top broker makes sense.
+        resolved.route === "compare"
+          ? computeTopMatch(answers, resolved.vertical)
+          : Promise.resolve(null),
+      ]);
       return NextResponse.json({
         plan: buildEphemeralPlan(answers, resolved),
         template: resolved.template,
         recommended_brief_template: resolved.recommendedBriefTemplate,
         accept_credits_cost: resolved.acceptCreditsCost,
         recommended_providers: providers,
+        top_match: topMatch,
+        primary_href: resolved.primaryHref,
+        vertical: resolved.vertical,
+        advisor_type: resolved.advisorType,
         ephemeral: true,
       });
     }
@@ -118,19 +130,28 @@ export async function POST(request: NextRequest) {
         });
         const answers = (clientAnswers ?? {}) as ActionPlanAnswers;
         const resolved = await resolveActionPlan({ answers, intents });
-        const providers = await recommendedProviders({
-          intent: resolved.intent,
-          route: resolved.route,
-          briefTemplate: resolved.recommendedBriefTemplate,
-          budgetBand: resolved.budgetBand,
-          locationState: resolved.locationState,
-        });
+        const [providers, topMatch] = await Promise.all([
+          recommendedProviders({
+            intent: resolved.intent,
+            route: resolved.route,
+            briefTemplate: resolved.recommendedBriefTemplate,
+            budgetBand: resolved.budgetBand,
+            locationState: resolved.locationState,
+          }),
+          resolved.route === "compare"
+            ? computeTopMatch(answers, resolved.vertical)
+            : Promise.resolve(null),
+        ]);
         return NextResponse.json({
           plan: buildEphemeralPlan(answers, resolved),
           template: resolved.template,
           recommended_brief_template: resolved.recommendedBriefTemplate,
           accept_credits_cost: resolved.acceptCreditsCost,
           recommended_providers: providers,
+          top_match: topMatch,
+          primary_href: resolved.primaryHref,
+          vertical: resolved.vertical,
+          advisor_type: resolved.advisorType,
           ephemeral: true,
         });
       }
@@ -162,13 +183,18 @@ export async function POST(request: NextRequest) {
       status: plan.status === "draft" ? "draft" : plan.status,
     });
 
-    const providers = await recommendedProviders({
-      intent: resolved.intent,
-      route: resolved.route,
-      briefTemplate: resolved.recommendedBriefTemplate,
-      budgetBand: resolved.budgetBand,
-      locationState: resolved.locationState,
-    });
+    const [providers, topMatch] = await Promise.all([
+      recommendedProviders({
+        intent: resolved.intent,
+        route: resolved.route,
+        briefTemplate: resolved.recommendedBriefTemplate,
+        budgetBand: resolved.budgetBand,
+        locationState: resolved.locationState,
+      }),
+      resolved.route === "compare"
+        ? computeTopMatch(plan.answers, resolved.vertical)
+        : Promise.resolve(null),
+    ]);
 
     void logEvent({
       sessionId: plan.session_id,
@@ -196,6 +222,10 @@ export async function POST(request: NextRequest) {
       recommended_brief_template: resolved.recommendedBriefTemplate,
       accept_credits_cost: resolved.acceptCreditsCost,
       recommended_providers: providers,
+      top_match: topMatch,
+      primary_href: resolved.primaryHref,
+      vertical: resolved.vertical,
+      advisor_type: resolved.advisorType,
     });
   } catch (err) {
     // Outer catastrophic catch — try to compute the plan from whatever
