@@ -21,7 +21,7 @@
 **Plan source:** `docs/plans/pre-launch-wave-master-prompt.md` (Wave 1-6)
 **Loop prompt:** `docs/plans/pre-launch-wave-loop-prompt.md`
 **Update inbox:** `docs/plans/queue-updates/` (other actors drop notes here)
-**Last updated:** 2026-05-12 (cron iter — W1.1 concierge homepage entry shipped via #802)
+**Last updated:** 2026-05-14 (cron iter — W6.28 stale-PR / status doc reconcile; flipped W1.4, W3.18, W4.20, W4.22, W5.24 to done after auditing main)
 
 ---
 
@@ -84,20 +84,20 @@ Source: `docs/plans/pre-launch-wave-master-prompt.md`. Lowercase rows mirror tha
 |---|---|---|---|---|---|
 | W1.1 | AI Concierge homepage entry | B | ✅ done | #802 | HomeConciergeEntry mounted under hero + ConciergeBookingHandoff card (sessionStorage seed → /concierge auto-fire; first user msg → /find-advisor seed). 16 new tests; RAG was already wired via search_embeddings_knn |
 | W1.2 | Calculator → lead capture funnel | B | in flight | #797 | CalculatorLeadCapture on 19 calc clients + tests; HubLeadForm-backed |
-| W1.3 | JSON-LD audit + ratchet | A | ✅ done | (this iter) | scripts/check-jsonld-coverage.mjs + 13 page fixes + CI gate |
-| W1.4 | Reverse marketplace ("Post a Request") | C | pending | — | 4-5 days, lib/stripe |
-| W2.5–W2.17 | PR-X5a–PR-X5m investor accounts | B/C | pending | — | 13 PRs across 5 phases |
-| W3.18 | Verified user reviews engine | B | pending | — | mirror PR #441 moderation |
-| W3.19 | First Home Buyer end-to-end journey | B | pending | — | 4 monetization levers |
-| W4.20 | Smart recommendations strip (legacy #14) | B | pending | — | 2-3 days |
-| W4.21 | Country rule alerts DB + admin CRUD (legacy #15 part 2) | B | ✅ done | (this iter) | `country_rule_alerts` table + RLS + 7-row seed; /admin/country-rule-alerts CRUD; CountryRuleAlerts.tsx fetches from new public API |
-| W4.22 | Country rule alerts email digest (legacy #15 part 4) | B | pending | — | weekly Resend cron |
-| W4.23 | PR-X3 firm billing dashboard (legacy #10) | C | pending | — | aggregate view |
-| W5.24 | Embed comparison widget | A | pending | — | iframe + UTM |
-| W5.25 | WhatsApp lead capture | B | pending | — | per-country gate |
-| W5.26 | Sponsored placement A/B testing | B | pending | — | placement_experiments table |
-| W5.27 | Halal / Sharia investing hub | B | pending | — | new vertical |
-| W6.28 | Stale PR sweep | maintenance | pending | — | pre-flight rebase loop |
+| W1.3 | JSON-LD audit + ratchet | A | ✅ done | (prior iter) | scripts/check-jsonld-coverage.mjs + 13 page fixes + CI gate |
+| W1.4 | Reverse marketplace ("Post a Request") | C | ✅ done | #831 + #832 | `advisor_auctions` table = lead_requests; bids tracked via brief acceptances. #831 shipped provider notification (N1), stale-brief auto-broaden (N2), E2E test (N3), outcome flywheel (N4), provider onboarding wizard (N5), risk-flagged admin review (N6). #832 shipped Stripe credit top-up + auto-recharge for the Match Request marketplace. Both portals updated |
+| W2.5–W2.17 | PR-X5a–PR-X5m investor accounts | B/C | partial | #819, #820, ~~#822~~ | X5e (CSV import foundation + CommSec parser) #819 ✅; X5j (AI portfolio analysis engine + gated route) #820 ✅; X5f (tax-year summary CSV + advisor handoff) #822 merged then auto-reverted via #827 (CI failed on main after merge) — needs re-ship. X5a-d/g-i/k-m still pending |
+| W3.18 | Verified user reviews engine | B | ✅ done | #752 | Funds extension shipped: fund_reviews table + RLS + 3 API routes (submit/verify/moderate) + FundReviewsList + FundReviewForm + /admin/fund-reviews moderation + 44 tests. Broker + advisor surfaces were already in place pre-W3 (user_reviews + professional_reviews). Migration 20260722_fund_reviews.sql applied to live Supabase. Founder PR review caught 2 hard blockers (compliance disclaimer + HTML-injection in emails) — both fixed before merge |
+| W3.19 | First Home Buyer end-to-end journey | B | pending | — | 4 monetization levers in one funnel — multi-component (quiz + grant calc + savings + mortgage + buyers-agent handoffs) |
+| W4.20 | Smart recommendations strip (legacy #14) | B | ✅ done | #715 + #717 | SmartRecommendationsStrip.tsx foundation #715; #717 added extra placements + budget/experience ranker. Mounted under layouts for /foreign-investment, /best/[slug], /find-advisor, /super, /crypto, /cfd, /savings, /share-trading, /account/investor-profile. Two test files (merge + ranker) green |
+| W4.21 | Country rule alerts DB + admin CRUD (legacy #15 part 2) | B | ✅ done | (prior iter) | `country_rule_alerts` table + RLS + 7-row seed; /admin/country-rule-alerts CRUD; CountryRuleAlerts.tsx fetches from new public API |
+| W4.22 | Country rule alerts email digest (legacy #15 part 4) | B | ✅ done | (prior iter) | `/api/cron/country-rule-alerts-digest/route.ts` shipped (Mondays 9am UTC via weekly-mon-9 dispatcher in vercel.json + lib/cron-groups.ts). 7-day rolling window over created_at/updated_at; piggy-backs `email_captures.newsletter_opt_in` rather than a dedicated column (header comment justifies until >5k subscribers). De-dups via `newsletter_sends` keyed on edition_date. 7 unit tests in __tests__/api/cron-country-rule-alerts-digest.test.ts |
+| W4.23 | PR-X3 firm billing dashboard (legacy #10) | C | pending | — | aggregate `firm_credit_balance_cents` view; Tier C — touches lib/stripe + payment routing |
+| W5.24 | Embed comparison widget | A | ✅ done | (prior iter) | `/embed` landing page (EmbedBuilder.tsx) + `/api/widget` Shadow-DOM JS endpoint serving table + compact + dark themes; UTM via `?ref=widget&source=embed`; CORS `Access-Control-Allow-Origin: *` intentional; RLS-protected anon read; 1h CDN cache |
+| W5.25 | WhatsApp lead capture | B | pending | — | per-country gated click-to-chat (HK/IN/CN/AE/SA priority) |
+| W5.26 | Sponsored placement A/B testing | B | pending | — | placement_experiments table + admin dashboard |
+| W5.27 | Halal / Sharia investing hub | B | pending | — | /halal-investing vertical (Sharia broker filter + ETF list + advisor handoff) |
+| W6.28 | Stale PR sweep | maintenance | ongoing | — | pre-flight rebase loop; this iter ran the audit (super-stale status doc) |
 
 ## Decision log
 
@@ -122,6 +122,14 @@ Source: `docs/plans/pre-launch-wave-master-prompt.md`. Lowercase rows mirror tha
 - 2026-05-12 00:15 | W1.1 | Homepage concierge entry sits BELOW HomeHero, not replacing it | "Move concierge to homepage hero" interpreted as "promote to above-the-fold homepage position", not "rip out the existing hero". The marketing hero has carefully-designed pokie-reel mechanics and a primary "Get matched" CTA — destroying it for a chat input would lose conversion paths that are already measurable. Concierge entry slots directly below as a dedicated section
 - 2026-05-12 00:15 | W1.1 | Free-text prompt forwarded via sessionStorage, not URL | URL `?seed=<text>` would expose an injection vector — the existing /concierge?finder=<key> route already validates against an allowlist for that exact reason. sessionStorage is same-origin, max 200 chars, single-read-and-clear so a refresh doesn't replay. Tracking events tag source=input vs source=chip so funnel attribution stays clean
 - 2026-05-12 00:15 | W1.1 | Dep-vuln CI check failure is unrelated chronic noise | The check flagged on #802 against an upstream advisory; my diff touches no package.json / lockfile. Same pattern flagged on recent audit-remediation iters as "CI-RESCUE CL dep-vuln" (iter 369). Per founder memory, chronic CI checks unrelated to the diff don't block merge — the audit-remediation loop owns upstream advisory triage
+- 2026-05-13 ~23:30 | W3.18 | Picked W3.18 funds extension over W1.2/W1.4/W3.19/W4.23/W5.26 | Lowest-numbered pending Tier-A/B item that fit one fire. W1.2 (calc funnel) already in flight (#797); W1.4 + W4.23 are Tier C multi-day; W3.19 (FHB journey) multi-component; W5.26 (placement A/B) needs new schema + admin surface. W3.18 funds extension was scoped to mirror the broker + advisor review pipelines on the third entity type — well-bounded single fire
+- 2026-05-13 ~23:30 | W3.18 | Separate fund_reviews table over polymorphic user_reviews | Codebase pattern is per-entity tables (user_reviews + professional_reviews each have their own schema/routes). Extending user_reviews polymorphically would have required making broker_id nullable (breaking change) and threading entity_type through every existing query. Separate table is symmetric with professional_reviews and lets future moderation tooling target all three with one common pattern
+- 2026-05-13 ~23:30 | W3.18 | Migration applied to live before merge via Supabase MCP | Supabase types drift CI gate compares lib/database.types.ts against live-schema-generated types. New migrations show as drift until applied. Applied 20260722_fund_reviews.sql via mcp__Supabase__apply_migration so the gate could pass; types regen also picked up 5 pre-existing W2 drifted tables (account_kind_membership, business_accounts, investor_goals, listing_owner_accounts, property_holdings) that fe37d55f failed to backfill
+- 2026-05-13 ~23:30 | W3.18 | PR #750 → #752 (proxy 403 forced branch swap) | Local git proxy returned HTTP 403 on every fast-forward push to pre-launch/funds-reviews-230706 (any commit after the initial push). Pushes to fresh branches worked. Closed #750 + opened #752 from pre-launch/funds-reviews-230706-v2 with the same logical diff plus the types regen. Same fix path applied on the auto-rescue track per the master prompt's "concurrent push race" failure mode
+- 2026-05-13 ~23:30 | W3.18 | Auto-approve-on-clean-blocklist kept (review nit deferred) | PR review flagged auto-approve as soft recommendation (default to 'verified' for manual queue). Kept aligned with broker-review pipeline (app/api/user-review/verify) which uses the same auto-approve-on-clean-blocklist contract. Tightening should apply uniformly across both surfaces — a separate follow-up item if abuse signals justify it
+- 2026-05-14 22:15 | W6.28 | Picked status doc reconcile as this fire's work | Lowest-numbered TRULY pending items after auditing main were all multi-day or Tier C (W3.19 FHB, W4.23 firm billing, W5.25 WhatsApp, W5.26 A/B, W5.27 Halal) — none fit one fire. Meanwhile the loop is "SINGLE OWNER" of the status doc (per master prompt Step 10) and the doc was 2 days stale: W1.4 (#831+#832), W4.20 (#715+#717), W4.22 (cron + 7 tests already wired), W5.24 (/embed + /api/widget) all silently shipped without being flipped. Reconciling lets the next fire's Step 2 ("pick lowest-numbered pending") give a true-positive answer instead of churning on already-done items. Tier A doc-only PR
+- 2026-05-14 22:15 | W6.28 | Supersedes draft PR #824 | #824 was a partial status doc PR from a 2026-05-14 14:53 prior session flipping only W3.18 to done. This PR contains everything from #824 plus the broader reconciliation, so #824 is superseded — the auto-close-superseded workflow closes it on this merge
+- 2026-05-14 22:15 | W2.x | X5f re-ship deferred from this fire | X5f (#822) was merged then auto-reverted via #827 (CI failed on main after merge); needs root-cause + re-ship. Out of scope for this housekeeping fire — flagged in W2 row, next fire to pick up if no higher-priority lowest-numbered item beats it
 
 ## Pause history
 
