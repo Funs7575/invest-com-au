@@ -251,6 +251,43 @@ export default function BillingClient(props: Props) {
         </div>
       </section>
 
+      {/* Settings links */}
+      <section className="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6">
+        <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-widest mb-3">
+          Settings
+        </h2>
+        <ul className="divide-y divide-slate-100">
+          <li>
+            <a
+              href="/pros/settings/pricing-tier"
+              className="flex items-center justify-between py-3 hover:bg-slate-50 -mx-2 px-2 rounded"
+            >
+              <div>
+                <p className="text-sm font-semibold text-slate-900">Pricing tier</p>
+                <p className="text-xs text-slate-500">
+                  Standard credits or success-only (pay at outcome).
+                </p>
+              </div>
+              <span className="text-slate-400">→</span>
+            </a>
+          </li>
+          <li>
+            <a
+              href="/pros/settings/intake"
+              className="flex items-center justify-between py-3 hover:bg-slate-50 -mx-2 px-2 rounded"
+            >
+              <div>
+                <p className="text-sm font-semibold text-slate-900">Intake questions</p>
+                <p className="text-xs text-slate-500">
+                  Customise what consumers answer after you accept.
+                </p>
+              </div>
+              <span className="text-slate-400">→</span>
+            </a>
+          </li>
+        </ul>
+      </section>
+
       <p className="text-[10px] text-slate-400 text-center">
         Payments processed by Stripe. Receipts are emailed automatically. <a href="/account/notifications" className="underline">Email preferences</a>.
       </p>
