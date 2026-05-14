@@ -27,7 +27,7 @@ import {
 
 function adminLoggedIn() {
   mockGetUser.mockResolvedValue({
-    data: { user: { id: "u1", email: "finn@invest.com.au" } },
+    data: { user: { id: "u1", email: "admin@invest.com.au" } },
   });
 }
 
@@ -251,7 +251,7 @@ describe("POST /api/admin/country-rule-alerts — validation", () => {
     expect(auditInsert).toHaveBeenCalledWith(
       expect.objectContaining({
         action: "country_rule_alert:created",
-        admin_email: "finn@invest.com.au",
+        admin_email: "admin@invest.com.au",
       }),
     );
   });
