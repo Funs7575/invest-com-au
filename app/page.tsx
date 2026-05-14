@@ -4,6 +4,7 @@ import HomeHero from "@/components/HomeHero";
 import HomeRouteCards from "@/components/HomeRouteCards";
 import CountryToolsStripWrapper from "@/components/country-mode/CountryToolsStripWrapper";
 import HomePathfinder from "@/components/HomePathfinder";
+import GetMatchedEmbed from "@/components/get-matched/GetMatchedEmbed";
 import HomeListingsTeaser, { type HomeListing } from "@/components/HomeListingsTeaser";
 import HomeAdvisorsTeaser, { type HomeAdvisor } from "@/components/HomeAdvisorsTeaser";
 import HomePostAJob from "@/components/HomePostAJob";
@@ -258,6 +259,12 @@ export default async function HomePage() {
       </ScrollFadeIn>
 
       <CountryPopularLinks />
+
+      <ScrollFadeIn>
+        <section className="container-custom my-10">
+          <GetMatchedEmbed context="homepage" />
+        </section>
+      </ScrollFadeIn>
 
       <ScrollFadeIn>
         <HomePathfinder />
