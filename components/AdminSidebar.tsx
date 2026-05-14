@@ -60,6 +60,7 @@ const NAV_GROUPS = [
       { href: "/admin/affiliate-dashboard", icon: "pie-chart", label: "Affiliate Performance" },
       { href: "/admin/sponsored-queue", icon: "calendar", label: "Sponsored Queue" },
       { href: "/admin/ab-tests", icon: "git-branch", label: "A/B Tests" },
+      { href: "/admin/placement-experiments", icon: "arrow-right-left", label: "Placement A/B" },
       { href: "/admin/fee-queue", icon: "dollar-sign", label: "Fee Queue" },
       { href: "/admin/deal-of-month", icon: "trophy", label: "Deal of Month" },
     ],
@@ -78,6 +79,25 @@ const NAV_GROUPS = [
     items: [
       { href: "/admin/advisors", icon: "user", label: "Advisors" },
       { href: "/admin/advisor-performance", icon: "trending-up", label: "Advisor Perf." },
+    ],
+  },
+  {
+    label: "Brief Marketplace",
+    items: [
+      { href: "/admin/briefs", icon: "edit", label: "Investor Briefs" },
+      { href: "/admin/expert-teams", icon: "users", label: "Expert Teams" },
+      { href: "/admin/credit-pricing", icon: "coins", label: "Credit Pricing" },
+      { href: "/admin/routing-rules", icon: "git-branch", label: "Routing Rules" },
+      { href: "/admin/risk-flags", icon: "shield", label: "Risk Flags" },
+    ],
+  },
+  {
+    label: "Get Matched",
+    items: [
+      { href: "/admin/intents", icon: "target", label: "Intents" },
+      { href: "/admin/get-matched/questions", icon: "message-circle", label: "Questions" },
+      { href: "/admin/get-matched/result-templates", icon: "layout", label: "Result Templates" },
+      { href: "/admin/get-matched/funnel", icon: "filter", label: "Funnel" },
     ],
   },
   {

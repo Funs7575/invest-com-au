@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
 import CompareClient from "./CompareClient";
 import CompareNav from "./CompareNav";
+import GetMatchedEmbed from "@/components/get-matched/GetMatchedEmbed";
 import { absoluteUrl, UPDATED_LABEL } from "@/lib/seo";
 import ComplianceFooter from "@/components/ComplianceFooter";
 import HomeToolsStrip from "@/components/HomeToolsStrip";
@@ -85,7 +86,7 @@ async function CompareData() {
 
   const { data: brokers } = await supabase
     .from('brokers')
-    .select("id, name, slug, color, icon, logo_url, rating, asx_fee, asx_fee_value, us_fee, us_fee_value, fx_rate, chess_sponsored, smsf_support, is_crypto, platform_type, deal, deal_text, deal_expiry, editors_pick, tagline, cta_text, affiliate_url, sponsorship_tier, benefit_cta, updated_at, fee_last_checked, fee_verified_date, status, promoted_placement, cpa_value, affiliate_priority")
+    .select("id, name, slug, color, icon, logo_url, rating, asx_fee, asx_fee_value, us_fee, us_fee_value, fx_rate, chess_sponsored, smsf_support, is_crypto, platform_type, deal, deal_text, deal_expiry, editors_pick, tagline, cta_text, affiliate_url, sponsorship_tier, benefit_cta, updated_at, fee_last_checked, fee_verified_date, status, promoted_placement, cpa_value, affiliate_priority, fee_source_url, fee_source_tcs_url, deal_source, min_deposit, payment_methods, markets, platforms, regulated_by, accepts_non_residents, requires_australian_address")
     .eq('status', 'active')
     // Revenue-weighted: promoted first, then by rating
     .order('promoted_placement', { ascending: false })
@@ -150,6 +151,9 @@ export default function ComparePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
       />
       <Suspense><CompareNav /></Suspense>
+      <div className="container-custom pt-5">
+        <GetMatchedEmbed context="platform_compare" />
+      </div>
       {/* Server-rendered H1 for crawlers that don't execute client JS — streams immediately */}
       <div className="container-custom pt-5 md:pt-10">
         <div className="mb-3"><IntentCountryBadge /></div>

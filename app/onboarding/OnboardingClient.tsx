@@ -4,6 +4,10 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Icon from "@/components/Icon";
 import { useUser } from "@/lib/hooks/useUser";
+import {
+  buildOnboardingProfilePayload,
+  type OnboardingData,
+} from "./onboarding-payload";
 
 /* ── Constants ── */
 
@@ -22,15 +26,31 @@ const INTEREST_OPTIONS = [
 
 const EXPERIENCE_OPTIONS = [
   { value: "beginner", label: "Beginner", description: "I'm new to investing" },
-  { value: "intermediate", label: "Intermediate", description: "I've been investing for 1-3 years" },
-  { value: "advanced", label: "Advanced", description: "I've invested for 3+ years" },
+  {
+    value: "intermediate",
+    label: "Intermediate",
+    description: "I've been investing for 1-3 years",
+  },
+  {
+    value: "advanced",
+    label: "Advanced",
+    description: "I've invested for 3+ years",
+  },
 ] as const;
 
 const GOAL_OPTIONS = [
   { value: "growth", label: "Growth", description: "Grow my wealth long-term" },
   { value: "income", label: "Income", description: "Generate regular income" },
-  { value: "preservation", label: "Preservation", description: "Protect what I have" },
-  { value: "speculation", label: "Speculation", description: "Active trading for returns" },
+  {
+    value: "preservation",
+    label: "Preservation",
+    description: "Protect what I have",
+  },
+  {
+    value: "speculation",
+    label: "Speculation",
+    description: "Active trading for returns",
+  },
 ] as const;
 
 const PORTFOLIO_OPTIONS = [
@@ -41,7 +61,16 @@ const PORTFOLIO_OPTIONS = [
   { value: "over_500k", label: "Over $500k" },
 ] as const;
 
-const AU_STATES = ["NSW", "VIC", "QLD", "WA", "SA", "TAS", "ACT", "NT"] as const;
+const AU_STATES = [
+  "NSW",
+  "VIC",
+  "QLD",
+  "WA",
+  "SA",
+  "TAS",
+  "ACT",
+  "NT",
+] as const;
 
 /* ── Subcomponents ── */
 
@@ -118,9 +147,13 @@ function RadioCard({
           <Icon name="check" size={12} className="text-white" />
         </span>
       )}
-      <span className="block text-sm font-semibold text-slate-900">{label}</span>
+      <span className="block text-sm font-semibold text-slate-900">
+        {label}
+      </span>
       {description && (
-        <span className="block text-xs text-slate-500 mt-0.5">{description}</span>
+        <span className="block text-xs text-slate-500 mt-0.5">
+          {description}
+        </span>
       )}
     </button>
   );
@@ -147,22 +180,17 @@ function InterestPill({
           : "bg-white text-slate-700 border-slate-200 hover:border-slate-300 hover:shadow-sm"
       }`}
     >
-      <Icon name={icon} size={16} className={selected ? "text-white" : "text-slate-400"} />
+      <Icon
+        name={icon}
+        size={16}
+        className={selected ? "text-white" : "text-slate-400"}
+      />
       {label}
     </button>
   );
 }
 
 /* ── Form state ── */
-
-interface OnboardingData {
-  interested_in: string[];
-  investing_experience: string;
-  investment_goals: string;
-  display_name: string;
-  portfolio_size: string;
-  state: string;
-}
 
 const emptyData: OnboardingData = {
   interested_in: [],
@@ -183,6 +211,7 @@ export default function OnboardingClient() {
   const [form, setForm] = useState<OnboardingData>(emptyData);
   const [checking, setChecking] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [direction, setDirection] = useState<"forward" | "back">("forward");
   const [animating, setAnimating] = useState(false);
 
@@ -208,12 +237,38 @@ export default function OnboardingClient() {
           router.push("/account");
           return;
         }
+
+        setForm((current) => ({
+          ...current,
+          display_name:
+            typeof profile?.display_name === "string" && profile.display_name.trim()
+              ? profile.display_name
+              : user.user_metadata?.display_name || user.email?.split("@")[0] || current.display_name,
+          state: typeof profile?.state === "string" ? profile.state : current.state,
+          investing_experience:
+            typeof profile?.investing_experience === "string"
+              ? profile.investing_experience
+              : current.investing_experience,
+          investment_goals:
+            typeof profile?.investment_goals === "string"
+              ? profile.investment_goals
+              : current.investment_goals,
+          portfolio_size:
+            typeof profile?.portfolio_size === "string"
+              ? profile.portfolio_size
+              : current.portfolio_size,
+          interested_in: Array.isArray(profile?.interested_in)
+            ? profile.interested_in.filter((item: unknown): item is string => typeof item === "string")
+            : current.interested_in,
+        }));
       } finally {
         if (!cancelled) setChecking(false);
       }
     })();
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [user, router]);
 
   // Step transition animation
@@ -234,31 +289,52 @@ export default function OnboardingClient() {
   // Navigation
   const canProceed = () => {
     if (step === 1) return form.interested_in.length >= 1;
-    if (step === 2) return form.investing_experience !== "" && form.investment_goals !== "";
+    if (step === 2)
+      return form.investing_experience !== "" && form.investment_goals !== "";
     return true; // Step 3 is all optional
   };
 
   const handleNext = () => {
+    setSubmitError(null);
     if (step < TOTAL_STEPS) goTo(step + 1);
   };
 
   const handleBack = () => {
+    setSubmitError(null);
     if (step > 1) goTo(step - 1);
   };
 
   const handleFinish = async () => {
+    setSubmitError(null);
     setSubmitting(true);
     try {
       const res = await fetch("/api/user-profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, onboarding_completed: true }),
+        body: JSON.stringify(buildOnboardingProfilePayload(form)),
       });
+
       if (res.ok) {
-        router.push("/account?welcome=1");
+        router.replace("/account?welcome=1");
+        router.refresh();
+        return;
       }
+
+      if (res.status === 401) {
+        router.replace("/auth/login?next=/onboarding");
+        return;
+      }
+
+      const data = (await res.json().catch(() => null)) as {
+        error?: string;
+      } | null;
+      setSubmitError(
+        data?.error ?? "We couldn't save your onboarding. Please try again.",
+      );
     } catch {
-      // Allow retry
+      setSubmitError(
+        "Connection issue. Please check your internet and try again.",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -291,7 +367,8 @@ export default function OnboardingClient() {
     if (animating) {
       return {
         opacity: 0,
-        transform: direction === "forward" ? "translateX(40px)" : "translateX(-40px)",
+        transform:
+          direction === "forward" ? "translateX(40px)" : "translateX(-40px)",
         transition: "opacity 200ms ease, transform 200ms ease",
       };
     }
@@ -345,13 +422,20 @@ export default function OnboardingClient() {
               </p>
 
               <div className="mb-8">
-                <p className="text-sm font-medium text-slate-700 mb-3">Experience Level</p>
+                <p className="text-sm font-medium text-slate-700 mb-3">
+                  Experience Level
+                </p>
                 <div className="grid grid-cols-1 gap-2">
                   {EXPERIENCE_OPTIONS.map((opt) => (
                     <RadioCard
                       key={opt.value}
                       selected={form.investing_experience === opt.value}
-                      onClick={() => setForm((p) => ({ ...p, investing_experience: opt.value }))}
+                      onClick={() =>
+                        setForm((p) => ({
+                          ...p,
+                          investing_experience: opt.value,
+                        }))
+                      }
                       label={opt.label}
                       description={opt.description}
                     />
@@ -360,13 +444,17 @@ export default function OnboardingClient() {
               </div>
 
               <div>
-                <p className="text-sm font-medium text-slate-700 mb-3">Primary Goal</p>
+                <p className="text-sm font-medium text-slate-700 mb-3">
+                  Primary Goal
+                </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {GOAL_OPTIONS.map((opt) => (
                     <RadioCard
                       key={opt.value}
                       selected={form.investment_goals === opt.value}
-                      onClick={() => setForm((p) => ({ ...p, investment_goals: opt.value }))}
+                      onClick={() =>
+                        setForm((p) => ({ ...p, investment_goals: opt.value }))
+                      }
                       label={opt.label}
                       description={opt.description}
                     />
@@ -389,14 +477,19 @@ export default function OnboardingClient() {
               <div className="space-y-6">
                 {/* Display Name */}
                 <div>
-                  <label htmlFor="onboard_name" className="block text-sm font-medium text-slate-700 mb-1">
+                  <label
+                    htmlFor="onboard_name"
+                    className="block text-sm font-medium text-slate-700 mb-1"
+                  >
                     Display Name
                   </label>
                   <input
                     id="onboard_name"
                     type="text"
                     value={form.display_name}
-                    onChange={(e) => setForm((p) => ({ ...p, display_name: e.target.value }))}
+                    onChange={(e) =>
+                      setForm((p) => ({ ...p, display_name: e.target.value }))
+                    }
                     placeholder="How should we address you?"
                     className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
                     maxLength={100}
@@ -405,13 +498,17 @@ export default function OnboardingClient() {
 
                 {/* Portfolio Size */}
                 <div>
-                  <p className="text-sm font-medium text-slate-700 mb-2">Portfolio Size</p>
+                  <p className="text-sm font-medium text-slate-700 mb-2">
+                    Portfolio Size
+                  </p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {PORTFOLIO_OPTIONS.map((opt) => (
                       <RadioCard
                         key={opt.value}
                         selected={form.portfolio_size === opt.value}
-                        onClick={() => setForm((p) => ({ ...p, portfolio_size: opt.value }))}
+                        onClick={() =>
+                          setForm((p) => ({ ...p, portfolio_size: opt.value }))
+                        }
                         label={opt.label}
                       />
                     ))}
@@ -420,18 +517,25 @@ export default function OnboardingClient() {
 
                 {/* State */}
                 <div>
-                  <label htmlFor="onboard_state" className="block text-sm font-medium text-slate-700 mb-1">
+                  <label
+                    htmlFor="onboard_state"
+                    className="block text-sm font-medium text-slate-700 mb-1"
+                  >
                     State
                   </label>
                   <select
                     id="onboard_state"
                     value={form.state}
-                    onChange={(e) => setForm((p) => ({ ...p, state: e.target.value }))}
+                    onChange={(e) =>
+                      setForm((p) => ({ ...p, state: e.target.value }))
+                    }
                     className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors bg-white"
                   >
                     <option value="">Select your state</option>
                     {AU_STATES.map((s) => (
-                      <option key={s} value={s}>{s}</option>
+                      <option key={s} value={s}>
+                        {s}
+                      </option>
                     ))}
                   </select>
                 </div>
@@ -439,6 +543,15 @@ export default function OnboardingClient() {
             </div>
           )}
         </div>
+
+        {submitError && (
+          <div
+            role="alert"
+            className="mt-8 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700"
+          >
+            {submitError}
+          </div>
+        )}
 
         {/* Navigation buttons */}
         <div className="flex items-center justify-between mt-10 gap-3">

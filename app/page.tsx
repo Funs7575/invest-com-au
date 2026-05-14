@@ -1,17 +1,16 @@
 import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
 import HomeHero from "@/components/HomeHero";
-import HomeConciergeEntry from "@/components/HomeConciergeEntry";
 import HomeRouteCards from "@/components/HomeRouteCards";
 import CountryToolsStripWrapper from "@/components/country-mode/CountryToolsStripWrapper";
 import HomePathfinder from "@/components/HomePathfinder";
+import GetMatchedEmbed from "@/components/get-matched/GetMatchedEmbed";
 import HomeListingsTeaser, { type HomeListing } from "@/components/HomeListingsTeaser";
 import HomeAdvisorsTeaser, { type HomeAdvisor } from "@/components/HomeAdvisorsTeaser";
 import HomePostAJob from "@/components/HomePostAJob";
 import HomeCompareDeepDive, { type CompareBroker } from "@/components/HomeCompareDeepDive";
 import HomeCrossBorder from "@/components/HomeCrossBorder";
 import HomeFridayBriefing from "@/components/HomeFridayBriefing";
-import HomeHowWeEarn from "@/components/HomeHowWeEarn";
 import CountryListingsPreview from "@/components/country-mode/CountryListingsPreview";
 import CountryExpertsPreview from "@/components/country-mode/CountryExpertsPreview";
 import CountryComparePreview from "@/components/country-mode/CountryComparePreview";
@@ -245,7 +244,8 @@ export default async function HomePage() {
         advisorCount={totalProfessionalCount}
       />
 
-      <HomeConciergeEntry />
+      {/* Temporarily hidden for the next few months. Keep the component intact
+          so the homepage AI concierge entry can be restored without rebuilding it. */}
 
       <ScrollFadeIn>
         <HomeRouteCards
@@ -258,11 +258,13 @@ export default async function HomePage() {
         />
       </ScrollFadeIn>
 
-      <ScrollFadeIn>
-        <CountryToolsStripWrapper />
-      </ScrollFadeIn>
-
       <CountryPopularLinks />
+
+      <ScrollFadeIn>
+        <section className="container-custom my-10">
+          <GetMatchedEmbed context="homepage" />
+        </section>
+      </ScrollFadeIn>
 
       <ScrollFadeIn>
         <HomePathfinder />
@@ -305,7 +307,7 @@ export default async function HomePage() {
       </ScrollFadeIn>
 
       <ScrollFadeIn>
-        <HomeHowWeEarn />
+        <CountryToolsStripWrapper />
       </ScrollFadeIn>
 
       <MobileBottomNav />
