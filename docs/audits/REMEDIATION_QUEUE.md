@@ -54,7 +54,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | SP | (none yet) | (none yet) | **BLOCKED — waiting on MM-V09 completion.** | All SP tasks merged + compliance signoff |
 | MAIN-RESCUE | _complete_ | **#793 MERGED** | next 16.2.4→16.2.6 patch merged. Non-loop auto-revert PRs for failed main commits: **#827 OPEN** (reverts `d26094aa`) · **#843 OPEN** (reverts `ff43ed6f`). These are founder-action items — loop will not create duplicate fixes. | Merged to main ✓ |
 | CL | `claude/audit-remediation/cl-01-about-entity-only` | **#795 MERGED 2026-05-14** | CL-01..CL-04, CL-06, CL-09, CL-10 done. CL-07+CL-08 false-positive. CL-05 blocked (WHOIS registrar action — see Blocked). | All CL tasks merged (CL-05 blocked) |
-| LL | `claude/audit-remediation/ll-01-personal-dashboard` | **#807 MERGED 2026-05-14** | LL-01..LL-03 done. **LL-04 pending** (reviews + ratings — deps LL-01 ✓; next item per Tier-1 preempt). LL-05 blocked (live chat AI routing — deps V-NEW-02 + CC-06). | All LL tasks merged |
+| LL | `claude/audit-remediation/ll-04-reviews-ratings` | **#807 MERGED 2026-05-14** · **#845 OPEN** | LL-01..LL-03 done. LL-04 in-flight (#845). LL-05 blocked (live chat AI routing — deps V-NEW-02 + CC-06). | All LL tasks merged |
 
 ---
 
@@ -93,6 +93,17 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 396 — 2026-05-14 — LL-04 [Tier-1 preempt]
+
+- **Stream:** LL (logged-in user infrastructure)
+- **Item:** LL-04 — reviews + ratings history
+- **Branch:** `claude/audit-remediation/ll-04-reviews-ratings`
+- **PR:** #845 OPEN
+- **Commit:** `3fca3fe`
+- **Diff:** +399 -4 across 5 files (3 new, 2 modified)
+- **What:** Built the account-side reviews + ratings surface for logged-in investors. New `GET /api/account/reviews` route returns all of the authenticated user's broker reviews regardless of moderation status (standard RLS only shows `status='approved'`; admin client scoped to caller's own email provides the full history). New `app/account/reviews/page.tsx` RSC displays review cards with status badges (pending/approved/rejected), star rows, broker links, and a "View live →" link for approved reviews; empty-state has CTA to `/reviews/write`. Added optional `reviewCount` prop to `AccountKindCards` — when >0 renders an amber "My reviews" tile (follows the `savedSearchCount` pattern). `app/account/page.tsx` parallel-fetches the count (HEAD query via admin client) and threads it through. 5-test suite covers 401 paths, happy path, all-statuses, DB error, and null→[] normalisation. Rate-limit audit 100% (421 routes, 0 missing). LL-05 blocked (deps V-NEW-02 + CC-06).
+- **STATUS: PROGRESS · stream=LL · item=LL-04 · pr=#845 · override=tier-1-preempt**
 
 ### iter 395 — 2026-05-14 — queue sync (all in-flight PRs merged by founder)
 
