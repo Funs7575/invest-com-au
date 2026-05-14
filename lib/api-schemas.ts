@@ -157,6 +157,230 @@ export const PostJobResponse = z.object({
   ends_at: z.string(),
 });
 
+// ─── /api/briefs — Investor Brief marketplace ──────────────────────
+
+export const BRIEF_TEMPLATES = [
+  "general",
+  "smsf_property",
+  "foreign_investor",
+  "expat",
+  "opportunity_assessment",
+  "business_acquisition",
+  "commercial_property",
+  "second_opinion",
+  "mortgage",
+  "tax",
+  "smsf_accountant",
+  "financial_adviser",
+  "listing",
+  "listing_readiness",
+] as const;
+
+export const PROVIDER_PREFERENCES = [
+  "any",
+  "individual",
+  "firm",
+  "expert_team",
+  "multiple",
+] as const;
+
+export const ROUTING_MODES = ["smart_match", "direct", "multi_response"] as const;
+
+export const CreateBriefRequest = z.object({
+  brief_template: z.enum(BRIEF_TEMPLATES),
+  brief_payload: z.record(z.string(), z.unknown()).default({}),
+  job_title: z.string().min(8, "Title must be at least 8 characters.").max(160),
+  job_description: z.string().min(30, "Please add a little more context.").max(5000),
+  budget_band: z.enum(QUOTE_BUDGET_BANDS),
+  advisor_types: z.array(z.enum(QUOTE_ADVISOR_TYPES)).default([]),
+  location_state: z.enum(QUOTE_AU_STATES),
+  provider_preference: z.enum(PROVIDER_PREFERENCES).default("any"),
+  routing_mode: z.enum(ROUTING_MODES).default("smart_match"),
+  target_team_slug: z.string().max(120).optional(),
+  target_professional_slug: z.string().max(120).optional(),
+  target_firm_slug: z.string().max(120).optional(),
+  listing_id: z.number().int().positive().optional(),
+  contact_name: z.string().min(1).max(100),
+  contact_email: z.string().email().max(200),
+  contact_phone: z.string().max(20).optional(),
+  consent_share: z.boolean().refine((v) => v === true, {
+    message: "Please confirm consent to share the brief with verified providers.",
+  }),
+  // Honeypots — silently accept, ignore.
+  website: z.string().optional(),
+  fax: z.string().optional(),
+});
+
+export const AcceptBriefRequest = z.object({
+  team_id: z.number().int().positive().optional(),
+});
+
+export const BriefStatusUpdateRequest = z.object({
+  tracker_status: z.enum([
+    "new",
+    "contacted",
+    "call_booked",
+    "proposal_sent",
+    "won",
+    "lost",
+  ]),
+  note: z.string().max(2000).optional(),
+});
+
+// ─── /api/expert-teams ─────────────────────────────────────────────
+
+export const TEAM_TYPES = [
+  "same_firm",
+  "independent",
+  "private_referral",
+  "internal_firm",
+] as const;
+
+export const TEAM_CATEGORIES = [
+  "smsf_property",
+  "foreign_investor",
+  "expat",
+  "commercial_property",
+  "business_acquisition",
+  "due_diligence",
+  "retirement",
+  "custom",
+] as const;
+
+export const CreateExpertTeamRequest = z.object({
+  name: z.string().min(3).max(120),
+  team_category: z.enum(TEAM_CATEGORIES),
+  team_type: z.enum(TEAM_TYPES),
+  description: z.string().max(2000).optional(),
+  niche: z.string().max(200).optional(),
+  location_state: z.enum(QUOTE_AU_STATES).optional(),
+  service_areas: z.array(z.string().max(80)).max(20).optional(),
+  firm_id: z.number().int().positive().optional(),
+  disclosure: z.string().max(4000).optional(),
+  accepted_brief_templates: z.array(z.enum(BRIEF_TEMPLATES)).max(BRIEF_TEMPLATES.length).optional(),
+});
+
+export const InviteExpertTeamMemberRequest = z.object({
+  email: z.string().email().max(200),
+  name: z.string().max(120).optional(),
+  role: z.string().max(60).optional(),
+});
+
+export const AcceptExpertTeamInvitationRequest = z.object({
+  token: z.string().min(20).max(200),
+});
+
+export const SubmitExpertTeamRequest = z.object({});
+
+export const AdminVerifyExpertTeamRequest = z.object({
+  approved: z.boolean(),
+  rejection_reason: z.string().max(2000).optional(),
+  accepts_briefs: z.boolean().optional(),
+});
+
+// ─── /api/get-matched (Get Matched 2.0) ─────────────────────────────
+
+export const GM_INTENT_SLUGS = [
+  "compare_platform",
+  "start_investing",
+  "smsf_property",
+  "buy_property",
+  "opportunity_assessment",
+  "business_acquisition",
+  "commercial_property",
+  "foreign_investor",
+  "expat_investing",
+  "financial_advice",
+  "tax_help",
+  "mortgage_help",
+  "legal_help",
+  "second_opinion",
+  "listing_owner",
+  "listing_readiness",
+  "not_sure",
+] as const;
+
+export const GM_ROUTE_TYPES = [
+  "compare",
+  "browse",
+  "individual",
+  "firm",
+  "expert_team",
+  "investor_brief",
+  "listing_brief",
+  "second_opinion",
+  "guide",
+] as const;
+
+export const GM_QUESTION_MODES = ["fast", "guided", "both"] as const;
+
+const PlainAnswerValue = z.union([
+  z.string().max(500),
+  z.array(z.string().max(120)).max(20),
+  z.number().finite(),
+  z.boolean(),
+  z.null(),
+]);
+
+export const StartGetMatchedRequest = z.object({
+  session_id: z.string().min(8).max(120),
+  mode: z.enum(GM_QUESTION_MODES).default("both"),
+  prefill: z.record(z.string(), PlainAnswerValue).optional(),
+  source_page: z.string().max(500).optional(),
+});
+
+export const AnswerQuestionRequest = z.object({
+  plan_id: z.number().int().positive(),
+  question_slug: z.string().min(1).max(80),
+  value: PlainAnswerValue,
+});
+
+export const ResolvePlanRequest = z.object({
+  plan_id: z.number().int().positive(),
+});
+
+export const SavePlanRequest = z.object({
+  email: z.string().email().max(200),
+});
+
+export const ClaimPlanRequest = z.object({
+  plan_id: z.number().int().positive(),
+});
+
+export const PlanToBriefRequest = z.object({
+  contact_name: z.string().min(1).max(100),
+  contact_email: z.string().email().max(200),
+  contact_phone: z.string().max(20).optional(),
+  routing_mode: z.enum(ROUTING_MODES).default("smart_match"),
+  provider_preference: z.enum(PROVIDER_PREFERENCES).optional(),
+  consent_share: z.boolean().refine((v) => v === true, {
+    message: "Please confirm consent to share the brief with verified providers.",
+  }),
+});
+
+export const ChecklistToggleRequest = z.object({
+  index: z.number().int().nonnegative().max(50),
+});
+
+export const LogGmEventRequest = z.object({
+  session_id: z.string().min(8).max(120),
+  event_type: z.enum([
+    "started",
+    "question_answered",
+    "question_abandoned",
+    "plan_shown",
+    "cta_clicked",
+    "plan_saved",
+    "account_created",
+    "brief_drafted",
+    "brief_submitted",
+    "risk_flagged",
+  ]),
+  step: z.number().int().min(0).max(50).optional(),
+  payload: z.record(z.string(), z.unknown()).optional(),
+  source_page: z.string().max(500).optional(),
+});
+
 // ─── Helper: assert a response matches a schema ────────────────────
 
 /**
