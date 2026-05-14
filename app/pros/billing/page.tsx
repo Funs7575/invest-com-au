@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/server";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import { MARKETPLACE_CREDIT_PACKS } from "@/lib/advisor-credit-packs";
 import BillingClient from "./BillingClient";
+import ProOnboardingTour from "@/components/onboarding/ProOnboardingTour";
 
 export const metadata: Metadata = {
   title: "Match Request credits — Invest.com.au",
@@ -73,6 +74,7 @@ export default async function ProsBillingPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      <ProOnboardingTour />
       <div className="min-h-screen bg-slate-50 py-6 md:py-12">
         <div className="container-custom max-w-3xl">
           <header className="mb-6 md:mb-8">
