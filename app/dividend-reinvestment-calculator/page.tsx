@@ -3,6 +3,7 @@ import { CURRENT_YEAR, absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import { calculatorJsonLd, faqJsonLd } from "@/lib/schema-markup";
 import DividendReinvestmentClient from "./DividendReinvestmentClient";
 import ComplianceFooter from "@/components/ComplianceFooter";
+import CalcToPlanBridge from "@/components/get-matched/CalcToPlanBridge";
 
 export const revalidate = 86400;
 
@@ -65,7 +66,10 @@ export default function DividendReinvestmentCalculatorPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
       <DividendReinvestmentClient />
-      <div className="container-custom pb-8"><ComplianceFooter variant="calculator" /></div>
+      <div className="container-custom pb-8">
+        <CalcToPlanBridge goal="income" />
+        <ComplianceFooter variant="calculator" />
+      </div>
 
     </>
   );
