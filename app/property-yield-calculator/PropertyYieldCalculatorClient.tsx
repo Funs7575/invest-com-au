@@ -8,6 +8,7 @@ import { trackEvent, trackPageDuration, formatPercent } from "@/lib/tracking";
 import { getStoredUtm } from "@/components/UtmCapture";
 import { formatCurrency } from "@/lib/utils";
 import { useCalculatorState } from "@/hooks/use-calculator-state";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 /* ─── helpers ─── */
 // formatPercent imported from lib/tracking; default 2 decimals matches old local impl.
@@ -454,6 +455,13 @@ export default function PropertyYieldCalculatorClient() {
               needKey="property"
               headline="Want expert help building a property portfolio?"
               description="A property investment advisor can help you find high-yield areas, structure ownership, and build a portfolio strategy."
+            />
+
+            <CalculatorLeadCapture
+              calcSlug="property-yield-calculator"
+              calcTitle="rental yield"
+              need="property"
+              contextKeys={["property-investment", "rental-yield"]}
             />
 
             {/* SEO content */}

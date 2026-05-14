@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { useCalculatorState } from "@/hooks/use-calculator-state";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 function fmt(n: number) {
   return new Intl.NumberFormat("en-AU", { style: "currency", currency: "AUD", maximumFractionDigits: 0 }).format(n);
@@ -290,6 +291,13 @@ export default function DividendReinvestmentClient() {
             </div>
           </div>
         </div>
+
+        <CalculatorLeadCapture
+          calcSlug="dividend-reinvestment-calculator"
+          calcTitle="DRP projection"
+          need="wealth"
+          contextKeys={["dividend-reinvestment", "drp"]}
+        />
 
         <p className="text-[0.65rem] text-slate-400 mt-8 leading-relaxed">
           This calculator provides general information only and does not constitute financial advice. Projections assume constant dividend yield and share price growth, which will vary in practice. Dividends received via DRP are still assessable income in Australia. Always verify your tax position with a registered tax agent.
