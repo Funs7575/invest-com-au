@@ -75,20 +75,38 @@ export async function POST(request: NextRequest) {
     .single();
 
   // Create Stripe Checkout session
+  const isMarketplacePack = packSlug?.startsWith("marketplace_");
+  const productName = packSlug === "featured_monthly"
+    ? "Featured Advisor — 1 Month"
+    : packSlug === "expert_article"
+      ? "Expert Article Publication"
+      : isMarketplacePack
+        ? `Invest.com.au Match Request Credits — ${pack?.leads || 0} credits`
+        : `Invest.com.au Lead Credit — ${pack?.leads || "Custom"} Leads`;
+  const productDescription = packSlug === "featured_monthly"
+    ? "Priority listing, featured badge, and gold border for 30 days"
+    : packSlug === "expert_article"
+      ? "SEO-optimised expert article published on invest.com.au"
+      : isMarketplacePack
+        ? `A$${(amountCents / 100).toFixed(0)} credit for accepting Match Requests on the marketplace`
+        : `A$${(amountCents / 100).toFixed(0)} credit for exclusive advisor leads`;
+  const successPath = isMarketplacePack ? "/pros/billing?topup=success" : "/advisor-portal?topup=success";
+  const cancelPath = isMarketplacePack ? "/pros/billing?topup=cancelled" : "/advisor-portal?topup=cancelled";
+
   const session = await stripe.checkout.sessions.create({
     customer: customerId,
     mode: "payment",
+    // Save the card for future auto-recharge attempts. Stripe stores the
+    // card on the Customer; the webhook stamps stripe_default_payment_method
+    // when checkout completes.
+    payment_intent_data: { setup_future_usage: "off_session" },
     line_items: [{
       price_data: {
         currency: "aud",
         unit_amount: amountCents,
         product_data: {
-          name: packSlug === "featured_monthly" ? "Featured Advisor — 1 Month"
-            : packSlug === "expert_article" ? "Expert Article Publication"
-            : `Invest.com.au Lead Credit — ${pack?.leads || "Custom"} Leads`,
-          description: packSlug === "featured_monthly" ? "Priority listing, featured badge, and gold border for 30 days"
-            : packSlug === "expert_article" ? "SEO-optimised expert article published on invest.com.au"
-            : `A$${(amountCents / 100).toFixed(0)} credit for exclusive advisor leads`,
+          name: productName,
+          description: productDescription,
         },
       },
       quantity: 1,
@@ -101,8 +119,8 @@ export async function POST(request: NextRequest) {
       pack_leads: pack ? String(pack.leads) : "",
       per_lead_cents: pack ? String(pack.perLeadCents) : "",
     },
-    success_url: `${siteUrl}/advisor-portal?topup=success`,
-    cancel_url: `${siteUrl}/advisor-portal?topup=cancelled`,
+    success_url: `${siteUrl}${successPath}`,
+    cancel_url: `${siteUrl}${cancelPath}`,
   });
 
   return NextResponse.json({ url: session.url });

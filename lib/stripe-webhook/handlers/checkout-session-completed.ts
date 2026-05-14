@@ -198,6 +198,36 @@ export const handleCheckoutSessionCompleted: WebhookHandler = async (
           .eq("id", professionalId);
       }
 
+      // Persist the saved payment method id so future auto-recharge
+      // attempts can charge off-session. The Checkout session is
+      // created with `payment_intent_data.setup_future_usage="off_session"`
+      // (in app/api/advisor-auth/topup/route.ts) which attaches the
+      // card to the customer and exposes it on the PaymentIntent.
+      try {
+        const paymentIntentId = session.payment_intent as string | null;
+        if (paymentIntentId) {
+          // Fetch the PaymentIntent to read payment_method (Stripe doesn't
+          // attach it directly to the checkout session object).
+          const stripeLib = await import("@/lib/stripe");
+          const stripe = stripeLib.getStripe();
+          const pi = await stripe.paymentIntents.retrieve(paymentIntentId);
+          if (typeof pi.payment_method === "string" && pi.payment_method.length > 0) {
+            await supabase
+              .from("professionals")
+              .update({ stripe_default_payment_method: pi.payment_method })
+              .eq("id", professionalId);
+          }
+        }
+      } catch (err) {
+        // Saving the payment method is best-effort — failure means
+        // the provider can't use auto-recharge but the top-up still
+        // succeeds.
+        log.warn("Could not save payment method for auto-recharge", {
+          professionalId,
+          err: err instanceof Error ? err.message : String(err),
+        });
+      }
+
       if (topupId) {
         await supabase
           .from("advisor_credit_topups")
