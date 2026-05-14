@@ -27,6 +27,15 @@ export interface BestBrokerCategory {
    * — categories without companions just don't render the strip.
    */
   companionLinks?: { label: string; sub: string; href: string }[];
+  /**
+   * Editorial dissent note — shown when the editorial team's perspective
+   * differs from what a pure algorithmic ranking would produce. For example,
+   * a sponsored broker might appear first while our editors prefer a
+   * different one for the stated goal. Surfaced as a one-line callout on
+   * the comparison page. Optional — omit when editorial and algorithmic
+   * rankings align.
+   */
+  editorialNote?: string;
 }
 
 const yr = CURRENT_YEAR;
@@ -104,6 +113,8 @@ const categories: BestBrokerCategory[] = [
         href: "/best/high-interest-savings",
       },
     ],
+    editorialNote:
+      "Our editors weight CHESS sponsorship heavily for beginners — shares held in your name offer stronger protection if a broker fails. A $0-brokerage custodial platform may rank high algorithmically but we'd recommend a CHESS-sponsored option first for new investors.",
   },
   {
     slug: "us-shares",
@@ -245,6 +256,8 @@ const categories: BestBrokerCategory[] = [
         href: "/quiz",
       },
     ],
+    editorialNote:
+      "Fee rankings reflect published per-trade costs only. Our editors factor in FX markups, inactivity fees, and platform quality — a broker offering $0 ASX brokerage but a 0.6% FX markup can be more expensive for investors who trade US shares.",
   },
   {
     slug: "chess-sponsored",
