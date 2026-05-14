@@ -93,7 +93,7 @@ export default function ListingCompanionServices() {
         ))}
       </div>
       <p className="text-[11px] text-slate-400 mt-3">
-        These are optional — your Listing Brief still works on its own. Pick any of the above before, during, or after you submit it.
+        These are optional — your listing still works on its own. Pick any of the above before, during, or after you submit it.
       </p>
     </section>
   );

@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { CURRENT_YEAR, SITE_NAME } from "@/lib/seo";
 import SwitchingCalculatorClient from "./SwitchingCalculatorClient";
 import ComplianceFooter from "@/components/ComplianceFooter";
+import CalcToPlanBridge from "@/components/get-matched/CalcToPlanBridge";
 
 export const revalidate = 3600;
 
@@ -41,7 +42,14 @@ export default async function SwitchingCalculatorPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <SwitchingCalculatorClient brokers={(brokers || []) as import("@/lib/types").Broker[]} />
-      <div className="container-custom pb-8"><ComplianceFooter variant="calculator" /></div>
+      <div className="container-custom pb-8">
+        <CalcToPlanBridge
+          goal="grow"
+          headline="Want a personalised broker shortlist?"
+          subtitle="Answer 5-7 quick questions — we'll match you with the right broker for your goal, budget, and experience."
+        />
+        <ComplianceFooter variant="calculator" />
+      </div>
 
     </>
   );

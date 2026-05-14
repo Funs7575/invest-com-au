@@ -6,6 +6,7 @@ import CalculatorsClient from "./CalculatorsClient";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
 import LeadMagnet from "@/components/LeadMagnet";
 import ComplianceFooter from "@/components/ComplianceFooter";
+import CalcToPlanBridge from "@/components/get-matched/CalcToPlanBridge";
 
 export const revalidate = 1800;
 
@@ -110,6 +111,11 @@ export default async function CalculatorsPage() {
         <div className="mt-6">
           <LeadMagnet />
         </div>
+        <CalcToPlanBridge
+          goal="grow"
+          headline="Done with the numbers? Get a personalised action plan."
+          subtitle="Answer 5-7 quick questions — we'll match you to the right platform, opportunity, or verified pro for your situation."
+        />
         <ComplianceFooter variant="calculator" />
       </div>
     </>

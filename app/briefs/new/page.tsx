@@ -6,9 +6,9 @@ import BriefForm from "./BriefForm";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: `Create an Investor Brief (${CURRENT_YEAR}) — Invest.com.au`,
+  title: `Get Quotes from Verified Australian Pros (${CURRENT_YEAR}) — Invest.com.au`,
   description:
-    "Create a structured Investor Brief so verified Australian providers — individuals, firms or expert teams — can understand what you need and respond. General information only; the provider you engage delivers the service.",
+    "Send a Match Request to verified Australian professionals, firms or Pro Squads. They see a masked preview and respond only if it's a fit. You stay in control of who sees your contact details.",
   alternates: { canonical: `${SITE_URL}/briefs/new` },
   robots: { index: true, follow: true },
 };
@@ -44,8 +44,8 @@ export default function NewBriefPage({
   void searchParams;
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
-    { name: "Investor Briefs", url: `${SITE_URL}/briefs` },
-    { name: "Create" },
+    { name: "Match Requests", url: `${SITE_URL}/briefs` },
+    { name: "New" },
   ]);
 
   return (
@@ -59,13 +59,13 @@ export default function NewBriefPage({
         <div className="max-w-5xl mx-auto px-4 py-16 sm:py-20">
           <div className="text-center">
             <p className="text-amber-400 text-xs font-semibold uppercase tracking-widest mb-3">
-              Investor Brief · Australia
+              Match Request · Australia
             </p>
             <h1 className="text-3xl sm:text-5xl font-extrabold mb-4">
-              Create an Investor Brief
+              Get quotes from verified pros
             </h1>
             <p className="text-slate-300 max-w-2xl mx-auto leading-relaxed">
-              Tell verified Australian professionals, firms or expert teams what
+              Tell verified Australian professionals, firms or Pro Squads what
               you need help with. They&apos;ll see a masked preview and respond
               only if it&apos;s a fit. You stay in control of who sees your
               contact details.
@@ -96,7 +96,7 @@ export default function NewBriefPage({
       <section className="bg-white py-12 sm:py-16">
         <div className="max-w-4xl mx-auto px-4">
           <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-2 text-center">
-            How an Investor Brief works
+            How Match Requests work
           </h2>
           <p className="text-sm text-slate-500 mb-10 text-center max-w-2xl mx-auto">
             A structured way to bring verified providers into your decision.
@@ -113,13 +113,13 @@ export default function NewBriefPage({
               },
               {
                 n: 2,
-                title: "Verified providers may respond",
-                desc: "Eligible individuals, firms or expert teams see a masked preview and can accept with credits to unlock your details.",
+                title: "Verified pros may respond",
+                desc: "Eligible individuals, firms or Pro Squads see a masked preview and can accept with credits to unlock your details.",
               },
               {
                 n: 3,
-                title: "Follow along in the Brief Tracker",
-                desc: "Status, next step, and accepted provider — all in one place. The service itself sits with the professional.",
+                title: "Track your quotes in one place",
+                desc: "Status, next step, and accepted pro — all visible to you. The service itself sits with the professional under their licence.",
               },
             ].map((s) => (
               <div key={s.n} className="text-center">
