@@ -1,0 +1,77 @@
+import { redirect } from "next/navigation";
+import type { Metadata } from "next";
+import { createClient } from "@/lib/supabase/server";
+// eslint-disable-next-line no-restricted-imports -- portal page: professional lookup by email (cross-user, no auth.uid() linkage) + full-status review fetch (policy only exposes approved rows to anon). Both patterns are admin-client legitimate per CLAUDE.md.
+import { createAdminClient } from "@/lib/supabase/admin";
+import AdvisorReviewsClient from "./AdvisorReviewsClient";
+
+export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "My Reviews — Advisor Portal",
+  robots: "noindex, nofollow",
+};
+
+export type ReviewWithResponse = {
+  id: number;
+  reviewer_name: string;
+  rating: number;
+  title: string | null;
+  body: string;
+  status: string;
+  created_at: string;
+  is_verified_client: boolean | null;
+  advisor_response: {
+    id: number;
+    body: string;
+    created_at: string;
+    updated_at: string;
+  } | null;
+};
+
+export default async function AdvisorPortalReviewsPage() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user?.email) {
+    redirect("/advisor-portal?next=/advisor-portal/reviews");
+  }
+
+  const admin = createAdminClient();
+  const { data: pro } = await admin
+    .from("professionals")
+    .select("id, name")
+    .eq("email", user.email)
+    .in("status", ["active", "pending"])
+    .maybeSingle();
+
+  if (!pro) {
+    redirect("/advisor-portal?next=/advisor-portal/reviews");
+  }
+
+  const { data: rawReviews } = await admin
+    .from("professional_reviews")
+    .select(
+      "id, reviewer_name, rating, title, body, status, created_at, is_verified_client, professional_review_responses(id, body, created_at, updated_at)",
+    )
+    .eq("professional_id", pro.id)
+    .in("status", ["approved", "pending"])
+    .order("created_at", { ascending: false })
+    .limit(50);
+
+  const reviews: ReviewWithResponse[] = ((rawReviews ?? []) as ReviewWithResponse[]).map((r) => ({
+    ...r,
+    advisor_response: Array.isArray((r as unknown as { professional_review_responses: unknown }).professional_review_responses)
+      ? (((r as unknown as { professional_review_responses: ReviewWithResponse["advisor_response"][] }).professional_review_responses)[0] ?? null)
+      : null,
+  }));
+
+  return (
+    <AdvisorReviewsClient
+      advisorName={pro.name as string}
+      reviews={reviews}
+    />
+  );
+}
