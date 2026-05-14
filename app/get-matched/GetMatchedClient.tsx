@@ -16,7 +16,7 @@ import type {
 import QuestionCard from "./_components/QuestionCard";
 import ProgressDots from "./_components/ProgressDots";
 import AnalyzingScreen from "./_components/AnalyzingScreen";
-import TopMatchCard from "./_components/TopMatchCard";
+import TopMatchCarousel from "./_components/TopMatchCarousel";
 import MatchExplainerCard from "./_components/MatchExplainerCard";
 
 type NextStep =
@@ -53,7 +53,7 @@ interface ResolveResponse {
   recommended_brief_template: string | null;
   accept_credits_cost: number | null;
   recommended_providers: { kind: string; id: number }[];
-  top_match?: TopMatch | null;
+  top_matches?: TopMatch[];
   primary_href?: string;
   vertical?: Vertical | null;
   advisor_type?: string | null;
@@ -660,8 +660,10 @@ function ActionPlanScreen({
           />
         )}
 
-        {/* Top-match hero card — only present for `compare` route */}
-        {result.top_match && <TopMatchCard match={result.top_match} />}
+        {/* Top-3 match carousel — only present for `compare` route */}
+        {result.top_matches && result.top_matches.length > 0 && (
+          <TopMatchCarousel matches={result.top_matches} />
+        )}
 
         <div className="bg-white rounded-3xl border border-slate-200 shadow-md p-6 sm:p-8 mb-6">
           <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-amber-700 bg-amber-50 border border-amber-200 rounded-full px-2.5 py-1 mb-3">

@@ -8,7 +8,7 @@ import {
   recommendedProviders,
   resolveActionPlan,
 } from "@/lib/getmatched/engine";
-import { computeTopMatch } from "@/lib/getmatched/top-match";
+import { computeTopMatches } from "@/lib/getmatched/top-match";
 import { buildMatchExplainer } from "@/lib/getmatched/explainer";
 import { logEvent } from "@/lib/getmatched/events";
 import { classifyGetMatchedError, errorResponse } from "@/lib/getmatched/errors";
@@ -97,8 +97,8 @@ export async function POST(request: NextRequest) {
         // Only compute the top-match hero card for the `compare` route —
         // the only one where a scored top broker makes sense.
         resolved.route === "compare"
-          ? computeTopMatch(answers, resolved.vertical)
-          : Promise.resolve(null),
+          ? computeTopMatches(answers, resolved.vertical, 3)
+          : Promise.resolve([]),
       ]);
       return NextResponse.json({
         plan: buildEphemeralPlan(answers, resolved),
@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
         recommended_brief_template: resolved.recommendedBriefTemplate,
         accept_credits_cost: resolved.acceptCreditsCost,
         recommended_providers: providers,
-        top_match: topMatch,
+        top_matches: topMatch,
         primary_href: resolved.primaryHref,
         vertical: resolved.vertical,
         advisor_type: resolved.advisorType,
@@ -147,8 +147,8 @@ export async function POST(request: NextRequest) {
             locationState: resolved.locationState,
           }),
           resolved.route === "compare"
-            ? computeTopMatch(answers, resolved.vertical)
-            : Promise.resolve(null),
+            ? computeTopMatches(answers, resolved.vertical, 3)
+            : Promise.resolve([]),
         ]);
         return NextResponse.json({
           plan: buildEphemeralPlan(answers, resolved),
@@ -156,7 +156,7 @@ export async function POST(request: NextRequest) {
           recommended_brief_template: resolved.recommendedBriefTemplate,
           accept_credits_cost: resolved.acceptCreditsCost,
           recommended_providers: providers,
-          top_match: topMatch,
+          top_matches: topMatch,
           primary_href: resolved.primaryHref,
           vertical: resolved.vertical,
           advisor_type: resolved.advisorType,
@@ -200,8 +200,8 @@ export async function POST(request: NextRequest) {
         locationState: resolved.locationState,
       }),
       resolved.route === "compare"
-        ? computeTopMatch(plan.answers, resolved.vertical)
-        : Promise.resolve(null),
+        ? computeTopMatches(plan.answers, resolved.vertical, 3)
+        : Promise.resolve([]),
     ]);
 
     void logEvent({
@@ -230,7 +230,7 @@ export async function POST(request: NextRequest) {
       recommended_brief_template: resolved.recommendedBriefTemplate,
       accept_credits_cost: resolved.acceptCreditsCost,
       recommended_providers: providers,
-      top_match: topMatch,
+      top_matches: topMatch,
       primary_href: resolved.primaryHref,
       vertical: resolved.vertical,
       advisor_type: resolved.advisorType,
