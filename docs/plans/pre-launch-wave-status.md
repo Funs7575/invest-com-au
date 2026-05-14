@@ -21,7 +21,7 @@
 **Plan source:** `docs/plans/pre-launch-wave-master-prompt.md` (Wave 1-6)
 **Loop prompt:** `docs/plans/pre-launch-wave-loop-prompt.md`
 **Update inbox:** `docs/plans/queue-updates/` (other actors drop notes here)
-**Last updated:** 2026-05-12 (cron iter — W1.1 concierge homepage entry shipped via #802)
+**Last updated:** 2026-05-14 (cron iter — W2.12 goals tracker reconciled via #739; Wave-2/4/5 status sweep)
 
 ---
 
@@ -86,17 +86,29 @@ Source: `docs/plans/pre-launch-wave-master-prompt.md`. Lowercase rows mirror tha
 | W1.2 | Calculator → lead capture funnel | B | in flight | #797 | CalculatorLeadCapture on 19 calc clients + tests; HubLeadForm-backed |
 | W1.3 | JSON-LD audit + ratchet | A | ✅ done | (this iter) | scripts/check-jsonld-coverage.mjs + 13 page fixes + CI gate |
 | W1.4 | Reverse marketplace ("Post a Request") | C | pending | — | 4-5 days, lib/stripe |
-| W2.5–W2.17 | PR-X5a–PR-X5m investor accounts | B/C | pending | — | 13 PRs across 5 phases |
+| W2.5 | PR-X5a — investor_profiles schema + RLS + auth wiring | B | ✅ done | — | migration 20260510180000_investor_profiles.sql + lib/investor-profiles.ts + tests in main (no PR — landed via direct dashboard provision + iter 353 types regen, then audit-remediation backfill) |
+| W2.6 | PR-X5b — sign-up + portal shell + watchlists | B | ✅ done | — | app/account/* shell + app/account/watchlist/ + select-workspace flow all in main |
+| W2.7 | PR-X5c — Manual Holdings Tracker | B | ✅ done | — | app/account/holdings/ + lib/holdings/ + investor_holdings migration shipped |
+| W2.8 | PR-X5d — Portfolio Health Score + Switching Coach | B | ✅ done | — | lib/holdings/health-score.ts + lib/holdings/switching-coach.ts mounted on /account/holdings |
+| W2.9 | PR-X5e — CSV import | B | pending | — | CommSec / Stake / Selfwealth / NABTrade / IBKR parsers |
+| W2.10 | PR-X5f — Tax-time pre-fill + advisor handoff | B | pending | — | tax-year summary PDF + structured advisor handoff |
+| W2.11 | PR-X5g — Sharesight OAuth read | B | pending | — | OAuth → holdings import |
+| W2.12 | PR-X5h — Goal Tracker | B | ✅ done | #739 | `feat(account): goals tracker with FV projection (W2 Phase 9)` shipped 2026-05-14; migration 20260510280000_investor_goals.sql + lib/goals/project.ts + /account/goals page + API. PR #770 (this loop) opened a duplicate-schema branch hours later; closed as superseded |
+| W2.13 | PR-X5i — Watchlist email alerts (Resend) | B | pending | — | daily/weekly digest cron |
+| W2.14 | PR-X5j — AI portfolio analysis (engine, AFSL-flagged off) | B | pending | — | Claude prompt + feature flag |
+| W2.15 | PR-X5k — Open Banking / CDR import (engineering) | B | pending | — | CDR application is Fin's lane |
+| W2.16 | PR-X5l — Investor Pro tier (Stripe $99/yr) | C | pending | — | reuses PR-B1 ledger pattern |
+| W2.17 | PR-X5m — Premium content gating | B | pending | — | research subscription integration |
 | W3.18 | Verified user reviews engine | B | pending | — | mirror PR #441 moderation |
 | W3.19 | First Home Buyer end-to-end journey | B | pending | — | 4 monetization levers |
-| W4.20 | Smart recommendations strip (legacy #14) | B | pending | — | 2-3 days |
-| W4.21 | Country rule alerts DB + admin CRUD (legacy #15 part 2) | B | ✅ done | (this iter) | `country_rule_alerts` table + RLS + 7-row seed; /admin/country-rule-alerts CRUD; CountryRuleAlerts.tsx fetches from new public API |
-| W4.22 | Country rule alerts email digest (legacy #15 part 4) | B | pending | — | weekly Resend cron |
+| W4.20 | Smart recommendations strip (legacy #14) | B | ✅ done | — | components/SmartRecommendationsStrip.tsx + SmartRecommendationsStrip.ranker.test.ts shipped; reads investor_profiles + quiz cookie |
+| W4.21 | Country rule alerts DB + admin CRUD (legacy #15 part 2) | B | ✅ done | — | `country_rule_alerts` table + RLS + 7-row seed; /admin/country-rule-alerts CRUD; CountryRuleAlerts.tsx fetches from new public API |
+| W4.22 | Country rule alerts email digest (legacy #15 part 4) | B | ✅ done | — | app/api/cron/country-rule-alerts-digest/ shipped + integration test |
 | W4.23 | PR-X3 firm billing dashboard (legacy #10) | C | pending | — | aggregate view |
-| W5.24 | Embed comparison widget | A | pending | — | iframe + UTM |
-| W5.25 | WhatsApp lead capture | B | pending | — | per-country gate |
-| W5.26 | Sponsored placement A/B testing | B | pending | — | placement_experiments table |
-| W5.27 | Halal / Sharia investing hub | B | pending | — | new vertical |
+| W5.24 | Embed comparison widget | A | ✅ done | — | /embed page + EmbedBuilder + /api/widget endpoint shipped |
+| W5.25 | WhatsApp lead capture | B | ✅ done | — | lib/whatsapp.ts + click-to-chat wired on advisor pages |
+| W5.26 | Sponsored placement A/B testing | B | ✅ done | — | migration 20260511011337_placement_experiments.sql + /admin/placement-experiments shipped |
+| W5.27 | Halal / Sharia investing hub | B | ✅ done | — | app/halal-investing vertical shipped |
 | W6.28 | Stale PR sweep | maintenance | pending | — | pre-flight rebase loop |
 
 ## Decision log
@@ -122,6 +134,8 @@ Source: `docs/plans/pre-launch-wave-master-prompt.md`. Lowercase rows mirror tha
 - 2026-05-12 00:15 | W1.1 | Homepage concierge entry sits BELOW HomeHero, not replacing it | "Move concierge to homepage hero" interpreted as "promote to above-the-fold homepage position", not "rip out the existing hero". The marketing hero has carefully-designed pokie-reel mechanics and a primary "Get matched" CTA — destroying it for a chat input would lose conversion paths that are already measurable. Concierge entry slots directly below as a dedicated section
 - 2026-05-12 00:15 | W1.1 | Free-text prompt forwarded via sessionStorage, not URL | URL `?seed=<text>` would expose an injection vector — the existing /concierge?finder=<key> route already validates against an allowlist for that exact reason. sessionStorage is same-origin, max 200 chars, single-read-and-clear so a refresh doesn't replay. Tracking events tag source=input vs source=chip so funnel attribution stays clean
 - 2026-05-12 00:15 | W1.1 | Dep-vuln CI check failure is unrelated chronic noise | The check flagged on #802 against an upstream advisory; my diff touches no package.json / lockfile. Same pattern flagged on recent audit-remediation iters as "CI-RESCUE CL dep-vuln" (iter 369). Per founder memory, chronic CI checks unrelated to the diff don't block merge — the audit-remediation loop owns upstream advisory triage
+- 2026-05-14 02:30 | W2.12 | PR #770 closed as duplicate of merged #739 | This loop picked W2.12 (goal tracker) on the basis of a stale queue audit showing it pending. PR #739 (`feat(account): goals tracker with FV projection (W2 Phase 9)`) had already merged migration `20260510280000_investor_goals.sql` + lib/goals/project.ts + /account/goals page + API; the founder closed #770 with a pointer comment. **Process lesson:** the duplicate-PR guard (`gh pr list --search "<id> OR <key>"`) is opening-time only — it doesn't catch merged-and-closed work because closed PRs are dropped from `--state open`. The check needs `--state all` _or_ a positive grep against `git ls-files` for the feature's signature file before branching. Adding this to the next iter's pre-flight
+- 2026-05-14 02:30 | sweep | Wave-2/4/5 queue reconciliation | The status doc had W2.5–W2.17 collapsed into one "pending" row even though Phase 1 (X5a–X5d) and several Phase-2+ items had already shipped via the audit-remediation loop + standalone PRs. Expanded into 13 rows and marked W2.5–W2.8 + W2.12 done with evidence pointers. Also flipped W4.20 (SmartRecommendationsStrip), W4.22 (cron-country-rule-alerts-digest), W5.24 (/embed + /api/widget), W5.25 (lib/whatsapp.ts), W5.26 (placement_experiments migration + admin), W5.27 (app/halal-investing) from pending → done. Remaining genuinely-pending one-fire candidates: W2.9–W2.11 (Phase 2 imports), W2.13 (watchlist email alerts), W2.14 (AI analysis behind flag), W4.23 (firm billing dashboard, Tier C), W6.28 (stale PR sweep)
 
 ## Pause history
 
