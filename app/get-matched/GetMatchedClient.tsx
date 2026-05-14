@@ -18,6 +18,7 @@ import ProgressDots from "./_components/ProgressDots";
 import AnalyzingScreen from "./_components/AnalyzingScreen";
 import TopMatchCarousel from "./_components/TopMatchCarousel";
 import MatchExplainerCard from "./_components/MatchExplainerCard";
+import { clearPartialPlan, setPartialPlan } from "@/lib/getmatched/recall";
 
 type NextStep =
   | {
@@ -129,6 +130,9 @@ export default function GetMatchedClient(props: Props) {
       setAnalyzing(false);
       setPendingResolveResult(null);
       setAnalyzingTimerDone(false);
+      // Plan completed — wipe the partial-plan cache so the homepage
+      // resume banner stops surfacing.
+      clearPartialPlan();
     }
   }, [analyzingTimerDone, pendingResolveResult]);
 
@@ -227,6 +231,15 @@ export default function GetMatchedClient(props: Props) {
       }
       if (data.ephemeral) setEphemeral(true);
       setStep(data.next);
+      // Persist partial plan so the homepage banner can surface
+      // "continue where you left off" if the user drops off mid-quiz.
+      if (!data.next.done) {
+        setPartialPlan({
+          answers: nextAnswers,
+          stepIndex: data.next.currentStep,
+          totalSteps: data.next.totalSteps,
+        });
+      }
       if (data.next.done) {
         // Show the 1.5s analyzing interstitial concurrently with the
         // resolve fetch. Whichever takes longer determines the actual
