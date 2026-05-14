@@ -10,6 +10,7 @@ import { getKindsForUser, type KindMembership } from "@/lib/account-kinds";
 import { listPlansForUser } from "@/lib/getmatched/action-plans";
 import { listForUser as listSavedSearchesForUser } from "@/lib/saved-searches";
 import { loadDashboardState, type DashboardState } from "@/lib/account/dashboard-state";
+import { createAdminClient } from "@/lib/supabase/admin";
 import type { ActionPlan } from "@/lib/getmatched/types";
 
 export const dynamic = "force-dynamic";
@@ -26,21 +27,30 @@ export default async function AccountPage() {
   let memberships: KindMembership[] = [];
   let plans: ActionPlan[] = [];
   let savedSearchCount = 0;
+  let reviewCount = 0;
   let dashboard: DashboardState | null = null;
   try {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
-      const [m, p, s, d] = await Promise.all([
+      const admin = createAdminClient();
+      const [m, p, s, d, rc] = await Promise.all([
         getKindsForUser(user.id),
         listPlansForUser(user.id),
         listSavedSearchesForUser(user.id),
         loadDashboardState({ authUserId: user.id, email: user.email ?? null }),
+        user.email
+          ? admin
+              .from("user_reviews")
+              .select("id", { count: "exact", head: true })
+              .eq("email", user.email)
+          : Promise.resolve({ count: 0, error: null }),
       ]);
       memberships = m;
       plans = p;
       savedSearchCount = s.length;
       dashboard = d;
+      reviewCount = rc.count ?? 0;
     }
   } catch {
     /* fall through with empty data — AccountClient still renders */
@@ -68,11 +78,12 @@ export default async function AccountPage() {
           <AccountActionPlansTiles plans={plans} />
         </div>
       )}
-      {(memberships.length > 0 || savedSearchCount > 0) && (
+      {(memberships.length > 0 || savedSearchCount > 0 || reviewCount > 0) && (
         <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-8">
           <AccountKindCards
             memberships={memberships}
             savedSearchCount={savedSearchCount}
+            reviewCount={reviewCount}
           />
         </div>
       )}
