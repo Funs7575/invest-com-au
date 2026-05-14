@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { useUser } from "@/lib/hooks/useUser";
 import { CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
-import NotificationBell from "@/components/NotificationBell";
+import NotificationBell from "@/components/notifications/NotificationBell";
 import ThemeToggle from "@/components/ThemeToggle";
 import WorkspaceSwitcher from "@/components/WorkspaceSwitcher";
 import { MegaMenu } from "@/components/MegaMenu";
