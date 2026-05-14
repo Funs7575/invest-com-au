@@ -53,13 +53,21 @@ const KIND_META: Record<
 
 interface Props {
   memberships: KindMembership[];
+  /**
+   * Count of the user's saved searches. When >0 we render an extra tile
+   * linking to /account/saved-searches. Caller should pass 0 (or omit)
+   * when the user has none — we don't render an empty-state tile.
+   */
+  savedSearchCount?: number;
 }
 
-export default function AccountKindCards({ memberships }: Props) {
+export default function AccountKindCards({ memberships, savedSearchCount = 0 }: Props) {
+  const hasSavedSearches = savedSearchCount > 0;
+  const tileCount = memberships.length + (hasSavedSearches ? 1 : 0);
   return (
     <section aria-label="Your roles" className="mb-6">
       <h2 className="text-base font-semibold text-slate-900 mb-3">Your roles</h2>
-      <div className={memberships.length === 1 ? "" : "grid grid-cols-1 sm:grid-cols-2 gap-3"}>
+      <div className={tileCount === 1 ? "" : "grid grid-cols-1 sm:grid-cols-2 gap-3"}>
         {memberships.map((m) => {
           const meta = KIND_META[m.kind];
           if (!meta) return null;
@@ -97,6 +105,34 @@ export default function AccountKindCards({ memberships }: Props) {
             </Link>
           );
         })}
+        {hasSavedSearches && (
+          <Link
+            href="/account/saved-searches"
+            className="block border bg-indigo-50 border-indigo-200 hover:border-indigo-400 rounded-xl p-4 transition-colors"
+          >
+            <div className="flex items-start gap-3">
+              <span className="text-2xl shrink-0" aria-hidden>
+                🔔
+              </span>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <h3 className="text-sm font-semibold text-slate-900">
+                    Saved searches
+                  </h3>
+                  <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 bg-white/70 text-slate-600 rounded">
+                    {savedSearchCount}
+                  </span>
+                </div>
+                <p className="text-xs text-slate-600 mt-1">
+                  Manage advisor and team alerts you&rsquo;re subscribed to.
+                </p>
+                <p className="text-xs font-semibold text-slate-700 mt-2">
+                  Open →
+                </p>
+              </div>
+            </div>
+          </Link>
+        )}
       </div>
     </section>
   );
