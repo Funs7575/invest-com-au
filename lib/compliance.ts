@@ -4,6 +4,11 @@
  * Do NOT hardcode disclosure wording anywhere else in the codebase.
  */
 
+/** Entity-level operational email addresses — update here to propagate everywhere. */
+export const CORRECTIONS_EMAIL = "corrections@invest.com.au";
+export const OPS_EMAIL = "ops@invest.com.au";
+export const PRESS_EMAIL = "press@invest.com.au";
+
 /** Full advertiser disclosure — used in footer, dedicated disclosure sections */
 export const ADVERTISER_DISCLOSURE =
   "Advertising and referral fees may be received from some listed businesses. " +
@@ -68,6 +73,17 @@ export const REGULATORY_NOTE =
   "credit provider, or financial adviser. " +
   "We are an information service. Always verify information with the product issuer before " +
   "making a decision.";
+
+/**
+ * Fictional persona slugs created during early development (CL-01/CL-02).
+ * These slugs no longer link from any public page; if a DB record exists for
+ * any of them, the author/reviewer page must carry `noindex` so search engines
+ * do not surface them and cannot be used to identify the founder.
+ */
+export const NOINDEX_PERSONA_SLUGS: ReadonlySet<string> = new Set([
+  "finn-webster",
+  "alex-reid",
+]);
 
 /** Course affiliate disclosure — shown on course pages near broker CTAs */
 export const COURSE_AFFILIATE_DISCLOSURE =
@@ -196,7 +212,7 @@ export const RG234_COMPLIANCE_NOTE =
  */
 export const EDITORIAL_ACCURACY_COMMITMENT =
   "We are committed to accuracy and regularly review our content. If you believe any information " +
-  "is incorrect, outdated, or misleading, please contact us at corrections@invest.com.au. " +
+  `is incorrect, outdated, or misleading, please contact us at ${CORRECTIONS_EMAIL}. ` +
   "We will investigate and update the information promptly.";
 
 /**

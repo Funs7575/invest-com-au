@@ -23,7 +23,7 @@ describe("CRON_GROUPS invariants", () => {
   it("every group key matches a known cadence shape", () => {
     for (const group of Object.keys(CRON_GROUPS)) {
       expect(group).toMatch(
-        /^(every-\d+[mh]|hourly-\d+|daily-\d+(-\d+)?|weekly-(sun|mon|tue|wed|thu|fri|sat)-\d+|monthly-\d+-\d+)$/,
+        /^(every-\d+[mh]|hourly-\d+|daily-\d+(-\d+)?|weekly-(sun|mon|tue|wed|thu|fri|sat)-\d+|monthly-\d+-\d+|quarterly-\d+-\d+)$/,
       );
     }
   });
