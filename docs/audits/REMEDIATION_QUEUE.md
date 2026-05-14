@@ -42,19 +42,19 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | EE | _complete_ | **#653 MERGED** | **Stream complete.** | #653 merged ✓ |
 | FF | _complete_ | **#656 MERGED 2026-05-09** | **Stream complete.** | FF-04 merged ✓ |
 | OOO | _complete_ | **#652 MERGED** | **Stream complete.** | OOO-03 merged ✓ |
-| KK | `claude/audit-remediation/kk-04-iter4-admin-density-override` · `claude/audit-remediation/kk-04-iter5-integration-tests` | **#703 MERGED** · **#711 MERGED** · **#743 MERGED** · **#747 MERGED** · **#749 OPEN** · **#751 OPEN** | KK-04 iter 4: **#749 OPEN** (Tier C migration — **needs human review**). KK-04 iter 5: **#751 OPEN** (tests). | KK-04 merged |
+| KK | _complete_ | **#703 MERGED** · **#711 MERGED** · **#743 MERGED** · **#747 MERGED** · **#749 MERGED 2026-05-14** · **#751 MERGED 2026-05-14** | KK-04 iter 4 + 5 merged by founder 2026-05-14. **Stream complete.** | KK-04 merged ✓ |
 | PP | _complete_ | **#706 MERGED** · **#745 MERGED** · **#755 MERGED** · **#765 MERGED** · **#768 MERGED** | **Stream complete.** | All PP tasks merged ✓ |
 | WW | _complete_ | **#651 MERGED** | WW-01+WW-02 merged. WW-03/04 blocked (DD-02 dep). | All WW tasks merged ✓ |
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
 | Z | `claude/audit-remediation/z-04-zero-state-ux` | #230/#323/#403/#457/#524/#565 | Z-01..Z-04 done. | Z-04 merged ✓ |
-| QQ | `claude/audit-remediation/qq-01-public-qa-surface` | **#800 OPEN** (QQ-01..QQ-07) | QQ-01 done (`281a83a`): capability audit doc. QQ-02 done (`596676b`): `"qa_capture"` route in ai-cost-caps. QQ-03 done (`d52119c`): `lib/qa-chatbot.ts` — `generateAnswer()` with QA-specific system prompt, retrieval, provider call, cost tracking. dep-vuln CI rescue done (`8fa60df`): next 16.2.4→16.2.6. QQ-04 done (`ae0eaa3`): `components/QuestionCaptureForm.tsx` + 8-test suite. QQ-07 done (`1ca09b2`): `lib/qa-ctas.ts` — per-category CTA mapping (18 categories; fallback to /find-advisor; RSC-safe). QQ-05 pending (needs qa_questions/qa_answers schema migration first — Tier C, announce before merge). QQ-08 compliance gate blocks public exposure. QQ-06/QQ-09/QQ-10 pending. Last CI: pending — pushed 2026-05-12 (`1ca09b2`). | All QQ tasks merged |
-| MM | `claude/audit-remediation/mm-01-marketplace-coverage-audit` · `claude/audit-remediation/mm-v01b-digital-infra-listings` | **#801 OPEN** (MM-AUDIT) · **#803 OPEN** (MM-V01b+V01c+V02+V03+V04+V07+V08+dep-vuln-rescue) | MM-V01 already on main (f024bc2). MM-AUDIT done (#801). MM-V01b done (#803 `369cbef`): /invest/digital-infrastructure/listings/. MM-V01c done (#803 `8512381`): /invest/funds/listings/ (P0 gap #2). dep-vuln CI rescue done (#803 `d240e3d`): next 16.2.4→16.2.6. MM-V02 done (#803 `ca9aa96`): /invest/public-social-infrastructure/listings/ page + type + URL mapping + sitemap. MM-V03 done (#803 `62aceac`): /invest/carbon-environmental-markets/listings/ page + type + URL mapping + sitemap. MM-V04 done (#803 `512055c`): /invest/royalties/listings/ page + 'royalties' type + listing-url + sitemap. MM-V05 false-positive — alternatives/listings already on main. MM-V07 done (#803 `42eb238`): /invest/aquaculture/listings/ page + 'aquaculture' type + listing-url + sitemap. MM-V08 done (#803 `6789f61`): /invest/livestock/listings/ page + 'livestock' type + listing-url + sitemap. Next: MM-V06 (wholesale-only alternatives — litigation funding, PE, VC, hedge funds, ILS). Last CI: pending — pushed 2026-05-12 (`6789f61`). | All MM phases merged |
-| TT | `claude/audit-remediation/tt-04-ga4-removal` | **#764 MERGED** (TT-01) · **#772 MERGED** (TT-02) · **#779 MERGED** (TT-03) · **#799 OPEN** (TT-04) | TT-01..TT-03 MERGED. TT-04: **#799 OPEN** (iter 373 `e8453d0`; GA4 removed from layout; Plausible sole analytics; connect-src tightened). Last CI: in_progress. | TT-04 merged |
-| CMP | `claude/audit-remediation/cmp-w1a-int-calculator-autosave` | **#782 OPEN** | CMP-W1A-INT complete. Last CI: pending. | All CMP tasks merged |
+| QQ | `claude/audit-remediation/qq-01-public-qa-surface` | **#800 MERGED 2026-05-14** | QQ-01..QQ-07 done (merged). QQ-05 pending (Tier C schema migration: `qa_questions`/`qa_answers`). QQ-06/QQ-09/QQ-10 pending. QQ-08 compliance gate blocks public exposure. Next item: QQ-05. | All QQ tasks merged |
+| MM | `claude/audit-remediation/mm-v01b-digital-infra-listings` | **#801 MERGED** · **#803 MERGED 2026-05-14** | MM-V01..V08 done. MM-V06 pending (Tier C — wholesale-only alternatives: litigation funding, PE, VC, hedge funds, ILS; s708 gate design required; announce before merge). Next item: MM-V06. | All MM phases merged |
+| TT | _complete_ | **#764 MERGED** · **#772 MERGED** · **#779 MERGED** · **#799 MERGED 2026-05-12** | TT-01..TT-04 all done. GA4 removed; Plausible sole analytics. **Stream complete.** | TT-04 merged ✓ |
+| CMP | `claude/audit-remediation/cmp-w1a-int-calculator-autosave` | **#782 CLOSED 2026-05-14 (not merged)** | CMP-W1A-INT: #782 was closed without merging by founder 2026-05-14. Work may need re-examination or re-opening on a fresh branch. | All CMP tasks merged |
 | SP | (none yet) | (none yet) | **BLOCKED — waiting on MM-V09 completion.** | All SP tasks merged + compliance signoff |
-| MAIN-RESCUE | `fix/main-rescue-next-security-patch` | **#793 OPEN** | next 16.2.4→16.2.6 patch. | Merged to main |
-| CL | `claude/audit-remediation/cl-01-about-entity-only` | **#795 OPEN** (CL-01..CL-04 + CL-06 + CL-09 + CL-10) | CL-01..CL-04, CL-06, CL-09, CL-10 done. CL-07+CL-08 false-positive. CL-05 blocked (WHOIS registrar action). CI rescue iter 383: centralised entity emails in compliance.ts (`aacdcf8`) — triggers Vercel redeployment so smoke test can find preview URL. Last CI: success (Vercel) — `aacdcf8`. | All CL tasks merged |
-| LL | `claude/audit-remediation/ll-01-personal-dashboard` | **#807 OPEN** (LL-01..LL-03) | LL-01 done (`8008bf1`): `/account/dashboard` RSC. LL-02 done (`b9d0631`): profile-driven advisor matching — `/api/account/advisor-matches` + dashboard grid. LL-03 done (`a2c6f27`): watchlist digest prefs — `/api/account/digest-prefs` GET+PUT (JSONB meta merge, no migration) + `DigestToggle.tsx` client toggle; watchlist page shows email notification section. LL-04 pending (reviews + ratings — deps LL-01 ✓). LL-05 blocked (live chat AI routing — deps V-NEW-02 + CC-06 not yet done). Last CI: pending — pushed 2026-05-12 (`a2c6f27`). | All LL tasks merged |
+| MAIN-RESCUE | _complete_ | **#793 MERGED** | next 16.2.4→16.2.6 patch merged. Non-loop auto-revert PRs for failed main commits: **#827 OPEN** (reverts `d26094aa`) · **#843 OPEN** (reverts `ff43ed6f`). These are founder-action items — loop will not create duplicate fixes. | Merged to main ✓ |
+| CL | `claude/audit-remediation/cl-01-about-entity-only` | **#795 MERGED 2026-05-14** | CL-01..CL-04, CL-06, CL-09, CL-10 done. CL-07+CL-08 false-positive. CL-05 blocked (WHOIS registrar action — see Blocked). | All CL tasks merged (CL-05 blocked) |
+| LL | `claude/audit-remediation/ll-01-personal-dashboard` | **#807 MERGED 2026-05-14** | LL-01..LL-03 done. **LL-04 pending** (reviews + ratings — deps LL-01 ✓; next item per Tier-1 preempt). LL-05 blocked (live chat AI routing — deps V-NEW-02 + CC-06). | All LL tasks merged |
 
 ---
 
@@ -76,23 +76,9 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 
 ### Dependency vulnerabilities systemic failure (3 in-flight PRs: #800, #803, #807) — 2026-05-14
 
-The `Dependency vulnerabilities` CI check is failing on three in-flight PRs simultaneously, triggering the same-gate cluster guard (≥3 PRs, same check name). Surfaced by iter 394.
+**RESOLVED 2026-05-14 (iter 395):** PRs #800, #803, #807 were merged directly by founder. Iter 394's root-cause analysis was incorrect — the `--audit-level=high` threshold in CI already excluded the remaining moderate PostCSS CVE. The actual HIGH-severity CVEs were from `next@16.2.4` (13 CVEs fixed in #793). Those branches simply predated PR #793's merge and still had 16.2.4 in their `package-lock.json`. The systemic block evaporated once the branches were merged (picking up 16.2.6 from main). **This blocked entry can be deleted by the founder.**
 
-**Root cause:** `postcss < 8.5.10` — "PostCSS has XSS via Unescaped `</style>` in its CSS Stringify Output" (GHSA-qx2v-qp2m-jg93, moderate). The vulnerability exists inside next.js's own bundled `postcss` (`node_modules/next/node_modules/postcss`). All next.js versions from `9.3.4-canary.0` through `16.3.0-canary.5` are affected. The project is on next `16.2.6` (latest stable), which falls in the vulnerable range.
-
-**Affected PRs:**
-- #800 (QQ stream) — dep-vuln failure only
-- #803 (MM stream) — dep-vuln + Accessibility (axe-core) + Preview smoke test failures
-- #807 (LL stream) — dep-vuln + Accessibility (axe-core) failures
-
-**No safe upgrade path currently exists.** `next@16.3.0` stable has not been released. `npm audit fix --force` would downgrade next to `9.3.3` — a breaking change. The direct `postcss` dependency in `package.json` is already `^8.5.14` (patched); only next's bundled copy is vulnerable.
-
-**Decision matrix:**
-- **(a) Change audit threshold (recommended short-term):** Update the dep-vuln CI check to `--audit-level=high`. This moderate CVE is in next.js's internal CSS compiler (server-side CSS stringify), not in user-facing HTML output. The exploit path requires influencing CSS inputs to the build server, which is not the threat model for invest.com.au.
-- **(b) Audit ignore:** Add `GHSA-qx2v-qp2m-jg93` to an audit ignore list (`.nsprc` or similar). Remove when next ≥16.3.0 ships.
-- **(c) Wait for next 16.3.0:** When `next@>=16.3.0` stable releases, `npm install next@latest` on main, commit, rebase affected stream branches (#800, #803, #807). Monitor npm weekly.
-
-**Once resolved:** delete this blocked entry and run the next iteration — Phase 2 will rescue #803 (Accessibility + Preview smoke test) and #807 (Accessibility) before the batch proceeds to LL-04.
+~~The `Dependency vulnerabilities` CI check is failing on three in-flight PRs simultaneously, triggering the same-gate cluster guard (≥3 PRs, same check name). Surfaced by iter 394.~~
 
 ---
 
@@ -107,6 +93,15 @@ The `Dependency vulnerabilities` CI check is failing on three in-flight PRs simu
 ---
 
 ## Iteration log (most recent first)
+
+### iter 395 — 2026-05-14 — queue sync (all in-flight PRs merged by founder)
+
+- **Stream:** all streams (queue housekeeping)
+- **Phase:** 7 — queue update
+- **What:** Comprehensive queue sync. All previously "OPEN" in-flight PRs were found merged or closed by founder before this iteration ran: #749 (KK-04 iter 4) ✓, #751 (KK-04 iter 5) ✓, #795 (CL) ✓, #799 (TT-04) ✓, #800 (QQ) ✓, #803 (MM) ✓, #807 (LL) ✓, #793 (MAIN-RESCUE) ✓. #782 (CMP) was closed without merging. Dep-vuln blocked entry corrected: iter 394's root cause was wrong — CI was already at `--audit-level=high`; the actual issue was that those branches predated #793's `next 16.2.4→16.2.6` patch. Block is now moot (PRs merged).
+- **Main CI note:** Two non-loop auto-revert PRs pending: #827 (reverts `d26094aa` — tax-year CSV export) and #843 (reverts `ff43ed6f` — cron dispatcher wiring). These are founder-action items. Loop will not open new stream PRs until main CI is confirmed green.
+- **Next item (when main CI clear):** LL-04 (reviews + ratings, Tier-1 preempt) on new branch from main.
+- **STATUS: PROGRESS · queue-sync · streams=KK,TT,CL,QQ,MM,LL,MAIN-RESCUE**
 
 ### iter 394 — 2026-05-14 — dep-vuln systemic cluster-guard
 
