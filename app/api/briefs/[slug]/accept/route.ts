@@ -9,6 +9,7 @@ import { acceptBrief } from "@/lib/briefs/credits";
 import { isProfessionalOnTeam } from "@/lib/expert-teams";
 import { sendConsumerProviderAccepted } from "@/lib/marketplace-emails";
 import { enqueueUserNotificationByEmail } from "@/lib/user-notifications";
+import { attributeBriefAccepted } from "@/lib/pro-affiliate/track";
 
 const log = logger("briefs:accept");
 
@@ -99,6 +100,16 @@ export async function POST(
       professionalId: advisorId,
       teamId,
       credits: result.creditsSpent,
+    });
+
+    // ── Pro affiliate attribution (fire-and-forget) ──
+    // Credit the originally referring pro for a real billable event.
+    // Never block the response.
+    void attributeBriefAccepted({ briefId: brief.id as number }).catch((err) => {
+      log.warn("attributeBriefAccepted failed", {
+        briefId: brief.id,
+        err: err instanceof Error ? err.message : String(err),
+      });
     });
 
     // ── Notify the consumer their brief was accepted (N1) ──
