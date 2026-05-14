@@ -157,6 +157,127 @@ export const PostJobResponse = z.object({
   ends_at: z.string(),
 });
 
+// ─── /api/briefs — Investor Brief marketplace ──────────────────────
+
+export const BRIEF_TEMPLATES = [
+  "general",
+  "smsf_property",
+  "foreign_investor",
+  "expat",
+  "opportunity_assessment",
+  "business_acquisition",
+  "commercial_property",
+  "second_opinion",
+  "mortgage",
+  "tax",
+  "smsf_accountant",
+  "financial_adviser",
+  "listing",
+  "listing_readiness",
+] as const;
+
+export const PROVIDER_PREFERENCES = [
+  "any",
+  "individual",
+  "firm",
+  "expert_team",
+  "multiple",
+] as const;
+
+export const ROUTING_MODES = ["smart_match", "direct", "multi_response"] as const;
+
+export const CreateBriefRequest = z.object({
+  brief_template: z.enum(BRIEF_TEMPLATES),
+  brief_payload: z.record(z.string(), z.unknown()).default({}),
+  job_title: z.string().min(8, "Title must be at least 8 characters.").max(160),
+  job_description: z.string().min(30, "Please add a little more context.").max(5000),
+  budget_band: z.enum(QUOTE_BUDGET_BANDS),
+  advisor_types: z.array(z.enum(QUOTE_ADVISOR_TYPES)).default([]),
+  location_state: z.enum(QUOTE_AU_STATES),
+  provider_preference: z.enum(PROVIDER_PREFERENCES).default("any"),
+  routing_mode: z.enum(ROUTING_MODES).default("smart_match"),
+  target_team_slug: z.string().max(120).optional(),
+  target_professional_slug: z.string().max(120).optional(),
+  target_firm_slug: z.string().max(120).optional(),
+  listing_id: z.number().int().positive().optional(),
+  contact_name: z.string().min(1).max(100),
+  contact_email: z.string().email().max(200),
+  contact_phone: z.string().max(20).optional(),
+  consent_share: z.boolean().refine((v) => v === true, {
+    message: "Please confirm consent to share the brief with verified providers.",
+  }),
+  // Honeypots — silently accept, ignore.
+  website: z.string().optional(),
+  fax: z.string().optional(),
+});
+
+export const AcceptBriefRequest = z.object({
+  team_id: z.number().int().positive().optional(),
+});
+
+export const BriefStatusUpdateRequest = z.object({
+  tracker_status: z.enum([
+    "new",
+    "contacted",
+    "call_booked",
+    "proposal_sent",
+    "won",
+    "lost",
+  ]),
+  note: z.string().max(2000).optional(),
+});
+
+// ─── /api/expert-teams ─────────────────────────────────────────────
+
+export const TEAM_TYPES = [
+  "same_firm",
+  "independent",
+  "private_referral",
+  "internal_firm",
+] as const;
+
+export const TEAM_CATEGORIES = [
+  "smsf_property",
+  "foreign_investor",
+  "expat",
+  "commercial_property",
+  "business_acquisition",
+  "due_diligence",
+  "retirement",
+  "custom",
+] as const;
+
+export const CreateExpertTeamRequest = z.object({
+  name: z.string().min(3).max(120),
+  team_category: z.enum(TEAM_CATEGORIES),
+  team_type: z.enum(TEAM_TYPES),
+  description: z.string().max(2000).optional(),
+  niche: z.string().max(200).optional(),
+  location_state: z.enum(QUOTE_AU_STATES).optional(),
+  service_areas: z.array(z.string().max(80)).max(20).optional(),
+  firm_id: z.number().int().positive().optional(),
+  disclosure: z.string().max(4000).optional(),
+  accepted_brief_templates: z.array(z.enum(BRIEF_TEMPLATES)).max(BRIEF_TEMPLATES.length).optional(),
+});
+
+export const InviteExpertTeamMemberRequest = z.object({
+  email: z.string().email().max(200),
+  name: z.string().max(120).optional(),
+  role: z.string().max(60).optional(),
+});
+
+export const AcceptExpertTeamInvitationRequest = z.object({
+  token: z.string().min(20).max(200),
+});
+
+export const SubmitExpertTeamRequest = z.object({});
+
+export const AdminVerifyExpertTeamRequest = z.object({
+  approved: z.boolean(),
+  rejection_reason: z.string().max(2000).optional(),
+  accepts_briefs: z.boolean().optional(),
+});
+
 // ─── Helper: assert a response matches a schema ────────────────────
 
 /**
