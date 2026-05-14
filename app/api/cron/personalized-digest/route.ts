@@ -60,7 +60,7 @@ export async function GET(req: NextRequest) {
 
   // ── 3. Fetch user profiles ──
   const { data: profiles } = await supabase
-    .from("user_profiles")
+    .from("profiles")
     .select("id, email, display_name, interested_in, preferred_broker, investing_experience")
     .in("id", pendingUserIds);
 
