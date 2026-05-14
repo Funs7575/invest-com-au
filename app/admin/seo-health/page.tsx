@@ -231,7 +231,7 @@ export default function SEOHealthPage() {
                 <h3 className="text-sm font-bold text-blue-700 mb-2">Next Steps</h3>
                 <ul className="text-xs text-blue-600 space-y-1">
                   <li>• Submit sitemap to <a href="https://search.google.com/search-console" target="_blank" rel="noopener noreferrer" className="underline">Google Search Console</a></li>
-                  <li>• Connect GA4 (set NEXT_PUBLIC_GA_ID env var)</li>
+                  <li>• Analytics via Plausible (set NEXT_PUBLIC_PLAUSIBLE_DOMAIN env var)</li>
                   <li>• Monitor indexed pages vs sitemap URLs</li>
                   <li>• Target &quot;best [category] australia&quot; keywords</li>
                   <li>• Build backlinks to highest-converting pages</li>

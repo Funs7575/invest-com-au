@@ -18,6 +18,7 @@ import type { InvestmentListing } from "@/lib/types";
 import { logger } from "@/lib/logger";
 import { listingUrl } from "@/lib/listing-url";
 import InvestListingsClient from "@/components/InvestListingsClient";
+import GetMatchedEmbed from "@/components/get-matched/GetMatchedEmbed";
 import HomeToolsStrip from "@/components/HomeToolsStrip";
 import IntentCountryBadge from "@/components/foreign-investment/IntentCountryBadge";
 import IntentCountryRecommendation from "@/components/foreign-investment/IntentCountryRecommendation";
@@ -417,6 +418,10 @@ export default async function InvestMarketplacePage() {
             </div>
           </div>
         )}
+
+        <div className="container-custom mb-6">
+          <GetMatchedEmbed context="opportunity" />
+        </div>
 
         {/* ── Marketplace grid (PRIMARY content — no two-step) ── */}
         <InvestListingsClient listings={listings} categories={categoryTabs} />

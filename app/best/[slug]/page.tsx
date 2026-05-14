@@ -40,7 +40,15 @@ import { getArticleFiltersForBestPage, CATEGORY_COLORS } from "@/lib/internal-li
 import { boostFeaturedPartner, isSponsored } from "@/lib/sponsorship";
 import { getIntentCountry } from "@/lib/intent-context-server";
 import { filterByCountryEligibility } from "@/lib/country-mode/eligibility-filter";
+import { headers } from "next/headers";
+import { getActivePlacementExperiment } from "@/lib/placement-experiments-server";
+import {
+  applyPlacementVariant,
+  pickVariant,
+  type PlacementVariant,
+} from "@/lib/placement-experiments";
 import SponsorBadge from "@/components/SponsorBadge";
+import PlacementImpressionTracker from "@/components/PlacementImpressionTracker";
 import JargonTooltip from "@/components/JargonTooltip";
 import OnThisPage from "@/components/OnThisPage";
 import type { Article } from "@/lib/types";
@@ -125,10 +133,26 @@ export default async function BestBrokerPage({
   );
 
   const allBrokers = eligibleBrokers;
-  const filtered = boostFeaturedPartner(
+  const naturalOrder = boostFeaturedPartner(
     allBrokers.filter(cat.filter).sort(cat.sort),
     0
   );
+
+  // Placement A/B testing (W5.26). When an active experiment is configured
+  // for `best/<slug>`, hash the visitor's IP + UA to pick a variant
+  // deterministically and reorder so the variant's broker_slug sits at
+  // position 1. Reading `headers()` makes this render dynamic for that slug
+  // while the experiment is live; slugs without an experiment stay ISR.
+  const placementExperiment = await getActivePlacementExperiment(`best/${slug}`);
+  let placementVariant: PlacementVariant | null = null;
+  let filtered = naturalOrder;
+  if (placementExperiment && placementExperiment.status === "running") {
+    const h = await headers();
+    const fingerprint = `${h.get("x-forwarded-for") ?? ""}|${h.get("user-agent") ?? ""}`;
+    placementVariant = pickVariant(placementExperiment, fingerprint);
+    filtered = applyPlacementVariant(naturalOrder, placementVariant);
+  }
+
   const topPick = filtered[0] || null;
   const hasSponsored = filtered.some(isSponsored);
   const relatedArticles: Pick<Article, "id" | "title" | "slug" | "category" | "read_time">[] = articleResult?.data || [];
@@ -215,6 +239,12 @@ export default async function BestBrokerPage({
 
   return (
     <>
+      {placementExperiment && placementVariant && (
+        <PlacementImpressionTracker
+          experimentId={placementExperiment.id}
+          variant={placementVariant.label}
+        />
+      )}
       {/* JSON-LD */}
       <script
         type="application/ld+json"
@@ -415,6 +445,12 @@ export default async function BestBrokerPage({
                   target="_blank"
                   rel={AFFILIATE_REL}
                   className="shrink-0 px-6 py-3 bg-amber-600 text-white font-semibold rounded-lg hover:bg-amber-700 transition-colors text-center"
+                  {...(placementExperiment && placementVariant
+                    ? {
+                        "data-pe-experiment-id": String(placementExperiment.id),
+                        "data-pe-variant": placementVariant.label,
+                      }
+                    : {})}
                 >
                   {getBenefitCta(topPick, "compare")}
                 </a>
@@ -477,6 +513,14 @@ export default async function BestBrokerPage({
                         target="_blank"
                         rel={AFFILIATE_REL}
                         className="inline-block px-4 py-2 bg-amber-600 text-white text-sm font-semibold rounded-lg hover:bg-amber-700 transition-colors"
+                        {...(i === 0 && placementExperiment && placementVariant
+                          ? {
+                              "data-pe-experiment-id": String(
+                                placementExperiment.id,
+                              ),
+                              "data-pe-variant": placementVariant.label,
+                            }
+                          : {})}
                       >
                         {getBenefitCta(broker, "compare")}
                       </a>
@@ -489,14 +533,27 @@ export default async function BestBrokerPage({
 
           {/* Mobile cards */}
           <div className="md:hidden space-y-2 mb-6">
-            {filtered.map((broker, i) => (
-              <BrokerCard
-                key={broker.id}
-                broker={broker}
-                badge={i === 0 ? "Top Pick" : undefined}
-                context="compare"
-              />
-            ))}
+            {filtered.map((broker, i) => {
+              const card = (
+                <BrokerCard
+                  broker={broker}
+                  badge={i === 0 ? "Top Pick" : undefined}
+                  context="compare"
+                />
+              );
+              if (i === 0 && placementExperiment && placementVariant) {
+                return (
+                  <div
+                    key={broker.id}
+                    data-pe-experiment-id={String(placementExperiment.id)}
+                    data-pe-variant={placementVariant.label}
+                  >
+                    {card}
+                  </div>
+                );
+              }
+              return <div key={broker.id}>{card}</div>;
+            })}
           </div>
           <CompactDisclaimerLine />
 
