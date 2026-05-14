@@ -10,7 +10,13 @@ import type {
   ActionPlanAnswers,
   QuestionDef,
   ResultTemplate,
+  TopMatch,
+  Vertical,
 } from "@/lib/getmatched/types";
+import QuestionCard from "./_components/QuestionCard";
+import ProgressDots from "./_components/ProgressDots";
+import AnalyzingScreen from "./_components/AnalyzingScreen";
+import TopMatchCard from "./_components/TopMatchCard";
 
 type NextStep =
   | {
@@ -46,6 +52,10 @@ interface ResolveResponse {
   recommended_brief_template: string | null;
   accept_credits_cost: number | null;
   recommended_providers: { kind: string; id: number }[];
+  top_match?: TopMatch | null;
+  primary_href?: string;
+  vertical?: Vertical | null;
+  advisor_type?: string | null;
   ephemeral?: boolean;
 }
 
@@ -84,14 +94,41 @@ export default function GetMatchedClient(props: Props) {
   const [shareToken, setShareToken] = useState<string | null>(null);
   const [step, setStep] = useState<NextStep | null>(null);
   const [answers, setAnswers] = useState<ActionPlanAnswers>({});
+  /** Stack of (slug, mapsTo) pairs we wrote on each answer, in answer
+   *  order. Used by the Back button to unwind the most recent write
+   *  without affecting earlier ones. */
+  const [history, setHistory] = useState<Array<{ slug: string; mapsTo: string }>>([]);
   const [error, setError] = useState<ErrorState | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  /** Bridge state: the final answer has been submitted and we've kicked
+   *  off /resolve. While true the AnalyzingScreen renders so the user
+   *  perceives the personalisation work. */
+  const [analyzing, setAnalyzing] = useState(false);
+  /** When `analyzing` flips false this is set to the (possibly
+   *  still-pending) resolve promise's result. We wait for BOTH the
+   *  1.5s timer AND the resolve fetch to finish before showing the
+   *  result screen — whichever takes longer wins. */
+  const [pendingResolveResult, setPendingResolveResult] =
+    useState<ResolveResponse | null>(null);
+  const [analyzingTimerDone, setAnalyzingTimerDone] = useState(false);
   const [result, setResult] = useState<ResolveResponse | null>(null);
   // Ephemeral mode: the server couldn't persist a plan row (migrations
   // pending), so we hold all state client-side and disable save / brief
   // creation until the DB is ready.
   const [ephemeral, setEphemeral] = useState(false);
+
+  // Promote the analyzing result to `result` only once BOTH the 1.5s
+  // timer AND the resolve fetch have finished — gives the perceived-
+  // effort moment a guaranteed minimum dwell.
+  useEffect(() => {
+    if (analyzingTimerDone && pendingResolveResult) {
+      setResult(pendingResolveResult);
+      setAnalyzing(false);
+      setPendingResolveResult(null);
+      setAnalyzingTimerDone(false);
+    }
+  }, [analyzingTimerDone, pendingResolveResult]);
 
   // Anonymous session id, persisted across refreshes so Back keeps progress.
   const sessionIdRef = useRef<string>("");
@@ -162,6 +199,7 @@ export default function GetMatchedClient(props: Props) {
     const mapsTo = step.question.maps_to;
     const nextAnswers = { ...answers, [slug]: value, [mapsTo]: value };
     setAnswers(nextAnswers);
+    setHistory((h) => [...h, { slug, mapsTo }]);
     try {
       const res = await fetch("/api/get-matched/answer", {
         method: "POST",
@@ -188,7 +226,13 @@ export default function GetMatchedClient(props: Props) {
       if (data.ephemeral) setEphemeral(true);
       setStep(data.next);
       if (data.next.done) {
-        await resolve(data.plan_id, nextAnswers);
+        // Show the 1.5s analyzing interstitial concurrently with the
+        // resolve fetch. Whichever takes longer determines the actual
+        // dwell time — but the user always sees the personalisation
+        // moment.
+        setAnalyzing(true);
+        setAnalyzingTimerDone(false);
+        void resolve(data.plan_id, nextAnswers);
       }
     } catch (err) {
       setError({
@@ -199,8 +243,45 @@ export default function GetMatchedClient(props: Props) {
     }
   }
 
+  function goBack() {
+    if (history.length === 0) return;
+    const last = history[history.length - 1]!;
+    const { [last.slug]: _a, [last.mapsTo]: _b, ...rest } = answers;
+    void _a; void _b;
+    setAnswers(rest);
+    setHistory((h) => h.slice(0, -1));
+    // Rebuilding the step requires re-running nextQuestion on the
+    // server. Easiest: re-fetch by calling /answer with the previous
+    // value or just re-starting. We use a lightweight approach: call
+    // /start again to get a fresh step computation from the current
+    // (truncated) answer set. The plan_id is preserved.
+    void rewindFetch(rest);
+  }
+
+  async function rewindFetch(currentAnswers: ActionPlanAnswers) {
+    try {
+      // The /start endpoint accepts a prefill — pass the truncated
+      // answers and it computes the next-unanswered question for us.
+      const res = await fetch("/api/get-matched/start", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          session_id: sessionIdRef.current,
+          mode: props.initialMode,
+          prefill: currentAnswers,
+          source_page: window.location.pathname,
+        }),
+      });
+      const data = (await res.json()) as StartResponse | ErrorResponse;
+      if (res.ok && "plan_id" in data) {
+        setStep(data.next);
+      }
+    } catch {
+      // Silent — back button stays usable, just the step UI may lag.
+    }
+  }
+
   async function resolve(id: number, finalAnswers: ActionPlanAnswers) {
-    setSubmitting(true);
     setError(null);
     try {
       const res = await fetch("/api/get-matched/resolve", {
@@ -216,16 +297,20 @@ export default function GetMatchedClient(props: Props) {
           code: errData.code,
           detail: errData.detail,
         });
+        // Bail out of analyzing mode so the user sees the error not
+        // a hung spinner.
+        setAnalyzing(false);
+        setAnalyzingTimerDone(false);
         return;
       }
       if (data.ephemeral) setEphemeral(true);
-      setResult(data);
+      setPendingResolveResult(data);
     } catch (err) {
       setError({
         message: err instanceof Error ? err.message : "Failed to resolve.",
       });
-    } finally {
-      setSubmitting(false);
+      setAnalyzing(false);
+      setAnalyzingTimerDone(false);
     }
   }
 
@@ -235,6 +320,10 @@ export default function GetMatchedClient(props: Props) {
         <div className="text-sm text-slate-500">Building your plan…</div>
       </div>
     );
+  }
+
+  if (analyzing && !result) {
+    return <AnalyzingScreen onComplete={() => setAnalyzingTimerDone(true)} />;
   }
 
   if (error) {
@@ -341,48 +430,47 @@ export default function GetMatchedClient(props: Props) {
       step={step}
       answers={answers}
       submitting={submitting}
+      canGoBack={history.length > 0}
       onAnswer={(value) => void submitAnswer(value)}
+      onBack={goBack}
     />
   );
 }
 
 // ─── Question screen ──────────────────────────────────────────────────────
 
+
+// ─── Question screen wrapper (3-pane desktop / single-column mobile) ───
+
 function QuestionScreen({
   step,
   answers,
   submitting,
+  canGoBack,
   onAnswer,
+  onBack,
 }: {
   step: { done: false; question: QuestionDef; totalSteps: number; currentStep: number };
   answers: ActionPlanAnswers;
   submitting: boolean;
+  canGoBack: boolean;
   onAnswer: (value: ActionPlanAnswers[string]) => void;
+  onBack: () => void;
 }) {
   const { question, totalSteps, currentStep } = step;
   const progress = Math.max(0, Math.min(100, (currentStep / totalSteps) * 100));
-
-  // The selected-multi state is keyed on `question.slug` so React resets it
-  // when we navigate to a new question — no setState-in-effect needed.
-  const initialSelected = (() => {
-    const v = answers[question.slug];
-    return Array.isArray(v) ? (v as string[]) : [];
-  })();
-  const [selectedMulti, setSelectedMulti] = useState<string[]>(initialSelected);
-
   const intentSummary = (answers.intent as string | undefined) ?? null;
   const helpSummary = (answers.help_preference as string | undefined) ?? null;
+  const budgetSummary = (answers.budget_band as string | undefined) ?? null;
+  const timelineSummary = (answers.timeline as string | undefined) ?? null;
 
   return (
     <div className="min-h-screen bg-slate-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
-        {/* Mobile progress */}
+        {/* Mobile progress strip */}
         <div className="lg:hidden mb-4">
           <div className="h-1 bg-slate-200 rounded-full overflow-hidden">
-            <div
-              className="h-1 bg-amber-500 transition-all"
-              style={{ width: `${progress}%` }}
-            />
+            <div className="h-1 bg-amber-500 transition-all" style={{ width: `${progress}%` }} />
           </div>
           <p className="text-[10px] uppercase tracking-widest text-slate-500 mt-1">
             Step {currentStep} of {totalSteps} · No account needed yet
@@ -393,260 +481,61 @@ function QuestionScreen({
           {/* LEFT — progress + reassurance */}
           <aside className="hidden lg:block">
             <div className="sticky top-6">
+              <ProgressDots total={totalSteps} current={currentStep - 1} />
               <div className="h-1 bg-slate-200 rounded-full overflow-hidden mb-3">
-                <div
-                  className="h-1 bg-amber-500 transition-all"
-                  style={{ width: `${progress}%` }}
-                />
+                <div className="h-1 bg-amber-500 transition-all" style={{ width: `${progress}%` }} />
               </div>
               <p className="text-[10px] uppercase tracking-widest text-slate-500 mb-3">
                 Step {currentStep} of {totalSteps}
               </p>
               <ul className="text-xs text-slate-500 space-y-2">
-                <li className="flex items-start gap-2">
-                  <Icon name="check" size={12} className="mt-0.5 text-emerald-600 shrink-0" />
-                  No account needed yet
-                </li>
-                <li className="flex items-start gap-2">
-                  <Icon name="check" size={12} className="mt-0.5 text-emerald-600 shrink-0" />
-                  General information only
-                </li>
-                <li className="flex items-start gap-2">
-                  <Icon name="check" size={12} className="mt-0.5 text-emerald-600 shrink-0" />
-                  You stay in control
-                </li>
-                <li className="flex items-start gap-2">
-                  <Icon name="check" size={12} className="mt-0.5 text-emerald-600 shrink-0" />
-                  Providers deliver under their own licence
-                </li>
+                <li className="flex items-start gap-2"><Icon name="check" size={12} className="mt-0.5 text-emerald-600 shrink-0" /> No account needed yet</li>
+                <li className="flex items-start gap-2"><Icon name="check" size={12} className="mt-0.5 text-emerald-600 shrink-0" /> General information only</li>
+                <li className="flex items-start gap-2"><Icon name="check" size={12} className="mt-0.5 text-emerald-600 shrink-0" /> You stay in control</li>
+                <li className="flex items-start gap-2"><Icon name="check" size={12} className="mt-0.5 text-emerald-600 shrink-0" /> Providers deliver under their own licence</li>
               </ul>
             </div>
           </aside>
 
           {/* CENTRE — question card */}
           <main>
-            <article
-              key={question.slug}
-              className="bg-white border border-slate-200 rounded-2xl shadow-sm p-6 sm:p-8 transition-all duration-200"
-              style={{ animation: "iv-fade-in 200ms ease-out" }}
-            >
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-2">
-                {question.prompt}
-              </h1>
-              {question.subtitle && (
-                <p className="text-sm text-slate-500 mb-6">{question.subtitle}</p>
-              )}
-              {(question.kind === "select" || question.kind === "contextual") && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                  {question.options.map((opt) => (
-                    <button
-                      type="button"
-                      key={opt.value}
-                      onClick={() => onAnswer(opt.value)}
-                      disabled={submitting}
-                      className={`text-left rounded-xl border p-4 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 ${
-                        answers[question.slug] === opt.value
-                          ? "border-amber-500 bg-amber-50 ring-2 ring-amber-300"
-                          : "border-slate-200 bg-white hover:border-slate-300"
-                      } disabled:opacity-60 disabled:cursor-not-allowed`}
-                    >
-                      <p className="text-sm font-semibold text-slate-900">
-                        {opt.label}
-                      </p>
-                    </button>
-                  ))}
-                </div>
-              )}
-              {question.kind === "multiselect" && (
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between text-xs text-slate-500">
-                    <span>Pick all that apply</span>
-                    <span>{selectedMulti.length} selected</span>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                    {question.options.map((opt) => {
-                      const checked = selectedMulti.includes(opt.value);
-                      return (
-                        <button
-                          type="button"
-                          key={opt.value}
-                          onClick={() => {
-                            setSelectedMulti((prev) =>
-                              checked
-                                ? prev.filter((x) => x !== opt.value)
-                                : [...prev, opt.value],
-                            );
-                          }}
-                          className={`text-left rounded-xl border p-4 flex items-center gap-3 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 ${
-                            checked
-                              ? "border-amber-500 bg-amber-50 ring-2 ring-amber-300"
-                              : "border-slate-200 bg-white hover:border-slate-300"
-                          }`}
-                        >
-                          <span
-                            className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 ${
-                              checked
-                                ? "border-amber-500 bg-amber-500"
-                                : "border-slate-300"
-                            }`}
-                          >
-                            {checked && (
-                              <Icon name="check" size={12} className="text-white" />
-                            )}
-                          </span>
-                          <span className="text-sm font-semibold text-slate-900">
-                            {opt.label}
-                          </span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                  <div className="flex justify-end pt-2">
-                    <button
-                      type="button"
-                      onClick={() => onAnswer(selectedMulti)}
-                      disabled={submitting || selectedMulti.length === 0}
-                      className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-slate-900 font-bold px-6 py-2.5 rounded-xl"
-                    >
-                      Continue <Icon name="arrow-right" size={14} />
-                    </button>
-                  </div>
-                </div>
-              )}
-              {question.kind === "text" && (
-                <TextInput
-                  initial={typeof answers[question.slug] === "string" ? (answers[question.slug] as string) : ""}
-                  onSubmit={(v) => onAnswer(v)}
-                  disabled={submitting}
-                />
-              )}
-              {question.kind === "number" && (
-                <NumberInput
-                  initial={typeof answers[question.slug] === "number" ? (answers[question.slug] as number) : null}
-                  onSubmit={(v) => onAnswer(v)}
-                  disabled={submitting}
-                />
-              )}
-            </article>
-
+            {canGoBack && (
+              <button
+                type="button"
+                onClick={onBack}
+                className="inline-flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-700 mb-2 min-h-11"
+              >
+                <Icon name="arrow-left" size={14} /> Back
+              </button>
+            )}
+            <QuestionCard
+              question={question}
+              answers={answers}
+              submitting={submitting}
+              onAnswer={onAnswer}
+            />
             <p className="lg:hidden text-[10px] text-slate-400 mt-3 text-center">
               General information only · You stay in control
             </p>
           </main>
 
-          {/* RIGHT — live action plan preview */}
+          {/* RIGHT — live plan preview */}
           <aside className="hidden lg:block">
-            <div
-              className="sticky top-6 rounded-2xl border border-slate-200 p-5 bg-gradient-to-br from-slate-50 to-white"
-              aria-live="polite"
-            >
-              <p className="text-[10px] uppercase tracking-widest text-slate-500 mb-2">
-                Your plan so far
-              </p>
+            <div className="sticky top-6 rounded-2xl border border-slate-200 p-5 bg-gradient-to-br from-slate-50 to-white" aria-live="polite">
+              <p className="text-[10px] uppercase tracking-widest text-slate-500 mb-2">Your plan so far</p>
               <ul className="text-sm space-y-1.5">
-                {intentSummary && (
-                  <li className="text-slate-900">
-                    <strong>Goal:</strong> {humanise(intentSummary)}
-                  </li>
-                )}
-                {helpSummary && (
-                  <li className="text-slate-700">
-                    <strong>Likely route:</strong> {humanise(helpSummary)}
-                  </li>
-                )}
-                {(answers.budget_band as string | undefined) && (
-                  <li className="text-slate-700">
-                    <strong>Budget:</strong> {humanise(answers.budget_band as string)}
-                  </li>
-                )}
-                {(answers.timeline as string | undefined) && (
-                  <li className="text-slate-700">
-                    <strong>Timeline:</strong> {humanise(answers.timeline as string)}
-                  </li>
-                )}
+                {intentSummary && (<li className="text-slate-900"><strong>Goal:</strong> {humanise(intentSummary)}</li>)}
+                {helpSummary && (<li className="text-slate-700"><strong>Help:</strong> {humanise(helpSummary)}</li>)}
+                {budgetSummary && (<li className="text-slate-700"><strong>Budget:</strong> {humanise(budgetSummary)}</li>)}
+                {timelineSummary && (<li className="text-slate-700"><strong>Timeline:</strong> {humanise(timelineSummary)}</li>)}
                 {!intentSummary && (
-                  <li className="text-slate-400 italic">
-                    Answer the questions and your action plan appears here.
-                  </li>
+                  <li className="text-slate-400 italic">Answer the questions and your action plan appears here.</li>
                 )}
               </ul>
             </div>
           </aside>
         </div>
       </div>
-      <style>{`
-        @keyframes iv-fade-in {
-          from { opacity: 0; transform: translateY(8px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @media (prefers-reduced-motion: reduce) {
-          [style*="iv-fade-in"] { animation: none !important; }
-        }
-      `}</style>
-    </div>
-  );
-}
-
-function TextInput({
-  initial,
-  onSubmit,
-  disabled,
-}: {
-  initial: string;
-  onSubmit: (v: string) => void;
-  disabled: boolean;
-}) {
-  const [value, setValue] = useState(initial);
-  return (
-    <div className="space-y-3">
-      <input
-        type="text"
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        maxLength={300}
-        className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
-      />
-      <button
-        type="button"
-        onClick={() => onSubmit(value.trim())}
-        disabled={disabled || value.trim().length === 0}
-        className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-slate-900 font-bold px-5 py-2.5 rounded-xl"
-      >
-        Continue <Icon name="arrow-right" size={14} />
-      </button>
-    </div>
-  );
-}
-
-function NumberInput({
-  initial,
-  onSubmit,
-  disabled,
-}: {
-  initial: number | null;
-  onSubmit: (v: number) => void;
-  disabled: boolean;
-}) {
-  const [value, setValue] = useState<string>(initial === null ? "" : String(initial));
-  return (
-    <div className="space-y-3">
-      <input
-        type="number"
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        className="w-full border border-slate-300 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
-      />
-      <button
-        type="button"
-        onClick={() => {
-          const num = Number(value);
-          if (Number.isFinite(num)) onSubmit(num);
-        }}
-        disabled={disabled || value.length === 0}
-        className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-slate-900 font-bold px-5 py-2.5 rounded-xl"
-      >
-        Continue <Icon name="arrow-right" size={14} />
-      </button>
     </div>
   );
 }
@@ -712,10 +601,16 @@ function ActionPlanScreen({
   }
 
   const primary = template.primary_cta;
+  // Routing precedence on the primary CTA:
+  //   1. plan_id-linked brief deep-link (when a brief template is on offer
+  //      and we have a persisted plan)
+  //   2. server-computed `primary_href` (engine's inferred terminal URL
+  //      with vertical / advisor-type filters baked in)
+  //   3. template's default href (fallback)
   const recommendedBriefHref =
-    result.recommended_brief_template && plan.id
+    result.recommended_brief_template && plan.id && !ephemeral
       ? `/briefs/new?plan_id=${plan.id}`
-      : primary?.href ?? "/";
+      : result.primary_href ?? primary?.href ?? "/";
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -754,6 +649,9 @@ function ActionPlanScreen({
             </p>
           </div>
         )}
+
+        {/* Top-match hero card — only present for `compare` route */}
+        {result.top_match && <TopMatchCard match={result.top_match} />}
 
         <div className="bg-white rounded-3xl border border-slate-200 shadow-md p-6 sm:p-8 mb-6">
           <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-amber-700 bg-amber-50 border border-amber-200 rounded-full px-2.5 py-1 mb-3">
