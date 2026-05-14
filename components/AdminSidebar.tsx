@@ -49,7 +49,6 @@ const NAV_GROUPS = [
       { href: "/admin/advisor-moderation", icon: "check-circle", label: "Pending Advisors" },
       { href: "/admin/review-moderation", icon: "star", label: "Pending Reviews" },
       { href: "/admin/user-reviews", icon: "clipboard-list", label: "User Reviews" },
-      { href: "/admin/fund-reviews", icon: "clipboard-list", label: "Fund Reviews" },
       { href: "/admin/switch-stories", icon: "shuffle", label: "Switch Stories" },
       { href: "/admin/moderation", icon: "shield-check", label: "Content Moderation" },
     ],
