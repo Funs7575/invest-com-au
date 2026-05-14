@@ -212,9 +212,13 @@ export const handleCheckoutSessionCompleted: WebhookHandler = async (
           const stripe = stripeLib.getStripe();
           const pi = await stripe.paymentIntents.retrieve(paymentIntentId);
           if (typeof pi.payment_method === "string" && pi.payment_method.length > 0) {
+            // `stripe_default_payment_method` lives in the new
+            // 20260514_mm03_credit_auto_recharge migration; cast until
+            // database.types.ts is regenerated.
             await supabase
               .from("professionals")
-              .update({ stripe_default_payment_method: pi.payment_method })
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              .update({ stripe_default_payment_method: pi.payment_method } as any)
               .eq("id", professionalId);
           }
         }
