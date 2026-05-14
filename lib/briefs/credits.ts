@@ -219,6 +219,16 @@ export async function acceptBrief({
     payload: { credits, team_id: teamId ?? null },
   });
 
+  // ── 5. Auto-recharge trigger (fire-and-forget) ────────────────────
+  // If the provider has auto-recharge enabled and the balance has now
+  // dropped below their threshold, kick off an off-session Stripe
+  // payment. The credit grant lands via the existing webhook path
+  // (checkout.session.completed → recordLedgerEntry). Failures are
+  // swallowed so the brief acceptance always succeeds.
+  void import("./auto-recharge").then(({ maybeAutoRecharge }) => {
+    void maybeAutoRecharge(professionalId);
+  });
+
   return {
     accepted: true,
     brief: claimed as unknown as BriefRow,

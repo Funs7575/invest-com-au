@@ -8,6 +8,12 @@ import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
 import ComplianceFooter from "@/components/ComplianceFooter";
 import ClaimListingButton from "@/components/claims/ClaimListingButton";
+import OutcomeBadge from "@/components/outcomes/OutcomeBadge";
+import TestimonialList from "@/components/outcomes/TestimonialList";
+import {
+  getProviderOutcomeBadge,
+  getPublicTestimonials,
+} from "@/lib/outcomes/profile-display";
 
 export const revalidate = 1800;
 
@@ -146,6 +152,13 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
   if (pro.linkedin_url) sameAs.push(pro.linkedin_url);
   if (pro.twitter_url) sameAs.push(pro.twitter_url);
 
+  // Outcome flywheel display data — fetched in parallel to keep the
+  // page render fast. Both helpers fail-soft on DB errors.
+  const [outcomeBadge, testimonials] = await Promise.all([
+    getProviderOutcomeBadge({ professionalId: pro.id }),
+    getPublicTestimonials({ professionalId: pro.id, limit: 5 }),
+  ]);
+
   const personLd: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "Person",
@@ -206,6 +219,19 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
         }) }} />
       )}
       <AdvisorProfileClient professional={pro as Professional} similar={similar} reviews={reviews} teamMembers={teamMembers} firm={firm} expertArticles={expertArticles} />
+      {/* Outcome-flywheel badge + verified testimonials — fetched in
+          parallel above. Renders below the main profile so it
+          augments without disrupting the existing layout. */}
+      {(outcomeBadge || testimonials.length > 0) && (
+        <div className="container-custom max-w-4xl mt-6 space-y-4">
+          {outcomeBadge && (
+            <div className="flex items-center gap-2 px-1">
+              <OutcomeBadge badge={outcomeBadge} />
+            </div>
+          )}
+          <TestimonialList testimonials={testimonials} />
+        </div>
+      )}
       <ClaimListingButton
         claimType="advisor"
         targetSlug={pro.slug}
