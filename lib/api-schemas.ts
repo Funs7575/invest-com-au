@@ -278,6 +278,109 @@ export const AdminVerifyExpertTeamRequest = z.object({
   accepts_briefs: z.boolean().optional(),
 });
 
+// ─── /api/get-matched (Get Matched 2.0) ─────────────────────────────
+
+export const GM_INTENT_SLUGS = [
+  "compare_platform",
+  "start_investing",
+  "smsf_property",
+  "buy_property",
+  "opportunity_assessment",
+  "business_acquisition",
+  "commercial_property",
+  "foreign_investor",
+  "expat_investing",
+  "financial_advice",
+  "tax_help",
+  "mortgage_help",
+  "legal_help",
+  "second_opinion",
+  "listing_owner",
+  "listing_readiness",
+  "not_sure",
+] as const;
+
+export const GM_ROUTE_TYPES = [
+  "compare",
+  "browse",
+  "individual",
+  "firm",
+  "expert_team",
+  "investor_brief",
+  "listing_brief",
+  "second_opinion",
+  "guide",
+] as const;
+
+export const GM_QUESTION_MODES = ["fast", "guided", "both"] as const;
+
+const PlainAnswerValue = z.union([
+  z.string().max(500),
+  z.array(z.string().max(120)).max(20),
+  z.number().finite(),
+  z.boolean(),
+  z.null(),
+]);
+
+export const StartGetMatchedRequest = z.object({
+  session_id: z.string().min(8).max(120),
+  mode: z.enum(GM_QUESTION_MODES).default("both"),
+  prefill: z.record(z.string(), PlainAnswerValue).optional(),
+  source_page: z.string().max(500).optional(),
+});
+
+export const AnswerQuestionRequest = z.object({
+  plan_id: z.number().int().positive(),
+  question_slug: z.string().min(1).max(80),
+  value: PlainAnswerValue,
+});
+
+export const ResolvePlanRequest = z.object({
+  plan_id: z.number().int().positive(),
+});
+
+export const SavePlanRequest = z.object({
+  email: z.string().email().max(200),
+});
+
+export const ClaimPlanRequest = z.object({
+  plan_id: z.number().int().positive(),
+});
+
+export const PlanToBriefRequest = z.object({
+  contact_name: z.string().min(1).max(100),
+  contact_email: z.string().email().max(200),
+  contact_phone: z.string().max(20).optional(),
+  routing_mode: z.enum(ROUTING_MODES).default("smart_match"),
+  provider_preference: z.enum(PROVIDER_PREFERENCES).optional(),
+  consent_share: z.boolean().refine((v) => v === true, {
+    message: "Please confirm consent to share the brief with verified providers.",
+  }),
+});
+
+export const ChecklistToggleRequest = z.object({
+  index: z.number().int().nonnegative().max(50),
+});
+
+export const LogGmEventRequest = z.object({
+  session_id: z.string().min(8).max(120),
+  event_type: z.enum([
+    "started",
+    "question_answered",
+    "question_abandoned",
+    "plan_shown",
+    "cta_clicked",
+    "plan_saved",
+    "account_created",
+    "brief_drafted",
+    "brief_submitted",
+    "risk_flagged",
+  ]),
+  step: z.number().int().min(0).max(50).optional(),
+  payload: z.record(z.string(), z.unknown()).optional(),
+  source_page: z.string().max(500).optional(),
+});
+
 // ─── Helper: assert a response matches a schema ────────────────────
 
 /**

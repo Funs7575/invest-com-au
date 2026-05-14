@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import GetMatchedEmbed from "@/components/get-matched/GetMatchedEmbed";
 import { filterByCountryEligibility } from "@/lib/country-mode/eligibility-filter";
 import type { Professional, AdvisorFirm } from "@/lib/types";
 import type { Metadata } from "next";
@@ -93,6 +94,9 @@ async function AdvisorsData() {
   return (
     <>
       <ProviderTypeTabs teamCount={expertTeams.length} />
+      <div className="container-custom mt-3 mb-4">
+        <GetMatchedEmbed context="advisor_directory" />
+      </div>
       <AdvisorsClient
         professionals={professionals}
         firms={firms}

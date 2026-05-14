@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
 import CompareClient from "./CompareClient";
 import CompareNav from "./CompareNav";
+import GetMatchedEmbed from "@/components/get-matched/GetMatchedEmbed";
 import { absoluteUrl, UPDATED_LABEL } from "@/lib/seo";
 import ComplianceFooter from "@/components/ComplianceFooter";
 import HomeToolsStrip from "@/components/HomeToolsStrip";
@@ -150,6 +151,9 @@ export default function ComparePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
       />
       <Suspense><CompareNav /></Suspense>
+      <div className="container-custom pt-5">
+        <GetMatchedEmbed context="platform_compare" />
+      </div>
       {/* Server-rendered H1 for crawlers that don't execute client JS — streams immediately */}
       <div className="container-custom pt-5 md:pt-10">
         <div className="mb-3"><IntentCountryBadge /></div>

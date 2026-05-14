@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 
@@ -68,6 +68,13 @@ interface FormState {
   consent: boolean;
 }
 
+function providerPrefForRoute(route: string | null | undefined): string {
+  if (route === "expert_team") return "expert_team";
+  if (route === "firm") return "firm";
+  if (route === "individual") return "individual";
+  return "any";
+}
+
 const INITIAL: FormState = {
   brief_template: "",
   job_title: "",
@@ -88,12 +95,16 @@ export default function BriefForm() {
   const searchParams = useSearchParams();
   const presetTeam = searchParams?.get("team") ?? "";
   const presetTemplate = searchParams?.get("template") ?? "";
+  const presetProviderPreference = searchParams?.get("provider_preference") ?? "";
+  const presetRoutingMode = searchParams?.get("routing_mode") ?? "";
+  const planId = searchParams?.get("plan_id") ?? "";
 
   const [step, setStep] = useState<Step>("template");
   const [form, setForm] = useState<FormState>(() => ({
     ...INITIAL,
     target_team_slug: presetTeam || "",
-    routing_mode: presetTeam ? "direct" : "smart_match",
+    routing_mode: presetRoutingMode || (presetTeam ? "direct" : "smart_match"),
+    provider_preference: presetProviderPreference || "any",
     brief_template: (BRIEF_TEMPLATES.includes(presetTemplate as BriefTemplate)
       ? (presetTemplate as BriefTemplate)
       : "") as BriefTemplate | "",
@@ -105,6 +116,49 @@ export default function BriefForm() {
     accept_credits_cost: number | null;
     risk_review_status: string;
   } | null>(null);
+  const [planPrefilled, setPlanPrefilled] = useState(false);
+
+  // Pre-fill from Get Matched action plan if plan_id present.
+  useEffect(() => {
+    if (!planId) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(`/api/get-matched/plans/by-id/${planId}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        const plan = data.plan;
+        const template =
+          (data.recommended_brief_template as BriefTemplate | null) ??
+          (BRIEF_TEMPLATES.includes(plan?.intent_slug)
+            ? (plan?.intent_slug as BriefTemplate)
+            : "general");
+        if (cancelled) return;
+        setForm((p) => ({
+          ...p,
+          brief_template: template,
+          job_title: plan?.goal ?? "Investment brief",
+          job_description: data.description ?? "Investment brief from action plan.",
+          budget_band: plan?.budget_band ?? "not_sure",
+          location_state: plan?.location_state ?? "NSW",
+          provider_preference:
+            presetProviderPreference || providerPrefForRoute(plan?.route),
+          routing_mode: presetRoutingMode || "smart_match",
+          payload: plan?.answers ?? {},
+        }));
+        setPlanPrefilled(true);
+        // Skip ahead to contact step since template + details + preference
+        // are now known.
+        setStep("contact");
+      } catch {
+        /* ignore */
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [planId]);
 
   const fields: FieldHint[] = useMemo(() => {
     if (!form.brief_template) return [];
@@ -144,30 +198,46 @@ export default function BriefForm() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/briefs", {
+      // If we have a plan_id, use the plan→brief endpoint so the brief is
+      // linked back to the action plan.
+      const fromPlan = !!planId && planPrefilled;
+      const url = fromPlan
+        ? `/api/get-matched/plans/${planId}/to-brief`
+        : "/api/briefs";
+      const body = fromPlan
+        ? {
+            contact_name: form.contact_name,
+            contact_email: form.contact_email,
+            contact_phone: form.contact_phone || undefined,
+            routing_mode: form.routing_mode,
+            provider_preference: form.provider_preference,
+            consent_share: form.consent,
+          }
+        : {
+            brief_template: form.brief_template,
+            brief_payload: form.payload,
+            job_title: form.job_title,
+            job_description: form.job_description,
+            budget_band: form.budget_band,
+            location_state: form.location_state,
+            provider_preference: form.provider_preference,
+            routing_mode: form.routing_mode,
+            target_team_slug: form.target_team_slug || undefined,
+            advisor_types: [],
+            contact_name: form.contact_name,
+            contact_email: form.contact_email,
+            contact_phone: form.contact_phone || undefined,
+            consent_share: form.consent,
+          };
+      const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          brief_template: form.brief_template,
-          brief_payload: form.payload,
-          job_title: form.job_title,
-          job_description: form.job_description,
-          budget_band: form.budget_band,
-          location_state: form.location_state,
-          provider_preference: form.provider_preference,
-          routing_mode: form.routing_mode,
-          target_team_slug: form.target_team_slug || undefined,
-          advisor_types: [],
-          contact_name: form.contact_name,
-          contact_email: form.contact_email,
-          contact_phone: form.contact_phone || undefined,
-          consent_share: form.consent,
-        }),
+        body: JSON.stringify(body),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || "Failed to create brief.");
       setResult({
-        slug: data.slug,
+        slug: fromPlan ? (data.brief_slug as string) : (data.slug as string),
         accept_credits_cost: data.accept_credits_cost ?? null,
         risk_review_status: data.risk_review_status ?? "clear",
       });
@@ -524,6 +594,14 @@ export default function BriefForm() {
 
       {step === "contact" && (
         <div className="space-y-6">
+          {planPrefilled && (
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 flex items-start gap-2">
+              <Icon name="check-circle" size={14} className="text-amber-600 mt-0.5 shrink-0" />
+              <p className="text-xs text-amber-900 leading-relaxed">
+                <strong>Pre-filled from your Action Plan.</strong> We&apos;ll send this brief with the goal, budget, timeline and route you already picked. Edit anything you need below.
+              </p>
+            </div>
+          )}
           <div>
             <h2 className="text-xl font-bold text-slate-900 mb-1">
               Your details
