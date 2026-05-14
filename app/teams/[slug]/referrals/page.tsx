@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 
@@ -10,6 +11,13 @@ import {
   type TeamBriefReferral,
 } from "@/lib/team-brief-referrals";
 import ReferralActions from "./_components/ReferralActions";
+
+// Members-only authenticated surface; mirrors sibling /teams/[slug]/inbox.
+// JSON-LD coverage gate auto-exempts pages with `robots: { index: false }`.
+export const metadata: Metadata = {
+  title: "Squad referrals — Invest.com.au",
+  robots: { index: false, follow: false },
+};
 
 export const dynamic = "force-dynamic";
 
