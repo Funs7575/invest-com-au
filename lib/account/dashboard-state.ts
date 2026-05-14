@@ -148,42 +148,7 @@ export async function loadDashboardState(input: {
     sent_at: string;
   }>;
 
-  // ── Compute hero ──
-  let hero: HeroCard;
-  if (quotes.length > 0) {
-    const q = quotes[0]!;
-    hero = {
-      kind: "quote_awaiting_review",
-      title: "You have a quote to review",
-      body: `A$${(q.amount_cents / 100).toLocaleString("en-AU")} — review and accept or decline before ${new Date(q.expires_at).toLocaleDateString("en-AU", { dateStyle: "medium" })}.`,
-      cta_label: "Review quote",
-      cta_href: `/quote/${q.review_token}`,
-    };
-  } else if (briefs.length > 0) {
-    const accepted = briefs.find((b) => b.accepted_at !== null);
-    const open = briefs.find((b) => b.status === "open" && b.accepted_at === null);
-    if (accepted) {
-      hero = {
-        kind: "brief_accepted",
-        title: "A verified pro accepted your Match Request",
-        body: "They'll be in touch shortly — usually within 1-2 business days.",
-        cta_label: "View status",
-        cta_href: `/briefs/${accepted.slug}`,
-      };
-    } else if (open) {
-      hero = {
-        kind: "brief_open",
-        title: "Verified pros are reviewing your Match Request",
-        body: "First to accept gets exclusive contact unlock — you'll be notified by email.",
-        cta_label: "View status",
-        cta_href: `/briefs/${open.slug}`,
-      };
-    } else {
-      hero = heroForPlans(plans);
-    }
-  } else {
-    hero = heroForPlans(plans);
-  }
+  const hero = pickHero({ plans, briefs, quotes });
 
   // ── Activity feed (most recent across plans + brief events) ──
   const feed: FeedItem[] = [];
@@ -222,6 +187,60 @@ export async function loadDashboardState(input: {
     },
     feed: feed.slice(0, 10),
   };
+}
+
+export interface HeroInputs {
+  plans: Array<{ id: number; status: string; share_token: string }>;
+  briefs: Array<{
+    slug: string;
+    status: string;
+    accepted_at: string | null;
+  }>;
+  quotes: Array<{
+    review_token: string;
+    amount_cents: number;
+    expires_at: string;
+  }>;
+}
+
+/**
+ * Pure hero-selection logic, separated so unit tests can pin down
+ * the priority order without mocking Supabase.
+ */
+export function pickHero({ plans, briefs, quotes }: HeroInputs): HeroCard {
+  if (quotes.length > 0) {
+    const q = quotes[0]!;
+    return {
+      kind: "quote_awaiting_review",
+      title: "You have a quote to review",
+      body: `A$${(q.amount_cents / 100).toLocaleString("en-AU")} — review and accept or decline before ${new Date(q.expires_at).toLocaleDateString("en-AU", { dateStyle: "medium" })}.`,
+      cta_label: "Review quote",
+      cta_href: `/quote/${q.review_token}`,
+    };
+  }
+  if (briefs.length > 0) {
+    const accepted = briefs.find((b) => b.accepted_at !== null);
+    if (accepted) {
+      return {
+        kind: "brief_accepted",
+        title: "A verified pro accepted your Match Request",
+        body: "They'll be in touch shortly — usually within 1-2 business days.",
+        cta_label: "View status",
+        cta_href: `/briefs/${accepted.slug}`,
+      };
+    }
+    const open = briefs.find((b) => b.status === "open" && b.accepted_at === null);
+    if (open) {
+      return {
+        kind: "brief_open",
+        title: "Verified pros are reviewing your Match Request",
+        body: "First to accept gets exclusive contact unlock — you'll be notified by email.",
+        cta_label: "View status",
+        cta_href: `/briefs/${open.slug}`,
+      };
+    }
+  }
+  return heroForPlans(plans);
 }
 
 function heroForPlans(plans: Array<{ status: string; share_token: string; id: number }>): HeroCard {
