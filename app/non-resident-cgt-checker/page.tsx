@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR, SITE_NAME } from "@/lib/seo";
 import ComplianceFooter from "@/components/ComplianceFooter";
+import CalcToPlanBridge from "@/components/get-matched/CalcToPlanBridge";
 import NonResidentCgtClient from "./NonResidentCgtClient";
 
 export const revalidate = 86400;
@@ -67,6 +68,11 @@ export default function NonResidentCgtCheckerPage() {
         <NonResidentCgtClient />
       </Suspense>
       <div className="container-custom pb-8">
+        <CalcToPlanBridge
+          goal="expat_investing"
+          headline="Want help with your non-resident tax position?"
+          subtitle="We'll match you with verified Australian tax agents who specialise in non-resident CGT and investment returns."
+        />
         <ComplianceFooter variant="calculator" />
       </div>
     </>

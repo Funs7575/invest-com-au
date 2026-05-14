@@ -6,7 +6,7 @@ import { CURRENT_YEAR, SITE_URL, breadcrumbJsonLd } from "@/lib/seo";
 export const metadata: Metadata = {
   title: `Get Matched — Build your Investment Action Plan (${CURRENT_YEAR})`,
   description:
-    "Tell us what you're trying to do. We'll build your investment action plan and guide you to the right next step — compare a platform, browse opportunities, or send an Investor Brief to verified Australian professionals.",
+    "Tell us what you're trying to do. We'll build your action plan and guide you to the right next step — compare platforms, browse opportunities, or get quotes from verified Australian professionals.",
   alternates: { canonical: `${SITE_URL}/get-matched` },
   robots: { index: true, follow: true },
 };
