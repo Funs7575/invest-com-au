@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createStaticClient } from "@/lib/supabase/static";
 import { getBrokerBySlug } from "@/lib/request-cache";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
+import ComplianceFooter from "@/components/ComplianceFooter";
 
 export const revalidate = 3600;
 
@@ -233,6 +234,7 @@ export default async function BrokerChangelogPage({
           )}
         </div>
       </div>
+      <ComplianceFooter />
     </>
   );
 }
