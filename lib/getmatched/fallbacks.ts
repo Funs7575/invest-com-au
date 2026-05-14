@@ -549,10 +549,12 @@ export const FALLBACK_TEMPLATES: Record<RouteType, ResultTemplate> = {
     intent_slug: null,
     headline: "Prepare Your Listing",
     why_text:
-      "You're on the seller side. Prepare a Listing Brief so verified professionals can help you get listing-ready and reach buyers.",
+      "You're on the seller side. A successful listing usually needs a few moving parts — legal, financial, valuation, marketing. Prepare a Listing Brief and we'll route it to the right verified professionals, or hand-pick them yourself below.",
     checklist: [
       { label: "Listing readiness check" },
-      { label: "Get valuation help" },
+      { label: "Get a transaction lawyer for the contract" },
+      { label: "Get an accountant on tax structuring" },
+      { label: "Get an independent valuation" },
       { label: "Prepare your due-diligence pack" },
       { label: "Create your Listing Brief" },
     ],
@@ -562,7 +564,9 @@ export const FALLBACK_TEMPLATES: Record<RouteType, ResultTemplate> = {
       { label: "Speak to listing experts", href: "/advisors" },
     ],
     cross_sells: [
-      { label: "Listing checklist", href: "/articles", icon: "file-text" },
+      { label: "Find a transaction lawyer", href: "/advisors?type=lawyer", icon: "scale" },
+      { label: "Find a property / business accountant", href: "/advisors?type=accountant", icon: "calculator" },
+      { label: "Find a valuation expert", href: "/advisors?type=valuer", icon: "trending-up" },
     ],
     enabled: true,
   },
