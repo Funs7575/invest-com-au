@@ -11,10 +11,12 @@ import { estimateBundledPrice } from "@/lib/expert-teams/pricing";
 import Icon from "@/components/Icon";
 import OutcomeBadge from "@/components/outcomes/OutcomeBadge";
 import TestimonialList from "@/components/outcomes/TestimonialList";
+import SquadTierBadge from "@/components/expert-teams/SquadTierBadge";
 import {
   getProviderOutcomeBadge,
   getPublicTestimonials,
 } from "@/lib/outcomes/profile-display";
+import { computeSquadTier } from "@/lib/expert-teams/badge-tier";
 import SquadStack from "./_components/SquadStack";
 import BundledPricePreview from "./_components/BundledPricePreview";
 
@@ -171,6 +173,20 @@ export default async function TeamProfilePage({ params }: PageProps) {
     }
   }
 
+  // Verification tier — derived from member count + unique disciplines +
+  // outcome scoreboard. Pure function over data we already loaded.
+  const uniqueDisciplines = new Set(
+    members
+      .map((m) => professionals[m.professional_id]?.type)
+      .filter((t): t is string => typeof t === "string"),
+  );
+  const squadTier = computeSquadTier({
+    memberCount: members.length,
+    uniqueDisciplineCount: uniqueDisciplines.size,
+    completionRatePct: outcomeBadge?.completion_rate_pct ?? null,
+    outcomesSubmitted: outcomeBadge?.outcomes_submitted ?? 0,
+  });
+
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
     { name: "Experts", url: absoluteUrl("/advisors") },
@@ -260,11 +276,10 @@ export default async function TeamProfilePage({ params }: PageProps) {
             </div>
           )}
 
-          {outcomeBadge && (
-            <div className="flex items-center gap-2">
-              <OutcomeBadge badge={outcomeBadge} />
-            </div>
-          )}
+          <div className="flex items-center gap-2 flex-wrap">
+            <SquadTierBadge badge={squadTier} />
+            {outcomeBadge && <OutcomeBadge badge={outcomeBadge} />}
+          </div>
 
           <BundledPricePreview estimate={priceEstimate} />
 
