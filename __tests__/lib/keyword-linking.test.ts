@@ -345,3 +345,89 @@ describe("linkDensityForCategory", () => {
     expect(linkDensityForCategory(undefined, 2)).toBe(2);
   });
 });
+
+describe("splitByLinks — edge cases (iter5 regression suite)", () => {
+  it("keyword at the very start of text is linked", () => {
+    const out = splitByLinks("CommSec is great.");
+    const first = out[0];
+    expect(typeof first).not.toBe("string");
+    if (typeof first !== "string") {
+      expect(first.href).toBe("/broker/commsec");
+    }
+  });
+
+  it("keyword at the very end of text is linked", () => {
+    const out = splitByLinks("We recommend CommSec");
+    const last = out[out.length - 1];
+    expect(typeof last).not.toBe("string");
+    if (typeof last !== "string") {
+      expect(last.href).toBe("/broker/commsec");
+    }
+  });
+
+  it("multiple distinct keywords all get linked (unlimited mode)", () => {
+    const text = "CommSec and SelfWealth and Pearler and Moomoo.";
+    const out = splitByLinks(text);
+    const links = out.filter((p) => typeof p !== "string");
+    expect(links.length).toBe(4);
+    const hrefs = links.map((l) => (typeof l !== "string" ? l.href : "")).sort();
+    expect(hrefs).toEqual([
+      "/broker/commsec",
+      "/broker/moomoo",
+      "/broker/pearler",
+      "/broker/selfwealth",
+    ].sort());
+  });
+
+  it("reconstructs the original text faithfully with multiple links", () => {
+    const original = "CommSec and SelfWealth are both CHESS-sponsored.";
+    const out = splitByLinks(original);
+    const reconstructed = out
+      .map((p) => (typeof p === "string" ? p : p.label))
+      .join("");
+    expect(reconstructed).toBe(original);
+  });
+
+  it("handles text with no alphabetic characters gracefully", () => {
+    const out = splitByLinks("123 456 789");
+    expect(out).toHaveLength(1);
+    expect(out[0]).toBe("123 456 789");
+  });
+
+  it("ignores partial keyword matches inside longer words (word boundary)", () => {
+    const out = splitByLinks("The FIRBs decision was final.");
+    const links = out.filter((p) => typeof p !== "string");
+    expect(links.length).toBe(0);
+  });
+});
+
+describe("linkifyHtml — edge cases (iter5 regression suite)", () => {
+  it("injects rel attribute from target definition", () => {
+    const term = GLOSSARY_LINK_TARGETS[0];
+    if (!term) return;
+    const out = linkifyHtml(`<p>${term.keyword} and more text.</p>`);
+    expect(out).toContain('rel="glossary"');
+  });
+
+  it("does not inject links inside <code> blocks even when surrounded by text", () => {
+    const out = linkifyHtml(
+      "<p>Before CommSec <code>const commsec = true</code> after CommSec.</p>",
+    );
+    const linkCount = (out.match(/href="\/broker\/commsec"/g) || []).length;
+    expect(linkCount).toBe(1);
+    expect(out).toContain("<code>const commsec = true</code>");
+  });
+
+  it("preserves title attribute for targets that define one", () => {
+    const out = linkifyHtml("<p>Find an SMSF accountant today.</p>");
+    expect(out).toContain('href="/advisors/smsf-accountants"');
+    expect(out).toContain(">SMSF accountant</a>");
+  });
+
+  it("the injected link class is always the expected amber style", () => {
+    const out = linkifyHtml("<p>CommSec is popular.</p>");
+    expect(out).toContain(
+      'class="text-amber-700 underline decoration-amber-300 underline-offset-2 hover:text-amber-800"',
+    );
+  });
+});
