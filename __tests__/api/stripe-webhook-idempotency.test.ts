@@ -30,7 +30,7 @@ import {
 // ─── Swappable mock target ────────────────────────────────────────────────────
 // vi.mock is hoisted, so all describe blocks share a single mock factory.
 // Each describe's beforeEach swaps `activeMockFrom` to its own harness.mockFrom.
-let activeMockFrom: ReturnType<typeof vi.fn>;
+let activeMockFrom: ReturnType<typeof vi.fn<(...args: unknown[]) => unknown>>;
 
 // ─── Module mocks (must be hoisted before route import) ──────────────────────
 
