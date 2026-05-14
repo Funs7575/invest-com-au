@@ -19,6 +19,7 @@ interface ArticleRow {
   tags: string[] | null;
   status: string;
   updated_at: string;
+  link_density_override: number | null;
 }
 
 interface TemplateRow {
@@ -56,7 +57,7 @@ export default async function AdminArticleEditorPage({ params }: Props) {
   if (slug !== "new") {
     const { data } = await supabase
       .from("articles")
-      .select("id, slug, title, excerpt, content, category, tags, status, updated_at")
+      .select("id, slug, title, excerpt, content, category, tags, status, updated_at, link_density_override")
       .eq("slug", slug)
       .maybeSingle();
     article = (data as ArticleRow | null) || null;
@@ -87,6 +88,7 @@ export default async function AdminArticleEditorPage({ params }: Props) {
                   category: article.category,
                   tags: article.tags,
                   status: article.status,
+                  link_density_override: article.link_density_override,
                 }
               : null
           }
