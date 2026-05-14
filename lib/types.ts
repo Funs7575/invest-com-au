@@ -152,6 +152,7 @@ export interface Article {
   reviewer?: TeamMember;
   reviewed_at?: string;
   changelog?: { date: string; summary: string }[];
+  link_density_override?: number | null;
   created_at: string;
   updated_at: string;
 }
@@ -1344,14 +1345,20 @@ export interface FirmInvitation {
 // ═══════════════════════════════════════════════
 
 export type InvestListingVertical =
+  | 'aquaculture'
   | 'business'
+  | 'carbon-environmental-markets'
   | 'commercial_property'
+  | 'digital-infrastructure'
   | 'energy'
   | 'farmland'
   | 'franchise'
   | 'fund'
+  | 'livestock'
   | 'mining'
   | 'pre_ipo'
+  | 'public-social-infrastructure'
+  | 'royalties'
   | 'startup';
 
 export interface InvestmentListing {

@@ -2,34 +2,17 @@
 
 import Script from "next/script";
 import { useEffect, useState } from "react";
+import { hasAnalyticsConsent } from "@/lib/consent";
 
 const FB_PIXEL_ID = process.env.NEXT_PUBLIC_FB_PIXEL_ID;
 const GOOGLE_ADS_ID = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID;
-
-function hasConsent(): boolean {
-  if (typeof window === "undefined") return false;
-  try {
-    const raw = localStorage.getItem("cookie-preferences");
-    if (raw) {
-      const prefs = JSON.parse(raw);
-      return prefs.analytics === true;
-    }
-    return localStorage.getItem("cookie-consent") === "accepted";
-  } catch {
-    return false;
-  }
-}
 
 export default function TrackingPixels() {
   const [consent, setConsent] = useState(false);
 
   useEffect(() => {
-    // Read initial consent from localStorage on mount — must run client-side,
-    // can't use lazy initial state because hasConsent() reads window/localStorage.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setConsent(hasConsent());
-    // Re-check consent on storage changes (fires from other tabs)
-    const handler = () => setConsent(hasConsent());
+    setConsent(hasAnalyticsConsent());
+    const handler = () => setConsent(hasAnalyticsConsent());
     window.addEventListener("storage", handler);
     return () => window.removeEventListener("storage", handler);
   }, []);

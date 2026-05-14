@@ -9,6 +9,8 @@ import { setQuizSessionCookie } from '@/lib/quiz-profile';
 import { syncQuizToInvestorProfile } from '@/lib/investor-profiles';
 import { createClient } from '@/lib/supabase/server';
 import { escapeHtml } from "@/lib/html-escape";
+import { UnifiedAnswersSchema } from "@/lib/quiz-answer-schemas";
+import type { UnifiedAnswers } from "@/lib/quiz-answer-schemas";
 
 /**
  * Body schema. The legacy `answers` (string[]) is preserved for
@@ -18,24 +20,10 @@ import { escapeHtml } from "@/lib/html-escape";
  * property_sub, location, investor_country, visa_status — for downstream
  * surfaces (drip cron variants, /best pre-filter, /compare prefill).
  *
- * Strict semantic validation (email format, disposable domains) lives
- * below; this schema only types the shape.
+ * Per-field enum validation lives in lib/quiz-answer-schemas.ts (QQ-01).
+ * Unknown values degrade to undefined via .catch() — preserves backward
+ * compatibility with older app versions in flight.
  */
-const UnifiedAnswersSchema = z.object({
-  location: z.string().max(50).optional(),
-  goal: z.string().max(50).optional(),
-  mode: z.string().max(50).optional(),
-  experience: z.string().max(50).optional(),
-  complexity: z.string().max(50).optional(),
-  amount: z.string().max(50).optional(),
-  priority: z.string().max(50).optional(),
-  advisor_type: z.string().max(50).optional(),
-  property_sub: z.string().max(50).optional(),
-  investor_country: z.string().max(50).optional(),
-  visa_status: z.string().max(50).optional(),
-  investor_goal_intl: z.string().max(50).optional(),
-}).optional();
-
 const QuizLeadSchema = z.object({
   email: z.string().optional(),
   name: z.string().optional(),
@@ -44,8 +32,6 @@ const QuizLeadSchema = z.object({
   top_match_slug: z.string().optional(),
   session_id: z.string().optional(),
 });
-
-type UnifiedAnswers = z.infer<typeof UnifiedAnswersSchema>;
 
 const log = logger('quiz-lead');
 

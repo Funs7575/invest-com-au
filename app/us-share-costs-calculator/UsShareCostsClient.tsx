@@ -5,6 +5,7 @@ import Link from "next/link";
 import Icon from "@/components/Icon";
 import type { Broker } from "@/lib/types";
 import FxFeeCalculator from "@/app/calculators/_components/FxFeeCalculator";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 export default function UsShareCostsClient({ brokers }: { brokers: Broker[] }) {
   const searchParams = useSearchParams();
@@ -42,6 +43,13 @@ export default function UsShareCostsClient({ brokers }: { brokers: Broker[] }) {
         </div>
 
         <FxFeeCalculator brokers={brokers} searchParams={searchParams} />
+
+        <CalculatorLeadCapture
+          calcSlug="us-share-costs-calculator"
+          calcTitle="US share trading cost"
+          need="tax"
+          contextKeys={["us-shares", "withholding-tax", "fx-cost"]}
+        />
 
         <div className="mt-8 md:mt-12 space-y-6">
           <div className="bg-white border border-slate-200 rounded-xl p-5 md:p-6">
