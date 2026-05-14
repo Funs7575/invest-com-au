@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import { formatAUD } from "@/lib/currency";
+import { useCalculatorState } from "@/hooks/use-calculator-state";
 
 const TAX_RATES: Array<{ id: string; label: string; rate: number; isSmsf?: boolean; pension?: boolean }> = [
   { id: "0",        label: "0% — under threshold",   rate: 0 },
@@ -21,6 +22,32 @@ export default function FrankingCalculatorClient() {
   const [dividend, setDividend] = useState<number>(1_000);
   const [frankingPct, setFrankingPct] = useState<number>(100);
   const [taxRateId, setTaxRateId] = useState<string>("30");
+
+  const {
+    value: persistedInputs,
+    setValue: setPersistedInputs,
+    isHydrated: persistHydrated,
+  } = useCalculatorState<{
+    dividend: number;
+    franking_pct: number;
+    tax_rate_id: string;
+  }>("dividends_franking_calculator", {
+    dividend: 1_000,
+    franking_pct: 100,
+    tax_rate_id: "30",
+  });
+
+  useEffect(() => {
+    if (!persistHydrated) return;
+    if (typeof persistedInputs.dividend === "number") setDividend(persistedInputs.dividend);
+    if (typeof persistedInputs.franking_pct === "number") setFrankingPct(persistedInputs.franking_pct);
+    if (typeof persistedInputs.tax_rate_id === "string") setTaxRateId(persistedInputs.tax_rate_id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- hydrate once
+  }, [persistHydrated]);
+
+  useEffect(() => {
+    setPersistedInputs({ dividend, franking_pct: frankingPct, tax_rate_id: taxRateId });
+  }, [dividend, frankingPct, taxRateId, setPersistedInputs]);
 
   const calc = useMemo(() => {
     const tr = TAX_RATES.find((r) => r.id === taxRateId) || TAX_RATES[2]!;

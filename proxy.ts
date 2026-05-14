@@ -93,7 +93,12 @@ export async function proxy(request: NextRequest) {
   response.headers.set('X-Frame-Options', 'DENY')
   response.headers.set('X-Content-Type-Options', 'nosniff')
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
-  response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(self)')
+  response.headers.set(
+    'Permissions-Policy',
+    'camera=(), microphone=(), geolocation=(self), payment=(), usb=(), gyroscope=(), magnetometer=(), midi=(), ambient-light-sensor=(), battery=(), screen-wake-lock=()'
+  )
+  // Spectre/side-channel isolation: allow popups so Supabase OAuth flows work.
+  response.headers.set('Cross-Origin-Opener-Policy', 'same-origin-allow-popups')
   response.headers.set('X-DNS-Prefetch-Control', 'on')
   response.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload')
 
@@ -150,7 +155,7 @@ export async function proxy(request: NextRequest) {
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob: https:",
     "font-src 'self' data:",
-    "connect-src 'self' https://*.supabase.co https://va.vercel-scripts.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com https://api.stripe.com https://cal.com https://app.cal.com https://*.sentry.io https://*.ingest.sentry.io",
+    "connect-src 'self' https://*.supabase.co https://va.vercel-scripts.com https://www.googletagmanager.com https://api.stripe.com https://cal.com https://app.cal.com https://*.sentry.io https://*.ingest.sentry.io https://eu.i.posthog.com https://us.i.posthog.com https://plausible.io",
     "frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://www.youtube-nocookie.com https://player.vimeo.com https://cal.com",
     "frame-ancestors 'none'",
     "base-uri 'self'",

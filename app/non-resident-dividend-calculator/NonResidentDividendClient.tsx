@@ -1,8 +1,10 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
+import { useCalculatorState } from "@/hooks/use-calculator-state";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 /**
  * Non-resident Australian dividend calculator
@@ -61,6 +63,32 @@ export default function NonResidentDividendClient() {
   const [dividend, setDividend] = useState<string>("10000");
   const [frankingPct, setFrankingPct] = useState<number>(100);
   const [countryCode, setCountryCode] = useState<string>("US");
+
+  const {
+    value: persistedInputs,
+    setValue: setPersistedInputs,
+    isHydrated: persistHydrated,
+  } = useCalculatorState<{
+    dividend: string;
+    franking_pct: number;
+    country_code: string;
+  }>("non_resident_dividend_calculator", {
+    dividend: "10000",
+    franking_pct: 100,
+    country_code: "US",
+  });
+
+  useEffect(() => {
+    if (!persistHydrated) return;
+    if (typeof persistedInputs.dividend === "string") setDividend(persistedInputs.dividend);
+    if (typeof persistedInputs.franking_pct === "number") setFrankingPct(persistedInputs.franking_pct);
+    if (typeof persistedInputs.country_code === "string") setCountryCode(persistedInputs.country_code);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- hydrate once
+  }, [persistHydrated]);
+
+  useEffect(() => {
+    setPersistedInputs({ dividend, franking_pct: frankingPct, country_code: countryCode });
+  }, [dividend, frankingPct, countryCode, setPersistedInputs]);
 
   const country = COUNTRIES.find((c) => c.code === countryCode) || COUNTRIES[0]!;
   const dividendNum = Math.max(0, parseFloat(dividend) || 0);
@@ -256,6 +284,15 @@ export default function NonResidentDividendClient() {
                 </tbody>
               </table>
             </div>
+          </div>
+
+          <div className="mt-6">
+            <CalculatorLeadCapture
+              calcSlug="non-resident-dividend-calculator"
+              calcTitle="non-resident dividend"
+              need="tax"
+              contextKeys={["non-resident", "withholding-tax", "cross-border"]}
+            />
           </div>
         </div>
       </section>

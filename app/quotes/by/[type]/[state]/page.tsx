@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import { createClient } from "@/lib/supabase/server";
 import Icon from "@/components/Icon";
@@ -195,8 +196,7 @@ export default async function QuotesByTypeStatePage({ params }: PageProps) {
                   className="flex items-center gap-3 bg-white border border-slate-200 hover:border-amber-300 rounded-xl p-3"
                 >
                   {a.photo_url ? (
-                    /* eslint-disable-next-line @next/next/no-img-element */
-                    <img src={a.photo_url} alt={a.name} className="w-10 h-10 rounded-full object-cover border border-slate-200" />
+                    <Image src={a.photo_url} alt={a.name} width={40} height={40} className="rounded-full object-cover border border-slate-200" />
                   ) : (
                     <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center">
                       <Icon name="user" size={16} className="text-slate-400" />

@@ -1,6 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+
+const log = logger("api:user-profile");
 
 /**
  * Body schema for PUT. Every field is optional and value-validating,
@@ -147,13 +150,47 @@ export async function PUT(req: NextRequest) {
 
   // Upsert profile
   try {
-    const { data: profile, error } = await supabase
+    const upsertProfile = async (fields: Record<string, unknown>) => supabase
       .from("user_profiles")
-      .upsert({ id: user.id, email: user.email, ...allowed }, { onConflict: "id" })
+      .upsert({ id: user.id, email: user.email, ...fields }, { onConflict: "id" })
       .select()
       .single();
 
+    const { data: profile, error } = await upsertProfile(allowed);
+
     if (error) {
+      // Onboarding's final detail fields are optional. In production, a single
+      // stale enum/check constraint or newly-added profile column should not
+      // trap users on /onboarding after they have already completed the
+      // required steps. If an enriched onboarding save fails, retry the minimum
+      // completion update and keep the existing profile details intact.
+      if (allowed.onboarding_completed === true) {
+        log.warn("Full onboarding profile save failed; retrying completion-only update", {
+          code: error.code,
+          details: error.details,
+          hint: error.hint,
+          message: error.message,
+          user_id: user.id,
+        });
+
+        const retry = await upsertProfile({
+          onboarding_completed: true,
+          updated_at: allowed.updated_at,
+        });
+
+        if (!retry.error) {
+          return NextResponse.json({ profile: retry.data });
+        }
+
+        log.error("Completion-only onboarding profile save failed", {
+          code: retry.error.code,
+          details: retry.error.details,
+          hint: retry.error.hint,
+          message: retry.error.message,
+          user_id: user.id,
+        });
+      }
+
       return NextResponse.json(
         { error: "Something went wrong on our end. Try again in a moment." },
         { status: 500 }
@@ -161,7 +198,8 @@ export async function PUT(req: NextRequest) {
     }
 
     return NextResponse.json({ profile });
-  } catch {
+  } catch (err) {
+    log.error("User profile save threw", { err, user_id: user.id });
     return NextResponse.json(
       { error: "Connection issue. Please try again." },
       { status: 503 }

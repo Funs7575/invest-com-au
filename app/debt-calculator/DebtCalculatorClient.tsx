@@ -5,10 +5,12 @@ import Link from "next/link";
 import Icon from "@/components/Icon";
 import SocialProofCounter from "@/components/SocialProofCounter";
 import AdvisorMatchCTA from "@/components/AdvisorMatchCTA";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 import { trackEvent, trackPageDuration } from "@/lib/tracking";
 import { getStoredUtm } from "@/components/UtmCapture";
 import { storeQualificationData } from "@/lib/qualification-store";
 import { formatCurrency } from "@/lib/utils";
+import { useCalculatorState } from "@/hooks/use-calculator-state";
 
 type DebtType = "credit_card" | "personal_loan" | "car_loan" | "hecs" | "other";
 
@@ -97,10 +99,12 @@ interface Results {
 
 let nextDebtId = 2;
 
+const DEFAULT_DEBTS: Debt[] = [
+  { id: 1, type: "credit_card", balance: 8000, rate: 20, minPayment: 200 },
+];
+
 export default function DebtCalculatorClient() {
-  const [debts, setDebts] = useState<Debt[]>([
-    { id: 1, type: "credit_card", balance: 8000, rate: 20, minPayment: 200 },
-  ]);
+  const [debts, setDebts] = useState<Debt[]>(DEFAULT_DEBTS);
   const [consolidationRate, setConsolidationRate] = useState(8);
   const [consolidationTerm, setConsolidationTerm] = useState(5);
   const [showResults, setShowResults] = useState(false);
@@ -108,6 +112,36 @@ export default function DebtCalculatorClient() {
   const [emailGated, setEmailGated] = useState(false);
   const [email, setEmail] = useState("");
   const [emailSubmitted, setEmailSubmitted] = useState(false);
+
+  const {
+    value: persistedInputs,
+    setValue: setPersistedInputs,
+    isHydrated: persistHydrated,
+  } = useCalculatorState<{
+    debts: Debt[];
+    consolidation_rate: number;
+    consolidation_term: number;
+  }>("debt_calculator", {
+    debts: DEFAULT_DEBTS,
+    consolidation_rate: 8,
+    consolidation_term: 5,
+  });
+
+  useEffect(() => {
+    if (!persistHydrated) return;
+    if (Array.isArray(persistedInputs.debts) && persistedInputs.debts.length > 0) {
+      setDebts(persistedInputs.debts);
+      const maxId = Math.max(...persistedInputs.debts.map((d) => d.id), 1);
+      nextDebtId = maxId + 1;
+    }
+    if (typeof persistedInputs.consolidation_rate === "number") setConsolidationRate(persistedInputs.consolidation_rate);
+    if (typeof persistedInputs.consolidation_term === "number") setConsolidationTerm(persistedInputs.consolidation_term);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- hydrate once
+  }, [persistHydrated]);
+
+  useEffect(() => {
+    setPersistedInputs({ debts, consolidation_rate: consolidationRate, consolidation_term: consolidationTerm });
+  }, [debts, consolidationRate, consolidationTerm, setPersistedInputs]);
 
   useEffect(() => { trackPageDuration("/debt-calculator"); }, []);
 
@@ -543,6 +577,13 @@ export default function DebtCalculatorClient() {
                 description="A debt advisor can negotiate with creditors, restructure repayments, and create a plan to get you debt-free faster."
               />
             </div>
+
+            <CalculatorLeadCapture
+              calcSlug="debt-calculator"
+              calcTitle="debt consolidation"
+              need="planning"
+              contextKeys={["debt-payoff", "consolidation"]}
+            />
 
             {/* SEO content */}
             <div className="bg-white border border-slate-200 rounded-2xl p-5 md:p-8">

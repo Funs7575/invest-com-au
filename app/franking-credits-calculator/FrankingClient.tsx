@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import FrankingCalculator from "@/app/calculators/_components/FrankingCalculator";
+import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 export default function FrankingClient() {
   const searchParams = useSearchParams();
@@ -40,6 +41,13 @@ export default function FrankingClient() {
         </div>
 
         <FrankingCalculator searchParams={searchParams} />
+
+        <CalculatorLeadCapture
+          calcSlug="franking-credits-calculator"
+          calcTitle="franking credit"
+          need="tax"
+          contextKeys={["franking-credits", "dividend-tax"]}
+        />
 
         <div className="mt-8 md:mt-12 space-y-6">
           <div className="bg-white border border-slate-200 rounded-xl p-5 md:p-6">

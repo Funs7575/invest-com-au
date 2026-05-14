@@ -4,6 +4,9 @@ import {
   GLOSSARY_LINK_TARGETS,
   linkifyHtml,
   splitByLinks,
+  pillarPathForCategory,
+  getClusterPaths,
+  linkDensityForCategory,
 } from "@/lib/keyword-linking";
 
 describe("INTERNAL_LINK_TARGETS", () => {
@@ -229,5 +232,202 @@ describe("linkifyHtml", () => {
     const out = linkifyHtml("<p>CommSec without closing");
     expect(out).toContain("<p>");
     expect(out.length).toBeGreaterThan(0);
+  });
+});
+
+describe("pillarPathForCategory", () => {
+  it("maps known categories to their pillar paths", () => {
+    expect(pillarPathForCategory("smsf")).toBe("/smsf");
+    expect(pillarPathForCategory("tax")).toBe("/tax");
+    expect(pillarPathForCategory("etfs")).toBe("/etfs");
+    expect(pillarPathForCategory("property")).toBe("/property");
+  });
+
+  it("handles mixed-case category strings", () => {
+    expect(pillarPathForCategory("SMSF")).toBe("/smsf");
+    expect(pillarPathForCategory("Tax & Strategy")).toBe("/tax");
+  });
+
+  it("returns undefined for unknown or missing categories", () => {
+    expect(pillarPathForCategory("news")).toBeUndefined();
+    expect(pillarPathForCategory()).toBeUndefined();
+    expect(pillarPathForCategory("")).toBeUndefined();
+  });
+});
+
+describe("getClusterPaths", () => {
+  it("returns hrefs for a known pillar", () => {
+    const paths = getClusterPaths("/smsf");
+    expect(paths.has("/smsf")).toBe(true);
+    expect(paths.size).toBeGreaterThan(1);
+  });
+
+  it("returns an empty set for an unknown pillar path", () => {
+    expect(getClusterPaths("/unknown-path").size).toBe(0);
+  });
+});
+
+describe("splitByLinks — cluster-aware selection", () => {
+  it("without pillarPath: injects first-N links in text order", () => {
+    // CommSec appears first; SelfWealth second. Both are /broker/ paths — not SMSF cluster.
+    const text = "CommSec and SelfWealth are popular brokers. SMSF investors use different platforms.";
+    const out = splitByLinks(text, 1);
+    const links = out.filter((p) => typeof p !== "string");
+    expect(links).toHaveLength(1);
+    // Without cluster context, CommSec (first in text) wins.
+    expect(links[0]).toMatchObject({ href: "/broker/commsec" });
+  });
+
+  it("with SMSF pillarPath: prefers cluster-relevant SMSF link over earlier broker link", () => {
+    // CommSec appears first, SMSF appears second. With smsf cluster, SMSF should win.
+    const text = "CommSec and SelfWealth are popular brokers. SMSF investors use different platforms.";
+    const out = splitByLinks(text, 1, "/smsf");
+    const links = out.filter((p) => typeof p !== "string");
+    expect(links).toHaveLength(1);
+    expect(links[0]).toMatchObject({ href: "/smsf" });
+  });
+
+  it("preserves all text content when cluster selection skips an earlier match", () => {
+    const original = "CommSec and SelfWealth are popular. SMSF investors differ.";
+    const out = splitByLinks(original, 1, "/smsf");
+    const reconstructed = out.map((p) => (typeof p === "string" ? p : p.label)).join("");
+    expect(reconstructed).toBe(original);
+  });
+
+  it("fills remaining cap slots with non-cluster links after cluster links are selected", () => {
+    // With maxLinks=2 and SMSF cluster: first slot = /smsf (cluster), second = CommSec (generic).
+    const text = "CommSec and SelfWealth are brokers. SMSF investors need an SMSF accountant.";
+    const out = splitByLinks(text, 2, "/smsf");
+    const links = out.filter((p) => typeof p !== "string");
+    expect(links).toHaveLength(2);
+    const hrefs = links.map((l) => (typeof l !== "string" ? l.href : ""));
+    // SMSF accountant (/advisors/smsf-accountants) is cluster-relevant (supporting)
+    // CommSec or SelfWealth fills the second slot
+    expect(hrefs.some((h) => h.startsWith("/smsf") || h.startsWith("/advisors/smsf"))).toBe(true);
+  });
+
+  it("falls back to original behaviour when pillarPath resolves to no cluster", () => {
+    const text = "CommSec and SelfWealth are popular brokers.";
+    const withUnknown = splitByLinks(text, 1, "/unknown-pillar");
+    const withoutPillar = splitByLinks(text, 1);
+    // Both should inject CommSec (first in text) since no cluster context applies
+    expect(withUnknown).toEqual(withoutPillar);
+  });
+});
+
+describe("linkDensityForCategory", () => {
+  it("returns higher density for long-form categories like smsf and tax", () => {
+    expect(linkDensityForCategory("smsf")).toBeGreaterThan(5);
+    expect(linkDensityForCategory("tax")).toBeGreaterThan(5);
+  });
+
+  it("returns lower density for short-format categories like calculators", () => {
+    expect(linkDensityForCategory("calculators")).toBeLessThan(5);
+  });
+
+  it("returns the default density for unknown categories", () => {
+    expect(linkDensityForCategory("news")).toBe(5);
+    expect(linkDensityForCategory("unknown-vertical")).toBe(5);
+  });
+
+  it("returns the default density when category is undefined or empty", () => {
+    expect(linkDensityForCategory(undefined)).toBe(5);
+    expect(linkDensityForCategory("")).toBe(5);
+  });
+
+  it("is case-insensitive", () => {
+    expect(linkDensityForCategory("SMSF")).toBe(linkDensityForCategory("smsf"));
+    expect(linkDensityForCategory("Tax & Strategy")).toBe(linkDensityForCategory("tax & strategy"));
+  });
+
+  it("accepts a custom default density", () => {
+    expect(linkDensityForCategory("unknown", 3)).toBe(3);
+    expect(linkDensityForCategory(undefined, 2)).toBe(2);
+  });
+});
+
+describe("splitByLinks — edge cases (iter5 regression suite)", () => {
+  it("keyword at the very start of text is linked", () => {
+    const out = splitByLinks("CommSec is great.");
+    const first = out[0];
+    expect(typeof first).not.toBe("string");
+    if (typeof first !== "string") {
+      expect(first.href).toBe("/broker/commsec");
+    }
+  });
+
+  it("keyword at the very end of text is linked", () => {
+    const out = splitByLinks("We recommend CommSec");
+    const last = out[out.length - 1];
+    expect(typeof last).not.toBe("string");
+    if (typeof last !== "string") {
+      expect(last.href).toBe("/broker/commsec");
+    }
+  });
+
+  it("multiple distinct keywords all get linked (unlimited mode)", () => {
+    const text = "CommSec and SelfWealth and Pearler and Moomoo.";
+    const out = splitByLinks(text);
+    const links = out.filter((p) => typeof p !== "string");
+    expect(links.length).toBe(4);
+    const hrefs = links.map((l) => (typeof l !== "string" ? l.href : "")).sort();
+    expect(hrefs).toEqual([
+      "/broker/commsec",
+      "/broker/moomoo",
+      "/broker/pearler",
+      "/broker/selfwealth",
+    ].sort());
+  });
+
+  it("reconstructs the original text faithfully with multiple links", () => {
+    const original = "CommSec and SelfWealth are both CHESS-sponsored.";
+    const out = splitByLinks(original);
+    const reconstructed = out
+      .map((p) => (typeof p === "string" ? p : p.label))
+      .join("");
+    expect(reconstructed).toBe(original);
+  });
+
+  it("handles text with no alphabetic characters gracefully", () => {
+    const out = splitByLinks("123 456 789");
+    expect(out).toHaveLength(1);
+    expect(out[0]).toBe("123 456 789");
+  });
+
+  it("ignores partial keyword matches inside longer words (word boundary)", () => {
+    const out = splitByLinks("The FIRBs decision was final.");
+    const links = out.filter((p) => typeof p !== "string");
+    expect(links.length).toBe(0);
+  });
+});
+
+describe("linkifyHtml — edge cases (iter5 regression suite)", () => {
+  it("injects rel attribute from target definition", () => {
+    const term = GLOSSARY_LINK_TARGETS[0];
+    if (!term) return;
+    const out = linkifyHtml(`<p>${term.keyword} and more text.</p>`);
+    expect(out).toContain('rel="glossary"');
+  });
+
+  it("does not inject links inside <code> blocks even when surrounded by text", () => {
+    const out = linkifyHtml(
+      "<p>Before CommSec <code>const commsec = true</code> after CommSec.</p>",
+    );
+    const linkCount = (out.match(/href="\/broker\/commsec"/g) || []).length;
+    expect(linkCount).toBe(1);
+    expect(out).toContain("<code>const commsec = true</code>");
+  });
+
+  it("preserves title attribute for targets that define one", () => {
+    const out = linkifyHtml("<p>Find an SMSF accountant today.</p>");
+    expect(out).toContain('href="/advisors/smsf-accountants"');
+    expect(out).toContain(">SMSF accountant</a>");
+  });
+
+  it("the injected link class is always the expected amber style", () => {
+    const out = linkifyHtml("<p>CommSec is popular.</p>");
+    expect(out).toContain(
+      'class="text-amber-700 underline decoration-amber-300 underline-offset-2 hover:text-amber-800"',
+    );
   });
 });
