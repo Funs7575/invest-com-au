@@ -32,6 +32,13 @@ export async function POST(request: NextRequest) {
   const category = typeof body.category === "string" ? body.category : null;
   const tags = Array.isArray(body.tags) ? (body.tags as string[]) : [];
   const status = body.status === "published" ? "published" : "draft";
+  const rawDensity = body.link_density_override;
+  const linkDensityOverride =
+    rawDensity === null || rawDensity === undefined
+      ? null
+      : typeof rawDensity === "number" && rawDensity >= 0 && rawDensity <= 20
+        ? Math.round(rawDensity)
+        : null;
 
   if (!slug || !/^[a-z0-9-]+$/.test(slug)) {
     return NextResponse.json(
@@ -79,6 +86,7 @@ export async function POST(request: NextRequest) {
       category: category || null,
       tags,
       status,
+      link_density_override: linkDensityOverride,
       ...(status === "published"
         ? { published_at: new Date().toISOString() }
         : {}),
