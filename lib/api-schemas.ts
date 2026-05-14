@@ -227,6 +227,25 @@ export const BriefStatusUpdateRequest = z.object({
   note: z.string().max(2000).optional(),
 });
 
+// ─── /api/teams/[slug]/briefs/[briefId]/* (Pro Squad inbox) ───────
+
+export const SquadClaimBriefRequest = z.object({
+  notes: z.string().max(2000).optional(),
+});
+
+export const SquadHandoffBriefRequest = z.object({
+  note: z.string().max(2000).optional(),
+  to_professional_id: z.number().int().positive().optional(),
+});
+
+export const SquadCompleteBriefRequest = z.object({
+  note: z.string().max(2000).optional(),
+});
+
+export const SquadReleaseBriefRequest = z.object({
+  note: z.string().max(2000).optional(),
+});
+
 // ─── /api/expert-teams ─────────────────────────────────────────────
 
 export const TEAM_TYPES = [
