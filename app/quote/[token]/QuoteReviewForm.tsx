@@ -34,7 +34,7 @@ export default function QuoteReviewForm(props: Props) {
     setSubmitting(true);
     setError(null);
     try {
-      const res = await fetch(`/api/quotes/${props.token}/accept`, {
+      const res = await fetch(`/api/fixed-quotes/${props.token}/accept`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
       });
@@ -54,7 +54,7 @@ export default function QuoteReviewForm(props: Props) {
     setSubmitting(true);
     setError(null);
     try {
-      const res = await fetch(`/api/quotes/${props.token}/decline`, {
+      const res = await fetch(`/api/fixed-quotes/${props.token}/decline`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ reason: declineReason.trim() || null }),
