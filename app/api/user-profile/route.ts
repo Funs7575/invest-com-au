@@ -68,7 +68,7 @@ export async function GET() {
     }
 
     const { data: profile } = await supabase
-      .from("user_profiles")
+      .from("profiles")
       .select("*")
       .eq("id", user.id)
       .single();
@@ -151,7 +151,7 @@ export async function PUT(req: NextRequest) {
   // Upsert profile
   try {
     const upsertProfile = async (fields: Record<string, unknown>) => supabase
-      .from("user_profiles")
+      .from("profiles")
       .upsert({ id: user.id, email: user.email, ...fields }, { onConflict: "id" })
       .select()
       .single();
