@@ -340,6 +340,15 @@ const nextConfig: NextConfig = {
         destination: "/global-investing/etfs/global",
         permanent: true,
       },
+      // ── PMP-01: /quotes/post relocated to /briefs/new ──
+      // The bid-auction Post-a-Request flow is replaced by the structured
+      // Investor Brief flow at /briefs/new. Legacy /quotes/* job pages
+      // remain live for previously-posted auction-style requests.
+      {
+        source: "/quotes/post",
+        destination: "/briefs/new",
+        permanent: true,
+      },
       // ── W-14: /grants hub relocated to /startup/grants ──
       // Canonical URL moves so the grants hub sits inside the /startup
       // content cluster. Subroutes (/grants/eligibility-quiz, /grants/rd-tax-

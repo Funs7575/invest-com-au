@@ -34,6 +34,7 @@ async function getOpenJobs(): Promise<JobRow[]> {
     .select("id, slug, job_title, job_description, budget_band, advisor_types, location, status, ends_at, created_at")
     .eq("is_public", true)
     .eq("source", "public_job")
+    .eq("flow_type", "auction")
     .eq("status", "open")
     .gt("ends_at", now)
     .order("created_at", { ascending: false })
