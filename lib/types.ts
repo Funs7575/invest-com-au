@@ -342,6 +342,40 @@ export interface BrokerReviewStats {
   avg_reliability_rating?: number;
 }
 
+export interface FundReview {
+  id: number;
+  fund_id: number;
+  fund_slug: string;
+  display_name: string;
+  email?: string;
+  rating: number;
+  title: string;
+  body: string;
+  pros?: string | null;
+  cons?: string | null;
+  performance_rating?: number | null;
+  communication_rating?: number | null;
+  fees_rating?: number | null;
+  manager_rating?: number | null;
+  hold_period_months?: number | null;
+  status: 'pending' | 'verified' | 'approved' | 'rejected';
+  verification_token?: string;
+  verified_at?: string | null;
+  moderation_note?: string | null;
+  created_at: string;
+  updated_at?: string;
+}
+
+export interface FundReviewStats {
+  fund_id: number;
+  review_count: number;
+  average_rating: number;
+  avg_performance_rating?: number;
+  avg_communication_rating?: number;
+  avg_fees_rating?: number;
+  avg_manager_rating?: number;
+}
+
 export interface SwitchStory {
   id: number;
   source_broker_id: number;
