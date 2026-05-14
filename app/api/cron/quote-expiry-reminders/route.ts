@@ -29,6 +29,7 @@ export async function GET(req: NextRequest) {
     .from("advisor_auctions")
     .select("id, slug, job_title, contact_email, contact_name, ends_at")
     .eq("source", "public_job")
+    .eq("flow_type", "auction")
     .eq("is_public", true)
     .eq("status", "open")
     .is("expiry_reminder_sent_at", null)
