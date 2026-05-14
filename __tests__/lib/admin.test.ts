@@ -17,10 +17,7 @@ describe("getAdminEmails — reads ADMIN_EMAILS env at call time", () => {
   });
 
   it("defaults to the built-in admin list when env is unset", () => {
-    expect(getAdminEmails()).toEqual([
-      "admin@invest.com.au",
-      "finn@invest.com.au",
-    ]);
+    expect(getAdminEmails()).toEqual(["admin@invest.com.au"]);
   });
 
   it("parses a comma-separated list", () => {
@@ -83,7 +80,7 @@ describe("getFinObjectionEmails — narrower Fin-only allowlist", () => {
   });
 
   it("falls back to the hardcoded Fin default when neither env var is set", () => {
-    expect(getFinObjectionEmails()).toEqual(["finn@invest.com.au"]);
+    expect(getFinObjectionEmails()).toEqual(["ops@invest.com.au"]);
   });
 
   it("falls back to FIN_EMAIL when FIN_OBJECTION_EMAILS is unset", () => {
