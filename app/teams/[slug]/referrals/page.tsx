@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 
@@ -10,6 +11,11 @@ import {
   type TeamBriefReferral,
 } from "@/lib/team-brief-referrals";
 import ReferralActions from "./_components/ReferralActions";
+
+export const metadata: Metadata = {
+  title: "Squad referrals",
+  robots: { index: false, follow: false },
+};
 
 export const dynamic = "force-dynamic";
 
