@@ -54,7 +54,8 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | SP | (none yet) | (none yet) | **BLOCKED — waiting on MM-V09 completion.** | All SP tasks merged + compliance signoff |
 | MAIN-RESCUE | _complete_ | **#793 MERGED** | next 16.2.4→16.2.6 patch merged. Non-loop auto-revert PRs for failed main commits: **#827 OPEN** (reverts `d26094aa`) · **#843 OPEN** (reverts `ff43ed6f`). These are founder-action items — loop will not create duplicate fixes. | Merged to main ✓ |
 | CL | `claude/audit-remediation/cl-01-about-entity-only` | **#795 MERGED 2026-05-14** | CL-01..CL-04, CL-06, CL-09, CL-10 done. CL-07+CL-08 false-positive. CL-05 blocked (WHOIS registrar action — see Blocked). | All CL tasks merged (CL-05 blocked) |
-| LL | `claude/audit-remediation/ll-04-reviews-ratings` | **#807 MERGED 2026-05-14** · **#845 OPEN** | LL-01..LL-03 done. LL-04 in-flight (#845). LL-05 blocked (live chat AI routing — deps V-NEW-02 + CC-06). | All LL tasks merged |
+| LL | `claude/audit-remediation/ll-04-reviews-ratings` | **#807 MERGED 2026-05-14** · **#845 OPEN** | LL-01..LL-03 done. LL-04 in-flight (#845, CI rescue iter 397 — teams/* JSON-LD exemption). LL-05 blocked (live chat AI routing — deps V-NEW-02 + CC-06). | All LL tasks merged |
+| RR | `claude/audit-remediation/rr-01-review-extensions` | (pending — iter 398) | RR-01 (verification badge) + RR-02 (advisor response) pending. Deps: LL-04. | All RR tasks merged |
 
 ---
 
@@ -93,6 +94,17 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 397 — 2026-05-14 — CI-RESCUE LL (#845)
+
+- **Stream:** LL (logged-in user infrastructure)
+- **Phase:** 2 — CI rescue
+- **PR:** #845 OPEN
+- **Commit:** `c7854e1`
+- **Diff:** +1 -0 (1 file — scripts/check-jsonld-coverage.mjs)
+- **Root cause:** `Lint · Type-check · Test · Build` CI job failing at the "JSON-LD coverage gate" step. `app/teams/[slug]/referrals/page.tsx` (added in main via PR #839) is an auth-gated advisor-portal page with no public SEO surface, but the gate was treating it as a public content route because `teams` was not in `EXEMPT_ROUTE_PATTERNS`. Fix: added `{ prefix: "teams", category: "PORTAL" }` to the exemption list with a comment. The public team profile (`/teams/[slug]`) already emits JSON-LD voluntarily — exempting the prefix does not regress public coverage.
+- **Local verification:** `node scripts/check-jsonld-coverage.mjs` → ✅ All public routes emit JSON-LD; `npm run audit:rate-limits -- --strict` → 100%; vitest on test file → 6/6 pass.
+- **STATUS: CI-RESCUE · stream=LL · pr=#845**
 
 ### iter 396 — 2026-05-14 — LL-04 [Tier-1 preempt]
 
