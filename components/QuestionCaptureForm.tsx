@@ -129,7 +129,6 @@ export default function QuestionCaptureForm({ category: initialCategory = "gener
           onChange={(e) => setQuestion(e.target.value)}
           placeholder="e.g. What's the cheapest broker for buying US shares in an SMSF?"
           rows={3}
-          maxLength={Q_MAX}
           disabled={submitting}
           className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-400 disabled:opacity-60 resize-none"
           aria-describedby={errors.question ? "qq-question-error" : undefined}
