@@ -200,4 +200,17 @@ describe("POST /api/fund-review", () => {
     const res = await POST(makeReq(VALID_BODY));
     expect(res.status).toBe(200);
   });
+
+  it("HTML-escapes display_name + fund title in verification email", async () => {
+    process.env.RESEND_API_KEY = "test-resend-key";
+    fundRow = { id: 1, title: "Evil <img src=x onerror=alert(1)> Fund", slug: "pengana-fund" };
+    setupHappyPath();
+    const res = await POST(makeReq({ ...VALID_BODY, display_name: "<script>alert(1)</script> Mallory" }));
+    expect(res.status).toBe(200);
+    const fetchBody = JSON.parse((fetchMock.mock.calls[0]?.[1] as { body: string }).body);
+    expect(fetchBody.html).not.toContain("<script>");
+    expect(fetchBody.html).not.toContain("<img src=x");
+    expect(fetchBody.html).toContain("&lt;script&gt;");
+    expect(fetchBody.html).toContain("&lt;img src=x onerror=alert(1)&gt;");
+  });
 });

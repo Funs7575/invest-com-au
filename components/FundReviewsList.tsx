@@ -1,4 +1,5 @@
 import type { FundReview, FundReviewStats } from "@/lib/types";
+import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import FundReviewForm from "./FundReviewForm";
 
 interface FundReviewsListProps {
@@ -58,6 +59,14 @@ export default function FundReviewsList({ reviews, stats, fundSlug, fundTitle }:
   return (
     <section className="mb-8" id="fund-reviews">
       <h2 className="text-xl font-extrabold text-slate-900 mb-4">Investor Reviews</h2>
+
+      <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
+        <p className="text-[11px] text-amber-900 leading-relaxed">
+          <strong>Investor reviews are general information only.</strong>{" "}
+          {GENERAL_ADVICE_WARNING} Past performance described in any review is not a reliable
+          indicator of future returns.
+        </p>
+      </div>
 
       {stats && stats.review_count > 0 ? (
         <div className="bg-slate-50 rounded-xl p-5 mb-5">

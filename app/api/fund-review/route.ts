@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 import { isValidEmail } from "@/lib/validate-email";
 import { createRateLimiter } from "@/lib/rate-limiter";
+import { escapeHtml } from "@/lib/html-escape";
 
 const log = logger("fund-review");
 
@@ -14,6 +15,12 @@ function sanitize(str: unknown, maxLen: number): string {
 }
 
 function buildVerificationEmail(displayName: string, fundTitle: string, verifyUrl: string): string {
+  // displayName + fundTitle are user-controlled (display_name from the
+  // submitter; fundTitle from the fund_listings record which Stream-A
+  // currently lets advisors edit). Escape both to block HTML injection.
+  // verifyUrl is constructed from a UUID + getSiteUrl() — safe.
+  const safeName = escapeHtml(displayName);
+  const safeTitle = escapeHtml(fundTitle);
   return `
 <!DOCTYPE html>
 <html>
@@ -29,10 +36,10 @@ function buildVerificationEmail(displayName: string, fundTitle: string, verifyUr
     </div>
     <div style="background: #ffffff; padding: 24px; border-radius: 0 0 12px 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
       <p style="color: #334155; font-size: 14px; line-height: 1.6; margin: 0 0 16px 0;">
-        Hi ${displayName},
+        Hi ${safeName},
       </p>
       <p style="color: #334155; font-size: 14px; line-height: 1.6; margin: 0 0 16px 0;">
-        Thanks for reviewing <strong>${fundTitle}</strong> on Invest.com.au. Click the button below to verify your email and submit your review for approval.
+        Thanks for reviewing <strong>${safeTitle}</strong> on Invest.com.au. Click the button below to verify your email and submit your review for approval.
       </p>
       <div style="text-align: center; margin: 24px 0;">
         <a href="${verifyUrl}" style="display: inline-block; padding: 12px 32px; background-color: #15803d; color: #ffffff; font-weight: 700; font-size: 14px; border-radius: 8px; text-decoration: none;">

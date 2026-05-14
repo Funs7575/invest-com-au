@@ -192,4 +192,63 @@ describe("POST /api/fund-review/moderate", () => {
     expect(body.subject).toContain("Syndicate Property Fund");
     expect(body.html).toContain("Off topic");
   });
+
+  it("HTML-escapes user-controlled fields in approval email body", async () => {
+    process.env.RESEND_API_KEY = "test-key";
+    const updateChain = makeUpdateChain({ data: { id: 1, status: "approved" }, error: null });
+    // display_name + fund title contain HTML-injection payload
+    const selectChain = {
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      single: vi.fn().mockResolvedValue({
+        data: {
+          display_name: "<script>alert('xss')</script> Bob",
+          email: "bob@example.com",
+          fund_slug: "evil-fund",
+          fund_listings: [{ title: "Evil <img src=x onerror=alert(1)> Fund" }],
+        },
+      }),
+    };
+    mockAdminFrom
+      .mockReturnValueOnce(updateChain)
+      .mockReturnValueOnce(selectChain);
+    await POST(makeRequest({ review_id: 1, action: "approve" }));
+    const [, opts] = mockFetch.mock.calls[0] as [string, RequestInit];
+    const body = JSON.parse(opts.body as string);
+    // Raw payload must NOT appear in rendered HTML
+    expect(body.html).not.toContain("<script>");
+    expect(body.html).not.toContain("<img src=x");
+    // Escaped versions must appear instead
+    expect(body.html).toContain("&lt;script&gt;");
+    expect(body.html).toContain("&lt;img src=x onerror=alert(1)&gt;");
+  });
+
+  it("HTML-escapes moderation_note in rejection email", async () => {
+    process.env.RESEND_API_KEY = "test-key";
+    const updateChain = makeUpdateChain({ data: { id: 1, status: "rejected" }, error: null });
+    const selectChain = {
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      single: vi.fn().mockResolvedValue({
+        data: {
+          display_name: "Bob",
+          email: "bob@example.com",
+          fund_slug: "evil-fund",
+          fund_listings: [{ title: "Evil Fund" }],
+        },
+      }),
+    };
+    mockAdminFrom
+      .mockReturnValueOnce(updateChain)
+      .mockReturnValueOnce(selectChain);
+    await POST(makeRequest({
+      review_id: 1,
+      action: "reject",
+      moderation_note: "<a href=javascript:alert(1)>click</a>",
+    }));
+    const [, opts] = mockFetch.mock.calls[0] as [string, RequestInit];
+    const body = JSON.parse(opts.body as string);
+    expect(body.html).not.toContain("<a href=javascript");
+    expect(body.html).toContain("&lt;a href=javascript:alert(1)&gt;click&lt;/a&gt;");
+  });
 });
