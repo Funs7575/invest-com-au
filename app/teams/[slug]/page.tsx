@@ -5,7 +5,10 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { absoluteUrl, breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import { BRIEF_TEMPLATE_LABELS } from "@/lib/briefs/templates";
+import { estimateBundledPrice } from "@/lib/expert-teams/pricing";
 import Icon from "@/components/Icon";
+import SquadStack from "./_components/SquadStack";
+import BundledPricePreview from "./_components/BundledPricePreview";
 
 export const revalidate = 1800;
 
@@ -66,19 +69,63 @@ export default async function TeamProfilePage({ params }: PageProps) {
   const proIds = members.map((m) => m.professional_id);
   let professionals: Record<
     number,
-    { name: string; slug: string; type: string; photo_url: string | null }
+    {
+      name: string;
+      slug: string;
+      type: string;
+      photo_url: string | null;
+      tagline: string | null;
+      hourly_rate_cents: number | null;
+    }
   > = {};
   if (proIds.length > 0) {
     const { data: pros } = await admin
       .from("professionals")
-      .select("id, name, slug, type, photo_url")
+      .select("id, name, slug, type, photo_url, tagline, hourly_rate_cents")
       .in("id", proIds);
     professionals = Object.fromEntries(
-      ((pros ?? []) as { id: number; name: string; slug: string; type: string; photo_url: string | null }[]).map(
-        (p) => [p.id, p],
-      ),
+      ((pros ?? []) as {
+        id: number;
+        name: string;
+        slug: string;
+        type: string;
+        photo_url: string | null;
+        tagline: string | null;
+        hourly_rate_cents: number | null;
+      }[]).map((p) => [p.id, p]),
     );
   }
+
+  // Build the enriched member list for <SquadStack /> + <BundledPricePreview />.
+  const squadMembers = members
+    .map((m) => {
+      const pro = professionals[m.professional_id];
+      if (!pro) return null;
+      return {
+        id: m.id,
+        professional_id: m.professional_id,
+        member_role: m.member_role,
+        public_title: m.public_title,
+        pro_name: pro.name,
+        pro_slug: pro.slug,
+        pro_type: pro.type,
+        pro_photo_url: pro.photo_url,
+        pro_tagline: pro.tagline ?? null,
+      };
+    })
+    .filter(
+      (m): m is NonNullable<typeof m> => m !== null,
+    );
+
+  const priceEstimate = estimateBundledPrice(
+    members.map((m) => {
+      const pro = professionals[m.professional_id];
+      return {
+        hourly_rate_cents: pro?.hourly_rate_cents ?? null,
+        role: m.member_role,
+      };
+    }),
+  );
 
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
@@ -161,40 +208,9 @@ export default async function TeamProfilePage({ params }: PageProps) {
             </div>
           )}
 
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6">
-            <p className="text-xs uppercase tracking-widest text-slate-500 mb-3">
-              Team members
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {members.map((m) => {
-                const pro = professionals[m.professional_id];
-                if (!pro) return null;
-                return (
-                  <Link
-                    key={m.id}
-                    href={`/advisor/${pro.slug}`}
-                    className="flex items-center gap-3 p-3 border border-slate-100 rounded-xl hover:border-slate-300"
-                  >
-                    <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 text-xs font-bold uppercase">
-                      {pro.name
-                        .split(" ")
-                        .slice(0, 2)
-                        .map((n) => n[0])
-                        .join("")}
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-sm font-semibold text-slate-900 truncate">
-                        {pro.name}
-                      </p>
-                      <p className="text-xs text-slate-500 truncate">
-                        {m.public_title ?? String(m.member_role).replace(/_/g, " ")}
-                      </p>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
+          <BundledPricePreview estimate={priceEstimate} />
+
+          <SquadStack members={squadMembers} />
 
           {team.disclosure && (
             <div className="bg-slate-100 border border-slate-200 rounded-2xl p-4 text-xs text-slate-600 leading-relaxed">
