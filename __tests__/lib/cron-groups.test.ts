@@ -41,10 +41,4 @@ describe("CRON_GROUPS invariants", () => {
     expect(all).toContain("/api/cron/affiliate-payout-recon");
     expect(all).toContain("/api/cron/sponsored-placement-apply");
   });
-
-  it("registers the marketplace re-engagement crons", () => {
-    const all = Object.values(CRON_GROUPS).flat();
-    expect(all).toContain("/api/cron/plan-resume-digest");
-    expect(all).toContain("/api/cron/saved-search-alerts");
-  });
 });
