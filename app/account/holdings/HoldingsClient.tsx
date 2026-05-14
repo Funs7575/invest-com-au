@@ -8,7 +8,6 @@ import {
   type BrokerForCoach,
 } from "@/lib/holdings/switching-coach";
 import CsvImportModal from "./CsvImportModal";
-import TaxSummaryButton from "./TaxSummaryButton";
 
 export interface HoldingRow {
   id: number;
@@ -453,10 +452,6 @@ export default function HoldingsClient({ initialItems, brokers }: Props) {
           </ul>
         )}
       </section>
-
-      {/* Tax-year summary export + advisor handoff. Sits below the list
-          so users see what they have before deciding to export. */}
-      <TaxSummaryButton />
     </div>
   );
 }
