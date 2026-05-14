@@ -160,10 +160,10 @@ function ExpertTeamsStrip({ teams }: { teams: ExpertTeamCard[] }) {
     >
       <div className="flex items-center justify-between mb-3">
         <h2 className="text-xl font-extrabold text-slate-900">
-          Verified Expert Teams
+          Verified Pro Squads
         </h2>
         <span className="text-xs text-slate-500">
-          Multi-discipline teams that handle structured Investor Briefs
+          Multi-discipline teams that handle structured Match Requests
         </span>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

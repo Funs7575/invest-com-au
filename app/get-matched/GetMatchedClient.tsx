@@ -16,7 +16,9 @@ import type {
 import QuestionCard from "./_components/QuestionCard";
 import ProgressDots from "./_components/ProgressDots";
 import AnalyzingScreen from "./_components/AnalyzingScreen";
-import TopMatchCard from "./_components/TopMatchCard";
+import TopMatchCarousel from "./_components/TopMatchCarousel";
+import MatchExplainerCard from "./_components/MatchExplainerCard";
+import { clearPartialPlan, setPartialPlan } from "@/lib/getmatched/recall";
 
 type NextStep =
   | {
@@ -52,10 +54,11 @@ interface ResolveResponse {
   recommended_brief_template: string | null;
   accept_credits_cost: number | null;
   recommended_providers: { kind: string; id: number }[];
-  top_match?: TopMatch | null;
+  top_matches?: TopMatch[];
   primary_href?: string;
   vertical?: Vertical | null;
   advisor_type?: string | null;
+  match_explainer?: { score: number; bullets: string[] };
   ephemeral?: boolean;
 }
 
@@ -127,6 +130,9 @@ export default function GetMatchedClient(props: Props) {
       setAnalyzing(false);
       setPendingResolveResult(null);
       setAnalyzingTimerDone(false);
+      // Plan completed — wipe the partial-plan cache so the homepage
+      // resume banner stops surfacing.
+      clearPartialPlan();
     }
   }, [analyzingTimerDone, pendingResolveResult]);
 
@@ -225,6 +231,15 @@ export default function GetMatchedClient(props: Props) {
       }
       if (data.ephemeral) setEphemeral(true);
       setStep(data.next);
+      // Persist partial plan so the homepage banner can surface
+      // "continue where you left off" if the user drops off mid-quiz.
+      if (!data.next.done) {
+        setPartialPlan({
+          answers: nextAnswers,
+          stepIndex: data.next.currentStep,
+          totalSteps: data.next.totalSteps,
+        });
+      }
       if (data.next.done) {
         // Show the 1.5s analyzing interstitial concurrently with the
         // resolve fetch. Whichever takes longer determines the actual
@@ -643,15 +658,25 @@ function ActionPlanScreen({
       <section className="max-w-5xl mx-auto px-4 sm:px-6 py-10">
         {isRiskHeld && (
           <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 text-sm text-amber-900">
-            <p className="font-semibold mb-1">Quick compliance check</p>
+            <p className="font-semibold mb-1">Quick safety check</p>
             <p>
-              Your answers mention topics that need a brief review. If you create a brief from this plan, we&apos;ll hold it for review before routing it to providers — usually within a business day.
+              Your answers mention topics that need a quick safety check. If you ask for quotes from this plan, we&apos;ll confirm before sending it to verified pros — usually within a business day.
             </p>
           </div>
         )}
 
-        {/* Top-match hero card — only present for `compare` route */}
-        {result.top_match && <TopMatchCard match={result.top_match} />}
+        {/* Match-score badge + "why we matched you here" transparency strip */}
+        {result.match_explainer && (
+          <MatchExplainerCard
+            score={result.match_explainer.score}
+            bullets={result.match_explainer.bullets}
+          />
+        )}
+
+        {/* Top-3 match carousel — only present for `compare` route */}
+        {result.top_matches && result.top_matches.length > 0 && (
+          <TopMatchCarousel matches={result.top_matches} />
+        )}
 
         <div className="bg-white rounded-3xl border border-slate-200 shadow-md p-6 sm:p-8 mb-6">
           <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-amber-700 bg-amber-50 border border-amber-200 rounded-full px-2.5 py-1 mb-3">
@@ -775,7 +800,7 @@ function ActionPlanScreen({
         {!ephemeral && (
         <section className="bg-white border border-slate-200 rounded-2xl p-5 mb-6">
           <p className="font-semibold text-slate-900 mb-1">
-            Want to save this action plan or send a brief to verified professionals?
+            Want to save this plan or get quotes from verified pros?
           </p>
           <p className="text-xs text-slate-500 mb-4">
             We&apos;ll email you a private link. No account needed.

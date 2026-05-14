@@ -4,6 +4,7 @@ import { CURRENT_YEAR } from "@/lib/seo";
 import { calculatorJsonLd } from "@/lib/schema-markup";
 import SavingsCalculatorClient from "./SavingsCalculatorClient";
 import ComplianceFooter from "@/components/ComplianceFooter";
+import CalcToPlanBridge from "@/components/get-matched/CalcToPlanBridge";
 
 export const revalidate = 3600;
 
@@ -31,7 +32,14 @@ export default async function SavingsCalculatorPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(calculatorJsonLd({ name: "Savings Rate Calculator", description: "Compare savings account interest rates and calculate how much more you could earn.", path: "/savings-calculator" })) }} />
       <SavingsCalculatorClient accounts={accounts || []} />
-      <div className="container-custom pb-8"><ComplianceFooter variant="calculator" /></div>
+      <div className="container-custom pb-8">
+        <CalcToPlanBridge
+          goal="grow"
+          headline="Want to start investing instead of just saving?"
+          subtitle="Compare brokers, get matched with platforms, or talk to verified pros. Takes 60 seconds."
+        />
+        <ComplianceFooter variant="calculator" />
+      </div>
 
     </>
   );
