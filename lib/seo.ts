@@ -94,11 +94,11 @@ export function breadcrumbJsonLd(
 /* ─── E-E-A-T: Review author & editorial info ─── */
 
 export const REVIEW_AUTHOR = {
-  name: "Finn Webster",
-  jobTitle: "Founder & Lead Editor",
+  name: "invest.com.au Research Team",
+  jobTitle: "Editorial & Research Team",
   description:
-    "Finn is the founder and lead editor at Invest.com.au. He has personally tested over 20 Australian brokers, comparing fees, platforms, and CHESS sponsorship status to help everyday Australians make smarter investment decisions.",
-  url: absoluteUrl("/reviewers/finn-webster"),
+    "The invest.com.au editorial and research team tests and compares Australian financial products and services, providing independent analysis to help Australians make informed investment decisions.",
+  url: absoluteUrl("/about"),
 };
 
 export const REVIEW_METHODOLOGY_URL = absoluteUrl("/how-we-verify");
