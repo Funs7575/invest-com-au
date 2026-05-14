@@ -30,14 +30,24 @@ import type {
   IntentSlug,
   ResultTemplate,
   RouteType,
+  Vertical,
 } from "./types";
-import { defaultRouteForIntent } from "./intents";
+import { inferRoute, type AdvisorType } from "./inference";
 import { getResultTemplate } from "./templates";
 
 export interface ResolveResult {
   intent: IntentSlug | null;
   secondaryIntent: IntentSlug | null;
   route: RouteType;
+  /** Terminal URL the primary CTA on the result screen should link to.
+   *  Includes vertical / advisor-type filters when relevant. */
+  primaryHref: string;
+  /** Vertical inferred from the answers — used by callers that want to
+   *  show a vertical badge on the result. */
+  vertical: Vertical | null;
+  /** Advisor type inferred from the answers — used when the route is
+   *  `individual` to filter recommended providers. */
+  advisorType: AdvisorType | null;
   goal: string | null;
   template: ResultTemplate;
   checklist: ChecklistItem[];
@@ -53,47 +63,21 @@ export interface ResolveResult {
 }
 
 /**
- * Pure resolver — used by tests + the API route. The IO-bound provider
- * preview is fetched separately so this stays testable without mocks.
+ * Pure resolver — used by tests + the API route. Delegates to
+ * `inferRoute` in ./inference.ts which encodes the full 13 × 8 routing
+ * matrix.
+ *
+ * Kept exported for back-compat with existing call sites that only want
+ * the route. New callers should use `inferRoute` directly to also get
+ * the terminal href + vertical + advisor type.
  */
 export function deriveRoute(
   answers: ActionPlanAnswers,
-  intents: IntentDef[],
+  _intents: IntentDef[],
 ): { intent: IntentSlug | null; secondary: IntentSlug | null; route: RouteType } {
   const intent = (answers.intent as IntentSlug | undefined) ?? null;
-  const help = answers.help_preference;
-
-  // `help_preference` is the strongest user signal — they explicitly said
-  // what they want. Override the intent's default route when present.
-  const routeFromHelp = mapHelpPreferenceToRoute(help);
-  if (routeFromHelp) {
-    return { intent, secondary: null, route: routeFromHelp };
-  }
-
-  const route = defaultRouteForIntent(intent, intents);
+  const { route } = inferRoute(answers);
   return { intent, secondary: deriveSecondaryIntent(answers, intent), route };
-}
-
-function mapHelpPreferenceToRoute(value: unknown): RouteType | null {
-  if (typeof value !== "string") return null;
-  switch (value) {
-    case "info_only":
-      return "guide";
-    case "compare":
-      return "compare";
-    case "individual":
-      return "individual";
-    case "firm":
-      return "firm";
-    case "expert_team":
-      return "expert_team";
-    case "investor_brief":
-      return "investor_brief";
-    case "not_sure":
-      return null; // fall through to intent default
-    default:
-      return null;
-  }
 }
 
 function deriveSecondaryIntent(
@@ -140,10 +124,22 @@ export async function resolveActionPlan({
   answers,
   intents,
 }: ResolveActionPlanOptions): Promise<ResolveResult> {
-  const { intent, secondary, route } = deriveRoute(answers, intents);
+  const inferred = inferRoute(answers);
+  const intent = (answers.intent as IntentSlug | undefined) ?? null;
+  const secondary = deriveSecondaryIntent(answers, intent);
+  const route = inferred.route;
   const template = await getResultTemplate(route, intent);
   const goal = goalLabel(intent, intents);
   const checklist = buildChecklist(template);
+
+  // Override the template's primary CTA href with the routed terminal href
+  // (with vertical / advisor-type filters baked in) when we have one.
+  const effectiveTemplate: ResultTemplate = inferred.href
+    ? {
+        ...template,
+        primary_cta: { ...template.primary_cta, href: inferred.href },
+      }
+    : template;
 
   // Risk scan: stringify the structured answers + free-text fields.
   const riskText = stringifyAnswers(answers);
@@ -167,8 +163,11 @@ export async function resolveActionPlan({
     intent,
     secondaryIntent: secondary,
     route,
+    primaryHref: inferred.href,
+    vertical: inferred.vertical,
+    advisorType: inferred.advisor_type,
     goal,
-    template,
+    template: effectiveTemplate,
     checklist,
     riskFlags: risk.flags,
     riskSeverity: risk.severity,

@@ -13,6 +13,7 @@ import {
   type FieldHint,
 } from "@/lib/briefs/templates";
 import type { BriefTemplate } from "@/lib/briefs/types";
+import ListingCompanionServices from "./ListingCompanionServices";
 
 type Step = "template" | "details" | "preference" | "contact" | "success";
 
@@ -495,6 +496,11 @@ export default function BriefForm() {
               Continue <Icon name="arrow-right" size={16} />
             </button>
           </div>
+
+          {(form.brief_template === "listing" ||
+            form.brief_template === "listing_readiness") && (
+            <ListingCompanionServices />
+          )}
         </div>
       )}
 
