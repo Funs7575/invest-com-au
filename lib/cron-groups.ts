@@ -88,8 +88,13 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
     "/api/cron/investor-drip",
     "/api/cron/advisor-nudge",
     "/api/cron/subscription-dunning",
+    "/api/cron/marketplace-stale-briefs",
   ],
   "daily-9-30": ["/api/cron/enforce-lead-sla"],
+
+  "daily-10-30": [
+    "/api/cron/marketplace-outcome-flywheel",
+  ],
   "daily-10": [
     "/api/cron/advisor-profile-gate-drip",
     "/api/cron/welcome-drip",
