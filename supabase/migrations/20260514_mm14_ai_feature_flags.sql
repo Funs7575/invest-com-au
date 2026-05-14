@@ -13,10 +13,11 @@
 --           opt-in toggle on /briefs/new. When disabled, the route
 --           returns 404 and the toggle is server-side-hidden.
 --
---        2. `ai_get_matched_v3` — AI Get Matched 3.0 (feature #3,
---           sibling agent). Seeded here so both AI features in the
---           same wave share a single migration and a single rollout
---           audit trail. Sibling agent gates its own routes on this.
+--        2. `ai_get_matched_v3` — AI Get Matched 3.0 (feature #3).
+--           When enabled, /api/get-matched/answer routes the
+--           next-question decision through Claude
+--           (claude-haiku-4-5 by default) instead of the rule-based
+--           shown_if walker.
 --
 --      Both default OFF. Flip via admin UI (preferred — preserved on
 --      migration re-run) or by running:
@@ -29,18 +30,11 @@
 --              this migration is a safe no-op. Any admin-toggled state
 --              (rollout_pct, allowlist, enabled) is preserved on re-run
 --              because ON CONFLICT DO NOTHING leaves existing rows
---              untouched. This is critical: never reset a flag's enabled
---              state via migration once it has been deliberately flipped.
---
---              Race-safe with the sibling MM-14 AI Get Matched agent —
---              whichever migration lands first creates both rows, the
---              second is a clean no-op on both INSERTs.
+--              untouched.
 --
 -- Rollback:
 --   DELETE FROM public.feature_flags
 --    WHERE flag_key IN ('ai_match_request_copilot', 'ai_get_matched_v3');
---   (Safe — pure feature gates, no data dependencies. Any in-flight
---   route call will then evaluate the flag as false and return 404.)
 -- ============================================================
 
 BEGIN;
@@ -60,11 +54,11 @@ VALUES
    'scanning the API surface gets no signal that the feature exists.',
    false, 0, '{}', '{}', '{}'),
   ('ai_get_matched_v3',
-   'AI Get Matched 3.0 — Claude-driven intent routing for the /get-matched '
-   'flow (sibling-agent feature #3 in the same MM-14 wave). Disabled by '
-   'default; flip in the admin UI once the sibling agent ships the route. '
-   'Seeded in this shared migration so both AI features in the wave share '
-   'a single rollout audit trail.',
+   'AI-driven Get Matched 3.0 question walker. When enabled, the '
+   '/api/get-matched/answer route routes through Claude (claude-haiku-4-5 '
+   'by default) to pick the next question or signal that we have enough '
+   'info to resolve a plan. ANTHROPIC_API_KEY billing applies per token '
+   '(~$0.0003 per question). Default OFF.',
    false, 0, '{}', '{}', '{}')
 ON CONFLICT (flag_key) DO NOTHING;
 
