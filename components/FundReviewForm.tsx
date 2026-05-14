@@ -1,0 +1,310 @@
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import StarRatingInput from "./StarRatingInput";
+
+interface FundReviewFormProps {
+  fundSlug: string;
+  fundTitle: string;
+}
+
+export default function FundReviewForm({ fundSlug, fundTitle }: FundReviewFormProps) {
+  const [rating, setRating] = useState(0);
+  const [displayName, setDisplayName] = useState("");
+  const [email, setEmail] = useState("");
+  const [title, setTitle] = useState("");
+  const [body, setBody] = useState("");
+  const [pros, setPros] = useState("");
+  const [cons, setCons] = useState("");
+  const [performanceRating, setPerformanceRating] = useState(0);
+  const [communicationRating, setCommunicationRating] = useState(0);
+  const [feesRating, setFeesRating] = useState(0);
+  const [managerRating, setManagerRating] = useState(0);
+  const [holdPeriodMonths, setHoldPeriodMonths] = useState<number | null>(null);
+  const [consent, setConsent] = useState(false);
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setErrorMsg("");
+
+    if (rating === 0) {
+      setErrorMsg("Please select a star rating.");
+      return;
+    }
+    if (!displayName.trim() || !email.trim() || !title.trim() || !body.trim()) {
+      setErrorMsg("Please fill in all required fields.");
+      return;
+    }
+    if (!consent) {
+      setErrorMsg("Please agree to the terms to continue.");
+      return;
+    }
+
+    setStatus("loading");
+    try {
+      const res = await fetch("/api/fund-review", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          fund_slug: fundSlug,
+          display_name: displayName.trim(),
+          email: email.trim(),
+          rating,
+          title: title.trim(),
+          body: body.trim(),
+          pros: pros.trim() || null,
+          cons: cons.trim() || null,
+          performance_rating: performanceRating || null,
+          communication_rating: communicationRating || null,
+          fees_rating: feesRating || null,
+          manager_rating: managerRating || null,
+          hold_period_months: holdPeriodMonths,
+        }),
+      });
+
+      if (res.ok) {
+        setStatus("success");
+      } else {
+        const data = await res.json();
+        setErrorMsg(data.error || "Something went wrong. Please try again.");
+        setStatus("error");
+      }
+    } catch {
+      setErrorMsg("Network error. Please try again.");
+      setStatus("error");
+    }
+  }
+
+  if (status === "success") {
+    return (
+      <div className="bg-slate-50 border border-slate-200 rounded-xl p-6 text-center">
+        <div className="text-2xl mb-2">📧</div>
+        <h4 className="text-lg font-bold text-slate-900 mb-1">Check your inbox!</h4>
+        <p className="text-sm text-slate-600">
+          We&apos;ve sent a verification email to <strong>{email}</strong>.
+          Click the link to confirm your review — it&apos;ll appear on this page once approved.
+        </p>
+      </div>
+    );
+  }
+
+  if (!isOpen) {
+    return (
+      <button
+        onClick={() => setIsOpen(true)}
+        className="w-full py-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-800 font-semibold text-sm hover:bg-amber-100 transition-colors"
+      >
+        Write a Review of {fundTitle}
+      </button>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} noValidate className="bg-white border border-slate-200 rounded-xl p-5 space-y-4">
+      <h4 className="text-base font-bold text-slate-900">Write Your Review of {fundTitle}</h4>
+
+      <div>
+        <label className="block text-sm font-medium text-slate-700 mb-1">
+          Your Rating <span className="text-red-500">*</span>
+        </label>
+        <StarRatingInput value={rating} onChange={setRating} size="lg" />
+      </div>
+
+      <div className="bg-slate-50 rounded-lg p-3">
+        <p className="text-xs font-medium text-slate-500 mb-2">Rate specific aspects <span className="text-slate-400 font-normal">(optional)</span></p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2">
+          {([
+            { label: "Performance vs target", value: performanceRating, setter: setPerformanceRating },
+            { label: "Manager communication", value: communicationRating, setter: setCommunicationRating },
+            { label: "Fees & total cost", value: feesRating, setter: setFeesRating },
+            { label: "Manager confidence", value: managerRating, setter: setManagerRating },
+          ] as const).map((dim) => (
+            <div key={dim.label} className="flex items-center gap-2">
+              <span className="text-xs text-slate-600 w-36 shrink-0">{dim.label}</span>
+              <div className="flex items-center gap-0.5">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    onClick={() => dim.setter(star === dim.value ? 0 : star)}
+                    className={`text-base leading-none ${star <= dim.value ? "text-amber-400" : "text-slate-200"} hover:scale-110 transition-transform`}
+                    aria-label={`${dim.label} ${star} star${star !== 1 ? "s" : ""}`}
+                  >
+                    ★
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="mt-3">
+          <label htmlFor="fund-review-hold-period" className="text-xs text-slate-600">
+            How long have you held this fund?
+          </label>
+          <select
+            id="fund-review-hold-period"
+            value={holdPeriodMonths ?? ""}
+            onChange={(e) => setHoldPeriodMonths(e.target.value ? Number(e.target.value) : null)}
+            className="mt-1 w-full sm:w-auto px-3 py-1.5 rounded-lg border border-slate-200 text-xs text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-700/40 focus:border-blue-700"
+          >
+            <option value="">Select...</option>
+            <option value="3">Less than 6 months</option>
+            <option value="9">6-12 months</option>
+            <option value="18">1-2 years</option>
+            <option value="36">2-3 years</option>
+            <option value="60">3-5 years</option>
+            <option value="120">5+ years</option>
+          </select>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <label htmlFor="fund-review-name" className="block text-sm font-medium text-slate-700 mb-1">
+            Display Name <span className="text-red-500">*</span>
+          </label>
+          <input
+            id="fund-review-name"
+            type="text"
+            value={displayName}
+            onChange={(e) => setDisplayName(e.target.value)}
+            placeholder="e.g. Sarah M."
+            maxLength={50}
+            required
+            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-700/40 focus:border-blue-700"
+          />
+        </div>
+        <div>
+          <label htmlFor="fund-review-email" className="block text-sm font-medium text-slate-700 mb-1">
+            Email <span className="text-red-500">*</span>
+          </label>
+          <input
+            id="fund-review-email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@email.com"
+            maxLength={254}
+            required
+            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-700/40 focus:border-blue-700"
+          />
+          <p className="text-xs text-slate-400 mt-1">For verification only — never displayed.</p>
+        </div>
+      </div>
+
+      <div>
+        <label htmlFor="fund-review-title" className="block text-sm font-medium text-slate-700 mb-1">
+          Review Title <span className="text-red-500">*</span>
+        </label>
+        <input
+          id="fund-review-title"
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Summarise your experience in a few words"
+          maxLength={120}
+          required
+          className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-700/40 focus:border-blue-700"
+        />
+      </div>
+
+      <div>
+        <label htmlFor="fund-review-body" className="block text-sm font-medium text-slate-700 mb-1">
+          Your Review <span className="text-red-500">*</span>
+        </label>
+        <textarea
+          id="fund-review-body"
+          value={body}
+          onChange={(e) => setBody(e.target.value)}
+          placeholder="What was your experience investing in this fund? Returns vs expectations, manager communication, fees, anything else?"
+          rows={4}
+          maxLength={2000}
+          required
+          className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400 resize-y"
+        />
+        <p className="text-xs text-slate-400 mt-1 text-right">{body.length}/2000</p>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <label htmlFor="fund-review-pros" className="block text-sm font-medium text-slate-700 mb-1">
+            Pros <span className="text-slate-400 font-normal">(optional)</span>
+          </label>
+          <textarea
+            id="fund-review-pros"
+            value={pros}
+            onChange={(e) => setPros(e.target.value)}
+            placeholder="What worked well?"
+            rows={2}
+            maxLength={500}
+            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400 resize-y"
+          />
+        </div>
+        <div>
+          <label htmlFor="fund-review-cons" className="block text-sm font-medium text-slate-700 mb-1">
+            Cons <span className="text-slate-400 font-normal">(optional)</span>
+          </label>
+          <textarea
+            id="fund-review-cons"
+            value={cons}
+            onChange={(e) => setCons(e.target.value)}
+            placeholder="What could be improved?"
+            rows={2}
+            maxLength={500}
+            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400 resize-y"
+          />
+        </div>
+      </div>
+
+      <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+        <p className="text-[11px] text-amber-900 leading-relaxed">
+          <strong>General advice notice.</strong> Reviews reflect personal investor experience only.
+          Past performance described in any review is not a reliable indicator of future returns.
+          Consider the fund&apos;s PDS / IM and speak to a licensed adviser before investing.
+        </p>
+      </div>
+
+      <label className="flex items-start gap-2 cursor-pointer">
+        <input
+          type="checkbox"
+          checked={consent}
+          onChange={(e) => setConsent(e.target.checked)}
+          required
+          className="mt-0.5 w-4 h-4 rounded border-slate-300 accent-slate-700 shrink-0"
+        />
+        <span className="text-xs text-slate-500 leading-tight">
+          I confirm this review is based on my genuine experience as an investor in this fund. I agree to the{" "}
+          <Link href="/privacy" className="underline hover:text-slate-900">
+            Privacy Policy
+          </Link>
+          . My email will only be used for verification.
+        </span>
+      </label>
+
+      {errorMsg && (
+        <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{errorMsg}</p>
+      )}
+
+      <div className="flex items-center gap-3">
+        <button
+          type="submit"
+          disabled={status === "loading"}
+          className="px-5 py-2.5 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-60"
+        >
+          {status === "loading" ? "Submitting..." : "Submit Review"}
+        </button>
+        <button
+          type="button"
+          onClick={() => setIsOpen(false)}
+          className="px-4 py-2.5 text-sm text-slate-500 hover:text-slate-700 transition-colors"
+        >
+          Cancel
+        </button>
+      </div>
+    </form>
+  );
+}
