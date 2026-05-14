@@ -234,6 +234,81 @@ describe("integration: /api/admin/articles-editor/save", () => {
     expect(row.status).toBe("published");
     expect(row.published_at).toBeTruthy();
   });
+
+  it("persists link_density_override when a valid integer is supplied", async () => {
+    const res = await saveMod.POST(
+      makeRequest("/api/admin/articles-editor/save", {
+        method: "POST",
+        body: {
+          slug: "density-override-article",
+          title: "An article with a density override set",
+          content: CLEAN_BODY,
+          category: "beginners",
+          tags: ["shares"],
+          status: "draft",
+          link_density_override: 3,
+        },
+      }),
+    );
+    expect(res.status).toBe(200);
+    const row = getTable("articles")[0];
+    expect(row.link_density_override).toBe(3);
+  });
+
+  it("persists null link_density_override when explicitly cleared", async () => {
+    const res = await saveMod.POST(
+      makeRequest("/api/admin/articles-editor/save", {
+        method: "POST",
+        body: {
+          slug: "density-clear-article",
+          title: "An article with no density override",
+          content: CLEAN_BODY,
+          status: "draft",
+          link_density_override: null,
+        },
+      }),
+    );
+    expect(res.status).toBe(200);
+    const row = getTable("articles")[0];
+    expect(row.link_density_override).toBeNull();
+  });
+
+  it("clamps link_density_override to null for out-of-range values", async () => {
+    const res = await saveMod.POST(
+      makeRequest("/api/admin/articles-editor/save", {
+        method: "POST",
+        body: {
+          slug: "density-oob-article",
+          title: "An article with an out-of-range density override",
+          content: CLEAN_BODY,
+          status: "draft",
+          link_density_override: 999,
+        },
+      }),
+    );
+    expect(res.status).toBe(200);
+    const row = getTable("articles")[0];
+    // Values outside 0–20 are silently treated as null by the save route.
+    expect(row.link_density_override).toBeNull();
+  });
+
+  it("accepts link_density_override = 0 (inject no links for this article)", async () => {
+    const res = await saveMod.POST(
+      makeRequest("/api/admin/articles-editor/save", {
+        method: "POST",
+        body: {
+          slug: "zero-density-article",
+          title: "An article suppressing all auto links",
+          content: CLEAN_BODY,
+          status: "draft",
+          link_density_override: 0,
+        },
+      }),
+    );
+    expect(res.status).toBe(200);
+    const row = getTable("articles")[0];
+    expect(row.link_density_override).toBe(0);
+  });
 });
 
 describe("integration: /api/admin/article-scorecard", () => {
