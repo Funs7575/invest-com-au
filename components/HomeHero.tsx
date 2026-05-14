@@ -5,6 +5,7 @@ import HomeHeroReel, {
   type ReelListing,
   type ReelAdvisor,
 } from "@/components/HomeHeroReel";
+import HomeHeroCTA from "@/components/HomeHeroCTA";
 
 interface HomeHeroProps {
   topBrokers: ReadonlyArray<ReelBroker>;
@@ -174,26 +175,7 @@ export default function HomeHero({
             >
               Explore options <DesignIcon name="arrow-right" size={14} strokeWidth={2.4} />
             </Link>
-            <Link
-              href="/quiz"
-              className="hero-cta-pokie"
-              style={{
-                fontSize: 16,
-                fontWeight: 700,
-                padding: "14px 24px",
-                borderRadius: 12,
-                background:
-                  "linear-gradient(180deg, var(--color-coral-400), var(--color-coral-500))",
-                color: "white",
-                textDecoration: "none",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 8,
-                whiteSpace: "nowrap",
-              }}
-            >
-              Get matched in 60 seconds <DesignIcon name="arrow-right" size={16} strokeWidth={2.6} />
-            </Link>
+            <HomeHeroCTA />
           </div>
         </div>
       </div>
