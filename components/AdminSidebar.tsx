@@ -90,6 +90,7 @@ const NAV_GROUPS = [
       { href: "/admin/credit-pricing", icon: "coins", label: "Credit Pricing" },
       { href: "/admin/routing-rules", icon: "git-branch", label: "Routing Rules" },
       { href: "/admin/risk-flags", icon: "shield", label: "Risk Flags" },
+      { href: "/admin/listings/moderation", icon: "list-checks", label: "Listing Briefs (moderation)" },
     ],
   },
   {
