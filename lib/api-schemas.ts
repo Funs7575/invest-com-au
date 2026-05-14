@@ -227,6 +227,51 @@ export const BriefStatusUpdateRequest = z.object({
   note: z.string().max(2000).optional(),
 });
 
+// ─── /api/intake — Pro intake questions (MM-10) ────────────────────
+
+export const INTAKE_QUESTION_KINDS = [
+  "text",
+  "number",
+  "select",
+  "phone",
+  "email",
+] as const;
+
+export const INTAKE_OWNER_KINDS = ["professional", "team"] as const;
+
+export const CreateIntakeQuestionRequest = z.object({
+  owner_kind: z.enum(INTAKE_OWNER_KINDS),
+  owner_id: z.number().int().positive(),
+  prompt: z.string().min(3).max(240),
+  kind: z.enum(INTAKE_QUESTION_KINDS).default("text"),
+  options: z.array(z.string().min(1).max(80)).max(10).default([]),
+  required: z.boolean().default(true),
+  sort_order: z.number().int().min(0).max(99).default(0),
+  enabled: z.boolean().default(true),
+});
+
+export const UpdateIntakeQuestionRequest = z.object({
+  prompt: z.string().min(3).max(240),
+  kind: z.enum(INTAKE_QUESTION_KINDS).default("text"),
+  options: z.array(z.string().min(1).max(80)).max(10).default([]),
+  required: z.boolean().default(true),
+  sort_order: z.number().int().min(0).max(99).default(0),
+  enabled: z.boolean().default(true),
+});
+
+export const SubmitIntakeAnswersRequest = z.object({
+  email: z.string().email().max(200),
+  answers: z
+    .array(
+      z.object({
+        question_id: z.number().int().positive(),
+        answer: z.string().max(1000),
+      }),
+    )
+    .min(1)
+    .max(5),
+});
+
 // ─── /api/expert-teams ─────────────────────────────────────────────
 
 export const TEAM_TYPES = [
