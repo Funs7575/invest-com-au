@@ -133,7 +133,7 @@ export default async function TeamProfilePage({ params }: PageProps) {
               className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold px-5 py-3 rounded-xl"
             >
               <Icon name="edit" size={16} />
-              Create an Investor Brief for this team
+              Get quotes from this Pro Squad
             </Link>
             <Link
               href="/briefs/new"

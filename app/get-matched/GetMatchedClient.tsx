@@ -643,9 +643,9 @@ function ActionPlanScreen({
       <section className="max-w-5xl mx-auto px-4 sm:px-6 py-10">
         {isRiskHeld && (
           <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 text-sm text-amber-900">
-            <p className="font-semibold mb-1">Quick compliance check</p>
+            <p className="font-semibold mb-1">Quick safety check</p>
             <p>
-              Your answers mention topics that need a brief review. If you create a brief from this plan, we&apos;ll hold it for review before routing it to providers — usually within a business day.
+              Your answers mention topics that need a quick safety check. If you ask for quotes from this plan, we&apos;ll confirm before sending it to verified pros — usually within a business day.
             </p>
           </div>
         )}
@@ -775,7 +775,7 @@ function ActionPlanScreen({
         {!ephemeral && (
         <section className="bg-white border border-slate-200 rounded-2xl p-5 mb-6">
           <p className="font-semibold text-slate-900 mb-1">
-            Want to save this action plan or send a brief to verified professionals?
+            Want to save this plan or get quotes from verified pros?
           </p>
           <p className="text-xs text-slate-500 mb-4">
             We&apos;ll email you a private link. No account needed.

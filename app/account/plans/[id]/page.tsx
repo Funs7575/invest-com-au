@@ -99,14 +99,14 @@ export default async function MyPlanDetailPage({
                 href={`/briefs/${plan.linked_brief_id}`}
                 className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm px-4 py-2.5 rounded-lg"
               >
-                <Icon name="check-circle" size={14} /> View Brief Tracker
+                <Icon name="check-circle" size={14} /> View Quote Status
               </Link>
             ) : (
               <Link
                 href={`/briefs/new?plan_id=${plan.id}`}
                 className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold text-sm px-4 py-2.5 rounded-lg"
               >
-                Create an Investor Brief
+                Get Quotes
                 <Icon name="arrow-right" size={14} />
               </Link>
             )}
