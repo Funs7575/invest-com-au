@@ -8,6 +8,7 @@ import { AcceptBriefRequest } from "@/lib/api-schemas";
 import { acceptBrief } from "@/lib/briefs/credits";
 import { isProfessionalOnTeam } from "@/lib/expert-teams";
 import { sendConsumerProviderAccepted } from "@/lib/marketplace-emails";
+import { enqueueUserNotificationByEmail } from "@/lib/user-notifications";
 
 const log = logger("briefs:accept");
 
@@ -180,4 +181,21 @@ async function notifyConsumerOfAcceptance(input: {
     providerName,
     providerKind,
   });
+
+  // ── In-app inbox (C1 / mm06) ─────────────────────────────────────
+  // Drop a `brief_accepted` row in the consumer's notification inbox
+  // alongside the email so users without inbox-monitoring habits still
+  // see the news on next visit. Anonymous-brief flows have a contact
+  // email that doesn't resolve to an auth.users row — the helper
+  // returns `false` in that case and we silently no-op.
+  try {
+    await enqueueUserNotificationByEmail(input.consumerEmail, {
+      kind: "brief_accepted",
+      title: `${providerName} accepted your Match Request`,
+      body: `Re: ${input.briefTitle}. Your contact details have been shared with the pro.`,
+      href: `/briefs/${input.briefSlug}`,
+    });
+  } catch {
+    /* silent — inbox failure must never break the accept response */
+  }
 }
