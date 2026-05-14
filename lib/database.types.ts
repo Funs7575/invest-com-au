@@ -10016,6 +10016,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          avatar_url: string | null
           created_at: string | null
           display_name: string | null
           email: string
@@ -10024,10 +10025,18 @@ export type Database = {
           email_newsletter: boolean | null
           email_weekly_digest: boolean | null
           id: string
+          interested_in: string[] | null
+          investing_experience: string | null
+          investment_goals: string | null
+          onboarding_completed: boolean
+          portfolio_size: string | null
+          preferred_broker: string | null
+          state: string | null
           stripe_customer_id: string | null
           updated_at: string | null
         }
         Insert: {
+          avatar_url?: string | null
           created_at?: string | null
           display_name?: string | null
           email: string
@@ -10036,10 +10045,18 @@ export type Database = {
           email_newsletter?: boolean | null
           email_weekly_digest?: boolean | null
           id: string
+          interested_in?: string[] | null
+          investing_experience?: string | null
+          investment_goals?: string | null
+          onboarding_completed?: boolean
+          portfolio_size?: string | null
+          preferred_broker?: string | null
+          state?: string | null
           stripe_customer_id?: string | null
           updated_at?: string | null
         }
         Update: {
+          avatar_url?: string | null
           created_at?: string | null
           display_name?: string | null
           email?: string
@@ -10048,6 +10065,13 @@ export type Database = {
           email_newsletter?: boolean | null
           email_weekly_digest?: boolean | null
           id?: string
+          interested_in?: string[] | null
+          investing_experience?: string | null
+          investment_goals?: string | null
+          onboarding_completed?: boolean
+          portfolio_size?: string | null
+          preferred_broker?: string | null
+          state?: string | null
           stripe_customer_id?: string | null
           updated_at?: string | null
         }
@@ -14308,4 +14332,3 @@ export const Constants = {
     Enums: {},
   },
 } as const
-
