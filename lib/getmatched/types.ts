@@ -8,6 +8,21 @@
  */
 
 export type IntentSlug =
+  // Retail goal slugs (Step 2) — match the old quiz's 13 emoji options
+  | "grow"
+  | "income"
+  | "crypto"
+  | "trade"
+  | "automate"
+  | "super"
+  | "property"
+  | "home"
+  | "alt_assets"
+  | "royalties"
+  | "pre_ipo"
+  | "help"
+  | "browse"
+  // Advisor / brief / niche slugs (kept for marketplace router synergy)
   | "compare_platform"
   | "start_investing"
   | "smsf_property"
@@ -37,6 +52,21 @@ export type RouteType =
   | "second_opinion"
   | "guide";
 
+/** Logical vertical for filtered compare/browse routing. Pure ad-hoc enum
+ *  used to attach `?vertical=X` query params on terminal hrefs. */
+export type Vertical =
+  | "shares"
+  | "property"
+  | "super"
+  | "crypto"
+  | "trade"
+  | "robo"
+  | "lender"
+  | "alt"
+  | "royalties"
+  | "pre_ipo"
+  | "opportunity";
+
 export type QuestionKind =
   | "select"
   | "multiselect"
@@ -49,8 +79,20 @@ export type QuestionMode = "fast" | "guided" | "both";
 export interface QuestionOption {
   value: string;
   label: string;
+  /** Optional short caption shown beneath the label — the old quiz's
+   *  `sub` field. Plain English, no jargon. */
+  sub?: string;
+  /** Single emoji or short emoji cluster for the chip badge. */
+  emoji?: string;
+  /** When this option implies a vertical filter (e.g., property →
+   *  `/compare?vertical=property`), set it here so the terminal CTA is
+   *  built correctly. */
+  vertical?: Vertical;
   intent_hint?: IntentSlug;
   route_hint?: RouteType;
+  /** Hint about a sub-question to show next, even if the goal's default
+   *  is to skip to step 4. Used for property → property_sub branching. */
+  sub_intent?: IntentSlug;
   weight?: number;
 }
 
@@ -147,6 +189,26 @@ export interface ResolvedPlan extends ActionPlan {
   recommended_provider_ids: { kind: "individual" | "firm" | "expert_team"; id: number }[];
   recommended_brief_template: string | null;
   accept_credits_cost: number | null;
+}
+
+/**
+ * Top-match preview rendered on the result screen when the route is
+ * `compare` or `individual`. Mirrors the affiliate-aware hero card the
+ * old quiz had. Engine pulls this from `quiz_weights` / `placements`.
+ */
+export interface TopMatch {
+  kind: "broker" | "advisor";
+  slug: string;
+  name: string;
+  logo_url: string | null;
+  rating: number | null;
+  rating_count: number | null;
+  one_line_why: string;
+  cta_label: string;
+  /** Absolute or relative URL — affiliate-tracked link for brokers,
+   *  /advisors/<slug> for advisors. */
+  cta_href: string;
+  vertical: Vertical | null;
 }
 
 export type EmbedContext =
