@@ -7,6 +7,11 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { SITE_URL, absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import Icon from "@/components/Icon";
+import {
+  getCohortComparison,
+  getResponseLatencyMinutes,
+  ratesFromFunnel,
+} from "@/lib/squad-analytics";
 
 export const dynamic = "force-dynamic";
 
@@ -180,6 +185,19 @@ export default async function TeamDashboardPage({ params }: PageProps) {
   const activeBriefs = briefs.filter((b) => b.status === "open" && b.tracker_status !== "completed");
   const completedBriefs = briefs.filter((b) => b.tracker_status === "completed");
 
+  // Funnel + cohort analytics for the last 30 days vs the prior 30.
+  const teamId = team.id as number;
+  const [cohort, latencyMinutes] = await Promise.all([
+    getCohortComparison(teamId, 30),
+    getResponseLatencyMinutes(
+      teamId,
+      new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+      new Date(),
+    ),
+  ]);
+  const currentRates = ratesFromFunnel(cohort.current);
+  const previousRates = ratesFromFunnel(cohort.previous);
+
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
     { name: "Pro Squads", url: absoluteUrl("/advisors#expert-teams") },
@@ -235,6 +253,53 @@ export default async function TeamDashboardPage({ params }: PageProps) {
               label="Avg rating"
               value={scoreboard?.avg_rating !== null && scoreboard?.avg_rating !== undefined ? scoreboard.avg_rating.toFixed(1) : "—"}
             />
+          </section>
+
+          {/* Funnel + cohort (last 30 days vs prior 30) */}
+          <section className="bg-white border border-slate-200 rounded-2xl p-5">
+            <header className="flex items-center justify-between mb-4">
+              <h2 className="text-base font-bold text-slate-900">
+                30-day funnel
+              </h2>
+              {latencyMinutes !== null && (
+                <p className="text-xs text-slate-500">
+                  Avg. response latency:{" "}
+                  <strong className="text-slate-900">{latencyMinutes}m</strong>
+                </p>
+              )}
+            </header>
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+              <FunnelBar
+                label="Briefs visible"
+                value={cohort.current.briefs_visible}
+                prev={cohort.previous.briefs_visible}
+                max={cohort.current.briefs_visible || 1}
+              />
+              <FunnelBar
+                label="Accepted"
+                value={cohort.current.briefs_accepted}
+                prev={cohort.previous.briefs_accepted}
+                max={cohort.current.briefs_visible || 1}
+                rate={`${currentRates.accept_rate}%`}
+                prevRate={`${previousRates.accept_rate}%`}
+              />
+              <FunnelBar
+                label="Consultations"
+                value={cohort.current.consultations_booked}
+                prev={cohort.previous.consultations_booked}
+                max={cohort.current.briefs_accepted || 1}
+                rate={`${currentRates.book_rate}%`}
+                prevRate={`${previousRates.book_rate}%`}
+              />
+              <FunnelBar
+                label="Outcomes"
+                value={cohort.current.outcomes_completed}
+                prev={cohort.previous.outcomes_completed}
+                max={cohort.current.consultations_booked || 1}
+                rate={`${currentRates.complete_rate}%`}
+                prevRate={`${previousRates.complete_rate}%`}
+              />
+            </div>
           </section>
 
           {/* Member contributions */}
@@ -339,6 +404,58 @@ export default async function TeamDashboardPage({ params }: PageProps) {
         </div>
       </div>
     </>
+  );
+}
+
+function FunnelBar({
+  label,
+  value,
+  prev,
+  max,
+  rate,
+  prevRate,
+}: {
+  label: string;
+  value: number;
+  prev: number;
+  max: number;
+  rate?: string;
+  prevRate?: string;
+}) {
+  const pct = max > 0 ? Math.min(100, Math.round((value / max) * 100)) : 0;
+  const delta = value - prev;
+  const deltaCls =
+    delta > 0
+      ? "text-emerald-700"
+      : delta < 0
+        ? "text-rose-700"
+        : "text-slate-500";
+  return (
+    <div className="rounded-xl border border-slate-200 p-3 bg-slate-50">
+      <p className="text-[10px] uppercase tracking-widest font-bold text-slate-500">
+        {label}
+      </p>
+      <p className="text-2xl font-extrabold text-slate-900 mt-0.5">{value}</p>
+      {rate && (
+        <p className="text-xs text-slate-500 mt-1">
+          {rate}{" "}
+          {prevRate && (
+            <span className="text-[10px] opacity-70">(prev {prevRate})</span>
+          )}
+        </p>
+      )}
+      <div className="h-1.5 bg-slate-200 rounded-full mt-2 overflow-hidden">
+        <div
+          className="h-full bg-amber-500"
+          style={{ width: `${pct}%` }}
+          aria-hidden
+        />
+      </div>
+      <p className={`text-[11px] font-semibold mt-1 ${deltaCls}`}>
+        {delta > 0 ? "+" : ""}
+        {delta} vs previous
+      </p>
+    </div>
   );
 }
 
