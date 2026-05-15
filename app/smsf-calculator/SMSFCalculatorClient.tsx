@@ -7,7 +7,7 @@ import SocialProofCounter from "@/components/SocialProofCounter";
 import { trackEvent, trackPageDuration } from "@/lib/tracking";
 import { getStoredUtm } from "@/components/UtmCapture";
 import { formatCurrency } from "@/lib/utils";
-import { useCalculatorState, buildShareableUrl } from "@/hooks/use-calculator-state";
+import { useCalculatorState } from "@/hooks/use-calculator-state";
 import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 /* ── helpers ── */
@@ -179,14 +179,13 @@ export default function SMSFCalculatorClient() {
   };
 
   const handleShare = () => {
-    const deepLink = buildShareableUrl(window.location.pathname, "smsf_calculator", { balance, annualContribution, currentFeePercent, expectedReturn, yearsToRetirement });
     const text = netBenefit > 0
-      ? `Switching to an SMSF could grow my super by an extra ${formatCurrency(netBenefit)} over ${yearsToRetirement} years. See the calculation: ${deepLink}`
-      : `I just checked whether an SMSF makes sense for my super: ${deepLink}`;
+      ? `Switching to an SMSF could grow my super by an extra ${formatCurrency(netBenefit)} over ${yearsToRetirement} years. Check yours: invest.com.au/smsf-calculator`
+      : `I just checked whether an SMSF makes sense for my super. Check yours: invest.com.au/smsf-calculator`;
     if (navigator.share) {
-      navigator.share({ title: "SMSF Calculator", text, url: deepLink }).catch(() => {});
+      navigator.share({ title: "SMSF Calculator", text }).catch(() => {});
     } else {
-      navigator.clipboard.writeText(deepLink).catch(() => {});
+      navigator.clipboard.writeText(text).catch(() => {});
     }
   };
 

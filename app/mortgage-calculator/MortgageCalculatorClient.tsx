@@ -7,7 +7,7 @@ import SocialProofCounter from "@/components/SocialProofCounter";
 import { trackEvent, trackPageDuration } from "@/lib/tracking";
 import { getStoredUtm } from "@/components/UtmCapture";
 import { storeQualificationData } from "@/lib/qualification-store";
-import { useCalculatorState, buildShareableUrl } from "@/hooks/use-calculator-state";
+import { useCalculatorState } from "@/hooks/use-calculator-state";
 import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
 /* ── helpers ─────────────────────────────────────────── */
@@ -177,12 +177,11 @@ export default function MortgageCalculatorClient() {
   };
 
   const handleShare = () => {
-    const deepLink = buildShareableUrl(window.location.pathname, "mortgage_calculator", { loanAmount, interestRate, loanTerm, repaymentType });
-    const text = `My ${loanTerm}-year mortgage at ${interestRate}% on ${formatCurrency(loanAmount)} = ${formatCurrencyExact(monthly)}/month. Check the calculation: ${deepLink}`;
+    const text = `My ${loanTerm}-year mortgage at ${interestRate}% on ${formatCurrency(loanAmount)} = ${formatCurrencyExact(monthly)}/month. Total interest: ${formatCurrency(totalInterest)}. Check yours: invest.com.au/mortgage-calculator`;
     if (navigator.share) {
-      navigator.share({ title: "Mortgage Repayment Calculator", text, url: deepLink }).catch(() => {});
+      navigator.share({ title: "Mortgage Repayment Calculator", text }).catch(() => {});
     } else {
-      navigator.clipboard.writeText(deepLink).catch(() => {});
+      navigator.clipboard.writeText(text).catch(() => {});
     }
   };
 

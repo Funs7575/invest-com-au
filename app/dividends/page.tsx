@@ -4,7 +4,6 @@ import { SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import HubPage from "@/components/HubPage";
 import { DIVIDENDS_HUB_CONFIG } from "@/lib/verticals";
-import HubExitIntent from "@/components/HubExitIntent";
 
 export const revalidate = 3600;
 
@@ -72,7 +71,6 @@ const serviceGridNode = (
 
 export default function DividendsHubPage() {
   return (
-    <>
     <HubPage config={DIVIDENDS_HUB_CONFIG} serviceGrid={serviceGridNode}>
       {/* SMSF franking crossover callout */}
       <section className="py-12 bg-slate-50 border-y border-slate-200">
@@ -124,7 +122,5 @@ export default function DividendsHubPage() {
         </div>
       </section>
     </HubPage>
-    <HubExitIntent segmentSlug="dividends-hub" hubName="Dividend Investing" />
-    </>
   );
 }

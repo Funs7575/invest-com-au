@@ -6,7 +6,7 @@ import SocialProofCounter from "@/components/SocialProofCounter";
 import { trackEvent, trackClick, getAffiliateLink, AFFILIATE_REL, trackPageDuration } from "@/lib/tracking";
 import { getStoredUtm } from "@/components/UtmCapture";
 import { storeQualificationData } from "@/lib/qualification-store";
-import { useCalculatorState, buildShareableUrl } from "@/hooks/use-calculator-state";
+import { useCalculatorState } from "@/hooks/use-calculator-state";
 import AdvisorMatchCTA from "@/components/AdvisorMatchCTA";
 import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
 
@@ -99,12 +99,11 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
   };
 
   const handleShare = () => {
-    const deepLink = buildShareableUrl(window.location.pathname, "savings_calculator", { balance, current_rate: currentRate });
-    const text = `I could earn ${formatCurrency(maxExtra)} more per year just by switching savings accounts. See my calculation: ${deepLink}`;
+    const text = `I could earn ${formatCurrency(maxExtra)} more per year just by switching savings accounts. Check yours: invest.com.au/savings-calculator`;
     if (navigator.share) {
-      navigator.share({ title: "Savings Calculator", text, url: deepLink }).catch(() => {});
+      navigator.share({ title: "Savings Calculator", text }).catch(() => {});
     } else {
-      navigator.clipboard.writeText(deepLink).catch(() => {});
+      navigator.clipboard.writeText(text).catch(() => {});
     }
   };
 

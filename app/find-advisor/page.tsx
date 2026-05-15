@@ -272,12 +272,6 @@ function FindAdvisorQuiz() {
   const needParam = searchParams.get("need");
   const prefilledIntent = needParam ? NEED_TO_INTENT[needParam] || null : null;
 
-  // LX-04 — pre-filled form params from hub CTAs, calculators, onboarding results.
-  const stateParam = searchParams.get("state");
-  const postcodeParam = searchParams.get("postcode");
-  const budgetParam = searchParams.get("budget");
-  const firstNameParam = searchParams.get("first_name");
-
   // Read sessionStorage once synchronously so all lazy initialisers share the same
   // parsed value — avoids 5 separate JSON.parse calls and, crucially, avoids the
   // two-render flash (step-1 paint → useEffect → step-5 repaint).
@@ -308,15 +302,8 @@ function FindAdvisorQuiz() {
     return {
       step: initialIntent ? 2 : 1,
       intent: initialIntent,
-      context: [],
-      // LX-04: seed state/postcode/budget/firstName from URL so Step 3 + Step 4
-      // are pre-populated when the user reaches them — reduces form friction.
-      state: stateParam ?? "",
-      postcode: postcodeParam ?? "",
-      suburb: "",
-      budget: budgetParam ?? "",
-      firstName: firstNameParam ?? "",
-      email: "", phone: "", consent: false,
+      context: [], state: "", postcode: "", suburb: "", budget: "",
+      firstName: "", email: "", phone: "", consent: false,
     };
   });
 
@@ -326,17 +313,7 @@ function FindAdvisorQuiz() {
     if (needParam && needParam !== appliedNeed) {
       const intent = NEED_TO_INTENT[needParam] || null;
       if (intent) {
-        setQuiz(prev => ({
-          ...prev,
-          step: 2,
-          intent,
-          context: [],
-          // Re-apply pre-fill params on navigation changes too
-          state: stateParam ?? prev.state,
-          postcode: postcodeParam ?? prev.postcode,
-          budget: budgetParam ?? prev.budget,
-          firstName: firstNameParam ?? prev.firstName,
-        }));
+        setQuiz(prev => ({ ...prev, step: 2, intent, context: [] }));
         setAppliedNeed(needParam);
       }
     }
