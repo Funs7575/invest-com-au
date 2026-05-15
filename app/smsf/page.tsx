@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import Icon from "@/components/Icon";
 import HubPage from "@/components/HubPage";
 import HubServiceGrid from "@/components/HubServiceGrid";
+import HubNewsletterCapture from "@/components/HubNewsletterCapture";
 import type { HubServiceItem } from "@/components/HubServiceGrid";
 import { SMSF_HUB_CONFIG } from "@/lib/verticals";
 import HubExitIntent from "@/components/HubExitIntent";
@@ -97,6 +98,13 @@ export default async function SmsfHubPage() {
           heading="Four SMSF service categories"
           items={SMSF_SERVICE_ITEMS}
           columns={2}
+        />
+      }
+      newsletterCapture={
+        <HubNewsletterCapture
+          segmentSlug="smsf-hub"
+          hubTitle="SMSF"
+          leadMagnetTitle="Free SMSF Trustee Checklist"
         />
       }
     >

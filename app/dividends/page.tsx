@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import HubPage from "@/components/HubPage";
+import HubNewsletterCapture from "@/components/HubNewsletterCapture";
 import { DIVIDENDS_HUB_CONFIG } from "@/lib/verticals";
 import HubExitIntent from "@/components/HubExitIntent";
 
@@ -73,7 +74,16 @@ const serviceGridNode = (
 export default function DividendsHubPage() {
   return (
     <>
-    <HubPage config={DIVIDENDS_HUB_CONFIG} serviceGrid={serviceGridNode}>
+    <HubPage
+      config={DIVIDENDS_HUB_CONFIG}
+      serviceGrid={serviceGridNode}
+      newsletterCapture={
+        <HubNewsletterCapture
+          segmentSlug="dividends-hub"
+          hubTitle="dividend investing"
+        />
+      }
+    >
       {/* SMSF franking crossover callout */}
       <section className="py-12 bg-slate-50 border-y border-slate-200">
         <div className="container-custom max-w-4xl">
