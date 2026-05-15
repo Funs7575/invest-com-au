@@ -3,7 +3,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { AnswerQuestionRequest } from "@/lib/api-schemas";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 import { getPlanById, updatePlan } from "@/lib/getmatched/action-plans";
-import { getQuestions, nextQuestion } from "@/lib/getmatched/questions";
+import {
+  getQuestions,
+  nextQuestion,
+  nextQuestionWithAI,
+} from "@/lib/getmatched/questions";
 import { logEvent } from "@/lib/getmatched/events";
 import { classifyGetMatchedError, errorResponse } from "@/lib/getmatched/errors";
 import { logger } from "@/lib/logger";
@@ -107,7 +111,16 @@ export async function POST(request: NextRequest) {
       payload: { question_slug, plan_id: plan.id },
     });
 
-    const next = nextQuestion(questions, updated.answers, "both");
+    // Use the AI wrapper on the DB-backed path so the persisted
+    // session_id is the stable userKey for the rollout hash. When the
+    // `ai_get_matched_v3` flag is OFF (the default) this is a pure
+    // pass-through to the rule-based walker — zero Claude calls.
+    const next = await nextQuestionWithAI(
+      questions,
+      updated.answers,
+      "both",
+      plan.session_id,
+    );
 
     return NextResponse.json({ plan_id: plan.id, next });
   } catch (err) {
