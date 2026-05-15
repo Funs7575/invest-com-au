@@ -54,7 +54,7 @@ export default async function FindIntentPage({ params }: PageProps) {
         <span className="mx-2">/</span>
         <span className="text-slate-700">{intent.label}</span>
       </nav>
-      <h1 className="text-3xl font-extrabold text-slate-900 mb-2">{meta.h1}</h1>
+      <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-2">{meta.h1}</h1>
       {intent.description && (
         <p className="text-slate-600 mb-6 leading-relaxed">{intent.description}</p>
       )}
