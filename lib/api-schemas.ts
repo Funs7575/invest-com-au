@@ -287,14 +287,6 @@ export const SquadCompleteBriefRequest = z.object({
   note: z.string().max(2000).optional(),
 });
 
-// ─── /api/briefs/[slug]/messages (MM32 — brief tracker chat) ──────
-
-export const SendBriefMessageRequest = z.object({
-  body: z.string().min(1).max(4000),
-});
-
-export const MarkBriefMessagesReadRequest = z.object({}).optional();
-
 export const SquadReleaseBriefRequest = z.object({
   note: z.string().max(2000).optional(),
 });
