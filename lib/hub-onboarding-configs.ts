@@ -320,3 +320,112 @@ export const WHOLESALE_ONBOARDING_CONFIG: HubOnboardingConfig = {
     };
   },
 };
+
+export const PROPERTY_ONBOARDING_CONFIG: HubOnboardingConfig = {
+  hubSlug: "property",
+  hubName: "Property Investment",
+  heading: "What kind of property investor are you?",
+  subheading: "3 quick questions to personalise your Australian property investment path.",
+  questions: [
+    {
+      id: "goal",
+      question: "What is your primary property investment goal?",
+      options: [
+        { value: "capital_growth", label: "Capital growth — buy in a growth corridor and hold" },
+        { value: "rental_income", label: "Rental yield — generate reliable passive income" },
+        { value: "home_first", label: "Owner-occupier first, then invest in a second property" },
+        { value: "exploring", label: "Still exploring whether property is right for me" },
+      ],
+    },
+    {
+      id: "budget",
+      question: "What is your available budget (deposit + purchase costs)?",
+      options: [
+        { value: "under_100k", label: "Under $100k" },
+        { value: "100k_200k", label: "$100k – $200k" },
+        { value: "200k_500k", label: "$200k – $500k" },
+        { value: "over_500k", label: "Over $500k" },
+      ],
+    },
+    {
+      id: "experience",
+      question: "What best describes your current property situation?",
+      options: [
+        { value: "first_time", label: "First property — never owned before" },
+        { value: "owner_occ", label: "I own my home but have no investment properties" },
+        { value: "existing_ip", label: "I already own one or more investment properties" },
+        { value: "researching", label: "Actively researching but not yet committed" },
+      ],
+    },
+  ],
+
+  evaluate(answers: QuizAnswers) {
+    const goal = answers["goal"];
+    const budget = answers["budget"];
+    const experience = answers["experience"];
+
+    if (goal === "exploring") {
+      return {
+        headline: "Let us help you decide if property is the right move.",
+        summary:
+          "Property suits investors who want leverage, tax benefits (negative gearing, depreciation), and long-term capital appreciation. But it comes with illiquidity and concentration risk. A buyer's agent or financial adviser can model the numbers for your situation.",
+        primaryCta: { label: "Property vs Shares Calculator", href: "/property-vs-shares-calculator" },
+        secondaryCta: { label: "Find a Financial Adviser", href: "/find-advisor" },
+        advisorCta: { href: "/quiz?vertical=property", specialty: "property investment adviser" },
+      };
+    }
+
+    if (experience === "first_time" && budget === "under_100k") {
+      return {
+        headline: "A deposit is the first milestone — here is how to build to it.",
+        summary:
+          "With under $100k available, the goal now is building a deposit. The First Home Super Saver Scheme (FHSS) lets you save inside super at 15% tax, then withdraw up to $50k for a home deposit. Stamp-duty exemptions for first-home buyers also reduce your required savings.",
+        primaryCta: { label: "First Home Buyer Hub", href: "/first-home-buyer" },
+        secondaryCta: { label: "FHSS Calculator", href: "/tools/fhss-calculator" },
+        advisorCta: { href: "/quiz?vertical=mortgage", specialty: "mortgage broker" },
+      };
+    }
+
+    if (experience === "existing_ip") {
+      return {
+        headline: "You are building a portfolio — here is how to scale efficiently.",
+        summary:
+          "Experienced investors typically focus next on equity release from existing properties (via refinance or line of credit), cross-collateralisation risks, and portfolio diversification. A buyer's agent who specialises in investor clients can source off-market deals.",
+        primaryCta: { label: "Browse New Developments", href: "/property/listings" },
+        secondaryCta: { label: "Find a Buyer's Agent", href: "/quiz?vertical=property" },
+        advisorCta: { href: "/quiz?vertical=property", specialty: "property investment adviser" },
+      };
+    }
+
+    if (goal === "rental_income") {
+      return {
+        headline: "Rental yield investing starts with the right suburb and property type.",
+        summary:
+          "High-yield markets (regional QLD, parts of WA) can hit 6–8% gross yield but trade capital growth for income. Dual-income properties and house-and-land packages in high-demand rental corridors often outperform on a total-return basis. Use our yield calculator to stress-test the numbers.",
+        primaryCta: { label: "Property Yield Calculator", href: "/property-yield-calculator" },
+        secondaryCta: { label: "Find a Buyer's Agent", href: "/quiz?vertical=property" },
+        advisorCta: { href: "/quiz?vertical=property", specialty: "property buyer's agent" },
+      };
+    }
+
+    if (goal === "capital_growth") {
+      return {
+        headline: "Capital growth investing rewards patience and the right corridor.",
+        summary:
+          "Historically, well-located metro land within 20km of a CBD doubles every 10–12 years. New estates on urban fringes are cheaper but grow slower. A buyer's agent with local data can identify growth corridors before they peak — saving both time and money.",
+        primaryCta: { label: "Browse New Developments", href: "/property/listings" },
+        secondaryCta: { label: "Find a Buyer's Agent", href: "/quiz?vertical=property" },
+        advisorCta: { href: "/quiz?vertical=property", specialty: "property buyer's agent" },
+      };
+    }
+
+    return {
+      headline: "Property is one of Australia's most proven wealth-building assets.",
+      summary:
+        "Start with a clear budget (deposit + stamp duty + buying costs), define your goal (yield vs growth), and choose the right structure (personal, joint, or trust). A mortgage broker can confirm your borrowing power before you make any offers.",
+      primaryCta: { label: "Property Investment Guides", href: "/property" },
+      secondaryCta: { label: "Find a Mortgage Broker", href: "/quiz?vertical=mortgage" },
+      advisorCta: { href: "/quiz?vertical=property", specialty: "property investment adviser" },
+    };
+  },
+};
