@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Icon from "@/components/Icon";
+import { buildAdvisorUrl } from "@/lib/prefill-url";
 
 interface AdvisorMatchCTAProps {
   /** The wizard need key to pre-fill (e.g. "mortgage", "tax", "planning") */
@@ -8,6 +9,12 @@ interface AdvisorMatchCTAProps {
   headline: string;
   /** Supporting description */
   description: string;
+  /** LX-04: optional pre-fill — Australian state (e.g. "VIC") */
+  state?: string;
+  /** LX-04: optional pre-fill — postcode */
+  postcode?: string;
+  /** LX-04: optional pre-fill — budget range key (e.g. "200k_500k") */
+  budget?: string;
 }
 
 const NEED_KEY_TO_ICON: Record<string, string> = {
@@ -26,8 +33,16 @@ const NEED_KEY_TO_ICON: Record<string, string> = {
   debt: "credit-card",
 };
 
-export default function AdvisorMatchCTA({ needKey, headline, description }: AdvisorMatchCTAProps) {
-  const icon = NEED_KEY_TO_ICON[needKey] || "users";
+export default function AdvisorMatchCTA({
+  needKey,
+  headline,
+  description,
+  state,
+  postcode,
+  budget,
+}: AdvisorMatchCTAProps) {
+  const icon = NEED_KEY_TO_ICON[needKey] ?? "users";
+  const href = buildAdvisorUrl({ need: needKey, state, postcode, budget });
 
   return (
     <div className="bg-gradient-to-br from-amber-50 to-slate-50 border border-amber-200/60 rounded-xl p-4 md:p-5">
@@ -39,7 +54,7 @@ export default function AdvisorMatchCTA({ needKey, headline, description }: Advi
           <h3 className="text-sm md:text-base font-bold text-slate-900 mb-0.5">{headline}</h3>
           <p className="text-xs md:text-sm text-slate-500 mb-3 leading-relaxed">{description}</p>
           <Link
-            href={`/find-advisor?need=${needKey}`}
+            href={href}
             className="inline-flex items-center gap-1.5 px-4 py-2 bg-amber-500 text-white text-xs font-bold rounded-lg hover:bg-amber-600 transition-colors"
           >
             Get Matched Free <span>&rarr;</span>
