@@ -58,7 +58,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | RR | `claude/audit-remediation/rr-01-review-extensions` | **#847 OPEN** | RR-01 false-positive (VerifiedClientBadge already implemented). RR-02 (advisor response to reviews) in-flight (#847, CI-rescue done iter 399). | All RR tasks merged |
 | EM | `claude/audit-remediation/em-03-hub-newsletter-infra` | **#848 OPEN** | EM-03 (hub-aware newsletter capture) done. EM-01 (lead magnets) done (`511976fc`): `LeadMagnetCapture` + `lib/lead-magnets.ts` 12-PDF registry + wired into SMSF+dividends hubs. Next: EM-02 (digest infrastructure). | All EM tasks merged |
 | LX | `claude/audit-remediation/lx-01-calculator-share-save` | **#849 OPEN** | LX-01 (share/save) done. LX-04 (pre-filled forms) done. LX-05 (exit-intent capture) done. LX-02 (calculator history) done (`d6e206c4`): `useCalculatorHistory` hook + `CalculatorHistory` component + wired into compound-interest calculator. Next: LX-03 (cross-calculator navigation). | All LX tasks merged |
-| OB | `claude/audit-remediation/ob-01-hub-onboarding` | **#852 OPEN** | OB-01..OB-07 done. OB-07 (`080f127`): `SUPER_ONBOARDING_CONFIG` + `/super/quiz` page + sitemap. OB-08..OB-13 (5 remaining hub configs) pending. Next: OB-08 (crypto hub onboarding quiz). | All OB tasks merged |
+| OB | `claude/audit-remediation/ob-01-hub-onboarding` | **#852 OPEN** | OB-01..OB-08 done. OB-08 (`26de421`): `CRYPTO_ONBOARDING_CONFIG` + `/crypto/quiz` page + sitemap. OB-09..OB-13 (4 remaining hub configs) pending. Next: OB-09 (lump-sum investing hub onboarding quiz). | All OB tasks merged |
 
 ---
 
@@ -123,6 +123,17 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 417 — 2026-05-15 — OB-08 crypto hub onboarding quiz
+
+- **Stream:** OB (hub onboarding flows)
+- **Item:** OB-08 — cryptocurrency diagnostic quiz
+- **Branch:** `claude/audit-remediation/ob-01-hub-onboarding`
+- **PR:** #852 OPEN
+- **Commit:** `26de421`
+- **Diff:** +158 -1 across 3 files (1 new lib config, 1 new page, 1 sitemap update)
+- **What:** `CRYPTO_ONBOARDING_CONFIG` — 3 questions (experience: new/some/active/advanced; goal: diversify/long-term-growth/income-yield/speculate; allocation: under-5% / 5–15% / 15–30% / over-30%). Six evaluate() branches: complete beginner → regulated-exchange onboarding + 5%-max rule; over-30% allocation → concentration-risk warning + DCA alternative; income/yield → staking vs centralised-lending risk hierarchy + ATO tax note; advanced/DeFi → tax-record hygiene (Koinly/CoinTracker) + ATO data-sharing regime; diversify → institutional 5–10% satellite + ASX crypto ETFs; default → DCA Bitcoin/Ethereum + 12-month CGT discount. Created `app/crypto/quiz/page.tsx` (ISR 86400, breadcrumb JSON-LD to `/crypto`, `<ComplianceFooter>` — `app/crypto` is in AFSL MANDATORY_ROOTS). 39 AFSL compliance tests green. JSON-LD ✅.
+- **STATUS: PROGRESS · stream=OB · item=OB-08 · pr=#852**
 
 ### iter 416 — 2026-05-15 — OB-07 super hub onboarding quiz
 
