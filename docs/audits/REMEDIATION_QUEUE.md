@@ -58,6 +58,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | RR | `claude/audit-remediation/rr-01-review-extensions` | **#847 OPEN** | RR-01 false-positive (VerifiedClientBadge already implemented). RR-02 (advisor response to reviews) in-flight (#847, CI-rescue done iter 399). | All RR tasks merged |
 | EM | `claude/audit-remediation/em-03-hub-newsletter-infra` | **#848 OPEN** | EM-03 (hub-aware newsletter capture) done. Unblocks EM-01/02/04/05/06 + LX-05. Next: EM-01 (lead magnets). | All EM tasks merged |
 | LX | `claude/audit-remediation/lx-01-calculator-share-save` | **#849 OPEN** | LX-01 (calculator share/save — viral deep links) done. `CalculatorShareButton` component + deep links wired into 4 calculators (compound interest, mortgage, SMSF, savings). | All LX tasks merged |
+| OB | `claude/audit-remediation/ob-01-hub-onboarding` | **#852 OPEN** | OB-01 done (`e654f70`). `HubOnboardingShell` + `lib/hub-onboarding-configs.ts` + SMSF/dividends quiz pages + sitemap. OB-02..OB-13 (remaining 11 hub configs) pending. Next: OB-02 (wholesale hub onboarding quiz). | All OB tasks merged |
 
 ---
 
@@ -122,6 +123,18 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 403 — 2026-05-15 — OB-01 hub onboarding shell
+
+- **Stream:** OB (hub onboarding flows)
+- **Item:** OB-01 — `HubOnboardingShell` + SMSF + Dividends diagnostic quiz pages
+- **Branch:** `claude/audit-remediation/ob-01-hub-onboarding`
+- **PR:** #852 OPEN
+- **Commit:** `e654f70`
+- **Diff:** +386 -2 across 5 files (1 new component, 1 new lib config, 2 new pages, 1 sitemap update)
+- **What:** Built the generic hub onboarding shell and first two hub configs. `HubOnboardingShell` wraps `<EligibilityQuiz>` (W-10) and accepts a `HubOnboardingConfig` with hub-specific questions and an `evaluate(answers)` function. On completion the evaluate function returns a `HubOnboardingResult` (headline, summary, primaryCta, optional secondaryCta, optional advisorCta rendered as a "want expert advice?" card). `lib/hub-onboarding-configs.ts` defines `SMSF_ONBOARDING_CONFIG` (3 questions, 5 result branches: current trustee / under-balance / property-goal / ready+balance / default) and `DIVIDENDS_ONBOARDING_CONFIG` (3 questions, 4 result branches: SMSF+franking / income / growth / exploring). Pages at `/smsf/quiz` and `/dividends/quiz` (ISR 86400, breadcrumb JSON-LD, canonicals). OB-02..OB-13 (11 remaining hub configs) are the next iterations in this stream.
+- **CI:** #848/#849 CI bypass (green). #845 axe-core systemic (blocked). #847 Vercel-only (CI not triggered on last push). No rescue needed this iteration.
+- **STATUS: PROGRESS · stream=OB · item=OB-01 · pr=#852**
 
 ### iter 402 — 2026-05-15 — systemic axe-core cluster-guard
 
