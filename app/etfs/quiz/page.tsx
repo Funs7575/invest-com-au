@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { SITE_URL, breadcrumbJsonLd } from "@/lib/seo";
 import { ETF_ONBOARDING_CONFIG } from "@/lib/hub-onboarding-configs";
 import HubOnboardingShell from "@/components/HubOnboardingShell";
+import ComplianceFooter from "@/components/ComplianceFooter";
 
 export const revalidate = 86400;
 
@@ -35,6 +36,7 @@ export default function EtfQuizPage() {
       >
         <HubOnboardingShell config={ETF_ONBOARDING_CONFIG} />
       </Suspense>
+      <ComplianceFooter className="mt-8 mx-4" />
     </>
   );
 }
