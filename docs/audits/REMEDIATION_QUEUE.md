@@ -58,7 +58,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | RR | `claude/audit-remediation/rr-01-review-extensions` | **#847 OPEN** | RR-01 false-positive (VerifiedClientBadge already implemented). RR-02 (advisor response to reviews) in-flight (#847, CI-rescue done iter 399). | All RR tasks merged |
 | EM | `claude/audit-remediation/em-03-hub-newsletter-infra` | **#848 OPEN** | EM-03 (hub-aware newsletter capture) done. EM-01 (lead magnets) done (`511976fc`): `LeadMagnetCapture` + `lib/lead-magnets.ts` 12-PDF registry + wired into SMSF+dividends hubs. Next: EM-02 (digest infrastructure). | All EM tasks merged |
 | LX | `claude/audit-remediation/lx-01-calculator-share-save` | **#849 OPEN** | LX-01 (share/save) done. LX-04 (pre-filled forms) done. LX-05 (exit-intent capture) done. LX-02 (calculator history) done (`d6e206c4`): `useCalculatorHistory` hook + `CalculatorHistory` component + wired into compound-interest calculator. Next: LX-03 (cross-calculator navigation). | All LX tasks merged |
-| OB | `claude/audit-remediation/ob-01-hub-onboarding` | **#852 OPEN** | OB-01..OB-05 done. CI-rescue iter 414 (`4872612`): added ComplianceFooter to etfs/quiz and property/quiz (AFSL test). OB-06..OB-13 (7 remaining hub configs) pending. Next: OB-06 (negative-gearing hub onboarding quiz). | All OB tasks merged |
+| OB | `claude/audit-remediation/ob-01-hub-onboarding` | **#852 OPEN** | OB-01..OB-06 done. OB-06 (`1cd3d09`): `NEGATIVE_GEARING_ONBOARDING_CONFIG` + `/negative-gearing/quiz` page + sitemap. OB-07..OB-13 (6 remaining hub configs) pending. Next: OB-07 (super hub onboarding quiz). | All OB tasks merged |
 
 ---
 
@@ -123,6 +123,17 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 415 — 2026-05-15 — OB-06 negative-gearing hub onboarding quiz
+
+- **Stream:** OB (hub onboarding flows)
+- **Item:** OB-06 — negative-gearing diagnostic quiz
+- **Branch:** `claude/audit-remediation/ob-01-hub-onboarding`
+- **PR:** #852 OPEN
+- **Commit:** `1cd3d09`
+- **Diff:** +157 -1 across 3 files (1 new lib config, 1 new page, 1 sitemap update)
+- **What:** `NEGATIVE_GEARING_ONBOARDING_CONFIG` — 3 questions (income bracket: under-$45k / $45k–$120k / $120k–$180k / over-$180k; vehicle: property / shares / both / exploring; situation: first-time / currently-neg / positively-geared / near-neutral). Seven evaluate() branches: under-$45k → cash-flow-positive alternative (tax offset too small at 19%); already-neg → depreciation schedule optimisation + tax accountant CTA; high-income + property → 37–45¢/dollar math with calculator CTA; high-income + shares → margin lending structure + adviser CTA; positively-geared → interest-only refinance restructuring; default → calculator + tax accountant CTA. Created `app/negative-gearing/quiz/page.tsx` (ISR 86400, breadcrumb JSON-LD to `/negative-gearing`). Added `/negative-gearing/quiz` to sitemap. AFSL compliance: `/negative-gearing` not in MANDATORY_ROOTS → no ComplianceFooter required. All 37 AFSL tests green. JSON-LD gate ✅.
+- **STATUS: PROGRESS · stream=OB · item=OB-06 · pr=#852**
 
 ### iter 414 — 2026-05-15 — CI-RESCUE OB (#852)
 
