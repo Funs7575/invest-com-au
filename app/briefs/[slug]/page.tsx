@@ -3,14 +3,17 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 
 import { createClient } from "@/lib/supabase/server";
-// eslint-disable-next-line no-restricted-imports -- The email-key tracker path has no advisor JWT but still needs to detect whether the signed-in user is the accepted pro / a member of the accepted team (expert_team_members is deny-all-anon). Per CLAUDE.md § "Two Supabase clients", cross-table membership lookups that can't be scoped to auth.uid() are a legitimate service-role use case.
-import { createAdminClient } from "@/lib/supabase/admin";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import { BRIEF_TEMPLATE_LABELS } from "@/lib/briefs/templates";
 import type { BriefRow, TrackerStatus } from "@/lib/briefs/types";
-import { listMessagesForBrief } from "@/lib/brief-messages";
+import {
+  getSlot,
+  listBookingsForBrief,
+  type AvailabilitySlot,
+  type ConsultationBooking,
+} from "@/lib/consultations";
 
-import BriefChatPanel from "./BriefChatPanel";
+import BookConsultationPanel from "./BookConsultationPanel";
 
 export const dynamic = "force-dynamic";
 
@@ -91,102 +94,6 @@ async function loadAccepted(brief: BriefRow): Promise<AcceptedInfo> {
   return info;
 }
 
-interface ChatBlock {
-  initialMessages: Awaited<ReturnType<typeof listMessagesForBrief>>;
-  viewerSide: "consumer" | "pro";
-  viewerName: string;
-  counterpartyName: string;
-}
-
-/**
- * Detect which side of the conversation the signed-in viewer is on
- * and pre-load the message history for SSR. Returns null if the viewer
- * isn't on either side (anonymous / wrong account) — caller hides the
- * chat panel in that case.
- *
- * Email-key access (`?email=…`) is enough for *visibility* of the
- * tracker, but the chat panel writes via authenticated API routes that
- * gate on auth.users / advisor session. We render the panel for the
- * email-key consumer path because the API will 401 if they aren't
- * actually signed-in — better to show the input + a clear error than
- * silently hide the chat from the brief owner.
- */
-async function loadChatContext(
-  brief: BriefRow,
-  emailMatches: boolean,
-  accepted: AcceptedInfo,
-): Promise<ChatBlock | null> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const proName =
-    accepted.team?.name ?? accepted.professional?.name ?? "Your provider";
-  const consumerName = brief.contact_name?.trim() || "You";
-
-  let viewerSide: "consumer" | "pro" | null = null;
-
-  // Pro side: signed-in user matches the accepted professional (by email
-  // — pros log in via Supabase auth, and the professionals.email column
-  // is the same address). Membership lookups on expert_team_members are
-  // deny-all-anon so we use the service-role admin client for those reads.
-  if (user?.email) {
-    const admin = createAdminClient();
-    const { data: pro } = await admin
-      .from("professionals")
-      .select("id")
-      .eq("email", user.email)
-      .maybeSingle();
-    if (pro) {
-      if (
-        brief.accepted_by_professional_id !== null &&
-        (pro.id as number) === brief.accepted_by_professional_id
-      ) {
-        viewerSide = "pro";
-      } else if (brief.accepted_by_team_id !== null) {
-        const { data: membership } = await admin
-          .from("expert_team_members")
-          .select("id")
-          .eq("team_id", brief.accepted_by_team_id)
-          .eq("professional_id", pro.id as number)
-          .eq("status", "active")
-          .maybeSingle();
-        if (membership) viewerSide = "pro";
-      }
-    }
-  }
-
-  // Consumer side: signed-in email matches contact_email, OR the
-  // email-key query string matched (covers the magic-link path before
-  // a full auth session is established).
-  if (
-    viewerSide === null &&
-    ((user?.email &&
-      brief.contact_email &&
-      user.email.toLowerCase() === brief.contact_email.toLowerCase()) ||
-      emailMatches)
-  ) {
-    viewerSide = "consumer";
-  }
-
-  if (viewerSide === null) return null;
-
-  let initialMessages: Awaited<ReturnType<typeof listMessagesForBrief>> = [];
-  try {
-    initialMessages = await listMessagesForBrief(brief.id);
-  } catch {
-    // Non-fatal — render an empty chat. Error logged in the helper.
-  }
-
-  return {
-    initialMessages,
-    viewerSide,
-    viewerName: viewerSide === "consumer" ? consumerName : proName,
-    counterpartyName: viewerSide === "consumer" ? proName : consumerName,
-  };
-}
-
 export default async function BriefTrackerPage({
   params,
   searchParams,
@@ -214,14 +121,19 @@ export default async function BriefTrackerPage({
 
   const accepted = await loadAccepted(brief);
 
-  // ── Chat-panel visibility ──────────────────────────────────────────
-  // Only render the chat panel once a provider has accepted the brief.
-  // We also need to know which "side" the viewer is on so the bubble
-  // alignment + mark-read column match. Anonymous viewers (no JWT, no
-  // email match) don't see the panel at all.
-  const chatBlock = brief.accepted_at
-    ? await loadChatContext(brief, emailMatches, accepted)
-    : null;
+  // Load any existing consultation booking for this brief (latest non-cancelled).
+  let existingBooking: ConsultationBooking | null = null;
+  let existingSlot: AvailabilitySlot | null = null;
+  if (accepted.professional) {
+    const bookings = await listBookingsForBrief(brief.id);
+    const active = bookings.find(
+      (b) => b.status === "pending" || b.status === "confirmed",
+    );
+    if (active) {
+      existingBooking = active;
+      existingSlot = await getSlot(active.slot_id);
+    }
+  }
 
   const stepIndex = STATUS_ORDER.indexOf(brief.tracker_status);
 
@@ -278,16 +190,13 @@ export default async function BriefTrackerPage({
               </div>
             )}
 
-            {/* 5 status dots side-by-side. Labels can wrap to 2 lines on
-                narrow viewports — `break-words` prevents the longest label
-                ("Engagement confirmed") from forcing horizontal overflow. */}
-            <ol className="mt-4 grid grid-cols-5 gap-1.5 sm:gap-2">
+            <ol className="mt-4 grid grid-cols-5 gap-2">
               {STATUS_ORDER.map((s, idx) => {
                 const reached = idx <= stepIndex;
                 return (
-                  <li key={s} className="text-center min-w-0">
+                  <li key={s} className="text-center">
                     <div
-                      className={`w-7 h-7 rounded-full mx-auto flex items-center justify-center text-[11px] font-bold ${
+                      className={`w-7 h-7 rounded-full mx-auto flex items-center justify-center text-[10px] font-bold ${
                         reached
                           ? "bg-amber-500 text-slate-900"
                           : "bg-slate-100 text-slate-400"
@@ -296,7 +205,7 @@ export default async function BriefTrackerPage({
                       {idx + 1}
                     </div>
                     <p
-                      className={`text-[10px] sm:text-[11px] mt-1 leading-tight break-words ${
+                      className={`text-[10px] mt-1 ${
                         reached ? "text-slate-700 font-semibold" : "text-slate-400"
                       }`}
                     >
@@ -346,16 +255,18 @@ export default async function BriefTrackerPage({
             </div>
           )}
 
-          {/* Chat panel — only renders once a provider has accepted */}
-          {chatBlock && (
-            <BriefChatPanel
-              slug={brief.slug}
-              briefId={brief.id}
-              initialMessages={chatBlock.initialMessages}
-              viewerSide={chatBlock.viewerSide}
-              viewerName={chatBlock.viewerName}
-              counterpartyName={chatBlock.counterpartyName}
-            />
+          {/* Book consultation — only shown once the brief is accepted */}
+          {accepted.professional?.slug && (
+            <div className="mb-6">
+              <BookConsultationPanel
+                briefSlug={brief.slug}
+                proSlug={accepted.professional.slug}
+                proName={accepted.professional.name}
+                contactEmail={emailMatches ? email : null}
+                existingBooking={existingBooking}
+                existingSlot={existingSlot}
+              />
+            </div>
           )}
 
           {/* Brief summary */}
@@ -398,7 +309,7 @@ export default async function BriefTrackerPage({
           {!emailMatches && (
             <div className="bg-slate-100 border border-slate-200 rounded-2xl p-4 text-xs text-slate-600">
               Looking for the full owner view? Use the link we emailed you, or
-              add <code className="break-all">?email=&lt;your-email&gt;</code> to this page.
+              add <code>?email=&lt;your-email&gt;</code> to this page.
             </div>
           )}
         </div>
