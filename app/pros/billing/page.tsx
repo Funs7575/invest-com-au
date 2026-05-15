@@ -7,6 +7,12 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import { MARKETPLACE_CREDIT_PACKS } from "@/lib/advisor-credit-packs";
+import {
+  getProSubscription,
+  SUBSCRIPTION_CONFIGS,
+  type ProSubscriptionTier,
+  type ProSubscriptionStatus,
+} from "@/lib/pro-subscription";
 import BillingClient from "./BillingClient";
 import ProOnboardingTour from "@/components/onboarding/ProOnboardingTour";
 
@@ -62,6 +68,15 @@ export default async function ProsBillingPage() {
   const advisor = pro as ProRow;
   void cookies();
 
+  const subscription = await getProSubscription(advisor.id);
+  const subscriptionTiers = (
+    ["free", "starter", "growth", "scale"] as ProSubscriptionTier[]
+  ).map((tier) => ({
+    tier,
+    monthlyPriceCents: SUBSCRIPTION_CONFIGS[tier].monthlyPriceCents,
+    perks: SUBSCRIPTION_CONFIGS[tier].perks,
+  }));
+
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
     { name: "Pros" },
@@ -96,6 +111,9 @@ export default async function ProsBillingPage() {
             autoRechargePackSlug={advisor.auto_recharge_pack_slug}
             hasSavedCard={Boolean(advisor.stripe_default_payment_method)}
             packs={[...MARKETPLACE_CREDIT_PACKS]}
+            subscriptionTier={subscription.tier}
+            subscriptionStatus={subscription.status as ProSubscriptionStatus}
+            subscriptionTiers={subscriptionTiers}
           />
         </div>
       </div>
