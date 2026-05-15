@@ -56,7 +56,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | CL | `claude/audit-remediation/cl-01-about-entity-only` | **#795 MERGED 2026-05-14** | CL-01..CL-04, CL-06, CL-09, CL-10 done. CL-07+CL-08 false-positive. CL-05 blocked (WHOIS registrar action — see Blocked). | All CL tasks merged (CL-05 blocked) |
 | LL | `claude/audit-remediation/ll-04-reviews-ratings` | **#807 MERGED 2026-05-14** · **#845 OPEN** | LL-01..LL-03 done. LL-04 in-flight (#845, CI rescue iter 397 — teams/* JSON-LD exemption). LL-05 blocked (live chat AI routing — deps V-NEW-02 + CC-06). | All LL tasks merged |
 | RR | `claude/audit-remediation/rr-01-review-extensions` | **#847 OPEN** | RR-01 false-positive (VerifiedClientBadge already implemented). RR-02 (advisor response to reviews) in-flight (#847, CI-rescue done iter 399). | All RR tasks merged |
-| EM | `claude/audit-remediation/em-03-hub-newsletter-infra` | **#848 OPEN** | EM-03 (hub-aware newsletter capture) done. Unblocks EM-01/02/04/05/06 + LX-05. Next: EM-01 (lead magnets). | All EM tasks merged |
+| EM | `claude/audit-remediation/em-03-hub-newsletter-infra` | **#848 OPEN** | EM-03 (hub-aware newsletter capture) done. EM-01 (lead magnets) done (`511976fc`): `LeadMagnetCapture` + `lib/lead-magnets.ts` 12-PDF registry + wired into SMSF+dividends hubs. Next: EM-02 (digest infrastructure). | All EM tasks merged |
 | LX | `claude/audit-remediation/lx-01-calculator-share-save` | **#849 OPEN** | LX-01 (share/save) done. LX-04 (pre-filled forms) done. LX-05 (exit-intent capture) done. CI-rescue iter 406 (`375d665`): Fragment wrapper for HubExitIntent siblings in dividends+smsf pages. Next: LX-02 (calculator history — dep LL-01 done ✓). | All LX tasks merged |
 | OB | `claude/audit-remediation/ob-01-hub-onboarding` | **#852 OPEN** | OB-01 done (`e654f70`). `HubOnboardingShell` + `lib/hub-onboarding-configs.ts` + SMSF/dividends quiz pages + sitemap. OB-02..OB-13 (remaining 11 hub configs) pending. Next: OB-02 (wholesale hub onboarding quiz). | All OB tasks merged |
 
@@ -123,6 +123,27 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 408 — 2026-05-15 — EM-01 lead magnets
+
+- **Stream:** EM (email infrastructure)
+- **Item:** EM-01 — lead magnet capture (12-PDF registry + per-hub email gate)
+- **Branch:** `claude/audit-remediation/em-03-hub-newsletter-infra`
+- **PR:** #848 OPEN
+- **Commit:** `511976fc`
+- **Diff:** +273 -0 across 4 files (2 new files, 2 hub pages updated)
+- **What:** `lib/lead-magnets.ts` — 12-entry registry, one per hub (SMSF trustee checklist, franking credits guide, wholesale checklist, property DD checklist, negative-gearing estimator, ETF selection guide, super comparison guide, crypto tax guide, business-sale checklist, FIRB guide, lump-sum guide, aged-care planning guide). `getLeadMagnetForHub(hubSlug)` helper. `components/LeadMagnetCapture.tsx` — "use client" email-gate card: amber gradient, cover icon, PDF title/description, email input → POST `/api/newsletter-segments/subscribe` → on success shows direct "Download Now" `<a download>` button + email-copy note. Handles 429 and network errors. `app/smsf/page.tsx`: wires SMSF magnet (trustee checklist) between guide cross-link and featured articles. `app/dividends/page.tsx`: wires dividends magnet (franking credits guide) between SMSF crossover callout and platform CTA.
+- **STATUS: PROGRESS · stream=EM · item=EM-01 · pr=#848**
+
+### iter 407 — 2026-05-15 — CI-RESCUE OB (#852)
+
+- **Stream:** OB (hub onboarding flows)
+- **Phase:** 2 — CI rescue
+- **PR:** #852 OPEN
+- **Commit:** `b680c6f0`
+- **Diff:** +1 -1 (1 file — components/HubOnboardingShell.tsx)
+- **Root cause:** `HubOnboardingResult.advisorCta` type declared `label: string` as required, but the `HubOnboardingShell` renders a hardcoded "Find an Adviser" button text (never reads `label`) and all 9 `advisorCta` object literals in `lib/hub-onboarding-configs.ts` omitted the field. TypeScript strict mode raised a type error on all 9 literals. Fix: removed `label: string` from the `advisorCta` type — the field is unused in the component and was a copy-paste artefact from `primaryCta`/`secondaryCta`.
+- **STATUS: CI-RESCUE · stream=OB · pr=#852**
 
 ### iter 406 — 2026-05-15 — CI-RESCUE LX (#849)
 
