@@ -9,6 +9,7 @@ import { scanBrief } from "@/lib/briefs/risk-flags";
 import { getAcceptCost } from "@/lib/briefs/credits";
 import { resolveEligibleProviders } from "@/lib/briefs/routing";
 import { sendProviderNewMatchRequest } from "@/lib/marketplace-emails";
+import { attributeBriefCreated } from "@/lib/pro-affiliate/track";
 import {
   BRIEF_TEMPLATE_SCHEMAS,
   isBriefTemplate,
@@ -221,6 +222,19 @@ export async function POST(request: NextRequest) {
       slug: brief.slug,
       template: body.brief_template,
       riskSeverity: risk.severity,
+    });
+
+    // ── Pro affiliate attribution (fire-and-forget) ──
+    // If the lead clicked a /p/<token> link before posting, credit the
+    // referring pro. Failures must never block the brief response.
+    void attributeBriefCreated({
+      contactEmail: body.contact_email.toLowerCase().trim(),
+      briefId: brief.id as number,
+    }).catch((err) => {
+      log.warn("attributeBriefCreated failed", {
+        briefId: brief.id,
+        err: err instanceof Error ? err.message : String(err),
+      });
     });
 
     // ── Notify eligible providers (N1) ──
