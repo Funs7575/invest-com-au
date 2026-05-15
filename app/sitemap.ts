@@ -105,7 +105,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/tools/alternative-returns", "/tools/smsf-checker",
     "/firb-fee-estimator", "/non-resident-dividend-calculator", "/non-resident-cgt-checker",
     "/franking-credits-calculator", "/chess-lookup",
-    "/share-trading", "/crypto", "/savings", "/super", "/super/quiz", "/cfd",
+    "/share-trading", "/crypto", "/crypto/quiz", "/savings", "/super", "/super/quiz", "/cfd",
     "/how-to",
     // Revenue-expansion hubs
     "/grants", "/grants/rd-tax-incentive", "/grants/emdg",

@@ -891,3 +891,118 @@ export const SUPER_ONBOARDING_CONFIG: HubOnboardingConfig = {
     };
   },
 };
+
+export const CRYPTO_ONBOARDING_CONFIG: HubOnboardingConfig = {
+  hubSlug: "crypto",
+  hubName: "Cryptocurrency",
+  heading: "How should you approach crypto investing?",
+  subheading: "3 quick questions to find the right crypto strategy for your risk profile.",
+  questions: [
+    {
+      id: "experience",
+      question: "How experienced are you with cryptocurrency?",
+      options: [
+        { value: "new", label: "Complete beginner — never bought crypto before" },
+        { value: "some", label: "Some experience — I have held Bitcoin or Ethereum" },
+        { value: "active", label: "Active investor — I track markets and manage a portfolio" },
+        { value: "advanced", label: "Advanced — I use DeFi, staking, or derivatives" },
+      ],
+    },
+    {
+      id: "goal",
+      question: "What is your primary goal with crypto?",
+      options: [
+        { value: "diversify", label: "Diversify — add a small allocation to a share portfolio" },
+        { value: "growth", label: "Long-term growth — hold Bitcoin or Ethereum for years" },
+        { value: "income", label: "Generate yield — staking, lending, or interest accounts" },
+        { value: "speculate", label: "Speculate — higher-risk altcoins for potential large gains" },
+      ],
+    },
+    {
+      id: "allocation",
+      question: "What percentage of your total investable assets would you put into crypto?",
+      options: [
+        { value: "under_5", label: "Under 5% — small satellite position" },
+        { value: "5_15", label: "5–15% — meaningful but contained" },
+        { value: "15_30", label: "15–30% — significant allocation" },
+        { value: "over_30", label: "Over 30% — majority of portfolio" },
+      ],
+    },
+  ],
+
+  evaluate(answers: QuizAnswers) {
+    const experience = answers["experience"];
+    const goal = answers["goal"];
+    const allocation = answers["allocation"];
+
+    // Complete beginner — start simple
+    if (experience === "new") {
+      return {
+        headline: "Start with Bitcoin or Ethereum on a regulated Australian exchange.",
+        summary:
+          "For first-time crypto investors, the safest entry point is a regulated Australian exchange (Coinbase, Swyftx, or CoinSpot). Buy Bitcoin or Ethereum — they are the most liquid, most researched, and least likely to go to zero of any digital asset. Keep your first purchase to under 5% of investable assets. Never invest more than you can afford to lose entirely.",
+        primaryCta: { label: "Compare Crypto Exchanges", href: "/crypto" },
+        secondaryCta: { label: "Crypto Beginner Guide", href: "/crypto" },
+        advisorCta: { href: "/quiz", specialty: "financial adviser" },
+      };
+    }
+
+    // High allocation warning
+    if (allocation === "over_30") {
+      return {
+        headline: "A 30%+ crypto allocation carries extreme concentration risk.",
+        summary:
+          "Bitcoin has fallen 80%+ from peak in three separate cycles (2014, 2018, 2022). A 40% crypto position could drop your total portfolio by 32%+ in a bear market. Most regulated financial advisers cap crypto at 5–10% for retail clients. If you proceed, consider dollar-cost averaging (weekly/monthly buys) rather than a lump sum, and use a hardware wallet for self-custody.",
+        primaryCta: { label: "Crypto Risk Guide", href: "/crypto" },
+        secondaryCta: { label: "Compare Exchanges", href: "/crypto" },
+        advisorCta: { href: "/quiz", specialty: "financial adviser" },
+      };
+    }
+
+    // Income / yield goal
+    if (goal === "income") {
+      return {
+        headline: "Crypto yield strategies carry significant smart-contract and counterparty risk.",
+        summary:
+          "Staking on Ethereum (3–4% APY), ADA, or Solana is relatively low-risk — you are securing the network and earning native rewards. Centralised lending platforms (like the collapsed Celsius) are higher risk. DeFi lending (Aave, Compound) exposes you to smart-contract exploits. For Australian tax, staking rewards are income at receipt and CGT on disposal.",
+        primaryCta: { label: "Crypto Tax Guide", href: "/crypto" },
+        secondaryCta: { label: "Compare Exchanges", href: "/crypto" },
+        advisorCta: { href: "/quiz", specialty: "crypto tax adviser" },
+      };
+    }
+
+    // Advanced / DeFi user
+    if (experience === "advanced") {
+      return {
+        headline: "Advanced crypto users need tax records from day one.",
+        summary:
+          "Every DeFi interaction (swap, LP deposit, staking reward) is a taxable event in Australia. CoinTracker, Koinly, or CryptoTaxCalculator can ingest your on-chain history via wallet address. Keep records of cost bases for all positions — the ATO now receives data directly from Australian exchanges under the mandatory data-sharing regime.",
+        primaryCta: { label: "Crypto Tax Guide", href: "/crypto" },
+        secondaryCta: { label: "Compare Exchanges", href: "/crypto" },
+        advisorCta: { href: "/quiz", specialty: "crypto tax adviser" },
+      };
+    }
+
+    // Diversification goal — sensible approach
+    if (goal === "diversify") {
+      return {
+        headline: "A 5–10% crypto satellite allocation is the consensus institutional approach.",
+        summary:
+          "Research by Fidelity, BlackRock, and MSCI suggests 1–5% Bitcoin in a diversified portfolio improves risk-adjusted returns over a 10-year horizon due to low correlation with equities (especially pre-ETF era). Rebalance annually — crypto's volatility means it will drift quickly from a target allocation. Australian crypto ETFs (e.g., VanEck Bitcoin ETF) on ASX remove self-custody risk.",
+        primaryCta: { label: "Compare Crypto Exchanges", href: "/crypto" },
+        secondaryCta: { label: "Crypto on ASX (ETFs)", href: "/crypto" },
+        advisorCta: { href: "/quiz", specialty: "financial adviser" },
+      };
+    }
+
+    // Default: long-term growth
+    return {
+      headline: "Long-term Bitcoin and Ethereum holding has outperformed most asset classes over a decade.",
+      summary:
+        "A dollar-cost averaging strategy (e.g., $200/week into Bitcoin) removes the timing risk of lump-sum buying. Hold on a regulated Australian exchange for amounts under $50k; consider a hardware wallet (Ledger, Trezor) for self-custody above that. Australian tax: CGT discount applies after 12 months — do not sell before then unless you need the liquidity.",
+      primaryCta: { label: "Compare Crypto Exchanges", href: "/crypto" },
+      secondaryCta: { label: "Crypto Tax Guide", href: "/crypto" },
+      advisorCta: { href: "/quiz", specialty: "financial adviser" },
+    };
+  },
+};
