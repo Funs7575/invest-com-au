@@ -6,6 +6,14 @@ import { createClient } from "@/lib/supabase/server";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import { BRIEF_TEMPLATE_LABELS } from "@/lib/briefs/templates";
 import type { BriefRow, TrackerStatus } from "@/lib/briefs/types";
+import {
+  getSlot,
+  listBookingsForBrief,
+  type AvailabilitySlot,
+  type ConsultationBooking,
+} from "@/lib/consultations";
+
+import BookConsultationPanel from "./BookConsultationPanel";
 
 export const dynamic = "force-dynamic";
 
@@ -113,6 +121,20 @@ export default async function BriefTrackerPage({
 
   const accepted = await loadAccepted(brief);
 
+  // Load any existing consultation booking for this brief (latest non-cancelled).
+  let existingBooking: ConsultationBooking | null = null;
+  let existingSlot: AvailabilitySlot | null = null;
+  if (accepted.professional) {
+    const bookings = await listBookingsForBrief(brief.id);
+    const active = bookings.find(
+      (b) => b.status === "pending" || b.status === "confirmed",
+    );
+    if (active) {
+      existingBooking = active;
+      existingSlot = await getSlot(active.slot_id);
+    }
+  }
+
   const stepIndex = STATUS_ORDER.indexOf(brief.tracker_status);
 
   const breadcrumb = breadcrumbJsonLd([
@@ -168,16 +190,13 @@ export default async function BriefTrackerPage({
               </div>
             )}
 
-            {/* 5 status dots side-by-side. Labels can wrap to 2 lines on
-                narrow viewports — `break-words` prevents the longest label
-                ("Engagement confirmed") from forcing horizontal overflow. */}
-            <ol className="mt-4 grid grid-cols-5 gap-1.5 sm:gap-2">
+            <ol className="mt-4 grid grid-cols-5 gap-2">
               {STATUS_ORDER.map((s, idx) => {
                 const reached = idx <= stepIndex;
                 return (
-                  <li key={s} className="text-center min-w-0">
+                  <li key={s} className="text-center">
                     <div
-                      className={`w-7 h-7 rounded-full mx-auto flex items-center justify-center text-[11px] font-bold ${
+                      className={`w-7 h-7 rounded-full mx-auto flex items-center justify-center text-[10px] font-bold ${
                         reached
                           ? "bg-amber-500 text-slate-900"
                           : "bg-slate-100 text-slate-400"
@@ -186,7 +205,7 @@ export default async function BriefTrackerPage({
                       {idx + 1}
                     </div>
                     <p
-                      className={`text-[10px] sm:text-[11px] mt-1 leading-tight break-words ${
+                      className={`text-[10px] mt-1 ${
                         reached ? "text-slate-700 font-semibold" : "text-slate-400"
                       }`}
                     >
@@ -236,6 +255,20 @@ export default async function BriefTrackerPage({
             </div>
           )}
 
+          {/* Book consultation — only shown once the brief is accepted */}
+          {accepted.professional?.slug && (
+            <div className="mb-6">
+              <BookConsultationPanel
+                briefSlug={brief.slug}
+                proSlug={accepted.professional.slug}
+                proName={accepted.professional.name}
+                contactEmail={emailMatches ? email : null}
+                existingBooking={existingBooking}
+                existingSlot={existingSlot}
+              />
+            </div>
+          )}
+
           {/* Brief summary */}
           <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6">
             <p className="text-xs uppercase tracking-widest text-slate-500 mb-2">
@@ -276,7 +309,7 @@ export default async function BriefTrackerPage({
           {!emailMatches && (
             <div className="bg-slate-100 border border-slate-200 rounded-2xl p-4 text-xs text-slate-600">
               Looking for the full owner view? Use the link we emailed you, or
-              add <code className="break-all">?email=&lt;your-email&gt;</code> to this page.
+              add <code>?email=&lt;your-email&gt;</code> to this page.
             </div>
           )}
         </div>
