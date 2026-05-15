@@ -92,13 +92,35 @@ const INITIAL: FormState = {
   consent: false,
 };
 
-export default function BriefForm() {
+interface BriefFormProps {
+  /**
+   * Whether the AI co-pilot toggle should render. Resolved server-side
+   * via `isFlagEnabled('ai_match_request_copilot', ...)` in the parent
+   * server page. When false the toggle never renders, so the freeform
+   * textarea + Submit button path is never reachable client-side either.
+   */
+  aiCopilotEnabled?: boolean;
+}
+
+export default function BriefForm({ aiCopilotEnabled = false }: BriefFormProps) {
   const searchParams = useSearchParams();
   const presetTeam = searchParams?.get("team") ?? "";
   const presetTemplate = searchParams?.get("template") ?? "";
   const presetProviderPreference = searchParams?.get("provider_preference") ?? "";
   const presetRoutingMode = searchParams?.get("routing_mode") ?? "";
   const planId = searchParams?.get("plan_id") ?? "";
+
+  // ── AI co-pilot state ───────────────────────────────────────────────
+  // The toggle only renders when the parent server page passed
+  // aiCopilotEnabled=true (feature flag on). When toggled ON, we replace
+  // the multi-step form with a single textarea. On submit the textarea
+  // POSTs to /api/briefs/ai-copilot; if confidence is high enough we
+  // pre-fill the form and drop the user back into step "details" to
+  // review. Otherwise we fall back to the manual flow with a toast.
+  const [copilotMode, setCopilotMode] = useState(false);
+  const [copilotText, setCopilotText] = useState("");
+  const [copilotLoading, setCopilotLoading] = useState(false);
+  const [copilotInfo, setCopilotInfo] = useState<string | null>(null);
 
   const [step, setStep] = useState<Step>("template");
   const [form, setForm] = useState<FormState>(() => ({
@@ -195,6 +217,82 @@ export default function BriefForm() {
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.contact_email) &&
     form.consent;
 
+  async function runCopilot() {
+    if (copilotText.trim().length < 10) {
+      setCopilotInfo("Tell us a bit more — at least 10 characters.");
+      return;
+    }
+    setCopilotLoading(true);
+    setCopilotInfo(null);
+    try {
+      const res = await fetch("/api/briefs/ai-copilot", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ description: copilotText }),
+      });
+      if (res.status === 404) {
+        // Feature flag flipped off between server render and submit —
+        // bail back to the manual form silently.
+        setCopilotMode(false);
+        setCopilotInfo(null);
+        return;
+      }
+      if (!res.ok) {
+        setCopilotInfo("We couldn't draft your brief. Use the form below instead.");
+        setCopilotMode(false);
+        return;
+      }
+      const data = (await res.json()) as {
+        ok: boolean;
+        payload: Partial<FormState> & {
+          brief_template?: BriefTemplate;
+          job_title?: string;
+          job_description?: string;
+          budget_band?: string;
+          location_state?: string;
+          advisor_types?: string[];
+          brief_payload?: Record<string, unknown>;
+        };
+        confidence: number;
+        missing_fields: string[];
+      };
+      const ok =
+        data.ok &&
+        data.confidence >= 0.6 &&
+        (data.missing_fields?.length ?? 0) === 0;
+
+      // Pre-fill what we can regardless — even a low-confidence draft
+      // beats an empty form for the user.
+      const p = data.payload || {};
+      const template = BRIEF_TEMPLATES.includes(p.brief_template as BriefTemplate)
+        ? (p.brief_template as BriefTemplate)
+        : form.brief_template;
+      setForm((prev) => ({
+        ...prev,
+        brief_template: template || "general",
+        job_title: p.job_title ?? prev.job_title,
+        job_description: p.job_description ?? prev.job_description,
+        budget_band: p.budget_band ?? prev.budget_band,
+        location_state: p.location_state ?? prev.location_state,
+        payload: { ...prev.payload, ...(p.brief_payload ?? {}) },
+      }));
+
+      // Always drop the user into the manual form so they can review.
+      setCopilotMode(false);
+      setStep("details");
+      if (ok) {
+        setCopilotInfo("We've drafted your brief — review and submit.");
+      } else {
+        setCopilotInfo("We need a bit more info — please fill in the highlighted fields.");
+      }
+    } catch {
+      setCopilotInfo("We couldn't draft your brief. Use the form below instead.");
+      setCopilotMode(false);
+    } finally {
+      setCopilotLoading(false);
+    }
+  }
+
   async function submit() {
     setLoading(true);
     setError(null);
@@ -290,8 +388,103 @@ export default function BriefForm() {
     );
   }
 
+  // ── AI co-pilot mode — single textarea replaces the multi-step form
+  if (copilotMode && aiCopilotEnabled) {
+    return (
+      <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <span className="inline-flex items-center gap-1 bg-amber-100 text-amber-900 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">
+              Beta
+            </span>
+            <h2 className="text-xl font-bold text-slate-900 mt-2">
+              Tell us what you&apos;re trying to do
+            </h2>
+            <p className="text-sm text-slate-500 mt-1">
+              Describe your situation in your own words. We&apos;ll draft a brief for you to review.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setCopilotMode(false);
+              setCopilotInfo(null);
+            }}
+            className="text-xs font-semibold text-slate-500 hover:text-slate-700 underline"
+          >
+            Use the regular form
+          </button>
+        </div>
+        <textarea
+          rows={8}
+          maxLength={3000}
+          value={copilotText}
+          onChange={(e) => setCopilotText(e.target.value)}
+          placeholder="e.g. I'm a 38-year-old in NSW with a $200k super balance and I'm thinking about setting up an SMSF to buy an investment property in QLD. Budget around $2,000 for advice. Need help in the next 3 months."
+          className="w-full border border-slate-300 rounded-lg px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 resize-y"
+        />
+        <p className="text-xs text-slate-400 mt-1">
+          {copilotText.length} / 3000
+        </p>
+        {copilotInfo && (
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-sm text-amber-900 mt-3">
+            {copilotInfo}
+          </div>
+        )}
+        <div className="flex justify-end mt-5">
+          <button
+            type="button"
+            disabled={copilotLoading || copilotText.trim().length < 10}
+            onClick={runCopilot}
+            className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-slate-900 font-bold px-7 py-3 rounded-xl"
+          >
+            {copilotLoading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-slate-900 border-t-transparent rounded-full animate-spin" />
+                Drafting…
+              </>
+            ) : (
+              <>
+                Draft my brief <Icon name="arrow-right" size={16} />
+              </>
+            )}
+          </button>
+        </div>
+        <p className="text-xs text-slate-400 mt-4 leading-relaxed">
+          AI assists with structuring only — verified providers deliver the actual service under their own licence. We never give personal advice.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm">
+      {aiCopilotEnabled && (
+        <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 mb-6 flex items-center justify-between gap-3">
+          <div className="flex items-start gap-2 min-w-0">
+            <Icon name="lightbulb" size={16} className="text-amber-500 mt-0.5 shrink-0" />
+            <p className="text-xs text-slate-600 leading-relaxed">
+              <strong className="text-slate-900">Try AI co-pilot (beta).</strong>{" "}
+              Describe your situation in plain English and we&apos;ll draft the brief for you.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setCopilotMode(true);
+              setCopilotInfo(null);
+            }}
+            className="text-xs font-bold text-amber-700 hover:text-amber-900 underline shrink-0"
+          >
+            Try it
+          </button>
+        </div>
+      )}
+      {copilotInfo && !copilotMode && (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-sm text-amber-900 mb-4">
+          {copilotInfo}
+        </div>
+      )}
       {/* Progress */}
       <div className="flex items-center gap-2 mb-8">
         {(["template", "details", "preference", "contact"] as Step[]).map(

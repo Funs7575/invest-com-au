@@ -177,6 +177,8 @@ export default function Footer() {
                 <li><Link href="/advisors/mining-lawyers" className="hover:text-white transition-colors inline-block py-0.5">Mining Lawyers</Link></li>
                 <li><Link href="/advisors/business-brokers" className="hover:text-white transition-colors inline-block py-0.5">Business Brokers</Link></li>
                 <li><Link href="/for-advisors" className="hover:text-white transition-colors inline-block py-0.5">List Your Practice</Link></li>
+                <li><Link href="/listings/new" className="hover:text-white transition-colors inline-block py-0.5">List a Property or Business</Link></li>
+                <li><Link href="/listings" className="hover:text-white transition-colors inline-block py-0.5">Browse Listings</Link></li>
               </ul>
             </div>
 

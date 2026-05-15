@@ -6,8 +6,33 @@ import {
   getKindsForUser,
   setActiveKind,
 } from "@/lib/account-kinds";
+import { attributeSignupByToken } from "@/lib/pro-affiliate/track";
 
 const log = logger("auth-callback");
+
+/**
+ * Fire-and-forget pro-affiliate signup attribution. Reads the `ref`
+ * cookie set by /api/pro-affiliate/[token], pairs it with the freshly
+ * authed user, and credits the referring pro. Never blocks the
+ * redirect, never throws.
+ */
+async function maybeAttributePro(request: NextRequest): Promise<void> {
+  try {
+    const token = request.cookies.get("ref")?.value;
+    if (!token) return;
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return;
+    const sessionId = request.cookies.get("session_id")?.value ?? null;
+    await attributeSignupByToken({ token, userId: user.id, sessionId });
+  } catch (err) {
+    log.warn("maybeAttributePro failed", {
+      err: err instanceof Error ? err.message : String(err),
+    });
+  }
+}
 
 /**
  * Decide where to send the user after a successful auth, based on the
@@ -101,6 +126,7 @@ export async function GET(request: NextRequest) {
   if (code) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
+      void maybeAttributePro(request);
       return NextResponse.redirect(await postAuthRedirectUrl(origin, next));
     }
     log.warn("exchangeCodeForSession failed", {
@@ -127,6 +153,7 @@ export async function GET(request: NextRequest) {
       token_hash: tokenHash,
     });
     if (!error) {
+      void maybeAttributePro(request);
       return NextResponse.redirect(await postAuthRedirectUrl(origin, next));
     }
     log.warn("verifyOtp failed", {

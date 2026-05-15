@@ -17,6 +17,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { recordLedgerEntry } from "@/lib/advisor-credit-ledger";
 import { logger } from "@/lib/logger";
+import { getProPricingTier } from "./pricing-tier";
 
 import type { BriefRow, ProviderKind } from "./types";
 
@@ -141,14 +142,17 @@ export async function acceptBrief({
   const credits = row.accept_credits_cost ?? 2;
   const cents = credits * CENTS_PER_CREDIT;
 
-  // ── 2. Check sufficient balance ─────────────────────────────────────
+  // ── 2a. Resolve pricing tier (success_only pros skip the accept-time charge) ─
+  const tier = await getProPricingTier(professionalId);
+
+  // ── 2b. Standard tier: check sufficient balance up front ────────────
   const { data: pro } = await admin
     .from("professionals")
     .select("credit_balance_cents")
     .eq("id", professionalId)
     .maybeSingle();
   const currentBalance = pro?.credit_balance_cents ?? 0;
-  if (currentBalance < cents) {
+  if (tier === "standard" && currentBalance < cents) {
     return {
       accepted: false,
       reason: "insufficient_credits",
@@ -162,6 +166,7 @@ export async function acceptBrief({
     accepted_by_professional_id: professionalId,
     accepted_at: acceptedAt,
     tracker_status: "new",
+    pricing_tier_at_accept: tier,
   };
   if (teamId) updates.accepted_by_team_id = teamId;
 
@@ -179,7 +184,10 @@ export async function acceptBrief({
   }
 
   // ── 4. Debit credits via ledger (idempotent on brief_id) ───────────
+  //      Skipped entirely when the pro is on the success_only tier — those
+  //      pros pay at outcome-submit time instead, gated on outcome=completed.
   let balanceAfterCents = currentBalance;
+  if (tier === "standard") {
   try {
     const result = await recordLedgerEntry({
       professionalId,
@@ -200,6 +208,7 @@ export async function acceptBrief({
         accepted_by_team_id: null,
         accepted_at: null,
         tracker_status: "new",
+        pricing_tier_at_accept: null,
       })
       .eq("id", briefId);
     log.error("acceptBrief: ledger debit failed", {
@@ -209,6 +218,7 @@ export async function acceptBrief({
     });
     throw err;
   }
+  } // end if (tier === "standard")
 
   // ── 5. Emit tracker event ───────────────────────────────────────────
   await admin.from("brief_tracker_events").insert({
@@ -216,7 +226,12 @@ export async function acceptBrief({
     event_type: "accepted",
     actor_kind: "professional",
     actor_id: String(professionalId),
-    payload: { credits, team_id: teamId ?? null },
+    payload: {
+      credits,
+      team_id: teamId ?? null,
+      pricing_tier: tier,
+      charged_at_accept: tier === "standard",
+    },
   });
 
   // ── 5. Auto-recharge trigger (fire-and-forget) ────────────────────
