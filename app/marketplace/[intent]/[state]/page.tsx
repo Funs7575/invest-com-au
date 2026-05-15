@@ -79,7 +79,7 @@ export default async function FindIntentStatePage({ params }: PageProps) {
         <span className="text-slate-700">{state.fullName}</span>
       </nav>
 
-      <h1 className="text-3xl font-extrabold text-slate-900 mb-2">{meta.h1}</h1>
+      <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-2">{meta.h1}</h1>
       {intent.description && (
         <p className="text-slate-600 mb-6 leading-relaxed">{intent.description}</p>
       )}
@@ -103,10 +103,10 @@ export default async function FindIntentStatePage({ params }: PageProps) {
                   href={p.slug ? `/advisors/${p.slug}` : `/advisors`}
                   className="block bg-white border border-slate-200 rounded-xl p-4 hover:border-amber-300"
                 >
-                  <div className="flex items-center justify-between">
-                    <p className="font-semibold text-slate-900">{p.name}</p>
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="font-semibold text-slate-900 min-w-0 truncate">{p.name}</p>
                     {p.verified && (
-                      <span className="text-[10px] uppercase tracking-widest bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded">
+                      <span className="text-[10px] uppercase tracking-widest bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded shrink-0">
                         Verified
                       </span>
                     )}

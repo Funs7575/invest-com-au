@@ -487,7 +487,7 @@ function QuestionScreen({
           <div className="h-1 bg-slate-200 rounded-full overflow-hidden">
             <div className="h-1 bg-amber-500 transition-all" style={{ width: `${progress}%` }} />
           </div>
-          <p className="text-[10px] uppercase tracking-widest text-slate-500 mt-1">
+          <p className="text-[11px] uppercase tracking-widest text-slate-500 mt-1">
             Step {currentStep} of {totalSteps} · No account needed yet
           </p>
         </div>
@@ -529,7 +529,7 @@ function QuestionScreen({
               submitting={submitting}
               onAnswer={onAnswer}
             />
-            <p className="lg:hidden text-[10px] text-slate-400 mt-3 text-center">
+            <p className="lg:hidden text-[11px] text-slate-400 mt-3 text-center">
               General information only · You stay in control
             </p>
           </main>
