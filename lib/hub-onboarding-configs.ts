@@ -782,3 +782,112 @@ export const NEGATIVE_GEARING_ONBOARDING_CONFIG: HubOnboardingConfig = {
     };
   },
 };
+
+export const SUPER_ONBOARDING_CONFIG: HubOnboardingConfig = {
+  hubSlug: "super",
+  hubName: "Superannuation",
+  heading: "Is your super on track?",
+  subheading: "3 quick questions to find your best super strategy for 2026.",
+  questions: [
+    {
+      id: "stage",
+      question: "Which best describes your current life stage?",
+      options: [
+        { value: "early", label: "Early career — under 35, building the habit" },
+        { value: "mid", label: "Mid-career — 35–50, accumulating seriously" },
+        { value: "pre_retire", label: "Pre-retirement — 50–60, transition planning" },
+        { value: "retire", label: "At or near retirement — drawing down or planning to" },
+      ],
+    },
+    {
+      id: "balance",
+      question: "What is your approximate super balance today?",
+      options: [
+        { value: "under_50k", label: "Under $50,000" },
+        { value: "50k_200k", label: "$50,000 – $200,000" },
+        { value: "200k_500k", label: "$200,000 – $500,000" },
+        { value: "over_500k", label: "Over $500,000" },
+      ],
+    },
+    {
+      id: "concern",
+      question: "What is your main super concern right now?",
+      options: [
+        { value: "fees", label: "I think I am paying too much in fees" },
+        { value: "performance", label: "My fund's investment returns seem low" },
+        { value: "contributions", label: "I want to make extra contributions and reduce tax" },
+        { value: "consolidate", label: "I have multiple super funds and want to consolidate" },
+      ],
+    },
+  ],
+
+  evaluate(answers: QuizAnswers) {
+    const stage = answers["stage"];
+    const balance = answers["balance"];
+    const concern = answers["concern"];
+
+    if (stage === "retire" || stage === "pre_retire") {
+      return {
+        headline: "Transition to retirement planning is the highest-impact move you can make.",
+        summary:
+          "A Transition to Retirement (TTR) income stream lets you draw from super at a reduced tax rate while still working. At 60+, super drawdowns are completely tax-free in pension phase. The right time to start a TTR or account-based pension depends on your balance, income, and age pension eligibility — a super specialist can model both.",
+        primaryCta: { label: "Find a Super Specialist", href: "/quiz?vertical=super" },
+        secondaryCta: { label: "Super Contributions Guide", href: "/super/contributions" },
+        advisorCta: { href: "/quiz?vertical=super", specialty: "super specialist" },
+      };
+    }
+
+    if ((balance === "over_500k" || balance === "200k_500k") && concern === "fees") {
+      return {
+        headline: "At your balance, reducing fees by 0.5% adds $2,500–$5,000 per year to your retirement.",
+        summary:
+          "Australian Retirement Trust, Aware Super, and Hostplus charge 0.10–0.15% for members above $500k — well below the industry average of 0.85%. An SMSF also becomes cost-competitive above $250k if you are comfortable running it. Compare fund options using APRA's published fee data before switching.",
+        primaryCta: { label: "Compare Super Funds", href: "/compare/super" },
+        secondaryCta: { label: "SMSF vs Industry Fund", href: "/invest/smsf" },
+        advisorCta: { href: "/quiz?vertical=super", specialty: "super adviser" },
+      };
+    }
+
+    if (balance === "over_500k" || balance === "200k_500k") {
+      return {
+        headline: "Your balance is large enough to benefit from personalised super advice.",
+        summary:
+          "Above $200k, the difference between a 0.3% and 0.8% fee fund is $1,000–$4,000 per year in compounding lost. Investment-option switching (e.g., balanced → high growth) can add significant long-term returns if your timeline allows. A super specialist can run a full fee + performance comparison across top funds.",
+        primaryCta: { label: "Find a Super Specialist", href: "/quiz?vertical=super" },
+        secondaryCta: { label: "Compare Super Funds", href: "/compare/super" },
+        advisorCta: { href: "/quiz?vertical=super", specialty: "super adviser" },
+      };
+    }
+
+    if (concern === "contributions") {
+      return {
+        headline: "Extra contributions at your marginal rate are the most tax-efficient savings vehicle in Australia.",
+        summary:
+          "The concessional (pre-tax) contributions cap is $30,000 per year from 2024–25, taxed at 15% inside super. If your marginal rate is 32.5–45%, that is a 17.5–30% instant tax saving per dollar contributed. Salary sacrifice through your employer is the simplest mechanism — no out-of-pocket cash required.",
+        primaryCta: { label: "Super Contributions Guide", href: "/super/contributions" },
+        secondaryCta: { label: "Super Contributions Calculator", href: "/super-contributions-calculator" },
+        advisorCta: { href: "/quiz?vertical=super", specialty: "super specialist" },
+      };
+    }
+
+    if (concern === "consolidate") {
+      return {
+        headline: "Consolidating multiple super accounts eliminates duplicate fees immediately.",
+        summary:
+          "Each super account charges a fixed annual administration fee ($50–$120) plus a percentage fee. Two accounts on a $150k balance could cost $400–$700 extra per year for no benefit. Use myGov to find lost or inactive accounts, then roll them into your chosen fund — the process takes under 10 minutes online.",
+        primaryCta: { label: "Super Consolidation Guide", href: "/super/consolidation" },
+        secondaryCta: { label: "Compare Super Funds", href: "/compare/super" },
+        advisorCta: { href: "/quiz?vertical=super", specialty: "super specialist" },
+      };
+    }
+
+    return {
+      headline: "The best super move for most Australians is choosing a lower-fee fund.",
+      summary:
+        "The difference between a 0.5% and 1.3% fee fund on a $100k balance is $800 per year — $40,000+ over a career. Performance follows fees over long periods: low-cost indexed options in top-tier funds (AustralianSuper, Hostplus, UniSuper) have outperformed most active alternatives over 10 years. Your employer must pay into any registered fund you nominate.",
+      primaryCta: { label: "Compare Super Funds", href: "/compare/super" },
+      secondaryCta: { label: "Super Contributions Calculator", href: "/super-contributions-calculator" },
+      advisorCta: { href: "/quiz?vertical=super", specialty: "super specialist" },
+    };
+  },
+};
