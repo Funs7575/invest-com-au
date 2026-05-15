@@ -3,6 +3,16 @@
 import { useState } from "react";
 import Icon from "@/components/Icon";
 import type { CreditPack } from "@/lib/advisor-credit-packs";
+import type {
+  ProSubscriptionTier,
+  ProSubscriptionStatus,
+} from "@/lib/pro-subscription";
+
+interface SubscriptionTierOption {
+  tier: ProSubscriptionTier;
+  monthlyPriceCents: number;
+  perks: string[];
+}
 
 interface Props {
   advisorName: string;
@@ -14,6 +24,9 @@ interface Props {
   autoRechargePackSlug: string | null;
   hasSavedCard: boolean;
   packs: CreditPack[];
+  subscriptionTier: ProSubscriptionTier;
+  subscriptionStatus: ProSubscriptionStatus;
+  subscriptionTiers: SubscriptionTierOption[];
 }
 
 function fmtAud(cents: number): string {
@@ -35,6 +48,58 @@ export default function BillingClient(props: Props) {
   const [settingsError, setSettingsError] = useState<string | null>(null);
   const [settingsSaved, setSettingsSaved] = useState(false);
   const [topupPack, setTopupPack] = useState<string | null>(null);
+  const [pendingTier, setPendingTier] = useState<ProSubscriptionTier | null>(null);
+  const [portalLoading, setPortalLoading] = useState(false);
+  const [subscriptionError, setSubscriptionError] = useState<string | null>(null);
+
+  const isActive = props.subscriptionStatus === "active" ||
+    props.subscriptionStatus === "trialing";
+
+  async function startSubscribe(tier: ProSubscriptionTier) {
+    if (tier === "free") return;
+    setPendingTier(tier);
+    setSubscriptionError(null);
+    try {
+      const res = await fetch("/api/pros/billing/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tier }),
+      });
+      const json = (await res.json()) as { url?: string; error?: string };
+      if (!res.ok || !json.url) {
+        throw new Error(json.error ?? "Could not start checkout");
+      }
+      window.location.href = json.url;
+    } catch (err) {
+      setSubscriptionError(
+        err instanceof Error ? err.message : "Could not start checkout",
+      );
+    } finally {
+      setPendingTier(null);
+    }
+  }
+
+  async function openBillingPortal() {
+    setPortalLoading(true);
+    setSubscriptionError(null);
+    try {
+      const res = await fetch("/api/pros/billing/portal", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+      const json = (await res.json()) as { url?: string; error?: string };
+      if (!res.ok || !json.url) {
+        throw new Error(json.error ?? "Could not open billing portal");
+      }
+      window.location.href = json.url;
+    } catch (err) {
+      setSubscriptionError(
+        err instanceof Error ? err.message : "Could not open billing portal",
+      );
+    } finally {
+      setPortalLoading(false);
+    }
+  }
 
   const balanceCredits = creditsFromCents(props.balanceCents);
   const isLowBalance = balanceCredits < 5;
@@ -109,6 +174,81 @@ export default function BillingClient(props: Props) {
           <p className="text-xs text-amber-700 mt-3 font-semibold">
             ⚠ Low balance — top up below to keep accepting Match Requests.
           </p>
+        )}
+      </section>
+
+      {/* Subscription tiers (mm31) */}
+      <section className="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6">
+        <div className="flex items-start justify-between gap-3 mb-1">
+          <div>
+            <h2 className="text-lg font-bold text-slate-900">Subscription plan</h2>
+            <p className="text-sm text-slate-500">
+              Current tier: <span className="font-bold text-slate-900 capitalize">{props.subscriptionTier}</span>
+              {props.subscriptionStatus !== "inactive" && (
+                <span className="ml-2 text-xs text-slate-400 capitalize">({props.subscriptionStatus})</span>
+              )}
+            </p>
+          </div>
+          {isActive && (
+            <button
+              type="button"
+              onClick={() => void openBillingPortal()}
+              disabled={portalLoading}
+              className="inline-flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 disabled:bg-slate-50 text-slate-900 text-xs font-bold px-3 py-1.5 rounded-lg"
+            >
+              {portalLoading ? "Opening…" : "Manage subscription"}
+            </button>
+          )}
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-4">
+          {props.subscriptionTiers.map((opt) => {
+            const isCurrent = opt.tier === props.subscriptionTier;
+            const isFree = opt.tier === "free";
+            return (
+              <article
+                key={opt.tier}
+                className={`rounded-xl border p-4 flex flex-col ${
+                  isCurrent
+                    ? "border-amber-300 bg-amber-50/40"
+                    : "border-slate-200 bg-white"
+                }`}
+              >
+                <p className="text-sm font-bold text-slate-900 capitalize">{opt.tier}</p>
+                <p className="text-2xl font-extrabold text-slate-900 mt-1">
+                  {isFree ? "A$0" : `A$${(opt.monthlyPriceCents / 100).toFixed(0)}`}
+                  <span className="text-xs font-bold text-slate-500"> /mo</span>
+                </p>
+                <ul className="text-xs text-slate-600 mt-2 space-y-1 flex-1">
+                  {opt.perks.map((perk) => (
+                    <li key={perk} className="flex items-start gap-1">
+                      <span className="text-emerald-500 font-bold">✓</span>
+                      <span>{perk}</span>
+                    </li>
+                  ))}
+                </ul>
+                <div className="mt-3">
+                  {isCurrent ? (
+                    <p className="text-xs font-bold text-amber-700 text-center py-2">Current plan</p>
+                  ) : isFree ? (
+                    <p className="text-xs text-slate-400 text-center py-2">Default</p>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => void startSubscribe(opt.tier)}
+                      disabled={pendingTier !== null}
+                      className="w-full inline-flex items-center justify-center gap-1.5 bg-slate-900 hover:bg-slate-800 disabled:bg-slate-400 text-white text-sm font-bold px-3 py-2 rounded-lg"
+                    >
+                      {pendingTier === opt.tier ? "Loading…" : `Upgrade to ${opt.tier}`}
+                      <Icon name="arrow-right" size={12} />
+                    </button>
+                  )}
+                </div>
+              </article>
+            );
+          })}
+        </div>
+        {subscriptionError && (
+          <p className="text-xs text-red-700 mt-3">{subscriptionError}</p>
         )}
       </section>
 
