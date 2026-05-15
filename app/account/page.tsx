@@ -97,7 +97,7 @@ function Kpi({
     : "bg-white border-slate-200 text-slate-900";
   return (
     <div className={`rounded-xl border p-4 ${cls}`}>
-      <p className="text-[10px] uppercase tracking-widest mb-1 opacity-80">{label}</p>
+      <p className="text-[11px] uppercase tracking-widest mb-1 opacity-80">{label}</p>
       <p className="text-2xl font-extrabold">{value}</p>
     </div>
   );

@@ -127,7 +127,7 @@ export default function TopMatchCarousel({ matches }: Props) {
         </>
       )}
 
-      <p className="text-[10px] text-slate-400 mt-3 text-center">
+      <p className="text-[11px] text-slate-400 mt-3 text-center">
         Routed from your answers. General information only — not personal advice.
       </p>
       <style>{`

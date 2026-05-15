@@ -26,6 +26,7 @@ import {
   buildTrialEndingSoonEmail,
   sendTransactionalEmail,
 } from "../lib/email";
+import { handleSubscriptionWebhook } from "@/lib/pro-subscription/billing";
 
 export const handleCustomerSubscriptionCreated: WebhookHandler = async (event, ctx) => {
   const newSub = event.data.object as Stripe.Subscription;
@@ -119,12 +120,35 @@ export const handleCustomerSubscriptionTrialWillEnd: WebhookHandler = async (eve
 
 export const handleCustomerSubscriptionUpdated: WebhookHandler = async (event, ctx) => {
   await upsertSubscription(event.data.object as Stripe.Subscription, ctx.admin, ctx.log);
+  // Mirror the status / period_end onto the professionals row if this is
+  // a pro tier subscription (mm31). Skip silently for consumer-Pro
+  // subscriptions — `handleSubscriptionWebhook` returns `handled: false`
+  // when the price id doesn't match any pro tier env var.
+  try {
+    await handleSubscriptionWebhook(event);
+  } catch (err) {
+    ctx.log.error("Pro subscription update dispatch failed", {
+      err: err instanceof Error ? err.message : String(err),
+    });
+  }
   return { status: "done" };
 };
 
 export const handleCustomerSubscriptionDeleted: WebhookHandler = async (event, ctx) => {
   const subscription = event.data.object as Stripe.Subscription;
   await upsertSubscription(subscription, ctx.admin, ctx.log);
+
+  // Flip the pro back to the free tier if this was a pro subscription
+  // (mm31). Safe to run for consumer-Pro subs too — `handleSubscriptionWebhook`
+  // looks up by professional_id metadata + stripe_customer_id, both of
+  // which are absent on consumer-Pro subscriptions, so nothing happens.
+  try {
+    await handleSubscriptionWebhook(event);
+  } catch (err) {
+    ctx.log.error("Pro subscription delete dispatch failed", {
+      err: err instanceof Error ? err.message : String(err),
+    });
+  }
 
   // Deferred-downgrade flip: when the tier-upgrade route initiated a
   // downgrade with cancel_at_period_end + metadata.pending_tier, this

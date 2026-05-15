@@ -12,6 +12,8 @@ import { listingUrl } from "@/lib/listing-url";
 import type { InvestListingVertical, PlatformType } from "@/lib/types";
 import { generateVersusPairs } from "@/lib/versus-pairs";
 import { BCP47_TAG } from "@/lib/i18n/locales";
+import { AUSTRALIAN_STATES } from "@/lib/seo/best-pages";
+import { getEnabledIntents } from "@/lib/getmatched/intents";
 
 // Regenerate sitemap at most once per day — avoids per-request DB queries
 export const revalidate = 86400;
@@ -889,5 +891,45 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   );
 
-  return [...staticPages, ...localizedPages, ...bestPages, ...bestForPages, ...commodityPages, ...stockDetailPages, ...transferGuidePages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...howToPages, ...expertArticlePages, ...advisorPages, ...advisorTypePages, ...advisorStatePages, ...advisorCityPages, ...advisorLocationPages, ...investingCityPages, ...glossaryPages, ...firmPages, ...propertyListingPages, ...suburbGuidePages, ...propertyHubPages, ...newHubPages, newsletterArchivePage, ...newsletterEditionPages, ...investStaticPages, ...investCategoryPages, ...investSubcategoryPages, ...investListingPages, ...stockbrokerFirmPages, ...quoteJobPages, ...quoteCategoryStatePages];
+  // ── /marketplace hub + intent + intent×state pages ──
+  // Programmatic SEO surface — 1 hub + N intents + (N × 8 states) leaf
+  // pages. Intents come from the admin-tunable taxonomy; if the DB is
+  // unreachable, `getEnabledIntents()` falls back to the code-defined
+  // list so the sitemap stays populated. Routes:
+  //   /marketplace                     (hub)
+  //   /marketplace/[intent]            (per intent)
+  //   /marketplace/[intent]/[state]    (per intent × state)
+  // /account/refer and other /account/* paths are noindex — not emitted
+  // here; robots.ts already disallows /account/.
+  const enabledIntents = await getEnabledIntents();
+  const marketplaceHubPage = {
+    url: `${baseUrl}/marketplace`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.85,
+  };
+  const marketplaceIntentPages = enabledIntents.map((i) => ({
+    url: `${baseUrl}/marketplace/${i.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.8,
+  }));
+  const marketplaceIntentStatePages = enabledIntents.flatMap((i) =>
+    AUSTRALIAN_STATES.map((s) => ({
+      url: `${baseUrl}/marketplace/${i.slug}/${s.slug}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.6,
+    })),
+  );
+
+  // ── /testimonials — single static page ──
+  const testimonialsPage = {
+    url: `${baseUrl}/testimonials`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.5,
+  };
+
+  return [...staticPages, ...localizedPages, ...bestPages, ...bestForPages, ...commodityPages, ...stockDetailPages, ...transferGuidePages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...howToPages, ...expertArticlePages, ...advisorPages, ...advisorTypePages, ...advisorStatePages, ...advisorCityPages, ...advisorLocationPages, ...investingCityPages, ...glossaryPages, ...firmPages, ...propertyListingPages, ...suburbGuidePages, ...propertyHubPages, ...newHubPages, newsletterArchivePage, ...newsletterEditionPages, ...investStaticPages, ...investCategoryPages, ...investSubcategoryPages, ...investListingPages, ...stockbrokerFirmPages, ...quoteJobPages, ...quoteCategoryStatePages, marketplaceHubPage, ...marketplaceIntentPages, ...marketplaceIntentStatePages, testimonialsPage];
 }

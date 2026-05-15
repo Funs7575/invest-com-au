@@ -229,8 +229,8 @@ export default async function SquadInboxPage({ params, searchParams }: PageProps
           </ul>
         </div>
 
-        {/* KPI strip */}
-        <div className="grid grid-cols-3 gap-3 mb-8">
+        {/* KPI strip — stays 3-up across all sizes; 3 short numerals fit at 375px. */}
+        <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-8">
           <KpiTile label="Active claims" value={activeCount} accent="amber" />
           <KpiTile label="Open" value={openCount} accent="slate" />
           <KpiTile label="Completed" value={completedCount} accent="emerald" />
@@ -342,9 +342,9 @@ function KpiTile({
         ? "text-emerald-700"
         : "text-slate-700";
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 p-4">
-      <p className="text-xs uppercase tracking-widest text-slate-500">{label}</p>
-      <p className={`text-2xl font-extrabold ${accentClass} mt-1`}>{value}</p>
+    <div className="bg-white rounded-2xl border border-slate-200 p-3 sm:p-4">
+      <p className="text-[11px] sm:text-xs uppercase tracking-widest text-slate-500">{label}</p>
+      <p className={`text-xl sm:text-2xl font-extrabold ${accentClass} mt-1`}>{value}</p>
     </div>
   );
 }

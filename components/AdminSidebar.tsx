@@ -92,6 +92,7 @@ const NAV_GROUPS = [
       { href: "/admin/risk-flags", icon: "shield", label: "Risk Flags" },
       { href: "/admin/listings/moderation", icon: "list-checks", label: "Listing Briefs (moderation)" },
       { href: "/admin/pro-affiliate", icon: "link", label: "Pro affiliate program" },
+      { href: "/admin/marketplace-ranking", icon: "trending-up", label: "Marketplace ranking" },
     ],
   },
   {
