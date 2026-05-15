@@ -666,3 +666,119 @@ export const INSURANCE_ONBOARDING_CONFIG: HubOnboardingConfig = {
     };
   },
 };
+
+export const NEGATIVE_GEARING_ONBOARDING_CONFIG: HubOnboardingConfig = {
+  hubSlug: "negative-gearing",
+  hubName: "Negative Gearing",
+  heading: "Is negative gearing right for your situation?",
+  subheading:
+    "3 questions to see whether the tax maths works for you — and which strategy fits.",
+  questions: [
+    {
+      id: "income",
+      question: "What is your approximate annual taxable income?",
+      options: [
+        { value: "under_45k", label: "Under $45,000 (19% marginal rate)" },
+        { value: "45k_120k", label: "$45,001 – $120,000 (32.5% marginal rate)" },
+        { value: "120k_180k", label: "$120,001 – $180,000 (37% marginal rate)" },
+        { value: "over_180k", label: "Over $180,000 (45% marginal rate)" },
+      ],
+    },
+    {
+      id: "vehicle",
+      question: "What is your preferred negative gearing vehicle?",
+      options: [
+        { value: "property", label: "Investment property (residential or commercial)" },
+        { value: "shares", label: "Shares or managed funds (margin lending)" },
+        { value: "both", label: "Both property and shares" },
+        { value: "exploring", label: "Not sure yet — want to understand the options" },
+      ],
+    },
+    {
+      id: "situation",
+      question: "Where are you in your investment journey?",
+      options: [
+        { value: "first_time", label: "Researching negative gearing for the first time" },
+        { value: "currently_neg", label: "Already negatively geared — want to optimise" },
+        { value: "positively_geared", label: "Positively geared — considering restructuring" },
+        { value: "near_neutral", label: "Near breakeven — managing holding costs" },
+      ],
+    },
+  ],
+
+  evaluate(answers: QuizAnswers) {
+    const income = answers["income"];
+    const vehicle = answers["vehicle"];
+    const situation = answers["situation"];
+
+    // Low income bracket — tax offset is minimal, don't recommend
+    if (income === "under_45k") {
+      return {
+        headline: "At your income level, negative gearing provides limited tax benefit.",
+        summary:
+          "Negative gearing offsets losses at your marginal rate. At 19%, a $10,000 annual loss saves only $1,900 in tax — barely enough to cover a rate rise. A positively-geared (cash-flow-positive) property strategy is typically better below $45k, where the cash you keep matters more than the tax you save.",
+        primaryCta: { label: "Property Investment Guide", href: "/property" },
+        secondaryCta: { label: "Negative Gearing Calculator", href: "/negative-gearing/calculator" },
+        advisorCta: { href: "/quiz?vertical=property", specialty: "property investment adviser" },
+      };
+    }
+
+    // Already negatively geared — optimisation focus
+    if (situation === "currently_neg") {
+      return {
+        headline: "You are already negatively geared — the opportunity is in optimisation.",
+        summary:
+          "Most investors leave money on the table by under-claiming depreciation. A quantity surveyor's depreciation schedule ($500–$800) typically finds $5,000–$15,000 per year in additional deductions on properties built after 1985 — a 10× return on the survey cost in year one alone. A tax accountant specialising in investment property can also review your ownership structure and loan type.",
+        primaryCta: { label: "Find a Property Tax Accountant", href: "/quiz?vertical=tax" },
+        secondaryCta: { label: "Depreciation Guide", href: "/negative-gearing" },
+        advisorCta: { href: "/quiz?vertical=tax", specialty: "property tax accountant" },
+      };
+    }
+
+    // High income + property — strongest case for negative gearing
+    if ((income === "over_180k" || income === "120k_180k") && vehicle === "property") {
+      return {
+        headline: "At 37–45% marginal rate, negative gearing on property is highly efficient.",
+        summary:
+          "Every dollar of net rental loss reduces your taxable income at 37–45 cents. On a $600k investment property losing $15k per year, that is $5,550–$6,750 in annual tax savings. Combined with capital growth, depreciation, and eventual CGT discount on sale, property negative gearing at your income level has a strong risk-adjusted return profile.",
+        primaryCta: { label: "Negative Gearing Calculator", href: "/negative-gearing/calculator" },
+        secondaryCta: { label: "Find a Property Adviser", href: "/quiz?vertical=property" },
+        advisorCta: { href: "/quiz?vertical=property", specialty: "property investment adviser" },
+      };
+    }
+
+    // High income + shares — margin lending negative gearing
+    if ((income === "over_180k" || income === "120k_180k") && vehicle === "shares") {
+      return {
+        headline: "Margin lending on shares is a tax-effective strategy at your income level.",
+        summary:
+          "Borrowing to invest in shares or managed funds (margin lending) creates deductible interest and fees, reducing taxable income at 37–45%. A $200k loan at 7% interest = $14,000 in deductions per year. Unlike property, share portfolios are liquid — but margin calls require cash buffers. A financial adviser can structure the right loan-to-value ratio for your risk appetite.",
+        primaryCta: { label: "Find a Financial Adviser", href: "/find-advisor" },
+        secondaryCta: { label: "Negative Gearing on Shares", href: "/negative-gearing" },
+        advisorCta: { href: "/quiz", specialty: "investment adviser" },
+      };
+    }
+
+    // Positively geared — restructuring case
+    if (situation === "positively_geared") {
+      return {
+        headline: "Positively geared investors can still use negative gearing strategically.",
+        summary:
+          "If your property is positively geared (rental income exceeds expenses), the tax benefits of negative gearing don't apply — but depreciation deductions may still reduce your net taxable position. Some investors restructure by refinancing to interest-only loans, accessing equity for a new (negatively geared) investment while keeping the existing cash-flow-positive property.",
+        primaryCta: { label: "Find a Financial Adviser", href: "/find-advisor" },
+        secondaryCta: { label: "Property Investment Guide", href: "/property" },
+        advisorCta: { href: "/quiz?vertical=property", specialty: "property investment adviser" },
+      };
+    }
+
+    // Default — general case with calculator CTA
+    return {
+      headline: "Negative gearing works best when the tax saving exceeds the cash shortfall.",
+      summary:
+        "The core test: does the annual tax saving (loss × marginal rate) come close to covering the monthly cash shortfall (mortgage – rent)? If you need to top up more than $800–$1,000 per month, the tax benefit rarely offsets the cash pressure. Run your numbers in the calculator, then speak to a tax accountant before committing.",
+      primaryCta: { label: "Negative Gearing Calculator", href: "/negative-gearing/calculator" },
+      secondaryCta: { label: "Find a Property Tax Accountant", href: "/quiz?vertical=tax" },
+      advisorCta: { href: "/quiz?vertical=tax", specialty: "property tax accountant" },
+    };
+  },
+};
