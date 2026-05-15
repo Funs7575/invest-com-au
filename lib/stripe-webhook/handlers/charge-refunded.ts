@@ -324,5 +324,16 @@ export const handleChargeRefunded: WebhookHandler = async (event, ctx) => {
     admin_email: "stripe_webhook",
   });
 
+  // Mirror into marketplace_payments if this charge was a Connect payment
+  // routed through the platform. Fail-soft — handler is idempotent.
+  try {
+    const { handleConnectWebhook } = await import("@/lib/stripe-connect");
+    await handleConnectWebhook(event);
+  } catch (err) {
+    ctx.log.warn("connect-webhook mirror failed (charge.refunded)", {
+      err: err instanceof Error ? err.message : String(err),
+    });
+  }
+
   return { status: "done" };
 };
