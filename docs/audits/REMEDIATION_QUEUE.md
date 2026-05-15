@@ -57,7 +57,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | LL | `claude/audit-remediation/ll-04-reviews-ratings` | **#807 MERGED 2026-05-14** · **#845 OPEN** | LL-01..LL-03 done. LL-04 in-flight (#845, CI rescue iter 397 — teams/* JSON-LD exemption). LL-05 blocked (live chat AI routing — deps V-NEW-02 + CC-06). | All LL tasks merged |
 | RR | `claude/audit-remediation/rr-01-review-extensions` | **#847 OPEN** | RR-01 false-positive (VerifiedClientBadge already implemented). RR-02 (advisor response to reviews) in-flight (#847, CI-rescue done iter 399). | All RR tasks merged |
 | EM | `claude/audit-remediation/em-03-hub-newsletter-infra` | **#848 OPEN** | EM-03 (hub-aware newsletter capture) done. Unblocks EM-01/02/04/05/06 + LX-05. Next: EM-01 (lead magnets). | All EM tasks merged |
-| LX | `claude/audit-remediation/lx-01-calculator-share-save` | **#849 OPEN** | LX-01 (calculator share/save) done. LX-04 (pre-filled forms) done (`c0a52b7b`): `lib/prefill-url.ts` + find-advisor extended params + AdvisorMatchCTA pre-fill props. Next: LX-05 (exit-intent capture — dep EM-03 done ✓). | All LX tasks merged |
+| LX | `claude/audit-remediation/lx-01-calculator-share-save` | **#849 OPEN** | LX-01 (share/save) done. LX-04 (pre-filled forms) done. LX-05 (exit-intent capture) done (`b2d527c6`): `HubExitIntent` + wired into SMSF+dividends hub pages. Next: LX-02 (calculator history — dep LL-01 done ✓). | All LX tasks merged |
 | OB | `claude/audit-remediation/ob-01-hub-onboarding` | **#852 OPEN** | OB-01 done (`e654f70`). `HubOnboardingShell` + `lib/hub-onboarding-configs.ts` + SMSF/dividends quiz pages + sitemap. OB-02..OB-13 (remaining 11 hub configs) pending. Next: OB-02 (wholesale hub onboarding quiz). | All OB tasks merged |
 
 ---
@@ -123,6 +123,17 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 405 — 2026-05-15 — LX-05 hub exit-intent email capture
+
+- **Stream:** LX (UX conversion + retention)
+- **Item:** LX-05 — exit-intent capture (cold-launch critical)
+- **Branch:** `claude/audit-remediation/lx-01-calculator-share-save`
+- **PR:** #849 OPEN
+- **Commit:** `b2d527c6`
+- **Diff:** +169 -0 across 3 files (1 new component, 2 hub pages)
+- **What:** `HubExitIntent` "use client" component — fires on `mouseleave` through viewport top after ≥20s engagement, uses shared `exitIntentShown` sessionStorage key to coordinate with global `ExitIntentPopup` (no double-fire). Modal shows hub-specific headline + email capture form. Submits to `/api/newsletter-segments/subscribe` with the hub's segment slug for hub-specific drip sequences. Wired into `/smsf` (segmentSlug=smsf-hub) and `/dividends` (segmentSlug=dividends-hub). Accessible: role=dialog, aria-modal, aria-labelledby, close button with aria-label.
+- **STATUS: PROGRESS · stream=LX · item=LX-05 · pr=#849**
 
 ### iter 404 — 2026-05-15 — LX-04 pre-filled advisor form URLs
 
