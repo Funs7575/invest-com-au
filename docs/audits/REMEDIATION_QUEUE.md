@@ -95,6 +95,17 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 
 ## Iteration log (most recent first)
 
+### iter 399 — 2026-05-15 — CI-RESCUE RR (#847)
+
+- **Stream:** RR (review extensions)
+- **Phase:** 2 — CI rescue
+- **PR:** #847 OPEN
+- **Commit:** `c53761d`
+- **Diff:** +21 -5 (1 file — app/advisor-portal/reviews/page.tsx)
+- **Root cause:** `Lint · Type-check · Test · Build` CI failing with TS2352 in `app/advisor-portal/reviews/page.tsx`. Supabase nested select returns `professional_review_responses` as an array; the original code attempted to spread that into a `ReviewWithResponse` (which expects `advisor_response` singular), hitting "neither type sufficiently overlaps". Fix: introduced an explicit `RawReview` intermediate type and mapped it cleanly to `ReviewWithResponse`, picking `professional_review_responses[0]` into `advisor_response`.
+- **Local verification:** `npm run type-check` → clean; 7 tests pass; lint clean; JSON-LD gate ✅; rate-limit audit 100%.
+- **STATUS: CI-RESCUE · stream=RR · pr=#847**
+
 ### iter 398 — 2026-05-14 — RR-01 FP + RR-02 advisor-review-responses
 
 - **Stream:** RR (review extensions)
