@@ -72,6 +72,7 @@ const serviceGridNode = (
 
 export default function DividendsHubPage() {
   return (
+    <>
     <HubPage config={DIVIDENDS_HUB_CONFIG} serviceGrid={serviceGridNode}>
       {/* SMSF franking crossover callout */}
       <section className="py-12 bg-slate-50 border-y border-slate-200">
@@ -124,5 +125,6 @@ export default function DividendsHubPage() {
       </section>
     </HubPage>
     <HubExitIntent segmentSlug="dividends-hub" hubName="Dividend Investing" />
+    </>
   );
 }

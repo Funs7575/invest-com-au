@@ -89,6 +89,7 @@ export default async function SmsfHubPage() {
   const deepDives = SMSF_HUB_CONFIG.deepDives ?? [];
 
   return (
+    <>
     <HubPage
       config={SMSF_HUB_CONFIG}
       serviceGrid={
@@ -196,5 +197,6 @@ export default async function SmsfHubPage() {
       )}
     </HubPage>
     <HubExitIntent segmentSlug="smsf-hub" hubName="SMSF" />
+    </>
   );
 }
