@@ -17,6 +17,7 @@
 // eslint-disable-next-line no-restricted-imports -- cross-team writes; service-role legitimate per CLAUDE.md.
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
+import { recordReferralPayout } from "./team-brief-referrals/payouts";
 
 const log = logger("team-brief-referrals");
 
@@ -213,15 +214,30 @@ export async function acceptReferral(
 
   const admin = createAdminClient();
 
-  // Claim the brief for the receiving team. Guard against a concurrent
-  // acceptance by another team / individual by filtering on the still-open
-  // condition: accepted_by_team_id IS NULL AND accepted_by_professional_id
-  // IS NULL.
+  // Read the brief's accept cost before we claim — we need it for the
+  // payout below and the row must still be open at this moment.
+  const { data: briefBefore } = await admin
+    .from("advisor_auctions")
+    .select("id, accept_credits_cost, accepted_by_team_id, accepted_by_professional_id")
+    .eq("id", referral.brief_id)
+    .maybeSingle();
+  if (!briefBefore) throw new ReferralError("brief_not_found");
+  if (briefBefore.accepted_by_team_id || briefBefore.accepted_by_professional_id) {
+    throw new ReferralError("brief_already_accepted");
+  }
+  const acceptCreditsCost = (briefBefore.accept_credits_cost as number | null) ?? 2;
+
+  // Claim the brief for the receiving team AND stamp the accepting
+  // professional so the lead spend can be attributed cleanly. Guard against
+  // concurrent acceptance by another team / individual via the still-open
+  // condition.
   const { data: claimed, error: claimErr } = await admin
     .from("advisor_auctions")
     .update({
       accepted_by_team_id: referral.to_team_id,
+      accepted_by_professional_id: professionalId,
       accepted_at: new Date().toISOString(),
+      tracker_status: "new",
     })
     .eq("id", referral.brief_id)
     .is("accepted_by_team_id", null)
@@ -252,6 +268,26 @@ export async function acceptReferral(
     log.error("referral update failed", { error: updErr?.message });
     throw new ReferralError("referral_update_failed", updErr?.message);
   }
+
+  // Settle the credit transfer: charge the accepting pro, pay out the
+  // referrer. Failures are logged but the referral remains accepted — the
+  // ledger has its own idempotency triple so a re-run is safe.
+  try {
+    await recordReferralPayout({
+      referralId,
+      briefId: referral.brief_id,
+      acceptCreditsCost,
+      acceptingProfessionalId: professionalId,
+      fromProfessionalId: referral.from_professional_id,
+      fromTeamId: referral.from_team_id,
+    });
+  } catch (err) {
+    log.error("referral payout failed (referral still accepted)", {
+      referral_id: referralId,
+      error: err instanceof Error ? err.message : String(err),
+    });
+  }
+
   return updated as TeamBriefReferral;
 }
 

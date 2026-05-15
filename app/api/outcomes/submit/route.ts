@@ -3,6 +3,8 @@ import { z } from "zod";
 
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 import { submitOutcome, type OutcomeStatus } from "@/lib/outcomes";
+import { settleSuccessCharge } from "@/lib/briefs/pricing-tier";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 
 const log = logger("api:outcomes:submit");
@@ -61,6 +63,40 @@ export async function POST(request: NextRequest) {
     }
 
     log.info("Outcome submitted", { briefId: row.brief_id, outcome: row.outcome });
+
+    // Outcome-based pricing tier: when the consumer confirms 'completed' and
+    // the pro accepted on the success_only tier, settle the deferred charge.
+    // Fire-and-forget — failures are logged but the consumer's review still
+    // counts as submitted (idempotent ledger triple prevents double-charging
+    // on retry).
+    if (row.outcome === "completed" && row.professional_id) {
+      try {
+        const admin = createAdminClient();
+        const { data: brief } = await admin
+          .from("advisor_auctions")
+          .select("accept_credits_cost")
+          .eq("id", row.brief_id)
+          .maybeSingle();
+        const standardCredits = (brief?.accept_credits_cost as number | null) ?? 2;
+        const settle = await settleSuccessCharge({
+          briefId: row.brief_id,
+          professionalId: row.professional_id,
+          standardCredits,
+        });
+        if (settle.charged) {
+          log.info("success-tier charge settled", {
+            briefId: row.brief_id,
+            cents: settle.amountCents,
+          });
+        }
+      } catch (settleErr) {
+        log.error("success-tier settle threw (outcome still saved)", {
+          briefId: row.brief_id,
+          err: settleErr instanceof Error ? settleErr.message : String(settleErr),
+        });
+      }
+    }
+
     return NextResponse.json({ success: true });
   } catch (err) {
     log.error("outcomes/submit error", {

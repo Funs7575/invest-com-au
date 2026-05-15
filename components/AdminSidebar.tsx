@@ -90,6 +90,8 @@ const NAV_GROUPS = [
       { href: "/admin/credit-pricing", icon: "coins", label: "Credit Pricing" },
       { href: "/admin/routing-rules", icon: "git-branch", label: "Routing Rules" },
       { href: "/admin/risk-flags", icon: "shield", label: "Risk Flags" },
+      { href: "/admin/listings/moderation", icon: "list-checks", label: "Listing Briefs (moderation)" },
+      { href: "/admin/pro-affiliate", icon: "link", label: "Pro affiliate program" },
     ],
   },
   {
@@ -99,6 +101,7 @@ const NAV_GROUPS = [
       { href: "/admin/get-matched/questions", icon: "message-circle", label: "Questions" },
       { href: "/admin/get-matched/result-templates", icon: "layout", label: "Result Templates" },
       { href: "/admin/get-matched/funnel", icon: "filter", label: "Funnel" },
+      { href: "/admin/ai-flags", icon: "sparkles", label: "AI feature flags" },
     ],
   },
   {

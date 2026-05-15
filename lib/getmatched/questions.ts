@@ -20,8 +20,13 @@
 
 // eslint-disable-next-line no-restricted-imports -- public read of admin config.
 import { createAdminClient } from "@/lib/supabase/admin";
+import { isFlagEnabled } from "@/lib/feature-flags";
 import { logger } from "@/lib/logger";
 
+import {
+  pickNextQuestionAI,
+  type AiQuestionContext,
+} from "./ai-engine";
 import { FALLBACK_QUESTIONS } from "./fallbacks";
 import type { ActionPlanAnswers, QuestionDef, QuestionMode } from "./types";
 
@@ -103,6 +108,115 @@ export function nextQuestion(
   }
 
   return { done: true, totalSteps: eligible.length, currentStep: eligible.length };
+}
+
+/**
+ * Flag-gated AI wrapper around {@link nextQuestion}.
+ *
+ * Behaviour:
+ *   • If the `ai_get_matched_v3` feature flag is OFF for `userKey`
+ *     (the default in prod — seed migration MM-14 ships
+ *     `enabled=false, rollout_pct=0`), this function delegates
+ *     straight to the deterministic rule-based walker. Zero
+ *     Anthropic API calls, zero token cost.
+ *   • If the flag is ON, we ask Claude to pick the next slug. On
+ *     success we look that slug up in the question set and return a
+ *     normal `NextQuestionResult` (optionally with the model's
+ *     `generated_prompt` overriding the canonical prompt). On
+ *     `should_resolve_plan=true`, we return `done: true` so the
+ *     caller short-circuits to /api/get-matched/resolve. On
+ *     malformed output / timeout / unknown slug, we fall through to
+ *     the rule-based walker so the user always sees a working flow.
+ *
+ * The existing {@link nextQuestion} signature is unchanged — this is
+ * a strict wrapper so the rule-based path remains pure and
+ * test-covered.
+ */
+export async function nextQuestionWithAI(
+  questions: QuestionDef[],
+  answers: ActionPlanAnswers,
+  mode: QuestionMode = "both",
+  userKey: string | null = null,
+): Promise<NextQuestionResult | NextQuestionDone> {
+  const ruleBased = (): NextQuestionResult | NextQuestionDone =>
+    nextQuestion(questions, answers, mode);
+
+  let enabled = false;
+  try {
+    enabled = await isFlagEnabled("ai_get_matched_v3", {
+      userKey: userKey ?? null,
+    });
+  } catch (err) {
+    log.warn("ai_get_matched_v3 flag read threw — using rule-based", {
+      err: err instanceof Error ? err.message : String(err),
+    });
+    return ruleBased();
+  }
+  if (!enabled) return ruleBased();
+
+  // Flag is ON — narrow the candidate slugs to UNANSWERED questions
+  // in this mode. Cheaper to filter on the server than to spend
+  // tokens telling the model which ones are already answered.
+  const eligible = questions
+    .filter((q) => q.enabled)
+    .filter((q) => mode === "both" || q.mode === mode || q.mode === "both")
+    .filter((q) => shownIfMatches(q, answers))
+    .filter((q) => {
+      const bySlug = answers[q.slug];
+      const byMapped = answers[q.maps_to];
+      const answered =
+        (bySlug !== undefined && bySlug !== null) ||
+        (byMapped !== undefined && byMapped !== null);
+      return !answered;
+    })
+    .sort((a, b) => a.step - b.step || a.sort_order - b.sort_order);
+
+  if (eligible.length === 0) {
+    return { done: true, totalSteps: 0, currentStep: 0 };
+  }
+
+  const context: AiQuestionContext[] = eligible.map((q) => ({
+    slug: q.slug,
+    prompt: q.prompt,
+    step: q.step,
+    mapsTo: q.maps_to,
+  }));
+
+  let ai;
+  try {
+    ai = await pickNextQuestionAI(answers, mode, context, { userKey });
+  } catch (err) {
+    log.warn("pickNextQuestionAI threw — using rule-based", {
+      err: err instanceof Error ? err.message : String(err),
+    });
+    return ruleBased();
+  }
+
+  // Short-circuit: model says "we have enough info, resolve now".
+  if (ai.shouldResolve) {
+    return {
+      done: true,
+      totalSteps: eligible.length,
+      currentStep: eligible.length,
+    };
+  }
+
+  if (!ai.slug) return ruleBased();
+
+  const picked = eligible.find((q) => q.slug === ai.slug);
+  if (!picked) return ruleBased();
+
+  const idx = eligible.findIndex((q) => q.slug === picked.slug);
+  const surfaced: QuestionDef = ai.generatedPrompt
+    ? { ...picked, prompt: ai.generatedPrompt }
+    : picked;
+
+  return {
+    done: false,
+    question: surfaced,
+    totalSteps: eligible.length,
+    currentStep: idx + 1,
+  };
 }
 
 export function shownIfMatches(
