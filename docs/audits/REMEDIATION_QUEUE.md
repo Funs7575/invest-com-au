@@ -57,7 +57,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | LL | `claude/audit-remediation/ll-04-reviews-ratings` | **#807 MERGED 2026-05-14** · **#845 OPEN** | LL-01..LL-03 done. LL-04 in-flight (#845, CI rescue iter 397 — teams/* JSON-LD exemption). LL-05 blocked (live chat AI routing — deps V-NEW-02 + CC-06). | All LL tasks merged |
 | RR | `claude/audit-remediation/rr-01-review-extensions` | **#847 OPEN** | RR-01 false-positive (VerifiedClientBadge already implemented). RR-02 (advisor response to reviews) in-flight (#847, CI-rescue done iter 399). | All RR tasks merged |
 | EM | `claude/audit-remediation/em-03-hub-newsletter-infra` | **#848 OPEN** | EM-03 (hub-aware newsletter capture) done. Unblocks EM-01/02/04/05/06 + LX-05. Next: EM-01 (lead magnets). | All EM tasks merged |
-| LX | `claude/audit-remediation/lx-01-calculator-share-save` | **#849 OPEN** | LX-01 (calculator share/save — viral deep links) done. `CalculatorShareButton` component + deep links wired into 4 calculators (compound interest, mortgage, SMSF, savings). | All LX tasks merged |
+| LX | `claude/audit-remediation/lx-01-calculator-share-save` | **#849 OPEN** | LX-01 (calculator share/save) done. LX-04 (pre-filled forms) done (`c0a52b7b`): `lib/prefill-url.ts` + find-advisor extended params + AdvisorMatchCTA pre-fill props. Next: LX-05 (exit-intent capture — dep EM-03 done ✓). | All LX tasks merged |
 | OB | `claude/audit-remediation/ob-01-hub-onboarding` | **#852 OPEN** | OB-01 done (`e654f70`). `HubOnboardingShell` + `lib/hub-onboarding-configs.ts` + SMSF/dividends quiz pages + sitemap. OB-02..OB-13 (remaining 11 hub configs) pending. Next: OB-02 (wholesale hub onboarding quiz). | All OB tasks merged |
 
 ---
@@ -123,6 +123,17 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 404 — 2026-05-15 — LX-04 pre-filled advisor form URLs
+
+- **Stream:** LX (UX conversion + retention)
+- **Item:** LX-04 — pre-filled forms (buildAdvisorUrl + find-advisor + AdvisorMatchCTA)
+- **Branch:** `claude/audit-remediation/lx-01-calculator-share-save`
+- **PR:** #849 OPEN
+- **Commit:** `c0a52b7b`
+- **Diff:** +106 -6 across 3 files (1 new lib, 2 modified)
+- **What:** Created `lib/prefill-url.ts` as the SSOT for building pre-filled /find-advisor and /quiz URLs. `buildAdvisorUrl({ need, state?, postcode?, budget?, firstName? })` produces canonical URLs; `buildQuizUrl({ vertical, state? })` does the same for /quiz. Updated `FindAdvisorQuiz` in `app/find-advisor/page.tsx` to read `?state`, `?postcode`, `?budget`, `?first_name` URL params alongside the existing `?need` — applied to useState initializer so Steps 3+4 are pre-populated when the user reaches them. Late-navigation useEffect also re-applies. Updated `AdvisorMatchCTA` to accept optional `state`/`postcode`/`budget` props and route through `buildAdvisorUrl` — backward-compatible, no callers broken.
+- **STATUS: PROGRESS · stream=LX · item=LX-04 · pr=#849**
 
 ### iter 403 — 2026-05-15 — OB-01 hub onboarding shell
 
