@@ -34,6 +34,11 @@ import {
 import { handlePaymentIntentPaymentFailed } from "./payment-intent-failed";
 import { handlePayoutFailed } from "./payout-failed";
 import { handleRadarEarlyFraudWarning } from "./radar-early-fraud-warning";
+import {
+  handleAccountUpdated,
+  handlePaymentIntentSucceeded,
+  handlePaymentIntentCanceled,
+} from "./marketplace-connect";
 
 registerHandler("charge.dispute.created", handleChargeDisputeCreated);
 registerHandler("charge.refunded", handleChargeRefunded);
@@ -49,3 +54,7 @@ registerHandler("invoice.payment_failed", handleInvoicePaymentFailedEvent);
 registerHandler("payment_intent.payment_failed", handlePaymentIntentPaymentFailed);
 registerHandler("payout.failed", handlePayoutFailed);
 registerHandler("radar.early_fraud_warning.created", handleRadarEarlyFraudWarning);
+// MM-34: Connect marketplace payouts.
+registerHandler("account.updated", handleAccountUpdated);
+registerHandler("payment_intent.succeeded", handlePaymentIntentSucceeded);
+registerHandler("payment_intent.canceled", handlePaymentIntentCanceled);
