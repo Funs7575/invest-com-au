@@ -4,6 +4,7 @@ import { SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import HubPage from "@/components/HubPage";
 import { DIVIDENDS_HUB_CONFIG } from "@/lib/verticals";
+import HubExitIntent from "@/components/HubExitIntent";
 
 export const revalidate = 3600;
 
@@ -122,5 +123,6 @@ export default function DividendsHubPage() {
         </div>
       </section>
     </HubPage>
+    <HubExitIntent segmentSlug="dividends-hub" hubName="Dividend Investing" />
   );
 }

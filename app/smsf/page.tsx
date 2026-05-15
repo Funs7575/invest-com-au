@@ -7,6 +7,7 @@ import HubPage from "@/components/HubPage";
 import HubServiceGrid from "@/components/HubServiceGrid";
 import type { HubServiceItem } from "@/components/HubServiceGrid";
 import { SMSF_HUB_CONFIG } from "@/lib/verticals";
+import HubExitIntent from "@/components/HubExitIntent";
 
 export const revalidate = 3600;
 
@@ -194,5 +195,6 @@ export default async function SmsfHubPage() {
         </section>
       )}
     </HubPage>
+    <HubExitIntent segmentSlug="smsf-hub" hubName="SMSF" />
   );
 }
