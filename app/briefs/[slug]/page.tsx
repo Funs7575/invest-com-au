@@ -168,13 +168,16 @@ export default async function BriefTrackerPage({
               </div>
             )}
 
-            <ol className="mt-4 grid grid-cols-5 gap-2">
+            {/* 5 status dots side-by-side. Labels can wrap to 2 lines on
+                narrow viewports — `break-words` prevents the longest label
+                ("Engagement confirmed") from forcing horizontal overflow. */}
+            <ol className="mt-4 grid grid-cols-5 gap-1.5 sm:gap-2">
               {STATUS_ORDER.map((s, idx) => {
                 const reached = idx <= stepIndex;
                 return (
-                  <li key={s} className="text-center">
+                  <li key={s} className="text-center min-w-0">
                     <div
-                      className={`w-7 h-7 rounded-full mx-auto flex items-center justify-center text-[10px] font-bold ${
+                      className={`w-7 h-7 rounded-full mx-auto flex items-center justify-center text-[11px] font-bold ${
                         reached
                           ? "bg-amber-500 text-slate-900"
                           : "bg-slate-100 text-slate-400"
@@ -183,7 +186,7 @@ export default async function BriefTrackerPage({
                       {idx + 1}
                     </div>
                     <p
-                      className={`text-[10px] mt-1 ${
+                      className={`text-[10px] sm:text-[11px] mt-1 leading-tight break-words ${
                         reached ? "text-slate-700 font-semibold" : "text-slate-400"
                       }`}
                     >
@@ -273,7 +276,7 @@ export default async function BriefTrackerPage({
           {!emailMatches && (
             <div className="bg-slate-100 border border-slate-200 rounded-2xl p-4 text-xs text-slate-600">
               Looking for the full owner view? Use the link we emailed you, or
-              add <code>?email=&lt;your-email&gt;</code> to this page.
+              add <code className="break-all">?email=&lt;your-email&gt;</code> to this page.
             </div>
           )}
         </div>

@@ -31,7 +31,7 @@ export default async function FindHubPage() {
         <span className="mx-2">/</span>
         <span className="text-slate-700">Find a provider</span>
       </nav>
-      <h1 className="text-3xl font-extrabold text-slate-900 mb-2">
+      <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-2">
         Find a verified Australian provider
       </h1>
       <p className="text-slate-600 mb-8 leading-relaxed">

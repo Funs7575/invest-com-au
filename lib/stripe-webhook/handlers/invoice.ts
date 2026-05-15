@@ -36,6 +36,7 @@ import {
   emailWrapper,
   sendTransactionalEmail,
 } from "../lib/email";
+import { handleSubscriptionWebhook } from "@/lib/pro-subscription/billing";
 
 export const handleInvoicePaidEvent: WebhookHandler = async (event, ctx) => {
   const paidInvoice = event.data.object as Stripe.Invoice;
@@ -128,6 +129,18 @@ export const handleInvoicePaymentFailedEvent: WebhookHandler = async (event, ctx
   // The subscription.updated webhook will also fire with status 'past_due',
   // which upsertSubscription handles automatically. Access is revoked
   // by getSubscription() since past_due is excluded from isPro.
+
+  // mm31: also flip the professionals.subscription_status to past_due so
+  // priority-weight logic + UI can react. Safe for advisor-lead invoices —
+  // `handleSubscriptionWebhook` no-ops when the subscription's price id
+  // doesn't match any pro tier env var.
+  try {
+    await handleSubscriptionWebhook(event);
+  } catch (err) {
+    ctx.log.error("Pro subscription past_due dispatch failed", {
+      err: err instanceof Error ? err.message : String(err),
+    });
+  }
 
   return { status: "done" };
 };
