@@ -55,7 +55,8 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | MAIN-RESCUE | _complete_ | **#793 MERGED** | next 16.2.4→16.2.6 patch merged. Non-loop auto-revert PRs for failed main commits: **#827 OPEN** (reverts `d26094aa`) · **#843 OPEN** (reverts `ff43ed6f`). These are founder-action items — loop will not create duplicate fixes. | Merged to main ✓ |
 | CL | `claude/audit-remediation/cl-01-about-entity-only` | **#795 MERGED 2026-05-14** | CL-01..CL-04, CL-06, CL-09, CL-10 done. CL-07+CL-08 false-positive. CL-05 blocked (WHOIS registrar action — see Blocked). | All CL tasks merged (CL-05 blocked) |
 | LL | `claude/audit-remediation/ll-04-reviews-ratings` | **#807 MERGED 2026-05-14** · **#845 OPEN** | LL-01..LL-03 done. LL-04 in-flight (#845, CI rescue iter 397 — teams/* JSON-LD exemption). LL-05 blocked (live chat AI routing — deps V-NEW-02 + CC-06). | All LL tasks merged |
-| RR | `claude/audit-remediation/rr-01-review-extensions` | **#847 OPEN** | RR-01 false-positive (VerifiedClientBadge already implemented). RR-02 (advisor response to reviews) in-flight (#847, CI rescue needed). | All RR tasks merged |
+| RR | `claude/audit-remediation/rr-01-review-extensions` | **#847 OPEN** | RR-01 false-positive (VerifiedClientBadge already implemented). RR-02 (advisor response to reviews) in-flight (#847, CI-rescue done iter 399). | All RR tasks merged |
+| EM | `claude/audit-remediation/em-03-hub-newsletter-infra` | **#848 OPEN** | EM-03 (hub-aware newsletter capture) done. Unblocks EM-01/02/04/05/06 + LX-05. Next: EM-01 (lead magnets). | All EM tasks merged |
 
 ---
 
@@ -94,6 +95,18 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 400 — 2026-05-15 — EM-03 hub-newsletter-infra
+
+- **Stream:** EM (email infrastructure)
+- **Phase:** 3–7 — new stream, pick, verify, do, commit, push, PR
+- **PR:** #848 OPEN
+- **Branch:** `claude/audit-remediation/em-03-hub-newsletter-infra`
+- **Commit:** `f5dcc0e`
+- **Diff:** +216 -1 across 6 files (1 migration, 1 new component, 2 page updates, 1 HubPage slot, 1 verticals update)
+- **What:** Foundational email list-building layer for all content hubs. Migration seeds 12 hub-specific `newsletter_segments` rows (smsf-hub, dividends-hub, wholesale-hub, etc.) so the segment-aware subscribe API accepts hub slugs without 400 errors. New `<HubNewsletterCapture>` client component posts to `/api/newsletter-segments/subscribe` with hub's segment slug; success/429/error states; accessible. Added `newsletterCapture?: ReactNode` slot to `<HubPage>` (positioned after advisorCta). Populated `newsletter: { listKey, cadence }` on `SMSF_HUB_CONFIG` and `DIVIDENDS_HUB_CONFIG`. Wired `<HubNewsletterCapture>` into `/smsf` and `/dividends` hub pages.
+- **Unblocks:** EM-01 (lead magnets), EM-02 (digest infra), EM-04 (newsletter foundation), EM-05 (automation), EM-06 (drip sequences), LX-05 (exit-intent capture).
+- **STATUS: PROGRESS · stream=EM · item=EM-03 · pr=#848**
 
 ### iter 399 — 2026-05-15 — CI-RESCUE RR (#847)
 
