@@ -55,7 +55,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | MAIN-RESCUE | _complete_ | **#793 MERGED** | next 16.2.4→16.2.6 patch merged. Non-loop auto-revert PRs for failed main commits: **#827 OPEN** (reverts `d26094aa`) · **#843 OPEN** (reverts `ff43ed6f`). These are founder-action items — loop will not create duplicate fixes. | Merged to main ✓ |
 | CL | `claude/audit-remediation/cl-01-about-entity-only` | **#795 MERGED 2026-05-14** | CL-01..CL-04, CL-06, CL-09, CL-10 done. CL-07+CL-08 false-positive. CL-05 blocked (WHOIS registrar action — see Blocked). | All CL tasks merged (CL-05 blocked) |
 | LL | `claude/audit-remediation/ll-04-reviews-ratings` | **#807 MERGED 2026-05-14** · **#845 OPEN** | LL-01..LL-03 done. LL-04 in-flight (#845, CI rescue iter 397 — teams/* JSON-LD exemption). LL-05 blocked (live chat AI routing — deps V-NEW-02 + CC-06). | All LL tasks merged |
-| RR | `claude/audit-remediation/rr-01-review-extensions` | (pending — iter 398) | RR-01 (verification badge) + RR-02 (advisor response) pending. Deps: LL-04. | All RR tasks merged |
+| RR | `claude/audit-remediation/rr-01-review-extensions` | **#847 OPEN** | RR-01 false-positive (VerifiedClientBadge already implemented). RR-02 (advisor response to reviews) in-flight (#847, CI rescue needed). | All RR tasks merged |
 
 ---
 
@@ -94,6 +94,18 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 398 — 2026-05-14 — RR-01 FP + RR-02 advisor-review-responses
+
+- **Stream:** RR (review extensions)
+- **Phase:** 3–7 — pick, verify, do, commit, push
+- **PR:** #847 OPEN
+- **Branch:** `claude/audit-remediation/rr-01-review-extensions`
+- **Commit:** `8547e70`
+- **Diff:** +407 -2 across 8 files (1 migration, 2 new API route, 2 new portal pages, 1 type update, 1 query update, 1 test suite)
+- **RR-01:** Resolved as **false-positive** — `VerifiedClientBadge` component already implemented and wired into `UserReviewsList` and `AdvisorProfileClient`. No new code needed.
+- **RR-02:** Advisor response to reviews. New `professional_review_responses` table (migration `20260726_rr02_…`), POST `/api/advisor-portal/reviews/respond` (rate-limited 10/60s, upsert pattern), advisor-portal reviews page (`/advisor-portal/reviews`) showing all approved+pending reviews with inline response forms, advisor response display in public profile, 7-test suite (all green).
+- **STATUS: PROGRESS · stream=RR · item=RR-02 · pr=#847**
 
 ### iter 397 — 2026-05-14 — CI-RESCUE LL (#845)
 
