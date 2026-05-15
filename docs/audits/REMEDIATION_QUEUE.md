@@ -57,7 +57,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | LL | `claude/audit-remediation/ll-04-reviews-ratings` | **#807 MERGED 2026-05-14** · **#845 OPEN** | LL-01..LL-03 done. LL-04 in-flight (#845, CI rescue iter 397 — teams/* JSON-LD exemption). LL-05 blocked (live chat AI routing — deps V-NEW-02 + CC-06). | All LL tasks merged |
 | RR | `claude/audit-remediation/rr-01-review-extensions` | **#847 OPEN** | RR-01 false-positive (VerifiedClientBadge already implemented). RR-02 (advisor response to reviews) in-flight (#847, CI-rescue done iter 399). | All RR tasks merged |
 | EM | `claude/audit-remediation/em-03-hub-newsletter-infra` | **#848 OPEN** | EM-03 (hub-aware newsletter capture) done. Unblocks EM-01/02/04/05/06 + LX-05. Next: EM-01 (lead magnets). | All EM tasks merged |
-| LX | `claude/audit-remediation/lx-01-calculator-share-save` | **#849 OPEN** | LX-01 (share/save) done. LX-04 (pre-filled forms) done. LX-05 (exit-intent capture) done (`b2d527c6`): `HubExitIntent` + wired into SMSF+dividends hub pages. Next: LX-02 (calculator history — dep LL-01 done ✓). | All LX tasks merged |
+| LX | `claude/audit-remediation/lx-01-calculator-share-save` | **#849 OPEN** | LX-01 (share/save) done. LX-04 (pre-filled forms) done. LX-05 (exit-intent capture) done. CI-rescue iter 406 (`375d665`): Fragment wrapper for HubExitIntent siblings in dividends+smsf pages. Next: LX-02 (calculator history — dep LL-01 done ✓). | All LX tasks merged |
 | OB | `claude/audit-remediation/ob-01-hub-onboarding` | **#852 OPEN** | OB-01 done (`e654f70`). `HubOnboardingShell` + `lib/hub-onboarding-configs.ts` + SMSF/dividends quiz pages + sitemap. OB-02..OB-13 (remaining 11 hub configs) pending. Next: OB-02 (wholesale hub onboarding quiz). | All OB tasks merged |
 
 ---
@@ -123,6 +123,17 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 406 — 2026-05-15 — CI-RESCUE LX (#849)
+
+- **Stream:** LX (UX conversion + retention)
+- **Phase:** 2 — CI rescue
+- **PR:** #849 OPEN
+- **Commit:** `375d665`
+- **Diff:** +4 -0 (2 files — app/dividends/page.tsx, app/smsf/page.tsx)
+- **Root cause:** LX-05 placed `<HubExitIntent>` as a JSX sibling to `<HubPage>` without a Fragment wrapper in both `app/dividends/page.tsx` and `app/smsf/page.tsx`. TypeScript raised TS2657 "JSX expressions must have one parent element", failing `Lint · Type-check · Test · Build`. Fix: added `<>…</>` Fragment wrapper in both return statements.
+- **Local verification:** visual inspect confirms Fragment closes correctly; the original TS2657 was the only tsc error in these files.
+- **STATUS: CI-RESCUE · stream=LX · pr=#849**
 
 ### iter 405 — 2026-05-15 — LX-05 hub exit-intent email capture
 
