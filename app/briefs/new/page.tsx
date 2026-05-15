@@ -1,9 +1,16 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
+
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import { isFlagEnabled } from "@/lib/feature-flags";
 import Icon from "@/components/Icon";
 import BriefForm from "./BriefForm";
 
-export const revalidate = 3600;
+// Flag-gated AI co-pilot toggle reads from feature_flags on every request.
+// We can't ISR-cache when the response branches on a feature flag — the
+// flag's 30-second in-process cache (see lib/feature-flags.ts) already
+// absorbs the read cost.
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: `Get Quotes from Verified Australian Pros (${CURRENT_YEAR}) — Invest.com.au`,
@@ -36,12 +43,25 @@ const TRUST_BLOCKS = [
   },
 ];
 
-export default function NewBriefPage({
+export default async function NewBriefPage({
   searchParams,
 }: {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
 }) {
   void searchParams;
+
+  // Stable per-visitor key for the feature flag's percentage rollout —
+  // IP from the proxy headers. We don't have a user session at this
+  // point (anonymous brief flow), so IP is the best stable signal.
+  const h = await headers();
+  const visitorIp =
+    h.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    h.get("x-real-ip")?.trim() ||
+    "anonymous";
+  const aiCopilotEnabled = await isFlagEnabled("ai_match_request_copilot", {
+    userKey: visitorIp,
+  });
+
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
     { name: "Match Requests", url: `${SITE_URL}/briefs` },
@@ -89,7 +109,7 @@ export default function NewBriefPage({
 
       <section className="bg-slate-50 py-12 sm:py-16">
         <div className="max-w-3xl mx-auto px-4">
-          <BriefForm />
+          <BriefForm aiCopilotEnabled={aiCopilotEnabled} />
         </div>
       </section>
 
