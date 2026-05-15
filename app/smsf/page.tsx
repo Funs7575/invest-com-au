@@ -6,9 +6,11 @@ import Icon from "@/components/Icon";
 import HubPage from "@/components/HubPage";
 import HubServiceGrid from "@/components/HubServiceGrid";
 import HubNewsletterCapture from "@/components/HubNewsletterCapture";
+import LeadMagnetCapture from "@/components/LeadMagnetCapture";
 import type { HubServiceItem } from "@/components/HubServiceGrid";
 import { SMSF_HUB_CONFIG } from "@/lib/verticals";
 import HubExitIntent from "@/components/HubExitIntent";
+import { getLeadMagnetForHub } from "@/lib/lead-magnets";
 
 export const revalidate = 3600;
 
@@ -88,6 +90,7 @@ async function fetchSmsfArticles() {
 export default async function SmsfHubPage() {
   const articles = await fetchSmsfArticles();
   const deepDives = SMSF_HUB_CONFIG.deepDives ?? [];
+  const smsfMagnet = getLeadMagnetForHub("smsf");
 
   return (
     <>
@@ -135,6 +138,9 @@ export default async function SmsfHubPage() {
           </div>
         </div>
       </section>
+
+      {/* Lead magnet — SMSF Trustee Compliance Checklist */}
+      {smsfMagnet && <LeadMagnetCapture magnet={smsfMagnet} />}
 
       {/* Featured articles */}
       {articles.length > 0 && (

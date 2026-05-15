@@ -4,8 +4,10 @@ import { SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import HubPage from "@/components/HubPage";
 import HubNewsletterCapture from "@/components/HubNewsletterCapture";
+import LeadMagnetCapture from "@/components/LeadMagnetCapture";
 import { DIVIDENDS_HUB_CONFIG } from "@/lib/verticals";
 import HubExitIntent from "@/components/HubExitIntent";
+import { getLeadMagnetForHub } from "@/lib/lead-magnets";
 
 export const revalidate = 3600;
 
@@ -71,6 +73,8 @@ const serviceGridNode = (
   </section>
 );
 
+const dividendsMagnet = getLeadMagnetForHub("dividends");
+
 export default function DividendsHubPage() {
   return (
     <>
@@ -114,6 +118,9 @@ export default function DividendsHubPage() {
           </div>
         </div>
       </section>
+
+      {/* Lead magnet — Franking Credits Guide */}
+      {dividendsMagnet && <LeadMagnetCapture magnet={dividendsMagnet} />}
 
       {/* Platform CTA */}
       <section className="py-12 bg-white">
