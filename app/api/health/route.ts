@@ -91,7 +91,30 @@ export async function GET(request: Request) {
     ...(missingEnv.length > 0 && { error: `Missing: ${missingEnv.join(", ")}` }),
   };
 
+  // ── 4. Third-party API reachability (Stripe / Resend / Anthropic) ──
+  //      Soft checks: missing keys downgrade to degraded (not down) so a
+  //      preview deployment without third-party secrets still reports its
+  //      core (db/cron/env) status correctly.
+  await Promise.all([
+    probeKeyedApi("stripe", "STRIPE_SECRET_KEY", "https://api.stripe.com/v1/balance", {
+      Authorization: `Bearer ${process.env.STRIPE_SECRET_KEY ?? ""}`,
+    }),
+    probeKeyedApi("resend", "RESEND_API_KEY", "https://api.resend.com/domains", {
+      Authorization: `Bearer ${process.env.RESEND_API_KEY ?? ""}`,
+    }),
+    // Anthropic doesn't expose a cheap health endpoint; reach the root for a
+    // coarse DNS/TLS signal so we don't burn tokens.
+    probeKeyedApi("anthropic", "ANTHROPIC_API_KEY", "https://api.anthropic.com/", {}),
+  ]).then((rows) => {
+    for (const r of rows) checks[r.name] = r;
+  });
+
   // ── Overall status ──
+  // Third-party checks degrade but don't fail the overall health — the core
+  // app (db/cron/env) is the gating signal for the 503 response.
+  const coreOk = ["database", "cron_freshness", "env"].every(
+    (k) => checks[k]?.ok ?? true,
+  );
   const allOk = Object.values(checks).every((c) => c.ok);
   const totalLatency = Date.now() - start;
 
@@ -106,5 +129,38 @@ export async function GET(request: Request) {
     body.checks = checks;
   }
 
-  return NextResponse.json(body, { status: allOk ? 200 : 503 });
+  return NextResponse.json(body, { status: coreOk ? 200 : 503 });
+}
+
+async function probeKeyedApi(
+  name: string,
+  envVar: string,
+  url: string,
+  headers: Record<string, string>,
+): Promise<{ name: string; ok: boolean; latency_ms: number; error?: string }> {
+  const start = Date.now();
+  const key = process.env[envVar];
+  if (!key || key.length < 10) {
+    return { name, ok: false, latency_ms: 0, error: `${envVar} missing` };
+  }
+  try {
+    const res = await fetch(url, {
+      method: "GET",
+      headers,
+      signal: AbortSignal.timeout(3_000),
+    });
+    return {
+      name,
+      ok: res.ok || res.status === 401, // 401 still means reachable
+      latency_ms: Date.now() - start,
+      ...(res.ok ? {} : { error: `HTTP ${res.status}` }),
+    };
+  } catch (err) {
+    return {
+      name,
+      ok: false,
+      latency_ms: Date.now() - start,
+      error: err instanceof Error ? err.message : "unreachable",
+    };
+  }
 }

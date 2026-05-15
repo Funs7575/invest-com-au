@@ -112,6 +112,8 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
     "/api/cron/quiz-follow-up",
     "/api/cron/plan-resume-digest",
     "/api/cron/saved-search-alerts",
+    "/api/cron/pro-digest",
+    "/api/cron/tax-nurture",
   ],
 
   "weekly-sun-0": ["/api/cron/rotate-featured-advisors"],
