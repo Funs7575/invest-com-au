@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { useCalculatorState } from "@/hooks/use-calculator-state";
 import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
+import CalculatorShareButton from "@/components/CalculatorShareButton";
 
 const FREQ_OPTIONS = [
   { label: "Monthly", value: 12 },
@@ -191,9 +192,15 @@ export default function CompoundInterestClient() {
                   <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Final Balance</p>
                   <p className="text-3xl font-extrabold text-slate-900">{fmt(result.finalAmount)}</p>
                 </div>
-                <span className="text-xs font-bold px-2 py-1 rounded-full bg-emerald-100 text-emerald-700">
-                  {result.effectiveRate.toFixed(2)}% effective
-                </span>
+                <div className="flex flex-col items-end gap-2">
+                  <span className="text-xs font-bold px-2 py-1 rounded-full bg-emerald-100 text-emerald-700">
+                    {result.effectiveRate.toFixed(2)}% effective
+                  </span>
+                  <CalculatorShareButton
+                    calculatorKey="compound_interest_calculator"
+                    state={{ principal, rate, years, monthly, freq }}
+                  />
+                </div>
               </div>
               <div className="flex gap-6 text-sm mt-2">
                 <div>
