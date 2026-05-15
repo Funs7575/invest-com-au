@@ -11,13 +11,27 @@
  * `investor_holdings.broker_slug` back to a known broker in the DB.
  */
 import { parseCommSecCsv } from "./commsec";
+import { parseIbkrCsv } from "./ibkr";
+import { parseNabTradeCsv } from "./nabtrade";
+import { parseSelfWealthCsv } from "./selfwealth";
+import { parseStakeCsv } from "./stake";
 import type { BrokerCsvParser } from "./types";
 
-export const SUPPORTED_BROKER_SLUGS = ["commsec"] as const;
+export const SUPPORTED_BROKER_SLUGS = [
+  "commsec",
+  "stake",
+  "selfwealth",
+  "nabtrade",
+  "ibkr",
+] as const;
 export type SupportedBrokerSlug = (typeof SUPPORTED_BROKER_SLUGS)[number];
 
 export const CSV_IMPORT_PARSERS: Readonly<Record<SupportedBrokerSlug, BrokerCsvParser>> = {
   commsec: parseCommSecCsv,
+  stake: parseStakeCsv,
+  selfwealth: parseSelfWealthCsv,
+  nabtrade: parseNabTradeCsv,
+  ibkr: parseIbkrCsv,
 };
 
 export function getCsvImportParser(slug: SupportedBrokerSlug): BrokerCsvParser {
