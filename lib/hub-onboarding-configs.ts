@@ -429,3 +429,112 @@ export const PROPERTY_ONBOARDING_CONFIG: HubOnboardingConfig = {
     };
   },
 };
+
+export const ETF_ONBOARDING_CONFIG: HubOnboardingConfig = {
+  hubSlug: "etfs",
+  hubName: "ETF Investing",
+  heading: "Which ETFs suit your investing style?",
+  subheading: "3 questions to find the right ETF strategy for your portfolio.",
+  questions: [
+    {
+      id: "goal",
+      question: "What is your primary investing goal?",
+      options: [
+        { value: "income", label: "Passive income — dividends and distributions every quarter" },
+        { value: "growth", label: "Long-term capital growth — build wealth over decades" },
+        { value: "diversify", label: "Diversify a stock-heavy portfolio I already have" },
+        { value: "simplify", label: "Simplify — replace multiple individual shares with one ETF" },
+      ],
+    },
+    {
+      id: "market",
+      question: "Which market exposure interests you most?",
+      options: [
+        { value: "asx", label: "ASX / Australian equities" },
+        { value: "us", label: "US equities (S&P 500, Nasdaq)" },
+        { value: "global", label: "Broad global equities (VGS, IWLD-style)" },
+        { value: "bonds_defensive", label: "Bonds or defensive / multi-asset" },
+      ],
+    },
+    {
+      id: "horizon",
+      question: "What is your investment time horizon?",
+      options: [
+        { value: "short", label: "Under 3 years" },
+        { value: "medium", label: "3–7 years" },
+        { value: "long", label: "7–15 years" },
+        { value: "very_long", label: "15+ years (retirement wealth building)" },
+      ],
+    },
+  ],
+
+  evaluate(answers: QuizAnswers) {
+    const goal = answers["goal"];
+    const market = answers["market"];
+    const horizon = answers["horizon"];
+
+    if (goal === "income" && (market === "asx" || market === "global")) {
+      return {
+        headline: "High-yield dividend ETFs are built for your goal.",
+        summary:
+          "VHY (Vanguard Australian Shares High Yield) yields ~4.5–5.5% with full franking credits — in a pension-phase SMSF that becomes ~6.5–7%. For global income, consider VDHG (multi-asset, income tilt) or HBRD (hybrid-securities ETF). Compare MER fees before buying — they compound negatively just like returns.",
+        primaryCta: { label: "Compare Dividend ETFs", href: "/article/best-dividend-etfs-australia" },
+        secondaryCta: { label: "Franking Credits Calculator", href: "/franking-credits-calculator" },
+        advisorCta: { href: "/quiz", specialty: "investment adviser" },
+      };
+    }
+
+    if (goal === "growth" && (market === "us" || market === "global")) {
+      return {
+        headline: "A low-cost global equity ETF is the core of most growth portfolios.",
+        summary:
+          "VGS (Vanguard MSCI Index International Shares) gives you ~1,500 global stocks at 0.18% MER. IVV (iShares S&P 500) is pure US at 0.04% — the cheapest way to own America. NDQ (BetaShares Nasdaq 100) is higher growth, higher volatility. All available on ASX.",
+        primaryCta: { label: "Best Global ETFs Guide", href: "/article/best-global-etfs-australia" },
+        secondaryCta: { label: "Compare ETFs on ASX", href: "/etfs" },
+        advisorCta: { href: "/quiz", specialty: "investment adviser" },
+      };
+    }
+
+    if (goal === "diversify") {
+      return {
+        headline: "One diversification ETF can rebalance your whole portfolio.",
+        summary:
+          "If you already hold Australian stocks, a single international equity ETF (VGS or BGBL) adds geographic diversification without overlap. VDHG and DHHF are pre-mixed multi-asset ETFs that automatically hold 4–7 underlying ETFs — one holding simplifies your tax return and rebalancing.",
+        primaryCta: { label: "Best ETFs Australia", href: "/etfs" },
+        secondaryCta: { label: "Portfolio X-Ray", href: "/portfolio-xray" },
+        advisorCta: { href: "/quiz", specialty: "investment adviser" },
+      };
+    }
+
+    if (goal === "simplify") {
+      return {
+        headline: "Swapping individual shares for an ETF cuts research, fees, and tax drag.",
+        summary:
+          "A move from 15 individual ASX stocks to A200 (ASX 200 ETF) typically halves brokerage, eliminates individual company risk, and removes the cognitive load of tracking earnings. CGT timing matters when selling shares — consider doing it across two financial years to spread the capital gain.",
+        primaryCta: { label: "Best ASX ETFs", href: "/etfs" },
+        secondaryCta: { label: "CGT Calculator", href: "/cgt-calculator" },
+        advisorCta: { href: "/quiz", specialty: "investment adviser" },
+      };
+    }
+
+    if (market === "bonds_defensive" || horizon === "short") {
+      return {
+        headline: "For a short horizon or capital preservation, defensive ETFs reduce volatility.",
+        summary:
+          "IAF (iShares Core Composite Bond) or BOND (BetaShares Composite Bond) give exposure to Australian government and corporate bonds. For mixed defensive/growth under 3 years, VDHG (70% equities / 30% bonds) or cash ETFs like MONY smooth short-term volatility.",
+        primaryCta: { label: "Defensive ETF Guide", href: "/etfs" },
+        secondaryCta: { label: "Compare ETFs", href: "/compare/etfs" },
+        advisorCta: { href: "/quiz", specialty: "financial adviser" },
+      };
+    }
+
+    return {
+      headline: "A simple 2-ETF portfolio covers most long-term investor goals.",
+      summary:
+        "The classic approach: VAS (or A200) for Australian equities + VGS for international equities. Allocate 30–40% to Australia, 60–70% to international. Rebalance annually. Total ongoing cost: ~0.10–0.18% MER. This beats the median active fund over 15+ years after tax.",
+      primaryCta: { label: "ETF Comparison Hub", href: "/etfs" },
+      secondaryCta: { label: "Compare ETFs on ASX", href: "/compare/etfs" },
+      advisorCta: { href: "/quiz", specialty: "investment adviser" },
+    };
+  },
+};
