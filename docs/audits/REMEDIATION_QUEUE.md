@@ -57,6 +57,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | LL | `claude/audit-remediation/ll-04-reviews-ratings` | **#807 MERGED 2026-05-14** · **#845 OPEN** | LL-01..LL-03 done. LL-04 in-flight (#845, CI rescue iter 397 — teams/* JSON-LD exemption). LL-05 blocked (live chat AI routing — deps V-NEW-02 + CC-06). | All LL tasks merged |
 | RR | `claude/audit-remediation/rr-01-review-extensions` | **#847 OPEN** | RR-01 false-positive (VerifiedClientBadge already implemented). RR-02 (advisor response to reviews) in-flight (#847, CI-rescue done iter 399). | All RR tasks merged |
 | EM | `claude/audit-remediation/em-03-hub-newsletter-infra` | **#848 OPEN** | EM-03 (hub-aware newsletter capture) done. Unblocks EM-01/02/04/05/06 + LX-05. Next: EM-01 (lead magnets). | All EM tasks merged |
+| LX | `claude/audit-remediation/lx-01-calculator-share-save` | **#849 OPEN** | LX-01 (calculator share/save — viral deep links) done. `CalculatorShareButton` component + deep links wired into 4 calculators (compound interest, mortgage, SMSF, savings). | All LX tasks merged |
 
 ---
 
@@ -95,6 +96,17 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 401 — 2026-05-15 — LX-01 calculator-share-save
+
+- **Stream:** LX (calculator UX / viral loops)
+- **Phase:** 3–7 — new stream, pick, verify, do, commit, push, PR
+- **PR:** #849 OPEN
+- **Branch:** `claude/audit-remediation/lx-01-calculator-share-save`
+- **Commit:** `3359732`
+- **Diff:** +104 -4 across 5 files (1 new component, 4 calculator pages updated)
+- **What:** Viral deep-link sharing for all four main calculators. New `CalculatorShareButton` client component calls `buildShareableUrl(pathname, key, state)` from `hooks/use-calculator-state` to produce a URL with state encoded in the query string; copies to clipboard (falls back to `window.prompt` on non-HTTPS). Integrated into `CompoundInterestClient` (new share button in results panel). Upgraded `handleShare` in `MortgageCalculatorClient`, `SMSFCalculatorClient`, `SavingsCalculatorClient` to pass a deep link through `navigator.share` / clipboard copy — pre-existing share buttons now produce live-state URLs instead of bare origin URLs.
+- **STATUS: PROGRESS · stream=LX · item=LX-01 · pr=#849**
 
 ### iter 400 — 2026-05-15 — EM-03 hub-newsletter-infra
 
