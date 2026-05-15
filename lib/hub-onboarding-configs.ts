@@ -538,3 +538,131 @@ export const ETF_ONBOARDING_CONFIG: HubOnboardingConfig = {
     };
   },
 };
+
+export const INSURANCE_ONBOARDING_CONFIG: HubOnboardingConfig = {
+  hubSlug: "insurance",
+  hubName: "Insurance",
+  heading: "What insurance do you actually need?",
+  subheading: "3 questions to identify the right cover for your situation.",
+  questions: [
+    {
+      id: "situation",
+      question: "Which best describes your current life situation?",
+      options: [
+        { value: "single_no_deps", label: "Single, no dependants or mortgage" },
+        { value: "couple_mortgage", label: "Couple with a mortgage, no kids" },
+        { value: "family", label: "Family with young or school-age children" },
+        { value: "self_employed", label: "Self-employed or business owner" },
+        { value: "near_retirement", label: "Near retirement (55+)" },
+      ],
+    },
+    {
+      id: "priority",
+      question: "What is your biggest insurance concern right now?",
+      options: [
+        { value: "income", label: "Protecting my income if I can't work" },
+        { value: "life_cover", label: "Providing for my family if I die" },
+        { value: "health", label: "Reducing out-of-pocket medical costs" },
+        { value: "property_cover", label: "Protecting my home and contents" },
+        { value: "not_sure", label: "Not sure — I want a general review" },
+      ],
+    },
+    {
+      id: "current_cover",
+      question: "What insurance do you currently hold?",
+      options: [
+        { value: "none", label: "None / I have no personal insurance" },
+        { value: "super_only", label: "Only what comes with my super fund" },
+        { value: "some", label: "Some cover but I think it may be inadequate" },
+        { value: "reviewing", label: "I have cover and want to review it" },
+      ],
+    },
+  ],
+  evaluate(answers: QuizAnswers) {
+    const situation = answers["situation"];
+    const priority = answers["priority"];
+    const currentCover = answers["current_cover"];
+
+    // Self-employed: income protection is critical (no employer sick leave)
+    if (situation === "self_employed") {
+      return {
+        headline: "Income protection is your most critical insurance as a self-employed person.",
+        summary:
+          "You have no employer sick leave or workers compensation fallback. Income protection outside super (not inside) gives you the broadest 'own occupation' definition, is fully tax-deductible, and can be structured to match your drawings — not just a salary figure. A specialist insurance broker will help you structure agreed-value cover correctly.",
+        primaryCta: { label: "Find an Insurance Broker", href: "/advisors/insurance-brokers" },
+        secondaryCta: { label: "Income Protection Guide", href: "/insurance/income-protection" },
+        advisorCta: { href: "/quiz", specialty: "insurance broker" },
+      };
+    }
+
+    // Family: life + income protection highest priority
+    if (situation === "family") {
+      return {
+        headline: "Families need life insurance and income protection — both, not one.",
+        summary:
+          "With dependants, a gap in either life or income cover creates serious financial risk. A rule of thumb: 10× your annual income in life cover, income protection to age 65. If you hold insurance inside super, check the policy's disability definition — income protection inside super defaults to 'any occupation' for the first 2 years, which is far more restrictive.",
+        primaryCta: { label: "Life Insurance Guide", href: "/insurance/life" },
+        secondaryCta: { label: "Find an Insurance Broker", href: "/advisors/insurance-brokers" },
+        advisorCta: { href: "/quiz", specialty: "insurance broker" },
+      };
+    }
+
+    // Health/MLS priority
+    if (priority === "health") {
+      return {
+        headline: "Private health insurance may eliminate a 1–1.5% tax surcharge.",
+        summary:
+          "Singles earning above $93,000 (families above $186,000) pay a Medicare Levy Surcharge without private hospital cover. A basic hospital policy from ~$100/month often costs less than the MLS. Compare bronze, silver, and gold tiers — hospital cover is what removes the MLS; extras (dental/optical) are optional.",
+        primaryCta: { label: "Health Insurance Guide", href: "/insurance/health" },
+        secondaryCta: { label: "MLS Explained", href: "/insurance" },
+        advisorCta: { href: "/quiz", specialty: "financial adviser" },
+      };
+    }
+
+    // Home & contents priority
+    if (priority === "property_cover") {
+      return {
+        headline: "One in eight Australian homes is underinsured — check your rebuild cost.",
+        summary:
+          "The most common mistake is insuring for market value instead of rebuild cost. Use a building cost estimator (check your insurer's website) to calculate the cost of rebuilding from scratch, not what you paid for the house. Contents cover should include all furniture, appliances, and personal items at replacement value.",
+        primaryCta: { label: "Home & Contents Guide", href: "/insurance/home-contents" },
+        secondaryCta: { label: "Find an Insurance Broker", href: "/advisors/insurance-brokers" },
+        advisorCta: { href: "/quiz", specialty: "insurance broker" },
+      };
+    }
+
+    // Near retirement
+    if (situation === "near_retirement") {
+      return {
+        headline: "Review your cover amounts — many people are over-insured near retirement.",
+        summary:
+          "As your mortgage reduces and children become financially independent, your life insurance need decreases. However, income protection remains valuable while you're still working. Consider whether existing TPD and trauma cover is sized correctly, and review whether stepped premiums are now costing significantly more than when you first took out cover.",
+        primaryCta: { label: "Insurance Review Guide", href: "/insurance" },
+        secondaryCta: { label: "Find an Insurance Broker", href: "/advisors/insurance-brokers" },
+        advisorCta: { href: "/quiz", specialty: "insurance broker" },
+      };
+    }
+
+    // No cover / super-only — general push to get advice
+    if (currentCover === "none" || currentCover === "super_only") {
+      return {
+        headline: "Most Australians are significantly underinsured — your super default may not be enough.",
+        summary:
+          "Default super fund insurance is group cover with no underwriting. It often lapses if your balance runs low, and the disability definition is more restrictive than individual cover. A 30-minute conversation with an insurance broker (typically no cost to you) can identify gaps and structure cover tax-efficiently.",
+        primaryCta: { label: "Find an Insurance Broker", href: "/advisors/insurance-brokers" },
+        secondaryCta: { label: "Insurance Hub", href: "/insurance" },
+        advisorCta: { href: "/quiz", specialty: "insurance broker" },
+      };
+    }
+
+    // Default: income protection — the most universally needed
+    return {
+      headline: "Income protection is the most universally needed insurance for working Australians.",
+      summary:
+        "If you can't work for 3+ months, no income protection means drawing down savings, redrawing on the mortgage, or relying on the disability support pension. Cover to age 65, 90-day waiting period, and 'own occupation' definition is the standard professional recommendation for employed Australians.",
+      primaryCta: { label: "Income Protection Guide", href: "/insurance/income-protection" },
+      secondaryCta: { label: "Find an Insurance Broker", href: "/advisors/insurance-brokers" },
+      advisorCta: { href: "/quiz", specialty: "insurance broker" },
+    };
+  },
+};
