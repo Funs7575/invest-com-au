@@ -101,7 +101,10 @@ export default function NotificationDropdown({
       ref={containerRef}
       role="dialog"
       aria-label="Notifications"
-      className="absolute right-0 top-full mt-2 w-80 sm:w-96 bg-white rounded-xl border border-slate-200 shadow-lg z-50 overflow-hidden"
+      // Constrain width to viewport on small screens so the dropdown
+      // never overflows past the right edge of the header. 2rem accounts
+      // for the parent container's px-4 (16px) on each side.
+      className="absolute right-0 top-full mt-2 w-[calc(100vw-2rem)] max-w-sm sm:w-96 bg-white rounded-xl border border-slate-200 shadow-lg z-50 overflow-hidden"
     >
       <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
         <p className="text-sm font-bold text-slate-900">
@@ -152,7 +155,7 @@ export default function NotificationDropdown({
                     {n.body ? (
                       <p className="text-xs text-slate-600 line-clamp-2">{n.body}</p>
                     ) : null}
-                    <p className="mt-1 text-[10px] uppercase tracking-wide text-slate-400">
+                    <p className="mt-1 text-[11px] uppercase tracking-wide text-slate-400">
                       {timeAgo(n.created_at)}
                     </p>
                   </div>
