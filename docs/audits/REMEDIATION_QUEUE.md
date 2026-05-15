@@ -57,7 +57,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | LL | `claude/audit-remediation/ll-04-reviews-ratings` | **#807 MERGED 2026-05-14** · **#845 OPEN** | LL-01..LL-03 done. LL-04 in-flight (#845, CI rescue iter 397 — teams/* JSON-LD exemption). LL-05 blocked (live chat AI routing — deps V-NEW-02 + CC-06). | All LL tasks merged |
 | RR | `claude/audit-remediation/rr-01-review-extensions` | **#847 OPEN** | RR-01 false-positive (VerifiedClientBadge already implemented). RR-02 (advisor response to reviews) in-flight (#847, CI-rescue done iter 399). | All RR tasks merged |
 | EM | `claude/audit-remediation/em-03-hub-newsletter-infra` | **#848 OPEN** | EM-03 (hub-aware newsletter capture) done. EM-01 (lead magnets) done (`511976fc`): `LeadMagnetCapture` + `lib/lead-magnets.ts` 12-PDF registry + wired into SMSF+dividends hubs. Next: EM-02 (digest infrastructure). | All EM tasks merged |
-| LX | `claude/audit-remediation/lx-01-calculator-share-save` | **#849 OPEN** | LX-01 (share/save) done. LX-04 (pre-filled forms) done. LX-05 (exit-intent capture) done. CI-rescue iter 406 (`375d665`): Fragment wrapper for HubExitIntent siblings in dividends+smsf pages. Next: LX-02 (calculator history — dep LL-01 done ✓). | All LX tasks merged |
+| LX | `claude/audit-remediation/lx-01-calculator-share-save` | **#849 OPEN** | LX-01 (share/save) done. LX-04 (pre-filled forms) done. LX-05 (exit-intent capture) done. LX-02 (calculator history) done (`d6e206c4`): `useCalculatorHistory` hook + `CalculatorHistory` component + wired into compound-interest calculator. Next: LX-03 (cross-calculator navigation). | All LX tasks merged |
 | OB | `claude/audit-remediation/ob-01-hub-onboarding` | **#852 OPEN** | OB-01..OB-04 done. OB-04 (`07e5a76`): `ETF_ONBOARDING_CONFIG` + `/etfs/quiz` page + sitemap. OB-05..OB-13 (8 remaining hub configs) pending. Next: OB-05 (insurance hub onboarding quiz). | All OB tasks merged |
 
 ---
@@ -123,6 +123,17 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 412 — 2026-05-15 — LX-02 calculator history
+
+- **Stream:** LX (calculator UX)
+- **Item:** LX-02 — calculator history (save/load past scenarios)
+- **Branch:** `claude/audit-remediation/lx-01-calculator-share-save`
+- **PR:** #849 OPEN
+- **Commit:** `d6e206c4`
+- **Diff:** +159 -4 across 3 files (2 new files, 1 updated)
+- **What:** `hooks/use-calculator-history.ts` — generic hook keyed by calc name, max 10 entries per key in localStorage (`invest-calc-history-${calcName}`), exposes `entries`, `addEntry(inputs, label, summary)`, `clearHistory()`. `components/CalculatorHistory.tsx` — renders saved scenarios list: label, summary (result), timestamp, Load button to restore inputs; Clear all button; hidden when empty. `app/compound-interest-calculator/CompoundInterestClient.tsx` — wired `useCalculatorHistory<CompoundInputs>` + "Save" button beside ShareButton + `CalculatorHistory` component with `onLoad` restoring all 5 state vars.
+- **STATUS: PROGRESS · stream=LX · item=LX-02 · pr=#849**
 
 ### iter 411 — 2026-05-15 — OB-04 ETF strategy quiz
 
