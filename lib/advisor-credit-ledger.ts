@@ -45,7 +45,9 @@ export type LedgerKind =
   | "tier_proration_credit"
   | "admin_adjustment"
   | "expiry"
-  | "chargeback_clawback";
+  | "chargeback_clawback"
+  | "referral_payout"
+  | "success_bonus_award";
 
 export interface LedgerEntry {
   id: number;
