@@ -58,7 +58,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | RR | `claude/audit-remediation/rr-01-review-extensions` | **#847 OPEN** | RR-01 false-positive (VerifiedClientBadge already implemented). RR-02 (advisor response to reviews) in-flight (#847, CI-rescue done iter 399). | All RR tasks merged |
 | EM | `claude/audit-remediation/em-03-hub-newsletter-infra` | **#848 OPEN** | EM-03 (hub-aware newsletter capture) done. EM-01 (lead magnets) done (`511976fc`): `LeadMagnetCapture` + `lib/lead-magnets.ts` 12-PDF registry + wired into SMSF+dividends hubs. Next: EM-02 (digest infrastructure). | All EM tasks merged |
 | LX | `claude/audit-remediation/lx-01-calculator-share-save` | **#849 OPEN** | LX-01 (share/save) done. LX-04 (pre-filled forms) done. LX-05 (exit-intent capture) done. CI-rescue iter 406 (`375d665`): Fragment wrapper for HubExitIntent siblings in dividends+smsf pages. Next: LX-02 (calculator history — dep LL-01 done ✓). | All LX tasks merged |
-| OB | `claude/audit-remediation/ob-01-hub-onboarding` | **#852 OPEN** | OB-01 done. OB-02 done (`7965eb9`): `WHOLESALE_ONBOARDING_CONFIG` + `/wholesale/quiz` page + sitemap row. OB-03..OB-13 (10 remaining hub configs) pending. Next: OB-03 (property hub onboarding quiz). | All OB tasks merged |
+| OB | `claude/audit-remediation/ob-01-hub-onboarding` | **#852 OPEN** | OB-01 done. OB-02 done. OB-03 done (`8244dc2`): `PROPERTY_ONBOARDING_CONFIG` + `/property/quiz` page + sitemap row. OB-04..OB-13 (9 remaining hub configs) pending. Next: OB-04 (ETF/investing hub onboarding quiz). | All OB tasks merged |
 
 ---
 
@@ -123,6 +123,17 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 410 — 2026-05-15 — OB-03 property hub onboarding quiz
+
+- **Stream:** OB (hub onboarding flows)
+- **Item:** OB-03 — property investor diagnostic quiz
+- **Branch:** `claude/audit-remediation/ob-01-hub-onboarding`
+- **PR:** #852 OPEN
+- **Commit:** `8244dc2`
+- **Diff:** +150 -0 across 3 files (1 new lib config, 1 new page, 1 sitemap update)
+- **What:** `PROPERTY_ONBOARDING_CONFIG` in `lib/hub-onboarding-configs.ts` — 3 questions (goal: capital growth / yield / owner-occ / exploring; budget: <$100k / $100-200k / $200-500k / >$500k; experience: first-time / owner-occ / existing IP / researching). Six evaluate() branches: exploring → property-vs-shares calculator; first-time + low budget → FHSS / FHB hub; existing IP → portfolio scaling + buyer's agent; yield → yield calculator; capital growth → developments + buyer's agent; default → mortgage broker. Created `app/property/quiz/page.tsx` (ISR 86400, breadcrumb JSON-LD linking to `/property` which exists). Registered `/property/quiz` in sitemap.
+- **STATUS: PROGRESS · stream=OB · item=OB-03 · pr=#852**
 
 ### iter 409 — 2026-05-15 — OB-02 wholesale hub onboarding quiz
 
