@@ -195,3 +195,128 @@ export const DIVIDENDS_ONBOARDING_CONFIG: HubOnboardingConfig = {
     };
   },
 };
+
+export const WHOLESALE_ONBOARDING_CONFIG: HubOnboardingConfig = {
+  hubSlug: "wholesale",
+  hubName: "Wholesale Investing",
+  heading: "Do you qualify as a wholesale investor?",
+  subheading:
+    "3 questions to see whether you meet the s708 test and which wholesale products suit you.",
+  questions: [
+    {
+      id: "qualification",
+      question: "Which best describes your current financial position?",
+      options: [
+        {
+          value: "net_assets",
+          label: "Net assets over $2.5M (excluding primary residence in some cases)",
+        },
+        {
+          value: "income",
+          label: "Gross income over $250,000 for each of the last 2 financial years",
+        },
+        {
+          value: "professional",
+          label: "Licensed financial services professional (AFS licence holder or rep)",
+        },
+        { value: "exploring", label: "Not yet — still building toward these thresholds" },
+      ],
+    },
+    {
+      id: "interest",
+      question: "Which wholesale asset class interests you most?",
+      options: [
+        { value: "private_equity", label: "Private equity or venture capital" },
+        { value: "hedge_fund", label: "Hedge funds or absolute-return strategies" },
+        { value: "litigation", label: "Litigation funding or private credit" },
+        { value: "unlisted_property", label: "Unlisted commercial property or infrastructure" },
+      ],
+    },
+    {
+      id: "horizon",
+      question: "What is your preferred investment horizon for wholesale capital?",
+      options: [
+        { value: "short", label: "Under 2 years (liquid / short-term credit)" },
+        { value: "medium", label: "2–5 years (typical PE / hedge fund lock-up)" },
+        { value: "long", label: "5–10 years (infrastructure, VC, late-stage PE)" },
+        { value: "unsure", label: "Not sure yet — want to understand the options" },
+      ],
+    },
+  ],
+
+  evaluate(answers: QuizAnswers) {
+    const qualification = answers["qualification"];
+    const interest = answers["interest"];
+    const horizon = answers["horizon"];
+
+    if (qualification === "exploring") {
+      return {
+        headline: "You are building toward wholesale status — let us map the path.",
+        summary:
+          "The s708 test requires net assets over $2.5M or $250k annual income (both tests sustained over 2 years). A financial adviser can help you structure assets and document eligibility when you cross the threshold.",
+        primaryCta: { label: "Wholesale Investor Guide", href: "/invest/wholesale" },
+        secondaryCta: { label: "Find a Financial Adviser", href: "/find-advisor" },
+        advisorCta: { href: "/quiz", specialty: "financial adviser" },
+      };
+    }
+
+    if (qualification === "professional") {
+      return {
+        headline: "As a licensed professional, you have broad wholesale access.",
+        summary:
+          "AFS licence holders and authorised representatives qualify under s708(11) regardless of asset or income tests. You can access the full range of wholesale products — PE, VC, hedge funds, litigation funding — directly.",
+        primaryCta: { label: "Explore Wholesale Products", href: "/invest/wholesale" },
+        secondaryCta: {
+          label: "Private Equity Opportunities",
+          href: "/invest/private-equity/listings",
+        },
+        advisorCta: { href: "/quiz?vertical=wholesale", specialty: "wholesale investment specialist" },
+      };
+    }
+
+    if (interest === "private_equity" || interest === "litigation") {
+      return {
+        headline: "Private equity and litigation funding suit your profile.",
+        summary:
+          "With confirmed wholesale status, Australian PE and litigation funding managers accept direct subscriptions — typically $50k–$250k minimums. Returns vary widely; illiquidity premiums of 2–5% above listed markets are common in well-managed funds.",
+        primaryCta: {
+          label: "Browse PE & VC Listings",
+          href: "/invest/private-equity/listings",
+        },
+        secondaryCta: { label: "Litigation Funding Explained", href: "/invest/alternatives" },
+        advisorCta: { href: "/quiz?vertical=wholesale", specialty: "wholesale investment specialist" },
+      };
+    }
+
+    if (interest === "hedge_fund") {
+      return {
+        headline: "Hedge funds and absolute-return strategies are within reach.",
+        summary:
+          "Australian-domiciled wholesale hedge funds typically require $50k–$500k minimums and a 12-month lock-up. Absolute-return mandates seek positive returns in both bull and bear markets — useful as a portfolio diversifier.",
+        primaryCta: { label: "Alternative Investments", href: "/invest/alternatives" },
+        secondaryCta: { label: "Find a Wholesale Adviser", href: "/quiz?vertical=wholesale" },
+        advisorCta: { href: "/quiz?vertical=wholesale", specialty: "wholesale investment specialist" },
+      };
+    }
+
+    if (interest === "unlisted_property" || horizon === "long") {
+      return {
+        headline: "Unlisted property and infrastructure offer long-duration returns.",
+        summary:
+          "Wholesale commercial property syndicates and infrastructure funds target 7–9% p.a. distributions with capital appreciation over 5–10 year horizons. Low correlation to ASX makes them attractive portfolio diversifiers for HNW investors.",
+        primaryCta: { label: "Property Investment Hub", href: "/property" },
+        secondaryCta: { label: "Find a Wholesale Adviser", href: "/quiz?vertical=wholesale" },
+        advisorCta: { href: "/quiz?vertical=wholesale", specialty: "wholesale investment specialist" },
+      };
+    }
+
+    return {
+      headline: "You qualify as a wholesale investor — let us find the right products.",
+      summary:
+        "Wholesale investors access a wider product universe: unlisted funds, PE, VC, hedge funds, and private credit — without the retail disclosure requirements of listed products. A specialist adviser can match your risk tolerance to the right allocations.",
+      primaryCta: { label: "Explore Wholesale Products", href: "/invest/wholesale" },
+      secondaryCta: { label: "Find a Wholesale Adviser", href: "/quiz?vertical=wholesale" },
+      advisorCta: { href: "/quiz?vertical=wholesale", specialty: "wholesale investment specialist" },
+    };
+  },
+};
