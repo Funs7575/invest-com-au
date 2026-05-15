@@ -3,7 +3,10 @@
 import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import { useCalculatorState } from "@/hooks/use-calculator-state";
+import { useCalculatorHistory } from "@/hooks/use-calculator-history";
 import CalculatorLeadCapture from "@/components/CalculatorLeadCapture";
+import CalculatorShareButton from "@/components/CalculatorShareButton";
+import CalculatorHistory from "@/components/CalculatorHistory";
 
 const FREQ_OPTIONS = [
   { label: "Monthly", value: 12 },
@@ -45,6 +48,13 @@ export default function CompoundInterestClient() {
   useEffect(() => {
     setPersistedInputs({ principal, rate, years, monthly, freq });
   }, [principal, rate, years, monthly, freq, setPersistedInputs]);
+
+  type CompoundInputs = { principal: number; rate: number; years: number; monthly: number; freq: number };
+  const {
+    entries: historyEntries,
+    addEntry,
+    clearHistory,
+  } = useCalculatorHistory<CompoundInputs>("compound_interest_calculator");
 
   const result = useMemo(() => {
     const r = rate / 100;
@@ -191,9 +201,29 @@ export default function CompoundInterestClient() {
                   <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Final Balance</p>
                   <p className="text-3xl font-extrabold text-slate-900">{fmt(result.finalAmount)}</p>
                 </div>
-                <span className="text-xs font-bold px-2 py-1 rounded-full bg-emerald-100 text-emerald-700">
-                  {result.effectiveRate.toFixed(2)}% effective
-                </span>
+                <div className="flex flex-col items-end gap-2">
+                  <span className="text-xs font-bold px-2 py-1 rounded-full bg-emerald-100 text-emerald-700">
+                    {result.effectiveRate.toFixed(2)}% effective
+                  </span>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() =>
+                        addEntry(
+                          { principal, rate, years, monthly, freq },
+                          `$${principal.toLocaleString("en-AU")} at ${rate}% for ${years} yrs`,
+                          `→ ${fmt(result.finalAmount)}`,
+                        )
+                      }
+                      className="text-xs font-bold px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors"
+                    >
+                      Save
+                    </button>
+                    <CalculatorShareButton
+                      calculatorKey="compound_interest_calculator"
+                      state={{ principal, rate, years, monthly, freq }}
+                    />
+                  </div>
+                </div>
               </div>
               <div className="flex gap-6 text-sm mt-2">
                 <div>
@@ -277,6 +307,19 @@ export default function CompoundInterestClient() {
             </div>
           </div>
         </div>
+
+        <CalculatorHistory
+          entries={historyEntries}
+          onLoad={(raw) => {
+            const i = raw as CompoundInputs;
+            setPrincipal(i.principal);
+            setRate(i.rate);
+            setYears(i.years);
+            setMonthly(i.monthly);
+            setFreq(i.freq);
+          }}
+          onClear={clearHistory}
+        />
 
         <CalculatorLeadCapture
           calcSlug="compound-interest-calculator"
