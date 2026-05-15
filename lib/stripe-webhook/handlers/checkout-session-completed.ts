@@ -36,6 +36,7 @@ import {
 import { ADMIN_EMAIL } from "@/lib/admin";
 import { escapeHtml } from "@/lib/html-escape";
 import { getSiteUrl } from "@/lib/url";
+import { handleSubscriptionWebhook } from "@/lib/pro-subscription/billing";
 
 export const handleCheckoutSessionCompleted: WebhookHandler = async (
   event,
@@ -652,6 +653,22 @@ export const handleCheckoutSessionCompleted: WebhookHandler = async (
           ).catch(() => undefined);
         }
       }
+    }
+  }
+
+  // ── 7. Pro subscription tier upgrade (mm31) ──────────────────────
+  // Subscription-mode Checkout completions flip the calling pro to the
+  // matching tier via `lib/pro-subscription/billing.ts`. Idempotent —
+  // the webhook route already dedupes by event.id, and the handler
+  // boils down to a single UPDATE through `setProSubscriptionTier`.
+  if (session.mode === "subscription" && session.metadata?.pro_tier) {
+    try {
+      await handleSubscriptionWebhook(event);
+    } catch (err) {
+      log.error("Pro subscription tier dispatch failed", {
+        sessionId: session.id,
+        err: err instanceof Error ? err.message : String(err),
+      });
     }
   }
 
