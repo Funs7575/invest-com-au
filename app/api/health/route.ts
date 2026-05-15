@@ -115,11 +115,12 @@ export async function GET(request: Request) {
   const coreOk = ["database", "cron_freshness", "env"].every(
     (k) => checks[k]?.ok ?? true,
   );
-  const allOk = Object.values(checks).every((c) => c.ok);
   const totalLatency = Date.now() - start;
 
+  // status reflects core-app health (db/cron/env). Third-party probes are
+  // advisory — they surface in `checks` but don't degrade the headline.
   const body: Record<string, unknown> = {
-    status: allOk ? "ok" : "degraded",
+    status: coreOk ? "ok" : "degraded",
     latency_ms: totalLatency,
     timestamp: new Date().toISOString(),
     version: process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) || "local",
