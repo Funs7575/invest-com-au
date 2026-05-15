@@ -58,7 +58,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | RR | `claude/audit-remediation/rr-01-review-extensions` | **#847 OPEN** | RR-01 false-positive (VerifiedClientBadge already implemented). RR-02 (advisor response to reviews) in-flight (#847, CI-rescue done iter 399). | All RR tasks merged |
 | EM | `claude/audit-remediation/em-03-hub-newsletter-infra` | **#848 OPEN** | EM-03 (hub-aware newsletter capture) done. EM-01 (lead magnets) done (`511976fc`): `LeadMagnetCapture` + `lib/lead-magnets.ts` 12-PDF registry + wired into SMSF+dividends hubs. Next: EM-02 (digest infrastructure). | All EM tasks merged |
 | LX | `claude/audit-remediation/lx-01-calculator-share-save` | **#849 OPEN** | LX-01 (share/save) done. LX-04 (pre-filled forms) done. LX-05 (exit-intent capture) done. LX-02 (calculator history) done (`d6e206c4`): `useCalculatorHistory` hook + `CalculatorHistory` component + wired into compound-interest calculator. Next: LX-03 (cross-calculator navigation). | All LX tasks merged |
-| OB | `claude/audit-remediation/ob-01-hub-onboarding` | **#852 OPEN** | OB-01..OB-05 done. OB-05 (`037c5e7`): `INSURANCE_ONBOARDING_CONFIG` + `/insurance/quiz` page + sitemap. OB-06..OB-13 (7 remaining hub configs) pending. Next: OB-06 (negative-gearing hub onboarding quiz). | All OB tasks merged |
+| OB | `claude/audit-remediation/ob-01-hub-onboarding` | **#852 OPEN** | OB-01..OB-05 done. CI-rescue iter 414 (`4872612`): added ComplianceFooter to etfs/quiz and property/quiz (AFSL test). OB-06..OB-13 (7 remaining hub configs) pending. Next: OB-06 (negative-gearing hub onboarding quiz). | All OB tasks merged |
 
 ---
 
@@ -123,6 +123,16 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 414 — 2026-05-15 — CI-RESCUE OB (#852)
+
+- **Stream:** OB (hub onboarding flows)
+- **Phase:** 2 — CI rescue
+- **PR:** #852 OPEN
+- **Commit:** `4872612`
+- **Diff:** +4 -0 (2 files — app/etfs/quiz/page.tsx, app/property/quiz/page.tsx)
+- **Root cause:** `Lint · Type-check · Test · Build` CI failing because `__tests__/lib/afsl-compliance-coverage.test.ts` requires every page under `app/etfs` and `app/property` to include `ComplianceFooter`, `PropertyDisclaimer`, or `GENERAL_ADVICE_WARNING`. The new `/etfs/quiz` and `/property/quiz` pages (OB-04 and OB-03) were missing this. Both pages produce personalised financial product recommendations (specific ETF tickers, property strategies) which are in scope for s912D general-advice disclosure. Fix: added `<ComplianceFooter className="mt-8 mx-4" />` to both pages. All 37 AFSL compliance tests now green. TSC, lint, and rate-limits audit all pass locally.
+- **STATUS: CI-RESCUE · stream=OB · pr=#852**
 
 ### iter 413 — 2026-05-15 — OB-05 insurance hub onboarding quiz
 
