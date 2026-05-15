@@ -58,7 +58,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | RR | `claude/audit-remediation/rr-01-review-extensions` | **#847 OPEN** | RR-01 false-positive (VerifiedClientBadge already implemented). RR-02 (advisor response to reviews) in-flight (#847, CI-rescue done iter 399). | All RR tasks merged |
 | EM | `claude/audit-remediation/em-03-hub-newsletter-infra` | **#848 OPEN** | EM-03 (hub-aware newsletter capture) done. EM-01 (lead magnets) done (`511976fc`): `LeadMagnetCapture` + `lib/lead-magnets.ts` 12-PDF registry + wired into SMSF+dividends hubs. Next: EM-02 (digest infrastructure). | All EM tasks merged |
 | LX | `claude/audit-remediation/lx-01-calculator-share-save` | **#849 OPEN** | LX-01 (share/save) done. LX-04 (pre-filled forms) done. LX-05 (exit-intent capture) done. LX-02 (calculator history) done (`d6e206c4`): `useCalculatorHistory` hook + `CalculatorHistory` component + wired into compound-interest calculator. Next: LX-03 (cross-calculator navigation). | All LX tasks merged |
-| OB | `claude/audit-remediation/ob-01-hub-onboarding` | **#852 OPEN** | OB-01..OB-04 done. OB-04 (`07e5a76`): `ETF_ONBOARDING_CONFIG` + `/etfs/quiz` page + sitemap. OB-05..OB-13 (8 remaining hub configs) pending. Next: OB-05 (insurance hub onboarding quiz). | All OB tasks merged |
+| OB | `claude/audit-remediation/ob-01-hub-onboarding` | **#852 OPEN** | OB-01..OB-05 done. OB-05 (`037c5e7`): `INSURANCE_ONBOARDING_CONFIG` + `/insurance/quiz` page + sitemap. OB-06..OB-13 (7 remaining hub configs) pending. Next: OB-06 (negative-gearing hub onboarding quiz). | All OB tasks merged |
 
 ---
 
@@ -123,6 +123,17 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 413 — 2026-05-15 — OB-05 insurance hub onboarding quiz
+
+- **Stream:** OB (hub onboarding flows)
+- **Item:** OB-05 — insurance diagnostic quiz
+- **Branch:** `claude/audit-remediation/ob-01-hub-onboarding`
+- **PR:** #852 OPEN
+- **Commit:** `037c5e7`
+- **Diff:** +175 -0 across 3 files (1 new lib config, 1 new page, 1 sitemap update)
+- **What:** `INSURANCE_ONBOARDING_CONFIG` in `lib/hub-onboarding-configs.ts` — 3 questions (situation: single/couple/family/self-employed/near-retirement; priority concern: income/life/health/property/unsure; current cover: none/super-only/some/reviewing). Seven evaluate() branches: self-employed → income protection outside super critical (no sick leave); family → life + income protection both needed (MLS definition warning); health priority → MLS threshold guidance ($93K single / $186K family); property cover → rebuild cost vs market value underinsurance note; near retirement → right-size/review stepped premiums; none/super-only → super default cover gap + free broker push; default → income protection most universally needed (own occupation, to-65). Created `app/insurance/quiz/page.tsx` (ISR 86400, breadcrumb JSON-LD linking to `/insurance`). Added `/insurance/quiz` to sitemap after `/etfs/quiz`.
+- **STATUS: PROGRESS · stream=OB · item=OB-05 · pr=#852**
 
 ### iter 412 — 2026-05-15 — LX-02 calculator history
 
