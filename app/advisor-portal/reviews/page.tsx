@@ -61,11 +61,27 @@ export default async function AdvisorPortalReviewsPage() {
     .order("created_at", { ascending: false })
     .limit(50);
 
-  const reviews: ReviewWithResponse[] = ((rawReviews ?? []) as ReviewWithResponse[]).map((r) => ({
-    ...r,
-    advisor_response: Array.isArray((r as unknown as { professional_review_responses: unknown }).professional_review_responses)
-      ? (((r as unknown as { professional_review_responses: ReviewWithResponse["advisor_response"][] }).professional_review_responses)[0] ?? null)
-      : null,
+  type RawReview = {
+    id: number;
+    reviewer_name: string;
+    rating: number;
+    title: string | null;
+    body: string;
+    status: string;
+    created_at: string;
+    is_verified_client: boolean | null;
+    professional_review_responses: { id: number; body: string; created_at: string; updated_at: string }[];
+  };
+  const reviews: ReviewWithResponse[] = ((rawReviews ?? []) as unknown as RawReview[]).map((r) => ({
+    id: r.id,
+    reviewer_name: r.reviewer_name,
+    rating: r.rating,
+    title: r.title,
+    body: r.body,
+    status: r.status,
+    created_at: r.created_at,
+    is_verified_client: r.is_verified_client,
+    advisor_response: r.professional_review_responses[0] ?? null,
   }));
 
   return (
