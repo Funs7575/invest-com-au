@@ -64,7 +64,7 @@ export default async function TestimonialsPage() {
         <span className="text-slate-700">Testimonials</span>
       </nav>
 
-      <h1 className="text-3xl font-extrabold text-slate-900 mb-2">
+      <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-2">
         Verified consumer testimonials
       </h1>
       <p className="text-slate-600 mb-8 leading-relaxed">

@@ -14,6 +14,10 @@ interface SendEmailOptions {
   subject: string;
   html: string;
   from?: string;
+  /** Optional plain-text fallback. Resend accepts `text` alongside `html`
+   *  and lets the recipient's client pick — good practice for
+   *  deliverability and accessibility. */
+  text?: string;
 }
 
 /**
@@ -41,6 +45,7 @@ export async function sendEmail(
         to: Array.isArray(opts.to) ? opts.to : [opts.to],
         subject: opts.subject,
         html: opts.html,
+        ...(opts.text ? { text: opts.text } : {}),
       }),
       signal: AbortSignal.timeout(RESEND_TIMEOUT_MS),
     });

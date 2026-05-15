@@ -108,7 +108,7 @@ export default function SquadInboxClaimRow({
             type="button"
             onClick={onClaim}
             disabled={pending}
-            className="ml-auto bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-slate-900 text-xs font-bold px-3 py-1.5 rounded-lg"
+            className="ml-auto bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-slate-900 text-xs font-bold px-4 py-2.5 min-h-11 rounded-lg"
           >
             {pending ? "Claiming…" : "Claim this brief"}
           </button>
@@ -158,7 +158,7 @@ export default function SquadInboxClaimRow({
             type="button"
             onClick={onClaim}
             disabled={pending}
-            className="ml-auto bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-slate-900 text-xs font-bold px-3 py-1.5 rounded-lg"
+            className="ml-auto bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-slate-900 text-xs font-bold px-4 py-2.5 min-h-11 rounded-lg"
           >
             {pending ? "Picking up…" : "Pick this up"}
           </button>
@@ -177,7 +177,7 @@ export default function SquadInboxClaimRow({
               type="button"
               onClick={onHandoff}
               disabled={pending}
-              className="bg-white hover:bg-slate-50 disabled:opacity-50 border border-slate-200 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-lg"
+              className="bg-white hover:bg-slate-50 disabled:opacity-50 border border-slate-200 text-slate-700 text-xs font-semibold px-4 py-2.5 min-h-11 rounded-lg"
             >
               Hand off
             </button>
@@ -185,7 +185,7 @@ export default function SquadInboxClaimRow({
               type="button"
               onClick={onComplete}
               disabled={pending}
-              className="bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-white text-xs font-bold px-3 py-1.5 rounded-lg"
+              className="bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-white text-xs font-bold px-4 py-2.5 min-h-11 rounded-lg"
             >
               Mark completed
             </button>
@@ -193,7 +193,7 @@ export default function SquadInboxClaimRow({
               type="button"
               onClick={onRelease}
               disabled={pending}
-              className="text-xs text-slate-500 hover:text-slate-700 underline ml-1"
+              className="text-xs text-slate-500 hover:text-slate-700 underline ml-1 px-2 py-2 min-h-11"
             >
               Release
             </button>
