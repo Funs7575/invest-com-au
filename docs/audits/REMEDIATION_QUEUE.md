@@ -85,6 +85,32 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 
 ---
 
+### Accessibility (axe-core on key routes) systemic failure — 2026-05-15
+
+**Pre-existing in main; not caused by any stream PR.** `Accessibility (axe-core on key routes)` CI check is failing on in-flight PR #845 (LL-04) and was also failing on founder PRs #846 and #850 (both admin-merged past the failure). Diagnosed in iter 402.
+
+**Key facts:**
+- The a11y job runs against a local Next.js build with placeholder Supabase creds — NOT the Vercel preview.
+- The 8 tested routes are: `/, /glossary, /tools, /foreign-investment, /about, /how-we-earn, /privacy, /terms`.
+- LL-04's changes only touch `app/account/*` — none of the 8 tested routes — confirming the failure is not caused by the stream.
+- PR #846 (founder marketplace PR, independent branch) also fails the same check; PR #850 (merged to main 2026-05-15) also fails.
+- `Lint · Type-check · Test · Build` passes; only the a11y gate fails.
+- The specific critical axe-core rule is unknown without CI job logs (`gh run view --job 76104276977 --log-failed`); the loop's cloud env cannot access those logs.
+- `Lighthouse — Core Web Vitals (advisory)` is also failing but is advisory-only (non-blocking).
+- `Preview smoke test` failure on #845 is a Vercel preview timing issue — PR #850 passes it.
+- PRs #847, #848, #849 have CI bypass/not-triggered, so axe-core is only confirmed failing on #845.
+
+**Effect on auto-merge:** PR #845 cannot auto-merge while axe-core is red. PRs #848 (EM) and #849 (LX) have CI bypass and are unaffected.
+
+**Recommendation matrix:**
+- **(a) Fix root cause — recommended:** Run `gh run view --job 76104276977 --log-failed` locally (needs `gh` CLI auth) to get the exact critical rule name and failing node. Fix on a `fix/a11y-<rule>` branch targeting main; all stream PRs pick it up on next update.
+- **(b) Admin-merge #845 past the failure:** Founder admin-merges #845 (LL-04) as done for #846 and #850. The underlying violation remains.
+- **(c) Gate reconfiguration:** If the violation is known runner noise from placeholder creds, add the specific rule to `DISABLED_RULES` in `e2e/a11y.spec.ts` with a dated comment, open a PR to main.
+
+**To resolve:** Delete this blocked entry once (a), (b), or (c) is actioned and PR #845 shows green Accessibility check.
+
+---
+
 ## Resolved as false positives
 
 | Item | Reason |
@@ -96,6 +122,15 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 402 — 2026-05-15 — systemic axe-core cluster-guard
+
+- **Stream:** systemic (main shared codebase → in-flight PR #845 LL-04)
+- **Phase:** 1.7 + 2 — main CI preflight + CI rescue check
+- **What:** Diagnosed `Accessibility (axe-core on key routes)` failure on PR #845 as a pre-existing main-codebase issue, not caused by LL-04's changes. Confirmed by: (1) LL-04 only touches `app/account/*` files, none of the 8 tested public routes; (2) founder PR #846 (independent branch) also fails; (3) PR #850 (merged to main today) also fails. The core CI (`Lint · Type-check · Test · Build`) is passing on all PRs — only the a11y gate fails. A previous concurrent session (running during iter 401's LX-01 fire) placed a blocked queue entry on the LL-04 branch rather than main — this iter 402 commit moves that entry to main where it belongs.
+- **In-flight PR CI summary:** #845 (LL-04): axe-core FAILURE + Preview smoke timing + advisory LH. #847 (RR-02): only Vercel check visible (CI may not have triggered on latest commit). #848 (EM-03): CI bypass. #849 (LX-01): CI bypass.
+- **Note:** `Preview smoke test` failure on #845 is a Vercel preview timing issue (not ready within 6-min window) — #850 passes it, confirming no structural regression.
+- **STATUS: BLOCKED · systemic=Accessibility (axe-core on key routes)**
 
 ### iter 401 — 2026-05-15 — LX-01 calculator-share-save
 
