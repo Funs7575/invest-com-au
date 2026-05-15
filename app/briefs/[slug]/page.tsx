@@ -3,9 +3,14 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 
 import { createClient } from "@/lib/supabase/server";
+// eslint-disable-next-line no-restricted-imports -- The email-key tracker path has no advisor JWT but still needs to detect whether the signed-in user is the accepted pro / a member of the accepted team (expert_team_members is deny-all-anon). Per CLAUDE.md § "Two Supabase clients", cross-table membership lookups that can't be scoped to auth.uid() are a legitimate service-role use case.
+import { createAdminClient } from "@/lib/supabase/admin";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import { BRIEF_TEMPLATE_LABELS } from "@/lib/briefs/templates";
 import type { BriefRow, TrackerStatus } from "@/lib/briefs/types";
+import { listMessagesForBrief } from "@/lib/brief-messages";
+
+import BriefChatPanel from "./BriefChatPanel";
 
 export const dynamic = "force-dynamic";
 
@@ -86,6 +91,102 @@ async function loadAccepted(brief: BriefRow): Promise<AcceptedInfo> {
   return info;
 }
 
+interface ChatBlock {
+  initialMessages: Awaited<ReturnType<typeof listMessagesForBrief>>;
+  viewerSide: "consumer" | "pro";
+  viewerName: string;
+  counterpartyName: string;
+}
+
+/**
+ * Detect which side of the conversation the signed-in viewer is on
+ * and pre-load the message history for SSR. Returns null if the viewer
+ * isn't on either side (anonymous / wrong account) — caller hides the
+ * chat panel in that case.
+ *
+ * Email-key access (`?email=…`) is enough for *visibility* of the
+ * tracker, but the chat panel writes via authenticated API routes that
+ * gate on auth.users / advisor session. We render the panel for the
+ * email-key consumer path because the API will 401 if they aren't
+ * actually signed-in — better to show the input + a clear error than
+ * silently hide the chat from the brief owner.
+ */
+async function loadChatContext(
+  brief: BriefRow,
+  emailMatches: boolean,
+  accepted: AcceptedInfo,
+): Promise<ChatBlock | null> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const proName =
+    accepted.team?.name ?? accepted.professional?.name ?? "Your provider";
+  const consumerName = brief.contact_name?.trim() || "You";
+
+  let viewerSide: "consumer" | "pro" | null = null;
+
+  // Pro side: signed-in user matches the accepted professional (by email
+  // — pros log in via Supabase auth, and the professionals.email column
+  // is the same address). Membership lookups on expert_team_members are
+  // deny-all-anon so we use the service-role admin client for those reads.
+  if (user?.email) {
+    const admin = createAdminClient();
+    const { data: pro } = await admin
+      .from("professionals")
+      .select("id")
+      .eq("email", user.email)
+      .maybeSingle();
+    if (pro) {
+      if (
+        brief.accepted_by_professional_id !== null &&
+        (pro.id as number) === brief.accepted_by_professional_id
+      ) {
+        viewerSide = "pro";
+      } else if (brief.accepted_by_team_id !== null) {
+        const { data: membership } = await admin
+          .from("expert_team_members")
+          .select("id")
+          .eq("team_id", brief.accepted_by_team_id)
+          .eq("professional_id", pro.id as number)
+          .eq("status", "active")
+          .maybeSingle();
+        if (membership) viewerSide = "pro";
+      }
+    }
+  }
+
+  // Consumer side: signed-in email matches contact_email, OR the
+  // email-key query string matched (covers the magic-link path before
+  // a full auth session is established).
+  if (
+    viewerSide === null &&
+    ((user?.email &&
+      brief.contact_email &&
+      user.email.toLowerCase() === brief.contact_email.toLowerCase()) ||
+      emailMatches)
+  ) {
+    viewerSide = "consumer";
+  }
+
+  if (viewerSide === null) return null;
+
+  let initialMessages: Awaited<ReturnType<typeof listMessagesForBrief>> = [];
+  try {
+    initialMessages = await listMessagesForBrief(brief.id);
+  } catch {
+    // Non-fatal — render an empty chat. Error logged in the helper.
+  }
+
+  return {
+    initialMessages,
+    viewerSide,
+    viewerName: viewerSide === "consumer" ? consumerName : proName,
+    counterpartyName: viewerSide === "consumer" ? proName : consumerName,
+  };
+}
+
 export default async function BriefTrackerPage({
   params,
   searchParams,
@@ -112,6 +213,15 @@ export default async function BriefTrackerPage({
     !!email && (brief.contact_email ?? "").toLowerCase() === email;
 
   const accepted = await loadAccepted(brief);
+
+  // ── Chat-panel visibility ──────────────────────────────────────────
+  // Only render the chat panel once a provider has accepted the brief.
+  // We also need to know which "side" the viewer is on so the bubble
+  // alignment + mark-read column match. Anonymous viewers (no JWT, no
+  // email match) don't see the panel at all.
+  const chatBlock = brief.accepted_at
+    ? await loadChatContext(brief, emailMatches, accepted)
+    : null;
 
   const stepIndex = STATUS_ORDER.indexOf(brief.tracker_status);
 
@@ -231,6 +341,18 @@ export default async function BriefTrackerPage({
                 team you engage — under their own licence and terms.
               </p>
             </div>
+          )}
+
+          {/* Chat panel — only renders once a provider has accepted */}
+          {chatBlock && (
+            <BriefChatPanel
+              slug={brief.slug}
+              briefId={brief.id}
+              initialMessages={chatBlock.initialMessages}
+              viewerSide={chatBlock.viewerSide}
+              viewerName={chatBlock.viewerName}
+              counterpartyName={chatBlock.counterpartyName}
+            />
           )}
 
           {/* Brief summary */}
