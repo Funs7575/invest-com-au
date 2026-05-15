@@ -9,7 +9,7 @@ export interface HubOnboardingResult {
   summary: string;
   primaryCta: { label: string; href: string };
   secondaryCta?: { label: string; href: string };
-  advisorCta?: { label: string; href: string; specialty?: string };
+  advisorCta?: { href: string; specialty?: string };
 }
 
 export interface HubOnboardingConfig {
