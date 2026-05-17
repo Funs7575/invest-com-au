@@ -118,6 +118,8 @@ export async function GET(request: Request) {
   );
   const totalLatency = Date.now() - start;
 
+  // status reflects core-app health (db/cron/env). Third-party probes are
+  // advisory — they surface in `checks` but don't degrade the headline.
   const body: Record<string, unknown> = {
     status: coreOk ? "ok" : "degraded",
     latency_ms: totalLatency,
