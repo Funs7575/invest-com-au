@@ -14,9 +14,16 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 // ── Mocks ────────────────────────────────────────────────────────────────────
 
 vi.mock("@/lib/supabase/server", () => ({
-  createClient: vi.fn(() => {
-    // Each call returns a fresh chain that always resolves to empty data.
-    const chain = (): unknown => {
+  createClient: vi.fn(async () => {
+    // Make the *chain* thenable (so `await client.from(...).select(...)`
+    // resolves), but DON'T make the top-level client object thenable —
+    // otherwise `Promise.resolve(client)` unwraps it via Promise's
+    // thenable-assimilation rule and `await createClient()` returns the
+    // chain payload (`{ data: [], error: null }`) instead of the client.
+    // That bug bit on every PR with NEXT_PUBLIC_SUPABASE_ANON_KEY set:
+    // `supabase.from is not a function` because `supabase` was actually
+    // `{ data, error }`.
+    const makeChain = (): unknown => {
       const builder: Record<string, unknown> = {};
       const methods = [
         "from",
@@ -38,7 +45,7 @@ vi.mock("@/lib/supabase/server", () => ({
       );
       return builder;
     };
-    return Promise.resolve(chain());
+    return { from: vi.fn(() => makeChain()) };
   }),
 }));
 

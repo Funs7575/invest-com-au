@@ -1260,7 +1260,8 @@ export const AU_STATES = ["NSW", "VIC", "QLD", "WA", "SA", "TAS", "ACT", "NT"] a
 
 /**
  * Languages supported by the advisor directory — used as filter options
- * on /advisors/search. Keep in rough order of Australian speaker volume
+ * on /advisors (Language dropdown in the filter panel). Keep in rough
+ * order of Australian speaker volume
  * so the top choices are the most common. Free-form input is still
  * supported for exotic languages; this list just powers the dropdown.
  */

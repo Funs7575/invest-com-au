@@ -281,7 +281,8 @@ const mobileNavSections = [
     title: "Advisors — All",
     items: [
       { name: "View All Advisors", href: "/advisors" },
-      { name: "Advanced Search", href: "/advisors/search" },
+      { name: "Browse Firms", href: "/advisors?provider_type=firm" },
+      { name: "Browse Expert Teams", href: "/advisors?provider_type=team" },
       { name: "Find-an-Advisor Quiz", href: "/find-advisor" },
       { name: "List Your Practice", href: "/for-advisors" },
     ],
@@ -354,7 +355,8 @@ const advisorsSidebar: MegaMenuSidebar = {
   heading: "All",
   links: [
     { label: "View All Advisors", href: "/advisors" },
-    { label: "Advanced Search", href: "/advisors/search" },
+    { label: "Browse Firms", href: "/advisors?provider_type=firm" },
+    { label: "Browse Expert Teams", href: "/advisors?provider_type=team" },
     { label: "Find-an-Advisor Quiz", href: "/find-advisor" },
     { label: "FIRB Specialists", href: "/advisors/firb-specialists" },
     { label: "International Tax", href: "/advisors/international-tax-specialists" },

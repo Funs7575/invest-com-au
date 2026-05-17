@@ -170,7 +170,8 @@ export default function Footer() {
                 <li><Link href="/quiz" className="hover:text-white transition-colors inline-block py-0.5">Get Matched</Link></li>
                 <li><Link href="/find-advisor" className="hover:text-white transition-colors inline-block py-0.5">Find My Advisor — Free</Link></li>
                 <li><Link href="/advisors" className="hover:text-white transition-colors inline-block py-0.5">Advisor Directory</Link></li>
-                <li><Link href="/advisors/search" className="hover:text-white transition-colors inline-block py-0.5">Advanced Search</Link></li>
+                <li><Link href="/advisors?provider_type=firm" className="hover:text-white transition-colors inline-block py-0.5">Advisor Firms</Link></li>
+                <li><Link href="/advisors?provider_type=team" className="hover:text-white transition-colors inline-block py-0.5">Expert Teams</Link></li>
                 <li><Link href="/advisors/mortgage-brokers" className="hover:text-white transition-colors inline-block py-0.5">Mortgage Brokers</Link></li>
                 <li><Link href="/advisors/financial-planners" className="hover:text-white transition-colors inline-block py-0.5">Financial Planners</Link></li>
                 <li><Link href="/advisors/smsf-accountants" className="hover:text-white transition-colors inline-block py-0.5">SMSF Accountants</Link></li>
