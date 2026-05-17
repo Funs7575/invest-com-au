@@ -111,15 +111,15 @@ export async function GET(request: Request) {
 
   // ── Overall status ──
   // Third-party checks degrade but don't fail the overall health — the core
-  // app (db/cron/env) is the gating signal for the 503 response.
+  // app (db/cron/env) is the gating signal for the 503 response and the
+  // status field.
   const coreOk = ["database", "cron_freshness", "env"].every(
     (k) => checks[k]?.ok ?? true,
   );
-  const allOk = Object.values(checks).every((c) => c.ok);
   const totalLatency = Date.now() - start;
 
   const body: Record<string, unknown> = {
-    status: allOk ? "ok" : "degraded",
+    status: coreOk ? "ok" : "degraded",
     latency_ms: totalLatency,
     timestamp: new Date().toISOString(),
     version: process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) || "local",
