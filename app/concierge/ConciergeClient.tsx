@@ -297,7 +297,7 @@ export default function ConciergeClient() {
   //      here, then navigates to /concierge. Same-origin only, so this can't
   //      be planted by a crafted URL.
   //   2. URL `?finder=<key>` — allowlisted starter prompt from deep-links
-  //      in /advisors, /advisors/search, post-quiz drop-offs, etc.
+  //      in /advisors, post-quiz drop-offs, etc.
   useEffect(() => {
     if (seedFiredRef.current) return;
     if (hydrating) return;
