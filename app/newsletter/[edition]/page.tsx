@@ -5,8 +5,10 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME, ORGANIZATION_JSONLD } from "@/lib/seo";
 import { sanitizeHtml } from "@/lib/sanitize-html";
+import { requirePro, truncateHtml } from "@/lib/server/require-pro";
+import ProPaywall from "@/components/ProPaywall";
 
-export const revalidate = 86400;
+export const revalidate = 0;
 
 export async function generateStaticParams() {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
@@ -75,6 +77,8 @@ interface NewsletterEdition {
   created_at: string;
 }
 
+const PUBLIC_TEASER_CHARS = 800;
+
 export default async function NewsletterEditionPage({
   params,
 }: {
@@ -92,6 +96,11 @@ export default async function NewsletterEditionPage({
   if (!data) notFound();
 
   const editionData = data as NewsletterEdition;
+  const { isPro } = await requirePro();
+
+  const rawSource = isPro
+    ? editionData.html_content
+    : truncateHtml(editionData.html_content, PUBLIC_TEASER_CHARS);
 
   const date = new Date(editionData.edition_date + "T00:00:00Z");
   const formattedDate = date.toLocaleDateString("en-AU", {
@@ -120,6 +129,12 @@ export default async function NewsletterEditionPage({
     },
     publisher: ORGANIZATION_JSONLD,
     author: ORGANIZATION_JSONLD,
+    isAccessibleForFree: false,
+    hasPart: {
+      "@type": "WebPageElement",
+      isAccessibleForFree: false,
+      cssSelector: "[data-pro-gated]",
+    },
   };
 
   return (
@@ -133,7 +148,6 @@ export default async function NewsletterEditionPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(newsArticleJsonLd) }}
       />
       <div className="container-custom">
-        {/* Breadcrumbs */}
         <nav className="text-xs md:text-sm text-slate-500 mb-2 md:mb-4">
           <Link href="/" className="hover:text-slate-900">
             Home
@@ -146,7 +160,6 @@ export default async function NewsletterEditionPage({
           <span className="text-slate-700">{formattedDate}</span>
         </nav>
 
-        {/* Edition header */}
         <div className="mb-4 md:mb-8">
           <p className="text-xs md:text-sm text-amber-600 font-semibold mb-1">
             Weekly Digest
@@ -178,26 +191,33 @@ export default async function NewsletterEditionPage({
         </div>
 
         {/* Rendered HTML content.
-            Sanitised via lib/sanitize-html.ts before render. The newsletter
-            html_content column is admin-authored today, but defence-in-depth
-            matters here for two reasons:
-              1. A compromised admin account becomes stored XSS hitting every
-                 newsletter reader (large blast radius — full email list).
-              2. Future advertiser-submission features (sponsored newsletter
-                 sections) will write to the same column.
-            P0-2 in docs/audits/2026-04-26-comprehensive-audit.md §7.7.
-            Follow-up F-7.7.3 (queue K-stream) replaces the regex
-            sanitiser with isomorphic-dompurify for stronger guarantees. */}
+            Already sanitised via lib/sanitize-html.ts before render. For non-
+            Pro readers the visible HTML is truncated to a teaser (~800 chars)
+            on the server so source-view cannot bypass the paywall — gated
+            content is never serialised to the response body. */}
         <div className="border border-slate-200 rounded-2xl bg-white overflow-hidden shadow-sm">
           <div
             className="newsletter-html-content"
-            dangerouslySetInnerHTML={{
-              __html: sanitizeHtml(editionData.html_content),
-            }}
+            data-pro-gated={!isPro || undefined}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(rawSource) }}
           />
         </div>
 
-        {/* Back link */}
+        {!isPro && (
+          <div className="mt-6" data-pro-gated>
+            <ProPaywall
+              title="Read the full digest"
+              description="The rest of this edition (fee changes, deal explainers, new platform launches) is for Pro members. Get unlimited archive access plus the weekly digest delivered to your inbox."
+              bullets={[
+                "Full newsletter archive",
+                "Fee-change alerts as they happen",
+                "Pro-only deals & platform reviews",
+                "Cancel anytime",
+              ]}
+            />
+          </div>
+        )}
+
         <div className="mt-6 md:mt-10 text-center">
           <Link
             href="/newsletter"

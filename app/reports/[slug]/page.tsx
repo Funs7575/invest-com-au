@@ -1,8 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
 import type { QuarterlyReport } from "@/lib/types";
 import { notFound } from "next/navigation";
+import { requirePro, truncateText } from "@/lib/server/require-pro";
 
-export const revalidate = 3600; // 1 hour
+export const revalidate = 0;
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import ReportDetailClient from "./ReportDetailClient";
 
@@ -29,18 +30,56 @@ export default async function ReportDetailPage({ params }: { params: Promise<{ s
     .single();
 
   if (!data) notFound();
-  const report = data as QuarterlyReport;
+  const fullReport = data as QuarterlyReport;
+  const { isPro } = await requirePro();
+
+  const gatedReport: QuarterlyReport = isPro
+    ? fullReport
+    : {
+        ...fullReport,
+        sections: (fullReport.sections ?? []).slice(0, 2).map((s) => ({
+          heading: s.heading,
+          body: truncateText(s.body, 240),
+        })),
+        fee_changes_summary: [],
+        new_entrants: [],
+      };
+
+  const totalSections = (fullReport.sections ?? []).length;
+  const totalFeeChanges = (fullReport.fee_changes_summary ?? []).length;
+  const totalEntrants = (fullReport.new_entrants ?? []).length;
 
   const breadcrumbLd = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
     { name: "Quarterly Reports", url: absoluteUrl("/reports") },
-    { name: report.title },
+    { name: fullReport.title },
   ]);
+
+  const articleLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: fullReport.title,
+    description: fullReport.executive_summary,
+    datePublished: fullReport.published_at ?? fullReport.created_at,
+    dateModified: fullReport.updated_at,
+    mainEntityOfPage: { "@type": "WebPage", "@id": absoluteUrl(`/reports/${slug}`) },
+    isAccessibleForFree: false,
+    hasPart: {
+      "@type": "WebPageElement",
+      isAccessibleForFree: false,
+      cssSelector: "[data-pro-gated]",
+    },
+  };
 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
-      <ReportDetailClient report={report} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(articleLd) }} />
+      <ReportDetailClient
+        report={gatedReport}
+        isPro={isPro}
+        totals={{ sections: totalSections, feeChanges: totalFeeChanges, newEntrants: totalEntrants }}
+      />
     </>
   );
 }

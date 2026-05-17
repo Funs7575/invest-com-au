@@ -1,12 +1,14 @@
-"use client";
-
 import Link from "next/link";
 import type { QuarterlyReport } from "@/lib/types";
-import { useSubscription } from "@/lib/hooks/useSubscription";
+import ProPaywall from "@/components/ProPaywall";
 
-export default function ReportDetailClient({ report }: { report: QuarterlyReport }) {
-  const { isPro, loading: authLoading } = useSubscription();
+interface Props {
+  report: QuarterlyReport;
+  isPro: boolean;
+  totals: { sections: number; feeChanges: number; newEntrants: number };
+}
 
+export default function ReportDetailClient({ report, isPro, totals }: Props) {
   return (
     <div className="py-5 md:py-12">
       <div className="container-custom max-w-3xl mx-auto">
@@ -31,7 +33,6 @@ export default function ReportDetailClient({ report }: { report: QuarterlyReport
 
         <h1 className="text-2xl md:text-3xl font-extrabold mb-6">{report.title}</h1>
 
-        {/* Executive Summary — free for all */}
         {report.executive_summary && (
           <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-5 mb-6">
             <h2 className="text-sm font-bold text-emerald-800 mb-2">Executive Summary</h2>
@@ -39,7 +40,6 @@ export default function ReportDetailClient({ report }: { report: QuarterlyReport
           </div>
         )}
 
-        {/* Key Findings — free for all */}
         {report.key_findings && report.key_findings.length > 0 && (
           <div className="bg-white border border-slate-200 rounded-xl p-5 mb-6">
             <h2 className="text-sm font-bold text-slate-700 mb-3">Key Findings</h2>
@@ -56,11 +56,10 @@ export default function ReportDetailClient({ report }: { report: QuarterlyReport
           </div>
         )}
 
-        {/* Full Sections — Pro only */}
-        {report.sections && report.sections.length > 0 && (
-          <div className="mb-6">
+        {totals.sections > 0 && (
+          <div className="mb-6" data-pro-gated>
             <h2 className="text-lg font-extrabold mb-4">Full Report</h2>
-            {isPro || authLoading ? (
+            {isPro ? (
               <div className="space-y-6">
                 {report.sections.map((section, i) => (
                   <div key={i} className="bg-white border border-slate-200 rounded-xl p-5">
@@ -70,32 +69,30 @@ export default function ReportDetailClient({ report }: { report: QuarterlyReport
                 ))}
               </div>
             ) : (
-              <div className="relative">
-                <div className="space-y-6 blur-sm pointer-events-none select-none">
-                  {report.sections.slice(0, 2).map((section, i) => (
+              <>
+                <div className="space-y-6 mb-4">
+                  {report.sections.map((section, i) => (
                     <div key={i} className="bg-white border border-slate-200 rounded-xl p-5">
                       <h3 className="text-sm font-bold text-slate-900 mb-2">{section.heading}</h3>
-                      <p className="text-sm text-slate-400 leading-relaxed">{section.body.slice(0, 200)}...</p>
+                      <p className="text-sm text-slate-500 leading-relaxed">{section.body}</p>
                     </div>
                   ))}
                 </div>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="bg-white/95 border border-slate-200 rounded-xl p-6 text-center shadow-lg max-w-sm">
-                    <p className="text-sm font-bold text-slate-900 mb-1">Unlock Full Report</p>
-                    <p className="text-xs text-slate-500 mb-3">
-                      Get access to all {report.sections.length} sections, fee change analysis, and new entrant coverage.
-                    </p>
-                    <Link href="/pro" className="inline-block px-4 py-2 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors">
-                      Upgrade to Pro
-                    </Link>
-                  </div>
-                </div>
-              </div>
+                <ProPaywall
+                  title="Unlock the full report"
+                  description={`Read all ${totals.sections} sections${totals.feeChanges ? `, ${totals.feeChanges} fee changes` : ""}${totals.newEntrants ? `, and ${totals.newEntrants} new market entrants` : ""} — plus every future quarterly report.`}
+                  bullets={[
+                    "Full section-by-section analysis",
+                    "Quarterly fee change tracker",
+                    "New market entrants & exits",
+                    "All future reports included",
+                  ]}
+                />
+              </>
             )}
           </div>
         )}
 
-        {/* Fee Changes Table — Pro only */}
         {isPro && report.fee_changes_summary && report.fee_changes_summary.length > 0 && (
           <div className="bg-white border border-slate-200 rounded-xl overflow-hidden mb-6">
             <div className="px-5 py-3 border-b border-slate-200">
@@ -126,7 +123,6 @@ export default function ReportDetailClient({ report }: { report: QuarterlyReport
           </div>
         )}
 
-        {/* New Entrants — Pro only */}
         {isPro && report.new_entrants && report.new_entrants.length > 0 && (
           <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
             <h3 className="text-sm font-bold text-blue-800 mb-2">New Market Entrants</h3>
