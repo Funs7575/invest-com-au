@@ -59,11 +59,16 @@ interface Props {
    * when the user has none — we don't render an empty-state tile.
    */
   savedSearchCount?: number;
+  /**
+   * Count of the user's broker reviews. When >0 renders a "My Reviews" tile.
+   */
+  reviewCount?: number;
 }
 
-export default function AccountKindCards({ memberships, savedSearchCount = 0 }: Props) {
+export default function AccountKindCards({ memberships, savedSearchCount = 0, reviewCount = 0 }: Props) {
   const hasSavedSearches = savedSearchCount > 0;
-  const tileCount = memberships.length + (hasSavedSearches ? 1 : 0);
+  const hasReviews = reviewCount > 0;
+  const tileCount = memberships.length + (hasSavedSearches ? 1 : 0) + (hasReviews ? 1 : 0);
   return (
     <section aria-label="Your roles" className="mb-6">
       <h2 className="text-base font-semibold text-slate-900 mb-3">Your roles</h2>
@@ -125,6 +130,34 @@ export default function AccountKindCards({ memberships, savedSearchCount = 0 }: 
                 </div>
                 <p className="text-xs text-slate-600 mt-1">
                   Manage advisor and team alerts you&rsquo;re subscribed to.
+                </p>
+                <p className="text-xs font-semibold text-slate-700 mt-2">
+                  Open →
+                </p>
+              </div>
+            </div>
+          </Link>
+        )}
+        {hasReviews && (
+          <Link
+            href="/account/reviews"
+            className="block border bg-amber-50 border-amber-200 hover:border-amber-400 rounded-xl p-4 transition-colors"
+          >
+            <div className="flex items-start gap-3">
+              <span className="text-2xl shrink-0" aria-hidden>
+                ⭐
+              </span>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <h3 className="text-sm font-semibold text-slate-900">
+                    My reviews
+                  </h3>
+                  <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 bg-white/70 text-slate-600 rounded">
+                    {reviewCount}
+                  </span>
+                </div>
+                <p className="text-xs text-slate-600 mt-1">
+                  Track and manage your broker reviews.
                 </p>
                 <p className="text-xs font-semibold text-slate-700 mt-2">
                   Open →
