@@ -56,7 +56,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | CL | `claude/audit-remediation/cl-01-about-entity-only` | **#795 MERGED 2026-05-14** | CL-01..CL-04, CL-06, CL-09, CL-10 done. CL-07+CL-08 false-positive. CL-05 blocked (WHOIS registrar action — see Blocked). | All CL tasks merged (CL-05 blocked) |
 | LL | `claude/audit-remediation/ll-04-reviews-ratings` | **#807 MERGED 2026-05-14** · **#845 MERGED 2026-05-17** | LL-01..LL-04 done. LL-05 blocked (live chat AI routing — deps V-NEW-02 + CC-06). **Stream stalled at LL-05 (blocked).** | All LL tasks merged (LL-05 blocked) |
 | RR | _complete_ | **#847 MERGED 2026-05-17** | RR-01 false-positive. RR-02 done. **Stream complete.** | All RR tasks merged ✓ |
-| EM | `claude/audit-remediation/em-03-hub-newsletter-infra` | **#848 MERGED 2026-05-17** | EM-03 + EM-01 done. Next: EM-02 (digest infrastructure — drip-sequence delivery mechanism). | All EM tasks merged |
+| EM | `claude/audit-remediation/em-02-hub-drip-infra` | **#848 MERGED 2026-05-17** · **#880 OPEN** | EM-03 + EM-01 done. EM-02 (`16add6f`): hub_drip_log migration + hub-subscriber-drip cron. **Stream complete pending #880 merge (Tier C).** | All EM tasks merged |
 | LX | `claude/audit-remediation/lx-03-cross-calc-nav` | **#849 MERGED 2026-05-15** · **#879 OPEN** | LX-01, LX-02, LX-03, LX-04, LX-05 done. LX-03 (`b6f675a`): RelatedCalculators component wired into 4 main calculators. **Stream complete pending #879 merge.** | All LX tasks merged |
 | OB | `claude/audit-remediation/ob-09-remaining-quizzes` | **#852 MERGED 2026-05-17** · **#878 OPEN** | OB-01..OB-12 done. OB-09..OB-12 (`710dba3`): LUMP_SUM, FOREIGN_INVESTMENT, SELL_BUSINESS, HALAL_INVESTING configs + 4 quiz pages + sitemap. **Stream complete pending #878 merge.** | All OB tasks merged |
 
@@ -123,6 +123,18 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 420 — 2026-05-17 — EM-02 hub subscriber drip infrastructure
+
+- **Stream:** EM (email infrastructure)
+- **Item:** EM-02 — digest infrastructure (hub subscriber drip-sequence delivery mechanism)
+- **Branch:** `claude/audit-remediation/em-02-hub-drip-infra`
+- **PR:** #880 OPEN (Tier C — needs founder review before merge)
+- **Commit:** `16add6f`
+- **Diff:** +406 -0 across 4 files (1 new cron route, 1 new migration, 1 cron-groups update, 1 database.types update)
+- **What:** Completes the EM stream's delivery layer. New `hub_drip_log` table (migration `20260517_em02_hub_drip_log.sql`) with UNIQUE(email, segment_slug, drip_step) — guarantees idempotent sends across retries. RLS: deny-all anon; service_role full access. New daily cron `app/api/cron/hub-subscriber-drip` (registered in `daily-10` alongside welcome-drip, advisor-onboarding, abandoned-quiz-drip): queries confirmed hub newsletter subscribers from `newsletter_subscriptions`, sends a 3-step welcome drip keyed off `confirmed_at` — Step 1 (Day 0–3) welcome + top resource, Step 2 (Day 5–9) calculator/tool CTA, Step 3 (Day 14–30) advisor CTA + series close. Covers 9 hub segments: smsf-hub, dividends-hub, wholesale-hub, property-hub, super-hub, insurance-hub, foreign-investment-hub, private-markets-hub, first-home-buyer-hub. `lib/database.types.ts` updated with hub_drip_log type stub.
+- **Tier C announcement:** New cron route + new schema migration. Merge unless `STOP`.
+- **STATUS: PROGRESS · stream=EM · item=EM-02 · pr=#880**
 
 ### iter 419 — 2026-05-17 — LX-03 cross-calculator navigation
 
