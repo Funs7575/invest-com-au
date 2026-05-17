@@ -1151,6 +1151,11 @@ export const SMSF_HUB_CONFIG: HubConfig = {
     "self managed super fund",
   ],
   schemaTypes: ["FinancialService", "FAQPage"],
+  newsletter: {
+    listKey: "smsf-hub",
+    cadence: "weekly",
+    sponsorSlotsAvailable: true,
+  },
 };
 
 // ── Dividends hub ────────────────────────────────────────────────────────────
@@ -1269,4 +1274,9 @@ export const DIVIDENDS_HUB_CONFIG: HubConfig = {
     "fully franked dividends",
   ],
   schemaTypes: ["FinancialService", "FAQPage"],
+  newsletter: {
+    listKey: "dividends-hub",
+    cadence: "weekly",
+    sponsorSlotsAvailable: true,
+  },
 };
