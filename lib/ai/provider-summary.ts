@@ -116,16 +116,26 @@ export async function generateProviderSummary(
   }
   const confidence = clamp01(parsed.confidence ?? 0.5);
 
+  // Auto-publish at high confidence — bypasses pro approval bottleneck while
+  // still gated by the feature flag (zero cost in prod until admin flips).
+  // Lower bound is intentionally conservative: pros can still manually
+  // unpublish via the settings page.
+  const autoPublish = confidence >= 0.9;
+
   await admin
     .from("professionals")
     .update({
       ai_generated_summary: parsed.summary,
       ai_summary_generated_at: new Date().toISOString(),
-      ai_summary_published: false,
+      ai_summary_published: autoPublish,
     })
     .eq("id", professionalId);
 
-  log.info("provider summary generated", { professional_id: professionalId, confidence });
+  log.info("provider summary generated", {
+    professional_id: professionalId,
+    confidence,
+    auto_published: autoPublish,
+  });
   return { summary: parsed.summary, confidence, generated: true };
 }
 
