@@ -118,6 +118,7 @@ const EXEMPT_ROUTE_PATTERNS = [
   { prefix: "marketplace-portal", category: "PORTAL" },
   { prefix: "shortlist", category: "PORTAL" },
   { prefix: "invest/my-listings", category: "PORTAL" },
+  { prefix: "teams", category: "PORTAL" }, // /teams/[slug]/* sub-pages are auth-gated advisor portals; /teams/[slug] public profile already has JSON-LD
   // FORM
   { prefix: "advisor-signup", category: "FORM" },
   { prefix: "advisor-apply", category: "FORM" },
