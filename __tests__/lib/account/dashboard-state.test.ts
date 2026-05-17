@@ -26,6 +26,40 @@ describe("pickHero priority order", () => {
     expect(hero.cta_href).toBe("/briefs/new?plan_id=1");
   });
 
+  it("escalates the saved-plan hero copy after 14d of aging", () => {
+    const fifteenDaysAgo = new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString();
+    const hero = pickHero({
+      ...emptyInputs,
+      plans: [
+        {
+          id: 1,
+          status: "saved",
+          share_token: "t1",
+          updated_at: fifteenDaysAgo,
+        },
+      ],
+    });
+    expect(hero.kind).toBe("plan_saved_no_brief");
+    expect(hero.title).toMatch(/still considering/i);
+    expect(hero.cta_href).toContain("plan_age_nudge");
+  });
+
+  it("does NOT escalate when the saved plan is fresh (<14d)", () => {
+    const fiveDaysAgo = new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString();
+    const hero = pickHero({
+      ...emptyInputs,
+      plans: [
+        {
+          id: 1,
+          status: "saved",
+          share_token: "t1",
+          updated_at: fiveDaysAgo,
+        },
+      ],
+    });
+    expect(hero.title).toBe("Ready to get quotes?");
+  });
+
   it("returns 'brief_open' when a brief is open and unaccepted", () => {
     const hero = pickHero({
       ...emptyInputs,

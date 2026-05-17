@@ -295,6 +295,27 @@ export const SendBriefMessageRequest = z.object({
 
 export const MarkBriefMessagesReadRequest = z.object({}).optional();
 
+// ─── /api/briefs/[slug]/disputes (MM39 — mediation flow) ──────────
+
+export const OpenDisputeRequest = z.object({
+  reason: z.string().min(200).max(4000),
+  evidence_urls: z.array(z.string().url().max(2000)).max(10).optional(),
+});
+
+export const PostDisputeMessageRequest = z.object({
+  body: z.string().min(1).max(4000),
+});
+
+export const ResolveDisputeRequest = z.object({
+  status: z.enum([
+    "admin_reviewing",
+    "resolved_for_consumer",
+    "resolved_for_provider",
+    "withdrawn",
+  ]),
+  resolution_notes: z.string().max(4000).optional(),
+});
+
 export const SquadReleaseBriefRequest = z.object({
   note: z.string().max(2000).optional(),
 });

@@ -12,8 +12,15 @@ import {
   type AvailabilitySlot,
   type ConsultationBooking,
 } from "@/lib/consultations";
+import {
+  DISPUTE_STALE_DAYS,
+  getDisputeForBrief,
+  type DisputeMessageRow,
+  type DisputeRow,
+} from "@/lib/disputes";
 
 import BookConsultationPanel from "./BookConsultationPanel";
+import DisputePanel from "./DisputePanel";
 
 export const dynamic = "force-dynamic";
 
@@ -51,7 +58,7 @@ export async function generateMetadata({
   const title = data?.job_title || "Match Request";
   return {
     title: `${title} — Your Quote Status (${CURRENT_YEAR})`,
-    robots: { index: false, follow: false },
+    robots: "noindex, nofollow",
     alternates: { canonical: `${SITE_URL}/briefs/${slug}` },
   };
 }
@@ -132,6 +139,34 @@ export default async function BriefTrackerPage({
     if (active) {
       existingBooking = active;
       existingSlot = await getSlot(active.slot_id);
+    }
+  }
+
+  // Dispute panel — only render once the brief has been accepted and either:
+  //   - an outcome has been submitted (consumer reviewed), OR
+  //   - 30+ days have elapsed since acceptance (the timeout window).
+  let disputeRow: DisputeRow | null = null;
+  let disputeMessages: DisputeMessageRow[] = [];
+  let canOpenDispute = false;
+  if (brief.accepted_at && emailMatches) {
+    const existing = await getDisputeForBrief(brief.id, email);
+    if (existing) {
+      disputeRow = existing.dispute;
+      disputeMessages = existing.messages;
+    } else {
+      // Check whether the brief is in a state where opening a dispute is allowed.
+      const adminRead = await createClient();
+      const { data: outcomeRow } = await adminRead
+        .from("brief_outcomes")
+        .select("submitted_at")
+        .eq("brief_id", brief.id)
+        .maybeSingle();
+      const hasSubmittedOutcome = !!outcomeRow?.submitted_at;
+      const acceptedMs = new Date(brief.accepted_at).getTime();
+      const staleMs = DISPUTE_STALE_DAYS * 24 * 60 * 60 * 1000;
+      // eslint-disable-next-line react-hooks/purity -- server-rendered page; Date.now() is legitimate here (not a render-loop concern).
+      const isStale = Date.now() - acceptedMs >= staleMs;
+      canOpenDispute = hasSubmittedOutcome || isStale;
     }
   }
 
@@ -267,6 +302,18 @@ export default async function BriefTrackerPage({
                 existingSlot={existingSlot}
               />
             </div>
+          )}
+
+          {/* Dispute / mediation panel */}
+          {emailMatches && brief.accepted_at && (disputeRow || canOpenDispute) && (
+            <DisputePanel
+              slug={brief.slug}
+              briefId={brief.id}
+              initialDispute={disputeRow}
+              initialMessages={disputeMessages}
+              canViewerOpen={canOpenDispute}
+              viewerName="You"
+            />
           )}
 
           {/* Brief summary */}

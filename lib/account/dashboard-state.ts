@@ -190,7 +190,7 @@ export async function loadDashboardState(input: {
 }
 
 export interface HeroInputs {
-  plans: Array<{ id: number; status: string; share_token: string }>;
+  plans: Array<{ id: number; status: string; share_token: string; updated_at?: string }>;
   briefs: Array<{
     slug: string;
     status: string;
@@ -243,10 +243,30 @@ export function pickHero({ plans, briefs, quotes }: HeroInputs): HeroCard {
   return heroForPlans(plans);
 }
 
-function heroForPlans(plans: Array<{ status: string; share_token: string; id: number }>): HeroCard {
+function heroForPlans(
+  plans: Array<{ status: string; share_token: string; id: number; updated_at?: string }>,
+): HeroCard {
   const savedPlan = plans.find((p) => p.status === "saved" || p.status === "converted");
   const draftPlan = plans.find((p) => p.status === "draft");
   if (savedPlan && !plans.some((p) => p.status === "converted")) {
+    // Plan-aging nudge: after 14 days of sitting saved, escalate the hero
+    // copy from passive "ready to get quotes" to active "still considering?".
+    const ageDays =
+      savedPlan.updated_at != null
+        ? Math.floor(
+            (Date.now() - new Date(savedPlan.updated_at).getTime()) /
+              (1000 * 60 * 60 * 24),
+          )
+        : 0;
+    if (ageDays >= 14) {
+      return {
+        kind: "plan_saved_no_brief",
+        title: "Still considering? Send your Match Request",
+        body: `Your action plan has been saved for ${ageDays} days. Verified pros usually respond within 24 hours — get quotes now.`,
+        cta_label: "Send Match Request",
+        cta_href: `/briefs/new?plan_id=${savedPlan.id}&utm_source=plan_age_nudge`,
+      };
+    }
     return {
       kind: "plan_saved_no_brief",
       title: "Ready to get quotes?",
