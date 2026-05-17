@@ -57,7 +57,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | LL | `claude/audit-remediation/ll-04-reviews-ratings` | **#807 MERGED 2026-05-14** · **#845 MERGED 2026-05-17** | LL-01..LL-04 done. LL-05 blocked (live chat AI routing — deps V-NEW-02 + CC-06). **Stream stalled at LL-05 (blocked).** | All LL tasks merged (LL-05 blocked) |
 | RR | _complete_ | **#847 MERGED 2026-05-17** | RR-01 false-positive. RR-02 done. **Stream complete.** | All RR tasks merged ✓ |
 | EM | `claude/audit-remediation/em-03-hub-newsletter-infra` | **#848 MERGED 2026-05-17** | EM-03 + EM-01 done. Next: EM-02 (digest infrastructure — drip-sequence delivery mechanism). | All EM tasks merged |
-| LX | `claude/audit-remediation/lx-01-calculator-share-save` | **#849 MERGED 2026-05-15** | LX-01, LX-02, LX-04, LX-05 done. Next: LX-03 (cross-calculator navigation — comparison cart). | All LX tasks merged |
+| LX | `claude/audit-remediation/lx-03-cross-calc-nav` | **#849 MERGED 2026-05-15** · **#879 OPEN** | LX-01, LX-02, LX-03, LX-04, LX-05 done. LX-03 (`b6f675a`): RelatedCalculators component wired into 4 main calculators. **Stream complete pending #879 merge.** | All LX tasks merged |
 | OB | `claude/audit-remediation/ob-09-remaining-quizzes` | **#852 MERGED 2026-05-17** · **#878 OPEN** | OB-01..OB-12 done. OB-09..OB-12 (`710dba3`): LUMP_SUM, FOREIGN_INVESTMENT, SELL_BUSINESS, HALAL_INVESTING configs + 4 quiz pages + sitemap. **Stream complete pending #878 merge.** | All OB tasks merged |
 
 ---
@@ -123,6 +123,17 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 419 — 2026-05-17 — LX-03 cross-calculator navigation
+
+- **Stream:** LX (calculator UX / conversion)
+- **Item:** LX-03 — cross-calculator navigation (`RelatedCalculators` component)
+- **Branch:** `claude/audit-remediation/lx-03-cross-calc-nav`
+- **PR:** #879 OPEN
+- **Commit:** `b6f675a`
+- **Diff:** +88 -1 across 5 files (1 new component, 4 calculator pages updated)
+- **What:** New `components/RelatedCalculators.tsx` — server component accepting `RelatedCalc[]` (name, description, href, optional tag chip). Renders a responsive 1-3 column card grid positioned between the calculator output and `CalcToPlanBridge`. Wired into: compound-interest-calculator (→ Savings, FIRE, Dividend Reinvestment); mortgage-calculator (→ Property vs Shares, Savings, CGT); savings-calculator (→ Compound Interest, FIRE, Mortgage); smsf-calculator (→ Super Contributions, Compound Interest, FIRE). Surfaces contextually relevant next tools at the natural "I have my answer" moment.
+- **STATUS: PROGRESS · stream=LX · item=LX-03 · pr=#879**
 
 ### iter 418 — 2026-05-17 — queue sync + OB-09..OB-12 remaining hub quizzes
 
