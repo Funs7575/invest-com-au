@@ -36,6 +36,12 @@ export interface HubPageProps {
   /** Rendered <CrossHubLinks> — optional. */
   crossHubLinks?: ReactNode;
   /**
+   * Rendered <HubNewsletterCapture> — optional. Position: between advisorCta
+   * and crossHubLinks, giving email capture high placement near page-bottom
+   * intent signals (after the user has consumed the hub content).
+   */
+  newsletterCapture?: ReactNode;
+  /**
    * Catch-all slot for hub-specific sections that don't fit the named slots
    * (article strips, calculators, quizzes, affiliate rails, etc.).
    * Rendered between deepDives and faq.
@@ -90,6 +96,7 @@ export default function HubPage({
   faq,
   advisorCta,
   crossHubLinks,
+  newsletterCapture,
   children,
 }: HubPageProps) {
   const breadcrumbs = buildBreadcrumbs(config);
@@ -158,6 +165,11 @@ export default function HubPage({
       {/* Advisor CTA footer slot */}
       {advisorCta && (
         <div data-testid="hub-page-advisor-cta">{advisorCta}</div>
+      )}
+
+      {/* Newsletter capture slot — hub-specific email list building (EM-03) */}
+      {newsletterCapture && (
+        <div data-testid="hub-page-newsletter-capture">{newsletterCapture}</div>
       )}
 
       {/* Cross-hub rail slot */}
