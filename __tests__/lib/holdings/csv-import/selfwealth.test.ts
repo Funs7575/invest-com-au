@@ -52,6 +52,23 @@ describe("parseSelfWealthCsv", () => {
     expect(rows[0]?.exchange).toBe("OTHER");
   });
 
+  it("accepts ASX ETF codes with embedded digits as ASX (A200, IOZ, VAS, STW)", () => {
+    // The previous regex `^[A-Z]{3,4}$` rejected real ASX codes like A200
+    // (BetaShares S&P/ASX 200 ETF — see lib/ticker-sectors.ts:120),
+    // routing them to OTHER and breaking value-source.ts ASX lookup.
+    // Widened to `^[A-Z][A-Z0-9]{2,4}$`.
+    const csv = [
+      HEADER,
+      "01/03/2026,03/03/2026,Trading,A200,BUY,100,135.00,9.50,13500.00,13509.50",
+      "01/03/2026,03/03/2026,Trading,IOZ,BUY,50,29.50,9.50,1475.00,1484.50",
+      "01/03/2026,03/03/2026,Trading,STW,BUY,40,65.00,9.50,2600.00,2609.50",
+    ].join("\n");
+    const { rows, errors } = parseSelfWealthCsv(csv);
+    expect(errors).toEqual([]);
+    expect(rows).toHaveLength(3);
+    expect(rows.map((r) => r.exchange)).toEqual(["ASX", "ASX", "ASX"]);
+  });
+
   it("rejects invalid quantity / price / date", () => {
     const csv = [
       HEADER,
