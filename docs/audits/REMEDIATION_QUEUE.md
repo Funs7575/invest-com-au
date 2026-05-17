@@ -59,6 +59,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | EM | `claude/audit-remediation/em-02-hub-drip-infra` | **#848 MERGED 2026-05-17** · **#880 OPEN** | EM-03 + EM-01 done. EM-02 (`16add6f`): hub_drip_log migration + hub-subscriber-drip cron. **Stream complete pending #880 merge (Tier C).** | All EM tasks merged |
 | LX | `claude/audit-remediation/lx-03-cross-calc-nav` | **#849 MERGED 2026-05-15** · **#879 OPEN** | LX-01, LX-02, LX-03, LX-04, LX-05 done. LX-03 (`b6f675a`): RelatedCalculators component wired into 4 main calculators. **Stream complete pending #879 merge.** | All LX tasks merged |
 | OB | `claude/audit-remediation/ob-09-remaining-quizzes` | **#852 MERGED 2026-05-17** · **#878 OPEN** | OB-01..OB-12 done. OB-09..OB-12 (`710dba3`): LUMP_SUM, FOREIGN_INVESTMENT, SELL_BUSINESS, HALAL_INVESTING configs + 4 quiz pages + sitemap. **Stream complete pending #878 merge.** | All OB tasks merged |
+| GT | `claude/audit-remediation/gt-02-annual-check` | **#881 OPEN** | GT-01 blocked (needs DV-01). GT-02 done (`a4c5352`): annual financial check-up page `/account/annual-check` — personalised FY checklist for 5 investor types. NavCard added to dashboard. | All GT tasks merged |
 
 ---
 
@@ -123,6 +124,17 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 421 — 2026-05-17 — GT-02 annual financial check-up
+
+- **Stream:** GT (goal tracking)
+- **Item:** GT-02 — annual financial check-up
+- **Branch:** `claude/audit-remediation/gt-02-annual-check`
+- **PR:** #881 OPEN
+- **Commit:** `a4c5352`
+- **Diff:** +302 -0 across 2 files (1 new page, 1 dashboard update)
+- **What:** `/account/annual-check` RSC behind `enforcePortalKind("investor")`. Reads `getInvestorProfile()` to personalise across 5 investor types (FHB, pre-retiree, HNW, business owner, cross-border). Four sections: Superannuation (concessional/non-concessional caps, consolidation, beneficiary nominations), Tax & investments (lodgement deadline, CGT harvesting, expense pre-payment), Insurance review (life/TPD, income protection, building & contents, private health), Goals & planning (update balances, emergency fund, estate docs, advisor review). FY2025–26 key dates banner. General-advice disclaimer at foot. Added "Annual Check-up" NavCard to dashboard nav grid (📅, `/account/annual-check`). GT-01 blocked (needs DV-01).
+- **STATUS: PROGRESS · stream=GT · item=GT-02 · pr=#881**
 
 ### iter 420 — 2026-05-17 — EM-02 hub subscriber drip infrastructure
 
