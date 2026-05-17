@@ -88,7 +88,7 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
         .limit(3),
       supabase
         .from("professional_reviews")
-        .select("*")
+        .select("*, advisor_response:professional_review_responses(id, body, created_at, updated_at)")
         .eq("professional_id", pro.id)
         .eq("status", "approved")
         .order("created_at", { ascending: false })
