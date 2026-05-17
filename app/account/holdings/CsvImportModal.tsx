@@ -6,6 +6,10 @@ import { SUPPORTED_BROKER_SLUGS } from "@/lib/holdings/csv-import";
 
 const BROKER_LABELS: Record<(typeof SUPPORTED_BROKER_SLUGS)[number], string> = {
   commsec: "CommSec — Trading Account Transactions CSV",
+  stake: "Stake — Transactions / Trade History CSV",
+  selfwealth: "SelfWealth — Order History CSV",
+  nabtrade: "NABTrade — Transaction History CSV",
+  ibkr: "Interactive Brokers — Activity Statement CSV",
 };
 
 interface CsvParseError {
