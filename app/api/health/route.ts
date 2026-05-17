@@ -111,7 +111,8 @@ export async function GET(request: Request) {
 
   // ── Overall status ──
   // Third-party checks degrade but don't fail the overall health — the core
-  // app (db/cron/env) is the gating signal for the 503 response.
+  // app (db/cron/env) is the gating signal for the 503 response and the
+  // status field.
   const coreOk = ["database", "cron_freshness", "env"].every(
     (k) => checks[k]?.ok ?? true,
   );

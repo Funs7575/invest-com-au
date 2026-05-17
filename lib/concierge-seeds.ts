@@ -1,7 +1,7 @@
 /**
  * Named seed prompts for the Investment Concierge.
  *
- * UI surfaces (e.g. /advisors, /advisors/search, post-quiz drop-offs)
+ * UI surfaces (e.g. /advisors, post-quiz drop-offs)
  * deep-link to `/concierge?finder=<key>` and the client looks up the
  * starter prompt here. Replacing the prior free-form `?seed=<text>`
  * removes the URL-tampering vector entirely — only keys in this

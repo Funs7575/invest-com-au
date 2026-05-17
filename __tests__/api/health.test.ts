@@ -1,5 +1,4 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { NextRequest } from "next/server";
 
 // ── Mocks ──────────────────────────────────────────────────────────────────────
 
@@ -45,6 +44,12 @@ function makeHeartbeatChain(result: { data: unknown; error: unknown }) {
 describe("GET /api/health", () => {
   const OLD_ENV = process.env;
 
+  // vi.spyOn on globalThis.fetch is hard to type cleanly because lib.dom's
+  // `fetch` isn't declared on globalThis directly. Restore via the saved
+  // reference instead of MockInstance.mockRestore — same effect, no typing
+  // headache.
+  const originalFetch = globalThis.fetch;
+
   beforeEach(() => {
     vi.clearAllMocks();
     process.env = {
@@ -53,11 +58,24 @@ describe("GET /api/health", () => {
       NEXT_PUBLIC_SUPABASE_ANON_KEY: "anon-key",
       SUPABASE_SERVICE_ROLE_KEY: "service-role-key",
       CRON_SECRET: "cron-secret",
+      // PR #856 added Stripe/Resend/Anthropic probes to the route. Without
+      // these stubs the probes short-circuit to ok:false ("…_API_KEY
+      // missing") and the overall status flips to "degraded". The route
+      // requires keys >= 10 chars before it actually fetches.
+      STRIPE_SECRET_KEY: "sk_test_placeholder",
+      RESEND_API_KEY: "re_test_placeholder",
+      ANTHROPIC_API_KEY: "sk-ant-placeholder",
     };
+    // Intercept the route's outbound fetches so tests never hit the real
+    // Stripe/Resend/Anthropic APIs (slow, flaky, and would burn rate limits).
+    globalThis.fetch = vi
+      .fn()
+      .mockResolvedValue(new Response(null, { status: 200 })) as typeof fetch;
   });
 
   afterEach(() => {
     process.env = OLD_ENV;
+    globalThis.fetch = originalFetch;
   });
 
   it("returns 200 with status ok when all checks pass", async () => {
