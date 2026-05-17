@@ -3,8 +3,15 @@ import { parseStakeCsv } from "@/lib/holdings/csv-import/stake";
 
 const HEADER = "Date,Reference,Activity,Symbol,Description,Quantity,Price,Total,Currency";
 
-describe("parseStakeCsv", () => {
-  it("parses three BUY rows and infers exchange", () => {
+// Stake's US CSV is USD-denominated; cost_basis_per_share_cents downstream
+// (HoldingsClient, tax-summary.ts) is consumed as AUD cents. Until per-
+// currency FX conversion ships, the parser intentionally rejects every BUY
+// row with an FX-block error. These tests assert that contract; when the
+// FX layer lands and STAKE_FX_DISABLED flips to false, the row-shape
+// assertions in the bottom describe block become the truth source.
+
+describe("parseStakeCsv — FX-block guard (STAKE_FX_DISABLED=true)", () => {
+  it("rejects BUY rows with an FX-conversion error instead of importing wrong AUD cost basis", () => {
     const csv = [
       HEADER,
       "2026-03-01,T1,Buy,AAPL,Apple Inc.,10,150.25,1502.50,USD",
@@ -13,26 +20,13 @@ describe("parseStakeCsv", () => {
     ].join("\n");
 
     const { rows, errors } = parseStakeCsv(csv);
-    expect(errors).toEqual([]);
-    expect(rows).toHaveLength(3);
-
-    const [r0, r1, r2] = rows;
-    expect(r0?.ticker).toBe("AAPL");
-    expect(r0?.exchange).toBe("NASDAQ");
-    expect(r0?.shares).toBe(10);
-    expect(r0?.cost_basis_per_share_cents).toBe(15025);
-    expect(r0?.acquired_at).toBe("2026-03-01");
-    expect(r0?.broker_slug).toBe("stake");
-
-    expect(r1?.ticker).toBe("MSFT");
-    expect(r1?.exchange).toBe("NASDAQ");
-
-    expect(r2?.ticker).toBe("JNJ");
-    // JNJ is in the NYSE allowlist
-    expect(r2?.exchange).toBe("NYSE");
+    expect(rows).toEqual([]);
+    expect(errors).toHaveLength(3);
+    expect(errors.every((e) => /USD-denominated|FX conversion/i.test(e.reason))).toBe(true);
+    expect(errors[0]?.reason).toMatch(/AAPL/);
   });
 
-  it("skips non-BUY activities and surfaces them as errors", () => {
+  it("non-BUY rows still surface as 'non-BUY' errors (validation runs before FX block)", () => {
     const csv = [
       HEADER,
       "2026-03-01,T1,Buy,AAPL,Apple,10,150.00,1500.00,USD",
@@ -41,25 +35,14 @@ describe("parseStakeCsv", () => {
       "2026-03-04,T4,Cash Deposit,,,0,0,1000.00,USD",
     ].join("\n");
     const { rows, errors } = parseStakeCsv(csv);
-    expect(rows).toHaveLength(1);
-    expect(rows[0]?.ticker).toBe("AAPL");
-    expect(errors).toHaveLength(3);
-    expect(errors.every((e) => /non-BUY/.test(e.reason))).toBe(true);
+    expect(rows).toHaveLength(0);
+    // 1 FX-block (the Buy row) + 3 non-BUY rejections.
+    expect(errors).toHaveLength(4);
+    expect(errors.filter((e) => /non-BUY/.test(e.reason))).toHaveLength(3);
+    expect(errors.filter((e) => /FX conversion/i.test(e.reason))).toHaveLength(1);
   });
 
-  it("tolerates $ prefix and thousands-separators on price/qty", () => {
-    const csv = [
-      HEADER,
-      '2026-03-01,T1,Buy,GOOG,"Alphabet Inc.","1,000","$2,750.50","2,750,500.00",USD',
-    ].join("\n");
-    const { rows, errors } = parseStakeCsv(csv);
-    expect(errors).toEqual([]);
-    expect(rows).toHaveLength(1);
-    expect(rows[0]?.shares).toBe(1000);
-    expect(rows[0]?.cost_basis_per_share_cents).toBe(275050);
-  });
-
-  it("rejects malformed dates and invalid tickers", () => {
+  it("malformed-date / invalid-ticker rows error before the FX-block path", () => {
     const csv = [
       HEADER,
       "NOT-A-DATE,T1,Buy,AAPL,Apple,10,150.00,1500.00,USD",
@@ -72,7 +55,7 @@ describe("parseStakeCsv", () => {
     expect(errors[1]?.reason).toMatch(/ticker/);
   });
 
-  it("returns an error if the header row is missing", () => {
+  it("returns an error if the header row is missing (still works pre-FX-block)", () => {
     const csv = "2026-03-01,T1,Buy,AAPL,Apple,10,150.00,1500.00,USD";
     const { rows, errors } = parseStakeCsv(csv);
     expect(rows).toEqual([]);
@@ -80,17 +63,7 @@ describe("parseStakeCsv", () => {
     expect(errors[0]?.reason).toMatch(/header/);
   });
 
-  it("accepts AU-style DD/MM/YYYY dates as a fallback", () => {
-    const csv = [
-      HEADER,
-      "01/03/2026,T1,Buy,AAPL,Apple,10,150.00,1500.00,USD",
-    ].join("\n");
-    const { rows, errors } = parseStakeCsv(csv);
-    expect(errors).toEqual([]);
-    expect(rows[0]?.acquired_at).toBe("2026-03-01");
-  });
-
-  it("returns a cap error when input exceeds 500 data rows", () => {
+  it("returns a cap error when input exceeds 500 data rows (cap check runs before row-level FX block)", () => {
     const buyRow = "2026-03-01,T1,Buy,AAPL,Apple,1,150.00,150.00,USD";
     const csv = [HEADER, ...new Array(501).fill(buyRow)].join("\n");
     const { rows, errors } = parseStakeCsv(csv);

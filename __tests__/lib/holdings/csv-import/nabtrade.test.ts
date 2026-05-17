@@ -29,16 +29,36 @@ describe("parseNabTradeCsv", () => {
     expect(r2?.cost_basis_per_share_cents).toBe(3010);
   });
 
-  it("uses currency to route US orders to NASDAQ", () => {
+  it("rejects non-AUD orders (USD/GBP) with an FX-conversion error until FX support ships", () => {
+    // Codex review on PR #862 surfaced that pre-FX, USD/GBP/HKD prices
+    // were being stored in `cost_basis_per_share_cents` (AUD), which the
+    // tax CSV then surfaced as wrong AUD cost basis. Block until FX
+    // conversion lands.
     const csv = [
       HEADER,
       "01/03/2026,03/03/2026,12345,A1,Bought,10,AAPL,Apple Inc.,150.00,9.95,0.00,1500.00,USD",
       "01/03/2026,03/03/2026,12345,A2,Bought,5,VOD,Vodafone,80.00,9.95,0.00,400.00,GBP",
     ].join("\n");
     const { rows, errors } = parseNabTradeCsv(csv);
+    expect(rows).toEqual([]);
+    expect(errors).toHaveLength(2);
+    expect(errors.every((e) => /non-AUD|FX conversion/i.test(e.reason))).toBe(true);
+  });
+
+  it("accepts ASX ETF codes with digits (A200, IOZ-style) as ASX, not OTHER", () => {
+    // The previous regex `^[A-Z]{3,4}$` rejected real ASX codes like A200
+    // (BetaShares S&P/ASX 200 ETF, listed in lib/ticker-sectors.ts:120),
+    // routing them to OTHER and breaking value-source.ts ASX lookup.
+    const csv = [
+      HEADER,
+      "01/03/2026,03/03/2026,12345,A1,Bought,100,A200,BetaShares Aus 200,135.00,14.95,1.50,13500.00,AUD",
+      "01/03/2026,03/03/2026,12345,A2,Bought,50,IOZ,iShares ASX 200,29.50,14.95,1.50,1475.00,AUD",
+    ].join("\n");
+    const { rows, errors } = parseNabTradeCsv(csv);
     expect(errors).toEqual([]);
-    expect(rows[0]?.exchange).toBe("NASDAQ");
-    expect(rows[1]?.exchange).toBe("LSE");
+    expect(rows).toHaveLength(2);
+    expect(rows[0]?.exchange).toBe("ASX");
+    expect(rows[1]?.exchange).toBe("ASX");
   });
 
   it("surfaces Sold/Dividend rows as skipped errors", () => {

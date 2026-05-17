@@ -18,32 +18,35 @@ function buildStatement(...tradeDataRows: string[]): string {
 }
 
 describe("parseIbkrCsv", () => {
-  it("parses two Stocks BUY orders and infers exchange by currency", () => {
+  it("parses AUD BUY orders and rejects non-AUD with an FX-conversion error", () => {
     const csv = buildStatement(
       'Trades,Data,Order,Stocks,USD,AAPL,"2026-01-15, 10:30:00",100,150.25,151.00,-15025,-1.00,15026,0,75,O',
       'Trades,Data,Order,Stocks,AUD,BHP,"2026-02-20, 09:45:00",50,45.10,45.20,-2255,-7.50,2262.50,0,5,O',
     );
     const { rows, errors } = parseIbkrCsv(csv);
-    expect(errors).toEqual([]);
-    expect(rows).toHaveLength(2);
+    // AAPL (USD) is rejected because cost_basis_per_share_cents downstream
+    // is consumed as AUD cents. BHP (AUD) passes through.
+    expect(rows).toHaveLength(1);
+    expect(errors).toHaveLength(1);
+    expect(errors[0]?.reason).toMatch(/non-AUD.*USD|FX conversion/i);
 
-    const [r0, r1] = rows;
-    expect(r0?.ticker).toBe("AAPL");
-    expect(r0?.exchange).toBe("NASDAQ");
-    expect(r0?.shares).toBe(100);
-    expect(r0?.cost_basis_per_share_cents).toBe(15025);
-    expect(r0?.acquired_at).toBe("2026-01-15");
-    expect(r0?.broker_slug).toBe("ibkr");
-
-    expect(r1?.ticker).toBe("BHP");
-    expect(r1?.exchange).toBe("ASX");
+    expect(rows[0]?.ticker).toBe("BHP");
+    expect(rows[0]?.exchange).toBe("ASX");
+    expect(rows[0]?.shares).toBe(50);
+    expect(rows[0]?.cost_basis_per_share_cents).toBe(4510);
+    expect(rows[0]?.acquired_at).toBe("2026-02-20");
+    // Slug must match data/site-data.json:292 — the catalogue uses
+    // "interactive-brokers"; the parser used to ship "ibkr" (Codex review
+    // on PR #862 surfaced this drift). Soft-link breaks for IBKR rows
+    // unless they agree.
+    expect(rows[0]?.broker_slug).toBe("interactive-brokers");
   });
 
-  it("skips SubTotal / Total aggregation rows silently", () => {
+  it("skips SubTotal / Total aggregation rows silently (AUD BUY)", () => {
     const csv = buildStatement(
-      'Trades,Data,Order,Stocks,USD,AAPL,"2026-01-15, 10:30:00",100,150.00,150.00,-15000,-1.00,15001,0,0,O',
-      "Trades,SubTotal,,Stocks,USD,AAPL,,100,,,-15000,-1.00,15001,0,0,",
-      "Trades,Total,,Stocks,USD,,,,,,,-15000,-1.00,15001,0,0,",
+      'Trades,Data,Order,Stocks,AUD,BHP,"2026-01-15, 10:30:00",100,45.00,45.00,-4500,-1.00,4501,0,0,O',
+      "Trades,SubTotal,,Stocks,AUD,BHP,,100,,,-4500,-1.00,4501,0,0,",
+      "Trades,Total,,Stocks,AUD,,,,,,,-4500,-1.00,4501,0,0,",
     );
     const { rows, errors } = parseIbkrCsv(csv);
     expect(rows).toHaveLength(1);
@@ -52,29 +55,29 @@ describe("parseIbkrCsv", () => {
 
   it("surfaces negative-quantity (SELL) rows as skipped errors", () => {
     const csv = buildStatement(
-      'Trades,Data,Order,Stocks,USD,AAPL,"2026-01-15, 10:30:00",100,150.00,150.00,-15000,-1.00,15001,0,0,O',
-      'Trades,Data,Order,Stocks,USD,AAPL,"2026-02-15, 10:30:00",-50,160.00,160.00,8000,-1.00,-7501,499,0,C',
+      'Trades,Data,Order,Stocks,AUD,BHP,"2026-01-15, 10:30:00",100,45.00,45.00,-4500,-1.00,4501,0,0,O',
+      'Trades,Data,Order,Stocks,AUD,BHP,"2026-02-15, 10:30:00",-50,50.00,50.00,2500,-1.00,-2251,499,0,C',
     );
     const { rows, errors } = parseIbkrCsv(csv);
     expect(rows).toHaveLength(1);
-    expect(rows[0]?.ticker).toBe("AAPL");
+    expect(rows[0]?.ticker).toBe("BHP");
     expect(errors).toHaveLength(1);
     expect(errors[0]?.reason).toMatch(/SELL/);
   });
 
   it("skips non-stock asset categories with a clear error", () => {
     const csv = buildStatement(
-      'Trades,Data,Order,Equity and Index Options,USD,AAPL  240119C00150000,"2026-01-10, 10:30:00",1,2.50,2.60,-250,-0.65,250.65,0,10,O',
-      'Trades,Data,Order,Stocks,USD,AAPL,"2026-01-15, 10:30:00",100,150.00,150.00,-15000,-1.00,15001,0,0,O',
+      'Trades,Data,Order,Equity and Index Options,AUD,BHP  240119C00045000,"2026-01-10, 10:30:00",1,2.50,2.60,-250,-0.65,250.65,0,10,O',
+      'Trades,Data,Order,Stocks,AUD,BHP,"2026-01-15, 10:30:00",100,45.00,45.00,-4500,-1.00,4501,0,0,O',
     );
     const { rows, errors } = parseIbkrCsv(csv);
     expect(rows).toHaveLength(1);
-    expect(rows[0]?.ticker).toBe("AAPL");
+    expect(rows[0]?.ticker).toBe("BHP");
     expect(errors).toHaveLength(1);
     expect(errors[0]?.reason).toMatch(/non-stock/);
   });
 
-  it("maps currency to expected exchange", () => {
+  it("rejects non-AUD trades (USD/GBP/HKD/JPY/SGD) until FX support ships", () => {
     const csv = buildStatement(
       'Trades,Data,Order,Stocks,GBP,VOD,"2026-01-15, 10:30:00",100,80.00,80.00,-8000,-1.00,8001,0,0,O',
       'Trades,Data,Order,Stocks,HKD,0700,"2026-01-15, 10:30:00",100,330.00,330.00,-33000,-1.00,33001,0,0,O',
@@ -82,12 +85,9 @@ describe("parseIbkrCsv", () => {
       'Trades,Data,Order,Stocks,SGD,D05,"2026-01-15, 10:30:00",100,30.00,30.00,-3000,-1.00,3001,0,0,O',
     );
     const { rows, errors } = parseIbkrCsv(csv);
-    expect(errors).toEqual([]);
-    expect(rows).toHaveLength(4);
-    expect(rows[0]?.exchange).toBe("LSE");
-    expect(rows[1]?.exchange).toBe("HKEX");
-    expect(rows[2]?.exchange).toBe("TYO");
-    expect(rows[3]?.exchange).toBe("SGX");
+    expect(rows).toEqual([]);
+    expect(errors).toHaveLength(4);
+    expect(errors.every((e) => /non-AUD|FX conversion/i.test(e.reason))).toBe(true);
   });
 
   it("returns an error when the Trades section is absent", () => {
@@ -102,9 +102,9 @@ describe("parseIbkrCsv", () => {
       [
         STATEMENT_PREAMBLE,
         TRADES_HEADER,
-        'Trades,Data,Order,Stocks,USD,AAPL,"2026-01-15, 10:30:00",10,150.00,150.00,-1500,-1.00,1501,0,0,O',
+        'Trades,Data,Order,Stocks,AUD,BHP,"2026-01-15, 10:30:00",10,45.00,45.00,-450,-1.00,451,0,0,O',
         "Dividends,Header,Currency,Date,Description,Amount",
-        "Dividends,Data,USD,2026-03-01,AAPL Dividend,5.50",
+        "Dividends,Data,AUD,2026-03-01,BHP Dividend,5.50",
       ].join("\n");
     const { rows, errors } = parseIbkrCsv(csv);
     expect(rows).toHaveLength(1);
@@ -113,7 +113,7 @@ describe("parseIbkrCsv", () => {
 
   it("returns a cap error when Trades section exceeds 500 data rows", () => {
     const row =
-      'Trades,Data,Order,Stocks,USD,AAPL,"2026-01-15, 10:30:00",1,150.00,150.00,-150,-1.00,151,0,0,O';
+      'Trades,Data,Order,Stocks,AUD,BHP,"2026-01-15, 10:30:00",1,45.00,45.00,-45,-1.00,46,0,0,O';
     const csv = [STATEMENT_PREAMBLE, TRADES_HEADER, ...new Array(501).fill(row)].join(
       "\n",
     );
