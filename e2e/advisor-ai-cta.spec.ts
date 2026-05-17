@@ -2,18 +2,21 @@ import { test, expect } from "@playwright/test";
 
 /**
  * Smoke checks for the AI advisor surface:
- *   1. /advisors hero has "Ask the AI concierge" CTA → /concierge?finder=advisor-finder
- *   2. /advisors/search header has the same CTA shape
- *   3. /concierge?finder=advisor-finder auto-fires a POST /api/concierge
+ *   1. /advisors hero has "Ask the AI concierge" link → /concierge?finder=advisor-finder
+ *   2. /concierge?finder=advisor-finder auto-fires a POST /api/concierge
  *      (with finder=advisor-finder + the server-mapped prompt)
- *   4. /concierge?finder=… does NOT auto-fire when a stored session is hydrating
- *   5. ConciergeClient renders Sources block when SSE emits a 'retrieved' event
- *   6. Unknown finder values do NOT auto-fire
- *   7. /advisors/compare?add=<slug> toggles the slug into the shortlist and
+ *   3. /concierge?finder=… does NOT auto-fire when a stored session is hydrating
+ *   4. ConciergeClient renders Sources block when SSE emits a 'retrieved' event
+ *   5. Unknown finder values do NOT auto-fire
+ *   6. /advisors/compare?add=<slug> toggles the slug into the shortlist and
  *      strips the ?add= param from the URL
  *
- * /api/concierge is intercepted in tests 3-6 so we never make a real
+ * /api/concierge is intercepted in tests 2-5 so we never make a real
  * Claude call (zero added inference cost).
+ *
+ * Previously test 2 in this file covered /advisors/search — that route was
+ * retired 2026-05; its filters are now hosted inside /advisors and the URL
+ * 301s to /advisors via next.config redirects().
  */
 
 // Server-side prompt for finder=advisor-finder; kept in sync with
@@ -53,12 +56,13 @@ test.describe("Advisor AI surface", () => {
     expect(href).toBe("/concierge?finder=advisor-finder");
   });
 
-  test("/advisors/search header shows the AI CTA", async ({ page }) => {
-    await page.goto("/advisors/search");
-    const cta = page.getByRole("link", { name: /Ask the AI/i });
-    await expect(cta).toBeVisible();
-    const href = await cta.getAttribute("href");
-    expect(href).toBe("/concierge?finder=advisor-finder");
+  test("/advisors/search 301-redirects to /advisors", async ({ page }) => {
+    const response = await page.goto("/advisors/search");
+    // Next's permanent redirects resolve to /advisors before the response
+    // reaches the browser; only assert the landed URL since redirect status
+    // chains are flaky to capture in Playwright.
+    await expect(page).toHaveURL(/\/advisors(\?|$)/);
+    expect(response).not.toBeNull();
   });
 
   test("/concierge?finder=advisor-finder auto-fires a POST /api/concierge with the mapped prompt + finder", async ({ page }) => {

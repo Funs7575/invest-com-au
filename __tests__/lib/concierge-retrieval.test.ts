@@ -55,7 +55,8 @@ describe("CONCIERGE_BASE_SYSTEM_PROMPT", () => {
         /foreign-investment. For funds, /invest/funds. For the energy sector,
         /invest/oil-gas / /invest/uranium / /invest/hydrogen.
       - For users searching for a financial advisor, point to /find-advisor
-        (the structured wizard) and /advisors/search (faceted search).
+        (the structured wizard) and /advisors (faceted directory with
+        individual, firm, and expert-team filters).
       - Decline questions about specific stocks or crypto trades — say we
         cover platforms and educational context only.
 
