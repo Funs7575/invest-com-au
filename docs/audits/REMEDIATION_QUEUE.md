@@ -54,11 +54,11 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | SP | (none yet) | (none yet) | **BLOCKED — waiting on MM-V09 completion.** | All SP tasks merged + compliance signoff |
 | MAIN-RESCUE | _complete_ | **#793 MERGED** | next 16.2.4→16.2.6 patch merged. Non-loop auto-revert PRs for failed main commits: **#827 OPEN** (reverts `d26094aa`) · **#843 OPEN** (reverts `ff43ed6f`). These are founder-action items — loop will not create duplicate fixes. | Merged to main ✓ |
 | CL | `claude/audit-remediation/cl-01-about-entity-only` | **#795 MERGED 2026-05-14** | CL-01..CL-04, CL-06, CL-09, CL-10 done. CL-07+CL-08 false-positive. CL-05 blocked (WHOIS registrar action — see Blocked). | All CL tasks merged (CL-05 blocked) |
-| LL | `claude/audit-remediation/ll-04-reviews-ratings` | **#807 MERGED 2026-05-14** · **#845 OPEN** | LL-01..LL-03 done. LL-04 in-flight (#845, CI rescue iter 397 — teams/* JSON-LD exemption). LL-05 blocked (live chat AI routing — deps V-NEW-02 + CC-06). | All LL tasks merged |
-| RR | `claude/audit-remediation/rr-01-review-extensions` | **#847 OPEN** | RR-01 false-positive (VerifiedClientBadge already implemented). RR-02 (advisor response to reviews) in-flight (#847, CI-rescue done iter 399). | All RR tasks merged |
-| EM | `claude/audit-remediation/em-03-hub-newsletter-infra` | **#848 OPEN** | EM-03 (hub-aware newsletter capture) done. EM-01 (lead magnets) done (`511976fc`): `LeadMagnetCapture` + `lib/lead-magnets.ts` 12-PDF registry + wired into SMSF+dividends hubs. Next: EM-02 (digest infrastructure). | All EM tasks merged |
-| LX | `claude/audit-remediation/lx-01-calculator-share-save` | **#849 OPEN** | LX-01 (share/save) done. LX-04 (pre-filled forms) done. LX-05 (exit-intent capture) done. LX-02 (calculator history) done (`d6e206c4`): `useCalculatorHistory` hook + `CalculatorHistory` component + wired into compound-interest calculator. Next: LX-03 (cross-calculator navigation). | All LX tasks merged |
-| OB | `claude/audit-remediation/ob-01-hub-onboarding` | **#852 OPEN** | OB-01..OB-08 done. OB-08 (`26de421`): `CRYPTO_ONBOARDING_CONFIG` + `/crypto/quiz` page + sitemap. OB-09..OB-13 (4 remaining hub configs) pending. Next: OB-09 (lump-sum investing hub onboarding quiz). | All OB tasks merged |
+| LL | `claude/audit-remediation/ll-04-reviews-ratings` | **#807 MERGED 2026-05-14** · **#845 MERGED 2026-05-17** | LL-01..LL-04 done. LL-05 blocked (live chat AI routing — deps V-NEW-02 + CC-06). **Stream stalled at LL-05 (blocked).** | All LL tasks merged (LL-05 blocked) |
+| RR | _complete_ | **#847 MERGED 2026-05-17** | RR-01 false-positive. RR-02 done. **Stream complete.** | All RR tasks merged ✓ |
+| EM | `claude/audit-remediation/em-03-hub-newsletter-infra` | **#848 MERGED 2026-05-17** | EM-03 + EM-01 done. Next: EM-02 (digest infrastructure — drip-sequence delivery mechanism). | All EM tasks merged |
+| LX | `claude/audit-remediation/lx-01-calculator-share-save` | **#849 MERGED 2026-05-15** | LX-01, LX-02, LX-04, LX-05 done. Next: LX-03 (cross-calculator navigation — comparison cart). | All LX tasks merged |
+| OB | `claude/audit-remediation/ob-09-remaining-quizzes` | **#852 MERGED 2026-05-17** · **#878 OPEN** | OB-01..OB-12 done. OB-09..OB-12 (`710dba3`): LUMP_SUM, FOREIGN_INVESTMENT, SELL_BUSINESS, HALAL_INVESTING configs + 4 quiz pages + sitemap. **Stream complete pending #878 merge.** | All OB tasks merged |
 
 ---
 
@@ -123,6 +123,19 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 418 — 2026-05-17 — queue sync + OB-09..OB-12 remaining hub quizzes
+
+- **Stream:** OB (hub onboarding flows)
+- **Item:** OB-09..OB-12 — lump-sum-investing, foreign-investment, sell-business, halal-investing diagnostic quizzes
+- **Branch:** `claude/audit-remediation/ob-09-remaining-quizzes`
+- **PR:** #878 OPEN
+- **Commit:** `710dba3`
+- **Diff:** +581 -2 across 6 files (4 new quiz pages, 1 lib config +417 LOC, 1 sitemap update)
+- **Queue sync (Phase 1):** All 5 previously-OPEN in-flight PRs were found merged by founder on 2026-05-17: #845 (LL-04 ✓), #847 (RR-02 ✓), #848 (EM-01+EM-03 ✓), #849 (LX-01+LX-02+LX-04+LX-05 ✓), #852 (OB-01..OB-08 ✓). RR stream complete. LL stalled at LL-05 (blocked).
+- **What:** Completed the OB stream. Four new `HubOnboardingConfig` exports in `lib/hub-onboarding-configs.ts`. LUMP_SUM_ONBOARDING_CONFIG (source × amount × timeline → 6 branches: redundancy ETP/super window, inheritance 90-day rule, property-sale calculator, large-amount financial planner, short-horizon savings, default lump-sum calculator). FOREIGN_INVESTMENT_ONBOARDING_CONFIG (status × focus × concern → 5 branches: property/FIRB, expat super/DASP, withholding tax+DTA, new migrant banking, default hub). SELL_BUSINESS_ONBOARDING_CONFIG (revenue × timeline × priority → 5 branches: urgent 12-month sale, CGT concessions, M&A for large businesses, legacy/EOT exit, default valuation-first). HALAL_INVESTING_ONBOARDING_CONFIG (focus × experience × amount → 6 branches: super/Crescent Wealth, home finance/MCCA+Hejaz, experienced AAOIFI self-screening, screened ETFs for new investors, large bespoke portfolio, default hub). Four quiz pages at ISR 86400 with breadcrumb JSON-LD; no ComplianceFooter (hubs not in MANDATORY_ROOTS). All 4 pages registered in sitemap med-priority block.
+- **AFSL:** lump-sum-investing, foreign-investment, sell-business, halal-investing are NOT in MANDATORY_ROOTS — no ComplianceFooter required.
+- **STATUS: PROGRESS · stream=OB · item=OB-09..OB-12 · pr=#878**
 
 ### iter 417 — 2026-05-15 — OB-08 crypto hub onboarding quiz
 
