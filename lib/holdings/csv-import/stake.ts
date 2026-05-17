@@ -32,6 +32,15 @@ import {
 
 const STAKE_BROKER_SLUG = "stake";
 
+// Temporary kill-switch — flips back when per-currency FX conversion
+// (USD/AUD against trade-date) ships. Without it, importing a USD trade
+// stores the raw USD price in cost_basis_per_share_cents (AUD), which
+// HoldingsClient + tax-summary.ts then surface as wrong AUD cost basis.
+// Codex review on PR #862 surfaced this gap; safest interim is to block.
+// Widened to `boolean` so TypeScript doesn't narrow the row.push branch
+// to dead code (defeats the kill-switch's intent and trips eslint).
+const STAKE_FX_DISABLED: boolean = true;
+
 // US-listed ticker regex: 1-5 uppercase letters, optional dot-suffix
 // (`BRK.B`). We default to NASDAQ; a small list of well-known NYSE
 // tickers is overridden below — beyond that we don't try to disambiguate,
@@ -226,6 +235,23 @@ export const parseStakeCsv: BrokerCsvParser = (csvText: string): CsvParseResult 
         rowIndex,
         rawRow: truncate(line),
         reason: `unparseable date: ${cells[colDate]}`,
+      });
+      continue;
+    }
+
+    // Stake's US export ships prices in USD. cost_basis_per_share_cents
+    // is consumed downstream (HoldingsClient + tax-summary.ts) as AUD
+    // cents — importing the raw USD price would yield materially wrong
+    // cost basis on the tax CSV. Block until per-currency FX conversion
+    // ships. (The Stake AU product exports through a different format
+    // not handled by this parser, so every row here is USD by design.)
+    // When the FX layer lands, flip STAKE_FX_DISABLED to false and the
+    // row.push path is re-enabled in-place.
+    if (STAKE_FX_DISABLED) {
+      errors.push({
+        rowIndex,
+        rawRow: truncate(line),
+        reason: `Stake CSV is USD-denominated and requires FX conversion to AUD — temporarily unsupported. Coming soon. Symbol: ${ticker}`,
       });
       continue;
     }

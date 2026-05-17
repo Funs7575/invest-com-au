@@ -32,9 +32,13 @@ import {
 
 const SELFWEALTH_BROKER_SLUG = "selfwealth";
 
-// ASX codes are 3-letter (occasionally 4). Anything outside that shape
-// is treated as `OTHER` so we don't mislabel international orders.
-const ASX_TICKER_RE = /^[A-Z]{3,4}$/;
+// ASX listing codes are typically 3 letters (e.g. CBA, BHP) but ETFs
+// regularly embed digits (e.g. A200 — BetaShares S&P/ASX 200 ETF;
+// IOZ; STW); see lib/ticker-sectors.ts for the canonical catalogue. The
+// previous `^[A-Z]{3,4}$` form rejected every digit-containing code as
+// OTHER, breaking ASX price-source lookup. Allow 3-5 chars total, first
+// char alpha, remainder alphanumeric.
+const ASX_TICKER_RE = /^[A-Z][A-Z0-9]{2,4}$/;
 
 function looksLikeSelfWealthHeader(cells: readonly string[]): boolean {
   const joined = cells.join(",").toLowerCase();
