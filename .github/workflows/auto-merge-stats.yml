@@ -69,8 +69,14 @@ jobs:
           git config user.name "auto-merge-stats-bot"
 
           if git ls-remote --exit-code origin "$BOT_BRANCH" > /dev/null 2>&1; then
+            # Shallow clones don't track arbitrary remote refs; after a
+            # bare `git fetch origin <branch>` the only reachable ref is
+            # FETCH_HEAD, not `origin/<branch>`. Checking out from
+            # FETCH_HEAD avoids the "is not a commit" failure we hit on
+            # 2026-05-17 when the previous form ran against a shallow
+            # checkout.
             git fetch origin "$BOT_BRANCH"
-            git checkout -B "$BOT_BRANCH" "origin/$BOT_BRANCH"
+            git checkout -B "$BOT_BRANCH" FETCH_HEAD
           else
             git checkout --orphan "$BOT_BRANCH"
             git rm -rf --cached . > /dev/null 2>&1 || true
