@@ -62,8 +62,7 @@ const ROUTES: RouteCheck[] = [
   { route: "/glossary", tables: [] },
 
   // Advisor marketplace
-  { route: "/advisors", tables: ["professionals"], critical: true },
-  { route: "/advisors/search", tables: ["professionals"], critical: true },
+  { route: "/advisors", tables: ["professionals", "advisor_firms", "expert_teams"], critical: true },
   { route: "/find-advisor", tables: [] },
   { route: "/for-advisors", tables: ["professionals"] },
 
@@ -171,13 +170,9 @@ async function getTableCounts(
 
   const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  // First check which tables actually exist
-  const { data: existingTables } = await supabase
-    .from("information_schema.tables" as never)
-    .select("table_name")
-    .eq("table_schema", "public");
-
-  // Fallback: just try each table
+  // Just try each table — Supabase via PostgREST doesn't expose
+  // information_schema.tables without an RPC, so the existence probe
+  // here is the per-table query below.
   for (const table of tables) {
     try {
       const { count, error } = await supabase
