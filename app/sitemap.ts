@@ -124,8 +124,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/insurance/quiz",
     "/negative-gearing", "/negative-gearing/calculator", "/negative-gearing/quiz",
     "/lump-sum-investing", "/lump-sum-investing/redundancy",
-    "/lump-sum-investing/inheritance", "/lump-sum-investing/calculator",
-    "/halal-investing",
+    "/lump-sum-investing/inheritance", "/lump-sum-investing/calculator", "/lump-sum-investing/quiz",
+    "/foreign-investment/quiz",
+    "/sell-business/quiz",
+    "/halal-investing", "/halal-investing/quiz",
     "/learn",
     // Global investing hub (outbound — AU residents → world)
     "/global-investing",
