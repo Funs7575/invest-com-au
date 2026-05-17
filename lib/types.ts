@@ -1283,6 +1283,13 @@ export const AU_LANGUAGES = [
   "French",
 ] as const;
 
+export interface ProfessionalReviewResponse {
+  id: number;
+  body: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface ProfessionalReview {
   id: number;
   professional_id: number;
@@ -1303,6 +1310,8 @@ export interface ProfessionalReview {
   lead_id?: number | null;
   created_at: string;
   updated_at: string;
+  /** Official response from the advisor being reviewed. */
+  advisor_response?: ProfessionalReviewResponse | null;
 }
 
 export interface AdvisorFirm {
