@@ -41,7 +41,10 @@ import {
   truncate,
 } from "./_utils";
 
-const IBKR_BROKER_SLUG = "ibkr";
+// Must match the slug in data/site-data.json (line 292) — anything else
+// breaks the soft-link from `investor_holdings.broker_slug` back to the
+// broker catalogue.
+const IBKR_BROKER_SLUG = "interactive-brokers";
 
 function indexOf(headers: readonly string[], ...names: readonly string[]): number {
   const targets = names.map((n) => n.toLowerCase());
@@ -257,6 +260,21 @@ export const parseIbkrCsv: BrokerCsvParser = (csvText: string): CsvParseResult =
     }
 
     const currency = (cells[colCurrency] ?? "").trim();
+
+    // Non-AUD trades: cost_basis_per_share_cents is stored as AUD cents
+    // by HoldingsClient + tax-summary.ts, but the CSV price is in the
+    // trade currency. Importing without FX conversion would yield
+    // materially wrong cost basis on the tax CSV. Block until a per-
+    // currency FX rate source ships; users with USD/GBP/HKD trades can
+    // re-import after the FX layer lands.
+    if (currency && currency.toUpperCase() !== "AUD") {
+      errors.push({
+        rowIndex,
+        rawRow: truncate(line),
+        reason: `non-AUD trades (${currency.toUpperCase()}) require FX conversion — temporarily unsupported. Coming soon.`,
+      });
+      continue;
+    }
 
     rows.push({
       ticker,
