@@ -1,3 +1,5 @@
+// dated-strings-exempt — FY2025-26 specific page; all dates are statutory deadlines
+// (30 June, 1 July, 31 Oct) that are content, not incidental stats. Updated each FY.
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
