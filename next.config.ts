@@ -120,6 +120,16 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
+      // /advisors/search retired 2026-05 — the inline filter panel on
+      // /advisors now hosts every filter the standalone page had
+      // (language, accepting-new-clients, with-intro-video) plus the
+      // filters the standalone page lacked (location/proximity, firm,
+      // min rating, specialty, shortlist). One filter UI, one result feed.
+      {
+        source: "/advisors/search",
+        destination: "/advisors",
+        permanent: true,
+      },
       // /invest/listings retired — /invest IS the marketplace landing now (no
       // more two-step "category aggregator → click again to see deals"). Pre-
       // launch consolidation, no SEO equity to preserve. Permanent redirect
