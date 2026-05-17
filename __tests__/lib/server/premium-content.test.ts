@@ -40,11 +40,14 @@ function setReport(row: unknown) {
   });
 }
 
-function setEdition(row: unknown) {
+function setEdition(row: unknown, capturedEqCalls?: [string, unknown][]) {
   mockAdminFrom.mockImplementationOnce(() => {
     const chain = {
       select: () => chain,
-      eq: () => chain,
+      eq: (col: string, val: unknown) => {
+        capturedEqCalls?.push([col, val]);
+        return chain;
+      },
       single: async () => ({ data: row, error: null }),
     };
     return chain;
@@ -160,6 +163,17 @@ describe("getGatedNewsletter", () => {
     expect(visibleText.length).toBeLessThanOrEqual(820);
     expect(res.truncatedHtml.length).toBeLessThan(longHtml.length);
     expect(res.edition?.html_content).toBe(res.truncatedHtml);
+  });
+
+  it("scopes the query to status='sent' so drafts cannot leak", async () => {
+    const captured: [string, unknown][] = [];
+    setEdition(null, captured);
+    mockGetUser.mockResolvedValueOnce({ data: { user: null } });
+
+    await getGatedNewsletter("2026-05-10");
+
+    expect(captured).toContainEqual(["status", "sent"]);
+    expect(captured).toContainEqual(["edition_date", "2026-05-10"]);
   });
 
   it("returns full html_content for Pro users", async () => {

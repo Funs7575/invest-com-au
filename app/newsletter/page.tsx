@@ -31,9 +31,9 @@ interface NewsletterEdition {
   id: number;
   edition_date: string;
   subject: string;
-  fee_changes: number;
-  articles: number;
-  deals: number;
+  fee_changes_count: number;
+  articles_count: number;
+  deals_count: number;
   created_at: string;
 }
 
@@ -46,8 +46,9 @@ export default async function NewsletterArchivePage() {
     const { data: editions } = await supabase
       .from("newsletter_editions")
       .select(
-        "id, edition_date, subject, fee_changes, articles, deals, created_at"
+        "id, edition_date, subject, fee_changes_count, articles_count, deals_count, created_at"
       )
+      .eq("status", "sent")
       .order("edition_date", { ascending: false });
     allEditions = (editions as NewsletterEdition[]) || [];
   } catch {
@@ -127,26 +128,26 @@ export default async function NewsletterArchivePage() {
                       </h2>
                     </div>
                     <div className="flex items-center gap-3 md:gap-4 shrink-0">
-                      {edition.fee_changes > 0 && (
+                      {edition.fee_changes_count > 0 && (
                         <span className="text-[0.69rem] md:text-xs font-medium px-2 py-0.5 rounded-full bg-red-50 text-red-700">
-                          {edition.fee_changes} fee{" "}
-                          {edition.fee_changes === 1
+                          {edition.fee_changes_count} fee{" "}
+                          {edition.fee_changes_count === 1
                             ? "change"
                             : "changes"}
                         </span>
                       )}
-                      {edition.articles > 0 && (
+                      {edition.articles_count > 0 && (
                         <span className="text-[0.69rem] md:text-xs font-medium px-2 py-0.5 rounded-full bg-blue-50 text-blue-700">
-                          {edition.articles}{" "}
-                          {edition.articles === 1
+                          {edition.articles_count}{" "}
+                          {edition.articles_count === 1
                             ? "article"
                             : "articles"}
                         </span>
                       )}
-                      {edition.deals > 0 && (
+                      {edition.deals_count > 0 && (
                         <span className="text-[0.69rem] md:text-xs font-medium px-2 py-0.5 rounded-full bg-amber-50 text-amber-700">
-                          {edition.deals}{" "}
-                          {edition.deals === 1 ? "deal" : "deals"}
+                          {edition.deals_count}{" "}
+                          {edition.deals_count === 1 ? "deal" : "deals"}
                         </span>
                       )}
                       <span className="text-xs md:text-sm font-semibold text-slate-400 group-hover:text-amber-600 transition-colors">

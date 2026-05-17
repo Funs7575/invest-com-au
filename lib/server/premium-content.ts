@@ -95,10 +95,16 @@ export async function getGatedNewsletter(
   editionDate: string,
 ): Promise<GatedNewsletter> {
   const supabase = createAdminClient();
+  // status='sent' filter must be carried explicitly here — the
+  // anon-client RLS policy used to enforce it for free, but this
+  // helper now uses the service-role client which bypasses RLS.
+  // Without this filter, draft / scheduled editions with guessable
+  // dates would render via /newsletter/[edition].
   const { data } = await supabase
     .from("newsletter_editions")
     .select("*")
     .eq("edition_date", editionDate)
+    .eq("status", "sent")
     .single();
 
   if (!data) {
