@@ -1,11 +1,10 @@
-import { createClient } from "@/lib/supabase/server";
 import { createStaticClient } from "@/lib/supabase/static";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME, ORGANIZATION_JSONLD } from "@/lib/seo";
 import { sanitizeHtml } from "@/lib/sanitize-html";
-import { requirePro, truncateHtml } from "@/lib/server/require-pro";
+import { getGatedNewsletter } from "@/lib/server/premium-content";
 import ProPaywall from "@/components/ProPaywall";
 
 export const revalidate = 0;
@@ -66,41 +65,15 @@ export async function generateMetadata({
   };
 }
 
-interface NewsletterEdition {
-  id: number;
-  edition_date: string;
-  subject: string;
-  html_content: string;
-  fee_changes_count: number;
-  articles_count: number;
-  deals_count: number;
-  created_at: string;
-}
-
-const PUBLIC_TEASER_CHARS = 800;
-
 export default async function NewsletterEditionPage({
   params,
 }: {
   params: Promise<{ edition: string }>;
 }) {
   const { edition } = await params;
-  const supabase = await createClient();
+  const { edition: editionData, isPro, truncatedHtml } = await getGatedNewsletter(edition);
 
-  const { data } = await supabase
-    .from("newsletter_editions")
-    .select("*")
-    .eq("edition_date", edition)
-    .single();
-
-  if (!data) notFound();
-
-  const editionData = data as NewsletterEdition;
-  const { isPro } = await requirePro();
-
-  const rawSource = isPro
-    ? editionData.html_content
-    : truncateHtml(editionData.html_content, PUBLIC_TEASER_CHARS);
+  if (!editionData) notFound();
 
   const date = new Date(editionData.edition_date + "T00:00:00Z");
   const formattedDate = date.toLocaleDateString("en-AU", {
@@ -191,15 +164,19 @@ export default async function NewsletterEditionPage({
         </div>
 
         {/* Rendered HTML content.
-            Already sanitised via lib/sanitize-html.ts before render. For non-
-            Pro readers the visible HTML is truncated to a teaser (~800 chars)
-            on the server so source-view cannot bypass the paywall — gated
-            content is never serialised to the response body. */}
+            For non-Pro readers the html source is already truncated server-
+            side in `lib/server/premium-content.ts` (the full payload never
+            leaves the server). The column-level GRANT on
+            `newsletter_editions.html_content` blocks anon/authenticated REST
+            reads of the full digest entirely — see migration
+            20260517_w2_17_premium_content_column_grants.sql. Sanitised here
+            via lib/sanitize-html.ts as defence-in-depth and to satisfy the
+            invest/no-unsafe-inner-html lint rule. */}
         <div className="border border-slate-200 rounded-2xl bg-white overflow-hidden shadow-sm">
           <div
             className="newsletter-html-content"
             data-pro-gated={!isPro || undefined}
-            dangerouslySetInnerHTML={{ __html: sanitizeHtml(rawSource) }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(truncatedHtml) }}
           />
         </div>
 
