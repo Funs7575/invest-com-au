@@ -3,8 +3,11 @@ import type { Metadata } from "next";
 import { SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import HubPage from "@/components/HubPage";
+import HubNewsletterCapture from "@/components/HubNewsletterCapture";
+import LeadMagnetCapture from "@/components/LeadMagnetCapture";
 import { DIVIDENDS_HUB_CONFIG } from "@/lib/verticals";
 import HubExitIntent from "@/components/HubExitIntent";
+import { getLeadMagnetForHub } from "@/lib/lead-magnets";
 
 export const revalidate = 3600;
 
@@ -70,10 +73,21 @@ const serviceGridNode = (
   </section>
 );
 
+const dividendsMagnet = getLeadMagnetForHub("dividends");
+
 export default function DividendsHubPage() {
   return (
     <>
-    <HubPage config={DIVIDENDS_HUB_CONFIG} serviceGrid={serviceGridNode}>
+    <HubPage
+      config={DIVIDENDS_HUB_CONFIG}
+      serviceGrid={serviceGridNode}
+      newsletterCapture={
+        <HubNewsletterCapture
+          segmentSlug="dividends-hub"
+          hubTitle="dividend investing"
+        />
+      }
+    >
       {/* SMSF franking crossover callout */}
       <section className="py-12 bg-slate-50 border-y border-slate-200">
         <div className="container-custom max-w-4xl">
@@ -104,6 +118,9 @@ export default function DividendsHubPage() {
           </div>
         </div>
       </section>
+
+      {/* Lead magnet — Franking Credits Guide */}
+      {dividendsMagnet && <LeadMagnetCapture magnet={dividendsMagnet} />}
 
       {/* Platform CTA */}
       <section className="py-12 bg-white">
