@@ -55,7 +55,7 @@ function indexOfHeader(headers: readonly string[], ...names: readonly string[]):
 function inferExchange(ticker: string, currency: string | null): ParsedHoldingRow["exchange"] {
   const upperCurrency = (currency ?? "").toUpperCase();
   if (upperCurrency === "AUD") {
-    return /^[A-Z]{3,4}$/.test(ticker) ? "ASX" : "OTHER";
+    return /^[A-Z][A-Z0-9]{2,4}$/.test(ticker) ? "ASX" : "OTHER";
   }
   if (upperCurrency === "USD") {
     // NABTrade routes US orders to NASDAQ + NYSE; without an exchange
@@ -66,7 +66,7 @@ function inferExchange(ticker: string, currency: string | null): ParsedHoldingRo
   if (upperCurrency === "HKD") return "HKEX";
   if (upperCurrency === "SGD") return "SGX";
   if (upperCurrency === "JPY") return "TYO";
-  return /^[A-Z]{3,4}$/.test(ticker) ? "ASX" : "OTHER";
+  return /^[A-Z][A-Z0-9]{2,4}$/.test(ticker) ? "ASX" : "OTHER";
 }
 
 export const parseNabTradeCsv: BrokerCsvParser = (csvText: string): CsvParseResult => {
@@ -206,6 +206,20 @@ export const parseNabTradeCsv: BrokerCsvParser = (csvText: string): CsvParseResu
     }
 
     const currency = colCurrency === -1 ? null : (cells[colCurrency] ?? null);
+
+    // Non-AUD trades: cost_basis_per_share_cents is consumed downstream
+    // (HoldingsClient, tax-summary.ts) as AUD cents — importing the raw
+    // foreign-currency price would yield wrong cost basis on the tax
+    // CSV. Block until per-currency FX conversion ships. Rows without a
+    // currency column default to AUD (ASX tab uses no Currency column).
+    if (currency && currency.toUpperCase() !== "AUD") {
+      errors.push({
+        rowIndex,
+        rawRow: truncate(line),
+        reason: `non-AUD trades (${currency.toUpperCase()}) require FX conversion — temporarily unsupported. Coming soon.`,
+      });
+      continue;
+    }
 
     rows.push({
       ticker,
