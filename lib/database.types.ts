@@ -3606,6 +3606,84 @@ export type Database = {
           },
         ]
       }
+      brief_promo_codes: {
+        Row: {
+          code: string
+          code_kind: string
+          created_at: string
+          created_by_admin: string | null
+          expires_at: string | null
+          id: number
+          max_uses: number
+          notes: string | null
+          used_count: number
+          value: number | null
+        }
+        Insert: {
+          code: string
+          code_kind: string
+          created_at?: string
+          created_by_admin?: string | null
+          expires_at?: string | null
+          id?: number
+          max_uses?: number
+          notes?: string | null
+          used_count?: number
+          value?: number | null
+        }
+        Update: {
+          code?: string
+          code_kind?: string
+          created_at?: string
+          created_by_admin?: string | null
+          expires_at?: string | null
+          id?: number
+          max_uses?: number
+          notes?: string | null
+          used_count?: number
+          value?: number | null
+        }
+        Relationships: []
+      }
+      brief_promo_redemptions: {
+        Row: {
+          brief_id: number
+          contact_email: string | null
+          id: number
+          promo_code_id: number
+          redeemed_at: string
+        }
+        Insert: {
+          brief_id: number
+          contact_email?: string | null
+          id?: number
+          promo_code_id: number
+          redeemed_at?: string
+        }
+        Update: {
+          brief_id?: number
+          contact_email?: string | null
+          id?: number
+          promo_code_id?: number
+          redeemed_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "brief_promo_redemptions_brief_id_fkey"
+            columns: ["brief_id"]
+            isOneToOne: false
+            referencedRelation: "advisor_auctions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "brief_promo_redemptions_promo_code_id_fkey"
+            columns: ["promo_code_id"]
+            isOneToOne: false
+            referencedRelation: "brief_promo_codes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       brief_risk_patterns: {
         Row: {
           category: string
@@ -7600,11 +7678,14 @@ export type Database = {
         Row: {
           accepted_brief_templates: string[] | null
           accepts_briefs: boolean
+          auto_claim_member_ids: number[]
+          auto_claim_mode: string
           created_at: string
           description: string | null
           disclosure: string | null
           firm_id: number | null
           id: number
+          last_auto_claim_index: number
           lead_professional_id: number | null
           location_state: string | null
           name: string
@@ -7614,6 +7695,7 @@ export type Database = {
           rejection_reason: string | null
           service_areas: string[] | null
           slug: string
+          specialty_tags: string[]
           team_category: string
           team_type: string
           updated_at: string
@@ -7623,11 +7705,14 @@ export type Database = {
         Insert: {
           accepted_brief_templates?: string[] | null
           accepts_briefs?: boolean
+          auto_claim_member_ids?: number[]
+          auto_claim_mode?: string
           created_at?: string
           description?: string | null
           disclosure?: string | null
           firm_id?: number | null
           id?: number
+          last_auto_claim_index?: number
           lead_professional_id?: number | null
           location_state?: string | null
           name: string
@@ -7637,6 +7722,7 @@ export type Database = {
           rejection_reason?: string | null
           service_areas?: string[] | null
           slug: string
+          specialty_tags?: string[]
           team_category: string
           team_type?: string
           updated_at?: string
@@ -7646,11 +7732,14 @@ export type Database = {
         Update: {
           accepted_brief_templates?: string[] | null
           accepts_briefs?: boolean
+          auto_claim_member_ids?: number[]
+          auto_claim_mode?: string
           created_at?: string
           description?: string | null
           disclosure?: string | null
           firm_id?: number | null
           id?: number
+          last_auto_claim_index?: number
           lead_professional_id?: number | null
           location_state?: string | null
           name?: string
@@ -7660,6 +7749,7 @@ export type Database = {
           rejection_reason?: string | null
           service_areas?: string[] | null
           slug?: string
+          specialty_tags?: string[]
           team_category?: string
           team_type?: string
           updated_at?: string
@@ -9911,6 +10001,54 @@ export type Database = {
         }
         Relationships: []
       }
+      investor_oauth_connections: {
+        Row: {
+          access_token_enc: string
+          auth_user_id: string
+          connected_at: string
+          created_at: string
+          expires_at: string
+          external_account_id: string | null
+          id: number
+          last_sync_error: string | null
+          last_synced_at: string | null
+          provider: string
+          refresh_token_enc: string | null
+          scope: string | null
+          updated_at: string
+        }
+        Insert: {
+          access_token_enc: string
+          auth_user_id: string
+          connected_at?: string
+          created_at?: string
+          expires_at: string
+          external_account_id?: string | null
+          id?: never
+          last_sync_error?: string | null
+          last_synced_at?: string | null
+          provider: string
+          refresh_token_enc?: string | null
+          scope?: string | null
+          updated_at?: string
+        }
+        Update: {
+          access_token_enc?: string
+          auth_user_id?: string
+          connected_at?: string
+          created_at?: string
+          expires_at?: string
+          external_account_id?: string | null
+          id?: never
+          last_sync_error?: string | null
+          last_synced_at?: string | null
+          provider?: string
+          refresh_token_enc?: string | null
+          scope?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       investor_profiles: {
         Row: {
           auth_user_id: string
@@ -11045,6 +11183,7 @@ export type Database = {
           fee_changes_count: number
           html_content: string | null
           id: number
+          status: string
           subject: string
         }
         Insert: {
@@ -11055,6 +11194,7 @@ export type Database = {
           fee_changes_count?: number
           html_content?: string | null
           id?: number
+          status?: string
           subject: string
         }
         Update: {
@@ -11065,6 +11205,7 @@ export type Database = {
           fee_changes_count?: number
           html_content?: string | null
           id?: number
+          status?: string
           subject?: string
         }
         Relationships: []
@@ -15424,6 +15565,7 @@ export type Database = {
           notes: string | null
           professional_id: number
           released_at: string | null
+          role: string
           status: string
           team_id: number
         }
@@ -15434,6 +15576,7 @@ export type Database = {
           notes?: string | null
           professional_id: number
           released_at?: string | null
+          role?: string
           status?: string
           team_id: number
         }
@@ -15444,6 +15587,7 @@ export type Database = {
           notes?: string | null
           professional_id?: number
           released_at?: string | null
+          role?: string
           status?: string
           team_id?: number
         }
