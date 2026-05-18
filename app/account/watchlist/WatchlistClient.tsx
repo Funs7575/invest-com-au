@@ -9,6 +9,16 @@ export interface WatchlistItem {
   item_slug: string;
   display_name: string | null;
   added_at: string;
+  /**
+   * Live headline rate (basis points) when this watched broker is a
+   * savings_account or term_deposit. Populated server-side by the
+   * watchlist page from savings_rate_snapshots; null otherwise.
+   */
+  current_rate_bps?: number | null;
+}
+
+function formatRatePct(bps: number): string {
+  return `${(bps / 100).toFixed(2)}% p.a.`;
 }
 
 const TYPE_LABELS: Record<string, string> = {
@@ -134,6 +144,11 @@ export default function WatchlistClient({ initialItems }: Props) {
                     {item.item_slug}
                   </span>
                 </Link>
+                {typeof item.current_rate_bps === "number" && (
+                  <span className="shrink-0 rounded-full bg-emerald-50 border border-emerald-200 px-2 py-0.5 text-[0.65rem] font-semibold text-emerald-800">
+                    {formatRatePct(item.current_rate_bps)}
+                  </span>
+                )}
                 <button
                   onClick={() => removeItem(item.id)}
                   disabled={removingIds.has(item.id)}

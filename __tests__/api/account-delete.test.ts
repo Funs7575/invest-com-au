@@ -62,6 +62,14 @@ vi.mock("@/lib/supabase/server", () => ({
   })),
 }));
 
+// Suppression-list integration on sendEmail (added in lib/resend.ts):
+// stub both helpers to "nothing suppressed" so the delete-route tests
+// don't fail on the inner .in() call against the test's bare supabase mock.
+vi.mock("@/lib/email-suppression", () => ({
+  getSuppressedSet: vi.fn(async () => new Set<string>()),
+  isSuppressed: vi.fn(async () => false),
+}));
+
 import { POST, DELETE } from "@/app/api/account/delete/route";
 
 function makeReq(

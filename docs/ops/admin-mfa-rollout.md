@@ -24,28 +24,55 @@ Admins who land on an admin page without a valid cookie are redirected to `/admi
 
 ## Pre-deploy checklist
 
-Complete **before** enabling this on Production:
+Complete **before** enabling this on Production. **All three variables
+below are required** — the original draft of this doc only mentioned
+`ADMIN_MFA_COOKIE_SECRET`, which caused a stuttering rollout (set var →
+redeploy → fail at enrollment with "ADMIN_MFA_KEY env var is required
+for MFA encryption" → discover next var → repeat). Set all three at
+once.
 
-### 1. Set `ADMIN_MFA_COOKIE_SECRET` in Vercel
+### 1. Generate the three secrets
 
 ```bash
-# Generate a 32-byte random secret (64 hex chars)
+# 1. Cookie HMAC secret — 32 bytes, hex
 openssl rand -hex 32
+
+# 2. TOTP-secret encryption key — 32 bytes, hex OR base64
+openssl rand -hex 32
+
+# 3. (Optional) Recovery-code pepper — any string (defaults to "invest-com-au-v1" if unset)
+openssl rand -hex 16
 ```
+
+### 2. Set them in Vercel
 
 Go to Vercel → Project → Settings → Environment Variables and add:
 
-| Variable | Environment | Value |
-|---|---|---|
-| `ADMIN_MFA_COOKIE_SECRET` | Production | `<output of openssl command>` |
-| `ADMIN_MFA_COOKIE_SECRET` | Preview | `<can be a different value>` |
-| `ADMIN_MFA_COOKIE_SECRET` | Development | `<local value ≥32 chars>` |
+| Variable | Required? | Purpose | Format |
+|---|---|---|---|
+| `ADMIN_MFA_COOKIE_SECRET` | ✅ | HMAC-signs the 12-hour `admin_mfa_verified` cookie | ≥32 chars |
+| `ADMIN_MFA_KEY` | ✅ | AES-256-GCM encrypts TOTP secrets in `admin_mfa_enrollments` | 32 bytes — 64-char hex OR base64 |
+| `ADMIN_MFA_RECOVERY_PEPPER` | ❌ | Pepper for hashed recovery codes | Any string (default: `invest-com-au-v1`) |
 
-**Without this variable set:**
+Set all three across **Production**, **Preview**, and **Development**.
+Code refs: `lib/mfa-totp.ts:217`, `lib/admin-mfa-cookie-edge.ts:40`,
+`lib/mfa-totp.ts:255`.
+
+**Recovery-pepper rotation warning:** if `ADMIN_MFA_RECOVERY_PEPPER` is
+ever rotated or set non-default after admins have enrolled, all existing
+recovery codes are invalidated. Leave it on the default unless you have
+a specific reason to rotate.
+
+**Without `ADMIN_MFA_COOKIE_SECRET`:**
 
 - The proxy gate reads the cookie but `verifyMfaCookieEdge` returns `false` (secret missing → fail closed).
-- Every authenticated admin will be redirected to `/admin/mfa/verify` on every request.
+- Every authenticated admin is redirected to `/admin/mfa/verify` on every request.
 - The verify route (`POST /api/admin/mfa/verify`) returns HTTP 500.
+
+**Without `ADMIN_MFA_KEY`:**
+
+- Admins can pass the verify step, but enrollment fails — the TOTP secret can't be encrypted before write.
+- Enrollment route (`POST /api/admin/mfa/enroll`) returns 500 with "ADMIN_MFA_KEY env var is required for MFA encryption".
 
 So set this variable **before** deploying the V-NEW-07b commit, or the admin panel will be inaccessible even to enrolled admins.
 

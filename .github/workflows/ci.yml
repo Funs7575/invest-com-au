@@ -442,6 +442,21 @@ jobs:
           GITHUB_BASE_REF: ${{ github.base_ref }}
         run: node scripts/check-stripe-idempotency.mjs
 
+  compliance-disclosure-gate:
+    name: Compliance disclosure gate (ASIC RG 234/256)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: github.event_name == 'pull_request'
+    # Verifies the org-wide compliance chain is intact:
+    # app/layout.tsx → LayoutShell → SiteFooter → compliance constants.
+    # Hard-fails if any link in that chain breaks; soft-warns on
+    # recommendation-heavy pages without inline compliance (the global
+    # footer still covers them, but inline lifts trust signals).
+    steps:
+      - uses: actions/checkout@v6
+      - name: Check compliance-disclosure chain
+        run: node scripts/check-compliance-disclosure.mjs
+
   rls-migrations-gate:
     name: RLS migration gate (new CREATE TABLE without RLS)
     runs-on: ubuntu-latest
