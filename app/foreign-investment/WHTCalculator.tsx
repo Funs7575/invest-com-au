@@ -73,10 +73,11 @@ export default function WHTCalculator({ countries, defaultRates }: Props) {
 
         {/* Gross amount */}
         <div>
-          <label className="block text-xs font-bold text-slate-700 mb-1.5">Gross amount (AUD)</label>
+          <label htmlFor="wht-gross-amount" className="block text-xs font-bold text-slate-700 mb-1.5">Gross amount (AUD)</label>
           <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
             <input
+              id="wht-gross-amount"
               type="text"
               inputMode="decimal"
               value={grossAmount}
