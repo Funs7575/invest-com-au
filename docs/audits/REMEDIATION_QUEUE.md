@@ -63,6 +63,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | DF | `claude/audit-remediation/df-01-decision-frameworks` | **#883 OPEN** · ~~#884 CLOSED (dup)~~ | DF-01 done (`49bc079`): DecisionTree engine + buy-vs-rent. DF-02 done (`972e13a`): salary-sacrifice tree. DF-03 done (`1d741e9`): SMSF-setup tree. DF-04 done (`cadd73e`): tools index updated (buy-vs-rent/salary-sacrifice/smsf-setup added to ToolsClient). **Stream complete pending #883 merge.** | All DF tasks merged |
 | QA | `claude/audit-remediation/qa-01-question-deep-dive` | **#890 OPEN** | QA-01 done (`a7c7d56`): /questions index + RSC deep-dive template + 17 seeded questions. QA-02 done (`3c0d82a`): +13 questions → 30 total (tax-loss harvesting, MLS, LITO, crypto tax, investment bonds, A-REITs, rebalancing, shares vs bonds, diversification, FHBG, age pension assets test, HECS-HELP). **Stream complete at 30 questions pending #890 merge.** | All QA tasks merged |
 | Z-23+BB-08 | `claude/audit-remediation/z-23-first-home-buyer` | **#895 OPEN** | Z-23 done (`6f33976`): `/first-home-buyer` hub page. BB-08 done: FHSS deposit calculator at `app/tools/fhss-calculator/page.tsx`. CI rescue iter 431: fixed Dated strings gate ("1 July 2017" → `// dated-ok`), JSON-LD missing (added `calculatorJsonLd`+`breadcrumbJsonLd`+`faqJsonLd`), merged main for Supabase types drift. Commit `0cdd2ee`. Last CI: pending — pushed 2026-05-18. **Stream complete pending #895 merge.** | #895 merged |
+| CD | `claude/audit-remediation/cd-01-financial-calendar` | **#900 OPEN** | CD-01 done (`e07b8e4`): `lib/financial-calendar-data.ts` (FY2025-26 data registry: 16 events, 10 thresholds, typed EventCategory/EventUrgency) + `app/tools/financial-calendar/page.tsx` (RSC, ISR 86400, calculatorJsonLd+breadcrumbJsonLd+faqJsonLd, events grouped by category with urgency badges, thresholds grid, FAQ accordion, related tools, ComplianceFooter). ToolsClient + sitemap updated. Local gates: dated-strings ✅, jsonld-coverage ✅, rate-limits 100% ✅, tsc ✅. Last CI: pending — pushed 2026-05-18. | All CD tasks merged |
 
 ---
 
@@ -127,6 +128,22 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 432 — 2026-05-18 — CD-01 Australian financial calendar
+
+- **Stream:** CD (calendar + utility features)
+- **Item:** CD-01 — Australian financial calendar page
+- **Branch:** `claude/audit-remediation/cd-01-financial-calendar`
+- **PR:** #900 OPEN
+- **Commit:** `e07b8e4`
+- **Diff:** +629 -1 across 4 files (lib/financial-calendar-data.ts +309, app/tools/financial-calendar/page.tsx +309, app/tools/ToolsClient.tsx +11, app/sitemap.ts +1)
+- **What:**
+  - **`lib/financial-calendar-data.ts`** — `.ts` data module (exempt from dated-strings gate): `FinancialEvent` + `FinancialThreshold` interfaces, `EventCategory`/`EventUrgency` union types, `FINANCIAL_EVENTS` array (16 events: super deadlines, quarterly BAS, individual tax return, CGT harvest window, SMSF annual return, FHSS contribution deadline, company tax return, Div 7A), `FINANCIAL_THRESHOLDS` array (10 items: SG rate 11.5%, concessional cap $30k, non-concessional $120k, transfer balance cap $1.9M, LISTO $500, LITO $700, Medicare levy threshold $26k, CGT 12-month discount, FHSS max $50k, FHSS per-year $15k), `CATEGORY_LABELS` + `CATEGORY_COLORS` maps, `FY = "FY2025–26"` constant.
+  - **`app/tools/financial-calendar/page.tsx`** — RSC, `revalidate = 86400`. Emits `calculatorJsonLd` + `breadcrumbJsonLd` + `faqJsonLd` (6 FAQ items). Events grouped by `CATEGORY_ORDER` (tax → super → smsf → investment → fhss → business) with date pills, urgency badges, description, notes, and optional guide links. Thresholds rendered in 3-column card grid. FAQ accordion using `<details>`/`<summary>`. Related tools strip. `ComplianceFooter variant="calculator"`. No hardcoded dates in `.tsx` source — all dates rendered from imported data.
+  - **ToolsClient.tsx** — added "Australian Financial Calendar" entry to Calculators tab.
+  - **sitemap.ts** — added `/tools/financial-calendar`.
+- **Local verification:** `node scripts/check-dated-strings.mjs` ✅ (0 bare dates in .tsx), `node scripts/check-jsonld-coverage.mjs` ✅ (336 public routes), `npm run audit:rate-limits --strict` → 100% (461 routes), `npx tsc --noEmit` ✅
+- **STATUS: PROGRESS · stream=CD · item=CD-01 · pr=#900**
 
 ### iter 431 — 2026-05-18 — CI-RESCUE Z-23+BB-08 (#895) + GT (#881) + types regen on main
 
