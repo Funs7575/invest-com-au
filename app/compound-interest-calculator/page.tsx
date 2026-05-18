@@ -3,6 +3,7 @@ import { CURRENT_YEAR, absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import { calculatorJsonLd, faqJsonLd } from "@/lib/schema-markup";
 import CompoundInterestClient from "./CompoundInterestClient";
 import ComplianceFooter from "@/components/ComplianceFooter";
+import RelatedCalculators from "@/components/RelatedCalculators";
 
 export const revalidate = 86400;
 
@@ -65,7 +66,16 @@ export default function CompoundInterestCalculatorPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
       <CompoundInterestClient />
-      <div className="container-custom pb-8"><ComplianceFooter variant="calculator" /></div>
+      <div className="container-custom pb-8">
+        <RelatedCalculators
+          items={[
+            { name: "Savings Calculator", description: "Compare savings accounts and see how your balance grows with different rates.", href: "/savings-calculator" },
+            { name: "FIRE Calculator", description: "Find your Financial Independence number and the years until you can retire.", href: "/fire-calculator" },
+            { name: "Dividend Reinvestment Calculator", description: "Model the compounding effect of reinvesting dividends over time.", href: "/dividend-reinvestment-calculator" },
+          ]}
+        />
+        <ComplianceFooter variant="calculator" />
+      </div>
 
     </>
   );
