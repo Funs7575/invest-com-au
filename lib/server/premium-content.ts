@@ -12,7 +12,7 @@ import type { QuarterlyReport } from "@/lib/types";
 import { requirePro, truncateText, truncateHtml } from "./require-pro";
 
 const NEWSLETTER_TEASER_CHARS = 800;
-const REPORT_TEASER_SECTIONS = 2;
+const REPORT_TEASER_SECTIONS = 1;
 const REPORT_TEASER_CHARS = 240;
 
 function truncateForNonPro(html: string, maxChars: number): string {
@@ -30,6 +30,22 @@ function truncateForNonPro(html: string, maxChars: number): string {
     Math.min(maxChars, Math.max(80, Math.floor(visibleLen / 2)), visibleLen - 1),
   );
   return truncateHtml(html, cap);
+}
+
+function truncateTextForNonPro(input: string, maxChars: number): string {
+  if (!input) return "";
+  // Same shape as truncateForNonPro but for plain text section bodies.
+  // `truncateText` returns its input verbatim when length ≤ maxChars,
+  // so a small report with sub-`REPORT_TEASER_CHARS` section bodies
+  // would otherwise serialise the full section payload to non-Pro
+  // readers. Force the cut at min(max, half-length, length-1) with a
+  // 40-char floor so the resulting fragment is always a strict
+  // prefix.
+  const cap = Math.max(
+    1,
+    Math.min(maxChars, Math.max(40, Math.floor(input.length / 2)), input.length - 1),
+  );
+  return truncateText(input, cap);
 }
 
 export interface NewsletterEditionRow {
@@ -91,6 +107,12 @@ export async function getGatedReport(slug: string): Promise<GatedReport> {
     newEntrants: (full.new_entrants ?? []).length,
   };
 
+  // For non-Pro: only the first section survives as a teaser, and even
+  // that section is force-truncated. The previous "first 2 sections,
+  // each ≤ teaser-chars" shape let a small report's full premium
+  // payload pass through unchanged because `truncateText` returns
+  // verbatim for short input. Limiting to one section + a forced
+  // truncation guarantees non-Pro never gets more than a fragment.
   const report: QuarterlyReport = isPro
     ? full
     : {
@@ -99,7 +121,7 @@ export async function getGatedReport(slug: string): Promise<GatedReport> {
           .slice(0, REPORT_TEASER_SECTIONS)
           .map((s) => ({
             heading: s.heading,
-            body: truncateText(s.body, REPORT_TEASER_CHARS),
+            body: truncateTextForNonPro(s.body, REPORT_TEASER_CHARS),
           })),
         fee_changes_summary: [],
         new_entrants: [],

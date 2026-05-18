@@ -95,10 +95,38 @@ describe("getGatedReport", () => {
     const res = await getGatedReport("q1-2026");
     expect(res.isPro).toBe(false);
     expect(res.totals).toEqual({ sections: 3, feeChanges: 1, newEntrants: 1 });
-    expect(res.report?.sections.length).toBe(2);
+    expect(res.report?.sections.length).toBe(1);
     expect(res.report?.sections[0]?.body.endsWith("…")).toBe(true);
     expect(res.report?.fee_changes_summary).toEqual([]);
     expect(res.report?.new_entrants).toEqual([]);
+  });
+
+  it("force-truncates short section bodies so small reports don't bypass the teaser", async () => {
+    // A report with a 50-char section body — well under
+    // REPORT_TEASER_CHARS (240). `truncateText` would return the body
+    // verbatim, leaking the full section. The non-Pro path must force
+    // a cut even on short bodies.
+    setReport({
+      id: 5,
+      title: "Sparse Quarter",
+      slug: "sparse-q",
+      quarter: "Q2",
+      year: 2026,
+      executive_summary: "exec",
+      key_findings: [],
+      sections: [{ heading: "Only Section", body: "Just fifty chars of body here, less than the cap." }],
+      fee_changes_summary: [],
+      new_entrants: [],
+      status: "published",
+    });
+    mockGetUser.mockResolvedValueOnce({ data: { user: null } });
+
+    const res = await getGatedReport("sparse-q");
+    expect(res.isPro).toBe(false);
+    expect(res.report?.sections.length).toBe(1);
+    const body = res.report?.sections[0]?.body ?? "";
+    expect(body.endsWith("…")).toBe(true);
+    expect(body.length).toBeLessThan("Just fifty chars of body here, less than the cap.".length + 1);
   });
 
   it("returns the full report for Pro users", async () => {

@@ -64,6 +64,25 @@ BEGIN;
 ALTER TABLE public.newsletter_editions
   ADD COLUMN IF NOT EXISTS status text NOT NULL DEFAULT 'sent';
 
+-- ─── newsletter_editions: drop legacy USING(true) policies ────────────
+-- 20260408_tier2_traffic_features.sql created two permissive policies
+-- (`Public read newsletter editions` and `Service write newsletter
+-- editions`) with `USING (true)`. The 20260427 migration then layered
+-- a stricter `newsletter_editions_public_read` (USING `status = 'sent'`)
+-- on top, but Postgres ORs permissive policies, so the older
+-- `USING (true)` still let anon read draft / scheduled rows. Drop them
+-- here so the `status = 'sent'` policy is the canonical row filter.
+DROP POLICY IF EXISTS "Public read newsletter editions" ON public.newsletter_editions;
+DROP POLICY IF EXISTS "Service write newsletter editions" ON public.newsletter_editions;
+
+-- Recreate the service-role write policy with an explicit role scope so
+-- it does not act as a permissive `USING (true)` for anon/authenticated.
+DROP POLICY IF EXISTS "service_role full access" ON public.newsletter_editions;
+CREATE POLICY "service_role full access"
+  ON public.newsletter_editions
+  FOR ALL TO service_role
+  USING (true) WITH CHECK (true);
+
 -- ─── quarterly_reports ────────────────────────────────────────────────
 REVOKE SELECT ON public.quarterly_reports FROM anon;
 REVOKE SELECT ON public.quarterly_reports FROM authenticated;
