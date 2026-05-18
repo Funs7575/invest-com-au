@@ -59,7 +59,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | EM | `claude/audit-remediation/em-02-hub-drip-infra` | **#848 MERGED 2026-05-17** · **#880 OPEN** | EM-03 + EM-01 done. EM-02 (`16add6f`): hub_drip_log migration + hub-subscriber-drip cron. **Stream complete pending #880 merge (Tier C).** | All EM tasks merged |
 | LX | `claude/audit-remediation/lx-03-cross-calc-nav` | **#849 MERGED 2026-05-15** · **#879 OPEN** | LX-01, LX-02, LX-03, LX-04, LX-05 done. LX-03 (`b6f675a`): RelatedCalculators component wired into 4 main calculators. **Stream complete pending #879 merge.** | All LX tasks merged |
 | OB | `claude/audit-remediation/ob-09-remaining-quizzes` | **#852 MERGED 2026-05-17** · **#878 OPEN** | OB-01..OB-12 done. OB-09..OB-12 (`710dba3`): LUMP_SUM, FOREIGN_INVESTMENT, SELL_BUSINESS, HALAL_INVESTING configs + 4 quiz pages + sitemap. **Stream complete pending #878 merge.** | All OB tasks merged |
-| GT | `claude/audit-remediation/gt-02-annual-check` | **#881 OPEN** | GT-01 blocked (needs DV-01). GT-02 done (`a4c5352`): annual financial check-up page `/account/annual-check` — personalised FY checklist for 5 investor types. NavCard added to dashboard. CI rescue iter 422: `Supabase types drift` fixed — `hub_drip_log` from EM-02 caused drift; types regen committed to main (`c5113b7`) + GT branch rebased to pick it up (`731ea21`). | All GT tasks merged |
+| GT | `claude/audit-remediation/gt-02-annual-check` | **#881 OPEN** | GT-01 blocked (needs DV-01). GT-02 done (`a4c5352`): annual financial check-up page `/account/annual-check` — personalised FY checklist for 5 investor types. NavCard added to dashboard. CI rescue iter 422: `Supabase types drift` fixed — `hub_drip_log` from EM-02 caused drift. CI rescue iter 429: `Supabase types drift` again — advisor_auctions/bids migration added to main; merged main into GT branch (`2929e91`) to pick up updated types. Axe-core still failing (systemic/blocked). | All GT tasks merged |
 | DF | `claude/audit-remediation/df-01-decision-frameworks` | **#883 OPEN** · ~~#884 CLOSED (dup)~~ | DF-01 done (`49bc079`): DecisionTree engine + buy-vs-rent. DF-02 done (`972e13a`): salary-sacrifice tree. DF-03 done (`1d741e9`): SMSF-setup tree. DF-04 done (`cadd73e`): tools index updated (buy-vs-rent/salary-sacrifice/smsf-setup added to ToolsClient). **Stream complete pending #883 merge.** | All DF tasks merged |
 | QA | `claude/audit-remediation/qa-01-question-deep-dive` | **#890 OPEN** | QA-01 done (`a7c7d56`): /questions index + RSC deep-dive template + 17 seeded questions. QA-02 done (`3c0d82a`): +13 questions → 30 total (tax-loss harvesting, MLS, LITO, crypto tax, investment bonds, A-REITs, rebalancing, shares vs bonds, diversification, FHBG, age pension assets test, HECS-HELP). **Stream complete at 30 questions pending #890 merge.** | All QA tasks merged |
 
@@ -126,6 +126,17 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 429 — 2026-05-18 — CI-RESCUE GT (#881 Supabase types drift again)
+
+- **Stream:** GT (goal tracking)
+- **Phase:** 2 — CI rescue
+- **PR:** #881 OPEN
+- **Commit:** `2929e91` (GT branch merge of main)
+- **Diff:** merge commit picking up 24 main commits including updated `lib/database.types.ts`
+- **Root cause:** PR #881 was based on `c5113b7` (pre-2026-05-18 founder feature burst). Main added 24 commits today including `20260518_advisor_auctions_and_bids_backfill.sql` migration and a fresh `lib/database.types.ts` regen. GT branch still had the old types file, causing `Supabase types drift` to fail. Fix: merged origin/main into the GT branch; resolved trivial `.driftallowlist` comment conflict (took main version).
+- **Note:** `Accessibility (axe-core on key routes)` still failing — pre-existing systemic failure per Blocked entry; GT-02 changes only touch `app/account/annual-check` + dashboard NavCard, not the 8 tested public routes.
+- **STATUS: CI-RESCUE · stream=GT · pr=#881**
 
 ### iter 428 — 2026-05-18 — QA-02 extend Q&A seed to 30 questions
 
