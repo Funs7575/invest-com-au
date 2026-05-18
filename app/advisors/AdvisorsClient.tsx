@@ -14,6 +14,7 @@ import Icon from "@/components/Icon";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import { trackEvent } from "@/lib/tracking";
 import { useAdvisorShortlist } from "@/lib/hooks/useAdvisorShortlist";
+import { ADVISOR_SPECIALTY_CATEGORIES } from "@/lib/advisor-specialties";
 
 export interface ExpertTeamCard {
   id: number;
@@ -844,13 +845,47 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               </button>
             </div>
 
-            {/* Specialties */}
+            {/* Service-line filter — SM-01: grouped by ADVISOR_SPECIALTY_CATEGORIES */}
             <div>
-              <label className="text-xs font-bold text-slate-700 mb-2 block">Specialties {specialtyFilters.length > 0 && <span className="text-amber-600">({specialtyFilters.length} selected)</span>}</label>
-              <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto">
-                {allSpecialties.map(s => (
-                  <button key={s} onClick={() => toggleSpecialty(s)} className={`px-2.5 py-1 text-[0.65rem] font-medium rounded-full transition-all ${specialtyFilters.includes(s) ? "bg-amber-100 text-amber-700 border border-amber-300" : "bg-slate-50 text-slate-500 border border-slate-200 hover:bg-slate-100"}`}>{s}</button>
-                ))}
+              <label className="text-xs font-bold text-slate-700 mb-2 block">
+                Service Line
+                {specialtyFilters.length > 0 && (
+                  <span className="text-amber-600 ml-1">({specialtyFilters.length} selected)</span>
+                )}
+              </label>
+              <div className="space-y-2 max-h-52 overflow-y-auto pr-1">
+                {ADVISOR_SPECIALTY_CATEGORIES.map(({ category, specialties }) => {
+                  const visibleSpecialties = specialties.filter(s =>
+                    allSpecialties.includes(s) || specialtyFilters.includes(s)
+                  );
+                  if (visibleSpecialties.length === 0) return null;
+                  const isCultural = category === "Cultural & Faith-Based";
+                  return (
+                    <details key={category} open={isCultural || specialties.some(s => specialtyFilters.includes(s))}>
+                      <summary className="text-[0.6rem] font-semibold text-slate-500 uppercase tracking-wide cursor-pointer select-none hover:text-slate-700 list-none flex items-center gap-1 mb-1">
+                        {isCultural && <span className="text-[0.7rem]">🌏</span>}
+                        {category}
+                      </summary>
+                      <div className="flex flex-wrap gap-1 pl-1">
+                        {visibleSpecialties.map(s => (
+                          <button
+                            key={s}
+                            onClick={() => toggleSpecialty(s)}
+                            className={`px-2 py-0.5 text-[0.6rem] font-medium rounded-full transition-all ${
+                              specialtyFilters.includes(s)
+                                ? isCultural
+                                  ? "bg-teal-100 text-teal-700 border border-teal-300"
+                                  : "bg-amber-100 text-amber-700 border border-amber-300"
+                                : "bg-slate-50 text-slate-500 border border-slate-200 hover:bg-slate-100"
+                            }`}
+                          >
+                            {s}
+                          </button>
+                        ))}
+                      </div>
+                    </details>
+                  );
+                })}
               </div>
             </div>
 
@@ -1321,6 +1356,22 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                           {pro.specialties.length > 4 && (
                             <span className="text-[0.6rem] text-slate-400 self-center">+{pro.specialties.length - 4} more</span>
                           )}
+                        </div>
+                      )}
+
+                      {/* SM-02: Language / cultural routing badges — shown when advisor speaks
+                          non-English languages, helping users identify cultural match quickly */}
+                      {(pro.languages ?? []).filter(l => l && l !== "English").length > 0 && (
+                        <div className="flex flex-wrap gap-1 mt-1.5">
+                          {(pro.languages!).filter(l => l !== "English").slice(0, 3).map(lang => (
+                            <span key={lang} className={`text-[0.6rem] font-medium px-2 py-0.5 rounded-full border ${
+                              languageFilter === lang
+                                ? "bg-indigo-100 text-indigo-700 border-indigo-300"
+                                : "bg-indigo-50 text-indigo-600 border-indigo-200"
+                            }`}>
+                              🌏 {lang}
+                            </span>
+                          ))}
                         </div>
                       )}
 
