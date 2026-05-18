@@ -5,12 +5,14 @@ import AccountKindCards from "./AccountKindCards";
 import AccountActionPlansTiles from "./AccountActionPlansTiles";
 import AccountHero from "./_components/AccountHero";
 import AccountActivityFeed from "./_components/AccountActivityFeed";
+import AccountInvestingOSTiles from "./_components/AccountInvestingOSTiles";
 import { createClient } from "@/lib/supabase/server";
 import { getKindsForUser, type KindMembership } from "@/lib/account-kinds";
 import { listPlansForUser } from "@/lib/getmatched/action-plans";
 import { listForUser as listSavedSearchesForUser } from "@/lib/saved-searches";
 import { loadDashboardState, type DashboardState } from "@/lib/account/dashboard-state";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { getSubscription } from "@/lib/server/get-subscription";
 import type { ActionPlan } from "@/lib/getmatched/types";
 
 export const dynamic = "force-dynamic";
@@ -29,12 +31,16 @@ export default async function AccountPage() {
   let savedSearchCount = 0;
   let reviewCount = 0;
   let dashboard: DashboardState | null = null;
+  let holdingsCount = 0;
+  let goalsCount = 0;
+  let rateAlertsCount = 0;
+  let isPro = false;
   try {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
       const admin = createAdminClient();
-      const [m, p, s, d, rc] = await Promise.all([
+      const [m, p, s, d, rc, hc, gc, ac, sub] = await Promise.all([
         getKindsForUser(user.id),
         listPlansForUser(user.id),
         listSavedSearchesForUser(user.id),
@@ -45,12 +51,32 @@ export default async function AccountPage() {
               .select("id", { count: "exact", head: true })
               .eq("email", user.email)
           : Promise.resolve({ count: 0, error: null }),
+        admin
+          .from("investor_holdings")
+          .select("id", { count: "exact", head: true })
+          .eq("auth_user_id", user.id),
+        admin
+          .from("investor_goals")
+          .select("id", { count: "exact", head: true })
+          .eq("auth_user_id", user.id),
+        user.email
+          ? admin
+              .from("rate_alert_subscriptions")
+              .select("id", { count: "exact", head: true })
+              .eq("email", user.email)
+              .eq("verified", true)
+          : Promise.resolve({ count: 0, error: null }),
+        getSubscription().catch(() => ({ isPro: false })),
       ]);
       memberships = m;
       plans = p;
       savedSearchCount = s.length;
       dashboard = d;
       reviewCount = rc.count ?? 0;
+      holdingsCount = hc.count ?? 0;
+      goalsCount = gc.count ?? 0;
+      rateAlertsCount = ac.count ?? 0;
+      isPro = sub.isPro;
     }
   } catch {
     /* fall through with empty data — AccountClient still renders */
@@ -84,6 +110,16 @@ export default async function AccountPage() {
             memberships={memberships}
             savedSearchCount={savedSearchCount}
             reviewCount={reviewCount}
+          />
+        </div>
+      )}
+      {dashboard && (
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 pt-8">
+          <AccountInvestingOSTiles
+            holdingsCount={holdingsCount}
+            goalsCount={goalsCount}
+            rateAlertsCount={rateAlertsCount}
+            isPro={isPro}
           />
         </div>
       )}

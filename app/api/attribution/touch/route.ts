@@ -22,6 +22,14 @@ const TouchBody = z.object({
   value_cents: z.number().optional(),
 });
 
+// Wealth-stack attribution (FIN_NOTEBOOK Revenue #1): clients carry the
+// stackId + per-component kind in the affiliate URL query string
+// (?stack_id=…&stack_kind=…). Today those land in the PostHog event
+// payload via wealth_stack_cta_click; the attribution_touches DB path
+// doesn't capture them yet (needs a migration adding stack_id /
+// stack_kind columns to attribution_touches). Logged as item 5 in the
+// post-launch follow-on plan.
+
 /**
  * POST /api/attribution/touch
  *

@@ -7,6 +7,7 @@ import { escapeHtml } from "@/lib/html-escape";
 import { getSiteUrl } from "@/lib/url";
 import { ADMIN_EMAIL } from "@/lib/admin";
 import { wrapCronHandler } from "@/lib/cron-run-log";
+import { postToSlack } from "@/lib/slack-webhook";
 
 const log = logger("cron:afsl-expiry-monitor");
 
@@ -113,6 +114,28 @@ async function handler(req: NextRequest) {
   }
 
   log.info("AFSL expiry monitor completed", stats);
+
+  // FIN_NOTEBOOK item 20 — Slack fan-out on compliance-critical findings.
+  // Ceased + suspended events both auto-pause the advisor, so the operator
+  // needs to know immediately. Errors get a quieter ops-alerts ping so the
+  // cron's reliability is visible.
+  const flagged = stats.flagged_ceased + stats.flagged_suspended;
+  if (flagged > 0) {
+    void postToSlack({
+      channel: "slo-alerts",
+      text: `🚨 *AFSL register check* — ${stats.flagged_ceased} ceased, ${stats.flagged_suspended} suspended (auto-paused). ${stats.scanned} advisors scanned, ${stats.errored} lookups errored.`,
+    }).catch((err) =>
+      log.warn("Slack flagged post failed", { err: err instanceof Error ? err.message : String(err) }),
+    );
+  } else if (stats.errored > 0) {
+    void postToSlack({
+      channel: "ops-alerts",
+      text: `AFSL register check: ${stats.errored} lookups errored out of ${stats.scanned} scanned (no licences flagged).`,
+    }).catch((err) =>
+      log.warn("Slack errored post failed", { err: err instanceof Error ? err.message : String(err) }),
+    );
+  }
+
   return NextResponse.json({ ok: true, ...stats });
 }
 

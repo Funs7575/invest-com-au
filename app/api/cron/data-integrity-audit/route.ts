@@ -3,6 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 import { requireCronAuth } from "@/lib/cron-auth";
 import { wrapCronHandler } from "@/lib/cron-run-log";
+import { postToSlack } from "@/lib/slack-webhook";
 
 const log = logger("cron:data-integrity-audit");
 
@@ -181,12 +182,18 @@ async function handler(req: NextRequest) {
 
   const supabase = createAdminClient();
   const stats = { checks: CHECKS.length, issues_found: 0, failed: 0 };
+  const criticalIssues: Array<{ name: string; count: number }> = [];
   const nowIso = new Date().toISOString();
 
   for (const check of CHECKS) {
     try {
       const result = await check.run(supabase);
-      if (result.count > 0) stats.issues_found++;
+      if (result.count > 0) {
+        stats.issues_found++;
+        if (check.severity === "critical") {
+          criticalIssues.push({ name: check.name, count: result.count });
+        }
+      }
 
       await supabase.from("data_integrity_issues").upsert(
         {
@@ -210,6 +217,28 @@ async function handler(req: NextRequest) {
   }
 
   log.info("data integrity audit completed", stats);
+
+  // FIN_NOTEBOOK item 20 — Slack fan-out for critical findings only. Info /
+  // warn-severity issues stay in the admin dashboard; pages-everyone alerts
+  // are reserved for cases that block real flows (orphaned leads, broken FK
+  // references, impossible states).
+  if (criticalIssues.length > 0) {
+    const lines = criticalIssues.map((i) => `• \`${i.name}\` — ${i.count} row${i.count === 1 ? "" : "s"}`).join("\n");
+    void postToSlack({
+      channel: "slo-alerts",
+      text: `🚨 *Data integrity audit* found ${criticalIssues.length} critical issue${criticalIssues.length === 1 ? "" : "s"}:\n${lines}`,
+    }).catch((err) =>
+      log.warn("Slack critical-issues post failed", { err: err instanceof Error ? err.message : String(err) }),
+    );
+  } else if (stats.failed > 0) {
+    void postToSlack({
+      channel: "ops-alerts",
+      text: `Data integrity audit completed: ${stats.failed} of ${stats.checks} checks errored (no critical issues).`,
+    }).catch((err) =>
+      log.warn("Slack failed-checks post failed", { err: err instanceof Error ? err.message : String(err) }),
+    );
+  }
+
   return NextResponse.json({ ok: true, ...stats });
 }
 

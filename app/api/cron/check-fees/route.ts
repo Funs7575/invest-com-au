@@ -5,6 +5,7 @@ import { feeChangeAlertEmail } from "@/lib/email-templates";
 import { logger } from "@/lib/logger";
 import { requireCronAuth } from "@/lib/cron-auth";
 import { buildEmailToUserIdMap, notifyUser } from "@/lib/notifications";
+import { postToSlack } from "@/lib/slack-webhook";
 
 const log = logger("cron-check-fees");
 
@@ -239,6 +240,21 @@ export async function GET(req: NextRequest) {
     }
   }
 
+  // Slack fan-out — fire-and-forget so a misconfigured webhook doesn't
+  // block the email path. Pre-launch: no SLACK_WEBHOOK_* env vars set,
+  // so postToSlack returns {ok:false} silently. Once configured the
+  // content team gets every fee change within 24h, before user emails
+  // go out.
+  if (changedBrokers.length > 0) {
+    const slackLines = changedBrokers
+      .map((b) => `• *${b.name}* — ${b.detail}`)
+      .join("\n");
+    void postToSlack({
+      channel: "fee-changes",
+      text: `Fee changes detected on ${changedBrokers.length} broker${changedBrokers.length > 1 ? "s" : ""}:\n${slackLines}`,
+    }).catch((err) => log.warn("Slack fee-change post failed", { err: err instanceof Error ? err.message : String(err) }));
+  }
+
   // Send admin alert if any fees changed
   if (changedBrokers.length > 0 && process.env.RESEND_API_KEY) {
     const changeList = changedBrokers.map(b => 
@@ -268,7 +284,6 @@ export async function GET(req: NextRequest) {
       // Signed-in subscribers get an inbox notification; email-only
       // subscribers just receive the outbound email.
       const emailToUserId = await buildEmailToUserIdMap();
-      const changedSlugs = changedBrokers.map((b) => b.slug);
 
       for (const sub of subscribers.slice(0, 50)) {
         // Filter changes by subscriber's broker_slugs preference
