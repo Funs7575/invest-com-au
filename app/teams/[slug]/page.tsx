@@ -17,6 +17,7 @@ import {
   getPublicTestimonials,
 } from "@/lib/outcomes/profile-display";
 import { computeSquadTier } from "@/lib/expert-teams/badge-tier";
+import { getOnlineProsBatch } from "@/lib/presence";
 import SquadStack from "./_components/SquadStack";
 import BundledPricePreview from "./_components/BundledPricePreview";
 
@@ -143,6 +144,11 @@ export default async function TeamProfilePage({ params }: PageProps) {
     getPublicTestimonials({ teamId: team.id, limit: 5 }),
   ]);
 
+  // Presence indicator — how many squad members are pinging right now
+  // (heartbeat from /teams/[slug]/inbox). Fail-soft to empty set.
+  const onlineProIds = await getOnlineProsBatch(proIds);
+  const onlineNow = onlineProIds.size;
+
   // Is the calling visitor an active member of this team? If so, surface
   // the "Open squad inbox" link in the trust strip. We resolve the user
   // via the anon auth cookie, then look up the professional + membership
@@ -224,6 +230,18 @@ export default async function TeamProfilePage({ params }: PageProps) {
             <span className="text-xs text-slate-500">
               {String(team.team_category).replace(/_/g, " ")} · {String(team.team_type).replace(/_/g, " ")}
             </span>
+            {onlineNow > 0 && (
+              <span
+                className="inline-flex items-center gap-1.5 text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 px-2 py-1 rounded-full"
+                title="Squad members with an active session in the last 5 minutes"
+              >
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                </span>
+                {onlineNow} member{onlineNow === 1 ? "" : "s"} online
+              </span>
+            )}
             {isActiveMember && (
               <Link
                 href={`/teams/${slug}/inbox`}
