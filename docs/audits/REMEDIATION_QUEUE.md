@@ -59,11 +59,11 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | EM | `claude/audit-remediation/em-02-hub-drip-infra` | **#848 MERGED 2026-05-17** · **#880 OPEN** | EM-03 + EM-01 done. EM-02 (`16add6f`): hub_drip_log migration + hub-subscriber-drip cron. **Stream complete pending #880 merge (Tier C).** | All EM tasks merged |
 | LX | `claude/audit-remediation/lx-03-cross-calc-nav` | **#849 MERGED 2026-05-15** · **#879 OPEN** | LX-01, LX-02, LX-03, LX-04, LX-05 done. LX-03 (`b6f675a`): RelatedCalculators component wired into 4 main calculators. **Stream complete pending #879 merge.** | All LX tasks merged |
 | OB | `claude/audit-remediation/ob-09-remaining-quizzes` | **#852 MERGED 2026-05-17** · **#878 OPEN** | OB-01..OB-12 done. OB-09..OB-12 (`710dba3`): LUMP_SUM, FOREIGN_INVESTMENT, SELL_BUSINESS, HALAL_INVESTING configs + 4 quiz pages + sitemap. **Stream complete pending #878 merge.** | All OB tasks merged |
-| GT | `claude/audit-remediation/gt-02-annual-check` | **#881 OPEN** | GT-01 blocked (needs DV-01). GT-02 done (`a4c5352`): annual financial check-up page `/account/annual-check` — personalised FY checklist for 5 investor types. NavCard added to dashboard. CI rescue iter 422: `Supabase types drift` fixed — `hub_drip_log` from EM-02 caused drift. CI rescue iter 429: `Supabase types drift` again — advisor_auctions/bids migration; merged main (`2929e91`). CI rescue iter 431: `Supabase types drift` again — 3 new tables (brief_promo_codes, brief_promo_redemptions, investor_oauth_connections) from founder PRs #891–#893; types regen on main (`b9b57b5`), then merged into GT (`241721f`). Axe-core still failing (systemic/blocked). Last CI: pending — pushed `241721f` 2026-05-18. | All GT tasks merged |
+| GT | `claude/audit-remediation/gt-02-annual-check` | **#881 OPEN** | GT-01 blocked (needs DV-01). GT-02 done (`a4c5352`): annual financial check-up page `/account/annual-check` — personalised FY checklist for 5 investor types. NavCard added to dashboard. CI rescue iter 422: `Supabase types drift` fixed — `hub_drip_log` from EM-02 caused drift. CI rescue iter 429: `Supabase types drift` again — advisor_auctions/bids migration; merged main (`2929e91`). CI rescue iter 431: `Supabase types drift` again — 3 new tables (brief_promo_codes, brief_promo_redemptions, investor_oauth_connections) from founder PRs #891–#893; types regen on main (`b9b57b5`), then merged into GT (`241721f`). CI rescue iter 433: `Database types drift gate` — same 3 founder tables still failing after types regen (gate uses migrations not types); fixed by allowlisting in `.driftallowlist` (`947d14d` on main), then merging into GT (`f39e995`). Axe-core still failing (systemic/blocked). Last CI: pending — pushed `f39e995` 2026-05-18. | All GT tasks merged |
 | DF | `claude/audit-remediation/df-01-decision-frameworks` | **#883 OPEN** · ~~#884 CLOSED (dup)~~ | DF-01 done (`49bc079`): DecisionTree engine + buy-vs-rent. DF-02 done (`972e13a`): salary-sacrifice tree. DF-03 done (`1d741e9`): SMSF-setup tree. DF-04 done (`cadd73e`): tools index updated (buy-vs-rent/salary-sacrifice/smsf-setup added to ToolsClient). **Stream complete pending #883 merge.** | All DF tasks merged |
 | QA | `claude/audit-remediation/qa-01-question-deep-dive` | **#890 OPEN** | QA-01 done (`a7c7d56`): /questions index + RSC deep-dive template + 17 seeded questions. QA-02 done (`3c0d82a`): +13 questions → 30 total (tax-loss harvesting, MLS, LITO, crypto tax, investment bonds, A-REITs, rebalancing, shares vs bonds, diversification, FHBG, age pension assets test, HECS-HELP). **Stream complete at 30 questions pending #890 merge.** | All QA tasks merged |
 | Z-23+BB-08 | `claude/audit-remediation/z-23-first-home-buyer` | **#895 OPEN** | Z-23 done (`6f33976`): `/first-home-buyer` hub page. BB-08 done: FHSS deposit calculator at `app/tools/fhss-calculator/page.tsx`. CI rescue iter 431: fixed Dated strings gate ("1 July 2017" → `// dated-ok`), JSON-LD missing (added `calculatorJsonLd`+`breadcrumbJsonLd`+`faqJsonLd`), merged main for Supabase types drift. Commit `0cdd2ee`. Last CI: pending — pushed 2026-05-18. **Stream complete pending #895 merge.** | #895 merged |
-| CD | `claude/audit-remediation/cd-01-financial-calendar` | **#900 OPEN** | CD-01 done (`e07b8e4`): `lib/financial-calendar-data.ts` (FY2025-26 data registry: 16 events, 10 thresholds, typed EventCategory/EventUrgency) + `app/tools/financial-calendar/page.tsx` (RSC, ISR 86400, calculatorJsonLd+breadcrumbJsonLd+faqJsonLd, events grouped by category with urgency badges, thresholds grid, FAQ accordion, related tools, ComplianceFooter). ToolsClient + sitemap updated. Local gates: dated-strings ✅, jsonld-coverage ✅, rate-limits 100% ✅, tsc ✅. Last CI: pending — pushed 2026-05-18. | All CD tasks merged |
+| CD | `claude/audit-remediation/cd-01-financial-calendar` · `claude/audit-remediation/cd-01-calendar-utility` | **#900 OPEN** · **#902 OPEN** | CD-01 done (`e07b8e4`): public `/tools/financial-calendar` (PR #900). CD-01 account-gated (`5142821`): `/account/calendar` personalised deadline calendar (PR #902). CD-02 done (`3ff2353`): `/tools/currency-converter` + `CurrencyConverterClient` — 15 currencies, FIRB thresholds context, static mid-market rates (PR #902). CD-03 done (`3ff2353`): `/pricing` — 5 fee tables for financial planners/brokers/tax accountants/buyer's agents/SMSF specialists (PR #902). CI rescue iter 435: `Dated strings gate` fixed — "1 July 2025" in calendar description (`// dated-ok`), commit `5142821`. **Stream complete pending #900 + #902 merge.** | All CD tasks merged |
 
 ---
 
@@ -128,6 +128,46 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 435 — 2026-05-18 — CI-RESCUE CD (#902 dated strings gate)
+
+- **Stream:** CD (calendar + utility features)
+- **Phase:** 2 — CI rescue
+- **PR:** #902 OPEN
+- **Branch:** `claude/audit-remediation/cd-01-calendar-utility`
+- **Commit:** `5142821`
+- **Diff:** +1 -1 in `app/account/calendar/page.tsx`
+- **Root cause:** `Dated strings gate` flagged `"1 July 2025"` on line 46 of the calendar page — a description string for the "New financial year begins" deadline card that referenced the SG rate legislative change date (a fixed historical fact). The pattern `\d{1,2}\s+July\s+\d{4}` matched. Fix: appended `// dated-ok` to the end of that line. Gate now passes: 0 bare date violations.
+- **Local verification:** `node scripts/check-dated-strings.mjs` ✅ (all dates wrapped)
+- **STATUS: CI-RESCUE · stream=CD · pr=#902**
+
+### iter 434 — 2026-05-18 — CD-01 account calendar + CD-02 currency converter + CD-03 pricing transparency
+
+- **Stream:** CD (calendar + utility features)
+- **Items:** CD-01 (account-gated financial calendar), CD-02 (AUD currency converter), CD-03 (advisor fee transparency / pricing page)
+- **Branch:** `claude/audit-remediation/cd-01-calendar-utility`
+- **PR:** #902 OPEN
+- **Commit:** `3ff2353`
+- **Diff:** +1009 -1 across 7 files
+- **What:**
+  - **CD-01 account calendar (`app/account/calendar/page.tsx`)** — RSC behind `enforcePortalKind("investor")`, `dynamic = "force-dynamic"`, `robots: "noindex, nofollow"`. `FY26_DEADLINES` array (8 entries: EOFY, super concessional cap, new FY, Oct tax return, PAYG, Q1+Q2+Q3 BAS). `ONGOING` array (4 annual review items). Personalised `extraDeadlines` for 4 investor types: FHB → FHSS withdrawal request, pre-retiree → non-concessional cap, business owner → company tax return, cross-border → foreign income disclosure. `TAG_COLORS` map, `DeadlineCard` sub-component. Sidebar: key numbers (caps, SG rate, Div293), find-a-tax-accountant CTA, useful tools links. `GENERAL_ADVICE_WARNING` footer. Added "Financial Calendar" NavCard (📅) to `app/account/dashboard/page.tsx`.
+  - **CD-02 currency converter (`app/tools/currency-converter/page.tsx` + `CurrencyConverterClient.tsx`)** — RSC wrapper exports metadata + breadcrumb JSON-LD (canonical, revalidate 86400); `CurrencyConverterClient` is "use client". Converts AUD ↔ 15 currencies: USD, GBP, EUR, JPY, CNY, SGD, HKD, NZD, CAD, CHF, INR, THB, IDR, MYR, ZAR. Static mid-market indicative rates. Swap button, full rate sidebar, Australian context table (FIRB residential $1.21M / commercial $269k, SIV visa $5M, Business Innovation $800k, super caps in target currency). FX provider CTA to comparison page.
+  - **CD-03 pricing transparency (`app/pricing/page.tsx`)** — RSC, revalidate 86400, breadcrumb JSON-LD. Five fee tables: Financial Planners (SoA $2.5k–$6k, ongoing $3.5k–$12k pa), Mortgage Brokers (free to consumer — commission in Credit Guide), Tax Accountants (simple $150–$400, complex $400–$1.5k, SMSF $2k–$4.5k), Buyer's Agents (1.5–3% purchase price), SMSF Specialists (setup $1.5k–$3k, admin $2.5k–$5k pa). "Tips for negotiating fees" (5 items). `AFSL_STATUS_DISCLOSURE` from `lib/compliance.ts` in footer.
+  - **ToolsClient.tsx** — added "AUD Currency Converter" entry (Calculators category, rating 5, internal=true).
+  - **sitemap.ts** — added `/tools/currency-converter` and `/pricing`.
+- **Note:** PR #900 (concurrent session, branch `cd-01-financial-calendar`) covers the complementary public `/tools/financial-calendar` page. Both PRs touch different files — no conflicts.
+- **STATUS: PROGRESS · stream=CD · item=CD-01+CD-02+CD-03 · pr=#902**
+
+### iter 433 — 2026-05-18 — CI-RESCUE GT (#881 Database types drift gate)
+
+- **Stream:** GT (goal tracking)
+- **Phase:** 2 — CI rescue
+- **PR:** #881 OPEN
+- **Commits:**
+  - `947d14d` — fix(db): allowlist 3 founder-dashboard tables in .driftallowlist (main)
+  - `f39e995` — merge main into GT branch (`claude/audit-remediation/gt-02-annual-check`)
+- **Root cause:** `Database types drift gate` was failing on PR #881 even after iter 431's types regen (`b9b57b5`). The drift gate compares `lib/database.types.ts` against `supabase/migrations/*.sql`, NOT the live DB. The 3 founder-dashboard tables (`brief_promo_codes`, `brief_promo_redemptions`, `investor_oauth_connections`) from PRs #891–#893 have no migration files — they were created via the Supabase dashboard directly. Types regen adds them to `database.types.ts`, which makes the Supabase types drift gate (live-DB vs types) pass, but the migration-based drift gate still fails. Fix: added all 3 tables to `.driftallowlist` with explanatory comments, committed `947d14d` directly to main, then merged updated main into GT branch (`f39e995`). `.driftallowlist` now has 21 entries; gate passes (334 type-declared tables, 320 migration-backed, 21 allowlisted → 334-21=313 ≤ 320).
+- **STATUS: CI-RESCUE · stream=GT · pr=#881**
 
 ### iter 432 — 2026-05-18 — CD-01 Australian financial calendar
 
