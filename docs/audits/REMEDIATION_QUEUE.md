@@ -66,6 +66,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | SM | `claude/audit-remediation/sm-service-cultural` | **#904 OPEN** | SM-01 done (`819465d`): grouped service-line specialty filter by `ADVISOR_SPECIALTY_CATEGORIES` in advisor listing (replaces flat alpha chips). SM-02 done (`819465d`): "Cultural & Faith-Based" category added to specialty taxonomy (Halal, ESG, Buddhist, Bilingual etc.); non-English language badges on advisor cards (🌏 indigo pills). **Stream complete pending #904 merge.** | All SM tasks merged |
 | MK | `claude/audit-remediation/mk-marketplace-conversion` | **#903 OPEN** | MK-01 done (`773c0e8`): `AdvisorCalendarEmbed` — inline Calendly/Cal.com iframe embed on advisor profile; falls back to link for other URLs. MK-02 done (`773c0e8`): `AdvisorVideoIntro` — lazy poster-overlay player replacing bare iframe; YouTube thumbnail auto-fetch + Vimeo support. Both wired into `AdvisorProfileClient`. **Stream complete pending #903 merge.** | All MK tasks merged |
 | CD | `claude/audit-remediation/cd-01-financial-calendar` · `claude/audit-remediation/cd-01-calendar-utility` | **#900 OPEN** · **#902 OPEN** | CD-01 done (`e07b8e4`): public `/tools/financial-calendar` (PR #900). CD-01 account-gated (`5142821`): `/account/calendar` personalised deadline calendar (PR #902). CD-02 done (`3ff2353`): `/tools/currency-converter` + `CurrencyConverterClient` — 15 currencies, FIRB thresholds context, static mid-market rates (PR #902). CD-03 done (`3ff2353`): `/pricing` — 5 fee tables for financial planners/brokers/tax accountants/buyer's agents/SMSF specialists (PR #902). CI rescue iter 435: `Dated strings gate` fixed — "1 July 2025" in calendar description (`// dated-ok`), commit `5142821`. **Stream complete pending #900 + #902 merge.** | All CD tasks merged |
+| CM | `claude/audit-remediation/cm-01-multi-advisor-matching` | **#905 OPEN** | CM-01 done (`5e3db01`): `/find-advisor/life-event` landing page — 17 life events across 6 categories → advisor routing; `lib/life-events.ts` data layer; `?context=` pre-fill param added to `lib/prefill-url.ts` + `/find-advisor`; sitemap updated. **Stream complete pending #905 merge.** | All CM tasks merged |
 
 ---
 
@@ -130,6 +131,24 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 439 — 2026-05-18 — CM-01 life-event matching / multi-advisor routing
+
+- **Stream:** CM (multi-advisor / life-event matching)
+- **Item:** CM-01 — life-event landing page + advisor routing
+- **Branch:** `claude/audit-remediation/cm-01-multi-advisor-matching`
+- **PR:** #905 OPEN
+- **Commit:** `5e3db01`
+- **Diff:** ~520 lines across 5 files (lib/life-events.ts +163, app/find-advisor/life-event/page.tsx +220, lib/prefill-url.ts +7, app/find-advisor/page.tsx +14, app/sitemap.ts +1)
+- **What:**
+  - **`lib/life-events.ts`** — core data layer: `LifeEvent` type (id, emoji, title, subtitle, category, need, context[], suggestedTypes, relatedHub), `LIFE_EVENT_CATEGORIES` (6 categories), `LIFE_EVENTS` array (17 events: buying first home, investment property, refinancing, getting married, having baby, getting divorced, aged care planning, redundancy, new job, moving to AU, inheritance, SMSF setup, crypto tax, selling business, starting business, approaching retirement, estate planning), `buildLifeEventUrl()` helper.
+  - **`lib/prefill-url.ts`** — extended `AdvisorPrefillOptions` with `context?: string[]`; `buildAdvisorUrl` now serialises context as `?context=item1,item2`.
+  - **`app/find-advisor/page.tsx`** — reads `?context=` param on mount; pre-selects Step 2 checkboxes; adds "Find by life event instead" link below Step 1 trust signals.
+  - **`app/find-advisor/life-event/page.tsx`** — RSC landing page at `/find-advisor/life-event`; `revalidate = 86400`; canonical + OG metadata; `BreadcrumbList` + `FAQPage` JSON-LD; card grid grouped by category → `buildLifeEventUrl()` for each card; fallback "find by financial goal" CTA; FAQ accordion; trust signals.
+  - **`app/sitemap.ts`** — `/find-advisor/life-event` added to high-priority static pages.
+- **Local gates:** `node scripts/check-dated-strings.mjs` ✅, `node scripts/check-jsonld-coverage.mjs` ✅, `npm run audit:rate-limits --strict` → 100%
+- **Tier:** A (new page + lib data layer + URL param extension — no API/schema/auth changes)
+- **STATUS: PROGRESS · stream=CM · item=CM-01 · pr=#905**
 
 ### iter 438 — 2026-05-18 — CI-RESCUE Z-23+BB-08 (#895 Vercel build failure)
 
