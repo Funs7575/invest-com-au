@@ -7,6 +7,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { isFlagEnabled } from "@/lib/feature-flags";
 import { getAdminEmails } from "@/lib/admin";
+import { listServiceLines } from "@/lib/marketplace/service-lines";
 
 export const dynamic = "force-dynamic";
 
@@ -151,6 +152,43 @@ export default async function PartnerAuctionsPage({ searchParams }: PageProps) {
         >
           Email a bid change &rarr;
         </Link>
+      </section>
+
+      {/* FIN_NOTEBOOK item 16 — service-line preview ahead of the self-serve
+          bid form. Once legal signs off on the quality-multiplier model and
+          the bid UI lands, advisors will pick from this taxonomy instead of
+          free-text specialties. Showing it now so advisors can see what
+          they'll be bidding on. */}
+      <section className="mt-6 rounded-xl border border-slate-200 bg-white p-5">
+        <h2 className="text-sm font-semibold text-slate-900">Service lines (preview)</h2>
+        <p className="mt-2 text-xs text-slate-500">
+          When self-serve bidding lands, you&apos;ll bid per service-line rather than per advisor
+          category. Cross-border lines (marked LTV) carry a 1.75× premium per lead.
+        </p>
+        <ul className="mt-3 space-y-2">
+          {listServiceLines().map((line) => (
+            <li key={line.slug} className="flex items-start justify-between gap-3 rounded-lg border border-slate-100 bg-slate-50 px-3 py-2">
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-slate-900">
+                  {line.label}
+                  {line.highLtv && (
+                    <span className="ml-2 inline-block rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-amber-800">
+                      High LTV
+                    </span>
+                  )}
+                </p>
+                <p className="text-[11px] text-slate-500 mt-0.5">
+                  Specialties: {line.specialties.join(" · ")}
+                </p>
+              </div>
+              <p className="shrink-0 text-xs text-slate-600 whitespace-nowrap">
+                {line.feeRangeCents.min === 0 && line.feeRangeCents.max === 0
+                  ? "Fee varies"
+                  : `$${(line.feeRangeCents.min / 100).toLocaleString()}-${(line.feeRangeCents.max / 100).toLocaleString()}`}
+              </p>
+            </li>
+          ))}
+        </ul>
       </section>
 
       <p className="mt-8 text-[0.65rem] text-slate-400">

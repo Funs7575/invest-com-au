@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import type { Professional, ProfessionalLead } from "@/lib/types";
 import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
+import AdvisorAIDraftModal from "./_components/AdvisorAIDraftModal";
 
 const EMPTY_ADVISOR: Partial<Professional> = {
   name: "", slug: "", firm_name: "", type: "smsf_accountant", specialties: [],
@@ -27,6 +28,9 @@ export default function AdminAdvisorsPage() {
   const [specialtyInput, setSpecialtyInput] = useState("");
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [expandedAppId, setExpandedAppId] = useState<number | null>(null);
+  const [aiDraftOpen, setAiDraftOpen] = useState(false);
+  const [aiFlags, setAiFlags] = useState<string[]>([]);
+  const [aiServiceLines, setAiServiceLines] = useState<string[]>([]);
   const [appStatusFilter, setAppStatusFilter] = useState<"all" | "pending" | "approved" | "rejected">("all");
   const [appTypeFilter, setAppTypeFilter] = useState<string>("all");
   const [appStateFilter, setAppStateFilter] = useState<string>("all");
@@ -90,6 +94,8 @@ export default function AdminAdvisorsPage() {
     }
     setSaving(false);
     setEditing(null);
+    setAiFlags([]);
+    setAiServiceLines([]);
     loadData();
   };
 
@@ -172,9 +178,48 @@ export default function AdminAdvisorsPage() {
       {/* ─── ADVISORS TAB ─── */}
       {tab === "advisors" && (
         <>
-          <button onClick={() => setEditing({ ...EMPTY_ADVISOR })} className="mb-4 px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg text-sm hover:bg-blue-700">
-            + Add Advisor
-          </button>
+          <div className="mb-4 flex gap-2 flex-wrap">
+            <button onClick={() => setEditing({ ...EMPTY_ADVISOR })} className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg text-sm hover:bg-blue-700">
+              + Add Advisor
+            </button>
+            <button
+              onClick={() => setAiDraftOpen(true)}
+              className="px-4 py-2 bg-violet-600 text-white font-semibold rounded-lg text-sm hover:bg-violet-700"
+              title="AI-drafted profile (you review before saving)"
+            >
+              ✨ Draft with AI
+            </button>
+          </div>
+
+          {aiDraftOpen && (
+            <AdvisorAIDraftModal
+              onClose={() => setAiDraftOpen(false)}
+              onApply={(draft) => {
+                const { _ai_flags, _ai_service_lines, ...rest } = draft;
+                setEditing({ ...EMPTY_ADVISOR, ...rest });
+                setAiFlags(_ai_flags ?? []);
+                setAiServiceLines(_ai_service_lines ?? []);
+                setAiDraftOpen(false);
+              }}
+            />
+          )}
+
+          {editing && aiFlags.length > 0 && (
+            <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-3">
+              <p className="text-xs font-bold uppercase tracking-wide text-amber-800 mb-1">
+                AI flags — verify before saving
+              </p>
+              <ul className="text-xs text-amber-900 space-y-1 list-disc pl-4">
+                {aiFlags.map((f, i) => <li key={i}>{f}</li>)}
+              </ul>
+              {aiServiceLines.length > 0 && (
+                <p className="text-xs text-amber-900 mt-2">
+                  Suggested service lines (taxonomy in <code>lib/marketplace/service-lines.ts</code>):{" "}
+                  <strong>{aiServiceLines.join(", ")}</strong>
+                </p>
+              )}
+            </div>
+          )}
 
           {/* Edit/Create Form */}
           {editing && (
@@ -314,7 +359,7 @@ export default function AdminAdvisorsPage() {
                 <button onClick={handleSave} disabled={saving} className="px-6 py-2 bg-slate-900 text-white font-semibold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50">
                   {saving ? "Saving..." : "Save"}
                 </button>
-                <button onClick={() => setEditing(null)} className="px-6 py-2 border border-slate-200 rounded-lg text-sm font-semibold hover:bg-slate-50">
+                <button onClick={() => { setEditing(null); setAiFlags([]); setAiServiceLines([]); }} className="px-6 py-2 border border-slate-200 rounded-lg text-sm font-semibold hover:bg-slate-50">
                   Cancel
                 </button>
               </div>

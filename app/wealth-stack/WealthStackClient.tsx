@@ -236,6 +236,8 @@ export default function WealthStackClient() {
           })}
         </section>
 
+        <SaveStackAsGoalButton stack={stack} goal={goal} amount={amount as string} />
+
         <button
           type="button"
           onClick={() => setStack(null)}
@@ -545,5 +547,102 @@ function EmailMyStack({ stackId, goal, amount }: EmailMyStackProps) {
         </p>
       )}
     </form>
+  );
+}
+
+// FIN_NOTEBOOK item 15 — save the generated stack as a goal so it shows up
+// on /account, /account/net-worth, and the AccountInvestingOSTiles "FIRE
+// goal" badge. Uses goal_type=generic with notes carrying the component
+// list — no schema change needed since investor_goals already accepts
+// generic-typed entries.
+interface SaveStackProps {
+  stack: WealthStack;
+  goal: string;
+  amount: string;
+}
+
+function SaveStackAsGoalButton({ stack, goal, amount }: SaveStackProps) {
+  const [status, setStatus] = useState<"idle" | "saving" | "saved" | "signin" | "error">("idle");
+  const [error, setError] = useState<string | null>(null);
+
+  async function save() {
+    setStatus("saving");
+    setError(null);
+    try {
+      const label = `Wealth stack — ${goal}`;
+      const componentSummary = stack.components
+        .map((c) => `${KIND_LABELS[c.kind]}: ${c.broker.name}`)
+        .join(" · ");
+
+      // Target date defaults to 10 years out — stack is a long-horizon
+      // construct. User can edit on /account/goals.
+      const target = new Date();
+      target.setFullYear(target.getFullYear() + 10);
+      const targetDate = target.toISOString().slice(0, 10);
+
+      const res = await fetch("/api/account/goals", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          label,
+          goal_type: "generic",
+          target_cents: 0,
+          target_date: targetDate,
+          current_balance_cents: 0,
+          monthly_contribution_cents: 0,
+          expected_return_pct: 7,
+          notes: `Amount band: ${amount} · ${componentSummary} · Stack ID: ${stack.stackId}`,
+        }),
+      });
+      if (res.status === 401) {
+        setStatus("signin");
+        return;
+      }
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || `HTTP ${res.status}`);
+      }
+      trackEvent("wealth_stack_saved_as_goal", { stackId: stack.stackId }, "/wealth-stack");
+      setStatus("saved");
+    } catch (err) {
+      setStatus("error");
+      setError(err instanceof Error ? err.message : "Network error");
+    }
+  }
+
+  if (status === "saved") {
+    return (
+      <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-900">
+        Saved.{" "}
+        <Link href="/account/goals" className="font-semibold underline">
+          See it in your goals →
+        </Link>
+      </div>
+    );
+  }
+
+  if (status === "signin") {
+    return (
+      <div className="rounded-xl border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+        <Link href="/login?next=/wealth-stack" className="font-semibold underline">
+          Sign in
+        </Link>{" "}
+        to save this stack as a goal you can track.
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <button
+        type="button"
+        onClick={save}
+        disabled={status === "saving"}
+        className="inline-flex items-center rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"
+      >
+        {status === "saving" ? "Saving…" : "Save this stack as a goal"}
+      </button>
+      {error && <p className="mt-1 text-xs text-red-700">{error}</p>}
+    </div>
   );
 }

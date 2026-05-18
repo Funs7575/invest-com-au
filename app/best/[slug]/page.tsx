@@ -79,7 +79,8 @@ export async function generateMetadata({
   const { slug } = await params;
   const cat = getCategoryBySlug(slug);
   if (!cat) return {};
-  const ogImageUrl = `/api/og?title=${encodeURIComponent(cat.h1)}&subtitle=${encodeURIComponent(cat.metaDescription.slice(0, 80))}&type=best`;
+  const stat = cat.criteria[0] ?? "";
+  const ogImageUrl = `/api/og?title=${encodeURIComponent(cat.h1)}&subtitle=${encodeURIComponent(cat.metaDescription.slice(0, 80))}&type=best${stat ? `&stat=${encodeURIComponent(stat)}` : ""}`;
   return {
     title: cat.title,
     description: cat.metaDescription,

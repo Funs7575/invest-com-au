@@ -9,6 +9,11 @@ export async function GET(request: NextRequest) {
   const subtitle =
     searchParams.get("subtitle") || "Honest reviews, real fees, updated daily.";
   const type = searchParams.get("type") || "default";
+  // FIN_NOTEBOOK item 11 — optional headline stat shown as a coloured
+  // accent band below the subtitle. Used by /best/[slug] to surface
+  // each category's signature criterion (e.g. "$0 brokerage from $20")
+  // without rebuilding the whole OG renderer per category.
+  const stat = searchParams.get("stat") || "";
 
   const brandBg = "#0f172a";
   const green = "#15803d";
@@ -93,6 +98,26 @@ export async function GET(request: NextRequest) {
         >
           {subtitle.length > 100 ? subtitle.slice(0, 100) + "..." : subtitle}
         </div>
+
+        {/* Headline stat — coloured accent band so the signature criterion
+            jumps out in social previews. Only rendered when ?stat= is set. */}
+        {stat && (
+          <div
+            style={{
+              marginTop: "24px",
+              padding: "12px 20px",
+              backgroundColor: green,
+              color: "white",
+              fontSize: "20px",
+              fontWeight: 700,
+              borderRadius: "6px",
+              alignSelf: "flex-start",
+              display: "flex",
+            }}
+          >
+            {stat.length > 70 ? stat.slice(0, 70) + "..." : stat}
+          </div>
+        )}
 
         {/* Bottom branding */}
         <div

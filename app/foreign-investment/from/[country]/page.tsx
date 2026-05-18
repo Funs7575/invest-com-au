@@ -16,6 +16,23 @@ function getCountryBySlug(slug: string): DTACountry | undefined {
   return DTA_COUNTRIES.find((c) => c.countryCode.toLowerCase() === slug.toLowerCase());
 }
 
+// FIN_NOTEBOOK item 10 — country → cross-border specialty mapping for the
+// /find-advisor pre-filter. Matches the canonical list in
+// lib/advisor-billing-multipliers.ts:CROSS_BORDER_SPECIALTIES. UK + US
+// have specialty-specific desks; everywhere else, "FIRB Property
+// (Non-Resident)" is the catch-all because the /from/[country] page
+// audience is non-resident investors looking at AU property + ASX.
+function crossBorderSpecialtyForCountry(countryCode: string): string {
+  switch (countryCode.toUpperCase()) {
+    case "GB":
+      return "UK Pension Transfer";
+    case "US":
+      return "FATCA-Aware US Expat Planning";
+    default:
+      return "FIRB Property (Non-Resident)";
+  }
+}
+
 // ── Static params ────────────────────────────────────────────────────────────
 
 export async function generateStaticParams() {
@@ -377,8 +394,11 @@ export default async function CountryForeignInvestmentPage({
             <p className="text-slate-400 text-sm">International tax specialists who understand both Australian rules and {dtaCountry.country} obligations.</p>
           </div>
           <div className="flex gap-3 shrink-0">
-            <Link href="/advisors/tax-agents" className="px-5 py-3 bg-amber-500 hover:bg-amber-400 text-white font-bold rounded-xl text-sm transition-colors whitespace-nowrap">
-              Find Tax Advisor
+            <Link
+              href={`/find-advisor?specialty=${encodeURIComponent(crossBorderSpecialtyForCountry(dtaCountry.countryCode))}`}
+              className="px-5 py-3 bg-amber-500 hover:bg-amber-400 text-white font-bold rounded-xl text-sm transition-colors whitespace-nowrap"
+            >
+              Find specialist advisor
             </Link>
             <Link href="/foreign-investment" className="px-5 py-3 border border-slate-600 hover:border-slate-400 text-slate-300 font-semibold rounded-xl text-sm transition-colors whitespace-nowrap">
               ← Foreign Investment Hub

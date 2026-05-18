@@ -64,7 +64,23 @@ export default async function PersonalisedFeeDelta({ targetBroker }: Props) {
     .eq("auth_user_id", user.id);
 
   const rows = (holdings ?? []) as HoldingRow[];
-  if (rows.length === 0) return null;
+  if (rows.length === 0) {
+    // Logged-in but no holdings — surface a thin CTA to import via
+    // Sharesight (when that PR lands) or add manually. The fee delta
+    // is only meaningful with real holdings, so a quiet prompt is
+    // better than rendering nothing.
+    return (
+      <div className="rounded-lg border border-indigo-200 bg-indigo-50 px-4 py-3 text-sm text-indigo-900">
+        <p>
+          <Link href="/account/holdings" className="font-semibold underline">
+            Add your holdings
+          </Link>{" "}
+          to see how {targetBroker.name} would change your annual fees based on your actual trading
+          pattern.
+        </p>
+      </div>
+    );
+  }
 
   // Find the user's current dominant broker.
   const brokerCounts = new Map<string, number>();
