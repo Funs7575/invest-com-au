@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
+import { createClient } from "@/lib/supabase/server";
+ 
 import { createAdminClient } from "@/lib/supabase/admin";
-import { requireAdmin } from "@/lib/require-admin";
+import { getAdminEmails } from "@/lib/admin";
 import { INTERNAL_LINK_TARGETS, GLOSSARY_LINK_TARGETS } from "@/lib/keyword-linking";
 
 export const dynamic = "force-dynamic";
@@ -69,8 +72,16 @@ function alreadyLinks(body: string, path: string): boolean {
 }
 
 export default async function InternalLinkingPage() {
-  const guard = await requireAdmin();
-  if (!guard.ok) return guard.response;
+  // Admin-page gate. requireAdmin() returns a NextResponse on failure
+  // which page components can't return; use redirect() + getUser() +
+  // ADMIN_EMAILS instead.
+  const authClient = await createClient();
+  const {
+    data: { user },
+  } = await authClient.auth.getUser();
+  if (!user || !user.email || !getAdminEmails().includes(user.email.toLowerCase())) {
+    redirect("/admin/login?redirect=/admin/internal-linking");
+  }
 
   const supabase = createAdminClient();
 

@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
+import { createClient } from "@/lib/supabase/server";
+ 
 import { createAdminClient } from "@/lib/supabase/admin";
-import { requireAdmin } from "@/lib/require-admin";
+import { getAdminEmails } from "@/lib/admin";
 
 export const dynamic = "force-dynamic";
 
@@ -50,8 +53,16 @@ interface ThreadEntry {
 }
 
 export default async function LicensingTrackerPage() {
-  const guard = await requireAdmin();
-  if (!guard.ok) return guard.response;
+  // Admin-page gate. requireAdmin() returns a NextResponse on failure
+  // which page components can't return; use redirect() + getUser() +
+  // ADMIN_EMAILS instead.
+  const authClient = await createClient();
+  const {
+    data: { user },
+  } = await authClient.auth.getUser();
+  if (!user || !user.email || !getAdminEmails().includes(user.email.toLowerCase())) {
+    redirect("/admin/login?redirect=/admin/licensing");
+  }
 
   const supabase = createAdminClient();
 
