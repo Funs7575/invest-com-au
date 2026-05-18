@@ -75,8 +75,78 @@ export default function ConnectClient({
 
   const meta = STATUS_LABEL[status];
 
+  // 3-step onboarding wizard indicator. Each step lights up based on the
+  // resolved Stripe Connect status — turns the opaque "click Connect"
+  // button into a visible journey so pros know what's next + how close
+  // they are to receiving payouts.
+  const stepIndex =
+    status === "active"
+      ? 2
+      : status === "onboarding" || status === "restricted"
+        ? 1
+        : 0;
+  const steps = [
+    {
+      title: "Connect",
+      body: "Hand off to Stripe Express to verify your identity + bank account.",
+    },
+    {
+      title: "Verify",
+      body: "Stripe checks your details. Usually instant; takes up to 24h if anything needs follow-up.",
+    },
+    {
+      title: "Active",
+      body: "Marketplace payments start flowing. 10% platform fee, payouts on your Stripe schedule.",
+    },
+  ];
+
   return (
     <div className="space-y-4">
+      <ol className="grid grid-cols-3 gap-2 mb-2">
+        {steps.map((s, i) => {
+          const reached = i <= stepIndex;
+          const active = i === stepIndex;
+          return (
+            <li
+              key={s.title}
+              className={`rounded-xl border p-3 ${
+                active
+                  ? "border-amber-400 bg-amber-50"
+                  : reached
+                    ? "border-emerald-200 bg-emerald-50"
+                    : "border-slate-200 bg-white"
+              }`}
+            >
+              <div className="flex items-center gap-2 mb-1">
+                <span
+                  className={`inline-flex w-5 h-5 rounded-full text-[10px] font-bold items-center justify-center ${
+                    reached
+                      ? active
+                        ? "bg-amber-500 text-slate-900"
+                        : "bg-emerald-500 text-white"
+                      : "bg-slate-200 text-slate-500"
+                  }`}
+                >
+                  {reached && !active ? "✓" : i + 1}
+                </span>
+                <p
+                  className={`text-xs font-bold ${
+                    active
+                      ? "text-amber-900"
+                      : reached
+                        ? "text-emerald-900"
+                        : "text-slate-500"
+                  }`}
+                >
+                  {s.title}
+                </p>
+              </div>
+              <p className="text-[10px] leading-snug text-slate-600">{s.body}</p>
+            </li>
+          );
+        })}
+      </ol>
+
       <div className={`rounded-2xl border p-4 ${meta.tone}`}>
         <p className="text-[11px] uppercase tracking-widest font-bold opacity-80 mb-1">
           Status
