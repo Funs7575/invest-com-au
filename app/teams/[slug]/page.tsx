@@ -20,6 +20,7 @@ import { computeSquadTier } from "@/lib/expert-teams/badge-tier";
 import { getOnlineProsBatch } from "@/lib/presence";
 import SquadStack from "./_components/SquadStack";
 import BundledPricePreview from "./_components/BundledPricePreview";
+import ActivityHeatmap from "./_components/ActivityHeatmap";
 
 export const revalidate = 1800;
 
@@ -148,6 +149,38 @@ export default async function TeamProfilePage({ params }: PageProps) {
   // (heartbeat from /teams/[slug]/inbox). Fail-soft to empty set.
   const onlineProIds = await getOnlineProsBatch(proIds);
   const onlineNow = onlineProIds.size;
+
+  // Activity heatmap — bucket the last 90 days of member-side
+  // brief_messages into a 7-day × 24-hour grid for the trust strip.
+  const heatmapCutoff = new Date(
+    Date.now() - 90 * 86_400_000,
+  ).toISOString();
+  const heatmapBuckets: number[][] = Array.from({ length: 7 }, () =>
+    Array(24).fill(0),
+  );
+  let heatmapTotal = 0;
+  if (proIds.length > 0) {
+    try {
+      const { data: msgRaw } = await admin
+        .from("brief_messages")
+        .select("created_at, sender_professional_id, sender_team_id")
+        .or(
+          `sender_professional_id.in.(${proIds.join(",")}),sender_team_id.eq.${team.id}`,
+        )
+        .gte("created_at", heatmapCutoff);
+      for (const m of (msgRaw ?? []) as { created_at: string }[]) {
+        const d = new Date(m.created_at);
+        const row = heatmapBuckets[d.getDay()];
+        if (row) {
+          const hour = d.getHours();
+          row[hour] = (row[hour] ?? 0) + 1;
+          heatmapTotal += 1;
+        }
+      }
+    } catch {
+      /* silent — heatmap hides on failure */
+    }
+  }
 
   // Is the calling visitor an active member of this team? If so, surface
   // the "Open squad inbox" link in the trust strip. We resolve the user
@@ -331,10 +364,26 @@ export default async function TeamProfilePage({ params }: PageProps) {
             {team.name as string}
           </h1>
           {team.description && (
-            <p className="text-slate-600 leading-relaxed max-w-3xl mb-6">
+            <p className="text-slate-600 leading-relaxed max-w-3xl mb-3">
               {team.description as string}
             </p>
           )}
+
+          {/* Specialty tags — finer-grained discovery signals beyond
+              the headline team_category. Hides when none set. */}
+          {Array.isArray(team.specialty_tags) &&
+            (team.specialty_tags as string[]).length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mb-6">
+                {(team.specialty_tags as string[]).slice(0, 12).map((t) => (
+                  <span
+                    key={t}
+                    className="inline-flex items-center text-[11px] font-semibold bg-violet-50 text-violet-700 border border-violet-200 rounded-full px-2 py-0.5"
+                  >
+                    {t.replace(/_/g, " ")}
+                  </span>
+                ))}
+              </div>
+            )}
 
           <div className="flex flex-wrap gap-3 mb-10">
             <Link
@@ -349,6 +398,14 @@ export default async function TeamProfilePage({ params }: PageProps) {
               className="inline-flex items-center gap-2 bg-white border border-slate-200 text-slate-700 font-semibold px-5 py-3 rounded-xl hover:border-slate-300"
             >
               Compare other experts
+            </Link>
+            <Link
+              href={`/teams/${slug}/availability`}
+              className="inline-flex items-center gap-2 bg-white border border-slate-200 text-slate-700 font-semibold px-5 py-3 rounded-xl hover:border-emerald-300 hover:text-emerald-700"
+              title="See when this squad is open for intro calls"
+            >
+              <Icon name="calendar" size={16} />
+              See team availability
             </Link>
           </div>
 
@@ -376,6 +433,14 @@ export default async function TeamProfilePage({ params }: PageProps) {
           </div>
 
           <BundledPricePreview estimate={priceEstimate} />
+
+          {/* Activity heatmap — when this squad is most responsive.
+              Reads 90d of brief_messages by member into a 7×24 grid.
+              Returns null if no message history. */}
+          <ActivityHeatmap
+            buckets={heatmapBuckets}
+            total={heatmapTotal}
+          />
 
           {testimonials.length > 0 && (
             <TestimonialList testimonials={testimonials} />
