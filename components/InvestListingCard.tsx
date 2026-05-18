@@ -3,6 +3,13 @@ import Image from "next/image";
 import type { InvestmentListing } from "@/lib/types";
 import { listingUrl } from "@/lib/listing-url";
 import { getListingHeroImage } from "@/lib/listing-vertical-images";
+import {
+  deriveListingKind,
+  listingKindMeta,
+  formatListingPrice,
+  freshnessSignal,
+} from "@/lib/listing-kind";
+import Icon from "@/components/Icon";
 import EnquireButton from "@/components/marketplace/EnquireButton";
 
 function formatLocation(state?: string, city?: string): string | null {
@@ -17,7 +24,6 @@ function formatKeyMetricValue(value: string | number | boolean): string {
 
 /**
  * Vertical → fallback gradient when listing has no images.
- * Each category gets a distinct, warm gradient so cards still look polished.
  */
 const VERTICAL_FALLBACK_GRADIENT: Record<string, string> = {
   business: "from-blue-100 via-indigo-50 to-blue-50",
@@ -30,9 +36,6 @@ const VERTICAL_FALLBACK_GRADIENT: Record<string, string> = {
   startup: "from-indigo-100 via-blue-50 to-cyan-50",
 };
 
-/**
- * Vertical → emoji icon for fallback when no images available.
- */
 const VERTICAL_ICON: Record<string, string> = {
   business: "🏢",
   commercial_property: "🏬",
@@ -44,14 +47,46 @@ const VERTICAL_ICON: Record<string, string> = {
   startup: "🚀",
 };
 
+/**
+ * Card variants:
+ *   - `grid` (default): full card with hero image (the marketplace grid)
+ *   - `list`: horizontal layout, denser, no large hero
+ *
+ * Card rendering keys off `listing_kind` (with safe derivation fallback)
+ * to pick:
+ *   - Price label ("Asking" / "Min investment" / "Raising" / "ASX")
+ *   - CTA verb ("Enquire" / "Request IM" / "Buy via broker" / "Express interest")
+ *   - Kind chip colour + icon
+ *
+ * The blanket "FIRB" badge that used to fire on every row is now gated
+ * to listings where the visitor's intent country matters AND the listing
+ * is foreign-investor-relevant — passed via the `showFirbBadge` prop so
+ * the listings client can decide once at parent level.
+ */
 export default function InvestListingCard({
   listing,
   badge,
+  variant = "grid",
+  showFirbBadge = false,
+  matchScore,
 }: {
   listing: InvestmentListing;
   badge?: string;
+  variant?: "grid" | "list";
+  /** Render the blue FIRB badge top-right. Off by default — only on
+   *  when the parent surface has a visitor-country signal that makes
+   *  the FIRB lens meaningful. */
+  showFirbBadge?: boolean;
+  /** Optional 0–100 smart-match score. Renders a green pill bottom-left
+   *  on the hero when set. (Wired up in Wave 3.) */
+  matchScore?: number;
 }) {
+  const kind = deriveListingKind(listing);
+  const meta = listingKindMeta(kind);
+  const fresh = freshnessSignal(listing);
+  const price = formatListingPrice(listing);
   const location = formatLocation(listing.location_state, listing.location_city);
+
   const metricEntries = listing.key_metrics
     ? Object.entries(listing.key_metrics).slice(0, 3)
     : [];
@@ -69,15 +104,107 @@ export default function InvestListingCard({
   const heroIsSeed = !dbHeroImage;
   const fallbackGradient = VERTICAL_FALLBACK_GRADIENT[listing.vertical] ?? "from-slate-100 to-slate-50";
   const fallbackIcon = VERTICAL_ICON[listing.vertical] ?? "📊";
+  const isFeatured = listing.listing_type === "featured" || listing.listing_type === "premium";
 
+  // ── List variant ──────────────────────────────────────────────────
+  if (variant === "list") {
+    return (
+      <Link
+        href={listingUrl(listing)}
+        className={`group flex gap-4 rounded-xl border bg-white p-3 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 ${meta.accent.border}`}
+      >
+        {/* Compact thumb */}
+        <div className="relative w-32 h-24 sm:w-40 sm:h-28 rounded-lg overflow-hidden shrink-0 bg-slate-100">
+          {heroImage ? (
+            <Image
+              src={heroImage}
+              alt={listing.title}
+              fill
+              sizes="160px"
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
+              loading="lazy"
+            />
+          ) : (
+            <div className={`absolute inset-0 bg-gradient-to-br ${fallbackGradient} flex items-center justify-center text-3xl opacity-40`}>
+              {fallbackIcon}
+            </div>
+          )}
+          {heroImage && heroIsSeed && (
+            <div className={`absolute inset-0 bg-gradient-to-br ${fallbackGradient} opacity-30 mix-blend-multiply`} />
+          )}
+          {/* Top-left kind badge */}
+          <span className={`absolute top-1.5 left-1.5 inline-flex items-center gap-1 ${meta.accent.badge} text-[0.55rem] font-extrabold uppercase tracking-wider px-1.5 py-0.5 rounded shadow-sm`}>
+            <Icon name={meta.icon} size={9} />
+            {meta.label}
+          </span>
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 min-w-0 flex flex-col">
+          <div className="flex items-start justify-between gap-2">
+            <h3 className={`font-bold text-sm md:text-base text-slate-900 line-clamp-2 leading-snug ${meta.accent.text.replace("text-", "group-hover:text-")}`}>
+              {listing.title}
+            </h3>
+            {price && (
+              <div className="shrink-0 text-right">
+                <div className="text-[0.55rem] text-slate-400 uppercase tracking-wide font-semibold">{price.label}</div>
+                <div className="text-sm font-extrabold text-slate-900">{price.value}</div>
+              </div>
+            )}
+          </div>
+          <div className="flex items-center gap-2 mt-1 text-xs text-slate-500 flex-wrap">
+            {location && (
+              <span className="inline-flex items-center gap-0.5">
+                <Icon name="map-pin" size={11} className="text-slate-400" />
+                {location}
+              </span>
+            )}
+            {listing.industry && <span>· {listing.industry}</span>}
+            {fresh === "new_this_week" && (
+              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[0.55rem] font-bold uppercase tracking-wide">
+                New
+              </span>
+            )}
+            {fresh === "closing_soon" && (
+              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-rose-50 text-rose-700 text-[0.55rem] font-bold uppercase tracking-wide">
+                Closing soon
+              </span>
+            )}
+            {isFeatured && (
+              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 text-[0.55rem] font-bold uppercase tracking-wide">
+                ★ Featured
+              </span>
+            )}
+            {matchScore != null && (
+              <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-emerald-600 text-white text-[0.55rem] font-bold uppercase tracking-wide">
+                {matchScore}% match
+              </span>
+            )}
+          </div>
+          {metricEntries.length > 0 && (
+            <div className="mt-auto pt-2 flex gap-3 text-[0.62rem] text-slate-600">
+              {metricEntries.map(([k, v]) => (
+                <span key={k}>
+                  <span className="text-slate-400 capitalize">{k.replace(/_/g, " ")}: </span>
+                  <span className="font-semibold text-slate-800">{formatKeyMetricValue(v)}</span>
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      </Link>
+    );
+  }
+
+  // ── Grid variant (default) ────────────────────────────────────────
   return (
     <Link
       href={listingUrl(listing)}
-      className="group relative block overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm hover:shadow-xl hover:border-slate-300 transition-all duration-300 hover:-translate-y-0.5"
+      className={`group relative block overflow-hidden rounded-2xl border bg-white shadow-sm hover:shadow-xl hover:border-slate-300 transition-all duration-300 hover:-translate-y-0.5 ${meta.accent.border} ${
+        isFeatured ? "ring-1 ring-amber-200/80 shadow-amber-50" : ""
+      }`}
     >
-      {/* Hero image — DB image when present, otherwise a deterministic
-          seed image from the listing's vertical. The gradient + emoji
-          path remains as a final guard if the seed pool is exhausted. */}
+      {/* Hero image */}
       <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
         {heroImage ? (
           <>
@@ -104,65 +231,79 @@ export default function InvestListingCard({
           </div>
         )}
 
-        {/* Top-left badges (Featured / pick) */}
-        {(badge || listing.listing_type === "featured") && (
-          <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
-            {listing.listing_type === "featured" && (
-              <span className="bg-amber-500 text-slate-900 text-[0.62rem] font-extrabold uppercase tracking-wider px-2 py-1 rounded-md shadow-sm">
-                ★ Featured
-              </span>
-            )}
-            {badge && (
-              <span className="bg-white/95 backdrop-blur text-slate-800 text-[0.62rem] font-extrabold uppercase tracking-wider px-2 py-1 rounded-md shadow-sm">
-                {badge}
-              </span>
-            )}
-          </div>
-        )}
+        {/* Top-left badges: kind + featured + provided badge */}
+        <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 max-w-[70%]">
+          <span className={`inline-flex items-center gap-1 ${meta.accent.badge} text-[0.62rem] font-extrabold uppercase tracking-wider px-2 py-1 rounded-md shadow-sm`}>
+            <Icon name={meta.icon} size={10} />
+            {meta.label}
+          </span>
+          {isFeatured && (
+            <span className="bg-amber-500 text-slate-900 text-[0.62rem] font-extrabold uppercase tracking-wider px-2 py-1 rounded-md shadow-sm">
+              ★ Featured
+            </span>
+          )}
+          {badge && (
+            <span className="bg-white/95 backdrop-blur text-slate-800 text-[0.62rem] font-extrabold uppercase tracking-wider px-2 py-1 rounded-md shadow-sm">
+              {badge}
+            </span>
+          )}
+        </div>
 
-        {/* Top-right compliance badges */}
-        {(listing.firb_eligible || listing.siv_complying) && (
-          <div className="absolute top-3 right-3 flex gap-1.5">
-            {listing.firb_eligible && (
-              <span className="bg-blue-600 text-white text-[0.6rem] font-extrabold uppercase tracking-wider px-2 py-1 rounded-md shadow-sm">
-                FIRB
-              </span>
-            )}
-            {listing.siv_complying && (
-              <span className="bg-emerald-600 text-white text-[0.6rem] font-extrabold uppercase tracking-wider px-2 py-1 rounded-md shadow-sm">
-                SIV
-              </span>
-            )}
-          </div>
-        )}
+        {/* Top-right compliance + freshness */}
+        <div className="absolute top-3 right-3 flex flex-wrap gap-1.5 justify-end max-w-[40%]">
+          {showFirbBadge && listing.firb_eligible && (
+            <span className="bg-blue-600 text-white text-[0.6rem] font-extrabold uppercase tracking-wider px-2 py-1 rounded-md shadow-sm">
+              FIRB
+            </span>
+          )}
+          {listing.siv_complying && (
+            <span className="bg-emerald-600 text-white text-[0.6rem] font-extrabold uppercase tracking-wider px-2 py-1 rounded-md shadow-sm">
+              SIV
+            </span>
+          )}
+          {fresh === "new_this_week" && (
+            <span className="bg-emerald-500 text-white text-[0.6rem] font-extrabold uppercase tracking-wider px-2 py-1 rounded-md shadow-sm">
+              New
+            </span>
+          )}
+          {fresh === "closing_soon" && (
+            <span className="bg-rose-500 text-white text-[0.6rem] font-extrabold uppercase tracking-wider px-2 py-1 rounded-md shadow-sm">
+              Closing
+            </span>
+          )}
+        </div>
 
         {/* Bottom price overlay */}
-        {listing.price_display && (
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent p-3">
-            <div className="text-white text-xs font-semibold opacity-80 uppercase tracking-wide">Asking</div>
-            <div className="text-white text-lg font-extrabold">{listing.price_display}</div>
+        {price && (
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-3">
+            <div className="flex items-end justify-between gap-2">
+              <div>
+                <div className="text-white text-[0.65rem] font-semibold opacity-80 uppercase tracking-wide">{price.label}</div>
+                <div className="text-white text-lg font-extrabold leading-tight">{price.value}</div>
+              </div>
+              {matchScore != null && (
+                <span className="bg-emerald-500 text-white text-[0.6rem] font-extrabold uppercase tracking-wider px-2 py-1 rounded-md shadow-sm">
+                  {matchScore}% match
+                </span>
+              )}
+            </div>
           </div>
         )}
       </div>
 
       {/* Content */}
       <div className="p-4">
-        {/* Title */}
-        <h3 className="font-bold text-base text-slate-900 group-hover:text-emerald-700 transition-colors line-clamp-2 mb-1.5 leading-snug">
+        <h3 className={`font-bold text-base text-slate-900 transition-colors line-clamp-2 mb-1.5 leading-snug ${meta.accent.text.replace("text-", "group-hover:text-")}`}>
           {listing.title}
         </h3>
 
-        {/* Location */}
         {location && (
           <p className="flex items-center gap-1 text-xs text-slate-500 mb-3">
-            <svg className="w-3 h-3 text-slate-400" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-            </svg>
+            <Icon name="map-pin" size={11} className="text-slate-400" />
             {location}
           </p>
         )}
 
-        {/* Industry / sub-category pills */}
         {(listing.industry || listing.sub_category) && (
           <div className="flex flex-wrap items-center gap-1 mb-3">
             {listing.industry && (
@@ -178,7 +319,6 @@ export default function InvestListingCard({
           </div>
         )}
 
-        {/* Key metrics row */}
         {metricEntries.length > 0 && (
           <div className="grid grid-cols-3 gap-2 pt-3 mt-2 border-t border-slate-100">
             {metricEntries.map(([key, value]) => (
@@ -194,20 +334,24 @@ export default function InvestListingCard({
           </div>
         )}
 
-        {/* CTA row — Enquire button is a sibling <button> but we rely
-            on event.preventDefault + stopPropagation inside
-            EnquireButton to prevent the outer <Link> from firing. */}
+        {/* CTA row — kind-aware verb. Listed securities use an external
+            "Buy via broker" link to /compare instead of the Enquire flow. */}
         <div className="flex items-center gap-2 mt-4 pt-3 border-t border-slate-100">
-          <EnquireButton
-            listingId={listing.id}
-            listingTitle={listing.title}
-            buttonCls="bg-amber-500 hover:bg-amber-600 text-white"
-          />
-          <span className="flex-1 inline-flex items-center justify-end gap-1 text-xs font-bold text-emerald-600 group-hover:text-emerald-700 group-hover:gap-2 transition-all">
+          {meta.externalCta ? (
+            <span className={`inline-flex items-center gap-1 text-xs font-bold ${meta.accent.text}`}>
+              <Icon name="external-link" size={12} />
+              {meta.ctaLabel}
+            </span>
+          ) : (
+            <EnquireButton
+              listingId={listing.id}
+              listingTitle={listing.title}
+              buttonCls="bg-amber-500 hover:bg-amber-600 text-white"
+            />
+          )}
+          <span className={`flex-1 inline-flex items-center justify-end gap-1 text-xs font-bold ${meta.accent.text} group-hover:gap-2 transition-all`}>
             View Details
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-            </svg>
+            <Icon name="chevron-right" size={12} />
           </span>
         </div>
       </div>
