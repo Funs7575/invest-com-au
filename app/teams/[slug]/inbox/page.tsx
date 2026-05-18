@@ -10,7 +10,10 @@ import {
   listAssignmentsForBriefs,
   type TeamBriefAssignmentRow,
 } from "@/lib/team-brief-assignments";
+import { getHiddenBriefIdsForTeam } from "@/lib/team-brief-decisions";
+import PresencePinger from "@/components/PresencePinger";
 import SquadInboxClaimRow from "./SquadInboxClaimRow";
+import SquadInboxRowActions from "./SquadInboxRowActions";
 
 // Private surface — keep out of the index. JSON-LD coverage gate
 // auto-exempts pages with `robots: { index: false }`.
@@ -132,14 +135,42 @@ export default async function SquadInboxPage({ params, searchParams }: PageProps
     })
     .filter((m): m is MemberRow => m !== null);
 
-  // 4. Accepted briefs for this team.
-  const { data: briefsRaw } = await admin
+  // 4. Accepted briefs for this team. Hide briefs the squad has marked
+  // `not_for_us` (forever) or `snoozed` within the last 7 days — see
+  // `team_brief_decisions`.
+  const hiddenBriefIds = await getHiddenBriefIdsForTeam(team.id as number);
+  let briefQuery = admin
     .from("advisor_auctions")
     .select("id, slug, job_title, brief_template, created_at")
     .eq("accepted_by_team_id", team.id)
     .order("accepted_at", { ascending: false, nullsFirst: false })
     .range(offset, offset + PAGE_SIZE - 1);
+  if (hiddenBriefIds.size > 0) {
+    briefQuery = briefQuery.not(
+      "id",
+      "in",
+      `(${Array.from(hiddenBriefIds).join(",")})`,
+    );
+  }
+  const { data: briefsRaw } = await briefQuery;
   const briefs = (briefsRaw ?? []) as BriefRow[];
+
+  // 4b. Other verified teams the caller can refer briefs to — populates
+  // the "Refer to another team" picker in the row actions component.
+  const { data: otherTeamsRaw } = await admin
+    .from("expert_teams")
+    .select("id, slug, name, team_category")
+    .eq("public", true)
+    .eq("verification_status", "verified")
+    .neq("id", team.id)
+    .order("name", { ascending: true })
+    .limit(20);
+  const otherTeams = (otherTeamsRaw ?? []) as {
+    id: number;
+    slug: string;
+    name: string;
+    team_category: string;
+  }[];
 
   // 5. Claim assignments for those briefs.
   const briefIds = briefs.map((b) => b.id);
@@ -175,6 +206,11 @@ export default async function SquadInboxPage({ params, searchParams }: PageProps
 
   return (
     <div className="min-h-screen bg-slate-50">
+      {/* Heartbeat — keeps the caller's `presence_pings` row fresh while
+          they're sitting in the inbox. Drives the "X members online"
+          indicator on the public team profile. */}
+      <PresencePinger kind="professional" id={caller.id} />
+
       <div className="max-w-5xl mx-auto px-4 py-8 sm:py-12">
         <div className="flex items-center gap-2 text-xs text-slate-500 mb-4">
           <Link href={`/teams/${team.slug}`} className="hover:text-slate-700">
@@ -293,6 +329,12 @@ export default async function SquadInboxPage({ params, searchParams }: PageProps
                     activeAssignment={active}
                     claimerName={claimerPro?.name ?? null}
                     claimerPhotoUrl={claimerPro?.photo_url ?? null}
+                  />
+                  <SquadInboxRowActions
+                    teamSlug={team.slug as string}
+                    briefId={b.id}
+                    otherTeams={otherTeams}
+                    snoozed={false}
                   />
                 </li>
               );
