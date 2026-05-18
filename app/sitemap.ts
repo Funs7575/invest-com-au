@@ -120,6 +120,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/etfs/quiz",
     "/insurance/quiz",
     "/negative-gearing", "/negative-gearing/calculator", "/negative-gearing/quiz",
+    "/decision/buy-vs-rent",
     "/lump-sum-investing", "/lump-sum-investing/redundancy",
     "/lump-sum-investing/inheritance", "/lump-sum-investing/calculator",
     "/halal-investing",
