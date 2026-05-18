@@ -258,6 +258,42 @@ const TOOLS: Tool[] = [
     url: "/tools/currency-converter",
     internal: true,
   },
+  {
+    slug: "buy-vs-rent",
+    name: "Should I Buy or Rent?",
+    category: "Calculators",
+    rating: 5,
+    description:
+      "Answer 3–5 questions about your time horizon, deposit, and situation to get a personalised buy-vs-rent recommendation with next steps.",
+    pros: ["Time horizon check", "LMI threshold guidance", "Owner-sell scenarios"],
+    pricing: "Free tool",
+    url: "/tools/buy-vs-rent",
+    internal: true,
+  },
+  {
+    slug: "salary-sacrifice",
+    name: "Should I Salary Sacrifice Into Super?",
+    category: "Super",
+    rating: 5,
+    description:
+      "Find out whether salary sacrificing into super makes financial sense for your income, employment type, and contribution cap position. Covers Division 293 for high earners.",
+    pros: ["Income band analysis", "Cap room check", "Division 293 guidance"],
+    pricing: "Free tool",
+    url: "/tools/salary-sacrifice",
+    internal: true,
+  },
+  {
+    slug: "smsf-setup",
+    name: "Should I Set Up an SMSF?",
+    category: "Super",
+    rating: 5,
+    description:
+      "Check whether your super balance and goals make an SMSF cost-effective. Covers the balance breakeven, business real property, and when to check your existing fund first.",
+    pros: ["Balance cost check", "Business property arm", "YourSuper comparison prompt"],
+    pricing: "Free tool",
+    url: "/tools/smsf-setup",
+    internal: true,
+  },
 ];
 
 /* ─── Config ─── */
