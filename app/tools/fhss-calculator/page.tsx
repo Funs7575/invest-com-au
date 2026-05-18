@@ -7,9 +7,9 @@ import { calculatorJsonLd, faqJsonLd } from "@/lib/schema-markup";
 import { breadcrumbJsonLd } from "@/lib/seo";
 
 const breadcrumbLd = breadcrumbJsonLd([
-  { name: "Home", href: "/" },
-  { name: "Tools", href: "/tools" },
-  { name: "FHSS Calculator", href: "/tools/fhss-calculator" },
+  { name: "Home", url: "/" },
+  { name: "Tools", url: "/tools" },
+  { name: "FHSS Calculator", url: "/tools/fhss-calculator" },
 ]);
 
 const calcLd = calculatorJsonLd({
@@ -21,14 +21,12 @@ const calcLd = calculatorJsonLd({
 
 const faqLd = faqJsonLd([
   {
-    question: "What is the First Home Super Saver Scheme (FHSS)?",
-    answer:
-      "The FHSS scheme lets first home buyers save for a deposit inside their superannuation fund, taking advantage of the lower 15% contributions tax. You can contribute up to $15,000 per year (max $50,000 total) and withdraw those savings as your home deposit.",
+    q: "What is the First Home Super Saver Scheme (FHSS)?",
+    a: "The FHSS scheme lets first home buyers save for a deposit inside their superannuation fund, taking advantage of the lower 15% contributions tax. You can contribute up to $15,000 per year (max $50,000 total) and withdraw those savings as your home deposit.",
   },
   {
-    question: "How much can I release from FHSS?",
-    answer:
-      "You can release a maximum of $50,000 in total across all years of contributions (plus associated earnings). Up to $15,000 per financial year counts toward the limit.",
+    q: "How much can I release from FHSS?",
+    a: "You can release a maximum of $50,000 in total across all years of contributions (plus associated earnings). Up to $15,000 per financial year counts toward the limit.",
   },
 ]);
 

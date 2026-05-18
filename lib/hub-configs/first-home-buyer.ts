@@ -48,7 +48,7 @@ export const firstHomeBuyerHubConfig: HubConfig = {
     secondaryCta: {
       label: "FHSS Calculator",
       href: "/tools/fhss-calculator",
-      lever: "calculator",
+      lever: "lead_routing",
     },
   },
 
@@ -106,31 +106,31 @@ export const firstHomeBuyerHubConfig: HubConfig = {
   deepDives: [
     {
       title: "FHSS: How to Maximise Your $50,000",
-      description:
+      excerpt:
         "Step-by-step guide to making voluntary contributions, requesting your determination, and coordinating the release with your settlement date.",
       href: "/first-home-buyer/fhss-guide",
-      readTime: 8,
+      readingTimeMinutes: 8,
     },
     {
       title: "First Home Guarantee: What the Fine Print Says",
-      description:
+      excerpt:
         "Income caps, property price caps by state, eligible lenders, and how the guarantee interacts with FHSS withdrawals.",
       href: "/first-home-buyer/first-home-guarantee",
-      readTime: 6,
+      readingTimeMinutes: 6,
     },
     {
       title: "How Much Deposit Do You Actually Need?",
-      description:
+      excerpt:
         "20% avoids LMI. 5% + guarantee avoids LMI differently. Splitting your FHSS + savings + grants — worked examples.",
       href: "/first-home-buyer/deposit-guide",
-      readTime: 7,
+      readingTimeMinutes: 7,
     },
     {
       title: `Stamp Duty by State (${CURRENT_YEAR} Rates)`,
-      description:
+      excerpt:
         "Every state's current first home buyer stamp duty concession, with examples and application timelines.",
       href: "/first-home-buyer/stamp-duty",
-      readTime: 5,
+      readingTimeMinutes: 5,
     },
   ],
 
