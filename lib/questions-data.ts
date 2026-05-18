@@ -921,6 +921,581 @@ export const QUESTIONS: InvestingQuestion[] = [
       { label: "Compare property investment platforms", href: "/property-platforms" },
     ],
   },
+  // ─── QA-02 additions (questions 18–30) ───────────────────────────────────
+  {
+    slug: "how-does-tax-loss-harvesting-work",
+    category: "tax",
+    question: "How does tax-loss harvesting work in Australia?",
+    metaTitle: "Tax-Loss Harvesting in Australia: How It Works (2026)",
+    metaDescription:
+      "Tax-loss harvesting means selling investments at a loss to offset capital gains, reducing your CGT bill. Learn the ATO rules, the wash-sale problem, and when it makes sense.",
+    shortAnswer:
+      "Tax-loss harvesting means deliberately selling an investment at a loss to offset capital gains made elsewhere, reducing your taxable capital gain for the year. Australia has no wash-sale rule, but the ATO can apply Part IVA anti-avoidance provisions if a transaction has no commercial purpose other than generating a tax benefit.",
+    sections: [
+      {
+        heading: "How it works",
+        body: "If you made a $20,000 capital gain from selling shares in Company A, and you hold shares in Company B that are sitting at a $15,000 loss, you can sell Company B to crystallise the $15,000 capital loss. The net capital gain falls to $5,000, and after the 50% CGT discount (if applicable), only $2,500 is added to your assessable income.",
+      },
+      {
+        heading: "Carry-forward losses",
+        body: "Capital losses that exceed capital gains in a year cannot be offset against ordinary income — they are carried forward indefinitely. In a low-income year, you might choose not to harvest losses if you have no gains to offset; instead, save the losses for a future high-gain year.",
+      },
+      {
+        heading: "No formal wash-sale rule — but Part IVA applies",
+        body: "Australia does not have a statutory wash-sale rule (unlike the US, which disallows a loss if you repurchase the same asset within 30 days). However, the ATO can invoke Part IVA of the ITAA 1936 to disallow losses from transactions where obtaining a tax benefit was the dominant purpose. Re-purchasing the same shares immediately after selling to harvest a loss could attract scrutiny. The prudent approach: wait at least 30 days before repurchasing, or switch to a similar-but-not-identical holding.",
+      },
+      {
+        heading: "End-of-year timing",
+        body: "The tax year ends 30 June. To crystallise a loss in the current year, the contract date of the sale must fall on or before 30 June. Settlement can occur in July. The reverse applies to gains: if you want to defer a gain, the contract date (not settlement) is what matters for CGT timing.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Can I sell ETF units and immediately buy the same ETF to harvest a loss?",
+        a: "Technically there is no rule that prohibits this, but immediately repurchasing the same ETF could attract ATO scrutiny under Part IVA if it has no commercial purpose other than generating a tax loss. Waiting 30+ days or switching to a similar ETF tracking a different index is the cautious approach.",
+      },
+      {
+        q: "Can I offset capital losses against ordinary income?",
+        a: "No. Capital losses in Australia can only be offset against capital gains. They cannot be deducted from ordinary income (salary, dividends, rental income). Unused capital losses carry forward to future years with no time limit.",
+      },
+      {
+        q: "Does the 50% CGT discount apply after loss offsets?",
+        a: "Yes, and importantly, losses must be applied before the 50% discount is applied. You cannot choose to skip a loss in order to maximise the discount on a gain. Apply losses first, then apply the 50% discount to the remaining net gain.",
+      },
+    ],
+    relatedSlugs: [
+      "what-is-capital-gains-tax-discount",
+      "how-does-negative-gearing-work",
+      "what-is-the-principal-place-of-residence-cgt-exemption",
+    ],
+    relatedTools: [
+      { label: "CGT calculator", href: "/cgt-calculator" },
+      { label: "Compare share brokers", href: "/share-trading" },
+    ],
+  },
+  {
+    slug: "should-i-pay-off-hecs-hep-debt-or-invest",
+    category: "budgeting",
+    question: "Should I pay off my HECS-HELP debt or invest instead?",
+    metaTitle: "Pay Off HECS-HELP vs. Invest: Which Is Better? (Australia 2026)",
+    metaDescription:
+      "HECS-HELP debt is indexed to CPI and has no interest. Most financial advisers say invest first — unless CPI inflation is high or you are close to threshold repayments. Learn the maths.",
+    shortAnswer:
+      "HECS-HELP debt is interest-free and indexed to CPI (2.4% in 2025). If your expected after-tax investment return exceeds CPI, investing outperforms voluntary repayment. Most years, and especially in rising-rate environments where equities return 7–10%, it makes sense to invest rather than voluntarily repay HECS-HELP early.",
+    sections: [
+      {
+        heading: "How HECS-HELP indexation works",
+        body: "Your HECS-HELP balance is indexed to CPI each 1 June. In 2023 indexation was 7.1% (a spike from energy and food inflation). In 2024 it was 4.7%. In 2025 it was 2.4%. If CPI returns to the RBA's 2–3% target band, the effective cost of holding HECS-HELP debt is very low — lower than most other debt and far below expected equity returns.",
+      },
+      {
+        heading: "The maths",
+        body: "At 2.4% CPI indexation, your HECS-HELP debt costs you 2.4% per year in real terms. A broad-market ETF returning 8% per year (before tax) earns approximately 6.7% after-tax (at 32.5% marginal rate on 50% of the gain under the CGT discount — 8% × 67.5% discount = ~5.4% effective, or for dividends taxed at marginal rate after franking, slightly different). Either way, the investment return substantially exceeds the HECS-HELP cost in most market conditions.",
+      },
+      {
+        heading: "When voluntary repayment makes sense",
+        body: "If CPI spikes again (as in 2023), the one-year cost of holding HECS-HELP is higher. Paying down debt provides a guaranteed risk-free return equal to the indexation rate. Psychologically, some people prefer to clear the HECS balance before taking on a mortgage (it reduces your borrowing capacity as the compulsory repayment threshold reduces take-home pay). And if you are within $10,000 of clearing the balance, the peace of mind is worth the mathematical sacrifice.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Does HECS-HELP debt affect my borrowing capacity?",
+        a: "Yes. Lenders assess your borrowing capacity using your net income. HECS-HELP compulsory repayments reduce your take-home pay at the thresholds. For FY2026, compulsory repayments start at 1% of income once you earn $54,435, rising to 10% above $159,664. This reduces the income figure banks use for servicing calculations.",
+      },
+      {
+        q: "Does HECS-HELP debt affect my credit score?",
+        a: "No. HECS-HELP is a government debt that does not appear on your credit report (Equifax, Experian, Illion). It does not affect your credit score. However, lenders will ask about it when assessing mortgage or personal loan applications.",
+      },
+      {
+        q: "Can I get a tax deduction for voluntary HECS-HELP repayments?",
+        a: "No. Voluntary HECS-HELP repayments are not tax-deductible. Compulsory repayments withheld from your salary are also not deductible.",
+      },
+    ],
+    relatedSlugs: [
+      "should-i-pay-off-mortgage-or-invest",
+      "how-much-should-i-have-in-emergency-fund",
+      "how-does-compound-interest-work",
+    ],
+  },
+  {
+    slug: "what-is-an-investment-bond",
+    category: "investing",
+    question: "What is an investment bond and how is it taxed?",
+    metaTitle: "Investment Bonds Explained: Tax Rules and 10-Year Rule (Australia 2026)",
+    metaDescription:
+      "Investment bonds (insurance bonds) let earnings compound inside the bond at 30% tax. After 10 years, withdrawals are tax-free. Learn who they suit, contribution rules, and estate planning benefits.",
+    shortAnswer:
+      "An investment bond (also called an insurance bond or friendly society bond) is a tax-paid investment that grows inside the bond at 30% tax. After 10 years, all withdrawals are tax-free. They are particularly useful for estate planning, child savings, and investors on high marginal rates who have maxed out super.",
+    sections: [
+      {
+        heading: "How the tax works",
+        body: "Earnings inside an investment bond are taxed at 30% (the corporate tax rate) within the bond issuer's tax position. You do not declare earnings in your personal tax return while they remain invested. After 10 years of continuous investment, the 'policy anniversary rule' means all withdrawals — including gains — are tax-free in your hands.",
+      },
+      {
+        heading: "The 125% rule for additional contributions",
+        body: "To maintain the 10-year clock, additional contributions in any year must not exceed 125% of the prior year's contributions. If you exceed 125%, the 10-year clock resets to zero. Initial contributions can be any amount; only the 125% cap applies to subsequent contributions.",
+      },
+      {
+        heading: "Who benefits most",
+        body: "Investment bonds suit: (1) investors on 45% marginal rate who benefit from the 30% internal tax rate; (2) parents saving for children — bonds can be transferred to adult children as tax-paid capital; (3) estate planning — bonds can pass outside the will with nominated beneficiaries, bypassing probate; (4) investors who have reached super contribution limits.",
+      },
+      {
+        heading: "Early withdrawal tax",
+        body: "If you withdraw before 10 years, the proportion of earnings attributable to the withdrawal is included in your assessable income — minus a 30% tax offset (to account for tax already paid inside the bond). The tax impact reduces significantly after year 8 and is zero after year 10.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Are investment bonds safe?",
+        a: "Investment bonds are typically offered by life insurance companies regulated by APRA. The investment portfolio within the bond can include shares, property, fixed income, or cash — the underlying risk depends on the investment option chosen, not the bond structure itself.",
+      },
+      {
+        q: "Can I hold an investment bond inside super?",
+        a: "No. Investment bonds and super are separate structures. Both offer tax concessions but are governed by different legislation. You cannot hold a bond inside an SMSF.",
+      },
+      {
+        q: "What is the difference between an investment bond and a term deposit?",
+        a: "A term deposit is a bank deposit returning a fixed interest rate for a fixed term, taxed at your marginal rate. An investment bond is a life insurance wrapper offering investment choice and a favourable tax rate, with the 10-year tax-free exit. Term deposits are lower risk; investment bonds offer more growth potential and significant long-term tax advantages for high-rate taxpayers.",
+      },
+    ],
+    relatedSlugs: [
+      "what-is-capital-gains-tax-discount",
+      "what-is-smsf-and-is-it-worth-it",
+      "how-does-compound-interest-work",
+    ],
+    relatedTools: [
+      { label: "Compare share brokers", href: "/share-trading" },
+    ],
+  },
+  {
+    slug: "how-to-invest-in-reits-in-australia",
+    category: "property",
+    question: "How do you invest in REITs in Australia?",
+    metaTitle: "How to Invest in REITs in Australia (A-REITs Guide 2026)",
+    metaDescription:
+      "Australian REITs (A-REITs) are ASX-listed trusts that own commercial property. Learn how they work, how they are taxed, and the major A-REITs by sector.",
+    shortAnswer:
+      "Australian Real Estate Investment Trusts (A-REITs) are ASX-listed trusts that pool investor capital to own and manage commercial properties — offices, shopping centres, industrial warehouses, data centres, and hospitals. You buy A-REIT units through any share broker, making them accessible at low minimums compared to direct property.",
+    sections: [
+      {
+        heading: "What A-REITs own",
+        body: "The ASX's major A-REIT sub-sectors include retail (Scentre Group/Westfield, Vicinity Centres), office (Dexus, Charter Hall), industrial and logistics (Goodman Group, Centuria Industrial REIT), diversified (GPT Group), and healthcare (HealthCo Healthcare & Wellness REIT). Some stapled trusts combine property trust and operating company units.",
+      },
+      {
+        heading: "How to buy A-REITs",
+        body: "Purchase units through any ASX-enabled share broker (CommSec, Selfwealth, Pearler, etc.) exactly as you would buy shares. Minimum investment is the price of one unit (often $3–$15). A-REIT ETFs (e.g. VAP from Vanguard, SLF from iShares) provide diversified exposure to the sector in a single trade.",
+      },
+      {
+        heading: "Distribution yield and tax",
+        body: "A-REITs distribute income quarterly or half-yearly. Distributions often contain a mix of: tax-deferred income (building depreciation creates a non-cash deduction that reduces the taxable component — deferred tax liability crystallises on sale), trust income (taxed at marginal rate), and capital gains (may attract the 50% CGT discount). This mix creates favourable after-tax cash flows, especially for investors on lower marginal rates.",
+      },
+      {
+        heading: "Interest rate sensitivity",
+        body: "A-REITs borrow to fund property acquisitions and are sensitive to interest rate changes. Rising rates increase borrowing costs and tend to compress property capitalisation rates, reducing valuations. The 2022–2023 rate-hiking cycle led to significant A-REIT price falls. Conversely, when rates fall, A-REITs typically outperform the broader market.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Are A-REITs suitable for an SMSF?",
+        a: "Yes. A-REITs provide commercial property exposure without the compliance complexity of direct SMSF property ownership. They are liquid (can be sold on the ASX in seconds) and diversified. They don't require an LRBA (Limited Recourse Borrowing Arrangement) as direct property does.",
+      },
+      {
+        q: "What is the difference between a REIT and a managed property fund?",
+        a: "A-REITs are listed on the ASX and trade at market price throughout the day. Unlisted property trusts value their assets periodically (quarterly) and transact at net asset value. A-REITs offer more liquidity; unlisted trusts are often less volatile (smoother valuations) but lock capital away for longer.",
+      },
+      {
+        q: "Do A-REITs pay franked dividends?",
+        a: "Rarely. Most A-REIT distributions are trust income (not company dividends) and therefore cannot carry franking credits. A-REITs that have a stapled operating company component (e.g. Goodman Group's management business) may include a small franked dividend from the corporate side.",
+      },
+    ],
+    relatedSlugs: [
+      "how-does-negative-gearing-work",
+      "what-is-the-difference-between-etf-and-managed-fund",
+      "what-is-smsf-and-is-it-worth-it",
+    ],
+    relatedTools: [
+      { label: "Compare property investment platforms", href: "/property-platforms" },
+      { label: "Compare share brokers", href: "/share-trading" },
+    ],
+  },
+  {
+    slug: "what-is-the-medicare-levy-surcharge",
+    category: "tax",
+    question: "What is the Medicare Levy Surcharge and how do I avoid it?",
+    metaTitle: "Medicare Levy Surcharge Explained: Avoid It With PHI (2026)",
+    metaDescription:
+      "The Medicare Levy Surcharge (MLS) adds 1–1.5% to your tax bill if you earn above $93,000 and don't hold private hospital cover. Learn the thresholds, how private health rebates offset the cost, and whether it's worth it.",
+    shortAnswer:
+      "The Medicare Levy Surcharge (MLS) is an additional 1–1.5% tax on top of the standard 2% Medicare Levy, charged to singles earning above $93,000 (families above $186,000) who do not hold private hospital insurance cover. Taking out a basic private hospital policy is usually cheaper than paying the surcharge.",
+    sections: [
+      {
+        heading: "MLS rates and thresholds (FY2026)",
+        body: "Singles: $93,001–$108,000 → 1% MLS; $108,001–$144,000 → 1.25%; above $144,000 → 1.5%. Families: double the single thresholds. The surcharge applies to 'income for surcharge purposes' which includes taxable income, reportable fringe benefits, and total net investment losses.",
+      },
+      {
+        heading: "The private health rebate",
+        body: "The government provides a private health insurance rebate that reduces your premium. For FY2026, the rebate is: below $93,000 income → 24.608% rebate; $93,001–$108,000 → 16.405%; $108,001–$144,000 → 8.202%; above $144,000 → 0% rebate. A basic hospital policy costing $1,200/year at 16.4% rebate effectively costs $1,003. Compare this to the MLS: at $100,000 income, 1% MLS = $1,000. The rebate makes private cover very close to MLS-neutral at this income.",
+      },
+      {
+        heading: "Lifetime Health Cover loading",
+        body: "If you don't take out hospital cover by 1 July after your 31st birthday, a 2% loading per year is added to your premium when you eventually do take out cover. The loading caps at 70% and is removed after 10 consecutive years of holding cover. This creates an incentive to start private health cover early independent of the MLS.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Does the Medicare Levy Surcharge apply to couples?",
+        a: "Yes. If either member of a couple (or family) exceeds the single threshold but the combined family income is below the family threshold, the MLS applies only to the member who exceeds the single threshold. Both must hold private hospital cover to avoid the surcharge.",
+      },
+      {
+        q: "Is a basic hospital policy sufficient to avoid the MLS?",
+        a: "Yes. Any private hospital policy — even the cheapest basic cover — avoids the MLS, as long as it is a registered product with a government-approved insurer (checked via healthinsurance.gov.au). Extras-only cover does NOT avoid the MLS.",
+      },
+      {
+        q: "Does the Medicare Levy apply to everyone?",
+        a: "The standard 2% Medicare Levy applies to most resident taxpayers, separate from the MLS. Low-income earners below the Medicare Levy low-income threshold ($26,000 in FY2026 for singles) are exempt from the standard levy. The MLS is an additional charge on top of the standard levy.",
+      },
+    ],
+    relatedSlugs: [
+      "how-does-the-low-income-tax-offset-work",
+      "how-does-tax-loss-harvesting-work",
+      "what-is-capital-gains-tax-discount",
+    ],
+  },
+  {
+    slug: "how-does-the-low-income-tax-offset-work",
+    category: "tax",
+    question: "How does the Low Income Tax Offset (LITO) work?",
+    metaTitle: "Low Income Tax Offset (LITO) Explained (Australia FY2026)",
+    metaDescription:
+      "LITO reduces the income tax payable by individuals earning up to $66,667 per year. Learn the maximum offset, phase-out rates, and how LITO interacts with LMITO and LAMITO.",
+    shortAnswer:
+      "The Low Income Tax Offset (LITO) reduces income tax for individuals earning up to $66,667 per year. The maximum LITO is $700 for those earning up to $37,500. It phases out at 5¢ per dollar between $37,500 and $45,000, then at 1.5¢ per dollar between $45,000 and $66,667.",
+    sections: [
+      {
+        heading: "LITO thresholds and amounts (FY2026)",
+        body: "Income up to $37,500: full $700 LITO. $37,500–$45,000: LITO reduces by 5¢ per dollar (from $700 to $325). $45,000–$66,667: LITO reduces by 1.5¢ per dollar (from $325 to $0). Above $66,667: no LITO. The offset reduces tax payable dollar-for-dollar; it does not reduce Medicare Levy or the Medicare Levy Surcharge.",
+      },
+      {
+        heading: "Effect on the tax-free threshold",
+        body: "The combination of the tax-free threshold ($18,200), LITO ($700 at maximum), and the Low Income Medicare Levy Reduction means that in FY2026 an individual pays no net tax until income exceeds approximately $21,885 (accounting for the Medicare Levy reduction floor). The 'effective tax-free threshold' is often quoted around $21,884.",
+      },
+      {
+        heading: "LITO vs LAMITO and LMITO",
+        body: "The Low and Middle Income Tax Offset (LMITO) was a temporary pandemic-era offset that was abolished after FY2023. LAMITO (Low and Middle Income Tax Offset — a separate variant) also ended. From FY2024 onwards, LITO is the primary low-income offset. Do not confuse these with the current legislation.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Is LITO automatically applied?",
+        a: "Yes. LITO is automatically applied when you lodge your tax return (or when your employer withholds PAYG). You do not need to claim it separately. Your tax withheld from wages is based on LITO entitlement included in the ATO's tax withheld calculators.",
+      },
+      {
+        q: "Do non-residents get LITO?",
+        a: "No. LITO is only available to Australian tax residents. Non-resident individuals are taxed at different rates and are not entitled to the tax-free threshold or LITO.",
+      },
+      {
+        q: "Can my SMSF claim LITO?",
+        a: "No. LITO applies only to individuals, not to trusts, companies, or superannuation funds. SMSFs pay 15% flat tax on fund income with no LITO offset.",
+      },
+    ],
+    relatedSlugs: [
+      "what-is-the-medicare-levy-surcharge",
+      "should-i-pay-off-hecs-hep-debt-or-invest",
+      "what-is-salary-sacrifice-super",
+    ],
+  },
+  {
+    slug: "how-does-portfolio-rebalancing-work",
+    category: "investing",
+    question: "How does portfolio rebalancing work?",
+    metaTitle: "Portfolio Rebalancing Explained for Australian Investors (2026)",
+    metaDescription:
+      "Rebalancing restores your portfolio to target allocations by selling outperformers and buying underperformers. Learn threshold-based vs. calendar rebalancing, tax considerations, and when to rebalance inside super.",
+    shortAnswer:
+      "Portfolio rebalancing means selling assets that have grown above their target allocation and buying assets that have fallen below, restoring your original risk exposure. It enforces a buy-low, sell-high discipline and keeps your portfolio risk level consistent with your goals.",
+    sections: [
+      {
+        heading: "Why rebalancing matters",
+        body: "Over time, higher-returning assets grow to dominate your portfolio. A 70% shares / 30% bonds portfolio left unrebalanced for 10 years in a bull market may drift to 90% shares / 10% bonds — significantly more volatile than your original target. Rebalancing restores the risk-return profile you chose.",
+      },
+      {
+        heading: "Calendar vs. threshold rebalancing",
+        body: "Calendar rebalancing (quarterly, semi-annual, annual) is simpler but may trigger unnecessary trades. Threshold rebalancing triggers when an asset class drifts 5% or more from target (e.g. shares drift from 70% to 75%). Research suggests a 5% threshold rebalancing band is cost-effective — it avoids over-trading while still maintaining meaningful discipline.",
+      },
+      {
+        heading: "Tax consequences of rebalancing",
+        body: "Selling to rebalance crystallises capital gains. In a taxable account, prefer to rebalance by directing new contributions to underweight assets (avoiding sales), using dividends/distributions to top up laggards, and selling only when threshold drift is significant. Inside super (15% tax on gains, 0% in pension phase), rebalancing is much cheaper and worth doing promptly.",
+      },
+      {
+        heading: "Rebalancing inside super",
+        body: "Accumulation-phase super pays 15% CGT (10% after the one-third discount for assets held 12+ months) — far lower than personal tax rates. SMSF trustees should actively manage their asset allocation rather than allowing drift. Most APRA-regulated super funds rebalance automatically within their diversified options.",
+      },
+    ],
+    faqs: [
+      {
+        q: "How often should I rebalance my portfolio?",
+        a: "Annual rebalancing is adequate for most buy-and-hold investors. More frequent rebalancing (quarterly) adds little incremental benefit after accounting for transaction costs and CGT. A 5–10% threshold rule (rebalance when any asset class drifts by 5–10 percentage points from target) is often more efficient than calendar-only rules.",
+      },
+      {
+        q: "Should I rebalance inside or outside super first?",
+        a: "Inside super first. Tax rates are lower (15% or 0% in pension phase vs. your marginal rate in personal accounts). Use super distributions and new contributions to rebalance before selling in personal accounts.",
+      },
+    ],
+    relatedSlugs: [
+      "how-does-dollar-cost-averaging-work",
+      "what-is-the-difference-between-etf-and-managed-fund",
+      "what-is-smsf-and-is-it-worth-it",
+    ],
+    relatedTools: [
+      { label: "Compare share brokers", href: "/share-trading" },
+      { label: "Portfolio vs shares calculator", href: "/property-vs-shares-calculator" },
+    ],
+  },
+  {
+    slug: "what-is-the-difference-between-shares-and-bonds",
+    category: "investing",
+    question: "What is the difference between shares and bonds?",
+    metaTitle: "Shares vs Bonds: Key Differences Explained (Australia 2026)",
+    metaDescription:
+      "Shares give you equity ownership and a share in profits. Bonds are debt instruments paying fixed interest. Learn risk profiles, returns, tax treatment, and how to hold both in an Australian portfolio.",
+    shortAnswer:
+      "Shares represent ownership equity in a company — you share in its profits (dividends) and growth (capital gains). Bonds are loans to companies or governments — the issuer pays you interest (coupon) and returns your principal at maturity. Shares are higher risk/return; bonds are lower risk/return.",
+    sections: [
+      {
+        heading: "Shares: ownership and upside",
+        body: "Buying shares makes you a part-owner of the company. If the company grows, your shares appreciate. If it pays dividends (Australian companies often do, with franking credits), you receive income. If the company fails, shareholders rank last in the liquidation queue — after creditors and bondholders — and may receive nothing.",
+      },
+      {
+        heading: "Bonds: lending and income",
+        body: "Buying a bond means you lend money to the issuer for a set term at a fixed (or floating) interest rate. You receive regular coupon payments and your principal back at maturity. Bondholders rank ahead of shareholders in insolvency. Australian government bonds are considered near-risk-free; corporate bonds carry credit risk proportional to the issuer's financial health.",
+      },
+      {
+        heading: "Return comparison",
+        body: "Over long periods, Australian shares (All Ordinaries) have returned approximately 9–10% per year (total return including dividends). The Bloomberg AusBond Composite Index (broad bond market) has returned approximately 5–6% per year. The higher share return compensates investors for higher volatility (30–50% peak-to-trough drawdowns in major downturns vs 5–15% for bonds).",
+      },
+      {
+        heading: "Tax treatment",
+        body: "Share dividends are taxed at marginal rates with potential franking credit offsets. Capital gains on shares held 12+ months qualify for the 50% CGT discount. Bond interest income is taxed at marginal rates with no discount. Capital gains on bonds (e.g. if you sell before maturity at a premium) are also assessable but typically modest.",
+      },
+    ],
+    faqs: [
+      {
+        q: "How do I buy Australian government bonds?",
+        a: "Australian Government Bonds (AGBs) are available directly via the Australian Government Bonds platform (austraclear.rba.gov.au for institutions). Retail investors can buy Exchange-traded Treasury Bonds (eTBs) listed on the ASX through any share broker, or access bond exposure via ETFs (VAF, IAF, BOND).",
+      },
+      {
+        q: "Are bonds safe in a rising interest rate environment?",
+        a: "No — rising rates reduce the market value of existing bonds (because new bonds offer higher yields, making existing lower-rate bonds less attractive). Bonds held to maturity return full principal, but their market price fluctuates in the interim. Shorter-duration bonds are less sensitive to rate changes than longer-duration bonds.",
+      },
+    ],
+    relatedSlugs: [
+      "how-does-franking-credit-work",
+      "what-is-the-difference-between-etf-and-managed-fund",
+      "how-does-portfolio-rebalancing-work",
+    ],
+    relatedTools: [
+      { label: "Compare share brokers", href: "/share-trading" },
+    ],
+  },
+  {
+    slug: "how-do-i-report-crypto-tax-in-australia",
+    category: "tax",
+    question: "How do I report cryptocurrency for tax purposes in Australia?",
+    metaTitle: "Crypto Tax Australia: How to Report Bitcoin and Altcoins (2026)",
+    metaDescription:
+      "The ATO treats crypto as a CGT asset. Every trade, swap, and purchase is a taxable event. Learn which records to keep, when the 50% CGT discount applies, and how staking income is taxed.",
+    shortAnswer:
+      "The ATO treats cryptocurrency as a CGT asset (not a currency). Every disposal — selling, swapping, using crypto to buy goods, gifting — is a taxable CGT event. You report gains and losses in your annual tax return. Staking rewards, mining income, and DeFi income are generally taxed as ordinary income when received.",
+    sections: [
+      {
+        heading: "What counts as a disposal",
+        body: "The ATO considers these events as CGT disposals: selling crypto for AUD; exchanging one crypto for another (e.g. Bitcoin for Ethereum — this is a swap triggering CGT on the Bitcoin); using crypto to purchase goods or services; gifting crypto to another person; moving crypto to a new wallet you control is NOT a disposal (same beneficial owner).",
+      },
+      {
+        heading: "How to calculate capital gain or loss",
+        body: "Capital gain = sale proceeds − cost base. Cost base = acquisition price + any associated costs (brokerage, transfer fees). For assets held more than 12 months, the 50% CGT discount applies to the gain. For Australian residents (not operating a crypto business), the individual CGT rules apply.",
+      },
+      {
+        heading: "Staking, mining, and DeFi income",
+        body: "Staking rewards: taxed as ordinary income at the market value in AUD when received. The same amount becomes your cost base for the staking rewards going forward. Mining income: taxed as ordinary income if mining is a business or a hobby generating assessable income. DeFi liquidity provision and yield farming: each interaction can create taxable events; the ATO has issued guidance but many DeFi interactions remain in a grey area.",
+      },
+      {
+        heading: "Record-keeping requirements",
+        body: "The ATO requires you to keep records for at least five years after lodging the relevant tax return. Records needed: date of each transaction, amount in AUD at the time of transaction, purpose, counterparty details. Specialist crypto tax software (Koinly, CoinTracker, CryptoTaxCalculator) can import exchange transaction histories and generate ATO-compliant capital gains reports.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Is crypto personal use exempt from CGT?",
+        a: "The ATO's personal use asset exemption applies only if: the crypto was purchased solely for personal use and consumption (e.g. to buy a specific item, not as an investment), the cost base is under $10,000, and you disposed of it promptly after acquisition. In practice, the ATO views most crypto holdings as investments, not personal use assets.",
+      },
+      {
+        q: "Does the ATO know about my crypto holdings?",
+        a: "The ATO has data-matching arrangements with most Australian cryptocurrency exchanges (CoinSpot, Independent Reserve, Swyftx, etc.). It receives account holder information and transaction data. The ATO matches this data against tax returns and sends letters to taxpayers who appear to have omitted crypto gains.",
+      },
+      {
+        q: "What if I made a loss on crypto?",
+        a: "Crypto losses are capital losses and are treated like any other capital loss — they can only offset capital gains, not ordinary income. Unused losses carry forward indefinitely to offset future capital gains. If you disposed of crypto for less than $10,000 (personal use exemption applies), you cannot claim the loss.",
+      },
+    ],
+    relatedSlugs: [
+      "what-is-capital-gains-tax-discount",
+      "how-does-tax-loss-harvesting-work",
+      "what-is-the-principal-place-of-residence-cgt-exemption",
+    ],
+    relatedTools: [
+      { label: "CGT calculator", href: "/cgt-calculator" },
+      { label: "Compare crypto exchanges", href: "/crypto" },
+    ],
+  },
+  {
+    slug: "what-is-diversification-in-investing",
+    category: "investing",
+    question: "What is diversification and why does it matter?",
+    metaTitle: "What Is Diversification in Investing? (Australia 2026)",
+    metaDescription:
+      "Diversification means spreading investments across assets, sectors, and geographies to reduce risk without proportionally sacrificing return. Learn how correlation works and how to diversify an Australian portfolio.",
+    shortAnswer:
+      "Diversification means spreading your investments so that the poor performance of one asset, sector, or geography does not devastate your overall portfolio. Combining assets with low or negative correlation reduces portfolio volatility without proportionally reducing expected returns — this is sometimes called 'the only free lunch in investing'.",
+    sections: [
+      {
+        heading: "How correlation works",
+        body: "Two assets are perfectly correlated (correlation = 1) if they always move together. If they are perfectly uncorrelated (correlation = 0) or negatively correlated (correlation = −1), combining them reduces overall portfolio volatility. In practice, most risky assets have positive correlations, especially in market crises — but the benefit of diversification persists for correlations below 1.",
+      },
+      {
+        heading: "Types of diversification",
+        body: "Asset class: shares + bonds + property + commodities + cash. Geographic: Australian + international equities. Sector: technology, financials, healthcare, resources, consumer. Currency: AUD-denominated vs. foreign-currency-denominated assets. Time: dollar-cost averaging spreads your entry point over time.",
+      },
+      {
+        heading: "The Australian concentration problem",
+        body: "The ASX All Ordinaries is heavily concentrated in financials (banks, 30%+ of index) and materials (mining, 20%+). An all-Australian portfolio is therefore undiversified by sector and over-exposed to commodity cycles and Australian house prices (through banks). Adding international equities — especially US tech and European consumer staples — materially improves diversification for most Australian investors.",
+      },
+      {
+        heading: "How many stocks for adequate diversification?",
+        body: "Academic research suggests diminishing diversification benefit beyond 15–20 uncorrelated stocks. In practice, broad-market ETFs (VAS for Australia, VGS for international) provide instant diversification across hundreds or thousands of securities. Individual stock portfolios of fewer than 20 holdings carry meaningful idiosyncratic risk.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Can I over-diversify?",
+        a: "Yes. Owning every available asset in proportion to market weight eventually just replicates the market portfolio. Beyond ~15–20 uncorrelated positions, the marginal diversification benefit is minimal. Excessive diversification ('diworsification') can mean you hold too many mediocre positions and incur unnecessary trading costs.",
+      },
+      {
+        q: "Does diversification protect against market crashes?",
+        a: "Partially. In a systemic crisis (2008 GFC, March 2020 COVID crash), most risky assets fall together as correlations converge toward 1. Bonds and gold tend to hold or rise in these scenarios. A balanced portfolio (60% shares / 40% bonds) falls less than a 100% equity portfolio in most downturns.",
+      },
+    ],
+    relatedSlugs: [
+      "how-does-portfolio-rebalancing-work",
+      "what-is-the-difference-between-etf-and-managed-fund",
+      "how-does-dollar-cost-averaging-work",
+    ],
+    relatedTools: [
+      { label: "Compare share brokers", href: "/share-trading" },
+      { label: "Compare ETFs", href: "/etfs" },
+    ],
+  },
+  {
+    slug: "how-does-the-first-home-guarantee-work",
+    category: "property",
+    question: "How does the First Home Guarantee (FHBG) work?",
+    metaTitle: "First Home Guarantee Explained: 5% Deposit, No LMI (Australia 2026)",
+    metaDescription:
+      "The First Home Guarantee lets eligible buyers purchase a home with as little as 5% deposit, with the government guaranteeing 15% of the loan value so you avoid Lenders Mortgage Insurance. Learn eligibility, property price caps, and participating lenders.",
+    shortAnswer:
+      "The First Home Guarantee (FHBG) allows eligible first home buyers to purchase a property with a 5% deposit (instead of the usual 20%) without paying Lenders Mortgage Insurance (LMI). The government guarantees the remaining 15% gap, meaning the lender is protected without you paying LMI — saving $10,000–$35,000 depending on the property price.",
+    sections: [
+      {
+        heading: "How the guarantee works",
+        body: "Under the scheme, Housing Australia (formerly NHFIC) guarantees up to 15% of the purchase price to the lender. You only need a 5% genuine deposit. You still borrow 95% of the purchase price — the loan-to-value ratio is still 95% — but the government guarantee means the lender doesn't require LMI. You repay the full loan; the guarantee is just security for the lender.",
+      },
+      {
+        heading: "Eligibility (2026)",
+        body: "Individual buyers: Australian citizens or permanent residents, taxable income ≤ $125,000. Joint buyers: ≤ $200,000 combined income. Must be a genuine first home buyer (never owned property in Australia). Plan to occupy the property (owner-occupier, not investment). Property price caps apply by location and are indexed periodically.",
+      },
+      {
+        heading: "Property price caps (FY2026)",
+        body: "Sydney / NSW regional: $900,000 / $750,000. Melbourne / Vic regional: $800,000 / $650,000. Brisbane / Qld regional: $700,000 / $550,000. Adelaide / SA regional: $600,000 / $450,000. Perth / WA regional: $600,000 / $450,000. Hobart / Tas regional: $600,000 / $450,000. Darwin / ACT: $600,000 / $600,000. Prices updated in the 2026 MYEFO.",
+      },
+      {
+        heading: "Participating lenders",
+        body: "Only panel lenders approved by Housing Australia can process FHBG applications. The major banks (CBA, NAB, ANZ, Westpac) and many non-bank lenders participate. Your broker or bank must submit the application to Housing Australia before your purchase contract is unconditional. Spots are limited per financial year.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Can I use the FHBG with other government schemes?",
+        a: "Yes. The FHBG can be used in conjunction with the First Home Super Saver Scheme (FHSS) for the deposit component. State government first homeowner grants (FHOG) also stack with the FHBG in most states.",
+      },
+      {
+        q: "What happens if I don't live in the property?",
+        a: "The FHBG requires owner-occupation. If you move out and rent the property within the guarantee period (typically until LVR falls below 80%), you may breach scheme conditions. Housing Australia may require the guarantee to be discharged, requiring you to pay LMI or top up equity.",
+      },
+      {
+        q: "Is the First Home Guarantee different from the Family Home Guarantee?",
+        a: "Yes. The Family Home Guarantee (FHG) allows eligible single parents with dependants (who may have previously owned a home) to purchase with a 2% deposit. Different eligibility criteria apply. Both are administered by Housing Australia.",
+      },
+    ],
+    relatedSlugs: [
+      "how-does-the-first-home-super-saver-scheme-work",
+      "should-i-pay-off-mortgage-or-invest",
+      "how-does-negative-gearing-work",
+    ],
+    relatedTools: [
+      { label: "Mortgage calculator", href: "/mortgage-calculator" },
+      { label: "Compare property investment platforms", href: "/property-platforms" },
+    ],
+  },
+  {
+    slug: "what-is-the-age-pension-assets-test",
+    category: "retirement",
+    question: "How does the Age Pension assets test work?",
+    metaTitle: "Age Pension Assets Test Explained (Australia FY2026)",
+    metaDescription:
+      "The Age Pension assets test reduces your pension by $3 per fortnight for every $1,000 of assets above the threshold. Learn what counts, the thresholds, and how super, property, and investments are assessed.",
+    shortAnswer:
+      "The Age Pension assets test reduces the full pension by $3 per fortnight for every $1,000 of assessable assets above the lower threshold. At the upper threshold, the pension cuts out completely. Your principal home is exempt; super in accumulation phase is counted from age pension age.",
+    sections: [
+      {
+        heading: "Assets test thresholds (FY2026)",
+        body: "Single homeowner: full pension up to $295,500; pension cuts out at $634,750. Single non-homeowner: full pension up to $504,500; cuts out at $843,750. Couple homeowner (combined): full pension up to $451,500; cuts out at $954,000. These thresholds are indexed to CPI each 1 July.",
+      },
+      {
+        heading: "What counts as an assessable asset",
+        body: "Financial investments (shares, managed funds, ETFs, bank accounts, term deposits, investment bonds). Super in accumulation phase (from Age Pension age). Investment properties (assessed at net market value). Vehicles, caravans, boats, personal assets above $2,500. The assessable value of a life interest, reversionary income, and allocated pension assets.",
+      },
+      {
+        heading: "What is exempt",
+        body: "Your principal home (regardless of value). Some pre-paid funeral arrangements (up to a capped value). Accommodation bonds for aged care. Exempt assets reduce your assessable figure and can significantly affect pension eligibility.",
+      },
+      {
+        heading: "Interaction with the income test",
+        body: "The Age Pension uses both an assets test and an income test, and pays the lower of the two pension amounts. The income test applies a deeming rate to financial assets (currently 0.25% on assets up to $62,600 and 2.25% above for singles). Most retirees with substantial super balances are cut off by the assets test before the income test bites.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Does downsizing my home affect the Age Pension?",
+        a: "Yes. Proceeds from selling your principal home are exempt for 24 months under the Assets Test Exemption for Home Sale Proceeds, provided you intend to buy or build a new home. After 24 months, the proceeds become assessable financial assets. The downsizer super contribution (up to $300,000 per person) can shelter some proceeds inside super.",
+      },
+      {
+        q: "Is super in accumulation phase assessable for the Age Pension?",
+        a: "Yes, from age pension age (currently 67). Super in accumulation phase held by someone below pension age is generally NOT assessable. This creates a strategy of maximising super contributions before pension age to shelter assets from the means test.",
+      },
+      {
+        q: "How often is the assets test reassessed?",
+        a: "Centrelink requires you to report significant asset changes (death of spouse, sale of property, change in investment values). Financial investment values are updated annually using the deemed rate methodology unless you notify Centrelink of a material change.",
+      },
+    ],
+    relatedSlugs: [
+      "what-is-the-super-preservation-age",
+      "what-is-smsf-and-is-it-worth-it",
+      "what-is-concessional-contribution",
+    ],
+    relatedTools: [
+      { label: "Super contributions calculator", href: "/super-contributions-calculator" },
+      { label: "Compare super funds", href: "/super" },
+    ],
+  },
 ];
 
 /** Lookup by slug — O(1) for static-generation. */
