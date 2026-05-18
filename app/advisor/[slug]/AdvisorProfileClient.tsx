@@ -8,6 +8,8 @@ import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
 import Icon from "@/components/Icon";
 import BookingWidget from "@/components/BookingWidget";
 import AdvisorAppointmentsWidget from "@/components/AdvisorAppointmentsWidget";
+import AdvisorCalendarEmbed from "@/components/AdvisorCalendarEmbed";
+import AdvisorVideoIntro from "@/components/AdvisorVideoIntro";
 import AdvisorReviewForm from "@/components/AdvisorReviewForm";
 import VerifiedClientBadge from "@/components/VerifiedClientBadge";
 import VerifiedBadge from "@/components/VerifiedBadge";
@@ -766,18 +768,14 @@ export default function AdvisorProfileClient({
               </SectionCard>
             )}
 
-            {/* Intro Video */}
+            {/* Intro Video — MK-02: lazy-load with poster overlay + Vimeo support */}
             {pro.intro_video_url && (
               <SectionCard title="Introduction Video" icon="video">
-                <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-slate-100">
-                  <iframe
-                    src={(pro.intro_video_url!).replace("watch?v=", "embed/").replace("youtu.be/", "youtube.com/embed/")}
-                    className="absolute inset-0 w-full h-full"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    loading="lazy"
-                  />
-                </div>
+                <AdvisorVideoIntro
+                  videoUrl={pro.intro_video_url!}
+                  posterUrl={pro.intro_video_poster_url}
+                  advisorName={pro.name}
+                />
               </SectionCard>
             )}
 
@@ -845,6 +843,20 @@ export default function AdvisorProfileClient({
                 </div>
               </SectionCard>
             ) : null}
+
+            {/* MK-01: Calendly/Cal.com inline embed — shows when booking_link is
+                a supported calendar platform. Eliminates the new-tab context
+                switch that hurts conversion on mobile. Falls back to link for
+                other booking URLs. */}
+            {pro.booking_link && (
+              <SectionCard title="Book a Time" icon="calendar">
+                <AdvisorCalendarEmbed
+                  bookingLink={pro.booking_link}
+                  advisorName={pro.name}
+                  consultationLabel={pro.initial_consultation_free ? "free consultation" : "consultation"}
+                />
+              </SectionCard>
+            )}
 
             {/* Wave 17 first-party concrete-slot booking.
                 Renders nothing if the advisor has no open slots in
