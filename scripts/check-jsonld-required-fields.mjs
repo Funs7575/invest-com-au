@@ -59,8 +59,8 @@ function listFiles(dir, extensions, acc = []) {
   return acc;
 }
 
-let hardFails = [];
-let softWarns = [];
+const hardFails = [];
+const softWarns = [];
 
 // ── 1. Check the named helpers in lib/schema-markup.ts ──────────────
 

@@ -2538,6 +2538,30 @@ export type Database = {
         }
         Relationships: []
       }
+      api_latency_samples: {
+        Row: {
+          duration_ms: number
+          id: number
+          route_path: string
+          sampled_at: string
+          status: number
+        }
+        Insert: {
+          duration_ms: number
+          id?: number
+          route_path: string
+          sampled_at?: string
+          status: number
+        }
+        Update: {
+          duration_ms?: number
+          id?: number
+          route_path?: string
+          sampled_at?: string
+          status?: number
+        }
+        Relationships: []
+      }
       api_request_log: {
         Row: {
           api_key_id: string | null
@@ -15626,6 +15650,66 @@ export type Database = {
           metadata?: Json
           reason?: string
           suppressed_at?: string
+        }
+        Relationships: []
+      }
+      switch_intents: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          email: string
+          estimated_balance_cents: number | null
+          from_provider: string | null
+          id: string
+          notes: string
+          partner_routed_at: string | null
+          phone: string | null
+          product_kind: string
+          reason: string
+          status: string
+          to_provider: string | null
+          unsubscribe_token: string
+          updated_at: string
+          verified_at: string | null
+          verify_token: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          email: string
+          estimated_balance_cents?: number | null
+          from_provider?: string | null
+          id?: string
+          notes?: string
+          partner_routed_at?: string | null
+          phone?: string | null
+          product_kind: string
+          reason?: string
+          status?: string
+          to_provider?: string | null
+          unsubscribe_token: string
+          updated_at?: string
+          verified_at?: string | null
+          verify_token: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          email?: string
+          estimated_balance_cents?: number | null
+          from_provider?: string | null
+          id?: string
+          notes?: string
+          partner_routed_at?: string | null
+          phone?: string | null
+          product_kind?: string
+          reason?: string
+          status?: string
+          to_provider?: string | null
+          unsubscribe_token?: string
+          updated_at?: string
+          verified_at?: string | null
+          verify_token?: string
         }
         Relationships: []
       }
