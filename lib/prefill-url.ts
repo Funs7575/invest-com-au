@@ -23,6 +23,12 @@ export interface AdvisorPrefillOptions {
   budget?: string;
   /** Pre-fill the user's first name in Step 4. */
   firstName?: string;
+  /**
+   * Pre-select context checkboxes in Step 2 (comma-separated in URL).
+   * Values must match the option IDs in CONTEXT_CONFIG for the resolved intent.
+   * CM-01: life-event matching passes pre-selected context so Step 2 is pre-populated.
+   */
+  context?: string[];
 }
 
 /**
@@ -38,6 +44,7 @@ export function buildAdvisorUrl(options: AdvisorPrefillOptions): string {
   if (options.postcode) params.set("postcode", options.postcode);
   if (options.budget) params.set("budget", options.budget);
   if (options.firstName) params.set("first_name", options.firstName);
+  if (options.context && options.context.length > 0) params.set("context", options.context.join(","));
   return `/find-advisor?${params.toString()}`;
 }
 
