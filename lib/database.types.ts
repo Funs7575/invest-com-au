@@ -9866,6 +9866,54 @@ export type Database = {
         }
         Relationships: []
       }
+      investor_oauth_connections: {
+        Row: {
+          access_token_enc: string
+          auth_user_id: string
+          connected_at: string
+          created_at: string
+          expires_at: string
+          external_account_id: string | null
+          id: number
+          last_sync_error: string | null
+          last_synced_at: string | null
+          provider: string
+          refresh_token_enc: string | null
+          scope: string | null
+          updated_at: string
+        }
+        Insert: {
+          access_token_enc: string
+          auth_user_id: string
+          connected_at?: string
+          created_at?: string
+          expires_at: string
+          external_account_id?: string | null
+          id?: never
+          last_sync_error?: string | null
+          last_synced_at?: string | null
+          provider: string
+          refresh_token_enc?: string | null
+          scope?: string | null
+          updated_at?: string
+        }
+        Update: {
+          access_token_enc?: string
+          auth_user_id?: string
+          connected_at?: string
+          created_at?: string
+          expires_at?: string
+          external_account_id?: string | null
+          id?: never
+          last_sync_error?: string | null
+          last_synced_at?: string | null
+          provider?: string
+          refresh_token_enc?: string | null
+          scope?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       investor_journey_touchpoints: {
         Row: {
           active: boolean | null
