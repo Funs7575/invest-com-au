@@ -5,8 +5,16 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME, ORGANIZATION_JSONLD } from "@/lib/seo";
 import { sanitizeHtml } from "@/lib/sanitize-html";
+import { requirePro } from "@/lib/server/get-subscription";
+import NewsletterProUpsell from "./NewsletterProUpsell";
 
-export const revalidate = 86400;
+// Per-request render (was ISR `revalidate = 86400`). The page renders a
+// Pro upsell CTA for non-Pro viewers via `requirePro()` server-side;
+// caching one variant across Pro and non-Pro viewers would either show
+// the upsell to subscribers (bad UX, lost trust) or hide it from
+// visitors (lost conversion). The newsletter archive is low-traffic
+// enough that the loss of CDN caching is acceptable.
+export const dynamic = "force-dynamic";
 
 export async function generateStaticParams() {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
@@ -92,6 +100,7 @@ export default async function NewsletterEditionPage({
   if (!data) notFound();
 
   const editionData = data as NewsletterEdition;
+  const { isPro } = await requirePro();
 
   const date = new Date(editionData.edition_date + "T00:00:00Z");
   const formattedDate = date.toLocaleDateString("en-AU", {
@@ -176,6 +185,12 @@ export default async function NewsletterEditionPage({
             )}
           </div>
         </div>
+
+        {/* Pro upsell CTA — non-Pro readers only. Rendered above the
+            free digest content as the newsletter page is a high-intent
+            surface (visitor specifically subscribed / opened the
+            digest), so the Pro upsell converts well here. */}
+        {!isPro && <NewsletterProUpsell />}
 
         {/* Rendered HTML content.
             Sanitised via lib/sanitize-html.ts before render. The newsletter

@@ -2,10 +2,17 @@
 
 import Link from "next/link";
 import type { QuarterlyReport } from "@/lib/types";
-import { useSubscription } from "@/lib/hooks/useSubscription";
 
-export default function ReportDetailClient({ report }: { report: QuarterlyReport }) {
-  const { isPro, loading: authLoading } = useSubscription();
+export default function ReportDetailClient({
+  report,
+  isPro,
+  totalSectionsCount,
+}: {
+  report: QuarterlyReport;
+  isPro: boolean;
+  totalSectionsCount: number;
+}) {
+  const hasGatedSections = !isPro && totalSectionsCount > 0;
 
   return (
     <div className="py-5 md:py-12">
@@ -56,42 +63,39 @@ export default function ReportDetailClient({ report }: { report: QuarterlyReport
           </div>
         )}
 
-        {/* Full Sections — Pro only */}
-        {report.sections && report.sections.length > 0 && (
+        {/* Full Sections — Pro only. Server-side gating means
+            `report.sections` is empty for non-Pro; the CTA below
+            replaces the prior CSS-blur preview which leaked content
+            via view-source. */}
+        {isPro && report.sections && report.sections.length > 0 && (
           <div className="mb-6">
             <h2 className="text-lg font-extrabold mb-4">Full Report</h2>
-            {isPro || authLoading ? (
-              <div className="space-y-6">
-                {report.sections.map((section, i) => (
-                  <div key={i} className="bg-white border border-slate-200 rounded-xl p-5">
-                    <h3 className="text-sm font-bold text-slate-900 mb-2">{section.heading}</h3>
-                    <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-line">{section.body}</p>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="relative">
-                <div className="space-y-6 blur-sm pointer-events-none select-none">
-                  {report.sections.slice(0, 2).map((section, i) => (
-                    <div key={i} className="bg-white border border-slate-200 rounded-xl p-5">
-                      <h3 className="text-sm font-bold text-slate-900 mb-2">{section.heading}</h3>
-                      <p className="text-sm text-slate-400 leading-relaxed">{section.body.slice(0, 200)}...</p>
-                    </div>
-                  ))}
+            <div className="space-y-6">
+              {report.sections.map((section, i) => (
+                <div key={i} className="bg-white border border-slate-200 rounded-xl p-5">
+                  <h3 className="text-sm font-bold text-slate-900 mb-2">{section.heading}</h3>
+                  <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-line">{section.body}</p>
                 </div>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="bg-white/95 border border-slate-200 rounded-xl p-6 text-center shadow-lg max-w-sm">
-                    <p className="text-sm font-bold text-slate-900 mb-1">Unlock Full Report</p>
-                    <p className="text-xs text-slate-500 mb-3">
-                      Get access to all {report.sections.length} sections, fee change analysis, and new entrant coverage.
-                    </p>
-                    <Link href="/pro" className="inline-block px-4 py-2 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors">
-                      Upgrade to Pro
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            )}
+              ))}
+            </div>
+          </div>
+        )}
+
+        {hasGatedSections && (
+          <div
+            data-testid="report-upgrade-cta"
+            className="mb-6 bg-white border border-slate-200 rounded-xl p-6 text-center shadow-sm"
+          >
+            <p className="text-sm font-bold text-slate-900 mb-1">Unlock Full Report</p>
+            <p className="text-xs text-slate-500 mb-3">
+              Get access to all {totalSectionsCount} sections, fee change analysis, and new entrant coverage.
+            </p>
+            <Link
+              href="/pro"
+              className="inline-block px-4 py-2 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors"
+            >
+              Upgrade to Pro
+            </Link>
           </div>
         )}
 

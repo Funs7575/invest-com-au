@@ -30,7 +30,7 @@ vi.mock("@/lib/supabase/server", () => ({
 }));
 
 import { hasCourseAccess } from "@/lib/server/course-access";
-import { getSubscription } from "@/lib/server/get-subscription";
+import { gatePremiumData, getSubscription, requirePro } from "@/lib/server/get-subscription";
 
 // ─── Tests ───────────────────────────────────────────────────────────
 
@@ -120,5 +120,90 @@ describe("getSubscription", () => {
     subData = { status: "active" };
     const res = await getSubscription();
     expect(res.user).toBe(user);
+  });
+});
+
+describe("requirePro", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    subData = null;
+  });
+
+  it("returns isPro=false for an unauthenticated visitor", async () => {
+    mockGetUser.mockResolvedValueOnce({ data: { user: null } });
+    const res = await requirePro();
+    expect(res.isPro).toBe(false);
+    expect(res.user).toBeNull();
+  });
+
+  it("returns isPro=true when the active subscription matches", async () => {
+    mockGetUser.mockResolvedValueOnce({ data: { user: { id: "u1" } } });
+    subData = { status: "active" };
+    const res = await requirePro();
+    expect(res.isPro).toBe(true);
+  });
+
+  it("does not throw or redirect when the viewer is non-Pro (soft-gating contract)", async () => {
+    mockGetUser.mockResolvedValueOnce({ data: { user: { id: "u1" } } });
+    subData = null;
+    await expect(requirePro()).resolves.toEqual(
+      expect.objectContaining({ isPro: false }),
+    );
+  });
+});
+
+describe("gatePremiumData", () => {
+  const fullReport = {
+    title: "Q1 2026 Broker Report",
+    executive_summary: "Free for everyone.",
+    sections: [{ heading: "Paid", body: "Long-form analysis." }],
+    fee_changes_summary: [
+      { broker: "X", field: "fee", old_value: "$1", new_value: "$2" },
+    ],
+    new_entrants: ["NewBroker"],
+  };
+
+  it("returns the data unchanged when isPro=true", () => {
+    const result = gatePremiumData(fullReport, true, {
+      sections: [],
+      fee_changes_summary: [],
+      new_entrants: [],
+    });
+    expect(result).toEqual(fullReport);
+  });
+
+  it("substitutes the fallbacks when isPro=false", () => {
+    const result = gatePremiumData(fullReport, false, {
+      sections: [],
+      fee_changes_summary: [],
+      new_entrants: [],
+    });
+    expect(result.sections).toEqual([]);
+    expect(result.fee_changes_summary).toEqual([]);
+    expect(result.new_entrants).toEqual([]);
+    // Free fields are preserved
+    expect(result.title).toBe("Q1 2026 Broker Report");
+    expect(result.executive_summary).toBe("Free for everyone.");
+  });
+
+  it("does not mutate the input record", () => {
+    const original = { ...fullReport };
+    gatePremiumData(fullReport, false, {
+      sections: [],
+      fee_changes_summary: [],
+      new_entrants: [],
+    });
+    expect(fullReport).toEqual(original);
+  });
+
+  it("only blanks fields listed in fallbacks (others pass through)", () => {
+    const result = gatePremiumData(fullReport, false, {
+      sections: [],
+    });
+    expect(result.sections).toEqual([]);
+    // Untouched paid fields stay as-is — caller must explicitly list
+    // every field they want to gate.
+    expect(result.fee_changes_summary).toEqual(fullReport.fee_changes_summary);
+    expect(result.new_entrants).toEqual(fullReport.new_entrants);
   });
 });
