@@ -3,7 +3,6 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
- 
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getAdminEmails } from "@/lib/admin";
 import { INTERNAL_LINK_TARGETS, GLOSSARY_LINK_TARGETS } from "@/lib/keyword-linking";
