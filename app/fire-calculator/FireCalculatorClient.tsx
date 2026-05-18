@@ -251,6 +251,15 @@ export default function FireCalculatorClient() {
                   <p className="font-bold text-slate-700">{result.savingsRate.toFixed(0)}%</p>
                 </div>
               </div>
+              <SaveGoalButton
+                targetCents={Math.round(result.fireNumber * 100)}
+                currentCents={Math.round(currentSavings * 100)}
+                monthlyCents={Math.round((annualSavings / 12) * 100)}
+                returnPct={returnRate}
+                fireAge={result.fireAge}
+                currentAge={currentAge}
+                withdrawalRate={withdrawalRate}
+              />
             </div>
 
             {result.achieved && (
@@ -344,6 +353,103 @@ export default function FireCalculatorClient() {
           This calculator provides general information only and does not constitute financial advice. Returns are not guaranteed and the 4% withdrawal rate is based on US historical data and may not reflect Australian market conditions. Speak with a licensed financial adviser before making retirement planning decisions.
         </p>
       </div>
+    </div>
+  );
+}
+
+interface SaveGoalButtonProps {
+  targetCents: number;
+  currentCents: number;
+  monthlyCents: number;
+  returnPct: number;
+  fireAge: number;
+  currentAge: number;
+  withdrawalRate: number;
+}
+
+function SaveGoalButton({
+  targetCents,
+  currentCents,
+  monthlyCents,
+  returnPct,
+  fireAge,
+  currentAge,
+  withdrawalRate,
+}: SaveGoalButtonProps) {
+  const [status, setStatus] = useState<"idle" | "saving" | "saved" | "signin" | "error">("idle");
+  const [error, setError] = useState<string | null>(null);
+
+  async function save() {
+    setStatus("saving");
+    setError(null);
+    try {
+      // Target date: today + (fireAge - currentAge) years. ISO YYYY-MM-DD.
+      const yearsAway = Math.max(0, Math.round(fireAge - currentAge));
+      const target = new Date();
+      target.setFullYear(target.getFullYear() + yearsAway);
+      const targetDate = target.toISOString().slice(0, 10);
+
+      const res = await fetch("/api/account/goals", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          label: "FIRE",
+          goal_type: "retirement",
+          target_cents: targetCents,
+          target_date: targetDate,
+          current_balance_cents: currentCents,
+          monthly_contribution_cents: monthlyCents,
+          expected_return_pct: returnPct,
+          notes: `${withdrawalRate}% withdrawal rate · FIRE at age ${Math.round(fireAge)}`,
+        }),
+      });
+      if (res.status === 401) {
+        setStatus("signin");
+        return;
+      }
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || `HTTP ${res.status}`);
+      }
+      setStatus("saved");
+    } catch (err) {
+      setStatus("error");
+      setError(err instanceof Error ? err.message : "Network error");
+    }
+  }
+
+  if (status === "saved") {
+    return (
+      <p className="mt-3 text-xs text-emerald-700" role="status" aria-live="polite">
+        ✓ Saved — view + edit on your account dashboard.
+      </p>
+    );
+  }
+  if (status === "signin") {
+    return (
+      <p className="mt-3 text-xs text-slate-500">
+        <Link href="/account/login?redirect=/fire-calculator" className="underline">
+          Sign in
+        </Link>{" "}
+        to save this FIRE goal to your account.
+      </p>
+    );
+  }
+  return (
+    <div className="mt-3">
+      <button
+        type="button"
+        onClick={save}
+        disabled={status === "saving"}
+        className="inline-flex items-center rounded-md bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-400"
+      >
+        {status === "saving" ? "Saving…" : "Save this FIRE goal"}
+      </button>
+      {error && (
+        <span role="alert" className="ml-2 text-xs text-red-700">
+          {error}
+        </span>
+      )}
     </div>
   );
 }

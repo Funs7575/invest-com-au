@@ -58,15 +58,32 @@ export default defineConfig({
     // than Chromium/Blink. iOS Safari and macOS Safari ship the same
     // engine, so this covers both. Mobile Safari viewport tested
     // separately below.
+    //
+    // Chronic-flake mitigation (CLAUDE.md): webkit + mobile-safari hit
+    // networkidle timeouts on PRs that chromium clears cleanly, and the
+    // E2E job was cancelling out at 25 min on every wave-3 push. Two
+    // surgical changes scoped to these projects only:
+    //   1. navigationTimeout bumped to 30 s (vs the 15 s default that
+    //      lives in `use:` above) so a slow first paint doesn't fail.
+    //   2. retries=3 on CI (vs the 2 retries globally) so a single
+    //      flaky run doesn't kill the whole job.
     {
       name: "webkit",
-      use: { ...devices["Desktop Safari"] },
+      use: {
+        ...devices["Desktop Safari"],
+        navigationTimeout: 30_000,
+      },
+      retries: process.env.CI ? 3 : 0,
     },
     // Mobile viewport — catches responsive layout regressions and
     // touch-specific event bugs that desktop projects miss.
     {
       name: "mobile-safari",
-      use: { ...devices["iPhone 13"] },
+      use: {
+        ...devices["iPhone 13"],
+        navigationTimeout: 30_000,
+      },
+      retries: process.env.CI ? 3 : 0,
     },
   ],
   // Skip the local webServer when E2E_BASE_URL points at an

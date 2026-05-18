@@ -34,6 +34,7 @@ export default function ProfileTab({ advisor, reviews, onAdvisorChange }: Props)
           offer_text: advisor.offer_text || null,
           offer_terms: advisor.offer_terms || null,
           offer_active: advisor.offer_active || false,
+          available_in_countries: advisor.available_in_countries || [],
         }),
       });
       setProfileSaved(true);
@@ -120,6 +121,11 @@ export default function ProfileTab({ advisor, reviews, onAdvisorChange }: Props)
             />
           </div>
         </div>
+
+        <CountriesServedField
+          value={advisor.available_in_countries || []}
+          onChange={(next) => onAdvisorChange({ ...advisor, available_in_countries: next })}
+        />
 
         <div>
           <label className="block text-xs font-semibold text-slate-600 mb-1">Booking Link (Calendly / Cal.com)</label>
@@ -224,5 +230,70 @@ export default function ProfileTab({ advisor, reviews, onAdvisorChange }: Props)
         </div>
       )}
     </>
+  );
+}
+
+// Countries an advisor can serve — FIN_NOTEBOOK cross-border Phase B.
+// Curated to the 12 corridors that have lib/foreign-investment-country-data
+// configs today; AU is always included because every advisor is AU-licensed
+// by definition (the toggle is implicit, not exposed).
+const CORRIDOR_COUNTRIES: ReadonlyArray<{ code: string; label: string }> = [
+  { code: "gb", label: "United Kingdom" },
+  { code: "us", label: "United States" },
+  { code: "cn", label: "China" },
+  { code: "in", label: "India" },
+  { code: "hk", label: "Hong Kong" },
+  { code: "sg", label: "Singapore" },
+  { code: "nz", label: "New Zealand" },
+  { code: "jp", label: "Japan" },
+  { code: "kr", label: "South Korea" },
+  { code: "my", label: "Malaysia" },
+  { code: "ae", label: "United Arab Emirates" },
+  { code: "sa", label: "Saudi Arabia" },
+];
+
+interface CountriesServedFieldProps {
+  value: string[];
+  onChange: (next: string[]) => void;
+}
+
+function CountriesServedField({ value, onChange }: CountriesServedFieldProps) {
+  const selected = new Set(value);
+  return (
+    <div>
+      <label className="block text-xs font-semibold text-slate-600 mb-1">
+        Cross-border corridors you serve
+      </label>
+      <p className="text-[0.62rem] text-slate-400 mb-2">
+        Tick the countries you actively help clients with. Investors landing on
+        country pages get matched to you first when their country is one you
+        flagged. AU is implicit — every advisor here is AU-licensed.
+      </p>
+      <div className="flex flex-wrap gap-2">
+        {CORRIDOR_COUNTRIES.map((c) => {
+          const active = selected.has(c.code);
+          return (
+            <button
+              key={c.code}
+              type="button"
+              onClick={() => {
+                const next = new Set(selected);
+                if (active) next.delete(c.code);
+                else next.add(c.code);
+                onChange(Array.from(next).sort());
+              }}
+              className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+                active
+                  ? "bg-violet-600 text-white border-violet-600"
+                  : "bg-white text-slate-700 border-slate-200 hover:border-slate-300"
+              }`}
+              aria-pressed={active}
+            >
+              {c.label}
+            </button>
+          );
+        })}
+      </div>
+    </div>
   );
 }
