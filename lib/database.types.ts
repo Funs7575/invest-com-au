@@ -11045,6 +11045,7 @@ export type Database = {
           fee_changes_count: number
           html_content: string | null
           id: number
+          status: string
           subject: string
         }
         Insert: {
@@ -11055,6 +11056,7 @@ export type Database = {
           fee_changes_count?: number
           html_content?: string | null
           id?: number
+          status?: string
           subject: string
         }
         Update: {
@@ -11065,6 +11067,7 @@ export type Database = {
           fee_changes_count?: number
           html_content?: string | null
           id?: number
+          status?: string
           subject?: string
         }
         Relationships: []
