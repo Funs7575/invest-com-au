@@ -63,6 +63,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | DF | `claude/audit-remediation/df-01-decision-frameworks` | **#883 OPEN** · ~~#884 CLOSED (dup)~~ | DF-01 done (`49bc079`): DecisionTree engine + buy-vs-rent. DF-02 done (`972e13a`): salary-sacrifice tree. DF-03 done (`1d741e9`): SMSF-setup tree. DF-04 done (`cadd73e`): tools index updated (buy-vs-rent/salary-sacrifice/smsf-setup added to ToolsClient). **Stream complete pending #883 merge.** | All DF tasks merged |
 | QA | `claude/audit-remediation/qa-01-question-deep-dive` | **#890 OPEN** | QA-01 done (`a7c7d56`): /questions index + RSC deep-dive template + 17 seeded questions. QA-02 done (`3c0d82a`): +13 questions → 30 total (tax-loss harvesting, MLS, LITO, crypto tax, investment bonds, A-REITs, rebalancing, shares vs bonds, diversification, FHBG, age pension assets test, HECS-HELP). **Stream complete at 30 questions pending #890 merge.** | All QA tasks merged |
 | Z-23+BB-08 | `claude/audit-remediation/z-23-first-home-buyer` | **#895 OPEN** | Z-23 done (`6f33976`): `/first-home-buyer` hub page. BB-08 done: FHSS deposit calculator at `app/tools/fhss-calculator/page.tsx`. CI rescue iter 431: fixed Dated strings gate ("1 July 2017" → `// dated-ok`), JSON-LD missing (added `calculatorJsonLd`+`breadcrumbJsonLd`+`faqJsonLd`), merged main for Supabase types drift. Commit `0cdd2ee`. Last CI: pending — pushed 2026-05-18. **Stream complete pending #895 merge.** | #895 merged |
+| SM | `claude/audit-remediation/sm-service-cultural` | **#904 OPEN** | SM-01 done (`819465d`): grouped service-line specialty filter by `ADVISOR_SPECIALTY_CATEGORIES` in advisor listing (replaces flat alpha chips). SM-02 done (`819465d`): "Cultural & Faith-Based" category added to specialty taxonomy (Halal, ESG, Buddhist, Bilingual etc.); non-English language badges on advisor cards (🌏 indigo pills). **Stream complete pending #904 merge.** | All SM tasks merged |
 | MK | `claude/audit-remediation/mk-marketplace-conversion` | **#903 OPEN** | MK-01 done (`773c0e8`): `AdvisorCalendarEmbed` — inline Calendly/Cal.com iframe embed on advisor profile; falls back to link for other URLs. MK-02 done (`773c0e8`): `AdvisorVideoIntro` — lazy poster-overlay player replacing bare iframe; YouTube thumbnail auto-fetch + Vimeo support. Both wired into `AdvisorProfileClient`. **Stream complete pending #903 merge.** | All MK tasks merged |
 | CD | `claude/audit-remediation/cd-01-financial-calendar` · `claude/audit-remediation/cd-01-calendar-utility` | **#900 OPEN** · **#902 OPEN** | CD-01 done (`e07b8e4`): public `/tools/financial-calendar` (PR #900). CD-01 account-gated (`5142821`): `/account/calendar` personalised deadline calendar (PR #902). CD-02 done (`3ff2353`): `/tools/currency-converter` + `CurrencyConverterClient` — 15 currencies, FIRB thresholds context, static mid-market rates (PR #902). CD-03 done (`3ff2353`): `/pricing` — 5 fee tables for financial planners/brokers/tax accountants/buyer's agents/SMSF specialists (PR #902). CI rescue iter 435: `Dated strings gate` fixed — "1 July 2025" in calendar description (`// dated-ok`), commit `5142821`. **Stream complete pending #900 + #902 merge.** | All CD tasks merged |
 
@@ -129,6 +130,24 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 437 — 2026-05-18 — SM-01 grouped service-line filter + SM-02 cultural routing
+
+- **Stream:** SM (service-line + cultural matching)
+- **Items:** SM-01 — fine-grained service-line tags, SM-02 — cultural/religion routing
+- **Branch:** `claude/audit-remediation/sm-service-cultural`
+- **PR:** #904 OPEN
+- **Commit:** `819465d`
+- **Diff:** +71 -6 across 2 files
+- **What:**
+  - **SM-01 — `app/advisors/AdvisorsClient.tsx`** — replaced the flat alphabetical specialty chip list in the filter sidebar with `<details>`/`<summary>` accordion groups, driven by `ADVISOR_SPECIALTY_CATEGORIES`. Categories with no matching advisors are hidden (filter renders only what the live data supports). Active specialty selections auto-expand their parent category. Scrollable container at `max-h-52`. Imported `ADVISOR_SPECIALTY_CATEGORIES` from `lib/advisor-specialties`.
+  - **SM-02 — `lib/advisor-specialties.ts`** — added "Cultural & Faith-Based" specialty category: Halal Investing, Ethical / ESG Investing, Buddhist Financial Principles, Culturally Sensitive Advice, Bilingual Financial Advice, Socially Responsible Investing. These appear in the new grouped filter in teal highlight.
+  - **SM-02 — `app/advisors/AdvisorsClient.tsx`** — advisor cards now show non-English language badges (🌏 indigo pill for each non-English language, up to 3). Highlighted in darker indigo when matching the active `languageFilter`. Immediate cultural-match signal without opening the full profile.
+- **No schema changes** — uses existing `Professional.specialties[]` and `Professional.languages[]` fields.
+- **Local gates:** `node scripts/check-dated-strings.mjs` ✅, `node scripts/check-jsonld-coverage.mjs` ✅, `npm run audit:rate-limits --strict` → 100% (461 routes)
+- **Tier:** A (listing UI update + lib constant addition — no API/schema changes)
+- **Batch end:** 5 items in this fire (iters 433–437; CD CI-rescue counted as sub-iter). Within 5-item Tier-A batch cap. Cumulative diff ~1284 LOC.
+- **STATUS: PROGRESS · stream=SM · item=SM-01+SM-02 · pr=#904**
 
 ### iter 436 — 2026-05-18 — MK-01 calendar embed + MK-02 advisor video intros
 
