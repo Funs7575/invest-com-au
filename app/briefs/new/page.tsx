@@ -3,8 +3,108 @@ import { headers } from "next/headers";
 
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import { isFlagEnabled } from "@/lib/feature-flags";
+import { createClient } from "@/lib/supabase/server";
+// eslint-disable-next-line no-restricted-imports -- cross-table workspace lookup: resolves the caller's active account kind label so the brief form can prefill business/listing-owner context. Reads only the user's own profile under service-role because business_accounts / listing_owner_accounts have no anon SELECT path.
+import { createAdminClient } from "@/lib/supabase/admin";
+import { getActiveKind, type WorkspaceKind } from "@/lib/account-kinds";
 import Icon from "@/components/Icon";
 import BriefForm from "./BriefForm";
+
+interface WorkspaceContext {
+  kind: WorkspaceKind;
+  label: string;
+  prefillName: string | null;
+  prefillEmail: string | null;
+  prefillPhone: string | null;
+}
+
+async function loadWorkspaceContext(): Promise<WorkspaceContext | null> {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return null;
+    const active = await getActiveKind();
+    if (!active) return null;
+    const admin = createAdminClient();
+    if (active === "business_owner") {
+      const { data } = await admin
+        .from("business_accounts")
+        .select("business_name, contact_name, contact_email, contact_phone")
+        .eq("auth_user_id", user.id)
+        .maybeSingle();
+      if (!data) return null;
+      return {
+        kind: "business_owner",
+        label: (data.business_name as string) || "your business",
+        prefillName: (data.contact_name as string) ?? null,
+        prefillEmail: (data.contact_email as string) ?? user.email ?? null,
+        prefillPhone: (data.contact_phone as string) ?? null,
+      };
+    }
+    if (active === "listing_owner") {
+      const { data } = await admin
+        .from("listing_owner_accounts")
+        .select("owner_name, contact_email, contact_phone")
+        .eq("auth_user_id", user.id)
+        .maybeSingle();
+      if (!data) return null;
+      return {
+        kind: "listing_owner",
+        label: (data.owner_name as string) || "your listing",
+        prefillName: (data.owner_name as string) ?? null,
+        prefillEmail: (data.contact_email as string) ?? user.email ?? null,
+        prefillPhone: (data.contact_phone as string) ?? null,
+      };
+    }
+    if (active === "investor") {
+      const { data } = await admin
+        .from("investor_profiles")
+        .select("full_name")
+        .eq("auth_user_id", user.id)
+        .maybeSingle();
+      return {
+        kind: "investor",
+        label: (data?.full_name as string) || (user.email as string) || "you",
+        prefillName: (data?.full_name as string) ?? null,
+        prefillEmail: user.email ?? null,
+        prefillPhone: null,
+      };
+    }
+    // advisor / broker_partner — generic label, no prefill (those kinds
+    // don't typically file briefs).
+    return {
+      kind: active,
+      label: active.replace(/_/g, " "),
+      prefillName: null,
+      prefillEmail: user.email ?? null,
+      prefillPhone: null,
+    };
+  } catch {
+    return null;
+  }
+}
+
+async function isProSubscriber(): Promise<boolean> {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return false;
+    const admin = createAdminClient();
+    const { data } = await admin
+      .from("subscriptions")
+      .select("status, plan")
+      .eq("auth_user_id", user.id)
+      .in("status", ["active", "trialing"])
+      .maybeSingle();
+    return !!data;
+  } catch {
+    return false;
+  }
+}
 
 // Flag-gated AI co-pilot toggle reads from feature_flags on every request.
 // We can't ISR-cache when the response branches on a feature flag — the
@@ -62,6 +162,11 @@ export default async function NewBriefPage({
     userKey: visitorIp,
   });
 
+  const [workspace, proSubscriber] = await Promise.all([
+    loadWorkspaceContext(),
+    isProSubscriber(),
+  ]);
+
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
     { name: "Match Requests", url: `${SITE_URL}/briefs` },
@@ -109,7 +214,11 @@ export default async function NewBriefPage({
 
       <section className="bg-slate-50 py-12 sm:py-16">
         <div className="max-w-3xl mx-auto px-4">
-          <BriefForm aiCopilotEnabled={aiCopilotEnabled} />
+          <BriefForm
+            aiCopilotEnabled={aiCopilotEnabled}
+            workspace={workspace}
+            proSubscriber={proSubscriber}
+          />
         </div>
       </section>
 

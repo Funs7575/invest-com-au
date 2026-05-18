@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 
 import type {
   AvailabilitySlot,
@@ -17,6 +17,8 @@ interface Props {
   existingBooking: ConsultationBooking | null;
   existingSlot: AvailabilitySlot | null;
 }
+
+const DAY_MS = 24 * 60 * 60 * 1000;
 
 export default function BookConsultationPanel({
   briefSlug,
@@ -37,6 +39,7 @@ export default function BookConsultationPanel({
   const [bookedSlot, setBookedSlot] = useState<AvailabilitySlot | null>(
     existingSlot,
   );
+  const [pickedSlotId, setPickedSlotId] = useState<number | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -59,8 +62,34 @@ export default function BookConsultationPanel({
     };
   }, [proSlug, booking]);
 
+  // Group slots into a 7-day calendar starting from the earliest available
+  // slot (or today if there are no slots in the past). Each cell is a list
+  // of pickable times on that date so the consumer can scan a week at a
+  // glance instead of scrolling a flat list.
+  const grid = useMemo(() => {
+    if (slots.length === 0) return [] as { date: Date; slots: AvailabilitySlot[] }[];
+    const sorted = [...slots].sort(
+      (a, b) => new Date(a.start_at).getTime() - new Date(b.start_at).getTime(),
+    );
+    const first = new Date(sorted[0]?.start_at ?? Date.now());
+    first.setHours(0, 0, 0, 0);
+    const startMs = first.getTime();
+    const grouped: { date: Date; slots: AvailabilitySlot[] }[] = [];
+    for (let i = 0; i < 7; i++) {
+      const dayStart = new Date(startMs + i * DAY_MS);
+      const dayEnd = new Date(dayStart.getTime() + DAY_MS);
+      const inDay = sorted.filter((s) => {
+        const t = new Date(s.start_at).getTime();
+        return t >= dayStart.getTime() && t < dayEnd.getTime();
+      });
+      grouped.push({ date: dayStart, slots: inDay });
+    }
+    return grouped;
+  }, [slots]);
+
   function handleBook(slot: AvailabilitySlot) {
     setError(null);
+    setPickedSlotId(slot.id);
     startTransition(async () => {
       try {
         const body: Record<string, unknown> = { slot_id: slot.id };
@@ -83,6 +112,7 @@ export default function BookConsultationPanel({
         setBookedSlot(parsed.slot ?? slot);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to book.");
+        setPickedSlotId(null);
       }
     });
   }
@@ -123,9 +153,17 @@ export default function BookConsultationPanel({
 
   return (
     <div className="bg-white rounded-2xl border border-slate-200 p-5">
-      <p className="text-xs uppercase tracking-widest text-slate-500 mb-2">
-        Book a consultation
-      </p>
+      <div className="flex items-baseline justify-between gap-2 mb-2">
+        <p className="text-xs uppercase tracking-widest text-slate-500">
+          Book a consultation
+        </p>
+        {slots.length > 0 && (
+          <p className="text-[11px] text-slate-500">
+            Times shown in your local timezone (
+            {Intl.DateTimeFormat().resolvedOptions().timeZone})
+          </p>
+        )}
+      </div>
       <p className="text-sm text-slate-600 mb-4">
         Pick an open slot from {proName}&apos;s availability below.
       </p>
@@ -161,26 +199,67 @@ export default function BookConsultationPanel({
             </p>
           )}
 
-          <ul className="space-y-2">
-            {slots.map((s) => (
-              <li
-                key={s.id}
-                className="flex items-center justify-between bg-slate-50 rounded-xl border border-slate-200 p-3"
-              >
-                <p className="text-sm font-semibold text-slate-900">
-                  {formatRange(s.start_at, s.end_at)}
-                </p>
-                <button
-                  type="button"
-                  onClick={() => handleBook(s)}
-                  disabled={pending}
-                  className="rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-semibold text-slate-900 hover:bg-amber-400 disabled:opacity-50"
+          {/* 7-day calendar grid — each column is a date, each cell is a
+              clickable time chip. Scans much faster than a flat list once a
+              pro publishes more than ~10 open slots. */}
+          <div className="grid grid-cols-7 gap-1 sm:gap-2">
+            {grid.map(({ date, slots: daySlots }) => {
+              const isToday =
+                new Date().toDateString() === date.toDateString();
+              return (
+                <div
+                  key={date.toISOString()}
+                  className="flex flex-col rounded-lg bg-slate-50 border border-slate-200 p-1.5 sm:p-2 min-h-[120px]"
                 >
-                  {pending ? "Booking…" : "Book"}
-                </button>
-              </li>
-            ))}
-          </ul>
+                  <div
+                    className={`text-[10px] sm:text-xs font-semibold text-center pb-1 mb-1 border-b border-slate-200 ${
+                      isToday ? "text-amber-700" : "text-slate-600"
+                    }`}
+                  >
+                    {date.toLocaleDateString(undefined, {
+                      weekday: "short",
+                    })}
+                    <br />
+                    <span className="font-bold">
+                      {date.toLocaleDateString(undefined, { day: "numeric" })}
+                    </span>
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    {daySlots.length === 0 && (
+                      <span className="text-[10px] text-slate-400 text-center py-2">
+                        —
+                      </span>
+                    )}
+                    {daySlots.map((s) => {
+                      const isPicked = pickedSlotId === s.id;
+                      return (
+                        <button
+                          key={s.id}
+                          type="button"
+                          onClick={() => handleBook(s)}
+                          disabled={pending}
+                          className={`text-[10px] sm:text-xs font-semibold rounded px-1 py-1 transition-colors ${
+                            isPicked
+                              ? "bg-amber-500 text-slate-900"
+                              : "bg-white text-slate-700 border border-slate-200 hover:bg-amber-50 hover:border-amber-300 disabled:opacity-50"
+                          }`}
+                          title={formatRange(s.start_at, s.end_at)}
+                        >
+                          {formatTime(s.start_at)}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {pending && (
+            <p className="text-xs text-slate-500 mt-3 text-center">
+              Booking your slot…
+            </p>
+          )}
         </>
       )}
     </div>
@@ -202,4 +281,11 @@ function formatRange(startAt: string, endAt: string): string {
     minute: "2-digit",
   });
   return `${startStr} → ${endStr}`;
+}
+
+function formatTime(startAt: string): string {
+  return new Date(startAt).toLocaleTimeString(undefined, {
+    hour: "numeric",
+    minute: "2-digit",
+  });
 }
