@@ -432,6 +432,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "advisor_applications_firm_id_fkey"
+            columns: ["firm_id"]
+            isOneToOne: false
+            referencedRelation: "firm_credit_balance_summary"
+            referencedColumns: ["firm_id"]
+          },
+          {
             foreignKeyName: "advisor_applications_professional_id_fkey"
             columns: ["professional_id"]
             isOneToOne: false
@@ -858,6 +865,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "advisor_firms"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "advisor_auctions_target_firm_id_fkey"
+            columns: ["target_firm_id"]
+            isOneToOne: false
+            referencedRelation: "firm_credit_balance_summary"
+            referencedColumns: ["firm_id"]
           },
           {
             foreignKeyName: "advisor_auctions_target_professional_id_fkey"
@@ -1363,6 +1377,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "advisor_firms"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "advisor_firm_invitations_firm_id_fkey"
+            columns: ["firm_id"]
+            isOneToOne: false
+            referencedRelation: "firm_credit_balance_summary"
+            referencedColumns: ["firm_id"]
           },
           {
             foreignKeyName: "advisor_firm_invitations_invited_by_fkey"
@@ -7765,6 +7786,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "expert_teams_firm_id_fkey"
+            columns: ["firm_id"]
+            isOneToOne: false
+            referencedRelation: "firm_credit_balance_summary"
+            referencedColumns: ["firm_id"]
+          },
+          {
             foreignKeyName: "expert_teams_lead_professional_id_fkey"
             columns: ["lead_professional_id"]
             isOneToOne: false
@@ -8540,6 +8568,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "advisor_firms"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "firm_seat_requests_firm_id_fkey"
+            columns: ["firm_id"]
+            isOneToOne: false
+            referencedRelation: "firm_credit_balance_summary"
+            referencedColumns: ["firm_id"]
           },
           {
             foreignKeyName: "firm_seat_requests_requested_by_fkey"
@@ -13159,6 +13194,13 @@ export type Database = {
             referencedRelation: "advisor_firms"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "professionals_firm_id_fkey"
+            columns: ["firm_id"]
+            isOneToOne: false
+            referencedRelation: "firm_credit_balance_summary"
+            referencedColumns: ["firm_id"]
+          },
         ]
       }
       profiles: {
@@ -16902,6 +16944,21 @@ export type Database = {
           income_count: number | null
           month: string | null
           net_cents: number | null
+        }
+        Relationships: []
+      }
+      firm_credit_balance_summary: {
+        Row: {
+          active_member_count: number | null
+          firm_id: number | null
+          firm_name: string | null
+          firm_slug: string | null
+          low_balance_member_count: number | null
+          most_recent_member_login_at: string | null
+          pending_member_count: number | null
+          total_credit_balance_cents: number | null
+          total_lifetime_credit_cents: number | null
+          total_lifetime_spend_cents: number | null
         }
         Relationships: []
       }
