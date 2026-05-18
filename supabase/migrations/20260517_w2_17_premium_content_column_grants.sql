@@ -50,6 +50,20 @@
 
 BEGIN;
 
+-- ─── newsletter_editions.status (idempotent) ──────────────────────────
+-- A `status` column was implied by the RLS policy in
+-- 20260427_wave_security_observability.sql (USING `status = 'sent'`)
+-- and the schema seeded by 20260426_wave_launch_readiness.sql, but
+-- live drift shows the column is missing from the running schema
+-- (verified via `npx supabase gen types typescript` regen). Add it
+-- here with `DEFAULT 'sent'` so:
+--   - Existing rows backfill to 'sent' on column add and remain
+--     visible through the new gated newsletter helper's filter.
+--   - The weekly cron's upsert can rely on the default if the
+--     explicit `status: 'sent'` write below is ever omitted.
+ALTER TABLE public.newsletter_editions
+  ADD COLUMN IF NOT EXISTS status text NOT NULL DEFAULT 'sent';
+
 -- ─── quarterly_reports ────────────────────────────────────────────────
 REVOKE SELECT ON public.quarterly_reports FROM anon;
 REVOKE SELECT ON public.quarterly_reports FROM authenticated;

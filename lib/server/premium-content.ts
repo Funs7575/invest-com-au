@@ -15,6 +15,23 @@ const NEWSLETTER_TEASER_CHARS = 800;
 const REPORT_TEASER_SECTIONS = 2;
 const REPORT_TEASER_CHARS = 240;
 
+function truncateForNonPro(html: string, maxChars: number): string {
+  if (!html) return "";
+  const visibleLen = html.replace(/<[^>]*>/g, "").length;
+  // Cap at the smaller of the configured ceiling or half the original
+  // length, with a floor of ~80 chars so very tiny digests still emit
+  // a coherent fragment rather than an empty string. The `- 1` keeps
+  // `cap` strictly less than the visible length even when the floor
+  // dominates, so `truncateHtml` always actually truncates (its
+  // shortcut path returns the input verbatim when visible-chars are
+  // already at or below the requested max).
+  const cap = Math.max(
+    1,
+    Math.min(maxChars, Math.max(80, Math.floor(visibleLen / 2)), visibleLen - 1),
+  );
+  return truncateHtml(html, cap);
+}
+
 export interface NewsletterEditionRow {
   id: number;
   edition_date: string;
@@ -114,9 +131,15 @@ export async function getGatedNewsletter(
   const full = data as NewsletterEditionRow;
   const { isPro } = await requirePro();
 
+  // For non-Pro readers, force a teaser boundary even on short or
+  // sparse editions. `truncateHtml` returns its input unchanged when
+  // the visible-char count is at or below the max, which would let a
+  // short digest bypass the paywall entirely. Capping at half the
+  // original length (or the teaser ceiling, whichever is smaller)
+  // guarantees the non-Pro response always omits some content.
   const visibleSource = isPro
     ? full.html_content
-    : truncateHtml(full.html_content, NEWSLETTER_TEASER_CHARS);
+    : truncateForNonPro(full.html_content, NEWSLETTER_TEASER_CHARS);
 
   const safeEdition: NewsletterEditionRow = isPro
     ? full

@@ -176,6 +176,33 @@ describe("getGatedNewsletter", () => {
     expect(captured).toContainEqual(["edition_date", "2026-05-10"]);
   });
 
+  it("truncates short editions too so non-Pro readers never see the full body", async () => {
+    // A sparse week's digest with ~100 visible chars — under the
+    // 800-char teaser ceiling. The non-Pro path must still emit a
+    // teaser shorter than the source, never the full body.
+    const shortHtml = "<p>" + "a".repeat(100) + "</p>";
+    setEdition({
+      id: 2,
+      edition_date: "2026-05-11",
+      subject: "Sparse week",
+      html_content: shortHtml,
+      fee_changes_count: 0,
+      articles_count: 0,
+      deals_count: 0,
+      created_at: "2026-05-11T00:00:00Z",
+      status: "sent",
+    });
+    mockGetUser.mockResolvedValueOnce({ data: { user: null } });
+
+    const res = await getGatedNewsletter("2026-05-11");
+    expect(res.isPro).toBe(false);
+    expect(res.truncatedHtml.endsWith("…")).toBe(true);
+    expect(res.truncatedHtml).not.toBe(shortHtml);
+    const visibleAfter = res.truncatedHtml.replace(/<[^>]*>/g, "").replace(/…$/, "").length;
+    const visibleBefore = shortHtml.replace(/<[^>]*>/g, "").length;
+    expect(visibleAfter).toBeLessThan(visibleBefore);
+  });
+
   it("returns full html_content for Pro users", async () => {
     const longHtml = "<p>" + "a".repeat(2000) + "</p>";
     setEdition({

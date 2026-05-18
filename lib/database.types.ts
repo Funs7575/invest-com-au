@@ -230,6 +230,42 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_impersonations: {
+        Row: {
+          actions_taken: Json
+          admin_user_id: string
+          ended_at: string | null
+          id: number
+          ip_hash: string | null
+          started_at: string
+          target_email: string
+          target_user_id: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          actions_taken?: Json
+          admin_user_id: string
+          ended_at?: string | null
+          id?: number
+          ip_hash?: string | null
+          started_at?: string
+          target_email: string
+          target_user_id?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          actions_taken?: Json
+          admin_user_id?: string
+          ended_at?: string | null
+          id?: number
+          ip_hash?: string | null
+          started_at?: string
+          target_email?: string
+          target_user_id?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       admin_login_attempts: {
         Row: {
           count: number
@@ -611,6 +647,241 @@ export type Database = {
           },
         ]
       }
+      advisor_auction_bids: {
+        Row: {
+          advisor_id: number
+          auction_id: number
+          bid_amount: number
+          created_at: string
+          id: number
+          status: string
+        }
+        Insert: {
+          advisor_id: number
+          auction_id: number
+          bid_amount: number
+          created_at?: string
+          id?: number
+          status?: string
+        }
+        Update: {
+          advisor_id?: number
+          auction_id?: number
+          bid_amount?: number
+          created_at?: string
+          id?: number
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "advisor_auction_bids_advisor_id_fkey"
+            columns: ["advisor_id"]
+            isOneToOne: false
+            referencedRelation: "admin_advisor_health"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "advisor_auction_bids_advisor_id_fkey"
+            columns: ["advisor_id"]
+            isOneToOne: false
+            referencedRelation: "professionals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "advisor_auction_bids_auction_id_fkey"
+            columns: ["auction_id"]
+            isOneToOne: false
+            referencedRelation: "advisor_auctions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      advisor_auctions: {
+        Row: {
+          accept_credits_cost: number | null
+          accepted_at: string | null
+          accepted_by_professional_id: number | null
+          accepted_by_team_id: number | null
+          advisor_types: string[]
+          brief_payload: Json
+          brief_template: string | null
+          budget_band: string | null
+          contact_email: string
+          contact_name: string | null
+          contact_phone: string | null
+          created_at: string
+          ends_at: string
+          flow_type: string
+          id: number
+          is_public: boolean
+          job_description: string | null
+          job_title: string
+          linked_action_plan_id: number | null
+          listing_id: number | null
+          location: string | null
+          provider_preference: string | null
+          referrer_advisor_id: number | null
+          risk_flags: string[]
+          risk_review_status: string
+          routing_mode: string | null
+          slug: string
+          source: string
+          status: string
+          target_firm_id: number | null
+          target_professional_id: number | null
+          target_team_id: number | null
+          tracker_status: string
+        }
+        Insert: {
+          accept_credits_cost?: number | null
+          accepted_at?: string | null
+          accepted_by_professional_id?: number | null
+          accepted_by_team_id?: number | null
+          advisor_types?: string[]
+          brief_payload?: Json
+          brief_template?: string | null
+          budget_band?: string | null
+          contact_email: string
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          ends_at: string
+          flow_type?: string
+          id?: number
+          is_public?: boolean
+          job_description?: string | null
+          job_title: string
+          linked_action_plan_id?: number | null
+          listing_id?: number | null
+          location?: string | null
+          provider_preference?: string | null
+          referrer_advisor_id?: number | null
+          risk_flags?: string[]
+          risk_review_status?: string
+          routing_mode?: string | null
+          slug: string
+          source?: string
+          status?: string
+          target_firm_id?: number | null
+          target_professional_id?: number | null
+          target_team_id?: number | null
+          tracker_status?: string
+        }
+        Update: {
+          accept_credits_cost?: number | null
+          accepted_at?: string | null
+          accepted_by_professional_id?: number | null
+          accepted_by_team_id?: number | null
+          advisor_types?: string[]
+          brief_payload?: Json
+          brief_template?: string | null
+          budget_band?: string | null
+          contact_email?: string
+          contact_name?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          ends_at?: string
+          flow_type?: string
+          id?: number
+          is_public?: boolean
+          job_description?: string | null
+          job_title?: string
+          linked_action_plan_id?: number | null
+          listing_id?: number | null
+          location?: string | null
+          provider_preference?: string | null
+          referrer_advisor_id?: number | null
+          risk_flags?: string[]
+          risk_review_status?: string
+          routing_mode?: string | null
+          slug?: string
+          source?: string
+          status?: string
+          target_firm_id?: number | null
+          target_professional_id?: number | null
+          target_team_id?: number | null
+          tracker_status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "advisor_auctions_accepted_by_professional_id_fkey"
+            columns: ["accepted_by_professional_id"]
+            isOneToOne: false
+            referencedRelation: "admin_advisor_health"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "advisor_auctions_accepted_by_professional_id_fkey"
+            columns: ["accepted_by_professional_id"]
+            isOneToOne: false
+            referencedRelation: "professionals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "advisor_auctions_accepted_by_team_id_fkey"
+            columns: ["accepted_by_team_id"]
+            isOneToOne: false
+            referencedRelation: "expert_teams"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "advisor_auctions_linked_action_plan_id_fkey"
+            columns: ["linked_action_plan_id"]
+            isOneToOne: false
+            referencedRelation: "get_matched_action_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "advisor_auctions_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "investment_listings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "advisor_auctions_referrer_advisor_id_fkey"
+            columns: ["referrer_advisor_id"]
+            isOneToOne: false
+            referencedRelation: "admin_advisor_health"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "advisor_auctions_referrer_advisor_id_fkey"
+            columns: ["referrer_advisor_id"]
+            isOneToOne: false
+            referencedRelation: "professionals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "advisor_auctions_target_firm_id_fkey"
+            columns: ["target_firm_id"]
+            isOneToOne: false
+            referencedRelation: "advisor_firms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "advisor_auctions_target_professional_id_fkey"
+            columns: ["target_professional_id"]
+            isOneToOne: false
+            referencedRelation: "admin_advisor_health"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "advisor_auctions_target_professional_id_fkey"
+            columns: ["target_professional_id"]
+            isOneToOne: false
+            referencedRelation: "professionals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "advisor_auctions_target_team_id_fkey"
+            columns: ["target_team_id"]
+            isOneToOne: false
+            referencedRelation: "expert_teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       advisor_auth_tokens: {
         Row: {
           created_at: string | null
@@ -933,6 +1204,66 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      advisor_credit_ledger: {
+        Row: {
+          amount_cents: number
+          balance_after_cents: number
+          created_at: string
+          created_by: string | null
+          description: string
+          expires_at: string | null
+          id: number
+          kind: string
+          metadata: Json
+          professional_id: number
+          reference_id: string | null
+          reference_type: string | null
+        }
+        Insert: {
+          amount_cents: number
+          balance_after_cents: number
+          created_at?: string
+          created_by?: string | null
+          description: string
+          expires_at?: string | null
+          id?: never
+          kind: string
+          metadata?: Json
+          professional_id: number
+          reference_id?: string | null
+          reference_type?: string | null
+        }
+        Update: {
+          amount_cents?: number
+          balance_after_cents?: number
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          expires_at?: string | null
+          id?: never
+          kind?: string
+          metadata?: Json
+          professional_id?: number
+          reference_id?: string | null
+          reference_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "advisor_credit_ledger_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "admin_advisor_health"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "advisor_credit_ledger_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "professionals"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       advisor_credit_topups: {
         Row: {
@@ -1385,6 +1716,36 @@ export type Database = {
         }
         Relationships: []
       }
+      advisor_tiers: {
+        Row: {
+          created_at: string | null
+          features: Json | null
+          id: string
+          lead_fee: number
+          match_multiplier: number
+          monthly_fee: number
+          name: string
+        }
+        Insert: {
+          created_at?: string | null
+          features?: Json | null
+          id?: string
+          lead_fee?: number
+          match_multiplier?: number
+          monthly_fee?: number
+          name: string
+        }
+        Update: {
+          created_at?: string | null
+          features?: Json | null
+          id?: string
+          lead_fee?: number
+          match_multiplier?: number
+          monthly_fee?: number
+          name?: string
+        }
+        Relationships: []
+      }
       advisor_verification_log: {
         Row: {
           action: string
@@ -1500,6 +1861,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      affiliate_monthly_reports: {
+        Row: {
+          broker_name: string | null
+          broker_slug: string
+          conversion_rate: number | null
+          epc_cents: number | null
+          generated_at: string | null
+          id: number
+          month: string
+          total_clicks: number | null
+          total_revenue_cents: number | null
+          total_signups: number | null
+        }
+        Insert: {
+          broker_name?: string | null
+          broker_slug: string
+          conversion_rate?: number | null
+          epc_cents?: number | null
+          generated_at?: string | null
+          id?: number
+          month: string
+          total_clicks?: number | null
+          total_revenue_cents?: number | null
+          total_signups?: number | null
+        }
+        Update: {
+          broker_name?: string | null
+          broker_slug?: string
+          conversion_rate?: number | null
+          epc_cents?: number | null
+          generated_at?: string | null
+          id?: number
+          month?: string
+          total_clicks?: number | null
+          total_revenue_cents?: number | null
+          total_signups?: number | null
+        }
+        Relationships: []
       }
       affiliate_payout_reports: {
         Row: {
@@ -1846,6 +2246,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      ai_token_usage: {
+        Row: {
+          alerted_80_at: string | null
+          cost_usd_micros: number
+          created_at: string
+          day: string
+          id: number
+          input_tokens: number
+          output_tokens: number
+          request_count: number
+          route: string
+          subject_id: string
+          subject_type: string
+          updated_at: string
+        }
+        Insert: {
+          alerted_80_at?: string | null
+          cost_usd_micros?: number
+          created_at?: string
+          day: string
+          id?: number
+          input_tokens?: number
+          output_tokens?: number
+          request_count?: number
+          route: string
+          subject_id: string
+          subject_type: string
+          updated_at?: string
+        }
+        Update: {
+          alerted_80_at?: string | null
+          cost_usd_micros?: number
+          created_at?: string
+          day?: string
+          id?: number
+          input_tokens?: number
+          output_tokens?: number
+          request_count?: number
+          route?: string
+          subject_id?: string
+          subject_type?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       allocation_decisions: {
         Row: {
@@ -2443,6 +2888,7 @@ export type Database = {
           created_at: string | null
           evergreen: boolean | null
           excerpt: string | null
+          expected_rev_per_visit: number | null
           featured: boolean | null
           id: number
           last_audited_at: string | null
@@ -2451,6 +2897,7 @@ export type Database = {
           meta_description: string | null
           meta_title: string | null
           needs_update: boolean | null
+          primary_broker_ids: number[] | null
           publish_date: string | null
           published_at: string | null
           read_time: number | null
@@ -2465,7 +2912,12 @@ export type Database = {
           staleness_score: number | null
           status: string | null
           tags: Json | null
+          target_keyword: string | null
           title: string
+          total_affiliate_clicks: number | null
+          total_conversions: number | null
+          total_revenue_cents: number | null
+          total_visits: number | null
           updated_at: string | null
         }
         Insert: {
@@ -2483,6 +2935,7 @@ export type Database = {
           created_at?: string | null
           evergreen?: boolean | null
           excerpt?: string | null
+          expected_rev_per_visit?: number | null
           featured?: boolean | null
           id?: number
           last_audited_at?: string | null
@@ -2491,6 +2944,7 @@ export type Database = {
           meta_description?: string | null
           meta_title?: string | null
           needs_update?: boolean | null
+          primary_broker_ids?: number[] | null
           publish_date?: string | null
           published_at?: string | null
           read_time?: number | null
@@ -2505,7 +2959,12 @@ export type Database = {
           staleness_score?: number | null
           status?: string | null
           tags?: Json | null
+          target_keyword?: string | null
           title: string
+          total_affiliate_clicks?: number | null
+          total_conversions?: number | null
+          total_revenue_cents?: number | null
+          total_visits?: number | null
           updated_at?: string | null
         }
         Update: {
@@ -2523,6 +2982,7 @@ export type Database = {
           created_at?: string | null
           evergreen?: boolean | null
           excerpt?: string | null
+          expected_rev_per_visit?: number | null
           featured?: boolean | null
           id?: number
           last_audited_at?: string | null
@@ -2531,6 +2991,7 @@ export type Database = {
           meta_description?: string | null
           meta_title?: string | null
           needs_update?: boolean | null
+          primary_broker_ids?: number[] | null
           publish_date?: string | null
           published_at?: string | null
           read_time?: number | null
@@ -2545,7 +3006,12 @@ export type Database = {
           staleness_score?: number | null
           status?: string | null
           tags?: Json | null
+          target_keyword?: string | null
           title?: string
+          total_affiliate_clicks?: number | null
+          total_conversions?: number | null
+          total_revenue_cents?: number | null
+          total_visits?: number | null
           updated_at?: string | null
         }
         Relationships: [
@@ -2867,6 +3333,426 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      brief_credit_prices: {
+        Row: {
+          brief_template: string
+          credits_cost: number
+          id: number
+          notes: string | null
+          provider_type: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          brief_template: string
+          credits_cost: number
+          id?: number
+          notes?: string | null
+          provider_type?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          brief_template?: string
+          credits_cost?: number
+          id?: number
+          notes?: string | null
+          provider_type?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
+      brief_dispute_messages: {
+        Row: {
+          body: string
+          created_at: string
+          dispute_id: number
+          evidence_urls: string[]
+          id: number
+          sender_kind: string
+          sender_user_id: string | null
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          dispute_id: number
+          evidence_urls?: string[]
+          id?: number
+          sender_kind: string
+          sender_user_id?: string | null
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          dispute_id?: number
+          evidence_urls?: string[]
+          id?: number
+          sender_kind?: string
+          sender_user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "brief_dispute_messages_dispute_id_fkey"
+            columns: ["dispute_id"]
+            isOneToOne: false
+            referencedRelation: "brief_disputes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      brief_disputes: {
+        Row: {
+          brief_id: number
+          created_at: string
+          evidence_urls: string[]
+          id: number
+          opened_by_email: string
+          opened_by_kind: string
+          opened_by_user_id: string | null
+          reason: string
+          resolution_notes: string | null
+          resolved_at: string | null
+          resolved_by_user_id: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          brief_id: number
+          created_at?: string
+          evidence_urls?: string[]
+          id?: number
+          opened_by_email: string
+          opened_by_kind: string
+          opened_by_user_id?: string | null
+          reason: string
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by_user_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          brief_id?: number
+          created_at?: string
+          evidence_urls?: string[]
+          id?: number
+          opened_by_email?: string
+          opened_by_kind?: string
+          opened_by_user_id?: string | null
+          reason?: string
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by_user_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "brief_disputes_brief_id_fkey"
+            columns: ["brief_id"]
+            isOneToOne: true
+            referencedRelation: "advisor_auctions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      brief_messages: {
+        Row: {
+          body: string
+          brief_id: number
+          created_at: string
+          id: number
+          read_by_consumer_at: string | null
+          read_by_pro_at: string | null
+          sender_kind: string
+          sender_professional_id: number | null
+          sender_team_id: number | null
+          sender_user_id: string | null
+        }
+        Insert: {
+          body: string
+          brief_id: number
+          created_at?: string
+          id?: number
+          read_by_consumer_at?: string | null
+          read_by_pro_at?: string | null
+          sender_kind: string
+          sender_professional_id?: number | null
+          sender_team_id?: number | null
+          sender_user_id?: string | null
+        }
+        Update: {
+          body?: string
+          brief_id?: number
+          created_at?: string
+          id?: number
+          read_by_consumer_at?: string | null
+          read_by_pro_at?: string | null
+          sender_kind?: string
+          sender_professional_id?: number | null
+          sender_team_id?: number | null
+          sender_user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "brief_messages_brief_id_fkey"
+            columns: ["brief_id"]
+            isOneToOne: false
+            referencedRelation: "advisor_auctions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "brief_messages_sender_professional_id_fkey"
+            columns: ["sender_professional_id"]
+            isOneToOne: false
+            referencedRelation: "admin_advisor_health"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "brief_messages_sender_professional_id_fkey"
+            columns: ["sender_professional_id"]
+            isOneToOne: false
+            referencedRelation: "professionals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "brief_messages_sender_team_id_fkey"
+            columns: ["sender_team_id"]
+            isOneToOne: false
+            referencedRelation: "expert_teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      brief_outcomes: {
+        Row: {
+          auth_user_id: string | null
+          brief_id: number
+          consumer_email: string
+          created_at: string
+          id: number
+          outcome: string
+          professional_id: number | null
+          rating: number | null
+          review_requested_at: string | null
+          review_token: string
+          show_testimonial: boolean
+          submitted_at: string | null
+          team_id: number | null
+          testimonial: string | null
+        }
+        Insert: {
+          auth_user_id?: string | null
+          brief_id: number
+          consumer_email: string
+          created_at?: string
+          id?: number
+          outcome: string
+          professional_id?: number | null
+          rating?: number | null
+          review_requested_at?: string | null
+          review_token: string
+          show_testimonial?: boolean
+          submitted_at?: string | null
+          team_id?: number | null
+          testimonial?: string | null
+        }
+        Update: {
+          auth_user_id?: string | null
+          brief_id?: number
+          consumer_email?: string
+          created_at?: string
+          id?: number
+          outcome?: string
+          professional_id?: number | null
+          rating?: number | null
+          review_requested_at?: string | null
+          review_token?: string
+          show_testimonial?: boolean
+          submitted_at?: string | null
+          team_id?: number | null
+          testimonial?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "brief_outcomes_brief_id_fkey"
+            columns: ["brief_id"]
+            isOneToOne: true
+            referencedRelation: "advisor_auctions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "brief_outcomes_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "admin_advisor_health"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "brief_outcomes_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "professionals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "brief_outcomes_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "expert_teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      brief_risk_patterns: {
+        Row: {
+          category: string
+          created_at: string
+          enabled: boolean
+          id: number
+          notes: string | null
+          pattern: string
+          severity: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          enabled?: boolean
+          id?: number
+          notes?: string | null
+          pattern: string
+          severity?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          enabled?: boolean
+          id?: number
+          notes?: string | null
+          pattern?: string
+          severity?: string
+        }
+        Relationships: []
+      }
+      brief_routing_rules: {
+        Row: {
+          created_at: string
+          enabled: boolean
+          id: number
+          match_conditions: Json
+          name: string
+          notes: string | null
+          priority: number
+          route_to: Json
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          enabled?: boolean
+          id?: number
+          match_conditions?: Json
+          name: string
+          notes?: string | null
+          priority?: number
+          route_to?: Json
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          enabled?: boolean
+          id?: number
+          match_conditions?: Json
+          name?: string
+          notes?: string | null
+          priority?: number
+          route_to?: Json
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
+      brief_shortlists: {
+        Row: {
+          added_by_email: string
+          added_by_user_id: string | null
+          brief_id: number
+          created_at: string
+          id: number
+          note: string | null
+          provider_id: number
+          provider_kind: string
+        }
+        Insert: {
+          added_by_email: string
+          added_by_user_id?: string | null
+          brief_id: number
+          created_at?: string
+          id?: number
+          note?: string | null
+          provider_id: number
+          provider_kind: string
+        }
+        Update: {
+          added_by_email?: string
+          added_by_user_id?: string | null
+          brief_id?: number
+          created_at?: string
+          id?: number
+          note?: string | null
+          provider_id?: number
+          provider_kind?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "brief_shortlists_brief_id_fkey"
+            columns: ["brief_id"]
+            isOneToOne: false
+            referencedRelation: "advisor_auctions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      brief_tracker_events: {
+        Row: {
+          actor_id: string | null
+          actor_kind: string | null
+          brief_id: number
+          created_at: string
+          event_type: string
+          id: number
+          payload: Json
+        }
+        Insert: {
+          actor_id?: string | null
+          actor_kind?: string | null
+          brief_id: number
+          created_at?: string
+          event_type: string
+          id?: number
+          payload?: Json
+        }
+        Update: {
+          actor_id?: string | null
+          actor_kind?: string | null
+          brief_id?: number
+          created_at?: string
+          event_type?: string
+          id?: number
+          payload?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "brief_tracker_events_brief_id_fkey"
+            columns: ["brief_id"]
+            isOneToOne: false
+            referencedRelation: "advisor_auctions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       broker_accounts: {
         Row: {
@@ -3500,6 +4386,68 @@ export type Database = {
           },
         ]
       }
+      broker_signups: {
+        Row: {
+          broker_id: number | null
+          broker_slug: string
+          click_id: string | null
+          commission_type: string | null
+          created_at: string | null
+          external_ref: string | null
+          id: number
+          notes: string | null
+          revenue_cents: number | null
+          signup_date: string | null
+          source: string | null
+          status: string | null
+          utm_campaign: string | null
+          utm_medium: string | null
+          utm_source: string | null
+        }
+        Insert: {
+          broker_id?: number | null
+          broker_slug: string
+          click_id?: string | null
+          commission_type?: string | null
+          created_at?: string | null
+          external_ref?: string | null
+          id?: number
+          notes?: string | null
+          revenue_cents?: number | null
+          signup_date?: string | null
+          source?: string | null
+          status?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+        }
+        Update: {
+          broker_id?: number | null
+          broker_slug?: string
+          click_id?: string | null
+          commission_type?: string | null
+          created_at?: string | null
+          external_ref?: string | null
+          id?: number
+          notes?: string | null
+          revenue_cents?: number | null
+          signup_date?: string | null
+          source?: string | null
+          status?: string | null
+          utm_campaign?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "broker_signups_broker_id_fkey"
+            columns: ["broker_id"]
+            isOneToOne: false
+            referencedRelation: "brokers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       broker_transfer_guides: {
         Row: {
           broker_slug: string
@@ -3622,6 +4570,7 @@ export type Database = {
           cta_text: string | null
           deal: boolean | null
           deal_category: string | null
+          deal_description: string | null
           deal_expiry: string | null
           deal_source: string | null
           deal_terms: string | null
@@ -3654,6 +4603,7 @@ export type Database = {
           logo_url: string | null
           markets: Json | null
           min_deposit: string | null
+          monthly_sponsorship_fee: number | null
           name: string
           payment_methods: Json | null
           platform_type: string | null
@@ -3699,6 +4649,7 @@ export type Database = {
           cta_text?: string | null
           deal?: boolean | null
           deal_category?: string | null
+          deal_description?: string | null
           deal_expiry?: string | null
           deal_source?: string | null
           deal_terms?: string | null
@@ -3731,6 +4682,7 @@ export type Database = {
           logo_url?: string | null
           markets?: Json | null
           min_deposit?: string | null
+          monthly_sponsorship_fee?: number | null
           name: string
           payment_methods?: Json | null
           platform_type?: string | null
@@ -3776,6 +4728,7 @@ export type Database = {
           cta_text?: string | null
           deal?: boolean | null
           deal_category?: string | null
+          deal_description?: string | null
           deal_expiry?: string | null
           deal_source?: string | null
           deal_terms?: string | null
@@ -3808,6 +4761,7 @@ export type Database = {
           logo_url?: string | null
           markets?: Json | null
           min_deposit?: string | null
+          monthly_sponsorship_fee?: number | null
           name?: string
           payment_methods?: Json | null
           platform_type?: string | null
@@ -3843,6 +4797,54 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      bug_reports: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          page_url: string
+          route: string | null
+          severity_guess: string | null
+          status: Database["public"]["Enums"]["bug_report_status"]
+          triaged_at: string | null
+          triaged_by: string | null
+          user_agent: string | null
+          user_id: string | null
+          user_message: string
+          viewport: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          page_url: string
+          route?: string | null
+          severity_guess?: string | null
+          status?: Database["public"]["Enums"]["bug_report_status"]
+          triaged_at?: string | null
+          triaged_by?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          user_message: string
+          viewport?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          page_url?: string
+          route?: string | null
+          severity_guess?: string | null
+          status?: Database["public"]["Enums"]["bug_report_status"]
+          triaged_at?: string | null
+          triaged_by?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+          user_message?: string
+          viewport?: string | null
+        }
+        Relationships: []
       }
       business_accounts: {
         Row: {
@@ -3973,6 +4975,27 @@ export type Database = {
           updated_at?: string | null
           verified?: boolean | null
           website?: string | null
+        }
+        Relationships: []
+      }
+      calculator_config: {
+        Row: {
+          calc_type: string
+          config: Json
+          id: number
+          updated_at: string | null
+        }
+        Insert: {
+          calc_type: string
+          config?: Json
+          id?: number
+          updated_at?: string | null
+        }
+        Update: {
+          calc_type?: string
+          config?: Json
+          id?: number
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -5305,6 +6328,66 @@ export type Database = {
         }
         Relationships: []
       }
+      country_schemes: {
+        Row: {
+          active: boolean
+          audience: string
+          body_md: string
+          category: string
+          country_code: string
+          created_at: string
+          display_order: number
+          id: number
+          name: string
+          source_name: string
+          source_url: string
+          sourced_at: string
+          stales_at: string
+          summary: string
+          threshold_cents: number | null
+          threshold_label: string | null
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          audience: string
+          body_md: string
+          category: string
+          country_code: string
+          created_at?: string
+          display_order?: number
+          id?: never
+          name: string
+          source_name: string
+          source_url: string
+          sourced_at: string
+          stales_at: string
+          summary: string
+          threshold_cents?: number | null
+          threshold_label?: string | null
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          audience?: string
+          body_md?: string
+          category?: string
+          country_code?: string
+          created_at?: string
+          display_order?: number
+          id?: never
+          name?: string
+          source_name?: string
+          source_url?: string
+          sourced_at?: string
+          stales_at?: string
+          summary?: string
+          threshold_cents?: number | null
+          threshold_label?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       course_lessons: {
         Row: {
           content: string | null
@@ -5978,6 +7061,33 @@ export type Database = {
           },
         ]
       }
+      drip_affiliate_clicks: {
+        Row: {
+          broker_slug: string
+          click_id: string | null
+          clicked_at: string | null
+          drip_number: number
+          email: string
+          id: number
+        }
+        Insert: {
+          broker_slug: string
+          click_id?: string | null
+          clicked_at?: string | null
+          drip_number: number
+          email: string
+          id?: number
+        }
+        Update: {
+          broker_slug?: string
+          click_id?: string | null
+          clicked_at?: string | null
+          drip_number?: number
+          email?: string
+          id?: number
+        }
+        Relationships: []
+      }
       dynamic_pricing_rules: {
         Row: {
           advisor_type: string | null
@@ -6098,6 +7208,45 @@ export type Database = {
         }
         Relationships: []
       }
+      email_campaigns: {
+        Row: {
+          campaign_name: string
+          created_at: string | null
+          id: string
+          revenue_generated_cents: number | null
+          segment: string | null
+          sent_at: string | null
+          subject_line: string | null
+          total_clicked: number | null
+          total_opened: number | null
+          total_sent: number | null
+        }
+        Insert: {
+          campaign_name: string
+          created_at?: string | null
+          id?: string
+          revenue_generated_cents?: number | null
+          segment?: string | null
+          sent_at?: string | null
+          subject_line?: string | null
+          total_clicked?: number | null
+          total_opened?: number | null
+          total_sent?: number | null
+        }
+        Update: {
+          campaign_name?: string
+          created_at?: string | null
+          id?: string
+          revenue_generated_cents?: number | null
+          segment?: string | null
+          sent_at?: string | null
+          subject_line?: string | null
+          total_clicked?: number | null
+          total_opened?: number | null
+          total_sent?: number | null
+        }
+        Relationships: []
+      }
       email_captures: {
         Row: {
           captured_at: string | null
@@ -6194,6 +7343,51 @@ export type Database = {
         }
         Relationships: []
       }
+      email_subscribers: {
+        Row: {
+          email: string
+          id: string
+          last_email_opened_at: string | null
+          lead_magnet: string | null
+          name: string | null
+          quiz_responses: Json | null
+          report_data: Json | null
+          segment: string | null
+          source_page: string | null
+          subscribed_at: string | null
+          unsubscribed_at: string | null
+          utm_params: Json | null
+        }
+        Insert: {
+          email: string
+          id?: string
+          last_email_opened_at?: string | null
+          lead_magnet?: string | null
+          name?: string | null
+          quiz_responses?: Json | null
+          report_data?: Json | null
+          segment?: string | null
+          source_page?: string | null
+          subscribed_at?: string | null
+          unsubscribed_at?: string | null
+          utm_params?: Json | null
+        }
+        Update: {
+          email?: string
+          id?: string
+          last_email_opened_at?: string | null
+          lead_magnet?: string | null
+          name?: string | null
+          quiz_responses?: Json | null
+          report_data?: Json | null
+          segment?: string | null
+          source_page?: string | null
+          subscribed_at?: string | null
+          unsubscribed_at?: string | null
+          utm_params?: Json | null
+        }
+        Relationships: []
+      }
       email_suppression_list: {
         Row: {
           bounce_count: number | null
@@ -6250,6 +7444,265 @@ export type Database = {
           session_hash?: string | null
         }
         Relationships: []
+      }
+      expert_team_invitations: {
+        Row: {
+          accepted_at: string | null
+          created_at: string
+          email: string
+          expires_at: string
+          id: number
+          invited_by: number
+          invited_professional_id: number | null
+          invited_role: string | null
+          name: string | null
+          status: string
+          team_id: number
+          token: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          created_at?: string
+          email: string
+          expires_at?: string
+          id?: number
+          invited_by: number
+          invited_professional_id?: number | null
+          invited_role?: string | null
+          name?: string | null
+          status?: string
+          team_id: number
+          token: string
+        }
+        Update: {
+          accepted_at?: string | null
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: number
+          invited_by?: number
+          invited_professional_id?: number | null
+          invited_role?: string | null
+          name?: string | null
+          status?: string
+          team_id?: number
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expert_team_invitations_invited_by_fkey"
+            columns: ["invited_by"]
+            isOneToOne: false
+            referencedRelation: "admin_advisor_health"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expert_team_invitations_invited_by_fkey"
+            columns: ["invited_by"]
+            isOneToOne: false
+            referencedRelation: "professionals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expert_team_invitations_invited_professional_id_fkey"
+            columns: ["invited_professional_id"]
+            isOneToOne: false
+            referencedRelation: "admin_advisor_health"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expert_team_invitations_invited_professional_id_fkey"
+            columns: ["invited_professional_id"]
+            isOneToOne: false
+            referencedRelation: "professionals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expert_team_invitations_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "expert_teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      expert_team_members: {
+        Row: {
+          accepted_at: string | null
+          can_appear_publicly: boolean
+          can_receive_briefs: boolean
+          created_at: string
+          end_date: string | null
+          id: number
+          member_role: string
+          professional_id: number
+          public_title: string | null
+          start_date: string | null
+          status: string
+          team_id: number
+          updated_at: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          can_appear_publicly?: boolean
+          can_receive_briefs?: boolean
+          created_at?: string
+          end_date?: string | null
+          id?: number
+          member_role?: string
+          professional_id: number
+          public_title?: string | null
+          start_date?: string | null
+          status?: string
+          team_id: number
+          updated_at?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          can_appear_publicly?: boolean
+          can_receive_briefs?: boolean
+          created_at?: string
+          end_date?: string | null
+          id?: number
+          member_role?: string
+          professional_id?: number
+          public_title?: string | null
+          start_date?: string | null
+          status?: string
+          team_id?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expert_team_members_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "admin_advisor_health"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expert_team_members_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "professionals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expert_team_members_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "expert_teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      expert_teams: {
+        Row: {
+          accepted_brief_templates: string[] | null
+          accepts_briefs: boolean
+          created_at: string
+          description: string | null
+          disclosure: string | null
+          firm_id: number | null
+          id: number
+          lead_professional_id: number | null
+          location_state: string | null
+          name: string
+          niche: string | null
+          owner_professional_id: number
+          public: boolean
+          rejection_reason: string | null
+          service_areas: string[] | null
+          slug: string
+          team_category: string
+          team_type: string
+          updated_at: string
+          verification_status: string
+          verified_at: string | null
+        }
+        Insert: {
+          accepted_brief_templates?: string[] | null
+          accepts_briefs?: boolean
+          created_at?: string
+          description?: string | null
+          disclosure?: string | null
+          firm_id?: number | null
+          id?: number
+          lead_professional_id?: number | null
+          location_state?: string | null
+          name: string
+          niche?: string | null
+          owner_professional_id: number
+          public?: boolean
+          rejection_reason?: string | null
+          service_areas?: string[] | null
+          slug: string
+          team_category: string
+          team_type?: string
+          updated_at?: string
+          verification_status?: string
+          verified_at?: string | null
+        }
+        Update: {
+          accepted_brief_templates?: string[] | null
+          accepts_briefs?: boolean
+          created_at?: string
+          description?: string | null
+          disclosure?: string | null
+          firm_id?: number | null
+          id?: number
+          lead_professional_id?: number | null
+          location_state?: string | null
+          name?: string
+          niche?: string | null
+          owner_professional_id?: number
+          public?: boolean
+          rejection_reason?: string | null
+          service_areas?: string[] | null
+          slug?: string
+          team_category?: string
+          team_type?: string
+          updated_at?: string
+          verification_status?: string
+          verified_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expert_teams_firm_id_fkey"
+            columns: ["firm_id"]
+            isOneToOne: false
+            referencedRelation: "advisor_firms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expert_teams_lead_professional_id_fkey"
+            columns: ["lead_professional_id"]
+            isOneToOne: false
+            referencedRelation: "admin_advisor_health"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expert_teams_lead_professional_id_fkey"
+            columns: ["lead_professional_id"]
+            isOneToOne: false
+            referencedRelation: "professionals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expert_teams_owner_professional_id_fkey"
+            columns: ["owner_professional_id"]
+            isOneToOne: false
+            referencedRelation: "admin_advisor_health"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expert_teams_owner_professional_id_fkey"
+            columns: ["owner_professional_id"]
+            isOneToOne: false
+            referencedRelation: "professionals"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       feature_flags: {
         Row: {
@@ -6509,6 +7962,315 @@ export type Database = {
           },
         ]
       }
+      fi_change_log: {
+        Row: {
+          action: string
+          category_key: string
+          changed_by: string
+          created_at: string
+          id: string
+          new_value: Json | null
+          note: string | null
+          previous_value: Json | null
+          record_id: string | null
+        }
+        Insert: {
+          action: string
+          category_key: string
+          changed_by: string
+          created_at?: string
+          id?: string
+          new_value?: Json | null
+          note?: string | null
+          previous_value?: Json | null
+          record_id?: string | null
+        }
+        Update: {
+          action?: string
+          category_key?: string
+          changed_by?: string
+          created_at?: string
+          id?: string
+          new_value?: Json | null
+          note?: string | null
+          previous_value?: Json | null
+          record_id?: string | null
+        }
+        Relationships: []
+      }
+      fi_dasp_rates: {
+        Row: {
+          component_type: string
+          created_at: string
+          id: string
+          is_active: boolean
+          notes: string | null
+          sort_order: number
+          updated_at: string
+          visa_category: string
+          withholding_rate: number
+        }
+        Insert: {
+          component_type: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          notes?: string | null
+          sort_order?: number
+          updated_at?: string
+          visa_category: string
+          withholding_rate: number
+        }
+        Update: {
+          component_type?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          notes?: string | null
+          sort_order?: number
+          updated_at?: string
+          visa_category?: string
+          withholding_rate?: number
+        }
+        Relationships: []
+      }
+      fi_data_categories: {
+        Row: {
+          category_key: string
+          created_at: string
+          description: string
+          display_name: string
+          effective_date: string | null
+          id: string
+          last_verified_at: string | null
+          notes: string | null
+          review_frequency_days: number
+          source_name: string
+          source_url: string
+          status: string
+          updated_at: string
+          urgent_threshold_days: number
+          verified_by: string | null
+          warning_threshold_days: number
+        }
+        Insert: {
+          category_key: string
+          created_at?: string
+          description?: string
+          display_name: string
+          effective_date?: string | null
+          id?: string
+          last_verified_at?: string | null
+          notes?: string | null
+          review_frequency_days?: number
+          source_name?: string
+          source_url?: string
+          status?: string
+          updated_at?: string
+          urgent_threshold_days?: number
+          verified_by?: string | null
+          warning_threshold_days?: number
+        }
+        Update: {
+          category_key?: string
+          created_at?: string
+          description?: string
+          display_name?: string
+          effective_date?: string | null
+          id?: string
+          last_verified_at?: string | null
+          notes?: string | null
+          review_frequency_days?: number
+          source_name?: string
+          source_url?: string
+          status?: string
+          updated_at?: string
+          urgent_threshold_days?: number
+          verified_by?: string | null
+          warning_threshold_days?: number
+        }
+        Relationships: []
+      }
+      fi_dta_countries: {
+        Row: {
+          ato_reference_url: string | null
+          country: string
+          country_code: string
+          created_at: string
+          dividend_wht: number
+          dta_effective_year: number | null
+          has_dta: boolean
+          id: string
+          interest_wht: number
+          is_active: boolean
+          notes: string | null
+          royalties_wht: number
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          ato_reference_url?: string | null
+          country: string
+          country_code: string
+          created_at?: string
+          dividend_wht?: number
+          dta_effective_year?: number | null
+          has_dta?: boolean
+          id?: string
+          interest_wht?: number
+          is_active?: boolean
+          notes?: string | null
+          royalties_wht?: number
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          ato_reference_url?: string | null
+          country?: string
+          country_code?: string
+          created_at?: string
+          dividend_wht?: number
+          dta_effective_year?: number | null
+          has_dta?: boolean
+          id?: string
+          interest_wht?: number
+          is_active?: boolean
+          notes?: string | null
+          royalties_wht?: number
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      fi_property_rules: {
+        Row: {
+          created_at: string
+          effective_from: string | null
+          effective_to: string | null
+          id: string
+          is_active: boolean
+          notes: string | null
+          rule_key: string
+          rule_type: string
+          sort_order: number
+          source_url: string | null
+          title: string
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          created_at?: string
+          effective_from?: string | null
+          effective_to?: string | null
+          id?: string
+          is_active?: boolean
+          notes?: string | null
+          rule_key: string
+          rule_type: string
+          sort_order?: number
+          source_url?: string | null
+          title: string
+          updated_at?: string
+          value: string
+        }
+        Update: {
+          created_at?: string
+          effective_from?: string | null
+          effective_to?: string | null
+          id?: string
+          is_active?: boolean
+          notes?: string | null
+          rule_key?: string
+          rule_type?: string
+          sort_order?: number
+          source_url?: string | null
+          title?: string
+          updated_at?: string
+          value?: string
+        }
+        Relationships: []
+      }
+      fi_tax_brackets: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          income_from: number
+          income_to: number | null
+          is_active: boolean
+          rate: number
+          sort_order: number
+          tax_year: string
+          taxpayer_type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: string
+          income_from: number
+          income_to?: number | null
+          is_active?: boolean
+          rate: number
+          sort_order?: number
+          tax_year: string
+          taxpayer_type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          income_from?: number
+          income_to?: number | null
+          is_active?: boolean
+          rate?: number
+          sort_order?: number
+          tax_year?: string
+          taxpayer_type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      fi_withholding_rates: {
+        Row: {
+          color: string
+          created_at: string
+          id: string
+          income_type: string
+          is_active: boolean
+          notes: string | null
+          sort_order: number
+          standard_rate: string
+          updated_at: string
+          with_dta_typical: string
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          id?: string
+          income_type: string
+          is_active?: boolean
+          notes?: string | null
+          sort_order?: number
+          standard_rate: string
+          updated_at?: string
+          with_dta_typical: string
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          id?: string
+          income_type?: string
+          is_active?: boolean
+          notes?: string | null
+          sort_order?: number
+          standard_rate?: string
+          updated_at?: string
+          with_dta_typical?: string
+        }
+        Relationships: []
+      }
       finance_transactions: {
         Row: {
           amount_cents: number
@@ -6641,6 +8403,112 @@ export type Database = {
           status?: string
           total_credits_cents?: number | null
           total_refunds_cents?: number | null
+        }
+        Relationships: []
+      }
+      firm_seat_requests: {
+        Row: {
+          admin_notes: string | null
+          created_at: string | null
+          current_seats: number
+          firm_id: number
+          id: number
+          reason: string | null
+          requested_by: number
+          requested_seats: number
+          reviewed_at: string | null
+          status: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          created_at?: string | null
+          current_seats: number
+          firm_id: number
+          id?: number
+          reason?: string | null
+          requested_by: number
+          requested_seats: number
+          reviewed_at?: string | null
+          status?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          created_at?: string | null
+          current_seats?: number
+          firm_id?: number
+          id?: number
+          reason?: string | null
+          requested_by?: number
+          requested_seats?: number
+          reviewed_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "firm_seat_requests_firm_id_fkey"
+            columns: ["firm_id"]
+            isOneToOne: false
+            referencedRelation: "advisor_firms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "firm_seat_requests_requested_by_fkey"
+            columns: ["requested_by"]
+            isOneToOne: false
+            referencedRelation: "admin_advisor_health"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "firm_seat_requests_requested_by_fkey"
+            columns: ["requested_by"]
+            isOneToOne: false
+            referencedRelation: "professionals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      foreign_investment_dta: {
+        Row: {
+          ato_reference_url: string | null
+          country_code: string
+          country_name: string
+          created_at: string | null
+          dividend_wht_rate: number
+          dta_effective_year: number | null
+          has_dta: boolean
+          id: number
+          interest_wht_rate: number
+          notes: string | null
+          royalties_wht_rate: number
+          updated_at: string | null
+        }
+        Insert: {
+          ato_reference_url?: string | null
+          country_code: string
+          country_name: string
+          created_at?: string | null
+          dividend_wht_rate?: number
+          dta_effective_year?: number | null
+          has_dta?: boolean
+          id?: number
+          interest_wht_rate?: number
+          notes?: string | null
+          royalties_wht_rate?: number
+          updated_at?: string | null
+        }
+        Update: {
+          ato_reference_url?: string | null
+          country_code?: string
+          country_name?: string
+          created_at?: string | null
+          dividend_wht_rate?: number
+          dta_effective_year?: number | null
+          has_dta?: boolean
+          id?: number
+          interest_wht_rate?: number
+          notes?: string | null
+          royalties_wht_rate?: number
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -7268,6 +9136,215 @@ export type Database = {
           },
         ]
       }
+      get_matched_action_plans: {
+        Row: {
+          answers: Json
+          auth_user_id: string | null
+          contact_email: string | null
+          contact_name: string | null
+          converted_brief_id: number | null
+          created_at: string
+          id: number
+          intent_slug: string | null
+          ranked_routes: Json
+          result_template_slug: string | null
+          saved_at: string | null
+          share_token: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          answers?: Json
+          auth_user_id?: string | null
+          contact_email?: string | null
+          contact_name?: string | null
+          converted_brief_id?: number | null
+          created_at?: string
+          id?: number
+          intent_slug?: string | null
+          ranked_routes?: Json
+          result_template_slug?: string | null
+          saved_at?: string | null
+          share_token: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          answers?: Json
+          auth_user_id?: string | null
+          contact_email?: string | null
+          contact_name?: string | null
+          converted_brief_id?: number | null
+          created_at?: string
+          id?: number
+          intent_slug?: string | null
+          ranked_routes?: Json
+          result_template_slug?: string | null
+          saved_at?: string | null
+          share_token?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "get_matched_action_plans_converted_brief_id_fkey"
+            columns: ["converted_brief_id"]
+            isOneToOne: false
+            referencedRelation: "advisor_auctions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "get_matched_action_plans_intent_slug_fkey"
+            columns: ["intent_slug"]
+            isOneToOne: false
+            referencedRelation: "intent_taxonomy"
+            referencedColumns: ["slug"]
+          },
+        ]
+      }
+      get_matched_events: {
+        Row: {
+          auth_user_id: string | null
+          created_at: string
+          event_name: string
+          id: number
+          intent_slug: string | null
+          payload: Json
+          question_slug: string | null
+          session_id: string | null
+          step: number | null
+        }
+        Insert: {
+          auth_user_id?: string | null
+          created_at?: string
+          event_name: string
+          id?: number
+          intent_slug?: string | null
+          payload?: Json
+          question_slug?: string | null
+          session_id?: string | null
+          step?: number | null
+        }
+        Update: {
+          auth_user_id?: string | null
+          created_at?: string
+          event_name?: string
+          id?: number
+          intent_slug?: string | null
+          payload?: Json
+          question_slug?: string | null
+          session_id?: string | null
+          step?: number | null
+        }
+        Relationships: []
+      }
+      get_matched_questions: {
+        Row: {
+          created_at: string
+          enabled: boolean
+          id: number
+          kind: string
+          maps_to: string
+          mode: string
+          options: Json
+          prompt: string
+          risk_weight: number
+          shown_if: Json
+          slug: string
+          sort_order: number
+          step: number
+          subtitle: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          enabled?: boolean
+          id?: number
+          kind: string
+          maps_to: string
+          mode?: string
+          options?: Json
+          prompt: string
+          risk_weight?: number
+          shown_if?: Json
+          slug: string
+          sort_order?: number
+          step: number
+          subtitle?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          enabled?: boolean
+          id?: number
+          kind?: string
+          maps_to?: string
+          mode?: string
+          options?: Json
+          prompt?: string
+          risk_weight?: number
+          shown_if?: Json
+          slug?: string
+          sort_order?: number
+          step?: number
+          subtitle?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      get_matched_result_templates: {
+        Row: {
+          body_md: string | null
+          created_at: string
+          cta_label: string | null
+          cta_route: string | null
+          enabled: boolean
+          id: number
+          intent_slug: string | null
+          slug: string
+          steps: Json
+          subtitle: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          body_md?: string | null
+          created_at?: string
+          cta_label?: string | null
+          cta_route?: string | null
+          enabled?: boolean
+          id?: number
+          intent_slug?: string | null
+          slug: string
+          steps?: Json
+          subtitle?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          body_md?: string | null
+          created_at?: string
+          cta_label?: string | null
+          cta_route?: string | null
+          enabled?: boolean
+          id?: number
+          intent_slug?: string | null
+          slug?: string
+          steps?: Json
+          subtitle?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "get_matched_result_templates_intent_slug_fkey"
+            columns: ["intent_slug"]
+            isOneToOne: false
+            referencedRelation: "intent_taxonomy"
+            referencedColumns: ["slug"]
+          },
+        ]
+      }
       glossary_terms: {
         Row: {
           category: string | null
@@ -7364,6 +9441,30 @@ export type Database = {
         }
         Relationships: []
       }
+      hub_drip_log: {
+        Row: {
+          drip_step: number
+          email: string
+          id: number
+          segment_slug: string
+          sent_at: string
+        }
+        Insert: {
+          drip_step: number
+          email: string
+          id?: never
+          segment_slug: string
+          sent_at?: string
+        }
+        Update: {
+          drip_step?: number
+          email?: string
+          id?: never
+          segment_slug?: string
+          sent_at?: string
+        }
+        Relationships: []
+      }
       i18n_currency_rates: {
         Row: {
           base_currency: string
@@ -7391,6 +9492,54 @@ export type Database = {
           rate?: number
           source?: string | null
           target_currency?: string
+        }
+        Relationships: []
+      }
+      intent_taxonomy: {
+        Row: {
+          available_in_countries: string[]
+          created_at: string
+          default_brief_template: string | null
+          default_route: string
+          description: string | null
+          enabled: boolean
+          id: number
+          label: string
+          meta: Json
+          risk_level: string
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          available_in_countries?: string[]
+          created_at?: string
+          default_brief_template?: string | null
+          default_route?: string
+          description?: string | null
+          enabled?: boolean
+          id?: number
+          label: string
+          meta?: Json
+          risk_level?: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          available_in_countries?: string[]
+          created_at?: string
+          default_brief_template?: string | null
+          default_route?: string
+          description?: string | null
+          enabled?: boolean
+          id?: number
+          label?: string
+          meta?: Json
+          risk_level?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
         }
         Relationships: []
       }
@@ -7816,6 +9965,69 @@ export type Database = {
         }
         Relationships: []
       }
+      investor_referral_credits: {
+        Row: {
+          attributed_brief_id: number | null
+          attributed_user_id: string | null
+          auth_user_id: string
+          created_at: string
+          credits_awarded: number
+          id: number
+          source_event: string
+        }
+        Insert: {
+          attributed_brief_id?: number | null
+          attributed_user_id?: string | null
+          auth_user_id: string
+          created_at?: string
+          credits_awarded: number
+          id?: number
+          source_event: string
+        }
+        Update: {
+          attributed_brief_id?: number | null
+          attributed_user_id?: string | null
+          auth_user_id?: string
+          created_at?: string
+          credits_awarded?: number
+          id?: number
+          source_event?: string
+        }
+        Relationships: []
+      }
+      investor_referral_links: {
+        Row: {
+          auth_user_id: string
+          brief_count: number
+          click_count: number
+          created_at: string
+          id: number
+          last_clicked_at: string | null
+          share_token: string
+          signup_count: number
+        }
+        Insert: {
+          auth_user_id: string
+          brief_count?: number
+          click_count?: number
+          created_at?: string
+          id?: number
+          last_clicked_at?: string | null
+          share_token: string
+          signup_count?: number
+        }
+        Update: {
+          auth_user_id?: string
+          brief_count?: number
+          click_count?: number
+          created_at?: string
+          id?: number
+          last_clicked_at?: string | null
+          share_token?: string
+          signup_count?: number
+        }
+        Relationships: []
+      }
       job_queue: {
         Row: {
           attempts: number
@@ -8188,6 +10400,81 @@ export type Database = {
         }
         Relationships: []
       }
+      listing_advisor_opt_ins: {
+        Row: {
+          advisor_type: string
+          contact_email: string
+          contact_name: string | null
+          contact_phone: string | null
+          context_note: string | null
+          created_at: string
+          failure_reason: string | null
+          id: number
+          investment_listing_id: number | null
+          job_posting_id: number | null
+          lead_id: number | null
+          processed_at: string | null
+          property_enquiry_id: number | null
+          quiz_lead_id: number | null
+          source: string
+          status: string
+          user_location_state: string | null
+        }
+        Insert: {
+          advisor_type: string
+          contact_email: string
+          contact_name?: string | null
+          contact_phone?: string | null
+          context_note?: string | null
+          created_at?: string
+          failure_reason?: string | null
+          id?: number
+          investment_listing_id?: number | null
+          job_posting_id?: number | null
+          lead_id?: number | null
+          processed_at?: string | null
+          property_enquiry_id?: number | null
+          quiz_lead_id?: number | null
+          source: string
+          status?: string
+          user_location_state?: string | null
+        }
+        Update: {
+          advisor_type?: string
+          contact_email?: string
+          contact_name?: string | null
+          contact_phone?: string | null
+          context_note?: string | null
+          created_at?: string
+          failure_reason?: string | null
+          id?: number
+          investment_listing_id?: number | null
+          job_posting_id?: number | null
+          lead_id?: number | null
+          processed_at?: string | null
+          property_enquiry_id?: number | null
+          quiz_lead_id?: number | null
+          source?: string
+          status?: string
+          user_location_state?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listing_advisor_opt_ins_investment_listing_id_fkey"
+            columns: ["investment_listing_id"]
+            isOneToOne: false
+            referencedRelation: "investment_listings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "listing_advisor_opt_ins_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       listing_claims: {
         Row: {
           admin_notes: string | null
@@ -8343,6 +10630,72 @@ export type Database = {
         }
         Relationships: []
       }
+      listings: {
+        Row: {
+          approved_at: string | null
+          asking_price_cents: number | null
+          created_at: string
+          currency: string
+          description: string | null
+          id: string
+          kind: string
+          location_state: string | null
+          match_request_count: number
+          moderation_notes: string | null
+          owner_email: string
+          owner_user_id: string | null
+          payload: Json
+          rejected_at: string | null
+          slug: string
+          status: string
+          title: string
+          updated_at: string
+          view_count: number
+        }
+        Insert: {
+          approved_at?: string | null
+          asking_price_cents?: number | null
+          created_at?: string
+          currency?: string
+          description?: string | null
+          id?: string
+          kind: string
+          location_state?: string | null
+          match_request_count?: number
+          moderation_notes?: string | null
+          owner_email: string
+          owner_user_id?: string | null
+          payload?: Json
+          rejected_at?: string | null
+          slug: string
+          status?: string
+          title: string
+          updated_at?: string
+          view_count?: number
+        }
+        Update: {
+          approved_at?: string | null
+          asking_price_cents?: number | null
+          created_at?: string
+          currency?: string
+          description?: string | null
+          id?: string
+          kind?: string
+          location_state?: string | null
+          match_request_count?: number
+          moderation_notes?: string | null
+          owner_email?: string
+          owner_user_id?: string | null
+          payload?: Json
+          rejected_at?: string | null
+          slug?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          view_count?: number
+        }
+        Relationships: []
+      }
       llm_citations: {
         Row: {
           citation_excerpt: string | null
@@ -8478,6 +10831,79 @@ export type Database = {
         }
         Relationships: []
       }
+      marketplace_payments: {
+        Row: {
+          amount_cents: number
+          brief_id: number
+          consumer_email: string
+          consumer_user_id: string | null
+          created_at: string
+          currency: string
+          description: string | null
+          id: number
+          metadata: Json
+          platform_fee_cents: number
+          professional_id: number
+          status: string
+          stripe_payment_intent_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount_cents: number
+          brief_id: number
+          consumer_email: string
+          consumer_user_id?: string | null
+          created_at?: string
+          currency?: string
+          description?: string | null
+          id?: number
+          metadata?: Json
+          platform_fee_cents: number
+          professional_id: number
+          status?: string
+          stripe_payment_intent_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount_cents?: number
+          brief_id?: number
+          consumer_email?: string
+          consumer_user_id?: string | null
+          created_at?: string
+          currency?: string
+          description?: string | null
+          id?: number
+          metadata?: Json
+          platform_fee_cents?: number
+          professional_id?: number
+          status?: string
+          stripe_payment_intent_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marketplace_payments_brief_id_fkey"
+            columns: ["brief_id"]
+            isOneToOne: false
+            referencedRelation: "advisor_auctions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "marketplace_payments_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "admin_advisor_health"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "marketplace_payments_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "professionals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       marketplace_placements: {
         Row: {
           avg_ctr_pct: number | null
@@ -8526,6 +10952,39 @@ export type Database = {
           position?: string
           slug?: string
           stats_updated_at?: string | null
+        }
+        Relationships: []
+      }
+      marketplace_ranking_weights: {
+        Row: {
+          created_at: string
+          enabled: boolean
+          id: number
+          notes: string | null
+          signal: string
+          surface: string
+          updated_at: string
+          weight_bps: number
+        }
+        Insert: {
+          created_at?: string
+          enabled?: boolean
+          id?: number
+          notes?: string | null
+          signal: string
+          surface: string
+          updated_at?: string
+          weight_bps: number
+        }
+        Update: {
+          created_at?: string
+          enabled?: boolean
+          id?: number
+          notes?: string | null
+          signal?: string
+          surface?: string
+          updated_at?: string
+          weight_bps?: number
         }
         Relationships: []
       }
@@ -8586,6 +11045,7 @@ export type Database = {
           fee_changes_count: number
           html_content: string | null
           id: number
+          status: string
           subject: string
         }
         Insert: {
@@ -8596,6 +11056,7 @@ export type Database = {
           fee_changes_count?: number
           html_content?: string | null
           id?: number
+          status?: string
           subject: string
         }
         Update: {
@@ -8606,6 +11067,7 @@ export type Database = {
           fee_changes_count?: number
           html_content?: string | null
           id?: number
+          status?: string
           subject?: string
         }
         Relationships: []
@@ -8853,6 +11315,101 @@ export type Database = {
         }
         Relationships: []
       }
+      outbound_webhook_deliveries: {
+        Row: {
+          created_at: string
+          delivered_at: string | null
+          endpoint_id: number
+          event_type: string
+          id: number
+          payload: Json
+          response_body: string | null
+          response_status: number | null
+          retry_count: number
+          signature: string
+          signed_payload: string
+        }
+        Insert: {
+          created_at?: string
+          delivered_at?: string | null
+          endpoint_id: number
+          event_type: string
+          id?: number
+          payload: Json
+          response_body?: string | null
+          response_status?: number | null
+          retry_count?: number
+          signature: string
+          signed_payload: string
+        }
+        Update: {
+          created_at?: string
+          delivered_at?: string | null
+          endpoint_id?: number
+          event_type?: string
+          id?: number
+          payload?: Json
+          response_body?: string | null
+          response_status?: number | null
+          retry_count?: number
+          signature?: string
+          signed_payload?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "outbound_webhook_deliveries_endpoint_id_fkey"
+            columns: ["endpoint_id"]
+            isOneToOne: false
+            referencedRelation: "outbound_webhook_endpoints"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      outbound_webhook_endpoints: {
+        Row: {
+          created_at: string
+          enabled: boolean
+          event_subscriptions: string[]
+          failure_count: number
+          id: number
+          last_failure_at: string | null
+          last_success_at: string | null
+          owner_id: string
+          owner_kind: string
+          signing_secret: string
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          enabled?: boolean
+          event_subscriptions?: string[]
+          failure_count?: number
+          id?: number
+          last_failure_at?: string | null
+          last_success_at?: string | null
+          owner_id: string
+          owner_kind: string
+          signing_secret: string
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          created_at?: string
+          enabled?: boolean
+          event_subscriptions?: string[]
+          failure_count?: number
+          id?: number
+          last_failure_at?: string | null
+          last_success_at?: string | null
+          owner_id?: string
+          owner_kind?: string
+          signing_secret?: string
+          updated_at?: string
+          url?: string
+        }
+        Relationships: []
+      }
       partner_integrations: {
         Row: {
           contact_email: string | null
@@ -8973,6 +11530,27 @@ export type Database = {
           updated_at?: string
           variants?: Json
           winner_variant?: string | null
+        }
+        Relationships: []
+      }
+      plan_resume_emails: {
+        Row: {
+          auth_user_id: string
+          id: number
+          plan_id: number
+          sent_at: string
+        }
+        Insert: {
+          auth_user_id: string
+          id?: number
+          plan_id: number
+          sent_at?: string
+        }
+        Update: {
+          auth_user_id?: string
+          id?: number
+          plan_id?: number
+          sent_at?: string
         }
         Relationships: []
       }
@@ -9234,6 +11812,49 @@ export type Database = {
         }
         Relationships: []
       }
+      presence_pings: {
+        Row: {
+          id: number
+          last_ping_at: string
+          professional_id: number | null
+          team_id: number | null
+        }
+        Insert: {
+          id?: number
+          last_ping_at?: string
+          professional_id?: number | null
+          team_id?: number | null
+        }
+        Update: {
+          id?: number
+          last_ping_at?: string
+          professional_id?: number | null
+          team_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "presence_pings_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "admin_advisor_health"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "presence_pings_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "professionals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "presence_pings_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "expert_teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       price_drop_notifications: {
         Row: {
           broker_slug: string
@@ -9313,6 +11934,176 @@ export type Database = {
           verified_at?: string | null
         }
         Relationships: []
+      }
+      pro_affiliate_clicks: {
+        Row: {
+          attributed_user_id: string | null
+          clicked_at: string
+          id: number
+          ip_hash: string | null
+          landing_page: string | null
+          session_id: string | null
+          share_token: string
+          user_agent: string | null
+        }
+        Insert: {
+          attributed_user_id?: string | null
+          clicked_at?: string
+          id?: number
+          ip_hash?: string | null
+          landing_page?: string | null
+          session_id?: string | null
+          share_token: string
+          user_agent?: string | null
+        }
+        Update: {
+          attributed_user_id?: string | null
+          clicked_at?: string
+          id?: number
+          ip_hash?: string | null
+          landing_page?: string | null
+          session_id?: string | null
+          share_token?: string
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pro_affiliate_clicks_share_token_fkey"
+            columns: ["share_token"]
+            isOneToOne: false
+            referencedRelation: "pro_affiliate_links"
+            referencedColumns: ["share_token"]
+          },
+        ]
+      }
+      pro_affiliate_credits: {
+        Row: {
+          attributed_brief_id: number | null
+          attributed_user_id: string | null
+          created_at: string
+          credits_awarded: number
+          id: number
+          pro_kind: string
+          pro_slug: string
+          source_event: string
+        }
+        Insert: {
+          attributed_brief_id?: number | null
+          attributed_user_id?: string | null
+          created_at?: string
+          credits_awarded: number
+          id?: number
+          pro_kind: string
+          pro_slug: string
+          source_event: string
+        }
+        Update: {
+          attributed_brief_id?: number | null
+          attributed_user_id?: string | null
+          created_at?: string
+          credits_awarded?: number
+          id?: number
+          pro_kind?: string
+          pro_slug?: string
+          source_event?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pro_affiliate_credits_attributed_brief_id_fkey"
+            columns: ["attributed_brief_id"]
+            isOneToOne: false
+            referencedRelation: "advisor_auctions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pro_affiliate_links: {
+        Row: {
+          brief_count: number
+          click_count: number
+          created_at: string
+          id: number
+          last_clicked_at: string | null
+          pro_kind: string
+          pro_slug: string
+          share_token: string
+          signup_count: number
+        }
+        Insert: {
+          brief_count?: number
+          click_count?: number
+          created_at?: string
+          id?: number
+          last_clicked_at?: string | null
+          pro_kind: string
+          pro_slug: string
+          share_token: string
+          signup_count?: number
+        }
+        Update: {
+          brief_count?: number
+          click_count?: number
+          created_at?: string
+          id?: number
+          last_clicked_at?: string | null
+          pro_kind?: string
+          pro_slug?: string
+          share_token?: string
+          signup_count?: number
+        }
+        Relationships: []
+      }
+      pro_availability_slots: {
+        Row: {
+          created_at: string
+          end_at: string
+          id: number
+          professional_id: number
+          start_at: string
+          status: string
+          team_id: number | null
+        }
+        Insert: {
+          created_at?: string
+          end_at: string
+          id?: number
+          professional_id: number
+          start_at: string
+          status?: string
+          team_id?: number | null
+        }
+        Update: {
+          created_at?: string
+          end_at?: string
+          id?: number
+          professional_id?: number
+          start_at?: string
+          status?: string
+          team_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pro_availability_slots_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "admin_advisor_health"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pro_availability_slots_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "professionals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pro_availability_slots_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "expert_teams"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       pro_deal_redemptions: {
         Row: {
@@ -9399,6 +12190,151 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      pro_digest_sends: {
+        Row: {
+          brief_count: number
+          id: number
+          period_end: string
+          period_start: string
+          professional_id: number
+          sent_at: string
+        }
+        Insert: {
+          brief_count?: number
+          id?: number
+          period_end: string
+          period_start: string
+          professional_id: number
+          sent_at?: string
+        }
+        Update: {
+          brief_count?: number
+          id?: number
+          period_end?: string
+          period_start?: string
+          professional_id?: number
+          sent_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pro_digest_sends_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "admin_advisor_health"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pro_digest_sends_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "professionals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pro_intake_answers: {
+        Row: {
+          answer: string
+          answered_at: string
+          brief_id: number
+          id: number
+          question_id: number
+        }
+        Insert: {
+          answer: string
+          answered_at?: string
+          brief_id: number
+          id?: number
+          question_id: number
+        }
+        Update: {
+          answer?: string
+          answered_at?: string
+          brief_id?: number
+          id?: number
+          question_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pro_intake_answers_brief_id_fkey"
+            columns: ["brief_id"]
+            isOneToOne: false
+            referencedRelation: "advisor_auctions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pro_intake_answers_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "pro_intake_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pro_intake_questions: {
+        Row: {
+          created_at: string
+          enabled: boolean
+          id: number
+          kind: string
+          options: Json
+          owner_kind: string
+          professional_id: number | null
+          prompt: string
+          required: boolean
+          sort_order: number
+          team_id: number | null
+        }
+        Insert: {
+          created_at?: string
+          enabled?: boolean
+          id?: number
+          kind?: string
+          options?: Json
+          owner_kind: string
+          professional_id?: number | null
+          prompt: string
+          required?: boolean
+          sort_order?: number
+          team_id?: number | null
+        }
+        Update: {
+          created_at?: string
+          enabled?: boolean
+          id?: number
+          kind?: string
+          options?: Json
+          owner_kind?: string
+          professional_id?: number | null
+          prompt?: string
+          required?: boolean
+          sort_order?: number
+          team_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pro_intake_questions_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "admin_advisor_health"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pro_intake_questions_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "professionals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pro_intake_questions_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "expert_teams"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       professional_leads: {
         Row: {
@@ -9511,6 +12447,55 @@ export type Database = {
           },
         ]
       }
+      professional_review_responses: {
+        Row: {
+          body: string
+          created_at: string | null
+          id: number
+          professional_id: number
+          review_id: number
+          updated_at: string | null
+        }
+        Insert: {
+          body: string
+          created_at?: string | null
+          id?: number
+          professional_id: number
+          review_id: number
+          updated_at?: string | null
+        }
+        Update: {
+          body?: string
+          created_at?: string | null
+          id?: number
+          professional_id?: number
+          review_id?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "professional_review_responses_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "admin_advisor_health"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "professional_review_responses_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "professionals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "professional_review_responses_review_id_fkey"
+            columns: ["review_id"]
+            isOneToOne: true
+            referencedRelation: "professional_reviews"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       professional_reviews: {
         Row: {
           admin_overridden_at: string | null
@@ -9618,6 +12603,7 @@ export type Database = {
           admin_notes: string | null
           admin_tags: string[] | null
           advisor_dormant_nudged_at: string | null
+          advisor_nudge_sent_at: string | null
           advisor_tier: string | null
           afsl_number: string | null
           aum_aud_billions: number | null
@@ -9625,6 +12611,7 @@ export type Database = {
           auth_user_id: string | null
           auto_pause_reason: string | null
           auto_paused_at: string | null
+          available_in_countries: string[]
           avg_response_minutes: number | null
           bio: string | null
           booking_enabled: boolean | null
@@ -9669,6 +12656,7 @@ export type Database = {
           last_verified_at: string | null
           latitude: number | null
           lead_price_cents: number | null
+          leads_accepted: number | null
           leads_this_month: number | null
           lifetime_credit_cents: number
           lifetime_lead_spend_cents: number
@@ -9718,6 +12706,10 @@ export type Database = {
           specialties: Json | null
           sponsored_boost: number | null
           status: string | null
+          stripe_connect_account_id: string | null
+          stripe_connect_charges_enabled: boolean
+          stripe_connect_payouts_enabled: boolean
+          stripe_connect_status: string
           stripe_customer_id: string | null
           terms_accepted_at: string | null
           terms_version: string | null
@@ -9726,6 +12718,7 @@ export type Database = {
           tier_changed_at: string | null
           tier_changed_by: string | null
           total_leads: number | null
+          total_leads_received: number | null
           twitter_url: string | null
           type: string
           unresponded_leads: number | null
@@ -9750,6 +12743,7 @@ export type Database = {
           admin_notes?: string | null
           admin_tags?: string[] | null
           advisor_dormant_nudged_at?: string | null
+          advisor_nudge_sent_at?: string | null
           advisor_tier?: string | null
           afsl_number?: string | null
           aum_aud_billions?: number | null
@@ -9757,6 +12751,7 @@ export type Database = {
           auth_user_id?: string | null
           auto_pause_reason?: string | null
           auto_paused_at?: string | null
+          available_in_countries?: string[]
           avg_response_minutes?: number | null
           bio?: string | null
           booking_enabled?: boolean | null
@@ -9801,6 +12796,7 @@ export type Database = {
           last_verified_at?: string | null
           latitude?: number | null
           lead_price_cents?: number | null
+          leads_accepted?: number | null
           leads_this_month?: number | null
           lifetime_credit_cents?: number
           lifetime_lead_spend_cents?: number
@@ -9850,6 +12846,10 @@ export type Database = {
           specialties?: Json | null
           sponsored_boost?: number | null
           status?: string | null
+          stripe_connect_account_id?: string | null
+          stripe_connect_charges_enabled?: boolean
+          stripe_connect_payouts_enabled?: boolean
+          stripe_connect_status?: string
           stripe_customer_id?: string | null
           terms_accepted_at?: string | null
           terms_version?: string | null
@@ -9858,6 +12858,7 @@ export type Database = {
           tier_changed_at?: string | null
           tier_changed_by?: string | null
           total_leads?: number | null
+          total_leads_received?: number | null
           twitter_url?: string | null
           type: string
           unresponded_leads?: number | null
@@ -9882,6 +12883,7 @@ export type Database = {
           admin_notes?: string | null
           admin_tags?: string[] | null
           advisor_dormant_nudged_at?: string | null
+          advisor_nudge_sent_at?: string | null
           advisor_tier?: string | null
           afsl_number?: string | null
           aum_aud_billions?: number | null
@@ -9889,6 +12891,7 @@ export type Database = {
           auth_user_id?: string | null
           auto_pause_reason?: string | null
           auto_paused_at?: string | null
+          available_in_countries?: string[]
           avg_response_minutes?: number | null
           bio?: string | null
           booking_enabled?: boolean | null
@@ -9933,6 +12936,7 @@ export type Database = {
           last_verified_at?: string | null
           latitude?: number | null
           lead_price_cents?: number | null
+          leads_accepted?: number | null
           leads_this_month?: number | null
           lifetime_credit_cents?: number
           lifetime_lead_spend_cents?: number
@@ -9982,6 +12986,10 @@ export type Database = {
           specialties?: Json | null
           sponsored_boost?: number | null
           status?: string | null
+          stripe_connect_account_id?: string | null
+          stripe_connect_charges_enabled?: boolean
+          stripe_connect_payouts_enabled?: boolean
+          stripe_connect_status?: string
           stripe_customer_id?: string | null
           terms_accepted_at?: string | null
           terms_version?: string | null
@@ -9990,6 +12998,7 @@ export type Database = {
           tier_changed_at?: string | null
           tier_changed_by?: string | null
           total_leads?: number | null
+          total_leads_received?: number | null
           twitter_url?: string | null
           type?: string
           unresponded_leads?: number | null
@@ -10454,6 +13463,79 @@ export type Database = {
         }
         Relationships: []
       }
+      provider_outcome_scores: {
+        Row: {
+          avg_rating: number | null
+          briefs_accepted: number
+          completion_rate_pct: number | null
+          id: number
+          outcomes_abandoned: number
+          outcomes_completed: number
+          outcomes_in_progress: number
+          outcomes_submitted: number
+          outcomes_switched: number
+          professional_id: number | null
+          team_id: number | null
+          updated_at: string
+          window_end: string
+          window_start: string
+        }
+        Insert: {
+          avg_rating?: number | null
+          briefs_accepted?: number
+          completion_rate_pct?: number | null
+          id?: number
+          outcomes_abandoned?: number
+          outcomes_completed?: number
+          outcomes_in_progress?: number
+          outcomes_submitted?: number
+          outcomes_switched?: number
+          professional_id?: number | null
+          team_id?: number | null
+          updated_at?: string
+          window_end: string
+          window_start: string
+        }
+        Update: {
+          avg_rating?: number | null
+          briefs_accepted?: number
+          completion_rate_pct?: number | null
+          id?: number
+          outcomes_abandoned?: number
+          outcomes_completed?: number
+          outcomes_in_progress?: number
+          outcomes_submitted?: number
+          outcomes_switched?: number
+          professional_id?: number | null
+          team_id?: number | null
+          updated_at?: string
+          window_end?: string
+          window_start?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "provider_outcome_scores_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "admin_advisor_health"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "provider_outcome_scores_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "professionals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "provider_outcome_scores_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "expert_teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       qa_votes: {
         Row: {
           created_at: string | null
@@ -10661,6 +13743,36 @@ export type Database = {
         }
         Relationships: []
       }
+      quiz_questions: {
+        Row: {
+          active: boolean | null
+          created_at: string | null
+          id: number
+          options: Json
+          order_index: number
+          question_text: string
+          updated_at: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          created_at?: string | null
+          id?: number
+          options?: Json
+          order_index?: number
+          question_text: string
+          updated_at?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          created_at?: string | null
+          id?: number
+          options?: Json
+          order_index?: number
+          question_text?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       quiz_weights: {
         Row: {
           advanced_weight: number | null
@@ -10710,6 +13822,132 @@ export type Database = {
             columns: ["broker_id"]
             isOneToOne: false
             referencedRelation: "brokers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quote_qa: {
+        Row: {
+          advisor_id: number | null
+          auction_id: number
+          author_display_name: string
+          author_email: string | null
+          body: string
+          created_at: string
+          id: number
+          is_question: boolean
+          is_removed: boolean
+          parent_id: number | null
+        }
+        Insert: {
+          advisor_id?: number | null
+          auction_id: number
+          author_display_name: string
+          author_email?: string | null
+          body: string
+          created_at?: string
+          id?: number
+          is_question?: boolean
+          is_removed?: boolean
+          parent_id?: number | null
+        }
+        Update: {
+          advisor_id?: number | null
+          auction_id?: number
+          author_display_name?: string
+          author_email?: string | null
+          body?: string
+          created_at?: string
+          id?: number
+          is_question?: boolean
+          is_removed?: boolean
+          parent_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quote_qa_advisor_id_fkey"
+            columns: ["advisor_id"]
+            isOneToOne: false
+            referencedRelation: "admin_advisor_health"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quote_qa_advisor_id_fkey"
+            columns: ["advisor_id"]
+            isOneToOne: false
+            referencedRelation: "professionals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quote_qa_auction_id_fkey"
+            columns: ["auction_id"]
+            isOneToOne: false
+            referencedRelation: "advisor_auctions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quote_qa_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "quote_qa"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quote_reviews: {
+        Row: {
+          advisor_id: number
+          auction_id: number
+          body: string | null
+          created_at: string
+          id: number
+          rating: number
+          reviewer_display_name: string | null
+          reviewer_email: string
+          verified: boolean
+        }
+        Insert: {
+          advisor_id: number
+          auction_id: number
+          body?: string | null
+          created_at?: string
+          id?: number
+          rating: number
+          reviewer_display_name?: string | null
+          reviewer_email: string
+          verified?: boolean
+        }
+        Update: {
+          advisor_id?: number
+          auction_id?: number
+          body?: string | null
+          created_at?: string
+          id?: number
+          rating?: number
+          reviewer_display_name?: string | null
+          reviewer_email?: string
+          verified?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quote_reviews_advisor_id_fkey"
+            columns: ["advisor_id"]
+            isOneToOne: false
+            referencedRelation: "admin_advisor_health"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quote_reviews_advisor_id_fkey"
+            columns: ["advisor_id"]
+            isOneToOne: false
+            referencedRelation: "professionals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quote_reviews_auction_id_fkey"
+            columns: ["auction_id"]
+            isOneToOne: false
+            referencedRelation: "advisor_auctions"
             referencedColumns: ["id"]
           },
         ]
@@ -11125,6 +14363,45 @@ export type Database = {
         }
         Relationships: []
       }
+      saved_searches: {
+        Row: {
+          created_at: string
+          email_frequency: string
+          filters: Json
+          id: number
+          kind: string
+          label: string
+          last_alerted_at: string | null
+          last_match_signature: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email_frequency?: string
+          filters?: Json
+          id?: number
+          kind: string
+          label: string
+          last_alerted_at?: string | null
+          last_match_signature?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email_frequency?: string
+          filters?: Json
+          id?: number
+          kind?: string
+          label?: string
+          last_alerted_at?: string | null
+          last_match_signature?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       scenarios: {
         Row: {
           brokers: Json | null
@@ -11359,6 +14636,75 @@ export type Database = {
           expires_at?: string | null
           id?: string
           view_count?: number | null
+        }
+        Relationships: []
+      }
+      site_ab_tests: {
+        Row: {
+          clicks_a: number | null
+          clicks_b: number | null
+          conversions_a: number | null
+          conversions_b: number | null
+          created_at: string | null
+          created_by: string | null
+          end_date: string | null
+          id: number
+          impressions_a: number | null
+          impressions_b: number | null
+          name: string
+          page: string
+          start_date: string | null
+          status: string | null
+          test_type: string
+          traffic_split: number | null
+          updated_at: string | null
+          variant_a: Json
+          variant_b: Json
+          winner: string | null
+        }
+        Insert: {
+          clicks_a?: number | null
+          clicks_b?: number | null
+          conversions_a?: number | null
+          conversions_b?: number | null
+          created_at?: string | null
+          created_by?: string | null
+          end_date?: string | null
+          id?: number
+          impressions_a?: number | null
+          impressions_b?: number | null
+          name: string
+          page?: string
+          start_date?: string | null
+          status?: string | null
+          test_type: string
+          traffic_split?: number | null
+          updated_at?: string | null
+          variant_a?: Json
+          variant_b?: Json
+          winner?: string | null
+        }
+        Update: {
+          clicks_a?: number | null
+          clicks_b?: number | null
+          conversions_a?: number | null
+          conversions_b?: number | null
+          created_at?: string | null
+          created_by?: string | null
+          end_date?: string | null
+          id?: number
+          impressions_a?: number | null
+          impressions_b?: number | null
+          name?: string
+          page?: string
+          start_date?: string | null
+          status?: string | null
+          test_type?: string
+          traffic_split?: number | null
+          updated_at?: string | null
+          variant_a?: Json
+          variant_b?: Json
+          winner?: string | null
         }
         Relationships: []
       }
@@ -12004,6 +15350,367 @@ export type Database = {
             columns: ["source_broker_id"]
             isOneToOne: false
             referencedRelation: "brokers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      synthetic_check_runs: {
+        Row: {
+          error: string | null
+          flow: string
+          id: number
+          latency_ms: number | null
+          ok: boolean
+          started_at: string
+        }
+        Insert: {
+          error?: string | null
+          flow: string
+          id?: number
+          latency_ms?: number | null
+          ok: boolean
+          started_at?: string
+        }
+        Update: {
+          error?: string | null
+          flow?: string
+          id?: number
+          latency_ms?: number | null
+          ok?: boolean
+          started_at?: string
+        }
+        Relationships: []
+      }
+      tax_nurture_sends: {
+        Row: {
+          auth_user_id: string | null
+          clicked_at: string | null
+          email: string
+          id: number
+          plan_id: number
+          sent_at: string
+          step: number
+        }
+        Insert: {
+          auth_user_id?: string | null
+          clicked_at?: string | null
+          email: string
+          id?: number
+          plan_id: number
+          sent_at?: string
+          step: number
+        }
+        Update: {
+          auth_user_id?: string | null
+          clicked_at?: string | null
+          email?: string
+          id?: number
+          plan_id?: number
+          sent_at?: string
+          step?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tax_nurture_sends_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "get_matched_action_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      team_brief_assignments: {
+        Row: {
+          brief_id: number
+          claimed_at: string
+          id: number
+          notes: string | null
+          professional_id: number
+          released_at: string | null
+          status: string
+          team_id: number
+        }
+        Insert: {
+          brief_id: number
+          claimed_at?: string
+          id?: number
+          notes?: string | null
+          professional_id: number
+          released_at?: string | null
+          status?: string
+          team_id: number
+        }
+        Update: {
+          brief_id?: number
+          claimed_at?: string
+          id?: number
+          notes?: string | null
+          professional_id?: number
+          released_at?: string | null
+          status?: string
+          team_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_brief_assignments_brief_id_fkey"
+            columns: ["brief_id"]
+            isOneToOne: false
+            referencedRelation: "advisor_auctions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_brief_assignments_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "admin_advisor_health"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_brief_assignments_professional_id_fkey"
+            columns: ["professional_id"]
+            isOneToOne: false
+            referencedRelation: "professionals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_brief_assignments_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "expert_teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      team_brief_decisions: {
+        Row: {
+          brief_id: number
+          created_at: string
+          decided_by_professional_id: number | null
+          decision: string
+          id: number
+          reason: string | null
+          team_id: number
+        }
+        Insert: {
+          brief_id: number
+          created_at?: string
+          decided_by_professional_id?: number | null
+          decision: string
+          id?: number
+          reason?: string | null
+          team_id: number
+        }
+        Update: {
+          brief_id?: number
+          created_at?: string
+          decided_by_professional_id?: number | null
+          decision?: string
+          id?: number
+          reason?: string | null
+          team_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_brief_decisions_brief_id_fkey"
+            columns: ["brief_id"]
+            isOneToOne: false
+            referencedRelation: "advisor_auctions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_brief_decisions_decided_by_professional_id_fkey"
+            columns: ["decided_by_professional_id"]
+            isOneToOne: false
+            referencedRelation: "admin_advisor_health"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_brief_decisions_decided_by_professional_id_fkey"
+            columns: ["decided_by_professional_id"]
+            isOneToOne: false
+            referencedRelation: "professionals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_brief_decisions_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "expert_teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      team_brief_referrals: {
+        Row: {
+          brief_id: number
+          created_at: string
+          from_professional_id: number | null
+          from_team_id: number
+          id: number
+          note: string | null
+          responded_at: string | null
+          responded_by_professional_id: number | null
+          status: string
+          to_team_id: number
+        }
+        Insert: {
+          brief_id: number
+          created_at?: string
+          from_professional_id?: number | null
+          from_team_id: number
+          id?: number
+          note?: string | null
+          responded_at?: string | null
+          responded_by_professional_id?: number | null
+          status?: string
+          to_team_id: number
+        }
+        Update: {
+          brief_id?: number
+          created_at?: string
+          from_professional_id?: number | null
+          from_team_id?: number
+          id?: number
+          note?: string | null
+          responded_at?: string | null
+          responded_by_professional_id?: number | null
+          status?: string
+          to_team_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_brief_referrals_brief_id_fkey"
+            columns: ["brief_id"]
+            isOneToOne: false
+            referencedRelation: "advisor_auctions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_brief_referrals_from_professional_id_fkey"
+            columns: ["from_professional_id"]
+            isOneToOne: false
+            referencedRelation: "admin_advisor_health"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_brief_referrals_from_professional_id_fkey"
+            columns: ["from_professional_id"]
+            isOneToOne: false
+            referencedRelation: "professionals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_brief_referrals_from_team_id_fkey"
+            columns: ["from_team_id"]
+            isOneToOne: false
+            referencedRelation: "expert_teams"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_brief_referrals_responded_by_professional_id_fkey"
+            columns: ["responded_by_professional_id"]
+            isOneToOne: false
+            referencedRelation: "admin_advisor_health"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_brief_referrals_responded_by_professional_id_fkey"
+            columns: ["responded_by_professional_id"]
+            isOneToOne: false
+            referencedRelation: "professionals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_brief_referrals_to_team_id_fkey"
+            columns: ["to_team_id"]
+            isOneToOne: false
+            referencedRelation: "expert_teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      team_fixed_quotes: {
+        Row: {
+          accepted_at: string | null
+          amount_cents: number
+          brief_id: number
+          decline_reason: string | null
+          declined_at: string | null
+          delivery_days_estimate: number | null
+          expires_at: string
+          id: number
+          issued_by_professional_id: number | null
+          payment_terms: string | null
+          review_token: string
+          scope_items: Json
+          sent_at: string
+          status: string
+          team_id: number
+          withdrawn_at: string | null
+        }
+        Insert: {
+          accepted_at?: string | null
+          amount_cents: number
+          brief_id: number
+          decline_reason?: string | null
+          declined_at?: string | null
+          delivery_days_estimate?: number | null
+          expires_at: string
+          id?: number
+          issued_by_professional_id?: number | null
+          payment_terms?: string | null
+          review_token: string
+          scope_items?: Json
+          sent_at?: string
+          status?: string
+          team_id: number
+          withdrawn_at?: string | null
+        }
+        Update: {
+          accepted_at?: string | null
+          amount_cents?: number
+          brief_id?: number
+          decline_reason?: string | null
+          declined_at?: string | null
+          delivery_days_estimate?: number | null
+          expires_at?: string
+          id?: number
+          issued_by_professional_id?: number | null
+          payment_terms?: string | null
+          review_token?: string
+          scope_items?: Json
+          sent_at?: string
+          status?: string
+          team_id?: number
+          withdrawn_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_fixed_quotes_brief_id_fkey"
+            columns: ["brief_id"]
+            isOneToOne: false
+            referencedRelation: "advisor_auctions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_fixed_quotes_issued_by_professional_id_fkey"
+            columns: ["issued_by_professional_id"]
+            isOneToOne: false
+            referencedRelation: "admin_advisor_health"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_fixed_quotes_issued_by_professional_id_fkey"
+            columns: ["issued_by_professional_id"]
+            isOneToOne: false
+            referencedRelation: "professionals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "team_fixed_quotes_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "expert_teams"
             referencedColumns: ["id"]
           },
         ]
@@ -12929,6 +16636,24 @@ export type Database = {
         }
         Relationships: []
       }
+      weekly_rate_drip_log: {
+        Row: {
+          email_capture_id: number
+          id: number
+          sent_at: string | null
+        }
+        Insert: {
+          email_capture_id: number
+          id?: number
+          sent_at?: string | null
+        }
+        Update: {
+          email_capture_id?: number
+          id?: number
+          sent_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       account_kind_membership: {
@@ -13248,6 +16973,17 @@ export type Database = {
           min_flat_fee_cents: number
           min_hourly_cents: number
         }[]
+      }
+      calculate_broker_revenue_score: {
+        Args: {
+          p_cpa_value: number
+          p_editors_pick: boolean
+          p_has_chess: boolean
+          p_has_deal: boolean
+          p_promoted: boolean
+          p_rating: number
+        }
+        Returns: number
       }
       cleanup_expired_data: { Args: never; Returns: undefined }
       cleanup_old_analytics: { Args: never; Returns: undefined }
@@ -14181,6 +17917,7 @@ export type Database = {
         Args: { geom: unknown; move: number; wrap: number }
         Returns: unknown
       }
+      tbr_is_team_member: { Args: { p_team_id: number }; Returns: boolean }
       unlockrows: { Args: { "": string }; Returns: number }
       updategeometrysrid: {
         Args: {
@@ -14194,7 +17931,7 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      bug_report_status: "new" | "triaged" | "fixed" | "wont_fix"
     }
     CompositeTypes: {
       geometry_dump: {
@@ -14329,6 +18066,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      bug_report_status: ["new", "triaged", "fixed", "wont_fix"],
+    },
   },
 } as const
