@@ -69,5 +69,5 @@ spatial_ref_sys
 
 # W2 Phase — tables created in Supabase dashboard without migration files; pending Stream A backfill
 
-# EM-02 migration applied to live DB before PR #880 merged to main; allowlisted until merge
+# EM-02 migration applied to live DB before PR #880 merged to main; remove when #880 merges
 hub_drip_log

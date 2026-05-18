@@ -17,6 +17,7 @@ import {
   getPublicTestimonials,
 } from "@/lib/outcomes/profile-display";
 import { computeSquadTier } from "@/lib/expert-teams/badge-tier";
+import { getOnlineProsBatch } from "@/lib/presence";
 import SquadStack from "./_components/SquadStack";
 import BundledPricePreview from "./_components/BundledPricePreview";
 
@@ -143,6 +144,11 @@ export default async function TeamProfilePage({ params }: PageProps) {
     getPublicTestimonials({ teamId: team.id, limit: 5 }),
   ]);
 
+  // Presence indicator — how many squad members are pinging right now
+  // (heartbeat from /teams/[slug]/inbox). Fail-soft to empty set.
+  const onlineProIds = await getOnlineProsBatch(proIds);
+  const onlineNow = onlineProIds.size;
+
   // Is the calling visitor an active member of this team? If so, surface
   // the "Open squad inbox" link in the trust strip. We resolve the user
   // via the anon auth cookie, then look up the professional + membership
@@ -195,11 +201,87 @@ export default async function TeamProfilePage({ params }: PageProps) {
 
   const acceptedTemplates = (team.accepted_brief_templates as string[]) ?? [];
 
+  // ProfessionalService schema for verified Pro Squads — gives Google
+  // rich-result eligibility (rating stars in SERPs). aggregateRating
+  // surfaces the outcome flywheel data from provider_outcome_scores.
+  // Reviews stream from brief_outcomes (show_testimonial=true only).
+  const completionPct = outcomeBadge?.completion_rate_pct;
+  const outcomesSubmitted = outcomeBadge?.outcomes_submitted ?? 0;
+  const teamLocation = (team.location_state as string | null) ?? null;
+  const serviceAreas = (team.service_areas as string[] | null) ?? null;
+  const teamUrl = absoluteUrl(`/teams/${slug}`);
+  const professionalServiceLd: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "ProfessionalService",
+    name: team.name,
+    description: ((team.description as string) ?? "").slice(0, 280),
+    url: teamUrl,
+    ...(teamLocation
+      ? {
+          address: {
+            "@type": "PostalAddress",
+            addressRegion: teamLocation,
+            addressCountry: "AU",
+          },
+        }
+      : {}),
+    ...(serviceAreas && serviceAreas.length > 0
+      ? { areaServed: serviceAreas.map((s) => ({ "@type": "State", name: s })) }
+      : {}),
+    ...(squadMembers.length > 0
+      ? {
+          employee: squadMembers.slice(0, 10).map((m) => ({
+            "@type": "Person",
+            name: m.pro_name,
+            ...(m.public_title ? { jobTitle: m.public_title } : {}),
+            ...(m.pro_slug ? { url: absoluteUrl(`/advisor/${m.pro_slug}`) } : {}),
+          })),
+        }
+      : {}),
+    ...(typeof completionPct === "number" && outcomesSubmitted > 0
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            // Map completion-rate percentage onto a 1-5 scale so search
+            // engines surface stars (50% → 2.5, 100% → 5).
+            ratingValue: Math.max(1, Math.round((completionPct / 100) * 5 * 10) / 10),
+            reviewCount: outcomesSubmitted,
+            bestRating: 5,
+            worstRating: 1,
+          },
+        }
+      : {}),
+    ...(testimonials.length > 0
+      ? {
+          review: testimonials.slice(0, 5).map((t) => ({
+            "@type": "Review",
+            ...(t.rating
+              ? {
+                  reviewRating: {
+                    "@type": "Rating",
+                    ratingValue: t.rating,
+                    bestRating: 5,
+                    worstRating: 1,
+                  },
+                }
+              : {}),
+            reviewBody: t.testimonial,
+            author: { "@type": "Person", name: "Verified consumer" },
+            ...(t.submitted_at ? { datePublished: t.submitted_at } : {}),
+          })),
+        }
+      : {}),
+  };
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(professionalServiceLd) }}
       />
       <div className="min-h-screen bg-slate-50">
         <div className="bg-white border-b border-slate-200">
@@ -224,6 +306,18 @@ export default async function TeamProfilePage({ params }: PageProps) {
             <span className="text-xs text-slate-500">
               {String(team.team_category).replace(/_/g, " ")} · {String(team.team_type).replace(/_/g, " ")}
             </span>
+            {onlineNow > 0 && (
+              <span
+                className="inline-flex items-center gap-1.5 text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 px-2 py-1 rounded-full"
+                title="Squad members with an active session in the last 5 minutes"
+              >
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                </span>
+                {onlineNow} member{onlineNow === 1 ? "" : "s"} online
+              </span>
+            )}
             {isActiveMember && (
               <Link
                 href={`/teams/${slug}/inbox`}

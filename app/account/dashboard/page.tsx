@@ -30,6 +30,34 @@ function daysUntil(dateStr: string): number {
   return Math.ceil((target.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
 }
 
+function countByKey<T extends Record<string, unknown>>(
+  rows: T[],
+  key: keyof T,
+): Map<unknown, number> {
+  const m = new Map<unknown, number>();
+  for (const r of rows) {
+    const k = r[key];
+    if (k == null) continue;
+    m.set(k, (m.get(k) ?? 0) + 1);
+  }
+  return m;
+}
+
+function median(nums: number[]): number {
+  if (nums.length === 0) return 0;
+  const sorted = [...nums].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 === 0
+    ? Math.round((sorted[mid - 1]! + sorted[mid]!) / 2)
+    : (sorted[mid] ?? 0);
+}
+
+function percentile(value: number, distribution: number[]): number | null {
+  if (distribution.length === 0) return null;
+  const lessOrEqual = distribution.filter((n) => n <= value).length;
+  return Math.round((lessOrEqual / distribution.length) * 100);
+}
+
 type GoalRow = {
   id: number;
   label: string;
@@ -137,6 +165,54 @@ type SnapshotCardProps = {
   emptyHint?: string;
 };
 
+interface BenchmarkRowProps {
+  label: string;
+  user: number;
+  median: number;
+  pct: number | null;
+}
+function BenchmarkRow({ label, user, median, pct }: BenchmarkRowProps) {
+  const diff = user - median;
+  const callout =
+    pct !== null
+      ? pct >= 80
+        ? `Top ${100 - pct}% of investors`
+        : pct >= 50
+          ? "Above median"
+          : pct >= 20
+            ? "Below median — room to grow"
+            : "Just getting started — that's normal"
+      : null;
+  return (
+    <div className="flex flex-col">
+      <p className="text-[10px] uppercase tracking-wide text-slate-500 font-semibold">
+        {label}
+      </p>
+      <div className="flex items-baseline gap-2 mt-1">
+        <p className="text-xl font-extrabold text-violet-900">{user}</p>
+        <p className="text-[11px] text-slate-500">
+          most have {median}
+          {diff !== 0 && (
+            <span
+              className={
+                diff > 0
+                  ? "text-emerald-700 font-semibold ml-1"
+                  : "text-slate-400 ml-1"
+              }
+            >
+              ({diff > 0 ? "+" : ""}
+              {diff})
+            </span>
+          )}
+        </p>
+      </div>
+      {callout && (
+        <p className="text-[11px] text-violet-700 mt-1">{callout}</p>
+      )}
+    </div>
+  );
+}
+
 function SnapshotCard({ title, value, sub, href, emptyHint }: SnapshotCardProps) {
   return (
     <Link
@@ -184,23 +260,114 @@ export default async function PersonalDashboardPage() {
   // user is guaranteed after enforcePortalKind; this narrows the type
   if (!user) return null;
 
-  const [profileRes, goalsRes, holdingsRes, watchlistRes, investorProfile] = await Promise.all([
+  const [
+    profileRes,
+    goalsRes,
+    holdingsRes,
+    watchlistRes,
+    investorProfile,
+    briefsRes,
+  ] = await Promise.all([
     supabase.from("user_profiles").select("display_name, investing_experience, investment_goals, portfolio_size, interested_in, state, onboarding_completed").eq("id", user.id).maybeSingle(),
     supabase.from("investor_goals").select("id, label, goal_type, target_cents, current_balance_cents, target_date").order("target_date", { ascending: true }),
     supabase.from("investor_holdings").select("id", { count: "exact", head: true }),
     supabase.from("user_watchlist_items").select("id", { count: "exact", head: true }),
     getInvestorProfile(user.id),
+    // Cross-kind "My Briefs" tile — counts every Match Request filed
+    // under this auth user's email regardless of which account kind was
+    // active at filing time. Email match handles the legacy anonymous
+    // brief flow that doesn't write `auth_user_id`.
+    user.email
+      ? supabase
+          .from("advisor_auctions")
+          .select("id, tracker_status", { count: "exact" })
+          .eq("contact_email", user.email)
+      : Promise.resolve({ data: [], count: 0 }),
   ]);
 
   const profile = profileRes.data as UserProfile | null;
   const goals = (goalsRes.data ?? []) as GoalRow[];
   const holdingsCount = holdingsRes.count ?? 0;
   const watchlistCount = watchlistRes.count ?? 0;
+  const briefsCount = briefsRes.count ?? 0;
+  const briefs = (briefsRes.data ?? []) as {
+    id: number;
+    tracker_status: string;
+  }[];
+  const briefsActive = briefs.filter(
+    (b) => b.tracker_status && !["won", "lost", "withdrawn"].includes(b.tracker_status),
+  ).length;
   const completeness = profileCompleteness(profile);
 
   // LL-02: fetch profile-matched advisors after profile is resolved
   const { advisors: matchedAdvisors, matchBasis: advisorMatchBasis } =
     await fetchMatchedAdvisors(supabase, investorProfile);
+
+  // Benchmarking — anonymised aggregate stats so the user can see "where
+  // they stand" vs other investors. Pure counts + medians; no PII leaves
+  // the joins. Service-role queries; investor_profiles and
+  // investor_holdings are RLS-isolated, so aggregate reads need admin.
+  // Fail-soft to nulls — strip hides itself when no signal.
+  type Benchmark = {
+    median_goals: number;
+    median_holdings: number;
+    median_watchlist: number;
+    investor_total: number;
+    user_pct_goals: number | null;
+    user_pct_holdings: number | null;
+    user_pct_watchlist: number | null;
+  };
+  let benchmark: Benchmark | null = null;
+  try {
+    const { createAdminClient } = await import("@/lib/supabase/admin");
+    const admin = createAdminClient();
+    const [
+      { count: investorTotal },
+      { data: goalsAgg },
+      { data: holdingsAgg },
+      { data: watchlistAgg },
+    ] = await Promise.all([
+      admin
+        .from("investor_profiles")
+        .select("auth_user_id", { count: "exact", head: true }),
+      // Use a window of recent active investors to keep aggregates fresh.
+      admin
+        .from("investor_goals")
+        .select("auth_user_id")
+        .limit(5000),
+      admin.from("investor_holdings").select("auth_user_id").limit(5000),
+      admin.from("user_watchlist_items").select("user_id").limit(5000),
+    ]);
+    const goalCounts = countByKey(
+      (goalsAgg ?? []) as { auth_user_id: string }[],
+      "auth_user_id",
+    );
+    const holdingsCounts = countByKey(
+      (holdingsAgg ?? []) as { auth_user_id: string }[],
+      "auth_user_id",
+    );
+    const watchlistCounts = countByKey(
+      (watchlistAgg ?? []) as { user_id: string }[],
+      "user_id",
+    );
+    benchmark = {
+      median_goals: median(Array.from(goalCounts.values())),
+      median_holdings: median(Array.from(holdingsCounts.values())),
+      median_watchlist: median(Array.from(watchlistCounts.values())),
+      investor_total: investorTotal ?? 0,
+      user_pct_goals: percentile(goals.length, Array.from(goalCounts.values())),
+      user_pct_holdings: percentile(
+        holdingsCount,
+        Array.from(holdingsCounts.values()),
+      ),
+      user_pct_watchlist: percentile(
+        watchlistCount,
+        Array.from(watchlistCounts.values()),
+      ),
+    };
+  } catch {
+    /* fail-soft */
+  }
 
   const displayName = profile?.display_name ?? investorProfile?.displayName ?? null;
   const firstName = displayName?.split(" ")[0] ?? null;
@@ -234,7 +401,7 @@ export default async function PersonalDashboardPage() {
         <h2 id="snapshot-heading" className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-3">
           Financial snapshot
         </h2>
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <SnapshotCard
             title="Goals"
             value={goals.length}
@@ -256,8 +423,63 @@ export default async function PersonalDashboardPage() {
             href="/account/watchlist"
             emptyHint="Add to watchlist"
           />
+          <SnapshotCard
+            title="My Briefs"
+            value={briefsCount}
+            sub={
+              briefsActive > 0
+                ? `${briefsActive} active`
+                : briefsCount === 1
+                  ? "Match Request filed"
+                  : "Match Requests filed"
+            }
+            href="/briefs"
+            emptyHint="File your first brief"
+          />
         </div>
       </section>
+
+      {/* Benchmarking strip — "how you compare" against anonymised
+          aggregate community stats. Hidden when no signal (new
+          install) or when neither user nor community has data. */}
+      {benchmark && benchmark.investor_total > 5 && (
+        <section
+          aria-labelledby="benchmark-heading"
+          className="mb-8"
+        >
+          <h2
+            id="benchmark-heading"
+            className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-3"
+          >
+            How you compare
+          </h2>
+          <div className="bg-gradient-to-br from-violet-50 via-white to-violet-50 border border-violet-100 rounded-xl p-4 grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+            <BenchmarkRow
+              label="Goals tracked"
+              user={goals.length}
+              median={benchmark.median_goals}
+              pct={benchmark.user_pct_goals}
+            />
+            <BenchmarkRow
+              label="Holdings entered"
+              user={holdingsCount}
+              median={benchmark.median_holdings}
+              pct={benchmark.user_pct_holdings}
+            />
+            <BenchmarkRow
+              label="Watchlist items"
+              user={watchlistCount}
+              median={benchmark.median_watchlist}
+              pct={benchmark.user_pct_watchlist}
+            />
+          </div>
+          <p className="text-[10px] text-slate-400 mt-2">
+            Aggregated across {benchmark.investor_total.toLocaleString()}{" "}
+            investor profiles · refreshed on page load · no personal data
+            leaves these comparisons.
+          </p>
+        </section>
+      )}
 
       {/* Nearest goal progress */}
       {nearestGoal && (
