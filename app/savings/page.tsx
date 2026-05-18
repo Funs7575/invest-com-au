@@ -6,6 +6,7 @@ import { absoluteUrl } from "@/lib/seo";
 import { boostFeaturedPartner } from "@/lib/sponsorship";
 import VerticalPillarPage from "@/components/VerticalPillarPage";
 import ForeignInvestorCallout from "@/components/ForeignInvestorCallout";
+import RateAlertCapture from "@/components/RateAlertCapture";
 
 const vertical = getVerticalBySlug("savings")!;
 
@@ -93,6 +94,12 @@ export default async function SavingsPage() {
         advisors={advisors || []}
         expertArticles={expertArticles || []}
       />
+      <div className="mx-auto max-w-3xl px-4 pb-12">
+        <RateAlertCapture
+          productKind="savings_account"
+          defaultThresholdPct={5.25}
+        />
+      </div>
     </>
   );
 }
