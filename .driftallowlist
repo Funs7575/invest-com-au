@@ -71,3 +71,8 @@ spatial_ref_sys
 
 # EM-02 migration applied to live DB before PR #880 merged to main; remove when #880 merges
 hub_drip_log
+
+# Founder PRs #891–#893 added tables via Supabase dashboard without migrations; pending Stream A backfill
+brief_promo_codes        # PR #891 — promotional codes for advisor briefs
+brief_promo_redemptions  # PR #892 — redemption tracking for brief promo codes
+investor_oauth_connections  # PR #893 — OAuth provider connections for investor accounts
