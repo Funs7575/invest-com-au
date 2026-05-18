@@ -528,8 +528,8 @@ export const UK_CONFIG: CountryConfig = {
     { emoji: "📈", label: "Brokers that accept UK residents", sublabel: "Pre-filtered to non-resident-friendly platforms", href: "/compare/non-residents" },
     { emoji: "🏠", label: "FIRB-eligible new properties", sublabel: "New dwellings + commercial only — established homes blocked till 2027", href: "/invest?firb=eligible" },
     { emoji: "💱", label: "GBP → AUD transfers", sublabel: "Specialist FX vs UK retail bank — typical saving 2–4%", href: "/foreign-investment/send-money-australia" },
-    { emoji: "🧾", label: "UK-AU pension transfer (QROPS)", sublabel: "Specialist advisors for the highest-risk cross-border decision", href: "/advisors/international-tax-specialists" },
-    { emoji: "👤", label: "Find a UK-AU specialist", sublabel: "HMRC SA106, IHT, FIRB — cross-border advisors", href: "/advisors/international-tax-specialists" },
+    { emoji: "🧾", label: "UK-AU pension transfer (QROPS)", sublabel: "Specialist advisors for the highest-risk cross-border decision", href: "/find-advisor?specialty=UK+Pension+Transfer" },
+    { emoji: "👤", label: "Find a UK-AU specialist", sublabel: "HMRC SA106, IHT, FIRB — cross-border advisors", href: "/find-advisor?specialty=UK+Pension+Transfer" },
   ],
   homepageListingFilters: {
     verticals: ["commercial-property", "buy-business", "funds"],
@@ -1226,7 +1226,7 @@ export const US_CONFIG: CountryConfig = {
     { emoji: "⚠️", label: "PFIC-safe investment options", sublabel: "Individual ASX stocks + US-listed AU ETFs — avoid the trap", href: "/foreign-investment/shares" },
     { emoji: "🏠", label: "FIRB-eligible new properties", sublabel: "AUSFTA raises commercial thresholds — residential rules unchanged", href: "/invest?firb=eligible" },
     { emoji: "💱", label: "USD → AUD transfers", sublabel: "Wise/OFX vs US wires — saves 1.5–3% on size", href: "/foreign-investment/send-money-australia" },
-    { emoji: "👤", label: "Find a US-AU CPA", sublabel: "FBAR/FATCA/PFIC + Forms 8938, 8621, 3520 — specialist territory", href: "/advisors/international-tax-specialists" },
+    { emoji: "👤", label: "Find a US-AU CPA", sublabel: "FBAR/FATCA/PFIC + Forms 8938, 8621, 3520 — specialist territory", href: "/find-advisor?specialty=FATCA-Aware+US+Expat+Planning" },
   ],
   homepageListingFilters: {
     verticals: ["commercial-property", "buy-business", "funds"],
@@ -2081,7 +2081,7 @@ export const IN_CONFIG: CountryConfig = {
     { emoji: "🏠", label: "FIRB-eligible new properties", sublabel: "Sydney/Melbourne off-the-plan most popular with NRI buyers", href: "/invest?firb=eligible" },
     { emoji: "💱", label: "INR → AUD (within LRS)", sublabel: "US$250K/year LRS limit — Wise/Instarem typically beats banks", href: "/foreign-investment/send-money-australia" },
     { emoji: "💰", label: "Claim your stranded super (DASP)", sublabel: "If you worked in AU on a temp visa — 35% tax but worth claiming", href: "/foreign-investment/super" },
-    { emoji: "👤", label: "Find an India-AU tax specialist", sublabel: "Schedule FA reporting, DASP, FIRB, ECTA expertise", href: "/advisors/international-tax-specialists" },
+    { emoji: "👤", label: "Find an India-AU tax specialist", sublabel: "Schedule FA reporting, DASP, FIRB, ECTA expertise", href: "/find-advisor?specialty=DASP+Processing" },
   ],
   homepageListingFilters: {
     verticals: ["commercial-property", "buy-business", "funds"],

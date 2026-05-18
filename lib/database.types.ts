@@ -15450,6 +15450,30 @@ export type Database = {
         }
         Relationships: []
       }
+      suppression_list: {
+        Row: {
+          contact_email: string
+          id: string
+          metadata: Json
+          reason: string
+          suppressed_at: string
+        }
+        Insert: {
+          contact_email: string
+          id?: string
+          metadata?: Json
+          reason: string
+          suppressed_at?: string
+        }
+        Update: {
+          contact_email?: string
+          id?: string
+          metadata?: Json
+          reason?: string
+          suppressed_at?: string
+        }
+        Relationships: []
+      }
       switch_stories: {
         Row: {
           body: string

@@ -120,6 +120,20 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
+      // /brokers (plural) was a 404 even though every natural link, internal
+      // nav, and Google result expects the plural. The actual page lives at
+      // /broker (singular). Cheap permanent redirect closes the leak.
+      // PRODUCT_AUDIT.md 2026-04-15 §CRITICAL #1.
+      {
+        source: "/brokers",
+        destination: "/broker",
+        permanent: true,
+      },
+      {
+        source: "/brokers/:slug*",
+        destination: "/broker/:slug*",
+        permanent: true,
+      },
       // /advisors/search retired 2026-05 — the inline filter panel on
       // /advisors now hosts every filter the standalone page had
       // (language, accepting-new-clients, with-intro-video) plus the
