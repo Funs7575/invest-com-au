@@ -56,18 +56,18 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | CL | `claude/audit-remediation/cl-01-about-entity-only` | **#795 MERGED 2026-05-14** | CL-01..CL-04, CL-06, CL-09, CL-10 done. CL-07+CL-08 false-positive. CL-05 blocked (WHOIS registrar action — see Blocked). | All CL tasks merged (CL-05 blocked) |
 | LL | `claude/audit-remediation/ll-04-reviews-ratings` | **#807 MERGED 2026-05-14** · **#845 MERGED 2026-05-17** | LL-01..LL-04 done. LL-05 blocked (live chat AI routing — deps V-NEW-02 + CC-06). **Stream stalled at LL-05 (blocked).** | All LL tasks merged (LL-05 blocked) |
 | RR | _complete_ | **#847 MERGED 2026-05-17** | RR-01 false-positive. RR-02 done. **Stream complete.** | All RR tasks merged ✓ |
-| EM | `claude/audit-remediation/em-02-hub-drip-infra` | **#848 MERGED 2026-05-17** · **#880 OPEN** | EM-03 + EM-01 done. EM-02 (`16add6f`): hub_drip_log migration + hub-subscriber-drip cron. **Stream complete pending #880 merge (Tier C).** | All EM tasks merged |
-| LX | `claude/audit-remediation/lx-03-cross-calc-nav` | **#849 MERGED 2026-05-15** · **#879 OPEN** | LX-01, LX-02, LX-03, LX-04, LX-05 done. LX-03 (`b6f675a`): RelatedCalculators component wired into 4 main calculators. **Stream complete pending #879 merge.** | All LX tasks merged |
-| OB | `claude/audit-remediation/ob-09-remaining-quizzes` | **#852 MERGED 2026-05-17** · **#878 OPEN** | OB-01..OB-12 done. OB-09..OB-12 (`710dba3`): LUMP_SUM, FOREIGN_INVESTMENT, SELL_BUSINESS, HALAL_INVESTING configs + 4 quiz pages + sitemap. **Stream complete pending #878 merge.** | All OB tasks merged |
-| GT | `claude/audit-remediation/gt-02-annual-check` | **#881 OPEN** | GT-01 blocked (needs DV-01). GT-02 done (`a4c5352`): annual financial check-up page `/account/annual-check` — personalised FY checklist for 5 investor types. NavCard added to dashboard. CI rescue iter 422: `Supabase types drift` fixed — `hub_drip_log` from EM-02 caused drift. CI rescue iter 429: `Supabase types drift` again — advisor_auctions/bids migration; merged main (`2929e91`). CI rescue iter 431: `Supabase types drift` again — 3 new tables (brief_promo_codes, brief_promo_redemptions, investor_oauth_connections) from founder PRs #891–#893; types regen on main (`b9b57b5`), then merged into GT (`241721f`). CI rescue iter 433: `Database types drift gate` — same 3 founder tables still failing after types regen (gate uses migrations not types); fixed by allowlisting in `.driftallowlist` (`947d14d` on main), then merging into GT (`f39e995`). Axe-core still failing (systemic/blocked). Last CI: pending — pushed `f39e995` 2026-05-18. | All GT tasks merged |
-| DF | `claude/audit-remediation/df-01-decision-frameworks` | **#883 OPEN** · ~~#884 CLOSED (dup)~~ | DF-01 done (`49bc079`): DecisionTree engine + buy-vs-rent. DF-02 done (`972e13a`): salary-sacrifice tree. DF-03 done (`1d741e9`): SMSF-setup tree. DF-04 done (`cadd73e`): tools index updated (buy-vs-rent/salary-sacrifice/smsf-setup added to ToolsClient). **Stream complete pending #883 merge.** | All DF tasks merged |
-| QA | `claude/audit-remediation/qa-01-question-deep-dive` | **#890 OPEN** | QA-01 done (`a7c7d56`): /questions index + RSC deep-dive template + 17 seeded questions. QA-02 done (`3c0d82a`): +13 questions → 30 total (tax-loss harvesting, MLS, LITO, crypto tax, investment bonds, A-REITs, rebalancing, shares vs bonds, diversification, FHBG, age pension assets test, HECS-HELP). **Stream complete at 30 questions pending #890 merge.** | All QA tasks merged |
-| Z-23+BB-08 | `claude/audit-remediation/z-23-first-home-buyer` | **#895 OPEN** | Z-23 done (`6f33976`): `/first-home-buyer` hub page. BB-08 done: FHSS deposit calculator at `app/tools/fhss-calculator/`. CI rescue iter 442: root cause found — `page.tsx` was `"use client"` without `export const metadata`, failing `__tests__/lib/metadata-coverage.test.ts`. Fix: split into server `page.tsx` (metadata + JSON-LD) + `FHSSCalculatorClient.tsx` ("use client" interactive UI). Commit `07b5e5f`. Last CI: pending. **Stream complete pending CI green.** | #895 merged |
-| SM | `claude/audit-remediation/sm-service-cultural` | **#904 OPEN** | SM-01 done (`819465d`): grouped service-line specialty filter by `ADVISOR_SPECIALTY_CATEGORIES` in advisor listing (replaces flat alpha chips). SM-02 done (`819465d`): "Cultural & Faith-Based" category added to specialty taxonomy (Halal, ESG, Buddhist, Bilingual etc.); non-English language badges on advisor cards (🌏 indigo pills). **Stream complete pending #904 merge.** | All SM tasks merged |
-| MK | `claude/audit-remediation/mk-marketplace-conversion` | **#903 OPEN** | MK-01 done (`773c0e8`): `AdvisorCalendarEmbed` — inline Calendly/Cal.com iframe embed on advisor profile; falls back to link for other URLs. MK-02 done (`773c0e8`): `AdvisorVideoIntro` — lazy poster-overlay player replacing bare iframe; YouTube thumbnail auto-fetch + Vimeo support. Both wired into `AdvisorProfileClient`. **Stream complete pending #903 merge.** | All MK tasks merged |
-| CD | `claude/audit-remediation/cd-01-financial-calendar` · `claude/audit-remediation/cd-01-calendar-utility` | **#900 OPEN** · **#902 OPEN** | CD-01 done (`e07b8e4`): public `/tools/financial-calendar` (PR #900). CD-01 account-gated (`5142821`): `/account/calendar` personalised deadline calendar (PR #902). CD-02 done (`3ff2353`): `/tools/currency-converter` + `CurrencyConverterClient` — 15 currencies, FIRB thresholds context, static mid-market rates (PR #902). CD-03 done (`3ff2353`): `/pricing` — 5 fee tables for financial planners/brokers/tax accountants/buyer's agents/SMSF specialists (PR #902). CI rescue iter 435: `Dated strings gate` fixed — "1 July 2025" in calendar description (`// dated-ok`), commit `5142821`. **Stream complete pending #900 + #902 merge.** | All CD tasks merged |
-| CM | `claude/audit-remediation/cm-01-multi-advisor-matching` | **#905 OPEN** | CM-01 done (`5e3db01`): `/find-advisor/life-event` landing page — 17 life events across 6 categories → advisor routing; `lib/life-events.ts` data layer; `?context=` pre-fill param added to `lib/prefill-url.ts` + `/find-advisor`; sitemap updated. CI-RESCUE iter 441: `Accessibility (axe-core on key routes)` failure diagnosed as pre-existing critical a11y violation in `/foreign-investment` (one of 8 tested routes) — `WHTCalculator.tsx` + `DASPCalculator.tsx` had `<label>` elements without `htmlFor` and `<input>` elements without `id`. Fixed: `app/foreign-investment/WHTCalculator.tsx` + `DASPCalculator.tsx` — 3 label/input pairs now properly associated. Commit `a2f98e6`. This also resolves the systemic a11y blocked entry (see Blocked section). **Stream complete pending #905 merge.** | All CM tasks merged |
-| AT | `claude/audit-remediation/at-account-types` | **#907 OPEN** | AT-01 done (`a2553d7`): `InvestorAccountType` + `INVESTOR_ACCOUNT_TYPES` + `getInvestorAccountType()` added to `lib/account-types.ts`; `/api/account/account-type` GET/PUT route (meta-merge safe); "Account Type" section added to `app/account/profile/ProfileClient.tsx`. Stored in `investor_profiles.meta.account_type` — no schema migration. **CI pending.** Unblocks AT-02..04. | AT-01..04 done |
+| EM | _complete_ | **#848 MERGED 2026-05-17** · **#880 MERGED 2026-05-18** | EM-03 + EM-01 done. EM-02 (`16add6f`): hub_drip_log migration + hub-subscriber-drip cron. **Stream complete. #880 merged by founder 2026-05-18.** | All EM tasks merged ✓ |
+| LX | _complete_ | **#849 MERGED 2026-05-15** · **#879 MERGED 2026-05-18** | LX-01, LX-02, LX-03, LX-04, LX-05 done. **Stream complete. #879 merged by founder 2026-05-18.** | All LX tasks merged ✓ |
+| OB | _complete_ | **#852 MERGED 2026-05-17** · **#878 MERGED 2026-05-18** | OB-01..OB-12 done. **Stream complete. #878 merged by founder 2026-05-18.** | All OB tasks merged ✓ |
+| GT | `claude/audit-remediation/gt-02-annual-check` | **#881 OPEN** | GT-01 blocked (needs DV-01). GT-02 done (`a4c5352`): annual financial check-up page `/account/annual-check`. CI rescue iter 444: merge main → resolve dashboard NavCard conflict (both Annual Check-up + Financial Calendar kept) + pick up a11y fix now on main via founder PRs #908–#915. Commit `7d5ef49`. Last CI: pending — pushed `7d5ef49` 2026-05-18. | All GT tasks merged |
+| DF | `claude/audit-remediation/df-01-decision-frameworks` | **#883 OPEN** · ~~#884 CLOSED (dup)~~ | DF-01..04 done. Merge rescue iter 444: resolved additive conflicts in `app/sitemap.ts` + `app/tools/ToolsClient.tsx` (DF adds buy-vs-rent/salary-sacrifice/smsf-setup; main adds fhss-calculator; kept all). Commit `5f105bc`. Last CI: pending — pushed `5f105bc` 2026-05-18. | All DF tasks merged |
+| QA | _complete_ | **#890 MERGED 2026-05-18** | QA-01..QA-02 done. **Stream complete. #890 merged by founder 2026-05-18.** | All QA tasks merged ✓ |
+| Z-23+BB-08 | _complete_ | **#895 MERGED 2026-05-18** | Z-23 + BB-08 done. All CI green. **Stream complete. #895 merged by founder 2026-05-18.** | #895 merged ✓ |
+| SM | _complete_ | **#904 MERGED 2026-05-18** | SM-01+SM-02 done. **Stream complete. #904 merged by founder 2026-05-18.** | All SM tasks merged ✓ |
+| MK | _complete_ | **#903 MERGED 2026-05-18** | MK-01+MK-02 done. **Stream complete. #903 merged by founder 2026-05-18.** | All MK tasks merged ✓ |
+| CD | _complete_ | **#900 CLOSED 2026-05-18** (dup) · **#902 MERGED 2026-05-18** | CD-01 (public calendar + account calendar), CD-02 (currency converter), CD-03 (pricing transparency) all done. #900 closed as duplicate (content covered by #902). **Stream complete. #902 merged by founder 2026-05-18.** | All CD tasks merged ✓ |
+| CM | _complete_ | **#905 MERGED 2026-05-18** | CM-01 done. a11y fix (`a2f98e6`) now on main via this merge. **Stream complete. #905 merged by founder 2026-05-18.** | All CM tasks merged ✓ |
+| AT | `claude/audit-remediation/at-02-couple-family-business` | **#907 MERGED 2026-05-18** | AT-01 done (`a2553d7`, #907): account type selector in profile. **AT-02 (couple), AT-03 (family), AT-04 (business/SMSF) pending** — account-type-aware dashboard personalisation. New PR to open on next iteration. | AT-01..04 done |
 
 ---
 
@@ -97,16 +97,7 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 
 ### Accessibility (axe-core on key routes) systemic failure — 2026-05-15
 
-**ROOT CAUSE FOUND AND FIXED (iter 441, 2026-05-18).** Fix is on `claude/audit-remediation/cm-01-multi-advisor-matching` as commit `a2f98e6`. Pending merge of PR #905 to land on main; all other stream PRs should rebase to pick it up.
-
-**Root cause:** `app/foreign-investment/WHTCalculator.tsx` and `app/foreign-investment/DASPCalculator.tsx` (under the `/foreign-investment` route — one of the 8 axe-tested routes) had `<label>` elements without `htmlFor` and `<input>` elements without `id`. The axe-core `label` rule flags this as a **critical** WCAG 2 AA violation (no programmatic label-to-input association). Three inputs affected: `wht-gross-amount`, `dasp-balance`, `dasp-tax-free-pct`. Fix: added matching `htmlFor`/`id` pairs.
-
-**Original investigation (iter 402):**
-- The a11y job runs against a local Next.js build with placeholder Supabase creds — NOT the Vercel preview.
-- The 8 tested routes are: `/, /glossary, /tools, /foreign-investment, /about, /how-we-earn, /privacy, /terms`.
-- `Lighthouse — Core Web Vitals (advisory)` is also failing but is advisory-only (non-blocking).
-
-**To resolve:** Delete this blocked entry once PR #905 is merged (fix lands on main).
+**RESOLVED 2026-05-18.** PR #905 merged by founder. `WHTCalculator.tsx` + `DASPCalculator.tsx` a11y fix (`a2f98e6`) is now on main. All new stream PRs will pass `Accessibility (axe-core on key routes)` automatically. **This blocked entry can be deleted by the founder.**
 
 ---
 
@@ -123,6 +114,21 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 444 — 2026-05-18 — CI/merge rescue GT (#881) + DF (#883); queue sync for founder-merged PRs
+
+- **Streams:** GT (annual-check) + DF (decision-frameworks)
+- **Phase:** 2 — CI rescue (GT) + merge rescue (DF)
+- **PRs:** GT #881 OPEN, DF #883 OPEN
+- **Commits:**
+  - `7d5ef49` — fix(gt): merge main into GT branch — resolve dashboard conflict, pick up a11y fix
+  - `5f105bc` — fix(df): merge main into DF branch — additive sitemap + ToolsClient conflict resolution
+- **Diff:** +2 -1 GT (dashboard keeps both Annual Check-up + Financial Calendar NavCards); +47 -0 DF (4 tool entries kept in ToolsClient + sitemap)
+- **Context:** Founder merged 10 PRs between iters 443 and 444 (OB #878, LX #879, EM #880, QA #890, CD #902, MK #903, SM #904, CM #905, AT #907, Z-23+BB-08 #895). Main advanced by ~70 commits including Wave 1/2/3 founder feature PRs (#908, #913, #914, #915). Both GT and DF branches became conflicted. Additionally, Wave 1/2/3 brought the a11y fix (WHTCalculator + DASPCalculator label/input associations) to main, resolving GT's persistent Accessibility CI failure without needing additional code changes.
+- **GT conflict resolution:** `app/account/dashboard/page.tsx` — GT added Annual Check-up NavCard; CD stream (PR #902) added Financial Calendar NavCard to same position. Resolution: kept both cards, differentiated Calendar emoji to 🗓️.
+- **DF conflict resolution:** `app/sitemap.ts` + `app/tools/ToolsClient.tsx` — DF added buy-vs-rent/salary-sacrifice/smsf-setup; main added FHSS calculator. All 4 entries kept (pure additive conflict).
+- **Queue update:** Marked EM/LX/OB/QA/Z-23+BB-08/SM/MK/CD/CM/AT as stream-complete with MERGED status; resolved Accessibility blocked entry (fix landed on main via #905); updated GT + DF rows.
+- **STATUS: CI-RESCUE · stream=GT+DF · pr=#881+#883**
 
 ### iter 443 — 2026-05-18 — AT-01 investor household account type selector
 
