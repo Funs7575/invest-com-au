@@ -37,6 +37,15 @@ export interface InvestListingsClientProps {
    *  funnels). When set, the FIRB badge on cards becomes meaningful and
    *  the "FIRB eligible only" toggle is auto-surfaced in filters. */
   intentCountry?: string | null;
+  /** Pre-computed smart-match scores per listing id (Wave 3). Cards render
+   *  a green "X% match" pill when present. */
+  matchScores?: Record<number, number>;
+  /** Pre-computed advisor opt-in counts per listing id (Wave 3). Cards
+   *  render an emerald "X advisors can assess this" pill when > 0. */
+  advisorOptInCounts?: Record<number, number>;
+  /** Set of slugs that already have an approved claim. Cards NOT in this
+   *  set render a small "Are you the owner?" link. (Wave 3) */
+  claimedSlugs?: Set<string>;
 }
 
 // ─── Australian states ───────────────────────────────────────────────
@@ -86,6 +95,9 @@ export default function InvestListingsClient({
   pageTitle,
   pageSubtitle,
   intentCountry,
+  matchScores,
+  advisorOptInCounts,
+  claimedSlugs,
 }: InvestListingsClientProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -673,13 +685,28 @@ export default function InvestListingsClient({
         ) : activeView === "list" ? (
           <div className="flex flex-col gap-3">
             {filtered.map((l) => (
-              <InvestListingCard key={l.id} listing={l} variant="list" showFirbBadge={Boolean(intentCountry) || activeFirbOnly} />
+              <InvestListingCard
+                key={l.id}
+                listing={l}
+                variant="list"
+                showFirbBadge={Boolean(intentCountry) || activeFirbOnly}
+                matchScore={matchScores?.[l.id] ?? null}
+                advisorOptInCount={advisorOptInCounts?.[l.id] ?? 0}
+                showClaimBadge={claimedSlugs ? !claimedSlugs.has(l.slug) && (l.listing_kind === "fund" || l.listing_kind === "physical_asset" || l.listing_kind === "listed_security") : false}
+              />
             ))}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {filtered.map((l) => (
-              <InvestListingCard key={l.id} listing={l} showFirbBadge={Boolean(intentCountry) || activeFirbOnly} />
+              <InvestListingCard
+                key={l.id}
+                listing={l}
+                showFirbBadge={Boolean(intentCountry) || activeFirbOnly}
+                matchScore={matchScores?.[l.id] ?? null}
+                advisorOptInCount={advisorOptInCounts?.[l.id] ?? 0}
+                showClaimBadge={claimedSlugs ? !claimedSlugs.has(l.slug) && (l.listing_kind === "fund" || l.listing_kind === "physical_asset" || l.listing_kind === "listed_security") : false}
+              />
             ))}
           </div>
         )}
