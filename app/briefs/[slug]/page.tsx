@@ -170,6 +170,75 @@ export default async function BriefTrackerPage({
     }
   }
 
+  // Intake-question prompt: pros/teams can publish 1-5 questions the
+  // consumer should answer post-accept. Surface a banner when the brief
+  // has unanswered required questions so the consumer doesn't need to
+  // discover the /intake page on their own. Count via service-role —
+  // questions are public-readable but answers are owner-scoped.
+  let intakeOutstanding = 0;
+  if (brief.accepted_at) {
+    try {
+      const intakeAdmin = await createClient();
+      const targetTeam = brief.accepted_by_team_id;
+      const targetPro = brief.accepted_by_professional_id;
+      let questionFilter = intakeAdmin
+        .from("pro_intake_questions")
+        .select("id", { count: "exact", head: true })
+        .eq("enabled", true);
+      if (targetTeam) questionFilter = questionFilter.eq("team_id", targetTeam);
+      else if (targetPro) questionFilter = questionFilter.eq("professional_id", targetPro);
+      else questionFilter = questionFilter.eq("id", -1);
+      const { count: questionCount } = await questionFilter;
+      const { count: answeredCount } = await intakeAdmin
+        .from("pro_intake_answers")
+        .select("id", { count: "exact", head: true })
+        .eq("brief_id", brief.id);
+      intakeOutstanding = Math.max(0, (questionCount ?? 0) - (answeredCount ?? 0));
+    } catch {
+      /* silent — banner just doesn't render */
+    }
+  }
+
+  // Unread message count from the consumer's perspective — pros / team
+  // members who posted to brief_messages without the consumer having
+  // marked-read. Drives a small badge next to the "accepted by" panel.
+  let unreadFromPro = 0;
+  if (brief.accepted_at && emailMatches) {
+    try {
+      const msgAdmin = await createClient();
+      const { count } = await msgAdmin
+        .from("brief_messages")
+        .select("id", { count: "exact", head: true })
+        .eq("brief_id", brief.id)
+        .in("sender_kind", ["professional", "team"])
+        .is("read_by_consumer_at", null);
+      unreadFromPro = count ?? 0;
+    } catch {
+      /* silent */
+    }
+  }
+
+  // Outcome review prompt — once the cron has issued a brief_outcomes row
+  // (4 weeks post-accept by default) we show a "rate the engagement" CTA
+  // pointing the consumer at /review/<token>. The form itself already
+  // exists at app/review/[token]/page.tsx + app/api/outcomes/submit.
+  let outcomeReviewToken: string | null = null;
+  if (brief.accepted_at && (brief.tracker_status === "won" || emailMatches)) {
+    try {
+      const outcomeAdmin = await createClient();
+      const { data: outcomeRow } = await outcomeAdmin
+        .from("brief_outcomes")
+        .select("review_token, submitted_at")
+        .eq("brief_id", brief.id)
+        .maybeSingle();
+      if (outcomeRow && !outcomeRow.submitted_at) {
+        outcomeReviewToken = outcomeRow.review_token as string;
+      }
+    } catch {
+      /* silent */
+    }
+  }
+
   const stepIndex = STATUS_ORDER.indexOf(brief.tracker_status);
 
   const breadcrumb = breadcrumbJsonLd([
@@ -252,12 +321,70 @@ export default async function BriefTrackerPage({
             </ol>
           </div>
 
+          {/* Intake-question prompt — surfaces unanswered required questions
+              that the accepting provider published. Skipped silently when
+              questions are zero or all answered. */}
+          {intakeOutstanding > 0 && (
+            <div className="bg-amber-50 border border-amber-300 rounded-2xl p-5 mb-6 flex items-start gap-3">
+              <div className="text-2xl leading-none">✍️</div>
+              <div className="flex-1">
+                <p className="text-sm font-bold text-amber-900">
+                  Your provider has {intakeOutstanding} quick question
+                  {intakeOutstanding === 1 ? "" : "s"} before your first call
+                </p>
+                <p className="text-xs text-amber-800 mt-1">
+                  Answering these now means the first call lands with the context they need.
+                </p>
+                <Link
+                  href={`/briefs/${brief.slug}/intake${email ? `?email=${encodeURIComponent(email)}` : ""}`}
+                  className="inline-block mt-3 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-900 text-xs font-semibold px-3 py-2"
+                >
+                  Answer now →
+                </Link>
+              </div>
+            </div>
+          )}
+
+          {/* Outcome review prompt — once the 4-week cron has issued a
+              review_token for this brief, surface a small banner so the
+              consumer can submit feedback. Drives provider_outcome_scores. */}
+          {outcomeReviewToken && (
+            <div className="bg-violet-50 border border-violet-200 rounded-2xl p-5 mb-6 flex items-start gap-3">
+              <div className="text-2xl leading-none">⭐</div>
+              <div className="flex-1">
+                <p className="text-sm font-bold text-violet-900">
+                  How did your engagement go?
+                </p>
+                <p className="text-xs text-violet-800 mt-1">
+                  A two-minute review helps other investors and bumps your provider on their scoreboard.
+                </p>
+                <Link
+                  href={`/review/${outcomeReviewToken}`}
+                  className="inline-block mt-3 rounded-lg bg-violet-600 hover:bg-violet-500 text-white text-xs font-semibold px-3 py-2"
+                >
+                  Leave a review →
+                </Link>
+              </div>
+            </div>
+          )}
+
           {/* Accepted provider */}
           {(accepted.professional || accepted.team) && (
             <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-6">
-              <p className="text-xs uppercase tracking-widest text-slate-500 mb-2">
-                Accepted by
-              </p>
+              <div className="flex items-center justify-between gap-2 mb-2">
+                <p className="text-xs uppercase tracking-widest text-slate-500">
+                  Accepted by
+                </p>
+                {unreadFromPro > 0 && (
+                  <span
+                    className="inline-flex items-center gap-1 rounded-full bg-rose-100 text-rose-700 text-[11px] font-bold px-2 py-0.5"
+                    title="Unread messages from your provider"
+                  >
+                    <span className="h-1.5 w-1.5 rounded-full bg-rose-500" aria-hidden />
+                    {unreadFromPro} new message{unreadFromPro === 1 ? "" : "s"}
+                  </span>
+                )}
+              </div>
               {accepted.team && (
                 <p className="text-base font-bold text-slate-900">
                   {accepted.team.name}{" "}
