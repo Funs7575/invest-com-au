@@ -67,6 +67,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | MK | `claude/audit-remediation/mk-marketplace-conversion` | **#903 OPEN** | MK-01 done (`773c0e8`): `AdvisorCalendarEmbed` — inline Calendly/Cal.com iframe embed on advisor profile; falls back to link for other URLs. MK-02 done (`773c0e8`): `AdvisorVideoIntro` — lazy poster-overlay player replacing bare iframe; YouTube thumbnail auto-fetch + Vimeo support. Both wired into `AdvisorProfileClient`. **Stream complete pending #903 merge.** | All MK tasks merged |
 | CD | `claude/audit-remediation/cd-01-financial-calendar` · `claude/audit-remediation/cd-01-calendar-utility` | **#900 OPEN** · **#902 OPEN** | CD-01 done (`e07b8e4`): public `/tools/financial-calendar` (PR #900). CD-01 account-gated (`5142821`): `/account/calendar` personalised deadline calendar (PR #902). CD-02 done (`3ff2353`): `/tools/currency-converter` + `CurrencyConverterClient` — 15 currencies, FIRB thresholds context, static mid-market rates (PR #902). CD-03 done (`3ff2353`): `/pricing` — 5 fee tables for financial planners/brokers/tax accountants/buyer's agents/SMSF specialists (PR #902). CI rescue iter 435: `Dated strings gate` fixed — "1 July 2025" in calendar description (`// dated-ok`), commit `5142821`. **Stream complete pending #900 + #902 merge.** | All CD tasks merged |
 | CM | `claude/audit-remediation/cm-01-multi-advisor-matching` | **#905 OPEN** | CM-01 done (`5e3db01`): `/find-advisor/life-event` landing page — 17 life events across 6 categories → advisor routing; `lib/life-events.ts` data layer; `?context=` pre-fill param added to `lib/prefill-url.ts` + `/find-advisor`; sitemap updated. CI-RESCUE iter 441: `Accessibility (axe-core on key routes)` failure diagnosed as pre-existing critical a11y violation in `/foreign-investment` (one of 8 tested routes) — `WHTCalculator.tsx` + `DASPCalculator.tsx` had `<label>` elements without `htmlFor` and `<input>` elements without `id`. Fixed: `app/foreign-investment/WHTCalculator.tsx` + `DASPCalculator.tsx` — 3 label/input pairs now properly associated. Commit `a2f98e6`. This also resolves the systemic a11y blocked entry (see Blocked section). **Stream complete pending #905 merge.** | All CM tasks merged |
+| AT | `claude/audit-remediation/at-account-types` | **#907 OPEN** | AT-01 done (`a2553d7`): `InvestorAccountType` + `INVESTOR_ACCOUNT_TYPES` + `getInvestorAccountType()` added to `lib/account-types.ts`; `/api/account/account-type` GET/PUT route (meta-merge safe); "Account Type" section added to `app/account/profile/ProfileClient.tsx`. Stored in `investor_profiles.meta.account_type` — no schema migration. **CI pending.** Unblocks AT-02..04. | AT-01..04 done |
 
 ---
 
@@ -122,6 +123,25 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 443 — 2026-05-18 — AT-01 investor household account type selector
+
+- **Stream:** AT (account types)
+- **Item:** AT-01 — individual account type (household structure)
+- **Branch:** `claude/audit-remediation/at-account-types`
+- **PR:** #907 OPEN
+- **Commit:** `a2553d7`
+- **Diff:** +136 -20 across 3 files (`lib/account-types.ts` +25, `app/api/account/account-type/route.ts` +50 new, `app/account/profile/ProfileClient.tsx` +61 -20)
+- **What:**
+  - **`lib/account-types.ts`** — added `InvestorAccountType` (`"individual" | "couple" | "family" | "business"`), `INVESTOR_ACCOUNT_TYPES` display array (4 entries with value/label/description), `getInvestorAccountType(meta)` helper (defaults to `"individual"` when key absent). Added alongside existing `AccountKind` in the same file.
+  - **`app/api/account/account-type/route.ts`** — new authenticated GET/PUT route. GET returns `account_type` from `investor_profiles.meta` (via `getInvestorAccountType`). PUT merges `account_type` into existing meta using read-modify-write (`{...currentMeta, account_type: body.account_type}`) so other meta keys (digest prefs, etc.) survive. Auth via `createClient()`. Validated via `withValidatedBody` + `z.enum(["individual","couple","family","business"])`.
+  - **`app/account/profile/ProfileClient.tsx`** — new "Account Type" section at top of profile form (4 `RadioCard` options: Individual / Couple / Family / Business/SMSF). Fetch on mount: parallel `Promise.all([/api/user-profile, /api/account/account-type])`. Save: parallel `Promise.all([PUT /api/user-profile, PUT /api/account/account-type])`. State in separate `investorMeta` to avoid mixing with `profiles` table form.
+- **No schema migration** — `investor_profiles.meta: Json` column already exists; `meta` patch already supported by `upsertInvestorProfile()`.
+- **Dedup guard:** `gh pr list --search "AT-01 in:title"` → no prior open PR.
+- **Local gates:** `node scripts/check-dated-strings.mjs` ✅, `node scripts/check-jsonld-coverage.mjs` ✅ (all public routes), tsc errors = pre-existing missing-node_modules only.
+- **Tier:** A (new UI + lib constant + authenticated API route — no schema/auth/cron changes)
+- **Batch status:** 5th item in this batch fire (iters 439 CI-rescue, 441 CM-01+Z-23 stuck, 443 AT-01). Cumulative diff ~672 LOC.
+- **STATUS: PROGRESS · stream=AT · item=AT-01 · pr=#907**
 
 ### iter 442 — 2026-05-18 — CI-RESCUE Z-23+BB-08 (#895 metadata-coverage test fix)
 
