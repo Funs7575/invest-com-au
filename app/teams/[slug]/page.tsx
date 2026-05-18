@@ -350,6 +350,14 @@ export default async function TeamProfilePage({ params }: PageProps) {
             >
               Compare other experts
             </Link>
+            <Link
+              href={`/teams/${slug}/availability`}
+              className="inline-flex items-center gap-2 bg-white border border-slate-200 text-slate-700 font-semibold px-5 py-3 rounded-xl hover:border-emerald-300 hover:text-emerald-700"
+              title="See when this squad is open for intro calls"
+            >
+              <Icon name="calendar" size={16} />
+              See team availability
+            </Link>
           </div>
 
           {acceptedTemplates.length > 0 && (
