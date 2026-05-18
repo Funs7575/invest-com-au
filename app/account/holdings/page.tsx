@@ -4,6 +4,8 @@ import { createClient } from "@/lib/supabase/server";
 import HoldingsClient, { type HoldingRow } from "./HoldingsClient";
 import { getCurrentPricesBatch, keyOf } from "@/lib/holdings/value";
 import { enforcePortalKind } from "@/lib/portal-gate";
+import { isSharesightConfigured } from "@/lib/sharesight/config";
+import type { SharesightConnectionState } from "./SharesightConnect";
 
 export const dynamic = "force-dynamic";
 
@@ -28,9 +30,15 @@ export default async function HoldingsPage() {
     redirect("/account/login?redirect=/account/holdings");
   }
 
-  // Fetch holdings + the broker fee table in parallel — the latter feeds
-  // the switching coach (asx_fee_value is the comparison axis).
-  const [{ data: holdings }, { data: brokers }] = await Promise.all([
+  // Fetch holdings + the broker fee table + Sharesight connection state in
+  // parallel. The broker fee table feeds the switching coach
+  // (asx_fee_value is the comparison axis); the OAuth row tells the
+  // Sharesight connect widget whether the user is already linked.
+  const [
+    { data: holdings },
+    { data: brokers },
+    { data: sharesightRow },
+  ] = await Promise.all([
     supabase
       .from("investor_holdings")
       .select(
@@ -41,6 +49,11 @@ export default async function HoldingsPage() {
       .from("brokers")
       .select("slug, name, asx_fee_value")
       .eq("status", "active"),
+    supabase
+      .from("investor_oauth_connections")
+      .select("last_synced_at, last_sync_error")
+      .eq("provider", "sharesight")
+      .maybeSingle(),
   ]);
 
   const initialItems: HoldingRow[] = (holdings ?? []).map((r) => ({
@@ -81,6 +94,12 @@ export default async function HoldingsPage() {
     asx_fee_value: typeof b.asx_fee_value === "number" ? b.asx_fee_value : null,
   }));
 
+  const sharesightState: SharesightConnectionState = {
+    connected: Boolean(sharesightRow),
+    lastSyncedAt: sharesightRow?.last_synced_at ?? null,
+    lastSyncError: sharesightRow?.last_sync_error ?? null,
+  };
+
   return (
     <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
       <header className="mb-6">
@@ -91,7 +110,12 @@ export default async function HoldingsPage() {
           treatment.
         </p>
       </header>
-      <HoldingsClient initialItems={initialItems} brokers={brokerOptions} />
+      <HoldingsClient
+        initialItems={initialItems}
+        brokers={brokerOptions}
+        sharesightInitialState={sharesightState}
+        sharesightConfigured={isSharesightConfigured()}
+      />
     </main>
   );
 }
