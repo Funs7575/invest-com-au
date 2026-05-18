@@ -1006,3 +1006,420 @@ export const CRYPTO_ONBOARDING_CONFIG: HubOnboardingConfig = {
     };
   },
 };
+
+// OB-09 — lump-sum investing diagnostic quiz
+export const LUMP_SUM_ONBOARDING_CONFIG: HubOnboardingConfig = {
+  hubSlug: "lump-sum-investing",
+  hubName: "Lump-Sum Investing",
+  heading: "What should you do with your lump sum?",
+  subheading: "3 questions to get a personalised next-step plan for your windfall.",
+  questions: [
+    {
+      id: "source",
+      question: "Where is your lump sum coming from?",
+      options: [
+        { value: "redundancy", label: "Redundancy or retrenchment payout" },
+        { value: "inheritance", label: "Inheritance or estate distribution" },
+        { value: "property_sale", label: "Property sale proceeds" },
+        { value: "other_windfall", label: "Business sale, bonus, or other windfall" },
+      ],
+    },
+    {
+      id: "amount",
+      question: "How large is the lump sum approximately?",
+      options: [
+        { value: "under_100k", label: "Under $100,000" },
+        { value: "100k_250k", label: "$100,000 – $250,000" },
+        { value: "250k_500k", label: "$250,000 – $500,000" },
+        { value: "over_500k", label: "Over $500,000" },
+      ],
+    },
+    {
+      id: "timeline",
+      question: "When do you need to access this money?",
+      options: [
+        { value: "under_3yr", label: "Within the next 3 years" },
+        { value: "3_5yr", label: "3 to 5 years from now" },
+        { value: "5_10yr", label: "5 to 10 years from now" },
+        { value: "over_10yr", label: "More than 10 years away" },
+      ],
+    },
+  ],
+
+  evaluate(answers: QuizAnswers) {
+    const source = answers["source"];
+    const amount = answers["amount"];
+    const timeline = answers["timeline"];
+
+    if (source === "redundancy") {
+      return {
+        headline: "Your redundancy payout has special tax rules — act before 30 June.",
+        summary:
+          "Genuine redundancy payments receive a tax-free component ($12,524 base + $6,264 per year of service in 2025–26). The taxable component qualifies as an ETP taxed at 32% (or 17% if above preservation age). You may have a 12-month window to make a concessional super contribution using the carry-forward rule if your TSB is under $500k — worth discussing with a tax agent before the financial year ends.",
+        primaryCta: { label: "Redundancy Guide", href: "/lump-sum-investing/redundancy" },
+        secondaryCta: { label: "Find a Tax Agent", href: "/advisors/tax-agents" },
+        advisorCta: { href: "/quiz?vertical=tax", specialty: "tax agent" },
+      };
+    }
+
+    if (source === "inheritance") {
+      return {
+        headline: "Inheritance in Australia is tax-free — but the 90-day rule matters.",
+        summary:
+          "Australia has no inheritance tax. However, if you inherit super assets you must roll them into your own super or cash out within 3–6 months (the 'death benefit' rule). Inherited property sold within a trust carries embedded CGT. If the estate includes a family home, CGT principal-residence exemption can be claimed if you sell within 2 years of death.",
+        primaryCta: { label: "Inheritance Tax Guide", href: "/lump-sum-investing/inheritance" },
+        secondaryCta: { label: "Find a Financial Planner", href: "/advisors/financial-planners" },
+        advisorCta: { href: "/quiz?vertical=estate_planning", specialty: "estate planning adviser" },
+      };
+    }
+
+    if (source === "property_sale") {
+      return {
+        headline: "Property sale proceeds: the lump-sum calculator will model your options.",
+        summary:
+          "After settlement, the first step is to park proceeds in a high-interest savings account while you plan. If the property was your principal residence, the CGT exemption applies. If it was investment property, CGT is due — the 50% discount applies if held over 12 months. From there, the options include paying down debt, investing in shares or super, or buying another property.",
+        primaryCta: { label: "Lump-Sum Calculator", href: "/lump-sum-investing/calculator" },
+        secondaryCta: { label: "Compare Savings Accounts", href: "/savings" },
+        advisorCta: { href: "/quiz?vertical=investment", specialty: "financial planner" },
+      };
+    }
+
+    if (amount === "over_500k" || amount === "250k_500k") {
+      return {
+        headline: "A lump sum this size benefits from a structured investment plan.",
+        summary:
+          "Above $250k, the sequence matters: (1) clear high-interest debt; (2) top up super if concessional room exists; (3) build a 6-month emergency buffer in a high-interest account; (4) invest the remainder in a diversified portfolio. Dollar-cost averaging over 6–12 months reduces timing risk on the investing tranche. At this level, a one-off financial plan ($3,000–$6,000) typically pays for itself within 2 years.",
+        primaryCta: { label: "Find a Financial Planner", href: "/advisors/financial-planners" },
+        secondaryCta: { label: "Lump-Sum Calculator", href: "/lump-sum-investing/calculator" },
+        advisorCta: { href: "/quiz?vertical=investment", specialty: "financial planner" },
+      };
+    }
+
+    if (timeline === "under_3yr") {
+      return {
+        headline: "With a short horizon, capital preservation comes first.",
+        summary:
+          "For money needed within 3 years, a high-interest savings account or term deposit is the right vehicle — not the share market. A market correction (which happens every 3–5 years on average) could leave you unable to access the full amount when you need it. Compare savings accounts and term deposits to find the highest rate.",
+        primaryCta: { label: "Compare Savings Accounts", href: "/savings" },
+        secondaryCta: { label: "Compare Term Deposits", href: "/term-deposits" },
+        advisorCta: { href: "/quiz?vertical=savings", specialty: "financial adviser" },
+      };
+    }
+
+    return {
+      headline: "The right sequence turns a windfall into lasting wealth.",
+      summary:
+        "Use the lump-sum calculator to model different scenarios — debt paydown vs. super contribution vs. investing — over your investment horizon. The general rule: clear high-rate debt first, build a 3-month buffer, then invest the rest in a low-cost diversified portfolio matched to your timeline.",
+      primaryCta: { label: "Lump-Sum Calculator", href: "/lump-sum-investing/calculator" },
+      secondaryCta: { label: "Find a Financial Planner", href: "/advisors/financial-planners" },
+      advisorCta: { href: "/quiz?vertical=investment", specialty: "financial planner" },
+    };
+  },
+};
+
+// OB-10 — foreign investment / overseas investor diagnostic quiz
+export const FOREIGN_INVESTMENT_ONBOARDING_CONFIG: HubOnboardingConfig = {
+  hubSlug: "foreign-investment",
+  hubName: "Investing from Overseas",
+  heading: "What type of overseas investor are you?",
+  subheading: "3 questions to get guidance tailored to your residency and investment goal.",
+  questions: [
+    {
+      id: "status",
+      question: "Which best describes your situation?",
+      options: [
+        { value: "non_resident", label: "Non-resident — living and earning overseas" },
+        { value: "expat_abroad", label: "Australian expat currently living abroad" },
+        { value: "new_migrant", label: "New migrant — recently arrived in Australia" },
+        { value: "visa_holder", label: "Visa holder — living in Australia temporarily" },
+      ],
+    },
+    {
+      id: "focus",
+      question: "What do you most want to invest in?",
+      options: [
+        { value: "property", label: "Property in Australia" },
+        { value: "shares", label: "Shares or ETFs on the ASX" },
+        { value: "super", label: "Superannuation or DASP" },
+        { value: "savings", label: "Savings accounts or term deposits" },
+      ],
+    },
+    {
+      id: "concern",
+      question: "What is your biggest concern?",
+      options: [
+        { value: "firb", label: "FIRB approval and foreign ownership rules" },
+        { value: "tax", label: "Withholding tax and double-tax treaties" },
+        { value: "banking", label: "Opening an Australian bank account" },
+        { value: "repatriation", label: "Getting money back to my home country" },
+      ],
+    },
+  ],
+
+  evaluate(answers: QuizAnswers) {
+    const status = answers["status"];
+    const focus = answers["focus"];
+    const concern = answers["concern"];
+
+    if (focus === "property") {
+      return {
+        headline: "Foreign buyers need FIRB approval before purchasing Australian residential property.",
+        summary:
+          "Foreign nationals (including temporary visa holders) generally must apply to the Foreign Investment Review Board (FIRB) before buying established residential property. FIRB fees range from $14,100 (under $1M) to $1.04M (over $40M). New dwellings have a simpler approval pathway. The 2024–25 ban on purchasing established dwellings (except for off-the-plan) is in effect — verify current rules before proceeding.",
+        primaryCta: { label: "FIRB Application Guide", href: "/foreign-investment/guides/firb-application-guide" },
+        secondaryCta: { label: "Property for Foreigners", href: "/foreign-investment/guides/buy-property-australia-foreigner" },
+        advisorCta: { href: "/quiz?vertical=property", specialty: "property adviser" },
+      };
+    }
+
+    if (status === "expat_abroad" && focus === "super") {
+      return {
+        headline: "As an Australian expat, your super is still growing — DASP applies only when you leave permanently.",
+        summary:
+          "Australian expats retain their super while living abroad; the fund continues to grow. DASP (Departing Australia Superannuation Payment) applies to temporary visa holders leaving Australia permanently — not Australian citizens or permanent residents. If you hold a temporary visa and are leaving for good, you can claim DASP after your visa expires. Tax on DASP is 35–65% depending on the component.",
+        primaryCta: { label: "Expat Super Guide", href: "/foreign-investment/super" },
+        secondaryCta: { label: "Compare Super Funds", href: "/super" },
+        advisorCta: { href: "/quiz?vertical=super", specialty: "expat financial adviser" },
+      };
+    }
+
+    if (concern === "tax" || focus === "shares") {
+      return {
+        headline: "Non-residents pay withholding tax on Australian dividends — but treaties reduce the rate.",
+        summary:
+          "Non-resident shareholders pay 30% withholding tax on unfranked dividends; this drops to 15% for residents of DTA countries (e.g. USA, UK, NZ, Singapore). Fully franked dividends generally have no withholding tax. Capital gains from ASX shares are generally not taxable in Australia for non-residents unless the shares are in a land-rich company. Check the ATO's DTA table for your country.",
+        primaryCta: { label: "Withholding Tax Guide", href: "/foreign-investment" },
+        secondaryCta: { label: "Compare Brokers for Non-Residents", href: "/compare/non-residents" },
+        advisorCta: { href: "/quiz?vertical=tax", specialty: "international tax adviser" },
+      };
+    }
+
+    if (status === "new_migrant" || concern === "banking") {
+      return {
+        headline: "As a new arrival, start with a bank account and TFN — everything else follows.",
+        summary:
+          "New migrants can open an Australian bank account online before arriving (CBA, ANZ, NAB, Westpac all offer migrant accounts). Apply for a Tax File Number (TFN) through myGov once you have your visa. Without a TFN, banks withhold 47% from interest earned. From there, superannuation enrolment and CHESS-sponsored share trading are straightforward.",
+        primaryCta: { label: "Non-Resident Bank Account Guide", href: "/foreign-investment/guides/non-resident-bank-account" },
+        secondaryCta: { label: "Foreign Investment Hub", href: "/foreign-investment" },
+        advisorCta: { href: "/quiz?vertical=investment", specialty: "financial adviser" },
+      };
+    }
+
+    return {
+      headline: "The rules vary significantly by visa type and asset class.",
+      summary:
+        "Australian investment rules for overseas investors depend on your visa, residency status, and what you want to invest in. The foreign investment hub has dedicated guides for property (FIRB), shares (withholding tax + DTA), super (DASP), and banking — with per-country breakdowns for 20+ nationalities.",
+      primaryCta: { label: "Foreign Investment Hub", href: "/foreign-investment" },
+      secondaryCta: { label: "Find an International Adviser", href: "/quiz?vertical=investment" },
+      advisorCta: { href: "/quiz?vertical=investment", specialty: "international financial adviser" },
+    };
+  },
+};
+
+// OB-11 — sell-business diagnostic quiz
+export const SELL_BUSINESS_ONBOARDING_CONFIG: HubOnboardingConfig = {
+  hubSlug: "sell-business",
+  hubName: "Selling a Business",
+  heading: "Where are you in your business exit journey?",
+  subheading: "3 questions to get a personalised exit-planning next step.",
+  questions: [
+    {
+      id: "revenue",
+      question: "What is your business's approximate annual revenue?",
+      options: [
+        { value: "under_1m", label: "Under $1 million" },
+        { value: "1m_5m", label: "$1 million – $5 million" },
+        { value: "5m_20m", label: "$5 million – $20 million" },
+        { value: "over_20m", label: "Over $20 million" },
+      ],
+    },
+    {
+      id: "timeline",
+      question: "When do you want to complete the sale?",
+      options: [
+        { value: "within_12m", label: "Within the next 12 months" },
+        { value: "1_3yr", label: "1 to 3 years from now" },
+        { value: "3_5yr", label: "3 to 5 years from now" },
+        { value: "just_exploring", label: "Just exploring my options" },
+      ],
+    },
+    {
+      id: "priority",
+      question: "What matters most in your exit?",
+      options: [
+        { value: "max_price", label: "Maximising the sale price" },
+        { value: "tax_minimise", label: "Minimising CGT and tax" },
+        { value: "fast_sale", label: "A fast, low-friction sale" },
+        { value: "legacy", label: "Keeping the business in the right hands" },
+      ],
+    },
+  ],
+
+  evaluate(answers: QuizAnswers) {
+    const revenue = answers["revenue"];
+    const timeline = answers["timeline"];
+    const priority = answers["priority"];
+
+    if (timeline === "within_12m") {
+      return {
+        headline: "A 12-month sale is achievable — but preparation is everything.",
+        summary:
+          "A rushed sale typically fetches 20–30% less than a prepared one. In 12 months you can: get a formal valuation, clean up financials (3 years of clean P&L is standard buyer due diligence), draft an information memorandum, and run a structured auction. A business broker with a live buyer database gets deals done faster than off-market approaches.",
+        primaryCta: { label: "Find a Business Broker", href: "/sell-business" },
+        secondaryCta: { label: "Business Sale Checklist", href: "/sell-business/checklist" },
+        advisorCta: { href: "/quiz?vertical=business_sale", specialty: "business broker" },
+      };
+    }
+
+    if (priority === "tax_minimise") {
+      return {
+        headline: "Small business CGT concessions can reduce your tax liability to near-zero.",
+        summary:
+          "The four small-business CGT concessions can eliminate or dramatically reduce CGT on the sale of an active business: 15-year exemption (fully tax-free if held 15+ years), 50% active-asset reduction, retirement exemption ($500k lifetime), and rollover. Accessing them requires meeting the basic conditions: active asset test, turnover under $2M or net assets under $6M. A tax agent specialising in business sales is essential.",
+        primaryCta: { label: "CGT Concessions Guide", href: "/sell-business" },
+        secondaryCta: { label: "Find a Tax Agent", href: "/advisors/tax-agents" },
+        advisorCta: { href: "/quiz?vertical=business_sale", specialty: "business sale tax specialist" },
+      };
+    }
+
+    if (revenue === "over_20m" || revenue === "5m_20m") {
+      return {
+        headline: "A business of this size warrants a formal M&A process — not a trade-sale listing.",
+        summary:
+          "For businesses over $5M revenue, a structured M&A process (strategic buyer targeting, management presentations, data room, competitive bidding) typically yields 20–40% more than a direct listing. Engage an M&A adviser or corporate finance specialist 18–24 months before your target exit date to maximise value and manage the process.",
+        primaryCta: { label: "Find an M&A Adviser", href: "/sell-business" },
+        secondaryCta: { label: "Business Valuation Guide", href: "/sell-business/valuation" },
+        advisorCta: { href: "/quiz?vertical=business_sale", specialty: "M&A adviser" },
+      };
+    }
+
+    if (priority === "legacy") {
+      return {
+        headline: "A trade sale to the right buyer can preserve your legacy — but takes longer.",
+        summary:
+          "Legacy exits — selling to a management buyout (MBO), an employee ownership trust (EOT), or a strategic partner who values culture — typically involve a lower headline price but more certainty on fit. EOTs receive favourable CGT treatment from the ATO. MBOs require vendor finance or PE backing. Allow 2–3 years to identify and structure the right deal.",
+        primaryCta: { label: "Business Sale Guide", href: "/sell-business" },
+        secondaryCta: { label: "Find a Business Broker", href: "/sell-business" },
+        advisorCta: { href: "/quiz?vertical=business_sale", specialty: "business sale adviser" },
+      };
+    }
+
+    return {
+      headline: "Get a business valuation first — it anchors every decision that follows.",
+      summary:
+        "A formal valuation (multiple of EBITDA, typically 2–5× for SMEs) tells you what the business is worth today, what levers increase it, and what price you need to retire comfortably. Most reputable brokers offer a free indication; a formal valuation ($3,000–$10,000) is worth it for businesses over $1M.",
+      primaryCta: { label: "Business Valuation Guide", href: "/sell-business/valuation" },
+      secondaryCta: { label: "Find a Business Broker", href: "/sell-business" },
+      advisorCta: { href: "/quiz?vertical=business_sale", specialty: "business broker" },
+    };
+  },
+};
+
+// OB-12 — halal investing diagnostic quiz
+export const HALAL_INVESTING_ONBOARDING_CONFIG: HubOnboardingConfig = {
+  hubSlug: "halal-investing",
+  hubName: "Halal Investing",
+  heading: "Which Sharia-compliant investment pathway fits you?",
+  subheading: "3 questions to find the right halal investment approach for your situation.",
+  questions: [
+    {
+      id: "focus",
+      question: "What is your primary investment focus?",
+      options: [
+        { value: "super", label: "Superannuation — I want a Sharia-compliant fund" },
+        { value: "home_finance", label: "Home finance — I want an Islamic mortgage" },
+        { value: "shares", label: "Shares or ETFs — I want to invest in the market" },
+        { value: "unsure", label: "Not sure — I want a general overview" },
+      ],
+    },
+    {
+      id: "experience",
+      question: "How familiar are you with halal investing principles?",
+      options: [
+        { value: "new", label: "New to halal investing — just starting out" },
+        { value: "some", label: "I understand the basics (riba, gharar, prohibited sectors)" },
+        { value: "experienced", label: "Experienced — I self-screen stocks or use AAOIFI criteria" },
+      ],
+    },
+    {
+      id: "amount",
+      question: "How much are you looking to invest initially?",
+      options: [
+        { value: "under_10k", label: "Under $10,000" },
+        { value: "10k_50k", label: "$10,000 – $50,000" },
+        { value: "50k_250k", label: "$50,000 – $250,000" },
+        { value: "over_250k", label: "Over $250,000" },
+      ],
+    },
+  ],
+
+  evaluate(answers: QuizAnswers) {
+    const focus = answers["focus"];
+    const experience = answers["experience"];
+    const amount = answers["amount"];
+
+    if (focus === "super") {
+      return {
+        headline: "Crescent Wealth is Australia's only AAOIFI-certified Sharia-compliant super fund.",
+        summary:
+          "Crescent Wealth Superannuation Fund is certified by AAOIFI (Accounting and Auditing Organisation for Islamic Financial Institutions) and screened by a Sharia supervisory board. Funds are invested in AAOIFI-screened equities, Sukuk (Islamic bonds), and real assets — no interest-bearing instruments, tobacco, alcohol, weapons, or pornography. Compare it against your current fund's performance and fees before switching.",
+        primaryCta: { label: "Compare Super Funds", href: "/super" },
+        secondaryCta: { label: "Halal Investing Guide", href: "/halal-investing" },
+        advisorCta: { href: "/quiz?vertical=super", specialty: "Islamic finance adviser" },
+      };
+    }
+
+    if (focus === "home_finance") {
+      return {
+        headline: "Islamic home finance uses a diminishing musharakah structure — no interest charged.",
+        summary:
+          "Australian Islamic home finance providers (MCCA, Hejaz Financial Services, Islamic Co-operative Finance Australia) use diminishing musharakah: the lender and borrower co-own the property; the borrower makes monthly payments to buy out the lender's share. No riba (interest) is charged. Rates are comparable to conventional mortgages — compare carefully as the ATO treats rental/profit payments differently.",
+        primaryCta: { label: "Halal Home Finance Guide", href: "/halal-investing" },
+        secondaryCta: { label: "Find a Finance Adviser", href: "/advisors" },
+        advisorCta: { href: "/quiz?vertical=mortgage", specialty: "Islamic finance broker" },
+      };
+    }
+
+    if (focus === "shares" && experience === "experienced") {
+      return {
+        headline: "AAOIFI screening criteria: debt ratio under 33%, receivables ratio under 33%.",
+        summary:
+          "For self-directed halal stock screening on the ASX: use AAOIFI financial ratios — debt-to-market-cap under 33%, receivables under 33%, interest income under 5% of revenue. Exclude tobacco, alcohol, pork, weapons, entertainment, conventional banking/insurance. International ETFs: SPDR S&P 500 ESG, iShares MSCI World Islamic, and Wahed ETF (US-listed) apply AAOIFI screening. Purification: any haram-income percentage must be donated to charity.",
+        primaryCta: { label: "Halal Investing Guide", href: "/halal-investing" },
+        secondaryCta: { label: "Compare ETFs", href: "/etfs" },
+        advisorCta: { href: "/quiz?vertical=investment", specialty: "Islamic finance adviser" },
+      };
+    }
+
+    if (focus === "shares" && experience !== "experienced") {
+      return {
+        headline: "A Sharia-screened ETF is the simplest halal entry point for new investors.",
+        summary:
+          "Rather than self-screening individual stocks (which requires understanding AAOIFI financial ratios), a Sharia-screened ETF delegates the screening. Options available to Australian investors: iShares MSCI World Islamic ETF (ISWD — London-listed, requires international broker), Wahed FTSE USA Shariah ETF (US-listed), and Saturna Amana funds. Locally, some managed accounts on Elbaite or Superhero apply Islamic screens.",
+        primaryCta: { label: "Compare ETFs", href: "/etfs" },
+        secondaryCta: { label: "Halal Investing Guide", href: "/halal-investing" },
+        advisorCta: { href: "/quiz?vertical=investment", specialty: "Islamic finance adviser" },
+      };
+    }
+
+    if (amount === "over_250k") {
+      return {
+        headline: "Above $250k, a bespoke Sharia-compliant portfolio is worth considering.",
+        summary:
+          "At this level, a Sharia-supervised managed account or direct portfolio service can be tailored to your risk profile and zakat calculation needs. Some advisers specialising in Islamic finance (including those affiliated with ISRA and IFSB) offer discretionary portfolio management with annual Sharia supervisory board sign-off. Compare against ETF-based approaches on total cost.",
+        primaryCta: { label: "Find an Islamic Finance Adviser", href: "/advisors" },
+        secondaryCta: { label: "Halal Investing Guide", href: "/halal-investing" },
+        advisorCta: { href: "/quiz?vertical=investment", specialty: "Islamic finance adviser" },
+      };
+    }
+
+    return {
+      headline: "The halal investing hub covers super, home finance, and shares in one place.",
+      summary:
+        "Halal investing in Australia has grown significantly — there are now Sharia-compliant options across superannuation (Crescent Wealth), home finance (MCCA, Hejaz), and shares (AAOIFI-screened ETFs via international brokers). The hub breaks down each pathway with independent comparisons and no sales incentives.",
+      primaryCta: { label: "Halal Investing Guide", href: "/halal-investing" },
+      secondaryCta: { label: "Find an Islamic Finance Adviser", href: "/advisors" },
+      advisorCta: { href: "/quiz?vertical=investment", specialty: "Islamic finance adviser" },
+    };
+  },
+};
