@@ -184,18 +184,43 @@ export default async function PersonalDashboardPage() {
   // user is guaranteed after enforcePortalKind; this narrows the type
   if (!user) return null;
 
-  const [profileRes, goalsRes, holdingsRes, watchlistRes, investorProfile] = await Promise.all([
+  const [
+    profileRes,
+    goalsRes,
+    holdingsRes,
+    watchlistRes,
+    investorProfile,
+    briefsRes,
+  ] = await Promise.all([
     supabase.from("user_profiles").select("display_name, investing_experience, investment_goals, portfolio_size, interested_in, state, onboarding_completed").eq("id", user.id).maybeSingle(),
     supabase.from("investor_goals").select("id, label, goal_type, target_cents, current_balance_cents, target_date").order("target_date", { ascending: true }),
     supabase.from("investor_holdings").select("id", { count: "exact", head: true }),
     supabase.from("user_watchlist_items").select("id", { count: "exact", head: true }),
     getInvestorProfile(user.id),
+    // Cross-kind "My Briefs" tile — counts every Match Request filed
+    // under this auth user's email regardless of which account kind was
+    // active at filing time. Email match handles the legacy anonymous
+    // brief flow that doesn't write `auth_user_id`.
+    user.email
+      ? supabase
+          .from("advisor_auctions")
+          .select("id, tracker_status", { count: "exact" })
+          .eq("contact_email", user.email)
+      : Promise.resolve({ data: [], count: 0 }),
   ]);
 
   const profile = profileRes.data as UserProfile | null;
   const goals = (goalsRes.data ?? []) as GoalRow[];
   const holdingsCount = holdingsRes.count ?? 0;
   const watchlistCount = watchlistRes.count ?? 0;
+  const briefsCount = briefsRes.count ?? 0;
+  const briefs = (briefsRes.data ?? []) as {
+    id: number;
+    tracker_status: string;
+  }[];
+  const briefsActive = briefs.filter(
+    (b) => b.tracker_status && !["won", "lost", "withdrawn"].includes(b.tracker_status),
+  ).length;
   const completeness = profileCompleteness(profile);
 
   // LL-02: fetch profile-matched advisors after profile is resolved
@@ -234,7 +259,7 @@ export default async function PersonalDashboardPage() {
         <h2 id="snapshot-heading" className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-3">
           Financial snapshot
         </h2>
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <SnapshotCard
             title="Goals"
             value={goals.length}
@@ -255,6 +280,19 @@ export default async function PersonalDashboardPage() {
             sub={watchlistCount === 1 ? "item watched" : "items watched"}
             href="/account/watchlist"
             emptyHint="Add to watchlist"
+          />
+          <SnapshotCard
+            title="My Briefs"
+            value={briefsCount}
+            sub={
+              briefsActive > 0
+                ? `${briefsActive} active`
+                : briefsCount === 1
+                  ? "Match Request filed"
+                  : "Match Requests filed"
+            }
+            href="/briefs"
+            emptyHint="File your first brief"
           />
         </div>
       </section>
