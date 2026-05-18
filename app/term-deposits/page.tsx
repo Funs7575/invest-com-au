@@ -5,6 +5,7 @@ import { getVerticalBySlug } from "@/lib/verticals";
 import { absoluteUrl } from "@/lib/seo";
 import { boostFeaturedPartner } from "@/lib/sponsorship";
 import VerticalPillarPage from "@/components/VerticalPillarPage";
+import RateAlertCapture from "@/components/RateAlertCapture";
 
 const vertical = getVerticalBySlug("term-deposits")!;
 
@@ -66,12 +67,20 @@ export default async function TermDepositsPage() {
     .limit(3);
 
   return (
-    <VerticalPillarPage
-      config={vertical}
-      brokers={sorted}
-      relatedArticles={relatedArticles}
-      advisors={advisors || []}
-      expertArticles={expertArticles || []}
-    />
+    <>
+      <VerticalPillarPage
+        config={vertical}
+        brokers={sorted}
+        relatedArticles={relatedArticles}
+        advisors={advisors || []}
+        expertArticles={expertArticles || []}
+      />
+      <div className="mx-auto max-w-3xl px-4 pb-12">
+        <RateAlertCapture
+          productKind="term_deposit"
+          defaultThresholdPct={5.0}
+        />
+      </div>
+    </>
   );
 }

@@ -110,6 +110,7 @@ export async function POST(request: NextRequest) {
     prev_lead_ids,
     dry_run,
     confirm_advisor_id,
+    preferred_specialty,
   } = body as {
     lead_type?: string;
     user_email?: string;
@@ -127,6 +128,15 @@ export async function POST(request: NextRequest) {
     dry_run?: boolean;
     /** If set: skip matching, create lead directly for this advisor ID */
     confirm_advisor_id?: number;
+    /**
+     * Cross-border Phase A: when the user arrives from a country page
+     * (/foreign-investment/uk → ?specialty=UK+Pension+Transfer), prefer
+     * advisors whose `specialties` array contains this exact string.
+     * Falls back to the top-ranked non-specialist if no match is found
+     * in the fetched batch — the corridor still gets routed, just to
+     * the next-best advisor by the existing rank.
+     */
+    preferred_specialty?: string;
   };
 
   if (!lead_type || !["advisor", "platform"].includes(lead_type)) {
@@ -452,6 +462,12 @@ export async function POST(request: NextRequest) {
 
   // Take the highest-ranked candidate eligible for the visitor's
   // country. When intentCountry is null, simply returns the top pick.
+  //
+  // Cross-border Phase A: if the user arrived with ?specialty=X, prefer
+  // the first eligible advisor whose `specialties` array contains X.
+  // The original rank order is preserved within the preferred-specialty
+  // subset; if zero advisors in the batch carry the specialty, fall
+  // through to the standard top pick so the corridor still routes.
   function pickFirstEligible(
     rows: ReadonlyArray<Record<string, unknown>> | null | undefined,
   ): Record<string, unknown> | null {
@@ -460,6 +476,17 @@ export async function POST(request: NextRequest) {
       rows as ReadonlyArray<EntityWithEligibility & Record<string, unknown>>,
       intentCountry,
     );
+    if (eligible.length === 0) return null;
+
+    if (preferred_specialty) {
+      const wanted = preferred_specialty;
+      const specialist = eligible.find((row) => {
+        const specs = (row as { specialties?: unknown }).specialties;
+        return Array.isArray(specs) && specs.some((s) => typeof s === "string" && s === wanted);
+      });
+      if (specialist) return specialist;
+    }
+
     return eligible[0] ?? null;
   }
 

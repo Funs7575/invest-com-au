@@ -3,7 +3,11 @@ import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 
-// noindex: backing table (forum_categories) doesn't exist — remove this once content is seeded
+// noindex while the forum is still pre-launch and seeded with zero
+// user threads. The forum_categories / forum_threads tables exist and
+// the page reads real data (migration 20260518030000); flip robots.index
+// to true once each category has ≥3 seeded threads — empty forums look
+// like a dead community in Google's eyes and bounce hard.
 export const metadata = {
   title: "Community Forum",
   description:

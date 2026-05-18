@@ -129,6 +129,16 @@ export const LEAD_MAGNETS: LeadMagnet[] = [
     downloadUrl: "/downloads/aged-care-planning-guide.pdf",
     coverIcon: "heart",
   },
+  {
+    slug: "first-home-buyer-guide",
+    hubSlug: "first-home-buyer",
+    title: "First Home Buyer Action Plan: FHSS + Grants + Mortgage",
+    description:
+      "Step-by-step guide to the FHSS scheme, every state grant, the First Home Guarantee 5% deposit, and how to coordinate settlement timing.",
+    segmentSlug: "first-home-buyer-hub",
+    downloadUrl: "/downloads/first-home-buyer-guide.pdf",
+    coverIcon: "home",
+  },
 ];
 
 export function getLeadMagnetForHub(hubSlug: string): LeadMagnet | undefined {

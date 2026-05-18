@@ -32,6 +32,7 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
     "/api/cron/synthetic-checks",
     "/api/cron/confirm-lead-notify",
     "/api/cron/lead-sla-check",
+    "/api/cron/editorial-auto-publish",
   ],
   "every-30m": ["/api/cron/heartbeat", "/api/cron/retry-webhooks"],
   "every-6h": ["/api/admin/run-migration"],
@@ -78,6 +79,7 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
   "daily-7": [
     "/api/cron/portfolio-alerts",
     "/api/cron/price-drop-alerts",
+    "/api/cron/rate-alerts",
   ],
   "daily-8": [
     "/api/cron/complaints-sla",
@@ -100,6 +102,7 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
     "/api/cron/welcome-drip",
     "/api/cron/advisor-onboarding",
     "/api/cron/abandoned-quiz-drip",
+    "/api/cron/hub-subscriber-drip",
   ],
   "daily-11": [
     "/api/cron/advisor-dunning",

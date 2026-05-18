@@ -37,6 +37,21 @@ const KIND_META: Record<Kind, { icon: string; label: string; href: string }> = {
   invest: { icon: "📈", label: "Invest", href: "/invest" },
 };
 
+/** Rehydrates the kind's base URL with the saved filters as query
+ *  string params so clicking "Open" lands the user on the same view
+ *  they saved. Values are flattened to strings (jsonb may store
+ *  numbers or booleans). */
+function buildOpenHref(baseHref: string, filters: Record<string, unknown>): string {
+  const params = new URLSearchParams();
+  for (const [k, v] of Object.entries(filters)) {
+    if (v == null || v === "") continue;
+    if (Array.isArray(v)) params.set(k, v.map(String).join(","));
+    else params.set(k, String(v));
+  }
+  const qs = params.toString();
+  return qs ? `${baseHref}?${qs}` : baseHref;
+}
+
 export default function SavedSearchesClient() {
   const router = useRouter();
   const { user, loading: userLoading } = useUser();
@@ -235,7 +250,7 @@ export default function SavedSearchesClient() {
                     </select>
                   </label>
                   <Link
-                    href={meta.href}
+                    href={buildOpenHref(meta.href, row.filters)}
                     className="text-xs font-semibold text-emerald-600 hover:text-emerald-700"
                   >
                     Open {meta.label.toLowerCase()} →

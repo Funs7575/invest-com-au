@@ -246,6 +246,30 @@ const TOOLS: Tool[] = [
     url: "/tools/withholding-tax-calculator",
     internal: true,
   },
+  {
+    slug: "currency-converter",
+    name: "AUD Currency Converter",
+    category: "Calculators",
+    rating: 5,
+    description:
+      "Convert Australian dollars to and from 15 currencies. Includes an Australian context table showing FIRB thresholds, visa investment minimums, and super caps in the target currency.",
+    pros: ["15 currencies", "FIRB threshold table", "Swap direction in one click"],
+    pricing: "Free tool",
+    url: "/tools/currency-converter",
+    internal: true,
+  },
+  {
+    slug: "fhss-calculator",
+    name: "FHSS Deposit Calculator",
+    category: "Super",
+    rating: 5,
+    description:
+      "Calculate how much deposit you can save via the First Home Super Saver Scheme — and how much tax you save vs saving outside super. Covers concessional and non-concessional contributions across all income brackets.",
+    pros: ["Tax saving estimate", "All income brackets", "Time to $50k maximum"],
+    pricing: "Free tool",
+    url: "/tools/fhss-calculator",
+    internal: true,
+  },
 ];
 
 /* ─── Config ─── */

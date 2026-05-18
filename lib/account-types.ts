@@ -46,3 +46,28 @@ export const ACTIVE_ACCOUNT_KINDS: readonly AccountKind[] = [
 export function isAccountKind(value: unknown): value is AccountKind {
   return typeof value === "string" && (ACTIVE_ACCOUNT_KINDS as readonly string[]).includes(value);
 }
+
+// ─── Investor household type (AT stream) ────────────────────────────────────
+
+/**
+ * Household structure for investor-portal personalisation. Stored in
+ * `investor_profiles.meta.account_type`. Drives content routing and
+ * copy variants (AT-01..AT-04 audit stream). "individual" is the default.
+ */
+export type InvestorAccountType = "individual" | "couple" | "family" | "business";
+
+export const INVESTOR_ACCOUNT_TYPES: readonly {
+  value: InvestorAccountType;
+  label: string;
+  description: string;
+}[] = [
+  { value: "individual", label: "Individual", description: "Solo investor — personal finances only" },
+  { value: "couple", label: "Couple / household", description: "Shared finances with a partner" },
+  { value: "family", label: "Family", description: "Family household with dependants" },
+  { value: "business", label: "Business / SMSF", description: "Company, trust, or self-managed super" },
+] as const;
+
+export function getInvestorAccountType(meta: Record<string, unknown>): InvestorAccountType {
+  const v = meta.account_type;
+  return v === "individual" || v === "couple" || v === "family" || v === "business" ? v : "individual";
+}
