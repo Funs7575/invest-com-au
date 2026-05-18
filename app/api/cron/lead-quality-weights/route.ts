@@ -3,6 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 import { requireCronAuth } from "@/lib/cron-auth";
 import { wrapCronHandler } from "@/lib/cron-run-log";
+import { computeQualityWeights } from "@/lib/lead-quality-weights";
 
 const log = logger("cron:lead-quality-weights");
 
@@ -66,11 +67,8 @@ async function handler(req: NextRequest) {
     return NextResponse.json({ ok: true, insufficient_sample: true, count: leads?.length || 0 });
   }
 
-  const totalLeads = leads.length;
-  const totalConverted = leads.filter((l) => l.converted_at !== null).length;
-  const baselineHitRate = totalConverted / totalLeads;
-
-  // Signals to evaluate — must match the keys set in /api/advisor-enquiry
+  // Signal names must match the keys set in /api/advisor-enquiry's
+  // quality_signals jsonb write.
   const signalNames = [
     "has_phone",
     "has_message",
@@ -82,6 +80,17 @@ async function handler(req: NextRequest) {
     "qualification",
   ];
 
+  // Pure-math layer lives in lib/lead-quality-weights.ts — tested
+  // independently in __tests__/lib/lead-quality-weights.test.ts.
+  const computed = computeQualityWeights(
+    leads.map((l) => ({
+      quality_signals: l.quality_signals as Record<string, unknown> | null,
+      converted_at: l.converted_at as string | null,
+    })),
+    signalNames,
+  );
+  const { totalLeads, baselineHitRate, rows } = computed;
+
   // Determine the next model version (monotonic)
   const { data: lastWeight } = await supabase
     .from("lead_quality_weights")
@@ -91,44 +100,12 @@ async function handler(req: NextRequest) {
     .maybeSingle();
   const nextVersion = ((lastWeight?.model_version as number) || 0) + 1;
 
-  const weightRows: Array<{
-    signal_name: string;
-    weight: number;
-    sample_size: number;
-    hit_rate: number;
-    computed_at: string;
-    model_version: number;
-  }> = [];
-
   const nowIso = new Date().toISOString();
-
-  for (const signal of signalNames) {
-    const withSignal = leads.filter((l) => {
-      const signals = l.quality_signals as Record<string, unknown> | null;
-      return signals && signal in signals && signals[signal];
-    });
-    const sampleSize = withSignal.length;
-    if (sampleSize < 20) {
-      // Too few to trust a weight — skip rather than overfit
-      continue;
-    }
-    const convertedWithSignal = withSignal.filter((l) => l.converted_at !== null).length;
-    const hitRate = convertedWithSignal / sampleSize;
-
-    // Weight = hit rate lift over baseline, scaled to the live scorer range
-    const lift = baselineHitRate > 0 ? hitRate / baselineHitRate : 1;
-    // Clamp to 0-50 (the maximum contribution of a single signal)
-    const weight = Math.min(50, Math.max(0, Math.round(lift * 20)));
-
-    weightRows.push({
-      signal_name: signal,
-      weight,
-      sample_size: sampleSize,
-      hit_rate: Math.round(hitRate * 10000) / 10000,
-      computed_at: nowIso,
-      model_version: nextVersion,
-    });
-  }
+  const weightRows = rows.map((r) => ({
+    ...r,
+    computed_at: nowIso,
+    model_version: nextVersion,
+  }));
 
   if (weightRows.length === 0) {
     log.info("No signals had enough sample size", { totalLeads });

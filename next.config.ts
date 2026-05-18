@@ -120,6 +120,22 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
+      // /brokers (plural) used to 404 even though every natural link,
+      // internal nav, and Google result expects the plural. The actual
+      // broker comparison surface lives at /compare; the singular
+      // /broker is itself a redirect to /compare, so this entry skips
+      // the double-hop and sends /brokers directly to /compare.
+      // PRODUCT_AUDIT.md 2026-04-15 §CRITICAL #1.
+      {
+        source: "/brokers",
+        destination: "/compare",
+        permanent: true,
+      },
+      {
+        source: "/brokers/:slug*",
+        destination: "/broker/:slug*",
+        permanent: true,
+      },
       // /advisors/search retired 2026-05 — the inline filter panel on
       // /advisors now hosts every filter the standalone page had
       // (language, accepting-new-clients, with-intro-video) plus the

@@ -21,6 +21,7 @@ import { z } from "zod";
 import { createCheckoutSession } from "@/lib/pro-subscription/billing";
 import { requireAdvisorSession } from "@/lib/require-advisor-session";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
+import { checkStripeEnv } from "@/lib/stripe-env-check";
 import { logger } from "@/lib/logger";
 
 const log = logger("pro-subscription:billing");
@@ -55,6 +56,20 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       { error: parsed.error.issues[0]?.message ?? "Invalid body." },
       { status: 400 },
+    );
+  }
+
+  // Surface the specific missing env var(s) up-front so first-time
+  // setup doesn't stutter through 503 → set var → redeploy → 503 again.
+  const tierPriceVar = `STRIPE_PRICE_ID_${parsed.data.tier.toUpperCase()}`;
+  const envStatus = checkStripeEnv({ required: [tierPriceVar] });
+  if (!envStatus.ok) {
+    return NextResponse.json(
+      {
+        error: "Subscription billing is not configured.",
+        missing: envStatus.missing,
+      },
+      { status: 503 },
     );
   }
 
