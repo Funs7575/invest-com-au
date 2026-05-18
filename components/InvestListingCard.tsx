@@ -12,6 +12,7 @@ import {
 import Icon from "@/components/Icon";
 import EnquireButton from "@/components/marketplace/EnquireButton";
 import ListingShortlistButton from "@/components/invest/ListingShortlistButton";
+import ListingClaimLink from "@/components/invest/ListingClaimLink";
 
 function formatLocation(state?: string, city?: string): string | null {
   if (city && state) return `${city}, ${state}`;
@@ -70,6 +71,8 @@ export default function InvestListingCard({
   variant = "grid",
   showFirbBadge = false,
   matchScore,
+  advisorOptInCount = 0,
+  showClaimBadge = false,
 }: {
   listing: InvestmentListing;
   badge?: string;
@@ -78,9 +81,17 @@ export default function InvestListingCard({
    *  when the parent surface has a visitor-country signal that makes
    *  the FIRB lens meaningful. */
   showFirbBadge?: boolean;
-  /** Optional 0–100 smart-match score. Renders a green pill bottom-left
-   *  on the hero when set. (Wired up in Wave 3.) */
-  matchScore?: number;
+  /** Optional 0–100 smart-match score from `computeMatchScore`. Renders
+   *  a green pill bottom-left on the hero when set. Computed server-side
+   *  per logged-in investor profile. */
+  matchScore?: number | null;
+  /** Number of distinct advisor types that have opted in to support
+   *  this listing. Renders a small "X advisors" pill on the card when > 0. */
+  advisorOptInCount?: number;
+  /** When true, render a small "Are you the owner?" link on the card.
+   *  Set on listings that have no approved listing_claims row — gives
+   *  fund / project sellers a self-service entry into the claim flow. */
+  showClaimBadge?: boolean;
 }) {
   const kind = deriveListingKind(listing);
   const meta = listingKindMeta(kind);
@@ -338,6 +349,26 @@ export default function InvestListingCard({
               </div>
             ))}
           </div>
+        )}
+
+        {/* Advisor opt-in pill — surfaces "X advisors can assess this"
+            when listing_advisor_opt_ins has rows for this listing. Closes
+            the loop with /advisors. */}
+        {advisorOptInCount > 0 && (
+          <div className="mt-3 inline-flex items-center gap-1.5 text-[0.62rem] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-full px-2.5 py-1">
+            <Icon name="user-check" size={11} />
+            {advisorOptInCount} advisor{advisorOptInCount !== 1 ? "s" : ""} can assess this
+          </div>
+        )}
+
+        {/* Claim-your-listing prompt — shown when the listing has no
+            approved row in listing_claims. Routes to the existing claim
+            flow with target_slug pre-filled. */}
+        {showClaimBadge && (
+          <ListingClaimLink
+            slug={listing.slug}
+            label={kind === "fund" ? "fund manager" : kind === "physical_asset" ? "seller" : "owner"}
+          />
         )}
 
         {/* CTA row — kind-aware verb. Listed securities use an external
