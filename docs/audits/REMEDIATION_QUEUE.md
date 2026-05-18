@@ -60,7 +60,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | LX | `claude/audit-remediation/lx-03-cross-calc-nav` | **#849 MERGED 2026-05-15** · **#879 OPEN** | LX-01, LX-02, LX-03, LX-04, LX-05 done. LX-03 (`b6f675a`): RelatedCalculators component wired into 4 main calculators. **Stream complete pending #879 merge.** | All LX tasks merged |
 | OB | `claude/audit-remediation/ob-09-remaining-quizzes` | **#852 MERGED 2026-05-17** · **#878 OPEN** | OB-01..OB-12 done. OB-09..OB-12 (`710dba3`): LUMP_SUM, FOREIGN_INVESTMENT, SELL_BUSINESS, HALAL_INVESTING configs + 4 quiz pages + sitemap. **Stream complete pending #878 merge.** | All OB tasks merged |
 | GT | `claude/audit-remediation/gt-02-annual-check` | **#881 OPEN** | GT-01 blocked (needs DV-01). GT-02 done (`a4c5352`): annual financial check-up page `/account/annual-check` — personalised FY checklist for 5 investor types. NavCard added to dashboard. CI rescue iter 422: `Supabase types drift` fixed — `hub_drip_log` from EM-02 caused drift; types regen committed to main (`c5113b7`) + GT branch rebased to pick it up (`731ea21`). | All GT tasks merged |
-| DF | `claude/audit-remediation/df-01-decision-frameworks` | **#883 OPEN** | DF-01 done (`49bc079`): DecisionTree engine (`components/DecisionTree.tsx`) + buy-vs-rent tree (`lib/decision-trees/buy-vs-rent.ts`) + page (`/tools/buy-vs-rent`). 5 question nodes + 9 leaf nodes. DF-02 (salary-sacrifice) + DF-03 (SMSF setup) pending. | DF-01 done |
+| DF | `claude/audit-remediation/df-01-decision-frameworks` | **#883 OPEN** | DF-01 done (`49bc079`): DecisionTree engine + buy-vs-rent. DF-02 done (`972e13a`): salary-sacrifice tree. DF-03 done (`1d741e9`): SMSF-setup tree. DF-04 (tools index update) pending. | DF-01/02/03 done |
 
 ---
 
@@ -125,6 +125,28 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 425 — 2026-05-18 — DF-03 SMSF-setup decision tree
+
+- **Stream:** DF (decision frameworks)
+- **Item:** DF-03 — SMSF setup decision tree
+- **Branch:** `claude/audit-remediation/df-01-decision-frameworks`
+- **PR:** #883 OPEN
+- **Commit:** `1d741e9`
+- **Diff:** +248 -1 across 3 files
+- **What:** `lib/decision-trees/smsf-setup.ts` — 3 question nodes + 5 leaves. Goal gate (investment control vs business real property vs returns disappointment), balance check (under $200k → too small, $200k–$500k → viable/watch costs, $500k+ → strong case), and a returns-check arm that surfaces ATO YourSuper comparison tool before committing. `app/tools/smsf-setup/page.tsx` — ISR-86400 RSC at `/tools/smsf-setup`. 4 FAQs: minimum balance, business real property rules, residential property rules, trustee obligations. Added to sitemap.
+- **STATUS: PROGRESS · stream=DF · item=DF-03 · pr=#883**
+
+### iter 424 — 2026-05-18 — DF-02 salary-sacrifice decision tree
+
+- **Stream:** DF (decision frameworks)
+- **Item:** DF-02 — salary sacrifice decision tree
+- **Branch:** `claude/audit-remediation/df-01-decision-frameworks`
+- **PR:** #883 OPEN
+- **Commit:** `972e13a`
+- **Diff:** +265 -1 across 3 files
+- **What:** `lib/decision-trees/salary-sacrifice.ts` — 4 question nodes + 6 leaves. Employment gate (employee vs self-employed), income band (under $45k / $45k–$120k / over $120k), concessional cap check (room vs near-cap), Division 293 check (over $250k). Self-employed arm redirects to personal deductible contributions. Low-income arm surfaces super co-contribution as potentially better fit. `app/tools/salary-sacrifice/page.tsx` — ISR-86400 RSC at `/tools/salary-sacrifice`. 4 FAQs covering mechanics, cap, self-employed path, Division 293. Added to sitemap.
+- **STATUS: PROGRESS · stream=DF · item=DF-02 · pr=#883**
 
 ### iter 423 — 2026-05-18 — DF-01 DecisionTree engine + buy-vs-rent tool
 
