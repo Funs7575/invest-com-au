@@ -63,6 +63,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | DF | `claude/audit-remediation/df-01-decision-frameworks` | **#883 OPEN** · ~~#884 CLOSED (dup)~~ | DF-01 done (`49bc079`): DecisionTree engine + buy-vs-rent. DF-02 done (`972e13a`): salary-sacrifice tree. DF-03 done (`1d741e9`): SMSF-setup tree. DF-04 done (`cadd73e`): tools index updated (buy-vs-rent/salary-sacrifice/smsf-setup added to ToolsClient). **Stream complete pending #883 merge.** | All DF tasks merged |
 | QA | `claude/audit-remediation/qa-01-question-deep-dive` | **#890 OPEN** | QA-01 done (`a7c7d56`): /questions index + RSC deep-dive template + 17 seeded questions. QA-02 done (`3c0d82a`): +13 questions → 30 total (tax-loss harvesting, MLS, LITO, crypto tax, investment bonds, A-REITs, rebalancing, shares vs bonds, diversification, FHBG, age pension assets test, HECS-HELP). **Stream complete at 30 questions pending #890 merge.** | All QA tasks merged |
 | Z-23+BB-08 | `claude/audit-remediation/z-23-first-home-buyer` | **#895 OPEN** | Z-23 done (`6f33976`): `/first-home-buyer` hub page. BB-08 done: FHSS deposit calculator at `app/tools/fhss-calculator/page.tsx`. CI rescue iter 431: fixed Dated strings gate ("1 July 2017" → `// dated-ok`), JSON-LD missing (added `calculatorJsonLd`+`breadcrumbJsonLd`+`faqJsonLd`), merged main for Supabase types drift. Commit `0cdd2ee`. Last CI: pending — pushed 2026-05-18. **Stream complete pending #895 merge.** | #895 merged |
+| MK | `claude/audit-remediation/mk-marketplace-conversion` | **#903 OPEN** | MK-01 done (`773c0e8`): `AdvisorCalendarEmbed` — inline Calendly/Cal.com iframe embed on advisor profile; falls back to link for other URLs. MK-02 done (`773c0e8`): `AdvisorVideoIntro` — lazy poster-overlay player replacing bare iframe; YouTube thumbnail auto-fetch + Vimeo support. Both wired into `AdvisorProfileClient`. **Stream complete pending #903 merge.** | All MK tasks merged |
 | CD | `claude/audit-remediation/cd-01-financial-calendar` · `claude/audit-remediation/cd-01-calendar-utility` | **#900 OPEN** · **#902 OPEN** | CD-01 done (`e07b8e4`): public `/tools/financial-calendar` (PR #900). CD-01 account-gated (`5142821`): `/account/calendar` personalised deadline calendar (PR #902). CD-02 done (`3ff2353`): `/tools/currency-converter` + `CurrencyConverterClient` — 15 currencies, FIRB thresholds context, static mid-market rates (PR #902). CD-03 done (`3ff2353`): `/pricing` — 5 fee tables for financial planners/brokers/tax accountants/buyer's agents/SMSF specialists (PR #902). CI rescue iter 435: `Dated strings gate` fixed — "1 July 2025" in calendar description (`// dated-ok`), commit `5142821`. **Stream complete pending #900 + #902 merge.** | All CD tasks merged |
 
 ---
@@ -128,6 +129,23 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 436 — 2026-05-18 — MK-01 calendar embed + MK-02 advisor video intros
+
+- **Stream:** MK (marketplace conversion)
+- **Items:** MK-01 — advisor calendar embedding, MK-02 — advisor video intros
+- **Branch:** `claude/audit-remediation/mk-marketplace-conversion`
+- **PR:** #903 OPEN
+- **Commit:** `773c0e8`
+- **Diff:** +204 -10 across 3 files (2 new components, 1 updated profile client)
+- **What:**
+  - **MK-01 — `components/AdvisorCalendarEmbed.tsx`** — new "use client" component. Detects Calendly (`calendly.com/`) and Cal.com (`cal.com/`) URLs in the advisor's existing `booking_link` field. Renders a "Book [consultation type]" CTA button; on click, expands an inline iframe embed with dismiss (✕) control. Eliminates new-tab context switch that hurts mobile conversion. Falls back to a styled link button for non-supported booking URL patterns. `consultationLabel` auto-set to "free consultation" when `initial_consultation_free` is true. Wired into `AdvisorProfileClient` as a "Book a Time" `SectionCard`, rendered when `booking_link` is set.
+  - **MK-02 — `components/AdvisorVideoIntro.tsx`** — new "use client" component replacing the bare always-on iframe. Lazy: iframe only mounts on user click. Poster overlay: uses `intro_video_poster_url` if set; auto-fetches YouTube `hqdefault.jpg` thumbnail by video ID; dark placeholder for Vimeo. Play button with hover scale + white background. Platform support: YouTube (`watch?v=`, `youtu.be/`, `embed/`) → `embed/{ID}?autoplay=1&rel=0`; Vimeo (`vimeo.com/{ID}`) → `player.vimeo.com/video/{ID}?autoplay=1`. Accessible `aria-label` + iframe `title`.
+  - **`AdvisorProfileClient.tsx`** — added imports for both components; replaced inline video iframe with `<AdvisorVideoIntro>`; added "Book a Time" SectionCard with `<AdvisorCalendarEmbed>` before `AdvisorAppointmentsWidget`.
+- **No schema changes** — both components consume existing `Professional` fields: `booking_link`, `intro_video_url`, `intro_video_poster_url`, `initial_consultation_free`.
+- **Local gates:** `node scripts/check-dated-strings.mjs` ✅, `node scripts/check-jsonld-coverage.mjs` ✅ (all public routes), `npm run audit:rate-limits --strict` → 100% (461 routes)
+- **Tier:** A (new UI components + profile page update — no API/schema/auth changes)
+- **STATUS: PROGRESS · stream=MK · item=MK-01+MK-02 · pr=#903**
 
 ### iter 435 — 2026-05-18 — CI-RESCUE CD (#902 dated strings gate)
 
