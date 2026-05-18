@@ -1405,9 +1405,32 @@ export type InvestListingVertical =
   | 'royalties'
   | 'startup';
 
+/**
+ * Discriminator added 2026-05 (Wave 1 of /invest rebuild). Each kind has a
+ * distinct card variant + filter set + price-label semantic. See
+ * `lib/listing-kind.ts` for the helpers that key off this value.
+ *
+ * `vertical` is the secondary axis (sector / industry); `listing_kind`
+ * answers "what shape of opportunity is this" which the page UX needs to
+ * branch on far more often than the vertical does.
+ */
+export type ListingKind =
+  | 'for_sale_business'   // operating business changing hands (cafes, agencies, franchises)
+  | 'for_sale_asset'      // tangible asset for sale (commercial property, farmland, livestock)
+  | 'equity_raise'        // company raising primary capital (startups, pre-IPO)
+  | 'project_equity'      // project / SPV equity (mining tenements, renewables, infra)
+  | 'royalty'             // royalty stream (mining, IP, music, oil-gas)
+  | 'fund'                // managed fund — PDS / IM / wholesale-only / SIV-complying
+  | 'physical_asset'      // collectible: wine, whisky, watches, cars, art, coins, sports
+  | 'listed_security';    // ASX ticker — "buy via broker", not enquire
+
 export interface InvestmentListing {
   id: number;
   vertical: InvestListingVertical;
+  /** What shape of opportunity. Drives card variant + price-label semantic
+   *  + filter set. May be null on legacy rows; UI falls back to deriving
+   *  from `vertical` via lib/listing-kind#deriveListingKind. */
+  listing_kind?: ListingKind | null;
   title: string;
   slug: string;
   description?: string;

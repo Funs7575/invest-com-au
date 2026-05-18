@@ -9769,6 +9769,7 @@ export type Database = {
           industry: string | null
           key_metrics: Json | null
           listed_by_professional_id: number | null
+          listing_kind: string | null
           listing_type: string | null
           location_city: string | null
           location_state: string | null
@@ -9805,6 +9806,7 @@ export type Database = {
           industry?: string | null
           key_metrics?: Json | null
           listed_by_professional_id?: number | null
+          listing_kind?: string | null
           listing_type?: string | null
           location_city?: string | null
           location_state?: string | null
@@ -9841,6 +9843,7 @@ export type Database = {
           industry?: string | null
           key_metrics?: Json | null
           listed_by_professional_id?: number | null
+          listing_kind?: string | null
           listing_type?: string | null
           location_city?: string | null
           location_state?: string | null
