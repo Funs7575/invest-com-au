@@ -14132,6 +14132,54 @@ export type Database = {
           },
         ]
       }
+      rate_alert_subscriptions: {
+        Row: {
+          created_at: string
+          email: string
+          frequency: string
+          id: string
+          last_notified_at: string | null
+          notification_count: number
+          product_filters: Json
+          product_kind: string
+          threshold_bps: number
+          unsubscribe_token: string
+          updated_at: string
+          verified: boolean
+          verify_token: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          frequency?: string
+          id?: string
+          last_notified_at?: string | null
+          notification_count?: number
+          product_filters?: Json
+          product_kind: string
+          threshold_bps: number
+          unsubscribe_token: string
+          updated_at?: string
+          verified?: boolean
+          verify_token: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          frequency?: string
+          id?: string
+          last_notified_at?: string | null
+          notification_count?: number
+          product_filters?: Json
+          product_kind?: string
+          threshold_bps?: number
+          unsubscribe_token?: string
+          updated_at?: string
+          verified?: boolean
+          verify_token?: string
+        }
+        Relationships: []
+      }
       rate_limit_buckets: {
         Row: {
           created_at: string
