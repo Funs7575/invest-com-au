@@ -223,6 +223,79 @@ export default function ReferralsClient() {
           </div>
         </div>
 
+        {/* Referral chain — visual layout of who you've invited and where
+            they are in the funnel. Renders as a hub-and-spoke diagram:
+            "You" in the centre, each referee as a card with status pill
+            and connecting line. Hides when history is empty. */}
+        {history.length > 0 && (
+          <div className="bg-white border border-slate-200 rounded-xl p-5 mb-4">
+            <h2 className="text-base font-bold text-slate-900 mb-1">
+              Your referral chain
+            </h2>
+            <p className="text-xs text-slate-500 mb-4">
+              Visible only to you — each card is one invite and its progress.
+            </p>
+            <div className="relative">
+              {/* You (centre) */}
+              <div className="flex justify-center mb-5">
+                <div className="inline-flex items-center gap-2 rounded-full bg-emerald-100 border border-emerald-300 px-4 py-2">
+                  <span className="inline-flex w-7 h-7 rounded-full bg-emerald-500 text-white items-center justify-center font-bold text-xs">
+                    {user?.email?.[0]?.toUpperCase() ?? "Y"}
+                  </span>
+                  <span className="text-sm font-bold text-emerald-900">You</span>
+                </div>
+              </div>
+              {/* Stem */}
+              <div
+                aria-hidden
+                className="absolute left-1/2 top-12 -translate-x-1/2 h-6 w-px bg-emerald-300"
+              />
+              {/* Spokes */}
+              <ul className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-2 relative">
+                {history.slice(0, 9).map((item) => {
+                  const accent =
+                    item.status === "rewarded"
+                      ? "border-emerald-300 bg-emerald-50"
+                      : item.status === "converted"
+                        ? "border-blue-300 bg-blue-50"
+                        : "border-amber-200 bg-amber-50";
+                  return (
+                    <li
+                      key={item.id}
+                      className={`rounded-xl border p-3 text-center ${accent}`}
+                    >
+                      <div className="text-2xl mb-1" aria-hidden>
+                        {item.status === "rewarded"
+                          ? "🎁"
+                          : item.status === "converted"
+                            ? "✅"
+                            : "✉️"}
+                      </div>
+                      <p className="text-[11px] font-semibold text-slate-900 truncate">
+                        {item.email || `Invite #${item.id}`}
+                      </p>
+                      <p className="text-[10px] text-slate-500 mt-0.5">
+                        {new Date(item.date).toLocaleDateString("en-AU", {
+                          day: "numeric",
+                          month: "short",
+                        })}
+                      </p>
+                      <div className="mt-1.5">
+                        <StatusBadge status={item.status} />
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+              {history.length > 9 && (
+                <p className="text-center text-[11px] text-slate-500 mt-3">
+                  + {history.length - 9} more in the table below
+                </p>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Referral History */}
         <div className="bg-white border border-slate-200 rounded-xl p-5 mb-4">
           <h2 className="text-base font-bold text-slate-900 mb-3">Referral History</h2>

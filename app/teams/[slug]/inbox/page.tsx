@@ -13,6 +13,7 @@ import {
 import { getHiddenBriefIdsForTeam } from "@/lib/team-brief-decisions";
 import PresencePinger from "@/components/PresencePinger";
 import SquadInboxClaimRow from "./SquadInboxClaimRow";
+import SquadInboxFirstTimeTour from "./SquadInboxFirstTimeTour";
 import SquadInboxRowActions from "./SquadInboxRowActions";
 
 // Private surface — keep out of the index. JSON-LD coverage gate
@@ -219,6 +220,14 @@ export default async function SquadInboxPage({ params, searchParams }: PageProps
           <span>/</span>
           <span className="text-slate-700">Squad inbox</span>
         </div>
+
+        {/* First-time onboarding tour — shown when this is the team's
+            first accepted brief (acceptedTotal ≤ 1 from the KPI count
+            above). Client-side dismissible via localStorage. */}
+        <SquadInboxFirstTimeTour
+          teamSlug={team.slug as string}
+          isFirstTime={(acceptedTotal ?? 0) <= 1}
+        />
 
         <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-1">
           {team.name as string} — Squad inbox
