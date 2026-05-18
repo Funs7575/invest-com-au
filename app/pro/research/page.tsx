@@ -4,6 +4,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { getSubscription } from "@/lib/server/get-subscription";
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
+import AfslBadge from "@/components/AfslBadge";
 
 // FIN_NOTEBOOK Revenue #10: Premium research subscription.
 //
@@ -120,7 +121,12 @@ export default async function PremiumResearchPage() {
         </p>
       </header>
 
-      {!isPro && <UpgradeBanner signedIn={!!user} />}
+      {!isPro && (
+        <>
+          <AfslBadge variant="block" className="mb-4" />
+          <UpgradeBanner signedIn={!!user} />
+        </>
+      )}
 
       <section aria-label="Available research" className="space-y-4">
         {published.map((report) => (

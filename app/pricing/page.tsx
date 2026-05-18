@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
 import { AFSL_STATUS_DISCLOSURE } from "@/lib/compliance";
+import AfslBadge from "@/components/AfslBadge";
 
 export const revalidate = 86400;
 
@@ -171,7 +172,7 @@ const FEE_TABLES: {
   },
 ];
 
-export default function PricingPage() {
+export default async function PricingPage() {
   return (
     <main className="bg-white min-h-screen">
       <script
@@ -192,7 +193,7 @@ export default function PricingPage() {
             What do Australian financial advisors charge?
           </h1>
           <p className="text-slate-300 max-w-2xl">
-            Typical fee ranges for financial planners, mortgage brokers, accountants, buyer's agents
+            Typical fee ranges for financial planners, mortgage brokers, accountants, buyer&apos;s agents
             and SMSF specialists — so you know what to expect before you book a consultation.
           </p>
         </div>
@@ -318,7 +319,8 @@ export default function PricingPage() {
         </Link>
       </section>
 
-      <div className="container-custom pb-8">
+      <div className="container-custom pb-8 space-y-4">
+        <AfslBadge variant="block" />
         <p className="text-xs text-slate-500 border-t border-slate-200 pt-4">
           Fee ranges are indicative only based on industry surveys and publicly disclosed fee
           schedules. Actual fees depend on the complexity of your situation and the individual
