@@ -43,7 +43,7 @@ const FY26_DEADLINES: Deadline[] = [
     date: "1 Jul 2026",
     label: "New financial year begins",
     description:
-      "Contribution caps reset. Division 293 threshold remains at $250,000. Superannuation guarantee rate holds at 11.5% (legislated rise to 12% from 1 July 2025 applies in some contexts — verify with your employer).",
+      "Contribution caps reset. Division 293 threshold remains at $250,000. Superannuation guarantee rate holds at 11.5% (legislated rise to 12% from 1 July 2025 applies in some contexts — verify with your employer).", // dated-ok
     tag: "FY",
   },
   {
