@@ -9441,6 +9441,30 @@ export type Database = {
         }
         Relationships: []
       }
+      hub_drip_log: {
+        Row: {
+          drip_step: number
+          email: string
+          id: number
+          segment_slug: string
+          sent_at: string
+        }
+        Insert: {
+          drip_step: number
+          email: string
+          id?: never
+          segment_slug: string
+          sent_at?: string
+        }
+        Update: {
+          drip_step?: number
+          email?: string
+          id?: never
+          segment_slug?: string
+          sent_at?: string
+        }
+        Relationships: []
+      }
       i18n_currency_rates: {
         Row: {
           base_currency: string
