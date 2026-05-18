@@ -37,6 +37,14 @@ export interface SubmitLeadPayload {
   dry_run?: boolean;
   /** Skip matching, create lead directly for this advisor. */
   confirm_advisor_id?: number;
+  /**
+   * Cross-border Phase A (FIN_NOTEBOOK 2026-05-01 #24): user arrived from
+   * a country page with a specific cross-border specialty hint (e.g.
+   * "UK Pension Transfer"). The matcher uses this to bias toward
+   * advisors carrying that specialty so the 1.75× lead premium they're
+   * being charged is justified by relevance, not just routing.
+   */
+  preferred_specialty?: string;
 }
 
 export interface SubmitLeadResult {
