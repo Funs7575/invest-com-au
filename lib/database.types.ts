@@ -9866,6 +9866,51 @@ export type Database = {
         }
         Relationships: []
       }
+      investor_journey_touchpoints: {
+        Row: {
+          active: boolean | null
+          created_at: string | null
+          description: string | null
+          domestic: boolean | null
+          estimated_revenue_cents: number | null
+          id: number
+          international: boolean | null
+          partner_type: string | null
+          revenue_type: string
+          sort_order: number | null
+          stage: string
+          touchpoint: string
+        }
+        Insert: {
+          active?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          domestic?: boolean | null
+          estimated_revenue_cents?: number | null
+          id?: number
+          international?: boolean | null
+          partner_type?: string | null
+          revenue_type: string
+          sort_order?: number | null
+          stage: string
+          touchpoint: string
+        }
+        Update: {
+          active?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          domestic?: boolean | null
+          estimated_revenue_cents?: number | null
+          id?: number
+          international?: boolean | null
+          partner_type?: string | null
+          revenue_type?: string
+          sort_order?: number | null
+          stage?: string
+          touchpoint?: string
+        }
+        Relationships: []
+      }
       investor_oauth_connections: {
         Row: {
           access_token_enc: string
@@ -9911,51 +9956,6 @@ export type Database = {
           refresh_token_enc?: string | null
           scope?: string | null
           updated_at?: string
-        }
-        Relationships: []
-      }
-      investor_journey_touchpoints: {
-        Row: {
-          active: boolean | null
-          created_at: string | null
-          description: string | null
-          domestic: boolean | null
-          estimated_revenue_cents: number | null
-          id: number
-          international: boolean | null
-          partner_type: string | null
-          revenue_type: string
-          sort_order: number | null
-          stage: string
-          touchpoint: string
-        }
-        Insert: {
-          active?: boolean | null
-          created_at?: string | null
-          description?: string | null
-          domestic?: boolean | null
-          estimated_revenue_cents?: number | null
-          id?: number
-          international?: boolean | null
-          partner_type?: string | null
-          revenue_type: string
-          sort_order?: number | null
-          stage: string
-          touchpoint: string
-        }
-        Update: {
-          active?: boolean | null
-          created_at?: string | null
-          description?: string | null
-          domestic?: boolean | null
-          estimated_revenue_cents?: number | null
-          id?: number
-          international?: boolean | null
-          partner_type?: string | null
-          revenue_type?: string
-          sort_order?: number | null
-          stage?: string
-          touchpoint?: string
         }
         Relationships: []
       }
@@ -11093,6 +11093,7 @@ export type Database = {
           fee_changes_count: number
           html_content: string | null
           id: number
+          status: string
           subject: string
         }
         Insert: {
@@ -11103,6 +11104,7 @@ export type Database = {
           fee_changes_count?: number
           html_content?: string | null
           id?: number
+          status?: string
           subject: string
         }
         Update: {
@@ -11113,6 +11115,7 @@ export type Database = {
           fee_changes_count?: number
           html_content?: string | null
           id?: number
+          status?: string
           subject?: string
         }
         Relationships: []
