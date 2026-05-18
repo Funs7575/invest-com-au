@@ -3,6 +3,7 @@ import { CURRENT_YEAR, SITE_NAME } from "@/lib/seo";
 import MortgageCalculatorClient from "./MortgageCalculatorClient";
 import ComplianceFooter from "@/components/ComplianceFooter";
 import CalcToPlanBridge from "@/components/get-matched/CalcToPlanBridge";
+import RelatedCalculators from "@/components/RelatedCalculators";
 
 export const revalidate = 3600;
 
@@ -35,6 +36,13 @@ export default function MortgageCalculatorPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <MortgageCalculatorClient />
       <div className="container-custom pb-8">
+        <RelatedCalculators
+          items={[
+            { name: "Property vs Shares Calculator", description: "Compare the long-run return of property versus a share portfolio side by side.", href: "/property-vs-shares-calculator" },
+            { name: "Savings Calculator", description: "Model how quickly you can save your deposit with different contribution rates.", href: "/savings-calculator" },
+            { name: "CGT Calculator", description: "Estimate capital gains tax when you sell an investment property.", href: "/cgt-calculator" },
+          ]}
+        />
         <CalcToPlanBridge goal="home" />
         <ComplianceFooter variant="calculator" />
       </div>
