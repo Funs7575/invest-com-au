@@ -22,6 +22,12 @@ export type Advisor = {
   credit_balance_cents?: number; lifetime_credit_cents?: number; lifetime_lead_spend_cents?: number;
   featured_until?: string;
   advisor_tier?: string | null;
+  /**
+   * ISO 3166-1 alpha-2 codes (lowercased) for cross-border corridors the
+   * advisor self-selected on /advisor-portal Profile (FIN_NOTEBOOK Phase B).
+   * AU is implicit — every advisor here is AU-licensed — and is omitted.
+   */
+  available_in_countries?: string[];
 };
 
 export type FirmMember = { id: number; name: string; slug: string; email?: string; type: string; photo_url?: string; verified?: boolean; status?: string; created_at: string; role?: string; is_firm_admin?: boolean };
