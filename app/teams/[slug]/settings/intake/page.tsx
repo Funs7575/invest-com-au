@@ -7,8 +7,10 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { SITE_URL } from "@/lib/seo";
 import { listForTeam, MAX_QUESTIONS_PER_OWNER } from "@/lib/pro-intake";
+import { getTemplatesForCategory } from "@/lib/pro-intake/templates";
 import { isProfessionalOnTeam } from "@/lib/expert-teams";
 
+import IntakeTemplatePicker from "@/components/pro-intake/IntakeTemplatePicker";
 import IntakeQuestionsEditor from "../../../../pros/settings/intake/IntakeQuestionsEditor";
 
 export const metadata: Metadata = {
@@ -48,7 +50,7 @@ export default async function TeamIntakeSettingsPage({
 
   const { data: team } = await admin
     .from("expert_teams")
-    .select("id, name, slug, owner_professional_id")
+    .select("id, name, slug, owner_professional_id, team_category")
     .eq("slug", slug)
     .maybeSingle();
   if (!team) notFound();
@@ -57,6 +59,7 @@ export default async function TeamIntakeSettingsPage({
     name: string;
     slug: string;
     owner_professional_id: number;
+    team_category: string;
   };
 
   const isMember =
@@ -92,6 +95,17 @@ export default async function TeamIntakeSettingsPage({
             your team accepts their brief.
           </p>
         </header>
+
+        {/* Quick-start templates picker — surfaces 4 curated 5-question
+            packs ordered by team_category match (exact-match templates
+            first). Disabled when adding would exceed the per-owner cap. */}
+        <IntakeTemplatePicker
+          templates={getTemplatesForCategory(teamRow.team_category)}
+          ownerKind="team"
+          ownerId={teamRow.id}
+          existingCount={questions.length}
+          maxQuestions={MAX_QUESTIONS_PER_OWNER}
+        />
 
         <IntakeQuestionsEditor
           ownerKind="team"
