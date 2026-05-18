@@ -62,7 +62,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | GT | `claude/audit-remediation/gt-02-annual-check` | **#881 OPEN** | GT-01 blocked (needs DV-01). GT-02 done (`a4c5352`): annual financial check-up page `/account/annual-check` — personalised FY checklist for 5 investor types. NavCard added to dashboard. CI rescue iter 422: `Supabase types drift` fixed — `hub_drip_log` from EM-02 caused drift. CI rescue iter 429: `Supabase types drift` again — advisor_auctions/bids migration; merged main (`2929e91`). CI rescue iter 431: `Supabase types drift` again — 3 new tables (brief_promo_codes, brief_promo_redemptions, investor_oauth_connections) from founder PRs #891–#893; types regen on main (`b9b57b5`), then merged into GT (`241721f`). CI rescue iter 433: `Database types drift gate` — same 3 founder tables still failing after types regen (gate uses migrations not types); fixed by allowlisting in `.driftallowlist` (`947d14d` on main), then merging into GT (`f39e995`). Axe-core still failing (systemic/blocked). Last CI: pending — pushed `f39e995` 2026-05-18. | All GT tasks merged |
 | DF | `claude/audit-remediation/df-01-decision-frameworks` | **#883 OPEN** · ~~#884 CLOSED (dup)~~ | DF-01 done (`49bc079`): DecisionTree engine + buy-vs-rent. DF-02 done (`972e13a`): salary-sacrifice tree. DF-03 done (`1d741e9`): SMSF-setup tree. DF-04 done (`cadd73e`): tools index updated (buy-vs-rent/salary-sacrifice/smsf-setup added to ToolsClient). **Stream complete pending #883 merge.** | All DF tasks merged |
 | QA | `claude/audit-remediation/qa-01-question-deep-dive` | **#890 OPEN** | QA-01 done (`a7c7d56`): /questions index + RSC deep-dive template + 17 seeded questions. QA-02 done (`3c0d82a`): +13 questions → 30 total (tax-loss harvesting, MLS, LITO, crypto tax, investment bonds, A-REITs, rebalancing, shares vs bonds, diversification, FHBG, age pension assets test, HECS-HELP). **Stream complete at 30 questions pending #890 merge.** | All QA tasks merged |
-| Z-23+BB-08 | `claude/audit-remediation/z-23-first-home-buyer` | **#895 OPEN** | Z-23 done (`6f33976`): `/first-home-buyer` hub page. BB-08 done: FHSS deposit calculator at `app/tools/fhss-calculator/page.tsx`. CI rescue iter 438: fixed 4 TypeScript errors. CI rescue iter 440: empty-commit re-trigger. CI rescue iter 441: stuck-detection guard fired (3 CI-RESCUE entries within 24h for `Lint · Type-check · Test · Build` on #895). Root cause unknown — static analysis exhausted, CI logs needed. **BLOCKED — see Blocked section.** | #895 merged |
+| Z-23+BB-08 | `claude/audit-remediation/z-23-first-home-buyer` | **#895 OPEN** | Z-23 done (`6f33976`): `/first-home-buyer` hub page. BB-08 done: FHSS deposit calculator at `app/tools/fhss-calculator/`. CI rescue iter 442: root cause found — `page.tsx` was `"use client"` without `export const metadata`, failing `__tests__/lib/metadata-coverage.test.ts`. Fix: split into server `page.tsx` (metadata + JSON-LD) + `FHSSCalculatorClient.tsx` ("use client" interactive UI). Commit `07b5e5f`. Last CI: pending. **Stream complete pending CI green.** | #895 merged |
 | SM | `claude/audit-remediation/sm-service-cultural` | **#904 OPEN** | SM-01 done (`819465d`): grouped service-line specialty filter by `ADVISOR_SPECIALTY_CATEGORIES` in advisor listing (replaces flat alpha chips). SM-02 done (`819465d`): "Cultural & Faith-Based" category added to specialty taxonomy (Halal, ESG, Buddhist, Bilingual etc.); non-English language badges on advisor cards (🌏 indigo pills). **Stream complete pending #904 merge.** | All SM tasks merged |
 | MK | `claude/audit-remediation/mk-marketplace-conversion` | **#903 OPEN** | MK-01 done (`773c0e8`): `AdvisorCalendarEmbed` — inline Calendly/Cal.com iframe embed on advisor profile; falls back to link for other URLs. MK-02 done (`773c0e8`): `AdvisorVideoIntro` — lazy poster-overlay player replacing bare iframe; YouTube thumbnail auto-fetch + Vimeo support. Both wired into `AdvisorProfileClient`. **Stream complete pending #903 merge.** | All MK tasks merged |
 | CD | `claude/audit-remediation/cd-01-financial-calendar` · `claude/audit-remediation/cd-01-calendar-utility` | **#900 OPEN** · **#902 OPEN** | CD-01 done (`e07b8e4`): public `/tools/financial-calendar` (PR #900). CD-01 account-gated (`5142821`): `/account/calendar` personalised deadline calendar (PR #902). CD-02 done (`3ff2353`): `/tools/currency-converter` + `CurrencyConverterClient` — 15 currencies, FIRB thresholds context, static mid-market rates (PR #902). CD-03 done (`3ff2353`): `/pricing` — 5 fee tables for financial planners/brokers/tax accountants/buyer's agents/SMSF specialists (PR #902). CI rescue iter 435: `Dated strings gate` fixed — "1 July 2025" in calendar description (`// dated-ok`), commit `5142821`. **Stream complete pending #900 + #902 merge.** | All CD tasks merged |
@@ -109,30 +109,6 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 
 ---
 
-### Z-23+BB-08 persistent `Lint · Type-check · Test · Build` failure on PR #895 — 2026-05-18
-
-Stuck-detection guard fired: 3 CI-RESCUE entries for PR #895 (`Lint · Type-check · Test · Build`) within 24h (iters 438, 440, 441). Exhaustive static analysis found no root cause.
-
-**What was checked (iter 441):**
-- All TypeScript types in `lib/hub-configs/first-home-buyer.ts` and `app/tools/fhss-calculator/page.tsx` verified correct against `HubConfig`, `LeadQueueRoute`, `CalculatorSchemaInput`, `breadcrumbJsonLd`, `faqJsonLd`, `GENERAL_ADVICE_WARNING` signatures.
-- `node scripts/check-jsonld-coverage.mjs` passes locally (337 public routes, all covered).
-- ESLint: no `error`-level rule violations in new files; `npm run lint` = `eslint .` (no `--max-warnings 0`).
-- Coverage thresholds: adding `lib/hub-configs/first-home-buyer.ts` (0% covered) drops ~0.8pp on lines/statements — still above 65% floor.
-- No server-only imports in client component dependency chain.
-- `app/first-home-buyer/page.tsx` uses same HubPage/ISR pattern as SMSF/grants/dividends hubs (all of which build fine).
-
-**Possible causes (unverifiable without CI logs):**
-- A runtime error in `npm run build` not caught by `tsc --noEmit` (e.g., missing export, circular import, Next.js edge-runtime constraint)
-- A specific test failing in `npm run test:coverage` that isn't reproduced by reading source
-- An environment-dependent issue on the CI runner (unlikely after empty-commit re-trigger)
-
-**Recommendation matrix:**
-- **(a) Get CI logs — recommended:** Access `https://github.com/Funs7575/invest-com-au/actions/runs/26011543652/job/76453051296` and expand the failing step to see the exact error message. Fix the root cause.
-- **(b) Admin-merge if code is verified correct:** The code review shows all TypeScript and logic is sound. If logs confirm only a transient runner issue, admin-merge is reasonable.
-- **(c) Rebase from main:** If main has had significant changes since the branch was created, a fresh rebase might resolve environment mismatches.
-
-**To resolve:** Diagnose via CI logs, fix root cause or admin-merge, delete this blocked entry.
-
 ---
 
 ## Resolved as false positives
@@ -146,6 +122,21 @@ Stuck-detection guard fired: 3 CI-RESCUE entries for PR #895 (`Lint · Type-chec
 ---
 
 ## Iteration log (most recent first)
+
+### iter 442 — 2026-05-18 — CI-RESCUE Z-23+BB-08 (#895 metadata-coverage test fix)
+
+- **Stream:** Z-23+BB-08 (first-home-buyer hub + FHSS calculator)
+- **Phase:** 2 — CI rescue
+- **PR:** #895 OPEN
+- **Branch:** `claude/audit-remediation/z-23-first-home-buyer`
+- **Commit:** `07b5e5f`
+- **Diff:** +412 -375 (new `FHSSCalculatorClient.tsx` + simplified `page.tsx`)
+- **Root cause found (with node_modules installed this fire):** `__tests__/lib/metadata-coverage.test.ts` was failing — `app/tools/fhss-calculator/page.tsx` had `"use client"` at the top but no `export const metadata`. In Next.js App Router, `metadata` can only be exported from Server Components; the test walks all public `app/**/page.tsx` files and requires each to have metadata in self or an ancestor layout. The FHSS calculator page had none.
+- **Why this wasn't caught by local tsc / lint:** TypeScript doesn't enforce the metadata requirement — it's a runtime + test convention, not a type error. ESLint has no rule for it. The only gate is `metadata-coverage.test.ts` (vitest).
+- **Why iter 441 missed it:** node_modules not installed; only static analysis performed; test suite not run.
+- **Fix:** Split into server `page.tsx` (exports `metadata`, JSON-LD `<script>` tags, renders `<FHSSCalculatorClient>` via `<Suspense>`) + `FHSSCalculatorClient.tsx` (`"use client"`, all interactive state/UI). Matches existing pattern: `app/tools/withholding-tax-calculator/page.tsx` + `WithholdingTaxClient.tsx`.
+- **Local verification:** `npx vitest run __tests__/lib/metadata-coverage.test.ts` ✅ (452 tests); `npx tsc --noEmit` ✅ (no errors); `npm run lint` ✅ (0 errors); `npx vitest run` (full suite) ✅ (9063/9063 pass).
+- **STATUS: CI-RESCUE · stream=Z-23+BB-08 · pr=#895**
 
 ### iter 441 — 2026-05-18 — CI-RESCUE CM (#905 a11y fix) + Z-23 stuck → Blocked
 
