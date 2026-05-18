@@ -19,6 +19,8 @@ import { logger } from "@/lib/logger";
 import { listingUrl } from "@/lib/listing-url";
 import InvestListingsClient from "@/components/InvestListingsClient";
 import GetMatchedEmbed from "@/components/get-matched/GetMatchedEmbed";
+import { loadInvestPageContext } from "@/lib/listing-page-context";
+import { computeMatchScore } from "@/lib/listing-match";
 import HomeToolsStrip from "@/components/HomeToolsStrip";
 import IntentCountryBadge from "@/components/foreign-investment/IntentCountryBadge";
 import IntentCountryRecommendation from "@/components/foreign-investment/IntentCountryRecommendation";
@@ -146,6 +148,25 @@ export default async function InvestMarketplacePage() {
     if (l.siv_complying) sivCount++;
   }
 
+  // Wave 3 — load page-side context (advisor opt-in counts, claimed
+  // slugs, investor profile, owner status). One round trip on SSR,
+  // fail-tolerant — page renders even when these fetches fail.
+  const ctx = await loadInvestPageContext(
+    listings.map((l) => l.id),
+    listings.map((l) => l.slug),
+  );
+
+  // Pre-compute match scores so the client doesn't pay the cost
+  // per-card. Sparse map — only listings that beat the score floor
+  // (50) end up keyed.
+  const matchScores: Record<number, number> = {};
+  if (ctx.investorProfile) {
+    for (const l of listings) {
+      const score = computeMatchScore(l, ctx.investorProfile);
+      if (score != null) matchScores[l.id] = score;
+    }
+  }
+
   const categories = getOpportunityCategories();
   const categoryTabs = categories.map((c) => ({ slug: c.slug, label: c.label }));
 
@@ -228,11 +249,26 @@ export default async function InvestMarketplacePage() {
               <span className="font-bold">{sivCount}</span> SIV-complying
             </span>
           )}
+          {ctx.isListingOwner && (
+            <Link
+              href="/account/my-listings"
+              className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 border border-amber-200 rounded-full text-[0.65rem] md:text-xs font-semibold text-amber-700 hover:bg-amber-100 transition-colors shadow-sm"
+            >
+              <Icon name="user-check" size={11} />
+              My listings →
+            </Link>
+          )}
         </div>
       </div>
 
       {/* ── Marketplace (primary — no two-step) ───────────────── */}
-      <InvestListingsClient listings={listings} categories={categoryTabs} />
+      <InvestListingsClient
+        listings={listings}
+        categories={categoryTabs}
+        matchScores={matchScores}
+        advisorOptInCounts={ctx.advisorOptInCounts}
+        claimedSlugs={ctx.claimedSlugs}
+      />
 
       {/* ── "Not sure?" CTA — moved BELOW results per UX rebuild.
             Wedging this between filters and results was an anti-pattern
