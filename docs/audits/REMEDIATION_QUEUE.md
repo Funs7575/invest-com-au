@@ -132,6 +132,17 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 
 ## Iteration log (most recent first)
 
+### iter 440 — 2026-05-18 — CI-RESCUE Z-23+BB-08 (#895 re-trigger)
+
+- **Stream:** Z-23+BB-08 (first-home-buyer hub + FHSS calculator)
+- **Phase:** 2 — CI rescue (empty-commit re-trigger)
+- **PR:** #895 OPEN
+- **Branch:** `claude/audit-remediation/z-23-first-home-buyer`
+- **Commit:** `adcaf93` (empty)
+- **Diff:** 0 LOC
+- **Root cause investigation:** Local scripts all pass — `check-dated-strings.mjs` ✅, `check-jsonld-coverage.mjs` ✅ (337 public routes, all covered), `audit:rate-limits --strict` ✅ (100%, 461 routes). TypeScript shapes all verified correct: `breadcrumbJsonLd({url})`, `faqJsonLd([{q,a}])`, `calculatorJsonLd({name,description,path})`, `DeepDiveCard.{excerpt,readingTimeMinutes}`, `lever:"lead_routing"`. No tsc, lint, or test failures reproducible locally (node_modules not installed — sandbox hardware exception). CI failure at `02:44:51Z` on run `26010726709` took ~6m15s — consistent with build or test step. Pushing empty commit to determine if failure was transient runner noise vs persistent code issue. All other CI gates green (types drift, RLS, secrets, etc).
+- **STATUS: CI-RESCUE · stream=Z-23+BB-08 · pr=#895**
+
 ### iter 439 — 2026-05-18 — CM-01 life-event matching / multi-advisor routing
 
 - **Stream:** CM (multi-advisor / life-event matching)
