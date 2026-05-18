@@ -67,7 +67,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | MK | _complete_ | **#903 MERGED 2026-05-18** | MK-01+MK-02 done. **Stream complete. #903 merged by founder 2026-05-18.** | All MK tasks merged ✓ |
 | CD | _complete_ | **#900 CLOSED 2026-05-18** (dup) · **#902 MERGED 2026-05-18** | CD-01 (public calendar + account calendar), CD-02 (currency converter), CD-03 (pricing transparency) all done. #900 closed as duplicate (content covered by #902). **Stream complete. #902 merged by founder 2026-05-18.** | All CD tasks merged ✓ |
 | CM | _complete_ | **#905 MERGED 2026-05-18** | CM-01 done. a11y fix (`a2f98e6`) now on main via this merge. **Stream complete. #905 merged by founder 2026-05-18.** | All CM tasks merged ✓ |
-| AT | `claude/audit-remediation/at-02-couple-family-business` | **#907 MERGED 2026-05-18** | AT-01 done (`a2553d7`, #907): account type selector in profile. **AT-02 (couple), AT-03 (family), AT-04 (business/SMSF) pending** — account-type-aware dashboard personalisation. New PR to open on next iteration. | AT-01..04 done |
+| AT | `claude/audit-remediation/at-02-couple-family-business` | **#907 MERGED 2026-05-18** · **#917 OPEN** | AT-01 done (`a2553d7`, #907). AT-02..04 done (`f34e7fe`): couple/family/business account-type hub sections on dashboard — `ACCOUNT_TYPE_HUBS` map + conditional section renders between "Recommended" and advisor cards. **Stream complete pending #917 merge.** | AT-01..04 done |
 
 ---
 
@@ -114,6 +114,19 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 445 — 2026-05-18 — AT-02..04 couple/family/business account-type hubs on dashboard
+
+- **Stream:** AT (account-type personalisation)
+- **Phase:** 5 — implementation
+- **Branch:** `claude/audit-remediation/at-02-couple-family-business`
+- **PR:** #917 OPEN
+- **Commit:** `f34e7fe` — feat(at): AT-02..04 — couple/family/business hub sections on investor dashboard
+- **Diff:** +59 LOC in `app/account/dashboard/page.tsx`
+- **Items done:** AT-02 (couple hub), AT-03 (family hub), AT-04 (business/SMSF hub)
+- **Implementation:** Added `ACCOUNT_TYPE_HUBS` map keyed by `InvestorAccountType` (couple/family/business), each with a heading + 4 resource cards. A `accountTypeHub` variable reads `getInvestorAccountType(investorProfile?.meta ?? {})` (from AT-01's `lib/account-types.ts` helper); renders a `<section>` between "Recommended for you" and "Profile-matched advisors" when non-individual. `individual` accounts see no change. Hub cards are accessible `<Link>` elements with emoji icon, label, and description.
+- **Cumulative diff (batch fire):** ~108 LOC
+- **STATUS: PROGRESS · stream=AT · item=AT-02..04 · pr=#917**
 
 ### iter 444 — 2026-05-18 — CI/merge rescue GT (#881) + DF (#883); queue sync for founder-merged PRs
 
