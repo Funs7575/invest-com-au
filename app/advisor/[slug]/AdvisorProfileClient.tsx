@@ -293,6 +293,7 @@ export default function AdvisorProfileClient({
                     method={pro.verification_method ?? null}
                     abn={pro.abn ?? null}
                     afsl={pro.afsl_number ?? null}
+                    lastVerifiedAt={pro.last_verified_at ?? null}
                     compact
                   />
                   {pro.accepts_international_clients && (
