@@ -138,6 +138,28 @@ export default function AccountKindCards({ memberships, savedSearchCount = 0, re
             </div>
           </Link>
         )}
+        <Link
+          href="/account/upgrade"
+          className="block border border-dashed border-slate-300 hover:border-emerald-400 bg-slate-50 hover:bg-emerald-50 rounded-xl p-4 transition-colors"
+        >
+          <div className="flex items-start gap-3">
+            <span className="text-2xl shrink-0" aria-hidden>
+              +
+            </span>
+            <div className="flex-1 min-w-0">
+              <h3 className="text-sm font-semibold text-slate-900">
+                Add a workspace
+              </h3>
+              <p className="text-xs text-slate-600 mt-1">
+                Wear another hat — list as a pro, add a business profile, or
+                post a listing.
+              </p>
+              <p className="text-xs font-semibold text-emerald-700 mt-2">
+                See options →
+              </p>
+            </div>
+          </div>
+        </Link>
         {hasReviews && (
           <Link
             href="/account/reviews"
