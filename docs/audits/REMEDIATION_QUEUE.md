@@ -59,10 +59,10 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | EM | `claude/audit-remediation/em-02-hub-drip-infra` | **#848 MERGED 2026-05-17** · **#880 OPEN** | EM-03 + EM-01 done. EM-02 (`16add6f`): hub_drip_log migration + hub-subscriber-drip cron. **Stream complete pending #880 merge (Tier C).** | All EM tasks merged |
 | LX | `claude/audit-remediation/lx-03-cross-calc-nav` | **#849 MERGED 2026-05-15** · **#879 OPEN** | LX-01, LX-02, LX-03, LX-04, LX-05 done. LX-03 (`b6f675a`): RelatedCalculators component wired into 4 main calculators. **Stream complete pending #879 merge.** | All LX tasks merged |
 | OB | `claude/audit-remediation/ob-09-remaining-quizzes` | **#852 MERGED 2026-05-17** · **#878 OPEN** | OB-01..OB-12 done. OB-09..OB-12 (`710dba3`): LUMP_SUM, FOREIGN_INVESTMENT, SELL_BUSINESS, HALAL_INVESTING configs + 4 quiz pages + sitemap. **Stream complete pending #878 merge.** | All OB tasks merged |
-| GT | `claude/audit-remediation/gt-02-annual-check` | **#881 OPEN** | GT-01 blocked (needs DV-01). GT-02 done (`a4c5352`): annual financial check-up page `/account/annual-check` — personalised FY checklist for 5 investor types. NavCard added to dashboard. CI rescue iter 422: `Supabase types drift` fixed — `hub_drip_log` from EM-02 caused drift. CI rescue iter 429: `Supabase types drift` again — advisor_auctions/bids migration added to main; merged main into GT branch (`2929e91`) to pick up updated types. Axe-core still failing (systemic/blocked). | All GT tasks merged |
+| GT | `claude/audit-remediation/gt-02-annual-check` | **#881 OPEN** | GT-01 blocked (needs DV-01). GT-02 done (`a4c5352`): annual financial check-up page `/account/annual-check` — personalised FY checklist for 5 investor types. NavCard added to dashboard. CI rescue iter 422: `Supabase types drift` fixed — `hub_drip_log` from EM-02 caused drift. CI rescue iter 429: `Supabase types drift` again — advisor_auctions/bids migration; merged main (`2929e91`). CI rescue iter 431: `Supabase types drift` again — 3 new tables (brief_promo_codes, brief_promo_redemptions, investor_oauth_connections) from founder PRs #891–#893; types regen on main (`b9b57b5`), then merged into GT (`241721f`). Axe-core still failing (systemic/blocked). Last CI: pending — pushed `241721f` 2026-05-18. | All GT tasks merged |
 | DF | `claude/audit-remediation/df-01-decision-frameworks` | **#883 OPEN** · ~~#884 CLOSED (dup)~~ | DF-01 done (`49bc079`): DecisionTree engine + buy-vs-rent. DF-02 done (`972e13a`): salary-sacrifice tree. DF-03 done (`1d741e9`): SMSF-setup tree. DF-04 done (`cadd73e`): tools index updated (buy-vs-rent/salary-sacrifice/smsf-setup added to ToolsClient). **Stream complete pending #883 merge.** | All DF tasks merged |
 | QA | `claude/audit-remediation/qa-01-question-deep-dive` | **#890 OPEN** | QA-01 done (`a7c7d56`): /questions index + RSC deep-dive template + 17 seeded questions. QA-02 done (`3c0d82a`): +13 questions → 30 total (tax-loss harvesting, MLS, LITO, crypto tax, investment bonds, A-REITs, rebalancing, shares vs bonds, diversification, FHBG, age pension assets test, HECS-HELP). **Stream complete at 30 questions pending #890 merge.** | All QA tasks merged |
-| Z-23+BB-08 | `claude/audit-remediation/z-23-first-home-buyer` | **#895 OPEN** | Z-23 done (`6f33976`): `/first-home-buyer` hub page (HubConfig in `lib/hub-configs/first-home-buyer.ts`, `app/first-home-buyer/page.tsx`). BB-08 done: FHSS deposit calculator at `app/tools/fhss-calculator/page.tsx` (client component, maths: 85% concessional × marginal_rate + 2% medicare − 30% offset). Lead magnet added (`lib/lead-magnets.ts`). Sitemap updated. `getLeadMagnetForHub("first-home-buyer")` wired. AA-01 (`/find/[advisor-type]/[city]`) noted as **pre-existing** — full 314-line implementation already in main before queue tracking. **Stream complete pending #895 merge.** | #895 merged |
+| Z-23+BB-08 | `claude/audit-remediation/z-23-first-home-buyer` | **#895 OPEN** | Z-23 done (`6f33976`): `/first-home-buyer` hub page. BB-08 done: FHSS deposit calculator at `app/tools/fhss-calculator/page.tsx`. CI rescue iter 431: fixed Dated strings gate ("1 July 2017" → `// dated-ok`), JSON-LD missing (added `calculatorJsonLd`+`breadcrumbJsonLd`+`faqJsonLd`), merged main for Supabase types drift. Commit `0cdd2ee`. Last CI: pending — pushed 2026-05-18. **Stream complete pending #895 merge.** | #895 merged |
 
 ---
 
@@ -127,6 +127,22 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 431 — 2026-05-18 — CI-RESCUE Z-23+BB-08 (#895) + GT (#881) + types regen on main
+
+- **Streams:** Z-23+BB-08 (PR #895), GT (PR #881), main (types regen)
+- **Phase:** 2 — CI rescue (dual stream + Phase 1.5 types regen)
+- **Commits:**
+  - `0cdd2ee` — fix(z23+bb08): JSON-LD + dated-ok + merge main for types (branch `z-23-first-home-buyer`)
+  - `b9b57b5` — chore(db): regenerate database.types.ts auto-rescue (main)
+  - `241721f` — merge main into GT branch with fresh types (branch `gt-02-annual-check`)
+- **PR #895 failures fixed:**
+  1. `Dated strings gate` — "1 July 2017" (FHSS scheme start, static legislative fact) not escaped. Fixed with `{/* // dated-ok ... */}` JSX comment on preceding line.
+  2. `Lint · Type-check · Test · Build` — `check-jsonld-coverage.mjs` runs inside this job; `app/tools/fhss-calculator/page.tsx` (pure "use client" page) emitted no JSON-LD. Fixed by importing `calculatorJsonLd`, `breadcrumbJsonLd`, `faqJsonLd` at module scope and embedding three `<script type="application/ld+json">` tags at `<main>` top. All three gates now pass locally.
+  3. `Supabase types drift` — branch predated 26 main commits. Fixed by merging origin/main into branch.
+- **PR #881 failure:** `Supabase types drift` FAILING even after iter 429's merge. Root cause: founder PRs #891–#893 ("second-wave UX bundle", "Re-verified freshness", "ProfessionalService schema") added 3 new DB tables (`brief_promo_codes`, `brief_promo_redemptions`, `investor_oauth_connections`) without a corresponding types regen in main. Phase 1.5 gate fired: regenerated `lib/database.types.ts` (+144 lines) via Supabase MCP, committed `b9b57b5` directly to main, then merged updated main into GT branch (`241721f`).
+- **Local verification:** `node scripts/check-dated-strings.mjs` ✅, `node scripts/check-jsonld-coverage.mjs` ✅ (all public routes), `npm run audit:rate-limits --strict` → 100% (461 routes), `npm test -- afsl-compliance-coverage` → 39/39 ✅
+- **STATUS: CI-RESCUE · stream=Z-23+BB-08+GT · pr=#895+#881**
 
 ### iter 430 — 2026-05-18 — Z-23+BB-08 first-home-buyer hub + FHSS calculator
 
