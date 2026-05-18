@@ -61,6 +61,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | OB | `claude/audit-remediation/ob-09-remaining-quizzes` | **#852 MERGED 2026-05-17** · **#878 OPEN** | OB-01..OB-12 done. OB-09..OB-12 (`710dba3`): LUMP_SUM, FOREIGN_INVESTMENT, SELL_BUSINESS, HALAL_INVESTING configs + 4 quiz pages + sitemap. **Stream complete pending #878 merge.** | All OB tasks merged |
 | GT | `claude/audit-remediation/gt-02-annual-check` | **#881 OPEN** | GT-01 blocked (needs DV-01). GT-02 done (`a4c5352`): annual financial check-up page `/account/annual-check` — personalised FY checklist for 5 investor types. NavCard added to dashboard. CI rescue iter 422: `Supabase types drift` fixed — `hub_drip_log` from EM-02 caused drift; types regen committed to main (`c5113b7`) + GT branch rebased to pick it up (`731ea21`). | All GT tasks merged |
 | DF | `claude/audit-remediation/df-01-decision-frameworks` | **#883 OPEN** · ~~#884 CLOSED (dup)~~ | DF-01 done (`49bc079`): DecisionTree engine + buy-vs-rent. DF-02 done (`972e13a`): salary-sacrifice tree. DF-03 done (`1d741e9`): SMSF-setup tree. DF-04 done (`cadd73e`): tools index updated (buy-vs-rent/salary-sacrifice/smsf-setup added to ToolsClient). **Stream complete pending #883 merge.** | All DF tasks merged |
+| QA | `claude/audit-remediation/qa-01-question-deep-dive` | **#890 OPEN** | QA-01 done (`a7c7d56`): /questions index + RSC deep-dive template + 17 seeded questions (lib/questions-data.ts) + sitemap. Categories: super/tax/investing/property/budgeting. FAQ JSON-LD + BreadcrumbList JSON-LD + generateStaticParams. QA-02 (extend to 50 questions) pending. | All QA tasks merged |
 
 ---
 
@@ -125,6 +126,17 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 427 — 2026-05-18 — QA-01 Q&A deep-dive template
+
+- **Stream:** QA (Q&A surfaces)
+- **Item:** QA-01 — single-question deep-dive template + seeded pages
+- **Branch:** `claude/audit-remediation/qa-01-question-deep-dive`
+- **PR:** #890 OPEN
+- **Commit:** `a7c7d56`
+- **Diff:** +1301 -1 across 4 files (lib/questions-data.ts +944, app/questions/[slug]/page.tsx +228, app/questions/page.tsx +126, app/sitemap.ts +4)
+- **What:** New `/questions` surface at slot 72 in the priority order (Tier 3, after DF-01..04). `lib/questions-data.ts` defines `InvestingQuestion` type and seeds 17 questions spanning super (salary sacrifice, concessional contributions, SG rate, SMSF, preservation age, FHSS, franking in super), tax (negative gearing, franking credits, CGT discount, PPR exemption, property depreciation), investing (compound interest, DCA, ETF vs managed fund), and budgeting (emergency fund). `app/questions/page.tsx` — index grouped by category. `app/questions/[slug]/page.tsx` — RSC deep-dive with short answer box, detailed sections, FAQ accordion, related tools, related questions, `GENERAL_ADVICE_WARNING` footer, `FAQPage` JSON-LD, `BreadcrumbList` JSON-LD, `generateStaticParams()`. Sitemap updated. QA-02 (extend to 50 questions) is next.
+- **STATUS: PROGRESS · stream=QA · item=QA-01 · pr=#890**
 
 ### iter 426 — 2026-05-18 — DF-04 tools index + batch end
 
