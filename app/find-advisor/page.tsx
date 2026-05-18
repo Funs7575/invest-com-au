@@ -273,10 +273,12 @@ function FindAdvisorQuiz() {
   const prefilledIntent = needParam ? NEED_TO_INTENT[needParam] || null : null;
 
   // LX-04 — pre-filled form params from hub CTAs, calculators, onboarding results.
+  // CM-01 — context pre-fill from life-event matcher (?context=first_home,investment).
   const stateParam = searchParams.get("state");
   const postcodeParam = searchParams.get("postcode");
   const budgetParam = searchParams.get("budget");
   const firstNameParam = searchParams.get("first_name");
+  const contextParam = searchParams.get("context");
 
   // Read sessionStorage once synchronously so all lazy initialisers share the same
   // parsed value — avoids 5 separate JSON.parse calls and, crucially, avoids the
@@ -308,7 +310,8 @@ function FindAdvisorQuiz() {
     return {
       step: initialIntent ? 2 : 1,
       intent: initialIntent,
-      context: [],
+      // CM-01: pre-select context from life-event matcher (?context=first_home,income_protection,…)
+      context: contextParam ? contextParam.split(",").filter(Boolean) : [],
       // LX-04: seed state/postcode/budget/firstName from URL so Step 3 + Step 4
       // are pre-populated when the user reaches them — reduces form friction.
       state: stateParam ?? "",
@@ -330,7 +333,7 @@ function FindAdvisorQuiz() {
           ...prev,
           step: 2,
           intent,
-          context: [],
+          context: contextParam ? contextParam.split(",").filter(Boolean) : [],
           // Re-apply pre-fill params on navigation changes too
           state: stateParam ?? prev.state,
           postcode: postcodeParam ?? prev.postcode,
@@ -763,6 +766,11 @@ function Step1({ onSelect }: { onSelect: (intent: Intent) => void }) {
             {t}
           </span>
         ))}
+      </div>
+      <div className="mt-4 text-center">
+        <Link href="/find-advisor/life-event" className="text-xs text-amber-600 hover:text-amber-700 font-semibold">
+          Find by life event instead (getting married, new baby, selling a business\u2026) &rarr;
+        </Link>
       </div>
     </Card>
   );
