@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createStaticClient } from "@/lib/supabase/static";
+import { getWidgetCatalogueEntry } from "@/lib/widget/types";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -38,6 +39,15 @@ export async function GET(request: NextRequest) {
   const theme = params.get("theme") === "dark" ? "dark" : "light";
   const limit = Math.min(Math.max(parseInt(params.get("limit") || "5", 10) || 5, 1), 10);
 
+  // FIN_NOTEBOOK #16 — curated content filter. `?widget=` picks a
+  // pre-defined audience (cheapest-brokers, us-shares, top-crypto,
+  // savings-rates, term-deposits); the slug resolves via the catalogue
+  // in lib/widget/types.ts. When omitted, the route falls back to the
+  // existing top-by-rating behaviour.
+  const widgetSlug = params.get("widget");
+  const catalogueEntry = widgetSlug ? getWidgetCatalogueEntry(widgetSlug) : undefined;
+  const widgetHeading = catalogueEntry?.heading || "Broker Comparison";
+
   // Anon-key client: RLS enforces that only `status='active'` brokers are
   // readable, and only the columns selected below are returned. See header
   // comment for the public-by-design CORS contract.
@@ -51,6 +61,28 @@ export async function GET(request: NextRequest) {
 
   if (brokerSlugs.length > 0) {
     query = query.in("slug", brokerSlugs);
+  } else if (catalogueEntry) {
+    switch (catalogueEntry.filter) {
+      case "crypto":
+        query = query.eq("platform_type", "crypto_exchange");
+        break;
+      case "savings":
+        query = query.eq("platform_type", "savings_account");
+        break;
+      case "term-deposits":
+        query = query.eq("platform_type", "term_deposit");
+        break;
+      case "asx":
+        // ASX brokers have a per-trade fee; default share_broker covers it.
+        query = query.eq("platform_type", "share_broker").not("asx_fee_value", "is", null);
+        break;
+      case "us":
+        query = query.eq("platform_type", "share_broker").not("us_fee_value", "is", null);
+        break;
+      case "all":
+        // No additional filter.
+        break;
+    }
   }
 
   const { data: brokers } = await query;
@@ -67,6 +99,7 @@ export async function GET(request: NextRequest) {
   var BROKERS = ${brokersJson};
   var TYPE = ${JSON.stringify(widgetType)};
   var THEME = ${JSON.stringify(theme)};
+  var WIDGET_HEADING = ${JSON.stringify(widgetHeading)};
   var BASE = "https://invest.com.au";
 
   // Find the script tag that loaded us (last script on page)
@@ -125,7 +158,7 @@ export async function GET(request: NextRequest) {
 
   if (TYPE === "compact") {
     container.classList.add("icw-compact");
-    container.innerHTML = '<div class="icw-header">Broker Comparison</div>';
+    container.innerHTML = '<div class="icw-header">' + esc(WIDGET_HEADING) + '</div>';
     BROKERS.forEach(function(b) {
       var logoHtml = b.logo_url
         ? '<div class="icw-logo" style="background:#fff;border:1px solid ' + border + '"><img src="' + esc(b.logo_url) + '" alt="' + esc(b.name) + '"></div>'
@@ -142,7 +175,7 @@ export async function GET(request: NextRequest) {
     });
   } else {
     // Table layout
-    container.innerHTML = '<div class="icw-header">Broker Comparison</div>';
+    container.innerHTML = '<div class="icw-header">' + esc(WIDGET_HEADING) + '</div>';
     container.innerHTML += '<div class="icw-row" style="font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:' + textMuted + '">' +
       '<div>Broker</div><div>ASX Fee</div><div class="icw-hide-sm">US Fee</div><div class="icw-hide-sm">Rating</div><div></div></div>';
     BROKERS.forEach(function(b) {
