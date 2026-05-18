@@ -6,6 +6,7 @@ import Link from "next/link";
 import Icon from "@/components/Icon";
 import { useUser } from "@/lib/hooks/useUser";
 import { useToast } from "@/components/Toast";
+import { type InvestorAccountType, INVESTOR_ACCOUNT_TYPES } from "@/lib/account-types";
 
 /* ── Constants ── */
 
@@ -128,6 +129,10 @@ const emptyProfile: ProfileData = {
   preferred_broker: "",
 };
 
+interface InvestorMeta {
+  account_type: InvestorAccountType;
+}
+
 /* ── Main component ── */
 
 export default function ProfileClient() {
@@ -136,6 +141,7 @@ export default function ProfileClient() {
   const { toast } = useToast();
 
   const [form, setForm] = useState<ProfileData>(emptyProfile);
+  const [investorMeta, setInvestorMeta] = useState<InvestorMeta>({ account_type: "individual" });
   const [fetching, setFetching] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -146,26 +152,37 @@ export default function ProfileClient() {
     }
   }, [authLoading, user, router]);
 
-  // Fetch profile on mount
+  // Fetch profile + investor meta on mount
   useEffect(() => {
     if (!user) return;
     let cancelled = false;
 
     (async () => {
       try {
-        const res = await fetch("/api/user-profile");
-        if (!res.ok) return;
-        const { profile } = await res.json();
-        if (cancelled || !profile) return;
-        setForm({
-          display_name: profile.display_name ?? "",
-          state: profile.state ?? "",
-          investing_experience: profile.investing_experience ?? "",
-          investment_goals: profile.investment_goals ?? "",
-          portfolio_size: profile.portfolio_size ?? "",
-          interested_in: Array.isArray(profile.interested_in) ? profile.interested_in : [],
-          preferred_broker: profile.preferred_broker ?? "",
-        });
+        const [profileRes, metaRes] = await Promise.all([
+          fetch("/api/user-profile"),
+          fetch("/api/account/account-type"),
+        ]);
+        if (!cancelled && profileRes.ok) {
+          const { profile } = await profileRes.json();
+          if (profile) {
+            setForm({
+              display_name: profile.display_name ?? "",
+              state: profile.state ?? "",
+              investing_experience: profile.investing_experience ?? "",
+              investment_goals: profile.investment_goals ?? "",
+              portfolio_size: profile.portfolio_size ?? "",
+              interested_in: Array.isArray(profile.interested_in) ? profile.interested_in : [],
+              preferred_broker: profile.preferred_broker ?? "",
+            });
+          }
+        }
+        if (!cancelled && metaRes.ok) {
+          const data = await metaRes.json();
+          if (data.account_type) {
+            setInvestorMeta({ account_type: data.account_type });
+          }
+        }
       } finally {
         if (!cancelled) setFetching(false);
       }
@@ -178,12 +195,19 @@ export default function ProfileClient() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const res = await fetch("/api/user-profile", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-      if (res.ok) {
+      const [profileRes, metaRes] = await Promise.all([
+        fetch("/api/user-profile", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(form),
+        }),
+        fetch("/api/account/account-type", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ account_type: investorMeta.account_type }),
+        }),
+      ]);
+      if (profileRes.ok && metaRes.ok) {
         toast("Profile saved", "success");
       } else {
         toast("Failed to save profile", "error");
@@ -231,6 +255,23 @@ export default function ProfileClient() {
             <Icon name="arrow-left" size={18} className="text-slate-600" />
           </Link>
           <h1 className="text-2xl font-extrabold text-slate-900">Edit Profile</h1>
+        </div>
+
+        {/* Section 0: Account Type */}
+        <div className="bg-white border border-slate-200 rounded-2xl p-6 mb-4">
+          <h2 className="text-base font-bold text-slate-900 mb-1">Account Type</h2>
+          <p className="text-xs text-slate-500 mb-4">Helps us surface content relevant to your situation.</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {INVESTOR_ACCOUNT_TYPES.map((opt) => (
+              <RadioCard
+                key={opt.value}
+                selected={investorMeta.account_type === opt.value}
+                onClick={() => setInvestorMeta({ account_type: opt.value })}
+                label={opt.label}
+                description={opt.description}
+              />
+            ))}
+          </div>
         </div>
 
         {/* Section 1: Personal Info */}
