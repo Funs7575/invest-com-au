@@ -23,6 +23,8 @@ admin_audit_log
 # A-03 (advisor family)
 advisor_applications
 advisor_articles
+advisor_auctions          # W1.4 reverse marketplace — live, migration backfill pending
+advisor_auction_bids      # W1.4 reverse marketplace — live, migration backfill pending
 advisor_auth_tokens
 advisor_billing
 advisor_bookings
@@ -99,6 +101,7 @@ rate_limits
 webhook_delivery_queue
 
 # A-12 (email / lifecycle)
+hub_drip_log              # vertical-hub drip cadence — live, migration backfill pending
 investor_drip_log
 notification_preferences
 
