@@ -18,6 +18,8 @@ import {
   freshnessSignal,
 } from "@/lib/listing-kind";
 import InvestListingCard from "@/components/InvestListingCard";
+import ListingCompareBar from "@/components/invest/ListingCompareBar";
+import SaveSearchButton from "@/components/invest/SaveSearchButton";
 import Icon from "@/components/Icon";
 
 // ─── Props ───────────────────────────────────────────────────────────
@@ -505,6 +507,12 @@ export default function InvestListingsClient({
                 </button>
               ))}
             </div>
+
+            {/* Save current filter set as a named saved-search */}
+            <SaveSearchButton
+              activeChipsCount={activeChips.length}
+              filters={Object.fromEntries(searchParams.entries())}
+            />
           </div>
 
           {/* Row 2: kind segmented control */}
@@ -696,6 +704,9 @@ export default function InvestListingsClient({
         intentCountry={intentCountry ?? null}
         setParams={setParams}
       />
+
+      {/* Sticky compare bar — renders nothing when shortlist is empty */}
+      <ListingCompareBar />
     </div>
   );
 }
