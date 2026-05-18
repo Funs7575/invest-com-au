@@ -144,6 +144,8 @@ export default function WealthStackClient() {
           </p>
         </header>
 
+        <EmailMyStack stackId={stack.stackId} goal={goal} amount={amount as string} />
+
         <section aria-label="Stack components" className="space-y-3">
           {stack.components.map((c) => {
             const ctaUrl = c.broker.affiliate_url
@@ -299,6 +301,93 @@ export default function WealthStackClient() {
       >
         {submitting ? "Building your stack…" : "Build my stack"}
       </button>
+    </form>
+  );
+}
+
+interface EmailMyStackProps {
+  stackId: string;
+  goal: string;
+  amount: string;
+}
+
+function EmailMyStack({ stackId, goal, amount }: EmailMyStackProps) {
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [error, setError] = useState<string | null>(null);
+
+  async function submit(e: FormEvent) {
+    e.preventDefault();
+    setError(null);
+    if (!email.includes("@")) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+    setStatus("sending");
+    try {
+      // Re-call /api/wealth-stack with the email param — server side-
+      // effects the email send and returns the same stack. We don't
+      // re-render with the response; user already has the stack on
+      // screen.
+      const res = await fetch("/api/wealth-stack", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ answers: [goal, amount], goal, amount, email }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      setStatus("sent");
+      trackEvent("wealth_stack_emailed", { stackId }, "/wealth-stack");
+    } catch (err) {
+      setStatus("error");
+      setError(err instanceof Error ? err.message : "Network error");
+    }
+  }
+
+  if (status === "sent") {
+    return (
+      <div
+        role="status"
+        aria-live="polite"
+        className="rounded-xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-900"
+      >
+        ✓ Sent — check your inbox for a recap you can come back to.
+      </div>
+    );
+  }
+
+  return (
+    <form
+      onSubmit={submit}
+      className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
+    >
+      <h3 className="text-sm font-semibold text-slate-900">Email this stack to me</h3>
+      <p className="mt-1 text-xs text-slate-600">
+        We&apos;ll send a recap to your inbox. One email, no follow-up sequence unless you
+        opt in separately.
+      </p>
+      <div className="mt-3 grid gap-2 sm:grid-cols-[1fr,auto]">
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="you@example.com"
+          required
+          autoComplete="email"
+          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-violet-500 focus:outline-none focus:ring-2 focus:ring-violet-200"
+        />
+        <button
+          type="submit"
+          disabled={status === "sending"}
+          className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
+        >
+          {status === "sending" ? "Sending…" : "Email me"}
+        </button>
+      </div>
+      {error && (
+        <p role="alert" className="mt-2 text-xs text-red-700">
+          {error}
+        </p>
+      )}
     </form>
   );
 }
