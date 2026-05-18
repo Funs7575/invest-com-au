@@ -76,10 +76,11 @@ export default function DASPCalculator() {
         {/* Super balance */}
         <div className="space-y-3">
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1.5">Super balance (AUD)</label>
+            <label htmlFor="dasp-balance" className="block text-xs font-bold text-slate-700 mb-1.5">Super balance (AUD)</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">$</span>
               <input
+                id="dasp-balance"
                 type="text"
                 inputMode="decimal"
                 value={totalBalance}
@@ -90,12 +91,13 @@ export default function DASPCalculator() {
             </div>
           </div>
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">
+            <label htmlFor="dasp-tax-free-pct" className="block text-xs font-bold text-slate-700 mb-1">
               Tax-free component (%)
               <span className="font-normal text-slate-400 ms-1">— after-tax contributions only</span>
             </label>
             <div className="relative">
               <input
+                id="dasp-tax-free-pct"
                 type="number"
                 min={0}
                 max={100}
