@@ -294,6 +294,18 @@ const TOOLS: Tool[] = [
     url: "/tools/smsf-setup",
     internal: true,
   },
+  {
+    slug: "fhss-calculator",
+    name: "FHSS Deposit Calculator",
+    category: "Super",
+    rating: 5,
+    description:
+      "Calculate how much deposit you can save via the First Home Super Saver Scheme — and how much tax you save vs saving outside super. Covers concessional and non-concessional contributions across all income brackets.",
+    pros: ["Tax saving estimate", "All income brackets", "Time to $50k maximum"],
+    pricing: "Free tool",
+    url: "/tools/fhss-calculator",
+    internal: true,
+  },
 ];
 
 /* ─── Config ─── */

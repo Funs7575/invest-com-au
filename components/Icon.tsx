@@ -621,6 +621,48 @@ const icons: Record<string, string[]> = {
     "M17.7 3.7a1 1 0 0 0-1.4 0l-4.6 4.6a1 1 0 0 0 0 1.4l2.6 2.6a1 1 0 0 0 1.4 0l4.6-4.6a1 1 0 0 0 0-1.4Z",
     "M19.686 8.314a12.501 12.501 0 0 1 1.356 10.225 1 1 0 0 1-1.752-.119 22 22 0 0 0-3.393-6.319",
   ],
+  // Icons added 2026-05 for the /invest rebuild (listing-kind variants
+  // + view-mode toggle + shortlist button states).
+  store: [
+    "M2 7h20l-1.5 4.5a2 2 0 0 1-2 1.5H5.5a2 2 0 0 1-2-1.5L2 7z",
+    "M4 13v8h16v-8",
+    "M9 21v-5h6v5",
+  ],
+  gem: [
+    "M6 3h12l4 6-10 13L2 9l4-6z",
+    "M11 3 8 9l4 13 4-13-3-6",
+    "M2 9h20",
+  ],
+  grid: [
+    "rect:3,3,7,7,1",
+    "rect:14,3,7,7,1",
+    "rect:14,14,7,7,1",
+    "rect:3,14,7,7,1",
+  ],
+  list: [
+    "M8 6h13",
+    "M8 12h13",
+    "M8 18h13",
+    "M3 6h.01",
+    "M3 12h.01",
+    "M3 18h.01",
+  ],
+  table: [
+    "rect:3,3,18,18,2",
+    "M3 9h18",
+    "M3 15h18",
+    "M9 3v18",
+    "M15 3v18",
+  ],
+  map: [
+    "M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2z",
+    "M9 4v16",
+    "M15 6v16",
+  ],
+  "bookmark-check": [
+    "M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z",
+    "m9 10 2 2 4-4",
+  ],
 };
 
 export default function Icon({ name, size = 24, className = "" }: IconProps) {

@@ -37,12 +37,56 @@ export default async function WatchlistPage() {
   const digestMeta = investorProfile?.meta ?? {};
   const watchlistDigestEnabled = digestMeta.watchlist_digest === true;
 
-  const items = (data ?? []).map((row) => ({
+  const rawItems = (data ?? []).map((row) => ({
     id: row.id as number,
     item_type: row.item_type as string,
     item_slug: row.item_slug as string,
     display_name: row.display_name as string | null,
     added_at: row.added_at as string,
+  }));
+
+  // Enrich watched brokers with their current best-rate snapshot when
+  // the broker is a savings_account or term_deposit. Surfaces the live
+  // rate next to the watched item so the watchlist isn't just a list of
+  // links — it actually shows what changed. Lazy + bounded: only fires
+  // when at least one broker is watched, never blocks if the lookup fails.
+  const watchedBrokerSlugs = rawItems
+    .filter((i) => i.item_type === "broker")
+    .map((i) => i.item_slug);
+  const currentRateBpsBySlug: Record<string, number> = {};
+  if (watchedBrokerSlugs.length > 0) {
+    const { data: brokerRows } = await supabase
+      .from("brokers")
+      .select("id, slug, platform_type")
+      .in("slug", watchedBrokerSlugs)
+      .in("platform_type", ["savings_account", "term_deposit"]);
+
+    const rateBrokerIds = (brokerRows ?? []).map((b) => b.id as number);
+    if (rateBrokerIds.length > 0) {
+      const { data: snapshots } = await supabase
+        .from("savings_rate_snapshots")
+        .select("broker_id, rate_bps, captured_at")
+        .in("broker_id", rateBrokerIds)
+        .order("captured_at", { ascending: false });
+
+      const bestByBrokerId = new Map<number, number>();
+      for (const snap of snapshots ?? []) {
+        const bid = snap.broker_id as number;
+        if (!bestByBrokerId.has(bid)) {
+          bestByBrokerId.set(bid, snap.rate_bps as number);
+        }
+      }
+
+      for (const b of brokerRows ?? []) {
+        const rate = bestByBrokerId.get(b.id as number);
+        if (rate != null) currentRateBpsBySlug[b.slug as string] = rate;
+      }
+    }
+  }
+
+  const items = rawItems.map((i) => ({
+    ...i,
+    current_rate_bps: currentRateBpsBySlug[i.item_slug] ?? null,
   }));
 
   const { data: alertPref } = await supabase

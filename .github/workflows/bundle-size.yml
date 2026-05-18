@@ -45,7 +45,12 @@ jobs:
   bundle-size:
     name: Bundle size diff vs base
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    # Two full Next.js builds (base + head) take ~13 min each on this
+    # codebase. 15 min was guaranteed to timeout and showed CANCELLED
+    # on every wave-3 PR. 30 min gives a comfortable buffer without
+    # ballooning cost — the job is already path-filtered to skip
+    # docs-only / config-only PRs.
+    timeout-minutes: 30
     permissions:
       contents: read
       pull-requests: write
