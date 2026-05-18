@@ -11,6 +11,7 @@ import {
 } from "@/lib/listing-kind";
 import Icon from "@/components/Icon";
 import EnquireButton from "@/components/marketplace/EnquireButton";
+import ListingShortlistButton from "@/components/invest/ListingShortlistButton";
 
 function formatLocation(state?: string, city?: string): string | null {
   if (city && state) return `${city}, ${state}`;
@@ -137,6 +138,10 @@ export default function InvestListingCard({
             <Icon name={meta.icon} size={9} />
             {meta.label}
           </span>
+          {/* Top-right shortlist button */}
+          <div className="absolute top-1 right-1">
+            <ListingShortlistButton slug={listing.slug} size="sm" />
+          </div>
         </div>
 
         {/* Content */}
@@ -249,8 +254,9 @@ export default function InvestListingCard({
           )}
         </div>
 
-        {/* Top-right compliance + freshness */}
-        <div className="absolute top-3 right-3 flex flex-wrap gap-1.5 justify-end max-w-[40%]">
+        {/* Top-right: shortlist bookmark + compliance + freshness */}
+        <div className="absolute top-3 right-3 flex flex-wrap gap-1.5 justify-end items-start max-w-[55%]">
+          <ListingShortlistButton slug={listing.slug} />
           {showFirbBadge && listing.firb_eligible && (
             <span className="bg-blue-600 text-white text-[0.6rem] font-extrabold uppercase tracking-wider px-2 py-1 rounded-md shadow-sm">
               FIRB
