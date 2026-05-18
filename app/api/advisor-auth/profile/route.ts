@@ -12,10 +12,15 @@ export async function PATCH(request: NextRequest) {
   const advisorId = await requireAdvisorSession(request);
   if (!advisorId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
 
+  // eslint-disable-next-line invest/no-unvalidated-req-json -- field-level allowlist below enforces the contract; full Zod schema would duplicate that list.
   const body = await request.json();
 
   // Only allow updating specific fields (not status, verified, rating, etc.)
-  const allowedFields = ["bio", "specialties", "fee_structure", "fee_description", "website", "phone", "photo_url", "booking_link", "booking_intro", "offer_text", "offer_terms", "offer_active"];
+  // available_in_countries is the advisor's self-asserted corridor coverage
+  // (FIN_NOTEBOOK cross-border Phase B). Stored as ISO 3166-1 alpha-2
+  // codes (au, gb, us, in, …); the matcher uses it to country-match-boost
+  // incoming intent-country leads.
+  const allowedFields = ["bio", "specialties", "fee_structure", "fee_description", "website", "phone", "photo_url", "booking_link", "booking_intro", "offer_text", "offer_terms", "offer_active", "available_in_countries"];
   const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
 
   for (const field of allowedFields) {
