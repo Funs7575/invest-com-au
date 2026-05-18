@@ -72,9 +72,29 @@ function fitnessColor(fitness: number): string {
   return "bg-slate-50 text-slate-600 border-slate-200";
 }
 
+type Horizon = "" | "short" | "mid" | "long";
+type Risk = "" | "low" | "balanced" | "growth";
+type Toggle = "" | "yes" | "no";
+
+const HORIZONS: Array<{ value: Exclude<Horizon, "">; label: string; sub: string }> = [
+  { value: "short", label: "< 2 years", sub: "Cash + savings dominate" },
+  { value: "mid", label: "2–7 years", sub: "Balanced — some growth assets" },
+  { value: "long", label: "7+ years", sub: "Growth assets do the heavy lifting" },
+];
+
+const RISKS: Array<{ value: Exclude<Risk, "">; label: string; sub: string }> = [
+  { value: "low", label: "Low", sub: "I'd rather not see big drawdowns" },
+  { value: "balanced", label: "Balanced", sub: "OK with ups + downs over years" },
+  { value: "growth", label: "Growth", sub: "Comfortable with full equity-like risk" },
+];
+
 export default function WealthStackClient() {
   const [goal, setGoal] = useState<string>("");
   const [amount, setAmount] = useState<typeof AMOUNTS[number]["value"] | "">("");
+  const [horizon, setHorizon] = useState<Horizon>("");
+  const [risk, setRisk] = useState<Risk>("");
+  const [superInterest, setSuperInterest] = useState<Toggle>("");
+  const [cryptoInterest, setCryptoInterest] = useState<Toggle>("");
   const [submitting, setSubmitting] = useState(false);
   const [stack, setStack] = useState<WealthStack | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -99,14 +119,20 @@ export default function WealthStackClient() {
   async function submit(e: FormEvent) {
     e.preventDefault();
     setError(null);
-    if (!goal) {
-      setError("Pick a goal so we know what to recommend.");
-      return;
-    }
-    if (!amount) {
-      setError("Pick a starting amount.");
-      return;
-    }
+    if (!goal) return setError("Pick a goal so we know what to recommend.");
+    if (!amount) return setError("Pick a starting amount.");
+    if (!horizon) return setError("Tell us your time horizon.");
+    if (!risk) return setError("Pick a risk tolerance.");
+
+    // Compose the answer set the scorer reads. Each answer maps to a
+    // weight key via ANSWER_WEIGHT_MAP in lib/quiz-scoring.ts — including
+    // an answer with no mapping is harmless (it's ignored).
+    const answers = [goal, amount, risk];
+    if (horizon === "short") answers.push("low_fee", "fees");
+    if (horizon === "mid") answers.push("balanced");
+    if (horizon === "long") answers.push("grow");
+    if (superInterest === "yes") answers.push("super");
+    if (cryptoInterest === "yes") answers.push("crypto");
 
     setSubmitting(true);
     try {
@@ -114,7 +140,7 @@ export default function WealthStackClient() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          answers: [goal, amount],
+          answers,
           goal,
           amount,
         }),
@@ -122,7 +148,20 @@ export default function WealthStackClient() {
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
       setStack(data.stack as WealthStack);
-      trackEvent("wealth_stack_built", { goal, amount, stackId: data.stack?.stackId, components: (data.stack?.components ?? []).length }, "/wealth-stack");
+      trackEvent(
+        "wealth_stack_built",
+        {
+          goal,
+          amount,
+          horizon,
+          risk,
+          super_interest: superInterest,
+          crypto_interest: cryptoInterest,
+          stackId: data.stack?.stackId,
+          components: (data.stack?.components ?? []).length,
+        },
+        "/wealth-stack",
+      );
     } catch (err) {
       setError(err instanceof Error ? err.message : "Network error");
     } finally {
@@ -283,6 +322,123 @@ export default function WealthStackClient() {
                 className="sr-only"
               />
               {a.label}
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend className="mb-3 text-sm font-semibold text-slate-900">
+          3. When do you need this money?
+        </legend>
+        <div className="grid gap-2 sm:grid-cols-3">
+          {HORIZONS.map((h) => (
+            <label
+              key={h.value}
+              className={`flex cursor-pointer flex-col gap-0.5 rounded-lg border p-3 text-sm ${
+                horizon === h.value
+                  ? "border-violet-500 bg-violet-50 text-violet-900"
+                  : "border-slate-200 bg-white text-slate-700 hover:border-slate-300"
+              }`}
+            >
+              <input
+                type="radio"
+                name="horizon"
+                value={h.value}
+                checked={horizon === h.value}
+                onChange={() => setHorizon(h.value)}
+                className="sr-only"
+              />
+              <span className="font-medium">{h.label}</span>
+              <span className="text-[0.7rem] opacity-80">{h.sub}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend className="mb-3 text-sm font-semibold text-slate-900">
+          4. How would you describe your risk tolerance?
+        </legend>
+        <div className="grid gap-2 sm:grid-cols-3">
+          {RISKS.map((r) => (
+            <label
+              key={r.value}
+              className={`flex cursor-pointer flex-col gap-0.5 rounded-lg border p-3 text-sm ${
+                risk === r.value
+                  ? "border-violet-500 bg-violet-50 text-violet-900"
+                  : "border-slate-200 bg-white text-slate-700 hover:border-slate-300"
+              }`}
+            >
+              <input
+                type="radio"
+                name="risk"
+                value={r.value}
+                checked={risk === r.value}
+                onChange={() => setRisk(r.value)}
+                className="sr-only"
+              />
+              <span className="font-medium">{r.label}</span>
+              <span className="text-[0.7rem] opacity-80">{r.sub}</span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend className="mb-3 text-sm font-semibold text-slate-900">
+          5. Want a super-fund pick in your stack?
+        </legend>
+        <div className="grid gap-2 sm:grid-cols-2">
+          {(["yes", "no"] as const).map((v) => (
+            <label
+              key={v}
+              className={`flex cursor-pointer items-center justify-center rounded-lg border p-3 text-sm capitalize ${
+                superInterest === v
+                  ? "border-violet-500 bg-violet-50 text-violet-900"
+                  : "border-slate-200 bg-white text-slate-700 hover:border-slate-300"
+              }`}
+            >
+              <input
+                type="radio"
+                name="super_interest"
+                value={v}
+                checked={superInterest === v}
+                onChange={() => setSuperInterest(v)}
+                className="sr-only"
+              />
+              {v}
+            </label>
+          ))}
+        </div>
+        <p className="mt-1 text-[0.65rem] text-slate-400">
+          Defaults to skipping the super pick if left blank. Your current super stays put either way.
+        </p>
+      </fieldset>
+
+      <fieldset>
+        <legend className="mb-3 text-sm font-semibold text-slate-900">
+          6. Include a crypto exchange in your stack?
+        </legend>
+        <div className="grid gap-2 sm:grid-cols-2">
+          {(["yes", "no"] as const).map((v) => (
+            <label
+              key={v}
+              className={`flex cursor-pointer items-center justify-center rounded-lg border p-3 text-sm capitalize ${
+                cryptoInterest === v
+                  ? "border-violet-500 bg-violet-50 text-violet-900"
+                  : "border-slate-200 bg-white text-slate-700 hover:border-slate-300"
+              }`}
+            >
+              <input
+                type="radio"
+                name="crypto_interest"
+                value={v}
+                checked={cryptoInterest === v}
+                onChange={() => setCryptoInterest(v)}
+                className="sr-only"
+              />
+              {v}
             </label>
           ))}
         </div>

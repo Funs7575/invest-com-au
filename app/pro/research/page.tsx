@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { createClient } from "@/lib/supabase/server";
 import { getSubscription } from "@/lib/server/get-subscription";
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
 
@@ -44,15 +45,10 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image" },
 };
 
+// Always-shown teaser cards for reports that haven't been written yet.
+// Once a report with the same slug lands in pro_research_reports the
+// real row takes precedence (we filter teasers by published slug below).
 const TEASER_REPORTS = [
-  {
-    slug: "asx-broker-fee-audit-2026-q2",
-    title: "ASX Broker Fee Audit — 2026 Q2",
-    summary:
-      "Quarterly fee-by-fee comparison of every CHESS-sponsored ASX broker. Headline brokerage, ETF deals, FX spreads on US trades, hidden inactivity / withdrawal / transfer-out fees, and the all-in cost of a 10-trades-per-month investor.",
-    publishedLabel: "Coming soon",
-    badge: "Fee Audit",
-  },
   {
     slug: "super-fund-investment-mix-2026",
     title: "Super Fund Investment-Mix Audit — 2026",
@@ -71,8 +67,31 @@ const TEASER_REPORTS = [
   },
 ];
 
+interface PublishedReport {
+  slug: string;
+  title: string;
+  kicker: string;
+  summary: string;
+  reading_time_minutes: number;
+  published_at: string;
+}
+
 export default async function PremiumResearchPage() {
   const { user, isPro } = await getSubscription();
+
+  // Pull published reports from the DB. Suspense not necessary — this
+  // is a small, lightly-cached SELECT.
+  const supabase = await createClient();
+  const { data: reportRows } = await supabase
+    .from("pro_research_reports")
+    .select("slug, title, kicker, summary, reading_time_minutes, published_at")
+    .not("published_at", "is", null)
+    .order("published_at", { ascending: false })
+    .limit(20);
+
+  const published = (reportRows ?? []) as PublishedReport[];
+  const publishedSlugs = new Set(published.map((r) => r.slug));
+  const teasers = TEASER_REPORTS.filter((t) => !publishedSlugs.has(t.slug));
 
   const breadcrumbs = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
@@ -104,7 +123,42 @@ export default async function PremiumResearchPage() {
       {!isPro && <UpgradeBanner signedIn={!!user} />}
 
       <section aria-label="Available research" className="space-y-4">
-        {TEASER_REPORTS.map((report) => (
+        {published.map((report) => (
+          <article
+            key={report.slug}
+            className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
+          >
+            <div className="flex items-center gap-2">
+              {report.kicker && (
+                <span className="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-[0.65rem] font-semibold text-emerald-700">
+                  {report.kicker}
+                </span>
+              )}
+              <span className="text-xs text-slate-400">
+                Published {new Date(report.published_at).toLocaleDateString("en-AU")} · ~{report.reading_time_minutes} min read
+              </span>
+            </div>
+            <h2 className="mt-2 text-lg font-semibold text-slate-900">{report.title}</h2>
+            <p className="mt-2 text-sm text-slate-600">{report.summary}</p>
+            {isPro ? (
+              <Link
+                href={`/pro/research/${report.slug}`}
+                className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-violet-700 hover:text-violet-900"
+              >
+                Read full report &rarr;
+              </Link>
+            ) : (
+              <Link
+                href="/account/upgrade"
+                className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-violet-700 hover:text-violet-900"
+              >
+                Unlock with Pro &rarr;
+              </Link>
+            )}
+          </article>
+        ))}
+
+        {teasers.map((report) => (
           <article
             key={report.slug}
             className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"

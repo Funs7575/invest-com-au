@@ -12515,6 +12515,54 @@ export type Database = {
           },
         ]
       }
+      pro_research_reports: {
+        Row: {
+          body_html: string
+          cover_image_url: string | null
+          created_at: string
+          id: string
+          kicker: string
+          published_at: string | null
+          reading_time_minutes: number
+          slug: string
+          summary: string
+          tags: string[]
+          tier: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          body_html?: string
+          cover_image_url?: string | null
+          created_at?: string
+          id?: string
+          kicker?: string
+          published_at?: string | null
+          reading_time_minutes?: number
+          slug: string
+          summary?: string
+          tags?: string[]
+          tier?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          body_html?: string
+          cover_image_url?: string | null
+          created_at?: string
+          id?: string
+          kicker?: string
+          published_at?: string | null
+          reading_time_minutes?: number
+          slug?: string
+          summary?: string
+          tags?: string[]
+          tier?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       professional_leads: {
         Row: {
           advisor_notes: string | null
