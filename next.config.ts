@@ -120,13 +120,15 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
-      // /brokers (plural) was a 404 even though every natural link, internal
-      // nav, and Google result expects the plural. The actual page lives at
-      // /broker (singular). Cheap permanent redirect closes the leak.
+      // /brokers (plural) used to 404 even though every natural link,
+      // internal nav, and Google result expects the plural. The actual
+      // broker comparison surface lives at /compare; the singular
+      // /broker is itself a redirect to /compare, so this entry skips
+      // the double-hop and sends /brokers directly to /compare.
       // PRODUCT_AUDIT.md 2026-04-15 §CRITICAL #1.
       {
         source: "/brokers",
-        destination: "/broker",
+        destination: "/compare",
         permanent: true,
       },
       {

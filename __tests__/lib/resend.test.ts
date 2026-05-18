@@ -9,6 +9,18 @@ vi.mock("@/lib/logger", () => ({
   })),
 }));
 
+// Suppression-list integration: sendEmail now consults
+// `@/lib/email-suppression` before every send. Default to nothing
+// suppressed; specific tests override the mock per-case.
+const mockGetSuppressedSet = vi.fn<(emails: readonly string[]) => Promise<Set<string>>>(
+  async () => new Set<string>(),
+);
+const mockIsSuppressed = vi.fn<(email: string) => Promise<boolean>>(async () => false);
+vi.mock("@/lib/email-suppression", () => ({
+  getSuppressedSet: (emails: readonly string[]) => mockGetSuppressedSet(emails),
+  isSuppressed: (email: string) => mockIsSuppressed(email),
+}));
+
 import { sendEmail, upsertContact } from "@/lib/resend";
 
 describe("sendEmail", () => {
@@ -200,5 +212,76 @@ describe("upsertContact", () => {
     }) as unknown as typeof fetch;
     const res = await upsertContact("a1", "u@x.com");
     expect(res).toEqual({ ok: false, error: "disconnected" });
+  });
+});
+
+describe("sendEmail suppression-list integration", () => {
+  const originalFetch = globalThis.fetch;
+  const originalKey = process.env.RESEND_API_KEY;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    process.env.RESEND_API_KEY = "rk_test";
+    mockGetSuppressedSet.mockResolvedValue(new Set<string>());
+  });
+
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
+    if (originalKey === undefined) delete process.env.RESEND_API_KEY;
+    else process.env.RESEND_API_KEY = originalKey;
+  });
+
+  it("short-circuits with ok:false / 'suppressed' when the single recipient is suppressed", async () => {
+    mockGetSuppressedSet.mockResolvedValueOnce(new Set(["blocked@example.com"]));
+    const fetchSpy = vi.fn(async () => new Response("{}", { status: 200 })) as unknown as typeof fetch;
+    globalThis.fetch = fetchSpy;
+
+    const res = await sendEmail({ to: "Blocked@Example.com", subject: "x", html: "<p/>" });
+
+    expect(res).toEqual({ ok: false, error: "suppressed" });
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it("drops suppressed addresses but still sends to the rest of a batch", async () => {
+    mockGetSuppressedSet.mockResolvedValueOnce(new Set(["blocked@example.com"]));
+    const fetchSpy = vi.fn(async () => new Response("{}", { status: 200 }));
+    globalThis.fetch = fetchSpy as unknown as typeof fetch;
+
+    const res = await sendEmail({
+      to: ["blocked@example.com", "ok@example.com"],
+      subject: "x",
+      html: "<p/>",
+    });
+
+    expect(res).toEqual({ ok: true });
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+    const calls = fetchSpy.mock.calls as unknown as Array<[string, RequestInit | undefined]>;
+    const body = JSON.parse((calls[0]?.[1]?.body ?? "{}") as string);
+    expect(body.to).toEqual(["ok@example.com"]);
+  });
+
+  it("bypasses suppression entirely when bypassSuppression=true (legally-required sends)", async () => {
+    mockGetSuppressedSet.mockResolvedValue(new Set(["blocked@example.com"]));
+    const fetchSpy = vi.fn(async () => new Response("{}", { status: 200 }));
+    globalThis.fetch = fetchSpy as unknown as typeof fetch;
+
+    const res = await sendEmail({
+      to: "blocked@example.com",
+      subject: "Account deletion confirmation",
+      html: "<p/>",
+      bypassSuppression: true,
+    });
+
+    expect(res).toEqual({ ok: true });
+    expect(mockGetSuppressedSet).not.toHaveBeenCalled();
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it("returns 'No recipients' on an empty to-array", async () => {
+    const fetchSpy = vi.fn(async () => new Response("{}", { status: 200 }));
+    globalThis.fetch = fetchSpy as unknown as typeof fetch;
+    const res = await sendEmail({ to: [], subject: "x", html: "<p/>" });
+    expect(res).toEqual({ ok: false, error: "No recipients" });
+    expect(fetchSpy).not.toHaveBeenCalled();
   });
 });

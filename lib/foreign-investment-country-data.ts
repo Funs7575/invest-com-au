@@ -1817,7 +1817,7 @@ export const CN_CONFIG: CountryConfig = {
     { emoji: "🏠", label: "FIRB-eligible new properties", sublabel: "New dwellings + commercial — established homes blocked till 2027", href: "/invest?firb=eligible" },
     { emoji: "💱", label: "CNY → AUD via SAFE-compliant routes", sublabel: "USD 50K/year individual quota — plan property settlements around it", href: "/foreign-investment/send-money-australia" },
     { emoji: "🛂", label: "Significant Investor Visa pathway", sublabel: "$5M+ removes FIRB and foreign-buyer constraints permanently", href: "/foreign-investment/siv" },
-    { emoji: "👤", label: "Find a Mandarin-speaking advisor", sublabel: "Cross-border tax + FIRB + capital structuring", href: "/advisors" },
+    { emoji: "👤", label: "Find a Mandarin-speaking advisor", sublabel: "Cross-border tax + FIRB + capital structuring", href: "/find-advisor?specialty=FIRB+Property+%28Non-Resident%29" },
   ],
   homepageListingFilters: {
     verticals: ["commercial-property", "buy-business", "funds"],
@@ -2373,7 +2373,7 @@ export const HK_CONFIG: CountryConfig = {
     { emoji: "🏠", label: "FIRB-eligible new properties", sublabel: "Sydney/Melbourne CBD apartments most popular with HK buyers", href: "/invest?firb=eligible" },
     { emoji: "💱", label: "HKD → AUD transfers", sublabel: "Specialist FX vs HK retail bank — saves 1–2%", href: "/foreign-investment/send-money-australia" },
     { emoji: "🛂", label: "HK → AU pathway visas", sublabel: "BN(O)/SAR/HKBN holders have a reserved migration stream", href: "/advisors/migration-agents" },
-    { emoji: "👤", label: "Find an HK-AU advisor", sublabel: "Cross-border tax + AU residency + FIRB", href: "/advisors" },
+    { emoji: "👤", label: "Find an HK-AU advisor", sublabel: "Cross-border tax + AU residency + FIRB", href: "/find-advisor?specialty=FIRB+Property+%28Non-Resident%29" },
   ],
   // Country Mode homepage personalisation — Phase 2 saturation.
   // Filter values use the canonical advisor-type strings from
@@ -2633,7 +2633,7 @@ export const SG_CONFIG: CountryConfig = {
     { emoji: "📈", label: "Brokers that accept SG residents", sublabel: "IBKR Singapore + Saxo Singapore primary options", href: "/compare/non-residents" },
     { emoji: "🏠", label: "FIRB-eligible new properties", sublabel: "FTA gives higher commercial thresholds — residential rules unchanged", href: "/invest?firb=eligible" },
     { emoji: "💱", label: "SGD → AUD transfers", sublabel: "Wise/OFX vs DBS/OCBC/UOB — saves 1–2% on size", href: "/foreign-investment/send-money-australia" },
-    { emoji: "👤", label: "Find an SG-AU specialist", sublabel: "Multilingual cross-border tax + FIRB advisors", href: "/advisors" },
+    { emoji: "👤", label: "Find an SG-AU specialist", sublabel: "Multilingual cross-border tax + FIRB advisors", href: "/find-advisor?specialty=FIRB+Property+%28Non-Resident%29" },
   ],
   homepageListingFilters: {
     verticals: ["funds", "commercial-property", "buy-business"],
@@ -3172,7 +3172,7 @@ export const JP_CONFIG: CountryConfig = {
     { emoji: "📈", label: "Brokers that accept Japanese residents", sublabel: "IBKR + Saxo + CMC most common", href: "/compare/non-residents" },
     { emoji: "🏠", label: "FIRB-eligible new properties", sublabel: "Sydney/Melbourne CBD office popular with Japanese institutionals", href: "/invest?firb=eligible" },
     { emoji: "💱", label: "JPY → AUD transfers", sublabel: "Wise/GoRemit vs MUFG/SMBC/Mizuho — saves 1.5–2.5%", href: "/foreign-investment/send-money-australia" },
-    { emoji: "👤", label: "Find a Japan-AU tax specialist", sublabel: "Inheritance tax exposure + DTA optimisation", href: "/advisors/international-tax-specialists" },
+    { emoji: "👤", label: "Find a Japan-AU tax specialist", sublabel: "Inheritance tax exposure + DTA optimisation", href: "/find-advisor?specialty=FIRB+Property+%28Non-Resident%29" },
   ],
   homepageListingFilters: {
     verticals: ["funds", "commercial-property", "buy-business"],
@@ -3445,7 +3445,7 @@ export const KR_CONFIG: CountryConfig = {
     { emoji: "📈", label: "Brokers that accept Korean residents", sublabel: "IBKR + Saxo confirmed; verify Korean exit-tax position first", href: "/compare/non-residents" },
     { emoji: "🏠", label: "FIRB-eligible new properties", sublabel: "Sydney/Melbourne commercial property active with Korean institutions", href: "/invest?firb=eligible" },
     { emoji: "💱", label: "KRW → AUD transfers", sublabel: "Wise/Sentbe vs Korean retail banks — saves 1–2%", href: "/foreign-investment/send-money-australia" },
-    { emoji: "👤", label: "Find a Korea-AU tax specialist", sublabel: "KAFTA, exit tax, DTA optimisation", href: "/advisors/international-tax-specialists" },
+    { emoji: "👤", label: "Find a Korea-AU tax specialist", sublabel: "KAFTA, exit tax, DTA optimisation", href: "/find-advisor?specialty=FIRB+Property+%28Non-Resident%29" },
   ],
   homepageListingFilters: {
     verticals: ["funds", "commercial-property", "buy-business"],
@@ -3716,7 +3716,7 @@ export const MY_CONFIG: CountryConfig = {
     { emoji: "🏠", label: "FIRB-eligible new properties", sublabel: "Melbourne off-the-plan top destination for Malaysian buyers", href: "/invest?firb=eligible" },
     { emoji: "📊", label: "State stamp duty surcharge guide", sublabel: "VIC/NSW 8%, QLD/WA/SA 7%, ACT 0% — calculate before you commit", href: "/foreign-investment/guides/stamp-duty-foreign-buyers" },
     { emoji: "💱", label: "MYR → AUD transfers", sublabel: "Wise/Instarem vs Maybank/CIMB — saves 1–2%", href: "/foreign-investment/send-money-australia" },
-    { emoji: "👤", label: "Find a Malaysia-AU specialist", sublabel: "Cross-border tax + Labuan structuring", href: "/advisors/international-tax-specialists" },
+    { emoji: "👤", label: "Find a Malaysia-AU specialist", sublabel: "Cross-border tax + Labuan structuring", href: "/find-advisor?specialty=FIRB+Property+%28Non-Resident%29" },
   ],
   homepageListingFilters: {
     verticals: ["commercial-property", "buy-business", "funds"],
@@ -3987,7 +3987,7 @@ export const AE_CONFIG: CountryConfig = {
     { emoji: "📈", label: "Brokers that accept UAE residents", sublabel: "IBKR ME + Saxo most common", href: "/compare/non-residents" },
     { emoji: "🏠", label: "FIRB-eligible new properties", sublabel: "New dwellings + commercial only — established homes blocked till 2027", href: "/invest?firb=eligible" },
     { emoji: "💱", label: "AED → AUD transfers", sublabel: "Wise/OFX vs Emirates NBD/ADCB — saves 1–2%", href: "/foreign-investment/send-money-australia" },
-    { emoji: "👤", label: "Find a UAE-AU specialist", sublabel: "No-DTA structuring + Arabic-speaking advisors", href: "/advisors" },
+    { emoji: "👤", label: "Find a UAE-AU specialist", sublabel: "No-DTA structuring + Arabic-speaking advisors", href: "/find-advisor?specialty=FIRB+Property+%28Non-Resident%29" },
   ],
   homepageListingFilters: {
     verticals: ["commercial-property", "buy-business", "funds"],
@@ -4263,7 +4263,7 @@ export const SA_CONFIG: CountryConfig = {
     { emoji: "🕌", label: "Shariah-compliant investment options", sublabel: "MCCA + Hejaz + screened ASX equity portfolios", href: "/foreign-investment/shares" },
     { emoji: "⛏️", label: "Critical minerals + Vision 2030", sublabel: "PIF-aligned themes — lithium, cobalt, agricultural assets", href: "/invest/mining/listings" },
     { emoji: "🏠", label: "FIRB-eligible new properties", sublabel: "Government-linked investors face additional national-interest review", href: "/invest?firb=eligible" },
-    { emoji: "👤", label: "Find a Saudi-AU specialist", sublabel: "No-DTA structuring + Islamic finance + Arabic-speaking advisors", href: "/advisors" },
+    { emoji: "👤", label: "Find a Saudi-AU specialist", sublabel: "No-DTA structuring + Islamic finance + Arabic-speaking advisors", href: "/find-advisor?specialty=FIRB+Property+%28Non-Resident%29" },
   ],
   homepageListingFilters: {
     verticals: ["commercial-property", "farmland", "buy-business"],

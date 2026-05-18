@@ -36,23 +36,36 @@ export interface SuppressionRow {
  * never silently grounds the whole email pipeline. The error is logged so
  * SLO monitoring picks it up; if a hard guarantee is required, callers
  * should add an outer circuit-breaker.
+ *
+ * Union-checks BOTH suppression sources:
+ *   - `public.suppression_list` (TODO.md-spec'd, this helper's primary)
+ *   - `public.email_suppression_list` (legacy bounce-tracking table used
+ *     by the abandoned-drip family of crons; pre-dates the unified
+ *     suppression spec)
+ *
+ * Either-side hit suppresses. The legacy table will be consolidated into
+ * the canonical one in a follow-up; until then this union keeps the new
+ * dispatch helpers and the legacy crons honoring the same blocklist.
  */
 export async function isSuppressed(email: string): Promise<boolean> {
   if (!email) return false;
 
   const supabase = createAdminClient();
-  const { data, error } = await supabase
-    .from("suppression_list")
-    .select("id")
-    .eq("contact_email", email.toLowerCase())
-    .maybeSingle();
+  const normalised = email.toLowerCase();
 
-  if (error) {
-    log.error("isSuppressed query failed", { err: error.message });
-    return false;
+  const [primary, legacy] = await Promise.all([
+    supabase.from("suppression_list").select("id").eq("contact_email", normalised).maybeSingle(),
+    supabase.from("email_suppression_list").select("email").eq("email", normalised).maybeSingle(),
+  ]);
+
+  if (primary.error) {
+    log.error("isSuppressed primary query failed", { err: primary.error.message });
+  }
+  if (legacy.error) {
+    log.error("isSuppressed legacy query failed", { err: legacy.error.message });
   }
 
-  return !!data;
+  return !!primary.data || !!legacy.data;
 }
 
 /**
@@ -62,23 +75,33 @@ export async function isSuppressed(email: string): Promise<boolean> {
  * Uses an `IN (...)` query rather than one round-trip per address. Batch
  * size in practice is bounded by Resend's per-call limits (~100), well
  * within PG's `IN` ergonomics.
+ *
+ * Like `isSuppressed`, union-checks both `suppression_list` and the legacy
+ * `email_suppression_list` so the bounce-aware crons and the new dispatch
+ * helpers agree on the same blocklist.
  */
 export async function getSuppressedSet(emails: readonly string[]): Promise<Set<string>> {
   const lowered = emails.filter(Boolean).map((e) => e.toLowerCase());
   if (lowered.length === 0) return new Set();
 
   const supabase = createAdminClient();
-  const { data, error } = await supabase
-    .from("suppression_list")
-    .select("contact_email")
-    .in("contact_email", lowered);
 
-  if (error) {
-    log.error("getSuppressedSet query failed", { err: error.message, count: lowered.length });
-    return new Set();
+  const [primary, legacy] = await Promise.all([
+    supabase.from("suppression_list").select("contact_email").in("contact_email", lowered),
+    supabase.from("email_suppression_list").select("email").in("email", lowered),
+  ]);
+
+  if (primary.error) {
+    log.error("getSuppressedSet primary query failed", { err: primary.error.message, count: lowered.length });
+  }
+  if (legacy.error) {
+    log.error("getSuppressedSet legacy query failed", { err: legacy.error.message, count: lowered.length });
   }
 
-  return new Set((data ?? []).map((r) => r.contact_email.toLowerCase()));
+  const result = new Set<string>();
+  for (const r of primary.data ?? []) result.add(r.contact_email.toLowerCase());
+  for (const r of legacy.data ?? []) result.add(r.email.toLowerCase());
+  return result;
 }
 
 /**
