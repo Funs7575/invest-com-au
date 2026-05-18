@@ -52,10 +52,16 @@ export default defineConfig({
       // in-flight PRs add new code before tests; prevents false CI failures).
       // API-route floor raised proportionally from D-11 batch coverage.
       thresholds: {
-        lines: 65,
-        functions: 74,
-        branches: 74,
-        statements: 65,
+        // Ratchet 2026-05-18 — bumped from 65/74/74/65 after the
+        // quality-pass landed 38 tests across email-suppression,
+        // rate-alerts, resend dispatch, and wealth-stack. Last measured
+        // run was ~70.94% lines / ~79% branches+functions on the
+        // lib + app/api scope, so the new floors are ~3pp under
+        // measured to absorb normal swings without blocking ships.
+        lines: 68,
+        functions: 77,
+        branches: 77,
+        statements: 68,
         // API-route floor. Raised from 13/58/30 (D-10, Apr 2026) after
         // D-11 added tests for virtually all existing routes (batches 1-23+,
         // ~110 route files covered). Conservative 5pp buffer applied.

@@ -8926,31 +8926,37 @@ export type Database = {
       forum_user_profiles: {
         Row: {
           avatar_url: string | null
+          badge: string
           created_at: string | null
           display_name: string | null
           id: number
           is_moderator: boolean | null
           post_count: number | null
+          reputation: number
           updated_at: string | null
           user_id: string
         }
         Insert: {
           avatar_url?: string | null
+          badge?: string
           created_at?: string | null
           display_name?: string | null
           id?: number
           is_moderator?: boolean | null
           post_count?: number | null
+          reputation?: number
           updated_at?: string | null
           user_id: string
         }
         Update: {
           avatar_url?: string | null
+          badge?: string
           created_at?: string | null
           display_name?: string | null
           id?: number
           is_moderator?: boolean | null
           post_count?: number | null
+          reputation?: number
           updated_at?: string | null
           user_id?: string
         }
@@ -14629,6 +14635,59 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      savings_rate_snapshots: {
+        Row: {
+          broker_id: number
+          captured_at: string
+          id: string
+          intro_rate_bps: number | null
+          intro_term_months: number | null
+          max_balance_cents: number | null
+          min_balance_cents: number
+          notes: string
+          product_kind: string
+          rate_bps: number
+          source: string
+          term_months: number | null
+        }
+        Insert: {
+          broker_id: number
+          captured_at?: string
+          id?: string
+          intro_rate_bps?: number | null
+          intro_term_months?: number | null
+          max_balance_cents?: number | null
+          min_balance_cents?: number
+          notes?: string
+          product_kind: string
+          rate_bps: number
+          source?: string
+          term_months?: number | null
+        }
+        Update: {
+          broker_id?: number
+          captured_at?: string
+          id?: string
+          intro_rate_bps?: number | null
+          intro_term_months?: number | null
+          max_balance_cents?: number | null
+          min_balance_cents?: number
+          notes?: string
+          product_kind?: string
+          rate_bps?: number
+          source?: string
+          term_months?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "savings_rate_snapshots_broker_id_fkey"
+            columns: ["broker_id"]
+            isOneToOne: false
+            referencedRelation: "brokers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       scenarios: {
         Row: {
