@@ -3,6 +3,34 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import { calculatorJsonLd, faqJsonLd } from "@/lib/schema-markup";
+import { breadcrumbJsonLd } from "@/lib/seo";
+
+const breadcrumbLd = breadcrumbJsonLd([
+  { name: "Home", href: "/" },
+  { name: "Tools", href: "/tools" },
+  { name: "FHSS Calculator", href: "/tools/fhss-calculator" },
+]);
+
+const calcLd = calculatorJsonLd({
+  name: "First Home Super Saver (FHSS) Calculator",
+  description:
+    "Estimate how much deposit you can save via the FHSS scheme and how much tax you'd save compared to saving outside super.",
+  path: "/tools/fhss-calculator",
+});
+
+const faqLd = faqJsonLd([
+  {
+    question: "What is the First Home Super Saver Scheme (FHSS)?",
+    answer:
+      "The FHSS scheme lets first home buyers save for a deposit inside their superannuation fund, taking advantage of the lower 15% contributions tax. You can contribute up to $15,000 per year (max $50,000 total) and withdraw those savings as your home deposit.",
+  },
+  {
+    question: "How much can I release from FHSS?",
+    answer:
+      "You can release a maximum of $50,000 in total across all years of contributions (plus associated earnings). Up to $15,000 per financial year counts toward the limit.",
+  },
+]);
 
 // ─── FHSS maths ──────────────────────────────────────────────────────────────
 
@@ -123,6 +151,9 @@ export default function FHSSCalculatorPage() {
 
   return (
     <main className="max-w-3xl mx-auto px-4 py-10">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(calcLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
       <nav className="text-sm text-slate-500 mb-6">
         <Link href="/" className="hover:underline">Home</Link>
         {" / "}
@@ -287,6 +318,7 @@ export default function FHSSCalculatorPage() {
           <li>Use the funds as your home deposit — must be used within 12 months of release.</li>
         </ol>
         <p className="mt-3 text-sm text-slate-500">
+          {/* // dated-ok — FHSS scheme start date; static legislative fact, never changes */}
           Maximum release: $50,000 from contributions made on or after 1 July 2017 + associated earnings.
           Non-concessional contributions can be released without tax on the principal (only earnings taxed).
         </p>
