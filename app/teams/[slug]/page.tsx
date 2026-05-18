@@ -201,11 +201,87 @@ export default async function TeamProfilePage({ params }: PageProps) {
 
   const acceptedTemplates = (team.accepted_brief_templates as string[]) ?? [];
 
+  // ProfessionalService schema for verified Pro Squads — gives Google
+  // rich-result eligibility (rating stars in SERPs). aggregateRating
+  // surfaces the outcome flywheel data from provider_outcome_scores.
+  // Reviews stream from brief_outcomes (show_testimonial=true only).
+  const completionPct = outcomeBadge?.completion_rate_pct;
+  const outcomesSubmitted = outcomeBadge?.outcomes_submitted ?? 0;
+  const teamLocation = (team.location_state as string | null) ?? null;
+  const serviceAreas = (team.service_areas as string[] | null) ?? null;
+  const teamUrl = absoluteUrl(`/teams/${slug}`);
+  const professionalServiceLd: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "ProfessionalService",
+    name: team.name,
+    description: ((team.description as string) ?? "").slice(0, 280),
+    url: teamUrl,
+    ...(teamLocation
+      ? {
+          address: {
+            "@type": "PostalAddress",
+            addressRegion: teamLocation,
+            addressCountry: "AU",
+          },
+        }
+      : {}),
+    ...(serviceAreas && serviceAreas.length > 0
+      ? { areaServed: serviceAreas.map((s) => ({ "@type": "State", name: s })) }
+      : {}),
+    ...(squadMembers.length > 0
+      ? {
+          employee: squadMembers.slice(0, 10).map((m) => ({
+            "@type": "Person",
+            name: m.pro_name,
+            ...(m.public_title ? { jobTitle: m.public_title } : {}),
+            ...(m.pro_slug ? { url: absoluteUrl(`/advisor/${m.pro_slug}`) } : {}),
+          })),
+        }
+      : {}),
+    ...(typeof completionPct === "number" && outcomesSubmitted > 0
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            // Map completion-rate percentage onto a 1-5 scale so search
+            // engines surface stars (50% → 2.5, 100% → 5).
+            ratingValue: Math.max(1, Math.round((completionPct / 100) * 5 * 10) / 10),
+            reviewCount: outcomesSubmitted,
+            bestRating: 5,
+            worstRating: 1,
+          },
+        }
+      : {}),
+    ...(testimonials.length > 0
+      ? {
+          review: testimonials.slice(0, 5).map((t) => ({
+            "@type": "Review",
+            ...(t.rating
+              ? {
+                  reviewRating: {
+                    "@type": "Rating",
+                    ratingValue: t.rating,
+                    bestRating: 5,
+                    worstRating: 1,
+                  },
+                }
+              : {}),
+            reviewBody: t.testimonial,
+            author: { "@type": "Person", name: "Verified consumer" },
+            ...(t.submitted_at ? { datePublished: t.submitted_at } : {}),
+          })),
+        }
+      : {}),
+  };
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(professionalServiceLd) }}
       />
       <div className="min-h-screen bg-slate-50">
         <div className="bg-white border-b border-slate-200">
