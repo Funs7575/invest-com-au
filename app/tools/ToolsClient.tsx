@@ -246,6 +246,18 @@ const TOOLS: Tool[] = [
     url: "/tools/withholding-tax-calculator",
     internal: true,
   },
+  {
+    slug: "financial-calendar",
+    name: "Australian Financial Calendar",
+    category: "Calculators",
+    rating: 5,
+    description:
+      "Key tax, super, BAS, SMSF, FHSS and CGT deadlines for FY2025–26. Never miss an ATO cut-off — covers individual tax returns, quarterly BAS, super contribution caps, and company returns.",
+    pros: ["Tax & BAS deadlines", "Super & SMSF dates", "FHSS & CGT windows"],
+    pricing: "Free tool",
+    url: "/tools/financial-calendar",
+    internal: true,
+  },
 ];
 
 /* ─── Config ─── */
