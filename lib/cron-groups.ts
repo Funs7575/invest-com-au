@@ -100,6 +100,7 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
     "/api/cron/welcome-drip",
     "/api/cron/advisor-onboarding",
     "/api/cron/abandoned-quiz-drip",
+    "/api/cron/hub-subscriber-drip",
   ],
   "daily-11": [
     "/api/cron/advisor-dunning",
