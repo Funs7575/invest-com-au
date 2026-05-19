@@ -76,12 +76,12 @@ describe("GET /api/admin/country-rule-alerts — auth", () => {
     expect(res.status).toBe(401);
   });
 
-  it("returns 401 when signed in but not on admin allow-list", async () => {
+  it("returns 403 when signed in but not on admin allow-list", async () => {
     nonAdminLoggedIn();
     const res = await GET(
       makeRequest("GET", "http://localhost/api/admin/country-rule-alerts"),
     );
-    expect(res.status).toBe(401);
+    expect(res.status).toBe(403);
   });
 
   it("returns rows for authorised admin", async () => {
@@ -141,7 +141,7 @@ describe("GET /api/admin/country-rule-alerts — auth", () => {
 });
 
 describe("POST /api/admin/country-rule-alerts — validation", () => {
-  it("returns 401 for non-admin", async () => {
+  it("returns 403 for non-admin", async () => {
     nonAdminLoggedIn();
     const res = await POST(
       makeRequest("POST", "http://localhost/api/admin/country-rule-alerts", {
@@ -154,7 +154,7 @@ describe("POST /api/admin/country-rule-alerts — validation", () => {
         stales_at: "2027-01-01",
       }),
     );
-    expect(res.status).toBe(401);
+    expect(res.status).toBe(403);
   });
 
   it("returns 400 for invalid country_code", async () => {
