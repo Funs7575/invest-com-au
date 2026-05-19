@@ -4,6 +4,8 @@ import { createClient } from "@/lib/supabase/server";
 import HoldingsClient, { type HoldingRow } from "./HoldingsClient";
 import { getCurrentPricesBatch, keyOf } from "@/lib/holdings/value";
 import { enforcePortalKind } from "@/lib/portal-gate";
+import { getSharesightConfig } from "@/lib/sharesight/oauth";
+import { SHARESIGHT_PROVIDER } from "@/lib/sharesight/sync";
 
 export const dynamic = "force-dynamic";
 
@@ -28,20 +30,37 @@ export default async function HoldingsPage() {
     redirect("/account/login?redirect=/account/holdings");
   }
 
-  // Fetch holdings + the broker fee table in parallel — the latter feeds
-  // the switching coach (asx_fee_value is the comparison axis).
-  const [{ data: holdings }, { data: brokers }] = await Promise.all([
-    supabase
-      .from("investor_holdings")
-      .select(
-        "id, ticker, exchange, shares, cost_basis_per_share_cents, acquired_at, broker_slug, notes",
-      )
-      .order("acquired_at", { ascending: false }),
-    supabase
-      .from("brokers")
-      .select("slug, name, asx_fee_value")
-      .eq("status", "active"),
-  ]);
+  // Fetch holdings + broker fee table + sharesight connection in parallel.
+  // Broker fees feed the switching coach (asx_fee_value is the comparison
+  // axis); sharesight connection feeds the Connect/Sync button block.
+  const [{ data: holdings }, { data: brokers }, { data: sharesightRow }] =
+    await Promise.all([
+      supabase
+        .from("investor_holdings")
+        .select(
+          "id, ticker, exchange, shares, cost_basis_per_share_cents, acquired_at, broker_slug, notes",
+        )
+        .order("acquired_at", { ascending: false }),
+      supabase
+        .from("brokers")
+        .select("slug, name, asx_fee_value")
+        .eq("status", "active"),
+      supabase
+        .from("investor_oauth_connections")
+        .select("connected_at, last_synced_at, last_sync_error")
+        .eq("provider", SHARESIGHT_PROVIDER)
+        .maybeSingle(),
+    ]);
+
+  const sharesightConfigured = getSharesightConfig() !== null;
+  const sharesightStatus = {
+    configured: sharesightConfigured,
+    connected: sharesightRow != null,
+    connectedAt: (sharesightRow?.connected_at as string | undefined) ?? null,
+    lastSyncedAt: (sharesightRow?.last_synced_at as string | undefined) ?? null,
+    lastSyncError:
+      (sharesightRow?.last_sync_error as string | undefined) ?? null,
+  };
 
   const initialItems: HoldingRow[] = (holdings ?? []).map((r) => ({
     id: r.id as number,
@@ -91,7 +110,11 @@ export default async function HoldingsPage() {
           treatment.
         </p>
       </header>
-      <HoldingsClient initialItems={initialItems} brokers={brokerOptions} />
+      <HoldingsClient
+        initialItems={initialItems}
+        brokers={brokerOptions}
+        sharesightStatus={sharesightStatus}
+      />
     </main>
   );
 }

@@ -8,6 +8,7 @@ import {
   type BrokerForCoach,
 } from "@/lib/holdings/switching-coach";
 import CsvImportModal from "./CsvImportModal";
+import SharesightConnectButton from "./SharesightConnectButton";
 import TaxSummaryButton from "./TaxSummaryButton";
 
 export interface HoldingRow {
@@ -30,9 +31,18 @@ export interface HoldingRow {
   currentPriceFetchedAt: string | null;
 }
 
+interface SharesightStatus {
+  configured: boolean;
+  connected: boolean;
+  connectedAt: string | null;
+  lastSyncedAt: string | null;
+  lastSyncError: string | null;
+}
+
 interface Props {
   initialItems: HoldingRow[];
   brokers: BrokerForCoach[];
+  sharesightStatus: SharesightStatus;
 }
 
 const TRADE_FREQ_OPTIONS = [
@@ -64,7 +74,11 @@ const fmtPct = (deltaCents: number, baseCents: number) => {
 const fmtShares = (n: number) =>
   n.toLocaleString("en-AU", { maximumFractionDigits: 4 });
 
-export default function HoldingsClient({ initialItems, brokers }: Props) {
+export default function HoldingsClient({
+  initialItems,
+  brokers,
+  sharesightStatus,
+}: Props) {
   const [items, setItems] = useState<HoldingRow[]>(initialItems);
   const [adding, setAdding] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
@@ -288,9 +302,10 @@ export default function HoldingsClient({ initialItems, brokers }: Props) {
         </div>
       </section>
 
-      {/* CSV import — bulk import from a broker export (e.g. CommSec). */}
-      <section>
+      {/* CSV import + Sharesight OAuth — bulk-load holdings without typing. */}
+      <section className="space-y-3">
         <CsvImportModal />
+        <SharesightConnectButton initialStatus={sharesightStatus} />
       </section>
 
       {/* Add form */}
