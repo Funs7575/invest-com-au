@@ -290,6 +290,43 @@ These don't require unification — they're isolated fixes:
 | QW6 | Recolor shortlist bar from `bg-violet-600` to `bg-slate-900` | `AdvisorsClient.tsx:634-656` | 5 min |
 | QW7 | Add a "Browse all advisors" link to `/find-advisor` confirmation step | `app/find-advisor/page.tsx:~1592` | 10 min |
 
+## Progress (2026-05-19)
+
+### Merged into main
+- **PR #950** — `vercel.json` — drop unsupported `_regions_note` key blocking every preview deploy
+- **PR #951** — ETF screener lint — `let`→`const` + `<SortIcon>` extraction, clears blocking lint error
+- **PR #952** — Five directory quick-wins (`<CountryRuleAlerts />` on `/invest`, zero-count tabs hidden, duplicate alert widget removed, shortlist bar recolored slate-900)
+
+### Open PRs by phase
+
+| Phase / Session | PR | Status |
+|-----------------|----|--------|
+| (gate) a11y unblock — drop `role="menu"` from 4 nav dropdowns | [#953](https://github.com/Funs7575/invest-com-au/pull/953) | Open |
+| Plan doc | [#948](https://github.com/Funs7575/invest-com-au/pull/948) | Open |
+| **Phase 1** banner stack unification (`<DirectoryBanners>`, data-layer recommendations, `banner-tokens.ts`) | [#954](https://github.com/Funs7575/invest-com-au/pull/954) | Open |
+| **Phase 2 Session 4** — `<SearchInput>`, `<SortDropdown>` primitives + consumer migration | [#955](https://github.com/Funs7575/invest-com-au/pull/955) | Open |
+| **Phase 2 Session 6** — `<TabBar>`, `<ResultCount>` primitives + consumer migration | [#956](https://github.com/Funs7575/invest-com-au/pull/956) | Open |
+| **Phase 2 Sessions 5 + 5.5** — `<FilterPanel>`, `<FacetGroup>`, `<RangeSlider>` primitives | [#957](https://github.com/Funs7575/invest-com-au/pull/957) | Open |
+| **Phase 6 (partial)** — `/find-advisor` deep-link with quiz context + extracted lib + tests | [#958](https://github.com/Funs7575/invest-com-au/pull/958) | Open |
+| **Phase 3 (partial)** — `<CompareBar>` primitive | [#959](https://github.com/Funs7575/invest-com-au/pull/959) | Open |
+
+### Still to do (after merges unblock)
+- **Phase 2 Session 5b** — migrate `InvestListingsClient` FilterDrawer + `AdvisorsClient` inline panel to use `<FilterPanel>` + `<FacetGroup>` + `<RangeSlider>` (depends on #957 merge to avoid conflicts)
+- **Phase 2 Session 7** — URL-param state alignment on `AdvisorsClient.tsx` (~15 filter states currently local; align to `/invest`'s URL-first pattern) (depends on #955/#956)
+- **Phase 3 Session 8 (full)** — refactor `lib/hooks/useShortlist.ts` from broker-specific to generic, add `useAdvisorShortlist` + `useListingShortlist` thin wrappers, unify `/api/saved-searches` + `/api/advisor-alerts` (large)
+- **Phase 4 Session 9** — schema migration adding `latitude`/`longitude` columns to `investment_listings` (Tier C, needs approval)
+- **Phase 4 Session 9.5** — geocoding backfill cron route
+- **Phase 4 Session 10** — `<DirectoryMap>` component using Mapbox GL JS (needs MAPBOX_TOKEN in Vercel env)
+- **Phase 4 Session 11** — wire `useGeoSearch` + map view into `/invest`
+- **Phase 5 Session 12** — apply primitives + `<DirectoryBanners>` to `/compare/super`, `/compare/insurance`, `/compare/etfs` (depends on #954+#956+#957)
+- **Phase 5 Session 13** — pillar pages: filterable directories or stay editorial? (strategic — needs Fin)
+- **Phase 5 Session 14** — URL slug normalization: add 301s for `/super-funds` → `/super`, `/savings-accounts` → `/savings`, etc.
+- **Phase 6 Session 15** — mobile bottom-sheet drawer + `prefers-reduced-motion` respect (depends on Sessions 5b, 7)
+- **Phase 6 Session 16** — cross-route shortlist sync between `/find-advisor` and `/advisors` (needs Phase 3 full)
+
+### Decisions still pending
+- **Q4** — pillar pages: filterable directories or stay editorial? Needs Fin's input.
+
 ## Decisions (locked in 2026-05-19)
 
 | # | Question | Decision |
