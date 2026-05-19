@@ -67,6 +67,11 @@ function assetClassLabel(cls: ETFAssetClass): string {
   return labels[cls] ?? cls;
 }
 
+function SortIcon({ col, sortKey, sortDir }: { col: SortKey; sortKey: SortKey; sortDir: SortDir }) {
+  if (sortKey !== col) return <span className="text-slate-400 ml-1">↕</span>;
+  return <span className="text-amber-600 ml-1">{sortDir === "asc" ? "↑" : "↓"}</span>;
+}
+
 export default function ETFScreenerClient() {
   const [assetClass, setAssetClass] = useState<ETFAssetClass | "all">("all");
   const [provider, setProvider] = useState<ETFProvider | "all">("all");
@@ -77,7 +82,7 @@ export default function ETFScreenerClient() {
   const [search, setSearch] = useState("");
 
   const filtered = useMemo(() => {
-    let results = ETF_DATA.filter((etf) => {
+    const results = ETF_DATA.filter((etf) => {
       if (assetClass !== "all" && etf.assetClass !== assetClass) return false;
       if (provider !== "all" && etf.provider !== provider) return false;
       if (etf.mer > maxMER) return false;
@@ -108,11 +113,6 @@ export default function ETFScreenerClient() {
       setSortKey(key);
       setSortDir(key === "ticker" ? "asc" : "desc");
     }
-  }
-
-  function SortIcon({ col }: { col: SortKey }) {
-    if (sortKey !== col) return <span className="text-slate-400 ml-1">↕</span>;
-    return <span className="text-amber-600 ml-1">{sortDir === "asc" ? "↑" : "↓"}</span>;
   }
 
   return (
@@ -218,7 +218,7 @@ export default function ETFScreenerClient() {
                     className="text-left py-3 px-4 text-xs font-bold cursor-pointer select-none"
                     onClick={() => toggleSort("ticker")}
                   >
-                    Ticker <SortIcon col="ticker" />
+                    Ticker <SortIcon col="ticker" sortKey={sortKey} sortDir={sortDir} />
                   </th>
                   <th className="text-left py-3 px-4 text-xs font-bold">Name</th>
                   <th className="text-left py-3 px-4 text-xs font-bold hidden sm:table-cell">Category</th>
@@ -226,19 +226,19 @@ export default function ETFScreenerClient() {
                     className="text-right py-3 px-4 text-xs font-bold cursor-pointer select-none"
                     onClick={() => toggleSort("mer")}
                   >
-                    MER <SortIcon col="mer" />
+                    MER <SortIcon col="mer" sortKey={sortKey} sortDir={sortDir} />
                   </th>
                   <th
                     className="text-right py-3 px-4 text-xs font-bold cursor-pointer select-none"
                     onClick={() => toggleSort("aumMillions")}
                   >
-                    AUM <SortIcon col="aumMillions" />
+                    AUM <SortIcon col="aumMillions" sortKey={sortKey} sortDir={sortDir} />
                   </th>
                   <th
                     className="text-right py-3 px-4 text-xs font-bold cursor-pointer select-none"
                     onClick={() => toggleSort("distributionYield")}
                   >
-                    Yield <SortIcon col="distributionYield" />
+                    Yield <SortIcon col="distributionYield" sortKey={sortKey} sortDir={sortDir} />
                   </th>
                   <th className="text-center py-3 px-4 text-xs font-bold">Franking</th>
                   <th className="py-3 px-4"></th>
