@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 
@@ -37,6 +38,8 @@ interface ProRow {
   auto_recharge_threshold_credits: number;
   auto_recharge_pack_slug: string | null;
   stripe_default_payment_method: string | null;
+  firm_id: number | null;
+  is_firm_admin: boolean | null;
 }
 
 export default async function ProsBillingPage() {
@@ -56,7 +59,7 @@ export default async function ProsBillingPage() {
   const { data: pro } = await admin
     .from("professionals")
     .select(
-      "id, name, email, credit_balance_cents, lifetime_credit_cents, lifetime_lead_spend_cents, auto_recharge_enabled, auto_recharge_threshold_credits, auto_recharge_pack_slug, stripe_default_payment_method",
+      "id, name, email, credit_balance_cents, lifetime_credit_cents, lifetime_lead_spend_cents, auto_recharge_enabled, auto_recharge_threshold_credits, auto_recharge_pack_slug, stripe_default_payment_method, firm_id, is_firm_admin",
     )
     .or(`auth_user_id.eq.${user.id},email.eq.${user.email}`)
     .in("status", ["active", "pending"])
@@ -99,6 +102,14 @@ export default async function ProsBillingPage() {
             <p className="text-sm md:text-base text-slate-500 mt-1.5 leading-relaxed">
               Top up to accept Match Requests on the Invest.com.au marketplace. 1 credit = A$1.
             </p>
+            {advisor.firm_id && advisor.is_firm_admin && (
+              <Link
+                href="/firm-portal/billing"
+                className="inline-flex items-center gap-1.5 mt-3 text-sm font-medium text-violet-700 hover:text-violet-900"
+              >
+                View firm-wide billing dashboard →
+              </Link>
+            )}
           </header>
 
           <BillingClient
