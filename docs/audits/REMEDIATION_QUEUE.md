@@ -73,6 +73,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | BB-06 | `claude/audit-remediation/bb-06-mortgage-stress-test` | **#924 OPEN** | BB-06 done (`648d024`): `/tools/mortgage-stress-test` — 9 rate-rise scenarios (+0..+5%), housing-stress thresholds (30%/40% gross), APRA +3% buffer callout, binary-search breakeven rate, FY2025-26 tax. ToolsClient entry + sitemap updated. Last CI: pending — pushed `648d024` 2026-05-19. | BB-06 merged |
 | AA | `claude/audit-remediation/aa-02-03-programmatic-grants` | **#928 OPEN** | AA-01 false-positive (pre-existing). AA-02+AA-03 done (`bc4909c` iter 459): 10 `/grants/[industry]` pages + 11 `/grants/[state]/[program]` pages + sitemap. Last CI: pending — pushed `bc4909c` 2026-05-19. | AA-02+AA-03 merged |
 | Z-26 | `claude/audit-remediation/z-26-super-hub` | **#929 OPEN** | Z-26 done (`225e8be` iter 460): `/super` hub migration to HubPage HOC; `lib/hub-configs/super.ts` (3 hero stats, 6 service cards, 4 deep-dives, 5 FAQs); sub-hub link grid, articles strip, ForeignInvestorCallout, newsletter/lead-magnet/exit-intent wired. Last CI: pending — pushed `225e8be` 2026-05-19. | Z-26 merged |
+| Z-25 | `claude/audit-remediation/z-25-insurance-hub` | **#930 OPEN** | Z-25 done (`dbd76c0` iter 461): `/insurance` hub migration to HubPage HOC; `lib/hub-configs/insurance.ts` (3 hero stats, 6 service cards, 4 deep-dives, 6 FAQs, `complianceKey: "general_advice"`); KEY_CONCEPTS glossary + SITUATION_GUIDE table + inside-vs-outside-super panel preserved as children. Last CI: pending — pushed `dbd76c0` 2026-05-19. | Z-25 merged |
 | DD | `claude/audit-remediation/dd-01-tiered-listings` | **#926 OPEN** | DD-01 done (`137680e`): `advisor_tier` added to `Professional` type; Pro badge + violet card border on `/advisors`; `advisor_tier` select + Pro badge on `/find/[advisor-type]/[city]`. Sort: Featured→Pro→Free. No schema migration. Last CI: pending — pushed `137680e` 2026-05-19. | DD-01 merged |
 
 ---
@@ -133,6 +134,20 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 461 — 2026-05-19 — Z-25 — /insurance hub migration to HubPage HOC
+
+- **Stream:** Z (Tier-1 hub builds)
+- **Phase:** 5 — implementation (Tier A — page/hub)
+- **Branch:** `claude/audit-remediation/z-25-insurance-hub`
+- **PR:** #930 OPEN
+- **Commit:** `dbd76c0` — feat(z25): Z-25 — /insurance hub migration to HubPage HOC
+- **Diff:** 2 files changed, 417 insertions(+), 327 deletions(-)
+- **Items done:** Z-25 (`/insurance` proper hub — HubPage HOC migration)
+- **Implementation:**
+  - **`lib/hub-configs/insurance.ts`** (new) — full `insuranceHubConfig`: 3 hero stats (95% underinsured, up to 70% income protection, $93K MLS threshold), 6 service cards (Life, Income Protection, Health, Home & Contents, TPD, Trauma), 4 deep-dives, 1 calculator, insurance quiz, lead magnet (insurance-cover-checklist), 6 FAQs, `complianceKey: "general_advice"` (no insurance-specific compliance key exists).
+  - **`app/insurance/page.tsx`** — replaced 386-line custom layout with HubPage HOC; KEY_CONCEPTS glossary (6 terms), SITUATION_GUIDE priority table (5 life stages with colour badges), inside-vs-outside-super two-panel section preserved as children; `revalidate` lowered 86400→3600; `HubNewsletterCapture` + `HubExitIntent` wired. No DB queries (page has none).
+- **STATUS: PROGRESS · stream=Z · item=Z-25 · pr=#930**
 
 ### iter 460 — 2026-05-19 — Z-26 — /super hub migration to HubPage HOC
 
