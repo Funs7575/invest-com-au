@@ -21,6 +21,8 @@ import InvestListingCard from "@/components/InvestListingCard";
 import ListingCompareBar from "@/components/invest/ListingCompareBar";
 import SaveSearchButton from "@/components/invest/SaveSearchButton";
 import Icon from "@/components/Icon";
+import SearchInput from "@/components/directory/SearchInput";
+import SortDropdown from "@/components/directory/SortDropdown";
 
 // ─── Props ───────────────────────────────────────────────────────────
 export interface InvestListingsClientProps {
@@ -441,39 +443,14 @@ export default function InvestListingsClient({
         <div className="container-custom py-3 space-y-2.5">
           {/* Row 1: search · filters · sort · view-mode toggle */}
           <div className="flex gap-2 items-center">
-            <form
-              role="search"
-              className="flex-1 min-w-0"
-              onSubmit={(e) => { e.preventDefault(); submitSearch(searchInput); }}
-            >
-              <label htmlFor="listings-search" className="sr-only">Search listings</label>
-              <div className="relative">
-                <Icon name="search" size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                <input
-                  id="listings-search"
-                  type="search"
-                  inputMode="search"
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") submitSearch(searchInput);
-                    if (e.key === "Escape") { setSearchInput(""); submitSearch(""); }
-                  }}
-                  placeholder="Search title, sector, ticker, suburb…"
-                  className="w-full rounded-lg border border-slate-200 bg-white pl-9 pr-9 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400"
-                />
-                {searchInput && (
-                  <button
-                    type="button"
-                    onClick={() => { setSearchInput(""); submitSearch(""); }}
-                    aria-label="Clear search"
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center text-[11px] font-bold"
-                  >
-                    ×
-                  </button>
-                )}
-              </div>
-            </form>
+            <SearchInput
+              id="listings-search"
+              value={searchInput}
+              onChange={setSearchInput}
+              onSubmit={submitSearch}
+              placeholder="Search title, sector, ticker, suburb…"
+              ariaLabel="Search listings"
+            />
 
             <button
               type="button"
@@ -493,14 +470,11 @@ export default function InvestListingsClient({
               )}
             </button>
 
-            <select
+            <SortDropdown
+              options={SORT_OPTIONS}
               value={activeSort}
-              onChange={(e) => setParams({ sort: e.target.value === "newest" ? "" : e.target.value })}
-              aria-label="Sort results"
-              className="shrink-0 hidden md:block rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400"
-            >
-              {SORT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-            </select>
+              onChange={(v) => setParams({ sort: v === "newest" ? "" : v })}
+            />
 
             <div className="shrink-0 hidden sm:inline-flex rounded-lg border border-slate-200 bg-white p-0.5" role="tablist" aria-label="View mode">
               {VIEW_MODES.map((v) => (

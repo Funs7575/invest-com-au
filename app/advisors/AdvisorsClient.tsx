@@ -15,6 +15,8 @@ import VerifiedBadge from "@/components/VerifiedBadge";
 import { trackEvent } from "@/lib/tracking";
 import { useAdvisorShortlist } from "@/lib/hooks/useAdvisorShortlist";
 import { ADVISOR_SPECIALTY_CATEGORIES } from "@/lib/advisor-specialties";
+import SearchInput from "@/components/directory/SearchInput";
+import SortDropdown from "@/components/directory/SortDropdown";
 
 export interface ExpertTeamCard {
   id: number;
@@ -64,14 +66,14 @@ const RADIUS_OPTIONS = [
 ];
 
 type SortKey = "rating" | "name" | "newest" | "reviews" | "distance" | "fee_low" | "fee_high";
-const SORT_OPTIONS: { key: SortKey; label: string }[] = [
-  { key: "rating", label: "Highest Rated" },
-  { key: "reviews", label: "Most Reviewed" },
-  { key: "distance", label: "Nearest" },
-  { key: "fee_low", label: "Lowest Fee" },
-  { key: "fee_high", label: "Highest Fee" },
-  { key: "name", label: "Name (A-Z)" },
-  { key: "newest", label: "Newest" },
+const SORT_OPTIONS: { value: SortKey; label: string }[] = [
+  { value: "rating", label: "Highest Rated" },
+  { value: "reviews", label: "Most Reviewed" },
+  { value: "distance", label: "Nearest" },
+  { value: "fee_low", label: "Lowest Fee" },
+  { value: "fee_high", label: "Highest Fee" },
+  { value: "name", label: "Name (A-Z)" },
+  { value: "newest", label: "Newest" },
 ];
 
 const RESULTS_PER_PAGE = 12;
@@ -694,24 +696,23 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
 
         {/* Search + Filter bar */}
         <div className="flex gap-2 mb-3 md:mb-4">
-          <div className="relative flex-1">
-            <Icon name="search" size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input type="text" placeholder="Search name, firm, team, specialty, suburb..." value={search} onChange={e => setSearch(e.target.value)} aria-label="Search advisors" className="w-full pl-9 pr-4 py-2.5 md:py-3 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-400 transition-all" />
-            {search && <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"><Icon name="x" size={16} /></button>}
-          </div>
-          <button onClick={() => setFiltersOpen(!filtersOpen)} className={`flex items-center gap-1.5 px-3 md:px-4 py-2.5 border rounded-xl text-sm font-semibold transition-all shrink-0 ${filtersOpen || activeFilterCount > 0 ? "bg-amber-50 border-amber-300 text-amber-700" : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"}`}>
+          <SearchInput
+            id="advisors-search"
+            value={search}
+            onChange={setSearch}
+            placeholder="Search name, firm, team, specialty, suburb..."
+            ariaLabel="Search advisors"
+          />
+          <button onClick={() => setFiltersOpen(!filtersOpen)} className={`flex items-center gap-1.5 px-3 md:px-4 py-2 border rounded-lg text-sm font-semibold transition-all shrink-0 ${filtersOpen || activeFilterCount > 0 ? "bg-amber-50 border-amber-300 text-amber-700" : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"}`}>
             <Icon name="sliders" size={16} />
             <span className="hidden md:inline">Filters</span>
             {activeFilterCount > 0 && <span className="w-5 h-5 bg-amber-600 text-white text-[0.6rem] font-bold rounded-full flex items-center justify-center">{activeFilterCount}</span>}
           </button>
-          <select
+          <SortDropdown
+            options={SORT_OPTIONS}
             value={sortBy}
-            onChange={e => setSortBy(e.target.value as SortKey)}
-            aria-label="Sort results"
-            className="hidden md:block px-3 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-600 bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/30"
-          >
-            {SORT_OPTIONS.map(o => <option key={o.key} value={o.key}>{o.label}</option>)}
-          </select>
+            onChange={(v) => setSortBy(v as SortKey)}
+          />
         </div>
 
         {/* Filter panel */}
