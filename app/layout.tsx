@@ -105,16 +105,22 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Feature-flag gate for the chat widget — admins can ramp it
-  // from 0% → 100% via /admin/automation/flags.
-  const chatEnabled = await isFlagEnabled("chatbot_widget");
-  const reportButtonEnabled = await isFlagEnabled("report_button");
-  const pushEnabled = await isFlagEnabled("push_notifications");
-  // Exit-intent newsletter modal — default-on with a feature flag
-  // escape hatch. If no `newsletter_exit_intent` row exists, the
-  // modal ships live; admins can disable or segment via
-  // /admin/automation/flags by inserting a row with enabled=false.
-  const newsletterExitIntentFlag = await loadFlag("newsletter_exit_intent");
+  // Four layout-level flag reads. Previously serial — 4 sequential
+  // Supabase round-trips on every page render. Now parallelised so a
+  // cold L1 cache only adds 1 cross-Atlantic hop, not 4. The L2 cache
+  // wrapper from PR #940 (unstable_cache) keeps subsequent reads off
+  // Supabase entirely for the revalidate window.
+  //   - chatbot_widget / report_button / push_notifications: admin-
+  //     rampable feature flags (0% → 100% via /admin/automation/flags).
+  //   - newsletter_exit_intent: default-on; missing row = enabled,
+  //     existing row honours enabled+rollout_pct.
+  const [chatEnabled, reportButtonEnabled, pushEnabled, newsletterExitIntentFlag] =
+    await Promise.all([
+      isFlagEnabled("chatbot_widget"),
+      isFlagEnabled("report_button"),
+      isFlagEnabled("push_notifications"),
+      loadFlag("newsletter_exit_intent"),
+    ]);
   const newsletterExitIntentEnabled = newsletterExitIntentFlag
     ? newsletterExitIntentFlag.enabled &&
       newsletterExitIntentFlag.rollout_pct > 0
