@@ -634,21 +634,21 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
         {/* Compare bar */}
         {shortlistCount > 0 && (
           <div className="sticky top-16 z-30 mb-3">
-            <div className="bg-violet-600 text-white rounded-xl px-4 py-2.5 flex items-center justify-between shadow-lg shadow-violet-200">
+            <div className="bg-slate-900 text-white rounded-xl px-4 py-2.5 flex items-center justify-between shadow-lg shadow-slate-300">
               <span className="text-sm font-semibold">
                 {shortlistCount} advisor{shortlistCount !== 1 ? "s" : ""} saved
-                {shortlistCount === 1 && <span className="text-violet-200 font-normal"> — save 1 more to compare</span>}
+                {shortlistCount === 1 && <span className="text-slate-300 font-normal"> — save 1 more to compare</span>}
               </span>
               <div className="flex items-center gap-2">
-                <Link href="/shortlist/advisors" className="px-3 py-1.5 text-violet-200 text-xs font-semibold hover:text-white transition-colors">
+                <Link href="/shortlist/advisors" className="px-3 py-1.5 text-slate-300 text-xs font-semibold hover:text-white transition-colors">
                   View saved
                 </Link>
                 {shortlistCount >= 2 ? (
-                  <Link href="/advisors/compare" className="px-3 py-1.5 bg-white text-violet-700 text-xs font-bold rounded-lg hover:bg-violet-50 transition-colors">
+                  <Link href="/advisors/compare" className="px-3 py-1.5 bg-amber-500 text-white text-xs font-bold rounded-lg hover:bg-amber-400 transition-colors">
                     Compare {shortlistCount} →
                   </Link>
                 ) : (
-                  <span className="text-xs text-violet-200">{shortlistMax - shortlistCount} more to compare</span>
+                  <span className="text-xs text-slate-400">{shortlistMax - shortlistCount} more to compare</span>
                 )}
               </div>
             </div>
@@ -664,33 +664,31 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
             aria-label="Provider type"
             className="flex items-center gap-1 p-1 bg-slate-100 rounded-xl mb-3 md:mb-4 overflow-x-auto"
           >
-            {(["all", "individual", "firm", "team"] as const).map(pt => {
-              const label = pt === "all" ? "All" : PROVIDER_TYPE_LABELS[pt];
-              const count = providerTypeCounts[pt];
-              const active = providerType === pt;
-              const disabled = pt !== "all" && count === 0;
-              return (
-                <button
-                  key={pt}
-                  role="tab"
-                  aria-selected={active}
-                  disabled={disabled}
-                  onClick={() => setProviderType(pt)}
-                  className={`flex items-center gap-1.5 px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm font-semibold rounded-lg transition-all whitespace-nowrap ${
-                    active
-                      ? "bg-white text-slate-900 shadow-sm"
-                      : disabled
-                        ? "text-slate-300 cursor-not-allowed"
+            {(["all", "individual", "firm", "team"] as const)
+              .filter(pt => pt === "all" || providerTypeCounts[pt] > 0)
+              .map(pt => {
+                const label = pt === "all" ? "All" : PROVIDER_TYPE_LABELS[pt];
+                const count = providerTypeCounts[pt];
+                const active = providerType === pt;
+                return (
+                  <button
+                    key={pt}
+                    role="tab"
+                    aria-selected={active}
+                    onClick={() => setProviderType(pt)}
+                    className={`flex items-center gap-1.5 px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm font-semibold rounded-lg transition-all whitespace-nowrap ${
+                      active
+                        ? "bg-white text-slate-900 shadow-sm"
                         : "text-slate-600 hover:bg-white/60"
-                  }`}
-                >
-                  {label}
-                  <span className={`text-[0.6rem] md:text-[0.65rem] font-bold px-1.5 py-0.5 rounded ${active ? "bg-amber-100 text-amber-700" : "bg-slate-200 text-slate-500"}`}>
-                    {count}
-                  </span>
-                </button>
-              );
-            })}
+                    }`}
+                  >
+                    {label}
+                    <span className={`text-[0.6rem] md:text-[0.65rem] font-bold px-1.5 py-0.5 rounded ${active ? "bg-amber-100 text-amber-700" : "bg-slate-200 text-slate-500"}`}>
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
           </div>
         )}
 
@@ -1561,44 +1559,6 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               </Link>
             ))}
           </div>
-        </div>
-
-        {/* Saved search / alert widget */}
-        <div className="mt-6 md:mt-8 bg-gradient-to-br from-amber-50/80 via-white to-white border border-amber-100 rounded-2xl p-4 md:p-6 shadow-sm">
-          <div className="flex items-start gap-3 mb-3.5">
-            <div className="w-10 h-10 bg-amber-100 border border-amber-200 rounded-xl flex items-center justify-center shrink-0 shadow-sm shadow-amber-100">
-              <Icon name="bell" size={18} className="text-amber-600" />
-            </div>
-            <div>
-              <h3 className="text-sm font-extrabold text-slate-800">Can&apos;t find the right advisor?</h3>
-              <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">Save a search alert and we&apos;ll notify you when a new advisor matching your criteria joins.</p>
-            </div>
-          </div>
-          {alertStatus === "done" ? (
-            <div className="flex items-center gap-2 text-sm text-emerald-700 font-semibold">
-              <svg className="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
-              Alert saved — we&apos;ll email you when a match is available.
-            </div>
-          ) : (
-            <div className="flex gap-2">
-              <input
-                type="email"
-                value={alertEmail}
-                onChange={(e) => { setAlertEmail(e.target.value); setAlertError(""); }}
-                placeholder="your@email.com"
-                className="flex-1 px-3 py-2 border border-amber-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white"
-                onKeyDown={(e) => e.key === "Enter" && saveAlert()}
-              />
-              <button
-                onClick={saveAlert}
-                disabled={alertStatus === "submitting"}
-                className="px-4 py-2 bg-amber-500 text-white text-sm font-semibold rounded-lg hover:bg-amber-600 disabled:opacity-60 transition-colors whitespace-nowrap"
-              >
-                {alertStatus === "submitting" ? "Saving..." : "Set Alert"}
-              </button>
-            </div>
-          )}
-          {alertError && <p className="text-xs text-red-600 mt-1">{alertError}</p>}
         </div>
 
         <div className="mt-6 md:mt-10 relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-2xl p-5 md:p-8 text-center shadow-xl shadow-slate-900/10">
