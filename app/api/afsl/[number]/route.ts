@@ -16,7 +16,12 @@ import { getAfslLicensee, normaliseAfslNumber } from "@/lib/afsl-register";
 import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 
 export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
+// 1h ISR cache. Data is the public AFSL register — same response for all
+// callers, safe to CDN-cache. Previously `dynamic = "force-dynamic"`
+// silently nullified the `s-maxage=86400` header set at the bottom of
+// the file. Rate-limit still applies on cache misses (function invocations);
+// the cache absorbs the bulk of repeat lookups.
+export const revalidate = 3600;
 
 type Params = { params: Promise<{ number: string }> };
 

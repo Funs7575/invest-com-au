@@ -5,6 +5,8 @@ import { validateApiKey, logApiRequest, API_CORS_HEADERS } from "@/lib/api-auth"
 import { escapeHtml } from "@/lib/html-escape";
 
 export const runtime = "nodejs";
+// Per-key auth gating — see /api/v1/brokers/route.ts for the same reasoning.
+// Browser-level cache only via `Cache-Control: private` below.
 export const dynamic = "force-dynamic";
 
 const log = logger("api-v1-broker-slug");
@@ -198,7 +200,7 @@ export async function GET(
         status: 200,
         headers: {
           ...API_CORS_HEADERS,
-          "Cache-Control": "public, max-age=3600",
+          "Cache-Control": "private, max-age=3600",
         },
       },
     );

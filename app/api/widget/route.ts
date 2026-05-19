@@ -3,7 +3,11 @@ import { createStaticClient } from "@/lib/supabase/static";
 import { getWidgetCatalogueEntry } from "@/lib/widget/types";
 
 export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
+// 1h ISR cache. Previously `dynamic = "force-dynamic"` which silently
+// nullified the `Cache-Control: max-age=3600` header below — every
+// partner embed re-rendered the widget on every page view. Vercel
+// now serves the same JS payload from the CDN edge for 1h.
+export const revalidate = 3600;
 
 /**
  * GET /api/widget — Returns self-contained JavaScript that renders an
