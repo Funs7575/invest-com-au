@@ -1,6 +1,8 @@
 import { getStripe } from "@/lib/stripe";
+// eslint-disable-next-line no-restricted-imports -- advisor_billing writes/reads are performed by Stripe webhooks and admin-triggered flows that run without a user JWT; admin client is the documented exception per CLAUDE.md §"Two Supabase clients".
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
+import { CROSS_BORDER_SPECIALTIES } from "@/lib/advisor-specialties";
 
 const log = logger("advisor-billing");
 
@@ -10,6 +12,34 @@ export const FREE_LEAD_LIMIT = 3; // 3 free leads to prove value
 export const DEFAULT_TOPUP_CENTS = 15000; // A$150 credit top-up (~4 leads)
 export const ARTICLE_STANDARD_PRICE_CENTS = 19900; // A$199 standard article
 export const ARTICLE_FEATURED_PRICE_CENTS = 39900; // A$399 featured article
+
+/**
+ * Cross-border leads (UK pension transfer, FATCA US expat, DASP, FIRB
+ * non-resident property) realise 5–15× the LTV of a domestic share-broker
+ * lead — fees across pension transfer + non-resident mortgage + FX +
+ * FIRB lawyer + ongoing planner + recurring tax stack to $5–20k over
+ * ~18 months. 1.75× is a conservative slice of that asymmetry that
+ * leaves the advisor with most of the margin (see FIN_NOTEBOOK
+ * 2026-05-01 decision, backlog item #24 Phase A).
+ */
+export const CROSS_BORDER_LEAD_MULTIPLIER = 1.75;
+
+/**
+ * Returns the per-lead price in cents for a lead with the given
+ * specialty tags. If any specialty is in the cross-border set sourced
+ * from `lib/advisor-specialties.ts`, applies the
+ * `CROSS_BORDER_LEAD_MULTIPLIER`; otherwise returns the flat default.
+ *
+ * Pure — no DB / Stripe / cookies. Callers that don't have specialty
+ * context should keep using `DEFAULT_LEAD_PRICE_CENTS` directly.
+ */
+export function getLeadPriceCents(specialties: readonly string[]): number {
+  if (specialties.length === 0) return DEFAULT_LEAD_PRICE_CENTS;
+  const crossBorderSet = new Set<string>(CROSS_BORDER_SPECIALTIES);
+  const hasCrossBorder = specialties.some((s) => crossBorderSet.has(s));
+  if (!hasCrossBorder) return DEFAULT_LEAD_PRICE_CENTS;
+  return Math.round(DEFAULT_LEAD_PRICE_CENTS * CROSS_BORDER_LEAD_MULTIPLIER);
+}
 
 /**
  * Get or create a Stripe customer for a professional advisor.
