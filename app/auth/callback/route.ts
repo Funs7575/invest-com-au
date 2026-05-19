@@ -8,6 +8,7 @@ import {
   setActiveTeamId,
 } from "@/lib/account-kinds";
 import { attributeSignupByToken } from "@/lib/pro-affiliate/track";
+import { runPostSignin } from "@/lib/auth/post-signin";
 
 const log = logger("auth-callback");
 
@@ -30,6 +31,32 @@ async function maybeAttributePro(request: NextRequest): Promise<void> {
     await attributeSignupByToken({ token, userId: user.id, sessionId });
   } catch (err) {
     log.warn("maybeAttributePro failed", {
+      err: err instanceof Error ? err.message : String(err),
+    });
+  }
+}
+
+/**
+ * Fire-and-forget post-signin orchestrator (Phase 2.5). Runs the
+ * canonical email-claim + session-claim tasks so every almost-account
+ * row matching the freshly authed user gets linked. Never blocks the
+ * redirect; per-table errors logged inside runPostSignin.
+ */
+async function maybeRunPostSignin(request: NextRequest): Promise<void> {
+  try {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return;
+    const sessionId = request.cookies.get("session_id")?.value ?? null;
+    await runPostSignin({
+      authUserId: user.id,
+      email: user.email ?? null,
+      sessionId,
+    });
+  } catch (err) {
+    log.warn("maybeRunPostSignin threw", {
       err: err instanceof Error ? err.message : String(err),
     });
   }
@@ -129,6 +156,7 @@ export async function GET(request: NextRequest) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
       void maybeAttributePro(request);
+      void maybeRunPostSignin(request);
       return NextResponse.redirect(await postAuthRedirectUrl(origin, next));
     }
     log.warn("exchangeCodeForSession failed", {
@@ -156,6 +184,7 @@ export async function GET(request: NextRequest) {
     });
     if (!error) {
       void maybeAttributePro(request);
+      void maybeRunPostSignin(request);
       return NextResponse.redirect(await postAuthRedirectUrl(origin, next));
     }
     log.warn("verifyOtp failed", {
