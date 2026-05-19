@@ -412,7 +412,11 @@ export default async function ArticlesPage({
           <>
             <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2.5 md:gap-6">
               {flatFiltered.map((article, idx) => (
-                <ArticleCard key={article.id} article={article} priority={idx < 3} />
+                // Only the single LCP candidate (first card) gets
+                // `priority`. Marking 3 cards as priority was an
+                // anti-pattern — splits the network budget and DELAYS
+                // the real LCP image.
+                <ArticleCard key={article.id} article={article} priority={idx === 0} />
               ))}
             </div>
 
