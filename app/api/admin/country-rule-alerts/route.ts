@@ -8,9 +8,8 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { getAdminEmails } from "@/lib/admin";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
+import { requireAdmin } from "@/lib/require-admin";
 import { logger } from "@/lib/logger";
 import { withValidatedBody } from "@/lib/validation/withValidatedBody";
 import {
@@ -43,23 +42,12 @@ const UpdateSchema = CreateSchema.partial().extend({
   id: z.number().int().positive(),
 });
 
-async function requireAdmin(): Promise<{ email: string } | null> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user?.email) return null;
-  const allowed = getAdminEmails();
-  const email = user.email.toLowerCase();
-  if (!allowed.includes(email)) return null;
-  return { email };
-}
 
 /** GET /api/admin/country-rule-alerts?country_code=uk */
 export async function GET(request: NextRequest) {
-  const admin = await requireAdmin();
-  if (!admin) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const guard = await requireAdmin();
+  if (!guard.ok) {
+    return guard.response;
   }
 
   const code = request.nextUrl.searchParams.get("country_code");
@@ -94,9 +82,9 @@ export async function GET(request: NextRequest) {
 
 /** POST /api/admin/country-rule-alerts — create a new row */
 export const POST = withValidatedBody(CreateSchema, async (_req, body) => {
-  const admin = await requireAdmin();
-  if (!admin) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const guard = await requireAdmin();
+  if (!guard.ok) {
+    return guard.response;
   }
 
   const supabase = createAdminClient();
@@ -128,7 +116,7 @@ export const POST = withValidatedBody(CreateSchema, async (_req, body) => {
     action: "country_rule_alert:created",
     entity_type: "country_rule_alerts",
     entity_id: String(data.id),
-    admin_email: admin.email,
+    admin_email: guard.email,
     details: { country_code: body.country_code, alert_key: body.alert_key },
   });
 
@@ -137,9 +125,9 @@ export const POST = withValidatedBody(CreateSchema, async (_req, body) => {
 
 /** PATCH /api/admin/country-rule-alerts — update an existing row by id */
 export const PATCH = withValidatedBody(UpdateSchema, async (_req, body) => {
-  const admin = await requireAdmin();
-  if (!admin) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const guard = await requireAdmin();
+  if (!guard.ok) {
+    return guard.response;
   }
 
   const { id, ...updates } = body;
@@ -160,7 +148,7 @@ export const PATCH = withValidatedBody(UpdateSchema, async (_req, body) => {
     action: "country_rule_alert:updated",
     entity_type: "country_rule_alerts",
     entity_id: String(id),
-    admin_email: admin.email,
+    admin_email: guard.email,
     details: updates,
   });
 
@@ -169,9 +157,9 @@ export const PATCH = withValidatedBody(UpdateSchema, async (_req, body) => {
 
 /** DELETE /api/admin/country-rule-alerts?id=123 */
 export async function DELETE(request: NextRequest) {
-  const admin = await requireAdmin();
-  if (!admin) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const guard = await requireAdmin();
+  if (!guard.ok) {
+    return guard.response;
   }
 
   const id = request.nextUrl.searchParams.get("id");
@@ -192,7 +180,7 @@ export async function DELETE(request: NextRequest) {
     action: "country_rule_alert:deleted",
     entity_type: "country_rule_alerts",
     entity_id: id,
-    admin_email: admin.email,
+    admin_email: guard.email,
   });
 
   return NextResponse.json({ ok: true });

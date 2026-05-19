@@ -106,6 +106,115 @@ const ALLOWED_NAMES = new Set([
   // is an async DB insert that creates a booking availability slot. Same name, unrelated
   // domains; false-positive from the heuristic scan.
   "addSlot",
+
+  // 8 UI files: remove(id) / remove(index) — React state callbacks (setState(prev =>
+  // prev.filter(...))).  lib/saved-searches.ts: remove(id) is async and deletes from DB.
+  // Same name, opposite domains; false-positive.
+  "remove",
+
+  // 7 files: formatCurrency(n) — AUD-only, takes a plain dollar number.
+  // lib/currency.ts: formatCurrency(cents, currency, locale) — multi-currency, takes
+  // cents. Different units and call sites; swapping would break output.
+  "formatCurrency",
+
+  // 7 files: slugify() — each uses a locally-tuned regex or 80-char truncation that
+  // diverges from lib/utils.ts slugify() (different character sets, no truncation cap).
+  // Behavioural difference is intentional in those contexts.
+  "slugify",
+
+  // 6 files (cron routes): sendEmail(to, subject, html) — positional-arg wrappers
+  // around Resend calls.  lib/resend.ts: sendEmail(opts: SendEmailOptions) — options
+  // object with extra fields (tags, bcc, replyTo). Different call shapes; not
+  // mechanically substitutable without rewriting every call site.
+  "sendEmail",
+
+  // 5 files: update() — React state setters (setState(prev => ({...prev, ...patch}))).
+  // lib/saved-searches.ts: update(id, patch) is async and writes to DB. False-positive.
+  "update",
+
+  // 4 files: formatAUD(cents) — divides by 100 before formatting; used in
+  // broker-portal invoices where the DB stores amounts in cents.
+  // lib/currency.ts: formatAUD(dollars) — takes dollars directly. Different units;
+  // swapping would double-divide amounts already in the DB.
+  "formatAUD",
+
+  // 3 calculator files: storeQualificationData(data) — single-arg wrapper that
+  // hard-codes the source key locally.
+  // lib/qualification-store.ts: storeQualificationData(source, data) — two args.
+  // Different signatures; callers omit the source argument by design.
+  "storeQualificationData",
+
+  // 2 files: truncate() — admin/moderation truncates by line count; bug-report
+  // truncates by char count with a different param name.
+  // lib/holdings/csv-import/_utils.ts: truncate(s, max=200) truncates by char count
+  // with a default.  Different semantics between the two local versions and the lib.
+  "truncate",
+
+  // 2 files: formatDate(iso: string) — simplified renderers that take only an ISO
+  // string.  lib/utils.ts: formatDate(iso?, {style?, fallback?}) — complex overload.
+  // Locals don't pass options; the lib's defaults differ from the local formatting
+  // used in those files.
+  "formatDate",
+
+  // app/admin/ai-assistant/page.tsx: sendMessage(text) — React event handler that
+  // POSTs to the AI assistant endpoint. lib/brief-messages/index.ts: sendMessage() is
+  // an async DB insert into brief_messages. Unrelated domains.
+  "sendMessage",
+
+  // app/admin/placement-experiments/PlacementExperimentsEditor.tsx: setStatus(row,
+  // status) — local React handler calling a fetch PATCH. lib/disputes/index.ts:
+  // setStatus() is an async DB operation on disputes. Different tables and domains.
+  "setStatus",
+
+  // app/advisor-portal/teams/TeamsManagerClient.tsx: submitForVerification() — no-arg
+  // UI handler that calls fetch. lib/expert-teams.ts: submitForVerification(teamId)
+  // is an async DB update. Different signatures and contexts.
+  "submitForVerification",
+
+  // app/api/cron/country-rule-alerts-digest/route.ts: renderDigestHtml(alerts, now)
+  // — renders a country-alert digest email. lib/pro-digest/index.ts: renderDigestHtml
+  // (input: {…}) renders a professional weekly digest. Different templates, different
+  // input shapes, different purposes.
+  "renderDigestHtml",
+
+  // app/api/cron/country-rule-alerts-digest/route.ts: isKnownIntentCountry(code) —
+  // checks against a local KNOWN_INTENT_CODES Set<IntentCountryCode>.
+  // lib/intent-context.ts: isKnownIntentCountry(value) checks via hasOwnProperty on
+  // the KNOWN object (security-hardened). Same type-guard shape but different backing
+  // data structure; not a drop-in replacement without removing the local Set.
+  "isKnownIntentCountry",
+
+  // app/api/pro-affiliate/[token]/route.ts: hashIp(ip) — sha256(ip).slice(0,32),
+  // no salt.  lib/article-comments.ts: hashIp(ip) — sha256(ip + IP_HASH_SALT).
+  // Different outputs; swapping would invalidate hashes already stored in the DB
+  // under the no-salt format.
+  "hashIp",
+
+  // app/api/quiz-lead/route.ts: inferVertical(a: UnifiedAnswers | undefined): string |
+  // null — quiz-lead-specific inference over UnifiedAnswers shape.
+  // lib/getmatched/inference.ts: inferVertical(answers: ActionPlanAnswers): Vertical |
+  // null — takes a different input type and returns a typed enum. Not substitutable.
+  "inferVertical",
+
+  // app/questions/page.tsx: groupByCategory(questions) — groups FAQ Question rows by
+  // their category string. lib/country-schemes.ts: groupByCategory(schemes) — groups
+  // CountryScheme rows by SchemeCategory. Same name, unrelated input/output types.
+  "groupByCategory",
+
+  // app/quiz/page.tsx: inferAdvisorType(a: UnifiedAnswers): string — returns a plain
+  // string. lib/getmatched/inference.ts: inferAdvisorType(answers: ActionPlanAnswers):
+  // AdvisorType — different input type and return type. Not substitutable.
+  "inferAdvisorType",
+
+  // components/SmartRecommendationsStrip.tsx defines lightweight local rankBrokers,
+  // rankAdvisors, and scoreAdvisor functions that score using only rating + a small
+  // profile heuristic.  The lib/ versions (lib/compare-engine.ts, lib/advisor-ranker.ts)
+  // take different input types (CostInputs, full AdvisorForRanking<T>) and implement
+  // full pricing/availability scoring. Not substitutable — the strip deliberately
+  // uses a simplified ranker for performance and to avoid importing heavy deps.
+  "rankBrokers",
+  "rankAdvisors",
+  "scoreAdvisor",
 ]);
 
 const EXPORT_PATTERNS = [
