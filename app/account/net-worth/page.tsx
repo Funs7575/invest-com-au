@@ -26,8 +26,9 @@ export const metadata: Metadata = {
 //   - Pull manual savings balances (no input surface yet — the saved
 //     calculator-state in investor_goals.current_balance_cents is the
 //     stand-in for users without Sharesight import).
-//   - Pull super balances (requires Sharesight OAuth completion — PR #885
-//     in draft).
+//   - Pull super balances (Sharesight OAuth read for ASX holdings is
+//     shipped via /account/holdings; super accounts are a separate
+//     Sharesight account type not yet handled).
 //
 // As those data sources land, this page reads them automatically — the
 // switch from "holdings + manual goals" to "holdings + super + savings"
@@ -128,8 +129,8 @@ export default async function NetWorthPage() {
       <header className="mb-6">
         <h1 className="text-2xl font-extrabold text-slate-900">Net worth</h1>
         <p className="mt-1 text-sm text-slate-500">
-          Pulled from your holdings + saved goals. Add a Sharesight import for super + cash
-          balances (coming soon).
+          Pulled from your holdings + saved goals. Connect Sharesight on your
+          holdings page to pull share portfolios automatically.
         </p>
       </header>
 

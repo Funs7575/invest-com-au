@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import HoldingsClient, { type HoldingRow } from "./HoldingsClient";
+import type { SharesightConnectStatus } from "./SharesightConnect";
 import { getCurrentPricesBatch, keyOf } from "@/lib/holdings/value";
 import { enforcePortalKind } from "@/lib/portal-gate";
+import { isSharesightConfigured } from "@/lib/sharesight";
 
 export const dynamic = "force-dynamic";
 
@@ -28,9 +30,11 @@ export default async function HoldingsPage() {
     redirect("/account/login?redirect=/account/holdings");
   }
 
-  // Fetch holdings + the broker fee table in parallel — the latter feeds
-  // the switching coach (asx_fee_value is the comparison axis).
-  const [{ data: holdings }, { data: brokers }] = await Promise.all([
+  // Fetch holdings + the broker fee table + sharesight connection in
+  // parallel — the brokers list feeds the switching coach
+  // (asx_fee_value is the comparison axis); sharesight status drives the
+  // connect/sync card.
+  const [{ data: holdings }, { data: brokers }, { data: sharesightRow }] = await Promise.all([
     supabase
       .from("investor_holdings")
       .select(
@@ -41,6 +45,11 @@ export default async function HoldingsPage() {
       .from("brokers")
       .select("slug, name, asx_fee_value")
       .eq("status", "active"),
+    supabase
+      .from("sharesight_connections")
+      .select("last_imported_at, last_import_error")
+      .eq("auth_user_id", user.id)
+      .maybeSingle(),
   ]);
 
   const initialItems: HoldingRow[] = (holdings ?? []).map((r) => ({
@@ -81,17 +90,31 @@ export default async function HoldingsPage() {
     asx_fee_value: typeof b.asx_fee_value === "number" ? b.asx_fee_value : null,
   }));
 
+  const sharesightStatus: SharesightConnectStatus = {
+    configured: isSharesightConfigured(),
+    connected: sharesightRow != null,
+    lastImportedAt:
+      (sharesightRow?.last_imported_at as string | null | undefined) ?? null,
+    lastImportError:
+      (sharesightRow?.last_import_error as string | null | undefined) ?? null,
+  };
+
   return (
     <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
       <header className="mb-6">
         <h1 className="text-2xl font-bold text-slate-900">Holdings</h1>
         <p className="text-sm text-slate-600 mt-1">
-          Track what you own across brokers in one place. Manual entry only —
-          general information, not financial advice. See your accountant for tax
+          Track what you own across brokers in one place. Add manually, import
+          a broker CSV, or connect Sharesight for one-click sync — general
+          information, not financial advice. See your accountant for tax
           treatment.
         </p>
       </header>
-      <HoldingsClient initialItems={initialItems} brokers={brokerOptions} />
+      <HoldingsClient
+        initialItems={initialItems}
+        brokers={brokerOptions}
+        sharesightStatus={sharesightStatus}
+      />
     </main>
   );
 }
