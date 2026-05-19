@@ -71,6 +71,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | Z-22+BB-07 | `claude/audit-remediation/z-22-bb07-redundancy-hub` | **#922 OPEN** | Z-22 done (`63875c8`): `/redundancy` hub (HubPage HOC, 6 service cards, 6 FAQs, ETP stats). BB-07 done: `/tools/etp-calculator` (FY2025-26 maths, tax-free threshold, 17%/32% ETP rates, marginal rate comparison). Lead magnet + ToolsClient entry + sitemap updated. Last CI: pending — pushed `63875c8` 2026-05-19. | Z-22+BB-07 merged |
 | BB-01 | `claude/audit-remediation/bb-01-borrowing-power` | **#923 OPEN** | BB-01 done (`a861dc3`): `/tools/borrowing-power-calculator` — multi-lender borrowing power calc (FY2025-26 tax, HEM, 3 APRA lender scenarios, LVR/LMI flags). ToolsClient entry + sitemap updated. Last CI: pending — pushed `a861dc3` 2026-05-19. | BB-01 merged |
 | BB-06 | `claude/audit-remediation/bb-06-mortgage-stress-test` | **#924 OPEN** | BB-06 done (`648d024`): `/tools/mortgage-stress-test` — 9 rate-rise scenarios (+0..+5%), housing-stress thresholds (30%/40% gross), APRA +3% buffer callout, binary-search breakeven rate, FY2025-26 tax. ToolsClient entry + sitemap updated. Last CI: pending — pushed `648d024` 2026-05-19. | BB-06 merged |
+| AA | `claude/audit-remediation/aa-02-03-programmatic-grants` | **#928 OPEN** | AA-01 false-positive (pre-existing). AA-02+AA-03 done (`bc4909c` iter 459): 10 `/grants/[industry]` pages + 11 `/grants/[state]/[program]` pages + sitemap. Last CI: pending — pushed `bc4909c` 2026-05-19. | AA-02+AA-03 merged |
 | DD | `claude/audit-remediation/dd-01-tiered-listings` | **#926 OPEN** | DD-01 done (`137680e`): `advisor_tier` added to `Professional` type; Pro badge + violet card border on `/advisors`; `advisor_tier` select + Pro badge on `/find/[advisor-type]/[city]`. Sort: Featured→Pro→Free. No schema migration. Last CI: pending — pushed `137680e` 2026-05-19. | DD-01 merged |
 
 ---
@@ -131,6 +132,22 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 459 — 2026-05-19 — AA-02+AA-03 — programmatic /grants/[industry] + /grants/[state]/[program]
+
+- **Stream:** AA (programmatic SEO)
+- **Phase:** 5 — implementation (Tier A — content/pages)
+- **Branch:** `claude/audit-remediation/aa-02-03-programmatic-grants`
+- **PR:** #928 OPEN
+- **Commit:** `bc4909c` — feat(aa): AA-02+AA-03 — programmatic /grants/[industry] and /grants/[state]/[program] pages
+- **Diff:** 3 files changed, 1043 insertions(+), 1 deletion(-)
+- **Items done:** AA-02 (`/grants/[industry]` — 10 industry slugs), AA-03 (`/grants/[state]/[program]` — 11 state/program combos)
+- **Implementation:**
+  - **`app/grants/[industry]/page.tsx`** — 10 industry pages (tech, biotech, agriculture, manufacturing, clean-energy, mining, healthcare, export, creative, defence). Each: federal grant listing cards with links to static grant pages, state program cross-links, FAQ JSON-LD, breadcrumb JSON-LD, ISR 3600, `generateStaticParams()`.
+  - **`app/grants/[state]/[program]/page.tsx`** — 11 state/program pages (NSW×2, VIC×2, QLD×2, WA, SA, TAS, ACT, NT). Each: funding amount in `<DatedStatBadge>` (stalesAt 2027-01-01), eligibility checklist, eligible costs, FAQ JSON-LD, breadcrumb JSON-LD, ISR 3600, `generateStaticParams()`.
+  - **`app/sitemap.ts`** — 21 new entries added (10 industry + 11 state/program), priority 0.6, monthly change frequency.
+  - Static routes `/grants/emdg`, `/grants/rd-tax-incentive`, `/grants/industry-growth-program` retain Next.js segment-priority over the `[industry]` dynamic catch-all.
+- **STATUS: PROGRESS · stream=AA · item=AA-02+AA-03 · pr=#928**
 
 ### iter 458 — 2026-05-19 — CI-RESCUE — F stream #925 Lint·Type-check·Test·Build
 
