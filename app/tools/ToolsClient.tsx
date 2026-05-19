@@ -270,6 +270,18 @@ const TOOLS: Tool[] = [
     url: "/tools/fhss-calculator",
     internal: true,
   },
+  {
+    slug: "mortgage-stress-test",
+    name: "Mortgage Stress Test Calculator",
+    category: "Calculators",
+    rating: 5,
+    description:
+      "Test your mortgage repayments across nine rate-rise scenarios from current to +5% above your rate. Find the breakeven rate where you'd hit housing stress (30% of gross income) and see the impact of APRA's mandatory 3% buffer.",
+    pros: ["9 rate scenarios", "APRA buffer highlighted", "Housing-stress breakeven"],
+    pricing: "Free tool",
+    url: "/tools/mortgage-stress-test",
+    internal: true,
+  },
 ];
 
 /* ─── Config ─── */
