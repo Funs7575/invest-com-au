@@ -74,3 +74,4 @@ spatial_ref_sys
 # brief_promo_codes + brief_promo_redemptions get their migration in this PR (#899) and so are
 # intentionally omitted here — the gate will fail loudly if they slip out of the migration set.
 afsl_register               # created in Supabase dashboard (ASIC AFSL register import 2026-05-19); remove when backfill migration lands
+sharesight_connections      # W2.11 Sharesight OAuth — table on live, migration in #927/#885 not yet merged; remove when either lands

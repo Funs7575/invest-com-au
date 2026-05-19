@@ -111,7 +111,13 @@ export async function GET(req: NextRequest) {
       fee_changes_count: (feeChanges || []).length,
       articles_count: (newArticles || []).length,
       deals_count: (deals || []).length,
-    },
+      // Mark immediately as 'sent' so the row is visible through the
+      // status='sent' filter applied by both the newsletter list page
+      // and `lib/server/premium-content.ts`. The default on the
+      // underlying column is 'draft'; without this the digest renders
+      // a 404 to all readers after this cron stores it.
+      status: "sent",
+    } as never,
     { onConflict: "edition_date" }
   );
 
