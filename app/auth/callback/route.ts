@@ -5,6 +5,7 @@ import {
   chooseCallbackRedirect,
   getKindsForUser,
   setActiveKind,
+  setActiveTeamId,
 } from "@/lib/account-kinds";
 import { attributeSignupByToken } from "@/lib/pro-affiliate/track";
 
@@ -47,8 +48,9 @@ async function postAuthRedirectUrl(origin: string, fallbackNext: string): Promis
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return new URL(fallbackNext, origin);
     const memberships = await getKindsForUser(user.id);
-    const { redirect, setKind } = chooseCallbackRedirect(memberships, fallbackNext);
+    const { redirect, setKind, setTeamId } = chooseCallbackRedirect(memberships, fallbackNext);
     if (setKind) await setActiveKind(setKind);
+    if (setTeamId) await setActiveTeamId(setTeamId);
     return new URL(redirect, origin);
   } catch (err) {
     log.warn("postAuthRedirectUrl threw — falling back", {

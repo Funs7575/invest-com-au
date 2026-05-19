@@ -26,11 +26,12 @@ import type { AccountKind } from "@/lib/account-types";
 const log = logger("account-kinds");
 
 export const ACTIVE_KIND_COOKIE = "iv_active_kind";
+export const ACTIVE_TEAM_COOKIE = "iv_active_team_id";
 export const ACTIVE_KIND_TTL_SECONDS = 60 * 60 * 24 * 30; // 30 days
 
-// As of W2 Phase 3, AccountKind covers all 5 workspace kinds. WorkspaceKind
-// is kept as an alias for call-site readability ("workspace" semantics
-// vs "account membership" semantics) but they're the same union.
+// AccountKind covers the 5 base workspace kinds plus 'squad', a team-scoped
+// workspace where the user acts on behalf of an expert_team they're an
+// active member of. WorkspaceKind is kept as a readability alias.
 export type WorkspaceKind = AccountKind;
 
 export interface KindMembership {
@@ -39,6 +40,11 @@ export interface KindMembership {
   kindId: string;
   status: string;
   displayLabel: string;
+  /**
+   * For team-scoped workspaces (currently only kind='squad'), the team's
+   * slug — used for routing to /teams/<slug>/dashboard. NULL for base kinds.
+   */
+  scopeSlug: string | null;
   createdAt: string;
 }
 
@@ -54,7 +60,7 @@ export async function getKindsForUser(userId: string): Promise<KindMembership[]>
     const supabase = createAdminClient();
     const { data, error } = await supabase
       .from("account_kind_membership")
-      .select("auth_user_id, kind, kind_id, status, display_label, created_at")
+      .select("auth_user_id, kind, kind_id, status, display_label, scope_slug, created_at")
       .eq("auth_user_id", userId)
       .order("created_at", { ascending: true });
     if (error) {
@@ -67,6 +73,7 @@ export async function getKindsForUser(userId: string): Promise<KindMembership[]>
       kindId: r.kind_id as string,
       status: r.status as string,
       displayLabel: r.display_label as string,
+      scopeSlug: (r.scope_slug as string | null) ?? null,
       createdAt: r.created_at as string,
     }));
   } catch (err) {
@@ -113,6 +120,37 @@ export async function setActiveKind(kind: WorkspaceKind): Promise<void> {
 export async function clearActiveKind(): Promise<void> {
   const c = await cookies();
   c.delete(ACTIVE_KIND_COOKIE);
+  c.delete(ACTIVE_TEAM_COOKIE);
+}
+
+/**
+ * Read the active team id from the cookie. Only meaningful when the active
+ * kind is 'squad'. Returns null when unset.
+ */
+export async function getActiveTeamId(): Promise<string | null> {
+  const c = await cookies();
+  return c.get(ACTIVE_TEAM_COOKIE)?.value ?? null;
+}
+
+/**
+ * Set the active team id (squad workspace scope). 30-day TTL mirrors the
+ * kind cookie. Like the kind cookie, not httpOnly so the client can read
+ * for theming; RLS still enforces team-scoped data isolation.
+ */
+export async function setActiveTeamId(teamId: string): Promise<void> {
+  const c = await cookies();
+  c.set(ACTIVE_TEAM_COOKIE, teamId, {
+    maxAge: ACTIVE_KIND_TTL_SECONDS,
+    httpOnly: false,
+    sameSite: "lax",
+    path: "/",
+    secure: process.env.NODE_ENV === "production",
+  });
+}
+
+export async function clearActiveTeamId(): Promise<void> {
+  const c = await cookies();
+  c.delete(ACTIVE_TEAM_COOKIE);
 }
 
 const KNOWN_WORKSPACE_KINDS = new Set<WorkspaceKind>([
@@ -121,6 +159,7 @@ const KNOWN_WORKSPACE_KINDS = new Set<WorkspaceKind>([
   "investor",
   "business_owner",
   "listing_owner",
+  "squad",
 ]);
 
 export function isWorkspaceKind(value: string): value is WorkspaceKind {
@@ -134,36 +173,55 @@ export function isWorkspaceKind(value: string): value is WorkspaceKind {
  *
  *   0 kinds  → `/account` (default investor surface; new users can
  *              create non-investor kinds from there)
- *   1 kind   → that kind's portal, set cookie
+ *   1 kind   → that kind's portal, set cookie (+ team cookie if squad)
  *   2+ kinds → `/account/select-workspace`
  */
 export function chooseCallbackRedirect(
   memberships: ReadonlyArray<KindMembership>,
   fallbackNext: string,
-): { redirect: string; setKind: WorkspaceKind | null } {
+): {
+  redirect: string;
+  setKind: WorkspaceKind | null;
+  setTeamId: string | null;
+} {
   if (memberships.length === 0) {
-    return { redirect: fallbackNext, setKind: "investor" };
+    return { redirect: fallbackNext, setKind: "investor", setTeamId: null };
   }
   if (memberships.length === 1) {
+    const only = memberships[0]!;
     return {
-      redirect: portalForKind(memberships[0]!.kind, fallbackNext),
-      setKind: memberships[0]!.kind,
+      redirect: portalForKind(only.kind, {
+        teamSlug: only.scopeSlug,
+        fallback: fallbackNext,
+      }),
+      setKind: only.kind,
+      setTeamId: only.kind === "squad" ? only.kindId : null,
     };
   }
-  return { redirect: "/account/select-workspace", setKind: null };
+  return { redirect: "/account/select-workspace", setKind: null, setTeamId: null };
 }
 
 /**
  * Map a workspace kind to its primary portal URL. The investor kind keeps
- * the existing /account namespace; specialised kinds get their own.
+ * the existing /account namespace; specialised kinds get their own. The
+ * squad kind requires options.teamSlug to route to /teams/<slug>/dashboard
+ * — if absent the caller falls back to the workspace chooser.
  */
-export function portalForKind(kind: WorkspaceKind, fallback = "/account"): string {
+export function portalForKind(
+  kind: WorkspaceKind,
+  options: { teamSlug?: string | null; fallback?: string } = {},
+): string {
+  const fallback = options.fallback ?? "/account";
   switch (kind) {
     case "advisor": return "/advisor-portal";
     case "broker_partner": return "/broker-portal";
     case "business_owner": return "/business-portal";
     case "listing_owner": return "/invest/my-listings";
     case "investor": return fallback;
+    case "squad":
+      return options.teamSlug
+        ? `/teams/${options.teamSlug}/dashboard`
+        : "/account/select-workspace";
     default: return fallback;
   }
 }

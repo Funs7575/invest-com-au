@@ -25,7 +25,9 @@ export type AccountKind =
   | "broker_partner"  // broker_accounts.auth_user_id (marketplace)
   | "investor"        // investor_profiles.auth_user_id (end-user dashboard)
   | "business_owner"  // business_accounts.auth_user_id (grants / R&D / sell-prep)
-  | "listing_owner";  // listing_owner_accounts.auth_user_id (claimed-listing owners)
+  | "listing_owner"   // listing_owner_accounts.auth_user_id (claimed-listing owners)
+  | "squad";          // expert_team_members.professional_id → professionals.auth_user_id
+                      // (squad workspace; team-scoped via scope_slug)
 
 /**
  * Reserved future kinds (uncomment when the corresponding entity table
@@ -41,6 +43,7 @@ export const ACTIVE_ACCOUNT_KINDS: readonly AccountKind[] = [
   "investor",
   "business_owner",
   "listing_owner",
+  "squad",
 ];
 
 export function isAccountKind(value: unknown): value is AccountKind {

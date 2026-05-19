@@ -76,7 +76,7 @@ export default function AccountKindCards({ memberships, savedSearchCount = 0, re
         {memberships.map((m) => {
           const meta = KIND_META[m.kind];
           if (!meta) return null;
-          const href = portalForKind(m.kind);
+          const href = portalForKind(m.kind, { teamSlug: m.scopeSlug });
           return (
             <Link
               key={`${m.kind}-${m.kindId}`}

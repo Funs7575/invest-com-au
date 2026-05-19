@@ -31,35 +31,51 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import {
   getActiveKind,
+  getActiveTeamId,
   getKindsForUser,
   setActiveKind,
+  setActiveTeamId,
   type WorkspaceKind,
 } from "@/lib/account-kinds";
 
 const CHOOSER = "/account/select-workspace";
 
-export async function enforcePortalKind(expected: WorkspaceKind): Promise<void> {
+/**
+ * Enforce the active-workspace gate on a portal page.
+ *
+ * For base kinds (advisor / broker_partner / investor / business_owner /
+ * listing_owner): redirect to chooser unless the user holds the kind AND
+ * either the cookie matches or is absent (auto-set on first visit).
+ *
+ * For 'squad': additionally requires `scope.teamSlug` and validates that
+ * (a) the user is an active member of THAT team, (b) the active-team
+ * cookie matches the team. Mismatch → chooser so the switch is deliberate.
+ */
+export async function enforcePortalKind(
+  expected: WorkspaceKind,
+  scope?: { teamSlug: string },
+): Promise<void> {
+  if (expected === "squad" && !scope?.teamSlug) {
+    throw new Error("enforcePortalKind('squad') requires scope.teamSlug");
+  }
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
-    redirect(`/account/login?redirect=${encodeURIComponent(currentPortalPath(expected))}`);
+    redirect(`/account/login?redirect=${encodeURIComponent(currentPortalPath(expected, scope?.teamSlug))}`);
   }
 
-  const [active, memberships] = await Promise.all([
+  const [active, activeTeamId, memberships] = await Promise.all([
     getActiveKind(),
+    getActiveTeamId(),
     getKindsForUser(user.id),
   ]);
-  const holdsExpected = memberships.some((m) => m.kind === expected);
 
-  if (active === expected && holdsExpected) {
-    return; // happy path
-  }
-
-  if (active === null && holdsExpected) {
-    // First visit since cookie expired or new device. Set + allow.
-    await setActiveKind(expected);
-    return;
-  }
+  const matching = memberships.find((m) =>
+    expected === "squad"
+      ? m.kind === "squad" && m.scopeSlug === scope?.teamSlug
+      : m.kind === expected,
+  );
+  const holdsExpected = matching !== undefined;
 
   if (!holdsExpected) {
     // User isn't entitled to this portal at all. Send to chooser; the
@@ -67,18 +83,43 @@ export async function enforcePortalKind(expected: WorkspaceKind): Promise<void> 
     redirect(CHOOSER);
   }
 
+  if (expected === "squad") {
+    const teamId = matching!.kindId;
+    if (active === "squad" && activeTeamId === teamId) {
+      return; // happy path — cookie matches expected team
+    }
+    if (active === null) {
+      // First visit since cookie expired or new device. Set both + allow.
+      await setActiveKind("squad");
+      await setActiveTeamId(teamId);
+      return;
+    }
+    redirect(`${CHOOSER}?from=${encodeURIComponent(currentPortalPath(expected, scope?.teamSlug))}`);
+  }
+
+  if (active === expected) {
+    return; // happy path
+  }
+
+  if (active === null) {
+    // First visit since cookie expired or new device. Set + allow.
+    await setActiveKind(expected);
+    return;
+  }
+
   // Cookie mismatches expected: user holds this kind but is currently
   // "acting as" a different one. Send to chooser to make the switch
   // deliberate.
-  redirect(`${CHOOSER}?from=${encodeURIComponent(currentPortalPath(expected))}`);
+  redirect(`${CHOOSER}?from=${encodeURIComponent(currentPortalPath(expected, scope?.teamSlug))}`);
 }
 
-function currentPortalPath(kind: WorkspaceKind): string {
+function currentPortalPath(kind: WorkspaceKind, teamSlug?: string): string {
   switch (kind) {
     case "advisor": return "/advisor-portal";
     case "broker_partner": return "/broker-portal";
     case "business_owner": return "/business-portal";
     case "listing_owner": return "/invest/my-listings";
     case "investor": return "/account";
+    case "squad": return teamSlug ? `/teams/${teamSlug}/dashboard` : "/teams";
   }
 }
