@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import type { Broker } from "@/lib/types";
+import { getActiveBrokersListing } from "@/lib/cached-data";
 import HomeHero from "@/components/HomeHero";
 import HomeRouteCards from "@/components/HomeRouteCards";
 import CountryToolsStripWrapper from "@/components/country-mode/CountryToolsStripWrapper";
@@ -52,23 +52,17 @@ export const revalidate = 3600;
 export default async function HomePage() {
   const supabase = await createClient();
 
-  const BROKER_LISTING_COLUMNS =
-    "id, name, slug, color, logo_url, rating, asx_fee, asx_fee_value, platform_type, sponsorship_tier, promoted_placement, editors_pick, status";
-
   const [
-    { data: brokers },
+    allActiveBrokers,
     { count: professionalCount },
     { data: professionals },
     { count: listingCount },
     { data: listings },
   ] = await Promise.all([
-    supabase
-      .from("brokers")
-      .select(BROKER_LISTING_COLUMNS)
-      .eq("status", "active")
-      .order("promoted_placement", { ascending: false })
-      .order("rating", { ascending: false })
-      .limit(80),
+    // Cached cross-worker via lib/cached-data.ts (24h unstable_cache).
+    // Returns all active brokers sorted by rating; we re-sort below to
+    // prefer promoted_placement and trim to 80 (matching prior query).
+    getActiveBrokersListing(),
     supabase
       .from("professionals")
       .select("id", { count: "exact", head: true })
@@ -98,11 +92,21 @@ export default async function HomePage() {
       .limit(80),
   ]);
 
-  const brokerCount = brokers?.length || 0;
+  // Match prior query ordering (promoted_placement DESC, rating DESC, limit 80).
+  const brokers = [...allActiveBrokers]
+    .sort((a, b) => {
+      const promotedDiff =
+        Number(b.promoted_placement ?? 0) - Number(a.promoted_placement ?? 0);
+      if (promotedDiff !== 0) return promotedDiff;
+      return (b.rating ?? 0) - (a.rating ?? 0);
+    })
+    .slice(0, 80);
+
+  const brokerCount = brokers.length;
   const totalListingCount = listingCount ?? 0;
   const totalProfessionalCount = professionalCount ?? 0;
 
-  const compareBrokers: ReadonlyArray<CompareBroker> = ((brokers as Broker[]) || []).map((b) => ({
+  const compareBrokers: ReadonlyArray<CompareBroker> = brokers.map((b) => ({
     id: b.id,
     slug: b.slug,
     name: b.name,

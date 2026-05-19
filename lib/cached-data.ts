@@ -28,8 +28,13 @@ function getClient() {
 
 // ── Column selections (match existing page queries) ──
 
+// Adds `logo_url`, `promoted_placement`, `accepts_non_residents` so
+// the homepage + vertical pillars can use this helper instead of
+// re-querying brokers separately. Sole reason to add: dedup with
+// app/page.tsx and the 5 pillar pages, all of which previously
+// hit `brokers` raw on every render.
 const BROKER_LISTING_COLUMNS =
-  "id, name, slug, color, icon, rating, asx_fee, asx_fee_value, us_fee, us_fee_value, fx_rate, chess_sponsored, smsf_support, is_crypto, platform_type, deal, deal_text, deal_expiry, deal_terms, deal_verified_date, deal_category, editors_pick, tagline, cta_text, affiliate_url, sponsorship_tier, benefit_cta, updated_at, fee_last_checked, fee_verified_date, status";
+  "id, name, slug, color, icon, logo_url, rating, asx_fee, asx_fee_value, us_fee, us_fee_value, fx_rate, chess_sponsored, smsf_support, is_crypto, platform_type, deal, deal_text, deal_expiry, deal_terms, deal_verified_date, deal_category, editors_pick, promoted_placement, accepts_non_residents, tagline, cta_text, affiliate_url, sponsorship_tier, benefit_cta, updated_at, fee_last_checked, fee_verified_date, status";
 
 // ── Broker Data (most impactful to cache) ──
 

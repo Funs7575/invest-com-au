@@ -3,7 +3,8 @@ import Link from "next/link";
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
-import type { Broker, BrokerQuestion, BrokerAnswer } from "@/lib/types";
+import { getActiveBrokersFull } from "@/lib/cached-data";
+import type { BrokerQuestion, BrokerAnswer } from "@/lib/types";
 import {
   getCategoryBySlug,
   getAllCategorySlugs,
@@ -118,9 +119,12 @@ export default async function BestBrokerPage({
     orParts.push(`tags.ov.{${articleFilters.tags.join(",")}}`);
   }
 
-  // Fetch brokers + articles + visitor's intent country in parallel
-  const [{ data: brokers }, articleResult, intentCountry] = await Promise.all([
-    supabase.from("brokers").select("*").eq("status", "active"),
+  // Fetch brokers + articles + visitor's intent country in parallel.
+  // Brokers comes from the 24h unstable_cache helper — same query as
+  // the homepage + 5 vertical pillars + broker detail page, so all 43
+  // best-of subcategory pages share the same single Supabase read.
+  const [brokers, articleResult, intentCountry] = await Promise.all([
+    getActiveBrokersFull(),
     orParts.length > 0
       ? supabase.from("articles").select("id, title, slug, category, read_time").or(orParts.join(",")).limit(3)
       : Promise.resolve({ data: null }),
@@ -131,7 +135,7 @@ export default async function BestBrokerPage({
   // (or whose allow-list excludes it). When intentCountry is null this is a no-op.
   // PR #619 added the schema; this is the first reader.
   const eligibleBrokers = filterByCountryEligibility(
-    (brokers as Broker[]) || [],
+    brokers,
     intentCountry,
   );
 
