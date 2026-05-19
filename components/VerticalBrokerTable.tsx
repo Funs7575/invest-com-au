@@ -295,6 +295,9 @@ export default function VerticalBrokerTable({ brokers, slug, color }: Props) {
               broker={broker}
               badge={i === 0 && !query ? "Top Pick" : undefined}
               context="compare"
+              // Top card on the mobile vertical table is the LCP
+              // candidate (above the fold on /share-trading et al.)
+              priority={i === 0 && !query}
             />
           ))
         )}
