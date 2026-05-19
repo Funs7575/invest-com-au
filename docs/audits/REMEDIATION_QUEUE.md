@@ -47,7 +47,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | WW | _complete_ | **#651 MERGED** | WW-01+WW-02 merged. WW-03/04 blocked (DD-02 dep). | All WW tasks merged ✓ |
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
 | Z | `claude/audit-remediation/z-04-zero-state-ux` | #230/#323/#403/#457/#524/#565 | Z-01..Z-04 done. | Z-04 merged ✓ |
-| QQ | `claude/audit-remediation/qq-01-public-qa-surface` | **#800 MERGED 2026-05-14** | QQ-01..QQ-07 done (merged). QQ-05 pending (Tier C schema migration: `qa_questions`/`qa_answers`). QQ-06/QQ-09/QQ-10 pending. QQ-08 compliance gate blocks public exposure. Next item: QQ-05. | All QQ tasks merged |
+| QQ | `claude/audit-remediation/qq-05-schema` | **#800 MERGED 2026-05-14** · **#920 OPEN** | QQ-01..QQ-07 done (merged). QQ-05+QQ-06 done (`b3a1e63`): `qa_questions`/`qa_answers` migration + `/api/answers/ask` POST route. QQ-09/QQ-10 pending. QQ-08 compliance gate blocks public exposure. Last CI: pending — pushed `b3a1e63` 2026-05-19. | All QQ tasks merged |
 | MM | `claude/audit-remediation/mm-v01b-digital-infra-listings` | **#801 MERGED** · **#803 MERGED 2026-05-14** | MM-V01..V08 done. MM-V06 pending (Tier C — wholesale-only alternatives: litigation funding, PE, VC, hedge funds, ILS; s708 gate design required; announce before merge). Next item: MM-V06. | All MM phases merged |
 | TT | _complete_ | **#764 MERGED** · **#772 MERGED** · **#779 MERGED** · **#799 MERGED 2026-05-12** | TT-01..TT-04 all done. GA4 removed; Plausible sole analytics. **Stream complete.** | TT-04 merged ✓ |
 | CMP | `claude/audit-remediation/cmp-w1a-int-calculator-autosave` | **#782 CLOSED 2026-05-14 (not merged)** | CMP-W1A-INT: #782 was closed without merging by founder 2026-05-14. Work may need re-examination or re-opening on a fresh branch. | All CMP tasks merged |
@@ -114,6 +114,23 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 447 — 2026-05-19 — QQ-05+QQ-06 — qa_questions/qa_answers schema + /api/answers/ask route
+
+- **Stream:** QQ (public AI Q&A capture surface)
+- **Phase:** 5 — implementation (Tier C — schema migration)
+- **Branch:** `claude/audit-remediation/qq-05-schema`
+- **PR:** #920 OPEN
+- **Commit:** `b3a1e63` — feat(qq): QQ-05+QQ-06 — qa_questions/qa_answers schema + /api/answers/ask route
+- **Diff:** +220 LOC across 2 files (migration +129, route +91)
+- **Items done:** QQ-05 (schema migration), QQ-06 (/api/answers/ask API route)
+- **Implementation:**
+  - **Migration** — `qa_questions` (slug ref token, question_text 10–500 chars CHECK, category, optional email, status, moderation_note, source_ip_hash SHA-256) + `qa_answers` (question_id FK, answer_text, source editorial/ai/community, status, published_at). RLS enabled + FORCE on both. Anon INSERT on qa_questions; anon/authenticated SELECT on approved rows only; service_role full access. Performance indexes. Idempotent (IF NOT EXISTS + DROP POLICY IF EXISTS). Prior policy state: none (new tables).
+  - **API route** — `POST /api/answers/ask`: rate-limited 5/hr per IP; Zod validation (question min10/max500, category enum ×10, optional email); `createClient()` (anon key + anon INSERT policy); generates unique slug; returns `{ slug, status: "pending" }`.
+- **Why this was Tier C:** adds `supabase/migrations/**` SQL file — hard Tier-C gate per MERGE_AUTHORIZATION.md.
+- **Tier C announcement:** Included in PR body. Auto-merge proceeds after CI green + quiet window unless STOP received.
+- **Cumulative diff (batch fire, iters 446–447):** ~220 LOC forward progress + CI-rescue merges
+- **STATUS: PROGRESS · stream=QQ · item=QQ-05+QQ-06 · pr=#920**
 
 ### iter 446 — 2026-05-19 — CI-RESCUE GT (#881) + DF (#883): Supabase types drift — afsl_register
 
