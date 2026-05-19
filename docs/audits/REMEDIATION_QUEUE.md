@@ -74,6 +74,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | AA | `claude/audit-remediation/aa-02-03-programmatic-grants` | **#928 OPEN** | AA-01 false-positive (pre-existing). AA-02+AA-03 done (`bc4909c` iter 459): 10 `/grants/[industry]` pages + 11 `/grants/[state]/[program]` pages + sitemap. Last CI: pending — pushed `bc4909c` 2026-05-19. | AA-02+AA-03 merged |
 | Z-26 | `claude/audit-remediation/z-26-super-hub` | **#929 OPEN** | Z-26 done (`225e8be` iter 460): `/super` hub migration to HubPage HOC; `lib/hub-configs/super.ts` (3 hero stats, 6 service cards, 4 deep-dives, 5 FAQs); sub-hub link grid, articles strip, ForeignInvestorCallout, newsletter/lead-magnet/exit-intent wired. Last CI: pending — pushed `225e8be` 2026-05-19. | Z-26 merged |
 | Z-25 | `claude/audit-remediation/z-25-insurance-hub` | **#930 OPEN** | Z-25 done (`dbd76c0` iter 461): `/insurance` hub migration to HubPage HOC; `lib/hub-configs/insurance.ts` (3 hero stats, 6 service cards, 4 deep-dives, 6 FAQs, `complianceKey: "general_advice"`); KEY_CONCEPTS glossary + SITUATION_GUIDE table + inside-vs-outside-super panel preserved as children. Last CI: pending — pushed `dbd76c0` 2026-05-19. | Z-25 merged |
+| AA-04+BB-09 | `claude/audit-remediation/aa-04-bb09-etf-ticker-screener` | **#931 OPEN** | AA-04+BB-09 done (`bad0ae4` iter 462): 25 ETF ticker pages at `/etfs/[ticker]` (ISR 3600, generateStaticParams, FinancialProduct JSON-LD, fee impact table); ETF screener at `/etfs/screener` (client filters: asset class, provider, MER slider, franking-only; sortable table); `lib/etf-data.ts` shared data feed (VAS/A200/STW/IOZ/IVV/NDQ/VTS/VGS/IWLD/VGAD/VHY/HVST/VAF/IAF/FEMX/HACK/ETHI/MVW/VEU/VISM/QUS/BOND/CRED/ZYAU + 1); +16 sitemap entries. GENERAL_ADVICE_WARNING on all new pages. Last CI: pending — pushed `bad0ae4` 2026-05-19. | AA-04+BB-09 merged |
 | DD | `claude/audit-remediation/dd-01-tiered-listings` | **#926 OPEN** | DD-01 done (`137680e`): `advisor_tier` added to `Professional` type; Pro badge + violet card border on `/advisors`; `advisor_tier` select + Pro badge on `/find/[advisor-type]/[city]`. Sort: Featured→Pro→Free. No schema migration. Last CI: pending — pushed `137680e` 2026-05-19. | DD-01 merged |
 
 ---
@@ -134,6 +135,24 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 462 — 2026-05-19 — AA-04+BB-09 — ETF ticker pages + ETF screener
+
+- **Stream:** AA (programmatic SEO) + BB (calculator farm)
+- **Phase:** 5 — implementation (Tier A — content/data pages)
+- **Branch:** `claude/audit-remediation/aa-04-bb09-etf-ticker-screener`
+- **PR:** #931 OPEN
+- **Commit:** `bad0ae4` — feat(aa04+bb09): AA-04+BB-09 — ETF ticker pages + ETF screener
+- **Diff:** 5 files, +1379 LOC (content/data budget)
+- **Items done:** AA-04 (`/etfs/[ticker]` ISR pages), BB-09 (ETF screener)
+- **Implementation:**
+  - **`lib/etf-data.ts`** (new, 640 LOC): typed `ETF` data for 25 ASX ETFs. Fields: ticker, provider, assetClass, benchmark, MER, AUM, yield, frankingPercent, distributionFrequency, inceptionYear, description, highlights, relatedTickers. Helpers: `getETFByTicker`, `getETFsByAssetClass`, `ALL_TICKERS`.
+  - **`app/etfs/[ticker]/page.tsx`** (new): `generateStaticParams` (25 tickers), `generateMetadata`, ISR 3600. Key metric cards (MER/AUM/yield/franking/grossed-up yield); fee impact table (5 portfolio sizes); related ticker links; `FinancialProduct` JSON-LD; `GENERAL_ADVICE_WARNING` footer.
+  - **`app/etfs/screener/ETFScreenerClient.tsx`** (new): client component with search, asset-class (10 opts), provider (5 opts), MER slider, franking-only toggle; sortable table; MER colour-coded green/amber/orange.
+  - **`app/etfs/screener/page.tsx`** (new): SSR shell, breadcrumb JSON-LD, "How to use" section, ISR 3600. `GENERAL_ADVICE_WARNING` footer.
+  - **`app/sitemap.ts`**: +16 entries (screener + 15 popular tickers).
+- **Note:** Dedup checks on Z-25 and Z-26 confirmed those were already covered by concurrent sessions (PRs #930 and #929). This iteration was genuine forward progress on next pending slot.
+- **STATUS: PROGRESS · stream=AA+BB · item=AA-04+BB-09 · pr=#931**
 
 ### iter 461 — 2026-05-19 — Z-25 — /insurance hub migration to HubPage HOC
 
