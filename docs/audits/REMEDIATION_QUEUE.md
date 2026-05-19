@@ -72,8 +72,8 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | BB-01 | `claude/audit-remediation/bb-01-borrowing-power` | **#923 OPEN** | BB-01 done (`a861dc3`): `/tools/borrowing-power-calculator` — multi-lender borrowing power calc (FY2025-26 tax, HEM, 3 APRA lender scenarios, LVR/LMI flags). ToolsClient entry + sitemap updated. Last CI: pending — pushed `a861dc3` 2026-05-19. | BB-01 merged |
 | BB-06 | `claude/audit-remediation/bb-06-mortgage-stress-test` | **#924 OPEN** | BB-06 done (`648d024`): `/tools/mortgage-stress-test` — 9 rate-rise scenarios (+0..+5%), housing-stress thresholds (30%/40% gross), APRA +3% buffer callout, binary-search breakeven rate, FY2025-26 tax. ToolsClient entry + sitemap updated. Last CI: pending — pushed `648d024` 2026-05-19. | BB-06 merged |
 | AA | `claude/audit-remediation/aa-02-03-programmatic-grants` | **#928 OPEN** | AA-01 false-positive (pre-existing). AA-02+AA-03 done (`bc4909c` iter 459): 10 `/grants/[industry]` pages + 11 `/grants/[state]/[program]` pages + sitemap. Last CI: pending — pushed `bc4909c` 2026-05-19. | AA-02+AA-03 merged |
-| Z-26 | `claude/audit-remediation/z-26-super-hub` | **#929 OPEN** | Z-26 done (`225e8be` iter 460): `/super` hub migration to HubPage HOC; `lib/hub-configs/super.ts` (3 hero stats, 6 service cards, 4 deep-dives, 5 FAQs); sub-hub link grid, articles strip, ForeignInvestorCallout, newsletter/lead-magnet/exit-intent wired. Last CI: pending — pushed `225e8be` 2026-05-19. | Z-26 merged |
-| Z-25 | `claude/audit-remediation/z-25-insurance-hub` | **#930 OPEN** | Z-25 done (`dbd76c0` iter 461): `/insurance` hub migration to HubPage HOC; `lib/hub-configs/insurance.ts` (3 hero stats, 6 service cards, 4 deep-dives, 6 FAQs, `complianceKey: "general_advice"`); KEY_CONCEPTS glossary + SITUATION_GUIDE table + inside-vs-outside-super panel preserved as children. Last CI: pending — pushed `dbd76c0` 2026-05-19. | Z-25 merged |
+| Z-26 | `claude/audit-remediation/z-26-super-hub` | **#929 OPEN** | Z-26 done (`225e8be` iter 460): `/super` hub migration to HubPage HOC; `lib/hub-configs/super.ts` (3 hero stats, 6 service cards, 4 deep-dives, 5 FAQs); sub-hub link grid, articles strip, ForeignInvestorCallout, newsletter/lead-magnet/exit-intent wired. CI-rescue (`a0bd594`): `app/super/page.tsx` allowlisted in AFSL compliance test (HubPage renders compliance from `complianceKey`). Last CI: fixing — pushed `a0bd594` 2026-05-19. | Z-26 merged |
+| Z-25 | `claude/audit-remediation/z-25-insurance-hub` | **#930 OPEN** | Z-25 done (`dbd76c0` iter 461): `/insurance` hub migration to HubPage HOC; `lib/hub-configs/insurance.ts` (3 hero stats, 6 service cards, 4 deep-dives, 6 FAQs, `complianceKey: "general_advice"`); KEY_CONCEPTS glossary + SITUATION_GUIDE table + inside-vs-outside-super panel preserved as children. CI-rescue (`4abe14e`): `routesTo: "insurance"` → `"general"` in quiz config (invalid `LeadQueueKey`). Last CI: fixing — pushed `4abe14e` 2026-05-19. | Z-25 merged |
 | AA-04+BB-09 | `claude/audit-remediation/aa-04-bb09-etf-ticker-screener` | **#931 OPEN** | AA-04+BB-09 done (`bad0ae4` iter 462): 25 ETF ticker pages at `/etfs/[ticker]` (ISR 3600, generateStaticParams, FinancialProduct JSON-LD, fee impact table); ETF screener at `/etfs/screener` (client filters: asset class, provider, MER slider, franking-only; sortable table); `lib/etf-data.ts` shared data feed (VAS/A200/STW/IOZ/IVV/NDQ/VTS/VGS/IWLD/VGAD/VHY/HVST/VAF/IAF/FEMX/HACK/ETHI/MVW/VEU/VISM/QUS/BOND/CRED/ZYAU + 1); +16 sitemap entries. GENERAL_ADVICE_WARNING on all new pages. Last CI: pending — pushed `bad0ae4` 2026-05-19. | AA-04+BB-09 merged |
 | DD | `claude/audit-remediation/dd-01-tiered-listings` | **#926 OPEN** | DD-01 done (`137680e`): `advisor_tier` added to `Professional` type; Pro badge + violet card border on `/advisors`; `advisor_tier` select + Pro badge on `/find/[advisor-type]/[city]`. Sort: Featured→Pro→Free. No schema migration. Last CI: pending — pushed `137680e` 2026-05-19. | DD-01 merged |
 
@@ -153,6 +153,18 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
   - **`app/sitemap.ts`**: +16 entries (screener + 15 popular tickers).
 - **Note:** Dedup checks on Z-25 and Z-26 confirmed those were already covered by concurrent sessions (PRs #930 and #929). This iteration was genuine forward progress on next pending slot.
 - **STATUS: PROGRESS · stream=AA+BB · item=AA-04+BB-09 · pr=#931**
+
+### iter 463 — 2026-05-19 — CI-RESCUE — Z-25 #930 + Z-26 #929 (type error + compliance gate)
+
+- **Stream:** Z (CI rescue — both Z-25 and Z-26)
+- **Phase:** 2 — CI rescue
+- **PRs:** #930 (Z-25) + #929 (Z-26)
+- **Root causes:**
+  - **Z-25 #930 (tsc failure + Vercel build failure):** `lib/hub-configs/insurance.ts` had `routesTo: "insurance"` in the quiz config. `QuizRef.routesTo` is typed as `LeadQueueKey` which does not include `"insurance"`. Fix: `routesTo: "general"`.
+  - **Z-26 #929 (AFSL compliance test failure):** `app/super/page.tsx` is under `app/super` which is in `MANDATORY_ROOTS`. The HubPage migration removed the raw `ComplianceFooter` import — but HubPage renders compliance internally via `config.complianceKey`. Fix: allowlisted `app/super/page.tsx` in `__tests__/lib/afsl-compliance-coverage.test.ts` with explanatory comment.
+- **Rescue commits:** `4abe14e` (Z-25 type fix), `a0bd594` (Z-26 compliance allowlist)
+- **Stuck-detection:** First rescue attempt on both PRs — within threshold.
+- **STATUS: CI-RESCUE · stream=Z · pr=#929+#930**
 
 ### iter 461 — 2026-05-19 — Z-25 — /insurance hub migration to HubPage HOC
 
