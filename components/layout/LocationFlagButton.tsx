@@ -231,10 +231,7 @@ export default function LocationFlagButton() {
       </button>
 
       {open && (
-        <div
-          role="menu"
-          className="absolute right-0 top-full mt-2 z-[60] w-[360px] bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/60 overflow-hidden"
-        >
+        <div className="absolute right-0 top-full mt-2 z-[60] w-[360px] bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/60 overflow-hidden">
           <div className="p-4">
             {popoverState === "suggested" && supported ? (
               <>

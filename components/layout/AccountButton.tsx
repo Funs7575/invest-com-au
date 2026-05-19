@@ -26,6 +26,7 @@ export default function AccountButton() {
   // (user_metadata isn't kept in sync — display_name lives in our profile table)
   useEffect(() => {
     if (!user) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: clear stale name on sign-out
       setProfileName(null);
       return;
     }
@@ -138,10 +139,7 @@ export default function AccountButton() {
       </button>
 
       {open && (
-        <div
-          className="absolute right-0 top-full mt-2 w-64 bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/60 overflow-hidden z-50"
-          role="menu"
-        >
+        <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/60 overflow-hidden z-50">
           {/* Profile header */}
           <div className="px-4 py-3 border-b border-slate-100 bg-slate-50/50">
             <p className="text-sm font-bold text-slate-900 truncate">{displayName}</p>
