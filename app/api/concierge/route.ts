@@ -14,6 +14,7 @@ import {
 import { sendCap80Alert } from "@/lib/ai-cost-alerts";
 import { embedText } from "@/lib/embeddings";
 import { classifyUserMessage } from "@/lib/chatbot";
+import { filterFactualOutput } from "@/lib/compliance";
 import {
   buildConciergeSystemPrompt,
   validateNoHallucinations,
@@ -277,12 +278,38 @@ export async function POST(req: NextRequest) {
         tokensIn = final.usage?.input_tokens ?? 0;
         tokensOut = final.usage?.output_tokens ?? 0;
 
+        // V-NEW-02 — factual-filter post-pass on the assembled stream.
+        // We can't easily filter chunk-by-chunk (rules like missing-GAW-prefix
+        // need the whole text), so we run the filter against the final
+        // assembled assistant reply and emit a structured filter_failure
+        // event when it rejects. The UI shows this as a "response withheld"
+        // message rather than the raw text. Reject reason is persisted to
+        // chatbot_conversations.context.filter so we can audit which rules
+        // trip most often.
+        const filterResult = filterFactualOutput(assembledAssistant);
+        if (!filterResult.ok) {
+          log.warn("factual_filter_rejected_concierge_reply", {
+            session_id,
+            reason: filterResult.reason,
+            spans: filterResult.rejectedSpans.map((s) => s.rule),
+          });
+          controller.enqueue(
+            encoder.encode(
+              `data: ${JSON.stringify({
+                type: "filter_failure",
+                reason: filterResult.reason,
+              })}\n\n`,
+            ),
+          );
+        }
+
         controller.enqueue(
           encoder.encode(
             `data: ${JSON.stringify({
               type: "done",
               tokens_in: tokensIn,
               tokens_out: tokensOut,
+              filter_ok: filterResult.ok,
             })}\n\n`,
           ),
         );
