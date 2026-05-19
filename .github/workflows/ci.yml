@@ -403,6 +403,21 @@ jobs:
           GITHUB_BASE_REF: ${{ github.base_ref }}
         run: node scripts/check-rls-isolation.mjs
 
+  account-kind-registry-gate:
+    name: Account-kind registry consistency
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    # Why this exists (Phase 0.2 of the account-architecture master plan):
+    # adding an AccountKind today requires updating 4+ files in lockstep.
+    # The lint script reads ACTIVE_ACCOUNT_KINDS from lib/account-types.ts
+    # and asserts every other registry site (KNOWN_WORKSPACE_KINDS set,
+    # portalForKind switch, currentPortalPath switch) declares the same set.
+    # No skip token — this is static file analysis.
+    steps:
+      - uses: actions/checkout@v6
+      - name: Check account-kind registry sites stay in sync
+        run: node scripts/check-entity-registry.mjs
+
   stale-dated-stats-gate:
     name: Stale dated-stats gate (DatedStatBadge stalesAt)
     runs-on: ubuntu-latest
