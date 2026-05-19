@@ -63,6 +63,7 @@ trading_signals            # trading product never shipped
 
 
 # Recent additions (dashboard-created via Supabase UI, pending Stream A backfill migration)
+sharesight_connections     # ORPHAN — created by an abandoned Claude session (W2.11 race condition, 2026-05-19 04:16 UTC). Migration 20260519041638_w2_11_sharesight_connections applied to live but no PR / code / users (0 rows). Superseded by `investor_oauth_connections` (PR #927, encrypted tokens). Founder to DROP TABLE when convenient — see decision log entry 2026-05-19.
 
 # PostGIS extension-managed (out of scope — comes from CREATE EXTENSION postgis)
 spatial_ref_sys
@@ -72,5 +73,4 @@ spatial_ref_sys
 # Founder dashboard PRs (#891–#893) added these tables without migrations; pending Stream A backfill.
 # brief_promo_codes + brief_promo_redemptions get their migration in this PR (#899) and so are
 # intentionally omitted here — the gate will fail loudly if they slip out of the migration set.
-investor_oauth_connections  # PR #893 — OAuth provider connections; remove when its migration lands
 afsl_register               # created in Supabase dashboard (ASIC AFSL register import 2026-05-19); remove when backfill migration lands
