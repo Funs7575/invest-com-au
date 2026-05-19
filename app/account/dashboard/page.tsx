@@ -4,6 +4,7 @@ import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import { enforcePortalKind } from "@/lib/portal-gate";
 import { getInvestorProfile, type InvestorProfile } from "@/lib/investor-profiles";
+import { getInvestorAccountType, type InvestorAccountType } from "@/lib/account-types";
 
 export const dynamic = "force-dynamic";
 
@@ -386,6 +387,40 @@ export default async function PersonalDashboardPage() {
   if (actions.length === 0) actions.push({ label: "Take our platform quiz to get personalised picks", href: "/quiz" });
   actions.push({ label: "Find a financial advisor near you", href: "/find-advisor" });
 
+  // AT-02..04: account-type-specific resource hub
+  const investorAccountType: InvestorAccountType = getInvestorAccountType(investorProfile?.meta ?? {});
+  type HubResource = { emoji: string; label: string; desc: string; href: string };
+  const ACCOUNT_TYPE_HUBS: Partial<Record<InvestorAccountType, { heading: string; resources: HubResource[] }>> = {
+    couple: {
+      heading: "Joint finance hub",
+      resources: [
+        { emoji: "🎯", label: "Shared financial goals", desc: "Set joint savings targets together", href: "/account/goals" },
+        { emoji: "🏠", label: "First home buyer guide", desc: "FHSS, FHBG, and stamp duty concessions", href: "/first-home-buyer" },
+        { emoji: "🔄", label: "Should you buy or rent?", desc: "Interactive decision tree for your situation", href: "/tools/buy-vs-rent" },
+        { emoji: "👥", label: "Find a financial planner", desc: "Couples + household specialists near you", href: "/find-advisor?need=financial_planner&context=joint_finances" },
+      ],
+    },
+    family: {
+      heading: "Family wealth hub",
+      resources: [
+        { emoji: "🎓", label: "Education savings options", desc: "Investment bonds, scholarships & more", href: "/invest" },
+        { emoji: "🏡", label: "First Home Guarantee for your children", desc: "How to help kids enter the market", href: "/first-home-buyer" },
+        { emoji: "📜", label: "Estate planning essentials", desc: "Wills, trusts & intergenerational transfer", href: "/find-advisor?need=estate_planner&context=family_wealth" },
+        { emoji: "🗓️", label: "Financial calendar & deadlines", desc: "FY dates relevant to family finances", href: "/account/calendar" },
+      ],
+    },
+    business: {
+      heading: "Business & SMSF hub",
+      resources: [
+        { emoji: "🏦", label: "Should you set up an SMSF?", desc: "Cost-effectiveness decision tree", href: "/tools/smsf-setup" },
+        { emoji: "✅", label: "SMSF compliance checklist", desc: "Annual obligations & audit prep", href: "/smsf/checklist" },
+        { emoji: "💼", label: "Sell your business", desc: "Valuation, CGT concessions, M&A process", href: "/sell-business" },
+        { emoji: "🧑‍💼", label: "Find a business advisor", desc: "SMSF specialists & tax accountants", href: "/find-advisor?need=financial_planner&context=smsf,business_advisory" },
+      ],
+    },
+  };
+  const accountTypeHub = investorAccountType !== "individual" ? ACCOUNT_TYPE_HUBS[investorAccountType] ?? null : null;
+
   return (
     <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
       {/* Header */}
@@ -568,6 +603,30 @@ export default async function PersonalDashboardPage() {
         </div>
       </section>
 
+      {/* AT-02..04 — account-type-specific resource hub */}
+      {accountTypeHub && (
+        <section aria-labelledby="account-type-hub-heading" className="mb-8">
+          <h2 id="account-type-hub-heading" className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-3">
+            {accountTypeHub.heading}
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {accountTypeHub.resources.map((r) => (
+              <Link
+                key={r.href}
+                href={r.href}
+                className="flex items-start gap-3 p-4 bg-white border border-slate-200 rounded-xl hover:border-violet-300 hover:shadow-sm transition-all group"
+              >
+                <span className="text-xl shrink-0 mt-0.5">{r.emoji}</span>
+                <div>
+                  <div className="text-sm font-semibold text-slate-800 group-hover:text-violet-700 transition-colors">{r.label}</div>
+                  <div className="text-xs text-slate-500 mt-0.5">{r.desc}</div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* Profile-matched advisors (LL-02) */}
       {matchedAdvisors.length > 0 && (
         <section aria-labelledby="advisors-heading" className="mb-8">
@@ -645,6 +704,8 @@ export default async function PersonalDashboardPage() {
           <NavCard href="/account/notifications" emoji="🔔" label="Notifications" desc="Email preferences and alerts" />
           <NavCard href="/account/referrals" emoji="🎁" label="Referrals" desc="Invite friends, earn rewards" />
           <NavCard href="/account/privacy" emoji="🔒" label="Privacy & Data" desc="Export, delete, GDPR rights" />
+          <NavCard href="/account/annual-check" emoji="📅" label="Annual Check-up" desc="FY checklist: super, tax, insurance" />
+          <NavCard href="/account/calendar" emoji="🗓️" label="Financial Calendar" desc="Key tax dates and deadlines" />
         </div>
       </section>
     </main>

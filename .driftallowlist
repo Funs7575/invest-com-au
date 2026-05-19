@@ -69,10 +69,8 @@ spatial_ref_sys
 
 # W2 Phase — tables created in Supabase dashboard without migration files; pending Stream A backfill
 
-# EM-02 migration applied to live DB before PR #880 merged to main; remove when #880 merges
-hub_drip_log
-
-# Founder PRs #891–#893 added tables via Supabase dashboard without migrations; pending Stream A backfill
-brief_promo_codes        # PR #891 — promotional codes for advisor briefs
-brief_promo_redemptions  # PR #892 — redemption tracking for brief promo codes
-investor_oauth_connections  # PR #893 — OAuth provider connections for investor accounts
+# Founder dashboard PRs (#891–#893) added these tables without migrations; pending Stream A backfill.
+# brief_promo_codes + brief_promo_redemptions get their migration in this PR (#899) and so are
+# intentionally omitted here — the gate will fail loudly if they slip out of the migration set.
+investor_oauth_connections  # PR #893 — OAuth provider connections; remove when its migration lands
+afsl_register               # created in Supabase dashboard (ASIC AFSL register import 2026-05-19); remove when backfill migration lands

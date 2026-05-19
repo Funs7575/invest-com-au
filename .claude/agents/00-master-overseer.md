@@ -81,6 +81,10 @@ You run once per hour and also on agent-error and calendar-change events. Each r
 1. Read `agent_logs` and `agent_tasks` for the last 60 minutes. Compute health for every active agent (00–18 minus any marked inactive). Flag any agent whose success rate over 24h has dropped below 90%, whose runtime has exceeded 2× its declared budget, or whose queue depth exceeds 50.
 2. Read `founder_bandwidth` plus a fresh Google Calendar pull. Reconcile. If a founder is inside a low-bandwidth window, record the window in `founder_bandwidth` and apply the tier-downgrade rule to any in-flight Tier 2 escalations addressed to them.
 3. Drain `agent_tasks WHERE status='unassigned'`. For each task, choose the correct specialist agent based on task type (the task's `kind` column maps to an owning agent — see the mapping in `agent_memory:overseer:kind_map`). Set `assigned_agent` and `status='assigned'`.
+   - **Activation gates for time-bounded agents.** Before routing to #16 or #18, read the respective activation gate from `agent_memory`:
+     - **#16 Domain Migration**: read `agent_memory WHERE agent_name='migration' AND key='window_active'`. Route only if `value.active = true`. The migration window is bounded (intended Oct–Dec 2026); outside it the agent does not run.
+     - **#18 Product Layer**: read `agent_memory WHERE agent_name='licensing' AND key='afsl_granted_at'` AND verify that the activation `ceo_approvals` pair (Fin + Co-Founder) is both `approved`. AFSL must be granted by ASIC and explicitly activated — pre-AFSL routing to #18 is refused.
+   - **If a gate is closed**: do not route. Stamp the `agent_tasks` row with `assigned_agent=null` and `metadata.routing_blocked='<agent>_inactive'`, and raise T3 against yourself (`task_type='kind_map_debug'`) so the misroute is visible. The originating agent gets a T2 notify with the same reason.
 4. Emit one `agent_logs` row summarising the run. Update `agent_memory:overseer:last_snapshot` with a JSON digest (healthy count, degraded count, failed count, unassigned delta, bandwidth windows seen).
 
 Hard constraints:

@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import type { MetadataRoute } from "next";
+import { QUESTIONS } from "@/lib/questions-data";
 import { getAllCategorySlugs } from "@/lib/best-broker-categories";
 import { getAllCostScenarioSlugs } from "@/lib/cost-scenarios";
 import { getAllCitySlugs } from "@/lib/cities";
@@ -24,8 +25,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = hasSupabase ? await createClient() : null;
 
   // Static pages with tiered priorities
-  const highPriority = new Set(["/compare", "/quiz", "/reviews", "/deals", "/share-trading", "/crypto", "/savings", "/super", "/cfd", "/term-deposits", "/robo-advisors", "/versus", "/how-to", "/invest", "/foreign-investment", "/global-investing", "/etfs", "/insurance", "/tax", "/property", "/grants", "/grants/rd-tax-incentive", "/smsf/setup", "/smsf/crypto", "/smsf/property", "/sell-business", "/sell-business/valuation", "/dividends", "/dividends/franking-credits", "/negative-gearing", "/lump-sum-investing", "/lump-sum-investing/redundancy", "/lump-sum-investing/inheritance", "/halal-investing", "/learn"]);
-  const medPriority = new Set(["/calculators", "/articles", "/scenarios", "/switch", "/stories", "/benchmark", "/health-scores", "/alerts", "/whats-new", "/costs", "/fee-impact", "/compound-interest-calculator", "/dividend-reinvestment-calculator", "/fire-calculator", "/property-vs-shares-calculator", "/super-contributions-calculator", "/tco-calculator", "/invest/mining", "/invest/buy-business", "/invest/farmland", "/invest/commercial-property", "/invest/renewable-energy", "/invest/startups", "/compare/non-residents", "/compare/money-transfer", "/grants/emdg", "/grants/industry-growth-program", "/grants/eligibility-quiz", "/smsf/investment-strategy", "/smsf/checklist", "/sell-business/checklist", "/visa-investment", "/dividends/calculator", "/negative-gearing/calculator", "/lump-sum-investing/calculator"]);
+  const highPriority = new Set(["/compare", "/quiz", "/reviews", "/deals", "/share-trading", "/crypto", "/savings", "/super", "/cfd", "/term-deposits", "/robo-advisors", "/versus", "/how-to", "/invest", "/foreign-investment", "/global-investing", "/etfs", "/insurance", "/tax", "/property", "/grants", "/grants/rd-tax-incentive", "/smsf/setup", "/smsf/crypto", "/smsf/property", "/sell-business", "/sell-business/valuation", "/dividends", "/dividends/franking-credits", "/negative-gearing", "/lump-sum-investing", "/lump-sum-investing/redundancy", "/lump-sum-investing/inheritance", "/halal-investing", "/learn", "/first-home-buyer"]);
+  const medPriority = new Set(["/calculators", "/articles", "/scenarios", "/switch", "/stories", "/benchmark", "/health-scores", "/alerts", "/whats-new", "/costs", "/fee-impact", "/compound-interest-calculator", "/dividend-reinvestment-calculator", "/fire-calculator", "/property-vs-shares-calculator", "/super-contributions-calculator", "/tco-calculator", "/invest/mining", "/invest/buy-business", "/invest/farmland", "/invest/commercial-property", "/invest/renewable-energy", "/invest/startups", "/compare/non-residents", "/compare/money-transfer", "/grants/emdg", "/grants/industry-growth-program", "/grants/eligibility-quiz", "/smsf/investment-strategy", "/smsf/checklist", "/sell-business/checklist", "/visa-investment", "/dividends/calculator", "/negative-gearing/calculator", "/lump-sum-investing/calculator",
+    "/questions", ...QUESTIONS.map((q) => `/questions/${q.slug}`)]);
   // Everything else (about, how-we-earn, privacy, methodology, terms, etc.) → 0.4
 
   const staticPages = [
@@ -73,7 +75,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/methodology", "/how-we-verify", "/terms", "/switch", "/editorial-policy", "/benchmark",
     "/billing-policy",
     "/health-scores", "/alerts", "/whats-new", "/costs", "/fee-impact", "/fee-alerts", "/score",
-    "/glossary", "/complaints", "/contact", "/advisors", "/find-advisor", "/community",
+    "/glossary", "/complaints", "/contact", "/advisors", "/find-advisor", "/find-advisor/life-event", "/community",
     "/community/share-trading", "/community/etfs-index-funds", "/community/crypto",
     "/community/super-retirement", "/community/property", "/community/tax-strategy",
     "/community/broker-reviews", "/community/beginners", "/community/off-topic",
@@ -102,7 +104,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/quick-audit", "/portfolio-xray", "/tax-optimizer", "/fee-simulator",
     "/trade-cost-calculator", "/us-share-costs-calculator", "/cgt-calculator",
     "/tools", "/tools/should-i-switch", "/tools/visa-investment-calculator", "/tools/withholding-tax-calculator",
-    "/tools/alternative-returns", "/tools/smsf-checker",
+    "/tools/alternative-returns", "/tools/smsf-checker", "/tools/currency-converter",
+    "/tools/fhss-calculator",
+    "/pricing",
     "/firb-fee-estimator", "/non-resident-dividend-calculator", "/non-resident-cgt-checker",
     "/franking-credits-calculator", "/chess-lookup",
     "/share-trading", "/crypto", "/crypto/quiz", "/savings", "/super", "/super/quiz", "/cfd",
@@ -121,8 +125,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/insurance/quiz",
     "/negative-gearing", "/negative-gearing/calculator", "/negative-gearing/quiz",
     "/lump-sum-investing", "/lump-sum-investing/redundancy",
-    "/lump-sum-investing/inheritance", "/lump-sum-investing/calculator",
-    "/halal-investing",
+    "/lump-sum-investing/inheritance", "/lump-sum-investing/calculator", "/lump-sum-investing/quiz",
+    "/foreign-investment/quiz",
+    "/sell-business/quiz",
+    "/halal-investing", "/halal-investing/quiz",
     "/learn",
     // Global investing hub (outbound — AU residents → world)
     "/global-investing",

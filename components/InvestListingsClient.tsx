@@ -1,11 +1,26 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import type { InvestmentListing } from "@/lib/types";
+import type { InvestmentListing, ListingKind } from "@/lib/types";
 import { categoryForListing } from "@/lib/listing-url";
+import {
+  ALL_LISTING_KINDS,
+  TICKET_BUCKETS,
+  ticketBucketByKey,
+  INVESTOR_TYPES,
+  type InvestorType,
+  deriveListingKind,
+  listingKindMeta,
+  filterSpecForKind,
+  formatListingPrice,
+  freshnessSignal,
+} from "@/lib/listing-kind";
 import InvestListingCard from "@/components/InvestListingCard";
+import ListingCompareBar from "@/components/invest/ListingCompareBar";
+import SaveSearchButton from "@/components/invest/SaveSearchButton";
+import Icon from "@/components/Icon";
 
 // ─── Props ───────────────────────────────────────────────────────────
 export interface InvestListingsClientProps {
@@ -13,77 +28,56 @@ export interface InvestListingsClientProps {
   categories: { slug: string; label: string }[];
   initialCategory?: string;
   initialSubcategory?: string;
-  /**
-   * When set, the filter is locked to this category and the
-   * global category tab bar is hidden. Used on every
-   * /invest/[vertical]/listings page to prevent a ?category=
-   * URL param bleeding in from other pages and collapsing the
-   * result set to zero.
-   */
+  /** Vertical-listings pages pass this to lock the category and hide
+   *  the global category tab bar. */
   lockedCategory?: string;
-  /**
-   * Optional page title rendered above filters. Required on
-   * vertical listings pages per Phase 1D spec.
-   */
   pageTitle?: string;
-  /**
-   * Optional page subtitle / lead paragraph.
-   */
   pageSubtitle?: string;
+  /** Optional: visitor's intent country (set on FIRB / foreign-investment
+   *  funnels). When set, the FIRB badge on cards becomes meaningful and
+   *  the "FIRB eligible only" toggle is auto-surfaced in filters. */
+  intentCountry?: string | null;
+  /** Pre-computed smart-match scores per listing id (Wave 3). Cards render
+   *  a green "X% match" pill when present. */
+  matchScores?: Record<number, number>;
+  /** Pre-computed advisor opt-in counts per listing id (Wave 3). Cards
+   *  render an emerald "X advisors can assess this" pill when > 0. */
+  advisorOptInCounts?: Record<number, number>;
+  /** Set of slugs that already have an approved claim. Cards NOT in this
+   *  set render a small "Are you the owner?" link. (Wave 3) */
+  claimedSlugs?: Set<string>;
 }
-
-// ─── Category colors (pill styling) ─────────────────────────────────
-const CATEGORY_COLORS: Record<
-  string,
-  { bg: string; text: string; ring: string }
-> = {
-  all: { bg: "bg-slate-100", text: "text-slate-700", ring: "ring-slate-300" },
-  "buy-business": { bg: "bg-blue-100", text: "text-blue-700", ring: "ring-blue-300" },
-  mining: { bg: "bg-amber-100", text: "text-amber-700", ring: "ring-amber-300" },
-  farmland: { bg: "bg-green-100", text: "text-green-700", ring: "ring-green-300" },
-  "commercial-property": { bg: "bg-slate-100", text: "text-slate-700", ring: "ring-slate-400" },
-  franchise: { bg: "bg-purple-100", text: "text-purple-700", ring: "ring-purple-300" },
-  "renewable-energy": { bg: "bg-emerald-100", text: "text-emerald-700", ring: "ring-emerald-300" },
-  startups: { bg: "bg-indigo-100", text: "text-indigo-700", ring: "ring-indigo-300" },
-  "pre-ipo": { bg: "bg-red-100", text: "text-red-700", ring: "ring-red-300" },
-  alternatives: { bg: "bg-rose-100", text: "text-rose-700", ring: "ring-rose-300" },
-  "private-credit": { bg: "bg-teal-100", text: "text-teal-700", ring: "ring-teal-300" },
-  infrastructure: { bg: "bg-cyan-100", text: "text-cyan-700", ring: "ring-cyan-300" },
-  funds: { bg: "bg-violet-100", text: "text-violet-700", ring: "ring-violet-300" },
-};
 
 // ─── Australian states ───────────────────────────────────────────────
 const STATES = ["NSW", "VIC", "QLD", "WA", "SA", "TAS", "ACT", "NT"] as const;
 
-// ─── Price ranges ────────────────────────────────────────────────────
-// URL-friendly keys so `?price=500k-1m` is human readable. Older index
-// params (`?price=3`) remain supported as a fallback for inbound links.
-const PRICE_RANGES = [
-  { key: "", label: "Any price", min: 0, max: Infinity },
-  { key: "under-100k", label: "Under $100k", min: 0, max: 10_000_000 },
-  { key: "100k-500k", label: "$100k – $500k", min: 10_000_000, max: 50_000_000 },
-  { key: "500k-1m", label: "$500k – $1M", min: 50_000_000, max: 100_000_000 },
-  { key: "1m-5m", label: "$1M – $5M", min: 100_000_000, max: 500_000_000 },
-  { key: "5m-plus", label: "$5M+", min: 500_000_000, max: Infinity },
-] as const;
-
 // ─── Sort options ────────────────────────────────────────────────────
-type SortKey = "newest" | "price-asc" | "price-desc";
+type SortKey = "newest" | "price-asc" | "price-desc" | "popular" | "closing-soon";
 const SORT_OPTIONS: { value: SortKey; label: string }[] = [
-  { value: "newest", label: "Newest" },
+  { value: "newest", label: "Newest first" },
   { value: "price-asc", label: "Price: low to high" },
   { value: "price-desc", label: "Price: high to low" },
+  { value: "popular", label: "Most viewed" },
+  { value: "closing-soon", label: "Closing soon" },
 ];
 
-/** Resolve the current price range index from the URL param, accepting
- *  both the new key form (`?price=500k-1m`) and the legacy numeric
- *  form (`?price=3`). Returns 0 (any) for anything unrecognised. */
-function resolvePriceIdx(raw: string | null): number {
-  if (!raw) return 0;
+// ─── View modes ──────────────────────────────────────────────────────
+type ViewMode = "grid" | "list" | "table";
+const VIEW_MODES: { value: ViewMode; label: string; icon: string }[] = [
+  { value: "grid", label: "Grid", icon: "grid" },
+  { value: "list", label: "List", icon: "list" },
+  { value: "table", label: "Table", icon: "table" },
+];
+
+function resolveTicketBucketKey(raw: string | null): string {
+  if (!raw) return "";
+  // Legacy numeric index form (?price=3) → translate to new key
   const asNum = Number(raw);
-  if (!Number.isNaN(asNum) && asNum >= 0 && asNum < PRICE_RANGES.length) return asNum;
-  const idx = PRICE_RANGES.findIndex((r) => r.key === raw);
-  return idx >= 0 ? idx : 0;
+  if (!Number.isNaN(asNum) && asNum >= 0 && asNum < TICKET_BUCKETS.length) {
+    return TICKET_BUCKETS[asNum].key;
+  }
+  // New key form (?price=100k-1m)
+  return TICKET_BUCKETS.some((b) => b.key === raw) ? raw : "";
 }
 
 function prettyCategory(slug: string, categories: { slug: string; label: string }[]): string {
@@ -100,37 +94,54 @@ export default function InvestListingsClient({
   lockedCategory,
   pageTitle,
   pageSubtitle,
+  intentCountry,
+  matchScores,
+  advisorOptInCounts,
+  claimedSlugs,
 }: InvestListingsClientProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  // When a vertical listings page passes lockedCategory, that value
-  // wins unconditionally — a ?category= URL param from another page
-  // must not bleed in. Otherwise fall back to the URL search param,
-  // then the initial prop, then 'all'.
+  // ── State from URL (single source of truth — keeps Back/Forward + sharing working) ──
   const activeCategory = lockedCategory
     ? lockedCategory
     : (searchParams.get("category") ?? initialCategory ?? "all");
   const activeSubcategory = searchParams.get("sub") ?? initialSubcategory ?? "";
   const activeState = searchParams.get("state") ?? "";
-  const activePriceIdx = resolvePriceIdx(searchParams.get("price"));
+  const activeTicket = resolveTicketBucketKey(searchParams.get("price"));
   const activeSort = (searchParams.get("sort") ?? "newest") as SortKey;
-  // FIRB-eligibility filter — typically auto-applied for users who came
-  // through a /foreign-investment/<country> page (and therefore have an
-  // intent-country cookie). Leaves all listings visible by default for
-  // domestic users.
-  const activeFirbOnly = searchParams.get("firb") === "eligible";
+  const activeView = (searchParams.get("view") ?? "grid") as ViewMode;
 
-  // Keyword search is a separate, local state rather than a URL param
-  // so typing doesn't spam history entries. Submitting (Enter or
-  // natural debounce via filter) applies it to the grid.
+  // Kind filter — `?kind=fund` narrows to one listing kind. Multi-kind
+  // selection encoded as comma-separated values.
+  const activeKindsRaw = searchParams.get("kind") ?? "";
+  const activeKinds = useMemo(
+    () => new Set(activeKindsRaw.split(",").filter(Boolean) as ListingKind[]),
+    [activeKindsRaw],
+  );
+
+  // Universal advanced filters
+  const activeInvestorType = (searchParams.get("investor") ?? "") as InvestorType;
+  const activeFirbOnly = searchParams.get("firb") === "eligible";
+  const activeSivOnly = searchParams.get("siv") === "complying";
+  const activeWholesaleOnly = searchParams.get("wholesale") === "true";
+  const activeFreshness = searchParams.get("fresh") ?? ""; // 'new_this_week' | 'closing_soon'
+  const activeFeaturedOnly = searchParams.get("featured") === "true";
+  const activeMinYield = searchParams.get("min_yield") ?? ""; // numeric % string
+  const activeEsicOnly = searchParams.get("esic") === "true";
+
+  // Free-text search (URL-backed so back-button works + share-able)
   const initialQuery = searchParams.get("q") ?? "";
   const [searchInput, setSearchInput] = useState(initialQuery);
+  useEffect(() => { setSearchInput(initialQuery); }, [initialQuery]);
   const activeQuery = initialQuery.toLowerCase();
 
-  // Build new URLSearchParams and push
-  const setParam = useCallback(
+  // Filter drawer open state — kept local, never persisted
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  // ── URL update helper ──
+  const setParams = useCallback(
     (updates: Record<string, string>) => {
       const next = new URLSearchParams(searchParams.toString());
       for (const [k, v] of Object.entries(updates)) {
@@ -142,24 +153,30 @@ export default function InvestListingsClient({
     [router, pathname, searchParams],
   );
 
-  const clearAll = useCallback(() => {
+  const clearAllFilters = useCallback(() => {
     const next = new URLSearchParams(searchParams.toString());
-    for (const key of ["category", "sub", "state", "price", "sort", "q", "firb"]) {
+    for (const key of [
+      "category", "sub", "state", "price", "sort", "q", "firb", "siv",
+      "wholesale", "investor", "kind", "fresh", "featured", "min_yield", "esic",
+    ]) {
       next.delete(key);
     }
-    if (lockedCategory) next.delete("category");
+    // View mode is a display preference, NOT a filter — preserve it.
     setSearchInput("");
     router.replace(`${pathname}?${next.toString()}`, { scroll: false });
-  }, [router, pathname, searchParams, lockedCategory]);
+  }, [router, pathname, searchParams]);
 
-  const submitSearch = useCallback(
-    (q: string) => {
-      setParam({ q: q.trim() });
-    },
-    [setParam],
-  );
+  const toggleKind = useCallback((k: ListingKind) => {
+    const next = new Set(activeKinds);
+    if (next.has(k)) next.delete(k); else next.add(k);
+    setParams({ kind: Array.from(next).join(",") });
+  }, [activeKinds, setParams]);
 
-  // Derive unique sub_categories for the active category
+  const submitSearch = useCallback((q: string) => {
+    setParams({ q: q.trim() });
+  }, [setParams]);
+
+  // ── Derived sub-categories for the active category ──
   const subCategories = useMemo(() => {
     if (activeCategory === "all") return [];
     const subs = new Set<string>();
@@ -171,9 +188,33 @@ export default function InvestListingsClient({
     return Array.from(subs).sort();
   }, [listings, activeCategory]);
 
-  // ── Filter + sort ──
+  // ── Per-kind counts for the segmented control ──
+  const kindCounts = useMemo(() => {
+    const counts: Record<string, number> = { all: listings.length };
+    for (const l of listings) {
+      const k = deriveListingKind(l);
+      counts[k] = (counts[k] ?? 0) + 1;
+    }
+    return counts;
+  }, [listings]);
+
+  // ── Per-category counts ──
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = { all: listings.length };
+    for (const l of listings) {
+      const c = categoryForListing(l);
+      if (c) counts[c] = (counts[c] ?? 0) + 1;
+    }
+    return counts;
+  }, [listings]);
+
+  // ── The main filter + sort pipeline ──
   const filtered = useMemo(() => {
     let result = listings;
+
+    if (activeKinds.size > 0) {
+      result = result.filter((l) => activeKinds.has(deriveListingKind(l)));
+    }
 
     if (activeCategory !== "all") {
       result = result.filter((l) => categoryForListing(l) === activeCategory);
@@ -187,24 +228,27 @@ export default function InvestListingsClient({
       result = result.filter((l) => l.location_state === activeState);
     }
 
-    if (activePriceIdx > 0 && activePriceIdx < PRICE_RANGES.length) {
-      const range = PRICE_RANGES[activePriceIdx];
+    if (activeTicket) {
+      const range = ticketBucketByKey(activeTicket);
       result = result.filter((l) => {
-        const p = l.asking_price_cents;
-        if (p == null) return false;
-        return p >= range.min && p < range.max;
+        const km = (l.key_metrics ?? {}) as Record<string, unknown>;
+        const minInvest = km["min_investment_aud"] ?? km["min_commit_aud"] ?? km["min_investment"];
+        const minInvestCents = typeof minInvest === "number" ? minInvest * 100 : undefined;
+        const ticket = l.asking_price_cents ?? minInvestCents;
+        if (ticket == null) return false;
+        return ticket >= range.min && ticket < range.max;
       });
     }
 
     if (activeQuery) {
       result = result.filter((l) => {
+        const km = (l.key_metrics ?? {}) as Record<string, unknown>;
         const haystack = [
-          l.title,
-          l.description,
-          l.location_city,
-          l.location_state,
-          l.industry,
-          l.sub_category,
+          l.title, l.description, l.location_city, l.location_state,
+          l.industry, l.sub_category,
+          String(km["asx_ticker"] ?? ""),
+          String(km["brand"] ?? ""),
+          String(km["commodity"] ?? ""),
         ]
           .filter((x): x is string => typeof x === "string")
           .join(" ")
@@ -213,228 +257,215 @@ export default function InvestListingsClient({
       });
     }
 
-    if (activeFirbOnly) {
-      result = result.filter((l) => l.firb_eligible === true);
+    if (activeFirbOnly) result = result.filter((l) => l.firb_eligible === true);
+    if (activeSivOnly) result = result.filter((l) => l.siv_complying === true);
+
+    if (activeWholesaleOnly) {
+      result = result.filter((l) => {
+        const km = (l.key_metrics ?? {}) as Record<string, unknown>;
+        return km["wholesale_only"] === true || km["s708_required"] === true || km["accredited_only"] === true;
+      });
     }
 
+    if (activeInvestorType === "retail") {
+      result = result.filter((l) => {
+        const km = (l.key_metrics ?? {}) as Record<string, unknown>;
+        const wholesaleOnly = km["wholesale_only"] === true || km["s708_required"] === true || km["accredited_only"] === true;
+        return !wholesaleOnly || km["open_to_retail"] === true;
+      });
+    }
+    if (activeInvestorType === "siv") {
+      result = result.filter((l) => l.siv_complying === true);
+    }
+
+    if (activeFreshness === "new_this_week") {
+      result = result.filter((l) => freshnessSignal(l) === "new_this_week");
+    }
+    if (activeFreshness === "closing_soon") {
+      result = result.filter((l) => freshnessSignal(l) === "closing_soon");
+    }
+
+    if (activeFeaturedOnly) {
+      result = result.filter((l) => l.listing_type === "featured" || l.listing_type === "premium");
+    }
+
+    if (activeMinYield) {
+      const minYield = Number(activeMinYield);
+      if (!Number.isNaN(minYield)) {
+        result = result.filter((l) => {
+          const km = (l.key_metrics ?? {}) as Record<string, unknown>;
+          const candidates = [
+            km["distribution_yield"], km["target_yield_pct"], km["target_yield_pa"],
+            km["dividend_yield"], km["yield_percent"], km["target_irr_percent"],
+            km["target_irr"], km["historical_return_pa"], km["return_5yr_pa"],
+            km["target_return_pa"], km["estimated_return_percent"],
+          ];
+          for (const c of candidates) {
+            if (typeof c === "number" && c >= minYield) return true;
+            if (typeof c === "string") {
+              const n = Number(c.replace(/[^\d.]/g, ""));
+              if (!Number.isNaN(n) && n >= minYield) return true;
+            }
+          }
+          return false;
+        });
+      }
+    }
+
+    if (activeEsicOnly) {
+      result = result.filter((l) => {
+        const km = (l.key_metrics ?? {}) as Record<string, unknown>;
+        return km["esic_eligible"] === true;
+      });
+    }
+
+    // Sort
     const sorted = [...result];
-    if (activeSort === "newest") {
-      sorted.sort((a, b) => b.created_at.localeCompare(a.created_at));
-    } else if (activeSort === "price-asc") {
-      sorted.sort(
-        (a, b) => (a.asking_price_cents ?? 0) - (b.asking_price_cents ?? 0),
-      );
-    } else {
-      sorted.sort(
-        (a, b) => (b.asking_price_cents ?? 0) - (a.asking_price_cents ?? 0),
-      );
+    switch (activeSort) {
+      case "newest":
+        sorted.sort((a, b) => b.created_at.localeCompare(a.created_at));
+        break;
+      case "price-asc":
+        sorted.sort((a, b) => (a.asking_price_cents ?? Infinity) - (b.asking_price_cents ?? Infinity));
+        break;
+      case "price-desc":
+        sorted.sort((a, b) => (b.asking_price_cents ?? 0) - (a.asking_price_cents ?? 0));
+        break;
+      case "popular":
+        sorted.sort((a, b) => (b.views ?? 0) - (a.views ?? 0));
+        break;
+      case "closing-soon":
+        sorted.sort((a, b) => {
+          const ax = a.expires_at ? new Date(a.expires_at).getTime() : Infinity;
+          const bx = b.expires_at ? new Date(b.expires_at).getTime() : Infinity;
+          return ax - bx;
+        });
+        break;
     }
 
     return sorted;
   }, [
-    listings,
-    activeCategory,
-    activeSubcategory,
-    activeState,
-    activePriceIdx,
-    activeSort,
-    activeQuery,
-    activeFirbOnly,
+    listings, activeKinds, activeCategory, activeSubcategory, activeState,
+    activeTicket, activeQuery, activeFirbOnly, activeSivOnly, activeWholesaleOnly,
+    activeInvestorType, activeFreshness, activeFeaturedOnly, activeMinYield,
+    activeEsicOnly, activeSort,
   ]);
 
-  // Build a list of active-filter chips so the reader can see exactly
-  // what's filtering the results + remove any one with a click.
+  // ── Active-filter chips ──
   const activeChips: Array<{ label: string; onClear: () => void }> = [];
   if (!lockedCategory && activeCategory !== "all") {
     activeChips.push({
       label: `Category: ${prettyCategory(activeCategory, categories)}`,
-      onClear: () => setParam({ category: "", sub: "" }),
+      onClear: () => setParams({ category: "", sub: "" }),
+    });
+  }
+  if (activeKinds.size > 0) {
+    Array.from(activeKinds).forEach((k) => {
+      const meta = listingKindMeta(k);
+      activeChips.push({ label: meta.label, onClear: () => toggleKind(k) });
     });
   }
   if (activeSubcategory) {
-    activeChips.push({
-      label: `Sub: ${activeSubcategory.replace(/_/g, " ")}`,
-      onClear: () => setParam({ sub: "" }),
-    });
+    activeChips.push({ label: `Sub: ${activeSubcategory.replace(/_/g, " ")}`, onClear: () => setParams({ sub: "" }) });
   }
   if (activeState) {
+    activeChips.push({ label: `State: ${activeState}`, onClear: () => setParams({ state: "" }) });
+  }
+  if (activeTicket) {
+    activeChips.push({ label: `Ticket: ${ticketBucketByKey(activeTicket).label}`, onClear: () => setParams({ price: "" }) });
+  }
+  if (activeInvestorType) {
     activeChips.push({
-      label: `State: ${activeState}`,
-      onClear: () => setParam({ state: "" }),
+      label: INVESTOR_TYPES.find((t) => t.value === activeInvestorType)?.label ?? activeInvestorType,
+      onClear: () => setParams({ investor: "" }),
     });
   }
-  if (activePriceIdx > 0) {
+  if (activeFirbOnly) activeChips.push({ label: "FIRB-eligible", onClear: () => setParams({ firb: "" }) });
+  if (activeSivOnly) activeChips.push({ label: "SIV-complying", onClear: () => setParams({ siv: "" }) });
+  if (activeWholesaleOnly) activeChips.push({ label: "Wholesale only", onClear: () => setParams({ wholesale: "" }) });
+  if (activeFreshness) {
     activeChips.push({
-      label: `Price: ${PRICE_RANGES[activePriceIdx].label}`,
-      onClear: () => setParam({ price: "" }),
+      label: activeFreshness === "new_this_week" ? "New this week" : "Closing soon",
+      onClear: () => setParams({ fresh: "" }),
     });
   }
+  if (activeFeaturedOnly) activeChips.push({ label: "Featured only", onClear: () => setParams({ featured: "" }) });
+  if (activeMinYield) activeChips.push({ label: `Yield ≥ ${activeMinYield}%`, onClear: () => setParams({ min_yield: "" }) });
+  if (activeEsicOnly) activeChips.push({ label: "ESIC-eligible", onClear: () => setParams({ esic: "" }) });
   if (activeQuery) {
     activeChips.push({
       label: `"${initialQuery}"`,
-      onClear: () => {
-        setSearchInput("");
-        setParam({ q: "" });
-      },
-    });
-  }
-  if (activeFirbOnly) {
-    activeChips.push({
-      label: "FIRB-eligible only",
-      onClear: () => setParam({ firb: "" }),
+      onClear: () => { setSearchInput(""); setParams({ q: "" }); },
     });
   }
 
-  // All category tabs (prepend "All")
+  // Drive kind-specific filters off the active narrowed kind.
+  const narrowedKind: ListingKind | null = activeKinds.size === 1 ? Array.from(activeKinds)[0] : null;
+  const kindSpec = filterSpecForKind(narrowedKind);
+
   const tabs = useMemo(
     () => [{ slug: "all", label: "All" }, ...categories],
     [categories],
   );
 
-  const lockedCategoryLabel = lockedCategory
-    ? prettyCategory(lockedCategory, categories)
-    : null;
-  const lockedCategoryColors = lockedCategory
-    ? CATEGORY_COLORS[lockedCategory] ?? CATEGORY_COLORS.all
-    : null;
+  const lockedCategoryLabel = lockedCategory ? prettyCategory(lockedCategory, categories) : null;
 
   return (
     <div>
+      {/* ── Page-header band (vertical-listings pages only) ────── */}
       {pageTitle && (
         <div className="bg-white border-b border-slate-100 py-6 md:py-8">
           <div className="container-custom">
-            {/* Filtered-view framing: makes clear this is a slice of the
-                main /invest marketplace, not a separate catalogue. Only
-                renders when a vertical listings page locks the category. */}
-            {lockedCategory && lockedCategoryLabel && lockedCategoryColors && (
+            {lockedCategory && lockedCategoryLabel && (
               <div className="flex items-center gap-2 mb-3 text-xs flex-wrap">
-                <Link
-                  href="/invest"
-                  className="text-slate-500 hover:text-slate-900 font-semibold inline-flex items-center gap-1 transition-colors"
-                >
+                <Link href="/invest" className="text-slate-500 hover:text-slate-900 font-semibold inline-flex items-center gap-1 transition-colors">
                   <span aria-hidden="true">←</span> Browse all listings
                 </Link>
                 <span className="text-slate-300" aria-hidden="true">·</span>
-                <span
-                  className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full font-semibold ring-1 ${lockedCategoryColors.bg} ${lockedCategoryColors.text} ${lockedCategoryColors.ring}`}
-                >
-                  <svg
-                    className="w-3 h-3"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
-                    />
-                  </svg>
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full font-semibold ring-1 bg-amber-50 text-amber-700 ring-amber-200">
+                  <Icon name="filter" size={11} />
                   Filtered to {lockedCategoryLabel}
                 </span>
               </div>
             )}
-            <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-slate-900 leading-tight">
-              {pageTitle}
-            </h1>
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-slate-900 leading-tight">{pageTitle}</h1>
             {pageSubtitle && (
-              <p className="text-sm md:text-base text-slate-600 leading-relaxed mt-2 max-w-3xl">
-                {pageSubtitle}
-              </p>
+              <p className="text-sm md:text-base text-slate-600 leading-relaxed mt-2 max-w-3xl">{pageSubtitle}</p>
             )}
           </div>
         </div>
       )}
 
-      {/* ── Sticky category tab bar — global page only ── */}
-      {!lockedCategory && (
-        <div className="sticky top-0 z-20 bg-white/95 backdrop-blur border-b border-slate-200">
-          <div className="container-custom overflow-x-auto scrollbar-hide">
-            <div className="flex gap-1.5 py-2.5 min-w-max">
-              {tabs.map((tab) => {
-                const isActive = tab.slug === activeCategory;
-                const colors = CATEGORY_COLORS[tab.slug] ?? CATEGORY_COLORS.all;
-                return (
-                  <button
-                    key={tab.slug}
-                    onClick={() =>
-                      setParam({ category: tab.slug === "all" ? "" : tab.slug, sub: "" })
-                    }
-                    className={`whitespace-nowrap rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${
-                      isActive
-                        ? `${colors.bg} ${colors.text} ring-1 ${colors.ring}`
-                        : "text-slate-500 hover:bg-slate-50 hover:text-slate-700"
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ── Sticky filter toolbar — visible as user scrolls. ──
-           Separate from the category bar (when present) so the selects
-           are always reachable without scrolling back up. */}
-      <div
-        className={`sticky z-10 bg-white/95 backdrop-blur border-b border-slate-200 ${
-          lockedCategory ? "top-0" : "top-[48px]"
-        }`}
-      >
-        <div className="container-custom py-3">
-          <div className="flex flex-col md:flex-row md:items-center gap-3">
-            {/* Search */}
+      {/* ── Single sticky toolbar (replaces the old two-bar stack) ── */}
+      <div className="sticky top-0 z-20 bg-white/95 backdrop-blur border-b border-slate-200">
+        <div className="container-custom py-3 space-y-2.5">
+          {/* Row 1: search · filters · sort · view-mode toggle */}
+          <div className="flex gap-2 items-center">
             <form
               role="search"
               className="flex-1 min-w-0"
-              onSubmit={(e) => {
-                e.preventDefault();
-                submitSearch(searchInput);
-              }}
+              onSubmit={(e) => { e.preventDefault(); submitSearch(searchInput); }}
             >
-              <label htmlFor="listings-search" className="sr-only">
-                Search listings
-              </label>
+              <label htmlFor="listings-search" className="sr-only">Search listings</label>
               <div className="relative">
-                <svg
-                  className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 21l-4.35-4.35M17 10.5a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z"
-                  />
-                </svg>
+                <Icon name="search" size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                 <input
                   id="listings-search"
                   type="search"
                   inputMode="search"
                   value={searchInput}
                   onChange={(e) => setSearchInput(e.target.value)}
-                  onBlur={() => {
-                    if (searchInput.trim() !== initialQuery) {
-                      submitSearch(searchInput);
-                    }
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") submitSearch(searchInput);
+                    if (e.key === "Escape") { setSearchInput(""); submitSearch(""); }
                   }}
-                  placeholder="Search by keyword, city, industry…"
+                  placeholder="Search title, sector, ticker, suburb…"
                   className="w-full rounded-lg border border-slate-200 bg-white pl-9 pr-9 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400"
                 />
                 {searchInput && (
                   <button
                     type="button"
-                    onClick={() => {
-                      setSearchInput("");
-                      submitSearch("");
-                    }}
+                    onClick={() => { setSearchInput(""); submitSearch(""); }}
                     aria-label="Clear search"
                     className="absolute right-2.5 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center text-[11px] font-bold"
                   >
@@ -444,52 +475,159 @@ export default function InvestListingsClient({
               </div>
             </form>
 
-            {/* Filter dropdowns — each with a visible inline label so
-                users always know what the current value means. */}
-            <div className="flex flex-wrap items-center gap-2">
-              <LabeledSelect
-                id="filter-state"
-                label="State"
-                value={activeState}
-                onChange={(v) => setParam({ state: v })}
-                options={[
-                  { value: "", label: "All states" },
-                  ...STATES.map((s) => ({ value: s, label: s })),
-                ]}
-              />
-              <LabeledSelect
-                id="filter-price"
-                label="Price"
-                value={PRICE_RANGES[activePriceIdx].key}
-                onChange={(v) => setParam({ price: v })}
-                options={PRICE_RANGES.map((r) => ({ value: r.key, label: r.label }))}
-              />
-              <LabeledSelect
-                id="filter-sort"
-                label="Sort"
-                value={activeSort === "newest" ? "" : activeSort}
-                onChange={(v) => setParam({ sort: v })}
-                options={SORT_OPTIONS.map((o) => ({
-                  value: o.value === "newest" ? "" : o.value,
-                  label: o.label,
-                }))}
-              />
+            <button
+              type="button"
+              onClick={() => setDrawerOpen(true)}
+              className={`shrink-0 inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-semibold transition-all ${
+                activeChips.length > 0
+                  ? "bg-amber-50 border-amber-300 text-amber-700"
+                  : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
+              }`}
+            >
+              <Icon name="sliders" size={16} />
+              <span className="hidden sm:inline">Filters</span>
+              {activeChips.length > 0 && (
+                <span className="bg-amber-600 text-white text-[0.6rem] font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                  {activeChips.length}
+                </span>
+              )}
+            </button>
+
+            <select
+              value={activeSort}
+              onChange={(e) => setParams({ sort: e.target.value === "newest" ? "" : e.target.value })}
+              aria-label="Sort results"
+              className="shrink-0 hidden md:block rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400"
+            >
+              {SORT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+            </select>
+
+            <div className="shrink-0 hidden sm:inline-flex rounded-lg border border-slate-200 bg-white p-0.5" role="tablist" aria-label="View mode">
+              {VIEW_MODES.map((v) => (
+                <button
+                  key={v.value}
+                  type="button"
+                  role="tab"
+                  aria-selected={activeView === v.value}
+                  aria-label={`${v.label} view`}
+                  onClick={() => setParams({ view: v.value === "grid" ? "" : v.value })}
+                  className={`inline-flex items-center justify-center w-8 h-8 rounded-md text-slate-500 transition-all ${
+                    activeView === v.value ? "bg-slate-100 text-slate-900" : "hover:bg-slate-50"
+                  }`}
+                >
+                  <Icon name={v.icon} size={14} />
+                </button>
+              ))}
             </div>
+
+            {/* Save current filter set as a named saved-search */}
+            <SaveSearchButton
+              activeChipsCount={activeChips.length}
+              filters={Object.fromEntries(searchParams.entries())}
+            />
           </div>
 
-          {/* Active-filter chips row — only shown when something is
-              filtering so the page isn't visually noisy otherwise. */}
+          {/* Row 2: kind segmented control */}
+          {!lockedCategory && (
+            <div className="overflow-x-auto scrollbar-hide -mx-1 px-1">
+              <div className="flex items-center gap-1.5 min-w-max">
+                <button
+                  type="button"
+                  onClick={() => setParams({ kind: "" })}
+                  aria-pressed={activeKinds.size === 0}
+                  className={`whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-semibold transition-all inline-flex items-center gap-1.5 ${
+                    activeKinds.size === 0 ? "bg-slate-900 text-white" : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
+                  }`}
+                >
+                  All kinds
+                  <span className={`text-[0.6rem] font-bold px-1.5 py-0.5 rounded ${
+                    activeKinds.size === 0 ? "bg-white/20 text-white" : "bg-slate-100 text-slate-500"
+                  }`}>
+                    {kindCounts.all ?? 0}
+                  </span>
+                </button>
+                {ALL_LISTING_KINDS.map((k) => {
+                  const meta = listingKindMeta(k);
+                  const count = kindCounts[k] ?? 0;
+                  const isActive = activeKinds.has(k);
+                  const disabled = count === 0;
+                  return (
+                    <button
+                      key={k}
+                      type="button"
+                      onClick={() => !disabled && toggleKind(k)}
+                      disabled={disabled}
+                      aria-pressed={isActive}
+                      className={`whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-semibold transition-all inline-flex items-center gap-1.5 ${
+                        isActive
+                          ? `${meta.accent.badge} shadow-sm`
+                          : disabled
+                            ? "bg-slate-50 text-slate-300 cursor-not-allowed"
+                            : `bg-white border border-slate-200 text-slate-600 hover:bg-slate-50`
+                      }`}
+                      title={meta.blurb}
+                    >
+                      <Icon name={meta.icon} size={11} />
+                      {meta.label}
+                      <span className={`text-[0.6rem] font-bold px-1.5 py-0.5 rounded ${
+                        isActive ? "bg-white/20 text-white" : disabled ? "bg-slate-100 text-slate-300" : "bg-slate-100 text-slate-500"
+                      }`}>
+                        {count}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Row 3: category chips (secondary narrow by sector) */}
+          {!lockedCategory && tabs.length > 1 && (
+            <div className="overflow-x-auto scrollbar-hide -mx-1 px-1">
+              <div className="flex items-center gap-1.5 min-w-max">
+                {tabs.map((tab) => {
+                  const isActive = tab.slug === activeCategory;
+                  const count = categoryCounts[tab.slug] ?? 0;
+                  const isAll = tab.slug === "all";
+                  const disabled = !isAll && count === 0;
+                  return (
+                    <button
+                      key={tab.slug}
+                      type="button"
+                      onClick={() => !disabled && setParams({ category: tab.slug === "all" ? "" : tab.slug, sub: "" })}
+                      disabled={disabled}
+                      aria-pressed={isActive}
+                      className={`whitespace-nowrap rounded-full px-3 py-1 text-[0.7rem] font-medium transition-all inline-flex items-center gap-1 ${
+                        isActive
+                          ? "bg-slate-100 text-slate-900 ring-1 ring-slate-300"
+                          : disabled
+                            ? "text-slate-300 cursor-not-allowed"
+                            : "text-slate-500 hover:bg-slate-50"
+                      }`}
+                    >
+                      {tab.label}
+                      {!isAll && (
+                        <span className={`text-[0.55rem] font-bold tabular-nums ${disabled ? "text-slate-300" : "text-slate-400"}`}>
+                          {count}
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Active-filter chips */}
           {activeChips.length > 0 && (
-            <div className="flex flex-wrap items-center gap-2 mt-2.5">
-              <span className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
-                Filtering:
-              </span>
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Filtering:</span>
               {activeChips.map((c) => (
                 <button
                   key={c.label}
                   type="button"
                   onClick={c.onClear}
-                  className="inline-flex items-center gap-1 rounded-full bg-amber-50 border border-amber-200 px-2.5 py-1 text-[11px] font-semibold text-amber-900 hover:bg-amber-100"
+                  className="inline-flex items-center gap-1 rounded-full bg-amber-50 border border-amber-200 px-2 py-0.5 text-[11px] font-semibold text-amber-900 hover:bg-amber-100"
                 >
                   {c.label}
                   <span className="text-amber-600" aria-hidden="true">×</span>
@@ -498,8 +636,8 @@ export default function InvestListingsClient({
               ))}
               <button
                 type="button"
-                onClick={clearAll}
-                className="text-[11px] font-bold text-slate-500 hover:text-slate-700 underline underline-offset-2"
+                onClick={clearAllFilters}
+                className="text-[11px] font-bold text-slate-500 hover:text-slate-700 underline underline-offset-2 ml-1"
               >
                 Clear all
               </button>
@@ -508,27 +646,21 @@ export default function InvestListingsClient({
         </div>
       </div>
 
+      {/* ── Results ───────────────────────────────────────────────── */}
       <div className="container-custom py-5 md:py-8">
-        {/* Sub-category pills — only meaningful when a single category
-            is selected. Collapsed into a compact chip row with a
-            visible label so readers know what the pills narrow. */}
         {subCategories.length > 0 && (
           <div className="mb-5">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-1.5">
-              Narrow by type
-            </p>
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-1.5">Narrow by sub-type</p>
             <div className="flex flex-wrap gap-1.5">
               {subCategories.map((sub) => {
                 const isActive = sub === activeSubcategory;
                 return (
                   <button
                     key={sub}
-                    onClick={() => setParam({ sub: isActive ? "" : sub })}
+                    onClick={() => setParams({ sub: isActive ? "" : sub })}
                     aria-pressed={isActive}
                     className={`rounded-full px-3 py-1 text-xs font-medium transition-colors capitalize ${
-                      isActive
-                        ? "bg-slate-900 text-white"
-                        : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                      isActive ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                     }`}
                   >
                     {sub.replace(/_/g, " ")}
@@ -539,103 +671,425 @@ export default function InvestListingsClient({
           </div>
         )}
 
-        {/* Results count */}
         <p className="text-xs text-slate-500 mb-4">
-          {filtered.length} listing{filtered.length !== 1 ? "s" : ""} found
+          <span className="font-bold text-slate-700">{filtered.length}</span> listing{filtered.length !== 1 ? "s" : ""} found
+          {activeChips.length > 0 && (
+            <span className="text-slate-400"> · from {listings.length} total</span>
+          )}
         </p>
 
-        {/* Grid of cards */}
         {filtered.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-center">
-            <div className="text-4xl mb-3" aria-hidden="true">🔍</div>
-            <h3 className="text-lg font-bold text-slate-800 mb-1">
-              No listings match your filters
-            </h3>
-            <p className="text-sm text-slate-500 max-w-sm mb-5">
-              Try widening the search, choosing a different category, or
-              clearing one of the active filters.
-            </p>
-            {activeChips.length > 0 && (
-              <button
-                type="button"
-                onClick={clearAll}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm px-5 py-2.5 transition-colors"
-              >
-                Clear all filters
-              </button>
-            )}
+          <EmptyState onClearAll={clearAllFilters} hasFilters={activeChips.length > 0} />
+        ) : activeView === "table" ? (
+          <TableView listings={filtered} showFirbBadge={Boolean(intentCountry) || activeFirbOnly} />
+        ) : activeView === "list" ? (
+          <div className="flex flex-col gap-3">
+            {filtered.map((l) => (
+              <InvestListingCard
+                key={l.id}
+                listing={l}
+                variant="list"
+                showFirbBadge={Boolean(intentCountry) || activeFirbOnly}
+                matchScore={matchScores?.[l.id] ?? null}
+                advisorOptInCount={advisorOptInCounts?.[l.id] ?? 0}
+                showClaimBadge={claimedSlugs ? !claimedSlugs.has(l.slug) && (l.listing_kind === "fund" || l.listing_kind === "physical_asset" || l.listing_kind === "listed_security") : false}
+              />
+            ))}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {filtered.map((listing) => (
-              <InvestListingCard key={listing.id} listing={listing} />
+            {filtered.map((l) => (
+              <InvestListingCard
+                key={l.id}
+                listing={l}
+                showFirbBadge={Boolean(intentCountry) || activeFirbOnly}
+                matchScore={matchScores?.[l.id] ?? null}
+                advisorOptInCount={advisorOptInCounts?.[l.id] ?? 0}
+                showClaimBadge={claimedSlugs ? !claimedSlugs.has(l.slug) && (l.listing_kind === "fund" || l.listing_kind === "physical_asset" || l.listing_kind === "listed_security") : false}
+              />
             ))}
           </div>
         )}
       </div>
+
+      <FilterDrawer
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        resultCount={filtered.length}
+        onClearAll={clearAllFilters}
+        activeState={activeState}
+        activeTicket={activeTicket}
+        activeInvestorType={activeInvestorType}
+        activeFirbOnly={activeFirbOnly}
+        activeSivOnly={activeSivOnly}
+        activeWholesaleOnly={activeWholesaleOnly}
+        activeFreshness={activeFreshness}
+        activeFeaturedOnly={activeFeaturedOnly}
+        activeMinYield={activeMinYield}
+        activeEsicOnly={activeEsicOnly}
+        kindSpec={kindSpec}
+        intentCountry={intentCountry ?? null}
+        setParams={setParams}
+      />
+
+      {/* Sticky compare bar — renders nothing when shortlist is empty */}
+      <ListingCompareBar />
     </div>
   );
 }
 
-/* ─── Labeled select helper ───────────────────────────────────────── */
-
-function LabeledSelect({
-  id,
-  label,
-  value,
-  onChange,
-  options,
-}: {
-  id: string;
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-  options: Array<{ value: string; label: string }>;
-}) {
-  // Inline label keeps the dropdown self-describing — once a user
-  // picks "QLD" they still see "State: QLD" on the button, so they
-  // remember what it is without re-opening the menu. Also gives
-  // screen readers a stable accessible name.
-  const current = options.find((o) => o.value === value);
-  const display = current ? current.label : options[0]?.label ?? "";
+// ─── Empty state ──────────────────────────────────────────────────────
+function EmptyState({ onClearAll, hasFilters }: { onClearAll: () => void; hasFilters: boolean }) {
   return (
-    <div className="relative">
-      <label htmlFor={id} className="sr-only">
-        {label}
-      </label>
-      <span
-        className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[10px] font-bold uppercase tracking-wide text-slate-400"
-        aria-hidden="true"
-      >
-        {label}
-      </span>
-      <select
-        id={id}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        aria-label={`${label}: ${display}`}
-        className="appearance-none rounded-lg border border-slate-200 bg-white pl-[52px] pr-8 py-2 text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400 cursor-pointer"
-      >
-        {options.map((o) => (
-          <option key={o.value || "default"} value={o.value}>
-            {o.label}
-          </option>
-        ))}
-      </select>
-      <svg
-        className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-        aria-hidden="true"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M19 9l-7 7-7-7"
-        />
-      </svg>
+    <div className="flex flex-col items-center justify-center py-20 text-center">
+      <div className="text-4xl mb-3" aria-hidden="true">🔍</div>
+      <h3 className="text-lg font-bold text-slate-800 mb-1">
+        {hasFilters ? "No listings match your filters" : "No listings yet"}
+      </h3>
+      <p className="text-sm text-slate-500 max-w-sm mb-5">
+        {hasFilters
+          ? "Try widening the search, choosing a different category, or clearing one of the active filters."
+          : "Check back soon — new opportunities are added weekly."}
+      </p>
+      {hasFilters && (
+        <button
+          type="button"
+          onClick={onClearAll}
+          className="inline-flex items-center gap-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm px-5 py-2.5 transition-colors"
+        >
+          Clear all filters
+        </button>
+      )}
     </div>
+  );
+}
+
+// ─── Table view ───────────────────────────────────────────────────────
+function TableView({ listings, showFirbBadge }: { listings: InvestmentListing[]; showFirbBadge: boolean }) {
+  return (
+    <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
+      <table className="min-w-full text-sm">
+        <thead className="bg-slate-50 text-[10px] uppercase tracking-wider text-slate-500">
+          <tr>
+            <th className="text-left px-4 py-2.5 font-bold">Listing</th>
+            <th className="text-left px-3 py-2.5 font-bold">Kind</th>
+            <th className="text-left px-3 py-2.5 font-bold">Sector</th>
+            <th className="text-left px-3 py-2.5 font-bold">Location</th>
+            <th className="text-right px-3 py-2.5 font-bold">Price</th>
+            <th className="text-left px-3 py-2.5 font-bold">Flags</th>
+            <th className="px-3 py-2.5"></th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-slate-100">
+          {listings.map((l) => {
+            const kind = deriveListingKind(l);
+            const meta = listingKindMeta(kind);
+            const price = formatListingPrice(l);
+            const km = (l.key_metrics ?? {}) as Record<string, unknown>;
+            const wholesaleOnly = km["wholesale_only"] === true || km["s708_required"] === true || km["accredited_only"] === true;
+            return (
+              <tr key={l.id} className="hover:bg-slate-50">
+                <td className="px-4 py-3">
+                  <Link href={`/invest/listings/${l.slug}`} className="font-bold text-slate-900 hover:text-amber-700 line-clamp-1">
+                    {l.title}
+                  </Link>
+                  {l.industry && <div className="text-[0.62rem] text-slate-500 mt-0.5">{l.industry}</div>}
+                </td>
+                <td className="px-3 py-3">
+                  <span className={`inline-flex items-center gap-1 ${meta.accent.badgeSubtle} text-[0.6rem] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full border`}>
+                    <Icon name={meta.icon} size={9} />
+                    {meta.label}
+                  </span>
+                </td>
+                <td className="px-3 py-3 text-xs text-slate-600 capitalize">{l.vertical.replace(/[-_]/g, " ")}</td>
+                <td className="px-3 py-3 text-xs text-slate-600">
+                  {l.location_state ?? "—"}{l.location_city ? ` · ${l.location_city}` : ""}
+                </td>
+                <td className="px-3 py-3 text-right">
+                  {price ? (
+                    <div>
+                      <div className="text-[0.55rem] text-slate-400 uppercase">{price.label}</div>
+                      <div className="text-xs font-bold text-slate-900">{price.value}</div>
+                    </div>
+                  ) : <span className="text-slate-300">—</span>}
+                </td>
+                <td className="px-3 py-3">
+                  <div className="flex gap-1 flex-wrap">
+                    {showFirbBadge && l.firb_eligible && <span className="bg-blue-100 text-blue-700 text-[0.55rem] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded">FIRB</span>}
+                    {l.siv_complying && <span className="bg-emerald-100 text-emerald-700 text-[0.55rem] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded">SIV</span>}
+                    {wholesaleOnly && <span className="bg-rose-100 text-rose-700 text-[0.55rem] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded">Wholesale</span>}
+                  </div>
+                </td>
+                <td className="px-3 py-3 text-right">
+                  <Link href={`/invest/listings/${l.slug}`} className="text-xs font-bold text-amber-700 hover:text-amber-900 inline-flex items-center gap-0.5">
+                    View
+                    <Icon name="chevron-right" size={11} />
+                  </Link>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+// ─── Filter drawer (slide-over) ───────────────────────────────────────
+interface FilterDrawerProps {
+  open: boolean;
+  onClose: () => void;
+  resultCount: number;
+  onClearAll: () => void;
+  activeState: string;
+  activeTicket: string;
+  activeInvestorType: InvestorType;
+  activeFirbOnly: boolean;
+  activeSivOnly: boolean;
+  activeWholesaleOnly: boolean;
+  activeFreshness: string;
+  activeFeaturedOnly: boolean;
+  activeMinYield: string;
+  activeEsicOnly: boolean;
+  kindSpec: ReturnType<typeof filterSpecForKind>;
+  intentCountry: string | null;
+  setParams: (updates: Record<string, string>) => void;
+}
+
+function FilterDrawer(props: FilterDrawerProps) {
+  const {
+    open, onClose, resultCount, onClearAll,
+    activeState, activeTicket, activeInvestorType,
+    activeFirbOnly, activeSivOnly, activeWholesaleOnly,
+    activeFreshness, activeFeaturedOnly, activeMinYield, activeEsicOnly,
+    kindSpec, intentCountry, setParams,
+  } = props;
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [open, onClose]);
+
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 z-50">
+      <button
+        type="button"
+        aria-label="Close filters"
+        onClick={onClose}
+        className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
+      />
+      <aside
+        role="dialog"
+        aria-label="Filters"
+        className="absolute right-0 top-0 bottom-0 w-full sm:max-w-md bg-white shadow-2xl flex flex-col"
+      >
+        <header className="flex items-center justify-between px-5 py-4 border-b border-slate-200 shrink-0">
+          <h2 className="text-lg font-extrabold text-slate-900 flex items-center gap-2">
+            <Icon name="sliders" size={18} />
+            Filters
+          </h2>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close"
+            className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center"
+          >
+            <Icon name="x" size={16} />
+          </button>
+        </header>
+
+        <div className="flex-1 overflow-y-auto px-5 py-4 space-y-5">
+          <Section title="Location">
+            <select
+              value={activeState}
+              onChange={(e) => setParams({ state: e.target.value })}
+              className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+            >
+              <option value="">All states</option>
+              {STATES.map((s) => <option key={s} value={s}>{s}</option>)}
+            </select>
+          </Section>
+
+          <Section title="Ticket size">
+            <div className="grid grid-cols-3 gap-1.5">
+              {TICKET_BUCKETS.map((b) => (
+                <button
+                  key={b.key || "any"}
+                  type="button"
+                  onClick={() => setParams({ price: b.key })}
+                  aria-pressed={activeTicket === b.key}
+                  className={`text-[11px] font-semibold rounded-lg px-2 py-1.5 transition-colors ${
+                    activeTicket === b.key
+                      ? "bg-amber-500 text-white shadow-sm"
+                      : "bg-slate-50 text-slate-600 hover:bg-slate-100"
+                  }`}
+                >
+                  {b.label}
+                </button>
+              ))}
+            </div>
+          </Section>
+
+          <Section title="Investor type">
+            <select
+              value={activeInvestorType}
+              onChange={(e) => setParams({ investor: e.target.value })}
+              className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+            >
+              {INVESTOR_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
+            </select>
+            <p className="text-[10px] text-slate-500 mt-1.5 leading-snug">
+              Narrows out listings restricted to a category you don&apos;t qualify for. Doesn&apos;t verify status — that happens at enquiry.
+            </p>
+          </Section>
+
+          <Section title="Compliance & structure">
+            <div className="space-y-2">
+              <Toggle
+                label="FIRB-eligible only"
+                hint={intentCountry ? "Recommended — your visit comes via a foreign-investment page." : "Only show listings flagged eligible for foreign investment."}
+                checked={activeFirbOnly}
+                onChange={(v) => setParams({ firb: v ? "eligible" : "" })}
+              />
+              <Toggle
+                label="SIV-complying only"
+                hint="Significant Investor Visa qualifying ($5M+ over 4 years across complying assets)."
+                checked={activeSivOnly}
+                onChange={(v) => setParams({ siv: v ? "complying" : "" })}
+              />
+              <Toggle
+                label="Wholesale only"
+                hint="Restrict to s708 / sophisticated-investor offerings."
+                checked={activeWholesaleOnly}
+                onChange={(v) => setParams({ wholesale: v ? "true" : "" })}
+              />
+            </div>
+          </Section>
+
+          {kindSpec.showYield && (
+            <Section title="Minimum yield / return">
+              <div className="grid grid-cols-5 gap-1.5">
+                {["", "3", "5", "8", "12"].map((y) => (
+                  <button
+                    key={y || "any"}
+                    type="button"
+                    onClick={() => setParams({ min_yield: y })}
+                    aria-pressed={activeMinYield === y}
+                    className={`text-[11px] font-semibold rounded-lg px-2 py-1.5 transition-colors ${
+                      activeMinYield === y
+                        ? "bg-emerald-600 text-white shadow-sm"
+                        : "bg-slate-50 text-slate-600 hover:bg-slate-100"
+                    }`}
+                  >
+                    {y ? `${y}%+` : "Any"}
+                  </button>
+                ))}
+              </div>
+              <p className="text-[10px] text-slate-500 mt-1.5 leading-snug">
+                Matches any of: distribution yield, dividend yield, target IRR, historical return, target return.
+              </p>
+            </Section>
+          )}
+
+          {kindSpec.showEsicToggle && (
+            <Section title="Tax breaks">
+              <Toggle
+                label="ESIC-eligible"
+                hint="Early-Stage Innovation Company — investor gets a 20% non-refundable carry-forward tax offset (capped at $200k/yr)."
+                checked={activeEsicOnly}
+                onChange={(v) => setParams({ esic: v ? "true" : "" })}
+              />
+            </Section>
+          )}
+
+          <Section title="Listing status">
+            <div className="space-y-2">
+              <Toggle
+                label="New this week"
+                hint="Added in the last 7 days."
+                checked={activeFreshness === "new_this_week"}
+                onChange={(v) => setParams({ fresh: v ? "new_this_week" : "" })}
+              />
+              <Toggle
+                label="Closing soon"
+                hint="Expires within the next 7 days."
+                checked={activeFreshness === "closing_soon"}
+                onChange={(v) => setParams({ fresh: v ? "closing_soon" : "" })}
+              />
+              <Toggle
+                label="Featured only"
+                hint="Promoted (Featured / Premium tier)."
+                checked={activeFeaturedOnly}
+                onChange={(v) => setParams({ featured: v ? "true" : "" })}
+              />
+            </div>
+          </Section>
+        </div>
+
+        <footer className="border-t border-slate-200 px-5 py-3 flex items-center justify-between gap-2 bg-slate-50 shrink-0">
+          <button
+            type="button"
+            onClick={onClearAll}
+            className="text-xs font-bold text-slate-500 hover:text-slate-700 underline underline-offset-2"
+          >
+            Clear all
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm px-4 py-2.5 transition-colors"
+          >
+            Show {resultCount} result{resultCount !== 1 ? "s" : ""}
+          </button>
+        </footer>
+      </aside>
+    </div>
+  );
+}
+
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section>
+      <h3 className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500 mb-2">{title}</h3>
+      {children}
+    </section>
+  );
+}
+
+function Toggle({
+  label, hint, checked, onChange,
+}: {
+  label: string;
+  hint?: string;
+  checked: boolean;
+  onChange: (v: boolean) => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={() => onChange(!checked)}
+      aria-pressed={checked}
+      className={`w-full flex items-start justify-between gap-3 text-left px-3 py-2 rounded-lg border transition-colors ${
+        checked
+          ? "border-emerald-300 bg-emerald-50"
+          : "border-slate-200 bg-white hover:bg-slate-50"
+      }`}
+    >
+      <div className="min-w-0">
+        <div className={`text-sm font-semibold ${checked ? "text-emerald-900" : "text-slate-700"}`}>{label}</div>
+        {hint && <p className={`text-[10px] mt-0.5 leading-snug ${checked ? "text-emerald-700" : "text-slate-500"}`}>{hint}</p>}
+      </div>
+      <span className={`relative inline-flex h-5 w-9 shrink-0 rounded-full transition-colors mt-0.5 ${checked ? "bg-emerald-600" : "bg-slate-300"}`}>
+        <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform mt-0.5 ${checked ? "translate-x-4 ml-0.5" : "translate-x-0.5"}`} />
+      </span>
+    </button>
   );
 }
