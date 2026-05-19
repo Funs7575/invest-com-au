@@ -1,33 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { ADMIN_EMAILS } from "@/lib/admin";
+import { requireAdmin } from "@/lib/require-admin";
 import { logger } from "@/lib/logger";
 
 const log = logger("admin-fee-queue");
 
-async function requireAdmin() {
-  const supabaseAuth = await createClient();
-  const {
-    data: { user },
-    error: authError,
-  } = await supabaseAuth.auth.getUser();
-
-  if (
-    authError ||
-    !user ||
-    !ADMIN_EMAILS.includes(user.email?.toLowerCase() || "")
-  ) {
-    return null;
-  }
-  return user;
-}
-
 // GET — list pending fee changes
 export async function GET() {
   try {
-    const admin = await requireAdmin();
-    if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
 
     const supabase = createAdminClient();
     const { data } = await supabase
@@ -44,8 +26,8 @@ export async function GET() {
 
 // POST — approve or reject a fee change
 export async function POST(request: NextRequest) {
-  const admin = await requireAdmin();
-  if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const guard = await requireAdmin();
+  if (!guard.ok) return guard.response;
 
   const supabase = createAdminClient();
   const { id, action } = await request.json();
@@ -102,7 +84,7 @@ export async function POST(request: NextRequest) {
       action: "fee_queue:approved",
       entity_type: "fee_update_queue",
       entity_id: String(id),
-      admin_email: admin.email ?? "unknown",
+      admin_email: guard.email ?? "unknown",
       details: { broker_id: item.broker_id, field_name: item.field_name, new_value: item.new_value },
     });
 
@@ -120,7 +102,7 @@ export async function POST(request: NextRequest) {
       action: "fee_queue:rejected",
       entity_type: "fee_update_queue",
       entity_id: String(id),
-      admin_email: admin.email ?? "unknown",
+      admin_email: guard.email ?? "unknown",
       details: { broker_id: item.broker_id, field_name: item.field_name },
     });
 
