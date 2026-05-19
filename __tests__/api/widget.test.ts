@@ -121,6 +121,64 @@ describe("GET /api/widget", () => {
     const body = await res.text();
     expect(body).toContain("BROKERS = []");
   });
+
+  // FIN_NOTEBOOK #16 — ?widget= catalogue filter tests.
+
+  it("filters by platform_type=crypto_exchange for ?widget=top-crypto", async () => {
+    const chain = makeChain([BROKER]);
+    mockFrom.mockReturnValue(chain);
+    await GET(makeReq({ widget: "top-crypto" }));
+    const eqCalls = (chain.eq as ReturnType<typeof vi.fn>).mock.calls;
+    expect(eqCalls.some((c) => c[0] === "platform_type" && c[1] === "crypto_exchange")).toBe(true);
+  });
+
+  it("filters by platform_type=savings_account for ?widget=savings-rates", async () => {
+    const chain = makeChain([BROKER]);
+    mockFrom.mockReturnValue(chain);
+    await GET(makeReq({ widget: "savings-rates" }));
+    const eqCalls = (chain.eq as ReturnType<typeof vi.fn>).mock.calls;
+    expect(eqCalls.some((c) => c[0] === "platform_type" && c[1] === "savings_account")).toBe(true);
+  });
+
+  it("filters by platform_type=term_deposit for ?widget=term-deposits", async () => {
+    const chain = makeChain([BROKER]);
+    mockFrom.mockReturnValue(chain);
+    await GET(makeReq({ widget: "term-deposits" }));
+    const eqCalls = (chain.eq as ReturnType<typeof vi.fn>).mock.calls;
+    expect(eqCalls.some((c) => c[0] === "platform_type" && c[1] === "term_deposit")).toBe(true);
+  });
+
+  it("renders the curated heading for ?widget=top-crypto", async () => {
+    mockFrom.mockReturnValue(makeChain([BROKER]));
+    const res = await GET(makeReq({ widget: "top-crypto" }));
+    const body = await res.text();
+    expect(body).toContain("Top AU Crypto Exchanges");
+  });
+
+  it("falls back to default heading when ?widget= is absent", async () => {
+    mockFrom.mockReturnValue(makeChain([BROKER]));
+    const res = await GET(makeReq());
+    const body = await res.text();
+    expect(body).toContain("Broker Comparison");
+  });
+
+  it("ignores an unknown ?widget= slug (no platform_type filter applied)", async () => {
+    const chain = makeChain([BROKER]);
+    mockFrom.mockReturnValue(chain);
+    await GET(makeReq({ widget: "does-not-exist" }));
+    const eqCalls = (chain.eq as ReturnType<typeof vi.fn>).mock.calls;
+    expect(eqCalls.some((c) => c[0] === "platform_type")).toBe(false);
+  });
+
+  it("?brokers= takes precedence over ?widget= (explicit slug list wins)", async () => {
+    const chain = makeChain([BROKER]);
+    mockFrom.mockReturnValue(chain);
+    await GET(makeReq({ brokers: "pearler", widget: "top-crypto" }));
+    const inCalls = (chain.in as ReturnType<typeof vi.fn>).mock.calls;
+    const eqCalls = (chain.eq as ReturnType<typeof vi.fn>).mock.calls;
+    expect(inCalls[0]?.[1]).toEqual(["pearler"]);
+    expect(eqCalls.some((c) => c[0] === "platform_type" && c[1] === "crypto_exchange")).toBe(false);
+  });
 });
 
 describe("OPTIONS /api/widget", () => {
