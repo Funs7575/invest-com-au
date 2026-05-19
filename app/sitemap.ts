@@ -804,7 +804,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Newsletter archive & edition pages
   const { data: newsletterEditions } = supabase
-    ? await supabase.from("newsletter_editions").select("edition_date, created_at")
+    ? await supabase
+        .from("newsletter_editions")
+        .select("edition_date, created_at")
+        .eq("status", "sent")
     : { data: null };
 
   const newsletterArchivePage = {
