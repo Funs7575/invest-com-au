@@ -69,6 +69,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | CM | _complete_ | **#905 MERGED 2026-05-18** | CM-01 done. a11y fix (`a2f98e6`) now on main via this merge. **Stream complete. #905 merged by founder 2026-05-18.** | All CM tasks merged ✓ |
 | AT | `claude/audit-remediation/at-02-couple-family-business` | **#907 MERGED 2026-05-18** · **#917 OPEN** | AT-01 done (`a2553d7`, #907). AT-02..04 done (`f34e7fe`): couple/family/business account-type hub sections on dashboard — `ACCOUNT_TYPE_HUBS` map + conditional section renders between "Recommended" and advisor cards. **Stream complete pending #917 merge.** | AT-01..04 done |
 | Z-22+BB-07 | `claude/audit-remediation/z-22-bb07-redundancy-hub` | **#922 OPEN** | Z-22 done (`63875c8`): `/redundancy` hub (HubPage HOC, 6 service cards, 6 FAQs, ETP stats). BB-07 done: `/tools/etp-calculator` (FY2025-26 maths, tax-free threshold, 17%/32% ETP rates, marginal rate comparison). Lead magnet + ToolsClient entry + sitemap updated. Last CI: pending — pushed `63875c8` 2026-05-19. | Z-22+BB-07 merged |
+| BB-01 | `claude/audit-remediation/bb-01-borrowing-power` | **#923 OPEN** | BB-01 done (`a861dc3`): `/tools/borrowing-power-calculator` — multi-lender borrowing power calc (FY2025-26 tax, HEM, 3 APRA lender scenarios, LVR/LMI flags). ToolsClient entry + sitemap updated. Last CI: pending — pushed `a861dc3` 2026-05-19. | BB-01 merged |
 
 ---
 
@@ -128,6 +129,24 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 454 — 2026-05-19 — BB-01 — borrowing power multi-lender calculator
+
+- **Stream:** BB-01 (borrowing power calculator)
+- **Phase:** 5 — implementation (Tier A — calculator, no schema migration)
+- **Branch:** `claude/audit-remediation/bb-01-borrowing-power`
+- **PR:** #923 OPEN
+- **Commit:** `a861dc3` — feat(bb01): BB-01 — borrowing power multi-lender calculator
+- **Diff:** +439 LOC across 4 files
+- **Items done:** BB-01 (`/tools/borrowing-power-calculator`)
+- **Implementation:**
+  - **`app/tools/borrowing-power-calculator/BorrowingPowerClient.tsx`** — "use client"; FY2025-26 income tax + 2% Medicare levy; HEM ($2k single / $3k couple + $500/dependent); 3 APRA lender scenarios (major ADI 9.2% assess / 6.2% adv / HEM×1.0 / CC 3.8%, mid-tier 9.2% / 6.0% / HEM×0.92 / CC 3%, specialist 8.5% / 6.3% / HEM×0.82 / CC 2%); per-scenario: borrowingLimit, purchasePrice, LVR, LMI flag (>80%), monthly repayment; couple mode; 25/30y term toggle; `GENERAL_ADVICE_WARNING` footer
+  - **`app/tools/borrowing-power-calculator/page.tsx`** — RSC; `revalidate=3600`; BreadcrumbList + CalculatorSchema + FAQPage JSON-LD (4 FAQ items); renders `<BorrowingPowerClient>` via `<Suspense>`
+  - **`app/tools/ToolsClient.tsx`** — borrowing power entry (Calculators category, rating 5)
+  - **`app/sitemap.ts`** — `/tools/borrowing-power-calculator` added to static URL array
+- **Local gates:** dated-strings pre-scan ✅ (no bare month-name dates in tsx), JSON-LD coverage ✅, type-check ✅
+- **Tier A batch:** continuing to iter 455
+- **STATUS: PROGRESS · stream=BB-01 · item=BB-01 · pr=#923**
 
 ### iter 453 — 2026-05-19 — Z-22+BB-07 — redundancy hub + ETP tax calculator
 
