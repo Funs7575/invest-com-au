@@ -62,6 +62,28 @@ describe("useUser", () => {
     expect(result.current.user).toBeNull();
   });
 
+  it("falls back to logged-out after the timeout when getUser never settles", async () => {
+    vi.useFakeTimers();
+    try {
+      // A promise that neither resolves nor rejects — simulates the
+      // TLS / fetch deadlock case where supabase.auth.getUser() hangs
+      // forever. Without the timeout fallback, `loading` would stay
+      // true and AccountButton would sit on its skeleton indefinitely.
+      getUserImpl = () => new Promise<{ data: { user: unknown } }>(() => {});
+      const { result } = renderHook(() => useUser());
+      expect(result.current.loading).toBe(true);
+
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(5500);
+      });
+
+      expect(result.current.loading).toBe(false);
+      expect(result.current.user).toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("upgrades state when onAuthStateChange fires", async () => {
     const { result } = renderHook(() => useUser());
     await waitFor(() => expect(result.current.loading).toBe(false));
