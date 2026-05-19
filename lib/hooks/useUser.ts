@@ -4,6 +4,15 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
 
+// supabase.auth.getUser() has been observed to neither resolve nor reject
+// when the auth service is unreachable (TLS / fetch deadlock at the edge).
+// .catch() alone doesn't help — a promise that never settles never rejects,
+// so `loading` would stay true and AccountButton + every downstream
+// auth-gated UI stays pinned in its loading skeleton forever. Cap the
+// initial call: well above typical ~200ms response, short enough that the
+// user sees an actionable Sign In control rather than a stuck skeleton.
+const INITIAL_GET_USER_TIMEOUT_MS = 5000;
+
 export function useUser() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -12,32 +21,29 @@ export function useUser() {
     const supabase = createClient();
     let cancelled = false;
 
-    // Get initial user.
-    //
-    // The previous version had no .catch() — if supabase.auth.getUser()
-    // rejected (network failure, auth service down), `loading` would stay
-    // true forever and every component downstream (AccountButton, shortlist,
-    // compare CTAs, subscription checks) would sit in its loading skeleton
-    // indefinitely. This blocked the whole authenticated UI on a single
-    // transient failure.
+    const fallbackTimer = setTimeout(() => {
+      if (cancelled) return;
+      // Treat as logged-out on timeout; onAuthStateChange below still
+      // upgrades state if a real session resolves later.
+      setUser(null);
+      setLoading(false);
+    }, INITIAL_GET_USER_TIMEOUT_MS);
+
     supabase.auth
       .getUser()
       .then(({ data }) => {
         if (cancelled) return;
+        clearTimeout(fallbackTimer);
         setUser(data.user);
         setLoading(false);
       })
       .catch(() => {
         if (cancelled) return;
-        // Treat as logged-out rather than hanging the UI forever. The
-        // onAuthStateChange subscription below will still upgrade state
-        // if the user actually has a valid session once the service is
-        // reachable again.
+        clearTimeout(fallbackTimer);
         setUser(null);
         setLoading(false);
       });
 
-    // Listen for auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -47,6 +53,7 @@ export function useUser() {
 
     return () => {
       cancelled = true;
+      clearTimeout(fallbackTimer);
       subscription.unsubscribe();
     };
   }, []);

@@ -74,3 +74,4 @@ spatial_ref_sys
 # intentionally omitted here — the gate will fail loudly if they slip out of the migration set.
 investor_oauth_connections  # PR #893 — OAuth provider connections; remove when its migration lands
 afsl_register               # created in Supabase dashboard (ASIC AFSL register import 2026-05-19); remove when backfill migration lands
+sharesight_connections      # W2.11 Sharesight OAuth — dashboard-created table for token storage; remove when its backfill migration lands

@@ -29,6 +29,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { requireCronAuth } from "@/lib/cron-auth";
 import { logger } from "@/lib/logger";
 import { sendEmail } from "@/lib/resend";
+import { escapeHtml } from "@/lib/html-escape";
 import {
   computeMatchSignature,
   type SavedSearchKind,
@@ -175,14 +176,6 @@ function buildDigestHtml(
 </body></html>`;
 }
 
-function escapeHtml(s: string): string {
-  return s
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-}
 
 export async function GET(req: NextRequest) {
   const unauth = requireCronAuth(req);

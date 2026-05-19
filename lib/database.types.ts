@@ -15043,6 +15043,42 @@ export type Database = {
         }
         Relationships: []
       }
+      sharesight_connections: {
+        Row: {
+          access_token: string
+          api_base_url: string
+          auth_user_id: string
+          created_at: string
+          expires_at_s: number
+          last_import_error: string | null
+          last_imported_at: string | null
+          refresh_token: string
+          updated_at: string
+        }
+        Insert: {
+          access_token: string
+          api_base_url: string
+          auth_user_id: string
+          created_at?: string
+          expires_at_s: number
+          last_import_error?: string | null
+          last_imported_at?: string | null
+          refresh_token: string
+          updated_at?: string
+        }
+        Update: {
+          access_token?: string
+          api_base_url?: string
+          auth_user_id?: string
+          created_at?: string
+          expires_at_s?: number
+          last_import_error?: string | null
+          last_imported_at?: string | null
+          refresh_token?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       site_ab_tests: {
         Row: {
           clicks_a: number | null
@@ -17749,6 +17785,7 @@ export type Database = {
       is_admin: { Args: never; Returns: boolean }
       is_pro: { Args: { check_user_id?: string }; Returns: boolean }
       longtransactionsenabled: { Args: never; Returns: boolean }
+      metric_rls_tables_with_policies: { Args: never; Returns: number }
       populate_geometry_columns:
         | { Args: { tbl_oid: unknown; use_typmod?: boolean }; Returns: number }
         | { Args: { use_typmod?: boolean }; Returns: string }

@@ -1106,6 +1106,8 @@ export interface Professional {
   meta_title?: string;
   meta_description?: string;
   featured_until?: string;
+  /** "free" | "pro" | "gold". Drives Pro/Featured badge on listing cards. */
+  advisor_tier?: string | null;
   // Billing fields
   credit_balance_cents?: number;
   lifetime_credit_cents?: number;
@@ -1398,12 +1400,17 @@ export type InvestListingVertical =
   | 'farmland'
   | 'franchise'
   | 'fund'
+  | 'hedge-fund'
+  | 'insurance-linked-securities'
+  | 'litigation-funding'
   | 'livestock'
   | 'mining'
   | 'pre_ipo'
+  | 'private-equity'
   | 'public-social-infrastructure'
   | 'royalties'
-  | 'startup';
+  | 'startup'
+  | 'venture-capital';
 
 /**
  * Discriminator added 2026-05 (Wave 1 of /invest rebuild). Each kind has a

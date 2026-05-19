@@ -25,8 +25,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = hasSupabase ? await createClient() : null;
 
   // Static pages with tiered priorities
-  const highPriority = new Set(["/compare", "/quiz", "/reviews", "/deals", "/share-trading", "/crypto", "/savings", "/super", "/cfd", "/term-deposits", "/robo-advisors", "/versus", "/how-to", "/invest", "/foreign-investment", "/global-investing", "/etfs", "/insurance", "/tax", "/property", "/grants", "/grants/rd-tax-incentive", "/smsf/setup", "/smsf/crypto", "/smsf/property", "/sell-business", "/sell-business/valuation", "/dividends", "/dividends/franking-credits", "/negative-gearing", "/lump-sum-investing", "/lump-sum-investing/redundancy", "/lump-sum-investing/inheritance", "/halal-investing", "/learn", "/first-home-buyer"]);
-  const medPriority = new Set(["/calculators", "/articles", "/scenarios", "/switch", "/stories", "/benchmark", "/health-scores", "/alerts", "/whats-new", "/costs", "/fee-impact", "/compound-interest-calculator", "/dividend-reinvestment-calculator", "/fire-calculator", "/property-vs-shares-calculator", "/super-contributions-calculator", "/tco-calculator", "/invest/mining", "/invest/buy-business", "/invest/farmland", "/invest/commercial-property", "/invest/renewable-energy", "/invest/startups", "/compare/non-residents", "/compare/money-transfer", "/grants/emdg", "/grants/industry-growth-program", "/grants/eligibility-quiz", "/smsf/investment-strategy", "/smsf/checklist", "/sell-business/checklist", "/visa-investment", "/dividends/calculator", "/negative-gearing/calculator", "/lump-sum-investing/calculator",
+  const highPriority = new Set(["/compare", "/quiz", "/reviews", "/deals", "/share-trading", "/crypto", "/savings", "/super", "/cfd", "/term-deposits", "/robo-advisors", "/versus", "/how-to", "/invest", "/foreign-investment", "/global-investing", "/etfs", "/insurance", "/tax", "/property", "/grants", "/grants/rd-tax-incentive", "/smsf/setup", "/smsf/crypto", "/smsf/property", "/sell-business", "/sell-business/valuation", "/dividends", "/dividends/franking-credits", "/negative-gearing", "/lump-sum-investing", "/lump-sum-investing/redundancy", "/lump-sum-investing/inheritance", "/halal-investing", "/learn", "/first-home-buyer", "/redundancy"]);
+  const medPriority = new Set(["/calculators", "/articles", "/scenarios", "/switch", "/stories", "/benchmark", "/health-scores", "/alerts", "/whats-new", "/costs", "/fee-impact", "/fee-alerts", "/rate-alerts", "/compound-interest-calculator", "/dividend-reinvestment-calculator", "/fire-calculator", "/property-vs-shares-calculator", "/super-contributions-calculator", "/tco-calculator", "/invest/mining", "/invest/buy-business", "/invest/farmland", "/invest/commercial-property", "/invest/renewable-energy", "/invest/startups", "/compare/non-residents", "/compare/money-transfer", "/grants/emdg", "/grants/industry-growth-program", "/grants/eligibility-quiz", "/smsf/investment-strategy", "/smsf/checklist", "/sell-business/checklist", "/visa-investment", "/dividends/calculator", "/negative-gearing/calculator", "/lump-sum-investing/calculator",
     "/questions", ...QUESTIONS.map((q) => `/questions/${q.slug}`)]);
   // Everything else (about, how-we-earn, privacy, methodology, terms, etc.) → 0.4
 
@@ -65,6 +65,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/invest/royalties/listings",
     "/invest/aquaculture", "/invest/aquaculture/listings",
     "/invest/livestock", "/invest/livestock/listings",
+    "/invest/private-equity/listings",
+    "/invest/venture-capital", "/invest/venture-capital/listings",
+    "/invest/litigation-funding", "/invest/litigation-funding/listings",
+    "/invest/insurance-linked-securities", "/invest/insurance-linked-securities/listings",
     "/foreign-investment/united-states", "/foreign-investment/japan", "/foreign-investment/india",
     "/foreign-investment/malaysia", "/foreign-investment/new-zealand", "/foreign-investment/south-korea",
     "/foreign-investment/saudi-arabia",
@@ -74,7 +78,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/privacy/data-collection", "/privacy/data-rights",
     "/methodology", "/how-we-verify", "/terms", "/switch", "/editorial-policy", "/benchmark",
     "/billing-policy",
-    "/health-scores", "/alerts", "/whats-new", "/costs", "/fee-impact", "/fee-alerts", "/score",
+    "/health-scores", "/alerts", "/whats-new", "/costs", "/fee-impact", "/fee-alerts", "/rate-alerts", "/score",
     "/glossary", "/complaints", "/contact", "/advisors", "/find-advisor", "/find-advisor/life-event", "/community",
     "/community/share-trading", "/community/etfs-index-funds", "/community/crypto",
     "/community/super-retirement", "/community/property", "/community/tax-strategy",
@@ -107,6 +111,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/tools/alternative-returns", "/tools/smsf-checker", "/tools/currency-converter",
     "/tools/buy-vs-rent", "/tools/salary-sacrifice", "/tools/smsf-setup",
     "/tools/fhss-calculator",
+    "/tools/mortgage-stress-test",
+    "/tools/borrowing-power-calculator",
+    "/tools/etp-calculator",
+    "/redundancy",
     "/pricing",
     "/firb-fee-estimator", "/non-resident-dividend-calculator", "/non-resident-cgt-checker",
     "/franking-credits-calculator", "/chess-lookup",
@@ -130,6 +138,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/foreign-investment/quiz",
     "/sell-business/quiz",
     "/halal-investing", "/halal-investing/quiz",
+    "/first-home-buyer/quiz",
     "/learn",
     // Global investing hub (outbound — AU residents → world)
     "/global-investing",
@@ -751,6 +760,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/etfs/asx-200`, priority: 0.85 },
     { url: `${baseUrl}/etfs/us-exposure`, priority: 0.85 },
     { url: `${baseUrl}/etfs/dividends`, priority: 0.85 },
+    // ETF screener + ticker pages (AA-04 + BB-09)
+    { url: `${baseUrl}/etfs/screener`, priority: 0.88 },
+    { url: `${baseUrl}/etfs/vas`, priority: 0.85 },
+    { url: `${baseUrl}/etfs/a200`, priority: 0.85 },
+    { url: `${baseUrl}/etfs/ivv`, priority: 0.85 },
+    { url: `${baseUrl}/etfs/ndq`, priority: 0.85 },
+    { url: `${baseUrl}/etfs/vgs`, priority: 0.85 },
+    { url: `${baseUrl}/etfs/vts`, priority: 0.82 },
+    { url: `${baseUrl}/etfs/vhy`, priority: 0.82 },
+    { url: `${baseUrl}/etfs/stw`, priority: 0.80 },
+    { url: `${baseUrl}/etfs/ioz`, priority: 0.80 },
+    { url: `${baseUrl}/etfs/ethi`, priority: 0.78 },
+    { url: `${baseUrl}/etfs/vgad`, priority: 0.78 },
+    { url: `${baseUrl}/etfs/hack`, priority: 0.75 },
+    { url: `${baseUrl}/etfs/vaf`, priority: 0.75 },
+    { url: `${baseUrl}/etfs/iwld`, priority: 0.75 },
     // ETF vs pages
     { url: `${baseUrl}/etfs/vs/vas-vs-a200`, priority: 0.8 },
     { url: `${baseUrl}/etfs/vs/vas-vs-stw`, priority: 0.75 },
@@ -801,7 +826,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Newsletter archive & edition pages
   const { data: newsletterEditions } = supabase
-    ? await supabase.from("newsletter_editions").select("edition_date, created_at")
+    ? await supabase
+        .from("newsletter_editions")
+        .select("edition_date, created_at")
+        .eq("status", "sent")
     : { data: null };
 
   const newsletterArchivePage = {
@@ -942,5 +970,38 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.5,
   };
 
-  return [...staticPages, ...localizedPages, ...bestPages, ...bestForPages, ...commodityPages, ...stockDetailPages, ...transferGuidePages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...howToPages, ...expertArticlePages, ...advisorPages, ...advisorTypePages, ...advisorStatePages, ...advisorCityPages, ...advisorLocationPages, ...investingCityPages, ...glossaryPages, ...firmPages, ...propertyListingPages, ...suburbGuidePages, ...propertyHubPages, ...newHubPages, newsletterArchivePage, ...newsletterEditionPages, ...investStaticPages, ...investCategoryPages, ...investSubcategoryPages, ...investListingPages, ...stockbrokerFirmPages, ...quoteJobPages, ...quoteCategoryStatePages, marketplaceHubPage, ...marketplaceIntentPages, ...marketplaceIntentStatePages, testimonialsPage];
+  // ── AA-02: /grants/[industry] programmatic pages ──
+  const grantsIndustrySlugs = [
+    "tech", "biotech", "agriculture", "manufacturing", "clean-energy",
+    "mining", "healthcare", "export", "creative", "defence",
+  ];
+  const grantsIndustryPages = grantsIndustrySlugs.map((slug) => ({
+    url: `${baseUrl}/grants/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+  }));
+
+  // ── AA-03: /grants/[state]/[program] programmatic pages ──
+  const grantsStatePrograms: [string, string][] = [
+    ["nsw", "mvp-ventures"],
+    ["nsw", "technology-adoption"],
+    ["vic", "launchvic"],
+    ["vic", "vic-innovation-network"],
+    ["qld", "ignite-ideas"],
+    ["qld", "advance-qld"],
+    ["wa", "collab-vouchers"],
+    ["sa", "sa-techvoucher"],
+    ["tas", "tas-entrepreneur-fund"],
+    ["act", "act-innovation-fund"],
+    ["nt", "nt-business-innovation"],
+  ];
+  const grantsStateProgramPages = grantsStatePrograms.map(([state, program]) => ({
+    url: `${baseUrl}/grants/${state}/${program}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+  }));
+
+  return [...staticPages, ...localizedPages, ...bestPages, ...bestForPages, ...commodityPages, ...stockDetailPages, ...transferGuidePages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...howToPages, ...expertArticlePages, ...advisorPages, ...advisorTypePages, ...advisorStatePages, ...advisorCityPages, ...advisorLocationPages, ...investingCityPages, ...glossaryPages, ...firmPages, ...propertyListingPages, ...suburbGuidePages, ...propertyHubPages, ...newHubPages, newsletterArchivePage, ...newsletterEditionPages, ...investStaticPages, ...investCategoryPages, ...investSubcategoryPages, ...investListingPages, ...stockbrokerFirmPages, ...quoteJobPages, ...quoteCategoryStatePages, marketplaceHubPage, ...marketplaceIntentPages, ...marketplaceIntentStatePages, testimonialsPage, ...grantsIndustryPages, ...grantsStateProgramPages];
 }

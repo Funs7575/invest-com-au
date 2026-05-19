@@ -7,6 +7,13 @@ const bundleAnalyzer = withBundleAnalyzer({
 });
 
 const nextConfig: NextConfig = {
+  // Default is 60s. Bumped because the Supabase project sits in eu-west-1
+  // while Vercel builds run in iad1 (US East) — every prerender query pays
+  // ~80-100ms of cross-region latency, and the parallel fan-out during
+  // static export occasionally pushes the slowest broker / advisor pages
+  // past 60s. 180s leaves headroom without masking a genuinely-broken
+  // page (Next.js still retries 3 times before failing).
+  staticPageGenerationTimeout: 180,
   experimental: {
     // Reduce aggressive prefetching — only prefetch on hover, not on viewport
     optimisticClientCache: false,

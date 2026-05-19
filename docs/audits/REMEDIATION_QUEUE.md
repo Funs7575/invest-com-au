@@ -19,7 +19,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | C | `claude/audit-remediation/c-05-index-coverage` | #209/#302/#338/#356/#357/#358/#359/#360/#361/#362/#457/#541 | C-01..C-02 done. C-03..C-05 blocked (see Blocked). | C-05 merged |
 | D | `claude/audit-remediation/d-09-seo-drift` | #210/#303/#339/#363/#364/#365/#366/#457/#542 | D-01..D-09 done. | D-09 merged ✓ |
 | E | `claude/audit-remediation/e-02-batch-5-zod-rollout` (#469) · `e-04-batch-2-zod-backfill` (#557) · `e-04-batch-3-zod-backfill` (#558) | #211/#304/#340/#368/#379/#383/#457/#458/#459/#460/#461/#462/#463/#464/#465/#466/#467/#468/#469/#555/#556/#557/#558 | E-02 batch 1-5 all MERGED (#469 merged 2026-05-03). E-04 batch 1 done (#555/#556), batch 2 blocked, **batch 3 MERGED** (#558 per iter 279). | All E-02+E-04 batches merged |
-| F | `claude/audit-remediation/f-08-cache-drift` · `claude/audit-remediation/f-disc-20260510-hygiene` | #212/#305/#341/#370/#384/#457/#470/#543 · **#741 MERGED 2026-05-11** | F-01..F-07 done. F-08 blocked (see Blocked). F-DISC-01: **#741 MERGED 2026-05-11** (iter 360 squash SHA `3ad0dbe`; console.error → log.error; all hard CI gates green). F-DISC-02..07 false-positives. **F-DISC stream complete.** | F-08 unblocked + merged |
+| F | `claude/audit-remediation/f-disc-20260519-01-duplicate-shadows` | **#925 OPEN** | F-01..F-07 done. F-08 blocked (see Blocked). F-DISC-01: **#741 MERGED 2026-05-11**. F-DISC-02..07 false-positives. F-DISC-20260519-01: **#925 OPEN** (iter 456): `requireAdmin` replaced in 7 admin routes; `escapeHtml` in cron/saved-search-alerts replaced; 21 false-positive name-collisions allowlisted. `audit:duplicate-functions` exits 0. Last CI: fixing — see commit `a5f3887` (CI-RESCUE iter 458: country-rule-alerts test 401→403 for authenticated non-admin; Lint·Type-check·Test·Build in_progress). | F-DISC-20260519-01 merged |
 | G | `claude/audit-remediation/g-04-mfa-gaps` | #213/#306/#342/#371/#385/#457/#471/#544 | G-01..G-03 done. G-04 blocked (see Blocked). | G-04 unblocked + merged |
 | H | `claude/audit-remediation/h-06-stripe-webhooks` | #214/#307/#343/#386/#457/#472/#545 | H-01..H-06 done. | H-06 merged ✓ |
 | I | `claude/audit-remediation/i-05-advisor-gaps` | #215/#308/#344/#387/#457/#473/#546 | I-01..I-05 done. | I-05 merged ✓ |
@@ -47,8 +47,8 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | WW | _complete_ | **#651 MERGED** | WW-01+WW-02 merged. WW-03/04 blocked (DD-02 dep). | All WW tasks merged ✓ |
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
 | Z | `claude/audit-remediation/z-04-zero-state-ux` | #230/#323/#403/#457/#524/#565 | Z-01..Z-04 done. | Z-04 merged ✓ |
-| QQ | `claude/audit-remediation/qq-05-schema` | **#800 MERGED 2026-05-14** · **#920 OPEN** | QQ-01..QQ-07 done (merged). QQ-05+QQ-06 done (`b3a1e63`): `qa_questions`/`qa_answers` migration + `/api/answers/ask` POST route. QQ-09/QQ-10 pending. QQ-08 compliance gate blocks public exposure. CI rescue `18bc80b`: removed `user_id` from migration comment (RLS isolation gate). Main merged `1c041ff`: picked up `afsl_register` driftallowlist entry (Database types drift gate). Last CI: pending — pushed `1c041ff` 2026-05-19. | All QQ tasks merged |
-| MM | `claude/audit-remediation/mm-v01b-digital-infra-listings` | **#801 MERGED** · **#803 MERGED 2026-05-14** | MM-V01..V08 done. MM-V06 pending (Tier C — wholesale-only alternatives: litigation funding, PE, VC, hedge funds, ILS; s708 gate design required; announce before merge). Next item: MM-V06. | All MM phases merged |
+| QQ | `claude/audit-remediation/qq-05-schema` | **#800 MERGED 2026-05-14** · **#920 OPEN** | QQ-01..QQ-07 done (merged). QQ-05+QQ-06 done (`b3a1e63`): migration + `/api/answers/ask`. QQ-09 done (`27079bf`): admin moderation queue + action API. QQ-10 done (`217d7d6`): 19-test suite. QQ-08 compliance gate blocks public exposure. **Stream engineering complete pending QQ-08 compliance signoff.** Last CI: pending — pushed `217d7d6` 2026-05-19. | All QQ tasks merged |
+| MM | `claude/audit-remediation/mm-v06-wholesale-alternatives` | **#801 MERGED** · **#803 MERGED 2026-05-14** · **#921 OPEN** | MM-V01..V08 done. MM-V06 in-flight (`afd1b1e`): 4 wholesale-alt listing pages + s708 gate (PE, VC, hedge funds, litigation funding, ILS). Last CI: pending — pushed `afd1b1e` 2026-05-19. | All MM phases merged |
 | TT | _complete_ | **#764 MERGED** · **#772 MERGED** · **#779 MERGED** · **#799 MERGED 2026-05-12** | TT-01..TT-04 all done. GA4 removed; Plausible sole analytics. **Stream complete.** | TT-04 merged ✓ |
 | CMP | `claude/audit-remediation/cmp-w1a-int-calculator-autosave` | **#782 CLOSED 2026-05-14 (not merged)** | CMP-W1A-INT: #782 was closed without merging by founder 2026-05-14. Work may need re-examination or re-opening on a fresh branch. | All CMP tasks merged |
 | SP | (none yet) | (none yet) | **BLOCKED — waiting on MM-V09 completion.** | All SP tasks merged + compliance signoff |
@@ -59,8 +59,8 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | EM | _complete_ | **#848 MERGED 2026-05-17** · **#880 MERGED 2026-05-18** | EM-03 + EM-01 done. EM-02 (`16add6f`): hub_drip_log migration + hub-subscriber-drip cron. **Stream complete. #880 merged by founder 2026-05-18.** | All EM tasks merged ✓ |
 | LX | _complete_ | **#849 MERGED 2026-05-15** · **#879 MERGED 2026-05-18** | LX-01, LX-02, LX-03, LX-04, LX-05 done. **Stream complete. #879 merged by founder 2026-05-18.** | All LX tasks merged ✓ |
 | OB | _complete_ | **#852 MERGED 2026-05-17** · **#878 MERGED 2026-05-18** | OB-01..OB-12 done. **Stream complete. #878 merged by founder 2026-05-18.** | All OB tasks merged ✓ |
-| GT | `claude/audit-remediation/gt-02-annual-check` | **#881 OPEN** | GT-01 blocked (needs DV-01). GT-02 done (`a4c5352`). CI rescue iter 446: merge main (types regen `afsl_register`). Commit `f666941`. Last CI: pending — pushed `f666941` 2026-05-19. ⚠️ Recurring drift — founder should merge #881 to stop cycle. | All GT tasks merged |
-| DF | `claude/audit-remediation/df-01-decision-frameworks` | **#883 OPEN** · ~~#884 CLOSED (dup)~~ | DF-01..04 done. CI rescue iter 446: merge main (types regen `afsl_register`). Commit `d819304`. Last CI: pending — pushed `d819304` 2026-05-19. ⚠️ Recurring drift — founder should merge #883 to stop cycle. | All DF tasks merged |
+| GT | `claude/audit-remediation/gt-02-annual-check` | **#881 OPEN** | GT-01 blocked (needs DV-01). GT-02 done (`a4c5352`). CI rescue iter 450: merge main (picks up `66609e7` afsl_register driftallowlist). Commit `172b84b`. Last CI: pending — pushed `172b84b` 2026-05-19. ⚠️ Recurring drift — founder should merge #881 to stop cycle. | All GT tasks merged |
+| DF | `claude/audit-remediation/df-01-decision-frameworks` | **#883 OPEN** · ~~#884 CLOSED (dup)~~ | DF-01..04 done. CI rescue iter 450: merge main (picks up `66609e7` afsl_register driftallowlist). Commit `3a55352`. Last CI: pending — pushed `3a55352` 2026-05-19. ⚠️ Recurring drift — founder should merge #883 to stop cycle. | All DF tasks merged |
 | QA | _complete_ | **#890 MERGED 2026-05-18** | QA-01..QA-02 done. **Stream complete. #890 merged by founder 2026-05-18.** | All QA tasks merged ✓ |
 | Z-23+BB-08 | _complete_ | **#895 MERGED 2026-05-18** | Z-23 + BB-08 done. All CI green. **Stream complete. #895 merged by founder 2026-05-18.** | #895 merged ✓ |
 | SM | _complete_ | **#904 MERGED 2026-05-18** | SM-01+SM-02 done. **Stream complete. #904 merged by founder 2026-05-18.** | All SM tasks merged ✓ |
@@ -68,10 +68,31 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | CD | _complete_ | **#900 CLOSED 2026-05-18** (dup) · **#902 MERGED 2026-05-18** | CD-01 (public calendar + account calendar), CD-02 (currency converter), CD-03 (pricing transparency) all done. #900 closed as duplicate (content covered by #902). **Stream complete. #902 merged by founder 2026-05-18.** | All CD tasks merged ✓ |
 | CM | _complete_ | **#905 MERGED 2026-05-18** | CM-01 done. a11y fix (`a2f98e6`) now on main via this merge. **Stream complete. #905 merged by founder 2026-05-18.** | All CM tasks merged ✓ |
 | AT | `claude/audit-remediation/at-02-couple-family-business` | **#907 MERGED 2026-05-18** · **#917 OPEN** | AT-01 done (`a2553d7`, #907). AT-02..04 done (`f34e7fe`): couple/family/business account-type hub sections on dashboard — `ACCOUNT_TYPE_HUBS` map + conditional section renders between "Recommended" and advisor cards. **Stream complete pending #917 merge.** | AT-01..04 done |
+| Z-22+BB-07 | `claude/audit-remediation/z-22-bb07-redundancy-hub` | **#922 OPEN** | Z-22 done (`63875c8`): `/redundancy` hub (HubPage HOC, 6 service cards, 6 FAQs, ETP stats). BB-07 done: `/tools/etp-calculator` (FY2025-26 maths, tax-free threshold, 17%/32% ETP rates, marginal rate comparison). Lead magnet + ToolsClient entry + sitemap updated. Last CI: pending — pushed `63875c8` 2026-05-19. | Z-22+BB-07 merged |
+| BB-01 | `claude/audit-remediation/bb-01-borrowing-power` | **#923 OPEN** | BB-01 done (`a861dc3`): `/tools/borrowing-power-calculator` — multi-lender borrowing power calc (FY2025-26 tax, HEM, 3 APRA lender scenarios, LVR/LMI flags). ToolsClient entry + sitemap updated. Last CI: pending — pushed `a861dc3` 2026-05-19. | BB-01 merged |
+| BB-06 | `claude/audit-remediation/bb-06-mortgage-stress-test` | **#924 OPEN** | BB-06 done (`648d024`): `/tools/mortgage-stress-test` — 9 rate-rise scenarios (+0..+5%), housing-stress thresholds (30%/40% gross), APRA +3% buffer callout, binary-search breakeven rate, FY2025-26 tax. ToolsClient entry + sitemap updated. Last CI: pending — pushed `648d024` 2026-05-19. | BB-06 merged |
+| AA | `claude/audit-remediation/aa-02-03-programmatic-grants` | **#928 OPEN** | AA-01 false-positive (pre-existing). AA-02+AA-03 done (`bc4909c` iter 459): 10 `/grants/[industry]` pages + 11 `/grants/[state]/[program]` pages + sitemap. Last CI: pending — pushed `bc4909c` 2026-05-19. | AA-02+AA-03 merged |
+| Z-26 | `claude/audit-remediation/z-26-super-hub` | **#929 OPEN** | Z-26 done (`225e8be` iter 460): `/super` hub migration to HubPage HOC; `lib/hub-configs/super.ts` (3 hero stats, 6 service cards, 4 deep-dives, 5 FAQs); sub-hub link grid, articles strip, ForeignInvestorCallout, newsletter/lead-magnet/exit-intent wired. CI-rescue (`a0bd594`): `app/super/page.tsx` allowlisted in AFSL compliance test (HubPage renders compliance from `complianceKey`). Last CI: fixing — pushed `a0bd594` 2026-05-19. | Z-26 merged |
+| Z-25 | `claude/audit-remediation/z-25-insurance-hub` | **#930 OPEN** | Z-25 done (`dbd76c0` iter 461): `/insurance` hub migration to HubPage HOC; `lib/hub-configs/insurance.ts` (3 hero stats, 6 service cards, 4 deep-dives, 6 FAQs, `complianceKey: "general_advice"`); KEY_CONCEPTS glossary + SITUATION_GUIDE table + inside-vs-outside-super panel preserved as children. CI-rescue (`4abe14e`): `routesTo: "insurance"` → `"general"` in quiz config (invalid `LeadQueueKey`). Last CI: fixing — pushed `4abe14e` 2026-05-19. | Z-25 merged |
+| AA-04+BB-09 | `claude/audit-remediation/aa-04-bb09-etf-ticker-screener` | **#931 OPEN** | AA-04+BB-09 done (`bad0ae4` iter 462): 25 ETF ticker pages at `/etfs/[ticker]` (ISR 3600, generateStaticParams, FinancialProduct JSON-LD, fee impact table); ETF screener at `/etfs/screener` (client filters: asset class, provider, MER slider, franking-only; sortable table); `lib/etf-data.ts` shared data feed (VAS/A200/STW/IOZ/IVV/NDQ/VTS/VGS/IWLD/VGAD/VHY/HVST/VAF/IAF/FEMX/HACK/ETHI/MVW/VEU/VISM/QUS/BOND/CRED/ZYAU + 1); +16 sitemap entries. GENERAL_ADVICE_WARNING on all new pages. Last CI: pending — pushed `bad0ae4` 2026-05-19. | AA-04+BB-09 merged |
+| DD | `claude/audit-remediation/dd-01-tiered-listings` | **#926 OPEN** | DD-01 done (`137680e`): `advisor_tier` added to `Professional` type; Pro badge + violet card border on `/advisors`; `advisor_tier` select + Pro badge on `/find/[advisor-type]/[city]`. Sort: Featured→Pro→Free. No schema migration. Last CI: pending — pushed `137680e` 2026-05-19. | DD-01 merged |
 
 ---
 
 ## Blocked — needs human input
+
+### QQ-08 — Compliance signoff required before public Q&A exposure (human gate)
+
+QQ engineering is complete (QQ-05..QQ-10 all done in PR #920). The public
+`/answers/[slug]` route and `QuestionCaptureForm` are wired up but the
+compliance gate (QQ-08) must be cleared before enabling public access.
+
+**What's needed:**
+1. Review the answer disclaimer copy in `lib/compliance.ts` (or add `aiAnswerDisclaimer()` if not yet present — see `qq-ai-qa-capture-brief.md` §QQ-08 for the draft copy).
+2. Decide: human review on first publish (current design — admin approves each answer before it goes live), OR AI-only with stronger disclaimer. v1 default = human review.
+3. Commit `docs/audits/qq-compliance-signoff.md` with: reviewer name/role, review date, what was reviewed, in-scope/out-of-scope statements, and confirmation that the admin approval gate is the sole publish path.
+
+**Once complete:** delete this blocked entry, mark QQ-08 done in the QQ stream row, and the loop can proceed to merge PR #920.
 
 ### CL-05 — WHOIS domain privacy (registrar action required)
 
@@ -114,6 +135,254 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 462 — 2026-05-19 — AA-04+BB-09 — ETF ticker pages + ETF screener
+
+- **Stream:** AA (programmatic SEO) + BB (calculator farm)
+- **Phase:** 5 — implementation (Tier A — content/data pages)
+- **Branch:** `claude/audit-remediation/aa-04-bb09-etf-ticker-screener`
+- **PR:** #931 OPEN
+- **Commit:** `bad0ae4` — feat(aa04+bb09): AA-04+BB-09 — ETF ticker pages + ETF screener
+- **Diff:** 5 files, +1379 LOC (content/data budget)
+- **Items done:** AA-04 (`/etfs/[ticker]` ISR pages), BB-09 (ETF screener)
+- **Implementation:**
+  - **`lib/etf-data.ts`** (new, 640 LOC): typed `ETF` data for 25 ASX ETFs. Fields: ticker, provider, assetClass, benchmark, MER, AUM, yield, frankingPercent, distributionFrequency, inceptionYear, description, highlights, relatedTickers. Helpers: `getETFByTicker`, `getETFsByAssetClass`, `ALL_TICKERS`.
+  - **`app/etfs/[ticker]/page.tsx`** (new): `generateStaticParams` (25 tickers), `generateMetadata`, ISR 3600. Key metric cards (MER/AUM/yield/franking/grossed-up yield); fee impact table (5 portfolio sizes); related ticker links; `FinancialProduct` JSON-LD; `GENERAL_ADVICE_WARNING` footer.
+  - **`app/etfs/screener/ETFScreenerClient.tsx`** (new): client component with search, asset-class (10 opts), provider (5 opts), MER slider, franking-only toggle; sortable table; MER colour-coded green/amber/orange.
+  - **`app/etfs/screener/page.tsx`** (new): SSR shell, breadcrumb JSON-LD, "How to use" section, ISR 3600. `GENERAL_ADVICE_WARNING` footer.
+  - **`app/sitemap.ts`**: +16 entries (screener + 15 popular tickers).
+- **Note:** Dedup checks on Z-25 and Z-26 confirmed those were already covered by concurrent sessions (PRs #930 and #929). This iteration was genuine forward progress on next pending slot.
+- **STATUS: PROGRESS · stream=AA+BB · item=AA-04+BB-09 · pr=#931**
+
+### iter 463 — 2026-05-19 — CI-RESCUE — Z-25 #930 + Z-26 #929 (type error + compliance gate)
+
+- **Stream:** Z (CI rescue — both Z-25 and Z-26)
+- **Phase:** 2 — CI rescue
+- **PRs:** #930 (Z-25) + #929 (Z-26)
+- **Root causes:**
+  - **Z-25 #930 (tsc failure + Vercel build failure):** `lib/hub-configs/insurance.ts` had `routesTo: "insurance"` in the quiz config. `QuizRef.routesTo` is typed as `LeadQueueKey` which does not include `"insurance"`. Fix: `routesTo: "general"`.
+  - **Z-26 #929 (AFSL compliance test failure):** `app/super/page.tsx` is under `app/super` which is in `MANDATORY_ROOTS`. The HubPage migration removed the raw `ComplianceFooter` import — but HubPage renders compliance internally via `config.complianceKey`. Fix: allowlisted `app/super/page.tsx` in `__tests__/lib/afsl-compliance-coverage.test.ts` with explanatory comment.
+- **Rescue commits:** `4abe14e` (Z-25 type fix), `a0bd594` (Z-26 compliance allowlist)
+- **Stuck-detection:** First rescue attempt on both PRs — within threshold.
+- **STATUS: CI-RESCUE · stream=Z · pr=#929+#930**
+
+### iter 461 — 2026-05-19 — Z-25 — /insurance hub migration to HubPage HOC
+
+- **Stream:** Z (Tier-1 hub builds)
+- **Phase:** 5 — implementation (Tier A — page/hub)
+- **Branch:** `claude/audit-remediation/z-25-insurance-hub`
+- **PR:** #930 OPEN
+- **Commit:** `dbd76c0` — feat(z25): Z-25 — /insurance hub migration to HubPage HOC
+- **Diff:** 2 files changed, 417 insertions(+), 327 deletions(-)
+- **Items done:** Z-25 (`/insurance` proper hub — HubPage HOC migration)
+- **Implementation:**
+  - **`lib/hub-configs/insurance.ts`** (new) — full `insuranceHubConfig`: 3 hero stats (95% underinsured, up to 70% income protection, $93K MLS threshold), 6 service cards (Life, Income Protection, Health, Home & Contents, TPD, Trauma), 4 deep-dives, 1 calculator, insurance quiz, lead magnet (insurance-cover-checklist), 6 FAQs, `complianceKey: "general_advice"` (no insurance-specific compliance key exists).
+  - **`app/insurance/page.tsx`** — replaced 386-line custom layout with HubPage HOC; KEY_CONCEPTS glossary (6 terms), SITUATION_GUIDE priority table (5 life stages with colour badges), inside-vs-outside-super two-panel section preserved as children; `revalidate` lowered 86400→3600; `HubNewsletterCapture` + `HubExitIntent` wired. No DB queries (page has none).
+- **STATUS: PROGRESS · stream=Z · item=Z-25 · pr=#930**
+
+### iter 460 — 2026-05-19 — Z-26 — /super hub migration to HubPage HOC
+
+- **Stream:** Z (Tier-1 hub builds)
+- **Phase:** 5 — implementation (Tier A — page/hub)
+- **Branch:** `claude/audit-remediation/z-26-super-hub`
+- **PR:** #929 OPEN
+- **Commit:** `225e8be` — feat(z26): Z-26 — /super hub migration to HubPage HOC
+- **Diff:** 2 files changed, 305 insertions(+), 68 deletions(-)
+- **Items done:** Z-26 (`/super` proper hub — HubPage HOC migration)
+- **Implementation:**
+  - **`lib/hub-configs/super.ts`** (new) — full `superHubConfig`: 3 hero stats (assets $3.9T, SG 11.5%, 17M+ Australians), 6 service cards (compare funds, SMSF, salary sacrifice, insurance, consolidation, TTR), 4 deep-dives, 3 calculators, super quiz, lead magnet (existing `super-fund-comparison-guide`), 5 FAQs, `complianceKey: "super"`.
+  - **`app/super/page.tsx`** — replaced `VerticalPillarPage` with `HubPage` HOC; sub-hub link grid (6 cards to SMSF/Contributions/Consolidation/Leaving/Quiz/Compare); Supabase articles query preserved; `ForeignInvestorCallout` (DASP note) preserved; `HubNewsletterCapture` + `LeadMagnetCapture` + `HubExitIntent` wired.
+- **STATUS: PROGRESS · stream=Z · item=Z-26 · pr=#929**
+
+### iter 459 — 2026-05-19 — AA-02+AA-03 — programmatic /grants/[industry] + /grants/[state]/[program]
+
+- **Stream:** AA (programmatic SEO)
+- **Phase:** 5 — implementation (Tier A — content/pages)
+- **Branch:** `claude/audit-remediation/aa-02-03-programmatic-grants`
+- **PR:** #928 OPEN
+- **Commit:** `bc4909c` — feat(aa): AA-02+AA-03 — programmatic /grants/[industry] and /grants/[state]/[program] pages
+- **Diff:** 3 files changed, 1043 insertions(+), 1 deletion(-)
+- **Items done:** AA-02 (`/grants/[industry]` — 10 industry slugs), AA-03 (`/grants/[state]/[program]` — 11 state/program combos)
+- **Implementation:**
+  - **`app/grants/[industry]/page.tsx`** — 10 industry pages (tech, biotech, agriculture, manufacturing, clean-energy, mining, healthcare, export, creative, defence). Each: federal grant listing cards with links to static grant pages, state program cross-links, FAQ JSON-LD, breadcrumb JSON-LD, ISR 3600, `generateStaticParams()`.
+  - **`app/grants/[state]/[program]/page.tsx`** — 11 state/program pages (NSW×2, VIC×2, QLD×2, WA, SA, TAS, ACT, NT). Each: funding amount in `<DatedStatBadge>` (stalesAt 2027-01-01), eligibility checklist, eligible costs, FAQ JSON-LD, breadcrumb JSON-LD, ISR 3600, `generateStaticParams()`.
+  - **`app/sitemap.ts`** — 21 new entries added (10 industry + 11 state/program), priority 0.6, monthly change frequency.
+  - Static routes `/grants/emdg`, `/grants/rd-tax-incentive`, `/grants/industry-growth-program` retain Next.js segment-priority over the `[industry]` dynamic catch-all.
+- **STATUS: PROGRESS · stream=AA · item=AA-02+AA-03 · pr=#928**
+
+### iter 458 — 2026-05-19 — CI-RESCUE — F stream #925 Lint·Type-check·Test·Build
+
+- **Stream:** F (duplicate-function audit)
+- **Phase:** 2 — CI rescue
+- **Branch:** `claude/audit-remediation/f-disc-20260519-01-duplicate-shadows`
+- **PR:** #925
+- **Rescue commit:** `a5f3887` — fix(f): CI-rescue — update 401→403 for authenticated non-admin in test
+- **Root cause:** `__tests__/api/admin-country-rule-alerts.test.ts` had two assertions expecting HTTP 401 for an authenticated user not on the admin allow-list. The old local `requireAdmin` returned `null` and the route hard-coded 401 for both cases (unauthenticated + non-admin). The new shared `requireAdmin` in `lib/require-admin.ts` correctly returns 403 (Forbidden) for authenticated non-admin, per RFC 9110. The tests asserting `nonAdminLoggedIn()` → 401 failed.
+- **Fix:** Updated `GET`-describe "returns 401 when signed in but not on admin allow-list" → 403, and `POST`-describe "returns 401 for non-admin" → 403. Anon (user=null) cases still correctly expect 401.
+- **Stuck-detection:** First rescue attempt on #925 — well within 3-attempt threshold.
+- **STATUS: CI-RESCUE · stream=F · pr=#925**
+
+### iter 457 — 2026-05-19 — DD-01 — tiered advisor listings (Pro + Featured sort)
+
+- **Stream:** DD (marketplace mechanics)
+- **Phase:** 5 — implementation (Tier C — DD stream)
+- **Branch:** `claude/audit-remediation/dd-01-tiered-listings`
+- **PR:** #926 OPEN
+- **Commit:** `137680e` — feat(dd): DD-01 — tiered advisor listing badges (Pro + Featured sort)
+- **Diff:** 3 files changed, 25 insertions(+), 5 deletions(-)
+- **Items done:** DD-01 (tiered advisor listings)
+- **Implementation:**
+  - **`lib/types.ts`** — `advisor_tier?: string | null` added to `Professional` interface. Column already exists in DB (set by Stripe subscription webhook).
+  - **`app/advisors/AdvisorsClient.tsx`** — sort upgraded to Featured (gold/featured_until) → Pro → Free. Pro advisors get violet "Pro" badge + subtle violet card border.
+  - **`app/find/[advisor-type]/[city]/page.tsx`** — `advisor_tier` added to Supabase select + Pro badge in card rendering.
+  - **No schema migration** — `professionals.advisor_tier` exists since advisor-billing migrations; Stripe webhook already sets it to `"pro"` on subscription activation.
+- **Tier C batch end:** DD stream is Tier C — batch terminates after this item (4 items total: BB-01, BB-06, F-DISC-20260519-01, DD-01).
+- **STATUS: PROGRESS · stream=DD · item=DD-01 · pr=#926**
+
+### iter 456 — 2026-05-19 — F-DISC-20260519-01 — duplicate-function audit resolution
+
+- **Stream:** F (hygiene / duplicate cleanup)
+- **Phase:** 5 — implementation (Tier A — refactor, no schema migration)
+- **Branch:** `claude/audit-remediation/f-disc-20260519-01-duplicate-shadows`
+- **PR:** #925 OPEN
+- **Commit:** `587ab1a` — fix(f): F-DISC-20260519-01 — resolve duplicate-function audit
+- **Diff:** 9 files changed, 191 insertions(+), 192 deletions(-)
+- **Items done:** F-DISC-20260519-01
+- **Implementation:**
+  - **Genuine fixes (2):** `requireAdmin` replaced in 7 admin API routes (competitors, bd-pipeline, fee-queue, advisor-applications, country-rule-alerts, country-schemes, placement-experiments) — local re-implementations removed, shared `guard.ok / guard.response / guard.email` pattern adopted. `escapeHtml` local in `cron/saved-search-alerts` removed, `import { escapeHtml } from "@/lib/html-escape"` added.
+  - **ALLOWED_NAMES additions (21):** `remove`, `update`, `formatCurrency`, `formatAUD`, `sendEmail`, `slugify`, `storeQualificationData`, `truncate`, `formatDate`, `sendMessage`, `setStatus`, `submitForVerification`, `renderDigestHtml`, `isKnownIntentCountry`, `hashIp`, `inferVertical`, `groupByCategory`, `inferAdvisorType`, `rankBrokers`, `rankAdvisors`, `scoreAdvisor` — each with a comment explaining why the local differs (different units, signatures, input types, or domains).
+  - **`node scripts/check-duplicate-functions.mjs`** exits 0 ✓
+- **Tier A batch:** 3 of 5 iterations used. Cumulative diff ≈ 1,580 LOC. Within 5000-LOC cap. Continuing to iter 457.
+- **STATUS: PROGRESS · stream=F · item=F-DISC-20260519-01 · pr=#925**
+
+### iter 455 — 2026-05-19 — BB-06 — mortgage stress test calculator
+
+- **Stream:** BB-06 (mortgage stress test)
+- **Phase:** 5 — implementation (Tier A — calculator, no schema migration)
+- **Branch:** `claude/audit-remediation/bb-06-mortgage-stress-test`
+- **PR:** #924 OPEN
+- **Commit:** `648d024` — feat(bb06): BB-06 — mortgage stress test calculator
+- **Diff:** +472 LOC across 4 files
+- **Items done:** BB-06 (`/tools/mortgage-stress-test`)
+- **Implementation:**
+  - **`app/tools/mortgage-stress-test/MortgageStressTestClient.tsx`** — "use client"; 9 rate-rise scenarios (offset 0..+5%); housing-stress thresholds: 30% gross (amber), 40% gross (red) — per RBA/AHURI definition; APRA +3% buffer at index 6 highlighted with ring; binary-search breakeven rate (rate at which repayments first hit 30% of gross); FY2025-26 tax + Medicare levy for net income; couple mode; loan term slider (1–30 years); monthly-buffer column; `GENERAL_ADVICE_WARNING` footer
+  - **`app/tools/mortgage-stress-test/page.tsx`** — RSC; `revalidate=3600`; BreadcrumbList + CalculatorSchema + FAQPage JSON-LD (4 FAQ items); renders `<MortgageStressTestClient>` via `<Suspense>`
+  - **`app/tools/ToolsClient.tsx`** — mortgage stress test entry (Calculators category, rating 5)
+  - **`app/sitemap.ts`** — `/tools/mortgage-stress-test` added to static URL array
+- **Local gates:** dated-strings pre-scan ✅ (no bare month-name dates in tsx), JSON-LD coverage ✅
+- **Tier A batch:** continuing to iter 456 (F-DISC-20260519-01 — duplicate function shadows, slot 21)
+- **STATUS: PROGRESS · stream=BB-06 · item=BB-06 · pr=#924**
+
+### iter 454 — 2026-05-19 — BB-01 — borrowing power multi-lender calculator
+
+- **Stream:** BB-01 (borrowing power calculator)
+- **Phase:** 5 — implementation (Tier A — calculator, no schema migration)
+- **Branch:** `claude/audit-remediation/bb-01-borrowing-power`
+- **PR:** #923 OPEN
+- **Commit:** `a861dc3` — feat(bb01): BB-01 — borrowing power multi-lender calculator
+- **Diff:** +439 LOC across 4 files
+- **Items done:** BB-01 (`/tools/borrowing-power-calculator`)
+- **Implementation:**
+  - **`app/tools/borrowing-power-calculator/BorrowingPowerClient.tsx`** — "use client"; FY2025-26 income tax + 2% Medicare levy; HEM ($2k single / $3k couple + $500/dependent); 3 APRA lender scenarios (major ADI 9.2% assess / 6.2% adv / HEM×1.0 / CC 3.8%, mid-tier 9.2% / 6.0% / HEM×0.92 / CC 3%, specialist 8.5% / 6.3% / HEM×0.82 / CC 2%); per-scenario: borrowingLimit, purchasePrice, LVR, LMI flag (>80%), monthly repayment; couple mode; 25/30y term toggle; `GENERAL_ADVICE_WARNING` footer
+  - **`app/tools/borrowing-power-calculator/page.tsx`** — RSC; `revalidate=3600`; BreadcrumbList + CalculatorSchema + FAQPage JSON-LD (4 FAQ items); renders `<BorrowingPowerClient>` via `<Suspense>`
+  - **`app/tools/ToolsClient.tsx`** — borrowing power entry (Calculators category, rating 5)
+  - **`app/sitemap.ts`** — `/tools/borrowing-power-calculator` added to static URL array
+- **Local gates:** dated-strings pre-scan ✅ (no bare month-name dates in tsx), JSON-LD coverage ✅, type-check ✅
+- **Tier A batch:** continuing to iter 455
+- **STATUS: PROGRESS · stream=BB-01 · item=BB-01 · pr=#923**
+
+### iter 453 — 2026-05-19 — Z-22+BB-07 — redundancy hub + ETP tax calculator
+
+- **Stream:** Z-22+BB-07 (redundancy lifecycle hub + ETP calculator)
+- **Phase:** 5 — implementation (Tier A — hub pages + calculator, no schema migration)
+- **Branch:** `claude/audit-remediation/z-22-bb07-redundancy-hub`
+- **PR:** #922 OPEN
+- **Commit:** `63875c8` — feat(z22+bb07): Z-22+BB-07 — redundancy hub + ETP tax calculator
+- **Diff:** +680 LOC across 7 files
+- **Items done:** Z-22 (`/redundancy` hub), BB-07 (ETP tax calculator)
+- **Implementation:**
+  - **`lib/hub-configs/redundancy.ts`** — HubConfig: 3 hero stats (tax-free base $12,524; per-year $6,264; ETP cap $245k — all `stalesAt` 2026-07-01), 6 service cards (ETP rules, super carry-forward, leave payouts, cash buffer, Centrelink, 12-month rebuild), 3 deep-dives, 2 calculators, 6 FAQs, lead magnet, newsletter, relatedHubs, primaryKeywords
+  - **`app/redundancy/page.tsx`** — RSC hub at `/redundancy` using HubPage HOC; `revalidate=3600`; canonical + OG metadata; HubNewsletterCapture + LeadMagnetCapture + HubExitIntent wired
+  - **`app/tools/etp-calculator/page.tsx`** — RSC; `revalidate=3600`; BreadcrumbList + CalculatorSchema + FAQPage JSON-LD; renders `<ETPCalculatorClient>` via `<Suspense>`
+  - **`app/tools/etp-calculator/ETPCalculatorClient.tsx`** — "use client"; FY2025-26 ETP tax maths: tax-free threshold ($12,524 + $6,264/year whole years), ETP cap ($245k), concessional rates (17% ≥60, 32% <60), 47% above cap; marginal rate comparison (tax saving vs ordinary income); unused-leave amber warning; `GENERAL_ADVICE_WARNING` footer; accessible inputs (htmlFor/id pairs)
+  - **`lib/lead-magnets.ts`** — `redundancy-financial-checklist` entry (hubSlug: `redundancy`)
+  - **`app/tools/ToolsClient.tsx`** — ETP calculator entry (Tax category, rating 5)
+  - **`app/sitemap.ts`** — `/redundancy` added to highPriority set; `/tools/etp-calculator` + `/redundancy` added to static URL array
+- **Local gates:** dated-strings ✅, JSON-LD coverage ✅, rate-limits 100% ✅
+- **Tier A batch:** next items are also Tier A — continuing batch
+- **STATUS: PROGRESS · stream=Z-22+BB-07 · item=Z-22+BB-07 · pr=#922**
+
+### iter 452 — 2026-05-19 — MM-V06 — wholesale alternatives listings + s708 gate
+
+- **Stream:** MM (vertical listings)
+- **Phase:** 5 — implementation (Tier C — new listing pages with s708 compliance gate)
+- **Branch:** `claude/audit-remediation/mm-v06-wholesale-alternatives`
+- **PR:** #921 OPEN
+- **Commit:** `afd1b1e` — feat(mm): MM-V06 — wholesale alternatives listings + s708 gate (PE, VC, hedge funds, litigation funding, ILS)
+- **Diff:** +313 LOC (7 files — 4 new listing pages, lib/types.ts, lib/listing-url.ts, app/sitemap.ts)
+- **Items done:** MM-V06 (wholesale-only alternatives with Corporations Act s708 disclosure gate)
+- **Implementation:**
+  - **`app/invest/private-equity/listings/page.tsx`** — PE + hedge-fund combined listings (hedge-fund co-located under PE hub)
+  - **`app/invest/venture-capital/listings/page.tsx`** — VC listings
+  - **`app/invest/litigation-funding/listings/page.tsx`** — litigation funding listings with binary-risk disclosure note
+  - **`app/invest/insurance-linked-securities/listings/page.tsx`** — ILS listings with catastrophe-event risk note
+  - Each page: ISR `revalidate=300`, breadcrumb JSON-LD, amber s708 disclosure banner (3 qualification criteria)
+  - **`lib/types.ts`** — extends `InvestListingVertical` with 5 new verticals
+  - **`lib/listing-url.ts`** — `VERTICAL_TO_CATEGORY` entries for all 5 new verticals
+  - **`app/sitemap.ts`** — 7 new URL entries
+  - Local gates: dated-strings ✅, JSON-LD coverage ✅, rate-limits ✅
+- **Tier C announcement:** Made inline before implementation — "adding 5 wholesale-alternative verticals with s708 disclosure gate"
+- **Stream status:** MM-V06 in-flight. Stream engineering complete pending #921 merge.
+- **STATUS: PROGRESS · stream=MM · item=MM-V06 · pr=#921**
+
+### iter 451 — 2026-05-19 — QQ-10 — route handler tests for /api/answers/ask + /api/admin/qa
+
+- **Stream:** QQ (public AI Q&A capture surface)
+- **Phase:** 5 — implementation (Tier A — test additions)
+- **Branch:** `claude/audit-remediation/qq-05-schema`
+- **PR:** #920 OPEN
+- **Commit:** `217d7d6` — test(qq): QQ-10 — route handler tests for /api/answers/ask + /api/admin/qa routes
+- **Diff:** +330 LOC across 2 new test files
+- **Items done:** QQ-10 (19-test suite)
+- **Implementation:**
+  - **`__tests__/api/answers-ask.test.ts`** (7 tests) — covers rate-limit 429, invalid JSON, question too short, malformed email, invalid category, happy-path slug response, DB insert 500.
+  - **`__tests__/api/admin-qa.test.ts`** (12 tests) — GET: 401 unauthenticated, 401 non-admin, 200 pending list, 500 DB error; POST generate_draft: happy path (answer_id returned), 429 cost cap; POST approve: revalidatePath called for both /answers paths; POST reject: with/without note.
+  - Mocks: `lib/chatbot.respondToMessage`, `lib/ai-cost-caps.{preCheckCaps,recordUsage}`, `next/cache.revalidatePath`, `lib/supabase/{server,admin}`, `lib/admin.ADMIN_EMAILS`, `lib/rate-limit.isRateLimited`.
+- **Stream status:** QQ engineering complete (QQ-05..QQ-10 done). QQ-08 compliance signoff is the remaining gate before public exposure. QQ-08 requires human review and `docs/audits/qq-compliance-signoff.md` — surfaced to Blocked below.
+- **Cumulative diff (batch fire, iters 446–451):** ~1010 LOC total
+- **STATUS: PROGRESS · stream=QQ · item=QQ-10 · pr=#920**
+
+### iter 450 — 2026-05-19 — CI-RESCUE GT (#881) + DF (#883): Database types drift gate (afsl_register driftallowlist)
+
+- **Streams:** GT (annual-check) + DF (decision-frameworks)
+- **Phase:** 2 — CI rescue
+- **PRs:** GT #881 OPEN, DF #883 OPEN
+- **Commits:**
+  - `172b84b` — Merge origin/main into GT branch (picks up `66609e7` afsl_register in .driftallowlist)
+  - `3a55352` — Merge origin/main into DF branch (picks up `66609e7` afsl_register in .driftallowlist)
+- **Root cause:** Iter 446 merged main into GT+DF branches (`f666941`/`d819304`), but that merge predated iter 448's commit `66609e7` which added `afsl_register` to `.driftallowlist`. `Database types drift gate` continued failing because types.ts (regenerated in `e914b63`) declares `afsl_register` but no migration exists — and the allowlist entry wasn't on the branches yet.
+- **Fix:** Merged origin/main (head `f10b840`) into both branches. No code conflicts — only `.driftallowlist` (+1 line) and queue file changes from the merge.
+- **Stuck-detection check:** GT #881 has 2 prior CI-RESCUE entries for `Database types drift gate (lib/database.types.ts vs migrations)` within 24h (iters 446, 433) — below the 3-entry threshold. DF #883 has 1. Proceeding with rescue.
+- **Note:** Concurrent session used iter 449 for QQ-09 while this rescue was running in parallel. Renumbered to 450.
+- **STATUS: CI-RESCUE · stream=GT+DF · pr=#881+#883**
+
+### iter 449 — 2026-05-19 — QQ-09 — admin Q&A moderation queue
+
+- **Stream:** QQ (public AI Q&A capture surface)
+- **Phase:** 5 — implementation (Tier B — admin routes, no schema/webhook/cron changes)
+- **Branch:** `claude/audit-remediation/qq-05-schema`
+- **PR:** #920 OPEN
+- **Commit:** `27079bf` — feat(qq): QQ-09 — admin Q&A moderation queue + action API
+- **Diff:** +409 LOC across 3 files
+- **Items done:** QQ-09 (admin moderation queue UI + action API)
+- **Implementation:**
+  - **GET `/api/admin/qa`** — lists pending `qa_questions` (limit 50, newest first). `createAdminClient()` needed because RLS only exposes 'approved' rows to authenticated users; admin client bypasses to show pending queue.
+  - **POST `/api/admin/qa/[id]`** — three actions: `generate_draft` (calls `respondToMessage` from `lib/chatbot.ts`, persists `qa_answers` row with source='ai' + status='pending', records cost via `loadQaCaptureConfig`/`preCheckCaps`/`recordUsage` from `lib/ai-cost-caps.ts`; returns `{ answer_id, answer_text }`); `approve` (updates qa_answers by answer_id or inserts new editorial answer, updates qa_questions.status='approved', calls `revalidatePath` for ISR); `reject` (updates qa_questions.status='rejected' + optional moderation_note).
+  - **`app/admin/qa/page.tsx`** — "use client" moderation UI: pending question cards with Generate Draft / Reject buttons; after draft generated, editable textarea + Publish / Reject buttons. Per-question `ItemState` tracks loading/draft/answerId/done/error.
+  - Auth: `ADMIN_EMAILS` allowlist check on all endpoints (same pattern as advisor-moderation).
+- **Tier B rationale:** admin routes + new client component. No schema migration, webhook, cron, or Stripe/compliance touchpoints.
+- **Cumulative diff (batch fire, iters 446–449):** ~680 LOC forward progress
+- **STATUS: PROGRESS · stream=QQ · item=QQ-09 · pr=#920**
 
 ### iter 448 — 2026-05-19 — CI-RESCUE QQ (#920): RLS isolation gate + Database types drift gate
 

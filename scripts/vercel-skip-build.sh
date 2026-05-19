@@ -21,6 +21,15 @@ set -e
 
 sha="${VERCEL_GIT_COMMIT_SHA:-HEAD}"
 
+# Force-build escape hatch — `git commit -m "ci: force redeploy ..."`
+# always builds, even for empty commits. Useful when prior main pushes
+# missed the GitHub→Vercel webhook and the site is stale. Anchored to
+# the start of the subject so it can't be confused with body mentions.
+if git log -1 --format=%s "$sha" 2>/dev/null | grep -qE '^ci: force[ -](redeploy|deploy|build)\b'; then
+  echo "build: force-redeploy marker in commit subject"
+  exit 1
+fi
+
 # Files-changed inspection
 # `git diff --quiet` exits 0 if no diff (i.e. excluded paths cover
 # everything), so we invert: if --quiet returns 0 after excluding

@@ -296,7 +296,7 @@ export default async function CalendarPage() {
           <div className="bg-blue-50 rounded-xl border border-blue-200 p-4">
             <h3 className="font-semibold text-blue-900 text-sm mb-2">Find a tax accountant</h3>
             <p className="text-xs text-blue-700 mb-3">
-              A good accountant typically saves 3–5× their fee by catching deductions you'd miss.
+              A good accountant typically saves 3–5× their fee by catching deductions you&rsquo;d miss.
             </p>
             <Link
               href="/find/tax-accountant"

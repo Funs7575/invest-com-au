@@ -306,6 +306,42 @@ const TOOLS: Tool[] = [
     url: "/tools/fhss-calculator",
     internal: true,
   },
+  {
+    slug: "mortgage-stress-test",
+    name: "Mortgage Stress Test Calculator",
+    category: "Calculators",
+    rating: 5,
+    description:
+      "Test your mortgage repayments across nine rate-rise scenarios from current to +5% above your rate. Find the breakeven rate where you'd hit housing stress (30% of gross income) and see the impact of APRA's mandatory 3% buffer.",
+    pros: ["9 rate scenarios", "APRA buffer highlighted", "Housing-stress breakeven"],
+    pricing: "Free tool",
+    url: "/tools/mortgage-stress-test",
+    internal: true,
+  },
+  {
+    slug: "borrowing-power-calculator",
+    name: "Borrowing Power Calculator",
+    category: "Calculators",
+    rating: 5,
+    description:
+      "Estimate how much you can borrow across three lender types (major bank, mid-tier, specialist). Uses APRA assessment rates, HEM living expenses, and credit card commitments to give a realistic range.",
+    pros: ["3 lender scenarios", "APRA assessment rates", "LVR + LMI check"],
+    pricing: "Free tool",
+    url: "/tools/borrowing-power-calculator",
+    internal: true,
+  },
+  {
+    slug: "etp-calculator",
+    name: "ETP Tax Calculator",
+    category: "Tax",
+    rating: 5,
+    description:
+      "Calculate the tax on your Employment Termination Payment (ETP) from genuine redundancy. Shows tax-free threshold, concessional ETP rate (17% or 32%), net payout, and saving vs your marginal rate.",
+    pros: ["Tax-free threshold", "17%/32% ETP rates", "Marginal rate comparison"],
+    pricing: "Free tool",
+    url: "/tools/etp-calculator",
+    internal: true,
+  },
 ];
 
 /* ─── Config ─── */
