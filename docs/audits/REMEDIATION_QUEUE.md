@@ -68,6 +68,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | CD | _complete_ | **#900 CLOSED 2026-05-18** (dup) · **#902 MERGED 2026-05-18** | CD-01 (public calendar + account calendar), CD-02 (currency converter), CD-03 (pricing transparency) all done. #900 closed as duplicate (content covered by #902). **Stream complete. #902 merged by founder 2026-05-18.** | All CD tasks merged ✓ |
 | CM | _complete_ | **#905 MERGED 2026-05-18** | CM-01 done. a11y fix (`a2f98e6`) now on main via this merge. **Stream complete. #905 merged by founder 2026-05-18.** | All CM tasks merged ✓ |
 | AT | `claude/audit-remediation/at-02-couple-family-business` | **#907 MERGED 2026-05-18** · **#917 OPEN** | AT-01 done (`a2553d7`, #907). AT-02..04 done (`f34e7fe`): couple/family/business account-type hub sections on dashboard — `ACCOUNT_TYPE_HUBS` map + conditional section renders between "Recommended" and advisor cards. **Stream complete pending #917 merge.** | AT-01..04 done |
+| Z-22+BB-07 | `claude/audit-remediation/z-22-bb07-redundancy-hub` | **#922 OPEN** | Z-22 done (`63875c8`): `/redundancy` hub (HubPage HOC, 6 service cards, 6 FAQs, ETP stats). BB-07 done: `/tools/etp-calculator` (FY2025-26 maths, tax-free threshold, 17%/32% ETP rates, marginal rate comparison). Lead magnet + ToolsClient entry + sitemap updated. Last CI: pending — pushed `63875c8` 2026-05-19. | Z-22+BB-07 merged |
 
 ---
 
@@ -127,6 +128,27 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 453 — 2026-05-19 — Z-22+BB-07 — redundancy hub + ETP tax calculator
+
+- **Stream:** Z-22+BB-07 (redundancy lifecycle hub + ETP calculator)
+- **Phase:** 5 — implementation (Tier A — hub pages + calculator, no schema migration)
+- **Branch:** `claude/audit-remediation/z-22-bb07-redundancy-hub`
+- **PR:** #922 OPEN
+- **Commit:** `63875c8` — feat(z22+bb07): Z-22+BB-07 — redundancy hub + ETP tax calculator
+- **Diff:** +680 LOC across 7 files
+- **Items done:** Z-22 (`/redundancy` hub), BB-07 (ETP tax calculator)
+- **Implementation:**
+  - **`lib/hub-configs/redundancy.ts`** — HubConfig: 3 hero stats (tax-free base $12,524; per-year $6,264; ETP cap $245k — all `stalesAt` 2026-07-01), 6 service cards (ETP rules, super carry-forward, leave payouts, cash buffer, Centrelink, 12-month rebuild), 3 deep-dives, 2 calculators, 6 FAQs, lead magnet, newsletter, relatedHubs, primaryKeywords
+  - **`app/redundancy/page.tsx`** — RSC hub at `/redundancy` using HubPage HOC; `revalidate=3600`; canonical + OG metadata; HubNewsletterCapture + LeadMagnetCapture + HubExitIntent wired
+  - **`app/tools/etp-calculator/page.tsx`** — RSC; `revalidate=3600`; BreadcrumbList + CalculatorSchema + FAQPage JSON-LD; renders `<ETPCalculatorClient>` via `<Suspense>`
+  - **`app/tools/etp-calculator/ETPCalculatorClient.tsx`** — "use client"; FY2025-26 ETP tax maths: tax-free threshold ($12,524 + $6,264/year whole years), ETP cap ($245k), concessional rates (17% ≥60, 32% <60), 47% above cap; marginal rate comparison (tax saving vs ordinary income); unused-leave amber warning; `GENERAL_ADVICE_WARNING` footer; accessible inputs (htmlFor/id pairs)
+  - **`lib/lead-magnets.ts`** — `redundancy-financial-checklist` entry (hubSlug: `redundancy`)
+  - **`app/tools/ToolsClient.tsx`** — ETP calculator entry (Tax category, rating 5)
+  - **`app/sitemap.ts`** — `/redundancy` added to highPriority set; `/tools/etp-calculator` + `/redundancy` added to static URL array
+- **Local gates:** dated-strings ✅, JSON-LD coverage ✅, rate-limits 100% ✅
+- **Tier A batch:** next items are also Tier A — continuing batch
+- **STATUS: PROGRESS · stream=Z-22+BB-07 · item=Z-22+BB-07 · pr=#922**
 
 ### iter 452 — 2026-05-19 — MM-V06 — wholesale alternatives listings + s708 gate
 
