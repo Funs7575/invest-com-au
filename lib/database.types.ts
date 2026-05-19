@@ -2020,6 +2020,48 @@ export type Database = {
           },
         ]
       }
+      afsl_register: {
+        Row: {
+          address: string | null
+          afsl_number: string
+          cancelled_date: string | null
+          created_at: string
+          effective_date: string | null
+          last_verified_at: string
+          licence_conditions: Json | null
+          licensee_name: string
+          source: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          afsl_number: string
+          cancelled_date?: string | null
+          created_at?: string
+          effective_date?: string | null
+          last_verified_at?: string
+          licence_conditions?: Json | null
+          licensee_name: string
+          source?: string
+          status: string
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          afsl_number?: string
+          cancelled_date?: string | null
+          created_at?: string
+          effective_date?: string | null
+          last_verified_at?: string
+          licence_conditions?: Json | null
+          licensee_name?: string
+          source?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       agent_analytics: {
         Row: {
           agent_name: string
