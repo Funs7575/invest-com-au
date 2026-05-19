@@ -134,24 +134,17 @@ async function collectFromSupabase(
   });
   const out: Record<string, number> = {};
 
-  // M04 RLS tables with policies — count distinct tablename in pg_policies
-  const { data: policyData } = await sb
-    .rpc("get_table_count_by_property", { property: "rls_policy" })
-    .single();
-  if (policyData) {
-    out.M04_rls_tables_with_policies =
-      (policyData as { count?: number }).count ?? 0;
+  // M04 RLS tables with policies — calls a SECURITY DEFINER RPC that wraps
+  // `SELECT COUNT(DISTINCT tablename) FROM pg_policies WHERE schemaname='public'`.
+  // Prior implementation tried `sb.from("pg_policies")` directly; PostgREST
+  // doesn't expose Postgres system views so that always returned null. The
+  // RPC migration is `supabase/migrations/20260519000000_metric_rls_tables_with_policies.sql`.
+  const { data: rlsCount } = await sb.rpc(
+    "metric_rls_tables_with_policies" as never,
+  );
+  if (typeof rlsCount === "number") {
+    out.M04_rls_tables_with_policies = rlsCount;
   }
-
-  // Fallback: when the helper RPC isn't available, query directly via REST.
-  // Keep RPC path above so a future Phase-3 RPC can short-circuit. For now
-  // we use direct queries via the JS client.
-
-  // RLS tables with policies — distinct count
-  const { count: rlsCount } = await sb
-    .from("pg_policies" as never)
-    .select("tablename", { count: "exact", head: true });
-  if (rlsCount != null) out.M04_rls_tables_with_policies = rlsCount;
 
   // M09 cron success rate (7d)
   const sevenDays = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
@@ -191,12 +184,36 @@ async function collectFromSupabase(
 async function collectAdvisorCounts(
   ctx: CollectorContext,
 ): Promise<{ M07: number; M08: number }> {
-  // The Supabase advisor count is reachable via the management API; in CI
-  // we proxy through a small admin route so the SUPABASE_ACCESS_TOKEN isn't
-  // shared with all jobs. For now, emit baseline + log a warning so the
-  // dashboard renders — replaceable when /api/admin/supabase-advisors lands.
+  // Calls the Supabase Management API directly. Requires SUPABASE_ACCESS_TOKEN
+  // + SUPABASE_PROJECT_ID env vars (set in the code-quality.yml workflow from
+  // GitHub Actions secrets of the same name). When either is missing the
+  // collector skips this metric pair instead of crashing the whole run —
+  // M07/M08 stay null but the rest of the dashboard still updates.
   void ctx;
-  return { M07: -1, M08: -1 };
+  const token = envOr("SUPABASE_ACCESS_TOKEN");
+  const projectId = envOr("SUPABASE_PROJECT_ID");
+  if (!token || !projectId) {
+    return { M07: -1, M08: -1 };
+  }
+  async function countAdvisors(kind: "security" | "performance"): Promise<number> {
+    const res = await fetch(
+      `https://api.supabase.com/v1/projects/${projectId}/advisors?type=${kind}`,
+      { headers: { Authorization: `Bearer ${token}` } },
+    );
+    if (!res.ok) return -1;
+    const body = (await res.json()) as { lints?: unknown[] } | unknown[];
+    if (Array.isArray(body)) return body.length;
+    return Array.isArray(body.lints) ? body.lints.length : -1;
+  }
+  try {
+    const [M07, M08] = await Promise.all([
+      countAdvisors("security"),
+      countAdvisors("performance"),
+    ]);
+    return { M07, M08 };
+  } catch {
+    return { M07: -1, M08: -1 };
+  }
 }
 
 function collectFromCoverageJson(): Record<string, number> {
@@ -285,8 +302,11 @@ function collectFromGrep(): Record<string, number> {
       .trim();
     void inTypes;
     // We don't have a precise live count without DB access from CI; emit the
-    // CREATE TABLE count and let the snapshot delta show the trend.
-    out.M05_migration_drift_create_tables = parseInt(sql, 10) || 0;
+    // CREATE TABLE count and let the snapshot delta show the trend. Key
+    // matches the id in `.quality-targets.yml` (`M05_migration_drift`) so
+    // the dashboard picks it up — previously emitted under a `_create_tables`
+    // suffix that no target row matched, leaving M05 perpetually null.
+    out.M05_migration_drift = parseInt(sql, 10) || 0;
   } catch {
     /* noop */
   }
