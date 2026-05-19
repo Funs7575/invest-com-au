@@ -154,6 +154,8 @@ import {
   DEFAULT_TOPUP_CENTS,
   ARTICLE_STANDARD_PRICE_CENTS,
   ARTICLE_FEATURED_PRICE_CENTS,
+  CROSS_BORDER_LEAD_MULTIPLIER,
+  getLeadPriceCents,
 } from "@/lib/advisor-billing";
 
 // ─── Tests ───────────────────────────────────────────────────────────
@@ -449,5 +451,39 @@ describe("handleInvoicePaymentFailed", () => {
     const bu = updateCalls.find((c) => c.table === "advisor_billing");
     expect(bu?.payload.status).toBe("payment_failed");
     expect(bu?.keyVal).toBe(9);
+  });
+});
+
+describe("getLeadPriceCents (cross-border premium)", () => {
+  it("exports the 1.75× multiplier constant", () => {
+    expect(CROSS_BORDER_LEAD_MULTIPLIER).toBe(1.75);
+  });
+
+  it("returns the default for empty specialties", () => {
+    expect(getLeadPriceCents([])).toBe(DEFAULT_LEAD_PRICE_CENTS);
+    expect(getLeadPriceCents([])).toBe(3900);
+  });
+
+  it("returns the default for a non-cross-border specialty", () => {
+    expect(getLeadPriceCents(["SMSF Setup"])).toBe(DEFAULT_LEAD_PRICE_CENTS);
+  });
+
+  it("returns the premium for a single cross-border specialty", () => {
+    expect(getLeadPriceCents(["UK Pension Transfer"])).toBe(6825);
+    expect(getLeadPriceCents(["FATCA-Aware US Expat Planning"])).toBe(6825);
+    expect(getLeadPriceCents(["DASP Processing"])).toBe(6825);
+    expect(getLeadPriceCents(["FIRB Property (Non-Resident)"])).toBe(6825);
+  });
+
+  it("returns the premium when a mix includes any cross-border specialty (cross-border wins)", () => {
+    expect(
+      getLeadPriceCents(["SMSF Setup", "UK Pension Transfer", "Crypto Tax"]),
+    ).toBe(6825);
+  });
+
+  it("computed premium matches DEFAULT × multiplier rounded to nearest cent", () => {
+    expect(getLeadPriceCents(["DASP Processing"])).toBe(
+      Math.round(DEFAULT_LEAD_PRICE_CENTS * CROSS_BORDER_LEAD_MULTIPLIER),
+    );
   });
 });

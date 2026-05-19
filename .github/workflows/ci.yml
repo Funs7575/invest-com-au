@@ -420,6 +420,25 @@ jobs:
       - name: Check for stale DatedStatBadge stalesAt props
         run: node scripts/check-stale-dated-stats.mjs
 
+  ai-factual-filter-gate:
+    name: AI factual-filter gate (V-NEW-02)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    # Why this exists (V-NEW-02): every file that imports @anthropic-ai/sdk
+    # AND renders the result to a user must pass the response through
+    # `filterFactualOutput()` from lib/compliance.ts. The gate is a static
+    # import-presence check — it catches new AI routes that wire the SDK
+    # without the filter, which is the most common shape of accidental
+    # bypass. Files that legitimately don't render to users (cron writers,
+    # internal classifiers, route delegates that forward already-filtered
+    # text) must opt out via the EXEMPT allowlist in the script with a
+    # one-line reason each. Skip token not required — static analysis.
+    # Runs on every push, not just PRs, so main can never regress.
+    steps:
+      - uses: actions/checkout@v6
+      - name: Check AI surfaces call filterFactualOutput
+        run: node scripts/check-ai-factual-filter.mjs
+
   stripe-idempotency-gate:
     name: Stripe webhook idempotency gate (new handlers)
     runs-on: ubuntu-latest

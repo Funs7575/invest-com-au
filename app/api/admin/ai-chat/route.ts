@@ -11,6 +11,7 @@ import {
   capRejectionPayload,
 } from "@/lib/ai-cost-caps";
 import { sendCap80Alert } from "@/lib/ai-cost-alerts";
+import { filterFactualOutput } from "@/lib/compliance";
 
 export const runtime = "nodejs";
 export const maxDuration = 120;
@@ -785,6 +786,36 @@ export async function POST(req: NextRequest) {
             const validBlocks = contentBlocks.filter(Boolean);
 
             if (stopReason !== "tool_use") {
+              // V-NEW-02 — factual-filter on the assistant's text payload
+              // for this final iteration. Admin surface so we WARN-only
+              // (don't block the response) and persist the rejection
+              // reason for review. Production user-facing routes should
+              // emit a structured filter_failure event and fall back to a
+              // template — but in the admin agent the operator can read
+              // the raw output and judge for themselves.
+              const finalText = validBlocks
+                .filter(
+                  (b): b is Anthropic.TextBlock =>
+                    !!b && b.type === "text",
+                )
+                .map((b) => b.text)
+                .join("\n\n");
+              if (finalText.trim().length > 0) {
+                const filterResult = filterFactualOutput(finalText);
+                if (!filterResult.ok) {
+                  console.warn(
+                    "[ai-chat] factual_filter_rejected",
+                    JSON.stringify({
+                      reason: filterResult.reason,
+                      spans: filterResult.rejectedSpans.map((s) => s.rule),
+                    }),
+                  );
+                  send({
+                    type: "filter_warning",
+                    reason: filterResult.reason,
+                  });
+                }
+              }
               send({ type: "done" });
               controller.close();
               return;
