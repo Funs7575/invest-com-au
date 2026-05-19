@@ -969,5 +969,38 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.5,
   };
 
-  return [...staticPages, ...localizedPages, ...bestPages, ...bestForPages, ...commodityPages, ...stockDetailPages, ...transferGuidePages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...howToPages, ...expertArticlePages, ...advisorPages, ...advisorTypePages, ...advisorStatePages, ...advisorCityPages, ...advisorLocationPages, ...investingCityPages, ...glossaryPages, ...firmPages, ...propertyListingPages, ...suburbGuidePages, ...propertyHubPages, ...newHubPages, newsletterArchivePage, ...newsletterEditionPages, ...investStaticPages, ...investCategoryPages, ...investSubcategoryPages, ...investListingPages, ...stockbrokerFirmPages, ...quoteJobPages, ...quoteCategoryStatePages, marketplaceHubPage, ...marketplaceIntentPages, ...marketplaceIntentStatePages, testimonialsPage];
+  // ── AA-02: /grants/[industry] programmatic pages ──
+  const grantsIndustrySlugs = [
+    "tech", "biotech", "agriculture", "manufacturing", "clean-energy",
+    "mining", "healthcare", "export", "creative", "defence",
+  ];
+  const grantsIndustryPages = grantsIndustrySlugs.map((slug) => ({
+    url: `${baseUrl}/grants/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+  }));
+
+  // ── AA-03: /grants/[state]/[program] programmatic pages ──
+  const grantsStatePrograms: [string, string][] = [
+    ["nsw", "mvp-ventures"],
+    ["nsw", "technology-adoption"],
+    ["vic", "launchvic"],
+    ["vic", "vic-innovation-network"],
+    ["qld", "ignite-ideas"],
+    ["qld", "advance-qld"],
+    ["wa", "collab-vouchers"],
+    ["sa", "sa-techvoucher"],
+    ["tas", "tas-entrepreneur-fund"],
+    ["act", "act-innovation-fund"],
+    ["nt", "nt-business-innovation"],
+  ];
+  const grantsStateProgramPages = grantsStatePrograms.map(([state, program]) => ({
+    url: `${baseUrl}/grants/${state}/${program}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+  }));
+
+  return [...staticPages, ...localizedPages, ...bestPages, ...bestForPages, ...commodityPages, ...stockDetailPages, ...transferGuidePages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...howToPages, ...expertArticlePages, ...advisorPages, ...advisorTypePages, ...advisorStatePages, ...advisorCityPages, ...advisorLocationPages, ...investingCityPages, ...glossaryPages, ...firmPages, ...propertyListingPages, ...suburbGuidePages, ...propertyHubPages, ...newHubPages, newsletterArchivePage, ...newsletterEditionPages, ...investStaticPages, ...investCategoryPages, ...investSubcategoryPages, ...investListingPages, ...stockbrokerFirmPages, ...quoteJobPages, ...quoteCategoryStatePages, marketplaceHubPage, ...marketplaceIntentPages, ...marketplaceIntentStatePages, testimonialsPage, ...grantsIndustryPages, ...grantsStateProgramPages];
 }
