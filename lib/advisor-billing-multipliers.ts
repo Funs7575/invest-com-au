@@ -20,17 +20,17 @@
  * advisor's `specialties` array.
  */
 
+import { CROSS_BORDER_SPECIALTIES } from "@/lib/advisor-specialties";
+
 /**
  * The 4 cross-border specialties that justify premium pricing
  * (ASIC RG 246-friendly: pricing reflects effort + risk profile +
  * regulatory complexity, not personal advice quality).
+ *
+ * Re-exported from `@/lib/advisor-specialties` so the taxonomy and the
+ * pricing layer can never drift apart — change one place, both update.
  */
-export const CROSS_BORDER_SPECIALTIES: ReadonlyArray<string> = [
-  "UK Pension Transfer",
-  "FATCA-Aware US Expat Planning",
-  "DASP Processing",
-  "FIRB Property (Non-Resident)",
-];
+export { CROSS_BORDER_SPECIALTIES };
 
 /**
  * Multiplier applied on top of base + tier multipliers when the
