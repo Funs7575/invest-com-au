@@ -47,7 +47,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | WW | _complete_ | **#651 MERGED** | WW-01+WW-02 merged. WW-03/04 blocked (DD-02 dep). | All WW tasks merged ✓ |
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
 | Z | `claude/audit-remediation/z-04-zero-state-ux` | #230/#323/#403/#457/#524/#565 | Z-01..Z-04 done. | Z-04 merged ✓ |
-| QQ | `claude/audit-remediation/qq-05-schema` | **#800 MERGED 2026-05-14** · **#920 OPEN** | QQ-01..QQ-07 done (merged). QQ-05+QQ-06 done (`b3a1e63`): migration + `/api/answers/ask`. QQ-09 done (`27079bf`): admin moderation queue + action API. QQ-10 pending. QQ-08 compliance gate blocks public exposure. Last CI: pending — pushed `27079bf` 2026-05-19. | All QQ tasks merged |
+| QQ | `claude/audit-remediation/qq-05-schema` | **#800 MERGED 2026-05-14** · **#920 OPEN** | QQ-01..QQ-07 done (merged). QQ-05+QQ-06 done (`b3a1e63`): migration + `/api/answers/ask`. QQ-09 done (`27079bf`): admin moderation queue + action API. QQ-10 done (`217d7d6`): 19-test suite. QQ-08 compliance gate blocks public exposure. **Stream engineering complete pending QQ-08 compliance signoff.** Last CI: pending — pushed `217d7d6` 2026-05-19. | All QQ tasks merged |
 | MM | `claude/audit-remediation/mm-v01b-digital-infra-listings` | **#801 MERGED** · **#803 MERGED 2026-05-14** | MM-V01..V08 done. MM-V06 pending (Tier C — wholesale-only alternatives: litigation funding, PE, VC, hedge funds, ILS; s708 gate design required; announce before merge). Next item: MM-V06. | All MM phases merged |
 | TT | _complete_ | **#764 MERGED** · **#772 MERGED** · **#779 MERGED** · **#799 MERGED 2026-05-12** | TT-01..TT-04 all done. GA4 removed; Plausible sole analytics. **Stream complete.** | TT-04 merged ✓ |
 | CMP | `claude/audit-remediation/cmp-w1a-int-calculator-autosave` | **#782 CLOSED 2026-05-14 (not merged)** | CMP-W1A-INT: #782 was closed without merging by founder 2026-05-14. Work may need re-examination or re-opening on a fresh branch. | All CMP tasks merged |
@@ -72,6 +72,19 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 ---
 
 ## Blocked — needs human input
+
+### QQ-08 — Compliance signoff required before public Q&A exposure (human gate)
+
+QQ engineering is complete (QQ-05..QQ-10 all done in PR #920). The public
+`/answers/[slug]` route and `QuestionCaptureForm` are wired up but the
+compliance gate (QQ-08) must be cleared before enabling public access.
+
+**What's needed:**
+1. Review the answer disclaimer copy in `lib/compliance.ts` (or add `aiAnswerDisclaimer()` if not yet present — see `qq-ai-qa-capture-brief.md` §QQ-08 for the draft copy).
+2. Decide: human review on first publish (current design — admin approves each answer before it goes live), OR AI-only with stronger disclaimer. v1 default = human review.
+3. Commit `docs/audits/qq-compliance-signoff.md` with: reviewer name/role, review date, what was reviewed, in-scope/out-of-scope statements, and confirmation that the admin approval gate is the sole publish path.
+
+**Once complete:** delete this blocked entry, mark QQ-08 done in the QQ stream row, and the loop can proceed to merge PR #920.
 
 ### CL-05 — WHOIS domain privacy (registrar action required)
 
@@ -114,6 +127,23 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 451 — 2026-05-19 — QQ-10 — route handler tests for /api/answers/ask + /api/admin/qa
+
+- **Stream:** QQ (public AI Q&A capture surface)
+- **Phase:** 5 — implementation (Tier A — test additions)
+- **Branch:** `claude/audit-remediation/qq-05-schema`
+- **PR:** #920 OPEN
+- **Commit:** `217d7d6` — test(qq): QQ-10 — route handler tests for /api/answers/ask + /api/admin/qa routes
+- **Diff:** +330 LOC across 2 new test files
+- **Items done:** QQ-10 (19-test suite)
+- **Implementation:**
+  - **`__tests__/api/answers-ask.test.ts`** (7 tests) — covers rate-limit 429, invalid JSON, question too short, malformed email, invalid category, happy-path slug response, DB insert 500.
+  - **`__tests__/api/admin-qa.test.ts`** (12 tests) — GET: 401 unauthenticated, 401 non-admin, 200 pending list, 500 DB error; POST generate_draft: happy path (answer_id returned), 429 cost cap; POST approve: revalidatePath called for both /answers paths; POST reject: with/without note.
+  - Mocks: `lib/chatbot.respondToMessage`, `lib/ai-cost-caps.{preCheckCaps,recordUsage}`, `next/cache.revalidatePath`, `lib/supabase/{server,admin}`, `lib/admin.ADMIN_EMAILS`, `lib/rate-limit.isRateLimited`.
+- **Stream status:** QQ engineering complete (QQ-05..QQ-10 done). QQ-08 compliance signoff is the remaining gate before public exposure. QQ-08 requires human review and `docs/audits/qq-compliance-signoff.md` — surfaced to Blocked below.
+- **Cumulative diff (batch fire, iters 446–451):** ~1010 LOC total
+- **STATUS: PROGRESS · stream=QQ · item=QQ-10 · pr=#920**
 
 ### iter 450 — 2026-05-19 — CI-RESCUE GT (#881) + DF (#883): Database types drift gate (afsl_register driftallowlist)
 
