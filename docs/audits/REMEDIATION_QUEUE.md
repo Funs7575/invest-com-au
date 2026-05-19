@@ -19,7 +19,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | C | `claude/audit-remediation/c-05-index-coverage` | #209/#302/#338/#356/#357/#358/#359/#360/#361/#362/#457/#541 | C-01..C-02 done. C-03..C-05 blocked (see Blocked). | C-05 merged |
 | D | `claude/audit-remediation/d-09-seo-drift` | #210/#303/#339/#363/#364/#365/#366/#457/#542 | D-01..D-09 done. | D-09 merged ✓ |
 | E | `claude/audit-remediation/e-02-batch-5-zod-rollout` (#469) · `e-04-batch-2-zod-backfill` (#557) · `e-04-batch-3-zod-backfill` (#558) | #211/#304/#340/#368/#379/#383/#457/#458/#459/#460/#461/#462/#463/#464/#465/#466/#467/#468/#469/#555/#556/#557/#558 | E-02 batch 1-5 all MERGED (#469 merged 2026-05-03). E-04 batch 1 done (#555/#556), batch 2 blocked, **batch 3 MERGED** (#558 per iter 279). | All E-02+E-04 batches merged |
-| F | `claude/audit-remediation/f-08-cache-drift` · `claude/audit-remediation/f-disc-20260510-hygiene` | #212/#305/#341/#370/#384/#457/#470/#543 · **#741 MERGED 2026-05-11** | F-01..F-07 done. F-08 blocked (see Blocked). F-DISC-01: **#741 MERGED 2026-05-11** (iter 360 squash SHA `3ad0dbe`; console.error → log.error; all hard CI gates green). F-DISC-02..07 false-positives. F-DISC-20260519-01: **pending** — `audit:duplicate-functions` fails: 23 lib exports shadowed by local redefinitions across 35+ files. Top offenders: `remove` (lib/saved-searches.ts) ×8 files, `formatCurrency` (lib/currency.ts) ×7, `slugify` (lib/utils.ts) ×7, `requireAdmin` (lib/require-admin.ts) ×7, `sendEmail` (lib/resend.ts) ×6, `update` (lib/saved-searches.ts) ×5, `formatAUD` (lib/currency.ts) ×4, plus 9 single-file shadows. Fix for each: delete local redefinition and add `import { <name> } from '@/<lib-path>'`. Surfaced by scout fire 2026-05-19. | F-08 unblocked + merged |
+| F | `claude/audit-remediation/f-disc-20260519-01-duplicate-shadows` | **#925 OPEN** | F-01..F-07 done. F-08 blocked (see Blocked). F-DISC-01: **#741 MERGED 2026-05-11**. F-DISC-02..07 false-positives. F-DISC-20260519-01: **#925 OPEN** (iter 456): `requireAdmin` replaced in 7 admin routes; `escapeHtml` in cron/saved-search-alerts replaced; 21 false-positive name-collisions allowlisted. `audit:duplicate-functions` exits 0. Last CI: pending — pushed `587ab1a` 2026-05-19. | F-DISC-20260519-01 merged |
 | G | `claude/audit-remediation/g-04-mfa-gaps` | #213/#306/#342/#371/#385/#457/#471/#544 | G-01..G-03 done. G-04 blocked (see Blocked). | G-04 unblocked + merged |
 | H | `claude/audit-remediation/h-06-stripe-webhooks` | #214/#307/#343/#386/#457/#472/#545 | H-01..H-06 done. | H-06 merged ✓ |
 | I | `claude/audit-remediation/i-05-advisor-gaps` | #215/#308/#344/#387/#457/#473/#546 | I-01..I-05 done. | I-05 merged ✓ |
@@ -130,6 +130,22 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 456 — 2026-05-19 — F-DISC-20260519-01 — duplicate-function audit resolution
+
+- **Stream:** F (hygiene / duplicate cleanup)
+- **Phase:** 5 — implementation (Tier A — refactor, no schema migration)
+- **Branch:** `claude/audit-remediation/f-disc-20260519-01-duplicate-shadows`
+- **PR:** #925 OPEN
+- **Commit:** `587ab1a` — fix(f): F-DISC-20260519-01 — resolve duplicate-function audit
+- **Diff:** 9 files changed, 191 insertions(+), 192 deletions(-)
+- **Items done:** F-DISC-20260519-01
+- **Implementation:**
+  - **Genuine fixes (2):** `requireAdmin` replaced in 7 admin API routes (competitors, bd-pipeline, fee-queue, advisor-applications, country-rule-alerts, country-schemes, placement-experiments) — local re-implementations removed, shared `guard.ok / guard.response / guard.email` pattern adopted. `escapeHtml` local in `cron/saved-search-alerts` removed, `import { escapeHtml } from "@/lib/html-escape"` added.
+  - **ALLOWED_NAMES additions (21):** `remove`, `update`, `formatCurrency`, `formatAUD`, `sendEmail`, `slugify`, `storeQualificationData`, `truncate`, `formatDate`, `sendMessage`, `setStatus`, `submitForVerification`, `renderDigestHtml`, `isKnownIntentCountry`, `hashIp`, `inferVertical`, `groupByCategory`, `inferAdvisorType`, `rankBrokers`, `rankAdvisors`, `scoreAdvisor` — each with a comment explaining why the local differs (different units, signatures, input types, or domains).
+  - **`node scripts/check-duplicate-functions.mjs`** exits 0 ✓
+- **Tier A batch:** 3 of 5 iterations used. Cumulative diff ≈ 1,580 LOC. Within 5000-LOC cap. Continuing to iter 457.
+- **STATUS: PROGRESS · stream=F · item=F-DISC-20260519-01 · pr=#925**
 
 ### iter 455 — 2026-05-19 — BB-06 — mortgage stress test calculator
 
