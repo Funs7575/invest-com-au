@@ -282,6 +282,18 @@ const TOOLS: Tool[] = [
     url: "/tools/borrowing-power-calculator",
     internal: true,
   },
+  {
+    slug: "etp-calculator",
+    name: "ETP Tax Calculator",
+    category: "Tax",
+    rating: 5,
+    description:
+      "Calculate the tax on your Employment Termination Payment (ETP) from genuine redundancy. Shows tax-free threshold, concessional ETP rate (17% or 32%), net payout, and saving vs your marginal rate.",
+    pros: ["Tax-free threshold", "17%/32% ETP rates", "Marginal rate comparison"],
+    pricing: "Free tool",
+    url: "/tools/etp-calculator",
+    internal: true,
+  },
 ];
 
 /* ─── Config ─── */
