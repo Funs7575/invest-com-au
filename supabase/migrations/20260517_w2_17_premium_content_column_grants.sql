@@ -83,6 +83,19 @@ CREATE POLICY "service_role full access"
   FOR ALL TO service_role
   USING (true) WITH CHECK (true);
 
+-- Recreate the canonical public-read policy with the status='sent'
+-- filter explicitly. The 20260423 migration originally created this
+-- policy name with `USING (true)`; 20260427 attempted to tighten it to
+-- `USING (status='sent')`, but that DROP+CREATE may not have applied
+-- cleanly in environments where `status` didn't exist yet at the time.
+-- Re-asserting here now that the column is guaranteed to exist (added
+-- earlier in this same migration) closes the gap unambiguously.
+DROP POLICY IF EXISTS "newsletter_editions_public_read" ON public.newsletter_editions;
+CREATE POLICY "newsletter_editions_public_read"
+  ON public.newsletter_editions
+  FOR SELECT TO anon, authenticated
+  USING (status = 'sent');
+
 -- ─── quarterly_reports ────────────────────────────────────────────────
 REVOKE SELECT ON public.quarterly_reports FROM anon;
 REVOKE SELECT ON public.quarterly_reports FROM authenticated;
