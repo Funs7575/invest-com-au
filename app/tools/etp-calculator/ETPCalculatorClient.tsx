@@ -10,7 +10,7 @@ const TAX_FREE_BASE = 12_524;
 const TAX_FREE_PER_YEAR = 6_264;
 const ETP_CAP = 245_000;
 
-// Preservation age in AU is 60 for those born after 30 June 1964.
+// Preservation age in AU is 60 for those born after 30 June 1964. // dated-ok — fixed legislative threshold, set in superannuation law
 // For simplicity: "at or above 60" → 17%, "under 60" → 32%.
 const ETP_RATE_UNDER_60 = 0.32;
 const ETP_RATE_AT_OR_ABOVE_60 = 0.17;
