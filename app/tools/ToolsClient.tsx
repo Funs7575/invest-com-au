@@ -271,6 +271,18 @@ const TOOLS: Tool[] = [
     internal: true,
   },
   {
+    slug: "borrowing-power-calculator",
+    name: "Borrowing Power Calculator",
+    category: "Calculators",
+    rating: 5,
+    description:
+      "Estimate how much you can borrow across three lender types (major bank, mid-tier, specialist). Uses APRA assessment rates, HEM living expenses, and credit card commitments to give a realistic range.",
+    pros: ["3 lender scenarios", "APRA assessment rates", "LVR + LMI check"],
+    pricing: "Free tool",
+    url: "/tools/borrowing-power-calculator",
+    internal: true,
+  },
+  {
     slug: "etp-calculator",
     name: "ETP Tax Calculator",
     category: "Tax",
