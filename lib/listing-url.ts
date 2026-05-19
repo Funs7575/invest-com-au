@@ -14,12 +14,17 @@ export const VERTICAL_TO_CATEGORY: Record<InvestListingVertical, string> = {
   farmland: "farmland",
   franchise: "franchise",
   fund: "funds",
+  "hedge-fund": "private-equity",
+  "insurance-linked-securities": "insurance-linked-securities",
+  "litigation-funding": "litigation-funding",
   livestock: "livestock",
   mining: "mining",
   pre_ipo: "pre-ipo",
+  "private-equity": "private-equity",
   "public-social-infrastructure": "public-social-infrastructure",
   royalties: "royalties",
   startup: "startups",
+  "venture-capital": "venture-capital",
 };
 
 /**
