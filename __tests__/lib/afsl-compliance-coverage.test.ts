@@ -44,6 +44,8 @@ const ALLOWLIST = new Set<string>([
   // Pure redirects — no product content ever rendered
   "app/broker/page.tsx",
   "app/brokers/[slug]/page.tsx",
+  // HubPage HOC renders compliance footer from config.complianceKey — no raw ComplianceFooter import needed
+  "app/super/page.tsx",
 ]);
 
 const COMPLIANCE_PATTERNS = [
