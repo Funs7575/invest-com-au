@@ -1,6 +1,25 @@
 import type { ProfessionalType } from "@/lib/types";
 
 // ═══════════════════════════════════════════════
+// Cross-border specialty set (single source of truth)
+// ═══════════════════════════════════════════════
+//
+// Listed here at module top so downstream pricing/routing modules
+// (`lib/advisor-billing.ts`, `lib/advisor-billing-multipliers.ts`,
+// country-page CTA filters, etc.) can import the canonical list without
+// duplicating the strings. Keep IN SYNC with the "Cross-border & expat"
+// category below — the category spreads this constant.
+
+export const CROSS_BORDER_SPECIALTY_CATEGORY = "Cross-border & expat";
+
+export const CROSS_BORDER_SPECIALTIES: readonly string[] = [
+  "UK Pension Transfer",
+  "FATCA-Aware US Expat Planning",
+  "DASP Processing",
+  "FIRB Property (Non-Resident)",
+];
+
+// ═══════════════════════════════════════════════
 // Specialty Taxonomy
 // ═══════════════════════════════════════════════
 
@@ -128,13 +147,8 @@ export const ADVISOR_SPECIALTY_CATEGORIES: {
     //   • Departing temp visa holders claiming DASP super refunds
     //   • Non-residents buying AU property where FIRB rules + AU credit
     //     history + tax treatment all interact
-    category: "Cross-border & expat",
-    specialties: [
-      "UK Pension Transfer",
-      "FATCA-Aware US Expat Planning",
-      "DASP Processing",
-      "FIRB Property (Non-Resident)",
-    ],
+    category: CROSS_BORDER_SPECIALTY_CATEGORY,
+    specialties: [...CROSS_BORDER_SPECIALTIES],
   },
   {
     // SM-02: Cultural + faith-based routing (added 2026-05-18). Advisors who
