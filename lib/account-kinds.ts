@@ -103,14 +103,16 @@ export async function getActiveKind(): Promise<WorkspaceKind | null> {
 /**
  * Set the active workspace cookie. Called from the chooser UI's server
  * action when the user picks a kind. 30-day TTL; sameSite=lax; httpOnly
- * is FALSE so the client can read for theming. Not security-critical:
- * RLS still enforces data isolation per kind regardless of cookie value.
+ * is TRUE (Phase 3 hardening) — no client-side reader exists today and
+ * the WorkspaceSwitcher resolves active state via `/api/account/active-kind`
+ * GET. Defence-in-depth against XSS-driven workspace pivoting; RLS still
+ * enforces data isolation per kind regardless of cookie value.
  */
 export async function setActiveKind(kind: WorkspaceKind): Promise<void> {
   const c = await cookies();
   c.set(ACTIVE_KIND_COOKIE, kind, {
     maxAge: ACTIVE_KIND_TTL_SECONDS,
-    httpOnly: false,
+    httpOnly: true,
     sameSite: "lax",
     path: "/",
     secure: process.env.NODE_ENV === "production",
@@ -134,14 +136,15 @@ export async function getActiveTeamId(): Promise<string | null> {
 
 /**
  * Set the active team id (squad workspace scope). 30-day TTL mirrors the
- * kind cookie. Like the kind cookie, not httpOnly so the client can read
- * for theming; RLS still enforces team-scoped data isolation.
+ * kind cookie. httpOnly TRUE (Phase 3 hardening) for the same reason
+ * as setActiveKind — no client reader exists; team-scope active state
+ * is resolved server-side. RLS still enforces team-scoped data isolation.
  */
 export async function setActiveTeamId(teamId: string): Promise<void> {
   const c = await cookies();
   c.set(ACTIVE_TEAM_COOKIE, teamId, {
     maxAge: ACTIVE_KIND_TTL_SECONDS,
-    httpOnly: false,
+    httpOnly: true,
     sameSite: "lax",
     path: "/",
     secure: process.env.NODE_ENV === "production",
