@@ -24,6 +24,7 @@ import { computeMatchScore } from "@/lib/listing-match";
 import HomeToolsStrip from "@/components/HomeToolsStrip";
 import IntentCountryBadge from "@/components/foreign-investment/IntentCountryBadge";
 import IntentCountryRecommendation from "@/components/foreign-investment/IntentCountryRecommendation";
+import CountryRuleAlerts from "@/components/CountryRuleAlerts";
 import ScrollReveal from "@/components/ScrollReveal";
 import Icon from "@/components/Icon";
 
@@ -220,6 +221,7 @@ export default async function InvestMarketplacePage() {
         <div className="mb-2">
           <IntentCountryBadge />
         </div>
+        <CountryRuleAlerts />
         <IntentCountryRecommendation surface="invest" />
 
         <h1 className="text-2xl md:text-4xl font-extrabold mb-2 text-slate-900 tracking-tight">

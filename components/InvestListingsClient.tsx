@@ -546,77 +546,75 @@ export default function InvestListingsClient({
                     {kindCounts.all ?? 0}
                   </span>
                 </button>
-                {ALL_LISTING_KINDS.map((k) => {
-                  const meta = listingKindMeta(k);
-                  const count = kindCounts[k] ?? 0;
-                  const isActive = activeKinds.has(k);
-                  const disabled = count === 0;
-                  return (
-                    <button
-                      key={k}
-                      type="button"
-                      onClick={() => !disabled && toggleKind(k)}
-                      disabled={disabled}
-                      aria-pressed={isActive}
-                      className={`whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-semibold transition-all inline-flex items-center gap-1.5 ${
-                        isActive
-                          ? `${meta.accent.badge} shadow-sm`
-                          : disabled
-                            ? "bg-slate-50 text-slate-300 cursor-not-allowed"
+                {ALL_LISTING_KINDS
+                  .filter((k) => (kindCounts[k] ?? 0) > 0)
+                  .map((k) => {
+                    const meta = listingKindMeta(k);
+                    const count = kindCounts[k] ?? 0;
+                    const isActive = activeKinds.has(k);
+                    return (
+                      <button
+                        key={k}
+                        type="button"
+                        onClick={() => toggleKind(k)}
+                        aria-pressed={isActive}
+                        className={`whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-semibold transition-all inline-flex items-center gap-1.5 ${
+                          isActive
+                            ? `${meta.accent.badge} shadow-sm`
                             : `bg-white border border-slate-200 text-slate-600 hover:bg-slate-50`
-                      }`}
-                      title={meta.blurb}
-                    >
-                      <Icon name={meta.icon} size={11} />
-                      {meta.label}
-                      <span className={`text-[0.6rem] font-bold px-1.5 py-0.5 rounded ${
-                        isActive ? "bg-white/20 text-white" : disabled ? "bg-slate-100 text-slate-300" : "bg-slate-100 text-slate-500"
-                      }`}>
-                        {count}
-                      </span>
-                    </button>
-                  );
-                })}
+                        }`}
+                        title={meta.blurb}
+                      >
+                        <Icon name={meta.icon} size={11} />
+                        {meta.label}
+                        <span className={`text-[0.6rem] font-bold px-1.5 py-0.5 rounded ${
+                          isActive ? "bg-white/20 text-white" : "bg-slate-100 text-slate-500"
+                        }`}>
+                          {count}
+                        </span>
+                      </button>
+                    );
+                  })}
               </div>
             </div>
           )}
 
           {/* Row 3: category chips (secondary narrow by sector) */}
-          {!lockedCategory && tabs.length > 1 && (
-            <div className="overflow-x-auto scrollbar-hide -mx-1 px-1">
-              <div className="flex items-center gap-1.5 min-w-max">
-                {tabs.map((tab) => {
-                  const isActive = tab.slug === activeCategory;
-                  const count = categoryCounts[tab.slug] ?? 0;
-                  const isAll = tab.slug === "all";
-                  const disabled = !isAll && count === 0;
-                  return (
-                    <button
-                      key={tab.slug}
-                      type="button"
-                      onClick={() => !disabled && setParams({ category: tab.slug === "all" ? "" : tab.slug, sub: "" })}
-                      disabled={disabled}
-                      aria-pressed={isActive}
-                      className={`whitespace-nowrap rounded-full px-3 py-1 text-[0.7rem] font-medium transition-all inline-flex items-center gap-1 ${
-                        isActive
-                          ? "bg-slate-100 text-slate-900 ring-1 ring-slate-300"
-                          : disabled
-                            ? "text-slate-300 cursor-not-allowed"
+          {!lockedCategory && (() => {
+            const visibleTabs = tabs.filter(tab => tab.slug === "all" || (categoryCounts[tab.slug] ?? 0) > 0);
+            if (visibleTabs.length <= 1) return null;
+            return (
+              <div className="overflow-x-auto scrollbar-hide -mx-1 px-1">
+                <div className="flex items-center gap-1.5 min-w-max">
+                  {visibleTabs.map((tab) => {
+                    const isActive = tab.slug === activeCategory;
+                    const count = categoryCounts[tab.slug] ?? 0;
+                    const isAll = tab.slug === "all";
+                    return (
+                      <button
+                        key={tab.slug}
+                        type="button"
+                        onClick={() => setParams({ category: tab.slug === "all" ? "" : tab.slug, sub: "" })}
+                        aria-pressed={isActive}
+                        className={`whitespace-nowrap rounded-full px-3 py-1 text-[0.7rem] font-medium transition-all inline-flex items-center gap-1 ${
+                          isActive
+                            ? "bg-slate-100 text-slate-900 ring-1 ring-slate-300"
                             : "text-slate-500 hover:bg-slate-50"
-                      }`}
-                    >
-                      {tab.label}
-                      {!isAll && (
-                        <span className={`text-[0.55rem] font-bold tabular-nums ${disabled ? "text-slate-300" : "text-slate-400"}`}>
-                          {count}
-                        </span>
-                      )}
-                    </button>
-                  );
-                })}
+                        }`}
+                      >
+                        {tab.label}
+                        {!isAll && (
+                          <span className="text-[0.55rem] font-bold tabular-nums text-slate-400">
+                            {count}
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
 
           {/* Active-filter chips */}
           {activeChips.length > 0 && (
