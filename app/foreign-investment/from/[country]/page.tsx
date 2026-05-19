@@ -9,6 +9,8 @@ import { intentCountryFromIso, intentCountryMeta } from "@/lib/intent-context";
 import type { Broker } from "@/lib/types";
 import ForeignInvestmentNav from "../../ForeignInvestmentNav";
 import SectionHeading from "@/components/SectionHeading";
+import CrossBorderAdvisorCTA from "@/components/CrossBorderAdvisorCTA";
+import { getCrossBorderCta } from "@/lib/cross-border-cta";
 
 // ── Country lookup helpers ───────────────────────────────────────────────────
 
@@ -370,22 +372,39 @@ export default async function CountryForeignInvestmentPage({
       </section>
 
       {/* ── CTA ──────────────────────────────────────────────────────── */}
-      <section className="py-10 bg-gradient-to-br from-slate-900 to-slate-800">
-        <div className="container-custom flex flex-col sm:flex-row items-center gap-6 justify-between">
-          <div>
-            <h2 className="text-lg font-extrabold text-white mb-1">Find an advisor for {dtaCountry.country} investors</h2>
-            <p className="text-slate-400 text-sm">International tax specialists who understand both Australian rules and {dtaCountry.country} obligations.</p>
+      {/*
+        Backlog #24 (FIN_NOTEBOOK 2026-05-01): the generic "Find Tax Advisor"
+        button is replaced when the country has a cross-border specialty
+        mapping in `lib/cross-border-cta.ts`. Specialty-routed CTAs deep-link
+        /find-advisor with ?specialty= + ?country= so the lead carries its
+        cross-border context into the matcher and lands at the 1.75× pricing
+        tier instead of the flat $39 pool. Countries without a mapping keep
+        the previous generic copy.
+      */}
+      {getCrossBorderCta(country) ? (
+        <CrossBorderAdvisorCTA
+          countrySlug={country}
+          secondaryHref="/foreign-investment"
+          secondaryLabel="← Foreign Investment Hub"
+        />
+      ) : (
+        <section className="py-10 bg-gradient-to-br from-slate-900 to-slate-800">
+          <div className="container-custom flex flex-col sm:flex-row items-center gap-6 justify-between">
+            <div>
+              <h2 className="text-lg font-extrabold text-white mb-1">Find an advisor for {dtaCountry.country} investors</h2>
+              <p className="text-slate-400 text-sm">International tax specialists who understand both Australian rules and {dtaCountry.country} obligations.</p>
+            </div>
+            <div className="flex gap-3 shrink-0">
+              <Link href="/advisors/tax-agents" className="px-5 py-3 bg-amber-500 hover:bg-amber-400 text-white font-bold rounded-xl text-sm transition-colors whitespace-nowrap">
+                Find Tax Advisor
+              </Link>
+              <Link href="/foreign-investment" className="px-5 py-3 border border-slate-600 hover:border-slate-400 text-slate-300 font-semibold rounded-xl text-sm transition-colors whitespace-nowrap">
+                ← Foreign Investment Hub
+              </Link>
+            </div>
           </div>
-          <div className="flex gap-3 shrink-0">
-            <Link href="/advisors/tax-agents" className="px-5 py-3 bg-amber-500 hover:bg-amber-400 text-white font-bold rounded-xl text-sm transition-colors whitespace-nowrap">
-              Find Tax Advisor
-            </Link>
-            <Link href="/foreign-investment" className="px-5 py-3 border border-slate-600 hover:border-slate-400 text-slate-300 font-semibold rounded-xl text-sm transition-colors whitespace-nowrap">
-              ← Foreign Investment Hub
-            </Link>
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       <section className="py-6 bg-slate-50 border-t border-slate-200">
         <div className="container-custom">
