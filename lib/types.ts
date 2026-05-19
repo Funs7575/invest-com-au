@@ -1398,12 +1398,17 @@ export type InvestListingVertical =
   | 'farmland'
   | 'franchise'
   | 'fund'
+  | 'hedge-fund'
+  | 'insurance-linked-securities'
+  | 'litigation-funding'
   | 'livestock'
   | 'mining'
   | 'pre_ipo'
+  | 'private-equity'
   | 'public-social-infrastructure'
   | 'royalties'
-  | 'startup';
+  | 'startup'
+  | 'venture-capital';
 
 /**
  * Discriminator added 2026-05 (Wave 1 of /invest rebuild). Each kind has a
