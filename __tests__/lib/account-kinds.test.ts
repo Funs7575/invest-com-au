@@ -12,6 +12,7 @@ const m = (kind: KindMembership["kind"], extras: Partial<KindMembership> = {}): 
   kindId: "1",
   status: "active",
   displayLabel: "Test",
+  scopeSlug: null,
   createdAt: "2026-05-10T00:00:00Z",
   ...extras,
 });
@@ -23,6 +24,7 @@ describe("isWorkspaceKind", () => {
     expect(isWorkspaceKind("broker_partner")).toBe(true);
     expect(isWorkspaceKind("business_owner")).toBe(true);
     expect(isWorkspaceKind("listing_owner")).toBe(true);
+    expect(isWorkspaceKind("squad")).toBe(true);
   });
   it("rejects unknown values", () => {
     expect(isWorkspaceKind("admin")).toBe(false);
@@ -32,36 +34,48 @@ describe("isWorkspaceKind", () => {
 });
 
 describe("portalForKind", () => {
-  it("maps each kind to its portal", () => {
+  it("maps each base kind to its portal", () => {
     expect(portalForKind("advisor")).toBe("/advisor-portal");
     expect(portalForKind("broker_partner")).toBe("/broker-portal");
     expect(portalForKind("business_owner")).toBe("/business-portal");
     expect(portalForKind("listing_owner")).toBe("/invest/my-listings");
     expect(portalForKind("investor")).toBe("/account");
   });
-  it("respects fallback for investor kind only", () => {
-    expect(portalForKind("investor", "/custom")).toBe("/custom");
-    expect(portalForKind("advisor", "/custom")).toBe("/advisor-portal");
+  it("respects fallback option for investor kind only", () => {
+    expect(portalForKind("investor", { fallback: "/custom" })).toBe("/custom");
+    expect(portalForKind("advisor", { fallback: "/custom" })).toBe("/advisor-portal");
+  });
+  it("squad with teamSlug routes to /teams/<slug>/dashboard", () => {
+    expect(portalForKind("squad", { teamSlug: "au-smsf-property-squad" })).toBe(
+      "/teams/au-smsf-property-squad/dashboard",
+    );
+  });
+  it("squad without teamSlug falls back to chooser", () => {
+    expect(portalForKind("squad")).toBe("/account/select-workspace");
+    expect(portalForKind("squad", { teamSlug: null })).toBe("/account/select-workspace");
   });
 });
 
 describe("chooseCallbackRedirect", () => {
-  it("0 kinds → fallback + lazy-investor cookie", () => {
+  it("0 kinds → fallback + lazy-investor cookie + no team", () => {
     const r = chooseCallbackRedirect([], "/account");
     expect(r.redirect).toBe("/account");
     expect(r.setKind).toBe("investor");
+    expect(r.setTeamId).toBeNull();
   });
 
-  it("1 kind → that portal + matching cookie", () => {
+  it("1 base kind → that portal + matching cookie + no team", () => {
     const r = chooseCallbackRedirect([m("advisor")], "/account");
     expect(r.redirect).toBe("/advisor-portal");
     expect(r.setKind).toBe("advisor");
+    expect(r.setTeamId).toBeNull();
   });
 
-  it("2+ kinds → chooser, no cookie set", () => {
+  it("2+ kinds → chooser, no cookies set", () => {
     const r = chooseCallbackRedirect([m("advisor"), m("investor")], "/account");
     expect(r.redirect).toBe("/account/select-workspace");
     expect(r.setKind).toBeNull();
+    expect(r.setTeamId).toBeNull();
   });
 
   it("respects fallbackNext for the 0-kind case", () => {
@@ -72,5 +86,36 @@ describe("chooseCallbackRedirect", () => {
   it("uses portalForKind for the 1-kind broker_partner case", () => {
     const r = chooseCallbackRedirect([m("broker_partner")], "/account");
     expect(r.redirect).toBe("/broker-portal");
+  });
+
+  it("1 squad membership → squad dashboard + both cookies", () => {
+    const r = chooseCallbackRedirect(
+      [m("squad", { kindId: "42", scopeSlug: "au-smsf-property-squad" })],
+      "/account",
+    );
+    expect(r.redirect).toBe("/teams/au-smsf-property-squad/dashboard");
+    expect(r.setKind).toBe("squad");
+    expect(r.setTeamId).toBe("42");
+  });
+
+  it("1 squad with no scopeSlug → chooser (defensive)", () => {
+    const r = chooseCallbackRedirect(
+      [m("squad", { kindId: "42", scopeSlug: null })],
+      "/account",
+    );
+    // portalForKind('squad', { teamSlug: null }) falls through to chooser
+    expect(r.redirect).toBe("/account/select-workspace");
+    expect(r.setKind).toBe("squad");
+    expect(r.setTeamId).toBe("42");
+  });
+
+  it("base kind + squad → chooser (multi-membership)", () => {
+    const r = chooseCallbackRedirect(
+      [m("advisor"), m("squad", { kindId: "42", scopeSlug: "smsf" })],
+      "/account",
+    );
+    expect(r.redirect).toBe("/account/select-workspace");
+    expect(r.setKind).toBeNull();
+    expect(r.setTeamId).toBeNull();
   });
 });
