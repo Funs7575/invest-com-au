@@ -64,7 +64,7 @@ CREATE POLICY "anon_select_approved_qa_questions" ON qa_questions
   FOR SELECT TO anon
   USING (status = 'approved');
 
--- Authenticated users: same as anon for reads (no ownership linkage; anon submissions have no user_id)
+-- Authenticated users: same as anon for reads (no account linkage — anonymous submissions only)
 DROP POLICY IF EXISTS "authenticated_select_approved_qa_questions" ON qa_questions;
 CREATE POLICY "authenticated_select_approved_qa_questions" ON qa_questions
   FOR SELECT TO authenticated
