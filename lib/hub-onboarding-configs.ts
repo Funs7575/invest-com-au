@@ -1423,3 +1423,194 @@ export const HALAL_INVESTING_ONBOARDING_CONFIG: HubOnboardingConfig = {
     };
   },
 };
+
+export const FIRST_HOME_BUYER_ONBOARDING_CONFIG: HubOnboardingConfig = {
+  hubSlug: "first-home-buyer",
+  hubName: "First Home Buyer",
+  heading: "Which first-home-buyer schemes are you eligible for?",
+  subheading:
+    "3 questions to map your income, state, and deposit status to FHSS, the First Home Guarantee, and state grants.",
+  questions: [
+    {
+      id: "income",
+      question: "What is your annual taxable income?",
+      options: [
+        { value: "under_60k", label: "Under $60,000" },
+        { value: "60k_125k", label: "$60,000 – $125,000" },
+        { value: "125k_200k", label: "$125,000 – $200,000 (couple)" },
+        { value: "over_200k", label: "Over $200,000" },
+      ],
+    },
+    {
+      id: "state",
+      question: "Which state or territory are you buying in?",
+      options: [
+        { value: "nsw", label: "New South Wales" },
+        { value: "vic", label: "Victoria" },
+        { value: "qld", label: "Queensland" },
+        { value: "wa", label: "Western Australia" },
+        { value: "sa", label: "South Australia" },
+        { value: "tas", label: "Tasmania" },
+        { value: "act", label: "ACT" },
+        { value: "nt", label: "Northern Territory" },
+      ],
+    },
+    {
+      id: "deposit",
+      question: "Where are you in your deposit journey?",
+      options: [
+        { value: "not_started", label: "Haven't started saving yet" },
+        { value: "saving_outside_super", label: "Saving outside super" },
+        { value: "using_fhss", label: "Already using FHSS" },
+        { value: "ready_to_buy", label: "Deposit is ready — actively looking" },
+      ],
+    },
+  ],
+
+  evaluate(answers: QuizAnswers) {
+    const income = answers["income"];
+    const state = answers["state"];
+    const deposit = answers["deposit"];
+
+    // Per-state FHOG / stamp-duty snapshot. Amounts are conservative current
+    // figures; the deep-dive pages own the precise eligibility tables.
+    const stateNote: Record<string, string> = {
+      nsw: "NSW: full stamp-duty exemption under $800,000, scaled concession to $1m; FHOG $10,000 for new homes under $600k (construction) or $750k (land + build).",
+      vic: "VIC: full stamp-duty exemption under $600,000, scaled to $750,000; FHOG $10,000 for new builds outside Melbourne, $20,000 in regional VIC.",
+      qld: "QLD: First Home Owner Grant lifted to $30,000 for new builds; stamp-duty concession to $700,000 for established homes or $350,000 land.",
+      wa: "WA: FHOG $10,000 for new homes; stamp-duty exemption for new homes under $430,000 and existing under $430,000.",
+      sa: "SA: FHOG $15,000 for new homes; no property value cap on the grant; stamp-duty relief was abolished for first home buyers in 2024 — verify with RevenueSA.",
+      tas: "TAS: FHOG $30,000 for new builds (Tasmania's grant is the highest in the country alongside QLD); 50% stamp-duty discount on established homes under $750,000.",
+      act: "ACT: no FHOG (replaced by the Home Buyer Concession Scheme which scales stamp duty by income up to $250k/yr).",
+      nt: "NT: FHOG $10,000 for new homes; BuildBonus and HomeGrown Territory grants stack on top.",
+    };
+
+    const stateLine = state ? stateNote[state] : null;
+
+    // Income over $200k disqualifies from First Home Guarantee (single cap
+    // $125k, couple cap $200k) and most state-grant income tests. FHSS
+    // individual cap ($50k) still applies and is more tax-efficient at the
+    // top marginal rate.
+    if (income === "over_200k") {
+      return {
+        headline:
+          "Above the First Home Guarantee cap — but FHSS still gives you the biggest tax saving.",
+        summary: [
+          "Your income exceeds the First Home Guarantee thresholds ($125k single / $200k couple), so the 5% deposit + no-LMI guarantee is unavailable. FHSS remains worth using: at the 45% marginal bracket, the 15% concessional contributions tax saves up to 30 cents on every dollar contributed (capped $15,000/year, $50,000 total per person — a couple can release $100,000 combined).",
+          stateLine,
+          "Mortgage brokers who specialise in high-income first home buyers can structure interest-only periods, offset accounts, and lender-paid LMI to optimise the deposit gap.",
+        ]
+          .filter(Boolean)
+          .join(" "),
+        primaryCta: { label: "Calculate Your FHSS Saving", href: "/tools/fhss-calculator" },
+        secondaryCta: { label: "Find a Mortgage Broker", href: "/find/mortgage-broker" },
+        advisorCta: { href: "/quiz?vertical=mortgage", specialty: "first home buyer mortgage broker" },
+      };
+    }
+
+    // Couple-band income: eligible for the FHG at the $200k couple cap.
+    if (income === "125k_200k") {
+      return {
+        headline:
+          "You're in the First Home Guarantee couple band — 5% deposit with no LMI.",
+        summary: [
+          "At a combined income up to $200,000 you qualify for the First Home Guarantee as a couple: buy with a 5% deposit and the government guarantees up to 15% of the price so you avoid Lender's Mortgage Insurance. 35,000 places per year — book one through a participating lender.",
+          "Stack with FHSS (up to $50,000 each, $100,000 combined release) for the deposit, and check your state's grant + stamp-duty concessions.",
+          stateLine,
+        ]
+          .filter(Boolean)
+          .join(" "),
+        primaryCta: { label: "Find an FHB Mortgage Broker", href: "/find/mortgage-broker" },
+        secondaryCta: { label: "FHSS Calculator", href: "/tools/fhss-calculator" },
+        advisorCta: { href: "/quiz?vertical=mortgage", specialty: "first home buyer mortgage broker" },
+      };
+    }
+
+    // Under-60k income: FHSS tax saving is small, but FHG + state grants
+    // are the main lever. Push hardest on the grant + deposit-bond track.
+    if (income === "under_60k") {
+      return {
+        headline:
+          "First Home Guarantee + state grants are your fastest route — FHSS tax saving is small at this bracket.",
+        summary: [
+          "Below ~$45,000 of taxable income your marginal rate is 19%, so the FHSS 15% concessional tax saves only a few cents on the dollar. The 5%-deposit First Home Guarantee and your state's grant matter more — they can shrink your required cash deposit to a few percent of the purchase price.",
+          stateLine,
+          "If you're early in the savings phase, a high-interest savings account or term deposit beats FHSS at this income; once you cross into the 32.5% marginal bracket, FHSS becomes the better option.",
+        ]
+          .filter(Boolean)
+          .join(" "),
+        primaryCta: { label: "Compare Savings Accounts", href: "/savings" },
+        secondaryCta: { label: "Find a Mortgage Broker", href: "/find/mortgage-broker" },
+        advisorCta: { href: "/quiz?vertical=mortgage", specialty: "first home buyer mortgage broker" },
+      };
+    }
+
+    // $60k-$125k income — the bull's-eye for every FHB scheme.
+    if (deposit === "ready_to_buy") {
+      return {
+        headline:
+          "You're FHB-scheme eligible and deposit-ready — go straight to a specialist broker.",
+        summary: [
+          "On a $60k–$125k income you qualify for the First Home Guarantee (5% deposit, no LMI) as a single. State grants and stamp-duty concessions also apply.",
+          stateLine,
+          "Because your deposit is ready, the next decision is lender selection — a first-home-buyer-specialist mortgage broker compares 30+ lenders for FHG-participating products and FHSS-aware settlements (FHSS release takes 20+ business days, so settlement timing matters).",
+        ]
+          .filter(Boolean)
+          .join(" "),
+        primaryCta: { label: "Find an FHB Mortgage Broker", href: "/find/mortgage-broker" },
+        secondaryCta: { label: "FHB Hub", href: "/first-home-buyer" },
+        advisorCta: { href: "/quiz?vertical=mortgage", specialty: "first home buyer mortgage broker" },
+      };
+    }
+
+    if (deposit === "using_fhss") {
+      return {
+        headline:
+          "You're already on the most tax-efficient deposit path — focus on lender selection next.",
+        summary: [
+          "FHSS contributions at the 32.5% marginal bracket save ~17.5 cents per dollar via the 15% concessional tax. You can keep contributing up to $15,000/year (50,000 cap) until the ATO determination + release window opens.",
+          "On a $60k–$125k income you're also eligible for the First Home Guarantee — pair the FHSS release with a 5%-deposit FHG product so you avoid LMI on the rest.",
+          stateLine,
+        ]
+          .filter(Boolean)
+          .join(" "),
+        primaryCta: { label: "FHSS Calculator", href: "/tools/fhss-calculator" },
+        secondaryCta: { label: "Find an FHB Mortgage Broker", href: "/find/mortgage-broker" },
+        advisorCta: { href: "/quiz?vertical=mortgage", specialty: "first home buyer mortgage broker" },
+      };
+    }
+
+    if (deposit === "saving_outside_super") {
+      return {
+        headline:
+          "Move your deposit savings into FHSS — same dollar, ~17% tax saving at your marginal rate.",
+        summary: [
+          "Saving in a standard bank account taxes interest at your marginal rate (32.5%+). FHSS concessional contributions are taxed at 15% going in, and 85% of withdrawals are assessed at your marginal rate minus a 30% offset. For a $60k–$125k income, the net tax saving on $15,000/year of contributions is typically $2,500–$4,000.",
+          "Combine with the First Home Guarantee (5% deposit) and your state's grant.",
+          stateLine,
+        ]
+          .filter(Boolean)
+          .join(" "),
+        primaryCta: { label: "Calculate Your FHSS Saving", href: "/tools/fhss-calculator" },
+        secondaryCta: { label: "FHB Hub", href: "/first-home-buyer" },
+        advisorCta: { href: "/quiz?vertical=mortgage", specialty: "first home buyer mortgage broker" },
+      };
+    }
+
+    // Income $60k-$125k, no deposit yet — start with FHSS planning.
+    return {
+      headline:
+        "You're eligible for every FHB scheme — start by setting up FHSS to compound your deposit faster.",
+      summary: [
+        "On a $60k–$125k income you qualify for the First Home Guarantee (5% deposit, no LMI), FHSS ($50,000 max release), and your state's first-home grants and stamp-duty concessions. FHSS is usually the first move because deposit savings inside super grow tax-advantaged.",
+        stateLine,
+        "Run the FHSS calculator to size your contribution schedule, then come back for a mortgage-broker handoff once you're 12 months out from buying.",
+      ]
+        .filter(Boolean)
+        .join(" "),
+      primaryCta: { label: "Calculate Your FHSS Saving", href: "/tools/fhss-calculator" },
+      secondaryCta: { label: "Compare Savings Accounts", href: "/savings" },
+      advisorCta: { href: "/quiz?vertical=mortgage", specialty: "first home buyer mortgage broker" },
+    };
+  },
+};
