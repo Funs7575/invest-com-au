@@ -5,6 +5,7 @@ import { createStaticClient } from "@/lib/supabase/static";
 import type { Broker, UserReview, BrokerReviewStats, SwitchStory, BrokerQuestion, BrokerAnswer } from "@/lib/types";
 import { notFound } from "next/navigation";
 import { getBrokerBySlug } from "@/lib/request-cache";
+import { getActiveBrokersFull } from "@/lib/cached-data";
 import BrokerReviewClient from "./BrokerReviewClient";
 import TmdBadge from "@/components/TmdBadge";
 import BrokerHistoryChart from "@/components/broker/BrokerHistoryChart";
@@ -72,21 +73,25 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
   const { slug } = await params;
   const supabase = await createClient();
 
-  const broker = await getBrokerBySlug(slug);
+  // Both reads are independent of each other. Previously serial — paid
+  // two cross-region RTTs back-to-back. Now parallel via Promise.all,
+  // and `allActiveBrokers` comes from the 24h unstable_cache helper so
+  // subsequent broker pages share the same single Supabase read.
+  const [broker, allActiveBrokers] = await Promise.all([
+    getBrokerBySlug(slug),
+    getActiveBrokersFull(),
+  ]);
 
   if (!broker) notFound();
 
   const b = broker as Broker;
   const brokerReviewer = b.reviewer ?? null;
 
-  // Fetch similar brokers using multi-attribute similarity scoring
-  const { data: allOtherBrokers } = await supabase
-    .from('brokers')
-    .select('*')
-    .eq('status', 'active')
-    .neq('slug', slug);
+  // Filter the cached full set to exclude this broker (same as the prior
+  // `.eq('status', 'active').neq('slug', slug)` query).
+  const allOtherBrokers = allActiveBrokers.filter((other) => other.slug !== slug);
 
-  const similar = ((allOtherBrokers as Broker[]) || [])
+  const similar = allOtherBrokers
     .map((c) => ({ broker: c, score: scoreBrokerSimilarity(b, c) }))
     .filter(({ score }) => score >= 0)
     .sort((a, bItem) => bItem.score - a.score)
