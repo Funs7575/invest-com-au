@@ -17785,6 +17785,7 @@ export type Database = {
       is_admin: { Args: never; Returns: boolean }
       is_pro: { Args: { check_user_id?: string }; Returns: boolean }
       longtransactionsenabled: { Args: never; Returns: boolean }
+      metric_rls_tables_with_policies: { Args: never; Returns: number }
       populate_geometry_columns:
         | { Args: { tbl_oid: unknown; use_typmod?: boolean }; Returns: number }
         | { Args: { use_typmod?: boolean }; Returns: string }
