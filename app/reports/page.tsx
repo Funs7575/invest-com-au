@@ -22,9 +22,16 @@ export const metadata = {
 
 export default async function ReportsPage() {
   const supabase = await createClient();
+  // Explicit non-premium column list — `sections`, `fee_changes_summary`,
+  // and `new_entrants` are revoked from anon/authenticated at the column-
+  // GRANT layer (see migration
+  // 20260517_w2_17_premium_content_column_grants.sql). `select("*")` would
+  // 403 here; the list page only renders summary fields anyway.
   const { data } = await supabase
     .from("quarterly_reports")
-    .select("*")
+    .select(
+      "id, title, slug, quarter, year, cover_image_url, executive_summary, key_findings, status, published_at, created_at, updated_at",
+    )
     .eq("status", "published")
     .order("year", { ascending: false })
     .order("quarter", { ascending: false });
