@@ -48,7 +48,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
 | Z | `claude/audit-remediation/z-04-zero-state-ux` | #230/#323/#403/#457/#524/#565 | Z-01..Z-04 done. | Z-04 merged ✓ |
 | QQ | `claude/audit-remediation/qq-05-schema` | **#800 MERGED 2026-05-14** · **#920 OPEN** | QQ-01..QQ-07 done (merged). QQ-05+QQ-06 done (`b3a1e63`): migration + `/api/answers/ask`. QQ-09 done (`27079bf`): admin moderation queue + action API. QQ-10 done (`217d7d6`): 19-test suite. QQ-08 compliance gate blocks public exposure. **Stream engineering complete pending QQ-08 compliance signoff.** Last CI: pending — pushed `217d7d6` 2026-05-19. | All QQ tasks merged |
-| MM | `claude/audit-remediation/mm-v01b-digital-infra-listings` | **#801 MERGED** · **#803 MERGED 2026-05-14** | MM-V01..V08 done. MM-V06 pending (Tier C — wholesale-only alternatives: litigation funding, PE, VC, hedge funds, ILS; s708 gate design required; announce before merge). Next item: MM-V06. | All MM phases merged |
+| MM | `claude/audit-remediation/mm-v06-wholesale-alternatives` | **#801 MERGED** · **#803 MERGED 2026-05-14** · **#921 OPEN** | MM-V01..V08 done. MM-V06 in-flight (`afd1b1e`): 4 wholesale-alt listing pages + s708 gate (PE, VC, hedge funds, litigation funding, ILS). Last CI: pending — pushed `afd1b1e` 2026-05-19. | All MM phases merged |
 | TT | _complete_ | **#764 MERGED** · **#772 MERGED** · **#779 MERGED** · **#799 MERGED 2026-05-12** | TT-01..TT-04 all done. GA4 removed; Plausible sole analytics. **Stream complete.** | TT-04 merged ✓ |
 | CMP | `claude/audit-remediation/cmp-w1a-int-calculator-autosave` | **#782 CLOSED 2026-05-14 (not merged)** | CMP-W1A-INT: #782 was closed without merging by founder 2026-05-14. Work may need re-examination or re-opening on a fresh branch. | All CMP tasks merged |
 | SP | (none yet) | (none yet) | **BLOCKED — waiting on MM-V09 completion.** | All SP tasks merged + compliance signoff |
@@ -127,6 +127,29 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 452 — 2026-05-19 — MM-V06 — wholesale alternatives listings + s708 gate
+
+- **Stream:** MM (vertical listings)
+- **Phase:** 5 — implementation (Tier C — new listing pages with s708 compliance gate)
+- **Branch:** `claude/audit-remediation/mm-v06-wholesale-alternatives`
+- **PR:** #921 OPEN
+- **Commit:** `afd1b1e` — feat(mm): MM-V06 — wholesale alternatives listings + s708 gate (PE, VC, hedge funds, litigation funding, ILS)
+- **Diff:** +313 LOC (7 files — 4 new listing pages, lib/types.ts, lib/listing-url.ts, app/sitemap.ts)
+- **Items done:** MM-V06 (wholesale-only alternatives with Corporations Act s708 disclosure gate)
+- **Implementation:**
+  - **`app/invest/private-equity/listings/page.tsx`** — PE + hedge-fund combined listings (hedge-fund co-located under PE hub)
+  - **`app/invest/venture-capital/listings/page.tsx`** — VC listings
+  - **`app/invest/litigation-funding/listings/page.tsx`** — litigation funding listings with binary-risk disclosure note
+  - **`app/invest/insurance-linked-securities/listings/page.tsx`** — ILS listings with catastrophe-event risk note
+  - Each page: ISR `revalidate=300`, breadcrumb JSON-LD, amber s708 disclosure banner (3 qualification criteria)
+  - **`lib/types.ts`** — extends `InvestListingVertical` with 5 new verticals
+  - **`lib/listing-url.ts`** — `VERTICAL_TO_CATEGORY` entries for all 5 new verticals
+  - **`app/sitemap.ts`** — 7 new URL entries
+  - Local gates: dated-strings ✅, JSON-LD coverage ✅, rate-limits ✅
+- **Tier C announcement:** Made inline before implementation — "adding 5 wholesale-alternative verticals with s708 disclosure gate"
+- **Stream status:** MM-V06 in-flight. Stream engineering complete pending #921 merge.
+- **STATUS: PROGRESS · stream=MM · item=MM-V06 · pr=#921**
 
 ### iter 451 — 2026-05-19 — QQ-10 — route handler tests for /api/answers/ask + /api/admin/qa
 
