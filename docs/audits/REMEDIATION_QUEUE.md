@@ -59,8 +59,8 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | EM | _complete_ | **#848 MERGED 2026-05-17** · **#880 MERGED 2026-05-18** | EM-03 + EM-01 done. EM-02 (`16add6f`): hub_drip_log migration + hub-subscriber-drip cron. **Stream complete. #880 merged by founder 2026-05-18.** | All EM tasks merged ✓ |
 | LX | _complete_ | **#849 MERGED 2026-05-15** · **#879 MERGED 2026-05-18** | LX-01, LX-02, LX-03, LX-04, LX-05 done. **Stream complete. #879 merged by founder 2026-05-18.** | All LX tasks merged ✓ |
 | OB | _complete_ | **#852 MERGED 2026-05-17** · **#878 MERGED 2026-05-18** | OB-01..OB-12 done. **Stream complete. #878 merged by founder 2026-05-18.** | All OB tasks merged ✓ |
-| GT | `claude/audit-remediation/gt-02-annual-check` | **#881 OPEN** | GT-01 blocked (needs DV-01). GT-02 done (`a4c5352`): annual financial check-up page `/account/annual-check`. CI rescue iter 444: merge main → resolve dashboard NavCard conflict (both Annual Check-up + Financial Calendar kept) + pick up a11y fix now on main via founder PRs #908–#915. Commit `7d5ef49`. Last CI: pending — pushed `7d5ef49` 2026-05-18. | All GT tasks merged |
-| DF | `claude/audit-remediation/df-01-decision-frameworks` | **#883 OPEN** · ~~#884 CLOSED (dup)~~ | DF-01..04 done. Merge rescue iter 444: resolved additive conflicts in `app/sitemap.ts` + `app/tools/ToolsClient.tsx` (DF adds buy-vs-rent/salary-sacrifice/smsf-setup; main adds fhss-calculator; kept all). Commit `5f105bc`. Last CI: pending — pushed `5f105bc` 2026-05-18. | All DF tasks merged |
+| GT | `claude/audit-remediation/gt-02-annual-check` | **#881 OPEN** | GT-01 blocked (needs DV-01). GT-02 done (`a4c5352`). CI rescue iter 446: merge main (types regen `afsl_register`). Commit `f666941`. Last CI: pending — pushed `f666941` 2026-05-19. ⚠️ Recurring drift — founder should merge #881 to stop cycle. | All GT tasks merged |
+| DF | `claude/audit-remediation/df-01-decision-frameworks` | **#883 OPEN** · ~~#884 CLOSED (dup)~~ | DF-01..04 done. CI rescue iter 446: merge main (types regen `afsl_register`). Commit `d819304`. Last CI: pending — pushed `d819304` 2026-05-19. ⚠️ Recurring drift — founder should merge #883 to stop cycle. | All DF tasks merged |
 | QA | _complete_ | **#890 MERGED 2026-05-18** | QA-01..QA-02 done. **Stream complete. #890 merged by founder 2026-05-18.** | All QA tasks merged ✓ |
 | Z-23+BB-08 | _complete_ | **#895 MERGED 2026-05-18** | Z-23 + BB-08 done. All CI green. **Stream complete. #895 merged by founder 2026-05-18.** | #895 merged ✓ |
 | SM | _complete_ | **#904 MERGED 2026-05-18** | SM-01+SM-02 done. **Stream complete. #904 merged by founder 2026-05-18.** | All SM tasks merged ✓ |
@@ -114,6 +114,20 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 446 — 2026-05-19 — CI-RESCUE GT (#881) + DF (#883): Supabase types drift — afsl_register
+
+- **Streams:** GT (annual-check) + DF (decision-frameworks)
+- **Phase:** 1.5 (types regen) + 2 (CI rescue — both branches)
+- **PRs:** GT #881 OPEN, DF #883 OPEN
+- **Commits:**
+  - `e914b63` — chore(db): regenerate database.types.ts (auto-rescue — afsl_register) [main]
+  - `f666941` — merge main into GT branch [branch `claude/audit-remediation/gt-02-annual-check`]
+  - `d819304` — merge main into DF branch [branch `claude/audit-remediation/df-01-decision-frameworks`]
+- **Diff:** +42 lines in `lib/database.types.ts` (afsl_register table definition)
+- **Root cause:** A new `afsl_register` table (ASIC AFSL licence register import) was added to the live Supabase DB after iter 444's main-merge on both branches. The `Supabase types drift` CI check (live-DB vs `lib/database.types.ts`) fails when the live DB has tables not in the types file. Phase 1.5 gate fired: one new table not in current types → regenerated on main, then merged main into both GT and DF branches.
+- **Stuck-detection note:** GT has 5+ prior CI-RESCUE entries for #881 + `Supabase types drift` within 24h. Each rescue has successfully fixed the drift — the issue is that main keeps advancing (new DB tables, new migrations) while #881 sits unmerged. This is NOT non-productive runner noise; each fix works. Structural resolution: founder should merge #881 and #883 directly. The `Supabase types drift` recurring cycle will stop once these PRs land on main.
+- **STATUS: CI-RESCUE · stream=GT+DF · pr=#881+#883**
 
 ### iter 445 — 2026-05-18 — AT-02..04 couple/family/business account-type hubs on dashboard
 
