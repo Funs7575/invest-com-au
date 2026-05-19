@@ -139,6 +139,16 @@ export const LEAD_MAGNETS: LeadMagnet[] = [
     downloadUrl: "/downloads/first-home-buyer-guide.pdf",
     coverIcon: "home",
   },
+  {
+    slug: "redundancy-financial-checklist",
+    hubSlug: "redundancy",
+    title: "Redundancy Financial Action Checklist",
+    description:
+      "30-day, 90-day and 12-month roadmap: ETP tax decisions, super carry-forward timing, cash buffer sizing, Centrelink income maintenance period, and when to see a tax agent.",
+    segmentSlug: "redundancy-hub",
+    downloadUrl: "/downloads/redundancy-financial-checklist.pdf",
+    coverIcon: "shield-check",
+  },
 ];
 
 export function getLeadMagnetForHub(hubSlug: string): LeadMagnet | undefined {
