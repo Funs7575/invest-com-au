@@ -13,6 +13,7 @@ import Icon from "@/components/Icon";
 import { trackEvent } from "@/lib/tracking";
 import { submitLead } from "@/lib/submit-lead-client";
 import { isCrossBorderSpecialty } from "@/lib/advisor-billing-multipliers";
+import { browseAdvisorsHref } from "@/lib/find-advisor/browse-link";
 import EligibilityQuizSkipBanner from "@/components/EligibilityQuizSkipBanner";
 import CountryRuleAlerts from "@/components/CountryRuleAlerts";
 
@@ -1263,36 +1264,6 @@ function Step4({
 
 function typeLabel(type: string): string {
   return type.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-}
-
-/**
- * Map a quiz Intent to the professional types most relevant on /advisors.
- * Comma-separated so the /advisors `?type=` filter picks them all up.
- *
- * Audit: the /find-advisor confirmation screen previously linked to a
- * bare `/advisors` URL, losing the intent + location context the user
- * just answered through. This bridge keeps the funnel coherent for
- * users who explore alternatives after confirming a match.
- */
-function intentToAdvisorTypes(intent: Intent): string {
-  switch (intent) {
-    case "buy_property":
-      return "mortgage_broker,buyers_agent,property_advisor";
-    case "grow_wealth":
-      return "financial_planner,wealth_manager";
-    case "protect_assets":
-      return "insurance_broker,estate_planner";
-    case "business_tax":
-      return "tax_agent,smsf_accountant";
-  }
-}
-
-function browseAdvisorsHref(intent: Intent | null, state: string): string {
-  const params = new URLSearchParams();
-  if (intent) params.set("type", intentToAdvisorTypes(intent));
-  if (state) params.set("state", state);
-  const qs = params.toString();
-  return qs ? `/advisors?${qs}` : "/advisors";
 }
 
 function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches, onRematch, rematching, noMoreMatches, onRestart, submitError, onConfirm, confirming, confirmedAdvisorId, userIntent, userState }: {
