@@ -718,6 +718,8 @@ function FindAdvisorQuiz() {
           <MatchConfirmation
             userEmail={quiz.email}
             userFirstName={quiz.firstName}
+            userIntent={quiz.intent}
+            userState={quiz.state}
             currentMatch={currentMatch}
             allMatches={matchedAdvisors}
             onRematch={handleRematch}
@@ -1263,10 +1265,41 @@ function typeLabel(type: string): string {
   return type.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches, onRematch, rematching, noMoreMatches, onRestart, submitError, onConfirm, confirming, confirmedAdvisorId }: {
+/**
+ * Map a quiz Intent to the professional types most relevant on /advisors.
+ * Comma-separated so the /advisors `?type=` filter picks them all up.
+ *
+ * Audit: the /find-advisor confirmation screen previously linked to a
+ * bare `/advisors` URL, losing the intent + location context the user
+ * just answered through. This bridge keeps the funnel coherent for
+ * users who explore alternatives after confirming a match.
+ */
+function intentToAdvisorTypes(intent: Intent): string {
+  switch (intent) {
+    case "buy_property":
+      return "mortgage_broker,buyers_agent,property_advisor";
+    case "grow_wealth":
+      return "financial_planner,wealth_manager";
+    case "protect_assets":
+      return "insurance_broker,estate_planner";
+    case "business_tax":
+      return "tax_agent,smsf_accountant";
+  }
+}
+
+function browseAdvisorsHref(intent: Intent | null, state: string): string {
+  const params = new URLSearchParams();
+  if (intent) params.set("type", intentToAdvisorTypes(intent));
+  if (state) params.set("state", state);
+  const qs = params.toString();
+  return qs ? `/advisors?${qs}` : "/advisors";
+}
+
+function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches, onRematch, rematching, noMoreMatches, onRestart, submitError, onConfirm, confirming, confirmedAdvisorId, userIntent, userState }: {
   userEmail: string; userFirstName: string; currentMatch: MatchedAdvisor | null; allMatches: MatchedAdvisor[];
   onRematch: () => void; rematching: boolean; noMoreMatches: boolean; onRestart: () => void; submitError: string | null;
   onConfirm: (advisor: MatchedAdvisor) => void; confirming: boolean; confirmedAdvisorId: number | null;
+  userIntent: Intent | null; userState: string;
 }) {
   const isCurrentConfirmed = !!(currentMatch && confirmedAdvisorId === currentMatch.id);
   return (
@@ -1588,9 +1621,11 @@ function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches,
         ))}
       </div>
 
-      {/* CTAs */}
+      {/* CTAs — deep-link Browse to a /advisors filter pre-populated from
+          the quiz answers, so the user sees relevant alternatives, not the
+          full unfiltered directory. */}
       <div className="flex flex-col sm:flex-row gap-3">
-        <Button variant="secondary" href="/advisors" className="flex-1 justify-center">
+        <Button variant="secondary" href={browseAdvisorsHref(userIntent, userState)} className="flex-1 justify-center">
           Browse All Advisors
         </Button>
         <Button variant="secondary" href="/compare" className="flex-1 justify-center">
