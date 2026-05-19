@@ -6,12 +6,11 @@ import { logger } from "@/lib/logger";
 const log = logger("web-vitals");
 
 /**
- * Reports Core Web Vitals (CLS, LCP, INP, FCP, TTFB) to analytics.
+ * Reports Core Web Vitals (CLS, LCP, INP, FCP, TTFB) to our own
+ * /api/track-event endpoint. Logged in development for debugging.
  *
- * Metrics are sent to Google Analytics (if available) via the gtag event
- * and logged in development for debugging.
- *
- * Include this component once in the root layout inside a Suspense boundary.
+ * Mounted via components/LayoutSideEffects.tsx (lazy-loaded after
+ * hydration so this telemetry doesn't compete with LCP work).
  */
 export default function WebVitals() {
   useReportWebVitals((metric) => {
@@ -26,18 +25,9 @@ export default function WebVitals() {
       });
     }
 
-    // Send to Google Analytics if gtag is available
-    if (typeof window !== "undefined" && "gtag" in window) {
-      const gtag = (window as unknown as { gtag: (...args: unknown[]) => void }).gtag;
-      gtag("event", name, {
-        event_category: "Web Vitals",
-        event_label: id,
-        value: Math.round(name === "CLS" ? value * 1000 : value),
-        non_interaction: true,
-      });
-    }
-
-    // Send to our own analytics endpoint (non-blocking)
+    // Send to our own analytics endpoint (non-blocking).
+    // Previously also dispatched to `window.gtag` when present — GA4
+    // was removed in TT-04 and the branch was dead code from then on.
     if (process.env.NODE_ENV === "production") {
       fetch("/api/track-event", {
         method: "POST",
