@@ -2,6 +2,8 @@
 
 import { useState, useMemo, useEffect, useRef } from "react";
 
+import { WIDGET_CATALOGUE } from "@/lib/widget/types";
+
 const POPULAR_BROKERS = [
   { slug: "stake", name: "Stake" },
   { slug: "commsec", name: "CommSec" },
@@ -20,18 +22,20 @@ export default function EmbedBuilder() {
   const [widgetType, setWidgetType] = useState<"table" | "compact">("table");
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [limit, setLimit] = useState(5);
+  const [widgetCatalogueSlug, setWidgetCatalogueSlug] = useState<string>("");
   const [copied, setCopied] = useState(false);
   const previewRef = useRef<HTMLDivElement>(null);
 
   const embedUrl = useMemo(() => {
     const params = new URLSearchParams();
+    if (widgetCatalogueSlug) params.set("widget", widgetCatalogueSlug);
     if (selectedSlugs.length > 0) params.set("brokers", selectedSlugs.join(","));
     if (widgetType !== "table") params.set("type", widgetType);
     if (theme !== "light") params.set("theme", theme);
     if (limit !== 5) params.set("limit", String(limit));
     const qs = params.toString();
     return `https://invest.com.au/api/widget${qs ? `?${qs}` : ""}`;
-  }, [selectedSlugs, widgetType, theme, limit]);
+  }, [selectedSlugs, widgetType, theme, limit, widgetCatalogueSlug]);
 
   const snippet = `<script src="${embedUrl}"></script>`;
 
@@ -99,6 +103,26 @@ export default function EmbedBuilder() {
   return (
     <div className="border border-slate-200 rounded-xl overflow-hidden">
       <div className="p-5 md:p-6 space-y-5">
+        {/* Curated widget filter */}
+        <div>
+          <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
+            Widget type
+          </label>
+          <select
+            value={widgetCatalogueSlug}
+            onChange={(e) => setWidgetCatalogueSlug(e.target.value)}
+            className="w-full border border-slate-200 rounded-lg py-2 px-3 text-sm"
+          >
+            <option value="">Top brokers (default)</option>
+            {WIDGET_CATALOGUE.map((w) => (
+              <option key={w.slug} value={w.slug}>{w.label}</option>
+            ))}
+          </select>
+          <p className="mt-1 text-[11px] text-slate-500">
+            Pick a curated list (e.g. crypto exchanges) or leave default for top-rated overall.
+          </p>
+        </div>
+
         {/* Broker selection */}
         <div>
           <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
