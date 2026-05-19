@@ -8,6 +8,7 @@ import GetMatchedEmbed from "@/components/get-matched/GetMatchedEmbed";
 import ResumeBanner from "@/components/get-matched/ResumeBanner";
 import HomeListingsTeaser, { type HomeListing } from "@/components/HomeListingsTeaser";
 import HomeAdvisorsTeaser, { type HomeAdvisor } from "@/components/HomeAdvisorsTeaser";
+import HomeSquadOfTheMonth from "@/components/HomeSquadOfTheMonth";
 import HomePostAJob from "@/components/HomePostAJob";
 import HomeCompareDeepDive, { type CompareBroker } from "@/components/HomeCompareDeepDive";
 import HomeCrossBorder from "@/components/HomeCrossBorder";
@@ -297,6 +298,12 @@ export default async function HomePage() {
 
       <ScrollFadeIn>
         <HomeAdvisorsTeaser advisors={advisorList} totalCount={totalProfessionalCount} />
+      </ScrollFadeIn>
+
+      {/* Pro Squad of the Month — rotating verified-team spotlight ranked
+          by outcome flywheel data. Server-rendered, fail-soft to null. */}
+      <ScrollFadeIn>
+        <HomeSquadOfTheMonth />
       </ScrollFadeIn>
 
       <ScrollFadeIn>

@@ -18,92 +18,27 @@
 # Categories follow the Stream A item map in docs/audits/drift-list.md.
 
 # A-04 (admin / audit)
-admin_audit_log
 
 # A-03 (advisor family)
-advisor_applications
-advisor_articles
-advisor_auctions          # W1.4 reverse marketplace — live, migration backfill pending
-advisor_auction_bids      # W1.4 reverse marketplace — live, migration backfill pending
-advisor_auth_tokens
-advisor_billing
-advisor_bookings
-advisor_booking_slots
-advisor_metrics_daily
-advisor_sessions
-advisor_specialties        # verify retirement before backfill
-advisor_verification_log
 
 # A-05 (affiliate / finance)
-affiliate_payout_reports
-affiliate_payout_variance
-conversion_events
-credit_packs
-finance_transactions
-subscriptions
 
 # A-06 (marketplace)
-allocation_decisions
-broker_accounts
-broker_activity_log
-broker_answers
-broker_data_changes
-broker_health_scores
-broker_packages
-broker_questions
-broker_review_invites
-broker_review_stats        # verify view vs table
-broker_wallets
-campaigns
-campaign_daily_stats
-campaign_events
-campaign_templates
-marketplace_invoices
 marketplace_placements
-sponsored_placement_bookings
-sponsored_placement_pricing
-wallet_transactions
 
 # A-07 (reference data)
-au_postcodes
 
 # A-08 (CRM / BD)
-bd_pipeline
-broker_outreach_log
-competitor_watch
 
 # A-09 (content tables)
-broker_transfer_guides
-content_calendar
-country_investment_profiles  # verify rename relationship to foreign_investment_dta
-fee_auto_rules
-fee_profiles
-fee_update_queue
-foreign_investment_rates     # verify whether folded into fi_* tables
-legal_documents
-regulatory_alerts
 switch_stories
-team_members
 
 # A-10 (consultations / courses)
-consultations
-consultation_bookings
-courses
-course_lessons
-course_progress
 course_purchases
-course_revenue
 
 # A-11 (ops / observability)
-cron_health_alerts
-posthog_events_mirror
-rate_limits
-webhook_delivery_queue
 
 # A-12 (email / lifecycle)
-hub_drip_log              # vertical-hub drip cadence — live, migration backfill pending
-investor_drip_log
-notification_preferences
 
 # A-13 (portfolio)
 portfolio_alerts
@@ -113,19 +48,12 @@ portfolio_holdings         # verify; may be JSONB on user_portfolios
 user_portfolios
 
 # A-14 (Pro tier)
-pro_deals
-pro_deal_redemptions
 
 # A-02 (lead family / user data) — leftovers after main A-02 ship
-international_leads        # FK index exists but no CREATE TABLE — high priority
-lead_disputes
-user_reviews
 
 # A-99 (retirement / regenerate types — these tables look retired)
 article_moderation_log     # superseded by advisor_article_moderation_log
-content_products           # never shipped
 data_license_subscribers   # never shipped
-featured_plans             # superseded by sponsored_placement_*
 foreign_investment_flags   # renamed to foreign_investment_dta in 20260322 migration
 investor_journey_touchpoints  # superseded by attribution_touches
 sentiment_signals          # never shipped
@@ -135,17 +63,14 @@ trading_signals            # trading product never shipped
 
 
 # Recent additions (dashboard-created via Supabase UI, pending Stream A backfill migration)
-business_accounts         # account-system expansion (Phase 2/3) — backfill migration pending
-investor_goals            # goals-tracking feature — backfill migration pending
-listing_owner_accounts    # marketplace listing-owner portal — backfill migration pending
-property_holdings         # portfolio / property-investing feature — backfill migration pending
-fund_reviews              # fund review content — backfill migration pending
-placement_experiments     # A/B placement testing feature — dashboard-created 2026-05-11, backfill migration pending
 
 # PostGIS extension-managed (out of scope — comes from CREATE EXTENSION postgis)
 spatial_ref_sys
 
 # W2 Phase — tables created in Supabase dashboard without migration files; pending Stream A backfill
-business_accounts  # W2 Phase 2.5 — business account type; migration pending
-investor_goals     # W2 Phase 2 — investor goals tracking; migration pending
-placement_experiments  # created in dashboard 2026-05-11; pending migration backfill (A-stream)
+
+# Founder dashboard PRs (#891–#893) added these tables without migrations; pending Stream A backfill.
+# brief_promo_codes + brief_promo_redemptions get their migration in this PR (#899) and so are
+# intentionally omitted here — the gate will fail loudly if they slip out of the migration set.
+investor_oauth_connections  # PR #893 — OAuth provider connections; remove when its migration lands
+afsl_register               # created in Supabase dashboard (ASIC AFSL register import 2026-05-19); remove when backfill migration lands

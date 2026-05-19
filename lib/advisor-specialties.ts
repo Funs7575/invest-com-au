@@ -136,6 +136,20 @@ export const ADVISOR_SPECIALTY_CATEGORIES: {
       "FIRB Property (Non-Resident)",
     ],
   },
+  {
+    // SM-02: Cultural + faith-based routing (added 2026-05-18). Advisors who
+    // self-declare these tags appear in "Cultural Match" quick-filter results.
+    // Halal and ethical investing are distinct from ESG (methodology differs).
+    category: "Cultural & Faith-Based",
+    specialties: [
+      "Halal Investing",
+      "Ethical / ESG Investing",
+      "Buddhist Financial Principles",
+      "Culturally Sensitive Advice",
+      "Bilingual Financial Advice",
+      "Socially Responsible Investing",
+    ],
+  },
 ];
 
 // ═══════════════════════════════════════════════

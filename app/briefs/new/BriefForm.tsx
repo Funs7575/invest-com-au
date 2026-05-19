@@ -92,6 +92,19 @@ const INITIAL: FormState = {
   consent: false,
 };
 
+export interface WorkspaceContext {
+  kind:
+    | "advisor"
+    | "broker_partner"
+    | "investor"
+    | "business_owner"
+    | "listing_owner";
+  label: string;
+  prefillName: string | null;
+  prefillEmail: string | null;
+  prefillPhone: string | null;
+}
+
 interface BriefFormProps {
   /**
    * Whether the AI co-pilot toggle should render. Resolved server-side
@@ -100,9 +113,19 @@ interface BriefFormProps {
    * textarea + Submit button path is never reachable client-side either.
    */
   aiCopilotEnabled?: boolean;
+  /** Server-resolved active workspace — drives the "Filing as <kind>" chip
+   * and prefills contact fields. Null = not signed in or no active kind. */
+  workspace?: WorkspaceContext | null;
+  /** Server-resolved Investor Pro subscription state — unlocks the
+   * direct-route shortcut that skips the 24h smart-match window. */
+  proSubscriber?: boolean;
 }
 
-export default function BriefForm({ aiCopilotEnabled = false }: BriefFormProps) {
+export default function BriefForm({
+  aiCopilotEnabled = false,
+  workspace = null,
+  proSubscriber = false,
+}: BriefFormProps) {
   const searchParams = useSearchParams();
   const presetTeam = searchParams?.get("team") ?? "";
   const presetTemplate = searchParams?.get("template") ?? "";
@@ -131,6 +154,12 @@ export default function BriefForm({ aiCopilotEnabled = false }: BriefFormProps) 
     brief_template: (BRIEF_TEMPLATES.includes(presetTemplate as BriefTemplate)
       ? (presetTemplate as BriefTemplate)
       : "") as BriefTemplate | "",
+    // Workspace-aware prefill: pulls contact name/email/phone from the
+    // signed-in user's active account-kind row so business + listing
+    // owners don't retype their own details.
+    contact_name: workspace?.prefillName ?? INITIAL.contact_name,
+    contact_email: workspace?.prefillEmail ?? INITIAL.contact_email,
+    contact_phone: workspace?.prefillPhone ?? INITIAL.contact_phone,
   }));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -459,6 +488,35 @@ export default function BriefForm({ aiCopilotEnabled = false }: BriefFormProps) 
 
   return (
     <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm">
+      {/* Workspace chip — tells the user which account-kind context the
+          brief will be filed under (a business owner's contact details
+          differ from their investor profile's). Swappable via
+          /account/select-workspace. Only shown when an active kind
+          resolved (not anonymous). */}
+      {workspace && (
+        <div className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 mb-6 flex items-center gap-2 text-xs text-slate-600">
+          <span className="font-semibold uppercase tracking-wide text-slate-500">
+            Filing as
+          </span>
+          <span className="font-bold text-slate-900 truncate">
+            {workspace.label}
+          </span>
+          <span className="text-slate-400">·</span>
+          <span className="text-slate-500 truncate">
+            {workspace.kind === "business_owner" && "Business workspace"}
+            {workspace.kind === "investor" && "Investor workspace"}
+            {workspace.kind === "listing_owner" && "Listing-owner workspace"}
+            {workspace.kind === "advisor" && "Advisor workspace"}
+            {workspace.kind === "broker_partner" && "Broker-partner workspace"}
+          </span>
+          <Link
+            href="/account/select-workspace"
+            className="ml-auto text-amber-700 font-semibold hover:underline shrink-0"
+          >
+            Switch
+          </Link>
+        </div>
+      )}
       {aiCopilotEnabled && (
         <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 mb-6 flex items-center justify-between gap-3">
           <div className="flex items-start gap-2 min-w-0">
@@ -707,6 +765,42 @@ export default function BriefForm({ aiCopilotEnabled = false }: BriefFormProps) 
               Pick the provider type and the routing mode. You stay in control.
             </p>
           </div>
+
+          {/* Investor Pro perk — skips the smart-match window and sends
+              directly to a chosen verified expert team. Only shown when
+              the parent server page resolves an active subscription. */}
+          {proSubscriber && (
+            <div className="rounded-xl border border-violet-300 bg-violet-50 p-4">
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={
+                    form.routing_mode === "direct" &&
+                    form.provider_preference === "expert_team"
+                  }
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setField("routing_mode", "direct");
+                      setField("provider_preference", "expert_team");
+                    } else {
+                      setField("routing_mode", "smart_match");
+                    }
+                  }}
+                  className="mt-0.5 h-4 w-4 rounded border-violet-400 text-violet-600 focus:ring-violet-500"
+                />
+                <div>
+                  <p className="text-sm font-bold text-violet-900">
+                    Skip the smart-match queue · Investor Pro
+                  </p>
+                  <p className="text-xs text-violet-800 mt-0.5">
+                    Route directly to a verified Expert Team of your choice.
+                    Bypasses the 24-hour smart-match window so they see your
+                    brief in their inbox immediately.
+                  </p>
+                </div>
+              </label>
+            </div>
+          )}
 
           <div>
             <p className="block text-sm font-semibold text-slate-700 mb-2">

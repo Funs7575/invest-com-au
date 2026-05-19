@@ -12,6 +12,7 @@ import { Card } from "@/components/ui/Card";
 import Icon from "@/components/Icon";
 import { trackEvent } from "@/lib/tracking";
 import { submitLead } from "@/lib/submit-lead-client";
+import { isCrossBorderSpecialty } from "@/lib/advisor-billing-multipliers";
 import EligibilityQuizSkipBanner from "@/components/EligibilityQuizSkipBanner";
 import CountryRuleAlerts from "@/components/CountryRuleAlerts";
 
@@ -273,10 +274,21 @@ function FindAdvisorQuiz() {
   const prefilledIntent = needParam ? NEED_TO_INTENT[needParam] || null : null;
 
   // LX-04 — pre-filled form params from hub CTAs, calculators, onboarding results.
+  // CM-01 — context pre-fill from life-event matcher (?context=first_home,investment).
   const stateParam = searchParams.get("state");
   const postcodeParam = searchParams.get("postcode");
   const budgetParam = searchParams.get("budget");
   const firstNameParam = searchParams.get("first_name");
+  const contextParam = searchParams.get("context");
+  // Cross-border Phase A — pre-filter advisor pool by specialty when the
+  // user arrives from a country page (/foreign-investment/uk → ?specialty=
+  // UK+Pension+Transfer). Validated against the cross-border specialty
+  // taxonomy in lib/advisor-billing-multipliers.ts; any other value is
+  // ignored to keep this URL surface narrow.
+  const specialtyParam = searchParams.get("specialty");
+  const preferredSpecialty = isCrossBorderSpecialty([specialtyParam ?? ""])
+    ? specialtyParam ?? undefined
+    : undefined;
 
   // Read sessionStorage once synchronously so all lazy initialisers share the same
   // parsed value — avoids 5 separate JSON.parse calls and, crucially, avoids the
@@ -308,7 +320,8 @@ function FindAdvisorQuiz() {
     return {
       step: initialIntent ? 2 : 1,
       intent: initialIntent,
-      context: [],
+      // CM-01: pre-select context from life-event matcher (?context=first_home,income_protection,…)
+      context: contextParam ? contextParam.split(",").filter(Boolean) : [],
       // LX-04: seed state/postcode/budget/firstName from URL so Step 3 + Step 4
       // are pre-populated when the user reaches them — reduces form friction.
       state: stateParam ?? "",
@@ -330,7 +343,7 @@ function FindAdvisorQuiz() {
           ...prev,
           step: 2,
           intent,
-          context: [],
+          context: contextParam ? contextParam.split(",").filter(Boolean) : [],
           // Re-apply pre-fill params on navigation changes too
           state: stateParam ?? prev.state,
           postcode: postcodeParam ?? prev.postcode,
@@ -340,6 +353,7 @@ function FindAdvisorQuiz() {
         setAppliedNeed(needParam);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- other params are intentionally read at apply-time only, not re-applied on every change.
   }, [needParam, appliedNeed]);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -414,9 +428,12 @@ function FindAdvisorQuiz() {
         context: quiz.context,
         budget: quiz.budget,
       },
-      source_page: "/find-advisor",
+      source_page: preferredSpecialty
+        ? `/find-advisor?specialty=${preferredSpecialty}`
+        : "/find-advisor",
       exclude_advisor_ids: excludeList,
       dry_run: true,
+      preferred_specialty: preferredSpecialty,
     });
   };
 
@@ -435,8 +452,11 @@ function FindAdvisorQuiz() {
         context: quiz.context,
         budget: quiz.budget,
       },
-      source_page: "/find-advisor",
+      source_page: preferredSpecialty
+        ? `/find-advisor?specialty=${preferredSpecialty}`
+        : "/find-advisor",
       confirm_advisor_id: advisorId,
+      preferred_specialty: preferredSpecialty,
     });
   };
 
@@ -632,6 +652,13 @@ function FindAdvisorQuiz() {
           <>
             <CountryRuleAlerts />
             <EligibilityQuizSkipBanner />
+            {preferredSpecialty && (
+              <div className="mb-6 rounded-lg border border-violet-200 bg-violet-50 px-4 py-3 text-sm text-violet-900">
+                <strong className="font-semibold">Routing you to a {preferredSpecialty} specialist.</strong>{" "}
+                Cross-border matters carry more risk and effort than a domestic referral, so we
+                prioritise advisors with proven track records in this specialty.
+              </div>
+            )}
             <Step1 onSelect={handleIntent} />
           </>
         )}
@@ -763,6 +790,11 @@ function Step1({ onSelect }: { onSelect: (intent: Intent) => void }) {
             {t}
           </span>
         ))}
+      </div>
+      <div className="mt-4 text-center">
+        <Link href="/find-advisor/life-event" className="text-xs text-amber-600 hover:text-amber-700 font-semibold">
+          Find by life event instead (getting married, new baby, selling a business\u2026) &rarr;
+        </Link>
       </div>
     </Card>
   );

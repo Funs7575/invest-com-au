@@ -17,8 +17,10 @@ import {
   getPublicTestimonials,
 } from "@/lib/outcomes/profile-display";
 import { computeSquadTier } from "@/lib/expert-teams/badge-tier";
+import { getOnlineProsBatch } from "@/lib/presence";
 import SquadStack from "./_components/SquadStack";
 import BundledPricePreview from "./_components/BundledPricePreview";
+import ActivityHeatmap from "./_components/ActivityHeatmap";
 
 export const revalidate = 1800;
 
@@ -143,6 +145,43 @@ export default async function TeamProfilePage({ params }: PageProps) {
     getPublicTestimonials({ teamId: team.id, limit: 5 }),
   ]);
 
+  // Presence indicator — how many squad members are pinging right now
+  // (heartbeat from /teams/[slug]/inbox). Fail-soft to empty set.
+  const onlineProIds = await getOnlineProsBatch(proIds);
+  const onlineNow = onlineProIds.size;
+
+  // Activity heatmap — bucket the last 90 days of member-side
+  // brief_messages into a 7-day × 24-hour grid for the trust strip.
+  const heatmapCutoff = new Date(
+    Date.now() - 90 * 86_400_000,
+  ).toISOString();
+  const heatmapBuckets: number[][] = Array.from({ length: 7 }, () =>
+    Array(24).fill(0),
+  );
+  let heatmapTotal = 0;
+  if (proIds.length > 0) {
+    try {
+      const { data: msgRaw } = await admin
+        .from("brief_messages")
+        .select("created_at, sender_professional_id, sender_team_id")
+        .or(
+          `sender_professional_id.in.(${proIds.join(",")}),sender_team_id.eq.${team.id}`,
+        )
+        .gte("created_at", heatmapCutoff);
+      for (const m of (msgRaw ?? []) as { created_at: string }[]) {
+        const d = new Date(m.created_at);
+        const row = heatmapBuckets[d.getDay()];
+        if (row) {
+          const hour = d.getHours();
+          row[hour] = (row[hour] ?? 0) + 1;
+          heatmapTotal += 1;
+        }
+      }
+    } catch {
+      /* silent — heatmap hides on failure */
+    }
+  }
+
   // Is the calling visitor an active member of this team? If so, surface
   // the "Open squad inbox" link in the trust strip. We resolve the user
   // via the anon auth cookie, then look up the professional + membership
@@ -195,11 +234,87 @@ export default async function TeamProfilePage({ params }: PageProps) {
 
   const acceptedTemplates = (team.accepted_brief_templates as string[]) ?? [];
 
+  // ProfessionalService schema for verified Pro Squads — gives Google
+  // rich-result eligibility (rating stars in SERPs). aggregateRating
+  // surfaces the outcome flywheel data from provider_outcome_scores.
+  // Reviews stream from brief_outcomes (show_testimonial=true only).
+  const completionPct = outcomeBadge?.completion_rate_pct;
+  const outcomesSubmitted = outcomeBadge?.outcomes_submitted ?? 0;
+  const teamLocation = (team.location_state as string | null) ?? null;
+  const serviceAreas = (team.service_areas as string[] | null) ?? null;
+  const teamUrl = absoluteUrl(`/teams/${slug}`);
+  const professionalServiceLd: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "ProfessionalService",
+    name: team.name,
+    description: ((team.description as string) ?? "").slice(0, 280),
+    url: teamUrl,
+    ...(teamLocation
+      ? {
+          address: {
+            "@type": "PostalAddress",
+            addressRegion: teamLocation,
+            addressCountry: "AU",
+          },
+        }
+      : {}),
+    ...(serviceAreas && serviceAreas.length > 0
+      ? { areaServed: serviceAreas.map((s) => ({ "@type": "State", name: s })) }
+      : {}),
+    ...(squadMembers.length > 0
+      ? {
+          employee: squadMembers.slice(0, 10).map((m) => ({
+            "@type": "Person",
+            name: m.pro_name,
+            ...(m.public_title ? { jobTitle: m.public_title } : {}),
+            ...(m.pro_slug ? { url: absoluteUrl(`/advisor/${m.pro_slug}`) } : {}),
+          })),
+        }
+      : {}),
+    ...(typeof completionPct === "number" && outcomesSubmitted > 0
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            // Map completion-rate percentage onto a 1-5 scale so search
+            // engines surface stars (50% → 2.5, 100% → 5).
+            ratingValue: Math.max(1, Math.round((completionPct / 100) * 5 * 10) / 10),
+            reviewCount: outcomesSubmitted,
+            bestRating: 5,
+            worstRating: 1,
+          },
+        }
+      : {}),
+    ...(testimonials.length > 0
+      ? {
+          review: testimonials.slice(0, 5).map((t) => ({
+            "@type": "Review",
+            ...(t.rating
+              ? {
+                  reviewRating: {
+                    "@type": "Rating",
+                    ratingValue: t.rating,
+                    bestRating: 5,
+                    worstRating: 1,
+                  },
+                }
+              : {}),
+            reviewBody: t.testimonial,
+            author: { "@type": "Person", name: "Verified consumer" },
+            ...(t.submitted_at ? { datePublished: t.submitted_at } : {}),
+          })),
+        }
+      : {}),
+  };
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(professionalServiceLd) }}
       />
       <div className="min-h-screen bg-slate-50">
         <div className="bg-white border-b border-slate-200">
@@ -224,6 +339,18 @@ export default async function TeamProfilePage({ params }: PageProps) {
             <span className="text-xs text-slate-500">
               {String(team.team_category).replace(/_/g, " ")} · {String(team.team_type).replace(/_/g, " ")}
             </span>
+            {onlineNow > 0 && (
+              <span
+                className="inline-flex items-center gap-1.5 text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 px-2 py-1 rounded-full"
+                title="Squad members with an active session in the last 5 minutes"
+              >
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                </span>
+                {onlineNow} member{onlineNow === 1 ? "" : "s"} online
+              </span>
+            )}
             {isActiveMember && (
               <Link
                 href={`/teams/${slug}/inbox`}
@@ -237,10 +364,26 @@ export default async function TeamProfilePage({ params }: PageProps) {
             {team.name as string}
           </h1>
           {team.description && (
-            <p className="text-slate-600 leading-relaxed max-w-3xl mb-6">
+            <p className="text-slate-600 leading-relaxed max-w-3xl mb-3">
               {team.description as string}
             </p>
           )}
+
+          {/* Specialty tags — finer-grained discovery signals beyond
+              the headline team_category. Hides when none set. */}
+          {Array.isArray(team.specialty_tags) &&
+            (team.specialty_tags as string[]).length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mb-6">
+                {(team.specialty_tags as string[]).slice(0, 12).map((t) => (
+                  <span
+                    key={t}
+                    className="inline-flex items-center text-[11px] font-semibold bg-violet-50 text-violet-700 border border-violet-200 rounded-full px-2 py-0.5"
+                  >
+                    {t.replace(/_/g, " ")}
+                  </span>
+                ))}
+              </div>
+            )}
 
           <div className="flex flex-wrap gap-3 mb-10">
             <Link
@@ -255,6 +398,14 @@ export default async function TeamProfilePage({ params }: PageProps) {
               className="inline-flex items-center gap-2 bg-white border border-slate-200 text-slate-700 font-semibold px-5 py-3 rounded-xl hover:border-slate-300"
             >
               Compare other experts
+            </Link>
+            <Link
+              href={`/teams/${slug}/availability`}
+              className="inline-flex items-center gap-2 bg-white border border-slate-200 text-slate-700 font-semibold px-5 py-3 rounded-xl hover:border-emerald-300 hover:text-emerald-700"
+              title="See when this squad is open for intro calls"
+            >
+              <Icon name="calendar" size={16} />
+              See team availability
             </Link>
           </div>
 
@@ -282,6 +433,14 @@ export default async function TeamProfilePage({ params }: PageProps) {
           </div>
 
           <BundledPricePreview estimate={priceEstimate} />
+
+          {/* Activity heatmap — when this squad is most responsive.
+              Reads 90d of brief_messages by member into a 7×24 grid.
+              Returns null if no message history. */}
+          <ActivityHeatmap
+            buckets={heatmapBuckets}
+            total={heatmapTotal}
+          />
 
           {testimonials.length > 0 && (
             <TestimonialList testimonials={testimonials} />

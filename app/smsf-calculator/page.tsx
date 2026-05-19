@@ -4,6 +4,7 @@ import { calculatorJsonLd } from "@/lib/schema-markup";
 import SMSFCalculatorClient from "./SMSFCalculatorClient";
 import ComplianceFooter from "@/components/ComplianceFooter";
 import CalcToPlanBridge from "@/components/get-matched/CalcToPlanBridge";
+import RelatedCalculators from "@/components/RelatedCalculators";
 
 export const revalidate = 3600;
 
@@ -31,6 +32,13 @@ export default function SMSFCalculatorPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareLd) }} />
       <SMSFCalculatorClient />
       <div className="container-custom pb-8">
+        <RelatedCalculators
+          items={[
+            { name: "Super Contributions Calculator", description: "Model the impact of salary sacrifice and voluntary contributions on your retirement balance.", href: "/super-contributions-calculator" },
+            { name: "Compound Interest Calculator", description: "See how your SMSF balance compounds over time with your target return rate.", href: "/compound-interest-calculator" },
+            { name: "FIRE Calculator", description: "Calculate the balance you need to retire and how many years your SMSF needs to reach it.", href: "/fire-calculator" },
+          ]}
+        />
         <CalcToPlanBridge
           goal="super"
           headline="Want a personalised SMSF action plan?"

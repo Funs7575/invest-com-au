@@ -10,6 +10,11 @@ export const metadata: Metadata = {
   title: `Weekly Investing Newsletter Archive — ${SITE_NAME}`,
   description:
     "Browse every edition of the Invest.com.au weekly digest. Fee changes, new articles, broker deals, and market insights — delivered every Monday.",
+  // noindex while the archive is empty — newsletter_editions table is
+  // live but 0 editions are published yet. Empty archives bounce hard
+  // in Google's eyes; flip robots.index to true once we ship the first
+  // 3–5 editions and the page actually has content to rank.
+  robots: { index: false, follow: true },
   openGraph: {
     title: `Weekly Investing Newsletter Archive — ${SITE_NAME}`,
     description:

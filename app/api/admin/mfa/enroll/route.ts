@@ -6,9 +6,28 @@ import {
   disableAdminMfa,
 } from "@/lib/admin-mfa";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { checkAdminMfaEnv } from "@/lib/admin-mfa-env-check";
 import { logger } from "@/lib/logger";
 
 const log = logger("admin:mfa:enroll");
+
+// Friendlier first-time-setup gate: instead of letting the deep
+// "ADMIN_MFA_KEY env var is required for MFA encryption" error from
+// lib/mfa-totp.ts surface as a 500 mid-enrollment, return a clean
+// 503 with the full list of missing vars up-front. Saves the stutter
+// of "set var → redeploy → fail on next var → set var → redeploy".
+function envGate(): NextResponse | null {
+  const status = checkAdminMfaEnv();
+  if (status.ok) return null;
+  return NextResponse.json(
+    {
+      error: "Admin MFA is not configured. Set the missing env vars in Vercel and redeploy.",
+      missing: status.missing,
+      docs: "/docs/ops/admin-mfa-rollout.md",
+    },
+    { status: 503 },
+  );
+}
 
 export const runtime = "nodejs";
 
@@ -30,6 +49,9 @@ export async function GET() {
 }
 
 export async function POST() {
+  const envProblem = envGate();
+  if (envProblem) return envProblem;
+
   const guard = await requireAdmin();
   if (!guard.ok) return guard.response;
 
@@ -70,6 +92,7 @@ export async function DELETE(request: Request) {
   const guard = await requireAdmin();
   if (!guard.ok) return guard.response;
 
+  // eslint-disable-next-line invest/no-unvalidated-req-json -- single optional field; below check is the contract.
   const body = await request.json().catch(() => ({}));
   const reason = typeof body.reason === "string" ? body.reason : null;
   if (!reason || reason.length < 5) {

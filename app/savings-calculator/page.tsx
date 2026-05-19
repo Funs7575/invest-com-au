@@ -5,6 +5,7 @@ import { calculatorJsonLd } from "@/lib/schema-markup";
 import SavingsCalculatorClient from "./SavingsCalculatorClient";
 import ComplianceFooter from "@/components/ComplianceFooter";
 import CalcToPlanBridge from "@/components/get-matched/CalcToPlanBridge";
+import RelatedCalculators from "@/components/RelatedCalculators";
 
 export const revalidate = 3600;
 
@@ -33,6 +34,13 @@ export default async function SavingsCalculatorPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(calculatorJsonLd({ name: "Savings Rate Calculator", description: "Compare savings account interest rates and calculate how much more you could earn.", path: "/savings-calculator" })) }} />
       <SavingsCalculatorClient accounts={accounts || []} />
       <div className="container-custom pb-8">
+        <RelatedCalculators
+          items={[
+            { name: "Compound Interest Calculator", description: "Model long-term investment growth with regular contributions and compound returns.", href: "/compound-interest-calculator" },
+            { name: "FIRE Calculator", description: "Calculate your Financial Independence number and retirement timeline.", href: "/fire-calculator" },
+            { name: "Mortgage Calculator", description: "See how much of your savings you could put toward a home deposit.", href: "/mortgage-calculator" },
+          ]}
+        />
         <CalcToPlanBridge
           goal="grow"
           headline="Want to start investing instead of just saving?"

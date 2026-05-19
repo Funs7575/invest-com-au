@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import BriefActivityPanel from "./BriefActivityPanel";
 import NotificationsList from "./NotificationsList";
 
 export const dynamic = "force-dynamic";
@@ -53,6 +54,13 @@ export default async function AccountNotificationsPage() {
             </p>
           </div>
         </div>
+
+        {/* Live brief-activity panel — aggregates events from
+            brief_messages, brief_disputes, and brief_outcomes (review
+            requested but not submitted) so the user sees what's
+            happening on their Match Requests without leaving this page.
+            Returns null when there are no events. */}
+        <BriefActivityPanel />
 
         <NotificationsList
           initialItems={items.map((i) => ({
