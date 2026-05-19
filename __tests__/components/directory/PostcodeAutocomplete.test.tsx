@@ -50,7 +50,7 @@ describe("PostcodeAutocomplete", () => {
         debounceMs={0}
       />,
     );
-    await user.type(screen.getByRole("textbox"), "Sy");
+    await user.type(screen.getByRole("combobox"), "Sy");
     await waitFor(() => {
       expect(search).toHaveBeenCalled();
     });
@@ -70,7 +70,7 @@ describe("PostcodeAutocomplete", () => {
         debounceMs={0}
       />,
     );
-    await user.type(screen.getByRole("textbox"), "S");
+    await user.type(screen.getByRole("combobox"), "S");
     // Wait long enough that any debounced call would have fired
     await new Promise((r) => setTimeout(r, 50));
     expect(search).not.toHaveBeenCalled();
@@ -87,7 +87,7 @@ describe("PostcodeAutocomplete", () => {
         debounceMs={0}
       />,
     );
-    await user.type(screen.getByRole("textbox"), "Sy");
+    await user.type(screen.getByRole("combobox"), "Sy");
     const option = await screen.findByRole("option", { name: /Sydney, NSW/ });
     await user.click(option);
     expect(onSelect).toHaveBeenCalledWith(MOCK_HITS[0]);
@@ -106,7 +106,7 @@ describe("PostcodeAutocomplete", () => {
     );
     await user.click(screen.getByLabelText("Clear location"));
     expect(onSelect).toHaveBeenCalledWith(null);
-    expect(screen.getByRole("textbox")).toHaveValue("");
+    expect(screen.getByRole("combobox")).toHaveValue("");
   });
 
   it("Escape closes the dropdown", async () => {
@@ -119,7 +119,7 @@ describe("PostcodeAutocomplete", () => {
         debounceMs={0}
       />,
     );
-    await user.type(screen.getByRole("textbox"), "Sy");
+    await user.type(screen.getByRole("combobox"), "Sy");
     await screen.findByRole("listbox");
     await user.keyboard("{Escape}");
     expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
