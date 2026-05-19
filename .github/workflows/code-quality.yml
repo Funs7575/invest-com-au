@@ -124,6 +124,12 @@ jobs:
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          # Powers M07/M08 — Supabase advisors counts via Management API.
+          # Both secrets already exist (added 2026-04-19); they just weren't
+          # passed through to this step previously, so collectAdvisorCounts
+          # returned -1 and the metrics stayed null.
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
           LIGHTHOUSE_TOP5: ${{ steps.lh.outputs.lighthouse }}
           GITHUB_SHA: ${{ github.sha }}
         run: npx tsx scripts/collect-quality-metrics.ts > /tmp/snapshot.json
