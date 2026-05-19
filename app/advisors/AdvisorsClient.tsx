@@ -1205,7 +1205,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                             width={80}
                             height={80}
                             className="w-full h-full object-cover"
-                            priority={index < 3}
+                            priority={index === 0}
                             placeholder="blur"
                             blurDataURL="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxyZWN0IHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiNlMmU4ZjAiLz48L3N2Zz4="
                           />
