@@ -208,7 +208,7 @@ export async function GET(request: NextRequest) {
         status: 200,
         headers: {
           ...API_CORS_HEADERS,
-          "Cache-Control": "public, max-age=3600",
+          "Cache-Control": "private, max-age=3600",
         },
       },
     );

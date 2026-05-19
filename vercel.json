@@ -1,5 +1,7 @@
 {
   "ignoreCommand": "bash scripts/vercel-skip-build.sh",
+  "_regions_note": "Pin serverless + ISR functions to Dublin so they're co-located with Supabase eu-west-1. Cross-region RTT drops from ~80ms (iad1 ↔ eu-west-1) to ~5ms (dub1 ↔ eu-west-1) — every server-rendered page benefits. AU end-users still hit Vercel's Sydney CDN POP for cached/ISR pages, so only the rare uncached SSR pays the extra ~50ms first-byte vs iad1.",
+  "regions": ["dub1"],
   "crons": [
     { "path": "/api/cron/dispatch/every-15m", "schedule": "*/15 * * * *" },
     { "path": "/api/cron/dispatch/every-30m", "schedule": "0,30 * * * *" },
