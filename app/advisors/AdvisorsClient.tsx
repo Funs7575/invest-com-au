@@ -445,12 +445,15 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
       case "fee_low": result.sort((a, b) => (a.hourly_rate_cents || a.flat_fee_cents || 999999) - (b.hourly_rate_cents || b.flat_fee_cents || 999999)); break;
       case "fee_high": result.sort((a, b) => (b.hourly_rate_cents || b.flat_fee_cents || 0) - (a.hourly_rate_cents || a.flat_fee_cents || 0)); break;
     }
-    // Featured advisors always appear first within the chosen sort
+    // Tier sort: Featured (gold/featured_until) → Pro → Free
     const now = new Date();
     result.sort((a, b) => {
-      const aFeatured = a.featured_until && new Date(a.featured_until) > now ? 1 : 0;
-      const bFeatured = b.featured_until && new Date(b.featured_until) > now ? 1 : 0;
-      return bFeatured - aFeatured;
+      const tierScore = (p: typeof a) => {
+        if (p.featured_until && new Date(p.featured_until) > now) return 2;
+        if (p.advisor_tier === "pro") return 1;
+        return 0;
+      };
+      return tierScore(b) - tierScore(a);
     });
     return result;
   }, [professionals, nearbyResults, isLocationActive, typeFilters, stateFilter, specialtyFilters, feeFilter, firmFilter, minRating, verifiedOnly, internationalOnly, languageFilter, acceptingOnly, videoOnly, search, sortBy]);
@@ -1179,10 +1182,13 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
 
               const pro = item.pro;
               const isFeatured = !!(pro.featured_until && new Date(pro.featured_until) > new Date());
+              const isProTier = !isFeatured && pro.advisor_tier === "pro";
               return (
                 <Link key={item.key} href={`/advisor/${pro.slug}`} className={`group block bg-white rounded-2xl transition-all duration-200 overflow-hidden ${
                   isFeatured
                     ? "shadow-md shadow-amber-50 hover:shadow-xl hover:shadow-amber-100/50 hover:-translate-y-0.5 ring-1 ring-amber-200/80 border border-amber-200"
+                    : isProTier
+                    ? "shadow-sm border border-violet-100 hover:shadow-md hover:shadow-violet-50 hover:-translate-y-0.5 hover:border-violet-200"
                     : "shadow-sm border border-slate-100 hover:shadow-md hover:shadow-slate-100 hover:-translate-y-0.5 hover:border-slate-200"
                 }`}>
                   {isFeatured && (
@@ -1241,6 +1247,12 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                               <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-amber-500 text-white flex items-center gap-0.5 shadow-sm">
                                 <Icon name="star" size={9} />
                                 Featured
+                              </span>
+                            )}
+                            {isProTier && (
+                              <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-violet-600 text-white flex items-center gap-0.5 shadow-sm">
+                                <Icon name="zap" size={9} />
+                                Pro
                               </span>
                             )}
                             {pro.avg_response_minutes != null && pro.avg_response_minutes <= 120 && (
