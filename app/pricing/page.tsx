@@ -192,7 +192,7 @@ export default function PricingPage() {
             What do Australian financial advisors charge?
           </h1>
           <p className="text-slate-300 max-w-2xl">
-            Typical fee ranges for financial planners, mortgage brokers, accountants, buyer's agents
+            Typical fee ranges for financial planners, mortgage brokers, accountants, buyer&rsquo;s agents
             and SMSF specialists — so you know what to expect before you book a consultation.
           </p>
         </div>
