@@ -41,20 +41,29 @@ const KIND_META: Record<
     icon: "🏷️",
     tone: "bg-rose-50 border-rose-200 hover:border-rose-400",
   },
+  squad: {
+    label: "Squad",
+    description: "Act on behalf of your expert team — squad inbox, dashboard, quotes.",
+    icon: "🤝",
+    tone: "bg-indigo-50 border-indigo-200 hover:border-indigo-400",
+  },
 };
 
 export default function SelectWorkspaceClient({ memberships }: Props) {
   const [selecting, setSelecting] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const choose = async (kind: WorkspaceKind) => {
-    setSelecting(kind);
+  const choose = async (m: KindMembership) => {
+    const tag = m.kind === "squad" ? `${m.kind}:${m.kindId}` : m.kind;
+    setSelecting(tag);
     setError(null);
     try {
       const res = await fetch("/api/account/active-kind", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ kind }),
+        body: JSON.stringify(
+          m.kind === "squad" ? { kind: m.kind, team_id: m.kindId } : { kind: m.kind },
+        ),
       });
       if (!res.ok) {
         const body = (await res.json().catch(() => ({}))) as { error?: string; redirect?: string };
@@ -73,11 +82,15 @@ export default function SelectWorkspaceClient({ memberships }: Props) {
       {memberships.map((m) => {
         const meta = KIND_META[m.kind];
         if (!meta) return null;
+        const tag = m.kind === "squad" ? `${m.kind}:${m.kindId}` : m.kind;
+        // Squad cards lead with the team name; base kinds lead with the kind label.
+        const primaryLabel = m.kind === "squad" ? m.displayLabel : meta.label;
+        const secondaryLabel = m.kind === "squad" ? meta.label : m.displayLabel;
         return (
           <button
             key={`${m.kind}-${m.kindId}`}
             type="button"
-            onClick={() => void choose(m.kind)}
+            onClick={() => void choose(m)}
             disabled={selecting !== null}
             className={`w-full text-left border-2 ${meta.tone} rounded-xl p-5 transition-colors disabled:opacity-50`}
           >
@@ -85,19 +98,19 @@ export default function SelectWorkspaceClient({ memberships }: Props) {
               <span className="text-3xl shrink-0" aria-hidden>{meta.icon}</span>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between gap-2 flex-wrap">
-                  <h2 className="text-base font-semibold text-slate-900">{meta.label}</h2>
+                  <h2 className="text-base font-semibold text-slate-900">{primaryLabel}</h2>
                   <span className="text-xs px-2 py-0.5 bg-white/60 text-slate-700 rounded-full">
                     {m.status}
                   </span>
                 </div>
-                {m.displayLabel && m.displayLabel !== meta.label && (
+                {secondaryLabel && secondaryLabel !== primaryLabel && (
                   <p className="text-sm text-slate-700 font-medium mt-0.5">
-                    {m.displayLabel}
+                    {secondaryLabel}
                   </p>
                 )}
                 <p className="text-sm text-slate-600 mt-1">{meta.description}</p>
                 <p className="text-xs font-semibold text-slate-700 mt-3">
-                  {selecting === m.kind ? "Opening…" : "Open this workspace →"}
+                  {selecting === tag ? "Opening…" : "Open this workspace →"}
                 </p>
               </div>
             </div>

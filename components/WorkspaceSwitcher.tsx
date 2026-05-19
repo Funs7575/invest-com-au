@@ -26,6 +26,7 @@ const KIND_LABEL: Record<string, string> = {
   broker_partner: "Broker partner",
   business_owner: "Business owner",
   listing_owner: "Listing owner",
+  squad: "Squad",
 };
 
 const KIND_ICON: Record<string, string> = {
@@ -34,6 +35,7 @@ const KIND_ICON: Record<string, string> = {
   broker_partner: "🏦",
   business_owner: "🏢",
   listing_owner: "🏷️",
+  squad: "🤝",
 };
 
 interface Membership {
@@ -41,11 +43,23 @@ interface Membership {
   kind_id: string;
   status: string;
   display_label: string;
+  scope_slug: string | null;
 }
 
 interface ActiveKindResponse {
   memberships: Membership[];
   active: string | null;
+}
+
+/**
+ * Render order: base kinds first (preserving their existing relative
+ * order), then squads grouped after. Keeps the dropdown readable for
+ * users in many squads without changing the existing base-kind UX.
+ */
+function orderMemberships(memberships: Membership[]): Membership[] {
+  const base = memberships.filter((m) => m.kind !== "squad");
+  const squads = memberships.filter((m) => m.kind === "squad");
+  return [...base, ...squads];
 }
 
 export default function WorkspaceSwitcher() {
@@ -88,24 +102,27 @@ export default function WorkspaceSwitcher() {
   const label = data.active ? KIND_LABEL[data.active] : "Choose workspace";
   const icon = data.active ? KIND_ICON[data.active] : "⇄";
 
-  async function switchTo(kind: string) {
-    if (switching || kind === data?.active) {
+  async function switchTo(m: Membership) {
+    const tag = m.kind === "squad" ? `${m.kind}:${m.kind_id}` : m.kind;
+    if (switching || tag === switching) {
       setOpen(false);
       return;
     }
-    setSwitching(kind);
+    setSwitching(tag);
     try {
       const res = await fetch("/api/account/active-kind", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ kind }),
+        body: JSON.stringify(
+          m.kind === "squad" ? { kind: m.kind, team_id: m.kind_id } : { kind: m.kind },
+        ),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const body = (await res.json()) as { redirect?: string };
       const dest = body.redirect ?? "/account";
       setOpen(false);
       // Optimistically update active so the pill label flips immediately.
-      setData((prev) => (prev ? { ...prev, active: kind } : prev));
+      setData((prev) => (prev ? { ...prev, active: m.kind } : prev));
       router.push(dest);
       router.refresh();
     } catch {
@@ -141,21 +158,34 @@ export default function WorkspaceSwitcher() {
             Switch to
           </p>
           <ul className="py-1">
-            {data.memberships.map((m) => {
+            {orderMemberships(data.memberships).map((m) => {
               const isActive = m.kind === data.active;
+              const tag = m.kind === "squad" ? `${m.kind}:${m.kind_id}` : m.kind;
+              // Squads lead with team name (display_label); base kinds lead
+              // with their kind label.
+              const primary =
+                m.kind === "squad"
+                  ? m.display_label
+                  : (KIND_LABEL[m.kind] ?? m.kind);
+              const secondary =
+                m.kind === "squad"
+                  ? KIND_LABEL.squad
+                  : m.display_label && m.display_label !== KIND_LABEL[m.kind]
+                  ? m.display_label
+                  : null;
               return (
                 <li key={`${m.kind}-${m.kind_id}`}>
                   <button
                     type="button"
                     role="menuitem"
-                    onClick={() => switchTo(m.kind)}
+                    onClick={() => switchTo(m)}
                     disabled={switching !== null}
                     className={`w-full text-left flex items-start gap-2 px-3 py-2 text-sm transition-colors ${
                       isActive
                         ? "bg-emerald-50 text-emerald-900"
                         : "hover:bg-slate-50 text-slate-800"
                     } ${
-                      switching && switching !== m.kind ? "opacity-50" : ""
+                      switching && switching !== tag ? "opacity-50" : ""
                     }`}
                   >
                     <span aria-hidden className="text-base">
@@ -163,11 +193,11 @@ export default function WorkspaceSwitcher() {
                     </span>
                     <span className="flex-1 min-w-0">
                       <span className="block font-semibold truncate">
-                        {KIND_LABEL[m.kind] ?? m.kind}
+                        {primary}
                       </span>
-                      {m.display_label && m.display_label !== KIND_LABEL[m.kind] && (
+                      {secondary && (
                         <span className="block text-xs text-slate-500 truncate">
-                          {m.display_label}
+                          {secondary}
                         </span>
                       )}
                     </span>
@@ -176,7 +206,7 @@ export default function WorkspaceSwitcher() {
                         Active
                       </span>
                     )}
-                    {switching === m.kind && (
+                    {switching === tag && (
                       <span className="text-[10px] text-slate-400 mt-0.5">…</span>
                     )}
                   </button>
