@@ -5,6 +5,7 @@ import { feeChangeAlertEmail } from "@/lib/email-templates";
 import { logger } from "@/lib/logger";
 import { requireCronAuth } from "@/lib/cron-auth";
 import { buildEmailToUserIdMap, notifyUser } from "@/lib/notifications";
+import { sendEmail } from "@/lib/resend";
 
 const log = logger("cron-check-fees");
 
@@ -268,7 +269,6 @@ export async function GET(req: NextRequest) {
       // Signed-in subscribers get an inbox notification; email-only
       // subscribers just receive the outbound email.
       const emailToUserId = await buildEmailToUserIdMap();
-      const changedSlugs = changedBrokers.map((b) => b.slug);
 
       for (const sub of subscribers.slice(0, 50)) {
         // Filter changes by subscriber's broker_slugs preference
@@ -320,6 +320,93 @@ export async function GET(req: NextRequest) {
           }),
         }).catch((err) => log.warn("Subscriber fee alert email failed", { err: err instanceof Error ? err.message : String(err), email: sub.email }));
       }
+    }
+
+    // FIN_NOTEBOOK #14 — Personalized fee-change email for users who
+    // told us this is their broker (via investor_holdings.broker_slug)
+    // but who never opted into the fee_alert_subscriptions list.
+    //
+    // These are different audiences:
+    //   - fee_alert_subscriptions = explicit opt-in via /fee-alerts
+    //     (email-keyed, no auth_user_id required)
+    //   - investor_holdings = authenticated user telling us their
+    //     broker as part of the portfolio surface
+    //
+    // Use sendEmail() so the suppression-list check is enforced.
+    const changedSlugs = changedBrokers.map((b) => b.slug);
+    const { data: affectedHoldings } = await supabase
+      .from("investor_holdings")
+      .select("auth_user_id, broker_slug, ticker, exchange, shares")
+      .in("broker_slug", changedSlugs);
+
+    if (affectedHoldings && affectedHoldings.length > 0) {
+      // Group holdings by (user × broker_slug) so we send one email per user
+      // per broker that changed (not one per holding row).
+      type Holding = (typeof affectedHoldings)[number];
+      const byUserBroker = new Map<string, { userId: string; brokerSlug: string; holdings: Holding[] }>();
+      for (const h of affectedHoldings) {
+        if (!h.broker_slug) continue;
+        const key = `${h.auth_user_id}::${h.broker_slug}`;
+        const existing = byUserBroker.get(key);
+        if (existing) {
+          existing.holdings.push(h);
+        } else {
+          byUserBroker.set(key, { userId: h.auth_user_id, brokerSlug: h.broker_slug, holdings: [h] });
+        }
+      }
+
+      // Capped at 200 personalised sends per run to bound the cron's
+      // wall-clock + provider spend. Pre-launch we don't expect anything
+      // close to this; the cap is a guard rail.
+      const groups = [...byUserBroker.values()].slice(0, 200);
+
+      for (const group of groups) {
+        try {
+          const { data: userRes } = await supabase.auth.admin.getUserById(group.userId);
+          const userEmail = userRes?.user?.email;
+          if (!userEmail) continue;
+
+          const broker = changedBrokers.find((b) => b.slug === group.brokerSlug);
+          if (!broker) continue;
+
+          // Heuristic impact estimate: same shape as
+          // components/broker/PersonalisedFeeDelta.tsx so users see a
+          // consistent number on-site and in email.
+          const asxHoldings = group.holdings.filter((h) => h.exchange === "ASX").length;
+          const usHoldings = group.holdings.filter((h) => h.exchange === "NASDAQ" || h.exchange === "NYSE").length;
+          const tradesPerYear = asxHoldings * 4 + usHoldings * 1;
+
+          const emailChanges = [
+            {
+              broker: broker.name,
+              slug: broker.slug,
+              oldFee: "Previous fees on file",
+              newFee: broker.detail,
+            },
+          ];
+
+          const html = feeChangeAlertEmail(emailChanges)
+            .replace(/\{\{unsubscribe_url\}\}/g, `${process.env.NEXT_PUBLIC_BASE_URL || "https://invest.com.au"}/account#email-prefs`);
+
+          await sendEmail({
+            to: userEmail,
+            subject: `${broker.name} changed their fees — review your holdings`,
+            html: `<p style="font-family:Arial,sans-serif;color:#0f172a">You're using ${broker.name} for ${group.holdings.length} holding${group.holdings.length === 1 ? "" : "s"}${tradesPerYear > 0 ? ` (~${tradesPerYear} trades/yr at this pace)` : ""}. We just detected a fee change on their page.</p>${html}`,
+            from: "Invest.com.au <alerts@invest.com.au>",
+          });
+        } catch (err) {
+          log.warn("Personalized fee-change email failed", {
+            err: err instanceof Error ? err.message : String(err),
+            userId: group.userId,
+            brokerSlug: group.brokerSlug,
+          });
+        }
+      }
+
+      log.info("personalized fee-change notifications", {
+        groups: groups.length,
+        total_affected_users: byUserBroker.size,
+      });
     }
   }
 
