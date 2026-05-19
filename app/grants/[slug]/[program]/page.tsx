@@ -398,10 +398,10 @@ const STATE_PROGRAM_MAP: Record<string, Record<string, ProgramConfig>> = {
 // ─── Static params ────────────────────────────────────────────────────────────
 
 export function generateStaticParams() {
-  const params: { state: string; program: string }[] = [];
+  const params: { slug: string; program: string }[] = [];
   for (const [state, programs] of Object.entries(STATE_PROGRAM_MAP)) {
     for (const program of Object.keys(programs)) {
-      params.push({ state, program });
+      params.push({ slug: state, program });
     }
   }
   return params;
@@ -409,12 +409,12 @@ export function generateStaticParams() {
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type Props = { params: Promise<{ state: string; program: string }> };
+type Props = { params: Promise<{ slug: string; program: string }> };
 
 // ─── Metadata ─────────────────────────────────────────────────────────────────
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { state, program } = await params;
+  const { slug: state, program } = await params;
   const cfg = STATE_PROGRAM_MAP[state]?.[program];
   if (!cfg) return { title: "Not found" };
   return {
@@ -433,7 +433,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function StateGrantProgramPage({ params }: Props) {
-  const { state, program } = await params;
+  const { slug: state, program } = await params;
   const cfg = STATE_PROGRAM_MAP[state]?.[program];
   if (!cfg) notFound();
 

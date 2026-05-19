@@ -264,17 +264,17 @@ const INDUSTRY_MAP: Record<string, IndustryConfig> = {
 // ─── Static params ────────────────────────────────────────────────────────────
 
 export function generateStaticParams() {
-  return Object.keys(INDUSTRY_MAP).map((industry) => ({ industry }));
+  return Object.keys(INDUSTRY_MAP).map((industry) => ({ slug: industry }));
 }
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-type Props = { params: Promise<{ industry: string }> };
+type Props = { params: Promise<{ slug: string }> };
 
 // ─── Metadata ─────────────────────────────────────────────────────────────────
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { industry } = await params;
+  const { slug: industry } = await params;
   const cfg = INDUSTRY_MAP[industry];
   if (!cfg) return { title: "Not found" };
   return {
@@ -293,7 +293,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function GrantsIndustryPage({ params }: Props) {
-  const { industry } = await params;
+  const { slug: industry } = await params;
   const cfg = INDUSTRY_MAP[industry];
   if (!cfg) notFound();
 
