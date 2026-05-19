@@ -72,6 +72,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | BB-01 | `claude/audit-remediation/bb-01-borrowing-power` | **#923 OPEN** | BB-01 done (`a861dc3`): `/tools/borrowing-power-calculator` — multi-lender borrowing power calc (FY2025-26 tax, HEM, 3 APRA lender scenarios, LVR/LMI flags). ToolsClient entry + sitemap updated. Last CI: pending — pushed `a861dc3` 2026-05-19. | BB-01 merged |
 | BB-06 | `claude/audit-remediation/bb-06-mortgage-stress-test` | **#924 OPEN** | BB-06 done (`648d024`): `/tools/mortgage-stress-test` — 9 rate-rise scenarios (+0..+5%), housing-stress thresholds (30%/40% gross), APRA +3% buffer callout, binary-search breakeven rate, FY2025-26 tax. ToolsClient entry + sitemap updated. Last CI: pending — pushed `648d024` 2026-05-19. | BB-06 merged |
 | AA | `claude/audit-remediation/aa-02-03-programmatic-grants` | **#928 OPEN** | AA-01 false-positive (pre-existing). AA-02+AA-03 done (`bc4909c` iter 459): 10 `/grants/[industry]` pages + 11 `/grants/[state]/[program]` pages + sitemap. Last CI: pending — pushed `bc4909c` 2026-05-19. | AA-02+AA-03 merged |
+| Z-26 | `claude/audit-remediation/z-26-super-hub` | **#929 OPEN** | Z-26 done (`225e8be` iter 460): `/super` hub migration to HubPage HOC; `lib/hub-configs/super.ts` (3 hero stats, 6 service cards, 4 deep-dives, 5 FAQs); sub-hub link grid, articles strip, ForeignInvestorCallout, newsletter/lead-magnet/exit-intent wired. Last CI: pending — pushed `225e8be` 2026-05-19. | Z-26 merged |
 | DD | `claude/audit-remediation/dd-01-tiered-listings` | **#926 OPEN** | DD-01 done (`137680e`): `advisor_tier` added to `Professional` type; Pro badge + violet card border on `/advisors`; `advisor_tier` select + Pro badge on `/find/[advisor-type]/[city]`. Sort: Featured→Pro→Free. No schema migration. Last CI: pending — pushed `137680e` 2026-05-19. | DD-01 merged |
 
 ---
@@ -132,6 +133,20 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 460 — 2026-05-19 — Z-26 — /super hub migration to HubPage HOC
+
+- **Stream:** Z (Tier-1 hub builds)
+- **Phase:** 5 — implementation (Tier A — page/hub)
+- **Branch:** `claude/audit-remediation/z-26-super-hub`
+- **PR:** #929 OPEN
+- **Commit:** `225e8be` — feat(z26): Z-26 — /super hub migration to HubPage HOC
+- **Diff:** 2 files changed, 305 insertions(+), 68 deletions(-)
+- **Items done:** Z-26 (`/super` proper hub — HubPage HOC migration)
+- **Implementation:**
+  - **`lib/hub-configs/super.ts`** (new) — full `superHubConfig`: 3 hero stats (assets $3.9T, SG 11.5%, 17M+ Australians), 6 service cards (compare funds, SMSF, salary sacrifice, insurance, consolidation, TTR), 4 deep-dives, 3 calculators, super quiz, lead magnet (existing `super-fund-comparison-guide`), 5 FAQs, `complianceKey: "super"`.
+  - **`app/super/page.tsx`** — replaced `VerticalPillarPage` with `HubPage` HOC; sub-hub link grid (6 cards to SMSF/Contributions/Consolidation/Leaving/Quiz/Compare); Supabase articles query preserved; `ForeignInvestorCallout` (DASP note) preserved; `HubNewsletterCapture` + `LeadMagnetCapture` + `HubExitIntent` wired.
+- **STATUS: PROGRESS · stream=Z · item=Z-26 · pr=#929**
 
 ### iter 459 — 2026-05-19 — AA-02+AA-03 — programmatic /grants/[industry] + /grants/[state]/[program]
 
