@@ -21,6 +21,7 @@ export default memo(function BrokerCard({
   onToggleSelect,
   selectionDisabled,
   intentCountry = null,
+  priority = false,
 }: {
   broker: Broker;
   badge?: string;
@@ -33,6 +34,10 @@ export default memo(function BrokerCard({
    *  country_eligibility column. Caller is responsible for resolving
    *  the cookie (server) or hook value (client). */
   intentCountry?: IntentCountryCode | null;
+  /** When true, the broker logo loads with Next/Image `priority` (eager
+   *  + fetchPriority="high"). Set on the top row of comparison/listing
+   *  surfaces where the logo is the LCP candidate. */
+  priority?: boolean;
 }) {
   const isSponsoredBroker = isSponsored(broker);
   const isShareOrCFD = broker.platform_type === 'share_broker' || broker.platform_type === 'cfd_forex';
@@ -74,7 +79,7 @@ export default memo(function BrokerCard({
       <div className="p-3">
         {/* Row 1: Logo + Name + Rating + CTA */}
         <div className="flex items-center gap-2.5 mb-2">
-          <BrokerLogo broker={broker} size="md" />
+          <BrokerLogo broker={broker} size="md" priority={priority} />
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5 flex-wrap">
               <a href={`/broker/${broker.slug}`} className="font-bold text-sm text-slate-900 hover:text-slate-700 transition-colors truncate">
