@@ -110,6 +110,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/tools", "/tools/should-i-switch", "/tools/visa-investment-calculator", "/tools/withholding-tax-calculator",
     "/tools/alternative-returns", "/tools/smsf-checker", "/tools/currency-converter",
     "/tools/fhss-calculator",
+    "/tools/borrowing-power-calculator",
     "/pricing",
     "/firb-fee-estimator", "/non-resident-dividend-calculator", "/non-resident-cgt-checker",
     "/franking-credits-calculator", "/chess-lookup",
