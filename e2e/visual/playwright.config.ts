@@ -26,8 +26,8 @@ export default defineConfig({
     command: "npm run dev",
     url: process.env.E2E_BASE_URL ?? "http://localhost:3000",
     reuseExistingServer: true,
-    timeout: 180_000,
-    stdout: "ignore",
+    timeout: 600_000,
+    stdout: "pipe",
     stderr: "pipe",
   },
   projects: [
