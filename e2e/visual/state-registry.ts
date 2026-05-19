@@ -67,6 +67,20 @@ export const AUTH_STATES: AuthState[] = [
     postLoginPattern: /\/admin(\/|$)/,
     storageStateFile: stateFile("admin"),
   },
+  {
+    name: "listing-owner",
+    description: "Investment listing owner (my-listings portal)",
+    loginUrl: "/login",
+    postLoginPattern: /\/(account|dashboard|invest)(\/|$)/,
+    storageStateFile: stateFile("listing-owner"),
+  },
+  {
+    name: "firm-portal",
+    description: "Advisor firm admin (firm-portal billing)",
+    loginUrl: "/advisor-portal",
+    postLoginPattern: /\/advisor-portal(\/|$)/,
+    storageStateFile: stateFile("firm-portal"),
+  },
 ];
 
 export const ALL_STATE_NAMES = ["anonymous", ...AUTH_STATES.map((s) => s.name)];

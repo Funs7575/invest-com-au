@@ -37,6 +37,16 @@ const TEST_USERS = [
     email: "test-admin@invest-test.local",
     password: "TestPassword123!@#",
   },
+  {
+    state: "listing-owner",
+    email: "test-listing-owner@invest-test.local",
+    password: "TestPassword123!@#",
+  },
+  {
+    state: "firm-portal",
+    email: "test-firm-admin@invest-test.local",
+    password: "TestPassword123!@#",
+  },
 ];
 
 const baseURL = process.env.E2E_BASE_URL ?? "http://localhost:3000";
