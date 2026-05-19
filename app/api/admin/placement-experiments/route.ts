@@ -13,9 +13,8 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { getAdminEmails } from "@/lib/admin";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
+import { requireAdmin } from "@/lib/require-admin";
 import { logger } from "@/lib/logger";
 import { withValidatedBody } from "@/lib/validation/withValidatedBody";
 import { VARIANT_LABEL_PATTERN } from "@/lib/placement-experiments";
@@ -62,17 +61,6 @@ const UpdateSchema = z
   })
   .strict();
 
-async function requireAdmin(): Promise<{ email: string } | null> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user?.email) return null;
-  const allowed = getAdminEmails();
-  const email = user.email.toLowerCase();
-  if (!allowed.includes(email)) return null;
-  return { email };
-}
 
 /** Reject duplicate variant labels — they would collide in the metrics jsonb. */
 function uniqueLabels<T extends { label: string }>(variants: T[]): boolean {
@@ -85,9 +73,9 @@ function uniqueLabels<T extends { label: string }>(variants: T[]): boolean {
 }
 
 export async function GET(request: NextRequest) {
-  const admin = await requireAdmin();
-  if (!admin) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const guard = await requireAdmin();
+  if (!guard.ok) {
+    return guard.response;
   }
 
   const status = request.nextUrl.searchParams.get("status");
@@ -115,9 +103,9 @@ export async function GET(request: NextRequest) {
 }
 
 export const POST = withValidatedBody(CreateSchema, async (_req, body) => {
-  const admin = await requireAdmin();
-  if (!admin) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const guard = await requireAdmin();
+  if (!guard.ok) {
+    return guard.response;
   }
 
   if (!uniqueLabels(body.variants)) {
@@ -151,7 +139,7 @@ export const POST = withValidatedBody(CreateSchema, async (_req, body) => {
     action: "placement_experiment:created",
     entity_type: "placement_experiments",
     entity_id: String(data.id),
-    admin_email: admin.email,
+    admin_email: guard.email,
     details: { slug: body.slug, status: body.status },
   });
 
@@ -159,9 +147,9 @@ export const POST = withValidatedBody(CreateSchema, async (_req, body) => {
 });
 
 export const PATCH = withValidatedBody(UpdateSchema, async (_req, body) => {
-  const admin = await requireAdmin();
-  if (!admin) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const guard = await requireAdmin();
+  if (!guard.ok) {
+    return guard.response;
   }
 
   if (body.variants && !uniqueLabels(body.variants)) {
@@ -213,7 +201,7 @@ export const PATCH = withValidatedBody(UpdateSchema, async (_req, body) => {
     action: "placement_experiment:updated",
     entity_type: "placement_experiments",
     entity_id: String(body.id),
-    admin_email: admin.email,
+    admin_email: guard.email,
     details: updates,
   });
 
@@ -221,9 +209,9 @@ export const PATCH = withValidatedBody(UpdateSchema, async (_req, body) => {
 });
 
 export async function DELETE(request: NextRequest) {
-  const admin = await requireAdmin();
-  if (!admin) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const guard = await requireAdmin();
+  if (!guard.ok) {
+    return guard.response;
   }
 
   const id = request.nextUrl.searchParams.get("id");
@@ -244,7 +232,7 @@ export async function DELETE(request: NextRequest) {
     action: "placement_experiment:deleted",
     entity_type: "placement_experiments",
     entity_id: id,
-    admin_email: admin.email,
+    admin_email: guard.email,
   });
 
   return NextResponse.json({ ok: true });

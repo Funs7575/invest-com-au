@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient as createServerClient } from "@/lib/supabase/server";
 import { randomBytes } from "crypto";
 import { sendApplicationApproved, sendApplicationRejected } from "@/lib/advisor-emails";
 import { getSiteUrl } from "@/lib/url";
-import { ADMIN_EMAILS } from "@/lib/admin";
+import { requireAdmin } from "@/lib/require-admin";
 import { logger } from "@/lib/logger";
 
 const log = logger("admin-advisor-applications");
@@ -13,27 +12,10 @@ function createAdminSupabase() {
   return createAdminClient();
 }
 
-async function requireAdmin() {
-  const supabaseAuth = await createServerClient();
-  const {
-    data: { user },
-    error: authError,
-  } = await supabaseAuth.auth.getUser();
-
-  if (
-    authError ||
-    !user ||
-    !ADMIN_EMAILS.includes(user.email?.toLowerCase() || "")
-  ) {
-    return null;
-  }
-  return user;
-}
-
 // GET - list applications
 export async function GET(request: NextRequest) {
-  const admin = await requireAdmin();
-  if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const guard = await requireAdmin();
+  if (!guard.ok) return guard.response;
 
   const supabase = createAdminSupabase();
   const status = request.nextUrl.searchParams.get("status") || "pending";
@@ -51,8 +33,8 @@ export async function GET(request: NextRequest) {
 
 // PATCH - approve or reject
 export async function PATCH(request: NextRequest) {
-  const admin = await requireAdmin();
-  if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const guard = await requireAdmin();
+  if (!guard.ok) return guard.response;
 
   const supabase = createAdminSupabase();
   const siteUrl = getSiteUrl(request.headers.get("host"));
@@ -93,7 +75,7 @@ export async function PATCH(request: NextRequest) {
       entity_type: "advisor_application",
       entity_id: String(applicationId),
       entity_name: app.name,
-      admin_email: admin.email ?? null,
+      admin_email: guard.email ?? null,
       details: { rejection_reason: rejectionReason ?? null },
     });
     return NextResponse.json({ success: true });
@@ -212,7 +194,7 @@ export async function PATCH(request: NextRequest) {
     entity_type: "advisor_application",
     entity_id: String(applicationId),
     entity_name: app.name,
-    admin_email: admin.email ?? null,
+    admin_email: guard.email ?? null,
     details: { professional_id: newPro.id, firm_id: firmId },
   });
 

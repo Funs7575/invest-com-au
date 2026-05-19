@@ -1,33 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { ADMIN_EMAILS } from "@/lib/admin";
+import { requireAdmin } from "@/lib/require-admin";
 import { logger } from "@/lib/logger";
 
 const log = logger("admin-bd-pipeline");
 
-async function requireAdmin() {
-  const supabaseAuth = await createClient();
-  const {
-    data: { user },
-    error: authError,
-  } = await supabaseAuth.auth.getUser();
-
-  if (
-    authError ||
-    !user ||
-    !ADMIN_EMAILS.includes(user.email?.toLowerCase() || "")
-  ) {
-    return null;
-  }
-  return user;
-}
-
 // GET — list all pipeline entries
 export async function GET() {
   try {
-    const admin = await requireAdmin();
-    if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
 
     const supabase = createAdminClient();
     const { data } = await supabase
@@ -43,8 +25,8 @@ export async function GET() {
 
 // POST — create or update a pipeline entry
 export async function POST(request: NextRequest) {
-  const admin = await requireAdmin();
-  if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const guard = await requireAdmin();
+  if (!guard.ok) return guard.response;
 
   const supabase = createAdminClient();
   const body = await request.json();
@@ -70,7 +52,7 @@ export async function POST(request: NextRequest) {
       entity_type: "bd_pipeline",
       entity_id: String(id),
       entity_name: fields.company_name as string,
-      admin_email: admin.email ?? null,
+      admin_email: guard.email ?? null,
     }).then(({ error: logErr }) => {
       if (logErr) log.warn("admin_audit_log insert failed", { error: logErr.message });
     });
@@ -88,7 +70,7 @@ export async function POST(request: NextRequest) {
       entity_type: "bd_pipeline",
       entity_id: String((data as { id: number }).id),
       entity_name: fields.company_name as string,
-      admin_email: admin.email ?? null,
+      admin_email: guard.email ?? null,
     }).then(({ error: logErr }) => {
       if (logErr) log.warn("admin_audit_log insert failed", { error: logErr.message });
     });
@@ -98,8 +80,8 @@ export async function POST(request: NextRequest) {
 
 // DELETE — remove a pipeline entry
 export async function DELETE(request: NextRequest) {
-  const admin = await requireAdmin();
-  if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const guard = await requireAdmin();
+  if (!guard.ok) return guard.response;
 
   const supabase = createAdminClient();
   const { id } = await request.json();
@@ -109,7 +91,7 @@ export async function DELETE(request: NextRequest) {
     action: "bd_pipeline:deleted",
     entity_type: "bd_pipeline",
     entity_id: String(id),
-    admin_email: admin.email ?? null,
+    admin_email: guard.email ?? null,
   }).then(({ error: logErr }) => {
     if (logErr) log.warn("admin_audit_log insert failed", { error: logErr.message });
   });
