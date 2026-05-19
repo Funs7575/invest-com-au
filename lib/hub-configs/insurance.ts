@@ -146,7 +146,7 @@ export const insuranceHubConfig: HubConfig = {
     {
       slug: "insurance/quiz",
       label: "What insurance do I need?",
-      routesTo: "insurance",
+      routesTo: "general",
     },
   ],
 
