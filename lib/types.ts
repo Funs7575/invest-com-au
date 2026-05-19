@@ -1106,6 +1106,8 @@ export interface Professional {
   meta_title?: string;
   meta_description?: string;
   featured_until?: string;
+  /** "free" | "pro" | "gold". Drives Pro/Featured badge on listing cards. */
+  advisor_tier?: string | null;
   // Billing fields
   credit_balance_cents?: number;
   lifetime_credit_cents?: number;

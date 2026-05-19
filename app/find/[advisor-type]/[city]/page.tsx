@@ -119,6 +119,7 @@ interface AdvisorRow {
   fee_model: string | null;
   initial_consultation_free: boolean | null;
   is_sponsored: boolean;
+  advisor_tier: string | null;
 }
 
 async function getAdvisors(dbType: string, city: string): Promise<AdvisorRow[]> {
@@ -126,7 +127,7 @@ async function getAdvisors(dbType: string, city: string): Promise<AdvisorRow[]> 
   const { data, error } = await supabase
     .from("professionals")
     .select(
-      "id, name, slug, type, location_suburb, location_state, rating, review_count, verified, photo_url, bio, fee_model, initial_consultation_free, is_sponsored"
+      "id, name, slug, type, location_suburb, location_state, rating, review_count, verified, photo_url, bio, fee_model, initial_consultation_free, is_sponsored, advisor_tier"
     )
     .eq("status", "active")
     .eq("type", dbType)
@@ -192,6 +193,11 @@ function AdvisorCard({ advisor }: { advisor: AdvisorRow }) {
             {advisor.is_sponsored && (
               <span className="ml-2 text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded font-medium">
                 Featured
+              </span>
+            )}
+            {!advisor.is_sponsored && advisor.advisor_tier === "pro" && (
+              <span className="ml-2 text-xs bg-violet-50 text-violet-700 px-1.5 py-0.5 rounded font-medium">
+                Pro
               </span>
             )}
           </div>
