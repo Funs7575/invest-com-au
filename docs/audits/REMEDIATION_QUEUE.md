@@ -47,7 +47,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | WW | _complete_ | **#651 MERGED** | WW-01+WW-02 merged. WW-03/04 blocked (DD-02 dep). | All WW tasks merged ✓ |
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
 | Z | `claude/audit-remediation/z-04-zero-state-ux` | #230/#323/#403/#457/#524/#565 | Z-01..Z-04 done. | Z-04 merged ✓ |
-| QQ | `claude/audit-remediation/qq-05-schema` | **#800 MERGED 2026-05-14** · **#920 OPEN** | QQ-01..QQ-07 done (merged). QQ-05+QQ-06 done (`b3a1e63`): `qa_questions`/`qa_answers` migration + `/api/answers/ask` POST route. QQ-09/QQ-10 pending. QQ-08 compliance gate blocks public exposure. CI rescue `18bc80b`: removed `user_id` from migration comment (RLS isolation gate). Main merged `1c041ff`: picked up `afsl_register` driftallowlist entry (Database types drift gate). Last CI: pending — pushed `1c041ff` 2026-05-19. | All QQ tasks merged |
+| QQ | `claude/audit-remediation/qq-05-schema` | **#800 MERGED 2026-05-14** · **#920 OPEN** | QQ-01..QQ-07 done (merged). QQ-05+QQ-06 done (`b3a1e63`): migration + `/api/answers/ask`. QQ-09 done (`27079bf`): admin moderation queue + action API. QQ-10 pending. QQ-08 compliance gate blocks public exposure. Last CI: pending — pushed `27079bf` 2026-05-19. | All QQ tasks merged |
 | MM | `claude/audit-remediation/mm-v01b-digital-infra-listings` | **#801 MERGED** · **#803 MERGED 2026-05-14** | MM-V01..V08 done. MM-V06 pending (Tier C — wholesale-only alternatives: litigation funding, PE, VC, hedge funds, ILS; s708 gate design required; announce before merge). Next item: MM-V06. | All MM phases merged |
 | TT | _complete_ | **#764 MERGED** · **#772 MERGED** · **#779 MERGED** · **#799 MERGED 2026-05-12** | TT-01..TT-04 all done. GA4 removed; Plausible sole analytics. **Stream complete.** | TT-04 merged ✓ |
 | CMP | `claude/audit-remediation/cmp-w1a-int-calculator-autosave` | **#782 CLOSED 2026-05-14 (not merged)** | CMP-W1A-INT: #782 was closed without merging by founder 2026-05-14. Work may need re-examination or re-opening on a fresh branch. | All CMP tasks merged |
@@ -114,6 +114,24 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 449 — 2026-05-19 — QQ-09 — admin Q&A moderation queue
+
+- **Stream:** QQ (public AI Q&A capture surface)
+- **Phase:** 5 — implementation (Tier B — admin routes, no schema/webhook/cron changes)
+- **Branch:** `claude/audit-remediation/qq-05-schema`
+- **PR:** #920 OPEN
+- **Commit:** `27079bf` — feat(qq): QQ-09 — admin Q&A moderation queue + action API
+- **Diff:** +409 LOC across 3 files
+- **Items done:** QQ-09 (admin moderation queue UI + action API)
+- **Implementation:**
+  - **GET `/api/admin/qa`** — lists pending `qa_questions` (limit 50, newest first). `createAdminClient()` needed because RLS only exposes 'approved' rows to authenticated users; admin client bypasses to show pending queue.
+  - **POST `/api/admin/qa/[id]`** — three actions: `generate_draft` (calls `respondToMessage` from `lib/chatbot.ts`, persists `qa_answers` row with source='ai' + status='pending', records cost via `loadQaCaptureConfig`/`preCheckCaps`/`recordUsage` from `lib/ai-cost-caps.ts`; returns `{ answer_id, answer_text }`); `approve` (updates qa_answers by answer_id or inserts new editorial answer, updates qa_questions.status='approved', calls `revalidatePath` for ISR); `reject` (updates qa_questions.status='rejected' + optional moderation_note).
+  - **`app/admin/qa/page.tsx`** — "use client" moderation UI: pending question cards with Generate Draft / Reject buttons; after draft generated, editable textarea + Publish / Reject buttons. Per-question `ItemState` tracks loading/draft/answerId/done/error.
+  - Auth: `ADMIN_EMAILS` allowlist check on all endpoints (same pattern as advisor-moderation).
+- **Tier B rationale:** admin routes + new client component. No schema migration, webhook, cron, or Stripe/compliance touchpoints.
+- **Cumulative diff (batch fire, iters 446–449):** ~680 LOC forward progress
+- **STATUS: PROGRESS · stream=QQ · item=QQ-09 · pr=#920**
 
 ### iter 448 — 2026-05-19 — CI-RESCUE QQ (#920): RLS isolation gate + Database types drift gate
 
