@@ -290,14 +290,98 @@ These don't require unification — they're isolated fixes:
 | QW6 | Recolor shortlist bar from `bg-violet-600` to `bg-slate-900` | `AdvisorsClient.tsx:634-656` | 5 min |
 | QW7 | Add a "Browse all advisors" link to `/find-advisor` confirmation step | `app/find-advisor/page.tsx:~1592` | 10 min |
 
-## Open questions (need decisions before code)
+## Decisions (locked in 2026-05-19)
 
-1. **Map library**: Mapbox GL JS (paid free tier, polished mobile) or Leaflet (free, OSM, needs clustering plugin)?
-2. **Mobile filter UX**: bottom-sheet drawer (native feel) vs inline panel (keeps results visible) vs both (drawer mobile, inline desktop — my recommendation)?
-3. **Save vs shortlist vs compare** — are these one feature, two, or three? My read: shortlist + compare = same feature ("things I'm tracking, optionally compare them"); save-search is distinct ("notify me when new matches appear"). Confirm?
-4. **Pillar pages**: should `/share-trading`, `/crypto`, `/savings`, `/robo-advisors` become filterable broker directories, or stay editorial? Strategic — coordinate with Fin.
-5. **URL slug convention**: comfortable with `/advisors`, `/opportunities`, `/brokers`, `/super-funds` for directories + `/find-advisor` for quizzes + `/compare/*` for tables? Or keep `/invest` as primary slug?
-6. **Banner stacking order**: when multiple banners apply (country pill + country recommendation + rule alert), what order? Suggest: pill → rule alerts (urgent) → recommendation (advisory). Acceptable?
+| # | Question | Decision |
+|---|----------|----------|
+| 1 | Map library | **Mapbox GL JS** — better mobile UX, native clustering, 50K loads/mo free tier. Add API key to Vercel env before Session 10. |
+| 2 | Mobile filter UX | **Drawer on mobile + inline on desktop** — `FilterPanel` default `responsiveMode: "mobile-drawer-desktop-inline"`. |
+| 3 | Save model | **Three features**: Save Search (filter state + email digests, sign-in required) · Shortlist (entity IDs, localStorage→DB on sign-in) · Compare (view on top of shortlist with ≥2 selected). Apply to both `/invest` and `/advisors`. |
+| 5 | URL slugs | **Plural directories + `/find-*` funnels**: keep `/invest` (brand-sensitive), normalize advisors/brokers/super-funds/savings-accounts/insurance/etfs to plurals; quizzes at `/find-advisor`; tables at `/compare/*`. 301s where renamed. |
+| 6 | Banner stacking order | **Default**: country pill → rule alerts (urgent) → country recommendation (advisory). Bake into `<DirectoryBanners>` in Session 1. |
+
+## Filter ambition — "comprehensive and great, can do lots" (2026-05-19 user direction)
+
+The basic plan above ships *consistent* filters across pages. The user wants more — filters that are genuinely powerful, not just unified. Expanded filter scope (folded into Phase 2 sessions and a new Session 5.5):
+
+### Per-entity filter facets (target state)
+
+**Investment opportunities** (`/invest`):
+- **Asset kind** (multi-select): For-sale business, Asset, Equity raise, Project equity, Royalty stream, Managed fund, Physical asset, Listed security
+- **Category/sub-kind**: Mining, Farmland, Commercial property, Franchise, Renewable, Startups, Alternatives, Private credit, Infrastructure, Funds
+- **Ticket size** (range slider): $1K → $10M+ with quick-bucket presets ("$1K-$10K", "$10K-$100K", "$100K-$1M", "$1M+")
+- **Minimum yield %** (range): 0-30%, with "yield-bearing only" toggle
+- **Investor type**: Retail, Wholesale (708), Sophisticated, Professional
+- **Compliance flags**: FIRB-eligible, SIV-complying, Wholesale-only, ESIC
+- **Tax structure**: SMSF-eligible, CGT discount eligible, Franking credits, Capital works deductions
+- **Location**: State (multi-select) + suburb autocomplete + map-radius (post Session 11)
+- **Status**: Open, Closing soon (<14 days), Closed, New this week, Featured
+- **Time horizon**: Cash flow now, 1-3yr, 3-7yr, 7+yr
+- **Risk tier**: 1-5 scale with descriptions
+- **ESG**: Climate-positive, Indigenous-led, Social impact, B-Corp
+- **Advisor opt-in**: "Has advisor coverage", "I have an advisor watching this"
+- **Country-mode aware**: auto-apply FIRB filter when intent_country ≠ AU
+- **Saved searches**: filter combinations savable + shareable via URL + email-digest on new matches
+
+**Advisors** (`/advisors`):
+- **Type** (multi-select): Financial planner, Mortgage broker, Buyers agent, Tax agent, SMSF accountant, Risk insurance, Estate planning, Aged-care advisor, Crypto advisor, Property advisor, Wealth manager, Debt counsellor
+- **Specialty tags** (multi-select with autocomplete): SMSF setup, retirement planning, FIRB, international tax, property syndicates, etc. (open vocabulary)
+- **Location**: State + "Use my location" + radius (10-200km) + remote-only toggle + map view
+- **Fee structure**: Fixed, % AUM, commission, hybrid, free consultation, no minimum
+- **Fee range** (slider): $0-$5K initial / $0-2% AUM
+- **Verification**: ASIC-verified only, AFSL-licensed, professional body memberships (FPA, AFA, IPA)
+- **Rating**: Minimum stars (1-5) + minimum review count threshold
+- **Response time**: <1hr, <24hr, <48hr badges
+- **Languages**: multi-select (Mandarin, Cantonese, Arabic, Vietnamese, Greek, Italian, Hindi, Punjabi, etc.)
+- **Availability**: Accepting new clients, Video consultation, In-person, Weekend appointments
+- **Cultural focus**: Indigenous Australians, women advisors, LGBTQ+-friendly, religious considerations
+- **Country-aware specialty**: Cross-border tax, international clients, expat returnees
+- **Compare**: select ≥2 → side-by-side compare view (fees, ratings, response time, specialties)
+- **Saved searches + email alerts**: notify when matching advisors join
+
+### Cross-cutting filter capabilities
+
+- **Combinatorial logic**: AND across facets (default), OR within facets (multi-select)
+- **URL-shareable state**: every filter combination produces a copyable URL (deep links for marketing + email digests)
+- **Faceted counts**: each facet shows how many results would match if toggled — like Airbnb / Booking.com
+- **Smart suggestions**: "Did you mean X?" / "12 results when you remove the SIV filter" empty-state guidance
+- **Filter chips**: active filters shown as removable chips in the toolbar (already on `/invest`, formalize for both)
+- **Sort by relevance**: sortable by match-score when user has investor profile / advisor preferences set
+- **Recently-viewed memory**: page remembers last 5 filter sets across sessions
+- **A11y**: full keyboard nav, screen-reader-friendly facet groups, no purely-color affordances
+- **Mobile-first**: bottom-sheet drawer with sticky "Show N results" CTA at bottom, swipe-to-dismiss
+
+### Filter primitives — expanded scope for Phase 2
+
+The primitives from Session 4-7 must support:
+- `<SearchInput>` — debounced, with autocomplete suggestions (typeahead against entity index)
+- `<SortDropdown>` — configurable, with "Smart match" option when user profile exists
+- `<FilterPanel>` — sections, sub-sections, accordion, "show advanced" disclosure
+- `<TabBar>` — hide-zero-counts default, scroll-shadow indicators on mobile
+- `<ResultCount>` — animated count updates, "X of Y total" framing
+- `<FilterChips>` — removable active-filter chips, with "Clear all" affordance
+- New: `<RangeSlider>` — numeric ranges (yield, ticket, fees, rating) with quick-bucket presets
+- New: `<FacetGroup>` — checkbox group with live counts per option (Airbnb-style)
+- New: `<LocationPicker>` — postcode/suburb autocomplete + geolocation + radius slider
+- New: `<SaveSearchDialog>` — name the search + email frequency picker + alert toggle
+- New: `<CompareBar>` — sticky bottom bar showing selected items + "Compare N" CTA
+- New: `<EmptyState>` — context-aware empty results with smart suggestions
+
+### New Session 5.5 — Advanced filter primitives
+
+Inserted between Sessions 5 and 6:
+- Build `<RangeSlider>`, `<FacetGroup>`, `<LocationPicker>` primitives
+- Migrate the per-facet count logic to be live (recompute on every filter change, not static)
+- Add typeahead/autocomplete to `<SearchInput>` (debounced API call to entity index)
+- Empty-state component with smart suggestions
+
+This adds 2-3 sessions to the overall plan (so target is now ~18-20 sessions / ~50 focused hours), but the resulting filter UX matches industry benchmarks (Airbnb, Booking.com, Domain.com.au).
+
+## Still open
+
+| # | Question | Why blocked |
+|---|----------|-------------|
+| 4 | Pillar pages: filterable directories or stay editorial? | Strategic — needs Fin's input per `docs/strategy/FIN_NOTEBOOK.md`. Doesn't block Sessions 1-12. Park until Session 13. |
 
 ## What this plan does NOT propose
 
