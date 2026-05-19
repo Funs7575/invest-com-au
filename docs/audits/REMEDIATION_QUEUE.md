@@ -59,8 +59,8 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | EM | _complete_ | **#848 MERGED 2026-05-17** · **#880 MERGED 2026-05-18** | EM-03 + EM-01 done. EM-02 (`16add6f`): hub_drip_log migration + hub-subscriber-drip cron. **Stream complete. #880 merged by founder 2026-05-18.** | All EM tasks merged ✓ |
 | LX | _complete_ | **#849 MERGED 2026-05-15** · **#879 MERGED 2026-05-18** | LX-01, LX-02, LX-03, LX-04, LX-05 done. **Stream complete. #879 merged by founder 2026-05-18.** | All LX tasks merged ✓ |
 | OB | _complete_ | **#852 MERGED 2026-05-17** · **#878 MERGED 2026-05-18** | OB-01..OB-12 done. **Stream complete. #878 merged by founder 2026-05-18.** | All OB tasks merged ✓ |
-| GT | `claude/audit-remediation/gt-02-annual-check` | **#881 OPEN** | GT-01 blocked (needs DV-01). GT-02 done (`a4c5352`). CI rescue iter 446: merge main (types regen `afsl_register`). Commit `f666941`. Last CI: pending — pushed `f666941` 2026-05-19. ⚠️ Recurring drift — founder should merge #881 to stop cycle. | All GT tasks merged |
-| DF | `claude/audit-remediation/df-01-decision-frameworks` | **#883 OPEN** · ~~#884 CLOSED (dup)~~ | DF-01..04 done. CI rescue iter 446: merge main (types regen `afsl_register`). Commit `d819304`. Last CI: pending — pushed `d819304` 2026-05-19. ⚠️ Recurring drift — founder should merge #883 to stop cycle. | All DF tasks merged |
+| GT | `claude/audit-remediation/gt-02-annual-check` | **#881 OPEN** | GT-01 blocked (needs DV-01). GT-02 done (`a4c5352`). CI rescue iter 450: merge main (picks up `66609e7` afsl_register driftallowlist). Commit `172b84b`. Last CI: pending — pushed `172b84b` 2026-05-19. ⚠️ Recurring drift — founder should merge #881 to stop cycle. | All GT tasks merged |
+| DF | `claude/audit-remediation/df-01-decision-frameworks` | **#883 OPEN** · ~~#884 CLOSED (dup)~~ | DF-01..04 done. CI rescue iter 450: merge main (picks up `66609e7` afsl_register driftallowlist). Commit `3a55352`. Last CI: pending — pushed `3a55352` 2026-05-19. ⚠️ Recurring drift — founder should merge #883 to stop cycle. | All DF tasks merged |
 | QA | _complete_ | **#890 MERGED 2026-05-18** | QA-01..QA-02 done. **Stream complete. #890 merged by founder 2026-05-18.** | All QA tasks merged ✓ |
 | Z-23+BB-08 | _complete_ | **#895 MERGED 2026-05-18** | Z-23 + BB-08 done. All CI green. **Stream complete. #895 merged by founder 2026-05-18.** | #895 merged ✓ |
 | SM | _complete_ | **#904 MERGED 2026-05-18** | SM-01+SM-02 done. **Stream complete. #904 merged by founder 2026-05-18.** | All SM tasks merged ✓ |
@@ -114,6 +114,20 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 450 — 2026-05-19 — CI-RESCUE GT (#881) + DF (#883): Database types drift gate (afsl_register driftallowlist)
+
+- **Streams:** GT (annual-check) + DF (decision-frameworks)
+- **Phase:** 2 — CI rescue
+- **PRs:** GT #881 OPEN, DF #883 OPEN
+- **Commits:**
+  - `172b84b` — Merge origin/main into GT branch (picks up `66609e7` afsl_register in .driftallowlist)
+  - `3a55352` — Merge origin/main into DF branch (picks up `66609e7` afsl_register in .driftallowlist)
+- **Root cause:** Iter 446 merged main into GT+DF branches (`f666941`/`d819304`), but that merge predated iter 448's commit `66609e7` which added `afsl_register` to `.driftallowlist`. `Database types drift gate` continued failing because types.ts (regenerated in `e914b63`) declares `afsl_register` but no migration exists — and the allowlist entry wasn't on the branches yet.
+- **Fix:** Merged origin/main (head `f10b840`) into both branches. No code conflicts — only `.driftallowlist` (+1 line) and queue file changes from the merge.
+- **Stuck-detection check:** GT #881 has 2 prior CI-RESCUE entries for `Database types drift gate (lib/database.types.ts vs migrations)` within 24h (iters 446, 433) — below the 3-entry threshold. DF #883 has 1. Proceeding with rescue.
+- **Note:** Concurrent session used iter 449 for QQ-09 while this rescue was running in parallel. Renumbered to 450.
+- **STATUS: CI-RESCUE · stream=GT+DF · pr=#881+#883**
 
 ### iter 449 — 2026-05-19 — QQ-09 — admin Q&A moderation queue
 
