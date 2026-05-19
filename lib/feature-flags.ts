@@ -22,8 +22,6 @@
  * a flag in the admin UI propagates within one cron cycle.
  */
 
-import { unstable_cache } from "next/cache";
-// eslint-disable-next-line no-restricted-imports -- feature_flags is service-role-only by design (no anon SELECT policy); admin client is the correct read path per CLAUDE.md § "Two Supabase clients" → "Tables with service_role-only policies"
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 
@@ -139,73 +137,7 @@ export function evaluateFlag(
 }
 
 /**
- * Inner Supabase fetch — the part wrapped by Next.js `unstable_cache` for
- * cross-worker deduplication. Always returns `FlagRow | null` (never
- * throws) so cache entries are stable even on timeout / network failure.
- *
- * Telemetry (`last_evaluated_at` update) stays OUTSIDE this function so it
- * fires from the live caller, not from a cached-result replay — otherwise
- * the cron's "actively-used vs dormant" signal would only update on the
- * first call per cache lifetime.
- */
-async function fetchFlagRow(flagKey: string): Promise<FlagRow | null> {
-  if (isPlaceholderSupabase()) return null;
-  try {
-    const supabase = createAdminClient();
-    const { data, error } = await supabase
-      .from("feature_flags")
-      .select("flag_key, enabled, rollout_pct, allowlist, denylist, segments, archived_at")
-      .eq("flag_key", flagKey)
-      .is("archived_at", null)
-      .abortSignal(AbortSignal.timeout(FETCH_TIMEOUT_MS))
-      .maybeSingle();
-    if (error) {
-      log.warn("feature_flags fetch failed", {
-        flag: flagKey,
-        error: error.message,
-      });
-      return null;
-    }
-    return (data as FlagRow | null) || null;
-  } catch (err) {
-    log.warn("feature_flags threw", {
-      flag: flagKey,
-      err: err instanceof Error ? err.message : String(err),
-    });
-    return null;
-  }
-}
-
-/**
- * L2 cross-worker cache (Next.js `unstable_cache`). Critical during
- * static export: the build spawns ~29 worker processes, each with its
- * own L1 (in-process) cache. Without L2, every worker independently
- * fetches every layout-level flag (`chatbot_widget`, `report_button`,
- * `push_notifications`, `newsletter_exit_intent`) — 29 × 4 = 116 calls
- * for the first wave alone, plus refetches every 25s as L1 entries
- * expire. Cross-Atlantic latency (Supabase eu-west-1 ↔ Vercel iad1)
- * then turns that into a fetch storm that exceeds the 60s static-page
- * generation timeout and fails the build.
- *
- * `unstable_cache` shares one entry per cacheKey across all workers via
- * the `.next/cache/fetch-cache` directory. 60s revalidate balances
- * worker dedup (fast) with admin-UI flag-flip propagation (~1 min).
- *
- * Runtime impact is also positive: serverless functions warming up
- * read from the shared cache instead of each calling Supabase.
- */
-const cachedFetchFlagRow = unstable_cache(
-  fetchFlagRow,
-  ["feature-flag-row-v1"],
-  { revalidate: 60, tags: ["feature-flags"] },
-);
-
-/**
- * Read a flag row from the DB, with two-layer caching:
- *  - L1: per-process Map (30s TTL, fastest, used by serverless hot paths)
- *  - L2: Next.js unstable_cache (cross-worker, ~60s TTL, kills build-time
- *    fetch storms)
- *
+ * Read a flag row from the DB, with 30-second in-process cache.
  * Fail-open: DB errors return null → evaluateFlag() returns false.
  */
 export async function loadFlag(flagKey: string): Promise<FlagRow | null> {
@@ -221,48 +153,56 @@ export async function loadFlag(flagKey: string): Promise<FlagRow | null> {
     return null;
   }
 
-  // L2 fetch. fetchFlagRow already swallows errors and returns null,
-  // so the unstable_cache entry is always stable (null or row, never
-  // a thrown exception). On a true Supabase outage L2 caches null
-  // for 60s — matching the prior negative-cache intent at scale.
-  //
-  // Falls back to the raw fetcher when unstable_cache throws (E469 in
-  // vitest — no Next.js incremental-cache context) so unit tests and
-  // any other environment without a Next request context still work.
-  let row: FlagRow | null;
   try {
-    row = await cachedFetchFlagRow(flagKey);
-  } catch {
-    row = await fetchFlagRow(flagKey);
-  }
-
-  if (row === null) {
-    // Short negative-cache in L1 so repeated reads within one render
-    // don't each pay the L2 (or worse, a fresh Supabase) round-trip
-    // after a 60s revalidate window expires. Matches the original
-    // 5s negative-cache TTL.
+    const supabase = createAdminClient();
+    const { data, error } = await supabase
+      .from("feature_flags")
+      .select("flag_key, enabled, rollout_pct, allowlist, denylist, segments, archived_at")
+      .eq("flag_key", flagKey)
+      .is("archived_at", null)
+      .abortSignal(AbortSignal.timeout(FETCH_TIMEOUT_MS))
+      .maybeSingle();
+    if (error) {
+      log.warn("feature_flags fetch failed", {
+        flag: flagKey,
+        error: error.message,
+      });
+      // Short negative-cache so a transient Supabase blip doesn't
+      // bury every flag in the 30s positive cache, but repeated
+      // reads within one render don't each pay the timeout.
+      cache.set(flagKey, { row: null, at: now - CACHE_TTL_MS + NEGATIVE_CACHE_TTL_MS });
+      return null;
+    }
+    const row = (data as FlagRow | null) || null;
+    cache.set(flagKey, { row, at: now });
+    // FF-04: fire-and-forget — lets the expiry cron tell an actively-used
+    // disabled flag from a truly dormant one without blocking the caller.
+    if (row) {
+      void supabase
+        .from("feature_flags")
+        .update({ last_evaluated_at: new Date().toISOString() })
+        .eq("flag_key", flagKey)
+        .then(({ error: writeErr }) => {
+          if (writeErr) {
+            log.warn("feature_flags last_evaluated_at update failed", {
+              flag: flagKey,
+              error: writeErr.message,
+            });
+          }
+        });
+    }
+    return row;
+  } catch (err) {
+    log.warn("feature_flags threw", {
+      flag: flagKey,
+      err: err instanceof Error ? err.message : String(err),
+    });
+    // Same short negative-cache window on thrown errors (timeout,
+    // DNS failure, network) so the next read in this render returns
+    // immediately instead of waiting another FETCH_TIMEOUT_MS.
     cache.set(flagKey, { row: null, at: now - CACHE_TTL_MS + NEGATIVE_CACHE_TTL_MS });
     return null;
   }
-
-  cache.set(flagKey, { row, at: now });
-  // FF-04: fire-and-forget — lets the expiry cron tell an actively-used
-  // disabled flag from a truly dormant one without blocking the caller.
-  // Stays outside the L2 cache so it fires once per L1 miss (≈ once per
-  // 30s per worker) rather than only on the first call per L2 lifetime.
-  void createAdminClient()
-    .from("feature_flags")
-    .update({ last_evaluated_at: new Date().toISOString() })
-    .eq("flag_key", flagKey)
-    .then(({ error: writeErr }) => {
-      if (writeErr) {
-        log.warn("feature_flags last_evaluated_at update failed", {
-          flag: flagKey,
-          error: writeErr.message,
-        });
-      }
-    });
-  return row;
 }
 
 export async function isFlagEnabled(
