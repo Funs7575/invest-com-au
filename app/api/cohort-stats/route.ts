@@ -47,12 +47,23 @@ export async function GET(request: Request) {
 
   if (totalCount < MIN_COHORT) {
     // Not enough data — return illustrative flag
-    return NextResponse.json({
-      cohort_label: buildCohortLabel(experience, range, interest),
-      total_count: totalCount,
-      sufficient_data: false,
-      broker_distribution: [],
-    });
+    return NextResponse.json(
+      {
+        cohort_label: buildCohortLabel(experience, range, interest),
+        total_count: totalCount,
+        sufficient_data: false,
+        broker_distribution: [],
+      },
+      {
+        headers: {
+          // Same edge cache strategy as the sufficient-data path —
+          // insufficient-data cohorts only flip when respondents
+          // cross the MIN_COHORT threshold, which is slow.
+          "Cache-Control":
+            "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400",
+        },
+      },
+    );
   }
 
   // Aggregate broker distribution
@@ -86,12 +97,24 @@ export async function GET(request: Request) {
     .sort((a, b) => b.count - a.count)
     .slice(0, 5);
 
-  return NextResponse.json({
-    cohort_label: buildCohortLabel(experience, range, interest),
-    total_count: totalCount,
-    sufficient_data: true,
-    broker_distribution: distribution,
-  });
+  return NextResponse.json(
+    {
+      cohort_label: buildCohortLabel(experience, range, interest),
+      total_count: totalCount,
+      sufficient_data: true,
+      broker_distribution: distribution,
+    },
+    {
+      headers: {
+        // Aggregate query over a slow-changing dataset (new quiz
+        // respondents trickle in). 1h edge cache is safe; SWR keeps
+        // it warm during refresh. Audit flagged this as the one
+        // edge-runtime route shipping without any Cache-Control.
+        "Cache-Control":
+          "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400",
+      },
+    },
+  );
 }
 
 function buildCohortLabel(
