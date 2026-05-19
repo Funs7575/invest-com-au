@@ -2,6 +2,10 @@ import { createClient } from "@/lib/supabase/server";
 
 const SITE_URL = "https://invest.com.au";
 
+// 1h ISR — articles publish at most a few per day; aggressive caching is fine.
+// Pairs with the Cache-Control header on the response below.
+export const revalidate = 3600;
+
 export async function GET() {
   const supabase = await createClient();
   const { data: articles } = await supabase
@@ -60,7 +64,8 @@ export async function GET() {
   return new Response(xml, {
     headers: {
       "Content-Type": "application/xml; charset=utf-8",
-      "Cache-Control": "public, max-age=3600, s-maxage=3600",
+      "Cache-Control":
+        "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400",
     },
   });
 }
