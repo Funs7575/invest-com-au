@@ -133,6 +133,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/foreign-investment/quiz",
     "/sell-business/quiz",
     "/halal-investing", "/halal-investing/quiz",
+    "/first-home-buyer/quiz",
     "/learn",
     // Global investing hub (outbound — AU residents → world)
     "/global-investing",
