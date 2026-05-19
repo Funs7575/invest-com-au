@@ -318,7 +318,10 @@ export default function VerticalPillarPage({
               </div>
               <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                 <div className="flex items-center gap-3 flex-1">
-                  <BrokerLogo broker={topPick} size="lg" />
+                  {/* Top Pick is the LCP candidate on every vertical
+                      pillar page — set `priority` so Next/Image fetches
+                      it eagerly and avoids the lazy-load delay. */}
+                  <BrokerLogo broker={topPick} size="lg" priority />
                   <div>
                     <h3 className="text-xl font-bold">
                       <Link

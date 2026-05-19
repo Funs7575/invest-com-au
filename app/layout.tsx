@@ -141,9 +141,17 @@ export default async function RootLayout({
       {/* Inline script adds .js-ready immediately so CSS animations only run when JS is available.
           Without this, hero-fade-up starts at opacity:0 and stays invisible until JS loads. */}
       <head>
-        {/* Preconnect to external APIs for faster initial requests */}
+        {/* Preconnect to external APIs for faster initial requests.
+            ui-avatars + randomuser back avatar fallbacks across
+            advisor listings (/find-advisor, /advisors) where the
+            avatar is the LCP candidate — preconnect saves ~100-300 ms
+            of connection setup on cold visits. */}
         <link rel="preconnect" href="https://guggzyqceattncjwvgyc.supabase.co" />
         <link rel="dns-prefetch" href="https://guggzyqceattncjwvgyc.supabase.co" />
+        <link rel="preconnect" href="https://ui-avatars.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://ui-avatars.com" />
+        <link rel="preconnect" href="https://randomuser.me" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://randomuser.me" />
         <link rel="manifest" href="/manifest.json" />
         <link rel="alternate" type="application/rss+xml" title="Invest.com.au Articles" href="/feed.xml" />
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js-ready')" }} />
