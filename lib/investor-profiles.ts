@@ -24,6 +24,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 import type { IntentCountryCode } from "./intent-context";
+import type { InvestorAccountType } from "@/lib/account-types";
 
 const log = logger("investor-profiles");
 
@@ -42,6 +43,7 @@ export interface InvestorProfile {
   budgetBand: BudgetBand | null;
   experienceLevel: ExperienceLevel | null;
   primaryVertical: string | null;
+  householdType: InvestorAccountType;
   meta: Record<string, unknown>;
   createdAt: string;
   updatedAt: string;
@@ -91,6 +93,7 @@ export async function upsertInvestorProfile(
     budget_band: BudgetBand | null;
     experience_level: ExperienceLevel | null;
     primary_vertical: string | null;
+    household_type: InvestorAccountType;
     meta: Record<string, unknown>;
   }>,
 ): Promise<boolean> {
@@ -210,6 +213,12 @@ function rowToProfile(r: Record<string, unknown>): InvestorProfile {
     budgetBand: (r.budget_band as BudgetBand | null) ?? null,
     experienceLevel: (r.experience_level as ExperienceLevel | null) ?? null,
     primaryVertical: (r.primary_vertical as string | null) ?? null,
+    householdType: ((): InvestorAccountType => {
+      const v = r.household_type;
+      return v === "individual" || v === "couple" || v === "family" || v === "business"
+        ? v
+        : "individual";
+    })(),
     meta: ((r.meta as Record<string, unknown> | null) ?? {}),
     createdAt: r.created_at as string,
     updatedAt: r.updated_at as string,

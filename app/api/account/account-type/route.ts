@@ -27,7 +27,10 @@ export async function GET() {
   if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
   const profile = await getInvestorProfile(user.id);
-  const account_type = getInvestorAccountType(profile?.meta ?? {});
+  const account_type = getInvestorAccountType({
+    household_type: profile?.householdType,
+    meta: profile?.meta ?? {},
+  });
   return NextResponse.json({ account_type });
 }
 
@@ -37,10 +40,16 @@ export const PUT = withValidatedBody(Body, async (_req, body) => {
   if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
   const profile = await getInvestorProfile(user.id);
+  // Dual-write: typed column is source of truth (Phase 2.2), meta JSON
+  // keeps the value for one release as a fallback for any in-flight
+  // reader still on the JSON path. Remove the meta merge in a follow-up.
   const mergedMeta: Record<string, unknown> = { ...(profile?.meta ?? {}) };
   mergedMeta.account_type = body.account_type;
 
-  const ok = await upsertInvestorProfile(user.id, { meta: mergedMeta });
+  const ok = await upsertInvestorProfile(user.id, {
+    household_type: body.account_type,
+    meta: mergedMeta,
+  });
   if (!ok) {
     log.warn("account-type PUT failed", { userId: user.id });
     return NextResponse.json({ error: "update_failed" }, { status: 500 });

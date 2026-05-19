@@ -53,9 +53,13 @@ export function isAccountKind(value: unknown): value is AccountKind {
 // ─── Investor household type (AT stream) ────────────────────────────────────
 
 /**
- * Household structure for investor-portal personalisation. Stored in
- * `investor_profiles.meta.account_type`. Drives content routing and
- * copy variants (AT-01..AT-04 audit stream). "individual" is the default.
+ * Household structure for investor-portal personalisation. Source of truth
+ * is the typed `investor_profiles.household_type` column (Phase 2.2);
+ * `investor_profiles.meta.account_type` JSON is kept as a fallback for one
+ * release so any in-flight code reading the JSON path still works.
+ *
+ * Drives content routing and copy variants (AT-01..AT-04 audit stream).
+ * "individual" is the default.
  */
 export type InvestorAccountType = "individual" | "couple" | "family" | "business";
 
@@ -70,7 +74,21 @@ export const INVESTOR_ACCOUNT_TYPES: readonly {
   { value: "business", label: "Business / SMSF", description: "Company, trust, or self-managed super" },
 ] as const;
 
-export function getInvestorAccountType(meta: Record<string, unknown>): InvestorAccountType {
-  const v = meta.account_type;
-  return v === "individual" || v === "couple" || v === "family" || v === "business" ? v : "individual";
+function isInvestorAccountType(v: unknown): v is InvestorAccountType {
+  return v === "individual" || v === "couple" || v === "family" || v === "business";
+}
+
+/**
+ * Resolve household type with column-first, JSON-fallback ordering. After
+ * Phase 2.2 backfill the column is the source of truth; the JSON read
+ * survives until the JSON key is dropped in a follow-up.
+ */
+export function getInvestorAccountType(
+  profile: { household_type?: unknown; meta?: Record<string, unknown> | null },
+): InvestorAccountType {
+  if (isInvestorAccountType(profile.household_type)) {
+    return profile.household_type;
+  }
+  const fromJson = profile.meta?.account_type;
+  return isInvestorAccountType(fromJson) ? fromJson : "individual";
 }

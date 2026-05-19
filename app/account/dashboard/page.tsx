@@ -388,7 +388,10 @@ export default async function PersonalDashboardPage() {
   actions.push({ label: "Find a financial advisor near you", href: "/find-advisor" });
 
   // AT-02..04: account-type-specific resource hub
-  const investorAccountType: InvestorAccountType = getInvestorAccountType(investorProfile?.meta ?? {});
+  const investorAccountType: InvestorAccountType = getInvestorAccountType({
+    household_type: investorProfile?.householdType,
+    meta: investorProfile?.meta ?? {},
+  });
   type HubResource = { emoji: string; label: string; desc: string; href: string };
   const ACCOUNT_TYPE_HUBS: Partial<Record<InvestorAccountType, { heading: string; resources: HubResource[] }>> = {
     couple: {
