@@ -124,6 +124,15 @@ export async function GET(request: NextRequest) {
     {
       width: 1200,
       height: 630,
+      headers: {
+        // Crawlers (Google, Twitter, Facebook, LinkedIn, Slack) hit OG
+        // routes on every link share. PNG render = font load + JSX → PNG
+        // encode, which is the slowest thing this app does at runtime.
+        // 24h browser + 30d shared (CDN) means a popular link shared 1k
+        // times triggers ~1 actual render instead of 1k.
+        "Cache-Control":
+          "public, max-age=86400, s-maxage=2592000, stale-while-revalidate=86400",
+      },
     }
   );
 }
