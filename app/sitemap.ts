@@ -26,7 +26,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Static pages with tiered priorities
   const highPriority = new Set(["/compare", "/quiz", "/reviews", "/deals", "/share-trading", "/crypto", "/savings", "/super", "/cfd", "/term-deposits", "/robo-advisors", "/versus", "/how-to", "/invest", "/foreign-investment", "/global-investing", "/etfs", "/insurance", "/tax", "/property", "/grants", "/grants/rd-tax-incentive", "/smsf/setup", "/smsf/crypto", "/smsf/property", "/sell-business", "/sell-business/valuation", "/dividends", "/dividends/franking-credits", "/negative-gearing", "/lump-sum-investing", "/lump-sum-investing/redundancy", "/lump-sum-investing/inheritance", "/halal-investing", "/learn", "/first-home-buyer"]);
-  const medPriority = new Set(["/calculators", "/articles", "/scenarios", "/switch", "/stories", "/benchmark", "/health-scores", "/alerts", "/whats-new", "/costs", "/fee-impact", "/compound-interest-calculator", "/dividend-reinvestment-calculator", "/fire-calculator", "/property-vs-shares-calculator", "/super-contributions-calculator", "/tco-calculator", "/invest/mining", "/invest/buy-business", "/invest/farmland", "/invest/commercial-property", "/invest/renewable-energy", "/invest/startups", "/compare/non-residents", "/compare/money-transfer", "/grants/emdg", "/grants/industry-growth-program", "/grants/eligibility-quiz", "/smsf/investment-strategy", "/smsf/checklist", "/sell-business/checklist", "/visa-investment", "/dividends/calculator", "/negative-gearing/calculator", "/lump-sum-investing/calculator",
+  const medPriority = new Set(["/calculators", "/articles", "/scenarios", "/switch", "/stories", "/benchmark", "/health-scores", "/alerts", "/whats-new", "/costs", "/fee-impact", "/fee-alerts", "/rate-alerts", "/compound-interest-calculator", "/dividend-reinvestment-calculator", "/fire-calculator", "/property-vs-shares-calculator", "/super-contributions-calculator", "/tco-calculator", "/invest/mining", "/invest/buy-business", "/invest/farmland", "/invest/commercial-property", "/invest/renewable-energy", "/invest/startups", "/compare/non-residents", "/compare/money-transfer", "/grants/emdg", "/grants/industry-growth-program", "/grants/eligibility-quiz", "/smsf/investment-strategy", "/smsf/checklist", "/sell-business/checklist", "/visa-investment", "/dividends/calculator", "/negative-gearing/calculator", "/lump-sum-investing/calculator",
     "/questions", ...QUESTIONS.map((q) => `/questions/${q.slug}`)]);
   // Everything else (about, how-we-earn, privacy, methodology, terms, etc.) → 0.4
 
@@ -78,7 +78,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/privacy/data-collection", "/privacy/data-rights",
     "/methodology", "/how-we-verify", "/terms", "/switch", "/editorial-policy", "/benchmark",
     "/billing-policy",
-    "/health-scores", "/alerts", "/whats-new", "/costs", "/fee-impact", "/fee-alerts", "/score",
+    "/health-scores", "/alerts", "/whats-new", "/costs", "/fee-impact", "/fee-alerts", "/rate-alerts", "/score",
     "/glossary", "/complaints", "/contact", "/advisors", "/find-advisor", "/find-advisor/life-event", "/community",
     "/community/share-trading", "/community/etfs-index-funds", "/community/crypto",
     "/community/super-retirement", "/community/property", "/community/tax-strategy",
