@@ -70,6 +70,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | AT | `claude/audit-remediation/at-02-couple-family-business` | **#907 MERGED 2026-05-18** · **#917 OPEN** | AT-01 done (`a2553d7`, #907). AT-02..04 done (`f34e7fe`): couple/family/business account-type hub sections on dashboard — `ACCOUNT_TYPE_HUBS` map + conditional section renders between "Recommended" and advisor cards. **Stream complete pending #917 merge.** | AT-01..04 done |
 | Z-22+BB-07 | `claude/audit-remediation/z-22-bb07-redundancy-hub` | **#922 OPEN** | Z-22 done (`63875c8`): `/redundancy` hub (HubPage HOC, 6 service cards, 6 FAQs, ETP stats). BB-07 done: `/tools/etp-calculator` (FY2025-26 maths, tax-free threshold, 17%/32% ETP rates, marginal rate comparison). Lead magnet + ToolsClient entry + sitemap updated. Last CI: pending — pushed `63875c8` 2026-05-19. | Z-22+BB-07 merged |
 | BB-01 | `claude/audit-remediation/bb-01-borrowing-power` | **#923 OPEN** | BB-01 done (`a861dc3`): `/tools/borrowing-power-calculator` — multi-lender borrowing power calc (FY2025-26 tax, HEM, 3 APRA lender scenarios, LVR/LMI flags). ToolsClient entry + sitemap updated. Last CI: pending — pushed `a861dc3` 2026-05-19. | BB-01 merged |
+| BB-06 | `claude/audit-remediation/bb-06-mortgage-stress-test` | **#924 OPEN** | BB-06 done (`648d024`): `/tools/mortgage-stress-test` — 9 rate-rise scenarios (+0..+5%), housing-stress thresholds (30%/40% gross), APRA +3% buffer callout, binary-search breakeven rate, FY2025-26 tax. ToolsClient entry + sitemap updated. Last CI: pending — pushed `648d024` 2026-05-19. | BB-06 merged |
 
 ---
 
@@ -129,6 +130,24 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 455 — 2026-05-19 — BB-06 — mortgage stress test calculator
+
+- **Stream:** BB-06 (mortgage stress test)
+- **Phase:** 5 — implementation (Tier A — calculator, no schema migration)
+- **Branch:** `claude/audit-remediation/bb-06-mortgage-stress-test`
+- **PR:** #924 OPEN
+- **Commit:** `648d024` — feat(bb06): BB-06 — mortgage stress test calculator
+- **Diff:** +472 LOC across 4 files
+- **Items done:** BB-06 (`/tools/mortgage-stress-test`)
+- **Implementation:**
+  - **`app/tools/mortgage-stress-test/MortgageStressTestClient.tsx`** — "use client"; 9 rate-rise scenarios (offset 0..+5%); housing-stress thresholds: 30% gross (amber), 40% gross (red) — per RBA/AHURI definition; APRA +3% buffer at index 6 highlighted with ring; binary-search breakeven rate (rate at which repayments first hit 30% of gross); FY2025-26 tax + Medicare levy for net income; couple mode; loan term slider (1–30 years); monthly-buffer column; `GENERAL_ADVICE_WARNING` footer
+  - **`app/tools/mortgage-stress-test/page.tsx`** — RSC; `revalidate=3600`; BreadcrumbList + CalculatorSchema + FAQPage JSON-LD (4 FAQ items); renders `<MortgageStressTestClient>` via `<Suspense>`
+  - **`app/tools/ToolsClient.tsx`** — mortgage stress test entry (Calculators category, rating 5)
+  - **`app/sitemap.ts`** — `/tools/mortgage-stress-test` added to static URL array
+- **Local gates:** dated-strings pre-scan ✅ (no bare month-name dates in tsx), JSON-LD coverage ✅
+- **Tier A batch:** continuing to iter 456 (F-DISC-20260519-01 — duplicate function shadows, slot 21)
+- **STATUS: PROGRESS · stream=BB-06 · item=BB-06 · pr=#924**
 
 ### iter 454 — 2026-05-19 — BB-01 — borrowing power multi-lender calculator
 
