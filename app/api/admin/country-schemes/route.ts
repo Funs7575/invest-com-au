@@ -8,9 +8,8 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { ADMIN_EMAILS } from "@/lib/admin";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
+import { requireAdmin } from "@/lib/require-admin";
 import { logger } from "@/lib/logger";
 import { withValidatedBody } from "@/lib/validation/withValidatedBody";
 import {
@@ -41,18 +40,12 @@ const UpdateSchema = CreateSchema.partial().extend({
   id: z.number().int().positive(),
 });
 
-async function requireAdmin(): Promise<{ email: string } | null> {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user?.email || !ADMIN_EMAILS.includes(user.email)) return null;
-  return { email: user.email };
-}
 
 /** GET /api/admin/country-schemes?country_code=GB */
 export async function GET(request: NextRequest) {
-  const admin = await requireAdmin();
-  if (!admin) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const guard = await requireAdmin();
+  if (!guard.ok) {
+    return guard.response;
   }
 
   const code = request.nextUrl.searchParams.get("country_code");
@@ -75,9 +68,9 @@ export async function GET(request: NextRequest) {
 
 /** POST /api/admin/country-schemes — create a new row */
 export const POST = withValidatedBody(CreateSchema, async (_req, body) => {
-  const admin = await requireAdmin();
-  if (!admin) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const guard = await requireAdmin();
+  if (!guard.ok) {
+    return guard.response;
   }
 
   const supabase = createAdminClient();
@@ -96,7 +89,7 @@ export const POST = withValidatedBody(CreateSchema, async (_req, body) => {
     action: "country_scheme:created",
     entity_type: "country_schemes",
     entity_id: String(data.id),
-    admin_email: admin.email,
+    admin_email: guard.email,
     details: { country_code: body.country_code, name: body.name },
   });
 
@@ -105,9 +98,9 @@ export const POST = withValidatedBody(CreateSchema, async (_req, body) => {
 
 /** PATCH /api/admin/country-schemes — update an existing row by id */
 export const PATCH = withValidatedBody(UpdateSchema, async (_req, body) => {
-  const admin = await requireAdmin();
-  if (!admin) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const guard = await requireAdmin();
+  if (!guard.ok) {
+    return guard.response;
   }
 
   const { id, ...updates } = body;
@@ -128,7 +121,7 @@ export const PATCH = withValidatedBody(UpdateSchema, async (_req, body) => {
     action: "country_scheme:updated",
     entity_type: "country_schemes",
     entity_id: String(id),
-    admin_email: admin.email,
+    admin_email: guard.email,
     details: updates,
   });
 
@@ -137,9 +130,9 @@ export const PATCH = withValidatedBody(UpdateSchema, async (_req, body) => {
 
 /** DELETE /api/admin/country-schemes?id=123 */
 export async function DELETE(request: NextRequest) {
-  const admin = await requireAdmin();
-  if (!admin) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const guard = await requireAdmin();
+  if (!guard.ok) {
+    return guard.response;
   }
 
   const id = request.nextUrl.searchParams.get("id");
@@ -160,7 +153,7 @@ export async function DELETE(request: NextRequest) {
     action: "country_scheme:deleted",
     entity_type: "country_schemes",
     entity_id: id,
-    admin_email: admin.email,
+    admin_email: guard.email,
   });
 
   return NextResponse.json({ ok: true });

@@ -1,33 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { ADMIN_EMAILS } from "@/lib/admin";
+import { requireAdmin } from "@/lib/require-admin";
 import { logger } from "@/lib/logger";
 
 const log = logger("admin-competitors");
 
-async function requireAdmin() {
-  const supabaseAuth = await createClient();
-  const {
-    data: { user },
-    error: authError,
-  } = await supabaseAuth.auth.getUser();
-
-  if (
-    authError ||
-    !user ||
-    !ADMIN_EMAILS.includes(user.email?.toLowerCase() || "")
-  ) {
-    return null;
-  }
-  return user;
-}
-
 // GET — list recent competitor_watch entries (most recent 200)
 export async function GET() {
   try {
-    const admin = await requireAdmin();
-    if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const guard = await requireAdmin();
+    if (!guard.ok) return guard.response;
 
     const supabase = createAdminClient();
     const { data } = await supabase
@@ -44,8 +26,8 @@ export async function GET() {
 
 // POST — create a new competitor_watch entry
 export async function POST(request: NextRequest) {
-  const admin = await requireAdmin();
-  if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const guard = await requireAdmin();
+  if (!guard.ok) return guard.response;
 
   const supabase = createAdminClient();
   const body = await request.json();
@@ -74,7 +56,7 @@ export async function POST(request: NextRequest) {
     action: "competitor_watch:created",
     entity_type: "competitor_watch",
     entity_id: String(data.id),
-    admin_email: admin.email ?? "unknown",
+    admin_email: guard.email ?? "unknown",
     details: { competitor, event_type },
   });
 
@@ -83,8 +65,8 @@ export async function POST(request: NextRequest) {
 
 // DELETE — remove a competitor_watch entry
 export async function DELETE(request: NextRequest) {
-  const admin = await requireAdmin();
-  if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const guard = await requireAdmin();
+  if (!guard.ok) return guard.response;
 
   const supabase = createAdminClient();
   const { id } = await request.json();
@@ -95,7 +77,7 @@ export async function DELETE(request: NextRequest) {
     action: "competitor_watch:deleted",
     entity_type: "competitor_watch",
     entity_id: String(id),
-    admin_email: admin.email ?? "unknown",
+    admin_email: guard.email ?? "unknown",
   });
 
   return NextResponse.json({ deleted: true });
