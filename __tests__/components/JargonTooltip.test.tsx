@@ -29,7 +29,7 @@ describe("JargonTooltip", () => {
 
   it("hover opens the tooltip with the glossary definition", () => {
     render(<JargonTooltip term="ASX" />);
-    const wrapper = screen.getByText("ASX").parentElement?.parentElement;
+    const wrapper = screen.getByText("ASX").parentElement;
     expect(wrapper).not.toBeNull();
     fireEvent.mouseEnter(wrapper!);
     expect(screen.getByRole("tooltip")).toBeInTheDocument();
@@ -37,7 +37,7 @@ describe("JargonTooltip", () => {
 
   it("mouseLeave closes the tooltip", () => {
     render(<JargonTooltip term="ASX" />);
-    const wrapper = screen.getByText("ASX").parentElement?.parentElement;
+    const wrapper = screen.getByText("ASX").parentElement;
     fireEvent.mouseEnter(wrapper!);
     expect(screen.getByRole("tooltip")).toBeInTheDocument();
     fireEvent.mouseLeave(wrapper!);
