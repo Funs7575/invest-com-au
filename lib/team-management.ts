@@ -18,6 +18,7 @@
  * See docs/audits/identity-platform-expansion-2026-05-20.md (Wave 2, #16).
  */
 
+// eslint-disable-next-line no-restricted-imports -- cross-user / service-role-managed reads with no per-user JWT path (see CLAUDE.md § "Two Supabase clients").
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 import { recordAudit } from "@/lib/audit";

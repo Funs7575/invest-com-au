@@ -15,10 +15,14 @@ import Link from "next/link";
 import type { KindMembership } from "@/lib/account-kinds";
 import { portalForKind } from "@/lib/account-kinds";
 
-const KIND_META: Record<
+// Partial: the /account "your roles" strip covers the user-facing kinds it
+// has copy for; squad / wholesale_operator / embed_customer are reached via
+// the workspace switcher + their own portals, and the render guards on
+// `if (!meta) return null`.
+const KIND_META: Partial<Record<
   KindMembership["kind"],
   { label: string; description: string; icon: string; tone: string }
-> = {
+>> = {
   investor: {
     label: "Investor",
     description: "Holdings, watchlist, saved searches, scoring.",

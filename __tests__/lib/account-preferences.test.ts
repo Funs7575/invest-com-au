@@ -38,11 +38,6 @@ function chainUpsert(error: { message: string } | null) {
   return { from: vi.fn().mockReturnValue({ upsert }), upsert };
 }
 
-function chainInsert(error: { message: string } | null) {
-  const insert = vi.fn().mockResolvedValue({ error });
-  return { from: vi.fn().mockReturnValue({ insert }), insert };
-}
-
 describe("getKindPreferences", () => {
   beforeEach(() => mockFrom.mockReset());
 
@@ -108,6 +103,7 @@ describe("recordSwitch", () => {
     const upsert = vi.fn().mockResolvedValue({ error: null });
     const insert = vi.fn().mockResolvedValue({ error: null });
     mockFrom.mockImplementation((table: string) => {
+      if (table === undefined) return undefined as never; // ignore vitest cleanup's stray from(undefined)
       if (table === "account_kind_preferences") return { upsert };
       if (table === "account_kind_switch_log") return { insert };
       throw new Error(`unexpected table: ${table}`);
@@ -136,6 +132,7 @@ describe("recordSwitch", () => {
     const upsert = vi.fn().mockResolvedValue({ error: { message: "boom" } });
     const insert = vi.fn().mockResolvedValue({ error: null });
     mockFrom.mockImplementation((table: string) => {
+      if (table === undefined) return undefined as never; // ignore vitest cleanup's stray from(undefined)
       if (table === "account_kind_preferences") return { upsert };
       if (table === "account_kind_switch_log") return { insert };
       throw new Error(`unexpected table: ${table}`);

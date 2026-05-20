@@ -12,6 +12,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { withValidatedBody } from "@/lib/validation/withValidatedBody";
 import { professionalIdForUser, inviteAdvisorToSquad } from "@/lib/team-management";
+import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 import { sendEmail } from "@/lib/resend";
 import { escapeHtml } from "@/lib/html-escape";
 import { logger } from "@/lib/logger";
@@ -26,7 +27,10 @@ const Body = z.object({
   role: z.enum(["lead", "member"]),
 });
 
-export const POST = withValidatedBody(Body, async (_req, body) => {
+export const POST = withValidatedBody(Body, async (req, body) => {
+  if (!(await isAllowed("team_invite_advisor", ipKey(req), { max: 15, refillPerSec: 0.2 }))) {
+    return NextResponse.json({ error: "rate_limited" }, { status: 429 });
+  }
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });

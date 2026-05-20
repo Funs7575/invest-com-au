@@ -12,6 +12,7 @@
  * Capability gates live at the API route layer — see app/broker-portal/team.
  */
 
+// eslint-disable-next-line no-restricted-imports -- cross-user / service-role-managed reads with no per-user JWT path (see CLAUDE.md § "Two Supabase clients").
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 import crypto from "node:crypto";

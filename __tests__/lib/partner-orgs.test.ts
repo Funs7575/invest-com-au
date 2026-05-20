@@ -30,6 +30,7 @@ describe("upgradePartnerToBrokerPartner", () => {
       }),
     };
     mockFrom.mockImplementation((table: string) => {
+      if (table === undefined) return undefined as never; // ignore vitest cleanup's stray from(undefined)
       if (table === "principals") return principalUpdate;
       if (table === "broker_accounts") return brokerUpsert;
       throw new Error(`unexpected ${table}`);

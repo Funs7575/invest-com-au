@@ -21,6 +21,7 @@
  * See docs/audits/account-architecture-master-plan-2026-05-19.md Phase 2.5.
  */
 
+// eslint-disable-next-line no-restricted-imports -- cross-user / service-role-managed reads with no per-user JWT path (see CLAUDE.md § "Two Supabase clients").
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 
@@ -156,11 +157,17 @@ export async function claimByEmail(opts: {
   const onlyUnclaimed = spec.onlyUnclaimed ?? (spec.claimedAtColumn != null);
 
   try {
-    let query = supabase.from(spec.table).update(patch).eq(spec.emailColumn, trimmedEmail);
+    // count goes on the update() options (not select()) — the mutation
+    // builder's .select() takes only a column list. Awaiting the builder
+    // returns the affected-row count without fetching rows.
+    let query = supabase
+      .from(spec.table)
+      .update(patch, { count: "exact" })
+      .eq(spec.emailColumn, trimmedEmail);
     if (onlyUnclaimed && spec.claimedAtColumn) {
       query = query.is(spec.claimedAtColumn, null);
     }
-    const { error, count } = await query.select("*", { count: "exact", head: true });
+    const { error, count } = await query;
     if (error) {
       log.warn("claimByEmail update failed", {
         table: spec.table,
@@ -193,7 +200,6 @@ export async function claimAllByEmail(opts: {
     // Sequential — these are small writes against different tables, and
     // sequential makes the per-table error reporting cleaner. Parallel
     // would only help on a large registry.
-    // eslint-disable-next-line no-await-in-loop -- see above
     results.push(await claimByEmail({ ...opts, spec }));
   }
   return results;

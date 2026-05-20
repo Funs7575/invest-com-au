@@ -46,6 +46,7 @@ describe("getListingDetail gating", () => {
 
   it("gates a s708 listing for a non-certified / anonymous viewer", async () => {
     mockFrom.mockImplementation((table: string) => {
+      if (table === undefined) return undefined as never; // ignore vitest cleanup's stray from(undefined)
       if (table === "wholesale_listings") {
         return {
           select: vi.fn().mockReturnValue({
@@ -91,6 +92,7 @@ describe("submitWholesaleLead", () => {
   it("inserts when certified", async () => {
     const insert = vi.fn().mockResolvedValue({ error: null });
     mockFrom.mockImplementation((table: string) => {
+      if (table === undefined) return undefined as never; // ignore vitest cleanup's stray from(undefined)
       if (table === "investor_profiles") return profile({ is_hnw: true, meta: {} });
       if (table === "wholesale_listing_leads") return { insert };
       throw new Error(`unexpected ${table}`);

@@ -23,15 +23,15 @@ function AcceptInner() {
   const params = useSearchParams();
   const router = useRouter();
   const token = params.get("token");
-  const [state, setState] = useState<"working" | "ok" | "error">("working");
-  const [message, setMessage] = useState("Accepting invitation…");
+  // Derive the missing-token state from the initial render so the effect
+  // doesn't synchronously setState (react-hooks/set-state-in-effect).
+  const [state, setState] = useState<"working" | "ok" | "error">(token ? "working" : "error");
+  const [message, setMessage] = useState(
+    token ? "Accepting invitation…" : "Missing invitation token.",
+  );
 
   useEffect(() => {
-    if (!token) {
-      setState("error");
-      setMessage("Missing invitation token.");
-      return;
-    }
+    if (!token) return;
     let cancelled = false;
     (async () => {
       try {

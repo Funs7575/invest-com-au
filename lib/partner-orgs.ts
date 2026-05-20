@@ -18,6 +18,7 @@
  * See docs/audits/account-architecture-master-plan-2026-05-19.md Phase 0.3.
  */
 
+// eslint-disable-next-line no-restricted-imports -- cross-user / service-role-managed reads with no per-user JWT path (see CLAUDE.md § "Two Supabase clients").
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 import type { Principal } from "@/lib/principals";

@@ -7,9 +7,10 @@
  * service client after an explicit ownership check).
  */
 
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 import { logger } from "@/lib/logger";
 import crypto from "node:crypto";
 
@@ -24,7 +25,10 @@ function generateKey(): { plaintext: string; hash: string } {
   return { plaintext, hash };
 }
 
-export async function POST() {
+export async function POST(req: NextRequest) {
+  if (!(await isAllowed("embed_rotate_key", ipKey(req), { max: 6, refillPerSec: 0.05 }))) {
+    return NextResponse.json({ error: "rate_limited" }, { status: 429 });
+  }
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });

@@ -13,7 +13,6 @@ import { createClient } from "@/lib/supabase/server";
 import {
   getKindsForUser,
   type KindMembership,
-  type WorkspaceKind,
 } from "@/lib/account-kinds";
 import SelectWorkspaceClient from "./SelectWorkspaceClient";
 
@@ -58,7 +57,7 @@ export default async function SelectWorkspacePage() {
             Choose your workspace
           </h1>
           <p className="text-sm text-slate-600">
-            You have multiple roles on Invest.com.au. Pick the workspace you'd like to start in — you can switch any time from the header menu.
+            You have multiple roles on Invest.com.au. Pick the workspace you&apos;d like to start in — you can switch any time from the header menu.
           </p>
         </header>
         <SelectWorkspaceClient memberships={augmented} />

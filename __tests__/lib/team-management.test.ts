@@ -42,6 +42,7 @@ describe("isSquadAdmin", () => {
 
   it("true when caller is the team owner (short-circuits before member lookup)", async () => {
     mockFrom.mockImplementation((table: string) => {
+      if (table === undefined) return undefined as never; // ignore vitest cleanup's stray from(undefined)
       if (table === "expert_teams") {
         return builder({ data: { owner_professional_id: 5, lead_professional_id: null } });
       }
@@ -52,6 +53,7 @@ describe("isSquadAdmin", () => {
 
   it("true when caller is the lead_professional_id", async () => {
     mockFrom.mockImplementation((table: string) => {
+      if (table === undefined) return undefined as never; // ignore vitest cleanup's stray from(undefined)
       if (table === "expert_teams") {
         return builder({ data: { owner_professional_id: 9, lead_professional_id: 5 } });
       }
@@ -62,6 +64,7 @@ describe("isSquadAdmin", () => {
 
   it("true when caller is an active lead member", async () => {
     mockFrom.mockImplementation((table: string) => {
+      if (table === undefined) return undefined as never; // ignore vitest cleanup's stray from(undefined)
       if (table === "expert_teams") {
         return builder({ data: { owner_professional_id: 9, lead_professional_id: 9 } });
       }
@@ -75,6 +78,7 @@ describe("isSquadAdmin", () => {
 
   it("false for a plain active member", async () => {
     mockFrom.mockImplementation((table: string) => {
+      if (table === undefined) return undefined as never; // ignore vitest cleanup's stray from(undefined)
       if (table === "expert_teams") {
         return builder({ data: { owner_professional_id: 9, lead_professional_id: 9 } });
       }
@@ -88,6 +92,7 @@ describe("isSquadAdmin", () => {
 
   it("false when caller has no membership at all", async () => {
     mockFrom.mockImplementation((table: string) => {
+      if (table === undefined) return undefined as never; // ignore vitest cleanup's stray from(undefined)
       if (table === "expert_teams") {
         return builder({ data: { owner_professional_id: 9, lead_professional_id: 9 } });
       }

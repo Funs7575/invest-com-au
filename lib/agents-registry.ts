@@ -13,6 +13,7 @@
  * deliberately when the founder is ready, but nothing calls it yet.
  */
 
+// eslint-disable-next-line no-restricted-imports -- cross-user / service-role-managed reads with no per-user JWT path (see CLAUDE.md § "Two Supabase clients").
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 

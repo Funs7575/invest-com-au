@@ -72,6 +72,7 @@ describe("lockThread", () => {
 
   it("rejects non-moderators with not_a_moderator", async () => {
     mockFrom.mockImplementation((table: string) => {
+      if (table === undefined) return undefined as never; // ignore vitest cleanup's stray from(undefined)
       if (table === "forum_user_profiles") return modProfile(false);
       throw new Error(`unexpected: ${table}`);
     });
@@ -83,6 +84,7 @@ describe("lockThread", () => {
     const upd = tableUpdate();
     const ins = actionInsert();
     mockFrom.mockImplementation((table: string) => {
+      if (table === undefined) return undefined as never; // ignore vitest cleanup's stray from(undefined)
       if (table === "forum_user_profiles") return modProfile(true);
       if (table === "forum_threads") return upd;
       if (table === "forum_moderation_actions") return ins;
@@ -114,6 +116,7 @@ describe("hidePost", () => {
     const upd = tableUpdate();
     const ins = actionInsert();
     mockFrom.mockImplementation((table: string) => {
+      if (table === undefined) return undefined as never; // ignore vitest cleanup's stray from(undefined)
       if (table === "forum_user_profiles") return modProfile(true);
       if (table === "forum_posts") return upd;
       if (table === "forum_moderation_actions") return ins;
@@ -128,9 +131,9 @@ describe("banUser", () => {
   beforeEach(() => mockFrom.mockReset());
 
   it("permanent ban sets status=banned and banned_until null", async () => {
-    const upd = tableUpdate();
     const ins = actionInsert();
     mockFrom.mockImplementation((table: string) => {
+      if (table === undefined) return undefined as never; // ignore vitest cleanup's stray from(undefined)
       if (table === "forum_user_profiles") return modProfile(true);
       // The same table is also queried for the actual ban update.
       // First call (isModerator check) returns the modProfile chain;
@@ -142,6 +145,7 @@ describe("banUser", () => {
     });
     // Replace with a dual-purpose mock for forum_user_profiles:
     mockFrom.mockImplementation((table: string) => {
+      if (table === undefined) return undefined as never; // ignore vitest cleanup's stray from(undefined)
       if (table === "forum_user_profiles") {
         return {
           ...modProfile(true),
@@ -164,6 +168,7 @@ describe("banUser", () => {
   it("suspension with duration logs as suspend_user action", async () => {
     const ins = actionInsert();
     mockFrom.mockImplementation((table: string) => {
+      if (table === undefined) return undefined as never; // ignore vitest cleanup's stray from(undefined)
       if (table === "forum_user_profiles") {
         return {
           ...modProfile(true),

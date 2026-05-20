@@ -6,12 +6,15 @@ import { isFlagEnabled } from "@/lib/feature-flags";
 import { createClient } from "@/lib/supabase/server";
 // eslint-disable-next-line no-restricted-imports -- cross-table workspace lookup: resolves the caller's active account kind label so the brief form can prefill business/listing-owner context. Reads only the user's own profile under service-role because business_accounts / listing_owner_accounts have no anon SELECT path.
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getActiveKind, type WorkspaceKind } from "@/lib/account-kinds";
+import { getActiveKind } from "@/lib/account-kinds";
 import Icon from "@/components/Icon";
 import BriefForm from "./BriefForm";
 
+// Brief-filing kinds only — must stay in sync with BriefForm's
+// WorkspaceContext. squad / wholesale_operator / embed_customer don't file
+// briefs (loadWorkspaceContext returns null for them).
 interface WorkspaceContext {
-  kind: WorkspaceKind;
+  kind: "advisor" | "broker_partner" | "investor" | "business_owner" | "listing_owner";
   label: string;
   prefillName: string | null;
   prefillEmail: string | null;
@@ -72,15 +75,19 @@ async function loadWorkspaceContext(): Promise<WorkspaceContext | null> {
         prefillPhone: null,
       };
     }
-    // advisor / broker_partner — generic label, no prefill (those kinds
-    // don't typically file briefs).
-    return {
-      kind: active,
-      label: active.replace(/_/g, " "),
-      prefillName: null,
-      prefillEmail: user.email ?? null,
-      prefillPhone: null,
-    };
+    // advisor / broker_partner — generic label, no prefill. Other kinds
+    // (squad / wholesale_operator / embed_customer) don't file briefs →
+    // no workspace prefill.
+    if (active === "advisor" || active === "broker_partner") {
+      return {
+        kind: active,
+        label: active.replace(/_/g, " "),
+        prefillName: null,
+        prefillEmail: user.email ?? null,
+        prefillPhone: null,
+      };
+    }
+    return null;
   } catch {
     return null;
   }

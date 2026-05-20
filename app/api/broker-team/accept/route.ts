@@ -13,6 +13,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 import { withValidatedBody } from "@/lib/validation/withValidatedBody";
 import { logger } from "@/lib/logger";
 
@@ -22,7 +23,10 @@ export const runtime = "nodejs";
 
 const Body = z.object({ token: z.string().min(10).max(200) });
 
-export const POST = withValidatedBody(Body, async (_req, body) => {
+export const POST = withValidatedBody(Body, async (req, body) => {
+  if (!(await isAllowed("broker_team_accept", ipKey(req), { max: 10, refillPerSec: 0.2 }))) {
+    return NextResponse.json({ error: "rate_limited" }, { status: 429 });
+  }
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });

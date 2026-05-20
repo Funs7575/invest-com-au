@@ -10,6 +10,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 import { withValidatedBody } from "@/lib/validation/withValidatedBody";
 import {
   professionalIdForUser,
@@ -21,6 +22,9 @@ import {
 export const runtime = "nodejs";
 
 export async function GET(req: NextRequest) {
+  if (!(await isAllowed("team_members_read", ipKey(req), { max: 40, refillPerSec: 1 }))) {
+    return NextResponse.json({ error: "rate_limited" }, { status: 429 });
+  }
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });

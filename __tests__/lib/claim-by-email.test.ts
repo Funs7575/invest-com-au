@@ -14,12 +14,17 @@ import {
 } from "@/lib/claim/by-email";
 
 function chainUpdate(result: { error: { message: string } | null; count: number | null }) {
-  const headSpy = vi.fn().mockResolvedValue(result);
-  const selectSpy = vi.fn().mockReturnValue(headSpy());
-  const isSpy = vi.fn().mockReturnValue({ select: selectSpy });
-  const eqSpy = vi.fn().mockReturnValue({ is: isSpy, select: selectSpy });
+  // Source now does: update(patch, { count }).eq(col, val)[.is(col, null)]
+  // then awaits the builder (no .select()). So .eq() returns a thenable
+  // that also exposes .is(), and .is() returns an awaitable.
+  const thenable = {
+    is: vi.fn().mockReturnValue(Promise.resolve(result)),
+    then: (onF: (v: unknown) => unknown, onR?: (e: unknown) => unknown) =>
+      Promise.resolve(result).then(onF, onR),
+  };
+  const eqSpy = vi.fn().mockReturnValue(thenable);
   const updateSpy = vi.fn().mockReturnValue({ eq: eqSpy });
-  return { from: vi.fn().mockReturnValue({ update: updateSpy }), eqSpy, isSpy };
+  return { from: vi.fn().mockReturnValue({ update: updateSpy }), eqSpy };
 }
 
 const SPEC: ClaimableTable = {
