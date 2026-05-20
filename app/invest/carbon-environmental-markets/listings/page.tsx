@@ -7,6 +7,7 @@ import {
   countListingsByVertical,
 } from "@/lib/investment-listings-query";
 import InvestListingsClient from "@/components/InvestListingsClient";
+import ListingComplianceNotice from "@/components/invest/ListingComplianceNotice";
 
 export const revalidate = 300;
 
@@ -18,18 +19,17 @@ export async function generateMetadata(): Promise<Metadata> {
     description:
       "Browse Australian carbon and environmental market investment opportunities. ACCUs, voluntary carbon credits, biodiversity offsets, carbon farming projects, reforestation and land restoration assets.",
     alternates: { canonical: `${SITE_URL}/invest/carbon-environmental-markets/listings` },
+    // ACCUs are financial products under the Corporations Act 2001 and may
+    // trigger MIS licensing rules. Pending legal sign-off this vertical is
+    // de-indexed and shows a wholesale (s708) gate. Re-enable indexing only
+    // after compliance review (see MM-marketplace-expansion-plan.md § MM-V03).
+    robots: { index: false, follow: false },
     openGraph: {
       title: `Carbon & Environmental Markets Investment Australia — ${countLabel}Active Listings`,
       url: `${SITE_URL}/invest/carbon-environmental-markets/listings`,
     },
   };
 }
-
-// TODO: human review of compliance gating — ACCUs are financial products
-// under the Corporations Act 2001 and may trigger MIS licensing rules.
-// Until legal sign-off, listings should be gated to wholesale investors
-// or presented as lead-gen only (no pricing / subscription mechanics).
-// See MM-marketplace-expansion-plan.md § MM-V03 compliance note.
 
 export default async function CarbonEnvironmentalMarketsListingsPage() {
   const listings = await fetchListingsByVertical("carbon-environmental-markets");
@@ -47,6 +47,10 @@ export default async function CarbonEnvironmentalMarketsListingsPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
+      <ListingComplianceNotice
+        productLabel="Australian Carbon Credit Units (ACCUs) and related environmental-market products"
+        classification="ACCUs are financial products under the Corporations Act 2001."
       />
       <Suspense fallback={<div className="py-12 text-center text-slate-400">Loading listings...</div>}>
         <InvestListingsClient
