@@ -1029,5 +1029,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.65,
   }));
 
-  return [...staticPages, ...localizedPages, ...bestPages, ...bestForPages, ...commodityPages, ...stockDetailPages, ...transferGuidePages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...howToPages, ...expertArticlePages, ...advisorPages, ...advisorTypePages, ...advisorStatePages, ...advisorCityPages, ...advisorLocationPages, ...investingCityPages, ...glossaryPages, ...firmPages, ...propertyListingPages, ...suburbGuidePages, ...propertyHubPages, ...newHubPages, newsletterArchivePage, ...newsletterEditionPages, ...investStaticPages, ...investCategoryPages, ...investSubcategoryPages, ...investListingPages, ...stockbrokerFirmPages, ...quoteJobPages, ...quoteCategoryStatePages, marketplaceHubPage, ...marketplaceIntentPages, ...marketplaceIntentStatePages, testimonialsPage, ...grantsIndustryPages, ...grantsStateProgramPages, investingForIndexPage, ...investingForPages];
+  // ── Z-27: /tax-return hub (seasonal June–October) ──
+  const taxReturnHubPage = {
+    url: `${baseUrl}/tax-return`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.82,
+  };
+
+  return [...staticPages, ...localizedPages, ...bestPages, ...bestForPages, ...commodityPages, ...stockDetailPages, ...transferGuidePages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...howToPages, ...expertArticlePages, ...advisorPages, ...advisorTypePages, ...advisorStatePages, ...advisorCityPages, ...advisorLocationPages, ...investingCityPages, ...glossaryPages, ...firmPages, ...propertyListingPages, ...suburbGuidePages, ...propertyHubPages, ...newHubPages, newsletterArchivePage, ...newsletterEditionPages, ...investStaticPages, ...investCategoryPages, ...investSubcategoryPages, ...investListingPages, ...stockbrokerFirmPages, ...quoteJobPages, ...quoteCategoryStatePages, marketplaceHubPage, ...marketplaceIntentPages, ...marketplaceIntentStatePages, testimonialsPage, ...grantsIndustryPages, ...grantsStateProgramPages, investingForIndexPage, ...investingForPages, taxReturnHubPage];
 }
