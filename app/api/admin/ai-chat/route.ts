@@ -12,9 +12,12 @@ import {
 } from "@/lib/ai-cost-caps";
 import { sendCap80Alert } from "@/lib/ai-cost-alerts";
 import { filterFactualOutput } from "@/lib/compliance";
+import { logger } from "@/lib/logger";
 
 export const runtime = "nodejs";
 export const maxDuration = 120;
+
+const log = logger("api:admin:ai-chat");
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -803,13 +806,10 @@ export async function POST(req: NextRequest) {
               if (finalText.trim().length > 0) {
                 const filterResult = filterFactualOutput(finalText);
                 if (!filterResult.ok) {
-                  console.warn(
-                    "[ai-chat] factual_filter_rejected",
-                    JSON.stringify({
-                      reason: filterResult.reason,
-                      spans: filterResult.rejectedSpans.map((s) => s.rule),
-                    }),
-                  );
+                  log.warn("[ai-chat] factual_filter_rejected", {
+                    reason: filterResult.reason,
+                    spans: filterResult.rejectedSpans.map((s) => s.rule),
+                  });
                   send({
                     type: "filter_warning",
                     reason: filterResult.reason,
