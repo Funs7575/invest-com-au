@@ -19,6 +19,10 @@ import TabBar from "@/components/directory/TabBar";
 import SearchInput from "@/components/directory/SearchInput";
 import SortDropdown from "@/components/directory/SortDropdown";
 import { resolveDirectoryFilters } from "./filter-params";
+import FilterPanel from "@/components/directory/FilterPanel";
+import FacetGroup from "@/components/directory/FacetGroup";
+import RangeSlider from "@/components/directory/RangeSlider";
+import FilterChips from "@/components/directory/FilterChips";
 
 export interface ExpertTeamCard {
   id: number;
@@ -57,6 +61,12 @@ const TYPE_FILTERS: { key: ProfessionalType | "all"; label: string; icon: string
     }))
     .sort((a, b) => a.label.localeCompare(b.label)),
 ];
+
+// Multi-select facet options for the advisor-type FacetGroup. The "all"
+// pseudo-entry is dropped — an empty selection already means "all types".
+const TYPE_FACET_OPTIONS: { value: ProfessionalType; label: string }[] = TYPE_FILTERS
+  .filter((f): f is { key: ProfessionalType; label: string; icon: string } => f.key !== "all")
+  .map((f) => ({ value: f.key, label: f.label }));
 
 const RADIUS_OPTIONS = [
   { value: 10, label: "10 km" },
@@ -581,6 +591,32 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
     return [...ordered, ...extra];
   }, [professionals]);
 
+  // Active-filter chips — mirrors the bespoke strip that lived here before,
+  // now rendered through the shared <FilterChips> primitive.
+  const activeChips: { label: string; onClear: () => void }[] = [];
+  if (isLocationActive && locationSearch) {
+    activeChips.push({
+      label: `${radius > 0 ? `${radius}km from ` : "Near "}${locationSearch.locality}`,
+      onClear: () => { setLocationSearch(null); setUserLat(null); setUserLng(null); },
+    });
+  }
+  for (const t of Array.from(typeFilters)) {
+    activeChips.push({
+      label: TYPE_FILTERS.find(f => f.key === t)?.label ?? t,
+      onClear: () => toggleType(t),
+    });
+  }
+  if (stateFilter !== "all") activeChips.push({ label: stateFilter, onClear: () => setStateFilter("all") });
+  for (const s of specialtyFilters) activeChips.push({ label: s, onClear: () => toggleSpecialty(s) });
+  if (feeFilter !== "all") activeChips.push({ label: feeFilter, onClear: () => setFeeFilter("all") });
+  if (firmFilter !== "all") activeChips.push({ label: firmFilter, onClear: () => setFirmFilter("all") });
+  if (minRating > 0) activeChips.push({ label: `${minRating}+ ★`, onClear: () => setMinRating(0) });
+  if (verifiedOnly) activeChips.push({ label: "Verified", onClear: () => setVerifiedOnly(false) });
+  if (internationalOnly) activeChips.push({ label: "🌏 International clients", onClear: () => setInternationalOnly(false) });
+  if (languageFilter !== "all") activeChips.push({ label: `Speaks ${languageFilter}`, onClear: () => setLanguageFilter("all") });
+  if (acceptingOnly) activeChips.push({ label: "✓ Accepting new", onClear: () => setAcceptingOnly(false) });
+  if (videoOnly) activeChips.push({ label: "▶ Intro video", onClear: () => setVideoOnly(false) });
+
   return (
     <div className="py-5 md:py-12">
       <div className="container-custom max-w-5xl">
@@ -680,9 +716,9 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
             placeholder="Search name, firm, team, specialty, suburb..."
             ariaLabel="Search advisors"
           />
-          <button onClick={() => setFiltersOpen(!filtersOpen)} className={`flex items-center gap-1.5 px-3 md:px-4 py-2 border rounded-lg text-sm font-semibold transition-all shrink-0 ${filtersOpen || activeFilterCount > 0 ? "bg-amber-50 border-amber-300 text-amber-700" : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"}`}>
+          <button onClick={() => setFiltersOpen(!filtersOpen)} className={`md:hidden flex items-center gap-1.5 px-3 py-2 border rounded-lg text-sm font-semibold transition-all shrink-0 ${filtersOpen || activeFilterCount > 0 ? "bg-amber-50 border-amber-300 text-amber-700" : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"}`}>
             <Icon name="sliders" size={16} />
-            <span className="hidden md:inline">Filters</span>
+            <span>Filters</span>
             {activeFilterCount > 0 && <span className="w-5 h-5 bg-amber-600 text-white text-[0.6rem] font-bold rounded-full flex items-center justify-center">{activeFilterCount}</span>}
           </button>
           <SortDropdown
@@ -692,9 +728,14 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
           />
         </div>
 
-        {/* Filter panel */}
-        {filtersOpen && (
-          <div className="bg-white border border-slate-200 rounded-2xl p-4 md:p-5 mb-4 md:mb-6 space-y-4">
+        {/* Filter panel — shared primitive: inline on desktop, drawer on mobile */}
+        <FilterPanel
+          open={filtersOpen}
+          onClose={() => setFiltersOpen(false)}
+          onClearAll={clearAll}
+          activeCount={activeFilterCount}
+          resultCount={feed.length}
+        >
             {/* Location / Near me */}
             <div>
               <label className="text-xs font-bold text-slate-700 mb-2 block flex items-center gap-1.5">
@@ -714,21 +755,17 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               </div>
             </div>
 
-            {/* Advisor Type */}
-            <div>
-              <label className="text-xs font-bold text-slate-700 mb-2 block">Advisor Type</label>
-              <div className="flex flex-wrap gap-1.5">
-                {TYPE_FILTERS.map(f => (
-                  <button key={f.key} onClick={() => toggleType(f.key)} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${(f.key === "all" ? typeFilters.size === 0 : typeFilters.has(f.key as ProfessionalType)) ? "bg-amber-600 text-white shadow-sm" : "bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200"}`}>
-                    <Icon name={f.icon} size={13} className={(f.key === "all" ? typeFilters.size === 0 : typeFilters.has(f.key as ProfessionalType)) ? "text-amber-200" : "text-slate-400"} />
-                    {f.label}
-                    {typeCounts[f.key] ? <span className={(f.key === "all" ? typeFilters.size === 0 : typeFilters.has(f.key as ProfessionalType)) ? "text-amber-200" : "text-slate-400"}>({typeCounts[f.key]})</span> : null}
-                  </button>
-                ))}
-              </div>
-            </div>
+            {/* Advisor Type — multi-select facet (empty selection = all types) */}
+            <FacetGroup
+              label="Advisor Type"
+              options={TYPE_FACET_OPTIONS}
+              selected={typeFilters}
+              onChange={setTypeFilters}
+              counts={typeCounts}
+              layout="grid"
+            />
 
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
               <div>
                 <label className="text-xs font-bold text-slate-700 mb-1.5 block">State</label>
                 <select value={stateFilter} onChange={e => setStateFilter(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30" disabled={isLocationActive}>
@@ -754,16 +791,6 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                 </select>
               </div>
               <div>
-                <label className="text-xs font-bold text-slate-700 mb-1.5 block">Min Rating</label>
-                <select value={minRating} onChange={e => setMinRating(Number(e.target.value))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30">
-                  <option value={0}>Any</option>
-                  <option value={4.5}>4.5+ ★</option>
-                  <option value={4.0}>4.0+ ★</option>
-                  <option value={3.5}>3.5+ ★</option>
-                  <option value={3.0}>3.0+ ★</option>
-                </select>
-              </div>
-              <div>
                 <label className="text-xs font-bold text-slate-700 mb-1.5 block">Language</label>
                 <select value={languageFilter} onChange={e => setLanguageFilter(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30">
                   <option value="all">Any</option>
@@ -777,6 +804,23 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                 </label>
               </div>
             </div>
+
+            {/* Minimum rating — single-handle range with rating presets */}
+            <RangeSlider
+              label="Minimum rating"
+              min={0}
+              max={5}
+              step={0.5}
+              value={minRating}
+              onChange={setMinRating}
+              formatValue={(v) => (v === 0 ? "Any" : `${v}+ ★`)}
+              presets={[
+                { label: "Any", value: 0 },
+                { label: "3+", value: 3 },
+                { label: "4+", value: 4 },
+                { label: "4.5+", value: 4.5 },
+              ]}
+            />
 
             {/* Toggle row — International, Accepting new, Intro video */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
@@ -868,94 +912,12 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               </div>
             </div>
 
-            <div className="flex items-center justify-between pt-2 border-t border-slate-100">
-              <button onClick={clearAll} className="text-xs text-slate-500 hover:text-slate-700 font-medium">Clear all filters</button>
-              <button onClick={() => setFiltersOpen(false)} className="px-4 py-2 bg-amber-600 text-white text-xs font-bold rounded-lg hover:bg-amber-700 transition-colors">
-                {nearbyLoading ? "Searching..." : `Show ${feed.length} result${feed.length !== 1 ? "s" : ""}`}
-              </button>
-            </div>
-          </div>
-        )}
+        </FilterPanel>
 
-        {/* Active filter chips */}
-        {activeFilterCount > 0 && !filtersOpen && (
-          <div className="flex flex-wrap items-center gap-1.5 mb-3">
-            {isLocationActive && locationSearch && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-100 text-amber-700 text-[0.65rem] font-semibold rounded-full">
-                <Icon name="map-pin" size={11} />
-                {radius > 0 ? `${radius}km from ` : "Near "}{locationSearch.locality}
-                <button onClick={() => { setLocationSearch(null); setUserLat(null); setUserLng(null); }} className="hover:text-amber-900"><Icon name="x" size={12} /></button>
-              </span>
-            )}
-            {Array.from(typeFilters).map(t => (
-              <span key={t} className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-100 text-amber-700 text-[0.65rem] font-semibold rounded-full">
-                {TYPE_FILTERS.find(f => f.key === t)?.label}
-                <button onClick={() => toggleType(t)} className="hover:text-amber-900"><Icon name="x" size={12} /></button>
-              </span>
-            ))}
-            {stateFilter !== "all" && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-100 text-blue-700 text-[0.65rem] font-semibold rounded-full">
-                {stateFilter}
-                <button onClick={() => setStateFilter("all")} className="hover:text-blue-900"><Icon name="x" size={12} /></button>
-              </span>
-            )}
-            {specialtyFilters.map(s => (
-              <span key={s} className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-100 text-emerald-700 text-[0.65rem] font-semibold rounded-full">
-                {s}
-                <button onClick={() => toggleSpecialty(s)} className="hover:text-emerald-900"><Icon name="x" size={12} /></button>
-              </span>
-            ))}
-            {feeFilter !== "all" && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-100 text-amber-700 text-[0.65rem] font-semibold rounded-full">
-                {feeFilter}
-                <button onClick={() => setFeeFilter("all")} className="hover:text-amber-900"><Icon name="x" size={12} /></button>
-              </span>
-            )}
-            {firmFilter !== "all" && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-indigo-100 text-indigo-700 text-[0.65rem] font-semibold rounded-full">
-                {firmFilter}
-                <button onClick={() => setFirmFilter("all")} className="hover:text-indigo-900"><Icon name="x" size={12} /></button>
-              </span>
-            )}
-            {minRating > 0 && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-100 text-amber-700 text-[0.65rem] font-semibold rounded-full">
-                {minRating}+ ★
-                <button onClick={() => setMinRating(0)} className="hover:text-amber-900"><Icon name="x" size={12} /></button>
-              </span>
-            )}
-            {verifiedOnly && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-100 text-slate-700 text-[0.65rem] font-semibold rounded-full">
-                Verified
-                <button onClick={() => setVerifiedOnly(false)} className="hover:text-slate-900"><Icon name="x" size={12} /></button>
-              </span>
-            )}
-            {internationalOnly && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-100 text-blue-700 text-[0.65rem] font-semibold rounded-full">
-                🌏 International clients
-                <button onClick={() => setInternationalOnly(false)} className="hover:text-blue-900"><Icon name="x" size={12} /></button>
-              </span>
-            )}
-            {languageFilter !== "all" && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-indigo-100 text-indigo-700 text-[0.65rem] font-semibold rounded-full">
-                Speaks {languageFilter}
-                <button onClick={() => setLanguageFilter("all")} className="hover:text-indigo-900"><Icon name="x" size={12} /></button>
-              </span>
-            )}
-            {acceptingOnly && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-100 text-emerald-700 text-[0.65rem] font-semibold rounded-full">
-                ✓ Accepting new
-                <button onClick={() => setAcceptingOnly(false)} className="hover:text-emerald-900"><Icon name="x" size={12} /></button>
-              </span>
-            )}
-            {videoOnly && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-indigo-100 text-indigo-700 text-[0.65rem] font-semibold rounded-full">
-                ▶ Intro video
-                <button onClick={() => setVideoOnly(false)} className="hover:text-indigo-900"><Icon name="x" size={12} /></button>
-              </span>
-            )}
-            <button onClick={clearAll} className="text-[0.62rem] text-slate-400 hover:text-slate-600 font-medium ml-1">Clear all</button>
-          </div>
-        )}
+        {/* Active filter chips — shared <FilterChips> primitive (self-hides when empty) */}
+        <div className="mb-3">
+          <FilterChips chips={activeChips} onClearAll={clearAll} />
+        </div>
 
         {/* Result count */}
         <div className="flex items-center justify-between mb-3 md:mb-4">
