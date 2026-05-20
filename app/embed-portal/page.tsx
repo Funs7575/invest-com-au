@@ -8,6 +8,7 @@ interface EmbedCustomer {
   display_name: string | null;
   api_key_created_at: string | null;
   monthly_quota_requests: number;
+  usage_this_period: number;
   subscription_status: string | null;
   status: string;
 }
@@ -26,7 +27,7 @@ export default function EmbedPortalHome() {
     if (user) {
       const { data } = await supabase
         .from("embed_customers")
-        .select("company_name, display_name, api_key_created_at, monthly_quota_requests, subscription_status, status")
+        .select("company_name, display_name, api_key_created_at, monthly_quota_requests, usage_this_period, subscription_status, status")
         .eq("auth_user_id", user.id)
         .maybeSingle();
       setCustomer((data as EmbedCustomer | null) ?? null);
@@ -67,8 +68,9 @@ export default function EmbedPortalHome() {
 
       <div className="grid gap-4 sm:grid-cols-2 mb-8">
         <div className="border border-slate-200 rounded-xl p-4">
-          <p className="text-xs uppercase tracking-wider text-slate-400 mb-1">Monthly quota</p>
+          <p className="text-xs uppercase tracking-wider text-slate-400 mb-1">This month</p>
           <p className="text-sm font-semibold text-slate-900">
+            {(customer?.usage_this_period ?? 0).toLocaleString()} /{" "}
             {(customer?.monthly_quota_requests ?? 0).toLocaleString()} requests
           </p>
         </div>
