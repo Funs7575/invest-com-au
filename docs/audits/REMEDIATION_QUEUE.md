@@ -175,6 +175,21 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 
 ## Iteration log (most recent first)
 
+### iter 486 — 2026-05-20 — CO-03 supplement — sitemap gap-fill + /find city surface
+
+- **Stream:** CO (cutover preparation)
+- **Phase:** 5 — implementation (Tier A — sitemap supplement)
+- **Branch:** `claude/audit-remediation/co-cutover-prep`
+- **PR:** #1046 OPEN
+- **Commit:** `0c439b7` — feat(co): CO-03 sitemap finalisation — add missing pages + /find city surface
+- **Diff:** +29 LOC / -1 LOC (`app/sitemap.ts`)
+- **Items done:** CO-03 supplemental — filled gaps missed in iter 485
+- **Gap 1:** `/wealth-stack`, `/startup/grants`, `/lic-screener`, `/tools/subscription-audit` — added to both `staticPages` array and `medPriority` set (priority 0.7). All are public, non-noindex pages on main (or in-flight PRs merging before launch).
+- **Gap 2:** `/find/[advisor-type]/[city]` programmatic pages — entire surface was absent from sitemap despite being one of the larger long-tail SEO surfaces. Added DB query (same as `generateStaticParams` in `app/find/[advisor-type]/[city]/page.tsx`), dedup by type×city slug, capped at 2000 entries, priority 0.65, `changeFrequency: "weekly"`. Spread as `...findAdvisorCityPages` in the return array (after `...advisorPages`).
+- **Rebase:** resolved conflict with iter 485's AFSL section — kept both `...findAdvisorCityPages` and `...afslPages` in return array.
+- **Items pending:** CO-05 (pre-launch QA E2E). CO-01, CO-02, CO-04 remain blocked.
+- **STATUS: PROGRESS · stream=CO · item=CO-03-supplement · pr=#1046**
+
 ### iter 485 — 2026-05-20 — CO-03 — sitemap finalisation
 
 - **Stream:** CO (cutover preparation)
