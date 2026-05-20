@@ -1,5 +1,6 @@
 import { CURRENT_YEAR } from "@/lib/seo";
 import type { HubConfig } from "@/lib/verticals";
+import { firstHomeBuyerBrokerDirectoryUrl } from "@/lib/first-home-buyer/broker-handoff";
 
 /**
  * Hub config for /first-home-buyer — consumed by the <HubPage> HOC.
@@ -42,7 +43,7 @@ export const firstHomeBuyerHubConfig: HubConfig = {
     ],
     primaryCta: {
       label: "Find a Mortgage Broker",
-      href: "/find/mortgage-broker",
+      href: firstHomeBuyerBrokerDirectoryUrl(),
       lever: "lead_routing",
     },
     secondaryCta: {
@@ -90,7 +91,7 @@ export const firstHomeBuyerHubConfig: HubConfig = {
       icon: "briefcase",
       description:
         "A specialist first home buyer broker compares 30+ lenders including those using LMI waivers, 95% LVR products, and guarantor loans. Free service — paid by the lender.",
-      href: "/find/mortgage-broker/sydney",
+      href: firstHomeBuyerBrokerDirectoryUrl(),
       cta: "Find a Broker",
     },
     {
@@ -98,7 +99,7 @@ export const firstHomeBuyerHubConfig: HubConfig = {
       icon: "lock",
       description:
         "Waiting for FHSS release takes 20+ business days. A deposit bond (from $100) covers the 10% deposit at exchange while your ATO release processes.",
-      href: "/find/mortgage-broker",
+      href: firstHomeBuyerBrokerDirectoryUrl(),
       cta: "Talk to a Broker",
     },
   ],

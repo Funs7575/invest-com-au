@@ -131,6 +131,15 @@ describe("POST /api/account/goals", () => {
     expect(insertArgs[0]).toMatchObject({ auth_user_id: USER.id, label: "House deposit" });
   });
 
+  it("accepts fire and debt_free goal types", async () => {
+    for (const goal_type of ["fire", "debt_free"] as const) {
+      mockGetUser.mockResolvedValueOnce({ data: { user: USER } });
+      mockFrom.mockReturnValueOnce(makeInsertChain({ data: { id: 1, ...VALID_GOAL, goal_type }, error: null }));
+      const res = await POST(makeReq("POST", { ...VALID_GOAL, goal_type }));
+      expect(res.status).toBe(201);
+    }
+  });
+
   it("rejects an invalid body via the validation wrapper", async () => {
     // Validation 400s before the handler runs, so getUser is never consulted.
     const res = await POST(makeReq("POST", { ...VALID_GOAL, goal_type: "not_a_goal" }));
