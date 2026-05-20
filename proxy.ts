@@ -192,6 +192,8 @@ export async function proxy(request: NextRequest) {
     pathname.startsWith('/admin') ||
     pathname.startsWith('/broker-portal') ||
     pathname.startsWith('/advisor-portal') ||
+    pathname.startsWith('/startup-portal') ||
+    pathname.startsWith('/startup-signup') ||
     pathname.startsWith('/dashboard') ||
     pathname.startsWith('/invest/my-listings') ||
     pathname.startsWith('/advisor-apply')

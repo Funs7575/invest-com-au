@@ -15695,6 +15695,7 @@ export type Database = {
           created_at: string
           expires_at: string
           id: string
+          session_token: string
           startup_id: string
           user_id: string
         }
@@ -15702,6 +15703,7 @@ export type Database = {
           created_at?: string
           expires_at: string
           id?: string
+          session_token?: string
           startup_id: string
           user_id: string
         }
@@ -15709,6 +15711,7 @@ export type Database = {
           created_at?: string
           expires_at?: string
           id?: string
+          session_token?: string
           startup_id?: string
           user_id?: string
         }
