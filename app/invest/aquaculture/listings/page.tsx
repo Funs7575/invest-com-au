@@ -7,6 +7,7 @@ import {
   countListingsByVertical,
 } from "@/lib/investment-listings-query";
 import InvestListingsClient from "@/components/InvestListingsClient";
+import ListingComplianceNotice from "@/components/invest/ListingComplianceNotice";
 
 export const revalidate = 300;
 
@@ -18,6 +19,10 @@ export async function generateMetadata(): Promise<Metadata> {
     description:
       "Browse Australian aquaculture and marine investment opportunities. Salmon farming, oyster leases, abalone, prawn farming, mussel cultivation, land-based recirculating aquaculture systems and fishing licences available for investment.",
     alternates: { canonical: `${SITE_URL}/invest/aquaculture/listings` },
+    // Aquaculture syndications/leases may be regulated managed investment
+    // schemes. De-indexed with a wholesale (s708) gate pending compliance
+    // review; re-enable indexing only after legal sign-off.
+    robots: { index: false, follow: false },
     openGraph: {
       title: `Aquaculture & Marine Investment Opportunities Australia — ${countLabel}Active Listings`,
       url: `${SITE_URL}/invest/aquaculture/listings`,
@@ -41,6 +46,10 @@ export default async function AquacultureListingsPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
+      <ListingComplianceNotice
+        productLabel="aquaculture and marine investment opportunities (including syndicated leases and farm operations)"
+        classification="Aquaculture investments listed here may be regulated managed investment schemes."
       />
       <Suspense fallback={<div className="py-12 text-center text-slate-400">Loading listings...</div>}>
         <InvestListingsClient
