@@ -136,7 +136,8 @@ export async function GET(req: NextRequest) {
         await admin
           .from("advisor_auctions")
           .update({ status: "expired" })
-          .eq("id", auction.id);
+          .eq("id", auction.id)
+          .eq("status", "open");
         expired_count++;
         log.info("Auction expired (no bids)", { auctionId: auction.id });
         continue;
@@ -145,11 +146,24 @@ export async function GET(req: NextRequest) {
       const winner = bids[0];
       const loserIds = bids.slice(1).map((b: { id: number }) => b.id);
 
-      // Award auction to highest bidder
-      await admin
+      // Award the auction to the highest bidder — atomically. The
+      // `.eq("status","open")` guard means only the fire that actually
+      // flips open→awarded proceeds; an overlapping/duplicate run gets
+      // zero rows back and skips, so the winning advisor (and the client's
+      // revealed contact details) is never emailed twice.
+      const { data: claimed } = await admin
         .from("advisor_auctions")
         .update({ status: "awarded" })
-        .eq("id", auction.id);
+        .eq("id", auction.id)
+        .eq("status", "open")
+        .select("id");
+
+      if (!claimed || claimed.length === 0) {
+        log.info("Auction already closed by a concurrent run — skipping", {
+          auctionId: auction.id,
+        });
+        continue;
+      }
 
       await admin
         .from("advisor_auction_bids")
