@@ -24,6 +24,10 @@ import Icon from "@/components/Icon";
 import TabBar from "@/components/directory/TabBar";
 import SearchInput from "@/components/directory/SearchInput";
 import SortDropdown from "@/components/directory/SortDropdown";
+import FilterPanel from "@/components/directory/FilterPanel";
+import FacetGroup from "@/components/directory/FacetGroup";
+import RangeSlider from "@/components/directory/RangeSlider";
+import FilterChips from "@/components/directory/FilterChips";
 
 // ─── Props ───────────────────────────────────────────────────────────
 export interface InvestListingsClientProps {
@@ -456,7 +460,7 @@ export default function InvestListingsClient({
             <button
               type="button"
               onClick={() => setDrawerOpen(true)}
-              className={`shrink-0 inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-semibold transition-all ${
+              className={`md:hidden shrink-0 inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-semibold transition-all ${
                 activeChips.length > 0
                   ? "bg-amber-50 border-amber-300 text-amber-700"
                   : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50"
@@ -571,118 +575,107 @@ export default function InvestListingsClient({
           )}
 
           {/* Active-filter chips */}
-          {activeChips.length > 0 && (
-            <div className="flex flex-wrap items-center gap-1.5">
-              <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">Filtering:</span>
-              {activeChips.map((c) => (
-                <button
-                  key={c.label}
-                  type="button"
-                  onClick={c.onClear}
-                  className="inline-flex items-center gap-1 rounded-full bg-amber-50 border border-amber-200 px-2 py-0.5 text-[11px] font-semibold text-amber-900 hover:bg-amber-100"
-                >
-                  {c.label}
-                  <span className="text-amber-600" aria-hidden="true">×</span>
-                  <span className="sr-only">Remove {c.label} filter</span>
-                </button>
-              ))}
-              <button
-                type="button"
-                onClick={clearAllFilters}
-                className="text-[11px] font-bold text-slate-500 hover:text-slate-700 underline underline-offset-2 ml-1"
-              >
-                Clear all
-              </button>
-            </div>
-          )}
+          <FilterChips chips={activeChips} onClearAll={clearAllFilters} />
         </div>
       </div>
 
-      {/* ── Results ───────────────────────────────────────────────── */}
+      {/* ── Results + filter sidebar ──────────────────────────────── */}
       <div className="container-custom py-5 md:py-8">
-        {subCategories.length > 0 && (
-          <div className="mb-5">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-1.5">Narrow by sub-type</p>
-            <div className="flex flex-wrap gap-1.5">
-              {subCategories.map((sub) => {
-                const isActive = sub === activeSubcategory;
-                return (
-                  <button
-                    key={sub}
-                    onClick={() => setParams({ sub: isActive ? "" : sub })}
-                    aria-pressed={isActive}
-                    className={`rounded-full px-3 py-1 text-xs font-medium transition-colors capitalize ${
-                      isActive ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                    }`}
-                  >
-                    {sub.replace(/_/g, " ")}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        <p className="text-xs text-slate-500 mb-4">
-          <span className="font-bold text-slate-700">{filtered.length}</span> listing{filtered.length !== 1 ? "s" : ""} found
-          {activeChips.length > 0 && (
-            <span className="text-slate-400"> · from {listings.length} total</span>
-          )}
-        </p>
-
-        {filtered.length === 0 ? (
-          <EmptyState onClearAll={clearAllFilters} hasFilters={activeChips.length > 0} />
-        ) : activeView === "table" ? (
-          <TableView listings={filtered} showFirbBadge={Boolean(intentCountry) || activeFirbOnly} />
-        ) : activeView === "list" ? (
-          <div className="flex flex-col gap-3">
-            {filtered.map((l) => (
-              <InvestListingCard
-                key={l.id}
-                listing={l}
-                variant="list"
-                showFirbBadge={Boolean(intentCountry) || activeFirbOnly}
-                matchScore={matchScores?.[l.id] ?? null}
-                advisorOptInCount={advisorOptInCounts?.[l.id] ?? 0}
-                showClaimBadge={claimedSlugs ? !claimedSlugs.has(l.slug) && (l.listing_kind === "fund" || l.listing_kind === "physical_asset" || l.listing_kind === "listed_security") : false}
+        <div className="md:grid md:grid-cols-[260px_minmax(0,1fr)] md:gap-6 lg:gap-8">
+          {/* Filters — inline sidebar on desktop, bottom-sheet drawer on mobile */}
+          <aside className="md:self-start">
+            <FilterPanel
+              open={drawerOpen}
+              onClose={() => setDrawerOpen(false)}
+              onClearAll={clearAllFilters}
+              activeCount={activeChips.length}
+              resultCount={filtered.length}
+            >
+              <InvestFilterFields
+                activeState={activeState}
+                activeTicket={activeTicket}
+                activeInvestorType={activeInvestorType}
+                activeFirbOnly={activeFirbOnly}
+                activeSivOnly={activeSivOnly}
+                activeWholesaleOnly={activeWholesaleOnly}
+                activeFreshness={activeFreshness}
+                activeFeaturedOnly={activeFeaturedOnly}
+                activeMinYield={activeMinYield}
+                activeEsicOnly={activeEsicOnly}
+                kindSpec={kindSpec}
+                intentCountry={intentCountry ?? null}
+                setParams={setParams}
               />
-            ))}
+            </FilterPanel>
+          </aside>
+
+          {/* Results column */}
+          <div className="min-w-0">
+            {subCategories.length > 0 && (
+              <div className="mb-5">
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 mb-1.5">Narrow by sub-type</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {subCategories.map((sub) => {
+                    const isActive = sub === activeSubcategory;
+                    return (
+                      <button
+                        key={sub}
+                        onClick={() => setParams({ sub: isActive ? "" : sub })}
+                        aria-pressed={isActive}
+                        className={`rounded-full px-3 py-1 text-xs font-medium transition-colors capitalize ${
+                          isActive ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                        }`}
+                      >
+                        {sub.replace(/_/g, " ")}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            <p className="text-xs text-slate-500 mb-4">
+              <span className="font-bold text-slate-700">{filtered.length}</span> listing{filtered.length !== 1 ? "s" : ""} found
+              {activeChips.length > 0 && (
+                <span className="text-slate-400"> · from {listings.length} total</span>
+              )}
+            </p>
+
+            {filtered.length === 0 ? (
+              <EmptyState onClearAll={clearAllFilters} hasFilters={activeChips.length > 0} />
+            ) : activeView === "table" ? (
+              <TableView listings={filtered} showFirbBadge={Boolean(intentCountry) || activeFirbOnly} />
+            ) : activeView === "list" ? (
+              <div className="flex flex-col gap-3">
+                {filtered.map((l) => (
+                  <InvestListingCard
+                    key={l.id}
+                    listing={l}
+                    variant="list"
+                    showFirbBadge={Boolean(intentCountry) || activeFirbOnly}
+                    matchScore={matchScores?.[l.id] ?? null}
+                    advisorOptInCount={advisorOptInCounts?.[l.id] ?? 0}
+                    showClaimBadge={claimedSlugs ? !claimedSlugs.has(l.slug) && (l.listing_kind === "fund" || l.listing_kind === "physical_asset" || l.listing_kind === "listed_security") : false}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {filtered.map((l) => (
+                  <InvestListingCard
+                    key={l.id}
+                    listing={l}
+                    showFirbBadge={Boolean(intentCountry) || activeFirbOnly}
+                    matchScore={matchScores?.[l.id] ?? null}
+                    advisorOptInCount={advisorOptInCounts?.[l.id] ?? 0}
+                    showClaimBadge={claimedSlugs ? !claimedSlugs.has(l.slug) && (l.listing_kind === "fund" || l.listing_kind === "physical_asset" || l.listing_kind === "listed_security") : false}
+                  />
+                ))}
+              </div>
+            )}
           </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {filtered.map((l) => (
-              <InvestListingCard
-                key={l.id}
-                listing={l}
-                showFirbBadge={Boolean(intentCountry) || activeFirbOnly}
-                matchScore={matchScores?.[l.id] ?? null}
-                advisorOptInCount={advisorOptInCounts?.[l.id] ?? 0}
-                showClaimBadge={claimedSlugs ? !claimedSlugs.has(l.slug) && (l.listing_kind === "fund" || l.listing_kind === "physical_asset" || l.listing_kind === "listed_security") : false}
-              />
-            ))}
-          </div>
-        )}
+        </div>
       </div>
-
-      <FilterDrawer
-        open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
-        resultCount={filtered.length}
-        onClearAll={clearAllFilters}
-        activeState={activeState}
-        activeTicket={activeTicket}
-        activeInvestorType={activeInvestorType}
-        activeFirbOnly={activeFirbOnly}
-        activeSivOnly={activeSivOnly}
-        activeWholesaleOnly={activeWholesaleOnly}
-        activeFreshness={activeFreshness}
-        activeFeaturedOnly={activeFeaturedOnly}
-        activeMinYield={activeMinYield}
-        activeEsicOnly={activeEsicOnly}
-        kindSpec={kindSpec}
-        intentCountry={intentCountry ?? null}
-        setParams={setParams}
-      />
 
       {/* Sticky compare bar — renders nothing when shortlist is empty */}
       <ListingCompareBar />
@@ -787,12 +780,8 @@ function TableView({ listings, showFirbBadge }: { listings: InvestmentListing[];
   );
 }
 
-// ─── Filter drawer (slide-over) ───────────────────────────────────────
-interface FilterDrawerProps {
-  open: boolean;
-  onClose: () => void;
-  resultCount: number;
-  onClearAll: () => void;
+// ─── Filter fields (rendered inside <FilterPanel>) ────────────────────
+interface InvestFilterFieldsProps {
   activeState: string;
   activeTicket: string;
   activeInvestorType: InvestorType;
@@ -808,57 +797,35 @@ interface FilterDrawerProps {
   setParams: (updates: Record<string, string>) => void;
 }
 
-function FilterDrawer(props: FilterDrawerProps) {
-  const {
-    open, onClose, resultCount, onClearAll,
-    activeState, activeTicket, activeInvestorType,
-    activeFirbOnly, activeSivOnly, activeWholesaleOnly,
-    activeFreshness, activeFeaturedOnly, activeMinYield, activeEsicOnly,
-    kindSpec, intentCountry, setParams,
-  } = props;
+const YIELD_PRESETS = [
+  { label: "Any", value: 0 },
+  { label: "3%+", value: 3 },
+  { label: "5%+", value: 5 },
+  { label: "8%+", value: 8 },
+  { label: "12%+", value: 12 },
+] as const;
 
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
-    document.addEventListener("keydown", onKey);
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = "";
-    };
-  }, [open, onClose]);
-
-  if (!open) return null;
+function InvestFilterFields({
+  activeState, activeTicket, activeInvestorType,
+  activeFirbOnly, activeSivOnly, activeWholesaleOnly,
+  activeFreshness, activeFeaturedOnly, activeMinYield, activeEsicOnly,
+  kindSpec, intentCountry, setParams,
+}: InvestFilterFieldsProps) {
+  const complianceOptions = [
+    { value: "firb", label: "FIRB-eligible" },
+    { value: "siv", label: "SIV-complying" },
+    { value: "wholesale", label: "Wholesale only" },
+    ...(kindSpec.showEsicToggle ? [{ value: "esic", label: "ESIC-eligible" }] : []),
+  ];
+  const complianceSelected = new Set<string>();
+  if (activeFirbOnly) complianceSelected.add("firb");
+  if (activeSivOnly) complianceSelected.add("siv");
+  if (activeWholesaleOnly) complianceSelected.add("wholesale");
+  if (activeEsicOnly) complianceSelected.add("esic");
+  const minYieldValue = Number(activeMinYield) || 0;
 
   return (
-    <div className="fixed inset-0 z-50">
-      <button
-        type="button"
-        aria-label="Close filters"
-        onClick={onClose}
-        className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
-      />
-      <aside
-        role="dialog"
-        aria-label="Filters"
-        className="absolute right-0 top-0 bottom-0 w-full sm:max-w-md bg-white shadow-2xl flex flex-col"
-      >
-        <header className="flex items-center justify-between px-5 py-4 border-b border-slate-200 shrink-0">
-          <h2 className="text-lg font-extrabold text-slate-900 flex items-center gap-2">
-            <Icon name="sliders" size={18} />
-            Filters
-          </h2>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close"
-            className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center"
-          >
-            <Icon name="x" size={16} />
-          </button>
-        </header>
-
-        <div className="flex-1 overflow-y-auto px-5 py-4 space-y-5">
+    <div className="space-y-5">
           <Section title="Location">
             <select
               value={activeState}
@@ -903,106 +870,65 @@ function FilterDrawer(props: FilterDrawerProps) {
             </p>
           </Section>
 
-          <Section title="Compliance & structure">
-            <div className="space-y-2">
-              <Toggle
-                label="FIRB-eligible only"
-                hint={intentCountry ? "Recommended — your visit comes via a foreign-investment page." : "Only show listings flagged eligible for foreign investment."}
-                checked={activeFirbOnly}
-                onChange={(v) => setParams({ firb: v ? "eligible" : "" })}
-              />
-              <Toggle
-                label="SIV-complying only"
-                hint="Significant Investor Visa qualifying ($5M+ over 4 years across complying assets)."
-                checked={activeSivOnly}
-                onChange={(v) => setParams({ siv: v ? "complying" : "" })}
-              />
-              <Toggle
-                label="Wholesale only"
-                hint="Restrict to s708 / sophisticated-investor offerings."
-                checked={activeWholesaleOnly}
-                onChange={(v) => setParams({ wholesale: v ? "true" : "" })}
-              />
-            </div>
-          </Section>
+          <div>
+            <FacetGroup
+              label="Compliance & structure"
+              options={complianceOptions}
+              selected={complianceSelected}
+              onChange={(next) =>
+                setParams({
+                  firb: next.has("firb") ? "eligible" : "",
+                  siv: next.has("siv") ? "complying" : "",
+                  wholesale: next.has("wholesale") ? "true" : "",
+                  ...(kindSpec.showEsicToggle ? { esic: next.has("esic") ? "true" : "" } : {}),
+                })
+              }
+            />
+            <p className="text-[10px] text-slate-500 mt-1.5 leading-snug">
+              {intentCountry ? "FIRB-eligible recommended — your visit comes via a foreign-investment page. " : ""}
+              SIV = $5M+ across complying assets. Wholesale = s708 / sophisticated-investor only.
+            </p>
+          </div>
 
           {kindSpec.showYield && (
-            <Section title="Minimum yield / return">
-              <div className="grid grid-cols-5 gap-1.5">
-                {["", "3", "5", "8", "12"].map((y) => (
-                  <button
-                    key={y || "any"}
-                    type="button"
-                    onClick={() => setParams({ min_yield: y })}
-                    aria-pressed={activeMinYield === y}
-                    className={`text-[11px] font-semibold rounded-lg px-2 py-1.5 transition-colors ${
-                      activeMinYield === y
-                        ? "bg-emerald-600 text-white shadow-sm"
-                        : "bg-slate-50 text-slate-600 hover:bg-slate-100"
-                    }`}
-                  >
-                    {y ? `${y}%+` : "Any"}
-                  </button>
-                ))}
-              </div>
+            <div>
+              <RangeSlider
+                label="Minimum yield / return"
+                min={0}
+                max={15}
+                step={1}
+                value={minYieldValue}
+                onChange={(v) => setParams({ min_yield: v === 0 ? "" : String(v) })}
+                formatValue={(v) => (v === 0 ? "Any" : `${v}%`)}
+                presets={YIELD_PRESETS}
+              />
               <p className="text-[10px] text-slate-500 mt-1.5 leading-snug">
                 Matches any of: distribution yield, dividend yield, target IRR, historical return, target return.
               </p>
-            </Section>
-          )}
-
-          {kindSpec.showEsicToggle && (
-            <Section title="Tax breaks">
-              <Toggle
-                label="ESIC-eligible"
-                hint="Early-Stage Innovation Company — investor gets a 20% non-refundable carry-forward tax offset (capped at $200k/yr)."
-                checked={activeEsicOnly}
-                onChange={(v) => setParams({ esic: v ? "true" : "" })}
-              />
-            </Section>
+            </div>
           )}
 
           <Section title="Listing status">
-            <div className="space-y-2">
-              <Toggle
-                label="New this week"
-                hint="Added in the last 7 days."
-                checked={activeFreshness === "new_this_week"}
-                onChange={(v) => setParams({ fresh: v ? "new_this_week" : "" })}
-              />
-              <Toggle
-                label="Closing soon"
-                hint="Expires within the next 7 days."
-                checked={activeFreshness === "closing_soon"}
-                onChange={(v) => setParams({ fresh: v ? "closing_soon" : "" })}
-              />
-              <Toggle
-                label="Featured only"
-                hint="Promoted (Featured / Premium tier)."
+            <select
+              value={activeFreshness}
+              onChange={(e) => setParams({ fresh: e.target.value })}
+              aria-label="Listing freshness"
+              className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+            >
+              <option value="">Any status</option>
+              <option value="new_this_week">New this week</option>
+              <option value="closing_soon">Closing soon</option>
+            </select>
+            <label className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer mt-2.5">
+              <input
+                type="checkbox"
                 checked={activeFeaturedOnly}
-                onChange={(v) => setParams({ featured: v ? "true" : "" })}
+                onChange={(e) => setParams({ featured: e.target.checked ? "true" : "" })}
+                className="accent-amber-500 w-4 h-4 shrink-0"
               />
-            </div>
+              Featured / Premium only
+            </label>
           </Section>
-        </div>
-
-        <footer className="border-t border-slate-200 px-5 py-3 flex items-center justify-between gap-2 bg-slate-50 shrink-0">
-          <button
-            type="button"
-            onClick={onClearAll}
-            className="text-xs font-bold text-slate-500 hover:text-slate-700 underline underline-offset-2"
-          >
-            Clear all
-          </button>
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm px-4 py-2.5 transition-colors"
-          >
-            Show {resultCount} result{resultCount !== 1 ? "s" : ""}
-          </button>
-        </footer>
-      </aside>
     </div>
   );
 }
@@ -1013,35 +939,5 @@ function Section({ title, children }: { title: string; children: React.ReactNode
       <h3 className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500 mb-2">{title}</h3>
       {children}
     </section>
-  );
-}
-
-function Toggle({
-  label, hint, checked, onChange,
-}: {
-  label: string;
-  hint?: string;
-  checked: boolean;
-  onChange: (v: boolean) => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={() => onChange(!checked)}
-      aria-pressed={checked}
-      className={`w-full flex items-start justify-between gap-3 text-left px-3 py-2 rounded-lg border transition-colors ${
-        checked
-          ? "border-emerald-300 bg-emerald-50"
-          : "border-slate-200 bg-white hover:bg-slate-50"
-      }`}
-    >
-      <div className="min-w-0">
-        <div className={`text-sm font-semibold ${checked ? "text-emerald-900" : "text-slate-700"}`}>{label}</div>
-        {hint && <p className={`text-[10px] mt-0.5 leading-snug ${checked ? "text-emerald-700" : "text-slate-500"}`}>{hint}</p>}
-      </div>
-      <span className={`relative inline-flex h-5 w-9 shrink-0 rounded-full transition-colors mt-0.5 ${checked ? "bg-emerald-600" : "bg-slate-300"}`}>
-        <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform mt-0.5 ${checked ? "translate-x-4 ml-0.5" : "translate-x-0.5"}`} />
-      </span>
-    </button>
   );
 }
