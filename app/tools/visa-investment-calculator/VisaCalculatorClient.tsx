@@ -128,7 +128,7 @@ const VISA_PATHWAYS: VisaPathway[] = [
   },
 ];
 
-function formatAud(value: number): string {
+function formatAudAbbrev(value: number): string {
   if (value === 0) return "Nil";
   if (value >= 1_000_000) return `A$${(value / 1_000_000).toFixed(value >= 10_000_000 ? 0 : 1)}M`;
   return `A$${(value / 1_000).toFixed(0)}k`;
@@ -225,7 +225,7 @@ export default function VisaCalculatorClient() {
             />
           </div>
           <p className="text-xs text-slate-600 mt-3">
-            With <strong>{formatAud(budgetNum)}</strong>, you may qualify for:
+            With <strong>{formatAudAbbrev(budgetNum)}</strong>, you may qualify for:
           </p>
           <div className="flex flex-wrap gap-2 mt-2">
             {affordable.length === 0 ? (
@@ -310,7 +310,7 @@ export default function VisaCalculatorClient() {
                       Min investment
                     </dt>
                     <dd className="font-extrabold text-slate-900">
-                      {formatAud(v.minInvestmentAud)}
+                      {formatAudAbbrev(v.minInvestmentAud)}
                     </dd>
                   </div>
                   <div className="bg-slate-50 rounded-lg px-2.5 py-1.5">

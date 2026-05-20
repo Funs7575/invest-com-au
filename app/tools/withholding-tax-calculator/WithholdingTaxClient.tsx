@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
+import { formatAud } from "@/lib/first-home-buyer/state-grants";
 
 interface CountryOption {
   code: string;
@@ -52,13 +53,6 @@ function toNumber(value: number | string | null | undefined): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
-function formatAud(cents: number): string {
-  return (cents / 100).toLocaleString("en-AU", {
-    style: "currency",
-    currency: "AUD",
-    maximumFractionDigits: 0,
-  });
-}
 
 export default function WithholdingTaxClient() {
   const [countries, setCountries] = useState<CountryOption[]>([]);
