@@ -114,6 +114,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/tools/mortgage-stress-test",
     "/tools/borrowing-power-calculator",
     "/tools/etp-calculator",
+    "/tools/subscription-audit",
     "/redundancy",
     "/pricing",
     "/firb-fee-estimator", "/non-resident-dividend-calculator", "/non-resident-cgt-checker",

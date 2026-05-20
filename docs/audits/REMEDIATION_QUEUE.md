@@ -86,6 +86,21 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 
 ## Blocked — needs human input
 
+### BB-04 — Net-worth tracker (bank linking): missing CDR accreditation + API credentials
+
+BB-04 requires real-time bank-data integration via Basiq or Frollo (CDR/Open Banking AU). The following prerequisites are founder actions — the loop cannot proceed until they are in place:
+
+1. **CDR accreditation** — apply through the Australian Competition and Consumer Commission (ACCC) Data Recipient Register. Without accreditation, neither Basiq nor Frollo will issue production credentials for data requests.
+2. **API credentials** — provision `BASIQ_API_KEY` (or `FROLLO_CLIENT_ID` + `FROLLO_CLIENT_SECRET`) and set them in Vercel environment variables.
+3. **CPS230 privacy compliance review** — bank-transaction data is sensitive financial data under APRA CPS 230 and the Privacy Act 1988. The data handling, retention, and consent flows need legal review before a production build ships.
+4. **Security review** — as flagged in `REMEDIATION_DEFAULTS.md` §Review flags: BB-04 requires explicit security review before merge.
+
+**Once complete:** remove this blocked entry, set `BASIQ_API_KEY` (or Frollo equivalent) in the repo's secrets/env, and the loop can build BB-04.
+
+**Loop will now skip to BB-05 v1 (manual input — no bank-feed dependency).**
+
+---
+
 ### QQ-08 — Compliance signoff required before public Q&A exposure (human gate)
 
 QQ engineering is complete (QQ-05..QQ-10 all done in PR #920). The public
