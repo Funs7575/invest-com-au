@@ -49,6 +49,12 @@ const ISOLATION_EXEMPT = [
   { table: "csp_violations", reason: "write-only report endpoint; no user ownership" },
   // retention_rules: service-role-only config table
   { table: "retention_rules", reason: "service-role config; no per-user rows" },
+  // forum_moderation_actions: append-only moderation audit log. service_role
+  // writes; moderators SELECT ALL rows (the moderation queue), not just their
+  // own — so there is no per-user row ownership to isolate. actor_user_id is
+  // an audit field (who acted), not an ownership key. Same shape as
+  // admin_audit_log above. (Phase 2.4)
+  { table: "forum_moderation_actions", reason: "moderator-read audit log; service-role write; no per-user owned rows" },
 ];
 
 const EXEMPT_NAMES = new Set(ISOLATION_EXEMPT.map((e) => e.table));
