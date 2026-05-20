@@ -71,6 +71,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | Z-22+BB-07 | _complete_ | **#922 MERGED 2026-05-20** | Z-22 + BB-07 done. **Stream complete — #922 merged by founder 2026-05-20.** | Z-22+BB-07 merged ✓ |
 | BB-01 | _complete_ | **#923 MERGED 2026-05-20** | BB-01 done. **Stream complete — #923 merged by founder 2026-05-20.** | BB-01 merged ✓ |
 | BB-06 | _complete_ | **#924 MERGED 2026-05-20** | BB-06 done. **Stream complete — #924 merged by founder 2026-05-20.** | BB-06 merged ✓ |
+| BB-05 | `claude/audit-remediation/bb-05-subscription-audit` | **#1038 OPEN** | BB-04 blocked (CDR accreditation + Basiq/Frollo API credentials + CPS230 review — see Blocked). BB-05 done (iter 474): `/tools/subscription-audit` — manual subscription audit tool, 18 presets, category breakdown, savings analysis. | BB-05 merged ✓ |
 | AA | `claude/audit-remediation/aa-05-suburb-property-investing` | **#928 MERGED 2026-05-20** · **#931 MERGED** · **#1020 OPEN** · **#1031 OPEN** · **#1037 OPEN** | AA-01 false-positive. AA-02+AA-03 done (#928). AA-04+BB-09 done (#931). AA-05 done (iter 473): `/[suburb]/property-investing` dynamic route + sitemap. AA-06 done (#1031). AA-07 done (#1020). **Stream complete.** | AA-05 merged ✓ |
 | Z-26 | _complete_ | **#929 MERGED 2026-05-20** | Z-26 done. **Stream complete — #929 merged by founder 2026-05-20.** | Z-26 merged ✓ |
 | Z-25 | _complete_ | **#930 MERGED 2026-05-20** | Z-25 done. **Stream complete — #930 merged by founder 2026-05-20.** | Z-25 merged ✓ |
@@ -140,6 +141,23 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 474 — 2026-05-20 — BB-05 — subscription audit tool (v1 manual)
+
+- **Stream:** BB (lead-capture tool farm — Tier A for this item, client-side only)
+- **Phase:** 5 — implementation
+- **Branch:** `claude/audit-remediation/bb-05-subscription-audit`
+- **PR:** #1038 OPEN
+- **Commit:** `8697d91` — feat(bb05): BB-05 — subscription audit tool (v1 manual)
+- **Diff:** 5 files, +566 LOC (cumulative batch: ~1160 LOC)
+- **Items done:** BB-05 (subscription audit tool v1 manual), BB-04 surfaced as blocked
+- **Blocked:** BB-04 (net-worth tracker) requires CDR accreditation, Basiq/Frollo API credentials, CPS230 privacy compliance review — all founder actions. Loop surfaced to Blocked section and skipped to BB-05.
+- **Implementation:**
+  - **`app/tools/subscription-audit/SubscriptionAuditClient.tsx`** (430 LOC): "use client" component. 18 preset Australian services across 10 categories (Streaming/Music/Software/News/Fitness/Gaming/Food & Shopping/Finance/Professional/Other). Custom-add form with validation. Toggle active/inactive, remove. Live annual/monthly totals in hero. Category bar chart breakdown. Top-3 savings opportunity card. Summary + adviser CTA. Fully client-side — no DB, no auth.
+  - **`app/tools/subscription-audit/page.tsx`** (108 LOC): static wrapper with metadata, `calculatorJsonLd`, `faqJsonLd` (4 Q&As), breadcrumb JSON-LD, static FAQ accordion section for SEO, `ComplianceFooter variant="general"`.
+  - **`app/tools/ToolsClient.tsx`**: subscription-audit added to tools list under Budgeting category.
+  - **`app/sitemap.ts`**: +1 entry for `/tools/subscription-audit`.
+- **STATUS: PROGRESS · stream=BB · item=BB-05 · pr=#1038**
 
 ### iter 473 — 2026-05-20 — AA-05 — /[suburb]/property-investing programmatic pages
 
