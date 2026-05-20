@@ -7,8 +7,10 @@ import { notFound } from "next/navigation";
 import { getBrokerBySlug } from "@/lib/request-cache";
 import { getActiveBrokersFull } from "@/lib/cached-data";
 import BrokerReviewClient from "./BrokerReviewClient";
+import BrokerScreenshotGallery from "@/components/BrokerScreenshotGallery";
 import TmdBadge from "@/components/TmdBadge";
 import BrokerHistoryChart from "@/components/broker/BrokerHistoryChart";
+import { imageGalleryJsonLd } from "@/lib/schema-markup";
 import {
   absoluteUrl,
   breadcrumbJsonLd,
@@ -221,6 +223,25 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
     { name: b.name },
   ]);
 
+  // App-screenshot gallery — only present for a minority of brokers.
+  // `imageGalleryJsonLd` returns null when there are no screenshots so we
+  // skip the <script> entirely (and the visible gallery below renders
+  // nothing too — existing brokers without screenshots are unaffected).
+  const screenshots = b.screenshots ?? [];
+  const galleryLd =
+    screenshots.length > 0
+      ? imageGalleryJsonLd({
+          pageUrl: absoluteUrl(`/broker/${slug}`),
+          name: `${b.name} app screenshots`,
+          images: screenshots.map((s) => ({
+            url: s.url,
+            caption: s.caption,
+            width: s.width,
+            height: s.height,
+          })),
+        })
+      : null;
+
   // AggregateRating + individual Reviews JSON-LD for user reviews.
   // SoftwareApplication type keeps this entity distinct from the
   // editorial FinancialProduct review — Google honours both and shows
@@ -294,6 +315,12 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
           dangerouslySetInnerHTML={{ __html: JSON.stringify(aggregateRatingLd) }}
         />
       )}
+      {galleryLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(galleryLd) }}
+        />
+      )}
       <Suspense fallback={null}>
         <BrokerReviewClient
           broker={b}
@@ -313,6 +340,9 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
           relatedDeals={relatedDeals}
         />
       </Suspense>
+      {screenshots.length > 0 && (
+        <BrokerScreenshotGallery screenshots={screenshots} brokerName={b.name} />
+      )}
       {versusComparisons.length > 0 && (
         <section
           aria-labelledby="head-to-head-heading"
