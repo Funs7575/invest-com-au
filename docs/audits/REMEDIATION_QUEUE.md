@@ -79,6 +79,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | Z-24 | `claude/audit-remediation/z-24-inheritance-hub` | **#995 OPEN** | Z-24 done (iter 464): `/inheritance` top-level hub; `lib/hub-configs/inheritance.ts` (3 hero stats, 6 service cards, 4 deep-dives, 6 FAQs, `complianceKey: "general_advice"`); lead magnet + sitemap. CI rescue iter 467: merged main (`98f6433`) — Supabase types drift fixed. | Z-24 merged |
 | BB-02+BB-03 | `claude/audit-remediation/bb-02-03-salary-sacrifice-cgt` | **#1015 OPEN** | BB-02 done (iter 465): `/tools/salary-sacrifice-optimiser` — quantitative salary-sacrifice calculator (FY2025-26 tax, concessional cap enforcement, Division 293 detection, take-home before/after table). BB-03 done: `/tools/cgt-calculator` — purchase→sale CGT calc (50% discount, asset types, side-by-side discount impact). Sitemap +2. CI rescue iter 467: faqJsonLd null-access fix (`3f68cb9`). | BB-02+BB-03 merged |
 | AA-07 | `claude/audit-remediation/aa-07-just-event-pages` | **#1020 OPEN** | AA-07 done (iter 466): `/just/[event]` moment-of-money pages — 8 life-event checklists (retired, inherited, made-redundant, got-married, had-a-baby, bought-a-house, sold-a-business, started-investing); `/just` index hub. Dynamic route with `generateStaticParams`, `GENERAL_ADVICE_WARNING`, advisor CTA, cross-event nav strip. Sitemap +9. CI: queued — pushed 2026-05-20. | AA-07 merged |
+| AA-06 | `claude/audit-remediation/aa-06-investing-for-occupation` | **#1031 OPEN** | AA-06 done (iter 468): `/investing-for/[occupation]` — 26 occupation-specific investing guides + `/investing-for` index hub. Income type + super type badges, 3 highlights, 4 hub links, 3 FAQs, advisor CTA, cross-occupation nav, `GENERAL_ADVICE_WARNING`. `generateStaticParams` ISR, `revalidate = 3600`. Sitemap +27. CI: queued — pushed `617fd94a` 2026-05-20. | AA-06 merged |
 
 ---
 
@@ -138,6 +139,22 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 468 — 2026-05-20 — AA-06 — /investing-for/[occupation] programmatic pages
+
+- **Stream:** AA (programmatic SEO)
+- **Phase:** 5 — implementation (Tier A — content pages)
+- **Branch:** `claude/audit-remediation/aa-06-investing-for-occupation`
+- **PR:** #1031 OPEN
+- **Commit:** `617fd94a` — feat(aa06): AA-06 — /investing-for/[occupation] programmatic pages
+- **Diff:** 3 files, +1,341 LOC (content/data budget)
+- **Items done:** AA-06 (`/investing-for/[occupation]` dynamic route + `/investing-for` index hub)
+- **Implementation:**
+  - **`app/investing-for/[occupation]/page.tsx`** (new, 1,164 LOC): 26 occupation configs with income type, super type, 3 financial highlights, 4 hub links, 3 occupation-specific FAQs, advisor CTA, cross-occupation nav strip. `generateStaticParams` for ISR pre-rendering, `revalidate = 3600`, `GENERAL_ADVICE_WARNING` footer. Inline `faqSchema` object (no `faqJsonLd()` helper — avoids null-access pattern from iter 467 CI rescue).
+  - **`app/investing-for/page.tsx`** (new, 154 LOC): index hub grouping 26 occupations into 6 sections (Healthcare, Professional Services, Public Sector, Business Owners, Trades/Industries, Self-Employed). `revalidate = 86400`.
+  - **`app/sitemap.ts`**: +27 entries (`/investing-for` index at 0.75 + 26 slugs at 0.65).
+- **Occupations:** doctor, nurse, dentist, pharmacist, vet, lawyer, accountant, engineer, architect, financial-planner, it-professional, public-servant, teacher, police-officer, military, small-business-owner, startup-founder, executive, real-estate-agent, farmer, tradesperson, pilot, miner, freelancer, contractor, sports-professional
+- **STATUS: PROGRESS · stream=AA · item=AA-06 · pr=#1031**
 
 ### iter 467 — 2026-05-20 — CI-RESCUE BB-02+BB-03 (#1015) + Z-24 (#995) — faqJsonLd null-access + Supabase types drift
 
