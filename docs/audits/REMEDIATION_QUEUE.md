@@ -76,8 +76,8 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | Z-25 | _complete_ | **#930 MERGED 2026-05-20** | Z-25 done. **Stream complete — #930 merged by founder 2026-05-20.** | Z-25 merged ✓ |
 | AA-04+BB-09 | _complete_ | **#931 MERGED 2026-05-20** | AA-04+BB-09 done. **Stream segment merged — #931 merged by founder 2026-05-20.** | AA-04+BB-09 merged ✓ |
 | DD | `claude/audit-remediation/dd-01-tiered-listings` | **#926 MERGED 2026-05-20** | DD-01 done. **#926 merged by founder 2026-05-20.** DD-02/03/04 pending. | DD-01 merged ✓ |
-| Z-24 | `claude/audit-remediation/z-24-inheritance-hub` | **#995 OPEN** | Z-24 done (iter 464): `/inheritance` top-level hub; `lib/hub-configs/inheritance.ts` (3 hero stats, 6 service cards, 4 deep-dives, 6 FAQs, `complianceKey: "general_advice"`); lead magnet + sitemap. CI: queued — pushed `f3953a0` 2026-05-20. | Z-24 merged |
-| BB-02+BB-03 | `claude/audit-remediation/bb-02-03-salary-sacrifice-cgt` | **#1015 OPEN** | BB-02 done (iter 465): `/tools/salary-sacrifice-optimiser` — quantitative salary-sacrifice calculator (FY2025-26 tax, concessional cap enforcement, Division 293 detection, take-home before/after table). BB-03 done: `/tools/cgt-calculator` — purchase→sale CGT calc (50% discount, asset types, side-by-side discount impact). Sitemap +2. CI: queued — pushed `df71adb9` 2026-05-20. | BB-02+BB-03 merged |
+| Z-24 | `claude/audit-remediation/z-24-inheritance-hub` | **#995 OPEN** | Z-24 done (iter 464): `/inheritance` top-level hub; `lib/hub-configs/inheritance.ts` (3 hero stats, 6 service cards, 4 deep-dives, 6 FAQs, `complianceKey: "general_advice"`); lead magnet + sitemap. CI rescue iter 467: merged main (`98f6433`) — Supabase types drift fixed. | Z-24 merged |
+| BB-02+BB-03 | `claude/audit-remediation/bb-02-03-salary-sacrifice-cgt` | **#1015 OPEN** | BB-02 done (iter 465): `/tools/salary-sacrifice-optimiser` — quantitative salary-sacrifice calculator (FY2025-26 tax, concessional cap enforcement, Division 293 detection, take-home before/after table). BB-03 done: `/tools/cgt-calculator` — purchase→sale CGT calc (50% discount, asset types, side-by-side discount impact). Sitemap +2. CI rescue iter 467: faqJsonLd null-access fix (`3f68cb9`). | BB-02+BB-03 merged |
 | AA-07 | `claude/audit-remediation/aa-07-just-event-pages` | **#1020 OPEN** | AA-07 done (iter 466): `/just/[event]` moment-of-money pages — 8 life-event checklists (retired, inherited, made-redundant, got-married, had-a-baby, bought-a-house, sold-a-business, started-investing); `/just` index hub. Dynamic route with `generateStaticParams`, `GENERAL_ADVICE_WARNING`, advisor CTA, cross-event nav strip. Sitemap +9. CI: queued — pushed 2026-05-20. | AA-07 merged |
 
 ---
@@ -138,6 +138,18 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 467 — 2026-05-20 — CI-RESCUE BB-02+BB-03 (#1015) + Z-24 (#995) — faqJsonLd null-access + Supabase types drift
+
+- **Streams:** BB-02+BB-03 (CI rescue) · Z-24 (CI rescue)
+- **Phase:** 2 — CI rescue (both streams)
+- **PRs:** BB-02+BB-03 #1015 · Z-24 #995
+- **Root causes:**
+  - **BB-02+BB-03 #1015 (Vercel deployment failure):** `salary-sacrifice-optimiser/page.tsx` and `cgt-calculator/page.tsx` called `faqLd.mainEntity.map(...)` — `faqJsonLd()` returns `T | null` so TypeScript strict mode (TS2531) breaks next build. Fix: define `const FAQS: FaqItem[]`, pass to `faqJsonLd()` for JSON-LD, iterate `FAQS` in JSX. Matches all other calculator pages (etp, fhss, borrowing-power, mortgage-stress-test).
+  - **Z-24 #995 (Supabase types drift failure):** Branch was behind main by 2 commits. Merging main picks up `.driftallowlist` entry for `afsl_register`.
+- **Rescue commits:** `3f68cb9` (BB branch — faqJsonLd fix) · `98f6433` (Z-24 branch — merge main)
+- **Stuck-detection:** First rescue attempt on both PRs — within threshold.
+- **STATUS: CI-RESCUE · stream=BB+Z-24 · pr=#1015+#995**
 
 ### iter 466 — 2026-05-20 — AA-07 — /just/[event] moment-of-money pages
 
