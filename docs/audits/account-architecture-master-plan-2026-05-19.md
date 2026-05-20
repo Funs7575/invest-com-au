@@ -31,14 +31,18 @@ branch.
 
 **Test coverage shipped:** unit tests for principals, account-kinds (8 kinds + preferences + squad), claim-by-email, account-preferences, forum-moderation, lead-pricing.
 
-**Items intentionally deferred to focused follow-ups (not blockers):**
-- ts-morph full codegen for `scripts/add-entity.ts`
-- Playwright e2e for the multi-kind+multi-squad sign-in flow
-- professionals + broker_accounts RLS tightening for deleted_at (needs careful "status=active AND deleted_at IS NULL" rewrite)
-- lib/advisor-billing.ts refactor to consume lib/lead-pricing.ts
-- /broker-portal/team UI + invite-accept endpoint
-- Moderation queue UI at /admin/forum-moderation
-- Real surfaces for /wholesale-portal and /embed-portal beyond the landing pages
+**Follow-up items — ALL now shipped on this branch (2026-05-20):**
+- ✅ codegen for `scripts/add-entity.mjs` (dependency-free scaffolder + checklist; ts-morph deliberately avoided since the CI gate enforces the registry edits)
+- ✅ Playwright e2e — `e2e/workspace-switching.spec.ts` (auth-gate cases run every PR; full multi-kind flow skips cleanly without seeded staging user)
+- ✅ professionals + broker_accounts RLS tightening for deleted_at (`20260801001400`)
+- ✅ lib/advisor-billing.ts refactor — `getLeadPriceCents` routes through `composeLeadPrice` + optional firm-tier axis
+- ✅ /broker-portal/team UI + `/api/broker-team` + `/api/broker-team/accept`
+- ✅ Moderation queue UI at `/admin/forum-moderation`
+- ✅ Functional `/wholesale-portal` (profile + s708 status) and `/embed-portal` (quota + API-key rotation via `/api/embed/rotate-key`)
+
+**Remaining (genuinely demand-driven, not blockers):**
+- Deeper portal surfaces: full listings CRUD for wholesale; usage analytics + Stripe self-serve for embed
+- Per-agent Postgres roles / agent registry / internal-team / admin-DB — explicitly OUT OF SCOPE (separate session)
 
 
 
