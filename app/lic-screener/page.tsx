@@ -105,7 +105,7 @@ export default function LicScreenerPage() {
       </section>
 
       <div className="container-custom max-w-5xl pb-10">
-        <ComplianceFooter variant="general" />
+        <ComplianceFooter />
       </div>
     </>
   );

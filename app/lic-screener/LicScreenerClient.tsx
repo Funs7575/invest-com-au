@@ -128,7 +128,7 @@ export default function LicScreenerClient() {
               <p className="text-[0.65rem] text-slate-400">LICs covered</p>
             </div>
             <div className="bg-white/10 rounded-xl p-3 text-center">
-              <p className="text-xl font-extrabold">{LIC_DATA.filter((l) => l.frankingPct === 100).length}</div>
+              <p className="text-xl font-extrabold">{LIC_DATA.filter((l) => l.frankingPct === 100).length}</p>
               <p className="text-[0.65rem] text-slate-400">Fully franked</p>
             </div>
             <div className="bg-white/10 rounded-xl p-3 text-center">
