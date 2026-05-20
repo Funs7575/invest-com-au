@@ -117,6 +117,30 @@ describe("GET /api/broker-portal/invoices/[id]/pdf", () => {
     expect(res.headers.get("Content-Type")).toContain("text/html");
   });
 
+  it("renders the supplier (issuer) legal name + ABN — ATO tax-invoice requirement", async () => {
+    const accountChain = {
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      maybeSingle: vi.fn().mockResolvedValue({ data: { broker_slug: "commsec" } }),
+    };
+    const invoiceChain = {
+      select: vi.fn().mockReturnThis(),
+      eq: vi.fn().mockReturnThis(),
+      maybeSingle: vi.fn().mockResolvedValue({ data: baseInvoice, error: null }),
+    };
+    mockAdminFrom
+      .mockReturnValueOnce(accountChain)
+      .mockReturnValueOnce(invoiceChain);
+
+    const { GET } = await import("@/app/api/broker-portal/invoices/[id]/pdf/route");
+    const { COMPANY_LEGAL_NAME, COMPANY_ABN } = await import("@/lib/compliance");
+    const res = await GET(makeReq("42"), makeParams("42"));
+    const body = await res.text();
+    expect(body).toContain("TAX INVOICE");
+    expect(body).toContain(COMPANY_LEGAL_NAME);
+    expect(body).toContain(`ABN ${COMPANY_ABN}`);
+  });
+
   it("sets Content-Disposition with invoice number in filename", async () => {
     const accountChain = {
       select: vi.fn().mockReturnThis(),
