@@ -45,6 +45,7 @@ export default async function SelectWorkspacePage() {
           kindId: user.id,
           status: "active",
           displayLabel: "Investor account",
+          scopeSlug: null,
           createdAt: new Date().toISOString(),
         },
       ];
