@@ -27,6 +27,8 @@ const KIND_LABEL: Record<string, string> = {
   business_owner: "Business owner",
   listing_owner: "Listing owner",
   squad: "Squad",
+  wholesale_operator: "Wholesale operator",
+  embed_customer: "Embed customer",
 };
 
 const KIND_ICON: Record<string, string> = {
@@ -36,6 +38,8 @@ const KIND_ICON: Record<string, string> = {
   business_owner: "🏢",
   listing_owner: "🏷️",
   squad: "🤝",
+  wholesale_operator: "🏛️",
+  embed_customer: "🔌",
 };
 
 interface Membership {

@@ -121,5 +121,7 @@ function currentPortalPath(kind: WorkspaceKind, teamSlug?: string): string {
     case "listing_owner": return "/invest/my-listings";
     case "investor": return "/account";
     case "squad": return teamSlug ? `/teams/${teamSlug}/dashboard` : "/teams";
+    case "wholesale_operator": return "/wholesale-portal";
+    case "embed_customer": return "/embed-portal";
   }
 }

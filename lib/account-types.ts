@@ -21,19 +21,24 @@
  */
 
 export type AccountKind =
-  | "advisor"         // professionals.auth_user_id (AFSL Class 1/2)
-  | "broker_partner"  // broker_accounts.auth_user_id (marketplace)
-  | "investor"        // investor_profiles.auth_user_id (end-user dashboard)
-  | "business_owner"  // business_accounts.auth_user_id (grants / R&D / sell-prep)
-  | "listing_owner"   // listing_owner_accounts.auth_user_id (claimed-listing owners)
-  | "squad";          // expert_team_members.professional_id → professionals.auth_user_id
-                      // (squad workspace; team-scoped via scope_slug)
+  | "advisor"             // professionals.auth_user_id (AFSL Class 1/2)
+  | "broker_partner"      // broker_accounts.auth_user_id (marketplace)
+  | "investor"            // investor_profiles.auth_user_id (end-user dashboard)
+  | "business_owner"      // business_accounts.auth_user_id (grants / R&D / sell-prep)
+  | "listing_owner"       // listing_owner_accounts.auth_user_id (claimed-listing owners)
+  | "squad"               // expert_team_members → professionals.auth_user_id
+                          // (squad workspace; team-scoped via scope_slug)
+  | "wholesale_operator"  // wholesale_operators.auth_user_id (s708 fund managers)
+  | "embed_customer";     // embed_customers.auth_user_id (B2B white-label widget customers)
 
 /**
  * Reserved future kinds (uncomment when the corresponding entity table
  * ships):
  *
- *   - "wholesale_operator"  → fund managers (s708 sophisticated investor)
+ *   - "firm_staff"          → non-licensed firm employees (paraplanner,
+ *                              receptionist, marketing); modelled via
+ *                              firm_memberships role expansion, not its
+ *                              own entity table
  *   - "firm_partner"        → firm-admin role (separate from advisor)
  */
 
@@ -44,6 +49,8 @@ export const ACTIVE_ACCOUNT_KINDS: readonly AccountKind[] = [
   "business_owner",
   "listing_owner",
   "squad",
+  "wholesale_operator",
+  "embed_customer",
 ];
 
 export function isAccountKind(value: unknown): value is AccountKind {

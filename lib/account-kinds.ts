@@ -163,6 +163,8 @@ const KNOWN_WORKSPACE_KINDS = new Set<WorkspaceKind>([
   "business_owner",
   "listing_owner",
   "squad",
+  "wholesale_operator",
+  "embed_customer",
 ]);
 
 export function isWorkspaceKind(value: string): value is WorkspaceKind {
@@ -272,6 +274,8 @@ export function portalForKind(
       return options.teamSlug
         ? `/teams/${options.teamSlug}/dashboard`
         : "/account/select-workspace";
+    case "wholesale_operator": return "/wholesale-portal";
+    case "embed_customer": return "/embed-portal";
     default: return fallback;
   }
 }

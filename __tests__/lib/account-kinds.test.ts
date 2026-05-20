@@ -25,6 +25,8 @@ describe("isWorkspaceKind", () => {
     expect(isWorkspaceKind("business_owner")).toBe(true);
     expect(isWorkspaceKind("listing_owner")).toBe(true);
     expect(isWorkspaceKind("squad")).toBe(true);
+    expect(isWorkspaceKind("wholesale_operator")).toBe(true);
+    expect(isWorkspaceKind("embed_customer")).toBe(true);
   });
   it("rejects unknown values", () => {
     expect(isWorkspaceKind("admin")).toBe(false);
@@ -53,6 +55,12 @@ describe("portalForKind", () => {
   it("squad without teamSlug falls back to chooser", () => {
     expect(portalForKind("squad")).toBe("/account/select-workspace");
     expect(portalForKind("squad", { teamSlug: null })).toBe("/account/select-workspace");
+  });
+  it("wholesale_operator routes to its portal", () => {
+    expect(portalForKind("wholesale_operator")).toBe("/wholesale-portal");
+  });
+  it("embed_customer routes to its portal", () => {
+    expect(portalForKind("embed_customer")).toBe("/embed-portal");
   });
 });
 

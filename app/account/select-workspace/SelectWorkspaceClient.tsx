@@ -47,6 +47,18 @@ const KIND_META: Record<
     icon: "🤝",
     tone: "bg-indigo-50 border-indigo-200 hover:border-indigo-400",
   },
+  wholesale_operator: {
+    label: "Wholesale operator",
+    description: "s708 fund manager portal — listings, sophisticated-investor leads.",
+    icon: "🏛️",
+    tone: "bg-slate-50 border-slate-300 hover:border-slate-500",
+  },
+  embed_customer: {
+    label: "Embed customer",
+    description: "White-label widget integration — API key, quota, billing.",
+    icon: "🔌",
+    tone: "bg-teal-50 border-teal-200 hover:border-teal-400",
+  },
 };
 
 export default function SelectWorkspaceClient({ memberships }: Props) {
