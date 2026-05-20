@@ -13,6 +13,7 @@ import Icon from "@/components/Icon";
 import { trackEvent } from "@/lib/tracking";
 import { submitLead } from "@/lib/submit-lead-client";
 import { isCrossBorderSpecialty } from "@/lib/advisor-billing-multipliers";
+import { browseAdvisorsHref } from "@/lib/find-advisor/browse-link";
 import EligibilityQuizSkipBanner from "@/components/EligibilityQuizSkipBanner";
 import CountryRuleAlerts from "@/components/CountryRuleAlerts";
 
@@ -718,6 +719,8 @@ function FindAdvisorQuiz() {
           <MatchConfirmation
             userEmail={quiz.email}
             userFirstName={quiz.firstName}
+            userIntent={quiz.intent}
+            userState={quiz.state}
             currentMatch={currentMatch}
             allMatches={matchedAdvisors}
             onRematch={handleRematch}
@@ -1263,10 +1266,11 @@ function typeLabel(type: string): string {
   return type.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches, onRematch, rematching, noMoreMatches, onRestart, submitError, onConfirm, confirming, confirmedAdvisorId }: {
+function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches, onRematch, rematching, noMoreMatches, onRestart, submitError, onConfirm, confirming, confirmedAdvisorId, userIntent, userState }: {
   userEmail: string; userFirstName: string; currentMatch: MatchedAdvisor | null; allMatches: MatchedAdvisor[];
   onRematch: () => void; rematching: boolean; noMoreMatches: boolean; onRestart: () => void; submitError: string | null;
   onConfirm: (advisor: MatchedAdvisor) => void; confirming: boolean; confirmedAdvisorId: number | null;
+  userIntent: Intent | null; userState: string;
 }) {
   const isCurrentConfirmed = !!(currentMatch && confirmedAdvisorId === currentMatch.id);
   return (
@@ -1588,9 +1592,11 @@ function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches,
         ))}
       </div>
 
-      {/* CTAs */}
+      {/* CTAs — deep-link Browse to a /advisors filter pre-populated from
+          the quiz answers, so the user sees relevant alternatives, not the
+          full unfiltered directory. */}
       <div className="flex flex-col sm:flex-row gap-3">
-        <Button variant="secondary" href="/advisors" className="flex-1 justify-center">
+        <Button variant="secondary" href={browseAdvisorsHref(userIntent, userState)} className="flex-1 justify-center">
           Browse All Advisors
         </Button>
         <Button variant="secondary" href="/compare" className="flex-1 justify-center">

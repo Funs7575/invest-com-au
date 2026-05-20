@@ -2,6 +2,13 @@ import Link from "next/link";
 import { intentCountryMeta } from "@/lib/intent-context";
 import { getIntentCountry } from "@/lib/intent-context-server";
 import ClearIntentCountryButton from "./ClearIntentCountryButton";
+import {
+  BADGE_BG,
+  BADGE_BORDER,
+  BADGE_DIVIDER,
+  BADGE_LINK_HOVER,
+  BADGE_TEXT,
+} from "./banner-tokens";
 
 /**
  * Reads the iv_intent_country cookie and renders a small badge
@@ -25,25 +32,27 @@ export default async function IntentCountryBadge({
 
   return (
     <div
-      className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-50 border border-amber-200 text-xs font-semibold text-amber-900 ${className}`}
+      className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full ${BADGE_BG} border ${BADGE_BORDER} text-xs font-semibold ${BADGE_TEXT} ${className}`}
     >
       <span aria-hidden className="text-sm leading-none">
         {meta.flag}
       </span>
       <span>Browsing as {meta.label}</span>
-      <span aria-hidden className="text-amber-300">
+      <span aria-hidden className={BADGE_DIVIDER}>
         ·
       </span>
       <Link
         href={`/foreign-investment/${meta.slug}`}
-        className="underline decoration-dotted hover:text-amber-700"
+        className={`underline decoration-dotted ${BADGE_LINK_HOVER}`}
       >
         Hub
       </Link>
-      <span aria-hidden className="text-amber-300">
+      <span aria-hidden className={BADGE_DIVIDER}>
         ·
       </span>
-      <ClearIntentCountryButton className="underline decoration-dotted hover:text-amber-700 cursor-pointer disabled:opacity-50">
+      <ClearIntentCountryButton
+        className={`underline decoration-dotted ${BADGE_LINK_HOVER} cursor-pointer disabled:opacity-50`}
+      >
         Clear
       </ClearIntentCountryButton>
     </div>

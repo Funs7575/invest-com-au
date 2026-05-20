@@ -185,14 +185,14 @@ describe("LocationFlagButton", () => {
     it("dispatches open the popover from elsewhere on the page", async () => {
       render(<LocationFlagButton />);
       // Popover starts closed
-      expect(screen.queryByRole("menu")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("country-popover")).not.toBeInTheDocument();
 
       act(() => {
         window.dispatchEvent(new CustomEvent("country-mode:open-selector"));
       });
 
       // Popover is now open
-      expect(await screen.findByRole("menu")).toBeInTheDocument();
+      expect(await screen.findByTestId("country-popover")).toBeInTheDocument();
     });
   });
 
