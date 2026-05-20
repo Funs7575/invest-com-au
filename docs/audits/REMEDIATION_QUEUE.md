@@ -71,8 +71,8 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | Z-22+BB-07 | _complete_ | **#922 MERGED 2026-05-20** | Z-22 + BB-07 done. **Stream complete — #922 merged by founder 2026-05-20.** | Z-22+BB-07 merged ✓ |
 | BB-01 | _complete_ | **#923 MERGED 2026-05-20** | BB-01 done. **Stream complete — #923 merged by founder 2026-05-20.** | BB-01 merged ✓ |
 | BB-06 | _complete_ | **#924 MERGED 2026-05-20** | BB-06 done. **Stream complete — #924 merged by founder 2026-05-20.** | BB-06 merged ✓ |
-| BB-05 | `claude/audit-remediation/bb-05-subscription-audit` | **#1038 OPEN** | BB-04 blocked (CDR accreditation + Basiq/Frollo API credentials + CPS230 review — see Blocked). BB-05 done (iter 474): `/tools/subscription-audit` — manual subscription audit tool, 18 presets, category breakdown, savings analysis. | BB-05 merged ✓ |
-| AA | `claude/audit-remediation/aa-05-suburb-property-investing` | **#928 MERGED 2026-05-20** · **#931 MERGED** · **#1020 OPEN** · **#1031 OPEN** · **#1037 OPEN** | AA-01 false-positive. AA-02+AA-03 done (#928). AA-04+BB-09 done (#931). AA-05 done (iter 473): `/[suburb]/property-investing` dynamic route + sitemap. AA-06 done (#1031). AA-07 done (#1020). **Stream complete.** | AA-05 merged ✓ |
+| BB-05 | `claude/audit-remediation/bb-05-subscription-audit` | **#1038 OPEN** | BB-04 blocked (CDR accreditation + Basiq/Frollo API credentials + CPS230 review — see Blocked). BB-05 done (iter 474): `/tools/subscription-audit` — manual subscription audit tool, 18 presets, category breakdown, savings analysis. CI rescue iter 477: ComplianceFooter variant fix (`e824fee`). | BB-05 merged ✓ |
+| AA | `claude/audit-remediation/aa-05-suburb-property-investing` | **#928 MERGED 2026-05-20** · **#931 MERGED** · **#1020 OPEN** · **#1031 OPEN** · **#1037 OPEN** | AA-01 false-positive. AA-02+AA-03 done (#928). AA-04+BB-09 done (#931). AA-05 done (iter 473): `/[suburb]/property-investing` dynamic route + sitemap. AA-06 done (#1031). AA-07 done (#1020). **Stream complete.** CI rescue iter 476: faqJsonLd q/a key fix (`ad7017e`). | AA-05 merged ✓ |
 | Z-26 | _complete_ | **#929 MERGED 2026-05-20** | Z-26 done. **Stream complete — #929 merged by founder 2026-05-20.** | Z-26 merged ✓ |
 | Z-25 | _complete_ | **#930 MERGED 2026-05-20** | Z-25 done. **Stream complete — #930 merged by founder 2026-05-20.** | Z-25 merged ✓ |
 | AA-04+BB-09 | _complete_ | **#931 MERGED 2026-05-20** | AA-04+BB-09 done. **Stream segment merged — #931 merged by founder 2026-05-20.** | AA-04+BB-09 merged ✓ |
@@ -82,6 +82,8 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | AA-07 | `claude/audit-remediation/aa-07-just-event-pages` | **#1020 OPEN** | AA-07 done (iter 466): `/just/[event]` moment-of-money pages — 8 life-event checklists (retired, inherited, made-redundant, got-married, had-a-baby, bought-a-house, sold-a-business, started-investing); `/just` index hub. Dynamic route with `generateStaticParams`, `GENERAL_ADVICE_WARNING`, advisor CTA, cross-event nav strip. Sitemap +9. CI: queued — pushed 2026-05-20. | AA-07 merged |
 | AA-06 | `claude/audit-remediation/aa-06-investing-for-occupation` | **#1031 OPEN** | AA-06 done (iter 468): `/investing-for/[occupation]` — 26 occupation-specific investing guides + `/investing-for` index hub. Income type + super type badges, 3 highlights, 4 hub links, 3 FAQs, advisor CTA, cross-occupation nav, `GENERAL_ADVICE_WARNING`. `generateStaticParams` ISR, `revalidate = 3600`. Sitemap +27. CI: queued — pushed `617fd94a` 2026-05-20. | AA-06 merged |
 | Z-27 | `claude/audit-remediation/z-27-tax-return-hub` | **#1032 OPEN** | Z-27 done (iter 469): `/tax-return` top-level hub (HubPage HOC). `lib/hub-configs/tax-return.ts`: 3 hero stats ($2,817 avg refund, 67¢/hr WFH rate, 31 Oct deadline), 6 service cards, 4 deep-dives, withholding-tax calculator, 6 FAQs, lead queue `general/tax`. Page: FY2025-26 key-dates callout (amber), investor-type quick-access grid. Sitemap +1 (priority 0.82, weekly). CI: queued — pushed `00cb2265` 2026-05-20. | Z-27 merged |
+| BB-10 | `claude/audit-remediation/bb-10-lic-screener` | **#1039 OPEN** | BB-10 done (iter 475): `/lic-screener` — Listed Investment Company screener. `lib/lic-data.ts` (15 LICs, `ntaPremiumDiscount()` helper). LicScreenerClient: filterable/sortable table (focus, franking, mgmt cost, NTA discount toggle), row-click detail panel, hero stat boxes. page.tsx: metadata, calculatorJsonLd, faqJsonLd (4 Q&As), breadcrumb, ComplianceFooter. Sitemap +1. CI rescue iter 478: ComplianceFooter variant + JSX close tag fix (`7f9427d`). | BB-10 merged ✓ |
+| DV | `claude/audit-remediation/dv-01-document-vault` | **#1040 OPEN** | DV-01 done (iter 476): document vault — `user_documents` table (owner-only RLS: SELECT/INSERT/DELETE authenticated; service_role allow; deny anon) + V-NEW-04 isolation test (8 cases, `// rls-isolation: user_documents` marker). `GET /api/account/documents` (list + 10-min signed URLs), `POST /api/account/documents/upload` (multipart, rate-limited 20/hr, ≤20 MB, PDF/JPG/PNG/WebP; path `{uid}/{docId}/{filename}`; storage cleanup on DB failure), `DELETE /api/account/documents/[id]` (storage + DB, RLS-protected fetch prevents cross-user delete). `app/account/vault/` RSC + VaultClient (upload modal with type selector, doc list with download/delete, empty state, encryption notice). Dashboard NavCard (🗂️). CI: queued — pushed `cf0226d` 2026-05-20. Unblocks GT-01. | DV-01 merged ✓ |
 
 ---
 
@@ -141,6 +143,76 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 476 — 2026-05-20 — DV-01 — document vault
+
+- **Stream:** DV (document vault — Tier C: new schema migration + user-data storage)
+- **Phase:** 5 — implementation
+- **Branch:** `claude/audit-remediation/dv-01-document-vault`
+- **PR:** #1040 OPEN
+- **Commit:** `cf0226d` — feat(dv): DV-01 — document vault (encrypted upload + RLS-isolated storage)
+- **Diff:** 8 files, +810 LOC (cumulative batch: ~2878 LOC)
+- **Items done:** DV-01 (document vault — user_documents table + API routes + vault page + dashboard nav card)
+- **Implementation:**
+  - **`supabase/migrations/20260520_dv01_user_documents.sql`** (98 LOC): `user_documents` table with owner-only RLS (SELECT/INSERT/DELETE to authenticated role via `user_id = auth.uid()`; service_role explicit allow; deny anon). Storage bucket `user-documents` is private (AES-256 at rest). IF NOT EXISTS + BEGIN/COMMIT + prior policy discovery (no prior policies — new table).
+  - **`__tests__/lib/user_documents.rls.test.ts`** (155 LOC): V-NEW-04 isolation test. 8 cases: user A SELECT sees only own rows; user B SELECT independent; INSERT with wrong user_id → 42501; DELETE own row allowed; DELETE cross-user → 42501. Marker `// rls-isolation: user_documents`.
+  - **`app/api/account/documents/route.ts`** (50 LOC): `GET /api/account/documents` — lists user's vault docs with 10-min signed download URLs. RLS handles owner isolation.
+  - **`app/api/account/documents/upload/route.ts`** (132 LOC): `POST /api/account/documents/upload` — multipart, auth-gated, rate-limited 20/hr per user, ≤20 MB, PDF/JPG/PNG/WebP. Path: `{user_id}/{docId}/{filename}`. Cleans up orphaned storage file on DB insert failure.
+  - **`app/api/account/documents/[id]/route.ts`** (64 LOC): `DELETE /api/account/documents/[id]` — fetches row via RLS (prevents cross-user), removes storage file + DB row. Storage delete failure is non-fatal (continues to DB delete).
+  - **`app/account/vault/VaultClient.tsx`** (242 LOC): "use client". Upload modal (doc type select, file input, description, error display). Document list with download links and delete button. Empty state. Encryption notice. 6 document types.
+  - **`app/account/vault/page.tsx`** (68 LOC): RSC. `enforcePortalKind("investor")`, `force-dynamic`, server-fetches docs with signed URLs, passes to VaultClient.
+  - **`app/account/dashboard/page.tsx`**: +1 NavCard (🗂️ Document Vault → `/account/vault`).
+- **Unblocks:** GT-01 (goal tracking, cites DV-01 as dep).
+- **STATUS: PROGRESS · stream=DV · item=DV-01 · pr=#1040**
+
+### iter 478 — 2026-05-20 — CI-RESCUE BB-10 (#1039) — ComplianceFooter variant + JSX close tag
+
+- **Stream:** BB (CI rescue)
+- **Phase:** 2 — CI rescue
+- **Branch:** `claude/audit-remediation/bb-10-lic-screener`
+- **PR:** #1039
+- **Rescue commit:** `7f9427d` — fix(bb): CI-rescue BB-10 #1039 — ComplianceFooter variant + JSX close tag
+- **Root causes (2):** `page.tsx` had `variant="general"` (same as BB-05/#1038); `LicScreenerClient.tsx` line 131 had `<p>` closed by `</div>` — TS17008 + parse cascade. Fix: remove variant prop, change to `</p>`.
+- **Stuck-detection:** First rescue attempt on #1039 — within threshold.
+- **STATUS: CI-RESCUE · stream=BB · pr=#1039**
+
+### iter 477 — 2026-05-20 — CI-RESCUE BB-05 (#1038) — ComplianceFooter invalid variant
+
+- **Stream:** BB (CI rescue)
+- **Phase:** 2 — CI rescue
+- **Branch:** `claude/audit-remediation/bb-05-subscription-audit`
+- **PR:** #1038
+- **Rescue commit:** `e824fee` — fix(bb): CI-rescue BB-05 #1038 — remove invalid ComplianceFooter variant
+- **Root cause:** `variant="general"` not in allowed set for `ComplianceFooter`. TS2322 → Vercel build failure. Fix: remove prop (defaults to "default").
+- **Stuck-detection:** First rescue attempt — within threshold.
+- **STATUS: CI-RESCUE · stream=BB · pr=#1038**
+
+### iter 476 — 2026-05-20 — CI-RESCUE AA-05 (#1037) — faqJsonLd q/a key mismatch
+
+- **Stream:** AA (CI rescue)
+- **Phase:** 2 — CI rescue
+- **Branch:** `claude/audit-remediation/aa-05-suburb-property-investing`
+- **PR:** #1037
+- **Rescue commit:** `ad7017e` — fix(aa): CI-rescue AA-05 #1037 — faqJsonLd q/a key fix
+- **Root cause:** `faqJsonLd()` expects `{q, a}` keys; `.map()` was passing `{question, answer}`. TS2345 → Vercel build failure. Fix: change map to `{q: f.question, a: f.answer}`.
+- **Stuck-detection:** First rescue attempt — within threshold.
+- **STATUS: CI-RESCUE · stream=AA · pr=#1037**
+
+### iter 475 — 2026-05-20 — BB-10 — LIC screener
+
+- **Stream:** BB (lead-capture tool farm — Tier A for this item, client-side screener)
+- **Phase:** 5 — implementation
+- **Branch:** `claude/audit-remediation/bb-10-lic-screener`
+- **PR:** #1039 OPEN
+- **Commit:** `a2edfd6` — feat(bb10): BB-10 — /lic-screener Listed Investment Company screener
+- **Diff:** 4 files, +908 LOC (cumulative batch: ~2068 LOC)
+- **Items done:** BB-10 (LIC screener with NTA premium/discount, franking filter, sortable table)
+- **Implementation:**
+  - **`lib/lic-data.ts`** (424 LOC): `LIC` interface, `LICFocus`/`LICManager` types, `ntaPremiumDiscount()` helper, `LIC_DATA` array of 15 ASX-listed LICs (AFI, ARG, MLT, WHF, BKI, DJW, MIR, QVE, WAX, WLE, PMC, MFF, TGG, AMH, AUI).
+  - **`app/lic-screener/LicScreenerClient.tsx`** (371 LOC): "use client" component. Filters: focus (7 options), franking (any/fully/partial/unfranked), max management cost (number input), discounts-only toggle (role=switch). Sortable table: yield, franking, NTA ±%, mgmt %, AUM. Row-click → detail panel (description, NTA vs price grid, highlights, data source). Hero: 3 stat boxes (total LICs, fully-franked count, at-discount count). Adviser CTA → `/advisors/financial-planners`.
+  - **`app/lic-screener/page.tsx`** (112 LOC): metadata, `calculatorJsonLd`, `faqJsonLd` (4 Q&As: LIC definition, NTA discount, franking, LIC vs ETF), breadcrumb JSON-LD, static FAQ accordion for SEO, `ComplianceFooter variant="general"`, `revalidate = 86400`.
+  - **`app/sitemap.ts`**: +1 entry for `/lic-screener` (priority 0.7, monthly).
+- **STATUS: PROGRESS · stream=BB · item=BB-10 · pr=#1039**
 
 ### iter 474 — 2026-05-20 — BB-05 — subscription audit tool (v1 manual)
 
