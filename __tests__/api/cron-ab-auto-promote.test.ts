@@ -161,4 +161,21 @@ describe("GET /api/cron/ab-auto-promote", () => {
     const json = await res.json() as { failed: number };
     expect(json.failed).toBe(1);
   });
+
+  it("circuit-breaker: caps promotions at 5 per run and flags capped", async () => {
+    // 6 tests that all declare a winner — the breaker should stop after 5.
+    const sixWinners = [1, 2, 3, 4, 5, 6].map((id) => makeTest({ id }));
+    dbQueue.push({ data: sixWinners }); // fetch
+    // Each of the 5 promotions consumes an update + an admin_action_log insert.
+    for (let i = 0; i < 5; i++) {
+      dbQueue.push({ data: null }); // update ab_tests
+      dbQueue.push({ data: null }); // insert admin_action_log
+    }
+    mockDecideWinner.mockReturnValue({ winner: "b", reason: "b_wins", pValue: 0.01, zScore: 3, liftPct: 20 });
+    const res = await GET(makeReq());
+    const json = await res.json() as { promoted: number; capped: boolean; scanned: number };
+    expect(json.scanned).toBe(6);
+    expect(json.promoted).toBe(5);
+    expect(json.capped).toBe(true);
+  });
 });
