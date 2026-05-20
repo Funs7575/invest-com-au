@@ -62,6 +62,17 @@ export const POST = withValidatedBody(Body, async (_req, body) => {
     ? body.target_id
     : Number(body.target_id);
 
+  // thread/post actions key on a numeric id. Reject a non-numeric target
+  // up front — otherwise NaN flows into `.eq("id", NaN)`, which silently
+  // matches nothing yet returns ok:true. (User actions use String(...).)
+  const isUserAction =
+    body.action === "ban_user" ||
+    body.action === "unban_user" ||
+    body.action === "suspend_user";
+  if (!isUserAction && !Number.isInteger(targetIdNum)) {
+    return NextResponse.json({ error: "bad_target_id" }, { status: 400 });
+  }
+
   switch (body.action) {
     case "lock_thread":
     case "unlock_thread": {

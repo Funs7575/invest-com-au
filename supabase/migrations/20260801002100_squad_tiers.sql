@@ -65,4 +65,10 @@ CREATE TRIGGER squad_subscriptions_updated_at
   BEFORE UPDATE ON public.squad_subscriptions
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
+-- squad_placement_boost.updated_at also needs the maintaining trigger
+-- (it has the column + DEFAULT but would otherwise go stale on UPDATE).
+CREATE TRIGGER squad_placement_boost_updated_at
+  BEFORE UPDATE ON public.squad_placement_boost
+  FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
+
 COMMIT;

@@ -13,6 +13,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { withValidatedBody } from "@/lib/validation/withValidatedBody";
 import { professionalIdForUser, inviteAdvisorToSquad } from "@/lib/team-management";
 import { sendEmail } from "@/lib/resend";
+import { escapeHtml } from "@/lib/html-escape";
 import { logger } from "@/lib/logger";
 
 const log = logger("api:team:invite-advisor");
@@ -56,8 +57,8 @@ export const POST = withValidatedBody(Body, async (_req, body) => {
     const result = await sendEmail({
       to: advisor.email,
       subject: `You've been invited to join ${team.name} on Invest.com.au`,
-      html: `<p>Hi ${advisor.name ?? "there"},</p>
-<p>You've been invited to join the <strong>${team.name}</strong> expert team as ${body.role}.</p>
+      html: `<p>Hi ${escapeHtml(advisor.name ?? "there")},</p>
+<p>You've been invited to join the <strong>${escapeHtml(team.name)}</strong> expert team as ${body.role}.</p>
 <p><a href="${acceptUrl}">Review &amp; accept the invitation</a> (expires in 7 days).</p>`,
     });
     if (!result.ok) {

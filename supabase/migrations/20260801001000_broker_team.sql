@@ -99,21 +99,19 @@ CREATE INDEX IF NOT EXISTS idx_broker_team_memberships_active
 ALTER TABLE public.broker_team_memberships ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.broker_team_memberships FORCE ROW LEVEL SECURITY;
 
+-- A member reads their OWN membership rows. Viewing the full roster (other
+-- members of the same org) goes through /api/broker-team GET, which uses the
+-- service client after an explicit membership check — so we deliberately do
+-- NOT add a self-referencing "see all rows in my org" clause here (that
+-- recursion is both a planner hazard and an O(n) self-join per row).
 DROP POLICY IF EXISTS "broker member reads own org memberships"
   ON public.broker_team_memberships;
-CREATE POLICY "broker member reads own org memberships"
+CREATE POLICY "broker member reads own memberships"
   ON public.broker_team_memberships FOR SELECT
   TO authenticated
   USING (
     broker_account_id IN (
       SELECT id FROM public.broker_accounts WHERE auth_user_id = auth.uid()
-    )
-    OR org_id IN (
-      SELECT org_id FROM public.broker_team_memberships m2
-      WHERE m2.broker_account_id IN (
-        SELECT id FROM public.broker_accounts WHERE auth_user_id = auth.uid()
-      )
-      AND m2.status = 'active'
     )
   );
 

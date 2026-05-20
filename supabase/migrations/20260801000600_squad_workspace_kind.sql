@@ -22,7 +22,10 @@
 
 BEGIN;
 
-CREATE OR REPLACE VIEW public.account_kind_membership AS
+-- DROP + CREATE (not CREATE OR REPLACE): inserting scope_slug mid-column-
+-- list. security_invoker=true preserves RLS for authenticated direct reads.
+DROP VIEW IF EXISTS public.account_kind_membership;
+CREATE VIEW public.account_kind_membership WITH (security_invoker = true) AS
   SELECT
     auth_user_id,
     'advisor'::text AS kind,

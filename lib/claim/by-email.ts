@@ -83,21 +83,26 @@ export const CLAIMABLE_TABLES: readonly ClaimableTable[] = [
     claimedAtColumn: null,
   },
   {
+    // professional_reviews has reviewer_email but NO user-id column —
+    // provenance-only claim (email match recorded, no FK to stamp).
     table: "professional_reviews",
     emailColumn: "reviewer_email",
-    userColumn: "reviewer_user_id",
+    userColumn: null,
     claimedAtColumn: null,
   },
   {
+    // user_reviews keys on `email` (not reviewer_email) and has no user-id
+    // column.
     table: "user_reviews",
-    emailColumn: "reviewer_email",
-    userColumn: "reviewer_user_id",
+    emailColumn: "email",
+    userColumn: null,
     claimedAtColumn: null,
   },
   {
+    // qa_questions has `email` only — no asker user-id column.
     table: "qa_questions",
     emailColumn: "email",
-    userColumn: "asker_user_id",
+    userColumn: null,
     claimedAtColumn: null,
   },
   {
@@ -148,7 +153,7 @@ export async function claimByEmail(opts: {
     return { table: spec.table, claimed: 0 };
   }
 
-  const onlyUnclaimed = spec.onlyUnclaimed ?? (spec.claimedAtColumn !== null);
+  const onlyUnclaimed = spec.onlyUnclaimed ?? (spec.claimedAtColumn != null);
 
   try {
     let query = supabase.from(spec.table).update(patch).eq(spec.emailColumn, trimmedEmail);

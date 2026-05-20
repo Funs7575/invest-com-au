@@ -30,7 +30,10 @@ GROUP BY COALESCE(NULLIF(utm_source, ''), 'direct'),
          COALESCE(NULLIF(inferred_vertical, ''), 'unknown')
 ORDER BY total_leads DESC;
 
+-- service_role only: cross-user aggregate read by the admin dashboard via
+-- the service client. authenticated withheld (a plain view bypasses
+-- base-table RLS, so granting it would leak site-wide conversion data).
 REVOKE ALL ON public.lead_conversion_stats FROM anon, authenticated, service_role;
-GRANT SELECT ON public.lead_conversion_stats TO service_role, authenticated;
+GRANT SELECT ON public.lead_conversion_stats TO service_role;
 
 COMMIT;

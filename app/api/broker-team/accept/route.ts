@@ -32,7 +32,7 @@ export const POST = withValidatedBody(Body, async (_req, body) => {
   // Resolve caller's broker account.
   const { data: account } = await admin
     .from("broker_accounts")
-    .select("id")
+    .select("id, email")
     .eq("auth_user_id", user.id)
     .is("deleted_at", null)
     .maybeSingle();
@@ -43,7 +43,7 @@ export const POST = withValidatedBody(Body, async (_req, body) => {
   // Look up the invitation.
   const { data: invite, error: invErr } = await admin
     .from("broker_team_invitations")
-    .select("id, org_id, role, status, expires_at")
+    .select("id, org_id, role, status, expires_at, email")
     .eq("token", body.token)
     .maybeSingle();
   if (invErr || !invite) {
@@ -51,6 +51,14 @@ export const POST = withValidatedBody(Body, async (_req, body) => {
   }
   if (invite.status !== "pending") {
     return NextResponse.json({ error: "already_used" }, { status: 409 });
+  }
+  // Bind the token to the address it was sent to — a leaked/forwarded
+  // token shouldn't let a different broker account claim the seat.
+  if (
+    (invite.email as string | null)?.trim().toLowerCase() !==
+    (account.email as string | null)?.trim().toLowerCase()
+  ) {
+    return NextResponse.json({ error: "wrong_account" }, { status: 403 });
   }
   if (new Date(invite.expires_at as string).getTime() < Date.now()) {
     await admin

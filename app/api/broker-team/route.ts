@@ -21,6 +21,7 @@ import {
   type BrokerTeamRole,
 } from "@/lib/broker-teams";
 import { sendEmail } from "@/lib/resend";
+import { escapeHtml } from "@/lib/html-escape";
 import { logger } from "@/lib/logger";
 
 const log = logger("api:broker-team");
@@ -108,7 +109,7 @@ export const POST = withValidatedBody(InviteBody, async (_req, body) => {
   const result = await sendEmail({
     to: body.email,
     subject: `You've been invited to join ${org.name} on Invest.com.au`,
-    html: `<p>You've been invited to join <strong>${org.name}</strong> as ${body.role}.</p>
+    html: `<p>You've been invited to join <strong>${escapeHtml(org.name)}</strong> as ${body.role}.</p>
 <p><a href="${acceptUrl}">Accept the invitation</a> (expires in 7 days).</p>`,
   });
   if (!result.ok) {

@@ -65,14 +65,16 @@ export async function getAdminCapabilities(email: string | null | undefined): Pr
     const supabase = createAdminClient();
     const { data, error } = await supabase
       .from("admin_users")
-      .select("role_id, active, admin_role_capabilities:admin_role_capabilities(capability)")
+      .select("role_id, active, admin_roles!inner(admin_role_capabilities(capability))")
       .eq("email", normalized)
       .eq("active", true)
       .maybeSingle();
     if (error || !data) return new Set();
-    const caps = (data as unknown as { admin_role_capabilities: { capability: string }[] })
-      .admin_role_capabilities;
-    return new Set((caps ?? []).map((c) => c.capability as AdminCapability));
+    const caps =
+      (data as unknown as {
+        admin_roles: { admin_role_capabilities: { capability: string }[] } | null;
+      }).admin_roles?.admin_role_capabilities ?? [];
+    return new Set(caps.map((c) => c.capability as AdminCapability));
   } catch (err) {
     log.warn("getAdminCapabilities threw", {
       email: normalized,
@@ -104,13 +106,13 @@ export async function getAdminsWithCapability(capability: AdminCapability): Prom
     const supabase = createAdminClient();
     const { data } = await supabase
       .from("admin_users")
-      .select("email, active, admin_role_capabilities:admin_role_capabilities(capability)")
+      .select("email, active, admin_roles!inner(admin_role_capabilities(capability))")
       .eq("active", true);
     const dbAdmins = ((data ?? []) as unknown as {
       email: string;
-      admin_role_capabilities: { capability: string }[];
+      admin_roles: { admin_role_capabilities: { capability: string }[] } | null;
     }[])
-      .filter((r) => (r.admin_role_capabilities ?? []).some((c) => c.capability === capability))
+      .filter((r) => (r.admin_roles?.admin_role_capabilities ?? []).some((c) => c.capability === capability))
       .map((r) => r.email.trim().toLowerCase());
     return [...new Set([...envAdmins, ...dbAdmins])];
   } catch {

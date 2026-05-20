@@ -53,10 +53,12 @@ describe("admin-rbac getAdminCapabilities", () => {
         data: {
           role_id: 3,
           active: true,
-          admin_role_capabilities: [
-            { capability: "can_view_pii" },
-            { capability: "can_moderate" },
-          ],
+          admin_roles: {
+            admin_role_capabilities: [
+              { capability: "can_view_pii" },
+              { capability: "can_moderate" },
+            ],
+          },
         },
         error: null,
       }),
@@ -83,13 +85,13 @@ describe("hasAdminCapability", () => {
   });
 
   it("false for a scoped DB admin lacking the capability", async () => {
-    mockFrom.mockReturnValue(
-      dbAdmin({ data: { role_id: 4, active: true, admin_role_capabilities: [{ capability: "can_view_audit" }] }, error: null }),
-    );
+    const row = {
+      data: { role_id: 4, active: true, admin_roles: { admin_role_capabilities: [{ capability: "can_view_audit" }] } },
+      error: null,
+    };
+    mockFrom.mockReturnValue(dbAdmin(row));
     expect(await hasAdminCapability("readonly@example.com", "can_change_pricing")).toBe(false);
-    mockFrom.mockReturnValue(
-      dbAdmin({ data: { role_id: 4, active: true, admin_role_capabilities: [{ capability: "can_view_audit" }] }, error: null }),
-    );
+    mockFrom.mockReturnValue(dbAdmin(row));
     expect(await hasAdminCapability("readonly@example.com", "can_view_audit")).toBe(true);
   });
 });

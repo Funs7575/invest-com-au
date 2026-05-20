@@ -1,9 +1,25 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
+// useSearchParams must sit under a Suspense boundary or Next 15's
+// `next build` errors when it tries to prerender the route.
 export default function AcceptBrokerInvitePage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="max-w-md mx-auto py-12 text-center">
+          <p className="text-sm text-slate-600">Loading…</p>
+        </div>
+      }
+    >
+      <AcceptInner />
+    </Suspense>
+  );
+}
+
+function AcceptInner() {
   const params = useSearchParams();
   const router = useRouter();
   const token = params.get("token");

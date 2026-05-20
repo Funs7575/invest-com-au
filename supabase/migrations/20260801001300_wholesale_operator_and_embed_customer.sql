@@ -170,7 +170,10 @@ CREATE TRIGGER embed_customers_updated_at
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at();
 
 -- ─── account_kind_membership view: extend with two more branches ──────────
-CREATE OR REPLACE VIEW public.account_kind_membership AS
+-- DROP + CREATE for consistency with the earlier rebuilds + to carry the
+-- security_invoker setting forward (CREATE OR REPLACE wouldn't re-assert it).
+DROP VIEW IF EXISTS public.account_kind_membership;
+CREATE VIEW public.account_kind_membership WITH (security_invoker = true) AS
   SELECT
     auth_user_id,
     'advisor'::text AS kind,

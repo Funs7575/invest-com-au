@@ -49,7 +49,11 @@ ORDER BY switch_count DESC;
 
 REVOKE ALL ON public.multi_kind_cohort_stats FROM anon, authenticated, service_role;
 REVOKE ALL ON public.workspace_switch_stats FROM anon, authenticated, service_role;
-GRANT SELECT ON public.multi_kind_cohort_stats TO service_role, authenticated;
-GRANT SELECT ON public.workspace_switch_stats TO service_role, authenticated;
+-- service_role only: these are cross-user AGGREGATE views read by the
+-- admin dashboard via the service client. Granting authenticated would let
+-- any logged-in session read site-wide aggregates (a plain view bypasses
+-- base-table RLS), so it's deliberately withheld.
+GRANT SELECT ON public.multi_kind_cohort_stats TO service_role;
+GRANT SELECT ON public.workspace_switch_stats TO service_role;
 
 COMMIT;

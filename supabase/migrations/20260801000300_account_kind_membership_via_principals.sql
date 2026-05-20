@@ -13,7 +13,12 @@
 
 BEGIN;
 
-CREATE OR REPLACE VIEW public.account_kind_membership AS
+-- DROP + CREATE (not CREATE OR REPLACE): we're inserting principal_id
+-- mid-column-list, which REPLACE rejects ("cannot change name of view
+-- column"). security_invoker=true so authenticated direct reads respect
+-- each base table's RLS (service-role app reads bypass RLS as before).
+DROP VIEW IF EXISTS public.account_kind_membership;
+CREATE VIEW public.account_kind_membership WITH (security_invoker = true) AS
   SELECT
     auth_user_id,
     'advisor'::text AS kind,
