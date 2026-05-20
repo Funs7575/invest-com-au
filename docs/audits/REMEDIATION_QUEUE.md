@@ -52,7 +52,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | TT | _complete_ | **#764 MERGED** · **#772 MERGED** · **#779 MERGED** · **#799 MERGED 2026-05-12** | TT-01..TT-04 all done. GA4 removed; Plausible sole analytics. **Stream complete.** | TT-04 merged ✓ |
 | CMP | `claude/audit-remediation/cmp-w1a-int-calculator-autosave` | **#782 CLOSED 2026-05-14 (not merged)** | CMP-W1A-INT: #782 was closed without merging by founder 2026-05-14. Work may need re-examination or re-opening on a fresh branch. | All CMP tasks merged |
 | SP | `claude/audit-remediation/sp-01-capability-audit` | **#1048 OPEN** | MM blocker resolved (MM complete — #921 merged 2026-05-20). SP-01 done (iter 484): advisor-portal reuse map — require-startup-session pattern (copy-with-substitutions), portal-gate/account-kinds 4-line additive change, layout verbatim copy, types structural template, proxy.ts 2-line additive. Critical note: `account_kind_membership` VIEW needs `startup_profiles` arm in SP-02 migration. SP-02..SP-13 pending. | All SP tasks merged + compliance signoff |
-| CO | `claude/audit-remediation/co-cutover-prep` | **#1046 OPEN** | CO-01 blocked (legacy redirect map — needs prior-host URL list from founder). CO-02 blocked (GSC/GA4 — needs external credentials). CO-03 pending. CO-04 blocked (DNS — registrar access). CO-05 pending. CO-06 done (iter 482): apex domain cutover runbook `docs/runbooks/cutover.md`. CO-07 done (iter 483): final anonymity audit `docs/audits/co-07-final-anonymity-audit.md` — CL-09 PASSED (2,329 files clean). | All CO tasks done + compliance signoff |
+| CO | `claude/audit-remediation/co-cutover-prep` | **#1046 OPEN** | CO-01 blocked (legacy redirect map — needs prior-host URL list from founder). CO-02 blocked (GSC/GA4 — needs external credentials). CO-03 done (iter 485): sitemap finalisation — `/press` + `/about/careers` added; dynamic `/afsl/[number]` section (future-ready). CO-04 blocked (DNS — registrar access). CO-05 pending. CO-06 done (iter 482): apex domain cutover runbook `docs/runbooks/cutover.md`. CO-07 done (iter 483): final anonymity audit `docs/audits/co-07-final-anonymity-audit.md` — CL-09 PASSED (2,329 files clean). | All CO tasks done + compliance signoff |
 | MAIN-RESCUE | _complete_ | **#793 MERGED** | next 16.2.4→16.2.6 patch merged. Non-loop auto-revert PRs for failed main commits: **#827 OPEN** (reverts `d26094aa`) · **#843 OPEN** (reverts `ff43ed6f`). These are founder-action items — loop will not create duplicate fixes. | Merged to main ✓ |
 | CL | `claude/audit-remediation/cl-01-about-entity-only` | **#795 MERGED 2026-05-14** | CL-01..CL-04, CL-06, CL-09, CL-10 done. CL-07+CL-08 false-positive. CL-05 blocked (WHOIS registrar action — see Blocked). | All CL tasks merged (CL-05 blocked) |
 | LL | `claude/audit-remediation/ll-04-reviews-ratings` | **#807 MERGED 2026-05-14** · **#845 MERGED 2026-05-17** | LL-01..LL-04 done. LL-05 blocked (live chat AI routing — deps V-NEW-02 + CC-06). **Stream stalled at LL-05 (blocked).** | All LL tasks merged (LL-05 blocked) |
@@ -174,6 +174,20 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 ---
 
 ## Iteration log (most recent first)
+
+### iter 485 — 2026-05-20 — CO-03 — sitemap finalisation
+
+- **Stream:** CO (cutover preparation)
+- **Phase:** 5 — implementation (Tier A — code/sitemap)
+- **Branch:** `claude/audit-remediation/co-cutover-prep`
+- **PR:** #1046 OPEN (same PR as CO-06 + CO-07)
+- **Commit:** `09f538d` — feat(co): CO-03 — sitemap finalisation
+- **Diff:** +22 LOC / -1 LOC (`app/sitemap.ts`)
+- **Items done:** CO-03 (sitemap finalisation — 2 missing static pages + dynamic AFSL section)
+- **Missing pages found:** `/press` (press & media, canonical set, public) + `/about/careers` (careers page, indexed). Both were absent from `staticPages` array despite being public pages with proper metadata.
+- **New dynamic section:** `/afsl/[number]` pages — query against `afsl_register` table, filtered to `status IN ('current','suspended')`, `priority: 0.5`, `changeFrequency: 'monthly'`. Currently emits 0 entries (table unpopulated pre-launch); becomes live automatically after admin CSV upload.
+- **Items pending:** CO-05 (pre-launch QA E2E). CO-01, CO-02, CO-04 remain blocked (registrar/GSC credentials).
+- **STATUS: PROGRESS · stream=CO · item=CO-03 · pr=#1046**
 
 ### iter 484 — 2026-05-20 — SP-01 — capability audit (advisor-portal reuse map)
 
