@@ -19,7 +19,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | C | `claude/audit-remediation/c-05-index-coverage` | #209/#302/#338/#356/#357/#358/#359/#360/#361/#362/#457/#541 | C-01..C-02 done. C-03..C-05 blocked (see Blocked). | C-05 merged |
 | D | `claude/audit-remediation/d-09-seo-drift` | #210/#303/#339/#363/#364/#365/#366/#457/#542 | D-01..D-09 done. | D-09 merged ✓ |
 | E | `claude/audit-remediation/e-02-batch-5-zod-rollout` (#469) · `e-04-batch-2-zod-backfill` (#557) · `e-04-batch-3-zod-backfill` (#558) | #211/#304/#340/#368/#379/#383/#457/#458/#459/#460/#461/#462/#463/#464/#465/#466/#467/#468/#469/#555/#556/#557/#558 | E-02 batch 1-5 all MERGED (#469 merged 2026-05-03). E-04 batch 1 done (#555/#556), batch 2 blocked, **batch 3 MERGED** (#558 per iter 279). | All E-02+E-04 batches merged |
-| F | `claude/audit-remediation/f-disc-20260519-01-duplicate-shadows` | **#925 OPEN** | F-01..F-07 done. F-08 blocked (see Blocked). F-DISC-01: **#741 MERGED 2026-05-11**. F-DISC-02..07 false-positives. F-DISC-20260519-01: **#925 OPEN** (iter 456): `requireAdmin` replaced in 7 admin routes; `escapeHtml` in cron/saved-search-alerts replaced; 21 false-positive name-collisions allowlisted. `audit:duplicate-functions` exits 0. Last CI: fixing — see commit `a5f3887` (CI-RESCUE iter 458: country-rule-alerts test 401→403 for authenticated non-admin; Lint·Type-check·Test·Build in_progress). | F-DISC-20260519-01 merged |
+| F | _complete_ | **#925 MERGED 2026-05-20** | F-01..F-07 done. F-08 blocked. F-DISC-01 #741 MERGED. F-DISC-20260519-01: **#925 MERGED by founder 2026-05-20** — `requireAdmin` consolidated, `escapeHtml` consolidated, 21 false-positives allowlisted. **Stream engineering complete.** | F-DISC-20260519-01 merged ✓ |
 | G | `claude/audit-remediation/g-04-mfa-gaps` | #213/#306/#342/#371/#385/#457/#471/#544 | G-01..G-03 done. G-04 blocked (see Blocked). | G-04 unblocked + merged |
 | H | `claude/audit-remediation/h-06-stripe-webhooks` | #214/#307/#343/#386/#457/#472/#545 | H-01..H-06 done. | H-06 merged ✓ |
 | I | `claude/audit-remediation/i-05-advisor-gaps` | #215/#308/#344/#387/#457/#473/#546 | I-01..I-05 done. | I-05 merged ✓ |
@@ -47,8 +47,8 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | WW | _complete_ | **#651 MERGED** | WW-01+WW-02 merged. WW-03/04 blocked (DD-02 dep). | All WW tasks merged ✓ |
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
 | Z | `claude/audit-remediation/z-04-zero-state-ux` | #230/#323/#403/#457/#524/#565 | Z-01..Z-04 done. | Z-04 merged ✓ |
-| QQ | `claude/audit-remediation/qq-05-schema` | **#800 MERGED 2026-05-14** · **#920 OPEN** | QQ-01..QQ-07 done (merged). QQ-05+QQ-06 done (`b3a1e63`): migration + `/api/answers/ask`. QQ-09 done (`27079bf`): admin moderation queue + action API. QQ-10 done (`217d7d6`): 19-test suite. QQ-08 compliance gate blocks public exposure. **Stream engineering complete pending QQ-08 compliance signoff.** Last CI: pending — pushed `217d7d6` 2026-05-19. | All QQ tasks merged |
-| MM | `claude/audit-remediation/mm-v06-wholesale-alternatives` | **#801 MERGED** · **#803 MERGED 2026-05-14** · **#921 OPEN** | MM-V01..V08 done. MM-V06 in-flight (`afd1b1e`): 4 wholesale-alt listing pages + s708 gate (PE, VC, hedge funds, litigation funding, ILS). Last CI: pending — pushed `afd1b1e` 2026-05-19. | All MM phases merged |
+| QQ | _complete_ | **#800 MERGED 2026-05-14** · **#920 MERGED 2026-05-20** | QQ-01..QQ-10 done. **Stream complete — #920 merged by founder 2026-05-20.** QQ-08 compliance: public exposure pending human review. | All QQ tasks merged ✓ |
+| MM | _complete_ | **#801 MERGED** · **#803 MERGED 2026-05-14** · **#921 MERGED 2026-05-20** | MM-V01..V08 done. **Stream complete — #921 merged by founder 2026-05-20.** | All MM phases merged ✓ |
 | TT | _complete_ | **#764 MERGED** · **#772 MERGED** · **#779 MERGED** · **#799 MERGED 2026-05-12** | TT-01..TT-04 all done. GA4 removed; Plausible sole analytics. **Stream complete.** | TT-04 merged ✓ |
 | CMP | `claude/audit-remediation/cmp-w1a-int-calculator-autosave` | **#782 CLOSED 2026-05-14 (not merged)** | CMP-W1A-INT: #782 was closed without merging by founder 2026-05-14. Work may need re-examination or re-opening on a fresh branch. | All CMP tasks merged |
 | SP | (none yet) | (none yet) | **BLOCKED — waiting on MM-V09 completion.** | All SP tasks merged + compliance signoff |
@@ -59,23 +59,28 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | EM | _complete_ | **#848 MERGED 2026-05-17** · **#880 MERGED 2026-05-18** | EM-03 + EM-01 done. EM-02 (`16add6f`): hub_drip_log migration + hub-subscriber-drip cron. **Stream complete. #880 merged by founder 2026-05-18.** | All EM tasks merged ✓ |
 | LX | _complete_ | **#849 MERGED 2026-05-15** · **#879 MERGED 2026-05-18** | LX-01, LX-02, LX-03, LX-04, LX-05 done. **Stream complete. #879 merged by founder 2026-05-18.** | All LX tasks merged ✓ |
 | OB | _complete_ | **#852 MERGED 2026-05-17** · **#878 MERGED 2026-05-18** | OB-01..OB-12 done. **Stream complete. #878 merged by founder 2026-05-18.** | All OB tasks merged ✓ |
-| GT | `claude/audit-remediation/gt-02-annual-check` | **#881 OPEN** | GT-01 blocked (needs DV-01). GT-02 done (`a4c5352`). CI rescue iter 450: merge main (picks up `66609e7` afsl_register driftallowlist). Commit `172b84b`. Last CI: pending — pushed `172b84b` 2026-05-19. ⚠️ Recurring drift — founder should merge #881 to stop cycle. | All GT tasks merged |
-| DF | `claude/audit-remediation/df-01-decision-frameworks` | **#883 OPEN** · ~~#884 CLOSED (dup)~~ | DF-01..04 done. CI rescue iter 450: merge main (picks up `66609e7` afsl_register driftallowlist). Commit `3a55352`. Last CI: pending — pushed `3a55352` 2026-05-19. ⚠️ Recurring drift — founder should merge #883 to stop cycle. | All DF tasks merged |
+| GT | _complete_ | **#881 MERGED 2026-05-20** | GT-01 blocked (needs DV-01). GT-02 done. **Stream complete — #881 merged by founder 2026-05-20.** | All GT tasks merged ✓ |
+| DF | _complete_ | **#883 MERGED 2026-05-20** · ~~#884 CLOSED (dup)~~ | DF-01..04 done. **Stream complete — #883 merged by founder 2026-05-20.** | All DF tasks merged ✓ |
 | QA | _complete_ | **#890 MERGED 2026-05-18** | QA-01..QA-02 done. **Stream complete. #890 merged by founder 2026-05-18.** | All QA tasks merged ✓ |
 | Z-23+BB-08 | _complete_ | **#895 MERGED 2026-05-18** | Z-23 + BB-08 done. All CI green. **Stream complete. #895 merged by founder 2026-05-18.** | #895 merged ✓ |
 | SM | _complete_ | **#904 MERGED 2026-05-18** | SM-01+SM-02 done. **Stream complete. #904 merged by founder 2026-05-18.** | All SM tasks merged ✓ |
 | MK | _complete_ | **#903 MERGED 2026-05-18** | MK-01+MK-02 done. **Stream complete. #903 merged by founder 2026-05-18.** | All MK tasks merged ✓ |
 | CD | _complete_ | **#900 CLOSED 2026-05-18** (dup) · **#902 MERGED 2026-05-18** | CD-01 (public calendar + account calendar), CD-02 (currency converter), CD-03 (pricing transparency) all done. #900 closed as duplicate (content covered by #902). **Stream complete. #902 merged by founder 2026-05-18.** | All CD tasks merged ✓ |
 | CM | _complete_ | **#905 MERGED 2026-05-18** | CM-01 done. a11y fix (`a2f98e6`) now on main via this merge. **Stream complete. #905 merged by founder 2026-05-18.** | All CM tasks merged ✓ |
-| AT | `claude/audit-remediation/at-02-couple-family-business` | **#907 MERGED 2026-05-18** · **#917 OPEN** | AT-01 done (`a2553d7`, #907). AT-02..04 done (`f34e7fe`): couple/family/business account-type hub sections on dashboard — `ACCOUNT_TYPE_HUBS` map + conditional section renders between "Recommended" and advisor cards. **Stream complete pending #917 merge.** | AT-01..04 done |
-| Z-22+BB-07 | `claude/audit-remediation/z-22-bb07-redundancy-hub` | **#922 OPEN** | Z-22 done (`63875c8`): `/redundancy` hub (HubPage HOC, 6 service cards, 6 FAQs, ETP stats). BB-07 done: `/tools/etp-calculator` (FY2025-26 maths, tax-free threshold, 17%/32% ETP rates, marginal rate comparison). Lead magnet + ToolsClient entry + sitemap updated. Last CI: pending — pushed `63875c8` 2026-05-19. | Z-22+BB-07 merged |
-| BB-01 | `claude/audit-remediation/bb-01-borrowing-power` | **#923 OPEN** | BB-01 done (`a861dc3`): `/tools/borrowing-power-calculator` — multi-lender borrowing power calc (FY2025-26 tax, HEM, 3 APRA lender scenarios, LVR/LMI flags). ToolsClient entry + sitemap updated. Last CI: pending — pushed `a861dc3` 2026-05-19. | BB-01 merged |
-| BB-06 | `claude/audit-remediation/bb-06-mortgage-stress-test` | **#924 OPEN** | BB-06 done (`648d024`): `/tools/mortgage-stress-test` — 9 rate-rise scenarios (+0..+5%), housing-stress thresholds (30%/40% gross), APRA +3% buffer callout, binary-search breakeven rate, FY2025-26 tax. ToolsClient entry + sitemap updated. Last CI: pending — pushed `648d024` 2026-05-19. | BB-06 merged |
-| AA | `claude/audit-remediation/aa-02-03-programmatic-grants` | **#928 OPEN** | AA-01 false-positive (pre-existing). AA-02+AA-03 done (`bc4909c` iter 459): 10 `/grants/[industry]` pages + 11 `/grants/[state]/[program]` pages + sitemap. Last CI: pending — pushed `bc4909c` 2026-05-19. | AA-02+AA-03 merged |
-| Z-26 | `claude/audit-remediation/z-26-super-hub` | **#929 OPEN** | Z-26 done (`225e8be` iter 460): `/super` hub migration to HubPage HOC; `lib/hub-configs/super.ts` (3 hero stats, 6 service cards, 4 deep-dives, 5 FAQs); sub-hub link grid, articles strip, ForeignInvestorCallout, newsletter/lead-magnet/exit-intent wired. CI-rescue (`a0bd594`): `app/super/page.tsx` allowlisted in AFSL compliance test (HubPage renders compliance from `complianceKey`). Last CI: fixing — pushed `a0bd594` 2026-05-19. | Z-26 merged |
-| Z-25 | `claude/audit-remediation/z-25-insurance-hub` | **#930 OPEN** | Z-25 done (`dbd76c0` iter 461): `/insurance` hub migration to HubPage HOC; `lib/hub-configs/insurance.ts` (3 hero stats, 6 service cards, 4 deep-dives, 6 FAQs, `complianceKey: "general_advice"`); KEY_CONCEPTS glossary + SITUATION_GUIDE table + inside-vs-outside-super panel preserved as children. CI-rescue (`4abe14e`): `routesTo: "insurance"` → `"general"` in quiz config (invalid `LeadQueueKey`). Last CI: fixing — pushed `4abe14e` 2026-05-19. | Z-25 merged |
-| AA-04+BB-09 | `claude/audit-remediation/aa-04-bb09-etf-ticker-screener` | **#931 OPEN** | AA-04+BB-09 done (`bad0ae4` iter 462): 25 ETF ticker pages at `/etfs/[ticker]` (ISR 3600, generateStaticParams, FinancialProduct JSON-LD, fee impact table); ETF screener at `/etfs/screener` (client filters: asset class, provider, MER slider, franking-only; sortable table); `lib/etf-data.ts` shared data feed (VAS/A200/STW/IOZ/IVV/NDQ/VTS/VGS/IWLD/VGAD/VHY/HVST/VAF/IAF/FEMX/HACK/ETHI/MVW/VEU/VISM/QUS/BOND/CRED/ZYAU + 1); +16 sitemap entries. GENERAL_ADVICE_WARNING on all new pages. Last CI: pending — pushed `bad0ae4` 2026-05-19. | AA-04+BB-09 merged |
-| DD | `claude/audit-remediation/dd-01-tiered-listings` | **#926 OPEN** | DD-01 done (`137680e`): `advisor_tier` added to `Professional` type; Pro badge + violet card border on `/advisors`; `advisor_tier` select + Pro badge on `/find/[advisor-type]/[city]`. Sort: Featured→Pro→Free. No schema migration. Last CI: pending — pushed `137680e` 2026-05-19. | DD-01 merged |
+| AT | _complete_ | **#907 MERGED 2026-05-18** · **#917 MERGED 2026-05-20** | AT-01..04 done. **Stream complete — #917 merged by founder 2026-05-20.** | AT-01..04 done ✓ |
+| Z-22+BB-07 | _complete_ | **#922 MERGED 2026-05-20** | Z-22 + BB-07 done. **Stream complete — #922 merged by founder 2026-05-20.** | Z-22+BB-07 merged ✓ |
+| BB-01 | _complete_ | **#923 MERGED 2026-05-20** | BB-01 done. **Stream complete — #923 merged by founder 2026-05-20.** | BB-01 merged ✓ |
+| BB-06 | _complete_ | **#924 MERGED 2026-05-20** | BB-06 done. **Stream complete — #924 merged by founder 2026-05-20.** | BB-06 merged ✓ |
+| AA | `claude/audit-remediation/aa-02-03-programmatic-grants` | **#928 MERGED 2026-05-20** | AA-01 false-positive. AA-02+AA-03 done. **#928 merged by founder 2026-05-20.** AA-04+BB-09 (#931) also merged. AA-06/AA-07 pending. | AA-02+AA-03 merged ✓ |
+| Z-26 | _complete_ | **#929 MERGED 2026-05-20** | Z-26 done. **Stream complete — #929 merged by founder 2026-05-20.** | Z-26 merged ✓ |
+| Z-25 | _complete_ | **#930 MERGED 2026-05-20** | Z-25 done. **Stream complete — #930 merged by founder 2026-05-20.** | Z-25 merged ✓ |
+| AA-04+BB-09 | _complete_ | **#931 MERGED 2026-05-20** | AA-04+BB-09 done. **Stream segment merged — #931 merged by founder 2026-05-20.** | AA-04+BB-09 merged ✓ |
+| DD | `claude/audit-remediation/dd-02-verified-badge` | **#1033 OPEN** | DD-01 done (#926 merged). DD-02 done (iter 468): `/find/[advisor-type]/[city]` city listing upgraded to full `VerifiedBadge` component (ABN Verified + AFSL Current pills) — adds `verification_method`, `afsl_number`, `abn`, `last_verified_at` to select + local type. CI: queued — pushed `36b6da4f` 2026-05-20. DD-03/04 pending. | DD-02 in flight |
+| Z-24 | `claude/audit-remediation/z-24-inheritance-hub` | **#995 OPEN** | Z-24 done (iter 464): `/inheritance` top-level hub; `lib/hub-configs/inheritance.ts` (3 hero stats, 6 service cards, 4 deep-dives, 6 FAQs, `complianceKey: "general_advice"`); lead magnet + sitemap. CI rescue iter 467: merged main (`98f6433`) — Supabase types drift fixed. | Z-24 merged |
+| BB-02+BB-03 | `claude/audit-remediation/bb-02-03-salary-sacrifice-cgt` | **#1015 OPEN** | BB-02 done (iter 465): `/tools/salary-sacrifice-optimiser` — quantitative salary-sacrifice calculator (FY2025-26 tax, concessional cap enforcement, Division 293 detection, take-home before/after table). BB-03 done: `/tools/cgt-calculator` — purchase→sale CGT calc (50% discount, asset types, side-by-side discount impact). Sitemap +2. CI rescue iter 467: faqJsonLd null-access fix (`3f68cb9`). | BB-02+BB-03 merged |
+| AA-07 | `claude/audit-remediation/aa-07-just-event-pages` | **#1020 OPEN** | AA-07 done (iter 466): `/just/[event]` moment-of-money pages — 8 life-event checklists (retired, inherited, made-redundant, got-married, had-a-baby, bought-a-house, sold-a-business, started-investing); `/just` index hub. Dynamic route with `generateStaticParams`, `GENERAL_ADVICE_WARNING`, advisor CTA, cross-event nav strip. Sitemap +9. CI: queued — pushed 2026-05-20. | AA-07 merged |
+| AA-06 | `claude/audit-remediation/aa-06-investing-for-occupation` | **#1031 OPEN** | AA-06 done (iter 468): `/investing-for/[occupation]` — 26 occupation-specific investing guides + `/investing-for` index hub. Income type + super type badges, 3 highlights, 4 hub links, 3 FAQs, advisor CTA, cross-occupation nav, `GENERAL_ADVICE_WARNING`. `generateStaticParams` ISR, `revalidate = 3600`. Sitemap +27. CI: queued — pushed `617fd94a` 2026-05-20. | AA-06 merged |
+| Z-27 | `claude/audit-remediation/z-27-tax-return-hub` | **#1032 OPEN** | Z-27 done (iter 469): `/tax-return` top-level hub (HubPage HOC). `lib/hub-configs/tax-return.ts`: 3 hero stats ($2,817 avg refund, 67¢/hr WFH rate, 31 Oct deadline), 6 service cards, 4 deep-dives, withholding-tax calculator, 6 FAQs, lead queue `general/tax`. Page: FY2025-26 key-dates callout (amber), investor-type quick-access grid. Sitemap +1 (priority 0.82, weekly). CI: queued — pushed `00cb2265` 2026-05-20. | Z-27 merged |
 
 ---
 
@@ -135,6 +140,107 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 470 — 2026-05-20 — DD-02 — /find city listing upgraded to VerifiedBadge
+
+- **Stream:** DD (marketplace mechanics — Tier C)
+- **Phase:** 5 — implementation
+- **Branch:** `claude/audit-remediation/dd-02-verified-badge`
+- **PR:** #1033 OPEN
+- **Commit:** `36b6da4f` — feat(dd): upgrade /find city listing to use VerifiedBadge (DD-02)
+- **Diff:** 1 file, +13 LOC
+- **Items done:** DD-02 (VerifiedBadge on `/find/[advisor-type]/[city]` listing)
+- **Implementation:**
+  - **`app/find/[advisor-type]/[city]/page.tsx`**: imports `VerifiedBadge`; adds `verification_method`, `afsl_number`, `abn`, `last_verified_at` to `AdvisorRow` interface and Supabase select; replaces hard-coded `<span>Verified</span>` text pill in `AdvisorCard` with `<VerifiedBadge method={...} afsl={...} abn={...} lastVerifiedAt={...} compact />`. Consistent with main `/advisors` listing which already uses the component.
+- **Tier C batch end:** DD stream is Tier C — batch terminates after this item.
+- **STATUS: PROGRESS · stream=DD · item=DD-02 · pr=#1033**
+
+### iter 469 — 2026-05-20 — Z-27 — /tax-return hub (HubPage HOC, seasonal accountant lead gen)
+
+- **Stream:** Z (Tier-1 hub builds)
+- **Phase:** 5 — implementation (Tier A — hub page)
+- **Branch:** `claude/audit-remediation/z-27-tax-return-hub`
+- **PR:** #1032 OPEN
+- **Commit:** `00cb2265` — feat(z27): Z-27 — /tax-return hub
+- **Diff:** 3 files, +312 LOC
+- **Items done:** Z-27 (`/tax-return` top-level hub — HubPage HOC pattern)
+- **Implementation:**
+  - **`lib/hub-configs/tax-return.ts`** (new, 205 LOC): full `taxReturnHubConfig` — 3 hero stats with ATO sources (avg $2,817 refund 2022-23; 67¢/hr WFH fixed rate; 31 Oct individual deadline), 6 service cards (WFH, work deductions, investment income, rental property, crypto, tax agents), 4 deep-dives linking to existing tax/property/CGT pages, withholding-tax-calculator, 6 FAQs, lead queue `general/tax`, newsletter `tax-return-hub`, relatedHubs, articleFilters.
+  - **`app/tax-return/page.tsx`** (new, 98 LOC): HubPage HOC with FY2025-26 key-dates callout strip (amber — 1 Jul / 31 Oct / 15 May) and investor-type quick-access grid (shares/ETFs, property investors, crypto, SMSF trustees, freelancers/ABN, tax agent guide). `revalidate = 3600`.
+  - **`app/sitemap.ts`**: +1 entry (`/tax-return` at priority 0.82, `changeFrequency: "weekly"` for seasonal peak).
+- **Batch complete:** 5 Tier A items in this fire (Z-24/464, BB-02+BB-03/465, AA-07/466, AA-06/468, Z-27/469). Cloud loop ran iter 467 as CI rescue (BB faqJsonLd + Z-24 Supabase drift). Total LOC ~3,650 of 5,000 cap.
+- **STATUS: PROGRESS · stream=Z · item=Z-27 · pr=#1032**
+
+### iter 468 — 2026-05-20 — AA-06 — /investing-for/[occupation] programmatic pages
+
+- **Stream:** AA (programmatic SEO)
+- **Phase:** 5 — implementation (Tier A — content pages)
+- **Branch:** `claude/audit-remediation/aa-06-investing-for-occupation`
+- **PR:** #1031 OPEN
+- **Commit:** `617fd94a` — feat(aa06): AA-06 — /investing-for/[occupation] programmatic pages
+- **Diff:** 3 files, +1,341 LOC (content/data budget)
+- **Items done:** AA-06 (`/investing-for/[occupation]` dynamic route + `/investing-for` index hub)
+- **Implementation:**
+  - **`app/investing-for/[occupation]/page.tsx`** (new, 1,164 LOC): 26 occupation configs with income type, super type, 3 financial highlights, 4 hub links, 3 occupation-specific FAQs, advisor CTA, cross-occupation nav strip. `generateStaticParams` for ISR pre-rendering, `revalidate = 3600`, `GENERAL_ADVICE_WARNING` footer. Inline `faqSchema` object (no `faqJsonLd()` helper — avoids null-access pattern from iter 467 CI rescue).
+  - **`app/investing-for/page.tsx`** (new, 154 LOC): index hub grouping 26 occupations into 6 sections (Healthcare, Professional Services, Public Sector, Business Owners, Trades/Industries, Self-Employed). `revalidate = 86400`.
+  - **`app/sitemap.ts`**: +27 entries (`/investing-for` index at 0.75 + 26 slugs at 0.65).
+- **Occupations:** doctor, nurse, dentist, pharmacist, vet, lawyer, accountant, engineer, architect, financial-planner, it-professional, public-servant, teacher, police-officer, military, small-business-owner, startup-founder, executive, real-estate-agent, farmer, tradesperson, pilot, miner, freelancer, contractor, sports-professional
+- **STATUS: PROGRESS · stream=AA · item=AA-06 · pr=#1031**
+
+### iter 467 — 2026-05-20 — CI-RESCUE BB-02+BB-03 (#1015) + Z-24 (#995) — faqJsonLd null-access + Supabase types drift
+
+- **Streams:** BB-02+BB-03 (CI rescue) · Z-24 (CI rescue)
+- **Phase:** 2 — CI rescue (both streams)
+- **PRs:** BB-02+BB-03 #1015 · Z-24 #995
+- **Root causes:**
+  - **BB-02+BB-03 #1015 (Vercel deployment failure):** `salary-sacrifice-optimiser/page.tsx` and `cgt-calculator/page.tsx` called `faqLd.mainEntity.map(...)` — `faqJsonLd()` returns `T | null` so TypeScript strict mode (TS2531) breaks next build. Fix: define `const FAQS: FaqItem[]`, pass to `faqJsonLd()` for JSON-LD, iterate `FAQS` in JSX. Matches all other calculator pages (etp, fhss, borrowing-power, mortgage-stress-test).
+  - **Z-24 #995 (Supabase types drift failure):** Branch was behind main by 2 commits. Merging main picks up `.driftallowlist` entry for `afsl_register`.
+- **Rescue commits:** `3f68cb9` (BB branch — faqJsonLd fix) · `98f6433` (Z-24 branch — merge main)
+- **Stuck-detection:** First rescue attempt on both PRs — within threshold.
+- **STATUS: CI-RESCUE · stream=BB+Z-24 · pr=#1015+#995**
+
+### iter 466 — 2026-05-20 — AA-07 — /just/[event] moment-of-money pages
+
+- **Stream:** AA (programmatic SEO)
+- **Phase:** 5 — implementation (Tier A — content pages)
+- **Branch:** `claude/audit-remediation/aa-07-just-event-pages`
+- **PR:** #1020 OPEN
+- **Items done:** AA-07 (`/just/[event]` life-event checklists + `/just` index hub)
+- **Implementation:**
+  - **`app/just/[event]/page.tsx`** (new): dynamic route with `generateStaticParams` for 8 life events. `JustEvent` data includes slug, headline, subhead, advisorType, advisorHref, 5 timed-action checklist items, 4 hub links, 3 FAQs. Full page renders: action timeline, advisor CTA, hub links, FAQ accordion (JSON-LD + visible), cross-event navigation strip. `revalidate = 3600`, `GENERAL_ADVICE_WARNING`, `faqJsonLd`, `breadcrumbJsonLd`.
+  - **`app/just/page.tsx`** (new): index hub — 8 event cards with icons, `revalidate = 86400`.
+  - **`app/sitemap.ts`**: +9 entries (`/just` + 8 slugs).
+- **Life events:** `retired`, `inherited`, `made-redundant`, `got-married`, `had-a-baby`, `bought-a-house`, `sold-a-business`, `started-investing`
+- **STATUS: PROGRESS · stream=AA · item=AA-07 · pr=#1020**
+
+### iter 465 — 2026-05-20 — BB-02+BB-03 — salary-sacrifice optimiser + CGT calculator
+
+- **Stream:** BB (calculator farm)
+- **Phase:** 5 — implementation (Tier A — calculators)
+- **Branch:** `claude/audit-remediation/bb-02-03-salary-sacrifice-cgt`
+- **PR:** #1015 OPEN
+- **Commit:** `df71adb9` — feat(bb02+bb03): BB-02+BB-03 — salary-sacrifice optimiser + CGT calculator
+- **Diff:** 5 files, +876 LOC (content/calculator budget)
+- **Items done:** BB-02 (`/tools/salary-sacrifice-optimiser`), BB-03 (`/tools/cgt-calculator`)
+- **Implementation:**
+  - **`app/tools/salary-sacrifice-optimiser/SalarySacrificeOptimiserClient.tsx`** (new): quantitative calc (distinct from existing `/tools/salary-sacrifice` decision tree). FY2025-26 tax + Medicare, concessional cap $30k enforcement, Division 293 detection (>$250k), take-home before/after comparison table, net annual advantage.
+  - **`app/tools/salary-sacrifice-optimiser/page.tsx`** (new): SSR wrapper, breadcrumb JSON-LD, calculatorJsonLd, faqJsonLd (5 FAQs), revalidate 3600.
+  - **`app/tools/cgt-calculator/CGTCalculatorClient.tsx`** (new): full purchase→sale flow (distinct from `/cgt-calculator` which takes pre-computed gain). 50% CGT discount, stacked marginal rate (income + gain), asset types (shares/property/crypto/other), discount impact side-by-side, capital loss handling, asset-specific callouts.
+  - **`app/tools/cgt-calculator/page.tsx`** (new): SSR wrapper, breadcrumb JSON-LD, calculatorJsonLd, faqJsonLd (6 FAQs), revalidate 3600.
+  - **`app/sitemap.ts`**: +2 entries.
+- **STATUS: PROGRESS · stream=BB · item=BB-02+BB-03 · pr=#1015**
+
+### iter 464 — 2026-05-20 — Z-24 — /inheritance top-level hub [queue sync + in-flight]
+
+- **Stream:** Z (Tier-1 hub builds)
+- **Phase:** 7 — queue update (context-compressed session resumption: Z-24 was created by previous context window before queue update could be written)
+- **Branch:** `claude/audit-remediation/z-24-inheritance-hub`
+- **PR:** #995 OPEN (CI queued)
+- **Commit:** `f3953a0` — feat(z24): Z-24 — /inheritance top-level hub [audit remediation]
+- **Diff:** 5 files, +306 LOC (hub config + page + lead magnet + sitemap)
+- **Items done:** Z-24 (`/inheritance` top-level hub — HubPage HOC pattern)
+- **Queue housekeeping:** 14 founder-merged PRs marked MERGED (GT #881, DF #883, AT #917, QQ #920, MM #921, Z-22+BB-07 #922, BB-01 #923, BB-06 #924, F #925, DD #926, AA #928, Z-26 #929, Z-25 #930, AA-04+BB-09 #931). All were merged by founder on 2026-05-19/20.
+- **STATUS: PROGRESS · stream=Z · item=Z-24 · pr=#995**
 
 ### iter 462 — 2026-05-19 — AA-04+BB-09 — ETF ticker pages + ETF screener
 
