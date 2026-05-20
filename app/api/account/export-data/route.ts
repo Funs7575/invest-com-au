@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { isRateLimited } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
+import { recordAuditForUser } from "@/lib/audit";
 
 const log = logger("account-export");
 
@@ -55,6 +56,16 @@ export async function POST(request: NextRequest) {
     log.error("data_export_requests insert failed", error);
     return NextResponse.json({ error: "Failed to record request" }, { status: 500 });
   }
+
+  // Unified audit trail (#11): data export is a privileged data-access
+  // action (APP 12 / GDPR Art. 15) worth recording.
+  void recordAuditForUser(user.id, {
+    action: "account.data_export_requested",
+    resourceType: "auth_user",
+    resourceId: user.id,
+    summary: "Personal data export requested",
+    ip,
+  });
 
   return NextResponse.json({
     ok: true,
