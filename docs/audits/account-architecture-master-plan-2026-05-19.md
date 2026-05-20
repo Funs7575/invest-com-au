@@ -2,7 +2,45 @@
 
 **Date:** 2026-05-19
 **Branch:** `claude/audit-account-architecture-7186H`
-**Status:** approved, in execution
+**Status:** approved, executed end-to-end (see Progress section below)
+
+## Progress (2026-05-20)
+
+End-to-end execution of every numbered session except 4.3 (intentionally
+deferred — see notes). Status per session below; commit refs on the
+branch.
+
+| Phase | Session | Status | Notes |
+|---|---|---|---|
+| 0 | 0.1 principals + backfill + view + lib + tests | ✅ shipped | 4 migrations, lib/principals.ts, full unit coverage |
+| 0 | 0.2 codegen consistency gate | ✅ shipped | `scripts/check-entity-registry.mjs` + CI wiring. Full ts-morph codegen tool deferred (lint catches drift on the existing 8 kinds; codegen is nice-to-have for kind #9+) |
+| 0 | 0.3 partner-org principals | ✅ shipped | newsletter_sponsors + partner_integrations linked; lib/partner-orgs.ts find-or-create helper |
+| 1 | 1.1 squad workspace schema + lib | ✅ shipped | View extended; `iv_active_team_id` cookie; chooseCallbackRedirect.setTeamId; portalForKind options signature |
+| 1 | 1.2 chooser + switcher squad UX | ✅ shipped | Squad cards lead with team name; switcher orders base-then-squads; squad picks send team_id |
+| 1 | 1.3 unit tests for squad routing | ✅ shipped | 5 new test cases covering single/multi/missing-slug paths. Playwright e2e deferred — needs staging Supabase with seeded multi-membership user |
+| 2 | 2.1 GDPR soft-delete | ✅ shipped | Columns + RLS on principals + 3 simple kind tables; redact-deleted-users + hard-delete-expired crons live. (professionals/broker_accounts RLS tightening still pending — has public-read marketplace paths) |
+| 2 | 2.2 investor household_type enum | ✅ shipped | Typed column + backfill + column-first reader with JSON fallback during deprecation window |
+| 2 | 2.3 broker partner teams | ✅ shipped | broker_partner_orgs + broker_team_memberships + broker_team_invitations; 4 roles + capability map; lib/broker-teams.ts. Portal UI deferred to its own focused session |
+| 2 | 2.4 forum moderation API | ✅ shipped | forum_moderation_actions audit table + banned_at columns + lib/forum-moderation.ts + dispatch endpoint at /api/admin/forum-moderation. Moderation queue UI deferred |
+| 2 | 2.5 claimByEmail helper + post-signin hook | ✅ shipped | lib/claim/by-email.ts with 8-table registry + lib/auth/post-signin.ts orchestrator + wired into auth callback fire-and-forget |
+| 3 | preferences + switch log + cookie hardening | ✅ shipped | account_kind_preferences + account_kind_switch_log; chooseCallbackRedirect honours default→last-active→chooser; recordSwitch on every active-kind POST; both cookies httpOnly |
+| 4 | 4.1 pricing matrix | ✅ shipped | firm_pricing_tiers (3 tiers seeded) + advisor_specialties.lead_multiplier + lib/lead-pricing.ts composeLeadPrice helper. lib/advisor-billing.ts refactor deferred (hot path; opt-in migration safer) |
+| 4 | 4.2 wholesale_operator kind | ✅ shipped | wholesale_operators table + RLS + view branch + portal shell at /wholesale-portal |
+| 4 | 4.3 firm_staff kind | ⏸ skipped | Not a workspace kind — it's a permissions layer on firm_memberships. Reserved-kinds comment in lib/account-types.ts documents the decision |
+| 4 | 4.4 embed_customer kind | ✅ shipped | embed_customers table + RLS + view branch + portal shell at /embed-portal |
+
+**Test coverage shipped:** unit tests for principals, account-kinds (8 kinds + preferences + squad), claim-by-email, account-preferences, forum-moderation, lead-pricing.
+
+**Items intentionally deferred to focused follow-ups (not blockers):**
+- ts-morph full codegen for `scripts/add-entity.ts`
+- Playwright e2e for the multi-kind+multi-squad sign-in flow
+- professionals + broker_accounts RLS tightening for deleted_at (needs careful "status=active AND deleted_at IS NULL" rewrite)
+- lib/advisor-billing.ts refactor to consume lib/lead-pricing.ts
+- /broker-portal/team UI + invite-accept endpoint
+- Moderation queue UI at /admin/forum-moderation
+- Real surfaces for /wholesale-portal and /embed-portal beyond the landing pages
+
+
 
 ## Context
 
