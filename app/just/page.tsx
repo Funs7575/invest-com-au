@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CURRENT_YEAR, SITE_NAME, SITE_URL } from "@/lib/seo";
+import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR, SITE_NAME, SITE_URL } from "@/lib/seo";
 
 export const revalidate = 86400;
 
@@ -61,8 +61,34 @@ const EVENTS = [
 ];
 
 export default function JustPage() {
+  const breadcrumbLd = breadcrumbJsonLd([
+    { name: "Home", url: absoluteUrl("/") },
+    { name: "Life events", url: absoluteUrl("/just") },
+  ]);
+
+  const itemListLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: `Life Event Financial Checklists (${CURRENT_YEAR})`,
+    itemListElement: EVENTS.map((e, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: e.label,
+      url: absoluteUrl(`/just/${e.slug}`),
+    })),
+  };
+
   return (
-    <div className="container-custom max-w-3xl py-10">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListLd) }}
+      />
+      <div className="container-custom max-w-3xl py-10">
       <header className="mb-10">
         <p className="text-xs font-bold uppercase tracking-wider text-emerald-600 mb-2">
           Life event guides · {CURRENT_YEAR}
@@ -93,6 +119,7 @@ export default function JustPage() {
         These guides provide general financial information only and do not constitute personal financial advice.
         Always consult a licensed financial adviser or tax agent for advice tailored to your situation.
       </p>
-    </div>
+      </div>
+    </>
   );
 }
