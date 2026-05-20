@@ -82,7 +82,7 @@ function compoundValue(principal: number, rate: number, years: number): number {
   return principal * Math.pow(1 + rate, years);
 }
 
-function formatAud(value: number): string {
+function formatAudAbbrev(value: number): string {
   if (value >= 10_000_000) return `A$${(value / 1_000_000).toFixed(1)}M`;
   if (value >= 1_000_000) return `A$${(value / 1_000_000).toFixed(2)}M`;
   if (value >= 1_000) return `A$${(value / 1_000).toFixed(0)}k`;
@@ -231,13 +231,13 @@ export default function AlternativeReturnsClient() {
               Estimated current value — {selectedAsset.shortLabel}
             </p>
             <p className="text-3xl md:text-5xl font-extrabold mb-2 tracking-tight">
-              {formatAud(selectedResult.currentValue)}
+              {formatAudAbbrev(selectedResult.currentValue)}
             </p>
             <p className="text-sm text-slate-300">
-              {formatAud(principal)} invested in {yearNum}
+              {formatAudAbbrev(principal)} invested in {yearNum}
               {totalGrowth >= 0 ? (
                 <>
-                  {" "}grew by <strong className="text-emerald-300">{formatAud(totalGrowth)}</strong>
+                  {" "}grew by <strong className="text-emerald-300">{formatAudAbbrev(totalGrowth)}</strong>
                   {" "}({((totalGrowth / Math.max(principal, 1)) * 100).toFixed(0)}% total)
                 </>
               ) : (
@@ -252,7 +252,7 @@ export default function AlternativeReturnsClient() {
             Side-by-side comparison
           </h2>
           <p className="text-xs text-slate-500 mb-5">
-            Same {formatAud(principal)} purchase in {yearNum} across all five
+            Same {formatAudAbbrev(principal)} purchase in {yearNum} across all five
             asset classes, using historical annualised returns.
           </p>
 
@@ -276,7 +276,7 @@ export default function AlternativeReturnsClient() {
                     </p>
                   </div>
                   <p className="text-base md:text-lg font-extrabold text-slate-900 shrink-0">
-                    {formatAud(currentValue)}
+                    {formatAudAbbrev(currentValue)}
                   </p>
                 </div>
                 <div className="h-3 bg-slate-100 rounded-full overflow-hidden">
