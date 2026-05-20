@@ -3,6 +3,7 @@ import { UPDATED_LABEL } from "@/lib/seo";
 import InsuranceCompareClient from "./InsuranceCompareClient";
 import CompareNav from "../CompareNav";
 import ComplianceFooter from "@/components/ComplianceFooter";
+import DirectoryBanners from "@/components/foreign-investment/DirectoryBanners";
 
 export const metadata = {
   title: "Compare Insurance in Australia — Life, Income, Home (2026)",
@@ -83,6 +84,9 @@ export default function InsuranceComparePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
       />
       <Suspense><CompareNav /></Suspense>
+      <div className="container-custom pt-5">
+        <DirectoryBanners surface="compare" />
+      </div>
       <InsuranceCompareClient />
       <div className="container-custom pb-8">
         <ComplianceFooter />
