@@ -17,7 +17,7 @@ const log = logger("api:account:goals");
 
 export const runtime = "nodejs";
 
-const GOAL_TYPES = ["house_deposit", "retirement", "education", "generic"] as const;
+const GOAL_TYPES = ["house_deposit", "retirement", "education", "generic", "fire", "debt_free"] as const;
 
 const AddBody = z.object({
   label: z.string().min(1).max(120),

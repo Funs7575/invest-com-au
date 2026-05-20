@@ -3,6 +3,7 @@ import { UPDATED_LABEL } from "@/lib/seo";
 import SuperCompareClient from "./SuperCompareClient";
 import CompareNav from "../CompareNav";
 import ComplianceFooter from "@/components/ComplianceFooter";
+import DirectoryBanners from "@/components/foreign-investment/DirectoryBanners";
 
 export const metadata = {
   title: "Compare Super Funds — Fees & Performance (2026)",
@@ -83,6 +84,9 @@ export default function SuperComparePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
       />
       <Suspense><CompareNav /></Suspense>
+      <div className="container-custom pt-5">
+        <DirectoryBanners surface="compare" />
+      </div>
       <SuperCompareClient />
       <div className="container-custom pb-8">
         <ComplianceFooter />

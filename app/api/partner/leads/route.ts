@@ -4,6 +4,7 @@ import { escapeHtml } from "@/lib/html-escape";
 import { getSiteUrl } from "@/lib/url";
 import { timingSafeEqual } from "crypto";
 import { logger } from "@/lib/logger";
+import { crossBorderLeadMultiplier } from "@/lib/advisor-billing-multipliers";
 
 const log = logger("partner-leads");
 
@@ -27,6 +28,7 @@ interface PartnerLead {
  */
 export async function POST(request: NextRequest) {
   try {
+    // eslint-disable-next-line invest/no-unvalidated-req-json -- partner bulk endpoint; api_key is timing-safe checked and the leads array shape is validated inline below before any DB write
     const body = await request.json();
     const { api_key, leads } = body;
 
@@ -89,7 +91,7 @@ export async function POST(request: NextRequest) {
         // ── Find matching advisors by type ──
         const { data: matchingAdvisors, error: matchError } = await supabase
           .from("professionals")
-          .select("id, name, email, firm_name, type, lead_price_cents, credit_balance_cents, free_leads_used, lifetime_lead_spend_cents, total_leads")
+          .select("id, name, email, firm_name, type, specialties, lead_price_cents, credit_balance_cents, free_leads_used, lifetime_lead_spend_cents, total_leads")
           .eq("type", lead.advisor_type)
           .eq("status", "active")
           .limit(5);
@@ -149,6 +151,16 @@ export async function POST(request: NextRequest) {
               .single();
             if (catPricing) priceCents = catPricing.price_cents;
           }
+
+          // Cross-border premium: a partner lead in a cross-border specialty
+          // (UK pension transfer, FATCA US expat, DASP, FIRB non-resident)
+          // carries 5–15× the LTV of a domestic lead, so it bills at the same
+          // 1.75× premium as the on-site advisor-enquiry path. Stacks on top of
+          // the advisor/category base price. See FIN_NOTEBOOK 2026-05-01 #24.
+          const advisorSpecialties = Array.isArray(advisor.specialties)
+            ? (advisor.specialties as string[])
+            : [];
+          priceCents = Math.round(priceCents * crossBorderLeadMultiplier(advisorSpecialties));
 
           const freeUsed = advisor.free_leads_used || 0;
           const isFree = freeUsed < 2;
