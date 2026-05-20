@@ -181,6 +181,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/courses", "/reports", "/portfolio", "/portfolio-calculator",
     "/advisor-signup",
     "/quotes", "/quotes/post", "/quotes/recent-wins",
+    "/press",
+    "/about/careers",
     // More advisor-guides
     "/advisor-guides/how-to-choose-real-estate-agent",
     // Calculators
@@ -1042,5 +1044,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.82,
   };
 
-  return [...staticPages, ...localizedPages, ...bestPages, ...bestForPages, ...commodityPages, ...stockDetailPages, ...transferGuidePages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...howToPages, ...expertArticlePages, ...advisorPages, ...advisorTypePages, ...advisorStatePages, ...advisorCityPages, ...advisorLocationPages, ...investingCityPages, ...glossaryPages, ...firmPages, ...propertyListingPages, ...suburbGuidePages, ...propertyHubPages, ...newHubPages, newsletterArchivePage, ...newsletterEditionPages, ...investStaticPages, ...investCategoryPages, ...investSubcategoryPages, ...investListingPages, ...stockbrokerFirmPages, ...quoteJobPages, ...quoteCategoryStatePages, marketplaceHubPage, ...marketplaceIntentPages, ...marketplaceIntentStatePages, testimonialsPage, ...grantsIndustryPages, ...grantsStateProgramPages, investingForIndexPage, ...investingForPages, taxReturnHubPage];
+  // ── CO-03: /afsl/[number] — dynamic AFSL licensee SEO pages ──
+  // The afsl_register table is populated pre-launch via admin CSV upload
+  // or post-launch via weekly cron. Currently empty; query is future-ready
+  // so new entries surface in the sitemap automatically after upload.
+  // Only index current/suspended licensees — cancelled/ceased pages carry
+  // lower SEO value and are still served (dynamicParams=true) but omitted here.
+  const { data: afslLicensees } = supabase
+    ? await supabase
+        .from("afsl_register")
+        .select("afsl_number, last_verified_at")
+        .in("status", ["current", "suspended"])
+    : { data: null };
+  const afslPages = (afslLicensees || []).map((l: { afsl_number: string; last_verified_at: string | null }) => ({
+    url: `${baseUrl}/afsl/${l.afsl_number}`,
+    lastModified: l.last_verified_at ? new Date(l.last_verified_at) : new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.5,
+  }));
+
+  return [...staticPages, ...localizedPages, ...bestPages, ...bestForPages, ...commodityPages, ...stockDetailPages, ...transferGuidePages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...howToPages, ...expertArticlePages, ...advisorPages, ...advisorTypePages, ...advisorStatePages, ...advisorCityPages, ...advisorLocationPages, ...investingCityPages, ...glossaryPages, ...firmPages, ...propertyListingPages, ...suburbGuidePages, ...propertyHubPages, ...newHubPages, newsletterArchivePage, ...newsletterEditionPages, ...investStaticPages, ...investCategoryPages, ...investSubcategoryPages, ...investListingPages, ...stockbrokerFirmPages, ...quoteJobPages, ...quoteCategoryStatePages, marketplaceHubPage, ...marketplaceIntentPages, ...marketplaceIntentStatePages, testimonialsPage, ...grantsIndustryPages, ...grantsStateProgramPages, investingForIndexPage, ...investingForPages, taxReturnHubPage, ...afslPages];
 }
