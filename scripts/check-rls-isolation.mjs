@@ -49,6 +49,8 @@ const ISOLATION_EXEMPT = [
   { table: "csp_violations", reason: "write-only report endpoint; no user ownership" },
   // retention_rules: service-role-only config table
   { table: "retention_rules", reason: "service-role config; no per-user rows" },
+  // startup_sessions (SP-02): service-role-only, no authenticated policy (mirrors advisor_sessions)
+  { table: "startup_sessions", reason: "service-role-only; no authenticated policy / no user-readable rows" },
 ];
 
 const EXEMPT_NAMES = new Set(ISOLATION_EXEMPT.map((e) => e.table));
