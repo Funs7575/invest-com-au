@@ -78,6 +78,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | DD | `claude/audit-remediation/dd-01-tiered-listings` | **#926 MERGED 2026-05-20** | DD-01 done. **#926 merged by founder 2026-05-20.** DD-02/03/04 pending. | DD-01 merged ✓ |
 | Z-24 | `claude/audit-remediation/z-24-inheritance-hub` | **#995 OPEN** | Z-24 done (iter 464): `/inheritance` top-level hub; `lib/hub-configs/inheritance.ts` (3 hero stats, 6 service cards, 4 deep-dives, 6 FAQs, `complianceKey: "general_advice"`); lead magnet + sitemap. CI: queued — pushed `f3953a0` 2026-05-20. | Z-24 merged |
 | BB-02+BB-03 | `claude/audit-remediation/bb-02-03-salary-sacrifice-cgt` | **#1015 OPEN** | BB-02 done (iter 465): `/tools/salary-sacrifice-optimiser` — quantitative salary-sacrifice calculator (FY2025-26 tax, concessional cap enforcement, Division 293 detection, take-home before/after table). BB-03 done: `/tools/cgt-calculator` — purchase→sale CGT calc (50% discount, asset types, side-by-side discount impact). Sitemap +2. CI: queued — pushed `df71adb9` 2026-05-20. | BB-02+BB-03 merged |
+| AA-07 | `claude/audit-remediation/aa-07-just-event-pages` | **#1020 OPEN** | AA-07 done (iter 466): `/just/[event]` moment-of-money pages — 8 life-event checklists (retired, inherited, made-redundant, got-married, had-a-baby, bought-a-house, sold-a-business, started-investing); `/just` index hub. Dynamic route with `generateStaticParams`, `GENERAL_ADVICE_WARNING`, advisor CTA, cross-event nav strip. Sitemap +9. CI: queued — pushed 2026-05-20. | AA-07 merged |
 
 ---
 
@@ -137,6 +138,20 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 466 — 2026-05-20 — AA-07 — /just/[event] moment-of-money pages
+
+- **Stream:** AA (programmatic SEO)
+- **Phase:** 5 — implementation (Tier A — content pages)
+- **Branch:** `claude/audit-remediation/aa-07-just-event-pages`
+- **PR:** #1020 OPEN
+- **Items done:** AA-07 (`/just/[event]` life-event checklists + `/just` index hub)
+- **Implementation:**
+  - **`app/just/[event]/page.tsx`** (new): dynamic route with `generateStaticParams` for 8 life events. `JustEvent` data includes slug, headline, subhead, advisorType, advisorHref, 5 timed-action checklist items, 4 hub links, 3 FAQs. Full page renders: action timeline, advisor CTA, hub links, FAQ accordion (JSON-LD + visible), cross-event navigation strip. `revalidate = 3600`, `GENERAL_ADVICE_WARNING`, `faqJsonLd`, `breadcrumbJsonLd`.
+  - **`app/just/page.tsx`** (new): index hub — 8 event cards with icons, `revalidate = 86400`.
+  - **`app/sitemap.ts`**: +9 entries (`/just` + 8 slugs).
+- **Life events:** `retired`, `inherited`, `made-redundant`, `got-married`, `had-a-baby`, `bought-a-house`, `sold-a-business`, `started-investing`
+- **STATUS: PROGRESS · stream=AA · item=AA-07 · pr=#1020**
 
 ### iter 465 — 2026-05-20 — BB-02+BB-03 — salary-sacrifice optimiser + CGT calculator
 
