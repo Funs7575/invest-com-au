@@ -25,6 +25,7 @@ import { logger } from "@/lib/logger";
 const log = logger("stripe-connect");
 
 const DEFAULT_TAKE_RATE_BPS = 1_000;
+const DEFAULT_SESSION_TAKE_RATE_BPS = 1_500; // 15% for direct advisor session bookings (DD-03)
 
 export function getMarketplaceTakeRateBps(): number {
   const raw = process.env.MARKETPLACE_TAKE_RATE_BPS;
@@ -353,5 +354,106 @@ async function updatePaymentStatus(
       payment_intent_id: paymentIntentId,
       error: error.message,
     });
+  }
+}
+
+// ─── Session booking payment rail (DD-03) ────────────────────────────────────
+
+export function getSessionTakeRateBps(): number {
+  const raw = process.env.SESSION_BOOKING_TAKE_RATE_BPS;
+  if (!raw) return DEFAULT_SESSION_TAKE_RATE_BPS;
+  const parsed = Number.parseInt(raw, 10);
+  if (!Number.isFinite(parsed) || parsed < 0 || parsed > 3_000) {
+    log.warn("SESSION_BOOKING_TAKE_RATE_BPS out of range, using default", { raw });
+    return DEFAULT_SESSION_TAKE_RATE_BPS;
+  }
+  return parsed;
+}
+
+export interface CreateBookingCheckoutInput {
+  slotId: number;
+  professionalId: number;
+  advisorSlug: string;
+  advisorName: string;
+  consumerEmail: string;
+  consumerUserId?: string | null;
+  amountCents: number;
+  successUrl: string;
+  cancelUrl: string;
+}
+
+export interface CreateBookingCheckoutResult {
+  checkoutUrl: string | null;
+  unavailable?: "no_secret" | "pro_not_connected" | "stripe_error";
+  detail?: string;
+}
+
+export async function createBookingCheckout(
+  input: CreateBookingCheckoutInput,
+): Promise<CreateBookingCheckoutResult> {
+  if (!process.env.STRIPE_SECRET_KEY) {
+    return { checkoutUrl: null, unavailable: "no_secret" };
+  }
+
+  const info = await getConnectInfo(input.professionalId);
+  if (!info.stripeAccountId || !info.chargesEnabled) {
+    return { checkoutUrl: null, unavailable: "pro_not_connected" };
+  }
+
+  const takeBps = getSessionTakeRateBps();
+  const platformFeeCents = Math.floor((input.amountCents * takeBps) / 10_000);
+  const stripe = getStripe();
+
+  try {
+    const session = await stripe.checkout.sessions.create({
+      mode: "payment",
+      line_items: [
+        {
+          price_data: {
+            currency: "aud",
+            unit_amount: input.amountCents,
+            product_data: {
+              name: `Consultation with ${input.advisorName}`,
+              description: "Financial advisor session via invest.com.au",
+            },
+          },
+          quantity: 1,
+        },
+      ],
+      payment_intent_data: {
+        application_fee_amount: platformFeeCents,
+        transfer_data: { destination: info.stripeAccountId },
+        metadata: {
+          kind: "session_booking",
+          slot_id: String(input.slotId),
+          professional_id: String(input.professionalId),
+          platform_fee_cents: String(platformFeeCents),
+          take_rate_bps: String(takeBps),
+        },
+      },
+      customer_email: input.consumerEmail,
+      metadata: {
+        type: "session_booking",
+        slot_id: String(input.slotId),
+        professional_id: String(input.professionalId),
+        advisor_slug: input.advisorSlug,
+        consumer_user_id: input.consumerUserId ?? "",
+        platform_fee_cents: String(platformFeeCents),
+        take_rate_bps: String(takeBps),
+      },
+      success_url: input.successUrl,
+      cancel_url: input.cancelUrl,
+    });
+    return { checkoutUrl: session.url };
+  } catch (err) {
+    log.error("createBookingCheckout failed", {
+      slot_id: input.slotId,
+      err: err instanceof Error ? err.message : String(err),
+    });
+    return {
+      checkoutUrl: null,
+      unavailable: "stripe_error",
+      detail: err instanceof Error ? err.message : "unknown",
+    };
   }
 }
