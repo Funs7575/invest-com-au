@@ -83,6 +83,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | AA-06 | `claude/audit-remediation/aa-06-investing-for-occupation` | **#1031 OPEN** | AA-06 done (iter 468): `/investing-for/[occupation]` — 26 occupation-specific investing guides + `/investing-for` index hub. Income type + super type badges, 3 highlights, 4 hub links, 3 FAQs, advisor CTA, cross-occupation nav, `GENERAL_ADVICE_WARNING`. `generateStaticParams` ISR, `revalidate = 3600`. Sitemap +27. CI: queued — pushed `617fd94a` 2026-05-20. | AA-06 merged |
 | Z-27 | `claude/audit-remediation/z-27-tax-return-hub` | **#1032 OPEN** | Z-27 done (iter 469): `/tax-return` top-level hub (HubPage HOC). `lib/hub-configs/tax-return.ts`: 3 hero stats ($2,817 avg refund, 67¢/hr WFH rate, 31 Oct deadline), 6 service cards, 4 deep-dives, withholding-tax calculator, 6 FAQs, lead queue `general/tax`. Page: FY2025-26 key-dates callout (amber), investor-type quick-access grid. Sitemap +1 (priority 0.82, weekly). CI: queued — pushed `00cb2265` 2026-05-20. | Z-27 merged |
 | BB-10 | `claude/audit-remediation/bb-10-lic-screener` | **#1039 OPEN** | BB-10 done (iter 475): `/lic-screener` — Listed Investment Company screener. `lib/lic-data.ts` (15 LICs, `ntaPremiumDiscount()` helper). LicScreenerClient: filterable/sortable table (focus, franking, mgmt cost, NTA discount toggle), row-click detail panel, hero stat boxes. page.tsx: metadata, calculatorJsonLd, faqJsonLd (4 Q&As), breadcrumb, ComplianceFooter. Sitemap +1. CI rescue iter 478: ComplianceFooter variant + JSX close tag fix (`7f9427d`). | BB-10 merged ✓ |
+| DV | `claude/audit-remediation/dv-01-document-vault` | **#1040 OPEN** | DV-01 done (iter 476): document vault — `user_documents` table (owner-only RLS: SELECT/INSERT/DELETE authenticated; service_role allow; deny anon) + V-NEW-04 isolation test (8 cases, `// rls-isolation: user_documents` marker). `GET /api/account/documents` (list + 10-min signed URLs), `POST /api/account/documents/upload` (multipart, rate-limited 20/hr, ≤20 MB, PDF/JPG/PNG/WebP; path `{uid}/{docId}/{filename}`; storage cleanup on DB failure), `DELETE /api/account/documents/[id]` (storage + DB, RLS-protected fetch prevents cross-user delete). `app/account/vault/` RSC + VaultClient (upload modal with type selector, doc list with download/delete, empty state, encryption notice). Dashboard NavCard (🗂️). CI: queued — pushed `cf0226d` 2026-05-20. Unblocks GT-01. | DV-01 merged ✓ |
 
 ---
 
@@ -142,6 +143,27 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 476 — 2026-05-20 — DV-01 — document vault
+
+- **Stream:** DV (document vault — Tier C: new schema migration + user-data storage)
+- **Phase:** 5 — implementation
+- **Branch:** `claude/audit-remediation/dv-01-document-vault`
+- **PR:** #1040 OPEN
+- **Commit:** `cf0226d` — feat(dv): DV-01 — document vault (encrypted upload + RLS-isolated storage)
+- **Diff:** 8 files, +810 LOC (cumulative batch: ~2878 LOC)
+- **Items done:** DV-01 (document vault — user_documents table + API routes + vault page + dashboard nav card)
+- **Implementation:**
+  - **`supabase/migrations/20260520_dv01_user_documents.sql`** (98 LOC): `user_documents` table with owner-only RLS (SELECT/INSERT/DELETE to authenticated role via `user_id = auth.uid()`; service_role explicit allow; deny anon). Storage bucket `user-documents` is private (AES-256 at rest). IF NOT EXISTS + BEGIN/COMMIT + prior policy discovery (no prior policies — new table).
+  - **`__tests__/lib/user_documents.rls.test.ts`** (155 LOC): V-NEW-04 isolation test. 8 cases: user A SELECT sees only own rows; user B SELECT independent; INSERT with wrong user_id → 42501; DELETE own row allowed; DELETE cross-user → 42501. Marker `// rls-isolation: user_documents`.
+  - **`app/api/account/documents/route.ts`** (50 LOC): `GET /api/account/documents` — lists user's vault docs with 10-min signed download URLs. RLS handles owner isolation.
+  - **`app/api/account/documents/upload/route.ts`** (132 LOC): `POST /api/account/documents/upload` — multipart, auth-gated, rate-limited 20/hr per user, ≤20 MB, PDF/JPG/PNG/WebP. Path: `{user_id}/{docId}/{filename}`. Cleans up orphaned storage file on DB insert failure.
+  - **`app/api/account/documents/[id]/route.ts`** (64 LOC): `DELETE /api/account/documents/[id]` — fetches row via RLS (prevents cross-user), removes storage file + DB row. Storage delete failure is non-fatal (continues to DB delete).
+  - **`app/account/vault/VaultClient.tsx`** (242 LOC): "use client". Upload modal (doc type select, file input, description, error display). Document list with download links and delete button. Empty state. Encryption notice. 6 document types.
+  - **`app/account/vault/page.tsx`** (68 LOC): RSC. `enforcePortalKind("investor")`, `force-dynamic`, server-fetches docs with signed URLs, passes to VaultClient.
+  - **`app/account/dashboard/page.tsx`**: +1 NavCard (🗂️ Document Vault → `/account/vault`).
+- **Unblocks:** GT-01 (goal tracking, cites DV-01 as dep).
+- **STATUS: PROGRESS · stream=DV · item=DV-01 · pr=#1040**
 
 ### iter 478 — 2026-05-20 — CI-RESCUE BB-10 (#1039) — ComplianceFooter variant + JSX close tag
 
