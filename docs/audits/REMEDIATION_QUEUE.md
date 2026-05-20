@@ -75,7 +75,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | Z-26 | _complete_ | **#929 MERGED 2026-05-20** | Z-26 done. **Stream complete — #929 merged by founder 2026-05-20.** | Z-26 merged ✓ |
 | Z-25 | _complete_ | **#930 MERGED 2026-05-20** | Z-25 done. **Stream complete — #930 merged by founder 2026-05-20.** | Z-25 merged ✓ |
 | AA-04+BB-09 | _complete_ | **#931 MERGED 2026-05-20** | AA-04+BB-09 done. **Stream segment merged — #931 merged by founder 2026-05-20.** | AA-04+BB-09 merged ✓ |
-| DD | `claude/audit-remediation/dd-01-tiered-listings` | **#926 MERGED 2026-05-20** | DD-01 done. **#926 merged by founder 2026-05-20.** DD-02/03/04 pending. | DD-01 merged ✓ |
+| DD | `claude/audit-remediation/dd-02-verified-badge` | **#1033 OPEN** | DD-01 done (#926 merged). DD-02 done (iter 468): `/find/[advisor-type]/[city]` city listing upgraded to full `VerifiedBadge` component (ABN Verified + AFSL Current pills) — adds `verification_method`, `afsl_number`, `abn`, `last_verified_at` to select + local type. CI: queued — pushed `36b6da4f` 2026-05-20. DD-03/04 pending. | DD-02 in flight |
 | Z-24 | `claude/audit-remediation/z-24-inheritance-hub` | **#995 OPEN** | Z-24 done (iter 464): `/inheritance` top-level hub; `lib/hub-configs/inheritance.ts` (3 hero stats, 6 service cards, 4 deep-dives, 6 FAQs, `complianceKey: "general_advice"`); lead magnet + sitemap. CI rescue iter 467: merged main (`98f6433`) — Supabase types drift fixed. | Z-24 merged |
 | BB-02+BB-03 | `claude/audit-remediation/bb-02-03-salary-sacrifice-cgt` | **#1015 OPEN** | BB-02 done (iter 465): `/tools/salary-sacrifice-optimiser` — quantitative salary-sacrifice calculator (FY2025-26 tax, concessional cap enforcement, Division 293 detection, take-home before/after table). BB-03 done: `/tools/cgt-calculator` — purchase→sale CGT calc (50% discount, asset types, side-by-side discount impact). Sitemap +2. CI rescue iter 467: faqJsonLd null-access fix (`3f68cb9`). | BB-02+BB-03 merged |
 | AA-07 | `claude/audit-remediation/aa-07-just-event-pages` | **#1020 OPEN** | AA-07 done (iter 466): `/just/[event]` moment-of-money pages — 8 life-event checklists (retired, inherited, made-redundant, got-married, had-a-baby, bought-a-house, sold-a-business, started-investing); `/just` index hub. Dynamic route with `generateStaticParams`, `GENERAL_ADVICE_WARNING`, advisor CTA, cross-event nav strip. Sitemap +9. CI: queued — pushed 2026-05-20. | AA-07 merged |
@@ -140,6 +140,20 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 470 — 2026-05-20 — DD-02 — /find city listing upgraded to VerifiedBadge
+
+- **Stream:** DD (marketplace mechanics — Tier C)
+- **Phase:** 5 — implementation
+- **Branch:** `claude/audit-remediation/dd-02-verified-badge`
+- **PR:** #1033 OPEN
+- **Commit:** `36b6da4f` — feat(dd): upgrade /find city listing to use VerifiedBadge (DD-02)
+- **Diff:** 1 file, +13 LOC
+- **Items done:** DD-02 (VerifiedBadge on `/find/[advisor-type]/[city]` listing)
+- **Implementation:**
+  - **`app/find/[advisor-type]/[city]/page.tsx`**: imports `VerifiedBadge`; adds `verification_method`, `afsl_number`, `abn`, `last_verified_at` to `AdvisorRow` interface and Supabase select; replaces hard-coded `<span>Verified</span>` text pill in `AdvisorCard` with `<VerifiedBadge method={...} afsl={...} abn={...} lastVerifiedAt={...} compact />`. Consistent with main `/advisors` listing which already uses the component.
+- **Tier C batch end:** DD stream is Tier C — batch terminates after this item.
+- **STATUS: PROGRESS · stream=DD · item=DD-02 · pr=#1033**
 
 ### iter 469 — 2026-05-20 — Z-27 — /tax-return hub (HubPage HOC, seasonal accountant lead gen)
 
