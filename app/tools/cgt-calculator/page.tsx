@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { CURRENT_YEAR, breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
-import { calculatorJsonLd, faqJsonLd } from "@/lib/schema-markup";
+import { calculatorJsonLd, faqJsonLd, type FaqItem } from "@/lib/schema-markup";
 import CGTCalculatorClient from "./CGTCalculatorClient";
 
 export const revalidate = 3600;
@@ -32,7 +32,7 @@ const calcLd = calculatorJsonLd({
   path: "/tools/cgt-calculator",
 });
 
-const faqLd = faqJsonLd([
+const FAQS: FaqItem[] = [
   {
     q: "How is capital gains tax calculated in Australia?",
     a: "Your capital gain equals the proceeds (sale price minus sale costs) minus the cost base (purchase price plus purchase costs). If you held the asset for more than 12 months, you can apply a 50% discount to the gain before adding it to your taxable income for the year. The gain is then taxed at your marginal income tax rate — not a separate CGT rate.",
@@ -57,7 +57,9 @@ const faqLd = faqJsonLd([
     q: "When is my main residence CGT-free?",
     a: "Your main residence is fully CGT-exempt if you owned and lived in it the entire time, and the land is under 2 hectares. A partial exemption applies if you rented part of it or used it for income. The 6-year rule allows you to treat a former main residence as your main residence for up to 6 years while it is rented, preserving the exemption if you have no other main residence.",
   },
-]);
+];
+
+const faqLd = faqJsonLd(FAQS);
 
 export default function CGTCalculatorPage() {
   return (
@@ -105,10 +107,10 @@ export default function CGTCalculatorPage() {
             Frequently asked questions
           </h2>
           <div className="space-y-5">
-            {faqLd.mainEntity.map((faq: { name: string; acceptedAnswer: { text: string } }) => (
-              <div key={faq.name}>
-                <h3 className="text-sm font-bold text-slate-900 mb-1">{faq.name}</h3>
-                <p className="text-sm text-slate-600 leading-relaxed">{faq.acceptedAnswer.text}</p>
+            {FAQS.map((faq) => (
+              <div key={faq.q}>
+                <h3 className="text-sm font-bold text-slate-900 mb-1">{faq.q}</h3>
+                <p className="text-sm text-slate-600 leading-relaxed">{faq.a}</p>
               </div>
             ))}
           </div>

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { CURRENT_YEAR, breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
-import { calculatorJsonLd, faqJsonLd } from "@/lib/schema-markup";
+import { calculatorJsonLd, faqJsonLd, type FaqItem } from "@/lib/schema-markup";
 import SalarySacrificeOptimiserClient from "./SalarySacrificeOptimiserClient";
 
 export const revalidate = 3600;
@@ -32,7 +32,7 @@ const calcLd = calculatorJsonLd({
   path: "/tools/salary-sacrifice-optimiser",
 });
 
-const faqLd = faqJsonLd([
+const FAQS: FaqItem[] = [
   {
     q: "How does salary sacrifice into super reduce my tax?",
     a: "Salary sacrifice redirects part of your pre-tax salary into super before income tax is applied. That amount is taxed at 15% inside super rather than at your marginal rate (19%, 32.5%, 37%, or 45% + Medicare). The difference is your tax saving. For example, at a 37% marginal rate, a $10,000 sacrifice saves $2,200 per year in income tax (37% less 15% = 22% saving).",
@@ -53,7 +53,9 @@ const faqLd = faqJsonLd([
     q: "Can I use carry-forward unused cap to sacrifice more than $30,000?",
     a: "Yes, if your total super balance was under $500,000 at 30 June last year, you can carry forward up to 5 years of unused concessional cap. This allows a one-off sacrifice larger than $30,000 in a single year. The calculator shows the standard $30,000 annual cap; a financial adviser can model your carry-forward entitlement.",
   },
-]);
+];
+
+const faqLd = faqJsonLd(FAQS);
 
 export default function SalarySacrificeOptimiserPage() {
   return (
@@ -101,10 +103,10 @@ export default function SalarySacrificeOptimiserPage() {
             Frequently asked questions
           </h2>
           <div className="space-y-5">
-            {faqLd.mainEntity.map((faq: { name: string; acceptedAnswer: { text: string } }) => (
-              <div key={faq.name}>
-                <h3 className="text-sm font-bold text-slate-900 mb-1">{faq.name}</h3>
-                <p className="text-sm text-slate-600 leading-relaxed">{faq.acceptedAnswer.text}</p>
+            {FAQS.map((faq) => (
+              <div key={faq.q}>
+                <h3 className="text-sm font-bold text-slate-900 mb-1">{faq.q}</h3>
+                <p className="text-sm text-slate-600 leading-relaxed">{faq.a}</p>
               </div>
             ))}
           </div>
