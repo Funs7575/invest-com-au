@@ -58,19 +58,35 @@ export default function FilterPanel({
   variant = "responsive",
   children,
 }: FilterPanelProps) {
-  // Escape-to-close + lock background scroll while open (drawer + responsive
-  // variants only; inline has no open/closed state). Restoring the prior
-  // overflow value avoids clobbering a lock set by an outer modal.
+  // Escape-to-close + lock background scroll while the drawer is on-screen.
+  // In "responsive" mode the drawer is mobile-only (md:hidden), so the lock
+  // tracks the md breakpoint — otherwise crossing to desktop while open
+  // (e.g. rotating a tablet) would strand the page scroll-locked with no
+  // visible drawer to dismiss. "drawer" mode shows at all widths → always
+  // lock while open. Restoring the prior overflow avoids clobbering an
+  // outer modal's lock.
   useEffect(() => {
     if (variant === "inline" || !open) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
     document.addEventListener("keydown", onKey);
+
+    const mql =
+      variant === "responsive"
+        ? window.matchMedia("(max-width: 767.98px)")
+        : null;
     const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    const syncLock = () => {
+      const drawerVisible = mql ? mql.matches : true;
+      document.body.style.overflow = drawerVisible ? "hidden" : prevOverflow;
+    };
+    syncLock();
+    mql?.addEventListener("change", syncLock);
+
     return () => {
       document.removeEventListener("keydown", onKey);
+      mql?.removeEventListener("change", syncLock);
       document.body.style.overflow = prevOverflow;
     };
   }, [variant, open, onClose]);
