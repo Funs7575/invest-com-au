@@ -59,7 +59,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | EM | _complete_ | **#848 MERGED 2026-05-17** · **#880 MERGED 2026-05-18** | EM-03 + EM-01 done. EM-02 (`16add6f`): hub_drip_log migration + hub-subscriber-drip cron. **Stream complete. #880 merged by founder 2026-05-18.** | All EM tasks merged ✓ |
 | LX | _complete_ | **#849 MERGED 2026-05-15** · **#879 MERGED 2026-05-18** | LX-01, LX-02, LX-03, LX-04, LX-05 done. **Stream complete. #879 merged by founder 2026-05-18.** | All LX tasks merged ✓ |
 | OB | _complete_ | **#852 MERGED 2026-05-17** · **#878 MERGED 2026-05-18** | OB-01..OB-12 done. **Stream complete. #878 merged by founder 2026-05-18.** | All OB tasks merged ✓ |
-| GT | _complete_ | **#881 MERGED 2026-05-20** | GT-01 blocked (needs DV-01). GT-02 done. **Stream complete — #881 merged by founder 2026-05-20.** | All GT tasks merged ✓ |
+| GT | `claude/audit-remediation/gt-01-goal-tracking-complete` | **#881 MERGED 2026-05-20** · **#1044 OPEN** | GT-01 done (iter 479): fire/debt_free goal types + vault cross-link + RLS isolation test (9 cases) + API test suite (22 cases). GT-02 done. | GT-01 merged ✓ |
 | DF | _complete_ | **#883 MERGED 2026-05-20** · ~~#884 CLOSED (dup)~~ | DF-01..04 done. **Stream complete — #883 merged by founder 2026-05-20.** | All DF tasks merged ✓ |
 | QA | _complete_ | **#890 MERGED 2026-05-18** | QA-01..QA-02 done. **Stream complete. #890 merged by founder 2026-05-18.** | All QA tasks merged ✓ |
 | Z-23+BB-08 | _complete_ | **#895 MERGED 2026-05-18** | Z-23 + BB-08 done. All CI green. **Stream complete. #895 merged by founder 2026-05-18.** | #895 merged ✓ |
@@ -143,6 +143,24 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 479 — 2026-05-20 — GT-01 — goal tracking complete
+
+- **Stream:** GT (goal tracking — Tier B: test additions + migration + minor UI change)
+- **Phase:** 5 — implementation
+- **Branch:** `claude/audit-remediation/gt-01-goal-tracking-complete`
+- **PR:** #1044 OPEN
+- **Commit:** `d5c5da0` — feat(gt): GT-01 — goal tracking complete (fire/debt_free types, vault link, RLS test)
+- **Diff:** 5 files, +439 LOC / -9 LOC
+- **Items done:** GT-01 (fire/debt_free goal types + vault cross-link + RLS test + API tests)
+- **Unblocked by:** DV-01 (iter 476) — vault link requires vault page to exist
+- **Implementation:**
+  - **`supabase/migrations/20260520_gt01_goal_type_expand.sql`** (new, ~20 LOC): Expands `investor_goals.goal_type` CHECK constraint to add `'fire'` and `'debt_free'`. Idempotent: `DROP CONSTRAINT IF EXISTS` + `ADD CONSTRAINT`. No policy changes (RLS fully set up by `20260510280000_investor_goals.sql`).
+  - **`app/api/account/goals/route.ts`**: Add `'fire'`, `'debt_free'` to GOAL_TYPES Zod enum.
+  - **`app/account/goals/GoalsClient.tsx`**: 2 new goal types (FIRE 7.0%, debt_free 0.0%) + vault cross-link hint in add-form footer + `GoalRow.goalType` union update + "are not" lint fix.
+  - **`__tests__/lib/investor_goals.rls.test.ts`** (new, ~165 LOC): V-NEW-04 isolation test. 9 cases: user A/B SELECT isolation, INSERT enforcement, DELETE enforcement. Marker `// rls-isolation: investor_goals`.
+  - **`__tests__/api/account-goals.test.ts`** (new, ~200 LOC): 22 cases for GET/POST/DELETE/PATCH covering auth (401), Zod validation (400), happy paths (200/201).
+- **STATUS: PROGRESS · stream=GT · item=GT-01 · pr=#1044**
 
 ### iter 476 — 2026-05-20 — DV-01 — document vault
 
