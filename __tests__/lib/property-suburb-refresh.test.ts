@@ -41,7 +41,7 @@ vi.mock("@/lib/logger", () => ({
   }),
 }));
 
-import { refreshSuburb } from "@/lib/property-suburb-refresh";
+import { refreshSuburb, selectProvider } from "@/lib/property-suburb-refresh";
 
 const ORIGINAL_ENV = { ...process.env };
 
@@ -59,6 +59,20 @@ beforeEach(() => {
 afterEach(() => {
   for (const k of Object.keys(process.env)) delete process.env[k];
   Object.assign(process.env, ORIGINAL_ENV);
+});
+
+describe("selectProvider — used by the cron to detect an unintended stub", () => {
+  it("returns 'stub' when no provider env var is set", () => {
+    expect(selectProvider()).toBe("stub");
+  });
+  it("returns 'corelogic' when CORELOGIC_API_KEY is set", () => {
+    process.env.CORELOGIC_API_KEY = "token-abc";
+    expect(selectProvider()).toBe("corelogic");
+  });
+  it("returns 'sqm' when only SQM_RESEARCH_API_KEY is set", () => {
+    process.env.SQM_RESEARCH_API_KEY = "sqm-token";
+    expect(selectProvider()).toBe("sqm");
+  });
 });
 
 describe("refreshSuburb — stub provider (no env vars)", () => {

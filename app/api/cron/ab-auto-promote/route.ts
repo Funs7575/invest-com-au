@@ -12,6 +12,14 @@ export const runtime = "nodejs";
 export const maxDuration = 60;
 
 /**
+ * Circuit-breaker: max winners auto-promoted (concluded) in a single run.
+ * Beyond the kill switch, this guards against a miscalculated
+ * confidence/threshold concluding every running test in one nightly pass —
+ * when tripped the cron stops promoting and alerts ops to review manually.
+ */
+const MAX_PROMOTIONS_PER_RUN = 5;
+
+/**
  * Nightly cron that reads every running A/B test, runs a two-
  * proportion z-test on impressions/conversions, and if a significant
  * winner is declared (p < threshold AND min_sample_size reached)
@@ -56,6 +64,7 @@ async function handler(req: NextRequest) {
     insufficient: 0,
     inconclusive: 0,
     failed: 0,
+    capped: false,
   };
 
   for (const test of tests || []) {
@@ -80,6 +89,16 @@ async function handler(req: NextRequest) {
       if (!decision.winner) {
         stats.inconclusive++;
         continue;
+      }
+
+      // Circuit-breaker: stop and alert if too many tests conclude in one run.
+      if (stats.promoted >= MAX_PROMOTIONS_PER_RUN) {
+        stats.capped = true;
+        log.error(
+          "ab-auto-promote circuit breaker tripped — per-run promotion cap reached; remaining tests deferred to next run",
+          { cap: MAX_PROMOTIONS_PER_RUN, promoted: stats.promoted, scanned: stats.scanned },
+        );
+        break;
       }
 
       const nowIso = new Date().toISOString();
