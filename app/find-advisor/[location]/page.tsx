@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { getIntentCountry } from "@/lib/intent-context-server";
+import { intentCountryMeta } from "@/lib/intent-context";
 import { filterByCountryEligibility } from "@/lib/country-mode/eligibility-filter";
 import WhatsAppContactButton from "@/components/WhatsAppContactButton";
 import type { Metadata } from "next";
@@ -165,7 +166,14 @@ export default async function LocationAdvisorPage({ params }: { params: Promise<
   // sorting by raw rating. The ranker falls back to curated defaults
   // if the weights table is empty, so this is safe on a fresh DB.
   const weights = await getLatestQualityWeights(supabase);
-  const allAdvisors = rankAdvisors(eligibleAdvisors, weights);
+  // Cross-border corridor boost: when the visitor has a resolved intent
+  // country, float advisors who self-declared serving that corridor above
+  // generalists. ISO is lowercased to match available_in_countries codes.
+  // FIN_NOTEBOOK #24 Phase B.
+  const countryMatch = intentCountry
+    ? { country: intentCountryMeta(intentCountry).iso.toLowerCase() }
+    : undefined;
+  const allAdvisors = rankAdvisors(eligibleAdvisors, weights, { countryMatch });
 
   // JSON-LD
   const jsonLd = {

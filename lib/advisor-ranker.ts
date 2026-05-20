@@ -48,6 +48,13 @@ export interface AdvisorForRanking {
   recent_dispute_count?: number | null;
   is_sponsored?: boolean | null;
   sponsored_boost?: number | null; // 0-20 extra points
+  /**
+   * Cross-border corridors the advisor self-declared on the portal
+   * (ISO 3166-1 alpha-2, lowercased — e.g. ["gb", "in"]). Fed into the
+   * country-match boost when a visitor arrives with an intent country.
+   * AU is implicit and omitted. FIN_NOTEBOOK #24 Phase B.
+   */
+  available_in_countries?: string[] | null;
 }
 
 export interface QualityWeight {
@@ -60,7 +67,19 @@ export interface RankerOptions {
   specialtyMatchBoost?: number;
   /** Additional penalty for advisors with any open compliance issue */
   compliancePenalty?: number;
+  /**
+   * Boost advisors whose `available_in_countries` includes the visitor's
+   * resolved intent country. `country` is an ISO 3166-1 alpha-2 code
+   * (case-insensitive) — the caller maps the intent country to its ISO.
+   * Omit to disable. FIN_NOTEBOOK #24 Phase B — surfaces corridor
+   * specialists to inbound cross-border leads without hard-filtering
+   * AU-only advisors out.
+   */
+  countryMatch?: { country: string; boost?: number };
 }
+
+/** Default points added when an advisor serves the visitor's intent country. */
+export const DEFAULT_COUNTRY_MATCH_BOOST = 15;
 
 /**
  * Default weight map used when lead_quality_weights is empty.
@@ -136,6 +155,18 @@ export function scoreAdvisor(
   // Specialty match — caller passes this via options for context
   score += options.specialtyMatchBoost || 0;
 
+  // Country match — boost advisors who self-declared serving the
+  // visitor's intent country. Per-advisor (unlike specialtyMatchBoost),
+  // so corridor specialists float above generalists for cross-border leads.
+  const countryMatchMax = options.countryMatch
+    ? options.countryMatch.boost ?? DEFAULT_COUNTRY_MATCH_BOOST
+    : 0;
+  if (options.countryMatch?.country) {
+    const target = options.countryMatch.country.toLowerCase();
+    const served = (advisor.available_in_countries || []).map((c) => c.toLowerCase());
+    if (served.includes(target)) score += countryMatchMax;
+  }
+
   // Sponsored boost — paid placement, capped by ranker config
   const sponsoredBoost = Math.min(
     20,
@@ -144,7 +175,8 @@ export function scoreAdvisor(
   score += sponsoredBoost;
 
   // Normalise to [0, 100] using the weight total + boosts
-  const maxPossible = maxContribution + 20 /* sponsored cap */ + (options.specialtyMatchBoost || 0);
+  const maxPossible =
+    maxContribution + 20 /* sponsored cap */ + (options.specialtyMatchBoost || 0) + countryMatchMax;
   const normalised = Math.max(0, Math.min(100, Math.round((score / maxPossible) * 100)));
   return normalised;
 }
