@@ -14,6 +14,7 @@ const navItems = [
   { href: "/broker-portal/deals", label: "Deals", icon: "tag" },
   { href: "/broker-portal/analytics", label: "Analytics", icon: "pie-chart" },
   { href: "/broker-portal/sponsored-slots", label: "Sponsored Slots", icon: "star" },
+  { href: "/broker-portal/team", label: "Team", icon: "users" },
   { href: "/broker-portal/settings", label: "Settings", icon: "settings" },
 ];
 
