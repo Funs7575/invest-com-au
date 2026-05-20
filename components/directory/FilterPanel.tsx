@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useId, type ReactNode } from "react";
 
 /**
  * Canonical filter-panel container for directory pages.
@@ -48,8 +48,6 @@ export interface FilterPanelProps {
   children: ReactNode;
 }
 
-const HEADING_ID = "filter-panel-heading";
-
 export default function FilterPanel({
   open,
   onClose,
@@ -60,14 +58,21 @@ export default function FilterPanel({
   variant = "responsive",
   children,
 }: FilterPanelProps) {
-  // Escape-to-close (drawer + responsive variants only)
+  // Escape-to-close + lock background scroll while open (drawer + responsive
+  // variants only; inline has no open/closed state). Restoring the prior
+  // overflow value avoids clobbering a lock set by an outer modal.
   useEffect(() => {
     if (variant === "inline" || !open) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
     };
     document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prevOverflow;
+    };
   }, [variant, open, onClose]);
 
   // Inline-only: just render the panel body if open.
@@ -151,13 +156,14 @@ function FilterPanelInline({
   onClearAll,
   children,
 }: InternalProps) {
+  const headingId = useId();
   return (
     <section
-      aria-labelledby={HEADING_ID}
+      aria-labelledby={headingId}
       className="bg-white border border-slate-200 rounded-2xl p-4 md:p-5 mb-4 md:mb-6 space-y-4"
     >
       <header className="flex items-center justify-between">
-        <h2 id={HEADING_ID} className="text-sm font-extrabold text-slate-800">
+        <h2 id={headingId} className="text-sm font-extrabold text-slate-800">
           {heading}
           {activeCount > 0 && (
             <span className="ml-2 text-xs font-semibold text-amber-700">
@@ -193,11 +199,12 @@ function FilterPanelDrawer({
   onClearAll,
   children,
 }: InternalProps) {
+  const headingId = useId();
   return (
     <div
       role="dialog"
       aria-modal="true"
-      aria-labelledby={HEADING_ID}
+      aria-labelledby={headingId}
       className="fixed inset-0 z-50 flex flex-col"
     >
       {/* Backdrop */}
@@ -210,7 +217,7 @@ function FilterPanelDrawer({
       {/* Sheet — mobile bottom-sheet style for best touch ergonomics */}
       <div className="relative mt-auto bg-white rounded-t-3xl border-t border-slate-200 max-h-[85vh] flex flex-col shadow-2xl">
         <header className="flex items-center justify-between px-5 py-4 border-b border-slate-100 shrink-0">
-          <h2 id={HEADING_ID} className="text-base font-extrabold text-slate-900">
+          <h2 id={headingId} className="text-base font-extrabold text-slate-900">
             {heading}
             {activeCount > 0 && (
               <span className="ml-2 text-xs font-semibold text-amber-700">

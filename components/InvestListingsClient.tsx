@@ -830,6 +830,7 @@ function InvestFilterFields({
             <select
               value={activeState}
               onChange={(e) => setParams({ state: e.target.value })}
+              aria-label="State"
               className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
             >
               <option value="">All states</option>
@@ -861,6 +862,7 @@ function InvestFilterFields({
             <select
               value={activeInvestorType}
               onChange={(e) => setParams({ investor: e.target.value })}
+              aria-label="Investor type"
               className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
             >
               {INVESTOR_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
