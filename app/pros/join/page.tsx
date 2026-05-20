@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import ProsJoinWizard from "./ProsJoinWizard";
 
+// Static marketing landing shell — the signup wizard is a client island.
+export const revalidate = 86400;
+
 export const metadata: Metadata = {
   title: "Join the Invest.com.au Provider Marketplace",
   description:

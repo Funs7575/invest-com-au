@@ -3,6 +3,9 @@ import Link from "next/link";
 import ComplianceFooter from "@/components/ComplianceFooter";
 import ComplaintsIntakeForm from "./ComplaintsIntakeForm";
 
+// Static RG 271 compliance landing shell — the intake form is a client island.
+export const revalidate = 86400;
+
 export const metadata: Metadata = {
   title: "Submit a complaint — invest.com.au",
   description:
