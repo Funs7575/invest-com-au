@@ -75,10 +75,12 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | Z-26 | _complete_ | **#929 MERGED 2026-05-20** | Z-26 done. **Stream complete — #929 merged by founder 2026-05-20.** | Z-26 merged ✓ |
 | Z-25 | _complete_ | **#930 MERGED 2026-05-20** | Z-25 done. **Stream complete — #930 merged by founder 2026-05-20.** | Z-25 merged ✓ |
 | AA-04+BB-09 | _complete_ | **#931 MERGED 2026-05-20** | AA-04+BB-09 done. **Stream segment merged — #931 merged by founder 2026-05-20.** | AA-04+BB-09 merged ✓ |
-| DD | `claude/audit-remediation/dd-01-tiered-listings` | **#926 MERGED 2026-05-20** | DD-01 done. **#926 merged by founder 2026-05-20.** DD-02/03/04 pending. | DD-01 merged ✓ |
-| Z-24 | `claude/audit-remediation/z-24-inheritance-hub` | **#995 OPEN** | Z-24 done (iter 464): `/inheritance` top-level hub; `lib/hub-configs/inheritance.ts` (3 hero stats, 6 service cards, 4 deep-dives, 6 FAQs, `complianceKey: "general_advice"`); lead magnet + sitemap. CI: queued — pushed `f3953a0` 2026-05-20. | Z-24 merged |
-| BB-02+BB-03 | `claude/audit-remediation/bb-02-03-salary-sacrifice-cgt` | **#1015 OPEN** | BB-02 done (iter 465): `/tools/salary-sacrifice-optimiser` — quantitative salary-sacrifice calculator (FY2025-26 tax, concessional cap enforcement, Division 293 detection, take-home before/after table). BB-03 done: `/tools/cgt-calculator` — purchase→sale CGT calc (50% discount, asset types, side-by-side discount impact). Sitemap +2. CI: queued — pushed `df71adb9` 2026-05-20. | BB-02+BB-03 merged |
+| DD | `claude/audit-remediation/dd-02-verified-badge` | **#1033 OPEN** | DD-01 done (#926 merged). DD-02 done (iter 468): `/find/[advisor-type]/[city]` city listing upgraded to full `VerifiedBadge` component (ABN Verified + AFSL Current pills) — adds `verification_method`, `afsl_number`, `abn`, `last_verified_at` to select + local type. CI: queued — pushed `36b6da4f` 2026-05-20. DD-03/04 pending. | DD-02 in flight |
+| Z-24 | `claude/audit-remediation/z-24-inheritance-hub` | **#995 OPEN** | Z-24 done (iter 464): `/inheritance` top-level hub; `lib/hub-configs/inheritance.ts` (3 hero stats, 6 service cards, 4 deep-dives, 6 FAQs, `complianceKey: "general_advice"`); lead magnet + sitemap. CI rescue iter 467: merged main (`98f6433`) — Supabase types drift fixed. | Z-24 merged |
+| BB-02+BB-03 | `claude/audit-remediation/bb-02-03-salary-sacrifice-cgt` | **#1015 OPEN** | BB-02 done (iter 465): `/tools/salary-sacrifice-optimiser` — quantitative salary-sacrifice calculator (FY2025-26 tax, concessional cap enforcement, Division 293 detection, take-home before/after table). BB-03 done: `/tools/cgt-calculator` — purchase→sale CGT calc (50% discount, asset types, side-by-side discount impact). Sitemap +2. CI rescue iter 467: faqJsonLd null-access fix (`3f68cb9`). | BB-02+BB-03 merged |
 | AA-07 | `claude/audit-remediation/aa-07-just-event-pages` | **#1020 OPEN** | AA-07 done (iter 466): `/just/[event]` moment-of-money pages — 8 life-event checklists (retired, inherited, made-redundant, got-married, had-a-baby, bought-a-house, sold-a-business, started-investing); `/just` index hub. Dynamic route with `generateStaticParams`, `GENERAL_ADVICE_WARNING`, advisor CTA, cross-event nav strip. Sitemap +9. CI: queued — pushed 2026-05-20. | AA-07 merged |
+| AA-06 | `claude/audit-remediation/aa-06-investing-for-occupation` | **#1031 OPEN** | AA-06 done (iter 468): `/investing-for/[occupation]` — 26 occupation-specific investing guides + `/investing-for` index hub. Income type + super type badges, 3 highlights, 4 hub links, 3 FAQs, advisor CTA, cross-occupation nav, `GENERAL_ADVICE_WARNING`. `generateStaticParams` ISR, `revalidate = 3600`. Sitemap +27. CI: queued — pushed `617fd94a` 2026-05-20. | AA-06 merged |
+| Z-27 | `claude/audit-remediation/z-27-tax-return-hub` | **#1032 OPEN** | Z-27 done (iter 469): `/tax-return` top-level hub (HubPage HOC). `lib/hub-configs/tax-return.ts`: 3 hero stats ($2,817 avg refund, 67¢/hr WFH rate, 31 Oct deadline), 6 service cards, 4 deep-dives, withholding-tax calculator, 6 FAQs, lead queue `general/tax`. Page: FY2025-26 key-dates callout (amber), investor-type quick-access grid. Sitemap +1 (priority 0.82, weekly). CI: queued — pushed `00cb2265` 2026-05-20. | Z-27 merged |
 
 ---
 
@@ -138,6 +140,64 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 470 — 2026-05-20 — DD-02 — /find city listing upgraded to VerifiedBadge
+
+- **Stream:** DD (marketplace mechanics — Tier C)
+- **Phase:** 5 — implementation
+- **Branch:** `claude/audit-remediation/dd-02-verified-badge`
+- **PR:** #1033 OPEN
+- **Commit:** `36b6da4f` — feat(dd): upgrade /find city listing to use VerifiedBadge (DD-02)
+- **Diff:** 1 file, +13 LOC
+- **Items done:** DD-02 (VerifiedBadge on `/find/[advisor-type]/[city]` listing)
+- **Implementation:**
+  - **`app/find/[advisor-type]/[city]/page.tsx`**: imports `VerifiedBadge`; adds `verification_method`, `afsl_number`, `abn`, `last_verified_at` to `AdvisorRow` interface and Supabase select; replaces hard-coded `<span>Verified</span>` text pill in `AdvisorCard` with `<VerifiedBadge method={...} afsl={...} abn={...} lastVerifiedAt={...} compact />`. Consistent with main `/advisors` listing which already uses the component.
+- **Tier C batch end:** DD stream is Tier C — batch terminates after this item.
+- **STATUS: PROGRESS · stream=DD · item=DD-02 · pr=#1033**
+
+### iter 469 — 2026-05-20 — Z-27 — /tax-return hub (HubPage HOC, seasonal accountant lead gen)
+
+- **Stream:** Z (Tier-1 hub builds)
+- **Phase:** 5 — implementation (Tier A — hub page)
+- **Branch:** `claude/audit-remediation/z-27-tax-return-hub`
+- **PR:** #1032 OPEN
+- **Commit:** `00cb2265` — feat(z27): Z-27 — /tax-return hub
+- **Diff:** 3 files, +312 LOC
+- **Items done:** Z-27 (`/tax-return` top-level hub — HubPage HOC pattern)
+- **Implementation:**
+  - **`lib/hub-configs/tax-return.ts`** (new, 205 LOC): full `taxReturnHubConfig` — 3 hero stats with ATO sources (avg $2,817 refund 2022-23; 67¢/hr WFH fixed rate; 31 Oct individual deadline), 6 service cards (WFH, work deductions, investment income, rental property, crypto, tax agents), 4 deep-dives linking to existing tax/property/CGT pages, withholding-tax-calculator, 6 FAQs, lead queue `general/tax`, newsletter `tax-return-hub`, relatedHubs, articleFilters.
+  - **`app/tax-return/page.tsx`** (new, 98 LOC): HubPage HOC with FY2025-26 key-dates callout strip (amber — 1 Jul / 31 Oct / 15 May) and investor-type quick-access grid (shares/ETFs, property investors, crypto, SMSF trustees, freelancers/ABN, tax agent guide). `revalidate = 3600`.
+  - **`app/sitemap.ts`**: +1 entry (`/tax-return` at priority 0.82, `changeFrequency: "weekly"` for seasonal peak).
+- **Batch complete:** 5 Tier A items in this fire (Z-24/464, BB-02+BB-03/465, AA-07/466, AA-06/468, Z-27/469). Cloud loop ran iter 467 as CI rescue (BB faqJsonLd + Z-24 Supabase drift). Total LOC ~3,650 of 5,000 cap.
+- **STATUS: PROGRESS · stream=Z · item=Z-27 · pr=#1032**
+
+### iter 468 — 2026-05-20 — AA-06 — /investing-for/[occupation] programmatic pages
+
+- **Stream:** AA (programmatic SEO)
+- **Phase:** 5 — implementation (Tier A — content pages)
+- **Branch:** `claude/audit-remediation/aa-06-investing-for-occupation`
+- **PR:** #1031 OPEN
+- **Commit:** `617fd94a` — feat(aa06): AA-06 — /investing-for/[occupation] programmatic pages
+- **Diff:** 3 files, +1,341 LOC (content/data budget)
+- **Items done:** AA-06 (`/investing-for/[occupation]` dynamic route + `/investing-for` index hub)
+- **Implementation:**
+  - **`app/investing-for/[occupation]/page.tsx`** (new, 1,164 LOC): 26 occupation configs with income type, super type, 3 financial highlights, 4 hub links, 3 occupation-specific FAQs, advisor CTA, cross-occupation nav strip. `generateStaticParams` for ISR pre-rendering, `revalidate = 3600`, `GENERAL_ADVICE_WARNING` footer. Inline `faqSchema` object (no `faqJsonLd()` helper — avoids null-access pattern from iter 467 CI rescue).
+  - **`app/investing-for/page.tsx`** (new, 154 LOC): index hub grouping 26 occupations into 6 sections (Healthcare, Professional Services, Public Sector, Business Owners, Trades/Industries, Self-Employed). `revalidate = 86400`.
+  - **`app/sitemap.ts`**: +27 entries (`/investing-for` index at 0.75 + 26 slugs at 0.65).
+- **Occupations:** doctor, nurse, dentist, pharmacist, vet, lawyer, accountant, engineer, architect, financial-planner, it-professional, public-servant, teacher, police-officer, military, small-business-owner, startup-founder, executive, real-estate-agent, farmer, tradesperson, pilot, miner, freelancer, contractor, sports-professional
+- **STATUS: PROGRESS · stream=AA · item=AA-06 · pr=#1031**
+
+### iter 467 — 2026-05-20 — CI-RESCUE BB-02+BB-03 (#1015) + Z-24 (#995) — faqJsonLd null-access + Supabase types drift
+
+- **Streams:** BB-02+BB-03 (CI rescue) · Z-24 (CI rescue)
+- **Phase:** 2 — CI rescue (both streams)
+- **PRs:** BB-02+BB-03 #1015 · Z-24 #995
+- **Root causes:**
+  - **BB-02+BB-03 #1015 (Vercel deployment failure):** `salary-sacrifice-optimiser/page.tsx` and `cgt-calculator/page.tsx` called `faqLd.mainEntity.map(...)` — `faqJsonLd()` returns `T | null` so TypeScript strict mode (TS2531) breaks next build. Fix: define `const FAQS: FaqItem[]`, pass to `faqJsonLd()` for JSON-LD, iterate `FAQS` in JSX. Matches all other calculator pages (etp, fhss, borrowing-power, mortgage-stress-test).
+  - **Z-24 #995 (Supabase types drift failure):** Branch was behind main by 2 commits. Merging main picks up `.driftallowlist` entry for `afsl_register`.
+- **Rescue commits:** `3f68cb9` (BB branch — faqJsonLd fix) · `98f6433` (Z-24 branch — merge main)
+- **Stuck-detection:** First rescue attempt on both PRs — within threshold.
+- **STATUS: CI-RESCUE · stream=BB+Z-24 · pr=#1015+#995**
 
 ### iter 466 — 2026-05-20 — AA-07 — /just/[event] moment-of-money pages
 
