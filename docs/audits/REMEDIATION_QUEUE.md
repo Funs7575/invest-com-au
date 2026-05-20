@@ -82,7 +82,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | AA-07 | `claude/audit-remediation/aa-07-just-event-pages` | **#1020 OPEN** | AA-07 done (iter 466): `/just/[event]` moment-of-money pages — 8 life-event checklists (retired, inherited, made-redundant, got-married, had-a-baby, bought-a-house, sold-a-business, started-investing); `/just` index hub. Dynamic route with `generateStaticParams`, `GENERAL_ADVICE_WARNING`, advisor CTA, cross-event nav strip. Sitemap +9. CI: queued — pushed 2026-05-20. | AA-07 merged |
 | AA-06 | `claude/audit-remediation/aa-06-investing-for-occupation` | **#1031 OPEN** | AA-06 done (iter 468): `/investing-for/[occupation]` — 26 occupation-specific investing guides + `/investing-for` index hub. Income type + super type badges, 3 highlights, 4 hub links, 3 FAQs, advisor CTA, cross-occupation nav, `GENERAL_ADVICE_WARNING`. `generateStaticParams` ISR, `revalidate = 3600`. Sitemap +27. CI: queued — pushed `617fd94a` 2026-05-20. | AA-06 merged |
 | Z-27 | `claude/audit-remediation/z-27-tax-return-hub` | **#1032 OPEN** | Z-27 done (iter 469): `/tax-return` top-level hub (HubPage HOC). `lib/hub-configs/tax-return.ts`: 3 hero stats ($2,817 avg refund, 67¢/hr WFH rate, 31 Oct deadline), 6 service cards, 4 deep-dives, withholding-tax calculator, 6 FAQs, lead queue `general/tax`. Page: FY2025-26 key-dates callout (amber), investor-type quick-access grid. Sitemap +1 (priority 0.82, weekly). CI: queued — pushed `00cb2265` 2026-05-20. | Z-27 merged |
-| BB-10 | `claude/audit-remediation/bb-10-lic-screener` | **#1039 OPEN** | BB-10 done (iter 475): `/lic-screener` — Listed Investment Company screener. `lib/lic-data.ts` (15 LICs, `ntaPremiumDiscount()` helper). LicScreenerClient: filterable/sortable table (focus, franking, mgmt cost, NTA discount toggle), row-click detail panel, hero stat boxes. page.tsx: metadata, calculatorJsonLd, faqJsonLd (4 Q&As), breadcrumb, ComplianceFooter. Sitemap +1. CI rescue iter 478: ComplianceFooter variant + JSX close tag fix (`7f9427d`). | BB-10 merged ✓ |
+| BB-10 | `claude/audit-remediation/bb-10-lic-screener` | **#1039 OPEN** | BB-10 done (iter 475): `/lic-screener` — Listed Investment Company screener. `lib/lic-data.ts` (15 LICs, `ntaPremiumDiscount()` helper). LicScreenerClient: filterable/sortable table (focus, franking, mgmt cost, NTA discount toggle), row-click detail panel, hero stat boxes. page.tsx: metadata, calculatorJsonLd, faqJsonLd (4 Q&As), breadcrumb, ComplianceFooter. Sitemap +1. CI rescue iter 478: ComplianceFooter variant + JSX close tag fix (`7f9427d`). CI rescue iter 481: Supabase types drift — cherry-pick user_documents types fix (`b1d07a1`). | BB-10 merged ✓ |
 | DV | `claude/audit-remediation/dv-01-document-vault` | **#1040 OPEN** | DV-01 done (iter 476): document vault — `user_documents` table (owner-only RLS: SELECT/INSERT/DELETE authenticated; service_role allow; deny anon) + V-NEW-04 isolation test (8 cases, `// rls-isolation: user_documents` marker). `GET /api/account/documents` (list + 10-min signed URLs), `POST /api/account/documents/upload` (multipart, rate-limited 20/hr, ≤20 MB, PDF/JPG/PNG/WebP; path `{uid}/{docId}/{filename}`; storage cleanup on DB failure), `DELETE /api/account/documents/[id]` (storage + DB, RLS-protected fetch prevents cross-user delete). `app/account/vault/` RSC + VaultClient (upload modal with type selector, doc list with download/delete, empty state, encryption notice). Dashboard NavCard (🗂️). CI rescue iter 480: `user_documents` added to `lib/database.types.ts` (`8482b33`). | DV-01 merged ✓ |
 
 ---
@@ -143,6 +143,17 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 481 — 2026-05-20 — CI-RESCUE BB-10 (#1039) — Supabase types drift (user_documents)
+
+- **Stream:** BB (CI rescue)
+- **Phase:** 2 — CI rescue
+- **Branch:** `claude/audit-remediation/bb-10-lic-screener`
+- **PR:** #1039
+- **Rescue commit:** `b1d07a1` — fix(bb): CI-rescue BB-10 #1039 — add user_documents to database.types.ts
+- **Root cause:** "Supabase types drift" gate failing because live DB has `user_documents` table but `lib/database.types.ts` on the BB-10 branch doesn't include it. Fixed by cherry-picking the DV types entry (same as iter 480 fix on DV branch).
+- **Stuck-detection:** Second rescue attempt on #1039 — check: iter 478 was rescue #1 (different failure: ComplianceFooter+JSX), this is rescue #2 (different gate: Supabase types drift). Two different gates = not stuck on same check, within threshold.
+- **STATUS: CI-RESCUE · stream=BB · pr=#1039**
 
 ### iter 480 — 2026-05-20 — CI-RESCUE DV-01 (#1040) — user_documents missing from database.types.ts
 
