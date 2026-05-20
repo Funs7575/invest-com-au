@@ -3,6 +3,7 @@ import { getStripe } from "@/lib/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 import { CROSS_BORDER_SPECIALTIES } from "@/lib/advisor-specialties";
+import { composeLeadPrice } from "@/lib/lead-pricing";
 
 const log = logger("advisor-billing");
 
@@ -30,15 +31,28 @@ export const CROSS_BORDER_LEAD_MULTIPLIER = 1.75;
  * from `lib/advisor-specialties.ts`, applies the
  * `CROSS_BORDER_LEAD_MULTIPLIER`; otherwise returns the flat default.
  *
- * Pure — no DB / Stripe / cookies. Callers that don't have specialty
- * context should keep using `DEFAULT_LEAD_PRICE_CENTS` directly.
+ * Optionally composes a firm pricing-tier multiplier (Phase 4.1) on top
+ * of the specialty axis — pass `firmTierMultiplier` when the caller knows
+ * the advisor's firm tier (boutique 1.0 / enterprise 0.85 / sponsor 0.6).
+ * Omit it for the legacy single-axis behaviour.
+ *
+ * Pure — no DB / Stripe / cookies. The two-axis composition is delegated
+ * to `composeLeadPrice` (lib/lead-pricing.ts) so the rounding rule lives
+ * in one place. Callers that don't have specialty context should keep
+ * using `DEFAULT_LEAD_PRICE_CENTS` directly.
  */
-export function getLeadPriceCents(specialties: readonly string[]): number {
-  if (specialties.length === 0) return DEFAULT_LEAD_PRICE_CENTS;
+export function getLeadPriceCents(
+  specialties: readonly string[],
+  firmTierMultiplier?: number | null,
+): number {
   const crossBorderSet = new Set<string>(CROSS_BORDER_SPECIALTIES);
-  const hasCrossBorder = specialties.some((s) => crossBorderSet.has(s));
-  if (!hasCrossBorder) return DEFAULT_LEAD_PRICE_CENTS;
-  return Math.round(DEFAULT_LEAD_PRICE_CENTS * CROSS_BORDER_LEAD_MULTIPLIER);
+  const hasCrossBorder =
+    specialties.length > 0 && specialties.some((s) => crossBorderSet.has(s));
+  return composeLeadPrice({
+    baseLeadPriceCents: DEFAULT_LEAD_PRICE_CENTS,
+    specialtyMultiplier: hasCrossBorder ? CROSS_BORDER_LEAD_MULTIPLIER : 1.0,
+    firmTierMultiplier: firmTierMultiplier ?? 1.0,
+  });
 }
 
 /**

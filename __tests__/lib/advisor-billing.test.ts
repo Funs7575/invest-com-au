@@ -486,4 +486,29 @@ describe("getLeadPriceCents (cross-border premium)", () => {
       Math.round(DEFAULT_LEAD_PRICE_CENTS * CROSS_BORDER_LEAD_MULTIPLIER),
     );
   });
+
+  // ─── Phase 4.1: firm pricing-tier axis ──────────────────────────────────
+  it("omitting firmTierMultiplier preserves single-axis behaviour", () => {
+    expect(getLeadPriceCents([])).toBe(3900);
+    expect(getLeadPriceCents(["UK Pension Transfer"])).toBe(6825);
+  });
+
+  it("enterprise tier (0.85) discounts the base price", () => {
+    // 3900 × 1.0 × 0.85 = 3315
+    expect(getLeadPriceCents([], 0.85)).toBe(3315);
+  });
+
+  it("composes specialty and firm-tier multipliers together", () => {
+    // 3900 × 1.75 × 0.85 = 5801.25 → 5801
+    expect(getLeadPriceCents(["UK Pension Transfer"], 0.85)).toBe(5801);
+  });
+
+  it("sponsor tier (0.6) on a cross-border lead", () => {
+    // 3900 × 1.75 × 0.6 = 4095
+    expect(getLeadPriceCents(["DASP Processing"], 0.6)).toBe(4095);
+  });
+
+  it("null firmTierMultiplier is treated as 1.0", () => {
+    expect(getLeadPriceCents(["UK Pension Transfer"], null)).toBe(6825);
+  });
 });
