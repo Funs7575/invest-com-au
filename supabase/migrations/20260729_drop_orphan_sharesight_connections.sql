@@ -1,0 +1,28 @@
+-- Drop the orphan `sharesight_connections` table (new-features audit §5 flag #2).
+--
+-- BACKGROUND:
+--   This table was created directly in the Supabase dashboard for the W2.11
+--   Sharesight OAuth feature (token storage) and was never defined by a repo
+--   migration. The feature shipped using a different storage path; the table
+--   is now an orphan that holds plaintext OAuth tokens. As of this audit it has
+--   0 rows and ZERO code references (only a stale entry in lib/database.types.ts
+--   and .driftallowlist). A plaintext-token table with no owner is a standing
+--   security liability on an AFSL platform.
+--
+--   Tracked in the decision log as the "drop orphan plaintext-token table" item.
+--   Listed on .driftallowlist:77 — removed in the same change as this migration.
+--
+-- IDEMPOTENT: IF EXISTS guard makes re-running safe.
+-- FORWARD-ONLY: applied to live via Supabase MCP / dashboard by the founder
+--   (Tier E — irreversible drop), then regenerate lib/database.types.ts to
+--   clear the type entry.
+--
+-- ROLLBACK STRATEGY:
+--   There is no in-repo CREATE for this table (it was dashboard-created), so a
+--   true rollback would mean re-creating it from the dashboard. This is
+--   intentional: the table is unused (0 rows) and storing plaintext OAuth
+--   tokens, so its removal is the desired end state. Risk: none — no code reads
+--   or writes it. If Sharesight OAuth token persistence is later needed, add a
+--   purpose-built, encrypted, RLS-protected table via a fresh migration.
+
+DROP TABLE IF EXISTS public.sharesight_connections;
