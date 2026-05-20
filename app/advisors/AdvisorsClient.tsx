@@ -15,6 +15,14 @@ import VerifiedBadge from "@/components/VerifiedBadge";
 import { trackEvent } from "@/lib/tracking";
 import { useAdvisorShortlist } from "@/lib/hooks/useAdvisorShortlist";
 import { ADVISOR_SPECIALTY_CATEGORIES } from "@/lib/advisor-specialties";
+import TabBar from "@/components/directory/TabBar";
+import SearchInput from "@/components/directory/SearchInput";
+import SortDropdown from "@/components/directory/SortDropdown";
+import { resolveDirectoryFilters } from "./filter-params";
+import FilterPanel from "@/components/directory/FilterPanel";
+import FacetGroup from "@/components/directory/FacetGroup";
+import RangeSlider from "@/components/directory/RangeSlider";
+import FilterChips from "@/components/directory/FilterChips";
 
 export interface ExpertTeamCard {
   id: number;
@@ -54,6 +62,12 @@ const TYPE_FILTERS: { key: ProfessionalType | "all"; label: string; icon: string
     .sort((a, b) => a.label.localeCompare(b.label)),
 ];
 
+// Multi-select facet options for the advisor-type FacetGroup. The "all"
+// pseudo-entry is dropped — an empty selection already means "all types".
+const TYPE_FACET_OPTIONS: { value: ProfessionalType; label: string }[] = TYPE_FILTERS
+  .filter((f): f is { key: ProfessionalType; label: string; icon: string } => f.key !== "all")
+  .map((f) => ({ value: f.key, label: f.label }));
+
 const RADIUS_OPTIONS = [
   { value: 10, label: "10 km" },
   { value: 25, label: "25 km" },
@@ -64,14 +78,14 @@ const RADIUS_OPTIONS = [
 ];
 
 type SortKey = "rating" | "name" | "newest" | "reviews" | "distance" | "fee_low" | "fee_high";
-const SORT_OPTIONS: { key: SortKey; label: string }[] = [
-  { key: "rating", label: "Highest Rated" },
-  { key: "reviews", label: "Most Reviewed" },
-  { key: "distance", label: "Nearest" },
-  { key: "fee_low", label: "Lowest Fee" },
-  { key: "fee_high", label: "Highest Fee" },
-  { key: "name", label: "Name (A-Z)" },
-  { key: "newest", label: "Newest" },
+const SORT_OPTIONS: { value: SortKey; label: string }[] = [
+  { value: "rating", label: "Highest Rated" },
+  { value: "reviews", label: "Most Reviewed" },
+  { value: "distance", label: "Nearest" },
+  { value: "fee_low", label: "Lowest Fee" },
+  { value: "fee_high", label: "Highest Fee" },
+  { value: "name", label: "Name (A-Z)" },
+  { value: "newest", label: "Newest" },
 ];
 
 const RESULTS_PER_PAGE = 12;
@@ -319,25 +333,17 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
   }, [userLat, userLng, radius, typeFilters, feeFilter, specialtyFilters, isLocationActive]);
 
   useEffect(() => {
-    const pt = searchParams.get("provider_type");
-    if (pt === "individual" || pt === "firm" || pt === "team") setProviderType(pt);
-
-    if (initialType || initialState) return;
-    const t = searchParams.get("type");
-    const s = searchParams.get("state");
-    const sp = searchParams.get("specialty");
-    const sort = searchParams.get("sort");
-    const q = searchParams.get("q");
-    const lang = searchParams.get("language");
-    if (t) {
-      const types = t.split(",").filter(v => TYPE_FILTERS.some(f => f.key === v)) as ProfessionalType[];
-      if (types.length > 0) setTypeFilters(new Set(types));
-    }
-    if (s && AU_STATES.includes(s as typeof AU_STATES[number])) setStateFilter(s);
-    if (sp) setSpecialtyFilters(sp.split(","));
-    if (sort) setSortBy(sort as SortKey);
-    if (q) setSearch(q);
-    if (lang) setLanguageFilter(lang);
+    const resolved = resolveDirectoryFilters(searchParams, {
+      routeScoped: Boolean(initialType || initialState),
+      validType: v => TYPE_FILTERS.some(f => f.key === v),
+    });
+    if (resolved.providerType) setProviderType(resolved.providerType);
+    if (resolved.specialties) setSpecialtyFilters(resolved.specialties);
+    if (resolved.types) setTypeFilters(new Set(resolved.types));
+    if (resolved.state) setStateFilter(resolved.state);
+    if (resolved.sort) setSortBy(resolved.sort as SortKey);
+    if (resolved.search) setSearch(resolved.search);
+    if (resolved.language) setLanguageFilter(resolved.language);
   }, [searchParams, initialType, initialState]);
 
   const initialRenderRef = useRef(true);
@@ -585,6 +591,32 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
     return [...ordered, ...extra];
   }, [professionals]);
 
+  // Active-filter chips — mirrors the bespoke strip that lived here before,
+  // now rendered through the shared <FilterChips> primitive.
+  const activeChips: { label: string; onClear: () => void }[] = [];
+  if (isLocationActive && locationSearch) {
+    activeChips.push({
+      label: `${radius > 0 ? `${radius}km from ` : "Near "}${locationSearch.locality}`,
+      onClear: () => { setLocationSearch(null); setUserLat(null); setUserLng(null); },
+    });
+  }
+  for (const t of Array.from(typeFilters)) {
+    activeChips.push({
+      label: TYPE_FILTERS.find(f => f.key === t)?.label ?? t,
+      onClear: () => toggleType(t),
+    });
+  }
+  if (stateFilter !== "all") activeChips.push({ label: stateFilter, onClear: () => setStateFilter("all") });
+  for (const s of specialtyFilters) activeChips.push({ label: s, onClear: () => toggleSpecialty(s) });
+  if (feeFilter !== "all") activeChips.push({ label: feeFilter, onClear: () => setFeeFilter("all") });
+  if (firmFilter !== "all") activeChips.push({ label: firmFilter, onClear: () => setFirmFilter("all") });
+  if (minRating > 0) activeChips.push({ label: `${minRating}+ ★`, onClear: () => setMinRating(0) });
+  if (verifiedOnly) activeChips.push({ label: "Verified", onClear: () => setVerifiedOnly(false) });
+  if (internationalOnly) activeChips.push({ label: "🌏 International clients", onClear: () => setInternationalOnly(false) });
+  if (languageFilter !== "all") activeChips.push({ label: `Speaks ${languageFilter}`, onClear: () => setLanguageFilter("all") });
+  if (acceptingOnly) activeChips.push({ label: "✓ Accepting new", onClear: () => setAcceptingOnly(false) });
+  if (videoOnly) activeChips.push({ label: "▶ Intro video", onClear: () => setVideoOnly(false) });
+
   return (
     <div className="py-5 md:py-12">
       <div className="container-custom max-w-5xl">
@@ -634,21 +666,21 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
         {/* Compare bar */}
         {shortlistCount > 0 && (
           <div className="sticky top-16 z-30 mb-3">
-            <div className="bg-violet-600 text-white rounded-xl px-4 py-2.5 flex items-center justify-between shadow-lg shadow-violet-200">
+            <div className="bg-slate-900 text-white rounded-xl px-4 py-2.5 flex items-center justify-between shadow-lg shadow-slate-300">
               <span className="text-sm font-semibold">
                 {shortlistCount} advisor{shortlistCount !== 1 ? "s" : ""} saved
-                {shortlistCount === 1 && <span className="text-violet-200 font-normal"> — save 1 more to compare</span>}
+                {shortlistCount === 1 && <span className="text-slate-300 font-normal"> — save 1 more to compare</span>}
               </span>
               <div className="flex items-center gap-2">
-                <Link href="/shortlist/advisors" className="px-3 py-1.5 text-violet-200 text-xs font-semibold hover:text-white transition-colors">
+                <Link href="/shortlist/advisors" className="px-3 py-1.5 text-slate-300 text-xs font-semibold hover:text-white transition-colors">
                   View saved
                 </Link>
                 {shortlistCount >= 2 ? (
-                  <Link href="/advisors/compare" className="px-3 py-1.5 bg-white text-violet-700 text-xs font-bold rounded-lg hover:bg-violet-50 transition-colors">
+                  <Link href="/advisors/compare" className="px-3 py-1.5 bg-amber-500 text-white text-xs font-bold rounded-lg hover:bg-amber-400 transition-colors">
                     Compare {shortlistCount} →
                   </Link>
                 ) : (
-                  <span className="text-xs text-violet-200">{shortlistMax - shortlistCount} more to compare</span>
+                  <span className="text-xs text-slate-400">{shortlistMax - shortlistCount} more to compare</span>
                 )}
               </div>
             </div>
@@ -659,66 +691,51 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
             Hidden when sub-pages call AdvisorsClient with no firms/teams
             (e.g. /advisors/financial-planners). */}
         {(firms.length > 0 || expertTeams.length > 0) && (
-          <div
-            role="tablist"
-            aria-label="Provider type"
-            className="flex items-center gap-1 p-1 bg-slate-100 rounded-xl mb-3 md:mb-4 overflow-x-auto"
-          >
-            {(["all", "individual", "firm", "team"] as const).map(pt => {
-              const label = pt === "all" ? "All" : PROVIDER_TYPE_LABELS[pt];
-              const count = providerTypeCounts[pt];
-              const active = providerType === pt;
-              const disabled = pt !== "all" && count === 0;
-              return (
-                <button
-                  key={pt}
-                  role="tab"
-                  aria-selected={active}
-                  disabled={disabled}
-                  onClick={() => setProviderType(pt)}
-                  className={`flex items-center gap-1.5 px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm font-semibold rounded-lg transition-all whitespace-nowrap ${
-                    active
-                      ? "bg-white text-slate-900 shadow-sm"
-                      : disabled
-                        ? "text-slate-300 cursor-not-allowed"
-                        : "text-slate-600 hover:bg-white/60"
-                  }`}
-                >
-                  {label}
-                  <span className={`text-[0.6rem] md:text-[0.65rem] font-bold px-1.5 py-0.5 rounded ${active ? "bg-amber-100 text-amber-700" : "bg-slate-200 text-slate-500"}`}>
-                    {count}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
+          <TabBar
+            ariaLabel="Provider type"
+            variant="segmented"
+            value={providerType}
+            onChange={(id) => setProviderType(id as ProviderType)}
+            alwaysShow="all"
+            className="mb-3 md:mb-4"
+            tabs={[
+              { id: "all", label: "All", count: providerTypeCounts.all },
+              { id: "individual", label: PROVIDER_TYPE_LABELS.individual, count: providerTypeCounts.individual },
+              { id: "firm", label: PROVIDER_TYPE_LABELS.firm, count: providerTypeCounts.firm },
+              { id: "team", label: PROVIDER_TYPE_LABELS.team, count: providerTypeCounts.team },
+            ]}
+          />
         )}
 
         {/* Search + Filter bar */}
         <div className="flex gap-2 mb-3 md:mb-4">
-          <div className="relative flex-1">
-            <Icon name="search" size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input type="text" placeholder="Search name, firm, team, specialty, suburb..." value={search} onChange={e => setSearch(e.target.value)} aria-label="Search advisors" className="w-full pl-9 pr-4 py-2.5 md:py-3 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-400 transition-all" />
-            {search && <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"><Icon name="x" size={16} /></button>}
-          </div>
-          <button onClick={() => setFiltersOpen(!filtersOpen)} className={`flex items-center gap-1.5 px-3 md:px-4 py-2.5 border rounded-xl text-sm font-semibold transition-all shrink-0 ${filtersOpen || activeFilterCount > 0 ? "bg-amber-50 border-amber-300 text-amber-700" : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"}`}>
+          <SearchInput
+            id="advisors-search"
+            value={search}
+            onChange={setSearch}
+            placeholder="Search name, firm, team, specialty, suburb..."
+            ariaLabel="Search advisors"
+          />
+          <button onClick={() => setFiltersOpen(!filtersOpen)} className={`md:hidden flex items-center gap-1.5 px-3 py-2 border rounded-lg text-sm font-semibold transition-all shrink-0 ${filtersOpen || activeFilterCount > 0 ? "bg-amber-50 border-amber-300 text-amber-700" : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"}`}>
             <Icon name="sliders" size={16} />
-            <span className="hidden md:inline">Filters</span>
+            <span>Filters</span>
             {activeFilterCount > 0 && <span className="w-5 h-5 bg-amber-600 text-white text-[0.6rem] font-bold rounded-full flex items-center justify-center">{activeFilterCount}</span>}
           </button>
-          <select
+          <SortDropdown
+            options={SORT_OPTIONS}
             value={sortBy}
-            onChange={e => setSortBy(e.target.value as SortKey)}
-            aria-label="Sort results"
-            className="hidden md:block px-3 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-600 bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/30"
-          >
-            {SORT_OPTIONS.map(o => <option key={o.key} value={o.key}>{o.label}</option>)}
-          </select>
+            onChange={(v) => setSortBy(v as SortKey)}
+          />
         </div>
 
-        {/* Filter panel */}
-        {filtersOpen && (
-          <div className="bg-white border border-slate-200 rounded-2xl p-4 md:p-5 mb-4 md:mb-6 space-y-4">
+        {/* Filter panel — shared primitive: inline on desktop, drawer on mobile */}
+        <FilterPanel
+          open={filtersOpen}
+          onClose={() => setFiltersOpen(false)}
+          onClearAll={clearAll}
+          activeCount={activeFilterCount}
+          resultCount={feed.length}
+        >
             {/* Location / Near me */}
             <div>
               <label className="text-xs font-bold text-slate-700 mb-2 block flex items-center gap-1.5">
@@ -738,21 +755,17 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               </div>
             </div>
 
-            {/* Advisor Type */}
-            <div>
-              <label className="text-xs font-bold text-slate-700 mb-2 block">Advisor Type</label>
-              <div className="flex flex-wrap gap-1.5">
-                {TYPE_FILTERS.map(f => (
-                  <button key={f.key} onClick={() => toggleType(f.key)} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${(f.key === "all" ? typeFilters.size === 0 : typeFilters.has(f.key as ProfessionalType)) ? "bg-amber-600 text-white shadow-sm" : "bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200"}`}>
-                    <Icon name={f.icon} size={13} className={(f.key === "all" ? typeFilters.size === 0 : typeFilters.has(f.key as ProfessionalType)) ? "text-amber-200" : "text-slate-400"} />
-                    {f.label}
-                    {typeCounts[f.key] ? <span className={(f.key === "all" ? typeFilters.size === 0 : typeFilters.has(f.key as ProfessionalType)) ? "text-amber-200" : "text-slate-400"}>({typeCounts[f.key]})</span> : null}
-                  </button>
-                ))}
-              </div>
-            </div>
+            {/* Advisor Type — multi-select facet (empty selection = all types) */}
+            <FacetGroup
+              label="Advisor Type"
+              options={TYPE_FACET_OPTIONS}
+              selected={typeFilters}
+              onChange={setTypeFilters}
+              counts={typeCounts}
+              layout="grid"
+            />
 
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
               <div>
                 <label className="text-xs font-bold text-slate-700 mb-1.5 block">State</label>
                 <select value={stateFilter} onChange={e => setStateFilter(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30" disabled={isLocationActive}>
@@ -778,16 +791,6 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                 </select>
               </div>
               <div>
-                <label className="text-xs font-bold text-slate-700 mb-1.5 block">Min Rating</label>
-                <select value={minRating} onChange={e => setMinRating(Number(e.target.value))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30">
-                  <option value={0}>Any</option>
-                  <option value={4.5}>4.5+ ★</option>
-                  <option value={4.0}>4.0+ ★</option>
-                  <option value={3.5}>3.5+ ★</option>
-                  <option value={3.0}>3.0+ ★</option>
-                </select>
-              </div>
-              <div>
                 <label className="text-xs font-bold text-slate-700 mb-1.5 block">Language</label>
                 <select value={languageFilter} onChange={e => setLanguageFilter(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30">
                   <option value="all">Any</option>
@@ -801,6 +804,23 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                 </label>
               </div>
             </div>
+
+            {/* Minimum rating — single-handle range with rating presets */}
+            <RangeSlider
+              label="Minimum rating"
+              min={0}
+              max={5}
+              step={0.5}
+              value={minRating}
+              onChange={setMinRating}
+              formatValue={(v) => (v === 0 ? "Any" : `${v}+ ★`)}
+              presets={[
+                { label: "Any", value: 0 },
+                { label: "3+", value: 3 },
+                { label: "4+", value: 4 },
+                { label: "4.5+", value: 4.5 },
+              ]}
+            />
 
             {/* Toggle row — International, Accepting new, Intro video */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
@@ -892,94 +912,12 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               </div>
             </div>
 
-            <div className="flex items-center justify-between pt-2 border-t border-slate-100">
-              <button onClick={clearAll} className="text-xs text-slate-500 hover:text-slate-700 font-medium">Clear all filters</button>
-              <button onClick={() => setFiltersOpen(false)} className="px-4 py-2 bg-amber-600 text-white text-xs font-bold rounded-lg hover:bg-amber-700 transition-colors">
-                {nearbyLoading ? "Searching..." : `Show ${feed.length} result${feed.length !== 1 ? "s" : ""}`}
-              </button>
-            </div>
-          </div>
-        )}
+        </FilterPanel>
 
-        {/* Active filter chips */}
-        {activeFilterCount > 0 && !filtersOpen && (
-          <div className="flex flex-wrap items-center gap-1.5 mb-3">
-            {isLocationActive && locationSearch && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-100 text-amber-700 text-[0.65rem] font-semibold rounded-full">
-                <Icon name="map-pin" size={11} />
-                {radius > 0 ? `${radius}km from ` : "Near "}{locationSearch.locality}
-                <button onClick={() => { setLocationSearch(null); setUserLat(null); setUserLng(null); }} className="hover:text-amber-900"><Icon name="x" size={12} /></button>
-              </span>
-            )}
-            {Array.from(typeFilters).map(t => (
-              <span key={t} className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-100 text-amber-700 text-[0.65rem] font-semibold rounded-full">
-                {TYPE_FILTERS.find(f => f.key === t)?.label}
-                <button onClick={() => toggleType(t)} className="hover:text-amber-900"><Icon name="x" size={12} /></button>
-              </span>
-            ))}
-            {stateFilter !== "all" && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-100 text-blue-700 text-[0.65rem] font-semibold rounded-full">
-                {stateFilter}
-                <button onClick={() => setStateFilter("all")} className="hover:text-blue-900"><Icon name="x" size={12} /></button>
-              </span>
-            )}
-            {specialtyFilters.map(s => (
-              <span key={s} className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-100 text-emerald-700 text-[0.65rem] font-semibold rounded-full">
-                {s}
-                <button onClick={() => toggleSpecialty(s)} className="hover:text-emerald-900"><Icon name="x" size={12} /></button>
-              </span>
-            ))}
-            {feeFilter !== "all" && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-100 text-amber-700 text-[0.65rem] font-semibold rounded-full">
-                {feeFilter}
-                <button onClick={() => setFeeFilter("all")} className="hover:text-amber-900"><Icon name="x" size={12} /></button>
-              </span>
-            )}
-            {firmFilter !== "all" && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-indigo-100 text-indigo-700 text-[0.65rem] font-semibold rounded-full">
-                {firmFilter}
-                <button onClick={() => setFirmFilter("all")} className="hover:text-indigo-900"><Icon name="x" size={12} /></button>
-              </span>
-            )}
-            {minRating > 0 && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-100 text-amber-700 text-[0.65rem] font-semibold rounded-full">
-                {minRating}+ ★
-                <button onClick={() => setMinRating(0)} className="hover:text-amber-900"><Icon name="x" size={12} /></button>
-              </span>
-            )}
-            {verifiedOnly && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-100 text-slate-700 text-[0.65rem] font-semibold rounded-full">
-                Verified
-                <button onClick={() => setVerifiedOnly(false)} className="hover:text-slate-900"><Icon name="x" size={12} /></button>
-              </span>
-            )}
-            {internationalOnly && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-100 text-blue-700 text-[0.65rem] font-semibold rounded-full">
-                🌏 International clients
-                <button onClick={() => setInternationalOnly(false)} className="hover:text-blue-900"><Icon name="x" size={12} /></button>
-              </span>
-            )}
-            {languageFilter !== "all" && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-indigo-100 text-indigo-700 text-[0.65rem] font-semibold rounded-full">
-                Speaks {languageFilter}
-                <button onClick={() => setLanguageFilter("all")} className="hover:text-indigo-900"><Icon name="x" size={12} /></button>
-              </span>
-            )}
-            {acceptingOnly && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-100 text-emerald-700 text-[0.65rem] font-semibold rounded-full">
-                ✓ Accepting new
-                <button onClick={() => setAcceptingOnly(false)} className="hover:text-emerald-900"><Icon name="x" size={12} /></button>
-              </span>
-            )}
-            {videoOnly && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-indigo-100 text-indigo-700 text-[0.65rem] font-semibold rounded-full">
-                ▶ Intro video
-                <button onClick={() => setVideoOnly(false)} className="hover:text-indigo-900"><Icon name="x" size={12} /></button>
-              </span>
-            )}
-            <button onClick={clearAll} className="text-[0.62rem] text-slate-400 hover:text-slate-600 font-medium ml-1">Clear all</button>
-          </div>
-        )}
+        {/* Active filter chips — shared <FilterChips> primitive (self-hides when empty) */}
+        <div className="mb-3">
+          <FilterChips chips={activeChips} onClearAll={clearAll} />
+        </div>
 
         {/* Result count */}
         <div className="flex items-center justify-between mb-3 md:mb-4">
@@ -1205,7 +1143,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                             width={80}
                             height={80}
                             className="w-full h-full object-cover"
-                            priority={index < 3}
+                            priority={index === 0}
                             placeholder="blur"
                             blurDataURL="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxyZWN0IHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiNlMmU4ZjAiLz48L3N2Zz4="
                           />
@@ -1561,44 +1499,6 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               </Link>
             ))}
           </div>
-        </div>
-
-        {/* Saved search / alert widget */}
-        <div className="mt-6 md:mt-8 bg-gradient-to-br from-amber-50/80 via-white to-white border border-amber-100 rounded-2xl p-4 md:p-6 shadow-sm">
-          <div className="flex items-start gap-3 mb-3.5">
-            <div className="w-10 h-10 bg-amber-100 border border-amber-200 rounded-xl flex items-center justify-center shrink-0 shadow-sm shadow-amber-100">
-              <Icon name="bell" size={18} className="text-amber-600" />
-            </div>
-            <div>
-              <h3 className="text-sm font-extrabold text-slate-800">Can&apos;t find the right advisor?</h3>
-              <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">Save a search alert and we&apos;ll notify you when a new advisor matching your criteria joins.</p>
-            </div>
-          </div>
-          {alertStatus === "done" ? (
-            <div className="flex items-center gap-2 text-sm text-emerald-700 font-semibold">
-              <svg className="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
-              Alert saved — we&apos;ll email you when a match is available.
-            </div>
-          ) : (
-            <div className="flex gap-2">
-              <input
-                type="email"
-                value={alertEmail}
-                onChange={(e) => { setAlertEmail(e.target.value); setAlertError(""); }}
-                placeholder="your@email.com"
-                className="flex-1 px-3 py-2 border border-amber-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white"
-                onKeyDown={(e) => e.key === "Enter" && saveAlert()}
-              />
-              <button
-                onClick={saveAlert}
-                disabled={alertStatus === "submitting"}
-                className="px-4 py-2 bg-amber-500 text-white text-sm font-semibold rounded-lg hover:bg-amber-600 disabled:opacity-60 transition-colors whitespace-nowrap"
-              >
-                {alertStatus === "submitting" ? "Saving..." : "Set Alert"}
-              </button>
-            </div>
-          )}
-          {alertError && <p className="text-xs text-red-600 mt-1">{alertError}</p>}
         </div>
 
         <div className="mt-6 md:mt-10 relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-2xl p-5 md:p-8 text-center shadow-xl shadow-slate-900/10">

@@ -100,7 +100,14 @@ export default defineConfig({
             command: "npm run start",
             url: "http://localhost:3000",
             reuseExistingServer: false,
-            timeout: 120_000,
+            // 120s was timing out the Accessibility (axe-core) job
+            // on flaky runs ("Timed out waiting 120000ms from
+            // config.webServer"). The same .next artifact + npm
+            // run start works for E2E in the same workflow, but
+            // a11y races against runner cold-start more often.
+            // 180s gives a safer buffer; a real server crash will
+            // still surface within 3min.
+            timeout: 180_000,
           }
         : undefined,
 });

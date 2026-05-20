@@ -3,6 +3,7 @@ import { createServerClient } from "@supabase/ssr";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { formatDate } from "@/lib/utils";
 import { escapeHtml } from "@/lib/html-escape";
+import { COMPANY_LEGAL_NAME, COMPANY_ABN } from "@/lib/compliance";
 
 export const runtime = "nodejs";
 
@@ -230,6 +231,8 @@ export async function GET(
           Invest.com.au
         </div>
         <div style="font-size:12px;color:#94a3b8;margin-top:4px;">Partner Marketplace</div>
+        <div style="font-size:12px;color:#334155;margin-top:8px;">${escapeHtml(COMPANY_LEGAL_NAME)}</div>
+        <div style="font-size:12px;color:#334155;">ABN ${escapeHtml(COMPANY_ABN)}</div>
       </div>
       <div style="text-align:right;">
         <div style="font-size:24px;font-weight:700;color:#0f172a;letter-spacing:1px;">TAX INVOICE</div>

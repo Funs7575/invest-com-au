@@ -22,8 +22,7 @@ import GetMatchedEmbed from "@/components/get-matched/GetMatchedEmbed";
 import { loadInvestPageContext } from "@/lib/listing-page-context";
 import { computeMatchScore } from "@/lib/listing-match";
 import HomeToolsStrip from "@/components/HomeToolsStrip";
-import IntentCountryBadge from "@/components/foreign-investment/IntentCountryBadge";
-import IntentCountryRecommendation from "@/components/foreign-investment/IntentCountryRecommendation";
+import DirectoryBanners from "@/components/foreign-investment/DirectoryBanners";
 import ScrollReveal from "@/components/ScrollReveal";
 import Icon from "@/components/Icon";
 
@@ -217,10 +216,7 @@ export default async function InvestMarketplacePage() {
           <span className="text-slate-700">Opportunities</span>
         </nav>
 
-        <div className="mb-2">
-          <IntentCountryBadge />
-        </div>
-        <IntentCountryRecommendation surface="invest" />
+        <DirectoryBanners surface="invest" />
 
         <h1 className="text-2xl md:text-4xl font-extrabold mb-2 text-slate-900 tracking-tight">
           Australian Investment Opportunities

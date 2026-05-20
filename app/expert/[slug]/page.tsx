@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
 import { SITE_URL, absoluteUrl } from "@/lib/seo";
+import { SPONSORED_ARTICLE_DISCLOSURE } from "@/lib/compliance";
 
 export const revalidate = 3600;
 
@@ -112,6 +113,11 @@ export default async function ExpertArticlePage({ params }: Props) {
             <h1 className="text-2xl md:text-4xl font-extrabold text-slate-900 leading-tight mb-3">
               {article.title}
             </h1>
+            {(article.pricing_tier === "sponsored" || article.payment_status === "paid") && (
+              <p className="mb-3 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-[0.7rem] font-medium text-blue-900 leading-relaxed">
+                {SPONSORED_ARTICLE_DISCLOSURE}
+              </p>
+            )}
             {article.excerpt && (
               <p className="text-sm md:text-lg text-slate-500 leading-relaxed">{article.excerpt}</p>
             )}

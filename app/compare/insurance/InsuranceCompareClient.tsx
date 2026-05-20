@@ -5,6 +5,7 @@ import Link from "next/link";
 import Icon from "@/components/Icon";
 import SocialProofCounter from "@/components/SocialProofCounter";
 import AdvisorMatchCTA from "@/components/AdvisorMatchCTA";
+import ResultCount from "@/components/directory/ResultCount";
 
 /* ─── Types ─── */
 
@@ -239,9 +240,11 @@ export default function InsuranceCompareClient() {
           ))}
         </div>
 
-        <p className="text-sm text-slate-500 mb-6">
-          Showing {filtered.length} insurer{filtered.length !== 1 ? "s" : ""}
-        </p>
+        <ResultCount
+          total={filtered.length}
+          noun={filtered.length === 1 ? "insurer" : "insurers"}
+          className="mb-6"
+        />
 
         {/* ─── Card grid ─── */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

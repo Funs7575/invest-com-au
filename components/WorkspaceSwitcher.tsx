@@ -133,7 +133,6 @@ export default function WorkspaceSwitcher() {
 
       {open && (
         <div
-          role="menu"
           aria-label="Switch workspace"
           className="absolute right-0 mt-2 w-64 rounded-xl border border-slate-200 bg-white shadow-lg z-50 overflow-hidden"
         >

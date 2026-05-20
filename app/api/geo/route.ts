@@ -10,6 +10,12 @@ import { headers } from "next/headers";
  * flag indicator in the top nav. Cached aggressively at the edge
  * because the value only changes per IP, not per session.
  */
+// Edge runtime — this route only reads the `x-vercel-ip-country`
+// header and returns JSON. No Node.js APIs needed. Edge functions
+// execute in 18+ regions worldwide, giving sub-50ms TTFB globally
+// instead of paying a round-trip to the function region (dub1 today).
+export const runtime = "edge";
+
 export async function GET() {
   const hdrs = await headers();
   const country = hdrs.get("x-vercel-ip-country") ?? null;

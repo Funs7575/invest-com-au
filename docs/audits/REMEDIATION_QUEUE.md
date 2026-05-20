@@ -19,7 +19,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | C | `claude/audit-remediation/c-05-index-coverage` | #209/#302/#338/#356/#357/#358/#359/#360/#361/#362/#457/#541 | C-01..C-02 done. C-03..C-05 blocked (see Blocked). | C-05 merged |
 | D | `claude/audit-remediation/d-09-seo-drift` | #210/#303/#339/#363/#364/#365/#366/#457/#542 | D-01..D-09 done. | D-09 merged ✓ |
 | E | `claude/audit-remediation/e-02-batch-5-zod-rollout` (#469) · `e-04-batch-2-zod-backfill` (#557) · `e-04-batch-3-zod-backfill` (#558) | #211/#304/#340/#368/#379/#383/#457/#458/#459/#460/#461/#462/#463/#464/#465/#466/#467/#468/#469/#555/#556/#557/#558 | E-02 batch 1-5 all MERGED (#469 merged 2026-05-03). E-04 batch 1 done (#555/#556), batch 2 blocked, **batch 3 MERGED** (#558 per iter 279). | All E-02+E-04 batches merged |
-| F | `claude/audit-remediation/f-disc-20260519-01-duplicate-shadows` | **#925 OPEN** | F-01..F-07 done. F-08 blocked (see Blocked). F-DISC-01: **#741 MERGED 2026-05-11**. F-DISC-02..07 false-positives. F-DISC-20260519-01: **#925 OPEN** (iter 456): `requireAdmin` replaced in 7 admin routes; `escapeHtml` in cron/saved-search-alerts replaced; 21 false-positive name-collisions allowlisted. `audit:duplicate-functions` exits 0. Last CI: fixing — see commit `a5f3887` (CI-RESCUE iter 458: country-rule-alerts test 401→403 for authenticated non-admin; Lint·Type-check·Test·Build in_progress). | F-DISC-20260519-01 merged |
+| F | _complete_ | **#925 MERGED 2026-05-20** | F-01..F-07 done. F-08 blocked. F-DISC-01 #741 MERGED. F-DISC-20260519-01: **#925 MERGED by founder 2026-05-20** — `requireAdmin` consolidated, `escapeHtml` consolidated, 21 false-positives allowlisted. **Stream engineering complete.** | F-DISC-20260519-01 merged ✓ |
 | G | `claude/audit-remediation/g-04-mfa-gaps` | #213/#306/#342/#371/#385/#457/#471/#544 | G-01..G-03 done. G-04 blocked (see Blocked). | G-04 unblocked + merged |
 | H | `claude/audit-remediation/h-06-stripe-webhooks` | #214/#307/#343/#386/#457/#472/#545 | H-01..H-06 done. | H-06 merged ✓ |
 | I | `claude/audit-remediation/i-05-advisor-gaps` | #215/#308/#344/#387/#457/#473/#546 | I-01..I-05 done. | I-05 merged ✓ |
@@ -47,11 +47,12 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | WW | _complete_ | **#651 MERGED** | WW-01+WW-02 merged. WW-03/04 blocked (DD-02 dep). | All WW tasks merged ✓ |
 | Y | `claude/audit-remediation/y-03-yield-calc` | #229/#322/#402/#457/#523/#564 | Y-01..Y-03 done. | Y-03 merged ✓ |
 | Z | `claude/audit-remediation/z-04-zero-state-ux` | #230/#323/#403/#457/#524/#565 | Z-01..Z-04 done. | Z-04 merged ✓ |
-| QQ | `claude/audit-remediation/qq-05-schema` | **#800 MERGED 2026-05-14** · **#920 OPEN** | QQ-01..QQ-07 done (merged). QQ-05+QQ-06 done (`b3a1e63`): migration + `/api/answers/ask`. QQ-09 done (`27079bf`): admin moderation queue + action API. QQ-10 done (`217d7d6`): 19-test suite. QQ-08 compliance gate blocks public exposure. **Stream engineering complete pending QQ-08 compliance signoff.** Last CI: pending — pushed `217d7d6` 2026-05-19. | All QQ tasks merged |
-| MM | `claude/audit-remediation/mm-v06-wholesale-alternatives` | **#801 MERGED** · **#803 MERGED 2026-05-14** · **#921 OPEN** | MM-V01..V08 done. MM-V06 in-flight (`afd1b1e`): 4 wholesale-alt listing pages + s708 gate (PE, VC, hedge funds, litigation funding, ILS). Last CI: pending — pushed `afd1b1e` 2026-05-19. | All MM phases merged |
+| QQ | _complete_ | **#800 MERGED 2026-05-14** · **#920 MERGED 2026-05-20** | QQ-01..QQ-10 done. **Stream complete — #920 merged by founder 2026-05-20.** QQ-08 compliance: public exposure pending human review. | All QQ tasks merged ✓ |
+| MM | _complete_ | **#801 MERGED** · **#803 MERGED 2026-05-14** · **#921 MERGED 2026-05-20** | MM-V01..V08 done. **Stream complete — #921 merged by founder 2026-05-20.** | All MM phases merged ✓ |
 | TT | _complete_ | **#764 MERGED** · **#772 MERGED** · **#779 MERGED** · **#799 MERGED 2026-05-12** | TT-01..TT-04 all done. GA4 removed; Plausible sole analytics. **Stream complete.** | TT-04 merged ✓ |
 | CMP | `claude/audit-remediation/cmp-w1a-int-calculator-autosave` | **#782 CLOSED 2026-05-14 (not merged)** | CMP-W1A-INT: #782 was closed without merging by founder 2026-05-14. Work may need re-examination or re-opening on a fresh branch. | All CMP tasks merged |
-| SP | (none yet) | (none yet) | **BLOCKED — waiting on MM-V09 completion.** | All SP tasks merged + compliance signoff |
+| SP | `claude/audit-remediation/sp-01-capability-audit` (#1048) | **#1048 OPEN** | MM blocker resolved (MM complete — #921 merged 2026-05-20). SP-01 done (iter 484): advisor-portal reuse map. SP-02 done (iter 488): 8-table schema migration + types + RLS tests (`a2839db5`). SP-03 done (iter 489): require-startup-session.ts + AccountKind "startup" + portalForKind + proxy noindex (`a0cc461e`). SP-04 done (iter 489 batch): /startup-signup page + API + 9 tests (`94e64fc2`). SP-05 done (iter 490): /startup-portal layout + dashboard + round/investors/profile sub-routes (`7b6c014e`). SP-06 done (iter 491): round instrument form + API + per-instrument validation (`d04edfd1`). SP-07..SP-13 pending. | All SP tasks merged + compliance signoff |
+| CO | `claude/audit-remediation/co-cutover-prep` | **#1046 OPEN** | CO-01 blocked (legacy redirect map — needs prior-host URL list from founder). CO-02 blocked (GSC/GA4 — needs external credentials). CO-03 done (iter 485+486): sitemap finalisation — `/press` + `/about/careers` + `/wealth-stack` + `/startup/grants` + `/lic-screener` + `/tools/subscription-audit`; dynamic `/afsl/[number]` + `/find/[advisor-type]/[city]` sections. CO-04 blocked (DNS — registrar access). CO-05 done (iter 487): `e2e/pre-launch-qa.spec.ts` — 30 Playwright tests (critical pages, redirect coverage, sitemap/robots.txt, security headers, founder PII gate, canonical URL check). CO-06 done (iter 482): apex domain cutover runbook `docs/runbooks/cutover.md`. CO-07 done (iter 483): final anonymity audit `docs/audits/co-07-final-anonymity-audit.md` — CL-09 PASSED (2,329 files clean). | All CO tasks done + compliance signoff |
 | MAIN-RESCUE | _complete_ | **#793 MERGED** | next 16.2.4→16.2.6 patch merged. Non-loop auto-revert PRs for failed main commits: **#827 OPEN** (reverts `d26094aa`) · **#843 OPEN** (reverts `ff43ed6f`). These are founder-action items — loop will not create duplicate fixes. | Merged to main ✓ |
 | CL | `claude/audit-remediation/cl-01-about-entity-only` | **#795 MERGED 2026-05-14** | CL-01..CL-04, CL-06, CL-09, CL-10 done. CL-07+CL-08 false-positive. CL-05 blocked (WHOIS registrar action — see Blocked). | All CL tasks merged (CL-05 blocked) |
 | LL | `claude/audit-remediation/ll-04-reviews-ratings` | **#807 MERGED 2026-05-14** · **#845 MERGED 2026-05-17** | LL-01..LL-04 done. LL-05 blocked (live chat AI routing — deps V-NEW-02 + CC-06). **Stream stalled at LL-05 (blocked).** | All LL tasks merged (LL-05 blocked) |
@@ -59,23 +60,31 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | EM | _complete_ | **#848 MERGED 2026-05-17** · **#880 MERGED 2026-05-18** | EM-03 + EM-01 done. EM-02 (`16add6f`): hub_drip_log migration + hub-subscriber-drip cron. **Stream complete. #880 merged by founder 2026-05-18.** | All EM tasks merged ✓ |
 | LX | _complete_ | **#849 MERGED 2026-05-15** · **#879 MERGED 2026-05-18** | LX-01, LX-02, LX-03, LX-04, LX-05 done. **Stream complete. #879 merged by founder 2026-05-18.** | All LX tasks merged ✓ |
 | OB | _complete_ | **#852 MERGED 2026-05-17** · **#878 MERGED 2026-05-18** | OB-01..OB-12 done. **Stream complete. #878 merged by founder 2026-05-18.** | All OB tasks merged ✓ |
-| GT | `claude/audit-remediation/gt-02-annual-check` | **#881 OPEN** | GT-01 blocked (needs DV-01). GT-02 done (`a4c5352`). CI rescue iter 450: merge main (picks up `66609e7` afsl_register driftallowlist). Commit `172b84b`. Last CI: pending — pushed `172b84b` 2026-05-19. ⚠️ Recurring drift — founder should merge #881 to stop cycle. | All GT tasks merged |
-| DF | `claude/audit-remediation/df-01-decision-frameworks` | **#883 OPEN** · ~~#884 CLOSED (dup)~~ | DF-01..04 done. CI rescue iter 450: merge main (picks up `66609e7` afsl_register driftallowlist). Commit `3a55352`. Last CI: pending — pushed `3a55352` 2026-05-19. ⚠️ Recurring drift — founder should merge #883 to stop cycle. | All DF tasks merged |
+| GT | `claude/audit-remediation/gt-01-goal-tracking-complete` | **#881 MERGED 2026-05-20** · **#1044 OPEN** | GT-01 done (iter 479): fire/debt_free goal types + vault cross-link + RLS isolation test (9 cases) + API test suite (22 cases). GT-02 done. | GT-01 merged ✓ |
+| DF | _complete_ | **#883 MERGED 2026-05-20** · ~~#884 CLOSED (dup)~~ | DF-01..04 done. **Stream complete — #883 merged by founder 2026-05-20.** | All DF tasks merged ✓ |
 | QA | _complete_ | **#890 MERGED 2026-05-18** | QA-01..QA-02 done. **Stream complete. #890 merged by founder 2026-05-18.** | All QA tasks merged ✓ |
 | Z-23+BB-08 | _complete_ | **#895 MERGED 2026-05-18** | Z-23 + BB-08 done. All CI green. **Stream complete. #895 merged by founder 2026-05-18.** | #895 merged ✓ |
 | SM | _complete_ | **#904 MERGED 2026-05-18** | SM-01+SM-02 done. **Stream complete. #904 merged by founder 2026-05-18.** | All SM tasks merged ✓ |
 | MK | _complete_ | **#903 MERGED 2026-05-18** | MK-01+MK-02 done. **Stream complete. #903 merged by founder 2026-05-18.** | All MK tasks merged ✓ |
 | CD | _complete_ | **#900 CLOSED 2026-05-18** (dup) · **#902 MERGED 2026-05-18** | CD-01 (public calendar + account calendar), CD-02 (currency converter), CD-03 (pricing transparency) all done. #900 closed as duplicate (content covered by #902). **Stream complete. #902 merged by founder 2026-05-18.** | All CD tasks merged ✓ |
 | CM | _complete_ | **#905 MERGED 2026-05-18** | CM-01 done. a11y fix (`a2f98e6`) now on main via this merge. **Stream complete. #905 merged by founder 2026-05-18.** | All CM tasks merged ✓ |
-| AT | `claude/audit-remediation/at-02-couple-family-business` | **#907 MERGED 2026-05-18** · **#917 OPEN** | AT-01 done (`a2553d7`, #907). AT-02..04 done (`f34e7fe`): couple/family/business account-type hub sections on dashboard — `ACCOUNT_TYPE_HUBS` map + conditional section renders between "Recommended" and advisor cards. **Stream complete pending #917 merge.** | AT-01..04 done |
-| Z-22+BB-07 | `claude/audit-remediation/z-22-bb07-redundancy-hub` | **#922 OPEN** | Z-22 done (`63875c8`): `/redundancy` hub (HubPage HOC, 6 service cards, 6 FAQs, ETP stats). BB-07 done: `/tools/etp-calculator` (FY2025-26 maths, tax-free threshold, 17%/32% ETP rates, marginal rate comparison). Lead magnet + ToolsClient entry + sitemap updated. Last CI: pending — pushed `63875c8` 2026-05-19. | Z-22+BB-07 merged |
-| BB-01 | `claude/audit-remediation/bb-01-borrowing-power` | **#923 OPEN** | BB-01 done (`a861dc3`): `/tools/borrowing-power-calculator` — multi-lender borrowing power calc (FY2025-26 tax, HEM, 3 APRA lender scenarios, LVR/LMI flags). ToolsClient entry + sitemap updated. Last CI: pending — pushed `a861dc3` 2026-05-19. | BB-01 merged |
-| BB-06 | `claude/audit-remediation/bb-06-mortgage-stress-test` | **#924 OPEN** | BB-06 done (`648d024`): `/tools/mortgage-stress-test` — 9 rate-rise scenarios (+0..+5%), housing-stress thresholds (30%/40% gross), APRA +3% buffer callout, binary-search breakeven rate, FY2025-26 tax. ToolsClient entry + sitemap updated. Last CI: pending — pushed `648d024` 2026-05-19. | BB-06 merged |
-| AA | `claude/audit-remediation/aa-02-03-programmatic-grants` | **#928 OPEN** | AA-01 false-positive (pre-existing). AA-02+AA-03 done (`bc4909c` iter 459): 10 `/grants/[industry]` pages + 11 `/grants/[state]/[program]` pages + sitemap. Last CI: pending — pushed `bc4909c` 2026-05-19. | AA-02+AA-03 merged |
-| Z-26 | `claude/audit-remediation/z-26-super-hub` | **#929 OPEN** | Z-26 done (`225e8be` iter 460): `/super` hub migration to HubPage HOC; `lib/hub-configs/super.ts` (3 hero stats, 6 service cards, 4 deep-dives, 5 FAQs); sub-hub link grid, articles strip, ForeignInvestorCallout, newsletter/lead-magnet/exit-intent wired. CI-rescue (`a0bd594`): `app/super/page.tsx` allowlisted in AFSL compliance test (HubPage renders compliance from `complianceKey`). Last CI: fixing — pushed `a0bd594` 2026-05-19. | Z-26 merged |
-| Z-25 | `claude/audit-remediation/z-25-insurance-hub` | **#930 OPEN** | Z-25 done (`dbd76c0` iter 461): `/insurance` hub migration to HubPage HOC; `lib/hub-configs/insurance.ts` (3 hero stats, 6 service cards, 4 deep-dives, 6 FAQs, `complianceKey: "general_advice"`); KEY_CONCEPTS glossary + SITUATION_GUIDE table + inside-vs-outside-super panel preserved as children. CI-rescue (`4abe14e`): `routesTo: "insurance"` → `"general"` in quiz config (invalid `LeadQueueKey`). Last CI: fixing — pushed `4abe14e` 2026-05-19. | Z-25 merged |
-| AA-04+BB-09 | `claude/audit-remediation/aa-04-bb09-etf-ticker-screener` | **#931 OPEN** | AA-04+BB-09 done (`bad0ae4` iter 462): 25 ETF ticker pages at `/etfs/[ticker]` (ISR 3600, generateStaticParams, FinancialProduct JSON-LD, fee impact table); ETF screener at `/etfs/screener` (client filters: asset class, provider, MER slider, franking-only; sortable table); `lib/etf-data.ts` shared data feed (VAS/A200/STW/IOZ/IVV/NDQ/VTS/VGS/IWLD/VGAD/VHY/HVST/VAF/IAF/FEMX/HACK/ETHI/MVW/VEU/VISM/QUS/BOND/CRED/ZYAU + 1); +16 sitemap entries. GENERAL_ADVICE_WARNING on all new pages. Last CI: pending — pushed `bad0ae4` 2026-05-19. | AA-04+BB-09 merged |
-| DD | `claude/audit-remediation/dd-01-tiered-listings` | **#926 OPEN** | DD-01 done (`137680e`): `advisor_tier` added to `Professional` type; Pro badge + violet card border on `/advisors`; `advisor_tier` select + Pro badge on `/find/[advisor-type]/[city]`. Sort: Featured→Pro→Free. No schema migration. Last CI: pending — pushed `137680e` 2026-05-19. | DD-01 merged |
+| AT | _complete_ | **#907 MERGED 2026-05-18** · **#917 MERGED 2026-05-20** | AT-01..04 done. **Stream complete — #917 merged by founder 2026-05-20.** | AT-01..04 done ✓ |
+| Z-22+BB-07 | _complete_ | **#922 MERGED 2026-05-20** | Z-22 + BB-07 done. **Stream complete — #922 merged by founder 2026-05-20.** | Z-22+BB-07 merged ✓ |
+| BB-01 | _complete_ | **#923 MERGED 2026-05-20** | BB-01 done. **Stream complete — #923 merged by founder 2026-05-20.** | BB-01 merged ✓ |
+| BB-06 | _complete_ | **#924 MERGED 2026-05-20** | BB-06 done. **Stream complete — #924 merged by founder 2026-05-20.** | BB-06 merged ✓ |
+| BB-05 | `claude/audit-remediation/bb-05-subscription-audit` | **#1038 OPEN** | BB-04 blocked (CDR accreditation + Basiq/Frollo API credentials + CPS230 review — see Blocked). BB-05 done (iter 474): `/tools/subscription-audit` — manual subscription audit tool, 18 presets, category breakdown, savings analysis. CI rescue iter 477: ComplianceFooter variant fix (`e824fee`). | BB-05 merged ✓ |
+| AA | `claude/audit-remediation/aa-05-suburb-property-investing` | **#928 MERGED 2026-05-20** · **#931 MERGED** · **#1020 OPEN** · **#1031 OPEN** · **#1037 OPEN** | AA-01 false-positive. AA-02+AA-03 done (#928). AA-04+BB-09 done (#931). AA-05 done (iter 473): `/[suburb]/property-investing` dynamic route + sitemap. AA-06 done (#1031). AA-07 done (#1020). **Stream complete.** CI rescue iter 476: faqJsonLd q/a key fix (`ad7017e`). | AA-05 merged ✓ |
+| Z-26 | _complete_ | **#929 MERGED 2026-05-20** | Z-26 done. **Stream complete — #929 merged by founder 2026-05-20.** | Z-26 merged ✓ |
+| Z-25 | _complete_ | **#930 MERGED 2026-05-20** | Z-25 done. **Stream complete — #930 merged by founder 2026-05-20.** | Z-25 merged ✓ |
+| AA-04+BB-09 | _complete_ | **#931 MERGED 2026-05-20** | AA-04+BB-09 done. **Stream segment merged — #931 merged by founder 2026-05-20.** | AA-04+BB-09 merged ✓ |
+| DD | `claude/audit-remediation/dd-04-auction-close` | **#1033 OPEN** · **#1034 OPEN** · **#1036 OPEN** | DD-01 done (#926 merged). DD-02 done (iter 470). DD-03 done (iter 471). DD-04 done (iter 472): auction-close cron (every-30m dispatch group), lead-to-auction hot-lead trigger in submit-lead. CI: queued — pushed `bf57b68` 2026-05-20. **Stream complete.** | DD-04 merged ✓ |
+| Z-24 | `claude/audit-remediation/z-24-inheritance-hub` | **#995 OPEN** | Z-24 done (iter 464): `/inheritance` top-level hub; `lib/hub-configs/inheritance.ts` (3 hero stats, 6 service cards, 4 deep-dives, 6 FAQs, `complianceKey: "general_advice"`); lead magnet + sitemap. CI rescue iter 467: merged main (`98f6433`) — Supabase types drift fixed. | Z-24 merged |
+| BB-02+BB-03 | `claude/audit-remediation/bb-02-03-salary-sacrifice-cgt` | **#1015 OPEN** | BB-02 done (iter 465): `/tools/salary-sacrifice-optimiser` — quantitative salary-sacrifice calculator (FY2025-26 tax, concessional cap enforcement, Division 293 detection, take-home before/after table). BB-03 done: `/tools/cgt-calculator` — purchase→sale CGT calc (50% discount, asset types, side-by-side discount impact). Sitemap +2. CI rescue iter 467: faqJsonLd null-access fix (`3f68cb9`). | BB-02+BB-03 merged |
+| AA-07 | `claude/audit-remediation/aa-07-just-event-pages` | **#1020 OPEN** | AA-07 done (iter 466): `/just/[event]` moment-of-money pages — 8 life-event checklists (retired, inherited, made-redundant, got-married, had-a-baby, bought-a-house, sold-a-business, started-investing); `/just` index hub. Dynamic route with `generateStaticParams`, `GENERAL_ADVICE_WARNING`, advisor CTA, cross-event nav strip. Sitemap +9. CI: queued — pushed 2026-05-20. | AA-07 merged |
+| AA-06 | `claude/audit-remediation/aa-06-investing-for-occupation` | **#1031 OPEN** | AA-06 done (iter 468): `/investing-for/[occupation]` — 26 occupation-specific investing guides + `/investing-for` index hub. Income type + super type badges, 3 highlights, 4 hub links, 3 FAQs, advisor CTA, cross-occupation nav, `GENERAL_ADVICE_WARNING`. `generateStaticParams` ISR, `revalidate = 3600`. Sitemap +27. CI: queued — pushed `617fd94a` 2026-05-20. | AA-06 merged |
+| Z-27 | `claude/audit-remediation/z-27-tax-return-hub` | **#1032 OPEN** | Z-27 done (iter 469): `/tax-return` top-level hub (HubPage HOC). `lib/hub-configs/tax-return.ts`: 3 hero stats ($2,817 avg refund, 67¢/hr WFH rate, 31 Oct deadline), 6 service cards, 4 deep-dives, withholding-tax calculator, 6 FAQs, lead queue `general/tax`. Page: FY2025-26 key-dates callout (amber), investor-type quick-access grid. Sitemap +1 (priority 0.82, weekly). CI: queued — pushed `00cb2265` 2026-05-20. | Z-27 merged |
+| BB-10 | `claude/audit-remediation/bb-10-lic-screener` | **#1039 OPEN** | BB-10 done (iter 475): `/lic-screener` — Listed Investment Company screener. `lib/lic-data.ts` (15 LICs, `ntaPremiumDiscount()` helper). LicScreenerClient: filterable/sortable table (focus, franking, mgmt cost, NTA discount toggle), row-click detail panel, hero stat boxes. page.tsx: metadata, calculatorJsonLd, faqJsonLd (4 Q&As), breadcrumb, ComplianceFooter. Sitemap +1. CI rescue iter 478: ComplianceFooter variant + JSX close tag fix (`7f9427d`). CI rescue iter 481: Supabase types drift — cherry-pick user_documents types fix (`b1d07a1`). | BB-10 merged ✓ |
+| DV | `claude/audit-remediation/dv-01-document-vault` | **#1040 OPEN** | DV-01 done (iter 476): document vault — `user_documents` table (owner-only RLS: SELECT/INSERT/DELETE authenticated; service_role allow; deny anon) + V-NEW-04 isolation test (8 cases, `// rls-isolation: user_documents` marker). `GET /api/account/documents` (list + 10-min signed URLs), `POST /api/account/documents/upload` (multipart, rate-limited 20/hr, ≤20 MB, PDF/JPG/PNG/WebP; path `{uid}/{docId}/{filename}`; storage cleanup on DB failure), `DELETE /api/account/documents/[id]` (storage + DB, RLS-protected fetch prevents cross-user delete). `app/account/vault/` RSC + VaultClient (upload modal with type selector, doc list with download/delete, empty state, encryption notice). Dashboard NavCard (🗂️). CI rescue iter 480: `user_documents` added to `lib/database.types.ts` (`8482b33`). | DV-01 merged ✓ |
 
 ---
 
@@ -122,6 +131,36 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 
 ---
 
+### CO-01 — Legacy redirect map (prior-host URL list needed)
+
+Creating the 301 redirect map from the old `invest.com.au` host requires knowing the URL structure of the prior site (e.g., WordPress year/month/slug blog patterns, category pages, service pages). The loop has no access to the prior host's URL inventory.
+
+**What's needed:**
+1. Export or screenshot of the prior host's URL structure / sitemap (e.g., from Screaming Frog crawl of the old site, or a WordPress export, or GSC coverage report).
+2. For each significant URL: map it to the new equivalent route (or `/` if no equivalent).
+3. Add entries to `next.config.ts` `redirects()` array.
+
+**Options:**
+- (a) Founder provides the old site's URL list → loop adds entries to `next.config.ts`
+- (b) Founder adds redirects manually to `next.config.ts` following the existing pattern
+- (c) If the prior host has a sitemap at `https://invest.com.au/sitemap.xml` right now (pre-cutover), crawl it before DNS cutover and use it as the source
+
+**Current state:** `next.config.ts` already has 49 redirect entries for internal URL reshaping (plurality, IA changes). Legacy-host redirects are the missing piece.
+
+### CO-02 — GSC/GA4 verification (external credentials required)
+
+Setting up `invest.com.au` as a verified property in Google Search Console and Google Analytics 4 requires logging into those external services. The loop cannot access Google credentials.
+
+**What's needed:**
+1. GSC: Add `invest.com.au` as a new property (Domain type). Verify via DNS TXT record (`google-site-verification=…`). Export the TXT record to add to the registrar.
+2. GA4: Create an `invest.com.au` data stream if one doesn't exist. Note the Measurement ID to confirm it matches `NEXT_PUBLIC_GA_ID` / `NEXT_PUBLIC_GA_MEASUREMENT_ID` in Vercel production env.
+
+### CO-04 — DNS TTL reduction and registrar checklist (registrar access required)
+
+Reducing TTL and performing the DNS cutover requires logging into the domain registrar for `invest.com.au`. The loop cannot access registrar credentials.
+
+**What's needed:** Follow the step-by-step DNS procedure in `docs/runbooks/cutover.md` (added by CO-06, iter 481). Specifically: T−7 days TTL → 300s, T−1h TTL → 60s, T=0 record swap.
+
 ---
 
 ## Resolved as false positives
@@ -135,6 +174,465 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 491 — 2026-05-20 — SP-06 — round instrument modelling + /round/new form
+
+- **Stream:** SP (startup portal)
+- **Phase:** 5 — implementation (Tier B — portal UI + API)
+- **Branch:** `claude/audit-remediation/sp-01-capability-audit`
+- **PR:** #1048 OPEN
+- **Commit:** `d04edfd1` — feat(sp): SP-06 — round instrument modelling + /startup-portal/round/new form
+- **Diff:** +480 LOC (`app/startup-portal/round/new/page.tsx` +369, `app/api/startups/round/route.ts` +111)
+- **Items done:** SP-06 (round instrument modelling)
+- **Key deliverables:**
+  - 3-step round creation form: instrument selection → instrument-specific terms → common fields
+  - 4 instrument types: SAFE (valuation cap + discount), SAFE-T (same + target close), convertible note (interest + maturity + optional cap/discount), priced equity (pre-money valuation)
+  - API: Zod base schema + per-instrument validation overlay; 401/403/404/409 guards; one-open-round-per-startup enforced; admin client for insert (owner policy on startup_rounds)
+- **Items pending:** SP-07..SP-13 (data room, wholesale cert, ESIC verification, investor-facing public listing, admin review, Playwright E2E)
+- **STATUS: PROGRESS · stream=SP · item=SP-06 · pr=#1048**
+
+### iter 490 — 2026-05-20 — SP-05 — /startup-portal dashboard + sub-routes
+
+- **Stream:** SP (startup portal)
+- **Phase:** 5 — implementation (Tier B — portal UI routes)
+- **Branch:** `claude/audit-remediation/sp-01-capability-audit`
+- **PR:** #1048 OPEN
+- **Commit:** `7b6c014e` — feat(sp): SP-05 — /startup-portal dashboard + round/investors/profile sub-routes
+- **Diff:** +486 LOC (5 new files)
+- **Items done:** SP-05 (startup portal dashboard shell)
+- **Routes created:**
+  - `layout.tsx`: `enforcePortalKind("startup")` gate — parallels advisor-portal layout
+  - `page.tsx`: dashboard — stat cards (round progress, inquiry count, ESIC badge), round list, inquiry preview, empty CTA
+  - `round/page.tsx`: round list with status/instrument/target/raised; link to open new round
+  - `investors/page.tsx`: inquiry pipeline with status badges + data-room access timestamp; queries via `startup_rounds!inner` join (inquiries link via round_id, not startup_id)
+  - `profile/page.tsx`: read-only company profile detail view
+- **Data access pattern:** all pages use `createClient()` (server.ts — RLS-scoped to auth.uid()); no admin client needed for owner-scoped reads
+- **Items pending:** SP-06..SP-13 (round instrument forms, data room, wholesale cert, admin flows, tests)
+- **STATUS: PROGRESS · stream=SP · item=SP-05 · pr=#1048**
+
+### iter 489 (batch item 2) — 2026-05-20 — SP-04 — /startup-signup + API handler
+
+- **Stream:** SP (startup portal)
+- **Phase:** 5 — implementation (Tier C — new auth-adjacent signup route)
+- **Branch:** `claude/audit-remediation/sp-01-capability-audit`
+- **PR:** #1048 OPEN
+- **Commit:** `94e64fc2` — feat(sp): SP-04 — /startup-signup onboarding route + API handler
+- **Diff:** +665 LOC (`app/startup-signup/page.tsx` +385, `app/api/startups/signup/route.ts` +140, `__tests__/api/startup-signup.test.ts` +140)
+- **Items done:** SP-04 (/startup-signup onboarding)
+- **Key deliverables:**
+  - `app/startup-signup/page.tsx`: 3-step multi-step form — credentials → company basics + stage + sector → LinkedIn/ESIC self-attestation + terms
+  - `app/api/startups/signup/route.ts`: Zod-validated POST, rate-limited 3/60s, creates auth user + `startup_profiles` row in draft status, rollback on DB failure
+  - 9 API test cases (success, rate-limit, 5 validation errors, duplicate 409, rollback on insert failure)
+- **Admin flow:** founder submits → `startup_profiles.status = 'draft'` → admin promotes `draft → active` via admin UI (SP-12 scope)
+- **Items pending:** SP-05..SP-13
+- **STATUS: PROGRESS · stream=SP · item=SP-04 · pr=#1048**
+
+### iter 489 — 2026-05-20 — SP-03 — auth surface: require-startup-session.ts + account kind + proxy
+
+- **Stream:** SP (startup portal)
+- **Phase:** 5 — implementation (Tier C — new auth primitive, proxy change)
+- **Branch:** `claude/audit-remediation/sp-01-capability-audit`
+- **PR:** #1048 OPEN
+- **Commit:** `a0cc461e` — feat(sp): SP-03 — require-startup-session.ts + account kind + proxy noindex
+- **Diff:** +215 LOC (`lib/require-startup-session.ts` new, `lib/account-types.ts` +2, `lib/account-kinds.ts` +2, `lib/portal-gate.ts` +1, `proxy.ts` +2, `lib/database.types.ts` +3, `supabase/migrations/20260520_sp03_startup_sessions_token.sql` new, `__tests__/lib/require-startup-session.test.ts` new)
+- **Items done:** SP-03 (auth surface)
+- **Key deliverables:**
+  - `lib/require-startup-session.ts`: JWT path via `startup_profiles.owner_user_id` + cookie fallback via `startup_sessions.session_token`. Uses `createAdminClient()` (deny-all-anon table — CLAUDE.md allowed scope)
+  - `lib/account-types.ts`: "startup" added to `AccountKind` union + `ACTIVE_ACCOUNT_KINDS`
+  - `lib/account-kinds.ts`: `KNOWN_WORKSPACE_KINDS` + `portalForKind` now handle "startup" → "/startup-portal"
+  - `lib/portal-gate.ts`: `currentPortalPath("startup")` → "/startup-portal" (exhaustive switch)
+  - `proxy.ts`: `/startup-portal` + `/startup-signup` added to noindex block
+  - Forward migration: `startup_sessions.session_token text UNIQUE` (missing from SP-02)
+- **Tests:** 9 cases in `__tests__/lib/require-startup-session.test.ts` (JWT path, cookie path, expired cookie, unknown token, service-role justification)
+- **Items pending:** SP-04..SP-13 (signup route, dashboard, round management, data room, etc.)
+- **STATUS: PROGRESS · stream=SP · item=SP-03 · pr=#1048**
+
+### iter 488 — 2026-05-20 — SP-02 — startup portal schema migration
+
+- **Stream:** SP (startup portal)
+- **Phase:** 5 — implementation (Tier C — new schema migration with RLS)
+- **Branch:** `claude/audit-remediation/sp-01-capability-audit`
+- **PR:** #1048 OPEN
+- **Commit:** `a2839db5` — feat(sp): SP-02 — startup portal schema (8 tables + account_kind_membership startup arm)
+- **Diff:** +899 LOC (`supabase/migrations/20260520_sp02_startup_portal_schema.sql`, `lib/database.types.ts` +306, `__tests__/lib/startup_portal.rls.test.ts` +253)
+- **Items done:** SP-02 (schema migration — 8 new tables + RLS + account_kind_membership VIEW update)
+- **Tables created:** startup_profiles (anon read active; owner r/w), startup_rounds (anon read open/committed/closed; owner full), startup_investor_inquiries (investor owns own; startup owner reads theirs), startup_data_room_files (deny anon; owner manages; investor via service-role), startup_data_room_access (investor reads own non-revoked grants; owner manages), wholesale_investor_certifications (user owns own; service_role full), startup_sessions (deny-all anon — service-role only, mirrors advisor_sessions), esic_verifications (owner reads own; service_role full)
+- **View update:** `account_kind_membership` gained `startup_profiles` arm so `getKindsForUser()` returns `kind='startup'` for startup founders — required for `enforcePortalKind("startup")` in SP-03 layout to work without redirecting all founders to the chooser
+- **Prior policies:** none (all tables are new)
+- **Idempotency:** `IF NOT EXISTS` on all DDL; `DROP POLICY IF EXISTS` before each `CREATE POLICY`
+- **Items pending:** SP-03..SP-13 (auth surface, portal routes, admin flows, tests)
+- **STATUS: PROGRESS · stream=SP · item=SP-02 · pr=#1049**
+
+### iter 487 — 2026-05-20 — CO-05 — pre-launch QA automation suite
+
+- **Stream:** CO (cutover preparation)
+- **Phase:** 5 — implementation (Tier A — tests)
+- **Branch:** `claude/audit-remediation/co-cutover-prep`
+- **PR:** #1046 OPEN
+- **Commit:** `9fcfef0` — test(co): CO-05 pre-launch QA automation suite (Playwright)
+- **Diff:** +200 LOC (`e2e/pre-launch-qa.spec.ts`)
+- **Items done:** CO-05 (pre-launch QA E2E — 30 Playwright tests)
+- **Test coverage:**
+  - 15 critical public pages return 2xx (/, /compare, /get-matched, /advisors, /invest, /super, /savings, /etfs, /articles, /about, /privacy, /terms, /how-we-earn, /sitemap.xml, /robots.txt)
+  - 15 redirect pairs from next.config.ts verified end-to-end (brokers→compare, quiz→get-matched, learn→articles, invest/forex→cfd, invest/managed-funds→invest/funds, grants→startup/grants, quotes/post→briefs/new, etc.)
+  - sitemap.xml: valid XML, contains `invest.com.au` canonical domain, `/compare` present
+  - robots.txt: references canonical sitemap URL, /account blocked
+  - Security headers: HSTS (includeSubDomains), X-Content-Type-Options: nosniff, Referrer-Policy
+  - Founder PII (finn@invest.com.au, finnduns@gmail.com, Finn Webster) absent from 4 top-indexed pages
+  - Key flows: homepage nav+main, /compare table/grid, /get-matched quiz step, /advisors list
+  - 404 handling: unknown path returns 404 not 500
+  - Canonical base URL: sitemap must not contain Vercel alias (invest-com-au.vercel.app)
+- **Usage:** `E2E_BASE_URL=https://invest-com-au.vercel.app E2E_SKIP_WEBSERVER=1 npx playwright test e2e/pre-launch-qa.spec.ts` (pre-cutover) / same with `https://invest.com.au` (post-cutover)
+- **Items pending:** CO-01, CO-02, CO-04 remain blocked (registrar/GSC credentials). CO stream is otherwise complete.
+- **STATUS: PROGRESS · stream=CO · item=CO-05 · pr=#1046**
+
+### iter 486 — 2026-05-20 — CO-03 supplement — sitemap gap-fill + /find city surface
+
+- **Stream:** CO (cutover preparation)
+- **Phase:** 5 — implementation (Tier A — sitemap supplement)
+- **Branch:** `claude/audit-remediation/co-cutover-prep`
+- **PR:** #1046 OPEN
+- **Commit:** `0c439b7` — feat(co): CO-03 sitemap finalisation — add missing pages + /find city surface
+- **Diff:** +29 LOC / -1 LOC (`app/sitemap.ts`)
+- **Items done:** CO-03 supplemental — filled gaps missed in iter 485
+- **Gap 1:** `/wealth-stack`, `/startup/grants`, `/lic-screener`, `/tools/subscription-audit` — added to both `staticPages` array and `medPriority` set (priority 0.7). All are public, non-noindex pages on main (or in-flight PRs merging before launch).
+- **Gap 2:** `/find/[advisor-type]/[city]` programmatic pages — entire surface was absent from sitemap despite being one of the larger long-tail SEO surfaces. Added DB query (same as `generateStaticParams` in `app/find/[advisor-type]/[city]/page.tsx`), dedup by type×city slug, capped at 2000 entries, priority 0.65, `changeFrequency: "weekly"`. Spread as `...findAdvisorCityPages` in the return array (after `...advisorPages`).
+- **Rebase:** resolved conflict with iter 485's AFSL section — kept both `...findAdvisorCityPages` and `...afslPages` in return array.
+- **Items pending:** CO-05 (pre-launch QA E2E). CO-01, CO-02, CO-04 remain blocked.
+- **STATUS: PROGRESS · stream=CO · item=CO-03-supplement · pr=#1046**
+
+### iter 485 — 2026-05-20 — CO-03 — sitemap finalisation
+
+- **Stream:** CO (cutover preparation)
+- **Phase:** 5 — implementation (Tier A — code/sitemap)
+- **Branch:** `claude/audit-remediation/co-cutover-prep`
+- **PR:** #1046 OPEN (same PR as CO-06 + CO-07)
+- **Commit:** `09f538d` — feat(co): CO-03 — sitemap finalisation
+- **Diff:** +22 LOC / -1 LOC (`app/sitemap.ts`)
+- **Items done:** CO-03 (sitemap finalisation — 2 missing static pages + dynamic AFSL section)
+- **Missing pages found:** `/press` (press & media, canonical set, public) + `/about/careers` (careers page, indexed). Both were absent from `staticPages` array despite being public pages with proper metadata.
+- **New dynamic section:** `/afsl/[number]` pages — query against `afsl_register` table, filtered to `status IN ('current','suspended')`, `priority: 0.5`, `changeFrequency: 'monthly'`. Currently emits 0 entries (table unpopulated pre-launch); becomes live automatically after admin CSV upload.
+- **Items pending:** CO-05 (pre-launch QA E2E). CO-01, CO-02, CO-04 remain blocked (registrar/GSC credentials).
+- **STATUS: PROGRESS · stream=CO · item=CO-03 · pr=#1046**
+
+### iter 484 — 2026-05-20 — SP-01 — capability audit (advisor-portal reuse map)
+
+- **Stream:** SP (startup portal — Tier B: docs/audit)
+- **Phase:** 5 — implementation
+- **Branch:** `claude/audit-remediation/sp-01-capability-audit`
+- **PR:** #1048 OPEN
+- **Commit:** `1814e5d` — docs(sp): SP-01 capability audit — advisor-portal reuse map for startup portal
+- **Diff:** +282 LOC (docs/audits/sp-01-capability-audit.md)
+- **Items done:** SP-01 (capability audit — docs/audits/sp-01-capability-audit.md)
+- **Blocker resolved:** MM complete (#921 merged 2026-05-20); MM-V09 was never created (MM closed after V08).
+- **Implementation:** 9-section capability audit covering: (1) `require-advisor-session.ts` → `require-startup-session.ts` copy-with-substitutions (table/cookie/return-type swaps, service-role justification), (2) `lib/portal-gate.ts` + `lib/account-kinds.ts` 4-line additive change to add `"startup"` kind, (3) layout.tsx verbatim copy (3 substitutions), (4) types.ts structural template (Startup/Round/Inquiry/DataRoomFile types), (5) API route patterns, (6) proxy.ts 2-line noindex addition, (7) genuinely-new list (no advisor equivalent), (8) shared utilities, (9) implementation order + LOC estimates. Critical: `account_kind_membership` VIEW must gain `startup_profiles` arm in SP-02 or `enforcePortalKind("startup")` will redirect all founders.
+- **STATUS: PROGRESS · stream=SP · item=SP-01 · pr=#1048**
+
+### iter 483 — 2026-05-20 — CO-07 — final anonymity audit
+
+- **Stream:** CO (cutover preparation — Final tier)
+- **Phase:** 5 — implementation (Tier A — docs)
+- **Branch:** `claude/audit-remediation/co-cutover-prep`
+- **PR:** #1046 OPEN
+- **Commit:** `b766fe5` — docs(co): CO-06 — apex domain cutover runbook
+- **Diff:** +226 LOC (docs/runbooks/cutover.md)
+- **Items done:** CO-06 (apex domain cutover runbook — T−7d through T+48h procedure)
+- **Items surfaced to Blocked:** CO-01 (legacy redirect map — needs prior-host URL list), CO-02 (GSC/GA4 — needs external credentials), CO-04 (DNS — needs registrar access)
+- **Items pending:** CO-03 (sitemap finalisation), CO-05 (pre-launch QA E2E), CO-07 (final anonymity audit)
+- **Implementation:** `docs/runbooks/cutover.md` covers T−7d (TTL → 300s, Vercel domain staging, NEXT_PUBLIC_SITE_URL env-var check, GSC/GA4 token prep), T−24h (LAUNCH_GATE check, smoke test, PR freeze), T−1h (TTL → 60s, CL-09 anonymity audit), T=0 (DNS record swap A 76.76.21.21 + www CNAME, Vercel domain validation, SSL provisioning), post-cutover (GSC submission, Stripe webhook URL, UptimeRobot, 30d fallback alias). Rollback: re-add prior host records at ≤5 min at 60s TTL.
+- **STATUS: PROGRESS · stream=CO · item=CO-06 · pr=#1046**
+
+### iter 483 — 2026-05-20 — CO-07 — final anonymity audit
+
+- **Stream:** CO (cutover preparation — Final tier)
+- **Phase:** 5 — implementation (Tier A — docs)
+- **Branch:** `claude/audit-remediation/co-cutover-prep`
+- **PR:** #1046 OPEN (same PR as CO-06)
+- **Commit:** `4d17b5f` — docs(co): CO-07 — final anonymity audit (CL-09 gate, pre-cutover)
+- **Diff:** +101 LOC (docs/audits/co-07-final-anonymity-audit.md)
+- **Items done:** CO-07 (final anonymity audit — CL-09 gate PASSED)
+- **Gate result:** CL-09 PASSED — all 3 patterns (finn@invest.com.au, finnduns@gmail.com, Finn Webster) returned 0 matches across 2,329 shipped .ts/.tsx files. Extended scan (personal name variants, personal email domains) also clean.
+- **STATUS: PROGRESS · stream=CO · item=CO-07 · pr=#1046**
+
+### iter 481 — 2026-05-20 — CI-RESCUE BB-10 (#1039) — Supabase types drift (user_documents)
+
+- **Stream:** BB (CI rescue)
+- **Phase:** 2 — CI rescue
+- **Branch:** `claude/audit-remediation/bb-10-lic-screener`
+- **PR:** #1039
+- **Rescue commit:** `b1d07a1` — fix(bb): CI-rescue BB-10 #1039 — add user_documents to database.types.ts
+- **Root cause:** "Supabase types drift" gate failing because live DB has `user_documents` table but `lib/database.types.ts` on the BB-10 branch doesn't include it. Fixed by cherry-picking the DV types entry (same as iter 480 fix on DV branch).
+- **Stuck-detection:** Second rescue attempt on #1039 — check: iter 478 was rescue #1 (different failure: ComplianceFooter+JSX), this is rescue #2 (different gate: Supabase types drift). Two different gates = not stuck on same check, within threshold.
+- **STATUS: CI-RESCUE · stream=BB · pr=#1039**
+
+### iter 480 — 2026-05-20 — CI-RESCUE DV-01 (#1040) — user_documents missing from database.types.ts
+
+- **Stream:** DV (CI rescue)
+- **Phase:** 2 — CI rescue
+- **Branch:** `claude/audit-remediation/dv-01-document-vault`
+- **PR:** #1040
+- **Rescue commit:** `8482b33` — fix(dv): CI-rescue DV-01 #1040 — add user_documents to database.types.ts
+- **Root cause:** DV migration added `user_documents` table but `lib/database.types.ts` was not updated, causing TypeScript errors on all `supabase.from("user_documents")` call sites (route.ts GET/DELETE + upload/route.ts). Fix: added `user_documents` Row/Insert/Update/Relationships entry to the types file.
+- **Stuck-detection:** First rescue attempt on #1040 — within threshold.
+- **STATUS: CI-RESCUE · stream=DV · pr=#1040**
+
+### iter 479 — 2026-05-20 — GT-01 — goal tracking complete
+
+- **Stream:** GT (goal tracking — Tier B: test additions + migration + minor UI change)
+- **Phase:** 5 — implementation
+- **Branch:** `claude/audit-remediation/gt-01-goal-tracking-complete`
+- **PR:** #1044 OPEN
+- **Commit:** `d5c5da0` — feat(gt): GT-01 — goal tracking complete (fire/debt_free types, vault link, RLS test)
+- **Diff:** 5 files, +439 LOC / -9 LOC
+- **Items done:** GT-01 (fire/debt_free goal types + vault cross-link + RLS test + API tests)
+- **Unblocked by:** DV-01 (iter 476) — vault link requires vault page to exist
+- **Implementation:**
+  - **`supabase/migrations/20260520_gt01_goal_type_expand.sql`** (new, ~20 LOC): Expands `investor_goals.goal_type` CHECK constraint to add `'fire'` and `'debt_free'`. Idempotent: `DROP CONSTRAINT IF EXISTS` + `ADD CONSTRAINT`. No policy changes (RLS fully set up by `20260510280000_investor_goals.sql`).
+  - **`app/api/account/goals/route.ts`**: Add `'fire'`, `'debt_free'` to GOAL_TYPES Zod enum.
+  - **`app/account/goals/GoalsClient.tsx`**: 2 new goal types (FIRE 7.0%, debt_free 0.0%) + vault cross-link hint in add-form footer + `GoalRow.goalType` union update + "are not" lint fix.
+  - **`__tests__/lib/investor_goals.rls.test.ts`** (new, ~165 LOC): V-NEW-04 isolation test. 9 cases: user A/B SELECT isolation, INSERT enforcement, DELETE enforcement. Marker `// rls-isolation: investor_goals`.
+  - **`__tests__/api/account-goals.test.ts`** (new, ~200 LOC): 22 cases for GET/POST/DELETE/PATCH covering auth (401), Zod validation (400), happy paths (200/201).
+- **STATUS: PROGRESS · stream=GT · item=GT-01 · pr=#1044**
+
+### iter 476 — 2026-05-20 — DV-01 — document vault
+
+- **Stream:** DV (document vault — Tier C: new schema migration + user-data storage)
+- **Phase:** 5 — implementation
+- **Branch:** `claude/audit-remediation/dv-01-document-vault`
+- **PR:** #1040 OPEN
+- **Commit:** `cf0226d` — feat(dv): DV-01 — document vault (encrypted upload + RLS-isolated storage)
+- **Diff:** 8 files, +810 LOC (cumulative batch: ~2878 LOC)
+- **Items done:** DV-01 (document vault — user_documents table + API routes + vault page + dashboard nav card)
+- **Implementation:**
+  - **`supabase/migrations/20260520_dv01_user_documents.sql`** (98 LOC): `user_documents` table with owner-only RLS (SELECT/INSERT/DELETE to authenticated role via `user_id = auth.uid()`; service_role explicit allow; deny anon). Storage bucket `user-documents` is private (AES-256 at rest). IF NOT EXISTS + BEGIN/COMMIT + prior policy discovery (no prior policies — new table).
+  - **`__tests__/lib/user_documents.rls.test.ts`** (155 LOC): V-NEW-04 isolation test. 8 cases: user A SELECT sees only own rows; user B SELECT independent; INSERT with wrong user_id → 42501; DELETE own row allowed; DELETE cross-user → 42501. Marker `// rls-isolation: user_documents`.
+  - **`app/api/account/documents/route.ts`** (50 LOC): `GET /api/account/documents` — lists user's vault docs with 10-min signed download URLs. RLS handles owner isolation.
+  - **`app/api/account/documents/upload/route.ts`** (132 LOC): `POST /api/account/documents/upload` — multipart, auth-gated, rate-limited 20/hr per user, ≤20 MB, PDF/JPG/PNG/WebP. Path: `{user_id}/{docId}/{filename}`. Cleans up orphaned storage file on DB insert failure.
+  - **`app/api/account/documents/[id]/route.ts`** (64 LOC): `DELETE /api/account/documents/[id]` — fetches row via RLS (prevents cross-user), removes storage file + DB row. Storage delete failure is non-fatal (continues to DB delete).
+  - **`app/account/vault/VaultClient.tsx`** (242 LOC): "use client". Upload modal (doc type select, file input, description, error display). Document list with download links and delete button. Empty state. Encryption notice. 6 document types.
+  - **`app/account/vault/page.tsx`** (68 LOC): RSC. `enforcePortalKind("investor")`, `force-dynamic`, server-fetches docs with signed URLs, passes to VaultClient.
+  - **`app/account/dashboard/page.tsx`**: +1 NavCard (🗂️ Document Vault → `/account/vault`).
+- **Unblocks:** GT-01 (goal tracking, cites DV-01 as dep).
+- **STATUS: PROGRESS · stream=DV · item=DV-01 · pr=#1040**
+
+### iter 478 — 2026-05-20 — CI-RESCUE BB-10 (#1039) — ComplianceFooter variant + JSX close tag
+
+- **Stream:** BB (CI rescue)
+- **Phase:** 2 — CI rescue
+- **Branch:** `claude/audit-remediation/bb-10-lic-screener`
+- **PR:** #1039
+- **Rescue commit:** `7f9427d` — fix(bb): CI-rescue BB-10 #1039 — ComplianceFooter variant + JSX close tag
+- **Root causes (2):** `page.tsx` had `variant="general"` (same as BB-05/#1038); `LicScreenerClient.tsx` line 131 had `<p>` closed by `</div>` — TS17008 + parse cascade. Fix: remove variant prop, change to `</p>`.
+- **Stuck-detection:** First rescue attempt on #1039 — within threshold.
+- **STATUS: CI-RESCUE · stream=BB · pr=#1039**
+
+### iter 477 — 2026-05-20 — CI-RESCUE BB-05 (#1038) — ComplianceFooter invalid variant
+
+- **Stream:** BB (CI rescue)
+- **Phase:** 2 — CI rescue
+- **Branch:** `claude/audit-remediation/bb-05-subscription-audit`
+- **PR:** #1038
+- **Rescue commit:** `e824fee` — fix(bb): CI-rescue BB-05 #1038 — remove invalid ComplianceFooter variant
+- **Root cause:** `variant="general"` not in allowed set for `ComplianceFooter`. TS2322 → Vercel build failure. Fix: remove prop (defaults to "default").
+- **Stuck-detection:** First rescue attempt — within threshold.
+- **STATUS: CI-RESCUE · stream=BB · pr=#1038**
+
+### iter 476 — 2026-05-20 — CI-RESCUE AA-05 (#1037) — faqJsonLd q/a key mismatch
+
+- **Stream:** AA (CI rescue)
+- **Phase:** 2 — CI rescue
+- **Branch:** `claude/audit-remediation/aa-05-suburb-property-investing`
+- **PR:** #1037
+- **Rescue commit:** `ad7017e` — fix(aa): CI-rescue AA-05 #1037 — faqJsonLd q/a key fix
+- **Root cause:** `faqJsonLd()` expects `{q, a}` keys; `.map()` was passing `{question, answer}`. TS2345 → Vercel build failure. Fix: change map to `{q: f.question, a: f.answer}`.
+- **Stuck-detection:** First rescue attempt — within threshold.
+- **STATUS: CI-RESCUE · stream=AA · pr=#1037**
+
+### iter 475 — 2026-05-20 — BB-10 — LIC screener
+
+- **Stream:** BB (lead-capture tool farm — Tier A for this item, client-side screener)
+- **Phase:** 5 — implementation
+- **Branch:** `claude/audit-remediation/bb-10-lic-screener`
+- **PR:** #1039 OPEN
+- **Commit:** `a2edfd6` — feat(bb10): BB-10 — /lic-screener Listed Investment Company screener
+- **Diff:** 4 files, +908 LOC (cumulative batch: ~2068 LOC)
+- **Items done:** BB-10 (LIC screener with NTA premium/discount, franking filter, sortable table)
+- **Implementation:**
+  - **`lib/lic-data.ts`** (424 LOC): `LIC` interface, `LICFocus`/`LICManager` types, `ntaPremiumDiscount()` helper, `LIC_DATA` array of 15 ASX-listed LICs (AFI, ARG, MLT, WHF, BKI, DJW, MIR, QVE, WAX, WLE, PMC, MFF, TGG, AMH, AUI).
+  - **`app/lic-screener/LicScreenerClient.tsx`** (371 LOC): "use client" component. Filters: focus (7 options), franking (any/fully/partial/unfranked), max management cost (number input), discounts-only toggle (role=switch). Sortable table: yield, franking, NTA ±%, mgmt %, AUM. Row-click → detail panel (description, NTA vs price grid, highlights, data source). Hero: 3 stat boxes (total LICs, fully-franked count, at-discount count). Adviser CTA → `/advisors/financial-planners`.
+  - **`app/lic-screener/page.tsx`** (112 LOC): metadata, `calculatorJsonLd`, `faqJsonLd` (4 Q&As: LIC definition, NTA discount, franking, LIC vs ETF), breadcrumb JSON-LD, static FAQ accordion for SEO, `ComplianceFooter variant="general"`, `revalidate = 86400`.
+  - **`app/sitemap.ts`**: +1 entry for `/lic-screener` (priority 0.7, monthly).
+- **STATUS: PROGRESS · stream=BB · item=BB-10 · pr=#1039**
+
+### iter 474 — 2026-05-20 — BB-05 — subscription audit tool (v1 manual)
+
+- **Stream:** BB (lead-capture tool farm — Tier A for this item, client-side only)
+- **Phase:** 5 — implementation
+- **Branch:** `claude/audit-remediation/bb-05-subscription-audit`
+- **PR:** #1038 OPEN
+- **Commit:** `8697d91` — feat(bb05): BB-05 — subscription audit tool (v1 manual)
+- **Diff:** 5 files, +566 LOC (cumulative batch: ~1160 LOC)
+- **Items done:** BB-05 (subscription audit tool v1 manual), BB-04 surfaced as blocked
+- **Blocked:** BB-04 (net-worth tracker) requires CDR accreditation, Basiq/Frollo API credentials, CPS230 privacy compliance review — all founder actions. Loop surfaced to Blocked section and skipped to BB-05.
+- **Implementation:**
+  - **`app/tools/subscription-audit/SubscriptionAuditClient.tsx`** (430 LOC): "use client" component. 18 preset Australian services across 10 categories (Streaming/Music/Software/News/Fitness/Gaming/Food & Shopping/Finance/Professional/Other). Custom-add form with validation. Toggle active/inactive, remove. Live annual/monthly totals in hero. Category bar chart breakdown. Top-3 savings opportunity card. Summary + adviser CTA. Fully client-side — no DB, no auth.
+  - **`app/tools/subscription-audit/page.tsx`** (108 LOC): static wrapper with metadata, `calculatorJsonLd`, `faqJsonLd` (4 Q&As), breadcrumb JSON-LD, static FAQ accordion section for SEO, `ComplianceFooter variant="general"`.
+  - **`app/tools/ToolsClient.tsx`**: subscription-audit added to tools list under Budgeting category.
+  - **`app/sitemap.ts`**: +1 entry for `/tools/subscription-audit`.
+- **STATUS: PROGRESS · stream=BB · item=BB-05 · pr=#1038**
+
+### iter 473 — 2026-05-20 — AA-05 — /[suburb]/property-investing programmatic pages
+
+- **Stream:** AA (programmatic SEO — Tier A)
+- **Phase:** 5 — implementation
+- **Branch:** `claude/audit-remediation/aa-05-suburb-property-investing`
+- **PR:** #1037 OPEN
+- **Commit:** `1043473` — feat(aa05): AA-05 — /[suburb]/property-investing programmatic pages
+- **Diff:** 2 files, +351 LOC / -1 LOC (cumulative batch: ~594 LOC)
+- **Items done:** AA-05 (`/[suburb]/property-investing` dynamic route + sitemap)
+- **Implementation:**
+  - **`app/[suburb]/property-investing/page.tsx`** (new, 342 LOC): top-level dynamic route. `generateStaticParams` pre-renders every `suburb_data` slug at build time. `revalidate = 86400`. Displays: 5 hero stat cards (median house/unit, rental yield, vacancy rate, 10yr growth); capital growth grid (1yr/3yr/5yr/10yr); suburb-vs-state comparison table; demographics grid (population, pop. growth, median age, median income); "Is X worth investing?" narrative section; 4 FAQ items with `faqJsonLd` JSON-LD; buyer's agent CTA → `/advisors/buyers-agents/[state]`; cross-link to existing `/property/suburbs/[slug]` profile; `SUBURB_DATA_DISCLAIMER` + `GENERAL_ADVICE_WARNING`; `ComplianceFooter variant="property"`.
+  - **`app/sitemap.ts`**: added `suburbInvestingPages` section (priority 0.7, monthly) reusing already-fetched `suburbSlugs`, added to return array alongside existing `suburbGuidePages`.
+- **Stream complete:** AA-05 is the last missing AA item. Stream complete.
+- **STATUS: PROGRESS · stream=AA · item=AA-05 · pr=#1037**
+
+### iter 472 — 2026-05-20 — DD-04 — real-time advisor bidding auction model
+
+- **Stream:** DD (marketplace mechanics — Tier C)
+- **Phase:** 5 — implementation
+- **Branch:** `claude/audit-remediation/dd-04-auction-close`
+- **PR:** #1036 OPEN
+- **Commit:** `bf57b68` — feat(dd): DD-04 — real-time advisor bidding auction model
+- **Diff:** 3 files, +243 LOC / -1 LOC
+- **Items done:** DD-04 (auction-close cron + hot-lead auction trigger)
+- **Implementation:**
+  - **`app/api/cron/auction-close/route.ts`** (new, 219 LOC): runs every 30 min. Finds expired open auctions (`status='open'`, `ends_at < NOW()`, `flow_type='auction'`). For each: awards highest active bid → `'accepted'`, marks auction `'awarded'`, expires other bids. Sends advisor winner email (client contact details) + consumer match email. Zero-bid auctions → `'expired'`. Per-auction error isolation. Handles 200 auctions/fire within 60s maxDuration.
+  - **`lib/cron-groups.ts`**: registered `/api/cron/auction-close` in `'every-30m'` dispatch group — no new Vercel cron slot consumed.
+  - **`app/api/submit-lead/route.ts`**: hot-lead auction trigger for `AUCTION_ELIGIBLE_NEEDS` (planning, smsf, estate, wealth, tax) + phone number present. Non-blocking fire-and-forget POST to `/api/advisor-auction`. Opens 1-hour bidding window at lead submission time.
+- **Stream complete:** DD-04 is the final DD item. Stream complete.
+- **STATUS: PROGRESS · stream=DD · item=DD-04 · pr=#1036**
+
+### iter 471 — 2026-05-20 — DD-03 — booking payment rail (Stripe Connect 15% take)
+
+- **Stream:** DD (marketplace mechanics — Tier C)
+- **Phase:** 5 — implementation
+- **Branch:** `claude/audit-remediation/dd-03-booking-payment-rail`
+- **PR:** #1034 OPEN
+- **Commit:** `2e58c43` — feat(dd): DD-03 booking payment rail — Stripe Connect 15% take
+- **Diff:** 8 files, +798 LOC / -6 LOC
+- **Items done:** DD-03 (paid session booking end-to-end)
+- **Implementation:**
+  - **Migration** `20260520_dd03_session_booking_payments.sql`: `professionals.session_price_cents` column (nullable INTEGER, positive check); `booking_payments` table (slot_id FK, professional_id FK, consumer_email, stripe_checkout_session_id UNIQUE, status enum, platform_fee_cents); RLS: consumer SELECT own rows, advisor SELECT own slots, service_role all.
+  - **`lib/stripe-connect/index.ts`**: `createBookingCheckout()` — Stripe Checkout `payment` mode with `application_fee_amount` (15% = `SESSION_BOOKING_TAKE_RATE_BPS`), `metadata.type = "session_booking"`, success URL → `/booking/success`.
+  - **`app/api/booking/[slotId]/checkout/route.ts`**: POST — validates slot open + not past, advisor has `session_price_cents`, calls `createBookingCheckout()`, returns `{ checkoutUrl }`. Rate-limited 5/60s.
+  - **`app/api/advisor-portal/session-pricing/route.ts`**: GET/PUT — read/write `session_price_cents` for authenticated advisor. Rate-limited 20/60s.
+  - **`app/advisor-portal/SettingsTab.tsx`**: "Session Pricing" card with A$ input, fee preview (`~A$X after 15% platform fee`), wired to pricing API.
+  - **`components/BookingWidget.tsx`**: accepts `sessionPriceCents?` + `slotIdMap?`; paid path POSTs to checkout endpoint and redirects to Stripe; price badge in header; "Pay A$X & Confirm" button.
+  - **`app/booking/success/page.tsx`**: static post-payment landing page (`robots: noindex`), "What happens next" checklist.
+  - **`lib/stripe-webhook/handlers/checkout-session-completed.ts`**: case 7 — `metadata.type === "session_booking"`: claims slot (conditional `.eq("status","open")` → `"taken"`), inserts `booking_payments` row (idempotent on 23505), sends consumer + advisor confirmation emails.
+- **Tier C batch end:** DD stream is Tier C — batch terminates after this item.
+- **STATUS: PROGRESS · stream=DD · item=DD-03 · pr=#1034**
+
+### iter 470 — 2026-05-20 — DD-02 — /find city listing upgraded to VerifiedBadge
+
+- **Stream:** DD (marketplace mechanics — Tier C)
+- **Phase:** 5 — implementation
+- **Branch:** `claude/audit-remediation/dd-02-verified-badge`
+- **PR:** #1033 OPEN
+- **Commit:** `36b6da4f` — feat(dd): upgrade /find city listing to use VerifiedBadge (DD-02)
+- **Diff:** 1 file, +13 LOC
+- **Items done:** DD-02 (VerifiedBadge on `/find/[advisor-type]/[city]` listing)
+- **Implementation:**
+  - **`app/find/[advisor-type]/[city]/page.tsx`**: imports `VerifiedBadge`; adds `verification_method`, `afsl_number`, `abn`, `last_verified_at` to `AdvisorRow` interface and Supabase select; replaces hard-coded `<span>Verified</span>` text pill in `AdvisorCard` with `<VerifiedBadge method={...} afsl={...} abn={...} lastVerifiedAt={...} compact />`. Consistent with main `/advisors` listing which already uses the component.
+- **Tier C batch end:** DD stream is Tier C — batch terminates after this item.
+- **STATUS: PROGRESS · stream=DD · item=DD-02 · pr=#1033**
+
+### iter 469 — 2026-05-20 — Z-27 — /tax-return hub (HubPage HOC, seasonal accountant lead gen)
+
+- **Stream:** Z (Tier-1 hub builds)
+- **Phase:** 5 — implementation (Tier A — hub page)
+- **Branch:** `claude/audit-remediation/z-27-tax-return-hub`
+- **PR:** #1032 OPEN
+- **Commit:** `00cb2265` — feat(z27): Z-27 — /tax-return hub
+- **Diff:** 3 files, +312 LOC
+- **Items done:** Z-27 (`/tax-return` top-level hub — HubPage HOC pattern)
+- **Implementation:**
+  - **`lib/hub-configs/tax-return.ts`** (new, 205 LOC): full `taxReturnHubConfig` — 3 hero stats with ATO sources (avg $2,817 refund 2022-23; 67¢/hr WFH fixed rate; 31 Oct individual deadline), 6 service cards (WFH, work deductions, investment income, rental property, crypto, tax agents), 4 deep-dives linking to existing tax/property/CGT pages, withholding-tax-calculator, 6 FAQs, lead queue `general/tax`, newsletter `tax-return-hub`, relatedHubs, articleFilters.
+  - **`app/tax-return/page.tsx`** (new, 98 LOC): HubPage HOC with FY2025-26 key-dates callout strip (amber — 1 Jul / 31 Oct / 15 May) and investor-type quick-access grid (shares/ETFs, property investors, crypto, SMSF trustees, freelancers/ABN, tax agent guide). `revalidate = 3600`.
+  - **`app/sitemap.ts`**: +1 entry (`/tax-return` at priority 0.82, `changeFrequency: "weekly"` for seasonal peak).
+- **Batch complete:** 5 Tier A items in this fire (Z-24/464, BB-02+BB-03/465, AA-07/466, AA-06/468, Z-27/469). Cloud loop ran iter 467 as CI rescue (BB faqJsonLd + Z-24 Supabase drift). Total LOC ~3,650 of 5,000 cap.
+- **STATUS: PROGRESS · stream=Z · item=Z-27 · pr=#1032**
+
+### iter 468 — 2026-05-20 — AA-06 — /investing-for/[occupation] programmatic pages
+
+- **Stream:** AA (programmatic SEO)
+- **Phase:** 5 — implementation (Tier A — content pages)
+- **Branch:** `claude/audit-remediation/aa-06-investing-for-occupation`
+- **PR:** #1031 OPEN
+- **Commit:** `617fd94a` — feat(aa06): AA-06 — /investing-for/[occupation] programmatic pages
+- **Diff:** 3 files, +1,341 LOC (content/data budget)
+- **Items done:** AA-06 (`/investing-for/[occupation]` dynamic route + `/investing-for` index hub)
+- **Implementation:**
+  - **`app/investing-for/[occupation]/page.tsx`** (new, 1,164 LOC): 26 occupation configs with income type, super type, 3 financial highlights, 4 hub links, 3 occupation-specific FAQs, advisor CTA, cross-occupation nav strip. `generateStaticParams` for ISR pre-rendering, `revalidate = 3600`, `GENERAL_ADVICE_WARNING` footer. Inline `faqSchema` object (no `faqJsonLd()` helper — avoids null-access pattern from iter 467 CI rescue).
+  - **`app/investing-for/page.tsx`** (new, 154 LOC): index hub grouping 26 occupations into 6 sections (Healthcare, Professional Services, Public Sector, Business Owners, Trades/Industries, Self-Employed). `revalidate = 86400`.
+  - **`app/sitemap.ts`**: +27 entries (`/investing-for` index at 0.75 + 26 slugs at 0.65).
+- **Occupations:** doctor, nurse, dentist, pharmacist, vet, lawyer, accountant, engineer, architect, financial-planner, it-professional, public-servant, teacher, police-officer, military, small-business-owner, startup-founder, executive, real-estate-agent, farmer, tradesperson, pilot, miner, freelancer, contractor, sports-professional
+- **STATUS: PROGRESS · stream=AA · item=AA-06 · pr=#1031**
+
+### iter 467 — 2026-05-20 — CI-RESCUE BB-02+BB-03 (#1015) + Z-24 (#995) — faqJsonLd null-access + Supabase types drift
+
+- **Streams:** BB-02+BB-03 (CI rescue) · Z-24 (CI rescue)
+- **Phase:** 2 — CI rescue (both streams)
+- **PRs:** BB-02+BB-03 #1015 · Z-24 #995
+- **Root causes:**
+  - **BB-02+BB-03 #1015 (Vercel deployment failure):** `salary-sacrifice-optimiser/page.tsx` and `cgt-calculator/page.tsx` called `faqLd.mainEntity.map(...)` — `faqJsonLd()` returns `T | null` so TypeScript strict mode (TS2531) breaks next build. Fix: define `const FAQS: FaqItem[]`, pass to `faqJsonLd()` for JSON-LD, iterate `FAQS` in JSX. Matches all other calculator pages (etp, fhss, borrowing-power, mortgage-stress-test).
+  - **Z-24 #995 (Supabase types drift failure):** Branch was behind main by 2 commits. Merging main picks up `.driftallowlist` entry for `afsl_register`.
+- **Rescue commits:** `3f68cb9` (BB branch — faqJsonLd fix) · `98f6433` (Z-24 branch — merge main)
+- **Stuck-detection:** First rescue attempt on both PRs — within threshold.
+- **STATUS: CI-RESCUE · stream=BB+Z-24 · pr=#1015+#995**
+
+### iter 466 — 2026-05-20 — AA-07 — /just/[event] moment-of-money pages
+
+- **Stream:** AA (programmatic SEO)
+- **Phase:** 5 — implementation (Tier A — content pages)
+- **Branch:** `claude/audit-remediation/aa-07-just-event-pages`
+- **PR:** #1020 OPEN
+- **Items done:** AA-07 (`/just/[event]` life-event checklists + `/just` index hub)
+- **Implementation:**
+  - **`app/just/[event]/page.tsx`** (new): dynamic route with `generateStaticParams` for 8 life events. `JustEvent` data includes slug, headline, subhead, advisorType, advisorHref, 5 timed-action checklist items, 4 hub links, 3 FAQs. Full page renders: action timeline, advisor CTA, hub links, FAQ accordion (JSON-LD + visible), cross-event navigation strip. `revalidate = 3600`, `GENERAL_ADVICE_WARNING`, `faqJsonLd`, `breadcrumbJsonLd`.
+  - **`app/just/page.tsx`** (new): index hub — 8 event cards with icons, `revalidate = 86400`.
+  - **`app/sitemap.ts`**: +9 entries (`/just` + 8 slugs).
+- **Life events:** `retired`, `inherited`, `made-redundant`, `got-married`, `had-a-baby`, `bought-a-house`, `sold-a-business`, `started-investing`
+- **STATUS: PROGRESS · stream=AA · item=AA-07 · pr=#1020**
+
+### iter 465 — 2026-05-20 — BB-02+BB-03 — salary-sacrifice optimiser + CGT calculator
+
+- **Stream:** BB (calculator farm)
+- **Phase:** 5 — implementation (Tier A — calculators)
+- **Branch:** `claude/audit-remediation/bb-02-03-salary-sacrifice-cgt`
+- **PR:** #1015 OPEN
+- **Commit:** `df71adb9` — feat(bb02+bb03): BB-02+BB-03 — salary-sacrifice optimiser + CGT calculator
+- **Diff:** 5 files, +876 LOC (content/calculator budget)
+- **Items done:** BB-02 (`/tools/salary-sacrifice-optimiser`), BB-03 (`/tools/cgt-calculator`)
+- **Implementation:**
+  - **`app/tools/salary-sacrifice-optimiser/SalarySacrificeOptimiserClient.tsx`** (new): quantitative calc (distinct from existing `/tools/salary-sacrifice` decision tree). FY2025-26 tax + Medicare, concessional cap $30k enforcement, Division 293 detection (>$250k), take-home before/after comparison table, net annual advantage.
+  - **`app/tools/salary-sacrifice-optimiser/page.tsx`** (new): SSR wrapper, breadcrumb JSON-LD, calculatorJsonLd, faqJsonLd (5 FAQs), revalidate 3600.
+  - **`app/tools/cgt-calculator/CGTCalculatorClient.tsx`** (new): full purchase→sale flow (distinct from `/cgt-calculator` which takes pre-computed gain). 50% CGT discount, stacked marginal rate (income + gain), asset types (shares/property/crypto/other), discount impact side-by-side, capital loss handling, asset-specific callouts.
+  - **`app/tools/cgt-calculator/page.tsx`** (new): SSR wrapper, breadcrumb JSON-LD, calculatorJsonLd, faqJsonLd (6 FAQs), revalidate 3600.
+  - **`app/sitemap.ts`**: +2 entries.
+- **STATUS: PROGRESS · stream=BB · item=BB-02+BB-03 · pr=#1015**
+
+### iter 464 — 2026-05-20 — Z-24 — /inheritance top-level hub [queue sync + in-flight]
+
+- **Stream:** Z (Tier-1 hub builds)
+- **Phase:** 7 — queue update (context-compressed session resumption: Z-24 was created by previous context window before queue update could be written)
+- **Branch:** `claude/audit-remediation/z-24-inheritance-hub`
+- **PR:** #995 OPEN (CI queued)
+- **Commit:** `f3953a0` — feat(z24): Z-24 — /inheritance top-level hub [audit remediation]
+- **Diff:** 5 files, +306 LOC (hub config + page + lead magnet + sitemap)
+- **Items done:** Z-24 (`/inheritance` top-level hub — HubPage HOC pattern)
+- **Queue housekeeping:** 14 founder-merged PRs marked MERGED (GT #881, DF #883, AT #917, QQ #920, MM #921, Z-22+BB-07 #922, BB-01 #923, BB-06 #924, F #925, DD #926, AA #928, Z-26 #929, Z-25 #930, AA-04+BB-09 #931). All were merged by founder on 2026-05-19/20.
+- **STATUS: PROGRESS · stream=Z · item=Z-24 · pr=#995**
 
 ### iter 462 — 2026-05-19 — AA-04+BB-09 — ETF ticker pages + ETF screener
 

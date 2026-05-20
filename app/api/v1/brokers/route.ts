@@ -5,6 +5,10 @@ import { validateApiKey, logApiRequest, API_CORS_HEADERS } from "@/lib/api-auth"
 import { escapeHtml } from "@/lib/html-escape";
 
 export const runtime = "nodejs";
+// Keep force-dynamic: per-API-key allowed_endpoints + rate limits mean
+// CDN sharing across keys would bypass access control. The Cache-Control
+// header below uses `private` so each consumer's browser caches their
+// own copy for 1h, but Vercel's shared edge cache doesn't.
 export const dynamic = "force-dynamic";
 
 const log = logger("api-v1-brokers");
@@ -222,7 +226,7 @@ export async function GET(request: NextRequest) {
         status: 200,
         headers: {
           ...API_CORS_HEADERS,
-          "Cache-Control": "public, max-age=3600",
+          "Cache-Control": "private, max-age=3600",
         },
       },
     );

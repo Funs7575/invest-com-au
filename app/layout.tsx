@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
-import { JetBrains_Mono, Source_Serif_4 } from "next/font/google";
+import { JetBrains_Mono } from "next/font/google";
 import { Suspense } from "react";
 import { headers } from "next/headers";
 import { stripLocalePrefix, BCP47_TAG, LOCALE_DIR } from "@/lib/i18n/locales";
@@ -10,18 +10,17 @@ import CountryModeBanner from "@/components/country-mode/CountryModeBanner";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import PlausibleAnalytics from "@/components/PlausibleAnalytics";
 import { PostHogProvider } from "@/components/PostHogProvider";
-import UtmCapture from "@/components/UtmCapture";
-import RouteChangeFocus from "@/components/RouteChangeFocus";
-import ServiceWorkerRegistrar from "@/components/ServiceWorkerRegistrar";
+// 5 side-effect-only components (UtmCapture, RouteChangeFocus,
+// ServiceWorkerRegistrar, ClaimAnonymousOnAuth, WebVitals) all return
+// null and only run useEffect. Bundled together via a client wrapper
+// so each loads in its own client chunk after hydration instead of
+// blocking the critical-path layout bundle. See LayoutSideEffects.tsx.
+import LayoutSideEffects from "@/components/LayoutSideEffects";
 import ChatWidget from "@/components/ChatWidget";
 import ReportProblemButton from "@/components/ReportProblemButton";
 import PushNotificationOptIn from "@/components/PushNotificationOptIn";
-import ClaimAnonymousOnAuth from "@/components/ClaimAnonymousOnAuth";
 import NewsletterExitIntentModal from "@/components/NewsletterExitIntentModal";
 import { isFlagEnabled, loadFlag } from "@/lib/feature-flags";
-
-import { SpeedInsights } from "@vercel/speed-insights/next";
-import WebVitals from "@/components/WebVitals";
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, websiteJsonLd } from "@/lib/seo";
 
 const inter = localFont({
@@ -37,19 +36,20 @@ const inter = localFont({
   fallback: ["system-ui", "-apple-system", "Arial", "sans-serif"],
 });
 
+// Dropped weight 800 — audit flagged it as unused on a monospace font
+// (we have it in 122 callers but none style it at weight 800). Saves
+// ~15 kB across two third-party font requests.
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-jetbrains-mono",
-  weight: ["400", "700", "800"],
+  weight: ["400", "700"],
 });
 
-const sourceSerif = Source_Serif_4({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-source-serif",
-  weight: ["400"],
-});
+// Source_Serif_4 removed — was loaded on every page but only 1 caller
+// (components/HomeFridayBriefing.tsx). Falls back to system serif stack
+// defined in globals.css, which is indistinguishable in the one place
+// the class is applied. Saves a third-party request + ~30 kB transfer.
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -105,16 +105,22 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // Feature-flag gate for the chat widget — admins can ramp it
-  // from 0% → 100% via /admin/automation/flags.
-  const chatEnabled = await isFlagEnabled("chatbot_widget");
-  const reportButtonEnabled = await isFlagEnabled("report_button");
-  const pushEnabled = await isFlagEnabled("push_notifications");
-  // Exit-intent newsletter modal — default-on with a feature flag
-  // escape hatch. If no `newsletter_exit_intent` row exists, the
-  // modal ships live; admins can disable or segment via
-  // /admin/automation/flags by inserting a row with enabled=false.
-  const newsletterExitIntentFlag = await loadFlag("newsletter_exit_intent");
+  // Four layout-level flag reads. Previously serial — 4 sequential
+  // Supabase round-trips on every page render. Now parallelised so a
+  // cold L1 cache only adds 1 cross-Atlantic hop, not 4. The L2 cache
+  // wrapper from PR #940 (unstable_cache) keeps subsequent reads off
+  // Supabase entirely for the revalidate window.
+  //   - chatbot_widget / report_button / push_notifications: admin-
+  //     rampable feature flags (0% → 100% via /admin/automation/flags).
+  //   - newsletter_exit_intent: default-on; missing row = enabled,
+  //     existing row honours enabled+rollout_pct.
+  const [chatEnabled, reportButtonEnabled, pushEnabled, newsletterExitIntentFlag] =
+    await Promise.all([
+      isFlagEnabled("chatbot_widget"),
+      isFlagEnabled("report_button"),
+      isFlagEnabled("push_notifications"),
+      loadFlag("newsletter_exit_intent"),
+    ]);
   const newsletterExitIntentEnabled = newsletterExitIntentFlag
     ? newsletterExitIntentFlag.enabled &&
       newsletterExitIntentFlag.rollout_pct > 0
@@ -131,13 +137,21 @@ export default async function RootLayout({
   const htmlDir = LOCALE_DIR[locale];
 
   return (
-    <html lang={htmlLang} dir={htmlDir} suppressHydrationWarning className={`${inter.variable} ${jetbrainsMono.variable} ${sourceSerif.variable}`}>
+    <html lang={htmlLang} dir={htmlDir} suppressHydrationWarning className={`${inter.variable} ${jetbrainsMono.variable}`}>
       {/* Inline script adds .js-ready immediately so CSS animations only run when JS is available.
           Without this, hero-fade-up starts at opacity:0 and stays invisible until JS loads. */}
       <head>
-        {/* Preconnect to external APIs for faster initial requests */}
+        {/* Preconnect to external APIs for faster initial requests.
+            ui-avatars + randomuser back avatar fallbacks across
+            advisor listings (/find-advisor, /advisors) where the
+            avatar is the LCP candidate — preconnect saves ~100-300 ms
+            of connection setup on cold visits. */}
         <link rel="preconnect" href="https://guggzyqceattncjwvgyc.supabase.co" />
         <link rel="dns-prefetch" href="https://guggzyqceattncjwvgyc.supabase.co" />
+        <link rel="preconnect" href="https://ui-avatars.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://ui-avatars.com" />
+        <link rel="preconnect" href="https://randomuser.me" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://randomuser.me" />
         <link rel="manifest" href="/manifest.json" />
         <link rel="alternate" type="application/rss+xml" title="Invest.com.au Articles" href="/feed.xml" />
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js-ready')" }} />
@@ -167,10 +181,7 @@ export default async function RootLayout({
         </noscript>
         <PlausibleAnalytics />
         <PostHogProvider>
-        <Suspense fallback={null}><UtmCapture /></Suspense>
-        <Suspense fallback={null}><RouteChangeFocus /></Suspense>
-        <Suspense fallback={null}><ServiceWorkerRegistrar /></Suspense>
-        <Suspense fallback={null}><ClaimAnonymousOnAuth /></Suspense>
+        <LayoutSideEffects />
 
         <ThemeProvider>
           <LayoutShell countryModeBanner={<CountryModeBanner />}>{children}</LayoutShell>
@@ -183,9 +194,7 @@ export default async function RootLayout({
             </Suspense>
           )}
         </ThemeProvider>
-        <Suspense fallback={null}><WebVitals /></Suspense>
         </PostHogProvider>
-        <SpeedInsights />
       </body>
     </html>
   );
