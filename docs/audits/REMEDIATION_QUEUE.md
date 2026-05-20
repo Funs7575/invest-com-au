@@ -82,6 +82,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | AA-07 | `claude/audit-remediation/aa-07-just-event-pages` | **#1020 OPEN** | AA-07 done (iter 466): `/just/[event]` moment-of-money pages — 8 life-event checklists (retired, inherited, made-redundant, got-married, had-a-baby, bought-a-house, sold-a-business, started-investing); `/just` index hub. Dynamic route with `generateStaticParams`, `GENERAL_ADVICE_WARNING`, advisor CTA, cross-event nav strip. Sitemap +9. CI: queued — pushed 2026-05-20. | AA-07 merged |
 | AA-06 | `claude/audit-remediation/aa-06-investing-for-occupation` | **#1031 OPEN** | AA-06 done (iter 468): `/investing-for/[occupation]` — 26 occupation-specific investing guides + `/investing-for` index hub. Income type + super type badges, 3 highlights, 4 hub links, 3 FAQs, advisor CTA, cross-occupation nav, `GENERAL_ADVICE_WARNING`. `generateStaticParams` ISR, `revalidate = 3600`. Sitemap +27. CI: queued — pushed `617fd94a` 2026-05-20. | AA-06 merged |
 | Z-27 | `claude/audit-remediation/z-27-tax-return-hub` | **#1032 OPEN** | Z-27 done (iter 469): `/tax-return` top-level hub (HubPage HOC). `lib/hub-configs/tax-return.ts`: 3 hero stats ($2,817 avg refund, 67¢/hr WFH rate, 31 Oct deadline), 6 service cards, 4 deep-dives, withholding-tax calculator, 6 FAQs, lead queue `general/tax`. Page: FY2025-26 key-dates callout (amber), investor-type quick-access grid. Sitemap +1 (priority 0.82, weekly). CI: queued — pushed `00cb2265` 2026-05-20. | Z-27 merged |
+| BB-10 | `claude/audit-remediation/bb-10-lic-screener` | **#1039 OPEN** | BB-10 done (iter 475): `/lic-screener` — Listed Investment Company screener. `lib/lic-data.ts` (15 LICs, `ntaPremiumDiscount()` helper). LicScreenerClient: filterable/sortable table (focus, franking, mgmt cost, NTA discount toggle), row-click detail panel, hero stat boxes. page.tsx: metadata, calculatorJsonLd, faqJsonLd (4 Q&As), breadcrumb, ComplianceFooter. Sitemap +1. CI: queued — pushed `a2edfd6` 2026-05-20. | BB-10 merged ✓ |
 
 ---
 
@@ -141,6 +142,22 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 475 — 2026-05-20 — BB-10 — LIC screener
+
+- **Stream:** BB (lead-capture tool farm — Tier A for this item, client-side screener)
+- **Phase:** 5 — implementation
+- **Branch:** `claude/audit-remediation/bb-10-lic-screener`
+- **PR:** #1039 OPEN
+- **Commit:** `a2edfd6` — feat(bb10): BB-10 — /lic-screener Listed Investment Company screener
+- **Diff:** 4 files, +908 LOC (cumulative batch: ~2068 LOC)
+- **Items done:** BB-10 (LIC screener with NTA premium/discount, franking filter, sortable table)
+- **Implementation:**
+  - **`lib/lic-data.ts`** (424 LOC): `LIC` interface, `LICFocus`/`LICManager` types, `ntaPremiumDiscount()` helper, `LIC_DATA` array of 15 ASX-listed LICs (AFI, ARG, MLT, WHF, BKI, DJW, MIR, QVE, WAX, WLE, PMC, MFF, TGG, AMH, AUI).
+  - **`app/lic-screener/LicScreenerClient.tsx`** (371 LOC): "use client" component. Filters: focus (7 options), franking (any/fully/partial/unfranked), max management cost (number input), discounts-only toggle (role=switch). Sortable table: yield, franking, NTA ±%, mgmt %, AUM. Row-click → detail panel (description, NTA vs price grid, highlights, data source). Hero: 3 stat boxes (total LICs, fully-franked count, at-discount count). Adviser CTA → `/advisors/financial-planners`.
+  - **`app/lic-screener/page.tsx`** (112 LOC): metadata, `calculatorJsonLd`, `faqJsonLd` (4 Q&As: LIC definition, NTA discount, franking, LIC vs ETF), breadcrumb JSON-LD, static FAQ accordion for SEO, `ComplianceFooter variant="general"`, `revalidate = 86400`.
+  - **`app/sitemap.ts`**: +1 entry for `/lic-screener` (priority 0.7, monthly).
+- **STATUS: PROGRESS · stream=BB · item=BB-10 · pr=#1039**
 
 ### iter 474 — 2026-05-20 — BB-05 — subscription audit tool (v1 manual)
 
