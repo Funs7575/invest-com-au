@@ -118,6 +118,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/just/retired", "/just/inherited", "/just/made-redundant",
     "/just/got-married", "/just/had-a-baby", "/just/bought-a-house",
     "/just/sold-a-business", "/just/started-investing",
+    "/tools/salary-sacrifice-optimiser",
+    "/tools/cgt-calculator",
     "/redundancy",
     "/pricing",
     "/firb-fee-estimator", "/non-resident-dividend-calculator", "/non-resident-cgt-checker",
