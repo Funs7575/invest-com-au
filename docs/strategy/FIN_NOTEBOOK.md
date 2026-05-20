@@ -14,6 +14,50 @@
 
 ## Active strategic decisions log
 
+### 2026-05-20 — Cross-border #24 Phase A finished + Phase B engineering shipped
+
+Closed out the remaining cross-border engineering in one session. Most of it
+turned out to be already built by earlier loop iterations — the work was
+finding the dangling wires and connecting them.
+
+**Phase A — DONE.**
+- Premium pricing helper (`getLeadPriceCents` / `crossBorderLeadMultiplier`,
+  1.75×) and the on-site advisor-enquiry path were already wired. The one gap
+  was the **partner bulk-lead API** (`/api/partner/leads`) — it billed every
+  lead at the flat base price. Now stacks the 1.75× premium, so partner-sourced
+  cross-border leads price the same as on-site ones.
+- Country-page → advisor CTA `?specialty=` wiring already live for UK/US/India.
+  Did **not** add specialty params to the other corridors (China/HK/SG/…):
+  they have no clean mapping to the four cross-border specialties, and their
+  CTAs target the tax-specialist directory — forcing a FIRB-lawyer specialty
+  there would filter to zero advisors. The new country-match boost (below)
+  routes those corridors via `?country=` instead.
+
+**Phase B — engineering shipped (was estimated 4–6 wks; most pre-existed).**
+- `available_in_countries TEXT[]` column + GIN index: already existed
+  (migration 20260515). Advisor portal self-selection UI (`CountriesServedField`
+  in `ProfileTab.tsx`): already existed and persists via the profile PATCH
+  allowlist. **No new migration / UI needed.**
+- **Ranker country-match boost — built.** `available_in_countries` was being
+  collected but never consulted. Now `advisor-ranker` takes a `countryMatch`
+  option (per-advisor +15 default, normalised like specialtyMatchBoost) and
+  the submit-lead matcher prefers, in order: specialty+corridor → specialty →
+  corridor → top pick. `/find-advisor/[location]` passes the resolved intent
+  country. Soft preference, not a hard filter (country_eligibility already
+  hard-filters), so AU-only advisors aren't hidden.
+- **Affiliate panel — capability built, dormant.** Typed `CrossBorderPartner` +
+  `CountryConfig.crossBorderPartners` + `CrossBorderPartnerPanel` component
+  (affiliate `rel` + advertiser disclosure baked in) + template section. Left
+  **unpopulated**: listing a provider asserts a real referral relationship on
+  an AFSL page — that needs a signed agreement + disclosure review, which is
+  Phase C BD, not a code change. Activation is now a one-config-block change:
+  see `docs/plans/CROSS_BORDER_PARTNER_PANEL.md`.
+
+**What's left for revenue to actually land:** the affiliate panel needs signed
+FX / remittance / non-resident-mortgage / FIRB-legal referral deals (Phase C),
+and the persona selector + DASP calculator + homepage rewrite remain
+design/copy work, not engineering.
+
 ### 2026-05-01 — Cross-border audit (deep)
 
 The homepage v4 redesign exposed that the cross-border surface (`/foreign-investment` hub + 12 country pages) is **rich content with dumb monetization**. Bespoke deep guides (UK 2-audience, US FATCA/PFIC warnings, India NRI/ROR/DASP, SIV/188 pathways) already capture high-intent traffic. But every monetization signal — visa class, country of origin, journey direction — gets dropped at the funnel entrance. Lead lands in the same flat `$39/lead` advisor pool as a Brisbane share-trader.
