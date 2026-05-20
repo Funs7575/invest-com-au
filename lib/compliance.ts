@@ -59,6 +59,17 @@ export const SPONSORED_DISCLOSURE =
 export const SPONSORED_DISCLOSURE_SHORT =
   "Paid placement. Displayed separately from factual data.";
 
+/**
+ * Sponsored-article disclosure — shown on advisor pay-to-publish articles
+ * whose pricing_tier is "sponsored" (or payment_status is "paid").
+ * Corporations Act s1041H: paid promotional content must be clearly
+ * identified as such and distinguished from independent editorial.
+ */
+export const SPONSORED_ARTICLE_DISCLOSURE =
+  "Sponsored content: the author paid a placement fee to publish this article. " +
+  "It is promotional, not independent editorial, and is general information " +
+  "only — not personal financial advice.";
+
 /** Company registration details (from ASIC extract 20/02/2026) */
 export const COMPANY_LEGAL_NAME = "Invest.com.au Pty Ltd";
 export const COMPANY_ACN = "093 882 421";
