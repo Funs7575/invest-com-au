@@ -119,7 +119,7 @@ export default async function SuburbPropertyInvestingPage({ params }: { params: 
     { name: `${s.suburb} Property Investing` },
   ]);
 
-  const faqLd = faqJsonLd(faqs.map((f) => ({ question: f.question, answer: f.answer })));
+  const faqLd = faqJsonLd(faqs.map((f) => ({ q: f.question, a: f.answer })));
 
   return (
     <div className="bg-white min-h-screen">
