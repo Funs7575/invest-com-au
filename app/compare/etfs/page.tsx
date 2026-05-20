@@ -3,6 +3,7 @@ import { UPDATED_LABEL } from "@/lib/seo";
 import ETFCompareClient from "./ETFCompareClient";
 import CompareNav from "../CompareNav";
 import ComplianceFooter from "@/components/ComplianceFooter";
+import DirectoryBanners from "@/components/foreign-investment/DirectoryBanners";
 
 export const metadata = {
   title: "Compare Australian ETFs — Fees, Returns & Holdings (2026)",
@@ -36,6 +37,9 @@ export default function ETFComparePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
       <Suspense><CompareNav /></Suspense>
+      <div className="container-custom pt-5">
+        <DirectoryBanners surface="compare" />
+      </div>
       <ETFCompareClient />
       <div className="container-custom pb-8">
         <ComplianceFooter />
