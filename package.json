@@ -28,6 +28,8 @@
     "audit:unapplied-migrations": "node scripts/audit/unapplied-migrations.mjs",
     "audit:console-calls": "node scripts/check-console-calls.mjs",
     "audit:duplicate-functions": "node scripts/check-duplicate-functions.mjs",
+    "audit:entity-registry": "node scripts/check-entity-registry.mjs",
+    "add-entity": "node scripts/add-entity.mjs",
     "audit:stale-branches": "node scripts/check-stale-branches.mjs",
     "audit:jsonld-coverage": "node scripts/check-jsonld-coverage.mjs",
     "db:types": "npx supabase gen types typescript --project-id ${SUPABASE_PROJECT_ID} > lib/database.types.ts",
