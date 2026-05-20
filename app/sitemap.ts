@@ -61,10 +61,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/invest/private-credit/listings", "/invest/infrastructure/listings",
     "/invest/digital-infrastructure/listings",
     "/invest/public-social-infrastructure/listings",
-    "/invest/carbon-environmental-markets/listings",
+    // carbon/aquaculture/livestock /listings de-indexed pending compliance
+    // review (s708 / MIS classification) — guide hubs stay, listing pages omitted.
     "/invest/royalties/listings",
-    "/invest/aquaculture", "/invest/aquaculture/listings",
-    "/invest/livestock", "/invest/livestock/listings",
+    "/invest/aquaculture",
+    "/invest/livestock",
     "/invest/private-equity/listings",
     "/invest/venture-capital", "/invest/venture-capital/listings",
     "/invest/litigation-funding", "/invest/litigation-funding/listings",

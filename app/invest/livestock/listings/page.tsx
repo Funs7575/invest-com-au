@@ -7,6 +7,7 @@ import {
   countListingsByVertical,
 } from "@/lib/investment-listings-query";
 import InvestListingsClient from "@/components/InvestListingsClient";
+import ListingComplianceNotice from "@/components/invest/ListingComplianceNotice";
 
 export const revalidate = 300;
 
@@ -18,6 +19,10 @@ export async function generateMetadata(): Promise<Metadata> {
     description:
       "Browse Australian livestock and equine investment opportunities. Thoroughbred racehorse syndications, cattle herd investments, sheep and wool programs, stud breeding rights and equine genetic programs available for investment.",
     alternates: { canonical: `${SITE_URL}/invest/livestock/listings` },
+    // Livestock/equine syndications are commonly regulated managed investment
+    // schemes. De-indexed with a wholesale (s708) gate pending compliance
+    // review; re-enable indexing only after legal sign-off.
+    robots: { index: false, follow: false },
     openGraph: {
       title: `Livestock & Equine Investment Opportunities Australia — ${countLabel}Active Listings`,
       url: `${SITE_URL}/invest/livestock/listings`,
@@ -41,6 +46,10 @@ export default async function LivestockListingsPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
+      <ListingComplianceNotice
+        productLabel="livestock and equine investment opportunities (including racehorse and breeding syndications)"
+        classification="Livestock and equine syndications listed here are commonly regulated managed investment schemes."
       />
       <Suspense fallback={<div className="py-12 text-center text-slate-400">Loading listings...</div>}>
         <InvestListingsClient
