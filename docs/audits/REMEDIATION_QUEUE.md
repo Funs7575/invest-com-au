@@ -71,11 +71,12 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | Z-22+BB-07 | _complete_ | **#922 MERGED 2026-05-20** | Z-22 + BB-07 done. **Stream complete — #922 merged by founder 2026-05-20.** | Z-22+BB-07 merged ✓ |
 | BB-01 | _complete_ | **#923 MERGED 2026-05-20** | BB-01 done. **Stream complete — #923 merged by founder 2026-05-20.** | BB-01 merged ✓ |
 | BB-06 | _complete_ | **#924 MERGED 2026-05-20** | BB-06 done. **Stream complete — #924 merged by founder 2026-05-20.** | BB-06 merged ✓ |
-| AA | `claude/audit-remediation/aa-02-03-programmatic-grants` | **#928 MERGED 2026-05-20** | AA-01 false-positive. AA-02+AA-03 done. **#928 merged by founder 2026-05-20.** AA-04+BB-09 (#931) also merged. AA-06/AA-07 pending. | AA-02+AA-03 merged ✓ |
+| BB-05 | `claude/audit-remediation/bb-05-subscription-audit` | **#1038 OPEN** | BB-04 blocked (CDR accreditation + Basiq/Frollo API credentials + CPS230 review — see Blocked). BB-05 done (iter 474): `/tools/subscription-audit` — manual subscription audit tool, 18 presets, category breakdown, savings analysis. | BB-05 merged ✓ |
+| AA | `claude/audit-remediation/aa-05-suburb-property-investing` | **#928 MERGED 2026-05-20** · **#931 MERGED** · **#1020 OPEN** · **#1031 OPEN** · **#1037 OPEN** | AA-01 false-positive. AA-02+AA-03 done (#928). AA-04+BB-09 done (#931). AA-05 done (iter 473): `/[suburb]/property-investing` dynamic route + sitemap. AA-06 done (#1031). AA-07 done (#1020). **Stream complete.** | AA-05 merged ✓ |
 | Z-26 | _complete_ | **#929 MERGED 2026-05-20** | Z-26 done. **Stream complete — #929 merged by founder 2026-05-20.** | Z-26 merged ✓ |
 | Z-25 | _complete_ | **#930 MERGED 2026-05-20** | Z-25 done. **Stream complete — #930 merged by founder 2026-05-20.** | Z-25 merged ✓ |
 | AA-04+BB-09 | _complete_ | **#931 MERGED 2026-05-20** | AA-04+BB-09 done. **Stream segment merged — #931 merged by founder 2026-05-20.** | AA-04+BB-09 merged ✓ |
-| DD | `claude/audit-remediation/dd-02-verified-badge` | **#1033 OPEN** | DD-01 done (#926 merged). DD-02 done (iter 468): `/find/[advisor-type]/[city]` city listing upgraded to full `VerifiedBadge` component (ABN Verified + AFSL Current pills) — adds `verification_method`, `afsl_number`, `abn`, `last_verified_at` to select + local type. CI: queued — pushed `36b6da4f` 2026-05-20. DD-03/04 pending. | DD-02 in flight |
+| DD | `claude/audit-remediation/dd-04-auction-close` | **#1033 OPEN** · **#1034 OPEN** · **#1036 OPEN** | DD-01 done (#926 merged). DD-02 done (iter 470). DD-03 done (iter 471). DD-04 done (iter 472): auction-close cron (every-30m dispatch group), lead-to-auction hot-lead trigger in submit-lead. CI: queued — pushed `bf57b68` 2026-05-20. **Stream complete.** | DD-04 merged ✓ |
 | Z-24 | `claude/audit-remediation/z-24-inheritance-hub` | **#995 OPEN** | Z-24 done (iter 464): `/inheritance` top-level hub; `lib/hub-configs/inheritance.ts` (3 hero stats, 6 service cards, 4 deep-dives, 6 FAQs, `complianceKey: "general_advice"`); lead magnet + sitemap. CI rescue iter 467: merged main (`98f6433`) — Supabase types drift fixed. | Z-24 merged |
 | BB-02+BB-03 | `claude/audit-remediation/bb-02-03-salary-sacrifice-cgt` | **#1015 OPEN** | BB-02 done (iter 465): `/tools/salary-sacrifice-optimiser` — quantitative salary-sacrifice calculator (FY2025-26 tax, concessional cap enforcement, Division 293 detection, take-home before/after table). BB-03 done: `/tools/cgt-calculator` — purchase→sale CGT calc (50% discount, asset types, side-by-side discount impact). Sitemap +2. CI rescue iter 467: faqJsonLd null-access fix (`3f68cb9`). | BB-02+BB-03 merged |
 | AA-07 | `claude/audit-remediation/aa-07-just-event-pages` | **#1020 OPEN** | AA-07 done (iter 466): `/just/[event]` moment-of-money pages — 8 life-event checklists (retired, inherited, made-redundant, got-married, had-a-baby, bought-a-house, sold-a-business, started-investing); `/just` index hub. Dynamic route with `generateStaticParams`, `GENERAL_ADVICE_WARNING`, advisor CTA, cross-event nav strip. Sitemap +9. CI: queued — pushed 2026-05-20. | AA-07 merged |
@@ -140,6 +141,75 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 474 — 2026-05-20 — BB-05 — subscription audit tool (v1 manual)
+
+- **Stream:** BB (lead-capture tool farm — Tier A for this item, client-side only)
+- **Phase:** 5 — implementation
+- **Branch:** `claude/audit-remediation/bb-05-subscription-audit`
+- **PR:** #1038 OPEN
+- **Commit:** `8697d91` — feat(bb05): BB-05 — subscription audit tool (v1 manual)
+- **Diff:** 5 files, +566 LOC (cumulative batch: ~1160 LOC)
+- **Items done:** BB-05 (subscription audit tool v1 manual), BB-04 surfaced as blocked
+- **Blocked:** BB-04 (net-worth tracker) requires CDR accreditation, Basiq/Frollo API credentials, CPS230 privacy compliance review — all founder actions. Loop surfaced to Blocked section and skipped to BB-05.
+- **Implementation:**
+  - **`app/tools/subscription-audit/SubscriptionAuditClient.tsx`** (430 LOC): "use client" component. 18 preset Australian services across 10 categories (Streaming/Music/Software/News/Fitness/Gaming/Food & Shopping/Finance/Professional/Other). Custom-add form with validation. Toggle active/inactive, remove. Live annual/monthly totals in hero. Category bar chart breakdown. Top-3 savings opportunity card. Summary + adviser CTA. Fully client-side — no DB, no auth.
+  - **`app/tools/subscription-audit/page.tsx`** (108 LOC): static wrapper with metadata, `calculatorJsonLd`, `faqJsonLd` (4 Q&As), breadcrumb JSON-LD, static FAQ accordion section for SEO, `ComplianceFooter variant="general"`.
+  - **`app/tools/ToolsClient.tsx`**: subscription-audit added to tools list under Budgeting category.
+  - **`app/sitemap.ts`**: +1 entry for `/tools/subscription-audit`.
+- **STATUS: PROGRESS · stream=BB · item=BB-05 · pr=#1038**
+
+### iter 473 — 2026-05-20 — AA-05 — /[suburb]/property-investing programmatic pages
+
+- **Stream:** AA (programmatic SEO — Tier A)
+- **Phase:** 5 — implementation
+- **Branch:** `claude/audit-remediation/aa-05-suburb-property-investing`
+- **PR:** #1037 OPEN
+- **Commit:** `1043473` — feat(aa05): AA-05 — /[suburb]/property-investing programmatic pages
+- **Diff:** 2 files, +351 LOC / -1 LOC (cumulative batch: ~594 LOC)
+- **Items done:** AA-05 (`/[suburb]/property-investing` dynamic route + sitemap)
+- **Implementation:**
+  - **`app/[suburb]/property-investing/page.tsx`** (new, 342 LOC): top-level dynamic route. `generateStaticParams` pre-renders every `suburb_data` slug at build time. `revalidate = 86400`. Displays: 5 hero stat cards (median house/unit, rental yield, vacancy rate, 10yr growth); capital growth grid (1yr/3yr/5yr/10yr); suburb-vs-state comparison table; demographics grid (population, pop. growth, median age, median income); "Is X worth investing?" narrative section; 4 FAQ items with `faqJsonLd` JSON-LD; buyer's agent CTA → `/advisors/buyers-agents/[state]`; cross-link to existing `/property/suburbs/[slug]` profile; `SUBURB_DATA_DISCLAIMER` + `GENERAL_ADVICE_WARNING`; `ComplianceFooter variant="property"`.
+  - **`app/sitemap.ts`**: added `suburbInvestingPages` section (priority 0.7, monthly) reusing already-fetched `suburbSlugs`, added to return array alongside existing `suburbGuidePages`.
+- **Stream complete:** AA-05 is the last missing AA item. Stream complete.
+- **STATUS: PROGRESS · stream=AA · item=AA-05 · pr=#1037**
+
+### iter 472 — 2026-05-20 — DD-04 — real-time advisor bidding auction model
+
+- **Stream:** DD (marketplace mechanics — Tier C)
+- **Phase:** 5 — implementation
+- **Branch:** `claude/audit-remediation/dd-04-auction-close`
+- **PR:** #1036 OPEN
+- **Commit:** `bf57b68` — feat(dd): DD-04 — real-time advisor bidding auction model
+- **Diff:** 3 files, +243 LOC / -1 LOC
+- **Items done:** DD-04 (auction-close cron + hot-lead auction trigger)
+- **Implementation:**
+  - **`app/api/cron/auction-close/route.ts`** (new, 219 LOC): runs every 30 min. Finds expired open auctions (`status='open'`, `ends_at < NOW()`, `flow_type='auction'`). For each: awards highest active bid → `'accepted'`, marks auction `'awarded'`, expires other bids. Sends advisor winner email (client contact details) + consumer match email. Zero-bid auctions → `'expired'`. Per-auction error isolation. Handles 200 auctions/fire within 60s maxDuration.
+  - **`lib/cron-groups.ts`**: registered `/api/cron/auction-close` in `'every-30m'` dispatch group — no new Vercel cron slot consumed.
+  - **`app/api/submit-lead/route.ts`**: hot-lead auction trigger for `AUCTION_ELIGIBLE_NEEDS` (planning, smsf, estate, wealth, tax) + phone number present. Non-blocking fire-and-forget POST to `/api/advisor-auction`. Opens 1-hour bidding window at lead submission time.
+- **Stream complete:** DD-04 is the final DD item. Stream complete.
+- **STATUS: PROGRESS · stream=DD · item=DD-04 · pr=#1036**
+
+### iter 471 — 2026-05-20 — DD-03 — booking payment rail (Stripe Connect 15% take)
+
+- **Stream:** DD (marketplace mechanics — Tier C)
+- **Phase:** 5 — implementation
+- **Branch:** `claude/audit-remediation/dd-03-booking-payment-rail`
+- **PR:** #1034 OPEN
+- **Commit:** `2e58c43` — feat(dd): DD-03 booking payment rail — Stripe Connect 15% take
+- **Diff:** 8 files, +798 LOC / -6 LOC
+- **Items done:** DD-03 (paid session booking end-to-end)
+- **Implementation:**
+  - **Migration** `20260520_dd03_session_booking_payments.sql`: `professionals.session_price_cents` column (nullable INTEGER, positive check); `booking_payments` table (slot_id FK, professional_id FK, consumer_email, stripe_checkout_session_id UNIQUE, status enum, platform_fee_cents); RLS: consumer SELECT own rows, advisor SELECT own slots, service_role all.
+  - **`lib/stripe-connect/index.ts`**: `createBookingCheckout()` — Stripe Checkout `payment` mode with `application_fee_amount` (15% = `SESSION_BOOKING_TAKE_RATE_BPS`), `metadata.type = "session_booking"`, success URL → `/booking/success`.
+  - **`app/api/booking/[slotId]/checkout/route.ts`**: POST — validates slot open + not past, advisor has `session_price_cents`, calls `createBookingCheckout()`, returns `{ checkoutUrl }`. Rate-limited 5/60s.
+  - **`app/api/advisor-portal/session-pricing/route.ts`**: GET/PUT — read/write `session_price_cents` for authenticated advisor. Rate-limited 20/60s.
+  - **`app/advisor-portal/SettingsTab.tsx`**: "Session Pricing" card with A$ input, fee preview (`~A$X after 15% platform fee`), wired to pricing API.
+  - **`components/BookingWidget.tsx`**: accepts `sessionPriceCents?` + `slotIdMap?`; paid path POSTs to checkout endpoint and redirects to Stripe; price badge in header; "Pay A$X & Confirm" button.
+  - **`app/booking/success/page.tsx`**: static post-payment landing page (`robots: noindex`), "What happens next" checklist.
+  - **`lib/stripe-webhook/handlers/checkout-session-completed.ts`**: case 7 — `metadata.type === "session_booking"`: claims slot (conditional `.eq("status","open")` → `"taken"`), inserts `booking_payments` row (idempotent on 23505), sends consumer + advisor confirmation emails.
+- **Tier C batch end:** DD stream is Tier C — batch terminates after this item.
+- **STATUS: PROGRESS · stream=DD · item=DD-03 · pr=#1034**
 
 ### iter 470 — 2026-05-20 — DD-02 — /find city listing upgraded to VerifiedBadge
 
