@@ -65,6 +65,10 @@ npm run test:watch                 # watch mode
 | Schema.org JSON-LD builders                  | `lib/schema-markup.ts`                                    |
 | Structured logging                           | `lib/logger.ts` (never `console.*`)                       |
 | DB-backed rate limiting                      | `lib/rate-limit.ts`                                       |
+| Directory-page primitives (search, sort, tabs, filter panel, facet group, range slider, compare bar, empty state, filter chips, postcode autocomplete, result count, banner stack) | `components/directory/*` (see `docs/plans/DIRECTORY_UX_UNIFICATION.md`) |
+| Country-aware banner stack (pill + rule alerts + recommendation) | `<DirectoryBanners surface="invest \| advisors \| compare" />` from `components/foreign-investment/DirectoryBanners.tsx` |
+| Country-recommendation copy lookup           | `lib/page-recommendations.ts` (add a row here, don't edit the recommendation component) |
+| Banner visual tokens (colours / radius / spacing) | `components/foreign-investment/banner-tokens.ts`     |
 
 Reaching for a hardcoded disclaimer, a new affiliate URL builder, or a fresh JSON-LD object usually means you missed an existing helper — search `lib/` first.
 
