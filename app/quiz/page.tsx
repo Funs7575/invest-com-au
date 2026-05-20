@@ -771,6 +771,7 @@ export default function QuizPage() {
     return (
       <QuizResultsScreen
         results={results}
+        brokers={brokers}
         answers={scoringAnswers}
         unifiedAnswers={answers}
         hasCryptoResult={hasCryptoResult}

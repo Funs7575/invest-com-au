@@ -12,7 +12,8 @@ import QuizTopMatch from "./QuizTopMatch";
 import QuizComparisonTable from "./QuizComparisonTable";
 import QuizRunnerUps from "./QuizRunnerUps";
 import QuizResultsFooter from "./QuizResultsFooter";
-import ThreadCardsStrip, { type ThreadAnswers } from "./ThreadCardsStrip";
+import { type ThreadAnswers } from "./ThreadCardsStrip";
+import QuizWealthStack from "./QuizWealthStack";
 import QuizNextBestActions from "./QuizNextBestActions";
 import QuizPrimaryActionHero from "./QuizPrimaryActionHero";
 import QuizInlineEmailCapture from "./QuizInlineEmailCapture";
@@ -26,6 +27,8 @@ interface ScoredResult {
 
 interface Props {
   results: ScoredResult[];
+  /** Full active-platform pool (every platform_type) — feeds the wealth stack. */
+  brokers: Broker[];
   answers: string[];
   unifiedAnswers: ThreadAnswers;
   hasCryptoResult: boolean;
@@ -43,6 +46,7 @@ interface Props {
 
 export default function QuizResultsScreen({
   results,
+  brokers,
   answers,
   unifiedAnswers,
   hasCryptoResult,
@@ -194,10 +198,14 @@ export default function QuizResultsScreen({
           </div>
         </details>
 
-        {/* Your investing stack — multi-thread bundle cards conditional on quiz answers.
-            Now sits below the top match so the user sees the answer first, then
-            the broader "broker + super + savings + tax" framing. */}
-        <ThreadCardsStrip answers={unifiedAnswers} />
+        {/* Your wealth stack — CONCRETE product picks (one per applicable
+            category: broker + super + savings + robo), each with a rationale
+            and the correct affiliate CTA. Sits below the top match so the
+            user sees the headline answer first, then the broader setup.
+            Supersedes the abstract category-link strip (ThreadCardsStrip) for
+            the higher-revenue product-pick framing; falls back to nothing
+            when no extra category qualifies. */}
+        <QuizWealthStack brokers={brokers} answers={unifiedAnswers} />
 
         {/* Quick Comparison Table — only for outcomes that surface broker results */}
         {showBrokerResults && <QuizComparisonTable allResults={allResults} />}
