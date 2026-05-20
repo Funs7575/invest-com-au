@@ -137,5 +137,38 @@ Wave 4 — New revenue lines + trust (bigger, demand-driven)
 - **Registry gate stays green** — any new kind goes through `npm run add-entity` + the consistency gate.
 - **No live-env assumptions** — schema validated by the static gates; build/test validation owed once CI unblocks (#1053) or via the local-env session.
 
-## Execution status
-Tracked by commits on this branch tagged `feat(<area>): … — Idea #N`. This doc is updated as waves land.
+## Execution status (2026-05-20 — all 16 shipped on this branch)
+
+| # | Idea | Status | Commit area |
+|---|------|--------|-------------|
+| 11 | Unified audit trail | ✅ | `audit_events` + lib/audit + wired into moderation/deletion |
+| 16 | Team-management depth | ✅ | lib/team-management + /api/team/* + /teams/[slug]/settings/members |
+| 14 | Admin RBAC (additive) | ✅ | admin_roles/capabilities/users + lib/admin-rbac (env stays authoritative) |
+| 1 | Sponsor → partner upgrade | ✅ | lib/partner-orgs upgradePartnerToBrokerPartner |
+| 3 | Demand-aware pricing axis | ✅ | lead_demand_signals + composeLeadPrice demand axis |
+| 7 | Multi-hat cohorts | ✅ | multi_kind_cohort_stats view + lib/identity-analytics |
+| 8 | Workspace-switch telemetry | ✅ | workspace_switch_stats view + lib/identity-analytics |
+| 9 | Forum → advisor credibility | ✅ | lib/advisor-credibility (bounded boost) |
+| 2 | Lead-claim conversion stats | ✅ | lead_conversion_stats view + lib/lead-conversion |
+| 10 | Data-rights center | ✅ | already live at /account/privacy; added export audit event |
+| 13 | Firm seat subscriptions | ✅ | firm_subscriptions + lib/firm-subscriptions |
+| 4 | Squad marketplace tiers | ✅ | squad_subscriptions + squad_placement_boost + lib/squad-billing |
+| 5 | Wholesale s708 marketplace | ✅ | wholesale_listings + leads + lib/wholesale-listings |
+| 6 | Embed metered SaaS | ✅ | embed_usage_events + lib/embed-metering + portal usage |
+| 12 | Codegen partner verticals | ✅ (on-demand) | `npm run add-entity` already shipped; applied per BD deal |
+| 15 | Agent + internal identity | ✅ (additive only) | agents + internal_team_members registry + lib/agents-registry |
+
+**Founder-owned follow-ups deliberately NOT done** (flagged as internal):
+- backfill the 19 agents + the agent_logs `agent_name → agent_id` cutover (R1-HIGH)
+- seed founder / internal-team accounts
+- admin RBAC env→DB cutover (env stays authoritative until you flip it)
+
+**Integration steps owed once a real env / staging is available:**
+- ranker wiring for the forum-credibility (#9) + squad boost (#4) signals (built additive, flag-gated)
+- /api/widget middleware calling verifyAndMeter (#6)
+- Stripe webhook handlers for firm (#13) + squad (#4) subscription lifecycles
+- cron to compute lead_demand_signals (#3)
+- wholesale + embed portal CRUD surfaces beyond the foundations
+
+All new lib modules carry unit tests; every privileged mutation audits via #11;
+the account-kind registry + RLS isolation CI gates are green on this branch.
