@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 import { logger } from "@/lib/logger";
 import { validateApiKey, logApiRequest, API_CORS_HEADERS } from "@/lib/api-auth";
 import { escapeHtml } from "@/lib/html-escape";
@@ -124,7 +124,11 @@ export async function GET(request: NextRequest) {
     let offset = parseInt(params.get("offset") || "0", 10) || 0;
     if (offset < 0) offset = 0;
 
-    const supabase = createAdminClient();
+    // Public read of active brokers — RLS anon policy ("Public read for active
+    // brokers": status = 'active') covers exactly this query, so the
+    // RLS-scoped server client is sufficient and avoids needlessly using the
+    // service-role key on a public-data path.
+    const supabase = await createClient();
 
     // Build query — select only public fields
     let query = supabase
