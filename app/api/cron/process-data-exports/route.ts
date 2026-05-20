@@ -22,12 +22,15 @@
  *   If the bucket is missing, the request is marked status='failed' with
  *   a descriptive error_message guiding the fix.
  *
- * FORWARD-COMPATIBLE NOTE:
+ * TABLE STATUS:
  *   data_export_requests is defined in
- *   supabase/migrations/20260427_wave_security_observability.sql but that
- *   migration may not yet be applied to live. While it is absent, pending
- *   rows cannot exist and this cron exits immediately each run (no side
- *   effects). See Blocked entry A-MISSING-TABLE-1 in REMEDIATION_QUEUE.md.
+ *   supabase/migrations/20260427_wave_security_observability.sql and was
+ *   applied to live on 2026-05-08 (repo-parity migration
+ *   20260713_a_missing_table_2_data_export_requests_repair.sql; closed in
+ *   LAUNCH_GATE_9_5.md). The table now exists; this cron processes requests
+ *   normally. The "does not exist" guard below is retained as defensive
+ *   fallback only. (The genuinely-blocked table is account_deletion_requests,
+ *   tracked separately as A-MISSING-TABLE-1.)
  *
  * Queue item: K-06b — audit §7 SEC-06 (2026-04-26).
  */
