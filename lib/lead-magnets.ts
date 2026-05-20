@@ -149,16 +149,6 @@ export const LEAD_MAGNETS: LeadMagnet[] = [
     downloadUrl: "/downloads/redundancy-financial-checklist.pdf",
     coverIcon: "shield-check",
   },
-  {
-    slug: "inheritance-financial-checklist",
-    hubSlug: "inheritance",
-    title: "Inheritance Financial Action Checklist",
-    description:
-      "90-day sequencing guide: CGT cost base decisions, inherited property two-year window, super death benefit tax classification, and the order to engage your solicitor, tax agent, and financial planner.",
-    segmentSlug: "inheritance-hub",
-    downloadUrl: "/downloads/inheritance-financial-checklist.pdf",
-    coverIcon: "file-text",
-  },
 ];
 
 export function getLeadMagnetForHub(hubSlug: string): LeadMagnet | undefined {
