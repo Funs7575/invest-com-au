@@ -161,7 +161,11 @@ export default function StateGrantsCalculatorClient() {
 
         <div>
           <span className="block text-sm font-medium text-slate-700 mb-2">
-            Household income (for First Home Guarantee eligibility)
+            Household income{" "}
+            <span className="text-slate-400 font-normal">
+              (ACT duty concession test — the First Home Guarantee no longer
+              has an income cap)
+            </span>
           </span>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {INCOME_BANDS.map((band, i) => (
@@ -256,15 +260,25 @@ export default function StateGrantsCalculatorClient() {
         >
           <strong>
             First Home Guarantee:{" "}
-            {result.fhgEligible ? "Eligible" : "Above income cap"}
+            {result.fhgEligible ? "Within price cap" : "Above price cap"}
           </strong>
           {" — "}
           {result.fhgEligible
-            ? "buy with a 5% deposit, no LMI, federal guarantee covers up to 15% of the price."
-            : `your household income is above the ${
-                coupleStatus === "couple" ? "$200k couple" : "$125k single"
-              } cap.`}
+            ? `buy with a 5% deposit, no LMI (no income cap or place limit since 1 Oct 2025). Capital-city / regional-centre cap is ${formatAud(
+                result.fhgCapCents,
+              )}; rest-of-state cap is lower (${formatAud(
+                result.fhgRestOfStateCapCents,
+              )}) — confirm your postcode's cap.`
+            : `your purchase price is above this state's ${formatAud(
+                result.fhgCapCents,
+              )} capital-city cap.`}
         </p>
+
+        {result.dutyEstimateCaveat && (
+          <p className="mt-3 text-sm bg-slate-50 border border-slate-200 text-slate-700 rounded-lg p-3">
+            {result.dutyEstimateCaveat}
+          </p>
+        )}
       </section>
 
       {/* Breakdown */}

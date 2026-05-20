@@ -44,14 +44,27 @@ interface StateGrantData {
   fhogNewBuildCents: number;
   /** Optional FHOG bonus for regional NEW builds. */
   fhogRegionalBonusCents?: number;
-  /** Property-value cap on the FHOG eligibility (AUD). */
+  /** Default property-value cap on the FHOG eligibility (AUD). */
   fhogPriceCapCents: number | null;
+  /**
+   * Per-property-type FHOG price caps that override `fhogPriceCapCents`.
+   * NSW for example caps a completed new home at $600k but a land + build
+   * contract at $750k.
+   */
+  fhogPriceCapByTypeCents?: Partial<Record<PropertyType, number>>;
   /** Whether the FHOG applies to established/existing homes. */
   fhogAppliesToEstablished: boolean;
   /** Full stamp-duty exemption price cap (AUD). */
   stampDutyFullExemptionCapCents: number | null;
   /** Partial / scaled stamp-duty concession upper bound (AUD). */
   stampDutyPartialUpToCents: number | null;
+  /**
+   * Household-income test for the stamp-duty concession (AUD). When set,
+   * the concession is gated on income rather than property price — this
+   * is how the ACT Home Buyer Concession Scheme works (full duty waiver
+   * for buyers under the income threshold regardless of property value).
+   */
+  stampDutyIncomeTestCents?: number;
   /**
    * Approximate stamp duty otherwise payable as a fraction of price
    * (used for the "you would save approximately" estimate). State-by-
@@ -68,13 +81,17 @@ interface StateGrantData {
 export const STATE_GRANTS: Record<AustralianState, StateGrantData> = {
   nsw: {
     fhogNewBuildCents: 10_000_00,
-    fhogPriceCapCents: 750_000_00,
+    fhogPriceCapCents: 600_000_00,
+    fhogPriceCapByTypeCents: {
+      new_build: 600_000_00,
+      land_and_build: 750_000_00,
+    },
     fhogAppliesToEstablished: false,
     stampDutyFullExemptionCapCents: 800_000_00,
     stampDutyPartialUpToCents: 1_000_000_00,
     approxStampDutyRate: 0.039,
     notes:
-      "FHOG $10,000 for new builds with a contract price under $600,000 (construction) or $750,000 (land + build). Stamp duty fully exempt for first home buyers under $800,000, scaled concession to $1m.",
+      "FHOG $10,000 for a completed new home under $600,000, or a house-and-land / build contract under $750,000. Stamp duty fully exempt for first home buyers under $800,000, scaled concession to $1m.",
     sourceUrl: "https://www.revenue.nsw.gov.au/grants-schemes/first-home-buyer",
   },
   vic: {
@@ -126,22 +143,29 @@ export const STATE_GRANTS: Record<AustralianState, StateGrantData> = {
     fhogNewBuildCents: 30_000_00,
     fhogPriceCapCents: null,
     fhogAppliesToEstablished: false,
-    stampDutyFullExemptionCapCents: null,
-    stampDutyPartialUpToCents: 750_000_00,
+    // 100% duty exemption for first home buyers of established homes up to
+    // $750k for settlements in the current relief window (18 Feb 2024 –
+    // 30 Jun 2026). Re-confirm against SRO Tasmania once the window closes.
+    stampDutyFullExemptionCapCents: 750_000_00,
+    stampDutyPartialUpToCents: null,
     approxStampDutyRate: 0.04,
     notes:
-      "FHOG $30,000 for new builds (Tasmania matches Queensland for highest grant). 50% stamp-duty discount for established homes under $750,000 (not full exemption).",
+      "FHOG $30,000 for new builds (Tasmania matches Queensland for the highest grant). 100% stamp-duty exemption for first home buyers of established homes up to $750,000 (relief window to 30 June 2026 — re-confirm with SRO Tasmania after that).",
     sourceUrl: "https://www.sro.tas.gov.au/property-transfer-duties/first-home-owner-grant",
   },
   act: {
     fhogNewBuildCents: 0,
     fhogPriceCapCents: null,
     fhogAppliesToEstablished: false,
+    // ACT has no property-price band — the Home Buyer Concession Scheme
+    // gives a full duty concession to buyers under a household-income
+    // threshold, regardless of property value.
     stampDutyFullExemptionCapCents: null,
-    stampDutyPartialUpToCents: 250_000_00,
+    stampDutyPartialUpToCents: null,
+    stampDutyIncomeTestCents: 250_000_00,
     approxStampDutyRate: 0.04,
     notes:
-      "No FHOG — replaced by the Home Buyer Concession Scheme which scales stamp duty by household income up to $250,000. Single applicant income test: $250,000.",
+      "No FHOG — replaced by the Home Buyer Concession Scheme (HBCS) which gives a full duty concession to first home buyers under the $250,000 household-income threshold, regardless of property value.",
     sourceUrl: "https://www.revenue.act.gov.au/duties/concessions",
   },
   nt: {
@@ -170,15 +194,35 @@ export const STATE_GRANTS: Record<AustralianState, StateGrantData> = {
 };
 
 /**
- * First Home Guarantee — federal scheme, identical across states.
- * Single income cap and couple income cap drive eligibility for the
- * 5% deposit + no-LMI guarantee.
+ * First Home Guarantee — federal scheme (5% deposit, no LMI).
+ *
+ * From 1 October 2025 the scheme removed income caps AND place limits.
+ * Eligibility is now driven by the property-price cap for the buyer's
+ * location: a higher cap applies in capital cities + designated regional
+ * centres, with a lower "rest of state" cap elsewhere.
+ *
+ * Source: https://www.housingaustralia.gov.au/media/unlimited-places-higher-property-price-caps-first-home-buyers-1-october-2025
  */
+export const FHG_PRICE_CAPS: Record<
+  AustralianState,
+  { capitalCents: number; restOfStateCents: number }
+> = {
+  nsw: { capitalCents: 1_500_000_00, restOfStateCents: 800_000_00 },
+  vic: { capitalCents: 950_000_00, restOfStateCents: 650_000_00 },
+  qld: { capitalCents: 1_000_000_00, restOfStateCents: 700_000_00 },
+  wa: { capitalCents: 850_000_00, restOfStateCents: 600_000_00 },
+  sa: { capitalCents: 900_000_00, restOfStateCents: 500_000_00 },
+  tas: { capitalCents: 700_000_00, restOfStateCents: 550_000_00 },
+  act: { capitalCents: 1_000_000_00, restOfStateCents: 1_000_000_00 },
+  nt: { capitalCents: 600_000_00, restOfStateCents: 600_000_00 },
+};
+
 export const FHG = {
-  singleIncomeCapCents: 125_000_00,
-  coupleIncomeCapCents: 200_000_00,
-  placesPerYear: 35_000,
-  sourceUrl: "https://www.nhfic.gov.au/what-we-do/fhbg",
+  /** Income caps were removed from 1 October 2025. */
+  hasIncomeCap: false,
+  /** Place limits were removed from 1 October 2025 (was 35,000/year). */
+  hasPlaceLimit: false,
+  sourceUrl: "https://www.firsthomebuyers.gov.au/",
 } as const;
 
 export interface StateGrantsInput {
@@ -201,8 +245,17 @@ export interface StateGrantsResult {
   stampDutyPayableCents: number;
   /** Stamp duty saved vs the base scenario without concessions. */
   stampDutySavedCents: number;
-  /** Whether the buyer also qualifies for the First Home Guarantee. */
+  /**
+   * Whether the buyer qualifies for the First Home Guarantee. Driven by
+   * the property-price cap for the buyer's location (income caps were
+   * removed 1 Oct 2025). Uses the higher capital-city / regional-centre
+   * cap; rest-of-state buyers should verify against the lower cap below.
+   */
   fhgEligible: boolean;
+  /** Capital-city / regional-centre FHG price cap for the state. */
+  fhgCapCents: number;
+  /** Rest-of-state FHG price cap (lower; for the caveat note). */
+  fhgRestOfStateCapCents: number;
   /** Breakdown lines for display (label + amount + optional source). */
   breakdown: {
     label: string;
@@ -218,6 +271,8 @@ export interface StateGrantsResult {
   fhogApplies: boolean;
   /** Reason text when FHOG does NOT apply (empty if it applies). */
   fhogIneligibleReason: string;
+  /** Caveat shown for land-and-build (duty assessed differently). */
+  dutyEstimateCaveat: string;
 }
 
 export function calculateStateGrants(
@@ -246,14 +301,17 @@ export function calculateStateGrants(
       "This jurisdiction does not run a First Home Owner Grant.";
   }
 
-  if (
-    state.fhogPriceCapCents !== null &&
-    price > state.fhogPriceCapCents
-  ) {
+  // Per-property-type cap overrides the default cap (e.g. NSW caps a
+  // completed new home at $600k but a land + build contract at $750k).
+  const fhogCap =
+    state.fhogPriceCapByTypeCents?.[input.propertyType] ??
+    state.fhogPriceCapCents;
+
+  if (fhogCap !== null && fhogCap !== undefined && price > fhogCap) {
     fhogApplies = false;
     fhogIneligibleReason =
       fhogIneligibleReason ||
-      `Purchase price exceeds this state's $${(state.fhogPriceCapCents / 100).toLocaleString("en-AU")} FHOG cap.`;
+      `Purchase price exceeds this state's $${(fhogCap / 100).toLocaleString("en-AU")} FHOG cap for a ${input.propertyType.replace(/_/g, " ")}.`;
   }
 
   // ── FHOG amount ─────────────────────────────────────────────────────
@@ -275,6 +333,14 @@ export function calculateStateGrants(
 
   let stampDutyPayable = baseStampDuty;
   if (
+    state.stampDutyIncomeTestCents !== undefined &&
+    input.householdIncomeCents <= state.stampDutyIncomeTestCents
+  ) {
+    // Income-tested full concession (ACT Home Buyer Concession Scheme):
+    // duty waived regardless of property price for buyers under the
+    // household-income threshold.
+    stampDutyPayable = 0;
+  } else if (
     state.stampDutyFullExemptionCapCents !== null &&
     price <= state.stampDutyFullExemptionCapCents
   ) {
@@ -289,6 +355,14 @@ export function calculateStateGrants(
   }
 
   const stampDutySavedCents = Math.max(0, baseStampDuty - stampDutyPayable);
+
+  // Vacant land / house-and-land packages are assessed on the land value
+  // with state-specific bands, so the dwelling-based estimate above is
+  // indicative only — flag it rather than imply false precision.
+  const dutyEstimateCaveat =
+    input.propertyType === "land_and_build"
+      ? "House-and-land and vacant-land purchases are assessed for duty on the land value with separate concession bands — treat the stamp-duty figures as indicative and confirm with your state revenue office."
+      : "";
 
   // ── Output breakdown ────────────────────────────────────────────────
   const breakdown: StateGrantsResult["breakdown"] = [];
@@ -330,11 +404,12 @@ export function calculateStateGrants(
   }
 
   // ── First Home Guarantee eligibility (federal) ──────────────────────
-  const fhgCap =
-    input.coupleStatus === "couple"
-      ? FHG.coupleIncomeCapCents
-      : FHG.singleIncomeCapCents;
-  const fhgEligible = input.householdIncomeCents <= fhgCap;
+  // No income cap since 1 Oct 2025 — eligibility is now driven by the
+  // property-price cap. Use the higher capital-city / regional-centre cap
+  // (the calculator has no postcode granularity); rest-of-state buyers
+  // verify against the lower cap surfaced in the result.
+  const caps = FHG_PRICE_CAPS[input.state];
+  const fhgEligible = price <= caps.capitalCents;
 
   const totalGrantCents = fhogCents + additionalGrantsCents;
 
@@ -345,11 +420,14 @@ export function calculateStateGrants(
     stampDutyPayableCents: stampDutyPayable,
     stampDutySavedCents,
     fhgEligible,
+    fhgCapCents: caps.capitalCents,
+    fhgRestOfStateCapCents: caps.restOfStateCents,
     breakdown,
     stateNotes: state.notes,
     fhogSourceUrl: state.sourceUrl,
     fhogApplies,
     fhogIneligibleReason,
+    dutyEstimateCaveat,
   };
 }
 

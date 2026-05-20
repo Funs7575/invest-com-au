@@ -4,6 +4,7 @@ import {
   STATE_GRANTS,
   STATE_LABELS,
   FHG,
+  FHG_PRICE_CAPS,
   formatAud,
   type AustralianState,
 } from "@/lib/first-home-buyer/state-grants";
@@ -135,6 +136,32 @@ describe("calculateStateGrants — FHOG amounts", () => {
     expect(r.fhogApplies).toBe(false);
     expect(r.fhogIneligibleReason).toMatch(/exceeds.*cap/i);
   });
+
+  it("applies NSW new-build $600k cap (not the land+build $750k cap)", () => {
+    // A completed new home at $650k is over the $600k new-build cap.
+    const r = calculateStateGrants({
+      state: "nsw",
+      propertyType: "new_build",
+      purchasePriceCents: 650_000_00,
+      householdIncomeCents: 100_000_00,
+      coupleStatus: "single",
+    });
+    expect(r.fhogApplies).toBe(false);
+    expect(r.fhogIneligibleReason).toMatch(/\$600,000/);
+  });
+
+  it("applies NSW land+build $750k cap for land_and_build", () => {
+    // Same $650k price is under the $750k land+build cap → eligible.
+    const r = calculateStateGrants({
+      state: "nsw",
+      propertyType: "land_and_build",
+      purchasePriceCents: 650_000_00,
+      householdIncomeCents: 100_000_00,
+      coupleStatus: "single",
+    });
+    expect(r.fhogApplies).toBe(true);
+    expect(r.fhogCents).toBe(10_000_00);
+  });
 });
 
 describe("calculateStateGrants — stamp duty concessions", () => {
@@ -179,54 +206,120 @@ describe("calculateStateGrants — stamp duty concessions", () => {
   });
 });
 
-describe("calculateStateGrants — First Home Guarantee eligibility", () => {
-  it("single under $125k income qualifies", () => {
+describe("calculateStateGrants — First Home Guarantee eligibility (post 1 Oct 2025)", () => {
+  it("eligibility is price-driven, not income-driven (high income still eligible)", () => {
     const r = calculateStateGrants({
       state: "nsw",
       propertyType: "new_build",
       purchasePriceCents: 700_000_00,
-      householdIncomeCents: 120_000_00,
+      householdIncomeCents: 300_000_00, // well above the old $125k cap
       coupleStatus: "single",
     });
     expect(r.fhgEligible).toBe(true);
   });
 
-  it("single over $125k income disqualified", () => {
+  it("NSW under the $1.5m capital-city cap qualifies", () => {
     const r = calculateStateGrants({
       state: "nsw",
-      propertyType: "new_build",
-      purchasePriceCents: 700_000_00,
-      householdIncomeCents: 130_000_00,
+      propertyType: "established",
+      purchasePriceCents: 1_400_000_00,
+      householdIncomeCents: 100_000_00,
+      coupleStatus: "single",
+    });
+    expect(r.fhgEligible).toBe(true);
+    expect(r.fhgCapCents).toBe(1_500_000_00);
+  });
+
+  it("NSW above the $1.5m capital-city cap disqualified", () => {
+    const r = calculateStateGrants({
+      state: "nsw",
+      propertyType: "established",
+      purchasePriceCents: 1_600_000_00,
+      householdIncomeCents: 100_000_00,
+      coupleStatus: "couple",
+    });
+    expect(r.fhgEligible).toBe(false);
+  });
+
+  it("TAS uses the lower $700k capital cap", () => {
+    const r = calculateStateGrants({
+      state: "tas",
+      propertyType: "established",
+      purchasePriceCents: 720_000_00,
+      householdIncomeCents: 90_000_00,
       coupleStatus: "single",
     });
     expect(r.fhgEligible).toBe(false);
+    expect(r.fhgCapCents).toBe(700_000_00);
   });
 
-  it("couple under $200k income qualifies", () => {
+  it("surfaces both the capital and rest-of-state caps", () => {
     const r = calculateStateGrants({
       state: "vic",
       propertyType: "new_build",
       purchasePriceCents: 700_000_00,
-      householdIncomeCents: 195_000_00,
-      coupleStatus: "couple",
+      householdIncomeCents: 90_000_00,
+      coupleStatus: "single",
     });
-    expect(r.fhgEligible).toBe(true);
+    expect(r.fhgCapCents).toBe(950_000_00);
+    expect(r.fhgRestOfStateCapCents).toBe(650_000_00);
   });
 
-  it("couple over $200k disqualified", () => {
+  it("FHG no longer has income caps or place limits", () => {
+    expect(FHG.hasIncomeCap).toBe(false);
+    expect(FHG.hasPlaceLimit).toBe(false);
+    expect(FHG_PRICE_CAPS.nsw.capitalCents).toBe(1_500_000_00);
+  });
+});
+
+describe("calculateStateGrants — ACT income-tested duty concession", () => {
+  it("waives duty for buyers under the $250k income threshold regardless of price", () => {
     const r = calculateStateGrants({
-      state: "vic",
-      propertyType: "new_build",
-      purchasePriceCents: 700_000_00,
-      householdIncomeCents: 210_000_00,
+      state: "act",
+      propertyType: "established",
+      purchasePriceCents: 900_000_00,
+      householdIncomeCents: 220_000_00,
       coupleStatus: "couple",
     });
-    expect(r.fhgEligible).toBe(false);
+    expect(r.stampDutyPayableCents).toBe(0);
+    expect(r.stampDutySavedCents).toBeGreaterThan(0);
+  });
+});
+
+describe("calculateStateGrants — Tasmania established-home full exemption", () => {
+  it("fully exempts duty on an established home under $750k", () => {
+    const r = calculateStateGrants({
+      state: "tas",
+      propertyType: "established",
+      purchasePriceCents: 600_000_00,
+      householdIncomeCents: 90_000_00,
+      coupleStatus: "single",
+    });
+    expect(r.stampDutyPayableCents).toBe(0);
+  });
+});
+
+describe("calculateStateGrants — land_and_build caveat", () => {
+  it("surfaces a duty caveat for land-and-build", () => {
+    const r = calculateStateGrants({
+      state: "nsw",
+      propertyType: "land_and_build",
+      purchasePriceCents: 700_000_00,
+      householdIncomeCents: 90_000_00,
+      coupleStatus: "single",
+    });
+    expect(r.dutyEstimateCaveat).toMatch(/land value/i);
   });
 
-  it("references the federal FHG income caps directly", () => {
-    expect(FHG.singleIncomeCapCents).toBe(125_000_00);
-    expect(FHG.coupleIncomeCapCents).toBe(200_000_00);
+  it("no caveat for an established-home purchase", () => {
+    const r = calculateStateGrants({
+      state: "nsw",
+      propertyType: "established",
+      purchasePriceCents: 700_000_00,
+      householdIncomeCents: 90_000_00,
+      coupleStatus: "single",
+    });
+    expect(r.dutyEstimateCaveat).toBe("");
   });
 });
 

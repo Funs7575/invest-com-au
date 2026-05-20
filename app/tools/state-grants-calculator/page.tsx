@@ -43,7 +43,8 @@ const faqLd = faqJsonLd([
   },
   {
     q: "Do FHOG and the First Home Guarantee stack?",
-    a: "Yes — they are independent programs. FHOG is a state-government cash grant; the First Home Guarantee is a federal scheme that lets you buy with a 5% deposit without LMI. Income caps apply to the federal guarantee ($125k single, $200k couple).",
+    // dated-ok — "1 October 2025" is the fixed historical date the FHG income caps were removed; never changes
+    a: "Yes — they are independent programs. FHOG is a state-government cash grant; the First Home Guarantee is a federal scheme that lets you buy with a 5% deposit without LMI. From 1 October 2025 the First Home Guarantee removed its income caps and place limits — eligibility is now driven by a property-price cap that varies by state and location (capital city / regional centre vs rest of state).",
   },
 ]);
 
