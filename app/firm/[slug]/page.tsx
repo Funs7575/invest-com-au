@@ -6,6 +6,7 @@ import type { Professional, AdvisorFirm } from "@/lib/types";
 import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
 import type { Metadata } from "next";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
+import { advisorFirmJsonLd } from "@/lib/schema-markup";
 import Icon from "@/components/Icon";
 
 export const revalidate = 1800;
@@ -99,6 +100,43 @@ export default async function FirmProfilePage({ params }: { params: Promise<{ sl
     { name: typedFirm.name },
   ]);
 
+  // Firm-level rating, derived only from members that actually carry
+  // reviews. Review-count-weighted so a member with 50 reviews counts more
+  // than one with 2; members with zero reviews are excluded entirely so no
+  // rating is synthesised. AggregateRating is omitted unless real reviews
+  // exist (advisorFirmJsonLd guards on reviewCount > 0).
+  const reviewedMembers = members.filter((m) => (m.review_count || 0) > 0);
+  const firmReviewCount = reviewedMembers.reduce(
+    (sum, m) => sum + (m.review_count || 0),
+    0,
+  );
+  const firmRating =
+    firmReviewCount > 0
+      ? Number(
+          (
+            reviewedMembers.reduce(
+              (sum, m) => sum + (m.rating || 0) * (m.review_count || 0),
+              0,
+            ) / firmReviewCount
+          ).toFixed(1),
+        )
+      : null;
+
+  const firmLd = advisorFirmJsonLd({
+    slug,
+    name: typedFirm.name,
+    bio: typedFirm.bio ?? undefined,
+    logoUrl: typedFirm.logo_url ?? undefined,
+    website: typedFirm.website ?? undefined,
+    phone: typedFirm.phone ?? undefined,
+    email: typedFirm.email ?? undefined,
+    afslNumber: typedFirm.afsl_number ?? undefined,
+    locationState: typedFirm.location_state ?? undefined,
+    locationSuburb: typedFirm.location_suburb ?? undefined,
+    rating: firmRating,
+    reviewCount: firmReviewCount > 0 ? firmReviewCount : undefined,
+  });
+
   const firstMemberSlug = members[0]?.slug;
 
   return (
@@ -106,6 +144,10 @@ export default async function FirmProfilePage({ params }: { params: Promise<{ sl
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(firmLd) }}
       />
 
       <div className="min-h-screen bg-slate-50">

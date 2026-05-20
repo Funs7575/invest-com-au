@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import { fundFinancialProductJsonLd } from "@/lib/schema-markup";
 import { createClient } from "@/lib/supabase/server";
 import Icon from "@/components/Icon";
 import RegisterInterestForm from "@/components/funds/RegisterInterestForm";
@@ -152,11 +153,32 @@ export default async function FundDetailPage({
     { name: fund.title },
   ]);
 
+  // FinancialProduct JSON-LD. aggregateRating is sourced from
+  // `reviewStats`, which is null unless approved reviews exist, so no
+  // rating is emitted for unreviewed funds.
+  const productLd = fundFinancialProductJsonLd({
+    slug: fund.slug,
+    name: fund.title,
+    description: fund.description ?? undefined,
+    managerName: fund.manager_name ?? undefined,
+    fundType: fund.fund_type ? typeLabel : undefined,
+    rating: reviewStats?.average_rating ?? undefined,
+    reviewCount: reviewStats?.review_count ?? undefined,
+    minInvestmentAud:
+      fund.min_investment_cents != null
+        ? Math.round(fund.min_investment_cents / 100)
+        : undefined,
+  });
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productLd) }}
       />
 
       <div className="bg-slate-50 min-h-screen">
