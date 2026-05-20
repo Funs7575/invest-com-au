@@ -3,6 +3,7 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { logger } from "@/lib/logger";
 import { sendEmail } from "@/lib/resend";
+import { recordAuditForUser } from "@/lib/audit";
 
 const log = logger("account-delete");
 
@@ -112,6 +113,16 @@ export async function POST(request: NextRequest) {
     log.error("account_deletion_requests insert failed", error);
     return NextResponse.json({ error: "Failed to schedule deletion" }, { status: 500 });
   }
+
+  // Unified audit trail (#11): account deletion is a high-sensitivity action.
+  void recordAuditForUser(user.id, {
+    action: "account.delete_scheduled",
+    resourceType: "auth_user",
+    resourceId: user.id,
+    summary: `Deletion scheduled for ${data.scheduled_purge_at}`,
+    metadata: { scheduled_purge_at: data.scheduled_purge_at },
+    ip,
+  });
 
   // K-07 (audit 2026-04-26 §7 SEC-07): send a confirmation email so
   // the user has a permanent record of the deadline + a cancel link

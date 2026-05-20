@@ -17,6 +17,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 import { getPrincipalForAuthUser } from "@/lib/principals";
+import { recordAudit } from "@/lib/audit";
 
 const log = logger("forum-moderation");
 
@@ -79,6 +80,16 @@ async function recordAction(opts: {
       target_type: opts.targetType,
       target_id: String(opts.targetId),
       reason: opts.reason ?? null,
+    });
+    // Also emit to the unified audit trail (#11). Best-effort; the domain
+    // table above stays the moderation system-of-record.
+    void recordAudit({
+      actorPrincipalId: principal?.id ?? null,
+      actorKind: "human",
+      action: `forum.${opts.action}`,
+      resourceType: opts.targetType,
+      resourceId: opts.targetId,
+      summary: opts.reason ?? null,
     });
   } catch (err) {
     log.warn("recordAction failed", {
