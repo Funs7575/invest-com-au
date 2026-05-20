@@ -6,7 +6,13 @@
  * /embed-portal/*.
  */
 
+import type { Metadata } from "next";
 import { enforcePortalKind } from "@/lib/portal-gate";
+
+export const metadata: Metadata = {
+  title: "Embed portal — Invest.com.au",
+  robots: { index: false, follow: false },
+};
 
 export default async function EmbedPortalLayout({
   children,

@@ -22,6 +22,7 @@ import {
   banUser,
   hidePost,
   hideThread,
+  isModerator,
   lockThread,
   pinThread,
   unbanUser,
@@ -56,6 +57,11 @@ export const POST = withValidatedBody(Body, async (_req, body) => {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  }
+  // Explicit moderator gate at the route boundary (the lib helpers also
+  // re-check). Forum moderators — not full admins — operate this surface.
+  if (!(await isModerator(user.id))) {
+    return NextResponse.json({ error: "not_a_moderator" }, { status: 403 });
   }
 
   const targetIdNum = typeof body.target_id === "number"

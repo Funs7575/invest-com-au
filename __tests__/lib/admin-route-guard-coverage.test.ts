@@ -28,6 +28,10 @@ const GUARD_PATTERNS = [
   /process\.env\.CRON_SECRET/,
   /process\.env\.ADMIN_API_TOKEN/,
   /requireCronAuth\s*\(/,
+  // Capability gate: forum-moderation is gated to forum moderators
+  // (forum_user_profiles.is_moderator), a narrower trusted role than
+  // full admin — a legitimate guard for that route.
+  /isModerator\s*\(/,
 ];
 
 function walk(dir: string, out: string[] = []): string[] {
