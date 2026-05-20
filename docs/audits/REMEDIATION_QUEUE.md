@@ -51,7 +51,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | MM | _complete_ | **#801 MERGED** · **#803 MERGED 2026-05-14** · **#921 MERGED 2026-05-20** | MM-V01..V08 done. **Stream complete — #921 merged by founder 2026-05-20.** | All MM phases merged ✓ |
 | TT | _complete_ | **#764 MERGED** · **#772 MERGED** · **#779 MERGED** · **#799 MERGED 2026-05-12** | TT-01..TT-04 all done. GA4 removed; Plausible sole analytics. **Stream complete.** | TT-04 merged ✓ |
 | CMP | `claude/audit-remediation/cmp-w1a-int-calculator-autosave` | **#782 CLOSED 2026-05-14 (not merged)** | CMP-W1A-INT: #782 was closed without merging by founder 2026-05-14. Work may need re-examination or re-opening on a fresh branch. | All CMP tasks merged |
-| SP | `claude/audit-remediation/sp-01-capability-audit` (#1048) | **#1048 OPEN** | MM blocker resolved (MM complete — #921 merged 2026-05-20). SP-01 done (iter 484): advisor-portal reuse map. SP-02 done (iter 488): 8-table schema migration + types + RLS tests (`a2839db5`). SP-03 done (iter 489): require-startup-session.ts + AccountKind "startup" + portalForKind + proxy noindex (`a0cc461e`). SP-04..SP-13 pending. | All SP tasks merged + compliance signoff |
+| SP | `claude/audit-remediation/sp-01-capability-audit` (#1048) | **#1048 OPEN** | MM blocker resolved (MM complete — #921 merged 2026-05-20). SP-01 done (iter 484): advisor-portal reuse map. SP-02 done (iter 488): 8-table schema migration + types + RLS tests (`a2839db5`). SP-03 done (iter 489): require-startup-session.ts + AccountKind "startup" + portalForKind + proxy noindex (`a0cc461e`). SP-04 done (iter 489 batch): /startup-signup page + API + 9 tests (`94e64fc2`). SP-05..SP-13 pending. | All SP tasks merged + compliance signoff |
 | CO | `claude/audit-remediation/co-cutover-prep` | **#1046 OPEN** | CO-01 blocked (legacy redirect map — needs prior-host URL list from founder). CO-02 blocked (GSC/GA4 — needs external credentials). CO-03 done (iter 485+486): sitemap finalisation — `/press` + `/about/careers` + `/wealth-stack` + `/startup/grants` + `/lic-screener` + `/tools/subscription-audit`; dynamic `/afsl/[number]` + `/find/[advisor-type]/[city]` sections. CO-04 blocked (DNS — registrar access). CO-05 done (iter 487): `e2e/pre-launch-qa.spec.ts` — 30 Playwright tests (critical pages, redirect coverage, sitemap/robots.txt, security headers, founder PII gate, canonical URL check). CO-06 done (iter 482): apex domain cutover runbook `docs/runbooks/cutover.md`. CO-07 done (iter 483): final anonymity audit `docs/audits/co-07-final-anonymity-audit.md` — CL-09 PASSED (2,329 files clean). | All CO tasks done + compliance signoff |
 | MAIN-RESCUE | _complete_ | **#793 MERGED** | next 16.2.4→16.2.6 patch merged. Non-loop auto-revert PRs for failed main commits: **#827 OPEN** (reverts `d26094aa`) · **#843 OPEN** (reverts `ff43ed6f`). These are founder-action items — loop will not create duplicate fixes. | Merged to main ✓ |
 | CL | `claude/audit-remediation/cl-01-about-entity-only` | **#795 MERGED 2026-05-14** | CL-01..CL-04, CL-06, CL-09, CL-10 done. CL-07+CL-08 false-positive. CL-05 blocked (WHOIS registrar action — see Blocked). | All CL tasks merged (CL-05 blocked) |
@@ -174,6 +174,23 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 ---
 
 ## Iteration log (most recent first)
+
+### iter 489 (batch item 2) — 2026-05-20 — SP-04 — /startup-signup + API handler
+
+- **Stream:** SP (startup portal)
+- **Phase:** 5 — implementation (Tier C — new auth-adjacent signup route)
+- **Branch:** `claude/audit-remediation/sp-01-capability-audit`
+- **PR:** #1048 OPEN
+- **Commit:** `94e64fc2` — feat(sp): SP-04 — /startup-signup onboarding route + API handler
+- **Diff:** +665 LOC (`app/startup-signup/page.tsx` +385, `app/api/startups/signup/route.ts` +140, `__tests__/api/startup-signup.test.ts` +140)
+- **Items done:** SP-04 (/startup-signup onboarding)
+- **Key deliverables:**
+  - `app/startup-signup/page.tsx`: 3-step multi-step form — credentials → company basics + stage + sector → LinkedIn/ESIC self-attestation + terms
+  - `app/api/startups/signup/route.ts`: Zod-validated POST, rate-limited 3/60s, creates auth user + `startup_profiles` row in draft status, rollback on DB failure
+  - 9 API test cases (success, rate-limit, 5 validation errors, duplicate 409, rollback on insert failure)
+- **Admin flow:** founder submits → `startup_profiles.status = 'draft'` → admin promotes `draft → active` via admin UI (SP-12 scope)
+- **Items pending:** SP-05..SP-13
+- **STATUS: PROGRESS · stream=SP · item=SP-04 · pr=#1048**
 
 ### iter 489 — 2026-05-20 — SP-03 — auth surface: require-startup-session.ts + account kind + proxy
 
