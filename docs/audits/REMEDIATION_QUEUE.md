@@ -71,7 +71,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | Z-22+BB-07 | _complete_ | **#922 MERGED 2026-05-20** | Z-22 + BB-07 done. **Stream complete — #922 merged by founder 2026-05-20.** | Z-22+BB-07 merged ✓ |
 | BB-01 | _complete_ | **#923 MERGED 2026-05-20** | BB-01 done. **Stream complete — #923 merged by founder 2026-05-20.** | BB-01 merged ✓ |
 | BB-06 | _complete_ | **#924 MERGED 2026-05-20** | BB-06 done. **Stream complete — #924 merged by founder 2026-05-20.** | BB-06 merged ✓ |
-| AA | `claude/audit-remediation/aa-02-03-programmatic-grants` | **#928 MERGED 2026-05-20** | AA-01 false-positive. AA-02+AA-03 done. **#928 merged by founder 2026-05-20.** AA-04+BB-09 (#931) also merged. AA-06/AA-07 pending. | AA-02+AA-03 merged ✓ |
+| AA | `claude/audit-remediation/aa-05-suburb-property-investing` | **#928 MERGED 2026-05-20** · **#931 MERGED** · **#1020 OPEN** · **#1031 OPEN** · **#1037 OPEN** | AA-01 false-positive. AA-02+AA-03 done (#928). AA-04+BB-09 done (#931). AA-05 done (iter 473): `/[suburb]/property-investing` dynamic route + sitemap. AA-06 done (#1031). AA-07 done (#1020). **Stream complete.** | AA-05 merged ✓ |
 | Z-26 | _complete_ | **#929 MERGED 2026-05-20** | Z-26 done. **Stream complete — #929 merged by founder 2026-05-20.** | Z-26 merged ✓ |
 | Z-25 | _complete_ | **#930 MERGED 2026-05-20** | Z-25 done. **Stream complete — #930 merged by founder 2026-05-20.** | Z-25 merged ✓ |
 | AA-04+BB-09 | _complete_ | **#931 MERGED 2026-05-20** | AA-04+BB-09 done. **Stream segment merged — #931 merged by founder 2026-05-20.** | AA-04+BB-09 merged ✓ |
@@ -140,6 +140,21 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 473 — 2026-05-20 — AA-05 — /[suburb]/property-investing programmatic pages
+
+- **Stream:** AA (programmatic SEO — Tier A)
+- **Phase:** 5 — implementation
+- **Branch:** `claude/audit-remediation/aa-05-suburb-property-investing`
+- **PR:** #1037 OPEN
+- **Commit:** `1043473` — feat(aa05): AA-05 — /[suburb]/property-investing programmatic pages
+- **Diff:** 2 files, +351 LOC / -1 LOC (cumulative batch: ~594 LOC)
+- **Items done:** AA-05 (`/[suburb]/property-investing` dynamic route + sitemap)
+- **Implementation:**
+  - **`app/[suburb]/property-investing/page.tsx`** (new, 342 LOC): top-level dynamic route. `generateStaticParams` pre-renders every `suburb_data` slug at build time. `revalidate = 86400`. Displays: 5 hero stat cards (median house/unit, rental yield, vacancy rate, 10yr growth); capital growth grid (1yr/3yr/5yr/10yr); suburb-vs-state comparison table; demographics grid (population, pop. growth, median age, median income); "Is X worth investing?" narrative section; 4 FAQ items with `faqJsonLd` JSON-LD; buyer's agent CTA → `/advisors/buyers-agents/[state]`; cross-link to existing `/property/suburbs/[slug]` profile; `SUBURB_DATA_DISCLAIMER` + `GENERAL_ADVICE_WARNING`; `ComplianceFooter variant="property"`.
+  - **`app/sitemap.ts`**: added `suburbInvestingPages` section (priority 0.7, monthly) reusing already-fetched `suburbSlugs`, added to return array alongside existing `suburbGuidePages`.
+- **Stream complete:** AA-05 is the last missing AA item. Stream complete.
+- **STATUS: PROGRESS · stream=AA · item=AA-05 · pr=#1037**
 
 ### iter 472 — 2026-05-20 — DD-04 — real-time advisor bidding auction model
 
