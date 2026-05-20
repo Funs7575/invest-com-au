@@ -57,6 +57,12 @@ const FEATURED_TOOLS: ReadonlyArray<ToolEntry> = [
     icon: "globe",
     oneLiner: "Foreign-buyer fees + duty",
   },
+  {
+    name: "DASP Calculator",
+    href: "/dasp-calculator",
+    icon: "log-out",
+    oneLiner: "Departing Australia super tax",
+  },
 ];
 
 interface HomeToolsStripProps {
