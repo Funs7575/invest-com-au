@@ -80,7 +80,10 @@ export async function generateMetadata({
   const { slug } = await params;
   const cat = getCategoryBySlug(slug);
   if (!cat) return {};
-  const ogImageUrl = `/api/og?title=${encodeURIComponent(cat.h1)}&subtitle=${encodeURIComponent(cat.metaDescription.slice(0, 80))}&type=best`;
+  // Category-specific OG image: renders the title, ranked top 3 platforms,
+  // and the top pick's rating (see app/api/og/best/route.tsx). The route
+  // re-applies the category's own filter/sort, so only the slug is needed.
+  const ogImageUrl = absoluteUrl(`/api/og/best?slug=${slug}`);
   return {
     title: cat.title,
     description: cat.metaDescription,
@@ -91,7 +94,12 @@ export async function generateMetadata({
       url: absoluteUrl(`/best/${slug}`),
       images: [{ url: ogImageUrl, width: 1200, height: 630, alt: cat.h1 }],
     },
-    twitter: { card: "summary_large_image" as const },
+    twitter: {
+      card: "summary_large_image" as const,
+      title: cat.title,
+      description: cat.metaDescription,
+      images: [ogImageUrl],
+    },
   };
 }
 
