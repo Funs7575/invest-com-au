@@ -6,7 +6,7 @@ import { projectGoal } from "@/lib/goals/project";
 export interface GoalRow {
   id: number;
   label: string;
-  goalType: "house_deposit" | "retirement" | "education" | "generic";
+  goalType: "house_deposit" | "retirement" | "fire" | "debt_free" | "education" | "generic";
   targetCents: number;
   targetDate: string;
   currentBalanceCents: number;
@@ -20,10 +20,12 @@ interface Props {
 }
 
 const GOAL_TYPES = [
-  { value: "house_deposit", label: "🏠 House deposit", defaultReturn: 5.5 },
-  { value: "retirement",    label: "🏖️ Retirement",   defaultReturn: 7.0 },
-  { value: "education",     label: "🎓 Education",     defaultReturn: 5.0 },
-  { value: "generic",       label: "🎯 Other goal",    defaultReturn: 6.5 },
+  { value: "house_deposit", label: "🏠 House deposit",          defaultReturn: 5.5 },
+  { value: "retirement",    label: "🏖️ Retirement",             defaultReturn: 7.0 },
+  { value: "fire",          label: "🔥 FIRE (retire early)",    defaultReturn: 7.0 },
+  { value: "debt_free",     label: "💳 Debt-free",              defaultReturn: 0.0 },
+  { value: "education",     label: "🎓 Education",              defaultReturn: 5.0 },
+  { value: "generic",       label: "🎯 Other goal",             defaultReturn: 6.5 },
 ] as const;
 
 const fmt = (cents: number) =>
@@ -156,9 +158,16 @@ export default function GoalsClient({ initialItems }: Props) {
             <input type="text" name="notes" maxLength={500}
               className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
           </Field>
-          <div className="sm:col-span-6 flex justify-end">
+          <div className="sm:col-span-6 flex items-center justify-between gap-3">
+            <p className="text-xs text-slate-500">
+              💡 Use your{" "}
+              <a href="/account/vault" className="underline hover:text-slate-700">
+                Document Vault
+              </a>{" "}
+              to upload bank or super statements as a reference for current balances.
+            </p>
             <button type="submit" disabled={adding}
-              className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-medium rounded-lg disabled:opacity-50">
+              className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-medium rounded-lg disabled:opacity-50 shrink-0">
               {adding ? "Adding…" : "Add goal"}
             </button>
           </div>
@@ -246,7 +255,7 @@ function GoalCard({
       </p>
 
       <p className="text-[10px] text-slate-500 italic mt-2">
-        Pure projection. Returns aren't guaranteed. General information only — see your financial planner for advice.
+        Pure projection. Returns are not guaranteed. General information only — see your financial planner for advice.
       </p>
 
       <button
