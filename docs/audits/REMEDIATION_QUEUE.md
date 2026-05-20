@@ -77,6 +77,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | AA-04+BB-09 | _complete_ | **#931 MERGED 2026-05-20** | AA-04+BB-09 done. **Stream segment merged — #931 merged by founder 2026-05-20.** | AA-04+BB-09 merged ✓ |
 | DD | `claude/audit-remediation/dd-01-tiered-listings` | **#926 MERGED 2026-05-20** | DD-01 done. **#926 merged by founder 2026-05-20.** DD-02/03/04 pending. | DD-01 merged ✓ |
 | Z-24 | `claude/audit-remediation/z-24-inheritance-hub` | **#995 OPEN** | Z-24 done (iter 464): `/inheritance` top-level hub; `lib/hub-configs/inheritance.ts` (3 hero stats, 6 service cards, 4 deep-dives, 6 FAQs, `complianceKey: "general_advice"`); lead magnet + sitemap. CI: queued — pushed `f3953a0` 2026-05-20. | Z-24 merged |
+| BB-02+BB-03 | `claude/audit-remediation/bb-02-03-salary-sacrifice-cgt` | **#1015 OPEN** | BB-02 done (iter 465): `/tools/salary-sacrifice-optimiser` — quantitative salary-sacrifice calculator (FY2025-26 tax, concessional cap enforcement, Division 293 detection, take-home before/after table). BB-03 done: `/tools/cgt-calculator` — purchase→sale CGT calc (50% discount, asset types, side-by-side discount impact). Sitemap +2. CI: queued — pushed `df71adb9` 2026-05-20. | BB-02+BB-03 merged |
 
 ---
 
@@ -136,6 +137,23 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 465 — 2026-05-20 — BB-02+BB-03 — salary-sacrifice optimiser + CGT calculator
+
+- **Stream:** BB (calculator farm)
+- **Phase:** 5 — implementation (Tier A — calculators)
+- **Branch:** `claude/audit-remediation/bb-02-03-salary-sacrifice-cgt`
+- **PR:** #1015 OPEN
+- **Commit:** `df71adb9` — feat(bb02+bb03): BB-02+BB-03 — salary-sacrifice optimiser + CGT calculator
+- **Diff:** 5 files, +876 LOC (content/calculator budget)
+- **Items done:** BB-02 (`/tools/salary-sacrifice-optimiser`), BB-03 (`/tools/cgt-calculator`)
+- **Implementation:**
+  - **`app/tools/salary-sacrifice-optimiser/SalarySacrificeOptimiserClient.tsx`** (new): quantitative calc (distinct from existing `/tools/salary-sacrifice` decision tree). FY2025-26 tax + Medicare, concessional cap $30k enforcement, Division 293 detection (>$250k), take-home before/after comparison table, net annual advantage.
+  - **`app/tools/salary-sacrifice-optimiser/page.tsx`** (new): SSR wrapper, breadcrumb JSON-LD, calculatorJsonLd, faqJsonLd (5 FAQs), revalidate 3600.
+  - **`app/tools/cgt-calculator/CGTCalculatorClient.tsx`** (new): full purchase→sale flow (distinct from `/cgt-calculator` which takes pre-computed gain). 50% CGT discount, stacked marginal rate (income + gain), asset types (shares/property/crypto/other), discount impact side-by-side, capital loss handling, asset-specific callouts.
+  - **`app/tools/cgt-calculator/page.tsx`** (new): SSR wrapper, breadcrumb JSON-LD, calculatorJsonLd, faqJsonLd (6 FAQs), revalidate 3600.
+  - **`app/sitemap.ts`**: +2 entries.
+- **STATUS: PROGRESS · stream=BB · item=BB-02+BB-03 · pr=#1015**
 
 ### iter 464 — 2026-05-20 — Z-24 — /inheritance top-level hub [queue sync + in-flight]
 
