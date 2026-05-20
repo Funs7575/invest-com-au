@@ -101,7 +101,7 @@ export default function SubscriptionAuditPage() {
       </section>
 
       <div className="container-custom max-w-3xl pb-10">
-        <ComplianceFooter variant="general" />
+        <ComplianceFooter />
       </div>
     </>
   );
