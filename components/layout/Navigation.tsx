@@ -206,10 +206,7 @@ function MegaMenuDropdown({
       </button>
 
       {open && (
-        <div
-          className={`absolute left-0 top-full pt-2 z-50 ${menuWidth}`}
-          role="menu"
-        >
+        <div className={`absolute left-0 top-full pt-2 z-50 ${menuWidth}`}>
           <div className="bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/60 overflow-hidden">
             {children}
           </div>

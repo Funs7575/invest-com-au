@@ -4,6 +4,7 @@ import Link from "next/link";
 import { createStaticClient } from "@/lib/supabase/static";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR, SITE_NAME } from "@/lib/seo";
 import { logger } from "@/lib/logger";
+import VerifiedBadge from "@/components/VerifiedBadge";
 
 export const revalidate = 3600;
 
@@ -114,6 +115,10 @@ interface AdvisorRow {
   rating: number | null;
   review_count: number | null;
   verified: boolean | null;
+  verification_method: string | null;
+  afsl_number: string | null;
+  abn: string | null;
+  last_verified_at: string | null;
   photo_url: string | null;
   bio: string | null;
   fee_model: string | null;
@@ -127,7 +132,7 @@ async function getAdvisors(dbType: string, city: string): Promise<AdvisorRow[]> 
   const { data, error } = await supabase
     .from("professionals")
     .select(
-      "id, name, slug, type, location_suburb, location_state, rating, review_count, verified, photo_url, bio, fee_model, initial_consultation_free, is_sponsored, advisor_tier"
+      "id, name, slug, type, location_suburb, location_state, rating, review_count, verified, verification_method, afsl_number, abn, last_verified_at, photo_url, bio, fee_model, initial_consultation_free, is_sponsored, advisor_tier"
     )
     .eq("status", "active")
     .eq("type", dbType)
@@ -185,11 +190,13 @@ function AdvisorCard({ advisor }: { advisor: AdvisorRow }) {
             >
               {advisor.name}
             </Link>
-            {advisor.verified && (
-              <span className="ml-2 text-xs bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded font-medium">
-                Verified
-              </span>
-            )}
+            <VerifiedBadge
+              method={advisor.verification_method ?? null}
+              afsl={advisor.afsl_number ?? null}
+              abn={advisor.abn ?? null}
+              lastVerifiedAt={advisor.last_verified_at ?? null}
+              compact
+            />
             {advisor.is_sponsored && (
               <span className="ml-2 text-xs bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded font-medium">
                 Featured

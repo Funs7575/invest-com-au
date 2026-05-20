@@ -2,6 +2,15 @@
 
 import { useState, useTransition } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import {
+  BANNER_PADDING,
+  BANNER_RADIUS,
+  RECOMMENDATION_APPLIED_BG,
+  RECOMMENDATION_BG,
+  RECOMMENDATION_BORDER,
+  RECOMMENDATION_CTA_BG,
+  RECOMMENDATION_CTA_HOVER,
+} from "./banner-tokens";
 
 interface Props {
   flag: string;
@@ -70,7 +79,7 @@ export default function IntentCountryRecommendationCard({
       }`}
       aria-hidden={applied}
     >
-      <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 md:p-5">
+      <div className={`${RECOMMENDATION_BG} border ${RECOMMENDATION_BORDER} ${BANNER_RADIUS} ${BANNER_PADDING}`}>
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div className="flex items-start gap-3">
             <span aria-hidden className="text-2xl leading-none mt-0.5">
@@ -90,8 +99,8 @@ export default function IntentCountryRecommendationCard({
             disabled={applied}
             className={`shrink-0 px-4 py-2 font-bold text-sm rounded-lg transition-all duration-300 ease-out ${
               applied
-                ? "bg-emerald-500 text-white scale-105"
-                : "bg-amber-500 hover:bg-amber-400 text-slate-900"
+                ? `${RECOMMENDATION_APPLIED_BG} text-white scale-105`
+                : `${RECOMMENDATION_CTA_BG} ${RECOMMENDATION_CTA_HOVER} text-slate-900`
             }`}
             aria-live="polite"
           >
