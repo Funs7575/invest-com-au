@@ -18,6 +18,7 @@ import { ADVISOR_SPECIALTY_CATEGORIES } from "@/lib/advisor-specialties";
 import TabBar from "@/components/directory/TabBar";
 import SearchInput from "@/components/directory/SearchInput";
 import SortDropdown from "@/components/directory/SortDropdown";
+import { resolveDirectoryFilters } from "./filter-params";
 
 export interface ExpertTeamCard {
   id: number;
@@ -322,25 +323,17 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
   }, [userLat, userLng, radius, typeFilters, feeFilter, specialtyFilters, isLocationActive]);
 
   useEffect(() => {
-    const pt = searchParams.get("provider_type");
-    if (pt === "individual" || pt === "firm" || pt === "team") setProviderType(pt);
-
-    if (initialType || initialState) return;
-    const t = searchParams.get("type");
-    const s = searchParams.get("state");
-    const sp = searchParams.get("specialty");
-    const sort = searchParams.get("sort");
-    const q = searchParams.get("q");
-    const lang = searchParams.get("language");
-    if (t) {
-      const types = t.split(",").filter(v => TYPE_FILTERS.some(f => f.key === v)) as ProfessionalType[];
-      if (types.length > 0) setTypeFilters(new Set(types));
-    }
-    if (s && AU_STATES.includes(s as typeof AU_STATES[number])) setStateFilter(s);
-    if (sp) setSpecialtyFilters(sp.split(","));
-    if (sort) setSortBy(sort as SortKey);
-    if (q) setSearch(q);
-    if (lang) setLanguageFilter(lang);
+    const resolved = resolveDirectoryFilters(searchParams, {
+      routeScoped: Boolean(initialType || initialState),
+      validType: v => TYPE_FILTERS.some(f => f.key === v),
+    });
+    if (resolved.providerType) setProviderType(resolved.providerType);
+    if (resolved.specialties) setSpecialtyFilters(resolved.specialties);
+    if (resolved.types) setTypeFilters(new Set(resolved.types));
+    if (resolved.state) setStateFilter(resolved.state);
+    if (resolved.sort) setSortBy(resolved.sort as SortKey);
+    if (resolved.search) setSearch(resolved.search);
+    if (resolved.language) setLanguageFilter(resolved.language);
   }, [searchParams, initialType, initialState]);
 
   const initialRenderRef = useRef(true);

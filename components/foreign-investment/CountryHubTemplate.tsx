@@ -16,6 +16,7 @@ import CountryLeadForm from "@/components/foreign-investment/CountryLeadForm";
 import CountryAudiencesSection from "@/components/foreign-investment/sections/CountryAudiencesSection";
 import CountryFaqSection from "@/components/foreign-investment/sections/CountryFaqSection";
 import CountrySchemesSection from "@/components/foreign-investment/CountrySchemesSection";
+import CrossBorderPartnerPanel from "@/components/foreign-investment/CrossBorderPartnerPanel";
 import { isoForIntentCode } from "@/lib/intent-context";
 import SectionHeading from "@/components/SectionHeading";
 import ForeignInvestmentNav from "@/app/foreign-investment/ForeignInvestmentNav";
@@ -892,6 +893,18 @@ export default async function CountryHubTemplate({ config }: Props) {
                 Compare all non-resident brokers &rarr;
               </Link>
             </p>
+          </section>
+        )}
+
+        {/* ── Cross-border partners (remittance / FX / mortgage / FIRB legal) ── */}
+        {config.crossBorderPartners && config.crossBorderPartners.partners.length > 0 && (
+          <section id="cross-border-partners" className="scroll-mt-20">
+            <SectionHeading
+              eyebrow={config.crossBorderPartners.eyebrow}
+              title={config.crossBorderPartners.title}
+              sub={config.crossBorderPartners.sub}
+            />
+            <CrossBorderPartnerPanel partners={config.crossBorderPartners.partners} />
           </section>
         )}
 
