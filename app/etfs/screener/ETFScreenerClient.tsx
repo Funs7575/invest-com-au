@@ -72,11 +72,6 @@ function assetClassLabel(cls: ETFAssetClass): string {
   return labels[cls] ?? cls;
 }
 
-function SortIcon({ col, sortKey, sortDir }: { col: SortKey; sortKey: SortKey; sortDir: SortDir }) {
-  if (sortKey !== col) return <span className="text-slate-400 ml-1">↕</span>;
-  return <span className="text-amber-600 ml-1">{sortDir === "asc" ? "↑" : "↓"}</span>;
-}
-
 export default function ETFScreenerClient() {
   const [assetClass, setAssetClass] = useState<ETFAssetClass | "all">("all");
   const [provider, setProvider] = useState<ETFProvider | "all">("all");
