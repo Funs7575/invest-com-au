@@ -48,6 +48,7 @@ const faqLd = faqJsonLd([
   },
   {
     q: "How much tax is withheld on a DASP?",
+    // dated-ok — fixed legislative effective date, never needs updating
     a: "For a DASP paid on or after 1 July 2017: the tax-free component is taxed at 0%, the taxed element of the taxable component at 35%, and the untaxed element at 45%. Working Holiday Makers (subclass 417/462) are taxed at 65% on the whole taxable component.",
   },
   {

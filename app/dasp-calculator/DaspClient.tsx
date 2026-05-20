@@ -67,7 +67,7 @@ export default function DaspClient() {
                 withholds DASP tax before paying you, so the amount you receive is less than your account balance.
               </p>
               <p>
-                <strong className="text-slate-900">The rates (DASP paid on/after 1 July 2017):</strong> the tax-free
+                <strong className="text-slate-900">The current rates:</strong> the tax-free
                 component is taxed at 0%, the taxed element of the taxable component at 35%, and the untaxed element
                 (mostly some public-sector funds) at 45%. For most temporary residents with ordinary accumulation super,
                 the headline rate is effectively 35%.
@@ -101,6 +101,7 @@ export default function DaspClient() {
                 },
                 {
                   q: "How much tax is withheld on a DASP?",
+                  // dated-ok — fixed legislative effective date, never needs updating
                   a: "For a DASP paid on or after 1 July 2017: the tax-free component is 0%, the taxed element of the taxable component is 35%, and the untaxed element is 45%. Working Holiday Makers (subclass 417/462) are taxed at 65% on the whole taxable component.",
                 },
                 {
