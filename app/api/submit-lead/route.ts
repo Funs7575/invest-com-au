@@ -461,9 +461,6 @@ export async function POST(request: NextRequest) {
       .limit(MATCH_FETCH_LIMIT);
   }
 
-  // Take the highest-ranked candidate eligible for the visitor's
-  // country. When intentCountry is null, simply returns the top pick.
-  //
   // Visitor's intent country as a lowercased ISO alpha-2 ("uk" → "gb"),
   // matching the codes advisors self-declare in available_in_countries.
   const corridorCode = intentCountry
