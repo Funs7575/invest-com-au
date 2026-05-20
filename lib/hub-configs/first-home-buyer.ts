@@ -74,8 +74,8 @@ export const firstHomeBuyerHubConfig: HubConfig = {
       icon: "gift",
       description:
         "Most states offer grants of $10,000–$30,000 for new builds. NSW, VIC, QLD, WA, SA, TAS, NT and ACT all have separate first home owner grant (FHOG) programs.",
-      href: "/tools/state-grants-calculator",
-      cta: "Calculate Your State Grant",
+      href: "/grants/first-home-owner",
+      cta: "Find Your State Grant",
     },
     {
       title: "Stamp Duty Concessions",
