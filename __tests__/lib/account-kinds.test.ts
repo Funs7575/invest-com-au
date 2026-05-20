@@ -118,4 +118,83 @@ describe("chooseCallbackRedirect", () => {
     expect(r.setKind).toBeNull();
     expect(r.setTeamId).toBeNull();
   });
+
+  // ─── Phase 3 preference-aware routing ────────────────────────────────────
+
+  it("multi-kind + defaultKind matches → that workspace auto-routed", () => {
+    const r = chooseCallbackRedirect(
+      [m("advisor"), m("investor")],
+      "/account",
+      {
+        defaultKind: "advisor",
+        defaultTeamId: null,
+        lastActiveKind: "investor",
+        lastActiveTeamId: null,
+      },
+    );
+    expect(r.redirect).toBe("/advisor-portal");
+    expect(r.setKind).toBe("advisor");
+    expect(r.setTeamId).toBeNull();
+  });
+
+  it("multi-kind + no default + lastActive matches → last-active auto-routed", () => {
+    const r = chooseCallbackRedirect(
+      [m("advisor"), m("investor")],
+      "/account",
+      {
+        defaultKind: null,
+        defaultTeamId: null,
+        lastActiveKind: "investor",
+        lastActiveTeamId: null,
+      },
+    );
+    expect(r.redirect).toBe("/account");
+    expect(r.setKind).toBe("investor");
+  });
+
+  it("multi-kind + default points at kind the user no longer holds → chooser", () => {
+    const r = chooseCallbackRedirect(
+      [m("advisor"), m("investor")],
+      "/account",
+      {
+        defaultKind: "broker_partner", // user lost this membership
+        defaultTeamId: null,
+        lastActiveKind: null,
+        lastActiveTeamId: null,
+      },
+    );
+    expect(r.redirect).toBe("/account/select-workspace");
+    expect(r.setKind).toBeNull();
+  });
+
+  it("multi-kind + default squad with matching team id → that squad routed", () => {
+    const r = chooseCallbackRedirect(
+      [m("advisor"), m("squad", { kindId: "42", scopeSlug: "smsf" })],
+      "/account",
+      {
+        defaultKind: "squad",
+        defaultTeamId: "42",
+        lastActiveKind: null,
+        lastActiveTeamId: null,
+      },
+    );
+    expect(r.redirect).toBe("/teams/smsf/dashboard");
+    expect(r.setKind).toBe("squad");
+    expect(r.setTeamId).toBe("42");
+  });
+
+  it("multi-kind + default squad with wrong team id → falls through to chooser", () => {
+    const r = chooseCallbackRedirect(
+      [m("advisor"), m("squad", { kindId: "42", scopeSlug: "smsf" })],
+      "/account",
+      {
+        defaultKind: "squad",
+        defaultTeamId: "999", // user is not a member of squad 999
+        lastActiveKind: null,
+        lastActiveTeamId: null,
+      },
+    );
+    expect(r.redirect).toBe("/account/select-workspace");
+    expect(r.setKind).toBeNull();
+  });
 });

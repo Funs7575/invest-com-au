@@ -13,12 +13,15 @@ import { withValidatedBody } from "@/lib/validation/withValidatedBody";
 import {
   clearActiveTeamId,
   getActiveKind,
+  getActiveTeamId,
   getKindsForUser,
   isWorkspaceKind,
   portalForKind,
   setActiveKind,
   setActiveTeamId,
 } from "@/lib/account-kinds";
+import { recordSwitch } from "@/lib/account-preferences";
+import { getPrincipalForAuthUser } from "@/lib/principals";
 import { logger } from "@/lib/logger";
 
 /**
@@ -97,12 +100,30 @@ export const POST = withValidatedBody(Body, async (req, body) => {
     return NextResponse.json({ error: "no_membership" }, { status: 403 });
   }
 
+  // Capture the before-state so the switch log shows what changed.
+  const [fromKind, fromTeamId] = await Promise.all([getActiveKind(), getActiveTeamId()]);
+
   await setActiveKind(body.kind);
   if (body.kind === "squad" && body.team_id) {
     await setActiveTeamId(body.team_id);
   } else {
     await clearActiveTeamId();
   }
+
+  // Fire-and-forget: log the switch + bump last_active. Failure to log
+  // never breaks the switch itself.
+  void (async () => {
+    const principal = await getPrincipalForAuthUser(user.id);
+    if (!principal) return;
+    await recordSwitch({
+      principalId: principal.id,
+      fromKind,
+      fromTeamId,
+      toKind: body.kind as Parameters<typeof recordSwitch>[0]["toKind"],
+      toTeamId: body.kind === "squad" ? body.team_id ?? null : null,
+      source: "switcher",
+    });
+  })();
 
   return NextResponse.json({
     ok: true,

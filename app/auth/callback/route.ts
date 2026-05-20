@@ -9,6 +9,8 @@ import {
 } from "@/lib/account-kinds";
 import { attributeSignupByToken } from "@/lib/pro-affiliate/track";
 import { runPostSignin } from "@/lib/auth/post-signin";
+import { getPrincipalForAuthUser } from "@/lib/principals";
+import { getKindPreferences } from "@/lib/account-preferences";
 
 const log = logger("auth-callback");
 
@@ -75,7 +77,27 @@ async function postAuthRedirectUrl(origin: string, fallbackNext: string): Promis
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return new URL(fallbackNext, origin);
     const memberships = await getKindsForUser(user.id);
-    const { redirect, setKind, setTeamId } = chooseCallbackRedirect(memberships, fallbackNext);
+
+    // Honour stored preferences for multi-kind users so repeat visitors
+    // skip the chooser when they have a default pinned or a recent
+    // last-active workspace they still hold (Phase 3).
+    let preferences: Awaited<ReturnType<typeof getKindPreferences>> = null;
+    try {
+      const principal = await getPrincipalForAuthUser(user.id);
+      if (principal) {
+        preferences = await getKindPreferences(principal.id);
+      }
+    } catch (err) {
+      log.warn("preferences lookup failed — falling back to chooser", {
+        err: err instanceof Error ? err.message : String(err),
+      });
+    }
+
+    const { redirect, setKind, setTeamId } = chooseCallbackRedirect(
+      memberships,
+      fallbackNext,
+      preferences,
+    );
     if (setKind) await setActiveKind(setKind);
     if (setTeamId) await setActiveTeamId(setTeamId);
     return new URL(redirect, origin);

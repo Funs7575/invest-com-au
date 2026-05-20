@@ -171,17 +171,30 @@ export function isWorkspaceKind(value: string): value is WorkspaceKind {
 
 /**
  * Pure helper: pick the post-callback redirect URL based on the user's
- * memberships. Used by `/auth/callback/route.ts` after a successful
- * authentication.
+ * memberships and (optionally) their stored preferences. Used by
+ * `/auth/callback/route.ts` after a successful authentication.
  *
  *   0 kinds  → `/account` (default investor surface; new users can
  *              create non-investor kinds from there)
  *   1 kind   → that kind's portal, set cookie (+ team cookie if squad)
- *   2+ kinds → `/account/select-workspace`
+ *   2+ kinds → if preferences.defaultKind is set AND the user still holds
+ *              it → that workspace (auto-route, set cookies)
+ *              else if preferences.lastActiveKind is set AND the user
+ *              still holds it → that workspace
+ *              else → `/account/select-workspace`
+ *
+ * Preferences are optional — pass `null` (or omit) to keep the original
+ * "always chooser for multi-kind" behaviour.
  */
 export function chooseCallbackRedirect(
   memberships: ReadonlyArray<KindMembership>,
   fallbackNext: string,
+  preferences?: {
+    defaultKind: WorkspaceKind | null;
+    defaultTeamId: string | null;
+    lastActiveKind: WorkspaceKind | null;
+    lastActiveTeamId: string | null;
+  } | null,
 ): {
   redirect: string;
   setKind: WorkspaceKind | null;
@@ -201,6 +214,40 @@ export function chooseCallbackRedirect(
       setTeamId: only.kind === "squad" ? only.kindId : null,
     };
   }
+
+  // Multi-membership: try preferences before falling to chooser.
+  const tryAutoRoute = (
+    kind: WorkspaceKind | null,
+    teamId: string | null,
+  ): {
+    redirect: string;
+    setKind: WorkspaceKind | null;
+    setTeamId: string | null;
+  } | null => {
+    if (!kind) return null;
+    const match = memberships.find((m) =>
+      kind === "squad"
+        ? m.kind === "squad" && m.kindId === teamId
+        : m.kind === kind,
+    );
+    if (!match) return null;
+    return {
+      redirect: portalForKind(match.kind, {
+        teamSlug: match.scopeSlug,
+        fallback: fallbackNext,
+      }),
+      setKind: match.kind,
+      setTeamId: match.kind === "squad" ? match.kindId : null,
+    };
+  };
+
+  if (preferences) {
+    const fromDefault = tryAutoRoute(preferences.defaultKind, preferences.defaultTeamId);
+    if (fromDefault) return fromDefault;
+    const fromLast = tryAutoRoute(preferences.lastActiveKind, preferences.lastActiveTeamId);
+    if (fromLast) return fromLast;
+  }
+
   return { redirect: "/account/select-workspace", setKind: null, setTeamId: null };
 }
 
