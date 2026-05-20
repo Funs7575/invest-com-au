@@ -75,7 +75,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | Z-26 | _complete_ | **#929 MERGED 2026-05-20** | Z-26 done. **Stream complete — #929 merged by founder 2026-05-20.** | Z-26 merged ✓ |
 | Z-25 | _complete_ | **#930 MERGED 2026-05-20** | Z-25 done. **Stream complete — #930 merged by founder 2026-05-20.** | Z-25 merged ✓ |
 | AA-04+BB-09 | _complete_ | **#931 MERGED 2026-05-20** | AA-04+BB-09 done. **Stream segment merged — #931 merged by founder 2026-05-20.** | AA-04+BB-09 merged ✓ |
-| DD | `claude/audit-remediation/dd-02-verified-badge` | **#1033 OPEN** | DD-01 done (#926 merged). DD-02 done (iter 468): `/find/[advisor-type]/[city]` city listing upgraded to full `VerifiedBadge` component (ABN Verified + AFSL Current pills) — adds `verification_method`, `afsl_number`, `abn`, `last_verified_at` to select + local type. CI: queued — pushed `36b6da4f` 2026-05-20. DD-03/04 pending. | DD-02 in flight |
+| DD | `claude/audit-remediation/dd-03-booking-payment-rail` | **#1033 OPEN** · **#1034 OPEN** | DD-01 done (#926 merged). DD-02 done (iter 470). DD-03 done (iter 471): booking payment rail — `session_price_cents` column, `booking_payments` table, Stripe Connect Checkout (15% take), `/api/booking/[slotId]/checkout`, `/api/advisor-portal/session-pricing`, Settings fee card, BookingWidget paid path, webhook case 7, `/booking/success` page. CI: queued — pushed `2e58c43` 2026-05-20. DD-04 pending. | DD-03 in flight |
 | Z-24 | `claude/audit-remediation/z-24-inheritance-hub` | **#995 OPEN** | Z-24 done (iter 464): `/inheritance` top-level hub; `lib/hub-configs/inheritance.ts` (3 hero stats, 6 service cards, 4 deep-dives, 6 FAQs, `complianceKey: "general_advice"`); lead magnet + sitemap. CI rescue iter 467: merged main (`98f6433`) — Supabase types drift fixed. | Z-24 merged |
 | BB-02+BB-03 | `claude/audit-remediation/bb-02-03-salary-sacrifice-cgt` | **#1015 OPEN** | BB-02 done (iter 465): `/tools/salary-sacrifice-optimiser` — quantitative salary-sacrifice calculator (FY2025-26 tax, concessional cap enforcement, Division 293 detection, take-home before/after table). BB-03 done: `/tools/cgt-calculator` — purchase→sale CGT calc (50% discount, asset types, side-by-side discount impact). Sitemap +2. CI rescue iter 467: faqJsonLd null-access fix (`3f68cb9`). | BB-02+BB-03 merged |
 | AA-07 | `claude/audit-remediation/aa-07-just-event-pages` | **#1020 OPEN** | AA-07 done (iter 466): `/just/[event]` moment-of-money pages — 8 life-event checklists (retired, inherited, made-redundant, got-married, had-a-baby, bought-a-house, sold-a-business, started-investing); `/just` index hub. Dynamic route with `generateStaticParams`, `GENERAL_ADVICE_WARNING`, advisor CTA, cross-event nav strip. Sitemap +9. CI: queued — pushed 2026-05-20. | AA-07 merged |
@@ -140,6 +140,27 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 471 — 2026-05-20 — DD-03 — booking payment rail (Stripe Connect 15% take)
+
+- **Stream:** DD (marketplace mechanics — Tier C)
+- **Phase:** 5 — implementation
+- **Branch:** `claude/audit-remediation/dd-03-booking-payment-rail`
+- **PR:** #1034 OPEN
+- **Commit:** `2e58c43` — feat(dd): DD-03 booking payment rail — Stripe Connect 15% take
+- **Diff:** 8 files, +798 LOC / -6 LOC
+- **Items done:** DD-03 (paid session booking end-to-end)
+- **Implementation:**
+  - **Migration** `20260520_dd03_session_booking_payments.sql`: `professionals.session_price_cents` column (nullable INTEGER, positive check); `booking_payments` table (slot_id FK, professional_id FK, consumer_email, stripe_checkout_session_id UNIQUE, status enum, platform_fee_cents); RLS: consumer SELECT own rows, advisor SELECT own slots, service_role all.
+  - **`lib/stripe-connect/index.ts`**: `createBookingCheckout()` — Stripe Checkout `payment` mode with `application_fee_amount` (15% = `SESSION_BOOKING_TAKE_RATE_BPS`), `metadata.type = "session_booking"`, success URL → `/booking/success`.
+  - **`app/api/booking/[slotId]/checkout/route.ts`**: POST — validates slot open + not past, advisor has `session_price_cents`, calls `createBookingCheckout()`, returns `{ checkoutUrl }`. Rate-limited 5/60s.
+  - **`app/api/advisor-portal/session-pricing/route.ts`**: GET/PUT — read/write `session_price_cents` for authenticated advisor. Rate-limited 20/60s.
+  - **`app/advisor-portal/SettingsTab.tsx`**: "Session Pricing" card with A$ input, fee preview (`~A$X after 15% platform fee`), wired to pricing API.
+  - **`components/BookingWidget.tsx`**: accepts `sessionPriceCents?` + `slotIdMap?`; paid path POSTs to checkout endpoint and redirects to Stripe; price badge in header; "Pay A$X & Confirm" button.
+  - **`app/booking/success/page.tsx`**: static post-payment landing page (`robots: noindex`), "What happens next" checklist.
+  - **`lib/stripe-webhook/handlers/checkout-session-completed.ts`**: case 7 — `metadata.type === "session_booking"`: claims slot (conditional `.eq("status","open")` → `"taken"`), inserts `booking_payments` row (idempotent on 23505), sends consumer + advisor confirmation emails.
+- **Tier C batch end:** DD stream is Tier C — batch terminates after this item.
+- **STATUS: PROGRESS · stream=DD · item=DD-03 · pr=#1034**
 
 ### iter 470 — 2026-05-20 — DD-02 — /find city listing upgraded to VerifiedBadge
 
