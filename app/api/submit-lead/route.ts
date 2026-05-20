@@ -731,6 +731,29 @@ export async function POST(request: NextRequest) {
       utm_source: (utm as UtmParams).utm_source ?? null,
       utm_campaign: (utm as UtmParams).utm_campaign ?? null,
     });
+
+    // Hot-lead auction trigger (DD-04): fire a 1-hour bidding window for
+    // high-intent lead types that have a phone number supplied. Non-blocking.
+    const AUCTION_ELIGIBLE_NEEDS = ["planning", "smsf", "estate", "wealth", "tax"];
+    const hasPhone = typeof user_phone === "string" && user_phone.trim().length > 6;
+    if (hasPhone && AUCTION_ELIGIBLE_NEEDS.includes(need)) {
+      const origin = process.env.VERCEL_PROJECT_PRODUCTION_URL
+        ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+        : "http://localhost:3000";
+      fetch(`${origin}/api/advisor-auction`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-internal-secret": process.env.INTERNAL_API_SECRET ?? "",
+        },
+        body: JSON.stringify({
+          lead_id: lead.id,
+          lead_type: need,
+          location: userState,
+          budget_range: user_intent?.budget ?? null,
+        }),
+      }).catch(() => null);
+    }
   }
 
   return NextResponse.json({
