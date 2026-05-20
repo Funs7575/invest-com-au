@@ -140,6 +140,37 @@ const nextConfig: NextConfig = {
         destination: "/compare",
         permanent: true,
       },
+
+      // ── Directory-UX plan Phase 5 Session 14 — plural slug 301s.
+      // The user-locked decision (docs/plans/DIRECTORY_UX_UNIFICATION.md Q5)
+      // settles on "Plural directories + /find-* funnels". We keep the
+      // canonical singular routes (/super, /savings, /insurance) since
+      // they exist with content and SEO equity; these redirects catch
+      // the plural forms that external links / search results commonly
+      // use ("super funds Australia", "savings accounts comparison"
+      // etc.) so a user typing the plural never hits a 404. The
+      // canonical singular keeps its place; only the plural surface
+      // 301s to it.
+      {
+        source: "/super-funds",
+        destination: "/super",
+        permanent: true,
+      },
+      {
+        source: "/super-funds/:slug*",
+        destination: "/super/:slug*",
+        permanent: true,
+      },
+      {
+        source: "/savings-accounts",
+        destination: "/savings",
+        permanent: true,
+      },
+      {
+        source: "/savings-accounts/:slug*",
+        destination: "/savings/:slug*",
+        permanent: true,
+      },
       {
         source: "/brokers/:slug*",
         destination: "/broker/:slug*",
