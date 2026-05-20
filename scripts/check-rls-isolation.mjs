@@ -55,6 +55,18 @@ const ISOLATION_EXEMPT = [
   // an audit field (who acted), not an ownership key. Same shape as
   // admin_audit_log above. (Phase 2.4)
   { table: "forum_moderation_actions", reason: "moderator-read audit log; service-role write; no per-user owned rows" },
+  // audit_events: the unified cross-domain audit trail (#11). service_role
+  // writes; privileged read (moderator / can_view_audit) sees ALL rows.
+  // actor_principal_id records WHO acted, not row ownership — nothing to
+  // isolate per-user. Same shape as admin_audit_log + forum_moderation_actions.
+  { table: "audit_events", reason: "privileged-read audit trail; service-role write; no per-user owned rows" },
+  // admin RBAC tables (#14): service_role-only role catalogue + capability
+  // matrix + admin registry. No authenticated-role read at all — there are
+  // no per-user owned rows. Flagged only because the migration touches the
+  // audit_events policy (which references forum_user_profiles.user_id).
+  { table: "admin_roles", reason: "service-role-only role catalogue; no per-user rows" },
+  { table: "admin_role_capabilities", reason: "service-role-only capability matrix; no per-user rows" },
+  { table: "admin_users", reason: "service-role-only admin registry; no per-user owned rows" },
 ];
 
 const EXEMPT_NAMES = new Set(ISOLATION_EXEMPT.map((e) => e.table));
