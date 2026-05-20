@@ -52,6 +52,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | TT | _complete_ | **#764 MERGED** · **#772 MERGED** · **#779 MERGED** · **#799 MERGED 2026-05-12** | TT-01..TT-04 all done. GA4 removed; Plausible sole analytics. **Stream complete.** | TT-04 merged ✓ |
 | CMP | `claude/audit-remediation/cmp-w1a-int-calculator-autosave` | **#782 CLOSED 2026-05-14 (not merged)** | CMP-W1A-INT: #782 was closed without merging by founder 2026-05-14. Work may need re-examination or re-opening on a fresh branch. | All CMP tasks merged |
 | SP | (none yet) | (none yet) | **BLOCKED — waiting on MM-V09 completion.** | All SP tasks merged + compliance signoff |
+| CO | `claude/audit-remediation/co-cutover-prep` | **#1046 OPEN** | CO-01 blocked (legacy redirect map — needs prior-host URL list from founder). CO-02 blocked (GSC/GA4 — needs external credentials). CO-03 pending. CO-04 blocked (DNS — registrar access). CO-05 pending. CO-06 done (iter 481): apex domain cutover runbook `docs/runbooks/cutover.md`. CO-07 pending. | All CO tasks done + compliance signoff |
 | MAIN-RESCUE | _complete_ | **#793 MERGED** | next 16.2.4→16.2.6 patch merged. Non-loop auto-revert PRs for failed main commits: **#827 OPEN** (reverts `d26094aa`) · **#843 OPEN** (reverts `ff43ed6f`). These are founder-action items — loop will not create duplicate fixes. | Merged to main ✓ |
 | CL | `claude/audit-remediation/cl-01-about-entity-only` | **#795 MERGED 2026-05-14** | CL-01..CL-04, CL-06, CL-09, CL-10 done. CL-07+CL-08 false-positive. CL-05 blocked (WHOIS registrar action — see Blocked). | All CL tasks merged (CL-05 blocked) |
 | LL | `claude/audit-remediation/ll-04-reviews-ratings` | **#807 MERGED 2026-05-14** · **#845 MERGED 2026-05-17** | LL-01..LL-04 done. LL-05 blocked (live chat AI routing — deps V-NEW-02 + CC-06). **Stream stalled at LL-05 (blocked).** | All LL tasks merged (LL-05 blocked) |
@@ -130,6 +131,36 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 
 ---
 
+### CO-01 — Legacy redirect map (prior-host URL list needed)
+
+Creating the 301 redirect map from the old `invest.com.au` host requires knowing the URL structure of the prior site (e.g., WordPress year/month/slug blog patterns, category pages, service pages). The loop has no access to the prior host's URL inventory.
+
+**What's needed:**
+1. Export or screenshot of the prior host's URL structure / sitemap (e.g., from Screaming Frog crawl of the old site, or a WordPress export, or GSC coverage report).
+2. For each significant URL: map it to the new equivalent route (or `/` if no equivalent).
+3. Add entries to `next.config.ts` `redirects()` array.
+
+**Options:**
+- (a) Founder provides the old site's URL list → loop adds entries to `next.config.ts`
+- (b) Founder adds redirects manually to `next.config.ts` following the existing pattern
+- (c) If the prior host has a sitemap at `https://invest.com.au/sitemap.xml` right now (pre-cutover), crawl it before DNS cutover and use it as the source
+
+**Current state:** `next.config.ts` already has 49 redirect entries for internal URL reshaping (plurality, IA changes). Legacy-host redirects are the missing piece.
+
+### CO-02 — GSC/GA4 verification (external credentials required)
+
+Setting up `invest.com.au` as a verified property in Google Search Console and Google Analytics 4 requires logging into those external services. The loop cannot access Google credentials.
+
+**What's needed:**
+1. GSC: Add `invest.com.au` as a new property (Domain type). Verify via DNS TXT record (`google-site-verification=…`). Export the TXT record to add to the registrar.
+2. GA4: Create an `invest.com.au` data stream if one doesn't exist. Note the Measurement ID to confirm it matches `NEXT_PUBLIC_GA_ID` / `NEXT_PUBLIC_GA_MEASUREMENT_ID` in Vercel production env.
+
+### CO-04 — DNS TTL reduction and registrar checklist (registrar access required)
+
+Reducing TTL and performing the DNS cutover requires logging into the domain registrar for `invest.com.au`. The loop cannot access registrar credentials.
+
+**What's needed:** Follow the step-by-step DNS procedure in `docs/runbooks/cutover.md` (added by CO-06, iter 481). Specifically: T−7 days TTL → 300s, T−1h TTL → 60s, T=0 record swap.
+
 ---
 
 ## Resolved as false positives
@@ -143,6 +174,20 @@ Once done, delete this blocked entry and mark CL-05 as done in the stream table.
 ---
 
 ## Iteration log (most recent first)
+
+### iter 482 — 2026-05-20 — CO-06 — apex domain cutover runbook
+
+- **Stream:** CO (cutover preparation — Final tier)
+- **Phase:** 5 — implementation (Tier A — docs)
+- **Branch:** `claude/audit-remediation/co-cutover-prep`
+- **PR:** #1046 OPEN
+- **Commit:** `b766fe5` — docs(co): CO-06 — apex domain cutover runbook
+- **Diff:** +226 LOC (docs/runbooks/cutover.md)
+- **Items done:** CO-06 (apex domain cutover runbook — T−7d through T+48h procedure)
+- **Items surfaced to Blocked:** CO-01 (legacy redirect map — needs prior-host URL list), CO-02 (GSC/GA4 — needs external credentials), CO-04 (DNS — needs registrar access)
+- **Items pending:** CO-03 (sitemap finalisation), CO-05 (pre-launch QA E2E), CO-07 (final anonymity audit)
+- **Implementation:** `docs/runbooks/cutover.md` covers T−7d (TTL → 300s, Vercel domain staging, NEXT_PUBLIC_SITE_URL env-var check, GSC/GA4 token prep), T−24h (LAUNCH_GATE check, smoke test, PR freeze), T−1h (TTL → 60s, CL-09 anonymity audit), T=0 (DNS record swap A 76.76.21.21 + www CNAME, Vercel domain validation, SSL provisioning), post-cutover (GSC submission, Stripe webhook URL, UptimeRobot, 30d fallback alias). Rollback: re-add prior host records at ≤5 min at 60s TTL.
+- **STATUS: PROGRESS · stream=CO · item=CO-06 · pr=#1046**
 
 ### iter 481 — 2026-05-20 — CI-RESCUE BB-10 (#1039) — Supabase types drift (user_documents)
 
