@@ -31,14 +31,18 @@ test: `__tests__/components/InvestListingsClient.test.tsx`. Verified in the
 sandbox: `tsc`, `eslint`, unit tests all green. NOT verified: `npm run build`,
 full `test:coverage`.
 
-Three red checks, likely only **two** distinct causes.
+Three red checks. **New evidence narrows the diagnosis:**
 
-### STEP 1 — reproduce the build (almost certainly the root cause of 2 checks)
-`Lint·Type-check·Test·Build` AND `Preview smoke test (critical URLs)` most likely
-BOTH stem from `npm run build` failing: if the production build breaks, the CI
-build step fails AND Vercel's preview never deploys, so the smoke job fails with
-"No Vercel preview URL found within 6 min." Reproduce with CI's exact placeholder
-env (`.github/workflows/ci.yml:42`):
+> The "Bundle size diff vs base" bot posted *After* numbers on #1043 (shared
+> chunks 12051 KB, +3.7 KB — the 4 new primitive imports). That bot builds the
+> PR, so **`npm run build` SUCCEEDS.** Do NOT assume the build is the culprit (an
+> earlier draft of this brief did — it was wrong). The
+> `Lint·Type-check·Test·Build` failure is in a NON-build step; the
+> `Preview smoke test` failure is a separate runtime/infra matter.
+
+### STEP 1 — find the failing step in `Lint·Type-check·Test·Build`
+Run the steps in CI order with the placeholder env (`.github/workflows/ci.yml:42`)
+and STOP at the first failure:
 
 ```bash
 git checkout claude/clear-session-J0Ml0 && npm ci
@@ -47,29 +51,31 @@ export NEXT_PUBLIC_SUPABASE_URL=https://placeholder.supabase.co \
   RESEND_API_KEY=placeholder STRIPE_SECRET_KEY=placeholder \
   STRIPE_WEBHOOK_SECRET=placeholder NEXT_PUBLIC_SITE_URL=https://invest.com.au \
   CRON_SECRET=placeholder
-npm run build      # <-- run this FIRST. Read the error.
+npx tsc --noEmit
+npm run lint
+node scripts/check-jsonld-coverage.mjs
+npm run test:coverage          # MOST LIKELY culprit — full suite + coverage FLOORS
+npm run audit:rate-limits -- --strict
+npm run build                  # confirmed green via the bundle bot; run to be sure
+node scripts/bundle-size-budget.mjs --budget-kb 12000
 ```
 
-**Strong lead:** `/invest` is the FIRST built route to actually import
-`FilterPanel`/`FacetGroup`/`RangeSlider`/`FilterChips` — those primitives were
-built in #957 but were not yet consumed by any rendered page. So a build-time /
-SSR issue inside one of those primitives (or in the new `InvestFilterFields`
-component at the bottom of `InvestListingsClient.tsx`) would surface HERE for the
-first time. If the build errors, the stack trace names the file — fix there.
+Most likely `test:coverage`: either (a) a test in the full suite fails — could be
+pre-existing, see STEP 2 — or (b) a coverage FLOOR. For (b), extend
+`__tests__/components/InvestListingsClient.test.tsx` to cover the new
+`InvestFilterFields` component (the `<RangeSlider>` only renders when a kind is
+selected, so add a case with searchParams `?kind=fund`; the sandbox test only
+covered the empty state).
 
-If `npm run build` is GREEN locally, the failing step is elsewhere — run the job
-in CI order and stop at the first failure:
-
-```bash
-npx tsc --noEmit && npm run lint && node scripts/check-jsonld-coverage.mjs \
-  && npm run test:coverage && npm run audit:rate-limits -- --strict \
-  && node scripts/bundle-size-budget.mjs --budget-kb 12000
-```
-
-If it's a coverage-floor drop, extend the new test to cover `InvestFilterFields`.
-Note the `<RangeSlider>` only renders when a listing kind is selected, so a test
-needs searchParams like `?kind=fund` (the sandbox test only covered the empty
-state).
+### STEP 1b — the `Preview smoke test` failure
+Build passes, so this is NOT "no preview deployed". Read the job log:
+- If it lists specific failing paths and `/invest` is among them → my change has a
+  runtime bug (renders in build/SSR but errors at runtime against real Supabase).
+  Repro: `npm run build && npm start` with a real `.env`, open `/invest`; the new
+  primitives are client components, so check hydration/console errors too.
+- If the failing paths are ones I didn't touch (`/articles`, `/brokers`, …), or
+  every path is 401/timeout → pre-existing infra (Vercel protection / deploy
+  timing), not #1043.
 
 ### STEP 2 — confirm mine vs pre-existing
 ```bash
