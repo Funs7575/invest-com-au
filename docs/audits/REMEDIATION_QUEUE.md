@@ -51,7 +51,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | MM | _complete_ | **#801 MERGED** · **#803 MERGED 2026-05-14** · **#921 MERGED 2026-05-20** | MM-V01..V08 done. **Stream complete — #921 merged by founder 2026-05-20.** | All MM phases merged ✓ |
 | TT | _complete_ | **#764 MERGED** · **#772 MERGED** · **#779 MERGED** · **#799 MERGED 2026-05-12** | TT-01..TT-04 all done. GA4 removed; Plausible sole analytics. **Stream complete.** | TT-04 merged ✓ |
 | CMP | `claude/audit-remediation/cmp-w1a-int-calculator-autosave` | **#782 CLOSED 2026-05-14 (not merged)** | CMP-W1A-INT: #782 was closed without merging by founder 2026-05-14. Work may need re-examination or re-opening on a fresh branch. | All CMP tasks merged |
-| SP | `claude/audit-remediation/sp-01-capability-audit` | **#1048 OPEN** | MM blocker resolved (MM complete — #921 merged 2026-05-20). SP-01 done (iter 484): advisor-portal reuse map — require-startup-session pattern (copy-with-substitutions), portal-gate/account-kinds 4-line additive change, layout verbatim copy, types structural template, proxy.ts 2-line additive. Critical note: `account_kind_membership` VIEW needs `startup_profiles` arm in SP-02 migration. SP-02..SP-13 pending. | All SP tasks merged + compliance signoff |
+| SP | `claude/audit-remediation/sp-01-capability-audit` (#1048) · `claude/audit-remediation/sp-02-schema-migration` (#1049) | **#1048 OPEN · #1049 OPEN** | MM blocker resolved (MM complete — #921 merged 2026-05-20). SP-01 done (iter 484): advisor-portal reuse map. SP-02 done (iter 488): 8-table schema migration — startup_profiles, startup_rounds, startup_investor_inquiries, startup_data_room_files, startup_data_room_access, wholesale_investor_certifications, startup_sessions, esic_verifications — all with RLS; account_kind_membership VIEW updated with startup arm. SP-03..SP-13 pending. | All SP tasks merged + compliance signoff |
 | CO | `claude/audit-remediation/co-cutover-prep` | **#1046 OPEN** | CO-01 blocked (legacy redirect map — needs prior-host URL list from founder). CO-02 blocked (GSC/GA4 — needs external credentials). CO-03 done (iter 485+486): sitemap finalisation — `/press` + `/about/careers` + `/wealth-stack` + `/startup/grants` + `/lic-screener` + `/tools/subscription-audit`; dynamic `/afsl/[number]` + `/find/[advisor-type]/[city]` sections. CO-04 blocked (DNS — registrar access). CO-05 done (iter 487): `e2e/pre-launch-qa.spec.ts` — 30 Playwright tests (critical pages, redirect coverage, sitemap/robots.txt, security headers, founder PII gate, canonical URL check). CO-06 done (iter 482): apex domain cutover runbook `docs/runbooks/cutover.md`. CO-07 done (iter 483): final anonymity audit `docs/audits/co-07-final-anonymity-audit.md` — CL-09 PASSED (2,329 files clean). | All CO tasks done + compliance signoff |
 | MAIN-RESCUE | _complete_ | **#793 MERGED** | next 16.2.4→16.2.6 patch merged. Non-loop auto-revert PRs for failed main commits: **#827 OPEN** (reverts `d26094aa`) · **#843 OPEN** (reverts `ff43ed6f`). These are founder-action items — loop will not create duplicate fixes. | Merged to main ✓ |
 | CL | `claude/audit-remediation/cl-01-about-entity-only` | **#795 MERGED 2026-05-14** | CL-01..CL-04, CL-06, CL-09, CL-10 done. CL-07+CL-08 false-positive. CL-05 blocked (WHOIS registrar action — see Blocked). | All CL tasks merged (CL-05 blocked) |
@@ -174,6 +174,22 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 ---
 
 ## Iteration log (most recent first)
+
+### iter 488 — 2026-05-20 — SP-02 — startup portal schema migration
+
+- **Stream:** SP (startup portal)
+- **Phase:** 5 — implementation (Tier C — new schema migration with RLS)
+- **Branch:** `claude/audit-remediation/sp-02-schema-migration`
+- **PR:** #1049 OPEN
+- **Commit:** `46e87dd` — feat(sp): SP-02 — startup portal schema migration (8 tables + RLS + view)
+- **Diff:** +431 LOC (`supabase/migrations/20260729_sp02_startup_portal_schema.sql`)
+- **Items done:** SP-02 (schema migration — 8 new tables + RLS + account_kind_membership VIEW update)
+- **Tables created:** startup_profiles (anon read active; owner r/w), startup_rounds (anon read open/committed/closed; owner full), startup_investor_inquiries (investor owns own; startup owner reads theirs), startup_data_room_files (deny anon; owner manages; investor via service-role), startup_data_room_access (investor reads own non-revoked grants; owner manages), wholesale_investor_certifications (user owns own; service_role full), startup_sessions (deny-all anon — service-role only, mirrors advisor_sessions), esic_verifications (owner reads own; service_role full)
+- **View update:** `account_kind_membership` gained `startup_profiles` arm so `getKindsForUser()` returns `kind='startup'` for startup founders — required for `enforcePortalKind("startup")` in SP-03 layout to work without redirecting all founders to the chooser
+- **Prior policies:** none (all tables are new)
+- **Idempotency:** `IF NOT EXISTS` on all DDL; `DROP POLICY IF EXISTS` before each `CREATE POLICY`
+- **Items pending:** SP-03..SP-13 (auth surface, portal routes, admin flows, tests)
+- **STATUS: PROGRESS · stream=SP · item=SP-02 · pr=#1049**
 
 ### iter 487 — 2026-05-20 — CO-05 — pre-launch QA automation suite
 
