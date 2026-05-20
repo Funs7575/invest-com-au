@@ -307,6 +307,18 @@ const TOOLS: Tool[] = [
     internal: true,
   },
   {
+    slug: "state-grants-calculator",
+    name: "State Grants Calculator",
+    category: "Calculators",
+    rating: 5,
+    description:
+      "See your state's First Home Owner Grant, stamp-duty concession, and First Home Guarantee eligibility for any purchase price + property type. Covers NSW, VIC, QLD, WA, SA, TAS, ACT and NT.",
+    pros: ["All 8 states/territories", "FHG income cap check", "Stamp-duty saving estimate"],
+    pricing: "Free tool",
+    url: "/tools/state-grants-calculator",
+    internal: true,
+  },
+  {
     slug: "mortgage-stress-test",
     name: "Mortgage Stress Test Calculator",
     category: "Calculators",
