@@ -7,6 +7,7 @@ import { extractUtm, type UtmParams } from "@/lib/utm";
 import { sendNewLeadNotification, sendLeadConfirmationToUser } from "@/lib/advisor-emails";
 import { captureEdgeEvent } from "@/lib/posthog/capture-edge";
 import { getIntentCountry } from "@/lib/intent-context-server";
+import { intentCountryMeta } from "@/lib/intent-context";
 import {
   filterByCountryEligibility,
   isEligibleForCountry,
@@ -60,7 +61,7 @@ function resolveAdvisorTypes(need: string, context?: string[]): string[] {
 
 /* ─── Common select fields for matching queries ─── */
 
-const MATCH_SELECT = "id, slug, name, firm_name, type, photo_url, rating, review_count, location_display, location_state, specialties, fee_description, verified, bio, email, avg_response_minutes, country_eligibility";
+const MATCH_SELECT = "id, slug, name, firm_name, type, photo_url, rating, review_count, location_display, location_state, specialties, fee_description, verified, bio, email, avg_response_minutes, country_eligibility, available_in_countries";
 
 /**
  * Per-attempt fetch limit when matching. Each ranked query pulls
@@ -460,14 +461,38 @@ export async function POST(request: NextRequest) {
       .limit(MATCH_FETCH_LIMIT);
   }
 
+  // Visitor's intent country as a lowercased ISO alpha-2 ("uk" → "gb"),
+  // matching the codes advisors self-declare in available_in_countries.
+  const corridorCode = intentCountry
+    ? intentCountryMeta(intentCountry).iso.toLowerCase()
+    : null;
+
+  const hasPreferredSpecialty = (row: Record<string, unknown>): boolean => {
+    if (!preferred_specialty) return false;
+    const specs = (row as { specialties?: unknown }).specialties;
+    return Array.isArray(specs) && specs.some((s) => typeof s === "string" && s === preferred_specialty);
+  };
+
+  const servesCorridor = (row: Record<string, unknown>): boolean => {
+    if (!corridorCode) return false;
+    const served = (row as { available_in_countries?: unknown }).available_in_countries;
+    return (
+      Array.isArray(served) &&
+      served.some((c) => typeof c === "string" && c.toLowerCase() === corridorCode)
+    );
+  };
+
   // Take the highest-ranked candidate eligible for the visitor's
   // country. When intentCountry is null, simply returns the top pick.
   //
-  // Cross-border Phase A: if the user arrived with ?specialty=X, prefer
-  // the first eligible advisor whose `specialties` array contains X.
-  // The original rank order is preserved within the preferred-specialty
-  // subset; if zero advisors in the batch carry the specialty, fall
-  // through to the standard top pick so the corridor still routes.
+  // Cross-border Phase A/B: prefer the first eligible advisor matching the
+  // strongest available signal, in priority order:
+  //   1. specialty (?specialty=X) AND corridor (serves intent country)
+  //   2. specialty only
+  //   3. corridor only
+  //   4. standard top pick
+  // Original rank order is preserved within each subset, and any miss
+  // falls through so the corridor still routes to a real advisor.
   function pickFirstEligible(
     rows: ReadonlyArray<Record<string, unknown>> | null | undefined,
   ): Record<string, unknown> | null {
@@ -478,13 +503,19 @@ export async function POST(request: NextRequest) {
     );
     if (eligible.length === 0) return null;
 
+    if (preferred_specialty && corridorCode) {
+      const both = eligible.find((row) => hasPreferredSpecialty(row) && servesCorridor(row));
+      if (both) return both;
+    }
+
     if (preferred_specialty) {
-      const wanted = preferred_specialty;
-      const specialist = eligible.find((row) => {
-        const specs = (row as { specialties?: unknown }).specialties;
-        return Array.isArray(specs) && specs.some((s) => typeof s === "string" && s === wanted);
-      });
+      const specialist = eligible.find(hasPreferredSpecialty);
       if (specialist) return specialist;
+    }
+
+    if (corridorCode) {
+      const corridorMatch = eligible.find(servesCorridor);
+      if (corridorMatch) return corridorMatch;
     }
 
     return eligible[0] ?? null;

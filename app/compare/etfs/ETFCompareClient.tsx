@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import SocialProofCounter from "@/components/SocialProofCounter";
+import ResultCount from "@/components/directory/ResultCount";
 
 /* ─── Types ─── */
 
@@ -113,6 +114,12 @@ export default function ETFCompareClient() {
             </button>
           ))}
         </div>
+
+        <ResultCount
+          total={filtered.length}
+          noun={filtered.length === 1 ? "ETF" : "ETFs"}
+          className="mb-4"
+        />
 
         {/* ─── Desktop Table ─── */}
         <div className="hidden md:block border border-slate-200 rounded-xl overflow-hidden mb-8">

@@ -213,4 +213,73 @@ describe("POST /api/partner/leads", () => {
     const body = await res.json();
     expect(body.leads_failed).toBeGreaterThan(0);
   });
+
+  // ── Cross-border premium pricing (FIN_NOTEBOOK #24 Phase A) ──
+  // Capture the amount billed via the advisor_billing insert so we can
+  // assert the 1.75× multiplier is applied to partner-API leads, matching
+  // the on-site advisor-enquiry path.
+  function setupBillingCapture(advisor: typeof ADVISOR & { specialties?: string[] }) {
+    const billingInserts: Array<Record<string, unknown>> = [];
+    mockRpc.mockResolvedValue({ data: null, error: null });
+    mockFrom.mockImplementation((table: string) => {
+      if (table === "professionals") {
+        return {
+          select: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockReturnThis(),
+          update: vi.fn().mockReturnThis(),
+          limit: vi.fn().mockResolvedValue({ data: [advisor], error: null }),
+        };
+      }
+      if (table === "professional_leads") {
+        return {
+          select: vi.fn().mockReturnThis(),
+          eq: vi.fn().mockReturnThis(),
+          gte: vi.fn().mockReturnThis(),
+          limit: vi.fn().mockReturnThis(),
+          maybeSingle: vi.fn().mockResolvedValue({ data: null, error: null }),
+          insert: vi.fn().mockReturnThis(),
+          update: vi.fn().mockReturnThis(),
+          then: vi.fn((cb: (v: unknown) => void) => { cb({ data: null, error: null }); return Promise.resolve(); }),
+          single: vi.fn().mockResolvedValue({ data: { id: 99 }, error: null }),
+        };
+      }
+      // advisor_billing — capture the inserted row
+      return {
+        insert: vi.fn((row: Record<string, unknown>) => { billingInserts.push(row); return Promise.resolve({ data: null, error: null }); }),
+        update: vi.fn().mockReturnThis(),
+        eq: vi.fn().mockReturnThis(),
+        then: vi.fn((cb: (v: unknown) => void) => { cb({ data: null, error: null }); return Promise.resolve(); }),
+      };
+    });
+    return billingInserts;
+  }
+
+  it("bills a cross-border specialty lead at the 1.75× premium", async () => {
+    // free_leads_used >= 2 (not free) + sufficient credit → billing insert at full price
+    const billingInserts = setupBillingCapture({
+      ...ADVISOR,
+      lead_price_cents: 5000,
+      credit_balance_cents: 100000,
+      specialties: ["Retirement Planning", "UK Pension Transfer"],
+    });
+    const res = await POST(makePost({ api_key: PARTNER_API_KEY, leads: [VALID_LEAD] }));
+    expect(res.status).toBe(200);
+    expect(billingInserts).toHaveLength(1);
+    // 5000 × 1.75 = 8750
+    expect(billingInserts[0]?.amount_cents).toBe(8750);
+    expect(billingInserts[0]?.status).toBe("paid");
+  });
+
+  it("bills a domestic (non-cross-border) lead at the flat base price", async () => {
+    const billingInserts = setupBillingCapture({
+      ...ADVISOR,
+      lead_price_cents: 5000,
+      credit_balance_cents: 100000,
+      specialties: ["Retirement Planning", "SMSF Setup"],
+    });
+    const res = await POST(makePost({ api_key: PARTNER_API_KEY, leads: [VALID_LEAD] }));
+    expect(res.status).toBe(200);
+    expect(billingInserts).toHaveLength(1);
+    expect(billingInserts[0]?.amount_cents).toBe(5000);
+  });
 });
