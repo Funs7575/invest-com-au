@@ -25,16 +25,52 @@ export interface PricingInputs {
   baseLeadPriceCents: number;
   specialtyMultiplier?: number | null;
   firmTierMultiplier?: number | null;
+  /** Demand axis (Idea #3). Clamped to [0.8, 1.5] before applying. */
+  demandMultiplier?: number | null;
+}
+
+/** Bounds on the demand axis so a bad signal can't produce runaway pricing. */
+export const DEMAND_MULTIPLIER_MIN = 0.8;
+export const DEMAND_MULTIPLIER_MAX = 1.5;
+
+function clampDemand(m: number): number {
+  return Math.min(DEMAND_MULTIPLIER_MAX, Math.max(DEMAND_MULTIPLIER_MIN, m));
 }
 
 /**
- * Pure helper — compose the three axes. NULL multipliers fall back to
- * 1.0. Returns cents (integer).
+ * Pure helper — compose the three axes (specialty × firm-tier × demand).
+ * NULL multipliers fall back to 1.0; the demand axis is additionally
+ * clamped to [0.8, 1.5]. Returns cents (integer).
  */
 export function composeLeadPrice(opts: PricingInputs): number {
   const specialty = opts.specialtyMultiplier ?? 1.0;
   const firm = opts.firmTierMultiplier ?? 1.0;
-  return Math.round(opts.baseLeadPriceCents * specialty * firm);
+  const demand = opts.demandMultiplier != null ? clampDemand(opts.demandMultiplier) : 1.0;
+  return Math.round(opts.baseLeadPriceCents * specialty * firm * demand);
+}
+
+/**
+ * Look up the demand multiplier for a category from lead_demand_signals.
+ * Returns 1.0 (no adjustment) when absent or on error.
+ */
+export async function resolveDemandMultiplier(category: string): Promise<number> {
+  if (!category) return 1.0;
+  try {
+    const supabase = createAdminClient();
+    const { data, error } = await supabase
+      .from("lead_demand_signals")
+      .select("multiplier")
+      .eq("category", category)
+      .maybeSingle();
+    if (error || data?.multiplier == null) return 1.0;
+    return clampDemand(Number(data.multiplier));
+  } catch (err) {
+    log.warn("resolveDemandMultiplier threw", {
+      category,
+      err: err instanceof Error ? err.message : String(err),
+    });
+    return 1.0;
+  }
 }
 
 /**

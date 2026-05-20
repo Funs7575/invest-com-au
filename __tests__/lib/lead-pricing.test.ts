@@ -48,4 +48,29 @@ describe("composeLeadPrice", () => {
       composeLeadPrice({ baseLeadPriceCents: 1000, firmTierMultiplier: 0.6 }),
     ).toBe(600);
   });
+
+  // ─── Idea #3: demand axis ───────────────────────────────────────────────
+  it("applies the demand multiplier", () => {
+    expect(composeLeadPrice({ baseLeadPriceCents: 1000, demandMultiplier: 1.3 })).toBe(1300);
+  });
+
+  it("clamps demand above 1.5 down to 1.5", () => {
+    expect(composeLeadPrice({ baseLeadPriceCents: 1000, demandMultiplier: 3.0 })).toBe(1500);
+  });
+
+  it("clamps demand below 0.8 up to 0.8", () => {
+    expect(composeLeadPrice({ baseLeadPriceCents: 1000, demandMultiplier: 0.1 })).toBe(800);
+  });
+
+  it("composes all three axes (specialty × firm × demand)", () => {
+    // 1000 × 1.75 × 0.85 × 1.2 = 1785
+    expect(
+      composeLeadPrice({
+        baseLeadPriceCents: 1000,
+        specialtyMultiplier: 1.75,
+        firmTierMultiplier: 0.85,
+        demandMultiplier: 1.2,
+      }),
+    ).toBe(1785);
+  });
 });
