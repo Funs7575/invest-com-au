@@ -21,6 +21,7 @@ import InvestListingCard from "@/components/InvestListingCard";
 import ListingCompareBar from "@/components/invest/ListingCompareBar";
 import SaveSearchButton from "@/components/invest/SaveSearchButton";
 import Icon from "@/components/Icon";
+import TabBar from "@/components/directory/TabBar";
 import SearchInput from "@/components/directory/SearchInput";
 import SortDropdown from "@/components/directory/SortDropdown";
 
@@ -554,41 +555,20 @@ export default function InvestListingsClient({
           )}
 
           {/* Row 3: category chips (secondary narrow by sector) */}
-          {!lockedCategory && (() => {
-            const visibleTabs = tabs.filter(tab => tab.slug === "all" || (categoryCounts[tab.slug] ?? 0) > 0);
-            if (visibleTabs.length <= 1) return null;
-            return (
-              <div className="overflow-x-auto scrollbar-hide -mx-1 px-1">
-                <div className="flex items-center gap-1.5 min-w-max">
-                  {visibleTabs.map((tab) => {
-                    const isActive = tab.slug === activeCategory;
-                    const count = categoryCounts[tab.slug] ?? 0;
-                    const isAll = tab.slug === "all";
-                    return (
-                      <button
-                        key={tab.slug}
-                        type="button"
-                        onClick={() => setParams({ category: tab.slug === "all" ? "" : tab.slug, sub: "" })}
-                        aria-pressed={isActive}
-                        className={`whitespace-nowrap rounded-full px-3 py-1 text-[0.7rem] font-medium transition-all inline-flex items-center gap-1 ${
-                          isActive
-                            ? "bg-slate-100 text-slate-900 ring-1 ring-slate-300"
-                            : "text-slate-500 hover:bg-slate-50"
-                        }`}
-                      >
-                        {tab.label}
-                        {!isAll && (
-                          <span className="text-[0.55rem] font-bold tabular-nums text-slate-400">
-                            {count}
-                          </span>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            );
-          })()}
+          {!lockedCategory && (
+            <TabBar
+              ariaLabel="Category"
+              variant="chip"
+              value={activeCategory}
+              onChange={(id) => setParams({ category: id === "all" ? "" : id, sub: "" })}
+              alwaysShow="all"
+              tabs={tabs.map((tab) => ({
+                id: tab.slug,
+                label: tab.label,
+                count: tab.slug === "all" ? undefined : (categoryCounts[tab.slug] ?? 0),
+              }))}
+            />
+          )}
 
           {/* Active-filter chips */}
           {activeChips.length > 0 && (

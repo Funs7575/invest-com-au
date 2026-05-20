@@ -15,6 +15,7 @@ import VerifiedBadge from "@/components/VerifiedBadge";
 import { trackEvent } from "@/lib/tracking";
 import { useAdvisorShortlist } from "@/lib/hooks/useAdvisorShortlist";
 import { ADVISOR_SPECIALTY_CATEGORIES } from "@/lib/advisor-specialties";
+import TabBar from "@/components/directory/TabBar";
 import SearchInput from "@/components/directory/SearchInput";
 import SortDropdown from "@/components/directory/SortDropdown";
 
@@ -661,37 +662,20 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
             Hidden when sub-pages call AdvisorsClient with no firms/teams
             (e.g. /advisors/financial-planners). */}
         {(firms.length > 0 || expertTeams.length > 0) && (
-          <div
-            role="tablist"
-            aria-label="Provider type"
-            className="flex items-center gap-1 p-1 bg-slate-100 rounded-xl mb-3 md:mb-4 overflow-x-auto"
-          >
-            {(["all", "individual", "firm", "team"] as const)
-              .filter(pt => pt === "all" || providerTypeCounts[pt] > 0)
-              .map(pt => {
-                const label = pt === "all" ? "All" : PROVIDER_TYPE_LABELS[pt];
-                const count = providerTypeCounts[pt];
-                const active = providerType === pt;
-                return (
-                  <button
-                    key={pt}
-                    role="tab"
-                    aria-selected={active}
-                    onClick={() => setProviderType(pt)}
-                    className={`flex items-center gap-1.5 px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm font-semibold rounded-lg transition-all whitespace-nowrap ${
-                      active
-                        ? "bg-white text-slate-900 shadow-sm"
-                        : "text-slate-600 hover:bg-white/60"
-                    }`}
-                  >
-                    {label}
-                    <span className={`text-[0.6rem] md:text-[0.65rem] font-bold px-1.5 py-0.5 rounded ${active ? "bg-amber-100 text-amber-700" : "bg-slate-200 text-slate-500"}`}>
-                      {count}
-                    </span>
-                  </button>
-                );
-              })}
-          </div>
+          <TabBar
+            ariaLabel="Provider type"
+            variant="segmented"
+            value={providerType}
+            onChange={(id) => setProviderType(id as ProviderType)}
+            alwaysShow="all"
+            className="mb-3 md:mb-4"
+            tabs={[
+              { id: "all", label: "All", count: providerTypeCounts.all },
+              { id: "individual", label: PROVIDER_TYPE_LABELS.individual, count: providerTypeCounts.individual },
+              { id: "firm", label: PROVIDER_TYPE_LABELS.firm, count: providerTypeCounts.firm },
+              { id: "team", label: PROVIDER_TYPE_LABELS.team, count: providerTypeCounts.team },
+            ]}
+          />
         )}
 
         {/* Search + Filter bar */}
