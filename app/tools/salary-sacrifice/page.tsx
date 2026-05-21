@@ -10,6 +10,7 @@ import {
   CURRENT_YEAR,
   SITE_NAME,
 } from "@/lib/seo";
+import { calculatorJsonLd } from "@/lib/schema-markup";
 import JsonLd from "@/components/JsonLd";
 import ComplianceFooter from "@/components/ComplianceFooter";
 
@@ -44,6 +45,13 @@ const breadcrumbLd = breadcrumbJsonLd([
     url: absoluteUrl("/tools/salary-sacrifice"),
   },
 ]);
+
+const toolLd = calculatorJsonLd({
+  name: "Salary Sacrifice Decision Tool",
+  description:
+    "Free interactive tool that weighs your income, employment type, concessional cap room, and Division 293 status to show whether salary sacrificing into super is likely to benefit you. No sign-up required.",
+  path: "/tools/salary-sacrifice",
+});
 
 const faqLd = {
   "@context": "https://schema.org",
@@ -89,7 +97,10 @@ const FAQS = faqLd.mainEntity;
 export default function SalarySacrificePage() {
   return (
     <>
-      <JsonLd data={[breadcrumbLd, faqLd]} testId="salary-sacrifice-jsonld" />
+      <JsonLd
+        data={[breadcrumbLd, toolLd, faqLd]}
+        testId="salary-sacrifice-jsonld"
+      />
       <div className="py-8 md:py-12">
         <div className="container-custom max-w-2xl">
           <p className="text-xs uppercase tracking-wider font-extrabold text-amber-600 mb-3">

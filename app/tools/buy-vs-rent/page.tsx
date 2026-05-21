@@ -10,6 +10,7 @@ import {
   CURRENT_YEAR,
   SITE_NAME,
 } from "@/lib/seo";
+import { calculatorJsonLd } from "@/lib/schema-markup";
 import JsonLd from "@/components/JsonLd";
 import ComplianceFooter from "@/components/ComplianceFooter";
 
@@ -41,6 +42,13 @@ const breadcrumbLd = breadcrumbJsonLd([
   { name: "Tools", url: absoluteUrl("/tools") },
   { name: "Buy vs Rent", url: absoluteUrl("/tools/buy-vs-rent") },
 ]);
+
+const toolLd = calculatorJsonLd({
+  name: "Buy vs Rent Decision Tool",
+  description:
+    "Free interactive decision tool that weighs your time horizon, deposit size, LMI, and personal situation to give a personalised buy-vs-rent recommendation. No sign-up required.",
+  path: "/tools/buy-vs-rent",
+});
 
 const faqLd = {
   "@context": "https://schema.org",
@@ -86,7 +94,7 @@ const FAQS = faqLd.mainEntity;
 export default function BuyVsRentPage() {
   return (
     <>
-      <JsonLd data={[breadcrumbLd, faqLd]} testId="buy-vs-rent-jsonld" />
+      <JsonLd data={[breadcrumbLd, toolLd, faqLd]} testId="buy-vs-rent-jsonld" />
       <div className="py-8 md:py-12">
         <div className="container-custom max-w-2xl">
           <p className="text-xs uppercase tracking-wider font-extrabold text-amber-600 mb-3">
