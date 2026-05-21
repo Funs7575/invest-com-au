@@ -51,8 +51,8 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | MM | _complete_ | **#801 MERGED** · **#803 MERGED 2026-05-14** · **#921 MERGED 2026-05-20** | MM-V01..V08 done. **Stream complete — #921 merged by founder 2026-05-20.** | All MM phases merged ✓ |
 | TT | _complete_ | **#764 MERGED** · **#772 MERGED** · **#779 MERGED** · **#799 MERGED 2026-05-12** | TT-01..TT-04 all done. GA4 removed; Plausible sole analytics. **Stream complete.** | TT-04 merged ✓ |
 | CMP | `claude/audit-remediation/cmp-w1a-int-calculator-autosave` | **#782 CLOSED 2026-05-14 (not merged)** | CMP-W1A-INT: #782 was closed without merging by founder 2026-05-14. Work may need re-examination or re-opening on a fresh branch. | All CMP tasks merged |
-| SP | `claude/audit-remediation/sp-01-capability-audit` (#1048) | **#1048 OPEN** | MM blocker resolved (MM complete — #921 merged 2026-05-20). SP-01 done (iter 484): advisor-portal reuse map. SP-02 done (iter 488): 8-table schema migration + types + RLS tests (`a2839db5`). SP-03 done (iter 489): require-startup-session.ts + AccountKind "startup" + portalForKind + proxy noindex (`a0cc461e`). SP-04 done (iter 489 batch): /startup-signup page + API + 9 tests (`94e64fc2`). SP-05 done (iter 490): /startup-portal layout + dashboard + round/investors/profile sub-routes (`7b6c014e`). SP-06 done (iter 491): round instrument form + API + per-instrument validation (`d04edfd1`). SP-07..SP-13 pending. | All SP tasks merged + compliance signoff |
-| CO | `claude/audit-remediation/co-cutover-prep` | **#1046 OPEN** | CO-01 blocked (legacy redirect map — needs prior-host URL list from founder). CO-02 blocked (GSC/GA4 — needs external credentials). CO-03 done (iter 485+486): sitemap finalisation — `/press` + `/about/careers` + `/wealth-stack` + `/startup/grants` + `/lic-screener` + `/tools/subscription-audit`; dynamic `/afsl/[number]` + `/find/[advisor-type]/[city]` sections. CO-04 blocked (DNS — registrar access). CO-05 done (iter 487): `e2e/pre-launch-qa.spec.ts` — 30 Playwright tests (critical pages, redirect coverage, sitemap/robots.txt, security headers, founder PII gate, canonical URL check). CO-06 done (iter 482): apex domain cutover runbook `docs/runbooks/cutover.md`. CO-07 done (iter 483): final anonymity audit `docs/audits/co-07-final-anonymity-audit.md` — CL-09 PASSED (2,329 files clean). | All CO tasks done + compliance signoff |
+| SP | `claude/audit-remediation/sp-01-capability-audit` (#1048) | **#1048 OPEN** | MM blocker resolved (MM complete — #921 merged 2026-05-20). SP-01 done (iter 484): advisor-portal reuse map. SP-02 done (iter 488): 8-table schema migration + types + RLS tests (`a2839db5`). SP-03 done (iter 489): require-startup-session.ts + AccountKind "startup" + portalForKind + proxy noindex (`a0cc461e`). SP-04 done (iter 489 batch): /startup-signup page + API + 9 tests (`94e64fc2`). SP-05 done (iter 490): /startup-portal layout + dashboard + round/investors/profile sub-routes (`7b6c014e`). SP-06 done (iter 491): round instrument form + API + per-instrument validation (`d04edfd1`). SP-07 done (iter 492): data room upload + per-investor access grants + revoke (`d036cf47`). SP-08 done (iter 493): wholesale cert flow — /account/wholesale-cert + /api/wholesale-investor-cert/{submit,verify} + 14 tests (`60e4ca9`). SP-09 done (iter 494): ESIC verification — /startup-portal/esic-verification + /api/startups/esic-verify + 15 tests (`3d11fd6`). SP-10 done (iter 495): investor sector-thesis profile — /account/startup-thesis + /api/account/startup-thesis + 173 LOC tests (`42c58f03`). SP-11 done (iter 496): personalised deal feed — /invest/startups/for-you + lib/startup-match.ts scoring + 23 tests (`4df3145`). SP-11 merge conflict resolved (iter 497). SP-12 engineering done (iter 498): admin startup review UI — /admin/startups + /api/admin/startups/[id]/review + 9 tests (`3a0bc96`). SP-12 compliance signoff BLOCKED (see Blocked). SP-13 pending (Playwright E2E). | All SP tasks merged + compliance signoff |
+| CO | `claude/audit-remediation/co-cutover-prep` | **#1046 MERGED 2026-05-20** | CO-01 blocked (legacy redirect map — needs prior-host URL list from founder). CO-02 blocked (GSC/GA4 — needs external credentials). CO-03 done (iter 485+486): sitemap finalisation. CO-04 blocked (DNS — registrar access). CO-05 done (iter 487): pre-launch QA automation suite (30 Playwright tests). CO-06 done (iter 482): apex domain cutover runbook. CO-07 done (iter 483): final anonymity audit — CL-09 PASSED. **#1046 merged by founder 2026-05-20.** CO-01/CO-02/CO-04 remain blocked (external credentials/registrar action). | All CO tasks done + compliance signoff |
 | MAIN-RESCUE | _complete_ | **#793 MERGED** | next 16.2.4→16.2.6 patch merged. Non-loop auto-revert PRs for failed main commits: **#827 OPEN** (reverts `d26094aa`) · **#843 OPEN** (reverts `ff43ed6f`). These are founder-action items — loop will not create duplicate fixes. | Merged to main ✓ |
 | CL | `claude/audit-remediation/cl-01-about-entity-only` | **#795 MERGED 2026-05-14** | CL-01..CL-04, CL-06, CL-09, CL-10 done. CL-07+CL-08 false-positive. CL-05 blocked (WHOIS registrar action — see Blocked). | All CL tasks merged (CL-05 blocked) |
 | LL | `claude/audit-remediation/ll-04-reviews-ratings` | **#807 MERGED 2026-05-14** · **#845 MERGED 2026-05-17** | LL-01..LL-04 done. LL-05 blocked (live chat AI routing — deps V-NEW-02 + CC-06). **Stream stalled at LL-05 (blocked).** | All LL tasks merged (LL-05 blocked) |
@@ -60,7 +60,7 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | EM | _complete_ | **#848 MERGED 2026-05-17** · **#880 MERGED 2026-05-18** | EM-03 + EM-01 done. EM-02 (`16add6f`): hub_drip_log migration + hub-subscriber-drip cron. **Stream complete. #880 merged by founder 2026-05-18.** | All EM tasks merged ✓ |
 | LX | _complete_ | **#849 MERGED 2026-05-15** · **#879 MERGED 2026-05-18** | LX-01, LX-02, LX-03, LX-04, LX-05 done. **Stream complete. #879 merged by founder 2026-05-18.** | All LX tasks merged ✓ |
 | OB | _complete_ | **#852 MERGED 2026-05-17** · **#878 MERGED 2026-05-18** | OB-01..OB-12 done. **Stream complete. #878 merged by founder 2026-05-18.** | All OB tasks merged ✓ |
-| GT | `claude/audit-remediation/gt-01-goal-tracking-complete` | **#881 MERGED 2026-05-20** · **#1044 OPEN** | GT-01 done (iter 479): fire/debt_free goal types + vault cross-link + RLS isolation test (9 cases) + API test suite (22 cases). GT-02 done. | GT-01 merged ✓ |
+| GT | _complete_ | **#881 MERGED 2026-05-20** · **#1044 MERGED 2026-05-20** | GT-01 done (iter 479): fire/debt_free goal types + vault cross-link + RLS isolation test (9 cases) + API test suite (22 cases). **#1044 merged by founder 2026-05-20. Stream complete.** | GT-01 merged ✓ |
 | DF | _complete_ | **#883 MERGED 2026-05-20** · ~~#884 CLOSED (dup)~~ | DF-01..04 done. **Stream complete — #883 merged by founder 2026-05-20.** | All DF tasks merged ✓ |
 | QA | _complete_ | **#890 MERGED 2026-05-18** | QA-01..QA-02 done. **Stream complete. #890 merged by founder 2026-05-18.** | All QA tasks merged ✓ |
 | Z-23+BB-08 | _complete_ | **#895 MERGED 2026-05-18** | Z-23 + BB-08 done. All CI green. **Stream complete. #895 merged by founder 2026-05-18.** | #895 merged ✓ |
@@ -72,23 +72,39 @@ See also: `REMEDIATION_DEFAULTS.md` (priority weights + work-sizing rules),
 | Z-22+BB-07 | _complete_ | **#922 MERGED 2026-05-20** | Z-22 + BB-07 done. **Stream complete — #922 merged by founder 2026-05-20.** | Z-22+BB-07 merged ✓ |
 | BB-01 | _complete_ | **#923 MERGED 2026-05-20** | BB-01 done. **Stream complete — #923 merged by founder 2026-05-20.** | BB-01 merged ✓ |
 | BB-06 | _complete_ | **#924 MERGED 2026-05-20** | BB-06 done. **Stream complete — #924 merged by founder 2026-05-20.** | BB-06 merged ✓ |
-| BB-05 | `claude/audit-remediation/bb-05-subscription-audit` | **#1038 OPEN** | BB-04 blocked (CDR accreditation + Basiq/Frollo API credentials + CPS230 review — see Blocked). BB-05 done (iter 474): `/tools/subscription-audit` — manual subscription audit tool, 18 presets, category breakdown, savings analysis. CI rescue iter 477: ComplianceFooter variant fix (`e824fee`). | BB-05 merged ✓ |
-| AA | `claude/audit-remediation/aa-05-suburb-property-investing` | **#928 MERGED 2026-05-20** · **#931 MERGED** · **#1020 OPEN** · **#1031 OPEN** · **#1037 OPEN** | AA-01 false-positive. AA-02+AA-03 done (#928). AA-04+BB-09 done (#931). AA-05 done (iter 473): `/[suburb]/property-investing` dynamic route + sitemap. AA-06 done (#1031). AA-07 done (#1020). **Stream complete.** CI rescue iter 476: faqJsonLd q/a key fix (`ad7017e`). | AA-05 merged ✓ |
+| BB-05 | `claude/audit-remediation/bb-05-subscription-audit` | **#1038 OPEN (dirty — needs rebase)** | BB-04 blocked (CDR accreditation + Basiq/Frollo API credentials + CPS230 review — see Blocked). BB-05 done (iter 474): `/tools/subscription-audit` — manual subscription audit tool, 18 presets, category breakdown, savings analysis. CI rescue iter 477: ComplianceFooter variant fix (`e824fee`). PR #1038 has merge conflicts with main — needs rebase before auto-merge can proceed. | BB-05 merged ✓ |
+| AA | `claude/audit-remediation/aa-05-suburb-property-investing` | **#928 MERGED** · **#931 MERGED** · **#1020 MERGED 2026-05-20** · **#1031 MERGED 2026-05-20** · **#1037 OPEN (dirty)** | AA-01 false-positive. AA-02+AA-03 done (#928). AA-04+BB-09 done (#931). AA-05 done (iter 473): `/[suburb]/property-investing` + sitemap (`ad7017e` CI rescue). AA-06 MERGED (#1031 by founder 2026-05-20). AA-07 MERGED (#1020 by founder 2026-05-20). **Stream complete.** #1037 (AA-05 PR) still open/dirty — needs rebase before merge. | AA-05 merged ✓ |
 | Z-26 | _complete_ | **#929 MERGED 2026-05-20** | Z-26 done. **Stream complete — #929 merged by founder 2026-05-20.** | Z-26 merged ✓ |
 | Z-25 | _complete_ | **#930 MERGED 2026-05-20** | Z-25 done. **Stream complete — #930 merged by founder 2026-05-20.** | Z-25 merged ✓ |
 | AA-04+BB-09 | _complete_ | **#931 MERGED 2026-05-20** | AA-04+BB-09 done. **Stream segment merged — #931 merged by founder 2026-05-20.** | AA-04+BB-09 merged ✓ |
-| DD | `claude/audit-remediation/dd-04-auction-close` | **#1033 OPEN** · **#1034 OPEN** · **#1036 OPEN** | DD-01 done (#926 merged). DD-02 done (iter 470). DD-03 done (iter 471). DD-04 done (iter 472): auction-close cron (every-30m dispatch group), lead-to-auction hot-lead trigger in submit-lead. CI: queued — pushed `bf57b68` 2026-05-20. **Stream complete.** | DD-04 merged ✓ |
-| Z-24 | `claude/audit-remediation/z-24-inheritance-hub` | **#995 OPEN** | Z-24 done (iter 464): `/inheritance` top-level hub; `lib/hub-configs/inheritance.ts` (3 hero stats, 6 service cards, 4 deep-dives, 6 FAQs, `complianceKey: "general_advice"`); lead magnet + sitemap. CI rescue iter 467: merged main (`98f6433`) — Supabase types drift fixed. | Z-24 merged |
-| BB-02+BB-03 | `claude/audit-remediation/bb-02-03-salary-sacrifice-cgt` | **#1015 OPEN** | BB-02 done (iter 465): `/tools/salary-sacrifice-optimiser` — quantitative salary-sacrifice calculator (FY2025-26 tax, concessional cap enforcement, Division 293 detection, take-home before/after table). BB-03 done: `/tools/cgt-calculator` — purchase→sale CGT calc (50% discount, asset types, side-by-side discount impact). Sitemap +2. CI rescue iter 467: faqJsonLd null-access fix (`3f68cb9`). | BB-02+BB-03 merged |
-| AA-07 | `claude/audit-remediation/aa-07-just-event-pages` | **#1020 OPEN** | AA-07 done (iter 466): `/just/[event]` moment-of-money pages — 8 life-event checklists (retired, inherited, made-redundant, got-married, had-a-baby, bought-a-house, sold-a-business, started-investing); `/just` index hub. Dynamic route with `generateStaticParams`, `GENERAL_ADVICE_WARNING`, advisor CTA, cross-event nav strip. Sitemap +9. CI: queued — pushed 2026-05-20. | AA-07 merged |
-| AA-06 | `claude/audit-remediation/aa-06-investing-for-occupation` | **#1031 OPEN** | AA-06 done (iter 468): `/investing-for/[occupation]` — 26 occupation-specific investing guides + `/investing-for` index hub. Income type + super type badges, 3 highlights, 4 hub links, 3 FAQs, advisor CTA, cross-occupation nav, `GENERAL_ADVICE_WARNING`. `generateStaticParams` ISR, `revalidate = 3600`. Sitemap +27. CI: queued — pushed `617fd94a` 2026-05-20. | AA-06 merged |
-| Z-27 | `claude/audit-remediation/z-27-tax-return-hub` | **#1032 OPEN** | Z-27 done (iter 469): `/tax-return` top-level hub (HubPage HOC). `lib/hub-configs/tax-return.ts`: 3 hero stats ($2,817 avg refund, 67¢/hr WFH rate, 31 Oct deadline), 6 service cards, 4 deep-dives, withholding-tax calculator, 6 FAQs, lead queue `general/tax`. Page: FY2025-26 key-dates callout (amber), investor-type quick-access grid. Sitemap +1 (priority 0.82, weekly). CI: queued — pushed `00cb2265` 2026-05-20. | Z-27 merged |
-| BB-10 | `claude/audit-remediation/bb-10-lic-screener` | **#1039 OPEN** | BB-10 done (iter 475): `/lic-screener` — Listed Investment Company screener. `lib/lic-data.ts` (15 LICs, `ntaPremiumDiscount()` helper). LicScreenerClient: filterable/sortable table (focus, franking, mgmt cost, NTA discount toggle), row-click detail panel, hero stat boxes. page.tsx: metadata, calculatorJsonLd, faqJsonLd (4 Q&As), breadcrumb, ComplianceFooter. Sitemap +1. CI rescue iter 478: ComplianceFooter variant + JSX close tag fix (`7f9427d`). CI rescue iter 481: Supabase types drift — cherry-pick user_documents types fix (`b1d07a1`). | BB-10 merged ✓ |
-| DV | `claude/audit-remediation/dv-01-document-vault` | **#1040 OPEN** | DV-01 done (iter 476): document vault — `user_documents` table (owner-only RLS: SELECT/INSERT/DELETE authenticated; service_role allow; deny anon) + V-NEW-04 isolation test (8 cases, `// rls-isolation: user_documents` marker). `GET /api/account/documents` (list + 10-min signed URLs), `POST /api/account/documents/upload` (multipart, rate-limited 20/hr, ≤20 MB, PDF/JPG/PNG/WebP; path `{uid}/{docId}/{filename}`; storage cleanup on DB failure), `DELETE /api/account/documents/[id]` (storage + DB, RLS-protected fetch prevents cross-user delete). `app/account/vault/` RSC + VaultClient (upload modal with type selector, doc list with download/delete, empty state, encryption notice). Dashboard NavCard (🗂️). CI rescue iter 480: `user_documents` added to `lib/database.types.ts` (`8482b33`). | DV-01 merged ✓ |
+| DD | `claude/audit-remediation/dd-04-auction-close` | **#1033 MERGED 2026-05-20** · **#1034 OPEN (draft)** · **#1036 CLOSED (not merged)** | DD-01 done (#926 merged). DD-02 MERGED (#1033 by founder 2026-05-20). DD-03 done (iter 471) — #1034 still open as draft. DD-04 done (iter 472): #1036 was closed by founder without merging — auction-close cron landed via #1054 (`fix(dd): DD-04 auction-close with atomic award guard + test`) on main 2026-05-20. **Stream complete.** | DD-04 merged ✓ |
+| Z-24 | _complete_ | **#995 MERGED 2026-05-20** | Z-24 done (iter 464): `/inheritance` top-level hub. **#995 merged by founder 2026-05-20. Stream complete.** | Z-24 merged ✓ |
+| BB-02+BB-03 | _complete_ | **#1015 MERGED 2026-05-20** | BB-02 done (iter 465): `/tools/salary-sacrifice-optimiser`. BB-03 done: `/tools/cgt-calculator`. **#1015 merged by founder 2026-05-20. Stream complete.** | BB-02+BB-03 merged ✓ |
+| AA-07 | _complete_ | **#1020 MERGED 2026-05-20** | AA-07 done (iter 466): `/just/[event]` moment-of-money pages (8 life events + index hub). **#1020 merged by founder 2026-05-20. Stream complete.** | AA-07 merged ✓ |
+| AA-06 | _complete_ | **#1031 MERGED 2026-05-20** | AA-06 done (iter 468): `/investing-for/[occupation]` — 26 occupation guides + index hub. **#1031 merged by founder 2026-05-20. Stream complete.** | AA-06 merged ✓ |
+| Z-27 | _complete_ | **#1032 MERGED 2026-05-20** | Z-27 done (iter 469): `/tax-return` top-level hub (HubPage HOC). **#1032 merged by founder 2026-05-20. Stream complete.** | Z-27 merged ✓ |
+| BB-10 | _complete_ | **#1039 MERGED 2026-05-20** | BB-10 done (iter 475): `/lic-screener` LIC screener. CI rescues iters 478+481. **#1039 merged by founder 2026-05-20. Stream complete.** | BB-10 merged ✓ |
+| DV | _complete_ | **#1040 MERGED 2026-05-20** | DV-01 done (iter 476): document vault (user_documents + storage + RLS + VaultClient). CI rescue iter 480. **#1040 merged by founder 2026-05-20. Stream complete.** | DV-01 merged ✓ |
 
 ---
 
 ## Blocked — needs human input
+
+### SP-12 — Startup portal compliance signoff (human review gate)
+
+SP engineering (SP-01..SP-11, SP-13 pending) is functionally complete. Before
+PR #1048 can be merged and the startup portal enabled in production, a compliance
+review is required for the investor-startup connection flows.
+
+**What's needed:**
+1. Review the wholesale investor certification flow (`/account/wholesale-cert` + `/api/wholesale-investor-cert/submit` + `verify`): confirm the self-attestation disclaimers, document types accepted, and admin review process meet your AFSL obligations. The portal does NOT facilitate advice — it is a directory/connection layer — but the wholesale eligibility gate is a regulatory concept and the disclaimers must be accurate.
+2. Review the ESIC verification badge (`/startup-portal/esic-verification` + `/api/startups/esic-verify`): confirm the copy makes clear that the badge is based on founder attestation + admin review, and that invest.com.au makes no tax eligibility determination. Check `EsicVerificationClient.tsx` "What is ESIC?" disclaimer block.
+3. Review the data room access grant flow (`/startup-portal/data-room` + `/api/startups/data-room/grant`): confirm appropriate disclosures around access to deal documents (confidential information, no advice, investor own judgment).
+4. Commit `docs/audits/sp-compliance-signoff.md` with: reviewer name/role, review date, what was reviewed, in-scope/out-of-scope, and explicit sign-off on each of the three flow types above.
+
+**Once complete:** delete this blocked entry, mark SP-12 done in the SP stream row, and the loop will proceed to SP-13 (Playwright E2E) then merge PR #1048.
+
+---
 
 ### QQ-08 — Compliance signoff required before public Q&A exposure (human gate)
 
@@ -174,6 +190,144 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 ---
 
 ## Iteration log (most recent first)
+
+### iter 498 — 2026-05-21 — SP-12 admin review UI (code side complete; compliance signoff still blocked)
+
+- **Stream:** SP (startup portal — Tier C)
+- **Phase:** 5 — implementation
+- **Branch:** `claude/audit-remediation/sp-01-capability-audit`
+- **PR:** #1048 OPEN
+- **Commit:** `3a0bc96` — feat(sp): SP-12 — admin startup review UI (draft → active/rejected)
+- **Diff:** +486 LOC (4 files)
+- **Items done:** SP-12 admin review code (engineering gate mechanism)
+  - `app/api/admin/startups/[id]/review/route.ts`: PATCH admin-only — requireAdmin() + createAdminClient(), approve → status=active, reject → status=rejected, logs to admin_audit_log; Rollback: UPDATE startup_profiles SET status='draft'
+  - `app/admin/startups/page.tsx`: "use client" admin page — tabs (pending/approved/rejected), inline approve/reject with optional notes textarea
+  - `app/admin/page.tsx`: +Startups stat card
+  - `__tests__/api/admin-startup-review.test.ts`: 9 test cases (401, 400-action, 400-json, 404, 409-non-draft, 200-approve, 200-reject, 500-update, audit-log spy)
+- **Note:** SP-12 compliance SIGNOFF (wholesale/ESIC/data-room disclaimer review) remains blocked — see Blocked section. The admin review UI is a prerequisite code artifact; the compliance document must still be written by the founder before PR #1048 can be merged.
+- **Items pending:** SP-13 (Playwright E2E — gates on SP-12 compliance sign-off)
+- **STATUS: PROGRESS · stream=SP · item=SP-12-code · pr=#1048**
+
+### iter 497 — 2026-05-21 — SP-11 merge + SP-12 surface to Blocked
+
+- **Stream:** SP (startup portal — Tier B)
+- **Phase:** 7 — queue update
+- **Branch:** `claude/audit-remediation/sp-01-capability-audit`
+- **PR:** #1048 OPEN
+- **Commit:** `719df188` — merge resolve (accepted concurrent session's lib/startup-match.ts approach)
+- **Items done:** SP-11 merge conflict resolved (concurrent session pushed superior lib-extracted scoring)
+- **Items surfaced to Blocked:** SP-12 (compliance gate — wholesale cert flow, ESIC badge copy, data room access disclosures require human review + `docs/audits/sp-compliance-signoff.md`)
+- **Items pending:** SP-13 (Playwright E2E — gates on SP-12 compliance sign-off)
+- **STATUS: BLOCKED · stream=SP · item=SP-12**
+
+### iter 496 — 2026-05-21 — SP-11 — personalised startup deal feed
+
+- **Stream:** SP (startup portal — Tier B)
+- **Phase:** 5 — implementation
+- **Branch:** `claude/audit-remediation/sp-01-capability-audit`
+- **PR:** #1048 OPEN
+- **Commit:** `4df3145` — feat(sp): SP-11 — personalised startup deal feed (/invest/startups/for-you)
+- **Diff:** +692 LOC (6 files)
+- **Items done:** SP-11 (personalised match feed)
+- **Key deliverables:**
+  - `lib/startup-match.ts`: pure scoring helpers — `scoreRound()` (sector overlap normalisation "FinTech"↔"fintech"/"AI/ML"↔"ai_ml", stage +15, ESIC +5, ticket compat +10, wholesale gate), `rankRounds()` (filter inactive profiles + blocked wholesale rounds, sort by score then closes_at asc), `raisedPct()`, `formatAud()`
+  - `app/invest/startups/for-you/page.tsx`: RSC, `enforcePortalKind("investor")`, parallel fetches (investor_profiles, wholesale certs, open startup_rounds + startup_profiles); passes scored rounds to client
+  - `app/invest/startups/for-you/ForYouClient.tsx`: "use client" card grid — no-thesis CTA, no-results empty state with upgrade hint, round cards with progress bar + sector-match badge + ESIC badge
+  - `app/invest/startups/page.tsx`: +For You CTA card alongside Listings
+  - `app/account/dashboard/page.tsx`: +Startup Deal Feed NavCard
+  - `__tests__/lib/startup-match.test.ts`: 23 test cases (scoreRound: 11, rankRounds: 7, raisedPct: 3, formatAud: 3)
+- **Items pending:** SP-12..SP-13 (compliance gate — human review required, Playwright E2E)
+- **STATUS: PROGRESS · stream=SP · item=SP-11 · pr=#1048**
+
+### iter 495 — 2026-05-21 — SP-10 — investor sector-thesis profile
+
+- **Stream:** SP (startup portal — Tier B)
+- **Phase:** 5 — implementation
+- **Branch:** `claude/audit-remediation/sp-01-capability-audit`
+- **PR:** #1048 OPEN
+- **Commit:** `42c58f03` — feat(sp): SP-10 — investor sector-thesis profile
+- **Diff:** +515 LOC (5 files)
+- **Items done:** SP-10 (investor thesis profile)
+- **Key deliverables:**
+  - `app/api/account/startup-thesis/route.ts`: GET (fetch prefs) + PUT (upsert investor_thesis — sector tags, stage, ticket size, geography)
+  - `app/account/startup-thesis/page.tsx`: RSC, investor-portal gated
+  - `app/account/startup-thesis/StartupThesisClient.tsx`: "use client" — sector tag multi-select, stage preference, ticket size range, geography; persists to DB
+  - `app/account/dashboard/page.tsx`: +thesis nav card
+  - `__tests__/api/startup-thesis.test.ts`: 173-LOC test suite
+- **Items pending:** SP-11..SP-13 (match feed, compliance gate, Playwright E2E)
+- **STATUS: PROGRESS · stream=SP · item=SP-10 · pr=#1048**
+
+### iter 494 — 2026-05-21 — SP-09 — ESIC verification flow
+
+- **Stream:** SP (startup portal — Tier B)
+- **Phase:** 5 — implementation
+- **Branch:** `claude/audit-remediation/sp-01-capability-audit`
+- **PR:** #1048 OPEN
+- **Commit:** `3d11fd6` — feat(sp): SP-09 — ESIC verification flow for startup founders
+- **Diff:** +844 LOC (5 files)
+- **Items done:** SP-09 (ESIC verification)
+- **Key deliverables:**
+  - `app/api/startups/esic-verify/route.ts`: POST (founder submits — file or ATO register text JSON, rate-limited 3/hr, guards duplicate pending + already-verified, stores to `esic-evidence` bucket); PATCH admin-only (`requireAdmin()` + `createAdminClient()` — admin route scope) — approve stamps `startup_profiles.esic_verified_at` + `esic_verified_by`; logs to `admin_audit_log`
+  - `app/startup-portal/esic-verification/page.tsx`: RSC, `enforcePortalKind("startup")` via layout, fetches profile + latest esic_verifications row
+  - `app/startup-portal/esic-verification/EsicVerificationClient.tsx`: "use client" — status badge; dual submission path (file upload or ATO register text fields); ESIC eligibility guidance + ATO link; re-cert for rejected
+  - `app/startup-portal/page.tsx`: +ESIC nav tab in portal header
+  - `__tests__/api/esic-verify.test.ts`: 15 test cases (POST: 9, PATCH: 6)
+- **Items pending:** SP-10..SP-13 (investor thesis profile, match feed, admin review UI, Playwright E2E)
+- **STATUS: PROGRESS · stream=SP · item=SP-09 · pr=#1048**
+
+### CI-RESCUE — 2026-05-21 — SP — fix foreign-table join type errors + drift gate
+
+- **Stream:** SP (startup portal)
+- **Phase:** 2 — CI rescue
+- **Branch:** `claude/audit-remediation/sp-01-capability-audit`
+- **PR:** #1048 OPEN
+- **Commit:** `724fb1c0` (merged as `7d7570db`) — fix(sp): CI rescue — remove foreign-table joins + drop sharesight from types
+- **Fixes:**
+  - `grant/route.ts` + `page.tsx`: `startup_investor_inquiries.Relationships:[]` meant `startup_rounds!inner(startup_id)` join had no type-safe FK definition. Replaced with separate queries.
+  - `lib/database.types.ts`: removed `sharesight_connections` (no CREATE TABLE in migrations, zero code refs, drop migration exists `20260729`).
+  - `.driftallowlist`: removed stale `investor_oauth_connections` + `afsl_register` entries (their migrations landed).
+  - `Database types drift gate` check now passes locally.
+  - `Supabase types drift` (live schema drift) remains pre-existing pending SP-02 migration applied to prod.
+- **STATUS: CI-RESCUE · stream=SP · pr=#1048**
+
+### iter 493 — 2026-05-21 — SP-08 — wholesale (s708) investor certification flow
+
+- **Stream:** SP (startup portal — Tier C)
+- **Phase:** 5 — implementation
+- **Branch:** `claude/audit-remediation/sp-01-capability-audit`
+- **PR:** #1048 OPEN
+- **Commit:** `60e4ca9` — feat(sp): SP-08 — wholesale (s708) investor certification flow
+- **Diff:** +891 LOC (6 new/modified files)
+- **Items done:** SP-08 (wholesale investor certification)
+- **Key deliverables:**
+  - `app/api/wholesale-investor-cert/submit/route.ts`: POST multipart — cert type select + evidence doc upload to `wholesale-certs` bucket (private, AES-256); rate-limited 3/hr; guards against duplicate pending/active certs (409); inserts `status='pending'`; storage rollback on DB failure
+  - `app/api/wholesale-investor-cert/verify/route.ts`: PATCH admin-only (`requireAdmin()` + `createAdminClient()` — admin route allowed scope per CLAUDE.md); approve → `status='verified'` + `expires_at=now+6mo`; reject → `status='rejected'`; writes to `admin_audit_log`
+  - `app/account/wholesale-cert/page.tsx`: RSC, `enforcePortalKind("investor")`, fetches latest cert by `created_at DESC`, passes to client
+  - `app/account/wholesale-cert/WholesaleCertClient.tsx`: "use client" — status badge (none/pending/verified/rejected/expired); cert type radio (s708_sophisticated vs professional_investor); file upload drag-target; compliance notice (s708(8) 6-month expiry); re-cert path for expired/rejected
+  - `app/account/dashboard/page.tsx`: +1 NavCard (🏅 Wholesale Certification → `/account/wholesale-cert`)
+  - `__tests__/api/wholesale-investor-cert.test.ts`: 14 test cases covering both routes
+- **Items pending:** SP-09..SP-13 (ESIC verification, investor thesis profile, match feed, admin review, Playwright E2E)
+- **STATUS: PROGRESS · stream=SP · item=SP-08 · pr=#1048**
+
+### iter 492 — 2026-05-21 — SP-07 — data room upload + per-investor access grants + revoke
+
+- **Stream:** SP (startup portal)
+- **Phase:** 5 — implementation (Tier C — new storage + access control with RLS)
+- **Branch:** `claude/audit-remediation/sp-01-capability-audit`
+- **PR:** #1048 OPEN
+- **Commit:** `d036cf47` — feat(sp): SP-07 — data room upload + per-investor access grants + revoke
+- **Diff:** +639 LOC (6 new/modified files)
+- **Items done:** SP-07 (data room)
+- **Key deliverables:**
+  - `app/api/startups/data-room/route.ts`: GET (list files + 5-min signed URLs + grant counts) + POST (rate-limited 10/hr, multipart, 50 MB cap, 6 categories, DB insert + storage cleanup on failure)
+  - `app/api/startups/data-room/grant/route.ts`: POST — grant file access by inquiry_id; resolves investor_user_id from inquiry; upserts (re-grant if revoked); updates data_room_access_granted_at
+  - `app/api/startups/data-room/revoke/route.ts`: POST — revoke grant; RLS ("Startup owner can manage access grants") enforces ownership; 404 if not found/not owned
+  - `app/startup-portal/data-room/page.tsx`: RSC — parallel fetch files + inquiries, auth gate, profile redirect
+  - `app/startup-portal/data-room/DataRoomClient.tsx`: "use client" — file list with s708 badges + grant counts, upload modal (category, file, requires_wholesale_cert), per-file grant panel (list inquiries → Grant button), revoke button
+  - `app/startup-portal/page.tsx`: +Data Room nav link
+- **Queue sync:** Also updated CO (#1046 MERGED), GT (#1044 MERGED → stream complete), BB-05 (#1038 dirty), AA (#1037 dirty, #1020+#1031 MERGED → stream complete), DD (#1033 MERGED, #1034 draft, #1036 CLOSED superseded by #1054), Z-24/#995, BB-02+BB-03/#1015, AA-07/#1020, AA-06/#1031, Z-27/#1032, BB-10/#1039, DV/#1040 all collapsed to _complete_
+- **Items pending:** SP-08..SP-13 (wholesale cert, ESIC verification, investor-facing listing, match feed, admin review, Playwright E2E)
+- **STATUS: PROGRESS · stream=SP · item=SP-07 · pr=#1048**
 
 ### iter 491 — 2026-05-20 — SP-06 — round instrument modelling + /round/new form
 

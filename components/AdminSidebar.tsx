@@ -117,6 +117,7 @@ const NAV_GROUPS = [
     items: [
       { href: "/admin/legal", icon: "scale", label: "Legal Dashboard" },
       { href: "/admin/audit-log", icon: "eye", label: "Audit Log" },
+      { href: "/admin/impersonations", icon: "eye", label: "Impersonations" },
     ],
   },
   {
