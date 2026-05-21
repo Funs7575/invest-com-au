@@ -1,6 +1,11 @@
 // @vitest-environment jsdom
-import { describe, it, expect, beforeEach, vi } from "vitest";
-import { hasAnalyticsConsent } from "@/lib/consent";
+import { describe, it, expect, beforeEach } from "vitest";
+import {
+  hasAnalyticsConsent,
+  buildConsentCookie,
+  consentCookieGrantsAnalytics,
+  CONSENT_COOKIE,
+} from "@/lib/consent";
 
 describe("hasAnalyticsConsent", () => {
   beforeEach(() => {
@@ -48,5 +53,35 @@ describe("hasAnalyticsConsent", () => {
     delete global.window;
     expect(hasAnalyticsConsent()).toBe(false);
     global.window = originalWindow;
+  });
+});
+
+describe("SSR-readable consent cookie (§5 #20)", () => {
+  beforeEach(() => {
+    localStorage.clear();
+    // clear any iv_consent cookie between tests
+    document.cookie = `${CONSENT_COOKIE}=; Path=/; Max-Age=0`;
+  });
+
+  it("buildConsentCookie encodes analytics grant", () => {
+    expect(buildConsentCookie(true)).toContain(`${CONSENT_COOKIE}=analytics`);
+    expect(buildConsentCookie(true)).toContain("SameSite=Lax");
+    expect(buildConsentCookie(false)).toContain(`${CONSENT_COOKIE}=essential`);
+  });
+
+  it("consentCookieGrantsAnalytics only true for 'analytics'", () => {
+    expect(consentCookieGrantsAnalytics("analytics")).toBe(true);
+    expect(consentCookieGrantsAnalytics("essential")).toBe(false);
+    expect(consentCookieGrantsAnalytics(undefined)).toBe(false);
+  });
+
+  it("hasAnalyticsConsent falls back to the mirror cookie when localStorage is empty", () => {
+    document.cookie = `${CONSENT_COOKIE}=analytics; Path=/`;
+    expect(hasAnalyticsConsent()).toBe(true);
+  });
+
+  it("mirror cookie 'essential' does not grant analytics", () => {
+    document.cookie = `${CONSENT_COOKIE}=essential; Path=/`;
+    expect(hasAnalyticsConsent()).toBe(false);
   });
 });
