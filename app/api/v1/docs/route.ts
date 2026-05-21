@@ -225,6 +225,68 @@ export function GET() {
         },
       },
       {
+        path: "/api/v1/verify",
+        method: "GET",
+        auth_required: true,
+        description:
+          "Verification-as-a-Service. Verify an AFSL and/or ABN against public register data (ASIC public AFS register cache + the official ABR web service). Factual register check only — not financial advice. At least one of afsl/abn is required.",
+        parameters: [
+          {
+            name: "afsl",
+            type: "string",
+            required: false,
+            description:
+              "AFSL number to verify (6-7 digits; 'AFSL ' prefix and spaces tolerated).",
+          },
+          {
+            name: "abn",
+            type: "string",
+            required: false,
+            description:
+              "ABN to verify (11 digits; spaces/hyphens tolerated). Validated via ATO mod-89 checksum then the ABR.",
+          },
+        ],
+        example_request: "GET /api/v1/verify?afsl=240813",
+        example_response: {
+          data: {
+            verified: true,
+            afsl: {
+              subject: "afsl",
+              verified: true,
+              outcome: "verified",
+              number: "240813",
+              status: "Current",
+              licensee_name: "Example Advisers Pty Ltd",
+              conditions_summary: "No conditions recorded",
+              checked_at: "2026-05-01T00:00:00Z",
+              source: "afsl_register:asic_csv",
+              source_url:
+                "https://connectonline.asic.gov.au/RegistrySearch/faces/landing/ProfessionalRegisters.jspx?searchText=240813",
+            },
+          },
+          meta: {
+            checked_at: "2026-05-21T12:00:00Z",
+            subjects: ["afsl"],
+          },
+        },
+      },
+      {
+        path: "/api/v1/verify/badge",
+        method: "GET",
+        auth_required: false,
+        description:
+          "Hosted 'Verified by Invest.com.au' trust-mark. Returns an SVG (image/svg+xml) reflecting live public-register status for an AFSL, suitable for hotlinking from a licensee's own site via an <img> tag. No auth (public embed); IP rate-limited.",
+        parameters: [
+          {
+            name: "afsl",
+            type: "string",
+            required: true,
+            description: "AFSL number to render the trust-mark for.",
+          },
+        ],
+        example_request: "GET /api/v1/verify/badge?afsl=240813",
+      },
+      {
         path: "/api/v1/docs",
         method: "GET",
         auth_required: false,
