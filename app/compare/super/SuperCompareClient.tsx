@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import Icon from "@/components/Icon";
 import SocialProofCounter from "@/components/SocialProofCounter";
 import AdvisorMatchCTA from "@/components/AdvisorMatchCTA";
+import ResultCount from "@/components/directory/ResultCount";
 
 /* ─── Types ─── */
 
@@ -252,9 +253,11 @@ export default function SuperCompareClient() {
           ))}
         </div>
 
-        <p className="text-sm text-slate-500 mb-4">
-          Showing {filtered.length} fund{filtered.length !== 1 ? "s" : ""}
-        </p>
+        <ResultCount
+          total={filtered.length}
+          noun={filtered.length === 1 ? "super fund" : "super funds"}
+          className="mb-4"
+        />
 
         {/* ─── Desktop table ─── */}
         <div className="hidden md:block border border-slate-200 rounded-xl overflow-hidden">

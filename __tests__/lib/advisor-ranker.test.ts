@@ -137,6 +137,60 @@ describe("rankAdvisors", () => {
     expect(a).toBeGreaterThan(b);
   });
 
+  it("applies a country-match boost to advisors serving the intent country", () => {
+    const serving = scoreAdvisor(
+      mkAdvisor({ available_in_countries: ["gb", "in"] }),
+      [],
+      { countryMatch: { country: "gb" } },
+    );
+    const notServing = scoreAdvisor(
+      mkAdvisor({ available_in_countries: ["us"] }),
+      [],
+      { countryMatch: { country: "gb" } },
+    );
+    expect(serving).toBeGreaterThan(notServing);
+  });
+
+  it("matches the country boost case-insensitively", () => {
+    const lower = scoreAdvisor(
+      mkAdvisor({ available_in_countries: ["gb"] }),
+      [],
+      { countryMatch: { country: "gb" } },
+    );
+    const upper = scoreAdvisor(
+      mkAdvisor({ available_in_countries: ["GB"] }),
+      [],
+      { countryMatch: { country: "GB" } },
+    );
+    expect(lower).toBe(upper);
+  });
+
+  it("adds no additive boost to an advisor that doesn't serve the corridor", () => {
+    const baseline = scoreAdvisor(mkAdvisor({ available_in_countries: [] }), []);
+    // Without the option, available_in_countries is ignored entirely.
+    const noOption = scoreAdvisor(mkAdvisor({ available_in_countries: ["gb"] }), []);
+    expect(noOption).toBe(baseline);
+    // With the option active, a non-serving advisor receives no additive
+    // boost — it can only stay flat or normalise slightly lower (the
+    // boost widens maxPossible), never rise. This is the same mechanic as
+    // specialtyMatchBoost and keeps the boost strictly per-advisor.
+    const optionNoCorridor = scoreAdvisor(
+      mkAdvisor({ available_in_countries: [] }),
+      [],
+      { countryMatch: { country: "gb" } },
+    );
+    expect(optionNoCorridor).toBeLessThanOrEqual(baseline);
+  });
+
+  it("ranks a corridor specialist above a higher-rated generalist for the corridor", () => {
+    const generalist = mkAdvisor({ id: 1, rating: 4.6, available_in_countries: [] });
+    const corridorSpecialist = mkAdvisor({ id: 2, rating: 4.5, available_in_countries: ["gb"] });
+    const ranked = rankAdvisors([generalist, corridorSpecialist], [], {
+      countryMatch: { country: "gb", boost: 30 },
+    });
+    expect(ranked[0].id).toBe(2);
+  });
+
   it("caps sponsored boost at 20", () => {
     const a = scoreAdvisor(
       mkAdvisor({ is_sponsored: true, sponsored_boost: 100 }),
