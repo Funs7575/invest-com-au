@@ -8,6 +8,10 @@ import {
   listingProductJsonLd,
   calculatorJsonLd,
   versusComparisonJsonLd,
+  definedTermJsonLd,
+  definedTermSetJsonLd,
+  definedTermPageJsonLd,
+  speakableSpecification,
 } from "@/lib/schema-markup";
 
 describe("articleJsonLd", () => {
@@ -285,5 +289,100 @@ describe("versusComparisonJsonLd", () => {
       ],
     });
     expect(financialProducts).toHaveLength(3);
+  });
+});
+
+describe("definedTermJsonLd", () => {
+  const BASE = {
+    term: "Franking Credit",
+    slug: "franking-credit",
+    definition: "A tax credit passed to shareholders for company tax already paid.",
+  };
+
+  it("emits a DefinedTerm with @context and term identity", () => {
+    const out = definedTermJsonLd(BASE) as Bag;
+    expect(out["@context"]).toBe("https://schema.org");
+    expect(out["@type"]).toBe("DefinedTerm");
+    expect(out.name).toBe("Franking Credit");
+    expect(out.termCode).toBe("franking-credit");
+  });
+
+  it("links each term to its own /glossary/<slug> URL", () => {
+    const out = definedTermJsonLd(BASE) as Bag;
+    expect(String(out.url)).toContain("/glossary/franking-credit");
+  });
+
+  it("references the shared DefinedTermSet identity", () => {
+    const out = definedTermJsonLd(BASE) as Bag;
+    const set = out.inDefinedTermSet as Bag;
+    expect(set["@type"]).toBe("DefinedTermSet");
+    expect(String(set.url)).toContain("/glossary");
+  });
+});
+
+describe("definedTermSetJsonLd", () => {
+  const TERMS = [
+    { term: "ASX", slug: "asx", definition: "Australian Securities Exchange." },
+    { term: "ETF", slug: "etf", definition: "Exchange-traded fund." },
+  ];
+
+  it("names the corpus and lists every term", () => {
+    const out = definedTermSetJsonLd({ terms: TERMS }) as Bag;
+    expect(out["@type"]).toBe("DefinedTermSet");
+    expect(out.name).toBeDefined();
+    expect(out.hasDefinedTerm).toHaveLength(2);
+  });
+
+  it("gives each listed term a citable URL", () => {
+    const out = definedTermSetJsonLd({ terms: TERMS }) as Bag;
+    const first = (out.hasDefinedTerm as Bag[])[0];
+    expect(String(first.url)).toContain("/glossary/asx");
+    expect(first.termCode).toBe("asx");
+  });
+
+  it("omits description when not provided", () => {
+    const out = definedTermSetJsonLd({ terms: TERMS }) as Bag;
+    expect(out.description).toBeUndefined();
+  });
+});
+
+describe("speakableSpecification", () => {
+  it("wraps css selectors in a SpeakableSpecification", () => {
+    const out = speakableSpecification(["#a", "#b"]) as Bag;
+    expect(out["@type"]).toBe("SpeakableSpecification");
+    expect(out.cssSelector).toEqual(["#a", "#b"]);
+  });
+});
+
+describe("definedTermPageJsonLd", () => {
+  const BASE = {
+    term: "Dividend",
+    slug: "dividend",
+    definition: "A share of company profit paid to shareholders.",
+  };
+
+  it("emits a WebPage carrying speakable + a DefinedTerm mainEntity", () => {
+    const out = definedTermPageJsonLd(BASE) as Bag;
+    expect(out["@type"]).toBe("WebPage");
+    expect((out.speakable as Bag)["@type"]).toBe("SpeakableSpecification");
+    expect((out.mainEntity as Bag)["@type"]).toBe("DefinedTerm");
+  });
+
+  it("does not repeat @context on the nested mainEntity", () => {
+    const out = definedTermPageJsonLd(BASE) as Bag;
+    expect((out.mainEntity as Bag)["@context"]).toBeUndefined();
+  });
+
+  it("defaults speakable selectors to the answer-first heading + definition", () => {
+    const out = definedTermPageJsonLd(BASE) as Bag;
+    expect((out.speakable as Bag).cssSelector).toEqual([
+      "#glossary-term-name",
+      "#glossary-term-definition",
+    ]);
+  });
+
+  it("honours custom speakable selectors", () => {
+    const out = definedTermPageJsonLd({ ...BASE, speakableSelectors: ["#x"] }) as Bag;
+    expect((out.speakable as Bag).cssSelector).toEqual(["#x"]);
   });
 });

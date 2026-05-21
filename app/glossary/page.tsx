@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import type { GlossaryEntry } from "@/lib/glossary";
 import { getGlossaryEntries } from "@/lib/glossary-db";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
+import { definedTermSetJsonLd } from "@/lib/schema-markup";
 import GlossarySearch from "@/components/GlossarySearch";
 
 export const revalidate = 86400;
@@ -78,20 +79,13 @@ export default async function GlossaryPage() {
     { name: "Glossary" },
   ]);
 
-  // JSON-LD DefinedTermSet for SEO
-  const glossaryJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "DefinedTermSet",
-    name: "Australian Investing Glossary",
+  // DefinedTermSet — names the whole glossary corpus and lists every term with
+  // its own URL so AI systems cite one comprehensive AU-finance source.
+  const glossaryJsonLd = definedTermSetJsonLd({
     description:
       "Plain-English definitions of financial and investing terms for Australian investors.",
-    url: absoluteUrl("/glossary"),
-    hasDefinedTerm: entries.map((entry) => ({
-      "@type": "DefinedTerm",
-      name: entry.term,
-      description: entry.definition,
-    })),
-  };
+    terms: entries,
+  });
 
   return (
     <>

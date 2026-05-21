@@ -407,3 +407,114 @@ export function governmentServiceJsonLd(input: GovernmentSchemeSchemaInput) {
     audience: { "@type": "Audience", audienceType: "Cross-border investor" },
   });
 }
+
+// ─── DefinedTerm / DefinedTermSet — glossary ──────────────────
+//
+// GEO note: definitional content is prime AI-citation material. `DefinedTerm`
+// nodes tell generative engines "this page authoritatively defines X"; the
+// `DefinedTermSet` on the index ties the 100+ terms into one named corpus so
+// a single comprehensive AU-finance glossary is what gets cited. The set's
+// identity is centralised in GLOSSARY_TERM_SET so the term page and the index
+// can't drift apart. — see docs/strategy/FIN_NOTEBOOK.md 2026-05-21.
+
+const GLOSSARY_PATH = "/glossary";
+
+/** Canonical identity for the glossary, referenced from both the term page
+ *  (`inDefinedTermSet`) and the index page (`definedTermSetJsonLd`). */
+export const GLOSSARY_TERM_SET = {
+  "@type": "DefinedTermSet" as const,
+  name: "Invest.com.au Australian Investing Glossary",
+  url: absoluteUrl(GLOSSARY_PATH),
+};
+
+export interface DefinedTermInput {
+  term: string;
+  slug: string;
+  definition: string;
+}
+
+/** Inner DefinedTerm node (no @context) — for nesting as mainEntity or in a set. */
+function definedTermNode(input: DefinedTermInput) {
+  return compact({
+    "@type": "DefinedTerm",
+    name: input.term,
+    description: input.definition,
+    url: absoluteUrl(`${GLOSSARY_PATH}/${input.slug}`),
+    termCode: input.slug,
+    inDefinedTermSet: GLOSSARY_TERM_SET,
+  });
+}
+
+/** Standalone DefinedTerm document. */
+export function definedTermJsonLd(input: DefinedTermInput) {
+  return { "@context": "https://schema.org", ...definedTermNode(input) };
+}
+
+export interface DefinedTermSetInput {
+  /** Defaults to the canonical glossary set name. */
+  name?: string;
+  description?: string | null;
+  terms: DefinedTermInput[];
+}
+
+/** DefinedTermSet for the glossary index — names the whole corpus and lists
+ *  every term so AI systems treat it as one comprehensive cited source. */
+export function definedTermSetJsonLd(input: DefinedTermSetInput) {
+  return compact({
+    "@context": "https://schema.org",
+    "@type": "DefinedTermSet",
+    name: input.name ?? GLOSSARY_TERM_SET.name,
+    description: input.description ?? undefined,
+    url: GLOSSARY_TERM_SET.url,
+    hasDefinedTerm: input.terms.map((t) =>
+      compact({
+        "@type": "DefinedTerm",
+        name: t.term,
+        description: t.definition,
+        url: absoluteUrl(`${GLOSSARY_PATH}/${t.slug}`),
+        termCode: t.slug,
+      }),
+    ),
+  });
+}
+
+// ─── Speakable — voice / answer-first extraction ──────────────
+//
+// GEO note: `speakable` marks the exact DOM nodes that hold the answer-first
+// content (heading + lead sentence). Voice assistants read them aloud; the
+// same selectors signal to text AI systems "this is the extractable answer",
+// which is the whole point of the answer-first content rule. Attach only to a
+// page-level type (WebPage/Article) per Google's spec — never to an Intangible
+// like DefinedTerm. Selectors must resolve to real, unique elements on the page.
+
+/** SpeakableSpecification node for embedding under a WebPage/Article `speakable`. */
+export function speakableSpecification(cssSelectors: string[]) {
+  return { "@type": "SpeakableSpecification" as const, cssSelector: cssSelectors };
+}
+
+export interface DefinedTermPageInput extends DefinedTermInput {
+  /** Selectors for the answer-first content (heading + lead definition).
+   *  Must match real, unique elements on the rendered page. */
+  speakableSelectors?: string[];
+}
+
+/**
+ * Composite document for a glossary term page: a WebPage carrying both the
+ * `speakable` answer region and the `DefinedTerm` as its `mainEntity`. Emit
+ * as the single primary JSON-LD block on `/glossary/[term]` (breadcrumb stays
+ * separate). Replaces the previously hand-rolled inline DefinedTerm.
+ */
+export function definedTermPageJsonLd(input: DefinedTermPageInput) {
+  const selectors =
+    input.speakableSelectors && input.speakableSelectors.length > 0
+      ? input.speakableSelectors
+      : ["#glossary-term-name", "#glossary-term-definition"];
+  return compact({
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: `What Is ${input.term}?`,
+    url: absoluteUrl(`${GLOSSARY_PATH}/${input.slug}`),
+    speakable: speakableSpecification(selectors),
+    mainEntity: definedTermNode(input),
+  });
+}
