@@ -71,7 +71,9 @@ describe("InvestListingsClient — filter primitives wiring", () => {
 
   it("toggling a compliance facet writes the matching URL param", async () => {
     const user = userEvent.setup();
-    render(<InvestListingsClient listings={[makeListing()]} categories={categories} />);
+    // FIRB-eligible listing so the facet's live count is > 0 and the option
+    // is enabled (FacetGroup disables zero-count facets — Session 5.5).
+    render(<InvestListingsClient listings={[makeListing({ firb_eligible: true })]} categories={categories} />);
     await user.click(screen.getByRole("checkbox", { name: /FIRB-eligible/i }));
     expect(mockReplace).toHaveBeenCalled();
     expect(mockReplace.mock.calls.at(-1)?.[0]).toContain("firb=eligible");
