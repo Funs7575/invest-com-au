@@ -354,6 +354,18 @@ const TOOLS: Tool[] = [
     url: "/tools/etp-calculator",
     internal: true,
   },
+  {
+    slug: "subscription-audit",
+    name: "Subscription Audit Tool",
+    category: "Budgeting",
+    rating: 5,
+    description:
+      "Add your streaming, software, news, fitness and other subscriptions to see your true annual spend. Identifies your highest-cost services and shows how much you'd save by cutting the top 3.",
+    pros: ["18 preset services", "Category breakdown", "Savings opportunities"],
+    pricing: "Free tool",
+    url: "/tools/subscription-audit",
+    internal: true,
+  },
 ];
 
 /* ─── Config ─── */
