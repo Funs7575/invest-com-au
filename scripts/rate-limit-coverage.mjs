@@ -107,6 +107,11 @@ const EXEMPT_PATTERNS = [
   // absorbs repeats from the same IP. Per-IP throttle inside the
   // handler would cost cache hits with no real threat model.
   { match: /\/api\/country-rule-alerts(\/|$)/, reason: "public read w/ 5m CDN cache; provider-pooled" },
+  // Disabled pre-AFSL (C9): these endpoints return 410 Gone unconditionally —
+  // no compute, no DB, no external calls, no user input parsed. A per-IP
+  // throttle would guard a constant-time constant response with no threat model.
+  { match: /\/api\/tax-optimizer(\/|$)/, reason: "disabled (410 Gone); no work performed" },
+  { match: /\/api\/portfolio-xray(\/|$)/, reason: "disabled (410 Gone); no work performed" },
 ];
 
 async function findRouteFiles(dir) {
