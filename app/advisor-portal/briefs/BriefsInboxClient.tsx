@@ -17,6 +17,8 @@ interface AcceptedBrief {
   contact_email: string | null;
   contact_phone: string | null;
   accepted_by_team_id: number | null;
+  latest_note: string | null;
+  latest_note_at: string | null;
 }
 
 interface InboxData {
@@ -40,6 +42,8 @@ export default function BriefsInboxClient() {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const [statusBusy, setStatusBusy] = useState<string | null>(null);
+  const [noteDrafts, setNoteDrafts] = useState<Record<string, string>>({});
+  const [noteBusy, setNoteBusy] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     try {
@@ -89,6 +93,31 @@ export default function BriefsInboxClient() {
       await load();
     } finally {
       setStatusBusy(null);
+    }
+  }
+
+  // Saves a private note against the brief. The status route records the note
+  // on the brief's event log; we re-send the current tracker_status (unchanged)
+  // so the note attaches without altering the pipeline stage.
+  async function saveNote(slug: string, currentStatus: string) {
+    setNoteBusy(slug);
+    try {
+      await fetch(`/api/briefs/${slug}/status`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          tracker_status: currentStatus,
+          note: noteDrafts[slug] ?? "",
+        }),
+      });
+      setNoteDrafts((d) => {
+        const next = { ...d };
+        delete next[slug];
+        return next;
+      });
+      await load();
+    } finally {
+      setNoteBusy(null);
     }
   }
 
@@ -235,6 +264,44 @@ export default function BriefsInboxClient() {
                   <span className="text-xs text-slate-400">
                     Update status as you progress.
                   </span>
+                </div>
+                <div className="mt-3 border-t border-slate-100 pt-3">
+                  <label
+                    htmlFor={`note-${b.slug}`}
+                    className="block text-xs font-semibold text-slate-500 mb-1"
+                  >
+                    Private note
+                  </label>
+                  <textarea
+                    id={`note-${b.slug}`}
+                    rows={2}
+                    maxLength={2000}
+                    value={noteDrafts[b.slug] ?? b.latest_note ?? ""}
+                    onChange={(e) =>
+                      setNoteDrafts((d) => ({ ...d, [b.slug]: e.target.value }))
+                    }
+                    placeholder="Add a private note (only you can see this)…"
+                    className="w-full text-xs border border-slate-200 rounded-md px-2 py-1.5 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-300"
+                  />
+                  <div className="flex items-center justify-between mt-1.5">
+                    <span className="text-xs text-slate-400">
+                      {b.latest_note_at
+                        ? `Last note ${new Date(b.latest_note_at).toLocaleDateString()}`
+                        : "Notes are private to you."}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => saveNote(b.slug, b.tracker_status)}
+                      disabled={
+                        noteBusy === b.slug ||
+                        (noteDrafts[b.slug] ?? b.latest_note ?? "") ===
+                          (b.latest_note ?? "")
+                      }
+                      className="text-xs font-bold text-amber-700 hover:text-amber-600 disabled:text-slate-300"
+                    >
+                      {noteBusy === b.slug ? "Saving…" : "Save note"}
+                    </button>
+                  </div>
                 </div>
               </article>
             ))}
