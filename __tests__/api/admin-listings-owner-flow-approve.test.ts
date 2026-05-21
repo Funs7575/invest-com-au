@@ -54,15 +54,13 @@ function denyGuard(status: number) {
 }
 
 function makeReq(id: string, body?: unknown) {
-  const headers: Record<string, string> = {};
-  const init: RequestInit = { method: "POST", headers };
-  if (body !== undefined) {
-    headers["Content-Type"] = "application/json";
-    init.body = JSON.stringify(body);
-  }
   return new NextRequest(
     `http://localhost/api/admin/listings/owner-flow/${id}/approve`,
-    init,
+    {
+      method: "POST",
+      headers: body !== undefined ? { "Content-Type": "application/json" } : {},
+      ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
+    },
   );
 }
 
