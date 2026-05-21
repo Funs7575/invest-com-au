@@ -114,4 +114,35 @@ describe("SearchInput", () => {
     expect(onChange).toHaveBeenCalledWith("");
     expect(onSubmit).toHaveBeenCalledWith("");
   });
+
+  it("renders a datalist of suggestions and links the input via `list` when supplied", () => {
+    render(
+      <SearchInput
+        value=""
+        onChange={() => {}}
+        placeholder="Search"
+        id="inv"
+        suggestions={["Mining", "Renewable Energy", "NSW"]}
+      />,
+    );
+    // An <input> with a `list` attribute exposes the combobox role (ARIA), not searchbox.
+    expect(screen.getByRole("combobox")).toHaveAttribute("list", "inv-suggestions");
+    const datalist = document.getElementById("inv-suggestions") as HTMLDataListElement;
+    expect(datalist).toBeInTheDocument();
+    const options = Array.from(datalist.querySelectorAll("option"));
+    expect(options.map((o) => o.value)).toEqual(["Mining", "Renewable Energy", "NSW"]);
+  });
+
+  it("renders no datalist and no `list` attribute when suggestions are omitted or empty", () => {
+    const { rerender } = render(
+      <SearchInput value="" onChange={() => {}} placeholder="Search" id="x" />,
+    );
+    expect(screen.getByRole("searchbox")).not.toHaveAttribute("list");
+    expect(document.getElementById("x-suggestions")).toBeNull();
+    rerender(
+      <SearchInput value="" onChange={() => {}} placeholder="Search" id="x" suggestions={[]} />,
+    );
+    expect(screen.getByRole("searchbox")).not.toHaveAttribute("list");
+    expect(document.getElementById("x-suggestions")).toBeNull();
+  });
 });
