@@ -5,20 +5,20 @@ vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() })),
 }));
 
-const mockIsFlagEnabled = vi.fn(async () => false);
+const mockIsFlagEnabled = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => false);
 
 vi.mock("@/lib/feature-flags", () => ({
   isFlagEnabled: (...args: unknown[]) => mockIsFlagEnabled(...args),
 }));
 
-const mockIsAllowed = vi.fn(async () => true);
+const mockIsAllowed = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => true);
 
 vi.mock("@/lib/rate-limit-db", () => ({
   isAllowed: (...args: unknown[]) => mockIsAllowed(...args),
   ipKey: vi.fn(() => "127.0.0.1"),
 }));
 
-const mockExtractBriefPayload = vi.fn(async () => ({
+const mockExtractBriefPayload = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => ({
   payload: { job_title: "Test Brief", job_description: "Detailed description here." },
   confidence: 0.8,
   missing_fields: [],

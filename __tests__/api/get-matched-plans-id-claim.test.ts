@@ -8,13 +8,13 @@ vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() })),
 }));
 
-const mockIsAllowed = vi.fn(async () => true);
+const mockIsAllowed = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => true);
 vi.mock("@/lib/rate-limit-db", () => ({
   isAllowed: (...args: unknown[]) => mockIsAllowed(...args),
   ipKey: vi.fn(() => "127.0.0.1"),
 }));
 
-const mockGetUser = vi.fn(async () => ({ data: { user: { id: "u1", email: "user@example.com" } } }));
+const mockGetUser = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => ({ data: { user: { id: "u1", email: "user@example.com" } } }));
 vi.mock("@/lib/supabase/server", () => ({
   createClient: vi.fn(async () => ({
     auth: { getUser: mockGetUser },

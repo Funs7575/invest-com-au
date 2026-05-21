@@ -17,11 +17,11 @@ function makeBuilder(result: unknown = { data: null, error: null }) {
 }
 
 const { mockIsAllowed, mockRequireAdvisorSession, mockFrom, mockRecordDecision, mockClearDecision } = vi.hoisted(() => ({
-  mockIsAllowed: vi.fn(async () => true),
-  mockRequireAdvisorSession: vi.fn(async () => 42),
+  mockIsAllowed: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => true),
+  mockRequireAdvisorSession: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => 42),
   mockFrom: vi.fn(),
-  mockRecordDecision: vi.fn(async () => ({ id: 1, decision: "not_for_us" })),
-  mockClearDecision: vi.fn(async () => undefined),
+  mockRecordDecision: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => ({ id: 1, decision: "not_for_us" })),
+  mockClearDecision: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => undefined),
 }));
 
 vi.mock("@/lib/rate-limit-db", () => ({

@@ -1,13 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
 
-const mockRequireAdvisorSession = vi.fn(async () => 42);
+const mockRequireAdvisorSession = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => 42);
 
 vi.mock("@/lib/require-advisor-session", () => ({
   requireAdvisorSession: (...args: unknown[]) => mockRequireAdvisorSession(...args),
 }));
 
-const mockGetLedgerPage = vi.fn(async () => ({ rows: [], total: 0 }));
+const mockGetLedgerPage = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => ({ rows: [], total: 0 }));
 
 vi.mock("@/lib/advisor-credit-ledger", () => ({
   getLedgerPage: (...args: unknown[]) => mockGetLedgerPage(...args),

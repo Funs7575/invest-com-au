@@ -17,10 +17,10 @@ function makeBuilder(result: unknown = { data: null, error: null }) {
 }
 
 const { mockIsAllowed, mockRequireAdvisorSession, mockFrom, mockCreateFixedQuote, mockSendEmail } = vi.hoisted(() => ({
-  mockIsAllowed: vi.fn(async () => true),
-  mockRequireAdvisorSession: vi.fn(async () => 42),
+  mockIsAllowed: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => true),
+  mockRequireAdvisorSession: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => 42),
   mockFrom: vi.fn(),
-  mockCreateFixedQuote: vi.fn(async () => ({
+  mockCreateFixedQuote: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => ({
     id: 1,
     review_token: "tok_abc",
     expires_at: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),

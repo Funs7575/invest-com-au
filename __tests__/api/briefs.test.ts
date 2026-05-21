@@ -5,14 +5,14 @@ vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() })),
 }));
 
-const mockIsRateLimited = vi.fn(async () => false);
+const mockIsRateLimited = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => false);
 
 vi.mock("@/lib/rate-limit", () => ({
   isRateLimited: (...args: unknown[]) => mockIsRateLimited(...args),
 }));
 
-const mockIsValidEmail = vi.fn(() => true);
-const mockIsDisposableEmail = vi.fn(() => false);
+const mockIsValidEmail = vi.fn<(...args: unknown[]) => unknown>(() => true);
+const mockIsDisposableEmail = vi.fn<(...args: unknown[]) => unknown>(() => false);
 
 vi.mock("@/lib/validate-email", () => ({
   isValidEmail: (e: unknown) => mockIsValidEmail(e),
@@ -36,7 +36,7 @@ vi.mock("@/lib/supabase/admin", () => ({
   })),
 }));
 
-const mockScanBrief = vi.fn(async () => ({
+const mockScanBrief = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => ({
   flags: [],
   severity: "clear",
   reviewStatus: "clear",
@@ -46,13 +46,13 @@ vi.mock("@/lib/briefs/risk-flags", () => ({
   scanBrief: (...args: unknown[]) => mockScanBrief(...args),
 }));
 
-const mockGetAcceptCost = vi.fn(async () => 4900);
+const mockGetAcceptCost = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => 4900);
 
 vi.mock("@/lib/briefs/credits", () => ({
   getAcceptCost: (...args: unknown[]) => mockGetAcceptCost(...args),
 }));
 
-const mockResolveEligibleProviders = vi.fn(async () => []);
+const mockResolveEligibleProviders = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => []);
 
 vi.mock("@/lib/briefs/routing", () => ({
   resolveEligibleProviders: (...args: unknown[]) => mockResolveEligibleProviders(...args),

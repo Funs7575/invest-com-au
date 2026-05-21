@@ -1,0 +1,8 @@
+{
+  "route": "/admin/risk-flags",
+  "finalUrl": "https://invest-com-au.vercel.app/admin/login?redirect=%2Fadmin%2Frisk-flags",
+  "status": 200,
+  "redirected": true,
+  "capturedAt": "2026-05-19T22:41:15.591Z",
+  "viewport": "desktop"
+}

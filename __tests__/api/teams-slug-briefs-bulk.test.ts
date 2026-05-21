@@ -18,7 +18,7 @@ function makeBuilder(result: unknown = { data: null, error: null }) {
 
 const { mockIsAllowed, mockRequireAdvisorSession, mockFrom, mockRunBulkAction } = vi.hoisted(() => ({
   mockIsAllowed: vi.fn(async () => true),
-  mockRequireAdvisorSession: vi.fn(async () => 42),
+  mockRequireAdvisorSession: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => 42),
   mockFrom: vi.fn(),
   mockRunBulkAction: vi.fn(async () => ({
     results: [{ briefId: 1, ok: true }],

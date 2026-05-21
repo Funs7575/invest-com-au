@@ -20,12 +20,12 @@ vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() })),
 }));
 
-const mockIsRateLimited = vi.fn(async () => false);
+const mockIsRateLimited = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => false);
 vi.mock("@/lib/rate-limit", () => ({
   isRateLimited: (...args: unknown[]) => mockIsRateLimited(...args),
 }));
 
-const mockSendEmail = vi.fn(async () => undefined);
+const mockSendEmail = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => undefined);
 vi.mock("@/lib/resend", () => ({
   sendEmail: (...args: unknown[]) => mockSendEmail(...args),
 }));

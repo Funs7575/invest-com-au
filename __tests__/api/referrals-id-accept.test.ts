@@ -16,9 +16,9 @@ const {
     }
   }
   return {
-    mockIsAllowed: vi.fn(async () => true),
-    mockRequireAdvisorSession: vi.fn(async () => 42),
-    mockAcceptReferral: vi.fn(async () => ({ id: 1, status: "accepted" })),
+    mockIsAllowed: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => true),
+    mockRequireAdvisorSession: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => 42),
+    mockAcceptReferral: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => ({ id: 1, status: "accepted" })),
     MockReferralError,
   };
 });

@@ -15,7 +15,7 @@ const { mockGetUser, mockFrom } = vi.hoisted(() => {
     return b;
   }
   return {
-    mockGetUser: vi.fn(async () => ({ data: { user: { id: "u1", email: "finn@invest.com.au" } }, error: null })),
+    mockGetUser: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => ({ data: { user: { id: "u1", email: "finn@invest.com.au" } }, error: null })),
     mockFrom: vi.fn(() => makeBuilder({ data: [], error: null })),
   };
 });

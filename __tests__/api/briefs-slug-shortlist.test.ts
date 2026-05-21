@@ -7,13 +7,13 @@ vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() })),
 }));
 
-const mockIsAllowed = vi.fn(async () => true);
+const mockIsAllowed = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => true);
 vi.mock("@/lib/rate-limit-db", () => ({
   isAllowed: (...args: unknown[]) => mockIsAllowed(...args),
   ipKey: vi.fn(() => "test-ip"),
 }));
 
-const mockGetUser = vi.fn(async () => ({ data: { user: { id: "u1", email: "consumer@test.com" } }, error: null }));
+const mockGetUser = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => ({ data: { user: { id: "u1", email: "consumer@test.com" } }, error: null }));
 
 vi.mock("@/lib/supabase/server", () => ({
   createClient: vi.fn(async () => ({
@@ -37,7 +37,7 @@ vi.mock("@/lib/supabase/admin", () => ({
 }));
 
 const { mockAddToShortlist, ShortlistErrorClass } = vi.hoisted(() => {
-  const mockAddToShortlist = vi.fn(async () => ({ id: 1 }));
+  const mockAddToShortlist = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => ({ id: 1 }));
   class ShortlistErrorClass extends Error {
     code: string;
     constructor(msg: string, code = "error") {

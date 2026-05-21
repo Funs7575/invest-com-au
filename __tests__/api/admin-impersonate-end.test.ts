@@ -14,13 +14,13 @@ vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() })),
 }));
 
-const mockIsAllowed = vi.fn(async () => true);
+const mockIsAllowed = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => true);
 vi.mock("@/lib/rate-limit-db", () => ({
   isAllowed: (...args: unknown[]) => mockIsAllowed(...args),
   ipKey: vi.fn(() => "1.2.3.4"),
 }));
 
-const mockEndImpersonation = vi.fn(async () => undefined);
+const mockEndImpersonation = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => undefined);
 vi.mock("@/lib/admin-impersonation", () => ({
   IMPERSONATE_COOKIE: "iv_impersonate",
   buildClearImpersonateCookieAttrs: vi.fn(() => "iv_impersonate=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0"),
@@ -28,7 +28,7 @@ vi.mock("@/lib/admin-impersonation", () => ({
 }));
 
 // Mock next/headers cookies()
-const mockCookieGet = vi.fn(() => undefined);
+const mockCookieGet = vi.fn<(...args: unknown[]) => unknown>(() => undefined);
 vi.mock("next/headers", () => ({
   cookies: vi.fn(async () => ({ get: mockCookieGet })),
 }));

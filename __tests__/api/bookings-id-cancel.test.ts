@@ -5,13 +5,13 @@ vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() })),
 }));
 
-const mockRequireAdvisorSession = vi.fn(async () => null);
+const mockRequireAdvisorSession = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => null);
 
 vi.mock("@/lib/require-advisor-session", () => ({
   requireAdvisorSession: (...args: unknown[]) => mockRequireAdvisorSession(...args),
 }));
 
-const mockGetUser = vi.fn(async () => ({
+const mockGetUser = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => ({
   data: { user: null },
   error: null,
 }));
@@ -39,16 +39,16 @@ vi.mock("@/lib/supabase/admin", () => ({
   })),
 }));
 
-const mockIsAllowed = vi.fn(async () => true);
+const mockIsAllowed = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => true);
 
 vi.mock("@/lib/rate-limit-db", () => ({
   isAllowed: (...args: unknown[]) => mockIsAllowed(...args),
   ipKey: vi.fn(() => "127.0.0.1"),
 }));
 
-const mockGetBooking = vi.fn(async () => null);
-const mockGetSlot = vi.fn(async () => null);
-const mockCancelBooking = vi.fn(async () => ({ id: 1, status: "cancelled" }));
+const mockGetBooking = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => null);
+const mockGetSlot = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => null);
+const mockCancelBooking = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => ({ id: 1, status: "cancelled" }));
 
 const { MockConsultationError } = vi.hoisted(() => {
   class MockConsultationError extends Error {

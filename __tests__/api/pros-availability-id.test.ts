@@ -6,7 +6,7 @@ import { NextRequest } from "next/server";
 
 const { mockIsAllowed, mockRequireAdvisorSession } = vi.hoisted(() => ({
   mockIsAllowed: vi.fn(async () => true),
-  mockRequireAdvisorSession: vi.fn(async () => 42),
+  mockRequireAdvisorSession: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => 42),
 }));
 
 vi.mock("@/lib/rate-limit-db", () => ({

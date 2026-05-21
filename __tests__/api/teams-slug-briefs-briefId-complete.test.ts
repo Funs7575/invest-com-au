@@ -3,16 +3,16 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { NextRequest } from "next/server";
 
 const { mockIsAllowed, mockRequireAdvisorSession, mockResolveSquadRouteContext, mockCompleteBriefAssignment } = vi.hoisted(() => ({
-  mockIsAllowed: vi.fn(async () => true),
-  mockRequireAdvisorSession: vi.fn(async () => 42),
-  mockResolveSquadRouteContext: vi.fn(async () => ({
+  mockIsAllowed: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => true),
+  mockRequireAdvisorSession: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => 42),
+  mockResolveSquadRouteContext: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => ({
     teamId: 1,
     teamSlug: "test-squad",
     teamName: "Test Squad",
     briefId: 10,
     briefTitle: "Test Brief",
   })),
-  mockCompleteBriefAssignment: vi.fn(async () => ({ id: 5, status: "completed" })),
+  mockCompleteBriefAssignment: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => ({ id: 5, status: "completed" })),
 }));
 
 vi.mock("@/lib/rate-limit-db", () => ({

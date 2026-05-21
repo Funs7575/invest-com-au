@@ -5,7 +5,7 @@ vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() })),
 }));
 
-const mockRequireAdvisorSession = vi.fn(async () => 42);
+const mockRequireAdvisorSession = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => 42);
 
 vi.mock("@/lib/require-advisor-session", () => ({
   requireAdvisorSession: (...args: unknown[]) => mockRequireAdvisorSession(...args),
@@ -29,8 +29,8 @@ vi.mock("@/lib/supabase/admin", () => ({
   })),
 }));
 
-const mockGetLedgerPage = vi.fn(async () => ({ rows: [], total: 0 }));
-const mockGetExpiringSoonCents = vi.fn(async () => 0);
+const mockGetLedgerPage = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => ({ rows: [], total: 0 }));
+const mockGetExpiringSoonCents = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => 0);
 
 vi.mock("@/lib/advisor-credit-ledger", () => ({
   getLedgerPage: (...args: unknown[]) => mockGetLedgerPage(...args),

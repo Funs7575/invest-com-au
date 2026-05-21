@@ -5,13 +5,13 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { NextRequest } from "next/server";
 
 const { mockIsAllowed, mockSubmitOutcome, mockSettleSuccessCharge, mockAdminFrom } = vi.hoisted(() => ({
-  mockIsAllowed: vi.fn(async () => true),
-  mockSubmitOutcome: vi.fn(async () => ({
+  mockIsAllowed: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => true),
+  mockSubmitOutcome: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => ({
     brief_id: "brief-1",
     outcome: "completed",
     professional_id: 42,
   })),
-  mockSettleSuccessCharge: vi.fn(async () => ({ charged: false })),
+  mockSettleSuccessCharge: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => ({ charged: false })),
   mockAdminFrom: vi.fn(),
 }));
 

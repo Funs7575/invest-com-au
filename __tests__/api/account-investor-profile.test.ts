@@ -5,7 +5,7 @@ vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() })),
 }));
 
-const mockGetUser = vi.fn(async () => ({
+const mockGetUser = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => ({
   data: { user: { id: "u1", email: "user@example.com" } },
   error: null,
 }));
@@ -16,7 +16,7 @@ vi.mock("@/lib/supabase/server", () => ({
   })),
 }));
 
-const mockGetInvestorProfile = vi.fn(async () => ({
+const mockGetInvestorProfile = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => ({
   authUserId: "u1",
   displayName: null,
   isFhb: false,
@@ -32,7 +32,7 @@ const mockGetInvestorProfile = vi.fn(async () => ({
   createdAt: "2024-01-01T00:00:00Z",
   updatedAt: "2024-01-01T00:00:00Z",
 }));
-const mockUpsertInvestorProfile = vi.fn(async () => true);
+const mockUpsertInvestorProfile = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => true);
 
 vi.mock("@/lib/investor-profiles", () => ({
   getInvestorProfile: (...args: unknown[]) => mockGetInvestorProfile(...args),

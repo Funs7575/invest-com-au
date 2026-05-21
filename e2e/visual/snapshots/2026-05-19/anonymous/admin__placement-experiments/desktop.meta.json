@@ -1,0 +1,8 @@
+{
+  "route": "/admin/placement-experiments",
+  "finalUrl": "https://invest-com-au.vercel.app/admin/login?redirect=%2Fadmin%2Fplacement-experiments",
+  "status": 200,
+  "redirected": true,
+  "capturedAt": "2026-05-19T22:39:09.168Z",
+  "viewport": "desktop"
+}

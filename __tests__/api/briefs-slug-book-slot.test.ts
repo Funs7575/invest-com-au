@@ -7,7 +7,7 @@ vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() })),
 }));
 
-const mockIsAllowed = vi.fn(async () => true);
+const mockIsAllowed = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => true);
 vi.mock("@/lib/rate-limit-db", () => ({
   isAllowed: (...args: unknown[]) => mockIsAllowed(...args),
   ipKey: vi.fn(() => "test-ip"),
@@ -28,7 +28,7 @@ vi.mock("@/lib/supabase/admin", () => ({
   createAdminClient: vi.fn(() => ({ from: mockAdminFrom, rpc: vi.fn(() => makeBuilder()) })),
 }));
 
-const mockGetUser = vi.fn(async () => ({ data: { user: { id: "u1", email: "consumer@test.com" } }, error: null }));
+const mockGetUser = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => ({ data: { user: { id: "u1", email: "consumer@test.com" } }, error: null }));
 
 vi.mock("@/lib/supabase/server", () => ({
   createClient: vi.fn(async () => ({
@@ -37,8 +37,8 @@ vi.mock("@/lib/supabase/server", () => ({
   })),
 }));
 
-const mockGetSlot = vi.fn(async () => null);
-const mockBookSlot = vi.fn(async () => ({
+const mockGetSlot = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => null);
+const mockBookSlot = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => ({
   booking: { id: 1 },
   slot: { id: 10, start_at: "2026-06-01T09:00:00Z", end_at: "2026-06-01T10:00:00Z" },
 }));

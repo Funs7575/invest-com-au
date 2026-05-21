@@ -6,8 +6,8 @@ import type { NextRequest } from "next/server";
 
 const { mockIsAllowed, mockGetUser, mockCreateListing } = vi.hoisted(() => ({
   mockIsAllowed: vi.fn(async () => true),
-  mockGetUser: vi.fn(async () => ({ data: { user: { id: "u1", email: "owner@example.com" } }, error: null })),
-  mockCreateListing: vi.fn(async () => ({
+  mockGetUser: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => ({ data: { user: { id: "u1", email: "owner@example.com" } }, error: null })),
+  mockCreateListing: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => ({
     ok: true,
     listing: { id: "listing-1", slug: "test-title", status: "draft" },
   })),

@@ -2,10 +2,10 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { NextRequest } from "next/server";
 
 const { mockIsAllowed, mockGetUser, mockListForUser, mockCreate } = vi.hoisted(() => ({
-  mockIsAllowed: vi.fn(async () => true),
-  mockGetUser: vi.fn(async () => ({ data: { user: { id: "u1", email: "user@example.com" } }, error: null })),
-  mockListForUser: vi.fn(async () => []),
-  mockCreate: vi.fn(async () => ({ id: 1, kind: "advisors", label: "My Search" })),
+  mockIsAllowed: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => true),
+  mockGetUser: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => ({ data: { user: { id: "u1", email: "user@example.com" } }, error: null })),
+  mockListForUser: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => []),
+  mockCreate: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => ({ id: 1, kind: "advisors", label: "My Search" })),
 }));
 
 vi.mock("@/lib/rate-limit-db", () => ({

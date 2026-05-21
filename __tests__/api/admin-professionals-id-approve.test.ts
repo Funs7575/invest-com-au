@@ -14,13 +14,13 @@ vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() })),
 }));
 
-const mockIsAllowed = vi.fn(async () => true);
+const mockIsAllowed = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => true);
 vi.mock("@/lib/rate-limit-db", () => ({
   isAllowed: (...args: unknown[]) => mockIsAllowed(...args),
   ipKey: vi.fn(() => "1.2.3.4"),
 }));
 
-const mockSendProApproved = vi.fn(async () => true);
+const mockSendProApproved = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => true);
 vi.mock("@/lib/pro-onboarding-emails", () => ({
   sendProApproved: (...args: unknown[]) => mockSendProApproved(...args),
 }));
@@ -30,7 +30,7 @@ vi.mock("@/lib/pro-onboarding", () => ({
   STARTER_CREDIT_CENTS_PER_CREDIT: 100,
 }));
 
-const mockMaybeSingle = vi.fn(async () => ({
+const mockMaybeSingle = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => ({
   data: { id: 42, email: "pro@example.com", name: "John Smith", verification_status: "pending", credit_balance_cents: 0 },
   error: null,
 }));

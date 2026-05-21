@@ -7,12 +7,12 @@ const {
   mockGetLinkByToken,
   mockRecordClick,
 } = vi.hoisted(() => ({
-  mockIsAllowed: vi.fn(async () => true),
-  mockGetLinkByToken: vi.fn(async () => ({
+  mockIsAllowed: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => true),
+  mockGetLinkByToken: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => ({
     token: "abcdefgh12345678",
     investor_id: "u1",
   })),
-  mockRecordClick: vi.fn(async () => undefined),
+  mockRecordClick: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => undefined),
 }));
 
 vi.mock("@/lib/rate-limit-db", () => ({

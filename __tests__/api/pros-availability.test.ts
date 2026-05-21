@@ -5,16 +5,16 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
 
 const { mockIsAllowed, mockRequireAdvisorSession, mockCreateSlot, mockListAllSlotsForPro } = vi.hoisted(() => ({
-  mockIsAllowed: vi.fn(async () => true),
-  mockRequireAdvisorSession: vi.fn(async () => 42),
-  mockCreateSlot: vi.fn(async () => ({
+  mockIsAllowed: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => true),
+  mockRequireAdvisorSession: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => 42),
+  mockCreateSlot: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => ({
     id: 1,
     professional_id: 42,
     start_at: "2026-06-01T09:00:00Z",
     end_at: "2026-06-01T10:00:00Z",
     status: "open",
   })),
-  mockListAllSlotsForPro: vi.fn(async () => []),
+  mockListAllSlotsForPro: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => []),
 }));
 
 vi.mock("@/lib/rate-limit-db", () => ({
@@ -33,8 +33,12 @@ vi.mock("@/lib/require-advisor-session", () => ({
 vi.mock("@/lib/consultations", () => ({
   createSlot: mockCreateSlot,
   ConsultationError: class ConsultationError extends Error {
-    constructor(public message: string, public code: string, public status: number) {
+    code: string;
+    status: number;
+    constructor(message: string, code: string, status: number) {
       super(message);
+      this.code = code;
+      this.status = status;
     }
   },
   listAllSlotsForPro: mockListAllSlotsForPro,

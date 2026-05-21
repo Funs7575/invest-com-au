@@ -5,7 +5,7 @@ vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() })),
 }));
 
-const mockGetUser = vi.fn(async () => ({
+const mockGetUser = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => ({
   data: { user: { id: "u1", email: "user@example.com" } },
   error: null,
 }));
@@ -16,13 +16,13 @@ vi.mock("@/lib/supabase/server", () => ({
   })),
 }));
 
-const mockGetKindsForUser = vi.fn(async () => [
+const mockGetKindsForUser = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => [
   { kind: "investor", kindId: "k1", status: "active", displayLabel: "Investor" },
 ]);
-const mockGetActiveKind = vi.fn(async () => "investor");
+const mockGetActiveKind = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => "investor");
 const mockIsWorkspaceKind = vi.fn((k: string) => ["investor", "advisor", "business", "expert_team", "firm"].includes(k));
 const mockPortalForKind = vi.fn((k: string) => `/portal/${k}`);
-const mockSetActiveKind = vi.fn(async () => {});
+const mockSetActiveKind = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => {});
 
 vi.mock("@/lib/account-kinds", () => ({
   getKindsForUser: (...args: unknown[]) => mockGetKindsForUser(...args),

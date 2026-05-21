@@ -17,8 +17,8 @@ function makeBuilder(result: unknown = { data: null, error: null }) {
 }
 
 const { mockIsAllowed, mockRequireAdvisorSession, mockFrom } = vi.hoisted(() => ({
-  mockIsAllowed: vi.fn(async () => true),
-  mockRequireAdvisorSession: vi.fn(async () => 42),
+  mockIsAllowed: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => true),
+  mockRequireAdvisorSession: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => 42),
   mockFrom: vi.fn(),
 }));
 

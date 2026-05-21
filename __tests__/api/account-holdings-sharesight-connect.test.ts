@@ -4,7 +4,7 @@ vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() })),
 }));
 
-const mockGetUser = vi.fn(async () => ({
+const mockGetUser = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => ({
   data: { user: { id: "u1", email: "user@example.com" } },
   error: null,
 }));
@@ -15,8 +15,8 @@ vi.mock("@/lib/supabase/server", () => ({
   })),
 }));
 
-const mockGetSharesightConfig = vi.fn(() => null);
-const mockBuildAuthorizeUrl = vi.fn(() => "https://sharesight.com/oauth2/authorize?state=abc");
+const mockGetSharesightConfig = vi.fn<(...args: unknown[]) => unknown>(() => null);
+const mockBuildAuthorizeUrl = vi.fn<(...args: unknown[]) => unknown>(() => "https://sharesight.com/oauth2/authorize?state=abc");
 
 vi.mock("@/lib/sharesight/oauth", () => ({
   getSharesightConfig: () => mockGetSharesightConfig(),

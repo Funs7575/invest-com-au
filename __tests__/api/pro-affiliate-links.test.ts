@@ -5,11 +5,11 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { NextRequest } from "next/server";
 
 const { mockIsAllowed, mockGetUser, mockRequireAdvisorSession, mockGetOrCreateLink, mockGetAdminEmails } = vi.hoisted(() => ({
-  mockIsAllowed: vi.fn(async () => true),
-  mockGetUser: vi.fn(async () => ({ data: { user: { id: "u1", email: "admin@invest.com.au" } }, error: null })),
-  mockRequireAdvisorSession: vi.fn(async () => 1),
-  mockGetOrCreateLink: vi.fn(async () => ({ token: "tok_abc123", url: "https://invest.com.au?ref=tok_abc123" })),
-  mockGetAdminEmails: vi.fn(() => ["admin@invest.com.au"]),
+  mockIsAllowed: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => true),
+  mockGetUser: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => ({ data: { user: { id: "u1", email: "admin@invest.com.au" } }, error: null })),
+  mockRequireAdvisorSession: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => 1),
+  mockGetOrCreateLink: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => ({ token: "tok_abc123", url: "https://invest.com.au?ref=tok_abc123" })),
+  mockGetAdminEmails: vi.fn<(...args: unknown[]) => unknown>(() => ["admin@invest.com.au"]),
 }));
 
 vi.mock("@/lib/rate-limit-db", () => ({

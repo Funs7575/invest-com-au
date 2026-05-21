@@ -16,8 +16,8 @@ function makeBuilder(result: unknown = { data: null, error: null }) {
 }
 
 const { mockFrom, mockIsRateLimited } = vi.hoisted(() => ({
-  mockFrom: vi.fn(() => makeBuilder()),
-  mockIsRateLimited: vi.fn(async () => false),
+  mockFrom: vi.fn<(...args: unknown[]) => unknown>(() => makeBuilder()),
+  mockIsRateLimited: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => false),
 }));
 
 vi.mock("@/lib/supabase/admin", () => ({

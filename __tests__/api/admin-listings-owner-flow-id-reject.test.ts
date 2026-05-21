@@ -14,7 +14,7 @@ vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() })),
 }));
 
-const mockRejectListing = vi.fn(async () => ({
+const mockRejectListing = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => ({
   ok: true,
   noOp: false,
   listing: { slug: "test-listing" },

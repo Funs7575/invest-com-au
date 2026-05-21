@@ -1,0 +1,8 @@
+{
+  "route": "/admin/promo-codes",
+  "finalUrl": "https://invest-com-au.vercel.app/admin/login?redirect=%2Fadmin%2Fpromo-codes",
+  "status": 200,
+  "redirected": true,
+  "capturedAt": "2026-05-19T22:39:38.061Z",
+  "viewport": "desktop"
+}

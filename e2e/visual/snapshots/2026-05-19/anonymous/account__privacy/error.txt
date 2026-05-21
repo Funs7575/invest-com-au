@@ -1,0 +1,7 @@
+page.goto: Timeout 20000ms exceeded.
+Call log:
+[2m  - navigating to "http://localhost:3000/account/privacy", waiting until "domcontentloaded"[22m
+
+    at captureForContext (/home/finnduns/invest-com-au/e2e/visual/runner.ts:121:35)
+    at capture (/home/finnduns/invest-com-au/e2e/visual/runner.ts:57:20)
+    at /home/finnduns/invest-com-au/e2e/visual/screenshots.spec.ts:29:37

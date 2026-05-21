@@ -4,7 +4,7 @@ vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() })),
 }));
 
-const mockGetUser = vi.fn(async () => ({
+const mockGetUser = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => ({
   data: { user: { id: "u1", email: "user@example.com" } },
   error: null,
 }));
@@ -15,7 +15,7 @@ vi.mock("@/lib/supabase/server", () => ({
   })),
 }));
 
-const mockSyncSharesightHoldings = vi.fn(async () => ({
+const mockSyncSharesightHoldings = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => ({
   inserted: 5,
   skippedAsDuplicate: 2,
   errors: 0,

@@ -13,13 +13,13 @@ vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() })),
 }));
 
-const mockEnrollAdminMfa = vi.fn(async () => ({
+const mockEnrollAdminMfa = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => ({
   secret: "TESTSECRET",
   otpAuthUrl: "otpauth://totp/test",
   recoveryCodes: ["CODE1", "CODE2"],
 }));
-const mockIsAdminMfaEnrolled = vi.fn(async () => false);
-const mockDisableAdminMfa = vi.fn(async () => undefined);
+const mockIsAdminMfaEnrolled = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => false);
+const mockDisableAdminMfa = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => undefined);
 
 vi.mock("@/lib/admin-mfa", () => ({
   enrollAdminMfa: (...args: unknown[]) => mockEnrollAdminMfa(...args),
@@ -27,7 +27,7 @@ vi.mock("@/lib/admin-mfa", () => ({
   disableAdminMfa: (...args: unknown[]) => mockDisableAdminMfa(...args),
 }));
 
-const mockCheckAdminMfaEnv = vi.fn(() => ({ ok: true, missing: [] }));
+const mockCheckAdminMfaEnv = vi.fn<(...args: unknown[]) => unknown>(() => ({ ok: true, missing: [] }));
 vi.mock("@/lib/admin-mfa-env-check", () => ({
   checkAdminMfaEnv: () => mockCheckAdminMfaEnv(),
 }));

@@ -5,9 +5,9 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { NextRequest } from "next/server";
 
 const { mockIsAllowed, mockGetUser, mockSubmitListingForReview } = vi.hoisted(() => ({
-  mockIsAllowed: vi.fn(async () => true),
-  mockGetUser: vi.fn(async () => ({ data: { user: { id: "u1", email: "owner@example.com" } }, error: null })),
-  mockSubmitListingForReview: vi.fn(async () => ({
+  mockIsAllowed: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => true),
+  mockGetUser: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => ({ data: { user: { id: "u1", email: "owner@example.com" } }, error: null })),
+  mockSubmitListingForReview: vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => ({
     ok: true,
     noOp: false,
     listing: { status: "pending_review", id: "listing-1", slug: "test" },

@@ -1,0 +1,8 @@
+{
+  "route": "/admin/automation/forms",
+  "finalUrl": "https://invest-com-au.vercel.app/admin/login?redirect=%2Fadmin%2Fautomation%2Fforms",
+  "status": 200,
+  "redirected": true,
+  "capturedAt": "2026-05-19T22:32:36.943Z",
+  "viewport": "desktop"
+}

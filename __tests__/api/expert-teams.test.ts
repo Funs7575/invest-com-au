@@ -7,7 +7,7 @@ vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() })),
 }));
 
-const mockIsAllowed = vi.fn(async () => true);
+const mockIsAllowed = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => true);
 vi.mock("@/lib/rate-limit-db", () => ({
   isAllowed: (...args: unknown[]) => mockIsAllowed(...args),
   ipKey: vi.fn(() => "test-ip"),
@@ -21,8 +21,8 @@ vi.mock("@/lib/require-advisor-session", () => ({
   requireAdvisorSession: mockRequireAdvisorSession,
 }));
 
-const mockListTeams = vi.fn(async () => [{ id: 1, name: "Alpha Team" }]);
-const mockCreateTeam = vi.fn(async () => ({ id: 1, name: "Alpha Team" }));
+const mockListTeams = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => [{ id: 1, name: "Alpha Team" }]);
+const mockCreateTeam = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => ({ id: 1, name: "Alpha Team" }));
 
 vi.mock("@/lib/expert-teams", () => ({
   listTeamsForProfessional: (...args: unknown[]) => mockListTeams(...args),

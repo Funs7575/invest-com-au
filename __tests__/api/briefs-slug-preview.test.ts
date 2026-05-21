@@ -7,7 +7,7 @@ vi.mock("@/lib/logger", () => ({
   logger: vi.fn(() => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() })),
 }));
 
-const mockIsAllowed = vi.fn(async () => true);
+const mockIsAllowed = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => true);
 vi.mock("@/lib/rate-limit-db", () => ({
   isAllowed: (...args: unknown[]) => mockIsAllowed(...args),
   ipKey: vi.fn(() => "test-ip"),
@@ -37,7 +37,7 @@ vi.mock("@/lib/supabase/admin", () => ({
 }));
 
 const mockMaskBrief = vi.fn((b: unknown) => b);
-const mockGetAcceptCost = vi.fn(async () => 3);
+const mockGetAcceptCost = vi.fn<(...args: unknown[]) => Promise<unknown>>(async () => 3);
 
 vi.mock("@/lib/briefs/mask", () => ({
   maskBriefForProvider: (b: unknown) => mockMaskBrief(b),
