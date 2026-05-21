@@ -1,0 +1,4 @@
+page.goto: Target page, context or browser has been closed
+    at captureForContext (/home/finnduns/invest-com-au/e2e/visual/runner.ts:121:35)
+    at capture (/home/finnduns/invest-com-au/e2e/visual/runner.ts:57:20)
+    at /home/finnduns/invest-com-au/e2e/visual/screenshots.spec.ts:29:37

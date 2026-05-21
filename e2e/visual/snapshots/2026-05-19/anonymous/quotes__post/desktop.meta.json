@@ -1,0 +1,8 @@
+{
+  "route": "/quotes/post",
+  "finalUrl": "https://invest-com-au.vercel.app/briefs/new",
+  "status": 200,
+  "redirected": true,
+  "capturedAt": "2026-05-20T00:10:56.447Z",
+  "viewport": "desktop"
+}

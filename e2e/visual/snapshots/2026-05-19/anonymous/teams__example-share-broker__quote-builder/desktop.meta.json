@@ -1,0 +1,8 @@
+{
+  "route": "/teams/example-share-broker/quote-builder",
+  "finalUrl": "https://invest-com-au.vercel.app/teams/example-share-broker/quote-builder",
+  "status": 200,
+  "redirected": false,
+  "capturedAt": "2026-05-20T00:30:07.108Z",
+  "viewport": "desktop"
+}

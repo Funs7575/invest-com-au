@@ -1,0 +1,8 @@
+{
+  "route": "/etfs/us-exposure",
+  "finalUrl": "https://invest-com-au.vercel.app/global-investing/etfs/us",
+  "status": 200,
+  "redirected": true,
+  "capturedAt": "2026-05-19T23:07:03.839Z",
+  "viewport": "desktop"
+}
