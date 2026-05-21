@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Card } from "@/components/ui/Card";
 import Icon from "@/components/Icon";
+import { Skeleton } from "@/components/Skeletons";
 import { trackEvent } from "@/lib/tracking";
 import { submitLead } from "@/lib/submit-lead-client";
 import { isCrossBorderSpecialty } from "@/lib/advisor-billing-multipliers";
@@ -692,8 +693,8 @@ function FindAdvisorQuiz() {
           />
         )}
 
-        {/* Step 4 */}
-        {quiz.step === 4 && (
+        {/* Step 4 — hidden while the matching fetch is running (skeleton shown instead) */}
+        {quiz.step === 4 && !submitting && (
           <Step4
             firstName={quiz.firstName}
             email={quiz.email}
@@ -714,8 +715,62 @@ function FindAdvisorQuiz() {
           />
         )}
 
+        {/* Matching skeleton — shown while the advisor-match fetch is running
+            (OTP verified but results not yet back). quiz.step is still 4 at
+            this point; we render the skeleton in place of the Step 4 form so
+            the page doesn't look hung on slow connections. */}
+        {quiz.step === 4 && submitting && (
+          <div
+            aria-busy="true"
+            aria-live="polite"
+            aria-label="Finding your advisor match"
+            className="space-y-5 animate-in fade-in duration-300"
+          >
+            <div className="text-center py-3">
+              <div className="w-14 h-14 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-3">
+                <svg
+                  className="w-6 h-6 text-amber-500 animate-spin"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                </svg>
+              </div>
+              <Skeleton className="h-7 w-56 mx-auto mb-2" />
+              <Skeleton className="h-4 w-72 mx-auto" />
+            </div>
+
+            {/* Advisor card placeholder */}
+            <div className="rounded-2xl border-2 border-amber-100 overflow-hidden">
+              <div className="bg-amber-100 px-4 py-2.5">
+                <Skeleton className="h-4 w-40" />
+              </div>
+              <div className="p-5 space-y-4">
+                <div className="flex items-start gap-4">
+                  <Skeleton className="w-16 h-16 rounded-xl shrink-0" />
+                  <div className="flex-1 space-y-2">
+                    <Skeleton className="h-5 w-1/2" />
+                    <Skeleton className="h-3 w-1/3" />
+                    <Skeleton className="h-3 w-1/4" />
+                  </div>
+                </div>
+                <div className="flex gap-1.5">
+                  {[0, 1, 2].map((i) => (
+                    <Skeleton key={i} className="h-6 w-20 rounded-lg" />
+                  ))}
+                </div>
+                <Skeleton className="h-11 w-full rounded-xl" />
+              </div>
+            </div>
+
+            <p className="text-center text-xs text-slate-400">Finding the best match for you&hellip;</p>
+          </div>
+        )}
+
         {/* Step 5: success */}
-        {quiz.step === 5 && submitted && (
+        {quiz.step === 5 && submitted && !submitting && (
           <MatchConfirmation
             userEmail={quiz.email}
             userFirstName={quiz.firstName}
