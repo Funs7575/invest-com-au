@@ -1,0 +1,8 @@
+{
+  "route": "/admin/routing-rules",
+  "finalUrl": "https://invest-com-au.vercel.app/admin/login?redirect=%2Fadmin%2Frouting-rules",
+  "status": 200,
+  "redirected": true,
+  "capturedAt": "2026-05-19T22:41:24.278Z",
+  "viewport": "desktop"
+}

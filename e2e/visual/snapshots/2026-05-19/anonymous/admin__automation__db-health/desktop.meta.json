@@ -1,0 +1,8 @@
+{
+  "route": "/admin/automation/db-health",
+  "finalUrl": "https://invest-com-au.vercel.app/admin/login?redirect=%2Fadmin%2Fautomation%2Fdb-health",
+  "status": 200,
+  "redirected": true,
+  "capturedAt": "2026-05-19T22:32:04.572Z",
+  "viewport": "desktop"
+}
