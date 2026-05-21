@@ -73,19 +73,34 @@ export default function StartupsPage() {
       {/* Browse Listings CTA */}
       <section className="bg-white pt-8">
         <div className="container-custom">
-          <Link
-            href="/invest/startups/listings"
-            className="group flex items-center justify-between gap-4 p-5 bg-gradient-to-r from-emerald-50 to-emerald-100/40 border border-emerald-200 rounded-2xl mb-8 hover:border-emerald-300 hover:shadow-md transition-all"
-          >
-            <div>
-              <p className="text-xs font-extrabold uppercase tracking-wider text-emerald-700 mb-1">Browse Listings</p>
-              <p className="text-lg font-extrabold text-slate-900">View all startup opportunities &rarr;</p>
-              <p className="text-sm text-slate-600 mt-0.5">Active raises, ESIC-eligible, sub-categories &amp; more</p>
-            </div>
-            <svg className="w-8 h-8 text-emerald-600 shrink-0 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </Link>
+          <div className="grid sm:grid-cols-2 gap-4 mb-8">
+            <Link
+              href="/invest/startups/listings"
+              className="group flex items-center justify-between gap-4 p-5 bg-gradient-to-r from-emerald-50 to-emerald-100/40 border border-emerald-200 rounded-2xl hover:border-emerald-300 hover:shadow-md transition-all"
+            >
+              <div>
+                <p className="text-xs font-extrabold uppercase tracking-wider text-emerald-700 mb-1">Browse Listings</p>
+                <p className="text-lg font-extrabold text-slate-900">All startup opportunities &rarr;</p>
+                <p className="text-sm text-slate-600 mt-0.5">Active raises, ESIC-eligible, sub-categories &amp; more</p>
+              </div>
+              <svg className="w-8 h-8 text-emerald-600 shrink-0 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+            <Link
+              href="/invest/startups/for-you"
+              className="group flex items-center justify-between gap-4 p-5 bg-gradient-to-r from-violet-50 to-violet-100/40 border border-violet-200 rounded-2xl hover:border-violet-300 hover:shadow-md transition-all"
+            >
+              <div>
+                <p className="text-xs font-extrabold uppercase tracking-wider text-violet-700 mb-1">Personalised Feed</p>
+                <p className="text-lg font-extrabold text-slate-900">Rounds matched for you &rarr;</p>
+                <p className="text-sm text-slate-600 mt-0.5">Filtered by your thesis — sector, stage, ticket size</p>
+              </div>
+              <svg className="w-8 h-8 text-violet-600 shrink-0 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+          </div>
         </div>
       </section>
 

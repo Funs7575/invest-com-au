@@ -709,6 +709,7 @@ export default async function PersonalDashboardPage() {
           <NavCard href="/account/vault" emoji="🗂️" label="Document Vault" desc="Store super, tax, insurance docs securely" />
           <NavCard href="/account/wholesale-cert" emoji="🏅" label="Wholesale Certification" desc="s708 or professional investor status" />
           <NavCard href="/account/startup-thesis" emoji="🚀" label="Startup Thesis" desc="Sectors, stage, ticket size for deal feed" />
+          <NavCard href="/invest/startups/for-you" emoji="✨" label="Startup Deal Feed" desc="Open rounds matched to your thesis" />
         </div>
       </section>
     </main>
