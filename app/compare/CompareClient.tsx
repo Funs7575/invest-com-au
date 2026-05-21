@@ -24,6 +24,7 @@ import CompareDesktopTable from "./_components/CompareDesktopTable";
 import CompareSelectionBar from "./_components/CompareSelectionBar";
 import CompareFooter from "./_components/CompareFooter";
 import CompareCrossSellBanner from "@/components/CompareCrossSellBanner";
+import FeeAlertCapture from "./_components/FeeAlertCapture";
 import type { ABTestConfig } from "@/lib/ab-test";
 import { createClient } from "@/lib/supabase/client";
 import {
@@ -1008,6 +1009,10 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             </div>
           </div>
         )}
+
+        {/* F4: Fee-change alert capture — surfaces after the list so users who
+            have finished comparing can subscribe without noise during browsing. */}
+        <FeeAlertCapture className="mt-6" />
       </div>
     </div>
   );

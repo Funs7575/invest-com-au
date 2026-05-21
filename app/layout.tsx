@@ -20,6 +20,7 @@ import ChatWidget from "@/components/ChatWidget";
 import ReportProblemButton from "@/components/ReportProblemButton";
 import PushNotificationOptIn from "@/components/PushNotificationOptIn";
 import NewsletterExitIntentModal from "@/components/NewsletterExitIntentModal";
+import ExitIntentWrapper from "@/components/ExitIntentWrapper";
 import { isFlagEnabled, loadFlag } from "@/lib/feature-flags";
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, websiteJsonLd } from "@/lib/seo";
 
@@ -114,12 +115,15 @@ export default async function RootLayout({
   //     rampable feature flags (0% → 100% via /admin/automation/flags).
   //   - newsletter_exit_intent: default-on; missing row = enabled,
   //     existing row honours enabled+rollout_pct.
-  const [chatEnabled, reportButtonEnabled, pushEnabled, newsletterExitIntentFlag] =
+  //   - exit_intent_broker_match: gates ExitIntentCapture +
+  //     ExitIntentBrokerMatch; default-off until flag row is created.
+  const [chatEnabled, reportButtonEnabled, pushEnabled, newsletterExitIntentFlag, exitIntentBrokerMatchEnabled] =
     await Promise.all([
       isFlagEnabled("chatbot_widget"),
       isFlagEnabled("report_button"),
       isFlagEnabled("push_notifications"),
       loadFlag("newsletter_exit_intent"),
+      isFlagEnabled("exit_intent_broker_match"),
     ]);
   const newsletterExitIntentEnabled = newsletterExitIntentFlag
     ? newsletterExitIntentFlag.enabled &&
@@ -191,6 +195,11 @@ export default async function RootLayout({
           {newsletterExitIntentEnabled && (
             <Suspense fallback={null}>
               <NewsletterExitIntentModal />
+            </Suspense>
+          )}
+          {exitIntentBrokerMatchEnabled && (
+            <Suspense fallback={null}>
+              <ExitIntentWrapper />
             </Suspense>
           )}
         </ThemeProvider>

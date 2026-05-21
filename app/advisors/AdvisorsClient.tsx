@@ -12,6 +12,7 @@ import EligibilityBadge from "@/components/EligibilityBadge";
 import { PROFESSIONAL_TYPE_LABELS, PROFESSIONAL_TYPE_ICONS, AU_STATES, AU_LANGUAGES } from "@/lib/types";
 import Icon from "@/components/Icon";
 import VerifiedBadge from "@/components/VerifiedBadge";
+import BookmarkButton from "@/components/BookmarkButton";
 import { trackEvent } from "@/lib/tracking";
 import { useAdvisorShortlist } from "@/lib/hooks/useAdvisorShortlist";
 import { ADVISOR_SPECIALTY_CATEGORIES } from "@/lib/advisor-specialties";
@@ -627,6 +628,13 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
           </p>
         </div>
 
+        {/* C2 — RG 234 / ACL s18 sponsored-placement disclosure */}
+        <p className="text-[0.65rem] md:text-xs text-slate-500 mb-3 leading-relaxed" role="note">
+          <Icon name="info" size={11} className="inline mr-1 text-slate-400" aria-hidden />
+          <strong className="font-semibold text-slate-600">Featured · Sponsored</strong> advisors have a paid placement.
+          All other advisors are ranked by verification status and rating. Placement does not constitute a recommendation.
+        </p>
+
         {/* Compare bar */}
         {shortlistCount > 0 && (
           <div className="sticky top-16 z-30 mb-3">
@@ -1219,10 +1227,32 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                               afsl={pro.afsl_number ?? null}
                               compact
                             />
+                            {/* F8 — AFSL / ACL licence trust chip */}
+                            {pro.afsl_number && (
+                              <span
+                                className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-sky-50 text-sky-700 border border-sky-200 flex items-center gap-0.5"
+                                title={`Australian Financial Services Licence ${pro.afsl_number} — current as at last verification`}
+                              >
+                                <Icon name="shield-check" size={9} className="text-sky-500" />
+                                AFSL&nbsp;{pro.afsl_number}
+                              </span>
+                            )}
+                            {!pro.afsl_number && pro.abn && pro.verified && (
+                              <span
+                                className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-0.5"
+                                title={`Australian Business Number ${pro.abn} — ABN verified`}
+                              >
+                                <Icon name="shield-check" size={9} className="text-emerald-500" />
+                                ABN&nbsp;{pro.abn}
+                              </span>
+                            )}
                             {isFeatured && (
-                              <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-amber-500 text-white flex items-center gap-0.5 shadow-sm">
+                              <span
+                                className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-amber-500 text-white flex items-center gap-0.5 shadow-sm"
+                                title="This advisor has a paid featured placement"
+                              >
                                 <Icon name="star" size={9} />
-                                Featured
+                                Featured&nbsp;&middot;&nbsp;Sponsored
                               </span>
                             )}
                             {isProTier && (
@@ -1253,14 +1283,24 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                             </p>
                           )}
                         </div>
-                        <button
-                          onClick={(e) => { e.preventDefault(); toggleShortlist(pro.slug); }}
-                          disabled={!inShortlist(pro.slug) && shortlistCount >= shortlistMax}
-                          title={inShortlist(pro.slug) ? "Remove from compare" : shortlistCount >= shortlistMax ? "Compare list full" : "Save to compare"}
-                          className={`shrink-0 p-1.5 rounded-lg transition-colors ${inShortlist(pro.slug) ? "text-violet-600 bg-violet-50 hover:bg-violet-100" : shortlistCount >= shortlistMax ? "text-slate-200 cursor-not-allowed" : "text-slate-300 hover:text-violet-500 hover:bg-violet-50"}`}
-                        >
-                          <Icon name={inShortlist(pro.slug) ? "bookmark-check" : "bookmark"} size={15} />
-                        </button>
+                        <div className="flex items-center gap-1 shrink-0">
+                          {/* F1 — BookmarkButton: save advisor to profile/anonymous saves */}
+                          <BookmarkButton
+                            type="advisor"
+                            itemRef={pro.slug}
+                            label={pro.name}
+                            className="p-1.5 rounded-lg text-slate-300 hover:text-amber-500 hover:bg-amber-50 transition-colors"
+                          />
+                          {/* Compare shortlist toggle */}
+                          <button
+                            onClick={(e) => { e.preventDefault(); toggleShortlist(pro.slug); }}
+                            disabled={!inShortlist(pro.slug) && shortlistCount >= shortlistMax}
+                            title={inShortlist(pro.slug) ? "Remove from compare" : shortlistCount >= shortlistMax ? "Compare list full" : "Save to compare"}
+                            className={`p-1.5 rounded-lg transition-colors ${inShortlist(pro.slug) ? "text-violet-600 bg-violet-50 hover:bg-violet-100" : shortlistCount >= shortlistMax ? "text-slate-200 cursor-not-allowed" : "text-slate-300 hover:text-violet-500 hover:bg-violet-50"}`}
+                          >
+                            <Icon name={inShortlist(pro.slug) ? "bookmark-check" : "bookmark"} size={15} />
+                          </button>
+                        </div>
                       </div>
 
                       {/* Type + Location row */}

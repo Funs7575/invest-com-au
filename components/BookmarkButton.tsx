@@ -6,9 +6,14 @@ import { getSessionId } from "@/lib/session";
 
 interface Props {
   type: "article" | "broker" | "advisor" | "scenario" | "calculator";
-  ref: string;
+  /** Stable identifier for the saved item (e.g. broker slug). Renamed from
+   *  `ref` because `ref` is a reserved prop in React. */
+  itemRef: string;
   label?: string;
   className?: string;
+  /** When true, renders the bookmark icon only with no visible text label.
+   *  Useful in compact card contexts where aria-label provides the name. */
+  iconOnly?: boolean;
 }
 
 /**
@@ -23,7 +28,7 @@ interface Props {
  * claim trigger is handled by ClaimAnonymousOnAuth — this
  * button just fires the "save" event.
  */
-export default function BookmarkButton({ type, ref, label, className }: Props) {
+export default function BookmarkButton({ type, itemRef: ref, label, className, iconOnly }: Props) {
   const { user } = useUser();
   const [saved, setSaved] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -147,7 +152,7 @@ export default function BookmarkButton({ type, ref, label, className }: Props) {
           d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
         />
       </svg>
-      {saved ? "Saved" : "Save"}
+      {!iconOnly && (saved ? "Saved" : "Save")}
     </button>
   );
 }

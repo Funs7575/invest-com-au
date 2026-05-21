@@ -36,6 +36,8 @@ import CollapsibleSection from "@/components/CollapsibleSection";
 import AdSlot from "@/components/AdSlot";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
 import LeadMagnet from "@/components/LeadMagnet";
+import BookmarkButton from "@/components/BookmarkButton";
+import BrokerFeeAlertCapture from "@/components/BrokerFeeAlertCapture";
 
 function FeeVerdict({ value, thresholds }: { value: number | undefined; thresholds: [number, number] }) {
   if (value == null) return <span className="px-2 py-0.5 bg-slate-100 text-slate-500 text-xs font-semibold rounded-full">N/A</span>;
@@ -361,8 +363,8 @@ export default function BrokerReviewClient({
           )}
         </div>
 
-        {/* Share */}
-        <div className="flex items-center gap-2 mb-4">
+        {/* Share + Bookmark */}
+        <div className="flex items-center gap-2 mb-4 flex-wrap">
           <span className="text-[0.62rem] text-slate-400 font-medium">Share:</span>
           <button
             onClick={() => { if (navigator.share) { navigator.share({ title: `${b.name} Review — Invest.com.au`, url: window.location.href }); } else { navigator.clipboard.writeText(window.location.href); alert("Link copied!"); } }}
@@ -379,6 +381,12 @@ export default function BrokerReviewClient({
           >
             𝕏 Post
           </a>
+          <BookmarkButton
+            type="broker"
+            itemRef={b.slug}
+            label={b.name}
+            className="ml-auto text-[0.62rem] px-2 py-1 border border-slate-200 rounded-md text-slate-500 hover:bg-slate-50 hover:text-amber-600 transition-colors inline-flex items-center gap-1"
+          />
         </div>
 
         {/* Deal banner */}
@@ -583,6 +591,12 @@ export default function BrokerReviewClient({
               Report an error
             </a>
           </div>
+          {/* F4 — fee-change alert capture, inline next to fee freshness indicator */}
+          <BrokerFeeAlertCapture
+            brokerSlug={b.slug}
+            brokerName={b.name}
+            className="mt-3"
+          />
           {b.fee_changelog && b.fee_changelog.length > 0 && (
             <details className="mt-3">
               <summary className="text-xs font-semibold text-slate-600 cursor-pointer hover:text-slate-800">

@@ -53,6 +53,9 @@ import PlacementImpressionTracker from "@/components/PlacementImpressionTracker"
 import JargonTooltip from "@/components/JargonTooltip";
 import OnThisPage from "@/components/OnThisPage";
 import type { Article } from "@/lib/types";
+import SocialProofCounter from "@/components/SocialProofCounter";
+import CohortInsights from "@/components/CohortInsights";
+import StickyCTABar from "@/components/StickyCTABar";
 
 const SLUG_TO_SEGMENT: Record<string, LeadSegment> = {
   beginners: "beginner-guide",
@@ -301,6 +304,9 @@ export default async function BestBrokerPage({
               {cat.h1}
             </h1>
             <p className="text-xs md:text-base text-slate-600 mb-2">{cat.intro}</p>
+            <div className="flex items-center gap-3 flex-wrap mb-2">
+              <SocialProofCounter variant="badge" />
+            </div>
             <p className="text-[0.56rem] md:text-xs text-slate-400">
               {ADVERTISER_DISCLOSURE_SHORT}
             </p>
@@ -592,6 +598,15 @@ export default async function BestBrokerPage({
           </div>
           <CompactDisclaimerLine />
 
+          {/* F5: Cohort insights — what similar investors chose */}
+          <div className="my-6 md:my-8">
+            <CohortInsights
+              experience={slug === "beginners" ? "beginner" : "intermediate"}
+              range={slug === "smsf" || slug === "super-funds" ? "large" : "medium"}
+              interest={slug}
+            />
+          </div>
+
           {/* Editorial sections */}
           <div id="editorial" className="space-y-5 md:space-y-8 mb-6 md:mb-10 scroll-mt-20">
             {cat.sections.map((section, i) => (
@@ -758,6 +773,16 @@ export default async function BestBrokerPage({
           )}
         </div>
       </div>
+
+      {/* F7: StickyCTABar — persistent referral to the top-ranked result.
+          Appears after 500px scroll; dismissed per session. */}
+      {topPick && (
+        <StickyCTABar
+          broker={topPick}
+          detail={`Our #1 pick for ${cat.h1.replace(" in Australia", "").replace("Best ", "")}`}
+          context="compare"
+        />
+      )}
     </>
   );
 }
