@@ -6,6 +6,7 @@ import Icon from "@/components/Icon";
 import BrokerLogo from "@/components/BrokerLogo";
 import { getAffiliateLink, AFFILIATE_REL, trackClick } from "@/lib/tracking";
 import { TICKER_MAP } from "@/lib/ticker-sectors";
+import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import type { Broker } from "@/lib/types";
 
 interface Holding {
@@ -255,6 +256,7 @@ export default function XRayClient({ brokers }: { brokers: Broker[] }) {
                     Open Account →
                   </a>
                 </div>
+                <p className="text-[0.65rem] leading-snug text-emerald-700/80 mt-3">{GENERAL_ADVICE_WARNING}</p>
               </div>
             )}
 

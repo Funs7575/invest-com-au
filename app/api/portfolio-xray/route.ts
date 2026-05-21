@@ -53,6 +53,16 @@ interface Recommendation {
 }
 
 export async function POST(request: NextRequest) {
+  // Disabled pre-AFSL: emits imperative "switch to [Broker]" / risk directives
+  // with no compliance filter and has no live UI caller (the /portfolio-xray page
+  // computes client-side). Gated off (410 Gone) until a compliant rebuild; the
+  // analysis impl below is retained for re-enable.
+  return NextResponse.json(
+    { error: "This endpoint is no longer available." },
+    { status: 410 },
+  );
+
+  // eslint-disable-next-line no-unreachable -- intentionally retained behind the 410 gate above
   if (!(await isAllowed("portfolio_xray_post", ipKey(request), { max: 10, refillPerSec: 0.05 }))) {
     return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }

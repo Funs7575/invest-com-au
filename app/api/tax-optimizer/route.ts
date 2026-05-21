@@ -58,6 +58,15 @@ interface CGTDiscountAlert {
 }
 
 export async function POST(request: NextRequest) {
+  // Disabled pre-AFSL: emits imperative tax directives ("Sell BHP to harvest…")
+  // with no compliance filter and has no live UI caller. Gated off (410 Gone)
+  // until a compliant rebuild; the analysis impl below is retained for re-enable.
+  return NextResponse.json(
+    { error: "This endpoint is no longer available." },
+    { status: 410 },
+  );
+
+  // eslint-disable-next-line no-unreachable -- intentionally retained behind the 410 gate above
   try {
     if (!(await isAllowed("tax_optimizer", ipKey(request), { max: 20, refillPerSec: 20 / 3600 }))) {
       return NextResponse.json({ error: "Too many requests" }, { status: 429 });
