@@ -256,7 +256,7 @@ export default function VersusClient({ brokers, serverEditorial }: { brokers: Br
           <span className="text-brand">{allSelected ? title : "Versus"}</span>
         </div>
 
-        <h1 className="text-lg sm:text-3xl lg:text-4xl font-extrabold mb-0.5 md:mb-2 break-words">
+        <h1 id="versus-title" className="text-lg sm:text-3xl lg:text-4xl font-extrabold mb-0.5 md:mb-2 break-words">
           {allSelected ? `${title}: The Honest Truth (${CURRENT_YEAR})` : "Platform vs Platform"}
         </h1>
         <p className="text-[0.69rem] md:text-base text-slate-600 mb-3 md:mb-8">
@@ -595,7 +595,7 @@ export default function VersusClient({ brokers, serverEditorial }: { brokers: Br
                   {/* TL;DR */}
                   <div className="bg-gradient-to-r from-slate-50 to-blue-50 border border-slate-200 rounded-xl p-4 md:p-5">
                     <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">The Bottom Line</p>
-                    <p className="text-sm md:text-base text-slate-700 leading-relaxed">{editorial.tldr}</p>
+                    <p id="versus-tldr" className="text-sm md:text-base text-slate-700 leading-relaxed">{editorial.tldr}</p>
                   </div>
 
                   {/* Choose A / Choose B */}
