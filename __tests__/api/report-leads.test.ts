@@ -57,7 +57,8 @@ describe("/api/report-leads", () => {
     vi.clearAllMocks();
     mockIsRateLimited.mockResolvedValue(false);
     // Default: report exists, insert succeeds
-    mockFrom.mockImplementation((table: string) => {
+    mockFrom.mockImplementation((...args: unknown[]) => {
+      const table = args[0] as string;
       if (table === "sector_reports") {
         return makeBuilder({ data: { slug: "test-report", report_url: "/reports/test.pdf", gated: true, status: "published" }, error: null });
       }
