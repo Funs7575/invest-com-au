@@ -16,6 +16,7 @@ import ComparisonTableSkeleton from "@/components/ComparisonTableSkeleton";
 import AuthorByline from "@/components/AuthorByline";
 import OnThisPage from "@/components/OnThisPage";
 import { absoluteUrl, breadcrumbJsonLd, articleAuthorJsonLd, articleFaqJsonLd, CURRENT_MONTH_YEAR, ORGANIZATION_JSONLD } from "@/lib/seo";
+import { speakableWebPageJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 import { CATEGORY_COLORS, getBestPagesForArticle, getClusterLinksForArticle } from "@/lib/internal-links";
 import ClusterNav from "@/components/ClusterNav";
@@ -232,6 +233,16 @@ export default async function ArticlePage({
   // FAQ JSON-LD — only generated if sections have question-style headings
   const faqLd = a.sections ? articleFaqJsonLd(a.sections) : null;
 
+  // Speakable: mark the title + lead excerpt as the extractable answer region.
+  // Only references #article-summary when an excerpt actually renders.
+  const speakableLd = speakableWebPageJsonLd({
+    name: a.title,
+    path: `/article/${a.slug}`,
+    selectors: a.excerpt
+      ? ["#article-title", "#article-summary"]
+      : ["#article-title"],
+  });
+
   return (
     <div>
       {/* Schema.org JSON-LD */}
@@ -249,6 +260,10 @@ export default async function ArticlePage({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
         />
       )}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableLd) }}
+      />
 
       {/* Hero Section */}
       <section className="bg-white text-slate-900 pt-4 pb-5 md:pt-6 md:pb-8 border-b border-slate-200">
@@ -308,13 +323,13 @@ export default async function ArticlePage({
             </div>
 
             {/* Title */}
-            <h1 className="text-2xl md:text-4xl font-extrabold mb-2 md:mb-3 leading-tight">
+            <h1 id="article-title" className="text-2xl md:text-4xl font-extrabold mb-2 md:mb-3 leading-tight">
               {a.title}
             </h1>
 
             {/* Excerpt — smaller on mobile */}
             {a.excerpt && (
-              <p className="text-sm md:text-lg text-slate-600 leading-relaxed max-w-3xl">
+              <p id="article-summary" className="text-sm md:text-lg text-slate-600 leading-relaxed max-w-3xl">
                 {a.excerpt}
               </p>
             )}
