@@ -68,6 +68,7 @@ function centsToAud(cents: number): string {
 const NAV = [
   { href: "/startup-portal", label: "Dashboard", active: true },
   { href: "/startup-portal/round", label: "Round" },
+  { href: "/startup-portal/data-room", label: "Data Room" },
   { href: "/startup-portal/investors", label: "Investors" },
   { href: "/startup-portal/profile", label: "Profile" },
 ];
