@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR, SITE_NAME } from "@/lib/seo";
+import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import EmbedBuilder from "./EmbedBuilder";
+import WidgetGallery from "./WidgetGallery";
 
 export const revalidate = 3600;
 
@@ -94,6 +95,15 @@ export default function EmbedPage() {
               <p className="text-xs text-slate-500 leading-relaxed">{step.desc}</p>
             </div>
           ))}
+        </div>
+
+        {/* Widget Gallery */}
+        <h2 className="text-lg md:text-xl font-extrabold text-slate-900 mb-2">Widget Gallery</h2>
+        <p className="text-sm text-slate-500 mb-4">
+          Ready-made widgets for popular comparisons — copy a snippet and paste it anywhere. Each one stays up to date automatically.
+        </p>
+        <div className="mb-12">
+          <WidgetGallery />
         </div>
 
         {/* Snippet Examples */}
