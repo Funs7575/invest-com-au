@@ -7,6 +7,7 @@ vi.mock("@/lib/logger", () => ({
 
 vi.mock("@/lib/property-suburb-refresh", () => ({
   refreshSuburb: vi.fn(async () => ({ fieldsChanged: {}, error: null })),
+  selectProvider: vi.fn(() => "stub"),
 }));
 
 vi.mock("@/lib/admin/classifier-config", () => ({
