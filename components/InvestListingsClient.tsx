@@ -358,6 +358,40 @@ export default function InvestListingsClient({
     activeEsicOnly, activeSort,
   ]);
 
+  // ── Live per-facet counts for the compliance facet (Session 5.5) ──
+  // Counted over the current result set so the FacetGroup shows how many
+  // of the shown listings carry each attribute and disables zero-count
+  // options. Mirrors the predicates used in the filter pipeline above.
+  const complianceCounts = useMemo(() => {
+    const isWholesale = (l: InvestmentListing) => {
+      const km = (l.key_metrics ?? {}) as Record<string, unknown>;
+      return km["wholesale_only"] === true || km["s708_required"] === true || km["accredited_only"] === true;
+    };
+    const isEsic = (l: InvestmentListing) =>
+      ((l.key_metrics ?? {}) as Record<string, unknown>)["esic_eligible"] === true;
+    return {
+      firb: filtered.filter((l) => l.firb_eligible === true).length,
+      siv: filtered.filter((l) => l.siv_complying === true).length,
+      wholesale: filtered.filter(isWholesale).length,
+      esic: filtered.filter(isEsic).length,
+    };
+  }, [filtered]);
+
+  // ── Typeahead suggestions for the search box (Session 5.5) ──
+  // Filter-like terms (sector / sub-type / state / ASX ticker) make tighter
+  // suggestions than full listing titles. Deduped, sorted, capped.
+  const searchSuggestions = useMemo(() => {
+    const set = new Set<string>();
+    for (const l of listings) {
+      if (l.industry) set.add(l.industry);
+      if (l.sub_category) set.add(l.sub_category);
+      if (l.location_state) set.add(l.location_state);
+      const ticker = ((l.key_metrics ?? {}) as Record<string, unknown>)["asx_ticker"];
+      if (typeof ticker === "string" && ticker) set.add(ticker.toUpperCase());
+    }
+    return Array.from(set).sort().slice(0, 60);
+  }, [listings]);
+
   // ── Active-filter chips ──
   const activeChips: Array<{ label: string; onClear: () => void }> = [];
   if (!lockedCategory && activeCategory !== "all") {
@@ -455,6 +489,7 @@ export default function InvestListingsClient({
               onSubmit={submitSearch}
               placeholder="Search title, sector, ticker, suburb…"
               ariaLabel="Search listings"
+              suggestions={searchSuggestions}
             />
 
             <button
@@ -604,6 +639,7 @@ export default function InvestListingsClient({
                 activeEsicOnly={activeEsicOnly}
                 kindSpec={kindSpec}
                 intentCountry={intentCountry ?? null}
+                complianceCounts={complianceCounts}
                 setParams={setParams}
               />
             </FilterPanel>
@@ -794,6 +830,7 @@ interface InvestFilterFieldsProps {
   activeEsicOnly: boolean;
   kindSpec: ReturnType<typeof filterSpecForKind>;
   intentCountry: string | null;
+  complianceCounts: Record<string, number>;
   setParams: (updates: Record<string, string>) => void;
 }
 
@@ -809,7 +846,7 @@ function InvestFilterFields({
   activeState, activeTicket, activeInvestorType,
   activeFirbOnly, activeSivOnly, activeWholesaleOnly,
   activeFreshness, activeFeaturedOnly, activeMinYield, activeEsicOnly,
-  kindSpec, intentCountry, setParams,
+  kindSpec, intentCountry, complianceCounts, setParams,
 }: InvestFilterFieldsProps) {
   const complianceOptions = [
     { value: "firb", label: "FIRB-eligible" },
@@ -877,6 +914,7 @@ function InvestFilterFields({
               label="Compliance & structure"
               options={complianceOptions}
               selected={complianceSelected}
+              counts={complianceCounts}
               onChange={(next) =>
                 setParams({
                   firb: next.has("firb") ? "eligible" : "",
