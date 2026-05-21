@@ -24,6 +24,7 @@ import CompareDesktopTable from "./_components/CompareDesktopTable";
 import CompareSelectionBar from "./_components/CompareSelectionBar";
 import CompareFooter from "./_components/CompareFooter";
 import CompareCrossSellBanner from "@/components/CompareCrossSellBanner";
+import CompareSaveShareBar from "@/components/compare/CompareSaveShareBar";
 import type { ABTestConfig } from "@/lib/ab-test";
 import { createClient } from "@/lib/supabase/client";
 import {
@@ -204,8 +205,15 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
     } else {
       url.searchParams.set('scenario', scenario);
     }
+    // Persist the pinned shortlist as ?ids= so the URL is shareable/bookmarkable
+    // and "Save comparison" / "Share" reproduce the same selection on reload.
+    if (selected.size > 0) {
+      url.searchParams.set('ids', Array.from(selected).slice(0, 4).join(','));
+    } else {
+      url.searchParams.delete('ids');
+    }
     window.history.replaceState({}, '', url.toString());
-  }, [activeFilter, searchQuery, sortCol, sortDir, scenario]);
+  }, [activeFilter, searchQuery, sortCol, sortDir, scenario, selected]);
 
   // Marketplace campaign allocation
   const [campaignWinners, setCampaignWinners] = useState<PlacementWinner[]>([]);
@@ -944,6 +952,11 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               <button onClick={() => setSelected(new Set())} className="text-xs font-semibold text-slate-400 hover:text-slate-700">Clear</button>
             </div>
             {selected.size < 2 && <p className="mb-3 rounded-lg bg-amber-50 p-2 text-xs text-amber-800">Pin at least 2 providers for a side-by-side shortlist.</p>}
+            {selected.size >= 2 && (
+              <div className="mb-3">
+                <CompareSaveShareBar selectedSlugs={Array.from(selected)} />
+              </div>
+            )}
             <div className="space-y-2">
               {Array.from(selected).map((slug) => {
                 const row = sortedRows.find((item) => item.broker.slug === slug) ?? rankBrokers(brokers.filter((item) => item.slug === slug), scenario, costInputs)[0];
