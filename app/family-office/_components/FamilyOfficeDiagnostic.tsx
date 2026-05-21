@@ -246,7 +246,7 @@ export default function FamilyOfficeDiagnostic() {
         ) : (
           <FamilyOfficeReferralForm
             advisorType={copy.advisorType}
-            diagnosticAnswers={answers}
+            diagnosticAnswers={answers as Record<string, string | undefined>}
             onSuccess={() => setReferralDone(true)}
             onCancel={() => setShowReferral(false)}
           />
