@@ -13,13 +13,20 @@ One line per mergeable chunk. Newest at top. See
 - flag #21 — process-data-exports stale-comment reconcile + queue/progress seed → #1063 (merged).
 - §4 — `/teams` index page + nav link (unlocks Expert Teams) → #1069 (merged).
 
+**Also merged to `main` since:**
+- flag #2 (P0, Tier E) — DROP orphan `sharesight_connections` → #1065 (merged; apply migration to live + regen types).
+- flags #15,#18 (P2) — ab-auto-promote circuit-breaker + suburb stub alert → #1067 (merged).
+
 **Open PRs (founder/Tier-C merge):**
-- flag #2 (P0, **Tier E**) — DROP orphan `sharesight_connections` → #1065 (apply to live + regen types, then merge).
 - flag #4 (P0) — AFSL-monitor fail-loud when lookup unconfigured → #1076 (+ confirm `AFSL_LOOKUP_URL` in prod).
 - flag #9 (P1) — restrict `presence_pings` anon read → #1077 (apply migration to live, then merge).
 - flag #10 (P1) — TMD coverage gap proactive alert → #1086.
+- flag #11 (P1) — approval gate (draft-on-create) for country-rule alerts → #1119 (regulatory_alerts editor uses a server action — same treatment still TODO).
+- flag #12 (P1) — run-migration admin-session + dropped from cron → #1089.
+- flag #13 (P1) — impersonation visibility admin view → #1115.
 - flag #14 (P1) — portal-gate isolation on business portal → #1084.
-- flags #15,#18 (P2) — ab-auto-promote circuit-breaker + suburb stub alert → #1067.
+- flag #17 (P2) — outbound-webhook auto-retry cron → #1102.
+- flag #20 (P2, partial) — SSR-readable consent cookie → #1121 (SMS/WhatsApp consent record + unified unsubscribe still TODO).
 
 **Verified already-green (audit text stale):**
 - #83 occupation pages — all 26 slugs in sync across config/sitemap/hub.
@@ -36,11 +43,11 @@ One line per mergeable chunk. Newest at top. See
 - flag #7 (brief-chat compliance) — N/A: BriefChatPanel kept dormant (founder).
 - flag #19 (submit-lead Zod) — duplicate-guard: being worked live by another agent.
 
-**Remaining (Tier C, larger / decision-bound):**
-- #11 approval gates on reg-alert/country-rule publish (schema + UI).
-- #12 run-migration admin-session (decision: keep 6h cron → keep CRON_SECRET, or move to admin-only on-demand).
-- #13 impersonation visibility admin view (UI).
-- #17 outbound-webhook auto-retry (schema + cron).
-- #20 consent fixes (SMS/WhatsApp record, unified unsubscribe, SSR cookie consent) — multi-part.
+**Status: all 21 §5 flags addressed — 10 merged, 7 in open PRs, 4 triaged.**
+
+**Remaining work (founder-gated / large-feature residue):**
+- #11 — apply the same draft-on-create gate to the `regulatory_alerts` editor (server action, not the API route).
+- #20 — explicit SMS/WhatsApp consent record + unified unsubscribe surface (multi-part feature).
 - §4 empty listing verticals (VC, litigation-funding, ILS, royalties, …) — noindex or wire submit.
 - §4 reports / switch-stories / community — founder decision: seed vs keep noindexed.
+- #3 (admin MFA), #16 (autopilot kill-switch unify) — founder review (see "surfaced" above).
