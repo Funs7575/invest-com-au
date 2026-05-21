@@ -14,6 +14,8 @@ import {
 } from "@/lib/investment-listings-query";
 import { getSubcategoryBySlug } from "@/lib/invest-categories";
 import ListingSchemaScripts from "@/components/ListingSchemaScripts";
+import WholesaleAttestationGate from "@/components/invest/WholesaleAttestationGate";
+import { deriveListingKind } from "@/lib/listing-kind";
 
 export const revalidate = 300;
 
@@ -109,6 +111,10 @@ export default async function StartupOpportunityDetailPage({
   const km = (l.key_metrics ?? {}) as Record<string, unknown>;
   const location = [l.location_city, l.location_state].filter(Boolean).join(", ");
   const isEsic = km.esic_eligible === true;
+  // C8: equity raises are securities offers under the Corporations Act and are
+  // gated to wholesale (s708) investors. Hide raise terms (valuation/instrument)
+  // and the enquiry form behind a self-attestation interstitial.
+  const isEquityRaise = deriveListingKind(l) === "equity_raise";
 
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
@@ -170,44 +176,57 @@ export default async function StartupOpportunityDetailPage({
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-6">
               <ListingImageGallery images={l.images} alt={l.title} vertical={l.vertical} listingId={l.id} subCategory={l.sub_category} />
-              <div className="bg-white border border-slate-200 rounded-xl p-6">
-                <div className="flex flex-wrap items-center justify-between gap-4">
-                  <div>
-                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">
-                      {km.raising_cents ? "Raising" : "Investment Required"}
-                    </p>
-                    <p className="text-3xl font-extrabold text-slate-900">
-                      {km.raising_cents
-                        ? formatCents(km.raising_cents as number)
-                        : (l.price_display ?? (l.asking_price_cents ? formatCents(l.asking_price_cents) : "Price on application"))}
-                    </p>
-                  </div>
-                  {!!km.pre_money_valuation_cents && (
-                    <div className="text-right">
-                      <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Pre-Money Valuation</p>
-                      <p className="text-xl font-bold text-slate-700">{formatCents(km.pre_money_valuation_cents as number)}</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {Object.keys(km).length > 0 && (
-                <div className="bg-white border border-slate-200 rounded-xl p-6">
-                  <h2 className="text-base font-bold text-slate-900 mb-4">Company Details</h2>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    {Object.entries(km).map(([key, value]) => (
-                      <div key={key} className="bg-slate-50 rounded-lg p-3">
-                        <p className="text-xs text-slate-500 capitalize mb-1">{key.replace(/_/g, " ")}</p>
-                        <p className="text-sm font-bold text-slate-900">
-                          {typeof value === "boolean" ? (value ? "Yes" : "No") :
-                           typeof value === "number" && key.includes("cents") ? formatCents(value) :
-                           String(value)}
-                        </p>
+              {(() => {
+                const raiseTerms = (
+                  <div className="space-y-6">
+                    <div className="bg-white border border-slate-200 rounded-xl p-6">
+                      <div className="flex flex-wrap items-center justify-between gap-4">
+                        <div>
+                          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">
+                            {km.raising_cents ? "Raising" : "Investment Required"}
+                          </p>
+                          <p className="text-3xl font-extrabold text-slate-900">
+                            {km.raising_cents
+                              ? formatCents(km.raising_cents as number)
+                              : (l.price_display ?? (l.asking_price_cents ? formatCents(l.asking_price_cents) : "Price on application"))}
+                          </p>
+                        </div>
+                        {!!km.pre_money_valuation_cents && (
+                          <div className="text-right">
+                            <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Pre-Money Valuation</p>
+                            <p className="text-xl font-bold text-slate-700">{formatCents(km.pre_money_valuation_cents as number)}</p>
+                          </div>
+                        )}
                       </div>
-                    ))}
+                    </div>
+
+                    {Object.keys(km).length > 0 && (
+                      <div className="bg-white border border-slate-200 rounded-xl p-6">
+                        <h2 className="text-base font-bold text-slate-900 mb-4">Company Details</h2>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                          {Object.entries(km).map(([key, value]) => (
+                            <div key={key} className="bg-slate-50 rounded-lg p-3">
+                              <p className="text-xs text-slate-500 capitalize mb-1">{key.replace(/_/g, " ")}</p>
+                              <p className="text-sm font-bold text-slate-900">
+                                {typeof value === "boolean" ? (value ? "Yes" : "No") :
+                                 typeof value === "number" && key.includes("cents") ? formatCents(value) :
+                                 String(value)}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
-                </div>
-              )}
+                );
+                return isEquityRaise ? (
+                  <WholesaleAttestationGate productLabel="this equity raise">
+                    {raiseTerms}
+                  </WholesaleAttestationGate>
+                ) : (
+                  raiseTerms
+                );
+              })()}
 
               {l.description && (
                 <div className="bg-white border border-slate-200 rounded-xl p-6">
@@ -246,7 +265,13 @@ export default async function StartupOpportunityDetailPage({
                 <p className="text-xs text-slate-500 mb-4">
                   Send a confidential enquiry to the founding team.
                 </p>
-                <ListingEnquiryForm listingId={l.id} listingTitle={l.title} vertical="startup" />
+                {isEquityRaise ? (
+                  <WholesaleAttestationGate productLabel="this equity raise">
+                    <ListingEnquiryForm listingId={l.id} listingTitle={l.title} vertical="startup" />
+                  </WholesaleAttestationGate>
+                ) : (
+                  <ListingEnquiryForm listingId={l.id} listingTitle={l.title} vertical="startup" />
+                )}
               </div>
               <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 flex gap-6">
                 <div className="text-center">
