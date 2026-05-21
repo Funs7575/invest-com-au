@@ -66,7 +66,7 @@ describe("FALLBACK_INTENTS integrity", () => {
   });
 
   it("exposes the 13 retail goal slugs", () => {
-    const slugs = new Set(FALLBACK_INTENTS.map((i) => i.slug));
+    const slugs = new Set<string>(FALLBACK_INTENTS.map((i) => i.slug));
     for (const goal of [
       "grow",
       "income",
