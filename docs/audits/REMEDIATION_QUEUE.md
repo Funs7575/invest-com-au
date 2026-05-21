@@ -175,6 +175,21 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 
 ## Iteration log (most recent first)
 
+### CI-RESCUE — 2026-05-21 — SP — fix foreign-table join type errors + drift gate
+
+- **Stream:** SP (startup portal)
+- **Phase:** 2 — CI rescue
+- **Branch:** `claude/audit-remediation/sp-01-capability-audit`
+- **PR:** #1048 OPEN
+- **Commit:** `724fb1c0` (merged as `7d7570db`) — fix(sp): CI rescue — remove foreign-table joins + drop sharesight from types
+- **Fixes:**
+  - `grant/route.ts` + `page.tsx`: `startup_investor_inquiries.Relationships:[]` meant `startup_rounds!inner(startup_id)` join had no type-safe FK definition. Replaced with separate queries.
+  - `lib/database.types.ts`: removed `sharesight_connections` (no CREATE TABLE in migrations, zero code refs, drop migration exists `20260729`).
+  - `.driftallowlist`: removed stale `investor_oauth_connections` + `afsl_register` entries (their migrations landed).
+  - `Database types drift gate` check now passes locally.
+  - `Supabase types drift` (live schema drift) remains pre-existing pending SP-02 migration applied to prod.
+- **STATUS: CI-RESCUE · stream=SP · pr=#1048**
+
 ### iter 493 — 2026-05-21 — SP-08 — wholesale (s708) investor certification flow
 
 - **Stream:** SP (startup portal — Tier C)
