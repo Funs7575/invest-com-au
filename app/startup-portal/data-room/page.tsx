@@ -19,6 +19,13 @@ async function getDataRoomData() {
     .maybeSingle();
   if (!profile) redirect("/startup-signup");
 
+  // Get this startup's active round IDs to scope inquiries
+  const { data: rounds } = await supabase
+    .from("startup_rounds")
+    .select("id")
+    .eq("startup_id", profile.id);
+  const roundIds = (rounds ?? []).map((r) => r.id);
+
   const [filesRes, inquiriesRes] = await Promise.all([
     supabase
       .from("startup_data_room_files")
@@ -27,8 +34,8 @@ async function getDataRoomData() {
       .order("uploaded_at", { ascending: false }),
     supabase
       .from("startup_investor_inquiries")
-      .select("id, investor_user_id, status, created_at, startup_rounds!inner(startup_id)")
-      .eq("startup_rounds.startup_id", profile.id)
+      .select("id, investor_user_id, status, created_at")
+      .in("round_id", roundIds.length > 0 ? roundIds : ["00000000-0000-0000-0000-000000000000"])
       .in("status", ["pending", "accepted"])
       .order("created_at", { ascending: false }),
   ]);

@@ -33,16 +33,22 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  // Resolve investor from inquiry — verify inquiry is on this startup's round
+  // Resolve investor from inquiry
   const { data: inquiry } = await supabase
     .from("startup_investor_inquiries")
-    .select("id, investor_user_id, startup_rounds!inner(startup_id)")
+    .select("id, investor_user_id, round_id")
     .eq("id", inquiry_id)
     .maybeSingle();
 
   if (!inquiry) return NextResponse.json({ error: "Inquiry not found" }, { status: 404 });
-  const round = inquiry.startup_rounds as unknown as { startup_id: string };
-  if (round.startup_id !== startupId) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
+  // Verify the round belongs to this startup (guards cross-startup grant attempts)
+  const { data: round } = await supabase
+    .from("startup_rounds")
+    .select("startup_id")
+    .eq("id", inquiry.round_id)
+    .maybeSingle();
+  if (!round || round.startup_id !== startupId) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   const investorUserId = inquiry.investor_user_id;
 
