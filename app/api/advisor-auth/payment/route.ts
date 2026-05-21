@@ -4,6 +4,7 @@ import { requireAdvisorSession } from "@/lib/require-advisor-session";
 import { getStripe } from "@/lib/stripe";
 import { logger } from "@/lib/logger";
 import { getSiteUrl } from "@/lib/url";
+import { isAllowed } from "@/lib/rate-limit-db";
 
 const log = logger("advisor-payment");
 
@@ -25,6 +26,12 @@ export async function POST(request: NextRequest) {
     const advisorId = await requireAdvisorSession(request);
     if (!advisorId) {
       return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+    }
+
+    // Rate limit per advisor — each call creates a Stripe customer/checkout
+    // session and a pending top-up row, so cap scripted abuse.
+    if (!(await isAllowed("advisor_credit_topup", `a:${advisorId}`, { max: 10, refillPerSec: 10 / 3600 }))) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
     }
 
     let body: { credit_pack?: unknown };

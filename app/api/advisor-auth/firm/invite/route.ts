@@ -5,6 +5,7 @@ import { randomBytes } from "crypto";
 import { sendFirmInvitation } from "@/lib/advisor-emails";
 import { getSiteUrl } from "@/lib/url";
 import { logger } from "@/lib/logger";
+import { isAllowed } from "@/lib/rate-limit-db";
 
 const log = logger("advisor-auth:firm:invite");
 
@@ -27,6 +28,12 @@ export async function POST(request: NextRequest) {
   try {
     const advisor = await getFirmAdmin(request);
     if (!advisor) return NextResponse.json({ error: "Only firm admins can invite members" }, { status: 403 });
+
+    // Rate limit per firm admin — invites send email to an attacker-supplied
+    // recipient, so cap to prevent the endpoint being used as a spam relay.
+    if (!(await isAllowed("firm_invite", `a:${advisor.id}`, { max: 20, refillPerSec: 20 / 3600 }))) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+    }
 
     const admin = createAdminClient();
 
@@ -134,6 +141,12 @@ export async function PATCH(request: NextRequest) {
   try {
     const advisor = await getFirmAdmin(request);
     if (!advisor) return NextResponse.json({ error: "Only firm admins can manage invitations" }, { status: 403 });
+
+    // Rate limit per firm admin — the resend action re-sends invitation email
+    // to the stored recipient; cap to prevent spam-relay abuse.
+    if (!(await isAllowed("firm_invite_manage", `a:${advisor.id}`, { max: 30, refillPerSec: 30 / 3600 }))) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+    }
 
     const admin = createAdminClient();
 
