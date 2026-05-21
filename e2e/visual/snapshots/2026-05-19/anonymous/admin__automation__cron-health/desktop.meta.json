@@ -1,0 +1,8 @@
+{
+  "route": "/admin/automation/cron-health",
+  "finalUrl": "https://invest-com-au.vercel.app/admin/login?redirect=%2Fadmin%2Fautomation%2Fcron-health",
+  "status": 200,
+  "redirected": true,
+  "capturedAt": "2026-05-19T22:32:02.113Z",
+  "viewport": "desktop"
+}

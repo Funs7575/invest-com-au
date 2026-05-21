@@ -1,0 +1,8 @@
+{
+  "route": "/admin/sponsored-queue",
+  "finalUrl": "https://invest-com-au.vercel.app/admin/login?redirect=%2Fadmin%2Fsponsored-queue",
+  "status": 200,
+  "redirected": true,
+  "capturedAt": "2026-05-19T22:41:53.992Z",
+  "viewport": "desktop"
+}
