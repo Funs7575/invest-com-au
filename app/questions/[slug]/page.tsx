@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { breadcrumbJsonLd, absoluteUrl } from "@/lib/seo";
-import { faqJsonLd } from "@/lib/schema-markup";
+import { faqJsonLd, speakableWebPageJsonLd } from "@/lib/schema-markup";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import {
   QUESTIONS_BY_SLUG,
@@ -61,6 +61,14 @@ export default async function QuestionPage({ params }: Props) {
       ? faqJsonLd(question.faqs.map((f) => ({ q: f.q, a: f.a })))
       : null;
 
+  // Speakable: mark the question + short answer as the extractable answer region
+  // so AI/voice engines surface the direct answer. See lib/schema-markup.ts.
+  const speakableLd = speakableWebPageJsonLd({
+    name: question.question,
+    path: `/questions/${slug}`,
+    selectors: ["#question-title", "#question-short-answer"],
+  });
+
   const relatedQuestions = question.relatedSlugs
     .map((s) => QUESTIONS_BY_SLUG.get(s))
     .filter(Boolean);
@@ -77,6 +85,10 @@ export default async function QuestionPage({ params }: Props) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
         />
       )}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableLd) }}
+      />
 
       <main className="max-w-3xl mx-auto px-4 py-12">
         {/* Breadcrumb */}
@@ -103,7 +115,7 @@ export default async function QuestionPage({ params }: Props) {
 
         {/* Question header */}
         <header className="mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-snug mb-4">
+          <h1 id="question-title" className="text-2xl sm:text-3xl font-bold text-gray-900 leading-snug mb-4">
             {question.question}
           </h1>
           {/* Short answer box */}
@@ -111,7 +123,7 @@ export default async function QuestionPage({ params }: Props) {
             <p className="text-sm font-semibold text-emerald-800 mb-1">
               Short answer
             </p>
-            <p className="text-gray-800">{question.shortAnswer}</p>
+            <p id="question-short-answer" className="text-gray-800">{question.shortAnswer}</p>
           </div>
         </header>
 
