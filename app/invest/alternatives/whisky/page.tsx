@@ -283,7 +283,7 @@ export default async function WhiskyInvestPage() {
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-red-500 font-bold shrink-0 mt-0.5">-</span>
-                    Annual evaporation ("angels&apos; share") reduces volume
+                    Annual evaporation (&quot;angels&apos; share&quot;) reduces volume
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-red-500 font-bold shrink-0 mt-0.5">-</span>
