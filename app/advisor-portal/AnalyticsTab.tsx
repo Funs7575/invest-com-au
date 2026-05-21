@@ -1,7 +1,17 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Icon from "@/components/Icon";
 import type { Advisor, Stats, Lead, ProfileCompleteness, ViewType } from "./types";
+
+interface LeadBenchmark {
+  available: boolean;
+  advisor_type?: string;
+  peer_count?: number;
+  window_days?: number;
+  peer_accept_rate_pct?: number;
+  peer_conversion_rate_pct?: number;
+}
 
 function formatResponseTime(minutes: number | null): string {
   if (minutes === null) return "—";
@@ -20,6 +30,24 @@ type Props = {
 };
 
 export default function AnalyticsTab({ stats, advisor, leads, profileCompleteness, onNavigate }: Props) {
+  const [benchmark, setBenchmark] = useState<LeadBenchmark | null>(null);
+  useEffect(() => {
+    let active = true;
+    fetch("/api/advisor-portal/lead-quality-benchmark")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (active && d) setBenchmark(d as LeadBenchmark);
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const myAccept = stats?.acceptRate ?? 0;
+  const acceptAhead =
+    benchmark?.available && myAccept >= (benchmark.peer_accept_rate_pct ?? 0);
+
   return (
     <div className="space-y-4 md:space-y-6">
       <div>
@@ -123,6 +151,44 @@ export default function AnalyticsTab({ stats, advisor, leads, profileCompletenes
             })()}
           </div>
         </div>
+        {benchmark?.available && (
+          <div className="mt-3 pt-3 border-t border-slate-100">
+            <p className="text-[0.6rem] font-medium text-slate-400 uppercase tracking-wide mb-2">
+              vs other {benchmark.advisor_type?.replace(/_/g, " ")}s · last{" "}
+              {benchmark.window_days} days · {benchmark.peer_count} peers
+            </p>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-slate-50 rounded-xl p-3 text-center">
+                <p className="text-sm font-bold text-slate-900">
+                  {myAccept}%{" "}
+                  <span className="text-slate-400 font-normal">vs</span>{" "}
+                  {benchmark.peer_accept_rate_pct}%
+                </p>
+                <p className="text-[0.6rem] text-slate-500 mt-1">
+                  Your accept rate vs peers
+                </p>
+                <p
+                  className={`text-[0.55rem] mt-0.5 font-medium ${acceptAhead ? "text-emerald-600" : "text-amber-600"}`}
+                >
+                  {acceptAhead ? "Above peer average" : "Below peer average"}
+                </p>
+              </div>
+              <div className="bg-slate-50 rounded-xl p-3 text-center">
+                <p className="text-sm font-bold text-slate-900">
+                  {stats?.conversionRate ?? "0"}%{" "}
+                  <span className="text-slate-400 font-normal">vs</span>{" "}
+                  {benchmark.peer_conversion_rate_pct}%
+                </p>
+                <p className="text-[0.6rem] text-slate-500 mt-1">
+                  Your conversion vs peers
+                </p>
+                <p className="text-[0.55rem] text-slate-400 mt-0.5">
+                  Same-type advisors only
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Response time */}
