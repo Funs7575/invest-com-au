@@ -114,7 +114,8 @@ export default async function StartupOpportunityDetailPage({
   // C8: equity raises are securities offers under the Corporations Act and are
   // gated to wholesale (s708) investors. Hide raise terms (valuation/instrument)
   // and the enquiry form behind a self-attestation interstitial.
-  const isEquityRaise = deriveListingKind(l) === "equity_raise";
+  const isEquityRaise =
+    deriveListingKind(l as unknown as Parameters<typeof deriveListingKind>[0]) === "equity_raise";
 
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
