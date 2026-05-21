@@ -492,6 +492,31 @@ export function speakableSpecification(cssSelectors: string[]) {
   return { "@type": "SpeakableSpecification" as const, cssSelector: cssSelectors };
 }
 
+export interface SpeakableWebPageInput {
+  /** Page name (typically the question / headline). */
+  name: string;
+  /** Site-relative path, e.g. "/questions/how-much-super". */
+  path: string;
+  /** Selectors for the answer-first region — must resolve to real, unique elements. */
+  selectors: string[];
+}
+
+/**
+ * Generic WebPage carrying just a `speakable` answer region. Use on any
+ * answer-first page that doesn't have a richer dedicated builder — Q&A pages,
+ * articles, versus TL;DRs. The selectors should wrap the heading + lead/short
+ * answer so AI and voice systems extract the answer directly.
+ */
+export function speakableWebPageJsonLd(input: SpeakableWebPageInput) {
+  return compact({
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: input.name,
+    url: absoluteUrl(input.path),
+    speakable: speakableSpecification(input.selectors),
+  });
+}
+
 export interface DefinedTermPageInput extends DefinedTermInput {
   /** Selectors for the answer-first content (heading + lead definition).
    *  Must match real, unique elements on the rendered page. */

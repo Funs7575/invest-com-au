@@ -12,6 +12,7 @@ import {
   definedTermSetJsonLd,
   definedTermPageJsonLd,
   speakableSpecification,
+  speakableWebPageJsonLd,
 } from "@/lib/schema-markup";
 
 describe("articleJsonLd", () => {
@@ -384,5 +385,26 @@ describe("definedTermPageJsonLd", () => {
   it("honours custom speakable selectors", () => {
     const out = definedTermPageJsonLd({ ...BASE, speakableSelectors: ["#x"] }) as Bag;
     expect((out.speakable as Bag).cssSelector).toEqual(["#x"]);
+  });
+});
+
+describe("speakableWebPageJsonLd", () => {
+  const BASE = {
+    name: "How much super do I need to retire?",
+    path: "/questions/how-much-super-to-retire",
+    selectors: ["#question-title", "#question-short-answer"],
+  };
+
+  it("emits a WebPage with a speakable spec over the given selectors", () => {
+    const out = speakableWebPageJsonLd(BASE) as Bag;
+    expect(out["@type"]).toBe("WebPage");
+    expect(out.name).toBe(BASE.name);
+    expect((out.speakable as Bag)["@type"]).toBe("SpeakableSpecification");
+    expect((out.speakable as Bag).cssSelector).toEqual(BASE.selectors);
+  });
+
+  it("resolves the path to an absolute URL", () => {
+    const out = speakableWebPageJsonLd(BASE) as Bag;
+    expect(String(out.url)).toContain("/questions/how-much-super-to-retire");
   });
 });
