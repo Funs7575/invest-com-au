@@ -1,0 +1,8 @@
+{
+  "route": "/admin/fee-queue",
+  "finalUrl": "https://invest-com-au.vercel.app/admin/login?redirect=%2Fadmin%2Ffee-queue",
+  "status": 200,
+  "redirected": true,
+  "capturedAt": "2026-05-19T22:35:49.932Z",
+  "viewport": "desktop"
+}

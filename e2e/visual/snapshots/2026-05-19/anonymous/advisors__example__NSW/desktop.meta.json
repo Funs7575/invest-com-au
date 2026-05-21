@@ -1,0 +1,8 @@
+{
+  "route": "/advisors/example/NSW",
+  "finalUrl": "https://invest-com-au.vercel.app/advisors/example/NSW",
+  "status": 200,
+  "redirected": false,
+  "capturedAt": "2026-05-19T22:47:10.249Z",
+  "viewport": "desktop"
+}

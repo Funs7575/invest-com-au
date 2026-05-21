@@ -1,0 +1,8 @@
+{
+  "route": "/admin/marketplace/attribution",
+  "finalUrl": "https://invest-com-au.vercel.app/admin/login?redirect=%2Fadmin%2Fmarketplace%2Fattribution",
+  "status": 200,
+  "redirected": true,
+  "capturedAt": "2026-05-19T22:37:51.222Z",
+  "viewport": "desktop"
+}

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { buildConsentCookie } from "@/lib/consent";
 
 interface CookiePreferences {
   essential: boolean; // always true
@@ -43,6 +44,9 @@ export default function CookieBanner() {
   const saveAndClose = (preferences: CookiePreferences) => {
     localStorage.setItem("cookie-preferences", JSON.stringify(preferences));
     localStorage.setItem("cookie-consent", preferences.analytics ? "accepted" : "declined");
+    // Mirror to an SSR-readable cookie so the server + first client render gate
+    // pixels synchronously, instead of waiting for a localStorage read (§5 #20).
+    document.cookie = buildConsentCookie(preferences.analytics);
     setIsAnimating(false);
     setTimeout(() => setIsVisible(false), 300);
   };

@@ -3,6 +3,9 @@ import { requireCronAuth } from "@/lib/cron-auth";
 import { wrapCronHandler } from "@/lib/cron-run-log";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getCurrentTmd } from "@/lib/tmds";
+import { sendEmail } from "@/lib/resend";
+import { ADMIN_EMAIL } from "@/lib/admin";
+import { escapeHtml } from "@/lib/html-escape";
 import { logger } from "@/lib/logger";
 
 const log = logger("cron-tmd-audit");
@@ -71,6 +74,26 @@ async function handler(req: NextRequest): Promise<NextResponse> {
       missing_count: missing.length,
       sample: missing.slice(0, 5).map((m) => m.slug),
     });
+
+    // Proactively alert compliance — don't rely on someone opening the
+    // data-health surface. An expired/missing TMD on an active product is a
+    // DDO s994A–C exposure (audit §5 #10).
+    try {
+      const rows = missing
+        .slice(0, 50)
+        .map((m) => `<li>${escapeHtml(m.name)} (${escapeHtml(m.slug)})</li>`)
+        .join("");
+      await sendEmail({
+        to: ADMIN_EMAIL,
+        subject: `⚠️ TMD coverage gap — ${missing.length} active product(s) without a current TMD`,
+        html: `<p>${missing.length} active broker product(s) have no current (non-expired) Target Market Determination on file. DDO s994A–C requires one on every product page.</p><ul>${rows}</ul><p>Upload or renew the TMDs in the admin TMD manager.</p>`,
+        bypassSuppression: true,
+      });
+    } catch (err) {
+      log.warn("TMD coverage alert email failed", {
+        err: err instanceof Error ? err.message : String(err),
+      });
+    }
   } else {
     // Clear any previous issue row — coverage is complete again.
     try {

@@ -1,9 +1,6 @@
 "use client";
 
-/* eslint-disable react-hooks/set-state-in-effect */
-
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import GetMatchedEmbed from "@/components/get-matched/GetMatchedEmbed";
@@ -18,6 +15,11 @@ import { ADVISOR_SPECIALTY_CATEGORIES } from "@/lib/advisor-specialties";
 import TabBar from "@/components/directory/TabBar";
 import SearchInput from "@/components/directory/SearchInput";
 import SortDropdown from "@/components/directory/SortDropdown";
+import { useDirectoryParams } from "@/lib/hooks/useDirectoryParams";
+import FilterPanel from "@/components/directory/FilterPanel";
+import FacetGroup from "@/components/directory/FacetGroup";
+import RangeSlider from "@/components/directory/RangeSlider";
+import FilterChips from "@/components/directory/FilterChips";
 
 export interface ExpertTeamCard {
   id: number;
@@ -56,6 +58,12 @@ const TYPE_FILTERS: { key: ProfessionalType | "all"; label: string; icon: string
     }))
     .sort((a, b) => a.label.localeCompare(b.label)),
 ];
+
+// Multi-select facet options for the advisor-type FacetGroup. The "all"
+// pseudo-entry is dropped — an empty selection already means "all types".
+const TYPE_FACET_OPTIONS: { value: ProfessionalType; label: string }[] = TYPE_FILTERS
+  .filter((f): f is { key: ProfessionalType; label: string; icon: string } => f.key !== "all")
+  .map((f) => ({ value: f.key, label: f.label }));
 
 const RADIUS_OPTIONS = [
   { value: 10, label: "10 km" },
@@ -197,8 +205,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
   /** PR queue #12.5 — visitor's resolved intent country. When set, every advisor card renders an EligibilityBadge based on country_eligibility. */
   intentCountry?: import("@/lib/intent-context").IntentCountryCode | null;
 }) {
-  const searchParams = useSearchParams();
-  const router = useRouter();
+  const { params: searchParams, setParams, clearParams } = useDirectoryParams();
   const trackedRef = useRef(false);
 
   useEffect(() => {
@@ -213,34 +220,96 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
     }, '/advisors');
   }, [professionals.length, firms.length, expertTeams.length, initialType, initialState]);
 
-  const [providerType, setProviderType] = useState<ProviderType>("all");
-  const [typeFilters, setTypeFilters] = useState<Set<ProfessionalType>>(() => {
-    if (initialType) return new Set([initialType]);
-    return new Set();
-  });
-  const toggleType = (key: ProfessionalType | "all") => {
-    if (key === "all") {
-      setTypeFilters(new Set());
-    } else {
-      setTypeFilters(prev => {
-        const next = new Set(prev);
-        if (next.has(key)) next.delete(key); else next.add(key);
-        return next;
-      });
-    }
-  };
-  const [stateFilter, setStateFilter] = useState<string>(initialState || "all");
-  const [specialtyFilters, setSpecialtyFilters] = useState<string[]>([]);
+  // ── URL-first filter state (the URL is the single source of truth, mirroring
+  //    InvestListingsClient). Route-scoped pages seed type/state from the route
+  //    when the corresponding param is absent. ──
+  const providerType: ProviderType = (() => {
+    const pt = searchParams.get("provider_type");
+    return pt === "individual" || pt === "firm" || pt === "team" ? pt : "all";
+  })();
+
+  const typeParam = searchParams.get("type") ?? "";
+  const typeFilters = useMemo<Set<ProfessionalType>>(() => {
+    const fromUrl = typeParam
+      .split(",")
+      .filter((k) => TYPE_FILTERS.some((f) => f.key === k)) as ProfessionalType[];
+    if (fromUrl.length) return new Set(fromUrl);
+    return new Set(initialType ? [initialType] : []);
+  }, [typeParam, initialType]);
+
+  const stateParam = searchParams.get("state");
+  const stateFilter =
+    stateParam && (AU_STATES as readonly string[]).includes(stateParam)
+      ? stateParam
+      : initialState || "all";
+
+  const specialtyParam = searchParams.get("specialty") ?? "";
+  const specialtyFilters = useMemo(
+    () => specialtyParam.split(",").map((s) => s.trim()).filter(Boolean),
+    [specialtyParam],
+  );
+
+  const languageFilter = searchParams.get("language") || "all";
+
+  const sortParam = searchParams.get("sort");
+  const sortBy: SortKey = SORT_OPTIONS.some((o) => o.value === sortParam)
+    ? (sortParam as SortKey)
+    : "rating";
+
+  const setProviderType = useCallback(
+    (v: ProviderType) => setParams({ provider_type: v === "all" ? "" : v }),
+    [setParams],
+  );
+  const setTypeFilters = useCallback(
+    (next: Set<ProfessionalType>) => setParams({ type: Array.from(next).join(",") }),
+    [setParams],
+  );
+  const toggleType = useCallback(
+    (key: ProfessionalType) => {
+      const next = new Set(typeFilters);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      setTypeFilters(next);
+    },
+    [typeFilters, setTypeFilters],
+  );
+  const setStateFilter = useCallback(
+    (v: string) => setParams({ state: v === "all" ? "" : v }),
+    [setParams],
+  );
+  const setSpecialtyFilters = useCallback(
+    (next: string[]) => setParams({ specialty: next.join(",") }),
+    [setParams],
+  );
+  const toggleSpecialty = useCallback(
+    (s: string) =>
+      setSpecialtyFilters(
+        specialtyFilters.includes(s)
+          ? specialtyFilters.filter((x) => x !== s)
+          : [...specialtyFilters, s],
+      ),
+    [specialtyFilters, setSpecialtyFilters],
+  );
+  const setLanguageFilter = useCallback(
+    (v: string) => setParams({ language: v === "all" ? "" : v }),
+    [setParams],
+  );
+  const setSortBy = useCallback(
+    (v: SortKey) => setParams({ sort: v === "rating" ? "" : v }),
+    [setParams],
+  );
+
+  // ── Purely-local UI state (never persisted to the URL) ──
   const [feeFilter, setFeeFilter] = useState<string>("all");
   const [firmFilter, setFirmFilter] = useState<string>("all");
   const [minRating, setMinRating] = useState<number>(0);
   const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [internationalOnly, setInternationalOnly] = useState(false);
-  const [languageFilter, setLanguageFilter] = useState<string>("all");
   const [acceptingOnly, setAcceptingOnly] = useState(false);
   const [videoOnly, setVideoOnly] = useState(false);
-  const [search, setSearch] = useState("");
-  const [sortBy, setSortBy] = useState<SortKey>("rating");
+  const initialQuery = searchParams.get("q") ?? "";
+  const [search, setSearch] = useState(initialQuery);
+  useEffect(() => { setSearch(initialQuery); }, [initialQuery]);
   const [page, setPage] = useState(1);
   const [filtersOpen, setFiltersOpen] = useState(false);
 
@@ -291,15 +360,6 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
 
   const isLocationActive = userLat !== null && userLng !== null;
 
-  // When location is selected from search
-  useEffect(() => {
-    if (locationSearch) {
-      setUserLat(locationSearch.latitude);
-      setUserLng(locationSearch.longitude);
-      setSortBy("distance");
-    }
-  }, [locationSearch]);
-
   // Fetch nearby advisors when location/radius changes
   useEffect(() => {
     if (!isLocationActive) { setNearbyResults(null); return; }
@@ -320,57 +380,6 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
       .catch(() => setNearbyLoading(false));
     return () => controller.abort();
   }, [userLat, userLng, radius, typeFilters, feeFilter, specialtyFilters, isLocationActive]);
-
-  useEffect(() => {
-    const pt = searchParams.get("provider_type");
-    if (pt === "individual" || pt === "firm" || pt === "team") setProviderType(pt);
-
-    if (initialType || initialState) return;
-    const t = searchParams.get("type");
-    const s = searchParams.get("state");
-    const sp = searchParams.get("specialty");
-    const sort = searchParams.get("sort");
-    const q = searchParams.get("q");
-    const lang = searchParams.get("language");
-    if (t) {
-      const types = t.split(",").filter(v => TYPE_FILTERS.some(f => f.key === v)) as ProfessionalType[];
-      if (types.length > 0) setTypeFilters(new Set(types));
-    }
-    if (s && AU_STATES.includes(s as typeof AU_STATES[number])) setStateFilter(s);
-    if (sp) setSpecialtyFilters(sp.split(","));
-    if (sort) setSortBy(sort as SortKey);
-    if (q) setSearch(q);
-    if (lang) setLanguageFilter(lang);
-  }, [searchParams, initialType, initialState]);
-
-  const initialRenderRef = useRef(true);
-
-  const updateURL = useCallback(() => {
-    const params = new URLSearchParams();
-    if (providerType !== "all") params.set("provider_type", providerType);
-    if (typeFilters.size > 0) params.set("type", Array.from(typeFilters).join(","));
-    if (stateFilter !== "all") params.set("state", stateFilter);
-    if (specialtyFilters.length) params.set("specialty", specialtyFilters.join(","));
-    if (languageFilter !== "all") params.set("language", languageFilter);
-    if (sortBy !== "rating") params.set("sort", sortBy);
-    if (search) params.set("q", search);
-    const qs = params.toString();
-    const newPath = `/advisors${qs ? `?${qs}` : ""}`;
-    // Skip if URL hasn't changed (prevents initial load re-render cycle)
-    const currentQs = searchParams.toString();
-    if (qs === currentQs) return;
-    router.replace(newPath, { scroll: false });
-  }, [providerType, typeFilters, stateFilter, specialtyFilters, languageFilter, sortBy, search, router, searchParams]);
-
-  useEffect(() => {
-    // Skip the very first render to prevent immediate router.replace on page load
-    if (initialRenderRef.current) {
-      initialRenderRef.current = false;
-      return;
-    }
-    const t = setTimeout(updateURL, 300);
-    return () => clearTimeout(t);
-  }, [updateURL]);
 
   useEffect(() => { setPage(1); }, [providerType, typeFilters, stateFilter, specialtyFilters, feeFilter, firmFilter, minRating, verifiedOnly, internationalOnly, languageFilter, acceptingOnly, videoOnly, search, sortBy, nearbyResults]);
 
@@ -567,15 +576,13 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
     ? `Browse verified ${activeTypeLabel.toLowerCase()} across Australia. Filter by location, fees, and specialties.`
     : pageDescription || "Browse verified Australian financial professionals. Filter by location, type, fees, and specialties.";
 
-  const toggleSpecialty = (s: string) => setSpecialtyFilters(prev => prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s]);
-  const clearAll = () => {
-    setProviderType("all");
-    setTypeFilters(new Set()); setStateFilter("all"); setSpecialtyFilters([]); setFeeFilter("all");
-    setFirmFilter("all"); setMinRating(0);
-    setVerifiedOnly(false); setInternationalOnly(false); setSearch(""); setSortBy("rating");
-    setLanguageFilter("all"); setAcceptingOnly(false); setVideoOnly(false);
+  const clearAll = useCallback(() => {
+    clearParams(["provider_type", "type", "state", "specialty", "language", "sort", "q"]);
+    setFeeFilter("all"); setFirmFilter("all"); setMinRating(0);
+    setVerifiedOnly(false); setInternationalOnly(false); setSearch("");
+    setAcceptingOnly(false); setVideoOnly(false);
     setLocationSearch(null); setUserLat(null); setUserLng(null); setRadius(25);
-  };
+  }, [clearParams]);
 
   const allLanguages = useMemo(() => {
     const present = new Set<string>();
@@ -587,6 +594,32 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
     const extra = Array.from(present).filter(l => !(AU_LANGUAGES as readonly string[]).includes(l)).sort();
     return [...ordered, ...extra];
   }, [professionals]);
+
+  // Active-filter chips — mirrors the bespoke strip that lived here before,
+  // now rendered through the shared <FilterChips> primitive.
+  const activeChips: { label: string; onClear: () => void }[] = [];
+  if (isLocationActive && locationSearch) {
+    activeChips.push({
+      label: `${radius > 0 ? `${radius}km from ` : "Near "}${locationSearch.locality}`,
+      onClear: () => { setLocationSearch(null); setUserLat(null); setUserLng(null); },
+    });
+  }
+  for (const t of Array.from(typeFilters)) {
+    activeChips.push({
+      label: TYPE_FILTERS.find(f => f.key === t)?.label ?? t,
+      onClear: () => toggleType(t),
+    });
+  }
+  if (stateFilter !== "all") activeChips.push({ label: stateFilter, onClear: () => setStateFilter("all") });
+  for (const s of specialtyFilters) activeChips.push({ label: s, onClear: () => toggleSpecialty(s) });
+  if (feeFilter !== "all") activeChips.push({ label: feeFilter, onClear: () => setFeeFilter("all") });
+  if (firmFilter !== "all") activeChips.push({ label: firmFilter, onClear: () => setFirmFilter("all") });
+  if (minRating > 0) activeChips.push({ label: `${minRating}+ ★`, onClear: () => setMinRating(0) });
+  if (verifiedOnly) activeChips.push({ label: "Verified", onClear: () => setVerifiedOnly(false) });
+  if (internationalOnly) activeChips.push({ label: "🌏 International clients", onClear: () => setInternationalOnly(false) });
+  if (languageFilter !== "all") activeChips.push({ label: `Speaks ${languageFilter}`, onClear: () => setLanguageFilter("all") });
+  if (acceptingOnly) activeChips.push({ label: "✓ Accepting new", onClear: () => setAcceptingOnly(false) });
+  if (videoOnly) activeChips.push({ label: "▶ Intro video", onClear: () => setVideoOnly(false) });
 
   return (
     <div className="py-5 md:py-12">
@@ -684,12 +717,13 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
             id="advisors-search"
             value={search}
             onChange={setSearch}
+            onSubmit={(q) => setParams({ q: q.trim() })}
             placeholder="Search name, firm, team, specialty, suburb..."
             ariaLabel="Search advisors"
           />
-          <button onClick={() => setFiltersOpen(!filtersOpen)} className={`flex items-center gap-1.5 px-3 md:px-4 py-2 border rounded-lg text-sm font-semibold transition-all shrink-0 ${filtersOpen || activeFilterCount > 0 ? "bg-amber-50 border-amber-300 text-amber-700" : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"}`}>
+          <button onClick={() => setFiltersOpen(!filtersOpen)} className={`md:hidden flex items-center gap-1.5 px-3 py-2 border rounded-lg text-sm font-semibold transition-all shrink-0 ${filtersOpen || activeFilterCount > 0 ? "bg-amber-50 border-amber-300 text-amber-700" : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"}`}>
             <Icon name="sliders" size={16} />
-            <span className="hidden md:inline">Filters</span>
+            <span>Filters</span>
             {activeFilterCount > 0 && <span className="w-5 h-5 bg-amber-600 text-white text-[0.6rem] font-bold rounded-full flex items-center justify-center">{activeFilterCount}</span>}
           </button>
           <SortDropdown
@@ -699,9 +733,14 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
           />
         </div>
 
-        {/* Filter panel */}
-        {filtersOpen && (
-          <div className="bg-white border border-slate-200 rounded-2xl p-4 md:p-5 mb-4 md:mb-6 space-y-4">
+        {/* Filter panel — shared primitive: inline on desktop, drawer on mobile */}
+        <FilterPanel
+          open={filtersOpen}
+          onClose={() => setFiltersOpen(false)}
+          onClearAll={clearAll}
+          activeCount={activeFilterCount}
+          resultCount={feed.length}
+        >
             {/* Location / Near me */}
             <div>
               <label className="text-xs font-bold text-slate-700 mb-2 block flex items-center gap-1.5">
@@ -710,7 +749,11 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               </label>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                 <div className="md:col-span-2">
-                  <LocationSearch selected={locationSearch} onSelect={(p) => { setLocationSearch(p); if (!p) { setUserLat(null); setUserLng(null); } }} />
+                  <LocationSearch selected={locationSearch} onSelect={(p) => {
+                    setLocationSearch(p);
+                    if (p) { setUserLat(p.latitude); setUserLng(p.longitude); setSortBy("distance"); }
+                    else { setUserLat(null); setUserLng(null); }
+                  }} />
                 </div>
                 <div className="flex items-center gap-2">
                   <select value={radius} onChange={e => setRadius(Number(e.target.value))} className="flex-1 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30" disabled={!isLocationActive}>
@@ -721,21 +764,17 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               </div>
             </div>
 
-            {/* Advisor Type */}
-            <div>
-              <label className="text-xs font-bold text-slate-700 mb-2 block">Advisor Type</label>
-              <div className="flex flex-wrap gap-1.5">
-                {TYPE_FILTERS.map(f => (
-                  <button key={f.key} onClick={() => toggleType(f.key)} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${(f.key === "all" ? typeFilters.size === 0 : typeFilters.has(f.key as ProfessionalType)) ? "bg-amber-600 text-white shadow-sm" : "bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200"}`}>
-                    <Icon name={f.icon} size={13} className={(f.key === "all" ? typeFilters.size === 0 : typeFilters.has(f.key as ProfessionalType)) ? "text-amber-200" : "text-slate-400"} />
-                    {f.label}
-                    {typeCounts[f.key] ? <span className={(f.key === "all" ? typeFilters.size === 0 : typeFilters.has(f.key as ProfessionalType)) ? "text-amber-200" : "text-slate-400"}>({typeCounts[f.key]})</span> : null}
-                  </button>
-                ))}
-              </div>
-            </div>
+            {/* Advisor Type — multi-select facet (empty selection = all types) */}
+            <FacetGroup
+              label="Advisor Type"
+              options={TYPE_FACET_OPTIONS}
+              selected={typeFilters}
+              onChange={setTypeFilters}
+              counts={typeCounts}
+              layout="grid"
+            />
 
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
               <div>
                 <label className="text-xs font-bold text-slate-700 mb-1.5 block">State</label>
                 <select value={stateFilter} onChange={e => setStateFilter(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30" disabled={isLocationActive}>
@@ -761,16 +800,6 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                 </select>
               </div>
               <div>
-                <label className="text-xs font-bold text-slate-700 mb-1.5 block">Min Rating</label>
-                <select value={minRating} onChange={e => setMinRating(Number(e.target.value))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30">
-                  <option value={0}>Any</option>
-                  <option value={4.5}>4.5+ ★</option>
-                  <option value={4.0}>4.0+ ★</option>
-                  <option value={3.5}>3.5+ ★</option>
-                  <option value={3.0}>3.0+ ★</option>
-                </select>
-              </div>
-              <div>
                 <label className="text-xs font-bold text-slate-700 mb-1.5 block">Language</label>
                 <select value={languageFilter} onChange={e => setLanguageFilter(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30">
                   <option value="all">Any</option>
@@ -784,6 +813,23 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                 </label>
               </div>
             </div>
+
+            {/* Minimum rating — single-handle range with rating presets */}
+            <RangeSlider
+              label="Minimum rating"
+              min={0}
+              max={5}
+              step={0.5}
+              value={minRating}
+              onChange={setMinRating}
+              formatValue={(v) => (v === 0 ? "Any" : `${v}+ ★`)}
+              presets={[
+                { label: "Any", value: 0 },
+                { label: "3+", value: 3 },
+                { label: "4+", value: 4 },
+                { label: "4.5+", value: 4.5 },
+              ]}
+            />
 
             {/* Toggle row — International, Accepting new, Intro video */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
@@ -875,94 +921,12 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               </div>
             </div>
 
-            <div className="flex items-center justify-between pt-2 border-t border-slate-100">
-              <button onClick={clearAll} className="text-xs text-slate-500 hover:text-slate-700 font-medium">Clear all filters</button>
-              <button onClick={() => setFiltersOpen(false)} className="px-4 py-2 bg-amber-600 text-white text-xs font-bold rounded-lg hover:bg-amber-700 transition-colors">
-                {nearbyLoading ? "Searching..." : `Show ${feed.length} result${feed.length !== 1 ? "s" : ""}`}
-              </button>
-            </div>
-          </div>
-        )}
+        </FilterPanel>
 
-        {/* Active filter chips */}
-        {activeFilterCount > 0 && !filtersOpen && (
-          <div className="flex flex-wrap items-center gap-1.5 mb-3">
-            {isLocationActive && locationSearch && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-100 text-amber-700 text-[0.65rem] font-semibold rounded-full">
-                <Icon name="map-pin" size={11} />
-                {radius > 0 ? `${radius}km from ` : "Near "}{locationSearch.locality}
-                <button onClick={() => { setLocationSearch(null); setUserLat(null); setUserLng(null); }} className="hover:text-amber-900"><Icon name="x" size={12} /></button>
-              </span>
-            )}
-            {Array.from(typeFilters).map(t => (
-              <span key={t} className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-100 text-amber-700 text-[0.65rem] font-semibold rounded-full">
-                {TYPE_FILTERS.find(f => f.key === t)?.label}
-                <button onClick={() => toggleType(t)} className="hover:text-amber-900"><Icon name="x" size={12} /></button>
-              </span>
-            ))}
-            {stateFilter !== "all" && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-100 text-blue-700 text-[0.65rem] font-semibold rounded-full">
-                {stateFilter}
-                <button onClick={() => setStateFilter("all")} className="hover:text-blue-900"><Icon name="x" size={12} /></button>
-              </span>
-            )}
-            {specialtyFilters.map(s => (
-              <span key={s} className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-100 text-emerald-700 text-[0.65rem] font-semibold rounded-full">
-                {s}
-                <button onClick={() => toggleSpecialty(s)} className="hover:text-emerald-900"><Icon name="x" size={12} /></button>
-              </span>
-            ))}
-            {feeFilter !== "all" && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-100 text-amber-700 text-[0.65rem] font-semibold rounded-full">
-                {feeFilter}
-                <button onClick={() => setFeeFilter("all")} className="hover:text-amber-900"><Icon name="x" size={12} /></button>
-              </span>
-            )}
-            {firmFilter !== "all" && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-indigo-100 text-indigo-700 text-[0.65rem] font-semibold rounded-full">
-                {firmFilter}
-                <button onClick={() => setFirmFilter("all")} className="hover:text-indigo-900"><Icon name="x" size={12} /></button>
-              </span>
-            )}
-            {minRating > 0 && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-100 text-amber-700 text-[0.65rem] font-semibold rounded-full">
-                {minRating}+ ★
-                <button onClick={() => setMinRating(0)} className="hover:text-amber-900"><Icon name="x" size={12} /></button>
-              </span>
-            )}
-            {verifiedOnly && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-100 text-slate-700 text-[0.65rem] font-semibold rounded-full">
-                Verified
-                <button onClick={() => setVerifiedOnly(false)} className="hover:text-slate-900"><Icon name="x" size={12} /></button>
-              </span>
-            )}
-            {internationalOnly && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-100 text-blue-700 text-[0.65rem] font-semibold rounded-full">
-                🌏 International clients
-                <button onClick={() => setInternationalOnly(false)} className="hover:text-blue-900"><Icon name="x" size={12} /></button>
-              </span>
-            )}
-            {languageFilter !== "all" && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-indigo-100 text-indigo-700 text-[0.65rem] font-semibold rounded-full">
-                Speaks {languageFilter}
-                <button onClick={() => setLanguageFilter("all")} className="hover:text-indigo-900"><Icon name="x" size={12} /></button>
-              </span>
-            )}
-            {acceptingOnly && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-100 text-emerald-700 text-[0.65rem] font-semibold rounded-full">
-                ✓ Accepting new
-                <button onClick={() => setAcceptingOnly(false)} className="hover:text-emerald-900"><Icon name="x" size={12} /></button>
-              </span>
-            )}
-            {videoOnly && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-indigo-100 text-indigo-700 text-[0.65rem] font-semibold rounded-full">
-                ▶ Intro video
-                <button onClick={() => setVideoOnly(false)} className="hover:text-indigo-900"><Icon name="x" size={12} /></button>
-              </span>
-            )}
-            <button onClick={clearAll} className="text-[0.62rem] text-slate-400 hover:text-slate-600 font-medium ml-1">Clear all</button>
-          </div>
-        )}
+        {/* Active filter chips — shared <FilterChips> primitive (self-hides when empty) */}
+        <div className="mb-3">
+          <FilterChips chips={activeChips} onClearAll={clearAll} />
+        </div>
 
         {/* Result count */}
         <div className="flex items-center justify-between mb-3 md:mb-4">

@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { requireCronAuth } from "@/lib/cron-auth";
+import { requireAdmin } from "@/lib/require-admin";
 
 export const dynamic = "force-dynamic";
 
@@ -62,16 +62,20 @@ async function runMigration() {
   });
 }
 
-// GET - for Vercel cron or manual browser check
-export async function GET(request: NextRequest) {
-  const unauth = requireCronAuth(request);
-  if (unauth) return unauth;
+// Admin-session only. This route inspects live schema (table/column
+// existence), so it must require a logged-in admin — not just the cron shared
+// secret, a leaked copy of which would otherwise allow schema enumeration
+// (audit §5 #12). Removed from the every-6h cron schedule; admins run it on
+// demand, and AD-90 DB-health + the data-integrity audit cron cover automated
+// schema monitoring.
+export async function GET() {
+  const guard = await requireAdmin();
+  if (!guard.ok) return guard.response;
   return runMigration();
 }
 
-// POST - for programmatic calls
-export async function POST(request: NextRequest) {
-  const unauth = requireCronAuth(request);
-  if (unauth) return unauth;
+export async function POST() {
+  const guard = await requireAdmin();
+  if (!guard.ok) return guard.response;
   return runMigration();
 }

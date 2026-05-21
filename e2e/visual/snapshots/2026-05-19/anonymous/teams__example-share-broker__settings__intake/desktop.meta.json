@@ -1,0 +1,8 @@
+{
+  "route": "/teams/example-share-broker/settings/intake",
+  "finalUrl": "https://invest-com-au.vercel.app/teams/example-share-broker/settings/intake",
+  "status": 200,
+  "redirected": false,
+  "capturedAt": "2026-05-20T00:30:40.000Z",
+  "viewport": "desktop"
+}

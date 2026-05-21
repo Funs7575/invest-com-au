@@ -1,0 +1,8 @@
+{
+  "route": "/compare/example",
+  "finalUrl": "https://invest-com-au.vercel.app/compare/example",
+  "status": 500,
+  "redirected": false,
+  "capturedAt": "2026-05-19T22:59:37.164Z",
+  "viewport": "desktop"
+}
