@@ -167,9 +167,28 @@ export async function GET(request: NextRequest) {
       userAgent: request.headers.get("user-agent") ?? "unknown",
     });
 
+    // Defense-in-depth: re-project each row to the public shape so internal
+    // columns (changed_by, auto_applied_*) can never leak through this public
+    // endpoint even if the query returns extra fields (a view change or a
+    // select("*") regression). The PUBLIC_COLUMNS projection is the first line;
+    // this is the second.
+    const data = (changes ?? []).map((c) => {
+      const row = c as Record<string, unknown>;
+      return {
+        id: row.id,
+        broker_slug: row.broker_slug,
+        field_name: row.field_name,
+        old_value: row.old_value,
+        new_value: row.new_value,
+        change_type: row.change_type,
+        changed_at: row.changed_at,
+        source: row.source,
+      };
+    });
+
     return NextResponse.json(
       {
-        data: changes ?? [],
+        data,
         meta: {
           total: count ?? (changes?.length ?? 0),
           limit,
