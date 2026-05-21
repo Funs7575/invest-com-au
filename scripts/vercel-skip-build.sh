@@ -13,7 +13,7 @@
 #   4. Docs-only commits — no runtime impact.
 #   5. LOOP_PAUSE sentinel commits — touch one file, no behaviour change.
 
-set -e
+set -euo pipefail
 
 sha="${VERCEL_GIT_COMMIT_SHA:-HEAD}"
 branch="${VERCEL_GIT_COMMIT_REF:-}"
