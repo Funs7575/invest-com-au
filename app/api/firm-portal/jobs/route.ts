@@ -41,9 +41,7 @@ const CreateJobSchema = z.object({
     .min(2, "Location must be at least 2 characters.")
     .max(100, "Location must be 100 characters or fewer."),
   type: z.enum(VALID_TYPES, {
-    errorMap: () => ({
-      message: "Type must be full_time, part_time, contract, or casual.",
-    }),
+    error: "Type must be full_time, part_time, contract, or casual.",
   }),
   description: z
     .string()
