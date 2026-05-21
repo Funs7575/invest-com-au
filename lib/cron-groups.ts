@@ -34,8 +34,9 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
     "/api/cron/lead-sla-check",
     "/api/cron/editorial-auto-publish",
   ],
-  "every-30m": ["/api/cron/heartbeat", "/api/cron/retry-webhooks"],
-  "every-6h": ["/api/admin/run-migration"],
+  "every-30m": ["/api/cron/heartbeat", "/api/cron/retry-webhooks", "/api/cron/retry-outbound-webhooks", "/api/cron/auction-close"],
+  // every-6h removed: its only member, /api/admin/run-migration, is now
+  // admin-session-only (audit §5 #12) and runs on demand, not on a schedule.
 
   "daily-0": ["/api/cron/auto-publish"],
   "daily-1": [

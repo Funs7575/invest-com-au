@@ -706,6 +706,7 @@ export default async function PersonalDashboardPage() {
           <NavCard href="/account/privacy" emoji="🔒" label="Privacy & Data" desc="Export, delete, GDPR rights" />
           <NavCard href="/account/annual-check" emoji="📅" label="Annual Check-up" desc="FY checklist: super, tax, insurance" />
           <NavCard href="/account/calendar" emoji="🗓️" label="Financial Calendar" desc="Key tax dates and deadlines" />
+          <NavCard href="/account/vault" emoji="🗂️" label="Document Vault" desc="Store super, tax, insurance docs securely" />
         </div>
       </section>
     </main>

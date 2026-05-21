@@ -3,7 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 import { requireCronAuth } from "@/lib/cron-auth";
 import { wrapCronHandler } from "@/lib/cron-run-log";
-import { refreshSuburb } from "@/lib/property-suburb-refresh";
+import { refreshSuburb, selectProvider } from "@/lib/property-suburb-refresh";
 import { isFeatureDisabled } from "@/lib/admin/classifier-config";
 
 const log = logger("cron:property-suburb-refresh");
@@ -34,6 +34,18 @@ async function handler(req: NextRequest) {
   // instantly without a deploy if something is wrong upstream.
   if (await isFeatureDisabled("property_suburb_refresh")) {
     return NextResponse.json({ ok: true, skipped: "kill_switch_on" });
+  }
+
+  // Surface an unintended zero-stub: if no paid provider is configured the
+  // refresh writes empty diffs and would otherwise look like a clean success.
+  // Alert loudly so a missing CORELOGIC_API_KEY / SQM_RESEARCH_API_KEY in prod
+  // doesn't silently freeze suburb data. (A deliberately provider-less env
+  // still no-ops; the alert just makes the state visible to ops.)
+  const provider = selectProvider();
+  if (provider === "stub") {
+    log.error(
+      "property-suburb-refresh running in STUB mode — no data provider configured (CORELOGIC_API_KEY and SQM_RESEARCH_API_KEY both unset); suburb data is not being refreshed",
+    );
   }
 
   const supabase = createAdminClient();
@@ -85,8 +97,8 @@ async function handler(req: NextRequest) {
     }
   }
 
-  log.info("property-suburb-refresh cron completed", stats);
-  return NextResponse.json({ ok: true, ...stats });
+  log.info("property-suburb-refresh cron completed", { provider, ...stats });
+  return NextResponse.json({ ok: true, provider, ...stats });
 }
 
 export const GET = wrapCronHandler("property-suburb-refresh", handler);

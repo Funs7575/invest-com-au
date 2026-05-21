@@ -1,39 +1,42 @@
 #!/bin/bash
 # Vercel "Ignored Build Step" — exit 0 = SKIP build, exit 1 = BUILD.
 #
-# Wired in via vercel.json's `ignoreCommand`. Two skip rules:
+# Default policy: skip everything except manually-triggered deploys.
+# To deploy to production: push a commit whose subject starts with
+# "ci: force redeploy" (or "ci: force deploy" / "ci: force build").
 #
-#   1. Docs-only commits — only files under docs/, *.md at root, or the
-#      remediation queue/log files. No runtime impact, no need to build.
-#
-#   2. Loop pause sentinel commits (LOOP_PAUSE) — pause/resume commits
-#      touch a single file and don't change behaviour.
-#
-# Anything else builds normally — including loop-authored branches
-# (claude/audit-remediation/*). Loop PRs MUST build because the
-# `Preview smoke test (critical URLs)` CI gate looks up the Vercel
-# deployment registered to the head SHA; if no build runs, no
-# deployment exists, and the gate times out — forcing admin-merge
-# bypasses on every loop PR. The CPU savings from skipping loop
-# branches were not worth that ergonomic cost.
+# Skip rules (in order):
+#   1. Force-build escape hatch — always builds regardless of branch.
+#   2. main branch — skip by default; only deploy when explicitly needed.
+#   3. claude/* agent branches — loop PRs no longer need preview builds;
+#      the Preview smoke test CI gate has been removed to match.
+#   4. Docs-only commits — no runtime impact.
+#   5. LOOP_PAUSE sentinel commits — touch one file, no behaviour change.
 
 set -e
 
 sha="${VERCEL_GIT_COMMIT_SHA:-HEAD}"
+branch="${VERCEL_GIT_COMMIT_REF:-}"
 
-# Force-build escape hatch — `git commit -m "ci: force redeploy ..."`
-# always builds, even for empty commits. Useful when prior main pushes
-# missed the GitHub→Vercel webhook and the site is stale. Anchored to
-# the start of the subject so it can't be confused with body mentions.
+# 1. Force-build escape hatch
 if git log -1 --format=%s "$sha" 2>/dev/null | grep -qE '^ci: force[ -](redeploy|deploy|build)\b'; then
   echo "build: force-redeploy marker in commit subject"
   exit 1
 fi
 
-# Files-changed inspection
-# `git diff --quiet` exits 0 if no diff (i.e. excluded paths cover
-# everything), so we invert: if --quiet returns 0 after excluding
-# docs/markdown/queue files, the commit is docs-only and we skip.
+# 2. Skip main — deploy manually when you're ready to go live
+if [ "$branch" = "main" ]; then
+  echo "skip: main branch — use 'ci: force redeploy' to deploy"
+  exit 0
+fi
+
+# 3. Skip all agent/loop branches
+if [[ "$branch" == claude/* ]]; then
+  echo "skip: agent branch"
+  exit 0
+fi
+
+# 4+5. Skip docs-only / pause-sentinel commits
 if git diff --quiet "$sha^" "$sha" -- \
      ':(exclude)docs/' \
      ':(exclude)*.md' \
@@ -43,6 +46,6 @@ if git diff --quiet "$sha^" "$sha" -- \
   exit 0
 fi
 
-# Otherwise: build
+# Otherwise: build (e.g. your own feature branches)
 echo "build: changes outside skip patterns"
 exit 1

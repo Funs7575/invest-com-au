@@ -50,7 +50,7 @@ const COUNTRIES: { code: string; label: string; unfrankedWht: number }[] = [
   { code: "OTHER", label: "Other / no DTA", unfrankedWht: 30 },
 ];
 
-function formatAud(value: number): string {
+function formatAudDollars(value: number): string {
   return value.toLocaleString("en-AU", {
     style: "currency",
     currency: "AUD",
@@ -232,7 +232,7 @@ export default function NonResidentDividendClient() {
                 Net cash dividend received
               </p>
               <p className="text-3xl md:text-4xl font-extrabold text-green-900">
-                {formatAud(calc.netCash)}
+                {formatAudDollars(calc.netCash)}
               </p>
               <p className="text-xs text-green-800 mt-2">
                 Effective Australian withholding rate:{" "}
@@ -246,7 +246,7 @@ export default function NonResidentDividendClient() {
                   <tr>
                     <td className="px-4 py-2 text-slate-600">Gross dividend</td>
                     <td className="px-4 py-2 text-right font-bold text-slate-900">
-                      {formatAud(dividendNum)}
+                      {formatAudDollars(dividendNum)}
                     </td>
                   </tr>
                   <tr>
@@ -254,7 +254,7 @@ export default function NonResidentDividendClient() {
                       Franked portion ({frankingPct}%) — 0% WHT
                     </td>
                     <td className="px-4 py-2 text-right font-bold text-slate-900">
-                      {formatAud(calc.frankedPortion)}
+                      {formatAudDollars(calc.frankedPortion)}
                     </td>
                   </tr>
                   <tr>
@@ -262,7 +262,7 @@ export default function NonResidentDividendClient() {
                       Unfranked portion ({100 - frankingPct}%)
                     </td>
                     <td className="px-4 py-2 text-right font-bold text-slate-900">
-                      {formatAud(calc.unfrankedPortion)}
+                      {formatAudDollars(calc.unfrankedPortion)}
                     </td>
                   </tr>
                   <tr>
@@ -270,7 +270,7 @@ export default function NonResidentDividendClient() {
                       WHT on unfranked ({country.unfrankedWht}%)
                     </td>
                     <td className="px-4 py-2 text-right font-bold text-rose-700">
-                      -{formatAud(calc.unfrankedWht)}
+                      -{formatAudDollars(calc.unfrankedWht)}
                     </td>
                   </tr>
                   <tr className="bg-green-50">
@@ -278,7 +278,7 @@ export default function NonResidentDividendClient() {
                       Net cash to you
                     </td>
                     <td className="px-4 py-2 text-right font-extrabold text-green-800">
-                      {formatAud(calc.netCash)}
+                      {formatAudDollars(calc.netCash)}
                     </td>
                   </tr>
                 </tbody>

@@ -27,6 +27,7 @@
  *     200ms pacer between calls. A fresh CoreLogic call is ~300ms.
  */
 
+// eslint-disable-next-line no-restricted-imports -- ops cron writes to suburb_data + property_suburb_refresh_log (non-user-data, refreshed server-side); no anon JWT path. See CLAUDE.md § "Two Supabase clients".
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 
@@ -131,7 +132,7 @@ export async function refreshSuburb(
   return { suburbSlug, provider, fieldsChanged };
 }
 
-function selectProvider(): SuburbProvider {
+export function selectProvider(): SuburbProvider {
   if (process.env.CORELOGIC_API_KEY) return "corelogic";
   if (process.env.SQM_RESEARCH_API_KEY) return "sqm";
   return "stub";
