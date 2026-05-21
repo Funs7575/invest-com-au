@@ -90,5 +90,27 @@ The loop **must NOT** build these — they need founder + legal sign-off (Tier E
 - [!] Own/co-branded financial product (issuer/DDO; Y5+)
 - [!] Any new consumer→adviser payment clip / DD-03 (client money + RG 246)
 
+---
+
+## Execution log — 2026-05-21 interactive bootstrap (3 waves)
+The interactive session built the loop and bootstrapped the queue across 3 waves. PRs are **draft**, based off the integration branch. Builds compile; remaining red on some PRs is **lint/test** nuance (agents can't run vitest in-sandbox) — the cloud loop (full CI) or pasted logs will green them.
+
+**Shipped to draft PRs:**
+- **Phase 0** C1–C9 → #1132 (disclosures), #1133 (RLS — see follow-up), #1134 (payment/advice flag-offs), #1135 (wholesale s708 gate)
+- **Phase 1** F1–F8 → #1132
+- **Phase 2** P1–P5 → #1137
+- **Phase 3** U3–U6 → #1136  *(U1/U2 `/compare`-primitive migration deferred until #1132 merges)*
+- **Phase 5** D1 fee index → #1139 · D2 AFSL lookup → #1138 · D5 cross-border tax API → #1141
+- **Phase 7 + global-investing** H1 family-office · H3 alt-assets · H4 global-investing → #1140
+
+**Remaining for the loop:** U1/U2 · D3/D4/D6/D7 · B1–B5 · H2 (retirement/aged-care) · H5 (insurance funnel) · H6 (mortgage referral) · Phase 8 distribution · Phase 9 lifecycle funnel.
+
+## Discovered follow-ups (attach to the relevant PR before merge)
+- **#1133 RLS:** re-route admin A/B-tests writes + affiliate-dashboard reads through service-role `app/api/admin/*` (they hit the now-locked tables via the anon client) — **merge paired**.
+- **#1135 wholesale:** add server-side enforcement on `/api/listings/enquire` (current gate is client-side only).
+- **#1139 fee index:** register `/api/cron/fee-index` in `lib/cron-groups.ts` + `vercel.json`.
+- **#1140 surfaces:** register family-office + alternatives in `lib/verticals.ts` / `lib/invest-categories.ts` / nav / `app/sitemap.ts`; build the 4 `/global-investing/tax/*` deeper pages (or trim the links); add an SEO-metadata wrapper to the currency-hedging calculator (client component).
+- **#1141 tax API:** register endpoints in `app/api/v1/docs/route.ts`.
+
 ## Maintenance
 Append items as discovered; don't delete — tick to `[x]` and move resolved blockers to the bottom. When all non-HOLD phases are `[x]`, the goal is complete.
