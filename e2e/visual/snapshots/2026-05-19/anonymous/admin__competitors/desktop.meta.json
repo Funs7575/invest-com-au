@@ -1,0 +1,8 @@
+{
+  "route": "/admin/competitors",
+  "finalUrl": "https://invest-com-au.vercel.app/admin/login?redirect=%2Fadmin%2Fcompetitors",
+  "status": 200,
+  "redirected": true,
+  "capturedAt": "2026-05-19T22:34:06.645Z",
+  "viewport": "desktop"
+}

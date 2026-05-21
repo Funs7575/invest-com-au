@@ -1,0 +1,8 @@
+{
+  "route": "/admin/audit-log",
+  "finalUrl": "https://invest-com-au.vercel.app/admin/login?redirect=%2Fadmin%2Faudit-log",
+  "status": 200,
+  "redirected": true,
+  "capturedAt": "2026-05-19T22:31:12.495Z",
+  "viewport": "desktop"
+}

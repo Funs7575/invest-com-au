@@ -1,0 +1,8 @@
+{
+  "route": "/admin/marketplace-ranking",
+  "finalUrl": "https://invest-com-au.vercel.app/admin/login?redirect=%2Fadmin%2Fmarketplace-ranking",
+  "status": 200,
+  "redirected": true,
+  "capturedAt": "2026-05-19T22:37:48.645Z",
+  "viewport": "desktop"
+}

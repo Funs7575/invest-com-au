@@ -1,0 +1,8 @@
+{
+  "route": "/admin/legal",
+  "finalUrl": "https://invest-com-au.vercel.app/admin/login?redirect=%2Fadmin%2Flegal",
+  "status": 200,
+  "redirected": true,
+  "capturedAt": "2026-05-19T22:37:23.382Z",
+  "viewport": "desktop"
+}

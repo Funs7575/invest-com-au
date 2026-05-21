@@ -1,0 +1,9 @@
+page.screenshot: Timeout 10000ms exceeded.
+Call log:
+[2m  - taking page screenshot[22m
+[2m  - waiting for fonts to load...[22m
+[2m  - fonts loaded[22m
+
+    at captureForContext (/home/finnduns/invest-com-au/e2e/visual/runner.ts:139:20)
+    at capture (/home/finnduns/invest-com-au/e2e/visual/runner.ts:57:20)
+    at /home/finnduns/invest-com-au/e2e/visual/screenshots.spec.ts:29:37

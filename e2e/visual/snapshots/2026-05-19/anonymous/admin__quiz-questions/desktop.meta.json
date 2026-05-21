@@ -1,0 +1,8 @@
+{
+  "route": "/admin/quiz-questions",
+  "finalUrl": "https://invest-com-au.vercel.app/admin/login?redirect=%2Fadmin%2Fquiz-questions",
+  "status": 200,
+  "redirected": true,
+  "capturedAt": "2026-05-19T22:40:25.090Z",
+  "viewport": "desktop"
+}

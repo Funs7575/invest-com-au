@@ -1,0 +1,8 @@
+{
+  "route": "/unsubscribe",
+  "finalUrl": "https://invest-com-au.vercel.app/unsubscribe",
+  "status": 200,
+  "redirected": false,
+  "capturedAt": "2026-05-20T00:36:24.057Z",
+  "viewport": "desktop"
+}

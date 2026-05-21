@@ -1,0 +1,8 @@
+{
+  "route": "/complaints/submit",
+  "finalUrl": "https://invest-com-au.vercel.app/complaints/submit",
+  "status": 200,
+  "redirected": false,
+  "capturedAt": "2026-05-19T23:00:26.978Z",
+  "viewport": "desktop"
+}
