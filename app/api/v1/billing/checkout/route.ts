@@ -69,10 +69,14 @@ export const POST = withValidatedBody(Body, async (_req, body) => {
     const ownerEmail = user.email.trim().toLowerCase();
 
     // ── 2. Tier must be self-serve purchasable (price id configured) ──
+    // Read the label before the guard: isPurchasableTier narrows body.tier to
+    // `never` in the false branch (its predicate covers every paid tier), yet
+    // that branch is reachable at runtime when the tier's Price-ID env is unset.
+    const requestedTierLabel = API_TIER_CONFIG[body.tier].label;
     if (!isPurchasableTier(body.tier)) {
       return NextResponse.json(
         {
-          error: `The ${API_TIER_CONFIG[body.tier].label} tier isn't available for self-serve checkout yet. Contact api@invest.com.au.`,
+          error: `The ${requestedTierLabel} tier isn't available for self-serve checkout yet. Contact api@invest.com.au.`,
         },
         { status: 400 },
       );
