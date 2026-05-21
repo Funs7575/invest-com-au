@@ -1,9 +1,6 @@
 "use client";
 
-/* eslint-disable react-hooks/set-state-in-effect */
-
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import GetMatchedEmbed from "@/components/get-matched/GetMatchedEmbed";
@@ -18,7 +15,7 @@ import { ADVISOR_SPECIALTY_CATEGORIES } from "@/lib/advisor-specialties";
 import TabBar from "@/components/directory/TabBar";
 import SearchInput from "@/components/directory/SearchInput";
 import SortDropdown from "@/components/directory/SortDropdown";
-import { resolveDirectoryFilters } from "./filter-params";
+import { useDirectoryParams } from "@/lib/hooks/useDirectoryParams";
 import FilterPanel from "@/components/directory/FilterPanel";
 import FacetGroup from "@/components/directory/FacetGroup";
 import RangeSlider from "@/components/directory/RangeSlider";
@@ -208,8 +205,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
   /** PR queue #12.5 — visitor's resolved intent country. When set, every advisor card renders an EligibilityBadge based on country_eligibility. */
   intentCountry?: import("@/lib/intent-context").IntentCountryCode | null;
 }) {
-  const searchParams = useSearchParams();
-  const router = useRouter();
+  const { params: searchParams, setParams, clearParams } = useDirectoryParams();
   const trackedRef = useRef(false);
 
   useEffect(() => {
@@ -224,34 +220,96 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
     }, '/advisors');
   }, [professionals.length, firms.length, expertTeams.length, initialType, initialState]);
 
-  const [providerType, setProviderType] = useState<ProviderType>("all");
-  const [typeFilters, setTypeFilters] = useState<Set<ProfessionalType>>(() => {
-    if (initialType) return new Set([initialType]);
-    return new Set();
-  });
-  const toggleType = (key: ProfessionalType | "all") => {
-    if (key === "all") {
-      setTypeFilters(new Set());
-    } else {
-      setTypeFilters(prev => {
-        const next = new Set(prev);
-        if (next.has(key)) next.delete(key); else next.add(key);
-        return next;
-      });
-    }
-  };
-  const [stateFilter, setStateFilter] = useState<string>(initialState || "all");
-  const [specialtyFilters, setSpecialtyFilters] = useState<string[]>([]);
+  // ── URL-first filter state (the URL is the single source of truth, mirroring
+  //    InvestListingsClient). Route-scoped pages seed type/state from the route
+  //    when the corresponding param is absent. ──
+  const providerType: ProviderType = (() => {
+    const pt = searchParams.get("provider_type");
+    return pt === "individual" || pt === "firm" || pt === "team" ? pt : "all";
+  })();
+
+  const typeParam = searchParams.get("type") ?? "";
+  const typeFilters = useMemo<Set<ProfessionalType>>(() => {
+    const fromUrl = typeParam
+      .split(",")
+      .filter((k) => TYPE_FILTERS.some((f) => f.key === k)) as ProfessionalType[];
+    if (fromUrl.length) return new Set(fromUrl);
+    return new Set(initialType ? [initialType] : []);
+  }, [typeParam, initialType]);
+
+  const stateParam = searchParams.get("state");
+  const stateFilter =
+    stateParam && (AU_STATES as readonly string[]).includes(stateParam)
+      ? stateParam
+      : initialState || "all";
+
+  const specialtyParam = searchParams.get("specialty") ?? "";
+  const specialtyFilters = useMemo(
+    () => specialtyParam.split(",").map((s) => s.trim()).filter(Boolean),
+    [specialtyParam],
+  );
+
+  const languageFilter = searchParams.get("language") || "all";
+
+  const sortParam = searchParams.get("sort");
+  const sortBy: SortKey = SORT_OPTIONS.some((o) => o.value === sortParam)
+    ? (sortParam as SortKey)
+    : "rating";
+
+  const setProviderType = useCallback(
+    (v: ProviderType) => setParams({ provider_type: v === "all" ? "" : v }),
+    [setParams],
+  );
+  const setTypeFilters = useCallback(
+    (next: Set<ProfessionalType>) => setParams({ type: Array.from(next).join(",") }),
+    [setParams],
+  );
+  const toggleType = useCallback(
+    (key: ProfessionalType) => {
+      const next = new Set(typeFilters);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      setTypeFilters(next);
+    },
+    [typeFilters, setTypeFilters],
+  );
+  const setStateFilter = useCallback(
+    (v: string) => setParams({ state: v === "all" ? "" : v }),
+    [setParams],
+  );
+  const setSpecialtyFilters = useCallback(
+    (next: string[]) => setParams({ specialty: next.join(",") }),
+    [setParams],
+  );
+  const toggleSpecialty = useCallback(
+    (s: string) =>
+      setSpecialtyFilters(
+        specialtyFilters.includes(s)
+          ? specialtyFilters.filter((x) => x !== s)
+          : [...specialtyFilters, s],
+      ),
+    [specialtyFilters, setSpecialtyFilters],
+  );
+  const setLanguageFilter = useCallback(
+    (v: string) => setParams({ language: v === "all" ? "" : v }),
+    [setParams],
+  );
+  const setSortBy = useCallback(
+    (v: SortKey) => setParams({ sort: v === "rating" ? "" : v }),
+    [setParams],
+  );
+
+  // ── Purely-local UI state (never persisted to the URL) ──
   const [feeFilter, setFeeFilter] = useState<string>("all");
   const [firmFilter, setFirmFilter] = useState<string>("all");
   const [minRating, setMinRating] = useState<number>(0);
   const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [internationalOnly, setInternationalOnly] = useState(false);
-  const [languageFilter, setLanguageFilter] = useState<string>("all");
   const [acceptingOnly, setAcceptingOnly] = useState(false);
   const [videoOnly, setVideoOnly] = useState(false);
-  const [search, setSearch] = useState("");
-  const [sortBy, setSortBy] = useState<SortKey>("rating");
+  const initialQuery = searchParams.get("q") ?? "";
+  const [search, setSearch] = useState(initialQuery);
+  useEffect(() => { setSearch(initialQuery); }, [initialQuery]);
   const [page, setPage] = useState(1);
   const [filtersOpen, setFiltersOpen] = useState(false);
 
@@ -302,15 +360,6 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
 
   const isLocationActive = userLat !== null && userLng !== null;
 
-  // When location is selected from search
-  useEffect(() => {
-    if (locationSearch) {
-      setUserLat(locationSearch.latitude);
-      setUserLng(locationSearch.longitude);
-      setSortBy("distance");
-    }
-  }, [locationSearch]);
-
   // Fetch nearby advisors when location/radius changes
   useEffect(() => {
     if (!isLocationActive) { setNearbyResults(null); return; }
@@ -331,49 +380,6 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
       .catch(() => setNearbyLoading(false));
     return () => controller.abort();
   }, [userLat, userLng, radius, typeFilters, feeFilter, specialtyFilters, isLocationActive]);
-
-  useEffect(() => {
-    const resolved = resolveDirectoryFilters(searchParams, {
-      routeScoped: Boolean(initialType || initialState),
-      validType: v => TYPE_FILTERS.some(f => f.key === v),
-    });
-    if (resolved.providerType) setProviderType(resolved.providerType);
-    if (resolved.specialties) setSpecialtyFilters(resolved.specialties);
-    if (resolved.types) setTypeFilters(new Set(resolved.types));
-    if (resolved.state) setStateFilter(resolved.state);
-    if (resolved.sort) setSortBy(resolved.sort as SortKey);
-    if (resolved.search) setSearch(resolved.search);
-    if (resolved.language) setLanguageFilter(resolved.language);
-  }, [searchParams, initialType, initialState]);
-
-  const initialRenderRef = useRef(true);
-
-  const updateURL = useCallback(() => {
-    const params = new URLSearchParams();
-    if (providerType !== "all") params.set("provider_type", providerType);
-    if (typeFilters.size > 0) params.set("type", Array.from(typeFilters).join(","));
-    if (stateFilter !== "all") params.set("state", stateFilter);
-    if (specialtyFilters.length) params.set("specialty", specialtyFilters.join(","));
-    if (languageFilter !== "all") params.set("language", languageFilter);
-    if (sortBy !== "rating") params.set("sort", sortBy);
-    if (search) params.set("q", search);
-    const qs = params.toString();
-    const newPath = `/advisors${qs ? `?${qs}` : ""}`;
-    // Skip if URL hasn't changed (prevents initial load re-render cycle)
-    const currentQs = searchParams.toString();
-    if (qs === currentQs) return;
-    router.replace(newPath, { scroll: false });
-  }, [providerType, typeFilters, stateFilter, specialtyFilters, languageFilter, sortBy, search, router, searchParams]);
-
-  useEffect(() => {
-    // Skip the very first render to prevent immediate router.replace on page load
-    if (initialRenderRef.current) {
-      initialRenderRef.current = false;
-      return;
-    }
-    const t = setTimeout(updateURL, 300);
-    return () => clearTimeout(t);
-  }, [updateURL]);
 
   useEffect(() => { setPage(1); }, [providerType, typeFilters, stateFilter, specialtyFilters, feeFilter, firmFilter, minRating, verifiedOnly, internationalOnly, languageFilter, acceptingOnly, videoOnly, search, sortBy, nearbyResults]);
 
@@ -570,15 +576,13 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
     ? `Browse verified ${activeTypeLabel.toLowerCase()} across Australia. Filter by location, fees, and specialties.`
     : pageDescription || "Browse verified Australian financial professionals. Filter by location, type, fees, and specialties.";
 
-  const toggleSpecialty = (s: string) => setSpecialtyFilters(prev => prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s]);
-  const clearAll = () => {
-    setProviderType("all");
-    setTypeFilters(new Set()); setStateFilter("all"); setSpecialtyFilters([]); setFeeFilter("all");
-    setFirmFilter("all"); setMinRating(0);
-    setVerifiedOnly(false); setInternationalOnly(false); setSearch(""); setSortBy("rating");
-    setLanguageFilter("all"); setAcceptingOnly(false); setVideoOnly(false);
+  const clearAll = useCallback(() => {
+    clearParams(["provider_type", "type", "state", "specialty", "language", "sort", "q"]);
+    setFeeFilter("all"); setFirmFilter("all"); setMinRating(0);
+    setVerifiedOnly(false); setInternationalOnly(false); setSearch("");
+    setAcceptingOnly(false); setVideoOnly(false);
     setLocationSearch(null); setUserLat(null); setUserLng(null); setRadius(25);
-  };
+  }, [clearParams]);
 
   const allLanguages = useMemo(() => {
     const present = new Set<string>();
@@ -713,6 +717,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
             id="advisors-search"
             value={search}
             onChange={setSearch}
+            onSubmit={(q) => setParams({ q: q.trim() })}
             placeholder="Search name, firm, team, specialty, suburb..."
             ariaLabel="Search advisors"
           />
@@ -744,7 +749,11 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               </label>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
                 <div className="md:col-span-2">
-                  <LocationSearch selected={locationSearch} onSelect={(p) => { setLocationSearch(p); if (!p) { setUserLat(null); setUserLng(null); } }} />
+                  <LocationSearch selected={locationSearch} onSelect={(p) => {
+                    setLocationSearch(p);
+                    if (p) { setUserLat(p.latitude); setUserLng(p.longitude); setSortBy("distance"); }
+                    else { setUserLat(null); setUserLng(null); }
+                  }} />
                 </div>
                 <div className="flex items-center gap-2">
                   <select value={radius} onChange={e => setRadius(Number(e.target.value))} className="flex-1 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30" disabled={!isLocationActive}>
