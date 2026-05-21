@@ -11,7 +11,7 @@ vi.mock("@/lib/admin", () => ({ ADMIN_EMAIL: "admin@example.com" }));
 const mockGetCurrentTmd = vi.fn();
 vi.mock("@/lib/tmds", () => ({ getCurrentTmd: (...a: unknown[]) => mockGetCurrentTmd(...a) }));
 
-const mockSendEmail = vi.fn(() => Promise.resolve({ ok: true }));
+const mockSendEmail = vi.fn((..._a: unknown[]) => Promise.resolve({ ok: true }));
 vi.mock("@/lib/resend", () => ({ sendEmail: (...a: unknown[]) => mockSendEmail(...a) }));
 
 interface Res { data?: unknown; error?: { message: string } | null }
