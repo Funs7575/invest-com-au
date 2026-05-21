@@ -571,6 +571,43 @@ describe("POST /api/submit-lead", () => {
       expect(json.matched.id).toBe(2);
     });
 
+    it("prefers an advisor serving the visitor's corridor over a higher-ranked generalist", async () => {
+      // FIN_NOTEBOOK #24 Phase B — a UK visitor should be routed to an
+      // advisor who self-declared serving the GB corridor, even when a
+      // higher-ranked generalist sits ahead of them in the candidate list.
+      mockGetIntentCountry.mockResolvedValue("uk");
+      const GENERALIST = { ...ADVISOR, id: 1, slug: "generalist" };
+      const CORRIDOR = { ...ADVISOR, id: 5, slug: "uk-corridor", available_in_countries: ["gb"] };
+      mockFrom.mockImplementation((table: string) => {
+        const b = createChainableBuilder(table, supabaseCalls);
+        if (table === "professionals") {
+          b.limit = vi.fn(() => {
+            supabaseCalls[table]?.push({ method: "limit", args: [] });
+            return Promise.resolve({ data: [GENERALIST, CORRIDOR], error: null });
+          });
+          b.single = vi.fn(() =>
+            Promise.resolve({ data: { advisor_tier: "silver" }, error: null }),
+          );
+        }
+        if (table === "leads") {
+          b.single = vi.fn(() => Promise.resolve({ data: { id: 9300 }, error: null }));
+        }
+        return b;
+      });
+
+      const req = buildRequest({
+        lead_type: "advisor",
+        user_email: "uk-corridor@test.com",
+        user_location_state: "NSW",
+        user_intent: { need: "planning" },
+      });
+      const res = await POST(req);
+      expect(res.status).toBe(200);
+      const json = await res.json();
+      expect(json.matched.id).toBe(5);
+      expect(json.matched.slug).toBe("uk-corridor");
+    });
+
     it("rejects confirm_advisor_id when the advisor's blocked_countries includes the visitor", async () => {
       mockGetIntentCountry.mockResolvedValue("uk");
       mockFrom.mockImplementation((table: string) => {

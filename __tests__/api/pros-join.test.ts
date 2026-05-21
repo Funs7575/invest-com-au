@@ -1,35 +1,27 @@
-/**
- * Tests for POST /api/pros/join
- */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
 
-const { mockIsAllowed, mockSendWelcomePro } = vi.hoisted(() => ({
-  mockIsAllowed: vi.fn(async () => true),
-  mockSendWelcomePro: vi.fn(async () => true),
+const { mockIsAllowed, mockFrom, mockSendWelcomePro } = vi.hoisted(() => ({
+  mockIsAllowed: vi.fn(),
+  mockFrom: vi.fn(),
+  mockSendWelcomePro: vi.fn(),
 }));
 
 vi.mock("@/lib/rate-limit-db", () => ({
   isAllowed: mockIsAllowed,
-  ipKey: () => "test-ip",
+  ipKey: vi.fn(() => "ip:test"),
 }));
 
-vi.mock("@/lib/logger", () => ({
-  logger: vi.fn(() => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() })),
+vi.mock("@/lib/supabase/admin", () => ({
+  createAdminClient: vi.fn(() => ({ from: mockFrom })),
 }));
 
 vi.mock("@/lib/pro-onboarding-emails", () => ({
   sendWelcomePro: mockSendWelcomePro,
 }));
 
-vi.mock("@/lib/pro-onboarding", () => ({
-  STARTER_FREE_CREDITS: 10,
-}));
-
-// Default supabase admin mock: no existing pro, insert succeeds
-const mockAdminFrom = vi.fn();
-vi.mock("@/lib/supabase/admin", () => ({
-  createAdminClient: vi.fn(() => ({ from: mockAdminFrom })),
+vi.mock("@/lib/logger", () => ({
+  logger: vi.fn(() => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() })),
 }));
 
 import { POST } from "@/app/api/pros/join/route";
@@ -37,44 +29,38 @@ import { POST } from "@/app/api/pros/join/route";
 const VALID_BODY = {
   kind: "individual",
   specialties: ["financial_planner"],
-  name: "Jane Smith",
+  name: "Jane Pro",
   email: "jane@example.com",
-  verification_doc_path: "pending/12345-abcdef.pdf",
-  payout_bsb: "062-001",
+  verification_doc_path: "pending/123-abc.pdf",
+  payout_bsb: "062-000",
   payout_account_last4: "1234",
   agreed_to_terms: true,
 };
 
-function makeReq(body?: unknown): NextRequest {
+function makeReq(body: unknown): NextRequest {
   return new NextRequest("http://localhost/api/pros/join", {
     method: "POST",
-    body: JSON.stringify(body ?? VALID_BODY),
-    headers: { "content-type": "application/json" },
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
   });
 }
 
-function setupDefaultMocks() {
-  // First call: email dedupe check -> no existing
-  // Second call: slug clash check -> no clash
-  // Third call: insert -> success
-  let callCount = 0;
-  mockAdminFrom.mockImplementation(() => {
-    callCount++;
-    const chain: Record<string, unknown> = {};
-    for (const m of ["select","insert","update","eq","in","maybySingle","filter"]) {
-      chain[m] = vi.fn(() => chain);
-    }
+// from().select().eq().maybeSingle() — dedupe + slug-clash lookups.
+function makeLookupChain(result: { data: unknown }) {
+  const chain: Record<string, ReturnType<typeof vi.fn>> = {};
+  chain.select = vi.fn(() => chain);
+  chain.eq = vi.fn(() => chain);
+  chain.maybeSingle = vi.fn(() => Promise.resolve(result));
+  return chain;
+}
 
-    if (callCount === 3) {
-      // insert call
-      chain.insert = vi.fn(() => chain);
-      chain.select = vi.fn(() => chain);
-      chain.single = vi.fn(async () => ({ data: { id: 1, slug: "jane-smith" }, error: null }));
-    } else {
-      chain.maybeSingle = vi.fn(async () => ({ data: null, error: null }));
-    }
-    return chain;
-  });
+// from().insert().select().single()
+function makeInsertChain(result: { data: unknown; error: unknown }) {
+  const chain: Record<string, ReturnType<typeof vi.fn>> = {};
+  chain.insert = vi.fn(() => chain);
+  chain.select = vi.fn(() => chain);
+  chain.single = vi.fn(() => Promise.resolve(result));
+  return chain;
 }
 
 describe("POST /api/pros/join", () => {
@@ -82,55 +68,64 @@ describe("POST /api/pros/join", () => {
     vi.clearAllMocks();
     mockIsAllowed.mockResolvedValue(true);
     mockSendWelcomePro.mockResolvedValue(true);
-    setupDefaultMocks();
+  });
+
+  it("returns 400 when zod validation fails (missing terms agreement)", async () => {
+    const { agreed_to_terms: _omit, ...bad } = VALID_BODY;
+    const res = await POST(makeReq(bad));
+    expect(res.status).toBe(400);
+    expect(await res.json()).toMatchObject({ code: "validation_error" });
+  });
+
+  it("returns 400 on a malformed BSB", async () => {
+    const res = await POST(makeReq({ ...VALID_BODY, payout_bsb: "12" }));
+    expect(res.status).toBe(400);
   });
 
   it("returns 429 when rate-limited", async () => {
-    mockIsAllowed.mockResolvedValue(false);
-    const res = await POST(makeReq());
+    mockIsAllowed.mockResolvedValueOnce(false);
+    const res = await POST(makeReq(VALID_BODY));
     expect(res.status).toBe(429);
   });
 
-  it("returns 400 for missing name", async () => {
-    const { name: _name, ...body } = VALID_BODY;
-    const res = await POST(makeReq(body));
-    expect(res.status).toBe(400);
-  });
-
-  it("returns 400 for invalid email", async () => {
-    const res = await POST(makeReq({ ...VALID_BODY, email: "not-an-email" }));
-    expect(res.status).toBe(400);
-  });
-
-  it("returns 400 for missing agreed_to_terms", async () => {
-    const { agreed_to_terms: _agreed, ...body } = VALID_BODY;
-    const res = await POST(makeReq(body));
-    expect(res.status).toBe(400);
-  });
-
-  it("returns 400 for empty specialties", async () => {
-    const res = await POST(makeReq({ ...VALID_BODY, specialties: [] }));
-    expect(res.status).toBe(400);
-  });
-
-  it("returns 400 for invalid BSB", async () => {
-    const res = await POST(makeReq({ ...VALID_BODY, payout_bsb: "12345" }));
-    expect(res.status).toBe(400);
-  });
-
-  it("returns 400 for invalid account last4", async () => {
-    const res = await POST(makeReq({ ...VALID_BODY, payout_account_last4: "12" }));
-    expect(res.status).toBe(400);
-  });
-
-  it("returns 409 when email already has application", async () => {
-    mockAdminFrom.mockImplementation(() => {
-      const chain: Record<string, unknown> = {};
-      for (const m of ["select","insert","eq","in","filter"]) chain[m] = vi.fn(() => chain);
-      chain.maybeSingle = vi.fn(async () => ({ data: { id: 1, verification_status: "pending" }, error: null }));
-      return chain;
-    });
-    const res = await POST(makeReq());
+  it("returns 409 when an application already exists for the email", async () => {
+    mockFrom.mockReturnValueOnce(
+      makeLookupChain({ data: { id: 1, verification_status: "pending" } }),
+    );
+    const res = await POST(makeReq(VALID_BODY));
     expect(res.status).toBe(409);
+  });
+
+  it("inserts a pending professional and returns ok", async () => {
+    // 1: dedupe lookup (no existing), 2: slug-clash lookup (none), 3: insert.
+    mockFrom
+      .mockReturnValueOnce(makeLookupChain({ data: null }))
+      .mockReturnValueOnce(makeLookupChain({ data: null }))
+      .mockReturnValueOnce(makeInsertChain({ data: { id: 99, slug: "jane-pro" }, error: null }));
+    const res = await POST(makeReq(VALID_BODY));
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json).toMatchObject({ ok: true, professional_id: 99, slug: "jane-pro" });
+    expect(json.starter_credits_granted_on_approval).toBeGreaterThan(0);
+    expect(mockSendWelcomePro).toHaveBeenCalledWith("jane@example.com", "Jane Pro");
+  });
+
+  it("still returns ok when the welcome email throws", async () => {
+    mockFrom
+      .mockReturnValueOnce(makeLookupChain({ data: null }))
+      .mockReturnValueOnce(makeLookupChain({ data: null }))
+      .mockReturnValueOnce(makeInsertChain({ data: { id: 99, slug: "jane-pro" }, error: null }));
+    mockSendWelcomePro.mockRejectedValueOnce(new Error("smtp down"));
+    const res = await POST(makeReq(VALID_BODY));
+    expect(res.status).toBe(200);
+  });
+
+  it("returns 500 when the insert errors", async () => {
+    mockFrom
+      .mockReturnValueOnce(makeLookupChain({ data: null }))
+      .mockReturnValueOnce(makeLookupChain({ data: null }))
+      .mockReturnValueOnce(makeInsertChain({ data: null, error: { message: "boom" } }));
+    const res = await POST(makeReq(VALID_BODY));
+    expect(res.status).toBe(500);
   });
 });

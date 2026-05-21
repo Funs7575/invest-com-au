@@ -1,34 +1,21 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
 
-vi.mock("@/lib/logger", () => ({
-  logger: vi.fn(() => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() })),
-}));
+const mockIsAllowed = vi.fn();
+const mockRequireAdvisorSession = vi.fn();
+const mockListEndpoints = vi.fn();
+const mockCreateEndpoint = vi.fn();
+const mockDisableEndpoint = vi.fn();
+const mockAdminMaybeSingle = vi.fn();
 
-const mockRequireAdvisorSession = vi.fn(async () => 42);
+vi.mock("@/lib/rate-limit-db", () => ({
+  isAllowed: (...args: unknown[]) => mockIsAllowed(...args),
+  ipKey: vi.fn(() => "ip:1.2.3.4"),
+}));
 
 vi.mock("@/lib/require-advisor-session", () => ({
   requireAdvisorSession: (...args: unknown[]) => mockRequireAdvisorSession(...args),
 }));
-
-const mockIsAllowed = vi.fn(async () => true);
-
-vi.mock("@/lib/rate-limit-db", () => ({
-  isAllowed: (...args: unknown[]) => mockIsAllowed(...args),
-  ipKey: vi.fn(() => "127.0.0.1"),
-}));
-
-const mockListEndpoints = vi.fn(async () => []);
-const mockCreateEndpoint = vi.fn(async () => ({
-  endpoint: {
-    id: 1,
-    url: "https://example.com/webhook",
-    event_subscriptions: ["brief.accepted"],
-    enabled: true,
-  },
-  signingSecret: "whsec_test123",
-}));
-const mockDisableEndpoint = vi.fn(async () => {});
 
 vi.mock("@/lib/outbound-webhooks", () => ({
   listEndpoints: (...args: unknown[]) => mockListEndpoints(...args),
@@ -36,134 +23,180 @@ vi.mock("@/lib/outbound-webhooks", () => ({
   disableEndpoint: (...args: unknown[]) => mockDisableEndpoint(...args),
 }));
 
-function makeBuilder(result: unknown = { data: null, error: null }) {
-  const b: Record<string, unknown> = {};
-  for (const m of ["select","insert","update","upsert","delete","eq","neq","gt","gte","lt","lte","in","is","not","or","order","limit","range","single","maybeSingle","filter","contains"]) {
-    b[m] = vi.fn(() => b);
-  }
-  b.then = (cb: (v: unknown) => unknown) => Promise.resolve(cb(result));
-  return b;
-}
-
-const mockFrom = vi.fn(() => makeBuilder());
-
 vi.mock("@/lib/supabase/admin", () => ({
-  createAdminClient: vi.fn(() => ({
-    from: mockFrom,
-  })),
+  createAdminClient: vi.fn(() => {
+    const chain: Record<string, unknown> = {};
+    chain.from = vi.fn(() => chain);
+    chain.select = vi.fn(() => chain);
+    chain.eq = vi.fn(() => chain);
+    chain.maybeSingle = vi.fn(() => mockAdminMaybeSingle());
+    return chain;
+  }),
 }));
 
-import { GET, POST, DELETE } from "@/app/api/advisor-portal/webhooks/route";
+vi.mock("@/lib/logger", () => ({
+  logger: vi.fn(() => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() })),
+}));
 
-function makeReq(method = "GET", body?: unknown, searchParams = ""): NextRequest {
-  const url = `http://localhost/api/advisor-portal/webhooks${searchParams ? `?${searchParams}` : ""}`;
+import { GET, POST, DELETE, ALLOWED_EVENTS } from "@/app/api/advisor-portal/webhooks/route";
+
+function makeReq(method: string, body?: unknown, url = "http://localhost/api/advisor-portal/webhooks"): NextRequest {
   return new NextRequest(url, {
     method,
-    ...(body !== undefined
-      ? { body: JSON.stringify(body), headers: { "content-type": "application/json" } }
-      : {}),
+    headers: { "Content-Type": "application/json" },
+    ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
   });
 }
 
-const validPostBody = {
-  url: "https://example.com/webhook",
-  eventSubscriptions: ["brief.accepted"],
-};
+function makeRawReq(method: string, raw: string): NextRequest {
+  return new NextRequest("http://localhost/api/advisor-portal/webhooks", {
+    method,
+    headers: { "Content-Type": "application/json" },
+    body: raw,
+  });
+}
 
-describe("/api/advisor-portal/webhooks", () => {
+describe("GET /api/advisor-portal/webhooks", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockRequireAdvisorSession.mockResolvedValue(42);
-    mockIsAllowed.mockResolvedValue(true);
-    mockListEndpoints.mockResolvedValue([]);
-    mockCreateEndpoint.mockResolvedValue({
-      endpoint: {
-        id: 1,
-        url: "https://example.com/webhook",
-        event_subscriptions: ["brief.accepted"],
-        enabled: true,
-      },
-      signingSecret: "whsec_test123",
-    });
-    mockDisableEndpoint.mockResolvedValue(undefined);
-    mockFrom.mockImplementation(() => makeBuilder({ data: { id: 1 }, error: null }));
   });
 
-  // ── GET ──────────────────────────────────────────────────────────────────
-  it("GET rejects unauthenticated", async () => {
-    mockRequireAdvisorSession.mockResolvedValue(null);
+  it("returns 401 when there is no advisor session", async () => {
+    mockRequireAdvisorSession.mockResolvedValueOnce(null);
     const res = await GET(makeReq("GET"));
     expect(res.status).toBe(401);
+    expect(await res.json()).toEqual({ error: "Sign in required." });
   });
 
-  it("GET returns endpoints list", async () => {
-    const endpoints = [
-      { id: 1, url: "https://ex.com/wh", enabled: true, event_subscriptions: ["brief.accepted"], signing_secret: "s" },
-    ];
-    mockListEndpoints.mockResolvedValue(endpoints);
+  it("lists endpoints without exposing the signing secret", async () => {
+    mockListEndpoints.mockResolvedValueOnce([
+      {
+        id: 1,
+        url: "https://hook.example/x",
+        enabled: true,
+        event_subscriptions: ["brief.accepted"],
+        signing_secret: "shh-secret",
+      },
+    ]);
     const res = await GET(makeReq("GET"));
     expect(res.status).toBe(200);
-    const json = await res.json();
-    expect(json).toHaveProperty("endpoints");
-    expect(json).toHaveProperty("allowedEvents");
-    // Signing secret must not be in response
-    expect(JSON.stringify(json)).not.toContain("signing_secret");
+    const body = await res.json();
+    expect(body.endpoints[0]).toEqual({
+      id: 1,
+      url: "https://hook.example/x",
+      enabled: true,
+      event_subscriptions: ["brief.accepted"],
+    });
+    expect(JSON.stringify(body)).not.toContain("shh-secret");
+    expect(body.allowedEvents).toEqual(ALLOWED_EVENTS);
+    expect(mockListEndpoints).toHaveBeenCalledWith("professional", "42");
+  });
+});
+
+describe("POST /api/advisor-portal/webhooks", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockIsAllowed.mockResolvedValue(true);
+    mockRequireAdvisorSession.mockResolvedValue(42);
   });
 
-  // ── POST ─────────────────────────────────────────────────────────────────
-  it("POST returns 429 when rate-limited", async () => {
-    mockIsAllowed.mockResolvedValue(false);
-    const res = await POST(makeReq("POST", validPostBody));
+  it("returns 429 when rate limited", async () => {
+    mockIsAllowed.mockResolvedValueOnce(false);
+    const res = await POST(makeReq("POST", { url: "https://x.example", eventSubscriptions: ["brief.accepted"] }));
     expect(res.status).toBe(429);
   });
 
-  it("POST rejects unauthenticated", async () => {
-    mockRequireAdvisorSession.mockResolvedValue(null);
-    const res = await POST(makeReq("POST", validPostBody));
+  it("returns 401 when there is no advisor session", async () => {
+    mockRequireAdvisorSession.mockResolvedValueOnce(null);
+    const res = await POST(makeReq("POST", { url: "https://x.example", eventSubscriptions: ["brief.accepted"] }));
     expect(res.status).toBe(401);
   });
 
-  it("POST returns 400 for invalid URL", async () => {
+  it("returns 400 for invalid JSON", async () => {
+    const res = await POST(makeRawReq("POST", "{bad"));
+    expect(res.status).toBe(400);
+    expect(await res.json()).toEqual({ error: "Invalid JSON body." });
+  });
+
+  it("returns 400 for a zod-invalid body (bad url)", async () => {
     const res = await POST(makeReq("POST", { url: "not-a-url", eventSubscriptions: ["brief.accepted"] }));
     expect(res.status).toBe(400);
   });
 
-  it("POST returns 400 for unsupported event type", async () => {
-    const res = await POST(makeReq("POST", { url: "https://ex.com/wh", eventSubscriptions: ["unsupported.event"] }));
+  it("returns 400 when no events survive the allow-list filter", async () => {
+    const res = await POST(makeReq("POST", { url: "https://x.example", eventSubscriptions: ["bogus.event"] }));
     expect(res.status).toBe(400);
+    expect((await res.json()).error).toContain("No supported events");
+    expect(mockCreateEndpoint).not.toHaveBeenCalled();
   });
 
-  it("POST creates endpoint successfully", async () => {
-    const res = await POST(makeReq("POST", validPostBody));
+  it("happy path — creates an endpoint and returns the signing secret once", async () => {
+    mockCreateEndpoint.mockResolvedValueOnce({
+      endpoint: {
+        id: 9,
+        url: "https://x.example",
+        event_subscriptions: ["brief.accepted"],
+        enabled: true,
+      },
+      signingSecret: "whsec_abc",
+    });
+    const res = await POST(
+      makeReq("POST", { url: "https://x.example", eventSubscriptions: ["brief.accepted", "bogus.event"] }),
+    );
     expect(res.status).toBe(200);
-    const json = await res.json();
-    expect(json).toHaveProperty("endpoint");
-    expect(json).toHaveProperty("signingSecret");
+    const body = await res.json();
+    expect(body.signingSecret).toBe("whsec_abc");
+    expect(body.endpoint.id).toBe(9);
+    // bogus.event filtered out before reaching createEndpoint
+    expect(mockCreateEndpoint).toHaveBeenCalledWith(
+      expect.objectContaining({
+        ownerKind: "professional",
+        ownerId: "42",
+        eventSubscriptions: ["brief.accepted"],
+      }),
+    );
   });
 
-  // ── DELETE ───────────────────────────────────────────────────────────────
-  it("DELETE rejects unauthenticated", async () => {
-    mockRequireAdvisorSession.mockResolvedValue(null);
-    const res = await DELETE(makeReq("DELETE", undefined, "id=1"));
+  it("returns 500 when createEndpoint throws", async () => {
+    mockCreateEndpoint.mockRejectedValueOnce(new Error("db down"));
+    const res = await POST(makeReq("POST", { url: "https://x.example", eventSubscriptions: ["brief.accepted"] }));
+    expect(res.status).toBe(500);
+    expect(await res.json()).toEqual({ error: "Failed to create endpoint." });
+  });
+});
+
+describe("DELETE /api/advisor-portal/webhooks", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockRequireAdvisorSession.mockResolvedValue(42);
+  });
+
+  it("returns 401 when there is no advisor session", async () => {
+    mockRequireAdvisorSession.mockResolvedValueOnce(null);
+    const res = await DELETE(makeReq("DELETE", undefined, "http://localhost/api/advisor-portal/webhooks?id=1"));
     expect(res.status).toBe(401);
   });
 
-  it("DELETE returns 400 for missing id", async () => {
-    const res = await DELETE(makeReq("DELETE"));
+  it("returns 400 when the id is missing or invalid", async () => {
+    const res = await DELETE(makeReq("DELETE", undefined, "http://localhost/api/advisor-portal/webhooks"));
     expect(res.status).toBe(400);
+    expect(await res.json()).toEqual({ error: "Missing or invalid id." });
   });
 
-  it("DELETE returns 404 when endpoint not owned by advisor", async () => {
-    mockFrom.mockImplementation(() => makeBuilder({ data: null, error: null }));
-    const res = await DELETE(makeReq("DELETE", undefined, "id=1"));
+  it("returns 404 when the endpoint is not owned by the caller", async () => {
+    mockAdminMaybeSingle.mockResolvedValueOnce({ data: null });
+    const res = await DELETE(makeReq("DELETE", undefined, "http://localhost/api/advisor-portal/webhooks?id=5"));
     expect(res.status).toBe(404);
+    expect(await res.json()).toEqual({ error: "Endpoint not found." });
+    expect(mockDisableEndpoint).not.toHaveBeenCalled();
   });
 
-  it("DELETE disables endpoint successfully", async () => {
-    mockFrom.mockImplementation(() => makeBuilder({ data: { id: 1 }, error: null }));
-    const res = await DELETE(makeReq("DELETE", undefined, "id=1"));
+  it("happy path — disables an owned endpoint", async () => {
+    mockAdminMaybeSingle.mockResolvedValueOnce({ data: { id: 5 } });
+    const res = await DELETE(makeReq("DELETE", undefined, "http://localhost/api/advisor-portal/webhooks?id=5"));
     expect(res.status).toBe(200);
-    const json = await res.json();
-    expect(json.ok).toBe(true);
+    expect(await res.json()).toEqual({ ok: true });
+    expect(mockDisableEndpoint).toHaveBeenCalledWith(5);
   });
 });

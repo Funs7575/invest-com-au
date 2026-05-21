@@ -176,6 +176,35 @@ export interface LeadFormConfig {
   accent: "amber" | "emerald" | "blue" | "slate";
 }
 
+/**
+ * A vetted cross-border service partner surfaced on a country page —
+ * remittance/FX, non-resident mortgage, or FIRB legal. These are
+ * commercial (affiliate / referral) relationships, so cards render with
+ * the affiliate `rel` and an advertiser disclosure. FIN_NOTEBOOK #24
+ * Phase B: corridors consume FX + non-resident-mortgage + FIRB-lawyer
+ * spend long before they convert to an advisor lead; capturing that
+ * upstream spend is the panel's whole point.
+ *
+ * NOTE: leave `crossBorderPartners` UNSET until a real referral
+ * agreement exists for that corridor — the section is opt-in and stays
+ * dark when absent. Do not list a provider we haven't actually signed.
+ */
+export interface CrossBorderPartner {
+  /** Stable key, also used as the click-tracking label (e.g. "wise"). */
+  slug: string;
+  name: string;
+  category: "remittance" | "fx" | "mortgage" | "legal";
+  /** One line on what they do. */
+  tagline: string;
+  /** Concrete, corridor-specific reason to use them. */
+  benefit: string;
+  ctaLabel: string;
+  /** Outbound partner / affiliate URL. */
+  href: string;
+  /** Optional fine-print rendered under the card. */
+  note?: string;
+}
+
 export interface CountryConfig {
   /** Two-letter intent code matching IntentCountryCode (e.g. "uk"). */
   code: IntentCountryCode;
@@ -504,6 +533,20 @@ export interface CountryConfig {
     ctaHref: string;
     /** "dark" = slate-900 background; "light" = amber-50 background. */
     theme: "dark" | "light";
+  };
+
+  /**
+   * Optional cross-border partner panel (remittance/FX, non-resident
+   * mortgage, FIRB legal). Affiliate/referral cards — rendered with the
+   * affiliate `rel` + an advertiser disclosure. Opt-in: omit until a
+   * real referral agreement exists for the corridor. See
+   * `CrossBorderPartner` and FIN_NOTEBOOK #24 Phase B.
+   */
+  crossBorderPartners?: {
+    eyebrow: string;
+    title: string;
+    sub: string;
+    partners: ReadonlyArray<CrossBorderPartner>;
   };
 
   faq: ReadonlyArray<FaqEntry>;

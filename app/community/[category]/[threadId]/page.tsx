@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
+import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Icon from "@/components/Icon";
@@ -363,6 +364,11 @@ export default async function ThreadPage({
           categorySlug={categorySlug}
         />
       </Suspense>
+      <div className="container-custom max-w-4xl pb-8">
+        <p className="text-xs text-slate-500 border-t pt-4 leading-relaxed">
+          <strong>General advice warning:</strong> {GENERAL_ADVICE_WARNING}
+        </p>
+      </div>
     </div>
   );
 }

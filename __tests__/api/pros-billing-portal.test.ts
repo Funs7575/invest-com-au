@@ -1,22 +1,16 @@
-/**
- * Tests for POST /api/pros/billing/portal
- */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
 
-const { mockIsAllowed, mockRequireAdvisorSession, mockCreateBillingPortalUrl } = vi.hoisted(() => ({
-  mockIsAllowed: vi.fn(async () => true),
-  mockRequireAdvisorSession: vi.fn(async () => 42),
-  mockCreateBillingPortalUrl: vi.fn(async () => ({ url: "https://billing.stripe.com/portal/sess_123" })),
-}));
+const { mockIsAllowed, mockRequireAdvisorSession, mockCreateBillingPortalUrl } =
+  vi.hoisted(() => ({
+    mockIsAllowed: vi.fn(),
+    mockRequireAdvisorSession: vi.fn(),
+    mockCreateBillingPortalUrl: vi.fn(),
+  }));
 
 vi.mock("@/lib/rate-limit-db", () => ({
   isAllowed: mockIsAllowed,
-  ipKey: () => "test-ip",
-}));
-
-vi.mock("@/lib/logger", () => ({
-  logger: vi.fn(() => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() })),
+  ipKey: vi.fn(() => "ip:test"),
 }));
 
 vi.mock("@/lib/require-advisor-session", () => ({
@@ -25,6 +19,10 @@ vi.mock("@/lib/require-advisor-session", () => ({
 
 vi.mock("@/lib/pro-subscription/billing", () => ({
   createBillingPortalUrl: mockCreateBillingPortalUrl,
+}));
+
+vi.mock("@/lib/logger", () => ({
+  logger: vi.fn(() => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() })),
 }));
 
 import { POST } from "@/app/api/pros/billing/portal/route";
@@ -38,43 +36,53 @@ describe("POST /api/pros/billing/portal", () => {
     vi.clearAllMocks();
     mockIsAllowed.mockResolvedValue(true);
     mockRequireAdvisorSession.mockResolvedValue(42);
-    mockCreateBillingPortalUrl.mockResolvedValue({ url: "https://billing.stripe.com/portal/sess_123" });
   });
 
   it("returns 429 when rate-limited", async () => {
-    mockIsAllowed.mockResolvedValue(false);
+    mockIsAllowed.mockResolvedValueOnce(false);
     const res = await POST(makeReq());
     expect(res.status).toBe(429);
   });
 
-  it("returns 401 when unauthenticated", async () => {
-    mockRequireAdvisorSession.mockResolvedValue(null);
+  it("returns 401 when not an advisor session", async () => {
+    mockRequireAdvisorSession.mockResolvedValueOnce(null);
     const res = await POST(makeReq());
     expect(res.status).toBe(401);
+    expect(await res.json()).toEqual({ error: "Sign in required." });
   });
 
-  it("returns 200 with portal url on success", async () => {
+  it("returns the portal url on success", async () => {
+    mockCreateBillingPortalUrl.mockResolvedValueOnce({ url: "https://stripe.test/portal" });
     const res = await POST(makeReq());
     expect(res.status).toBe(200);
-    const json = await res.json();
-    expect(json.url).toContain("billing.stripe.com");
+    expect(await res.json()).toEqual({ url: "https://stripe.test/portal" });
+    expect(mockCreateBillingPortalUrl).toHaveBeenCalledWith(42);
   });
 
-  it("returns 404 when pro has no billing account", async () => {
-    mockCreateBillingPortalUrl.mockResolvedValue({ unavailable: true, reason: "No billing account found" });
+  it("returns 404 when the pro has no billing account yet", async () => {
+    mockCreateBillingPortalUrl.mockResolvedValueOnce({
+      unavailable: true,
+      reason: "No billing account for this pro",
+    });
     const res = await POST(makeReq());
     expect(res.status).toBe(404);
+    expect((await res.json()).error).toMatch(/subscribe first/i);
   });
 
-  it("returns 503 when Stripe not configured", async () => {
-    mockCreateBillingPortalUrl.mockResolvedValue({ unavailable: true, reason: "Stripe not configured" });
+  it("returns 503 when Stripe billing is unconfigured", async () => {
+    mockCreateBillingPortalUrl.mockResolvedValueOnce({
+      unavailable: true,
+      reason: "Stripe not configured",
+    });
     const res = await POST(makeReq());
     expect(res.status).toBe(503);
+    expect(await res.json()).toEqual({ error: "Subscription billing is not configured." });
   });
 
-  it("returns 500 on unexpected error", async () => {
-    mockCreateBillingPortalUrl.mockRejectedValue(new Error("unexpected"));
+  it("returns 500 when createBillingPortalUrl throws", async () => {
+    mockCreateBillingPortalUrl.mockRejectedValueOnce(new Error("boom"));
     const res = await POST(makeReq());
     expect(res.status).toBe(500);
+    expect(await res.json()).toEqual({ error: "Could not open billing portal." });
   });
 });

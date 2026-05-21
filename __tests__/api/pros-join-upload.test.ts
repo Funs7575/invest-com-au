@@ -1,99 +1,96 @@
-/**
- * Tests for POST /api/pros/join/upload
- */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
 
-const { mockIsAllowed } = vi.hoisted(() => ({
-  mockIsAllowed: vi.fn(async () => true),
+const { mockIsAllowed, mockUpload, mockStorageFrom } = vi.hoisted(() => ({
+  mockIsAllowed: vi.fn(),
+  mockUpload: vi.fn(),
+  mockStorageFrom: vi.fn(),
 }));
 
 vi.mock("@/lib/rate-limit-db", () => ({
   isAllowed: mockIsAllowed,
-  ipKey: () => "test-ip",
+  ipKey: vi.fn(() => "ip:test"),
 }));
 
-vi.mock("@/lib/logger", () => ({
-  logger: vi.fn(() => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() })),
-}));
-
-const mockStorageFrom = vi.fn();
 vi.mock("@/lib/supabase/admin", () => ({
   createAdminClient: vi.fn(() => ({
     storage: { from: mockStorageFrom },
   })),
 }));
 
+vi.mock("@/lib/logger", () => ({
+  logger: vi.fn(() => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() })),
+}));
+
 import { POST } from "@/app/api/pros/join/upload/route";
 
-function makeReq(formData: FormData): NextRequest {
+function makeReqWithForm(form: FormData): NextRequest {
   return new NextRequest("http://localhost/api/pros/join/upload", {
     method: "POST",
-    body: formData,
+    body: form,
   });
 }
 
-function makeUploadChain(uploadError: unknown = null) {
-  return { upload: vi.fn(async () => ({ error: uploadError })) };
+function makeFile(opts: { type: string; size: number; name?: string }): File {
+  const blob = new Blob([new Uint8Array(opts.size)], { type: opts.type });
+  return new File([blob], opts.name ?? "doc", { type: opts.type });
 }
 
 describe("POST /api/pros/join/upload", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockIsAllowed.mockResolvedValue(true);
-    mockStorageFrom.mockReturnValue(makeUploadChain(null));
+    mockStorageFrom.mockReturnValue({ upload: mockUpload });
+    mockUpload.mockResolvedValue({ error: null });
   });
 
   it("returns 429 when rate-limited", async () => {
-    mockIsAllowed.mockResolvedValue(false);
-    const fd = new FormData();
-    const file = new File(["content"], "test.pdf", { type: "application/pdf" });
-    fd.append("file", file);
-    const res = await POST(makeReq(fd));
+    mockIsAllowed.mockResolvedValueOnce(false);
+    const form = new FormData();
+    form.set("file", makeFile({ type: "application/pdf", size: 100 }));
+    const res = await POST(makeReqWithForm(form));
     expect(res.status).toBe(429);
   });
 
-  it("returns 400 when no file provided", async () => {
-    const fd = new FormData();
-    const res = await POST(makeReq(fd));
+  it("returns 400 when no file is provided", async () => {
+    const res = await POST(makeReqWithForm(new FormData()));
     expect(res.status).toBe(400);
+    expect(await res.json()).toEqual({ error: "No file provided" });
   });
 
-  it("returns 400 for unsupported MIME type", async () => {
-    const fd = new FormData();
-    const file = new File(["gif content"], "test.gif", { type: "image/gif" });
-    fd.append("file", file);
-    const res = await POST(makeReq(fd));
+  it("returns 400 for an unsupported MIME type", async () => {
+    const form = new FormData();
+    form.set("file", makeFile({ type: "text/plain", size: 100 }));
+    const res = await POST(makeReqWithForm(form));
     expect(res.status).toBe(400);
+    expect((await res.json()).error).toMatch(/Unsupported file type/);
   });
 
-  it("returns 200 with storage_path for valid PDF", async () => {
-    const fd = new FormData();
-    const file = new File([new Uint8Array(100)], "verification.pdf", { type: "application/pdf" });
-    fd.append("file", file);
-    const res = await POST(makeReq(fd));
+  it("returns 400 when the file exceeds the size cap", async () => {
+    const form = new FormData();
+    form.set("file", makeFile({ type: "image/png", size: 11 * 1024 * 1024 }));
+    const res = await POST(makeReqWithForm(form));
+    expect(res.status).toBe(400);
+    expect((await res.json()).error).toMatch(/too large/i);
+  });
+
+  it("uploads the file and returns the storage path", async () => {
+    const form = new FormData();
+    form.set("file", makeFile({ type: "application/pdf", size: 1024 }));
+    const res = await POST(makeReqWithForm(form));
     expect(res.status).toBe(200);
     const json = await res.json();
-    expect(json.storage_path).toMatch(/^pending\//);
-    expect(json.storage_path).toMatch(/\.pdf$/);
+    expect(json.storage_path).toMatch(/^pending\/.*\.pdf$/);
+    expect(mockStorageFrom).toHaveBeenCalledWith("pro-verification-docs");
+    expect(mockUpload).toHaveBeenCalledOnce();
   });
 
-  it("returns 200 for valid image upload", async () => {
-    const fd = new FormData();
-    const file = new File([new Uint8Array(100)], "doc.jpg", { type: "image/jpeg" });
-    fd.append("file", file);
-    const res = await POST(makeReq(fd));
-    expect(res.status).toBe(200);
-    const json = await res.json();
-    expect(json.storage_path).toMatch(/\.jpg$/);
-  });
-
-  it("returns 500 when storage upload fails", async () => {
-    mockStorageFrom.mockReturnValue(makeUploadChain({ message: "storage error" }));
-    const fd = new FormData();
-    const file = new File([new Uint8Array(100)], "test.pdf", { type: "application/pdf" });
-    fd.append("file", file);
-    const res = await POST(makeReq(fd));
+  it("returns 500 when the storage upload errors", async () => {
+    mockUpload.mockResolvedValueOnce({ error: { message: "denied" } });
+    const form = new FormData();
+    form.set("file", makeFile({ type: "image/webp", size: 1024 }));
+    const res = await POST(makeReqWithForm(form));
     expect(res.status).toBe(500);
+    expect(await res.json()).toEqual({ error: "Upload failed" });
   });
 });

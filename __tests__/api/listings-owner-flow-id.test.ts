@@ -1,21 +1,12 @@
-/**
- * Tests for PATCH /api/listings/owner-flow/[id]
- */
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import type { NextRequest } from "next/server";
+import { NextRequest } from "next/server";
 
-const { mockIsAllowed, mockGetUser } = vi.hoisted(() => ({
-  mockIsAllowed: vi.fn(async () => true),
-  mockGetUser: vi.fn(async () => ({ data: { user: { id: "u1", email: "owner@example.com" } }, error: null })),
-}));
-
-vi.mock("@/lib/rate-limit-db", () => ({
-  isAllowed: mockIsAllowed,
-  ipKey: () => "test-ip",
-}));
-
-vi.mock("@/lib/logger", () => ({
-  logger: vi.fn(() => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() })),
+const { mockGetUser, mockIsAllowed, mockIpKey, mockAdminFrom, mockRowToListing } = vi.hoisted(() => ({
+  mockGetUser: vi.fn(),
+  mockIsAllowed: vi.fn(),
+  mockIpKey: vi.fn(() => "ip:1.2.3.4"),
+  mockAdminFrom: vi.fn(),
+  mockRowToListing: vi.fn((row: { id: string }) => ({ id: row.id, mapped: true })),
 }));
 
 vi.mock("@/lib/supabase/server", () => ({
@@ -24,143 +15,166 @@ vi.mock("@/lib/supabase/server", () => ({
   })),
 }));
 
-// maybeSingle and single return different things depending on the test
-const mockAdminFrom = vi.fn();
-
 vi.mock("@/lib/supabase/admin", () => ({
   createAdminClient: vi.fn(() => ({ from: mockAdminFrom })),
 }));
 
-vi.mock("@/lib/listings/types", async () => {
-  const actual = await vi.importActual("@/lib/listings/types");
-  return actual;
-});
+vi.mock("@/lib/rate-limit-db", () => ({
+  isAllowed: mockIsAllowed,
+  ipKey: mockIpKey,
+}));
+
+vi.mock("@/lib/listings/types", () => ({
+  LISTING_KINDS: ["property", "business", "syndicate", "asset_other"],
+  rowToListing: mockRowToListing,
+}));
+
+vi.mock("@/lib/logger", () => ({
+  logger: vi.fn(() => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() })),
+}));
 
 import { PATCH } from "@/app/api/listings/owner-flow/[id]/route";
 
+const USER = { id: "owner-uuid-1", email: "alice@example.com" };
+const LISTING_ID = "list-uuid-1";
+
 function makeReq(body?: unknown): NextRequest {
-  return new Request("http://localhost/api/listings/owner-flow/listing-1", {
+  return new NextRequest(`http://localhost/api/listings/owner-flow/${LISTING_ID}`, {
     method: "PATCH",
-    ...(body !== undefined
-      ? { body: JSON.stringify(body), headers: { "content-type": "application/json" } }
-      : {}),
-  }) as unknown as NextRequest;
+    headers: { "Content-Type": "application/json" },
+    body: body === undefined ? undefined : JSON.stringify(body),
+  });
 }
 
-const ctx = { params: Promise.resolve({ id: "listing-1" }) } as Parameters<typeof PATCH>[1];
+const ctx = (id: string) => ({ params: Promise.resolve({ id }) });
 
-const draftListing = {
-  id: "listing-1",
-  owner_user_id: "u1",
-  status: "draft",
-  title: "Draft Title",
-  kind: "property",
-  asking_price_cents: null,
-  currency: "AUD",
-  location_state: null,
-  description: null,
-  payload: {},
-  owner_email: "owner@example.com",
-  moderation_notes: null,
-  view_count: 0,
-  match_request_count: 0,
-  created_at: "2026-01-01T00:00:00Z",
-  updated_at: "2026-01-01T00:00:00Z",
-  approved_at: null,
-  rejected_at: null,
-  slug: "draft-title",
-};
+// fetch chain: from().select().eq().maybeSingle()
+function makeFetchChain(result: { data: unknown; error: unknown }) {
+  const chain: Record<string, ReturnType<typeof vi.fn>> = {};
+  chain.select = vi.fn(() => chain);
+  chain.eq = vi.fn(() => chain);
+  chain.maybeSingle = vi.fn(() => Promise.resolve(result));
+  return chain;
+}
+
+// update chain: from().update().eq().select().single()
+function makeUpdateChain(result: { data: unknown; error: unknown }) {
+  const chain: Record<string, ReturnType<typeof vi.fn>> = {};
+  chain.update = vi.fn(() => chain);
+  chain.eq = vi.fn(() => chain);
+  chain.select = vi.fn(() => chain);
+  chain.single = vi.fn(() => Promise.resolve(result));
+  return chain;
+}
+
+const DRAFT = { id: LISTING_ID, owner_user_id: USER.id, status: "draft" };
 
 describe("PATCH /api/listings/owner-flow/[id]", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockIsAllowed.mockResolvedValue(true);
-    mockGetUser.mockResolvedValue({ data: { user: { id: "u1", email: "owner@example.com" } }, error: null });
-
-    // Default: select returns draft listing, update returns updated listing
-    function makeChain(resolveValue: unknown) {
-      const chain: Record<string, unknown> = {};
-      for (const m of ["select","update","eq","maybeSingle","single","filter","in"]) {
-        chain[m] = vi.fn(() => chain);
-      }
-      chain.maybySingle = vi.fn(async () => resolveValue);
-      chain.maybeSingle = vi.fn(async () => resolveValue);
-      chain.single = vi.fn(async () => resolveValue);
-      return chain;
-    }
-
-    mockAdminFrom.mockImplementation(() => {
-      return makeChain({ data: draftListing, error: null });
-    });
+    mockRowToListing.mockImplementation((row: { id: string }) => ({ id: row.id, mapped: true }));
   });
 
-  it("returns 429 when rate-limited", async () => {
-    mockIsAllowed.mockResolvedValue(false);
-    const res = await PATCH(makeReq({ title: "New Title" }), ctx);
+  it("returns 429 when rate limited", async () => {
+    mockIsAllowed.mockResolvedValueOnce(false);
+    const res = await PATCH(makeReq({ title: "New title" }), ctx(LISTING_ID));
     expect(res.status).toBe(429);
   });
 
-  it("returns 400 for invalid JSON body", async () => {
-    const req = new Request("http://localhost/api/listings/owner-flow/listing-1", {
+  it("returns 400 for invalid JSON", async () => {
+    const req = new NextRequest(`http://localhost/api/listings/owner-flow/${LISTING_ID}`, {
       method: "PATCH",
-      body: "not-json",
-      headers: { "content-type": "application/json" },
-    }) as unknown as NextRequest;
-    const res = await PATCH(req, ctx);
+      headers: { "Content-Type": "application/json" },
+      body: "{bad",
+    });
+    const res = await PATCH(req, ctx(LISTING_ID));
+    expect(res.status).toBe(400);
+    expect(await res.json()).toEqual({ error: "Invalid JSON body" });
+  });
+
+  it("returns 400 for a body that fails validation", async () => {
+    const res = await PATCH(makeReq({ title: "no" }), ctx(LISTING_ID));
     expect(res.status).toBe(400);
   });
 
-  it("returns 400 for body with extra fields (strict schema)", async () => {
-    const res = await PATCH(makeReq({ title: "Hello", extraField: "bad" }), ctx);
+  it("returns 400 for an unknown (strict) field", async () => {
+    const res = await PATCH(makeReq({ bogus: true }), ctx(LISTING_ID));
     expect(res.status).toBe(400);
   });
 
   it("returns 401 when unauthenticated", async () => {
-    mockGetUser.mockResolvedValue({ data: { user: null }, error: null });
-    const res = await PATCH(makeReq({ title: "New Title" }), ctx);
+    mockGetUser.mockResolvedValueOnce({ data: { user: null } });
+    const res = await PATCH(makeReq({ title: "New title" }), ctx(LISTING_ID));
     expect(res.status).toBe(401);
   });
 
-  it("returns 400 when no fields to update", async () => {
-    const res = await PATCH(makeReq({}), ctx);
-    expect(res.status).toBe(400);
+  it("returns 500 when the fetch errors", async () => {
+    mockGetUser.mockResolvedValueOnce({ data: { user: USER } });
+    mockAdminFrom.mockReturnValueOnce(makeFetchChain({ data: null, error: { message: "boom" } }));
+    const res = await PATCH(makeReq({ title: "New title" }), ctx(LISTING_ID));
+    expect(res.status).toBe(500);
   });
 
-  it("returns 404 when listing not found", async () => {
-    mockAdminFrom.mockImplementation(() => {
-      const chain: Record<string, unknown> = {};
-      for (const m of ["select","update","eq","filter","in"]) chain[m] = vi.fn(() => chain);
-      chain.maybeSingle = vi.fn(async () => ({ data: null, error: null }));
-      chain.single = vi.fn(async () => ({ data: null, error: null }));
-      return chain;
-    });
-    const res = await PATCH(makeReq({ title: "New Title" }), ctx);
+  it("returns 404 when the listing is not found", async () => {
+    mockGetUser.mockResolvedValueOnce({ data: { user: USER } });
+    mockAdminFrom.mockReturnValueOnce(makeFetchChain({ data: null, error: null }));
+    const res = await PATCH(makeReq({ title: "New title" }), ctx(LISTING_ID));
     expect(res.status).toBe(404);
   });
 
-  it("returns 403 when user does not own listing", async () => {
-    const otherListing = { ...draftListing, owner_user_id: "other-user" };
-    mockAdminFrom.mockImplementation(() => {
-      const chain: Record<string, unknown> = {};
-      for (const m of ["select","update","eq","filter","in"]) chain[m] = vi.fn(() => chain);
-      chain.maybeSingle = vi.fn(async () => ({ data: otherListing, error: null }));
-      chain.single = vi.fn(async () => ({ data: otherListing, error: null }));
-      return chain;
-    });
-    const res = await PATCH(makeReq({ title: "New Title" }), ctx);
+  it("returns 403 when the caller is not the owner", async () => {
+    mockGetUser.mockResolvedValueOnce({ data: { user: USER } });
+    mockAdminFrom.mockReturnValueOnce(
+      makeFetchChain({ data: { ...DRAFT, owner_user_id: "someone-else" }, error: null }),
+    );
+    const res = await PATCH(makeReq({ title: "New title" }), ctx(LISTING_ID));
     expect(res.status).toBe(403);
   });
 
-  it("returns 409 when listing is not a draft", async () => {
-    const pendingListing = { ...draftListing, status: "pending_review" };
-    mockAdminFrom.mockImplementation(() => {
-      const chain: Record<string, unknown> = {};
-      for (const m of ["select","update","eq","filter","in"]) chain[m] = vi.fn(() => chain);
-      chain.maybeSingle = vi.fn(async () => ({ data: pendingListing, error: null }));
-      chain.single = vi.fn(async () => ({ data: pendingListing, error: null }));
-      return chain;
-    });
-    const res = await PATCH(makeReq({ title: "New Title" }), ctx);
+  it("returns 409 when the listing is not a draft", async () => {
+    mockGetUser.mockResolvedValueOnce({ data: { user: USER } });
+    mockAdminFrom.mockReturnValueOnce(
+      makeFetchChain({ data: { ...DRAFT, status: "approved" }, error: null }),
+    );
+    const res = await PATCH(makeReq({ title: "New title" }), ctx(LISTING_ID));
     expect(res.status).toBe(409);
+  });
+
+  it("returns 400 when no updatable fields are provided", async () => {
+    mockGetUser.mockResolvedValueOnce({ data: { user: USER } });
+    mockAdminFrom.mockReturnValueOnce(makeFetchChain({ data: DRAFT, error: null }));
+    const res = await PATCH(makeReq({}), ctx(LISTING_ID));
+    expect(res.status).toBe(400);
+    expect(await res.json()).toEqual({ error: "No fields to update." });
+  });
+
+  it("returns 500 when the update errors", async () => {
+    mockGetUser.mockResolvedValueOnce({ data: { user: USER } });
+    mockAdminFrom
+      .mockReturnValueOnce(makeFetchChain({ data: DRAFT, error: null }))
+      .mockReturnValueOnce(makeUpdateChain({ data: null, error: { message: "boom" } }));
+    const res = await PATCH(makeReq({ title: "New title" }), ctx(LISTING_ID));
+    expect(res.status).toBe(500);
+  });
+
+  it("updates the draft and returns the mapped listing", async () => {
+    mockGetUser.mockResolvedValueOnce({ data: { user: USER } });
+    const updatedRow = { ...DRAFT, title: "New title" };
+    const updateChain = makeUpdateChain({ data: updatedRow, error: null });
+    mockAdminFrom
+      .mockReturnValueOnce(makeFetchChain({ data: DRAFT, error: null }))
+      .mockReturnValueOnce(updateChain);
+    const res = await PATCH(
+      makeReq({ title: "  New title  ", currency: "aud", asking_price_cents: 1000 }),
+      ctx(LISTING_ID),
+    );
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ ok: true, listing: { id: LISTING_ID, mapped: true } });
+    const updateArg = updateChain.update.mock.calls[0]?.[0] as Record<string, unknown>;
+    expect(updateArg.title).toBe("New title");
+    expect(updateArg.currency).toBe("AUD");
+    expect(updateArg.asking_price_cents).toBe(1000);
+    expect(updateArg.updated_at).toEqual(expect.any(String));
   });
 });

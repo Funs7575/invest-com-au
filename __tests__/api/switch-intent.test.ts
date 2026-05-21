@@ -1,144 +1,147 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import type { NextRequest } from "next/server";
+import { NextRequest } from "next/server";
 
-function makeBuilder(result: unknown = { data: {}, error: null }) {
-  const b: Record<string, unknown> = {};
-  for (const m of [
-    "select", "insert", "update", "upsert", "delete",
-    "eq", "neq", "gt", "gte", "lt", "lte", "in", "is",
-    "not", "or", "order", "limit", "range", "single",
-    "maybeSingle", "filter", "contains",
-  ]) {
-    b[m] = vi.fn(() => b);
-  }
-  b.then = (cb: (v: unknown) => unknown) => Promise.resolve(cb(result));
-  return b;
-}
-
-const { mockIsAllowed, mockGetUser, mockFrom, mockIsValidEmail, mockIsDisposableEmail, mockIsSuppressed, mockSendEmail } = vi.hoisted(() => ({
-  mockIsAllowed: vi.fn(async () => true),
-  mockGetUser: vi.fn(async () => ({ data: { user: { id: "u1" } }, error: null })),
-  mockFrom: vi.fn(() => makeBuilder()),
-  mockIsValidEmail: vi.fn(() => true),
-  mockIsDisposableEmail: vi.fn(() => false),
-  mockIsSuppressed: vi.fn(async () => false),
-  mockSendEmail: vi.fn(async () => ({ id: "email-id" })),
-}));
+const mockIsAllowed = vi.fn();
+const mockIsValidEmail = vi.fn();
+const mockIsDisposableEmail = vi.fn();
+const mockIsSuppressed = vi.fn();
+const mockSendEmail = vi.fn();
+const mockInsert = vi.fn();
 
 vi.mock("@/lib/rate-limit-db", () => ({
-  isAllowed: mockIsAllowed,
-  ipKey: vi.fn(() => "127.0.0.1"),
-}));
-
-vi.mock("@/lib/logger", () => ({
-  logger: vi.fn(() => ({
-    debug: vi.fn(),
-    info: vi.fn(),
-    warn: vi.fn(),
-    error: vi.fn(),
-  })),
+  isAllowed: (...args: unknown[]) => mockIsAllowed(...args),
+  ipKey: vi.fn(() => "ip:1.2.3.4"),
 }));
 
 vi.mock("@/lib/supabase/server", () => ({
   createClient: vi.fn(async () => ({
-    auth: { getUser: mockGetUser },
-    from: mockFrom,
+    from: vi.fn(() => ({ insert: (...args: unknown[]) => mockInsert(...args) })),
   })),
 }));
 
 vi.mock("@/lib/validate-email", () => ({
-  isValidEmail: mockIsValidEmail,
-  isDisposableEmail: mockIsDisposableEmail,
+  isValidEmail: (...args: unknown[]) => mockIsValidEmail(...args),
+  isDisposableEmail: (...args: unknown[]) => mockIsDisposableEmail(...args),
 }));
 
 vi.mock("@/lib/email-suppression", () => ({
-  isSuppressed: mockIsSuppressed,
+  isSuppressed: (...args: unknown[]) => mockIsSuppressed(...args),
 }));
 
 vi.mock("@/lib/resend", () => ({
-  sendEmail: mockSendEmail,
+  sendEmail: (...args: unknown[]) => mockSendEmail(...args),
 }));
 
 vi.mock("@/lib/url", () => ({
   getSiteUrl: vi.fn(() => "https://invest.com.au"),
 }));
 
+vi.mock("@/lib/logger", () => ({
+  logger: vi.fn(() => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() })),
+}));
+
 import { POST } from "@/app/api/switch-intent/route";
 
-function makeReq(body?: unknown): NextRequest {
-  return new Request("http://localhost/api/switch-intent", {
+function makeReq(body: unknown): NextRequest {
+  return new NextRequest("http://localhost/api/switch-intent", {
     method: "POST",
-    body: JSON.stringify(body ?? {}),
-    headers: { "content-type": "application/json" },
-  }) as unknown as NextRequest;
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
 }
 
-const validBody = {
+function makeRawReq(raw: string): NextRequest {
+  return new NextRequest("http://localhost/api/switch-intent", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: raw,
+  });
+}
+
+const VALID = {
   product_kind: "super_fund",
-  email: "test@example.com",
+  from_provider: "Old Super",
+  to_provider: "New Super",
+  email: "user@example.com",
+  estimated_balance: 50000,
+  reason: "fees",
+  notes: "switch please",
 };
 
-describe("/api/switch-intent", () => {
+describe("POST /api/switch-intent", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockIsAllowed.mockResolvedValue(true);
     mockIsValidEmail.mockReturnValue(true);
     mockIsDisposableEmail.mockReturnValue(false);
     mockIsSuppressed.mockResolvedValue(false);
-    mockFrom.mockImplementation(() => makeBuilder({ data: {}, error: null }));
+    mockSendEmail.mockResolvedValue(undefined);
+    mockInsert.mockResolvedValue({ error: null });
   });
 
   it("returns 400 for invalid JSON", async () => {
-    const req = new Request("http://localhost/api/switch-intent", {
-      method: "POST",
-      body: "not-json",
-      headers: { "content-type": "application/json" },
-    }) as unknown as NextRequest;
-    const res = await POST(req);
+    const res = await POST(makeRawReq("{nope"));
     expect(res.status).toBe(400);
+    expect(await res.json()).toEqual({ error: "Invalid JSON" });
   });
 
-  it("returns 400 when required fields missing", async () => {
-    const res = await POST(makeReq({}));
+  it("returns 400 for a zod-invalid body (bad product_kind)", async () => {
+    const res = await POST(makeReq({ ...VALID, product_kind: "crypto" }));
     expect(res.status).toBe(400);
+    expect((await res.json()).error).toBe("Invalid request");
   });
 
-  it("returns 400 when email is invalid", async () => {
-    mockIsValidEmail.mockReturnValue(false);
-    const res = await POST(makeReq(validBody));
-    expect(res.status).toBe(400);
-  });
-
-  it("returns 400 when email is disposable", async () => {
-    mockIsDisposableEmail.mockReturnValue(true);
-    const res = await POST(makeReq(validBody));
-    expect(res.status).toBe(400);
-  });
-
-  it("returns 400 for invalid product_kind", async () => {
-    const res = await POST(makeReq({ ...validBody, product_kind: "invalid_kind" }));
-    expect(res.status).toBe(400);
-  });
-
-  it("returns 200 success on honeypot (website field filled)", async () => {
-    const res = await POST(makeReq({ ...validBody, website: "http://spam.com" }));
+  it("returns success without inserting when honeypot is filled", async () => {
+    const res = await POST(makeReq({ ...VALID, website: "http://spam" }));
     expect(res.status).toBe(200);
-    const json = await res.json();
-    expect(json.success).toBe(true);
+    expect(await res.json()).toEqual({ success: true });
+    expect(mockInsert).not.toHaveBeenCalled();
   });
 
-  it("returns 200 when email is suppressed (silent drop)", async () => {
-    mockIsSuppressed.mockResolvedValue(true);
-    const res = await POST(makeReq(validBody));
-    expect(res.status).toBe(200);
-    const json = await res.json();
-    expect(json.success).toBe(true);
+  it("returns 400 when email fails the secondary validity check", async () => {
+    mockIsValidEmail.mockReturnValueOnce(false);
+    const res = await POST(makeReq(VALID));
+    expect(res.status).toBe(400);
+    expect(await res.json()).toEqual({ error: "Valid email required." });
   });
 
-  it("returns 200 on successful submission", async () => {
-    const res = await POST(makeReq(validBody));
+  it("returns 400 for a disposable email", async () => {
+    mockIsDisposableEmail.mockReturnValueOnce(true);
+    const res = await POST(makeReq(VALID));
+    expect(res.status).toBe(400);
+    expect(await res.json()).toEqual({ error: "Please use a real email address." });
+  });
+
+  it("silently succeeds (no insert) when the email is suppressed", async () => {
+    mockIsSuppressed.mockResolvedValueOnce(true);
+    const res = await POST(makeReq(VALID));
     expect(res.status).toBe(200);
-    const json = await res.json();
-    expect(json.success).toBe(true);
+    expect(await res.json()).toEqual({ success: true });
+    expect(mockInsert).not.toHaveBeenCalled();
+  });
+
+  it("happy path — inserts the row, lowercases email, sends verify email", async () => {
+    const res = await POST(makeReq({ ...VALID, email: "User@Example.com" }));
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ success: true });
+    expect(mockInsert).toHaveBeenCalledOnce();
+    const row = mockInsert.mock.calls[0]![0] as Record<string, unknown>;
+    expect(row).toMatchObject({
+      product_kind: "super_fund",
+      email: "user@example.com",
+      estimated_balance_cents: 5000000,
+      reason: "fees",
+    });
+    expect(row.verify_token).toEqual(expect.any(String));
+    expect(row.unsubscribe_token).toEqual(expect.any(String));
+    expect(mockSendEmail).toHaveBeenCalledOnce();
+  });
+
+  it("returns 500 when the insert fails", async () => {
+    mockInsert.mockResolvedValueOnce({ error: { message: "boom" } });
+    const res = await POST(makeReq(VALID));
+    expect(res.status).toBe(500);
+    expect(await res.json()).toEqual({ error: "Failed to submit" });
+    expect(mockSendEmail).not.toHaveBeenCalled();
   });
 });

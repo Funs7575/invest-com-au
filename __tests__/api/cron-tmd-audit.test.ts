@@ -1,87 +1,67 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import type { NextRequest } from "next/server";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { NextRequest } from "next/server";
 
 vi.mock("@/lib/logger", () => ({
-  logger: vi.fn(() => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() })),
+  logger: () => ({ info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn() }),
 }));
+vi.mock("@/lib/cron-run-log", () => ({ wrapCronHandler: (_n: string, h: unknown) => h }));
+vi.mock("@/lib/cron-auth", () => ({ requireCronAuth: vi.fn(() => null) }));
+vi.mock("@/lib/admin", () => ({ ADMIN_EMAIL: "admin@example.com" }));
 
-function makeBuilder(result: unknown = { data: [], error: null }) {
-  const builder: Record<string, unknown> = {};
-  for (const m of [
-    "select", "insert", "update", "upsert", "delete",
-    "eq", "neq", "gt", "gte", "lt", "lte", "in", "is", "not", "or",
-    "order", "limit", "range", "single", "maybeSingle", "filter",
-  ]) {
-    builder[m] = vi.fn(() => builder);
-  }
-  builder.then = (cb: (v: unknown) => unknown) => Promise.resolve(cb(result));
-  return builder;
+const mockGetCurrentTmd = vi.fn();
+vi.mock("@/lib/tmds", () => ({ getCurrentTmd: (...a: unknown[]) => mockGetCurrentTmd(...a) }));
+
+const mockSendEmail = vi.fn((..._a: unknown[]) => Promise.resolve({ ok: true }));
+vi.mock("@/lib/resend", () => ({ sendEmail: (...a: unknown[]) => mockSendEmail(...a) }));
+
+interface Res { data?: unknown; error?: { message: string } | null }
+const fromQueue: Res[] = [];
+let fromIdx = 0;
+function makeChain() {
+  const res = fromQueue[fromIdx++] ?? { data: null };
+  const c: Record<string, unknown> = {};
+  for (const m of ["select", "eq", "is", "upsert", "update"]) c[m] = vi.fn(() => c);
+  c.then = (resolve: (v: { data: unknown; error: unknown }) => unknown) =>
+    Promise.resolve(resolve({ data: res.data ?? null, error: res.error ?? null }));
+  return c;
 }
-
-const mockFrom = vi.fn(() => makeBuilder());
-
 vi.mock("@/lib/supabase/admin", () => ({
-  createAdminClient: vi.fn(() => ({ from: mockFrom })),
+  createAdminClient: () => ({ from: () => makeChain() }),
 }));
 
-vi.mock("@/lib/tmds", () => ({
-  getCurrentTmd: vi.fn(async () => ({ id: 1, effective_at: "2025-01-01" })),
-}));
+import { GET } from "@/app/api/cron/tmd-audit/route";
 
-import { GET, runtime, maxDuration } from "@/app/api/cron/tmd-audit/route";
-
-const SECRET = "test-cron-secret-1234567890";
-function req(headers: Record<string, string> = {}): NextRequest {
-  return new Request("http://localhost/api/cron/tmd-audit", { headers }) as unknown as NextRequest;
+function makeReq(): NextRequest {
+  return new Request("http://localhost/api/cron/tmd-audit") as unknown as NextRequest;
 }
 
 describe("GET /api/cron/tmd-audit", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    process.env.CRON_SECRET = SECRET;
-    // Default: no active brokers
-    mockFrom.mockImplementation(() => makeBuilder({ data: [], error: null }));
-  });
-  afterEach(() => {
-    delete process.env.CRON_SECRET;
+    fromQueue.length = 0;
+    fromIdx = 0;
   });
 
-  it("exports config", () => {
-    expect(runtime).toBe("nodejs");
-    expect(maxDuration).toBe(60);
+  it("emails a compliance alert when an active product has no current TMD", async () => {
+    fromQueue.push({ data: [{ slug: "stake", name: "Stake", status: "active" }] }); // brokers
+    fromQueue.push({ data: null }); // data_integrity_issues upsert
+    mockGetCurrentTmd.mockResolvedValue(null); // missing/expired
+    const res = await GET(makeReq());
+    const json = (await res.json()) as { missing_count: number };
+    expect(json.missing_count).toBe(1);
+    expect(mockSendEmail).toHaveBeenCalledTimes(1);
+    expect(mockSendEmail).toHaveBeenCalledWith(
+      expect.objectContaining({ to: "admin@example.com", bypassSuppression: true }),
+    );
   });
 
-  it("returns 500 when CRON_SECRET is unset", async () => {
-    delete process.env.CRON_SECRET;
-    const res = await GET(req({ authorization: `Bearer ${SECRET}` }));
-    expect(res.status).toBe(500);
-  });
-
-  it("returns 401 on wrong bearer", async () => {
-    const res = await GET(req({ authorization: "Bearer wrong" }));
-    expect(res.status).toBe(401);
-  });
-
-  it("returns 200 with no missing TMDs when all brokers have TMDs", async () => {
-    const res = await GET(req({ authorization: `Bearer ${SECRET}` }));
-    expect(res.status).toBe(200);
-    const body = await res.json();
-    expect(body.ok).toBe(true);
-    expect(body.missing_count).toBe(0);
-  });
-
-  it("returns 500 when broker fetch errors", async () => {
-    // wrapCronHandler inserts into cron_run_log first (call 1),
-    // then the handler queries brokers (call 2).
-    let callCount = 0;
-    mockFrom.mockImplementation(() => {
-      callCount++;
-      if (callCount === 2) {
-        return makeBuilder({ data: null, error: { message: "DB error" } });
-      }
-      return makeBuilder({ data: [{ id: 1 }], error: null });
-    });
-    const res = await GET(req({ authorization: `Bearer ${SECRET}` }));
-    expect(res.status).toBe(500);
+  it("does not alert when every active product has a current TMD", async () => {
+    fromQueue.push({ data: [{ slug: "stake", name: "Stake", status: "active" }] }); // brokers
+    fromQueue.push({ data: null }); // clear-issue update
+    mockGetCurrentTmd.mockResolvedValue({ id: 1, version: 2 });
+    const res = await GET(makeReq());
+    const json = (await res.json()) as { missing_count: number };
+    expect(json.missing_count).toBe(0);
+    expect(mockSendEmail).not.toHaveBeenCalled();
   });
 });

@@ -1,23 +1,21 @@
-/**
- * Tests for POST /api/pros/billing/subscribe
- */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
 
-const { mockIsAllowed, mockRequireAdvisorSession, mockCreateCheckoutSession, mockCheckStripeEnv } = vi.hoisted(() => ({
-  mockIsAllowed: vi.fn(async () => true),
-  mockRequireAdvisorSession: vi.fn(async () => 42),
-  mockCreateCheckoutSession: vi.fn(async () => ({ url: "https://checkout.stripe.com/pay/sess_123" })),
-  mockCheckStripeEnv: vi.fn(() => ({ ok: true, missing: [] })),
+const {
+  mockIsAllowed,
+  mockRequireAdvisorSession,
+  mockCreateCheckoutSession,
+  mockCheckStripeEnv,
+} = vi.hoisted(() => ({
+  mockIsAllowed: vi.fn(),
+  mockRequireAdvisorSession: vi.fn(),
+  mockCreateCheckoutSession: vi.fn(),
+  mockCheckStripeEnv: vi.fn(),
 }));
 
 vi.mock("@/lib/rate-limit-db", () => ({
   isAllowed: mockIsAllowed,
-  ipKey: () => "test-ip",
-}));
-
-vi.mock("@/lib/logger", () => ({
-  logger: vi.fn(() => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() })),
+  ipKey: vi.fn(() => "ip:test"),
 }));
 
 vi.mock("@/lib/require-advisor-session", () => ({
@@ -32,13 +30,17 @@ vi.mock("@/lib/stripe-env-check", () => ({
   checkStripeEnv: mockCheckStripeEnv,
 }));
 
+vi.mock("@/lib/logger", () => ({
+  logger: vi.fn(() => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() })),
+}));
+
 import { POST } from "@/app/api/pros/billing/subscribe/route";
 
-function makeReq(body?: unknown): NextRequest {
+function makeReq(body: unknown): NextRequest {
   return new NextRequest("http://localhost/api/pros/billing/subscribe", {
     method: "POST",
-    body: JSON.stringify(body ?? { tier: "starter" }),
-    headers: { "content-type": "application/json" },
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
   });
 }
 
@@ -48,56 +50,70 @@ describe("POST /api/pros/billing/subscribe", () => {
     mockIsAllowed.mockResolvedValue(true);
     mockRequireAdvisorSession.mockResolvedValue(42);
     mockCheckStripeEnv.mockReturnValue({ ok: true, missing: [] });
-    mockCreateCheckoutSession.mockResolvedValue({ url: "https://checkout.stripe.com/pay/sess_123" });
   });
 
   it("returns 429 when rate-limited", async () => {
-    mockIsAllowed.mockResolvedValue(false);
-    const res = await POST(makeReq());
+    mockIsAllowed.mockResolvedValueOnce(false);
+    const res = await POST(makeReq({ tier: "starter" }));
     expect(res.status).toBe(429);
   });
 
-  it("returns 401 when unauthenticated", async () => {
-    mockRequireAdvisorSession.mockResolvedValue(null);
-    const res = await POST(makeReq());
+  it("returns 401 when not an advisor session", async () => {
+    mockRequireAdvisorSession.mockResolvedValueOnce(null);
+    const res = await POST(makeReq({ tier: "starter" }));
     expect(res.status).toBe(401);
   });
 
-  it("returns 400 for invalid JSON body", async () => {
+  it("returns 400 on invalid JSON body", async () => {
     const req = new NextRequest("http://localhost/api/pros/billing/subscribe", {
       method: "POST",
-      body: "not-json",
-      headers: { "content-type": "application/json" },
+      body: "not json",
     });
     const res = await POST(req);
     expect(res.status).toBe(400);
   });
 
-  it("returns 400 for invalid tier", async () => {
-    const res = await POST(makeReq({ tier: "enterprise" }));
+  it("returns 400 when tier is not a valid enum", async () => {
+    const res = await POST(makeReq({ tier: "platinum" }));
     expect(res.status).toBe(400);
   });
 
-  it("returns 503 when Stripe env not configured", async () => {
-    mockCheckStripeEnv.mockReturnValue({ ok: false, missing: ["STRIPE_PRICE_ID_STARTER"] });
-    const res = await POST(makeReq());
+  it("returns 503 with missing env vars when Stripe price ids are unset", async () => {
+    mockCheckStripeEnv.mockReturnValueOnce({
+      ok: false,
+      missing: ["STRIPE_PRICE_ID_STARTER"],
+    });
+    const res = await POST(makeReq({ tier: "starter" }));
     expect(res.status).toBe(503);
+    expect(await res.json()).toMatchObject({
+      error: "Subscription billing is not configured.",
+      missing: ["STRIPE_PRICE_ID_STARTER"],
+    });
+    expect(mockCheckStripeEnv).toHaveBeenCalledWith({ required: ["STRIPE_PRICE_ID_STARTER"] });
   });
 
-  it("returns 200 with checkout url on success", async () => {
-    const res = await POST(makeReq());
-    expect(res.status).toBe(200);
-    const json = await res.json();
-    expect(json.url).toContain("checkout.stripe.com");
-  });
-
-  it("returns 200 for growth tier", async () => {
+  it("returns the checkout url on success", async () => {
+    mockCreateCheckoutSession.mockResolvedValueOnce({ url: "https://stripe.test/checkout" });
     const res = await POST(makeReq({ tier: "growth" }));
     expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ url: "https://stripe.test/checkout" });
+    expect(mockCreateCheckoutSession).toHaveBeenCalledWith({
+      professionalId: 42,
+      tier: "growth",
+    });
   });
 
-  it("returns 200 for scale tier", async () => {
+  it("returns 503 when checkout session is unavailable", async () => {
+    mockCreateCheckoutSession.mockResolvedValueOnce({ unavailable: true });
     const res = await POST(makeReq({ tier: "scale" }));
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(503);
+    expect(await res.json()).toEqual({ error: "Subscription billing is not configured." });
+  });
+
+  it("returns 500 when createCheckoutSession throws", async () => {
+    mockCreateCheckoutSession.mockRejectedValueOnce(new Error("boom"));
+    const res = await POST(makeReq({ tier: "starter" }));
+    expect(res.status).toBe(500);
+    expect(await res.json()).toEqual({ error: "Could not start checkout." });
   });
 });

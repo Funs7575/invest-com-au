@@ -1,106 +1,105 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import type { NextRequest } from "next/server";
+import { NextRequest } from "next/server";
 
-// ── Mocks ──────────────────────────────────────────────────────────────────────
-
-vi.mock("@/lib/logger", () => ({
-  logger: vi.fn(() => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() })),
+const { mockIsAllowed, mockRequireAdvisorSession, mockAcceptInvitation } = vi.hoisted(() => ({
+  mockIsAllowed: vi.fn(),
+  mockRequireAdvisorSession: vi.fn(),
+  mockAcceptInvitation: vi.fn(),
 }));
 
-const mockIsAllowed = vi.fn(async () => true);
 vi.mock("@/lib/rate-limit-db", () => ({
-  isAllowed: (...args: unknown[]) => mockIsAllowed(...args),
-  ipKey: vi.fn(() => "test-ip"),
-}));
-
-const { mockRequireAdvisorSession } = vi.hoisted(() => ({
-  mockRequireAdvisorSession: vi.fn(async () => 42 as number | null),
+  isAllowed: mockIsAllowed,
+  ipKey: vi.fn(() => "ip:test"),
 }));
 
 vi.mock("@/lib/require-advisor-session", () => ({
   requireAdvisorSession: mockRequireAdvisorSession,
 }));
 
-const mockAcceptInvitation = vi.fn(async () => ({ teamId: 1 }));
-
 vi.mock("@/lib/expert-teams", () => ({
-  acceptInvitation: (...args: unknown[]) => mockAcceptInvitation(...args),
+  acceptInvitation: mockAcceptInvitation,
 }));
 
-vi.mock("@/lib/api-schemas", () => ({
-  AcceptExpertTeamInvitationRequest: {
-    safeParse: (v: unknown) => {
-      if (v && typeof v === "object" && "token" in v && typeof (v as Record<string, unknown>).token === "string") {
-        return { success: true, data: v as Record<string, unknown>, error: null };
-      }
-      return { success: false, error: { issues: [{ message: "token required" }] } };
-    },
-  },
+vi.mock("@/lib/logger", () => ({
+  logger: vi.fn(() => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() })),
 }));
 
 import { POST } from "@/app/api/expert-teams/invite/accept/route";
 
-function makeReq(body?: unknown): NextRequest {
-  return new Request("http://localhost/api/expert-teams/invite/accept", {
+const TOKEN = "t".repeat(30);
+
+function makeReq(body: unknown, raw = false): NextRequest {
+  return new NextRequest("http://localhost/api/expert-teams/invite/accept", {
     method: "POST",
-    ...(body !== undefined ? { body: JSON.stringify(body), headers: { "content-type": "application/json" } } : {}),
-  }) as unknown as NextRequest;
+    headers: { "Content-Type": "application/json" },
+    body: raw ? (body as string) : JSON.stringify(body),
+  });
 }
 
-describe("/api/expert-teams/invite/accept", () => {
+describe("POST /api/expert-teams/invite/accept", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockIsAllowed.mockResolvedValue(true);
-    mockRequireAdvisorSession.mockResolvedValue(42);
-    mockAcceptInvitation.mockResolvedValue({ teamId: 1 });
+    mockRequireAdvisorSession.mockResolvedValue("advisor-1");
   });
 
   it("returns 429 when rate limited", async () => {
-    mockIsAllowed.mockResolvedValue(false);
-    const res = await POST(makeReq({ token: "tok123" }));
+    mockIsAllowed.mockResolvedValueOnce(false);
+    const res = await POST(makeReq({ token: TOKEN }));
     expect(res.status).toBe(429);
   });
 
-  it("returns 401 when no session", async () => {
-    mockRequireAdvisorSession.mockResolvedValue(null);
-    const res = await POST(makeReq({ token: "tok123" }));
+  it("returns 401 when not signed in", async () => {
+    mockRequireAdvisorSession.mockResolvedValueOnce(null);
+    const res = await POST(makeReq({ token: TOKEN }));
     expect(res.status).toBe(401);
+    expect(await res.json()).toEqual({ error: "Sign in required." });
   });
 
-  it("returns 400 when body invalid JSON", async () => {
-    const req = new Request("http://localhost/api/expert-teams/invite/accept", { method: "POST" }) as unknown as NextRequest;
-    const res = await POST(req);
+  it("returns 400 on invalid JSON body", async () => {
+    const res = await POST(makeReq("{not json", true));
+    expect(res.status).toBe(400);
+    expect(await res.json()).toEqual({ error: "Invalid JSON body." });
+  });
+
+  it("returns 400 when the token is too short (zod)", async () => {
+    const res = await POST(makeReq({ token: "short" }));
     expect(res.status).toBe(400);
   });
 
-  it("returns 400 when token missing", async () => {
-    const res = await POST(makeReq({ something: "else" }));
-    expect(res.status).toBe(400);
-  });
-
-  it("returns 200 on success", async () => {
-    const res = await POST(makeReq({ token: "tok123" }));
+  it("accepts the invitation on the happy path", async () => {
+    mockAcceptInvitation.mockResolvedValueOnce({ teamId: 99 });
+    const res = await POST(makeReq({ token: TOKEN }));
     expect(res.status).toBe(200);
-    const json = await res.json();
-    expect(json.success).toBe(true);
-    expect(json.team_id).toBe(1);
+    expect(await res.json()).toEqual({ success: true, team_id: 99 });
+    expect(mockAcceptInvitation).toHaveBeenCalledWith({
+      token: TOKEN,
+      professionalId: "advisor-1",
+    });
   });
 
-  it("returns 404 when invitation invalid", async () => {
-    mockAcceptInvitation.mockRejectedValue(new Error("invalid_invitation"));
-    const res = await POST(makeReq({ token: "bad-token" }));
+  it("maps invalid_invitation to 404", async () => {
+    mockAcceptInvitation.mockRejectedValueOnce(new Error("invalid_invitation"));
+    const res = await POST(makeReq({ token: TOKEN }));
     expect(res.status).toBe(404);
   });
 
-  it("returns 410 when invitation unavailable", async () => {
-    mockAcceptInvitation.mockRejectedValue(new Error("invitation_unavailable"));
-    const res = await POST(makeReq({ token: "used-token" }));
+  it("maps invitation_unavailable to 410", async () => {
+    mockAcceptInvitation.mockRejectedValueOnce(new Error("invitation_unavailable"));
+    const res = await POST(makeReq({ token: TOKEN }));
     expect(res.status).toBe(410);
   });
 
-  it("returns 410 when invitation expired", async () => {
-    mockAcceptInvitation.mockRejectedValue(new Error("invitation_expired"));
-    const res = await POST(makeReq({ token: "expired-token" }));
+  it("maps invitation_expired to 410", async () => {
+    mockAcceptInvitation.mockRejectedValueOnce(new Error("invitation_expired"));
+    const res = await POST(makeReq({ token: TOKEN }));
     expect(res.status).toBe(410);
+  });
+
+  it("returns 500 on an unmapped error", async () => {
+    mockAcceptInvitation.mockRejectedValueOnce(new Error("boom"));
+    const res = await POST(makeReq({ token: TOKEN }));
+    expect(res.status).toBe(500);
+    expect(await res.json()).toEqual({ error: "Failed to accept invitation." });
   });
 });

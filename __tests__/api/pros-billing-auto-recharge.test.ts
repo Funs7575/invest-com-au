@@ -1,113 +1,129 @@
-/**
- * Tests for POST /api/pros/billing/auto-recharge
- */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextRequest } from "next/server";
 
-const { mockIsAllowed, mockRequireAdvisorSession, mockGetPack } = vi.hoisted(() => ({
-  mockIsAllowed: vi.fn(async () => true),
-  mockRequireAdvisorSession: vi.fn(async () => 42),
-  mockGetPack: vi.fn(() => ({ slug: "marketplace_5", isCredit: true, credits: 5 })),
-}));
+const { mockIsAllowed, mockRequireAdvisorSession, mockFrom, mockGetPack } =
+  vi.hoisted(() => ({
+    mockIsAllowed: vi.fn(),
+    mockRequireAdvisorSession: vi.fn(),
+    mockFrom: vi.fn(),
+    mockGetPack: vi.fn(),
+  }));
 
 vi.mock("@/lib/rate-limit-db", () => ({
   isAllowed: mockIsAllowed,
-  ipKey: () => "test-ip",
-}));
-
-vi.mock("@/lib/logger", () => ({
-  logger: vi.fn(() => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() })),
+  ipKey: vi.fn(() => "ip:test"),
 }));
 
 vi.mock("@/lib/require-advisor-session", () => ({
   requireAdvisorSession: mockRequireAdvisorSession,
 }));
 
+vi.mock("@/lib/supabase/admin", () => ({
+  createAdminClient: vi.fn(() => ({ from: mockFrom })),
+}));
+
 vi.mock("@/lib/advisor-credit-packs", () => ({
   getPack: mockGetPack,
 }));
 
-const mockAdminFrom = vi.fn();
-vi.mock("@/lib/supabase/admin", () => ({
-  createAdminClient: vi.fn(() => ({ from: mockAdminFrom })),
+vi.mock("@/lib/logger", () => ({
+  logger: vi.fn(() => ({ debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() })),
 }));
 
 import { POST } from "@/app/api/pros/billing/auto-recharge/route";
 
 const VALID_BODY = {
   enabled: true,
-  threshold_credits: 5,
-  pack_slug: "marketplace_5",
+  threshold_credits: 10,
+  pack_slug: "marketplace_50",
 };
 
-function makeReq(body?: unknown): NextRequest {
+function makeReq(body: unknown): NextRequest {
   return new NextRequest("http://localhost/api/pros/billing/auto-recharge", {
     method: "POST",
-    body: JSON.stringify(body ?? VALID_BODY),
-    headers: { "content-type": "application/json" },
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
   });
 }
 
-function makeUpdateChain(error: unknown = null) {
-  const chain: Record<string, unknown> = {};
+// from().update().eq() — terminal eq() resolves.
+function makeUpdateChain(result: { error: unknown }) {
+  const chain: Record<string, ReturnType<typeof vi.fn>> = {};
   chain.update = vi.fn(() => chain);
-  chain.eq = vi.fn(async () => ({ error }));
+  chain.eq = vi.fn(() => Promise.resolve(result));
   return chain;
 }
+
+const MARKETPLACE_PACK = { slug: "marketplace_50", isCredit: true };
 
 describe("POST /api/pros/billing/auto-recharge", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockIsAllowed.mockResolvedValue(true);
     mockRequireAdvisorSession.mockResolvedValue(42);
-    mockGetPack.mockReturnValue({ slug: "marketplace_5", isCredit: true, credits: 5 });
-    mockAdminFrom.mockReturnValue(makeUpdateChain(null));
+    mockGetPack.mockReturnValue(MARKETPLACE_PACK);
   });
 
   it("returns 429 when rate-limited", async () => {
-    mockIsAllowed.mockResolvedValue(false);
-    const res = await POST(makeReq());
+    mockIsAllowed.mockResolvedValueOnce(false);
+    const res = await POST(makeReq(VALID_BODY));
     expect(res.status).toBe(429);
   });
 
-  it("returns 401 when unauthenticated", async () => {
-    mockRequireAdvisorSession.mockResolvedValue(null);
-    const res = await POST(makeReq());
+  it("returns 401 when not an advisor session", async () => {
+    mockRequireAdvisorSession.mockResolvedValueOnce(null);
+    const res = await POST(makeReq(VALID_BODY));
     expect(res.status).toBe(401);
+    expect(await res.json()).toEqual({ error: "Sign in required." });
   });
 
-  it("returns 400 for missing enabled field", async () => {
-    const res = await POST(makeReq({ threshold_credits: 5, pack_slug: "marketplace_5" }));
+  it("returns 400 on invalid JSON body", async () => {
+    const req = new NextRequest("http://localhost/api/pros/billing/auto-recharge", {
+      method: "POST",
+      body: "not json",
+    });
+    const res = await POST(req);
     expect(res.status).toBe(400);
   });
 
-  it("returns 400 for threshold_credits out of range", async () => {
-    const res = await POST(makeReq({ enabled: true, threshold_credits: 0, pack_slug: "marketplace_5" }));
+  it("returns 400 when zod validation fails", async () => {
+    const res = await POST(makeReq({ enabled: true, threshold_credits: 0, pack_slug: "" }));
     expect(res.status).toBe(400);
   });
 
-  it("returns 400 for non-marketplace pack slug", async () => {
-    mockGetPack.mockReturnValue({ slug: "lead_5", isCredit: true, credits: 5 });
-    const res = await POST(makeReq({ enabled: true, threshold_credits: 5, pack_slug: "lead_5" }));
+  it("returns 400 when the pack is not a marketplace credit pack", async () => {
+    mockGetPack.mockReturnValueOnce({ slug: "starter", isCredit: true });
+    const res = await POST(makeReq({ ...VALID_BODY, pack_slug: "starter" }));
+    expect(res.status).toBe(400);
+    expect(await res.json()).toEqual({ error: "Pack must be a marketplace credit pack." });
+  });
+
+  it("returns 400 when getPack returns null", async () => {
+    mockGetPack.mockReturnValueOnce(null);
+    const res = await POST(makeReq({ ...VALID_BODY, pack_slug: "marketplace_nope" }));
     expect(res.status).toBe(400);
   });
 
-  it("returns 400 for unknown pack slug", async () => {
-    mockGetPack.mockReturnValue(null);
-    const res = await POST(makeReq({ enabled: true, threshold_credits: 5, pack_slug: "marketplace_unknown" }));
-    expect(res.status).toBe(400);
-  });
-
-  it("returns 200 on successful update", async () => {
-    const res = await POST(makeReq());
+  it("saves settings and returns success", async () => {
+    const chain = makeUpdateChain({ error: null });
+    mockFrom.mockReturnValueOnce(chain);
+    const res = await POST(makeReq(VALID_BODY));
     expect(res.status).toBe(200);
-    const json = await res.json();
-    expect(json.success).toBe(true);
+    expect(await res.json()).toEqual({ success: true });
+    expect(mockFrom).toHaveBeenCalledWith("professionals");
+    expect(chain.eq).toHaveBeenCalledWith("id", 42);
+    const updateArg = chain.update.mock.calls[0]?.[0] as Record<string, unknown>;
+    expect(updateArg).toMatchObject({
+      auto_recharge_enabled: true,
+      auto_recharge_threshold_credits: 10,
+      auto_recharge_pack_slug: "marketplace_50",
+    });
   });
 
-  it("returns 500 when DB update errors", async () => {
-    mockAdminFrom.mockReturnValue(makeUpdateChain({ message: "db error" }));
-    const res = await POST(makeReq());
+  it("returns 500 when the update errors", async () => {
+    mockFrom.mockReturnValueOnce(makeUpdateChain({ error: { message: "boom" } }));
+    const res = await POST(makeReq(VALID_BODY));
     expect(res.status).toBe(500);
+    expect(await res.json()).toEqual({ error: "Could not save." });
   });
 });
