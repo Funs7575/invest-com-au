@@ -1,5 +1,5 @@
 {
-  "ignoreCommand": "bash scripts/vercel-skip-build.sh",
+  "ignoreCommand": "b=${VERCEL_GIT_COMMIT_REF:-}; [[ $b == claude/* || $b == main ]] && exit 0; bash scripts/vercel-skip-build.sh",
   "regions": ["dub1"],
   "crons": [
     { "path": "/api/cron/dispatch/every-15m", "schedule": "*/15 * * * *" },
