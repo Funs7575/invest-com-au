@@ -99,7 +99,10 @@ export const POST = withValidatedBody(CreateSchema, async (_req, body) => {
     cta_label: body.cta_label ?? null,
     stales_at: body.stales_at,
     display_order: body.display_order,
-    active: body.active,
+    // Approval gate (audit §5 #11): new alerts are created as inactive drafts
+    // so a mistake is never instantly public. Publishing is a deliberate,
+    // separately audit-logged step — PATCH active:true to go live.
+    active: false,
   };
   const { data, error } = await supabase
     .from("country_rule_alerts")
@@ -117,7 +120,11 @@ export const POST = withValidatedBody(CreateSchema, async (_req, body) => {
     entity_type: "country_rule_alerts",
     entity_id: String(data.id),
     admin_email: guard.email,
-    details: { country_code: body.country_code, alert_key: body.alert_key },
+    details: {
+      country_code: body.country_code,
+      alert_key: body.alert_key,
+      created_as_draft: true,
+    },
   });
 
   return NextResponse.json(data, { status: 201 });
