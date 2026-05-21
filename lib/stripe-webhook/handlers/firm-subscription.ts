@@ -79,7 +79,8 @@ export const handleFirmBrandedSubscription: WebhookHandler = async (
     const { data } = await ctx.admin
       .from("advisor_firms")
       .select("id")
-      .eq("branded_profile_subscription_id", sub.id)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- branded_profile_subscription_id lands via 20260521000000 migration; database.types.ts not yet regenerated, so the column is absent from the typed .eq() column union.
+      .eq("branded_profile_subscription_id" as any, sub.id)
       .maybeSingle();
     firmId = (data as { id: number } | null)?.id ?? null;
   }
