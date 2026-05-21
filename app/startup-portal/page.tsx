@@ -71,6 +71,7 @@ const NAV = [
   { href: "/startup-portal/data-room", label: "Data Room" },
   { href: "/startup-portal/investors", label: "Investors" },
   { href: "/startup-portal/profile", label: "Profile" },
+  { href: "/startup-portal/esic-verification", label: "ESIC" },
 ];
 
 export default async function StartupPortalPage() {
