@@ -176,7 +176,7 @@ describe("searchAfslRegister", () => {
     await searchAfslRegister("Smith, Jones & Co (Pty)");
     expect(state.calls["afsl_register.ilike"]).toEqual([
       "licensee_name",
-      "%Smith Jones Co Pty%",
+      "%Smith Jones & Co Pty%",
     ]);
   });
 
