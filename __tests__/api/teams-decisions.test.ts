@@ -17,7 +17,7 @@ vi.mock("@/lib/require-advisor-session", () => ({
 }));
 
 const recordDecisionMock = vi.fn();
-const clearDecisionMock = vi.fn(async () => undefined);
+const clearDecisionMock = vi.fn(async (..._args: unknown[]) => undefined);
 vi.mock("@/lib/team-brief-decisions", () => ({
   recordDecision: (...args: unknown[]) => recordDecisionMock(...args),
   clearDecision: (...args: unknown[]) => clearDecisionMock(...args),

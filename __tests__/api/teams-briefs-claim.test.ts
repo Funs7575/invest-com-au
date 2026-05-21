@@ -19,7 +19,7 @@ vi.mock("@/lib/require-advisor-session", () => ({
 }));
 
 const resolveSquadRouteContextMock = vi.fn();
-const listOtherActiveMembersMock = vi.fn(async () => []);
+const listOtherActiveMembersMock = vi.fn(async (..._args: unknown[]) => []);
 vi.mock("@/lib/team-brief-routes", () => ({
   resolveSquadRouteContext: (...args: unknown[]) => resolveSquadRouteContextMock(...args),
   listOtherActiveMembers: (...args: unknown[]) => listOtherActiveMembersMock(...args),
