@@ -246,6 +246,9 @@ describe("POST /api/admin/country-rule-alerts — validation", () => {
         alert_key: "uk-new",
         country_code: "uk",
         severity: "warning",
+        // Approval gate (§5 #11): created as an inactive draft even though the
+        // payload requested active:true — publishing is a deliberate PATCH.
+        active: false,
       }),
     );
     expect(auditInsert).toHaveBeenCalledWith(
