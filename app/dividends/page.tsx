@@ -8,6 +8,7 @@ import LeadMagnetCapture from "@/components/LeadMagnetCapture";
 import { DIVIDENDS_HUB_CONFIG } from "@/lib/verticals";
 import HubExitIntent from "@/components/HubExitIntent";
 import { getLeadMagnetForHub } from "@/lib/lead-magnets";
+import RelatedContentGrid from "@/components/RelatedContentGrid";
 
 export const revalidate = 3600;
 
@@ -75,6 +76,17 @@ const serviceGridNode = (
 
 const dividendsMagnet = getLeadMagnetForHub("dividends");
 
+// Topic-cluster cross-links (wave3b SEO). Routes verified against app/ — these
+// mirror the /dividends supporting/cluster entries in lib/content/topic-clusters.ts.
+const RELATED_LINKS = [
+  { id: "franking-calc", href: "/franking-credits-calculator", title: "Franking Credits Calculator", meta: "Tool" },
+  { id: "tax-franking", href: "/tax/franking-credits", title: "Franking Credits & Tax", meta: "Guide" },
+  { id: "etf-dividends", href: "/etfs/dividends", title: "Dividend ETFs", meta: "ETFs hub" },
+  { id: "dividend-investing", href: "/invest/dividend-investing", title: "Dividend Investing Strategy", meta: "Investing" },
+  { id: "drp-calc", href: "/dividend-reinvestment-calculator", title: "Dividend Reinvestment Calculator", meta: "Tool" },
+  { id: "smsf", href: "/smsf", title: "SMSF Hub", meta: "Superannuation" },
+];
+
 export default function DividendsHubPage() {
   return (
     <>
@@ -138,6 +150,13 @@ export default function DividendsHubPage() {
           >
             Compare share platforms <Icon name="arrow-right" size={16} />
           </Link>
+        </div>
+      </section>
+
+      {/* Related content — topic-cluster internal links (wave3b SEO) */}
+      <section className="py-12 bg-slate-50 border-t border-slate-200">
+        <div className="container-custom max-w-6xl">
+          <RelatedContentGrid heading="Related dividend tools & guides" items={RELATED_LINKS} />
         </div>
       </section>
     </HubPage>
