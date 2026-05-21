@@ -54,12 +54,10 @@ function denyGuard(status: number) {
 }
 
 function makeReq(id: string, body?: unknown) {
-  const init: RequestInit & { headers: Record<string, string> } = {
-    method: "POST",
-    headers: {},
-  };
+  const headers: Record<string, string> = {};
+  const init: RequestInit = { method: "POST", headers };
   if (body !== undefined) {
-    init.headers["Content-Type"] = "application/json";
+    headers["Content-Type"] = "application/json";
     init.body = JSON.stringify(body);
   }
   return new NextRequest(
