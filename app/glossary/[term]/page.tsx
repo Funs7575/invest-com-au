@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { GlossaryEntry } from "@/lib/glossary";
 import { getGlossaryBySlug, getGlossaryEntries } from "@/lib/glossary-db";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
+import { definedTermPageJsonLd } from "@/lib/schema-markup";
 import Icon from "@/components/Icon";
 import FloatingRightCTA from "@/components/FloatingRightCTA";
 
@@ -63,17 +64,14 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
     : { data: [] };
 
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "DefinedTerm",
-    name: entry.term,
-    description: entry.definition,
-    inDefinedTermSet: {
-      "@type": "DefinedTermSet",
-      name: "Invest.com.au Investing Glossary",
-      url: absoluteUrl("/glossary"),
-    },
-  };
+  // WebPage + Speakable + DefinedTerm (mainEntity). Speakable selectors point
+  // at the answer-first heading + lead definition so AI/voice systems extract
+  // the definition directly. See lib/schema-markup.ts.
+  const jsonLd = definedTermPageJsonLd({
+    term: entry.term,
+    slug: entry.slug,
+    definition: entry.definition,
+  });
 
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
@@ -108,11 +106,11 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
                 {entry.category}
               </span>
             )}
-            <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-4">
+            <h1 id="glossary-term-name" className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-4">
               What Is {entry.term}?
             </h1>
             <div className="prose prose-slate max-w-none">
-              <p className="text-base md:text-lg text-slate-600 leading-relaxed">
+              <p id="glossary-term-definition" className="text-base md:text-lg text-slate-600 leading-relaxed">
                 {entry.definition}
               </p>
             </div>
