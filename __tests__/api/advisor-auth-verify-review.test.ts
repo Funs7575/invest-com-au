@@ -1,4 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+
+vi.mock("@/lib/rate-limit-db", () => ({
+  isAllowed: vi.fn(async () => true),
+  ipKey: vi.fn(() => "ip:test"),
+}));
 import { NextRequest } from "next/server";
 
 // ── Mock state ─────────────────────────────────────────────────────────────────
