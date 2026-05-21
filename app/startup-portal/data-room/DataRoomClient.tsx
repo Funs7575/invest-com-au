@@ -40,6 +40,7 @@ const NAV = [
   { href: "/startup-portal/round", label: "Round" },
   { href: "/startup-portal/data-room", label: "Data Room", active: true },
   { href: "/startup-portal/investors", label: "Investors" },
+  { href: "/startup-portal/esic-verification", label: "ESIC" },
   { href: "/startup-portal/profile", label: "Profile" },
 ];
 
