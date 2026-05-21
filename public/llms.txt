@@ -1,0 +1,22 @@
+# Invest.com.au
+
+> Australia's independent investment comparison platform. Plain-English, Australian-focused general information comparing online brokers, super funds, savings accounts, crypto exchanges, CFD providers, robo-advisors and ETFs, plus financial-advisor matching, free calculators, and an A–Z investing glossary. Operated under Australian financial-services rules; content is general information, not personal financial advice.
+
+## Reference & definitions
+- [Investing Glossary](https://invest.com.au/glossary): A–Z plain-English definitions of Australian investing terms (shares, ETFs, super, crypto, CFDs, property, tax).
+- [Questions & Answers](https://invest.com.au/questions): Direct, answer-first responses to common Australian investing questions.
+- [Methodology](https://invest.com.au/methodology): How platforms and products are rated and ranked.
+
+## Compare platforms & products
+- [Compare Platforms](https://invest.com.au/compare): Side-by-side comparisons of Australian investing platforms.
+- [Best-of Categories](https://invest.com.au/best): Curated "best for" rankings by investor need.
+- [Online Brokers](https://invest.com.au/invest): Share-trading platform listings and reviews.
+- [Super Funds](https://invest.com.au/super): Superannuation fund comparison.
+- [Savings Accounts](https://invest.com.au/savings): High-interest savings account comparison.
+- [Crypto Exchanges](https://invest.com.au/crypto): AUSTRAC-registered crypto exchange comparison.
+- [Robo-Advisors](https://invest.com.au/robo-advisors): Automated investing platform comparison.
+
+## Tools & guides
+- [Calculators](https://invest.com.au/calculators): Free Australian finance calculators (franking credits, CGT, super, retirement, compound interest, and more).
+- [Guides & Articles](https://invest.com.au/articles): Educational guides for Australian investors.
+- [Find a Financial Advisor](https://invest.com.au/find-advisor): Match with Australian financial advisers by location and need.
