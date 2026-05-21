@@ -1,0 +1,8 @@
+{
+  "route": "/admin/commodity-hubs",
+  "finalUrl": "https://invest-com-au.vercel.app/admin/login?redirect=%2Fadmin%2Fcommodity-hubs",
+  "status": 200,
+  "redirected": true,
+  "capturedAt": "2026-05-19T22:34:02.318Z",
+  "viewport": "desktop"
+}

@@ -1,0 +1,4 @@
+page.evaluate: Execution context was destroyed, most likely because of a navigation
+    at captureForContext (/home/finnduns/invest-com-au/e2e/visual/runner.ts:131:18)
+    at capture (/home/finnduns/invest-com-au/e2e/visual/runner.ts:57:20)
+    at /home/finnduns/invest-com-au/e2e/visual/screenshots.spec.ts:29:37

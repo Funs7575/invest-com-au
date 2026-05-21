@@ -1,0 +1,8 @@
+{
+  "route": "/admin/courses",
+  "finalUrl": "https://invest-com-au.vercel.app/admin/login?redirect=%2Fadmin%2Fcourses",
+  "status": 200,
+  "redirected": true,
+  "capturedAt": "2026-05-19T22:34:44.460Z",
+  "viewport": "desktop"
+}
