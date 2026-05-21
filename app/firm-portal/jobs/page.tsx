@@ -11,6 +11,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+// eslint-disable-next-line no-restricted-imports -- firm-admin authorization read of the CALLER'S OWN professionals row (user is verified via getUser() above). The email-fallback match (pros not yet auth-linked) can't be expressed under the auth.uid() RLS self-policy, so the session client would miss it; this mirrors resolveFirmAdmin() in app/api/firm-portal/jobs/route.ts. No cross-user data is read.
 import { createAdminClient } from "@/lib/supabase/admin";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import JobsClient from "./JobsClient";
