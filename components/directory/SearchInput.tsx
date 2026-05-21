@@ -40,6 +40,12 @@ export interface SearchInputProps {
   id?: string;
   /** Outer wrapper extra classes (typically flex-1 in a toolbar row). */
   className?: string;
+  /**
+   * Optional typeahead suggestions. When provided, the browser renders a
+   * native datalist dropdown (no extra a11y wiring, keyboard-accessible).
+   * Purely additive — omit it and the input behaves exactly as before.
+   */
+  suggestions?: ReadonlyArray<string>;
 }
 
 const FOCUS_RING =
@@ -53,7 +59,10 @@ export default function SearchInput({
   ariaLabel,
   id = "directory-search",
   className = "",
+  suggestions,
 }: SearchInputProps) {
+  const listId = `${id}-suggestions`;
+  const hasSuggestions = Array.isArray(suggestions) && suggestions.length > 0;
   return (
     <form
       role="search"
@@ -86,8 +95,17 @@ export default function SearchInput({
           }}
           placeholder={placeholder}
           aria-label={ariaLabel ?? placeholder}
+          list={hasSuggestions ? listId : undefined}
+          autoComplete={hasSuggestions ? "off" : undefined}
           className={`w-full rounded-lg border border-slate-200 bg-white pl-9 pr-9 py-2 text-sm text-slate-800 placeholder:text-slate-400 ${FOCUS_RING}`}
         />
+        {hasSuggestions && (
+          <datalist id={listId}>
+            {suggestions!.map((s) => (
+              <option key={s} value={s} />
+            ))}
+          </datalist>
+        )}
         {value && (
           <button
             type="button"
