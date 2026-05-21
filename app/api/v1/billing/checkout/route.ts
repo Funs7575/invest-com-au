@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getStripe } from "@/lib/stripe";
 import { createClient } from "@/lib/supabase/server";
-// eslint-disable-next-line no-restricted-imports -- service-role legitimate: `api_keys` has a service_role-only RLS policy ("Service manage api keys" — no authenticated-role policy), and the row is keyed by `owner_email` not `auth.uid()`, so it can't be reached with the session client. We authenticate the user first via createClient() and only ever touch the row whose owner_email equals the verified user.email. Covered by CLAUDE.md "Two Supabase clients" service-role allow-list (service_role-only policy + cross-key lookup).
+// service-role legitimate: `api_keys` has a service_role-only RLS policy ("Service manage api keys" — no authenticated-role policy), and the row is keyed by `owner_email` not `auth.uid()`, so it can't be reached with the session client. We authenticate the user first via createClient() and only ever touch the row whose owner_email equals the verified user.email. Covered by CLAUDE.md "Two Supabase clients" service-role allow-list (service_role-only policy + cross-key lookup).
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 import { getSiteUrl } from "@/lib/url";
