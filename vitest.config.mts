@@ -72,8 +72,7 @@ export default defineConfig({
         // higher buffer is deliberate and the sweep's effect on them wasn't
         // separately measured (full-suite coverage couldn't be run locally
         // under heavy concurrent-CI machine load). The app/api/** floor
-        // below is the one this sweep most moves; raise it once a clean
-        // full-suite coverage run is available.
+        // below is the one this sweep most moves and IS now measured.
         lines: 65,
         functions: 73,
         branches: 73,
@@ -81,11 +80,22 @@ export default defineConfig({
         // API-route floor. Raised from 13/58/30 (D-10, Apr 2026) after
         // D-11 added tests for virtually all existing routes (batches 1-23+,
         // ~110 route files covered). Conservative 5pp buffer applied.
+        //
+        // 2026-05-21: ratcheted after the per-route sweep. Scoped run
+        // (__tests__/api only, coverage.include=app/api/**, the one flaky
+        // timing-out security-fixes.test.ts excluded): 4388 tests / 487
+        // files green, measured app/api/** lines/statements 77.54%,
+        // branches 77.14%, functions 85.74%. This is a *lower bound* on CI
+        // — CI additionally runs security-fixes plus other suites that
+        // touch app/api, so its number is >= these. Floors set ~3pp under
+        // measured (wider than the global 1pp because the audit loop adds
+        // brand-new untested routes between PRs, which transiently dip the
+        // %): lines/statements 75, branches 74, functions 82.
         "app/api/**/*.ts": {
-          lines: 40,
-          branches: 62,
-          functions: 40,
-          statements: 40,
+          lines: 75,
+          branches: 74,
+          functions: 82,
+          statements: 75,
         },
       },
     },
