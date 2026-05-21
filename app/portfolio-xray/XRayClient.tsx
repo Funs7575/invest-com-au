@@ -88,7 +88,6 @@ export default function XRayClient({ brokers }: { brokers: Broker[] }) {
     const curr = brokers.find(b => b.slug === currentBroker);
     const cheapest = brokers[0];
     const tradesEst = holdings.length * 4; // assume 4 trades/year per holding
-    const avgSize = totalVal / holdings.length;
     const currFee = curr ? tradesEst * parseFee(curr.asx_fee) : 0;
     const cheapFee = cheapest ? tradesEst * parseFee(cheapest.asx_fee) : 0;
     const feeSavings = Math.max(0, currFee - cheapFee);
