@@ -1,0 +1,8 @@
+{
+  "route": "/admin/export-import",
+  "finalUrl": "https://invest-com-au.vercel.app/admin/login?redirect=%2Fadmin%2Fexport-import",
+  "status": 200,
+  "redirected": true,
+  "capturedAt": "2026-05-19T22:35:41.879Z",
+  "viewport": "desktop"
+}

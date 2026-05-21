@@ -1,0 +1,8 @@
+{
+  "route": "/admin/automation/afsl-expiry",
+  "finalUrl": "https://invest-com-au.vercel.app/admin/login?redirect=%2Fadmin%2Fautomation%2Fafsl-expiry",
+  "status": 200,
+  "redirected": true,
+  "capturedAt": "2026-05-19T22:31:24.016Z",
+  "viewport": "desktop"
+}

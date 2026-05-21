@@ -1,0 +1,8 @@
+{
+  "route": "/admin/feature-flags",
+  "finalUrl": "https://invest-com-au.vercel.app/admin/login?redirect=%2Fadmin%2Ffeature-flags",
+  "status": 200,
+  "redirected": true,
+  "capturedAt": "2026-05-19T22:35:45.948Z",
+  "viewport": "desktop"
+}

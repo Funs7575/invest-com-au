@@ -1,0 +1,8 @@
+{
+  "route": "/admin/articles/editor/example-share-broker",
+  "finalUrl": "https://invest-com-au.vercel.app/admin/login?redirect=%2Fadmin%2Farticles%2Feditor%2Fexample-share-broker",
+  "status": 200,
+  "redirected": true,
+  "capturedAt": "2026-05-19T22:31:08.365Z",
+  "viewport": "desktop"
+}

@@ -1,0 +1,8 @@
+{
+  "route": "/grants/example-share-broker/example",
+  "finalUrl": "https://invest-com-au.vercel.app/grants/example-share-broker/example",
+  "status": 200,
+  "redirected": false,
+  "capturedAt": "2026-05-19T23:24:55.258Z",
+  "viewport": "desktop"
+}

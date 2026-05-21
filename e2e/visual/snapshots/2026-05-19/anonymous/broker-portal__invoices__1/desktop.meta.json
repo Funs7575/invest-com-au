@@ -1,0 +1,8 @@
+{
+  "route": "/broker-portal/invoices/1",
+  "finalUrl": "https://invest-com-au.vercel.app/broker-portal/login?redirect=%2Fbroker-portal%2Finvoices%2F1",
+  "status": 200,
+  "redirected": true,
+  "capturedAt": "2026-05-19T22:53:25.475Z",
+  "viewport": "desktop"
+}
