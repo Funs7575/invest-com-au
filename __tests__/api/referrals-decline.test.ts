@@ -17,7 +17,7 @@ const {
   return {
     isAllowedMock: vi.fn(() => Promise.resolve(true)),
     ipKeyMock: vi.fn(() => "ip:1.2.3.4"),
-    requireAdvisorSessionMock: vi.fn(() => Promise.resolve(42)),
+    requireAdvisorSessionMock: vi.fn<() => Promise<number | null>>(() => Promise.resolve(42)),
     declineReferralMock: vi.fn(),
     ReferralError,
   };
