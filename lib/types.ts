@@ -1336,6 +1336,19 @@ export interface AdvisorFirm {
   max_seats: number;
   created_at: string;
   updated_at: string;
+  // Branded-profile subscription (B2) — see
+  // supabase/migrations/20260521000000_firm_branded_profile_subscription.sql.
+  // `branded_profile_active` is the entitlement gate the /firm/[slug] page
+  // reads to decide whether to render the enhanced components below.
+  branded_profile_active?: boolean;
+  branded_profile_status?: string | null;
+  branded_profile_subscription_id?: string | null;
+  branded_profile_period_end?: string | null;
+  branded_profile_stripe_customer_id?: string | null;
+  hero_tagline?: string | null;
+  hero_image_url?: string | null;
+  featured_specialties?: string[] | null;
+  booking_embed_url?: string | null;
 }
 
 export interface AdvisorApplication {
