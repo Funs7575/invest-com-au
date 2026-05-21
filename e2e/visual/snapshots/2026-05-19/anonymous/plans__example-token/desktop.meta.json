@@ -1,0 +1,8 @@
+{
+  "route": "/plans/example-token",
+  "finalUrl": "https://invest-com-au.vercel.app/plans/example-token",
+  "status": 200,
+  "redirected": false,
+  "capturedAt": "2026-05-20T00:01:29.091Z",
+  "viewport": "desktop"
+}

@@ -1,0 +1,8 @@
+{
+  "route": "/foreign-investment/from/example",
+  "finalUrl": "https://invest-com-au.vercel.app/foreign-investment/from/example",
+  "status": 200,
+  "redirected": false,
+  "capturedAt": "2026-05-19T23:14:32.747Z",
+  "viewport": "desktop"
+}

@@ -1,0 +1,8 @@
+{
+  "route": "/admin/regulatory-alerts",
+  "finalUrl": "https://invest-com-au.vercel.app/admin/login?redirect=%2Fadmin%2Fregulatory-alerts",
+  "status": 200,
+  "redirected": true,
+  "capturedAt": "2026-05-19T22:40:46.739Z",
+  "viewport": "desktop"
+}

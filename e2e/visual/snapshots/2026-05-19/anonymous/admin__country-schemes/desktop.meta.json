@@ -1,0 +1,8 @@
+{
+  "route": "/admin/country-schemes",
+  "finalUrl": "https://invest-com-au.vercel.app/admin/login?redirect=%2Fadmin%2Fcountry-schemes",
+  "status": 200,
+  "redirected": true,
+  "capturedAt": "2026-05-19T22:34:36.902Z",
+  "viewport": "desktop"
+}

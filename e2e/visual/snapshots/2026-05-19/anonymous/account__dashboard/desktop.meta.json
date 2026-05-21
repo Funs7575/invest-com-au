@@ -1,0 +1,8 @@
+{
+  "route": "/account/dashboard",
+  "finalUrl": "https://invest-com-au.vercel.app/account/dashboard",
+  "status": 200,
+  "redirected": false,
+  "capturedAt": "2026-05-19T22:27:57.072Z",
+  "viewport": "desktop"
+}
