@@ -6,7 +6,7 @@ import { PLATFORM_TYPE_LABELS_LOWER } from "@/lib/types";
 import type { Metadata } from "next";
 import VersusClient from "../VersusClient";
 import { CURRENT_YEAR, absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
-import { versusComparisonJsonLd } from "@/lib/schema-markup";
+import { versusComparisonJsonLd, speakableWebPageJsonLd } from "@/lib/schema-markup";
 import ComplianceFooter from "@/components/ComplianceFooter";
 import { getVersusEditorial } from "@/lib/cached-versus";
 import { generateVersusPairs, getRelatedVersusPairs } from "@/lib/versus-pairs";
@@ -269,11 +269,25 @@ async function VersusData({ brokerSlugs, slugs }: { brokerSlugs: string[]; slugs
     })),
   } : null;
 
+  // Speakable: title + verdict TL;DR are the extractable answer for "X vs Y"
+  // queries. Only references #versus-tldr when editorial copy renders it.
+  const speakableLd = speakableWebPageJsonLd({
+    name: versusTitle,
+    path: `/versus/${slugs}`,
+    selectors: editorial?.tldr
+      ? ["#versus-title", "#versus-tldr"]
+      : ["#versus-title"],
+  });
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(speakableLd) }}
       />
       {financialProductLds.map((fp) => (
         <script
