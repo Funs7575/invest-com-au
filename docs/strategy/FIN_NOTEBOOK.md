@@ -14,6 +14,95 @@
 
 ## Active strategic decisions log
 
+### 2026-05-21 — GEO pivot: optimise to be *cited* by AI, not to *rank*
+
+**Trigger:** Google I/O 2026 (May 19–20) — the largest search overhaul in 25 years.
+Ten-blue-links increasingly replaced by AI-synthesised answers (Gemini 3.5 Flash).
+Founder's framing of the numbers: zero-click ~58.5% of queries; position-1 organic
+CTR on AI-impacted queries fell 27% → 11%; brands cited inside AI Overviews see ~35%
+more organic / ~91% more paid clicks than uncited competitors. *(I can't verify the
+exact I/O figures — knowledge cutoff Jan 2026 — but the direction, zero-click rising +
+AI Overviews reshaping CTR, was already the established trend; the strategy holds
+regardless of the precise percentages.)*
+
+**Decision: SEO → GEO (Generative Engine Optimization).** The goal shifts from ranking
+to *being the source Google's AI cites when Australians ask financial questions*. This
+is a lens applied to existing work, not a new build — most of the moats already exist.
+
+**Moats that matter in this world (all already real assets):**
+- 30-year domain (registered 1996) — strongest AU-finance authority signal for citation.
+  See [[project_invest_domain_lineage]].
+- `/quotes` reverse marketplace — transactional, not summarisable → structurally AI-proof.
+- Listing depth across 8+ verticals — AI prefers comprehensive structured sources.
+- Schema markup everywhere — `lib/schema-markup.ts` (single source of truth) is how AI
+  parses and surfaces us.
+
+**Grounded codebase state (checked 2026-05-21):**
+- **Glossary: 122 terms today** (`lib/glossary.ts` + DB-backed `lib/glossary-db.ts`,
+  migration `20260419_glossary_terms.sql`). Target 200 → **78 to add.** Definitional AU
+  finance content is prime citation material → this is the highest-leverage near-term GEO
+  lever and cheapest to ship.
+- **Schema gap:** `lib/schema-markup.ts` has article / FAQ / broker-FinancialProduct /
+  advisor / ItemList / listing-Product / versus / calculator / governmentService builders,
+  but **no `DefinedTerm` / `DefinedTermSet`** (the glossary-citation schema) and **no
+  `Speakable`**. Adding those two is the most direct "make us machine-citable" code change.
+- **AI Q&A capture (#7 / stream QQ)** is already in-flight and squarely on-strategy —
+  public Q&A landing pages with answer-first structure are exactly what GEO wants. Don't
+  treat GEO as greenfield; it largely re-prioritises QQ + glossary + schema.
+
+**Operating rules for all content work this session forward:**
+1. Schema markup non-negotiable on every listing, broker/advisor profile, and article.
+2. Every article/glossary term leads with a direct answer in the first 2–3 sentences
+   (extraction-ready), before any preamble.
+3. Glossary → 200 terms is now **high priority** (was untracked).
+4. Restructure informational content for AI extraction, not just keyword density.
+5. Competitive read: Finder/Canstar bleed *informational* traffic first → window to
+   become the cited AU-finance source on definitional/explanatory queries.
+
+**Concrete next actions (smallest-first):**
+- [x] **SHIPPED 2026-05-21** — `definedTermJsonLd` / `definedTermSetJsonLd` /
+  `definedTermPageJsonLd` / `speakableSpecification` added to `lib/schema-markup.ts`
+  (single source of truth; canonical `GLOSSARY_TERM_SET` shared so term page + index
+  can't drift). Glossary term page now emits a `WebPage` → `speakable` (answer-first
+  heading `#glossary-term-name` + lead definition `#glossary-term-definition`) →
+  `mainEntity: DefinedTerm`, replacing the hand-rolled inline node; index uses
+  `definedTermSetJsonLd`. 41 schema tests green, tsc clean. **This is the GEO schema floor.**
+- [ ] Audit existing articles/glossary entries for answer-first opening sentences.
+- [ ] Glossary backfill 122 → 200 (78 terms) as a cloud-loop content stream.
+- [ ] Confirm QQ public Q&A pages emit FAQ + (where apt) Speakable schema.
+
+**Deeper GEO dive (2026-05-21) — what else to add/adjust, grounded in the codebase:**
+1. **Schema is broad but split across two modules.** `lib/schema-markup.ts` AND `lib/seo.ts`
+   both emit Article/FAQ schema (`articleAuthorJsonLd`/`articleFaqJsonLd` live in seo.ts;
+   `/best/[slug]` uses schema-markup's `articleJsonLd`). Not a bug, but consolidate to one
+   so GEO changes (Speakable, dateModified discipline) land everywhere at once.
+2. **`Speakable` should extend beyond glossary** — add it to article TL;DRs, `/questions/[slug]`
+   answers, and the versus `tldr` (which already exists as answer-first copy in
+   `lib/versus-content.ts`). The answer copy is written; it just isn't marked machine-readable.
+3. **`dateModified` is the cheapest authority signal for AI** — AI engines prefer fresh,
+   dated sources. Ensure every Article/DefinedTerm emits a real `dateModified` (glossary
+   currently shows only `CURRENT_YEAR` in visible copy, no per-term date in schema).
+4. **FAQPage is on 27 pages — extend to listings + calculators** ("How much is FIRB fee for
+   a $2m property?" is exactly an AI-Overview query; calculator pages should emit the Q&A).
+5. **Author/E-E-A-T entities — already strong (verified 2026-05-21).** `articleAuthorJsonLd`
+   in `lib/seo.ts` already emits `Person` with `sameAs` (LinkedIn/Twitter), `jobTitle`,
+   `worksFor`, and `/authors/[slug]`, plus a separate reviewer Person block. Low-priority;
+   the win here is just ensuring every published article actually has an author assigned.
+6. **Citable stats/data**: AI cites concrete numbers. Fee tables, return figures, and
+   comparison data should sit in extractable `Table`/`Dataset`-friendly markup, not images.
+7. **Crawler policy — verified 2026-05-21.** AI crawlers (GPTBot/Google-Extended/Perplexity)
+   are currently **allowed** (only a `User-agent: *` block disallowing admin/api/auth/account
+   paths). Good for a citation strategy — don't add AI-bot disallows. TWO caveats: (a) there
+   are **two robots sources** — `app/robots.ts` AND `public/robots.txt` — and in Next.js the
+   static `public/robots.txt` wins, so `app/robots.ts` is dead/confusing → consolidate to one;
+   (b) **no `llms.txt`** exists — cheap, on-strategy add (curated map of our best citable pages).
+8. **Measurement is the hard part** — AI-Overview citations aren't in GSC cleanly. Proxy via
+   impressions-up/clicks-flat divergence + referrer strings from AI engines in PostHog.
+
+**Revisit:** 2026-06-21 — did cited-rate / referral mix actually move once QQ + the schema
+additions ship? (Hard to measure directly; proxy via GSC impressions-vs-clicks gap and any
+AI-Overview-attributed referrers PostHog can see.)
+
 ### 2026-05-20 — Cross-border #24 Phase A finished + Phase B engineering shipped
 
 Closed out the remaining cross-border engineering in one session. Most of it
