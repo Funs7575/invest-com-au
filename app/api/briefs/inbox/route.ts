@@ -104,9 +104,36 @@ export async function GET(request: NextRequest) {
       .order("accepted_at", { ascending: false })
       .limit(50);
 
+    // Attach the most recent advisor note per accepted brief. Notes live in
+    // brief_tracker_events.payload.note (written by updateTrackerStatus). We
+    // only query events for briefs this advisor already owns (acceptedRaw is
+    // scoped by accepted_by_professional_id), so no cross-advisor leak.
+    const acceptedIds = (acceptedRaw ?? []).map((b) => b.id as number);
+    const latestNote = new Map<number, { note: string; at: string }>();
+    if (acceptedIds.length > 0) {
+      const { data: events } = await admin
+        .from("brief_tracker_events")
+        .select("brief_id, payload, created_at")
+        .in("brief_id", acceptedIds)
+        .eq("event_type", "status_changed")
+        .order("created_at", { ascending: false });
+      for (const e of events ?? []) {
+        const briefId = e.brief_id as number;
+        const note = (e.payload as { note?: string | null } | null)?.note;
+        if (note && !latestNote.has(briefId)) {
+          latestNote.set(briefId, { note, at: e.created_at as string });
+        }
+      }
+    }
+    const accepted = (acceptedRaw ?? []).map((b) => ({
+      ...b,
+      latest_note: latestNote.get(b.id as number)?.note ?? null,
+      latest_note_at: latestNote.get(b.id as number)?.at ?? null,
+    }));
+
     return NextResponse.json({
       available,
-      accepted: acceptedRaw ?? [],
+      accepted,
       teamIds,
     });
   } catch (err) {
