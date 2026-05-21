@@ -1,0 +1,8 @@
+{
+  "route": "/admin/pro-subscribers",
+  "finalUrl": "https://invest-com-au.vercel.app/admin/login?redirect=%2Fadmin%2Fpro-subscribers",
+  "status": 200,
+  "redirected": true,
+  "capturedAt": "2026-05-19T22:39:28.462Z",
+  "viewport": "desktop"
+}

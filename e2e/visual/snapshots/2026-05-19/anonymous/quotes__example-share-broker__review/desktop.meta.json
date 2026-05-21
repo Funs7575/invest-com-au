@@ -1,0 +1,8 @@
+{
+  "route": "/quotes/example-share-broker/review",
+  "finalUrl": "https://invest-com-au.vercel.app/quotes/example-share-broker/review",
+  "status": 200,
+  "redirected": false,
+  "capturedAt": "2026-05-20T00:10:47.706Z",
+  "viewport": "desktop"
+}

@@ -1,0 +1,8 @@
+{
+  "route": "/account/investor-profile",
+  "finalUrl": "https://invest-com-au.vercel.app/account/investor-profile",
+  "status": 200,
+  "redirected": false,
+  "capturedAt": "2026-05-19T22:28:10.408Z",
+  "viewport": "desktop"
+}

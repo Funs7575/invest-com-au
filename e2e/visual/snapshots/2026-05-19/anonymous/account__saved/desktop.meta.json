@@ -1,0 +1,8 @@
+{
+  "route": "/account/saved",
+  "finalUrl": "https://invest-com-au.vercel.app/account/saved",
+  "status": 200,
+  "redirected": false,
+  "capturedAt": "2026-05-19T22:29:08.302Z",
+  "viewport": "desktop"
+}

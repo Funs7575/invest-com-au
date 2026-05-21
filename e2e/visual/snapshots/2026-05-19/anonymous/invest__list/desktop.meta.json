@@ -1,0 +1,8 @@
+{
+  "route": "/invest/list",
+  "finalUrl": "https://invest-com-au.vercel.app/invest/list",
+  "status": 200,
+  "redirected": false,
+  "capturedAt": "2026-05-19T23:41:47.992Z",
+  "viewport": "desktop"
+}

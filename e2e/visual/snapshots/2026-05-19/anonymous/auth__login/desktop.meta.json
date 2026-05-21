@@ -1,0 +1,8 @@
+{
+  "route": "/auth/login",
+  "finalUrl": "https://invest-com-au.vercel.app/auth/login",
+  "status": 200,
+  "redirected": false,
+  "capturedAt": "2026-05-19T22:50:11.262Z",
+  "viewport": "desktop"
+}

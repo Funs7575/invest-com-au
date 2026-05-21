@@ -1,0 +1,8 @@
+{
+  "route": "/admin/pro-deals",
+  "finalUrl": "https://invest-com-au.vercel.app/admin/login?redirect=%2Fadmin%2Fpro-deals",
+  "status": 200,
+  "redirected": true,
+  "capturedAt": "2026-05-19T22:39:25.492Z",
+  "viewport": "desktop"
+}

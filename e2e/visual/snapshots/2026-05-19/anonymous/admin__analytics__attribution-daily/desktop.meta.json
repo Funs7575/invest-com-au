@@ -1,0 +1,8 @@
+{
+  "route": "/admin/analytics/attribution-daily",
+  "finalUrl": "https://invest-com-au.vercel.app/admin/login?redirect=%2Fadmin%2Fanalytics%2Fattribution-daily",
+  "status": 200,
+  "redirected": true,
+  "capturedAt": "2026-05-19T22:30:30.672Z",
+  "viewport": "desktop"
+}

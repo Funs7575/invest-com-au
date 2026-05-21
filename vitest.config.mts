@@ -59,18 +59,43 @@ export default defineConfig({
         // average). Set floors 1pp under the actual measured value to
         // catch regressions without blocking unrelated ships. Bump
         // again after a focused per-route test-coverage pass.
-        lines: 64,
+        //
+        // Ratchet 2026-05-20 — the focused per-route sweep landed: 213 new
+        // __tests__/api/ files / ~1294 tests covering 212 routes that
+        // previously had no test importing their route module (60 cron,
+        // 57 admin, 95 user/advisor/public). Coverage is monotonic — these
+        // passing tests only execute previously-unexecuted route code, so
+        // global lines/statements can only have risen from the 64.93%
+        // baseline. lines/statements nudged 64 -> 65 (still strictly below
+        // the *pre-sweep* actual, so it cannot break CI while catching
+        // regressions tighter). functions/branches kept at 73 — their
+        // higher buffer is deliberate and the sweep's effect on them wasn't
+        // separately measured (full-suite coverage couldn't be run locally
+        // under heavy concurrent-CI machine load). The app/api/** floor
+        // below is the one this sweep most moves and IS now measured.
+        lines: 65,
         functions: 73,
         branches: 73,
-        statements: 64,
+        statements: 65,
         // API-route floor. Raised from 13/58/30 (D-10, Apr 2026) after
         // D-11 added tests for virtually all existing routes (batches 1-23+,
         // ~110 route files covered). Conservative 5pp buffer applied.
+        //
+        // 2026-05-21: ratcheted after the per-route sweep. Scoped run
+        // (__tests__/api only, coverage.include=app/api/**, the one flaky
+        // timing-out security-fixes.test.ts excluded): 4388 tests / 487
+        // files green, measured app/api/** lines/statements 77.54%,
+        // branches 77.14%, functions 85.74%. This is a *lower bound* on CI
+        // — CI additionally runs security-fixes plus other suites that
+        // touch app/api, so its number is >= these. Floors set ~3pp under
+        // measured (wider than the global 1pp because the audit loop adds
+        // brand-new untested routes between PRs, which transiently dip the
+        // %): lines/statements 75, branches 74, functions 82.
         "app/api/**/*.ts": {
-          lines: 40,
-          branches: 62,
-          functions: 40,
-          statements: 40,
+          lines: 75,
+          branches: 74,
+          functions: 82,
+          statements: 75,
         },
       },
     },
