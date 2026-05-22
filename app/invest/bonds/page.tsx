@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, SITE_NAME, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 
 export const revalidate = 3600;
 
@@ -16,6 +17,29 @@ export const metadata: Metadata = {
     url: `${SITE_URL}/invest/bonds`,
   },
 };
+
+const BONDS_FAQS = faqJsonLd([
+  {
+    q: "What are the different types of bonds available to Australian investors?",
+    a: "Australian investors can access government bonds (Commonwealth Treasury Bonds and Treasury Indexed Bonds issued via the AOFM), ASX-listed Exchange Traded Bonds (XTBs) tracking corporate bonds, bond ETFs such as VAF and IAF, bank hybrid securities (AT1 capital instruments like CBA PERLS and ANZ Capital Notes), and private credit funds offering direct-lending exposure.",
+  },
+  {
+    q: "Are Australian government bonds safe?",
+    a: "Commonwealth Government Securities (CGS) are rated AAA by S&P and Moody's and are backed by the full faith and credit of the Australian Government, making them among the safest investments available. State government bonds carry slightly lower ratings but are still investment-grade. As with all fixed income, returns fluctuate with interest-rate movements, so bond prices can fall if rates rise.",
+  },
+  {
+    q: "How do I buy bonds in Australia?",
+    a: "There are three main routes: (1) purchase Commonwealth Government Securities directly through the Australian Government Bond Exchange at aofm.gov.au from $1,000; (2) buy ASX-listed bond ETFs (e.g. VAF, IAF, AGVT) through any share broker; or (3) access specific corporate bonds via Exchange Traded Bonds (XTBs) listed on the ASX. Bond-focused managed funds are also available via ASX mFunds.",
+  },
+  {
+    q: "What is the minimum investment for Australian bonds?",
+    a: "Commonwealth Government Securities purchased directly via the AOFM have a $1,000 minimum with $1,000 increments. ASX-listed bond ETFs can be bought from the price of one unit (typically $20–$100). Exchange Traded Bonds (XTBs) are accessible from approximately $500. Private credit funds have higher minimums — retail-accessible funds from $5,000, wholesale funds often from $100,000.",
+  },
+  {
+    q: "Are bond returns taxed in Australia?",
+    a: "Interest (coupon) income from bonds is taxed as ordinary income at your marginal tax rate. Capital gains from selling a bond at a profit held for more than 12 months qualify for the 50% CGT discount for Australian resident individuals and SMSFs in accumulation phase. Foreign investors are generally subject to 10% withholding tax on Australian-sourced interest income, though Double Tax Agreement rates may reduce this.",
+  },
+]);
 
 export default function BondsPage() {
   const breadcrumb = breadcrumbJsonLd([
@@ -42,6 +66,12 @@ export default function BondsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(webPage) }}
       />
+      {BONDS_FAQS && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(BONDS_FAQS) }}
+        />
+      )}
 
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">

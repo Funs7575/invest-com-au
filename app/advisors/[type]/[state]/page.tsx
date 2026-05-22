@@ -2,8 +2,9 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { Professional, ProfessionalType } from "@/lib/types";
 import type { Metadata } from "next";
-import { PROFESSIONAL_TYPE_LABELS, AU_STATES } from "@/lib/types";
+import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import AdvisorsClient from "../../AdvisorsClient";
 
 export const revalidate = 1800;
@@ -144,6 +145,14 @@ export default async function AdvisorTypeLocationPage({ params }: { params: Prom
     professionals = (data as Professional[]) || [];
   }
 
+  const advisorFaqLd = faqJsonLd([
+    { q: `How do I find a verified ${label.toLowerCase()} in ${loc.name}?`, a: `Use the directory above to browse verified ${label.toLowerCase()}s in ${loc.name}. Each listing shows credentials, specialties, fees, and verified client reviews. You can request a free consultation directly through the platform — no obligation.` },
+    { q: `How much does a ${label.toLowerCase()} charge in Australia?`, a: `Fees vary by advisor type and engagement model. Financial planners typically charge $2,000–$5,000 for a Statement of Advice; ongoing advice is $2,500–$8,000 per year. Mortgage brokers are usually paid by lenders (no fee to borrowers). Buyers' agents charge 1–3% of purchase price. SMSF accountants charge $1,500–$4,000 per year. Always ask for a fee disclosure document before engaging.` },
+    { q: `What credentials should I check before hiring a ${label.toLowerCase()}?`, a: `Verify that financial planners and advisers hold an AFS Licence (AFSL) or are an authorised representative — check the ASIC Financial Advisers Register. Mortgage brokers must be licensed under the National Consumer Credit Protection Act and be members of MFAA or FBAA. Buyers' agents and real estate agents must hold a state real estate licence. SMSF accountants must be registered with the Tax Practitioners Board.` },
+    { q: `How do I compare ${label.toLowerCase()}s in ${loc.name}?`, a: `Compare on: verified credentials (AFSL, licence number), years of experience, speciality alignment with your situation, fee structure (flat fee vs ongoing vs commission), client reviews, and availability. The listings above show all of these factors. Request an initial consultation (often free) with 2–3 advisors before deciding.` },
+    { q: `Are ${label.toLowerCase()}s in Australia regulated?`, a: `Yes. Australia has one of the world's most comprehensive regulatory frameworks for financial advice. Financial advisers must pass the FASEA exam, hold relevant qualifications, and operate under an AFSL. Mortgage brokers are regulated by ASIC and must act in the best interests of borrowers. All professionals must comply with their relevant industry code of conduct and are subject to complaint processes via AFCA.` },
+  ]);
+
   const breadcrumbLd = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
     { name: "Find an Advisor", url: absoluteUrl("/advisors") },
@@ -161,6 +170,7 @@ export default async function AdvisorTypeLocationPage({ params }: { params: Prom
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(advisorFaqLd) }} />
       <AdvisorsClient
         professionals={professionals}
         initialType={professionalType}

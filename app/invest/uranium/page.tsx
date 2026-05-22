@@ -12,6 +12,7 @@ import GeneralAdviceWarning from "@/components/commodities/GeneralAdviceWarning"
 import VerticalMarketplaceListings from "@/components/marketplace/VerticalMarketplaceListings";
 import Icon from "@/components/Icon";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 
 export const revalidate = 1800;
 
@@ -66,6 +67,29 @@ const WAYS_TO_INVEST = [
   },
 ];
 
+const URANIUM_FAQS = faqJsonLd([
+  {
+    q: "How can I invest in uranium in Australia?",
+    a: "Australian investors can gain uranium exposure through ASX-listed producers such as Paladin Energy (PDN) and Boss Energy (BOE), development-stage companies like Deep Yellow (DYL) and Bannerman Energy (BMN), sector ETFs such as Global X Uranium ETF (ATOM), or unlisted project equity. Portfolio share purchases below 10% of an ASX-listed uranium company are generally exempt from FIRB notification; larger stakes require dual approval under FIRB and the Atomic Energy Act 1953.",
+  },
+  {
+    q: "What ASX-listed uranium stocks are available?",
+    a: "The two producing ASX uranium companies are Paladin Energy (PDN, Langer Heinrich mine in Namibia) and Boss Energy (BOE, Honeymoon in SA plus 30% Alta Mesa in Texas). Major development-stage names include Deep Yellow (DYL), Bannerman Energy (BMN), Aura Energy (AEE), and Lotus Resources (LOT). Explorers include Alligator Energy (AGE), Elevate Uranium (EL8), and 92 Energy (92E).",
+  },
+  {
+    q: "What are uranium ETFs available to Australian investors?",
+    a: "Global X Uranium ETF (ASX: ATOM) is the primary ASX-listed sector wrapper, holding approximately 40 positions including Cameco, Kazatomprom, NexGen, Denison, Sprott Physical Uranium Trust, and leading ASX names. Its management expense ratio is approximately 0.69%. US-listed alternatives URA and URNM offer broader global exposure for investors with a US-equity-enabled brokerage account.",
+  },
+  {
+    q: "Is uranium a good investment in 2025?",
+    a: "Uranium's investment case centres on structurally tightening supply and demand driven by nuclear power's role in decarbonisation and energy security — including SMR pipeline growth. Both Paladin Energy and Boss Energy restarted production in 2024 and are cashflow-generative at current spot prices. As with all commodities, uranium is cyclical and subject to price volatility; investors should consider their risk tolerance and position-size appropriately. This is general information only, not financial advice.",
+  },
+  {
+    q: "What drives the uranium price?",
+    a: "Uranium prices are driven by reactor demand (the number of operating nuclear plants and their fuel requirements), primary mine supply and restarts, secondary supply from enrichment tails and government inventories, long-term contracting cycles (utilities typically contract 3-7 years forward), and geopolitical factors such as US restrictions on Russian uranium imports. The spot market is thin relative to the long-term contract market, which can amplify price moves.",
+  },
+]);
+
 export default async function UraniumPage() {
   const sector = await getSector("uranium");
   if (!sector) notFound();
@@ -89,6 +113,12 @@ export default async function UraniumPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      {URANIUM_FAQS && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(URANIUM_FAQS) }}
+        />
+      )}
 
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">

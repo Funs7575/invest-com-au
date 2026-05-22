@@ -11,6 +11,7 @@ import EtfComparisonCard from "@/components/commodities/EtfComparisonCard";
 import GeneralAdviceWarning from "@/components/commodities/GeneralAdviceWarning";
 import Icon from "@/components/Icon";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 
 export const revalidate = 1800;
 
@@ -65,6 +66,29 @@ const WAYS_TO_INVEST = [
   },
 ];
 
+const LITHIUM_FAQS = faqJsonLd([
+  {
+    q: "How can I invest in lithium in Australia?",
+    a: "Australian investors can access lithium through ASX-listed producers such as Pilbara Minerals (PLS), Mineral Resources (MIN), IGO, and Liontown, through battery-mineral ETFs like Global X Battery Tech & Lithium ETF (ACDC), through downstream processing exposure via IGO's Tianqi joint venture, or through unlisted project equity in development-stage projects. Foreign investors should note that direct tenement and project-equity acquisitions are typically notifiable under FIRB as a sensitive critical-mineral sector.",
+  },
+  {
+    q: "What are the major ASX lithium stocks?",
+    a: "The leading ASX lithium equities are Pilbara Minerals (PLS, Pilgangoora hard-rock operation), Mineral Resources (MIN, Wodgina and Mt Marion plus diversified mining services), IGO (Greenbushes joint venture with Albemarle/Tianqi), and Liontown Resources (LTR, Kathleen Valley). These are the primary spodumene-concentrate producers; most downstream lithium hydroxide conversion is done offshore or via joint-venture arrangements.",
+  },
+  {
+    q: "Is lithium a good long-term investment?",
+    a: "Lithium's long-term demand thesis is underpinned by electric vehicle battery growth and grid-scale storage adoption. However, the 2023-24 price correction — caused by rapid supply expansion outpacing near-term EV adoption — shows that cycles are real. Australia supplies roughly half of the world's mined lithium, giving ASX stocks direct price leverage. The US-Australia Critical Minerals Framework and EU-Australia FTA pathway are expected to improve downstream economics from 2026. This is general information only, not financial advice.",
+  },
+  {
+    q: "What lithium ETFs are available in Australia?",
+    a: "Global X Battery Tech & Lithium ETF (ASX: ACDC) is the primary ASX-listed option, offering diversified exposure across lithium miners, battery manufacturers, and electric vehicle companies. VanEck Rare Earths & Critical Metals ETF also provides partial lithium exposure. Note that some 'lithium' ETFs weight downstream battery manufacturers more heavily than upstream miners — check the underlying index methodology as this materially changes the risk and return profile.",
+  },
+  {
+    q: "How do lithium prices affect mining stocks?",
+    a: "ASX lithium miners — particularly pure-play spodumene producers — are highly leveraged to spot SC6 (spodumene concentrate 6% Li2O) pricing. When lithium prices rise, miners with low all-in sustaining costs can see earnings expand disproportionately. Conversely, sustained price falls can push marginal producers into care-and-maintenance or cause balance-sheet stress. Integrated miners like Mineral Resources have mining-services revenue that partially buffers commodity price swings.",
+  },
+]);
+
 export default async function LithiumPage() {
   const sector = await getSector("lithium");
   if (!sector) notFound();
@@ -88,6 +112,12 @@ export default async function LithiumPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      {LITHIUM_FAQS && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(LITHIUM_FAQS) }}
+        />
+      )}
 
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">

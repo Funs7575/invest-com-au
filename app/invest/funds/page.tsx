@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import { createClient } from "@/lib/supabase/server";
 import FundsDirectoryClient, { type FundListing } from "./FundsDirectoryClient";
 import VerticalMarketplaceListings from "@/components/marketplace/VerticalMarketplaceListings";
@@ -39,6 +40,29 @@ async function fetchFunds(): Promise<FundListing[]> {
   }
 }
 
+const FUNDS_FAQS = faqJsonLd([
+  {
+    q: "What is the minimum investment for managed funds in Australia?",
+    a: "Minimum investments vary widely. Retail managed funds typically require $5,000–$25,000 to open an account, though some offer lower entry points with regular savings plans from $500–$1,000. Unlisted wholesale funds often require $500,000 or more. ETFs traded on the ASX have no minimum beyond the cost of a single unit (often under $100).",
+  },
+  {
+    q: "How do wholesale funds differ from retail funds in Australia?",
+    a: "Wholesale funds are restricted to sophisticated or wholesale investors under the Corporations Act — generally those with net assets of at least $2.5 million or gross income of $250,000 in each of the last two years. Wholesale funds are exempt from many disclosure requirements (no mandatory PDS) and often carry higher minimums and different fee structures. Retail funds are open to all investors and must comply with full ASIC disclosure obligations.",
+  },
+  {
+    q: "What is the difference between a managed fund and an ETF?",
+    a: "A managed fund is a pooled investment vehicle where a fund manager actively or passively manages a portfolio. You transact directly with the fund manager at the fund's net asset value (NAV), calculated once daily. An ETF (exchange-traded fund) is a similar pooled structure but trades on the ASX throughout the day like a share, typically at prices close to (but not always exactly) the underlying NAV. ETFs generally have lower fees and greater intraday liquidity, while unlisted managed funds may offer access to assets not available via exchange-listed products.",
+  },
+  {
+    q: "What fees do Australian managed funds charge?",
+    a: "Common fees include a management expense ratio (MER) or investment management fee (typically 0.1%–2%+ per year depending on strategy), buy/sell spreads applied when entering or exiting the fund, and in some cases a performance fee if the fund outperforms a benchmark. Always check the Product Disclosure Statement (PDS) for the full fee schedule before investing.",
+  },
+  {
+    q: "Can an SMSF invest in managed funds?",
+    a: "Yes. SMSFs can invest in both listed (ETFs) and unlisted managed funds provided the investment complies with the fund's investment strategy and the sole purpose test. The investment must be made on arm's-length commercial terms. Some wholesale unlisted funds may require a trustee or corporate trustee structure to meet their eligible investor criteria. Check the fund's PDS or Information Memorandum for SMSF-specific eligibility requirements.",
+  },
+]);
+
 export default async function FundsPage() {
   const funds = await fetchFunds();
 
@@ -54,6 +78,12 @@ export default async function FundsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      {FUNDS_FAQS && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(FUNDS_FAQS) }}
+        />
+      )}
       <div className="bg-white min-h-screen">
         {/* Hero */}
         <section className="bg-slate-900 text-white py-10 md:py-14">

@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import Icon from "@/components/Icon";
 import { breadcrumbJsonLd, SITE_URL, SITE_NAME, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 
 export const revalidate = 3600;
 
@@ -17,6 +18,29 @@ export const metadata: Metadata = {
     url: `${SITE_URL}/invest/gold`,
   },
 };
+
+const GOLD_FAQS = faqJsonLd([
+  {
+    q: "What is the best way to invest in gold in Australia?",
+    a: "The best approach depends on your goals. For most investors, ASX-listed gold ETFs (GOLD, PMGOLD, QAU) are the simplest and most cost-effective option — tradeable like shares through any broker. For those wanting physical ownership, the Perth Mint Gold Savings Account allows online purchases from $50. Larger investors seeking a government guarantee may prefer the Perth Mint Certificate Programme, while those seeking leveraged exposure can invest in ASX gold miners such as NST, EVN, or NEM.",
+  },
+  {
+    q: "Can I hold physical gold in my SMSF?",
+    a: "Yes. SMSFs can legally hold physical gold (bars and coins) and gold ETFs. Physical gold must be stored with an approved custodian such as the Perth Mint or ABC Bullion — it cannot be kept at a trustee's home or premises. Gold ETFs (GOLD, PMGOLD) held via an SMSF brokerage account are the most straightforward approach for most SMSF trustees and avoid storage and valuation complexities.",
+  },
+  {
+    q: "What are the tax implications of investing in gold in Australia?",
+    a: "Investment-grade gold (99.5%+ purity, bars or coins) is GST-free in Australia. Capital gains on gold held for more than 12 months qualify for the 50% CGT discount for Australian resident individuals and SMSFs in accumulation phase. Physical gold ETFs produce no income, so only capital gains events occur on sale. Foreign investors are generally not subject to Australian CGT on portfolio gold ETF investments under Section 855-10 ITAA 1997.",
+  },
+  {
+    q: "What is the difference between gold ETFs and gold miners on the ASX?",
+    a: "Gold ETFs (such as GOLD and PMGOLD) hold physical gold in a vault and directly track the gold spot price. Gold miner ETFs and individual mining stocks (NST, EVN, NEM) hold equity in gold-producing companies, which introduces operational leverage — a 10% rise in the gold price can translate to significantly larger earnings growth for an efficient miner, but also adds company-specific, operational, and management risk beyond gold price exposure.",
+  },
+  {
+    q: "Is gold a good hedge against inflation in Australia?",
+    a: "Gold has historically preserved purchasing power over long periods and is widely used as an inflation hedge. For Australian investors, this effect can be amplified by AUD/USD dynamics: the Australian dollar tends to weaken during periods of global risk aversion, which coincide with gold price rises, boosting AUD-denominated returns for unhedged gold holders. Currency-hedged ETFs (QAU) remove this currency effect for investors who want pure gold price exposure.",
+  },
+]);
 
 export default function GoldPage() {
   const breadcrumb = breadcrumbJsonLd([
@@ -43,6 +67,12 @@ export default function GoldPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(webPage) }}
       />
+      {GOLD_FAQS && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(GOLD_FAQS) }}
+        />
+      )}
 
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">

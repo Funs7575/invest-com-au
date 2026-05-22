@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import Icon from "@/components/Icon";
 import SectionHeading from "@/components/SectionHeading";
 
@@ -19,6 +20,29 @@ export const metadata: Metadata = {
   },
 };
 
+const FARMLAND_FAQS = faqJsonLd([
+  {
+    q: "How can I invest in Australian farmland?",
+    a: "You can invest in Australian farmland by purchasing agricultural land directly (cropping, grazing, horticulture, or dairy properties), investing in listed agricultural companies or REITs on the ASX, participating in managed agricultural investment schemes, or acquiring water entitlements in the Murray-Darling Basin. Foreign investors must comply with FIRB approval requirements for holdings above the $15 million cumulative threshold.",
+  },
+  {
+    q: "What is the minimum investment to buy farmland in Australia?",
+    a: "There is no regulatory minimum, but practical entry points vary significantly by property type and location. Smaller horticulture blocks can be found from $500,000–$1 million. Broadacre cropping and grazing properties typically start from $1 million and commonly range from $5 million to $50 million or more for larger pastoral stations. Water entitlements can be acquired separately and more affordably.",
+  },
+  {
+    q: "What returns does farmland investment typically generate?",
+    a: "Australian rural property has historically delivered 4–8% per annum in total returns, combining rental income (typically 2–4% yield from leasing to operators) and capital appreciation. Water rights have seen stronger capital appreciation over the past decade. Returns vary considerably by property type, location, rainfall reliability, and commodity cycles.",
+  },
+  {
+    q: "Do foreign investors need FIRB approval to buy Australian farmland?",
+    a: "Yes. All foreign persons (including individuals, companies, and trusts) must apply for Foreign Investment Review Board (FIRB) approval before acquiring an interest in Australian agricultural land where cumulative holdings reach or exceed $15 million. This threshold is much lower than the general commercial real estate threshold of $268 million. Some FTA partner countries (USA, New Zealand, Singapore, and others) have higher thresholds under their respective agreements.",
+  },
+  {
+    q: "Can an SMSF invest in farmland?",
+    a: "Yes. A self-managed super fund (SMSF) can invest in farmland provided it meets the sole purpose test (held for retirement benefit), the investment is at arm's length, and the property is not acquired from or leased back to a related party of the fund (unless it qualifies as business real property used wholly and exclusively in a business). The SMSF must be able to fund ongoing holding costs from fund assets.",
+  },
+]);
+
 export default function FarmlandPage() {
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
@@ -32,6 +56,12 @@ export default function FarmlandPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      {FARMLAND_FAQS && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(FARMLAND_FAQS) }}
+        />
+      )}
 
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
