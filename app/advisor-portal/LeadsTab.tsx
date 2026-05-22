@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Icon from "@/components/Icon";
 import LeadScoreBadge from "@/components/LeadScoreBadge";
-import type { Advisor, Stats, Lead, CategoryPricing, DisputeModal, FirmMemberOption } from "./types";
+import type { Advisor, Stats, Lead, CategoryPricing, DisputeModal } from "./types";
 import { logger } from "@/lib/logger";
 
 const log = logger("advisor-portal-leads");
@@ -35,48 +34,6 @@ export default function LeadsTab({
   onLeadSearchChange, onLeadStatusFilterChange, onLeadSortByQualityChange, onHotLeadsOnlyChange,
   onLeadsUpdate, onOpenDisputeModal, onUpdateLeadStatus, onUpdateLeadNotes,
 }: Props) {
-  // Firm inbox — only visible to firm admins
-  const isFirmAdmin = !!advisor?.is_firm_admin && !!advisor?.firm_id;
-  const [firmView, setFirmView] = useState(false);
-  const [firmLeads, setFirmLeads] = useState<Lead[]>([]);
-  const [firmMembers, setFirmMembers] = useState<FirmMemberOption[]>([]);
-  const [firmLoading, setFirmLoading] = useState(false);
-  const [firmError, setFirmError] = useState<string | null>(null);
-  const [reassigning, setReassigning] = useState<number | null>(null);
-
-  useEffect(() => {
-    if (!firmView || !isFirmAdmin) return;
-    setFirmLoading(true);
-    setFirmError(null);
-    fetch("/api/advisor-portal/firm-leads")
-      .then((r) => (r.ok ? r.json() : Promise.reject(r.statusText)))
-      .then((d: { leads: Lead[]; members: FirmMemberOption[] }) => {
-        setFirmLeads(d.leads ?? []);
-        setFirmMembers(d.members ?? []);
-      })
-      .catch(() => setFirmError("Failed to load team leads."))
-      .finally(() => setFirmLoading(false));
-  }, [firmView, isFirmAdmin]);
-
-  const reassignLead = async (leadId: number, professionalId: number) => {
-    setReassigning(leadId);
-    try {
-      await fetch("/api/advisor-portal/firm-leads", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ lead_id: leadId, professional_id: professionalId }),
-      });
-      setFirmLeads((prev) =>
-        prev.map((l) =>
-          l.id === leadId
-            ? { ...l, professional_id: professionalId, professional_name: firmMembers.find((m) => m.id === professionalId)?.name ?? "" }
-            : l,
-        ),
-      );
-    } catch { /* ignore */ }
-    setReassigning(null);
-  };
-
   const filteredLeads = leads.filter((l) => {
     const matchesStatus = leadStatusFilter === "all" || l.status === leadStatusFilter;
     const q = leadSearch.toLowerCase();
@@ -111,73 +68,11 @@ export default function LeadsTab({
   return (
     <>
       <div className="flex items-center justify-between mb-1">
-        <div className="flex items-center gap-3">
-          <h1 className="text-xl font-bold text-slate-900">Enquiries</h1>
-          {isFirmAdmin && (
-            <div className="flex rounded-lg border border-slate-200 overflow-hidden text-xs font-semibold">
-              <button
-                onClick={() => setFirmView(false)}
-                className={`px-3 py-1.5 transition-colors ${!firmView ? "bg-slate-900 text-white" : "bg-white text-slate-600 hover:bg-slate-50"}`}
-              >
-                Mine
-              </button>
-              <button
-                onClick={() => setFirmView(true)}
-                className={`px-3 py-1.5 transition-colors ${firmView ? "bg-slate-900 text-white" : "bg-white text-slate-600 hover:bg-slate-50"}`}
-              >
-                Team
-              </button>
-            </div>
-          )}
-        </div>
+        <h1 className="text-xl font-bold text-slate-900">Enquiries</h1>
         <button onClick={exportCsv} className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-700 px-3 py-1.5 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
           <Icon name="download" size={13} /> Export CSV
         </button>
       </div>
-
-      {/* Firm team inbox */}
-      {firmView && isFirmAdmin && (
-        <div className="mb-6">
-          {firmLoading && <p className="text-sm text-slate-500 py-8 text-center">Loading team leads…</p>}
-          {firmError && <p className="text-sm text-red-600 py-4">{firmError}</p>}
-          {!firmLoading && !firmError && (
-            <div className="space-y-2">
-              <p className="text-sm text-slate-500 mb-3">{firmLeads.length} leads across {firmMembers.length} team member{firmMembers.length !== 1 ? "s" : ""}</p>
-              {firmLeads.length === 0 && (
-                <div className="text-center py-10 text-slate-400 text-sm">No team leads yet.</div>
-              )}
-              {firmLeads.map((l) => (
-                <div key={l.id} className="bg-white border border-slate-200 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center gap-3">
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-slate-900 text-sm truncate">{l.user_name}</p>
-                    <p className="text-xs text-slate-500">{l.user_email}{l.user_phone ? ` · ${l.user_phone}` : ""}</p>
-                    <p className="text-xs text-slate-400 mt-0.5">{new Date(l.created_at).toLocaleDateString("en-AU")}</p>
-                  </div>
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${l.status === "new" ? "bg-emerald-100 text-emerald-700" : l.status === "converted" ? "bg-blue-100 text-blue-700" : "bg-slate-100 text-slate-600"}`}>
-                      {l.status}
-                    </span>
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-xs text-slate-400">Assigned:</span>
-                      <select
-                        value={l.professional_id ?? ""}
-                        onChange={(e) => { if (e.target.value) reassignLead(l.id, Number(e.target.value)); }}
-                        disabled={reassigning === l.id}
-                        className="text-xs border border-slate-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-violet-500 bg-white"
-                        aria-label="Assign to advisor"
-                      >
-                        {firmMembers.map((m) => (
-                          <option key={m.id} value={m.id}>{m.name}</option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
       <p className="text-sm text-slate-500 mb-4">{stats?.totalLeads || 0} total · {leads.filter(l => l.status === "new").length} new</p>
 
       {/* Lead pricing & credit balance */}

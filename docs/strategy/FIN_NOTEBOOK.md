@@ -14,27 +14,6 @@
 
 ## Active strategic decisions log
 
-### 2026-05-21 — Platform Expansion (PX stream) shipped
-
-Seven features that turn the platform from comparison directory into practice management tool for advisors and financial dashboard for investors.
-
-**Shipped in one session (branch `claude/sweet-gates-izLBx`):**
-- **PX-01: Slack lead alerts** — `slack_webhook_url` column on professionals, Slack Block Kit formatter (`lib/slack-lead-notify.ts`), internal Node route (`/api/internal/lead-webhooks`), advisor Settings tab UI. Advisors paste a Slack Incoming Webhook URL → get a structured Slack ping on every matched lead.
-- **PX-02: CRM/Zapier webhook sync** — `lead.received` added to outbound webhook ALLOWED_EVENTS; `sendOutboundWebhook` now accepts optional owner filter (prevents cross-advisor event leakage); wired from `submit-lead` via fire-and-forget internal route (edge runtime compatibility).
-- **PX-03: Firm shared lead inbox** — `Mine/Team` toggle in LeadsTab when `is_firm_admin=true`; `/api/advisor-portal/firm-leads` (GET + PATCH) returns all firm member leads with assignment dropdown. Firm admins can now see and reassign all leads across their team.
-- **PX-04: Fee impact visualiser** — `components/FeeImpactVisualiser.tsx` (pure SVG, no deps, interactive amount/horizon selectors, animated area chart, AUD callout). Embedded in `/broker/[slug]/` Fee Audit section for ETF/managed fund contexts.
-- **PX-05: Referral programme migration** — `referral_codes` + `referral_claims` tables (with RLS) that wire up the already-built `/api/referrals` route and `/account/referrals` UI which were orphaned without a DB backing.
-- **PX-06: Calendar booking on advisor profile** — already done (booking_link + BookingWidget already on advisor/[slug] profile page). No work needed.
-- **PX-07: Annual Financial MOT email** — daily cron (`/api/cron/annual-mot`) finds users whose account anniversary is today, queries their bookmarks, sends personalised re-engagement email. `mot_sent_at` column on `investor_profiles` prevents duplicate sends. Uses `auth.admin.listUsers()` pagination pattern.
-
-**Key architectural decision:** outbound webhooks (CRM/Zapier) and Slack notifications share one internal Node runtime route (`/api/internal/lead-webhooks`) called fire-and-forget from the edge `submit-lead` route. This sidesteps the `node:crypto` / edge runtime incompatibility without breaking the edge performance budget.
-
-**Docs:** `docs/plans/PLATFORM_EXPANSION_BRIEF.md` has full spec for each item.
-
-**Revisit:** 2026-06-21 — check Slack adoption rate in settings (query `SELECT COUNT(*) FROM professionals WHERE slack_webhook_url IS NOT NULL`), lead response time improvement in LeadsTab analytics, fee visualiser engagement (PostHog).
-
----
-
 ### 2026-05-21 — GEO pivot: optimise to be *cited* by AI, not to *rank*
 
 **Trigger:** Google I/O 2026 (May 19–20) — the largest search overhaul in 25 years.

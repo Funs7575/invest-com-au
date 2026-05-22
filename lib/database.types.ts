@@ -10174,7 +10174,6 @@ export type Database = {
           is_hnw: boolean
           is_pre_retiree: boolean
           meta: Json
-          mot_sent_at: string | null
           primary_vertical: string | null
           updated_at: string
         }
@@ -10192,7 +10191,6 @@ export type Database = {
           is_hnw?: boolean
           is_pre_retiree?: boolean
           meta?: Json
-          mot_sent_at?: string | null
           primary_vertical?: string | null
           updated_at?: string
         }
@@ -10210,7 +10208,6 @@ export type Database = {
           is_hnw?: boolean
           is_pre_retiree?: boolean
           meta?: Json
-          mot_sent_at?: string | null
           primary_vertical?: string | null
           updated_at?: string
         }
@@ -13001,7 +12998,6 @@ export type Database = {
           review_count: number | null
           service_areas: Json | null
           service_tiers: Json | null
-          slack_webhook_url: string | null
           slug: string
           specialties: Json | null
           sponsored_boost: number | null
@@ -13142,7 +13138,6 @@ export type Database = {
           review_count?: number | null
           service_areas?: Json | null
           service_tiers?: Json | null
-          slack_webhook_url?: string | null
           slug: string
           specialties?: Json | null
           sponsored_boost?: number | null
@@ -13283,7 +13278,6 @@ export type Database = {
           review_count?: number | null
           service_areas?: Json | null
           service_tiers?: Json | null
-          slack_webhook_url?: string | null
           slug?: string
           specialties?: Json | null
           sponsored_boost?: number | null
@@ -14359,89 +14353,6 @@ export type Database = {
           window_start?: string | null
         }
         Relationships: []
-      }
-      referral_claims: {
-        Row: {
-          claimant_user_id: string
-          claimed_at: string
-          code_id: number
-          id: number
-          reward_applied: boolean
-        }
-        Insert: {
-          claimant_user_id: string
-          claimed_at?: string
-          code_id: number
-          id?: number
-          reward_applied?: boolean
-        }
-        Update: {
-          claimant_user_id?: string
-          claimed_at?: string
-          code_id?: number
-          id?: number
-          reward_applied?: boolean
-        }
-        Relationships: [
-          {
-            foreignKeyName: "referral_claims_code_id_fkey"
-            columns: ["code_id"]
-            isOneToOne: false
-            referencedRelation: "referral_codes"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      referral_codes: {
-        Row: {
-          code: string
-          created_at: string
-          expires_at: string | null
-          id: number
-          max_uses: number
-          professional_id: number | null
-          reward_type: string
-          user_id: string
-          uses: number
-        }
-        Insert: {
-          code: string
-          created_at?: string
-          expires_at?: string | null
-          id?: number
-          max_uses?: number
-          professional_id?: number | null
-          reward_type?: string
-          user_id: string
-          uses?: number
-        }
-        Update: {
-          code?: string
-          created_at?: string
-          expires_at?: string | null
-          id?: number
-          max_uses?: number
-          professional_id?: number | null
-          reward_type?: string
-          user_id?: string
-          uses?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "referral_codes_professional_id_fkey"
-            columns: ["professional_id"]
-            isOneToOne: false
-            referencedRelation: "admin_advisor_health"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "referral_codes_professional_id_fkey"
-            columns: ["professional_id"]
-            isOneToOne: false
-            referencedRelation: "professionals"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       referral_rewards: {
         Row: {
@@ -16703,6 +16614,42 @@ export type Database = {
           savings_cents?: number | null
           total_balance_cents?: number | null
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      user_documents: {
+        Row: {
+          created_at: string
+          description: string | null
+          document_type: string
+          file_name: string
+          file_path: string
+          file_size_bytes: number
+          id: string
+          mime_type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          document_type: string
+          file_name: string
+          file_path: string
+          file_size_bytes: number
+          id?: string
+          mime_type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          document_type?: string
+          file_name?: string
+          file_path?: string
+          file_size_bytes?: number
+          id?: string
+          mime_type?: string
+          user_id?: string
         }
         Relationships: []
       }

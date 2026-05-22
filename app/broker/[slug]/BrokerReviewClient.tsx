@@ -33,7 +33,6 @@ import UserReviewsList from "@/components/UserReviewsList";
 import SwitchStoriesList from "@/components/SwitchStoriesList";
 import OnThisPage from "@/components/OnThisPage";
 import CollapsibleSection from "@/components/CollapsibleSection";
-import FeeImpactVisualiser from "@/components/FeeImpactVisualiser";
 import AdSlot from "@/components/AdSlot";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
 import LeadMagnet from "@/components/LeadMagnet";
@@ -541,19 +540,6 @@ export default function BrokerReviewClient({
             </div>
           ))}
         </ScrollReveal>
-
-        {/* PX-04: Fee impact visualiser — only for ETF/robo/super where ongoing
-            percentage fees compound meaningfully over time */}
-        {!isSavingsOrTD && (b.asx_fee_value == null || b.asx_fee_value < 2) && (
-          <div className="mb-6 md:mb-8">
-            <FeeImpactVisualiser
-              feeA={0.1}
-              feeB={b.asx_fee_value != null && b.asx_fee_value > 0.1 ? b.asx_fee_value : 0.65}
-              labelA="Low-cost"
-              labelB={b.asx_fee_value != null && b.asx_fee_value > 0.1 ? b.name : "Average fund"}
-            />
-          </div>
-        )}
 
         {/* Sources & Verification — E-E-A-T transparency signals */}
         <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 md:p-5 mb-6 md:mb-8">

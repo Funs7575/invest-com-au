@@ -118,21 +118,13 @@ export async function disableEndpoint(endpointId: number): Promise<void> {
 export async function sendOutboundWebhook(
   eventType: string,
   payload: Record<string, unknown>,
-  ownerKind?: WebhookOwnerKind,
-  ownerId?: string,
 ): Promise<void> {
   const admin = createAdminClient();
-  let query = admin
+  const { data: endpoints } = await admin
     .from("outbound_webhook_endpoints")
     .select("*")
     .eq("enabled", true)
     .contains("event_subscriptions", [eventType]);
-
-  if (ownerKind && ownerId) {
-    query = query.eq("owner_kind", ownerKind).eq("owner_id", ownerId);
-  }
-
-  const { data: endpoints } = await query;
 
   if (!endpoints || endpoints.length === 0) return;
 
