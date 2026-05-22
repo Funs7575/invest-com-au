@@ -119,5 +119,5 @@ export const grantsHubConfig: HubConfig = {
     "government grants Australia",
     "non-dilutive funding",
   ],
-  schemaTypes: ["FinancialService", "WebPage"],
+  schemaTypes: ["FAQPage", "FinancialService", "WebPage"],
 };

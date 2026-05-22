@@ -72,5 +72,5 @@ export const visaInvestmentHubConfig: HubConfig = {
     "SIV replacement australia",
     "investing in australia visa",
   ],
-  schemaTypes: ["WebPage"],
+  schemaTypes: ["FAQPage", "WebPage"],
 };
