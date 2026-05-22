@@ -100,8 +100,8 @@ jobs:
         # in this PR which added ~2900 kB: questions-data.ts Q&A content
         # (5085 lines imported by client quiz/scoring components) + advisor
         # course-creation, CPD, and certificate feature code. Actual at
-        # time of raise: ~12484 kB; 13000 gives ~4% headroom.
-        # scripts/bundle-size-budget.mjs for metric definition.
+        # time of raise: ~12484 kB; 13000 gives ~4% headroom (~515 kB).
+        # See scripts/bundle-size-budget.mjs for the metric definition.
         run: node scripts/bundle-size-budget.mjs --budget-kb 13000
 
       # Upload .next so dependent jobs (e2e, a11y, lighthouse*) can
