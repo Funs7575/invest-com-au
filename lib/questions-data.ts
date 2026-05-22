@@ -3000,6 +3000,54 @@ export const QUESTIONS: InvestingQuestion[] = [
       { label: "Compare ETF brokers", href: "/etfs" },
     ],
   },
+  {
+    slug: "how-does-asset-allocation-work-australia",
+    category: "investing",
+    question: "How does asset allocation work for Australian investors?",
+    metaTitle: "Asset Allocation for Australian Investors: Shares, Bonds & Property (2026)",
+    metaDescription:
+      "Asset allocation is dividing your portfolio between growth assets (shares, property) and defensive assets (bonds, cash) to match your risk tolerance and time horizon. Learn the standard models and how to build an allocation for Australian conditions.",
+    shortAnswer:
+      "Asset allocation is the process of dividing your investment portfolio between different asset classes — typically Australian shares, global shares, property, fixed interest (bonds), and cash — in proportions that reflect your risk tolerance, time horizon, and return objectives. The split between 'growth assets' (shares, property) and 'defensive assets' (bonds, cash) is the single most important driver of both long-run returns and portfolio volatility.",
+    sections: [
+      {
+        heading: "The growth vs defensive split",
+        body: "Super funds and financial advisers typically classify portfolios by their growth asset exposure: Conservative (0–30% growth), Moderate (30–60%), Balanced (60–70%), Growth (70–90%), High Growth (85–100%). The higher the growth allocation, the higher the expected long-run return — and the larger the potential drawdown in a market crash. The Australian Prudential Regulation Authority (APRA) uses a MySuper product benchmark requiring balanced options to target 60–70% growth assets. Over 30 years, a 70% growth portfolio has historically outperformed a 50% growth portfolio by roughly 1–2% per annum — but with significantly more short-term volatility.",
+      },
+      {
+        heading: "Australian-specific considerations",
+        body: "Australian investors often hold home-country bias: overweighting ASX shares relative to their 2% share of global market capitalisation. The ASX 200 is concentrated in financials (banks ~25%), materials (mining ~20%), and healthcare (~10%) — less diversified than the MSCI World Index. A globally diversified portfolio combining Australian and international equities provides broader sector exposure (technology in the US, consumer goods in Europe, emerging markets). The common recommendation from the Financial Services Council's investment research is 30–40% Australian equities, 30–40% international equities, and the remainder in bonds, cash, and alternatives for a growth-oriented portfolio.",
+      },
+      {
+        heading: "Rebalancing to maintain your target allocation",
+        body: "Market movements shift your actual allocation away from your target over time. A 70/30 growth/defensive portfolio that experiences a strong equity rally may drift to 80/20, taking on more risk than intended. Rebalancing — selling from over-weight asset classes and buying under-weight ones — restores the target allocation. Research shows annual or threshold-based rebalancing (e.g. rebalance when any class drifts more than 5% from target) provides most of the benefit with minimal trading costs. In superannuation, rebalancing is done within the fund and does not trigger CGT events — a significant tax advantage over rebalancing in a personal investment account.",
+      },
+    ],
+    faqs: [
+      {
+        q: "How should my asset allocation change as I get older?",
+        a: "The traditional rule is to reduce growth asset exposure as you approach retirement — sometimes expressed as '100 minus your age' equals your equity allocation (e.g. 65% equities at age 35, 35% at age 65). Modern thinking often uses '110 or 120 minus your age' given longer lifespans and low bond yields. Target date funds automate this 'glide path'. In practice, your specific health, income, other assets, and risk tolerance should drive the decision — not a formula.",
+      },
+      {
+        q: "What is the role of bonds in an Australian portfolio?",
+        a: "Bonds (fixed income) provide: (1) lower volatility — bond prices are less volatile than shares; (2) negative correlation in crises — when sharemarkets fall sharply, government bond prices often rise as investors seek safety; (3) regular income from coupon payments. Australian Government Bonds, the Bloomberg AusBond Composite Index, and international bond ETFs are common bond exposures. In low-interest-rate environments, bonds provide lower income but still serve their volatility-dampening role.",
+      },
+      {
+        q: "Can I implement asset allocation using just ETFs?",
+        a: "Yes. A simple three-ETF portfolio can implement a full asset allocation: (1) a broad Australian equity ETF (e.g. VAS, A200), (2) a global equity ETF (e.g. VGS, IVV, BGBL), and (3) a diversified bond ETF (e.g. VAF for Australian bonds, VBND for global bonds). Some investors add a fourth: an Australian or global property/infrastructure ETF. Adjusting the dollar amounts allocated to each ETF sets the growth/defensive split. Vanguard's Diversified ETF range (VDHG, VDGR, VDBA, VDCO) offer all-in-one pre-mixed options at a single MER.",
+      },
+    ],
+    relatedSlugs: [
+      "how-does-portfolio-rebalancing-work",
+      "what-is-diversification-in-investing",
+      "what-is-the-difference-between-shares-and-bonds",
+      "index-funds-vs-managed-funds-australia",
+    ],
+    relatedTools: [
+      { label: "Compare ETF brokers", href: "/etfs" },
+      { label: "Compound interest calculator", href: "/compound-interest-calculator" },
+    ],
+  },
 
   // ── TAX (6 new) ─────────────────────────────────────────────────────────────
 
