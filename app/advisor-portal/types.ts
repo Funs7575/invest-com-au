@@ -9,6 +9,7 @@ export type ViewType =
   | "articles"
   | "courses"
   | "events"
+  | "badges"
   | "team"
   | "settings";
 

@@ -22,6 +22,7 @@ const SettingsTab = dynamic(() => import("./SettingsTab"));
 const TeamTab = dynamic(() => import("./TeamTab"));
 const CourseBuilderTab = dynamic(() => import("./CourseBuilderTab"));
 const EventsTab = dynamic(() => import("./EventsTab"));
+const BadgesTab = dynamic(() => import("./BadgesTab"));
 
 export default function AdvisorPortalPage() {
   const [view, setView] = useState<ViewType>("login");
@@ -200,6 +201,7 @@ export default function AdvisorPortalPage() {
     { key: "articles", label: "Articles", icon: "file-text" },
     { key: "courses", label: "Courses", icon: "book-open" },
     { key: "events", label: "Events", icon: "calendar" },
+    { key: "badges", label: "Badges", icon: "award" },
     { key: "profile", label: "Profile", icon: "user" },
     { key: "billing", label: "Billing", icon: "credit-card" },
     ...(isFirmAdmin ? [{ key: "team", label: "Team", icon: "users" }] : []),
@@ -337,6 +339,9 @@ export default function AdvisorPortalPage() {
 
         {/* ─── CPD TRACKER ─── */}
         {view === "cpd" && <CPDTab />}
+
+        {/* ─── BADGES ─── */}
+        {view === "badges" && <BadgesTab advisor={advisor} />}
 
         {/* ─── COURSES ─── */}
         {view === "courses" && (
