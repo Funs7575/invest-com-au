@@ -5,6 +5,7 @@ import HubNewsletterCapture from "@/components/HubNewsletterCapture";
 import LeadMagnetCapture from "@/components/LeadMagnetCapture";
 import HubExitIntent from "@/components/HubExitIntent";
 import FhbSavingsMatch from "@/components/first-home-buyer/FhbSavingsMatch";
+import FhbBuyersAgentHandoff from "@/components/first-home-buyer/FhbBuyersAgentHandoff";
 import ArticleBrokerTable from "@/components/ArticleBrokerTable";
 import { getLeadMagnetForHub } from "@/lib/lead-magnets";
 import { firstHomeBuyerHubConfig } from "@/lib/hub-configs/first-home-buyer";
@@ -45,6 +46,7 @@ export default function FirstHomeBuyerPage() {
             heading="High-interest savings accounts for your deposit"
           />
         </div>
+        <FhbBuyersAgentHandoff />
         {leadMagnet && <LeadMagnetCapture magnet={leadMagnet} />}
       </HubPage>
       <HubExitIntent
