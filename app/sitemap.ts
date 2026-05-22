@@ -201,7 +201,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // For-advisors sub-pages
     "/for-advisors/pricing",
     // Provider directory
-    "/providers", "/provider-apply",
+    "/providers", "/provider-apply", "/for-providers",
+    // Advisor tools
+    "/advisors/leaderboard", "/advisors/compare",
+    // Content tools
+    "/switch-scripts",
   ].map((path) => ({
     url: `${baseUrl}${path}`,
     lastModified: new Date(),

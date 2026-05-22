@@ -21,7 +21,6 @@ import CourseCompleteButton from "@/components/CourseCompleteButton";
 
 const CourseReviews = dynamic(
   () => import("@/app/courses/[slug]/CourseReviews"),
-  { ssr: false }
 );
 
 interface PageProps {

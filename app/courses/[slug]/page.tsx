@@ -15,7 +15,7 @@ import { GENERAL_ADVICE_WARNING, COURSE_AFFILIATE_DISCLOSURE, ADVERTISER_DISCLOS
 import CoursePageClient from "./CoursePageClient";
 import CoursesGate from "../CoursesGate";
 
-const CourseReviews = dynamic(() => import("./CourseReviews"), { ssr: false });
+const CourseReviews = dynamic(() => import("./CourseReviews"));
 
 interface PageProps {
   params: Promise<{ slug: string }>;
