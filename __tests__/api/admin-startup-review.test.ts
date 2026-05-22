@@ -77,16 +77,18 @@ beforeEach(() => {
 });
 
 describe("PATCH /api/admin/startups/[id]/review", () => {
+const ctx = (id: string) => ({ params: Promise.resolve({ id }) }) as { params: Promise<{ id: string }> };
+
   it("returns 401 when not admin", async () => {
     const authFailRes = new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401 });
     mockRequireAdmin.mockResolvedValue({ ok: false, response: authFailRes });
-    const res = await PATCH(makeReq({ action: "approve" }), { params: { id: STARTUP_ID } });
+    const res = await PATCH(makeReq({ action: "approve" }), ctx(STARTUP_ID));
     expect(res.status).toBe(401);
   });
 
   it("returns 400 on invalid action", async () => {
     setupAdminFrom(draftStartup);
-    const res = await PATCH(makeReq({ action: "invalid" }), { params: { id: STARTUP_ID } });
+    const res = await PATCH(makeReq({ action: "invalid" }), ctx(STARTUP_ID));
     expect(res.status).toBe(400);
     const json = await res.json() as Record<string, unknown>;
     expect(String(json.error)).toMatch(/action must be/);
@@ -99,20 +101,20 @@ describe("PATCH /api/admin/startups/[id]/review", () => {
       headers: { "Content-Type": "application/json" },
       body: "not-json",
     });
-    const res = await PATCH(req, { params: { id: STARTUP_ID } });
+    const res = await PATCH(req, ctx(STARTUP_ID));
     expect(res.status).toBe(400);
   });
 
   it("returns 404 when startup not found", async () => {
     mockAdminFrom.mockImplementation(() => mockSelect(null));
-    const res = await PATCH(makeReq({ action: "approve" }), { params: { id: STARTUP_ID } });
+    const res = await PATCH(makeReq({ action: "approve" }), ctx(STARTUP_ID));
     expect(res.status).toBe(404);
   });
 
   it("returns 409 when startup is not draft", async () => {
     const activeStartup = { ...draftStartup, status: "active" };
     mockAdminFrom.mockImplementation(() => mockSelect(activeStartup));
-    const res = await PATCH(makeReq({ action: "approve" }), { params: { id: STARTUP_ID } });
+    const res = await PATCH(makeReq({ action: "approve" }), ctx(STARTUP_ID));
     expect(res.status).toBe(409);
   });
 
@@ -133,7 +135,7 @@ describe("PATCH /api/admin/startups/[id]/review", () => {
       return mockInsert();
     });
 
-    const res = await PATCH(makeReq({ action: "approve" }), { params: { id: STARTUP_ID } });
+    const res = await PATCH(makeReq({ action: "approve" }), ctx(STARTUP_ID));
     expect(res.status).toBe(200);
     const json = await res.json() as Record<string, unknown>;
     expect(json.ok).toBe(true);
@@ -158,7 +160,7 @@ describe("PATCH /api/admin/startups/[id]/review", () => {
       return mockInsert();
     });
 
-    const res = await PATCH(makeReq({ action: "reject", notes: "ABN not verified" }), { params: { id: STARTUP_ID } });
+    const res = await PATCH(makeReq({ action: "reject", notes: "ABN not verified" }), ctx(STARTUP_ID));
     expect(res.status).toBe(200);
     const json = await res.json() as Record<string, unknown>;
     expect(json.status).toBe("rejected");
@@ -179,7 +181,7 @@ describe("PATCH /api/admin/startups/[id]/review", () => {
       }
       return mockInsert();
     });
-    const res = await PATCH(makeReq({ action: "approve" }), { params: { id: STARTUP_ID } });
+    const res = await PATCH(makeReq({ action: "approve" }), ctx(STARTUP_ID));
     expect(res.status).toBe(500);
   });
 
@@ -197,7 +199,7 @@ describe("PATCH /api/admin/startups/[id]/review", () => {
       return { insert: insertSpy };
     });
 
-    await PATCH(makeReq({ action: "approve" }), { params: { id: STARTUP_ID } });
+    await PATCH(makeReq({ action: "approve" }), ctx(STARTUP_ID));
     expect(insertSpy).toHaveBeenCalledWith(
       expect.objectContaining({
         action: "startup:approved",

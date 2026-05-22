@@ -19,14 +19,18 @@ const log = logger("api:admin:startups:review");
  * Logs to admin_audit_log. Admin-only (requireAdmin + createAdminClient).
  * Rollback: UPDATE startup_profiles SET status='draft' WHERE id=<id>
  */
+interface RouteContext {
+  params: Promise<{ id: string }>;
+}
+
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  context: RouteContext,
 ) {
   const guard = await requireAdmin();
   if (!guard.ok) return guard.response;
 
-  const { id } = params;
+  const { id } = await context.params;
   if (!id) return NextResponse.json({ error: "Missing startup id" }, { status: 400 });
 
   let body: Record<string, unknown>;
