@@ -235,6 +235,16 @@ Reducing TTL and performing the DNS cutover requires logging into the domain reg
 
 ## Iteration log (most recent first)
 
+### iter 524 — 2026-05-22 — STATUS: ALL-BLOCKED (all actionable items done or blocked)
+
+- **Phase:** 3 — pick next item
+- **Result:** All streams complete or blocked. No pending non-blocked items remain.
+- **SP #1048 CI status:** `Lint · Type-check · Test · Build` in_progress (CI run `26269076843`, commit `be934c5`, started 04:50 UTC). All required checks green so far. If this CI run passes, the stuck-detection blocked entry premise is resolved — next fire should reassess SP-12 compliance signoff as the sole remaining blocker.
+- **Remaining blocked streams:** SP (stuck-detection + SP-12 compliance), B-09 (edge-fn secrets), C-03/04/05, G-04 (MFA), CO-01/02/04 (DNS/GSC), CL-05 (WHOIS), LL-05 (live chat AI), BB-04 (CDR), QQ-08 (compliance).
+- **STATUS: ALL-BLOCKED**
+
+---
+
 ### iter 523 — 2026-05-22 — C #1165 merged (Tier B, 18-min observation)
 
 - **Stream:** C (admin.ts scope reset — Tier B refactor)
