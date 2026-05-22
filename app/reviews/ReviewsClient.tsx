@@ -362,6 +362,7 @@ function getPlatformLabel(type: PlatformType): string {
     savings_account: "Savings Account",
     term_deposit: "Term Deposit",
     fx_provider: "FX Provider",
+    business_lender: "Business Lender",
   };
   return labels[type] || type;
 }
@@ -378,6 +379,7 @@ function getPlatformColor(type: PlatformType): string {
     savings_account: "bg-teal-50 text-teal-700",
     term_deposit: "bg-amber-50 text-amber-700",
     fx_provider: "bg-sky-50 text-sky-700",
+    business_lender: "bg-indigo-50 text-indigo-700",
   };
   return colors[type] || "bg-slate-50 text-slate-700";
 }
