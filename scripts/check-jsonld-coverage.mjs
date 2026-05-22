@@ -147,8 +147,11 @@ const EXEMPT_ROUTE_PATTERNS = [
   { prefix: "legal", category: "LEGAL" },
   { prefix: "privacy/data-rights", category: "LEGAL" },
   { prefix: "accessibility", category: "LEGAL" },
+  // FORM — provider application forms
+  { prefix: "provider-apply", category: "FORM" },
   // SALES — B2B advisor-facing, low consumer search demand
   { prefix: "for-advisors", category: "SALES" },
+  { prefix: "for-providers", category: "SALES" },
   { prefix: "advertise", category: "SALES" },
 ];
 
