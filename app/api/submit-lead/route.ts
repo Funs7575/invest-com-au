@@ -785,6 +785,33 @@ export async function POST(request: NextRequest) {
         }),
       }).catch(() => null);
     }
+
+    // PX-01/02: Fire outbound webhooks (CRM/Zapier) + Slack notification for
+    // the matched advisor. Uses Node-runtime internal route because
+    // lib/outbound-webhooks uses node:crypto (incompatible with edge runtime).
+    if (resolvedProfessionalId) {
+      const origin = process.env.VERCEL_PROJECT_PRODUCTION_URL
+        ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+        : "http://localhost:3000";
+      fetch(`${origin}/api/internal/lead-webhooks`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-internal-secret": process.env.INTERNAL_API_SECRET ?? "",
+        },
+        body: JSON.stringify({
+          professionalId: resolvedProfessionalId,
+          leadId: lead.id,
+          userName: typeof user_name === "string" ? user_name.trim() : null,
+          userEmail: normalizedEmail,
+          userPhone: typeof user_phone === "string" ? user_phone.trim() : null,
+          userState,
+          need,
+          context: Array.isArray(context) ? context : [],
+          sourcePage: typeof source_page === "string" ? source_page : null,
+        }),
+      }).catch(() => null);
+    }
   }
 
   return NextResponse.json({

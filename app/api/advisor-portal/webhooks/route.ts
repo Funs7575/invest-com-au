@@ -32,6 +32,7 @@ const PostBody = z.object({
 });
 
 export const ALLOWED_EVENTS = [
+  "lead.received",
   "brief.accepted",
   "brief.completed",
   "brief.message_received",
