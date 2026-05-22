@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import { faqJsonLd } from "@/lib/schema-markup";
 import { createClient } from "@/lib/supabase/server";
 import Icon from "@/components/Icon";
 
@@ -69,6 +70,29 @@ function formatFee(cents: number | null): string {
   });
 }
 
+const TRANSFER_FROM_FAQ = faqJsonLd([
+  {
+    q: "How do I transfer shares between Australian brokers?",
+    a: "To transfer Australian shares (CHESS-sponsored holdings) to a new broker, you initiate a CHESS transfer from your new broker's platform. You'll need your Holder Identification Number (HIN) from your current broker and the CHESS transfer form. The new broker submits the request to ASX; the transfer typically completes in 2–7 business days. Some brokers charge a per-holding transfer fee of $25–$55.",
+  },
+  {
+    q: "What is an in-specie transfer and which brokers support it?",
+    a: "An in-specie transfer moves your holdings — shares, ETFs, or managed funds — directly to a new broker without selling them. This avoids triggering capital gains tax. Not all brokers support in-specie transfers; some only accept cash. Brokers that accept in-specie typically require a formal transfer form and may charge a flat fee per holding. Check the individual broker guide for support and fees before initiating.",
+  },
+  {
+    q: "How long does a broker transfer take in Australia?",
+    a: "CHESS transfers of ASX-listed shares typically complete in 2–7 business days once the transfer instruction is submitted. Cash transfers between brokers (BPAY or bank transfer after selling) settle in 1–3 business days. Some brokers quote up to 10–15 business days for complex or bulk transfers, particularly around end of financial year.",
+  },
+  {
+    q: "Will I pay capital gains tax when switching brokers?",
+    a: "Only if you sell your holdings before transferring. An in-specie transfer preserves your original cost base and does not trigger a CGT event — you simply move the asset from one broker to another. If you sell first (because in-specie is not supported), a CGT event occurs in the year of sale. For assets held longer than 12 months, the 50% CGT discount applies for Australian residents.",
+  },
+  {
+    q: "Can I transfer ETFs and managed funds between brokers?",
+    a: "ASX-listed ETFs (such as VAS, IOZ, NDQ) are CHESS-sponsored securities and can be transferred between brokers like ordinary shares. Unlisted managed funds typically cannot be transferred directly — you redeem units with the current platform and repurchase with the new one, which triggers a CGT event. Some platforms (like Vanguard Personal Investor and InvestSMART) hold managed funds outside the ASX CHESS system.",
+  },
+]);
+
 export default async function TransferFromIndex() {
   const guides = await fetchGuides();
   const brokerMap = await fetchBrokers(guides.map((g) => g.broker_slug));
@@ -84,6 +108,10 @@ export default async function TransferFromIndex() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(TRANSFER_FROM_FAQ) }}
       />
       <div className="bg-white min-h-screen">
         <section className="bg-slate-900 text-white py-10 md:py-14">

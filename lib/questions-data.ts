@@ -16,7 +16,9 @@ export type QuestionCategory =
   | "investing"
   | "retirement"
   | "budgeting"
-  | "business";
+  | "business"
+  | "crypto"
+  | "insurance";
 
 export interface QuestionFaq {
   q: string;
@@ -3896,4 +3898,6 @@ export const CATEGORY_LABELS: Record<QuestionCategory, string> = {
   retirement: "Retirement",
   budgeting: "Budgeting",
   business: "Business",
+  crypto: "Cryptocurrency",
+  insurance: "Insurance",
 };
